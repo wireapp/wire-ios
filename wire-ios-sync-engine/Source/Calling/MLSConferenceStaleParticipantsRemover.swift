@@ -58,8 +58,8 @@ class MLSConferenceStaleParticipantsRemover: Subscriber {
 
     // MARK: - Interface
 
-    func performPendingRemovals() {
-        timerManager.fireAllTimers()
+    func cancelPendingRemovals() {
+        timerManager.cancelAllTimers()
     }
 
     // MARK: - Participants change handling

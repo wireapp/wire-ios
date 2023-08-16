@@ -46,7 +46,7 @@ extension WireCallCenterV3 {
         switch callState {
 
         case .terminating:
-            removeStaleParticipantsIfNeeded(callSnapshot: callSnapshot)
+            cancelPendingStaleParticipantsRemovals(callSnapshot: callSnapshot)
             leaveStaleConferenceIfNeeded(conversationID: conversationID)
 
         case .incoming:
@@ -80,30 +80,10 @@ extension WireCallCenterV3 {
         return (qualifiedID, groupID)
     }
 
-    private func removeStaleParticipantsIfNeeded(
+    func cancelPendingStaleParticipantsRemovals(
         callSnapshot: CallSnapshot?
     ) {
-        guard
-            let viewContext = uiMOC,
-            let callSnapshot = callSnapshot,
-            let staleParticipantsRemover = callSnapshot.mlsConferenceStaleParticipantsRemover
-        else {
-            return
-        }
-
-        let selfUser = ZMUser.selfUser(in: viewContext)
-        let connectedParticipantsExcludingSelf = callSnapshot.callParticipants.participants.filter {
-            let notSelf = $0.userId != selfUser.avsIdentifier
-            let connected = $0.state.isConnected
-
-            return notSelf && connected
-        }
-
-        guard connectedParticipantsExcludingSelf.isEmpty else {
-            return
-        }
-
-        staleParticipantsRemover.performPendingRemovals()
+        callSnapshot?.mlsConferenceStaleParticipantsRemover?.cancelPendingRemovals()
     }
 
     // Leaves the possibles subconversation for the mls conference.

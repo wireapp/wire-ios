@@ -40,6 +40,9 @@ class MLSConferenceStaleParticipantsRemoverTests: MessagingTest {
             context: uiMOC,
             removalTimeout: 0.4
         )
+
+        let selfUser = ZMUser.selfUser(in: uiMOC)
+        selfUser.remoteIdentifier = UUID()
     }
 
     override func tearDown() {
@@ -97,12 +100,6 @@ class MLSConferenceStaleParticipantsRemoverTests: MessagingTest {
         mlsService.mockSubconversationMembers = { _ in
             return participants.map(\.mlsClientID)
         }
-
-        // create input for the subscriber
-        let input = MLSConferenceParticipantsInfo(
-            participants: participants.map(\.callParticipant),
-            subconversationID: groupID
-        )
 
         // WHEN
         _ = sut.receive(
@@ -167,23 +164,29 @@ class MLSConferenceStaleParticipantsRemoverTests: MessagingTest {
         wait(for: [expectation], timeout: 0.5)
     }
 
-    func test_PerformPendingRemovals_RemovesParticipantsBeforeTimeout() {
+    func test_CancelPendingRemovals_CancelsRemovals() {
         // GIVEN
+
+        // create call participants
         let participants = [
             createMLSParticipant(state: .connecting)
         ]
 
+        // mock subconversation members
         mlsService.mockSubconversationMembers = { _ in
             return participants.map(\.mlsClientID)
         }
 
-        var removedMembers = [MLSClientID]()
+        // set expectation
         let expectation = XCTestExpectation()
-        mlsService.mockRemoveMembersFromConversation = { clientIDs, _ in
-            removedMembers = clientIDs
+        expectation.isInverted = true
+
+        // fulfill expectation
+        mlsService.mockRemoveMembersFromConversation = { _, _ in
             expectation.fulfill()
         }
 
+        // notify sut of stale participants
         _ = sut.receive(
             MLSConferenceParticipantsInfo(
                 participants: participants.map(\.callParticipant),
@@ -192,13 +195,10 @@ class MLSConferenceStaleParticipantsRemoverTests: MessagingTest {
         )
 
         // WHEN
-        sut.performPendingRemovals()
+        sut.cancelPendingRemovals()
 
         // THEN
-        // pending removals should be executed immediately but it's still async so we wait for .1 second
-        // another reason to wait for .1s is because the removal timeout is .4 seconds and we want to assert removals are triggered right away
-        wait(for: [expectation], timeout: 0.1)
-        XCTAssertEqual(participants.map(\.mlsClientID), removedMembers)
+        wait(for: [expectation], timeout: 0.5)
     }
 
     // MARK: - Helpers

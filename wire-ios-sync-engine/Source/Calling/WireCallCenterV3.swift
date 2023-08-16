@@ -716,6 +716,7 @@ extension WireCallCenterV3 {
         }
 
         if let mlsParentIDs = mlsParentIDS(for: conversationId) {
+            cancelPendingStaleParticipantsRemovals(callSnapshot: callSnapshots[conversationId])
             leaveSubconversation(
                 parentQualifiedID: mlsParentIDs.0,
                 parentGroupID: mlsParentIDs.1

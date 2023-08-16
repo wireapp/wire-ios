@@ -54,10 +54,12 @@ public class TimerManager<Identifier: Hashable> {
         timers.removeValue(forKey: identifier)
     }
 
-    public func fireAllTimers() {
+    public func cancelAllTimers() {
         timers.forEach {
-            $0.value.fire()
+            $0.value.invalidate()
         }
+
+        timers.removeAll()
     }
 
     private func timerExpired(
