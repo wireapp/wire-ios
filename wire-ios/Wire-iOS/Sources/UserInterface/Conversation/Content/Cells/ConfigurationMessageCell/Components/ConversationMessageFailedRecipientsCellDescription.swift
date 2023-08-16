@@ -46,17 +46,13 @@ final class ConversationMessageFailedRecipientsCellDescription: ConversationMess
         configuration = View.Configuration(title: ConversationMessageFailedRecipientsCellDescription.configureTitle(for: failedUsers),
                                            content: ConversationMessageFailedRecipientsCellDescription.configureContent(for: failedUsers),
                                            isCollapsed: isCollapsed,
-                                           hasMultipleUsers: (failedUsers.count > 1),
-                                           infoImage: nil,
+                                           icon: nil,
                                            buttonAction: buttonAction)
     }
 
-    private static func configureTitle(for failedUsers: [UserType]) -> String {
-        guard failedUsers.count > 1 else {
-            return ""
-        }
-
-        return SystemContent.FailedtosendParticipants.didNotGetMessage(failedUsers.count)
+    private static func configureTitle(for failedUsers: [UserType]) -> String? {
+        return (failedUsers.count > 1) ? SystemContent.FailedtosendParticipants.didNotGetMessage(failedUsers.count)
+                                       : nil
     }
 
     private static func configureContent(for failedUsers: [UserType]) -> String {
