@@ -77,9 +77,9 @@ final class MessageReactionsCell: UIView, ConversationMessageCell {
         self.translatesAutoresizingMaskIntoConstraints = false
 
         NSLayoutConstraint.activate([
-            reactionCollectionView.trailingAnchor.constraint(equalTo: self.trailingAnchor),
-            reactionCollectionView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: collectionViewLeadingAnchorValue),
-            reactionCollectionView.topAnchor.constraint(equalTo: self.topAnchor),
+            reactionCollectionView.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -conversationHorizontalMargins.right),
+            reactionCollectionView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: conversationHorizontalMargins.left),
+            reactionCollectionView.topAnchor.constraint(equalTo: self.topAnchor, constant: 8),
             reactionCollectionView.bottomAnchor.constraint(equalTo: self.bottomAnchor)
         ])
     }
