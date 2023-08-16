@@ -17,9 +17,10 @@
 //
 
 import XCTest
+import SnapshotTesting
 @testable import Wire
 
-class IncomingRequestFooterTests: ZMSnapshotTestCase {
+class IncomingRequestFooterTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
@@ -30,7 +31,7 @@ class IncomingRequestFooterTests: ZMSnapshotTestCase {
         footer.overrideUserInterfaceStyle = .light
         let view = footer.prepareForSnapshots()
 
-        verify(view: view)
+        verify(matching: view)
     }
 
     func testIncomingRequestFooter_Dark() {
@@ -38,7 +39,7 @@ class IncomingRequestFooterTests: ZMSnapshotTestCase {
         footer.overrideUserInterfaceStyle = .dark
         let view = footer.prepareForSnapshots()
 
-        verify(view: view)
+        verify(matching: view)
     }
 
 }
