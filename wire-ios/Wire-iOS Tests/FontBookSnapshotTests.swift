@@ -19,12 +19,12 @@
 import SnapshotTesting
 import WireCommonComponents
 import XCTest
+@testable import Wire
 
 final class FontBookSnapshotTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-
     }
 
     override func tearDown() {
@@ -32,7 +32,13 @@ final class FontBookSnapshotTests: XCTestCase {
 
     }
 
-    // MARK: Helper class
-    
+    func testBodyFontStyle(){
+        let sutLabel = DynamicFontLabel(text: "Welcome to Dub Dub",
+                                     style: .body,
+                                     color: SemanticColors.Label.textDefault)
+        sutLabel.numberOfLines = 0
+        sutLabel.frame.size = .init(width: 320, height: 200)
 
+        verifyForDynamicType(matching: sutLabel)
+    }
 }
