@@ -116,7 +116,6 @@ public final class ConversationService: ConversationServiceInterface {
             messageProtocol: messageProtocol,
             completion: completion
         )
-
     }
 
     private func internalCreateGroupConversation(
@@ -135,7 +134,6 @@ public final class ConversationService: ConversationServiceInterface {
             messageProtocol: .proteus,
             completion: completion
         )
-
     }
 
     private func internalCreateGroupWithRetryIfNeeded(
