@@ -58,5 +58,12 @@ final class FontBookSnapshotTests: XCTestCase {
         verifyForDynamicType(matching: setupLabel(style: .body))
     }
 
+    func testForSubHeadLineFontStyle() {
+        verifyForDynamicType(matching: setupLabel(style: .subheadline))
+    }
+
+    func testForCaption1FontStyle() {
+        verifyForDynamicType(matching: setupLabel(style: .caption1))
+    }
 
 }
