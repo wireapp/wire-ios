@@ -32,13 +32,31 @@ final class FontBookSnapshotTests: XCTestCase {
 
     }
 
-    func testBodyFontStyle() {
-        let sutLabel = DynamicFontLabel(text: "Welcome to Dub Dub",
-                                     style: .body,
-                                     color: SemanticColors.Label.textDefault)
-        sutLabel.numberOfLines = 0
-        sutLabel.frame.size = .init(width: 320, height: 200)
+    // MARK: Helper Method
 
-        verifyForDynamicType(matching: sutLabel)
+    func setupLabel(style: UIFont.FontStyle, width: Int = 320, height: Int = 200) -> UILabel {
+        let sutLabel = DynamicFontLabel(text: "Welcome to Dub Dub",
+                                        style: style,
+                                        color: SemanticColors.Label.textDefault)
+        sutLabel.numberOfLines = 0
+        sutLabel.frame.size = .init(width: width, height: height)
+
+        return sutLabel
     }
+
+    // MARK: Snapshot Tests
+
+    func testForTitle3FontStyle() {
+        verifyForDynamicType(matching: setupLabel(style: .title3))
+    }
+
+    func testForHeadlineFontStyle() {
+        verifyForDynamicType(matching: setupLabel(style: .headline))
+    }
+
+    func testBodyFontStyle() {
+        verifyForDynamicType(matching: setupLabel(style: .body))
+    }
+
+
 }
