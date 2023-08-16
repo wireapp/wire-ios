@@ -36,6 +36,7 @@ class ShowAllParticipantsCell: UICollectionViewCell, SectionListCellType {
     var contentStackView: UIStackView!
 
     var sectionName: String?
+    var obfuscatedSectionName: String?
     var cellIdentifier: String?
 
     // MARK: - Init and overrides

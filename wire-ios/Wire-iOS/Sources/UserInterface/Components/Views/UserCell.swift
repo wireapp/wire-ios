@@ -85,6 +85,7 @@ class UserCell: SeparatorCollectionViewCell, SectionListCellType {
     }
 
     var sectionName: String?
+    var obfuscatedSectionName: String?
     var cellIdentifier: String?
     let iconColor = IconColors.foregroundDefault
 

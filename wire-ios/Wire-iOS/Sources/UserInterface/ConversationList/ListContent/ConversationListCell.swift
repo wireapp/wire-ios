@@ -54,6 +54,7 @@ final class ConversationListCell: SwipeMenuCollectionCell,
 
     // MARK: - SectionListCellType
     var sectionName: String?
+    var obfuscatedSectionName: String?
     var cellIdentifier: String?
 
     private var hasCreatedInitialConstraints = false
