@@ -582,7 +582,7 @@ extension ZMConversation {
     }
 }
 
-extension Collection where Element == ZMUser {
+public extension Collection where Element == ZMUser {
 
     func belongingTo(domains: Set<String>) -> Set<ZMUser> {
         let result = filter { user in
