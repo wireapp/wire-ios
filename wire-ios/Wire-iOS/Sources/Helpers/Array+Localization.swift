@@ -22,7 +22,7 @@ extension [String] {
 
     typealias Strings = L10n.Localizable.General.NounSeparator
 
-    func localizedString() -> String {
+    func localizedJoin() -> String {
         guard
             let first = first,
             let last = last

@@ -317,7 +317,7 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
 
         let alert = UIAlertController(
             title: Strings.title,
-            message: Strings.message(domains.sorted().localizedString()),
+            message: Strings.message(domains.sorted().localizedJoin()),
             preferredStyle: .alert
         )
 
