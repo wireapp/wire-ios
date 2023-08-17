@@ -302,6 +302,9 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
                         didCreateConversation: conversation
                     )
 
+                case .failure(.networkError(.missingLegalholdConsent)):
+                    showMissingLegalholdConsentAlert()
+
                 case .failure(.networkError(.nonFederatingDomains(let domains))):
                     showNonFederatingDomainsAlert(domains: domains)
 
@@ -310,6 +313,21 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
                 }
             }
         }
+    }
+
+    private func showMissingLegalholdConsentAlert() {
+        typealias ConversationError = L10n.Localizable.Error.Conversation
+
+        let alert = UIAlertController(
+            title: ConversationError.title,
+            message: ConversationError.missingLegalholdConsent,
+            alertAction: .ok(style: .cancel)
+        )
+
+        present(
+            alert,
+            animated: true
+        )
     }
 
     private func showNonFederatingDomainsAlert(domains: Set<String>) {
