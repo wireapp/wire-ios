@@ -20,11 +20,9 @@ import XCTest
 import SnapshotTesting
 @testable import Wire
 
-class IncomingRequestFooterTests: XCTestCase {
+class IncomingRequestFooterTests: BaseSnapshotTestCase {
 
-    override func setUp() {
-        super.setUp()
-    }
+    // MARK: - Snapshot Tests
 
     func testIncomingRequestFooter_Light() {
         let footer = IncomingRequestFooterView()
@@ -45,6 +43,8 @@ class IncomingRequestFooterTests: XCTestCase {
 }
 
 private extension IncomingRequestFooterView {
+
+    // MARK: - Helper Method
 
     func prepareForSnapshots() -> UIView {
         let container = UIView()
