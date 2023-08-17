@@ -276,7 +276,7 @@ enum Payload {
                 case unknown
             }
 
-            let domains: [String]
+            let domain: String
             let path: String
             let type: FailureType
 
