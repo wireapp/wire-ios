@@ -190,7 +190,6 @@ public final class ConversationService: ConversationServiceInterface {
         teamID: UUID?,
         name: String?,
         users: Set<ZMUser>,
-        failedToAddUsers: Set<ZMUser>? = nil,
         accessMode: ConversationAccessMode,
         accessRoles: Set<ConversationAccessRoleV2>,
         enableReceipts: Bool,
@@ -234,12 +233,6 @@ public final class ConversationService: ConversationServiceInterface {
                 switch result {
                 case .success(let objectID):
                     if let conversation = try? self.context.existingObject(with: objectID) as? ZMConversation {
-                        if let failedToAddUsers = failedToAddUsers {
-                            conversation.appendFailedToAddUsersSystemMessage(
-                                users: failedToAddUsers,
-                                sender: selfUser,
-                                at: Date())
-                        }
                         completion(.success(conversation))
                     } else {
                         completion(.failure(.conversationNotFound))
