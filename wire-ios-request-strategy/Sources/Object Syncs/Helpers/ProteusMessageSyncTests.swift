@@ -247,7 +247,7 @@ class ProteusMessageSyncTests: MessagingTestBase {
             let payload = Payload.ResponseFailure(code: 533,
                                                   label: .federationRemoteError,
                                                   message: "",
-                                                  data: Payload.ResponseFailure.FederationFailure(domains: ["foma.wire.link"],
+                                                  data: Payload.ResponseFailure.FederationFailure(domain: "foma.wire.link",
                                                                                                   path: "/federation/api-version",
                                                                                                   type: federationType))
             let payloadAsString = String(bytes: payload.payloadData()!, encoding: .utf8)!
