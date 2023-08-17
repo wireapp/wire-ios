@@ -165,11 +165,12 @@ extension ZMConversation {
             )
 
             let usersToAdd = Set(users).subtracting(usersToExclude)
-
-            internalAddParticipants(
-                Array(usersToAdd),
-                completion: completion
-            )
+            if !usersToAdd.isEmpty {
+                internalAddParticipants(
+                    Array(usersToAdd),
+                    completion: completion
+                )
+            }
         }
 
         internalAddParticipants(users) { result in
@@ -581,7 +582,7 @@ extension ZMConversation {
     }
 }
 
-extension Collection where Element == ZMUser {
+public extension Collection where Element == ZMUser {
 
     func belongingTo(domains: Set<String>) -> Set<ZMUser> {
         let result = filter { user in

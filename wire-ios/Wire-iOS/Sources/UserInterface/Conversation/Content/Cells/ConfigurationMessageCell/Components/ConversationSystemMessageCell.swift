@@ -1114,34 +1114,24 @@ final class ConversationFailedToAddParticipantsCellDescription: ConversationMess
     let accessibilityLabel: String? = nil
 
     init(failedUsers: [UserType], isCollapsed: Bool, buttonAction: @escaping Completion) {
-        configuration = View.Configuration(title: ConversationFailedToAddParticipantsCellDescription.configureTitle(for: failedUsers),
-                                           content: ConversationFailedToAddParticipantsCellDescription.configureContent(for: failedUsers),
-                                           isCollapsed: isCollapsed,
-                                           hasMultipleUsers: (failedUsers.count > 1),
-                                           infoImage: Asset.Images.attention.image.withTintColor(SemanticColors.Label.textErrorDefault),
-                                           buttonAction: buttonAction)
+        configuration = View.Configuration(
+            title: ConversationFailedToAddParticipantsCellDescription.configureTitle(for: failedUsers),
+            content: ConversationFailedToAddParticipantsCellDescription.configureContent(for: failedUsers),
+            isCollapsed: isCollapsed,
+            icon: Asset.Images.attention.image,
+            buttonAction: buttonAction)
     }
 
-    private static func configureTitle(for failedUsers: [UserType]) -> String {
-        guard failedUsers.count > 1 else {
-            return ""
-        }
-
-        return SystemContent.FailedtoaddParticipants.count(failedUsers.count)
+    private static func configureTitle(for failedUsers: [UserType]) -> String? {
+        return (failedUsers.count > 1) ? SystemContent.FailedtoaddParticipants.count(failedUsers.count)
+                                       : nil
     }
 
     private static func configureContent(for failedUsers: [UserType]) -> String {
-        let groupedUsers: [String?: [UserType]] = Dictionary(grouping: failedUsers, by: \.domain)
-
-        var content: String = ""
-        for (domain, users) in groupedUsers {
-            let userNames = users.compactMap { $0.name }.joined(separator: ", ")
-            content.append(SystemContent.FailedtoaddParticipants.couldNotBeAdded(userNames))
-            content.append("\n")
-        }
-
-        return SystemContent.FailedParticipants.learnMore(content, URL.wr_backendOfflineLearnMore.absoluteString)
+        let userNames = failedUsers.compactMap { $0.name }.joined(separator: ", ")
+        return SystemContent.FailedtoaddParticipants.couldNotBeAdded(userNames, URL.wr_backendOfflineLearnMore.absoluteString)
     }
+
 }
 
 final class DomainsStoppedFederatingCellDescription: ConversationMessageCellDescription {

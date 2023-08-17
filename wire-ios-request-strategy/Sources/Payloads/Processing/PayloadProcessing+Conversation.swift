@@ -234,30 +234,7 @@ extension Payload.Conversation {
             }
         }
 
-        if let failedQualifiedIDs = failedToAddUsers, !failedQualifiedIDs.isEmpty {
-            let failedUsers = failedQualifiedIDs.compactMap {
-                ZMUser.fetch(with: $0.uuid, domain: $0.domain, in: context)
-            }
-
-            /// We need to remove failed users from the initial system message
-            updateSystemMessage(havingType: .newConversation,
-                                withFailedUsers: failedUsers,
-                                in: conversation)
-
-            conversation.appendFailedToAddUsersSystemMessage(users: Set(failedUsers), sender: conversation.creator, at: serverTimestamp)
-        }
-
         return conversation
-    }
-
-    func updateSystemMessage(
-        havingType systemMessageType: ZMSystemMessageType,
-        withFailedUsers failedUsers: [ZMUser],
-        in conversation: ZMConversation
-    ) {
-        guard let systemMessage = conversation.firstSystemMessage(for: systemMessageType) else { return }
-
-        failedUsers.forEach { systemMessage.users.remove($0) }
     }
 
     // There is a bug in the backend where the conversation type is not correct for
@@ -639,18 +616,6 @@ extension Payload.ConversationEvent where T == Payload.UpdateConversationDeleted
                     _ = ZMSystemMessage.createOrUpdate(from: originalEvent, in: context)
                 }
                 conversation.addParticipantsAndUpdateConversationState(users: users, role: nil)
-            }
-
-            if let serverTimestamp = timestamp,
-               let failedQualifiedIDs = failedToAddUsers,
-               !failedQualifiedIDs.isEmpty {
-
-                let failedUsers = failedQualifiedIDs.compactMap {
-                    ZMUser.fetch(with: $0.uuid, domain: $0.domain, in: context)
-                }
-                conversation.appendFailedToAddUsersSystemMessage(users: Set(failedUsers),
-                                                                 sender: conversation.creator,
-                                                                 at: serverTimestamp)
             }
         }
 

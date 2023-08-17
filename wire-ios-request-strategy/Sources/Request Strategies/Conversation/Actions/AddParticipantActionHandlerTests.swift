@@ -371,7 +371,7 @@ class AddParticipantActionHandlerTests: MessagingTestBase {
             let payloadString = payload.payloadString()!
             let response = ZMTransportResponse(
                 payload: payloadString as ZMTransportData,
-                httpStatus: 503,
+                httpStatus: 533,
                 transportSessionError: nil,
                 apiVersion: APIVersion.v4.rawValue
             )

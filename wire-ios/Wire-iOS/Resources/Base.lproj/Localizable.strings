@@ -490,7 +490,7 @@
 "content.system.failed_participants.learn_more" = "%@ [Learn more](%@)";
 
 "content.system.failedtoadd_participants.count" = "**%@ participants** could not be added to the group.";
-"content.system.failedtoadd_participants.could_not_be_added" = "**%@** could not be added to the group.";
+"content.system.failedtoadd_participants.could_not_be_added" = "**%@** could not be added to the group. [Learn more](%@)";
 
 "content.system.like_tooltip" = "Tap to like";
 "content.system.deleted_message_prefix_timestamp" = "Deleted: %@";
