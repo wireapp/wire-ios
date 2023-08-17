@@ -61,6 +61,16 @@ final class ConversationListViewModel: NSObject {
                 }
             }
 
+            var obfuscatedName: String {
+                switch self {
+                case .folder:
+                    return "user-defined-folder"
+
+                default:
+                    return canonicalName
+                }
+            }
+
             var canonicalName: String {
                 switch self {
                 case .contactRequests:
@@ -305,6 +315,10 @@ final class ConversationListViewModel: NSObject {
     /// - Returns: canonical name
     func sectionCanonicalName(of sectionIndex: Int) -> String? {
         return kind(of: sectionIndex)?.canonicalName
+    }
+
+    func obfuscatedSectionName(of sectionIndex: Int) -> String? {
+        return kind(of: sectionIndex)?.obfuscatedName
     }
 
     var sectionCount: Int {
