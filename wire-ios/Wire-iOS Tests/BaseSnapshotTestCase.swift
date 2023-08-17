@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2023 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,26 +17,14 @@
 //
 
 import XCTest
-@testable import Wire
+import WireCommonComponents
 
-final class TopPeopleCellSnapshotTests: BaseSnapshotTestCase {
-
-    var sut: TopPeopleCell!
+class BaseSnapshotTestCase: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        sut = TopPeopleCell(frame: CGRect(x: 0, y: 0, width: 56, height: 78))
-        sut.user = MockUserType.createDefaultOtherUser()
-        sut.overrideUserInterfaceStyle = .light
-        sut.backgroundColor = SemanticColors.View.backgroundDefault
+
+        FontScheme.configure(with: .large)
     }
 
-    override func tearDown() {
-        sut = nil
-        super.tearDown()
-    }
-
-    func testForInitState() {
-        verify(matching: sut)
-    }
 }
