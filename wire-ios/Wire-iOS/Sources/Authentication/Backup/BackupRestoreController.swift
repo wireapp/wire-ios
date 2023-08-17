@@ -38,13 +38,13 @@ final class BackupRestoreController: NSObject {
 
     let target: SpinnerCapableViewController
     weak var delegate: BackupRestoreControllerDelegate?
-    var tmpFilesManager: PTMPFilesManager
+    var temporaryFilesService: TemporaryFileServiceInterface
 
     // MARK: - Initialization
 
-    init(target: SpinnerCapableViewController, tmpFilesManager: PTMPFilesManager = TMPFilesManager()) {
+    init(target: SpinnerCapableViewController, temporaryFilesService: TemporaryFileServiceInterface = TemporaryFileService()) {
         self.target = target
-        self.tmpFilesManager = tmpFilesManager
+        self.temporaryFilesService = temporaryFilesService
         super.init()
     }
 
@@ -94,7 +94,7 @@ final class BackupRestoreController: NSObject {
 
             case .success:
                 BackupEvent.importSucceeded.track()
-                self.tmpFilesManager.removeTemporaryData()
+                self.temporaryFilesService.removeTemporaryData()
                 self.delegate?.backupResoreControllerDidFinishRestoring(self)
             }
         }

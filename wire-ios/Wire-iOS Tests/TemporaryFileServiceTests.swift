@@ -19,12 +19,12 @@
 import XCTest
 @testable import Wire
 
-class TMPFilesManagerTests: XCTestCase {
-    var sut: TMPFilesManager!
+class TemporaryFileServiceTests: XCTestCase {
+    var sut: TemporaryFileService!
 
     override func setUp() {
         super.setUp()
-        sut = TMPFilesManager()
+        sut = TemporaryFileService()
         sut.removeTemporaryData()
     }
 

@@ -18,11 +18,11 @@
 
 import Foundation
 
-protocol PTMPFilesManager {
+protocol TemporaryFileServiceInterface {
     func removeTemporaryData()
 }
 
-class TMPFilesManager: PTMPFilesManager {
+class TemporaryFileService: TemporaryFileServiceInterface {
     func removeTemporaryData() {
         guard let tmpDirectoryPath = URL(string: NSTemporaryDirectory()) else { return }
         let manager = FileManager.default
