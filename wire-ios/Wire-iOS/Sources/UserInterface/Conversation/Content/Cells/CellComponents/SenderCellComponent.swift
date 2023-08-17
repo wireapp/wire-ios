@@ -26,6 +26,7 @@ private struct SenderCellConfiguration {
     let fullName: String
     let textColor: UIColor
     let icon: StyleKitIcon?
+    let timestamp: String? = ""
     let accessibilityIdentifier: String
 
     init(user: UserType) {
@@ -68,13 +69,26 @@ final class SenderCellComponent: UIView {
     var avatarSpacerWidthConstraint: NSLayoutConstraint?
     var observerToken: Any?
 
+    private let dateLabel: UILabel = {
+        let label = UILabel()
+        label.font = FontSpec.mediumRegularFont.font!
+        label.textColor = SemanticColors.Label.textMessageDate
+        label.lineBreakMode = .byTruncatingMiddle
+        label.numberOfLines = 1
+        label.accessibilityIdentifier = "DateLabel"
+        label.isAccessibilityElement = true
+
+        return label
+    }()
+
     // MARK: - Configuration
 
-    func configure(with user: UserType) {
+    func configure(with user: UserType, timestamp: String?) {
         avatar.user = user
-
         let configuration = SenderCellConfiguration(user: user)
         configureViews(for: configuration)
+        dateLabel.text = timestamp
+        dateLabel.isHidden = timestamp == nil
 
         if !ProcessInfo.processInfo.isRunningTests,
            let userSession = ZMUserSession.shared() {
@@ -110,13 +124,12 @@ final class SenderCellComponent: UIView {
         titleStackView.spacing = 8
         titleStackView.translatesAutoresizingMaskIntoConstraints = false
 
-        stackView = UIStackView(arrangedSubviews: [avatarSpacer, titleStackView])
+        stackView = UIStackView(arrangedSubviews: [avatarSpacer, titleStackView, dateLabel])
         stackView.axis = .horizontal
         stackView.alignment = .center
         stackView.translatesAutoresizingMaskIntoConstraints = false
 
         addSubview(stackView)
-
         createConstraints()
 
         // We need to call that method here to restraint the authorLabel moving
