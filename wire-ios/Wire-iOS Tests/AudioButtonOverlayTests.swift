@@ -26,7 +26,6 @@ class AudioButtonOverlayTests: BaseSnapshotTestCase {
 
     override func setUp() {
         super.setUp()
-        isRecording = true
         buttonTapHistory = []
         sut = AudioButtonOverlay()
         sut.buttonHandler = { self.buttonTapHistory.append($0) }

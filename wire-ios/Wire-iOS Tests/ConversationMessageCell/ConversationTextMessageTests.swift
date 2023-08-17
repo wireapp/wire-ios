@@ -31,7 +31,6 @@ final class ConversationTextMessageTests: BaseSnapshotTestCase {
 
     override func setUp() {
         super.setUp()
-        isRecording = true
         UIColor.setAccentOverride(.vividRed)
 
         mockOtherUser = MockUserType.createConnectedUser(name: "Bruno")
