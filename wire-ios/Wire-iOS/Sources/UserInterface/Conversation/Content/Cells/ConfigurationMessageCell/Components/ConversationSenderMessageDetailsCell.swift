@@ -109,6 +109,7 @@ class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
 
             // dateLabel
             dateLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -conversationHorizontalMargins.right),
+            dateLabel.leadingAnchor.constraint(equalTo: senderView.trailingAnchor),
             dateLabel.bottomAnchor.constraint(equalTo: bottomAnchor),
             dateLabel.topAnchor.constraint(equalTo: topAnchor)
         ])

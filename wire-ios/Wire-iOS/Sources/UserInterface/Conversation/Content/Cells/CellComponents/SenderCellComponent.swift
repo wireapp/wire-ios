@@ -88,7 +88,7 @@ final class SenderCellComponent: UIView {
 
         authorLabel.translatesAutoresizingMaskIntoConstraints = false
         authorLabel.accessibilityIdentifier = "author.name"
-        authorLabel.numberOfLines = 1
+        authorLabel.numberOfLines = 0
 
         avatar.userSession = ZMUserSession.shared()
         avatar.initialsFont = .avatarInitial
