@@ -323,11 +323,13 @@ final class ConversationListContentController: UICollectionViewController, Popov
             fatal("Unknown cell type")
         }
 
-        (cell as? SectionListCellType)?.sectionName = listViewModel.sectionCanonicalName(of: indexPath.section)
-        (cell as? SectionListCellType)?.cellIdentifier = "conversation_list_cell"
+        if let cell = cell as? SectionListCellType {
+            cell.sectionName = listViewModel.sectionCanonicalName(of: indexPath.section)
+            cell.obfuscatedSectionName = listViewModel.obfuscatedSectionName(of: indexPath.section)
+            cell.cellIdentifier = "conversation_list_cell"
+        }
 
         cell.autoresizingMask = .flexibleWidth
-
         return cell
     }
 }
