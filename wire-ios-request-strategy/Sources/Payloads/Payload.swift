@@ -276,7 +276,7 @@ enum Payload {
                 case unknown
             }
 
-            let domains: [String]
+            let domain: String
             let path: String
             let type: FailureType
 
@@ -290,6 +290,7 @@ enum Payload {
             case missingLegalholdConsent = "missing-legalhold-consent"
             case notConnected = "not-connected"
             case connectionLimit = "connection-limit"
+            case federationDenied = "federation-denied"
             case federationRemoteError = "federation-remote-error"
             case unknown
 

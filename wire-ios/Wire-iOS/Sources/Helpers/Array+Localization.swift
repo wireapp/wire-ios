@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2023 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,15 +17,34 @@
 //
 
 import Foundation
-import WireDataModel
 
-extension ProfilePresenter: ProfileViewControllerDelegate {
+extension [String] {
 
-    func profileViewController(_ controller: ProfileViewController?, wantsToNavigateTo conversation: ZMConversation) {
-        guard let controller = controller else { return }
+    typealias Strings = L10n.Localizable.General.NounSeparator
 
-        dismiss(viewController: controller) {
-            ZClientViewController.shared?.select(conversation: conversation, focusOnView: true, animated: true)
+    func localizedJoin() -> String {
+        guard
+            let first = first,
+            let last = last
+        else {
+            return ""
+        }
+
+        switch count {
+        case 1:
+            return first
+
+        case 2:
+            // "A and B"
+            return Strings.and(first, last)
+
+        default:
+            // "A, B, C, ..."
+            var commaSeparatedValues = dropLast().reduce(first, Strings.comma)
+
+            // "A, B, C, ..., and Z"
+            return Strings.commaAnd(commaSeparatedValues, last)
         }
     }
+
 }

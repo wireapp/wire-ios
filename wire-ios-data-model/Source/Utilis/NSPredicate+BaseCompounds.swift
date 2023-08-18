@@ -1,6 +1,6 @@
-//
+////
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2023 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,15 +17,19 @@
 //
 
 import Foundation
-import WireDataModel
 
-extension ProfilePresenter: ProfileViewControllerDelegate {
+public extension NSPredicate {
 
-    func profileViewController(_ controller: ProfileViewController?, wantsToNavigateTo conversation: ZMConversation) {
-        guard let controller = controller else { return }
-
-        dismiss(viewController: controller) {
-            ZClientViewController.shared?.select(conversation: conversation, focusOnView: true, animated: true)
-        }
+    var inverse: NSPredicate {
+        return NSCompoundPredicate(notPredicateWithSubpredicate: self)
     }
+
+    func and(_ other: NSPredicate) -> NSPredicate {
+        return NSCompoundPredicate(andPredicateWithSubpredicates: [self, other])
+    }
+
+    func or(_ other: NSPredicate) -> NSPredicate {
+        return NSCompoundPredicate(orPredicateWithSubpredicates: [self, other])
+    }
+
 }

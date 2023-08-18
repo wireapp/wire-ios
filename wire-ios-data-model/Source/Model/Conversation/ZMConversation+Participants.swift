@@ -19,25 +19,6 @@
 import Foundation
 import WireProtos
 
-public enum ConversationRemoveParticipantError: Error {
-   case unknown,
-        invalidOperation,
-        conversationNotFound,
-        failedToRemoveMLSMembers
-}
-
-public enum ConversationAddParticipantsError: Error, Equatable {
-   case unknown,
-        invalidOperation,
-        accessDenied,
-        notConnectedToUser,
-        conversationNotFound,
-        tooManyMembers,
-        missingLegalHoldConsent,
-        failedToAddMLSMembers,
-        unreachableUsers(Set<ZMUser>)
-}
-
 public class AddParticipantAction: EntityAction {
     public var resultHandler: ResultHandler?
 
@@ -53,6 +34,21 @@ public class AddParticipantAction: EntityAction {
     }
 }
 
+public enum ConversationAddParticipantsError: Error, Equatable {
+
+    case unknown
+    case invalidOperation
+    case accessDenied
+    case notConnectedToUser
+    case conversationNotFound
+    case tooManyMembers
+    case missingLegalHoldConsent
+    case failedToAddMLSMembers
+    case unreachableDomains(Set<String>)
+    case nonFederatingDomains(Set<String>)
+
+}
+
 public class RemoveParticipantAction: EntityAction {
     public var resultHandler: ResultHandler?
 
@@ -66,6 +62,15 @@ public class RemoveParticipantAction: EntityAction {
         userID = user.objectID
         conversationID = conversation.objectID
     }
+}
+
+public enum ConversationRemoveParticipantError: Error {
+
+    case unknown
+    case invalidOperation
+    case conversationNotFound
+    case failedToRemoveMLSMembers
+
 }
 
 class MLSClientIDsProvider {
@@ -140,30 +145,41 @@ extension ZMConversation {
     }
 
     // MARK: - Participant actions
-    public func addParticipants(_ participants: [UserType],
-                                completion: @escaping AddParticipantAction.ResultHandler) {
-
+    public func addParticipants(
+        _ participants: [UserType],
+        completion: @escaping AddParticipantAction.ResultHandler
+    ) {
         guard let context = managedObjectContext else {
             completion(.failure(.unknown))
             return
         }
+
         let users = participants.materialize(in: context)
+
+        func retry(excludingDomains domains: Set<String>) {
+            let usersToExclude = users.belongingTo(domains: domains)
+            appendFailedToAddUsersSystemMessage(
+                users: usersToExclude,
+                sender: creator,
+                at: lastServerTimeStamp ?? Date()
+            )
+
+            let usersToAdd = Set(users).subtracting(usersToExclude)
+            if !usersToAdd.isEmpty {
+                internalAddParticipants(
+                    Array(usersToAdd),
+                    completion: completion
+                )
+            }
+        }
 
         internalAddParticipants(users) { result in
             switch result {
-            case .failure(.unreachableUsers(let unreachableUsers)):
-                self.appendFailedToAddUsersSystemMessage(
-                    users: unreachableUsers,
-                    sender: self.creator,
-                    at: self.lastServerTimeStamp ?? Date()
-                )
+            case .failure(.unreachableDomains(let domains)):
+                retry(excludingDomains: domains)
 
-                let reachableUsers = Set(users).subtracting(unreachableUsers)
-
-                self.internalAddParticipants(
-                    Array(reachableUsers),
-                    completion: completion
-                )
+            case .failure(.nonFederatingDomains(let domains)):
+                retry(excludingDomains: domains)
 
             default:
                 completion(result)
@@ -171,8 +187,10 @@ extension ZMConversation {
         }
     }
 
-    private func internalAddParticipants(_ users: [ZMUser],
-                                         completion: @escaping AddParticipantAction.ResultHandler) {
+    private func internalAddParticipants(
+        _ users: [ZMUser],
+        completion: @escaping AddParticipantAction.ResultHandler
+    ) {
         guard let context = managedObjectContext else {
             completion(.failure(.unknown))
             return
@@ -460,6 +478,20 @@ extension ZMConversation {
         }
     }
 
+    /// Remove participants from the conversation. It will NOT be synchronized to the backend .
+    ///
+    /// The method will handle the case when the participant is not there, so it's safe to call
+    /// it even if the user is not there.
+    public func removeParticipantsLocally(_ users: Set<ZMUser>) {
+        guard let context = managedObjectContext else {
+            return
+        }
+
+        users
+            .compactMap { $0.participantRole(in: self) }
+            .forEach(context.delete)
+    }
+
     /// Remove participants to the conversation. The method will decide on its own whether
     /// this operation need to be synchronized to the backend or not based on the current context.
     /// If the operation is executed from the UI context, then the operation will be synchronized.
@@ -548,4 +580,17 @@ extension ZMConversation {
     func has(participantWithId userId: Proteus_UserId?) -> Bool {
         return localParticipants.contains { $0.userId == userId }
     }
+}
+
+public extension Collection where Element == ZMUser {
+
+    func belongingTo(domains: Set<String>) -> Set<ZMUser> {
+        let result = filter { user in
+            guard let domain = user.domain else { return false }
+            return domain.isOne(of: domains)
+        }
+
+        return Set(result)
+    }
+
 }

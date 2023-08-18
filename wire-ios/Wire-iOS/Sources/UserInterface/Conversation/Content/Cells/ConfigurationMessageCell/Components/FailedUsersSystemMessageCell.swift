@@ -25,11 +25,10 @@ final class FailedUsersSystemMessageCell: UIView, ConversationMessageCell {
     typealias FailedtosendParticipants = L10n.Localizable.Content.System.FailedtosendParticipants
 
     struct Configuration {
-        let title: String
+        let title: String?
         let content: String
         let isCollapsed: Bool
-        let hasMultipleUsers: Bool
-        let infoImage: UIImage?
+        let icon: UIImage?
         let buttonAction: Completion
     }
 
@@ -83,9 +82,9 @@ final class FailedUsersSystemMessageCell: UIView, ConversationMessageCell {
 
         isCollapsed = config.isCollapsed
         buttonAction = config.buttonAction
-        imageView.image = config.infoImage
+        imageView.image = config.icon?.withTintColor(SemanticColors.Label.textErrorDefault)
 
-        guard config.hasMultipleUsers else {
+        guard let title = config.title else {
             usersView.attributedText = .markdown(from: config.content, style: .errorLabelStyle)
             [totalCountView, button].forEach { $0.isHidden = true }
             return
@@ -93,7 +92,7 @@ final class FailedUsersSystemMessageCell: UIView, ConversationMessageCell {
 
         [totalCountView, button].forEach { $0.isHidden = false }
         usersView.isHidden = isCollapsed
-        totalCountView.attributedText = .markdown(from: config.title, style: .errorLabelStyle)
+        totalCountView.attributedText = .markdown(from: title, style: .errorLabelStyle)
         usersView.attributedText = .markdown(from: config.content, style: .errorLabelStyle)
         setupButtonTitle()
 

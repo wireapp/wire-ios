@@ -41,6 +41,15 @@
 // Language like Chinese does not use space to sperate words or sentences.
 "general.space_between_words" = " ";
 
+// "A, B" in the string "A, B, and C".
+"general.noun_separator.comma" = "%@, %@";
+
+// "B, and C" in the string "A, B, and C".
+"general.noun_separator.comma_and" = "%@, and %@";
+
+// "A and B".
+"general.noun_separator.and" = "%@ and %@";
+
 "general.guest-room-name" = "Guest room";
 
 // User Cell
@@ -323,6 +332,11 @@
 "conversation.create.mls.subtitle" = "Select MLS to create a group using Messaging Layer Security protocol (beta version).";
 "conversation.create.mls.picker_title" = "Select Protocol";
 "conversation.create.mls.cancel" = "Cancel";
+"conversation.create.non_federating_domains_error.title" = "Group can't be created";
+"conversation.create.non_federating_domains_error.message" = "People from backends %@ can't join the same group conversation.\nTo create the group, remove affected participants.";
+"conversation.create.non_federating_domains_error.edit_participant_list" = "Edit Participants List";
+"conversation.create.non_federating_domains_error.learn_more" = "Learn More";
+"conversation.create.non_federating_domains_error.abort" = "Discard Group Creation";
 
 "conversation.input_bar.ongoing_call_alert.title" = "Ongoing call";
 "conversation.input_bar.ongoing_call_alert.audio.message" = "You can’t record an audio message during a call.";
@@ -476,7 +490,7 @@
 "content.system.failed_participants.learn_more" = "%@ [Learn more](%@)";
 
 "content.system.failedtoadd_participants.count" = "**%@ participants** could not be added to the group.";
-"content.system.failedtoadd_participants.could_not_be_added" = "**%@** could not be added to the group.";
+"content.system.failedtoadd_participants.could_not_be_added" = "**%@** could not be added to the group. [Learn more](%@)";
 
 "content.system.like_tooltip" = "Tap to like";
 "content.system.deleted_message_prefix_timestamp" = "Deleted: %@";
@@ -517,6 +531,9 @@
 
 "content.system.message_timer_off" = "%@ turned off the message timer";
 "content.system.message_timer_off-you" = "%@ turned off the message timer";
+
+"content.system.backends_stop_federating.self_backend" = "**Your backend** stopped federating with **%@**. [Learn more](%@)";
+"content.system.backends_stop_federating.other_backends" = "The backends **%@** and **%@** stopped federating. [Learn more](%@)";
 
 // read receipt
 
@@ -636,6 +653,7 @@
 "error.connection.title" = "Error";
 "error.connection.missing_legalhold_consent" = "You cannot connect to this user due to legal hold.";
 "error.connection.generic_error" = "Something went wrong, please try again";
+"error.connection.federation_denied_message" = "Your backend does not federate with the backend of %@. You can not connect with them.";
 
 // Save image errors
 "library.alert.permission_warning.title" = "Wire needs access to your Photos";
