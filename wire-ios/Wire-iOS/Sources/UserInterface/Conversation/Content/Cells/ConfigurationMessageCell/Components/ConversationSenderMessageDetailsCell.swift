@@ -45,6 +45,19 @@ class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
 
     private var indicatorImageViewTrailing: NSLayoutConstraint!
 
+    private let dateLabel: UILabel = {
+        let label = UILabel()
+        label.font = FontSpec.mediumRegularFont.font!
+        label.textColor = SemanticColors.Label.textMessageDate
+        label.lineBreakMode = .byTruncatingMiddle
+        label.numberOfLines = 1
+        label.accessibilityIdentifier = "DateLabel"
+        label.isAccessibilityElement = true
+        label.setContentHuggingPriority(.required, for: .horizontal)
+        label.setContentCompressionResistancePriority(.required, for: .horizontal)
+        return label
+    }()
+
     // MARK: - Init
 
     override init(frame: CGRect) {
@@ -61,10 +74,11 @@ class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
     // MARK: - configure
 
     func configure(with object: Configuration, animated: Bool) {
-        senderView.configure(with: object.user, timestamp: object.timestamp ?? "Test")
+        senderView.configure(with: object.user)
         indicatorImageView.isHidden = object.indicatorIcon == nil
         indicatorImageView.image = object.indicatorIcon
-
+        dateLabel.isHidden = object.timestamp == nil
+        dateLabel.text = object.timestamp
     }
 
     // MARK: - Configure subviews and setup constraints
@@ -72,11 +86,13 @@ class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
     private func configureSubviews() {
         addSubview(senderView)
         addSubview(indicatorImageView)
+        addSubview(dateLabel)
     }
 
     private func configureConstraints() {
         senderView.translatesAutoresizingMaskIntoConstraints = false
         indicatorImageView.translatesAutoresizingMaskIntoConstraints = false
+        dateLabel.translatesAutoresizingMaskIntoConstraints = false
 
         indicatorImageViewTrailing = indicatorImageView.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor,
                                                                                   constant: -conversationHorizontalMargins.right)
@@ -89,7 +105,13 @@ class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
             senderView.leadingAnchor.constraint(equalTo: leadingAnchor),
             senderView.topAnchor.constraint(equalTo: topAnchor),
             senderView.trailingAnchor.constraint(equalTo: indicatorImageView.leadingAnchor, constant: -8),
-            senderView.bottomAnchor.constraint(equalTo: bottomAnchor)
+            senderView.bottomAnchor.constraint(equalTo: bottomAnchor),
+
+            // dateLabel
+            dateLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -conversationHorizontalMargins.right),
+            dateLabel.leadingAnchor.constraint(equalTo: senderView.trailingAnchor),
+            dateLabel.bottomAnchor.constraint(equalTo: bottomAnchor),
+            dateLabel.topAnchor.constraint(equalTo: topAnchor)
         ])
     }
 
