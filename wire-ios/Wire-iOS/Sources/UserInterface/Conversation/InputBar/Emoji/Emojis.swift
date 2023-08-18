@@ -145,10 +145,11 @@ final class EmojiDataSource: NSObject, UICollectionViewDataSource {
             return
         }
         sections = []
+        let uppercasedQuery = query.uppercased()
         initialSections.forEach { section in
             let filtered = section.emoji.filter {
-                guard let unicodeScalar = $0.value.unicodeScalars.first else { return false }
-                return (unicodeScalar.properties.name ?? "").contains(query.uppercased())
+                guard let unicodeScalar = $0.unicodeScalars.first else { return false }
+                return (unicodeScalar.properties.name ?? "").uppercased().contains(uppercasedQuery)
             }
             guard !filtered.isEmpty else { return }
             let newSection = FileEmojiSection(emoji: filtered, type: section.type)
