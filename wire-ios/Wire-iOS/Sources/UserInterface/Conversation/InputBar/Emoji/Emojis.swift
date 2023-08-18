@@ -148,7 +148,7 @@ final class EmojiDataSource: NSObject, UICollectionViewDataSource {
         let uppercasedQuery = query.uppercased()
         initialSections.forEach { section in
             let filtered = section.emoji.filter {
-                guard let unicodeScalar = $0.unicodeScalars.first else { return false }
+                guard let unicodeScalar = $0.value.unicodeScalars.first else { return false }
                 return (unicodeScalar.properties.name ?? "").uppercased().contains(uppercasedQuery)
             }
             guard !filtered.isEmpty else { return }
