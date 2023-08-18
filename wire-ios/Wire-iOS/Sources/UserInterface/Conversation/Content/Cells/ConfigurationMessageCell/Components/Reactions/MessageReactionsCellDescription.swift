@@ -44,7 +44,11 @@ final class MessageReactionsCellDescription: ConversationMessageCellDescription 
                 performReaction: nil
             )
         }.sorted {
-            return $0.count > $1.count
+            if $0.count == $1.count {
+                return $0.emoji.name < $1.emoji.name
+            } else {
+                return $0.count > $1.count
+            }
         }
 
         self.configuration = View.Configuration(reactions: reactions)
