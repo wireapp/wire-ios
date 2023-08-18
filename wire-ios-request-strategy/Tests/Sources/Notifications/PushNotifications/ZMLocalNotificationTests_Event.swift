@@ -416,7 +416,7 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
     func testThatItCreatesANotificationForMessageTimerUpdateSystemMessages() {
         // given
         syncMOC.performGroupedBlockAndWait {
-            let event = self.createMessageTimerUpdateEvent(self.otherUser1.remoteIdentifier, conversationID: self.groupConversation.remoteIdentifier!, senderID: self.otherUser1.remoteIdentifier!, timer: 86400, timestamp: Date())
+            let event = self.createMessageTimerUpdateEvent(self.otherUser1.remoteIdentifier, conversationID: self.groupConversation.remoteIdentifier!, senderID: self.otherUser1.remoteIdentifier!, timer: 86400000, timestamp: Date())
 
             // when
             let note = ZMLocalNotification(event: event, conversation: self.groupConversation, managedObjectContext: self.syncMOC)
@@ -431,28 +431,28 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
         // given
         syncMOC.performGroupedBlockAndWait {
             self.otherUser1.name = nil
-            let event = self.createMessageTimerUpdateEvent(self.otherUser1.remoteIdentifier, conversationID: self.groupConversation.remoteIdentifier!, senderID: self.otherUser1.remoteIdentifier!, timer: 86400, timestamp: Date())
+            let event = self.createMessageTimerUpdateEvent(self.otherUser1.remoteIdentifier, conversationID: self.groupConversation.remoteIdentifier!, senderID: self.otherUser1.remoteIdentifier!, timer: 2419200000, timestamp: Date())
 
             // when
             let note = ZMLocalNotification(event: event, conversation: self.groupConversation, managedObjectContext: self.syncMOC)
 
             // then
             XCTAssertNotNil(note)
-            XCTAssertEqual(note?.body, "Someone set the message timer to 1 day")
+            XCTAssertEqual(note?.body, "Someone set the message timer to 4 weeks")
         }
     }
 
     func testThatItCreatesANotificationForMessageTimerUpdateSystemMessages_NoConversationName() {
         // given
         syncMOC.performGroupedBlockAndWait {
-            let event = self.createMessageTimerUpdateEvent(self.otherUser1.remoteIdentifier, conversationID: self.groupConversationWithoutName.remoteIdentifier!, senderID: self.otherUser1.remoteIdentifier!, timer: 86400, timestamp: Date())
+            let event = self.createMessageTimerUpdateEvent(self.otherUser1.remoteIdentifier, conversationID: self.groupConversationWithoutName.remoteIdentifier!, senderID: self.otherUser1.remoteIdentifier!, timer: 10000, timestamp: Date())
 
             // when
             let note = ZMLocalNotification(event: event, conversation: self.groupConversationWithoutName, managedObjectContext: self.syncMOC)
 
             // then
             XCTAssertNotNil(note)
-            XCTAssertEqual(note?.body, "Other User1 set the message timer to 1 day in a conversation")
+            XCTAssertEqual(note?.body, "Other User1 set the message timer to 10 seconds in a conversation")
         }
     }
 
@@ -460,14 +460,14 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
         // given
         syncMOC.performGroupedBlockAndWait {
             self.otherUser1.name = nil
-            let event = self.createMessageTimerUpdateEvent(self.otherUser1.remoteIdentifier, conversationID: self.groupConversationWithoutName.remoteIdentifier!, senderID: self.otherUser1.remoteIdentifier!, timer: 86400, timestamp: Date())
+            let event = self.createMessageTimerUpdateEvent(self.otherUser1.remoteIdentifier, conversationID: self.groupConversationWithoutName.remoteIdentifier!, senderID: self.otherUser1.remoteIdentifier!, timer: 300000, timestamp: Date())
 
             // when
             let note = ZMLocalNotification(event: event, conversation: self.groupConversationWithoutName, managedObjectContext: self.syncMOC)
 
             // then
             XCTAssertNotNil(note)
-            XCTAssertEqual(note?.body, "Someone set the message timer to 1 day in a conversation")
+            XCTAssertEqual(note?.body, "Someone set the message timer to 5 minutes in a conversation")
         }
     }
 
