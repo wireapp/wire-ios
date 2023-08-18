@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2023 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,27 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-@testable import Wire
+import Foundation
 
-final class TopPeopleCellSnapshotTests: BaseSnapshotTestCase {
+protocol TemporaryFileServiceInterface {
+    func removeTemporaryData()
+}
 
-    var sut: TopPeopleCell!
-
-    override func setUp() {
-        super.setUp()
-        sut = TopPeopleCell(frame: CGRect(x: 0, y: 0, width: 56, height: 78))
-        sut.user = MockUserType.createDefaultOtherUser()
-        sut.overrideUserInterfaceStyle = .light
-        sut.backgroundColor = SemanticColors.View.backgroundDefault
-    }
-
-    override func tearDown() {
-        sut = nil
-        super.tearDown()
-    }
-
-    func testForInitState() {
-        verify(matching: sut)
+class TemporaryFileService: TemporaryFileServiceInterface {
+    func removeTemporaryData() {
+        guard let tmpDirectoryPath = URL(string: NSTemporaryDirectory()) else { return }
+        let manager = FileManager.default
+        try? manager
+            .contentsOfDirectory(at: tmpDirectoryPath, includingPropertiesForKeys: nil, options: .skipsSubdirectoryDescendants)
+            .forEach { file in
+                try? manager.removeItem(atPath: file.path)
+            }
     }
 }

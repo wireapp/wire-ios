@@ -18,14 +18,12 @@
 
 import XCTest
 import SnapshotTesting
-import WireCommonComponents
 @testable import Wire
 
-final class ConversationSystemMessageTests: XCTestCase {
+final class ConversationSystemMessageTests: BaseSnapshotTestCase {
 
     override func setUp() {
         super.setUp()
-        FontScheme.configure(with: .large)
         SelfUser.provider = SelfProvider(selfUser: MockUserType.createSelfUser(name: "Alice"))
     }
 
