@@ -40,7 +40,8 @@ final public class FederationTerminationManager: FederationTerminationManagerInt
     /// - for all conversations that are NOT owned from self domain or `domain` and contain users from self domain and `domain`,
     /// remove users from `domain` and `otherDomain` from those conversations;
     /// - for any connection from a user on self domain to a user on `domain`, delete the connection;
-    /// - for any 1:1 conversation, where one of the two users is on `domain`, remove self user from those conversations.
+    /// - for any 1:1 conversation, where one of the two users is on `domain`, remove self user from those conversations;
+    /// - remove connection for all connected users owned by `domain`.
     public func handleFederationTerminationWith(_ domain: String) {
         removeUsers(with: domain, fromConversationsOwnedBy: context.selfDomain)
         removeUsers(with: context.selfDomain, fromConversationsOwnedBy: domain)
@@ -48,6 +49,7 @@ final public class FederationTerminationManager: FederationTerminationManagerInt
 
         removeConnectionRequests(with: domain)
         markOneToOneConversationsAsReadOnly(with: domain)
+        removeConnectedUsers(with: domain)
     }
 
     /// **Changes will be performed:**
@@ -76,6 +78,16 @@ private extension FederationTerminationManager {
                     conversation.appendFederationTerminationSystemMessage(domains: [domain, context.selfDomain])
                     conversation.isForcedReadOnly = true
                 }
+        }
+    }
+
+    func removeConnectedUsers(with domain: String) {
+        let connectedUsersPredicate = ZMUser.predicateForConnectedUsers(hostedOnDomain: domain)
+        let fetchRequest = ZMUser.sortedFetchRequest(with: connectedUsersPredicate)
+        if let pendingUsers = context.fetchOrAssert(request: fetchRequest) as? [ZMUser] {
+            pendingUsers.forEach { user in
+                user.connection = nil
+            }
         }
     }
 

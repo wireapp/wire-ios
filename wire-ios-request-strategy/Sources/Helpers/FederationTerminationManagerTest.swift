@@ -84,6 +84,20 @@ class FederationTerminationManagerTests: MessagingTestBase {
         }
     }
 
+    func testThatItRemovesConnectionForConnectedUsers() throws {
+        syncMOC.performGroupedAndWait { [self] _ in
+            // GIVEN
+            otherUser.domain = defederatedDomain
+            otherUser.connection?.status = .accepted
+
+            // WHEN
+            sut.handleFederationTerminationWith(defederatedDomain)
+
+            // THEN
+            XCTAssertEqual(otherUser.connection, nil)
+        }
+    }
+
     func testItRemovesSelfUserFromConversationHostedByDefederatedDomain_AndAddsSystemMessages() throws {
         syncMOC.performGroupedAndWait { [self] syncMOC in
             // GIVEN
