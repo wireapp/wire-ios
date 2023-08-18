@@ -5462,6 +5462,10 @@ internal enum L10n {
         internal static let headline = L10n.tr("Localizable", "team.phone_activation_code.headline", fallback: "Verification")
       }
     }
+    internal enum Time {
+      /// Just Now
+      internal static let justNow = L10n.tr("Localizable", "time.just_now", fallback: "Just Now")
+    }
     internal enum ToolTip {
       internal enum Contacts {
         /// Start a conversation. Call, message and share in private or with groups.
