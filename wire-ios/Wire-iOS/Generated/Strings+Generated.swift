@@ -3068,20 +3068,6 @@ internal enum L10n {
         /// Please try again.
         internal static let tryAgain = L10n.tr("Localizable", "general.failure.try_again", fallback: "Please try again.")
       }
-      internal enum NounSeparator {
-        /// %@ and %@
-        internal static func and(_ p1: Any, _ p2: Any) -> String {
-          return L10n.tr("Localizable", "general.noun_separator.and", String(describing: p1), String(describing: p2), fallback: "%@ and %@")
-        }
-        /// %@, %@
-        internal static func comma(_ p1: Any, _ p2: Any) -> String {
-          return L10n.tr("Localizable", "general.noun_separator.comma", String(describing: p1), String(describing: p2), fallback: "%@, %@")
-        }
-        /// %@, and %@
-        internal static func commaAnd(_ p1: Any, _ p2: Any) -> String {
-          return L10n.tr("Localizable", "general.noun_separator.comma_and", String(describing: p1), String(describing: p2), fallback: "%@, and %@")
-        }
-      }
     }
     internal enum Giphy {
       /// cancel
