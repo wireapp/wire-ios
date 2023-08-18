@@ -84,8 +84,8 @@ private extension FederationTerminationManager {
     func removeConnectedUsers(with domain: String) {
         let connectedUsersPredicate = ZMUser.predicateForConnectedUsers(hostedOnDomain: domain)
         let fetchRequest = ZMUser.sortedFetchRequest(with: connectedUsersPredicate)
-        if let pendingUsers = context.fetchOrAssert(request: fetchRequest) as? [ZMUser] {
-            pendingUsers.forEach { user in
+        if let connectedUsers = context.fetchOrAssert(request: fetchRequest) as? [ZMUser] {
+            connectedUsers.forEach { user in
                 user.connection = nil
             }
         }
