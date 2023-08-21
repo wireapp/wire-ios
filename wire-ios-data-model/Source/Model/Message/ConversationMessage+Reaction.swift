@@ -113,7 +113,7 @@ extension ZMMessage {
             let existingReaction = self.reactions.first(where: {
                 $0.unicodeValue == reaction
             })
-            
+
             if let existingReaction = existingReaction {
                 existingReaction.mutableSetValue(forKey: ZMReactionUsersValueKey).add(user)
             } else if Reaction.validate(unicode: reaction) {
