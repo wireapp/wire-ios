@@ -168,14 +168,9 @@ final class MessageDetailsDataSource: NSObject, ZMMessageObserver, ZMUserObserve
             return (Emoji(value: reaction), users)
         }.filter { _ , count in
             return !count.isEmpty
-        }.sorted { reactionOne, reactionTwo in
-            if reactionOne.1.count == reactionTwo.1.count {
-                print(reactionOne.0)
-                return (reactionOne.0.name < reactionTwo.0.name)
-            } else {
-                return (reactionOne.1.count > reactionTwo.1.count)
-            }
-        }.map({ (emoji, users) in
+        }
+        .sortedByCountThenName()
+        .map({ (emoji, users) in
             MessageDetailsSectionDescription(headerText: "\(emoji.value) \(emoji.name?.capitalizingFirstCharacterOnly ?? "") (\(users.count))",
                                              items: MessageDetailsCellDescription.makeReactionCells(users))
         })
@@ -201,6 +196,20 @@ final class MessageDetailsDataSource: NSObject, ZMMessageObserver, ZMUserObserve
     private func performChanges(_ block: () -> Void) {
         block()
         observer?.dataSourceDidChange(self)
+    }
+
+}
+
+extension Sequence where Element == (Emoji, [UserType]) {
+
+    func sortedByCountThenName() -> [(Emoji, [UserType])] {
+        return sorted { lhs, rhs in
+            if lhs.1.count == rhs.1.count, let lhsName = lhs.0.name, let rhsName = rhs.0.name {
+                return lhsName.lexicographicallyPrecedes(rhsName)
+            } else {
+                return lhs.1.count < rhs.1.count
+            }
+        }
     }
 
 }
