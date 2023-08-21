@@ -82,6 +82,15 @@ private extension BasicReactionPicker {
         ["👍", "🙂", "❤️", "☹️", "👎"].forEach { emoji in
             let button = UIButton()
             button.titleLabel?.font = UIFont.preferredFont(forTextStyle: .largeTitle)
+            button.titleLabel?.adjustsFontSizeToFitWidth = true
+            if #available(iOS 15.0, *) {
+                var configuration = UIButton.Configuration.plain()
+                configuration.contentInsets = NSDirectionalEdgeInsets(top: 6, leading: 6, bottom: 6, trailing: 6)
+                button.configuration = configuration
+            } else {
+                button.contentEdgeInsets = UIEdgeInsets(top: 6, left: 6, bottom: 6, right: 6)
+            }
+
             button.setTitle(emoji, for: .normal)
             if emoji == selectedReaction {
                 button.layer.cornerRadius = 12.0
