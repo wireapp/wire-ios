@@ -143,14 +143,14 @@ class ZMConversationTests_Ephemeral: BaseZMMessageTests {
 
     func testThatItReturnsCorrectValueWhenForcedOff() {
         // Given
-        let featureService = FeatureService(context: self.syncMOC)
+        let featureRepository = FeatureRepository(context: self.syncMOC)
 
         syncMOC.performGroupedBlockAndWait {
-            featureService.storeSelfDeletingMessages(.init(status: .disabled, config: .init()))
+            featureRepository.storeSelfDeletingMessages(.init(status: .disabled, config: .init()))
         }
 
         syncMOC.performGroupedBlockAndWait {
-            XCTAssertEqual(featureService.fetchSelfDeletingMesssages().status, .disabled)
+            XCTAssertEqual(featureRepository.fetchSelfDeletingMesssages().status, .disabled)
         }
 
         syncMOC.performGroupedBlockAndWait {
@@ -166,14 +166,14 @@ class ZMConversationTests_Ephemeral: BaseZMMessageTests {
 
     func testThatItReturnsCorrectValueWhenForcedOn() {
         // Given
-        let featureService = FeatureService(context: self.syncMOC)
+        let featureRepository = FeatureRepository(context: self.syncMOC)
 
         syncMOC.performGroupedBlockAndWait {
-            featureService.storeSelfDeletingMessages(.init(status: .enabled, config: .init(enforcedTimeoutSeconds: 300)))
+            featureRepository.storeSelfDeletingMessages(.init(status: .enabled, config: .init(enforcedTimeoutSeconds: 300)))
         }
 
         syncMOC.performGroupedBlockAndWait {
-            let feature = featureService.fetchSelfDeletingMesssages()
+            let feature = featureRepository.fetchSelfDeletingMesssages()
             XCTAssertEqual(feature.status, .enabled)
             XCTAssertEqual(feature.config.enforcedTimeoutSeconds, 300)
 

@@ -201,8 +201,8 @@ public class SharingSession {
     let earService: EARServiceInterface
 
     public var fileSharingFeature: Feature.FileSharing {
-        let featureService = FeatureService(context: coreDataStack.viewContext)
-        return featureService.fetchFileSharing()
+        let featureRepository = FeatureRepository(context: coreDataStack.viewContext)
+        return featureRepository.fetchFileSharing()
     }
 
     /// Initializes a new `SessionDirectory` to be used in an extension environment

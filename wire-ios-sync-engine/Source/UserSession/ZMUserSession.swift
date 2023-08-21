@@ -98,30 +98,30 @@ public class ZMUserSession: NSObject {
         return applicationStatusDirectory?.syncStatus
     }
 
-    public lazy var featureService = FeatureService(context: syncContext)
+    public lazy var featureRepository = FeatureRepository(context: syncContext)
 
     let earService: EARServiceInterface
 
     public var appLockController: AppLockType
 
     public var fileSharingFeature: Feature.FileSharing {
-        let featureService = FeatureService(context: coreDataStack.viewContext)
-        return featureService.fetchFileSharing()
+        let featureRepository = FeatureRepository(context: coreDataStack.viewContext)
+        return featureRepository.fetchFileSharing()
     }
 
     public var selfDeletingMessagesFeature: Feature.SelfDeletingMessages {
-        let featureService = FeatureService(context: coreDataStack.viewContext)
-        return featureService.fetchSelfDeletingMesssages()
+        let featureRepository = FeatureRepository(context: coreDataStack.viewContext)
+        return featureRepository.fetchSelfDeletingMesssages()
     }
 
     public var conversationGuestLinksFeature: Feature.ConversationGuestLinks {
-        let featureService = FeatureService(context: coreDataStack.viewContext)
-        return featureService.fetchConversationGuestLinks()
+        let featureRepository = FeatureRepository(context: coreDataStack.viewContext)
+        return featureRepository.fetchConversationGuestLinks()
     }
 
     public var classifiedDomainsFeature: Feature.ClassifiedDomains {
-        let featureService = FeatureService(context: coreDataStack.viewContext)
-        return featureService.fetchClassifiedDomains()
+        let featureRepository = FeatureRepository(context: coreDataStack.viewContext)
+        return featureRepository.fetchClassifiedDomains()
     }
 
     public var hasCompletedInitialSync: Bool = false
