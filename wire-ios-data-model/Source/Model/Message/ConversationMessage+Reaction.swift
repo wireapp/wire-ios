@@ -100,7 +100,7 @@ extension ZMMessage {
     }
 
     @objc public func setReactions(
-        _ reactions: Set<String>,
+        _ updatedReactions: Set<String>,
         forUser user: ZMUser
     ) {
         // Remove all existing reactions for this user.
@@ -109,7 +109,7 @@ extension ZMMessage {
         }
 
         // Add all new reactions for this user.
-        for reaction in reactions {
+        for reaction in updatedReactions {
             let existingReaction = self.reactions.first(where: {
                 $0.unicodeValue == reaction
             })
