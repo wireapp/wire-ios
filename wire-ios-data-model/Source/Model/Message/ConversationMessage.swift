@@ -295,8 +295,8 @@ extension ZMMessage: ZMConversationMessage {
             let managedObjectContext = self.managedObjectContext
         else { return false }
 
-        let featureService = FeatureService(context: managedObjectContext)
-        let fileSharingFeature = featureService.fetchFileSharing()
+        let featureRepository = FeatureRepository(context: managedObjectContext)
+        let fileSharingFeature = featureRepository.fetchFileSharing()
 
         return fileSharingFeature.status == .disabled
     }

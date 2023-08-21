@@ -46,8 +46,8 @@ extension ZMUser: UserType {
 
     public var hasDigitalSignatureEnabled: Bool {
         guard let context = managedObjectContext else { return false }
-        let service = FeatureService(context: context)
-        return service.fetchDigitalSignature().status == .enabled
+        let featureRepository = FeatureRepository(context: context)
+        return featureRepository.fetchDigitalSignature().status == .enabled
     }
 
     public var previewImageData: Data? {
@@ -134,8 +134,8 @@ extension ZMUser: UserType {
             return false
         }
 
-        let featureService = FeatureService(context: context)
-        return featureService.fetchMLS().config.protocolToggleUsers.contains(id)
+        let featureRepository = FeatureRepository(context: context)
+        return featureRepository.fetchMLS().config.protocolToggleUsers.contains(id)
     }
 
 }
