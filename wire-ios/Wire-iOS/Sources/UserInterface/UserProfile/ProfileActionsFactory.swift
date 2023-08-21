@@ -195,7 +195,7 @@ final class ProfileActionsFactory {
             }
 
             // Only non-guests and non-partners are allowed to remove
-            if let conversation = conversation, viewer.canRemoveUser(from: conversation) {
+            if let conversation = conversation, user.isConnected, viewer.canRemoveUser(from: conversation) {
                 actions.append(.removeFromGroup)
             }
 
