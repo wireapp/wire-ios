@@ -19,7 +19,7 @@
 import XCTest
 @testable import Wire
 
-final class MessageDetailsViewControllerTests: ZMSnapshotTestCase {
+final class MessageDetailsViewControllerTests: BaseSnapshotTestCase {
 
     // MARK: - Properties
 
@@ -31,7 +31,6 @@ final class MessageDetailsViewControllerTests: ZMSnapshotTestCase {
 
     override func setUp() {
         super.setUp()
-
         mockSelfUser = MockUserType.createSelfUser(name: "Alice")
         otherUser = MockUserType.createDefaultOtherUser()
         SelfUser.provider = SelfProvider(selfUser: mockSelfUser)
