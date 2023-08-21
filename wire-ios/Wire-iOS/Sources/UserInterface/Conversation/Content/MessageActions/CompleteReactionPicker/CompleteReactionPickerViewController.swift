@@ -146,9 +146,14 @@ extension CompleteReactionPickerViewController: EmojiSectionViewControllerDelega
     func sectionViewControllerDidSelectType(_ type: EmojiSectionType, scrolling: Bool) {
         guard let section = emojiDataSource.sectionIndex(for: type) else { return }
         let indexPath = IndexPath(item: 0, section: section)
-        collectionView.scrollToItem(at: indexPath, at: .top, animated: !scrolling)
+        if let attributes = collectionView.layoutAttributesForItem(at: indexPath) {
+            collectionView.setContentOffset(
+                CGPoint(x: collectionView.contentOffset.x, y: attributes.frame.minY),
+                animated: !scrolling)
+        } else {
+            collectionView.scrollToItem(at: indexPath, at: .top, animated: !scrolling)
+        }
     }
-
 }
 
 extension CompleteReactionPickerViewController: UICollectionViewDelegateFlowLayout {
@@ -165,8 +170,7 @@ extension CompleteReactionPickerViewController: UICollectionViewDelegateFlowLayo
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        return UIEdgeInsets(top: 0, left: 0, bottom: 12
-                            , right: 0)
+        return UIEdgeInsets(top: 30.0, left: 0.0, bottom: 0.0, right: 0.0)
     }
 }
 
