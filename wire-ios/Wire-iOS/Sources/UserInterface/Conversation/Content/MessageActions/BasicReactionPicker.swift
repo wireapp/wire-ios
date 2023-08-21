@@ -59,6 +59,7 @@ private extension BasicReactionPicker {
     func setupViews() {
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         titleLabel.text = L10n.Localizable.Content.Message.reactions
+        titleLabel.setContentCompressionResistancePriority(.required, for: .vertical)
         addSubview(titleLabel)
 
         horizontalStackView.alignment = .center

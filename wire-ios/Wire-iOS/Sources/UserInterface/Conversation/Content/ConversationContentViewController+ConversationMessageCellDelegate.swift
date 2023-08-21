@@ -47,7 +47,7 @@ extension UIView {
 
 extension ConversationContentViewController: ConversationMessageCellDelegate {
     func conversationMessageWantsToShowActionsController(_ cell: UIView, actionsController: MessageActionsViewController) {
-        present(actionsController, animated: false)
+        present(actionsController, animated: true)
     }
 
     // MARK: - MessageActionResponder
