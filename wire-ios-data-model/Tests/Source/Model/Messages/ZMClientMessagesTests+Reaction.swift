@@ -101,6 +101,24 @@ extension ZMClientMessageTests_Reaction {
         XCTAssertEqual(message.usersReaction.count, 0)
     }
 
+    func testThatItDoesNOTAppendsAnInvalidReactionWhenReceivingUpdateEventWithMultipleReactions() {
+        // GIVEN
+        let message = insertMessage()
+        let genericMessage = GenericMessage(content: WireProtos.Reaction.createReaction(emojis: ["TROP BIEN", "😃", "❤️", "😍"], messageID: message.nonce!))
+        let event = createUpdateEvent(UUID(), conversationID: conversation.remoteIdentifier!, genericMessage: genericMessage, senderID: message.sender!.remoteIdentifier!)
+
+        // WHEN
+        performPretendingUiMocIsSyncMoc {
+            ZMClientMessage.createOrUpdate(from: event, in: self.uiMOC, prefetchResult: nil)
+        }
+        XCTAssertTrue(uiMOC.saveOrRollback())
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // THEN
+        XCTAssertEqual(message.reactions.count, 3)
+        XCTAssertEqual(message.usersReaction.count, 3)
+    }
+
     func testThatItRemovesAReactionWhenReceivingUpdateEventWithValidReaction() {
 
         let message = insertMessage()
