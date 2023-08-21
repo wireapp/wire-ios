@@ -24,7 +24,7 @@ final class CompleteReactionPickerViewController: UIViewController {
     weak var delegate: EmojiPickerViewControllerDelegate?
     private var emojiDataSource: EmojiDataSource!
     private let collectionView = ReactionsCollectionView()
-    private let sectionViewController = ReactionSectionViewController(types: EmojiSectionType.all)
+    private let sectionViewController: ReactionSectionViewController
     private let topBar = ModalTopBar()
     private let searchBar = UISearchBar()
     private let selectedReaction: String?
@@ -37,6 +37,9 @@ final class CompleteReactionPickerViewController: UIViewController {
 
     init(selectedReaction: String?) {
         self.selectedReaction = selectedReaction
+        let hasNoRecentlyUsedReactions =  RecentlyUsedEmojiPeristenceCoordinator.loadOrCreate().emoji.isEmpty
+        let sectionTypes: [EmojiSectionType] = hasNoRecentlyUsedReactions ? EmojiSectionType.basicTypes : EmojiSectionType.all
+        sectionViewController = ReactionSectionViewController(types: sectionTypes)
         super.init(nibName: nil, bundle: nil)
 
         emojiDataSource = EmojiDataSource(provider: cellForEmoji)
@@ -159,6 +162,7 @@ extension CompleteReactionPickerViewController: UICollectionViewDelegateFlowLayo
         collectionView.deselectItem(at: indexPath, animated: true)
         let emoji = emojiDataSource[indexPath]
         delegate?.emojiPickerDidSelectEmoji(emoji)
+        emojiDataSource.register(used: emoji)
     }
 
     func scrollViewDidScroll(_ scrolLView: UIScrollView) {
