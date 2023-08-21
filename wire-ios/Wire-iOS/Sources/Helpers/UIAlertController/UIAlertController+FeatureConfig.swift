@@ -25,7 +25,7 @@ protocol FeatureChangeAcknowledger {
 
 }
 
-extension FeatureService: FeatureChangeAcknowledger {
+extension FeatureRepository: FeatureChangeAcknowledger {
 
     func acknowledgeChange(for featureName: Feature.Name) {
         setNeedsToNotifyUser(false, for: featureName)
@@ -35,7 +35,7 @@ extension FeatureService: FeatureChangeAcknowledger {
 
 extension UIAlertController {
 
-    class func fromFeatureChange(_ change: FeatureService.FeatureChange,
+    class func fromFeatureChange(_ change: FeatureRepository.FeatureChange,
                                  acknowledger: FeatureChangeAcknowledger) -> UIAlertController? {
         switch change {
         case .conferenceCallingIsAvailable:
