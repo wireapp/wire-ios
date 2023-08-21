@@ -37,8 +37,8 @@ final class CompleteReactionPickerViewController: UIViewController {
 
     init(selectedReaction: String?) {
         self.selectedReaction = selectedReaction
-        let hasRecentlyUsedReactions =  RecentlyUsedEmojiPeristenceCoordinator.loadOrCreate().emoji.isEmpty
-        let sectionTypes: [EmojiSectionType] = hasRecentlyUsedReactions ? EmojiSectionType.basicTypes : EmojiSectionType.all
+        let hasNoRecentlyUsedReactions =  RecentlyUsedEmojiPeristenceCoordinator.loadOrCreate().emoji.isEmpty
+        let sectionTypes: [EmojiSectionType] = hasNoRecentlyUsedReactions ? EmojiSectionType.basicTypes : EmojiSectionType.all
         sectionViewController = ReactionSectionViewController(types: sectionTypes)
         super.init(nibName: nil, bundle: nil)
 
