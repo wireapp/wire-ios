@@ -165,16 +165,20 @@ final class MessageDetailsDataSource: NSObject, ZMMessageObserver, ZMUserObserve
 
     private func setupReactions() {
         reactions = message.usersReaction.map { reaction, users in
-            let emoji = Emoji(value: reaction)
-            return MessageDetailsSectionDescription(
-                headerText: "\(emoji.value) \(emoji.name?.capitalizingFirstCharacterOnly ?? "") (\(users.count))",
-                items: MessageDetailsCellDescription.makeReactionCells(users)
-            )
-        }.filter {
-            !$0.items.isEmpty
-        }
-
-        self.reactions.sort(by: { $0.items.count > $1.items.count })
+            return (Emoji(value: reaction), users)
+        }.filter { _ , count in
+            return !count.isEmpty
+        }.sorted { reactionOne, reactionTwo in
+            if reactionOne.1.count == reactionTwo.1.count {
+                print(reactionOne.0)
+                return (reactionOne.0.name < reactionTwo.0.name)
+            } else {
+                return (reactionOne.1.count > reactionTwo.1.count)
+            }
+        }.map({ (emoji, users) in
+            MessageDetailsSectionDescription(headerText: "\(emoji.value) \(emoji.name?.capitalizingFirstCharacterOnly ?? "") (\(users.count))",
+                                             items: MessageDetailsCellDescription.makeReactionCells(users))
+        })
     }
 
     func setupReadReceipts() {
