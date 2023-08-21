@@ -110,9 +110,11 @@ extension ZMMessage {
 
         // Add all new reactions for this user.
         for reaction in reactions {
-            if let existingReaction = self.reactions.first(where: {
+            let existingReaction = self.reactions.first(where: {
                 $0.unicodeValue == reaction
-            }) {
+            })
+            
+            if let existingReaction = existingReaction {
                 existingReaction.mutableSetValue(forKey: ZMReactionUsersValueKey).add(user)
             } else if Reaction.validate(unicode: reaction) {
                 let newReaction = Reaction.insertReaction(
@@ -121,7 +123,7 @@ extension ZMMessage {
                     inMessage: self
                 )
 
-                self.mutableSetValue(forKey: "reactions").add(newReaction)
+                mutableSetValue(forKey: "reactions").add(newReaction)
                 updateCategoryCache()
             }
         }
