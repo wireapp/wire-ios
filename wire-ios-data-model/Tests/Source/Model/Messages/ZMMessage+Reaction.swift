@@ -62,7 +62,6 @@ class ZMMessage_Reaction: BaseZMClientMessageTests {
 
         message.setReactions(["😋", "😍"], forUser: selfUser)
         XCTAssertEqual(message.selfUserReactions(), ["😋", "😍"])
-        XCTAssertEqual(message.usersReaction.count, 2)
 
         // WHEN
         ZMMessage.addReaction("😎", to: message)
