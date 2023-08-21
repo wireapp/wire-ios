@@ -43,8 +43,8 @@ private extension ReactionsCollectionView {
 
     func setupLayout() {
         layout.scrollDirection = .vertical
-        layout.minimumLineSpacing = 8
-        layout.minimumInteritemSpacing = 8
+        layout.minimumLineSpacing = 7
+        layout.minimumInteritemSpacing = 12
     }
 
     func configureObservers() {

@@ -63,7 +63,7 @@ private extension BasicReactionPicker {
 
         horizontalStackView.alignment = .center
         horizontalStackView.distribution = .equalSpacing
-        horizontalStackView.spacing = 8
+        horizontalStackView.spacing = 12
         horizontalStackView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(horizontalStackView)
         NSLayoutConstraint.activate([
