@@ -24,6 +24,8 @@ class ZMClientMessageTests_Reaction: BaseZMClientMessageTests {
 
 extension ZMClientMessageTests_Reaction {
 
+    // MARK: Helper Methods
+
     func insertMessage() -> ZMMessage {
         let sender = ZMUser.insertNewObject(in: uiMOC)
         sender.remoteIdentifier = .create()
@@ -47,6 +49,26 @@ extension ZMClientMessageTests_Reaction {
         let genericMessage = GenericMessage(content: WireProtos.Reaction.createReaction(emojis: [], messageID: message.nonce!))
         let event = createUpdateEvent(UUID(), conversationID: conversation.remoteIdentifier!, genericMessage: genericMessage, senderID: sender.remoteIdentifier!)
         return event
+    }
+
+    // MARK: - Tests
+
+    func testThatItAppendsAllOfTheReactionsWhenReceivingUpdateEventWithReactions() {
+        // GIVEN
+        let message = insertMessage()
+        let genericMessage = GenericMessage(content: WireProtos.Reaction.createReaction(emojis: ["🥰", "😃", "❤️", "😍"], messageID: message.nonce!))
+        let event = createUpdateEvent(UUID(), conversationID: conversation.remoteIdentifier!, genericMessage: genericMessage, senderID: message.sender!.remoteIdentifier!)
+
+        // WHEN
+        performPretendingUiMocIsSyncMoc {
+            ZMClientMessage.createOrUpdate(from: event, in: self.uiMOC, prefetchResult: nil)
+        }
+        XCTAssertTrue(uiMOC.saveOrRollback())
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // THEN
+        XCTAssertEqual(message.reactions.count, 4)
+        XCTAssertEqual(message.usersReaction.count, 4)
     }
 
     func testThatItAppendsAReactionWhenReceivingUpdateEventWithValidReaction() {
@@ -161,5 +183,49 @@ extension ZMClientMessageTests_Reaction {
         // then
         XCTAssertTrue(message.cachedCategory.contains(.text))
         XCTAssertFalse(message.cachedCategory.contains(.reacted))
+    }
+
+    func testThatANessageWithReactionsWhenReceivingUpdateEventWithNoReactionsRemovesAllReactions() {
+        // GIVEN
+        let message = insertMessage()
+        ZMMessage.addReaction("❤️", to: message)
+        ZMMessage.addReaction("😍", to: message)
+        uiMOC.saveOrRollback()
+
+        let event = updateEventForRemovingReaction(to: message)
+
+        // WHEN
+        performPretendingUiMocIsSyncMoc {
+            ZMClientMessage.createOrUpdate(from: event, in: self.uiMOC, prefetchResult: nil)
+        }
+        XCTAssertTrue(uiMOC.saveOrRollback())
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // THEN
+        XCTAssertEqual(message.reactions.count, 0)
+        XCTAssertEqual(message.usersReaction.count, 0)
+    }
+
+    func testThatAMessageWithReactionsWhenReceivingUpdateEventWithNewReactionsUpdatesReactions() {
+        // GIVEN
+        let message = insertMessage()
+        ZMMessage.addReaction("❤️", to: message)
+        ZMMessage.addReaction("😍", to: message)
+        uiMOC.saveOrRollback()
+
+        let genericMessage = GenericMessage(content: WireProtos.Reaction.createReaction(emojis: ["🥰", "😃", "❤️", "😍"], messageID: message.nonce!))
+
+        let event = createUpdateEvent(UUID(), conversationID: conversation.remoteIdentifier!, genericMessage: genericMessage, senderID: message.sender!.remoteIdentifier!)
+
+        // WHEN
+        performPretendingUiMocIsSyncMoc {
+            ZMClientMessage.createOrUpdate(from: event, in: self.uiMOC, prefetchResult: nil)
+        }
+        XCTAssertTrue(uiMOC.saveOrRollback())
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // THEN
+        XCTAssertEqual(message.reactions.count, 4)
+        XCTAssertEqual(message.usersReaction.count, 4)
     }
 }
