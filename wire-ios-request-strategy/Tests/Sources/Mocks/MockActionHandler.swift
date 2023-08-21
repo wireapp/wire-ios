@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2023 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,11 +16,26 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
+import Foundation
 
-final class GiphyNavigationController: UINavigationController {
+class MockActionHandler<T: EntityAction>: EntityActionHandler {
 
-    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        return .portrait
+    typealias Action = T
+    typealias Result = Swift.Result<Action.Result, Action.Failure>
+
+    var result: Result
+    var token: Any?
+    var performedActions = [Action]()
+
+    init(result: Result, context: NotificationContext) {
+        self.result = result
+        token = Action.registerHandler(self, context: context)
     }
+
+    func performAction(_ action: Action) {
+        var action = action
+        action.notifyResult(result)
+        performedActions.append(action)
+    }
+
 }

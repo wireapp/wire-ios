@@ -16,26 +16,32 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
 import XCTest
+import SnapshotTesting
+@testable import Wire
 
 // MARK: - Mentions
 
-final class TextMessageMentionsTests: XCTestCase {
+final class TextMessageMentionsTests: BaseSnapshotTestCase {
+
+    // MARK: - Properties
+
     var otherUser: MockUserType!
     var selfUser: MockUserType!
 
     /// "Saturday, February 14, 2009 at 12:20:30 AM Central European Standard Time"
     static let dummyServerTimestamp = Date(timeIntervalSince1970: 1234567230)
 
+    // MARK: - setUp
+
     override func setUp() {
         super.setUp()
-
         otherUser = MockUserType.createUser(name: "Bruno")
         selfUser = MockUserType.createDefaultSelfUser()
-
         UIColor.setAccentOverride(.vividRed)
     }
+
+    // MARK: - tearDown
 
     override func tearDown() {
         otherUser = nil
@@ -43,6 +49,8 @@ final class TextMessageMentionsTests: XCTestCase {
         setColorScheme(.light)
         super.tearDown()
     }
+
+    // MARK: Helper method
 
     private func createMessage(messageText: String, mentions: [Mention]) -> MockMessage {
         let message = MockMessageFactory.messageTemplate(sender: selfUser)
@@ -54,6 +62,8 @@ final class TextMessageMentionsTests: XCTestCase {
 
         return message
     }
+
+    // MARK: - Snapshot Tests
 
     func testThatItRendersMentions_OnlyMention() {
         let messageText = "@Bruno"

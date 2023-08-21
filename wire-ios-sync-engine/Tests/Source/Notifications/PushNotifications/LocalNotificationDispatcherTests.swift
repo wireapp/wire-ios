@@ -114,12 +114,13 @@ extension LocalNotificationDispatcherTests {
 
     func testThatItCreatesNotificationFromSystemMessagesIfNotActive() {
         // GIVEN
+        let messageTimer = MessageDestructionTimeoutValue.fiveMinutes
         let payload: [String: Any] = [
             "id": UUID.create().transportString(),
             "from": self.user1.remoteIdentifier.transportString(),
             "conversation": self.conversation1.remoteIdentifier!.transportString(),
             "time": Date().transportString(),
-            "data": ["message_timer": MessageDestructionTimeoutValue.fiveMinutes.rawValue],
+            "data": ["message_timer": messageTimer.rawValue * 1000],
             "type": "conversation.message-timer-update"
         ]
         let event = ZMUpdateEvent(fromEventStreamPayload: payload as ZMTransportData, uuid: UUID.create())!
@@ -250,7 +251,7 @@ extension LocalNotificationDispatcherTests {
         // THEN
         XCTAssertEqual(self.scheduledRequests.count, 1)
         XCTAssertEqual(self.scheduledRequests[0].content.body, "New message")
-        XCTAssertEqual(self.scheduledRequests[0].content.sound, UNNotificationSound(named: convertToUNNotificationSoundName("new_message_apns.caf")))
+        XCTAssertEqual(self.scheduledRequests[0].content.sound, UNNotificationSound(named: convertToUNNotificationSoundName("default")))
     }
 
     func testThatItDoesNotCreateNotificationForTwoMessageEventsWithTheSameNonce() {
