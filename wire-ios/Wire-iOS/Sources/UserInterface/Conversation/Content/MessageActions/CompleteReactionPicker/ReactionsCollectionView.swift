@@ -43,8 +43,10 @@ private extension ReactionsCollectionView {
 
     func setupLayout() {
         layout.scrollDirection = .vertical
-        layout.minimumLineSpacing = 0
-        layout.minimumInteritemSpacing = 0
+        layout.minimumLineSpacing = UIDevice.current.type == .iPad ? 7 : 7
+        layout.minimumInteritemSpacing = UIDevice.current.type == .iPad ? 12 : 7
+        let itemSize = UIDevice.current.type == .iPad ? 51 : 41
+        layout.itemSize = CGSize(width: itemSize, height: itemSize)
     }
 
     func configureObservers() {
