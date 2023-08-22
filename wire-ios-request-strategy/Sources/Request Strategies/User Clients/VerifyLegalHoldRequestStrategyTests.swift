@@ -55,7 +55,8 @@ extension Payload.MessageSendingStatus: TransportDataConvertible {
             missing: missing,
             redundant: .init(),
             deleted: .init(),
-            failedToSend: .init()
+            failedToSend: .init(),
+            failedToConfirm: .init()
         )
     }
 }

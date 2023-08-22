@@ -38,6 +38,7 @@ final class MessageToolboxViewTests: CoreDataSnapshotTestCase {
 
     override func tearDown() {
         sut = nil
+        message = nil
         super.tearDown()
     }
 
@@ -49,7 +50,21 @@ final class MessageToolboxViewTests: CoreDataSnapshotTestCase {
         sut.configureForMessage(message, forceShowTimestamp: true, animated: false)
 
         // THEN
-        verify(view: sut)
+        verifyView(view: sut, width: defaultIPhoneSize.width)
+    }
+
+    func testThatItConfiguresWithFailedToSendAndReason() {
+        // GIVEN
+        message.deliveryState = .failedToSend
+        message.conversationLike = otherUserConversation
+        message.failedToSendReason = .federationRemoteError
+        message.conversation?.domain = "anta.wire.link"
+
+        // WHEN
+        sut.configureForMessage(message, forceShowTimestamp: true, animated: false)
+
+        // THEN
+        verifyView(view: sut, width: defaultIPhoneSize.width)
     }
 
     func testThatItConfiguresWith1To1ConversationReadReceipt() {
@@ -247,8 +262,7 @@ final class MessageToolboxViewTests: CoreDataSnapshotTestCase {
         sut.configureForMessage(message, forceShowTimestamp: true, animated: false)
 
         // THEN
-        verifyInAllPhoneWidths(view: sut)
-
+        verify(view: sut)
     }
 
     func testThatItDisplaysLongListOfLikers() {

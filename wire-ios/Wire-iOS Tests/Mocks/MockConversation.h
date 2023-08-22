@@ -39,6 +39,7 @@ NS_CLASS_DEPRECATED_IOS(4_0, 13_0, "Use SwiftMockConversation instead")
 @property (nonatomic) BOOL isArchived;
 @property (nonatomic) NSUUID *teamRemoteIdentifier;
 @property (nonatomic) ZMConversationLegalHoldStatus legalHoldStatus;
+@property (nonatomic, nullable) NSString *domain;
 
 - (ZMConversation *)convertToRegularConversation;
 - (void)verifyLegalHoldSubjects;
