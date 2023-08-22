@@ -133,7 +133,7 @@ final class SearchResultsViewController: UIViewController {
         return view
     }()
 
-    private lazy var searchDirectory: SearchDirectory! = {
+    private lazy var searchDirectory: SearchDirectory? = {
         guard let session = ZMUserSession.shared() else {
             return nil
         }
@@ -241,6 +241,7 @@ final class SearchResultsViewController: UIViewController {
         updateVisibleSections()
 
         searchResultsView.emptyResultContainer.isHidden = !isResultEmpty
+        searchDirectory?.updateIncompleteMetadataIfNeeded()
     }
 
     @objc

@@ -24,7 +24,7 @@ final class CompleteReactionPickerViewController: UIViewController {
     weak var delegate: EmojiPickerViewControllerDelegate?
     private var emojiDataSource: EmojiDataSource!
     private let collectionView = ReactionsCollectionView()
-    private let sectionViewController = ReactionSectionViewController(types: EmojiSectionType.all)
+    private let sectionViewController: ReactionSectionViewController
     private let topBar = ModalTopBar()
     private let searchBar = UISearchBar()
     private let selectedReaction: String?
@@ -37,6 +37,9 @@ final class CompleteReactionPickerViewController: UIViewController {
 
     init(selectedReaction: String?) {
         self.selectedReaction = selectedReaction
+        let hasNoRecentlyUsedReactions =  RecentlyUsedEmojiPeristenceCoordinator.loadOrCreate().emoji.isEmpty
+        let sectionTypes: [EmojiSectionType] = hasNoRecentlyUsedReactions ? EmojiSectionType.basicTypes : EmojiSectionType.all
+        sectionViewController = ReactionSectionViewController(types: sectionTypes)
         super.init(nibName: nil, bundle: nil)
 
         emojiDataSource = EmojiDataSource(provider: cellForEmoji)
@@ -143,9 +146,14 @@ extension CompleteReactionPickerViewController: EmojiSectionViewControllerDelega
     func sectionViewControllerDidSelectType(_ type: EmojiSectionType, scrolling: Bool) {
         guard let section = emojiDataSource.sectionIndex(for: type) else { return }
         let indexPath = IndexPath(item: 0, section: section)
-        collectionView.scrollToItem(at: indexPath, at: .top, animated: !scrolling)
+        if let attributes = collectionView.layoutAttributesForItem(at: indexPath) {
+            collectionView.setContentOffset(
+                CGPoint(x: collectionView.contentOffset.x, y: attributes.frame.minY),
+                animated: !scrolling)
+        } else {
+            collectionView.scrollToItem(at: indexPath, at: .top, animated: !scrolling)
+        }
     }
-
 }
 
 extension CompleteReactionPickerViewController: UICollectionViewDelegateFlowLayout {
@@ -154,6 +162,7 @@ extension CompleteReactionPickerViewController: UICollectionViewDelegateFlowLayo
         collectionView.deselectItem(at: indexPath, animated: true)
         let emoji = emojiDataSource[indexPath]
         delegate?.emojiPickerDidSelectEmoji(emoji)
+        emojiDataSource.register(used: emoji)
     }
 
     func scrollViewDidScroll(_ scrolLView: UIScrollView) {
@@ -161,8 +170,7 @@ extension CompleteReactionPickerViewController: UICollectionViewDelegateFlowLayo
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        return UIEdgeInsets(top: 0, left: 0, bottom: 12
-                            , right: 0)
+        return UIEdgeInsets(top: 30.0, left: 0.0, bottom: 0.0, right: 0.0)
     }
 }
 
