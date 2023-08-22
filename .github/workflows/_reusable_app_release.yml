@@ -106,14 +106,13 @@ jobs:
         with:
           name: post-build-env
           path: |
-            **/*.post_build_env
-      - name: Put output from fastlane into ENV
-        if: always()
-        run: source fastlane/.post_build_env
+            **/.post_build/*.env
+      - name: Load .env file
+        uses: xom9ikk/dotenv@v2
+        with:
+          path: fastlane/.post_build
       - name: Notify on Wire
-        if: always()
         uses: 8398a7/action-slack@v3
         with:
           status: ${{ job.status }}
-          
-          text: "**$APP_NAME** (version: $BUILD_VERSION build: $BUILD_NUMBER) build completed  🚀\nRelease notes: $APPCENTER_RELEASE_NOTES\nInstall link: $APPCENTER_INSTALL_LINK\nAWS S3 Paths:S3_PATHS"
+          text: "**${{ env.APP_NAME }} ** (version: ${{ env.BUILD_VERSION }} build: ${{ env.BUILD_NUMBER }}) build completed  🚀\nRelease notes: ${{ env.APPCENTER_RELEASE_NOTES }}\nInstall link: ${{ env.APPCENTER_INSTALL_LINK }}\nAWS S3 Paths:${{ env.S3_PATHS }}"

@@ -36,6 +36,7 @@ platform :ios do
     before_all do |lane|
         ensure_xcode_version
         create_keychain_if_needed unless [:prepare_for_tests].include?(lane)
+        `mkdir -p ./.post_build`
         Dir.chdir("..") do
             encoded_key = ENV['APPSTORE_API_KEY_BASE64']
             if !File.exist?(appstoreconnect_api_key_file_path) && !encoded_key.nil?
@@ -183,7 +184,7 @@ platform :ios do
     end
 
     def save_app_name(name)
-        `echo APP_NAME=#{name} >> .post_build_env`
+        `echo APP_NAME=#{name} >> ./.post_build/.env`
     end
 
     def download_distribution_certificate_and_profiles(build, options)
@@ -231,7 +232,7 @@ platform :ios do
 
     def generate_build_number
         build_number = `curl -H "Accept: text/plain" -X POST -d '' "https://incrementator.appspot.com/api/v1/code/ORUHILeMbXB4D5Z5conFzYoYpQPjVnyUA4pu56X2MHVJSFxM/increment"`
-        `echo BUILD_NUMBER=#{build_number} >> .post_build_env`
+        `echo BUILD_NUMBER=#{build_number} >> ./.post_build/.env`
         build_number
     end
 
@@ -256,7 +257,7 @@ platform :ios do
             # Adding extra information to the icon must be done after we check them out in setup script
             build.process_icon()
 
-            `echo BUILD_VERSION=#{build.version_from_xcconfig} >> .post_build_env`
+            `echo BUILD_VERSION=#{build.version_from_xcconfig} >> ./.post_build/.env`
 
             download_distribution_certificate_and_profiles(build, options)
         end
@@ -406,8 +407,8 @@ platform :ios do
 
         appcenter_build_info = Fastlane::Actions.lane_context[:APPCENTER_BUILD_INFORMATION]
         puts appcenter_build_info['release_notes'].dump
-        `export TEMP='APPCENTER_INSTALL_LINK=#{appcenter_build_info['install_url']}' && echo $TEMP >> .post_build_env`
-        `export TEMP='APPCENTER_RELEASE_NOTES=#{Base64.strict_encode64(appcenter_build_info['release_notes'])}' && echo $TEMP >> .post_build_env`
+        `export TEMP='APPCENTER_INSTALL_LINK=#{appcenter_build_info['install_url']}' && echo $TEMP >> ./.post_build/.env`
+        `export TEMP='APPCENTER_RELEASE_NOTES=#{Base64.strict_encode64(appcenter_build_info['release_notes'])}' && echo $TEMP >> ./.post_build/.env`
     end
 
     # Upload to S3 (Automation builds)
@@ -431,7 +432,7 @@ platform :ios do
         
         output += `cd .. && aws s3 cp --recursive --exclude '*'  --include '*.ipa'  --include '*.app.dSYM.zip' --include '*.xcarchive.tgz' --include '*.junit' artifacts/ #{s3_path}`
         paths = output.split(/[\r,\n]/).map { |line| line.gsub(/\n/, '').match(/s3:\/\/.*ipa$/)}.compact!.map{ |match| match[0] }.uniq.join('\n')
-        `export TEMP='S3_PATHS=#{Base64.strict_encode64(paths)}' && echo $TEMP >> .post_build_env`
+        `export TEMP='S3_PATHS=#{Base64.strict_encode64(paths)}' && echo $TEMP >> ./.post_build/.env`
     end
 
     # Upload dSYMs for AppStore crash tracking
