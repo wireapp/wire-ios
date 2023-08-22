@@ -19,7 +19,7 @@
 import UIKit
 
 protocol EmojiPickerViewControllerDelegate: AnyObject {
-    func emojiPickerDidSelectEmoji(_ emoji: String)
+    func emojiPickerDidSelectEmoji(_ emoji: Emoji)
     func emojiPickerDeleteTapped()
 }
 
@@ -90,7 +90,7 @@ final class EmojiKeyboardViewController: UIViewController {
 
     func cellForEmoji(_ emoji: Emoji, indexPath: IndexPath) -> UICollectionViewCell {
         let cell = self.collectionView.dequeueReusableCell(withReuseIdentifier: EmojiCollectionViewCell.zm_reuseIdentifier, for: indexPath) as! EmojiCollectionViewCell
-        cell.titleLabel.text = emoji
+        cell.titleLabel.text = emoji.value
         return cell
     }
 

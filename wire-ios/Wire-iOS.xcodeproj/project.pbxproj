@@ -962,7 +962,7 @@
 		BF0BDF801DAB8923003C61DE /* EphemeralKeyboardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF0BDF7F1DAB8923003C61DE /* EphemeralKeyboardViewController.swift */; };
 		BF0BDF881DABEF3B003C61DE /* DestructionCountdownView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF0BDF871DABEF3B003C61DE /* DestructionCountdownView.swift */; };
 		BF0BDF8A1DABF32B003C61DE /* DestructionCountdownViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF0BDF891DABF32B003C61DE /* DestructionCountdownViewTests.swift */; };
-		BF10B58D1E6452B800E7036E /* ZMMessage+Likes.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF10B58C1E6452B800E7036E /* ZMMessage+Likes.swift */; };
+		BF10B58D1E6452B800E7036E /* ZMConversationMessage+Reactions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF10B58C1E6452B800E7036E /* ZMConversationMessage+Reactions.swift */; };
 		BF16FC4C1DAFCA0000FF4325 /* EphemeralKeyboardViewControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF16FC4B1DAFCA0000FF4325 /* EphemeralKeyboardViewControllerTests.swift */; };
 		BF1743742123060E008851CA /* AdditionalMenuItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF1743732123060E008851CA /* AdditionalMenuItem.swift */; };
 		BF1A81281C9848DB00A96CAA /* ConversationViewController+NavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF1A81271C9848DB00A96CAA /* ConversationViewController+NavigationBar.swift */; };
@@ -2959,7 +2959,7 @@
 		BF0BDF7F1DAB8923003C61DE /* EphemeralKeyboardViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EphemeralKeyboardViewController.swift; sourceTree = "<group>"; };
 		BF0BDF871DABEF3B003C61DE /* DestructionCountdownView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DestructionCountdownView.swift; sourceTree = "<group>"; };
 		BF0BDF891DABF32B003C61DE /* DestructionCountdownViewTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DestructionCountdownViewTests.swift; sourceTree = "<group>"; };
-		BF10B58C1E6452B800E7036E /* ZMMessage+Likes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ZMMessage+Likes.swift"; sourceTree = "<group>"; };
+		BF10B58C1E6452B800E7036E /* ZMConversationMessage+Reactions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ZMConversationMessage+Reactions.swift"; sourceTree = "<group>"; };
 		BF16FC4B1DAFCA0000FF4325 /* EphemeralKeyboardViewControllerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EphemeralKeyboardViewControllerTests.swift; sourceTree = "<group>"; };
 		BF16FC4D1DAFCE9300FF4325 /* MockConversationFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockConversationFactory.swift; sourceTree = "<group>"; };
 		BF1743732123060E008851CA /* AdditionalMenuItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdditionalMenuItem.swift; sourceTree = "<group>"; };
@@ -6071,7 +6071,7 @@
 				EF3371C12216D9D9005ED048 /* ZMUser+Self.swift */,
 				A978D992236C587B00B568AE /* ZMUserSession+Shared.swift */,
 				163495861F010F91004E80DB /* UnauthenticatedSession+Shared.swift */,
-				BF10B58C1E6452B800E7036E /* ZMMessage+Likes.swift */,
+				BF10B58C1E6452B800E7036E /* ZMConversationMessage+Reactions.swift */,
 				5EBBE9772188B85A008BC1B7 /* ZMMessage+Actions.swift */,
 				BAED82B81B307AEE004D027F /* ZMUserSession+RequestProxy.swift */,
 				161B75C720B6BCB50002B0F7 /* ZMUserSession+Calling.swift */,
@@ -9407,7 +9407,7 @@
 				5E8DA76C211B2EC200360979 /* AuthenticationEventResponderChain.swift in Sources */,
 				5E8DA758211B055100360979 /* AuthenticationClientLimitErrorHandler.swift in Sources */,
 				AFD4E72A1E449925002A4732 /* Analytics+StorableTrackingEvent.swift in Sources */,
-				BF10B58D1E6452B800E7036E /* ZMMessage+Likes.swift in Sources */,
+				BF10B58D1E6452B800E7036E /* ZMConversationMessage+Reactions.swift in Sources */,
 				5E2945992190A1680045ACFA /* SenderNameCellComponent.swift in Sources */,
 				8751BA442069455E00DF8667 /* BackupViewController.swift in Sources */,
 				1610366F20616EBC008AFDD0 /* SelfProfileViewController+NewDeviceAlert.swift in Sources */,

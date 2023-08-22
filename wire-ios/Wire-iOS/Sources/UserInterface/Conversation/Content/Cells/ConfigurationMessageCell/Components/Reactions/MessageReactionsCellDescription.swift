@@ -33,15 +33,12 @@ final class MessageReactionsCellDescription: ConversationMessageCellDescription 
         self.message = message
 
         let reactions: [MessageReactionMetadata] = message.usersReaction.compactMap { reaction, usersWhoReacted in
-            guard
-                let reactionType = MessageReaction.messageReaction(from: reaction),
-                !usersWhoReacted.isEmpty
-            else {
+            guard !usersWhoReacted.isEmpty else {
                 return nil
             }
 
             return MessageReactionMetadata(
-                type: reactionType,
+                emoji: Emoji(value: reaction),
                 count: UInt(usersWhoReacted.count),
                 isSelfUserReacting: usersWhoReacted.contains(where: \.isSelfUser),
                 performReaction: nil
@@ -51,7 +48,6 @@ final class MessageReactionsCellDescription: ConversationMessageCellDescription 
         }
 
         self.configuration = View.Configuration(reactions: reactions)
-
     }
 
     var topMargin: Float = 0

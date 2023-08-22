@@ -160,7 +160,6 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
         XCTAssertTrue(cellDescriptions[2].instance is ConversationMessageToolboxCellDescription)
     }
 
-
     func testCellGrouping_SenderIsSameAsPreviousAndTimeStampIsNotInTheSameMinuteAsPreviousMessage() throws {
         // GIVEN
         let message = MockMessageFactory.textMessage(withText: "Hello")

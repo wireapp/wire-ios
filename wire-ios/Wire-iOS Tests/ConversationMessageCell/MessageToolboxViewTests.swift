@@ -69,7 +69,7 @@ final class MessageToolboxViewTests: CoreDataSnapshotTestCase {
         message.conversation?.domain = "anta.wire.link"
 
         // WHEN
-        sut.configureForMessage(message, forceShowTimestamp: true, animated: false)
+        sut.configureForMessage(message, animated: false)
 
         // THEN
         verifyView(view: sut, width: defaultIPhoneSize.width)
