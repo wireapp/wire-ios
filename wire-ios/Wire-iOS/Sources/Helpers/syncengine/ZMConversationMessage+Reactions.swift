@@ -60,6 +60,13 @@ extension ZMConversationMessage {
         return Set(result)
     }
 
+    func sortedReactions() -> [(Emoji, [UserType])] {
+        return usersReaction.lazy
+            .filter { _, users in !users.isEmpty }
+            .map { key, users in (Emoji(value: key), users) }
+            .sortedByCountThenName()
+    }
+
     func hasReactions() -> Bool {
         return usersReaction.contains { _, users in
             !users.isEmpty

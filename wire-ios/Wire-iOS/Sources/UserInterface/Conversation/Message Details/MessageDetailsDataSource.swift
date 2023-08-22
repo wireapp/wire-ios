@@ -166,7 +166,7 @@ final class MessageDetailsDataSource: NSObject, ZMMessageObserver, ZMUserObserve
     private func setupReactions() {
         reactions = message.usersReaction.map { reaction, users in
             return (Emoji(value: reaction), users)
-        }.filter { _ , count in
+        }.filter { _,count in
             return !count.isEmpty
         }
         .sortedByCountThenName()

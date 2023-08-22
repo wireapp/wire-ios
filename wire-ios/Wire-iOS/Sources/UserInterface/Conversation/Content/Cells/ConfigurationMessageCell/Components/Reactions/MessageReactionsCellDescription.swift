@@ -32,24 +32,16 @@ final class MessageReactionsCellDescription: ConversationMessageCellDescription 
     init(message: ZMConversationMessage) {
         self.message = message
 
-        let reactions: [MessageReactionMetadata] = message.usersReaction.compactMap { reaction, usersWhoReacted in
-            guard !usersWhoReacted.isEmpty else {
-                return nil
-            }
+        let reactions: [MessageReactionMetadata] = message.sortedReactions().map { emoji, users in
 
             return MessageReactionMetadata(
-                emoji: Emoji(value: reaction),
-                count: UInt(usersWhoReacted.count),
-                isSelfUserReacting: usersWhoReacted.contains(where: \.isSelfUser),
+                emoji: emoji,
+                count: UInt(users.count),
+                isSelfUserReacting: users.contains(where: \.isSelfUser),
                 performReaction: nil
             )
-        }.sorted {
-            if $0.count == $1.count {
-                return $0.emoji.name < $1.emoji.name
-            } else {
-                return $0.count > $1.count
-            }
         }
+        
 
         self.configuration = View.Configuration(reactions: reactions)
     }
