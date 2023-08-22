@@ -107,7 +107,7 @@ final class MessageToolboxView: UIView {
             button.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
             return button
         }()
-    
+
     private let statusLabel: UILabel = {
         let label = UILabel()
         label.lineBreakMode = .byTruncatingMiddle
@@ -172,7 +172,7 @@ final class MessageToolboxView: UIView {
          statusLabel,
          statusSeparatorLabel,
          countdownLabel].forEach(contentStack.addArrangedSubview)
-        
+
         [separatorView, contentStack, messageFailureView].forEach(addSubview)
     }
 

@@ -30,7 +30,7 @@ class ZMMessage_Reaction: BaseZMClientMessageTests {
         self.uiMOC.saveOrRollback()
 
         XCTAssertEqual(message.deliveryState, ZMDeliveryState.sent)
-        
+
         // when
         // this is the UI facing call to add reaction
         ZMMessage.addReaction("❤️", to: message)
