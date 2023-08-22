@@ -185,7 +185,7 @@ extension ZMClientMessageTests_Reaction {
         XCTAssertFalse(message.cachedCategory.contains(.reacted))
     }
 
-    func testThatANessageWithReactionsWhenReceivingUpdateEventWithNoReactionsRemovesAllReactions() {
+    func testThatAMessageWithReactionsWhenReceivingUpdateEventWithNoReactionsRemovesAllReactions() {
         // GIVEN
         let message = insertMessage()
         ZMMessage.addReaction("❤️", to: message)
