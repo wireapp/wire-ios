@@ -63,7 +63,6 @@ private extension BasicReactionPicker {
 
         horizontalStackView.alignment = .center
         horizontalStackView.distribution = .equalSpacing
-        horizontalStackView.spacing = 12
         horizontalStackView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(horizontalStackView)
         NSLayoutConstraint.activate([
@@ -81,16 +80,7 @@ private extension BasicReactionPicker {
         var constraints = [NSLayoutConstraint]()
         ["👍", "🙂", "❤️", "☹️", "👎"].forEach { emoji in
             let button = UIButton()
-            button.titleLabel?.font = UIFont.preferredFont(forTextStyle: .largeTitle)
-            button.titleLabel?.adjustsFontSizeToFitWidth = true
-            if #available(iOS 15.0, *) {
-                var configuration = UIButton.Configuration.plain()
-                configuration.contentInsets = NSDirectionalEdgeInsets(top: 6, leading: 6, bottom: 6, trailing: 6)
-                button.configuration = configuration
-            } else {
-                button.contentEdgeInsets = UIEdgeInsets(top: 6, left: 6, bottom: 6, right: 6)
-            }
-
+            button.titleLabel?.font = UIFont.systemFont(ofSize: UIDevice.current.type == .iPad ? 24 : 32)
             button.setTitle(emoji, for: .normal)
             if emoji == selectedReaction {
                 button.layer.cornerRadius = 12.0
