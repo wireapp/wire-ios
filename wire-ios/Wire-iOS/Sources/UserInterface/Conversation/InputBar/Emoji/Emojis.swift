@@ -118,7 +118,7 @@ final class EmojiDataSource: NSObject, UICollectionViewDataSource {
         return sections.map { $0.type }.firstIndex(of: type)
     }
 
-    func register(used emoji: Emoji) -> Update? {
+    @discardableResult func register(used emoji: Emoji) -> Update? {
         let shouldReload = recentlyUsed.register(emoji)
         let shouldInsert = insertRecentlyUsedSectionIfNeeded()
 
@@ -191,8 +191,13 @@ enum EmojiSectionType: String {
     }
 
     static var all: [EmojiSectionType] {
+        var all = basicTypes
+        all.insert(EmojiSectionType.recent, at: 0)
+        return all
+    }
+
+    static var basicTypes: [EmojiSectionType] {
         return [
-            EmojiSectionType.recent,
             .people,
             .nature,
             .food,

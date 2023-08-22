@@ -483,7 +483,7 @@ extension WireProtos.Reaction {
         }
     }
 
-    func toSet() -> Set<String> {
+    func toReactionSet() -> Set<String> {
         guard !emoji.isEmpty else { return [] }
 
         let result = emoji

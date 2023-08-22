@@ -34,7 +34,7 @@ extension ZMMessage {
             return
         }
 
-        localMessage.setReactions(reaction.toSet(), forUser: user)
+        localMessage.setReactions(reaction.toReactionSet(), forUser: user)
         localMessage.updateCategoryCache()
     }
 
@@ -42,7 +42,16 @@ extension ZMMessage {
         let result = usersReaction
             .filter { _, users in users.contains(where: \.isSelfUser) }
             .map { $0.key }
-        
+
+        return Set(result)
+    }
+
+    public func otherUsersReactions() -> Set<String> {
+        let result = usersReaction
+            .filter { _, users in users.contains { user in
+                !user.isSelfUser
+            }}
+            .map { $0.key }
 
         return Set(result)
     }
