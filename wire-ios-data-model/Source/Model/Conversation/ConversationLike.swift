@@ -29,7 +29,7 @@ public protocol ConversationLike: NSObjectProtocol {
     func localParticipantsContain(user: UserType) -> Bool
     var localParticipantsCount: Int { get }
 
-    var displayName: String { get }
+    var displayName: String? { get }
     var connectedUserType: UserType? { get }
     var allowGuests: Bool { get }
     var allowServices: Bool { get }
@@ -46,6 +46,7 @@ public protocol ConversationLike: NSObjectProtocol {
     var firstUnreadMessage: ZMConversationMessage? { get }
 
     var areServicesPresent: Bool { get }
+    var domain: String? { get }
 }
 
 // Since ConversationLike must have @objc signature(@objc UserType has a ConversationLike property), create another protocol to abstract Swift only properties

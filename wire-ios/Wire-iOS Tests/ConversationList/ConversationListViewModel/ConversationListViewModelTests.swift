@@ -59,6 +59,8 @@ final class ConversationListViewModelTests: XCTestCase {
     var mockUserSession: MockZMUserSession!
     var mockConversationListViewModelDelegate: MockConversationListViewModelDelegate!
     var mockBar: MockBar!
+    var mockConversation: ZMConversation!
+    var coreDataFixture: CoreDataFixture!
 
     /// constants
     let sectionGroups: Int = 2
@@ -73,6 +75,9 @@ final class ConversationListViewModelTests: XCTestCase {
 
         mockConversationListViewModelDelegate = MockConversationListViewModelDelegate()
         sut.delegate = mockConversationListViewModelDelegate
+
+        coreDataFixture = CoreDataFixture()
+        mockConversation = ZMConversation.createOtherUserConversation(moc: coreDataFixture.uiMOC, otherUser: coreDataFixture.otherUser)
     }
 
     override func tearDown() {
@@ -80,6 +85,8 @@ final class ConversationListViewModelTests: XCTestCase {
         mockUserSession = nil
         mockConversationListViewModelDelegate = nil
         mockBar = nil
+        mockConversation = nil
+        coreDataFixture = nil
 
         super.tearDown()
     }
@@ -94,8 +101,13 @@ final class ConversationListViewModelTests: XCTestCase {
     func fillDummyConversations(mockConversation: ZMConversation) {
         let info = ConversationDirectoryChangeInfo(reloaded: false, updatedLists: [.groups, .contacts], updatedFolders: false)
 
-        mockUserSession.mockConversationDirectory.mockGroupConversations = [mockConversation, ZMConversation()]
-        mockUserSession.mockConversationDirectory.mockContactsConversations = [ZMConversation()]
+        let teamConversation = ZMConversation.createTeamGroupConversation(moc: coreDataFixture.uiMOC,
+                                                                          otherUser: coreDataFixture.otherUser,
+                                                                          selfUser: coreDataFixture.selfUser)
+        let oneToOneConversation = ZMConversation.createOtherUserConversation(moc: coreDataFixture.uiMOC,
+                                                                              otherUser: coreDataFixture.otherUser)
+        mockUserSession.mockConversationDirectory.mockGroupConversations = [mockConversation, teamConversation]
+        mockUserSession.mockConversationDirectory.mockContactsConversations = [oneToOneConversation]
 
         sut.conversationDirectoryDidChange(info)
     }
@@ -103,8 +115,6 @@ final class ConversationListViewModelTests: XCTestCase {
     func testForNumberOfItems() {
         // GIVEN
         sut.folderEnabled = true
-
-        let mockConversation = ZMConversation()
 
         fillDummyConversations(mockConversation: mockConversation)
 
@@ -121,8 +131,6 @@ final class ConversationListViewModelTests: XCTestCase {
         // GIVEN
         sut.folderEnabled = true
 
-        let mockConversation = ZMConversation()
-
         fillDummyConversations(mockConversation: mockConversation)
 
         // WHEN
@@ -138,7 +146,6 @@ final class ConversationListViewModelTests: XCTestCase {
 
     func testThatOutOfBoundIndexPathReturnsNilItem() {
         // GIVEN & WHEN
-        let mockConversation = ZMConversation()
         fillDummyConversations(mockConversation: mockConversation)
 
         // THEN
@@ -170,8 +177,6 @@ final class ConversationListViewModelTests: XCTestCase {
         // GIVEN
         sut.folderEnabled = true
 
-        let mockConversation = ZMConversation()
-
         fillDummyConversations(mockConversation: mockConversation)
 
         // WHEN
@@ -186,8 +191,6 @@ final class ConversationListViewModelTests: XCTestCase {
         // GIVEN
         sut.folderEnabled = true
 
-        let mockConversation = ZMConversation()
-
         fillDummyConversations(mockConversation: mockConversation)
 
         // WHEN
@@ -201,8 +204,6 @@ final class ConversationListViewModelTests: XCTestCase {
     func testForItemPervious() {
         // GIVEN
         sut.folderEnabled = true
-
-        let mockConversation = ZMConversation()
 
         fillDummyConversations(mockConversation: mockConversation)
 
@@ -219,8 +220,6 @@ final class ConversationListViewModelTests: XCTestCase {
     func testForSelectItem() {
         sut.folderEnabled = true
 
-        let mockConversation = ZMConversation()
-
         fillDummyConversations(mockConversation: mockConversation)
 
         // WHEN & THEN
@@ -233,8 +232,6 @@ final class ConversationListViewModelTests: XCTestCase {
     func testThatSelectItemAtIndexReturnCorrectConversation() {
         // GIVEN
         sut.folderEnabled = true
-
-        let mockConversation = ZMConversation()
 
         fillDummyConversations(mockConversation: mockConversation)
 
@@ -249,7 +246,6 @@ final class ConversationListViewModelTests: XCTestCase {
     func testThatSectionIsExpandedAfterSelected() {
         // GIVEN
         sut.folderEnabled = true
-        let mockConversation = ZMConversation()
         fillDummyConversations(mockConversation: mockConversation)
         sut.setCollapsed(sectionIndex: Int(sectionGroups), collapsed: true) // todo
 
@@ -264,8 +260,6 @@ final class ConversationListViewModelTests: XCTestCase {
     func testThatCollapseStateCanBeRestoredAfterFolderDisabled() {
         // GIVEN
         sut.folderEnabled = true
-
-        let mockConversation = ZMConversation()
 
         fillDummyConversations(mockConversation: mockConversation)
 
@@ -295,8 +289,6 @@ final class ConversationListViewModelTests: XCTestCase {
 
         sut.folderEnabled = true
 
-        let mockConversation = ZMConversation()
-
         fillDummyConversations(mockConversation: mockConversation)
 
         // WHEN
@@ -309,7 +301,6 @@ final class ConversationListViewModelTests: XCTestCase {
     func testForRestorationDelegateMethodCalledOnceAfterItIsSet() {
         // GIVEN
         sut.folderEnabled = true
-        let mockConversation = ZMConversation()
         fillDummyConversations(mockConversation: mockConversation)
         sut.setCollapsed(sectionIndex: 1, collapsed: true)
         XCTAssertFalse(mockBar.folderEnabled)

@@ -44,6 +44,22 @@ extension ZMConversation {
                             timestamp: timestamp)
     }
 
+    public func appendParticipantsRemovedSystemMessage(users: Set<ZMUser>, sender: ZMUser, at timestamp: Date) {
+        appendSystemMessage(type: .participantsRemoved,
+                            sender: sender,
+                            users: users,
+                            clients: nil,
+                            timestamp: timestamp)
+    }
+
+    public func appendFailedToAddUsersSystemMessage(users: Set<ZMUser>, sender: ZMUser, at timestamp: Date) {
+        appendSystemMessage(type: .failedToAddParticipants,
+                            sender: sender,
+                            users: users,
+                            clients: nil,
+                            timestamp: timestamp.nextNearestTimestamp)
+    }
+
     @objc(appendNewConversationSystemMessageAtTimestamp:users:)
     public func appendNewConversationSystemMessage(at timestamp: Date, users: Set<ZMUser>) {
         let systemMessage = appendSystemMessage(type: .newConversation,
@@ -95,6 +111,27 @@ extension ZMConversation {
                 conversation.appendNewPotentialGapSystemMessage(users: conversation.localParticipants, timestamp: timestamp)
             }
         }
+    }
+
+    public func appendParticipantsRemovedAnonymouslySystemMessage(users: Set<ZMUser>,
+                                                                  sender: ZMUser,
+                                                                  removedReason: ZMParticipantsRemovedReason,
+                                                                  at timestamp: Date) {
+        appendSystemMessage(type: .participantsRemoved,
+                            sender: sender,
+                            users: users,
+                            clients: nil,
+                            timestamp: timestamp,
+                            removedReason: removedReason)
+    }
+
+    public func appendFederationTerminationSystemMessage(domains: [String], sender: ZMUser, at timestamp: Date) {
+        appendSystemMessage(type: .domainsStoppedFederating,
+                            sender: sender,
+                            users: nil,
+                            clients: nil,
+                            timestamp: timestamp,
+                            domains: domains)
     }
 
 }

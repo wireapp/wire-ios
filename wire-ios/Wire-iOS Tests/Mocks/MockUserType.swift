@@ -32,6 +32,7 @@ class MockUserType: NSObject, UserType, Decodable {
         displayName = try container.decode(String.self, forKey: .displayName)
         initials = try? container.decode(String.self, forKey: .initials)
         handle = try? container.decode(String.self, forKey: .handle)
+        domain = try? container.decode(String.self, forKey: .domain)
         isConnected = (try? container.decode(Bool.self, forKey: .isConnected)) ?? false
         if let rawAccentColorValue = try? container.decode(Int16.self, forKey: .accentColorValue),
            let accentColorValue = ZMAccentColor(rawValue: rawAccentColorValue) {
@@ -64,6 +65,7 @@ class MockUserType: NSObject, UserType, Decodable {
     var canModifyAccessControlSettings = false
     var isGroupAdminInConversation = false
     var isGuestInConversation = false
+    var isPendingMetadataRefresh = false
 
     // MARK: - UserType Conformance
 

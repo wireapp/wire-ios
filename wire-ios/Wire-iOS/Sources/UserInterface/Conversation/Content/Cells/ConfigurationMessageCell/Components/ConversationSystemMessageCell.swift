@@ -324,10 +324,13 @@ class ConversationRenamedSystemMessageCell: ConversationIconBasedCell, Conversat
 
 final class ConversationSystemMessageCellDescription {
 
-    static func cells(for message: ZMConversationMessage) -> [AnyConversationMessageCellDescription] {
+    static func cells(for message: ZMConversationMessage,
+                      isCollapsed: Bool = true,
+                      buttonAction: Completion? = nil) -> [AnyConversationMessageCellDescription] {
         guard let systemMessageData = message.systemMessageData,
               let sender = message.senderUser,
-              let conversation = message.conversationLike else {
+              let conversation = message.conversationLike
+        else {
             preconditionFailure("Invalid system message")
         }
 
@@ -420,6 +423,18 @@ final class ConversationSystemMessageCellDescription {
             }
 
             return cells
+
+        case .failedToAddParticipants:
+            if let users = Array(systemMessageData.userTypes) as? [UserType], let buttonAction = buttonAction {
+                let cellDescription = ConversationFailedToAddParticipantsCellDescription(failedUsers: users,
+                                                                                         isCollapsed: isCollapsed,
+                                                                                         buttonAction: buttonAction)
+                return [AnyConversationMessageCellDescription(cellDescription)]
+            }
+
+        case .domainsStoppedFederating:
+            let domainsStoppedFederatingCell = DomainsStoppedFederatingCellDescription(systemMessageData: systemMessageData)
+            return [AnyConversationMessageCellDescription(domainsStoppedFederatingCell)]
 
         default:
             let unknownMessage = UnknownMessageCellDescription()
@@ -1075,4 +1090,105 @@ class ConversationEncryptionInfoDescription: ConversationMessageCellDescription 
         accessibilityLabel = "\(connectionView.encryptionInfo), \(connectionView.sensitiveInformationWarning)"
         actionController = nil
     }
+}
+
+final class ConversationFailedToAddParticipantsCellDescription: ConversationMessageCellDescription {
+
+    typealias SystemContent = L10n.Localizable.Content.System
+    typealias View = FailedUsersSystemMessageCell
+
+    let configuration: View.Configuration
+
+    var message: ZMConversationMessage?
+    weak var delegate: ConversationMessageCellDelegate?
+    weak var actionController: ConversationMessageActionController?
+
+    var showEphemeralTimer: Bool = false
+    var topMargin: Float = 26.0
+
+    let isFullWidth: Bool = true
+    let supportsActions: Bool = false
+    let containsHighlightableContent: Bool = false
+
+    let accessibilityIdentifier: String? = nil
+    let accessibilityLabel: String? = nil
+
+    init(failedUsers: [UserType], isCollapsed: Bool, buttonAction: @escaping Completion) {
+        configuration = View.Configuration(
+            title: ConversationFailedToAddParticipantsCellDescription.configureTitle(for: failedUsers),
+            content: ConversationFailedToAddParticipantsCellDescription.configureContent(for: failedUsers),
+            isCollapsed: isCollapsed,
+            icon: Asset.Images.attention.image,
+            buttonAction: buttonAction)
+    }
+
+    private static func configureTitle(for failedUsers: [UserType]) -> String? {
+        return (failedUsers.count > 1) ? SystemContent.FailedtoaddParticipants.count(failedUsers.count)
+                                       : nil
+    }
+
+    private static func configureContent(for failedUsers: [UserType]) -> String {
+        let userNames = failedUsers.compactMap { $0.name }.joined(separator: ", ")
+        return SystemContent.FailedtoaddParticipants.couldNotBeAdded(userNames, URL.wr_backendOfflineLearnMore.absoluteString)
+    }
+
+}
+
+final class DomainsStoppedFederatingCellDescription: ConversationMessageCellDescription {
+
+    typealias View = ConversationSystemMessageCell
+    typealias System = L10n.Localizable.Content.System
+    let configuration: View.Configuration
+
+    var showEphemeralTimer: Bool = false
+    var topMargin: Float = 0
+
+    let isFullWidth: Bool = true
+    let supportsActions: Bool = false
+    let containsHighlightableContent: Bool = false
+
+    let accessibilityIdentifier: String? = nil
+    let accessibilityLabel: String?
+
+    var message: WireDataModel.ZMConversationMessage?
+    var delegate: ConversationMessageCellDelegate?
+    var actionController: ConversationMessageActionController?
+
+    init(systemMessageData: ZMSystemMessageData) {
+        let icon = Asset.Images.attention.image.withTintColor(SemanticColors.Icon.backgroundDefault)
+        let content = DomainsStoppedFederatingCellDescription.makeAttributedString(for: systemMessageData)
+        configuration = View.Configuration(icon: icon, attributedText: content, showLine: false)
+
+        accessibilityLabel = content?.string
+    }
+
+    private static func makeAttributedString(for systemMessageData: ZMSystemMessageData) -> NSAttributedString? {
+        typealias BackendsStopFederating = L10n.Localizable.Content.System.BackendsStopFederating
+
+        guard let domains = systemMessageData.domains,
+              domains.count == 2 else {
+            return nil
+        }
+
+        var text: String
+        if domains.hasSelfDomain {
+            let withoutSelfDomain = domains.filter { $0 != SelfUser.current.domain }
+            text = BackendsStopFederating.selfBackend(withoutSelfDomain.first ?? "", URL.wr_FederationLearnMore.absoluteString)
+        } else {
+            text = BackendsStopFederating.otherBackends(domains.first ?? "", domains.last ?? "", URL.wr_FederationLearnMore.absoluteString)
+        }
+
+        let attributedString = NSAttributedString.markdown(from: text, style: .systemMessage)
+
+        return attributedString
+    }
+
+}
+
+private extension Array where Element == String {
+
+    var hasSelfDomain: Bool {
+        return self.contains(SelfUser.current.domain ?? "")
+    }
+
 }

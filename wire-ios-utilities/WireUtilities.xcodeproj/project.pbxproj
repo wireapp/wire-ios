@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		067BB07125068D6500946EC8 /* String+HexDecodedData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 067BB07025068D6500946EC8 /* String+HexDecodedData.swift */; };
+		06CDC6FA2A2F2B4B00EB518D /* TimeInterval+Units.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06CDC6F92A2F2B4B00EB518D /* TimeInterval+Units.swift */; };
 		097E36C31B7B62150039CC4C /* NSLocale+Internal.m in Sources */ = {isa = PBXBuildFile; fileRef = 097E36C21B7B62150039CC4C /* NSLocale+Internal.m */; };
 		097E36C51B7B631C0039CC4C /* NSLocale+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 097E36C41B7B631C0039CC4C /* NSLocale+Internal.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		09F027CB1B721D7300BADDB6 /* NSUserDefaults+SharedUserDefaults.m in Sources */ = {isa = PBXBuildFile; fileRef = 09F027C81B721D7300BADDB6 /* NSUserDefaults+SharedUserDefaults.m */; };
@@ -238,6 +239,7 @@
 /* Begin PBXFileReference section */
 		01461A3F2A60422B00C3C85E /* Developer-Flags.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = "Developer-Flags.xcconfig"; path = "../../../wire-ios/Configuration/Developer-Flags.xcconfig"; sourceTree = "<group>"; };
 		067BB07025068D6500946EC8 /* String+HexDecodedData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+HexDecodedData.swift"; sourceTree = "<group>"; };
+		06CDC6F92A2F2B4B00EB518D /* TimeInterval+Units.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TimeInterval+Units.swift"; sourceTree = "<group>"; };
 		097E36C21B7B62150039CC4C /* NSLocale+Internal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSLocale+Internal.m"; sourceTree = "<group>"; };
 		097E36C41B7B631C0039CC4C /* NSLocale+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSLocale+Internal.h"; sourceTree = "<group>"; };
 		09F027C81B721D7300BADDB6 /* NSUserDefaults+SharedUserDefaults.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSUserDefaults+SharedUserDefaults.m"; sourceTree = "<group>"; };
@@ -585,6 +587,7 @@
 				EE16270F250BA12900D35062 /* VolatileData.swift */,
 				A9C6EDE326B32E9D007F61C5 /* UTIHelper.swift */,
 				63DFEAD029A3845600FCA830 /* DeveloperFlag.swift */,
+				06CDC6F92A2F2B4B00EB518D /* TimeInterval+Units.swift */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -1071,6 +1074,7 @@
 				5E9EA4C122423E0300D401B2 /* Array+SafeIndex.swift in Sources */,
 				3E88BE551B1F478200232589 /* ZMTimer.m in Sources */,
 				54181A501F594E4100155ABC /* FileManager+Move.swift in Sources */,
+				06CDC6FA2A2F2B4B00EB518D /* TimeInterval+Units.swift in Sources */,
 				09F027CB1B721D7300BADDB6 /* NSUserDefaults+SharedUserDefaults.m in Sources */,
 				3E88BE511B1F478200232589 /* ZMOSVersions.m in Sources */,
 				3E88BF6F1B1F693F00232589 /* NSDate+Utility.m in Sources */,

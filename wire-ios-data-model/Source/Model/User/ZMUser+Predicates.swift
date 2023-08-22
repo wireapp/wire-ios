@@ -75,4 +75,32 @@ extension ZMUser {
     public static func predicateForUsersToUpdateRichProfile() -> NSPredicate {
         return NSPredicate(format: "(%K == YES)", #keyPath(ZMUser.needsRichProfileUpdate))
     }
+
+    public static func predicateForUsersArePendingToRefreshMetadata() -> NSPredicate {
+        return NSPredicate(format: "%K == YES", #keyPath(ZMUser.isPendingMetadataRefresh))
+    }
+
+    public static func predicateForConnectedUsers(hostedOnDomain domain: String) -> NSPredicate {
+        return NSPredicate.isHostedOnDomain(domain)
+                          .and(predicateForUsers(withConnectionStatuses: [ZMConnectionStatus.accepted.rawValue]))
+    }
+
+    public static func predicateForSentAndPendingConnections(hostedOnDomain domain: String) -> NSPredicate {
+        return NSPredicate.isHostedOnDomain(domain)
+                          .and(predicateForUsers(withConnectionStatuses: [ZMConnectionStatus.pending.rawValue,
+                                                                          ZMConnectionStatus.sent.rawValue]))
+    }
+
+}
+
+private extension NSPredicate {
+
+    static func isHostedOnDomain(_ domain: String) -> NSPredicate {
+        return NSPredicate(
+            format: "%K == %@",
+            #keyPath(ZMUser.domain),
+            domain
+        )
+    }
+
 }

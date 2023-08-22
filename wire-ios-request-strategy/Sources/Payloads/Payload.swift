@@ -267,6 +267,21 @@ enum Payload {
 
     struct ResponseFailure: Codable {
 
+        /// Endpoints involving federated calls to other domains can return some extra failure responses.
+        /// The error response contains the following extra fields:
+        struct FederationFailure: Codable {
+
+            enum FailureType: String, Codable {
+                case federation
+                case unknown
+            }
+
+            let domain: String
+            let path: String
+            let type: FailureType
+
+        }
+
         enum Label: String, Codable {
             case notFound = "not-found"
             case noEndpoint = "no-endpoint"
@@ -275,6 +290,8 @@ enum Payload {
             case missingLegalholdConsent = "missing-legalhold-consent"
             case notConnected = "not-connected"
             case connectionLimit = "connection-limit"
+            case federationDenied = "federation-denied"
+            case federationRemoteError = "federation-remote-error"
             case unknown
 
             init(from decoder: Decoder) throws {
@@ -292,6 +309,7 @@ enum Payload {
         let code: Int
         let label: Label
         let message: String
+        let data: FederationFailure?
 
     }
 
@@ -303,6 +321,7 @@ enum Payload {
             case redundant
             case deleted
             case failedToSend = "failed_to_send"
+            case failedToConfirm = "failed_to_confirm_clients"
         }
 
         /// Time of sending message.
@@ -321,6 +340,28 @@ enum Payload {
         /// When a message is partially sent contains the list of clients which
         /// didn't receive the message.
         let failedToSend: ClientListByQualifiedUserID
+
+        /// The lists the users for which the client verification could not be performed.
+        let failedToConfirm: ClientListByQualifiedUserID
+    }
+
+    struct MLSMessageSendingStatus: Codable {
+
+        enum CodingKeys: String, CodingKey {
+            case time
+            case events
+            case failedToSend = "failed_to_send"
+        }
+
+        /// Time of sending message.
+        let time: Date
+
+        /// A list of events caused by sending the message.
+        let events: [Data]
+
+        /// List of federated users who could not be reached and did not receive the message.
+        let failedToSend: [QualifiedID]?
+
     }
 
     struct PaginationStatus: Codable {
@@ -337,6 +378,14 @@ enum Payload {
             self.pagingState = pagingState?.isEmpty == true ? nil : pagingState
             self.size = size
         }
+    }
+
+}
+
+extension Payload.ResponseFailure {
+
+    func updateExpirationReason(for message: OTREntity, with reason: MessageSendFailure) {
+        message.expirationReasonCode = NSNumber(value: reason.rawValue)
     }
 
 }

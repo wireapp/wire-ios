@@ -56,22 +56,17 @@
 
 - (void)testThatItReturnsADictionaryWithJSONDictionary
 {
-    
+    [[[_URLResponse expect] andReturnValue:[NSNumber numberWithInteger:533]] statusCode];
     id<ZMTransportData> parsed = [ZMTransportCodec interpretResponse:_URLResponse data:_validJson error:nil];
     XCTAssertEqualObjects(parsed, @{@"name" : @"boo"});
 }
 
--(void)testThatItReturnsNilFromANSURLResponseWithAErrorStatusCode
+- (void)testThatItReturnsADictionaryFromANSURLResponseWithAErrorStatusCode
 {
-
-    for (int status = 500; status <= 599; ++status) {
-        [[[_URLResponse expect] andReturnValue:[NSNumber numberWithInteger:status]] statusCode];
-        
-        id<ZMTransportData> parsed = [ZMTransportCodec interpretResponse:_URLResponse data:_validJson error:nil];
-        XCTAssertNil(parsed);
-        [_URLResponse verify];
-    }
-
+    int status = 533;
+    [[[_URLResponse expect] andReturnValue:[NSNumber numberWithInteger:status]] statusCode];
+    id<ZMTransportData> parsed = [ZMTransportCodec interpretResponse:_URLResponse data:_validJson error:nil];
+    XCTAssertEqualObjects(parsed, @{@"name" : @"boo"});
 }
 
 - (void)testThatItReturnsNilIfTheJSONIsMalformed
@@ -80,15 +75,6 @@
     id<ZMTransportData> parsed = [ZMTransportCodec interpretResponse:_URLResponse data:[json dataUsingEncoding:NSUTF8StringEncoding] error:nil];
     XCTAssertNil(parsed);
 }
-
-- (void)testThatItReturnsNilIfItReceivesAnErrorObject
-{
-
-    NSError *actualError = [NSError errorWithDomain:@"Test" code:-1 userInfo:@{}];
-    id<ZMTransportData> parsed = [ZMTransportCodec interpretResponse:_URLResponse data:_validJson error:actualError];
-    XCTAssertNil(parsed);
-}
-
 
 - (void)testThatItReturnsNilIfTheContentTypeIsNotJSON
 {

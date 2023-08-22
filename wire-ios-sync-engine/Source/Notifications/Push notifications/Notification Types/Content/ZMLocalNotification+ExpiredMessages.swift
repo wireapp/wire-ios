@@ -67,7 +67,7 @@ extension ZMLocalNotification {
             let userInfo = NotificationUserInfo()
             userInfo.selfUserID = selfUserID
             userInfo.conversationID = conversationID
-            userInfo.conversationName = conversation.meaningfulDisplayName
+            userInfo.conversationName = conversation.displayName
             userInfo.teamName = selfUser.team?.name
 
             return userInfo

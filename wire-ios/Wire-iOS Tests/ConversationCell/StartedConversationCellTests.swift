@@ -178,7 +178,7 @@ final class StartedConversationCellTests: XCTestCase {
                       fillUsers: Users = .one,
                       allowGuests: Bool = false,
                       allTeamUsers: Bool = false,
-                      numberOfGuests: Int16 = 0) -> ZMConversationMessage {
+                      numberOfGuests: Int16 = 0) -> ConversationMessage {
         let message = MockMessageFactory.systemMessage(with: type)!
         message.senderUser = fromSelf ? mockSelfUser : mockOtherUser
 

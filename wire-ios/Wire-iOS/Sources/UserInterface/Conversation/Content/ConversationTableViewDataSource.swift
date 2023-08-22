@@ -84,7 +84,7 @@ final class ConversationTableViewDataSource: NSObject {
         }
     }
 
-    var messages: [ZMConversationMessage] {
+    var messages: [ConversationMessage] {
         // NOTE: We limit the number of messages to the `lastFetchedObjectCount` since the
         // NSFetchResultsController will add objects to `fetchObjects` if they are modified after
         // the initial fetch, which results in unwanted table view updates. This is normally what
@@ -171,7 +171,7 @@ final class ConversationTableViewDataSource: NSObject {
         return actionController
     }
 
-    func sectionController(for message: ZMConversationMessage, at index: Int) -> ConversationMessageSectionController {
+    func sectionController(for message: ConversationMessage, at index: Int) -> ConversationMessageSectionController {
         if let cachedEntry = sectionControllers[message.objectIdentifier] {
             return cachedEntry
         }

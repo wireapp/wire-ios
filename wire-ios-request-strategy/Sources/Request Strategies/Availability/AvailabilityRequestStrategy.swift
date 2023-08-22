@@ -40,6 +40,8 @@ public class AvailabilityRequestStrategy: AbstractRequestStrategy {
         return modifiedSync.nextRequest(for: apiVersion)
     }
 
+    public var expirationReasonCode: NSNumber?
+
 }
 
 extension AvailabilityRequestStrategy: ZMUpstreamTranscoder {
@@ -116,6 +118,10 @@ extension AvailabilityRequestStrategy: OTREntity {
 
     public func missesRecipients(_ recipients: Set<UserClient>!) {
         // BE notified us about a new client. A session will be established and then we'll try again
+    }
+
+    public func addFailedToSendRecipients(_ recipients: [ZMUser]) {
+        // no-op
     }
 
     public func detectedRedundantUsers(_ users: [ZMUser]) {
