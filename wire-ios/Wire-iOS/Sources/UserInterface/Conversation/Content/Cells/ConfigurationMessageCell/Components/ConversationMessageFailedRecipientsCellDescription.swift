@@ -51,12 +51,12 @@ final class ConversationMessageFailedRecipientsCellDescription: ConversationMess
     }
 
     private static func configureTitle(for failedUsers: [UserType]) -> NSAttributedString? {
-        if failedUsers.count > 1 {
-            let title = SystemContent.FailedtosendParticipants.didNotGetMessage(failedUsers.count)
-            return .markdown(from: title, style: .errorLabelStyle)
-        } else {
+        guard failedUsers.count > 1 else {
             return nil
         }
+
+        let title = SystemContent.FailedtosendParticipants.didNotGetMessage(failedUsers.count)
+        return .markdown(from: title, style: .errorLabelStyle)
     }
 
     private static func configureContent(for failedUsers: [UserType]) -> NSAttributedString {
@@ -69,9 +69,7 @@ final class ConversationMessageFailedRecipientsCellDescription: ConversationMess
             let userNamesJoined = usersWithName.joined(separator: ", ")
             let text = keyString.localized(args: usersWithName.count, userNamesJoined)
 
-            let attributedText: NSAttributedString = .markdown(from: text, style: .errorLabelStyle)
-                                                     .adding(font: .mediumSemiboldFont, to: userNamesJoined)
-
+            let attributedText = NSAttributedString.errorSystemMessage(withText: text, andHighlighted: userNamesJoined)
             content.append(attributedText)
         }
 
@@ -84,15 +82,10 @@ final class ConversationMessageFailedRecipientsCellDescription: ConversationMess
             let domainsJoined = groupedByDomainUsers.joined(separator: ", ")
             let text = keyString.localized(args: groupedByDomainUsers.count, domainsJoined)
 
-            let attributedText: NSAttributedString = .markdown(from: text, style: .errorLabelStyle)
-                                 .adding(font: .mediumSemiboldFont, to: domainsJoined)
-
+            let attributedText = NSAttributedString.errorSystemMessage(withText: text, andHighlighted: domainsJoined)
             content.append(attributedText)
         }
-
-        let learnMore = NSAttributedString(string: SystemContent.FailedParticipants.learnMore,
-                                           attributes: [.font: UIFont.mediumSemiboldFont,
-                                                        .link: URL.wr_backendOfflineLearnMore])
+        let learnMore = NSAttributedString.unreachableBackendLearnMoreLink
 
         return content.joined(separator: "\n".attributedString) + " " + learnMore
     }
@@ -105,6 +98,23 @@ final class ConversationMessageFailedRecipientsCellDescription: ConversationMess
             usersPerDomain.append(SystemContent.FailedtosendParticipants.from(usersCountString, domain ?? ""))
         }
         return usersPerDomain
+    }
+
+}
+
+extension NSAttributedString {
+
+    static var unreachableBackendLearnMoreLink: NSAttributedString {
+        typealias SystemContent = L10n.Localizable.Content.System
+
+        return NSAttributedString(string: SystemContent.FailedParticipants.learnMore,
+                                  attributes: [.font: UIFont.mediumSemiboldFont,
+                                               .link: URL.wr_unreachableBackendLearnMore])
+    }
+
+    static func errorSystemMessage(withText text: String, andHighlighted highlighted: String) -> NSAttributedString {
+        return .markdown(from: text, style: .errorLabelStyle)
+               .adding(font: .mediumSemiboldFont, to: highlighted)
     }
 
 }

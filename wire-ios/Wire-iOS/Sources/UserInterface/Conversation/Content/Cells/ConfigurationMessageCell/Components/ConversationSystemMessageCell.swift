@@ -1123,12 +1123,12 @@ final class ConversationFailedToAddParticipantsCellDescription: ConversationMess
     }
 
     private static func configureTitle(for failedUsers: [UserType]) -> NSAttributedString? {
-        if failedUsers.count > 1 {
-            let title = SystemContent.FailedtoaddParticipants.count(failedUsers.count)
-            return .markdown(from: title, style: .errorLabelStyle)
-        } else {
+        guard failedUsers.count > 1 else {
             return nil
         }
+
+        let title = SystemContent.FailedtoaddParticipants.count(failedUsers.count)
+        return .markdown(from: title, style: .errorLabelStyle)
     }
 
     private static func configureContent(for failedUsers: [UserType]) -> NSAttributedString {
@@ -1138,11 +1138,8 @@ final class ConversationFailedToAddParticipantsCellDescription: ConversationMess
         let userNamesJoined = userNames.joined(separator: ", ")
         let text = keyString.localized(args: userNames.count, userNamesJoined)
 
-        let attributedText: NSAttributedString = .markdown(from: text, style: .errorLabelStyle)
-                                                 .adding(font: .mediumSemiboldFont, to: userNamesJoined)
-        let learnMore = NSAttributedString(string: SystemContent.FailedParticipants.learnMore,
-                                           attributes: [.font: UIFont.mediumSemiboldFont,
-                                                        .link: URL.wr_backendOfflineLearnMore])
+        let attributedText = NSAttributedString.errorSystemMessage(withText: text, andHighlighted: userNamesJoined)
+        let learnMore = NSAttributedString.unreachableBackendLearnMoreLink
 
         return [attributedText, learnMore].joined(separator: " ".attributedString)
     }
