@@ -207,7 +207,7 @@ extension Sequence where Element == (Emoji, [UserType]) {
             if lhs.1.count == rhs.1.count, let lhsName = lhs.0.name, let rhsName = rhs.0.name {
                 return lhsName.lexicographicallyPrecedes(rhsName)
             } else {
-                return lhs.1.count < rhs.1.count
+                return lhs.1.count > rhs.1.count
             }
         }
     }
