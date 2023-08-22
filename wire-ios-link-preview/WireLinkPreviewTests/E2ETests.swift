@@ -19,7 +19,7 @@
 import XCTest
 @testable import WireLinkPreview
 
-final class IntegrationTests: XCTestCase {
+final class E2ETests: XCTestCase {
 
     func testThatItParsesSampleDataTwitter() {
         let expectation = OpenGraphDataExpectation(numberOfImages: 1, type: "article", siteNameString: "Twitter", userGeneratedImage: false, hasDescription: true, hasFoursquareMetaData: false)
