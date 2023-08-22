@@ -108,6 +108,7 @@ final class MessageToolboxView: UIView {
             return button
         }()
 
+
     private let statusLabel: UILabel = {
         let label = UILabel()
         label.lineBreakMode = .byTruncatingMiddle
@@ -273,22 +274,15 @@ final class MessageToolboxView: UIView {
             self.detailsLabel.numberOfLines = 0
             self.hideAndCleanStatusLabel()
             self.timestampSeparatorLabel.isHidden = true
-            self.deleteButton.isHidden = true
-            self.resendButton.isHidden = true
             self.statusSeparatorLabel.isHidden = true
             self.countdownLabel.isHidden = true
             self.messageFailureView.isHidden = true
 
         case .sendFailure(let detailsString):
-            self.detailsLabel.attributedText = detailsString
-            self.detailsLabel.isHidden = false
-            self.detailsLabel.numberOfLines = 1
             self.hideAndCleanStatusLabel()
-            self.timestampSeparatorLabel.isHidden = false
-            self.deleteButton.isHidden = false
-            self.resendButton.isHidden = false
             self.statusSeparatorLabel.isHidden = true
             self.countdownLabel.isHidden = true
+            self.timestampSeparatorLabel.isHidden = false
             self.messageFailureView.isHidden = false
             self.messageFailureView.setTitle(detailsString.string)
 
@@ -301,14 +295,12 @@ final class MessageToolboxView: UIView {
             if let accessibilityLabel = status?.accessibilityLabel {
                 self.statusLabel.accessibilityLabel = accessibilityLabel
             }
-            self.messageFailureView.isHidden = true
             self.statusLabel.isHidden = status == nil
             self.timestampSeparatorLabel.isHidden = timestamp == nil || status == nil
-            self.deleteButton.isHidden = true
-            self.resendButton.isHidden = true
             self.statusSeparatorLabel.isHidden = (timestamp == nil && status == nil) || countdown == nil
             self.countdownLabel.attributedText = countdown
             self.countdownLabel.isHidden = countdown == nil
+            self.messageFailureView.isHidden = true
 
         }
 
