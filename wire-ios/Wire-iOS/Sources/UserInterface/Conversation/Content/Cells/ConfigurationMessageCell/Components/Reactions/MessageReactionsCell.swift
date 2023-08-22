@@ -22,12 +22,16 @@ import WireDataModel
 
 // MARK: - Reaction
 
-public struct MessageReactionMetadata {
+public struct MessageReactionMetadata: Equatable {
 
-    let type: MessageReaction
+    let emoji: Emoji
     let count: UInt
     let isSelfUserReacting: Bool
     var performReaction: (() -> Void)?
+
+    public static func == (lhs: MessageReactionMetadata, rhs: MessageReactionMetadata) -> Bool {
+        return lhs.emoji == rhs.emoji && lhs.count == rhs.count && lhs.isSelfUserReacting == rhs.isSelfUserReacting
+    }
 
 }
 
@@ -37,7 +41,7 @@ final class MessageReactionsCell: UIView, ConversationMessageCell {
 
     // MARK: - Properties
 
-    struct Configuration {
+    struct Configuration: Equatable {
 
         let reactions: [MessageReactionMetadata]
 
@@ -90,27 +94,27 @@ final class MessageReactionsCell: UIView, ConversationMessageCell {
         with object: Configuration,
         animated: Bool
     ) {
-        reactionCollectionView.reactions = object.reactions.map {
-            var reaction = $0
+        reactionCollectionView.reactions = object.reactions.map { reaction in
+            return MessageReactionMetadata(
+                emoji: reaction.emoji,
+                count: reaction.count,
+                isSelfUserReacting: reaction.isSelfUserReacting
+            ) {
+                [weak self] in
+                    guard
+                        let `self` = self,
+                        let message = self.message
+                    else {
+                        return
+                    }
 
-            reaction.performReaction = { [weak self] in
-                guard
-                    let `self` = self,
-                    let message = self.message
-                else {
-                    return
-                }
-
-                self.delegate?.perform(
-                    action: .react(reaction.type),
-                    for: message,
-                    view: self
-                )
+                    self.delegate?.perform(
+                        action: .react(reaction.emoji),
+                        for: message,
+                        view: self
+                    )
             }
-
-            return reaction
         }
-
     }
 
 }

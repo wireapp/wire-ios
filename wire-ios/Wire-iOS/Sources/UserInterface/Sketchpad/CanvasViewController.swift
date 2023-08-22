@@ -370,11 +370,11 @@ extension CanvasViewController: EmojiPickerViewControllerDelegate {
 
     func emojiPickerDeleteTapped() {}
 
-    func emojiPickerDidSelectEmoji(_ emoji: String) {
+    func emojiPickerDidSelectEmoji(_ emoji: Emoji) {
 
         let attributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 82)]
 
-        if let image = emoji.image(renderedWithAttributes: attributes)?.imageWithAlphaTrimmed {
+        if let image = emoji.value.image(renderedWithAttributes: attributes)?.imageWithAlphaTrimmed {
             canvas.insert(image: image, at: CGPoint(x: canvas.center.x - image.size.width / 2, y: canvas.center.y - image.size.height / 2))
         }
 

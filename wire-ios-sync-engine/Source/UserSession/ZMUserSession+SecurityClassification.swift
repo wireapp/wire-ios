@@ -46,7 +46,7 @@ extension ZMUserSession {
 
         guard let otherDomain = domain(for: user),
               user.isTemporaryUser == false else { return .notClassified }
-        
+
         return classifiedDomainsFeature.config.domains.contains(otherDomain) ? .classified : .notClassified
     }
 

@@ -27,16 +27,12 @@ final class CompleteReactionPickerViewController: UIViewController {
     private let sectionViewController: ReactionSectionViewController
     private let topBar = ModalTopBar()
     private let searchBar = UISearchBar()
-    private let selectedReaction: String?
+    private let selectedReactions: Set<Emoji>
 
     private var deleting = false
 
-    deinit {
-        NotificationCenter.default.removeObserver(self)
-    }
-
-    init(selectedReaction: String?) {
-        self.selectedReaction = selectedReaction
+    init(selectedReactions: Set<Emoji>) {
+        self.selectedReactions = selectedReactions
         let hasNoRecentlyUsedReactions =  RecentlyUsedEmojiPeristenceCoordinator.loadOrCreate().emoji.isEmpty
         let sectionTypes: [EmojiSectionType] = hasNoRecentlyUsedReactions ? EmojiSectionType.basicTypes : EmojiSectionType.all
         sectionViewController = ReactionSectionViewController(types: sectionTypes)
@@ -59,6 +55,10 @@ final class CompleteReactionPickerViewController: UIViewController {
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    deinit {
+        NotificationCenter.default.removeObserver(self)
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -89,11 +89,8 @@ final class CompleteReactionPickerViewController: UIViewController {
         view.addSubview(searchBar)
         view.backgroundColor = SemanticColors.View.backgroundDefault
         view.addSubview(collectionView)
-        collectionView.keyboardDismissMode = .onDrag
-    }
 
-    @objc private func hideKeyboard() {
-        endEditing()
+        collectionView.keyboardDismissMode = .onDrag
     }
 
     private func createConstraints() {
@@ -124,9 +121,9 @@ final class CompleteReactionPickerViewController: UIViewController {
 
     func cellForEmoji(_ emoji: Emoji, indexPath: IndexPath) -> UICollectionViewCell {
         let cell = self.collectionView.dequeueReusableCell(withReuseIdentifier: EmojiCollectionViewCell.zm_reuseIdentifier, for: indexPath) as! EmojiCollectionViewCell
-        cell.titleLabel.text = emoji
+        cell.titleLabel.text = emoji.value
         cell.titleLabel.font = UIFont.preferredFont(forTextStyle: .largeTitle)
-        cell.isCurrent = (emoji == selectedReaction)
+        cell.isCurrent = selectedReactions.contains(emoji)
         return cell
     }
 

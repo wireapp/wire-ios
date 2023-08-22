@@ -431,7 +431,6 @@ final class ConversationImagesViewController: TintColorCorrectedViewController {
     }
 }
 
-
 extension ConversationImagesViewController: ScreenshotProvider {
     func backgroundScreenshot(for fullscreenController: FullscreenImageViewController) -> UIView? {
         return self.snapshotBackgroundView
