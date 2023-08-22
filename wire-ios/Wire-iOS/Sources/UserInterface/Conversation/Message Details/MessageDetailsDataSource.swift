@@ -164,16 +164,10 @@ final class MessageDetailsDataSource: NSObject, ZMMessageObserver, ZMUserObserve
     }
 
     private func setupReactions() {
-        reactions = message.usersReaction.map { reaction, users in
-            return (Emoji(value: reaction), users)
-        }.filter { _,count in
-            return !count.isEmpty
-        }
-        .sortedByCountThenName()
-        .map({ (emoji, users) in
+        reactions = message.sortedReactions().map { (emoji, users) in
             MessageDetailsSectionDescription(headerText: "\(emoji.value) \(emoji.name?.capitalizingFirstCharacterOnly ?? "") (\(users.count))",
                                              items: MessageDetailsCellDescription.makeReactionCells(users))
-        })
+        }
     }
 
     func setupReadReceipts() {
