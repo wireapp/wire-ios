@@ -82,31 +82,6 @@ final class MessageToolboxView: UIView {
     private let timestampSeparatorLabel = UILabel.createSeparatorLabel()
     private let statusSeparatorLabel = UILabel.createSeparatorLabel()
     private let messageFailureView = MessageSendFailureView()
-
-    private let resendButton: UIButton = {
-            let button = UIButton()
-            let attributedTitle = NSAttributedString(string: "content.system.failedtosend_message_timestamp_resend".localized,
-                                                     attributes: [.foregroundColor: MessageActionsColor.textErrorDefault,
-                                                                  .underlineStyle: NSUnderlineStyle.single.rawValue as NSNumber,
-                                                                  .font: UIFont.smallSemiboldFont])
-            button.contentHorizontalAlignment = .left
-            button.setAttributedTitle(attributedTitle, for: .normal)
-            button.setContentHuggingPriority(.required, for: .horizontal)
-            button.setContentCompressionResistancePriority(.required, for: .horizontal)
-            return button
-        }()
-        private let deleteButton: UIButton = {
-            let button = UIButton()
-            let attributedTitle = NSAttributedString(string: "content.system.failedtosend_message_timestamp_delete".localized,
-                                                     attributes: [.foregroundColor: MessageActionsColor.textErrorDefault,
-                                                                  .underlineStyle: NSUnderlineStyle.single.rawValue as NSNumber,
-                                                                  .font: UIFont.smallSemiboldFont])
-            button.contentHorizontalAlignment = .left
-            button.setAttributedTitle(attributedTitle, for: .normal)
-            button.setContentHuggingPriority(.defaultLow, for: .horizontal)
-            button.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
-            return button
-        }()
     
     private let statusLabel: UILabel = {
         let label = UILabel()
@@ -273,22 +248,15 @@ final class MessageToolboxView: UIView {
             self.detailsLabel.numberOfLines = 0
             self.hideAndCleanStatusLabel()
             self.timestampSeparatorLabel.isHidden = true
-            self.deleteButton.isHidden = true
-            self.resendButton.isHidden = true
             self.statusSeparatorLabel.isHidden = true
             self.countdownLabel.isHidden = true
             self.messageFailureView.isHidden = true
 
         case .sendFailure(let detailsString):
-            self.detailsLabel.attributedText = detailsString
-            self.detailsLabel.isHidden = false
-            self.detailsLabel.numberOfLines = 1
             self.hideAndCleanStatusLabel()
-            self.timestampSeparatorLabel.isHidden = false
-            self.deleteButton.isHidden = false
-            self.resendButton.isHidden = false
             self.statusSeparatorLabel.isHidden = true
             self.countdownLabel.isHidden = true
+            self.timestampSeparatorLabel.isHidden = false
             self.messageFailureView.isHidden = false
             self.messageFailureView.setTitle(detailsString.string)
 
@@ -301,14 +269,12 @@ final class MessageToolboxView: UIView {
             if let accessibilityLabel = status?.accessibilityLabel {
                 self.statusLabel.accessibilityLabel = accessibilityLabel
             }
-            self.messageFailureView.isHidden = true
             self.statusLabel.isHidden = status == nil
             self.timestampSeparatorLabel.isHidden = timestamp == nil || status == nil
-            self.deleteButton.isHidden = true
-            self.resendButton.isHidden = true
             self.statusSeparatorLabel.isHidden = (timestamp == nil && status == nil) || countdown == nil
             self.countdownLabel.attributedText = countdown
             self.countdownLabel.isHidden = countdown == nil
+            self.messageFailureView.isHidden = true
 
         }
 
