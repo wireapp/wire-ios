@@ -228,4 +228,28 @@ extension ZMClientMessageTests_Reaction {
         XCTAssertEqual(message.reactions.count, 4)
         XCTAssertEqual(message.usersReaction.count, 4)
     }
+
+    func testThatAMessageWithAReactionWhenReceivingUpdateEventWithANewReactionItOnlyContainsTheNewReaction() {
+        // GIVEN
+        let message = insertMessage()
+        ZMMessage.addReaction("❤️", to: message)
+        uiMOC.saveOrRollback()
+
+        let genericMessage = GenericMessage(content: WireProtos.Reaction.createReaction(emojis: ["🥰"], messageID: message.nonce!))
+
+        let event = createUpdateEvent(UUID(), conversationID: conversation.remoteIdentifier!, genericMessage: genericMessage, senderID: message.sender!.remoteIdentifier!)
+
+        // WHEN
+        performPretendingUiMocIsSyncMoc {
+            ZMClientMessage.createOrUpdate(from: event, in: self.uiMOC, prefetchResult: nil)
+        }
+        XCTAssertTrue(uiMOC.saveOrRollback())
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // THEN
+        XCTAssert(message.usersReaction.contains(where: { (key: String, value: [UserType]) in
+            key == "🥰"
+        }))
+    }
+
 }
