@@ -83,32 +83,6 @@ final class MessageToolboxView: UIView {
     private let statusSeparatorLabel = UILabel.createSeparatorLabel()
     private let messageFailureView = MessageSendFailureView()
 
-    private let resendButton: UIButton = {
-            let button = UIButton()
-            let attributedTitle = NSAttributedString(string: "content.system.failedtosend_message_timestamp_resend".localized,
-                                                     attributes: [.foregroundColor: MessageActionsColor.textErrorDefault,
-                                                                  .underlineStyle: NSUnderlineStyle.single.rawValue as NSNumber,
-                                                                  .font: UIFont.smallSemiboldFont])
-            button.contentHorizontalAlignment = .left
-            button.setAttributedTitle(attributedTitle, for: .normal)
-            button.setContentHuggingPriority(.required, for: .horizontal)
-            button.setContentCompressionResistancePriority(.required, for: .horizontal)
-            return button
-        }()
-        private let deleteButton: UIButton = {
-            let button = UIButton()
-            let attributedTitle = NSAttributedString(string: "content.system.failedtosend_message_timestamp_delete".localized,
-                                                     attributes: [.foregroundColor: MessageActionsColor.textErrorDefault,
-                                                                  .underlineStyle: NSUnderlineStyle.single.rawValue as NSNumber,
-                                                                  .font: UIFont.smallSemiboldFont])
-            button.contentHorizontalAlignment = .left
-            button.setAttributedTitle(attributedTitle, for: .normal)
-            button.setContentHuggingPriority(.defaultLow, for: .horizontal)
-            button.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
-            return button
-        }()
-
-
     private let statusLabel: UILabel = {
         let label = UILabel()
         label.lineBreakMode = .byTruncatingMiddle
