@@ -21,7 +21,7 @@ import UIKit
 import WireDataModel
 
 protocol ShareDestination: Hashable {
-    var displayName: String { get }
+    var displayNameWithFallback: String { get }
     var securityLevel: ZMConversationSecurityLevel { get }
     var showsGuestIcon: Bool { get }
     var isUnderLegalHold: Bool { get }
@@ -121,7 +121,7 @@ final class ShareViewController<D: ShareDestination & NSObjectProtocol, S: Share
         didSet {
             if let filterString = filterString, !filterString.isEmpty {
                 self.filteredDestinations = self.destinations.filter {
-                    let name = $0.displayName
+                    let name = $0.displayNameWithFallback
                     return name.range(of: filterString, options: .caseInsensitive) != nil
                 }
             } else {
@@ -184,7 +184,7 @@ final class ShareViewController<D: ShareDestination & NSObjectProtocol, S: Share
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let destination = self.filteredDestinations[indexPath.row]
 
-        tokenField.addToken(forTitle: destination.displayName, representedObject: destination)
+        tokenField.addToken(forTitle: destination.displayNameWithFallback, representedObject: destination)
 
         self.selectedDestinations.insert(destination)
 
