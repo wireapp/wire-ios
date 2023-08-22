@@ -247,7 +247,7 @@ extension ZMClientMessageTests_Reaction {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
-        XCTAssert(message.usersReaction.contains(where: { (key: String, value: [UserType]) in
+        XCTAssert(message.usersReaction.contains(where: { (key: String, _) in
             key == "🥰"
         }))
     }
