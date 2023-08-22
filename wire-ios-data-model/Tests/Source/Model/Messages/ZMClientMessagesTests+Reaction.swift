@@ -67,8 +67,7 @@ extension ZMClientMessageTests_Reaction {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
-        XCTAssertEqual(message.reactions.count, 4)
-        XCTAssertEqual(message.usersReaction.count, 4)
+        XCTAssertEqual(message.otherUsersReactions(), ["🥰", "😃", "❤️", "😍"])
     }
 
     func testThatItAppendsAReactionWhenReceivingUpdateEventWithValidReaction() {
@@ -83,8 +82,7 @@ extension ZMClientMessageTests_Reaction {
         XCTAssertTrue(uiMOC.saveOrRollback())
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        XCTAssertEqual(message.reactions.count, 1)
-        XCTAssertEqual(message.usersReaction.count, 1)
+        XCTAssertEqual(message.otherUsersReactions(), ["❤️"])
     }
 
     func testThatItUpdatesTheCategoryWhenAddingAReaction() {
@@ -137,8 +135,7 @@ extension ZMClientMessageTests_Reaction {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
-        XCTAssertEqual(message.reactions.count, 3)
-        XCTAssertEqual(message.usersReaction.count, 3)
+        XCTAssertEqual(message.otherUsersReactions(), ["😃", "❤️", "😍"])
     }
 
     func testThatItRemovesAReactionWhenReceivingUpdateEventWithValidReaction() {
@@ -202,7 +199,6 @@ extension ZMClientMessageTests_Reaction {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
-        XCTAssertEqual(message.reactions.count, 0)
         XCTAssertEqual(message.usersReaction.count, 0)
     }
 
@@ -225,8 +221,7 @@ extension ZMClientMessageTests_Reaction {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
-        XCTAssertEqual(message.reactions.count, 4)
-        XCTAssertEqual(message.usersReaction.count, 4)
+        XCTAssertEqual(message.otherUsersReactions(), ["🥰", "😃", "❤️", "😍"])
     }
 
     func testThatAMessageWithAReactionWhenReceivingUpdateEventWithANewReactionItOnlyContainsTheNewReaction() {
@@ -247,9 +242,7 @@ extension ZMClientMessageTests_Reaction {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
-        XCTAssert(message.usersReaction.contains(where: { (key: String, _) in
-            key == "🥰"
-        }))
+        XCTAssertEqual(message.otherUsersReactions(), ["🥰"])
     }
 
 }

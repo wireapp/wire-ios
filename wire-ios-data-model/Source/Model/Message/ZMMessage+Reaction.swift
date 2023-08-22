@@ -45,6 +45,15 @@ extension ZMMessage {
 
         return Set(result)
     }
-    
+
+    public func otherUsersReactions() -> Set<String> {
+        let result = usersReaction
+            .filter { _, users in users.contains { user in
+                !user.isSelfUser
+            }}
+            .map { $0.key }
+
+        return Set(result)
+    }
 
 }
