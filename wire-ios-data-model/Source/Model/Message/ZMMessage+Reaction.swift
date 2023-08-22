@@ -34,7 +34,7 @@ extension ZMMessage {
             return
         }
 
-        localMessage.setReactions(reaction.toSet(), forUser: user)
+        localMessage.setReactions(reaction.toReactionSet(), forUser: user)
         localMessage.updateCategoryCache()
     }
 
