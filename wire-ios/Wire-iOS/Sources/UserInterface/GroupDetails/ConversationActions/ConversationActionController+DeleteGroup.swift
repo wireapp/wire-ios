@@ -42,7 +42,7 @@ extension ConversationActionController {
                     break
                 case .failure:
                     let alert = UIAlertController.alertWithOKButton(title: "error.conversation.title".localized,
-                                                                    message: "conversation.delete_request_error_dialog.title".localized(args: conversation.displayName))
+                                                                    message: "conversation.delete_request_error_dialog.title".localized(args: conversation.displayNameWithFallback))
                     UIApplication.shared.topmostViewController(onlyFullScreen: false)?.present(alert, animated: true)
                 }
             }

@@ -60,6 +60,7 @@ final class ContactsCellSnapshotTests: ZMSnapshotTestCase {
     func testForNoSubtitle() {
         let user = SwiftMockLoader.mockUsers()[0]
         user.handle = nil
+        user.domain = nil
         sut.user = user
         sut.action = .open
 

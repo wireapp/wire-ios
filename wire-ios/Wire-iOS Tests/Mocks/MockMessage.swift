@@ -113,10 +113,12 @@ final class MockSystemMessageData: NSObject, ZMSystemMessageData {
     var childMessages = Set<AnyHashable>()
     var parentMessage: ZMSystemMessageData?
     var participantsRemovedReason: ZMParticipantsRemovedReason
+    var domains: [String]?
 
-    init(systemMessageType: ZMSystemMessageType, reason: ZMParticipantsRemovedReason) {
+    init(systemMessageType: ZMSystemMessageType, reason: ZMParticipantsRemovedReason, domains: [String]? = nil) {
         self.systemMessageType = systemMessageType
         self.participantsRemovedReason = reason
+        self.domains = domains
     }
 }
 
@@ -303,7 +305,8 @@ final class MockLocationMessageData: NSObject, LocationMessageData {
     var zoomLevel: Int32 = 0
 }
 
-class MockMessage: NSObject, ZMConversationMessage, ConversationCompositeMessage {
+class MockMessage: NSObject, ZMConversationMessage, ConversationCompositeMessage, SwiftConversationMessage {
+
     // MARK: - ConversationCompositeMessage
     var compositeMessageData: CompositeMessageData?
 
@@ -338,6 +341,8 @@ class MockMessage: NSObject, ZMConversationMessage, ConversationCompositeMessage
     var conversationLike: ConversationLike? = .none
 
     var deliveryState: ZMDeliveryState = .delivered
+    var failedToSendReason: MessageSendFailure? = .unknown
+    var failedToSendUsers: [UserType] = []
 
     var imageMessageData: ZMImageMessageData? = .none
     var knockMessageData: ZMKnockMessageData? = .none

@@ -103,7 +103,7 @@ public final class ConversationService: ConversationServiceInterface {
             return
         }
 
-        internalCreateGroupConversation(
+        internalCreateGroupWithRetryIfNeeded(
             teamID: teamID,
             name: name,
             users: users,
@@ -123,7 +123,8 @@ public final class ConversationService: ConversationServiceInterface {
         users: Set<ZMUser>,
         completion: @escaping (Swift.Result<ZMConversation, ConversationCreationFailure>) -> Void
     ) {
-        internalCreateGroupConversation(
+
+        internalCreateGroupWithRetryIfNeeded(
             teamID: nil,
             name: name,
             users: users,
@@ -134,6 +135,56 @@ public final class ConversationService: ConversationServiceInterface {
             completion: completion
         )
     }
+
+    private func internalCreateGroupWithRetryIfNeeded(
+        teamID: UUID?,
+        name: String?,
+        users: Set<ZMUser>,
+        accessMode: ConversationAccessMode,
+        accessRoles: Set<ConversationAccessRoleV2>,
+        enableReceipts: Bool,
+        messageProtocol: WireDataModel.MessageProtocol,
+        completion: @escaping (Swift.Result<ZMConversation, ConversationCreationFailure>) -> Void) {
+
+            func createGroup(
+                withUsers users: Set<ZMUser>,
+                completion: @escaping (Swift.Result<ZMConversation, ConversationCreationFailure>) -> Void
+            ) {
+                internalCreateGroupConversation(
+                    teamID: teamID,
+                    name: name,
+                    users: users,
+                    accessMode: accessMode,
+                    accessRoles: accessRoles,
+                    enableReceipts: enableReceipts,
+                    messageProtocol: messageProtocol,
+                    completion: completion
+                )
+            }
+
+            createGroup(withUsers: users) { result in
+                switch result {
+                case .failure(.networkError(.unreachableDomains(let domains))):
+                    let unreachableUsers = users.belongingTo(domains: domains)
+                    let reachableUsers = Set(users).subtracting(unreachableUsers)
+
+                    createGroup(withUsers: reachableUsers) { retryResult in
+                        if case .success(let conversation) = retryResult {
+                            conversation.appendFailedToAddUsersSystemMessage(
+                                users: unreachableUsers,
+                                sender: .selfUser(in: self.context),
+                                at: Date()
+                            )
+                        }
+
+                        completion(retryResult)
+                    }
+
+                default:
+                    completion(result)
+                }
+            }
+        }
 
     private func internalCreateGroupConversation(
         teamID: UUID?,
