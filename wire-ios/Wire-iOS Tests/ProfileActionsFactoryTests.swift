@@ -357,6 +357,20 @@ final class ProfileActionsFactoryTests: XCTestCase {
         ])
     }
 
+    func test_Group_GuestFromOtherTeam_ConnectedWithoutName() {
+        // GIVEN
+        let otherUser = MockUserType.createConnectedUser(name: "", inTeam: UUID())
+        otherUser.isGuestInConversation = true
+
+        let conversation = MockConversation.groupConversation()
+        conversation.activeParticipants = [selfUser, otherUser]
+
+        // THEN
+        verifyActions(user: otherUser, viewer: selfUser, conversation: conversation, expectedActions: [
+            .removeFromGroup
+        ])
+    }
+
     func test_Group_TeamToGuest_NotConnected() {
         // GIVEN
         let otherUser = MockUserType.createConnectedUser(name: "Catherine Jackson", inTeam: UUID())

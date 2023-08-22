@@ -138,7 +138,6 @@ extension Payload {
     }
 
     struct Conversation: DecodableAPIVersionAware, EventData {
-
         enum CodingKeys: String, CodingKey {
             case qualifiedID = "qualified_id"
             case id

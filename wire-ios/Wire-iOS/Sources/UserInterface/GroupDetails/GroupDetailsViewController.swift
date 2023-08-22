@@ -48,6 +48,10 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
         createSubviews()
 
         if let conversation = conversation as? ZMConversation {
+            ZMUserSession.shared()?.perform {
+                conversation.refetchParticipantsIfNeeded()
+            }
+
             token = ConversationChangeInfo.add(observer: self, for: conversation)
             if let session = ZMUserSession.shared() {
                 syncObserver = InitialSyncObserver(in: session) { [weak self] completed in
@@ -287,10 +291,6 @@ extension GroupDetailsViewController: ProfileViewControllerDelegate {
             ZClientViewController.shared?.load(conversation, scrollTo: nil, focusOnView: true, animated: true)
         }
     }
-
-    func profileViewController(_ controller: ProfileViewController?, wantsToCreateConversationWithName name: String?, users: UserSet) {
-        // no-op
-    }
 }
 
 extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, GroupOptionsSectionControllerDelegate {
@@ -340,6 +340,16 @@ extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, Gro
         let menu = ConversationNotificationOptionsViewController(conversation: conversation, userSession: .shared()!)
         menu.dismisser = self
         navigationController?.pushViewController(menu, animated: animated)
+    }
+
+}
+
+extension ZMConversation {
+
+    func refetchParticipantsIfNeeded() {
+        for user in sortedOtherParticipants where user.isPendingMetadataRefresh {
+            user.refreshData()
+        }
     }
 
 }

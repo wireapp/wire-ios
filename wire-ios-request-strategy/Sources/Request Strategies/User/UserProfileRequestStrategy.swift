@@ -334,8 +334,9 @@ class UserProfileByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
             let foundUsers = payload.found
             foundUsers.updateUserProfiles(in: context)
 
-            let missingIdentifiers = identifiers.subtracting(foundUsers.compactMap(\.qualifiedID))
-            markUserProfilesAsFetched(missingIdentifiers)
+            if let failedIdentifiers = payload.failed {
+                markUserProfilesAsUnavailable(Set(failedIdentifiers))
+            }
         }
     }
 
@@ -349,7 +350,7 @@ class UserProfileByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
     private func markUserProfilesAsUnavailable(_ users: Set<QualifiedID>) {
         for qualifiedID in users {
             let user = ZMUser.fetch(with: qualifiedID.uuid, domain: qualifiedID.domain, in: context)
-            user?.name = "Username unavailable"
+            user?.isPendingMetadataRefresh = true
             user?.needsToBeUpdatedFromBackend = false
         }
     }
