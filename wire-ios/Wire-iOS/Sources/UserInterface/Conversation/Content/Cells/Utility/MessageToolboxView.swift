@@ -81,35 +81,33 @@ final class MessageToolboxView: UIView {
 
     private let timestampSeparatorLabel = UILabel.createSeparatorLabel()
     private let statusSeparatorLabel = UILabel.createSeparatorLabel()
+    private let messageFailureView = MessageSendFailureView()
 
     private let resendButton: UIButton = {
-        let button = UIButton()
-        let attributedTitle = NSAttributedString(string: "content.system.failedtosend_message_timestamp_resend".localized,
-                                                 attributes: [.foregroundColor: MessageActionsColor.textErrorDefault,
-                                                              .underlineStyle: NSUnderlineStyle.single.rawValue as NSNumber,
-                                                              .font: UIFont.smallSemiboldFont])
-
-        button.contentHorizontalAlignment = .left
-        button.setAttributedTitle(attributedTitle, for: .normal)
-        button.setContentHuggingPriority(.required, for: .horizontal)
-        button.setContentCompressionResistancePriority(.required, for: .horizontal)
-        return button
-    }()
-
-    private let deleteButton: UIButton = {
-        let button = UIButton()
-        let attributedTitle = NSAttributedString(string: "content.system.failedtosend_message_timestamp_delete".localized,
-                                                 attributes: [.foregroundColor: MessageActionsColor.textErrorDefault,
-                                                              .underlineStyle: NSUnderlineStyle.single.rawValue as NSNumber,
-                                                              .font: UIFont.smallSemiboldFont])
-
-        button.contentHorizontalAlignment = .left
-        button.setAttributedTitle(attributedTitle, for: .normal)
-        button.setContentHuggingPriority(.defaultLow, for: .horizontal)
-        button.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
-        return button
-    }()
-
+            let button = UIButton()
+            let attributedTitle = NSAttributedString(string: "content.system.failedtosend_message_timestamp_resend".localized,
+                                                     attributes: [.foregroundColor: MessageActionsColor.textErrorDefault,
+                                                                  .underlineStyle: NSUnderlineStyle.single.rawValue as NSNumber,
+                                                                  .font: UIFont.smallSemiboldFont])
+            button.contentHorizontalAlignment = .left
+            button.setAttributedTitle(attributedTitle, for: .normal)
+            button.setContentHuggingPriority(.required, for: .horizontal)
+            button.setContentCompressionResistancePriority(.required, for: .horizontal)
+            return button
+        }()
+        private let deleteButton: UIButton = {
+            let button = UIButton()
+            let attributedTitle = NSAttributedString(string: "content.system.failedtosend_message_timestamp_delete".localized,
+                                                     attributes: [.foregroundColor: MessageActionsColor.textErrorDefault,
+                                                                  .underlineStyle: NSUnderlineStyle.single.rawValue as NSNumber,
+                                                                  .font: UIFont.smallSemiboldFont])
+            button.contentHorizontalAlignment = .left
+            button.setAttributedTitle(attributedTitle, for: .normal)
+            button.setContentHuggingPriority(.defaultLow, for: .horizontal)
+            button.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+            return button
+        }()
+    
     private let statusLabel: UILabel = {
         let label = UILabel()
         label.lineBreakMode = .byTruncatingMiddle
@@ -165,22 +163,23 @@ final class MessageToolboxView: UIView {
 
     private func setupViews() {
 
-        resendButton.addTarget(self, action: #selector(resendMessage), for: .touchUpInside)
-        deleteButton.addTarget(self, action: #selector(deleteMessage), for: .touchUpInside)
+        messageFailureView.tapHandler = { [weak self] _ in
+            self?.resendMessage()
+        }
 
         [detailsLabel,
-         resendButton,
          timestampSeparatorLabel,
-         deleteButton,
          statusLabel,
          statusSeparatorLabel,
          countdownLabel].forEach(contentStack.addArrangedSubview)
-        [separatorView, contentStack].forEach(addSubview)
+        
+        [separatorView, contentStack, messageFailureView].forEach(addSubview)
     }
 
     private func createConstraints() {
         separatorView.translatesAutoresizingMaskIntoConstraints = false
         contentStack.translatesAutoresizingMaskIntoConstraints = false
+        messageFailureView.translatesAutoresizingMaskIntoConstraints = false
 
         heightConstraint = heightAnchor.constraint(greaterThanOrEqualToConstant: 28)
         heightConstraint.priority = UILayoutPriority(999)
@@ -197,7 +196,12 @@ final class MessageToolboxView: UIView {
             contentStack.leadingAnchor.constraint(equalTo: separatorView.trailingAnchor),
             contentStack.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor, constant: -conversationHorizontalMargins.right),
             contentStack.topAnchor.constraint(equalTo: topAnchor),
-            contentStack.bottomAnchor.constraint(equalTo: bottomAnchor)
+            contentStack.bottomAnchor.constraint(equalTo: bottomAnchor),
+
+            messageFailureView.leadingAnchor.constraint(equalTo: separatorView.trailingAnchor),
+            messageFailureView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            messageFailureView.topAnchor.constraint(equalTo: topAnchor),
+            messageFailureView.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])
     }
 
@@ -237,7 +241,8 @@ final class MessageToolboxView: UIView {
         _ message: ZMConversationMessage,
         animated: Bool = false
     ) {
-        if dataSource?.message.nonce != message.nonce {
+        if let message = message as? ConversationMessage,
+           dataSource?.message.nonce != message.nonce {
             dataSource = MessageToolboxDataSource(message: message)
         }
 
@@ -272,6 +277,7 @@ final class MessageToolboxView: UIView {
             self.resendButton.isHidden = true
             self.statusSeparatorLabel.isHidden = true
             self.countdownLabel.isHidden = true
+            self.messageFailureView.isHidden = true
 
         case .sendFailure(let detailsString):
             self.detailsLabel.attributedText = detailsString
@@ -283,6 +289,8 @@ final class MessageToolboxView: UIView {
             self.resendButton.isHidden = false
             self.statusSeparatorLabel.isHidden = true
             self.countdownLabel.isHidden = true
+            self.messageFailureView.isHidden = false
+            self.messageFailureView.setTitle(detailsString.string)
 
         case .details(let timestamp, let status, let countdown):
             self.detailsLabel.attributedText = timestamp
@@ -293,6 +301,7 @@ final class MessageToolboxView: UIView {
             if let accessibilityLabel = status?.accessibilityLabel {
                 self.statusLabel.accessibilityLabel = accessibilityLabel
             }
+            self.messageFailureView.isHidden = true
             self.statusLabel.isHidden = status == nil
             self.timestampSeparatorLabel.isHidden = timestamp == nil || status == nil
             self.deleteButton.isHidden = true

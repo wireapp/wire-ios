@@ -403,7 +403,7 @@ final class ConversationInputBarViewController: UIViewController,
         NotificationCenter.default.addObserver(forName: .featureDidChangeNotification,
                                                object: nil,
                                                queue: .main) { [weak self] note in
-            guard let change = note.object as? FeatureService.FeatureChange else { return }
+            guard let change = note.object as? FeatureRepository.FeatureChange else { return }
 
             switch change {
             case .fileSharingEnabled, .fileSharingDisabled:
@@ -815,7 +815,7 @@ extension ConversationInputBarViewController: UIImagePickerControllerDelegate {
 
         let viewController = CanvasViewController()
         viewController.delegate = self
-        viewController.navigationItem.setupNavigationBarTitle(title: conversation.displayName)
+        viewController.navigationItem.setupNavigationBarTitle(title: conversation.displayNameWithFallback)
 
         parent?.present(viewController.wrapInNavigationController(setBackgroundColor: true), animated: true)
     }
@@ -837,7 +837,7 @@ extension ConversationInputBarViewController: InformalTextViewDelegate {
 
         let confirmImageViewController = ConfirmAssetViewController(context: context)
 
-        confirmImageViewController.previewTitle = conversation.displayName.localized
+        confirmImageViewController.previewTitle = conversation.displayNameWithFallback.localized
 
         present(confirmImageViewController, animated: false)
     }

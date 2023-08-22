@@ -28,6 +28,7 @@ import XCTest
     public func expire() {
         isExpired = true
     }
+    public var expirationReasonCode: NSNumber?
 
     let messageData: Data
 
@@ -39,6 +40,7 @@ import XCTest
     var isMissingClients = false
     var didCallHandleClientUpdates = false
     var isDelivered = false
+    var isFailedToSendUsers = false
 
     var dependentObjectNeedingUpdateBeforeProcessing: NSObject?
 
@@ -58,6 +60,10 @@ import XCTest
 
     func delivered(with response: ZMTransportResponse) {
         isDelivered = true
+    }
+
+    func addFailedToSendRecipients(_ recipients: [ZMUser]) {
+        isFailedToSendUsers = true
     }
 
 }

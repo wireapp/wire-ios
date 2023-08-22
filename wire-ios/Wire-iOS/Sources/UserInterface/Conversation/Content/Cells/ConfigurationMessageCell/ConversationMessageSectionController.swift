@@ -75,7 +75,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     }
 
     /// The message that is being presented.
-    var message: ZMConversationMessage {
+    var message: ConversationMessage {
         didSet {
             updateDelegates()
         }
@@ -97,16 +97,20 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     /// Whether this section is selected
     private var selected: Bool
 
+    /// Whether this section is collapsed
+    private var isCollapsed: Bool
+
     private var changeObservers: [Any] = []
 
     deinit {
         changeObservers.removeAll()
     }
 
-    init(message: ZMConversationMessage, context: ConversationMessageContext, selected: Bool = false) {
+    init(message: ConversationMessage, context: ConversationMessageContext, selected: Bool = false) {
         self.message = message
         self.context = context
         self.selected = selected
+        self.isCollapsed = true
 
         super.init()
 
@@ -144,7 +148,9 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         } else if message.isFile {
             contentCellDescriptions = [AnyConversationMessageCellDescription(ConversationFileMessageCellDescription(message: message))]
         } else if message.isSystem {
-            contentCellDescriptions = ConversationSystemMessageCellDescription.cells(for: message)
+            contentCellDescriptions = ConversationSystemMessageCellDescription.cells(for: message,
+                                                                                     isCollapsed: isCollapsed,
+                                                                                     buttonAction: buttonAction)
         } else {
             contentCellDescriptions = [AnyConversationMessageCellDescription(UnknownMessageCellDescription())]
         }
@@ -158,6 +164,11 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         }
 
         cellDescriptions.append(contentsOf: contentCellDescriptions)
+    }
+
+    private func buttonAction() {
+        self.isCollapsed = !self.isCollapsed
+        self.cellDelegate?.conversationMessageShouldUpdate()
     }
 
     // MARK: - Content Cells
@@ -247,6 +258,13 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             add(description: MessageReactionsCellDescription(message: message))
         }
 
+        if isFailedRecipientsVisible(in: context) {
+            let cellDescription = ConversationMessageFailedRecipientsCellDescription(failedUsers: message.failedToSendUsers,
+                                                                                     isCollapsed: isCollapsed,
+                                                                                     buttonAction: { self.buttonAction() })
+            add(description: cellDescription)
+        }
+
         if let topCelldescription = cellDescriptions.first {
             topCelldescription.topMargin = context.spacing
         }
@@ -313,6 +331,15 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         }
 
         return false
+    }
+
+    func isFailedRecipientsVisible(in context: ConversationMessageContext) -> Bool {
+        guard message.isNormal,
+              !message.isKnock else {
+            return false
+        }
+
+        return !message.failedToSendUsers.isEmpty
     }
 
     // MARK: - Highlight
