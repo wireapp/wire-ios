@@ -27,23 +27,12 @@ public struct MessageReactionMetadata: Equatable {
     let emoji: Emoji
     let count: UInt
     let isSelfUserReacting: Bool
-    var performReaction: (() -> Void)?
-
-    public static func == (lhs: MessageReactionMetadata, rhs: MessageReactionMetadata) -> Bool {
-        return lhs.emoji == rhs.emoji && lhs.count == rhs.count && lhs.isSelfUserReacting == rhs.isSelfUserReacting
-    }
 
 }
 
 // MARK: - MessageReactionsCell
 
 final class MessageReactionsCell: UIView, ConversationMessageCell {
-
-    struct Configuration: Equatable {
-
-        let reactions: [MessageReactionMetadata]
-
-    }
 
     // MARK: - Properties
 
@@ -85,14 +74,14 @@ final class MessageReactionsCell: UIView, ConversationMessageCell {
     // MARK: - configure method
 
     func configure(
-        with object: Configuration,
+        with reactions: [MessageReactionMetadata],
         animated: Bool
     ) {
-        let reactions = object.reactions.map { reaction in
-            return MessageReactionMetadata(
+        let reactionToggles = reactions.map { reaction in
+            ReactionToggle(
                 emoji: reaction.emoji,
                 count: reaction.count,
-                isSelfUserReacting: reaction.isSelfUserReacting
+                isToggled: reaction.isSelfUserReacting
             ) { [weak self] in
                 guard
                     let `self` = self,
@@ -107,9 +96,9 @@ final class MessageReactionsCell: UIView, ConversationMessageCell {
                     view: self
                 )
             }
-        }.map(ReactionToggle.init)
+        }
 
-        reactionsView.configure(views: reactions)
+        reactionsView.configure(views: reactionToggles)
     }
 
 }

@@ -43,18 +43,16 @@ class ReactionToggle: UIControl {
 
     // MARK: - Life cycle
 
-    convenience init(_ reactionData: MessageReactionMetadata) {
-        self.init()
-        configureData(
-            emoji: reactionData.emoji.value,
-            count: Int(reactionData.count),
-            isToggled: reactionData.isSelfUserReacting,
-            onToggle: { reactionData.performReaction?() }
-        )
-    }
-
-    init(isToggled: Bool = false) {
+    init(
+        emoji: Emoji,
+        count: UInt,
+        isToggled: Bool = false,
+        onToggle: (() -> Void)? = nil
+    ) {
+        emojiLabel.text = emoji.value
+        counterLabel.text = String(count)
         self.isToggled = isToggled
+        self.onToggle = onToggle
         super.init(frame: .zero)
 
         layer.borderWidth = 1
@@ -103,18 +101,6 @@ class ReactionToggle: UIControl {
     }
 
     // MARK: - Methods
-
-    public func configureData(
-        emoji: String,
-        count: Int,
-        isToggled: Bool,
-        onToggle: @escaping () -> Void
-    ) {
-        emojiLabel.text  = emoji
-        counterLabel.text = String(count)
-        self.isToggled = isToggled
-        self.onToggle = onToggle
-    }
 
     private func updateAppearance() {
         if isToggled {
