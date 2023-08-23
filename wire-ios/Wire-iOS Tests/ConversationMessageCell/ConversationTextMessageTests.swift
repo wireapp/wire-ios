@@ -22,8 +22,12 @@ import WireLinkPreview
 
 final class ConversationTextMessageTests: BaseSnapshotTestCase {
 
+    // MARK: - Properties
+
     var mockOtherUser: MockUserType!
     var message: MockMessage!
+
+    // MARK: - setUp
 
     override func setUp() {
         super.setUp()
@@ -31,11 +35,15 @@ final class ConversationTextMessageTests: BaseSnapshotTestCase {
         message = createMessage()
     }
 
+    // MARK: - tearDown
+
     override func tearDown() {
         mockOtherUser = nil
-
+        message = nil
         super.tearDown()
     }
+
+    // MARK: - Snapshot Tests
 
     func testPlainText_WithALongUsernameAndShowingTheDateOfTheMessage() {
         // GIVEN, WHEN
@@ -199,8 +207,8 @@ final class ConversationTextMessageTests: BaseSnapshotTestCase {
     // MARK: - Helper Methods
 
     // swiftlint:disable:next line_length
-    func createMessage(withText: String = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem.", userName: String = "Bruno") -> MockMessage {
-
+    func createMessage(withText: String = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem.",
+                       userName: String = "Bruno") -> MockMessage {
         let message = MockMessageFactory.textMessage(withText: withText)
         mockOtherUser = MockUserType.createConnectedUser(name: userName)
         message.senderUser = mockOtherUser
