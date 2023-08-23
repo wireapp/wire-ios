@@ -196,7 +196,6 @@ final class ConversationTextMessageTests: BaseSnapshotTestCase {
         verify(message: message)
     }
 
-
     // MARK: - Helper Methods
 
     // swiftlint:disable:next line_length
