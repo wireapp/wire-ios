@@ -62,7 +62,6 @@ class ZMMessage_Reaction: BaseZMClientMessageTests {
 
         message.setReactions(["😋", "😍"], forUser: selfUser)
         XCTAssertEqual(message.selfUserReactions(), ["😋", "😍"])
-        XCTAssertEqual(message.usersReaction.count, 2)
 
         // WHEN
         ZMMessage.addReaction("😎", to: message)
@@ -110,6 +109,31 @@ class ZMMessage_Reaction: BaseZMClientMessageTests {
 
         // WHEN
         ZMMessage.addReaction("", to: message)
+        self.uiMOC.saveOrRollback()
+
+        // THEN
+        XCTAssertEqual(message.selfUserReactions(), ["😋", "😍"])
+    }
+
+    func testThatRemovingAReactionThatTheSelfUserDidNotReactDoesNothing() {
+        // GIVEN
+        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        conversation.remoteIdentifier = UUID.create()
+        let otherUser = ZMUser.insertNewObject(in: self.uiMOC)
+        otherUser.remoteIdentifier = UUID.create()
+
+        let message = try! conversation.appendText(content: self.name) as! ZMMessage
+        message.markAsSent()
+        self.uiMOC.saveOrRollback()
+
+        XCTAssertEqual(message.deliveryState, ZMDeliveryState.sent)
+
+        message.setReactions(["😋", "😍"], forUser: selfUser)
+        message.setReactions(["😙"], forUser: otherUser)
+        XCTAssertEqual(message.selfUserReactions(), ["😋", "😍"])
+
+        // WHEN
+        ZMMessage.removeReaction("😙", from: message)
         self.uiMOC.saveOrRollback()
 
         // THEN

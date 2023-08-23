@@ -28,6 +28,10 @@ public struct MessageReactionMetadata: Equatable {
     let count: UInt
     let isSelfUserReacting: Bool
 
+    public static func == (lhs: MessageReactionMetadata, rhs: MessageReactionMetadata) -> Bool {
+        return lhs.emoji == rhs.emoji && lhs.count == rhs.count && lhs.isSelfUserReacting == rhs.isSelfUserReacting
+    }
+
 }
 
 // MARK: - MessageReactionsCell

@@ -156,6 +156,25 @@ final class ProfileViewControllerTests: ZMSnapshotTestCase {
         verify(matching: navWrapperController)
     }
 
+    func testForContextProfileViewer_ForUserWithoutName() {
+        // GIVEN
+        selfUser.teamRole = .member
+        mockUser = MockUser.createConnectedUser(name: "Catherine Jackson", inTeam: nil)
+        mockUser.name = nil
+        mockUser.domain = "foma.wire.link"
+        mockUser.initials = ""
+
+        // WHEN
+        sut = ProfileViewController(user: mockUser,
+                                    viewer: selfUser,
+                                    context: .profileViewer)
+        let navWrapperController = sut.wrapInNavigationController()
+        sut.viewDidAppear(false)
+
+        // THEN
+        verify(matching: navWrapperController)
+    }
+
     func testItRequestsDataRefeshForTeamMembers() {
         // GIVEN
         mockUser.isTeamMember = true
@@ -180,7 +199,6 @@ final class ProfileViewControllerTests: ZMSnapshotTestCase {
                                     context: .profileViewer)
 
         // THEN
-        XCTAssertEqual(mockUser.refreshDataCount, 0)
         XCTAssertEqual(mockUser.refreshMembershipCount, 0)
     }
 

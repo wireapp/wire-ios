@@ -59,6 +59,7 @@ private extension BasicReactionPicker {
     func setupViews() {
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         titleLabel.text = L10n.Localizable.Content.Message.reactions
+        titleLabel.setContentCompressionResistancePriority(.required, for: .vertical)
         addSubview(titleLabel)
 
         horizontalStackView.alignment = .center
@@ -80,7 +81,7 @@ private extension BasicReactionPicker {
         var constraints = [NSLayoutConstraint]()
         [Emoji.thumbsUp, .smile, .like, .frown, .thumbsDown].forEach { emoji in
             let button = UIButton()
-            button.titleLabel?.font = UIFont.preferredFont(forTextStyle: .largeTitle)
+           button.titleLabel?.font = UIFont.systemFont(ofSize: UIDevice.current.type == .iPad ? 24 : 32)
             button.setTitle(emoji.value, for: .normal)
             if selectedReactions.contains(emoji) {
                 button.layer.cornerRadius = 12.0
