@@ -123,4 +123,4 @@ jobs:
         uses: 8398a7/action-slack@v3
         with:
           status: ${{ job.status }}
-          text: "**${{ env.APP_NAME }}** (version: ${{ env.BUILD_VERSION }} build: ${{ env.BUILD_NUMBER }}) build completed  🚀\n**Release notes:**\n${{ steps.base64-decoded-RELEASE_NOTES.outputs.decoded }}\n**Tap on iOS device to install:**\n${{ env.APPCENTER_INSTALL_LINK }}\n**AWS S3 Paths:**\n${{ steps.base64-decoded-S3_PATHS.outputs.decoded }}\n*Triggered by: ${{ env.GITHUB_ACTOR }}\nBuild log: ${{ env.GITHUB_SERVER_URL }}/${{ env.GITHUB_REPOSITORY }}/actions/runs/${{ env.GITHUB_RUN_ID }}"
+          text: "${{ env.APP_NAME }} (version: ${{ env.BUILD_VERSION }} build: ${{ env.BUILD_NUMBER }}) build completed  🚀\nRelease notes:\n${{ steps.base64-decoded-RELEASE_NOTES.outputs.decoded }}\nTap on iOS device to install:\n${{ env.APPCENTER_INSTALL_LINK }}\nAWS S3 Paths:\n${{ steps.base64-decoded-S3_PATHS.outputs.decoded }}\nTriggered by: $GITHUB_ACTOR\nBuild log: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
