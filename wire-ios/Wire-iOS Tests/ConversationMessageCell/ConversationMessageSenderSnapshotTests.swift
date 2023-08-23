@@ -20,7 +20,7 @@ import SnapshotTesting
 import XCTest
 @testable import Wire
 
-final class ConversationMessageSenderSnapshotTests: ZMSnapshotTestCase {
+final class ConversationMessageSenderSnapshotTests: BaseSnapshotTestCase {
 
     var sut: SenderCellComponent!
     var teamID = UUID()
@@ -182,8 +182,6 @@ final class ConversationMessageSenderSnapshotTests: ZMSnapshotTestCase {
         // GIVEN
         mockUser = MockUserType.createUser(name: "Bruno with a really really really really really really really really really really long name", inTeam: teamID)
         mockUser.teamRole = .member
-        mockUser.isGuestInConversation = false
-        mockUser.mockedIsServiceUser = false
 
         // WHEN
         sut.configure(with: mockUser)
