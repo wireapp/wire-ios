@@ -248,6 +248,7 @@
 "calling.swipeUpParticipants.hint" = "Торкніться двічі, щоб переглянути детальну інформацію про учасника";
 "calling.swipeDownParticipants.hint" = "Торкніться двічі, щоб приховати детальну інформацію про учасника";
 "calling.headerBar.description" = "Мінімізувати екран дзвінка";
+"calling.status.connecting" = "Connecting";
 
 "tabBar.contacts.description" = "Контакти";
 "tabBar.contacts.hint" = "Торкніться двічі для пошуку людей та відкриття списку контактів";

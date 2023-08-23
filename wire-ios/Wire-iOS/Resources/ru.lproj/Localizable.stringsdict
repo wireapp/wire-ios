@@ -2,6 +2,66 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
   <dict>
+    <key>content.system.failedtoadd_participants.could_not_be_added</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@number_of_users@</string>
+      <key>number_of_users</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>Не удалось добавить %2$@ в группу.</string>
+        <key>few</key>
+        <string>Не удалось добавить %2$@ в группу.</string>
+        <key>many</key>
+        <string>Не удалось добавить %2$@ в группу.</string>
+        <key>other</key>
+        <string>Не удалось добавить %2$@ в группу.</string>
+      </dict>
+    </dict>
+    <key>content.system.failedtosend_participants.will_never_get_message</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@number_of_users@</string>
+      <key>number_of_users</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>%2$@ не получит ваше сообщение.</string>
+        <key>few</key>
+        <string>%2$@ не получат ваше сообщение.</string>
+        <key>many</key>
+        <string>%2$@ не получат ваше сообщение.</string>
+        <key>other</key>
+        <string>%2$@ не получат ваше сообщение.</string>
+      </dict>
+    </dict>
+    <key>content.system.failedtosend_participants.will_get_message_later</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@number_of_users@</string>
+      <key>number_of_users</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>%2$@ получит ваше сообщение позднее.</string>
+        <key>few</key>
+        <string>%2$@ получат ваше сообщение позднее.</string>
+        <key>many</key>
+        <string>%2$@ получат ваше сообщение позднее.</string>
+        <key>other</key>
+        <string>%2$@ получат ваше сообщение позднее.</string>
+      </dict>
+    </dict>
     <key>self.new_device_alert.title_prefix.devices</key>
     <dict>
       <key>NSStringLocalizedFormatKey</key>
@@ -197,6 +257,26 @@
         <string>новых устройств</string>
       </dict>
     </dict>
+    <key>content.system.failedtosend_participants.count</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@lu_number_of_participants@</string>
+      <key>lu_number_of_participants</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>lu</string>
+        <key>one</key>
+        <string>1 участник</string>
+        <key>few</key>
+        <string>%lu участника</string>
+        <key>many</key>
+        <string>%lu участников</string>
+        <key>other</key>
+        <string>%lu участника</string>
+      </dict>
+    </dict>
     <key>conversation.silenced.status.message.generic_message</key>
     <dict>
       <key>NSStringLocalizedFormatKey</key>
@@ -315,6 +395,26 @@
         <string>Пропущенных вызовов</string>
         <key>other</key>
         <string>Пропущенных вызовов</string>
+      </dict>
+    </dict>
+    <key>content.system.federation_termination.participants_removed</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@lu_number_of_participants@</string>
+      <key>lu_number_of_participants</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>%2$@ был удален из беседы</string>
+        <key>few</key>
+        <string>%2$@ были удалены из беседы</string>
+        <key>many</key>
+        <string>%2$@ были удалены из беседы</string>
+        <key>other</key>
+        <string>%2$@ были удалены из беседы</string>
       </dict>
     </dict>
     <key>content.system.call.missed-call.groups</key>

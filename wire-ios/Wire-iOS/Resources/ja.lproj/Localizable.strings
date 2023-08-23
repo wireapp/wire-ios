@@ -323,6 +323,11 @@
 "conversation.create.mls.subtitle" = "Select MLS to create a group using Messaging Layer Security protocol (beta version).";
 "conversation.create.mls.picker_title" = "Select Protocol";
 "conversation.create.mls.cancel" = "キャンセル";
+"conversation.create.non_federating_domains_error.title" = "Group can't be created";
+"conversation.create.non_federating_domains_error.message" = "People from backends %@ can't join the same group conversation.\nTo create the group, remove affected participants.";
+"conversation.create.non_federating_domains_error.edit_participant_list" = "Edit Participants List";
+"conversation.create.non_federating_domains_error.learn_more" = "もっと知る";
+"conversation.create.non_federating_domains_error.abort" = "Discard Group Creation";
 
 "conversation.input_bar.ongoing_call_alert.title" = "通話中";
 "conversation.input_bar.ongoing_call_alert.audio.message" = "音声メッセージは通話中に記録できません";
@@ -463,9 +468,18 @@
 "content.system.message_sent_timestamp" = "送信済み";
 "content.system.message_delivered_timestamp" = "配信済み";
 "content.system.message_read_timestamp" = "既読";
-"content.system.failedtosend_message_timestamp" = "送信できませんでした";
-"content.system.failedtosend_message_timestamp_resend" = "再送する";
-"content.system.failedtosend_message_timestamp_delete" = "削除";
+"content.system.failedtosend_message.general_reason" = "Message could not be sent due to connectivity issues.";
+"content.system.failedtosend_message.federation_remote_error_reason" = "Message could not be sent as the backend of **%@** could not be reached. [Learn more](%@)";
+"content.system.failedtosend_message.retry" = "Retry";
+
+"content.system.failedtosend_participants.show_details" = "Show Details";
+"content.system.failedtosend_participants.hide_details" = "Hide Details";
+"content.system.failedtosend_participants.did_not_get_message" = "**%@ participants** didn’t get your message.";
+"content.system.failedtosend_participants.from" = "**%@ from %@**";
+"content.system.failed_participants.learn_more" = "もっと知る";
+
+"content.system.failedtoadd_participants.count" = "**%@ participants** could not be added to the group.";
+
 "content.system.like_tooltip" = "タップしていいね！";
 "content.system.deleted_message_prefix_timestamp" = "削除済: %@";
 "content.system.edited_message_prefix_timestamp" = "編集済: %@";
@@ -505,6 +519,9 @@
 
 "content.system.message_timer_off" = "%@ が タイマーメッセージをオフにしました";
 "content.system.message_timer_off-you" = "%@ が タイマーメッセージをオフにしました";
+
+"content.system.backends_stop_federating.self_backend" = "**Your backend** stopped federating with **%@**. [Learn more](%@)";
+"content.system.backends_stop_federating.other_backends" = "The backends **%@** and **%@** stopped federating. [Learn more](%@)";
 
 // read receipt
 
@@ -624,6 +641,7 @@
 "error.connection.title" = "エラー";
 "error.connection.missing_legalhold_consent" = "法的保留のため、このユーザーに接続できません。";
 "error.connection.generic_error" = "問題が生じたようです。もう一度やり直してください。";
+"error.connection.federation_denied_message" = "Your backend does not federate with the backend of %@. You can not connect with them.";
 
 // Save image errors
 "library.alert.permission_warning.title" = "\"Wire\"が 写真へのアクセスを求めています。";
@@ -693,6 +711,7 @@
 "call.overlay.switch_to.all" = "全て";
 
 "call.grid.no_active_speakers" = "アクティブなビデオスピーカーがありません...";
+"call.grid.connecting" = "Connecting";
 
 "call.grid.hints.fullscreen" = "タイルをダブルタップして全画面表示にする";
 "call.grid.hints.go_back_or_zoom" = "ダブルタップで戻り、ピンチでズームします";
@@ -889,10 +908,12 @@
 "profile.details.blocking_reason" = "This user is blocked due to legal hold. [LEARN MORE](%@)";
 "profile.details.identity_warning" = "Get certainty about %@’s identity before connecting.";
 "profile.details.requested_identity_warning" = "Please verify the person's identity before accepting the connection request.";
+"profile.details.title.unavailable" = "Name not available";
 
 // Device list
 "profile.devices.title" = "デバイス";
 "profile.devices.fingerprint_message_unencrypted" = "%@は古いバージョンのWireを使用しています。端末は表示されません。";
+"profile.devices.no_device_data" = "No device data available.";
 "profile.devices.fingerprint_message.title" = "Wire はそれぞれのデバイスに固有のフィンガープリントを付与します。それを %@ と比較して、会話を確認します。";
 "profile.devices.fingerprint_message.link" = "なぜ会話を確認するのですか? _";
 

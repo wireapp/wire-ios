@@ -248,6 +248,7 @@
 "calling.swipeUpParticipants.hint" = "Double tap to swipe up and view all participant’s details";
 "calling.swipeDownParticipants.hint" = "Double tap to swipe down and hide participant’s details";
 "calling.headerBar.description" = "Minimize calling view";
+"calling.status.connecting" = "Connecting";
 
 "tabBar.contacts.description" = "Kontaktid";
 "tabBar.contacts.hint" = "Double tap to search for people and open contact list";

@@ -2,6 +2,48 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
   <dict>
+    <key>content.system.failedtoadd_participants.could_not_be_added</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@number_of_users@</string>
+      <key>number_of_users</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>other</key>
+        <string>%2$@ could not be added to the group.</string>
+      </dict>
+    </dict>
+    <key>content.system.failedtosend_participants.will_never_get_message</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@number_of_users@</string>
+      <key>number_of_users</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>other</key>
+        <string>%2$@ won’t get your message.</string>
+      </dict>
+    </dict>
+    <key>content.system.failedtosend_participants.will_get_message_later</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@number_of_users@</string>
+      <key>number_of_users</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>other</key>
+        <string>%2$@ will get your message later.</string>
+      </dict>
+    </dict>
     <key>self.new_device_alert.title_prefix.devices</key>
     <dict>
       <key>NSStringLocalizedFormatKey</key>
@@ -137,6 +179,20 @@
         <string>新设备</string>
       </dict>
     </dict>
+    <key>content.system.failedtosend_participants.count</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@lu_number_of_participants@</string>
+      <key>lu_number_of_participants</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>lu</string>
+        <key>other</key>
+        <string>%lu participants</string>
+      </dict>
+    </dict>
     <key>conversation.silenced.status.message.generic_message</key>
     <dict>
       <key>NSStringLocalizedFormatKey</key>
@@ -219,6 +275,20 @@
         <string>d</string>
         <key>other</key>
         <string>未接来电</string>
+      </dict>
+    </dict>
+    <key>content.system.federation_termination.participants_removed</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@lu_number_of_participants@</string>
+      <key>lu_number_of_participants</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>other</key>
+        <string>%2$@ were removed from the conversation</string>
       </dict>
     </dict>
     <key>content.system.call.missed-call.groups</key>
