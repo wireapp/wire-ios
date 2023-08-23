@@ -24,19 +24,18 @@ final class CompleteReactionPickerViewController: UIViewController {
     weak var delegate: EmojiPickerViewControllerDelegate?
     private var emojiDataSource: EmojiDataSource!
     private let collectionView = ReactionsCollectionView()
-    private let sectionViewController = ReactionSectionViewController(types: EmojiSectionType.all)
+    private let sectionViewController: ReactionSectionViewController
     private let topBar = ModalTopBar()
     private let searchBar = UISearchBar()
-    private let selectedReaction: String?
+    private let selectedReactions: Set<Emoji>
 
     private var deleting = false
 
-    deinit {
-        NotificationCenter.default.removeObserver(self)
-    }
-
-    init(selectedReaction: String?) {
-        self.selectedReaction = selectedReaction
+    init(selectedReactions: Set<Emoji>) {
+        self.selectedReactions = selectedReactions
+        let hasNoRecentlyUsedReactions =  RecentlyUsedEmojiPeristenceCoordinator.loadOrCreate().emoji.isEmpty
+        let sectionTypes: [EmojiSectionType] = hasNoRecentlyUsedReactions ? EmojiSectionType.basicTypes : EmojiSectionType.all
+        sectionViewController = ReactionSectionViewController(types: sectionTypes)
         super.init(nibName: nil, bundle: nil)
 
         emojiDataSource = EmojiDataSource(provider: cellForEmoji)
@@ -56,6 +55,10 @@ final class CompleteReactionPickerViewController: UIViewController {
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    deinit {
+        NotificationCenter.default.removeObserver(self)
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -86,11 +89,8 @@ final class CompleteReactionPickerViewController: UIViewController {
         view.addSubview(searchBar)
         view.backgroundColor = SemanticColors.View.backgroundDefault
         view.addSubview(collectionView)
-        collectionView.keyboardDismissMode = .onDrag
-    }
 
-    @objc private func hideKeyboard() {
-        endEditing()
+        collectionView.keyboardDismissMode = .onDrag
     }
 
     private func createConstraints() {
@@ -121,9 +121,9 @@ final class CompleteReactionPickerViewController: UIViewController {
 
     func cellForEmoji(_ emoji: Emoji, indexPath: IndexPath) -> UICollectionViewCell {
         let cell = self.collectionView.dequeueReusableCell(withReuseIdentifier: EmojiCollectionViewCell.zm_reuseIdentifier, for: indexPath) as! EmojiCollectionViewCell
-        cell.titleLabel.text = emoji
+        cell.titleLabel.text = emoji.value
         cell.titleLabel.font = UIFont.preferredFont(forTextStyle: .largeTitle)
-        cell.isCurrent = (emoji == selectedReaction)
+        cell.isCurrent = selectedReactions.contains(emoji)
         return cell
     }
 
@@ -143,9 +143,14 @@ extension CompleteReactionPickerViewController: EmojiSectionViewControllerDelega
     func sectionViewControllerDidSelectType(_ type: EmojiSectionType, scrolling: Bool) {
         guard let section = emojiDataSource.sectionIndex(for: type) else { return }
         let indexPath = IndexPath(item: 0, section: section)
-        collectionView.scrollToItem(at: indexPath, at: .top, animated: !scrolling)
+        if let attributes = collectionView.layoutAttributesForItem(at: indexPath) {
+            collectionView.setContentOffset(
+                CGPoint(x: collectionView.contentOffset.x, y: attributes.frame.minY),
+                animated: !scrolling)
+        } else {
+            collectionView.scrollToItem(at: indexPath, at: .top, animated: !scrolling)
+        }
     }
-
 }
 
 extension CompleteReactionPickerViewController: UICollectionViewDelegateFlowLayout {
@@ -154,6 +159,7 @@ extension CompleteReactionPickerViewController: UICollectionViewDelegateFlowLayo
         collectionView.deselectItem(at: indexPath, animated: true)
         let emoji = emojiDataSource[indexPath]
         delegate?.emojiPickerDidSelectEmoji(emoji)
+        emojiDataSource.register(used: emoji)
     }
 
     func scrollViewDidScroll(_ scrolLView: UIScrollView) {
@@ -161,8 +167,7 @@ extension CompleteReactionPickerViewController: UICollectionViewDelegateFlowLayo
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        return UIEdgeInsets(top: 0, left: 0, bottom: 12
-                            , right: 0)
+        return UIEdgeInsets(top: 30.0, left: 0.0, bottom: 0.0, right: 0.0)
     }
 }
 

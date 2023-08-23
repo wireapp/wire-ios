@@ -21,7 +21,7 @@ import WireDataModel
 import WireCommonComponents
 
 protocol ReactionPickerDelegate: AnyObject {
-    func didPickReaction(reaction: MessageReaction)
+    func didPickReaction(reaction: Emoji)
     func didTapMoreEmojis()
 }
 
@@ -29,7 +29,7 @@ class BasicReactionPicker: UIView {
     private let titleLabel = DynamicFontLabel(fontSpec: .normalRegularFont,
                                               color: SemanticColors.Label.textUserPropertyCellName)
     private let horizontalStackView = UIStackView(axis: .horizontal)
-    private let selectedReaction: String?
+    private let selectedReactions: Set<Emoji>
     private var buttons = [UIButton]()
     weak var delegate: ReactionPickerDelegate?
 
@@ -41,8 +41,8 @@ class BasicReactionPicker: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    init(selectedReaction: String?) {
-        self.selectedReaction = selectedReaction
+    init(selectedReactions: Set<Emoji>) {
+        self.selectedReactions = selectedReactions
         super.init(frame: .zero)
         setupViews()
         NotificationCenter.default.addObserver(self,
@@ -59,6 +59,7 @@ private extension BasicReactionPicker {
     func setupViews() {
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         titleLabel.text = L10n.Localizable.Content.Message.reactions
+        titleLabel.setContentCompressionResistancePriority(.required, for: .vertical)
         addSubview(titleLabel)
 
         horizontalStackView.alignment = .center
@@ -78,11 +79,11 @@ private extension BasicReactionPicker {
 
     func addButtons() {
         var constraints = [NSLayoutConstraint]()
-        ["👍", "🙂", "❤️", "☹️", "👎"].forEach { emoji in
+        [Emoji.thumbsUp, .smile, .like, .frown, .thumbsDown].forEach { emoji in
             let button = UIButton()
-            button.titleLabel?.font = UIFont.preferredFont(forTextStyle: .largeTitle)
-            button.setTitle(emoji, for: .normal)
-            if emoji == selectedReaction {
+           button.titleLabel?.font = UIFont.systemFont(ofSize: UIDevice.current.type == .iPad ? 24 : 32)
+            button.setTitle(emoji.value, for: .normal)
+            if selectedReactions.contains(emoji) {
                 button.layer.cornerRadius = 12.0
                 button.layer.masksToBounds = true
                 button.backgroundColor = SemanticColors.Button.reactionBackgroundSelected
@@ -112,8 +113,8 @@ private extension BasicReactionPicker {
     }
 
     @objc func didTapEmoji(sender: UIButton) {
-        guard let reaction = MessageReaction.messageReaction(from: sender.titleLabel?.text ?? "") else { return }
-        delegate?.didPickReaction(reaction: reaction)
+        guard let value = sender.titleLabel?.text else { return }
+        delegate?.didPickReaction(reaction: Emoji(value: value))
     }
 
     @objc func preferredContentSizeChanged(_ notification: Notification) {

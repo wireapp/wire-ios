@@ -323,6 +323,11 @@
 "conversation.create.mls.subtitle" = "Select MLS to create a group using Messaging Layer Security protocol (beta version).";
 "conversation.create.mls.picker_title" = "Select Protocol";
 "conversation.create.mls.cancel" = "Cancel";
+"conversation.create.non_federating_domains_error.title" = "Group can't be created";
+"conversation.create.non_federating_domains_error.message" = "People from backends %@ can't join the same group conversation.\nTo create the group, remove affected participants.";
+"conversation.create.non_federating_domains_error.edit_participant_list" = "Edit Participants List";
+"conversation.create.non_federating_domains_error.learn_more" = "Learn More";
+"conversation.create.non_federating_domains_error.abort" = "Discard Group Creation";
 
 "conversation.input_bar.ongoing_call_alert.title" = "Ongoing call";
 "conversation.input_bar.ongoing_call_alert.audio.message" = "You can’t record an audio message during a call.";
@@ -463,9 +468,21 @@
 "content.system.message_sent_timestamp" = "Sent";
 "content.system.message_delivered_timestamp" = "Delivered";
 "content.system.message_read_timestamp" = "Seen";
-"content.system.failedtosend_message_timestamp" = "Sending failed.";
-"content.system.failedtosend_message_timestamp_resend" = "Resend";
-"content.system.failedtosend_message_timestamp_delete" = "Delete";
+"content.system.failedtosend_message.general_reason" = "Message could not be sent due to connectivity issues.";
+"content.system.failedtosend_message.federation_remote_error_reason" = "Message could not be sent as the backend of **%@** could not be reached. [Learn more](%@)";
+"content.system.failedtosend_message.retry" = "Retry";
+
+"content.system.failedtosend_participants.show_details" = "Show Details";
+"content.system.failedtosend_participants.hide_details" = "Hide Details";
+"content.system.failedtosend_participants.did_not_get_message" = "**%@ participants** didn’t get your message.";
+"content.system.failedtosend_participants.will_get_message_later" = "**%@** will get your message later.";
+"content.system.failedtosend_participants.will_never_get_message" = "**%@** won’t get your message.";
+"content.system.failedtosend_participants.from" = "**%@ from %@**";
+"content.system.failed_participants.learn_more" = "%@ [Learn more](%@)";
+
+"content.system.failedtoadd_participants.count" = "**%@ participants** could not be added to the group.";
+"content.system.failedtoadd_participants.could_not_be_added" = "**%@** could not be added to the group. [Learn more](%@)";
+
 "content.system.like_tooltip" = "Tap to like";
 "content.system.deleted_message_prefix_timestamp" = "Deleted: %@";
 "content.system.edited_message_prefix_timestamp" = "Edited: %@";
@@ -505,6 +522,9 @@
 
 "content.system.message_timer_off" = "%@ turned off the message timer";
 "content.system.message_timer_off-you" = "%@ turned off the message timer";
+
+"content.system.backends_stop_federating.self_backend" = "**Your backend** stopped federating with **%@**. [Learn more](%@)";
+"content.system.backends_stop_federating.other_backends" = "The backends **%@** and **%@** stopped federating. [Learn more](%@)";
 
 // read receipt
 
@@ -630,6 +650,7 @@
 "error.connection.title" = "Error";
 "error.connection.missing_legalhold_consent" = "You cannot connect to this user due to legal hold.";
 "error.connection.generic_error" = "Something went wrong, please try again";
+"error.connection.federation_denied_message" = "Your backend does not federate with the backend of %@. You can not connect with them.";
 
 // Save image errors
 "library.alert.permission_warning.title" = "Wire needs access to your Photos";
@@ -896,10 +917,12 @@
 "profile.details.blocking_reason" = "This user is blocked due to legal hold. [LEARN MORE](%@)";
 "profile.details.identity_warning" = "Get certainty about %@’s identity before connecting.";
 "profile.details.requested_identity_warning" = "Please verify the person's identity before accepting the connection request.";
+"profile.details.title.unavailable" = "Name not available";
 
 // Device list
 "profile.devices.title" = "Devices";
 "profile.devices.fingerprint_message_unencrypted" = "%@ is using an old version of Wire. No devices are shown here.";
+"profile.devices.no_device_data" = "No device data available.";
 "profile.devices.fingerprint_message.title" = "Wire gives every device a unique fingerprint. Compare them with %@ and verify your conversation.";
 "profile.devices.fingerprint_message.link" = "Why verify conversations?";
 

@@ -53,6 +53,14 @@ final class ReactionSectionViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        guard let firstButton = typesByButton.first?.key else { return }
+        for button in sectionButtons {
+            button.isSelected = (button == firstButton)
+        }
+    }
+
     private func createButtons(_ types: [EmojiSectionType]) {
         sectionButtons = types.map(createSectionButton)
         zip(types, sectionButtons).forEach { (type, button) in
@@ -108,11 +116,9 @@ final class ReactionSectionViewController: UIViewController {
     }
 
     private func createConstraints() {
-
-        let inset: CGFloat = 16
         let count = CGFloat(sectionButtons.count)
-        let fullSpacing = (view.bounds.width - 2 * inset) - iconSize
-        let padding: CGFloat = fullSpacing / (count - 1)
+        let fullSpacing = view.bounds.width -  iconSize
+        let padding: CGFloat = fullSpacing / count
 
         var constraints = [NSLayoutConstraint]()
 
@@ -122,7 +128,7 @@ final class ReactionSectionViewController: UIViewController {
 
             switch idx {
             case 0:
-                constraints.append(button.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: inset))
+                constraints.append(button.leadingAnchor.constraint(equalTo: view.leadingAnchor))
             default:
                 let previous = sectionButtons[idx - 1]
                 constraints.append(button.centerXAnchor.constraint(equalTo: previous.centerXAnchor, constant: padding))

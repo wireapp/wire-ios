@@ -89,12 +89,12 @@ class ReactionToggle: UIControl {
     // MARK: - Methods
 
     public func configureData(
-        type: String,
+        emoji: String,
         count: Int,
         isToggled: Bool,
         onToggle: @escaping () -> Void
     ) {
-        emojiLabel.text  = type
+        emojiLabel.text  = emoji
         counterLabel.text = String(count)
         self.isToggled = isToggled
         self.onToggle = onToggle

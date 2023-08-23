@@ -442,9 +442,11 @@ extension Text {
         updatedText.expectsReadConfirmation = expectsReadConfirmation
 
         // We always keep the quote from the original message
-        hasQuote
-            ? updatedText.quote = quote
-            : updatedText.clearQuote()
+        if hasQuote {
+            updatedText.quote = quote
+        } else {
+            updatedText.clearQuote()
+        }
         return updatedText
     }
 
@@ -466,19 +468,45 @@ extension Text {
 // MARK: - Reaction
 
 extension WireProtos.Reaction {
-    public static func createReaction(emoji: String, messageID: UUID) -> WireProtos.Reaction {
-        return WireProtos.Reaction.with({
-            $0.emoji = emoji
+
+    public static func createReaction(
+        emojis: Set<String>,
+        messageID: UUID
+    ) -> WireProtos.Reaction {
+        let transportString = emojis
+            .map { $0.trimmingCharacters(in: .whitespaces) }
+            .joined(separator: ",")
+
+        return WireProtos.Reaction.with {
+            $0.emoji = transportString
             $0.messageID = messageID.transportString()
-        })
+        }
     }
+
+    func toReactionSet() -> Set<String> {
+        guard !emoji.isEmpty else { return [] }
+
+        let result = emoji
+            .components(separatedBy: ",")
+            .map { String($0) }
+
+        return Set(result)
+    }
+
 }
 
 public enum ProtosReactionFactory {
-    public static func createReaction(emoji: String, messageID: UUID) -> WireProtos.Reaction {
-        return WireProtos.Reaction.createReaction(emoji: emoji,
-                                                  messageID: messageID)
+
+    public static func createReaction(
+        emojis: Set<String>,
+        messageID: UUID
+    ) -> WireProtos.Reaction {
+        return WireProtos.Reaction.createReaction(
+            emojis: emojis,
+            messageID: messageID
+        )
     }
+
 }
 
 // MARK: - LastRead
@@ -540,7 +568,7 @@ extension MessageHide {
 extension MessageDelete {
     public init(messageId: UUID) {
         self = MessageDelete.with {
-         $0.messageID = messageId.transportString()
+            $0.messageID = messageId.transportString()
         }
     }
 }
@@ -669,7 +697,7 @@ public extension LinkPreview {
             }
 
             guard let author = twitterMetadata.author,
-                let username = twitterMetadata.username else { return }
+                  let username = twitterMetadata.username else { return }
 
             $0.tweet = WireProtos.Tweet.with({
                 $0.author = author

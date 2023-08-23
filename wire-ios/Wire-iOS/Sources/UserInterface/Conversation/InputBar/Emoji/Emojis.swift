@@ -20,7 +20,55 @@ import Foundation
 import UIKit
 import WireCommonComponents
 
-typealias Emoji = String
+@objc
+final class Emoji: NSObject {
+
+    let value: String
+    let name: String?
+
+    init(value: String) {
+        self.value = value
+        self.name = value.unicodeScalars.first?.properties.name?.lowercased()
+    }
+
+    override var description: String {
+        return value
+    }
+
+    override var hash: Int {
+        return value.hash
+    }
+
+    override func isEqual(_ object: Any?) -> Bool {
+        guard let other = object as? Emoji else { return false }
+        return value == other.value
+    }
+
+}
+
+extension Emoji {
+
+    static var like: Emoji {
+        return Emoji(value: "❤️")
+    }
+
+    static var smile: Emoji {
+        return Emoji(value: "🙂")
+    }
+
+    static var frown: Emoji {
+        return Emoji(value: "☹️")
+    }
+
+    static var thumbsUp: Emoji {
+        return Emoji(value: "👍")
+    }
+
+    static var thumbsDown: Emoji {
+        return Emoji(value: "👎")
+    }
+
+}
 
 final class EmojiDataSource: NSObject, UICollectionViewDataSource {
 
@@ -70,7 +118,7 @@ final class EmojiDataSource: NSObject, UICollectionViewDataSource {
         return sections.map { $0.type }.firstIndex(of: type)
     }
 
-    func register(used emoji: Emoji) -> Update? {
+    @discardableResult func register(used emoji: Emoji) -> Update? {
         let shouldReload = recentlyUsed.register(emoji)
         let shouldInsert = insertRecentlyUsedSectionIfNeeded()
 
@@ -100,7 +148,7 @@ final class EmojiDataSource: NSObject, UICollectionViewDataSource {
         let uppercasedQuery = query.uppercased()
         initialSections.forEach { section in
             let filtered = section.emoji.filter {
-                guard let unicodeScalar = $0.unicodeScalars.first else { return false }
+                guard let unicodeScalar = $0.value.unicodeScalars.first else { return false }
                 return (unicodeScalar.properties.name ?? "").uppercased().contains(uppercasedQuery)
             }
             guard !filtered.isEmpty else { return }
@@ -143,8 +191,13 @@ enum EmojiSectionType: String {
     }
 
     static var all: [EmojiSectionType] {
+        var all = basicTypes
+        all.insert(EmojiSectionType.recent, at: 0)
+        return all
+    }
+
+    static var basicTypes: [EmojiSectionType] {
         return [
-            EmojiSectionType.recent,
             .people,
             .nature,
             .food,
@@ -173,8 +226,8 @@ struct FileEmojiSection: EmojiSection {
     init?(_ type: EmojiSectionType) {
         let filename = "emoji_\(type.rawValue)"
         guard let url = Bundle.main.url(forResource: filename, withExtension: "plist") else { return nil }
-        guard let emoji = NSArray(contentsOf: url) as? [Emoji] else { return nil }
-        self.emoji = emoji
+        guard let emoji = NSArray(contentsOf: url) as? [String] else { return nil }
+        self.emoji = emoji.map { Emoji(value: $0) }
         self.type = type
     }
 

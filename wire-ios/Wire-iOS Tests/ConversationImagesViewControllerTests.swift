@@ -21,6 +21,8 @@ import XCTest
 
 extension SelfUser {
 
+    // MARK: - Helper method
+
     /// setup self user as a team member if providing teamID with the name Tarja Turunen
     /// - Parameter teamID: when providing a team ID, self user is a team member
     static func setupMockSelfUser(inTeam teamID: UUID? = nil) {
@@ -28,7 +30,11 @@ extension SelfUser {
     }
 }
 
+// MARK: - ConversationImagesViewControllerTests
+
 final class ConversationImagesViewControllerTests: CoreDataSnapshotTestCase {
+
+    // MARK: - Properties
 
     var sut: ConversationImagesViewController! = nil
     var navigatorController: UINavigationController! = nil
@@ -36,6 +42,8 @@ final class ConversationImagesViewControllerTests: CoreDataSnapshotTestCase {
     override var needsCaches: Bool {
         return true
     }
+
+    // MARK: - setUp
 
     override func setUp() {
         super.setUp()
@@ -55,10 +63,14 @@ final class ConversationImagesViewControllerTests: CoreDataSnapshotTestCase {
         navigatorController = sut.wrapInNavigationController(navigationBarClass: UINavigationBar.self)
     }
 
+    // MARK: - tearDown
+
     override func tearDown() {
         sut = nil
         super.tearDown()
     }
+
+    // MARK: - Snapshot Tests
 
     func testForWrappedInNavigationController() {
         verify(view: navigatorController.view)
@@ -84,7 +96,9 @@ final class ConversationImagesViewControllerTests: CoreDataSnapshotTestCase {
         verify(view: navigatorController.view)
     }
 
-    // MARK: - Update toolbar buttons for switching between ephemeral/normal messages
+    // MARK: - Unit Tests
+    // Update toolbar buttons for switching between ephemeral/normal messages
+
     func testThatToolBarIsUpdateAfterScollToAnEphemeralImage() {
         // GIVEN
         let image = self.image(inTestBundleNamed: "unsplash_matterhorn.jpg")
@@ -96,7 +110,7 @@ final class ConversationImagesViewControllerTests: CoreDataSnapshotTestCase {
         sut.viewDidLoad()
 
         // THEN
-        XCTAssertEqual(sut.buttonsBar.buttons.count, 8)
+        XCTAssertEqual(sut.buttonsBar.buttons.count, 7)
 
         // WHEN
         message.isEphemeral = true

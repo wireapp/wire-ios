@@ -39,7 +39,7 @@ class MessageActionsViewController: UIAlertController {
     override func viewDidLoad() {
         super.viewDidLoad()
     }
-    
+
     private func addMessageActions(_ actions: [MessageAction],
                                    withActionController actionController: ConversationMessageActionController) {
         self.actionController = actionController
@@ -57,7 +57,8 @@ class MessageActionsViewController: UIAlertController {
         guard let customContentPlaceholder = self.view.findLabel(withText: MessageActionsViewController.MessageLabelMarker),
               let customContainer = customContentPlaceholder.superview else { return }
 
-        let reactionPicker = BasicReactionPicker(selectedReaction: actionController?.selfUserReaction?.unicodeValue)
+        let reactionPicker = BasicReactionPicker(selectedReactions: actionController?.message.selfUserReactions() ?? [])
+
         reactionPicker.delegate = delegate
         reactionPicker.translatesAutoresizingMaskIntoConstraints = false
 
@@ -94,24 +95,20 @@ class MessageActionsViewController: UIAlertController {
 }
 
 extension MessageActionsViewController: ReactionPickerDelegate {
-    func didPickReaction(reaction: WireDataModel.MessageReaction) {
+    func didPickReaction(reaction: Emoji) {
         actionController?.perform(action: .react(reaction))
     }
 
     func didTapMoreEmojis() {
-        let pickerController = CompleteReactionPickerViewController(selectedReaction: actionController?.selfUserReaction?.unicodeValue)
+        let pickerController = CompleteReactionPickerViewController(selectedReactions: actionController?.message.selfUserReactions() ?? [])
         pickerController.delegate = self
         present(pickerController, animated: true)
     }
 }
 
 extension MessageActionsViewController: EmojiPickerViewControllerDelegate {
-    func emojiPickerDidSelectEmoji(_ emoji: String) {
-        guard let reaction = MessageReaction.messageReaction(from: emoji) else {
-            dismiss(animated: true)
-            return
-        }
-        actionController?.perform(action: .react(reaction))
+    func emojiPickerDidSelectEmoji(_ emoji: Emoji) {
+        actionController?.perform(action: .react(emoji))
         dismiss(animated: true)
         return
     }

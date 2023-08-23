@@ -178,10 +178,6 @@ final class ConversationMessageActionController {
         return message.canAddReaction ? .react(.like) : nil
     }
 
-    var selfUserReaction: MessageReaction? {
-        return message.selfUserReaction
-    }
-
     // MARK: - Handler
 
     func perform(action: MessageAction) {
@@ -238,7 +234,7 @@ final class ConversationMessageActionController {
         perform(action: .showInConversation)
     }
 
-    @objc func addReaction(reaction: MessageReaction) {
+    @objc func addReaction(reaction: Emoji) {
         perform(action: .react(reaction))
     }
 

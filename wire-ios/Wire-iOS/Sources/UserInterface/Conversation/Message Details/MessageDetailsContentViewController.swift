@@ -143,6 +143,7 @@ final class MessageDetailsContentViewController: UIViewController {
             forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
             withReuseIdentifier: sectionHeaderIdentifier
         )
+
         view.addSubview(collectionView)
 
         subtitleLabel.numberOfLines = 0
@@ -312,6 +313,7 @@ extension MessageDetailsContentViewController: UICollectionViewDataSource, UICol
             withReuseIdentifier: sectionHeaderIdentifier,
             for: indexPath
         )
+
         let section = sections[indexPath.section]
         (view as? SectionHeader)?.titleLabel.text = section.headerText
         (view as? SectionHeader)?.titleLabel.font = FontSpec.headerRegularFont.font!
@@ -385,14 +387,6 @@ extension MessageDetailsContentViewController: ProfileViewControllerDelegate {
         dismiss(animated: true) {
             ZClientViewController.shared?.load(conversation, scrollTo: nil, focusOnView: true, animated: true)
         }
-    }
-
-    func profileViewController(
-        _ controller: ProfileViewController?,
-        wantsToCreateConversationWithName name: String?,
-        users: UserSet
-    ) {
-        // no-op
     }
 }
 
