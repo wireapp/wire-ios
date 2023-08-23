@@ -323,6 +323,11 @@
 "conversation.create.mls.subtitle" = "Select MLS to create a group using Messaging Layer Security protocol (beta version).";
 "conversation.create.mls.picker_title" = "Select Protocol";
 "conversation.create.mls.cancel" = "取消";
+"conversation.create.non_federating_domains_error.title" = "Group can't be created";
+"conversation.create.non_federating_domains_error.message" = "People from backends %@ can't join the same group conversation.\nTo create the group, remove affected participants.";
+"conversation.create.non_federating_domains_error.edit_participant_list" = "Edit Participants List";
+"conversation.create.non_federating_domains_error.learn_more" = "了解更多信息";
+"conversation.create.non_federating_domains_error.abort" = "Discard Group Creation";
 
 "conversation.input_bar.ongoing_call_alert.title" = "正在呼叫";
 "conversation.input_bar.ongoing_call_alert.audio.message" = "在通话时不能录制语音讯息。";
@@ -463,9 +468,18 @@
 "content.system.message_sent_timestamp" = "发送";
 "content.system.message_delivered_timestamp" = "已送达";
 "content.system.message_read_timestamp" = "已读";
-"content.system.failedtosend_message_timestamp" = "发送失败。";
-"content.system.failedtosend_message_timestamp_resend" = "重新发送";
-"content.system.failedtosend_message_timestamp_delete" = "删除";
+"content.system.failedtosend_message.general_reason" = "Message could not be sent due to connectivity issues.";
+"content.system.failedtosend_message.federation_remote_error_reason" = "Message could not be sent as the backend of **%@** could not be reached. [Learn more](%@)";
+"content.system.failedtosend_message.retry" = "Retry";
+
+"content.system.failedtosend_participants.show_details" = "Show Details";
+"content.system.failedtosend_participants.hide_details" = "Hide Details";
+"content.system.failedtosend_participants.did_not_get_message" = "**%@ participants** didn’t get your message.";
+"content.system.failedtosend_participants.from" = "**%@ from %@**";
+"content.system.failed_participants.learn_more" = "更多信息";
+
+"content.system.failedtoadd_participants.count" = "**%@ participants** could not be added to the group.";
+
 "content.system.like_tooltip" = "点击赞我";
 "content.system.deleted_message_prefix_timestamp" = "已删除: %@";
 "content.system.edited_message_prefix_timestamp" = "已编辑: %@";
@@ -505,6 +519,9 @@
 
 "content.system.message_timer_off" = "%@关闭了消息计时器";
 "content.system.message_timer_off-you" = "%@关闭了消息计时器";
+
+"content.system.backends_stop_federating.self_backend" = "**Your backend** stopped federating with **%@**. [Learn more](%@)";
+"content.system.backends_stop_federating.other_backends" = "The backends **%@** and **%@** stopped federating. [Learn more](%@)";
 
 // read receipt
 
@@ -624,6 +641,7 @@
 "error.connection.title" = "错误";
 "error.connection.missing_legalhold_consent" = "You cannot connect to this user due to legal hold.";
 "error.connection.generic_error" = "出了点问题，请再试一次";
+"error.connection.federation_denied_message" = "Your backend does not federate with the backend of %@. You can not connect with them.";
 
 // Save image errors
 "library.alert.permission_warning.title" = "Wire需要存取你的照片库";
@@ -693,6 +711,7 @@
 "call.overlay.switch_to.all" = "所有人";
 
 "call.grid.no_active_speakers" = "No active video speakers...";
+"call.grid.connecting" = "Connecting";
 
 "call.grid.hints.fullscreen" = "Double tap on a tile for fullscreen";
 "call.grid.hints.go_back_or_zoom" = "Double tap to go back, pinch to zoom";
@@ -889,10 +908,12 @@
 "profile.details.blocking_reason" = "This user is blocked due to legal hold. [LEARN MORE](%@)";
 "profile.details.identity_warning" = "Get certainty about %@’s identity before connecting.";
 "profile.details.requested_identity_warning" = "Please verify the person's identity before accepting the connection request.";
+"profile.details.title.unavailable" = "Name not available";
 
 // Device list
 "profile.devices.title" = "设备";
 "profile.devices.fingerprint_message_unencrypted" = "%@使用旧版本的Wire，无法显示设备。";
+"profile.devices.no_device_data" = "No device data available.";
 "profile.devices.fingerprint_message.title" = "Wire为每个设备设置了一个唯一的指纹。您可以和%@进行比对来验证聊天室。";
 "profile.devices.fingerprint_message.link" = "为什么要验证对话？";
 

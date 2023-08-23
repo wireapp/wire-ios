@@ -323,6 +323,11 @@
 "conversation.create.mls.subtitle" = "Select MLS to create a group using Messaging Layer Security protocol (beta version).";
 "conversation.create.mls.picker_title" = "Select Protocol";
 "conversation.create.mls.cancel" = "Скасувати";
+"conversation.create.non_federating_domains_error.title" = "Group can't be created";
+"conversation.create.non_federating_domains_error.message" = "People from backends %@ can't join the same group conversation.\nTo create the group, remove affected participants.";
+"conversation.create.non_federating_domains_error.edit_participant_list" = "Edit Participants List";
+"conversation.create.non_federating_domains_error.learn_more" = "Дізнатися більше";
+"conversation.create.non_federating_domains_error.abort" = "Discard Group Creation";
 
 "conversation.input_bar.ongoing_call_alert.title" = "Активний дзвінок";
 "conversation.input_bar.ongoing_call_alert.audio.message" = "Ви не можете записувати аудіо під час дзвінка.";
@@ -463,9 +468,18 @@
 "content.system.message_sent_timestamp" = "Надіслано";
 "content.system.message_delivered_timestamp" = "Доставлене";
 "content.system.message_read_timestamp" = "Переглянуто";
-"content.system.failedtosend_message_timestamp" = "Помилка надсилання.";
-"content.system.failedtosend_message_timestamp_resend" = "Надіслати ще раз";
-"content.system.failedtosend_message_timestamp_delete" = "Видалити";
+"content.system.failedtosend_message.general_reason" = "Message could not be sent due to connectivity issues.";
+"content.system.failedtosend_message.federation_remote_error_reason" = "Message could not be sent as the backend of **%@** could not be reached. [Learn more](%@)";
+"content.system.failedtosend_message.retry" = "Retry";
+
+"content.system.failedtosend_participants.show_details" = "Show Details";
+"content.system.failedtosend_participants.hide_details" = "Hide Details";
+"content.system.failedtosend_participants.did_not_get_message" = "**%@ participants** didn’t get your message.";
+"content.system.failedtosend_participants.from" = "**%@ from %@**";
+"content.system.failed_participants.learn_more" = "Дізнатися більше";
+
+"content.system.failedtoadd_participants.count" = "**%@ participants** could not be added to the group.";
+
 "content.system.like_tooltip" = "Торкніться, якщо сподобалося";
 "content.system.deleted_message_prefix_timestamp" = "Видалено: %@";
 "content.system.edited_message_prefix_timestamp" = "Відредаговано: %@";
@@ -505,6 +519,9 @@
 
 "content.system.message_timer_off" = "%@ вимкнув(-ла) таймер повідомлень";
 "content.system.message_timer_off-you" = "%@ вимкнув(-ла) таймер повідомлень";
+
+"content.system.backends_stop_federating.self_backend" = "**Your backend** stopped federating with **%@**. [Learn more](%@)";
+"content.system.backends_stop_federating.other_backends" = "The backends **%@** and **%@** stopped federating. [Learn more](%@)";
 
 // read receipt
 
@@ -624,6 +641,7 @@
 "error.connection.title" = "Помилка";
 "error.connection.missing_legalhold_consent" = "Ви не можете додати цього користувача через правовий захист.";
 "error.connection.generic_error" = "Щось пішло не так. Будь ласка, спробуй ще раз";
+"error.connection.federation_denied_message" = "Your backend does not federate with the backend of %@. You can not connect with them.";
 
 // Save image errors
 "library.alert.permission_warning.title" = "Wire потребує доступу до ваших фотографій";
@@ -693,6 +711,7 @@
 "call.overlay.switch_to.all" = "ВСІ";
 
 "call.grid.no_active_speakers" = "Активні спікери відсутні...";
+"call.grid.connecting" = "Connecting";
 
 "call.grid.hints.fullscreen" = "Торкніться двічі для повноекранного режиму";
 "call.grid.hints.go_back_or_zoom" = "Токніться двічі, щоб повернутись. Розведіть/зведіть пальці для збільшення/зменшення";
@@ -889,10 +908,12 @@
 "profile.details.blocking_reason" = "Цей користувач заблокований через правовий захист. [ДІЗНАТИСЯ БІЛЬШЕ](%@)";
 "profile.details.identity_warning" = "Get certainty about %@’s identity before connecting.";
 "profile.details.requested_identity_warning" = "Please verify the person's identity before accepting the connection request.";
+"profile.details.title.unavailable" = "Name not available";
 
 // Device list
 "profile.devices.title" = "Пристрої";
 "profile.devices.fingerprint_message_unencrypted" = "%@ використовує стару версію Wire, тому не показується жоден пристрій.";
+"profile.devices.no_device_data" = "No device data available.";
 "profile.devices.fingerprint_message.title" = "Wire присвоює кожному пристроєві унікальний ідентифікатор. Порівняйте його з %@ та верифікуйте вашу розмову.";
 "profile.devices.fingerprint_message.link" = "Навіщо верифікувати розмови?";
 
