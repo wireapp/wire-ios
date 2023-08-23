@@ -29,7 +29,7 @@ public final class GridLayoutView: UIView {
 
     var verticalSpacing: CGFloat = 4
     var horizontalSpacing: CGFloat = 4
-    var rowHeight: CGFloat = 24 // TODO: check to see if this is actually needed.
+    var rowHeight: CGFloat = 40
 
     private(set) var views = [UIView]()
 

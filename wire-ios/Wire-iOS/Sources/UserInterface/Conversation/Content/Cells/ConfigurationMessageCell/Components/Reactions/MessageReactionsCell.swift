@@ -54,6 +54,13 @@ final class MessageReactionsCell: UIView, ConversationMessageCell {
 
     private let reactionsView = GridLayoutView()
 
+    private lazy var insets = UIEdgeInsets(
+        top: 8,
+        left: conversationHorizontalMargins.left,
+        bottom: 0,
+        right: conversationHorizontalMargins.right
+    )
+
     // MARK: - Life cycle
 
     override init(frame: CGRect) {
@@ -69,28 +76,10 @@ final class MessageReactionsCell: UIView, ConversationMessageCell {
     // MARK: - configure Views and constraints
 
     private func configureSubviews() {
+        reactionsView.rowHeight = 24
         addSubview(reactionsView)
-        configureConstraints()
-    }
-
-    private func configureConstraints() {
         reactionsView.translatesAutoresizingMaskIntoConstraints = false
-
-        NSLayoutConstraint.activate([
-            reactionsView.leadingAnchor.constraint(
-                equalTo: leadingAnchor,
-                constant: conversationHorizontalMargins.left
-            ),
-            reactionsView.topAnchor.constraint(
-                equalTo: topAnchor,
-                constant: 8
-            ),
-            reactionsView.trailingAnchor.constraint(
-                equalTo: trailingAnchor,
-                constant: -conversationHorizontalMargins.right
-            ),
-            reactionsView.bottomAnchor.constraint(equalTo: bottomAnchor)
-        ])
+        reactionsView.fitIn(view: self, insets: insets)
     }
 
     // MARK: - configure method
