@@ -112,9 +112,9 @@ jobs:
         with:
           path: fastlane/.post_build
       - uses: akiojin/decode-base64-github-action@v0.1.0
-        id: base64-decoded-APPCENTER_RELEASE_NOTES
+        id: base64-decoded-RELEASE_NOTES
         with:
-          base64: ${{ env.APPCENTER_RELEASE_NOTES }}
+          base64: ${{ env.RELEASE_NOTES }}
       - uses: akiojin/decode-base64-github-action@v0.1.0
         id: base64-decoded-S3_PATHS
         with:
@@ -123,4 +123,4 @@ jobs:
         uses: 8398a7/action-slack@v3
         with:
           status: ${{ job.status }}
-          text: "**${{ env.APP_NAME }}** (version: ${{ env.BUILD_VERSION }} build: ${{ env.BUILD_NUMBER }}) build completed  🚀\n**Release notes:**\n${{ steps.base64-decoded-APPCENTER_RELEASE_NOTES.outputs.decoded }}\n**Tap on iOS device to install:**\n${{ env.APPCENTER_INSTALL_LINK }}\n**AWS S3 Paths:**\n${{ steps.base64-decoded-S3_PATHS.outputs.decoded }}\n*Triggered by: ${{ env.GITHUB_ACTOR }}"
+          text: "**${{ env.APP_NAME }}** (version: ${{ env.BUILD_VERSION }} build: ${{ env.BUILD_NUMBER }}) build completed  🚀\n**Release notes:**\n${{ steps.base64-decoded-RELEASE_NOTES.outputs.decoded }}\n**Tap on iOS device to install:**\n${{ env.APPCENTER_INSTALL_LINK }}\n**AWS S3 Paths:**\n${{ steps.base64-decoded-S3_PATHS.outputs.decoded }}\n*Triggered by: ${{ env.GITHUB_ACTOR }}"

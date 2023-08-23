@@ -175,6 +175,7 @@ platform :ios do
             upload_app_center(options)
         end
         upload_s3(options)
+        save_changelog_to_env(options)
         if options[:upload_dsyms_to_app_center] || false
             upload_dsyms_to_app_center_for_appstore_build(options)
         end
@@ -374,7 +375,7 @@ platform :ios do
 
         changelog += "Last commits:\n" + changelog_from_git_commits(
                 commits_count: 5,
-                pretty: "* [%an] %s",
+                pretty: "- [%an] %s",
         )
         changelog
     end
@@ -406,9 +407,7 @@ platform :ios do
         )
 
         appcenter_build_info = Fastlane::Actions.lane_context[:APPCENTER_BUILD_INFORMATION]
-        puts appcenter_build_info['release_notes'].dump
         `export TEMP='APPCENTER_INSTALL_LINK=#{appcenter_build_info['install_url']}' && echo $TEMP >> ./.post_build/.env`
-        `export TEMP='APPCENTER_RELEASE_NOTES=#{Base64.strict_encode64(appcenter_build_info['release_notes'])}' && echo $TEMP >> ./.post_build/.env`
     end
 
     # Upload to S3 (Automation builds)
@@ -433,6 +432,12 @@ platform :ios do
         output += `cd .. && aws s3 cp --recursive --exclude '*'  --include '*.ipa'  --include '*.app.dSYM.zip' --include '*.xcarchive.tgz' --include '*.junit' artifacts/ #{s3_path}`
         paths = output.split(/[\r,\n]/).map { |line| line.gsub(/\n/, '').gsub(/\*/, '').match(/s3:\/\/.*ipa$/)}.compact!.map{ |match| match[0] }.uniq.join(' \n')
         `export TEMP='S3_PATHS=#{Base64.strict_encode64(paths)}' && echo $TEMP >> ./.post_build/.env`
+    end
+
+    def save_changelog_to_env(options)
+        build = Build.new(options: options)
+        changelog = changelog(build)
+        `export TEMP='RELEASE_NOTES=#{Base64.strict_encode64(changelog)}' && echo $TEMP >> ./.post_build/.env`
     end
 
     # Upload dSYMs for AppStore crash tracking
