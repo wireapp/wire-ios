@@ -60,6 +60,17 @@ public final class GridLayoutView: UIView {
 
     // MARK: - Layout
 
+    public override var intrinsicContentSize: CGSize {
+        let firstViewMinY = views.first?.frame.minY ?? .zero
+        let lastViewMaxY = views.last?.frame.maxY ?? .zero
+        let constraintHeight = lastViewMaxY - firstViewMinY
+
+        return CGSize(
+            width: UIView.noIntrinsicMetric,
+            height: constraintHeight
+        )
+    }
+
     public func prepareForReuse() {
         stackView.removeArrangedSubviews()
         views.removeAll(keepingCapacity: true)
@@ -71,6 +82,7 @@ public final class GridLayoutView: UIView {
 
         setNeedsLayout()
         layoutIfNeeded()
+        invalidateIntrinsicContentSize()
     }
 
     public override func layoutSubviews() {

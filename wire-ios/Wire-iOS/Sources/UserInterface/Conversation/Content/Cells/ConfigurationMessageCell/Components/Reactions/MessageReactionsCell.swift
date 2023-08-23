@@ -52,7 +52,7 @@ final class MessageReactionsCell: UIView, ConversationMessageCell {
 
     weak var delegate: ConversationMessageCellDelegate?
 
-    private let reactionsView = GridLayoutAutoLayoutWrappedView()
+    private let reactionsView = GridLayoutView()
 
     // MARK: - Life cycle
 
