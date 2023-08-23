@@ -119,6 +119,7 @@ class BaseCallParticipantView: OrientableView, AVSIdentifierProvider {
     func updateUserDetails() {
         userDetailsView.name = stream.user?.name
         userDetailsView.microphoneIconStyle = MicrophoneIconStyle(state: stream.microphoneState, shouldPulse: stream.activeSpeakerState.isSpeakingNow)
+        userDetailsView.callState = stream.callParticipantState
         userDetailsView.alpha = userDetailsAlpha
     }
 

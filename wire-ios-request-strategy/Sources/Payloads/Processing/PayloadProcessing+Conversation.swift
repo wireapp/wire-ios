@@ -67,37 +67,55 @@ extension Payload.Conversation {
         return ZMUser.fetchOrCreate(with: userID, domain: qualifiedID?.domain, in: context)
     }
 
-    func updateOrCreate(in context: NSManagedObjectContext,
-                        serverTimestamp: Date = Date(),
-                        source: Source = .eventStream) {
-
-        guard let rawType = type else { return }
-        let conversationType = BackendConversationType.clientConversationType(rawValue: rawType)
+    @discardableResult
+    func updateOrCreate(
+        in context: NSManagedObjectContext,
+        serverTimestamp: Date = Date(),
+        source: Source = .eventStream
+    ) -> ZMConversation? {
+        guard let conversationType = type.map(BackendConversationType.clientConversationType) else {
+            return nil
+        }
 
         switch conversationType {
         case .group:
-            updateOrCreateGroupConversation(in: context, serverTimestamp: serverTimestamp, source: source)
+            return updateOrCreateGroupConversation(
+                in: context,
+                serverTimestamp: serverTimestamp,
+                source: source
+            )
+
         case .`self`:
-            updateOrCreateSelfConversation(in: context, serverTimestamp: serverTimestamp, source: source)
+            return updateOrCreateSelfConversation(
+                in: context,
+                serverTimestamp: serverTimestamp,
+                source: source
+            )
+
         case .connection, .oneOnOne:
-            updateOrCreateOneToOneConversation(in: context, serverTimestamp: serverTimestamp, source: source)
+            return updateOrCreateOneToOneConversation(
+                in: context,
+                serverTimestamp: serverTimestamp,
+                source: source
+            )
+
         default:
-            break
+            return nil
         }
     }
 
+    @discardableResult
     func updateOrCreateOneToOneConversation(
         in context: NSManagedObjectContext,
         serverTimestamp: Date,
         source: Source
-    ) {
-
+    ) -> ZMConversation? {
         guard
             let conversationID = id ?? qualifiedID?.uuid,
             let rawConversationType = type
         else {
             Logging.eventProcessing.error("Missing conversation or type in 1:1 conversation payload, aborting...")
-            return
+            return nil
         }
 
         let conversationType = BackendConversationType.clientConversationType(rawValue: rawConversationType)
@@ -110,7 +128,7 @@ extension Payload.Conversation {
             // TODO: use conversation type from the backend once it returns the correct value
             conversation?.conversationType = self.conversationType(for: conversation, from: conversationType)
             conversation?.needsToBeUpdatedFromBackend = false
-            return
+            return conversation
         }
 
         let otherUser = ZMUser.fetchOrCreate(with: otherUserID, domain: otherMember.qualifiedID?.domain, in: context)
@@ -136,49 +154,66 @@ extension Payload.Conversation {
         updateConversationStatus(for: conversation)
 
         conversation.needsToBeUpdatedFromBackend = false
+        conversation.isPendingMetadataRefresh = otherUser.isPendingMetadataRefresh
+
+        return conversation
     }
 
-    func updateOrCreateSelfConversation(in context: NSManagedObjectContext,
-                                        serverTimestamp: Date,
-                                        source: Source) {
+    @discardableResult
+    func updateOrCreateSelfConversation(
+        in context: NSManagedObjectContext,
+        serverTimestamp: Date,
+        source: Source
+    ) -> ZMConversation? {
         guard let conversationID = id ?? qualifiedID?.uuid else {
             Logging.eventProcessing.error("Missing conversationID in self conversation payload, aborting...")
-            return
+            return nil
         }
 
         var created = false
-        let conversation = ZMConversation.fetchOrCreate(with: conversationID,
-                                                        domain: qualifiedID?.domain,
-                                                        in: context,
-                                                        created: &created)
+        let conversation = ZMConversation.fetchOrCreate(
+            with: conversationID,
+            domain: qualifiedID?.domain,
+            in: context,
+            created: &created
+        )
 
         conversation.conversationType = .`self`
         conversation.domain = BackendInfo.isFederationEnabled ? qualifiedID?.domain : nil
         conversation.needsToBeUpdatedFromBackend = false
+        conversation.isPendingMetadataRefresh = false
 
         updateMetadata(for: conversation, context: context)
         updateMembers(for: conversation, context: context)
         updateConversationTimestamps(for: conversation, serverTimestamp: serverTimestamp)
+
+        return conversation
     }
 
-    func updateOrCreateGroupConversation(in context: NSManagedObjectContext,
-                                         serverTimestamp: Date,
-                                         source: Source) {
+    @discardableResult
+    func updateOrCreateGroupConversation(
+        in context: NSManagedObjectContext,
+        serverTimestamp: Date,
+        source: Source
+    ) -> ZMConversation? {
         guard let conversationID = id ?? qualifiedID?.uuid else {
             Logging.eventProcessing.error("Missing conversationID in group conversation payload, aborting...")
-            return
+            return nil
         }
 
         var created = false
-        let conversation = ZMConversation.fetchOrCreate(with: conversationID,
-                                                        domain: qualifiedID?.domain,
-                                                        in: context,
-                                                        created: &created)
+        let conversation = ZMConversation.fetchOrCreate(
+            with: conversationID,
+            domain: qualifiedID?.domain,
+            in: context,
+            created: &created
+        )
 
         conversation.conversationType = .group
         conversation.remoteIdentifier = conversationID
         conversation.domain = BackendInfo.isFederationEnabled ? qualifiedID?.domain : nil
         conversation.needsToBeUpdatedFromBackend = false
+        conversation.isPendingMetadataRefresh = false
         conversation.epoch = UInt64(epoch ?? 0)
 
         updateMetadata(for: conversation, context: context)
@@ -198,6 +233,8 @@ extension Payload.Conversation {
                 conversation.lastReadServerTimeStamp = conversation.lastModifiedDate
             }
         }
+
+        return conversation
     }
 
     // There is a bug in the backend where the conversation type is not correct for
@@ -517,60 +554,69 @@ extension Payload.ConversationEvent where T == Payload.UpdateConversationDeleted
 
 }
 
-extension Payload.ConversationEvent where T == Payload.UpdateConversationConnectionRequest {
+    extension Payload.ConversationEvent where T == Payload.UpdateConversationConnectionRequest {
 
-    func process(in context: NSManagedObjectContext, originalEvent: ZMUpdateEvent) {
-        // TODO jacob refactor to append method on conversation
-        _ = ZMSystemMessage.createOrUpdate(from: originalEvent, in: context)
-    }
-
-}
-
-extension Payload.UpdateConversationMLSWelcome {
-
-    func process(in context: NSManagedObjectContext, originalEvent: ZMUpdateEvent) {
-        MLSEventProcessor.shared.process(
-            welcomeMessage: data,
-            in: context
-        )
-    }
-
-}
-
-extension Payload.ConversationEvent where T == Payload.UpdateConverationMemberJoin {
-
-    func process(in context: NSManagedObjectContext, originalEvent: ZMUpdateEvent) {
-        guard
-            let conversation = fetchOrCreateConversation(in: context)
-        else {
-            Logging.eventProcessing.error("Member join update missing conversation, aborting...")
-            return
-        }
-
-        if let usersAndRoles = data.users?.map({ $0.fetchUserAndRole(in: context, conversation: conversation)! }) {
-            let selfUser = ZMUser.selfUser(in: context)
-            let users = Set(usersAndRoles.map { $0.0 })
-            let newUsers = !users.subtracting(conversation.localParticipants).isEmpty
-
-            if users.contains(selfUser) || newUsers {
-                // TODO jacob refactor to append method on conversation
-                _ = ZMSystemMessage.createOrUpdate(from: originalEvent, in: context)
-            }
-
-            conversation.addParticipantsAndUpdateConversationState(usersAndRoles: usersAndRoles)
-        } else if let users = data.userIDs?.map({ ZMUser.fetchOrCreate(with: $0, domain: nil, in: context)}) {
-            // NOTE: legacy code path for backwards compatibility with servers without role support
-
-            let users = Set(users)
-            let selfUser = ZMUser.selfUser(in: context)
-
-            if !users.isSubset(of: conversation.localParticipantsExcludingSelf) || users.contains(selfUser) {
-                // TODO jacob refactor to append method on conversation
-                _ = ZMSystemMessage.createOrUpdate(from: originalEvent, in: context)
-            }
-            conversation.addParticipantsAndUpdateConversationState(users: users, role: nil)
+        func process(in context: NSManagedObjectContext, originalEvent: ZMUpdateEvent) {
+            // TODO jacob refactor to append method on conversation
+            _ = ZMSystemMessage.createOrUpdate(from: originalEvent, in: context)
         }
 
     }
 
-}
+    private extension ZMConversation {
+
+        func firstSystemMessage(for systemMessageType: ZMSystemMessageType) -> ZMSystemMessage? {
+
+            return allMessages
+                .compactMap { $0 as? ZMSystemMessage }
+                .first(where: { $0.systemMessageType == systemMessageType })
+        }
+    }
+
+    extension Payload.UpdateConversationMLSWelcome {
+
+        func process(in context: NSManagedObjectContext, originalEvent: ZMUpdateEvent) {
+            MLSEventProcessor.shared.process(
+                welcomeMessage: data,
+                in: context
+            )
+        }
+
+    }
+
+    extension Payload.ConversationEvent where T == Payload.UpdateConverationMemberJoin {
+
+        func process(in context: NSManagedObjectContext, originalEvent: ZMUpdateEvent) {
+            guard
+                let conversation = fetchOrCreateConversation(in: context)
+            else {
+                Logging.eventProcessing.error("Member join update missing conversation, aborting...")
+                return
+            }
+
+            if let usersAndRoles = data.users?.map({ $0.fetchUserAndRole(in: context, conversation: conversation)! }) {
+                let selfUser = ZMUser.selfUser(in: context)
+                let users = Set(usersAndRoles.map { $0.0 })
+                let newUsers = !users.subtracting(conversation.localParticipants).isEmpty
+
+                if users.contains(selfUser) || newUsers {
+                    // TODO jacob refactor to append method on conversation
+                    _ = ZMSystemMessage.createOrUpdate(from: originalEvent, in: context)
+                }
+
+                conversation.addParticipantsAndUpdateConversationState(usersAndRoles: usersAndRoles)
+            } else if let users = data.userIDs?.map({ ZMUser.fetchOrCreate(with: $0, domain: nil, in: context)}) {
+                // NOTE: legacy code path for backwards compatibility with servers without role support
+
+                let users = Set(users)
+                let selfUser = ZMUser.selfUser(in: context)
+
+                if !users.isSubset(of: conversation.localParticipantsExcludingSelf) || users.contains(selfUser) {
+                    // TODO jacob refactor to append method on conversation
+                    _ = ZMSystemMessage.createOrUpdate(from: originalEvent, in: context)
+                }
+                conversation.addParticipantsAndUpdateConversationState(users: users, role: nil)
+            }
+        }
+
+    }
