@@ -323,6 +323,11 @@
 "conversation.create.mls.subtitle" = "Select MLS to create a group using Messaging Layer Security protocol (beta version).";
 "conversation.create.mls.picker_title" = "Select Protocol";
 "conversation.create.mls.cancel" = "Annulla";
+"conversation.create.non_federating_domains_error.title" = "Group can't be created";
+"conversation.create.non_federating_domains_error.message" = "People from backends %@ can't join the same group conversation.\nTo create the group, remove affected participants.";
+"conversation.create.non_federating_domains_error.edit_participant_list" = "Edit Participants List";
+"conversation.create.non_federating_domains_error.learn_more" = "Ulteriori informazioni";
+"conversation.create.non_federating_domains_error.abort" = "Discard Group Creation";
 
 "conversation.input_bar.ongoing_call_alert.title" = "Chiamata in corso";
 "conversation.input_bar.ongoing_call_alert.audio.message" = "Non è possibile registrare un messaggio vocale durante una chiamata.";
@@ -463,9 +468,18 @@
 "content.system.message_sent_timestamp" = "Inviato";
 "content.system.message_delivered_timestamp" = "Consegnato";
 "content.system.message_read_timestamp" = "Letto";
-"content.system.failedtosend_message_timestamp" = "Invio non riuscito.";
-"content.system.failedtosend_message_timestamp_resend" = "Inviare di nuovo";
-"content.system.failedtosend_message_timestamp_delete" = "Elimina";
+"content.system.failedtosend_message.general_reason" = "Message could not be sent due to connectivity issues.";
+"content.system.failedtosend_message.federation_remote_error_reason" = "Message could not be sent as the backend of **%@** could not be reached. [Learn more](%@)";
+"content.system.failedtosend_message.retry" = "Retry";
+
+"content.system.failedtosend_participants.show_details" = "Show Details";
+"content.system.failedtosend_participants.hide_details" = "Hide Details";
+"content.system.failedtosend_participants.did_not_get_message" = "**%@ participants** didn’t get your message.";
+"content.system.failedtosend_participants.from" = "**%@ from %@**";
+"content.system.failed_participants.learn_more" = "Ulteriori informazioni";
+
+"content.system.failedtoadd_participants.count" = "**%@ participants** could not be added to the group.";
+
 "content.system.like_tooltip" = "Tocca per mettere mi piace";
 "content.system.deleted_message_prefix_timestamp" = "Cancellato il %@";
 "content.system.edited_message_prefix_timestamp" = "Modificato il %@";
@@ -505,6 +519,9 @@
 
 "content.system.message_timer_off" = "%@ ha disattivato la scadenza dei messaggi";
 "content.system.message_timer_off-you" = "%@ ha disattivato la scadenza dei messaggi";
+
+"content.system.backends_stop_federating.self_backend" = "**Your backend** stopped federating with **%@**. [Learn more](%@)";
+"content.system.backends_stop_federating.other_backends" = "The backends **%@** and **%@** stopped federating. [Learn more](%@)";
 
 // read receipt
 
@@ -624,6 +641,7 @@
 "error.connection.title" = "Errore";
 "error.connection.missing_legalhold_consent" = "You cannot connect to this user due to legal hold.";
 "error.connection.generic_error" = "Qualcosa è andato storto, si prega di riprovare";
+"error.connection.federation_denied_message" = "Your backend does not federate with the backend of %@. You can not connect with them.";
 
 // Save image errors
 "library.alert.permission_warning.title" = "Wire ha bisogno di accedere alle tue foto";
@@ -693,6 +711,7 @@
 "call.overlay.switch_to.all" = "TUTTI";
 
 "call.grid.no_active_speakers" = "Nessun altoparlante video attivo...";
+"call.grid.connecting" = "Connecting";
 
 "call.grid.hints.fullscreen" = "Tocca due volte su un tile per schermo intero";
 "call.grid.hints.go_back_or_zoom" = "Doppio tocco per tornare indietro, pizzica per ingrandire";
@@ -889,10 +908,12 @@
 "profile.details.blocking_reason" = "This user is blocked due to legal hold. [LEARN MORE](%@)";
 "profile.details.identity_warning" = "Get certainty about %@’s identity before connecting.";
 "profile.details.requested_identity_warning" = "Please verify the person's identity before accepting the connection request.";
+"profile.details.title.unavailable" = "Name not available";
 
 // Device list
 "profile.devices.title" = "Dispositivi";
 "profile.devices.fingerprint_message_unencrypted" = "%@ sta utilizzando una vecchia versione di filo. Nessun dispositivo viene visualizzato qui.";
+"profile.devices.no_device_data" = "No device data available.";
 "profile.devices.fingerprint_message.title" = "Wire dà un'impronta unica a ogni dispositivo. Confrontale con %@ e verifica la tua conversazione.";
 "profile.devices.fingerprint_message.link" = "Perché verificare le conversazioni?";
 
