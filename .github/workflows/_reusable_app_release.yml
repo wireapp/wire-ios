@@ -123,4 +123,4 @@ jobs:
         uses: 8398a7/action-slack@v3
         with:
           status: ${{ job.status }}
-          text: "**${{ env.APP_NAME }}** (version: ${{ env.BUILD_VERSION }} build: ${{ env.BUILD_NUMBER }}) build completed  🚀\nRelease notes:\n${{ steps.base64-decoded-APPCENTER_RELEASE_NOTES.outputs.decoded }}\nInstall link: ${{ env.APPCENTER_INSTALL_LINK }}\nAWS S3 Paths:${{ steps.base64-decoded-S3_PATHS.outputs.decoded }}\n"
+          text: "**${{ env.APP_NAME }}** (version: ${{ env.BUILD_VERSION }} build: ${{ env.BUILD_NUMBER }}) build completed  🚀\n**Release notes:**\n${{ steps.base64-decoded-APPCENTER_RELEASE_NOTES.outputs.decoded }}\n**Install link:**\n${{ env.APPCENTER_INSTALL_LINK }}\n**AWS S3 Paths:**\n${{ steps.base64-decoded-S3_PATHS.outputs.decoded }}\n"
