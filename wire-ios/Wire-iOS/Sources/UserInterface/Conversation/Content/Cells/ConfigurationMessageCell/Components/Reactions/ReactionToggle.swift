@@ -27,10 +27,15 @@ class ReactionToggle: UIControl {
 
     typealias ButtonColors = SemanticColors.Button
 
-    private let emojiLabel = DynamicFontLabel(fontSpec: .mediumRegularFont,
-                                              color: SemanticColors.Label.textDefault)
-    private let counterLabel = DynamicFontLabel(fontSpec: .mediumSemiboldFont,
-                                                color: SemanticColors.Label.textDefault)
+    private let emojiLabel = DynamicFontLabel(
+        fontSpec: .mediumRegularFont,
+        color: SemanticColors.Label.textDefault
+    )
+
+    private let counterLabel = DynamicFontLabel(
+        fontSpec: .mediumSemiboldFont,
+        color: SemanticColors.Label.textDefault
+    )
 
     private var onToggle: (() -> Void)?
 
@@ -49,48 +54,32 @@ class ReactionToggle: UIControl {
         isToggled: Bool = false,
         onToggle: (() -> Void)? = nil
     ) {
-        emojiLabel.text = emoji.value
-        counterLabel.text = String(count)
         self.isToggled = isToggled
         self.onToggle = onToggle
+
         super.init(frame: .zero)
 
-        layer.borderWidth = 1
-        layer.cornerRadius = 12
-        layer.masksToBounds = true
+        emojiLabel.text = emoji.value
+        counterLabel.text = String(count)
 
-        let insideStackView = UIStackView(arrangedSubviews: [emojiLabel, counterLabel])
-        let stackView = UIStackView(arrangedSubviews: [insideStackView])
-
-        insideStackView.axis = .horizontal
-        insideStackView.distribution = .fill
-        insideStackView.alignment = .center
-        insideStackView.spacing = 4
-
+        let stackView = UIStackView(arrangedSubviews: [emojiLabel, counterLabel])
         stackView.axis = .horizontal
         stackView.distribution = .fill
         stackView.alignment = .center
-
-        insideStackView.isLayoutMarginsRelativeArrangement = true
-        insideStackView.layoutMargins = UIEdgeInsets(top: 4, left: 4, bottom: 4, right: 4)
-
+        stackView.spacing = 4
+        stackView.setContentCompressionResistancePriority(.required, for: .horizontal)
         stackView.isUserInteractionEnabled = false
 
         addSubview(stackView)
-
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-
-        NSLayoutConstraint.activate([
-            stackView.topAnchor.constraint(equalTo: topAnchor),
-            stackView.bottomAnchor.constraint(equalTo: bottomAnchor),
-            stackView.centerXAnchor.constraint(equalTo: centerXAnchor)
-        ])
+        stackView.fitIn(
+            view: self,
+            insets: UIEdgeInsets(top: 4, left: 8, bottom: 4, right: 8)
+        )
 
         translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            widthAnchor.constraint(equalToConstant: 43),
-            heightAnchor.constraint(equalToConstant: 24)
-        ])
+
+        layer.borderWidth = 1
+        layer.masksToBounds = true
 
         updateAppearance()
         addTarget(self, action: #selector(didToggle), for: .touchUpInside)
@@ -102,15 +91,20 @@ class ReactionToggle: UIControl {
 
     // MARK: - Methods
 
+    override func draw(_ rect: CGRect) {
+        super.draw(rect)
+        layer.cornerRadius = rect.height / 2.0
+    }
+
     private func updateAppearance() {
         if isToggled {
-           backgroundColor = ButtonColors.backgroundReactionSelected
-           layer.borderColor = ButtonColors.borderReactionSelected.cgColor
-           counterLabel.textColor = SemanticColors.Label.textReactionCounterSelected
+            backgroundColor = ButtonColors.backgroundReactionSelected
+            layer.borderColor = ButtonColors.borderReactionSelected.cgColor
+            counterLabel.textColor = SemanticColors.Label.textReactionCounterSelected
         } else {
-           backgroundColor = ButtonColors.backroundReactionNormal
-           layer.borderColor = ButtonColors.borderReactionNormal.cgColor
-           counterLabel.textColor = SemanticColors.Label.textDefault
+            backgroundColor = ButtonColors.backroundReactionNormal
+            layer.borderColor = ButtonColors.borderReactionNormal.cgColor
+            counterLabel.textColor = SemanticColors.Label.textDefault
         }
     }
 

@@ -29,7 +29,6 @@ public final class GridLayoutView: UIView {
 
     var verticalSpacing: CGFloat = 4
     var horizontalSpacing: CGFloat = 4
-    var rowHeight: CGFloat = 40
 
     private(set) var views = [UIView]()
 
@@ -79,7 +78,6 @@ public final class GridLayoutView: UIView {
     public func configure(views: [UIView]) {
         prepareForReuse()
         self.views = views
-
         setNeedsLayout()
         layoutIfNeeded()
         invalidateIntrinsicContentSize()
@@ -110,6 +108,7 @@ public final class GridLayoutView: UIView {
             currentLineStackView.addArrangedSubview(view)
             lineWidth += view.frame.width + horizontalSpacing
         }
+        invalidateIntrinsicContentSize()
     }
 
     private func createNewRow() -> UIStackView {
@@ -118,7 +117,6 @@ public final class GridLayoutView: UIView {
         stackView.spacing = horizontalSpacing
         stackView.alignment = .center
         stackView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([stackView.heightAnchor.constraint(equalToConstant: rowHeight)])
         return stackView
     }
 

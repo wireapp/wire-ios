@@ -69,7 +69,6 @@ final class MessageReactionsCell: UIView, ConversationMessageCell {
     // MARK: - configure Views and constraints
 
     private func configureSubviews() {
-        reactionsView.rowHeight = 24
         addSubview(reactionsView)
         reactionsView.fitIn(view: self, insets: insets)
     }
