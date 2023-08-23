@@ -25,8 +25,8 @@ final class FailedUsersSystemMessageCell: UIView, ConversationMessageCell {
     typealias FailedtosendParticipants = L10n.Localizable.Content.System.FailedtosendParticipants
 
     struct Configuration {
-        let title: String?
-        let content: String
+        let title: NSAttributedString?
+        let content: NSAttributedString
         let isCollapsed: Bool
         let icon: UIImage?
         let buttonAction: Completion
@@ -85,15 +85,15 @@ final class FailedUsersSystemMessageCell: UIView, ConversationMessageCell {
         imageView.image = config.icon?.withTintColor(SemanticColors.Label.textErrorDefault)
 
         guard let title = config.title else {
-            usersView.attributedText = .markdown(from: config.content, style: .errorLabelStyle)
+            usersView.attributedText = config.content
             [totalCountView, button].forEach { $0.isHidden = true }
             return
         }
 
         [totalCountView, button].forEach { $0.isHidden = false }
         usersView.isHidden = isCollapsed
-        totalCountView.attributedText = .markdown(from: title, style: .errorLabelStyle)
-        usersView.attributedText = .markdown(from: config.content, style: .errorLabelStyle)
+        totalCountView.attributedText = title
+        usersView.attributedText = config.content
         setupButtonTitle()
 
         layoutIfNeeded()

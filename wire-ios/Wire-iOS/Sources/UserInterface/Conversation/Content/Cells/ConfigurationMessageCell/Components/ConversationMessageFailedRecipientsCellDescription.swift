@@ -50,29 +50,44 @@ final class ConversationMessageFailedRecipientsCellDescription: ConversationMess
                                            buttonAction: buttonAction)
     }
 
-    private static func configureTitle(for failedUsers: [UserType]) -> String? {
-        return (failedUsers.count > 1) ? SystemContent.FailedtosendParticipants.didNotGetMessage(failedUsers.count)
-                                       : nil
+    private static func configureTitle(for failedUsers: [UserType]) -> NSAttributedString? {
+        guard failedUsers.count > 1 else {
+            return nil
+        }
+
+        let title = SystemContent.FailedtosendParticipants.didNotGetMessage(failedUsers.count)
+        return .markdown(from: title, style: .errorLabelStyle)
     }
 
-    private static func configureContent(for failedUsers: [UserType]) -> String {
-        var content: [String] = []
+    private static func configureContent(for failedUsers: [UserType]) -> NSAttributedString {
+        var content: [NSAttributedString] = []
         /// The list of participants with complete metadata.
         let usersWithName = failedUsers.filter { !$0.hasEmptyName }.compactMap(\.name)
         if !usersWithName.isEmpty {
-            content.append(SystemContent.FailedtosendParticipants.willGetMessageLater(usersWithName.joined(separator: ", ")))
+            let keyString = "content.system.failedtosend_participants.will_get_message_later"
+
+            let userNamesJoined = usersWithName.joined(separator: ", ")
+            let text = keyString.localized(args: usersWithName.count, userNamesJoined)
+
+            let attributedText = NSAttributedString.errorSystemMessage(withText: text, andHighlighted: userNamesJoined)
+            content.append(attributedText)
         }
 
         /// The list of participants with incomplete metadata.
         let usersWithoutName = failedUsers.filter { $0.hasEmptyName }
         if !usersWithoutName.isEmpty {
+            let keyString = "content.system.failedtosend_participants.will_never_get_message"
+
             let groupedByDomainUsers = groupByDomain(usersWithoutName)
-            content.append(SystemContent.FailedtosendParticipants.willNeverGetMessage(groupedByDomainUsers.joined(separator: ", ")))
+            let domainsJoined = groupedByDomainUsers.joined(separator: ", ")
+            let text = keyString.localized(args: groupedByDomainUsers.count, domainsJoined)
+
+            let attributedText = NSAttributedString.errorSystemMessage(withText: text, andHighlighted: domainsJoined)
+            content.append(attributedText)
         }
+        let learnMore = NSAttributedString.unreachableBackendLearnMoreLink
 
-        let contentString = content.joined(separator: "\n")
-
-        return SystemContent.FailedParticipants.learnMore(contentString, URL.wr_backendOfflineLearnMore.absoluteString)
+        return content.joined(separator: "\n".attributedString) + " " + learnMore
     }
 
     private static func groupByDomain(_ users: [UserType]) -> [String] {
@@ -83,6 +98,23 @@ final class ConversationMessageFailedRecipientsCellDescription: ConversationMess
             usersPerDomain.append(SystemContent.FailedtosendParticipants.from(usersCountString, domain ?? ""))
         }
         return usersPerDomain
+    }
+
+}
+
+extension NSAttributedString {
+
+    static var unreachableBackendLearnMoreLink: NSAttributedString {
+        typealias SystemContent = L10n.Localizable.Content.System
+
+        return NSAttributedString(string: SystemContent.FailedParticipants.learnMore,
+                                  attributes: [.font: UIFont.mediumSemiboldFont,
+                                               .link: URL.wr_unreachableBackendLearnMore])
+    }
+
+    static func errorSystemMessage(withText text: String, andHighlighted highlighted: String) -> NSAttributedString {
+        return .markdown(from: text, style: .errorLabelStyle)
+               .adding(font: .mediumSemiboldFont, to: highlighted)
     }
 
 }

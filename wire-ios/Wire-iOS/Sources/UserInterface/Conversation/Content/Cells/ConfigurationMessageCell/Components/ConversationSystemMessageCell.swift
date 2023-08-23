@@ -1122,14 +1122,26 @@ final class ConversationFailedToAddParticipantsCellDescription: ConversationMess
             buttonAction: buttonAction)
     }
 
-    private static func configureTitle(for failedUsers: [UserType]) -> String? {
-        return (failedUsers.count > 1) ? SystemContent.FailedtoaddParticipants.count(failedUsers.count)
-                                       : nil
+    private static func configureTitle(for failedUsers: [UserType]) -> NSAttributedString? {
+        guard failedUsers.count > 1 else {
+            return nil
+        }
+
+        let title = SystemContent.FailedtoaddParticipants.count(failedUsers.count)
+        return .markdown(from: title, style: .errorLabelStyle)
     }
 
-    private static func configureContent(for failedUsers: [UserType]) -> String {
-        let userNames = failedUsers.compactMap { $0.name }.joined(separator: ", ")
-        return SystemContent.FailedtoaddParticipants.couldNotBeAdded(userNames, URL.wr_backendOfflineLearnMore.absoluteString)
+    private static func configureContent(for failedUsers: [UserType]) -> NSAttributedString {
+        let keyString = "content.system.failedtoadd_participants.could_not_be_added"
+
+        let userNames = failedUsers.compactMap { $0.name }
+        let userNamesJoined = userNames.joined(separator: ", ")
+        let text = keyString.localized(args: userNames.count, userNamesJoined)
+
+        let attributedText = NSAttributedString.errorSystemMessage(withText: text, andHighlighted: userNamesJoined)
+        let learnMore = NSAttributedString.unreachableBackendLearnMoreLink
+
+        return [attributedText, learnMore].joined(separator: " ".attributedString)
     }
 
 }

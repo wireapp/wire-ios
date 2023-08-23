@@ -1957,15 +1957,13 @@ internal enum L10n {
           }
         }
         internal enum FailedParticipants {
-          /// %@ [Learn more](%@)
-          internal static func learnMore(_ p1: Any, _ p2: Any) -> String {
-            return L10n.tr("Localizable", "content.system.failed_participants.learn_more", String(describing: p1), String(describing: p2), fallback: "%@ [Learn more](%@)")
-          }
+          /// Learn more
+          internal static let learnMore = L10n.tr("Localizable", "content.system.failed_participants.learn_more", fallback: "Learn more")
         }
         internal enum FailedtoaddParticipants {
-          /// **%@** could not be added to the group. [Learn more](%@)
-          internal static func couldNotBeAdded(_ p1: Any, _ p2: Any) -> String {
-            return L10n.tr("Localizable", "content.system.failedtoadd_participants.could_not_be_added", String(describing: p1), String(describing: p2), fallback: "**%@** could not be added to the group. [Learn more](%@)")
+          /// Plural format key: "%#@number_of_users@"
+          internal static func couldNotBeAdded(_ p1: Int) -> String {
+            return L10n.tr("Localizable", "content.system.failedtoadd_participants.could_not_be_added", p1, fallback: "Plural format key: \"%#@number_of_users@\"")
           }
           /// **%@ participants** could not be added to the group.
           internal static func count(_ p1: Any) -> String {
@@ -1999,13 +1997,13 @@ internal enum L10n {
           internal static let hideDetails = L10n.tr("Localizable", "content.system.failedtosend_participants.hide_details", fallback: "Hide Details")
           /// Show Details
           internal static let showDetails = L10n.tr("Localizable", "content.system.failedtosend_participants.show_details", fallback: "Show Details")
-          /// **%@** will get your message later.
-          internal static func willGetMessageLater(_ p1: Any) -> String {
-            return L10n.tr("Localizable", "content.system.failedtosend_participants.will_get_message_later", String(describing: p1), fallback: "**%@** will get your message later.")
+          /// Plural format key: "%#@number_of_users@"
+          internal static func willGetMessageLater(_ p1: Int) -> String {
+            return L10n.tr("Localizable", "content.system.failedtosend_participants.will_get_message_later", p1, fallback: "Plural format key: \"%#@number_of_users@\"")
           }
-          /// **%@** won’t get your message.
-          internal static func willNeverGetMessage(_ p1: Any) -> String {
-            return L10n.tr("Localizable", "content.system.failedtosend_participants.will_never_get_message", String(describing: p1), fallback: "**%@** won’t get your message.")
+          /// Plural format key: "%#@number_of_users@"
+          internal static func willNeverGetMessage(_ p1: Int) -> String {
+            return L10n.tr("Localizable", "content.system.failedtosend_participants.will_never_get_message", p1, fallback: "Plural format key: \"%#@number_of_users@\"")
           }
         }
         internal enum FederationTermination {
