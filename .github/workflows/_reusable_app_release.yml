@@ -121,6 +121,8 @@ jobs:
           base64: ${{ env.S3_PATHS }}
       - name: Notify on Wire
         uses: 8398a7/action-slack@v3
+        env:
+          BUILD_LOG_LINK: ${{ GITHUB_SERVER_URL }}/${{ env.GITHUB_REPOSITORY }}/actions/runs/${{ env.GITHUB_RUN_ID }} 
         with:
           status: ${{ job.status }}
-          text: "${{ env.APP_NAME }} (version: ${{ env.BUILD_VERSION }} build: ${{ env.BUILD_NUMBER }}) build completed  🚀\nRelease notes:\n${{ steps.base64-decoded-RELEASE_NOTES.outputs.decoded }}\nTap on iOS device to install:\n${{ env.APPCENTER_INSTALL_LINK }}\nAWS S3 Paths:\n${{ steps.base64-decoded-S3_PATHS.outputs.decoded }}\nTriggered by: $GITHUB_ACTOR\nBuild log: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+          text: "${{ env.APP_NAME }} (version: ${{ env.BUILD_VERSION }} build: ${{ env.BUILD_NUMBER }}) build completed  🚀\nRelease notes:\n${{ steps.base64-decoded-RELEASE_NOTES.outputs.decoded }}\nTap on iOS device to install:\n${{ env.APPCENTER_INSTALL_LINK }}\nAWS S3 Paths:\n${{ steps.base64-decoded-S3_PATHS.outputs.decoded }}\nTriggered by: $GITHUB_ACTOR\nBuild log: ${{ env.BUILD_LOG_LINK }}"
