@@ -178,6 +178,20 @@ final class ConversationMessageSenderSnapshotTests: ZMSnapshotTestCase {
         verify(matching: sut)
     }
 
+    func test_SenderIsTeamMemberWithALongName_GroupConversation() {
+        // GIVEN
+        mockUser = MockUserType.createUser(name: "Bruno with a really really really really really really really really really really long name", inTeam: teamID)
+        mockUser.teamRole = .member
+        mockUser.isGuestInConversation = false
+        mockUser.mockedIsServiceUser = false
+
+        // WHEN
+        sut.configure(with: mockUser)
+
+        // THEN
+        verify(matching: sut)
+    }
+
     // MARK: - Helpers
 
     private func createGroupConversation() -> SwiftMockConversation {
