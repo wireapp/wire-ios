@@ -39,30 +39,26 @@ public struct MessageReactionMetadata: Equatable {
 
 final class MessageReactionsCell: UIView, ConversationMessageCell {
 
-    // MARK: - Properties
-
     struct Configuration: Equatable {
 
         let reactions: [MessageReactionMetadata]
 
     }
 
-    private var collectionViewTopAnchorValue: CGFloat = 8
+    // MARK: - Properties
 
-    let reactionCollectionView = ReactionCollectionView()
-
-    var isSelected: Bool  = false
-
-    var message: WireDataModel.ZMConversationMessage?
+    var isSelected = false
+    var message: ZMConversationMessage?
 
     weak var delegate: ConversationMessageCellDelegate?
 
-    // MARK: - Lifecycle
+    private let reactionsView = GridLayoutAutoLayoutWrappedView()
+
+    // MARK: - Life cycle
 
     override init(frame: CGRect) {
         super.init(frame: frame)
         configureSubviews()
-        configureConstraints()
     }
 
     @available(*, unavailable)
@@ -73,18 +69,27 @@ final class MessageReactionsCell: UIView, ConversationMessageCell {
     // MARK: - configure Views and constraints
 
     private func configureSubviews() {
-        addSubview(reactionCollectionView)
+        addSubview(reactionsView)
+        configureConstraints()
     }
 
     private func configureConstraints() {
-        reactionCollectionView.translatesAutoresizingMaskIntoConstraints = false
-        self.translatesAutoresizingMaskIntoConstraints = false
+        reactionsView.translatesAutoresizingMaskIntoConstraints = false
 
         NSLayoutConstraint.activate([
-            reactionCollectionView.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -conversationHorizontalMargins.right),
-            reactionCollectionView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: conversationHorizontalMargins.left),
-            reactionCollectionView.topAnchor.constraint(equalTo: self.topAnchor, constant: collectionViewTopAnchorValue),
-            reactionCollectionView.bottomAnchor.constraint(equalTo: self.bottomAnchor)
+            reactionsView.leadingAnchor.constraint(
+                equalTo: leadingAnchor,
+                constant: conversationHorizontalMargins.left
+            ),
+            reactionsView.topAnchor.constraint(
+                equalTo: topAnchor,
+                constant: 8
+            ),
+            reactionsView.trailingAnchor.constraint(
+                equalTo: trailingAnchor,
+                constant: -conversationHorizontalMargins.right
+            ),
+            reactionsView.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])
     }
 
@@ -94,27 +99,28 @@ final class MessageReactionsCell: UIView, ConversationMessageCell {
         with object: Configuration,
         animated: Bool
     ) {
-        reactionCollectionView.reactions = object.reactions.map { reaction in
+        let reactions = object.reactions.map { reaction in
             return MessageReactionMetadata(
                 emoji: reaction.emoji,
                 count: reaction.count,
                 isSelfUserReacting: reaction.isSelfUserReacting
-            ) {
-                [weak self] in
-                    guard
-                        let `self` = self,
-                        let message = self.message
-                    else {
-                        return
-                    }
+            ) { [weak self] in
+                guard
+                    let `self` = self,
+                    let message = self.message
+                else {
+                    return
+                }
 
-                    self.delegate?.perform(
-                        action: .react(reaction.emoji),
-                        for: message,
-                        view: self
-                    )
+                self.delegate?.perform(
+                    action: .react(reaction.emoji),
+                    for: message,
+                    view: self
+                )
             }
-        }
+        }.map(ReactionToggle.init)
+
+        reactionsView.configure(views: reactions)
     }
 
 }

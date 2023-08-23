@@ -41,7 +41,17 @@ class ReactionToggle: UIControl {
         }
     }
 
-    // MARK: - Lifecycle
+    // MARK: - Life cycle
+
+    convenience init(_ reactionData: MessageReactionMetadata) {
+        self.init()
+        configureData(
+            emoji: reactionData.emoji.value,
+            count: Int(reactionData.count),
+            isToggled: reactionData.isSelfUserReacting,
+            onToggle: { reactionData.performReaction?() }
+        )
+    }
 
     init(isToggled: Bool = false) {
         self.isToggled = isToggled
@@ -76,6 +86,12 @@ class ReactionToggle: UIControl {
             stackView.topAnchor.constraint(equalTo: topAnchor),
             stackView.bottomAnchor.constraint(equalTo: bottomAnchor),
             stackView.centerXAnchor.constraint(equalTo: centerXAnchor)
+        ])
+
+        translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            widthAnchor.constraint(equalToConstant: 43),
+            heightAnchor.constraint(equalToConstant: 24)
         ])
 
         updateAppearance()
