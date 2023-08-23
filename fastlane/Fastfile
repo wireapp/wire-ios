@@ -86,6 +86,7 @@ platform :ios do
         options[:upload_dsyms_to_datadog] = true
         options[:produce_debug_builds] = true
         build_and_upload_app(options)
+        `export TEMP='APPCENTER_INSTALL_LINK=For \'Beta\' build there is no AppCenter link, please visit Testflight to install the app' && echo $TEMP >> ./.post_build/.env`
         save_app_name('Testflight Beta')
     end
 
