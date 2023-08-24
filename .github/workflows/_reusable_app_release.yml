@@ -122,7 +122,8 @@ jobs:
       - name: Notify on Wire
         uses: 8398a7/action-slack@v3
         env:
-          BUILD_LOG_LINK: ${{ GITHUB_SERVER_URL }}/${{ env.GITHUB_REPOSITORY }}/actions/runs/${{ env.GITHUB_RUN_ID }} 
+          BUILD_LOG_LINK: ${{ env.GITHUB_SERVER_URL }}/${{ env.GITHUB_REPOSITORY }}/actions/runs/${{ env.GITHUB_RUN_ID }}
+          GITHUB_ACTOR: ${{ env.GITHUB_ACTOR }}
         with:
           status: ${{ job.status }}
-          text: "${{ env.APP_NAME }} (version: ${{ env.BUILD_VERSION }} build: ${{ env.BUILD_NUMBER }}) build completed  🚀\nRelease notes:\n${{ steps.base64-decoded-RELEASE_NOTES.outputs.decoded }}\nTap on iOS device to install:\n${{ env.APPCENTER_INSTALL_LINK }}\nAWS S3 Paths:\n${{ steps.base64-decoded-S3_PATHS.outputs.decoded }}\nTriggered by: $GITHUB_ACTOR\nBuild log: ${{ env.BUILD_LOG_LINK }}"
+          text: "**${{ env.APP_NAME }}** (version: ${{ env.BUILD_VERSION }} build: ${{ env.BUILD_NUMBER }}) is ready to test  🚀\nRelease notes:\n${{ steps.base64-decoded-RELEASE_NOTES.outputs.decoded }}\nTap on iOS device to install:\n${{ env.APPCENTER_INSTALL_LINK }}\nAWS S3 Paths:\n${{ steps.base64-decoded-S3_PATHS.outputs.decoded }}\nTriggered by: ${{ env.GITHUB_ACTOR }}\nBuild log: ${{ env.BUILD_LOG_LINK }}"
