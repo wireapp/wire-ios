@@ -20,19 +20,27 @@ import SnapshotTesting
 import XCTest
 @testable import Wire
 
-final class ConversationListHeaderViewSnapshotTests: ZMSnapshotTestCase {
+final class ConversationListHeaderViewSnapshotTests: BaseSnapshotTestCase {
+
+    // MARK: - Properties
 
     var sut: ConversationListHeaderView!
+
+    // MARK: - setUp
 
     override func setUp() {
         super.setUp()
         sut = setupConversationListHeaderView()
     }
 
+    // MARK: - tearDown
+
     override func tearDown() {
         sut = nil
         super.tearDown()
     }
+
+    // MARK: - Snapshot Tests
 
     func testForExpanded() {
         verify(matching: sut)
@@ -53,6 +61,7 @@ final class ConversationListHeaderViewSnapshotTests: ZMSnapshotTestCase {
         verify(matching: sut)
     }
 
+    // MARK: - Helper Methods
 
     private func setupConversationListHeaderView (
         folderBadge: Int = 0,
