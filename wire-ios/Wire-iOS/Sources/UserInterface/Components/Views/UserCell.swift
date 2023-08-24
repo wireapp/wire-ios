@@ -410,8 +410,11 @@ extension UserType {
             return AvailabilityStringBuilder.string(for: self, with: .list, color: color)
         } else if let name = name {
             return name && color
+        } else {
+            let fallbackTitle = L10n.Localizable.Profile.Details.Title.unavailable
+            let fallbackColor = SemanticColors.Label.textCollectionSecondary
+            return fallbackTitle && fallbackColor
         }
-
-        return nil
     }
+
 }

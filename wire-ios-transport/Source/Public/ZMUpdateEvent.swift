@@ -75,8 +75,10 @@ import WireUtilities
     case teamConversationDelete = 29
     case teamMemberUpdate = 30
     case featureConfigUpdate = 40
+    case federationDelete = 43
+    case federationConnectionRemoved = 44
 
-    // Current max value: conversationMLSMessageAdd = 42
+    // Current max value: conversationMLSMessageAdd = 44
 }
 
 extension ZMUpdateEventType {
@@ -169,6 +171,10 @@ extension ZMUpdateEventType {
             return "user.properties-delete"
         case .featureConfigUpdate:
             return "feature-config.update"
+        case .federationDelete:
+            return "federation.delete"
+        case .federationConnectionRemoved:
+            return "federation.connectionRemoved"
         }
     }
 
