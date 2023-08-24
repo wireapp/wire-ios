@@ -185,11 +185,15 @@ final class InputBarButtonsView: UIView {
             expandRowButton.isHidden = true
         }
 
-        // Round buttons.
-        firstRow.first?.roundCorners(edge: .leading, radius: 12)
-        firstRow.last?.roundCorners(edge: .trailing, radius: 12)
-        secondRow.first?.roundCorners(edge: .leading, radius: 12)
-
+        // Round buttons
+        if firstRow.count == 1 {
+            firstRow.first?.layer.cornerRadius = 12
+            firstRow.first?.clipsToBounds = true
+        } else {
+            firstRow.first?.roundCorners(edge: .leading, radius: 12)
+            firstRow.last?.roundCorners(edge: .trailing, radius: 12)
+            secondRow.first?.roundCorners(edge: .leading, radius: 12)
+        }
         var constraints = constrainRowOfButtons(
             firstRow,
             inset: 0,

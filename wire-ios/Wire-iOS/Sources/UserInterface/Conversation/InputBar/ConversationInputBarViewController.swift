@@ -400,7 +400,6 @@ final class ConversationInputBarViewController: UIViewController,
             conversationObserverToken = ConversationChangeInfo.add(observer: self, for: conversation)
         }
 
-
         NotificationCenter.default.addObserver(forName: .featureDidChangeNotification,
                                                object: nil,
                                                queue: .main) { [weak self] note in
