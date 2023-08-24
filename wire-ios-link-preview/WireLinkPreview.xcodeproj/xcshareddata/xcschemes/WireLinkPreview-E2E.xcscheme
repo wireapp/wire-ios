@@ -59,7 +59,40 @@
             </BuildableReference>
             <SkippedTests>
                <Test
-                  Identifier = "E2ETests">
+                  Identifier = "ImageDownloaderTests">
+               </Test>
+               <Test
+                  Identifier = "LinkAttachmentDetectorTests">
+               </Test>
+               <Test
+                  Identifier = "LinkAttachmentTypesTests">
+               </Test>
+               <Test
+                  Identifier = "LinkPreviewDetectorTests">
+               </Test>
+               <Test
+                  Identifier = "MetaStreamContainerTests">
+               </Test>
+               <Test
+                  Identifier = "NSDataDetectorAttachmentTests">
+               </Test>
+               <Test
+                  Identifier = "NSDataDetectorLinksTests">
+               </Test>
+               <Test
+                  Identifier = "OpenGraphDataTests">
+               </Test>
+               <Test
+                  Identifier = "OpenGraphScannerTests">
+               </Test>
+               <Test
+                  Identifier = "PreviewBlackListTests">
+               </Test>
+               <Test
+                  Identifier = "PreviewDownloaderTests">
+               </Test>
+               <Test
+                  Identifier = "StringXMLEntityParserTests">
                </Test>
             </SkippedTests>
          </TestableReference>
