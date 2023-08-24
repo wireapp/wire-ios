@@ -21,6 +21,7 @@ import XCTest
 import WireLinkPreview
 
 extension UIView {
+
     fileprivate func prepareForSnapshot(_ size: CGSize = CGSize(width: 320, height: 216)) -> UIView {
         let container = ReplyRoundCornersView(containedView: self)
         container.translatesAutoresizingMaskIntoConstraints = false
