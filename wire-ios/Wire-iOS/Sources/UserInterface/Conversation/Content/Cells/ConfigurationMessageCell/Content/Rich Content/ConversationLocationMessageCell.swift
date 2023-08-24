@@ -58,9 +58,6 @@ final class ConversationLocationMessageCell: UIView, ConversationMessageCell, Co
         super.init(frame: frame)
         configureViews()
         createConstraints()
-
-        let interaction = UIContextMenuInteraction(delegate: self)
-        addInteraction(interaction)
     }
 
     @available(*, unavailable)
@@ -178,37 +175,6 @@ final class ConversationLocationMessageCell: UIView, ConversationMessageCell, Co
     @objc
     private func openInMaps() {
         lastConfiguration?.location.openInMaps(with: mapView.region.span)
-    }
-
-}
-
-// MARK: - context menu
-extension ConversationLocationMessageCell: UIContextMenuInteractionDelegate {
-
-    func contextMenuInteraction(_ interaction: UIContextMenuInteraction,
-                                configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
-        guard let message = message,
-            let actionResponder = delegate else {
-                return nil
-        }
-
-        let previewProvider: UIContextMenuContentPreviewProvider = {
-            return LocationPreviewController(message: message, actionResponder: actionResponder)
-        }
-
-        return UIContextMenuConfiguration(identifier: message.objectIdentifier as NSCopying,
-                                          previewProvider: previewProvider,
-                                          actionProvider: { _ in
-                                            return self.makeContextMenu(title: "", view: self)
-        })
-    }
-
-    func contextMenuInteraction(_ interaction: UIContextMenuInteraction,
-                                willPerformPreviewActionForMenuWith configuration: UIContextMenuConfiguration,
-                                animator: UIContextMenuInteractionCommitAnimating) {
-        animator.addCompletion {
-            self.openInMaps()
-        }
     }
 }
 

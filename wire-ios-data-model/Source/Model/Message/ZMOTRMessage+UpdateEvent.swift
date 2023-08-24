@@ -77,10 +77,6 @@ extension ZMOTRMessage {
             ZMMessage.remove(remotelyDeletedMessage: message.deleted, inConversation: conversation, senderID: senderID, inContext: moc)
 
         case .reaction:
-            // if we don't understand the reaction received, discard it
-            guard Reaction.validate(unicode: message.reaction.emoji) else {
-                return nil
-            }
             ZMMessage.add(reaction: message.reaction, senderID: senderID, conversation: conversation, inContext: moc)
 
         case .confirmation:

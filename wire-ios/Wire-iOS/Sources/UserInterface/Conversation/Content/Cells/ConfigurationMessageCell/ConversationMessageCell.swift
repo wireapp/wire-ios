@@ -27,6 +27,7 @@ protocol ConversationMessageCellDelegate: MessageActionResponder {
     func conversationMessageWantsToOpenMessageDetails(_ cell: UIView, messageDetailsViewController: MessageDetailsViewController)
     func conversationMessageWantsToOpenGuestOptionsFromView(_ cell: UIView, sourceView: UIView)
     func conversationMessageWantsToOpenParticipantsDetails(_ cell: UIView, selectedUsers: [UserType], sourceView: UIView)
+    func conversationMessageWantsToShowActionsController(_ cell: UIView, actionsController: MessageActionsViewController)
     func conversationMessageShouldUpdate()
 }
 

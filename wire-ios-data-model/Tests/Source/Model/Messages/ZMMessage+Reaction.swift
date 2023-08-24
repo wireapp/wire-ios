@@ -33,7 +33,7 @@ class ZMMessage_Reaction: BaseZMClientMessageTests {
 
         // when
         // this is the UI facing call to add reaction
-        ZMMessage.addReaction(MessageReaction.like, toMessage: message)
+        ZMMessage.addReaction("❤️", to: message)
         self.uiMOC.saveOrRollback()
 
         // then
@@ -47,5 +47,96 @@ class ZMMessage_Reaction: BaseZMClientMessageTests {
             XCTFail()
         }
         XCTAssertEqual(reactionMessage.underlyingMessage!.reaction.emoji, "❤️")
+    }
+
+    func testThatSelfUserIsAbleToAddNewReactionToAMessageTheyAlreadyReactedTo() {
+        // GIVEN
+        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        conversation.remoteIdentifier = UUID.create()
+
+        let message = try! conversation.appendText(content: self.name) as! ZMMessage
+        message.markAsSent()
+        self.uiMOC.saveOrRollback()
+
+        XCTAssertEqual(message.deliveryState, ZMDeliveryState.sent)
+
+        message.setReactions(["😋", "😍"], forUser: selfUser)
+        XCTAssertEqual(message.selfUserReactions(), ["😋", "😍"])
+
+        // WHEN
+        ZMMessage.addReaction("😎", to: message)
+        self.uiMOC.saveOrRollback()
+
+        // THEN
+        XCTAssertEqual(message.selfUserReactions(), ["😋", "😍", "😎"])
+    }
+
+    func testThatSelfUserIsAbleToRemoveReactionFromMessageAndStillHaveAnotherReactionThere() {
+        // GIVEN
+        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        conversation.remoteIdentifier = UUID.create()
+
+        let message = try! conversation.appendText(content: self.name) as! ZMMessage
+        message.markAsSent()
+        self.uiMOC.saveOrRollback()
+
+        XCTAssertEqual(message.deliveryState, ZMDeliveryState.sent)
+
+        message.setReactions(["😋", "😍"], forUser: selfUser)
+        XCTAssertEqual(message.selfUserReactions(), ["😋", "😍"])
+
+        // WHEN
+        ZMMessage.removeReaction("😋", from: message)
+        self.uiMOC.saveOrRollback()
+
+        // THEN
+        XCTAssertEqual(message.selfUserReactions(), ["😍"])
+    }
+
+    func testThatEmptyReactionIsNotAddedToTheMessage() {
+        // GIVEN
+        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        conversation.remoteIdentifier = UUID.create()
+
+        let message = try! conversation.appendText(content: self.name) as! ZMMessage
+        message.markAsSent()
+        self.uiMOC.saveOrRollback()
+
+        XCTAssertEqual(message.deliveryState, ZMDeliveryState.sent)
+
+        message.setReactions(["😋", "😍"], forUser: selfUser)
+        XCTAssertEqual(message.selfUserReactions(), ["😋", "😍"])
+
+        // WHEN
+        ZMMessage.addReaction("", to: message)
+        self.uiMOC.saveOrRollback()
+
+        // THEN
+        XCTAssertEqual(message.selfUserReactions(), ["😋", "😍"])
+    }
+
+    func testThatRemovingAReactionThatTheSelfUserDidNotReactDoesNothing() {
+        // GIVEN
+        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        conversation.remoteIdentifier = UUID.create()
+        let otherUser = ZMUser.insertNewObject(in: self.uiMOC)
+        otherUser.remoteIdentifier = UUID.create()
+
+        let message = try! conversation.appendText(content: self.name) as! ZMMessage
+        message.markAsSent()
+        self.uiMOC.saveOrRollback()
+
+        XCTAssertEqual(message.deliveryState, ZMDeliveryState.sent)
+
+        message.setReactions(["😋", "😍"], forUser: selfUser)
+        message.setReactions(["😙"], forUser: otherUser)
+        XCTAssertEqual(message.selfUserReactions(), ["😋", "😍"])
+
+        // WHEN
+        ZMMessage.removeReaction("😙", from: message)
+        self.uiMOC.saveOrRollback()
+
+        // THEN
+        XCTAssertEqual(message.selfUserReactions(), ["😋", "😍"])
     }
 }

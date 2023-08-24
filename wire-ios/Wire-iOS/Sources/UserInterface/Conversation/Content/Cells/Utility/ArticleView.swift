@@ -59,9 +59,6 @@ final class ArticleView: UIView {
 
         setupViews()
         setupConstraints(imagePlaceholder)
-
-        let interaction = UIContextMenuInteraction(delegate: self)
-        addInteraction(interaction)
     }
 
     @available(*, unavailable)

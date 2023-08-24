@@ -20,14 +20,15 @@ import Foundation
 import WireSyncEngine
 
 struct ConversationMessageContext: Equatable {
-    let isSameSenderAsPrevious: Bool
-    let isTimeIntervalSinceLastMessageSignificant: Bool
-    let isFirstMessageOfTheDay: Bool
-    let isFirstUnreadMessage: Bool
-    let isLastMessage: Bool
-    let searchQueries: [String]
-    let previousMessageIsKnock: Bool
-    let spacing: Float
+    var isSameSenderAsPrevious: Bool = false
+    var isTimeIntervalSinceLastMessageSignificant: Bool = false
+    var isTimestampInSameMinuteAsPreviousMessage: Bool = false
+    var isFirstMessageOfTheDay: Bool = false
+    var isFirstUnreadMessage: Bool = false
+    var isLastMessage: Bool = false
+    var searchQueries: [String] = []
+    var previousMessageIsKnock: Bool = false
+    var spacing: Float = 0
 }
 
 protocol ConversationMessageSectionControllerDelegate: AnyObject {
@@ -206,8 +207,8 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
                                                                                                             state: data.state,
                                                                                                             hasError: data.isExpired,
                                                                                                             buttonAction: {
-                        data.touchAction()
-                    }))
+                    data.touchAction()
+                }))
                 cells.append(button)
             }
         }
@@ -237,20 +238,24 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     private func createCellDescriptions(in context: ConversationMessageContext) {
         cellDescriptions.removeAll()
 
-        let isSenderVisible = self.isSenderVisible(in: context) && message.senderUser != nil
+        let isSenderVisible = self.shouldShowSenderDetails(in: context)
 
         if isBurstTimestampVisible(in: context) {
             add(description: BurstTimestampSenderMessageCellDescription(message: message, context: context))
         }
-        if isSenderVisible,
-           let sender = message.senderUser {
-            add(description: ConversationSenderMessageCellDescription(sender: sender, message: message))
+
+        if isSenderVisible, let sender = message.senderUser, let timestamp = message.formattedReceivedDate() {
+            add(description: ConversationSenderMessageCellDescription(sender: sender, message: message, timestamp: timestamp))
         }
 
         addContent(context: context, isSenderVisible: isSenderVisible)
 
         if isToolboxVisible(in: context) {
-            add(description: ConversationMessageToolboxCellDescription(message: message, selected: selected))
+            add(description: ConversationMessageToolboxCellDescription(message: message))
+        }
+
+        if !message.isSystem, !message.isEphemeral, message.hasReactions() {
+            add(description: MessageReactionsCellDescription(message: message))
         }
 
         if isFailedRecipientsVisible(in: context) {
@@ -288,17 +293,44 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             return false
         }
 
-        return context.isLastMessage || selected || message.deliveryState == .failedToSend || message.hasReactions()
+        return message.deliveryState == .failedToSend || message.isSentBySelfUser
     }
 
-    func isSenderVisible(in context: ConversationMessageContext) -> Bool {
-        guard message.senderUser != nil,
-              !message.isKnock,
-              !message.isSystem else {
+    func shouldShowSenderDetails(in context: ConversationMessageContext) -> Bool {
+        guard message.senderUser != nil else {
             return false
         }
 
-        return !context.isSameSenderAsPrevious || context.previousMessageIsKnock || message.updatedAt != nil || isBurstTimestampVisible(in: context)
+        if message.isKnock || message.isSystem {
+            return false
+        }
+
+        // A new sender, show the sender details.
+        if !context.isSameSenderAsPrevious {
+            return true
+        }
+
+        // Show sender details again if the last message was a knock.
+        if context.previousMessageIsKnock {
+            return true
+        }
+
+        // The message was edited.
+        if message.updatedAt != nil {
+            return true
+        }
+
+        // We see the self deleting countdown.
+        if isBurstTimestampVisible(in: context) {
+            return true
+        }
+
+        // This message is from the same sender but in a different minute.
+        if context.isSameSenderAsPrevious && !context.isTimestampInSameMinuteAsPreviousMessage {
+            return true
+        }
+
+        return false
     }
 
     func isFailedRecipientsVisible(in context: ConversationMessageContext) -> Bool {

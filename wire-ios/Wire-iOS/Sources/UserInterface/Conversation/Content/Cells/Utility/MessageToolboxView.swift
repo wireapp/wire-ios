@@ -25,7 +25,6 @@ protocol MessageToolboxViewDelegate: AnyObject {
     func messageToolboxDidRequestOpeningDetails(_ messageToolboxView: MessageToolboxView, preferredDisplayMode: MessageDetailsDisplayMode)
     func messageToolboxViewDidSelectResend(_ messageToolboxView: MessageToolboxView)
     func messageToolboxViewDidSelectDelete(_ sender: UIView?)
-    func messageToolboxViewDidRequestLike(_ messageToolboxView: MessageToolboxView)
 }
 
 private extension UILabel {
@@ -108,8 +107,7 @@ final class MessageToolboxView: UIView {
 
     fileprivate var tapGestureRecogniser: UITapGestureRecognizer!
 
-    fileprivate let likeButton = LikeButton()
-    fileprivate let likeButtonContainer = UIView()
+    fileprivate let separatorView = UIView()
     fileprivate var likeButtonWidth: NSLayoutConstraint!
     fileprivate var heightConstraint: NSLayoutConstraint!
     fileprivate var previousLayoutBounds: CGRect = CGRect.zero
@@ -125,7 +123,10 @@ final class MessageToolboxView: UIView {
         setupViews()
         createConstraints()
 
-        tapGestureRecogniser = UITapGestureRecognizer(target: self, action: #selector(MessageToolboxView.onTapContent(_:)))
+        tapGestureRecogniser = UITapGestureRecognizer(
+            target: self,
+            action: #selector(MessageToolboxView.onTapContent(_:))
+        )
         tapGestureRecogniser.delegate = self
         addGestureRecognizer(tapGestureRecogniser)
     }
@@ -136,11 +137,6 @@ final class MessageToolboxView: UIView {
     }
 
     private func setupViews() {
-        likeButton.accessibilityIdentifier = "likeButton"
-        likeButton.addTarget(self, action: #selector(requestLike), for: .touchUpInside)
-        likeButton.setIconColor(LikeButton.normalColor, for: .normal)
-        likeButton.setIconColor(LikeButton.selectedColor, for: .selected)
-        likeButton.hitAreaPadding = CGSize(width: 20, height: 20)
 
         messageFailureView.tapHandler = { [weak self] _ in
             self?.resendMessage()
@@ -151,39 +147,33 @@ final class MessageToolboxView: UIView {
          statusLabel,
          statusSeparatorLabel,
          countdownLabel].forEach(contentStack.addArrangedSubview)
-        [likeButtonContainer, likeButton, contentStack, messageFailureView].forEach(addSubview)
+
+        [separatorView, contentStack, messageFailureView].forEach(addSubview)
     }
 
     private func createConstraints() {
-        likeButton.translatesAutoresizingMaskIntoConstraints = false
-        likeButtonContainer.translatesAutoresizingMaskIntoConstraints = false
-        likeButton.translatesAutoresizingMaskIntoConstraints = false
+        separatorView.translatesAutoresizingMaskIntoConstraints = false
         contentStack.translatesAutoresizingMaskIntoConstraints = false
         messageFailureView.translatesAutoresizingMaskIntoConstraints = false
 
         heightConstraint = heightAnchor.constraint(greaterThanOrEqualToConstant: 28)
         heightConstraint.priority = UILayoutPriority(999)
 
-        likeButtonWidth = likeButtonContainer.widthAnchor.constraint(equalToConstant: conversationHorizontalMargins.left)
-
         NSLayoutConstraint.activate([
             heightConstraint,
 
-            // likeButton
-            likeButtonWidth,
-            likeButtonContainer.leadingAnchor.constraint(equalTo: leadingAnchor),
-            likeButtonContainer.topAnchor.constraint(equalTo: topAnchor),
-            likeButtonContainer.bottomAnchor.constraint(equalTo: bottomAnchor),
-            likeButton.centerXAnchor.constraint(equalTo: likeButtonContainer.centerXAnchor),
-            likeButton.centerYAnchor.constraint(equalTo: likeButtonContainer.centerYAnchor),
+            separatorView.widthAnchor.constraint(equalToConstant: conversationHorizontalMargins.left),
+            separatorView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            separatorView.topAnchor.constraint(equalTo: topAnchor),
+            separatorView.bottomAnchor.constraint(equalTo: bottomAnchor),
 
             // statusTextView align vertically center
-            contentStack.leadingAnchor.constraint(equalTo: likeButtonContainer.trailingAnchor),
+            contentStack.leadingAnchor.constraint(equalTo: separatorView.trailingAnchor),
             contentStack.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor, constant: -conversationHorizontalMargins.right),
             contentStack.topAnchor.constraint(equalTo: topAnchor),
             contentStack.bottomAnchor.constraint(equalTo: bottomAnchor),
 
-            messageFailureView.leadingAnchor.constraint(equalTo: likeButtonContainer.trailingAnchor),
+            messageFailureView.leadingAnchor.constraint(equalTo: separatorView.trailingAnchor),
             messageFailureView.trailingAnchor.constraint(equalTo: trailingAnchor),
             messageFailureView.topAnchor.constraint(equalTo: topAnchor),
             messageFailureView.bottomAnchor.constraint(equalTo: bottomAnchor)
@@ -200,7 +190,7 @@ final class MessageToolboxView: UIView {
         }
 
         self.previousLayoutBounds = self.bounds
-        self.configureForMessage(message, forceShowTimestamp: self.forceShowTimestamp)
+        self.configureForMessage(message)
     }
 
     override func willMove(toWindow newWindow: UIWindow?) {
@@ -222,13 +212,15 @@ final class MessageToolboxView: UIView {
         return bounds.width - conversationHorizontalMargins.left - conversationHorizontalMargins.right
     }
 
-    func configureForMessage(_ message: ZMConversationMessage, forceShowTimestamp: Bool, animated: Bool = false) {
+    func configureForMessage(
+        _ message: ZMConversationMessage,
+        animated: Bool = false
+    ) {
         if let message = message as? ConversationMessage,
            dataSource?.message.nonce != message.nonce {
             dataSource = MessageToolboxDataSource(message: message)
         }
 
-        self.forceShowTimestamp = forceShowTimestamp
         reloadContent(animated: animated)
     }
 
@@ -242,66 +234,50 @@ final class MessageToolboxView: UIView {
         guard let dataSource = self.dataSource else { return }
 
         // Do not reload the content if it didn't change.
-        guard let newPosition = dataSource.updateContent(forceShowTimestamp: forceShowTimestamp, widthConstraint: contentWidth) else {
+        guard dataSource.shouldUpdateContent(
+            widthConstraint: contentWidth
+        ) else {
             return
         }
 
         switch dataSource.content {
 
         case .callList(let callListString):
-            updateContentStack(to: newPosition, animated: animated) {
-                self.detailsLabel.attributedText = callListString
-                self.detailsLabel.isHidden = false
-                self.detailsLabel.numberOfLines = 0
-                self.hideAndCleanStatusLabel()
-                self.timestampSeparatorLabel.isHidden = true
-                self.statusSeparatorLabel.isHidden = true
-                self.countdownLabel.isHidden = true
-                self.messageFailureView.isHidden = true
-            }
-        case .reactions(let reactionsString):
-            updateContentStack(to: newPosition, animated: animated) {
-                self.detailsLabel.attributedText = reactionsString
-                self.detailsLabel.isHidden = false
-                self.detailsLabel.numberOfLines = 1
-                self.hideAndCleanStatusLabel()
-                self.timestampSeparatorLabel.isHidden = true
-                self.statusSeparatorLabel.isHidden = true
-                self.countdownLabel.isHidden = true
-                self.messageFailureView.isHidden = true
-            }
+            self.detailsLabel.attributedText = callListString
+            self.detailsLabel.isHidden = false
+            self.detailsLabel.numberOfLines = 0
+            self.hideAndCleanStatusLabel()
+            self.timestampSeparatorLabel.isHidden = true
+            self.statusSeparatorLabel.isHidden = true
+            self.countdownLabel.isHidden = true
+            self.messageFailureView.isHidden = true
 
         case .sendFailure(let detailsString):
-            updateContentStack(to: newPosition, animated: animated) {
-                self.hideAndCleanStatusLabel()
-                self.statusSeparatorLabel.isHidden = true
-                self.countdownLabel.isHidden = true
-                self.detailsLabel.isHidden = true
-                self.timestampSeparatorLabel.isHidden = true
-                self.messageFailureView.isHidden = false
-                self.messageFailureView.setTitle(detailsString.string)
-            }
+            self.hideAndCleanStatusLabel()
+            self.statusSeparatorLabel.isHidden = true
+            self.countdownLabel.isHidden = true
+            self.timestampSeparatorLabel.isHidden = false
+            self.messageFailureView.isHidden = false
+            self.messageFailureView.setTitle(detailsString.string)
 
         case .details(let timestamp, let status, let countdown):
-            updateContentStack(to: newPosition, animated: animated) {
-                self.detailsLabel.attributedText = timestamp
-                self.detailsLabel.isHidden = timestamp == nil
-                self.detailsLabel.numberOfLines = 1
-                self.statusLabel.attributedText = status
-                // override accessibilityLabel if the attributed string has customized accessibilityLabel
-                if let accessibilityLabel = status?.accessibilityLabel {
-                    self.statusLabel.accessibilityLabel = accessibilityLabel
-                }
-                self.statusLabel.isHidden = status == nil
-                self.timestampSeparatorLabel.isHidden = timestamp == nil || status == nil
-                self.statusSeparatorLabel.isHidden = (timestamp == nil && status == nil) || countdown == nil
-                self.countdownLabel.attributedText = countdown
-                self.countdownLabel.isHidden = countdown == nil
-                self.messageFailureView.isHidden = true
+            self.detailsLabel.attributedText = timestamp
+            self.detailsLabel.isHidden = timestamp == nil
+            self.detailsLabel.numberOfLines = 1
+            self.statusLabel.attributedText = status
+            // override accessibilityLabel if the attributed string has customized accessibilityLabel
+            if let accessibilityLabel = status?.accessibilityLabel {
+                self.statusLabel.accessibilityLabel = accessibilityLabel
             }
+            self.statusLabel.isHidden = status == nil
+            self.timestampSeparatorLabel.isHidden = timestamp == nil || status == nil
+            self.statusSeparatorLabel.isHidden = (timestamp == nil && status == nil) || countdown == nil
+            self.countdownLabel.attributedText = countdown
+            self.countdownLabel.isHidden = countdown == nil
+            self.messageFailureView.isHidden = true
+
         }
 
-        configureLikedState(dataSource.message, animated: animated)
         layoutIfNeeded()
     }
 
@@ -325,39 +301,7 @@ final class MessageToolboxView: UIView {
         timestampTimer = nil
     }
 
-    fileprivate func updateContentStack(to direction: SlideDirection, animated: Bool = false, changes: @escaping () -> Void) {
-        if animated {
-            contentStack.wr_animateSlideTo(direction, newState: changes)
-        } else {
-            changes()
-        }
-    }
-
-    // MARK: - Hiding the Contents
-
-    func setHidden(_ isHidden: Bool, animated: Bool) {
-        let changes = {
-            self.heightConstraint?.constant = isHidden ? 0 : 28
-            self.alpha = isHidden ? 0 : 1
-            self.layoutIfNeeded()
-        }
-
-        if animated {
-            UIView.animate(withDuration: 0.35) {
-                changes()
-            }
-        } else {
-            layer.removeAllAnimations()
-            changes()
-        }
-    }
-
     // MARK: - Actions
-
-    @objc
-    private func requestLike() {
-        delegate?.messageToolboxViewDidRequestLike(self)
-    }
 
     @objc
     private func resendMessage() {
@@ -367,53 +311,6 @@ final class MessageToolboxView: UIView {
     @objc
     private func deleteMessage(sender: UIView?) {
         delegate?.messageToolboxViewDidSelectDelete(sender)
-    }
-
-    func update(for change: MessageChangeInfo) {
-        if change.reactionsChanged {
-            configureLikedState(change.message, animated: true)
-        }
-    }
-
-    /// Configures the like button.
-    fileprivate func configureLikedState(_ message: ZMConversationMessage, animated: Bool) {
-        let showLikeButton: Bool
-
-        if case .reactions? = dataSource?.content {
-            showLikeButton = message.liked || message.hasReactions()
-        } else {
-            showLikeButton = message.canBeLiked
-        }
-
-        // Prepare Animations
-        let needsAnimation = animated && (showLikeButton ? likeButton.isHidden : !likeButton.isHidden)
-
-        if showLikeButton && likeButton.isHidden {
-            likeButton.alpha = 0
-            likeButton.isHidden = false
-        }
-
-        let changes = {
-            self.likeButton.alpha = showLikeButton ? 1 : 0
-        }
-
-        let completion: (Bool) -> Void = { _ in
-            self.likeButton.isHidden = !showLikeButton
-        }
-
-        // Change State and Appearance
-        likeButton.accessibilityLabel = message.liked ? "content.message.unlike".localized : "content.message.like".localized
-        likeButton.setIcon(message.liked ? .liked : .like, size: 12, for: .normal)
-        likeButton.setIcon(.liked, size: 12, for: .selected)
-        likeButton.setSelected(message.liked, animated: animated)
-
-        // Animate Changes
-        if needsAnimation {
-            UIView.animate(withDuration: 0.2, animations: changes, completion: completion)
-        } else {
-            changes()
-            completion(true)
-        }
     }
 
 }
@@ -435,8 +332,6 @@ extension MessageToolboxView: UIGestureRecognizerDelegate {
         switch dataSource.content {
         case .sendFailure:
             break
-        case .reactions where dataSource.message.areMessageDetailsAvailable:
-            return .reactions
         case .details where dataSource.message.areReadReceiptsDetailsAvailable:
             return .receipts
         default:
@@ -446,7 +341,10 @@ extension MessageToolboxView: UIGestureRecognizerDelegate {
         return nil
     }
 
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+    func gestureRecognizer(
+        _ gestureRecognizer: UIGestureRecognizer,
+        shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer
+    ) -> Bool {
         return gestureRecognizer.isEqual(self.tapGestureRecogniser)
     }
 
