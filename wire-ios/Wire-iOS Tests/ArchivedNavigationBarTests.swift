@@ -19,16 +19,14 @@
 import XCTest
 @testable import Wire
 
-final class ArchivedNavigationBarTests: ZMSnapshotTestCase {
+final class ArchivedNavigationBarTests: BaseSnapshotTestCase {
 
     var sut: ArchivedNavigationBar!
 
     override func setUp() {
         super.setUp()
-
         accentColor = .violet
-        snapshotBackgroundColor = SemanticColors.View.backgroundDefault
-        sut = ArchivedNavigationBar(title: "ARCHIVE")
+        sut = ArchivedNavigationBar(title: "Archive")
     }
 
     override func tearDown() {
@@ -37,6 +35,9 @@ final class ArchivedNavigationBarTests: ZMSnapshotTestCase {
     }
 
     func testThatItRendersTheNavigationBarCorrectInitially() {
-        verifyInAllPhoneWidths(view: sut)
+        verifyInAllPhoneWidths(
+            matching: sut,
+            snapshotBackgroundColor: SemanticColors.View.backgroundDefault
+        )
     }
 }
