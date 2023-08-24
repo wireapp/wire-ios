@@ -374,7 +374,7 @@ platform :ios do
             changelog += "Playground build for #{build.git_branch}\n\n"
         end
 
-        changelog += "Last commits:\n" + changelog_from_git_commits(
+        changelog += "**Last commits:**\n" + changelog_from_git_commits(
                 commits_count: 5,
                 pretty: "- [%an] %s",
         )
