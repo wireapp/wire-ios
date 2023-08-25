@@ -1539,6 +1539,8 @@ internal enum L10n {
         internal static let `open` = L10n.tr("Localizable", "content.message.open", fallback: "Open")
         /// Original message
         internal static let originalLabel = L10n.tr("Localizable", "content.message.original_label", fallback: "Original message")
+        /// Reactions
+        internal static let reactions = L10n.tr("Localizable", "content.message.reactions", fallback: "Reactions")
         /// Reply
         internal static let reply = L10n.tr("Localizable", "content.message.reply", fallback: "Reply")
         /// Resend
@@ -1612,6 +1614,12 @@ internal enum L10n {
       internal enum Player {
         /// UNABLE TO PLAY TRACK
         internal static let unableToPlay = L10n.tr("Localizable", "content.player.unable_to_play", fallback: "UNABLE TO PLAY TRACK")
+      }
+      internal enum Reactions {
+        /// Search for Emoji
+        internal static let search = L10n.tr("Localizable", "content.reactions.search", fallback: "Search for Emoji")
+        /// Select Reaction
+        internal static let title = L10n.tr("Localizable", "content.reactions.title", fallback: "Select Reaction")
       }
       internal enum ReactionsList {
         /// Liked by
@@ -1957,15 +1965,13 @@ internal enum L10n {
           }
         }
         internal enum FailedParticipants {
-          /// %@ [Learn more](%@)
-          internal static func learnMore(_ p1: Any, _ p2: Any) -> String {
-            return L10n.tr("Localizable", "content.system.failed_participants.learn_more", String(describing: p1), String(describing: p2), fallback: "%@ [Learn more](%@)")
-          }
+          /// Learn more
+          internal static let learnMore = L10n.tr("Localizable", "content.system.failed_participants.learn_more", fallback: "Learn more")
         }
         internal enum FailedtoaddParticipants {
-          /// **%@** could not be added to the group. [Learn more](%@)
-          internal static func couldNotBeAdded(_ p1: Any, _ p2: Any) -> String {
-            return L10n.tr("Localizable", "content.system.failedtoadd_participants.could_not_be_added", String(describing: p1), String(describing: p2), fallback: "**%@** could not be added to the group. [Learn more](%@)")
+          /// Plural format key: "%#@number_of_users@"
+          internal static func couldNotBeAdded(_ p1: Int) -> String {
+            return L10n.tr("Localizable", "content.system.failedtoadd_participants.could_not_be_added", p1, fallback: "Plural format key: \"%#@number_of_users@\"")
           }
           /// **%@ participants** could not be added to the group.
           internal static func count(_ p1: Any) -> String {
@@ -1999,13 +2005,13 @@ internal enum L10n {
           internal static let hideDetails = L10n.tr("Localizable", "content.system.failedtosend_participants.hide_details", fallback: "Hide Details")
           /// Show Details
           internal static let showDetails = L10n.tr("Localizable", "content.system.failedtosend_participants.show_details", fallback: "Show Details")
-          /// **%@** will get your message later.
-          internal static func willGetMessageLater(_ p1: Any) -> String {
-            return L10n.tr("Localizable", "content.system.failedtosend_participants.will_get_message_later", String(describing: p1), fallback: "**%@** will get your message later.")
+          /// Plural format key: "%#@number_of_users@"
+          internal static func willGetMessageLater(_ p1: Int) -> String {
+            return L10n.tr("Localizable", "content.system.failedtosend_participants.will_get_message_later", p1, fallback: "Plural format key: \"%#@number_of_users@\"")
           }
-          /// **%@** won’t get your message.
-          internal static func willNeverGetMessage(_ p1: Any) -> String {
-            return L10n.tr("Localizable", "content.system.failedtosend_participants.will_never_get_message", String(describing: p1), fallback: "**%@** won’t get your message.")
+          /// Plural format key: "%#@number_of_users@"
+          internal static func willNeverGetMessage(_ p1: Int) -> String {
+            return L10n.tr("Localizable", "content.system.failedtosend_participants.will_never_get_message", p1, fallback: "Plural format key: \"%#@number_of_users@\"")
           }
         }
         internal enum FederationTermination {
@@ -3619,12 +3625,12 @@ internal enum L10n {
     internal enum MessageDetails {
       /// Message Details
       internal static let combinedTitle = L10n.tr("Localizable", "message_details.combined_title", fallback: "Message Details")
-      /// No one has liked this message yet.
-      internal static let emptyLikes = L10n.tr("Localizable", "message_details.empty_likes", fallback: "No one has liked this message yet.")
+      /// No one has reacted to this message yet.
+      internal static let emptyLikes = L10n.tr("Localizable", "message_details.empty_likes", fallback: "No one has reacted to this message yet.")
       /// No one has read this message yet.
       internal static let emptyReadReceipts = L10n.tr("Localizable", "message_details.empty_read_receipts", fallback: "No one has read this message yet.")
-      /// Liked
-      internal static let likesTitle = L10n.tr("Localizable", "message_details.likes_title", fallback: "Liked")
+      /// Reactions
+      internal static let reactionsTitle = L10n.tr("Localizable", "message_details.reactions_title", fallback: "Reactions")
       /// Read receipts were not on when this message was sent.
       internal static let readReceiptsDisabled = L10n.tr("Localizable", "message_details.read_receipts_disabled", fallback: "Read receipts were not on when this message was sent.")
       /// Read
@@ -3644,9 +3650,9 @@ internal enum L10n {
       /// Read at
       internal static let userReadTimestampSubtitleLabel = L10n.tr("Localizable", "message_details.user_read_timestamp_subtitle_label", fallback: "Read at")
       internal enum Tabs {
-        /// Liked (%d)
-        internal static func likes(_ p1: Int) -> String {
-          return L10n.tr("Localizable", "message_details.tabs.likes", p1, fallback: "Liked (%d)")
+        /// Reactions (%d)
+        internal static func reactions(_ p1: Int) -> String {
+          return L10n.tr("Localizable", "message_details.tabs.reactions", p1, fallback: "Reactions (%d)")
         }
         /// Read (%d)
         internal static func seen(_ p1: Int) -> String {

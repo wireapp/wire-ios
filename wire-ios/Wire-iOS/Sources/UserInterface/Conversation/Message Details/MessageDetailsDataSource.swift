@@ -66,11 +66,11 @@ final class MessageDetailsDataSource: NSObject, ZMMessageObserver, ZMUserObserve
     /// The subtitle of the message details for accessibility purposes.
     private(set) var accessibilitySubtitle: String!
 
-    /// The list of likes.
-    private(set) var reactions: [MessageDetailsCellDescription]
+    /// The list of reactions.
+    private(set) var reactions: [MessageDetailsSectionDescription] = []
 
     /// The list of read receipts with the associated date.
-    private(set) var readReceipts: [MessageDetailsCellDescription]
+    private(set) var readReceipts: [MessageDetailsSectionDescription] = []
 
     /// The object that receives information when the message details changes.
     weak var observer: MessageDetailsDataSourceObserver?
@@ -83,12 +83,8 @@ final class MessageDetailsDataSource: NSObject, ZMMessageObserver, ZMUserObserve
         self.message = message
         self.conversation = message.conversation!
 
-        // Assign the initial data
-        self.reactions = MessageDetailsCellDescription.makeReactionCells(message.sortedLikers)
-        self.readReceipts = MessageDetailsCellDescription.makeReceiptCell(message.sortedReadReceipts)
-
         // Compute the title and display mode
-        let showLikesTab = message.canBeLiked
+        let showLikesTab = message.canAddReaction
         let showReceiptsTab = message.areReadReceiptsDetailsAvailable
         supportsReadReceipts = message.needsReadConfirmation
 
@@ -101,12 +97,16 @@ final class MessageDetailsDataSource: NSObject, ZMMessageObserver, ZMUserObserve
             self.title = MessageDetails.receiptsTitle.capitalized
         case (true, false):
             self.displayMode = .reactions
-            self.title = MessageDetails.likesTitle.capitalized
+            self.title = MessageDetails.reactionsTitle.capitalized
         default:
             fatal("Trying to display a message that does not support reactions or receipts.")
         }
 
         super.init()
+
+        // Assign the initial data
+        setupReactions()
+        setupReadReceipts()
 
         updateSubtitle()
         setupObservers()
@@ -119,11 +119,12 @@ final class MessageDetailsDataSource: NSObject, ZMMessageObserver, ZMUserObserve
             return
         }
 
-        let sentString = "message_details.subtitle_send_date".localized(args: sentDate)
+        let sentString = MessageDetails.subtitleSendDate(sentDate)
+
         var subtitle = sentString
 
         if let editedDate = message.formattedEditedDate() {
-            let editedString = "message_details.subtitle_edit_date".localized(args: editedDate)
+            let editedString = MessageDetails.subtitleEditDate(editedDate)
             subtitle += "\n" + editedString
         }
 
@@ -135,17 +136,17 @@ final class MessageDetailsDataSource: NSObject, ZMMessageObserver, ZMUserObserve
     // MARK: - Changes
 
     func messageDidChange(_ changeInfo: MessageChangeInfo) {
-        // Detect changes in likes
+        // Detect changes in reactions
         if changeInfo.reactionsChanged {
             performChanges {
-                self.reactions = MessageDetailsCellDescription.makeReactionCells(message.sortedLikers)
+                setupReactions()
             }
         }
 
         // Detect changes in read receipts
         if changeInfo.confirmationsChanged {
             performChanges {
-                self.readReceipts = MessageDetailsCellDescription.makeReceiptCell(message.sortedReadReceipts)
+                setupReadReceipts()
             }
         }
 
@@ -157,8 +158,30 @@ final class MessageDetailsDataSource: NSObject, ZMMessageObserver, ZMUserObserve
 
     func userDidChange(_ changeInfo: UserChangeInfo) {
         performChanges {
-            self.reactions = MessageDetailsCellDescription.makeReactionCells(message.sortedLikers)
-            self.readReceipts = MessageDetailsCellDescription.makeReceiptCell(message.sortedReadReceipts)
+            setupReactions()
+            setupReadReceipts()
+        }
+    }
+
+    private func setupReactions() {
+        reactions = message.usersReaction.map { reaction, users in
+            let emoji = Emoji(value: reaction)
+            return MessageDetailsSectionDescription(
+                headerText: "\(emoji.value) \(emoji.name?.capitalizingFirstCharacterOnly ?? "") (\(users.count))",
+                items: MessageDetailsCellDescription.makeReactionCells(users)
+            )
+        }.filter {
+            !$0.items.isEmpty
+        }
+
+        self.reactions.sort(by: { $0.items.count > $1.items.count })
+    }
+
+    func setupReadReceipts() {
+        readReceipts = [
+            MessageDetailsSectionDescription(items: MessageDetailsCellDescription.makeReceiptCell(message.sortedReadReceipts))
+        ].filter {
+            !$0.items.isEmpty
         }
     }
 
