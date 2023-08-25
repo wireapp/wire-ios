@@ -19,7 +19,7 @@
 import XCTest
 @testable import Wire
 
-final class SelfProfileViewControllerTests: ZMSnapshotTestCase, CoreDataFixtureTestHelper {
+final class SelfProfileViewControllerTests: BaseSnapshotTestCase, CoreDataFixtureTestHelper {
     var coreDataFixture: CoreDataFixture!
     var sut: SelfProfileViewController!
     var selfUser: MockUserType!
@@ -38,12 +38,12 @@ final class SelfProfileViewControllerTests: ZMSnapshotTestCase, CoreDataFixtureT
 
     func testForAUserWithNoTeam() {
         createSut(userName: "Tarja Turunen", teamMember: false)
-        verify(view: sut.view)
+        verify(matching: sut.view)
     }
 
     func testForAUserWithALongName() {
         createSut(userName: "Johannes Chrysostomus Wolfgangus Theophilus Mozart")
-        verify(view: sut.view)
+        verify(matching: sut.view)
     }
 
     func testItRequestsToRefreshTeamMetadataIfSelfUserIsTeamMember() {
@@ -61,6 +61,6 @@ final class SelfProfileViewControllerTests: ZMSnapshotTestCase, CoreDataFixtureT
         Analytics.shared = Analytics(optedOut: true)
         selfUser = MockUserType.createSelfUser(name: userName, inTeam: teamMember ? UUID() : nil)
         sut = SelfProfileViewController(selfUser: selfUser, userRightInterfaceType: MockUserRight.self, userSession: MockZMUserSession())
-        sut.view.backgroundColor = .black
+        sut.view.backgroundColor = SemanticColors.View.backgroundDefault
     }
 }
