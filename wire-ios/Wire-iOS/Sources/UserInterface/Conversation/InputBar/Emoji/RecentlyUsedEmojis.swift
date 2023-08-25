@@ -62,13 +62,16 @@ final class RecentlyUsedEmojiPeristenceCoordinator {
         guard let emojiUrl = url,
               let directoryUrl = URL.directoryURL(directory) else { return }
 
+        let stringValues = section.emoji.map { $0.value }
         FileManager.default.createAndProtectDirectory(at: directoryUrl)
-        (section.emoji as NSArray).write(to: emojiUrl, atomically: true)
+        (stringValues as NSArray).write(to: emojiUrl, atomically: true)
     }
 
     private static func loadFromDisk() -> RecentlyUsedEmojiSection? {
-        guard let emojiUrl = url else { return nil }
-        guard let emoji = NSArray(contentsOf: emojiUrl) as? [Emoji] else { return nil }
+        guard let emojiUrl = url,
+              let stringValues = NSArray(contentsOf: emojiUrl) as? [String] else { return nil }
+        
+        let emoji = stringValues.map { Emoji(value: $0) }
         return RecentlyUsedEmojiSection(capacity: 15, elements: emoji)
     }
 
