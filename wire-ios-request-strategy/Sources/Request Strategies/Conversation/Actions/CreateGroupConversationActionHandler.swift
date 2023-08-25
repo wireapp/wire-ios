@@ -198,6 +198,7 @@ final class CreateGroupConversationActionHandler: ActionHandler<CreateGroupConve
 
         switch newConversation.messageProtocol {
         case .proteus:
+            print(newConversation)
             context.saveOrRollback()
             action.succeed(with: newConversation.objectID)
 

@@ -24,11 +24,25 @@ private typealias ConversationCreatedBlock = (ZMConversation?) -> Void
 
 extension ConversationListViewController.ViewModel: StartUIDelegate {
     func startUI(_ startUI: StartUIViewController, didSelect user: UserType) {
-        oneToOneConversationWithUser(user, callback: { conversation in
-            guard let conversation = conversation else { return }
+//        oneToOneConversationWithUser(user, callback: { conversation in
+//            guard let conversation = conversation else { return }
+//
+//            ZClientViewController.shared?.select(conversation: conversation, focusOnView: true, animated: true)
+//        })
 
-            ZClientViewController.shared?.select(conversation: conversation, focusOnView: true, animated: true)
-        })
+        guard let userSession = ZMUserSession.shared() else {
+            fatal("No user session present")
+        }
+        let conversationService = ConversationService(context: userSession.viewContext)
+        conversationService.createGroupConversation(name: <#T##String?#>,
+                                                    users: <#T##Set<ZMUser>#>,
+                                                    allowGuests: <#T##Bool#>,
+                                                    allowServices: <#T##Bool#>,
+                                                    enableReceipts: <#T##Bool#>,
+                                                    messageProtocol: <#T##MessageProtocol#>)
+        { [weak self] in
+
+        }
     }
 
     func startUI(_ startUI: StartUIViewController, didSelect conversation: ZMConversation) {

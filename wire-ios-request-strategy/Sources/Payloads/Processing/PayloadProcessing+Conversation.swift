@@ -73,6 +73,7 @@ extension Payload.Conversation {
         serverTimestamp: Date = Date(),
         source: Source = .eventStream
     ) -> ZMConversation? {
+        print(type)
         guard let conversationType = type.map(BackendConversationType.clientConversationType) else {
             return nil
         }
@@ -155,6 +156,7 @@ extension Payload.Conversation {
 
         conversation.needsToBeUpdatedFromBackend = false
         conversation.isPendingMetadataRefresh = otherUser.isPendingMetadataRefresh
+        print(conversation.conversationType)
 
         return conversation
     }

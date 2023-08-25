@@ -109,7 +109,7 @@ extension ZMConversation {
                                                allowServices: Bool = true,
                                                readReceipts: Bool = false,
                                                participantsRole: Role? = nil) -> ZMConversation? {
-        return insertGroupConversation(moc: moc,
+        return insertConversation(moc: moc,
                                        participants: participants,
                                        name: name,
                                        team: team,
@@ -122,8 +122,8 @@ extension ZMConversation {
 
     /// FOR TESTS ONLY.
     /// To create new conversations see ConversationService.
-
-    static public func insertGroupConversation(
+//
+    static public func insertConversation(
         moc: NSManagedObjectContext,
         participants: [ZMUser],
         name: String? = nil,
@@ -144,7 +144,7 @@ extension ZMConversation {
         let conversation = ZMConversation.insertNewObject(in: moc)
         conversation.messageProtocol = messageProtocol
         conversation.lastModifiedDate = Date()
-        conversation.conversationType = .group
+        conversation.conversationType = type
         conversation.creator = selfUser
         conversation.team = team
         conversation.userDefinedName = name
@@ -188,7 +188,7 @@ extension ZMConversation {
             return conversation
         }
 
-        return insertGroupConversation(moc: moc,
+        return insertConversation(moc: moc,
                                        participants: [participant],
                                        name: nil,
                                        team: team,
