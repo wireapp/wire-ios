@@ -599,6 +599,7 @@
 "content.message.copy" = "Kopiraj";
 "content.message.download" = "Preuzimanje";
 "content.message.details" = "Detalji";
+"content.message.reactions" = "Reactions";
 
 // Reply
 "content.message.reply" = "Odgovor";
@@ -617,6 +618,11 @@
 "content.reactions_list.likers" = "Sviđa se";
 
 "content.file.too_big" = "Možete poslati dokumente veličine do %@";
+
+// Reactions
+"content.reactions.title" = "Select Reaction";
+"content.reactions.search" = "Search for Emoji";
+
 // Someone pinged
 "content.ping.text" = "%@ pingao/la";
 "content.ping.text-you" = "%@ pingao/la";
@@ -1848,14 +1854,14 @@
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Message Details
-"message_details.empty_likes" = "Nikome se još nije svidjela poruka.";
+"message_details.empty_likes" = "No one has reacted to this message yet.";
 "message_details.empty_read_receipts" = "Nitko još nije pročitao ovu poruku.";
 "message_details.read_receipts_disabled" = "Potvrda čitanja nije bila uključena kada je ova poruka poslana.";
 "message_details.combined_title" = "Detalji o poruci";
-"message_details.likes_title" = "Sviđa se";
+"message_details.reactions_title" = "Reactions";
 "message_details.receipts_title" = "Pročitano";
 "message_details.tabs.seen" = "Pročitano (%d)";
-"message_details.tabs.likes" = "Sviđa se (%d)";
+"message_details.tabs.reactions" = "Reactions (%d)";
 "message_details.subtitle_send_date" = "Poslano: %@";
 "message_details.subtitle_edit_date" = "Uređeno: %@";
 "message_details.subtitle_label_voiceOver" = "Detalji o poruci";
