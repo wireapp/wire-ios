@@ -475,13 +475,10 @@
 "content.system.failedtosend_participants.show_details" = "Show Details";
 "content.system.failedtosend_participants.hide_details" = "Hide Details";
 "content.system.failedtosend_participants.did_not_get_message" = "**%@ participants** didn’t get your message.";
-"content.system.failedtosend_participants.will_get_message_later" = "**%@** will get your message later.";
-"content.system.failedtosend_participants.will_never_get_message" = "**%@** won’t get your message.";
 "content.system.failedtosend_participants.from" = "**%@ from %@**";
-"content.system.failed_participants.learn_more" = "%@ [Learn more](%@)";
+"content.system.failed_participants.learn_more" = "Learn more";
 
 "content.system.failedtoadd_participants.count" = "**%@ participants** could not be added to the group.";
-"content.system.failedtoadd_participants.could_not_be_added" = "**%@** could not be added to the group. [Learn more](%@)";
 
 "content.system.like_tooltip" = "Tap to like";
 "content.system.deleted_message_prefix_timestamp" = "Deleted: %@";
@@ -602,6 +599,7 @@
 "content.message.copy" = "Copy";
 "content.message.download" = "Download";
 "content.message.details" = "Details";
+"content.message.reactions" = "Reactions";
 
 // Reply
 "content.message.reply" = "Reply";
@@ -620,6 +618,11 @@
 "content.reactions_list.likers" = "Liked by";
 
 "content.file.too_big" = "You can send files up to %@";
+
+// Reactions
+"content.reactions.title" = "Select Reaction";
+"content.reactions.search" = "Search for Emoji";
+
 // Someone pinged
 "content.ping.text" = "%@ pinged";
 "content.ping.text-you" = "%@ pinged";
@@ -1851,14 +1854,14 @@
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Message Details
-"message_details.empty_likes" = "No one has liked this message yet.";
+"message_details.empty_likes" = "No one has reacted to this message yet.";
 "message_details.empty_read_receipts" = "No one has read this message yet.";
 "message_details.read_receipts_disabled" = "Read receipts were not on when this message was sent.";
 "message_details.combined_title" = "Message Details";
-"message_details.likes_title" = "Liked";
+"message_details.reactions_title" = "Reactions";
 "message_details.receipts_title" = "Read";
 "message_details.tabs.seen" = "Read (%d)";
-"message_details.tabs.likes" = "Liked (%d)";
+"message_details.tabs.reactions" = "Reactions (%d)";
 "message_details.subtitle_send_date" = "Sent: %@";
 "message_details.subtitle_edit_date" = "Edited: %@";
 "message_details.subtitle_label_voiceOver" = "Message Details";

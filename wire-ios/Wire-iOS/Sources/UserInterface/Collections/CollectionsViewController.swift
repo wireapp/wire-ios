@@ -740,11 +740,6 @@ extension CollectionsViewController: CollectionCellDelegate {
                 message.fileMessageData?.cancelTransfer()
             }
 
-        case .like:
-            ZMUserSession.shared()?.enqueue {
-                Message.setLikedMessage(message, liked: !message.liked)
-            }
-
         case .openDetails:
             let detailsViewController = MessageDetailsViewController(message: message)
             present(detailsViewController, animated: true)
