@@ -19,13 +19,20 @@ import XCTest
 import SnapshotTesting
 @testable import Wire
 
-final class WipeDatabaseViewControllerTests: ZMSnapshotTestCase {
+final class WipeDatabaseViewControllerTests: BaseSnapshotTestCase {
+
+    // MARK: - Properties
+
     var sut: WipeDatabaseViewController!
+
+    // MARK: - tearDown
 
     override func tearDown() {
         sut = nil
         super.tearDown()
     }
+
+    // MARK: - Snapshot Tests
 
     func testForAllScreenSizes() {
         sut = WipeDatabaseViewController()
@@ -33,12 +40,12 @@ final class WipeDatabaseViewControllerTests: ZMSnapshotTestCase {
     }
 
     func testForDarkTheme() {
-		let createSut: () -> UIViewController = {
-			let navigationController = UIViewController().wrapInNavigationController(navigationBarClass: TransparentNavigationBar.self)
-			navigationController.pushViewController(WipeDatabaseViewController(), animated: false)
+        let createSut: () -> UIViewController = {
+            let navigationController = UIViewController().wrapInNavigationController(navigationBarClass: TransparentNavigationBar.self)
+            navigationController.pushViewController(WipeDatabaseViewController(), animated: false)
 
-			return navigationController
-		}
+            return navigationController
+        }
 
         verifyInDarkScheme(createSut: createSut)
     }
