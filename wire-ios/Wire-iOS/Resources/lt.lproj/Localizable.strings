@@ -599,6 +599,7 @@
 "content.message.copy" = "Kopijuoti";
 "content.message.download" = "Atsisiųsti";
 "content.message.details" = "Išsamiau";
+"content.message.reactions" = "Reactions";
 
 // Reply
 "content.message.reply" = "Atsakyti";
@@ -617,6 +618,11 @@
 "content.reactions_list.likers" = "Patinka";
 
 "content.file.too_big" = "Siunčiamų failų dydis negali viršyti %@";
+
+// Reactions
+"content.reactions.title" = "Select Reaction";
+"content.reactions.search" = "Search for Emoji";
+
 // Someone pinged
 "content.ping.text" = "%@ skambtelėjo";
 "content.ping.text-you" = "%@ skambtelėjote";
@@ -1848,14 +1854,14 @@
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Message Details
-"message_details.empty_likes" = "Niekas dar nepažymėjo, kad patinka.";
+"message_details.empty_likes" = "No one has reacted to this message yet.";
 "message_details.empty_read_receipts" = "Niekas dar neperskaitė šios žinutės.";
 "message_details.read_receipts_disabled" = "Perskaitymo patvirtinimai nebuvo įjungti kai žinutė buvo išsiųsta.";
 "message_details.combined_title" = "Žinutės duomenys";
-"message_details.likes_title" = "Patinka";
+"message_details.reactions_title" = "Reactions";
 "message_details.receipts_title" = "Perskaityta";
 "message_details.tabs.seen" = "Perskaityta (%d)";
-"message_details.tabs.likes" = "Patinka (%d)";
+"message_details.tabs.reactions" = "Reactions (%d)";
 "message_details.subtitle_send_date" = "Išsiųsta: %@";
 "message_details.subtitle_edit_date" = "Pakeista: %@";
 "message_details.subtitle_label_voiceOver" = "Žinutės duomenys";

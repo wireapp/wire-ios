@@ -599,6 +599,7 @@
 "content.message.copy" = "复制";
 "content.message.download" = "下载";
 "content.message.details" = "详细信息";
+"content.message.reactions" = "Reactions";
 
 // Reply
 "content.message.reply" = "回复";
@@ -617,6 +618,11 @@
 "content.reactions_list.likers" = "赞好";
 
 "content.file.too_big" = "您可以发送最大%@的文件。";
+
+// Reactions
+"content.reactions.title" = "Select Reaction";
+"content.reactions.search" = "Search for Emoji";
+
 // Someone pinged
 "content.ping.text" = "%@ping了一下";
 "content.ping.text-you" = "%@ping了一下";
@@ -1848,14 +1854,14 @@
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Message Details
-"message_details.empty_likes" = "没有人喜欢这个消息。";
+"message_details.empty_likes" = "No one has reacted to this message yet.";
 "message_details.empty_read_receipts" = "还没有人阅读过此消息。";
 "message_details.read_receipts_disabled" = "当邮件发送时，读取收据未开启。";
 "message_details.combined_title" = "消息详情";
-"message_details.likes_title" = "喜欢";
+"message_details.reactions_title" = "Reactions";
 "message_details.receipts_title" = "已读";
 "message_details.tabs.seen" = "已读 (%d)";
-"message_details.tabs.likes" = "喜欢(%d)";
+"message_details.tabs.reactions" = "Reactions (%d)";
 "message_details.subtitle_send_date" = "发送: %@";
 "message_details.subtitle_edit_date" = "已编辑: %@";
 "message_details.subtitle_label_voiceOver" = "消息详情";

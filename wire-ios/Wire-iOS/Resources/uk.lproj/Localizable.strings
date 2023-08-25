@@ -599,6 +599,7 @@
 "content.message.copy" = "Скопіювати";
 "content.message.download" = "Завантажити";
 "content.message.details" = "Подробиці";
+"content.message.reactions" = "Reactions";
 
 // Reply
 "content.message.reply" = "Відповісти";
@@ -617,6 +618,11 @@
 "content.reactions_list.likers" = "Сподобалося";
 
 "content.file.too_big" = "Ви можете надсилати файли до %@";
+
+// Reactions
+"content.reactions.title" = "Select Reaction";
+"content.reactions.search" = "Search for Emoji";
+
 // Someone pinged
 "content.ping.text" = "%@ надіслав(-ла) пінг";
 "content.ping.text-you" = "%@ надіслав(-ла) пінг";
@@ -1848,14 +1854,14 @@
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Message Details
-"message_details.empty_likes" = "Це повідомлення поки що ніхто не лайкнув.";
+"message_details.empty_likes" = "No one has reacted to this message yet.";
 "message_details.empty_read_receipts" = "Це повідомлення поки що ніхто не переглянув.";
 "message_details.read_receipts_disabled" = "Звіти про перегляд були вимкнені, коли це повідомлення було надіслано.";
 "message_details.combined_title" = "Деталі повідомлення";
-"message_details.likes_title" = "Сподобалось";
+"message_details.reactions_title" = "Reactions";
 "message_details.receipts_title" = "Перегляди";
 "message_details.tabs.seen" = "Переглядів (%d)";
-"message_details.tabs.likes" = "Сподобалось (%d)";
+"message_details.tabs.reactions" = "Reactions (%d)";
 "message_details.subtitle_send_date" = "Відправлене: %@";
 "message_details.subtitle_edit_date" = "Відредаговано: %@";
 "message_details.subtitle_label_voiceOver" = "Деталі повідомлення";

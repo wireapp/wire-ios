@@ -599,6 +599,7 @@
 "content.message.copy" = "Kopyala";
 "content.message.download" = "İndir";
 "content.message.details" = "Ayrıntılar";
+"content.message.reactions" = "Reactions";
 
 // Reply
 "content.message.reply" = "Cevapla";
@@ -617,6 +618,11 @@
 "content.reactions_list.likers" = "Beğenen";
 
 "content.file.too_big" = "En fazla %@ dosya yükleyebilirsin";
+
+// Reactions
+"content.reactions.title" = "Select Reaction";
+"content.reactions.search" = "Search for Emoji";
+
 // Someone pinged
 "content.ping.text" = "%@ ping attı";
 "content.ping.text-you" = "%@ ping attı";
@@ -1848,14 +1854,14 @@
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Message Details
-"message_details.empty_likes" = "Bu mesajı henüz kimse beğenmemiş.";
+"message_details.empty_likes" = "No one has reacted to this message yet.";
 "message_details.empty_read_receipts" = "Bu mesajı henüz kimse okumamış.";
 "message_details.read_receipts_disabled" = "Bu mesaj gönderildiğinde okuma bilgisi açık değildi.";
 "message_details.combined_title" = "Mesaj Ayrıntıları";
-"message_details.likes_title" = "Beğendi";
+"message_details.reactions_title" = "Reactions";
 "message_details.receipts_title" = "Okundu";
 "message_details.tabs.seen" = "Okundu (%d)";
-"message_details.tabs.likes" = "Beğenenler (%d)";
+"message_details.tabs.reactions" = "Reactions (%d)";
 "message_details.subtitle_send_date" = "Gönderildi: %@";
 "message_details.subtitle_edit_date" = "%@ Düzenlendi";
 "message_details.subtitle_label_voiceOver" = "Mesaj Ayrıntıları";

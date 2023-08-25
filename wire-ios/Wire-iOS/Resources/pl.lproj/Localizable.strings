@@ -599,6 +599,7 @@
 "content.message.copy" = "Skopiuj";
 "content.message.download" = "Pobierz";
 "content.message.details" = "Szczegóły";
+"content.message.reactions" = "Reactions";
 
 // Reply
 "content.message.reply" = "Odpowiedz";
@@ -617,6 +618,11 @@
 "content.reactions_list.likers" = "Lubiany przez";
 
 "content.file.too_big" = "Możesz wysyłać pliki do %@";
+
+// Reactions
+"content.reactions.title" = "Select Reaction";
+"content.reactions.search" = "Search for Emoji";
+
 // Someone pinged
 "content.ping.text" = "%@ zaczepił(a)";
 "content.ping.text-you" = "%@ zaczepił(a)";
@@ -1848,14 +1854,14 @@
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Message Details
-"message_details.empty_likes" = "Nikt nie polubił tej wiadomości.";
+"message_details.empty_likes" = "No one has reacted to this message yet.";
 "message_details.empty_read_receipts" = "Nikt jeszcze nie przeczytał tej wiadomości.";
 "message_details.read_receipts_disabled" = "Potwierdzenia odczytu nie były włączone, gdy ta wiadomość została wysłana.";
 "message_details.combined_title" = "Szczegóły wiadomości";
-"message_details.likes_title" = "Polubione";
+"message_details.reactions_title" = "Reactions";
 "message_details.receipts_title" = "Czytaj";
 "message_details.tabs.seen" = "Czytaj (%d)";
-"message_details.tabs.likes" = "Polubiono (%d)";
+"message_details.tabs.reactions" = "Reactions (%d)";
 "message_details.subtitle_send_date" = "Wysłano: %@";
 "message_details.subtitle_edit_date" = "Edytowano: %@";
 "message_details.subtitle_label_voiceOver" = "Szczegóły wiadomości";
