@@ -21,13 +21,19 @@ import XCTest
 import WireDataModel
 @testable import Wire
 
+// MARK: - Mock Message
+
 extension MockMessage {
     var message: ZMConversationMessage {
         return self as Any as! ZMConversationMessage
     }
 }
 
-final class CollectionsViewControllerTests: ZMSnapshotTestCase {
+// MARK: - CollectionsViewControllerTests
+
+final class CollectionsViewControllerTests: BaseSnapshotTestCase {
+
+    // MARK: - Properties
 
     var emptyCollection: AssetCollectionWrapper!
     var imageMessage: ZMConversationMessage!
@@ -48,9 +54,10 @@ final class CollectionsViewControllerTests: ZMSnapshotTestCase {
     var deletedFileMessage: ZMConversationMessage!
     var deletedLinkMessage: ZMConversationMessage!
 
+    // MARK: - setUp
+
     override func setUp() {
         super.setUp()
-
         accentColor = .strongBlue
 
         let conversation = MockConversation() as Any as! ZMConversation
@@ -77,6 +84,8 @@ final class CollectionsViewControllerTests: ZMSnapshotTestCase {
         deletedAudioMessage = MockMessageFactory.deletedAudioMessage()
     }
 
+    // MARK: - tearDown
+
     override func tearDown() {
         emptyCollection = nil
         imageMessage = nil
@@ -99,6 +108,8 @@ final class CollectionsViewControllerTests: ZMSnapshotTestCase {
 
         super.tearDown()
     }
+
+    // MARK: - Snapshot Tests
 
     func testThatNoElementStateIsShownWhenCollectionIsEmpty() {
         let controller = CollectionsViewController(collection: emptyCollection, fetchingDone: true)
@@ -194,6 +205,8 @@ final class CollectionsViewControllerTests: ZMSnapshotTestCase {
 }
 
 extension CollectionsViewControllerTests {
+
+    // MARK: - Helper method
 
     func createController(showingCollection assetCollection: MockCollection) -> CollectionsViewController {
         let conversation = MockConversation() as Any as! ZMConversation
