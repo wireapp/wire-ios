@@ -20,9 +20,14 @@ import XCTest
 @testable import Wire
 
 final class SelfProfileViewControllerTests: BaseSnapshotTestCase, CoreDataFixtureTestHelper {
+
+    // MARK: - Properties
+
     var coreDataFixture: CoreDataFixture!
     var sut: SelfProfileViewController!
     var selfUser: MockUserType!
+
+    // MARK: - setUp
 
     override func setUp() {
         super.setUp()
@@ -30,11 +35,17 @@ final class SelfProfileViewControllerTests: BaseSnapshotTestCase, CoreDataFixtur
         SelfUser.provider = coreDataFixture.selfUserProvider
     }
 
+    // MARK: - tearDown
+
     override func tearDown() {
         sut = nil
+        coreDataFixture = nil
+        SelfUser.provider = nil
         selfUser = nil
         super.tearDown()
     }
+
+    // MARK: - Snapshot Tests
 
     func testForAUserWithNoTeam() {
         createSut(userName: "Tarja Turunen", teamMember: false)
@@ -42,7 +53,7 @@ final class SelfProfileViewControllerTests: BaseSnapshotTestCase, CoreDataFixtur
     }
 
     func testForAUserWithALongName() {
-        createSut(userName: "Johannes Chrysostomus Wolfgangus Theophilus Mozart")
+        createSut(userName: "Johannes Chrysostomus Wolfgangus Theophilus Mozart", teamMember: true)
         verify(matching: sut.view)
     }
 
@@ -56,7 +67,9 @@ final class SelfProfileViewControllerTests: BaseSnapshotTestCase, CoreDataFixtur
         XCTAssertEqual(selfUser.refreshTeamDataCount, 0)
     }
 
-    private func createSut(userName: String, teamMember: Bool = true) {
+    // MARK: Helper Method
+
+    private func createSut(userName: String, teamMember: Bool) {
         // prevent app crash when checking Analytics.shared.isOptout
         Analytics.shared = Analytics(optedOut: true)
         selfUser = MockUserType.createSelfUser(name: userName, inTeam: teamMember ? UUID() : nil)
