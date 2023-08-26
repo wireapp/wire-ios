@@ -357,7 +357,10 @@ extension Payload.Conversation {
         )
 
         if source == .slowSync {
-            mlsEventProcessor.joinMLSGroupWhenReady(forConversation: conversation, context: context)
+            mlsEventProcessor.joinMLSGroupWhenReady(
+                forConversation: conversation,
+                context: context
+            )
         }
     }
 

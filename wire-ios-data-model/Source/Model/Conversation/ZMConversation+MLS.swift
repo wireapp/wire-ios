@@ -173,22 +173,19 @@ public extension ZMConversation {
             ]
         )
 
-        let isMLSConveration = NSPredicate(
-            format: "%K == %i && %K != nil",
-            argumentArray: [
-                Self.messageProtocolKey,
-                MessageProtocol.mls.rawValue,
-                Self.mlsGroupIdKey
-            ]
-        )
-
         request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
-            isSelfConversation, isMLSConveration
+            isSelfConversation, .isMLSConversation
         ])
 
         let result = context.executeFetchRequestOrAssert(request)
         require(result.count <= 1, "More than one conversation found for a single group id")
         return result.first as? ZMConversation
+    }
+
+    static func fetchMLSConversations(in context: NSManagedObjectContext) -> [ZMConversation] {
+        let request = NSFetchRequest<Self>(entityName: Self.entityName())
+        request.predicate = .isMLSConversation
+        return context.fetchOrAssert(request: request)
     }
 
     enum ZMConversationError: Error {
@@ -216,4 +213,19 @@ public extension ZMConversation {
             }
         }
     }
+}
+
+private extension NSPredicate {
+
+    static var isMLSConversation: NSPredicate {
+        return NSPredicate(
+            format: "%K == %i && %K != nil",
+            argumentArray: [
+                ZMConversation.messageProtocolKey,
+                MessageProtocol.mls.rawValue,
+                ZMConversation.mlsGroupIdKey
+            ]
+        )
+    }
+
 }

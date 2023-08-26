@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireDataModel
 
 @objc(ZMThirdPartyServicesDelegate)
 public protocol ThirdPartyServicesDelegate: NSObjectProtocol {
@@ -619,6 +620,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
         processEvents()
 
         syncContext.mlsService?.performPendingJoins()
+        syncContext.mlsService?.repairOutOfSyncConversations()
 
         managedObjectContext.performGroupedBlock { [weak self] in
             self?.notifyThirdPartyServices()

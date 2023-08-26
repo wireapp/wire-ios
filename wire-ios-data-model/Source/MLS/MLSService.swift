@@ -81,6 +81,8 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
 
     func generateNewEpoch(groupID: MLSGroupID) async throws
 
+    func repairOutOfSyncConversations()
+
 }
 
 public protocol MLSServiceDelegate: AnyObject {
@@ -734,7 +736,7 @@ public final class MLSService: MLSServiceInterface {
                     welcomeMessage: messageBytes,
                     customConfiguration: .init(keyRotationSpan: nil, wirePolicy: nil)
                 )
-             }
+            }
             let groupID = MLSGroupID(groupIDBytes)
             uploadKeyPackagesIfNeeded()
             staleKeyMaterialDetector.keyingMaterialUpdated(for: groupID)
@@ -771,7 +773,7 @@ public final class MLSService: MLSServiceInterface {
 
     typealias PendingJoin = (groupID: MLSGroupID, epoch: UInt64)
 
-    /// Registers a group to be joined via external add proposal once the app has finished processing events
+    /// Registers a group to be joined via external commit once the app has finished processing events
     /// - Parameter groupID: the identifier for the MLS group
     public func registerPendingJoin(_ groupID: MLSGroupID) {
         groupsPendingJoin.insert(groupID)
@@ -780,7 +782,7 @@ public final class MLSService: MLSServiceInterface {
     /// Request to join groups still pending
     ///
     /// Generates a list of groups for which the `mlsStatus` is `pendingJoin`
-    /// and sends external add proposals for these groups
+    /// and sends external commits to join these groups
     public func performPendingJoins() {
         guard let context = context else {
             return
@@ -813,6 +815,60 @@ public final class MLSService: MLSServiceInterface {
             return (groupID, conversation.epoch)
 
         }
+    }
+
+    // MARK: - Out-of-sync conversations
+
+    public func repairOutOfSyncConversations() {
+        guard let context = self.context else { return }
+        logger.info("repairing out of sync conversations if needed")
+
+        outOfSyncConversations(in: context).forEach { conversation in
+            Task {
+                do {
+                    try await repairConversation(conversation)
+                    logger.info("repaired out of sync conversation")
+                } catch {
+                    logger.warn("failed to repair out of sync conversation: \(String(describing: error))")
+                }
+            }
+        }
+    }
+
+    enum ConversationRepairError: Error {
+        case missingGroupID
+    }
+
+    private func repairConversation(_ conversation: ZMConversation) async throws {
+        guard let groupID = conversation.mlsGroupID else {
+            throw ConversationRepairError.missingGroupID
+        }
+
+        try await joinGroup(with: groupID)
+    }
+
+    private func outOfSyncConversations(in context: NSManagedObjectContext) -> [ZMConversation] {
+        return coreCrypto.perform { coreCrypto in
+            return ZMConversation.fetchMLSConversations(in: context).filter {
+                isOutOfSync(conversation: $0, coreCrypto: coreCrypto)
+            }
+        }
+    }
+
+    private func isOutOfSync(
+        conversation: ZMConversation,
+        coreCrypto: CoreCryptoProtocol
+    ) -> Bool {
+        guard let groupID = conversation.mlsGroupID else {
+            return false
+        }
+
+        guard let epoch = try? coreCrypto.conversationEpoch(conversationId: groupID.bytes) else {
+            // TODO: Decide if failing to fetch the epoch is considered being out of sync
+            return true
+        }
+
+        return epoch != conversation.epoch
     }
 
     // MARK: - External Proposals
