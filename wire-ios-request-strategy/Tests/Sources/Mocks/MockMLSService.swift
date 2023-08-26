@@ -166,4 +166,16 @@ class MockMLSService: MLSServiceInterface {
         fatalError("not implemented")
     }
 
+    // MARK: - Out of sync
+
+    typealias RepairOutOfSyncConversationsMock = () -> Void
+    var repairOutOfSyncConversationsMock: RepairOutOfSyncConversationsMock?
+
+    func repairOutOfSyncConversations() {
+        guard let mock = repairOutOfSyncConversationsMock else {
+            return
+        }
+        mock()
+    }
+
 }

@@ -1086,6 +1086,70 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         XCTAssertEqual(groupInfoInvocations.count, 0)
     }
 
+    // MARK: - Handling out of sync conversations
+
+    func test_RepairOutOfSyncConversations_RejoinsOutOfSyncConversation() {
+        // GIVEN
+        let conversationAndOutOfSyncTuples = [
+            createConversation(outOfSync: true),
+            createConversation(outOfSync: true),
+            createConversation(outOfSync: false)
+        ]
+
+        // mock conversation epoch
+        mockCoreCrypto.mockConversationEpoch = { groupID in
+            guard let tuple = conversationAndOutOfSyncTuples.first(
+                where: { $0.conversation.mlsGroupID?.bytes == groupID }
+            ) else {
+                return 1
+            }
+
+            let epoch = tuple.conversation.epoch
+            return tuple.isOutOfSync ? epoch + 1 : epoch
+        }
+
+        // mock fetching group info
+        mockActionsProvider.fetchConversationGroupInfoConversationIdDomainSubgroupTypeContext_MockValue = Data()
+
+        // mock joining group
+        let expectations = expectations(from: conversationAndOutOfSyncTuples)
+        mockMLSActionExecutor.mockJoinGroup = { groupID, _ in
+            expectations[groupID]?.fulfill()
+            return []
+        }
+
+        // WHEN
+        sut.repairOutOfSyncConversations()
+
+        // THEN
+        wait(for: Array(expectations.values), timeout: 1.5)
+    }
+
+    private typealias ConversationAndOutOfSyncTuple = (conversation: ZMConversation, isOutOfSync: Bool)
+
+    private func createConversation(outOfSync: Bool) -> ConversationAndOutOfSyncTuple {
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
+        conversation.mlsGroupID = .random()
+        conversation.remoteIdentifier = UUID()
+        conversation.domain = "domain.com"
+        conversation.messageProtocol = .mls
+        conversation.epoch = 1
+
+        return (conversation, outOfSync)
+    }
+
+    private func expectations(from tuples: [ConversationAndOutOfSyncTuple]) -> [MLSGroupID: XCTestExpectation] {
+        tuples.reduce(into: [MLSGroupID: XCTestExpectation]()) { expectations, tuple in
+            guard let groupID = tuple.conversation.mlsGroupID else {
+                return
+            }
+
+            let expectation = XCTestExpectation(description: "joined group")
+            expectation.isInverted = !tuple.isOutOfSync
+            expectations[groupID] = expectation
+        }
+    }
+
     // MARK: - Wipe Groups
 
     func test_WipeGroup_IsSuccessfull() {
