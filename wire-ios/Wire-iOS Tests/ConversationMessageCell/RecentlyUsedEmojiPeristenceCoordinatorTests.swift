@@ -24,15 +24,17 @@ final class RecentlyUsedEmojiPeristenceCoordinatorTests: XCTestCase {
 
     // MARK: setUp
 
-    override func setUp() {
-        super.setUp()
+    override func tearDown() {
         RecentlyUsedEmojiPeristenceCoordinator.store(RecentlyUsedEmojiSection(capacity: 15))
+        super.tearDown()
+    }
+
+    func test_RecentlyUsedEmoji_isEmpty() {
+        // THEN
+        XCTAssertArrayEqual(RecentlyUsedEmojiPeristenceCoordinator.loadOrCreate().emoji, [])
     }
 
     func test_storeAndLoadEmojis() {
-        // THEN
-        XCTAssertArrayEqual(RecentlyUsedEmojiPeristenceCoordinator.loadOrCreate().emoji, [])
-
         // GIVEN
         let emojis = [Emoji(value: "😂"), Emoji(value: "🆎"), Emoji(value: "🫥"), Emoji(value: "🐞")]
         let emojiSection = RecentlyUsedEmojiSection(capacity: 15, elements: emojis)

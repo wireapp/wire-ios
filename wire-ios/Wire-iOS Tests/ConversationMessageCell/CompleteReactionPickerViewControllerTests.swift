@@ -36,6 +36,7 @@ final class CompleteReactionPickerViewControllerTests: BaseSnapshotTestCase {
 
     override func tearDown() {
         sut = nil
+        RecentlyUsedEmojiPeristenceCoordinator.store(RecentlyUsedEmojiSection(capacity: 15))
         super.tearDown()
     }
 
