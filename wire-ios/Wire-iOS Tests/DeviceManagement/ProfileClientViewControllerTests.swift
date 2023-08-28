@@ -46,7 +46,7 @@ final class ProfileClientViewControllerTests: ZMSnapshotTestCase {
 
     func setupProfileClientViewController(userInterfaceStyle: UIUserInterfaceStyle) {
         sut = ProfileClientViewController(client: client)
-        sut.overrideUserInterfaceStyle = .light
+        sut.overrideUserInterfaceStyle = userInterfaceStyle
         sut.spinner.stopAnimating()
         sut.spinner.isHidden = true
         sut.showBackButton = false
