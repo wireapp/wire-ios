@@ -20,7 +20,7 @@ import Foundation
 
 public class TimerManager<Identifier: Hashable> {
 
-    enum TimerError: Error {
+    public enum TimerError: Error {
         case timerAlreadyExists
         case timerNotFound
     }

@@ -33,6 +33,8 @@ class MLSConferenceStaleParticipantsRemover: Subscriber {
     private let context: NSManagedObjectContext
     private var previousInput: MLSConferenceParticipantsInfo?
 
+    private typealias TimerError = TimerManager<MLSClientID>.TimerError
+
     // MARK: - Life cycle
 
     init(mlsService: MLSServiceInterface, context: NSManagedObjectContext, removalTimeout: TimeInterval = 190) {
@@ -83,7 +85,7 @@ class MLSConferenceStaleParticipantsRemover: Subscriber {
 
             switch (subconversationMembers.contains(clientID), $0.state) {
             case (true, .connecting):
-                remove(
+                enqueueRemove(
                     client: clientID,
                     from: input.subconversationID,
                     after: removalTimeout
@@ -124,7 +126,7 @@ class MLSConferenceStaleParticipantsRemover: Subscriber {
         }
     }
 
-    private func remove(
+    private func enqueueRemove(
         client clientID: MLSClientID,
         from groupID: MLSGroupID,
         after duration: TimeInterval
@@ -144,8 +146,10 @@ class MLSConferenceStaleParticipantsRemover: Subscriber {
             )
 
             logger.info("started timer for removal of stale participant (clientdID: \(clientID), groupID: \(groupID))")
-        } catch {
+        } catch TimerError.timerAlreadyExists {
             // timer already exists, do nothing
+        } catch {
+            logger.warn("failed to start timer for removal of stale participant (clientdID: \(clientID), groupID: \(groupID)). error: (\(error))")
         }
     }
 
@@ -177,8 +181,10 @@ class MLSConferenceStaleParticipantsRemover: Subscriber {
         do {
             try timerManager.cancelTimer(for: clientID)
             logger.info("canceled removal of participant (\(clientID))")
-        } catch {
+        } catch TimerError.timerNotFound {
             // no timer to cancel, do nothing
+        } catch {
+            logger.warn("failed to cancel removal of participant (\(clientID))")
         }
     }
 }
