@@ -39,7 +39,7 @@ final class FolderCreationController: UIViewController {
 
     private lazy var nameSection: FolderCreationNameSectionController = {
         return FolderCreationNameSectionController(delegate: self,
-                                                   conversationName: conversation.displayName)
+                                                   conversationName: conversation.displayNameWithFallback)
     }()
 
     private var folderName: String = ""

@@ -122,7 +122,6 @@ final class CallParticipantsListViewControllerTests: ZMSnapshotTestCase {
         verify(matching: sut.view)
     }
 
-
     func testCallParticipants_ConnectingState_Light() {
         // When
         let participants = CallParticipantsListHelper.participants(count: 3, mockUsers: SwiftMockLoader.mockUsers())
@@ -137,7 +136,6 @@ final class CallParticipantsListViewControllerTests: ZMSnapshotTestCase {
         // Then
         verify(matching: sut.view)
     }
-
 
     func testCallParticipants_ConnectingState_Dark() {
         // When

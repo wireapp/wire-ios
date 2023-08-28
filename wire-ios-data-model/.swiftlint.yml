@@ -28,6 +28,9 @@ included:
     - Source
     - Tests
 
+excluded:
+    - sourcery
+
 
 # In order to deal with the huge number of violations, first set
 # very high limits then iteratively reduce the limits and resolve

@@ -93,6 +93,7 @@ public class ZMUserSession: NSObject {
     // When we move to the monorepo, uncomment hotFixApplicator
     // let hotFixApplicator = PatchApplicator<HotfixPatch>(lastRunVersionKey: "lastRunHotFixVersion")
     var accessTokenRenewalObserver: AccessTokenRenewalObserver?
+    var recurringActionService: RecurringActionServiceInterface = RecurringActionService()
 
     public var syncStatus: SyncStatusProtocol? {
         return applicationStatusDirectory?.syncStatus
@@ -328,6 +329,7 @@ public class ZMUserSession: NSObject {
         notifyUserAboutChangesInAvailabilityBehaviourIfNeeded()
         RequestAvailableNotification.notifyNewRequestsAvailable(self)
         restoreDebugCommandsState()
+        configureRecurringActions()
     }
 
     private func configureTransportSession() {
@@ -428,6 +430,11 @@ public class ZMUserSession: NSObject {
                                applicationStatusDirectory: applicationStatusDirectory!,
                                uiMOC: managedObjectContext,
                                syncMOC: syncManagedObjectContext)
+    }
+
+    private func configureRecurringActions() {
+        recurringActionService.registerAction(refreshUsersMissingMetadata())
+        recurringActionService.registerAction(refreshConversationsMissingMetadata())
     }
 
     func startRequestLoopTracker() {
@@ -626,6 +633,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
 
         commitPendingProposalsIfNeeded()
         fetchFeatureConfigs()
+        recurringActionService.performActionsIfNeeded()
     }
 
     func processEvents() {
