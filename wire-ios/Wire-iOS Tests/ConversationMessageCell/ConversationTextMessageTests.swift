@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import SnapshotTesting
 import XCTest
 import WireLinkPreview
 @testable import Wire
@@ -26,6 +27,8 @@ final class ConversationTextMessageTests: BaseSnapshotTestCase {
 
     var mockOtherUser: MockUserType!
     var message: MockMessage!
+
+    // MARK: - setUp
 
     // MARK: - setUp
 
@@ -42,7 +45,7 @@ final class ConversationTextMessageTests: BaseSnapshotTestCase {
         message = nil
         super.tearDown()
     }
-
+    
     // MARK: - Snapshot Tests
 
     func testPlainText_WithALongUsernameAndShowingTheDateOfTheMessage() {
@@ -133,7 +136,7 @@ final class ConversationTextMessageTests: BaseSnapshotTestCase {
         // THEN
         verify(message: message)
     }
-
+    
     func testMediaPreviewAttachment() {
         // GIVEN
         message = createMessage(withText: "https://www.youtube.com/watch?v=l7aqpSTa234")
@@ -155,7 +158,7 @@ final class ConversationTextMessageTests: BaseSnapshotTestCase {
                            permalink: URL(string: "https://soundcloud.com/bridgitmendler/bridgit-mendler-atlantis-feat-kaiydo")!,
                            thumbnails: [], originalRange: NSRange(location: 0, length: 74))
         ]
-
+        
         // THEN
 #if targetEnvironment(simulator) && swift(>=5.4)
         let options = XCTExpectedFailure.Options()

@@ -49,7 +49,6 @@ class BasicReactionPicker: UIView {
                                                selector: #selector(preferredContentSizeChanged(_:)),
                                                name: UIContentSizeCategory.didChangeNotification,
                                                object: nil)
-
     }
 
 }

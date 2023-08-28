@@ -19,27 +19,37 @@
 @testable import Wire
 import XCTest
 
-final class CompleteReactionPickerViewControllerTests: ZMSnapshotTestCase {
+final class CompleteReactionPickerViewControllerTests: BaseSnapshotTestCase {
+
+    // MARK: Properties
 
     var sut: CompleteReactionPickerViewController!
 
+    // MARK: setUp
+
     override func setUp() {
         super.setUp()
-        sut = CompleteReactionPickerViewController(selectedReactions: [Emoji.smile])
-        sut.view.setNeedsLayout()
-        sut.view.layoutIfNeeded()
+        sut = setUpCompleteReactionPickerViewController()
     }
+
+    // MARK: tearDown
+
     override func tearDown() {
         sut = nil
         super.tearDown()
     }
 
+    // MARK: Snapshot Tests
+
     func testReactionPicker() {
+        sut = setUpCompleteReactionPickerViewController(selectedReactions: [.monkey])
+        scrollToSection(1)
         verify(matching: sut)
     }
 
     func testReactionPicker_scrolledToMiddle() {
         // GIVEN & WHEN
+        sut = setUpCompleteReactionPickerViewController(selectedReactions: [.videoGameController])
         scrollToSection(4)
 
         // THEN
@@ -48,9 +58,24 @@ final class CompleteReactionPickerViewControllerTests: ZMSnapshotTestCase {
 
     func testReactionPicker_scrolledToBottom() {
         // GIVEN & WHEN
+        sut = setUpCompleteReactionPickerViewController(selectedReactions: [.argentinaFlag])
         scrollToSection(7)
+        
         // THEN
         verify(matching: sut)
+    }
+
+
+    // MARK: Helper Methods
+
+    private func setUpCompleteReactionPickerViewController(
+        selectedReactions: Set<Emoji> = [.smile]
+    ) -> CompleteReactionPickerViewController {
+        let vc = CompleteReactionPickerViewController(selectedReactions: selectedReactions)
+        vc.view.setNeedsLayout()
+        vc.view.layoutIfNeeded()
+
+        return vc
     }
 
     private func scrollToSection(_ section: Int) {
@@ -63,4 +88,22 @@ final class CompleteReactionPickerViewControllerTests: ZMSnapshotTestCase {
         }
     }
 
+}
+
+
+// MARK: - Emoji extension
+
+fileprivate extension Emoji {
+
+    static var videoGameController: Emoji {
+        return Emoji(value: "🎮")
+    }
+
+    static var argentinaFlag: Emoji {
+        return Emoji(value: "🇦🇷")
+    }
+
+    static var monkey: Emoji {
+        return Emoji(value: "🐒")
+    }
 }

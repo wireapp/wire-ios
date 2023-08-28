@@ -15,27 +15,37 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import SnapshotTesting
 import XCTest
 @testable import Wire
-import SnapshotTesting
 
-final class PasscodeSetupViewControllerTests: ZMSnapshotTestCase {
+final class PasscodeSetupViewControllerTests: BaseSnapshotTestCase {
+
+    // MARK: Properties
+
     var sut: PasscodeSetupViewController!
+
+    // MARK: setUp
 
     override func setUp() {
         super.setUp()
-
         accentColor = .strongBlue
     }
+
+    // MARK: tearDown
 
     override func tearDown() {
         sut = nil
     }
 
+    // MARK: Helper method
+
     private func fillPasscode() {
         sut.passcodeTextField.text = "P@ssc0de"
         sut.validationUpdated(sender: sut.passcodeTextField, error: nil)
     }
+
+    // MARK: - Snapshot Tests
 
     func testForInitState() {
         verifyAllIPhoneSizes(createSut: { size in

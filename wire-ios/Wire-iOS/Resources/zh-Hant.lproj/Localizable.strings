@@ -323,6 +323,11 @@
 "conversation.create.mls.subtitle" = "Select MLS to create a group using Messaging Layer Security protocol (beta version).";
 "conversation.create.mls.picker_title" = "Select Protocol";
 "conversation.create.mls.cancel" = "取消";
+"conversation.create.non_federating_domains_error.title" = "Group can't be created";
+"conversation.create.non_federating_domains_error.message" = "People from backends %@ can't join the same group conversation.\nTo create the group, remove affected participants.";
+"conversation.create.non_federating_domains_error.edit_participant_list" = "Edit Participants List";
+"conversation.create.non_federating_domains_error.learn_more" = "瞭解更多";
+"conversation.create.non_federating_domains_error.abort" = "Discard Group Creation";
 
 "conversation.input_bar.ongoing_call_alert.title" = "通話中";
 "conversation.input_bar.ongoing_call_alert.audio.message" = "在通話時不能錄製語音訊息。";
@@ -463,9 +468,18 @@
 "content.system.message_sent_timestamp" = "已送出";
 "content.system.message_delivered_timestamp" = "已傳送";
 "content.system.message_read_timestamp" = "閱";
-"content.system.failedtosend_message_timestamp" = "傳送失敗。";
-"content.system.failedtosend_message_timestamp_resend" = "重新發送";
-"content.system.failedtosend_message_timestamp_delete" = "刪除";
+"content.system.failedtosend_message.general_reason" = "Message could not be sent due to connectivity issues.";
+"content.system.failedtosend_message.federation_remote_error_reason" = "Message could not be sent as the backend of **%@** could not be reached. [Learn more](%@)";
+"content.system.failedtosend_message.retry" = "Retry";
+
+"content.system.failedtosend_participants.show_details" = "Show Details";
+"content.system.failedtosend_participants.hide_details" = "Hide Details";
+"content.system.failedtosend_participants.did_not_get_message" = "**%@ participants** didn’t get your message.";
+"content.system.failedtosend_participants.from" = "**%@ from %@**";
+"content.system.failed_participants.learn_more" = "瞭解詳情";
+
+"content.system.failedtoadd_participants.count" = "**%@ participants** could not be added to the group.";
+
 "content.system.like_tooltip" = "點一下讚好";
 "content.system.deleted_message_prefix_timestamp" = "已刪除: %@";
 "content.system.edited_message_prefix_timestamp" = "已編輯: %@";
@@ -505,6 +519,9 @@
 
 "content.system.message_timer_off" = "%@關閉了訊息時限";
 "content.system.message_timer_off-you" = "%@關閉了訊息時限";
+
+"content.system.backends_stop_federating.self_backend" = "**Your backend** stopped federating with **%@**. [Learn more](%@)";
+"content.system.backends_stop_federating.other_backends" = "The backends **%@** and **%@** stopped federating. [Learn more](%@)";
 
 // read receipt
 
@@ -582,6 +599,7 @@
 "content.message.copy" = "複製";
 "content.message.download" = "下載";
 "content.message.details" = "詳細資訊";
+"content.message.reactions" = "Reactions";
 
 // Reply
 "content.message.reply" = "回覆";
@@ -600,6 +618,11 @@
 "content.reactions_list.likers" = "讚好";
 
 "content.file.too_big" = "您可以發送最大%@的檔案。";
+
+// Reactions
+"content.reactions.title" = "Select Reaction";
+"content.reactions.search" = "Search for Emoji";
+
 // Someone pinged
 "content.ping.text" = "%@打了聲招呼";
 "content.ping.text-you" = "%@打了聲招呼";
@@ -624,6 +647,7 @@
 "error.connection.title" = "錯誤";
 "error.connection.missing_legalhold_consent" = "You cannot connect to this user due to legal hold.";
 "error.connection.generic_error" = "出了點問題，請再試一次";
+"error.connection.federation_denied_message" = "Your backend does not federate with the backend of %@. You can not connect with them.";
 
 // Save image errors
 "library.alert.permission_warning.title" = "Wire需要讀取你的照片庫";
@@ -693,6 +717,7 @@
 "call.overlay.switch_to.all" = "全部";
 
 "call.grid.no_active_speakers" = "沒有人在視像通話中發言...";
+"call.grid.connecting" = "Connecting";
 
 "call.grid.hints.fullscreen" = "雙擊方格以全屏顯示";
 "call.grid.hints.go_back_or_zoom" = "點兩下返回，兩指收放縮放";
@@ -889,10 +914,12 @@
 "profile.details.blocking_reason" = "This user is blocked due to legal hold. [LEARN MORE](%@)";
 "profile.details.identity_warning" = "Get certainty about %@’s identity before connecting.";
 "profile.details.requested_identity_warning" = "Please verify the person's identity before accepting the connection request.";
+"profile.details.title.unavailable" = "Name not available";
 
 // Device list
 "profile.devices.title" = "設備";
 "profile.devices.fingerprint_message_unencrypted" = "%@使用舊版本的Wire，無法顯示設備。";
+"profile.devices.no_device_data" = "No device data available.";
 "profile.devices.fingerprint_message.title" = "Wire為每個設備設置了一個獨特的指紋。您可以和%@進行比對來驗證對話。";
 "profile.devices.fingerprint_message.link" = "為何要驗證對話？";
 
@@ -1827,14 +1854,14 @@
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Message Details
-"message_details.empty_likes" = "目前還沒有人讚好這則訊息。";
+"message_details.empty_likes" = "No one has reacted to this message yet.";
 "message_details.empty_read_receipts" = "目前還沒有人讀取這則訊息。";
 "message_details.read_receipts_disabled" = "發送此郵件時沒有打開讀取回條。";
 "message_details.combined_title" = "訊息詳細資料";
-"message_details.likes_title" = "已按讚的項目";
+"message_details.reactions_title" = "Reactions";
 "message_details.receipts_title" = "已閱讀";
 "message_details.tabs.seen" = "已閱讀（%d）";
-"message_details.tabs.likes" = "讚（%d）";
+"message_details.tabs.reactions" = "Reactions (%d)";
 "message_details.subtitle_send_date" = "已寄出：%@";
 "message_details.subtitle_edit_date" = "已編輯: %@";
 "message_details.subtitle_label_voiceOver" = "訊息詳細資料";
