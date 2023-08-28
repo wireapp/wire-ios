@@ -68,6 +68,7 @@ class ReactionToggle: UIControl {
         stackView.alignment = .center
         stackView.spacing = 4
         stackView.setContentCompressionResistancePriority(.required, for: .horizontal)
+        stackView.setContentCompressionResistancePriority(.required, for: .vertical)
         stackView.isUserInteractionEnabled = false
 
         addSubview(stackView)
