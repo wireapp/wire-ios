@@ -75,7 +75,9 @@ NSString *const ZMConversationRemoteIdentifierDataKey = @"remoteIdentifier_data"
 NSString *const SecurityLevelKey = @"securityLevel";
 NSString *const ZMConversationLabelsKey = @"labels";
 NSString *const ZMConversationDomainKey = @"domain";
+NSString *const ZMConversationIsPendingMetadataRefreshKey = @"isPendingMetadataRefresh";
 NSString *const ZMConversationIsDeletedRemotelyKey = @"isDeletedRemotely";
+NSString *const ZMConversationIsForcedReadOnlyKey = @"isForcedReadOnly";
 
 static NSString *const ConnectedUserKey = @"connectedUser";
 static NSString *const CreatorKey = @"creator";
@@ -352,6 +354,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
             @"isSelfAnActiveMember", // DEPRECATED
             @"lastServerSyncedActiveParticipants", // DEPRECATED
             ZMConversationDomainKey,
+            ZMConversationIsPendingMetadataRefreshKey,
             ZMConversation.messageProtocolKey,
             ZMConversation.mlsGroupIdKey,
             ZMConversation.mlsStatusKey,
@@ -369,6 +372,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 - (BOOL)isReadOnly
 {
     return
+    self.isForcedReadOnly ||
     (self.conversationType == ZMConversationTypeInvalid) ||
     (self.conversationType == ZMConversationTypeSelf) ||
     (self.conversationType == ZMConversationTypeConnection) ||
@@ -377,7 +381,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 
 + (NSSet *)keyPathsForValuesAffectingIsReadOnly;
 {
-    return [NSSet setWithObjects:ZMConversationConversationTypeKey, ZMConversationParticipantRolesKey, nil];
+    return [NSSet setWithObjects:ZMConversationConversationTypeKey, ZMConversationParticipantRolesKey, ZMConversationIsForcedReadOnlyKey, nil];
 }
 
 + (instancetype)existingOneOnOneConversationWithUser:(ZMUser *)otherUser inUserSession:(id<ContextProvider>)session;

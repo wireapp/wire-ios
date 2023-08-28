@@ -602,7 +602,7 @@ extension WireCallCenterV3 {
             return true
         }
         guard let context = uiMOC else { return false }
-        let conferenceCalling = FeatureService(context: context).fetchConferenceCalling()
+        let conferenceCalling = FeatureRepository(context: context).fetchConferenceCalling()
         return conferenceCalling.status == .enabled
     }
 

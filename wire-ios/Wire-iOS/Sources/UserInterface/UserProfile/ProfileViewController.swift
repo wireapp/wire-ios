@@ -29,7 +29,6 @@ enum ProfileViewControllerTabBarIndex: Int {
 
 protocol ProfileViewControllerDelegate: AnyObject {
     func profileViewController(_ controller: ProfileViewController?, wantsToNavigateTo conversation: ZMConversation)
-    func profileViewController(_ controller: ProfileViewController?, wantsToCreateConversationWithName name: String?, users: UserSet)
 }
 
 protocol BackButtonTitleDelegate: AnyObject {
@@ -105,8 +104,8 @@ final class ProfileViewController: UIViewController {
 
         let user = viewModel.user
 
+        user.refreshData()
         if user.isTeamMember {
-            user.refreshData()
             user.refreshMembership()
         }
     }
@@ -464,31 +463,24 @@ extension ProfileViewController: ProfileViewControllerDelegate {
         delegate?.profileViewController(controller, wantsToNavigateTo: conversation)
     }
 
-    func profileViewController(_ controller: ProfileViewController?, wantsToCreateConversationWithName name: String?, users: UserSet) {
-        // no-op
-    }
-
 }
 
 extension ProfileViewController: ConversationCreationControllerDelegate {
 
     func conversationCreationController(
         _ controller: ConversationCreationController,
-        didSelectName name: String,
-        participants: UserSet,
-        allowGuests: Bool,
-        allowServices: Bool,
-        enableReceipts: Bool,
-        encryptionProtocol: EncryptionProtocol
+        didCreateConversation conversation: ZMConversation
     ) {
         controller.dismiss(animated: true) { [weak self] in
-            self?.delegate?.profileViewController(
+            guard let self = self else { return }
+
+            delegate?.profileViewController(
                 self,
-                wantsToCreateConversationWithName: name,
-                users: participants
+                wantsToNavigateTo: conversation
             )
         }
     }
+
 }
 
 extension ProfileViewController: TabBarControllerDelegate {
@@ -545,6 +537,14 @@ extension ProfileViewController: ProfileViewControllerViewModelDelegate {
     }
 
     func presentError(_ error: LocalizedError) {
-        presentLocalizedErrorAlert(error)
+        typealias Strings = L10n.Localizable.Error.Connection
+
+        if let connectionError = error as? ConnectToUserError,
+           connectionError == .federationDenied {
+            let message = Strings.federationDeniedMessage(viewModel.user.name ?? "")
+            UIAlertController.showErrorAlert(title: "", message: message)
+        } else {
+            presentLocalizedErrorAlert(error)
+        }
     }
 }

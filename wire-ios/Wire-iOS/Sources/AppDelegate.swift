@@ -102,6 +102,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return true
     }
 
+    var temporaryFilesService: TemporaryFileServiceInterface = TemporaryFileService()
+
     override init() {
         super.init()
     }
@@ -162,6 +164,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func applicationWillResignActive(_ application: UIApplication) {
         zmLog.info("applicationWillResignActive:  (applicationState = \(application.applicationState.rawValue))")
+        temporaryFilesService.removeTemporaryData()
     }
 
     func applicationDidEnterBackground(_ application: UIApplication) {
@@ -180,6 +183,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func applicationWillTerminate(_ application: UIApplication) {
         zmLog.info("applicationWillTerminate:  (applicationState = \(application.applicationState.rawValue))")
+        temporaryFilesService.removeTemporaryData()
     }
 
     func application(_ application: UIApplication,

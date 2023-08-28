@@ -1,3 +1,4 @@
+//
 // Wire
 // Copyright (C) 2021 Wire Swiss GmbH
 //
@@ -321,20 +322,12 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
         return remainingKeys.count > 0
     }
 
-    public func shouldRetryToSyncAfterFailed(toUpdate managedObject: ZMManagedObject,
-                                             request upstreamRequest: ZMUpstreamRequest,
-                                             response: ZMTransportResponse,
-                                             keysToParse keys: Set<String>) -> Bool {
-
-        guard let newConversation = managedObject as? ZMConversation else {
-            return false
-        }
-
-        if let responseFailure = Payload.ResponseFailure(response, decoder: .defaultDecoder),
-           responseFailure.code == 412 && responseFailure.label == .missingLegalholdConsent {
-            newConversation.notifyMissingLegalHoldConsent()
-        }
-
+    public func shouldRetryToSyncAfterFailed(
+        toUpdate managedObject: ZMManagedObject,
+        request upstreamRequest: ZMUpstreamRequest,
+        response: ZMTransportResponse,
+        keysToParse keys: Set<String>
+    ) -> Bool {
         return false
     }
 
@@ -746,6 +739,7 @@ class ConversationByQualifiedIDListTranscoder: IdentifierObjectSyncTranscoder {
 
         for qualifiedID in conversations {
             let conversation = ZMConversation.fetchOrCreate(with: qualifiedID.uuid, domain: qualifiedID.domain, in: context)
+            conversation.isPendingMetadataRefresh = true
             conversation.needsToBeUpdatedFromBackend = true
         }
     }

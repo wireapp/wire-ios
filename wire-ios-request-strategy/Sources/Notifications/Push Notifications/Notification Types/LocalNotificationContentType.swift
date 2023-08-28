@@ -50,7 +50,8 @@ public enum LocalNotificationContentType: Equatable {
         case .conversationMessageTimerUpdate:
             guard let payload = event.payload["data"] as? [String: AnyHashable] else { return nil }
             let timeoutIntegerValue = (payload["message_timer"] as? Int64) ?? 0
-            let timeoutValue = MessageDestructionTimeoutValue(rawValue: TimeInterval(timeoutIntegerValue))
+            let timeoutIntegerValueInSeconds = timeoutIntegerValue / 1000
+            let timeoutValue = MessageDestructionTimeoutValue(rawValue: TimeInterval(timeoutIntegerValueInSeconds))
             self = timeoutValue == .none ? .messageTimerUpdate(nil) : .messageTimerUpdate(timeoutValue.displayString)
 
         case .conversationOtrMessageAdd:
