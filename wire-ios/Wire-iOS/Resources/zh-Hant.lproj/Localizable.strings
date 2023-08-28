@@ -599,6 +599,7 @@
 "content.message.copy" = "複製";
 "content.message.download" = "下載";
 "content.message.details" = "詳細資訊";
+"content.message.reactions" = "Reactions";
 
 // Reply
 "content.message.reply" = "回覆";
@@ -617,6 +618,11 @@
 "content.reactions_list.likers" = "讚好";
 
 "content.file.too_big" = "您可以發送最大%@的檔案。";
+
+// Reactions
+"content.reactions.title" = "Select Reaction";
+"content.reactions.search" = "Search for Emoji";
+
 // Someone pinged
 "content.ping.text" = "%@打了聲招呼";
 "content.ping.text-you" = "%@打了聲招呼";
@@ -1848,14 +1854,14 @@
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Message Details
-"message_details.empty_likes" = "目前還沒有人讚好這則訊息。";
+"message_details.empty_likes" = "No one has reacted to this message yet.";
 "message_details.empty_read_receipts" = "目前還沒有人讀取這則訊息。";
 "message_details.read_receipts_disabled" = "發送此郵件時沒有打開讀取回條。";
 "message_details.combined_title" = "訊息詳細資料";
-"message_details.likes_title" = "已按讚的項目";
+"message_details.reactions_title" = "Reactions";
 "message_details.receipts_title" = "已閱讀";
 "message_details.tabs.seen" = "已閱讀（%d）";
-"message_details.tabs.likes" = "讚（%d）";
+"message_details.tabs.reactions" = "Reactions (%d)";
 "message_details.subtitle_send_date" = "已寄出：%@";
 "message_details.subtitle_edit_date" = "已編輯: %@";
 "message_details.subtitle_label_voiceOver" = "訊息詳細資料";

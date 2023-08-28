@@ -21,7 +21,7 @@ import WireDataModel
 
 extension ZMConversationMessage {
 
-    var canBeLiked: Bool {
+    var canAddReaction: Bool {
         guard let conversation = conversationLike else {
             return false
         }
@@ -39,25 +39,35 @@ extension ZMConversationMessage {
 
         set {
             if newValue {
-                ZMMessage.addReaction(.like, toMessage: self)
+                ZMMessage.addReaction(
+                    Emoji.like.value,
+                    to: self
+                )
             } else {
-                ZMMessage.removeReaction(onMessage: self)
+                ZMMessage.removeReaction(
+                    Emoji.like.value,
+                    from: self
+                )
             }
         }
     }
 
+    func selfUserReactions() -> Set<Emoji> {
+        let result = usersReaction
+            .filter { _, users in users.contains(where: \.isSelfUser) }
+            .map { Emoji(value: $0.key) }
+
+        return Set(result)
+    }
+
     func hasReactions() -> Bool {
-        return self.usersReaction.map { (_, users) in
-            return users.count
-            }.reduce(0, +) > 0
+        return usersReaction.contains { _, users in
+            !users.isEmpty
+        }
     }
 
     var likers: [UserType] {
-        return usersReaction.filter { (reaction, _) -> Bool in
-            reaction == MessageReaction.like.unicodeValue
-            }.map { (_, users) in
-                return users
-            }.first ?? []
+        return usersReaction[Emoji.like.value] ?? []
     }
 
     var sortedLikers: [UserType] {
@@ -68,20 +78,17 @@ extension ZMConversationMessage {
         return readReceipts.sorted { $0.userType.name < $1.userType.name }
     }
 
-}
-
-extension Message {
-
-    static func setLikedMessage(_ message: ZMConversationMessage, liked: Bool) {
-        return message.liked = liked
+    func react(_ reaction: Emoji) {
+        if selfUserReactions().contains(reaction) {
+            ZMMessage.removeReaction(
+                reaction.value,
+                from: self
+            )
+        } else {
+            ZMMessage.addReaction(
+                reaction.value,
+                to: self
+            )
+        }
     }
-
-    static func isLikedMessage(_ message: ZMConversationMessage) -> Bool {
-        return message.liked
-    }
-
-    static func hasReactions(_ message: ZMConversationMessage) -> Bool {
-        return message.hasReactions()
-    }
-
 }
