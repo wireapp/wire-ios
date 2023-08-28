@@ -130,7 +130,7 @@ final class EmptySearchResultsViewTests: BaseSnapshotTestCase {
         sut.overrideUserInterfaceStyle = .dark
         sut.updateStatus(
             searchingForServices: searchingForServices,
-            hasFilter: false
+            hasFilter: hasFilter
         )
         configureBounds(for: sut)
 
