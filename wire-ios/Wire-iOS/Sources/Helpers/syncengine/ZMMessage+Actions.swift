@@ -89,9 +89,9 @@ extension ZMConversationMessage {
 
         // Show the message details in Team groups.
         if conversation.teamRemoteIdentifier != nil {
-            return canBeLiked || isSentBySelfUser
+            return canAddReaction || isSentBySelfUser
         } else {
-            return canBeLiked
+            return canAddReaction
         }
     }
 

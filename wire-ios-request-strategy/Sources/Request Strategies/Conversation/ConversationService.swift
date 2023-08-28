@@ -17,13 +17,235 @@
 
 import Foundation
 
-public final class ConversationService: ConversationServiceProtocol {
+public protocol ConversationServiceInterface {
+
+    func createGroupConversation(
+        name: String?,
+        users: Set<ZMUser>,
+        allowGuests: Bool,
+        allowServices: Bool,
+        enableReceipts: Bool,
+        messageProtocol: MessageProtocol,
+        completion: @escaping (Swift.Result<ZMConversation, ConversationCreationFailure>) -> Void
+    )
+
+    func syncConversation(
+        qualifiedID: QualifiedID,
+        completion: @escaping () -> Void
+    )
+
+}
+
+public enum ConversationCreationFailure: Error {
+
+    case missingPermissions
+    case missingSelfClientID
+    case conversationNotFound
+    case networkError(CreateGroupConversationAction.Failure)
+
+}
+
+public final class ConversationService: ConversationServiceInterface {
+
+    // MARK: - Properties
 
     let context: NSManagedObjectContext
+
+    // MARK: - Life cycle
 
     public init(context: NSManagedObjectContext) {
         self.context = context
     }
+
+    // MARK: - Create conversation
+
+    public func createGroupConversation(
+        name: String?,
+        users: Set<ZMUser>,
+        allowGuests: Bool,
+        allowServices: Bool,
+        enableReceipts: Bool,
+        messageProtocol: MessageProtocol,
+        completion: @escaping (Swift.Result<ZMConversation, ConversationCreationFailure>) -> Void
+    ) {
+        if let teamID = ZMUser.selfUser(in: context).teamIdentifier {
+            internalCreateTeamGroupConversation(
+                teamID: teamID,
+                name: name,
+                users: users,
+                allowGuests: allowGuests,
+                allowServices: allowServices,
+                enableReceipts: enableReceipts,
+                messageProtocol: messageProtocol,
+                completion: completion
+            )
+        } else {
+            internalCreateGroupConversation(
+                name: name,
+                users: users,
+                completion: completion
+            )
+        }
+    }
+
+    private func internalCreateTeamGroupConversation(
+        teamID: UUID,
+        name: String?,
+        users: Set<ZMUser>,
+        allowGuests: Bool,
+        allowServices: Bool,
+        enableReceipts: Bool,
+        messageProtocol: WireDataModel.MessageProtocol,
+        completion: @escaping (Swift.Result<ZMConversation, ConversationCreationFailure>) -> Void
+    ) {
+        guard ZMUser.selfUser(in: context).canCreateConversation(type: .group) else {
+            completion(.failure(.missingPermissions))
+            return
+        }
+
+        internalCreateGroupWithRetryIfNeeded(
+            teamID: teamID,
+            name: name,
+            users: users,
+            accessMode: ConversationAccessMode.value(forAllowGuests: allowGuests),
+            accessRoles: ConversationAccessRoleV2.from(
+                allowGuests: allowGuests,
+                allowServices: allowServices
+            ),
+            enableReceipts: enableReceipts,
+            messageProtocol: messageProtocol,
+            completion: completion
+        )
+    }
+
+    private func internalCreateGroupConversation(
+        name: String?,
+        users: Set<ZMUser>,
+        completion: @escaping (Swift.Result<ZMConversation, ConversationCreationFailure>) -> Void
+    ) {
+
+        internalCreateGroupWithRetryIfNeeded(
+            teamID: nil,
+            name: name,
+            users: users,
+            accessMode: ConversationAccessMode(),
+            accessRoles: [],
+            enableReceipts: false,
+            messageProtocol: .proteus,
+            completion: completion
+        )
+    }
+
+    private func internalCreateGroupWithRetryIfNeeded(
+        teamID: UUID?,
+        name: String?,
+        users: Set<ZMUser>,
+        accessMode: ConversationAccessMode,
+        accessRoles: Set<ConversationAccessRoleV2>,
+        enableReceipts: Bool,
+        messageProtocol: WireDataModel.MessageProtocol,
+        completion: @escaping (Swift.Result<ZMConversation, ConversationCreationFailure>) -> Void) {
+
+            func createGroup(
+                withUsers users: Set<ZMUser>,
+                completion: @escaping (Swift.Result<ZMConversation, ConversationCreationFailure>) -> Void
+            ) {
+                internalCreateGroupConversation(
+                    teamID: teamID,
+                    name: name,
+                    users: users,
+                    accessMode: accessMode,
+                    accessRoles: accessRoles,
+                    enableReceipts: enableReceipts,
+                    messageProtocol: messageProtocol,
+                    completion: completion
+                )
+            }
+
+            createGroup(withUsers: users) { result in
+                switch result {
+                case .failure(.networkError(.unreachableDomains(let domains))):
+                    let unreachableUsers = users.belongingTo(domains: domains)
+                    let reachableUsers = Set(users).subtracting(unreachableUsers)
+
+                    createGroup(withUsers: reachableUsers) { retryResult in
+                        if case .success(let conversation) = retryResult {
+                            conversation.appendFailedToAddUsersSystemMessage(
+                                users: unreachableUsers,
+                                sender: .selfUser(in: self.context),
+                                at: Date()
+                            )
+                        }
+
+                        completion(retryResult)
+                    }
+
+                default:
+                    completion(result)
+                }
+            }
+        }
+
+    private func internalCreateGroupConversation(
+        teamID: UUID?,
+        name: String?,
+        users: Set<ZMUser>,
+        accessMode: ConversationAccessMode,
+        accessRoles: Set<ConversationAccessRoleV2>,
+        enableReceipts: Bool,
+        messageProtocol: WireDataModel.MessageProtocol,
+        completion: @escaping (Swift.Result<ZMConversation, ConversationCreationFailure>) -> Void
+    ) {
+        let selfUser = ZMUser.selfUser(in: context)
+
+        guard let selfClientID = selfUser.selfClient()?.remoteIdentifier else {
+            completion(.failure(.missingSelfClientID))
+            return
+        }
+
+        let usersExcludingSelfUser = users.filter { !$0.isSelfUser }
+        let qualifiedUserIDs: [QualifiedID]
+        let unqualifiedUserIDs: [UUID]
+
+        if let ids = usersExcludingSelfUser.qualifiedUserIDs {
+            qualifiedUserIDs = ids
+            unqualifiedUserIDs = []
+        } else {
+            qualifiedUserIDs = []
+            unqualifiedUserIDs = usersExcludingSelfUser.compactMap(\.remoteIdentifier)
+        }
+
+        var action = CreateGroupConversationAction(
+            messageProtocol: messageProtocol,
+            creatorClientID: selfClientID,
+            qualifiedUserIDs: qualifiedUserIDs,
+            unqualifiedUserIDs: unqualifiedUserIDs,
+            name: name,
+            accessMode: accessMode,
+            accessRoles: accessRoles,
+            legacyAccessRole: nil,
+            teamID: teamID,
+            isReadReceiptsEnabled: enableReceipts
+        )
+
+        action.perform(in: context.notificationContext) { result in
+            self.context.perform {
+                switch result {
+                case .success(let objectID):
+                    if let conversation = try? self.context.existingObject(with: objectID) as? ZMConversation {
+                        completion(.success(conversation))
+                    } else {
+                        completion(.failure(.conversationNotFound))
+                    }
+
+                case .failure(let failure):
+                    completion(.failure(.networkError(failure)))
+                }
+            }
+        }
+    }
+
+    // MARK: - Sync conversation
 
     public func syncConversation(
         qualifiedID: QualifiedID,

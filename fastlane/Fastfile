@@ -2,6 +2,7 @@ require 'git'
 require 'base64'
 require 'httparty'
 require 'json'
+require 'fastlane/action'
 
 opt_out_usage
 default_platform(:ios)
@@ -20,7 +21,7 @@ platform :ios do
     end
 
     def is_running_on_ci 
-        !ENV['CIRRUS_BUILD_ID'].nil?
+        !ENV['CI'].nil?
     end
 
     def create_keychain_if_needed
@@ -33,11 +34,13 @@ platform :ios do
     end
 
     before_all do |lane|
-        ensure_xcode_version unless [:prepare_for_development, :trigger_api_build_cirrus_ci].include?(lane)
-        create_keychain_if_needed
+        ensure_xcode_version
+        create_keychain_if_needed unless [:prepare_for_tests].include?(lane)
+        `mkdir -p ./.post_build`
         Dir.chdir("..") do
             encoded_key = ENV['APPSTORE_API_KEY_BASE64']
             if !File.exist?(appstoreconnect_api_key_file_path) && !encoded_key.nil?
+                puts "Setting AppStoreConnect API Key"
                 File.open(appstoreconnect_api_key_file_path, 'w+') {|f| f.write(Base64.decode64(encoded_key)) }
             end
         end
@@ -55,12 +58,6 @@ platform :ios do
     lane :prepare_for_tests do
         create_simulator_if_needed
     end
-
-    desc "Prepare for development"
-    lane :prepare_for_development do |options|
-        sh "cd .. && ./setup.sh"
-        sh "cd .. && ./download-assets.sh --configuration_repo https://github.com/wireapp/wire-ios-build-configuration.git"
-    end
     
     desc "Build & Upload Development build"
     lane :development do |options|
@@ -69,6 +66,7 @@ platform :ios do
         options[:upload_dsyms_to_datadog] = true
         options[:produce_debug_builds] = true
         build_and_upload_app(options)
+        save_app_name('Development')
     end
 
     desc "Build & Upload Playground build"
@@ -78,6 +76,7 @@ platform :ios do
         options[:upload_dsyms_to_datadog] = true
         options[:produce_debug_builds] = true
         build_and_upload_app(options)
+        save_app_name('Playground')
     end
 
     desc "Build & Upload Testflight Beta build"
@@ -87,6 +86,8 @@ platform :ios do
         options[:upload_dsyms_to_datadog] = true
         options[:produce_debug_builds] = true
         build_and_upload_app(options)
+        `export TEMP='APPCENTER_INSTALL_LINK=For \'Beta\' build there is no AppCenter link, please visit Testflight to install the app' && echo $TEMP >> ./.post_build/.env`
+        save_app_name('Testflight Beta')
     end
 
     desc "Build & Upload Public AppStore build"
@@ -96,135 +97,61 @@ platform :ios do
         options[:upload_app_store] = true
         options[:upload_app_center] = true
         build_and_upload_app(options)
+        save_app_name('Public AppStore Production')
     end
     
     desc "Build & Upload Col 1 Restricted AppStore build"
     lane :appstore_col_1_restricted do |options|
         options[:build_type] = "RC"
         options[:override_folder] = "BK-CI-configuration"
-        options[:s3_subfolder] = "custom/bund/column1"
-        options[:app_center_app_name] = "Wire-by-Bund-ReleaseCandidate"
+        options[:s3_subfolder] = ENV['C1_S3_SUBFOLDER_RESTRICTED']
+        options[:app_center_app_name] = ENV['C1_APP_CENTER_APP_NAME_RESTRICTED']
         options[:run_security_tests] = !ENV['SKIP_SECURITY_TESTS'] || true
         options[:upload_app_store] = true
         options[:upload_app_center] = true
         options[:produce_debug_builds] = true
         build_and_upload_app(options)
+        save_app_name('Column 1 Restricted')
     end
 
     desc "Build & Upload Col 3 Restricted AppStore build"
     lane :appstore_col_3_restricted do |options|
         options[:build_type] = "RC"
         options[:override_folder] = "COLUMN3-CI-configuration"
-        options[:s3_subfolder] = "custom/bund/column3"
-        options[:app_center_app_name] = "Wire-by-Bund-Column3"
+        options[:s3_subfolder] = ENV['C3_S3_SUBFOLDER_RESTRICTED']
+        options[:app_center_app_name] = ENV['C3_APP_CENTER_APP_NAME_RESTRICTED']
         options[:run_security_tests] = !ENV['SKIP_SECURITY_TESTS'] || true
         options[:upload_app_store] = true
         options[:upload_app_center] = true
         options[:produce_debug_builds] = true
         build_and_upload_app(options)
+        save_app_name('Column 3 Restricted')
     end
 
     desc "Build & Upload Col 1 Production AppStore build"
     lane :appstore_col_1_prod do |options|
         options[:build_type] = "AppStore"
         options[:override_folder] = "BK-CI-configuration"
-        options[:s3_subfolder] = "custom/bund/c1-appstore"
-        options[:app_center_app_name] = "Wire-by-Bund-C1-App-Store"
+        options[:s3_subfolder] = ENV['C1_S3_SUBFOLDER_PRODUCTION']
+        options[:app_center_app_name] = ENV['C1_APP_CENTER_APP_NAME_PRODUCTION']
         options[:run_security_tests] = !ENV['SKIP_SECURITY_TESTS'] || true
         options[:upload_app_store] = true
         options[:upload_app_center] = true
         build_and_upload_app(options)
+        save_app_name('Column 1 Production')
     end
 
     desc "Build & Upload Col 3 Production AppStore build"
     lane :appstore_col_3_prod do |options|
         options[:build_type] = "AppStore"
         options[:override_folder] = "COLUMN3-CI-configuration"
-        options[:s3_subfolder] = "custom/bund/c3-appstore"
-        options[:app_center_app_name] = "Wire-by-Bund-C3-App-Store"
+        options[:s3_subfolder] = ENV['C3_S3_SUBFOLDER_PRODUCTION']
+        options[:app_center_app_name] = ENV['C3_APP_CENTER_APP_NAME_PRODUCTION']
         options[:run_security_tests] = !ENV['SKIP_SECURITY_TESTS'] || true
         options[:upload_app_store] = true
         options[:upload_app_center] = true
         build_and_upload_app(options)
-    end
-
-    lane :trigger_api_build_cirrus_ci do |options|
-        authorization_header = { "Authorization" => "Bearer #{ENV['CIRRUS_CI_API_TOKEN']}" }
-        uri = 'https://api.cirrus-ci.com/graphql'
-        create_build_body = <<~BODY
-        {
-            "query": "mutation CreateBuildMutation($input: RepositoryCreateBuildInput!) {
-                createBuild(input: $input) {
-                    build {
-                        id
-                    }
-                }
-            }",
-            "variables": {
-                "input": {
-                    "repositoryId": "4507403593449472",
-                    "branch": "#{ENV['GITHUB_REF_NAME']}",
-                    "clientMutationId": "trigger-build-on-cirrus-#{ENV['GITHUB_REF_NAME']}"
-                }
-            }
-        }
-        BODY
-        create_build = HTTParty.post(
-            uri,
-            body: create_build_body,
-            headers: authorization_header
-        )
-        
-        # needed for async creation of jobs on CirrusCI, 1 second would be enough but I made it a big more to be sure that Cirrus already processed the async event
-        `sleep 7` 
-        
-        created_build_id =  JSON.parse(create_build.body, symbolize_names: true)[:data][:createBuild][:build][:id]
-        get_build_body = <<~BODY
-        {
-            "query": "query GetBuildQuery($id: ID!) {
-                build(id: $id) {
-                    tasks {
-                        id
-                        name
-                    }
-                }
-            }",
-            "variables": {
-                "id": "#{created_build_id}"
-            }
-        }
-        BODY
-        build_info = HTTParty.post(
-            uri,
-            body: get_build_body,
-            headers: authorization_header
-        )
-
-        cirrus_ci_tasks = JSON.parse(build_info.body, symbolize_names: true)[:data][:build][:tasks]
-        task_to_trigger = cirrus_ci_tasks.select { |task|  task[:name] == options[:task] }.first
-        trigger_task_body = <<~BODY 
-        {
-            "query": "mutation TriggerTask($input: TaskTriggerInput!) {
-                trigger(input: $input) {
-                    task {
-                        id
-                    }
-                }
-            }",
-            "variables": {
-                "input": {
-                    "taskId": "#{task_to_trigger[:id]}",
-                    "clientMutationId": "trigger-task-#{task_to_trigger[:id]}"
-                }
-            }
-        }
-        BODY
-        triggered_task = HTTParty.post(
-            uri,
-            body: trigger_task_body,
-            headers: authorization_header
-        )
-        puts "https://cirrus-ci.com/task/#{triggered_task["data"]["trigger"]["task"]["id"]}"
+        save_app_name('Column 3 Production')
     end
 
     def build_and_upload_app(options)
@@ -249,6 +176,7 @@ platform :ios do
             upload_app_center(options)
         end
         upload_s3(options)
+        save_changelog_to_env(options)
         if options[:upload_dsyms_to_app_center] || false
             upload_dsyms_to_app_center_for_appstore_build(options)
         end
@@ -257,21 +185,8 @@ platform :ios do
         end
     end
 
-    def fetch_latest_configuration_repo
-        
-        path = '../wire-ios-build-assets'
-        `rm -rf #{path}`
-        if is_running_on_ci 
-            Git.clone(
-                "https://#{ENV['WIRE_INTERNAL_GITHUB_USER']}:#{ENV['WIRE_INTERNAL_GITHUB_TOKEN']}@github.com/wireapp/wire-ios-build-assets.git",
-                path
-            )
-        else
-            Git.clone(
-                "git@github.com:wireapp/wire-ios-build-assets.git",
-                path
-            )
-        end
+    def save_app_name(name)
+        `echo APP_NAME=#{name} >> ./.post_build/.env`
     end
 
     def download_distribution_certificate_and_profiles(build, options)
@@ -319,12 +234,13 @@ platform :ios do
 
     def generate_build_number
         build_number = `curl -H "Accept: text/plain" -X POST -d '' "https://incrementator.appspot.com/api/v1/code/ORUHILeMbXB4D5Z5conFzYoYpQPjVnyUA4pu56X2MHVJSFxM/increment"`
+        `echo BUILD_NUMBER=#{build_number} >> ./.post_build/.env`
         build_number
     end
 
     # Fetch dependencies and prepare for building a release
     def prepare_for_release(options)
-        fetch_latest_configuration_repo
+        xcode_version = options[:xcode_version]
 
         build_type = options[:build_type]
         # Delete configurations in case we switch to different branch or repo
@@ -337,21 +253,13 @@ platform :ios do
                 override_folder = "CI configuration"
             end
 
-            config_repo = options[:config_repo]
-            if config_repo.nil? 
-                config_repo = "https://github.com/wireapp/wire-ios-build-configuration.git"
-            end
-
-            config_branch = options[:config_branch]
-            if config_branch.nil? 
-                config_branch = "master"
-            end
-
             build = Build.new(options: options)
 
-            sh "cd .. && ./setup.sh -c #{config_repo} -b #{config_branch} -o \'./wire-ios-build-assets/#{override_folder}/#{build_type}\'"
+            sh "cd .. && ./setup.sh -o \'./wire-ios-build-assets/#{override_folder}/#{build_type}\'"
             # Adding extra information to the icon must be done after we check them out in setup script
             build.process_icon()
+
+            `echo BUILD_VERSION=#{build.version_from_xcconfig} >> ./.post_build/.env`
 
             download_distribution_certificate_and_profiles(build, options)
         end
@@ -459,21 +367,25 @@ platform :ios do
         )
     end
 
-    # Upload for internal use
-    def upload_app_center (options)
-        build = Build.new(options: options)
+    # Changelog for current build
+    def changelog(build)
         changelog = ""
-
         if build.playground_build
-            changelog = "Playground build for #{build.git_branch}"
-        elsif build.last_commit.nil? || build.last_commit.empty?
-            changelog = "No changelog available"
-        else
-            changelog = "Changes Since Last Build:\n" + changelog_from_git_commits(
-                between: [build.last_commit, "HEAD"],
-                pretty: "* [%an] %s",
-            )
+            changelog += "Playground build for #{build.git_branch}\n\n"
         end
+
+        changelog += "**Last commits:**\n" + changelog_from_git_commits(
+                commits_count: 5,
+                pretty: "- [%an] %s",
+        )
+        changelog
+    end
+
+    # "Upload for internal use"
+    def upload_app_center(options)
+        build = Build.new(options: options)
+       
+        changelog = changelog(build)
 
         app_name = options[:app_center_app_name]
         if app_name.nil? 
@@ -494,6 +406,9 @@ platform :ios do
           mandatory_update: false,
           dsym: "#{build.artifact_path(with_filename: true)}.app.dSYM.zip"
         )
+
+        appcenter_build_info = Fastlane::Actions.lane_context[:APPCENTER_BUILD_INFORMATION]
+        `export TEMP='APPCENTER_INSTALL_LINK=#{appcenter_build_info['install_url']}' && echo $TEMP >> ./.post_build/.env`
     end
 
     # Upload to S3 (Automation builds)
@@ -510,12 +425,20 @@ platform :ios do
         end
 
 
-
+        output = ""
         if build.appstore_build
-            sh "cd ../#{build.archive_path(with_filename: false)} && tar -czf #{build.filename}.xcarchive.tgz #{build.filename}.xcarchive"
+            output += `cd ../#{build.archive_path(with_filename: false)} && tar -czf #{build.filename}.xcarchive.tgz #{build.filename}.xcarchive`
         end
         
-        sh "cd .. && aws s3 cp --recursive --exclude '*'  --include '*.ipa'  --include '*.app.dSYM.zip' --include '*.xcarchive.tgz' --include '*.junit' artifacts/ #{s3_path}"
+        output += `cd .. && aws s3 cp --recursive --exclude '*'  --include '*.ipa'  --include '*.app.dSYM.zip' --include '*.xcarchive.tgz' --include '*.junit' artifacts/ #{s3_path}`
+        paths = output.split(/[\r,\n]/).map { |line| line.gsub(/\n/, '').gsub(/\*/, '').match(/s3:\/\/.*ipa$/)}.compact!.map{ |match| match[0] }.uniq.join(' \n')
+        `export TEMP='S3_PATHS=#{Base64.strict_encode64(paths)}' && echo $TEMP >> ./.post_build/.env`
+    end
+
+    def save_changelog_to_env(options)
+        build = Build.new(options: options)
+        changelog = changelog(build)
+        `export TEMP='RELEASE_NOTES=#{Base64.strict_encode64(changelog)}' && echo $TEMP >> ./.post_build/.env`
     end
 
     # Upload dSYMs for AppStore crash tracking
@@ -554,7 +477,6 @@ class Build
     attr_reader :build_type
     attr_reader :git_branch
     attr_reader :build_number
-    attr_reader :last_commit
     attr_reader :for_simulator
     attr_reader :configuration
 
@@ -568,12 +490,12 @@ class Build
             UI.user_error! "Pass build_type parameter, e.g. fastlane build build_type:Development"
         end
 
-        @last_commit = options[:last_commit]
+
         @build_type = build_type
-        if ENV['CIRRUS_BRANCH'].nil? 
+        if ENV['GITHUB_REF_NAME'].nil? 
             @git_branch = %x(git rev-parse --abbrev-ref HEAD).chomp
         else
-            @git_branch = ENV['CIRRUS_BRANCH']
+            @git_branch = ENV['GITHUB_REF_NAME']
         end
 
         @build_number = build_number
@@ -720,11 +642,14 @@ class Build
     def extra_info
         prefix = ""
         if rc_build
-            version = IO.foreach('../wire-ios/Wire-iOS/Resources/Configuration/Version.xcconfig').grep(/WIRE_SHORT_VERSION/).first.split(" = ")[1].chomp
-            prefix = "#{version}-"
+            prefix = "#{version_from_xcconfig}-"
         end
 
         prefix + @build_number
+    end
+
+    def version_from_xcconfig
+        IO.foreach('../wire-ios/Wire-iOS/Resources/Configuration/Version.xcconfig').grep(/WIRE_SHORT_VERSION/).first.split(" = ")[1].chomp
     end
 
     def iconset_location

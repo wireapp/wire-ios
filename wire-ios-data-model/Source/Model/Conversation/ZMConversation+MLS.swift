@@ -190,4 +190,30 @@ public extension ZMConversation {
         require(result.count <= 1, "More than one conversation found for a single group id")
         return result.first as? ZMConversation
     }
+
+    enum ZMConversationError: Error {
+        case couldNotFindSyncContext
+    }
+
+    func joinNewMLSGroup(id mlsGroupID: MLSGroupID, completion: ((Error?) -> Void)?) {
+        guard let syncContext = self.managedObjectContext?.zm_sync else {
+            completion?(ZMConversationError.couldNotFindSyncContext)
+            return
+        }
+
+        syncContext.perform {
+            guard let mlsService = syncContext.mlsService else { return }
+
+            Task {
+                do {
+                    try await mlsService.joinNewGroup(with: mlsGroupID)
+                } catch {
+                    WireLogger.mls.error("failed to join new MLS Group \(mlsGroupID)")
+                    completion?(error)
+                    return
+                }
+                completion?(nil)
+            }
+        }
+    }
 }

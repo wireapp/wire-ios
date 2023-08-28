@@ -98,38 +98,39 @@ class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
             XCTAssert(self.waitForCustomExpectations(withTimeout: 0.5))
 
             // Then
-            let featureService = FeatureService(context: self.syncMOC)
+            let featureRepository = FeatureRepository(context: self.syncMOC)
 
-            let appLock = featureService.fetchAppLock()
+            let appLock = featureRepository.fetchAppLock()
             XCTAssertEqual(appLock.status, .enabled)
             XCTAssertEqual(appLock.config.enforceAppLock, true)
             XCTAssertEqual(appLock.config.inactivityTimeoutSecs, 11)
 
-            let classifiedDomains = featureService.fetchClassifiedDomains()
+            let classifiedDomains = featureRepository.fetchClassifiedDomains()
             XCTAssertEqual(classifiedDomains.status, .enabled)
             XCTAssertEqual(classifiedDomains.config.domains, ["foo"])
 
-            let conferenceCalling = featureService.fetchConferenceCalling()
+            let conferenceCalling = featureRepository.fetchConferenceCalling()
             XCTAssertEqual(conferenceCalling.status, .enabled)
 
-            let conversationGuestLinks = featureService.fetchConversationGuestLinks()
+            let conversationGuestLinks = featureRepository.fetchConversationGuestLinks()
             XCTAssertEqual(conversationGuestLinks.status, .enabled)
 
-            let digitalSignature = featureService.fetchDigitalSignature()
+            let digitalSignature = featureRepository.fetchDigitalSignature()
             XCTAssertEqual(digitalSignature.status, .enabled)
 
-            let fileSharing = featureService.fetchFileSharing()
+            let fileSharing = featureRepository.fetchFileSharing()
             XCTAssertEqual(fileSharing.status, .enabled)
 
-            let mls = featureService.fetchMLS()
+            let mls = featureRepository.fetchMLS()
             XCTAssertEqual(mls.status, .enabled)
             XCTAssertEqual(mls.config, .init(defaultProtocol: .mls))
 
-            let mlsMigration = featureService.fetchMLSMigration()
+            let mlsMigration = featureRepository.fetchMLSMigration()
             XCTAssertEqual(mlsMigration.status, .enabled)
             XCTAssertEqual(mlsMigration.config, .init(startTime: Date(timeIntervalSince1970: 10), finaliseRegardlessAfter: Date(timeIntervalSince1970: 20)))
 
-            let selfDeletingMessage = featureService.fetchSelfDeletingMesssages()
+            let selfDeletingMessage = featureRepository.fetchSelfDeletingMesssages()
+
             XCTAssertEqual(selfDeletingMessage.status, .enabled)
             XCTAssertEqual(selfDeletingMessage.config.enforcedTimeoutSeconds, 22)
         }
@@ -181,33 +182,33 @@ class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
             XCTAssert(self.waitForCustomExpectations(withTimeout: 0.5))
 
             // Then
-            let featureService = FeatureService(context: self.syncMOC)
+            let featureRepository = FeatureRepository(context: self.syncMOC)
 
-            let appLock = featureService.fetchAppLock()
+            let appLock = featureRepository.fetchAppLock()
             XCTAssertEqual(appLock.status, .enabled)
             XCTAssertEqual(appLock.config, .init())
 
-            let classifiedDomains = featureService.fetchClassifiedDomains()
+            let classifiedDomains = featureRepository.fetchClassifiedDomains()
             XCTAssertEqual(classifiedDomains.status, .disabled)
             XCTAssertEqual(classifiedDomains.config, .init())
 
-            let conferenceCalling = featureService.fetchConferenceCalling()
+            let conferenceCalling = featureRepository.fetchConferenceCalling()
             XCTAssertEqual(conferenceCalling.status, .enabled)
 
-            let conversationGuestLinks = featureService.fetchConversationGuestLinks()
+            let conversationGuestLinks = featureRepository.fetchConversationGuestLinks()
             XCTAssertEqual(conversationGuestLinks.status, .enabled)
 
-            let digitalSignature = featureService.fetchDigitalSignature()
+            let digitalSignature = featureRepository.fetchDigitalSignature()
             XCTAssertEqual(digitalSignature.status, .disabled)
 
-            let fileSharing = featureService.fetchFileSharing()
+            let fileSharing = featureRepository.fetchFileSharing()
             XCTAssertEqual(fileSharing.status, .enabled)
 
-            let mls = featureService.fetchMLS()
+            let mls = featureRepository.fetchMLS()
             XCTAssertEqual(mls.status, .disabled)
             XCTAssertEqual(mls.config, .init())
 
-            let selfDeletingMessage = featureService.fetchSelfDeletingMesssages()
+            let selfDeletingMessage = featureRepository.fetchSelfDeletingMesssages()
             XCTAssertEqual(selfDeletingMessage.status, .enabled)
             XCTAssertEqual(selfDeletingMessage.config, .init())
         }

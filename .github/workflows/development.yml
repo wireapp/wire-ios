@@ -1,4 +1,4 @@
-name: (CirrusCI) Development
+name: Development
 
 on:
   workflow_dispatch:
@@ -11,19 +11,7 @@ permissions:
 
 jobs:
   development:
-    runs-on: ubuntu-latest
-    env:
-      CIRRUS_CI_API_TOKEN: ${{ secrets.CIRRUS_CI_API_TOKEN }}
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: '3.1'
-      - name: Install dependencies
-        run: bundle install
-      - name: Trigger build
-        id: trigger
-        run: bundle exec fastlane trigger_api_build_cirrus_ci task:"Development"
+    uses: ./.github/workflows/_reusable_app_release.yml
+    with:
+      fastlane_action: development
+    secrets: inherit

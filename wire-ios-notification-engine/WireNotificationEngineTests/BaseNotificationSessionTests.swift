@@ -166,7 +166,8 @@ class BaseTest: ZMTBaseTest {
             operationLoop: operationLoop,
             accountIdentifier: accountIdentifier,
             pushNotificationStrategy: pushNotificationStrategy,
-            cryptoboxMigrationManager: mockCryptoboxMigrationManager
+            cryptoboxMigrationManager: mockCryptoboxMigrationManager,
+            earService: MockEARServiceInterface()
         )
     }
 }

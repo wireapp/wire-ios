@@ -201,8 +201,8 @@ public class SharingSession {
     let earService: EARServiceInterface
 
     public var fileSharingFeature: Feature.FileSharing {
-        let featureService = FeatureService(context: coreDataStack.viewContext)
-        return featureService.fetchFileSharing()
+        let featureRepository = FeatureRepository(context: coreDataStack.viewContext)
+        return featureRepository.fetchFileSharing()
     }
 
     /// Initializes a new `SessionDirectory` to be used in an extension environment
@@ -217,7 +217,8 @@ public class SharingSession {
         accountIdentifier: UUID,
         hostBundleIdentifier: String,
         environment: BackendEnvironmentProvider,
-        appLockConfig: AppLockController.LegacyConfig?
+        appLockConfig: AppLockController.LegacyConfig?,
+        sharedUserDefaults: UserDefaults
     ) throws {
 
         let sharedContainerURL = FileManager.sharedContainerDirectory(for: applicationGroupIdentifier)
@@ -264,7 +265,8 @@ public class SharingSession {
             transportSession: transportSession,
             cachesDirectory: FileManager.default.cachesURLForAccount(with: accountIdentifier, in: sharedContainerURL),
             accountContainer: CoreDataStack.accountDataFolder(accountIdentifier: accountIdentifier, applicationContainer: sharedContainerURL),
-            appLockConfig: appLockConfig
+            appLockConfig: appLockConfig,
+            sharedUserDefaults: sharedUserDefaults
         )
     }
 
@@ -280,7 +282,8 @@ public class SharingSession {
         strategyFactory: StrategyFactory,
         appLockConfig: AppLockController.LegacyConfig?,
         cryptoboxMigrationManager: CryptoboxMigrationManagerInterface = CryptoboxMigrationManager(),
-        earService: EARServiceInterface? = nil
+        earService: EARServiceInterface? = nil,
+        sharedUserDefaults: UserDefaults
     ) throws {
 
         self.coreDataStack = coreDataStack
@@ -296,7 +299,8 @@ public class SharingSession {
             databaseContexts: [
                 coreDataStack.viewContext,
                 coreDataStack.syncContext
-            ]
+            ],
+            sharedUserDefaults: sharedUserDefaults
         )
 
         let selfUser = ZMUser.selfUser(in: coreDataStack.viewContext)
@@ -328,7 +332,8 @@ public class SharingSession {
         transportSession: ZMTransportSession,
         cachesDirectory: URL,
         accountContainer: URL,
-        appLockConfig: AppLockController.LegacyConfig?
+        appLockConfig: AppLockController.LegacyConfig?,
+        sharedUserDefaults: UserDefaults
     ) throws {
 
         let applicationStatusDirectory = ApplicationStatusDirectory(syncContext: coreDataStack.syncContext, transportSession: transportSession)
@@ -363,7 +368,8 @@ public class SharingSession {
             applicationStatusDirectory: applicationStatusDirectory,
             operationLoop: operationLoop,
             strategyFactory: strategyFactory,
-            appLockConfig: appLockConfig
+            appLockConfig: appLockConfig,
+            sharedUserDefaults: sharedUserDefaults
         )
     }
 

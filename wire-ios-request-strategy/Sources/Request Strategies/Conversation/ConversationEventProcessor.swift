@@ -23,7 +23,7 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
     // MARK: - Properties
 
     let context: NSManagedObjectContext
-    let conversationService: ConversationServiceProtocol
+    let conversationService: ConversationServiceInterface
 
     // MARK: - Life cycle
 
@@ -36,7 +36,7 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
 
     public init(
         context: NSManagedObjectContext,
-        conversationService: ConversationServiceProtocol
+        conversationService: ConversationServiceInterface
     ) {
         self.context = context
         self.conversationService = conversationService
@@ -130,7 +130,6 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
                 Logging.eventProcessing.warn("Member join update missing conversation, aborting...")
                 return
             }
-
             if let usersAndRoles = payload.data.users?.map({ $0.fetchUserAndRole(in: self.context, conversation: conversation)! }) {
                 let selfUser = ZMUser.selfUser(in: self.context)
                 let users = Set(usersAndRoles.map { $0.0 })
@@ -161,14 +160,5 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
             context: context
         )
     }
-
-}
-
-public protocol ConversationServiceProtocol {
-
-    func syncConversation(
-        qualifiedID: QualifiedID,
-        completion: @escaping () -> Void
-    )
 
 }

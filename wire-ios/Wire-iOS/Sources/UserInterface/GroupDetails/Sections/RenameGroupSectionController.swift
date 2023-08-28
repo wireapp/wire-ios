@@ -23,10 +23,10 @@ import WireSyncEngine
 
 final class RenameGroupSectionController: NSObject, CollectionViewSectionController {
 
-    fileprivate var validName: String?
-    fileprivate var conversation: GroupDetailsConversationType
-    fileprivate var renameCell: GroupDetailsRenameCell?
-    fileprivate var token: AnyObject?
+    private var validName: String?
+    private var conversation: GroupDetailsConversationType
+    private var renameCell: GroupDetailsRenameCell?
+    private var token: AnyObject?
     private var sizingFooter = SectionFooter(frame: .zero)
 
     var isHidden: Bool {

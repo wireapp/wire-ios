@@ -89,45 +89,45 @@ extension FeatureConfigRequestStrategy: ZMEventConsumer {
     }
 
     private func processResponse(featureName: Feature.Name, data: Data) throws {
-        let featureService = FeatureService(context: managedObjectContext)
+        let featureRepository = FeatureRepository(context: managedObjectContext)
         let decoder = JSONDecoder()
 
         switch featureName {
         case .conferenceCalling:
             let response = try decoder.decode(FeatureStatus.self, from: data)
-            featureService.storeConferenceCalling(.init(status: response.status))
+            featureRepository.storeConferenceCalling(.init(status: response.status))
 
         case .fileSharing:
             let response = try decoder.decode(FeatureStatus.self, from: data)
-            featureService.storeFileSharing(.init(status: response.status))
+            featureRepository.storeFileSharing(.init(status: response.status))
 
         case .appLock:
             let response = try decoder.decode(FeatureStatusWithConfig<Feature.AppLock.Config>.self, from: data)
-            featureService.storeAppLock(.init(status: response.status, config: response.config))
+            featureRepository.storeAppLock(.init(status: response.status, config: response.config))
 
         case .selfDeletingMessages:
             let response = try decoder.decode(FeatureStatusWithConfig<Feature.SelfDeletingMessages.Config>.self, from: data)
-            featureService.storeSelfDeletingMessages(.init(status: response.status, config: response.config))
+            featureRepository.storeSelfDeletingMessages(.init(status: response.status, config: response.config))
 
         case .conversationGuestLinks:
             let response = try decoder.decode(FeatureStatus.self, from: data)
-            featureService.storeConversationGuestLinks(.init(status: response.status))
+            featureRepository.storeConversationGuestLinks(.init(status: response.status))
 
         case .classifiedDomains:
             let response = try decoder.decode(FeatureStatusWithConfig<Feature.ClassifiedDomains.Config>.self, from: data)
-            featureService.storeClassifiedDomains(.init(status: response.status, config: response.config))
+            featureRepository.storeClassifiedDomains(.init(status: response.status, config: response.config))
 
         case .digitalSignature:
             let response = try decoder.decode(FeatureStatus.self, from: data)
-            featureService.storeDigitalSignature(.init(status: response.status))
+            featureRepository.storeDigitalSignature(.init(status: response.status))
 
         case .mls:
             let response = try decoder.decode(FeatureStatusWithConfig<Feature.MLS.Config>.self, from: data)
-            featureService.storeMLS(.init(status: response.status, config: response.config))
+          featureRepository.storeMLS(.init(status: response.status, config: response.config))
 
         case .mlsMigration:
             let response = try decoder.decode(FeatureStatusWithConfig<Feature.MLSMigration.Config>.self, from: data)
-            featureService.storeMLSMigration(.init(status: response.status, config: response.config))
+          featureRepository.storeMLSMigration(.init(status: response.status, config: response.config))
         }
     }
 

@@ -156,7 +156,8 @@ class LinkPreviewUpdateRequestStrategyTests: MessagingTestBase {
                                                        missing: [:],
                                                        redundant: [:],
                                                        deleted: [:],
-                                                       failedToSend: [:])
+                                                       failedToSend: [:],
+                                                       failedToConfirm: [:])
             let payloadAsString = String(bytes: payload.payloadData()!, encoding: .utf8)!
             let response = ZMTransportResponse(payload: payloadAsString as ZMTransportData,
                                                httpStatus: 201,
