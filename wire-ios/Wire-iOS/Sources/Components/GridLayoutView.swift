@@ -27,7 +27,7 @@ public final class GridLayoutView: UIView {
 
     // MARK: - Properties
 
-    var verticalSpacing: CGFloat = 4
+    var verticalSpacing: CGFloat = 0
     var horizontalSpacing: CGFloat = 4
 
     private(set) var views = [UIView]()
@@ -40,6 +40,21 @@ public final class GridLayoutView: UIView {
         stackView.translatesAutoresizingMaskIntoConstraints = false
         return stackView
     }()
+
+    private lazy var heightConstraint: NSLayoutConstraint = {
+        let constraint = heightAnchor.constraint(equalToConstant: 0)
+        constraint.isActive = true
+        return constraint
+    }()
+
+    private var calculatedHeight: CGFloat = 0 {
+        didSet {
+            guard calculatedHeight != oldValue else { return }
+            setNeedsUpdateConstraints()
+            setNeedsLayout()
+            layoutIfNeeded()
+        }
+    }
 
     // MARK: - Life cycle
 
@@ -59,18 +74,13 @@ public final class GridLayoutView: UIView {
 
     // MARK: - Layout
 
-    public override var intrinsicContentSize: CGSize {
-        let firstViewMinY = views.first?.frame.minY ?? .zero
-        let lastViewMaxY = views.last?.frame.maxY ?? .zero
-        let constraintHeight = lastViewMaxY - firstViewMinY
-
-        return CGSize(
-            width: UIView.noIntrinsicMetric,
-            height: constraintHeight
-        )
+    public override func updateConstraints() {
+        super.updateConstraints()
+        heightConstraint.constant = calculatedHeight
     }
 
     public func prepareForReuse() {
+        calculatedHeight = 0
         stackView.removeArrangedSubviews()
         views.removeAll(keepingCapacity: true)
     }
@@ -80,17 +90,17 @@ public final class GridLayoutView: UIView {
         self.views = views
         setNeedsLayout()
         layoutIfNeeded()
-        invalidateIntrinsicContentSize()
     }
 
     public override func layoutSubviews() {
         super.layoutSubviews()
+        stackView.removeArrangedSubviews()
 
         guard !views.isEmpty else { return }
 
-        stackView.removeArrangedSubviews()
-
         var lineWidth: CGFloat = 0
+        var maxHeight: CGFloat = 0
+        var totalHeight: CGFloat = 0
 
         var currentLineStackView = createNewRow()
         stackView.addArrangedSubview(currentLineStackView)
@@ -102,13 +112,18 @@ public final class GridLayoutView: UIView {
             if lineWidth + view.frame.width > frame.width {
                 currentLineStackView = createNewRow()
                 stackView.addArrangedSubview(currentLineStackView)
+                totalHeight += maxHeight + verticalSpacing
                 lineWidth = 0
+                maxHeight = 0
             }
 
             currentLineStackView.addArrangedSubview(view)
             lineWidth += view.frame.width + horizontalSpacing
+            maxHeight = max(view.frame.height, maxHeight)
         }
-        invalidateIntrinsicContentSize()
+
+        totalHeight += maxHeight
+        calculatedHeight = totalHeight
     }
 
     private func createNewRow() -> UIStackView {
