@@ -57,7 +57,7 @@
 		BF4F2B4A1E925AE8000B22D1 /* OpenGraphMockDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF4F2B471E925AE8000B22D1 /* OpenGraphMockDataProvider.swift */; };
 		BF4F2B4B1E925AE8000B22D1 /* URLMocks.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF4F2B481E925AE8000B22D1 /* URLMocks.swift */; };
 		BF4F2B561E925AFE000B22D1 /* ImageDownloaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF4F2B4C1E925AFE000B22D1 /* ImageDownloaderTests.swift */; };
-		BF4F2B571E925AFE000B22D1 /* IntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF4F2B4D1E925AFE000B22D1 /* IntegrationTests.swift */; };
+		BF4F2B571E925AFE000B22D1 /* E2ETests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF4F2B4D1E925AFE000B22D1 /* E2ETests.swift */; };
 		BF4F2B581E925AFE000B22D1 /* LinkPreviewDetectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF4F2B4E1E925AFE000B22D1 /* LinkPreviewDetectorTests.swift */; };
 		BF4F2B591E925AFE000B22D1 /* MetaStreamContainerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF4F2B4F1E925AFE000B22D1 /* MetaStreamContainerTests.swift */; };
 		BF4F2B5A1E925AFE000B22D1 /* OpenGraphDataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF4F2B501E925AFE000B22D1 /* OpenGraphDataTests.swift */; };
@@ -164,7 +164,7 @@
 		BF4F2B471E925AE8000B22D1 /* OpenGraphMockDataProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = OpenGraphMockDataProvider.swift; path = WireLinkPreviewTests/OpenGraphMockDataProvider.swift; sourceTree = SOURCE_ROOT; };
 		BF4F2B481E925AE8000B22D1 /* URLMocks.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = URLMocks.swift; path = WireLinkPreviewTests/URLMocks.swift; sourceTree = SOURCE_ROOT; };
 		BF4F2B4C1E925AFE000B22D1 /* ImageDownloaderTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ImageDownloaderTests.swift; path = WireLinkPreviewTests/ImageDownloaderTests.swift; sourceTree = SOURCE_ROOT; };
-		BF4F2B4D1E925AFE000B22D1 /* IntegrationTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = IntegrationTests.swift; path = WireLinkPreviewTests/IntegrationTests.swift; sourceTree = SOURCE_ROOT; };
+		BF4F2B4D1E925AFE000B22D1 /* E2ETests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = E2ETests.swift; path = WireLinkPreviewTests/E2ETests.swift; sourceTree = SOURCE_ROOT; };
 		BF4F2B4E1E925AFE000B22D1 /* LinkPreviewDetectorTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = LinkPreviewDetectorTests.swift; path = WireLinkPreviewTests/LinkPreviewDetectorTests.swift; sourceTree = SOURCE_ROOT; };
 		BF4F2B4F1E925AFE000B22D1 /* MetaStreamContainerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MetaStreamContainerTests.swift; path = WireLinkPreviewTests/MetaStreamContainerTests.swift; sourceTree = SOURCE_ROOT; };
 		BF4F2B501E925AFE000B22D1 /* OpenGraphDataTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = OpenGraphDataTests.swift; path = WireLinkPreviewTests/OpenGraphDataTests.swift; sourceTree = SOURCE_ROOT; };
@@ -356,7 +356,7 @@
 			isa = PBXGroup;
 			children = (
 				BF4F2B4C1E925AFE000B22D1 /* ImageDownloaderTests.swift */,
-				BF4F2B4D1E925AFE000B22D1 /* IntegrationTests.swift */,
+				BF4F2B4D1E925AFE000B22D1 /* E2ETests.swift */,
 				BF4F2B4E1E925AFE000B22D1 /* LinkPreviewDetectorTests.swift */,
 				5E9EA4C7224257C100D401B2 /* NSDataDetectorLinksTests.swift */,
 				5E9EA4C922425C4E00D401B2 /* NSDataDetectorAttachmentTests.swift */,
@@ -596,7 +596,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5E9EA4CE2242785900D401B2 /* LinkAttachmentDetectorTests.swift in Sources */,
-				BF4F2B571E925AFE000B22D1 /* IntegrationTests.swift in Sources */,
+				BF4F2B571E925AFE000B22D1 /* E2ETests.swift in Sources */,
 				BF4F2B5B1E925AFE000B22D1 /* OpenGraphScannerTests.swift in Sources */,
 				5E9EA4CC2242732F00D401B2 /* LinkAttachmentTypesTests.swift in Sources */,
 				BF4F2B5E1E925AFE000B22D1 /* StringXMLEntityParserTests.swift in Sources */,

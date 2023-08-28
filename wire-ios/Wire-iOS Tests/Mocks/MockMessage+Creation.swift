@@ -109,10 +109,11 @@ final class MockMessageFactory {
                                     conversation: Conversation? = nil,
                                     users numUsers: Int = 0,
                                     sender: UserType? = nil,
-                                    reason: ZMParticipantsRemovedReason = .none) -> (MockMessage?, MockSystemMessageData) {
+                                    reason: ZMParticipantsRemovedReason = .none,
+                                    domains: [String]? = nil) -> (MockMessage?, MockSystemMessageData) {
         let message = MockMessageFactory.messageTemplate(sender: sender, conversation: conversation)
 
-        let mockSystemMessageData = MockSystemMessageData(systemMessageType: systemMessageType, reason: reason)
+        let mockSystemMessageData = MockSystemMessageData(systemMessageType: systemMessageType, reason: reason, domains: domains)
 
         message.serverTimestamp = Date(timeIntervalSince1970: 12345678564)
 
@@ -130,13 +131,15 @@ final class MockMessageFactory {
                              users numUsers: Int = 0,
                              clients numClients: Int = 0,
                              sender: UserType? = nil,
-                             reason: ZMParticipantsRemovedReason = .none) -> MockMessage? {
+                             reason: ZMParticipantsRemovedReason = .none,
+                             domains: [String]? = nil) -> MockMessage? {
 
         let (message, mockSystemMessageData) = systemMessageAndData(with: systemMessageType,
                                                                     conversation: conversation,
                                                                     users: numUsers,
                                                                     sender: sender,
-                                                                    reason: reason)
+                                                                    reason: reason,
+                                                                    domains: domains)
 
         var userClients: [AnyHashable] = []
 

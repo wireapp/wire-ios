@@ -64,6 +64,7 @@
 typedef NS_ENUM(int16_t, ZMSystemMessageType) {
     ZMSystemMessageTypeInvalid = 0,
     ZMSystemMessageTypeParticipantsAdded,
+    ZMSystemMessageTypeFailedToAddParticipants,
     ZMSystemMessageTypeParticipantsRemoved,
     ZMSystemMessageTypeConversationNameChanged,
     ZMSystemMessageTypeConnectionRequest,
@@ -89,12 +90,14 @@ typedef NS_ENUM(int16_t, ZMSystemMessageType) {
     ZMSystemMessageTypeLegalHoldDisabled,
     ZMSystemMessageTypeSessionReset,
     ZMSystemMessageTypeDecryptionFailedResolved,
+    ZMSystemMessageTypeDomainsStoppedFederating
 };
 
 typedef NS_ENUM(int16_t, ZMParticipantsRemovedReason) {
     ZMParticipantsRemovedReasonNone = 0,
     /// Users don't want / support LH
     ZMParticipantsRemovedReasonLegalHoldPolicyConflict = 1,
+    ZMParticipantsRemovedReasonFederationTermination = 2
 };
 
 @protocol ZMTextMessageData <NSObject>
@@ -161,6 +164,7 @@ typedef NS_ENUM(int16_t, ZMParticipantsRemovedReason) {
 @property (nonatomic, nullable) id <ZMSystemMessageData> parentMessage;
 @property (nonatomic, readonly) BOOL userIsTheSender;
 @property (nonatomic, nullable) NSNumber *messageTimer;
+@property (nonatomic, nullable) NSArray<NSString *> *domains;
 
 @end
 

@@ -37,29 +37,6 @@ extension ConversationListViewController.ViewModel: StartUIDelegate {
         }
     }
 
-    func startUI(
-        _ startUI: StartUIViewController,
-        createConversationWith users: UserSet,
-        name: String,
-        allowGuests: Bool,
-        allowServices: Bool,
-        enableReceipts: Bool,
-        encryptionProtocol: EncryptionProtocol
-    ) {
-        guard let viewController = viewController as? UIViewController else { return }
-
-        viewController.dismissIfNeeded {
-            self.createConversation(
-                users: users,
-                name: name,
-                allowGuests: allowGuests,
-                allowServices: allowServices,
-                enableReceipts: enableReceipts,
-                encryptionProtocol: encryptionProtocol
-            )
-        }
-    }
-
     /// Create a new conversation or open existing 1-to-1 conversation
     ///
     /// - Parameters:
@@ -81,43 +58,4 @@ extension ConversationListViewController.ViewModel: StartUIDelegate {
         }
     }
 
-    private func createConversation(
-        users: UserSet,
-        name: String?,
-        allowGuests: Bool,
-        allowServices: Bool,
-        enableReceipts: Bool,
-        encryptionProtocol: EncryptionProtocol
-    ) {
-        guard let userSession = ZMUserSession.shared() else { return }
-        let service = ConversationService(context: userSession.viewContext)
-        let users = Set(users.materialize(in: userSession.viewContext))
-
-        service.createGroupConversation(
-            name: name,
-            users: users,
-            allowGuests: allowGuests,
-            allowServices: allowServices,
-            enableReceipts: enableReceipts,
-            messageProtocol: encryptionProtocol == .proteus ? .proteus : .mls
-        ) { [weak self] in
-            switch $0 {
-            case .success(let conversation):
-                self?.navigate(to: conversation)
-
-            case .failure(let error):
-                WireLogger.conversation.error("failed to create conversation from flow: \(String(describing: error))")
-            }
-        }
-    }
-
-    private func navigate(to conversation: ZMConversation) {
-        delay(0.3) {
-            ZClientViewController.shared?.select(
-                conversation: conversation,
-                focusOnView: true,
-                animated: true
-            )
-        }
-    }
 }

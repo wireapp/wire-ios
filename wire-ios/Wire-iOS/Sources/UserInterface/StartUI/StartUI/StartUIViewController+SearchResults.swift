@@ -156,36 +156,36 @@ extension StartUIViewController: SearchResultsViewControllerDelegate {
 }
 
 extension StartUIViewController: ConversationCreationControllerDelegate {
-    func dismiss(controller: ConversationCreationController, completion: (() -> Void)? = nil) {
-        if traitCollection.horizontalSizeClass == .compact {
-            navigationController?.popToRootViewController(animated: true) {
-                completion?()
-            }
-        } else {
-            controller.navigationController?.dismiss(animated: true, completion: completion)
-        }
-    }
 
     func conversationCreationController(
         _ controller: ConversationCreationController,
-        didSelectName name: String,
-        participants: UserSet,
-        allowGuests: Bool,
-        allowServices: Bool,
-        enableReceipts: Bool,
-        encryptionProtocol: EncryptionProtocol
+        didCreateConversation conversation: ZMConversation
     ) {
         dismiss(controller: controller) { [weak self] in
-            guard let weakSelf = self else { return }
+            guard let self = self else { return }
 
-            weakSelf.delegate?.startUI(
-                weakSelf,
-                createConversationWith: participants,
-                name: name,
-                allowGuests: allowGuests,
-                allowServices: allowServices,
-                enableReceipts: enableReceipts,
-                encryptionProtocol: encryptionProtocol
+            delegate?.startUI(
+                self,
+                didSelect: conversation
+            )
+        }
+    }
+
+    func dismiss(
+        controller: ConversationCreationController,
+        completion: (() -> Void)? = nil
+    ) {
+        switch traitCollection.horizontalSizeClass {
+        case .compact:
+            navigationController?.popToRootViewController(
+                animated: true,
+                completion: completion
+            )
+
+        default:
+            controller.navigationController?.dismiss(
+                animated: true,
+                completion: completion
             )
         }
     }

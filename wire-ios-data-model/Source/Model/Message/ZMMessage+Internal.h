@@ -36,7 +36,9 @@
 @protocol UserClientType;
 
 extern NSString * _Nonnull const ZMMessageIsExpiredKey;
+extern NSString * _Nonnull const ZMMessageExpirationReasonCodeKey;
 extern NSString * _Nonnull const ZMMessageMissingRecipientsKey;
+extern NSString * _Nonnull const ZMMessageFailedToSendRecipientsKey;
 extern NSString * _Nonnull const ZMMessageImageTypeKey;
 extern NSString * _Nonnull const ZMMessageIsAnimatedGifKey;
 extern NSString * _Nonnull const ZMMessageMediumRemoteIdentifierDataKey;
@@ -157,6 +159,7 @@ extern NSString * _Nonnull const ZMMessageNeedsLinkAttachmentsUpdateKey;
 
 @property (nonatomic, readonly) BOOL isUnreadMessage;
 @property (nonatomic, readonly) BOOL isExpired;
+@property (nonatomic) NSNumber * _Nullable expirationReasonCode;
 @property (nonatomic, readonly) NSDate * _Nullable expirationDate;
 @property (nonatomic, readonly) BOOL isObfuscated;
 @property (nonatomic, readonly) BOOL needsReadConfirmation;

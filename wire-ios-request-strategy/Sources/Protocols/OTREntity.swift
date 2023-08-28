@@ -42,6 +42,9 @@ private let zmLog = ZMSLog(tag: "Dependencies")
 
     func delivered(with response: ZMTransportResponse)
 
+    /// Add users who didn't receive the message to failedToSendRecipients
+    func addFailedToSendRecipients(_ recipients: [ZMUser])
+
 }
 
 /// HTTP status of a request that has

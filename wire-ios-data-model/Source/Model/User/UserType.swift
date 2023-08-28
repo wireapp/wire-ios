@@ -78,7 +78,10 @@ public protocol UserType: NSObjectProtocol, UserConnections {
     /// Whether the account of the user is deleted
     var isAccountDeleted: Bool { get }
 
-    /// Wheater the user is under legal hold
+    /// Determines if the user may have incomplete metadata.
+    var isPendingMetadataRefresh: Bool { get }
+
+    /// Whether the user is under legal hold.
     var isUnderLegalHold: Bool { get }
 
     var accentColorValue: ZMAccentColor { get }

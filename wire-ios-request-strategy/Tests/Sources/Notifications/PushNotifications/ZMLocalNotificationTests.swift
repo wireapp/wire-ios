@@ -208,7 +208,7 @@ class ZMLocalNotificationTests: MessagingTestBase {
     func createMessageTimerUpdateEvent(_ nonce: UUID,
                                        conversationID: UUID,
                                        senderID: UUID = UUID.create(),
-                                       timer: Int64 = 31536000,
+                                       timer: Int64 = 31536000000,
                                        timestamp: Date = Date()) -> ZMUpdateEvent {
 
        let payload: [String: Any] = [

@@ -58,7 +58,7 @@ final class ConversationTitleView: TitleView {
         }
 
         super.configure(icons: attachments,
-                        title: conversation.displayName.localized,
+                        title: conversation.displayNameWithFallback.localized,
                         subtitle: subtitle,
                         interactive: self.interactive && conversation.relatedConnectionState != .sent)
 
@@ -69,7 +69,7 @@ final class ConversationTitleView: TitleView {
         typealias Conversation = L10n.Accessibility.Conversation
 
         var components: [String] = []
-        components.append(conversation.displayName.localized)
+        components.append(conversation.displayNameWithFallback.localized)
 
         if conversation.securityLevel == .secure {
             components.append(Conversation.VerifiedIcon.description)
@@ -118,4 +118,12 @@ extension NSTextAttachment {
         attachment.bounds = CGRect(x: 0, y: -2, width: height * ratio, height: height)
         return attachment
     }
+}
+
+extension ConversationLike {
+
+    var displayNameWithFallback: String {
+        return displayName ?? L10n.Localizable.Profile.Details.Title.unavailable
+    }
+    
 }

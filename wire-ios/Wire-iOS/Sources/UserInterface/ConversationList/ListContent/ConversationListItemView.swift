@@ -271,7 +271,7 @@ final class ConversationListItemView: UIView {
             }
             labelsStack.accessibilityLabel = title?.string
         } else {
-            title = conversation.displayName.attributedString
+            title = conversation.displayNameWithFallback.attributedString
             labelsStack.accessibilityLabel = conversation.displayName
         }
 

@@ -109,6 +109,10 @@ private class VerifyClientsParser: OTREntity {
         // no-op
     }
 
+    func addFailedToSendRecipients(_ recipients: [ZMUser]) {
+        // no-op
+    }
+
     func detectedRedundantUsers(_ users: [ZMUser]) {
         // no-op
     }
@@ -122,6 +126,8 @@ private class VerifyClientsParser: OTREntity {
     var isExpired: Bool = false
 
     var expirationDate: Date?
+
+    var expirationReasonCode: NSNumber?
 
     func expire() {
         // no-op

@@ -61,8 +61,11 @@ class WarningLabelView: UIView {
             self.isHidden = false
             label.text = profileDetails.requestedIdentityWarning
         }
+        guard let name = user.name else {
+            self.isHidden = true
+            return
+        }
         self.isHidden = user.isConnected || user.isTeamMember || user.isSelfUser
-        guard let name = user.name else { return }
         label.text = profileDetails.identityWarning(name)
 
     }

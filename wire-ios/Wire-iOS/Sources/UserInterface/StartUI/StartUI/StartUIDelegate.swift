@@ -22,16 +22,6 @@ import WireDataModel
 protocol StartUIDelegate: AnyObject {
 
     func startUI(_ startUI: StartUIViewController, didSelect user: UserType)
-
     func startUI(_ startUI: StartUIViewController, didSelect conversation: ZMConversation)
 
-    func startUI(
-        _ startUI: StartUIViewController,
-        createConversationWith users: UserSet,
-        name: String,
-        allowGuests: Bool,
-        allowServices: Bool,
-        enableReceipts: Bool,
-        encryptionProtocol: EncryptionProtocol
-    )
 }

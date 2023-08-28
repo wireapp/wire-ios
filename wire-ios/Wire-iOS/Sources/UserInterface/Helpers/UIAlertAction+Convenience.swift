@@ -36,6 +36,20 @@ extension UIAlertAction {
         )
     }
 
+    static func link(
+        title: String,
+        url: URL,
+        presenter: UIViewController
+    ) -> Self {
+        return .init(
+            title: title,
+            style: .default
+        ) { [weak presenter] _ in
+            let browserViewController = BrowserViewController(url: url)
+            presenter?.present(browserViewController, animated: true)
+        }
+    }
+
     convenience init(icon: StyleKitIcon?, title: String, tintColor: UIColor, handler: ((UIAlertAction) -> Void)? = nil) {
         self.init(title: title, style: .default, handler: handler)
 

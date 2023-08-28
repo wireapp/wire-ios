@@ -74,6 +74,11 @@ extension Payload.MessageSendingStatus {
             message.conversation?.addParticipantAndSystemMessageIfMissing(user, date: nil)
         }
 
+        let failedToConfirmUsers = failedToConfirm.fetchUsers(in: message.context)
+        if !failedToConfirmUsers.isEmpty {
+            message.addFailedToSendRecipients(failedToConfirmUsers)
+        }
+
         return !missingClients.isEmpty
     }
 

@@ -40,7 +40,6 @@ final class ConversationImagesViewController: TintColorCorrectedViewController {
         view.backgroundColor = SemanticColors.View.backgroundSeparatorCell
         return view
     }()
-    lazy var likeButton = iconButton(messageAction: .like)
 
     let inverse: Bool
 
@@ -239,8 +238,6 @@ final class ConversationImagesViewController: TintColorCorrectedViewController {
             return #selector(revealCurrent(_:))
         case .delete:
             return #selector(deleteCurrent)
-        case .like, .unlike:
-            return #selector(likeCurrent)
         default:
             return nil
         }
@@ -267,8 +264,6 @@ final class ConversationImagesViewController: TintColorCorrectedViewController {
         if !currentMessage.isEphemeral {
             let copyButton = iconButton(messageAction: .copy)
 
-            updateLikeButton()
-
             let saveButton = iconButton(messageAction: .save)
 
             let shareButton = iconButton(messageAction: .forward)
@@ -279,9 +274,9 @@ final class ConversationImagesViewController: TintColorCorrectedViewController {
 
             let revealButton = iconButton(messageAction: .showInConversation)
             if !MediaShareRestrictionManager(sessionRestriction: ZMUserSession.shared()).canDownloadMedia {
-                buttons = [likeButton, shareButton, sketchButton, emojiSketchButton, revealButton]
+                buttons = [shareButton, sketchButton, emojiSketchButton, revealButton]
             } else {
-                buttons = [likeButton, shareButton, sketchButton, emojiSketchButton, copyButton, saveButton, revealButton]
+                buttons = [shareButton, sketchButton, emojiSketchButton, copyButton, saveButton, revealButton]
             }
         }
 
@@ -324,18 +319,6 @@ final class ConversationImagesViewController: TintColorCorrectedViewController {
         buttonsBar.expandRowButton.setBorderColor(ButtonColors.borderInputBarItemHighlighted, for: .selected)
     }
 
-    private func updateLikeButtonStyle() {
-        if currentMessage.liked {
-            likeButton.setIconColor(ButtonColors.textInputBarItemHighlighted, for: .normal)
-            likeButton.setBackgroundImageColor(ButtonColors.backgroundInputBarItemHighlighted, for: .normal)
-            likeButton.setBorderColor(ButtonColors.borderInputBarItemHighlighted, for: .normal)
-        } else {
-            likeButton.setIconColor(ButtonColors.textInputBarItemEnabled, for: .normal)
-            likeButton.setBackgroundImageColor(ButtonColors.backgroundInputBarItemEnabled, for: .normal)
-            likeButton.setBorderColor(ButtonColors.borderInputBarItemEnabled, for: .normal)
-        }
-    }
-
     private func createControlsBar() {
         let buttons = createControlsBarButtons()
 
@@ -346,15 +329,6 @@ final class ConversationImagesViewController: TintColorCorrectedViewController {
         self.view.addSubview(self.buttonsBar)
 
         self.updateButtonsForMessage()
-    }
-
-    private func updateLikeButton() {
-
-        let messageAction: MessageAction = currentMessage.liked ? .like : .unlike
-
-        likeButton.setIcon(messageAction.icon, size: .tiny, for: .normal)
-        updateLikeButtonStyle()
-        likeButton.accessibilityLabel = messageAction.accessibilityLabel
     }
 
     private func updateBarsForPreview() {
@@ -432,15 +406,6 @@ final class ConversationImagesViewController: TintColorCorrectedViewController {
     }
 
     @objc
-    func likeCurrent() {
-        ZMUserSession.shared()?.enqueue({
-            self.currentMessage.liked = !self.currentMessage.liked
-        }, completionHandler: {
-            self.updateLikeButton()
-        })
-    }
-
-    @objc
     func shareCurrent(_ sender: AnyObject!) {
         perform(action: .forward, sender: sender)
     }
@@ -463,19 +428,6 @@ final class ConversationImagesViewController: TintColorCorrectedViewController {
     @objc
     private func sketchCurrentEmoji(_ sender: AnyObject!) {
         perform(action: .sketchEmoji, sender: sender)
-    }
-}
-
-extension ConversationImagesViewController: MessageActionResponder {
-    func perform(action: MessageAction, for message: ZMConversationMessage!, view: UIView) {
-        switch action {
-        case .like:
-            likeCurrent()
-        default:
-            perform(action: action,
-                    for: message,
-                    sender: view)
-        }
     }
 }
 
@@ -549,7 +501,6 @@ extension ConversationImagesViewController: UIPageViewControllerDelegate, UIPage
 
             self.currentMessage = currentController.message
             self.buttonsBar.buttons = createControlsBarButtons()
-            updateLikeButton()
         }
     }
 }

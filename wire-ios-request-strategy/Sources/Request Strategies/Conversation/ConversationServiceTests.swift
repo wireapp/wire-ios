@@ -255,6 +255,94 @@ final class ConversationServiceTests: MessagingTestBase {
         XCTAssertEqual(mockActionHandler.performedActions.count, 1)
     }
 
+    func test_CreateGroupConversation_UnreachableDomainsFailure() throws {
+        // GIVEN
+        let didFinish = expectation(description: "didFinish")
+        let unreachableDomain = "foma.wire.link"
+        user2.domain = unreachableDomain
+
+        let groupConversation = createGroupConversation(
+            with: user1,
+            in: uiMOC
+        )
+
+        let mockActionHandler = MockActionHandler<CreateGroupConversationAction>(
+            results: [.failure(.unreachableDomains([unreachableDomain])),
+                      .success(groupConversation.objectID)],
+            context: uiMOC.notificationContext
+        )
+
+        // WHEN
+        sut.createGroupConversation(
+            name: "Test",
+            users: [user1, user2],
+            allowGuests: true,
+            allowServices: true,
+            enableReceipts: true,
+            messageProtocol: .proteus
+        ) {
+            defer { didFinish.fulfill() }
+
+            switch $0 {
+            case .success(let conversation):
+                XCTAssertEqual(conversation, groupConversation)
+                // Then a system message is added.
+                guard let systemMessage = conversation.lastMessage?.systemMessageData else {
+                    return XCTFail("expected system message")
+                }
+
+                XCTAssertEqual(systemMessage.systemMessageType, .failedToAddParticipants)
+
+            case .failure(let error):
+                XCTFail("unexpected error: \(error)")
+            }
+        }
+
+        XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
+
+        // Then we retried the action with only reachable users.
+        XCTAssertEqual(mockActionHandler.performedActions.count, 2)
+
+        if let lastAction = mockActionHandler.performedActions.last {
+            XCTAssertEqual(lastAction.qualifiedUserIDs, [user1.qualifiedID])
+        }
+    }
+
+    func test_CreateGroupConversation_NonFederatingDomainsFailure() throws {
+        // GIVEN
+        let didFinish = expectation(description: "didFinish")
+
+        let mockActionHandler = MockActionHandler<CreateGroupConversationAction>(
+            result: .failure(.nonFederatingDomains(["example.com"])),
+            context: uiMOC.notificationContext
+        )
+
+        // WHEN
+        sut.createGroupConversation(
+            name: "New",
+            users: [user1, user2],
+            allowGuests: true,
+            allowServices: true,
+            enableReceipts: true,
+            messageProtocol: .proteus
+        ) {
+            switch $0 {
+            case .failure(.networkError(.nonFederatingDomains)):
+                didFinish.fulfill()
+
+            case .success:
+                XCTFail("unexpected success")
+
+            case .failure(let error):
+                XCTFail("unexpected error: \(error)")
+            }
+        }
+
+        // Then we got the expected failure.
+        XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
+        XCTAssertEqual(mockActionHandler.performedActions.count, 1)
+    }
+
     // MARK: - Sync conversation
 
     func test_SyncConversation() throws {

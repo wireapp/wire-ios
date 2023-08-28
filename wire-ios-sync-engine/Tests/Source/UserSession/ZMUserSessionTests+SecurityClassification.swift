@@ -35,7 +35,7 @@ final class ZMUserSessionTests_SecurityClassification: ZMUserSessionTestsBase {
             status: status,
             config: Feature.ClassifiedDomains.Config(domains: domains)
         )
-        sut.featureService.storeClassifiedDomains(classifiedDomains)
+        sut.featureRepository.storeClassifiedDomains(classifiedDomains)
     }
 
     func testThatItReturnsNone_WhenFeatureIsEnabled_WhenSelfDomainIsNil() {

@@ -84,7 +84,7 @@ class ZMClientMessageTests_TextMessageData: BaseZMClientMessageTests {
 
         let message = try! conversation.appendText(content: "hello") as! ZMClientMessage
         message.delivered = true
-        message.addReaction("🤠", forUser: selfUser)
+        message.setReactions(["🤠"], forUser: selfUser)
         XCTAssertFalse(message.reactions.isEmpty)
 
         // when
@@ -448,7 +448,7 @@ extension ZMClientMessageTests_Editing {
         conversation.remoteIdentifier = UUID.create()
         let message = try! conversation.appendText(content: oldText) as! ZMMessage
 
-        message.addReaction("👻", forUser: self.selfUser)
+        message.setReactions(["👻"], forUser: self.selfUser)
         self.uiMOC.saveOrRollback()
 
         let updateEvent = createMessageEditUpdateEvent(oldNonce: message.nonce!, newNonce: UUID.create(), conversationID: conversation.remoteIdentifier!, senderID: senderID!, newText: newText)
@@ -592,8 +592,8 @@ extension ZMClientMessageTests_Editing {
         let otherUser = ZMUser.insertNewObject(in: self.uiMOC)
         otherUser.remoteIdentifier = UUID.create()
 
-        message.addReaction("😱", forUser: self.selfUser)
-        message.addReaction("🤗", forUser: otherUser)
+        message.setReactions(["😱"], forUser: self.selfUser)
+        message.setReactions(["🤗"], forUser: otherUser)
 
         XCTAssertFalse(message.reactions.isEmpty)
 
@@ -627,8 +627,8 @@ extension ZMClientMessageTests_Editing {
         let otherUser = ZMUser.insertNewObject(in: self.uiMOC)
         otherUser.remoteIdentifier = UUID.create()
 
-        message.addReaction("😱", forUser: self.selfUser)
-        message.addReaction("🤗", forUser: otherUser)
+        message.setReactions(["😱"], forUser: self.selfUser)
+        message.setReactions(["🤗"], forUser: otherUser)
 
         XCTAssertFalse(message.reactions.isEmpty)
 

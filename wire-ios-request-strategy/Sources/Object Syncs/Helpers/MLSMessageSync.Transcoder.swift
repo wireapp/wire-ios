@@ -118,8 +118,11 @@ extension MLSMessageSync {
             case .v0, .v1:
                 return
 
-            case .v2, .v3, .v4:
+            case .v2, .v3:
                 v2processResponse(response, for: entity)
+
+            case .v4:
+                v4processResponse(response, for: entity)
             }
         }
 
@@ -135,11 +138,44 @@ extension MLSMessageSync {
             entity.delivered(with: response)
         }
 
+        private func v4processResponse(
+            _ response: ZMTransportResponse,
+            for entity: Message
+        ) {
+            guard response.result == .success else {
+                Logging.mls.warn("failed to send mls message. Response: \(response)")
+                return
+            }
+
+            let payload = Payload.MLSMessageSendingStatus(response, decoder: .defaultDecoder)
+            payload?.updateFailedRecipients(for: entity)
+            entity.delivered(with: response)
+        }
+
         func shouldTryToResend(
             entity: Entity,
             afterFailureWithResponse response: ZMTransportResponse
         ) -> Bool {
-            return false
+            switch response.httpStatus {
+            case 533:
+                guard
+                    let payload = Payload.ResponseFailure(response, decoder: .defaultDecoder),
+                    let data = payload.data
+                else {
+                    return false
+                }
+
+                switch data.type {
+                case .federation:
+                    payload.updateExpirationReason(for: entity, with: .federationRemoteError)
+                case .unknown:
+                    payload.updateExpirationReason(for: entity, with: .unknown)
+                }
+
+                return false
+            default:
+                return false
+            }
         }
 
     }

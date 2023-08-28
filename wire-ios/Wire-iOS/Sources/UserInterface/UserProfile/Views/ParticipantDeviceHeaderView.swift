@@ -68,22 +68,23 @@ final class ParticipantDeviceHeaderView: UIView {
 
     func attributedExplanationText(for userName: String,
                                    showUnencryptedLabel unencrypted: Bool) -> NSAttributedString? {
+        typealias ProfileDevices = L10n.Localizable.Profile.Devices
+
         if unencrypted {
-            let message = "profile.devices.fingerprint_message_unencrypted".localized
-            return attributedFingerprint(forUserName: userName, message: message)
+            let message = userName.isEmpty ? ProfileDevices.noDeviceData : ProfileDevices.fingerprintMessageUnencrypted(userName)
+            return attributedFingerprint(forMessage: message)
         } else {
-            let message = "\("profile.devices.fingerprint_message.title".localized)\("general.space_between_words".localized)"
+            let message = "\(ProfileDevices.FingerprintMessage.title(userName))\(L10n.Localizable.General.spaceBetweenWords)"
 
-            let mutableAttributedString = NSMutableAttributedString(attributedString: attributedFingerprint(forUserName: userName, message: message))
+            let mutableAttributedString = NSMutableAttributedString(attributedString: attributedFingerprint(forMessage: message))
 
-            let fingerprintLearnMoreLink = "profile.devices.fingerprint_message.link".localized && linkAttributes
+            let fingerprintLearnMoreLink = ProfileDevices.FingerprintMessage.link && linkAttributes
 
             return mutableAttributedString + fingerprintLearnMoreLink
         }
     }
 
-    func attributedFingerprint(forUserName userName: String, message: String) -> NSAttributedString {
-        let fingerprintExplanation = String(format: message, userName)
+    func attributedFingerprint(forMessage fingerprintExplanation: String) -> NSAttributedString {
 
         let textAttributes = [
             NSAttributedString.Key.foregroundColor: textColor,

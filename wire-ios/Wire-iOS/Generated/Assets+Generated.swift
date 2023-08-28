@@ -166,10 +166,21 @@ internal enum Asset {
     internal static let contactsOutline = ImageAsset(name: "Contacts Outline")
     internal static let conversationsFilled = ImageAsset(name: "Conversations Filled")
     internal static let conversationsOutline = ImageAsset(name: "Conversations Outline")
+    internal static let activity = ImageAsset(name: "Activity")
+    internal static let addEmojis = ImageAsset(name: "Add Emojis")
+    internal static let animalsNature = ImageAsset(name: "Animals & Nature")
+    internal static let flags = ImageAsset(name: "Flags")
+    internal static let foodDrink = ImageAsset(name: "Food & Drink")
+    internal static let objects = ImageAsset(name: "Objects")
+    internal static let recents = ImageAsset(name: "Recents")
+    internal static let smileysPeople = ImageAsset(name: "Smileys & People")
+    internal static let symbols = ImageAsset(name: "Symbols")
+    internal static let travelPlaces = ImageAsset(name: "Travel & Places")
     internal static let foldersFilled = ImageAsset(name: "Folders Filled")
     internal static let foldersOutline = ImageAsset(name: "Folders Outline")
     internal static let attention = ImageAsset(name: "Attention")
     internal static let check = ImageAsset(name: "Check")
+    internal static let unavailableUser = ImageAsset(name: "Unavailable user")
   }
 }
 // swiftlint:enable identifier_name line_length nesting type_body_length type_name

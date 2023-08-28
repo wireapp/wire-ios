@@ -249,9 +249,10 @@
 "calling.swipeUpParticipants.hint" = "Двойное касание для пролистывания вверх и просмотра всех данных участника";
 "calling.swipeDownParticipants.hint" = "Двойное касание для пролистывания вниз и скрытия данных участника";
 "calling.headerBar.description" = "Свернуть вид вызова";
+"calling.status.connecting" = "Подключение";
 
 "tabBar.contacts.description" = "Контакты";
-"tabBar.contacts.hint" = "Нажмите дважды, чтобы найти людей и открыть список контактов";
+"tabBar.contacts.hint" = "Нажмите дважды, чтобы найти пользователей и открыть список контактов";
 "tabBar.conversations.description" = "Список недавних бесед";
 "tabBar.conversations.hint" = "Нажмите дважды, чтобы открыть список последних бесед";
 "tabBar.folders.description" = "Список бесед, организованных по папкам";

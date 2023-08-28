@@ -24,7 +24,7 @@ import WireRequestStrategy
 public protocol Conversation: SharingTarget {
 
     /// User defined name for a group conversation, or standard name
-    var name: String { get }
+    var name: String? { get }
 
     /// Type of the conversation
     var conversationType: ZMConversationType { get }

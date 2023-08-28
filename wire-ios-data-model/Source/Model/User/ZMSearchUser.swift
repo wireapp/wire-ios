@@ -204,6 +204,12 @@ public class ZMSearchUser: NSObject, UserType {
         }
     }
 
+    public var isPendingMetadataRefresh: Bool {
+        guard let user = user else { return false }
+
+        return user.isPendingMetadataRefresh
+    }
+
     public var hasDigitalSignatureEnabled: Bool {
         return user?.hasDigitalSignatureEnabled ?? false
     }

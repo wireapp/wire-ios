@@ -80,7 +80,8 @@ class UpdateConnectionActionHandlerTests: MessagingTestBase {
             (.connectionLimitReached, responseFailure(code: 403, label: .connectionLimit, apiVersion: .v0)),
             (.noIdentity, responseFailure(code: 403, label: .noIdentity, apiVersion: .v0)),
             (.missingLegalholdConsent, responseFailure(code: 403, label: .missingLegalholdConsent, apiVersion: .v0)),
-            (.notConnected, responseFailure(code: 403, label: .notConnected, apiVersion: .v0))
+            (.notConnected, responseFailure(code: 403, label: .notConnected, apiVersion: .v0)),
+            (.federationDenied, responseFailure(code: 422, label: .federationDenied, apiVersion: .v4)),
         ]
 
         for (expectedError, response) in errorResponses {

@@ -66,7 +66,7 @@ final class GiphySearchViewController: VerticalColumnCollectionViewController {
         let columnCount = AdaptiveColumnCount(compact: 2, regular: 3, large: 4)
         super.init(interItemSpacing: 1, interColumnSpacing: 1, columnCount: columnCount)
 
-        navigationItem.setupNavigationBarTitle(title: conversation.displayName.capitalized)
+        navigationItem.setupNavigationBarTitle(title: conversation.displayNameWithFallback.capitalized)
         performSearch()
     }
 
@@ -298,7 +298,7 @@ extension GiphySearchViewController {
     @discardableResult
     func pushConfirmationViewController(ziph: Ziph?, previewImage: FLAnimatedImage?, animated: Bool = true) -> GiphyConfirmationViewController {
         let confirmationController = GiphyConfirmationViewController(withZiph: ziph, previewImage: previewImage, searchResultController: searchResultsController)
-        confirmationController.title = conversation.displayName.localizedUppercase
+        confirmationController.title = conversation.displayNameWithFallback.localizedUppercase
         confirmationController.delegate = self
         navigationController?.pushViewController(confirmationController, animated: animated)
 
