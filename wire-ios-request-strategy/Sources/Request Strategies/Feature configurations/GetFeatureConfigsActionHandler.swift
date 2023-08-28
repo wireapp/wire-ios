@@ -132,7 +132,7 @@ final class GetFeatureConfigsActionHandler: ActionHandler<GetFeatureConfigsActio
         }
 
         if let mlsMigration = payload.mlsMigration {
-            service.storeMLSMigration(
+            featureRepository.storeMLSMigration(
                 Feature.MLSMigration(
                     status: mlsMigration.status,
                     config: mlsMigration.config
