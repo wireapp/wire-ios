@@ -49,7 +49,7 @@ final class ConversationLinkAttachmentMessageCellTests: BaseSnapshotTestCase {
     func setUpCell(configuration: ConversationLinkAttachmentCell.Configuration) -> ConversationLinkAttachmentCell {
         let cell = ConversationLinkAttachmentCell()
         cell.configure(with: configuration, animated: false)
-        cell.frame.size = sut.systemLayoutSizeFitting(CGSize(width: 414, height: 0))
+        cell.frame.size = cell.systemLayoutSizeFitting(CGSize(width: 414, height: 0))
 
         return cell
     }
