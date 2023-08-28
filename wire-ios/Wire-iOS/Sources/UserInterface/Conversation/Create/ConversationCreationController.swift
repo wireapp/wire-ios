@@ -20,72 +20,13 @@ import Foundation
 import UIKit
 import WireCommonComponents
 import WireDataModel
-
-protocol ConversationCreationValuesConfigurable: AnyObject {
-    func configure(with values: ConversationCreationValues)
-}
-
-final class ConversationCreationValues {
-
-    private var unfilteredParticipants: UserSet
-    private let selfUser: UserType
-
-    var name: String
-    var allowGuests: Bool
-    var allowServices: Bool
-    var enableReceipts: Bool
-    var encryptionProtocol: EncryptionProtocol
-
-    var participants: UserSet {
-        get {
-            var result = unfilteredParticipants
-
-            if !allowGuests {
-                let noGuests = result.filter { $0.isOnSameTeam(otherUser: selfUser) }
-                result = UserSet(noGuests)
-            }
-
-            if !allowServices {
-                let noServices = result.filter { !$0.isServiceUser }
-                result = UserSet(noServices)
-            }
-
-            return result
-        }
-        set {
-            unfilteredParticipants = newValue
-        }
-    }
-
-    init(
-        name: String = "",
-        participants: UserSet = UserSet(),
-        allowGuests: Bool = true,
-        allowServices: Bool = true,
-        enableReceipts: Bool = true,
-        encryptionProtocol: EncryptionProtocol = .proteus,
-        selfUser: UserType
-    ) {
-        self.name = name
-        self.unfilteredParticipants = participants
-        self.allowGuests = allowGuests
-        self.allowServices = allowServices
-        self.enableReceipts = enableReceipts
-        self.encryptionProtocol = encryptionProtocol
-        self.selfUser = selfUser
-    }
-}
+import WireSyncEngine
 
 protocol ConversationCreationControllerDelegate: AnyObject {
 
     func conversationCreationController(
         _ controller: ConversationCreationController,
-        didSelectName name: String,
-        participants: UserSet,
-        allowGuests: Bool,
-        allowServices: Bool,
-        enableReceipts: Bool,
-        encryptionProtocol: EncryptionProtocol
+        didCreateConversation conversation: ZMConversation
     )
 
 }
@@ -337,20 +278,94 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
             values.participants = users
 
         case .create:
-            var allParticipants = values.participants
-            allParticipants.insert(selfUser)
+            guard let userSession = ZMUserSession.shared() else { return }
+            let service = ConversationService(context: userSession.viewContext)
 
-            delegate?.conversationCreationController(
-                self,
-                didSelectName: values.name,
-                participants: values.participants,
+            let users = values.participants
+                .union([selfUser])
+                .materialize(in: userSession.viewContext)
+
+            service.createGroupConversation(
+                name: values.name,
+                users: Set(users),
                 allowGuests: values.allowGuests,
                 allowServices: values.allowServices,
                 enableReceipts: values.enableReceipts,
-                encryptionProtocol: values.encryptionProtocol
-            )
+                messageProtocol: values.encryptionProtocol == .proteus ? .proteus : .mls
+            ) { [weak self] in
+                guard let self = self else { return }
+
+                switch $0 {
+                case .success(let conversation):
+                    delegate?.conversationCreationController(
+                        self,
+                        didCreateConversation: conversation
+                    )
+
+                case .failure(.networkError(.missingLegalholdConsent)):
+                    showMissingLegalholdConsentAlert()
+
+                case .failure(.networkError(.nonFederatingDomains(let domains))):
+                    showNonFederatingDomainsAlert(domains: domains)
+
+                case .failure(let error):
+                    WireLogger.conversation.error("failed to create conversation: \(String(describing: error))")
+                }
+            }
         }
     }
+
+    private func showMissingLegalholdConsentAlert() {
+        typealias ConversationError = L10n.Localizable.Error.Conversation
+
+        let alert = UIAlertController(
+            title: ConversationError.title,
+            message: ConversationError.missingLegalholdConsent,
+            alertAction: .ok(style: .cancel)
+        )
+
+        present(
+            alert,
+            animated: true
+        )
+    }
+
+    private func showNonFederatingDomainsAlert(domains: Set<String>) {
+        typealias Strings = L10n.Localizable.Conversation.Create.NonFederatingDomainsError
+
+        let alert = UIAlertController(
+            title: Strings.title,
+            message: Strings.message(ListFormatter.localizedString(byJoining: domains.sorted())),
+            preferredStyle: .alert
+        )
+
+        alert.addAction(UIAlertAction(
+            title: Strings.abort,
+            style: .destructive,
+            handler: abort
+        ))
+
+        alert.addAction(UIAlertAction(
+            title: Strings.editParticipantList,
+            style: .default
+        ))
+
+        alert.addAction(.link(
+            title: Strings.learnMore,
+            url: .wr_FederationLearnMore,
+            presenter: self
+        ))
+
+        present(
+            alert,
+            animated: true
+        )
+    }
+
+    private func abort(_ action: UIAlertAction) {
+        dismiss(animated: true)
+    }
+
 }
 
 // MARK: - SimpleTextFieldDelegate

@@ -34,44 +34,4 @@ extension ConversationViewController: ProfileViewControllerDelegate {
             self.zClientViewController.select(conversation: conversation, focusOnView: true, animated: true)
         }
     }
-
-    func profileViewController(
-        _ controller: ProfileViewController?,
-        wantsToCreateConversationWithName name: String?,
-        users: UserSet
-    ) {
-        guard let userSession = ZMUserSession.shared() else { return }
-
-        let conversationCreation: () -> Void = { [weak self] in
-            let service = ConversationService(context: userSession.viewContext)
-            let users = Set(users.materialize(in: userSession.viewContext))
-
-            service.createGroupConversation(
-                name: name,
-                users: users,
-                allowGuests: true,
-                allowServices: true,
-                enableReceipts: false,
-                messageProtocol: .proteus
-            ) {
-                switch $0 {
-                case .success(let conversation):
-                    self?.zClientViewController.select(
-                        conversation: conversation,
-                        focusOnView: true,
-                        animated: true
-                    )
-
-                case .failure(let error):
-                    WireLogger.conversation.error("failed to create conversation from profile: \(String(describing: error))")
-                }
-            }
-        }
-
-        if nil != presentedViewController {
-            dismiss(animated: true, completion: conversationCreation)
-        } else {
-            conversationCreation()
-        }
-    }
 }

@@ -75,7 +75,7 @@ final class ShareDestinationCell<D: ShareDestination>: UITableViewCell {
 
             guard let destination = destination else { return }
 
-            titleLabel.text = destination.displayName
+            titleLabel.text = destination.displayNameWithFallback
             shieldView.isHidden = destination.securityLevel != .secure
             guestUserIcon.isHidden = !destination.showsGuestIcon
             legalHoldIcon.isHidden = !destination.isUnderLegalHold
