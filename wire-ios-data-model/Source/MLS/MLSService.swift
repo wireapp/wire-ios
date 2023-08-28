@@ -850,13 +850,13 @@ public final class MLSService: MLSServiceInterface {
     private func outOfSyncConversations(in context: NSManagedObjectContext) -> [ZMConversation] {
         return coreCrypto.perform { coreCrypto in
             return ZMConversation.fetchMLSConversations(in: context).filter {
-                isOutOfSync(conversation: $0, coreCrypto: coreCrypto)
+                isConversationOutOfSync($0, coreCrypto: coreCrypto)
             }
         }
     }
 
-    private func isOutOfSync(
-        conversation: ZMConversation,
+    private func isConversationOutOfSync(
+        _ conversation: ZMConversation,
         coreCrypto: CoreCryptoProtocol
     ) -> Bool {
         guard let groupID = conversation.mlsGroupID else {
