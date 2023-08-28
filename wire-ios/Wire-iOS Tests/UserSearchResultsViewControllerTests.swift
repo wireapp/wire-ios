@@ -19,7 +19,7 @@
 import XCTest
 @testable import Wire
 
-final class UserSearchResultsViewControllerTests: ZMSnapshotTestCase {
+final class UserSearchResultsViewControllerTests: BaseSnapshotTestCase {
 
     // MARK: - Properties
     var sut: UserSearchResultsViewController!
@@ -46,7 +46,6 @@ final class UserSearchResultsViewControllerTests: ZMSnapshotTestCase {
         selfUser = nil
         otherUser = nil
         serviceUser = nil
-        resetColorScheme()
         super.tearDown()
     }
 

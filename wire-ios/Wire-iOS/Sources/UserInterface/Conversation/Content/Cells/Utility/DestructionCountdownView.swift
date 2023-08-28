@@ -20,6 +20,10 @@ import UIKit
 
 final class DestructionCountdownView: UIView {
 
+    // MARK: - Properties
+
+    typealias IconColors = SemanticColors.Icon
+
     private let remainingTimeLayer = CAShapeLayer()
     private let elapsedTimeLayer = CAShapeLayer()
     private let elapsedTimeAnimationKey = "elapsedTime"
@@ -44,13 +48,9 @@ final class DestructionCountdownView: UIView {
         elapsedTimeLayer.isOpaque = false
         remainingTimeLayer.isOpaque = false
 
-        let background = UIColor.from(scheme: .contentBackground)
+        elapsedTimeColor = IconColors.foregroundElapsedTimeSelfDeletingMessage
 
-        elapsedTimeColor = UIColor.lightGraphite
-            .withAlphaComponent(0.24)
-            .removeAlphaByBlending(with: background)
-
-        remainingTimeColor = UIColor.lightGraphite.withAlphaComponent(0.64).removeAlphaByBlending(with: .white)
+        remainingTimeColor = IconColors.foregroundRemainingTimeSelfDeletingMessage
     }
 
     // MARK: - Layout
@@ -72,7 +72,19 @@ final class DestructionCountdownView: UIView {
 
     private func makePath(for bounds: CGRect) -> CGPath {
         let path = CGMutablePath()
-        path.addArc(center: CGPoint(x: bounds.midX, y: bounds.midY), radius: min(bounds.height, bounds.width) / 4, startAngle: -.pi / 2, endAngle: 3 * .pi / 2, clockwise: false)
+        path.addArc(
+            center: CGPoint(
+                x: bounds.midX,
+                y: bounds.midY
+            ),
+            radius: min(
+                bounds.height,
+                bounds.width
+            ) / 4,
+            startAngle: -.pi / 2,
+            endAngle: 3 * .pi / 2,
+            clockwise: false
+        )
         return path
     }
 

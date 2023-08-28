@@ -379,7 +379,6 @@ final class ConversationInputBarViewController: UIViewController,
         updateTypingIndicator()
         updateWritingState(animated: false)
         updateButtonIcons()
-        updateAvailabilityPlaceholder()
         updateClassificationBanner()
 
         setInputLanguage()
@@ -401,15 +400,10 @@ final class ConversationInputBarViewController: UIViewController,
             conversationObserverToken = ConversationChangeInfo.add(observer: self, for: conversation)
         }
 
-        if let connectedUser = conversation.connectedUserType as? ZMUser,
-           let userSession = ZMUserSession.shared() {
-            userObserverToken = UserChangeInfo.add(observer: self, for: connectedUser, in: userSession)
-        }
-
         NotificationCenter.default.addObserver(forName: .featureDidChangeNotification,
                                                object: nil,
                                                queue: .main) { [weak self] note in
-            guard let change = note.object as? FeatureService.FeatureChange else { return }
+            guard let change = note.object as? FeatureRepository.FeatureChange else { return }
 
             switch change {
             case .fileSharingEnabled, .fileSharingDisabled:
@@ -534,16 +528,6 @@ final class ConversationInputBarViewController: UIViewController,
 
     func updateAccessoryViews() {
         updateRightAccessoryView()
-    }
-
-    func updateAvailabilityPlaceholder() {
-        guard ZMUser.selfUser().hasTeam,
-              conversation.conversationType == .oneOnOne,
-              let connectedUser = conversation.connectedUserType else {
-                  return
-              }
-
-        inputBar.availabilityPlaceholder = AvailabilityStringBuilder.string(for: connectedUser, with: .placeholder, color: inputBar.placeholderColor)
     }
 
     func updateInputBarVisibility() {
@@ -831,7 +815,7 @@ extension ConversationInputBarViewController: UIImagePickerControllerDelegate {
 
         let viewController = CanvasViewController()
         viewController.delegate = self
-        viewController.navigationItem.setupNavigationBarTitle(title: conversation.displayName)
+        viewController.navigationItem.setupNavigationBarTitle(title: conversation.displayNameWithFallback)
 
         parent?.present(viewController.wrapInNavigationController(setBackgroundColor: true), animated: true)
     }
@@ -853,7 +837,7 @@ extension ConversationInputBarViewController: InformalTextViewDelegate {
 
         let confirmImageViewController = ConfirmAssetViewController(context: context)
 
-        confirmImageViewController.previewTitle = conversation.displayName.localized
+        confirmImageViewController.previewTitle = conversation.displayNameWithFallback.localized
 
         present(confirmImageViewController, animated: false)
     }
@@ -878,16 +862,6 @@ extension ConversationInputBarViewController: ZMConversationObserver {
 
         if change.destructionTimeoutChanged {
             updateViewsForSelfDeletingMessageChanges()
-        }
-    }
-}
-
-// MARK: - ZMUserObserver
-
-extension ConversationInputBarViewController: ZMUserObserver {
-    func userDidChange(_ changeInfo: UserChangeInfo) {
-        if changeInfo.availabilityChanged {
-            updateAvailabilityPlaceholder()
         }
     }
 }

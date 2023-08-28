@@ -31,11 +31,14 @@ final class CallParticipantsListHelper {
             .lazy
             .map { mockUsers[$0] }
             .sorted { $0.name < $1.name }
+        var callParticipantState: CallParticipantState = .connecting
+        if let videoState = videoState, let microphoneState = microphoneState {
+            callParticipantState = .connected(videoState: videoState, microphoneState: microphoneState)
+        }
 
         return sortedParticipants.map { CallParticipantsListCellConfiguration.callParticipant(user: HashBox(value: $0),
-                                                                                          videoState: videoState,
-                                                                                          microphoneState: microphoneState,
-                                                                                          activeSpeakerState: .inactive)
+                                                                                              callParticipantState: callParticipantState,
+                                                                                              activeSpeakerState: .inactive)
         }
     }
 
@@ -48,7 +51,7 @@ final class CallParticipantsListViewControllerTests: ZMSnapshotTestCase {
 
     override func setUp() {
         super.setUp()
-        mockParticipants = CallParticipantsListHelper.participants(count: 10, mockUsers: SwiftMockLoader.mockUsers())
+        mockParticipants = CallParticipantsListHelper.participants(count: 10, videoState: .stopped, microphoneState: .muted, mockUsers: SwiftMockLoader.mockUsers())
     }
 
     override func tearDown() {
@@ -109,6 +112,37 @@ final class CallParticipantsListViewControllerTests: ZMSnapshotTestCase {
         sut = CallParticipantsListViewController(
             participants: mockParticipants,
             showParticipants: false,
+            selfUser: ZMUser.selfUser()
+        )
+        sut.view.frame = CGRect(x: 0, y: 0, width: 325, height: 336)
+        sut.view.backgroundColor = .black
+        sut.overrideUserInterfaceStyle = .dark
+
+        // Then
+        verify(matching: sut.view)
+    }
+
+    func testCallParticipants_ConnectingState_Light() {
+        // When
+        let participants = CallParticipantsListHelper.participants(count: 3, mockUsers: SwiftMockLoader.mockUsers())
+        sut = CallParticipantsListViewController(
+            participants: participants,
+            showParticipants: true,
+            selfUser: ZMUser.selfUser()
+        )
+        sut.view.frame = CGRect(x: 0, y: 0, width: 325, height: 336)
+        sut.view.backgroundColor = .white
+
+        // Then
+        verify(matching: sut.view)
+    }
+
+    func testCallParticipants_ConnectingState_Dark() {
+        // When
+        let participants = CallParticipantsListHelper.participants(count: 3, mockUsers: SwiftMockLoader.mockUsers())
+        sut = CallParticipantsListViewController(
+            participants: participants,
+            showParticipants: true,
             selfUser: ZMUser.selfUser()
         )
         sut.view.frame = CGRect(x: 0, y: 0, width: 325, height: 336)

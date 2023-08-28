@@ -206,6 +206,10 @@ internal enum L10n {
         /// Turn on speaker
         internal static let description = L10n.tr("Accessibility", "calling.speakerOnButton.description", fallback: "Turn on speaker")
       }
+      internal enum Status {
+        /// Connecting
+        internal static let connecting = L10n.tr("Accessibility", "calling.status.connecting", fallback: "Connecting")
+      }
       internal enum SwipeDownParticipants {
         /// Double tap to swipe down and hide participant’s details
         internal static let hint = L10n.tr("Accessibility", "calling.swipeDownParticipants.hint", fallback: "Double tap to swipe down and hide participant’s details")
@@ -1227,6 +1231,8 @@ internal enum L10n {
         }
       }
       internal enum Grid {
+        /// Connecting
+        internal static let connecting = L10n.tr("Localizable", "call.grid.connecting", fallback: "Connecting")
         /// No active video speakers...
         internal static let noActiveSpeakers = L10n.tr("Localizable", "call.grid.no_active_speakers", fallback: "No active video speakers...")
         internal enum Hints {
@@ -1533,6 +1539,8 @@ internal enum L10n {
         internal static let `open` = L10n.tr("Localizable", "content.message.open", fallback: "Open")
         /// Original message
         internal static let originalLabel = L10n.tr("Localizable", "content.message.original_label", fallback: "Original message")
+        /// Reactions
+        internal static let reactions = L10n.tr("Localizable", "content.message.reactions", fallback: "Reactions")
         /// Reply
         internal static let reply = L10n.tr("Localizable", "content.message.reply", fallback: "Reply")
         /// Resend
@@ -1607,6 +1615,12 @@ internal enum L10n {
         /// UNABLE TO PLAY TRACK
         internal static let unableToPlay = L10n.tr("Localizable", "content.player.unable_to_play", fallback: "UNABLE TO PLAY TRACK")
       }
+      internal enum Reactions {
+        /// Search for Emoji
+        internal static let search = L10n.tr("Localizable", "content.reactions.search", fallback: "Search for Emoji")
+        /// Select Reaction
+        internal static let title = L10n.tr("Localizable", "content.reactions.title", fallback: "Select Reaction")
+      }
       internal enum ReactionsList {
         /// Liked by
         internal static let likers = L10n.tr("Localizable", "content.reactions_list.likers", fallback: "Liked by")
@@ -1640,12 +1654,6 @@ internal enum L10n {
         internal static func ephemeralTimeRemaining(_ p1: Any) -> String {
           return L10n.tr("Localizable", "content.system.ephemeral_time_remaining", String(describing: p1), fallback: "%@ left")
         }
-        /// Sending failed.
-        internal static let failedtosendMessageTimestamp = L10n.tr("Localizable", "content.system.failedtosend_message_timestamp", fallback: "Sending failed.")
-        /// Delete
-        internal static let failedtosendMessageTimestampDelete = L10n.tr("Localizable", "content.system.failedtosend_message_timestamp_delete", fallback: "Delete")
-        /// Resend
-        internal static let failedtosendMessageTimestampResend = L10n.tr("Localizable", "content.system.failedtosend_message_timestamp_resend", fallback: "Resend")
         /// All fingerprints are verified
         internal static let isVerified = L10n.tr("Localizable", "content.system.is_verified", fallback: "All fingerprints are verified")
         /// Tap to like
@@ -1792,6 +1800,16 @@ internal enum L10n {
         }
         /// You called
         internal static let youWantedToTalk = L10n.tr("Localizable", "content.system.you_wanted_to_talk", fallback: "You called")
+        internal enum BackendsStopFederating {
+          /// The backends **%@** and **%@** stopped federating. [Learn more](%@)
+          internal static func otherBackends(_ p1: Any, _ p2: Any, _ p3: Any) -> String {
+            return L10n.tr("Localizable", "content.system.backends_stop_federating.other_backends", String(describing: p1), String(describing: p2), String(describing: p3), fallback: "The backends **%@** and **%@** stopped federating. [Learn more](%@)")
+          }
+          /// **Your backend** stopped federating with **%@**. [Learn more](%@)
+          internal static func selfBackend(_ p1: Any, _ p2: Any) -> String {
+            return L10n.tr("Localizable", "content.system.backends_stop_federating.self_backend", String(describing: p1), String(describing: p2), fallback: "**Your backend** stopped federating with **%@**. [Learn more](%@)")
+          }
+        }
         internal enum Call {
           /// %@ called
           internal static func called(_ p1: Any) -> String {
@@ -1946,6 +1964,62 @@ internal enum L10n {
             }
           }
         }
+        internal enum FailedParticipants {
+          /// Learn more
+          internal static let learnMore = L10n.tr("Localizable", "content.system.failed_participants.learn_more", fallback: "Learn more")
+        }
+        internal enum FailedtoaddParticipants {
+          /// Plural format key: "%#@number_of_users@"
+          internal static func couldNotBeAdded(_ p1: Int) -> String {
+            return L10n.tr("Localizable", "content.system.failedtoadd_participants.could_not_be_added", p1, fallback: "Plural format key: \"%#@number_of_users@\"")
+          }
+          /// **%@ participants** could not be added to the group.
+          internal static func count(_ p1: Any) -> String {
+            return L10n.tr("Localizable", "content.system.failedtoadd_participants.count", String(describing: p1), fallback: "**%@ participants** could not be added to the group.")
+          }
+        }
+        internal enum FailedtosendMessage {
+          /// Message could not be sent as the backend of **%@** could not be reached. [Learn more](%@)
+          internal static func federationRemoteErrorReason(_ p1: Any, _ p2: Any) -> String {
+            return L10n.tr("Localizable", "content.system.failedtosend_message.federation_remote_error_reason", String(describing: p1), String(describing: p2), fallback: "Message could not be sent as the backend of **%@** could not be reached. [Learn more](%@)")
+          }
+          /// Message could not be sent due to connectivity issues.
+          internal static let generalReason = L10n.tr("Localizable", "content.system.failedtosend_message.general_reason", fallback: "Message could not be sent due to connectivity issues.")
+          /// Retry
+          internal static let retry = L10n.tr("Localizable", "content.system.failedtosend_message.retry", fallback: "Retry")
+        }
+        internal enum FailedtosendParticipants {
+          /// Plural format key: "%#@lu_number_of_participants@"
+          internal static func count(_ p1: Int) -> String {
+            return L10n.tr("Localizable", "content.system.failedtosend_participants.count", p1, fallback: "Plural format key: \"%#@lu_number_of_participants@\"")
+          }
+          /// **%@ participants** didn’t get your message.
+          internal static func didNotGetMessage(_ p1: Any) -> String {
+            return L10n.tr("Localizable", "content.system.failedtosend_participants.did_not_get_message", String(describing: p1), fallback: "**%@ participants** didn’t get your message.")
+          }
+          /// **%@ from %@**
+          internal static func from(_ p1: Any, _ p2: Any) -> String {
+            return L10n.tr("Localizable", "content.system.failedtosend_participants.from", String(describing: p1), String(describing: p2), fallback: "**%@ from %@**")
+          }
+          /// Hide Details
+          internal static let hideDetails = L10n.tr("Localizable", "content.system.failedtosend_participants.hide_details", fallback: "Hide Details")
+          /// Show Details
+          internal static let showDetails = L10n.tr("Localizable", "content.system.failedtosend_participants.show_details", fallback: "Show Details")
+          /// Plural format key: "%#@number_of_users@"
+          internal static func willGetMessageLater(_ p1: Int) -> String {
+            return L10n.tr("Localizable", "content.system.failedtosend_participants.will_get_message_later", p1, fallback: "Plural format key: \"%#@number_of_users@\"")
+          }
+          /// Plural format key: "%#@number_of_users@"
+          internal static func willNeverGetMessage(_ p1: Int) -> String {
+            return L10n.tr("Localizable", "content.system.failedtosend_participants.will_never_get_message", p1, fallback: "Plural format key: \"%#@number_of_users@\"")
+          }
+        }
+        internal enum FederationTermination {
+          /// Plural format key: "%#@lu_number_of_participants@"
+          internal static func participantsRemoved(_ p1: Int) -> String {
+            return L10n.tr("Localizable", "content.system.federation_termination.participants_removed", p1, fallback: "Plural format key: \"%#@lu_number_of_participants@\"")
+          }
+        }
         internal enum MessageLegalHold {
           /// Legal hold deactivated for this conversation
           internal static let disabled = L10n.tr("Localizable", "content.system.message_legal_hold.disabled", fallback: "Legal hold deactivated for this conversation")
@@ -2095,6 +2169,21 @@ internal enum L10n {
           internal static let subtitle = L10n.tr("Localizable", "conversation.create.mls.subtitle", fallback: "Select MLS to create a group using Messaging Layer Security protocol (beta version).")
           /// Protocol
           internal static let title = L10n.tr("Localizable", "conversation.create.mls.title", fallback: "Protocol")
+        }
+        internal enum NonFederatingDomainsError {
+          /// Discard Group Creation
+          internal static let abort = L10n.tr("Localizable", "conversation.create.non_federating_domains_error.abort", fallback: "Discard Group Creation")
+          /// Edit Participants List
+          internal static let editParticipantList = L10n.tr("Localizable", "conversation.create.non_federating_domains_error.edit_participant_list", fallback: "Edit Participants List")
+          /// Learn More
+          internal static let learnMore = L10n.tr("Localizable", "conversation.create.non_federating_domains_error.learn_more", fallback: "Learn More")
+          /// People from backends %@ can't join the same group conversation.
+          /// To create the group, remove affected participants.
+          internal static func message(_ p1: Any) -> String {
+            return L10n.tr("Localizable", "conversation.create.non_federating_domains_error.message", String(describing: p1), fallback: "People from backends %@ can't join the same group conversation.\nTo create the group, remove affected participants.")
+          }
+          /// Group can't be created
+          internal static let title = L10n.tr("Localizable", "conversation.create.non_federating_domains_error.title", fallback: "Group can't be created")
         }
         internal enum Options {
           /// Guests: %@, Services: %@, Read receipts: %@
@@ -2698,6 +2787,10 @@ internal enum L10n {
         }
       }
       internal enum Connection {
+        /// Your backend does not federate with the backend of %@. You can not connect with them.
+        internal static func federationDeniedMessage(_ p1: Any) -> String {
+          return L10n.tr("Localizable", "error.connection.federation_denied_message", String(describing: p1), fallback: "Your backend does not federate with the backend of %@. You can not connect with them.")
+        }
         /// Something went wrong, please try again
         internal static let genericError = L10n.tr("Localizable", "error.connection.generic_error", fallback: "Something went wrong, please try again")
         /// You cannot connect to this user due to legal hold.
@@ -3532,12 +3625,12 @@ internal enum L10n {
     internal enum MessageDetails {
       /// Message Details
       internal static let combinedTitle = L10n.tr("Localizable", "message_details.combined_title", fallback: "Message Details")
-      /// No one has liked this message yet.
-      internal static let emptyLikes = L10n.tr("Localizable", "message_details.empty_likes", fallback: "No one has liked this message yet.")
+      /// No one has reacted to this message yet.
+      internal static let emptyLikes = L10n.tr("Localizable", "message_details.empty_likes", fallback: "No one has reacted to this message yet.")
       /// No one has read this message yet.
       internal static let emptyReadReceipts = L10n.tr("Localizable", "message_details.empty_read_receipts", fallback: "No one has read this message yet.")
-      /// Liked
-      internal static let likesTitle = L10n.tr("Localizable", "message_details.likes_title", fallback: "Liked")
+      /// Reactions
+      internal static let reactionsTitle = L10n.tr("Localizable", "message_details.reactions_title", fallback: "Reactions")
       /// Read receipts were not on when this message was sent.
       internal static let readReceiptsDisabled = L10n.tr("Localizable", "message_details.read_receipts_disabled", fallback: "Read receipts were not on when this message was sent.")
       /// Read
@@ -3557,9 +3650,9 @@ internal enum L10n {
       /// Read at
       internal static let userReadTimestampSubtitleLabel = L10n.tr("Localizable", "message_details.user_read_timestamp_subtitle_label", fallback: "Read at")
       internal enum Tabs {
-        /// Liked (%d)
-        internal static func likes(_ p1: Int) -> String {
-          return L10n.tr("Localizable", "message_details.tabs.likes", p1, fallback: "Liked (%d)")
+        /// Reactions (%d)
+        internal static func reactions(_ p1: Int) -> String {
+          return L10n.tr("Localizable", "message_details.tabs.reactions", p1, fallback: "Reactions (%d)")
         }
         /// Read (%d)
         internal static func seen(_ p1: Int) -> String {
@@ -4101,12 +4194,18 @@ internal enum L10n {
         internal static let requestedIdentityWarning = L10n.tr("Localizable", "profile.details.requested_identity_warning", fallback: "Please verify the person's identity before accepting the connection request.")
         /// Details
         internal static let title = L10n.tr("Localizable", "profile.details.title", fallback: "Details")
+        internal enum Title {
+          /// Name not available
+          internal static let unavailable = L10n.tr("Localizable", "profile.details.title.unavailable", fallback: "Name not available")
+        }
       }
       internal enum Devices {
         /// %@ is using an old version of Wire. No devices are shown here.
         internal static func fingerprintMessageUnencrypted(_ p1: Any) -> String {
           return L10n.tr("Localizable", "profile.devices.fingerprint_message_unencrypted", String(describing: p1), fallback: "%@ is using an old version of Wire. No devices are shown here.")
         }
+        /// No device data available.
+        internal static let noDeviceData = L10n.tr("Localizable", "profile.devices.no_device_data", fallback: "No device data available.")
         /// Devices
         internal static let title = L10n.tr("Localizable", "profile.devices.title", fallback: "Devices")
         internal enum Detail {
