@@ -138,6 +138,7 @@ final class ConversationContentViewController: UIViewController, PopoverPresente
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        tableView.rowHeight = UITableView.automaticDimension
         tableView.estimatedRowHeight = 80
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.allowsSelection = true
