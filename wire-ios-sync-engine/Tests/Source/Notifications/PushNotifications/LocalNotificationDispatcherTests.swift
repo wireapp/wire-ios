@@ -114,12 +114,13 @@ extension LocalNotificationDispatcherTests {
 
     func testThatItCreatesNotificationFromSystemMessagesIfNotActive() {
         // GIVEN
+        let messageTimer = MessageDestructionTimeoutValue.fiveMinutes
         let payload: [String: Any] = [
             "id": UUID.create().transportString(),
             "from": self.user1.remoteIdentifier.transportString(),
             "conversation": self.conversation1.remoteIdentifier!.transportString(),
             "time": Date().transportString(),
-            "data": ["message_timer": MessageDestructionTimeoutValue.fiveMinutes.rawValue],
+            "data": ["message_timer": messageTimer.rawValue * 1000],
             "type": "conversation.message-timer-update"
         ]
         let event = ZMUpdateEvent(fromEventStreamPayload: payload as ZMTransportData, uuid: UUID.create())!
@@ -250,7 +251,7 @@ extension LocalNotificationDispatcherTests {
         // THEN
         XCTAssertEqual(self.scheduledRequests.count, 1)
         XCTAssertEqual(self.scheduledRequests[0].content.body, "New message")
-        XCTAssertEqual(self.scheduledRequests[0].content.sound, UNNotificationSound(named: convertToUNNotificationSoundName("new_message_apns.caf")))
+        XCTAssertEqual(self.scheduledRequests[0].content.sound, UNNotificationSound(named: convertToUNNotificationSoundName("default")))
     }
 
     func testThatItDoesNotCreateNotificationForTwoMessageEventsWithTheSameNonce() {
@@ -357,8 +358,8 @@ extension LocalNotificationDispatcherTests {
 
         let message = try! conversation.appendText(content: "text") as! ZMClientMessage
 
-        let reaction1 = GenericMessage(content: ProtosReactionFactory.createReaction(emoji: "❤️", messageID: message.nonce!) as! MessageCapable)
-        let reaction2 = GenericMessage(content: ProtosReactionFactory.createReaction(emoji: "", messageID: message.nonce!) as! MessageCapable)
+        let reaction1 = GenericMessage(content: ProtosReactionFactory.createReaction(emojis: ["❤️"], messageID: message.nonce!) as! MessageCapable)
+        let reaction2 = GenericMessage(content: ProtosReactionFactory.createReaction(emojis: [], messageID: message.nonce!) as! MessageCapable)
 
         let event1 = createUpdateEvent(UUID.create(), conversationID: conversation.remoteIdentifier!, genericMessage: reaction1, senderID: sender.remoteIdentifier!)
         let event2 = createUpdateEvent(UUID.create(), conversationID: conversation.remoteIdentifier!, genericMessage: reaction2, senderID: sender.remoteIdentifier!)

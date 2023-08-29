@@ -29,13 +29,18 @@ fileprivate extension UICollectionViewFlowLayout {
 }
 
 extension UICollectionView {
-    convenience init(forGroupedSections: ()) {
+    convenience init(forGroupedSections: (), usedInMessageDetailsVC: Bool = false) {
         self.init(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout(forGroupedSections: ()))
         backgroundColor = .clear
         allowsMultipleSelection = false
         keyboardDismissMode = .onDrag
         bounces = true
         alwaysBounceVertical = true
-        contentInset = UIEdgeInsets(top: 32, left: 0, bottom: 32, right: 0)
+        if usedInMessageDetailsVC {
+            contentInset = UIEdgeInsets(top: 12, left: 0, bottom: 32, right: 0)
+        } else {
+            contentInset = UIEdgeInsets(top: 32, left: 0, bottom: 32, right: 0)
+        }
+
     }
 }

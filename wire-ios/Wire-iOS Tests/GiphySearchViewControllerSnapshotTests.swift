@@ -17,12 +17,11 @@
 //
 
 import XCTest
-import WireCommonComponents
 import SnapshotTesting
 import Ziphy
 @testable import Wire
 
-final class GiphySearchViewControllerSnapshotTests: XCTestCase {
+final class GiphySearchViewControllerSnapshotTests: BaseSnapshotTestCase {
     var sut: GiphySearchViewController!
 
     var mockConversation: MockConversation!
@@ -34,8 +33,6 @@ final class GiphySearchViewControllerSnapshotTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-
-        FontScheme.configure(with: .large)
 
         mockConversation = MockConversation.oneOnOneConversation()
         requester = MockURLSession(cache: nil)

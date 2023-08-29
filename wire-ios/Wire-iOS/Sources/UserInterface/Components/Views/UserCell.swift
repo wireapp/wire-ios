@@ -48,8 +48,17 @@ class UserCell: SeparatorCollectionViewCell, SectionListCellType {
     let userTypeIconView = IconImageView()
     let verifiedIconView = UIImageView()
     let videoIconView = IconImageView()
-    let connectingLabel = DynamicFontLabel(fontSpec: .mediumRegularFont,
-                                           color: LabelColors.textErrorDefault)
+
+    lazy var connectingLabel: DynamicFontLabel = {
+        let label = DynamicFontLabel(
+            fontSpec: .mediumRegularFont,
+            color: LabelColors.textErrorDefault
+        )
+
+        label.isHidden = true
+        return label
+    }()
+
     let checkmarkIconView = UIImageView()
     let microphoneIconView = PulsingIconImageView()
     var contentStackView: UIStackView!
@@ -76,6 +85,7 @@ class UserCell: SeparatorCollectionViewCell, SectionListCellType {
     }
 
     var sectionName: String?
+    var obfuscatedSectionName: String?
     var cellIdentifier: String?
     let iconColor = IconColors.foregroundDefault
 
@@ -101,7 +111,7 @@ class UserCell: SeparatorCollectionViewCell, SectionListCellType {
 
     override func prepareForReuse() {
         super.prepareForReuse()
-        
+
         UIView.performWithoutAnimation {
             hidesSubtitle = false
             userTypeIconView.isHidden = true
@@ -400,8 +410,11 @@ extension UserType {
             return AvailabilityStringBuilder.string(for: self, with: .list, color: color)
         } else if let name = name {
             return name && color
+        } else {
+            let fallbackTitle = L10n.Localizable.Profile.Details.Title.unavailable
+            let fallbackColor = SemanticColors.Label.textCollectionSecondary
+            return fallbackTitle && fallbackColor
         }
-
-        return nil
     }
+
 }

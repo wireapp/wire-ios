@@ -92,7 +92,7 @@ final class ConversationContentViewController: UIViewController, PopoverPresente
         NotificationCenter.default.addObserver(forName: .featureDidChangeNotification,
                                                object: nil,
                                                queue: .main) { [weak self] note in
-            guard let change = note.object as? FeatureService.FeatureChange else { return }
+            guard let change = note.object as? FeatureRepository.FeatureChange else { return }
 
             switch change {
             case .fileSharingEnabled, .fileSharingDisabled:
@@ -138,6 +138,7 @@ final class ConversationContentViewController: UIViewController, PopoverPresente
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        tableView.rowHeight = UITableView.automaticDimension
         tableView.estimatedRowHeight = 80
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.allowsSelection = true

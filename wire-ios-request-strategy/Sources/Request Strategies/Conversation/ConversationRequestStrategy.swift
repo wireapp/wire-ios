@@ -1,3 +1,4 @@
+//
 // Wire
 // Copyright (C) 2021 Wire Swiss GmbH
 //
@@ -35,11 +36,6 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
     let conversationByQualifiedIDListTranscoder: ConversationByQualifiedIDListTranscoder
     let conversationByQualifiedIDListSync: IdentifierObjectSync<ConversationByQualifiedIDListTranscoder>
 
-    lazy var insertSync: ZMUpstreamInsertedObjectSync = {
-        ZMUpstreamInsertedObjectSync(transcoder: self,
-                                     entityName: ZMConversation.entityName(),
-                                     managedObjectContext: managedObjectContext)
-    }()
     lazy var modifiedSync: ZMUpstreamModifiedObjectSync = {
         ZMUpstreamModifiedObjectSync(transcoder: self,
                                      entityName: ZMConversation.entityName(),
@@ -113,7 +109,8 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
             removeParticipantActionHandler,
             updateAccessRolesActionHandler,
             updateRoleActionHandler,
-            SyncConversationActionHandler(context: managedObjectContext)
+            SyncConversationActionHandler(context: managedObjectContext),
+            CreateGroupConversationActionHandler(context: managedObjectContext)
         ])
 
         conversationEventProcessor = ConversationEventProcessor(context: managedObjectContext)
@@ -197,14 +194,13 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
         } else {
             return [conversationByIDSync,
                     conversationByQualifiedIDSync,
-                    insertSync,
                     modifiedSync,
                     actionSync]
         }
     }
 
     public var contextChangeTrackers: [ZMContextChangeTracker] {
-        return [updateSync, insertSync, modifiedSync]
+        return [updateSync, modifiedSync]
     }
 
 }
@@ -326,20 +322,12 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
         return remainingKeys.count > 0
     }
 
-    public func shouldRetryToSyncAfterFailed(toUpdate managedObject: ZMManagedObject,
-                                             request upstreamRequest: ZMUpstreamRequest,
-                                             response: ZMTransportResponse,
-                                             keysToParse keys: Set<String>) -> Bool {
-
-        guard let newConversation = managedObject as? ZMConversation else {
-            return false
-        }
-
-        if let responseFailure = Payload.ResponseFailure(response, decoder: .defaultDecoder),
-           responseFailure.code == 412 && responseFailure.label == .missingLegalholdConsent {
-            newConversation.notifyMissingLegalHoldConsent()
-        }
-
+    public func shouldRetryToSyncAfterFailed(
+        toUpdate managedObject: ZMManagedObject,
+        request upstreamRequest: ZMUpstreamRequest,
+        response: ZMTransportResponse,
+        keysToParse keys: Set<String>
+    ) -> Bool {
         return false
     }
 
@@ -348,76 +336,7 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
         request upstreamRequest: ZMUpstreamRequest,
         response: ZMTransportResponse
     ) {
-        guard
-            let apiVersion = APIVersion(rawValue: response.apiVersion),
-            let newConversation = managedObject as? ZMConversation,
-            let rawData = response.rawData,
-            let payload = Payload.Conversation(rawData, apiVersion: apiVersion),
-            let conversationID = payload.id
-        else {
-            Logging.network.warn("Can't process response, aborting.")
-            return
-        }
-
-        var deletedDuplicate = false
-
-        if let existingConversation = ZMConversation.fetch(
-            with: conversationID,
-            domain: payload.qualifiedID?.domain,
-            in: managedObjectContext
-        ) {
-            managedObjectContext.delete(existingConversation)
-            deletedDuplicate = true
-        }
-
-        newConversation.remoteIdentifier = conversationID
-
-        if newConversation.messageProtocol == .mls {
-            Logging.mls.info("created new conversation on backend, got group ID (\(String(describing: payload.mlsGroupID)))")
-        }
-
-        // If this is an mls conversation, then the initial participants won't have
-        // been added yet on the backend. This means that when we process response payload
-        // we'll actually overwrite the local participants with just the self user. We
-        // store the pending participants now so we can pass them to the mls controllr
-        // when we actually create the mls group.
-        let pendingParticipants = newConversation.localParticipants
-        payload.updateOrCreate(in: managedObjectContext)
-
-        newConversation.needsToBeUpdatedFromBackend = deletedDuplicate
-
-        if newConversation.messageProtocol == .mls {
-            Logging.mls.info("resetting `mlsStatus` to `ready` b/c self client is creator")
-            newConversation.mlsStatus = .ready
-
-            guard let mlsService = managedObjectContext.mlsService else {
-                Logging.mls.warn("failed to create mls group: mlsService doesn't exist")
-                return
-            }
-
-            guard let groupID = newConversation.mlsGroupID else {
-                Logging.mls.warn("failed to create mls group: conversation is missing group id.")
-                return
-            }
-
-            do {
-                try mlsService.createGroup(for: groupID)
-            } catch let error {
-                Logging.mls.error("failed to create mls group: \(String(describing: error))")
-                return
-            }
-
-            let users = pendingParticipants.map(MLSUser.init(from:))
-
-            Task {
-                do {
-                    try await mlsService.addMembersToConversation(with: users, for: groupID)
-                } catch let error {
-                    Logging.mls.error("failed to add members to new mls group: \(String(describing: error))")
-                    return
-                }
-            }
-        }
+        // no op
     }
 
     public func updateUpdatedObject(_ managedObject: ZMManagedObject,
@@ -526,31 +445,7 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
         forKeys keys: Set<String>?,
         apiVersion: APIVersion
     ) -> ZMUpstreamRequest? {
-        guard
-            let conversation = managedObject as? ZMConversation,
-            let selfClient = ZMUser.selfUser(in: managedObjectContext).selfClient(),
-            let selfClientID = selfClient.remoteIdentifier
-        else {
-            return nil
-        }
-
-        let payload = Payload.NewConversation(conversation, selfClientID: selfClientID)
-
-        guard
-            let payloadData = payload.payloadData(apiVersion: apiVersion),
-            let payloadAsString = String(bytes: payloadData, encoding: .utf8)
-        else {
-            return nil
-        }
-
-        let request = ZMTransportRequest(
-            path: "/conversations",
-            method: .methodPOST,
-            payload: payloadAsString as ZMTransportData?,
-            apiVersion: apiVersion.rawValue
-        )
-
-        return ZMUpstreamRequest(transportRequest: request)
+        return nil
     }
 
 }
@@ -844,6 +739,7 @@ class ConversationByQualifiedIDListTranscoder: IdentifierObjectSyncTranscoder {
 
         for qualifiedID in conversations {
             let conversation = ZMConversation.fetchOrCreate(with: qualifiedID.uuid, domain: qualifiedID.domain, in: context)
+            conversation.isPendingMetadataRefresh = true
             conversation.needsToBeUpdatedFromBackend = true
         }
     }

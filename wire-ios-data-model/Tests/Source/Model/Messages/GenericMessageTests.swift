@@ -81,7 +81,7 @@ class GenericMessageTests: XCTestCase {
     }
 
     func testThatItConsidersCreatingReactionMessageTypeAsKnownMessage() {
-        let creatingReactionMessageType = GenericMessage(content: WireProtos.Reaction.createReaction(emoji: "test", messageID: UUID.create()))
+        let creatingReactionMessageType = GenericMessage(content: WireProtos.Reaction.createReaction(emojis: ["❤️"], messageID: UUID.create()))
         XCTAssertTrue(creatingReactionMessageType.knownMessage)
     }
 

@@ -28,7 +28,7 @@ extension ZMMessage {
             return .undefined
         }
 
-        return category.union(self.likedCategory)
+        return category.union(self.reactedCategory)
     }
 
     /// Obj-c compatible function
@@ -195,13 +195,13 @@ extension ZMMessage {
         return .none
     }
 
-    fileprivate var likedCategory: MessageCategory {
+    fileprivate var reactedCategory: MessageCategory {
         guard !self.reactions.isEmpty else {
             return .none
         }
         let selfUser = ZMUser.selfUser(in: self.managedObjectContext!)
         for reaction in self.reactions where reaction.users.contains(selfUser) {
-            return .liked
+            return .reacted
         }
         return .none
     }
@@ -237,7 +237,7 @@ public struct MessageCategory: OptionSet {
     public static let audio = MessageCategory(rawValue: 1 << 6)
     public static let video = MessageCategory(rawValue: 1 << 7)
     public static let location = MessageCategory(rawValue: 1 << 8)
-    public static let liked = MessageCategory(rawValue: 1 << 9)
+    public static let reacted = MessageCategory(rawValue: 1 << 9)
     public static let knock = MessageCategory(rawValue: 1 << 10)
     public static let systemMessage = MessageCategory(rawValue: 1 << 11)
     public static let excludedFromCollection = MessageCategory(rawValue: 1 << 12)
@@ -260,7 +260,7 @@ extension MessageCategory: CustomDebugStringConvertible {
         .audio: "Audio",
         .video: "Video",
         .location: "Location",
-        .liked: "Liked",
+        .reacted: "Reacted",
         .knock: "Knock",
         .systemMessage: "System message",
         .excludedFromCollection: "Excluded from collection",

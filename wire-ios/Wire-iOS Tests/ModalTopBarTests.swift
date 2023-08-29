@@ -16,9 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
+import SnapshotTesting
 @testable import Wire
 
-class ModalTopBarTests: ZMSnapshotTestCase {
+class ModalTopBarTests: BaseSnapshotTestCase {
 
     var sut: ModalTopBar! = nil
 
@@ -35,7 +36,7 @@ class ModalTopBarTests: ZMSnapshotTestCase {
 
     func testThatItRendersCorrectly_ShortTitle() {
         sut.configure(title: "Tim Cook", subtitle: nil, topAnchor: sut.topAnchor)
-        verifyInAllPhoneWidths(view: sut)
+        verifyInAllPhoneWidths(matching: sut)
     }
 
     func testThatItRendersCorrectly_LongTitle() {
@@ -43,12 +44,12 @@ class ModalTopBarTests: ZMSnapshotTestCase {
                       subtitle: nil,
                       topAnchor: sut.topAnchor)
 
-        verifyInAllPhoneWidths(view: sut)
+        verifyInAllPhoneWidths(matching: sut)
     }
 
     func testThatItRendersCorrectly_Subtitle() {
         sut.configure(title: "Details", subtitle: "Tim Cook", topAnchor: sut.topAnchor)
-        verifyInAllPhoneWidths(view: sut)
+        verifyInAllPhoneWidths(matching: sut)
     }
 
     func testThatItRendersCorrectly_LongSubtitle() {
@@ -56,7 +57,7 @@ class ModalTopBarTests: ZMSnapshotTestCase {
                       subtitle: "Adrian Hardacre, Amelia Henderson & Dylan Parsons",
                       topAnchor: sut.topAnchor)
 
-        verifyInAllPhoneWidths(view: sut)
+        verifyInAllPhoneWidths(matching: sut)
     }
 
 }
