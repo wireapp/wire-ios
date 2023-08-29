@@ -94,8 +94,11 @@ public final class ConversationService: ConversationServiceInterface {
             internalCreateGroupConversation(teamID: user.teamIdentifier,
                                             name: nil,
                                             users: [user],
-                                            accessMode: ConversationAccessMode(),
-                                            accessRoles: [],
+                                            accessMode: ConversationAccessMode.value(forAllowGuests: true),
+                                            accessRoles: ConversationAccessRoleV2.from(
+                                                allowGuests: true,
+                                                allowServices: true
+                                            ),
                                             enableReceipts: false,
                                             messageProtocol: .proteus,
                                             completion: completion)
