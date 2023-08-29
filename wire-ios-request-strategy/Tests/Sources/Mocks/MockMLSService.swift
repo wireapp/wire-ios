@@ -139,8 +139,10 @@ class MockMLSService: MLSServiceInterface {
         calls.joinNewGroup.append(groupID)
     }
 
+    var mockJoinGroup: ((MLSGroupID) throws -> Void)?
     func joinGroup(with groupID: MLSGroupID) async throws {
         calls.joinGroup.append(groupID)
+        try mockJoinGroup?(groupID)
     }
 
     func leaveSubconversation(

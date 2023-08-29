@@ -904,6 +904,11 @@ class PayloadProcessing_ConversationTests: MessagingTestBase {
     func testUpdateOrCreate_withMLSSelfGroupEpoch1_callsMLSServiceJoinGroup() {
         let mockMLS = internalTest_UpdateOrCreate_withMLSSelfGroupEpoch(epoch: 1)
 
+        let didJoinGroup = XCTestExpectation(description: "didJoinGroup")
+        mockMLS.mockJoinGroup = { _ in didJoinGroup.fulfill() }
+
+        wait(for: [didJoinGroup], timeout: 0.5)
+
         // then
         XCTAssertFalse(mockMLS.calls.joinGroup.isEmpty)
     }
