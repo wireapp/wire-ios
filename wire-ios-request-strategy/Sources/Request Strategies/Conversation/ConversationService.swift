@@ -88,6 +88,19 @@ public final class ConversationService: ConversationServiceInterface {
         }
     }
 
+    public func createOneToOneConversation(
+        user: ZMUser,
+        completion: @escaping (Swift.Result<ZMConversation, ConversationCreationFailure>) -> Void) {
+            internalCreateGroupConversation(teamID: user.teamIdentifier,
+                                            name: nil,
+                                            users: [user],
+                                            accessMode: ConversationAccessMode(),
+                                            accessRoles: [],
+                                            enableReceipts: false,
+                                            messageProtocol: .proteus,
+                                            completion: completion)
+        }
+
     private func internalCreateTeamGroupConversation(
         teamID: UUID,
         name: String?,

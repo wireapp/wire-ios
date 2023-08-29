@@ -132,7 +132,7 @@ extension ZMConversation {
         allowServices: Bool = true,
         readReceipts: Bool = false,
         participantsRole: Role? = nil,
-        type: ZMConversationType = .group,
+        type: ZMConversationType,
         messageProtocol: MessageProtocol = .proteus
     ) -> ZMConversation? {
         let selfUser = ZMUser.selfUser(in: moc)
@@ -171,34 +171,20 @@ extension ZMConversation {
         return conversation
     }
 
-    /// FOR TESTS ONLY.
-    /// To create new conversations see ConversationService.
-
-    @objc
-    static func fetchOrCreateOneToOneTeamConversation(
+    static func fetchOneToOneTeamConversation(
         moc: NSManagedObjectContext,
         participant: ZMUser,
-        team: Team?,
-        participantRole: Role? = nil) -> ZMConversation? {
-        guard let team = team,
-            !participant.isSelfUser
-        else { return nil }
+        team: Team?) -> ZMConversation? {
+            guard let team = team,
+                  !participant.isSelfUser
+            else { return nil }
 
-        if let conversation = self.existingTeamConversation(moc: moc, participant: participant, team: team) {
-            return conversation
+            return self.existingTeamConversation(moc: moc, participant: participant, team: team)
         }
 
-        return insertConversation(moc: moc,
-                                       participants: [participant],
-                                       name: nil,
-                                       team: team,
-                                       participantsRole: participantRole,
-                                       type: .oneOnOne)
-    }
-
-    private static func existingTeamConversation(moc: NSManagedObjectContext,
-                                                 participant: ZMUser,
-                                                 team: Team) -> ZMConversation? {
+    static func existingTeamConversation(moc: NSManagedObjectContext,
+                                         participant: ZMUser,
+                                         team: Team) -> ZMConversation? {
 
         // We consider a conversation being an existing 1:1 team conversation in case the following point are true:
         //  1. It is a conversation inside the team

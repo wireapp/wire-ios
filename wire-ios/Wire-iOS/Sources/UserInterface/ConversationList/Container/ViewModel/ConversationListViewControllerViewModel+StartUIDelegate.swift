@@ -24,25 +24,11 @@ private typealias ConversationCreatedBlock = (ZMConversation?) -> Void
 
 extension ConversationListViewController.ViewModel: StartUIDelegate {
     func startUI(_ startUI: StartUIViewController, didSelect user: UserType) {
-//        oneToOneConversationWithUser(user, callback: { conversation in
-//            guard let conversation = conversation else { return }
-//
-//            ZClientViewController.shared?.select(conversation: conversation, focusOnView: true, animated: true)
-//        })
+        oneToOneConversationWithUser(user, callback: { conversation in
+            guard let conversation = conversation else { return }
 
-        guard let userSession = ZMUserSession.shared() else {
-            fatal("No user session present")
-        }
-        let conversationService = ConversationService(context: userSession.viewContext)
-        conversationService.createGroupConversation(name: <#T##String?#>,
-                                                    users: <#T##Set<ZMUser>#>,
-                                                    allowGuests: <#T##Bool#>,
-                                                    allowServices: <#T##Bool#>,
-                                                    enableReceipts: <#T##Bool#>,
-                                                    messageProtocol: <#T##MessageProtocol#>)
-        { [weak self] in
-
-        }
+            ZClientViewController.shared?.select(conversation: conversation, focusOnView: true, animated: true)
+        })
     }
 
     func startUI(_ startUI: StartUIViewController, didSelect conversation: ZMConversation) {
@@ -56,20 +42,42 @@ extension ConversationListViewController.ViewModel: StartUIDelegate {
     /// - Parameters:
     ///   - user: the user which we want to have a 1-to-1 conversation with
     ///   - onConversationCreated: a ConversationCreatedBlock which has the conversation created
-    private func oneToOneConversationWithUser(_ user: UserType, callback onConversationCreated: @escaping ConversationCreatedBlock) {
+    private func oneToOneConversationWithUser(
+        _ user: UserType,
+        callback onConversationCreated: @escaping ConversationCreatedBlock) {
+            guard let userSession = ZMUserSession.shared() else { return }
 
-        guard let userSession = ZMUserSession.shared() else { return }
-
-        viewController?.setState(.conversationList, animated: true) {
-            var oneToOneConversation: ZMConversation?
-            userSession.enqueue({
-                oneToOneConversation = user.oneToOneConversation
-            }, completionHandler: {
-                delay(0.3) {
-                    onConversationCreated(oneToOneConversation)
+            viewController?.setState(.conversationList, animated: true) {
+                if let conversation = user.oneToOneConversation {
+                    onConversationCreated(conversation)
+                } else {
+                    self.createOneToOneConversation(with: user, context: userSession.viewContext) { conversation in
+                        onConversationCreated(conversation)
+                    }
                 }
-            })
+            }
         }
-    }
+
+    private func createOneToOneConversation(
+        with user: UserType,
+        context: NSManagedObjectContext,
+        completion: @escaping ConversationCreatedBlock) {
+            guard user.isTeamMember,
+                  let zmUser = (user as? ZMUser) ?? (user as? ZMSearchUser)?.user
+            else {
+                return
+            }
+            let conversationService = ConversationService(context: context)
+
+            conversationService.createOneToOneConversation(user: zmUser) { result in
+                switch result {
+                case .success(let conversation):
+                    completion(conversation)
+
+                case .failure(let error):
+                    WireLogger.conversation.error("failed to create guest room: \(String(describing: error))")
+                }
+            }
+        }
 
 }
