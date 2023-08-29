@@ -20,13 +20,17 @@ import SnapshotTesting
 import XCTest
 @testable import Wire
 
-final class ProfileViewControllerTests: ZMSnapshotTestCase {
+final class ProfileViewControllerTests: BaseSnapshotTestCase {
+
+    // MARK: - Properties
 
     private var sut: ProfileViewController!
     private var mockUser: MockUser!
     private var selfUser: MockUser!
     private var teamIdentifier: UUID!
     private var mockClassificationProvider: MockClassificationProvider!
+
+    // MARK: - setUp
 
     override func setUp() {
         super.setUp()
@@ -43,6 +47,8 @@ final class ProfileViewControllerTests: ZMSnapshotTestCase {
         mockClassificationProvider = MockClassificationProvider()
     }
 
+    // MARK: - tearDown
+
     override func tearDown() {
         sut = nil
         mockUser = nil
@@ -52,6 +58,8 @@ final class ProfileViewControllerTests: ZMSnapshotTestCase {
 
         super.tearDown()
     }
+
+    // MARK: - Snapshot Tests
 
     // MARK: - .profileViewer  Context
 
