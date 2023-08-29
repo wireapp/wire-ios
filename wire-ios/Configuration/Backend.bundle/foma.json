@@ -1,4 +1,5 @@
 {
+    "title" : "Foma Federation Environment",
     "endpoints" : {
         "backendURL" : "https://nginz-https.foma.wire.link",
         "backendWSURL" : "https://nginz-ssl.foma.wire.link",
@@ -6,6 +7,5 @@
         "teamsURL" : "https://teams.foma.wire.link",
         "accountsURL" : "https://account.foma.wire.link",
         "websiteURL" : "https://wire.com"
-    },
-    "title" : "Foma Federation Environment"
+    }
 }
