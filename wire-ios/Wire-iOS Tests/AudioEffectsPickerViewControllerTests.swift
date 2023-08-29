@@ -19,7 +19,7 @@
 import XCTest
 @testable import Wire
 
-final class AudioEffectsPickerViewControllerTests: ZMSnapshotTestCase {
+final class AudioEffectsPickerViewControllerTests: BaseSnapshotTestCase {
     var sut: AudioEffectsPickerViewController! = .none
 
     override func tearDown() {
@@ -29,7 +29,6 @@ final class AudioEffectsPickerViewControllerTests: ZMSnapshotTestCase {
 
     override func setUp() {
         super.setUp()
-
         let path = Bundle(for: type(of: self)).path(forResource: "audio_sample", ofType: "m4a")!
         self.sut = AudioEffectsPickerViewController(recordingPath: path, duration: TimeInterval(10.0))
         self.sut.normalizedLoudness = (0...100).map { Float($0) / 100.0 }
@@ -61,26 +60,26 @@ final class AudioEffectsPickerViewControllerTests: ZMSnapshotTestCase {
     }
 
     func testInitialState() {
-        self.verify(view: self.prepareForSnapshot())
+        verify(matching: prepareForSnapshot())
     }
 
     func testPlayingProgressState() {
         let preparedView = self.prepareForSnapshot()
 
         self.sut.setState(.playing, animated: false)
-        self.verify(view: preparedView)
+        verify(matching: preparedView)
     }
 
     func testTooltipState() {
         let preparedView = self.prepareForSnapshot()
         self.sut.setState(.tip, animated: false)
-        self.verify(view: preparedView)
+        verify(matching: preparedView)
     }
 
     func testEffectSelectedState() {
         let preparedView = self.prepareForSnapshot()
 
         sut.selectedAudioEffect = AVSAudioEffectType.chorusMax
-        self.verify(view: preparedView)
+        verify(matching: preparedView)
     }
 }

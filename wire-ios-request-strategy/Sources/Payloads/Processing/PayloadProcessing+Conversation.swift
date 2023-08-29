@@ -154,6 +154,7 @@ extension Payload.Conversation {
         updateConversationStatus(for: conversation)
 
         conversation.needsToBeUpdatedFromBackend = false
+        conversation.isPendingMetadataRefresh = otherUser.isPendingMetadataRefresh
 
         return conversation
     }
@@ -180,6 +181,7 @@ extension Payload.Conversation {
         conversation.conversationType = .`self`
         conversation.domain = BackendInfo.isFederationEnabled ? qualifiedID?.domain : nil
         conversation.needsToBeUpdatedFromBackend = false
+        conversation.isPendingMetadataRefresh = false
 
         updateMetadata(for: conversation, context: context)
         updateMembers(for: conversation, context: context)
@@ -211,6 +213,7 @@ extension Payload.Conversation {
         conversation.remoteIdentifier = conversationID
         conversation.domain = BackendInfo.isFederationEnabled ? qualifiedID?.domain : nil
         conversation.needsToBeUpdatedFromBackend = false
+        conversation.isPendingMetadataRefresh = false
         conversation.epoch = UInt64(epoch ?? 0)
 
         updateMetadata(for: conversation, context: context)
@@ -551,60 +554,69 @@ extension Payload.ConversationEvent where T == Payload.UpdateConversationDeleted
 
 }
 
-extension Payload.ConversationEvent where T == Payload.UpdateConversationConnectionRequest {
+    extension Payload.ConversationEvent where T == Payload.UpdateConversationConnectionRequest {
 
-    func process(in context: NSManagedObjectContext, originalEvent: ZMUpdateEvent) {
-        // TODO jacob refactor to append method on conversation
-        _ = ZMSystemMessage.createOrUpdate(from: originalEvent, in: context)
-    }
-
-}
-
-extension Payload.UpdateConversationMLSWelcome {
-
-    func process(in context: NSManagedObjectContext, originalEvent: ZMUpdateEvent) {
-        MLSEventProcessor.shared.process(
-            welcomeMessage: data,
-            in: context
-        )
-    }
-
-}
-
-extension Payload.ConversationEvent where T == Payload.UpdateConverationMemberJoin {
-
-    func process(in context: NSManagedObjectContext, originalEvent: ZMUpdateEvent) {
-        guard
-            let conversation = fetchOrCreateConversation(in: context)
-        else {
-            Logging.eventProcessing.error("Member join update missing conversation, aborting...")
-            return
-        }
-
-        if let usersAndRoles = data.users?.map({ $0.fetchUserAndRole(in: context, conversation: conversation)! }) {
-            let selfUser = ZMUser.selfUser(in: context)
-            let users = Set(usersAndRoles.map { $0.0 })
-            let newUsers = !users.subtracting(conversation.localParticipants).isEmpty
-
-            if users.contains(selfUser) || newUsers {
-                // TODO jacob refactor to append method on conversation
-                _ = ZMSystemMessage.createOrUpdate(from: originalEvent, in: context)
-            }
-
-            conversation.addParticipantsAndUpdateConversationState(usersAndRoles: usersAndRoles)
-        } else if let users = data.userIDs?.map({ ZMUser.fetchOrCreate(with: $0, domain: nil, in: context)}) {
-            // NOTE: legacy code path for backwards compatibility with servers without role support
-
-            let users = Set(users)
-            let selfUser = ZMUser.selfUser(in: context)
-
-            if !users.isSubset(of: conversation.localParticipantsExcludingSelf) || users.contains(selfUser) {
-                // TODO jacob refactor to append method on conversation
-                _ = ZMSystemMessage.createOrUpdate(from: originalEvent, in: context)
-            }
-            conversation.addParticipantsAndUpdateConversationState(users: users, role: nil)
+        func process(in context: NSManagedObjectContext, originalEvent: ZMUpdateEvent) {
+            // TODO jacob refactor to append method on conversation
+            _ = ZMSystemMessage.createOrUpdate(from: originalEvent, in: context)
         }
 
     }
 
-}
+    private extension ZMConversation {
+
+        func firstSystemMessage(for systemMessageType: ZMSystemMessageType) -> ZMSystemMessage? {
+
+            return allMessages
+                .compactMap { $0 as? ZMSystemMessage }
+                .first(where: { $0.systemMessageType == systemMessageType })
+        }
+    }
+
+    extension Payload.UpdateConversationMLSWelcome {
+
+        func process(in context: NSManagedObjectContext, originalEvent: ZMUpdateEvent) {
+            MLSEventProcessor.shared.process(
+                welcomeMessage: data,
+                in: context
+            )
+        }
+
+    }
+
+    extension Payload.ConversationEvent where T == Payload.UpdateConverationMemberJoin {
+
+        func process(in context: NSManagedObjectContext, originalEvent: ZMUpdateEvent) {
+            guard
+                let conversation = fetchOrCreateConversation(in: context)
+            else {
+                Logging.eventProcessing.error("Member join update missing conversation, aborting...")
+                return
+            }
+
+            if let usersAndRoles = data.users?.map({ $0.fetchUserAndRole(in: context, conversation: conversation)! }) {
+                let selfUser = ZMUser.selfUser(in: context)
+                let users = Set(usersAndRoles.map { $0.0 })
+                let newUsers = !users.subtracting(conversation.localParticipants).isEmpty
+
+                if users.contains(selfUser) || newUsers {
+                    // TODO jacob refactor to append method on conversation
+                    _ = ZMSystemMessage.createOrUpdate(from: originalEvent, in: context)
+                }
+
+                conversation.addParticipantsAndUpdateConversationState(usersAndRoles: usersAndRoles)
+            } else if let users = data.userIDs?.map({ ZMUser.fetchOrCreate(with: $0, domain: nil, in: context)}) {
+                // NOTE: legacy code path for backwards compatibility with servers without role support
+
+                let users = Set(users)
+                let selfUser = ZMUser.selfUser(in: context)
+
+                if !users.isSubset(of: conversation.localParticipantsExcludingSelf) || users.contains(selfUser) {
+                    // TODO jacob refactor to append method on conversation
+                    _ = ZMSystemMessage.createOrUpdate(from: originalEvent, in: context)
+                }
+                conversation.addParticipantsAndUpdateConversationState(users: users, role: nil)
+            }
+        }
+
+    }

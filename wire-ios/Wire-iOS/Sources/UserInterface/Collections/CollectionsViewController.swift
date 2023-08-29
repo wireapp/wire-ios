@@ -146,7 +146,7 @@ final class CollectionsViewController: UIViewController {
         NotificationCenter.default.addObserver(forName: .featureDidChangeNotification,
                                                object: nil,
                                                queue: .main) { [weak self] note in
-            guard let change = note.object as? FeatureService.FeatureChange else { return }
+            guard let change = note.object as? FeatureRepository.FeatureChange else { return }
 
             switch change {
             case .fileSharingEnabled, .fileSharingDisabled:
@@ -738,11 +738,6 @@ extension CollectionsViewController: CollectionCellDelegate {
         case .cancel:
             ZMUserSession.shared()?.enqueue {
                 message.fileMessageData?.cancelTransfer()
-            }
-
-        case .like:
-            ZMUserSession.shared()?.enqueue {
-                Message.setLikedMessage(message, liked: !message.liked)
             }
 
         case .openDetails:
