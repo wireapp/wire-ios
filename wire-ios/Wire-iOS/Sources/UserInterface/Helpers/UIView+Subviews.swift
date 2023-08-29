@@ -19,7 +19,21 @@
 import UIKit
 
 extension UIView {
+
     func removeSubviews() {
-        subviews.forEach { $0.removeFromSuperview() }
+        subviews.forEach {
+            $0.removeFromSuperview()
+        }
     }
+
+}
+
+extension UIStackView {
+
+    func removeArrangedSubviews() {
+        arrangedSubviews.forEach {
+            $0.removeFromSuperview()
+        }
+    }
+
 }
