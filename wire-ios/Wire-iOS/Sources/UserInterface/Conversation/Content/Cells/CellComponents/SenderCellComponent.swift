@@ -68,6 +68,10 @@ final class SenderCellComponent: UIView {
     var avatarSpacerWidthConstraint: NSLayoutConstraint?
     var observerToken: Any?
 
+    var authorLabelFirstBaselineAnchor: NSLayoutYAxisAnchor {
+        return authorLabel.firstBaselineAnchor
+    }
+
     // MARK: - Configuration
 
     func configure(with user: UserType) {
@@ -82,42 +86,31 @@ final class SenderCellComponent: UIView {
         }
     }
 
-    private func configureViews(for configuration: SenderCellConfiguration) {
-        configureNameLabel(for: configuration)
-        configureTeamRoleIndicator(for: configuration)
+    override init(frame: CGRect) {
+        super.init(frame: frame)
 
-        authorLabel.translatesAutoresizingMaskIntoConstraints = false
-        authorLabel.accessibilityIdentifier = "author.name"
-        authorLabel.numberOfLines = 0
+        setupAuthorLabel()
 
-        avatar.userSession = ZMUserSession.shared()
-        avatar.initialsFont = .avatarInitial
-        avatar.size = .badge
-        avatar.translatesAutoresizingMaskIntoConstraints = false
-        avatar.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(tappedOnAvatar)))
-        avatar.accessibilityElementsHidden = false
-        avatar.isAccessibilityElement = true
-        avatar.accessibilityTraits = .button
-        avatar.accessibilityLabel = L10n.Accessibility.Conversation.ProfileImage.description
-        avatar.accessibilityHint = L10n.Accessibility.Conversation.ProfileImage.hint
+        setupAvatar()
 
-        avatarSpacer.addSubview(avatar)
-        avatarSpacer.translatesAutoresizingMaskIntoConstraints = false
+        setupAvatarSpacer()
 
-        titleStackView = UIStackView(arrangedSubviews: [authorLabel, teamRoleIndicator])
-        titleStackView.axis = .horizontal
-        titleStackView.alignment = .center
-        titleStackView.spacing = 8
-        titleStackView.translatesAutoresizingMaskIntoConstraints = false
+        setupTitleStackView()
 
-        stackView = UIStackView(arrangedSubviews: [avatarSpacer, titleStackView])
-        stackView.axis = .horizontal
-        stackView.alignment = .center
-        stackView.translatesAutoresizingMaskIntoConstraints = false
+        setupStackView()
 
         addSubview(stackView)
 
         createConstraints()
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    private func configureViews(for configuration: SenderCellConfiguration) {
+        configureNameLabel(for: configuration)
+        configureTeamRoleIndicator(for: configuration)
 
         // We need to call that method here to restraint the authorLabel moving
         // outside of the view and then back to its position. For more information
@@ -126,6 +119,7 @@ final class SenderCellComponent: UIView {
     }
 
     private func createConstraints() {
+        [avatar, authorLabel, stackView, avatarSpacer, titleStackView].prepareForLayout()
         let avatarSpacerWidthConstraint = avatarSpacer.widthAnchor.constraint(equalToConstant: conversationHorizontalMargins.left)
         self.avatarSpacerWidthConstraint = avatarSpacerWidthConstraint
 
@@ -139,7 +133,43 @@ final class SenderCellComponent: UIView {
             stackView.topAnchor.constraint(equalTo: self.topAnchor),
             stackView.bottomAnchor.constraint(equalTo: self.bottomAnchor),
             stackView.trailingAnchor.constraint(lessThanOrEqualTo: self.trailingAnchor)
-            ])
+        ])
+    }
+
+    func setupAuthorLabel() {
+        authorLabel.translatesAutoresizingMaskIntoConstraints = false
+        authorLabel.accessibilityIdentifier = "author.name"
+        authorLabel.numberOfLines = 0
+    }
+
+    private func setupAvatar() {
+        avatar.userSession = ZMUserSession.shared()
+        avatar.initialsFont = .avatarInitial
+        avatar.size = .badge
+        avatar.translatesAutoresizingMaskIntoConstraints = false
+        avatar.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(tappedOnAvatar)))
+        avatar.accessibilityElementsHidden = false
+        avatar.isAccessibilityElement = true
+        avatar.accessibilityTraits = .button
+        avatar.accessibilityLabel = L10n.Accessibility.Conversation.ProfileImage.description
+        avatar.accessibilityHint = L10n.Accessibility.Conversation.ProfileImage.hint
+    }
+
+    private func setupAvatarSpacer() {
+        avatarSpacer.addSubview(avatar)
+    }
+
+    private func setupTitleStackView() {
+        titleStackView = UIStackView(arrangedSubviews: [authorLabel, teamRoleIndicator])
+        titleStackView.axis = .horizontal
+        titleStackView.alignment = .center
+        titleStackView.spacing = 8
+    }
+
+    private func setupStackView() {
+        stackView = UIStackView(arrangedSubviews: [avatarSpacer, titleStackView])
+        stackView.axis = .horizontal
+        stackView.alignment = .center
     }
 
     private func configureNameLabel(for configuration: SenderCellConfiguration) {

@@ -33,6 +33,7 @@ class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
         let indicatorIcon: UIImage?
     }
 
+
     // MARK: - Properties
 
     weak var delegate: ConversationMessageCellDelegate?
@@ -42,6 +43,9 @@ class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
 
     private let senderView = SenderCellComponent()
     private let indicatorImageView = UIImageView()
+//    private lazy var dateAuthorConstraint: NSLayoutConstraint = {
+//        return dateLabel.firstBaselineAnchor.constraint(equalTo: senderView.anchor)
+//    }()
 
     private var indicatorImageViewTrailing: NSLayoutConstraint!
 
@@ -75,12 +79,13 @@ class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
 
     func configure(with object: Configuration, animated: Bool) {
         senderView.configure(with: object.user)
+       // dateAuthorConstraint.isActive = true
         indicatorImageView.isHidden = object.indicatorIcon == nil
         indicatorImageView.image = object.indicatorIcon
         dateLabel.isHidden = object.timestamp == nil
         dateLabel.text = object.timestamp
     }
-
+    
     // MARK: - Configure subviews and setup constraints
 
     private func configureSubviews() {
@@ -110,8 +115,7 @@ class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
             // dateLabel
             dateLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -conversationHorizontalMargins.right),
             dateLabel.leadingAnchor.constraint(equalTo: senderView.trailingAnchor, constant: 4),
-            dateLabel.bottomAnchor.constraint(equalTo: bottomAnchor),
-            dateLabel.topAnchor.constraint(equalTo: topAnchor)
+            dateLabel.firstBaselineAnchor.constraint(equalTo: senderView.authorLabelFirstBaselineAnchor)
         ])
     }
 
