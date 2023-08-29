@@ -30,8 +30,6 @@ final class ConversationTextMessageTests: BaseSnapshotTestCase {
 
     // MARK: - setUp
 
-    // MARK: - setUp
-
     override func setUp() {
         super.setUp()
         UIColor.setAccentOverride(.vividRed)
