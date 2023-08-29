@@ -122,7 +122,7 @@ extension ZMConversation {
 
     /// FOR TESTS ONLY.
     /// To create new conversations see ConversationService.
-//
+
     static public func insertConversation(
         moc: NSManagedObjectContext,
         participants: [ZMUser],
@@ -171,7 +171,7 @@ extension ZMConversation {
         return conversation
     }
 
-    static func fetchOneToOneTeamConversation(
+    static func fetchOneToOneConversation(
         moc: NSManagedObjectContext,
         participant: ZMUser,
         team: Team?) -> ZMConversation? {
