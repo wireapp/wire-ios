@@ -72,53 +72,86 @@ extension Emoji {
 
 final class EmojiDataSource: NSObject, UICollectionViewDataSource {
 
-    enum Update {
-        case insert(Int)
-        case reload(Int)
-    }
-
-    typealias CellProvider = (Emoji, IndexPath) -> UICollectionViewCell
+    // MARK: - Properties
 
     let cellProvider: CellProvider
 
-    private let initialSections: [EmojiSection]
-    private var sections: [EmojiSection]
+    private let initialSections: [Section]
+    private var sections: [EmojiDataSourceSection]
     private let recentlyUsed: RecentlyUsedEmojiSection
+
+    // MARK: - Life cycle
 
     init(provider: @escaping CellProvider) {
         cellProvider = provider
-        self.recentlyUsed = RecentlyUsedEmojiPeristenceCoordinator.loadOrCreate()
-        initialSections = EmojiSectionType.all.compactMap(FileEmojiSection.init)
+        recentlyUsed = RecentlyUsedEmojiPeristenceCoordinator.loadOrCreate()
+        initialSections = Self.loadEmojiSections()
         sections = initialSections
         super.init()
         insertRecentlyUsedSectionIfNeeded()
     }
 
-    func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return sections.count
+    // MARK: - Helpers
+
+    private static func loadEmojiSections() -> [Section] {
+        guard let emojis = try? EmojiData.loadAllFromDisk() else {
+            return []
+        }
+
+        return emojis
+            .sorted { $0.sortOrder < $1.sortOrder }
+            .partition(by: \.category.sectionID)
+            .map(Section.init)
+            .sorted { $0.id.rawValue < $1.id.rawValue }
     }
 
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return self[section].emojis.count
-    }
-
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        return cellProvider(self[indexPath], indexPath)
-    }
-
-    subscript (index: Int) -> EmojiSection {
+    subscript (index: Int) -> EmojiDataSourceSection {
         return sections[index]
     }
 
     subscript (indexPath: IndexPath) -> Emoji {
-        return sections[indexPath.section][indexPath.item]
+        return sections[indexPath.section].items[indexPath.item]
     }
 
-    func sectionIndex(for type: EmojiSectionType) -> Int? {
-        return sections.map { $0.type }.firstIndex(of: type)
+    func sectionIndex(for id: EmojiSectionType) -> Int? {
+        return sections.firstIndex {
+            $0.id == id
+        }
     }
 
-    @discardableResult func register(used emoji: Emoji) -> Update? {
+    // MARK: - Data source
+
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
+        return sections.count
+    }
+
+    func collectionView(
+        _ collectionView: UICollectionView,
+        numberOfItemsInSection section: Int
+    ) -> Int {
+        return sections[section].items.count
+    }
+
+    func collectionView(
+        _ collectionView: UICollectionView,
+        cellForItemAt indexPath: IndexPath
+    ) -> UICollectionViewCell {
+        return cellProvider(self[indexPath], indexPath)
+    }
+
+    // MARK: - Filter
+
+    func filterEmojis(withQuery query: String) {
+        let lowercasedQuery = query.lowercased()
+        sections = initialSections.compactMap {
+            $0.filteredBySearchQuery(lowercasedQuery)
+        }
+    }
+
+    // MARK: - Recents
+
+    @discardableResult
+    func register(used emoji: Emoji) -> Update? {
         let shouldReload = recentlyUsed.register(emoji)
         let shouldInsert = insertRecentlyUsedSectionIfNeeded()
 
@@ -130,37 +163,105 @@ final class EmojiDataSource: NSObject, UICollectionViewDataSource {
         }
     }
 
-    @discardableResult func insertRecentlyUsedSectionIfNeeded() -> Bool {
-        guard let first = sections.first,
-              !(first is RecentlyUsedEmojiSection),
-              !recentlyUsed.emojis.isEmpty
-        else { return false }
+    @discardableResult
+    func insertRecentlyUsedSectionIfNeeded() -> Bool {
+        guard
+            let first = sections.first,
+            !(first is RecentlyUsedEmojiSection),
+            !recentlyUsed.items.isEmpty
+        else {
+            return false
+        }
+
         sections.insert(recentlyUsed, at: 0)
         return true
     }
 
-    func filterEmojis(withQuery query: String) {
-        if query.isEmpty {
-            sections = initialSections
-            return
-        }
-        sections = []
-        let uppercasedQuery = query.uppercased()
-        initialSections.forEach { section in
-            let filtered = section.emojis.filter {
-                guard let unicodeScalar = $0.value.unicodeScalars.first else { return false }
-                return (unicodeScalar.properties.name ?? "").uppercased().contains(uppercasedQuery)
-            }
-            guard !filtered.isEmpty else { return }
-            let newSection = FileEmojiSection(emojis: filtered, type: section.type)
-            sections.append(newSection)
-        }
-    }
 }
 
-enum EmojiSectionType: String {
+protocol EmojiDataSourceSection {
 
-    case recent, people, nature, food, travel, activities, objects, symbols, flags
+    var id: EmojiSectionType { get }
+    var items: [Emoji] { get }
+
+}
+
+extension EmojiDataSource {
+
+    typealias CellProvider = (Emoji, IndexPath) -> UICollectionViewCell
+
+    enum Update {
+
+        case insert(Int)
+        case reload(Int)
+
+    }
+
+    final class Section: EmojiDataSourceSection {
+
+        let id: EmojiSectionType
+        let image: ImageAsset
+        let emojiData: [EmojiData]
+        let items: [Emoji]
+
+        convenience init(
+            id: EmojiSectionType,
+            emojiData: [EmojiData]
+        ) {
+            self.init(
+                id: id,
+                image: id.imageAsset,
+                emojiData: emojiData
+            )
+        }
+
+        init(
+            id: EmojiSectionType,
+            image: ImageAsset,
+            emojiData: [EmojiData]
+        ) {
+            self.id = id
+            self.image = image
+            self.emojiData = emojiData
+            self.items = emojiData.map { Emoji(value: $0.value) }
+        }
+
+        func filteredBySearchQuery(_ query: String) -> Section? {
+            guard !query.isEmpty else {
+                return self
+            }
+
+            let filteredData = emojiData.filter {
+                $0.matchesSearchQuery(query)
+            }
+
+            guard !filteredData.isEmpty else {
+                return nil
+            }
+
+            return Section(
+                id: id,
+                image: image,
+                emojiData: filteredData
+            )
+        }
+
+    }
+
+}
+
+// TODO: rename EmojiDataSource.SectionID
+enum EmojiSectionType: Int {
+
+    case recent
+    case people
+    case nature
+    case food
+    case travel
+    case activities
+    case objects
+    case symbols
+    case flags
 
     var icon: StyleKitIcon {
         switch self {
@@ -190,12 +291,14 @@ enum EmojiSectionType: String {
         }
     }
 
+    // TODO: to delete?
     static var all: [EmojiSectionType] {
         var all = basicTypes
         all.insert(EmojiSectionType.recent, at: 0)
         return all
     }
 
+    // TODO: to delete?
     static var basicTypes: [EmojiSectionType] {
         return [
             .people,
@@ -208,35 +311,40 @@ enum EmojiSectionType: String {
             .flags
         ]
     }
+
 }
 
-protocol EmojiSection {
-    var emojis: [Emoji] { get }
-    var type: EmojiSectionType { get }
-}
+private extension EmojiCategory {
 
-extension EmojiSection {
-    subscript(index: Int) -> Emoji {
-        return emojis[index]
-    }
-}
+    var sectionID: EmojiSectionType? {
+        switch self {
+        case .smileysAndEmotion, .peopleAndBody:
+            return .people
 
-struct FileEmojiSection: EmojiSection {
+        case .animalsAndNature:
+            return .nature
 
-    let emojis: [Emoji]
-    let type: EmojiSectionType
+        case .foodAndDrink:
+            return .food
 
-    init?(_ type: EmojiSectionType) {
-        let filename = "emoji_\(type.rawValue)"
-        guard let url = Bundle.main.url(forResource: filename, withExtension: "plist") else { return nil }
-        guard let emojis = NSArray(contentsOf: url) as? [String] else { return nil }
-        self.emojis = emojis.map { Emoji(value: $0) }
-        self.type = type
-    }
+        case .activities:
+            return .activities
 
-    init(emojis: [Emoji], type: EmojiSectionType) {
-        self.emojis = emojis
-        self.type = type
+        case .travelAndPlaces:
+            return .travel
+
+        case .objects:
+            return .objects
+
+        case .symbols:
+            return .symbols
+
+        case .flags:
+            return .flags
+
+        case .component:
+            return nil
+        }
     }
 
 }

@@ -18,11 +18,10 @@
 
 import Foundation
 
-final class RecentlyUsedEmojiSection: NSObject, EmojiSection {
+final class RecentlyUsedEmojiSection: NSObject, EmojiDataSourceSection {
 
-    let type: EmojiSectionType = .recent
-
-    private(set) var emojis = [Emoji]()
+    let id = EmojiSectionType.recent
+    private(set) var items = [Emoji]()
     private let backing: NSMutableOrderedSet
     private let capacity: Int
 
@@ -45,7 +44,7 @@ final class RecentlyUsedEmojiSection: NSObject, EmojiSection {
     }
 
     private func updateContent() {
-        defer { emojis = backing.array as! [Emoji] }
+        defer { items = backing.array as! [Emoji] }
         guard backing.count > capacity else { return }
         backing.removeObjects(at: IndexSet(integersIn: capacity..<backing.count))
     }
@@ -64,7 +63,7 @@ final class RecentlyUsedEmojiPeristenceCoordinator {
 
         let stringValues = section.emojis.map { $0.value }
         FileManager.default.createAndProtectDirectory(at: directoryUrl)
-        (stringValues as NSArray).write(to: emojiUrl, atomically: true)
+        (section.items as NSArray).write(to: emojiUrl, atomically: true)
     }
 
     private static func loadFromDisk() -> RecentlyUsedEmojiSection? {
