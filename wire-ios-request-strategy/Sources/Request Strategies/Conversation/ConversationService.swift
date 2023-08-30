@@ -90,7 +90,8 @@ public final class ConversationService: ConversationServiceInterface {
 
     public func createOneToOneConversation(
         user: ZMUser,
-        completion: @escaping (Swift.Result<ZMConversation, ConversationCreationFailure>) -> Void) {
+        completion: @escaping (Swift.Result<ZMConversation, ConversationCreationFailure>) -> Void
+    ) {
             internalCreateGroupConversation(teamID: user.teamIdentifier,
                                             name: nil,
                                             users: [user],
