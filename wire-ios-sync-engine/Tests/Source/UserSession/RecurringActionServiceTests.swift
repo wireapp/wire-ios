@@ -46,11 +46,11 @@ class RecurringActionServiceTests: ZMTBaseTest {
         let action = RecurringAction(id: actionID, interval: 5, perform: {})
 
         // when
-        XCTAssertEqual(sut.actions.count, 0)
+        XCTAssertEqual(sut.actionsByID.count, 0)
         sut.registerAction(action)
 
         // then
-        XCTAssertEqual(sut.actions.count, 1)
+        XCTAssertEqual(sut.actionsByID.count, 1)
     }
 
     func testThatItPerformsAction() {
@@ -79,6 +79,25 @@ class RecurringActionServiceTests: ZMTBaseTest {
 
         // then
         XCTAssertFalse(actionPerformed)
+    }
+
+    func testThatItForcePerformsAction() {
+        // given
+        sut.persistLastCheckDate(for: actionID)
+        let action = RecurringAction(
+            id: actionID,
+            interval: 100,
+            perform: { self.actionPerformed = true }
+        )
+
+        sut.registerAction(action)
+        XCTAssertFalse(actionPerformed)
+
+        // when
+        sut.forcePerformAction(id: actionID)
+
+        // then
+        XCTAssertTrue(actionPerformed)
     }
 
 }

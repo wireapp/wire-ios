@@ -334,10 +334,23 @@ public class ZMUserSession: NSObject {
     }
 
     private func updateSupportedProtocolsIfNeeded() {
-        // TODO: check every 24hours
-        let service = SupportedProtocolsService(context: viewContext)
-        service.updateSupportedProtocols()
+        let recurringAction = RecurringAction(
+            id: "\(account.userIdentifier).updateSupportedProtocols",
+            interval: .oneDay
+        ) { [weak self] in
+            guard let context = self?.syncContext else { return }
 
+            context.perform {
+                let service = SupportedProtocolsService(context: context)
+                service.updateSupportedProtocols()
+
+            }
+        }
+
+        recurringActionService.registerAction(recurringAction)
+
+        // The action should run once on every launch, then each 24 hours thereafter.
+        recurringActionService.forcePerformAction(id: recurringAction.id)
     }
 
     private func configureTransportSession() {

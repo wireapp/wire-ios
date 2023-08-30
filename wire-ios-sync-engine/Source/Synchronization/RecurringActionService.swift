@@ -18,6 +18,14 @@
 
 import Foundation
 
+protocol RecurringActionServiceInterface {
+
+    func registerAction(_ action: RecurringAction)
+    func performActionsIfNeeded()
+    func forcePerformAction(id: String)
+
+}
+
 struct RecurringAction {
 
     typealias Action = () -> Void
@@ -28,38 +36,37 @@ struct RecurringAction {
 
 }
 
-protocol RecurringActionServiceInterface {
-
-    func performActionsIfNeeded()
-    func registerAction(_ action: RecurringAction)
-
-}
-
 class RecurringActionService: RecurringActionServiceInterface {
 
-    var actions = [RecurringAction]()
+    // MARK: - Properties
 
     var storage: UserDefaults = .standard
+    private(set) var actionsByID = [String: RecurringAction]()
+
+    // MARK: - Methods
+
+    public func registerAction(_ action: RecurringAction) {
+        actionsByID[action.id] = action
+    }
 
     public func performActionsIfNeeded() {
-
-        actions.forEach { action in
-
-            guard let lastActionDate = lastCheckDate(for: action.id) else {
-                persistLastCheckDate(for: action.id)
+        for (id, action) in actionsByID {
+            guard let lastActionDate = lastCheckDate(for: id) else {
+                persistLastCheckDate(for: id)
                 return
             }
 
             if (lastActionDate + action.interval) <= Date() {
                 action.perform()
-                persistLastCheckDate(for: action.id)
+                persistLastCheckDate(for: id)
             }
-
         }
     }
 
-    public func registerAction(_ action: RecurringAction) {
-        actions.append(action)
+    public func forcePerformAction(id: String) {
+        guard let action = actionsByID[id] else { return }
+        action.perform()
+        persistLastCheckDate(for: id)
     }
 
     // MARK: - Helpers

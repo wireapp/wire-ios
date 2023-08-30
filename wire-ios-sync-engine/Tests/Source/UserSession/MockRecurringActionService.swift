@@ -22,15 +22,20 @@ import Foundation
 class MockRecurringActionService: RecurringActionServiceInterface {
 
     var performActionsIsCalled: Bool = false
+    var forcePerformedActions = Set<String>()
 
     var actions = [RecurringAction]()
+
+    func registerAction(_ action: RecurringAction) {
+        actions.append(action)
+    }
 
     func performActionsIfNeeded() {
         performActionsIsCalled = true
     }
 
-    func registerAction(_ action: RecurringAction) {
-        actions.append(action)
+    func forcePerformAction(id: String) {
+        forcePerformedActions.insert(id)
     }
 
 }
