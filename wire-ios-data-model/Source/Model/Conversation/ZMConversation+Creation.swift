@@ -110,14 +110,14 @@ extension ZMConversation {
                                                readReceipts: Bool = false,
                                                participantsRole: Role? = nil) -> ZMConversation? {
         return insertConversation(moc: moc,
-                                       participants: participants,
-                                       name: name,
-                                       team: team,
-                                       allowGuests: allowGuests,
-                                       allowServices: allowServices,
-                                       readReceipts: readReceipts,
-                                       participantsRole: participantsRole,
-                                       type: .group)
+                                  participants: participants,
+                                  name: name,
+                                  team: team,
+                                  allowGuests: allowGuests,
+                                  allowServices: allowServices,
+                                  readReceipts: readReceipts,
+                                  participantsRole: participantsRole,
+                                  type: .group)
     }
 
     /// FOR TESTS ONLY.
