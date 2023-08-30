@@ -1,4 +1,5 @@
 {
+    "title" : "Anta Federation Environment",
     "endpoints" : {
         "backendURL" : "https://nginz-https.anta.wire.link",
         "backendWSURL" : "https://nginz-ssl.anta.wire.link",
@@ -6,6 +7,5 @@
         "teamsURL" : "https://teams.anta.wire.link",
         "accountsURL" : "https://account.anta.wire.link",
         "websiteURL" : "https://wire.com"
-    },
-    "title" : "Anta Federation Environment"
+    }
 }

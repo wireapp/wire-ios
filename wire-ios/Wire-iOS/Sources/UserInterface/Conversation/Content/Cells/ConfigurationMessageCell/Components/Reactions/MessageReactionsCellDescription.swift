@@ -40,14 +40,13 @@ final class MessageReactionsCellDescription: ConversationMessageCellDescription 
             return MessageReactionMetadata(
                 emoji: Emoji(value: reaction),
                 count: UInt(usersWhoReacted.count),
-                isSelfUserReacting: usersWhoReacted.contains(where: \.isSelfUser),
-                performReaction: nil
+                isSelfUserReacting: usersWhoReacted.contains(where: \.isSelfUser)
             )
         }.sorted {
             return $0.count > $1.count
         }
 
-        self.configuration = View.Configuration(reactions: reactions)
+        self.configuration = reactions
     }
 
     var topMargin: Float = 0
