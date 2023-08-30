@@ -44,7 +44,8 @@ extension ConversationListViewController.ViewModel: StartUIDelegate {
     ///   - onConversationCreated: a ConversationCreatedBlock which has the conversation created
     private func oneToOneConversationWithUser(
         _ user: UserType,
-        callback onConversationCreated: @escaping ConversationCreatedBlock) {
+        callback onConversationCreated: @escaping ConversationCreatedBlock
+    ) {
             guard let userSession = ZMUserSession.shared() else { return }
 
             viewController?.setState(.conversationList, animated: true) {
