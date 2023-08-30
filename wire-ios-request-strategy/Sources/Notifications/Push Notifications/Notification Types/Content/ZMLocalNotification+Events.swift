@@ -90,22 +90,24 @@ private class EventNotificationBuilder: NotificationBuilder {
     }
 
     func shouldCreateNotification() -> Bool {
-        // if there is a sender, it's not the selfUser
-        if let sender = self.sender, sender.isSelfUser { return false }
-
-        if let conversation = conversation {
-            if conversation.mutedMessageTypesIncludingAvailability != .none {
-                return false
-            }
-
-            if let timeStamp = event.timestamp,
-                let lastRead = conversation.lastReadServerTimeStamp, lastRead.compare(timeStamp) != .orderedAscending {
-                // don't show notifications that have already been read
-                return false
-            }
-        }
-
-        return true
+        // we're blocking notifications about received reactions for next sprint. For details: https://wearezeta.atlassian.net/browse/WPB-4239
+        return false
+//        // if there is a sender, it's not the selfUser
+//        if let sender = self.sender, sender.isSelfUser { return false }
+//
+//        if let conversation = conversation {
+//            if conversation.mutedMessageTypesIncludingAvailability != .none {
+//                return false
+//            }
+//
+//            if let timeStamp = event.timestamp,
+//                let lastRead = conversation.lastReadServerTimeStamp, lastRead.compare(timeStamp) != .orderedAscending {
+//                // don't show notifications that have already been read
+//                return false
+//            }
+//        }
+//
+//        return true
     }
 
     func titleText() -> String? {
