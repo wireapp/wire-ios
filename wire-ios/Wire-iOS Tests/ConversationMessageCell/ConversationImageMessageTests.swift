@@ -19,16 +19,22 @@
 import XCTest
 @testable import Wire
 
-final class ConversationImageMessageTests: ZMSnapshotTestCase {
+final class ConversationImageMessageTests: BaseSnapshotTestCase {
+
+    // MARK: - Properties
 
     var image: UIImage!
     var message: MockMessage!
+
+    // MARK: - setUp
 
     override func setUp() {
         super.setUp()
 
         UIColor.setAccentOverride(.vividRed)
     }
+
+    // MARK: - tearDown
 
     override func tearDown() {
         image = nil
@@ -38,12 +44,16 @@ final class ConversationImageMessageTests: ZMSnapshotTestCase {
         super.tearDown()
     }
 
+    // MARK: - Helper Method
+
     private func createSut(imageName: String) {
         image = image(inTestBundleNamed: imageName)
         message = MockMessageFactory.imageMessage(with: image)
         let sender = MockUserType.createDefaultOtherUser()
         message.senderUser = sender
     }
+
+    // MARK: - Snapshot Tests
 
     func testTransparentImage() {
         // GIVEN
