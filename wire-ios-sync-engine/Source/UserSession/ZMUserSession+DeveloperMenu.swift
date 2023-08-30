@@ -16,14 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 import Foundation
 import WireDataModel
 
 extension ZMUserSession {
 
     public func setBogusLastEventID() {
-        lastEventIDRepository.storeLastEventID(UUID())
+        let uuidV1 = UUID(uuidString: "0747b970-472d-11ee-be56-0242ac120002")
+        lastEventIDRepository.storeLastEventID(uuidV1)
     }
 
 }

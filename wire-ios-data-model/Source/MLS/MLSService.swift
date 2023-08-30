@@ -840,7 +840,15 @@ public final class MLSService: MLSServiceInterface {
     }
 
     private func repairConversation(_ conversation: ZMConversation) async throws {
-        guard let groupID = conversation.mlsGroupID else {
+        guard let context = context else { return }
+
+        var groupID: MLSGroupID?
+
+        context.performAndWait {
+            groupID = conversation.mlsGroupID
+        }
+
+        guard let groupID = groupID else {
             throw ConversationRepairError.missingGroupID
         }
 
