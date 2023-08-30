@@ -90,24 +90,22 @@ private class EventNotificationBuilder: NotificationBuilder {
     }
 
     func shouldCreateNotification() -> Bool {
-        // we're blocking notifications about received reactions for next sprint. For details: https://wearezeta.atlassian.net/browse/WPB-4239
-        return false
-//        // if there is a sender, it's not the selfUser
-//        if let sender = self.sender, sender.isSelfUser { return false }
-//
-//        if let conversation = conversation {
-//            if conversation.mutedMessageTypesIncludingAvailability != .none {
-//                return false
-//            }
-//
-//            if let timeStamp = event.timestamp,
-//                let lastRead = conversation.lastReadServerTimeStamp, lastRead.compare(timeStamp) != .orderedAscending {
-//                // don't show notifications that have already been read
-//                return false
-//            }
-//        }
-//
-//        return true
+        // if there is a sender, it's not the selfUser
+        if let sender = self.sender, sender.isSelfUser { return false }
+
+        if let conversation = conversation {
+            if conversation.mutedMessageTypesIncludingAvailability != .none {
+                return false
+            }
+
+            if let timeStamp = event.timestamp,
+                let lastRead = conversation.lastReadServerTimeStamp, lastRead.compare(timeStamp) != .orderedAscending {
+                // don't show notifications that have already been read
+                return false
+            }
+        }
+
+        return true
     }
 
     func titleText() -> String? {
@@ -167,17 +165,20 @@ private class ReactionEventNotificationBuilder: EventNotificationBuilder {
     }
 
     override func shouldCreateNotification() -> Bool {
-        guard super.shouldCreateNotification() else { return false }
+        return false
+        // we're blocking notifications about received reactions for next sprint. For details: https://wearezeta.atlassian.net/browse/WPB-4239
 
-        // If the message is an "unlike", we don't want to display a notification
-        guard message.reaction.emoji != "" else { return false }
-
-        // fetch message that was reacted to and make sure the sender of the original message is the selfUser
-        guard let conversation = conversation,
-              let reactionMessage = ZMMessage.fetch(withNonce: UUID(uuidString: message.reaction.messageID), for: conversation, in: moc),
-            reactionMessage.sender == ZMUser.selfUser(in: moc) else { return false }
-
-        return true
+//        guard super.shouldCreateNotification() else { return false }
+//
+//        // If the message is an "unlike", we don't want to display a notification
+//        guard message.reaction.emoji != "" else { return false }
+//
+//        // fetch message that was reacted to and make sure the sender of the original message is the selfUser
+//        guard let conversation = conversation,
+//              let reactionMessage = ZMMessage.fetch(withNonce: UUID(uuidString: message.reaction.messageID), for: conversation, in: moc),
+//            reactionMessage.sender == ZMUser.selfUser(in: moc) else { return false }
+//
+//        return true
     }
 
     override func userInfo() -> NotificationUserInfo? {
