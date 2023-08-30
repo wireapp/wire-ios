@@ -1236,6 +1236,7 @@
 		EE01D08725ADA3D5001DB205 /* AppLockModule.Router.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE01D08225ADA3D5001DB205 /* AppLockModule.Router.swift */; };
 		EE01D08825ADA3D5001DB205 /* AppLockModule.Interactor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE01D08325ADA3D5001DB205 /* AppLockModule.Interactor.swift */; };
 		EE01D08925ADA3D5001DB205 /* AppLockModule.View.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE01D08425ADA3D5001DB205 /* AppLockModule.View.swift */; };
+		EE0768EE2A9FB99700BA47A3 /* EmojiRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0768ED2A9FB99700BA47A3 /* EmojiRepository.swift */; };
 		EE08ADED29C8862800B6C14D /* SwitchBackendView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE08ADEC29C8862800B6C14D /* SwitchBackendView.swift */; };
 		EE08ADEF29C8863000B6C14D /* SwitchBackendViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE08ADEE29C8863000B6C14D /* SwitchBackendViewModel.swift */; };
 		EE09DE6025B24B2000B515F0 /* AppLockModuleRouterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE09DE5E25B24B2000B515F0 /* AppLockModuleRouterTests.swift */; };
@@ -3245,6 +3246,7 @@
 		EE01D08225ADA3D5001DB205 /* AppLockModule.Router.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockModule.Router.swift; sourceTree = "<group>"; };
 		EE01D08325ADA3D5001DB205 /* AppLockModule.Interactor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockModule.Interactor.swift; sourceTree = "<group>"; };
 		EE01D08425ADA3D5001DB205 /* AppLockModule.View.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockModule.View.swift; sourceTree = "<group>"; };
+		EE0768ED2A9FB99700BA47A3 /* EmojiRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmojiRepository.swift; sourceTree = "<group>"; };
 		EE08ADEC29C8862800B6C14D /* SwitchBackendView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwitchBackendView.swift; sourceTree = "<group>"; };
 		EE08ADEE29C8863000B6C14D /* SwitchBackendViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwitchBackendViewModel.swift; sourceTree = "<group>"; };
 		EE09DE5E25B24B2000B515F0 /* AppLockModuleRouterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockModuleRouterTests.swift; sourceTree = "<group>"; };
@@ -6917,6 +6919,7 @@
 				BFA25DC81D9A8D0B0086DEBD /* EmojiKeyboardViewController.swift */,
 				BF515F931D9D1C1900C786FB /* EmojiSectionViewController.swift */,
 				BFA25DCA1D9AB88A0086DEBD /* Emojis.swift */,
+				EE0768ED2A9FB99700BA47A3 /* EmojiRepository.swift */,
 				EE961C1F2A9F036A008127A6 /* EmojiData.swift */,
 				BFCF31D41D9E91880039B3DC /* RecentlyUsedEmojis.swift */,
 			);
@@ -8608,6 +8611,7 @@
 				1671D6D1200CDC380022D289 /* InviteTeamMemberCell.swift in Sources */,
 				D5D65A11207509F300D7F3C3 /* BackupPasswordViewController.swift in Sources */,
 				5EC7C87A219038F6004662AC /* ImageResourceThumbnailView.swift in Sources */,
+				EE0768EE2A9FB99700BA47A3 /* EmojiRepository.swift in Sources */,
 				87AC77DB1DE48C01009F6D56 /* Copyable.swift in Sources */,
 				EF207B3922083E8000738E84 /* ZMUserSessionInterface.swift in Sources */,
 				EF95B054227C782D005A060A /* ConversationInputBarViewController+TypingIndicator.swift in Sources */,

@@ -80,30 +80,46 @@ final class EmojiDataSource: NSObject, UICollectionViewDataSource {
     private var sections: [EmojiDataSourceSection]
     private let recentlyUsed: RecentlyUsedEmojiSection
 
+    private let emojiRepository: EmojiRepositoryInterface
+
     // MARK: - Life cycle
 
-    init(provider: @escaping CellProvider) {
+    init(
+        provider: @escaping CellProvider,
+        emojiRepository: EmojiRepositoryInterface = EmojiRepository()
+    ) {
         cellProvider = provider
+        self.emojiRepository = emojiRepository
+
+        let smileysAndEmotion = emojiRepository.emojis(for: .smileysAndEmotion)
+        let peopleAndBody = emojiRepository.emojis(for: .peopleAndBody)
+        let animalsAndNature = emojiRepository.emojis(for: .animalsAndNature)
+        let foodAndDrink = emojiRepository.emojis(for: .foodAndDrink)
+        let activities = emojiRepository.emojis(for: .activities)
+        let travelAndPlaces = emojiRepository.emojis(for: .travelAndPlaces)
+        let objects = emojiRepository.emojis(for: .objects)
+        let symbols = emojiRepository.emojis(for: .symbols)
+        let flags = emojiRepository.emojis(for: .flags)
+
+        initialSections = [
+            Section(id: .people, emojiData: smileysAndEmotion + peopleAndBody),
+            Section(id: .nature, emojiData: animalsAndNature),
+            Section(id: .food, emojiData: foodAndDrink),
+            Section(id: .activities, emojiData: activities),
+            Section(id: .travel, emojiData: travelAndPlaces),
+            Section(id: .objects, emojiData: objects),
+            Section(id: .symbols, emojiData: symbols),
+            Section(id: .flags, emojiData: flags)
+        ]
+
         recentlyUsed = RecentlyUsedEmojiPeristenceCoordinator.loadOrCreate()
-        initialSections = Self.loadEmojiSections()
         sections = initialSections
+
         super.init()
         insertRecentlyUsedSectionIfNeeded()
     }
 
     // MARK: - Helpers
-
-    private static func loadEmojiSections() -> [Section] {
-        guard let emojis = try? EmojiData.loadAllFromDisk() else {
-            return []
-        }
-
-        return emojis
-            .sorted { $0.sortOrder < $1.sortOrder }
-            .partition(by: \.category.sectionID)
-            .map(Section.init)
-            .sorted { $0.id.rawValue < $1.id.rawValue }
-    }
 
     subscript (index: Int) -> EmojiDataSourceSection {
         return sections[index]
@@ -310,41 +326,6 @@ enum EmojiSectionType: Int {
             .symbols,
             .flags
         ]
-    }
-
-}
-
-private extension EmojiCategory {
-
-    var sectionID: EmojiSectionType? {
-        switch self {
-        case .smileysAndEmotion, .peopleAndBody:
-            return .people
-
-        case .animalsAndNature:
-            return .nature
-
-        case .foodAndDrink:
-            return .food
-
-        case .activities:
-            return .activities
-
-        case .travelAndPlaces:
-            return .travel
-
-        case .objects:
-            return .objects
-
-        case .symbols:
-            return .symbols
-
-        case .flags:
-            return .flags
-
-        case .component:
-            return nil
-        }
     }
 
 }

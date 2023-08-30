@@ -69,4 +69,3 @@ enum EmojiCategory: String, CaseIterable, Decodable {
     case component = "Component"
 
 }
-
