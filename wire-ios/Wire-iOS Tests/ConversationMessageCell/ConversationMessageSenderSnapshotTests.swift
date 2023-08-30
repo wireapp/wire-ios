@@ -20,7 +20,9 @@ import SnapshotTesting
 import XCTest
 @testable import Wire
 
-final class ConversationMessageSenderSnapshotTests: ZMSnapshotTestCase {
+final class ConversationMessageSenderSnapshotTests: BaseSnapshotTestCase {
+
+    // MARK: - Properties
 
     var sut: SenderCellComponent!
     var teamID = UUID()
@@ -28,6 +30,8 @@ final class ConversationMessageSenderSnapshotTests: ZMSnapshotTestCase {
     var oneToOneConversation: SwiftMockConversation!
     var mockUser: MockUserType!
     var mockSelfUser: MockUserType!
+
+    // MARK: - setUp
 
     override func setUp() {
         super.setUp()
@@ -44,6 +48,8 @@ final class ConversationMessageSenderSnapshotTests: ZMSnapshotTestCase {
         sut.backgroundColor = SemanticColors.View.backgroundConversationView
     }
 
+    // MARK: - tearDown
+
     override func tearDown() {
         sut = nil
         groupConversation = nil
@@ -52,6 +58,8 @@ final class ConversationMessageSenderSnapshotTests: ZMSnapshotTestCase {
         mockSelfUser = nil
         super.tearDown()
     }
+
+    // MARK: - Snapshot Tests
 
     // MARK: - 1:1
 
@@ -69,7 +77,6 @@ final class ConversationMessageSenderSnapshotTests: ZMSnapshotTestCase {
     func test_SenderIsExternal_OneOnOneConversation_DarkMode() {
         // GIVEN
         sut.overrideUserInterfaceStyle = .dark
-
         mockUser.teamRole = .partner
 
         // WHEN
@@ -144,7 +151,6 @@ final class ConversationMessageSenderSnapshotTests: ZMSnapshotTestCase {
         // GIVEN
         sut.overrideUserInterfaceStyle = .dark
         mockUser.teamIdentifier = nil
-
         mockUser.isGuestInConversation = true
 
         // WHEN
