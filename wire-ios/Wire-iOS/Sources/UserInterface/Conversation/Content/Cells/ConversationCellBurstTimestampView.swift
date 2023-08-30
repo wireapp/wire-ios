@@ -134,7 +134,7 @@ final class ConversationCellBurstTimestampView: UIView {
             label.text = timestamp.olderThanOneWeekdateFormatter.string(from: timestamp).localized.capitalized
         } else {
             isSeparatorHidden = false
-            label.text = timestamp.formattedDate.localized.capitalized
+            label.text = timestamp.formattedDate.localized
         }
 
         label.font = burstBoldFont
