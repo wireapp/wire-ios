@@ -16,13 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import SnapshotTesting
 import XCTest
 import WireLinkPreview
 @testable import Wire
 
-final class ConversationTextMessageTests: ZMSnapshotTestCase {
+final class ConversationTextMessageTests: BaseSnapshotTestCase {
+
+    // MARK: - Properties
 
     var mockOtherUser: MockUserType!
+
+    // MARK: - setUp
 
     override func setUp() {
         super.setUp()
@@ -31,11 +36,15 @@ final class ConversationTextMessageTests: ZMSnapshotTestCase {
         mockOtherUser = MockUserType.createConnectedUser(name: "Bruno")
     }
 
+    // MARK: - tearDown
+
     override func tearDown() {
         mockOtherUser = nil
 
         super.tearDown()
     }
+
+    // MARK: - Snapshot Tests
 
     func testPlainText() {
         // GIVEN

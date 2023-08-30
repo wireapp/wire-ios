@@ -40,7 +40,7 @@ class AuthenticatedRouter: NSObject {
     private let rootViewController: RootViewController
     private let activeCallRouter: ActiveCallRouter
     private weak var _viewController: ZClientViewController?
-    private let featureRepository: FeatureRepositoryProvider
+    private let featureRepositoryProvider: FeatureRepositoryProvider
 
     // MARK: - Public Property
 
@@ -57,7 +57,7 @@ class AuthenticatedRouter: NSObject {
          selfUser: SelfUserType,
          isComingFromRegistration: Bool,
          needToShowDataUsagePermissionDialog: Bool,
-         featureRepository: FeatureRepositoryProvider) {
+         featureRepositoryProvider: FeatureRepositoryProvider) {
 
         self.rootViewController = rootViewController
         activeCallRouter = ActiveCallRouter(rootviewController: rootViewController)
@@ -67,7 +67,7 @@ class AuthenticatedRouter: NSObject {
                                          isComingFromRegistration: needToShowDataUsagePermissionDialog,
                                          needToShowDataUsagePermissionDialog: needToShowDataUsagePermissionDialog)
 
-        self.featureRepository = featureRepository
+        self.featureRepositoryProvider = featureRepositoryProvider
 
         super.init()
 
@@ -83,7 +83,7 @@ class AuthenticatedRouter: NSObject {
     private func notifyFeatureChange(_ note: Notification) {
         guard
             let change = note.object as? FeatureRepository.FeatureChange,
-            let alert = UIAlertController.fromFeatureChange(change, acknowledger: featureRepository.featureRepository)
+            let alert = UIAlertController.fromFeatureChange(change, acknowledger: featureRepositoryProvider.featureRepository)
         else {
             return
         }

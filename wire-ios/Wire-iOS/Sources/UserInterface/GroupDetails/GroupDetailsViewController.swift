@@ -21,12 +21,12 @@ import WireSyncEngine
 
 final class GroupDetailsViewController: UIViewController, ZMConversationObserver, GroupDetailsFooterViewDelegate {
 
-    fileprivate let collectionViewController: SectionCollectionViewController
-    fileprivate let conversation: GroupDetailsConversationType
-    fileprivate let footerView = GroupDetailsFooterView()
-    fileprivate var token: NSObjectProtocol?
+    private let collectionViewController: SectionCollectionViewController
+    private let conversation: GroupDetailsConversationType
+    private let footerView = GroupDetailsFooterView()
+    private var token: NSObjectProtocol?
     var actionController: ConversationActionController?
-    fileprivate var renameGroupSectionController: RenameGroupSectionController?
+    private var renameGroupSectionController: RenameGroupSectionController?
     private var syncObserver: InitialSyncObserver!
 
     var didCompleteInitialSync = false {
@@ -48,6 +48,10 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
         createSubviews()
 
         if let conversation = conversation as? ZMConversation {
+            ZMUserSession.shared()?.perform {
+                conversation.refetchParticipantsIfNeeded()
+            }
+
             token = ConversationChangeInfo.add(observer: self, for: conversation)
             if let session = ZMUserSession.shared() {
                 syncObserver = InitialSyncObserver(in: session) { [weak self] completed in
@@ -259,7 +263,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
 
 extension GroupDetailsViewController {
 
-    fileprivate var legalholdItem: UIBarButtonItem {
+    private var legalholdItem: UIBarButtonItem {
         let item = UIBarButtonItem(icon: .legalholdactive, target: self, action: #selector(presentLegalHoldDetails))
         item.setLegalHoldAccessibility()
         item.tintColor = SemanticColors.Icon.foregroundDefaultRed
@@ -286,10 +290,6 @@ extension GroupDetailsViewController: ProfileViewControllerDelegate {
         dismiss(animated: true) {
             ZClientViewController.shared?.load(conversation, scrollTo: nil, focusOnView: true, animated: true)
         }
-    }
-
-    func profileViewController(_ controller: ProfileViewController?, wantsToCreateConversationWithName name: String?, users: UserSet) {
-        // no-op
     }
 }
 
@@ -340,6 +340,16 @@ extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, Gro
         let menu = ConversationNotificationOptionsViewController(conversation: conversation, userSession: .shared()!)
         menu.dismisser = self
         navigationController?.pushViewController(menu, animated: animated)
+    }
+
+}
+
+extension ZMConversation {
+
+    func refetchParticipantsIfNeeded() {
+        for user in sortedOtherParticipants where user.isPendingMetadataRefresh {
+            user.refreshData()
+        }
     }
 
 }

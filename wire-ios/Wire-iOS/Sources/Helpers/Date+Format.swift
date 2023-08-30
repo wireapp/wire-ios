@@ -17,11 +17,11 @@
 //
 
 import Foundation
-import FormatterKit
 
 // Creating and configuring date formatters is insanely expensive.
 // This is why there’s a bunch of statically configured ones here that are reused.
 public class WRDateFormatter {
+    static let NSTimeIntervalOneMinute = 60.0
     static let NSTimeIntervalOneHour = 3600.0
     static let DayMonthYearUnits = Set<Calendar.Component>([.day, .month, .year])
     static let WeekMonthYearUnits = Set<Calendar.Component>([.weekOfMonth, .month, .year])
@@ -35,15 +35,11 @@ public class WRDateFormatter {
         return timeFormatter
     }()
 
-    static var timeIntervalFormatter: TTTTimeIntervalFormatter = {
-        let locale = Locale.current
-        let timeFormatter = TTTTimeIntervalFormatter()
-        timeFormatter.presentTimeIntervalMargin = 60
-        timeFormatter.locale = locale
-        timeFormatter.usesApproximateQualifier = false
-        timeFormatter.usesIdiomaticDeicticExpressions = true
-
-        return timeFormatter
+    static var timeIntervalFormatter: RelativeDateTimeFormatter = {
+        let formatter = RelativeDateTimeFormatter()
+        formatter.unitsStyle = .full
+        formatter.dateTimeStyle = .named
+        return formatter
     }()
 
     static var todayYesterdayFormatter: DateFormatter = {
@@ -119,12 +115,13 @@ extension Date {
         let isThisWeek: Bool = thisWeekComponents == weekComponents
         var dateString = String()
 
-        // Date is within the last hour
-        if intervalSinceDate < WRDateFormatter.NSTimeIntervalOneHour {
-            dateString = WRDateFormatter.timeIntervalFormatter.string(forTimeInterval: -intervalSinceDate)
-        }
+        if intervalSinceDate < WRDateFormatter.NSTimeIntervalOneMinute {
+            dateString = L10n.Localizable.Time.justNow
+        } else if intervalSinceDate < WRDateFormatter.NSTimeIntervalOneHour {
+            // Date is within the last hour
+            dateString = WRDateFormatter.timeIntervalFormatter.localizedString(for: self, relativeTo: Date())
+        } else if isToday || isYesterday {
             // Date is from today or yesterday
-        else if isToday || isYesterday {
             let dateStyle: DateFormatter.Style = isToday ? .none : .medium
             WRDateFormatter.todayYesterdayFormatter.dateStyle = dateStyle
             dateString = WRDateFormatter.todayYesterdayFormatter.string(from: self)

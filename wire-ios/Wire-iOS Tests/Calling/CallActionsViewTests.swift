@@ -57,8 +57,8 @@ extension CallStateMock {
 
 class CallActionsViewTests: ZMSnapshotTestCase {
 
-    fileprivate var sut: CallActionsView!
-    fileprivate var widthConstraint: NSLayoutConstraint!
+    private var sut: CallActionsView!
+    private var widthConstraint: NSLayoutConstraint!
 
     override func setUp() {
         super.setUp()

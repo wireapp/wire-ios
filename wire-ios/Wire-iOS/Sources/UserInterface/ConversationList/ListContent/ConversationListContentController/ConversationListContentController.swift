@@ -52,8 +52,6 @@ final class ConversationListContentController: UICollectionViewController, Popov
         super.init(collectionViewLayout: flowLayout)
 
         registerSectionHeader()
-
-        NotificationCenter.default.addObserver(self, selector: #selector(showErrorAlertForConversationRequest), name: ZMConversation.missingLegalHoldConsentNotificationName, object: nil)
     }
 
     @available(*, unavailable)
@@ -93,12 +91,6 @@ final class ConversationListContentController: UICollectionViewController, Popov
             NotificationCenter.default.removeObserver(token)
             self.token = nil
         }
-    }
-
-    @objc
-    func showErrorAlertForConversationRequest() {
-        typealias ConversationError = L10n.Localizable.Error.Conversation
-        UIAlertController.showErrorAlert(title: ConversationError.title, message: ConversationError.missingLegalholdConsent)
     }
 
     private func activeMediaPlayerChanged() {
@@ -294,7 +286,7 @@ final class ConversationListContentController: UICollectionViewController, Popov
                 }
             }
 
-            return UIMenu(title: conversation.displayName, children: actions)
+            return UIMenu(title: conversation.displayNameWithFallback, children: actions)
         }
 
         return UIContextMenuConfiguration(identifier: indexPath as NSIndexPath,
@@ -331,11 +323,13 @@ final class ConversationListContentController: UICollectionViewController, Popov
             fatal("Unknown cell type")
         }
 
-        (cell as? SectionListCellType)?.sectionName = listViewModel.sectionCanonicalName(of: indexPath.section)
-        (cell as? SectionListCellType)?.cellIdentifier = "conversation_list_cell"
+        if let cell = cell as? SectionListCellType {
+            cell.sectionName = listViewModel.sectionCanonicalName(of: indexPath.section)
+            cell.obfuscatedSectionName = listViewModel.obfuscatedSectionName(of: indexPath.section)
+            cell.cellIdentifier = "conversation_list_cell"
+        }
 
         cell.autoresizingMask = .flexibleWidth
-
         return cell
     }
 }

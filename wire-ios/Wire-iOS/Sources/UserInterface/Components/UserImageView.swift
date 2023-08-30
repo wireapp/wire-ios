@@ -230,7 +230,7 @@ class UserImageView: AvatarImageView, ZMUserObserver {
             return
         }
 
-        let defaultAvatar = Avatar.text(initials.localizedUppercase)
+        let defaultAvatar = initials.isEmpty ? Avatar.image(Asset.Images.unavailableUser.image) : Avatar.text(initials.localizedUppercase)
         setAvatar(defaultAvatar, user: user, animated: false)
         if !ProcessInfo.processInfo.isRunningTests,
            let userSession = userSession as? ZMUserSession {

@@ -18,7 +18,7 @@
 import XCTest
 @testable import Wire
 
-final class CompositeMessageCellTests: XCTestCase {
+final class CompositeMessageCellTests: ZMSnapshotTestCase {
 
     typealias CellConfiguration = (MockMessage) -> Void
 
@@ -83,7 +83,7 @@ final class CompositeMessageCellTests: XCTestCase {
         return buttonItem
     }
 
-    fileprivate lazy var mockTextMessage = MockMessageFactory.textMessage(withText: "# Question:\nWho is/are your most favourite musician(s)  ?")
+    private lazy var mockTextMessage = MockMessageFactory.textMessage(withText: "# Question:\nWho is/are your most favourite musician(s)  ?")
 
     private func makeMessage(sender: UserType? = nil,
                              items: [CompositeMessageItem]) -> MockMessage {

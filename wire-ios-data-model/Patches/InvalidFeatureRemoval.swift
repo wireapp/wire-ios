@@ -55,8 +55,8 @@ enum InvalidFeatureRemoval {
             moc.delete(existingInstance)
         }
 
-        let featureRepository = FeatureRepository(context: moc)
-        featureRepository.storeConferenceCalling(.init())
+        let featureRespository = FeatureRepository(context: moc)
+        featureRespository.storeConferenceCalling(.init())
     }
 
 }

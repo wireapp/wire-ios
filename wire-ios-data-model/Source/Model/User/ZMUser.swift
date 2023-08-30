@@ -46,8 +46,8 @@ extension ZMUser: UserType {
 
     public var hasDigitalSignatureEnabled: Bool {
         guard let context = managedObjectContext else { return false }
-        let service = FeatureRepository(context: context)
-        return service.fetchDigitalSignature().status == .enabled
+        let featureRepository = FeatureRepository(context: context)
+        return featureRepository.fetchDigitalSignature().status == .enabled
     }
 
     public var previewImageData: Data? {
@@ -88,8 +88,12 @@ extension ZMUser: UserType {
         return role(in: conversation)?.name == ZMConversation.defaultAdminRoleName
     }
 
-    public func role(in conversation: ConversationLike?) -> Role? {
-        return participantRoles.first(where: { $0.conversation === conversation })?.role
+    public func role(in conversation: ConversationLike) -> Role? {
+        return participantRole(in: conversation)?.role
+    }
+
+    public func participantRole(in conversation: ConversationLike) -> ParticipantRole? {
+        return participantRoles.first { $0.conversation === conversation }
     }
 
     // MARK: Legal Hold

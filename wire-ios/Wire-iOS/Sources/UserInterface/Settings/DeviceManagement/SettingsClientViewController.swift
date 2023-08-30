@@ -39,9 +39,9 @@ final class SettingsClientViewController: UIViewController,
     // MARK: SpinnerCapable
     var dismissSpinner: SpinnerCompletion?
 
-    fileprivate static let deleteCellReuseIdentifier: String = "DeleteCellReuseIdentifier"
-    fileprivate static let resetCellReuseIdentifier: String = "ResetCellReuseIdentifier"
-    fileprivate static let verifiedCellReuseIdentifier: String = "VerifiedCellReuseIdentifier"
+    private static let deleteCellReuseIdentifier: String = "DeleteCellReuseIdentifier"
+    private static let resetCellReuseIdentifier: String = "ResetCellReuseIdentifier"
+    private static let verifiedCellReuseIdentifier: String = "VerifiedCellReuseIdentifier"
 
     let userClient: UserClient
 
@@ -121,7 +121,7 @@ final class SettingsClientViewController: UIViewController,
         }
     }
 
-    fileprivate func createTableView() {
+    private func createTableView() {
         let tableView = UITableView(frame: CGRect.zero, style: .grouped)
         tableView.delegate = self
         tableView.dataSource = self

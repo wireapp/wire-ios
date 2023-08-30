@@ -37,23 +37,23 @@ final class CollectionsViewController: UIViewController {
         return textSearchController.searchQuery?.components(separatedBy: .whitespacesAndNewlines) ?? []
     }
 
-    fileprivate var contentView: CollectionsView! {
+    private var contentView: CollectionsView! {
         return view as? CollectionsView
     }
-    fileprivate let messagePresenter = MessagePresenter()
-    fileprivate weak var selectedMessage: ZMConversationMessage? = .none
+    private let messagePresenter = MessagePresenter()
+    private weak var selectedMessage: ZMConversationMessage? = .none
 
-    fileprivate var imageMessages: [ZMConversationMessage] = []
-    fileprivate var videoMessages: [ZMConversationMessage] = []
-    fileprivate var linkMessages: [ZMConversationMessage] = []
-    fileprivate var fileAndAudioMessages: [ZMConversationMessage] = []
+    private var imageMessages: [ZMConversationMessage] = []
+    private var videoMessages: [ZMConversationMessage] = []
+    private var linkMessages: [ZMConversationMessage] = []
+    private var fileAndAudioMessages: [ZMConversationMessage] = []
 
-    fileprivate var collection: AssetCollectionWrapper!
+    private var collection: AssetCollectionWrapper!
 
-    fileprivate var lastLayoutSize: CGSize = .zero
-    fileprivate var deletionDialogPresenter: DeletionDialogPresenter?
+    private var lastLayoutSize: CGSize = .zero
+    private var deletionDialogPresenter: DeletionDialogPresenter?
 
-    fileprivate var fetchingDone: Bool = false {
+    private var fetchingDone: Bool = false {
         didSet {
             if isViewLoaded {
                 updateNoElementsState()
@@ -64,11 +64,11 @@ final class CollectionsViewController: UIViewController {
         }
     }
 
-    fileprivate var inOverviewMode: Bool {
+    private var inOverviewMode: Bool {
         return sections == .all
     }
 
-    fileprivate lazy var textSearchController: TextSearchViewController =  TextSearchViewController(conversation: collection.conversation)
+    private lazy var textSearchController: TextSearchViewController =  TextSearchViewController(conversation: collection.conversation)
 
     convenience init(conversation: ZMConversation) {
         let matchImages = CategoryMatch(including: .image, excluding: .GIF)
@@ -261,7 +261,7 @@ final class CollectionsViewController: UIViewController {
         return false
     }
 
-    fileprivate func updateNoElementsState() {
+    private func updateNoElementsState() {
         contentView.noItemsInLibrary = fetchingDone && inOverviewMode && totalNumberOfElements() == 0
     }
 
@@ -300,12 +300,12 @@ final class CollectionsViewController: UIViewController {
     }
 
     @objc
-    fileprivate func closeButtonPressed(_ button: UIButton) {
+    private func closeButtonPressed(_ button: UIButton) {
         onDismiss?(self)
     }
 
     @objc
-    fileprivate func backButtonPressed(_ button: UIButton) {
+    private func backButtonPressed(_ button: UIButton) {
         _ = navigationController?.popViewController(animated: true)
     }
 }
@@ -346,7 +346,7 @@ extension CollectionsViewController: AssetCollectionDelegate {
 
 extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
 
-    fileprivate func elements(for section: CollectionsSectionSet) -> [ZMConversationMessage] {
+    private func elements(for section: CollectionsSectionSet) -> [ZMConversationMessage] {
         switch section {
         case CollectionsSectionSet.images:
             return imageMessages
@@ -360,7 +360,7 @@ extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewD
         }
     }
 
-    fileprivate func numberOfElements(for section: CollectionsSectionSet) -> Int {
+    private func numberOfElements(for section: CollectionsSectionSet) -> Int {
         switch section {
         case CollectionsSectionSet.images:
             let max = inOverviewMode ? maxOverviewElementsInGrid(in: section) : Int.max
@@ -385,16 +385,16 @@ extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewD
         }
     }
 
-    fileprivate func totalNumberOfElements() -> Int {
+    private func totalNumberOfElements() -> Int {
         // Empty collection contains one element (loading cell)
         return CollectionsSectionSet.visible.map { numberOfElements(for: $0) }.reduce(0, +) - 1
     }
 
-    fileprivate func moreElementsToSee(in section: CollectionsSectionSet) -> Bool {
+    private func moreElementsToSee(in section: CollectionsSectionSet) -> Bool {
         return elements(for: section).count > numberOfElements(for: section)
     }
 
-    fileprivate func message(for indexPath: IndexPath) -> ZMConversationMessage {
+    private func message(for indexPath: IndexPath) -> ZMConversationMessage {
         guard let section = CollectionsSectionSet(index: UInt(indexPath.section)) else {
             fatal("Unknown section")
         }
@@ -402,7 +402,7 @@ extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewD
         return elements(for: section)[indexPath.row]
     }
 
-    fileprivate func gridElementSize(in section: CollectionsSectionSet) -> CGSize {
+    private func gridElementSize(in section: CollectionsSectionSet) -> CGSize {
         let sectionHorizontalInset = horizontalInset(in: section)
 
         let size = (contentView.collectionView.bounds.size.width - sectionHorizontalInset) / CGFloat(elementsPerLine(in: section))
@@ -410,7 +410,7 @@ extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewD
         return CGSize(width: size - 1, height: size - 1)
     }
 
-    fileprivate func elementsPerLine(in section: CollectionsSectionSet) -> Int {
+    private func elementsPerLine(in section: CollectionsSectionSet) -> Int {
         var count: Int = 1
         let sectionHorizontalInset = horizontalInset(in: section)
 
@@ -421,15 +421,15 @@ extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewD
         return count
     }
 
-    fileprivate func maxOverviewElementsInGrid(in section: CollectionsSectionSet) -> Int {
+    private func maxOverviewElementsInGrid(in section: CollectionsSectionSet) -> Int {
         return elementsPerLine(in: section) * 2 // 2 lines of elements
     }
 
-    fileprivate var maxOverviewElementsInTable: Int {
+    private var maxOverviewElementsInTable: Int {
         return 3
     }
 
-    fileprivate func sizeForCell(at indexPath: IndexPath) -> (CGFloat?, CGFloat?) {
+    private func sizeForCell(at indexPath: IndexPath) -> (CGFloat?, CGFloat?) {
         guard let section = CollectionsSectionSet(index: UInt(indexPath.section)) else {
             fatal("Unknown section")
         }
@@ -468,12 +468,12 @@ extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewD
         return (desiredWidth, desiredHeight)
     }
 
-    fileprivate func horizontalInset(in section: CollectionsSectionSet) -> CGFloat {
+    private func horizontalInset(in section: CollectionsSectionSet) -> CGFloat {
         let insets = sectionInsets(in: section)
         return insets.left + insets.right
     }
 
-    fileprivate func sectionInsets(in section: CollectionsSectionSet) -> UIEdgeInsets {
+    private func sectionInsets(in section: CollectionsSectionSet) -> UIEdgeInsets {
         if section == CollectionsSectionSet.loading {
             return UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
         }
@@ -738,11 +738,6 @@ extension CollectionsViewController: CollectionCellDelegate {
         case .cancel:
             ZMUserSession.shared()?.enqueue {
                 message.fileMessageData?.cancelTransfer()
-            }
-
-        case .like:
-            ZMUserSession.shared()?.enqueue {
-                Message.setLikedMessage(message, liked: !message.liked)
             }
 
         case .openDetails:

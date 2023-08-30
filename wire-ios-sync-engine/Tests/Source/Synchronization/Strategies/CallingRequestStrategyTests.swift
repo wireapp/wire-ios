@@ -803,14 +803,14 @@ class CallingRequestStrategyTests: MessagingTest {
 
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 5))
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        
+
         syncMOC.performGroupedBlock {
             nextRequest = self.sut.nextRequest(for: .v4)
         }
 
         // give more time so Task is executed.
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 5))
-                      
+
         XCTAssertNotNil(nextRequest)
     }
 }

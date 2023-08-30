@@ -38,11 +38,13 @@ final class BackupRestoreController: NSObject {
 
     let target: SpinnerCapableViewController
     weak var delegate: BackupRestoreControllerDelegate?
+    var temporaryFilesService: TemporaryFileServiceInterface
 
     // MARK: - Initialization
 
-    init(target: SpinnerCapableViewController) {
+    init(target: SpinnerCapableViewController, temporaryFilesService: TemporaryFileServiceInterface = TemporaryFileService()) {
         self.target = target
+        self.temporaryFilesService = temporaryFilesService
         super.init()
     }
 
@@ -56,7 +58,7 @@ final class BackupRestoreController: NSObject {
         target.present(controller, animated: true)
     }
 
-    fileprivate func showFilePicker() {
+    private func showFilePicker() {
         // Test code to verify restore
 
         let picker = UIDocumentPickerViewController(
@@ -66,13 +68,13 @@ final class BackupRestoreController: NSObject {
         target.present(picker, animated: true)
     }
 
-    fileprivate func restore(with url: URL) {
+    private func restore(with url: URL) {
         requestPassword { [performRestore] password in
             performRestore(password, url)
         }
     }
 
-    fileprivate func performRestore(using password: String, from url: URL) {
+    private func performRestore(using password: String, from url: URL) {
         guard let sessionManager = SessionManager.shared else { return }
         target.isLoadingViewVisible = true
 
@@ -92,6 +94,7 @@ final class BackupRestoreController: NSObject {
 
             case .success:
                 BackupEvent.importSucceeded.track()
+                self.temporaryFilesService.removeTemporaryData()
                 self.delegate?.backupResoreControllerDidFinishRestoring(self)
             }
         }
@@ -99,7 +102,7 @@ final class BackupRestoreController: NSObject {
 
     // MARK: - Alerts
 
-    fileprivate func requestPassword(completion: @escaping (String) -> Void) {
+    private func requestPassword(completion: @escaping (String) -> Void) {
         let controller = UIAlertController.requestRestorePassword { password in
             password.apply(completion)
         }
@@ -107,12 +110,12 @@ final class BackupRestoreController: NSObject {
         target.present(controller, animated: true, completion: nil)
     }
 
-    fileprivate func showWrongPasswordAlert(completion: @escaping (UIAlertAction) -> Void) {
+    private func showWrongPasswordAlert(completion: @escaping (UIAlertAction) -> Void) {
         let controller = UIAlertController.importWrongPasswordError(completion: completion)
         target.present(controller, animated: true, completion: nil)
     }
 
-    fileprivate func showRestoreError(_ error: Error) {
+    private func showRestoreError(_ error: Error) {
         let controller = UIAlertController.restoreBackupFailed(with: error) { [unowned self] action in
             switch action {
             case .tryAgain: self.showFilePicker()

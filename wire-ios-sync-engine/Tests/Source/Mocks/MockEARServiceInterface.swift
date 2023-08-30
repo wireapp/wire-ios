@@ -29,7 +29,6 @@ public class MockEARServiceInterface: EARServiceInterface {
 
     public var delegate: EARServiceDelegate?
 
-
     // MARK: - enableEncryptionAtRest
 
     public var enableEncryptionAtRestContextSkipMigration_Invocations: [(context: NSManagedObjectContext, skipMigration: Bool)] = []
@@ -149,6 +148,21 @@ public class MockEARServiceInterface: EARServiceInterface {
         } else {
             fatalError("no mock for `fetchPrivateKeysIncludingPrimary`")
         }
+    }
+
+    // MARK: - setInitialEARFlagValue
+
+    public var setInitialEARFlagValue_Invocations: [Bool] = []
+    public var setInitialEARFlagValue_MockMethod: ((Bool) -> Void)?
+
+    public func setInitialEARFlagValue(_ enabled: Bool) {
+        setInitialEARFlagValue_Invocations.append(enabled)
+
+        guard let mock = setInitialEARFlagValue_MockMethod else {
+            fatalError("no mock for `setInitialEARFlagValue`")
+        }
+
+        mock(enabled)
     }
 
 }
