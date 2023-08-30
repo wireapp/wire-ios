@@ -840,6 +840,50 @@ public final class MLSService: MLSServiceInterface {
         }
     }
 
+    func fetchAndRepairConversation(with groupID: MLSGroupID) {
+        Task {
+            await fetchAndRepairConversation(with: groupID)
+        }
+    }
+
+    func fetchAndRepairConversation(with groupID: MLSGroupID) async {
+        guard let context = context else { return }
+
+        do {
+            logger.info("repairing conversation (\(groupID))")
+
+            guard
+                let conversation = ZMConversation.fetch(with: groupID, in: context),
+                let qualifiedID = conversation.qualifiedID
+            else {
+                logger.warn("failed to fetch conversation's qualified id")
+                return
+            }
+
+            try await actionsProvider.syncConversation(
+                qualifiedID: qualifiedID,
+                context: context.notificationContext
+            )
+
+            guard isConversationOutOfSync(conversation) else {
+                logger.info("conversation is not out of sync")
+                return
+            }
+
+            try await repairConversation(conversation)
+
+            conversation.appendNewPotentialGapSystemMessage(
+                users: conversation.localParticipants,
+                timestamp: Date()
+            )
+        } catch {
+            logger.warn("failed to repair conversation (\(groupID)). error: \(String(describing: error))")
+        }
+    }
+
+    enum ConversationRepairError: Error {
+        case missingGroupID
+    }
     private var conversationsBeingRepaired = Set<MLSGroupID>()
 
     private func launchConversationRepairTaskIfNotInProgress(
@@ -890,6 +934,11 @@ public final class MLSService: MLSServiceInterface {
         return isOutOfSync
     }
 
+    private func isConversationOutOfSync(_ conversation: ZMConversation) -> Bool {
+        return coreCrypto.perform {
+            return isConversationOutOfSync(conversation, coreCrypto: $0)
+        }
+    }
     // MARK: - External Proposals
 
     private func sendExternalAddProposal(_ groupID: MLSGroupID, epoch: UInt64) async {
@@ -1068,11 +1117,19 @@ public final class MLSService: MLSServiceInterface {
         for groupID: MLSGroupID,
         subconversationType: SubgroupType?
     ) throws -> MLSDecryptResult? {
-        return try decryptionService.decrypt(
-            message: message,
-            for: groupID,
-            subconversationType: subconversationType
-        )
+        do {
+            return try decryptionService.decrypt(
+                message: message,
+                for: groupID,
+                subconversationType: subconversationType
+            )
+        } catch {
+            if case MLSDecryptionService.MLSMessageDecryptionError.wrongEpoch = error,
+               subconversationType == nil {
+                fetchAndRepairConversation(with: groupID)
+            }
+            throw error
+        }
     }
 
     // MARK: - Pending proposals
