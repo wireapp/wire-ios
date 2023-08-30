@@ -16,13 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
+import SnapshotTesting
 import WireCommonComponents
+import XCTest
 
 class BaseSnapshotTestCase: XCTestCase {
 
     override func setUp() {
         super.setUp()
+        // Enable when the design of the view has changed in order to update the reference snapshots
+        isRecording = strcmp(getenv("RECORDING_SNAPSHOTS"), "YES") == 0
 
         FontScheme.configure(with: .large)
     }
