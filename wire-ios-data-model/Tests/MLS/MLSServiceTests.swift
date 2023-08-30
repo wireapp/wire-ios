@@ -1088,7 +1088,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     // MARK: - Handling out of sync conversations
 
-    func test_RepairOutOfSyncConversations_RejoinsOutOfSyncConversation() {
+    func test_RepairOutOfSyncConversations_RejoinsOutOfSyncConversations() {
         // GIVEN
         let conversationAndOutOfSyncTuples = [
             createConversation(outOfSync: true),
