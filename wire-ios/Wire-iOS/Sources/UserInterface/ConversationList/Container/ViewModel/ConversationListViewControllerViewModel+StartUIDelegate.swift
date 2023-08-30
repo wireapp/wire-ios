@@ -61,12 +61,14 @@ extension ConversationListViewController.ViewModel: StartUIDelegate {
     private func createOneToOneConversation(
         with user: UserType,
         context: NSManagedObjectContext,
-        completion: @escaping ConversationCreatedBlock) {
-            guard user.isTeamMember,
-                  let zmUser = (user as? ZMUser) ?? (user as? ZMSearchUser)?.user
-            else {
-                return
-            }
+        completion: @escaping ConversationCreatedBlock
+    ) {
+        guard 
+            user.isTeamMember,
+            let user = user.materialize(in: context)
+        else {
+            return
+        }
             let conversationService = ConversationService(context: context)
 
             conversationService.createOneToOneConversation(user: zmUser) { result in
