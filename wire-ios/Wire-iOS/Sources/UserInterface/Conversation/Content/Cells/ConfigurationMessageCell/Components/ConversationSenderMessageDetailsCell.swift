@@ -19,6 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireDataModel
+import WireSyncEngine
 
 // MARK: - ConversationSenderMessageDetailsCell
 
@@ -33,20 +34,51 @@ class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
         let indicatorIcon: UIImage?
     }
 
-
     // MARK: - Properties
 
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
 
+    private var trailingDateLabelConstraint: NSLayoutConstraint?
+
+    var observerToken: Any?
+
     var isSelected: Bool = false
 
-    private let senderView = SenderCellComponent()
+    private lazy var avatar: UserImageView = {
+        let view = UserImageView()
+        view.userSession = ZMUserSession.shared()
+        view.initialsFont = .avatarInitial
+        view.size = .badge
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(tappedOnAvatar)))
+        view.accessibilityElementsHidden = false
+        view.isAccessibilityElement = true
+        view.accessibilityTraits = .button
+        view.accessibilityLabel = L10n.Accessibility.Conversation.ProfileImage.description
+        view.accessibilityHint = L10n.Accessibility.Conversation.ProfileImage.hint
+
+        return view
+    }()
+
+    private lazy var authorLabel: UILabel = {
+        let label = UILabel()
+        label.accessibilityIdentifier = "author.name"
+        label.numberOfLines = 0
+
+        label.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        label.setContentHuggingPriority(.defaultLow, for: .horizontal)
+        label.setContentCompressionResistancePriority(.required, for: .vertical)
+        label.setContentHuggingPriority(.defaultLow, for: .vertical)
+
+        return label
+    }()
+
     private let indicatorImageView = UIImageView()
 
-    private var indicatorImageViewTrailing: NSLayoutConstraint!
+    let teamRoleIndicator = UIImageView()
 
-    private let dateLabel: UILabel = {
+    private lazy var dateLabel: UILabel = {
         let label = UILabel()
         label.font = FontSpec.mediumRegularFont.font!
         label.textColor = SemanticColors.Label.textMessageDate
@@ -54,8 +86,8 @@ class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
         label.numberOfLines = 1
         label.accessibilityIdentifier = "DateLabel"
         label.isAccessibilityElement = true
-        label.setContentHuggingPriority(.required, for: .horizontal)
-        label.setContentCompressionResistancePriority(.required, for: .horizontal)
+        label.text = "hey"
+
         return label
     }()
 
@@ -75,51 +107,140 @@ class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
     // MARK: - configure
 
     func configure(with object: Configuration, animated: Bool) {
-        senderView.configure(with: object.user)
+        let user = object.user
+        let fullName: String
+        let textColor: UIColor
+        let icon: StyleKitIcon?
+        let accessibilityIdentifier: String
+        avatar.user = user
+
+        fullName = user.name ?? ""
+
+        if user.isServiceUser {
+            textColor = SemanticColors.Label.textDefault
+            icon = .bot
+            accessibilityIdentifier = "img.serviceUser"
+        } else if user.isExternalPartner {
+            textColor = user.accentColor
+            icon = .externalPartner
+            accessibilityIdentifier = "img.externalPartner"
+        } else if user.isFederated {
+            textColor = user.accentColor
+            icon = .federated
+            accessibilityIdentifier = "img.federatedUser"
+        } else if !user.isTeamMember,
+                  let selfUser = SelfUser.provider?.selfUser,
+                  selfUser.isTeamMember {
+            textColor = user.accentColor
+            icon = .guest
+            accessibilityIdentifier = "img.guest"
+        } else {
+            textColor = user.accentColor
+            icon = .none
+            accessibilityIdentifier = "img.member"
+        }
+
+        authorLabel.attributedText = NSAttributedString(
+            string: fullName,
+            attributes: [
+                .foregroundColor: textColor,
+                .font: UIFont.mediumSemiboldFont
+            ]
+        )
+
         indicatorImageView.isHidden = object.indicatorIcon == nil
         indicatorImageView.image = object.indicatorIcon
+
+        teamRoleIndicator.accessibilityIdentifier = accessibilityIdentifier
+        teamRoleIndicator.isHidden = icon == nil
+        if let icon = icon {
+            teamRoleIndicator.setTemplateIcon(icon, size: iconSize(for: icon))
+            teamRoleIndicator.tintColor = SemanticColors.Icon.foregroundDefault
+        }
+
         dateLabel.isHidden = object.timestamp == nil
         dateLabel.text = object.timestamp
+
+        if !ProcessInfo.processInfo.isRunningTests,
+           let userSession = ZMUserSession.shared() {
+            observerToken = UserChangeInfo.add(observer: self, for: user, in: userSession)
+        }
+
+        // We need to call that method here to restraint the authorLabel moving
+        // outside of the view and then back to its position. For more information
+        // check the ticket: https://wearezeta.atlassian.net/browse/WPB-1955
+        self.layoutIfNeeded()
     }
 
     // MARK: - Configure subviews and setup constraints
 
     private func configureSubviews() {
-        addSubview(senderView)
+        addSubview(avatar)
+        addSubview(authorLabel)
         addSubview(indicatorImageView)
+        addSubview(teamRoleIndicator)
         addSubview(dateLabel)
     }
 
     private func configureConstraints() {
-        senderView.translatesAutoresizingMaskIntoConstraints = false
-        indicatorImageView.translatesAutoresizingMaskIntoConstraints = false
-        dateLabel.translatesAutoresizingMaskIntoConstraints = false
 
-        indicatorImageViewTrailing = indicatorImageView.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor,
-                                                                                  constant: -conversationHorizontalMargins.right)
+        [avatar, authorLabel, indicatorImageView, teamRoleIndicator, dateLabel].prepareForLayout()
+
+        let trailingDateLabelConstraint  = dateLabel.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -conversationHorizontalMargins.right)
+
+        indicatorImageView.setContentHuggingPriority(.required, for: .horizontal)
+        dateLabel.setContentHuggingPriority(.required, for: .horizontal)
+
+        self.trailingDateLabelConstraint = trailingDateLabelConstraint
         NSLayoutConstraint.activate([
-            // indicatorImageView
-            indicatorImageViewTrailing,
-            indicatorImageView.centerYAnchor.constraint(equalTo: centerYAnchor),
+            avatar.trailingAnchor.constraint(equalTo: authorLabel.leadingAnchor, constant: -8),
+            authorLabel.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: conversationHorizontalMargins.left),
+            indicatorImageView.leadingAnchor.constraint(equalTo: authorLabel.trailingAnchor),
+            teamRoleIndicator.leadingAnchor.constraint(equalTo: indicatorImageView.trailingAnchor, constant: 8),
+            dateLabel.leadingAnchor.constraint(equalTo: teamRoleIndicator.trailingAnchor, constant: 8),
+            trailingDateLabelConstraint,
 
-            // senderView
-            senderView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            senderView.topAnchor.constraint(equalTo: topAnchor),
-            senderView.trailingAnchor.constraint(equalTo: indicatorImageView.leadingAnchor, constant: -8),
-            senderView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            authorLabel.topAnchor.constraint(equalTo: self.topAnchor),
+            authorLabel.bottomAnchor.constraint(equalTo: self.bottomAnchor),
 
-            // dateLabel
-            dateLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -conversationHorizontalMargins.right),
-            dateLabel.leadingAnchor.constraint(equalTo: senderView.trailingAnchor, constant: 4),
-            dateLabel.firstBaselineAnchor.constraint(equalTo: senderView.authorLabelFirstBaselineAnchor)
+            avatar.centerYAnchor.constraint(equalTo: authorLabel.firstBaselineAnchor),
+            dateLabel.firstBaselineAnchor.constraint(equalTo: authorLabel.firstBaselineAnchor),
+            teamRoleIndicator.centerYAnchor.constraint(equalTo: authorLabel.lastBaselineAnchor),
+            indicatorImageView.centerYAnchor.constraint(equalTo: authorLabel.lastBaselineAnchor)
         ])
     }
+
+    private func iconSize(for icon: StyleKitIcon) -> StyleKitIcon.Size {
+        return icon == .externalPartner ? 16 : 14
+    }
+
+    // MARK: - Tap gesture of avatar
+
+    @objc func tappedOnAvatar() {
+        guard let user = avatar.user else { return }
+
+        SessionManager.shared?.showUserProfile(user: user)
+    }
+
 
     // MARK: - Override method
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
-        indicatorImageViewTrailing.constant = -conversationHorizontalMargins.right
+        trailingDateLabelConstraint?.constant = -conversationHorizontalMargins.right
+    }
+
+}
+
+extension ConversationSenderMessageDetailsCell: ZMUserObserver {
+
+    func userDidChange(_ changeInfo: UserChangeInfo) {
+        //        guard changeInfo.nameChanged || changeInfo.accentColorValueChanged else {
+        //            return
+        //        }
+        //
+        ////        let configuration = SenderCellConfiguration(user: changeInfo.user)
+        ////        configureNameLabel(for: configuration)
     }
 
 }
