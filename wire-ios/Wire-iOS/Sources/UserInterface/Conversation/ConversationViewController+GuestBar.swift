@@ -17,7 +17,6 @@
 //
 
 import UIKit
-import FormatterKit
 import WireDataModel
 
 extension ConversationViewController {

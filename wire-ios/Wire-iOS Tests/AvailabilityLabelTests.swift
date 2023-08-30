@@ -20,25 +20,27 @@ import XCTest
 import WireCommonComponents
 @testable import Wire
 
-class AvailabilityLabelTests: ZMSnapshotTestCase {
+class AvailabilityLabelTests: BaseSnapshotTestCase {
 
     // MARK: - List labels
 
     func testThatItRendersCorrectly_List_NoneAvailability() {
-        verify(view: createLabelForList(.none))
+        verify(matching: createLabelForList(.none))
     }
 
     func testThatItRendersCorrectly_List_AvailableAvailability() {
-        verify(view: createLabelForList(.available))
+        verify(matching: createLabelForList(.available))
     }
 
     func testThatItRendersCorrectly_List_AwayAvailability() {
-        verify(view: createLabelForList(.away))
+        verify(matching: createLabelForList(.away))
     }
 
     func testThatItRendersCorrectly_List_BusyAvailability() {
-        verify(view: createLabelForList(.busy))
+        verify(matching: createLabelForList(.busy))
     }
+
+    // MARK: - Helper Method
 
     func createLabelForList(_ availability: AvailabilityKind) -> UILabel {
         guard let user = ZMUser.selfUser() else { return UILabel() }
@@ -54,20 +56,22 @@ class AvailabilityLabelTests: ZMSnapshotTestCase {
     // MARK: - Participants labels
 
     func testThatItRendersCorrectly_Participants_NoneAvailability() {
-        verify(view: createLabelForParticipants(.none))
+        verify(matching: createLabelForParticipants(.none))
     }
 
     func testThatItRendersCorrectly_Participants_AvailableAvailability() {
-        verify(view: createLabelForParticipants(.available))
+        verify(matching: createLabelForParticipants(.available))
     }
 
     func testThatItRendersCorrectly_Participants_AwayAvailability() {
-        verify(view: createLabelForParticipants(.away))
+        verify(matching: createLabelForParticipants(.away))
     }
 
     func testThatItRendersCorrectly_Participants_BusyAvailability() {
-        verify(view: createLabelForParticipants(.busy))
+        verify(matching: createLabelForParticipants(.busy))
     }
+
+    // MARK: - Helper Method
 
     func createLabelForParticipants(_ availability: AvailabilityKind) -> UILabel {
         guard let user = ZMUser.selfUser() else { return UILabel() }
