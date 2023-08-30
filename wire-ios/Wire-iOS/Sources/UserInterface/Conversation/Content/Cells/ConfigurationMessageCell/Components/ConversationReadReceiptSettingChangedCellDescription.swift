@@ -30,8 +30,8 @@ struct ReadReceiptViewModel {
         return iconColor.map { icon.makeImage(size: .tiny, color: $0) }
     }
 
-    func createSystemMessage(template: String) -> NSAttributedString? {
-        var updateText: NSAttributedString?
+    func createSystemMessage(template: String) -> NSAttributedString {
+        var updateText: NSAttributedString
 
         if sender.isSelfUser {
             let youLocalized = "content.system.you_started".localized
