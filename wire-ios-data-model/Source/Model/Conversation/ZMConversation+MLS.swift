@@ -164,17 +164,8 @@ public extension ZMConversation {
     ) -> ZMConversation? {
         let request = Self.fetchRequest()
         request.fetchLimit = 2
-
-        let isSelfConversation = NSPredicate(
-            format: "%K == %i",
-            argumentArray: [
-                ZMConversationConversationTypeKey,
-                ZMConversationType.`self`.rawValue
-            ]
-        )
-
         request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
-            isSelfConversation, .isMLSConversation
+            .isSelfConversation, .isMLSConversation
         ])
 
         let result = context.executeFetchRequestOrAssert(request)
@@ -218,12 +209,22 @@ public extension ZMConversation {
 private extension NSPredicate {
 
     static var isMLSConversation: NSPredicate {
-        return NSPredicate(
+        NSPredicate(
             format: "%K == %i && %K != nil",
             argumentArray: [
                 ZMConversation.messageProtocolKey,
                 MessageProtocol.mls.rawValue,
                 ZMConversation.mlsGroupIdKey
+            ]
+        )
+    }
+
+    static var isSelfConversation: NSPredicate {
+        NSPredicate(
+            format: "%K == %i",
+            argumentArray: [
+                ZMConversationConversationTypeKey,
+                ZMConversationType.`self`.rawValue
             ]
         )
     }
