@@ -46,7 +46,7 @@ final class ConversationReactionMessageTests: ZMSnapshotTestCase {
     func testThatItConfiguresWithSelfReaction() {
         // GIVEN
         let reaction = MessageReactionMetadata(emoji: .like, count: 1, isSelfUserReacting: true)
-        let configuration = MessageReactionsCell.Configuration(reactions: [reaction])
+        let configuration = [reaction]
 
         sut.configure(with: configuration, animated: false)
 
@@ -62,12 +62,13 @@ final class ConversationReactionMessageTests: ZMSnapshotTestCase {
         let slightlySmilingReaction = MessageReactionMetadata(emoji: .smile, count: 8, isSelfUserReacting: false)
         let frowningFaceReaction = MessageReactionMetadata(emoji: .frown, count: 10, isSelfUserReacting: false)
 
-        let configuration = MessageReactionsCell.Configuration(reactions: [likeReaction,
-                                                                           thumbsUpReaction,
-                                                                           thumbsDownReaction,
-                                                                           slightlySmilingReaction,
-                                                                           frowningFaceReaction
-                                                                          ])
+        let configuration = [
+            likeReaction,
+            thumbsUpReaction,
+            thumbsDownReaction,
+            slightlySmilingReaction,
+            frowningFaceReaction
+        ]
 
         sut.frame = CGRect(x: 0, y: 0, width: 375, height: 90)
 
