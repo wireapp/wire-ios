@@ -29,9 +29,9 @@ final class RecentlyUsedEmojiPeristenceCoordinatorTests: XCTestCase {
         super.tearDown()
     }
 
-    func test_RecentlyUsedEmoji_isEmpty() {
+    func test_recentlyUsedEmoji_isEmpty() {
         // THEN
-        XCTAssertArrayEqual(RecentlyUsedEmojiPeristenceCoordinator.loadOrCreate().emoji, [])
+        XCTAssertArrayEqual(RecentlyUsedEmojiPeristenceCoordinator.loadOrCreate().emojis, [])
     }
 
     func test_storeAndLoadEmojis() {
@@ -43,7 +43,7 @@ final class RecentlyUsedEmojiPeristenceCoordinatorTests: XCTestCase {
         RecentlyUsedEmojiPeristenceCoordinator.store(emojiSection)
 
         // THEN
-        XCTAssertArrayEqual(RecentlyUsedEmojiPeristenceCoordinator.loadOrCreate().emoji, emojis)
+        XCTAssertArrayEqual(RecentlyUsedEmojiPeristenceCoordinator.loadOrCreate().emojis, emojis)
 
     }
 }

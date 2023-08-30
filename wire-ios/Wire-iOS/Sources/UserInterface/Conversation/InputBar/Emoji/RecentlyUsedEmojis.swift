@@ -22,7 +22,7 @@ final class RecentlyUsedEmojiSection: NSObject, EmojiSection {
 
     let type: EmojiSectionType = .recent
 
-    private(set) var emoji = [Emoji]()
+    private(set) var emojis = [Emoji]()
     private let backing: NSMutableOrderedSet
     private let capacity: Int
 
@@ -45,7 +45,7 @@ final class RecentlyUsedEmojiSection: NSObject, EmojiSection {
     }
 
     private func updateContent() {
-        defer { emoji = backing.array as! [Emoji] }
+        defer { emojis = backing.array as! [Emoji] }
         guard backing.count > capacity else { return }
         backing.removeObjects(at: IndexSet(integersIn: capacity..<backing.count))
     }
@@ -62,7 +62,7 @@ final class RecentlyUsedEmojiPeristenceCoordinator {
         guard let emojiUrl = url,
               let directoryUrl = URL.directoryURL(directory) else { return }
 
-        let stringValues = section.emoji.map { $0.value }
+        let stringValues = section.emojis.map { $0.value }
         FileManager.default.createAndProtectDirectory(at: directoryUrl)
         (stringValues as NSArray).write(to: emojiUrl, atomically: true)
     }
