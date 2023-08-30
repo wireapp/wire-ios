@@ -532,35 +532,37 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
 
     // MARK: - Notification title
 
-    func testThatItAddsATitleIfTheUserIsPartOfATeam() {
+    // we're blocking notifications about received reactions for next sprint. For details: https://wearezeta.atlassian.net/browse/WPB-4239
 
-        // given
-        syncMOC.performGroupedBlockAndWait {
-            let team = Team.insertNewObject(in: self.syncMOC)
-            team.name = "Wire Amazing Team"
-            let user = ZMUser.selfUser(in: self.syncMOC)
-            _ = Member.getOrCreateMember(for: user, in: team, context: self.syncMOC)
-            XCTAssertNotNil(user.team)
-
-            // when
-            let note = self.note(self.oneOnOneConversation, aSender: self.sender)
-
-            // then
-            XCTAssertNotNil(note)
-            XCTAssertEqual(note!.title, "Super User in \(team.name!)")
-        }
-    }
-
-    func testThatItDoesNotAddATitleIfTheUserIsNotPartOfATeam() {
-        syncMOC.performGroupedBlockAndWait {
-            // when
-            let note = self.note(self.oneOnOneConversation, aSender: self.sender)
-
-            // then
-            XCTAssertNotNil(note)
-            XCTAssertEqual(note!.title, "Super User")
-        }
-    }
+//    func testThatItAddsATitleIfTheUserIsPartOfATeam() {
+//
+//        // given
+//        syncMOC.performGroupedBlockAndWait {
+//            let team = Team.insertNewObject(in: self.syncMOC)
+//            team.name = "Wire Amazing Team"
+//            let user = ZMUser.selfUser(in: self.syncMOC)
+//            _ = Member.getOrCreateMember(for: user, in: team, context: self.syncMOC)
+//            XCTAssertNotNil(user.team)
+//
+//            // when
+//            let note = self.note(self.oneOnOneConversation, aSender: self.sender)
+//
+//            // then
+//            XCTAssertNotNil(note)
+//            XCTAssertEqual(note!.title, "Super User in \(team.name!)")
+//        }
+//    }
+//
+//    func testThatItDoesNotAddATitleIfTheUserIsNotPartOfATeam() {
+//        syncMOC.performGroupedBlockAndWait {
+//            // when
+//            let note = self.note(self.oneOnOneConversation, aSender: self.sender)
+//
+//            // then
+//            XCTAssertNotNil(note)
+//            XCTAssertEqual(note!.title, "Super User")
+//        }
+//    }
 
     // MARK: - Create text local notifications from update events
 
