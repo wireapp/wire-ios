@@ -867,13 +867,11 @@ public final class MLSService: MLSServiceInterface {
         _ conversation: ZMConversation,
         coreCrypto: CoreCryptoProtocol
     ) -> Bool {
-        guard let groupID = conversation.mlsGroupID else {
+        guard
+            let groupID = conversation.mlsGroupID,
+            let epoch = try? coreCrypto.conversationEpoch(conversationId: groupID.bytes)
+        else {
             return false
-        }
-
-        guard let epoch = try? coreCrypto.conversationEpoch(conversationId: groupID.bytes) else {
-            // TODO: Decide if failing to fetch the epoch is considered being out of sync
-            return true
         }
 
         return epoch != conversation.epoch
