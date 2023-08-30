@@ -74,7 +74,7 @@ extension ZMUser {
         if isSelfUser {
             return ZMConversation.selfConversation(in: moc)
         } else if isTeamMember {
-            return ZMConversation.fetchOneToOneConversation(moc: moc,
+            return ZMConversation.fetchOneToOneTeamConversation(moc: moc,
                                                                 participant: self,
                                                                 team: team)
         } else {

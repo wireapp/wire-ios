@@ -171,7 +171,7 @@ extension ZMConversation {
         return conversation
     }
 
-    static func fetchOneToOneConversation(
+    static func fetchOneToOneTeamConversation(
         moc: NSManagedObjectContext,
         participant: ZMUser,
         team: Team?) -> ZMConversation? {

@@ -55,10 +55,10 @@ final class ConversationTests_Teams: ZMConversationTestsBase {
 
     func testThatItReturnsAnExistingOneOnOneConversationIfThereAlreadyIsOneInATeam() {
         // given
-        let conversation = ZMConversation.fetchOneToOneConversation(moc: self.uiMOC, participant: otherUser, team: team)
+        let conversation = ZMConversation.fetchOneToOneTeamConversation(moc: self.uiMOC, participant: otherUser, team: team)
 
         // when
-        let newConversation = ZMConversation.fetchOneToOneConversation(moc: self.uiMOC, participant: otherUser, team: team)
+        let newConversation = ZMConversation.fetchOneToOneTeamConversation(moc: self.uiMOC, participant: otherUser, team: team)
 
         // then
         XCTAssertEqual(conversation, newConversation)
@@ -71,7 +71,7 @@ final class ConversationTests_Teams: ZMConversationTestsBase {
         conversation.team = team
 
         // when
-        let newConversation = ZMConversation.fetchOneToOneConversation(moc: self.uiMOC, participant: otherUser, team: team)
+        let newConversation = ZMConversation.fetchOneToOneTeamConversation(moc: self.uiMOC, participant: otherUser, team: team)
 
         // then
         XCTAssertNotEqual(conversation, newConversation)
@@ -79,11 +79,11 @@ final class ConversationTests_Teams: ZMConversationTestsBase {
 
     func testThatItDoesNotReturnAConversationIfAnExistingOneHasAUserDefinedName() {
         // given
-        let conversation = ZMConversation.fetchOneToOneConversation(moc: self.uiMOC, participant: otherUser, team: team)
+        let conversation = ZMConversation.fetchOneToOneTeamConversation(moc: self.uiMOC, participant: otherUser, team: team)
         conversation?.userDefinedName = "Best Conversation"
 
         // when
-        let existingConversation = ZMConversation.fetchOneToOneConversation(moc: self.uiMOC, participant: otherUser, team: team)
+        let existingConversation = ZMConversation.fetchOneToOneTeamConversation(moc: self.uiMOC, participant: otherUser, team: team)
 
         // then
         XCTAssertNil(existingConversation)
@@ -113,7 +113,7 @@ final class ConversationTests_Teams: ZMConversationTestsBase {
         oneOnOne.addParticipantsAndUpdateConversationState(users: Set([selfUser, otherUser]), role: nil)
 
         // when
-        let teamOneOnOne = ZMConversation.fetchOneToOneConversation(moc: self.uiMOC, participant: otherUser, team: team)
+        let teamOneOnOne = ZMConversation.fetchOneToOneTeamConversation(moc: self.uiMOC, participant: otherUser, team: team)
 
         // then
         XCTAssertNotEqual(otherUser.oneToOneConversation, oneOnOne)

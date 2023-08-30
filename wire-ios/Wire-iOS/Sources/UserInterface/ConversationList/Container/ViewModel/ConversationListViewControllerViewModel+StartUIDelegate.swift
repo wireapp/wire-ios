@@ -72,7 +72,7 @@ extension ConversationListViewController.ViewModel: StartUIDelegate {
         }
             let conversationService = ConversationService(context: context)
 
-            conversationService.createOneToOneConversation(user: zmUser) { result in
+            conversationService.createOneToOneConversation(user: user) { result in
                 switch result {
                 case .success(let conversation):
                     completion(conversation)
