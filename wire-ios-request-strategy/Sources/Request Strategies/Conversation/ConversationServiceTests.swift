@@ -168,7 +168,7 @@ final class ConversationServiceTests: MessagingTestBase {
         )
 
         // When
-        sut.createOneToOneConversation(user: user1) {
+        sut.createTeamOneToOneConversation(user: user1) {
             switch $0 {
             case .success(let conversation):
                 // Then we got back newly created conversation.
@@ -189,45 +189,6 @@ final class ConversationServiceTests: MessagingTestBase {
         XCTAssertEqual(performedAction.unqualifiedUserIDs, [])
         XCTAssertEqual(performedAction.name, nil)
         XCTAssertEqual(performedAction.teamID, team.remoteIdentifier)
-    }
-
-    func test_CreateOneToOneConversation_NoTeam_Success() throws {
-        // Given
-        let oneToOneConversation = createOneToOneConversation(
-            with: user1,
-            in: uiMOC
-        )
-
-        let didFinish = expectation(description: "didFinish")
-
-        // Mock
-        let mockActionHandler = MockActionHandler<CreateGroupConversationAction>(
-            result: .success(oneToOneConversation.objectID),
-            context: uiMOC.notificationContext
-        )
-
-        // When
-        sut.createOneToOneConversation(user: user1) {
-            switch $0 {
-            case .success(let conversation):
-                // Then we got back newly created conversation.
-                XCTAssertEqual(conversation, oneToOneConversation)
-                didFinish.fulfill()
-
-            case .failure(let error):
-                XCTFail("unexpected error: \(error)")
-            }
-        }
-
-        // Then the action was performed with correct arguments.
-        XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
-        let performedAction = try XCTUnwrap(mockActionHandler.performedActions.first)
-
-        XCTAssertEqual(performedAction.messageProtocol, .proteus)
-        XCTAssertEqual(performedAction.qualifiedUserIDs, [user1.qualifiedID].compactMap(\.self))
-        XCTAssertEqual(performedAction.unqualifiedUserIDs, [])
-        XCTAssertEqual(performedAction.name, nil)
-        XCTAssertEqual(performedAction.teamID, nil)
     }
 
     func test_CreateGroupConversation_Team_NoPermissionFailure() throws {
