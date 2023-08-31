@@ -35,17 +35,17 @@ final class ReactionSectionViewController: UIViewController {
             }
         }
     }
-
+    private let types: [EmojiSectionType]
     weak var sectionDelegate: EmojiSectionViewControllerDelegate?
 
     init(types: [EmojiSectionType]) {
+        self.types = types
         super.init(nibName: nil, bundle: nil)
         createButtons(types)
 
         setupViews()
         createConstraints()
         view.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: #selector(didPan)))
-        selectedType = typesByButton.values.first
     }
 
     @available(*, unavailable)
@@ -55,10 +55,8 @@ final class ReactionSectionViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        guard let firstButton = typesByButton.first?.key else { return }
-        for button in sectionButtons {
-            button.isSelected = (button == firstButton)
-        }
+        guard let firstType = types.first else { return }
+        selectedType = firstType
     }
 
     private func createButtons(_ types: [EmojiSectionType]) {
