@@ -732,7 +732,7 @@ class CallingRequestStrategyTests: MessagingTest {
                     "type": "REMOTEMUTE"] as [String: Any]
         let data = try! JSONSerialization.data(withJSONObject: json, options: [])
         let content = String(data: data, encoding: .utf8)!
-        let message = GenericMessage(content: Calling(content: content))
+        let message = GenericMessage(content: Calling(content: content, conversationId: .random()))
         let text = try? message.serializedData().base64String()
         let payload = [
             "conversation": UUID().transportString(),

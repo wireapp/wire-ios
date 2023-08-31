@@ -963,10 +963,7 @@ private extension ZMConversation {
         case (.group, .proteus):
             return .conference
 
-        case (.group, .mls):
-            return .mlsConference
-
-        case (.`self`, .mls):
+        case (.group, .mls), (.`self`, .mls):
             return .mlsConference
 
         default:

@@ -56,7 +56,7 @@ class GenericMessageTests: XCTestCase {
     }
 
     func testThatItConsidersCallingMessageTypeAsKnownMessage() {
-        let callingMessageType = GenericMessage(content: Calling(content: "Calling"))
+        let callingMessageType = GenericMessage(content: Calling(content: "Calling", conversationId: .random()))
         XCTAssertTrue(callingMessageType.knownMessage)
     }
 

@@ -220,7 +220,7 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
     // MARK: - Event Consumer
 
     public func processEvents(_ events: [ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) {
-        Self.logger.trace("🕵🏽 1.1 - process events: \(events)")
+        Self.logger.trace("process events: \(events)")
         events.forEach(processEvent)
     }
 
@@ -246,8 +246,7 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
                 zmLog.error("ignoring calling message: \(genericMessage)")
                 return
             }
-            let callingConversationId = genericMessage.calling.qualifiedConversationID
-            WireLogger.calling.debug("🕵🏽 1.2 - event: \(event) with payload: \(payload), isRejected \(CallEventContent(from: event)?.isRejected == true)")
+
             self.zmLog.debug("received calling message, timestamp \(eventTimestamp), serverTimeDelta \(serverTimeDelta)")
 
             guard !callEventContent.isRemoteMute else {
@@ -257,7 +256,7 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
             }
 
             processCallEvent(
-                callingConversationId: callingConversationId,
+                callingConversationId: genericMessage.calling.qualifiedConversationID,
                 conversationUUID: conversationUUID,
                 senderUUID: senderUUID,
                 clientId: event.senderClientID ?? callEventContent.callerClientID,
@@ -280,11 +279,11 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
         payload: Data,
         currentTimestamp: TimeInterval,
         eventTimestamp: Date) {
-            WireLogger.calling.debug("🕵🏽 callingConversationId: \(callingConversationId.id) ; domain: \(callingConversationId.domain)")
             let conversationId = AVSIdentifier(
                 identifier: !callingConversationId.id.isEmpty ? UUID(uuidString: callingConversationId.id)! : conversationUUID,
                 domain: !callingConversationId.domain.isEmpty ? callingConversationId.domain : conversationDomain
             )
+            
             let userId = AVSIdentifier(
                 identifier: senderUUID,
                 domain: senderDomain
@@ -300,7 +299,6 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
             )
             
             callEventStatus.scheduledCallEventForProcessing()
-            WireLogger.calling.debug("🕵🏽 1.3 - processCallEvent: \(callEvent.conversationId)")
             callCenter?.processCallEvent(callEvent, completionHandler: { [weak self] in
                 self?.zmLog.debug("processed calling message")
                 self?.callEventStatus.finishedProcessingCallEvent()
@@ -310,12 +308,7 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
 }
 
 // MARK: - Wire Call Center Transport
-extension AVSIdentifier {
-    func toQualifiedId() -> QualifiedID {
-        WireLogger.calling.debug("🕵🏽 toQualifiedId: \(domain)")
-        return QualifiedID(uuid: identifier, domain: domain ?? BackendInfo.domain ?? "")
-    }
-}
+
 extension CallingRequestStrategy: WireCallCenterTransport {
 
     public func send(
@@ -332,7 +325,6 @@ extension CallingRequestStrategy: WireCallCenterTransport {
         }
 
         let callingContent = Calling(content: dataString, conversationId: conversationId.toQualifiedId())
-        WireLogger.calling.debug("🕵🏽 Calling qualifiedID: \(callingContent.qualifiedConversationID)")
 
         managedObjectContext.performGroupedBlock {
             guard let conversation = ZMConversation.fetch(
@@ -683,5 +675,11 @@ private extension Calling {
         }
 
         return callContent.isRejected
+    }
+}
+
+private extension AVSIdentifier {
+    func toQualifiedId() -> QualifiedID {
+        QualifiedID(uuid: identifier, domain: domain ?? BackendInfo.domain ?? "")
     }
 }
