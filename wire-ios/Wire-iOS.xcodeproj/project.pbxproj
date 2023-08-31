@@ -1086,6 +1086,7 @@
 		D3095762283CEB1C00CEC620 /* MediaShareRestrictionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D309575D283CDFED00CEC620 /* MediaShareRestrictionManager.swift */; };
 		D3095763283CEB2000CEC620 /* SessionFileRestrictionsProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = D309575F283CE1E900CEC620 /* SessionFileRestrictionsProtocol.swift */; };
 		D3095764283CEB2000CEC620 /* SessionFileRestrictionsProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = D309575F283CE1E900CEC620 /* SessionFileRestrictionsProtocol.swift */; };
+		D30E113C2A98CE3000D8C62D /* RecentlyUsedEmojiPeristenceCoordinatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D30E113B2A98CE3000D8C62D /* RecentlyUsedEmojiPeristenceCoordinatorTests.swift */; };
 		D311F87E29EEA1BE00D9CF7E /* MessageActionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D311F87D29EEA1BE00D9CF7E /* MessageActionsViewController.swift */; };
 		D311F88029FA5F6400D9CF7E /* BasicReactionPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = D311F87F29FA5F6400D9CF7E /* BasicReactionPicker.swift */; };
 		D32D8D2F2A1364CC00482788 /* MessageActionsViewControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D32D8D2E2A1364CC00482788 /* MessageActionsViewControllerTests.swift */; };
@@ -3105,6 +3106,7 @@
 		D30880FD292E521D00DDEAB0 /* CallingActionsInfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallingActionsInfoViewController.swift; sourceTree = "<group>"; };
 		D309575D283CDFED00CEC620 /* MediaShareRestrictionManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediaShareRestrictionManager.swift; sourceTree = "<group>"; };
 		D309575F283CE1E900CEC620 /* SessionFileRestrictionsProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionFileRestrictionsProtocol.swift; sourceTree = "<group>"; };
+		D30E113B2A98CE3000D8C62D /* RecentlyUsedEmojiPeristenceCoordinatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentlyUsedEmojiPeristenceCoordinatorTests.swift; sourceTree = "<group>"; };
 		D311F87D29EEA1BE00D9CF7E /* MessageActionsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageActionsViewController.swift; sourceTree = "<group>"; };
 		D311F87F29FA5F6400D9CF7E /* BasicReactionPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasicReactionPicker.swift; sourceTree = "<group>"; };
 		D32D8D2E2A1364CC00482788 /* MessageActionsViewControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageActionsViewControllerTests.swift; sourceTree = "<group>"; };
@@ -4438,6 +4440,7 @@
 				06A5CFB52632A4D4006D2891 /* ConversationMessageSenderSnapshotTests.swift */,
 				E961C0742A332E7400A36DE6 /* ConversationReactionMessageTests.swift */,
 				0608828E29EC742B0053772B /* ConversationMessageFailedRecipientsTests.swift */,
+				D30E113B2A98CE3000D8C62D /* RecentlyUsedEmojiPeristenceCoordinatorTests.swift */,
 			);
 			path = ConversationMessageCell;
 			sourceTree = "<group>";
@@ -9597,6 +9600,7 @@
 				5E97C30420F4CFFF00C806B4 /* MockZiphyClient.swift in Sources */,
 				EEEED9B223F6EA53008C94CA /* MockUserType+ZMEditableUser.swift in Sources */,
 				BF16FC4C1DAFCA0000FF4325 /* EphemeralKeyboardViewControllerTests.swift in Sources */,
+				D30E113C2A98CE3000D8C62D /* RecentlyUsedEmojiPeristenceCoordinatorTests.swift in Sources */,
 				63F239352694A151000BFFC6 /* Array+Prefix.swift in Sources */,
 				87AE8BDC207B99540058715E /* BackupPasswordViewControllerTests.swift in Sources */,
 				EE52378423F5567300D4FE79 /* MockUserType+Creation.swift in Sources */,
