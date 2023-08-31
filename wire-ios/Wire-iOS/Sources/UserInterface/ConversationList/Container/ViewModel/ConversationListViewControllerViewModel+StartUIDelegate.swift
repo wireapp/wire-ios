@@ -47,7 +47,7 @@ extension ConversationListViewController.ViewModel: StartUIDelegate {
         callback onConversationCreated: @escaping ConversationCreatedBlock
     ) {
         guard let userSession = ZMUserSession.shared() else { return }
-        
+
         viewController?.setState(.conversationList, animated: true) {
             if let conversation = user.oneToOneConversation {
                 onConversationCreated(conversation)
@@ -58,7 +58,7 @@ extension ConversationListViewController.ViewModel: StartUIDelegate {
             }
         }
     }
-    
+
     private func createOneToOneConversation(
         with user: UserType,
         context: NSManagedObjectContext,
@@ -71,12 +71,12 @@ extension ConversationListViewController.ViewModel: StartUIDelegate {
             return
         }
         let conversationService = ConversationService(context: context)
-        
+
         conversationService.createTeamOneToOneConversation(user: user) { result in
             switch result {
             case .success(let conversation):
                 completion(conversation)
-                
+
             case .failure(let error):
                 WireLogger.conversation.error("failed to create guest room: \(String(describing: error))")
             }
