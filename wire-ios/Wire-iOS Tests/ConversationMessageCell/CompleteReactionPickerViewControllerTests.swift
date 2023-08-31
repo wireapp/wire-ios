@@ -36,6 +36,7 @@ final class CompleteReactionPickerViewControllerTests: BaseSnapshotTestCase {
 
     override func tearDown() {
         sut = nil
+        RecentlyUsedEmojiPeristenceCoordinator.store(RecentlyUsedEmojiSection(capacity: 15))
         super.tearDown()
     }
 
@@ -61,6 +62,20 @@ final class CompleteReactionPickerViewControllerTests: BaseSnapshotTestCase {
         sut = setUpCompleteReactionPickerViewController(selectedReactions: [.argentinaFlag])
         scrollToSection(7)
         // THEN
+        verify(matching: sut)
+    }
+
+
+    func testReactionPicker_withRecentReactionsSection() {
+        // GIVEN
+        let emojis = [Emoji(value: "😂"), Emoji(value: "🆎"), Emoji(value: "🫥"), Emoji(value: "🐞"), .monkey]
+        let emojiSection = RecentlyUsedEmojiSection(capacity: 15, elements: emojis)
+
+        // WHEN
+        RecentlyUsedEmojiPeristenceCoordinator.store(emojiSection)
+        sut = setUpCompleteReactionPickerViewController(selectedReactions: [.monkey])
+
+        // // THEN
         verify(matching: sut)
     }
 
