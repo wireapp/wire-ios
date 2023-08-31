@@ -2016,3 +2016,7 @@
 "drawing.colors.pink" = "pink";
 "drawing.colors.chocolate" = "chocolate";
 "drawing.colors.gray" = "gray";
+
+// MARK: - Time
+
+"time.just_now" = "Just now";
