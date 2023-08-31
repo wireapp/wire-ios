@@ -16,31 +16,36 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 import SnapshotTesting
 import WireTransport
+import XCTest
 @testable import Wire
 
-final class LandingViewControllerSnapshotTests: ZMSnapshotTestCase {
+final class LandingViewControllerSnapshotTests: BaseSnapshotTestCase {
+
+    // MARK: - Properties
 
     var sut: LandingViewController!
+
+    // MARK: - setUp
 
     override func setUp() {
         super.setUp()
         sut = LandingViewController()
     }
 
+    // MARK: - tearDown
+
     override func tearDown() {
         sut = nil
         super.tearDown()
     }
 
+    // MARK: - Snapshot Tests
+
     func testForInitState() {
         sut = LandingViewController()
-        let navigationController = UINavigationController(navigationBarClass: AuthenticationNavigationBar.self, toolbarClass: nil)
-        navigationController.setOverrideTraitCollection(UITraitCollection(horizontalSizeClass: .compact), forChild: sut)
-        navigationController.viewControllers = [sut]
-        verifyInAllDeviceSizes(matching: navigationController)
+        verifyInAllDeviceSizes(matching: sutInUiNavigationController())
     }
 
     func testForBackendWithCustomURL() {
@@ -51,13 +56,23 @@ final class LandingViewControllerSnapshotTests: ZMSnapshotTestCase {
         sut = LandingViewController(backendEnvironmentProvider: {
             customBackend
         })
+
+        verifyInAllDeviceSizes(matching: sutInUiNavigationController())
+    }
+
+    // MARK: - Helper Method
+
+    func sutInUiNavigationController() -> UINavigationController {
         let navigationController = UINavigationController(navigationBarClass: AuthenticationNavigationBar.self, toolbarClass: nil)
         navigationController.setOverrideTraitCollection(UITraitCollection(horizontalSizeClass: .compact), forChild: sut)
         navigationController.viewControllers = [sut]
-        verifyInAllDeviceSizes(matching: navigationController)
+
+        return navigationController
     }
 
 }
+
+// MARK: - FakeProxySettings
 
 class FakeProxySettings: NSObject, ProxySettingsProvider {
 

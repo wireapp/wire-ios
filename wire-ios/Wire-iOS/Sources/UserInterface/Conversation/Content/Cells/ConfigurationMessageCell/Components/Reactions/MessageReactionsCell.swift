@@ -102,5 +102,24 @@ final class MessageReactionsCell: UIView, ConversationMessageCell {
 
         reactionsView.configure(views: reactionToggles)
     }
-
+    
+    func prepareForReuse() {
+        reactionsView.prepareForReuse()
+    }
+    
+    override func systemLayoutSizeFitting(
+        _ targetSize: CGSize,
+        withHorizontalFittingPriority horizontalFittingPriority: UILayoutPriority,
+        verticalFittingPriority: UILayoutPriority
+    ) -> CGSize {
+        let insetsWidth = insets.left + insets.right
+        reactionsView.widthForCalculations = targetSize.width - insetsWidth
+        reactionsView.setNeedsLayout()
+        reactionsView.layoutIfNeeded()
+        return super.systemLayoutSizeFitting(
+            CGSize(width: targetSize.width - insetsWidth, height: UIView.noIntrinsicMetric),
+            withHorizontalFittingPriority: horizontalFittingPriority,
+            verticalFittingPriority: verticalFittingPriority
+        )
+    }
 }

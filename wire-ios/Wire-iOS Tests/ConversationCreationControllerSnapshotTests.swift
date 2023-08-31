@@ -20,25 +20,27 @@ import SnapshotTesting
 import XCTest
 @testable import Wire
 
-final class ConversationCreationControllerSnapshotTests: ZMSnapshotTestCase {
+final class ConversationCreationControllerSnapshotTests: BaseSnapshotTestCase {
+
+    // MARK: - Properties
 
     var sut: ConversationCreationController!
+
+    // MARK: - setUp
 
     override func setUp() {
         super.setUp()
         accentColor = .violet
     }
 
+    // MARK: - tearDown
+
     override func tearDown() {
         sut = nil
         super.tearDown()
     }
 
-    private func createSut(isTeamMember: Bool) {
-        let mockSelfUser = MockUserType.createSelfUser(name: "Alice", inTeam:
-            isTeamMember ? UUID() : nil)
-        sut = ConversationCreationController(preSelectedParticipants: nil, selfUser: mockSelfUser)
-    }
+    // MARK: - Snapshot Tests
 
     func testForEditingTextField() {
         createSut(isTeamMember: false)
@@ -53,9 +55,7 @@ final class ConversationCreationControllerSnapshotTests: ZMSnapshotTestCase {
     }
 
     func testTeamGroupOptionsCollapsed_dark() {
-        createSut(isTeamMember: true)
-
-        sut.overrideUserInterfaceStyle = .dark
+        createSut(isTeamMember: true, userInterfaceStyle: .dark)
 
         verify(matching: sut)
     }
@@ -65,5 +65,16 @@ final class ConversationCreationControllerSnapshotTests: ZMSnapshotTestCase {
         sut.expandOptions()
 
         verify(matching: sut)
+    }
+
+    // MARK: - Helper Method
+
+    private func createSut(
+        isTeamMember: Bool,
+        userInterfaceStyle: UIUserInterfaceStyle = .light
+    ) {
+        let mockSelfUser = MockUserType.createSelfUser(name: "Alice", inTeam: isTeamMember ? UUID() : nil)
+        sut = ConversationCreationController(preSelectedParticipants: nil, selfUser: mockSelfUser)
+        sut.overrideUserInterfaceStyle = userInterfaceStyle
     }
 }

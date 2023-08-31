@@ -20,9 +20,13 @@ import XCTest
 @testable import Wire
 import SnapshotTesting
 
-final class ContactsViewControllerSnapshotTests: ZMSnapshotTestCase {
+final class ContactsViewControllerSnapshotTests: BaseSnapshotTestCase {
+
+    // MARK: - Properties
 
     var sut: ContactsViewController!
+
+    // MARK: - setUp
 
     override func setUp() {
         super.setUp()
@@ -33,10 +37,14 @@ final class ContactsViewControllerSnapshotTests: ZMSnapshotTestCase {
         sut.view.backgroundColor = .black
     }
 
+    // MARK: - tearDown
+
     override func tearDown() {
         sut = nil
         super.tearDown()
     }
+
+    // MARK: - Snapshot Tests
 
     func testForNoContacts() {
         // Given
@@ -86,6 +94,8 @@ final class ContactsViewControllerSnapshotTests: ZMSnapshotTestCase {
         wrapInNavigationController()
         verify(matching: sut)
     }
+
+    // MARK: - Helper Methods
 
     private func simulateSearch(withResults: Bool) {
         sut.updateEmptyResults(hasResults: withResults)

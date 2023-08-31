@@ -5556,8 +5556,8 @@ internal enum L10n {
       }
     }
     internal enum Time {
-      /// Just Now
-      internal static let justNow = L10n.tr("Localizable", "time.just_now", fallback: "Just Now")
+      /// Just now
+      internal static let justNow = L10n.tr("Localizable", "time.just_now", fallback: "Just now")
     }
     internal enum ToolTip {
       internal enum Contacts {
