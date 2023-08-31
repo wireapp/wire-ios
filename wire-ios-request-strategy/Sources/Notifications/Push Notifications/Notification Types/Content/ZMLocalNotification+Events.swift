@@ -166,19 +166,6 @@ private class ReactionEventNotificationBuilder: EventNotificationBuilder {
 
     override func shouldCreateNotification() -> Bool {
         return false
-        // we're blocking notifications about received reactions for next sprint. For details: https://wearezeta.atlassian.net/browse/WPB-4239
-
-//        guard super.shouldCreateNotification() else { return false }
-//
-//        // If the message is an "unlike", we don't want to display a notification
-//        guard message.reaction.emoji != "" else { return false }
-//
-//        // fetch message that was reacted to and make sure the sender of the original message is the selfUser
-//        guard let conversation = conversation,
-//              let reactionMessage = ZMMessage.fetch(withNonce: UUID(uuidString: message.reaction.messageID), for: conversation, in: moc),
-//            reactionMessage.sender == ZMUser.selfUser(in: moc) else { return false }
-//
-//        return true
     }
 
     override func userInfo() -> NotificationUserInfo? {
