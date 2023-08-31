@@ -52,14 +52,14 @@ extension ConversationListViewController.ViewModel: StartUIDelegate {
             if let conversation = user.oneToOneConversation {
                 onConversationCreated(conversation)
             } else {
-                self.createOneToOneConversation(with: user, context: userSession.viewContext) { conversation in
+                self.createTeamOneToOneConversation(with: user, context: userSession.viewContext) { conversation in
                     onConversationCreated(conversation)
                 }
             }
         }
     }
 
-    private func createOneToOneConversation(
+    private func createTeamOneToOneConversation(
         with user: UserType,
         context: NSManagedObjectContext,
         completion: @escaping ConversationCreatedBlock
