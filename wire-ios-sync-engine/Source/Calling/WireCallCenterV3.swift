@@ -966,6 +966,9 @@ private extension ZMConversation {
         case (.group, .mls):
             return .mlsConference
 
+        case (.`self`, .mls):
+            return .mlsConference
+
         default:
             return nil
         }
