@@ -174,13 +174,14 @@ extension ZMConversation {
     static func fetchOneToOneTeamConversation(
         moc: NSManagedObjectContext,
         participant: ZMUser,
-        team: Team?) -> ZMConversation? {
-            guard let team = team,
-                  !participant.isSelfUser
-            else { return nil }
+        team: Team?
+    ) -> ZMConversation? {
+        guard let team = team,
+              !participant.isSelfUser
+        else { return nil }
 
-            return self.existingTeamConversation(moc: moc, participant: participant, team: team)
-        }
+        return self.existingTeamConversation(moc: moc, participant: participant, team: team)
+    }
 
     static func existingTeamConversation(moc: NSManagedObjectContext,
                                          participant: ZMUser,
