@@ -18,25 +18,39 @@
 
 import Foundation
 
-final class RecentlyUsedEmojiSection: NSObject, EmojiDataSourceSection {
+final class RecentlyUsedEmojiSection: EmojiDataSource.Section {
 
-    let id = EmojiSectionType.recent
-    private(set) var items = [Emoji]()
-    private let backing: NSMutableOrderedSet
+    // MARK: - Properties
+
     private let capacity: Int
+    private let backing: NSMutableOrderedSet
 
-    init(capacity: Int, elements: [Emoji] = []) {
+    // MARK: - Life cycle
+
+    init(
+        capacity: Int,
+        items: [EmojiData] = []
+    ) {
         self.capacity = capacity
-        self.backing = NSMutableOrderedSet(array: elements)
-        super.init()
+        self.backing = NSMutableOrderedSet(array: items)
+        super.init(id: .recent, items: items)
         updateContent()
     }
 
-    @discardableResult func register(_ element: Emoji) -> Bool {
-        switch backing.index(of: element) {
-        case 0: return false // No update neccessary if the first element is already the new one
-        case NSNotFound: backing.insert(element, at: 0)
-        case let idx: backing.moveObjects(at: IndexSet(integer: idx), to: 0)
+    // MARK: - Methods
+
+    @discardableResult
+    func register(_ emoji: EmojiData) -> Bool {
+        switch backing.index(of: emoji) {
+        case 0:
+            // No update neccessary if the first element is already the new one
+            return false
+
+        case NSNotFound:
+            backing.insert(emoji, at: 0)
+
+        case let idx:
+            backing.moveObjects(at: IndexSet(integer: idx), to: 0)
         }
 
         updateContent()
@@ -44,40 +58,9 @@ final class RecentlyUsedEmojiSection: NSObject, EmojiDataSourceSection {
     }
 
     private func updateContent() {
-        defer { items = backing.array as! [Emoji] }
+        defer { items = backing.array as! [EmojiData] }
         guard backing.count > capacity else { return }
         backing.removeObjects(at: IndexSet(integersIn: capacity..<backing.count))
     }
-
-}
-
-final class RecentlyUsedEmojiPeristenceCoordinator {
-
-    static func loadOrCreate() -> RecentlyUsedEmojiSection {
-        return loadFromDisk() ?? RecentlyUsedEmojiSection(capacity: 15)
-    }
-
-    static func store(_ section: RecentlyUsedEmojiSection) {
-        guard let emojiUrl = url,
-              let directoryUrl = URL.directoryURL(directory) else { return }
-
-        let stringValues = section.emojis.map { $0.value }
-        FileManager.default.createAndProtectDirectory(at: directoryUrl)
-        (section.items as NSArray).write(to: emojiUrl, atomically: true)
-    }
-
-    private static func loadFromDisk() -> RecentlyUsedEmojiSection? {
-        guard let emojiUrl = url,
-              let stringValues = NSArray(contentsOf: emojiUrl) as? [String] else { return nil }
-        
-        let emoji = stringValues.map { Emoji(value: $0) }
-        return RecentlyUsedEmojiSection(capacity: 15, elements: emoji)
-    }
-
-    private static var directory: String = "emoji"
-
-    private static var url: URL? = {
-        return URL.directoryURL(directory)?.appendingPathComponent("recently_used.plist")
-    }()
 
 }

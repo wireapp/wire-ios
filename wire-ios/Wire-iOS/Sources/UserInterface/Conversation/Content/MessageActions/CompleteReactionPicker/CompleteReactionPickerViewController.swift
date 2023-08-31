@@ -24,7 +24,7 @@ final class CompleteReactionPickerViewController: UIViewController {
     weak var delegate: EmojiPickerViewControllerDelegate?
     private var emojiDataSource: EmojiDataSource!
     private let collectionView = ReactionsCollectionView()
-    private let sectionViewController: ReactionSectionViewController
+    private lazy var sectionViewController = ReactionSectionViewController(types: emojiDataSource.sectionTypes)
     private let topBar = ModalTopBar()
     private let searchBar = UISearchBar()
     private let selectedReactions: Set<Emoji>
@@ -33,9 +33,6 @@ final class CompleteReactionPickerViewController: UIViewController {
 
     init(selectedReactions: Set<Emoji>) {
         self.selectedReactions = selectedReactions
-        let hasNoRecentlyUsedReactions =  RecentlyUsedEmojiPeristenceCoordinator.loadOrCreate().items.isEmpty
-        let sectionTypes: [EmojiSectionType] = hasNoRecentlyUsedReactions ? EmojiSectionType.basicTypes : EmojiSectionType.all
-        sectionViewController = ReactionSectionViewController(types: sectionTypes)
         super.init(nibName: nil, bundle: nil)
 
         emojiDataSource = EmojiDataSource(provider: cellForEmoji)

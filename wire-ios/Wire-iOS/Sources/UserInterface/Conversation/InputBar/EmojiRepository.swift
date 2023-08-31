@@ -24,6 +24,8 @@ protocol EmojiRepositoryInterface {
     func allEmojis() -> [EmojiData]
     func emojis(for category: EmojiCategory) -> [EmojiData]
     func data(for emoji: Emoji) -> EmojiData?
+    func registerRecentlyUsedEmojis(_ emojis: [EmojiData])
+    func fetchRecentlyUsedEmojis() -> [EmojiData]
 
 }
 
@@ -45,7 +47,7 @@ final class EmojiRepository: EmojiRepositoryInterface {
         }
     }
 
-    // MARK: - Methods
+    // MARK: - Fetch
 
     func allEmojis() -> [EmojiData] {
         return allEmojiData
@@ -58,6 +60,37 @@ final class EmojiRepository: EmojiRepositoryInterface {
     func data(for emoji: Emoji) -> EmojiData? {
         return emojisByValue[emoji.value]
     }
+
+    // MARK: - Recently used
+
+    func registerRecentlyUsedEmojis(_ emojis: [EmojiData]) {
+        guard
+            let emojiDirectory = emojiDirectory,
+            let recentlyUsedEmojisURL = recentlyUsedEmojisURL
+        else {
+            return
+        }
+
+        FileManager.default.createAndProtectDirectory(at: emojiDirectory)
+        let emojiValues = emojis.map(\.value)
+        (emojiValues as NSArray).write(to: recentlyUsedEmojisURL, atomically: true)
+    }
+
+    func fetchRecentlyUsedEmojis() -> [EmojiData] {
+        guard
+            let recentlyUsedEmojisURL = recentlyUsedEmojisURL,
+            let emojiValues = NSArray(contentsOf: recentlyUsedEmojisURL) as? [String]
+        else {
+            return []
+        }
+
+        return emojiValues
+            .map(Emoji.init(value:))
+            .compactMap(data(for:))
+    }
+
+    private lazy var emojiDirectory = URL.directoryURL("emoji")
+    private lazy var recentlyUsedEmojisURL = emojiDirectory?.appendingPathComponent("recently_used.plist")
 
 }
 

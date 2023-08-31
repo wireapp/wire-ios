@@ -28,7 +28,7 @@ final class EmojiKeyboardViewController: UIViewController {
     weak var delegate: EmojiPickerViewControllerDelegate?
     fileprivate var emojiDataSource: EmojiDataSource!
     fileprivate let collectionView = EmojiCollectionView()
-    let sectionViewController = EmojiSectionViewController(types: EmojiSectionType.all)
+    let sectionViewController = EmojiSectionViewController(types: EmojiSectionType.allCases)
 
     private var deleting = false
 

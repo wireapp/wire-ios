@@ -77,10 +77,13 @@ final class EmojiDataSource: NSObject, UICollectionViewDataSource {
     let cellProvider: CellProvider
 
     private let initialSections: [Section]
-    private var sections: [EmojiDataSourceSection]
+    private var sections: [Section]
     private let recentlyUsed: RecentlyUsedEmojiSection
-
     private let emojiRepository: EmojiRepositoryInterface
+
+    var sectionTypes: [EmojiSectionType] {
+        return sections.map(\.id)
+    }
 
     // MARK: - Life cycle
 
@@ -102,17 +105,21 @@ final class EmojiDataSource: NSObject, UICollectionViewDataSource {
         let flags = emojiRepository.emojis(for: .flags)
 
         initialSections = [
-            Section(id: .people, emojiData: smileysAndEmotion + peopleAndBody),
-            Section(id: .nature, emojiData: animalsAndNature),
-            Section(id: .food, emojiData: foodAndDrink),
-            Section(id: .activities, emojiData: activities),
-            Section(id: .travel, emojiData: travelAndPlaces),
-            Section(id: .objects, emojiData: objects),
-            Section(id: .symbols, emojiData: symbols),
-            Section(id: .flags, emojiData: flags)
+            Section(id: .people, items: smileysAndEmotion + peopleAndBody),
+            Section(id: .nature, items: animalsAndNature),
+            Section(id: .food, items: foodAndDrink),
+            Section(id: .activities, items: activities),
+            Section(id: .travel, items: travelAndPlaces),
+            Section(id: .objects, items: objects),
+            Section(id: .symbols, items: symbols),
+            Section(id: .flags, items: flags)
         ]
 
-        recentlyUsed = RecentlyUsedEmojiPeristenceCoordinator.loadOrCreate()
+        recentlyUsed = RecentlyUsedEmojiSection(
+            capacity: 15,
+            items: emojiRepository.fetchRecentlyUsedEmojis()
+        )
+
         sections = initialSections
 
         super.init()
@@ -121,12 +128,12 @@ final class EmojiDataSource: NSObject, UICollectionViewDataSource {
 
     // MARK: - Helpers
 
-    subscript (index: Int) -> EmojiDataSourceSection {
+    subscript (index: Int) -> Section {
         return sections[index]
     }
 
     subscript (indexPath: IndexPath) -> Emoji {
-        return sections[indexPath.section].items[indexPath.item]
+        return sections[indexPath.section].items[indexPath.item].emoji
     }
 
     func sectionIndex(for id: EmojiSectionType) -> Int? {
@@ -158,6 +165,12 @@ final class EmojiDataSource: NSObject, UICollectionViewDataSource {
     // MARK: - Filter
 
     func filterEmojis(withQuery query: String) {
+        guard !query.isEmpty else {
+            sections = initialSections
+            insertRecentlyUsedSectionIfNeeded()
+            return
+        }
+
         let lowercasedQuery = query.lowercased()
         sections = initialSections.compactMap {
             $0.filteredBySearchQuery(lowercasedQuery)
@@ -168,10 +181,14 @@ final class EmojiDataSource: NSObject, UICollectionViewDataSource {
 
     @discardableResult
     func register(used emoji: Emoji) -> Update? {
-        let shouldReload = recentlyUsed.register(emoji)
+        guard let emojiData = emojiRepository.data(for: emoji) else { return nil }
+        let shouldReload = recentlyUsed.register(emojiData)
         let shouldInsert = insertRecentlyUsedSectionIfNeeded()
 
-        defer { RecentlyUsedEmojiPeristenceCoordinator.store(recentlyUsed) }
+        defer {
+            emojiRepository.registerRecentlyUsedEmojis(recentlyUsed.items)
+        }
+
         switch (shouldInsert, shouldReload) {
         case (true, _): return .insert(0)
         case (false, true): return .reload(0)
@@ -195,13 +212,6 @@ final class EmojiDataSource: NSObject, UICollectionViewDataSource {
 
 }
 
-protocol EmojiDataSourceSection {
-
-    var id: EmojiSectionType { get }
-    var items: [Emoji] { get }
-
-}
-
 extension EmojiDataSource {
 
     typealias CellProvider = (Emoji, IndexPath) -> UICollectionViewCell
@@ -213,33 +223,17 @@ extension EmojiDataSource {
 
     }
 
-    final class Section: EmojiDataSourceSection {
+    class Section {
 
         let id: EmojiSectionType
-        let image: ImageAsset
-        let emojiData: [EmojiData]
-        let items: [Emoji]
-
-        convenience init(
-            id: EmojiSectionType,
-            emojiData: [EmojiData]
-        ) {
-            self.init(
-                id: id,
-                image: id.imageAsset,
-                emojiData: emojiData
-            )
-        }
+        var items: [EmojiData]
 
         init(
             id: EmojiSectionType,
-            image: ImageAsset,
-            emojiData: [EmojiData]
+            items: [EmojiData]
         ) {
             self.id = id
-            self.image = image
-            self.emojiData = emojiData
-            self.items = emojiData.map { Emoji(value: $0.value) }
+            self.items = items
         }
 
         func filteredBySearchQuery(_ query: String) -> Section? {
@@ -247,18 +241,17 @@ extension EmojiDataSource {
                 return self
             }
 
-            let filteredData = emojiData.filter {
+            let filteredItems = items.filter {
                 $0.matchesSearchQuery(query)
             }
 
-            guard !filteredData.isEmpty else {
+            guard !filteredItems.isEmpty else {
                 return nil
             }
 
             return Section(
                 id: id,
-                image: image,
-                emojiData: filteredData
+                items: filteredItems
             )
         }
 
@@ -266,8 +259,7 @@ extension EmojiDataSource {
 
 }
 
-// TODO: rename EmojiDataSource.SectionID
-enum EmojiSectionType: Int {
+enum EmojiSectionType: Int, CaseIterable {
 
     case recent
     case people
@@ -305,27 +297,6 @@ enum EmojiSectionType: Int {
         case .symbols: return Asset.Images.symbols
         case .flags: return Asset.Images.flags
         }
-    }
-
-    // TODO: to delete?
-    static var all: [EmojiSectionType] {
-        var all = basicTypes
-        all.insert(EmojiSectionType.recent, at: 0)
-        return all
-    }
-
-    // TODO: to delete?
-    static var basicTypes: [EmojiSectionType] {
-        return [
-            .people,
-            .nature,
-            .food,
-            .travel,
-            .activities,
-            .objects,
-            .symbols,
-            .flags
-        ]
     }
 
 }

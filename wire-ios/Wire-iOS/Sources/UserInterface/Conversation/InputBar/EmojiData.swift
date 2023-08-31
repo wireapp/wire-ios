@@ -28,6 +28,10 @@ struct EmojiData: Decodable {
     let addedIn: String
     let sortOrder: Int
 
+    var emoji: Emoji {
+        return Emoji(value: value)
+    }
+
     func matchesSearchQuery(_ query: String) -> Bool {
         return [name, shortName, category.rawValue, subcategory].contains {
             $0.lowercased().contains(query)
