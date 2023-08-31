@@ -73,7 +73,10 @@ final class SelfRequestStrategyTests: MessagingTestBase {
                 return XCTFail("expected a payload")
             }
 
-            XCTAssertEqual(supportedProtocols, selfUser.supportedProtocols.map(\.stringValue))
+            XCTAssertEqual(
+                Set(supportedProtocols),
+                Set(selfUser.supportedProtocols.map(\.stringValue))
+            )
         }
 
     }
