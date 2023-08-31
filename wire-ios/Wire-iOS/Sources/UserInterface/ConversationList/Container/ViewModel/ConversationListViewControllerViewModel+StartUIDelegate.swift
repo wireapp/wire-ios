@@ -42,20 +42,44 @@ extension ConversationListViewController.ViewModel: StartUIDelegate {
     /// - Parameters:
     ///   - user: the user which we want to have a 1-to-1 conversation with
     ///   - onConversationCreated: a ConversationCreatedBlock which has the conversation created
-    private func oneToOneConversationWithUser(_ user: UserType, callback onConversationCreated: @escaping ConversationCreatedBlock) {
-
+    private func oneToOneConversationWithUser(
+        _ user: UserType,
+        callback onConversationCreated: @escaping ConversationCreatedBlock
+    ) {
         guard let userSession = ZMUserSession.shared() else { return }
 
         viewController?.setState(.conversationList, animated: true) {
-            var oneToOneConversation: ZMConversation?
-            userSession.enqueue({
-                oneToOneConversation = user.oneToOneConversation
-            }, completionHandler: {
-                delay(0.3) {
-                    onConversationCreated(oneToOneConversation)
+            if let conversation = user.oneToOneConversation {
+                onConversationCreated(conversation)
+            } else {
+                self.createTeamOneToOneConversation(with: user, context: userSession.viewContext) { conversation in
+                    onConversationCreated(conversation)
                 }
-            })
+            }
         }
     }
 
+    private func createTeamOneToOneConversation(
+        with user: UserType,
+        context: NSManagedObjectContext,
+        completion: @escaping ConversationCreatedBlock
+    ) {
+        guard
+            user.isTeamMember,
+            let user = user.materialize(in: context)
+        else {
+            return
+        }
+        let conversationService = ConversationService(context: context)
+
+        conversationService.createTeamOneToOneConversation(user: user) { result in
+            switch result {
+            case .success(let conversation):
+                completion(conversation)
+
+            case .failure(let error):
+                WireLogger.conversation.error("failed to create guest room: \(String(describing: error))")
+            }
+        }
+    }
 }
