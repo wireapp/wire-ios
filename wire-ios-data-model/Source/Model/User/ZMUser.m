@@ -245,20 +245,6 @@ static NSString *const MessagesFailedToSendRecipientKey = @"messagesFailedToSend
     return self.managedBy == nil || [self.managedBy isEqualToString:@"wire"];
 }
 
-- (ZMConversation *)oneToOneConversation
-{
-    if (self.isSelfUser) {
-        return [ZMConversation selfConversationInContext:self.managedObjectContext];
-    } else if (self.isTeamMember) {
-        return [ZMConversation fetchOrCreateOneToOneTeamConversationWithMoc:self.managedObjectContext
-                                                        participant:self
-                                                               team:self.team
-                                                    participantRole:nil];
-    } else {
-        return self.connection.conversation;
-    }
-}
-
 - (BOOL)canBeConnected;
 {
     if (self.isServiceUser || self.isWirelessUser) {
