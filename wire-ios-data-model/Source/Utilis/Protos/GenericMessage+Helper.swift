@@ -529,7 +529,7 @@ extension Calling {
             $0.content = content
             $0.qualifiedConversationID = QualifiedConversationId.with {
                 $0.domain = conversationId.domain
-                $0.id = conversationId.uuid.uuidString
+                $0.id = conversationId.uuid.uuidString.lowercased()
             }
         }
     }
