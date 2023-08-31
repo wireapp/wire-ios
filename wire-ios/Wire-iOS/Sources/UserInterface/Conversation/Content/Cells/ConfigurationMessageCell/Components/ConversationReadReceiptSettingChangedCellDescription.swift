@@ -31,17 +31,16 @@ struct ReadReceiptViewModel {
     }
 
     func createSystemMessage(template: String) -> NSAttributedString {
-        var updateText: NSAttributedString! = .none
+        var updateText: NSAttributedString
 
         if sender.isSelfUser {
             let youLocalized = "content.system.you_started".localized
 
             updateText = NSAttributedString(string: template.localized(pov: sender.pov, args: youLocalized), attributes: ConversationSystemMessageCell.baseAttributes).adding(font: .mediumSemiboldFont, to: youLocalized)
-        } else if let otherUserName = sender.name {
+        } else {
+            let otherUserName = sender.name ?? L10n.Localizable.Conversation.Status.someone
             updateText = NSAttributedString(string: template.localized(args: otherUserName), attributes: ConversationSystemMessageCell.baseAttributes)
                 .adding(font: .mediumSemiboldFont, to: otherUserName)
-        } else {
-            assertionFailure("invalid user name for ReadReceiptViewModel")
         }
 
         return updateText
@@ -49,7 +48,7 @@ struct ReadReceiptViewModel {
 
     func attributedTitle() -> NSAttributedString? {
 
-        var updateText: NSAttributedString! = .none
+        var updateText: NSAttributedString?
 
         switch systemMessageType {
         case .readReceiptsDisabled:
