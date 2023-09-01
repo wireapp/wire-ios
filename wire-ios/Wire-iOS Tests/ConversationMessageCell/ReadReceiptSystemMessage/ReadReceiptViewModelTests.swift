@@ -82,6 +82,21 @@ final class ReadReceiptViewModelTests: XCTestCase {
         XCTAssertEqual(sut.attributedTitle()?.string, "James Hetfield turned read receipts on for everyone")
     }
 
+    func testThatUserWithoutNameSwitchOnReceiptOption() {
+        // GIVEN & WHEN
+        let type = ZMSystemMessageType.readReceiptsEnabled
+        createMockMessage(type: type)
+
+        let userWithoutMetadata = SwiftMockLoader.mockUsers().first
+        userWithoutMetadata?.name = nil
+        mockMessage.senderUser = userWithoutMetadata
+
+        createSut(type: type)
+
+        // THEN
+        XCTAssertEqual(sut.attributedTitle()?.string, "Someone turned read receipts on for everyone")
+    }
+
     func testThatReceiptOptionOnMessageIsShown() {
         // GIVEN & WHEN
         let type = ZMSystemMessageType.readReceiptsOn
