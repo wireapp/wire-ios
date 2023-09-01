@@ -385,7 +385,7 @@ extension MessageDetailsContentViewController: ProfileViewControllerDelegate {
         wantsToNavigateTo conversation: ZMConversation
     ) {
         dismiss(animated: true) {
-            ZClientViewController.shared?.load(conversation, scrollTo: nil, focusOnView: true, animated: true)
+            ZClientViewController.shared?.select(conversation: conversation, focusOnView: true, animated: true)
         }
     }
 }

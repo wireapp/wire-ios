@@ -53,31 +53,12 @@ final class ConversationTests_Teams: ZMConversationTestsBase {
         super.tearDown()
     }
 
-    func testThatItCreatesAOneToOneConversationInATeam() {
-        // given
-        let user = otherUser!
-        user.remoteIdentifier = .create()
-        let selfUser = ZMUser.selfUser(in: self.uiMOC)
-
-        // when
-        guard let conversation = ZMConversation.fetchOrCreateOneToOneTeamConversation(
-            moc: self.uiMOC,
-            participant: otherUser,
-            team: team
-            ) else { return XCTFail() }
-
-        // then
-        XCTAssertEqual(conversation.conversationType, .group)
-        XCTAssertEqual(Set(conversation.localParticipants), Set([user, selfUser]))
-        XCTAssertEqual(conversation.team, team)
-    }
-
     func testThatItReturnsAnExistingOneOnOneConversationIfThereAlreadyIsOneInATeam() {
         // given
-        let conversation = ZMConversation.fetchOrCreateOneToOneTeamConversation(moc: self.uiMOC, participant: otherUser, team: team)
+        let conversation = ZMConversation.fetchOneToOneTeamConversation(moc: self.uiMOC, participant: otherUser, team: team)
 
         // when
-        let newConversation = ZMConversation.fetchOrCreateOneToOneTeamConversation(moc: self.uiMOC, participant: otherUser, team: team)
+        let newConversation = ZMConversation.fetchOneToOneTeamConversation(moc: self.uiMOC, participant: otherUser, team: team)
 
         // then
         XCTAssertEqual(conversation, newConversation)
@@ -90,22 +71,22 @@ final class ConversationTests_Teams: ZMConversationTestsBase {
         conversation.team = team
 
         // when
-        let newConversation = ZMConversation.fetchOrCreateOneToOneTeamConversation(moc: self.uiMOC, participant: otherUser, team: team)
+        let newConversation = ZMConversation.fetchOneToOneTeamConversation(moc: self.uiMOC, participant: otherUser, team: team)
 
         // then
         XCTAssertNotEqual(conversation, newConversation)
     }
 
-    func testThatItReturnsANewConversationIfAnExistingOneHasAUserDefinedName() {
+    func testThatItDoesNotReturnAConversationIfAnExistingOneHasAUserDefinedName() {
         // given
-        let conversation = ZMConversation.fetchOrCreateOneToOneTeamConversation(moc: self.uiMOC, participant: otherUser, team: team)
+        let conversation = ZMConversation.fetchOneToOneTeamConversation(moc: self.uiMOC, participant: otherUser, team: team)
         conversation?.userDefinedName = "Best Conversation"
 
         // when
-        let newConversation = ZMConversation.fetchOrCreateOneToOneTeamConversation(moc: self.uiMOC, participant: otherUser, team: team)
+        let existingConversation = ZMConversation.fetchOneToOneTeamConversation(moc: self.uiMOC, participant: otherUser, team: team)
 
         // then
-        XCTAssertNotEqual(conversation, newConversation)
+        XCTAssertNil(existingConversation)
     }
 
     func testThatItReturnsNotNilWhenAskedForOneOnOneConversationWithoutTeam() {
@@ -121,37 +102,6 @@ final class ConversationTests_Teams: ZMConversationTestsBase {
         XCTAssertEqual(userOutsideTeam.oneToOneConversation, oneOnOne)
     }
 
-    func testThatItCreatesOneOnOneConversationInDifferentTeam() {
-        // given
-        let otherTeam = Team.insertNewObject(in: uiMOC)
-        let otherMember = Member.insertNewObject(in: uiMOC)
-        otherMember.permissions = .member
-        otherMember.team = otherTeam
-        otherMember.user = user
-        let otherUserMember = Member.insertNewObject(in: uiMOC)
-        otherUserMember.user = otherUser
-        otherUserMember.team = otherTeam
-
-        let conversation = ZMConversation.fetchOrCreateOneToOneTeamConversation(moc: self.uiMOC, participant: otherUser, team: team)
-        // when
-        let newConversation = ZMConversation.fetchOrCreateOneToOneTeamConversation(moc: uiMOC, participant: otherUser, team: otherTeam)
-
-        // then
-        XCTAssertNotEqual(conversation, newConversation)
-    }
-
-    func testThatItCanCreateAOneOnOneConversationWithAParticipantNotInTheTeam() {
-        // given
-        let userOutsideTeam = ZMUser.insertNewObject(in: uiMOC)
-
-        // when
-        let conversation = ZMConversation.fetchOrCreateOneToOneTeamConversation(moc: self.uiMOC, participant: otherUser, team: team)
-
-        // then
-        XCTAssertNotNil(conversation)
-        XCTAssertNil(userOutsideTeam.oneToOneConversation)
-    }
-
     func testThatItReturnsTeamConversationForOneOnOneConversationWithTeamMember() {
         // given
         let selfUser = ZMUser.selfUser(in: uiMOC)
@@ -163,7 +113,7 @@ final class ConversationTests_Teams: ZMConversationTestsBase {
         oneOnOne.addParticipantsAndUpdateConversationState(users: Set([selfUser, otherUser]), role: nil)
 
         // when
-        let teamOneOnOne = ZMConversation.fetchOrCreateOneToOneTeamConversation(moc: self.uiMOC, participant: otherUser, team: team)
+        let teamOneOnOne = ZMConversation.fetchOneToOneTeamConversation(moc: self.uiMOC, participant: otherUser, team: team)
 
         // then
         XCTAssertNotEqual(otherUser.oneToOneConversation, oneOnOne)

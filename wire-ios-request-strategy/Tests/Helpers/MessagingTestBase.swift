@@ -385,6 +385,21 @@ extension MessagingTestBase {
         return conversation
     }
 
+    func createOneToOneConversation(
+        with user: ZMUser,
+        in context: NSManagedObjectContext
+    ) -> ZMConversation {
+        let conversation = ZMConversation.insertNewObject(in: context)
+        conversation.conversationType = .oneOnOne
+        conversation.domain = owningDomain
+        conversation.remoteIdentifier = UUID.create()
+        conversation.connection = ZMConnection.insertNewObject(in: context)
+        conversation.connection?.to = user
+        conversation.connection?.status = .accepted
+        conversation.addParticipantAndUpdateConversationState(user: user, role: nil)
+        return conversation
+    }
+
     @discardableResult
     func createTeam() -> Team {
         return createTeam(in: syncMOC)

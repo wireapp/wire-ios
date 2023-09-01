@@ -62,7 +62,12 @@ class ZMSearchUserTests_TeamUser: ModelObjectsTests {
                                       accentColor: .brightOrange,
                                       remoteIdentifier: UUID(),
                                       teamIdentifier: team.remoteIdentifier)
+
         uiMOC.saveOrRollback()
+
+        let materializedUser = searchUser.materialize(in: uiMOC)!
+        let convo = ZMConversation.insertGroupConversation(moc: uiMOC, participants: [materializedUser, selfUser])
+        convo?.team = team
 
         // then
         XCTAssertNotNil(searchUser.oneToOneConversation)
