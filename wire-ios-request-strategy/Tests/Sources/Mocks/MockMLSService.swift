@@ -131,8 +131,10 @@ class MockMLSService: MLSServiceInterface {
         fatalError("not implemented")
     }
 
+    var mockCreateSelfGroup: ((MLSGroupID) -> Void)?
     func createSelfGroup(for groupID: MLSGroupID) {
         calls.createSelfGroup.append(groupID)
+        mockCreateSelfGroup?(groupID)
     }
 
     func joinNewGroup(with groupID: MLSGroupID) async throws {

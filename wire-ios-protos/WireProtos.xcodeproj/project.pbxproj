@@ -43,12 +43,14 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		016BDDED2A9F86E50054FB04 /* Scripts */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Scripts; sourceTree = "<group>"; };
+		016BDDEE2A9F88AF0054FB04 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		090837FE1B872DBF00629095 /* WireProtos.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireProtos.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		090838021B872DBF00629095 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		090838091B872DBF00629095 /* WireProtosTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WireProtosTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		0908380F1B872DC000629095 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		090838241B87347900629095 /* messages.proto */ = {isa = PBXFileReference; lastKnownFileType = text; name = messages.proto; path = "Carthage/Checkouts/generic-message-proto/proto/messages.proto"; sourceTree = SOURCE_ROOT; };
-		099223A61BED06E400668091 /* otr.proto */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.protobuf; name = otr.proto; path = "Carthage/Checkouts/generic-message-proto/proto/otr.proto"; sourceTree = SOURCE_ROOT; };
+		090838241B87347900629095 /* messages.proto */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.protobuf; name = messages.proto; path = "../Carthage/Checkouts/generic-message-proto/proto/messages.proto"; sourceTree = SOURCE_ROOT; };
+		099223A61BED06E400668091 /* otr.proto */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.protobuf; name = otr.proto; path = "../Carthage/Checkouts/generic-message-proto/proto/otr.proto"; sourceTree = SOURCE_ROOT; };
 		09B70B4D1B874390002667A6 /* version.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = version.xcconfig; sourceTree = "<group>"; };
 		09B70B601B874390002667A6 /* WireProtos.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = WireProtos.xcconfig; sourceTree = "<group>"; };
 		09BCDB6D1BCBE08D0020DCC7 /* medium.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = medium.jpg; sourceTree = "<group>"; };
@@ -64,7 +66,7 @@
 		5E13807C21A30A9D004A646C /* otr.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = otr.pb.swift; sourceTree = "<group>"; };
 		5E13807F21A30AB7004A646C /* ProtosTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProtosTests.swift; sourceTree = "<group>"; };
 		638BBCF029150CEE007491FF /* mls.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = mls.pb.swift; sourceTree = "<group>"; };
-		638BBCF229150D4C007491FF /* mls.proto */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.protobuf; name = mls.proto; path = "Carthage/Checkouts/generic-message-proto/proto/mls.proto"; sourceTree = SOURCE_ROOT; };
+		638BBCF229150D4C007491FF /* mls.proto */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.protobuf; name = mls.proto; path = "../Carthage/Checkouts/generic-message-proto/proto/mls.proto"; sourceTree = SOURCE_ROOT; };
 		A9EF6A7323D76AC8002904B4 /* ios.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = ios.xcconfig; sourceTree = "<group>"; };
 		EE67F6BE296F05DB001D7C88 /* SwiftProtobuf.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = SwiftProtobuf.xcframework; path = ../Carthage/Build/SwiftProtobuf.xcframework; sourceTree = "<group>"; };
 		F1FDF2DF21B043F400E037A1 /* WireProtos.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WireProtos.h; sourceTree = "<group>"; };
@@ -93,6 +95,8 @@
 		090837F41B872DBF00629095 = {
 			isa = PBXGroup;
 			children = (
+				016BDDEE2A9F88AF0054FB04 /* README.md */,
+				016BDDED2A9F86E50054FB04 /* Scripts */,
 				09B70B4B1B874390002667A6 /* Resources */,
 				090838001B872DBF00629095 /* Protos */,
 				0908380D1B872DBF00629095 /* ProtosTests */,

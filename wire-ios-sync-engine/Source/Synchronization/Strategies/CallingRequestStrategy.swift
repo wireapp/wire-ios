@@ -89,8 +89,8 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
 
     public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
         let request = callConfigRequestSync.nextRequest(for: apiVersion) ??
-                      clientDiscoverySync.nextRequest(for: apiVersion) ??
-                      messageSync.nextRequest(for: apiVersion)
+        clientDiscoverySync.nextRequest(for: apiVersion) ??
+        messageSync.nextRequest(for: apiVersion)
 
         return request
     }
@@ -237,7 +237,8 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
 
             guard
                 let payload = genericMessage.calling.content.data(using: .utf8, allowLossyConversion: false),
-                let callEventContent = CallEventContent(from: payload, with: decoder),
+
+                    let callEventContent = CallEventContent(from: payload, with: decoder),
                 let senderUUID = event.senderUUID,
                 let conversationUUID = event.conversationUUID,
                 let eventTimestamp = event.timestamp
@@ -255,6 +256,7 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
             }
 
             processCallEvent(
+                callingConversationId: genericMessage.calling.qualifiedConversationID,
                 conversationUUID: conversationUUID,
                 senderUUID: senderUUID,
                 clientId: event.senderClientID ?? callEventContent.callerClientID,
@@ -267,39 +269,45 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
         }
     }
 
-    func processCallEvent(conversationUUID: UUID,
-                          senderUUID: UUID,
-                          clientId: String,
-                          conversationDomain: String?,
-                          senderDomain: String?,
-                          payload: Data,
-                          currentTimestamp: TimeInterval,
-                          eventTimestamp: Date) {
-        let conversationId = AVSIdentifier(
-            identifier: conversationUUID,
-            domain: conversationDomain
-        )
-        let userId = AVSIdentifier(
-            identifier: senderUUID,
-            domain: senderDomain
-        )
+    func processCallEvent(
+        callingConversationId: QualifiedConversationId,
+        conversationUUID: UUID,
+        senderUUID: UUID,
+        clientId: String,
+        conversationDomain: String?,
+        senderDomain: String?,
+        payload: Data,
+        currentTimestamp: TimeInterval,
+        eventTimestamp: Date) {
+            
+            let identifier = !callingConversationId.id.isEmpty ? UUID(uuidString: callingConversationId.id)! : conversationUUID
+            let domain = !callingConversationId.domain.isEmpty ? callingConversationId.domain : conversationDomain
 
-        let callEvent = CallEvent(
-            data: payload,
-            currentTimestamp: Date().addingTimeInterval(currentTimestamp),
-            serverTimestamp: eventTimestamp,
-            conversationId: conversationId,
-            userId: userId,
-            clientId: clientId
-        )
+            let conversationId = AVSIdentifier(
+                identifier: identifier,
+                domain: domain
+            )
 
-        callEventStatus.scheduledCallEventForProcessing()
-
-        callCenter?.processCallEvent(callEvent, completionHandler: { [weak self] in
-            self?.zmLog.debug("processed calling message")
-            self?.callEventStatus.finishedProcessingCallEvent()
-        })
-    }
+            let userId = AVSIdentifier(
+                identifier: senderUUID,
+                domain: senderDomain
+            )
+            
+            let callEvent = CallEvent(
+                data: payload,
+                currentTimestamp: Date().addingTimeInterval(currentTimestamp),
+                serverTimestamp: eventTimestamp,
+                conversationId: conversationId,
+                userId: userId,
+                clientId: clientId
+            )
+            
+            callEventStatus.scheduledCallEventForProcessing()
+            callCenter?.processCallEvent(callEvent, completionHandler: { [weak self] in
+                self?.zmLog.debug("processed calling message")
+                self?.callEventStatus.finishedProcessingCallEvent()
+            })
+        }
 
 }
 
@@ -320,8 +328,7 @@ extension CallingRequestStrategy: WireCallCenterTransport {
             return
         }
 
-        let callingContent = Calling(content: dataString)
-        let genericMessage = GenericMessage(content: callingContent)
+        let callingContent = Calling(content: dataString, conversationId: conversationId.toQualifiedId())
 
         managedObjectContext.performGroupedBlock {
             guard let conversation = ZMConversation.fetch(
@@ -333,6 +340,8 @@ extension CallingRequestStrategy: WireCallCenterTransport {
                 completionHandler(500)
                 return
             }
+
+            let genericMessage = GenericMessage(content: callingContent)
 
             self.zmLog.debug("schedule calling message")
 
@@ -583,7 +592,7 @@ extension CallingRequestStrategy {
             switch apiVersion {
             case .v0:
                 // `nestedContainer` contains all the user ids with no notion of domain, we can extract clients directly
-               allClients = try extractClientsFromContainer(nestedContainer, nil)
+                allClients = try extractClientsFromContainer(nestedContainer, nil)
             case .v1, .v2, .v3, .v4:
                 // `nestedContainer` has further nested containers each dynamically keyed by a domain name.
                 // we need to loop over each container to extract the clients.
@@ -670,5 +679,11 @@ private extension Calling {
         }
 
         return callContent.isRejected
+    }
+}
+
+private extension AVSIdentifier {
+    func toQualifiedId() -> QualifiedID {
+        QualifiedID(uuid: identifier, domain: domain ?? BackendInfo.domain ?? "")
     }
 }
