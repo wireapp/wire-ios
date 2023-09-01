@@ -729,6 +729,9 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             conversation.commitPendingProposalDate = overdueCommitDate
         }
 
+        // Mock no subconversations
+        mockSubconversationGroupIDRepository.fetchSubconversationGroupIDForTypeParentGroupID_MockValue = .some(nil)
+
         // Mock no pending proposals.
         mockMLSActionExecutor.mockCommitPendingProposals = { _ in
             throw MLSActionExecutor.Error.noPendingProposals
@@ -755,6 +758,9 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             conversation.mlsGroupID = groupID
             conversation.commitPendingProposalDate = overdueCommitDate
         }
+
+        // Mock no subconversations
+        mockSubconversationGroupIDRepository.fetchSubconversationGroupIDForTypeParentGroupID_MockValue = .some(nil)
 
         // Mock committing pending proposal.
         var mockCommitPendingProposalArguments = [(MLSGroupID, Date)]()
@@ -794,6 +800,9 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             conversation.mlsGroupID = groupID
             conversation.commitPendingProposalDate = futureCommitDate
         }
+
+        // Mock no subconversations
+        mockSubconversationGroupIDRepository.fetchSubconversationGroupIDForTypeParentGroupID_MockValue = .some(nil)
 
         // Mock committing pending proposal.
         var mockCommitPendingProposalArguments = [(MLSGroupID, Date)]()
@@ -851,6 +860,9 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             conversation3.mlsGroupID = conversation3MLSGroupID
             conversation3.commitPendingProposalDate = futureCommitDate2
         }
+
+        // Mock no subconversations
+        mockSubconversationGroupIDRepository.fetchSubconversationGroupIDForTypeParentGroupID_MockValue = .some(nil)
 
         // Mock committing pending proposal.
         var mockCommitPendingProposalArguments = [(MLSGroupID, Date)]()
@@ -914,6 +926,55 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             mockConversationEventProcessor.calls.processConversationEvents,
             [[updateEvent1], [updateEvent2], [updateEvent3]]
         )
+    }
+
+    func test_CommitPendingProposals_ForSubconversation() async throws {
+        // Given
+        let overdueCommitDate = Date().addingTimeInterval(-5)
+        let parentGroupdID = MLSGroupID.random()
+        let subgroupID = MLSGroupID.random()
+        var conversation: ZMConversation!
+
+        uiMOC.performAndWait {
+            // A group with pending proposal in the past.
+            conversation = createConversation(in: uiMOC)
+            conversation.mlsGroupID = parentGroupdID
+            conversation.commitPendingProposalDate = overdueCommitDate
+        }
+
+        // Mock subconversation
+        mockSubconversationGroupIDRepository.fetchSubconversationGroupIDForTypeParentGroupID_MockValue = subgroupID
+
+        // Mock committing pending proposal.
+        var mockCommitPendingProposalArguments = [(MLSGroupID, Date)]()
+
+        mockMLSActionExecutor.mockCommitPendingProposals = {
+            mockCommitPendingProposalArguments.append(($0, Date()))
+            return []
+        }
+
+        // When
+        try await self.sut.commitPendingProposals()
+
+        // Then we asked for the subgroup id
+        let subgroupInvocations = mockSubconversationGroupIDRepository.fetchSubconversationGroupIDForTypeParentGroupID_Invocations
+        XCTAssertEqual(subgroupInvocations.count, 1)
+        XCTAssertEqual(subgroupInvocations.first?.type, .conference)
+        XCTAssertEqual(subgroupInvocations.first?.parentGroupID, parentGroupdID)
+
+        // Then we try to commit pending propsoals twice, once for the subgroup, once for the parent
+        XCTAssertEqual(mockCommitPendingProposalArguments.count, 2)
+        let (id1, commitTime1) = try XCTUnwrap(mockCommitPendingProposalArguments.first)
+        XCTAssertEqual(id1, subgroupID)
+        XCTAssertEqual(commitTime1.timeIntervalSinceNow, Date().timeIntervalSinceNow, accuracy: 0.1)
+
+        let (id2, commitTime2) = try XCTUnwrap(mockCommitPendingProposalArguments.last)
+        XCTAssertEqual(id2, parentGroupdID)
+        XCTAssertEqual(commitTime2.timeIntervalSinceNow, Date().timeIntervalSinceNow, accuracy: 0.1)
+
+        uiMOC.performAndWait {
+            XCTAssertNil(conversation.commitPendingProposalDate)
+        }
     }
 
     // MARK: - Joining conversations

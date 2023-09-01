@@ -1046,15 +1046,24 @@ public final class MLSService: MLSServiceInterface {
         context.performAndWait {
             let conversations = ZMConversation.fetchConversationsWithPendingProposals(in: context)
 
-            result = conversations.compactMap { conversation in
+            for conversation in conversations {
                 guard
                     let groupID = conversation.mlsGroupID,
                     let timestamp = conversation.commitPendingProposalDate
                 else {
-                    return nil
+                    continue
                 }
 
-                return (groupID, timestamp)
+                result.append((groupID, timestamp))
+
+                // The pending proposal might be for the subconversation,
+                // so include it just in case.
+                if let subgroupID = subconverationGroupIDRepository.fetchSubconversationGroupID(
+                    forType: .conference,
+                    parentGroupID: groupID
+                ) {
+                    result.append((subgroupID, timestamp))
+                }
             }
         }
 
