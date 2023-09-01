@@ -27,11 +27,11 @@ final class CompleteReactionPickerViewController: UIViewController {
     private lazy var sectionViewController = ReactionSectionViewController(types: emojiDataSource.sectionTypes)
     private let topBar = ModalTopBar()
     private let searchBar = UISearchBar()
-    private let selectedReactions: Set<Emoji>
+    private let selectedReactions: Set<Emoji.ID>
 
     private var deleting = false
 
-    init(selectedReactions: Set<Emoji>) {
+    init(selectedReactions: Set<Emoji.ID>) {
         self.selectedReactions = selectedReactions
         super.init(nibName: nil, bundle: nil)
 
@@ -120,7 +120,7 @@ final class CompleteReactionPickerViewController: UIViewController {
         let cell = self.collectionView.dequeueReusableCell(withReuseIdentifier: EmojiCollectionViewCell.zm_reuseIdentifier, for: indexPath) as! EmojiCollectionViewCell
         cell.titleLabel.text = emoji.value
         cell.titleLabel.font = UIFont.preferredFont(forTextStyle: .largeTitle)
-        cell.isCurrent = selectedReactions.contains(emoji)
+        cell.isCurrent = selectedReactions.contains(emoji.value)
         return cell
     }
 

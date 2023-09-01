@@ -38,7 +38,7 @@ enum MessageAction: CaseIterable, Equatable {
                                             .openQuote,
                                             .resetSession,
                                             .delete,
-                                            .react(.like)]
+                                            .react(Emoji.like.value)]
 
     case
     digitallySign,
@@ -59,7 +59,7 @@ enum MessageAction: CaseIterable, Equatable {
     present,
     openQuote,
     resetSession,
-    react(Emoji)
+    react(Emoji.ID)
 
     var title: String? {
         let key: String?

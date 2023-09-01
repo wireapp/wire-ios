@@ -29,7 +29,7 @@ final class RecentlyUsedEmojiSection: EmojiDataSource.Section {
 
     init(
         capacity: Int,
-        items: [EmojiData] = []
+        items: [Emoji] = []
     ) {
         self.capacity = capacity
         self.backing = NSMutableOrderedSet(array: items)
@@ -40,7 +40,7 @@ final class RecentlyUsedEmojiSection: EmojiDataSource.Section {
     // MARK: - Methods
 
     @discardableResult
-    func register(_ emoji: EmojiData) -> Bool {
+    func register(_ emoji: Emoji) -> Bool {
         switch backing.index(of: emoji) {
         case 0:
             // No update neccessary if the first element is already the new one
@@ -58,7 +58,7 @@ final class RecentlyUsedEmojiSection: EmojiDataSource.Section {
     }
 
     private func updateContent() {
-        defer { items = backing.array as! [EmojiData] }
+        defer { items = backing.array as! [Emoji] }
         guard backing.count > capacity else { return }
         backing.removeObjects(at: IndexSet(integersIn: capacity..<backing.count))
     }

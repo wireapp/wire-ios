@@ -18,8 +18,11 @@
 
 import Foundation
 
-struct EmojiData: Decodable {
+struct Emoji: Decodable, Hashable {
 
+    typealias ID = String
+
+    // TODO: rename value to id
     let value: String
     let name: String
     let shortName: String
@@ -27,10 +30,6 @@ struct EmojiData: Decodable {
     let subcategory: String
     let addedIn: String
     let sortOrder: Int
-
-    var emoji: Emoji {
-        return Emoji(value: value)
-    }
 
     func matchesSearchQuery(_ query: String) -> Bool {
         return [name, shortName, category.rawValue, subcategory].contains {
@@ -40,9 +39,25 @@ struct EmojiData: Decodable {
 
 }
 
-extension EmojiData {
+extension Emoji {
 
-    static func loadAllFromDisk() throws -> [EmojiData] {
+    // We should have a basic set to load from.
+
+    static let like = Emoji(
+        value: "❤️",
+        name: "heart",
+        shortName: "heart",
+        category: .symbols,
+        subcategory: "",
+        addedIn: "",
+        sortOrder: 0
+    )
+
+}
+
+extension Emoji {
+
+    static func loadAllFromDisk() throws -> [Emoji] {
         guard let url = Bundle.main.url(
             forResource: "emojis",
             withExtension: "json"
@@ -52,7 +67,7 @@ extension EmojiData {
 
         let data = try Data(contentsOf: url)
         return try JSONDecoder().decode(
-            [EmojiData].self,
+            [Emoji].self,
             from: data
         )
     }

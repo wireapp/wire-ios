@@ -21,11 +21,11 @@ import WireUtilities
 
 protocol EmojiRepositoryInterface {
 
-    func allEmojis() -> [EmojiData]
-    func emojis(for category: EmojiCategory) -> [EmojiData]
-    func data(for emoji: Emoji) -> EmojiData?
-    func registerRecentlyUsedEmojis(_ emojis: [EmojiData])
-    func fetchRecentlyUsedEmojis() -> [EmojiData]
+    func allEmojis() -> [Emoji]
+    func emojis(for category: EmojiCategory) -> [Emoji]
+    func data(for emoji: String) -> Emoji?
+    func registerRecentlyUsedEmojis(_ emojis: [Emoji])
+    func fetchRecentlyUsedEmojis() -> [Emoji]
 
 }
 
@@ -33,7 +33,7 @@ final class EmojiRepository: EmojiRepositoryInterface {
 
     // MARK: - Properties
 
-    private let allEmojiData: [EmojiData]
+    private let allEmojiData: [Emoji]
     private lazy var emojisByCategory = allEmojiData.partition(by: \.category)
     private lazy var emojisByValue = allEmojiData.partition(by: \.value).compactMapValues(\.first)
 
@@ -49,21 +49,21 @@ final class EmojiRepository: EmojiRepositoryInterface {
 
     // MARK: - Fetch
 
-    func allEmojis() -> [EmojiData] {
+    func allEmojis() -> [Emoji] {
         return allEmojiData
     }
 
-    func emojis(for category: EmojiCategory) -> [EmojiData] {
+    func emojis(for category: EmojiCategory) -> [Emoji] {
         return emojisByCategory[category] ?? []
     }
 
-    func data(for emoji: Emoji) -> EmojiData? {
-        return emojisByValue[emoji.value]
+    func data(for value: String) -> Emoji? {
+        return emojisByValue[value]
     }
 
     // MARK: - Recently used
 
-    func registerRecentlyUsedEmojis(_ emojis: [EmojiData]) {
+    func registerRecentlyUsedEmojis(_ emojis: [Emoji]) {
         guard
             let emojiDirectory = emojiDirectory,
             let recentlyUsedEmojisURL = recentlyUsedEmojisURL
@@ -76,7 +76,7 @@ final class EmojiRepository: EmojiRepositoryInterface {
         (emojiValues as NSArray).write(to: recentlyUsedEmojisURL, atomically: true)
     }
 
-    func fetchRecentlyUsedEmojis() -> [EmojiData] {
+    func fetchRecentlyUsedEmojis() -> [Emoji] {
         guard
             let recentlyUsedEmojisURL = recentlyUsedEmojisURL,
             let emojiValues = NSArray(contentsOf: recentlyUsedEmojisURL) as? [String]
@@ -84,9 +84,7 @@ final class EmojiRepository: EmojiRepositoryInterface {
             return []
         }
 
-        return emojiValues
-            .map(Emoji.init(value:))
-            .compactMap(data(for:))
+        return emojiValues.compactMap(data(for:))
     }
 
     private lazy var emojiDirectory = URL.directoryURL("emoji")
@@ -96,7 +94,7 @@ final class EmojiRepository: EmojiRepositoryInterface {
 
 private extension EmojiRepository {
 
-    static func loadAllFromDisk() -> [EmojiData] {
+    static func loadAllFromDisk() -> [Emoji] {
         guard let url = Bundle.main.url(forResource: "emojis", withExtension: "json") else {
             logger.error("failed to load emojis: emojis.json file not found")
             return []
@@ -104,7 +102,7 @@ private extension EmojiRepository {
 
         do {
             let data = try Data(contentsOf: url)
-            return try JSONDecoder().decode([EmojiData].self, from: data)
+            return try JSONDecoder().decode([Emoji].self, from: data)
         } catch {
             logger.error("failed to load emojis: \(error)")
             return []

@@ -38,7 +38,7 @@ final class MessageReactionsCellDescription: ConversationMessageCellDescription 
             }
 
             return MessageReactionMetadata(
-                emoji: Emoji(value: reaction),
+                emoji: reaction,
                 count: UInt(usersWhoReacted.count),
                 isSelfUserReacting: usersWhoReacted.contains(where: \.isSelfUser)
             )

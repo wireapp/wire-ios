@@ -20,56 +20,6 @@ import Foundation
 import UIKit
 import WireCommonComponents
 
-@objc
-final class Emoji: NSObject {
-
-    let value: String
-    let name: String?
-
-    init(value: String) {
-        self.value = value
-        self.name = value.unicodeScalars.first?.properties.name?.lowercased()
-    }
-
-    override var description: String {
-        return value
-    }
-
-    override var hash: Int {
-        return value.hash
-    }
-
-    override func isEqual(_ object: Any?) -> Bool {
-        guard let other = object as? Emoji else { return false }
-        return value == other.value
-    }
-
-}
-
-extension Emoji {
-
-    static var like: Emoji {
-        return Emoji(value: "❤️")
-    }
-
-    static var smile: Emoji {
-        return Emoji(value: "🙂")
-    }
-
-    static var frown: Emoji {
-        return Emoji(value: "☹️")
-    }
-
-    static var thumbsUp: Emoji {
-        return Emoji(value: "👍")
-    }
-
-    static var thumbsDown: Emoji {
-        return Emoji(value: "👎")
-    }
-
-}
-
 final class EmojiDataSource: NSObject, UICollectionViewDataSource {
 
     // MARK: - Properties
@@ -133,7 +83,7 @@ final class EmojiDataSource: NSObject, UICollectionViewDataSource {
     }
 
     subscript (indexPath: IndexPath) -> Emoji {
-        return sections[indexPath.section].items[indexPath.item].emoji
+        return sections[indexPath.section].items[indexPath.item]
     }
 
     func sectionIndex(for id: EmojiSectionType) -> Int? {
@@ -181,8 +131,7 @@ final class EmojiDataSource: NSObject, UICollectionViewDataSource {
 
     @discardableResult
     func register(used emoji: Emoji) -> Update? {
-        guard let emojiData = emojiRepository.data(for: emoji) else { return nil }
-        let shouldReload = recentlyUsed.register(emojiData)
+        let shouldReload = recentlyUsed.register(emoji)
         let shouldInsert = insertRecentlyUsedSectionIfNeeded()
 
         defer {
@@ -226,11 +175,11 @@ extension EmojiDataSource {
     class Section {
 
         let id: EmojiSectionType
-        var items: [EmojiData]
+        var items: [Emoji]
 
         init(
             id: EmojiSectionType,
-            items: [EmojiData]
+            items: [Emoji]
         ) {
             self.id = id
             self.items = items
