@@ -172,9 +172,9 @@ final class MessageDetailsDataSource: NSObject, ZMMessageObserver, ZMUserObserve
     private func setupReactions() {
         reactions = message.usersReaction.lazy
             .compactMap { reaction, users in
-                guard let emoji = self.emojiRepository.data(for: reaction) else { return nil }
+                guard let emoji = self.emojiRepository.emoji(for: reaction) else { return nil }
                 return MessageDetailsSectionDescription(
-                    headerText: "\(emoji.value) \(emoji.name.capitalizingFirstCharacterOnly) (\(users.count))",
+                    headerText: "\(emoji.id) \(emoji.name.capitalizingFirstCharacterOnly) (\(users.count))",
                     items: MessageDetailsCellDescription.makeReactionCells(users)
                 )
             }

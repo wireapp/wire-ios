@@ -38,7 +38,7 @@ enum MessageAction: CaseIterable, Equatable {
                                             .openQuote,
                                             .resetSession,
                                             .delete,
-                                            .react(Emoji.like.value)]
+                                            .react(Emoji.like.id)]
 
     case
     digitallySign,

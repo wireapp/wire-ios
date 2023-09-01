@@ -22,8 +22,7 @@ struct Emoji: Decodable, Hashable {
 
     typealias ID = String
 
-    // TODO: rename value to id
-    let value: String
+    let id: ID
     let name: String
     let shortName: String
     let category: EmojiCategory
@@ -44,7 +43,7 @@ extension Emoji {
     // We should have a basic set to load from.
 
     static let like = Emoji(
-        value: "❤️",
+        id: "❤️",
         name: "heart",
         shortName: "heart",
         category: .symbols,

@@ -23,7 +23,7 @@ protocol EmojiRepositoryInterface {
 
     func allEmojis() -> [Emoji]
     func emojis(for category: EmojiCategory) -> [Emoji]
-    func data(for emoji: String) -> Emoji?
+    func emoji(for id: String) -> Emoji?
     func registerRecentlyUsedEmojis(_ emojis: [Emoji])
     func fetchRecentlyUsedEmojis() -> [Emoji]
 
@@ -35,7 +35,7 @@ final class EmojiRepository: EmojiRepositoryInterface {
 
     private let allEmojiData: [Emoji]
     private lazy var emojisByCategory = allEmojiData.partition(by: \.category)
-    private lazy var emojisByValue = allEmojiData.partition(by: \.value).compactMapValues(\.first)
+    private lazy var emojisByID = allEmojiData.partition(by: \.id).compactMapValues(\.first)
 
     private static let logger = WireLogger(tag: "EmojiRepository")
 
@@ -57,8 +57,8 @@ final class EmojiRepository: EmojiRepositoryInterface {
         return emojisByCategory[category] ?? []
     }
 
-    func data(for value: String) -> Emoji? {
-        return emojisByValue[value]
+    func emoji(for id: String) -> Emoji? {
+        return emojisByID[id]
     }
 
     // MARK: - Recently used
@@ -72,7 +72,7 @@ final class EmojiRepository: EmojiRepositoryInterface {
         }
 
         FileManager.default.createAndProtectDirectory(at: emojiDirectory)
-        let emojiValues = emojis.map(\.value)
+        let emojiValues = emojis.map(\.id)
         (emojiValues as NSArray).write(to: recentlyUsedEmojisURL, atomically: true)
     }
 
@@ -84,7 +84,7 @@ final class EmojiRepository: EmojiRepositoryInterface {
             return []
         }
 
-        return emojiValues.compactMap(data(for:))
+        return emojiValues.compactMap(emoji(for:))
     }
 
     private lazy var emojiDirectory = URL.directoryURL("emoji")

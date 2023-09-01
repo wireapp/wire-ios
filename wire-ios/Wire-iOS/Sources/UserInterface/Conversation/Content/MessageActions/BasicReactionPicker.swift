@@ -50,7 +50,7 @@ class BasicReactionPicker: UIView {
     ) {
         self.selectedReactions = selectedReactions
         self.emojiRepository = emojiRepository
-        self.emojis = ["👍", "🙂", "❤️", "☹️", "👎"].compactMap(emojiRepository.data(for:))
+        self.emojis = ["👍", "🙂", "❤️", "☹️", "👎"].compactMap(emojiRepository.emoji(for:))
         super.init(frame: .zero)
         setupViews()
         NotificationCenter.default.addObserver(self,
@@ -89,8 +89,8 @@ private extension BasicReactionPicker {
         emojis.forEach { emoji in
             let button = UIButton()
            button.titleLabel?.font = UIFont.systemFont(ofSize: UIDevice.current.type == .iPad ? 24 : 32)
-            button.setTitle(emoji.value, for: .normal)
-            if selectedReactions.contains(emoji.value) {
+            button.setTitle(emoji.id, for: .normal)
+            if selectedReactions.contains(emoji.id) {
                 button.layer.cornerRadius = 12.0
                 button.layer.masksToBounds = true
                 button.backgroundColor = SemanticColors.Button.reactionBackgroundSelected
@@ -122,7 +122,7 @@ private extension BasicReactionPicker {
     @objc func didTapEmoji(sender: UIButton) {
         guard
             let value = sender.titleLabel?.text,
-            let emoji = emojis.first(where: { $0.value == value })
+            let emoji = emojis.first(where: { $0.id == value })
         else {
             return
         }

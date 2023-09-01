@@ -26,7 +26,7 @@ class MessageActionsViewController: UIAlertController {
 
     static func controller(withActions actions: [MessageAction],
                            actionController: ConversationMessageActionController) -> MessageActionsViewController {
-        let title = actionController.canPerformAction(action: .react(Emoji.like.value)) ? MessageLabelMarker : nil
+        let title = actionController.canPerformAction(action: .react(Emoji.like.id)) ? MessageLabelMarker : nil
         let controller = MessageActionsViewController(title: title,
                                             message: nil,
                                             preferredStyle: .actionSheet)
@@ -96,7 +96,7 @@ class MessageActionsViewController: UIAlertController {
 
 extension MessageActionsViewController: ReactionPickerDelegate {
     func didPickReaction(reaction: Emoji) {
-        actionController?.perform(action: .react(reaction.value))
+        actionController?.perform(action: .react(reaction.id))
     }
 
     func didTapMoreEmojis() {
@@ -108,7 +108,7 @@ extension MessageActionsViewController: ReactionPickerDelegate {
 
 extension MessageActionsViewController: EmojiPickerViewControllerDelegate {
     func emojiPickerDidSelectEmoji(_ emoji: Emoji) {
-        actionController?.perform(action: .react(emoji.value))
+        actionController?.perform(action: .react(emoji.id))
         dismiss(animated: true)
         return
     }
