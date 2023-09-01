@@ -618,12 +618,15 @@ class CallingRequestStrategyTests: MessagingTest {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         var nextRequest: ZMTransportRequest?
-
+        let expectation = self.expectation(description: "wait for send message")
         // When we schedule the message with no targets
         syncMOC.performGroupedBlock {
-            self.sut.send(data: self.callMessage(withType: "CONFSTART"), conversationId: conversation.avsIdentifier!, targets: nil, overMLSSelfConversation: false) { _ in }
+            self.sut.send(data: self.callMessage(withType: "CONFSTART"), conversationId: conversation.avsIdentifier!, targets: nil, overMLSSelfConversation: false) { _ in
+                expectation.fulfill()
+            }
         }
 
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         syncMOC.performGroupedBlock {
