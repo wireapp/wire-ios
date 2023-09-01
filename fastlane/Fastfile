@@ -365,6 +365,7 @@ platform :ios do
             skip_waiting_for_build_processing: true,
             distribute_external: true,
             groups: "Default External Testers",
+            submit_beta_review: true,
             changelog: changelog(build)
         )
     end
