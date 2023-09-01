@@ -359,11 +359,13 @@ platform :ios do
         build = Build.new(options: options)
         sh "cp ../wire-ios/Configuration/Appfile ."
 
-
         upload_to_testflight(
             api_key_path: appstoreconnect_api_key_file_path,
             ipa: "#{build.artifact_path(with_filename: true)}.ipa",
-            skip_waiting_for_build_processing: true
+            skip_waiting_for_build_processing: true,
+            distribute_external: true,
+            groups: "Default External Testers",
+            changelog: changelog(build)
         )
     end
 
