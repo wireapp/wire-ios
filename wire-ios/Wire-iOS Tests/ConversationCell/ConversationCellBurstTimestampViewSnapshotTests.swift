@@ -17,19 +17,26 @@
 //
 
 import XCTest
+import SnapshotTesting
 @testable import Wire
 
-final class ConversationCellBurstTimestampViewSnapshotTests: XCTestCase {
+final class ConversationCellBurstTimestampViewSnapshotTests: BaseSnapshotTestCase {
+
+    // MARK: - Properties
+
     var sut: ConversationCellBurstTimestampView!
+
+    // MARK: - setUp
 
     override func setUp() {
         super.setUp()
-
         sut = ConversationCellBurstTimestampView()
         sut.frame = CGRect(origin: .zero, size: CGSize(width: 320, height: 40))
         sut.unreadDot.backgroundColor = .red
-        sut.backgroundColor = .lightGray
+        sut.backgroundColor = SemanticColors.View.backgroundConversationView
     }
+
+    // MARK: - tearDown
 
     override func tearDown() {
         sut = nil
@@ -37,13 +44,19 @@ final class ConversationCellBurstTimestampViewSnapshotTests: XCTestCase {
         super.tearDown()
     }
 
+    // MARK: - Snapshot Tests
+
     func testForInitState() {
         verify(matching: sut)
     }
 
     func testForIncludeDayOfWeekAndDot() {
         // GIVEN & WHEN
-        sut.configure(with: Date(timeIntervalSinceReferenceDate: 0), includeDayOfWeek: true, showUnreadDot: true)
+        sut.configure(
+            with: Date(timeIntervalSinceReferenceDate: 0),
+            includeDayOfWeek: true,
+            showUnreadDot: true
+        )
 
         // THEN
         verify(matching: sut)
@@ -51,7 +64,23 @@ final class ConversationCellBurstTimestampViewSnapshotTests: XCTestCase {
 
     func testForNotIncludeDayOfWeekAndDot() {
         // GIVEN & WHEN
-        sut.configure(with: Date(timeIntervalSinceReferenceDate: 0), includeDayOfWeek: false, showUnreadDot: false)
+        sut.configure(
+            with: Date(timeIntervalSinceReferenceDate: 0),
+            includeDayOfWeek: false,
+            showUnreadDot: false
+        )
+
+        // THEN
+        verify(matching: sut)
+    }
+
+    func testForJustNowAndNotIncludeDayOfWeekAndDot() {
+        // GIVEN & WHEN
+        sut.configure(
+            with: Date(timeIntervalSinceNow: 5),
+            includeDayOfWeek: false,
+            showUnreadDot: false
+        )
 
         // THEN
         verify(matching: sut)
