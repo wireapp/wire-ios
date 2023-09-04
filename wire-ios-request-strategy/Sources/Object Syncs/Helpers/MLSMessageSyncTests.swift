@@ -75,12 +75,14 @@ final class MLSMessageSyncTests: MessagingTestBase {
 
     // MARK: - Request generation
 
-    func test_RequestGeneration_Success_v2() throws {
-        test_RequestGeneration_Success(apiVersion: .v2)
+    func test_ItGeneratesRequests() throws {
+        test_RequestGeneration_Success(apiVersion: .v5)
     }
 
-    func test_RequestGeneration_Success_v3() throws {
-        test_RequestGeneration_Success(apiVersion: .v3)
+    func test_ItDoesNotGenerateRequests() throws {
+        [.v0, .v1, .v2, .v3, .v4].forEach {
+            test_RequestGeneration_Failure(apiVersion: $0)
+        }
     }
 
     func test_RequestGeneration_Success(apiVersion: APIVersion) {
@@ -104,17 +106,12 @@ final class MLSMessageSyncTests: MessagingTestBase {
         }
     }
 
-    func test_RequestGeneration_Failure_OldAPIVersion() {
+    func test_RequestGeneration_Failure(apiVersion: APIVersion) {
         syncMOC.performGroupedBlockAndWait {
             // Then
             XCTAssertNil(self.sut.transcoder.request(
                 forEntity: self.mockMessage,
-                apiVersion: .v0
-            ))
-
-            XCTAssertNil(self.sut.transcoder.request(
-                forEntity: self.mockMessage,
-                apiVersion: .v1
+                apiVersion: apiVersion
             ))
         }
     }
@@ -127,7 +124,7 @@ final class MLSMessageSyncTests: MessagingTestBase {
             // Then
             XCTAssertNil(self.sut.transcoder.request(
                 forEntity: self.mockMessage,
-                apiVersion: .v2
+                apiVersion: .v5
             ))
         }
     }
@@ -140,7 +137,7 @@ final class MLSMessageSyncTests: MessagingTestBase {
             // Then
             XCTAssertNil(self.sut.transcoder.request(
                 forEntity: self.mockMessage,
-                apiVersion: .v2
+                apiVersion: .v5
             ))
         }
     }
@@ -153,7 +150,7 @@ final class MLSMessageSyncTests: MessagingTestBase {
             payload: nil,
             httpStatus: 201,
             transportSessionError: nil,
-            apiVersion: 2
+            apiVersion: 5
         )
 
         // When
@@ -172,7 +169,7 @@ final class MLSMessageSyncTests: MessagingTestBase {
             payload: nil,
             httpStatus: 409,
             transportSessionError: nil,
-            apiVersion: 2
+            apiVersion: 5
         )
 
         // When

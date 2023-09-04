@@ -32,24 +32,26 @@ class SendMLSMessageActionHandlerTests: ActionHandlerTestBase<SendMLSMessageActi
     func test_itGenerateARequest() throws {
         try test_itGeneratesARequest(
             for: action,
-            expectedPath: "/v1/mls/messages",
+            expectedPath: "/v5/mls/messages",
             expectedMethod: .methodPOST,
             expectedData: mlsMessage,
             expectedContentType: "message/mls",
-            apiVersion: .v1
+            apiVersion: .v5
         )
     }
 
     func test_itFailsToGenerateRequests() {
-        test_itDoesntGenerateARequest(
-            action: action,
-            apiVersion: .v0,
-            expectedError: .endpointUnavailable
-        )
-
+        [.v0, .v1, .v2, .v3, .v4].forEach {
+            test_itDoesntGenerateARequest(
+                action: action,
+                apiVersion: $0,
+                expectedError: .endpointUnavailable
+            )
+        }
+        
         test_itDoesntGenerateARequest(
             action: SendMLSMessageAction(message: Data()),
-            apiVersion: .v1,
+            apiVersion: .v5,
             expectedError: .malformedRequest
         )
     }

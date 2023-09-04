@@ -85,14 +85,43 @@ final class MessageSyncTests: MessagingTestBase {
             // When
             self.sut.sync(message) { _, _ in
                 // Then
-                guard let request = self.sut.nextRequest(for: .v2) else {
+                guard let request = self.sut.nextRequest(for: .v5) else {
                     XCTFail("no request generated")
                     return
                 }
 
-                XCTAssertEqual(request.path, "/v2/mls/messages")
+                XCTAssertEqual(request.path, "/v5/mls/messages")
                 XCTAssertEqual(request.method, .methodPOST)
                 XCTAssertEqual(request.binaryDataType, "message/mls")
+            }
+        }
+
+        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+    }
+
+    func test_ItDosntGenerate_SyncingMessage_MLS_Request() {
+        [.v0, .v1, .v2, .v3, .v4].forEach {
+            test_ItDoesntGenerateARequest(apiVersion: $0)
+        }
+    }
+
+    func test_ItDoesntGenerateARequest(apiVersion: APIVersion) {
+        syncMOC.performGroupedBlockAndWait {
+            // Given
+            self.groupConversation.messageProtocol = .mls
+            self.groupConversation.mlsGroupID = MLSGroupID([1, 2, 3])
+            self.syncMOC.mlsService = MockMLSService()
+
+            let message = MockOTREntity(
+                conversation: self.groupConversation,
+                context: self.syncMOC
+            )
+
+            // When
+            self.sut.sync(message) { _, _ in
+                // Then
+                let request = self.sut.nextRequest(for: apiVersion)
+                XCTAssertNil(request)
             }
         }
 

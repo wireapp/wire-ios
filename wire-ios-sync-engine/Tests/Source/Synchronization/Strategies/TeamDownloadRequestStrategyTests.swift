@@ -377,7 +377,7 @@ class TeamDownloadRequestStrategyTests: MessagingTest {
             XCTAssertEqual(request.path, "/v2/teams")
         case .v3:
             XCTAssertEqual(request.path, "/v3/teams")
-        case .v4:
+        case .v4, .v5:
             XCTAssertEqual(request.path, "/v4/teams/\(teamID.transportString())")
         }
         XCTAssertEqual(request.method, .methodGET)

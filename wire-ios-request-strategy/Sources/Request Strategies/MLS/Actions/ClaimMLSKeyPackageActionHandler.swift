@@ -25,7 +25,7 @@ class ClaimMLSKeyPackageActionHandler: ActionHandler<ClaimMLSKeyPackageAction> {
     override func request(for action: ClaimMLSKeyPackageAction, apiVersion: APIVersion) -> ZMTransportRequest? {
         var action = action
 
-        guard apiVersion > .v0 else {
+        guard apiVersion >= .v5 else {
             action.fail(with: .endpointUnavailable)
             return nil
         }
