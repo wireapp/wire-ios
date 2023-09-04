@@ -191,6 +191,9 @@ final class EmojiCollectionViewCell: UICollectionViewCell {
 
                 return
             }
+            
+            layer.borderWidth = 1.0
+            layer.cornerRadius = 12.0
             backgroundColor = SemanticColors.Button.reactionBackgroundSelected
             layer.borderColor = SemanticColors.Button.reactionBorderSelected.cgColor
         }
@@ -201,8 +204,6 @@ final class EmojiCollectionViewCell: UICollectionViewCell {
         let fontSize: CGFloat =  UIDevice.current.userInterfaceIdiom == .pad ? 40 : 28
         titleLabel.font = .systemFont(ofSize: fontSize)
         titleLabel.adjustsFontSizeToFitWidth = true
-        layer.borderWidth = 1.0
-        layer.cornerRadius = 12.0
         addSubview(titleLabel)
     }
 
