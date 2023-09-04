@@ -191,7 +191,7 @@ final class EmojiCollectionViewCell: UICollectionViewCell {
 
                 return
             }
-            
+
             layer.borderWidth = 1.0
             layer.cornerRadius = 12.0
             backgroundColor = SemanticColors.Button.reactionBackgroundSelected
