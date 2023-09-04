@@ -149,16 +149,13 @@ final class CompleteReactionPickerViewController: UIViewController {
 
     private func setupAccessibility() {
         typealias ReactionPickerAccessibility = L10n.Accessibility.ReactionPicker
-        searchBar.searchTextField.isAccessibilityElement = true
+        searchBar.isAccessibilityElement = true
         topBar.dismissButton.isAccessibilityElement = true
         topBar.dismissButton.accessibilityValue = ReactionPickerAccessibility.DismissButton.description
 
         if searchBar.placeholder != nil {
-            searchBar.searchTextField.accessibilityValue = ReactionPickerAccessibility.SearchFieldPlaceholder.description
-        } else {
-            searchBar.searchTextField.accessibilityValue = searchBar.text
+            searchBar.accessibilityValue = ReactionPickerAccessibility.SearchFieldPlaceholder.description
         }
-
     }
 
     // MARK: - Dynamic Type
