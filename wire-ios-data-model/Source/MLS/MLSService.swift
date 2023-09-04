@@ -1783,38 +1783,6 @@ public protocol ConversationEventProcessorProtocol {
     func processPayload(_ payload: ZMTransportData)
 }
 
-extension CiphersuiteName {
-
-    var rawValue: UInt16 {
-        switch self {
-        case .mls128Dhkemx25519Aes128gcmSha256Ed25519:
-            return 1
-
-        case .mls128Dhkemp256Aes128gcmSha256P256:
-            return 2
-
-        case .mls128Dhkemx25519Chacha20poly1305Sha256Ed25519:
-            return 3
-
-        case .mls256Dhkemx448Aes256gcmSha512Ed448:
-            return 4
-
-        case .mls256Dhkemp521Aes256gcmSha512P521:
-            return 5
-
-        case .mls256Dhkemx448Chacha20poly1305Sha512Ed448:
-            return 6
-
-        case .mls256Dhkemp384Aes256gcmSha384P384:
-            return 7
-
-        @unknown default:
-            fatalError("unsupported value of 'CiphersuiteName'!")
-        }
-    }
-
-}
-
 actor GroupsBeingRepaired {
     var values = Set<MLSGroupID>()
 

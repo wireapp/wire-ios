@@ -29,7 +29,32 @@ public protocol SafeCoreCryptoProtocol {
     func tearDown() throws
 }
 
-let defaultCipherSuite = CiphersuiteName.mls128Dhkemx25519Aes128gcmSha256Ed25519
+extension CiphersuiteName {
+    var rawValue: UInt16 {
+        switch self {
+        case .mls128Dhkemx25519Aes128gcmSha256Ed25519:
+            return 1
+        case .mls128Dhkemp256Aes128gcmSha256P256:
+            return 2
+        case .mls128Dhkemx25519Chacha20poly1305Sha256Ed25519:
+            return 3
+        case .mls256Dhkemx448Aes256gcmSha512Ed448:
+            return 4
+        case .mls256Dhkemp521Aes256gcmSha512P521:
+            return 5
+        case .mls256Dhkemx448Chacha20poly1305Sha512Ed448:
+            return 6
+        case .mls256Dhkemp384Aes256gcmSha384P384:
+            return 7
+        case .mls128X25519kyber768draft00Aes128gcmSha256Ed25519:
+            return 8
+        @unknown default:
+            fatalError("unsupported value of 'CiphersuiteName'!")
+        }
+    }
+
+    static var `default` = CiphersuiteName.mls128Dhkemx25519Aes128gcmSha256Ed25519
+}
 
 public class SafeCoreCrypto: SafeCoreCryptoProtocol {
 
@@ -47,14 +72,14 @@ public class SafeCoreCrypto: SafeCoreCryptoProtocol {
             throw CoreCryptoSetupFailure.failedToGetClientIDBytes
         }
         // TODO: wait for fix see cyphersuite cyphersuiteName
-        let coreCrypto = try await coreCryptoNew(path: config.path, key: config.key, clientId: clientID, ciphersuites: [1])
+        let coreCrypto = try await coreCryptoNew(path: config.path, key: config.key, clientId: clientID, ciphersuites: [CiphersuiteName.default.rawValue])
 
         self.init(coreCrypto: coreCrypto, databasePath: config.path)
         didInitializeMLS = true
     }
 
     public convenience init(path: String, key: String) async throws {
-        let coreCrypto = try await coreCryptoDeferredInit(path: path, key: key, ciphersuites: [1])
+        let coreCrypto = try await coreCryptoDeferredInit(path: path, key: key, ciphersuites: [CiphersuiteName.default.rawValue])
 
         try coreCrypto.setCallbacks(callbacks: CoreCryptoCallbacksImpl())
 
@@ -69,7 +94,7 @@ public class SafeCoreCrypto: SafeCoreCryptoProtocol {
         }
         // TODO: wait for fix see cyphersuite cyphersuiteName
         try await coreCrypto.mlsInit(clientId: clientIdBytes,
-                               ciphersuites: [0])
+                                     ciphersuites: [CiphersuiteName.default.rawValue])
         didInitializeMLS = true
     }
 
