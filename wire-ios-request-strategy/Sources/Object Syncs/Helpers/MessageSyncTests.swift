@@ -101,7 +101,7 @@ final class MessageSyncTests: MessagingTestBase {
 
     func test_ItDoesntGenerate_SyncingMessage_MLS_Request() {
         [.v0, .v1, .v2, .v3, .v4].forEach {
-            test_ItDoesntGenerateARequest(apiVersion: $0)
+            internalTest_ItDoesntGenerateARequest(apiVersion: $0)
         }
     }
 

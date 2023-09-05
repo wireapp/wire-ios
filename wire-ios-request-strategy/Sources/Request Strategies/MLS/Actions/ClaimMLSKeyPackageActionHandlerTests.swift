@@ -38,7 +38,7 @@ class ClaimMLSKeyPackageActionHandlerTests: ActionHandlerTestBase<ClaimMLSKeyPac
 
     // MARK: - Request generation
 
-    func test_itGeneratesARequest() throws {
+    func test_itGeneratesARequest_APIV5() throws {
         try test_itGeneratesARequest(
             for: ClaimMLSKeyPackageAction(
                 domain: domain,
@@ -52,7 +52,7 @@ class ClaimMLSKeyPackageActionHandlerTests: ActionHandlerTestBase<ClaimMLSKeyPac
         )
     }
 
-    func test_itDoesntGenerateRequests() {
+    func test_itDoesntGenerateRequests_APIBelowV5() {
         // when the endpoint is unavailable
         [.v0, .v1, .v2, .v3, .v4].forEach {
             test_itDoesntGenerateARequest(

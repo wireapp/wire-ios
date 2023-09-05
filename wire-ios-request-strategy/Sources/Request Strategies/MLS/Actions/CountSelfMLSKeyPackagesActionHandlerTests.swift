@@ -33,7 +33,7 @@ class CountSelfMLSKeyPackagesActionHandlerTests: ActionHandlerTestBase<CountSelf
 
     // MARK: - Request Generation
 
-    func test_itGeneratesValidRequest() throws {
+    func test_itGeneratesValidRequest_APIV5() throws {
         try test_itGeneratesARequest(
             for: action,
             expectedPath: requestPath,
@@ -42,7 +42,7 @@ class CountSelfMLSKeyPackagesActionHandlerTests: ActionHandlerTestBase<CountSelf
         )
     }
 
-    func test_itDoesntGenerateRequests() {
+    func test_itDoesntGenerateRequests_APIBelowV5() {
         // When the endpoint is not available
         [.v0, .v1, .v2, .v3, .v4].forEach {
             test_itDoesntGenerateARequest(
