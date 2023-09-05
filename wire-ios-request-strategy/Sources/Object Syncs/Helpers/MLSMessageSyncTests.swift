@@ -75,13 +75,13 @@ final class MLSMessageSyncTests: MessagingTestBase {
 
     // MARK: - Request generation
 
-    func test_ItGeneratesRequests() throws {
+    func test_ItGeneratesRequests_APIV5() throws {
         test_RequestGeneration_Success(apiVersion: .v5)
     }
 
-    func test_ItDoesNotGenerateRequests() throws {
+    func test_ItDoesNotGenerateRequests_APIBelowV5() throws {
         [.v0, .v1, .v2, .v3, .v4].forEach {
-            test_RequestGeneration_Failure(apiVersion: $0)
+            internalTest_RequestGeneration_Failure(apiVersion: $0)
         }
     }
 
@@ -106,7 +106,7 @@ final class MLSMessageSyncTests: MessagingTestBase {
         }
     }
 
-    func test_RequestGeneration_Failure(apiVersion: APIVersion) {
+    func internalTest_RequestGeneration_Failure(apiVersion: APIVersion) {
         syncMOC.performGroupedBlockAndWait {
             // Then
             XCTAssertNil(self.sut.transcoder.request(
