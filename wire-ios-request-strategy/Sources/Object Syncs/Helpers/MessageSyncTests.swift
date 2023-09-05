@@ -99,7 +99,7 @@ final class MessageSyncTests: MessagingTestBase {
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
 
-    func test_ItDosntGenerate_SyncingMessage_MLS_Request() {
+    func test_ItDoesntGenerate_SyncingMessage_MLS_Request() {
         [.v0, .v1, .v2, .v3, .v4].forEach {
             test_ItDoesntGenerateARequest(apiVersion: $0)
         }
