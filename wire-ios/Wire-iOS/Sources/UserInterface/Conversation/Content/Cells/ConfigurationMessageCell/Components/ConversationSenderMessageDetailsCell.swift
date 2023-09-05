@@ -82,11 +82,11 @@ class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
         let label = UILabel()
         label.font = FontSpec.mediumRegularFont.font!
         label.textColor = SemanticColors.Label.textMessageDate
+        label.setContentHuggingPriority(.required, for: .horizontal)
         label.lineBreakMode = .byTruncatingMiddle
         label.numberOfLines = 1
         label.accessibilityIdentifier = "DateLabel"
         label.isAccessibilityElement = true
-        label.text = "hey"
 
         return label
     }()
@@ -140,19 +140,14 @@ class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
             accessibilityIdentifier = "img.member"
         }
 
-        authorLabel.attributedText = NSAttributedString(
-            string: fullName,
-            attributes: [
-                .foregroundColor: textColor,
-                .font: UIFont.mediumSemiboldFont
-            ]
-        )
+        configureAuthorLabel(fullName: fullName, textColor: textColor)
 
         indicatorImageView.isHidden = object.indicatorIcon == nil
         indicatorImageView.image = object.indicatorIcon
 
         teamRoleIndicator.accessibilityIdentifier = accessibilityIdentifier
         teamRoleIndicator.isHidden = icon == nil
+
         if let icon = icon {
             teamRoleIndicator.setTemplateIcon(icon, size: iconSize(for: icon))
             teamRoleIndicator.tintColor = SemanticColors.Icon.foregroundDefault
@@ -186,16 +181,18 @@ class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
 
         [avatar, authorLabel, indicatorImageView, teamRoleIndicator, dateLabel].prepareForLayout()
 
-        let trailingDateLabelConstraint  = dateLabel.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -conversationHorizontalMargins.right)
+        let trailingDateLabelConstraint  = dateLabel.trailingAnchor.constraint(
+            equalTo: self.trailingAnchor,
+            constant: -conversationHorizontalMargins.right
+        )
 
         indicatorImageView.setContentHuggingPriority(.required, for: .horizontal)
-        dateLabel.setContentHuggingPriority(.required, for: .horizontal)
 
         self.trailingDateLabelConstraint = trailingDateLabelConstraint
         NSLayoutConstraint.activate([
-            avatar.trailingAnchor.constraint(equalTo: authorLabel.leadingAnchor, constant: -8),
+            avatar.trailingAnchor.constraint(equalTo: authorLabel.leadingAnchor, constant: -12),
             authorLabel.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: conversationHorizontalMargins.left),
-            indicatorImageView.leadingAnchor.constraint(equalTo: authorLabel.trailingAnchor),
+            indicatorImageView.leadingAnchor.constraint(equalTo: authorLabel.trailingAnchor, constant: 8),
             teamRoleIndicator.leadingAnchor.constraint(equalTo: indicatorImageView.trailingAnchor, constant: 8),
             dateLabel.leadingAnchor.constraint(equalTo: teamRoleIndicator.trailingAnchor, constant: 8),
             trailingDateLabelConstraint,
@@ -205,13 +202,24 @@ class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
 
             avatar.centerYAnchor.constraint(equalTo: authorLabel.firstBaselineAnchor),
             dateLabel.firstBaselineAnchor.constraint(equalTo: authorLabel.firstBaselineAnchor),
-            teamRoleIndicator.centerYAnchor.constraint(equalTo: authorLabel.lastBaselineAnchor),
-            indicatorImageView.centerYAnchor.constraint(equalTo: authorLabel.lastBaselineAnchor)
+            teamRoleIndicator.centerYAnchor.constraint(equalTo: authorLabel.centerYAnchor),
+            indicatorImageView.centerYAnchor.constraint(equalTo: authorLabel.centerYAnchor)
         ])
     }
 
     private func iconSize(for icon: StyleKitIcon) -> StyleKitIcon.Size {
         return icon == .externalPartner ? 16 : 14
+    }
+
+    private func configureAuthorLabel(fullName: String, textColor: UIColor) {
+
+        authorLabel.attributedText = NSAttributedString(
+            string: fullName,
+            attributes: [
+                .foregroundColor: textColor,
+                .font: UIFont.mediumSemiboldFont
+            ]
+        )
     }
 
     // MARK: - Tap gesture of avatar
@@ -232,15 +240,26 @@ class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
 
 }
 
+// MARK: - ZMUserObserver
+
 extension ConversationSenderMessageDetailsCell: ZMUserObserver {
 
     func userDidChange(_ changeInfo: UserChangeInfo) {
-        //        guard changeInfo.nameChanged || changeInfo.accentColorValueChanged else {
-        //            return
-        //        }
-        //
-        ////        let configuration = SenderCellConfiguration(user: changeInfo.user)
-        ////        configureNameLabel(for: configuration)
+        guard changeInfo.nameChanged || changeInfo.accentColorValueChanged else {
+            return
+        }
+
+        if changeInfo.user.isServiceUser {
+            configureAuthorLabel(
+                fullName: changeInfo.user.name ?? "",
+                textColor: SemanticColors.Label.textDefault
+            )
+        } else {
+            configureAuthorLabel(
+                fullName: changeInfo.user.name ?? "",
+                textColor: changeInfo.user.accentColor
+            )
+        }
     }
 
 }
