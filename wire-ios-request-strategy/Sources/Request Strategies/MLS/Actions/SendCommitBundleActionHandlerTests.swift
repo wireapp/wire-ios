@@ -40,7 +40,7 @@ class SendCommitBundleActionHandlerTests: ActionHandlerTestBase<SendCommitBundle
         )
     }
 
-    func test_itFailsToGenerateRequests() {
+    func test_itFailsToGenerateRequests_APIBelowV5() {
         [.v0, .v1, .v2, .v3, .v4].forEach {
             test_itDoesntGenerateARequest(
                 action: action,
