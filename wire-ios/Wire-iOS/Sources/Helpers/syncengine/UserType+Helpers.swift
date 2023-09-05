@@ -53,7 +53,7 @@ extension UserType {
                 completion(conversation)
 
             case .failure(let error):
-                WireLogger.conversation.error("failed to create guest room: \(String(describing: error))")
+                WireLogger.conversation.error("failed to create one to one conversation: \(String(describing: error))")
             }
         }
     }
