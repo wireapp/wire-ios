@@ -29,7 +29,7 @@ class SendMLSMessageActionHandlerTests: ActionHandlerTestBase<SendMLSMessageActi
     }
 
     // MARK: - Request generation
-    func test_itGenerateARequest() throws {
+    func test_itGenerateARequest_APIV5() throws {
         try test_itGeneratesARequest(
             for: action,
             expectedPath: "/v5/mls/messages",
