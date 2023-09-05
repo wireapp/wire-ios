@@ -86,7 +86,6 @@ class ReactionToggle: UIControl {
         addTarget(self, action: #selector(didToggle), for: .touchUpInside)
 
         setupAccessibility(
-            stackView: stackView,
             value: emoji.value,
             count: count
         )
@@ -125,12 +124,11 @@ class ReactionToggle: UIControl {
     // MARK: - Accessibility
 
     func setupAccessibility(
-        stackView: UIStackView,
         value: String,
         count: UInt
     ) {
-        stackView.isAccessibilityElement = true
-        stackView.accessibilityIdentifier = "value: \(value), count: \(count)"
+        self.isAccessibilityElement = true
+        self.accessibilityIdentifier = "value: \(value), count: \(count)"
     }
 
 }
