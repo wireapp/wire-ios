@@ -27,7 +27,6 @@ public struct MessageReactionMetadata: Equatable {
     let emoji: Emoji
     let count: UInt
     let isSelfUserReacting: Bool
-    var performReaction: (() -> Void)?
 
     public static func == (lhs: MessageReactionMetadata, rhs: MessageReactionMetadata) -> Bool {
         return lhs.emoji == rhs.emoji && lhs.count == rhs.count && lhs.isSelfUserReacting == rhs.isSelfUserReacting
@@ -41,28 +40,25 @@ final class MessageReactionsCell: UIView, ConversationMessageCell {
 
     // MARK: - Properties
 
-    struct Configuration: Equatable {
-
-        let reactions: [MessageReactionMetadata]
-
-    }
-
-    private var collectionViewTopAnchorValue: CGFloat = 8
-
-    let reactionCollectionView = ReactionCollectionView()
-
-    var isSelected: Bool  = false
-
-    var message: WireDataModel.ZMConversationMessage?
+    var isSelected = false
+    var message: ZMConversationMessage?
 
     weak var delegate: ConversationMessageCellDelegate?
 
-    // MARK: - Lifecycle
+    private let reactionsView = GridLayoutView()
+
+    private lazy var insets = UIEdgeInsets(
+        top: 8,
+        left: conversationHorizontalMargins.left,
+        bottom: 0,
+        right: conversationHorizontalMargins.right
+    )
+
+    // MARK: - Life cycle
 
     override init(frame: CGRect) {
         super.init(frame: frame)
         configureSubviews()
-        configureConstraints()
     }
 
     @available(*, unavailable)
@@ -73,48 +69,57 @@ final class MessageReactionsCell: UIView, ConversationMessageCell {
     // MARK: - configure Views and constraints
 
     private func configureSubviews() {
-        addSubview(reactionCollectionView)
-    }
-
-    private func configureConstraints() {
-        reactionCollectionView.translatesAutoresizingMaskIntoConstraints = false
-        self.translatesAutoresizingMaskIntoConstraints = false
-
-        NSLayoutConstraint.activate([
-            reactionCollectionView.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -conversationHorizontalMargins.right),
-            reactionCollectionView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: conversationHorizontalMargins.left),
-            reactionCollectionView.topAnchor.constraint(equalTo: self.topAnchor, constant: collectionViewTopAnchorValue),
-            reactionCollectionView.bottomAnchor.constraint(equalTo: self.bottomAnchor)
-        ])
+        addSubview(reactionsView)
+        reactionsView.fitIn(view: self, insets: insets)
     }
 
     // MARK: - configure method
 
     func configure(
-        with object: Configuration,
+        with reactions: [MessageReactionMetadata],
         animated: Bool
     ) {
-        reactionCollectionView.reactions = object.reactions.map { reaction in
-            return MessageReactionMetadata(
+        let reactionToggles = reactions.map { reaction in
+            ReactionToggle(
                 emoji: reaction.emoji,
                 count: reaction.count,
-                isSelfUserReacting: reaction.isSelfUserReacting
-            ) {
-                [weak self] in
-                    guard
-                        let `self` = self,
-                        let message = self.message
-                    else {
-                        return
-                    }
+                isToggled: reaction.isSelfUserReacting
+            ) { [weak self] in
+                guard
+                    let `self` = self,
+                    let message = self.message
+                else {
+                    return
+                }
 
-                    self.delegate?.perform(
-                        action: .react(reaction.emoji),
-                        for: message,
-                        view: self
-                    )
+                self.delegate?.perform(
+                    action: .react(reaction.emoji),
+                    for: message,
+                    view: self
+                )
             }
         }
-    }
 
+        reactionsView.configure(views: reactionToggles)
+    }
+    
+    func prepareForReuse() {
+        reactionsView.prepareForReuse()
+    }
+    
+    override func systemLayoutSizeFitting(
+        _ targetSize: CGSize,
+        withHorizontalFittingPriority horizontalFittingPriority: UILayoutPriority,
+        verticalFittingPriority: UILayoutPriority
+    ) -> CGSize {
+        let insetsWidth = insets.left + insets.right
+        reactionsView.widthForCalculations = targetSize.width - insetsWidth
+        reactionsView.setNeedsLayout()
+        reactionsView.layoutIfNeeded()
+        return super.systemLayoutSizeFitting(
+            CGSize(width: targetSize.width - insetsWidth, height: UIView.noIntrinsicMetric),
+            withHorizontalFittingPriority: horizontalFittingPriority,
+            verticalFittingPriority: verticalFittingPriority
+        )
+    }
 }
