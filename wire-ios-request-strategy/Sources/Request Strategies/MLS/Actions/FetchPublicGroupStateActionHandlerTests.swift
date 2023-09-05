@@ -37,7 +37,7 @@ class FetchPublicGroupStateActionHandlerTests: ActionHandlerTestBase<FetchPublic
     }
     // MARK: - Request generation
 
-    func test_itGeneratesARequest() throws {
+    func test_itGeneratesARequest_APIV5() throws {
         try test_itGeneratesARequest(
             for: action,
             expectedPath: "/v5/conversations/\(domain)/\(conversationId.transportString())/groupinfo",
