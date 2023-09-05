@@ -105,7 +105,7 @@ final class MessageSyncTests: MessagingTestBase {
         }
     }
 
-    func test_ItDoesntGenerateARequest(apiVersion: APIVersion) {
+    private func internalTest_ItDoesntGenerateARequest(apiVersion: APIVersion) {
         syncMOC.performGroupedBlockAndWait {
             // Given
             self.groupConversation.messageProtocol = .mls
