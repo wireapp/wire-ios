@@ -46,7 +46,7 @@ class FetchPublicGroupStateActionHandlerTests: ActionHandlerTestBase<FetchPublic
         )
     }
 
-    func test_itDoesntGenerateRequests() {
+    func test_itDoesntGenerateRequests_APIBelowV5() {
         [.v0, .v1, .v2, .v3, .v4].forEach {
             test_itDoesntGenerateARequest(
                 action: action,
