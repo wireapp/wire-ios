@@ -208,7 +208,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 applicationStatus: applicationStatusDirectory,
                 clientRegistrationStatus: applicationStatusDirectory.clientRegistrationStatus,
                 syncStatus: applicationStatusDirectory.syncStatus),
-            SelfRequestStrategy(
+            SelfUserRequestStrategy(
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory
             ),

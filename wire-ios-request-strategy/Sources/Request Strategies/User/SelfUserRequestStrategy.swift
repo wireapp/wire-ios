@@ -18,7 +18,7 @@
 
 import Foundation
 
-public final class SelfRequestStrategy: AbstractRequestStrategy {
+public final class SelfUserRequestStrategy: AbstractRequestStrategy {
 
     // MARK: - Properties
 
@@ -52,7 +52,7 @@ public final class SelfRequestStrategy: AbstractRequestStrategy {
 
 }
 
-private extension SelfRequestStrategy {
+private extension SelfUserRequestStrategy {
 
     final class Transcoder: NSObject, ZMUpstreamTranscoder {
 
@@ -132,7 +132,7 @@ private extension SelfRequestStrategy {
 
 }
 
-extension SelfRequestStrategy: ZMContextChangeTrackerSource {
+extension SelfUserRequestStrategy: ZMContextChangeTrackerSource {
 
     public var contextChangeTrackers: [ZMContextChangeTracker] {
         return [upstreamSync]

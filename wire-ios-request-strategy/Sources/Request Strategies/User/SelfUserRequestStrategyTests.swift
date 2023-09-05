@@ -19,9 +19,9 @@
 import XCTest
 @testable import WireRequestStrategy
 
-final class SelfRequestStrategyTests: MessagingTestBase {
+final class SelfUserRequestStrategyTests: MessagingTestBase {
 
-    var sut: SelfRequestStrategy!
+    var sut: SelfUserRequestStrategy!
     var applicationStatus: MockApplicationStatus!
 
     override func setUp() {
@@ -30,7 +30,7 @@ final class SelfRequestStrategyTests: MessagingTestBase {
         syncMOC.performGroupedAndWait { context in
             self.applicationStatus = MockApplicationStatus()
             self.applicationStatus.mockSynchronizationState = .online
-            self.sut = SelfRequestStrategy(
+            self.sut = SelfUserRequestStrategy(
                 withManagedObjectContext: context,
                 applicationStatus: self.applicationStatus
             )
