@@ -343,7 +343,6 @@ public class ZMUserSession: NSObject {
             context.perform {
                 let service = SupportedProtocolsService(context: context)
                 service.updateSupportedProtocols()
-
             }
         }
 
