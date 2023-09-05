@@ -359,6 +359,10 @@ class TeamDownloadRequestStrategyTests: MessagingTest {
         internalTestThatItDownloadsTeam_DuringSlowSync_ForPreviousApiVersions(for: .v4)
     }
 
+    func testThatItDownloadsSelfUserTeam_DuringSlowSync_V5() {
+        internalTestThatItDownloadsTeam_DuringSlowSync_ForPreviousApiVersions(for: .v5)
+    }
+
     func internalTestThatItDownloadsTeam_DuringSlowSync_ForPreviousApiVersions(for apiVersion: APIVersion) {
         // given
         mockSyncStatus.mockPhase = .fetchingTeams
@@ -377,8 +381,10 @@ class TeamDownloadRequestStrategyTests: MessagingTest {
             XCTAssertEqual(request.path, "/v2/teams")
         case .v3:
             XCTAssertEqual(request.path, "/v3/teams")
-        case .v4, .v5:
+        case .v4:
             XCTAssertEqual(request.path, "/v4/teams/\(teamID.transportString())")
+        case .v5:
+            XCTAssertEqual(request.path, "/v5/teams/\(teamID.transportString())")
         }
         XCTAssertEqual(request.method, .methodGET)
     }
