@@ -41,11 +41,11 @@ extension MLSMessageSync {
 
         func request(forEntity entity: Message, apiVersion: APIVersion) -> ZMTransportRequest? {
             switch apiVersion {
-            case .v0, .v1:
+            case .v0, .v1, .v2, .v3, .v4:
                 Logging.mls.warn("can't send mls message on api version: \(apiVersion.rawValue)")
                 return nil
 
-            case .v2, .v3, .v4:
+            case .v5:
                 return internalRequest(for: entity, apiVersion: apiVersion)
             }
         }
@@ -112,30 +112,15 @@ extension MLSMessageSync {
             guard let apiVersion = APIVersion(rawValue: response.apiVersion) else { return }
 
             switch apiVersion {
-            case .v0, .v1:
+            case .v0, .v1, .v2, .v3, .v4:
                 return
 
-            case .v2, .v3:
-                v2processResponse(response, for: entity)
-
-            case .v4:
-                v4processResponse(response, for: entity)
+            case .v5:
+                processResponse(response, for: entity)
             }
         }
 
-        private func v2processResponse(
-            _ response: ZMTransportResponse,
-            for entity: Message
-        ) {
-            guard response.result == .success else {
-                Logging.mls.warn("failed to send mls message. Response: \(response)")
-                return
-            }
-
-            entity.delivered(with: response)
-        }
-
-        private func v4processResponse(
+        private func processResponse(
             _ response: ZMTransportResponse,
             for entity: Message
         ) {

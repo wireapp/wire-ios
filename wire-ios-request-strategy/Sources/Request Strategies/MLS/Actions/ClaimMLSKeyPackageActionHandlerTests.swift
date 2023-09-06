@@ -38,34 +38,36 @@ class ClaimMLSKeyPackageActionHandlerTests: ActionHandlerTestBase<ClaimMLSKeyPac
 
     // MARK: - Request generation
 
-    func test_itGeneratesARequest() throws {
+    func test_itGeneratesARequest_APIV5() throws {
         try test_itGeneratesARequest(
             for: ClaimMLSKeyPackageAction(
                 domain: domain,
                 userId: userId,
                 excludedSelfClientId: excludedSelfCliendId
             ),
-            expectedPath: "/v1/mls/key-packages/claim/\(domain)/\(userId.transportString())",
+            expectedPath: "/v5/mls/key-packages/claim/\(domain)/\(userId.transportString())",
             expectedPayload: ["skip_own": excludedSelfCliendId],
             expectedMethod: .methodPOST,
-            apiVersion: .v1
+            apiVersion: .v5
         )
     }
 
-    func test_itDoesntGenerateRequests() {
+    func test_itDoesntGenerateRequests_APIBelowV5() {
         // when the endpoint is unavailable
-        test_itDoesntGenerateARequest(
-            action: action,
-            apiVersion: .v0,
-            expectedError: .endpointUnavailable
-        )
+        [.v0, .v1, .v2, .v3, .v4].forEach {
+            test_itDoesntGenerateARequest(
+                action: action,
+                apiVersion: $0,
+                expectedError: .endpointUnavailable
+            )
+        }
 
         // when the domain is missing
         BackendInfo.domain = nil
 
         test_itDoesntGenerateARequest(
             action: ClaimMLSKeyPackageAction(domain: "", userId: userId, excludedSelfClientId: excludedSelfCliendId),
-            apiVersion: .v1,
+            apiVersion: .v5,
             expectedError: .missingDomain
         )
     }

@@ -284,7 +284,7 @@ internal struct WirelessRequestFactory {
         switch apiVersion {
         case .v0, .v1, .v2, .v3:
             return .init(path: "/conversations/\(identifier)/code", method: .methodPOST, payload: nil, apiVersion: apiVersion.rawValue)
-        case .v4:
+        case .v4, .v5:
             let payload: [String: Any] = [:]
             return .init(path: "/conversations/\(identifier)/code", method: .methodPOST, payload: payload as ZMTransportData, apiVersion: apiVersion.rawValue)
         }
@@ -324,7 +324,7 @@ internal struct WirelessRequestFactory {
         let path: String
 
         switch apiVersion {
-        case .v3, .v4:
+        case .v3, .v4, .v5:
             guard let domain = conversation.domain.nonEmptyValue ?? BackendInfo.domain else {
                 fatal("no domain associated with conversation, can't make the request")
             }

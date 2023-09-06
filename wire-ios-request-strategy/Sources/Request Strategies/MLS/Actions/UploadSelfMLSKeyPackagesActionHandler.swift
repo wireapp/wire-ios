@@ -25,7 +25,7 @@ class UploadSelfMLSKeyPackagesActionHandler: ActionHandler<UploadSelfMLSKeyPacka
     override func request(for action: UploadSelfMLSKeyPackagesAction, apiVersion: APIVersion) -> ZMTransportRequest? {
         var action = action
 
-        guard apiVersion > .v0 else {
+        guard apiVersion >= .v5 else {
             action.fail(with: .endpointUnavailable)
             return nil
         }

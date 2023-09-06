@@ -303,7 +303,7 @@ extension UserImageAssetUpdateStrategyTests {
             expectedPath = "/assets/v3/\(assetId)"
         case .v1:
             expectedPath = "/v1/assets/v4/\(domain)/\(assetId)"
-        case .v2, .v3, .v4:
+        case .v2, .v3, .v4, .v5:
             expectedPath = "/v\(apiVersion.rawValue)/assets/\(domain)/\(assetId)"
         }
 
