@@ -28,6 +28,7 @@ public enum APIVersion: Int32 {
     case v2 = 2
     case v3 = 3
     case v4 = 4
+    case v5 = 5
 
 }
 

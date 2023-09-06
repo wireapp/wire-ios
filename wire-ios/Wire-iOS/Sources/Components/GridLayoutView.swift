@@ -27,7 +27,7 @@ public final class GridLayoutView: UIView {
 
     // MARK: - Properties
 
-    var verticalSpacing: CGFloat = 0
+    var verticalSpacing: CGFloat = 4
     var horizontalSpacing: CGFloat = 4
 
     private(set) var views = [UIView]()
@@ -40,21 +40,6 @@ public final class GridLayoutView: UIView {
         stackView.translatesAutoresizingMaskIntoConstraints = false
         return stackView
     }()
-
-    private lazy var heightConstraint: NSLayoutConstraint = {
-        let constraint = heightAnchor.constraint(equalToConstant: 0)
-        constraint.isActive = true
-        return constraint
-    }()
-
-    private var calculatedHeight: CGFloat = 0 {
-        didSet {
-            guard calculatedHeight != oldValue else { return }
-            setNeedsUpdateConstraints()
-            setNeedsLayout()
-            layoutIfNeeded()
-        }
-    }
 
     // MARK: - Life cycle
 
@@ -73,14 +58,7 @@ public final class GridLayoutView: UIView {
     }
 
     // MARK: - Layout
-
-    public override func updateConstraints() {
-        super.updateConstraints()
-        heightConstraint.constant = calculatedHeight
-    }
-
     public func prepareForReuse() {
-        calculatedHeight = 0
         stackView.removeArrangedSubviews()
         views.removeAll(keepingCapacity: true)
     }
@@ -92,38 +70,32 @@ public final class GridLayoutView: UIView {
         layoutIfNeeded()
     }
 
+    public var widthForCalculations: CGFloat = 0
+
     public override func layoutSubviews() {
         super.layoutSubviews()
-        stackView.removeArrangedSubviews()
 
         guard !views.isEmpty else { return }
 
+        stackView.removeArrangedSubviews()
+
         var lineWidth: CGFloat = 0
-        var maxHeight: CGFloat = 0
-        var totalHeight: CGFloat = 0
 
         var currentLineStackView = createNewRow()
         stackView.addArrangedSubview(currentLineStackView)
 
         for view in views {
-            view.setNeedsLayout()
-            view.layoutIfNeeded()
+            let viewSize = view.systemLayoutSizeFitting(currentLineStackView.bounds.size)
 
-            if lineWidth + view.frame.width > frame.width {
+            if lineWidth + viewSize.width > widthForCalculations {
                 currentLineStackView = createNewRow()
                 stackView.addArrangedSubview(currentLineStackView)
-                totalHeight += maxHeight + verticalSpacing
                 lineWidth = 0
-                maxHeight = 0
             }
 
             currentLineStackView.addArrangedSubview(view)
-            lineWidth += view.frame.width + horizontalSpacing
-            maxHeight = max(view.frame.height, maxHeight)
+            lineWidth += viewSize.width + horizontalSpacing
         }
-
-        totalHeight += maxHeight
-        calculatedHeight = totalHeight
     }
 
     private func createNewRow() -> UIStackView {

@@ -627,7 +627,7 @@ class CallingRequestStrategyTests: MessagingTest {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         syncMOC.performGroupedBlock {
-            nextRequest = self.sut.nextRequest(for: .v2)
+            nextRequest = self.sut.nextRequest(for: .v5)
         }
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -635,7 +635,7 @@ class CallingRequestStrategyTests: MessagingTest {
         guard let request = nextRequest else { return XCTFail("Expected next request") }
 
         // Then it's an mls request
-        XCTAssertEqual(request.path, "/v2/mls/messages")
+        XCTAssertEqual(request.path, "/v5/mls/messages")
         XCTAssertEqual(request.method, .methodPOST)
     }
 
@@ -698,7 +698,7 @@ class CallingRequestStrategyTests: MessagingTest {
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
 
         syncMOC.performGroupedBlock {
-            nextRequest = self.sut.nextRequest(for: .v2)
+            nextRequest = self.sut.nextRequest(for: .v5)
         }
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -706,7 +706,7 @@ class CallingRequestStrategyTests: MessagingTest {
         guard let request = nextRequest else { return XCTFail("Expected next request") }
 
         // Then it's an mls request
-        XCTAssertEqual(request.path, "/v2/mls/messages")
+        XCTAssertEqual(request.path, "/v5/mls/messages")
         XCTAssertEqual(request.method, .methodPOST)
     }
 

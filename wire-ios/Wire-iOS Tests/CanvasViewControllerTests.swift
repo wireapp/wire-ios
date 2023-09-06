@@ -19,7 +19,7 @@
 import XCTest
 @testable import Wire
 
-final class CanvasViewControllerTests: ZMSnapshotTestCase {
+final class CanvasViewControllerTests: BaseSnapshotTestCase {
 
     var sut: CanvasViewController!
 
@@ -37,11 +37,11 @@ final class CanvasViewControllerTests: ZMSnapshotTestCase {
 
     func testForSendButtonEnabled() {
         sut.sendButton.isEnabled = true
-        verify(view: sut.view)
+        verify(matching: sut.view)
     }
 
     func testForEmojiKeyboard() {
         sut.emojiButton.sendActions(for: .touchUpInside)
-        verify(view: sut.view)
+        verify(matching: sut.view)
     }
 }
