@@ -254,6 +254,15 @@ class ConversationMessageCellTableViewAdapter<C: ConversationMessageCellDescript
         return cellDescription?.actionController?.singleTapAction != nil
     }
 
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        cellView.prepareForReuse()
+    }
+
+    override func systemLayoutSizeFitting(_ targetSize: CGSize, withHorizontalFittingPriority horizontalFittingPriority: UILayoutPriority, verticalFittingPriority: UILayoutPriority) -> CGSize {
+        _ = cellView.systemLayoutSizeFitting(targetSize, withHorizontalFittingPriority: horizontalFittingPriority, verticalFittingPriority: verticalFittingPriority)
+        return super.systemLayoutSizeFitting(targetSize, withHorizontalFittingPriority: horizontalFittingPriority, verticalFittingPriority: verticalFittingPriority)
+    }
 }
 
 extension UITableView {
