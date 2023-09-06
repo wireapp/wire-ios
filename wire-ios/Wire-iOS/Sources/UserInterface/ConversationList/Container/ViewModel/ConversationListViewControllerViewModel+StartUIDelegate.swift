@@ -20,8 +20,6 @@ import WireDataModel
 import UIKit
 import WireSyncEngine
 
-private typealias ConversationCreatedBlock = (ZMConversation?) -> Void
-
 extension ConversationListViewController.ViewModel: StartUIDelegate {
     func startUI(_ startUI: StartUIViewController, didSelect user: UserType) {
         oneToOneConversationWithUser(user, callback: { conversation in
@@ -52,33 +50,9 @@ extension ConversationListViewController.ViewModel: StartUIDelegate {
             if let conversation = user.oneToOneConversation {
                 onConversationCreated(conversation)
             } else {
-                self.createTeamOneToOneConversation(with: user, context: userSession.viewContext) { conversation in
+                user.createTeamOneToOneConversation(in: userSession.viewContext) { conversation in
                     onConversationCreated(conversation)
                 }
-            }
-        }
-    }
-
-    private func createTeamOneToOneConversation(
-        with user: UserType,
-        context: NSManagedObjectContext,
-        completion: @escaping ConversationCreatedBlock
-    ) {
-        guard
-            user.isTeamMember,
-            let user = user.materialize(in: context)
-        else {
-            return
-        }
-        let conversationService = ConversationService(context: context)
-
-        conversationService.createTeamOneToOneConversation(user: user) { result in
-            switch result {
-            case .success(let conversation):
-                completion(conversation)
-
-            case .failure(let error):
-                WireLogger.conversation.error("failed to create guest room: \(String(describing: error))")
             }
         }
     }

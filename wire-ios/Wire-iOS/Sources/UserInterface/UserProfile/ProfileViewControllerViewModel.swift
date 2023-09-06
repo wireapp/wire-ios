@@ -129,16 +129,17 @@ final class ProfileViewControllerViewModel: NSObject {
     }
 
     func openOneToOneConversation() {
-        var conversation: ZMConversation?
+        guard let userSession = ZMUserSession.shared() else { return }
 
-        ZMUserSession.shared()?.enqueue({
-            conversation = self.user.oneToOneConversation
-        }, completionHandler: {
-            guard let conversation = conversation else { return }
+        if let conversation = user.oneToOneConversation {
+            transition(to: conversation)
+        } else {
+            user.createTeamOneToOneConversation(in: userSession.viewContext) { conversation in
+                guard let conversation = conversation else { return }
 
-            self.delegate?.profileViewController(self.viewModelDelegate as? ProfileViewController,
-                                                 wantsToNavigateTo: conversation)
-        })
+                self.transition(to: conversation)
+            }
+        }
     }
 
     // MARK: - Action Handlers
@@ -200,6 +201,12 @@ final class ProfileViewControllerViewModel: NSObject {
 
     func enqueueChanges(_ block: @escaping () -> Void) {
         ZMUserSession.shared()?.enqueue(block)
+    }
+
+    private func transition(to conversation: ZMConversation) {
+        delegate?.profileViewController(
+            viewModelDelegate as? ProfileViewController,
+            wantsToNavigateTo: conversation)
     }
 
     // MARK: - Factories
