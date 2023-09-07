@@ -27,9 +27,10 @@ public struct MessageReactionMetadata: Equatable {
     let emoji: Emoji
     let count: UInt
     let isSelfUserReacting: Bool
+    let creationDate: Date
 
     public static func == (lhs: MessageReactionMetadata, rhs: MessageReactionMetadata) -> Bool {
-        return lhs.emoji == rhs.emoji && lhs.count == rhs.count && lhs.isSelfUserReacting == rhs.isSelfUserReacting
+        return lhs.emoji == rhs.emoji && lhs.count == rhs.count && lhs.isSelfUserReacting == rhs.isSelfUserReacting && lhs.creationDate == rhs.creationDate
     }
 
 }
@@ -102,11 +103,11 @@ final class MessageReactionsCell: UIView, ConversationMessageCell {
 
         reactionsView.configure(views: reactionToggles)
     }
-    
+
     func prepareForReuse() {
         reactionsView.prepareForReuse()
     }
-    
+
     override func systemLayoutSizeFitting(
         _ targetSize: CGSize,
         withHorizontalFittingPriority horizontalFittingPriority: UILayoutPriority,

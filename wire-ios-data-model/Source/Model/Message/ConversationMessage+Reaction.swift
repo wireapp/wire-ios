@@ -101,8 +101,15 @@ extension ZMMessage {
 
     @objc public func setReactions(
         _ updatedReactions: Set<String>,
-        forUser user: ZMUser
+        forUser user: ZMUser,
+        newReactionsCreationDate: Date? = nil
     ) {
+        // Remove "empty" leftover reactions that have no user attached to treat them as fresh reactions in case of adding them again
+        let reactionsCopy = self.reactions
+        for reaction in reactionsCopy where reaction.users.isEmpty {
+            mutableSetValue(forKey: "reactions").remove(reaction)
+        }
+
         // Remove all existing reactions for this user.
         for reaction in self.reactions where reaction.users.contains(user) {
             reaction.mutableSetValue(forKey: ZMReactionUsersValueKey).remove(user)
@@ -120,7 +127,8 @@ extension ZMMessage {
                 let newReaction = Reaction.insertReaction(
                     reaction,
                     users: [user],
-                    inMessage: self
+                    inMessage: self,
+                    creationDate: newReactionsCreationDate
                 )
 
                 mutableSetValue(forKey: "reactions").add(newReaction)
