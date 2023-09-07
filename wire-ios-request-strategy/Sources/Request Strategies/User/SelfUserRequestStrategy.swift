@@ -59,16 +59,14 @@ private extension SelfUserRequestStrategy {
         func shouldCreateRequest(
             toSyncObject managedObject: ZMManagedObject,
             forKeys keys: Set<String>,
-            withSync sync: Any
+            withSync sync: Any,
+            apiVersion: APIVersion
         ) -> Bool {
-            guard
-                keys.contains(ZMUser.supportedProtocolsKey),
-                let currentAPIVersion = BackendInfo.apiVersion
-            else {
+            guard keys.contains(ZMUser.supportedProtocolsKey) else {
                 return false
             }
 
-            return currentAPIVersion >= .v4
+            return apiVersion >= .v4
         }
 
         func request(
