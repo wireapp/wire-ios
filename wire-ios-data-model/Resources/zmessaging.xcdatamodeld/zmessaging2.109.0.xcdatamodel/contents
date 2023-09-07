@@ -234,7 +234,7 @@
         <relationship name="user" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="participantRoles" inverseEntity="User"/>
     </entity>
     <entity name="Reaction" representedClassName=".Reaction" syncable="YES">
-        <attribute name="date" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="firstReactionDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="modifiedKeys" optional="YES" attributeType="Transformable" valueTransformerName="ExtendedSecureUnarchiveFromData"/>
         <attribute name="unicodeValue" optional="YES" attributeType="String"/>
         <relationship name="message" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Message" inverseName="reactions" inverseEntity="Message"/>
