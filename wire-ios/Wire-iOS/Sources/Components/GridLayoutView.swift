@@ -69,9 +69,9 @@ public final class GridLayoutView: UIView {
         setNeedsLayout()
         layoutIfNeeded()
     }
-    
+
     public var widthForCalculations: CGFloat = 0
-    
+
     public override func layoutSubviews() {
         super.layoutSubviews()
 
