@@ -1884,6 +1884,7 @@
 		010497D72940F4F40046124D /* CustomBackendView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomBackendView.swift; sourceTree = "<group>"; };
 		010497D82940F4F40046124D /* ProxyCredentialsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProxyCredentialsViewController.swift; sourceTree = "<group>"; };
 		010497E02940F5DE0046124D /* AuthenticationShowCustomBackendInfoHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthenticationShowCustomBackendInfoHandler.swift; sourceTree = "<group>"; };
+		016BDDEF2AA0AE670054FB04 /* Developer-Flags.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Developer-Flags.xcconfig"; sourceTree = "<group>"; };
 		01A5E043297FDAB500624B65 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 		01A5E046297FDAB500624B65 /* updateLicenses */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = updateLicenses; sourceTree = "<group>"; };
 		01A5E047297FDAB500624B65 /* updateStylekit */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = updateStylekit; sourceTree = "<group>"; };
@@ -7778,6 +7779,7 @@
 				F12C48EF2199D2C200F49548 /* Debug.xcconfig */,
 				F12C48F02199D2C200F49548 /* Release.xcconfig */,
 				54AA3C7B24E53E0100FE1F94 /* Security-Flags.xcconfig */,
+				016BDDEF2AA0AE670054FB04 /* Developer-Flags.xcconfig */,
 			);
 			path = Configuration;
 			sourceTree = SOURCE_ROOT;
