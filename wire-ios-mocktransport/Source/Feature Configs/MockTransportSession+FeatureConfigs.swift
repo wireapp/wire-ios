@@ -54,7 +54,8 @@ extension MockTransportSession {
                     "protocolToggleUsers": [],
                     "defaultProtocol": "proteus",
                     "allowedCipherSuites": [1],
-                    "defaultCipherSuite": 1
+                    "defaultCipherSuite": 1,
+                    "supportedProtocols": ["proteus"]
                 ]
             ],
             "selfDeletingMessages": [
