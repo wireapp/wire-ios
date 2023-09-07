@@ -56,6 +56,21 @@ private extension SelfUserRequestStrategy {
 
     final class Transcoder: NSObject, ZMUpstreamTranscoder {
 
+        func shouldCreateRequest(
+            toSyncObject managedObject: ZMManagedObject,
+            forKeys keys: Set<String>,
+            withSync sync: Any
+        ) -> Bool {
+            guard
+                keys.contains(ZMUser.supportedProtocolsKey),
+                let currentAPIVersion = BackendInfo.apiVersion
+            else {
+                return false
+            }
+
+            return currentAPIVersion >= .v4
+        }
+
         func request(
             forUpdating managedObject: ZMManagedObject,
             forKeys keys: Set<String>,
