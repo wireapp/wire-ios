@@ -819,62 +819,75 @@ public final class MLSService: MLSServiceInterface {
 
     // MARK: - Out-of-sync conversations
 
+    /// Fetches and re-joins MLS conversations that are out of sync
+    /// (where the conversation object's epoch differs from the corresponding MLS group epoch)
     public func repairOutOfSyncConversations() {
         guard let context = self.context else { return }
-        logger.info("repairing out of sync conversations if needed")
 
-        outOfSyncConversations(in: context).forEach { conversation in
-            Task {
+        let outOfSync = outOfSyncConversations(in: context).compactMap(\.mlsGroupID)
+
+        logger.info("found \(outOfSync.count) conversations out of sync")
+
+        outOfSync.forEach { groupID in
+            launchConversationRepairTaskIfNotInProgress(for: groupID) {
                 do {
-                    try await repairConversation(conversation)
-                    logger.info("repaired out of sync conversation")
+                    try await self.joinGroup(with: groupID)
+                    self.logger.info("repaired out of sync conversation (\(groupID))")
                 } catch {
-                    logger.warn("failed to repair out of sync conversation: \(String(describing: error))")
+                    self.logger.warn("failed to repair out of sync conversation (\(groupID)). error: \(String(describing: error))")
                 }
             }
         }
     }
 
-    enum ConversationRepairError: Error {
-        case missingGroupID
-    }
+    private var conversationsBeingRepaired = Set<MLSGroupID>()
 
-    private func repairConversation(_ conversation: ZMConversation) async throws {
-        guard let context = context else { return }
-
-        var groupID: MLSGroupID?
-
-        context.performAndWait {
-            groupID = conversation.mlsGroupID
+    private func launchConversationRepairTaskIfNotInProgress(
+        for groupID: MLSGroupID,
+        repairOperation: @escaping () async -> Void
+    ) {
+        guard !conversationsBeingRepaired.contains(groupID) else {
+            return
         }
 
-        guard let groupID = groupID else {
-            throw ConversationRepairError.missingGroupID
+        Task {
+            conversationsBeingRepaired.insert(groupID)
+            await repairOperation()
+            conversationsBeingRepaired.remove(groupID)
         }
-
-        try await joinGroup(with: groupID)
     }
 
     private func outOfSyncConversations(in context: NSManagedObjectContext) -> [ZMConversation] {
         return coreCrypto.perform { coreCrypto in
             return ZMConversation.fetchMLSConversations(in: context).filter {
-                isConversationOutOfSync($0, coreCrypto: coreCrypto)
+                isConversationOutOfSync(
+                    $0,
+                    coreCrypto: coreCrypto,
+                    context: context
+                )
             }
         }
     }
 
     private func isConversationOutOfSync(
         _ conversation: ZMConversation,
-        coreCrypto: CoreCryptoProtocol
+        coreCrypto: CoreCryptoProtocol,
+        context: NSManagedObjectContext
     ) -> Bool {
-        guard
-            let groupID = conversation.mlsGroupID,
-            let epoch = try? coreCrypto.conversationEpoch(conversationId: groupID.bytes)
-        else {
-            return false
+        var isOutOfSync: Bool = false
+
+        context.performAndWait {
+            guard
+                let groupID = conversation.mlsGroupID,
+                let epoch = try? coreCrypto.conversationEpoch(conversationId: groupID.bytes)
+            else {
+                return
+            }
+
+            isOutOfSync = epoch != conversation.epoch
         }
 
-        return epoch != conversation.epoch
+        return isOutOfSync
     }
 
     // MARK: - External Proposals

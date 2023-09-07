@@ -612,6 +612,8 @@ extension ZMUserSession: ZMSyncStateDelegate {
                 ZMUserSession.notifyInitialSyncCompleted(context: context)
             }
         }
+
+        syncContext.mlsService?.repairOutOfSyncConversations()
     }
 
     public func didStartQuickSync() {
@@ -627,7 +629,6 @@ extension ZMUserSession: ZMSyncStateDelegate {
         processEvents()
 
         syncContext.mlsService?.performPendingJoins()
-        syncContext.mlsService?.repairOutOfSyncConversations()
 
         managedObjectContext.performGroupedBlock { [weak self] in
             self?.notifyThirdPartyServices()
