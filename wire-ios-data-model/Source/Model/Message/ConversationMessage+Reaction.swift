@@ -104,11 +104,7 @@ extension ZMMessage {
         forUser user: ZMUser,
         newReactionsCreationDate: Date? = nil
     ) {
-        // Remove "empty" leftover reactions that have no user attached to treat them as fresh reactions in case of adding them again
-        let reactionsCopy = self.reactions
-        for reaction in reactionsCopy where reaction.users.isEmpty {
-            mutableSetValue(forKey: "reactions").remove(reaction)
-        }
+        removeEmptyReactions()
 
         // Remove all existing reactions for this user.
         for reaction in self.reactions where reaction.users.contains(user) {
@@ -134,6 +130,16 @@ extension ZMMessage {
                 mutableSetValue(forKey: "reactions").add(newReaction)
                 updateCategoryCache()
             }
+        }
+    }
+
+    func removeEmptyReactions() {
+        // Remove "empty" leftover reactions that have no user attached to treat them as fresh reactions in case of adding them again
+        guard let moc = managedObjectContext else { return }
+        let reactionsCopy = self.reactions
+        for reaction in reactionsCopy where reaction.users.isEmpty {
+            mutableSetValue(forKey: "reactions").remove(reaction)
+            moc.delete(reaction)
         }
     }
 

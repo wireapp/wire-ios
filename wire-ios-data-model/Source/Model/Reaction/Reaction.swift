@@ -40,7 +40,7 @@ public let ZMReactionUsersValueKey      = "users"
     @NSManaged private var date: Date?
 
     public var creationDate: Date {
-        return date != nil ? date! : Date.distantPast
+        return date ?? Date.distantPast
     }
 
     public static func insertReaction(_ unicodeValue: String, users: [ZMUser], inMessage message: ZMMessage, creationDate: Date?) -> Reaction {

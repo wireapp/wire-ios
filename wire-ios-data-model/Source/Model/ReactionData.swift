@@ -26,7 +26,7 @@
         self.users = users
         self.creationDate = creationDate
     }
-    
+
     override public var hash: Int {
         return reactionString.hash
     }

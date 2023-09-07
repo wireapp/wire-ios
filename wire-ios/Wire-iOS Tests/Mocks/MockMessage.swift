@@ -389,17 +389,17 @@ class MockMessage: NSObject, ZMConversationMessage, ConversationCompositeMessage
         return backingUsersReaction
     }
 
-    var reactionDates: [String: Date] {
-        return backingReactionDates
-    }
-
     func reactionsSortedByCreationDate() -> [ReactionData] {
         return backingSortedReactions
     }
 
+    var reactionData: Set<ReactionData> {
+        return backingReactionData
+    }
+
     var backingUsersReaction: UsersByReaction = [:]
-    var backingReactionDates: [String: Date] = [:]
     var backingSortedReactions: [ReactionData] = []
+    var backingReactionData: Set<ReactionData> = []
     var backingTextMessageData: MockTextMessageData! = .none
     var backingFileMessageData: MockFileMessageDataType! = .none
     var backingLocationMessageData: MockLocationMessageData! = .none

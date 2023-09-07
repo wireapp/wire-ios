@@ -103,7 +103,7 @@ public protocol ZMConversationMessage: NSObjectProtocol {
     var locationMessageData: LocationMessageData? { get }
 
     var usersReaction: [String: [UserType]] { get }
-    var reactionDates: [String: Date] { get }
+    var reactionData: Set<ReactionData> { get }
     func reactionsSortedByCreationDate() -> [ReactionData]
 
     /// In case this message failed to deliver, this will resend it
@@ -342,33 +342,31 @@ extension ZMMessage {
         return .delivered
     }
 
-    @objc public var usersReaction: [String: [UserType]] {
-        var result = [String: [ZMUser]]()
+    @objc public var reactionData: Set<ReactionData> {
+        var result = Set<ReactionData>()
         for reaction in reactions where reaction.users.count > 0 {
-            result[reaction.unicodeValue!] = [ZMUser](reaction.users)
+            result.insert(
+                ReactionData(
+                    reactionString: reaction.unicodeValue!,
+                    users: reaction.users.map { $0 },
+                    creationDate: reaction.creationDate
+                )
+            )
         }
         return result
     }
 
-    @objc public var reactionDates: [String: Date] {
-        var result = [String: Date]()
-        for reaction in reactions where reaction.users.count > 0 {
-            result[reaction.unicodeValue!] = reaction.creationDate
-        }
-        return result
+    @objc public var usersReaction: [String: [UserType]] {
+        return reactionData
+            .map { $0 }
+            .partition(by: \.reactionString)
+            .mapValues { $0.flatMap { $0.users } }
     }
 
     @objc public func reactionsSortedByCreationDate() -> [ReactionData] {
-        let reactionDates = self.reactionDates
-        return usersReaction.compactMap { reactionString, users in
-            return ReactionData(
-                reactionString: reactionString,
-                users: users,
-                creationDate: reactionDates[reactionString] ?? Date.distantPast
-            )
-        }.sorted {
+        return self.reactionData.sorted {
             if $0.creationDate == $1.creationDate {
-                return $0.users.count > $1.users.count
+                return $0.reactionString > $1.reactionString
             } else {
                 return $0.creationDate > $1.creationDate
             }
