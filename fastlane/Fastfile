@@ -362,10 +362,7 @@ platform :ios do
         upload_to_testflight(
             api_key_path: appstoreconnect_api_key_file_path,
             ipa: "#{build.artifact_path(with_filename: true)}.ipa",
-            skip_waiting_for_build_processing: false,
-            distribute_external: true,
-            groups: ["Default External Testers"],
-            submit_beta_review: true,
+            skip_waiting_for_build_processing: true,
             changelog: changelog(build)
         )
     end
