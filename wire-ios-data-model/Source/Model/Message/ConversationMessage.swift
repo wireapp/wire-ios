@@ -348,7 +348,7 @@ extension ZMMessage {
             result.insert(
                 ReactionData(
                     reactionString: reaction.unicodeValue!,
-                    users: reaction.users.map { $0 },
+                    users: Array(reaction.users),
                     creationDate: reaction.creationDate
                 )
             )
@@ -357,8 +357,7 @@ extension ZMMessage {
     }
 
     @objc public var usersReaction: [String: [UserType]] {
-        return reactionData
-            .map { $0 }
+        return Array(reactionData)
             .partition(by: \.reactionString)
             .mapValues { $0.flatMap { $0.users } }
     }
