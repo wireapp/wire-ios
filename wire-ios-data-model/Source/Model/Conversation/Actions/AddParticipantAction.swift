@@ -16,18 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 import Foundation
 
-public enum ConversationAddParticipantsError: Error {
-    case unknown,
-         invalidOperation,
-         accessDenied,
-         notConnectedToUser,
-         conversationNotFound,
-         tooManyMembers,
-         missingLegalHoldConsent,
-         failedToAddMLSMembers
+public enum ConversationAddParticipantsError: Error, Equatable {
+
+    case unknown
+    case invalidOperation
+    case accessDenied
+    case notConnectedToUser
+    case conversationNotFound
+    case tooManyMembers
+    case missingLegalHoldConsent
+    case failedToAddMLSMembers
+    case unreachableDomains(Set<String>)
+    case nonFederatingDomains(Set<String>)
+
 }
 
 public class AddParticipantAction: EntityAction {
