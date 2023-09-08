@@ -20,14 +20,18 @@ import XCTest
 
 class PayloadProcessing_ConversationTests: MessagingTestBase {
 
-    override func setUp() {
-        super.setUp()
-    }
+    var mockMLSService: MockMLSService!
 
-    override func tearDown() {
-        BackendInfo.isFederationEnabled = false
-        super.tearDown()
-    }
+    override func setUp() {
+         super.setUp()
+         mockMLSService = MockMLSService()
+     }
+
+     override func tearDown() {
+         BackendInfo.isFederationEnabled = false
+         mockMLSService = nil
+         super.tearDown()
+     }
 
     // MARK: Group conversations
 
@@ -896,28 +900,35 @@ class PayloadProcessing_ConversationTests: MessagingTestBase {
     }
 
     func testUpdateOrCreate_withMLSSelfGroupEpoch0_callsMLSServiceCreateGroup() {
-        let mockMLS = internalTest_UpdateOrCreate_withMLSSelfGroupEpoch(epoch: 0)
+        let didCallCreateGroup = XCTestExpectation(description: "didCallCreateGroup")
+        mockMLSService.mockCreateSelfGroup = { _ in
+            didCallCreateGroup.fulfill()
+        }
+
+        internalTest_UpdateOrCreate_withMLSSelfGroupEpoch(epoch: 0)
+        wait(for: [didCallCreateGroup], timeout: 0.5)
+
         // then
-        XCTAssertFalse(mockMLS.calls.createSelfGroup.isEmpty)
+        XCTAssertFalse(mockMLSService.calls.createSelfGroup.isEmpty)
     }
 
     func testUpdateOrCreate_withMLSSelfGroupEpoch1_callsMLSServiceJoinGroup() {
-        let mockMLS = internalTest_UpdateOrCreate_withMLSSelfGroupEpoch(epoch: 1)
-
         let didJoinGroup = XCTestExpectation(description: "didJoinGroup")
-        mockMLS.mockJoinGroup = { _ in didJoinGroup.fulfill() }
+        mockMLSService.mockJoinGroup = { _ in
+            didJoinGroup.fulfill()
+        }
 
+        internalTest_UpdateOrCreate_withMLSSelfGroupEpoch(epoch: 1)
         wait(for: [didJoinGroup], timeout: 0.5)
 
         // then
-        XCTAssertFalse(mockMLS.calls.joinGroup.isEmpty)
+        XCTAssertFalse(mockMLSService.calls.joinGroup.isEmpty)
     }
 
-    func internalTest_UpdateOrCreate_withMLSSelfGroupEpoch(epoch: UInt?) -> MockMLSService {
-        let mockMLS = MockMLSService()
+    func internalTest_UpdateOrCreate_withMLSSelfGroupEpoch(epoch: UInt?) {
 
         syncMOC.performAndWait {
-            syncMOC.mlsService = mockMLS
+            syncMOC.mlsService = mockMLSService
 
             MLSEventProcessor.setMock(MockMLSEventProcessor())
             let domain = "example.com"
@@ -935,7 +946,6 @@ class PayloadProcessing_ConversationTests: MessagingTestBase {
             // when
             conversation.updateOrCreate(in: syncMOC)
         }
-        return mockMLS
     }
 
     // MARK: - Helpers
