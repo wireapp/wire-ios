@@ -303,6 +303,8 @@ public final class SessionManager: NSObject, SessionManagerType {
         return manager.urls(for: .cachesDirectory, in: .userDomainMask).first
     }
 
+    private let minTLSVersion: String?
+
     public override init() {
         fatal("init() not implemented")
     }
@@ -376,7 +378,8 @@ public final class SessionManager: NSObject, SessionManagerType {
             isDeveloperModeEnabled: isDeveloperModeEnabled,
             proxyCredentials: proxyCredentials,
             isUnauthenticatedTransportSessionReady: isUnauthenticatedTransportSessionReady,
-            sharedUserDefaults: sharedUserDefaults
+            sharedUserDefaults: sharedUserDefaults,
+            minTLSVersion: minTLSVersion
         )
 
         configureBlacklistDownload()
@@ -438,7 +441,8 @@ public final class SessionManager: NSObject, SessionManagerType {
          isDeveloperModeEnabled: Bool = false,
          proxyCredentials: ProxyCredentials?,
          isUnauthenticatedTransportSessionReady: Bool = false,
-         sharedUserDefaults: UserDefaults
+         sharedUserDefaults: UserDefaults,
+         minTLSVersion: String? = nil
     ) {
         SessionManager.enableLogsByEnvironmentVariable()
         self.environment = environment
@@ -454,6 +458,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         self.proxyCredentials = proxyCredentials
         self.isUnauthenticatedTransportSessionReady = isUnauthenticatedTransportSessionReady
         self.sharedUserDefaults = sharedUserDefaults
+        self.minTLSVersion = minTLSVersion
 
         guard let sharedContainerURL = Bundle.main.appGroupIdentifier.map(FileManager.sharedContainerDirectory) else {
             preconditionFailure("Unable to get shared container URL")
@@ -532,6 +537,7 @@ public final class SessionManager: NSObject, SessionManagerType {
                 readyForRequests: self.isUnauthenticatedTransportSessionReady,
                 working: nil,
                 application: application,
+                minTLSVersion: minTLSVersion,
                 blacklistCallback: { [weak self] (blacklisted) in
                     guard let `self` = self, !self.isAppVersionBlacklisted else { return }
 

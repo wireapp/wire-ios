@@ -18,32 +18,12 @@
 
 import Foundation
 
-public enum TLSVersion {
+@objc
+public extension URLSession {
 
-    case v1_2
-    case v1_3
-
-    public init?(_ string: String) {
-        switch string {
-        case "1.2":
-            self = .v1_2
-
-        case "1.3":
-            self = .v1_3
-
-        default:
-            return nil
-        }
-    }
-
-    public var secValue: tls_protocol_version_t {
-        switch self {
-        case .v1_2:
-            return .TLSv12
-
-        case .v1_3:
-            return .TLSv13
-        }
+    func setMinTLSVersionIfNeeded(_ minTLSVersion: String?) {
+        let minTLSVersion = minTLSVersion.flatMap(TLSVersion.init) ?? .v1_2
+        configuration.tlsMinimumSupportedProtocolVersion = minTLSVersion.secValue
     }
 
 }

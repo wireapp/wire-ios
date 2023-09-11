@@ -17,7 +17,6 @@
 //
 
 #import <Foundation/Foundation.h>
-//#import <WireTransport/WireTransport-Swift.h>
 
 @class ZMAccessToken;
 @class ZMTransportRequestScheduler;

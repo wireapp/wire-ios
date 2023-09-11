@@ -92,6 +92,7 @@ static MockBlacklistDownloader *generatedDownloader;
                                                                         readyForRequests:YES
                                                                             workingGroup:self.syncMOC.dispatchGroup
                                                                              application:self.application
+                                                                           minTLSVersion:nil
                                                                        blacklistCallback:^(BOOL result) {
         verificationResult = result;
         [expectation fulfill];
