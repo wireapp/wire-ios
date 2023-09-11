@@ -58,25 +58,34 @@ class NativePushChannel: NSObject, PushChannelType {
     var consumerQueue: ZMSGroupQueue?
     var workQueue: OperationQueue
     var pingTimer: ZMTimer?
+    private let minTLSVersion: TLSVersion
 
-    required init(scheduler: ZMTransportRequestScheduler,
-                  userAgentString: String,
-                  environment: BackendEnvironmentProvider,
-                  proxyUsername: String?,
-                  proxyPassword: String?,
-                  queue: OperationQueue) {
+    required init(
+        scheduler: ZMTransportRequestScheduler,
+        userAgentString: String,
+        environment: BackendEnvironmentProvider,
+        proxyUsername: String?,
+        proxyPassword: String?,
+        minTLSVersion: String?,
+        queue: OperationQueue
+    ) {
         self.environment = environment
         self.scheduler = scheduler
         self.workQueue = queue
         self.proxyUsername = proxyUsername
         self.proxyPassword = proxyPassword
+        self.minTLSVersion = minTLSVersion.flatMap(TLSVersion.init) ?? .v1_2
         super.init()
-        self.session = URLSession(configuration: .ephemeral, delegate: self, delegateQueue: queue)
+
+        let sessionConfig = URLSessionConfiguration.ephemeral
+        sessionConfig.tlsMinimumSupportedProtocolVersion = self.minTLSVersion.secValue
 
         if let settings = environment.proxy?.socks5Settings(proxyUsername: proxyUsername, proxyPassword: proxyPassword) {
-            self.session?.configuration.httpShouldUsePipelining = true
-            self.session?.configuration.connectionProxyDictionary = settings
+            sessionConfig.httpShouldUsePipelining = true
+            sessionConfig.connectionProxyDictionary = settings
         }
+
+        self.session = URLSession(configuration: sessionConfig, delegate: self, delegateQueue: queue)
     }
 
     func close() {

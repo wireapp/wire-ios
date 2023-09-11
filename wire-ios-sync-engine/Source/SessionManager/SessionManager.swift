@@ -324,7 +324,8 @@ public final class SessionManager: NSObject, SessionManagerType {
         callKitManager: CallKitManagerInterface,
         isDeveloperModeEnabled: Bool = false,
         isUnauthenticatedTransportSessionReady: Bool = false,
-        sharedUserDefaults: UserDefaults
+        sharedUserDefaults: UserDefaults,
+        minTLSVersion: String?
     ) {
         let flowManager = FlowManager(mediaManager: mediaManager)
         let reachability = environment.reachabilityWrapper()
@@ -352,7 +353,8 @@ public final class SessionManager: NSObject, SessionManagerType {
             proxyUsername: proxyCredentials?.username,
             proxyPassword: proxyCredentials?.password,
             reachability: reachability,
-            analytics: analytics
+            analytics: analytics,
+            minTLSVersion: minTLSVersion
         )
 
         self.init(
