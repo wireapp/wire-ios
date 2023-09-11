@@ -30,16 +30,21 @@ class MLSConferenceStaleParticipantsRemover: Subscriber {
     private let logger = WireLogger.mls
     private let removalTimeout: TimeInterval
     private let mlsService: MLSServiceInterface
-    private let context: NSManagedObjectContext
+    private let syncContext: NSManagedObjectContext
     private var previousInput: MLSConferenceParticipantsInfo?
+
+    private static let defaultRemovalTimeout: TimeInterval = 190
 
     private typealias TimerError = TimerManager<MLSClientID>.TimerError
 
     // MARK: - Life cycle
 
-    init(mlsService: MLSServiceInterface, context: NSManagedObjectContext, removalTimeout: TimeInterval = 190) {
+    init(mlsService: MLSServiceInterface,
+         syncContext: NSManagedObjectContext,
+         removalTimeout: TimeInterval = defaultRemovalTimeout
+    ) {
         self.mlsService = mlsService
-        self.context = context
+        self.syncContext = syncContext
         self.removalTimeout = removalTimeout
     }
 
@@ -50,7 +55,9 @@ class MLSConferenceStaleParticipantsRemover: Subscriber {
     }
 
     func receive(_ input: MLSConferenceParticipantsInfo) -> Subscribers.Demand {
-        process(input: input)
+        syncContext.perform {
+            self.process(input: input)
+        }
         return .unlimited
     }
 
@@ -61,7 +68,9 @@ class MLSConferenceStaleParticipantsRemover: Subscriber {
     // MARK: - Interface
 
     func cancelPendingRemovals() {
-        timerManager.cancelAllTimers()
+        syncContext.perform {
+            self.timerManager.cancelAllTimers()
+        }
     }
 
     // MARK: - Participants change handling
@@ -77,7 +86,7 @@ class MLSConferenceStaleParticipantsRemover: Subscriber {
             and: input.participants
         )
 
-        newAndChangedParticipants.excludingSelf(in: context).forEach {
+        newAndChangedParticipants.excludingSelf(in: syncContext).forEach {
 
             guard let clientID = MLSClientID(callParticipant: $0) else {
                 return
@@ -157,7 +166,7 @@ class MLSConferenceStaleParticipantsRemover: Subscriber {
         client clientID: MLSClientID,
         from groupID: MLSGroupID
     ) {
-        context.perform { [weak self] in
+        syncContext.perform { [weak self] in
             guard let `self` = self else { return }
 
             Task {

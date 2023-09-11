@@ -37,7 +37,7 @@ class MLSConferenceStaleParticipantsRemoverTests: MessagingTest {
         mlsService = MockMLSService()
         sut = MLSConferenceStaleParticipantsRemover(
             mlsService: mlsService,
-            context: uiMOC,
+            syncContext: uiMOC,
             removalTimeout: 0.4
         )
 

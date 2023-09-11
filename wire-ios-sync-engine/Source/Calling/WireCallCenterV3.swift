@@ -667,7 +667,7 @@ extension WireCallCenterV3 {
 
                     let staleParticipantsRemover = MLSConferenceStaleParticipantsRemover(
                         mlsService: mlsService,
-                        context: syncContext
+                        syncContext: syncContext
                     )
 
                     self.onMLSConferenceParticipantsChanged(
