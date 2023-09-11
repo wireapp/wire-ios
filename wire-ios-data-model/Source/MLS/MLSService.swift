@@ -81,6 +81,8 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
 
     func generateNewEpoch(groupID: MLSGroupID) async throws
 
+    func repairOutOfSyncConversations()
+
 }
 
 public protocol MLSServiceDelegate: AnyObject {
@@ -734,7 +736,7 @@ public final class MLSService: MLSServiceInterface {
                     welcomeMessage: messageBytes,
                     customConfiguration: .init(keyRotationSpan: nil, wirePolicy: nil)
                 )
-             }
+            }
             let groupID = MLSGroupID(groupIDBytes)
             uploadKeyPackagesIfNeeded()
             staleKeyMaterialDetector.keyingMaterialUpdated(for: groupID)
@@ -771,7 +773,7 @@ public final class MLSService: MLSServiceInterface {
 
     typealias PendingJoin = (groupID: MLSGroupID, epoch: UInt64)
 
-    /// Registers a group to be joined via external add proposal once the app has finished processing events
+    /// Registers a group to be joined via external commit once the app has finished processing events
     /// - Parameter groupID: the identifier for the MLS group
     public func registerPendingJoin(_ groupID: MLSGroupID) {
         groupsPendingJoin.insert(groupID)
@@ -780,7 +782,7 @@ public final class MLSService: MLSServiceInterface {
     /// Request to join groups still pending
     ///
     /// Generates a list of groups for which the `mlsStatus` is `pendingJoin`
-    /// and sends external add proposals for these groups
+    /// and sends external commits to join these groups
     public func performPendingJoins() {
         guard let context = context else {
             return
@@ -813,6 +815,79 @@ public final class MLSService: MLSServiceInterface {
             return (groupID, conversation.epoch)
 
         }
+    }
+
+    // MARK: - Out-of-sync conversations
+
+    /// Fetches and re-joins MLS conversations that are out of sync
+    /// (where the conversation object's epoch differs from the corresponding MLS group epoch)
+    public func repairOutOfSyncConversations() {
+        guard let context = self.context else { return }
+
+        let outOfSync = outOfSyncConversations(in: context).compactMap(\.mlsGroupID)
+
+        logger.info("found \(outOfSync.count) conversations out of sync")
+
+        outOfSync.forEach { groupID in
+            launchConversationRepairTaskIfNotInProgress(for: groupID) {
+                do {
+                    try await self.joinGroup(with: groupID)
+                    self.logger.info("repaired out of sync conversation (\(groupID))")
+                } catch {
+                    self.logger.warn("failed to repair out of sync conversation (\(groupID)). error: \(String(describing: error))")
+                }
+            }
+        }
+    }
+
+    private var conversationsBeingRepaired = Set<MLSGroupID>()
+
+    private func launchConversationRepairTaskIfNotInProgress(
+        for groupID: MLSGroupID,
+        repairOperation: @escaping () async -> Void
+    ) {
+        guard !conversationsBeingRepaired.contains(groupID) else {
+            return
+        }
+
+        Task {
+            conversationsBeingRepaired.insert(groupID)
+            await repairOperation()
+            conversationsBeingRepaired.remove(groupID)
+        }
+    }
+
+    private func outOfSyncConversations(in context: NSManagedObjectContext) -> [ZMConversation] {
+        return coreCrypto.perform { coreCrypto in
+            return ZMConversation.fetchMLSConversations(in: context).filter {
+                isConversationOutOfSync(
+                    $0,
+                    coreCrypto: coreCrypto,
+                    context: context
+                )
+            }
+        }
+    }
+
+    private func isConversationOutOfSync(
+        _ conversation: ZMConversation,
+        coreCrypto: CoreCryptoProtocol,
+        context: NSManagedObjectContext
+    ) -> Bool {
+        var isOutOfSync: Bool = false
+
+        context.performAndWait {
+            guard
+                let groupID = conversation.mlsGroupID,
+                let epoch = try? coreCrypto.conversationEpoch(conversationId: groupID.bytes)
+            else {
+                return
+            }
+
+            isOutOfSync = epoch != conversation.epoch
+        }
+
+        return isOutOfSync
     }
 
     // MARK: - External Proposals
