@@ -16,51 +16,65 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 import SnapshotTesting
+import XCTest
 @testable import Wire
 
-final class CheckmarkCellTests: ZMSnapshotTestCase {
+final class CheckmarkCellTests: BaseSnapshotTestCase {
 
-    var cell: CheckmarkCell!
+    // MARK: - Properties
+
+    var sut: CheckmarkCell!
     var conversation: MockConversation!
+
+    // MARK: - setUp
 
     override func setUp() {
         super.setUp()
-        cell = CheckmarkCell(frame: CGRect(x: 0, y: 0, width: 350, height: 56))
         conversation = MockConversation.groupConversation()
     }
 
+    // MARK: - tearDown
+
     override func tearDown() {
-        cell = nil
+        sut = nil
         conversation = nil
         super.tearDown()
     }
 
+    // MARK: - Helper Method
+
+    func setUpCheckMarkCell(
+        title: String,
+        showCheckmark: Bool,
+        userInterfaceStyle: UIUserInterfaceStyle = .light
+    ) {
+        sut = CheckmarkCell(frame: CGRect(x: 0, y: 0, width: 350, height: 56))
+        sut.title = title
+        sut.showCheckmark = showCheckmark
+        sut.overrideUserInterfaceStyle = userInterfaceStyle
+    }
+
+    // MARK: - Snapshot Tests
+
     func testCheckmarkCell_NoCheckmark_Light() {
-        cell.title = "Option A"
-        cell.showCheckmark = false
-        verify(matching: cell)
+        setUpCheckMarkCell(title: "Option A", showCheckmark: false)
+        verify(matching: sut)
     }
 
     func testCheckmarkCell_NoCheckmark_Dark() {
-        cell.title = "Option A"
-        cell.showCheckmark = false
-        cell.overrideUserInterfaceStyle = .dark
-        verify(matching: cell)
+        setUpCheckMarkCell(title: "Option A", showCheckmark: false, userInterfaceStyle: .dark)
+        verify(matching: sut)
     }
 
     func testCheckmarkCell_WithCheckmark_Light() {
-        cell.title = "Option B"
-        cell.showCheckmark = true
-        verify(matching: cell)
-
+        setUpCheckMarkCell(title: "Option B", showCheckmark: true)
+        verify(matching: sut)
     }
 
     func testCheckmarkCell_WithCheckmark_Dark() {
-        cell.title = "Option B"
-        cell.showCheckmark = true
-        cell.overrideUserInterfaceStyle = .dark
-        verify(matching: cell)
+        setUpCheckMarkCell(title: "Option B", showCheckmark: true, userInterfaceStyle: .dark)
+        verify(matching: sut)
     }
+
 }

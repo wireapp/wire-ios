@@ -234,4 +234,17 @@ class MockMLSService: MLSServiceInterface {
     func subconversationMembers(for subconversationGroupID: MLSGroupID) throws -> [MLSClientID] {
         fatalError("not implemented")
     }
+
+    // MARK: - Out of sync
+
+    typealias RepairOutOfSyncConversationsMock = () -> Void
+    var repairOutOfSyncConversationsMock: RepairOutOfSyncConversationsMock?
+
+    func repairOutOfSyncConversations() {
+        guard let mock = repairOutOfSyncConversationsMock else {
+            return
+        }
+        mock()
+    }
+
 }

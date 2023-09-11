@@ -131,16 +131,20 @@ class MockMLSService: MLSServiceInterface {
         fatalError("not implemented")
     }
 
+    var mockCreateSelfGroup: ((MLSGroupID) -> Void)?
     func createSelfGroup(for groupID: MLSGroupID) {
         calls.createSelfGroup.append(groupID)
+        mockCreateSelfGroup?(groupID)
     }
 
     func joinNewGroup(with groupID: MLSGroupID) async throws {
         calls.joinNewGroup.append(groupID)
     }
 
+    var mockJoinGroup: ((MLSGroupID) throws -> Void)?
     func joinGroup(with groupID: MLSGroupID) async throws {
         calls.joinGroup.append(groupID)
+        try mockJoinGroup?(groupID)
     }
 
     func leaveSubconversation(
@@ -164,6 +168,18 @@ class MockMLSService: MLSServiceInterface {
 
     func generateNewEpoch(groupID: MLSGroupID) async throws {
         fatalError("not implemented")
+    }
+
+    // MARK: - Out of sync
+
+    typealias RepairOutOfSyncConversationsMock = () -> Void
+    var repairOutOfSyncConversationsMock: RepairOutOfSyncConversationsMock?
+
+    func repairOutOfSyncConversations() {
+        guard let mock = repairOutOfSyncConversationsMock else {
+            return
+        }
+        mock()
     }
 
 }

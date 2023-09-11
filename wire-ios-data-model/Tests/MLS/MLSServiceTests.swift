@@ -729,6 +729,9 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             conversation.commitPendingProposalDate = overdueCommitDate
         }
 
+        // Mock no subconversations
+        mockSubconversationGroupIDRepository.fetchSubconversationGroupIDForTypeParentGroupID_MockValue = .some(nil)
+
         // Mock no pending proposals.
         mockMLSActionExecutor.mockCommitPendingProposals = { _ in
             throw MLSActionExecutor.Error.noPendingProposals
@@ -755,6 +758,9 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             conversation.mlsGroupID = groupID
             conversation.commitPendingProposalDate = overdueCommitDate
         }
+
+        // Mock no subconversations
+        mockSubconversationGroupIDRepository.fetchSubconversationGroupIDForTypeParentGroupID_MockValue = .some(nil)
 
         // Mock committing pending proposal.
         var mockCommitPendingProposalArguments = [(MLSGroupID, Date)]()
@@ -794,6 +800,9 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             conversation.mlsGroupID = groupID
             conversation.commitPendingProposalDate = futureCommitDate
         }
+
+        // Mock no subconversations
+        mockSubconversationGroupIDRepository.fetchSubconversationGroupIDForTypeParentGroupID_MockValue = .some(nil)
 
         // Mock committing pending proposal.
         var mockCommitPendingProposalArguments = [(MLSGroupID, Date)]()
@@ -851,6 +860,9 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             conversation3.mlsGroupID = conversation3MLSGroupID
             conversation3.commitPendingProposalDate = futureCommitDate2
         }
+
+        // Mock no subconversations
+        mockSubconversationGroupIDRepository.fetchSubconversationGroupIDForTypeParentGroupID_MockValue = .some(nil)
 
         // Mock committing pending proposal.
         var mockCommitPendingProposalArguments = [(MLSGroupID, Date)]()
@@ -914,6 +926,55 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             mockConversationEventProcessor.calls.processConversationEvents,
             [[updateEvent1], [updateEvent2], [updateEvent3]]
         )
+    }
+
+    func test_CommitPendingProposals_ForSubconversation() async throws {
+        // Given
+        let overdueCommitDate = Date().addingTimeInterval(-5)
+        let parentGroupdID = MLSGroupID.random()
+        let subgroupID = MLSGroupID.random()
+        var conversation: ZMConversation!
+
+        uiMOC.performAndWait {
+            // A group with pending proposal in the past.
+            conversation = createConversation(in: uiMOC)
+            conversation.mlsGroupID = parentGroupdID
+            conversation.commitPendingProposalDate = overdueCommitDate
+        }
+
+        // Mock subconversation
+        mockSubconversationGroupIDRepository.fetchSubconversationGroupIDForTypeParentGroupID_MockValue = subgroupID
+
+        // Mock committing pending proposal.
+        var mockCommitPendingProposalArguments = [(MLSGroupID, Date)]()
+
+        mockMLSActionExecutor.mockCommitPendingProposals = {
+            mockCommitPendingProposalArguments.append(($0, Date()))
+            return []
+        }
+
+        // When
+        try await self.sut.commitPendingProposals()
+
+        // Then we asked for the subgroup id
+        let subgroupInvocations = mockSubconversationGroupIDRepository.fetchSubconversationGroupIDForTypeParentGroupID_Invocations
+        XCTAssertEqual(subgroupInvocations.count, 1)
+        XCTAssertEqual(subgroupInvocations.first?.type, .conference)
+        XCTAssertEqual(subgroupInvocations.first?.parentGroupID, parentGroupdID)
+
+        // Then we try to commit pending propsoals twice, once for the subgroup, once for the parent
+        XCTAssertEqual(mockCommitPendingProposalArguments.count, 2)
+        let (id1, commitTime1) = try XCTUnwrap(mockCommitPendingProposalArguments.first)
+        XCTAssertEqual(id1, subgroupID)
+        XCTAssertEqual(commitTime1.timeIntervalSinceNow, Date().timeIntervalSinceNow, accuracy: 0.1)
+
+        let (id2, commitTime2) = try XCTUnwrap(mockCommitPendingProposalArguments.last)
+        XCTAssertEqual(id2, parentGroupdID)
+        XCTAssertEqual(commitTime2.timeIntervalSinceNow, Date().timeIntervalSinceNow, accuracy: 0.1)
+
+        uiMOC.performAndWait {
+            XCTAssertNil(conversation.commitPendingProposalDate)
+        }
     }
 
     // MARK: - Joining conversations
@@ -1084,6 +1145,70 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
         let groupInfoInvocations = mockActionsProvider.fetchConversationGroupInfoConversationIdDomainSubgroupTypeContext_Invocations
         XCTAssertEqual(groupInfoInvocations.count, 0)
+    }
+
+    // MARK: - Handling out of sync conversations
+
+    func test_RepairOutOfSyncConversations_RejoinsOutOfSyncConversations() {
+        // GIVEN
+        let conversationAndOutOfSyncTuples = [
+            createConversation(outOfSync: true),
+            createConversation(outOfSync: true),
+            createConversation(outOfSync: false)
+        ]
+
+        // mock conversation epoch
+        mockCoreCrypto.mockConversationEpoch = { groupID in
+            guard let tuple = conversationAndOutOfSyncTuples.first(
+                where: { $0.conversation.mlsGroupID?.bytes == groupID }
+            ) else {
+                return 1
+            }
+
+            let epoch = tuple.conversation.epoch
+            return tuple.isOutOfSync ? epoch + 1 : epoch
+        }
+
+        // mock fetching group info
+        mockActionsProvider.fetchConversationGroupInfoConversationIdDomainSubgroupTypeContext_MockValue = Data()
+
+        // mock joining group
+        let expectations = expectations(from: conversationAndOutOfSyncTuples)
+        mockMLSActionExecutor.mockJoinGroup = { groupID, _ in
+            expectations[groupID]?.fulfill()
+            return []
+        }
+
+        // WHEN
+        sut.repairOutOfSyncConversations()
+
+        // THEN
+        wait(for: Array(expectations.values), timeout: 1.5)
+    }
+
+    private typealias ConversationAndOutOfSyncTuple = (conversation: ZMConversation, isOutOfSync: Bool)
+
+    private func createConversation(outOfSync: Bool) -> ConversationAndOutOfSyncTuple {
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
+        conversation.mlsGroupID = .random()
+        conversation.remoteIdentifier = UUID()
+        conversation.domain = "domain.com"
+        conversation.messageProtocol = .mls
+        conversation.epoch = 1
+
+        return (conversation, outOfSync)
+    }
+
+    private func expectations(from tuples: [ConversationAndOutOfSyncTuple]) -> [MLSGroupID: XCTestExpectation] {
+        tuples.reduce(into: [MLSGroupID: XCTestExpectation]()) { expectations, tuple in
+            guard let groupID = tuple.conversation.mlsGroupID else {
+                return
+            }
+
+            let expectation = XCTestExpectation(description: "joined group")
+            expectation.isInverted = !tuple.isOutOfSync
+            expectations[groupID] = expectation
+        }
     }
 
     // MARK: - Wipe Groups

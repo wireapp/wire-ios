@@ -26,6 +26,8 @@ public enum EnvironmentType: Equatable {
     case anta
     case bella
     case chala
+    case diya
+    case elna
     case foma
     case custom(url: URL)
 
@@ -45,6 +47,10 @@ public enum EnvironmentType: Equatable {
             return "bella"
         case .chala:
             return "chala"
+        case .diya:
+            return "diya"
+        case .elna:
+            return "elna"
         case .foma:
             return "foma"
         case .custom(url: let url):
@@ -66,6 +72,10 @@ public enum EnvironmentType: Equatable {
             self = .bella
         case EnvironmentType.chala.stringValue:
             self = .chala
+        case EnvironmentType.diya.stringValue:
+            self = .diya
+        case EnvironmentType.elna.stringValue:
+            self = .elna
         case EnvironmentType.foma.stringValue:
             self = .foma
         case let value where value.hasPrefix("custom-"):
