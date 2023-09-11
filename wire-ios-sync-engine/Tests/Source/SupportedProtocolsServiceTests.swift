@@ -71,8 +71,8 @@ final class SupportedProtocolsServiceTests: MessagingTest {
             otherClient.mlsPublicKeys = Bool.random() ? validMLSPublicKeys : invalidMLSPublicKeys
 
             // But make sure we do have an invalid client.
-            if otherClient.lastActiveDate != validLastActiveDate && otherClient.mlsPublicKeys != validMLSPublicKeys {
-                otherClient.lastActiveDate = nil
+            if otherClient.lastActiveDate == validLastActiveDate && otherClient.mlsPublicKeys == validMLSPublicKeys {
+                otherClient.lastActiveDate = invalidLastActiveDate
             }
         }
     }
