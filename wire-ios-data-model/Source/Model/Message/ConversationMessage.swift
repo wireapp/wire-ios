@@ -365,7 +365,7 @@ extension ZMMessage {
     @objc public func reactionsSortedByCreationDate() -> [ReactionData] {
         return self.reactionData.sorted {
             if $0.creationDate == $1.creationDate {
-                return $0.reactionString > $1.reactionString
+                return $0.reactionString < $1.reactionString
             } else {
                 return $0.creationDate > $1.creationDate
             }

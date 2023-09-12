@@ -39,10 +39,11 @@ class ReactionsSortingTests: BaseZMMessageTests {
     func testThatIfMoreReactionsHaveSameDateTheyAreSortedByValue() {
         // given
         let message = ZMClientMessage(nonce: UUID(), managedObjectContext: uiMOC)
-        let expectedOrder = ["🥇", "🤖", "🚀", "🙏", "😻", "😍", "👾", "👽", "🎃"] // The emojis are sorted by their string contents which takes unicode values into account: [0x1F947, 0x1F916, 0x1F680, 0x1F64F, 0x1F63B, 0x1F60D, 0x1F47E, 0x1F47D, 0x1F383]
+        let expectedOrder = ["🎃", "👽", "👾", "😍", "😻", "🙏", "🚀", "🤖", "🥇"] // The emojis are sorted by their string contents which takes unicode values into account: [0x1F383, 0x1F47D, 0x1F47E, 0x1F60D, 0x1F63B, 0x1F64F, 0x1F680, 0x1F916, 0x1F947]
         // when
         message.setReactions(["🙏", "🤖", "🚀", "👽", "🎃", "😍", "👾", "🥇", "😻"], forUser: selfUser, newReactionsCreationDate: Date())
         self.uiMOC.saveOrRollback()
+        print(expectedOrder.map { $0.unicodeScalars.first?.properties.name })
         // then
         let result = message.reactionsSortedByCreationDate().map { $0.reactionString }
         XCTAssertEqual(result, expectedOrder)
@@ -51,7 +52,7 @@ class ReactionsSortingTests: BaseZMMessageTests {
     func testThatReactionsAreSortedFirstByDateThenByValue() {
         // given
         let message = ZMClientMessage(nonce: UUID(), managedObjectContext: uiMOC)
-        let expectedOrder = ["🤖", "🚀", "😍", "🎃", "🥇", "🙏", "😻", "👾", "👽"] // // The emojis are sorted by dates and then their string contents which takes unicode values into account: [0x1F916, 0x1F680, 0x1F60D, 0x1F383, 0x1F947, 0x1F64F, 0x1F63B, 0x1F47E, 0x1F47D]
+        let expectedOrder = ["🎃", "😍", "🚀", "🤖", "👽", "👾", "😻", "🙏", "🥇" ] // // The emojis are sorted by dates and then their string contents which takes unicode values into account: [0x1F383, 0x1F60D, 0x1F680, 0x1F916, 0x1F47D, 0x1F47E, 0x1F63B, 0x1F64F, 0x1F947]
         // when
         message.setReactions(["👾", "🙏", "👽", "😻", "🥇"], forUser: selfUser, newReactionsCreationDate: Date(timeIntervalSince1970: .oneSecond))
         message.setReactions(["🙏", "👽", "😻", "🚀", "🎃", "🤖", "😍", "👾", "🥇"], forUser: selfUser, newReactionsCreationDate: Date(timeIntervalSince1970: .tenSeconds))
