@@ -181,5 +181,6 @@ extension CompleteReactionPickerViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         emojiDataSource.filterEmojis(withQuery: searchText)
         collectionView.reloadData()
+        sectionViewController.isEnabled = searchText.isEmpty
     }
 }
