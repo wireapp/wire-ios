@@ -22,32 +22,46 @@ import XCTest
 
 class ReactionsSortingTests: BaseZMMessageTests {
     func testThatReactionsAreSortedByDate() {
+        // given
         let message = ZMClientMessage(nonce: UUID(), managedObjectContext: uiMOC)
-        let expectedOrder = ["🎃", "🤖", "👾", "👽"]
-        message.setReactions(["👽"], forUser: selfUser, newReactionsCreationDate: Date())
-        message.setReactions(["👽", "👾"], forUser: selfUser, newReactionsCreationDate: Date())
-        message.setReactions(["👽", "👾", "🤖"], forUser: selfUser, newReactionsCreationDate: Date())
-        message.setReactions(["🎃", "👽", "👾", "🤖"], forUser: selfUser, newReactionsCreationDate: Date())
+        let expectedOrder = ["🎃", "👽", "🤖", "👾"] // [0x1F383, 0x1F47D, 0x1F916, 0x1F47E]
+        // when
+        message.setReactions(["👽"], forUser: selfUser, newReactionsCreationDate: Date(timeIntervalSince1970: .oneMinute))
+        message.setReactions(["🤖", "👾"], forUser: selfUser, newReactionsCreationDate: Date(timeIntervalSince1970: .fiveMinutes))
+        message.setReactions(["👽", "👾", "🤖"], forUser: selfUser, newReactionsCreationDate: Date(timeIntervalSince1970: .oneHour))
+        message.setReactions(["👽", "🎃", "👾", "🤖"], forUser: selfUser, newReactionsCreationDate: Date(timeIntervalSince1970: .oneWeek))
         self.uiMOC.saveOrRollback()
+        self.uiMOC.saveOrRollback()
+        print(expectedOrder.map {
+            $0.unicodeScalars.first?.value
+        })
+        print(expectedOrder)
+
+        // then
         let result = message.reactionsSortedByCreationDate().map { $0.reactionString }
         XCTAssertEqual(result, expectedOrder)
     }
 
     func testThatIfMoreReactionsHaveSameDateTheyAreSortedByValue() {
+        // given
         let message = ZMClientMessage(nonce: UUID(), managedObjectContext: uiMOC)
-        let expectedOrder = ["🤖", "😍", "👾", "👽", "🎃"]
-        message.setReactions(["🎃", "👽", "👾", "🤖", "😍"], forUser: selfUser, newReactionsCreationDate: Date())
-        self.uiMOC.saveOrRollback()
+        let expectedOrder = ["🥇", "🤖", "🚀", "🙏", "😻", "😍", "👾", "👽", "🎃"] // [0x1F947, 0x1F916, 0x1F680, 0x1F64F, 0x1F63B, 0x1F60D, 0x1F47E, 0x1F47D, 0x1F383]
+        // when
+        message.setReactions(["🙏", "🤖", "🚀", "👽", "🎃", "😍", "👾", "🥇", "😻"], forUser: selfUser, newReactionsCreationDate: Date())
+        // then
         let result = message.reactionsSortedByCreationDate().map { $0.reactionString }
         XCTAssertEqual(result, expectedOrder)
     }
 
     func testThatReactionsAreSortedFirstByDateThenByValue() {
+        // given
         let message = ZMClientMessage(nonce: UUID(), managedObjectContext: uiMOC)
-        let expectedOrder = ["🤖", "🎃", "👾", "👽"]
-        message.setReactions(["👾", "👽"], forUser: selfUser, newReactionsCreationDate: Date())
-        message.setReactions(["🎃", "👽", "👾", "🤖"], forUser: selfUser, newReactionsCreationDate: Date())
+        let expectedOrder = ["🤖", "🚀", "😍", "🎃", "🥇", "🙏", "😻", "👾", "👽"] // [0x1F916, 0x1F680, 0x1F60D, 0x1F383, 0x1F947, 0x1F64F, 0x1F63B, 0x1F47E, 0x1F47D]
+        // when
+        message.setReactions(["👾", "🙏", "👽", "😻", "🥇"], forUser: selfUser, newReactionsCreationDate: Date(timeIntervalSince1970: .oneSecond))
+        message.setReactions(["🙏", "👽", "😻", "🚀", "🎃", "🤖", "😍", "👾", "🥇"], forUser: selfUser, newReactionsCreationDate: Date(timeIntervalSince1970: .tenSeconds))
         self.uiMOC.saveOrRollback()
+        // then
         let result = message.reactionsSortedByCreationDate().map { $0.reactionString }
         XCTAssertEqual(result, expectedOrder)
     }
