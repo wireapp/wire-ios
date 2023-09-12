@@ -76,7 +76,8 @@ class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
 
     private let indicatorImageView = UIImageView()
 
-    let teamRoleIndicator = UIImageView()
+    var textColor: UIColor = .blue
+    var icon: StyleKitIcon?
 
     private lazy var dateLabel: UILabel = {
         let label = UILabel()
@@ -109,14 +110,14 @@ class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
     func configure(with object: Configuration, animated: Bool) {
         let user = object.user
         let fullName: String
-        let textColor: UIColor
-        let icon: StyleKitIcon?
-        let accessibilityIdentifier: String
+        var accessibilityIdentifier: String
+
         avatar.user = user
 
         fullName = user.name ?? ""
 
         if user.isServiceUser {
+
             textColor = SemanticColors.Label.textDefault
             icon = .bot
             accessibilityIdentifier = "img.serviceUser"
@@ -140,18 +141,11 @@ class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
             accessibilityIdentifier = "img.member"
         }
 
-        configureAuthorLabel(fullName: fullName, textColor: textColor)
+        configureAuthorLabel(user: user, fullName: fullName, textColor: textColor)
 
         indicatorImageView.isHidden = object.indicatorIcon == nil
         indicatorImageView.image = object.indicatorIcon
 
-        teamRoleIndicator.accessibilityIdentifier = accessibilityIdentifier
-        teamRoleIndicator.isHidden = icon == nil
-
-        if let icon = icon {
-            teamRoleIndicator.setTemplateIcon(icon, size: iconSize(for: icon))
-            teamRoleIndicator.tintColor = SemanticColors.Icon.foregroundDefault
-        }
 
         dateLabel.isHidden = object.timestamp == nil
         dateLabel.text = object.timestamp
@@ -173,13 +167,12 @@ class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
         addSubview(avatar)
         addSubview(authorLabel)
         addSubview(indicatorImageView)
-        addSubview(teamRoleIndicator)
         addSubview(dateLabel)
     }
 
     private func configureConstraints() {
 
-        [avatar, authorLabel, indicatorImageView, teamRoleIndicator, dateLabel].prepareForLayout()
+        [avatar, authorLabel, indicatorImageView, dateLabel].prepareForLayout()
 
         let trailingDateLabelConstraint  = dateLabel.trailingAnchor.constraint(
             equalTo: self.trailingAnchor,
@@ -193,8 +186,8 @@ class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
             avatar.trailingAnchor.constraint(equalTo: authorLabel.leadingAnchor, constant: -12),
             authorLabel.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: conversationHorizontalMargins.left),
             indicatorImageView.leadingAnchor.constraint(equalTo: authorLabel.trailingAnchor, constant: 8),
-            teamRoleIndicator.leadingAnchor.constraint(equalTo: indicatorImageView.trailingAnchor, constant: 8),
-            dateLabel.leadingAnchor.constraint(equalTo: teamRoleIndicator.trailingAnchor, constant: 8),
+
+            dateLabel.leadingAnchor.constraint(equalTo: authorLabel.trailingAnchor, constant: 8),
             trailingDateLabelConstraint,
 
             authorLabel.topAnchor.constraint(equalTo: self.topAnchor),
@@ -202,7 +195,6 @@ class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
 
             avatar.centerYAnchor.constraint(equalTo: authorLabel.firstBaselineAnchor),
             dateLabel.firstBaselineAnchor.constraint(equalTo: authorLabel.firstBaselineAnchor),
-            teamRoleIndicator.centerYAnchor.constraint(equalTo: authorLabel.centerYAnchor),
             indicatorImageView.centerYAnchor.constraint(equalTo: authorLabel.centerYAnchor)
         ])
     }
@@ -211,16 +203,53 @@ class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
         return icon == .externalPartner ? 16 : 14
     }
 
-    private func configureAuthorLabel(fullName: String, textColor: UIColor) {
+    private func configureAuthorLabel(user: UserType, fullName: String, textColor: UIColor) {
 
-        authorLabel.attributedText = NSAttributedString(
+        var attributedString = NSMutableAttributedString(
             string: fullName,
             attributes: [
                 .foregroundColor: textColor,
                 .font: UIFont.mediumSemiboldFont
             ]
         )
+
+            if user.isServiceUser {
+                icon = .bot
+                attributedString.append(stringForAttachment(named: .bot, caption: fullName))
+            } else if user.isExternalPartner {
+                icon = .externalPartner
+                attributedString.append(stringForAttachment(named: .externalPartner, caption: fullName))
+            } else if user.isFederated {
+                icon = .federated
+                attributedString.append(stringForAttachment(named: .federated, caption: fullName))
+            } else if !user.isTeamMember,
+                      let selfUser = SelfUser.provider?.selfUser,
+                      selfUser.isTeamMember {
+                icon = .guest
+                attributedString.append(stringForAttachment(named: .guest, caption: fullName))
+
+            } else {
+                icon = .none
+
+            }
     }
+
+    func stringForAttachment(
+        named imageName: StyleKitIcon,
+        caption: String
+    ) -> NSAttributedString {
+        let attachment = NSTextAttachment()
+        let image = icon?.makeImage(size: 12, color: textColor).with(insets: UIEdgeInsets(top: 0, left: 8, bottom: 0, right: 8), backgroundColor: .clear)
+        attachment.image = image
+        let fullString = NSMutableAttributedString(string: caption,
+    attributes: [
+        .foregroundColor: textColor,
+        .font: UIFont.mediumSemiboldFont
+    ])
+        fullString.append(NSAttributedString(attachment: attachment))
+        return fullString
+    }
+
 
     // MARK: - Tap gesture of avatar
 
@@ -229,7 +258,6 @@ class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
 
         SessionManager.shared?.showUserProfile(user: user)
     }
-
 
     // MARK: - Override method
 
@@ -251,12 +279,12 @@ extension ConversationSenderMessageDetailsCell: ZMUserObserver {
 
         if changeInfo.user.isServiceUser {
             configureAuthorLabel(
-                fullName: changeInfo.user.name ?? "",
+                user: changeInfo.user, fullName: changeInfo.user.name ?? "",
                 textColor: SemanticColors.Label.textDefault
             )
         } else {
             configureAuthorLabel(
-                fullName: changeInfo.user.name ?? "",
+                user: changeInfo.user, fullName: changeInfo.user.name ?? "",
                 textColor: changeInfo.user.accentColor
             )
         }
