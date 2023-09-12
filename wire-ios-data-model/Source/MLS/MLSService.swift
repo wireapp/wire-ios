@@ -840,23 +840,6 @@ public final class MLSService: MLSServiceInterface {
         }
     }
 
-    private var conversationsBeingRepaired = Set<MLSGroupID>()
-
-    private func launchConversationRepairTaskIfNotInProgress(
-        for groupID: MLSGroupID,
-        repairOperation: @escaping () async -> Void
-    ) {
-        guard !conversationsBeingRepaired.contains(groupID) else {
-            return
-        }
-
-        Task {
-            conversationsBeingRepaired.insert(groupID)
-            await repairOperation()
-            conversationsBeingRepaired.remove(groupID)
-        }
-    }
-
     func fetchAndRepairConversation(
         with groupID: MLSGroupID,
         subconversationType: SubgroupType?
@@ -964,6 +947,23 @@ public final class MLSService: MLSServiceInterface {
             logger.info("repaired out of sync subgroup! (parent: \(parentGroupID.safeForLoggingDescription), subgroup: \(subgroup.groupID.safeForLoggingDescription))")
         } catch {
             logger.warn("failed to repair subgroup (parent: \(parentGroupID.safeForLoggingDescription)). error: \(String(describing: error))")
+        }
+    }
+
+    private var conversationsBeingRepaired = Set<MLSGroupID>()
+
+    private func launchConversationRepairTaskIfNotInProgress(
+        for groupID: MLSGroupID,
+        repairOperation: @escaping () async -> Void
+    ) {
+        guard !conversationsBeingRepaired.contains(groupID) else {
+            return
+        }
+
+        Task {
+            conversationsBeingRepaired.insert(groupID)
+            await repairOperation()
+            conversationsBeingRepaired.remove(groupID)
         }
     }
 

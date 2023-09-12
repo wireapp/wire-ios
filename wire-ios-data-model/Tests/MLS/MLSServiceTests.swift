@@ -328,6 +328,36 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         XCTAssertEqual(result, mockResult)
     }
 
+    func test_Decrypt_RepairsConversationOnWrongEpochError() throws {
+        // Given
+        let conversation = createConversation(outOfSync: true).conversation
+        let groupID = try XCTUnwrap(conversation.mlsGroupID)
+        let message = "foo"
+        let error = MLSDecryptionService.MLSMessageDecryptionError.wrongEpoch
+        mockDecryptionService.decryptMessageForSubconversationType_MockError = error
+
+        let expectation = XCTestExpectation(description: "repaired conversation")
+
+        setMocksForConversationRepair(
+            epoch: conversation.epoch + 1,
+            onJoinGroup: { joinedGroupID in
+                XCTAssertEqual(groupID, joinedGroupID)
+                expectation.fulfill()
+            }
+        )
+
+        // When
+        _ = try? sut.decrypt(
+            message: message,
+            for: groupID,
+            subconversationType: nil
+        )
+
+        // Then
+        wait(for: [expectation], timeout: 0.5)
+        _ = waitForAllGroupsToBeEmpty(withTimeout: 0.5)
+    }
+
     // MARK: - Create group
 
     func test_CreateGroup_IsSuccessful() throws {
@@ -1184,6 +1214,163 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
         // THEN
         wait(for: Array(expectations.values), timeout: 1.5)
+    }
+
+    func test_FetchAndRepairConversation_RejoinsOutOfSyncConversation() throws {
+        // GIVEN
+        let conversation = createConversation(outOfSync: true).conversation
+        let groupID = try XCTUnwrap(conversation.mlsGroupID)
+        let expectation = XCTestExpectation(description: "rejoined conversation")
+
+        setMocksForConversationRepair(
+            epoch: conversation.epoch + 1,
+            onJoinGroup: { joinedGroupID in
+                XCTAssertEqual(groupID, joinedGroupID)
+                expectation.fulfill()
+            }
+        )
+
+        // WHEN
+        sut.fetchAndRepairConversation(
+            with: groupID,
+            subconversationType: nil
+        )
+
+        // THEN
+        // Verify expectation that the conversation was rejoined
+        wait(for: [expectation], timeout: 0.5)
+        // Wait for groups that need the current context before its deallocated
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+    }
+
+    func test_FetchAndRepairConversation_DoesNothingIfConversationIsNotOutOfSync() throws {
+        // GIVEN
+        let conversation = createConversation(outOfSync: true).conversation
+        let groupID = try XCTUnwrap(conversation.mlsGroupID)
+
+        let expectation = XCTestExpectation(description: "didn't rejoin conversation")
+        expectation.isInverted = true
+
+        setMocksForConversationRepair(
+            epoch: conversation.epoch,
+            onJoinGroup: { _ in
+                expectation.fulfill()
+            }
+        )
+
+        // WHEN
+        sut.fetchAndRepairConversation(
+            with: groupID,
+            subconversationType: nil
+        )
+
+        // THEN
+        // Verify expectation that the conversation was NOT rejoined
+        wait(for: [expectation], timeout: 0.5)
+    }
+
+    func test_FetchAndRepairConversation_RejoinsOutOfSyncSubgroup() throws {
+        // GIVEN
+        let conversation = createConversation(outOfSync: true).conversation
+        let groupID = try XCTUnwrap(conversation.mlsGroupID)
+        let subgroupID = MLSGroupID.random()
+
+        let subgroup = MLSSubgroup(
+            cipherSuite: 0,
+            epoch: 1,
+            epochTimestamp: Date(),
+            groupID: subgroupID,
+            members: [],
+            parentQualifiedID: try XCTUnwrap(conversation.qualifiedID)
+        )
+
+        let expectation = XCTestExpectation(description: "rejoined subgroup")
+
+        setMocksForConversationRepair(
+            epoch: UInt64(subgroup.epoch + 1),
+            subgroup: subgroup,
+            onJoinGroup: { joinedGroupID in
+                XCTAssertEqual(subgroupID, joinedGroupID)
+                expectation.fulfill()
+            }
+        )
+
+        // WHEN
+        sut.fetchAndRepairConversation(
+            with: groupID,
+            subconversationType: .conference
+        )
+
+        // THEN
+        // Verify expectation that the subgroup was rejoined
+        wait(for: [expectation], timeout: 0.5)
+    }
+
+    func test_FetchAndRepairConversation_DoesNothingIfSubgroupIsNotOutOfSync() throws {
+        // GIVEN
+        let conversation = createConversation(outOfSync: true).conversation
+        let groupID = try XCTUnwrap(conversation.mlsGroupID)
+        let subgroupID = MLSGroupID.random()
+
+        let subgroup = MLSSubgroup(
+            cipherSuite: 0,
+            epoch: 1,
+            epochTimestamp: Date(),
+            groupID: subgroupID,
+            members: [],
+            parentQualifiedID: try XCTUnwrap(conversation.qualifiedID)
+        )
+
+        let expectation = XCTestExpectation(description: "didn't rejoin subgroup")
+        expectation.isInverted = true
+
+        setMocksForConversationRepair(
+            epoch: UInt64(subgroup.epoch),
+            subgroup: subgroup,
+            onJoinGroup: { _ in
+                expectation.fulfill()
+            }
+        )
+
+        // WHEN
+        sut.fetchAndRepairConversation(
+            with: groupID,
+            subconversationType: .conference
+        )
+
+        // THEN
+        // Verify expectation that the subgroup was NOT rejoined
+        wait(for: [expectation], timeout: 0.5)
+    }
+
+    private func setMocksForConversationRepair(
+        epoch: UInt64,
+        subgroup: MLSSubgroup? = nil,
+        onJoinGroup: @escaping (MLSGroupID) -> Void
+    ) {
+        // mock conversation epoch
+        mockCoreCrypto.mockConversationEpoch = { _ in
+            return epoch
+        }
+
+        if let subgroup = subgroup {
+            // mock fetching subgroup
+            mockActionsProvider.fetchSubgroupConversationIDDomainTypeContext_MockValue = subgroup
+        } else {
+            // mock conversation sync
+            mockActionsProvider.syncConversationQualifiedIDContext_MockMethod = { _, _ in
+                // do nothing
+            }
+        }
+
+        // mock fetching group info
+        mockActionsProvider.fetchConversationGroupInfoConversationIdDomainSubgroupTypeContext_MockValue = Data()
+
+        // mock join group
+        mockMLSActionExecutor.mockJoinGroup = { groupID, _ in
+            onJoinGroup(groupID)
+            return []
+        }
     }
 
     private typealias ConversationAndOutOfSyncTuple = (conversation: ZMConversation, isOutOfSync: Bool)
