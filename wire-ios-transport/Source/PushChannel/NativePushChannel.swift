@@ -74,7 +74,7 @@ class NativePushChannel: NSObject, PushChannelType {
         self.workQueue = queue
         self.proxyUsername = proxyUsername
         self.proxyPassword = proxyPassword
-        self.minTLSVersion = minTLSVersion.flatMap(TLSVersion.init) ?? .v1_2
+        self.minTLSVersion = TLSVersion.minVersionFrom(minTLSVersion)
         super.init()
 
         let sessionConfig = URLSessionConfiguration.ephemeral

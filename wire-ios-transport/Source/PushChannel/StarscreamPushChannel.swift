@@ -81,7 +81,7 @@ class StarscreamPushChannel: NSObject, PushChannelType {
         self.proxyUsername = proxyUsername
         self.proxyPassword = proxyPassword
         self.workQueue = queue
-        self.minTLSVersion = minTLSVersion.flatMap(TLSVersion.init) ?? .v1_2
+        self.minTLSVersion = TLSVersion.minVersionFrom(minTLSVersion)
     }
 
     func reachabilityDidChange(_ reachability: ReachabilityProvider) {

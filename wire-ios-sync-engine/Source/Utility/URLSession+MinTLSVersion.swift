@@ -22,7 +22,7 @@ import Foundation
 public extension URLSession {
 
     func setMinTLSVersionIfNeeded(_ minTLSVersion: String?) {
-        let minTLSVersion = minTLSVersion.flatMap(TLSVersion.init) ?? .v1_2
+        let minTLSVersion = TLSVersion.minVersionFrom(minTLSVersion)
         configuration.tlsMinimumSupportedProtocolVersion = minTLSVersion.secValue
     }
 
