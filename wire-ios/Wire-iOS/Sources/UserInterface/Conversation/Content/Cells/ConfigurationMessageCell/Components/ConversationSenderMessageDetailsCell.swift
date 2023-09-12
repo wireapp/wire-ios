@@ -35,7 +35,7 @@ class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
     }
 
     // MARK: - Properties
-
+    
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
 
@@ -44,7 +44,7 @@ class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
     var observerToken: Any?
 
     var isSelected: Bool = false
-
+    
     private lazy var avatar: UserImageView = {
         let view = UserImageView()
         view.userSession = ZMUserSession.shared()
@@ -70,13 +70,12 @@ class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
         label.setContentHuggingPriority(.defaultLow, for: .horizontal)
         label.setContentCompressionResistancePriority(.required, for: .vertical)
         label.setContentHuggingPriority(.defaultLow, for: .vertical)
-
+        
         return label
     }()
 
     private let indicatorImageView = UIImageView()
 
-    var textColor: UIColor = .blue
     var icon: StyleKitIcon?
 
     private lazy var dateLabel: UILabel = {
@@ -110,6 +109,7 @@ class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
     func configure(with object: Configuration, animated: Bool) {
         let user = object.user
         let fullName: String
+        let textColor: UIColor
         var accessibilityIdentifier: String
 
         avatar.user = user
@@ -117,7 +117,6 @@ class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
         fullName = user.name ?? ""
 
         if user.isServiceUser {
-
             textColor = SemanticColors.Label.textDefault
             icon = .bot
             accessibilityIdentifier = "img.serviceUser"
@@ -145,7 +144,6 @@ class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
 
         indicatorImageView.isHidden = object.indicatorIcon == nil
         indicatorImageView.image = object.indicatorIcon
-
 
         dateLabel.isHidden = object.timestamp == nil
         dateLabel.text = object.timestamp
@@ -203,53 +201,69 @@ class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
         return icon == .externalPartner ? 16 : 14
     }
 
+
     private func configureAuthorLabel(user: UserType, fullName: String, textColor: UIColor) {
+        var attributedString = NSMutableAttributedString(string: fullName)
 
-        var attributedString = NSMutableAttributedString(
-            string: fullName,
-            attributes: [
-                .foregroundColor: textColor,
-                .font: UIFont.mediumSemiboldFont
-            ]
-        )
+        if user.isServiceUser {
+            icon = .bot
+            attributedString.append(
+                stringForAttachment(
+                    named: .bot,
+                    caption: fullName
+                )
+            )
+        } else if user.isExternalPartner {
+            icon = .externalPartner
+            attributedString.append(
+                stringForAttachment(
+                    named: .externalPartner,
+                    caption: fullName
+                )
+            )
+        } else if user.isFederated {
+            icon = .federated
+            attributedString.append(
+                stringForAttachment(
+                    named: .federated,
+                    caption: fullName
+                )
+            )
+        } else if !user.isTeamMember,
+                  let selfUser = SelfUser.provider?.selfUser,
+                  selfUser.isTeamMember {
+            icon = .guest
+            attributedString.append(
+                stringForAttachment(
+                    named: .guest,
+                    caption: fullName
+                )
+            )
 
-            if user.isServiceUser {
-                icon = .bot
-                attributedString.append(stringForAttachment(named: .bot, caption: fullName))
-            } else if user.isExternalPartner {
-                icon = .externalPartner
-                attributedString.append(stringForAttachment(named: .externalPartner, caption: fullName))
-            } else if user.isFederated {
-                icon = .federated
-                attributedString.append(stringForAttachment(named: .federated, caption: fullName))
-            } else if !user.isTeamMember,
-                      let selfUser = SelfUser.provider?.selfUser,
-                      selfUser.isTeamMember {
-                icon = .guest
-                attributedString.append(stringForAttachment(named: .guest, caption: fullName))
+        } else {
+            icon = .none
 
-            } else {
-                icon = .none
+        }
 
-            }
+        authorLabel.attributedText = attributedString
     }
 
-    func stringForAttachment(
+    fileprivate func stringForAttachment(
         named imageName: StyleKitIcon,
         caption: String
     ) -> NSAttributedString {
+        let textColor: UIColor = SemanticColors.Icon.foregroundDefault
         let attachment = NSTextAttachment()
         let image = icon?.makeImage(size: 12, color: textColor).with(insets: UIEdgeInsets(top: 0, left: 8, bottom: 0, right: 8), backgroundColor: .clear)
         attachment.image = image
         let fullString = NSMutableAttributedString(string: caption,
-    attributes: [
-        .foregroundColor: textColor,
-        .font: UIFont.mediumSemiboldFont
-    ])
+                                                   attributes: [
+                                                    .foregroundColor: textColor,
+                                                    .font: UIFont.mediumSemiboldFont
+                                                   ])
         fullString.append(NSAttributedString(attachment: attachment))
         return fullString
     }
-
 
     // MARK: - Tap gesture of avatar
 
@@ -279,12 +293,14 @@ extension ConversationSenderMessageDetailsCell: ZMUserObserver {
 
         if changeInfo.user.isServiceUser {
             configureAuthorLabel(
-                user: changeInfo.user, fullName: changeInfo.user.name ?? "",
+                user: changeInfo.user,
+                fullName: changeInfo.user.name ?? "",
                 textColor: SemanticColors.Label.textDefault
             )
         } else {
             configureAuthorLabel(
-                user: changeInfo.user, fullName: changeInfo.user.name ?? "",
+                user: changeInfo.user,
+                fullName: changeInfo.user.name ?? "",
                 textColor: changeInfo.user.accentColor
             )
         }
