@@ -110,7 +110,7 @@ class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
         let user = object.user
         let fullName: String
         let textColor: UIColor
-        var accessibilityIdentifier: String
+        let accessibilityIdentifier: String
 
         avatar.user = user
 
@@ -201,12 +201,13 @@ class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
         return icon == .externalPartner ? 16 : 14
     }
 
-
     private func configureAuthorLabel(user: UserType, fullName: String, textColor: UIColor) {
+        let textColor: UIColor
         var attributedString = NSMutableAttributedString(string: fullName)
 
         if user.isServiceUser {
             icon = .bot
+            textColor = SemanticColors.Label.textDefault
             attributedString.append(
                 stringForAttachment(
                     named: .bot,
@@ -215,6 +216,7 @@ class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
             )
         } else if user.isExternalPartner {
             icon = .externalPartner
+            textColor = user.accentColor
             attributedString.append(
                 stringForAttachment(
                     named: .externalPartner,
@@ -223,6 +225,7 @@ class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
             )
         } else if user.isFederated {
             icon = .federated
+            textColor = user.accentColor
             attributedString.append(
                 stringForAttachment(
                     named: .federated,
@@ -233,6 +236,7 @@ class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
                   let selfUser = SelfUser.provider?.selfUser,
                   selfUser.isTeamMember {
             icon = .guest
+            textColor = user.accentColor
             attributedString.append(
                 stringForAttachment(
                     named: .guest,
