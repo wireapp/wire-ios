@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireDataModel
 
 @objc(ZMThirdPartyServicesDelegate)
 public protocol ThirdPartyServicesDelegate: NSObjectProtocol {
@@ -631,6 +632,8 @@ extension ZMUserSession: ZMSyncStateDelegate {
                 ZMUserSession.notifyInitialSyncCompleted(context: context)
             }
         }
+
+        syncContext.mlsService?.repairOutOfSyncConversations()
     }
 
     public func didStartQuickSync() {
