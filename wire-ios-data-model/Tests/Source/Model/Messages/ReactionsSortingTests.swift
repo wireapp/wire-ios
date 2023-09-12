@@ -24,10 +24,10 @@ class ReactionsSortingTests: BaseZMMessageTests {
     func testThatReactionsAreSortedByDate() {
         // given
         let message = ZMClientMessage(nonce: UUID(), managedObjectContext: uiMOC)
-        let expectedOrder = ["🎃", "👽", "🤖", "👾"] // The emojis are sorted by dates of creation, newest emojis first [0x1F383, 0x1F47D, 0x1F916, 0x1F47E]
+        let expectedOrder = ["🎃", "👾", "🤖", "👽"] // The emojis are sorted by dates of creation, newest emojis first [0x1F383, 0x1F47E, 0x1F916, 0x1F47D]
         // when
         message.setReactions(["👽"], forUser: selfUser, newReactionsCreationDate: Date(timeIntervalSince1970: .oneMinute))
-        message.setReactions(["🤖", "👾"], forUser: selfUser, newReactionsCreationDate: Date(timeIntervalSince1970: .fiveMinutes))
+        message.setReactions(["👽", "🤖"], forUser: selfUser, newReactionsCreationDate: Date(timeIntervalSince1970: .fiveMinutes))
         message.setReactions(["👽", "👾", "🤖"], forUser: selfUser, newReactionsCreationDate: Date(timeIntervalSince1970: .oneHour))
         message.setReactions(["👽", "🎃", "👾", "🤖"], forUser: selfUser, newReactionsCreationDate: Date(timeIntervalSince1970: .oneWeek))
         self.uiMOC.saveOrRollback()
