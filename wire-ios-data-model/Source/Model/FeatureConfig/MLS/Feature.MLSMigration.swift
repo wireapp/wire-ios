@@ -35,8 +35,8 @@ public extension Feature {
 
         public struct Config: Codable, Equatable {
 
-            let startTime: Date?
-            let finaliseRegardlessAfter: Date?
+            public let startTime: Date?
+            public let finaliseRegardlessAfter: Date?
 
             public init(
                 startTime: Date? = nil,

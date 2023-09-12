@@ -267,6 +267,8 @@
 		EECBE8EC28E71ED7005DE5DD /* SyncConversationAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = EECBE8EB28E71ED7005DE5DD /* SyncConversationAction.swift */; };
 		EECBE8EE28E71F19005DE5DD /* SyncConversationActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = EECBE8ED28E71F19005DE5DD /* SyncConversationActionHandler.swift */; };
 		EECBE8F028E71F57005DE5DD /* SyncConversationActionHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EECBE8EF28E71F57005DE5DD /* SyncConversationActionHandlerTests.swift */; };
+		EEDBD0A92A7B7F0C00F3956F /* SelfUserRequestStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEDBD0A82A7B7F0C00F3956F /* SelfUserRequestStrategy.swift */; };
+		EEDBD0AB2A7B83B100F3956F /* SelfUserRequestStrategyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEDBD0AA2A7B83B100F3956F /* SelfUserRequestStrategyTests.swift */; };
 		EEDE7DAD28EAE538007DC6A3 /* ConversationEventProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEDE7DAC28EAE538007DC6A3 /* ConversationEventProcessorTests.swift */; };
 		EEDE7DB128EAEEC3007DC6A3 /* ConversationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEDE7DB028EAEEC3007DC6A3 /* ConversationService.swift */; };
 		EEDE7DB328EAEEFA007DC6A3 /* MockConversationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEDE7DB228EAEEFA007DC6A3 /* MockConversationService.swift */; };
@@ -706,6 +708,8 @@
 		EECBE8EB28E71ED7005DE5DD /* SyncConversationAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncConversationAction.swift; sourceTree = "<group>"; };
 		EECBE8ED28E71F19005DE5DD /* SyncConversationActionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncConversationActionHandler.swift; sourceTree = "<group>"; };
 		EECBE8EF28E71F57005DE5DD /* SyncConversationActionHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncConversationActionHandlerTests.swift; sourceTree = "<group>"; };
+		EEDBD0A82A7B7F0C00F3956F /* SelfUserRequestStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelfUserRequestStrategy.swift; sourceTree = "<group>"; };
+		EEDBD0AA2A7B83B100F3956F /* SelfUserRequestStrategyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelfUserRequestStrategyTests.swift; sourceTree = "<group>"; };
 		EEDE7DAC28EAE538007DC6A3 /* ConversationEventProcessorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationEventProcessorTests.swift; sourceTree = "<group>"; };
 		EEDE7DB028EAEEC3007DC6A3 /* ConversationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationService.swift; sourceTree = "<group>"; };
 		EEDE7DB228EAEEFA007DC6A3 /* MockConversationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockConversationService.swift; sourceTree = "<group>"; };
@@ -1308,6 +1312,8 @@
 				87F7288421AFF37D000ED371 /* UserPropertyRequestStrategyTests.swift */,
 				161E054F26655E4500DADC3D /* UserProfileRequestStrategy.swift */,
 				16972DEC2668E699008AF3A2 /* UserProfileRequestStrategyTests.swift */,
+				EEDBD0A82A7B7F0C00F3956F /* SelfUserRequestStrategy.swift */,
+				EEDBD0AA2A7B83B100F3956F /* SelfUserRequestStrategyTests.swift */,
 			);
 			path = User;
 			sourceTree = "<group>";
@@ -1960,6 +1966,7 @@
 				169BA1CD25E95DC900374343 /* Payload+Processing.swift in Sources */,
 				F18401D82073BE0800E9F4CC /* ZMConversation+Notifications.swift in Sources */,
 				F18401D92073BE0800E9F4CC /* EncryptionSessionDirectory+UpdateEvents.swift in Sources */,
+				EEDBD0A92A7B7F0C00F3956F /* SelfUserRequestStrategy.swift in Sources */,
 				F18401C72073BE0800E9F4CC /* AssetV3PreviewDownloadStrategy.swift in Sources */,
 				F18401B52073BE0800E9F4CC /* OTREntityTranscoder.swift in Sources */,
 				16367F1E26FDB0740028AF8B /* Payload+Connection.swift in Sources */,
@@ -2195,6 +2202,7 @@
 				16E5F71826EF4DBF00F35FBA /* ConversationRequestStrategyTests.swift in Sources */,
 				D3DA067C2A5D9EF700BA9CEB /* FederationTerminationManagerTest.swift in Sources */,
 				6308F8B22A2740C30072A177 /* FetchMLSSubconversationGroupInfoActionHandlerTests.swift in Sources */,
+				EEDBD0AB2A7B83B100F3956F /* SelfUserRequestStrategyTests.swift in Sources */,
 				F18401E72073C26200E9F4CC /* MissingClientsRequestStrategyTests.swift in Sources */,
 				1621D2671D75C776007108C2 /* ZMRemoteIdentifierObjectSyncTests.m in Sources */,
 				1621D26A1D75C782007108C2 /* ZMTimedSingleRequestSyncTests.m in Sources */,

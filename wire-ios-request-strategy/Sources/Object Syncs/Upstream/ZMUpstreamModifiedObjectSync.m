@@ -245,8 +245,8 @@ ZM_EMPTY_ASSERTING_INIT();
     }
 
     id<ZMUpstreamTranscoder> transcoder = self.transcoder;
-    if ([transcoder respondsToSelector:@selector(shouldCreateRequestToSyncObject:forKeys:withSync:)]) {
-        if (![transcoder shouldCreateRequestToSyncObject:objectWithKeys.object forKeys:objectWithKeys.keysToSync withSync:self]) {
+    if ([transcoder respondsToSelector:@selector(shouldCreateRequestToSyncObject:forKeys:withSync:apiVersion:)]) {
+        if (![transcoder shouldCreateRequestToSyncObject:objectWithKeys.object forKeys:objectWithKeys.keysToSync withSync:self apiVersion:apiVersion]) {
             return nil;
         }
     }

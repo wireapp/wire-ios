@@ -23,15 +23,15 @@ class PayloadProcessing_ConversationTests: MessagingTestBase {
     var mockMLSService: MockMLSService!
 
     override func setUp() {
-         super.setUp()
-         mockMLSService = MockMLSService()
-     }
+        super.setUp()
+        mockMLSService = MockMLSService()
+    }
 
-     override func tearDown() {
-         BackendInfo.isFederationEnabled = false
-         mockMLSService = nil
-         super.tearDown()
-     }
+    override func tearDown() {
+        BackendInfo.isFederationEnabled = false
+        mockMLSService = nil
+        super.tearDown()
+    }
 
     // MARK: Group conversations
 
@@ -926,7 +926,6 @@ class PayloadProcessing_ConversationTests: MessagingTestBase {
     }
 
     func internalTest_UpdateOrCreate_withMLSSelfGroupEpoch(epoch: UInt?) {
-
         syncMOC.performAndWait {
             syncMOC.mlsService = mockMLSService
 

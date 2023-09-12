@@ -765,6 +765,39 @@ public class MockFeatureRepositoryInterface: FeatureRepositoryInterface {
         mock(mls)            
     }
 
+    // MARK: - fetchMLSMigration
+
+    public var fetchMLSMigration_Invocations: [Void] = []
+    public var fetchMLSMigration_MockMethod: (() -> Feature.MLSMigration)?
+    public var fetchMLSMigration_MockValue: Feature.MLSMigration?
+
+    public func fetchMLSMigration() -> Feature.MLSMigration {
+        fetchMLSMigration_Invocations.append(())
+
+        if let mock = fetchMLSMigration_MockMethod {
+            return mock()
+        } else if let mock = fetchMLSMigration_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchMLSMigration`")
+        }
+    }
+
+    // MARK: - storeMLSMigration
+
+    public var storeMLSMigration_Invocations: [Feature.MLSMigration] = []
+    public var storeMLSMigration_MockMethod: ((Feature.MLSMigration) -> Void)?
+
+    public func storeMLSMigration(_ mlsMigration: Feature.MLSMigration) {
+        storeMLSMigration_Invocations.append(mlsMigration)
+
+        guard let mock = storeMLSMigration_MockMethod else {
+            fatalError("no mock for `storeMLSMigration`")
+        }
+
+        mock(mlsMigration)            
+    }
+
 }
 class MockFileManagerInterface: FileManagerInterface {
 
@@ -1496,6 +1529,32 @@ public class MockSubconversationGroupIDRepositoryInterface: SubconversationGroup
             return mock
         } else {
             fatalError("no mock for `fetchSubconversationGroupIDForTypeParentGroupID`")
+        }
+    }
+
+}
+public class MockUserRepositoryInterface: UserRepositoryInterface {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - selfUser
+
+    public var selfUser_Invocations: [Void] = []
+    public var selfUser_MockMethod: (() -> ZMUser)?
+    public var selfUser_MockValue: ZMUser?
+
+    public func selfUser() -> ZMUser {
+        selfUser_Invocations.append(())
+
+        if let mock = selfUser_MockMethod {
+            return mock()
+        } else if let mock = selfUser_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `selfUser`")
         }
     }
 

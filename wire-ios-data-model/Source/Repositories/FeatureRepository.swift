@@ -21,24 +21,26 @@ import Foundation
 // sourcery: AutoMockable
 public protocol FeatureRepositoryInterface {
 
-     func fetchAppLock() -> Feature.AppLock
-     func storeAppLock(_ appLock: Feature.AppLock)
-     func fetchConferenceCalling() -> Feature.ConferenceCalling
-     func storeConferenceCalling(_ conferenceCalling: Feature.ConferenceCalling)
-     func fetchFileSharing() -> Feature.FileSharing
-     func storeFileSharing(_ fileSharing: Feature.FileSharing)
-     func fetchSelfDeletingMesssages() -> Feature.SelfDeletingMessages
-     func storeSelfDeletingMessages(_ selfDeletingMessages: Feature.SelfDeletingMessages)
-     func fetchConversationGuestLinks() -> Feature.ConversationGuestLinks
-     func storeConversationGuestLinks(_ conversationGuestLinks: Feature.ConversationGuestLinks)
-     func fetchClassifiedDomains() -> Feature.ClassifiedDomains
-     func storeClassifiedDomains(_ classifiedDomains: Feature.ClassifiedDomains)
-     func fetchDigitalSignature() -> Feature.DigitalSignature
-     func storeDigitalSignature(_ digitalSignature: Feature.DigitalSignature)
-     func fetchMLS() -> Feature.MLS
-     func storeMLS(_ mls: Feature.MLS)
+    func fetchAppLock() -> Feature.AppLock
+    func storeAppLock(_ appLock: Feature.AppLock)
+    func fetchConferenceCalling() -> Feature.ConferenceCalling
+    func storeConferenceCalling(_ conferenceCalling: Feature.ConferenceCalling)
+    func fetchFileSharing() -> Feature.FileSharing
+    func storeFileSharing(_ fileSharing: Feature.FileSharing)
+    func fetchSelfDeletingMesssages() -> Feature.SelfDeletingMessages
+    func storeSelfDeletingMessages(_ selfDeletingMessages: Feature.SelfDeletingMessages)
+    func fetchConversationGuestLinks() -> Feature.ConversationGuestLinks
+    func storeConversationGuestLinks(_ conversationGuestLinks: Feature.ConversationGuestLinks)
+    func fetchClassifiedDomains() -> Feature.ClassifiedDomains
+    func storeClassifiedDomains(_ classifiedDomains: Feature.ClassifiedDomains)
+    func fetchDigitalSignature() -> Feature.DigitalSignature
+    func storeDigitalSignature(_ digitalSignature: Feature.DigitalSignature)
+    func fetchMLS() -> Feature.MLS
+    func storeMLS(_ mls: Feature.MLS)
+    func fetchMLSMigration() -> Feature.MLSMigration
+    func storeMLSMigration(_ mlsMigration: Feature.MLSMigration)
 
- }
+}
 
 /// This class facilitates storage and retrieval of feature configs to and from
 /// the database.

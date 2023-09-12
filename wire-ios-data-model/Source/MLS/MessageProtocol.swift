@@ -47,4 +47,14 @@ public enum MessageProtocol: Int16 {
             return nil
         }
     }
+
+    public var stringValue: String {
+        switch self {
+        case .proteus:
+            return "proteus"
+
+        case .mls:
+            return "mls"
+        }
+    }
 }

@@ -66,8 +66,12 @@ public final class MissingClientsRequestStrategy: AbstractRequestStrategy, ZMUps
         return false
     }
 
-    public func shouldCreateRequest(toSyncObject managedObject: ZMManagedObject, forKeys keys: Set<String>, withSync sync: Any) -> Bool {
-
+    public func shouldCreateRequest(
+        toSyncObject managedObject: ZMManagedObject,
+        forKeys keys: Set<String>,
+        withSync sync: Any,
+        apiVersion: APIVersion
+    ) -> Bool {
         var keysToSync = keys
         if keys.contains(ZMUserClientMissingKey),
             let client = managedObject as? UserClient, (client.missingClients == nil || client.missingClients?.count == 0) {

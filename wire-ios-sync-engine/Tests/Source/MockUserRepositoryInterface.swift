@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2023 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,29 +16,33 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import XCTest
+@testable import WireSyncEngine
 
-public extension Date {
+public class MockUserRepositoryInterface: UserRepositoryInterface {
 
-    /// The number of days from this date til now.
-    ///
-    /// If this date is in the future, the return value will be 0.
+    // MARK: - Life cycle
 
-    var ageInDays: Int {
-        let now = Date()
-        return Calendar.current.dateComponents([.day], from: self, to: now).day!
-    }
+    public init() {}
 
-    /// Whether the date is after the current instant.
 
-    var isInTheFuture: Bool {
-        return !isInThePast
-    }
+    // MARK: - selfUser
 
-    /// Whether the date is before the current instant.
+    public var selfUser_Invocations: [Void] = []
+    public var selfUser_MockMethod: (() -> ZMUser)?
+    public var selfUser_MockValue: ZMUser?
 
-    var isInThePast: Bool {
-        return compare(Date()) != .orderedDescending
+    public func selfUser() -> ZMUser {
+        selfUser_Invocations.append(())
+
+        if let mock = selfUser_MockMethod {
+            return mock()
+        } else if let mock = selfUser_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `selfUser`")
+        }
     }
 
 }
+

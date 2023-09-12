@@ -130,7 +130,6 @@ class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
             XCTAssertEqual(mlsMigration.config, .init(startTime: Date(timeIntervalSince1970: 10), finaliseRegardlessAfter: Date(timeIntervalSince1970: 20)))
 
             let selfDeletingMessage = featureRepository.fetchSelfDeletingMesssages()
-
             XCTAssertEqual(selfDeletingMessage.status, .enabled)
             XCTAssertEqual(selfDeletingMessage.config.enforcedTimeoutSeconds, 22)
         }

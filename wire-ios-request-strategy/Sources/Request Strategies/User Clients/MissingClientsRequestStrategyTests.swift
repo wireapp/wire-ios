@@ -675,9 +675,12 @@ class MissingClientsRequestStrategyTests: MessagingTestBase {
             XCTAssertTrue(self.selfClient.keysThatHaveLocalModifications.contains(ZMUserClientMissingKey))
 
             // WHEN
-            let shouldCreateRequest = self.sut.shouldCreateRequest(toSyncObject: self.selfClient,
-                                                              forKeys: [ZMUserClientMissingKey],
-                                                              withSync: self.sut.modifiedSync!)
+            let shouldCreateRequest = self.sut.shouldCreateRequest(
+                toSyncObject: self.selfClient,
+                forKeys: [ZMUserClientMissingKey],
+                withSync: self.sut.modifiedSync!,
+                apiVersion: .v0
+            )
 
             // THEN
             XCTAssertFalse(shouldCreateRequest)
@@ -693,9 +696,12 @@ class MissingClientsRequestStrategyTests: MessagingTestBase {
             XCTAssertTrue(self.selfClient.keysThatHaveLocalModifications.contains(ZMUserClientMissingKey))
 
             // WHEN
-            let shouldCreateRequest = self.sut.shouldCreateRequest(toSyncObject: self.selfClient,
-                                                              forKeys: [ZMUserClientMissingKey],
-                                                              withSync: self.sut.modifiedSync!)
+            let shouldCreateRequest = self.sut.shouldCreateRequest(
+                toSyncObject: self.selfClient,
+                forKeys: [ZMUserClientMissingKey],
+                withSync: self.sut.modifiedSync!,
+                apiVersion: .v0
+            )
 
             // THEN
             XCTAssertTrue(shouldCreateRequest)

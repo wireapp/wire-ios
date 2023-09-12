@@ -1,6 +1,6 @@
-//
+////
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2023 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,27 +18,29 @@
 
 import Foundation
 
-public extension Date {
+// sourcery: AutoMockable
+public protocol UserRepositoryInterface {
 
-    /// The number of days from this date til now.
-    ///
-    /// If this date is in the future, the return value will be 0.
+    func selfUser() -> ZMUser
 
-    var ageInDays: Int {
-        let now = Date()
-        return Calendar.current.dateComponents([.day], from: self, to: now).day!
+}
+
+public final class UserRepository: UserRepositoryInterface {
+
+    // MARK: - Properties
+
+    private let context: NSManagedObjectContext
+
+    // MARK: - Life cycle
+
+    public init(context: NSManagedObjectContext) {
+        self.context = context
     }
 
-    /// Whether the date is after the current instant.
+    // MARK: - Methods
 
-    var isInTheFuture: Bool {
-        return !isInThePast
-    }
-
-    /// Whether the date is before the current instant.
-
-    var isInThePast: Bool {
-        return compare(Date()) != .orderedDescending
+    public func selfUser() -> ZMUser {
+        return ZMUser.selfUser(in: context)
     }
 
 }
