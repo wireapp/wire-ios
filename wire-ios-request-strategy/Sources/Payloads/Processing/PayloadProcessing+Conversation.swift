@@ -202,7 +202,7 @@ extension Payload.Conversation {
             return
         }
 
-        WireLogger.mls.debug("createOrJoinSelfConversation for \(groupId); conv payload: \(String(describing: self))")
+        WireLogger.mls.debug("createOrJoinSelfConversation for \(groupId.safeForLoggingDescription); conv payload: \(String(describing: self))")
 
         if conversation.epoch <= 0 {
             mlsService.createSelfGroup(for: groupId)
