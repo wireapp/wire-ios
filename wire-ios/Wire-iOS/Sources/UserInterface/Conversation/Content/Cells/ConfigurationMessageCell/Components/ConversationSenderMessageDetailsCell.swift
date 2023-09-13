@@ -21,39 +21,29 @@ import WireCommonComponents
 import WireDataModel
 import WireSyncEngine
 
+enum Indicator {
+    case deleted
+    case edited
+    case none
+}
+
+enum TeamRoleIndicator {
+    case guest
+    case externalPartner
+    case federated
+    case service
+    case none
+}
+
 // MARK: - ConversationSenderMessageDetailsCell
 
 class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
 
-    enum Indicator {
-        case deleted
-        case edited
-    }
-
-    enum TeamRoleIndicator {
-        case guest
-        case externalPartner
-        case federated
-        case service
-    }
-
-    struct Content {
+    struct Configuration {
         let user: UserType
-        let authorName: String
         let indicator: Indicator
         let teamRoleIndicator: TeamRoleIndicator
         let timestamp: String?
-    }
-
-
-
-    // MARK: - Message configuration
-
-    struct Configuration {
-        let user: UserType
-        let message: ZMConversationMessage
-        let timestamp: String?
-        let indicatorIcon: UIImage?
     }
 
     // MARK: - Properties
@@ -128,7 +118,6 @@ class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
     func configure(with object: Configuration, animated: Bool) {
         let user = object.user
         let fullName: String
-    
         avatar.user = user
 
         fullName = user.name ?? ""
@@ -179,12 +168,16 @@ class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
 
     private func configureAuthorLabel(object: Configuration, user: UserType, fullName: String) {
         let textColor: UIColor = user.isServiceUser ? SemanticColors.Label.textDefault : user.accentColor
-        var attributedString = NSMutableAttributedString(string: fullName,
-                                                         attributes: [
-                                                            .foregroundColor: textColor,
-                                                            .font: UIFont.mediumSemiboldFont])
+        var attributedString = NSMutableAttributedString(
+            string: fullName,
+            attributes: [
+                .foregroundColor: textColor,
+                .font: UIFont.mediumSemiboldFont]
+        )
 
-        if object.message.isDeletion {
+        switch object.indicator {
+
+        case .deleted:
             attributedString.append(
                 stringForAttachment(
                     named: .trash,
@@ -192,24 +185,28 @@ class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
                 )
             )
 
-        } else if object.message.updatedAt != nil {
+        case .edited:
             attributedString.append(
                 stringForAttachment(
                     named: .pencil,
                     imageSize: 8
                 )
             )
+        case .none: break
+
         }
 
-        if user.isServiceUser {
-            accessibilityIdentifier = "img.serviceUser"
+        switch object.teamRoleIndicator {
+
+        case .guest:
+            accessibilityIdentifier = "img.guest"
             attributedString.append(
                 stringForAttachment(
-                    named: .bot,
+                    named: .guest,
                     imageSize: 12
                 )
             )
-        } else if user.isExternalPartner {
+        case .externalPartner:
             accessibilityIdentifier = "img.externalPartner"
             attributedString.append(
                 stringForAttachment(
@@ -218,7 +215,7 @@ class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
 
                 )
             )
-        } else if user.isFederated {
+        case .federated:
             accessibilityIdentifier = "img.federatedUser"
             attributedString.append(
                 stringForAttachment(
@@ -226,18 +223,16 @@ class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
                     imageSize: 12
                 )
             )
-        } else if !user.isTeamMember,
-                  let selfUser = SelfUser.provider?.selfUser,
-                  selfUser.isTeamMember {
-            accessibilityIdentifier = "img.guest"
+        case .service:
+            accessibilityIdentifier = "img.serviceUser"
             attributedString.append(
                 stringForAttachment(
-                    named: .guest,
+                    named: .bot,
                     imageSize: 12
                 )
             )
 
-        } else {
+        default:
             accessibilityIdentifier = "img.member"
         }
 
@@ -302,16 +297,37 @@ class ConversationSenderMessageCellDescription: ConversationMessageCellDescripti
     init(sender: UserType, message: ZMConversationMessage, timestamp: String?) {
         self.message = message
 
-        var icon: UIImage?
-        let iconColor = SemanticColors.Icon.foregroundDefault
+        var teamRoleIndicator: TeamRoleIndicator = .none
+        var indicator: Indicator = .none
 
         if message.isDeletion {
-            icon = StyleKitIcon.trash.makeImage(size: 8, color: iconColor)
+            indicator = .deleted
         } else if message.updatedAt != nil {
-            icon = StyleKitIcon.pencil.makeImage(size: 8, color: iconColor)
+            indicator = .edited
         }
 
-        self.configuration = View.Configuration(user: sender, message: message, timestamp: timestamp, indicatorIcon: icon)
+        if sender.isServiceUser {
+            teamRoleIndicator = .service
+
+        } else if sender.isExternalPartner {
+            teamRoleIndicator = .externalPartner
+
+        } else if sender.isFederated {
+            teamRoleIndicator = .federated
+
+        } else if !sender.isTeamMember,
+                  let selfUser = SelfUser.provider?.selfUser,
+                  selfUser.isTeamMember {
+            teamRoleIndicator = .guest
+        }
+
+        self.configuration = View.Configuration(
+            user: sender,
+            indicator: indicator,
+            teamRoleIndicator: teamRoleIndicator,
+            timestamp: timestamp
+        )
+
         setupAccessibility(sender)
         actionController = nil
     }
