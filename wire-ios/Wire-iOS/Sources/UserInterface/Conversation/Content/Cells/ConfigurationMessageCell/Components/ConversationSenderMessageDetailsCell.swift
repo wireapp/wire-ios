@@ -118,6 +118,7 @@ class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
     func configure(with object: Configuration, animated: Bool) {
         let user = object.user
         let fullName: String
+
         avatar.user = user
 
         fullName = user.name ?? ""
@@ -239,10 +240,14 @@ class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
         authorLabel.attributedText = attributedString
     }
 
-    fileprivate func stringForAttachment(named imageName: StyleKitIcon, imageSize: CGFloat) -> NSAttributedString {
+    private func stringForAttachment(named imageName: StyleKitIcon, imageSize: CGFloat) -> NSAttributedString {
         let textColor: UIColor = SemanticColors.Icon.foregroundDefault
         let attachment = NSTextAttachment()
-        let image = imageName.makeImage(size: StyleKitIcon.Size(floatLiteral: imageSize), color: textColor).with(insets: UIEdgeInsets(top: 0, left: 8, bottom: 0, right: 0), backgroundColor: .clear)
+        let image = imageName.makeImage(
+            size: StyleKitIcon.Size(floatLiteral: imageSize),
+            color: textColor
+        ).with(insets: UIEdgeInsets(top: 0, left: 8, bottom: 0, right: 0), backgroundColor: .clear)
+
         attachment.image = image
 
         return NSAttributedString(attachment: attachment)
