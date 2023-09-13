@@ -244,7 +244,10 @@ static FakePushChannel *currentFakePushChannel;
                            userAgentString:(NSString * _Nonnull)userAgentString
                                environment:(id<BackendEnvironmentProvider> _Nonnull)environment
                              proxyUsername:(NSString * _Nullable)proxyUsername
-                             proxyPassword:(NSString * _Nullable)proxyPassword queue:(NSOperationQueue * _Nonnull)queue {
+                             proxyPassword:(NSString * _Nullable)proxyPassword
+                             minTLSVersion:(NSString * _Nullable)minTLSVersion
+                                     queue:(NSOperationQueue *_Nonnull)queue
+{
     self = [self initWithScheduler:scheduler userAgentString:userAgentString environment:environment queue:queue];
     return self;
 }
@@ -421,7 +424,8 @@ static XCTestCase *currentTestCase;
                 pushChannelClass:FakePushChannel.class
                 cookieStorage:self.cookieStorage
                 initialAccessToken:nil
-                userAgent:self.userAgent];
+                userAgent:self.userAgent
+                minTLSVersion:nil];
 
     __weak id weakSelf = self;
     [self.sut setAccessTokenRenewalFailureHandler:^(ZMTransportResponse *response) {
@@ -564,7 +568,8 @@ static XCTestCase *currentTestCase;
                 pushChannelClass:nil
                 cookieStorage:self.cookieStorage
                 initialAccessToken:nil
-                userAgent:self.userAgent];
+                userAgent:self.userAgent
+                minTLSVersion:nil];
     
     self.sut.accessToken = self.validAccessToken;
     XCTestExpectation *expectation = [self expectationWithDescription:@"Completion handler called"];
@@ -788,7 +793,8 @@ static XCTestCase *currentTestCase;
                                pushChannelClass:nil
                                cookieStorage:self.cookieStorage
                                initialAccessToken:nil
-                               userAgent:self.userAgent];
+                               userAgent:self.userAgent
+                               minTLSVersion:nil];
     
     sut.accessToken = self.validAccessToken;
     id<ZMTransportData> payload = @{@"numbers": @[@4, @8, @15, @16, @23, @42]};
