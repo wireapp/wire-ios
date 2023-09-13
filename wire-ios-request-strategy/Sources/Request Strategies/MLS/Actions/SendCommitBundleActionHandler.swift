@@ -31,7 +31,7 @@ class SendCommitBundleActionHandler: ActionHandler<SendCommitBundleAction> {
 
         var action = action
 
-        guard apiVersion > .v2 else {
+        guard apiVersion >= .v5 else {
             action.fail(with: .endpointUnavailable)
             return nil
         }
