@@ -29,7 +29,7 @@ private struct SenderCellConfiguration {
     let accessibilityIdentifier: String
 
     init(user: UserType) {
-        fullName = user.name ?? ""
+        fullName = user.name ?? L10n.Localizable.Profile.Details.Title.unavailable
         if user.isServiceUser {
             textColor = SemanticColors.Label.textDefault
             icon = .bot

@@ -184,6 +184,18 @@ final class ConversationMessageSenderSnapshotTests: BaseSnapshotTestCase {
         verify(matching: sut)
     }
 
+    func test_SenderIsWithoutMetadata_GroupConversation() {
+        // GIVEN
+        mockUser.teamRole = .member
+        mockUser.name = nil
+
+        // WHEN
+        sut.configure(with: mockUser)
+
+        // THEN
+        verify(matching: sut)
+    }
+
     // MARK: - Helpers
 
     private func createGroupConversation() -> SwiftMockConversation {
