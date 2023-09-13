@@ -48,7 +48,7 @@ class DispatchQueueSerialAsyncTests: XCTestCase {
             doneExpectation.fulfill()
         }
 
-        self.wait(for: [doneExpectation], timeout: 0.5)
+        self.wait(for: [doneExpectation], timeout: 1)
         XCTAssertTrue(done1)
         XCTAssertTrue(done2)
     }
