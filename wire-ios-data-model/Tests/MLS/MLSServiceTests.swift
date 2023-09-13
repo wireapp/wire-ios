@@ -2567,8 +2567,6 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
     // MARK: - Guest links
 
     func test_ItJoinsNewGroupForGuestLinkWhenConversationDoesNotExist() async throws {
-        BackendInfo.domain = "example.com"
-
         // Given
         let groupID = MLSGroupID.random()
         var conversation: ZMConversation!
@@ -2578,6 +2576,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             conversation = createConversation(in: uiMOC)
             conversation.mlsGroupID = groupID
             conversation.messageProtocol = .mls
+            conversation.domain = "example.com"
         }
 
         let expectation1 = self.expectation(description: "CreateConversation should be called")
@@ -2618,8 +2617,6 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
     }
 
     func test_ItJoinsNewGroupForGuestLinkWhenConversationExists() async throws {
-        BackendInfo.domain = "example.com"
-
         // Given
         let groupID = MLSGroupID.random()
         var conversation: ZMConversation!
@@ -2629,6 +2626,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             conversation = createConversation(in: uiMOC)
             conversation.mlsGroupID = groupID
             conversation.messageProtocol = .mls
+            conversation.domain = "example.com"
         }
 
         mockMLSActionExecutor.mockJoinGroup = { _, _ in
