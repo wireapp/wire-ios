@@ -181,7 +181,7 @@ public extension APIVersion {
     /// Only if these critera are met should we explicitly mark the version
     /// as production ready.
 
-    static let productionVersions: Set<Self> = [.v0, .v1, .v2, .v3]
+    static let productionVersions: Set<Self> = [.v0, .v1, .v2, .v3, .v4]
 
     /// API versions currently under development and not suitable for production
     /// environments.

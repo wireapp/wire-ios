@@ -21,6 +21,8 @@ import WireCommonComponents
 
 final class CompleteReactionPickerViewController: UIViewController {
 
+    // MARK: - Properties
+
     weak var delegate: EmojiPickerViewControllerDelegate?
     private var emojiDataSource: EmojiDataSource!
     private let collectionView = ReactionsCollectionView()
@@ -30,6 +32,8 @@ final class CompleteReactionPickerViewController: UIViewController {
     private let selectedReactions: Set<Emoji>
 
     private var deleting = false
+
+    // MARK: - Init
 
     init(selectedReactions: Set<Emoji>) {
         self.selectedReactions = selectedReactions
@@ -61,6 +65,8 @@ final class CompleteReactionPickerViewController: UIViewController {
         NotificationCenter.default.removeObserver(self)
     }
 
+    // MARK: - Override methods
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         collectionView.reloadItems(at: collectionView.indexPathsForVisibleItems)
@@ -70,6 +76,8 @@ final class CompleteReactionPickerViewController: UIViewController {
         super.viewDidLayoutSubviews()
         updateSectionSelection()
     }
+
+    // MARK: - Setup views and constraints
 
     func setupViews() {
         typealias Strings = L10n.Localizable.Content.Reactions
@@ -91,6 +99,8 @@ final class CompleteReactionPickerViewController: UIViewController {
         view.addSubview(collectionView)
 
         collectionView.keyboardDismissMode = .onDrag
+
+        setupAccessibility()
     }
 
     private func createConstraints() {
@@ -119,6 +129,8 @@ final class CompleteReactionPickerViewController: UIViewController {
         ])
     }
 
+    // MARK: - Collection View
+
     func cellForEmoji(_ emoji: Emoji, indexPath: IndexPath) -> UICollectionViewCell {
         let cell = self.collectionView.dequeueReusableCell(withReuseIdentifier: EmojiCollectionViewCell.zm_reuseIdentifier, for: indexPath) as! EmojiCollectionViewCell
         cell.titleLabel.text = emoji.value
@@ -133,10 +145,28 @@ final class CompleteReactionPickerViewController: UIViewController {
         self.sectionViewController.didSelectSection(self.emojiDataSource[section].type)
     }
 
-    @objc func preferredContentSizeChanged(_ notification: Notification) {
+    // MARK: - Accessibility
+
+    private func setupAccessibility() {
+        typealias ReactionPickerAccessibility = L10n.Accessibility.ReactionPicker
+        searchBar.isAccessibilityElement = true
+        topBar.dismissButton.isAccessibilityElement = true
+        topBar.dismissButton.accessibilityValue = ReactionPickerAccessibility.DismissButton.description
+
+        if searchBar.placeholder != nil {
+            searchBar.accessibilityValue = ReactionPickerAccessibility.SearchFieldPlaceholder.description
+        }
+    }
+
+    // MARK: - Dynamic Type
+
+    @objc
+    func preferredContentSizeChanged(_ notification: Notification) {
         collectionView.reloadData()
     }
 }
+
+// MARK: - EmojiSectionViewControllerDelegate
 
 extension CompleteReactionPickerViewController: EmojiSectionViewControllerDelegate {
 
@@ -152,6 +182,8 @@ extension CompleteReactionPickerViewController: EmojiSectionViewControllerDelega
         }
     }
 }
+
+// MARK: - UICollectionViewDelegateFlowLayout
 
 extension CompleteReactionPickerViewController: UICollectionViewDelegateFlowLayout {
 
@@ -171,11 +203,15 @@ extension CompleteReactionPickerViewController: UICollectionViewDelegateFlowLayo
     }
 }
 
+// MARK: - ModalTopBarDelegate
+
 extension CompleteReactionPickerViewController: ModalTopBarDelegate {
     func modelTopBarWantsToBeDismissed(_ topBar: ModalTopBar) {
         dismiss(animated: true)
     }
 }
+
+// MARK: - UISearchBarDelegate
 
 extension CompleteReactionPickerViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
