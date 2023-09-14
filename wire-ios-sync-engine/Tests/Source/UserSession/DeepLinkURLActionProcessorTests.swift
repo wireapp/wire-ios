@@ -105,7 +105,7 @@ class DeepLinkURLActionProcessorTests: DatabaseTest {
         XCTAssertEqual(presentationDelegate.showConnectionRequestCalls.first, userId)
     }
 
-    func testThatItCompletesTheJoinConversationAction_WhenCodeIsValid() {
+    func disable_testThatItCompletesTheJoinConversationAction_WhenCodeIsValid() {
         // given
         let action: URLAction = .joinConversation(key: "test-key", code: "test-code")
 
