@@ -213,7 +213,7 @@ class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
             attributedString.append(
                 stringForAttachment(
                     named: .externalPartner,
-                    imageSize: 14
+                    imageSize: 12
 
                 )
             )

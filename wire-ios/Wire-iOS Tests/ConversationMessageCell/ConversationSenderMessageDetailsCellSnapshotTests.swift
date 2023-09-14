@@ -27,7 +27,6 @@ final class ConversationSenderMessageDetailsCellSnapshotTests: BaseSnapshotTestC
     var sut: ConversationSenderMessageDetailsCell!
     var teamID = UUID()
     var mockUser: MockUserType!
-    var mockSelfUser: MockUserType!
 
     // MARK: - setUp
 
@@ -35,8 +34,6 @@ final class ConversationSenderMessageDetailsCellSnapshotTests: BaseSnapshotTestC
         super.setUp()
         mockUser = MockUserType.createUser(name: "Bruno", inTeam: teamID)
         mockUser.isConnected = true
-        mockSelfUser = MockUserType.createSelfUser(name: "George Johnson", inTeam: teamID)
-        SelfUser.provider = SelfProvider(selfUser: mockSelfUser)
 
         sut = ConversationSenderMessageDetailsCell()
 
@@ -51,7 +48,6 @@ final class ConversationSenderMessageDetailsCellSnapshotTests: BaseSnapshotTestC
     override func tearDown() {
         sut = nil
         mockUser = nil
-        mockSelfUser = nil
         super.tearDown()
     }
 
@@ -71,7 +67,7 @@ final class ConversationSenderMessageDetailsCellSnapshotTests: BaseSnapshotTestC
         sut.configure(with: configuration, animated: false)
 
         // THEN
-        verifyInAllColorSchemes(matching: sut)
+        verify(matching: sut)
     }
 
     func test_SenderIsFederated_InConversation() {
@@ -88,7 +84,7 @@ final class ConversationSenderMessageDetailsCellSnapshotTests: BaseSnapshotTestC
         sut.configure(with: configuration, animated: false)
 
         // THEN
-        verifyInAllColorSchemes(matching: sut)
+        verify(matching: sut)
     }
 
     func test_SenderIsGuest_InConversation() {
@@ -105,7 +101,7 @@ final class ConversationSenderMessageDetailsCellSnapshotTests: BaseSnapshotTestC
         sut.configure(with: configuration, animated: false)
 
         // THEN
-        verifyInAllColorSchemes(matching: sut)
+        verify(matching: sut)
     }
 
     func test_SenderIsBot_InConversation() {
@@ -122,7 +118,7 @@ final class ConversationSenderMessageDetailsCellSnapshotTests: BaseSnapshotTestC
         sut.configure(with: configuration, animated: false)
 
         // THEN
-        verifyInAllColorSchemes(matching: sut)
+        verify(matching: sut)
     }
 
     func test_SenderIsTeamMember_InConversation() {
@@ -139,7 +135,7 @@ final class ConversationSenderMessageDetailsCellSnapshotTests: BaseSnapshotTestC
         sut.configure(with: configuration, animated: false)
 
         // THEN
-        verifyInAllColorSchemes(matching: sut)
+        verify(matching: sut)
     }
 
     func test_MessageHasBeenDeleted() {
@@ -155,7 +151,7 @@ final class ConversationSenderMessageDetailsCellSnapshotTests: BaseSnapshotTestC
         sut.configure(with: configuration, animated: false)
 
         // THEN
-        verifyInAllColorSchemes(matching: sut)
+        verify(matching: sut)
     }
 
     func test_MessageHasBeenEdited() {
@@ -171,7 +167,7 @@ final class ConversationSenderMessageDetailsCellSnapshotTests: BaseSnapshotTestC
         sut.configure(with: configuration, animated: false)
 
         // THEN
-        verifyInAllColorSchemes(matching: sut)
+        verify(matching: sut)
     }
 
     func test_SenderIsGuestWithALongName_AndMessageHasBeenEdited() {
@@ -192,7 +188,7 @@ final class ConversationSenderMessageDetailsCellSnapshotTests: BaseSnapshotTestC
         sut.configure(with: configuration, animated: false)
 
         // THEN
-        verifyInAllColorSchemes(matching: sut)
+        verify(matching: sut)
     }
 
     func test_SenderIsGuestWithALongName_AndMessageHasBeenDeleted() {
@@ -213,7 +209,7 @@ final class ConversationSenderMessageDetailsCellSnapshotTests: BaseSnapshotTestC
         sut.configure(with: configuration, animated: false)
 
         // THEN
-        verifyInAllColorSchemes(matching: sut)
+        verify(matching: sut)
     }
 
 }
