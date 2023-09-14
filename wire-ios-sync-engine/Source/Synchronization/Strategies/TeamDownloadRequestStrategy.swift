@@ -221,8 +221,10 @@ public final class TeamDownloadRequestStrategy: AbstractRequestStrategy, ZMConte
             return TeamDownloadRequestFactory.getTeamsRequest(apiVersion: apiVersion)
         case .v4, .v5:
             guard let teamID = ZMUser.selfUser(in: managedObjectContext).teamIdentifier else {
+                syncStatus.finishCurrentSyncPhase(phase: expectedSyncPhase)
                 return nil
             }
+
             return TeamDownloadRequestFactory.getRequest(for: [teamID], apiVersion: apiVersion)
         }
     }
