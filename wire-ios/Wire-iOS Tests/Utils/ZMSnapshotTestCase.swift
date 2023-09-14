@@ -383,7 +383,13 @@ extension ZMSnapshotTestCase {
                                  line: UInt = #line) {
             view.overrideUserInterfaceStyle = .light
             snapshotBackgroundColor = .white
-            verify(view: view, tolerance: tolerance, identifier: "LightTheme", file: file, line: line)
+            verify(
+                view: view,
+                tolerance: tolerance,
+                identifier: "LightTheme",
+                file: file,
+                line: line
+            )
             view.overrideUserInterfaceStyle = .light
             snapshotBackgroundColor = .black
             verify(view: view, tolerance: tolerance, identifier: "DarkTheme", file: file, line: line)
