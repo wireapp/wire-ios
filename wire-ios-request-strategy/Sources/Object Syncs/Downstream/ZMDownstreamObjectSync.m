@@ -127,7 +127,7 @@
     }
 }
 
-- (ZMTransportRequest *)nextRequestForAPIVersion:(APIVersion)apiVersion;
+- (void)nextRequestForAPIVersion:(APIVersion)apiVersion completion:(void (^ _Nonnull)(ZMTransportRequest * _Nullable))completionBlock
 {
     id<ZMDownstreamTranscoder> transcoder = self.transcoder;
 
@@ -152,10 +152,11 @@
             ZM_STRONG(self);
             [self processResponse:response forObject:nextObject token:token transcoder:self.transcoder];
         }]];
-        return request;
+        completionBlock(request);
+        return;
     }
     
-    return nil;
+    completionBlock(nil);
 }
 
 - (BOOL)hasOutstandingItems;
@@ -199,5 +200,6 @@
     [description appendFormat:@", context: \"%@\"", self.context];
     return description;
 }
+
 
 @end

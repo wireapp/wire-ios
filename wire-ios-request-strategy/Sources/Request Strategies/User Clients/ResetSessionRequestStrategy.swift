@@ -40,8 +40,8 @@ public class ResetSessionRequestStrategy: AbstractRequestStrategy, ZMContextChan
         keyPathSync.transcoder = self
     }
 
-    public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        return messageSync.nextRequest(for: apiVersion)
+    public override func nextRequestIfAllowed(for apiVersion: APIVersion) async -> ZMTransportRequest? {
+        return await messageSync.nextRequest(for: apiVersion)
     }
 
     public var contextChangeTrackers: [ZMContextChangeTracker] {

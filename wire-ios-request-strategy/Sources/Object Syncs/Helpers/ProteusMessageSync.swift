@@ -52,8 +52,8 @@ public class ProteusMessageSync<Message: ProteusMessage>: NSObject, EntityTransc
         return [dependencySync]
     }
 
-    public func nextRequest(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        return dependencySync.nextRequest(for: apiVersion)
+    public func nextRequest(for apiVersion: APIVersion) async -> ZMTransportRequest? {
+        return await dependencySync.nextRequest(for: apiVersion)
     }
 
     public func onRequestScheduled(_ handler: @escaping OnRequestScheduledHandler) {

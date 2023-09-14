@@ -69,12 +69,13 @@ ZM_EMPTY_ASSERTING_INIT()
     return self;
 }
 
-- (ZMTransportRequest *)nextRequestForAPIVersion:(APIVersion)apiVersion
+- (void)nextRequestForAPIVersion:(APIVersion)apiVersion completion:(void (^ _Nonnull)(ZMTransportRequest * _Nullable))completionBlock
 {
     if(!self.hasMoreToFetch) {
-        return nil;
+        completionBlock(nil);
+        return;
     }
-    return [self.singleRequestSync nextRequestForAPIVersion:apiVersion];
+    completionBlock([self.singleRequestSync nextRequestForAPIVersion:apiVersion]);
 }
 
 - (ZMSingleRequestProgress)status
@@ -160,5 +161,6 @@ ZM_EMPTY_ASSERTING_INIT()
     }
     [self.singleRequestSync readyForNextRequest];
 }
+
 
 @end

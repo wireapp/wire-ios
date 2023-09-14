@@ -85,9 +85,9 @@ import WireTransport
             message.associatedTaskIdentifier = nil
         }
     }
-
-    public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        return self.assetDownstreamObjectSync.nextRequest(for: apiVersion)
+    
+    public override func nextRequestIfAllowed(for apiVersion: APIVersion) async -> ZMTransportRequest? {
+        return await self.assetDownstreamObjectSync.nextRequest(for: apiVersion)
     }
 
     fileprivate func handleResponse(_ response: ZMTransportResponse, forMessage assetClientMessage: ZMAssetClientMessage) {

@@ -157,9 +157,9 @@ static NSString* ZMLogTag = @"Network";
     }];
 }
 
-- (ZMTransportRequest *)nextRequestForAPIVersion:(APIVersion)apiVersion;
+- (void)nextRequestForAPIVersion:(APIVersion)apiVersion completion:(void (^)(ZMTransportRequest * _Nullable))completionBlock
 {
-    return [self processNextInsertWithAPIVersion:apiVersion];
+    completionBlock([self processNextInsertWithAPIVersion:apiVersion]);
 }
 
 /// returns false if object has dependencies, adding it to insertedObjectsWithDependencies

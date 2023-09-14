@@ -86,7 +86,7 @@ public class SearchUserImageStrategy: AbstractRequestStrategy {
         RequestAvailableNotification.notifyNewRequestsAvailable(nil)
     }
 
-    public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
+    public override func nextRequestIfAllowed(for apiVersion: APIVersion) async -> ZMTransportRequest? {
         let request = fetchUserProfilesRequest(apiVersion: apiVersion) ?? fetchAssetRequest(apiVersion: apiVersion)
         request?.setDebugInformationTranscoder(self)
         return request

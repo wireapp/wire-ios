@@ -61,7 +61,7 @@ public class LabelDownstreamRequestStrategy: AbstractRequestStrategy, ZMEventCon
         self.slowSync = ZMSingleRequestSync(singleRequestTranscoder: self, groupQueue: managedObjectContext)
     }
 
-    override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
+    override public func nextRequestIfAllowed(for apiVersion: APIVersion) async -> ZMTransportRequest? {
         guard syncStatus.currentSyncPhase == .fetchingLabels || ZMUser.selfUser(in: managedObjectContext).needsToRefetchLabels else { return nil }
 
         slowSync.readyForNextRequestIfNotBusy()

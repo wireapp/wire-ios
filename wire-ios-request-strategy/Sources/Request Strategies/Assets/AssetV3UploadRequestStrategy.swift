@@ -49,8 +49,8 @@ public final class AssetV3UploadRequestStrategy: AbstractRequestStrategy, ZMCont
         return [preprocessor, upstreamSync, self]
     }
 
-    public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        return upstreamSync.nextRequest(for: apiVersion)
+    public override func nextRequestIfAllowed(for apiVersion: APIVersion) async -> ZMTransportRequest? {
+        return await upstreamSync.nextRequest(for: apiVersion)
     }
 
     private static var updatePredicate: NSPredicate {

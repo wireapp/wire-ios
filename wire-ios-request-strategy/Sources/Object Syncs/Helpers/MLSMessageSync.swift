@@ -51,8 +51,8 @@ class MLSMessageSync<Message: MLSMessage>: NSObject, ZMContextChangeTrackerSourc
 
     // MARK: - Request generator
 
-    func nextRequest(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        return dependencySync.nextRequest(for: apiVersion)
+    func nextRequest(for apiVersion: APIVersion) async -> ZMTransportRequest? {
+        return await dependencySync.nextRequest(for: apiVersion)
     }
 
     // MARK: - Methods

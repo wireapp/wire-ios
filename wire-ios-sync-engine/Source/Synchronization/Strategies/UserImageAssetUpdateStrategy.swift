@@ -127,7 +127,7 @@ public final class UserImageAssetUpdateStrategy: AbstractRequestStrategy, ZMCont
         }
     }
 
-    public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
+    public override func nextRequestIfAllowed(for apiVersion: APIVersion) async -> ZMTransportRequest? {
         for size in ProfileImageSize.allSizes {
             let requestSync = downstreamRequestSyncs[size]
             if let request = requestSync?.nextRequest(for: apiVersion) {

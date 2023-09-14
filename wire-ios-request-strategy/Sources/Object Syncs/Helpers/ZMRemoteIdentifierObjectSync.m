@@ -49,10 +49,11 @@
     return self;
 }
 
-- (ZMTransportRequest *)nextRequestForAPIVersion:(APIVersion)apiVersion;
+- (void)nextRequestForAPIVersion:(APIVersion)apiVersion completion:(void (^ _Nonnull)(ZMTransportRequest * _Nullable))completionBlock
 {
     if (self.remoteIdentifiersThatNeedToBeDownloaded.count == 0) {
-        return nil;
+        completionBlock(nil);
+        return;
     }
 
     id <ZMRemoteIdentifierObjectTranscoder> transcoder = self.transcoder;
@@ -91,7 +92,7 @@
         }
         [self.managedObjectContext enqueueDelayedSave];
     }]];
-    return request;
+    completionBlock(request);
 }
 
 - (void)setRemoteIdentifiersAsNeedingDownload:(NSSet<NSUUID *> *)remoteIdentifiers;
@@ -131,5 +132,7 @@
     [remoteIDsThatWillBeDownloaded unionSet:self.remoteIdentifiersInProgress];
     return [remoteIDsThatWillBeDownloaded set];
 }
+
+
 
 @end

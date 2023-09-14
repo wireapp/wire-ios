@@ -75,7 +75,7 @@ public class ConnectionRequestStrategy: AbstractRequestStrategy, ZMRequestGenera
         updateSync.transcoder = self
     }
 
-    public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
+    public override func nextRequestIfAllowed(for apiVersion: APIVersion) async -> ZMTransportRequest? {
         if syncProgress.currentSyncPhase == .fetchingConnections {
             fetchAllConnections(for: apiVersion)
         }

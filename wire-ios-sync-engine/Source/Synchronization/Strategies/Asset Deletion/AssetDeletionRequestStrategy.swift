@@ -60,7 +60,7 @@ final public class AssetDeletionRequestStrategy: AbstractRequestStrategy, ZMSing
         }
     }
 
-    public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
+    public override func nextRequestIfAllowed(for apiVersion: APIVersion) async -> ZMTransportRequest? {
         requestSync.readyForNextRequestIfNotBusy()
         return requestSync.nextRequest(for: apiVersion)
     }

@@ -151,12 +151,12 @@ public class UserPropertyRequestStrategy: AbstractRequestStrategy {
                                                   groupQueue: managedObjectContext)
     }
 
-    public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
+    public override func nextRequestIfAllowed(for apiVersion: APIVersion) async -> ZMTransportRequest? {
         if ZMUser.selfUser(in: managedObjectContext).needsPropertiesUpdate {
             downstreamSync.readyForNextRequestIfNotBusy()
             return downstreamSync.nextRequest(for: apiVersion)
         } else {
-            return modifiedSync.nextRequest(for: apiVersion)
+            return await modifiedSync.nextRequest(for: apiVersion)
         }
     }
 }

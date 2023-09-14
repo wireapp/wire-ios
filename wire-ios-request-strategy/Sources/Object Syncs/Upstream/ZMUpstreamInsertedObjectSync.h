@@ -45,6 +45,5 @@
                             filter:(NSPredicate *)filter
               managedObjectContext:(NSManagedObjectContext *)context;
 
-- (ZMTransportRequest *)nextRequestForAPIVersion:(APIVersion)apiVersion;
 
 @end

@@ -61,7 +61,7 @@ final class PushNotificationStrategy: AbstractRequestStrategy, ZMRequestGenerato
 
     // MARK: - Methods
 
-    public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
+    public override func nextRequestIfAllowed(for apiVersion: APIVersion) async -> ZMTransportRequest? {
         return nextRequest(for: apiVersion)
     }
 

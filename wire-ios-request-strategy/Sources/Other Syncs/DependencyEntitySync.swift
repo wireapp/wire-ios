@@ -93,7 +93,7 @@ class DependencyEntitySync<Transcoder: EntityTranscoder>: NSObject, ZMContextCha
         }
     }
 
-    public func nextRequest(for apiVersion: APIVersion) -> ZMTransportRequest? {
+    func nextRequest(for apiVersion: APIVersion) async -> ZMTransportRequest? {
         guard let entity = entitiesWithoutDependencies.first else { return nil }
 
         if let message = entity as? (any ProteusMessage) {

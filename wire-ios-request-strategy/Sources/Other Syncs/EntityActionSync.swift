@@ -25,7 +25,8 @@ class EntityActionSync: NSObject, ZMRequestGenerator {
     init(actionHandlers: [ZMRequestGenerator]) {
         self.actionHandlers = actionHandlers
     }
-    func nextRequest(for apiVersion: APIVersion) -> ZMTransportRequest? {
+
+    func nextRequest(for apiVersion: APIVersion) async -> ZMTransportRequest? {
         return actionHandlers.nextRequest(for: apiVersion)
     }
 

@@ -48,8 +48,8 @@ public final class MLSRequestStrategy: AbstractRequestStrategy {
 
     // MARK: - Requests
 
-    public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        return entitySync.nextRequest(for: apiVersion)
+    public override func nextRequestIfAllowed(for apiVersion: APIVersion) async -> ZMTransportRequest? {
+        return await entitySync.nextRequest(for: apiVersion)
     }
 
 }

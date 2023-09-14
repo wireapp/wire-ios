@@ -90,7 +90,8 @@ public class IdentifierObjectSync<Transcoder: IdentifierObjectSyncTranscoder>: N
         pending.subtract(identifiers)
     }
 
-    public func nextRequest(for apiVersion: APIVersion) -> ZMTransportRequest? {
+    public func nextRequest(for apiVersion: WireTransport.APIVersion) async -> ZMTransportRequest? {
+
         guard !pending.isEmpty, let fetchLimit = transcoder?.fetchLimit else { return nil }
 
         let scheduled = Set(pending.prefix(fetchLimit))

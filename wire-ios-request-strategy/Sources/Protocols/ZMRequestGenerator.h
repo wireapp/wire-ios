@@ -24,7 +24,7 @@
 
 @protocol ZMRequestGenerator <NSObject>
 
-- (ZMTransportRequest * __nullable)nextRequestForAPIVersion:(APIVersion)apiVersion;
+- (void)nextRequestForAPIVersion:(APIVersion)apiVersion completion:(void (^_Nonnull)(ZMTransportRequest *_Nullable))completionBlock;
 
 @end
 

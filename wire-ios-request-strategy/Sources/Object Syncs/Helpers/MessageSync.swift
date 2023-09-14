@@ -52,7 +52,7 @@ public class MessageSync<Message: ProteusMessage & MLSMessage>: NSObject, ZMCont
 
     // MARK: - Request generator
 
-    public func nextRequest(for apiVersion: APIVersion) -> ZMTransportRequest? {
+    public func nextRequest(for apiVersion: APIVersion) async -> ZMTransportRequest? {
         return [proteusMessageSync, mlsMessageSync].nextRequest(for: apiVersion)
     }
 

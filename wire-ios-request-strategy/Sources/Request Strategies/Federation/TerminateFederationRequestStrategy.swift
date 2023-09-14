@@ -50,7 +50,7 @@ public final class TerminateFederationRequestStrategy: AbstractRequestStrategy {
 
     // MARK: - Request
 
-    public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
+    public override func nextRequestIfAllowed(for apiVersion: APIVersion) async -> ZMTransportRequest? {
         return nil
     }
 

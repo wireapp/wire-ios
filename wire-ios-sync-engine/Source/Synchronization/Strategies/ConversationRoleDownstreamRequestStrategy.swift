@@ -64,7 +64,7 @@ public final class ConversationRoleDownstreamRequestStrategy: AbstractRequestStr
 
     }
 
-    public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
+    public override func nextRequestIfAllowed(for apiVersion: APIVersion) async -> ZMTransportRequest? {
         return downstreamSync.nextRequest(for: apiVersion)
     }
 

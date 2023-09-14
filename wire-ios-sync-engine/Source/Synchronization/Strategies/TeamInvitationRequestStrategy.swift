@@ -56,7 +56,7 @@ public final class TeamInvitationRequestStrategy: AbstractRequestStrategy {
         self.teamInvitationStatus = teamInvitationStatus
     }
 
-    override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
+    public override func nextRequestIfAllowed(for apiVersion: APIVersion) async -> ZMTransportRequest? {
         guard let teamId = ZMUser.selfUser(in: managedObjectContext).team?.remoteIdentifier,
               let email = teamInvitationStatus?.nextEmail() else { return nil }
 

@@ -28,15 +28,15 @@
 @interface ZMDownstreamObjectSyncWithWhitelist : NSObject <ZMObjectSync>
 
 /// @param predicateForObjectsToDownload the predicate that will be used to select which object to download
-- (instancetype)initWithTranscoder:(id<ZMDownstreamTranscoder>)transcoder
-                        entityName:(NSString *)entityName
-     predicateForObjectsToDownload:(NSPredicate *)predicateForObjectsToDownload
-              managedObjectContext:(NSManagedObjectContext *)moc;
+- (instancetype _Nonnull )initWithTranscoder:(id<ZMDownstreamTranscoder>_Nonnull)transcoder
+                        entityName:(NSString *_Nonnull)entityName
+     predicateForObjectsToDownload:(NSPredicate *_Nonnull)predicateForObjectsToDownload
+              managedObjectContext:(NSManagedObjectContext *_Nonnull)moc;
 
 /// Adds an object to the whitelist. It will later be removed once downloaded and not matching the whitelist predicate
-- (void)whiteListObject:(ZMManagedObject *)object;
+- (void)whiteListObject:(ZMManagedObject *_Nullable)object;
 
 /// Returns a request to download the next object
-- (ZMTransportRequest *)nextRequestForAPIVersion:(APIVersion)apiVersion;
+- (void)nextRequestForAPIVersion:(APIVersion)apiVersion completion:(void (^ _Nonnull)(ZMTransportRequest * _Nullable))completionBlock;
 
 @end

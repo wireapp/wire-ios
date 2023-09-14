@@ -75,9 +75,9 @@
     return self.innerDownstreamSync.hasOutstandingItems;
 }
 
-- (ZMTransportRequest *)nextRequestForAPIVersion:(APIVersion)apiVersion
+- (void)nextRequestForAPIVersion:(APIVersion)apiVersion completion:(void (^ _Nonnull)(ZMTransportRequest * _Nullable))completionBlock
 {
-    return [self.innerDownstreamSync nextRequestForAPIVersion:apiVersion];
+    [self.innerDownstreamSync nextRequestForAPIVersion:apiVersion completion:completionBlock];
 }
 
 - (ZMTransportRequest *)requestForFetchingObject:(ZMManagedObject *)object downstreamSync:(id<ZMObjectSync> __unused)downstreamSync apiVersion:(APIVersion)apiVersion
@@ -94,5 +94,8 @@
 {
     return [self.transcoder updateObject:object withResponse:response downstreamSync:self];
 }
+
+
+
 
 @end

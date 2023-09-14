@@ -87,12 +87,14 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
 
     // MARK: - Methods
 
-    public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        let request = callConfigRequestSync.nextRequest(for: apiVersion) ??
-                      clientDiscoverySync.nextRequest(for: apiVersion) ??
-                      messageSync.nextRequest(for: apiVersion)
-
-        return request
+    public override func nextRequestIfAllowed(for apiVersion: APIVersion) async -> ZMTransportRequest? {
+        let generators: [ZMRequestGenerator] = [callConfigRequestSync, clientDiscoverySync, messageSync]
+        for generator in generators {
+            if let request = await generator.nextRequest(for: apiVersion) {
+                return request
+            }
+        }
+        return nil
     }
 
     public func dropPendingCallMessages(for conversation: ZMConversation) {

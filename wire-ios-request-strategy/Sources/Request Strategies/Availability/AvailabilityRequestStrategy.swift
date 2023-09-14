@@ -36,8 +36,8 @@ public class AvailabilityRequestStrategy: AbstractRequestStrategy {
                                                          managedObjectContext: managedObjectContext)
     }
 
-    public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        return modifiedSync.nextRequest(for: apiVersion)
+    public override func nextRequestIfAllowed(for apiVersion: APIVersion) async -> ZMTransportRequest? {
+        return await modifiedSync.nextRequest(for: apiVersion)
     }
 
     public var expirationReasonCode: NSNumber?
