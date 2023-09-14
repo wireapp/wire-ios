@@ -34,7 +34,6 @@ final class ConversationSenderMessageDetailsCellSnapshotTests: BaseSnapshotTestC
         super.setUp()
         mockUser = MockUserType.createUser(name: "Bruno", inTeam: teamID)
         mockUser.isConnected = true
-        isRecording = true
         sut = ConversationSenderMessageDetailsCell()
 
         sut.translatesAutoresizingMaskIntoConstraints = false
