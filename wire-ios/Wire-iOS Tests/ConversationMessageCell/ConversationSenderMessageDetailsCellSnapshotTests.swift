@@ -34,11 +34,11 @@ final class ConversationSenderMessageDetailsCellSnapshotTests: BaseSnapshotTestC
         super.setUp()
         mockUser = MockUserType.createUser(name: "Bruno", inTeam: teamID)
         mockUser.isConnected = true
-
+        isRecording = true
         sut = ConversationSenderMessageDetailsCell()
 
-        sut.frame = CGRect(x: 0, y: 0, width: 320, height: 0)
         sut.translatesAutoresizingMaskIntoConstraints = false
+        sut.widthAnchor.constraint(equalToConstant: 320).isActive = true
 
         sut.backgroundColor = SemanticColors.View.backgroundConversationView
     }
