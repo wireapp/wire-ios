@@ -1,0 +1,219 @@
+//
+// Wire
+// Copyright (C) 2021 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
+
+import SnapshotTesting
+import XCTest
+@testable import Wire
+
+final class ConversationSenderMessageDetailsCellSnapshotTests: BaseSnapshotTestCase {
+
+    // MARK: - Properties
+
+    var sut: ConversationSenderMessageDetailsCell!
+    var teamID = UUID()
+    var mockUser: MockUserType!
+    var mockSelfUser: MockUserType!
+
+    // MARK: - setUp
+
+    override func setUp() {
+        super.setUp()
+        mockUser = MockUserType.createUser(name: "Bruno", inTeam: teamID)
+        mockUser.isConnected = true
+        mockSelfUser = MockUserType.createSelfUser(name: "George Johnson", inTeam: teamID)
+        SelfUser.provider = SelfProvider(selfUser: mockSelfUser)
+
+        sut = ConversationSenderMessageDetailsCell()
+
+        sut.frame = CGRect(x: 0, y: 0, width: 320, height: 0)
+        sut.translatesAutoresizingMaskIntoConstraints = false
+
+        sut.backgroundColor = SemanticColors.View.backgroundConversationView
+    }
+
+    // MARK: - tearDown
+
+    override func tearDown() {
+        sut = nil
+        mockUser = nil
+        mockSelfUser = nil
+        super.tearDown()
+    }
+
+    // MARK: - Snapshot Tests
+
+    func test_SenderIsExternal_InConversation() {
+        // GIVEN
+        mockUser.teamRole = .partner
+        let configuration = ConversationSenderMessageDetailsCell.Configuration(
+            user: mockUser,
+            indicator: .none,
+            teamRoleIndicator: .externalPartner,
+            timestamp: "1/1/70, 1:00 AM"
+        )
+
+        // WHEN
+        sut.configure(with: configuration, animated: false)
+
+        // THEN
+        verifyInAllColorSchemes(matching: sut)
+    }
+
+    func test_SenderIsFederated_InConversation() {
+        // GIVEN
+        mockUser.isFederated = true
+        let configuration = ConversationSenderMessageDetailsCell.Configuration(
+            user: mockUser,
+            indicator: .none,
+            teamRoleIndicator: .federated,
+            timestamp: "1/1/70, 1:00 AM"
+        )
+
+        // WHEN
+        sut.configure(with: configuration, animated: false)
+
+        // THEN
+        verifyInAllColorSchemes(matching: sut)
+    }
+
+    func test_SenderIsGuest_InConversation() {
+        // GIVEN
+        mockUser.isGuestInConversation = true
+        let configuration = ConversationSenderMessageDetailsCell.Configuration(
+            user: mockUser,
+            indicator: .none,
+            teamRoleIndicator: .guest,
+            timestamp: "1/1/70, 1:00 AM"
+        )
+
+        // WHEN
+        sut.configure(with: configuration, animated: false)
+
+        // THEN
+        verifyInAllColorSchemes(matching: sut)
+    }
+
+    func test_SenderIsBot_InConversation() {
+        // GIVEN
+        mockUser.mockedIsServiceUser = true
+        let configuration = ConversationSenderMessageDetailsCell.Configuration(
+            user: mockUser,
+            indicator: .none,
+            teamRoleIndicator: .service,
+            timestamp: "1/1/70, 1:00 AM"
+        )
+
+        // WHEN
+        sut.configure(with: configuration, animated: false)
+
+        // THEN
+        verifyInAllColorSchemes(matching: sut)
+    }
+
+    func test_SenderIsTeamMember_InConversation() {
+        // GIVEN
+        mockUser.teamRole = .member
+        let configuration = ConversationSenderMessageDetailsCell.Configuration(
+            user: mockUser,
+            indicator: .none,
+            teamRoleIndicator: .none,
+            timestamp: "1/1/70, 1:00 AM"
+        )
+
+        // WHEN
+        sut.configure(with: configuration, animated: false)
+
+        // THEN
+        verifyInAllColorSchemes(matching: sut)
+    }
+
+    func test_MessageHasBeenDeleted() {
+        mockUser.teamRole = .member
+        let configuration = ConversationSenderMessageDetailsCell.Configuration(
+            user: mockUser,
+            indicator: .deleted,
+            teamRoleIndicator: .none,
+            timestamp: "1/1/70, 1:00 AM"
+        )
+
+        // WHEN
+        sut.configure(with: configuration, animated: false)
+
+        // THEN
+        verifyInAllColorSchemes(matching: sut)
+    }
+
+    func test_MessageHasBeenEdited() {
+        mockUser.teamRole = .member
+        let configuration = ConversationSenderMessageDetailsCell.Configuration(
+            user: mockUser,
+            indicator: .edited,
+            teamRoleIndicator: .none,
+            timestamp: "1/1/70, 1:00 AM"
+        )
+
+        // WHEN
+        sut.configure(with: configuration, animated: false)
+
+        // THEN
+        verifyInAllColorSchemes(matching: sut)
+    }
+
+    func test_SenderIsGuestWithALongName_AndMessageHasBeenEdited() {
+        // GIVEN
+        mockUser = MockUserType.createUser(
+            name: "Bruno with a really really really really really really really really really really long name",
+            inTeam: teamID
+        )
+        mockUser.isGuestInConversation = true
+        let configuration = ConversationSenderMessageDetailsCell.Configuration(
+            user: mockUser,
+            indicator: .edited,
+            teamRoleIndicator: .guest,
+            timestamp: "1/1/70, 1:00 AM"
+        )
+
+        // WHEN
+        sut.configure(with: configuration, animated: false)
+
+        // THEN
+        verifyInAllColorSchemes(matching: sut)
+    }
+
+    func test_SenderIsGuestWithALongName_AndMessageHasBeenDeleted() {
+        // GIVEN
+        mockUser = MockUserType.createUser(
+            name: "Bruno with a really really really really really really really really really really long name",
+            inTeam: teamID
+        )
+        mockUser.isGuestInConversation = true
+        let configuration = ConversationSenderMessageDetailsCell.Configuration(
+            user: mockUser,
+            indicator: .deleted,
+            teamRoleIndicator: .guest,
+            timestamp: "1/1/70, 1:00 AM"
+        )
+
+        // WHEN
+        sut.configure(with: configuration, animated: false)
+
+        // THEN
+        verifyInAllColorSchemes(matching: sut)
+    }
+
+}

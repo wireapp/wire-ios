@@ -161,6 +161,8 @@ class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
 
             authorLabel.topAnchor.constraint(equalTo: self.topAnchor),
             authorLabel.bottomAnchor.constraint(equalTo: self.bottomAnchor),
+            self.bottomAnchor.constraint(greaterThanOrEqualTo: authorLabel.bottomAnchor),
+            self.bottomAnchor.constraint(greaterThanOrEqualTo: avatar.bottomAnchor),
 
             avatar.centerYAnchor.constraint(equalTo: authorLabel.firstBaselineAnchor),
             dateLabel.firstBaselineAnchor.constraint(equalTo: authorLabel.firstBaselineAnchor)
