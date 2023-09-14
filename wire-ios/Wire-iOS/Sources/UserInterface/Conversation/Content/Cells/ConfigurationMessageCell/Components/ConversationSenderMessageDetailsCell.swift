@@ -160,7 +160,6 @@ class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
             trailingDateLabelConstraint,
 
             authorLabel.topAnchor.constraint(equalTo: self.topAnchor),
-            authorLabel.bottomAnchor.constraint(equalTo: self.bottomAnchor),
             self.bottomAnchor.constraint(greaterThanOrEqualTo: authorLabel.bottomAnchor),
             self.bottomAnchor.constraint(greaterThanOrEqualTo: avatar.bottomAnchor),
 
