@@ -33,6 +33,7 @@
                                 readyForRequests:(BOOL)readyForRequests
                             workingGroup:(ZMSDispatchGroup *)workingGroup
                              application:(id<ZMApplication>)application
+                           minTLSVersion:(NSString *)minTLSVersion
                        completionHandler:(void (^)(NSString *minVersion, NSArray *excludedVersions))completionHandler;
 
 @end
