@@ -930,11 +930,11 @@ public final class MLSService: MLSServiceInterface {
                 context: context.notificationContext
             )
 
-            let localEpoch = try coreCrypto.perform {
-                return try $0.conversationEpoch(conversationId: subgroup.groupID.bytes)
-            }
-
-            guard localEpoch != subgroup.epoch else {
+            guard isConversationOutOfSync(
+                conversationInfo.conversation,
+                subgroup: subgroup,
+                context: context
+            ) else {
                 logger.info("subgroup is not out of sync (parent: \(parentGroupID.safeForLoggingDescription), subgroup: \(subgroup.groupID.safeForLoggingDescription))")
                 return
             }
@@ -981,20 +981,30 @@ public final class MLSService: MLSServiceInterface {
 
     private func isConversationOutOfSync(
         _ conversation: ZMConversation,
+        subgroup: MLSSubgroup? = nil,
         coreCrypto: CoreCryptoProtocol,
         context: NSManagedObjectContext
     ) -> Bool {
         var isOutOfSync: Bool = false
 
         context.performAndWait {
-            guard let groupID = conversation.mlsGroupID else {
-                return
+            var groupID: MLSGroupID?
+            var epoch: UInt64
+
+            if let subgroup = subgroup {
+                groupID = subgroup.groupID
+                epoch = UInt64(subgroup.epoch)
+            } else {
+                groupID = conversation.mlsGroupID
+                epoch = conversation.epoch
             }
 
+            guard let groupID = groupID else { return }
+
             do {
-                let epoch = try coreCrypto.conversationEpoch(conversationId: groupID.bytes)
-                isOutOfSync = epoch != conversation.epoch
-                logger.info("epochs(remote: \(conversation.epoch), local: \(epoch)) for (\(groupID.safeForLoggingDescription))")
+                let localEpoch = try coreCrypto.conversationEpoch(conversationId: groupID.bytes)
+                isOutOfSync = localEpoch != epoch
+                logger.info("epochs(remote: \(epoch), local: \(localEpoch)) for (\(groupID.safeForLoggingDescription))")
             } catch {
                 logger.info("cannot resolve conversation epoch \(String(describing: error)) for (\(groupID.safeForLoggingDescription))")
                 return
@@ -1006,11 +1016,13 @@ public final class MLSService: MLSServiceInterface {
 
     private func isConversationOutOfSync(
         _ conversation: ZMConversation,
+        subgroup: MLSSubgroup? = nil,
         context: NSManagedObjectContext
     ) -> Bool {
         return coreCrypto.perform {
             return isConversationOutOfSync(
                 conversation,
+                subgroup: subgroup,
                 coreCrypto: $0,
                 context: context
             )
@@ -1192,19 +1204,21 @@ public final class MLSService: MLSServiceInterface {
         for groupID: MLSGroupID,
         subconversationType: SubgroupType?
     ) throws -> MLSDecryptResult? {
+        typealias DecryptionError = MLSDecryptionService.MLSMessageDecryptionError
+
         do {
             return try decryptionService.decrypt(
                 message: message,
                 for: groupID,
                 subconversationType: subconversationType
             )
+        } catch DecryptionError.wrongEpoch {
+            fetchAndRepairConversation(
+                with: groupID,
+                subconversationType: subconversationType
+            )
+            throw DecryptionError.wrongEpoch
         } catch {
-            if case MLSDecryptionService.MLSMessageDecryptionError.wrongEpoch = error {
-                fetchAndRepairConversation(
-                    with: groupID,
-                    subconversationType: subconversationType
-                )
-            }
             throw error
         }
     }
