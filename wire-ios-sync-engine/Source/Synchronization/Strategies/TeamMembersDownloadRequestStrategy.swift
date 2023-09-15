@@ -38,12 +38,13 @@ public final class TeamMembersDownloadRequestStrategy: AbstractRequestStrategy, 
         sync = ZMSingleRequestSync(singleRequestTranscoder: self, groupQueue: managedObjectContext)
     }
 
-    override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
+
+    public override func nextRequest(for apiVersion: APIVersion) async -> ZMTransportRequest? {
         guard syncStatus.currentSyncPhase == .fetchingTeamMembers else { return nil }
 
         sync.readyForNextRequestIfNotBusy()
 
-        return sync.nextRequest(for: apiVersion)
+        return await sync.nextRequest(for: apiVersion)
     }
 
 // MARK: - ZMSingleRequestTranscoder

@@ -66,7 +66,7 @@ public class LabelDownstreamRequestStrategy: AbstractRequestStrategy, ZMEventCon
 
         slowSync.readyForNextRequestIfNotBusy()
 
-        return slowSync.nextRequest(for: apiVersion)
+        return await slowSync.nextRequest(for: apiVersion)
     }
 
     func update(with transportData: Data) {
@@ -150,3 +150,17 @@ public class LabelDownstreamRequestStrategy: AbstractRequestStrategy, ZMEventCon
     }
 
 }
+//import WireTransport
+//
+//extension Array where Element: ZMRequestGenerator {
+//
+//    func nextRequestForAPIVersion(_ apiVersion: APIVersion) async -> ZMTransportRequest? {
+//        for element in self {
+//            if let result = await element.nextRequest(for: apiVersion) {
+//                return result
+//            }
+//        }
+//        return nil
+//    }
+//}
+

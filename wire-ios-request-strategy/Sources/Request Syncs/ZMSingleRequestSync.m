@@ -70,7 +70,7 @@
     }
 }
 
-- (ZMTransportRequest *)nextRequestForAPIVersion:(APIVersion)apiVersion
+- (void)nextRequestForAPIVersion:(APIVersion)apiVersion completion:(void (^_Nonnull)(ZMTransportRequest *_Nullable))completionBlock
 {
     id<ZMSingleRequestTranscoder> transcoder = self.transcoder;
     if(self.currentRequest == nil && self.status == ZMSingleRequestReady) {
@@ -89,9 +89,10 @@
             ZM_STRONG(self);
             [self processResponse:response forRequest:self.currentRequest counterValueAtStart:currentCounter];
         }]];
-        return request;
+        completionBlock(request);
+        return;
     }
-    return nil;
+    completionBlock(nil);
 }
 
 - (void)processResponse:(ZMTransportResponse *)response forRequest:(ZMTransportRequest * __unused)request counterValueAtStart:(int)counterValue

@@ -137,7 +137,7 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
         return modifiedPredicate
     }
 
-    public func nextRequest(for apiVersion: APIVersion) -> ZMTransportRequest? {
+    public func nextRequest(for apiVersion: APIVersion) async -> ZMTransportRequest? {
         guard let clientRegistrationStatus = self.clientRegistrationStatus,
             let clientUpdateStatus = self.clientUpdateStatus else {
                 return nil
@@ -149,22 +149,22 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
 
         if clientUpdateStatus.currentPhase == .fetchingClients {
             fetchAllClientsSync.readyForNextRequestIfNotBusy()
-            return fetchAllClientsSync.nextRequest(for: apiVersion)
+            return await fetchAllClientsSync.nextRequest(for: apiVersion)
         }
 
         if clientUpdateStatus.currentPhase == .deletingClients {
-            if let request =  deleteSync.nextRequest(for: apiVersion) {
+            if let request = await deleteSync.nextRequest(for: apiVersion) {
                 return request
             }
         }
 
         if clientRegistrationStatus.currentPhase == .unregistered {
-            if let request = insertSync.nextRequest(for: apiVersion) {
+            if let request = await insertSync.nextRequest(for: apiVersion) {
                 return request
             }
         }
 
-        if let request = modifiedSync.nextRequest(for: apiVersion) {
+        if let request = await modifiedSync.nextRequest(for: apiVersion) {
             return request
         }
 

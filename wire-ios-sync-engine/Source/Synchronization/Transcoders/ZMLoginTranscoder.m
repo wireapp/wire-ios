@@ -87,26 +87,40 @@ NSTimeInterval DefaultPendingValidationLoginAttemptInterval = 5;
     [self.timedDownstreamSync invalidate];
 }
 
-- (ZMTransportRequest *)nextRequestForAPIVersion:(APIVersion)apiVersion
+-(void)nextRequestForAPIVersion:(APIVersion)apiVersion completion:(void (^)(ZMTransportRequest * _Nullable))completionBlock
 {
     ZMAuthenticationStatus *authenticationStatus = self.authenticationStatus;
-    ZMTransportRequest *request;
-    
-    request = [self.verificationResendRequest nextRequestForAPIVersion:apiVersion];
-    if(request) {
-        return request;
-    }
-    
-    if(authenticationStatus.currentPhase == ZMAuthenticationPhaseLoginWithPhone) {
-        [self.loginWithPhoneNumberSync readyForNextRequestIfNotBusy];
-        return [self.loginWithPhoneNumberSync nextRequestForAPIVersion:apiVersion];
-    }
-    if(authenticationStatus.currentPhase == ZMAuthenticationPhaseLoginWithEmail) {
-        [self.timedDownstreamSync readyForNextRequestIfNotBusy];
-        request = [self.timedDownstreamSync nextRequestForAPIVersion:apiVersion];
-    }
 
-    return request;
+    [self.verificationResendRequest nextRequestForAPIVersion:apiVersion completion:^(ZMTransportRequest * _Nullable request) {
+        if(request) {
+            completionBlock(request);
+            return;
+        }
+
+        if(authenticationStatus.currentPhase == ZMAuthenticationPhaseLoginWithPhone) {
+            [self.loginWithPhoneNumberSync readyForNextRequestIfNotBusy];
+            [self.loginWithPhoneNumberSync nextRequestForAPIVersion:apiVersion completion:^(ZMTransportRequest * _Nullable newRequest) {
+                if(newRequest) {
+                    completionBlock(newRequest);
+                    return;
+                }
+
+
+            }];
+        }
+
+        if(authenticationStatus.currentPhase == ZMAuthenticationPhaseLoginWithEmail) {
+            [self.timedDownstreamSync readyForNextRequestIfNotBusy];
+            [self.timedDownstreamSync nextRequestForAPIVersion:apiVersion completion:^(ZMTransportRequest * _Nullable newRequest) {
+                if(newRequest) {
+                    completionBlock(newRequest);
+                    return;
+                }
+
+            }];
+        }
+    }];
+    completionBlock(nil);
 }
 
 - (void)processEvents:(NSArray<ZMUpdateEvent *> __unused *)events
@@ -239,5 +253,6 @@ NSTimeInterval DefaultPendingValidationLoginAttemptInterval = 5;
     NSString *label = [response.payload asDictionary][@"label"];
     return response.HTTPStatus == 403 && [label isEqualToString:@"suspended"];
 }
+
 
 @end

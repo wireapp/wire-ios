@@ -97,7 +97,7 @@
     RequireString(self.isInvalidated, "Did not invalidate timer before dealloc");
 }
 
-- (ZMTransportRequest *)nextRequestForAPIVersion:(APIVersion)apiVersion
+- (void)nextRequestForAPIVersion:(APIVersion)apiVersion completion:(void (^)(ZMTransportRequest * _Nullable))completionBlock
 {
     if(self.shouldReturnRequest && ( ! self.isInvalidated) ) {
         
@@ -116,10 +116,11 @@
                 [group leave];
             });
         }
-        
-        return [super nextRequestForAPIVersion:apiVersion];
+
+        [super nextRequestForAPIVersion:apiVersion completion:completionBlock];
+        return;
     }
-    return nil;
+    completionBlock(nil);
 }
 
 - (void)timerDidExpire

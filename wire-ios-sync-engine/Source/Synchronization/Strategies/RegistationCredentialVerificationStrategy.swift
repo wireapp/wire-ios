@@ -91,7 +91,7 @@ extension RegistationCredentialVerificationStrategy: RequestStrategy {
         switch registrationStatus.phase {
         case .sendActivationCode, .checkActivationCode:
             codeSendingSync.readyForNextRequestIfNotBusy()
-            return codeSendingSync.nextRequest(for: apiVersion)
+            return await codeSendingSync.nextRequest(for: apiVersion)
         default:
             return nil
         }

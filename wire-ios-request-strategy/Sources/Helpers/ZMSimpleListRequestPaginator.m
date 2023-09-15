@@ -75,7 +75,7 @@ ZM_EMPTY_ASSERTING_INIT()
         completionBlock(nil);
         return;
     }
-    completionBlock([self.singleRequestSync nextRequestForAPIVersion:apiVersion]);
+    [self.singleRequestSync nextRequestForAPIVersion:apiVersion completion:completionBlock];
 }
 
 - (ZMSingleRequestProgress)status

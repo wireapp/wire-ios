@@ -151,7 +151,7 @@ ZM_EMPTY_ASSERTING_INIT()
 }
 #endif
 
-- (ZMTransportRequest *)nextRequestForAPIVersion:(APIVersion)apiVersion
+- (void)nextRequestForAPIVersion:(APIVersion)apiVersion completion:(void (^)(ZMTransportRequest * _Nullable))completionBlock
 {
     if (!self.didFetchObjects) {
         self.didFetchObjects = YES;
@@ -159,18 +159,31 @@ ZM_EMPTY_ASSERTING_INIT()
     }
 
     if(self.tornDown) {
-        return nil;
+        completionBlock(nil);
+        return;
     }
 
-    for (id<RequestStrategy> requestStrategy in self.strategyDirectory.requestStrategies) {
-        ZMTransportRequest *request = [requestStrategy nextRequestForAPIVersion:apiVersion];
+    NSAssert(![NSThread isMainThread], @"should not run on main Thread");
+    NSLog(@"Running on thread %@", NSThread.currentThread.name);
 
-        if (request != nil) {
-            return request;
+    // semaphore to wait for each request to complete
+    dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
+    __block ZMTransportRequest* returnedRequest = nil;
+
+    for (id<RequestStrategy> requestStrategy in self.strategyDirectory.requestStrategies) {
+        [requestStrategy nextRequestForAPIVersion:apiVersion completion:^(ZMTransportRequest * _Nullable request) {
+            returnedRequest = request;
+            dispatch_semaphore_signal(semaphore);
+        }];
+
+        dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
+
+        if (returnedRequest != nil) {
+            break;
         }
     }
 
-    return nil;
+    completionBlock(returnedRequest);
 }
 
 @end

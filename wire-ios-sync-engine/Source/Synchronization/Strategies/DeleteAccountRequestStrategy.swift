@@ -47,7 +47,7 @@ public final class DeleteAccountRequestStrategy: AbstractRequestStrategy, ZMSing
         }
 
         self.deleteSync.readyForNextRequestIfNotBusy()
-        return self.deleteSync.nextRequest(for: apiVersion)
+        return await self.deleteSync.nextRequest(for: apiVersion)
     }
 
     // MARK: - ZMSingleRequestTranscoder

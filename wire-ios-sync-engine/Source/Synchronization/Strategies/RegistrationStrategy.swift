@@ -64,11 +64,11 @@ extension RegistrationStrategy: ZMSingleRequestTranscoder {
 }
 
 extension RegistrationStrategy: RequestStrategy {
-    func nextRequest(for apiVersion: APIVersion) -> ZMTransportRequest? {
+    func nextRequest(for apiVersion: APIVersion) async -> ZMTransportRequest? {
         switch registrationStatus.phase {
         case .createTeam, .createUser:
             registrationSync.readyForNextRequestIfNotBusy()
-            return registrationSync.nextRequest(for: apiVersion)
+            return await registrationSync.nextRequest(for: apiVersion)
         default:
             return nil
         }

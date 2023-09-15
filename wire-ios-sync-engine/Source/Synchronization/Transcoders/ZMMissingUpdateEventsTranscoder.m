@@ -264,17 +264,21 @@ NSUInteger const ZMMissingUpdateEventsTranscoderListPageSize = 500;
             [self.listPaginator resetFetching];
         }
 
-        ZMTransportRequest *request = [self.listPaginator nextRequestForAPIVersion:apiVersion];
-
-        if (self.isFetchingStreamForAPNS && nil != request) {
-            
-            [self.notificationsTracker registerStartStreamFetching];
-            [request addCompletionHandler:[ZMCompletionHandler handlerOnGroupQueue:self.managedObjectContext block:^(__unused ZMTransportResponse * _Nonnull response) {
-                [self.notificationsTracker registerFinishStreamFetching];
-            }]];
-        }
-
-        return request;
+//        [self.listPaginator nextRequestForAPIVersion:apiVersion completion:^(ZMTransportRequest * _Nullable request) {
+//            if (self.isFetchingStreamForAPNS && nil != request) {
+//
+//                [self.notificationsTracker registerStartStreamFetching];
+//                [request addCompletionHandler:[ZMCompletionHandler handlerOnGroupQueue:self.managedObjectContext block:^(__unused ZMTransportResponse * _Nonnull response) {
+//                    [self.notificationsTracker registerFinishStreamFetching];
+//                }]];
+//            }
+//
+//        }:apiVersion];
+//
+//
+//
+//        return request;
+        return nil;
     } else {
         return nil;
     }

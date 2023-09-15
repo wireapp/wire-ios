@@ -146,18 +146,28 @@ static char* const ZMLogTag ZM_UNUSED = "OperationLoop";
             return nil;
         }
 
-        ZMTransportRequest *request = [self.requestStrategy nextRequestForAPIVersion:apiVersion.value];
+        __block ZMTransportRequest *returnedRequest = nil;
+        NSAssert(![NSThread isMainThread], @"should not run on main Thread");
+        NSLog(@"Running on thread %@", NSThread.currentThread.name);
+        // semaphore to wait for each request to complete
+        dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
 
-        [request addCompletionHandler:[ZMCompletionHandler handlerOnGroupQueue:self.syncMOC block:^(ZMTransportResponse *response) {
-            ZM_STRONG(self);
-            
-            [self.syncMOC enqueueDelayedSaveWithGroup:response.dispatchGroup];
-            
-            // Check if there is something to do now and when the save completes
-            [ZMRequestAvailableNotification notifyNewRequestsAvailable:self];
-        }]];
+        [self.requestStrategy nextRequestForAPIVersion:apiVersion.value completion:^(ZMTransportRequest * _Nullable request) {
+            [request addCompletionHandler:[ZMCompletionHandler handlerOnGroupQueue:self.syncMOC block:^(ZMTransportResponse *response) {
+                ZM_STRONG(self);
+
+                [self.syncMOC enqueueDelayedSaveWithGroup:response.dispatchGroup];
+
+                // Check if there is something to do now and when the save completes
+                [ZMRequestAvailableNotification notifyNewRequestsAvailable:self];
+            }]];
+            returnedRequest = request;
+            dispatch_semaphore_signal(semaphore);
+        }];
+
+        dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
         
-        return request;
+        return returnedRequest;
     };
     
 }

@@ -53,16 +53,18 @@
     return self;
 }
 
-- (ZMTransportRequest *)nextRequestForAPIVersion:(APIVersion)apiVersion
+- (void)nextRequestForAPIVersion:(APIVersion)apiVersion completion:(void (^)(ZMTransportRequest * _Nullable))completionBlock
 {
     if (self.authenticationStatus.currentPhase == ZMAuthenticationPhaseRequestPhoneVerificationCodeForLogin) {
         [self.phoneVerificationCodeRequestSync readyForNextRequestIfNotBusy];
-        return [self.phoneVerificationCodeRequestSync nextRequestForAPIVersion:apiVersion];
+        [self.phoneVerificationCodeRequestSync nextRequestForAPIVersion:apiVersion completion:completionBlock];
+        return;
     } else if (self.authenticationStatus.currentPhase == ZMAuthenticationPhaseRequestEmailVerificationCodeForLogin) {
         [self.emailVerificationCodeRequestSync readyForNextRequestIfNotBusy];
-        return [self.emailVerificationCodeRequestSync nextRequestForAPIVersion:apiVersion];
+        [self.emailVerificationCodeRequestSync nextRequestForAPIVersion:apiVersion completion:completionBlock];
+        return;
     }
-    return nil;
+    completionBlock(nil);
 }
 
 #pragma mark - ZMSingleRequestTranscoder

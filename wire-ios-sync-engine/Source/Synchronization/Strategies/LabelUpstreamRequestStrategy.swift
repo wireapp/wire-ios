@@ -30,8 +30,8 @@ public class LabelUpstreamRequestStrategy: AbstractRequestStrategy, ZMContextCha
         self.upstreamSync = ZMSingleRequestSync(singleRequestTranscoder: self, groupQueue: managedObjectContext)
     }
 
-    override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        return upstreamSync.nextRequest(for: apiVersion)
+    public override func nextRequestIfAllowed(for apiVersion: APIVersion) async -> ZMTransportRequest? {
+        return await upstreamSync.nextRequest(for: apiVersion)
     }
 
     // MARK: - ZMContextChangeTracker, ZMContextChangeTrackerSource

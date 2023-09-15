@@ -38,7 +38,7 @@ public class LegalHoldRequestStrategy: AbstractRequestStrategy, ZMSingleRequestT
 
         singleRequstSync.readyForNextRequestIfNotBusy()
 
-        return singleRequstSync.nextRequest(for: apiVersion)
+        return await singleRequstSync.nextRequest(for: apiVersion)
     }
 
     public func request(for sync: ZMSingleRequestSync, apiVersion: APIVersion) -> ZMTransportRequest? {

@@ -58,7 +58,7 @@ public final class SignatureRequestStrategy: AbstractRequestStrategy, ZMSingleRe
                 return nil
             }
             requestSync.readyForNextRequestIfNotBusy()
-            return requestSync.nextRequest(for: apiVersion)
+            return await requestSync.nextRequest(for: apiVersion)
         case .waitingForCodeVerification:
             break
         case .waitingForSignature:
@@ -66,7 +66,7 @@ public final class SignatureRequestStrategy: AbstractRequestStrategy, ZMSingleRe
                 return nil
             }
             retrieveSync.readyForNextRequestIfNotBusy()
-            return retrieveSync.nextRequest(for: apiVersion)
+            return await retrieveSync.nextRequest(for: apiVersion)
         case .signatureInvalid:
             break
         case .finished:

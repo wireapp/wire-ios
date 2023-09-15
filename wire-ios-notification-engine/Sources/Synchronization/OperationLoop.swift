@@ -43,8 +43,18 @@ public final class RequestGeneratorStore {
             if let requestGeneratorSource = strategy as? ZMRequestGeneratorSource {
                 for requestGenerator in requestGeneratorSource.requestGenerators {
                     requestGenerators.append({
-                        guard let apiVersion = BackendInfo.apiVersion else { return nil }
-                        return requestGenerator.nextRequest(for: apiVersion)
+                        requireInternal(!Thread.current.isMainThread, "this should be run on main")
+                        let semaphore = DispatchSemaphore(value: 0)
+                        var returnedValue: ZMTransportRequest? = nil
+
+                        guard let apiVersion = BackendInfo.apiVersion else { return returnedValue }
+
+                        requestGenerator.nextRequest(for: apiVersion) { request in
+                            returnedValue = request
+                            semaphore.signal()
+                        }
+                        semaphore.wait()
+                        return returnedValue
                     })
                 }
             }
@@ -59,8 +69,18 @@ public final class RequestGeneratorStore {
 
             if let requestStrategy = strategy as? RequestStrategy {
                 requestGenerators.append({
-                    guard let apiVersion = BackendInfo.apiVersion else { return nil }
-                    return requestStrategy.nextRequest(for: apiVersion)
+                    requireInternal(!Thread.current.isMainThread, "this should be run on main")
+                    let semaphore = DispatchSemaphore(value: 0)
+                    var returnedValue: ZMTransportRequest? = nil
+
+                    guard let apiVersion = BackendInfo.apiVersion else { return returnedValue }
+
+                    requestStrategy.nextRequest(for: apiVersion) { request in
+                        returnedValue = request
+                        semaphore.signal()
+                    }
+                    semaphore.wait()
+                    return returnedValue
                 })
             }
         }

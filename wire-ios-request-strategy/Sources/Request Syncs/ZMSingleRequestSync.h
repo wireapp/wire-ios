@@ -23,7 +23,7 @@
 @class ZMTransportRequest;
 @class ZMTransportResponse;
 @class ZMSingleRequestSync;
-
+#import "ZMRequestGenerator.h"
 NS_ASSUME_NONNULL_BEGIN
 
 @protocol ZMSingleRequestTranscoder <NSObject>
@@ -41,7 +41,7 @@ typedef NS_ENUM(int, ZMSingleRequestProgress) {
 };
 
 
-@interface ZMSingleRequestSync : NSObject
+@interface ZMSingleRequestSync : NSObject<ZMRequestGenerator>
 
 @property (nonatomic, readonly, weak) id<ZMSingleRequestTranscoder> __nullable transcoder;
 @property (nonatomic, readonly) ZMSingleRequestProgress status;
@@ -58,8 +58,6 @@ typedef NS_ENUM(int, ZMSingleRequestProgress) {
 
 /// mark the completion as "noted" by the client, and goes back to the idle state
 - (void)resetCompletionState;
-
-- (ZMTransportRequest *__nullable)nextRequestForAPIVersion:(APIVersion)apiVersion;
 
 @end
 
