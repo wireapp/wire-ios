@@ -30,6 +30,7 @@
                      readyForRequests:(BOOL)readyForRequests
                          workingGroup:(ZMSDispatchGroup *)workingGroup
                           application:(id<ZMApplication>)application
+                        minTLSVersion:(NSString *)minTLSVersion
                     blacklistCallback:(void (^)(BOOL))blacklistCallback
                        blacklistClass:(Class)blacklistClass;
 

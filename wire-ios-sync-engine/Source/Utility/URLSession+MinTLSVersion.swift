@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2023 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,22 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// Configuration settings file format documentation can be found at:
-// https://help.apple.com/xcode/#/dev745c5c974
+import Foundation
 
-CLIPBOARD_ENABLED=1
-FORCE_CBR_ENABLED=0
-GENERATE_LINK_PREVIEW_ENABLED=1
-CUSTOM_BACKEND_ENABLED=1
-CAMERA_ROLL_ENABLED=1
-BACKUP_ENABLED=1
-FILE_SHARING_ENABLED=1
+@objc
+public extension URLSession {
 
-/// Whether encryption at rest is enabled and can't be disabled.
+    func setMinTLSVersionIfNeeded(_ minTLSVersion: String?) {
+        let minTLSVersion = TLSVersion.minVersionFrom(minTLSVersion)
+        configuration.tlsMinimumSupportedProtocolVersion = minTLSVersion.secValue
+    }
 
-FORCE_ENCRYPTION_AT_REST_ENABLED=0
-
-// The minimum TLS version used by the app.
-// Possible values are [1.2, 1.3].
-
-MIN_TLS_VERSION=1.2
+}
