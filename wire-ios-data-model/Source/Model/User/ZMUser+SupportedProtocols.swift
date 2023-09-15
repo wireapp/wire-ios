@@ -48,7 +48,10 @@ extension ZMUser {
             willChangeValue(forKey: Self.supportedProtocolsKey)
             primitiveSupportedProtocols = newValue.map(\.rawValue)
             didChangeValue(forKey: Self.supportedProtocolsKey)
-            setLocallyModifiedKeys([Self.supportedProtocolsKey])
+
+            if isSelfUser {
+                setLocallyModifiedKeys([Self.supportedProtocolsKey])
+            }
         }
     }
 
