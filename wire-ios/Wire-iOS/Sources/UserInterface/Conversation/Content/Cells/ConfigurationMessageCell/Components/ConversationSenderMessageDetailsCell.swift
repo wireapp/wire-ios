@@ -24,7 +24,6 @@ import WireSyncEngine
 enum Indicator {
     case deleted
     case edited
-    case none
 }
 
 enum TeamRoleIndicator {
@@ -32,7 +31,6 @@ enum TeamRoleIndicator {
     case externalPartner
     case federated
     case service
-    case none
 }
 
 // MARK: - ConversationSenderMessageDetailsCell
@@ -41,8 +39,8 @@ class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
 
     struct Configuration {
         let user: UserType
-        let indicator: Indicator
-        let teamRoleIndicator: TeamRoleIndicator
+        let indicator: Indicator?
+        let teamRoleIndicator: TeamRoleIndicator?
         let timestamp: String?
     }
 
@@ -117,13 +115,9 @@ class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
 
     func configure(with object: Configuration, animated: Bool) {
         let user = object.user
-        let fullName: String
-
         avatar.user = user
 
-        fullName = user.name ?? ""
-
-        configureAuthorLabel(object: object, user: user, fullName: fullName)
+        configureAuthorLabel(object: object)
 
         dateLabel.isHidden = object.timestamp == nil
         dateLabel.text = object.timestamp
@@ -168,10 +162,10 @@ class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
         ])
     }
 
-    private func configureAuthorLabel(object: Configuration, user: UserType, fullName: String) {
-        let textColor: UIColor = user.isServiceUser ? SemanticColors.Label.textDefault : user.accentColor
+    private func configureAuthorLabel(object: Configuration) {
+        let textColor: UIColor = object.user.isServiceUser ? SemanticColors.Label.textDefault : object.user.accentColor
         var attributedString = NSMutableAttributedString(
-            string: fullName,
+            string: object.user.name ?? "",
             attributes: [
                 .foregroundColor: textColor,
                 .font: UIFont.mediumSemiboldFont]
@@ -181,16 +175,16 @@ class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
 
         case .deleted:
             attributedString.append(
-                stringForAttachment(
-                    named: .trash,
+                attachment(
+                    icon: .trash,
                     imageSize: 8
                 )
             )
 
         case .edited:
             attributedString.append(
-                stringForAttachment(
-                    named: .pencil,
+                attachment(
+                    icon: .pencil,
                     imageSize: 8
                 )
             )
@@ -203,34 +197,34 @@ class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
         case .guest:
             accessibilityIdentifier = "img.guest"
             attributedString.append(
-                stringForAttachment(
-                    named: .guest,
-                    imageSize: 12
+                attachment(
+                    from: .guest,
+                    size: 12
                 )
             )
         case .externalPartner:
             accessibilityIdentifier = "img.externalPartner"
             attributedString.append(
-                stringForAttachment(
-                    named: .externalPartner,
-                    imageSize: 12
+                attachment(
+                    from: .externalPartner,
+                    size: 12
 
                 )
             )
         case .federated:
             accessibilityIdentifier = "img.federatedUser"
             attributedString.append(
-                stringForAttachment(
-                    named: .federated,
-                    imageSize: 12
+                attachment(
+                    from: .federated,
+                    size: 12
                 )
             )
         case .service:
             accessibilityIdentifier = "img.serviceUser"
             attributedString.append(
-                stringForAttachment(
-                    named: .bot,
-                    imageSize: 12
+                attachment(
+                    from: .bot,
+                    size: 12
                 )
             )
 
@@ -241,11 +235,11 @@ class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
         authorLabel.attributedText = attributedString
     }
 
-    private func stringForAttachment(named imageName: StyleKitIcon, imageSize: CGFloat) -> NSAttributedString {
+    private func attachment(from icon: StyleKitIcon, size: CGFloat) -> NSAttributedString {
         let textColor: UIColor = SemanticColors.Icon.foregroundDefault
         let attachment = NSTextAttachment()
-        let image = imageName.makeImage(
-            size: StyleKitIcon.Size(floatLiteral: imageSize),
+        let image = icon.makeImage(
+            size: StyleKitIcon.Size(floatLiteral: size),
             color: textColor
         ).with(insets: UIEdgeInsets(top: 0, left: 8, bottom: 0, right: 0), backgroundColor: .clear)
 
@@ -303,8 +297,8 @@ class ConversationSenderMessageCellDescription: ConversationMessageCellDescripti
     init(sender: UserType, message: ZMConversationMessage, timestamp: String?) {
         self.message = message
 
-        var teamRoleIndicator: TeamRoleIndicator = .none
-        var indicator: Indicator = .none
+        var teamRoleIndicator: TeamRoleIndicator?
+        var indicator: Indicator?
 
         if message.isDeletion {
             indicator = .deleted
