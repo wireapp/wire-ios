@@ -189,6 +189,8 @@ class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
                 )
             )
 
+        default:
+            break
         }
 
         switch object.teamRoleIndicator {
