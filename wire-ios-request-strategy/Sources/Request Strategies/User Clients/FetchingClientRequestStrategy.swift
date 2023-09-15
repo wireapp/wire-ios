@@ -112,7 +112,9 @@ public final class FetchingClientRequestStrategy: AbstractRequestStrategy {
     public override func nextRequestIfAllowed(for apiVersion: APIVersion) async -> ZMTransportRequest? {
         // There may exist some clients that need an update, so try to sync any before asking
         // for requests.
-        syncClientsNeedingUpdateIfNeeded()
+        managedObjectContext.performAndWait {
+            syncClientsNeedingUpdateIfNeeded()
+        }
         async let entityRequest = entitySync.nextRequest(for: apiVersion)
 
         let generators: [ZMRequestGenerator] = [userClientsByUserClientID, userClientsByUserID, userClientsByQualifiedUserID, entitySync]

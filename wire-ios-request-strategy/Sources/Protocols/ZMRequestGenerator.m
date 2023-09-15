@@ -27,15 +27,26 @@
 
 - (ZMTransportRequest *)nextRequestForAPIVersion:(APIVersion)apiVersion;
 {
-    for (uint i = 0; i < self.count; i++) {
-        ZMTransportRequest *request = [[self objectAtIndex:i] nextRequestForAPIVersion:apiVersion];
+    __block ZMTransportRequest *returnedRequest = nil;
+    NSAssert(![NSThread isMainThread], @"should not run on main Thread");
+    NSLog(@"Running on thread %@", NSThread.currentThread);
 
-        if (request != nil) {
-            return request;
+    dispatch_group_t group = dispatch_group_create();
+
+    for (uint i = 0; i < self.count; i++) {
+        dispatch_group_enter(group);
+        [[self objectAtIndex:i] nextRequestForAPIVersion:apiVersion completion:^(ZMTransportRequest * _Nullable request) {
+            returnedRequest = request;
+            dispatch_group_leave(group);
+        }];
+        dispatch_group_wait(group, DISPATCH_TIME_FOREVER);
+        if (returnedRequest != nil) {
+            break;
         }
     }
 
-    return nil;
+
+    return returnedRequest;
 }
 
 @end

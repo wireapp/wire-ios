@@ -58,7 +58,7 @@ public class UnauthenticatedSession: NSObject {
          delegate: UnauthenticatedSessionDelegate?,
          authenticationStatusDelegate: ZMAuthenticationStatusDelegate?) {
         self.delegate = delegate
-        self.groupQueue = DispatchGroupQueue(queue: .main)
+        self.groupQueue = DispatchGroupQueue(queue: .main) //TODO: check Why .main
         self.registrationStatus = RegistrationStatus()
         self.transportSession = transportSession
         self.reachability = reachability

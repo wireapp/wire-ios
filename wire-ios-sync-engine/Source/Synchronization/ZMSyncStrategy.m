@@ -158,7 +158,10 @@ ZM_EMPTY_ASSERTING_INIT()
 {
     if (!self.didFetchObjects) {
         self.didFetchObjects = YES;
-        [self.changeTrackerBootStrap fetchObjectsForChangeTrackers];
+        // TODO: looks safe to put async but double check if it should be blocking?
+        [self.syncMOC performBlock:^{
+            [self.changeTrackerBootStrap fetchObjectsForChangeTrackers];
+        }];
     }
 
     if(self.tornDown) {
@@ -168,7 +171,7 @@ ZM_EMPTY_ASSERTING_INIT()
 
     dispatch_async(self.nextRequestQueue, ^{
         NSAssert(![NSThread isMainThread], @"should not run on main Thread");
-        NSLog(@"Running on thread %@", NSThread.currentThread.name);
+        NSLog(@"Running on thread %@", NSThread.currentThread);
 
         // semaphore to wait for each request to complete
         dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);

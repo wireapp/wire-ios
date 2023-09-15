@@ -122,30 +122,33 @@ NSTimeInterval ZMSelfStrategyPendingValidationRequestInterval = 5;
 
 - (void)nextRequestIfAllowedForAPIVersion:(APIVersion)apiVersion completion:(void (^_Nonnull)(ZMTransportRequest *_Nullable))completionBlock
 {
-    ZMClientRegistrationStatus *clientStatus = self.clientStatus;
-    ZMUser *selfUser = [ZMUser selfUserInContext:self.managedObjectContext];
-    
-    if (clientStatus.currentPhase == ZMClientRegistrationPhaseWaitingForEmailVerfication) {
-        [self.timedDownstreamSync readyForNextRequestIfNotBusy];
-        [self.timedDownstreamSync nextRequestForAPIVersion:apiVersion completion:completionBlock];
-        return;
-    }
-    if (clientStatus.currentPhase == ZMClientRegistrationPhaseWaitingForSelfUser || self.isSyncing) {
-        if (! selfUser.needsToBeUpdatedFromBackend) {
-            selfUser.needsToBeUpdatedFromBackend = YES;
-            [self.managedObjectContext enqueueDelayedSave];
-            [self.downstreamSelfUserSync readyForNextRequestIfNotBusy];
-        }
-        if (selfUser.needsToBeUpdatedFromBackend) {
-            [self.downstreamSelfUserSync nextRequestForAPIVersion:apiVersion completion:completionBlock];
+    [self.managedObjectContext performBlockAndWait:^{
+        ZMClientRegistrationStatus *clientStatus = self.clientStatus;
+        ZMUser *selfUser = [ZMUser selfUserInContext:self.managedObjectContext];
+
+        if (clientStatus.currentPhase == ZMClientRegistrationPhaseWaitingForEmailVerfication) {
+            [self.timedDownstreamSync readyForNextRequestIfNotBusy];
+            [self.timedDownstreamSync nextRequestForAPIVersion:apiVersion completion:completionBlock];
             return;
         }
-    }
-    else if (clientStatus.currentPhase == ZMClientRegistrationPhaseRegistered) {
-        ZMTransportRequest* request = [@[self.downstreamSelfUserSync, self.upstreamObjectSync] nextRequestForAPIVersion:apiVersion];
-        completionBlock(request);
-        return;
-    }
+        if (clientStatus.currentPhase == ZMClientRegistrationPhaseWaitingForSelfUser || self.isSyncing) {
+            if (! selfUser.needsToBeUpdatedFromBackend) {
+                selfUser.needsToBeUpdatedFromBackend = YES;
+                [self.managedObjectContext enqueueDelayedSave];
+                [self.downstreamSelfUserSync readyForNextRequestIfNotBusy];
+            }
+            if (selfUser.needsToBeUpdatedFromBackend) {
+                [self.downstreamSelfUserSync nextRequestForAPIVersion:apiVersion completion:completionBlock];
+                return;
+            }
+        }
+        else if (clientStatus.currentPhase == ZMClientRegistrationPhaseRegistered) {
+            ZMTransportRequest* request = [@[self.downstreamSelfUserSync, self.upstreamObjectSync] nextRequestForAPIVersion:apiVersion];
+            completionBlock(request);
+            return;
+        }
+
+    }];
     completionBlock(nil);
 }
 

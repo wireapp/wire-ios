@@ -130,7 +130,7 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
             fetchAllConversations(for: apiVersion)
         }
 
-        return requestGenerators.nextRequest(for: apiVersion)
+        return await requestGenerators.nextRequest(for: apiVersion)
     }
 
     func fetch(_ conversations: Set<ZMConversation>, for apiVersion: APIVersion) {

@@ -68,6 +68,21 @@ public class UserProfileUpdateRequestStrategy: AbstractRequestStrategy, ZMSingle
     }
 
     @objc public override func nextRequestIfAllowed(for apiVersion: APIVersion) async -> ZMTransportRequest? {
+        var shouldDoEmailUpdateSync = false
+        var shouldDoPhoneNumberDeleteSync = false
+        var shouldDoPasswordUpdateSync = false
+        var shouldDoHandleSuggestionSearchSync = false
+
+        managedObjectContext.performAndWait {
+            shouldDoEmailUpdateSync = self.userProfileUpdateStatus.currentlySettingEmail ||
+                self.userProfileUpdateStatus.currentlyChangingEmail
+
+            shouldDoPhoneNumberDeleteSync = self.userProfileUpdateStatus.currentlyRemovingPhoneNumber
+
+            shouldDoPasswordUpdateSync = self.userProfileUpdateStatus.currentlySettingPassword
+
+            shouldDoHandleSuggestionSearchSync = self.userProfileUpdateStatus.currentlyGeneratingHandleSuggestion
+        }
 
         if self.userProfileUpdateStatus.currentlyRequestingPhoneVerificationCode {
             self.phoneCodeRequestSync.readyForNextRequestIfNotBusy()
@@ -79,18 +94,17 @@ public class UserProfileUpdateRequestStrategy: AbstractRequestStrategy, ZMSingle
             return await self.phoneUpdateSync.nextRequest(for: apiVersion)
         }
 
-        if self.userProfileUpdateStatus.currentlySettingEmail ||
-            self.userProfileUpdateStatus.currentlyChangingEmail {
+        if shouldDoEmailUpdateSync {
             self.emailUpdateSync.readyForNextRequestIfNotBusy()
             return await self.emailUpdateSync.nextRequest(for: apiVersion)
         }
 
-        if self.userProfileUpdateStatus.currentlyRemovingPhoneNumber {
+        if shouldDoPhoneNumberDeleteSync {
             self.phoneNumberDeleteSync.readyForNextRequestIfNotBusy()
             return await self.phoneNumberDeleteSync.nextRequest(for: apiVersion)
         }
 
-        if self.userProfileUpdateStatus.currentlySettingPassword {
+        if shouldDoPasswordUpdateSync {
             self.passwordUpdateSync.readyForNextRequestIfNotBusy()
             return await self.passwordUpdateSync.nextRequest(for: apiVersion)
         }
@@ -105,7 +119,7 @@ public class UserProfileUpdateRequestStrategy: AbstractRequestStrategy, ZMSingle
             return await self.handleSetSync.nextRequest(for: apiVersion)
         }
 
-        if self.userProfileUpdateStatus.currentlyGeneratingHandleSuggestion {
+        if shouldDoHandleSuggestionSearchSync {
             self.handleSuggestionSearchSync.readyForNextRequestIfNotBusy()
             return await self.handleSuggestionSearchSync.nextRequest(for: apiVersion)
         }

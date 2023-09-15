@@ -46,7 +46,12 @@ static NSString* ZMLogTag ZM_UNUSED = @"Request Configuration";
 
 - (void)nextRequestForAPIVersion:(APIVersion)apiVersion completion:(void (^_Nonnull)(ZMTransportRequest *_Nullable))completionBlock
 {
-    if ([self configuration:self.configuration isSubsetOfPrerequisites:[AbstractRequestStrategy prerequisitesForApplicationStatus:self.applicationStatus]]) {
+    __block ZMStrategyConfigurationOption prerequisites;
+    [self.managedObjectContext performBlockAndWait:^{
+        prerequisites = [AbstractRequestStrategy prerequisitesForApplicationStatus:self.applicationStatus];
+    }];
+
+    if ([self configuration:self.configuration isSubsetOfPrerequisites:prerequisites]) {
         [self nextRequestIfAllowedForAPIVersion:apiVersion completion:completionBlock];
         return;
     }

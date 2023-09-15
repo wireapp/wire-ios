@@ -88,17 +88,20 @@ ZM_EMPTY_ASSERTING_INIT()
     if(!self.hasMoreToFetch) {
         return nil;
     }
-    NSMutableArray *queryItems = [NSMutableArray array];
+    __block NSMutableArray *queryItems = [NSMutableArray array];
     [queryItems addObject:[NSURLQueryItem queryItemWithName:@"size" value:[@(self.pageSize) stringValue]]];
 
     if (self.lastUUIDOfPreviousPage != nil) {
         [queryItems addObject:[NSURLQueryItem queryItemWithName:self.startKey value:self.lastUUIDOfPreviousPage.transportString]];
     }
     if (self.includeClientID) {
-        UserClient *selfClient = [ZMUser selfUserInContext:self.moc].selfClient;
-        if (selfClient.remoteIdentifier != nil) {
-            [queryItems addObject:[NSURLQueryItem queryItemWithName:@"client" value:selfClient.remoteIdentifier]];
-        }
+        [self.moc performBlockAndWait:^{
+            UserClient *selfClient = [ZMUser selfUserInContext:self.moc].selfClient;
+            if (selfClient.remoteIdentifier != nil) {
+                [queryItems addObject:[NSURLQueryItem queryItemWithName:@"client" value:selfClient.remoteIdentifier]];
+            }
+        }];
+
     }
 
     NSURLComponents *components = [NSURLComponents componentsWithString:self.basePath];

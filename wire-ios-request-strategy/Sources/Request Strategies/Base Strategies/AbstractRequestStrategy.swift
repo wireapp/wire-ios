@@ -47,7 +47,10 @@ private let zmLog = ZMSLog(tag: "Request Configuration")
             return nil
         }
 
-        let prerequisites = AbstractRequestStrategy.prerequisites(forApplicationStatus: applicationStatus)
+        var prerequisites: ZMStrategyConfigurationOption!
+        managedObjectContext.performAndWait {
+            prerequisites = AbstractRequestStrategy.prerequisites(forApplicationStatus: applicationStatus)
+        }
 
         if prerequisites.isSubset(of: configuration) {
             // TODO: keep track of task cancellation

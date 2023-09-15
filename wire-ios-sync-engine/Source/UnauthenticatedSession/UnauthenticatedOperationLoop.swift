@@ -29,6 +29,7 @@ class UnauthenticatedOperationLoop: NSObject {
     weak var operationQueue: ZMSGroupQueue?
     fileprivate var tornDown = false
     fileprivate var shouldEnqueue = true
+    private var internalQueue = DispatchQueue(label: "com.wire.UnauthenticatedOperationLoop-\(self).internalQueue")
 
     init(transportSession: UnauthenticatedTransportSessionProtocol, operationQueue: ZMSGroupQueue, requestStrategies: [RequestStrategy]) {
         self.transportSession = transportSession
@@ -55,14 +56,16 @@ extension UnauthenticatedOperationLoop: TearDownCapable {
 extension UnauthenticatedOperationLoop: RequestAvailableObserver {
 
     func newRequestsAvailable() {
-        var enqueueMore = true
-        while enqueueMore && shouldEnqueue {
-            let result = transportSession.enqueueRequest(withGenerator: generator)
-            enqueueMore = result == .success
-            switch result {
-            case .maximumNumberOfRequests: log.debug("Maximum number of concurrent requests reached")
-            case .nilRequest: log.debug("Nil request generated")
-            default: break
+        internalQueue.async {
+            var enqueueMore = true
+            while enqueueMore && self.shouldEnqueue {
+                let result = self.transportSession.enqueueRequest(withGenerator: self.generator)
+                enqueueMore = result == .success
+                switch result {
+                case .maximumNumberOfRequests: log.debug("Maximum number of concurrent requests reached")
+                case .nilRequest: log.debug("Nil request generated")
+                default: break
+                }
             }
         }
     }

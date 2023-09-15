@@ -80,7 +80,7 @@ public class ConnectionRequestStrategy: AbstractRequestStrategy, ZMRequestGenera
             fetchAllConnections(for: apiVersion)
         }
 
-        return requestGenerators.nextRequest(for: apiVersion)
+        return await requestGenerators.nextRequest(for: apiVersion)
     }
 
     func fetchAllConnections(for apiVersion: APIVersion) {

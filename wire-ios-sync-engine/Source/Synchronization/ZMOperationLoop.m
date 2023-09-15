@@ -46,7 +46,7 @@ static char* const ZMLogTag ZM_UNUSED = "OperationLoop";
 @property (atomic) BOOL shouldStopEnqueueing;
 @property (nonatomic) BOOL tornDown;
 @property (nonatomic, weak) ApplicationStatusDirectory *applicationStatusDirectory;
-
+@property (nonatomic, strong) dispatch_queue_t requestGeneratorQueue;
 @end
 
 
@@ -74,6 +74,7 @@ static char* const ZMLogTag ZM_UNUSED = "OperationLoop";
         self.updateEventProcessor = updateEventProcessor;
         self.syncMOC = syncMOC;
         self.shouldStopEnqueueing = NO;
+        self.requestGeneratorQueue = dispatch_queue_create("com.wire.operationLoop.requestQueue", DISPATCH_QUEUE_SERIAL);
         applicationStatusDirectory.operationStatus.delegate = self;
         
         [ZMRequestAvailableNotification addObserver:self];
@@ -148,8 +149,8 @@ static char* const ZMLogTag ZM_UNUSED = "OperationLoop";
 
         __block ZMTransportRequest *returnedRequest = nil;
         NSAssert(![NSThread isMainThread], @"should not run on main Thread");
-        NSLog(@"Running on thread %@", NSThread.currentThread.name);
-        // semaphore to wait for each request to complete
+        NSLog(@"Running on thread %@", NSThread.currentThread);
+        // semaphore to wait for each request to complete executed on private queue of OperationQueue
         dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
 
         [self.requestStrategy nextRequestForAPIVersion:apiVersion.value completion:^(ZMTransportRequest * _Nullable request) {
@@ -166,7 +167,7 @@ static char* const ZMLogTag ZM_UNUSED = "OperationLoop";
         }];
 
         dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
-        
+
         return returnedRequest;
     };
     
@@ -187,8 +188,9 @@ static char* const ZMLogTag ZM_UNUSED = "OperationLoop";
         return;
     }
 
+    // Note: changed to execute generation of request on private serial queue
     ZM_WEAK(self);
-    [self.syncMOC performGroupedBlock:^{
+    dispatch_async(self.requestGeneratorQueue, ^{
         ZM_STRONG(self);
         BOOL enqueueMore = YES;
         while (self && enqueueMore && !self.shouldStopEnqueueing) {
@@ -196,7 +198,8 @@ static char* const ZMLogTag ZM_UNUSED = "OperationLoop";
             enqueueMore = result.didGenerateNonNullRequest && result.didHaveLessRequestThanMax;
         }
         [BackgroundActivityFactory.sharedFactory endBackgroundActivity:enqueueActivity];
-    }];
+
+    });
 }
 
 - (PushNotificationStatus *)pushNotificationStatus

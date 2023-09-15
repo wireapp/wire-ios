@@ -62,7 +62,12 @@ public class LabelDownstreamRequestStrategy: AbstractRequestStrategy, ZMEventCon
     }
 
     override public func nextRequestIfAllowed(for apiVersion: APIVersion) async -> ZMTransportRequest? {
-        guard syncStatus.currentSyncPhase == .fetchingLabels || ZMUser.selfUser(in: managedObjectContext).needsToRefetchLabels else { return nil }
+        var needsToRefetchLabels = false
+        managedObjectContext.performAndWait {
+            needsToRefetchLabels = ZMUser.selfUser(in: managedObjectContext).needsToRefetchLabels
+        }
+
+        guard syncStatus.currentSyncPhase == .fetchingLabels || needsToRefetchLabels else { return nil }
 
         slowSync.readyForNextRequestIfNotBusy()
 
@@ -150,17 +155,3 @@ public class LabelDownstreamRequestStrategy: AbstractRequestStrategy, ZMEventCon
     }
 
 }
-//import WireTransport
-//
-//extension Array where Element: ZMRequestGenerator {
-//
-//    func nextRequestForAPIVersion(_ apiVersion: APIVersion) async -> ZMTransportRequest? {
-//        for element in self {
-//            if let result = await element.nextRequest(for: apiVersion) {
-//                return result
-//            }
-//        }
-//        return nil
-//    }
-//}
-

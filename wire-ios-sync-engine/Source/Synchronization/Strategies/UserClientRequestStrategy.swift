@@ -138,27 +138,33 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
     }
 
     public func nextRequest(for apiVersion: APIVersion) async -> ZMTransportRequest? {
-        guard let clientRegistrationStatus = self.clientRegistrationStatus,
-            let clientUpdateStatus = self.clientUpdateStatus else {
+        var clientRegistrationStatusCurrentPhase: ZMClientRegistrationPhase?
+
+        clientRegistrationStatus?.managedObjectContext.performAndWait {
+            clientRegistrationStatusCurrentPhase = self.clientRegistrationStatus?.currentPhase
+        }
+
+        guard let clientRegistrationStatusCurrentPhase = clientRegistrationStatusCurrentPhase,
+              let clientUpdateStatusCurrentPhase = self.clientUpdateStatus?.currentPhase  else {
                 return nil
         }
 
-        if clientRegistrationStatus.currentPhase == .waitingForLogin {
+        if clientRegistrationStatusCurrentPhase == .waitingForLogin {
             return nil
         }
 
-        if clientUpdateStatus.currentPhase == .fetchingClients {
+        if clientUpdateStatusCurrentPhase == .fetchingClients {
             fetchAllClientsSync.readyForNextRequestIfNotBusy()
             return await fetchAllClientsSync.nextRequest(for: apiVersion)
         }
 
-        if clientUpdateStatus.currentPhase == .deletingClients {
+        if clientUpdateStatusCurrentPhase == .deletingClients {
             if let request = await deleteSync.nextRequest(for: apiVersion) {
                 return request
             }
         }
 
-        if clientRegistrationStatus.currentPhase == .unregistered {
+        if clientRegistrationStatusCurrentPhase == .unregistered {
             if let request = await insertSync.nextRequest(for: apiVersion) {
                 return request
             }

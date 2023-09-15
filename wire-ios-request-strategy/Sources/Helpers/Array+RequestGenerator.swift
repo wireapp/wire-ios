@@ -16,10 +16,23 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public extension Array where Element == ZMRequestGenerator {
+//public extension Array where Element == ZMRequestGenerator {
+//
+//    func nextRequest(for apiVersion: APIVersion) -> ZMTransportRequest? {
+//        return (self as NSArray).nextRequest(for: apiVersion)
+//    }
+//
+//}
 
-    func nextRequest(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        return (self as NSArray).nextRequest(for: apiVersion)
+
+public extension Array where Element: ZMRequestGenerator {
+    
+    func nextRequest(for apiVersion: APIVersion) async -> ZMTransportRequest? {
+        for generator in self {
+            if let result = await generator.nextRequest(for: apiVersion) {
+                return result
+            }
+        }
+        return nil
     }
-
 }

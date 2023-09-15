@@ -247,7 +247,7 @@ NSUInteger const ZMMissingUpdateEventsTranscoderListPageSize = 500;
     }
 }
 
-- (ZMTransportRequest *)nextRequestIfAllowed
+- (void)nextRequestIfAllowedForAPIVersion:(APIVersion)apiVersion completion:(void (^)(ZMTransportRequest * _Nullable))completionBlock
 {
     /// There are multiple scenarios in which this class will create a new request:
     ///
@@ -264,23 +264,21 @@ NSUInteger const ZMMissingUpdateEventsTranscoderListPageSize = 500;
             [self.listPaginator resetFetching];
         }
 
-//        [self.listPaginator nextRequestForAPIVersion:apiVersion completion:^(ZMTransportRequest * _Nullable request) {
-//            if (self.isFetchingStreamForAPNS && nil != request) {
-//
-//                [self.notificationsTracker registerStartStreamFetching];
-//                [request addCompletionHandler:[ZMCompletionHandler handlerOnGroupQueue:self.managedObjectContext block:^(__unused ZMTransportResponse * _Nonnull response) {
-//                    [self.notificationsTracker registerFinishStreamFetching];
-//                }]];
-//            }
-//
-//        }:apiVersion];
-//
-//
-//
-//        return request;
-        return nil;
+        [self.listPaginator nextRequestForAPIVersion:apiVersion completion:^(ZMTransportRequest * _Nullable request) {
+            if (self.isFetchingStreamForAPNS && nil != request) {
+
+                [self.notificationsTracker registerStartStreamFetching];
+                [request addCompletionHandler:[ZMCompletionHandler handlerOnGroupQueue:self.managedObjectContext block:^(__unused ZMTransportResponse * _Nonnull response) {
+                    [self.notificationsTracker registerFinishStreamFetching];
+                }]];
+            }
+
+            completionBlock(request);
+
+        }];
+
     } else {
-        return nil;
+        completionBlock(nil);
     }
 }
 

@@ -41,8 +41,15 @@ public final class DeleteAccountRequestStrategy: AbstractRequestStrategy, ZMSing
     }
 
     public override func nextRequestIfAllowed(for apiVersion: APIVersion) async -> ZMTransportRequest? {
-        guard let shouldBeDeleted: NSNumber = self.managedObjectContext.persistentStoreMetadata(forKey: DeleteAccountRequestStrategy.userDeletionInitiatedKey) as? NSNumber, shouldBeDeleted.boolValue
-        else {
+
+        let context = self.managedObjectContext
+
+        var shouldBeDeleted: NSNumber?
+        context.performAndWait {
+            shouldBeDeleted = context.persistentStoreMetadata(forKey: DeleteAccountRequestStrategy.userDeletionInitiatedKey) as? NSNumber
+        }
+
+        guard let _ = shouldBeDeleted?.boolValue else {
             return nil
         }
 

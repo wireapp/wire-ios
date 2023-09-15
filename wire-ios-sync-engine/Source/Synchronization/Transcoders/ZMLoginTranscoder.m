@@ -97,7 +97,7 @@ NSTimeInterval DefaultPendingValidationLoginAttemptInterval = 5;
             return;
         }
 
-        if(authenticationStatus.currentPhase == ZMAuthenticationPhaseLoginWithPhone) {
+        if (authenticationStatus.currentPhase == ZMAuthenticationPhaseLoginWithPhone) {
             [self.loginWithPhoneNumberSync readyForNextRequestIfNotBusy];
             [self.loginWithPhoneNumberSync nextRequestForAPIVersion:apiVersion completion:^(ZMTransportRequest * _Nullable newRequest) {
                 if(newRequest) {
@@ -107,9 +107,7 @@ NSTimeInterval DefaultPendingValidationLoginAttemptInterval = 5;
 
 
             }];
-        }
-
-        if(authenticationStatus.currentPhase == ZMAuthenticationPhaseLoginWithEmail) {
+        } else if(authenticationStatus.currentPhase == ZMAuthenticationPhaseLoginWithEmail) {
             [self.timedDownstreamSync readyForNextRequestIfNotBusy];
             [self.timedDownstreamSync nextRequestForAPIVersion:apiVersion completion:^(ZMTransportRequest * _Nullable newRequest) {
                 if(newRequest) {
@@ -118,9 +116,11 @@ NSTimeInterval DefaultPendingValidationLoginAttemptInterval = 5;
                 }
 
             }];
+        } else {
+            completionBlock(nil);
         }
     }];
-    completionBlock(nil);
+
 }
 
 - (void)processEvents:(NSArray<ZMUpdateEvent *> __unused *)events
