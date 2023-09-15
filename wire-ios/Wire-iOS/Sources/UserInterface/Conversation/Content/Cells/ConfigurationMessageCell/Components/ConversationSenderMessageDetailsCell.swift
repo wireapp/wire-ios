@@ -176,19 +176,18 @@ class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
         case .deleted:
             attributedString.append(
                 attachment(
-                    icon: .trash,
-                    imageSize: 8
+                    from: .trash,
+                    size: 8
                 )
             )
 
         case .edited:
             attributedString.append(
                 attachment(
-                    icon: .pencil,
-                    imageSize: 8
+                    from: .pencil,
+                    size: 8
                 )
             )
-        case .none: break
 
         }
 
@@ -262,7 +261,6 @@ class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
         super.traitCollectionDidChange(previousTraitCollection)
         trailingDateLabelConstraint?.constant = -conversationHorizontalMargins.right
     }
-
 }
 
 // MARK: - ConversationSenderMessageCellDescription
