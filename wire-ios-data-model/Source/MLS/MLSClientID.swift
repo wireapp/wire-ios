@@ -21,7 +21,7 @@ import WireTransport
 
 /// An ID representing a identifying a single user client.
 
-public struct MLSClientID: Equatable {
+public struct MLSClientID: Equatable, Hashable {
 
     // MARK: - Properties
 

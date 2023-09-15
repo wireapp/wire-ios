@@ -18,6 +18,7 @@
 
 import Foundation
 import avs
+import Combine
 
 private let zmLog = ZMSLog(tag: "calling")
 
@@ -107,6 +108,8 @@ public class WireCallCenterV3: NSObject {
     /// Used to store AVS completions for the clients requests. AVS will only request the list of clients
     /// once, but we may need to provide AVS with an updated list during the call.
     var clientsRequestCompletionsByConversationId = [AVSIdentifier: (String) -> Void]()
+
+    private let onParticipantsChangedSubject = PassthroughSubject<[CallParticipant], Never>()
 
     let encoder = JSONEncoder()
     let decoder = JSONDecoder()
@@ -426,6 +429,10 @@ extension WireCallCenterV3 {
     func callParticipantsChanged(conversationId: AVSIdentifier, participants: [AVSCallMember]) {
         guard isEnabled else { return }
         callSnapshots[conversationId]?.callParticipants.callParticipantsChanged(participants: participants)
+
+        if let participants = callSnapshots[conversationId]?.callParticipants.participants {
+            onParticipantsChangedSubject.send(participants)
+        }
     }
 
     /// Call this method when the network quality of a participant changes and avs calls the `wcall_network_quality_h`.
@@ -434,6 +441,10 @@ extension WireCallCenterV3 {
 
         let snapshot = callSnapshots[conversationId]?.callParticipants
         snapshot?.callParticipantNetworkQualityChanged(client: client, networkQuality: quality)
+    }
+
+    func onParticipantsChanged() -> AnyPublisher<[CallParticipant], Never> {
+        return onParticipantsChangedSubject.eraseToAnyPublisher()
     }
 
 }
@@ -654,10 +665,20 @@ extension WireCallCenterV3 {
                         )
                     }
 
+                    let staleParticipantsRemover = MLSConferenceStaleParticipantsRemover(
+                        mlsService: mlsService,
+                        syncContext: syncContext
+                    )
+
+                    self.onMLSConferenceParticipantsChanged(
+                        subconversationID: subgroupID
+                    ).subscribe(staleParticipantsRemover)
+
                     if var snapshot = self.callSnapshots[conversationID] {
                         snapshot.qualifiedID = parentQualifiedID
                         snapshot.groupIDs = (parentGroupID, subgroupID)
                         snapshot.onConferenceInfoChangedToken = token
+                        snapshot.mlsConferenceStaleParticipantsRemover = staleParticipantsRemover
                         self.callSnapshots[conversationID] = snapshot
                     }
                 } catch {
@@ -695,6 +716,7 @@ extension WireCallCenterV3 {
         }
 
         if let mlsParentIDs = mlsParentIDS(for: conversationId) {
+            cancelPendingStaleParticipantsRemovals(callSnapshot: callSnapshots[conversationId])
             leaveSubconversation(
                 parentQualifiedID: mlsParentIDs.0,
                 parentGroupID: mlsParentIDs.1
@@ -929,10 +951,18 @@ extension WireCallCenterV3 {
         let callerId = initiatorForCall(conversationId: conversationId) ?? userId
         let previousCallState = callSnapshots[conversationId]?.callState
 
+        if let previousSnapshot = callSnapshots[conversationId] {
+            callSnapshots[conversationId] = previousSnapshot.update(with: callState)
+        }
+
+        updateMLSConferenceIfNeeded(
+            conversationID: conversationId,
+            callState: callState,
+            callSnapshot: callSnapshots[conversationId]
+        )
+
         if case .terminating = callState {
             clearSnapshot(conversationId: conversationId)
-        } else if let previousSnapshot = callSnapshots[conversationId] {
-            callSnapshots[conversationId] = previousSnapshot.update(with: callState)
         }
 
         if let context = uiMOC, let callerId = callerId {
@@ -945,10 +975,6 @@ extension WireCallCenterV3 {
             notification.post(in: context.notificationContext)
         }
 
-        updateMLSConferenceIfNeeded(
-            conversationID: conversationId,
-            callState: callState
-        )
     }
 
 }

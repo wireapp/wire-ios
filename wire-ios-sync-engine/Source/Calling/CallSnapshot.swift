@@ -42,6 +42,7 @@ struct CallSnapshot {
     let videoGridPresentationMode: VideoGridPresentationMode
     var conversationObserverToken: NSObjectProtocol?
     var onConferenceInfoChangedToken: AnyCancellable?
+    var mlsConferenceStaleParticipantsRemover: MLSConferenceStaleParticipantsRemover?
 
     var isDegradedCall: Bool {
         return degradedUser != nil
@@ -69,7 +70,8 @@ struct CallSnapshot {
             activeSpeakers: activeSpeakers,
             videoGridPresentationMode: videoGridPresentationMode,
             conversationObserverToken: conversationObserverToken,
-            onConferenceInfoChangedToken: onConferenceInfoChangedToken
+            onConferenceInfoChangedToken: onConferenceInfoChangedToken,
+            mlsConferenceStaleParticipantsRemover: mlsConferenceStaleParticipantsRemover
         )
     }
 
@@ -95,7 +97,8 @@ struct CallSnapshot {
             activeSpeakers: activeSpeakers,
             videoGridPresentationMode: videoGridPresentationMode,
             conversationObserverToken: conversationObserverToken,
-            onConferenceInfoChangedToken: onConferenceInfoChangedToken
+            onConferenceInfoChangedToken: onConferenceInfoChangedToken,
+            mlsConferenceStaleParticipantsRemover: mlsConferenceStaleParticipantsRemover
         )
     }
 
@@ -121,7 +124,8 @@ struct CallSnapshot {
             activeSpeakers: activeSpeakers,
             videoGridPresentationMode: videoGridPresentationMode,
             conversationObserverToken: conversationObserverToken,
-            onConferenceInfoChangedToken: onConferenceInfoChangedToken
+            onConferenceInfoChangedToken: onConferenceInfoChangedToken,
+            mlsConferenceStaleParticipantsRemover: mlsConferenceStaleParticipantsRemover
         )
     }
 
@@ -147,7 +151,8 @@ struct CallSnapshot {
             activeSpeakers: activeSpeakers,
             videoGridPresentationMode: videoGridPresentationMode,
             conversationObserverToken: conversationObserverToken,
-            onConferenceInfoChangedToken: onConferenceInfoChangedToken
+            onConferenceInfoChangedToken: onConferenceInfoChangedToken,
+            mlsConferenceStaleParticipantsRemover: mlsConferenceStaleParticipantsRemover
         )
     }
 
@@ -177,7 +182,8 @@ struct CallSnapshot {
             activeSpeakers: activeSpeakers,
             videoGridPresentationMode: videoGridPresentationMode,
             conversationObserverToken: conversationObserverToken,
-            onConferenceInfoChangedToken: onConferenceInfoChangedToken
+            onConferenceInfoChangedToken: onConferenceInfoChangedToken,
+            mlsConferenceStaleParticipantsRemover: mlsConferenceStaleParticipantsRemover
         )
     }
 
@@ -203,7 +209,8 @@ struct CallSnapshot {
             activeSpeakers: activeSpeakers,
             videoGridPresentationMode: videoGridPresentationMode,
             conversationObserverToken: conversationObserverToken,
-            onConferenceInfoChangedToken: onConferenceInfoChangedToken
+            onConferenceInfoChangedToken: onConferenceInfoChangedToken,
+            mlsConferenceStaleParticipantsRemover: mlsConferenceStaleParticipantsRemover
         )
     }
 
@@ -229,7 +236,8 @@ struct CallSnapshot {
             activeSpeakers: activeSpeakers,
             videoGridPresentationMode: presentationMode,
             conversationObserverToken: conversationObserverToken,
-            onConferenceInfoChangedToken: onConferenceInfoChangedToken
+            onConferenceInfoChangedToken: onConferenceInfoChangedToken,
+            mlsConferenceStaleParticipantsRemover: mlsConferenceStaleParticipantsRemover
         )
     }
 }
