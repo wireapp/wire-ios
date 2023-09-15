@@ -131,7 +131,7 @@ extension Payload {
             case .v0, .v1, .v2:
                 try container.encodeIfPresent(legacyAccessRole, forKey: .accessRole)
                 try container.encodeIfPresent(accessRoles, forKey: .accessRoleV2)
-            case .v3, .v4:
+            case .v3, .v4, .v5:
                 try container.encodeIfPresent(accessRoles, forKey: .accessRole)
             }
         }
@@ -241,7 +241,7 @@ extension Payload {
             case .v0, .v1, .v2:
                 legacyAccessRole = try container.decodeIfPresent(String.self, forKey: .accessRole)
                 accessRoles = try container.decodeIfPresent([String].self, forKey: .accessRoleV2)
-            case .v3, .v4:
+            case .v3, .v4, .v5:
 
                 // v3 replaces the field "access_role_v2" with "access_role".
                 // However, since the format of update events does not depend on versioning,
@@ -677,7 +677,7 @@ extension Payload.NewConversation: DecodableAPIVersionAware {
         case .v0, .v1, .v2:
             legacyAccessRole = try container.decodeIfPresent(String.self, forKey: .accessRole)
             accessRoles = try container.decodeIfPresent([String].self, forKey: .accessRoleV2)
-        case .v3, .v4:
+        case .v3, .v4, .v5:
             accessRoles = try container.decodeIfPresent([String].self, forKey: .accessRole)
             legacyAccessRole = nil
         }
@@ -737,7 +737,7 @@ extension Payload.Conversation: EncodableAPIVersionAware {
         case .v0, .v1, .v2:
             try container.encodeIfPresent(legacyAccessRole, forKey: .accessRole)
             try container.encodeIfPresent(accessRoles, forKey: .accessRoleV2)
-        case .v3, .v4:
+        case .v3, .v4, .v5:
             if legacyAccessRole == nil {
                 try container.encodeIfPresent(accessRoles, forKey: .accessRole)
             } else {
