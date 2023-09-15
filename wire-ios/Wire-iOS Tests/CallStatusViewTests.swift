@@ -29,13 +29,13 @@ struct MockStatusViewConfiguration: CallStatusViewInputType {
     var classification: SecurityClassification
 }
 
-final class CallStatusViewTests: ZMSnapshotTestCase {
+final class CallStatusViewTests: BaseSnapshotTestCase {
 
     private var sut: CallStatusView!
 
     override func setUp() {
         super.setUp()
-        snapshotBackgroundColor = .white
+        sut.backgroundColor = .white
         sut = CallStatusView(
             configuration: MockStatusViewConfiguration(
             state: .connecting,
@@ -71,7 +71,7 @@ final class CallStatusViewTests: ZMSnapshotTestCase {
         )
 
         // Then
-        verify(view: sut)
+        verify(matching: sut)
     }
 
     func testConnectingAudioCallLight() {
@@ -87,12 +87,12 @@ final class CallStatusViewTests: ZMSnapshotTestCase {
         )
 
         // Then
-        verify(view: sut)
+        verify(matching: sut)
     }
 
     func testConnectingAudioCallDark() {
         // When
-        snapshotBackgroundColor = .black
+        sut.backgroundColor = .black
         sut.overrideUserInterfaceStyle = .dark
         sut.configuration = MockStatusViewConfiguration(
             state: .connecting,
@@ -105,7 +105,7 @@ final class CallStatusViewTests: ZMSnapshotTestCase {
         )
 
         // Then
-        verify(view: sut)
+        verify(matching: sut)
     }
 
     func testIncomingAudioLight() {
@@ -121,7 +121,7 @@ final class CallStatusViewTests: ZMSnapshotTestCase {
         )
 
         // Then
-        verify(view: sut)
+        verify(matching: sut)
     }
 
     func testIncomingAudioLightOneOnOne() {
@@ -137,13 +137,14 @@ final class CallStatusViewTests: ZMSnapshotTestCase {
         )
 
         // Then
-        verify(view: sut)
+        verify(matching: sut)
     }
 
     func testIncomingAudioDark() {
         // When
-        snapshotBackgroundColor = .black
         sut.overrideUserInterfaceStyle = .dark
+        sut.backgroundColor = SemanticColors.View.backgroundDefault
+
         sut.configuration = MockStatusViewConfiguration(
             state: .ringingIncoming(name: "Ulrike"),
             isVideoCall: false,
@@ -155,12 +156,12 @@ final class CallStatusViewTests: ZMSnapshotTestCase {
         )
 
         // Then
-        verify(view: sut)
+        verify(matching: sut)
     }
 
     func testIncomingVideoLight() {
         // When
-        snapshotBackgroundColor = .black
+        sut.backgroundColor = SemanticColors.View.backgroundDefault
         sut.configuration = MockStatusViewConfiguration(
             state: .ringingIncoming(name: "Ulrike"),
             isVideoCall: true,
@@ -172,13 +173,13 @@ final class CallStatusViewTests: ZMSnapshotTestCase {
         )
 
         // Then
-        verify(view: sut)
+        verify(matching: sut)
     }
 
     func testIncomingVideoDark() {
         // When
-        snapshotBackgroundColor = .black
         sut.overrideUserInterfaceStyle = .dark
+        sut.backgroundColor = SemanticColors.View.backgroundDefault
         sut.configuration = MockStatusViewConfiguration(
             state: .ringingIncoming(name: "Ulrike"),
             isVideoCall: true,
@@ -190,7 +191,7 @@ final class CallStatusViewTests: ZMSnapshotTestCase {
         )
 
         // Then
-        verify(view: sut)
+        verify(matching: sut)
     }
 
     func testOutgoingLight() {
@@ -206,13 +207,13 @@ final class CallStatusViewTests: ZMSnapshotTestCase {
         )
 
         // Then
-        verify(view: sut)
+        verify(matching: sut)
     }
 
     func testOutgoingDark() {
         // When
-        snapshotBackgroundColor = .black
         sut.overrideUserInterfaceStyle = .dark
+        sut.backgroundColor = SemanticColors.View.backgroundDefault
         sut.configuration = MockStatusViewConfiguration(
             state: .ringingOutgoing,
             isVideoCall: true,
@@ -224,7 +225,7 @@ final class CallStatusViewTests: ZMSnapshotTestCase {
         )
 
         // Then
-        verify(view: sut)
+        verify(matching: sut)
     }
 
     func testEstablishedBriefLight() {
@@ -240,12 +241,12 @@ final class CallStatusViewTests: ZMSnapshotTestCase {
         )
 
         // Then
-        verify(view: sut)
+        verify(matching: sut)
     }
 
     func testEstablishedBriefDark() {
         // When
-        snapshotBackgroundColor = .black
+        sut.backgroundColor = .black
         sut.overrideUserInterfaceStyle = .dark
         sut.configuration = MockStatusViewConfiguration(
             state: .established(duration: 42),
@@ -258,7 +259,7 @@ final class CallStatusViewTests: ZMSnapshotTestCase {
         )
 
         // Then
-        verify(view: sut)
+        verify(matching: sut)
     }
 
     func testEstablishedLongLight() {
@@ -274,12 +275,12 @@ final class CallStatusViewTests: ZMSnapshotTestCase {
         )
 
         // Then
-        verify(view: sut)
+        verify(matching: sut)
     }
 
     func testEstablishedLongDark() {
         // When
-        snapshotBackgroundColor = .black
+        sut.backgroundColor = .black
         sut.overrideUserInterfaceStyle = .dark
         sut.configuration = MockStatusViewConfiguration(
             state: .established(duration: 321),
@@ -292,7 +293,7 @@ final class CallStatusViewTests: ZMSnapshotTestCase {
         )
 
         // Then
-        verify(view: sut)
+        verify(matching: sut)
     }
 
     func testConstantBitRateLight() {
@@ -308,12 +309,12 @@ final class CallStatusViewTests: ZMSnapshotTestCase {
         )
 
         // Then
-        verify(view: sut)
+        verify(matching: sut)
     }
 
     func testConstantBitRateDark() {
         // When
-        snapshotBackgroundColor = .black
+        sut.backgroundColor = .black
         sut.overrideUserInterfaceStyle = .dark
         sut.configuration = MockStatusViewConfiguration(
             state: .established(duration: 321),
@@ -326,7 +327,7 @@ final class CallStatusViewTests: ZMSnapshotTestCase {
         )
 
         // Then
-        verify(view: sut)
+        verify(matching: sut)
     }
 
     func testVariableBitRateLight() {
@@ -342,12 +343,12 @@ final class CallStatusViewTests: ZMSnapshotTestCase {
         )
 
         // Then
-        verify(view: sut)
+        verify(matching: sut)
     }
 
     func testVariableBitRateDark() {
         // When
-        snapshotBackgroundColor = .black
+        sut.backgroundColor = .black
         sut.overrideUserInterfaceStyle = .dark
         sut.configuration = MockStatusViewConfiguration(
             state: .established(duration: 321),
@@ -360,7 +361,7 @@ final class CallStatusViewTests: ZMSnapshotTestCase {
         )
 
         // Then
-        verify(view: sut)
+        verify(matching: sut)
     }
 
     func testReconnectingLight() {
@@ -376,12 +377,12 @@ final class CallStatusViewTests: ZMSnapshotTestCase {
         )
 
         // Then
-        verify(view: sut)
+        verify(matching: sut)
     }
 
     func testReconnectingDark() {
         // When
-        snapshotBackgroundColor = .black
+        sut.backgroundColor = .black
         sut.overrideUserInterfaceStyle = .dark
         sut.configuration = MockStatusViewConfiguration(
             state: .reconnecting,
@@ -394,7 +395,7 @@ final class CallStatusViewTests: ZMSnapshotTestCase {
         )
 
         // Then
-        verify(view: sut)
+        verify(matching: sut)
     }
 
     func testEndingLight() {
@@ -410,12 +411,12 @@ final class CallStatusViewTests: ZMSnapshotTestCase {
         )
 
         // Then
-        verify(view: sut)
+        verify(matching: sut)
     }
 
     func testEndingDark() {
         // When
-        snapshotBackgroundColor = .black
+        sut.backgroundColor = .black
         sut.overrideUserInterfaceStyle = .dark
         sut.configuration = MockStatusViewConfiguration(
             state: .terminating,
@@ -428,7 +429,7 @@ final class CallStatusViewTests: ZMSnapshotTestCase {
         )
 
         // Then
-        verify(view: sut)
+        verify(matching: sut)
     }
 
 }
