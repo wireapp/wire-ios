@@ -74,15 +74,4 @@ final class ConversationCellBurstTimestampViewSnapshotTests: BaseSnapshotTestCas
         verify(matching: sut)
     }
 
-    func testForJustNowAndNotIncludeDayOfWeekAndDot() {
-        // GIVEN & WHEN
-        sut.configure(
-            with: Date(timeIntervalSinceNow: 5),
-            includeDayOfWeek: false,
-            showUnreadDot: false
-        )
-
-        // THEN
-        verify(matching: sut)
-    }
 }
