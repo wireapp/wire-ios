@@ -17,23 +17,40 @@
 //
 
 import Foundation
+import Combine
+import WireDataModel
+
+struct MLSConferenceParticipantsInfo {
+    let participants: [CallParticipant]
+    let subconversationID: MLSGroupID
+}
 
 extension WireCallCenterV3 {
 
+    func onMLSConferenceParticipantsChanged(
+        subconversationID: MLSGroupID
+    ) -> AnyPublisher<MLSConferenceParticipantsInfo, Never> {
+        onParticipantsChanged().compactMap {
+            MLSConferenceParticipantsInfo(
+                participants: $0,
+                subconversationID: subconversationID
+            )
+        }.eraseToAnyPublisher()
+    }
+
     func updateMLSConferenceIfNeeded(
         conversationID: AVSIdentifier,
-        callState: CallState
+        callState: CallState,
+        callSnapshot: CallSnapshot?
     ) {
         switch callState {
-        case .incoming, .terminating:
-            guard let mlsParentIDs = mlsParentIDS(for: conversationID) else {
-                return
-            }
 
-            leaveStaleConferenceIfNeeded(
-                parentQualifiedID: mlsParentIDs.0,
-                parentGroupID: mlsParentIDs.1
-            )
+        case .terminating:
+            cancelPendingStaleParticipantsRemovals(callSnapshot: callSnapshot)
+            leaveStaleConferenceIfNeeded(conversationID: conversationID)
+
+        case .incoming:
+            leaveStaleConferenceIfNeeded(conversationID: conversationID)
 
         default:
             break
@@ -41,17 +58,10 @@ extension WireCallCenterV3 {
     }
 
     func updateMLSConferenceIfNeededForMissedCall(conversationID: AVSIdentifier) {
-        guard let mlsParentIDs = mlsParentIDS(for: conversationID) else {
-            return
-        }
-
-        leaveStaleConferenceIfNeeded(
-            parentQualifiedID: mlsParentIDs.0,
-            parentGroupID: mlsParentIDs.1
-        )
+        leaveStaleConferenceIfNeeded(conversationID: conversationID)
     }
 
-    func mlsParentIDS(for callID: AVSIdentifier) -> (QualifiedID, MLSGroupID)? {
+    func mlsParentIDS(for callID: AVSIdentifier) -> (qualifiedID: QualifiedID, groupID: MLSGroupID)? {
         guard
             let context = uiMOC,
             let domain = callID.domain ?? BackendInfo.domain,
@@ -70,17 +80,21 @@ extension WireCallCenterV3 {
         return (qualifiedID, groupID)
     }
 
+    func cancelPendingStaleParticipantsRemovals(
+        callSnapshot: CallSnapshot?
+    ) {
+        callSnapshot?.mlsConferenceStaleParticipantsRemover?.cancelPendingRemovals()
+    }
+
     // Leaves the possibles subconversation for the mls conference.
 
-    private func leaveStaleConferenceIfNeeded(
-        parentQualifiedID: QualifiedID,
-        parentGroupID: MLSGroupID
-    ) {
+    private func leaveStaleConferenceIfNeeded(conversationID: AVSIdentifier) {
         guard
             let viewContext = uiMOC,
             let syncContext = viewContext.zm_sync,
             let selfClient = ZMUser.selfUser(in: viewContext).selfClient(),
-            let selfClientID = MLSClientID(userClient: selfClient)
+            let selfClientID = MLSClientID(userClient: selfClient),
+            let parentIDs = mlsParentIDS(for: conversationID)
         else {
             return
         }
@@ -93,8 +107,8 @@ extension WireCallCenterV3 {
             Task {
                 do {
                     try await mlsService.leaveSubconversationIfNeeded(
-                        parentQualifiedID: parentQualifiedID,
-                        parentGroupID: parentGroupID,
+                        parentQualifiedID: parentIDs.qualifiedID,
+                        parentGroupID: parentIDs.groupID,
                         subconversationType: .conference,
                         selfClientID: selfClientID
                     )
@@ -131,6 +145,19 @@ extension WireCallCenterV3 {
                     subconversationType: .conference
                 )
             }
+        }
+    }
+
+}
+
+extension CallParticipantState {
+
+    var isConnected: Bool {
+        switch self {
+        case .connected:
+            return true
+        default:
+            return false
         }
     }
 
