@@ -19,6 +19,7 @@
 import Foundation
 import WireCoreCrypto
 import Combine
+import WireSystem
 
 // sourcery: AutoMockable
 public protocol MLSDecryptionServiceInterface {
@@ -72,6 +73,7 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
 
         case failedToConvertMessageToBytes
         case failedToDecryptMessage
+        case wrongEpoch
 
     }
 
@@ -135,7 +137,12 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
             return nil
         } catch {
             WireLogger.mls.error("failed to decrypt message for group (\(groupID)) and subconversation type (\(String(describing: subconversationType)): \(String(describing: error))")
-            throw MLSMessageDecryptionError.failedToDecryptMessage
+
+            if case CryptoError.WrongEpoch(message: _) = error {
+                throw MLSMessageDecryptionError.wrongEpoch
+            } else {
+                throw MLSMessageDecryptionError.failedToDecryptMessage
+            }
         }
     }
 

@@ -194,16 +194,19 @@ extension Payload.Conversation {
     }
 
     func createOrJoinSelfConversation(from conversation: ZMConversation) {
-        guard let groupId = conversation.mlsGroupID,
-              let mlsService = conversation.managedObjectContext?.mlsService else {
+        guard
+            let groupId = conversation.mlsGroupID,
+            let mlsService = conversation.managedObjectContext?.mlsService
+        else {
             WireLogger.mls.warn("no mlsService to createOrJoinSelfConversation")
             return
         }
+
         WireLogger.mls.debug("createOrJoinSelfConversation for \(groupId); conv payload: \(String(describing: self))")
 
         if conversation.epoch <= 0 {
             mlsService.createSelfGroup(for: groupId)
-        } else {
+        } else if !mlsService.conversationExists(groupID: groupId) {
             Task {
                 try await mlsService.joinGroup(with: groupId)
             }

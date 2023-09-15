@@ -66,6 +66,14 @@ extension MLSGroupID: CustomStringConvertible {
 
 }
 
+extension MLSGroupID: SafeForLoggingStringConvertible {
+
+    public var safeForLoggingDescription: String {
+        data.readableHash
+    }
+
+}
+
 public extension MLSGroupID {
 
     static func random() -> MLSGroupID {

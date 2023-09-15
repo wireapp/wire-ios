@@ -1,5 +1,6 @@
+////
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2023 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,11 +21,11 @@ import Foundation
 /// Fetches the metadata of a single conversation and stores it locally
 /// in the database.
 
-final class SyncConversationAction: EntityAction {
+public final class SyncConversationAction: EntityAction {
 
-    typealias Result = Void
+    public typealias Result = Void
 
-    enum Failure: Error, Equatable {
+    public enum Failure: Error, Equatable {
 
         case malformedRequestPayload
         case invalidBody
@@ -36,12 +37,12 @@ final class SyncConversationAction: EntityAction {
 
     // MARK: - Properties
 
-    let qualifiedID: QualifiedID
-    var resultHandler: ResultHandler?
+    public let qualifiedID: QualifiedID
+    public var resultHandler: ResultHandler?
 
     // MARK: - Life cycle
 
-    init(
+    public init(
         qualifiedID: QualifiedID,
         resultHandler: ResultHandler? = nil
     ) {
