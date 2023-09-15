@@ -25,7 +25,7 @@ class BaseFetchMLSGroupInfoActionHandler<T: BaseFetchMLSGroupInfoAction>: Action
     func request(for action: T, path: String, apiVersion: APIVersion, minRequiredAPIVersion: APIVersion) -> ZMTransportRequest? {
         var action = action
 
-        guard apiVersion >= minRequiredAPIVersion else {
+        guard apiVersion >= .v5 else {
             action.fail(with: .endpointUnavailable)
             return nil
         }

@@ -47,7 +47,7 @@ final class SyncConversationActionHandler: ActionHandler<SyncConversationAction>
                 apiVersion: apiVersion.rawValue
             )
 
-        case .v2, .v3, .v4:
+        case .v2, .v3, .v4, .v5:
             return ZMTransportRequest(
                 path: "/conversations/list",
                 method: .methodPOST,

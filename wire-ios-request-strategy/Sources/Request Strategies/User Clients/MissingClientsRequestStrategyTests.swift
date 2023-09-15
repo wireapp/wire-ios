@@ -754,7 +754,7 @@ extension MissingClientsRequestStrategyTests {
         switch apiVersion {
         case .v0:
             XCTAssertEqual(request.path, "/users/list-prekeys", file: file, line: line)
-        case .v1, .v2, .v3, .v4:
+        case .v1, .v2, .v3, .v4, .v5:
             XCTAssertEqual(request.path, "/v\(apiVersion.rawValue)/users/list-prekeys", file: file, line: line)
         }
 
@@ -842,7 +842,7 @@ extension MissingClientsRequestStrategyTests {
                                        transportSessionError: nil,
                                        apiVersion: apiVersion.rawValue)
 
-        case .v4:
+        case .v4, .v5:
             let prekeyByQualifiedUser_V4 = Payload.PrekeyByQualifiedUserIDV4(prekeyByQualifiedUserID: prekeyByQualifiedUser, failed: nil)
             guard let payloadData = prekeyByQualifiedUser_V4.payloadData() else {
                 return nil

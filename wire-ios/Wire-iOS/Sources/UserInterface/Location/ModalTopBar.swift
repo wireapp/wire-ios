@@ -68,9 +68,10 @@ final class ModalTopBar: UIView {
 
     private var title: String? {
         didSet {
-            titleLabel.text = title?.capitalized
+            titleLabel.text = title?.capitalizingFirstCharacterOnly
             titleLabel.isHidden = title == nil
             titleLabel.accessibilityLabel = title
+            titleLabel.accessibilityValue = title
             titleLabel.accessibilityTraits.insert(.header)
         }
     }
@@ -80,6 +81,7 @@ final class ModalTopBar: UIView {
             subtitleLabel.text = subtitle?.capitalized
             subtitleLabel.isHidden = subtitle == nil
             subtitleLabel.accessibilityLabel = subtitle
+            subtitleLabel.accessibilityValue = subtitle
         }
     }
 

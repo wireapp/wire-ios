@@ -32,31 +32,25 @@ class BaseFetchMLSGroupInfoActionHandlerTests<
         action = nil
         super.tearDown()
     }
-
     // MARK: - Request generation
 
-    func test_itDoesntGenerateRequests_APIV2() {
-        test_itDoesntGenerateARequest(
-            action: action,
-            apiVersion: .v2,
-            expectedError: .endpointUnavailable
+    func test_itGeneratesARequest_APIV5() throws {
+        try test_itGeneratesARequest(
+            for: action,
+            expectedPath: "/v5/conversations/\(domain)/\(conversationId.transportString())/groupinfo",
+            expectedMethod: .methodGET,
+            apiVersion: .v5
         )
     }
 
-    func test_itDoesntGenerateRequests_APIV1() {
-        test_itDoesntGenerateARequest(
-            action: action,
-            apiVersion: .v1,
-            expectedError: .endpointUnavailable
-        )
-    }
-
-    func test_itDoesntGenerateRequests_APIV0() {
-        test_itDoesntGenerateARequest(
-            action: action,
-            apiVersion: .v0,
-            expectedError: .endpointUnavailable
-        )
+    func test_itDoesntGenerateRequests_APIBelowV5() {
+        [.v0, .v1, .v2, .v3, .v4].forEach {
+            test_itDoesntGenerateARequest(
+                action: action,
+                apiVersion: $0,
+                expectedError: .endpointUnavailable
+            )
+        }
     }
 
     // MARK: - Response handling

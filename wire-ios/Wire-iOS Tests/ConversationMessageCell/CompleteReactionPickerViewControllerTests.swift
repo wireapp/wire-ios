@@ -65,7 +65,6 @@ final class CompleteReactionPickerViewControllerTests: BaseSnapshotTestCase {
         verify(matching: sut)
     }
 
-
     func testReactionPicker_withRecentReactionsSection() {
         // GIVEN
         let emojis = [Emoji(value: "😂"), Emoji(value: "🆎"), Emoji(value: "🫥"), Emoji(value: "🐞"), .monkey]
