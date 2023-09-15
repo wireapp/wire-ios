@@ -48,7 +48,7 @@
 @property (nonatomic) BOOL contextMergingDisabled;
 
 @property (nonatomic) NotificationDispatcher *notificationDispatcher;
-
+@property (nonatomic, strong) dispatch_queue_t nextRequestQueue;
 @end
 
 
@@ -81,6 +81,7 @@ ZM_EMPTY_ASSERTING_INIT()
         self.strategyDirectory = strategyDirectory;
         self.eventProcessingTracker = eventProcessingTracker;
         self.changeTrackerBootStrap = [[ZMChangeTrackerBootstrap alloc] initWithManagedObjectContext:self.syncMOC changeTrackers:self.strategyDirectory.contextChangeTrackers];
+        self.nextRequestQueue = dispatch_queue_create("com.wire.ZMSyncStrategy.nextRequestQueue", DISPATCH_QUEUE_SERIAL);
 
         ZM_ALLOW_MISSING_SELECTOR([[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(managedObjectContextDidSave:) name:NSManagedObjectContextDidSaveNotification object:self.syncMOC]);
         ZM_ALLOW_MISSING_SELECTOR([[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(managedObjectContextDidSave:) name:NSManagedObjectContextDidSaveNotification object:contextProvider.viewContext]);
@@ -88,6 +89,8 @@ ZM_EMPTY_ASSERTING_INIT()
         [application registerObserverForDidEnterBackground:self selector:@selector(appDidEnterBackground:)];
         [application registerObserverForWillEnterForeground:self selector:@selector(appWillEnterForeground:)];
         [application registerObserverForApplicationWillTerminate:self selector:@selector(appTerminated:)];
+
+
     }
     return self;
 }
@@ -163,27 +166,29 @@ ZM_EMPTY_ASSERTING_INIT()
         return;
     }
 
-    NSAssert(![NSThread isMainThread], @"should not run on main Thread");
-    NSLog(@"Running on thread %@", NSThread.currentThread.name);
+    dispatch_async(self.nextRequestQueue, ^{
+        NSAssert(![NSThread isMainThread], @"should not run on main Thread");
+        NSLog(@"Running on thread %@", NSThread.currentThread.name);
 
-    // semaphore to wait for each request to complete
-    dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
-    __block ZMTransportRequest* returnedRequest = nil;
+        // semaphore to wait for each request to complete
+        dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
+        __block ZMTransportRequest* returnedRequest = nil;
 
-    for (id<RequestStrategy> requestStrategy in self.strategyDirectory.requestStrategies) {
-        [requestStrategy nextRequestForAPIVersion:apiVersion completion:^(ZMTransportRequest * _Nullable request) {
-            returnedRequest = request;
-            dispatch_semaphore_signal(semaphore);
-        }];
+        for (id<RequestStrategy> requestStrategy in self.strategyDirectory.requestStrategies) {
+            [requestStrategy nextRequestForAPIVersion:apiVersion completion:^(ZMTransportRequest * _Nullable request) {
+                returnedRequest = request;
+                dispatch_semaphore_signal(semaphore);
+            }];
 
-        dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
+            dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
 
-        if (returnedRequest != nil) {
-            break;
+            if (returnedRequest != nil) {
+                break;
+            }
         }
-    }
 
-    completionBlock(returnedRequest);
+        completionBlock(returnedRequest);
+    });
 }
 
 @end
