@@ -219,10 +219,12 @@ public final class TeamDownloadRequestStrategy: AbstractRequestStrategy, ZMConte
         switch apiVersion {
         case .v0, .v1, .v2, .v3:
             return TeamDownloadRequestFactory.getTeamsRequest(apiVersion: apiVersion)
-        case .v4:
+        case .v4, .v5:
             guard let teamID = ZMUser.selfUser(in: managedObjectContext).teamIdentifier else {
+                syncStatus.finishCurrentSyncPhase(phase: expectedSyncPhase)
                 return nil
             }
+
             return TeamDownloadRequestFactory.getRequest(for: [teamID], apiVersion: apiVersion)
         }
     }
@@ -243,7 +245,7 @@ public final class TeamDownloadRequestStrategy: AbstractRequestStrategy, ZMConte
 
             syncStatus.finishCurrentSyncPhase(phase: expectedSyncPhase)
 
-        case .v4:
+        case .v4, .v5:
             guard
                 let rawData = response.rawData,
                 let teamPayload = TeamPayload(rawData)
