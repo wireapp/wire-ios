@@ -61,8 +61,10 @@ class ReactionToggle: UIControl {
         emojiLabel.text = emoji.value
         counterLabel.text = String(count)
 
-        let stackView = UIStackView(arrangedSubviews: [emojiLabel, counterLabel])
+        emojiLabel.text = emoji.value
+        counterLabel.text = String(count)
 
+        let stackView = UIStackView(arrangedSubviews: [emojiLabel, counterLabel])
         stackView.axis = .horizontal
         stackView.distribution = .fill
         stackView.alignment = .center
