@@ -39,7 +39,8 @@ final class MockAuthenticatedSessionFactory: AuthenticatedSessionFactory {
             proxyUsername: nil,
             proxyPassword: nil,
             reachability: reachability,
-            analytics: nil
+            analytics: nil,
+            minTLSVersion: nil
         )
     }
 

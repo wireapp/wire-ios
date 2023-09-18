@@ -507,6 +507,14 @@ class MissingClientsRequestStrategyTests: MessagingTestBase {
     }
 
     func testThatItRemovesMessagesMissingClientWhenEstablishedSessionWithClient_V4() {
+        internalTestThatItRemovesMessagesMissingClientWhenEstablishedSessionWithClient(apiVersion: .v4)
+    }
+
+    func testThatItRemovesMessagesMissingClientWhenEstablishedSessionWithClient_V5() {
+        internalTestThatItRemovesMessagesMissingClientWhenEstablishedSessionWithClient(apiVersion: .v5)
+    }
+
+    func internalTestThatItRemovesMessagesMissingClientWhenEstablishedSessionWithClient(apiVersion: APIVersion) {
         syncMOC.performGroupedBlockAndWait {
             // GIVEN
             let message = self.message(missingRecipient: self.otherClient)
@@ -514,7 +522,7 @@ class MissingClientsRequestStrategyTests: MessagingTestBase {
 
             // WHEN
             XCTAssertEqual(message.missingRecipients.count, 1)
-            guard let response = self.response(forMissing: [self.otherClient], apiVersion: .v4) else {
+            guard let response = self.response(forMissing: [self.otherClient], apiVersion: apiVersion) else {
                 return XCTFail("Response is invalid")
             }
             _ = self.sut.updateUpdatedObject(self.selfClient,

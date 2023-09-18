@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireCommonComponents
 import WireSyncEngine
 
 enum ShareableMediaSource: CaseIterable {

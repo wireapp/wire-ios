@@ -35,6 +35,7 @@ NS_ASSUME_NONNULL_BEGIN
                      readyForRequests:(BOOL)readyForRequests
                          workingGroup:(ZMSDispatchGroup * _Nullable)workingGroup
                           application:(id<ZMApplication>)application
+                        minTLSVersion:(NSString * _Nullable)minTLSVersion
                     blacklistCallback:(void (^)(BOOL))blacklistCallback;
 
 - (void)tearDown;

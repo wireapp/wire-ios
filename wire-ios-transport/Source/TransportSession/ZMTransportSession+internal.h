@@ -43,7 +43,8 @@
                             pushChannelClass:(Class)pushChannelClass
                                cookieStorage:(ZMPersistentCookieStorage *)cookieStorage
                           initialAccessToken:(ZMAccessToken *)initialAccessToken
-                                   userAgent:(NSString *)userAgent;
+                                   userAgent:(NSString *)userAgent
+                               minTLSVersion:(NSString *)minTLSVersion;
 
 - (NSURLSessionTask *)suspendedTaskForRequest:(ZMTransportRequest *)request onSession:(ZMURLSession *)session;
 

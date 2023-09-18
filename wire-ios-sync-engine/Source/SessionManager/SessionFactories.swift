@@ -30,6 +30,8 @@ open class AuthenticatedSessionFactory {
     var environment: BackendEnvironmentProvider
     var reachability: Reachability
 
+    let minTLSVersion: String?
+
     public init(
         appVersion: String,
         application: ZMApplication,
@@ -39,18 +41,20 @@ open class AuthenticatedSessionFactory {
         proxyUsername: String?,
         proxyPassword: String?,
         reachability: Reachability,
-        analytics: AnalyticsType? = nil) {
-
-            self.appVersion = appVersion
-            self.mediaManager = mediaManager
-            self.flowManager = flowManager
-            self.analytics = analytics
-            self.application = application
-            self.environment = environment
-            self.proxyUsername = proxyUsername
-            self.proxyPassword = proxyPassword
-            self.reachability = reachability
-        }
+        analytics: AnalyticsType? = nil,
+        minTLSVersion: String?
+    ) {
+        self.appVersion = appVersion
+        self.mediaManager = mediaManager
+        self.flowManager = flowManager
+        self.analytics = analytics
+        self.application = application
+        self.environment = environment
+        self.proxyUsername = proxyUsername
+        self.proxyPassword = proxyPassword
+        self.reachability = reachability
+        self.minTLSVersion = minTLSVersion
+    }
 
     func session(
         for account: Account,
@@ -67,7 +71,8 @@ open class AuthenticatedSessionFactory {
             reachability: reachability,
             initialAccessToken: nil,
             applicationGroupIdentifier: nil,
-            applicationVersion: appVersion
+            applicationVersion: appVersion,
+            minTLSVersion: minTLSVersion
         )
 
         let userSession = ZMUserSession(

@@ -373,14 +373,20 @@ platform :ios do
     # Changelog for current build
     def changelog(build)
         changelog = ""
+        changelog_path = './../CHANGELOG.md'
+
         if build.playground_build
             changelog += "Playground build for #{build.git_branch}\n\n"
         end
-
-        changelog += "**Last commits:**\n" + changelog_from_git_commits(
-                commits_count: 5,
-                pretty: "- %s by %ae",
-        )
+        
+        if File.exist?(changelog_path)
+            changelog += File.read(changelog_path)
+        else 
+            changelog += "**Last commits:**\n" + changelog_from_git_commits(
+                    commits_count: 5,
+                    pretty: "- %s by %ae",
+            )
+        end
         changelog
     end
 

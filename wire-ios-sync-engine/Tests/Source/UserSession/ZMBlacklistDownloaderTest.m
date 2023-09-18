@@ -61,6 +61,7 @@
                                                     userDefaults:[NSUserDefaults standardUserDefaults]
                                                      application:self.application
                                                     workingGroup:self.syncMOC.dispatchGroup
+                                                   minTLSVersion:nil
                                                completionHandler:completionHandler
     ];
 }

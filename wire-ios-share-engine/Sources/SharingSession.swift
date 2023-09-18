@@ -218,7 +218,8 @@ public class SharingSession {
         hostBundleIdentifier: String,
         environment: BackendEnvironmentProvider,
         appLockConfig: AppLockController.LegacyConfig?,
-        sharedUserDefaults: UserDefaults
+        sharedUserDefaults: UserDefaults,
+        minTLSVersion: String?
     ) throws {
 
         let sharedContainerURL = FileManager.sharedContainerDirectory(for: applicationGroupIdentifier)
@@ -256,7 +257,8 @@ public class SharingSession {
             reachability: reachability,
             initialAccessToken: nil,
             applicationGroupIdentifier: applicationGroupIdentifier,
-            applicationVersion: "1.0.0"
+            applicationVersion: "1.0.0",
+            minTLSVersion: minTLSVersion
         )
 
         try self.init(
