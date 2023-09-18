@@ -1,0 +1,3714 @@
+//
+// Wire
+// Copyright (C) 2023 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
+
+// 😀 - grinning
+"72078395.name" = "išsišiepęs veidas";
+"72078395.tags" = "išsišiepęs veidas | išsišiepti | veidas";
+// 😃 - smiley
+"72078410.name" = "besišypsantis išsižiojęs veidas";
+"72078410.tags" = "besišypsantis išsižiojęs veidas | burna | praverta | šypsena | veidas";
+// 😄 - smile
+"72078415.name" = "besišypsantis išsižiojęs veidas besišypsančiomis akimis";
+"72078415.tags" = "akys | besišypsantis išsižiojęs veidas besišypsančiomis akimis | burna | praverta | šypsena | veidas";
+// 😁 - grin
+"72078400.name" = "išsišiepęs veidas su besišypsančiomis akimis";
+"72078400.tags" = "akys | išsišiepęs veidas su besišypsančiomis akimis | išsišiepti | šypsena | veidas";
+// 😆 - laughing
+"72078425.name" = "besišypsantis išsižiojęs veidas su smarkiai užmerktomis akimis";
+"72078425.tags" = "besišypsantis išsižiojęs veidas su smarkiai užmerktomis akimis | burna | juokas | pasitenkinęs | praverta | šypsena | veidas";
+// 😅 - sweat_smile
+"72078420.name" = "besišypsantis išsižiojęs veidas, išpiltas šalto prakaito";
+"72078420.tags" = "besišypsantis išsižiojęs veidas | išpiltas šalto prakaito | prakaitas | praverta | šaltas | šypsena | veidas";
+// 🤣 - rolling_on_the_floor_laughing
+"72078575.name" = "raitausi iš juoko";
+"72078575.tags" = "juokas | raitausi iš juoko | raitytis";
+// 😂 - joy
+"72078405.name" = "veidas su džiaugsmo ašaromis";
+"72078405.tags" = "ašara | džiaugsmas | juokas | veidas | veidas su džiaugsmo ašaromis";
+// 🙂 - slightly_smiling_face
+"72078725.name" = "šiek tiek besišypsantis veidas";
+"72078725.tags" = "šiek tiek besišypsantis veidas | šypsena | veidas";
+// 🙃 - upside_down_face
+"72078730.name" = "apverstas veidas";
+"72078730.tags" = "apverstas veidas | aukštyn kojom | veidas";
+// 🫠 - melting_face
+"72080800.name" = "tirpstantis veidas";
+"72080800.tags" = "ištirpti | lydytis | nykti | skystis | tirpstantis veidas";
+// 😉 - wink
+"72078440.name" = "mirksintis veidas";
+"72078440.tags" = "mirksintis veidas | mirktelėjimas | veidas";
+// 😊 - blush
+"72078445.name" = "besišypsantis veidas su besišypsančiomis akimis";
+"72078445.tags" = "akys | besišypsantis veidas su besišypsančiomis akimis | nurausti | šypsena | veidas";
+// 😇 - innocent
+"72078430.name" = "besišypsantis veidas su aureole";
+"72078430.tags" = "angelas | aureolė | besišypsantis veidas su aureole | fantazija | nekaltas | veidas";
+// 🥰 - smiling_face_with_3_hearts
+"72078960.name" = "besišypsantis veidas su trimis širdelėmis";
+"72078960.tags" = "besišypsantis veidas su trimis širdelėmis | dievinti | garbinimo objektas | įsimylėjęs";
+// 😍 - heart_eyes
+"72078460.name" = "besišypsantis veidas su širdelės formos akimis";
+"72078460.tags" = "akys | besišypsantis veidas su širdelės formos akimis | meilė | širdelės | šypsena | veidas";
+// 🤩 - star-struck
+"72078605.name" = "žvaigždžių liga";
+"72078605.tags" = "akys | šypsotis | veidas | žvaigždė | žvaigždžių liga";
+// 😘 - kissing_heart
+"72078515.name" = "bučinį siunčiantis veidas";
+"72078515.tags" = "bučinį siunčiantis veidas | bučinys | širdelė | veidas";
+// 😗 - kissing
+"72078510.name" = "bučiuojantis veidas";
+"72078510.tags" = "bučinys | bučiuojantis veidas | veidas";
+// 😚 - kissing_closed_eyes
+"72078525.name" = "bučiuojantis su užmerktomis akimis";
+"72078525.tags" = "akys | bučinys | bučiuojantis su užmerktomis akimis | užmerktos | veidas";
+// 😙 - kissing_smiling_eyes
+"72078520.name" = "bučiuojantis su besišypsančiomis akimis";
+"72078520.tags" = "akys | bučinys | bučiuojantis su besišypsančiomis akimis | šypsena | veidas";
+// 🥲 - smiling_face_with_tear
+"72078970.name" = "besišypsantis veidas su ašara";
+"72078970.tags" = "ašara | besišypsantis | besišypsantis veidas su ašara | dėkingas | palengvėjimas | pasididžiavimas";
+// 😋 - yum
+"72078450.name" = "skaniu maistu besimėgaujantis veidas";
+"72078450.tags" = "besimėgaujantis | niam | skaniu maistu besimėgaujantis veidas | skanu | šypsena | veidas";
+// 😛 - stuck_out_tongue
+"72078530.name" = "veidas su iškištu liežuviu";
+"72078530.tags" = "liežuvis | veidas | veidas su iškištu liežuviu";
+// 😜 - stuck_out_tongue_winking_eye
+"72078535.name" = "veidas su iškištu liežuviu ir viena primerkta akimi";
+"72078535.tags" = "akis | liežuvis | mirksnis | pokštas | veidas | veidas su iškištu liežuviu ir viena primerkta akimi";
+// 🤪 - zany_face
+"72078610.name" = "pamišęs veidas";
+"72078610.tags" = "akis | didelis | mažas | pamišęs veidas";
+// 😝 - stuck_out_tongue_closed_eyes
+"72078540.name" = "veidas su iškištu liežuviu ir stipriai užmerktomis akimis";
+"72078540.tags" = "akys | bjaurus | liežuvis | skonis | veidas | veidas su iškištu liežuviu ir stipriai užmerktomis akimis";
+// 🤑 - money_mouth_face
+"72078485.name" = "veidas su pinigu vietoje liežuvio";
+"72078485.tags" = "burna | pinigai | veidas | veidas su pinigu vietoje liežuvio";
+// 🤗 - hugging_face
+"72078515.name" = "apkabinantis veidas";
+"72078515.tags" = "apkabinantis veidas | apkabinimas | apkabinti | veidas";
+// 🤭 - face_with_hand_over_mouth
+"72078625.name" = "veidas su ranka ant burnos";
+"72078625.tags" = "ups | veidas su ranka ant burnos";
+// 🫢 - face_with_open_eyes_and_hand_over_mouth
+"72080810.name" = "veidas atmerktomis akimis ir ranka uždengta burna";
+"72080810.tags" = "gėda | išgąstis | netikėjimas | netikėtumas | nuostaba | pagarbi baimė | veidas atmerktomis akimis ir ranka uždengta burna";
+// 🫣 - face_with_peeking_eye
+"72080815.name" = "veidas su stebinčia akimi";
+"72080815.tags" = "pakerėtas | stebeilytis | stebėti | veidas su stebinčia akimi";
+// 🤫 - shushing_face
+"72078615.name" = "tildantis veidas";
+"72078615.tags" = "ššš | tildantis veidas | tylus";
+// 🤔 - thinking_face
+"72078500.name" = "mąstantis veidas";
+"72078500.tags" = "mąstantis veidas | mąstymas | veidas";
+// 🫡 - saluting_face
+"72080805.name" = "pagarbą atiduodantis veidas";
+"72080805.tags" = "gerai | kariai | pagarba | pagarbą atiduodantis veidas | saulėta | taip";
+// 🤐 - zipper_mouth_face
+"72078480.name" = "veidas su užtrauktuku vietoje burnos";
+"72078480.tags" = "burna | užtrauktukas | veidas | veidas su užtrauktuku vietoje burnos";
+// 🤨 - face_with_raised_eyebrow
+"72078600.name" = "veidas su pakeltais antakiais";
+"72078600.tags" = "nepasitikintis | skeptiškas | veidas su pakeltais antakiais";
+// 😐 - neutral_face
+"72078475.name" = "neutralus veidas";
+"72078475.tags" = "neišraiškingas | neutralus | veidas";
+// 😑 - expressionless
+"72078480.name" = "veidas be jokios išraiškos";
+"72078480.tags" = "be išraiškos | neišraiškingas | veidas | veidas be jokios išraiškos";
+// 😶 - no_mouth
+"72078665.name" = "veidas be burnos";
+"72078665.tags" = "burna | tylus | veidas | veidas be burnos";
+// 🫥 - dotted_line_face
+"72080825.name" = "punktyrinis veidas";
+"72080825.tags" = "intravertas | išnykti | nematomas | prislėgtas | punktyrinis veidas | slėptis";
+// 😏 - smirk
+"72078470.name" = "iš pasitenkinimo besišypsantis veidas";
+"72078470.tags" = "iš pasitenkinimo besišypsantis veidas | pasitenkinimas | veidas";
+// 😒 - unamused
+"72078485.name" = "nelinksmas veidas";
+"72078485.tags" = "nelaimingas | nelinksmas | veidas";
+// 🙄 - face_with_rolling_eyes
+"72078735.name" = "veidas, vartantis akis";
+"72078735.tags" = "akys | vartyti | veidas | veidas | vartantis akis";
+// 😬 - grimacing
+"72078615.name" = "besivaipantis veidas";
+"72078615.tags" = "besivaipantis veidas | grimasa | veidas";
+// 😮‍💨 - face_exhaling
+"26809473017250.name" = "veidas su garu";
+"26809473017250.tags" = "dejuoti | gaudyti | iškvėpti | reljefas | šnabždesys | švilpukas | veidas su garu";
+// 🤥 - lying_face
+"72078585.name" = "meluojantis veidas";
+"72078585.tags" = "melas | meluojantis veidas | veidas";
+// 🫨 - shaking_face
+"72080840.name" = "besikratantis veidukas";
+"72080840.tags" = "besikratantis veidukas | purtymas | šokas | veidas | vibruoti | žemės drebėjimas";
+// 😌 - relieved
+"72078455.name" = "veidas su palengvėjimu";
+"72078455.tags" = "palengvėjimas | veidas | veidas su palengvėjimu";
+// 😔 - pensive
+"72078495.name" = "susimąstęs veidas";
+"72078495.tags" = "prislėgtas | susimąstęs | veidas";
+// 😪 - sleepy
+"72078605.name" = "mieguistas veidas";
+"72078605.tags" = "miegas | mieguistas veidas | veidas";
+// 🤤 - drooling_face
+"72078580.name" = "besiseilėjantis veidas";
+"72078580.tags" = "besiseilėjantis veidas | seilės | veidas";
+// 😴 - sleeping
+"72078655.name" = "miegantis veidas";
+"72078655.tags" = "miegantis veidas | miegas | veidas | zzz";
+// 😷 - mask
+"72078670.name" = "veidas su medicinine kauke";
+"72078670.tags" = "gydytojas | kaukė | medicina | šaltis | sergantis | veidas | veidas su medicinine kauke";
+// 🤒 - face_with_thermometer
+"72078490.name" = "veidas su termometru";
+"72078490.tags" = "ligonis | serga | termometras | veidas | veidas su termometru";
+// 🤕 - face_with_head_bandage
+"72078505.name" = "veidas su galvos tvarsčiu";
+"72078505.tags" = "skausmas | sužeidimas | tvarstis | veidas | veidas su galvos tvarsčiu";
+// 🤢 - nauseated_face
+"72078570.name" = "besiruošiantis vemti veidas";
+"72078570.tags" = "besiruošiantis vemti veidas | veidas | vemti";
+// 🤮 - face_vomiting
+"72078630.name" = "vemiantis veidas";
+"72078630.tags" = "liga | vemiantis veidas | vemti";
+// 🤧 - sneezing_face
+"72078595.name" = "čiaudantis veidas";
+"72078595.tags" = "čiaudantis veidas | čiaudulys | veidas";
+// 🥵 - hot_face
+"72078985.name" = "įkaitęs veidas";
+"72078985.tags" = "įkaitęs veidas | karščiuojantis | karštas | prakaitavimas | raudonveidis | šilumos smūgis";
+// 🥶 - cold_face
+"72078990.name" = "sušalęs veidas";
+"72078990.tags" = "mėlynveidis | nušalimas | šaltas | stingdantis | sušalęs veidas | varvekliai";
+// 🥴 - woozy_face
+"72078980.name" = "apkvaišęs veidas";
+"72078980.tags" = "apkvaišęs veidas | apsvaigęs | banguojanti burna | įkaušęs | nelygios akys";
+// 😵 - dizzy_face
+"72078660.name" = "apsvaigęs veidas";
+"72078660.tags" = "apsvaigęs | veidas";
+// 😵‍💫 - face_with_spiral_eyes
+"26813394148332.name" = "veidas su spiralinėmis akimis";
+"26813394148332.tags" = "bėda | spiralė | svaigulys | užhipnotizuotas | va | veidas su spiralinėmis akimis";
+// 🤯 - exploding_head
+"72078635.name" = "sprogstanti galva";
+"72078635.tags" = "šokiruotas | sprogstanti galva";
+// 🤠 - face_with_cowboy_hat
+"72078560.name" = "kaubojaus veidas su skrybėle";
+"72078560.tags" = "kaubojaus veidas su skrybėle | kaubojus | skrybėlė | veidas";
+// 🥳 - partying_face
+"72078975.name" = "švenčiantis veidas";
+"72078975.tags" = "skrybėlė | švenčiantis veidas | šventė | šventimas | švilpynė";
+// 🥸 - disguised_face
+"72079000.name" = "paslėptas veidas";
+"72079000.tags" = "akiniai | inkognito | nosis | pasislėpęs | paslėptas veidas | veidas";
+// 😎 - sunglasses
+"72078465.name" = "besišypsantis veidas su akiniais nuo saulės";
+"72078465.tags" = "akiniai nuo saulės | besišypsantis veidas su akiniais nuo saulės | saulė | šaunus | šviesus | veidas";
+// 🤓 - nerd_face
+"72078495.name" = "moksliuko veidas";
+"72078495.tags" = "moksliukas | moksliuko veidas | pirmūnas | veidas";
+// 🧐 - face_with_monocle
+"72079440.name" = "veidas su monokliu";
+"72079440.tags" = "tvankus | veidas su monokliu";
+// 😕 - confused
+"72078500.name" = "sutrikęs veidas";
+"72078500.tags" = "sutrikęs | veidas";
+// 🫤 - face_with_diagonal_mouth
+"72080820.name" = "veidas įstriža burna";
+"72080820.tags" = "abejojantis | nusivylęs | skeptiškas | veidas įstriža burna";
+// 😟 - worried
+"72078550.name" = "susirūpinęs veidas";
+"72078550.tags" = "susirūpinęs | veidas";
+// 🙁 - slightly_frowning_face
+"72078720.name" = "šiek tiek paniuręs veidas";
+"72078720.tags" = "paniuręs | šiek tiek paniuręs veidas | veidas";
+// 😮 - open_mouth
+"72078625.name" = "išsižiojęs veidas";
+"72078625.tags" = "atverta | burna | išsižiojęs | veidas";
+// 😯 - hushed
+"72078630.name" = "nuščiuvęs veidas";
+"72078630.tags" = "nuščiuvęs | nustebęs | priblokštas | veidas";
+// 😲 - astonished
+"72078645.name" = "apstulbęs veidas";
+"72078645.tags" = "apstulbęs | priblokštas | veidas | visiškai";
+// 😳 - flushed
+"72078650.name" = "nuraudęs veidas";
+"72078650.tags" = "nuraudęs | raudonis | veidas";
+// 🥺 - pleading_face
+"72079010.name" = "maldaujantis veidas";
+"72079010.tags" = "gailestingumas | maldaujantis veidas | maldavimas | šuniuko akys";
+// 🥹 - face_holding_back_tears
+"72079005.name" = "ašaras tramdantis veidas";
+"72079005.tags" = "ašaras tramdantis veidas | išdidus | liūdnas | nepasiduoti | piktas | verkti";
+// 😦 - frowning
+"72078585.name" = "paniuręs išsižiojęs veidas";
+"72078585.tags" = "burna | išsižiojęs | paniuręs | veidas";
+// 😧 - anguished
+"72078590.name" = "kenčiantis veidas";
+"72078590.tags" = "kenčiantis | veidas";
+// 😨 - fearful
+"72078595.name" = "baimės pilnas veidas";
+"72078595.tags" = "baimė | baimės pilnas veidas | išsigandęs | veidas";
+// 😰 - cold_sweat
+"72078635.name" = "išsižiojęs veidas, išpiltas šalto prakaito";
+"72078635.tags" = "burna | išsižiojęs | išsižiojęs veidas | išpiltas šalto prakaito | mėlyna | prakaitas | šaltis | veidas";
+// 😥 - disappointed_relieved
+"72078580.name" = "nusivylęs veidas su palengvėjimu";
+"72078580.tags" = "nusivylęs | nusivylęs veidas su palengvėjimu | palengvėjimas | veidas";
+// 😢 - cry
+"72078565.name" = "verkiantis veidas";
+"72078565.tags" = "ašara | liūdnas | veidas | verkiantis veidas | verkti";
+// 😭 - sob
+"72078620.name" = "garsiai raudantis veidas";
+"72078620.tags" = "ašara | garsiai raudantis veidas | liūdnas | raudoti | veidas | verkti";
+// 😱 - scream
+"72078640.name" = "iš baimės šaukiantis veidas";
+"72078640.tags" = "baimė | iš baimės šaukiantis veidas | išsigandęs | šauksmas | veidas";
+// 😖 - confounded
+"72078505.name" = "suglumintas veidas";
+"72078505.tags" = "suglumęs | suglumintas veidas | veidas";
+// 😣 - persevere
+"72078570.name" = "atkaklus veidas";
+"72078570.tags" = "atkaklus | veidas";
+// 😞 - disappointed
+"72078545.name" = "nusivylęs veidas";
+"72078545.tags" = "nusivylęs | veidas";
+// 😓 - sweat
+"72078490.name" = "veidas, išpiltas šalto prakaito";
+"72078490.tags" = "prakaitas | šaltas | veidas | veidas | išpiltas šalto prakaito";
+// 😩 - weary
+"72078600.name" = "nuvargęs veidas";
+"72078600.tags" = "nuvargęs | pavargęs | veidas";
+// 😫 - tired_face
+"72078610.name" = "pavargęs veidas";
+"72078610.tags" = "pavargęs | veidas";
+// 🥱 - yawning_face
+"72078965.name" = "žiovaujantis veidas";
+"72078965.tags" = "nuobodžiaujantis | pavargęs | žiovaujantis veidas | žiovauti";
+// 😤 - triumph
+"72078575.name" = "veidas su iš nosies einančiais garais";
+"72078575.tags" = "laimėjo | triumfas | veidas | veidas su iš nosies einančiais garais";
+// 😡 - rage
+"72078560.name" = "susiraukęs veidas";
+"72078560.tags" = "įniršis | įsiutęs | piktas | raudonas | susiraukęs | veidas";
+// 😠 - angry
+"72078555.name" = "piktas veidas";
+"72078555.tags" = "piktas | pyktis | veidas";
+// 🤬 - face_with_symbols_on_mouth
+"72078620.name" = "veidas su simboliais ant burnos";
+"72078620.tags" = "besikeikiantis | veidas su simboliais ant burnos";
+// 😈 - smiling_imp
+"72078435.name" = "besišypsantis veidas su ragais";
+"72078435.tags" = "besišypsantis veidas su ragais | fantazija | pasaka | ragai | šypsena | veidas";
+// 👿 - imp
+"72076470.name" = "velniūkštis";
+"72076470.tags" = "fantazija | pasaka | veidas | velnias | velniūkštis";
+// 💀 - skull
+"72076475.name" = "kaukolė";
+"72076475.tags" = "kaukolė | mirtis | monstras | pasaka | veidas";
+// 💩 - hankey
+"72076680.name" = "išmatų krūvelė";
+"72076680.tags" = "išmatos | išmatų krūvelė | kakoti | komiksas | mėšlas | monstras | veidas";
+// 🤡 - clown_face
+"72078565.name" = "klouno veidas";
+"72078565.tags" = "klounas | klouno veidas | veidas";
+// 👹 - japanese_ogre
+"72076440.name" = "pabaisa";
+"72076440.tags" = "fantazija | monstras | pabaisa | padaras | pasaka | veidas";
+// 👺 - japanese_goblin
+"72076445.name" = "demonas";
+"72076445.tags" = "demonas | fantazija | monstras | padaras | pasaka | veidas";
+// 👻 - ghost
+"72076450.name" = "vaiduoklis";
+"72076450.tags" = "fantazija | monstras | padaras | pasaka | vaiduoklis | veidas";
+// 👽 - alien
+"72076460.name" = "ateivis";
+"72076460.tags" = "ateivis | fantazija | kūrinys | nežemiška būtybė | veidas";
+// 👾 - space_invader
+"72076465.name" = "monstras ateivis";
+"72076465.tags" = "ateivis | fantazija | kūrinys | monstras ateivis | nežemiška būtybė | pabaisa | veidas";
+// 🤖 - robot_face
+"72078510.name" = "roboto veidas";
+"72078510.tags" = "monstras | robotas | roboto veidas | veidas";
+// 😺 - smiley_cat
+"72078685.name" = "besišypsančios katės snukutis";
+"72078685.tags" = "besišypsančios katės snukutis | burna | išsižiojęs | katė | šypsena | veidas";
+// 😸 - smile_cat
+"72078675.name" = "išsišiepusios katės snukutis su besišypsančiomis akimis";
+"72078675.tags" = "akys | išsišiepusios katės snukutis su besišypsančiomis akimis | katė | šypsena | vaipytis | veidas";
+// 😹 - joy_cat
+"72078680.name" = "katės snukutis su džiaugsmo ašaromis";
+"72078680.tags" = "ašara | džiaugsmas | katė | katės snukutis su džiaugsmo ašaromis | veidas";
+// 😻 - heart_eyes_cat
+"72078690.name" = "besišypsančios katės snukutis su širdelės formos akimis";
+"72078690.tags" = "akis | besišypsančios katės snukutis su širdelės formos akimis | katė | meilė | šypsena | veidas";
+// 😼 - smirk_cat
+"72078695.name" = "nuvargusios besišypsančios katės snukutis";
+"72078695.tags" = "ironija | katė | nuvargęs | nuvargusios besišypsančios katės snukutis | šypsena | veidas";
+// 😽 - kissing_cat
+"72078700.name" = "bučiuojančios katės snukutis";
+"72078700.tags" = "akys | bučinys | bučiuojančios katės snukutis | katė | veidas";
+// 🙀 - scream_cat
+"72078715.name" = "nustebusios katės snukutis";
+"72078715.tags" = "katė | nustebęs | nustebusios katės snukutis | oi | veidas";
+// 😿 - crying_cat_face
+"72078710.name" = "verkiančios katės snukutis";
+"72078710.tags" = "ašara | katė | liūdesys | veidas | verkiančios katės snukutis | verkti";
+// 😾 - pouting_cat
+"72078705.name" = "susiraukusios katės snukutis";
+"72078705.tags" = "katė | susiraukęs | susiraukusios katės snukutis | veidas";
+// 🙈 - see_no_evil
+"72078755.name" = "užsidengusi akis beždžionė";
+"72078755.tags" = "beždžionė | blogis | draudžiama | matyti | uždrausta | užsidengusi akis beždžionė | veidas";
+// 🙉 - hear_no_evil
+"72078760.name" = "užsidengusi ausis beždžionė";
+"72078760.tags" = "beždžionė | blogis | draudžiama | klausyti | uždrausta | užsidengusi ausis beždžionė | veidas";
+// 🙊 - speak_no_evil
+"72078765.name" = "užsidengusi burną beždžionė";
+"72078765.tags" = "beždžionė | blogis | uždrausta | užsidengusi burną beždžionė | veidas";
+// 💌 - love_letter
+"72076535.name" = "meilės laiškas";
+"72076535.tags" = "laiškas | meilė | meilės laiškas | paštas | širdis";
+// 💘 - cupid
+"72076595.name" = "širdelė su strėle";
+"72076595.tags" = "bučinys | lūpos | širdelė su strėle";
+// 💝 - gift_heart
+"72076620.name" = "širdelė su kaspinu";
+"72076620.tags" = "kaspinas | širdelė su kaspinu | valentino diena";
+// 💖 - sparkling_heart
+"72076585.name" = "žėrinti širdelė";
+"72076585.tags" = "susijaudinimas | žėrėti | žėrinti širdelė";
+// 💗 - heartpulse
+"72076590.name" = "auganti širdelė";
+"72076590.tags" = "auganti širdelė | didėjimas | pulsas | susijaudinimas | susinervinęs";
+// 💓 - heartbeat
+"72076570.name" = "plakanti širdelė";
+"72076570.tags" = "plakanti | plakanti širdelė | pulsavimas | širdies plakimas | širdis";
+// 💞 - revolving_hearts
+"72076625.name" = "besisukančios širdelės";
+"72076625.tags" = "besisukančios širdelės | suktis";
+// 💕 - two_hearts
+"72076580.name" = "dvi širdelės";
+"72076580.tags" = "dvi širdelės | meilė";
+// 💟 - heart_decoration
+"72076630.name" = "širdelės dekoracija";
+"72076630.tags" = "širdelės dekoracija | širdis";
+// 💔 - broken_heart
+"72076575.name" = "sudaužyta širdelė";
+"72076575.tags" = "sudaužyta | sudaužyta širdelė | sudaužyti";
+// 🩷 - pink_heart
+"72080275.name" = "rožinė širdelė";
+"72080275.tags" = "meilė | miela | patinka | rožinė | rožinė širdelė | širdis";
+// 🧡 - orange_heart
+"72079525.name" = "oranžinė širdelė";
+"72079525.tags" = "oranžinė | oranžinė širdelė";
+// 💛 - yellow_heart
+"72076610.name" = "geltona širdelė";
+"72076610.tags" = "geltona | geltona širdelė";
+// 💚 - green_heart
+"72076605.name" = "žalia širdelė";
+"72076605.tags" = "žalia | žalia širdelė";
+// 💙 - blue_heart
+"72076600.name" = "mėlyna širdelė";
+"72076600.tags" = "mėlyna | mėlyna širdelė";
+// 🩵 - light_blue_heart
+"72080265.name" = "šviesiai mėlyna širdelė";
+"72080265.tags" = "širdis | šviesiai mėlyna | šviesiai mėlyna širdelė | žalsvai mėlyna";
+// 💜 - purple_heart
+"72076615.name" = "purpurinė širdelė";
+"72076615.tags" = "purpurinė | purpurinė širdelė";
+// 🤎 - brown_heart
+"72078470.name" = "ruda širdelė";
+"72078470.tags" = "ruda | širdelė";
+// 🖤 - black_heart
+"72077935.name" = "juoda širdis";
+"72077935.tags" = "blogis | juoda | širdis";
+// 🩶 - grey_heart
+"72080270.name" = "pilka širdelė";
+"72080270.tags" = "granitas | pilka | pilka širdelė | sidabras | širdis";
+// 🤍 - white_heart
+"72078465.name" = "balta širdelė";
+"72078465.tags" = "balta | širdelė";
+// 💋 - kiss
+"72076530.name" = "bučinio žymė";
+"72076530.tags" = "bučinio žymė | bučinys | lūpos";
+// 💯 - 100
+"72076710.name" = "šimtas taškų";
+"72076710.tags" = "100 | pilnas | rezultatas | šimtas | šimtas taškų";
+// 💢 - anger
+"72076645.name" = "pykčio simbolis";
+"72076645.tags" = "komiksas | piktas | pykčio simbolis | supykęs";
+// 💥 - boom
+"72076660.name" = "susidūrimas";
+"72076660.tags" = "bum | komiksas | susidūrimas";
+// 💫 - dizzy
+"72076690.name" = "apsvaigęs";
+"72076690.tags" = "apsvaigęs | komiksas | žvaigždė";
+// 💦 - sweat_drops
+"72076665.name" = "prakaito lašeliai";
+"72076665.tags" = "komiksas | prakaitas | prakaito lašeliai | taškymas";
+// 💨 - dash
+"72076675.name" = "sukeltos dulkės";
+"72076675.tags" = "bėgimas | dulkės | komiksas | sukeltos dulkės";
+// 💬 - speech_balloon
+"72076695.name" = "kalbos debesėlis";
+"72076695.tags" = "balionas | debesėlis | dialogas | kalba | kalbos debesėlis | komiksas";
+// 💭 - thought_balloon
+"72076700.name" = "minties debesėlis";
+"72076700.tags" = "balionas | debesėlis | komiksas | minties debesėlis | mintis";
+// 💤 - zzz
+"72076655.name" = "miego simbolis";
+"72076655.tags" = "komiksas | miegas | miego simbolis";
+// 👋 - wave
+"72076210.name" = "mojuojanti ranka";
+"72076210.tags" = "mojuoja | mojuojanti ranka | mojuoti | ranka";
+// 🤚 - raised_back_of_hand
+"72078530.name" = "pakelta viršutinė plaštakos pusė";
+"72078530.tags" = "pakelta | pakelta viršutinė plaštakos pusė | plaštaka";
+// ✋ - hand
+"30756.name" = "iškelta ranka";
+"30756.tags" = "iškelta ranka | ranka";
+// 🖖 - spock-hand
+"72077865.name" = "vulkanų rasės pasisveikinimo ženklas";
+"72077865.tags" = "kūnas | pirštas | ranka | vulkanai | vulkanų rasės pasisveikinimo ženklas";
+// 🫱 - rightwards_hand
+"72080885.name" = "į dešinę rodanti ranka";
+"72080885.tags" = "dešinė | į dešinę | į dešinę rodanti ranka | ranka";
+// 🫲 - leftwards_hand
+"72080890.name" = "į kairę rodanti ranka";
+"72080890.tags" = "į kairę | į kairę rodanti ranka | kairė | ranka";
+// 🫳 - palm_down_hand
+"72080895.name" = "ranka delnu žemyn";
+"72080895.tags" = "nekreipti dėmesio | numesti | ranka delnu žemyn | štiš";
+// 🫴 - palm_up_hand
+"72080900.name" = "ranka delnu į viršų";
+"72080900.tags" = "ateik | gaudyti | kviesti | ranka delnu į viršų | siūlymas";
+// 🫷 - leftwards_pushing_hand
+"72080915.name" = "į kairę stumianti ranka";
+"72080915.tags" = "atsisakyti | duok penkis | į kairę | į kairę stumianti ranka | laukti | stumti | sustoti";
+// 🫸 - rightwards_pushing_hand
+"72080920.name" = "į dešinę stumianti ranka";
+"72080920.tags" = "atsisakyti | duok penkis | į dešinę | į dešinę stumianti ranka | laukti | stumti | sustoti";
+// 👌 - ok_hand
+"72076215.name" = "GERAI ženklas rankomis";
+"72076215.tags" = "gerai | GERAI ženklas rankomis | ranka";
+// 🤌 - pinched_fingers
+"72078460.name" = "suspausti pirštai";
+"72078460.tags" = "pirštai | rankos gestas | sarkastiškas | suspausti";
+// 🤏 - pinching_hand
+"72078475.name" = "žnybianti ranka";
+"72078475.tags" = "mažas kiekis | žnybianti ranka";
+// 🤞 - crossed_fingers
+"72078550.name" = "sukryžiuoti pirštai";
+"72078550.tags" = "kryžius | laimė | pirštai | ranka | sukryžiuoti pirštai";
+// 🫰 - hand_with_index_finger_and_thumb_crossed
+"72080880.name" = "ranka sukryžiuotu smiliumi ir nykščiu";
+"72080880.tags" = "brangu | meilė | pinigai | ranka sukryžiuotu smiliumi ir nykščiu | širdis | spragtelėjimas";
+// 🤟 - i_love_you_hand_sign
+"72078555.name" = "„myliu tave“ gestas";
+"72078555.tags" = "„myliu tave“ gestas | MYLIU | ranka";
+// 🤘 - the_horns
+"72078520.name" = "ragų ženklas";
+"72078520.tags" = "pirštas | ragai | ragų ženklas | ranka | rokas";
+// 🤙 - call_me_hand
+"72078525.name" = "gestas paskambink man";
+"72078525.tags" = "gestas paskambink man | ranka | skambinti";
+// 👈 - point_left
+"72076195.name" = "į kairę pirštu rodanti ranka";
+"72076195.tags" = "į kairę pirštu rodanti ranka | indeksas | pirštas | ranka | rodyti";
+// 👉 - point_right
+"72076200.name" = "į dešinę pirštu rodanti ranka";
+"72076200.tags" = "į dešinę pirštu rodanti ranka | indeksas | pirštas | ranka | rodyti";
+// 👆 - point_up_2
+"72076185.name" = "delnu nusukta aukštyn pirštu rodanti ranka";
+"72076185.tags" = "delnu nusukta aukštyn pirštu rodanti ranka | į viršų | indeksas | kūnas | pirštas | ranka | rodyti";
+// 🖕 - middle_finger
+"72077860.name" = "vidurinis pirštas";
+"72077860.tags" = "pirštas | ranka | vidurinis pirštas";
+// 👇 - point_down
+"72076190.name" = "delnu nusukta žemyn pirštu rodanti ranka";
+"72076190.tags" = "delnu nusukta žemyn pirštu rodanti ranka | į apačią | indeksas | pirštas | ranka | rodyti";
+// 🫵 - index_pointing_at_the_viewer
+"72080905.name" = "į žiūrovą rodantis smilius";
+"72080905.tags" = "į žiūrovą rodantis smilius | rodyti | tu";
+// 👍 - +1
+"72076220.name" = "nykštys į viršų";
+"72076220.tags" = "į viršų | liuks | nykštys | nykštys į viršų | ranka";
+// 👎 - -1
+"72076225.name" = "nykštys į apačią";
+"72076225.tags" = "blogai | nykštys | nykštys į apačią | ranka";
+// ✊ - fist
+"30753.name" = "iškeltas kumštis";
+"30753.tags" = "iškeltas kumštis | kumštis | ranka | smūgis | sugniaužta";
+// 👊 - facepunch
+"72076205.name" = "artėjantis kumštis";
+"72076205.tags" = "artėjantis kumštis | kumštis | ranka | smūgis | sugniaužtas";
+// 🤛 - left-facing_fist
+"72078535.name" = "į kairę nukreiptas kumštis";
+"72078535.tags" = "į kairę nukreiptas kumštis | kairėn | kumštis";
+// 🤜 - right-facing_fist
+"72078540.name" = "į dešinę nukreiptas kumštis";
+"72078540.tags" = "dešinėn | į dešinę nukreiptas kumštis | kumštis";
+// 👏 - clap
+"72076230.name" = "plojančios rankos";
+"72076230.tags" = "plojančios rankos | ploti | rankos";
+// 🙌 - raised_hands
+"72078775.name" = "žmogus, iškėlęs rankas";
+"72078775.tags" = "gestas | iškelta | kūnas | ranka | šventė | valio | žmogus | iškėlęs rankas";
+// 🫶 - heart_hands
+"72080910.name" = "širdelė iš rankų";
+"72080910.tags" = "meilė | širdelė iš rankų";
+// 👐 - open_hands
+"72076235.name" = "atviros rankos";
+"72076235.tags" = "atviros | rankos";
+// 🤲 - palms_up_together
+"72078650.name" = "delnai suglausti";
+"72078650.tags" = "delnai suglausti | malda";
+// 🤝 - handshake
+"72078545.name" = "rankos paspaudimas";
+"72078545.tags" = "pasisveikinimas | paspaudimas | ranka | rankos paspaudimas | susitarimas";
+// 🙏 - pray
+"72078790.name" = "suglausti delnai";
+"72078790.tags" = "melstis | prašymas | ranka | suglausti delnai";
+// 💅 - nail_care
+"72076500.name" = "nagų lakas";
+"72076500.tags" = "kosmetika | lakas | manikiūras | nagų lakas | priežiūra";
+// 🤳 - selfie
+"72078655.name" = "asmenukė";
+"72078655.tags" = "asmenukė | fotoaparatas | telefonas";
+// 💪 - muscle
+"72076685.name" = "paryškinti bicepsai";
+"72076685.tags" = "bicepsai | komiksas | kūnas | paryškinti bicepsai | raumuo";
+// 🦾 - mechanical_arm
+"72079350.name" = "mechaninė ranka";
+"72079350.tags" = "mechaninė ranka | prieinamumas | protezavimas";
+// 🦿 - mechanical_leg
+"72079355.name" = "mechaninė koja";
+"72079355.tags" = "mechaninė koja | prieinamumas | protezavimas";
+// 🦵 - leg
+"72079305.name" = "koja";
+"72079305.tags" = "galūnė | koja | spyris";
+// 🦶 - foot
+"72079310.name" = "pėda";
+"72079310.tags" = "pėda | spyris | trepsėti";
+// 👂 - ear
+"72076165.name" = "ausis";
+"72076165.tags" = "ausis | kūnas";
+// 🦻 - ear_with_hearing_aid
+"72079335.name" = "ausis su klausos aparatu";
+"72079335.tags" = "ausis su klausos aparatu | neprigirdintis | prieinamumas";
+// 👃 - nose
+"72076170.name" = "nosis";
+"72076170.tags" = "kūnas | nosis";
+// 🧠 - brain
+"72079520.name" = "smegenys";
+"72079520.tags" = "protingas | smegenys";
+// 🫀 - anatomical_heart
+"72080640.name" = "širdis";
+"72080640.tags" = "centras | organas | pulsas | širdies plakimas | širdis";
+// 🫁 - lungs
+"72080645.name" = "plaučiai";
+"72080645.tags" = "įkvėpimas | iškvėpimas | kvėpavimas | organas | plaučiai";
+// 🦷 - tooth
+"72079315.name" = "dantis";
+"72079315.tags" = "dantis | dantistas";
+// 🦴 - bone
+"72079300.name" = "kaulas";
+"72079300.tags" = "kaulas | skeletas";
+// 👀 - eyes
+"72076155.name" = "akys";
+"72076155.tags" = "akis | akys | veidas";
+// 👅 - tongue
+"72076180.name" = "liežuvis";
+"72076180.tags" = "kūnas | liežuvis";
+// 👄 - lips
+"72076175.name" = "burna";
+"72076175.tags" = "burna | lūpos";
+// 🫦 - biting_lip
+"72080830.name" = "prikąsta lūpa";
+"72080830.tags" = "baimė | flirtas | nepatogu | nerimas | nervingumas | prikąsta lūpa | susirūpinimas";
+// 👶 - baby
+"72076425.name" = "kūdikis";
+"72076425.tags" = "jaunas | kūdikis";
+// 🧒 - child
+"72079450.name" = "vaikas";
+"72079450.tags" = "jaunas | neutrali lytis | vaikas";
+// 👦 - boy
+"72076345.name" = "berniukas";
+"72076345.tags" = "berniukas | jaunas";
+// 👧 - girl
+"72076350.name" = "mergaitė";
+"72076350.tags" = "jauna | mergaitė | mergelė | zodiakas";
+// 🧑 - adult
+"72079445.name" = "suaugusysis";
+"72079445.tags" = "neutrali lytis | suaugusysis";
+// 👱 - person_with_blond_hair
+"72076400.name" = "šviesiaplaukis žmogus";
+"72076400.tags" = "šviesiaplaukis | šviesiaplaukis žmogus";
+// 👨 - man
+"72076355.name" = "vyras";
+"72076355.tags" = "vyras";
+// 🧔 - bearded_person
+"72079460.name" = "barzdotas žmogus";
+"72079460.tags" = "barzda | barzdotas žmogus";
+// 👩 - woman
+"72076360.name" = "moteris";
+"72076360.tags" = "moteris";
+// 🧓 - older_adult
+"72079455.name" = "kitas suaugusysis";
+"72079455.tags" = "kitas suaugusysis | neutrali lytis | senas";
+// 👴 - older_man
+"72076415.name" = "senas vyras";
+"72076415.tags" = "senas | vyras";
+// 👵 - older_woman
+"72076420.name" = "sena moteris";
+"72076420.tags" = "moteris | sena";
+// 🙍 - person_frowning
+"72078780.name" = "paniuręs žmogus";
+"72078780.tags" = "gestas | paniuręs žmogus | raukytis";
+// 🙎 - person_with_pouting_face
+"72078785.name" = "susiraukęs žmogus";
+"72078785.tags" = "gestas | raukymasis | susiraukęs žmogus";
+// 🙅 - no_good
+"72078740.name" = "neigiamas gestas";
+"72078740.tags" = "draudžiama | gestas | ne | neigiamas gestas | ranka";
+// 🙆 - ok_woman
+"72078745.name" = "teigiamas gestas";
+"72078745.tags" = "gerai | gestai | ranka | teigiamas gestas";
+// 💁 - information_desk_person
+"72076480.name" = "informacijos skyriaus darbuotojas";
+"72076480.tags" = "informacija | informacijos skyriaus darbuotojas | įžūlus | pagalba | ranka";
+// 🙋 - raising_hand
+"72078770.name" = "žmogus, iškėlęs ranką";
+"72078770.tags" = "gestas | iškelta | laimingas | ranka | žmogus | iškėlęs ranką";
+// 🧏 - deaf_person
+"72079435.name" = "kurčias žmogus";
+"72079435.tags" = "ausis | girdėti | kurčias | kurčias žmogus | prieinamumas";
+// 🙇 - bow
+"72078750.name" = "nusilenkęs žmogus";
+"72078750.tags" = "atsiprašymas | gestas | nusilenkęs žmogus | nusilenkimas";
+// 🤦 - face_palm
+"72078590.name" = "o varge";
+"72078590.tags" = "beviltiškumas | neįtikėtinumas | o varge | susierzinimas | veidas";
+// 🤷 - shrug
+"72078675.name" = "gūžtelėjimas pečiais";
+"72078675.tags" = "abejonė | gūžtelėjimas | gūžtelėjimas pečiais | nežinojimas";
+// 🧑‍🎓 - student
+"26901339530736.name" = "paskutinio kurso studentas";
+"26901339530736.tags" = "baigimas | paskutinio kurso studentas | studentas";
+// 👨‍🎓 - male-student
+"26555159681094.name" = "studentas";
+"26555159681094.tags" = "absolventas | studentas | vyras";
+// 👩‍🎓 - female-student
+"26555719842663.name" = "studentė";
+"26555719842663.tags" = "absolventė | moteris | studentė";
+// 🧑‍🏫 - teacher
+"26901339533640.name" = "mokantis žmogus";
+"26901339533640.tags" = "dėstytojas | instruktorius | mokantis žmogus | mokytojas";
+// 👨‍🏫 - male-teacher
+"26555159683998.name" = "mokytojas";
+"26555159683998.tags" = "dėstytojas | mokytojas | profesorius | vyras";
+// 👩‍🏫 - female-teacher
+"26555719845567.name" = "mokytoja";
+"26555719845567.tags" = "dėstytoja | mokytoja | moteris | profesorė";
+// 🧑‍🌾 - farmer
+"26901339527931.name" = "ūkininkaujantis žmogus";
+"26901339527931.tags" = "sodininkas | ūkininkas | ūkininkaujantis žmogus";
+// 👨‍🌾 - male-farmer
+"26555159678289.name" = "ūkininkas";
+"26555159678289.tags" = "darbininkas | sodininkas | ūkininkas | vyras";
+// 👩‍🌾 - female-farmer
+"26555719839858.name" = "ūkininkė";
+"26555719839858.tags" = "darbininkė | moteris | sodininkė | ūkininkė";
+// 🧑‍🍳 - cook
+"26901339529680.name" = "gaminantis žmogus";
+"26901339529680.tags" = "gaminantis žmogus | šefas | virėjas";
+// 👨‍🍳 - male-cook
+"26555159680038.name" = "virėjas";
+"26555159680038.tags" = "šefas | virėjas | vyras";
+// 👩‍🍳 - female-cook
+"26555719841607.name" = "virėja";
+"26555719841607.tags" = "moteris | šefė | virėja";
+// 🧑‍🔧 - mechanic
+"26901339518757.name" = "remontuojantis žmogus";
+"26901339518757.tags" = "elektrikas | mechanikas | remontuojantis žmogus | santechnikas";
+// 👨‍🔧 - male-mechanic
+"26555159669115.name" = "mechanikas";
+"26555159669115.tags" = "elektrikas | mechanikas | prekybininkas | santechnikas | vyras";
+// 👩‍🔧 - female-mechanic
+"26555719830684.name" = "mechanikė";
+"26555719830684.tags" = "elektrikė | mechanikė | moteris | prekybininkė | santechnikė";
+// 🧑‍🏭 - factory_worker
+"26901339533706.name" = "gamyklos darbuotojas";
+"26901339533706.tags" = "darbininkas | gamykla | gamyklos darbuotojas | industrinis | surinkimas";
+// 👨‍🏭 - male-factory-worker
+"26555159684064.name" = "fabriko darbininkas";
+"26555159684064.tags" = "darbuotojas | fabrikas | fabriko darbininkas | gamyba | susirinkimas | vyras";
+// 👩‍🏭 - female-factory-worker
+"26555719845633.name" = "fabriko darbininkė";
+"26555719845633.tags" = "darbuotoja | fabrikas | fabriko darbininkė | gamyba | moteris | susirinkimas";
+// 🧑‍💼 - office_worker
+"26901339515226.name" = "dirbantysis biure";
+"26901339515226.tags" = "architektas | balta apykaklė | dirbantysis biure | vadybininkas | verslas";
+// 👨‍💼 - male-office-worker
+"26555159665584.name" = "biuro darbuotojas";
+"26555159665584.tags" = "architektas | biuras | biuro darbuotojas | darbas įstaigoje | vadybininkas | verslas | vyras";
+// 👩‍💼 - female-office-worker
+"26555719827153.name" = "biuro darbuotoja";
+"26555719827153.tags" = "architektė | biuro darbuotoja | darbas įstaigoje | moteris | vadybininkė | verslas";
+// 🧑‍🔬 - scientist
+"26901339518922.name" = "mokslo darbuotojas";
+"26901339518922.tags" = "biologas | chemikas | fizikas | inžinierius | mokslininkas | mokslo darbuotojas";
+// 👨‍🔬 - male-scientist
+"26555159669280.name" = "mokslininkas";
+"26555159669280.tags" = "biologas | chemikas | fizikas | inžinierius | matematikas | mokslininkas | vyras";
+// 👩‍🔬 - female-scientist
+"26555719830849.name" = "mokslininkė";
+"26555719830849.tags" = "biologė | chemikė | fizikė | inžinierė | matematikė | mokslininkė | moteris";
+// 🧑‍💻 - technologist
+"26901339515193.name" = "technikas";
+"26901339515193.tags" = "išradėjas | koderis | programinė įranga | programuotojas | technikas";
+// 👨‍💻 - male-technologist
+"26555159665551.name" = "technologas";
+"26555159665551.tags" = "išradėjas | kūrėjas | programinė įranga | programuotojas | technologas | vyras";
+// 👩‍💻 - female-technologist
+"26555719827120.name" = "technologė";
+"26555719827120.tags" = "išradėja | kūrėja | moteris | programinė įranga | programuotoja | technologė";
+// 🧑‍🎤 - singer
+"26901339531297.name" = "dainuojantis žmogus";
+"26901339531297.tags" = "aktorius | dainininkas | dainuojantis žmogus | linksmintojas | rokas | žvaigždė";
+// 👨‍🎤 - male-singer
+"26555159681655.name" = "dainininkas";
+"26555159681655.tags" = "aktorius | dainininkas | rokas | vyras | žvaigždė";
+// 👩‍🎤 - female-singer
+"26555719843224.name" = "dainininkė";
+"26555719843224.tags" = "aktorė | dainininkė | moteris | rokas | žvaigždė";
+// 🧑‍🎨 - artist
+"26901339531429.name" = "tapytojas";
+"26901339531429.tags" = "menininkas | paletė | tapytojas";
+// 👨‍🎨 - male-artist
+"26555159681787.name" = "dailininkas";
+"26555159681787.tags" = "dailininkas | paletė | vyras";
+// 👩‍🎨 - female-artist
+"26555719843356.name" = "dailininkė";
+"26555719843356.tags" = "dailininkė | moteris | paletė";
+// 🧑‍🚀 - astronaut
+"26901339530142.name" = "kosmonautas";
+"26901339530142.tags" = "astronautas | kosmonautas | raketa";
+// 👨‍🚀 - male-astronaut
+"26555159680500.name" = "astronautas";
+"26555159680500.tags" = "astronautas | raketa | vyras";
+// 👩‍🚀 - female-astronaut
+"26555719842069.name" = "astronautė";
+"26555719842069.tags" = "astronautė | moteris | raketa";
+// 🧑‍🚒 - firefighter
+"26901339530736.name" = "ugniagesys";
+"26901339530736.tags" = "gaisrinė mašina | gaisrininkas | ugniagesys";
+// 👨‍🚒 - male-firefighter
+"26555159681094.name" = "gaisrininkas";
+"26555159681094.tags" = "gaisrininkas | gaisrininkų automobilis | vyras";
+// 👩‍🚒 - female-firefighter
+"26555719842663.name" = "gaisrininkė";
+"26555719842663.tags" = "gaisrininkė | gaisrininkų automobilis | moteris";
+// 👮 - cop
+"72076385.name" = "policininkas";
+"72076385.tags" = "pareigūnas | policija | policininkas";
+// 💂 - guardsman
+"72076485.name" = "sargybinis";
+"72076485.tags" = "sargyba | sargybinis";
+// 🥷 - ninja
+"72078995.name" = "nindzė";
+"72078995.tags" = "kovotojas | nindzė | užsimaskavęs";
+// 👷 - construction_worker
+"72076430.name" = "statybininkas";
+"72076430.tags" = "darbuotojas | kepurė | statyba | statybininkas";
+// 🫅 - person_with_crown
+"72080665.name" = "asmuo su karūna";
+"72080665.tags" = "asmuo su karūna | didikas | karališkas | karališkoji šeima | monarchas";
+// 🤴 - prince
+"72078660.name" = "princas";
+"72078660.tags" = "princas";
+// 👸 - princess
+"72076435.name" = "princesė";
+"72076435.tags" = "fantazija | pasaka | princesė";
+// 👳 - man_with_turban
+"72076410.name" = "vyras su turbanu";
+"72076410.tags" = "turbanas | vyras su turbanu";
+// 👲 - man_with_gua_pi_mao
+"72076405.name" = "vyras su kinietiška kepurėle";
+"72076405.tags" = "kepurė | kinietiška kepurėlė | vyras | vyras su kinietiška kepurėle";
+// 🧕 - person_with_headscarf
+"72079465.name" = "moteris su skarele";
+"72079465.tags" = "moteris su skarele | skarelė";
+// 🤵 - person_in_tuxedo
+"72078665.name" = "asmuo su smokingu";
+"72078665.tags" = "asmuo su smokingu | jaunikis | smokingas | vyras | vyras su smokingu";
+// 👰 - bride_with_veil
+"72076395.name" = "nuotaka su veliumu";
+"72076395.tags" = "nuotaka | nuotaka su veliumu | veliumas | vestuvės";
+// 🤰 - pregnant_woman
+"72078640.name" = "nėščia moteris";
+"72078640.tags" = "moteris | neščia | nėščia moteris";
+// 🫃 - pregnant_man
+"72080655.name" = "nėščias vyras";
+"72080655.tags" = "išsipūtęs | nėščias | nėščias vyras | pilnas | pilvas";
+// 🫄 - pregnant_person
+"72080660.name" = "nėščias asmuo";
+"72080660.tags" = "išsipūtęs | nėščias | nėščias asmuo | pilnas | pilvas";
+// 🤱 - breast-feeding
+"72078645.name" = "maitinimas krūtimi";
+"72078645.tags" = "krūtinė | kūdikis | maitinimas krūtimi | priežiūra";
+// 👩‍🍼 - woman_feeding_baby
+"26555719841904.name" = "kūdikį maitinanti moteris";
+"26555719841904.tags" = "kūdikį maitinanti moteris | kūdikis | maitinimas | maitinimas krūtimi | moteris";
+// 👨‍🍼 - man_feeding_baby
+"26555159680335.name" = "kūdikį maitinantis vyras";
+"26555159680335.tags" = "kūdikį maitinantis vyras | kūdikis | maitinimas | maitinimas krūtimi | vyras";
+// 🧑‍🍼 - person_feeding_baby
+"26901339529977.name" = "kūdikį maitinantis asmuo";
+"26901339529977.tags" = "asmuo | kūdikį maitinantis asmuo | kūdikis | maitinimas | maitinimas krūtimi";
+// 👼 - angel
+"72076455.name" = "angeliukas";
+"72076455.tags" = "angelas | angeliukas | fantazija | kūdikis | pasaka | veidas";
+// 🎅 - santa
+"72079055.name" = "Kalėdų senelis";
+"72079055.tags" = "Kalėdos | Kalėdų senelis | senelis | šventė | tėvas";
+// 🤶 - mrs_claus
+"72078670.name" = "ponia Claus";
+"72078670.tags" = "Kalėdos | mama | ponia | ponia Claus | šventė";
+// 🧑‍🎄 - mx_claus
+"26901339530241.name" = "Kalėdų asmuo";
+"26901339530241.tags" = "Kalėdos | Kalėdų asmuo";
+// 🦸 - superhero
+"72079320.name" = "superherojus";
+"72079320.tags" = "geras | herojė | herojus | supergalia | superherojus";
+// 🦹 - supervillain
+"72079325.name" = "superpiktadarys";
+"72079325.tags" = "blogas | nusikaltėlis | piktadarys | supergalia | superpiktadarys";
+// 🧙 - mage
+"72079485.name" = "magas";
+"72079485.tags" = "burtininkas | kerėtoja | kerėtojas | magas | ragana";
+// 🧚 - fairy
+"72079490.name" = "fėja";
+"72079490.tags" = "fėja | Oberon | Puck | Titania";
+// 🧛 - vampire
+"72079495.name" = "vampyras";
+"72079495.tags" = "Drakula | nemirtingas | vampyras";
+// 🧜 - merperson
+"72079500.name" = "undinius";
+"72079500.tags" = "undinė | undinėlė | undinius";
+// 🧝 - elf
+"72079505.name" = "elfas";
+"72079505.tags" = "elfas | magiškas";
+// 🧞 - genie
+"72079510.name" = "dvasia";
+"72079510.tags" = "dvasia | džinas";
+// 🧟 - zombie
+"72079515.name" = "zombis";
+"72079515.tags" = "nemirtingas | vaikštantis numirėlis | zombis";
+// 🧌 - troll
+"72079420.name" = "trolis";
+"72079420.tags" = "fantazija | pabaisa | pasaka | trolis";
+// 💆 - massage
+"72076505.name" = "veido masažas";
+"72076505.tags" = "masažas | salonas | veidas | veido masažas";
+// 💇 - haircut
+"72076510.name" = "apkerpamas žmogus";
+"72076510.tags" = "apkerpamas žmogus | grožis | kirpėjas | salonas | šukuosena";
+// 🚶 - walking
+"72079305.name" = "pėstysis";
+"72079305.tags" = "ėjimas | pėstysis | vaikščiojimas | vaikščioti";
+// 🧍 - standing_person
+"72079425.name" = "stovintis žmogus";
+"72079425.tags" = "stovėti | stovintis | stovintis žmogus";
+// 🧎 - kneeling_person
+"72079430.name" = "klūpantis žmogus";
+"72079430.tags" = "klūpantis | klūpantis žmogus | klūpėti";
+// 🧑‍🦯 - person_with_probing_cane
+"26901339531726.name" = "žmogus neregio lazdele";
+"26901339531726.tags" = "aklas | prieinamumas | žmogus neregio lazdele | žmogus su neregio lazdele";
+// 👨‍🦯 - man_with_probing_cane
+"26555159682084.name" = "vyras su neregio lazdele";
+"26555159682084.tags" = "aklas | prieinamumas | vyras | vyras su neregio lazdele";
+// 👩‍🦯 - woman_with_probing_cane
+"26555719843653.name" = "moteris su neregio lazdele";
+"26555719843653.tags" = "akla | moteris | moteris su neregio lazdele | prieinamumas";
+// 🧑‍🦼 - person_in_motorized_wheelchair
+"26901339532155.name" = "žmogus motorizuotame vežimėlyje";
+"26901339532155.tags" = "prieinamumas | vežimėlis | žmogus motorizuotame vežimėlyje";
+// 👨‍🦼 - man_in_motorized_wheelchair
+"26555159682513.name" = "vyras motorizuotame vežimėlyje";
+"26555159682513.tags" = "prieinamumas | vežimėlis | vyras | vyras motorizuotame vežimėlyje";
+// 👩‍🦼 - woman_in_motorized_wheelchair
+"26555719844082.name" = "moteris motorizuotame vežimėlyje";
+"26555719844082.tags" = "moteris | moteris motorizuotame vežimėlyje | prieinamumas | vežimėlis";
+// 🧑‍🦽 - person_in_manual_wheelchair
+"26901339532188.name" = "žmogus rankomis valdomame vežimėlyje";
+"26901339532188.tags" = "prieinamumas | vežimėlis | žmogus rankomis valdomame vežimėlyje";
+// 👨‍🦽 - man_in_manual_wheelchair
+"26555159682546.name" = "vyras rankomis valdomame vežimėlyje";
+"26555159682546.tags" = "prieinamumas | vežimėlis | vyras | vyras rankomis valdomame vežimėlyje";
+// 👩‍🦽 - woman_in_manual_wheelchair
+"26555719844115.name" = "moteris rankomis valdomame vežimėlyje";
+"26555719844115.tags" = "moteris | moteris rankomis valdomame vežimėlyje | prieinamumas | vežimėlis";
+// 🏃 - runner
+"72079365.name" = "bėgikas";
+"72079365.tags" = "bėgikas | bėgiojimas | maratonas";
+// 💃 - dancer
+"72076490.name" = "šokanti moteris";
+"72076490.tags" = "moteris | šokanti moteris | šokis";
+// 🕺 - man_dancing
+"72077725.name" = "šokantis vyras";
+"72077725.tags" = "šokantis vyras | šokis | vyras";
+// 👯 - dancers
+"72076390.name" = "besilinksminančios moterys";
+"72076390.tags" = "ausys | besilinksminančios moterys | merginos | moterys | šokėjos | zuikutis";
+// 🧖 - person_in_steamy_room
+"72079470.name" = "asmuo garų kambaryje";
+"72079470.tags" = "asmuo garų kambaryje | garų kambarys | sauna";
+// 🧗 - person_climbing
+"72079475.name" = "kopiantis žmogus";
+"72079475.tags" = "alpinistas | kopiantis žmogus";
+// 🤺 - fencer
+"72078690.name" = "fechtuotojas";
+"72078690.tags" = "fechtavimas | fechtuotojas | kardas";
+// 🏇 - horse_racing
+"72079385.name" = "arklių lenktynės";
+"72079385.tags" = "arklių lenktynės | arklys | jojikas | lenktynės";
+// 🏂 - snowboarder
+"72079360.name" = "snieglenčių sporto mėgėjas";
+"72079360.tags" = "slidinėti | sniegas | snieglenčių sporto mėgėjas | snieglentė";
+// 🏄 - surfer
+"72079370.name" = "banglentininkas";
+"72079370.tags" = "banglenčių sportas | banglentininkas";
+// 🚣 - rowboat
+"72079210.name" = "irkluojantis žmogus";
+"72079210.tags" = "irkluojantis žmogus | transporto priemonė | valtis";
+// 🏊 - swimmer
+"72079400.name" = "plaukikas";
+"72079400.tags" = "plaukikas | plaukti";
+// 🚴 - bicyclist
+"72079295.name" = "dviratininkas";
+"72079295.tags" = "dviratininkas | dviratis";
+// 🚵 - mountain_bicyclist
+"72079300.name" = "kalnų dviratininkas";
+"72079300.tags" = "dviratininkas | dviratis | kalnas | kalnų dviratininkas";
+// 🤸 - person_doing_cartwheel
+"72078680.name" = "persivertimas šonu";
+"72078680.tags" = "gimnastika | persivertimas | persivertimas šonu";
+// 🤼 - wrestlers
+"72078700.name" = "imtynininkai";
+"72078700.tags" = "imtynės | imtynininkai | imtynininkas";
+// 🤽 - water_polo
+"72078705.name" = "vandensvydis";
+"72078705.tags" = "vandensvydis | vanduo";
+// 🤾 - handball
+"72078710.name" = "rankinis";
+"72078710.tags" = "kamuolys | rankinis";
+// 🤹 - juggling
+"72078685.name" = "žongliravimas";
+"72078685.tags" = "įgūdis | pusiausvyra | reakcija | žongliravimas | žongliruoti";
+// 🧘 - person_in_lotus_position
+"72079480.name" = "žmogus lotoso pozoje";
+"72079480.tags" = "joga | meditacija | žmogus lotoso pozoje";
+// 🛀 - bath
+"72079355.name" = "žmogus prausiasi vonioje";
+"72079355.tags" = "vonia | žmogus prausiasi vonioje";
+// 🛌 - sleeping_accommodation
+"72079415.name" = "žmogus lovoje";
+"72079415.tags" = "miegoti | viešbutis | žmogus lovoje";
+// 🧑‍🤝‍🧑 - people_holding_hands
+"3200955216551984283.name" = "rankomis susikibę žmonės";
+"3200955216551984283.tags" = "asmuo | laikyti | pora | ranka | rankomis susikibę žmonės | susikibusios rankos";
+// 👭 - two_women_holding_hands
+"72076380.name" = "dvi moterys, susikibusios už rankų";
+"72076380.tags" = "dvi moterys | susikibusios už rankų | laikyti | moteris | pora | ranka";
+// 👫 - man_and_woman_holding_hands
+"72076370.name" = "vyras ir moteris, susikibę už rankų";
+"72076370.tags" = "laikyti | moteris | pora | ranka | vyras | vyras ir moteris | susikibę už rankų";
+// 👬 - two_men_holding_hands
+"72076375.name" = "du vyrai, susikibę už rankų";
+"72076375.tags" = "du vyrai | susikibę už rankų | dvyniai | laikyti | pora | ranka | vyras | zodiakas";
+// 💏 - couplekiss
+"72076550.name" = "bučinys";
+"72076550.tags" = "bučinys | pora";
+// 💑 - couple_with_heart
+"72076560.name" = "pora su širdele";
+"72076560.tags" = "meilė | pora | pora su širdele";
+// 👪 - family
+"72076365.name" = "šeima";
+"72076365.tags" = "mama | šeima | tėvas | vaikas";
+// 👤 - bust_in_silhouette
+"72076335.name" = "biusto siluetas";
+"72076335.tags" = "biustas | biusto siluetas | siluetas";
+// 👥 - busts_in_silhouette
+"72076340.name" = "biustų siluetai";
+"72076340.tags" = "biustas | biustų siluetai | siluetas";
+// 🫂 - people_hugging
+"72080650.name" = "apsikabinę žmonės";
+"72080650.tags" = "apsikabinę žmonės | apsikabinti | dėkui | labas | viso";
+// 👣 - footprints
+"72076330.name" = "pėdsakai";
+"72076330.tags" = "drabužiai | kūnas | pėdsakai | pėdsakas";
+// 🏻 - skin-tone-2
+"72079645.name" = "šviesios odos";
+"72079645.tags" = "odos atspalvis | šviesios odos";
+// 🏼 - skin-tone-3
+"72079650.name" = "vidutinio gymio";
+"72079650.tags" = "odos atspalvis | vidutinio gymio";
+// 🏽 - skin-tone-4
+"72079655.name" = "rusvos odos";
+"72079655.tags" = "odos atspalvis | rusvos odos";
+// 🏾 - skin-tone-5
+"72079660.name" = "tamsios odos";
+"72079660.tags" = "odos atspalvis | tamsios odos";
+// 🏿 - skin-tone-6
+"72079665.name" = "itin tamsios odos";
+"72079665.tags" = "itin tamsios odos | odos atspalvis";
+// 🐵 - monkey_face
+"72076100.name" = "beždžionės snukutis";
+"72076100.tags" = "beždžionė | beždžionės snukutis | veidas";
+// 🐒 - monkey
+"72075925.name" = "beždžionė";
+"72075925.tags" = "beždžionė";
+// 🦍 - gorilla
+"72079105.name" = "gorila";
+"72079105.tags" = "gorila | gyvūnas";
+// 🦧 - orangutan
+"72079235.name" = "orangutangas";
+"72079235.tags" = "beždžionė | orangutangas";
+// 🐶 - dog
+"72076105.name" = "šuns snukutis";
+"72076105.tags" = "naminis gyvūnas | šuns snukutis | šuo | veidas";
+// 🐕 - dog2
+"72075940.name" = "šuo";
+"72075940.tags" = "naminis gyvūnas | šuo";
+// 🦮 - guide_dog
+"72079270.name" = "šuo vedlys";
+"72079270.tags" = "aklas | prieinamumas | šuo vedlys | vedlys";
+// 🐕‍🦺 - service_dog
+"26508666272220.name" = "tarnaujantis šuo";
+"26508666272220.tags" = "aptarnavimas | pagalba | prieinamumas | šuo | tarnaujantis šuo";
+// 🐩 - poodle
+"72076040.name" = "pudelis";
+"72076040.tags" = "pudelis | šuo";
+// 🐺 - wolf
+"72076125.name" = "vilko snukis";
+"72076125.tags" = "veidas | vilkas | vilko snukis";
+// 🦊 - fox_face
+"72079090.name" = "lapės snukis";
+"72079090.tags" = "lapė | lapės snukis | snukis";
+// 🦝 - raccoon
+"72079185.name" = "meškėnas";
+"72079185.tags" = "gudrus | meškėnas | smalsus";
+// 🐱 - cat
+"72076080.name" = "katės snukutis";
+"72076080.tags" = "katė | katės snukutis | naminis gyvūnas | veidas";
+// 🐈 - cat2
+"72075875.name" = "katė";
+"72075875.tags" = "katė | naminis gyvūnas";
+// 🐈‍⬛ - black_cat
+"51973200513.name" = "juoda katė";
+"51973200513.tags" = "juoda | katė | nelaimė";
+// 🦁 - lion_face
+"72079045.name" = "liūto snukis";
+"72079045.tags" = "liūtas | liūto snukis | veidas | zodiakas";
+// 🐯 - tiger
+"72076070.name" = "tigro snukis";
+"72076070.tags" = "tigras | tigro snukis | veidas";
+// 🐅 - tiger2
+"72075860.name" = "tigras";
+"72075860.tags" = "tigras";
+// 🐆 - leopard
+"72075865.name" = "leopardas";
+"72075865.tags" = "leopardas";
+// 🐴 - horse
+"72076095.name" = "arklio snukis";
+"72076095.tags" = "arklio snukis | arklys | veidas";
+// 🫎 - moose
+"72080710.name" = "briedis";
+"72080710.tags" = "briedis | gyvūnas | ragai | žinduolis";
+// 🫏 - donkey
+"72080715.name" = "asilas";
+"72080715.tags" = "asilas | gyvūnas | mulas | užsispyręs | žinduolis";
+// 🐎 - racehorse
+"72075905.name" = "arklys";
+"72075905.tags" = "arklių varžybos | arklys | varžytis";
+// 🦄 - unicorn_face
+"72079060.name" = "vienaragio snukis";
+"72079060.tags" = "veidas | vienaragio snukis | vienaragis";
+// 🦓 - zebra_face
+"72079135.name" = "zebras";
+"72079135.tags" = "dryžis | zebras";
+// 🦌 - deer
+"72079100.name" = "elnias";
+"72079100.tags" = "elnias";
+// 🦬 - bison
+"72079260.name" = "bizonas";
+"72079260.tags" = "banda | bizonas | buivolas";
+// 🐮 - cow
+"72076065.name" = "karvės snukis";
+"72076065.tags" = "karvė | karvės snukis | veidas";
+// 🐂 - ox
+"72075845.name" = "jautis";
+"72075845.tags" = "bulius | jautis | tauras | zodiakas";
+// 🐃 - water_buffalo
+"72075850.name" = "azijinis buivolas";
+"72075850.tags" = "azijinis | buivolas";
+// 🐄 - cow2
+"72075855.name" = "karvė";
+"72075855.tags" = "karvė";
+// 🐷 - pig
+"72076110.name" = "kiaulės snukis";
+"72076110.tags" = "kiaulė | kiaulės snukis | veidas";
+// 🐖 - pig2
+"72075945.name" = "kiaulė";
+"72075945.tags" = "kiaulė";
+// 🐗 - boar
+"72075950.name" = "šernas";
+"72075950.tags" = "kiaulė | šernas";
+// 🐽 - pig_nose
+"72076140.name" = "kiaulės nosis";
+"72076140.tags" = "kiaulė | kiaulės nosis | nosis | veidas";
+// 🐏 - ram
+"72075910.name" = "avinas (gyvūnas)";
+"72075910.tags" = "avinas | avinas (gyvūnas) | avis | zodiakas";
+// 🐑 - sheep
+"72075920.name" = "avis";
+"72075920.tags" = "avis";
+// 🐐 - goat
+"72075915.name" = "ožys";
+"72075915.tags" = "ožiaragis | ožys | zodiakas";
+// 🐪 - dromedary_camel
+"72076045.name" = "kupranugaris";
+"72076045.tags" = "kupra | kupranugaris | vienakupris kupranugaris";
+// 🐫 - camel
+"72076050.name" = "dvikupris kupranugaris";
+"72076050.tags" = "dvikupris kupranugaris | kupra | kupranugaris";
+// 🦙 - llama
+"72079165.name" = "lama";
+"72079165.tags" = "alpaka | guanakas | lama | lamos vilna | vilna";
+// 🦒 - giraffe_face
+"72079130.name" = "žirafa";
+"72079130.tags" = "dėmė | žirafa";
+// 🐘 - elephant
+"72075955.name" = "dramblys";
+"72075955.tags" = "dramblys";
+// 🦣 - mammoth
+"72079215.name" = "mamutas";
+"72079215.tags" = "didelis | iltis | išnykimas | mamutas";
+// 🦏 - rhinoceros
+"72079115.name" = "raganosis";
+"72079115.tags" = "raganosis";
+// 🦛 - hippopotamus
+"72079175.name" = "begemotas";
+"72079175.tags" = "begemotas";
+// 🐭 - mouse
+"72076060.name" = "pelės snukutis";
+"72076060.tags" = "pelė | pelės snukutis | veidas";
+// 🐁 - mouse2
+"72075840.name" = "pelė";
+"72075840.tags" = "pelė";
+// 🐀 - rat
+"72075835.name" = "žiurkė";
+"72075835.tags" = "žiurkė";
+// 🐹 - hamster
+"72076120.name" = "žiurkėno snukutis";
+"72076120.tags" = "naminis gyvūnas | veidas | žiurkėnas | žiurkėno snukutis";
+// 🐰 - rabbit
+"72076075.name" = "triušio snukutis";
+"72076075.tags" = "naminis gyvūnas | triušio snukutis | triušis | veidas | zuikis";
+// 🐇 - rabbit2
+"72075870.name" = "triušis";
+"72075870.tags" = "naminis gyvūnas | triušis | triušiukas";
+// 🦫 - beaver
+"72079255.name" = "bebras";
+"72079255.tags" = "bebras | užtvanka";
+// 🦔 - hedgehog
+"72079140.name" = "ežys";
+"72079140.tags" = "ežys | spygliuotas";
+// 🦇 - bat
+"72079075.name" = "šikšnosparnis";
+"72079075.tags" = "šikšnosparnis | vampyras";
+// 🐻 - bear
+"72076130.name" = "meškos snukis";
+"72076130.tags" = "meška | meškos snukis | veidas";
+// 🐨 - koala
+"72076035.name" = "koala";
+"72076035.tags" = "koala | meška";
+// 🐼 - panda_face
+"72076135.name" = "pandos snukis";
+"72076135.tags" = "panda | pandos snukis | veidas";
+// 🦥 - sloth
+"72079225.name" = "tinginys";
+"72079225.tags" = "lėtas | tinginys | tingus";
+// 🦦 - otter
+"72079230.name" = "ūdra";
+"72079230.tags" = "ūdra | žaisminga | žvejojanti";
+// 🦨 - skunk
+"72079240.name" = "skunkas";
+"72079240.tags" = "skunkas | smirdantis";
+// 🦘 - kangaroo
+"72079160.name" = "kengūra";
+"72079160.tags" = "Australija | jauniklis | kengūra | šokinėti | sterblinis gyvūnas";
+// 🦡 - badger
+"72079205.name" = "barsukas";
+"72079205.tags" = "barsukas | įkyruolis";
+// 🐾 - feet
+"72076145.name" = "pėdutės";
+"72076145.tags" = "letenos | pėdos | pėdsakai | pėdutės";
+// 🦃 - turkey
+"72079055.name" = "kalakutas";
+"72079055.tags" = "kalakutas | paukštis";
+// 🐔 - chicken
+"72075935.name" = "višta";
+"72075935.tags" = "paukštis | višta";
+// 🐓 - rooster
+"72075930.name" = "gaidys";
+"72075930.tags" = "gaidys | paukštis";
+// 🐣 - hatching_chick
+"72076010.name" = "išsiritęs viščiukas";
+"72076010.tags" = "išsiridenti | išsiritęs viščiukas | mažas | paukštis | viščiukas";
+// 🐤 - baby_chick
+"72076015.name" = "viščiukas";
+"72076015.tags" = "mažas | viščiukas";
+// 🐥 - hatched_chick
+"72076020.name" = "atsisukęs snapu viščiukas";
+"72076020.tags" = "atsisukęs snapu viščiukas | mažas | paukštis | viščiukas";
+// 🐦 - bird
+"72076025.name" = "paukštis";
+"72076025.tags" = "paukštis";
+// 🐧 - penguin
+"72076030.name" = "pingvinas";
+"72076030.tags" = "paukštis | pingvinas";
+// 🦅 - eagle
+"72079065.name" = "erelis";
+"72079065.tags" = "erelis | paukštis";
+// 🦆 - duck
+"72079070.name" = "antis";
+"72079070.tags" = "antis | paukštis";
+// 🦢 - swan
+"72079210.name" = "gulbė";
+"72079210.tags" = "bjaurusis ančiukas | gulbė | paukštis";
+// 🦉 - owl
+"72079085.name" = "pelėda";
+"72079085.tags" = "išmintis | paukštis | pelėda";
+// 🦤 - dodo
+"72079220.name" = "drontas";
+"72079220.tags" = "didelis | drontas | išnykimas | Mauricijus";
+// 🪶 - feather
+"72080590.name" = "plunksna";
+"72080590.tags" = "lengvumas | plunksna | skrydis";
+// 🦩 - flamingo
+"72079245.name" = "flamingas";
+"72079245.tags" = "flamingas | spalvingas | tropinis";
+// 🦚 - peacock
+"72079170.name" = "povas";
+"72079170.tags" = "išdidus | mėgstantis pasirodyti | paukštis | povas | povė";
+// 🦜 - parrot
+"72079180.name" = "papūga";
+"72079180.tags" = "kalbantis | papūga | paukštis | piratas";
+// 🪽 - wing
+"72080625.name" = "sparnas";
+"72080625.tags" = "angeliškas | aviacija | mitologija | paukštis | skrenda | sparnas";
+// 🐦‍⬛ - black_bird
+"52006885503.name" = "juodas paukštis";
+"52006885503.tags" = "juodas | paukštis | varna | varnas";
+// 🪿 - goose
+"72080635.name" = "žąsis";
+"72080635.tags" = "kvailas | paukštis | višta | žąsis";
+// 🐸 - frog
+"72076115.name" = "varlės snukutis";
+"72076115.tags" = "varlė | varlės snukutis | veidas";
+// 🐊 - crocodile
+"72075885.name" = "krokodilas";
+"72075885.tags" = "krokodilas";
+// 🐢 - turtle
+"72076005.name" = "vėžlys";
+"72076005.tags" = "vėžlys";
+// 🦎 - lizard
+"72079110.name" = "driežas";
+"72079110.tags" = "driežas | roplys";
+// 🐍 - snake
+"72075900.name" = "gyvatė";
+"72075900.tags" = "gyvatė | gyvatnešis | žaltys | zodiakas";
+// 🐲 - dragon_face
+"72076085.name" = "drakono snukis";
+"72076085.tags" = "drakonas | drakono snukis | pasaka | veidas";
+// 🐉 - dragon
+"72075880.name" = "drakonas";
+"72075880.tags" = "drakonas | pasaka";
+// 🦕 - sauropod
+"72079145.name" = "sauropodas";
+"72079145.tags" = "brachiozauras | brontozauas | diplodokas | sauropodas";
+// 🦖 - t-rex
+"72079150.name" = "Reksas";
+"72079150.tags" = "Reksas | tiranozauras Reksas";
+// 🐳 - whale
+"72076090.name" = "purškiantis banginis";
+"72076090.tags" = "banginis | purkšti | purškiantis banginis | veidas";
+// 🐋 - whale2
+"72075890.name" = "banginis";
+"72075890.tags" = "banginis";
+// 🐬 - dolphin
+"72076055.name" = "delfinas";
+"72076055.tags" = "delfinas | fliperis";
+// 🦭 - seal
+"72079265.name" = "ruonis";
+"72079265.tags" = "jūrų liūtas | ruonis";
+// 🐟 - fish
+"72075990.name" = "žuvis";
+"72075990.tags" = "zodiakas | žuvis | žuvys";
+// 🐠 - tropical_fish
+"72075995.name" = "tropinė žuvis";
+"72075995.tags" = "tropinė | žuvis";
+// 🐡 - blowfish
+"72076000.name" = "fugu";
+"72076000.tags" = "fugu | žuvis";
+// 🦈 - shark
+"72079080.name" = "ryklys";
+"72079080.tags" = "ryklys | žuvis";
+// 🐙 - octopus
+"72075960.name" = "aštuonkojis";
+"72075960.tags" = "aštuonkojis";
+// 🐚 - shell
+"72075965.name" = "susisukusi kriauklė";
+"72075965.tags" = "kriauklė | spiralė | susisukusi kriauklė";
+// 🪸 - coral
+"72080600.name" = "koralas";
+"72080600.tags" = "koralas | rifas | vandenynas";
+// 🪼 - jellyfish
+"72080620.name" = "medūza";
+"72080620.tags" = "bestuburis | deginti | geluonis | jūrinis | medūza | oi | želė";
+// 🐌 - snail
+"72075895.name" = "sraigė";
+"72075895.tags" = "sraigė";
+// 🦋 - butterfly
+"72079095.name" = "drugelis";
+"72079095.tags" = "drugelis | gražus | vabzdys";
+// 🐛 - bug
+"72075970.name" = "vabalas";
+"72075970.tags" = "vabalas | vabzdys";
+// 🐜 - ant
+"72075975.name" = "skruzdėlė";
+"72075975.tags" = "skruzdėlė | vabzdys";
+// 🐝 - bee
+"72075980.name" = "bitė";
+"72075980.tags" = "bitė | vabzdys";
+// 🪲 - beetle
+"72080570.name" = "vabaliukas";
+"72080570.tags" = "vabalas | vabaliukas | vabzdys";
+// 🐞 - ladybug
+"72075985.name" = "boružė";
+"72075985.tags" = "boružė | vabalas | vabzdys";
+// 🦗 - cricket
+"72079155.name" = "svirplys";
+"72079155.tags" = "svirplys | žiogas";
+// 🪳 - cockroach
+"72080575.name" = "tarakonas";
+"72080575.tags" = "tarakonas | vabzdys";
+// 🦂 - scorpion
+"72079050.name" = "skorpionas (gyvūnas)";
+"72079050.tags" = "skorpionas | skorpionas (gyvūnas) | zodiakas";
+// 🦟 - mosquito
+"72079195.name" = "uodas";
+"72079195.tags" = "karštinė | maliarija | negalavimas | uodas | vabzdys | virusas";
+// 🪰 - fly
+"72080560.name" = "musė";
+"72080560.tags" = "cėcė | gyvulinė musė | kambarinė musė | mėšlinė musė | musė | negalavimas";
+// 🪱 - worm
+"72080565.name" = "kirmėlė";
+"72080565.tags" = "kirmėlė | kirmėlės | parazitai | sliekai";
+// 🦠 - microbe
+"72079200.name" = "mikrobas";
+"72079200.tags" = "ameba | bakterija | mikrobas | virusas";
+// 💐 - bouquet
+"72076555.name" = "puokštė";
+"72076555.tags" = "gėlė | puokštė";
+// 🌸 - cherry_blossom
+"72078670.name" = "vyšnios žiedas";
+"72078670.tags" = "gėlė | vyšnia | vyšnios žiedas | žydėti";
+// 💮 - white_flower
+"72076705.name" = "balta gėlė";
+"72076705.tags" = "balta gėlė | gėlė";
+// 🪷 - lotus
+"72080595.name" = "lotusas";
+"72080595.tags" = "budizmas | gėlė | Indija | induizmas | lotusas | tyrumas | Vietnamas";
+// 🌹 - rose
+"72078675.name" = "rožė";
+"72078675.tags" = "augalas | gėlė | rožė";
+// 🥀 - wilted_flower
+"72078720.name" = "gležna gėlė";
+"72078720.tags" = "gėlė | gležna";
+// 🌺 - hibiscus
+"72078680.name" = "kinrožė";
+"72078680.tags" = "augalas | gėlė | kinrožė";
+// 🌻 - sunflower
+"72078685.name" = "saulėgrąža";
+"72078685.tags" = "gėlė | saulė | saulėgrąža";
+// 🌼 - blossom
+"72078690.name" = "gėlės žiedas";
+"72078690.tags" = "augalas | gėlė | gėlės žiedas";
+// 🌷 - tulip
+"72078665.name" = "tulpė";
+"72078665.tags" = "augalas | gėlė | tulpė";
+// 🪻 - hyacinth
+"72080615.name" = "hiacintas";
+"72080615.tags" = "gėlė | hiacintas | levandos | lubinai";
+// 🌱 - seedling
+"72078635.name" = "daigas";
+"72078635.tags" = "augalas | daigas | jaunas";
+// 🪴 - potted_plant
+"72080580.name" = "pasodintas augalas";
+"72080580.tags" = "augalas | augti | bevertis | namas | nuobodus | pasodintas augalas | puoselėti";
+// 🌲 - evergreen_tree
+"72078640.name" = "amžinai žaliuojantis medis";
+"72078640.tags" = "amžinai žaliuojantis medis | medis";
+// 🌳 - deciduous_tree
+"72078645.name" = "lapuotis";
+"72078645.tags" = "augalas | lapuotis | medis | mesti";
+// 🌴 - palm_tree
+"72078650.name" = "palmė";
+"72078650.tags" = "medis | palmė";
+// 🌵 - cactus
+"72078655.name" = "kaktusas";
+"72078655.tags" = "augalas | kaktusas";
+// 🌾 - ear_of_rice
+"72078700.name" = "ryžių pėdas";
+"72078700.tags" = "augalas | ryžiai | ryžių pėdas | varpa";
+// 🌿 - herb
+"72078705.name" = "žolelė";
+"72078705.tags" = "lapas | žolelė";
+// 🍀 - four_leaf_clover
+"72078710.name" = "keturlapis dobilas";
+"72078710.tags" = "4 | dobilas | keturi | keturlapis dobilas | lapas";
+// 🍁 - maple_leaf
+"72078715.name" = "klevo lapas";
+"72078715.tags" = "klevas | klevo lapas | krenta | lapas";
+// 🍂 - fallen_leaf
+"72078720.name" = "nukritęs lapas";
+"72078720.tags" = "krenta | lapas | nukritęs lapas";
+// 🍃 - leaves
+"72078725.name" = "lapas vėjyje";
+"72078725.tags" = "lapas | lapas vėjyje | pūsti | skrajoti | vėjas";
+// 🪹 - empty_nest
+"72080605.name" = "tuščias lizdas";
+"72080605.tags" = "perėjimas | tuščias lizdas";
+// 🪺 - nest_with_eggs
+"72080610.name" = "lizdas su kiaušiniais";
+"72080610.tags" = "lizdas su kiaušiniais | perėjimas";
+// 🍄 - mushroom
+"72078730.name" = "grybas";
+"72078730.tags" = "grybas | šungrybis";
+// 🍇 - grapes
+"72078745.name" = "vynuogės";
+"72078745.tags" = "vaisius | vynuogė | vynuogės";
+// 🍈 - melon
+"72078750.name" = "melionas";
+"72078750.tags" = "augalas | melionas | vaisius";
+// 🍉 - watermelon
+"72078755.name" = "arbūzas";
+"72078755.tags" = "arbūzas | vaisius";
+// 🍊 - tangerine
+"72078760.name" = "mandarinas";
+"72078760.tags" = "mandarinas | oranžinis | vaisius";
+// 🍋 - lemon
+"72078765.name" = "citrina";
+"72078765.tags" = "citrina | citrusinis | vaisius";
+// 🍌 - banana
+"72078770.name" = "bananas";
+"72078770.tags" = "bananas | vaisius";
+// 🍍 - pineapple
+"72078775.name" = "ananasas";
+"72078775.tags" = "ananasas | vaisius";
+// 🥭 - mango
+"72078945.name" = "mangas";
+"72078945.tags" = "mangas | tropinis | vaisius";
+// 🍎 - apple
+"72078780.name" = "raudonas obuolys";
+"72078780.tags" = "obuolys | raudonas | vaisius";
+// 🍏 - green_apple
+"72078785.name" = "žalias obuolys";
+"72078785.tags" = "obuolys | vaisius | žalias";
+// 🍐 - pear
+"72078790.name" = "kriaušė";
+"72078790.tags" = "kriaušė | vaisius";
+// 🍑 - peach
+"72078795.name" = "persikas";
+"72078795.tags" = "persikas | vaisius";
+// 🍒 - cherries
+"72078800.name" = "vyšnios";
+"72078800.tags" = "vaisius | vyšnia | vyšnios";
+// 🍓 - strawberry
+"72078805.name" = "braškė";
+"72078805.tags" = "braškė | uoga | vaisius";
+// 🫐 - blueberries
+"72080720.name" = "mėlynės";
+"72080720.tags" = "mėlyna | mėlynė | mėlynės | uoga";
+// 🥝 - kiwifruit
+"72078865.name" = "kivis";
+"72078865.tags" = "kivis | maistas | vaisius";
+// 🍅 - tomato
+"72078735.name" = "pomidoras";
+"72078735.tags" = "augalas | daržovė | pomidoras";
+// 🫒 - olive
+"72080730.name" = "alyvuogė";
+"72080730.tags" = "alyvuogė | maistas";
+// 🥥 - coconut
+"72078905.name" = "kokosas";
+"72078905.tags" = "kokosas | palmė | pina kolada";
+// 🥑 - avocado
+"72078805.name" = "avokadas";
+"72078805.tags" = "avokadas | maistas | vaisius";
+// 🍆 - eggplant
+"72078740.name" = "baklažanas";
+"72078740.tags" = "augalas | baklažanas | daržovė";
+// 🥔 - potato
+"72078820.name" = "bulvė";
+"72078820.tags" = "bulvė | daržovė | maistas";
+// 🥕 - carrot
+"72078825.name" = "morka";
+"72078825.tags" = "daržovė | maistas | morka";
+// 🌽 - corn
+"72078695.name" = "kukurūzo burbuolė";
+"72078695.tags" = "augalas | kukurūzas | kukurūzo burbuolė | varpa";
+// 🫑 - bell_pepper
+"72080725.name" = "paprika";
+"72080725.tags" = "daržovė | paprika | pipirai";
+// 🥒 - cucumber
+"72078810.name" = "agurkas";
+"72078810.tags" = "agurkas | daržovė | maistas | raugintas";
+// 🥬 - leafy_green
+"72078940.name" = "lapinė daržovė";
+"72078940.tags" = "kininis kopūstas | kopūstas | lapinė daržovė | salota";
+// 🥦 - broccoli
+"72078910.name" = "brokolis";
+"72078910.tags" = "brokolis | laukinis kopūstas";
+// 🧄 - garlic
+"72079380.name" = "česnakas";
+"72079380.tags" = "česnakas | prieskonis";
+// 🧅 - onion
+"72079385.name" = "svogūnas";
+"72079385.tags" = "prieskonis | svogūnas";
+// 🥜 - peanuts
+"72078860.name" = "žemės riešutas";
+"72078860.tags" = "maistas | riešutas | žemės";
+// 🫘 - beans
+"72080760.name" = "pupelės";
+"72080760.tags" = "ankštiniai | maistas | pupelės | raudonosios pupelės";
+// 🌰 - chestnut
+"72078630.name" = "lazdyno riešutas";
+"72078630.tags" = "augalas | lazdyno riešutas";
+// 🫚 - ginger_root
+"72080770.name" = "imbiero šaknis";
+"72080770.tags" = "alus | imbiero šaknis | prieskonis | šaknis";
+// 🫛 - pea_pod
+"72080775.name" = "žirnių ankštis";
+"72080775.tags" = "ankštiniai augalai | ankštis | daržovė | žirnis | žirnių ankštis";
+// 🍞 - bread
+"72078860.name" = "duona";
+"72078860.tags" = "duona | kepalas";
+// 🥐 - croissant
+"72078800.name" = "raguolis";
+"72078800.tags" = "bandelė | duona | maistas | prancūziškas | raguolis";
+// 🥖 - baguette_bread
+"72078830.name" = "ilgas batonas";
+"72078830.tags" = "batonas | ilgas | maistas | prancūzų";
+// 🫓 - flatbread
+"72080735.name" = "paplotis";
+"72080735.tags" = "arepa | lavašas | naan | paplotis | pita";
+// 🥨 - pretzel
+"72078920.name" = "riestainis";
+"72078920.tags" = "riestainis | susuktas";
+// 🥯 - bagel
+"72078955.name" = "apvalus riestainis";
+"72078955.tags" = "apvalus riestainis | duonos gaminiai | užtepas";
+// 🥞 - pancakes
+"72078870.name" = "blynai";
+"72078870.tags" = "blynai | maistas";
+// 🧇 - waffle
+"72079395.name" = "vaflis";
+"72079395.tags" = "geležinis | neaiškus | vaflis";
+// 🧀 - cheese_wedge
+"72079360.name" = "sūrio gabaliukas";
+"72079360.tags" = "sūrio gabaliukas | sūris";
+// 🍖 - meat_on_bone
+"72078820.name" = "mėsa ant kaulo";
+"72078820.tags" = "kaulas | mėsa | mėsa ant kaulo";
+// 🍗 - poultry_leg
+"72078825.name" = "paukščio šlaunelė";
+"72078825.tags" = "kaulas | paukščio šlaunelė | paukštiena | šlaunis | višta";
+// 🥩 - cut_of_meat
+"72078925.name" = "mėsos gabalėliai";
+"72078925.tags" = "kepsnys | mėsos gabalėliai";
+// 🥓 - bacon
+"72078815.name" = "kumpis";
+"72078815.tags" = "kumpis | maistas | mėsa";
+// 🍔 - hamburger
+"72078810.name" = "mėsainis";
+"72078810.tags" = "mėsainis";
+// 🍟 - fries
+"72078865.name" = "gruzdintos bulvytės";
+"72078865.tags" = "bulvytės | gruzdintos";
+// 🍕 - pizza
+"72078815.name" = "pica";
+"72078815.tags" = "gabalėlis | pica | sūris";
+// 🌭 - hotdog
+"72078615.name" = "dešrainis";
+"72078615.tags" = "dešrainis | dešrelė";
+// 🥪 - sandwich
+"72078930.name" = "sumuštinis";
+"72078930.tags" = "duona | sumuštinis";
+// 🌮 - taco
+"72078620.name" = "meksikietiškas paplotėlis";
+"72078620.tags" = "meksikietiškas | meksikietiškas paplotėlis";
+// 🌯 - burrito
+"72078625.name" = "buritas";
+"72078625.tags" = "buritas | meksikietiškas | suvyniotas";
+// 🫔 - tamale
+"72080740.name" = "vyniotinis";
+"72080740.tags" = "meksikietiškas | susuktas | vyniotinis";
+// 🥙 - stuffed_flatbread
+"72078845.name" = "įdarytas lavašas";
+"72078845.tags" = "įdaras | įdarytas lavašas | lavašas | maistas";
+// 🧆 - falafel
+"72079390.name" = "falafelis";
+"72079390.tags" = "falafelis | mėsos kukulis | vištiena";
+// 🥚 - egg
+"72078850.name" = "kiaušinis";
+"72078850.tags" = "kiaušinis | maistas";
+// 🍳 - fried_egg
+"72078965.name" = "valgio gaminimas";
+"72078965.tags" = "kepimas | keptuvė | kiaušinis | valgio gaminimas";
+// 🥘 - shallow_pan_of_food
+"72078840.name" = "prikaistuvis su maistu";
+"72078840.tags" = "maistas | prikaistuvis | prikaistuvis su maistu";
+// 🍲 - stew
+"72078960.name" = "puodas su maistu";
+"72078960.tags" = "puodas | puodas su maistu | troškinys";
+// 🫕 - fondue
+"72080745.name" = "fondiu";
+"72080745.tags" = "dubuo | fondiu | ištirpintas | šokoladas | sūris | šveicariškas";
+// 🥣 - bowl_with_spoon
+"72078895.name" = "dubuo su šaukštu";
+"72078895.tags" = "dubuo su šaukštu | košė | pusryčiai";
+// 🥗 - green_salad
+"72078835.name" = "žalios salotos";
+"72078835.tags" = "maistas | salotos | žalios";
+// 🍿 - popcorn
+"72079025.name" = "spragėsiai";
+"72079025.tags" = "spragėsiai";
+// 🧈 - butter
+"72079400.name" = "sviestas";
+"72079400.tags" = "pieno produktas | sviestas";
+// 🧂 - salt
+"72079370.name" = "druska";
+"72079370.tags" = "druska | druskinė | prieskonis";
+// 🥫 - canned_food
+"72078935.name" = "konservai";
+"72078935.tags" = "konservai | skardinė";
+// 🍱 - bento
+"72078955.name" = "bento dėžutė";
+"72078955.tags" = "bento | dėžutė";
+// 🍘 - rice_cracker
+"72078830.name" = "ryžių paplotėlis";
+"72078830.tags" = "paplotėlis | ryžių";
+// 🍙 - rice_ball
+"72078835.name" = "ryžių rutuliukas";
+"72078835.tags" = "japonų | rutuliukas | ryžiai | ryžių rutuliukas";
+// 🍚 - rice
+"72078840.name" = "virti ryžiai";
+"72078840.tags" = "ryžiai | virti";
+// 🍛 - curry
+"72078845.name" = "ryžiai su kariu";
+"72078845.tags" = "karis | ryžiai | ryžiai su kariu";
+// 🍜 - ramen
+"72078850.name" = "makaronų sriubos dubenėlis";
+"72078850.tags" = "dubuo | makaronai | makaronų sriubos dubenėlis | ramen | sriuba";
+// 🍝 - spaghetti
+"72078855.name" = "spagečiai";
+"72078855.tags" = "pasta | spagečiai";
+// 🍠 - sweet_potato
+"72078870.name" = "kepta saldžioji bulvė";
+"72078870.tags" = "bulvė | kepta | kepta saldžioji bulvė | saldi";
+// 🍢 - oden
+"72078880.name" = "odenas";
+"72078880.tags" = "iešmas | jūros gėrybės | kebabas | lazdelė | odenas";
+// 🍣 - sushi
+"72078885.name" = "sušis";
+"72078885.tags" = "suši | sušis";
+// 🍤 - fried_shrimp
+"72078890.name" = "kepta krevetė";
+"72078890.tags" = "kepta | krevetė | tempura";
+// 🍥 - fish_cake
+"72078895.name" = "žuvies pyragėlis su išpieštu sūkurio simboliu";
+"72078895.tags" = "kepiniai | pyragėlis | sūkurys | žuvies pyragėlis su išpieštu sūkurio simboliu | žuvis";
+// 🥮 - moon_cake
+"72078950.name" = "mėnulio pyragas";
+"72078950.tags" = "festivalis | mėnulio pyragas | ruduo";
+// 🍡 - dango
+"72078875.name" = "dango";
+"72078875.tags" = "dango | desertas | iešmas | japonų | lazdelė | saldu";
+// 🥟 - dumpling
+"72078875.name" = "kukulis";
+"72078875.tags" = "kibinas | kukulis";
+// 🥠 - fortune_cookie
+"72078880.name" = "laimės sausainiukas";
+"72078880.tags" = "laimės sausainiukas | pranašystė";
+// 🥡 - takeout_box
+"72078885.name" = "dėžutė išsinešti";
+"72078885.tags" = "austrių kibirėlis | dėžutė išsinešti";
+// 🦀 - crab
+"72079040.name" = "krabas";
+"72079040.tags" = "krabas | vėžys | zodiakas";
+// 🦞 - lobster
+"72079190.name" = "omaras";
+"72079190.tags" = "jūrų gėrybė | omaras | žnyplės";
+// 🦐 - shrimp
+"72079120.name" = "krevetė";
+"72079120.tags" = "kiaukutinis | krevetė | maistas | mažas";
+// 🦑 - squid
+"72079125.name" = "kalmaras";
+"72079125.tags" = "kalmaras | maistas | moliuskas";
+// 🦪 - oyster
+"72079250.name" = "austrė";
+"72079250.tags" = "austrė | nardymas | perlas";
+// 🍦 - icecream
+"72078900.name" = "minkšti ledai";
+"72078900.tags" = "desertas | kremas | ledai | minkšti | saldu";
+// 🍧 - shaved_ice
+"72078905.name" = "susmulkintas ledas";
+"72078905.tags" = "desertas | ledas | saldu | smulkintas | susmulkintas ledas";
+// 🍨 - ice_cream
+"72078910.name" = "ledai";
+"72078910.tags" = "desertas | kremas | ledai | saldu";
+// 🍩 - doughnut
+"72078915.name" = "spurga";
+"72078915.tags" = "desertas | saldu | spurga";
+// 🍪 - cookie
+"72078920.name" = "sausainis";
+"72078920.tags" = "desertas | saldu | sausainis";
+// 🎂 - birthday
+"72079040.name" = "gimtadienio tortas";
+"72079040.tags" = "desertas | gimtadienio tortas | gimtadienis | kepiniai | pyragas | saldu | šventė";
+// 🍰 - cake
+"72078950.name" = "trapus pyragas";
+"72078950.tags" = "desertas | gabalėlis | kepiniai | pyragas | saldu | trapus pyragas";
+// 🧁 - cupcake
+"72079365.name" = "keksiukas";
+"72079365.tags" = "duonos gaminiai | keksiukas | saldus";
+// 🥧 - pie
+"72078915.name" = "pyragas";
+"72078915.tags" = "pyragas | tešla | užpildytas";
+// 🍫 - chocolate_bar
+"72078925.name" = "šokolado batonėlis";
+"72078925.tags" = "batonėlis | desertas | saldu | šokoladas | šokolado batonėlis";
+// 🍬 - candy
+"72078930.name" = "saldainis";
+"72078930.tags" = "desertas | saldainis | saldu";
+// 🍭 - lollipop
+"72078935.name" = "ledinukas ant pagaliuko";
+"72078935.tags" = "desertas | ledinukas ant pagaliuko | saldainis | saldu";
+// 🍮 - custard
+"72078940.name" = "saldus kremas";
+"72078940.tags" = "desertas | pudingas | saldu | saldus kremas";
+// 🍯 - honey_pot
+"72078945.name" = "medaus puodynė";
+"72078945.tags" = "medaus puodynė | medus | puodas | saldu";
+// 🍼 - baby_bottle
+"72079010.name" = "kūdikio buteliukas";
+"72079010.tags" = "buteliukas | gerti | kūdikio buteliukas | kūdikis | pienas";
+// 🥛 - glass_of_milk
+"72078855.name" = "pieno stiklinė";
+"72078855.tags" = "gėrimas | pienas | pieno stiklinė | sktiklinė";
+// ☕ - coffee
+"30018.name" = "karštas gėrimas";
+"30018.tags" = "arbata | garuoja | gėrimas | gerti | karšta | karštas gėrimas | kava";
+// 🫖 - teapot
+"72080750.name" = "arbatinukas";
+"72080750.tags" = "arbata | arbatinukas | gėrimas | puodas";
+// 🍵 - tea
+"72078975.name" = "arbatos puodelis be rankenos";
+"72078975.tags" = "arbata | arbatos puodelis | arbatos puodelis be rankenos | gėrimas | gerti | puodelis";
+// 🍶 - sake
+"72078980.name" = "sakė";
+"72078980.tags" = "baras | butelis | gėrimas | puodelis | sakė";
+// 🍾 - champagne
+"72079020.name" = "butelis su iššokusiu kamščiu";
+"72079020.tags" = "baras | butelis | butelis su iššokusiu kamščiu | gėrimas | iššauti | kamštis";
+// 🍷 - wine_glass
+"72078985.name" = "vyno taurė";
+"72078985.tags" = "baras | gėrimas | gerti | taurė | vynas | vyno taurė";
+// 🍸 - cocktail
+"72078990.name" = "kokteilio taurė";
+"72078990.tags" = "baras | gėrimas | kokteilio taurė | kokteilis | taurė";
+// 🍹 - tropical_drink
+"72078995.name" = "tropinis gėrimas";
+"72078995.tags" = "baras | gėrimas | tropinis";
+// 🍺 - beer
+"72079000.name" = "alaus bokalas";
+"72079000.tags" = "alaus bokalas | alus | baras | gėrimas | puodelis";
+// 🍻 - beers
+"72079005.name" = "susidaužiantys alaus bokalai";
+"72079005.tags" = "alus | baras | gėrimas | puodelis | susidaužiantys alaus bokalai | susidaužti";
+// 🥂 - clinking_glasses
+"72078730.name" = "sudaužtos taurės";
+"72078730.tags" = "gėrimas | sudaužti | sudaužtos taurės | šventimas | taurės";
+// 🥃 - tumbler_glass
+"72078735.name" = "stiklinė";
+"72078735.tags" = "alkoholis | stiklinė | viskis";
+// 🫗 - pouring_liquid
+"72080755.name" = "pilamas skystis";
+"72080755.tags" = "gėrimas | išlieti | pilamas skystis | stiklinė | tuščias";
+// 🥤 - cup_with_straw
+"72078900.name" = "puodelis su šiaudeliu";
+"72078900.tags" = "puodelis su šiaudeliu | soda | sultys";
+// 🧋 - bubble_tea
+"72079415.name" = "burbulinė arbata";
+"72079415.tags" = "arbata | burbulai | burbulinė arbata | pienas";
+// 🧃 - beverage_box
+"72079375.name" = "gėrimo pakelis";
+"72079375.tags" = "gėrimo pakelis | sulčių pakelis";
+// 🧉 - mate_drink
+"72079405.name" = "matė";
+"72079405.tags" = "gėrimas | matė";
+// 🧊 - ice_cube
+"72079410.name" = "ledo kubelis";
+"72079410.tags" = "ledas | ledo kubelis | šaltas";
+// 🥢 - chopsticks
+"72078890.name" = "lazdelės";
+"72078890.tags" = "haši | lazdelės";
+// 🍴 - fork_and_knife
+"72078970.name" = "šakutė ir peilis";
+"72078970.tags" = "maisto gaminimas | peilis | šakutė | šakutė ir peilis";
+// 🥄 - spoon
+"72078740.name" = "šaukštas";
+"72078740.tags" = "įrankis | šaukštas";
+// 🔪 - hocho
+"72077325.name" = "virtuvinis peilis";
+"72077325.tags" = "ginklas | įrankis | maisto gaminimas | peilis | virtuvinis peilis";
+// 🫙 - jar
+"72080765.name" = "stiklainis";
+"72080765.tags" = "indas | padažas | prieskonis | saugoti | stiklainis | tuščias";
+// 🏺 - amphora
+"72079640.name" = "senovinė vaza";
+"72079640.tags" = "maisto gaminimas | senovinė vaza | vandenis | zodiakas";
+// 🌍 - earth_africa
+"72078455.name" = "žemės rutulys su Europos ir Afrikos žemynais";
+"72078455.tags" = "Afrika | Europa | gaublys | pasaulis | žemė | žemės rutulys su Europos ir Afrikos žemynais";
+// 🌎 - earth_americas
+"72078460.name" = "žemės rutulys su Šiaurės ir Pietų Amerikos žemynais";
+"72078460.tags" = "Amerika | gaublys | pasaulis | žemė | žemės rutulys su Šiaurės ir Pietų Amerikos žemynais";
+// 🌏 - earth_asia
+"72078465.name" = "žemės rutulys su Azijos ir Australijos žemynais";
+"72078465.tags" = "Australija | Azija | gaublys | pasaulis | žemė | žemės rutulys su Azijos ir Australijos žemynais";
+// 🌐 - globe_with_meridians
+"72078470.name" = "žemės rutulys su dienovidiniais";
+"72078470.tags" = "dienovidiniai | gaublys | pasaulis | žemė | žemės rutulys su dienovidiniais";
+// 🗾 - japan
+"72078385.name" = "Japonijos žemėlapis";
+"72078385.tags" = "Japonijos | žemėlapis";
+// 🧭 - compass
+"72079585.name" = "kompasas";
+"72079585.tags" = "kompasas | magnetinis | navigacija | orientacinis";
+// 🌋 - volcano
+"72078445.name" = "ugnikalnis";
+"72078445.tags" = "išsiveržimas | kalnas | ugnikalnis";
+// 🗻 - mount_fuji
+"72078370.name" = "Fudžio kalnas";
+"72078370.tags" = "Fudžio kalnas | Fudžis | kalnas";
+// 🧱 - bricks
+"72079605.name" = "plyta";
+"72079605.tags" = "molis | plyta | plytos | siena | skiedinys";
+// 🪨 - rock
+"72080520.name" = "uoliena";
+"72080520.tags" = "akmuo | kietas | riedulys | sunkus | uola | uoliena";
+// 🪵 - wood
+"72080585.name" = "mediena";
+"72080585.tags" = "mediena | rąstas";
+// 🛖 - hut
+"72079465.name" = "namelis";
+"72079465.tags" = "apvalus namas | jurta | namas | namelis";
+// 🏠 - house
+"72079510.name" = "namas";
+"72079510.tags" = "namai | namas | pastatas";
+// 🏡 - house_with_garden
+"72079515.name" = "namas su sodu";
+"72079515.tags" = "namai | namas | namas su sodu | sodas";
+// 🏢 - office
+"72079520.name" = "biurų pastatas";
+"72079520.tags" = "biurų pastatas | pastatas";
+// 🏣 - post_office
+"72079525.name" = "japoniškas paštas";
+"72079525.tags" = "japoniškas paštas | japonų | paštas";
+// 🏤 - european_post_office
+"72079530.name" = "pašto pastatas";
+"72079530.tags" = "europietiškas | paštas | pašto pastatas";
+// 🏥 - hospital
+"72079535.name" = "ligoninė";
+"72079535.tags" = "gydytojas | ligoninė | medicina";
+// 🏦 - bank
+"72079540.name" = "bankas";
+"72079540.tags" = "bankas | pastatas";
+// 🏨 - hotel
+"72079550.name" = "viešbutis";
+"72079550.tags" = "pastatas | viešbutis";
+// 🏩 - love_hotel
+"72079555.name" = "meilės viešbutis";
+"72079555.tags" = "meilė | meilės viešbutis | viešbutis";
+// 🏪 - convenience_store
+"72079560.name" = "visą parą dirbanti parduotuvė";
+"72079560.tags" = "parduotuvė | visą parą | visą parą dirbanti parduotuvė";
+// 🏫 - school
+"72079565.name" = "mokykla";
+"72079565.tags" = "mokykla | pastatas";
+// 🏬 - department_store
+"72079570.name" = "prekybos centras";
+"72079570.tags" = "parduotuvė | prekyba | prekybos centras";
+// 🏭 - factory
+"72079575.name" = "gamykla";
+"72079575.tags" = "gamykla | pastatas";
+// 🏯 - japanese_castle
+"72079585.name" = "japoniška pilis";
+"72079585.tags" = "japoniška pilis | japonų | pilis";
+// 🏰 - european_castle
+"72079590.name" = "pilis";
+"72079590.tags" = "Europos | pastatas | pilis";
+// 💒 - wedding
+"72076565.name" = "vestuvės";
+"72076565.tags" = "koplyčia | romantika | vestuvės";
+// 🗼 - tokyo_tower
+"72078375.name" = "Tokijo bokštas";
+"72078375.tags" = "bokštas | Tokijas | Tokijo bokštas";
+// 🗽 - statue_of_liberty
+"72078380.name" = "laisvės statula";
+"72078380.tags" = "laisvė | laisvės statula | statula";
+// ⛪ - church
+"30657.name" = "bažnyčia";
+"30657.tags" = "bažnyčia | krikščionis | kryžius | pastatas | religija";
+// 🕌 - mosque
+"72077495.name" = "mečetė";
+"72077495.tags" = "islamas | mečetė | musulmonas | religija";
+// 🛕 - hindu_temple
+"72079460.name" = "induistų šventykla";
+"72079460.tags" = "induistai | induistų šventykla | šventykla";
+// 🕍 - synagogue
+"72077500.name" = "sinagoga";
+"72077500.tags" = "religija | sinagoga | šventykla | žydas | žydų";
+// 🕋 - kaaba
+"72077490.name" = "kaaba";
+"72077490.tags" = "islamas | kaaba | musulmonas | religija";
+// ⛲ - fountain
+"30681.name" = "fontanas";
+"30681.tags" = "fontanas";
+// ⛺ - tent
+"30705.name" = "palapinė";
+"30705.tags" = "palapinė | stovyklavimas";
+// 🌁 - foggy
+"72078395.name" = "rūkas";
+"72078395.tags" = "oras | rūkas";
+// 🌃 - night_with_stars
+"72078405.name" = "žvaigždėta naktis";
+"72078405.tags" = "naktis | žvaigždė | žvaigždėta naktis";
+// 🌄 - sunrise_over_mountains
+"72078410.name" = "saulėtekis virš kalnų";
+"72078410.tags" = "kalnas | rytas | saulė | saulėtekis | saulėtekis virš kalnų";
+// 🌅 - sunrise
+"72078415.name" = "saulėtekis";
+"72078415.tags" = "rytas | saulė | saulėtekis";
+// 🌆 - city_sunset
+"72078420.name" = "sutemos virš miesto";
+"72078420.tags" = "kraštovaizdis | miestas | pastatas | saulėlydis | sutemos virš miesto | vakaras";
+// 🌇 - city_sunrise
+"72078425.name" = "saulėlydis";
+"72078425.tags" = "saulė | saulėlydis | sutemos";
+// 🌉 - bridge_at_night
+"72078435.name" = "tiltas naktį";
+"72078435.tags" = "naktis | tiltas | tiltas naktį";
+// 🎠 - carousel_horse
+"72079190.name" = "karuselės arkliukas";
+"72079190.tags" = "arklys | karuselė | karuselės arkliukas";
+// 🛝 - playground_slide
+"72079500.name" = "čiuožykla";
+"72079500.tags" = "čiuožykla | pramogų parkas | žaisti";
+// 🎡 - ferris_wheel
+"72079195.name" = "apžvalgos ratas";
+"72079195.tags" = "apžvalgos | atrakcionų parkas | ratas";
+// 🎢 - roller_coaster
+"72079200.name" = "linksmieji kalneliai";
+"72079200.tags" = "atrakcionų parkas | kalneliai | linksmieji";
+// 💈 - barber
+"72076515.name" = "kirpėjo suktukas";
+"72076515.tags" = "kirpėjas | kirpėjo suktukas | suktukas | šukuosena";
+// 🎪 - circus_tent
+"72079240.name" = "cirko palapinė";
+"72079240.tags" = "cirkas | cirko palapinė | palapinė";
+// 🚂 - steam_locomotive
+"72079045.name" = "lokomotyvas";
+"72079045.tags" = "garai | geležinkelis | lokomotyvas | traukinys | variklis";
+// 🚃 - railway_car
+"72079050.name" = "traukinio vagonas";
+"72079050.tags" = "automobilis | elektrinis | geležinkelis | tramvajus | traukinio vagonas | traukinys | troleibusas";
+// 🚄 - bullettrain_side
+"72079055.name" = "greitasis traukinys";
+"72079055.tags" = "geležinkelis | greitasis | greitis | traukinys";
+// 🚅 - bullettrain_front
+"72079060.name" = "greitasis traukinys su smailu priekiu";
+"72079060.tags" = "geležinkelis | greitasis traukinys su smailu priekiu | greitis | kulka | traukinys";
+// 🚆 - train2
+"72079065.name" = "traukinys";
+"72079065.tags" = "geležinkelis | traukinys";
+// 🚇 - metro
+"72079070.name" = "metro";
+"72079070.tags" = "metro | transporto priemonė";
+// 🚈 - light_rail
+"72079075.name" = "miesto tramvajus";
+"72079075.tags" = "geležinkelis | miesto tramvajus";
+// 🚉 - station
+"72079080.name" = "stotis";
+"72079080.tags" = "geležinkelis | stotis | traukinys";
+// 🚊 - tram
+"72079085.name" = "tramvajus";
+"72079085.tags" = "tramvajus | troleibusas";
+// 🚝 - monorail
+"72079180.name" = "vienbėgis geležinkelis";
+"72079180.tags" = "transporto priemonė | vienbėgis geležinkelis";
+// 🚞 - mountain_railway
+"72079185.name" = "kalnų traukinys";
+"72079185.tags" = "automobilis | geležinkelis | kalnas | kalnų traukinys";
+// 🚋 - train
+"72079090.name" = "tramvajaus vagonas";
+"72079090.tags" = "automobilis | tramvajaus vagonas | tramvajus | troleibusas";
+// 🚌 - bus
+"72079095.name" = "autobusas";
+"72079095.tags" = "autobusas | transporto priemonė";
+// 🚍 - oncoming_bus
+"72079100.name" = "artėjantis autobusas";
+"72079100.tags" = "artėjantis | autobusas";
+// 🚎 - trolleybus
+"72079105.name" = "troleibusas";
+"72079105.tags" = "autobusas | tramvajus | troleibusas";
+// 🚐 - minibus
+"72079115.name" = "mikroautobusas";
+"72079115.tags" = "autobusas | mikroautobusas";
+// 🚑 - ambulance
+"72079120.name" = "greitosios pagalbos automobilis";
+"72079120.tags" = "greitosios pagalbos automobilis | transporto priemonė";
+// 🚒 - fire_engine
+"72079125.name" = "ugniagesių automobilis";
+"72079125.tags" = "sunkvežimis | ugniagesių automobilis | ugnis | variklis";
+// 🚓 - police_car
+"72079130.name" = "policijos automobilis";
+"72079130.tags" = "automobilis | patruliai | policija | policijos automobilis";
+// 🚔 - oncoming_police_car
+"72079135.name" = "artėjantis policijos automobilis";
+"72079135.tags" = "artėjantis | artėjantis policijos automobilis | automobilis | policija";
+// 🚕 - taxi
+"72079140.name" = "taksi";
+"72079140.tags" = "taksi | transporto priemonė";
+// 🚖 - oncoming_taxi
+"72079145.name" = "artėjantis taksi";
+"72079145.tags" = "artėjantis | taksi";
+// 🚗 - car
+"72079150.name" = "automobilis";
+"72079150.tags" = "automobilis | transporto priemonė";
+// 🚘 - oncoming_automobile
+"72079155.name" = "artėjantis automobilis";
+"72079155.tags" = "artėjanti | artėjantis automobilis | automobilis | mašina";
+// 🚙 - blue_car
+"72079160.name" = "rekreacijos automobilis";
+"72079160.tags" = "rekreacijos | rekreacijos automobilis | transporto priemonė";
+// 🛻 - pickup_truck
+"72079650.name" = "pikapas";
+"72079650.tags" = "pikapas | sunkvežimis";
+// 🚚 - truck
+"72079165.name" = "krovininis sunkvežimis";
+"72079165.tags" = "krovininis sunkvežimis | pristatymas | sunkvežimis";
+// 🚛 - articulated_lorry
+"72079170.name" = "sunkvežimis su priekaba";
+"72079170.tags" = "priekaba | pusė | sunkvežimis | sunkvežimis su priekaba";
+// 🚜 - tractor
+"72079175.name" = "traktorius";
+"72079175.tags" = "traktorius | transporto priemonė";
+// 🛵 - motor_scooter
+"72079620.name" = "motoroleris";
+"72079620.tags" = "motoroleris | transportas";
+// 🦽 - manual_wheelchair
+"72079345.name" = "rankomis valdomas vežimėlis";
+"72079345.tags" = "prieinamumas | rankomis valdomas vežimėlis";
+// 🦼 - motorized_wheelchair
+"72079340.name" = "motorizuotas vežimėlis";
+"72079340.tags" = "motorizuotas vežimėlis | prieinamumas";
+// 🛺 - auto_rickshaw
+"72079645.name" = "autorikša";
+"72079645.tags" = "autorikša | tuk tuk";
+// 🚲 - bike
+"72079285.name" = "dviratis";
+"72079285.tags" = "dviratis | transporto priemonė";
+// 🛴 - scooter
+"72079615.name" = "paspirtukas";
+"72079615.tags" = "paspirtukas | spirti";
+// 🛹 - skateboard
+"72079640.name" = "riedlentė";
+"72079640.tags" = "lenta | riedlentė";
+// 🛼 - roller_skate
+"72079655.name" = "riedučiai";
+"72079655.tags" = "riedučiai";
+// 🚏 - busstop
+"72079110.name" = "autobusų stotelė";
+"72079110.tags" = "autobusas | autobusų stotelė | stotelė";
+// ⛽ - fuelpump
+"30714.name" = "degalų siurblys";
+"30714.tags" = "degalai | degalinė | degalų siurblys | dujos | siurblys";
+// 🛞 - wheel
+"72079505.name" = "ratas";
+"72079505.tags" = "apskritimas | padanga | ratas | suktis";
+// 🚨 - rotating_light
+"72079235.name" = "policijos automobilio lempa";
+"72079235.tags" = "automobilis | besisukanti | policija | policijos automobilio lempa | signalinis žibintas | šviesa";
+// 🚥 - traffic_light
+"72079220.name" = "horizontalus šviesoforas";
+"72079220.tags" = "eismas | horizontalus šviesoforas | signalas | šviesa";
+// 🚦 - vertical_traffic_light
+"72079225.name" = "vertikalus šviesoforas";
+"72079225.tags" = "eismas | signalas | šviesa | vertikalus šviesoforas";
+// 🛑 - octagonal_sign
+"72079440.name" = "sustojimo ženklas";
+"72079440.tags" = "aštuonkampis | sustojimo ženklas | sustoti | ženklas";
+// 🚧 - construction
+"72079230.name" = "statybos";
+"72079230.tags" = "barjeras | statybos";
+// ⚓ - anchor
+"30396.name" = "inkaras";
+"30396.tags" = "inkaras | įrankis | laivas";
+// 🛟 - ring_buoy
+"72079510.name" = "gelbėjimo ratas";
+"72079510.tags" = "gelbėjimas | gelbėjimo ratas | plūduriavimas | saugumas";
+// ⛵ - boat
+"30690.name" = "burlaivis";
+"30690.tags" = "burlaivis | jachta | jūra | kurortas | valtis";
+// 🛶 - canoe
+"72079625.name" = "kanoja";
+"72079625.tags" = "irkluoti | kanoja";
+// 🚤 - speedboat
+"72079215.name" = "motorinis kateris";
+"72079215.tags" = "motorinis kateris | valtis";
+// 🚢 - ship
+"72079205.name" = "laivas";
+"72079205.tags" = "keleivis | laivas | valtis";
+// 🛫 - airplane_departure
+"72079570.name" = "lėktuvo pakilimas";
+"72079570.tags" = "išvykimai | išvykimas | lėktuvas | lėktuvo pakilimas | registracija";
+// 🛬 - airplane_arriving
+"72079575.name" = "lėktuvo nusileidimas";
+"72079575.tags" = "atvykimai | atvyksta | lėktuvas | lėktuvo nusileidimas | nusileidimas";
+// 🪂 - parachute
+"72080330.name" = "parašiutas";
+"72080330.tags" = "pakabinti | parašiutas";
+// 💺 - seat
+"72076765.name" = "vieta";
+"72076765.tags" = "kėdė | vieta";
+// 🚁 - helicopter
+"72079040.name" = "sraigstasparnis";
+"72079040.tags" = "sraigstasparnis | transporto priemonė";
+// 🚟 - suspension_railway
+"72079190.name" = "kabanti geležinkelio linija";
+"72079190.tags" = "geležinkelis | kabanti | kabanti geležinkelio linija";
+// 🚠 - mountain_cableway
+"72079195.name" = "kalnų keltuvas";
+"72079195.tags" = "gondola | kabelis | kalnas | kalnų keltuvas";
+// 🚡 - aerial_tramway
+"72079200.name" = "lynų keltuvas";
+"72079200.tags" = "automobilis | gondola | kabelis | lynų keltuvas | orinis | tramvajus";
+// 🚀 - rocket
+"72079035.name" = "raketa";
+"72079035.tags" = "kosmosas | raketa";
+// 🛸 - flying_saucer
+"72079635.name" = "skraidanti lėkštė";
+"72079635.tags" = "NSO | skraidanti lėkštė";
+// 🧳 - luggage
+"72079615.name" = "bagažas";
+"72079615.tags" = "bagažas | kelionė | pakavimas";
+// ⌛ - hourglass
+"27732.name" = "smėlio laikrodis";
+"27732.tags" = "laikmatis | smėlio laikrodis | smėlis";
+// ⏳ - hourglass_flowing_sand
+"28380.name" = "smėlio laikrodis su krentančiu smėliu";
+"28380.tags" = "laikmatis | smėlio laikrodis | smėlio laikrodis su krentančiu smėliu | smėlis";
+// ⌚ - watch
+"27729.name" = "laikrodis";
+"27729.tags" = "laikrodis";
+// ⏰ - alarm_clock
+"28371.name" = "žadintuvas";
+"28371.tags" = "laikrodis | signalas | žadintuvas";
+// 🕛 - clock12
+"72077570.name" = "dvylika valandų";
+"72077570.tags" = "00 | 12 | 12:00 | dvylika | dvylika valandų | valandos";
+// 🕧 - clock1230
+"72077630.name" = "dvylika trisdešimt";
+"72077630.tags" = "12 | 12:30 | 30 | dvylika | trisdešimt";
+// 🕐 - clock1
+"72077515.name" = "pirma valanda";
+"72077515.tags" = "00 | 1 | 1:00 | pirma valanda | valandos | viena";
+// 🕜 - clock130
+"72077575.name" = "pusė dviejų";
+"72077575.tags" = "1 | 1:30 | 30 | pusė dviejų | trisdešimt | viena";
+// 🕑 - clock2
+"72077520.name" = "dvi valandos";
+"72077520.tags" = "00 | 2 | 2:00 | dvi | valandos";
+// 🕝 - clock230
+"72077580.name" = "pusė trijų";
+"72077580.tags" = "2 | 2:30 | 30 | dvi | pusė trijų | trisdešimt";
+// 🕒 - clock3
+"72077525.name" = "trys valandos";
+"72077525.tags" = "00 | 3 | 3:00 | trys | valandos";
+// 🕞 - clock330
+"72077585.name" = "pusė keturių";
+"72077585.tags" = "3 | 3:30 | 30 | pusė keturių | trisdešimt | trys | valandos";
+// 🕓 - clock4
+"72077530.name" = "keturios valandos";
+"72077530.tags" = "00 | 4 | 4:00 | keturios | valandos";
+// 🕟 - clock430
+"72077590.name" = "pusė penkių";
+"72077590.tags" = "30 | 4 | 4:30 | pusė penkių | trisdešimt | valandos";
+// 🕔 - clock5
+"72077535.name" = "penkios valandos";
+"72077535.tags" = "00 | 5 | 5:00 | penkios | valandos";
+// 🕠 - clock530
+"72077595.name" = "pusė šešių";
+"72077595.tags" = "30 | 5 | 5:30 | penkios | pusė šešių | trisdešimt | valandos";
+// 🕕 - clock6
+"72077540.name" = "šešios valandos";
+"72077540.tags" = "00 | 6 | 6:00 | šešios | valandos";
+// 🕡 - clock630
+"72077600.name" = "pusė septynių";
+"72077600.tags" = "30 | 6 | 6:00 | pusė septynių | šešios | trisdešimt | valandos";
+// 🕖 - clock7
+"72077545.name" = "septynios valandos";
+"72077545.tags" = "00 | 7 | 7:00 | septynios | valandos";
+// 🕢 - clock730
+"72077605.name" = "pusė aštuonių";
+"72077605.tags" = "30 | 7 | 7:30 | pusė aštuonių | septynios | trisdešimt";
+// 🕗 - clock8
+"72077550.name" = "aštuonios valandos";
+"72077550.tags" = "00 | 8 | 8:00 | aštuonios | valandos";
+// 🕣 - clock830
+"72077610.name" = "pusė devynių";
+"72077610.tags" = "30 | 8 | 8:30 | aštuonios | pusė devynių | trisdešimt | valandos";
+// 🕘 - clock9
+"72077555.name" = "devinta valanda";
+"72077555.tags" = "00 | 9 | 9:00 | devinta valanda | devynios | valandos";
+// 🕤 - clock930
+"72077615.name" = "pusė dešimt";
+"72077615.tags" = "30 | 9 | 9:30 | devynios | pusė dešimt | trisdešimt | valandos";
+// 🕙 - clock10
+"72077560.name" = "dešimt valandų";
+"72077560.tags" = "00 | 10 | 10:00 | dešimt | dešimt valandų | valandos";
+// 🕥 - clock1030
+"72077620.name" = "pusė vienuolikos";
+"72077620.tags" = "10 | 10:30 | 30 | dešimt | pusė vienuolikos | trisdešimt | valandos";
+// 🕚 - clock11
+"72077565.name" = "vienuolika valandų";
+"72077565.tags" = "00 | 11 | 11:00 | valandos | vienuolika | vienuolika valandų";
+// 🕦 - clock1130
+"72077625.name" = "pusė dvylikos";
+"72077625.tags" = "11 | 11:30 | 30 | pusė dvylikos | trisdešimt | valandos | vienuolika";
+// 🌑 - new_moon
+"72078475.name" = "jaunas mėnulis";
+"72078475.tags" = "jaunas mėnulis | mėnulis | tamsa";
+// 🌒 - waxing_crescent_moon
+"72078480.name" = "priešpilnis mėnulis";
+"72078480.tags" = "mėnulis | priešpilnis";
+// 🌓 - first_quarter_moon
+"72078485.name" = "pirmas fazės ketvirtis";
+"72078485.tags" = "ketvirtis | mėnulis | pirmas fazės ketvirtis";
+// 🌔 - moon
+"72078490.name" = "priešpilnis (pabaiga)";
+"72078490.tags" = "mėnulis | priešpilnis | priešpilnis (pabaiga)";
+// 🌕 - full_moon
+"72078495.name" = "pilnatis";
+"72078495.tags" = "mėnulis | pilnas | pilnatis";
+// 🌖 - waning_gibbous_moon
+"72078500.name" = "delčia";
+"72078500.tags" = "delčia | dylantis | mėnulis";
+// 🌗 - last_quarter_moon
+"72078505.name" = "paskutinis fazės ketvirtis";
+"72078505.tags" = "ketvirtis | mėnulis | paskutinis fazės ketvirtis";
+// 🌘 - waning_crescent_moon
+"72078510.name" = "delčia (pabaiga)";
+"72078510.tags" = "delčia (pabaiga) | mėnulis | pusmėnulis";
+// 🌙 - crescent_moon
+"72078515.name" = "pusmėnulis";
+"72078515.tags" = "mėnulis | pusė | pusmėnulis";
+// 🌚 - new_moon_with_face
+"72078520.name" = "jaunas mėnulis su veidu";
+"72078520.tags" = "jaunas mėnulis su veidu | mėnulis | veidas";
+// 🌛 - first_quarter_moon_with_face
+"72078525.name" = "priešpilnio mėnulis su veidu";
+"72078525.tags" = "ketvirtis | mėnulis | priešpilnio mėnulis su veidu | veidas";
+// 🌜 - last_quarter_moon_with_face
+"72078530.name" = "delčios mėnulis su veidu";
+"72078530.tags" = "delčios mėnulis su veidu | ketvirtis | mėnulis | veidas";
+// 🌝 - full_moon_with_face
+"72078535.name" = "pilnatis su veidu";
+"72078535.tags" = "mėnulis | pilnatis | pilnatis su veidu | šviesu | veidas";
+// 🌞 - sun_with_face
+"72078540.name" = "saulė su veidu";
+"72078540.tags" = "saulė | saulė su veidu | šviesu | veidas";
+// 🪐 - ringed_planet
+"72080400.name" = "planeta su žiedu";
+"72080400.tags" = "planeta su žiedu | saturnas";
+// ⭐ - star
+"34035.name" = "balta vidutinė žvaigždė";
+"34035.tags" = "balta vidutinė žvaigždė | žvaigždė";
+// 🌟 - star2
+"72078545.name" = "žėrinti žvaigždė";
+"72078545.tags" = "kibirkštis | šviesti | žėrėti | žėrinti | žvaigždė";
+// 🌠 - stars
+"72078550.name" = "krintanti žvaigždė";
+"72078550.tags" = "krintanti | žvaigždė";
+// 🌌 - milky_way
+"72078450.name" = "paukščių takas";
+"72078450.tags" = "kosmosas | paukščių takas";
+// ⛅ - partly_sunny
+"30546.name" = "saulė už debesų";
+"30546.tags" = "debesis | saulė | saulė už debesų";
+// 🌀 - cyclone
+"72078390.name" = "ciklonas";
+"72078390.tags" = "apsvaigęs | ciklonas | spiralė | taifūnas";
+// 🌈 - rainbow
+"72078430.name" = "vaivorykštė";
+"72078430.tags" = "lietus | vaivorykštė";
+// 🌂 - closed_umbrella
+"72078400.name" = "suskleistas skėtis";
+"72078400.tags" = "drabužiai | lietus | skėtis | suskleistas skėtis";
+// ☔ - umbrella_with_rain_drops
+"30015.name" = "skėtis su lietaus lašais";
+"30015.tags" = "drabužiai | lašas | lietus | skėtis | skėtis su lietaus lašais";
+// ⚡ - zap
+"30438.name" = "aukštoji įtampa";
+"30438.tags" = "aukštoji įtampa | elektra | įtampa | pavojus | žaibas";
+// ⛄ - snowman_without_snow
+"30543.name" = "sniego senis be sniego";
+"30543.tags" = "šaltis | sniegas | sniego senis | sniego senis be sniego";
+// 🔥 - fire
+"72077300.name" = "ugnis";
+"72077300.tags" = "įrankis | liepsna | ugnis";
+// 💧 - droplet
+"72076670.name" = "lašas";
+"72076670.tags" = "komiksas | lašas | oras | prakaitas | šaltis";
+// 🌊 - ocean
+"72078440.name" = "vandens banga";
+"72078440.tags" = "banga | vandens banga | vandenynas | vanduo";
+// 🎃 - jack_o_lantern
+"72079045.name" = "žibintas iš moliūgo";
+"72079045.tags" = "helovinas | šventė | žibintas | žibintas iš moliūgo";
+// 🎄 - christmas_tree
+"72079050.name" = "Kalėdų eglutė";
+"72079050.tags" = "eglutė | Kalėdos | Kalėdų eglutė | šventė";
+// 🎆 - fireworks
+"72079060.name" = "fejerverkai";
+"72079060.tags" = "fejerverkai | šventė";
+// 🎇 - sparkler
+"72079065.name" = "šaltoji ugnelė";
+"72079065.tags" = "fejerverkai | kibirkštis | šaltoji ugnelė | šventė";
+// 🧨 - firecracker
+"72079560.name" = "fejerverkas";
+"72079560.tags" = "dinamitas | fejerverkai | fejerverkas | sprogus";
+// ✨ - sparkles
+"30843.name" = "kibirkštėlės";
+"30843.tags" = "kibirkštėlės | kibirkštis | žvaigždė";
+// 🎈 - balloon
+"72079070.name" = "balionas";
+"72079070.tags" = "balionas | šventė";
+// 🎉 - tada
+"72079075.name" = "konfeti šaudyklė";
+"72079075.tags" = "bum | konfeti šaudyklė | šauti | šventė | vakarėlis";
+// 🎊 - confetti_ball
+"72079080.name" = "konfeti kamuolys";
+"72079080.tags" = "kamuolys | konfeti | šventė";
+// 🎋 - tanabata_tree
+"72079085.name" = "tanabata medis";
+"72079085.tags" = "japonų | medis | šventė | tanabata medis";
+// 🎍 - bamboo
+"72079095.name" = "dekoracija iš pušies";
+"72079095.tags" = "bambukas | dekoracija iš pušies | japonų | pušis | šventė";
+// 🎎 - dolls
+"72079100.name" = "japoniškos lėlės";
+"72079100.tags" = "festivalis | japoniškos lėlės | japonų | lėlė | šventė";
+// 🎏 - flags
+"72079105.name" = "karpio vėtrungė";
+"72079105.tags" = "karpio vėtrungė | karpis | šventė | vėtrungė";
+// 🎐 - wind_chime
+"72079110.name" = "vėjo varpeliai";
+"72079110.tags" = "skambėti | šventė | varpelis | vėjas | vėjo varpeliai";
+// 🎑 - rice_scene
+"72079115.name" = "mėnesienos ceremonija";
+"72079115.tags" = "ceremonija | mėnesienos ceremonija | mėnulis | šventė";
+// 🧧 - red_envelope
+"72079555.name" = "raudonas vokas";
+"72079555.tags" = "dovana | pinigai | raudonas vokas | sėkmės";
+// 🎀 - ribbon
+"72079030.name" = "kaspinas";
+"72079030.tags" = "kaspinas | šventė";
+// 🎁 - gift
+"72079035.name" = "supakuota dovana";
+"72079035.tags" = "dėžutė | dovana | supakuota dovana | suvyniota | šventė";
+// 🎫 - ticket
+"72079245.name" = "bilietas";
+"72079245.tags" = "bilietas | įėjimas";
+// 🏆 - trophy
+"72079380.name" = "trofėjus";
+"72079380.tags" = "prizas | trofėjus";
+// 🏅 - sports_medal
+"72079375.name" = "sporto medalis";
+"72079375.tags" = "medalis | sporto medalis";
+// 🥇 - first_place_medal
+"72078755.name" = "1-osios vietos medalis";
+"72078755.tags" = "1-osios vietos medalis | auksas | medalis | pirmoji";
+// 🥈 - second_place_medal
+"72078760.name" = "2-osios vietos medalis";
+"72078760.tags" = "2-osios vietos medalis | antroji | medalis | sidabras";
+// 🥉 - third_place_medal
+"72078765.name" = "3-osios vietos medalis";
+"72078765.tags" = "3-osios vietos medalis | bronza | medalis | trečioji";
+// ⚽ - soccer
+"30522.name" = "futbolo kamuolys";
+"30522.tags" = "futbolas | futbolo kamuolys | kamuolys";
+// ⚾ - baseball
+"30525.name" = "beisbolo kamuoliukas";
+"30525.tags" = "beisbolo kamuoliukas | kamuolys";
+// 🥎 - softball
+"72078790.name" = "softbolas";
+"72078790.tags" = "kamuolys | pažastis | pirštinė | softbolas";
+// 🏀 - basketball
+"72079350.name" = "krepšinio kamuolys";
+"72079350.tags" = "kamuolys | krepšinio kamuolys | lankas";
+// 🏐 - volleyball
+"72079430.name" = "tinklinio kamuolys";
+"72079430.tags" = "kamuolys | tinklinio kamuolys | žaidimas";
+// 🏈 - football
+"72079390.name" = "amerikietiškojo futbolo kamuolys";
+"72079390.tags" = "amerikietiškas | amerikietiškojo futbolo kamuolys | futbolas | kamuolys";
+// 🏉 - rugby_football
+"72079395.name" = "regbio kamuolys";
+"72079395.tags" = "futbolas | kamuolys | regbio kamuolys | regbis";
+// 🎾 - tennis
+"72079340.name" = "teniso kamuoliukas";
+"72079340.tags" = "kamuolys | raketė | teniso kamuoliukas";
+// 🥏 - flying_disc
+"72078795.name" = "skraidantis diskas";
+"72078795.tags" = "aukščiausioji riba | skraidantis diskas";
+// 🎳 - bowling
+"72079285.name" = "boulingas";
+"72079285.tags" = "boulingas | kamuolys | žaidimas";
+// 🏏 - cricket_bat_and_ball
+"72079425.name" = "kriketas";
+"72079425.tags" = "kamuolys | kriketas | lazda | žaidimas";
+// 🏑 - field_hockey_stick_and_ball
+"72079435.name" = "žolės riedulys";
+"72079435.tags" = "kamuolys | laukas | lazda | riedulys | žaidimas | žolės riedulys";
+// 🏒 - ice_hockey_stick_and_puck
+"72079440.name" = "ledo ritulio lazda ir ritulys";
+"72079440.tags" = "lazda | ledas | ledo riedulys | ledo ritulio lazda ir ritulys | ritulys | žaidimas";
+// 🥍 - lacrosse
+"72078785.name" = "lakrosas";
+"72078785.tags" = "įvartis | kamuoliukas | lakrosas | lazda";
+// 🏓 - table_tennis_paddle_and_ball
+"72079445.name" = "stalo tenisas";
+"72079445.tags" = "kamuolys | lazda | raketė | stalo tenisas | žaidimas";
+// 🏸 - badminton_racquet_and_shuttlecock
+"72079630.name" = "badmintonas";
+"72079630.tags" = "badmintonas | plunksninukas | raketė | žaidimas";
+// 🥊 - boxing_glove
+"72078770.name" = "bokso pirštinė";
+"72078770.tags" = "boksas | bokso pirštinė | pirštinė";
+// 🥋 - martial_arts_uniform
+"72078775.name" = "kovos sporto šakos uniforma";
+"72078775.tags" = "dziudo | karatė | kovos menas | kovos sporto šakos uniforma | uniforma";
+// 🥅 - goal_net
+"72078745.name" = "vartai";
+"72078745.tags" = "tinklas | vartai";
+// ⛳ - golf
+"30684.name" = "vėliava skylutėje";
+"30684.tags" = "golfas | skylutė | vėliava skylutėje";
+// 🎣 - fishing_pole_and_fish
+"72079205.name" = "meškerė";
+"72079205.tags" = "meškerė | žuvis";
+// 🤿 - diving_mask
+"72078715.name" = "nardymo kaukė";
+"72078715.tags" = "nardymas | nardymo kaukė";
+// 🎽 - running_shirt_with_sash
+"72079335.name" = "bėgimo marškinėliai";
+"72079335.tags" = "bėgimas | bėgimo marškinėliai | juosta | marškinėliai";
+// 🎿 - ski
+"72079345.name" = "slidės";
+"72079345.tags" = "slidės | slidinėti | sniegas";
+// 🛷 - sled
+"72079630.name" = "rogės";
+"72079630.tags" = "rogės";
+// 🥌 - curling_stone
+"72078780.name" = "akmenslydis";
+"72078780.tags" = "akmenslydis | akmuo | žaidimas";
+// 🎯 - dart
+"72079265.name" = "smūgis tiesiai į taikinį";
+"72079265.tags" = "akis | dartas | pataikyti | smūgis tiesiai į taikinį | taikinys | žaidimas";
+// 🪀 - yo-yo
+"72080320.name" = "jo-jo";
+"72080320.tags" = "jo-jo | svyruojantis | žaislas";
+// 🪁 - kite
+"72080325.name" = "aitvaras";
+"72080325.tags" = "aitvaras | pakilti | skristi";
+// 🔫 - gun
+"72077330.name" = "vandens šautuvas";
+"72077330.tags" = "ginklas | įrankis | pistoletas | revolveris | vandens šautuvas";
+// 🎱 - 8ball
+"72079275.name" = "biliardo kamuoliukas";
+"72079275.tags" = "8 | 8 kamuoliukas | biliardas | biliardo kamuoliukas | žaidimas";
+// 🔮 - crystal_ball
+"72077345.name" = "krištolinis rutulys";
+"72077345.tags" = "fantazija | fortūna | krištolinis | pasaka | rutulys";
+// 🪄 - magic_wand
+"72080340.name" = "stebuklinga lazdelė";
+"72080340.tags" = "burtininkas | ragana | stebuklinga lazdelė | stebuklingas";
+// 🎮 - video_game
+"72079260.name" = "vaizdo žaidimas";
+"72079260.tags" = "vaizdo žaidimas | valdiklis | žaidimas";
+// 🎰 - slot_machine
+"72079270.name" = "žaidimų automatas";
+"72079270.tags" = "automatas | žaidimas | žaidimų automatas";
+// 🎲 - game_die
+"72079280.name" = "kauliukas";
+"72079280.tags" = "kauliukas | žaidimas";
+// 🧩 - jigsaw
+"72079565.name" = "dėlionė";
+"72079565.tags" = "dalis | dėlionė | galvosūkis | raktas | susijungiantis";
+// 🧸 - teddy_bear
+"72079640.name" = "meškiukas";
+"72079640.tags" = "kimštas | meškiukas | pliušas | žaislas";
+// 🪅 - pinata
+"72080345.name" = "pinjata";
+"72080345.tags" = "pinjata | šventė | vakarėlis";
+// 🪩 - mirror_ball
+"72080525.name" = "veidrodinis rutulys";
+"72080525.tags" = "blizgesys | diskoteka | šokiai | vakarėlis | veidrodinis rutulys";
+// 🪆 - nesting_dolls
+"72080350.name" = "matrioškos";
+"72080350.tags" = "lėlė | matrioška | matrioškos | Rusija";
+// 🃏 - black_joker
+"72075585.name" = "juokdarys";
+"72075585.tags" = "juokdarys | kortos | žaidimas";
+// 🀄 - mahjong
+"72074570.name" = "madžongo raudonas drakonas";
+"72074570.tags" = "madžongas | madžongo raudonas drakonas | raudonas | žaidimas";
+// 🎴 - flower_playing_cards
+"72079290.name" = "kortos su gėlėmis";
+"72079290.tags" = "gėlė | japonų | kortos | kortos su gėlėmis | žaidimas";
+// 🎭 - performing_arts
+"72079255.name" = "scenos menas";
+"72079255.tags" = "kaukė | menas | pasirodymas | scenos menas | teatras";
+// 🎨 - art
+"72079230.name" = "dailininko paletė";
+"72079230.tags" = "dailininko paletė | menas | muziejus | paletė | piešinys";
+// 🧵 - thread
+"72079625.name" = "siūlas";
+"72079625.tags" = "adata | gija | ritė | siūlas | siuvimas";
+// 🪡 - sewing_needle
+"72080485.name" = "siuvimo adata";
+"72080485.tags" = "adata | siūlai | siuvimas | siuvimo adata | siuvinėjimas";
+// 🧶 - yarn
+"72079630.name" = "siūlų kamuolys";
+"72079630.tags" = "kamuolys | megzti | nerti | siūlų kamuolys";
+// 🪢 - knot
+"72080490.name" = "mazgas";
+"72080490.tags" = "kaklaraištis | mazgas | surišti | virvė";
+// 👓 - eyeglasses
+"72076250.name" = "akiniai";
+"72076250.tags" = "akiniai | akys | apranga";
+// 🥽 - goggles
+"72079025.name" = "apsauginiai akiniai";
+"72079025.tags" = "akių apsauga | apsauginiai akiniai | plaukimas | suvirinimas";
+// 🥼 - lab_coat
+"72079020.name" = "laboratorinis chalatas";
+"72079020.tags" = "bandymas | gydytojas | laboratorinis chalatas | mokslininkas";
+// 🦺 - safety_vest
+"72079330.name" = "gelbėjimosi liemenė";
+"72079330.tags" = "gelbėjimosi | kritinė padėtis | liemenė";
+// 👔 - necktie
+"72076255.name" = "kaklaraištis";
+"72076255.tags" = "drabužiai | kaklaraištis";
+// 👕 - shirt
+"72076260.name" = "marškinėliai";
+"72076260.tags" = "drabužiai | marškinėliai | marškiniai";
+// 👖 - jeans
+"72076265.name" = "džinsai";
+"72076265.tags" = "drabužiai | džinsai | kelnės | trumpikės";
+// 🧣 - scarf
+"72079535.name" = "skara";
+"72079535.tags" = "kaklas | skara";
+// 🧤 - gloves
+"72079540.name" = "pirštinės";
+"72079540.tags" = "pirštinės | ranka";
+// 🧥 - coat
+"72079545.name" = "paltas";
+"72079545.tags" = "paltas | švarkas";
+// 🧦 - socks
+"72079550.name" = "kojinės";
+"72079550.tags" = "blauzdinė | kojinės";
+// 👗 - dress
+"72076270.name" = "suknelė";
+"72076270.tags" = "drabužiai | suknelė";
+// 👘 - kimono
+"72076275.name" = "kimono";
+"72076275.tags" = "drabužiai | kimono";
+// 🥻 - sari
+"72079015.name" = "saris";
+"72079015.tags" = "apranga | saris | suknelė";
+// 🩱 - one-piece_swimsuit
+"72080245.name" = "vientisas maudymosi kostiumėlis";
+"72080245.tags" = "maudymosi kostiumėlis | vientisas maudymosi kostiumėlis";
+// 🩲 - briefs
+"72080250.name" = "trumpikės";
+"72080250.tags" = "apatiniai | maudymosi kostiumėlis | trumpikės | viena dalis";
+// 🩳 - shorts
+"72080255.name" = "šortai";
+"72080255.tags" = "apatiniai | maudymosi kostiumas | šortai | trumpikės";
+// 👙 - bikini
+"72076280.name" = "bikinis";
+"72076280.tags" = "bikinis | drabužiai | plaukti";
+// 👚 - womans_clothes
+"72076285.name" = "moteriški drabužiai";
+"72076285.tags" = "drabužiai | moteris | moteriški drabužiai";
+// 🪭 - folding_hand_fan
+"72080545.name" = "sulankstoma vėduoklė";
+"72080545.tags" = "aušinimas | drovus | karšta | plazdėjimas | šokti | sulankstoma vėduoklė | vėsinimas";
+// 👛 - purse
+"72076290.name" = "piniginė";
+"72076290.tags" = "drabužiai | monetos | piniginė";
+// 👜 - handbag
+"72076295.name" = "rankinė";
+"72076295.tags" = "drabužiai | krepšys | rankinė";
+// 👝 - pouch
+"72076300.name" = "maišelis";
+"72076300.tags" = "drabužiai | krepšys | maišelis";
+// 🎒 - school_satchel
+"72079120.name" = "mokyklinė kuprinė";
+"72079120.tags" = "krepšys | kuprinė | mokykla | mokyklinė kuprinė";
+// 🩴 - thong_sandal
+"72080260.name" = "sandalai su dirželiu";
+"72080260.tags" = "dirželiai | paplūdimio sandalai | sandalai | sandalai su dirželiu";
+// 👞 - mans_shoe
+"72076305.name" = "vyriškas batas";
+"72076305.tags" = "batas | drabužiai | vyras | vyriškas batas";
+// 👟 - athletic_shoe
+"72076310.name" = "bėgimo batelis";
+"72076310.tags" = "atletiškas | batas | bėgimo batelis | drabužiai | sportinis batelis";
+// 🥾 - hiking_boot
+"72079030.name" = "žygio batai";
+"72079030.tags" = "batas | kuprinė | stovyklavietė | žygiai | žygio batai";
+// 🥿 - womans_flat_shoe
+"72079035.name" = "lygiapadis batelis";
+"72079035.tags" = "avalynė be raištelių | baleto batelis | lygiapadis batelis | šlepetė";
+// 👠 - high_heel
+"72076315.name" = "aukštakulnis batelis";
+"72076315.tags" = "aukštakulnis batelis | batas | drabužiai | kulnas | moteris";
+// 👡 - sandal
+"72076320.name" = "moteriška basutė";
+"72076320.tags" = "batas | drabužiai | moteris | moteriška basutė | sandalas";
+// 🩰 - ballet_shoes
+"72080240.name" = "baleto bateliai";
+"72080240.tags" = "baletas | baleto bateliai | šokis";
+// 👢 - boot
+"72076325.name" = "moteriškas batas";
+"72076325.tags" = "batas | batelis | drabužiai | moteris | moteriškas batas";
+// 🪮 - hair_pick
+"72080550.name" = "plaukų šukutės";
+"72080550.tags" = "juodaodžių | plaukai | plaukų šukutės | rinkti | šukos";
+// 👑 - crown
+"72076240.name" = "karūna";
+"72076240.tags" = "drabužiai | karalienė | karalius | karūna";
+// 👒 - womans_hat
+"72076245.name" = "moteriška skrybėlė";
+"72076245.tags" = "drabužiai | moteris | moteriška skrybėlė | skrybėlė";
+// 🎩 - tophat
+"72079235.name" = "cilindras";
+"72079235.tags" = "aukšta | cilindras | drabužiai | skrybėlė";
+// 🎓 - mortar_board
+"72079125.name" = "mokyklos baigimo kepurėlė";
+"72079125.tags" = "baigimas | drabužiai | kepurė | kepurėlė | mokyklos baigimo kepurėlė | šventė";
+// 🧢 - billed_cap
+"72079530.name" = "reklaminė kepurė";
+"72079530.tags" = "beisbolo kepuraitė | reklaminė kepurė";
+// 🪖 - military_helmet
+"72080430.name" = "kareiviškas šalmas";
+"72080430.tags" = "armija | kareivis | kareiviškas šalmas | kariuomenė | karys | šalmas";
+// 📿 - prayer_beads
+"72077110.name" = "rožinis";
+"72077110.tags" = "drabužiai | karoliai | melstis | religija | rožinis | vėrinys";
+// 💄 - lipstick
+"72076495.name" = "lūpų dažai";
+"72076495.tags" = "kosmetika | lūpų dažai | makiažas";
+// 💍 - ring
+"72076540.name" = "žiedas";
+"72076540.tags" = "deimantas | žiedas";
+// 💎 - gem
+"72076545.name" = "brangakmenis";
+"72076545.tags" = "brangakmenis | deimantas | juvelyrika | romantika";
+// 🔇 - mute
+"72077150.name" = "garsiakalbis išjungtas";
+"72077150.tags" = "garsiakalbis | garsiakalbis išjungtas | garsumas | nutildytas | tylus";
+// 🔈 - speaker
+"72077155.name" = "tylus garsiakalbis";
+"72077155.tags" = "tylus | tylus garsiakalbis";
+// 🔉 - sound
+"72077160.name" = "vidutinio garso garsiakalbis";
+"72077160.tags" = "vidutinio garso garsiakalbis | vidutinis";
+// 🔊 - loud_sound
+"72077165.name" = "didelis garsiakalbio garsumas";
+"72077165.tags" = "didelis garsiakalbio garsumas | garsus";
+// 📢 - loudspeaker
+"72076965.name" = "garsiakalbio simbolis";
+"72076965.tags" = "garsiai | garsiakalbio simbolis | viešas";
+// 📣 - mega
+"72076970.name" = "garsintuvas";
+"72076970.tags" = "džiaugsmingi šūksniai | garsintuvas";
+// 📯 - postal_horn
+"72077030.name" = "pašto ragas";
+"72077030.tags" = "paštas | pašto | ragas";
+// 🔔 - bell
+"72077215.name" = "varpelis";
+"72077215.tags" = "varpelis";
+// 🔕 - no_bell
+"72077220.name" = "perbrauktas varpelis";
+"72077220.tags" = "draudžiama | nutildyti | perbrauktas varpelis | tyliai | varpelis";
+// 🎼 - musical_score
+"72079330.name" = "partitūra";
+"72079330.tags" = "muzika | partitūra";
+// 🎵 - musical_note
+"72079295.name" = "muzikos nata";
+"72079295.tags" = "muzika | muzikos nata | nata";
+// 🎶 - notes
+"72079300.name" = "muzikos natos";
+"72079300.tags" = "muzika | muzikos natos | nata | natos";
+// 🎤 - microphone
+"72079210.name" = "mikrofonas";
+"72079210.tags" = "karaokė | mikrofonas";
+// 🎧 - headphones
+"72079225.name" = "ausinės";
+"72079225.tags" = "ausinės";
+// 📻 - radio
+"72077090.name" = "radijas";
+"72077090.tags" = "radijas | vaizdo įrašas";
+// 🎷 - saxophone
+"72079305.name" = "saksofonas";
+"72079305.tags" = "instrumentas | muzika | saksofonas";
+// 🪗 - accordion
+"72080435.name" = "akordeonas";
+"72080435.tags" = "akordeonas | armonika";
+// 🎸 - guitar
+"72079310.name" = "gitara";
+"72079310.tags" = "gitara | instrumentas | muzika";
+// 🎹 - musical_keyboard
+"72079315.name" = "muzikos klaviatūra";
+"72079315.tags" = "instrumentas | klaviatūra | muzika | muzikos klaviatūra | pianinas";
+// 🎺 - trumpet
+"72079320.name" = "trimitas";
+"72079320.tags" = "instrumentas | muzika | trimitas";
+// 🎻 - violin
+"72079325.name" = "smuikas";
+"72079325.tags" = "instrumentas | muzika | smuikas";
+// 🪕 - banjo
+"72080425.name" = "bandža";
+"72080425.tags" = "bandža | muzika | styginis";
+// 🥁 - drum_with_drumsticks
+"72078725.name" = "būgnas";
+"72078725.tags" = "būgnas | muzika";
+// 🪘 - long_drum
+"72080440.name" = "ilgas būgnas";
+"72080440.tags" = "būgnas | ilgas būgnas | Kongas | ritmas";
+// 🪇 - maracas
+"72080355.name" = "marakasai";
+"72080355.tags" = "barškutis | instrumentas | marakasai | mušamieji | muzika | purtyti";
+// 🪈 - flute
+"72080360.name" = "fleita";
+"72080360.tags" = "fleita | mediniai pučiamieji | muzika | vamzdis";
+// 📱 - iphone
+"72077040.name" = "mobilusis telefonas";
+"72077040.tags" = "mobilusis | telefonas";
+// 📲 - calling
+"72077045.name" = "mobilusis telefonas su rodykle";
+"72077045.tags" = "mobilusis | mobilusis telefonas su rodykle | rodyklė | skambinti | telefonas";
+// 📞 - telephone_receiver
+"72076945.name" = "telefono ragelis";
+"72076945.tags" = "ragelis | telefonas | telefono ragelis";
+// 📟 - pager
+"72076950.name" = "gaviklis";
+"72076950.tags" = "gaviklis";
+// 📠 - fax
+"72076955.name" = "fakso aparatas";
+"72076955.tags" = "faksas | fakso aparatas";
+// 🔋 - battery
+"72077170.name" = "baterija";
+"72077170.tags" = "baterija";
+// 🪫 - low_battery
+"72080535.name" = "išeikvota baterija";
+"72080535.tags" = "elektronika | išeikvota baterija | mažai energijos";
+// 🔌 - electric_plug
+"72077175.name" = "elektros kištukas";
+"72077175.tags" = "elektra | elektros kištukas | kištukas";
+// 💻 - computer
+"72076770.name" = "skreitinis kompiuteris";
+"72076770.tags" = "asmeninis | kompiuteris | skreitinis kompiuteris";
+// 💽 - minidisc
+"72076780.name" = "kompiuterio diskas";
+"72076780.tags" = "diskas | kompiuterio diskas | kompiuteris | minidiskas | optinis";
+// 💾 - floppy_disk
+"72076785.name" = "diskelis";
+"72076785.tags" = "diskas | diskelis | kompiuteris";
+// 💿 - cd
+"72076790.name" = "optinis diskas";
+"72076790.tags" = "CD | diskas | kompaktinis diskas | kompiuteris | optinis";
+// 📀 - dvd
+"72076795.name" = "skaitmeninis vaizdo diskas";
+"72076795.tags" = "Blu-Ray | diskas | kompaktinis diskas | kompiuteris | optinis | skaitmeninis vaizdo diskas";
+// 🧮 - abacus
+"72079590.name" = "skaitytuvai";
+"72079590.tags" = "skaičiavimas | skaitytuvai";
+// 🎥 - movie_camera
+"72079215.name" = "filmavimo kamera";
+"72079215.tags" = "filmas | filmavimo kamera | kamera | kinas";
+// 🎬 - clapper
+"72079250.name" = "pliauškė";
+"72079250.tags" = "filmas | pliauškė | pranešimo lenta";
+// 📺 - tv
+"72077085.name" = "televizorius";
+"72077085.tags" = "televizorius | TV | vaizdo įrašas";
+// 📷 - camera
+"72077070.name" = "fotoaparatas";
+"72077070.tags" = "fotoaparatas | vaizdo įrašas";
+// 📸 - camera_with_flash
+"72077075.name" = "fotoaparatas su blykste";
+"72077075.tags" = "blykstė | fotoaparatas | fotoaparatas su blykste | vaizdo įrašas";
+// 📹 - video_camera
+"72077080.name" = "vaizdo kamera";
+"72077080.tags" = "fotoaparatas | vaizdo įrašas | vaizdo kamera";
+// 📼 - vhs
+"72077095.name" = "vaizdo įrašų kasetė";
+"72077095.tags" = "juosta | vaizdo įrašas | vaizdo įrašų kasetė | VHS";
+// 🔍 - mag
+"72077180.name" = "didinimo stiklas į kairę";
+"72077180.tags" = "didinimo | didinimo stiklas į kairę | įrankis | paieška | stiklas";
+// 🔎 - mag_right
+"72077185.name" = "didinimo stiklas į dešinę";
+"72077185.tags" = "didinimo | didinimo stiklas į dešinę | įrankis | paieška | stiklas";
+// 💡 - bulb
+"72076640.name" = "lemputė";
+"72076640.tags" = "elektra | idėja | komiksas | lemputė | šviesa";
+// 🔦 - flashlight
+"72077305.name" = "žibintuvėlis";
+"72077305.tags" = "deglas | elektra | įrankis | šviesa | žibintuvėlis";
+// 🏮 - izakaya_lantern
+"72079580.name" = "raudonas popierinis žibintas";
+"72079580.tags" = "baras | raudonas | raudonas popierinis žibintas | šviesa | žibintas";
+// 🪔 - diya_lamp
+"72080420.name" = "žibalinė lempa";
+"72080420.tags" = "lempa | žibalas | žibalinė lempa | žvakė";
+// 📔 - notebook_with_decorative_cover
+"72076895.name" = "užrašų knygelė su dekoratyviniu viršeliu";
+"72076895.tags" = "dekoratyvinis | knyga | užrašų knygelė | užrašų knygelė su dekoratyviniu viršeliu | viršelis";
+// 📕 - closed_book
+"72076900.name" = "užversta knyga";
+"72076900.tags" = "knyga | užversta knyga | užverta";
+// 📖 - book
+"72076905.name" = "atversta knyga";
+"72076905.tags" = "atversta | knyga";
+// 📗 - green_book
+"72076910.name" = "žalia knyga";
+"72076910.tags" = "knyga | žalia";
+// 📘 - blue_book
+"72076915.name" = "mėlyna knyga";
+"72076915.tags" = "knyga | mėlyna";
+// 📙 - orange_book
+"72076920.name" = "oranžinė knyga";
+"72076920.tags" = "knyga | oranžinė";
+// 📚 - books
+"72076925.name" = "knygos";
+"72076925.tags" = "knyga | knygos";
+// 📓 - notebook
+"72076890.name" = "užrašinė";
+"72076890.tags" = "užrašinė";
+// 📒 - ledger
+"72076885.name" = "sąskaitų knyga";
+"72076885.tags" = "sąskaitų knyga | užrašų knygelė";
+// 📃 - page_with_curl
+"72076810.name" = "užsirietęs puslapis";
+"72076810.tags" = "dokumentas | puslapis | užsirietęs";
+// 📜 - scroll
+"72076935.name" = "susuktas lapas";
+"72076935.tags" = "popierius | susuktas lapas";
+// 📄 - page_facing_up
+"72076815.name" = "puslapis viršutine puse";
+"72076815.tags" = "dokumentas | puslapis | puslapis viršutine puse";
+// 📰 - newspaper
+"72077035.name" = "laikraštis";
+"72077035.tags" = "laikraštis | naujienos | popierius";
+// 📑 - bookmark_tabs
+"72076880.name" = "žymių skirtukai";
+"72076880.tags" = "skirtukai | žyma | žymė | žymeklis | žymių skirtukai";
+// 🔖 - bookmark
+"72077225.name" = "žymė";
+"72077225.tags" = "žyma | žymė";
+// 💰 - moneybag
+"72076715.name" = "pinigų maišas";
+"72076715.tags" = "doleris | maišas | pinigai | pinigų maišas";
+// 🪙 - coin
+"72080445.name" = "moneta";
+"72080445.tags" = "auksas | lobis | metalas | moneta | pinigai | sidabras";
+// 💴 - yen
+"72076735.name" = "jenos banknotas";
+"72076735.tags" = "bankas | banknotas | jena | jenos banknotas | pinigai | valiuta";
+// 💵 - dollar
+"72076740.name" = "dolerio banknotas";
+"72076740.tags" = "bankas | banknotas | dolerio banknotas | doleris | pinigai | valiuta";
+// 💶 - euro
+"72076745.name" = "euro banknotas";
+"72076745.tags" = "bankas | banknotas | euras | euro banknotas | pinigai | valiuta";
+// 💷 - pound
+"72076750.name" = "svaro sterlingų banknotas";
+"72076750.tags" = "bankas | banknotas | pinigai | svaras sterlingų | svaro sterlingų banknotas | valiuta";
+// 💸 - money_with_wings
+"72076755.name" = "pinigai su sparnais";
+"72076755.tags" = "bankas | banknotas | doleris | pinigai | pinigai su sparnais";
+// 💳 - credit_card
+"72076730.name" = "kredito kortelė";
+"72076730.tags" = "bankas | kortelė | kreditas | kredito kortelė | pinigai";
+// 🧾 - receipt
+"72079670.name" = "čekis";
+"72079670.tags" = "apskaita | čekis | įrodymai";
+// 💹 - chart
+"72076760.name" = "didėjimo diagrama su jenos simboliu";
+"72076760.tags" = "augimas | diagrama | didėjimo diagrama su jenos simboliu | jena | tendencijos | valiuta";
+// 📧 - e-mail
+"72076990.name" = "el. laiškas";
+"72076990.tags" = "el. laiškas | laiškas | paštas";
+// 📨 - incoming_envelope
+"72076995.name" = "gaunamas vokas";
+"72076995.tags" = "el. laiškas | gaunamas vokas | gavimas | laiškas | paštas | vokas";
+// 📩 - envelope_with_arrow
+"72077000.name" = "vokas su rodykle";
+"72077000.tags" = "el. laiškas | el. paštas | rodyklė | vokas | vokas su rodykle";
+// 📤 - outbox_tray
+"72076975.name" = "siunčiamų laiškų dėklas";
+"72076975.tags" = "dėklas | išsiųsti | laiškas | paštas | siunčiami | siunčiamų laiškų dėklas";
+// 📥 - inbox_tray
+"72076980.name" = "gaunamų laiškų dėklas";
+"72076980.tags" = "dėklas | gaunamų laiškų dėklas | gauti | laiškas | paštas";
+// 📦 - package
+"72076985.name" = "paketas";
+"72076985.tags" = "dėžė | paketas | siuntinys";
+// 📫 - mailbox
+"72077010.name" = "uždaryta pašto dėžutė su pakelta vėliava";
+"72077010.tags" = "paštas | pašto dėžutė | uždaryta | uždaryta pašto dėžutė su pakelta vėliava";
+// 📪 - mailbox_closed
+"72077005.name" = "uždaryta pašto dėžutė su nuleista vėliava";
+"72077005.tags" = "nuleista | paštas | pašto dėžutė | uždaryta | uždaryta pašto dėžutė su nuleista vėliava";
+// 📬 - mailbox_with_mail
+"72077015.name" = "atidaryta pašto dėžutė su pakelta vėliava";
+"72077015.tags" = "atidaryta | atidaryta pašto dėžutė su pakelta vėliava | paštas | pašto dėžutė";
+// 📭 - mailbox_with_no_mail
+"72077020.name" = "atidaryta pašto dėžutė su nuleista vėliava";
+"72077020.tags" = "atidaryta | atidaryta pašto dėžutė su nuleista vėliava | nuleista | paštas | pašto dėžutė";
+// 📮 - postbox
+"72077025.name" = "pašto dėžutė";
+"72077025.tags" = "paštas | pašto dėžutė";
+// 📝 - memo
+"72076940.name" = "atmintinė";
+"72076940.tags" = "atmintinė | pieštukas";
+// 💼 - briefcase
+"72076775.name" = "portfelis";
+"72076775.tags" = "portfelis";
+// 📁 - file_folder
+"72076800.name" = "failų aplankas";
+"72076800.tags" = "aplankas | failas | failų aplankas";
+// 📂 - open_file_folder
+"72076805.name" = "atidarytas failų aplankas";
+"72076805.tags" = "aplankas | atidarytas | atidarytas failų aplankas | failas";
+// 📅 - date
+"72076820.name" = "kalendorius";
+"72076820.tags" = "data | kalendorius";
+// 📆 - calendar
+"72076825.name" = "nuplėšiamas kalendorius";
+"72076825.tags" = "kalendorius | nuplėšiamas kalendorius";
+// 📇 - card_index
+"72076830.name" = "kortelių dėklas";
+"72076830.tags" = "dėklas | indeksas | kortelė | kortelių dėklas";
+// 📈 - chart_with_upwards_trend
+"72076835.name" = "didėjimo tendencijos diagrama";
+"72076835.tags" = "augimas | diagrama | didėjimo tendencijos diagrama | schema | tendencija";
+// 📉 - chart_with_downwards_trend
+"72076840.name" = "mažėjimo tendencijos diagrama";
+"72076840.tags" = "diagrama | į apačią | mažėjimo tendencijos diagrama | tendencija";
+// 📊 - bar_chart
+"72076845.name" = "juostinė diagrama";
+"72076845.tags" = "diagrama | juosta | juostinė diagrama";
+// 📋 - clipboard
+"72076850.name" = "segtuvas";
+"72076850.tags" = "segtuvas";
+// 📌 - pushpin
+"72076855.name" = "smeigtukas";
+"72076855.tags" = "smeigtukas";
+// 📍 - round_pushpin
+"72076860.name" = "apvalus smeigtukas";
+"72076860.tags" = "apvalus smeigtukas | smeigtukas";
+// 📎 - paperclip
+"72076865.name" = "sąvaržėlė";
+"72076865.tags" = "sąvaržėlė";
+// 📏 - straight_ruler
+"72076870.name" = "tiesi liniuotė";
+"72076870.tags" = "liniuotė | tiesi";
+// 📐 - triangular_ruler
+"72076875.name" = "trikampė liniuotė";
+"72076875.tags" = "liniuotė | trikampė liniuotė | trikampis";
+// 🔒 - lock
+"72077205.name" = "spyna";
+"72077205.tags" = "spyna | uždaryta";
+// 🔓 - unlock
+"72077210.name" = "atrakinta spyna";
+"72077210.tags" = "atidaryta | atrakinta | spyna";
+// 🔏 - lock_with_ink_pen
+"72077190.name" = "spyna ir rašiklis";
+"72077190.tags" = "privatumas | rašalas | rašiklis | smaigalys | spyna | spyna ir rašiklis";
+// 🔐 - closed_lock_with_key
+"72077195.name" = "užrakinta spyna su raktu";
+"72077195.tags" = "raktas | saugu | spyna | uždaryta | užrakinta spyna su raktu";
+// 🔑 - key
+"72077200.name" = "raktas";
+"72077200.tags" = "raktas | slaptažodis | spyna";
+// 🔨 - hammer
+"72077315.name" = "plaktukas";
+"72077315.tags" = "įrankis | plaktukas";
+// 🪓 - axe
+"72080415.name" = "kirvis";
+"72080415.tags" = "kapoti | kirvis | mediena";
+// 💣 - bomb
+"72076650.name" = "bomba";
+"72076650.tags" = "bomba | komiksas";
+// 🪃 - boomerang
+"72080335.name" = "bumerangas";
+"72080335.tags" = "australija | bumerangas | grįžimas";
+// 🏹 - bow_and_arrow
+"72079635.name" = "lankas ir strėlė";
+"72079635.tags" = "ginklas | įrankis | lankas | lankas ir strėlė | šaulys | strėlė | zodiako";
+// 🪚 - carpentry_saw
+"72080450.name" = "pjūklas";
+"72080450.tags" = "dailidė | įrankis | mediena | pjūklas";
+// 🔧 - wrench
+"72077310.name" = "veržliaraktis";
+"72077310.tags" = "įrankis | veržliaraktis";
+// 🪛 - screwdriver
+"72080455.name" = "atsuktuvas";
+"72080455.tags" = "atsuktuvas | įrankis | varžtas";
+// 🔩 - nut_and_bolt
+"72077320.name" = "veržlė ir varžtas";
+"72077320.tags" = "įrankis | varžtas | veržlė | veržlė ir varžtas";
+// 🦯 - probing_cane
+"72079275.name" = "neregio lazda";
+"72079275.tags" = "aklas | neregio lazda | prieinamumas";
+// 🔗 - link
+"72077230.name" = "jungtis";
+"72077230.tags" = "jungtis";
+// 🪝 - hook
+"72080465.name" = "kablys";
+"72080465.tags" = "grobis | kablys | sugauti";
+// 🧰 - toolbox
+"72079600.name" = "įrankių rinkinys";
+"72079600.tags" = "dėžė | įrankis | įrankių rinkinys | mechanikas";
+// 🧲 - magnet
+"72079610.name" = "magnetas";
+"72079610.tags" = "magnetas | magnetinis | pasaga | trauka";
+// 🪜 - ladder
+"72080460.name" = "kopėčios";
+"72080460.tags" = "kopėčios | lipti | žingsnis";
+// 🧪 - test_tube
+"72079570.name" = "mėgintuvėlis";
+"72079570.tags" = "bandymas | chemija | chemikas | laboratorija | mėgintuvėlis | mokslas";
+// 🧫 - petri_dish
+"72079575.name" = "petri lėkštelė";
+"72079575.tags" = "bakterijos | bakterijų auginimas | biologas | biologija | petri lėkštelė";
+// 🧬 - dna
+"72079580.name" = "DNR";
+"72079580.tags" = "biologas | DNR | evoliucija | genas | genetika | gyvybė";
+// 🔬 - microscope
+"72077335.name" = "mikroskopas";
+"72077335.tags" = "įrankis | mikroskopas";
+// 🔭 - telescope
+"72077340.name" = "teleskopas";
+"72077340.tags" = "įrankis | teleskopas";
+// 📡 - satellite_antenna
+"72076960.name" = "palydovinė antena";
+"72076960.tags" = "antena | indas | palydovas | palydovinė antena";
+// 💉 - syringe
+"72076520.name" = "švirkštas";
+"72076520.tags" = "adata | dūris | gydytojas | įrankis | ligonis | medicina | švirkštas";
+// 🩸 - drop_of_blood
+"72080280.name" = "kraujo lašas";
+"72080280.tags" = "kraujo aukojimas | kraujo lašas | medicina | menstruacijos";
+// 💊 - pill
+"72076525.name" = "piliulė";
+"72076525.tags" = "gydytojas | ligonis | medicina | piliulė";
+// 🩹 - adhesive_bandage
+"72080285.name" = "pleistras";
+"72080285.tags" = "pleistras";
+// 🩼 - crutch
+"72080300.name" = "ramentas";
+"72080300.tags" = "lazda | negalia | pagalba judėti | ramentas | ramstis | sužeistas";
+// 🩺 - stethoscope
+"72080290.name" = "stetoskopas";
+"72080290.tags" = "gydytojas | medicina | širdis | stetoskopas";
+// 🩻 - x-ray
+"72080295.name" = "rentgenas";
+"72080295.tags" = "gydytojas | kaulai | medicina | rentgenas | skeletas";
+// 🚪 - door
+"72079245.name" = "durys";
+"72079245.tags" = "durys";
+// 🛗 - elevator
+"72079470.name" = "elevatorius";
+"72079470.tags" = "elevatorius | keltuvas | liftas | prieinamumas";
+// 🪞 - mirror
+"72080470.name" = "veidrodis";
+"72080470.tags" = "atspindys | atšvaitas | reflektorius | veidrodis";
+// 🪟 - window
+"72080475.name" = "langas";
+"72080475.tags" = "atvėrimas | langas | perregimas | rėmas | šviežias oras | vaizdas";
+// 🪑 - chair
+"72080405.name" = "kėdė";
+"72080405.tags" = "kėdė | sėdėti";
+// 🚽 - toilet
+"72079340.name" = "tualetas";
+"72079340.tags" = "tualetas";
+// 🪠 - plunger
+"72080480.name" = "santechninė pompa";
+"72080480.tags" = "santechnikas | santechninė pompa | siurbimas | tualetas";
+// 🚿 - shower
+"72079350.name" = "dušas";
+"72079350.tags" = "dušas | vanduo";
+// 🛁 - bathtub
+"72079360.name" = "vonia";
+"72079360.tags" = "vonia";
+// 🪤 - mouse_trap
+"72080500.name" = "pelėkautai";
+"72080500.tags" = "pelėkautai | spąstai";
+// 🪒 - razor
+"72080410.name" = "skustuvas";
+"72080410.tags" = "aštrus | skusti | skustuvas";
+// 🧴 - lotion_bottle
+"72079620.name" = "losjono buteliukas";
+"72079620.tags" = "apsauga nuo saulės | drėkinamasis kremas | losjonas | losjono buteliukas | šampūnas";
+// 🧷 - safety_pin
+"72079635.name" = "žiogelis";
+"72079635.tags" = "pankrokas | vystyklai | žiogelis";
+// 🧹 - broom
+"72079645.name" = "šluota";
+"72079645.tags" = "ragana | šlavimas | šluota | valymas";
+// 🧺 - basket
+"72079650.name" = "pintinė";
+"72079650.tags" = "iškyla | pintinė | skalbiniai | ūkininkavimas";
+// 🧻 - roll_of_paper
+"72079655.name" = "popieriaus ritinys";
+"72079655.tags" = "popieriaus ritinys | popieriniai rankšluosčiai | tualetinis popierius";
+// 🪣 - bucket
+"72080495.name" = "kibiras";
+"72080495.tags" = "kibiras";
+// 🧼 - soap
+"72079660.name" = "muilas";
+"72079660.tags" = "maudytis | muilas | muilinė | muilinti | plytelė | praustis";
+// 🫧 - bubbles
+"72080835.name" = "burbulai";
+"72080835.tags" = "burbulai | muilas | po vandeniu | švara";
+// 🪥 - toothbrush
+"72080505.name" = "dantų šepetėlis";
+"72080505.tags" = "dantų šepetėlis | dantys | higiena | valyti | vonios kambarys";
+// 🧽 - sponge
+"72079665.name" = "kempinė";
+"72079665.tags" = "akytas | kempinė | praustis | sugeriantis";
+// 🧯 - fire_extinguisher
+"72079595.name" = "gesintuvas";
+"72079595.tags" = "gesinti | gesintuvas | ugnis";
+// 🛒 - shopping_trolley
+"72079445.name" = "pirkinių vežimėlis";
+"72079445.tags" = "apsipirkimas | parduotuvė | pirkinių vežimėlis | vežimėlis";
+// 🚬 - smoking
+"72079255.name" = "rūkymas";
+"72079255.tags" = "rūkymas";
+// 🪦 - headstone
+"72080510.name" = "paminklas";
+"72080510.tags" = "kapas | kapinės | paminklas";
+// 🧿 - nazar_amulet
+"72079675.name" = "amuletas akis";
+"72079675.tags" = "amuletas akis | blogio akis | karoliukas | nazaras | talismanas | žavesys";
+// 🪬 - hamsa
+"72080540.name" = "hamsa";
+"72080540.tags" = "amuletas | apsauga | Fatima | hamsa | Marija | ranka";
+// 🗿 - moyai
+"72078390.name" = "moai";
+"72078390.tags" = "moai | statula | veidas";
+// 🪧 - placard
+"72080515.name" = "plakatas";
+"72080515.tags" = "demonstracija | piketas | plakatas | protestas | ženklas";
+// 🪪 - identification_card
+"72080530.name" = "tapatybės kortelė";
+"72080530.tags" = "ID | licencija | sauga | tapatybė | tapatybės kortelė";
+// 🏧 - atm
+"72079545.name" = "bankomato ženklas";
+"72079545.tags" = "automatinis | bankas | bankomatas | bankomato ženklas | kasininkas";
+// 🚮 - put_litter_in_its_place
+"72079265.name" = "šiukšlių metimo į šiukšliadėžes ženklas";
+"72079265.tags" = "šiukšlė | šiukšliadėžė | šiukšlių metimo į šiukšliadėžes ženklas";
+// 🚰 - potable_water
+"72079275.name" = "geriamasis vanduo";
+"72079275.tags" = "geriamas | geriamasis vanduo | gerti | vanduo";
+// ♿ - wheelchair
+"30336.name" = "neįgaliojo vežimėlio simbolis";
+"30336.tags" = "neįgaliojo vežimėlio simbolis | pasiekiamumas";
+// 🚹 - mens
+"72079320.name" = "vyrų tualetas";
+"72079320.tags" = "tualetas | vyras | vyrų tualetas | wc";
+// 🚺 - womens
+"72079325.name" = "moterų tualetas";
+"72079325.tags" = "moteris | moterų tualetas | tualetas | wc";
+// 🚻 - restroom
+"72079330.name" = "tualeto kambarys";
+"72079330.tags" = "moteris | tualetas | tualeto kambarys | wc";
+// 🚼 - baby_symbol
+"72079335.name" = "kūdikio simbolis";
+"72079335.tags" = "kūdikio simbolis | kūdikis | vystyklų keitimas";
+// 🚾 - wc
+"72079345.name" = "tualeto patalpa";
+"72079345.tags" = "tualetas | tualeto patalpa | vanduo | wc";
+// 🛂 - passport_control
+"72079365.name" = "pasų kontrolė";
+"72079365.tags" = "kontrolė | pasas | pasų kontrolė";
+// 🛃 - customs
+"72079370.name" = "muitinė";
+"72079370.tags" = "muitinė";
+// 🛄 - baggage_claim
+"72079375.name" = "bagažo skyrius";
+"72079375.tags" = "atsiimti | bagažas | bagažo skyrius";
+// 🛅 - left_luggage
+"72079380.name" = "paliktas bagažas";
+"72079380.tags" = "bagažas | lagaminas | paliktas bagažas | spintelė";
+// 🚸 - children_crossing
+"72079315.name" = "vaikų perėja";
+"72079315.tags" = "eismas | perėja | pėstysis | vaikas | vaikų perėja";
+// ⛔ - no_entry
+"30591.name" = "įėjimo nėra";
+"30591.tags" = "draudžiama | eismas | įėjimas | įėjimo nėra | ne | uždrausta";
+// 🚫 - no_entry_sign
+"72079250.name" = "draudžiama";
+"72079250.tags" = "draudžiama | įėjimas | ne | uždrausta";
+// 🚳 - no_bicycles
+"72079290.name" = "dviračiai draudžiami";
+"72079290.tags" = "draudžiama | dviračiai draudžiami | dviratis | ne | transporto priemonė | uždrausta";
+// 🚭 - no_smoking
+"72079260.name" = "rūkyti draudžiama";
+"72079260.tags" = "draudžiama | ne | rūkymas | rūkyti draudžiama | uždrausta";
+// 🚯 - do_not_litter
+"72079270.name" = "šiukšlinti draudžiama";
+"72079270.tags" = "draudžiama | ne | šiukšlės | šiukšlinti draudžiama | uždrausta";
+// 🚱 - non-potable_water
+"72079280.name" = "draudžiama gerti vandenį";
+"72079280.tags" = "draudžiama | draudžiama gerti vandenį | geriamas | gėrimas | ne | uždrausta | vanduo";
+// 🚷 - no_pedestrians
+"72079310.name" = "pėstiesiems eiti draudžiama";
+"72079310.tags" = "draudžiama | ne | pėstiesiems eiti draudžiama | pėstysis | uždrausta";
+// 📵 - no_mobile_phones
+"72077060.name" = "jokių mobiliųjų telefonų";
+"72077060.tags" = "draudžiama | jokių mobiliųjų telefonų | mobilusis | ne | uždrausta";
+// 🔞 - underage
+"72077265.name" = "tik pilnamečiams";
+"72077265.tags" = "18 | amžiaus apribojimas | aštuoniolika | draudžiama | ne | nepilnametis | tik pilnamečiams | uždrausta";
+// 🔃 - arrows_clockwise
+"72077130.name" = "vertikalios laikrodžio rodyklės kryptimis nukreiptos rodyklės";
+"72077130.tags" = "pagal laikrodžio rodyklę | rodyklė | vertikalios laikrodžio rodyklės kryptimis nukreiptos rodyklės";
+// 🔄 - arrows_counterclockwise
+"72077135.name" = "prieš laikrodžio rodyklę nukreiptų rodyklių mygtukas";
+"72077135.tags" = "prieš laikrodžio rodyklę | prieš laikrodžio rodyklę nukreiptų rodyklių mygtukas | rodyklė";
+// 🔙 - back
+"72077240.name" = "rodyklė su užrašu „Back“";
+"72077240.tags" = "atgal | rodyklė | rodyklė su užrašu „Back“";
+// 🔚 - end
+"72077245.name" = "rodyklė su užrašu „End“";
+"72077245.tags" = "pabaiga | rodyklė | rodyklė su užrašu „End“";
+// 🔛 - on
+"72077250.name" = "rodyklė su užrašu „On!“";
+"72077250.tags" = "rodyklė | rodyklė su užrašu „On!“ | žymė";
+// 🔜 - soon
+"72077255.name" = "rodyklė su užrašu „Soon“";
+"72077255.tags" = "greitai | rodyklė | rodyklė su užrašu „Soon“";
+// 🔝 - top
+"72077260.name" = "rodyklė su užrašu „Top“";
+"72077260.tags" = "į viršų | rodyklė | rodyklė su užrašu „Top“ | viršus";
+// 🛐 - place_of_worship
+"72079435.name" = "garbinimo vieta";
+"72079435.tags" = "garbinimo vieta | garbinti | religija";
+// 🕎 - menorah_with_nine_branches
+"72077505.name" = "menora";
+"72077505.tags" = "menora | religija | žvakės | žvakidė";
+// 🔯 - six_pointed_star
+"72077350.name" = "šešiakampė žvaigždė su tašku";
+"72077350.tags" = "sėkmė | šešiakampė žvaigždė su tašku | žvaigždė";
+// 🪯 - khanda
+"72080555.name" = "khanda";
+"72080555.tags" = "khanda | religija | sikhizmas";
+// ♈ - aries
+"30171.name" = "avinas";
+"30171.tags" = "avinas | zodiakas";
+// ♉ - taurus
+"30174.name" = "tauras";
+"30174.tags" = "bulius | tauras | zodiakas";
+// ♊ - gemini
+"30177.name" = "dvyniai";
+"30177.tags" = "dvyniai | zodiakas";
+// ♋ - cancer
+"30180.name" = "vėžys";
+"30180.tags" = "krabas | vėžys | zodiakas";
+// ♌ - leo
+"30183.name" = "liūtas";
+"30183.tags" = "liūtas | zodiakas";
+// ♍ - virgo
+"30186.name" = "mergelė";
+"30186.tags" = "mergelė | zodiakas";
+// ♎ - libra
+"30189.name" = "svarstyklės";
+"30189.tags" = "pusiausvyra | svarstyklės | teisingumas | zodiakas";
+// ♏ - scorpius
+"30192.name" = "skorpionas";
+"30192.tags" = "skorpionas | zodiakas";
+// ♐ - sagittarius
+"30195.name" = "šaulys";
+"30195.tags" = "šaulys | zodiakas";
+// ♑ - capricorn
+"30198.name" = "ožiaragis";
+"30198.tags" = "ožiaragis | ožys | zodiakas";
+// ♒ - aquarius
+"30201.name" = "vandenio ženklas";
+"30201.tags" = "vandenio ženklas | vanduo | zodiakas";
+// ♓ - pisces
+"30204.name" = "žuvys";
+"30204.tags" = "zodiakas | žuvis | žuvys";
+// ⛎ - ophiuchus
+"30573.name" = "gyvatnešis";
+"30573.tags" = "gyvatė | gyvatnešis | nešėjas | zodiakas";
+// 🔀 - twisted_rightwards_arrows
+"72077115.name" = "maišyti takelius";
+"72077115.tags" = "maišyti takelius | rodyklė | sukryžiuota";
+// 🔁 - repeat
+"72077120.name" = "kartoti";
+"72077120.tags" = "kartoti | pagal laikrodžio rodyklę | rodyklė";
+// 🔂 - repeat_one
+"72077125.name" = "kartoti vieną";
+"72077125.tags" = "kartoti vieną | pagal laikrodžio rodyklę | rodyklė | vieną kartą";
+// ⏩ - fast_forward
+"28350.name" = "sukti pirmyn";
+"28350.tags" = "du kartus | greitai | rodyklė | sukti | sukti pirmyn";
+// ⏪ - rewind
+"28353.name" = "atsukti atgal";
+"28353.tags" = "atsukti atgal | du kartus | rodyklė | sukti atgal";
+// 🔼 - arrow_up_small
+"72077415.name" = "į viršų";
+"72077415.tags" = "į viršų | mygtukas | raudonas | rodyklė";
+// ⏫ - arrow_double_up
+"28356.name" = "greitai į viršų";
+"28356.tags" = "dviguba | greitai į viršų | rodyklė";
+// 🔽 - arrow_down_small
+"72077420.name" = "į apačią";
+"72077420.tags" = "į apačią | mygtukas | raudona | rodyklė";
+// ⏬ - arrow_double_down
+"28359.name" = "greitai į apačią";
+"28359.tags" = "dviguba | greitai į apačią | į apačią | rodyklė";
+// 🎦 - cinema
+"72079220.name" = "kinas";
+"72079220.tags" = "filmas | kamera | kinas";
+// 🔅 - low_brightness
+"72077140.name" = "užtemdymo mygtukas";
+"72077140.tags" = "blankus | mažas | ryškumas | užtemdymo mygtukas";
+// 🔆 - high_brightness
+"72077145.name" = "ryškumo mygtukas";
+"72077145.tags" = "ryškumas | ryškumo mygtukas | ryškus";
+// 📶 - signal_strength
+"72077065.name" = "antenos juostos";
+"72077065.tags" = "antena | antenos juostos | juosta | mobilusis | signalas | telefonas";
+// 🛜 - wireless
+"72079495.name" = "belaidis ryšys";
+"72079495.tags" = "belaidis ryšys | internetas | kompiuteris | tinklas";
+// 📳 - vibration_mode
+"72077050.name" = "vibravimo režimas";
+"72077050.tags" = "mobilusis | režimas | telefonas | vibravimas | vibravimo režimas";
+// 📴 - mobile_phone_off
+"72077055.name" = "išjungti mobilųjį telefoną";
+"72077055.tags" = "išjungti | išjungti mobilųjį telefoną | mobilusis | telefonas";
+// ➕ - heavy_plus_sign
+"31170.name" = "paryškintas pliusas";
+"31170.tags" = "matematika | paryškintas pliusas | pliusas";
+// ➖ - heavy_minus_sign
+"31173.name" = "paryškintas minusas";
+"31173.tags" = "matematika | minusas | paryškintas minusas";
+// ➗ - heavy_division_sign
+"31176.name" = "paryškintas dalybos ženklas";
+"31176.tags" = "dalyba | matematika | paryškintas dalybos ženklas";
+// 🟰 - heavy_equals_sign
+"72080875.name" = "paryškintas lygybės ženklas";
+"72080875.tags" = "lygybė | paryškintas lygybės ženklas";
+// ❓ - question
+"30972.name" = "raudonas klaustukas";
+"30972.tags" = "klausimas | klaustukas | raudonas klaustukas | skyryba | žymė";
+// ❔ - grey_question
+"30975.name" = "baltas klaustukas";
+"30975.tags" = "baltas klaustukas | klausimas | kontūras | skyryba | žymė";
+// ❕ - grey_exclamation
+"30978.name" = "baltas šauktukas";
+"30978.tags" = "baltas šauktukas | kontūras | šauktukas | skyryba | žymė";
+// ❗ - exclamation
+"30984.name" = "raudonas šauktukas";
+"30984.tags" = "raudonas šauktukas | šauktukas | skyryba | žymė";
+// 💱 - currency_exchange
+"72076720.name" = "valiutos keitimas";
+"72076720.tags" = "bankas | keitimas | pinigai | valiuta | valiutos keitimas";
+// 💲 - heavy_dollar_sign
+"72076725.name" = "paryškintas dolerio ženklas";
+"72076725.tags" = "doleris | paryškintas dolerio ženklas | pinigai | valiuta";
+// 🔱 - trident
+"72077360.name" = "trišakė emblema";
+"72077360.tags" = "emblema | inkaras | įrankis | laivas | trišakė emblema | trišakis";
+// 📛 - name_badge
+"72076930.name" = "vardo ženklelis";
+"72076930.tags" = "vardas | vardo ženklelis | ženklelis";
+// 🔰 - beginner
+"72077355.name" = "japoniškas pradedančiojo simbolis";
+"72077355.tags" = "geltonas | įrankis | japoniškas pradedančiojo simbolis | japonų | lapas | pradedantysis | simbolis | žalias";
+// ⭕ - o
+"34050.name" = "ryškus didelis ratas";
+"34050.tags" = "o | ratas | ryškus didelis ratas";
+// ✅ - white_check_mark
+"30738.name" = "balta paryškinta varnelė";
+"30738.tags" = "balta paryškinta varnelė | varnelė | žymė";
+// ❌ - x
+"30951.name" = "kryžiukas";
+"30951.tags" = "atšaukti | dauginti | daugyba | kryžiukas | x | žymė";
+// ❎ - negative_squared_cross_mark
+"30957.name" = "kryžiuko mygtukas";
+"30957.tags" = "kryžiuko mygtukas | kvadratas | žymė";
+// ➰ - curly_loop
+"31251.name" = "kilpelė";
+"31251.tags" = "kilpa | kilpelė | raityti";
+// ➿ - loop
+"31296.name" = "dviguba kilpelė";
+"31296.tags" = "dviguba | dviguba kilpelė | kilpa | raityti";
+// 🔠 - capital_abcd
+"72077275.name" = "įvestis didžiosios lotyniškos raidės";
+"72077275.tags" = "ABCD | didžiosios | įvestis | lotyniškos | raidės";
+// 🔡 - abcd
+"72077280.name" = "įvestis mažosios lotyniškos raidės";
+"72077280.tags" = "abcd | įvestis | lotyniškos | mažosios | raidės";
+// 🔢 - 1234
+"72077285.name" = "įvesties skaičiai";
+"72077285.tags" = "1234 | įvesties skaičiai | įvestis | skaičiai";
+// 🔣 - symbols
+"72077290.name" = "įvesties simboliai";
+"72077290.tags" = "įvesties simboliai | įvestis";
+// 🔤 - abc
+"72077295.name" = "įvestis lotyniškos raidės";
+"72077295.tags" = "abc | abėcėlė | įvestis | lotyniškos | raidės";
+// 🆎 - ab
+"72076540.name" = "mygtukas „AB“ (raudona)";
+"72076540.tags" = "ab | mygtukas „AB“ (raudona) | raudona";
+// 🆑 - cl
+"72076555.name" = "simbolis „CL“";
+"72076555.tags" = "cl | simbolis „CL“";
+// 🆒 - cool
+"72076560.name" = "simbolis „COOL“";
+"72076560.tags" = "simbolis „COOL“ | vėsu";
+// 🆓 - free
+"72076565.name" = "simbolis „FREE“";
+"72076565.tags" = "nemokama | simbolis „FREE“";
+// 🆔 - id
+"72076570.name" = "simbolis „ID“";
+"72076570.tags" = "ID | simbolis „ID“ | tapatybė";
+// 🆕 - new
+"72076575.name" = "simbolis „NEW“";
+"72076575.tags" = "new | simbolis „NEW“";
+// 🆖 - ng
+"72076580.name" = "simbolis „NG“";
+"72076580.tags" = "ng | simbolis „NG“";
+// 🆗 - ok
+"72076585.name" = "simbolis „OK“";
+"72076585.tags" = "ok | simbolis „OK“";
+// 🆘 - sos
+"72076590.name" = "simbolis „SOS“";
+"72076590.tags" = "pagalba | simbolis „SOS“ | sos";
+// 🆙 - up
+"72076595.name" = "mygtukas „Up!“";
+"72076595.tags" = "mygtukas „Up!“ | up | žymė";
+// 🆚 - vs
+"72076600.name" = "simbolis „VS“";
+"72076600.tags" = "palyginti | simbolis „VS“";
+// 🈁 - koko
+"72077115.name" = "čia reiškiantis hieroglifas";
+"72077115.tags" = "čia | čia reiškiantis hieroglifas | hieroglifas | japonų";
+// 🈶 - u6709
+"72077380.name" = "ne nemokamą reiškiantis hieroglifas";
+"72077380.tags" = "hieroglifas | japonų | ne nemokamą reiškiantis hieroglifas | ne nemokamas";
+// 🈯 - u6307
+"72077345.name" = "rezervavimą reiškiantis hieroglifas";
+"72077345.tags" = "hieroglifas | japonų | rezervavimą reiškiantis hieroglifas | rezervuotas";
+// 🉐 - ideograph_advantage
+"72077510.name" = "susitarimą reiškiantis hieroglifas";
+"72077510.tags" = "hieroglifas | japonų | susitarimą reiškiantis hieroglifas | susitarimas";
+// 🈹 - u5272
+"72077395.name" = "nuolaidą reiškiantis hieroglifas";
+"72077395.tags" = "hieroglifas | japonų | nuolaida | nuolaidą reiškiantis hieroglifas";
+// 🈚 - u7121
+"72077240.name" = "nemokamumą reiškiantis hieroglifas";
+"72077240.tags" = "hieroglifas | japonų | nemokamai | nemokamumą reiškiantis hieroglifas";
+// 🈲 - u7981
+"72077360.name" = "draudimą reiškiantis hieroglifas";
+"72077360.tags" = "draudimą reiškiantis hieroglifas | draudimas | hieroglifas | japonų";
+// 🉑 - accept
+"72077515.name" = "sutikimą reiškiantis hieroglifas";
+"72077515.tags" = "hieroglifas | japonų | sutikimą reiškiantis hieroglifas | sutikimas";
+// 🈸 - u7533
+"72077390.name" = "taikymą reiškiantis hieroglifas";
+"72077390.tags" = "hieroglifas | japonų | taikymą reiškiantis hieroglifas | taikymas";
+// 🈴 - u5408
+"72077370.name" = "bendrumą reiškiantis hieroglifas";
+"72077370.tags" = "bendrumą reiškiantis hieroglifas | bendrumas | hieroglifas | japonų";
+// 🈳 - u7a7a
+"72077365.name" = "tuštumą reiškiantis hieroglifas";
+"72077365.tags" = "hieroglifas | japonų | tuštuma | tuštumą reiškiantis hieroglifas";
+// 🈺 - u55b6
+"72077400.name" = "veikimą reiškiantis hieroglifas";
+"72077400.tags" = "hieroglifas | japonų | veikimą reiškiantis hieroglifas | veikti";
+// 🈵 - u6e80
+"72077375.name" = "pilnatvę reiškiantis hieroglifas";
+"72077375.tags" = "hieroglifas | japonų | pilnatvė | pilnatvę reiškiantis hieroglifas";
+// 🔴 - red_circle
+"72077375.name" = "raudonas apskritimas";
+"72077375.tags" = "apskritimas | geometrija | raudonas";
+// 🟠 - large_orange_circle
+"72080795.name" = "oranžinis apskritimas";
+"72080795.tags" = "apskritimas | oranžinis";
+// 🟡 - large_yellow_circle
+"72080800.name" = "geltonas apskritimas";
+"72080800.tags" = "apskritimas | geltonas";
+// 🟢 - large_green_circle
+"72080805.name" = "žalias apskritimas";
+"72080805.tags" = "apskritimas | žalias";
+// 🔵 - large_blue_circle
+"72077380.name" = "mėlynas apskritimas";
+"72077380.tags" = "apskritimas | geometrija | mėlynas";
+// 🟣 - large_purple_circle
+"72080810.name" = "violetinis apskritimas";
+"72080810.tags" = "apskritimas | violetinis";
+// 🟤 - large_brown_circle
+"72080815.name" = "rudas apskritimas";
+"72080815.tags" = "apskritimas | rudas";
+// ⚫ - black_circle
+"30468.name" = "juodas apskritimas";
+"30468.tags" = "geometrija | juodas apskritimas | rutulys";
+// ⚪ - white_circle
+"30465.name" = "baltas apskritimas";
+"30465.tags" = "baltas apskritimas | geometrija | rutulys";
+// 🟥 - large_red_square
+"72080820.name" = "raudonas kvadratas";
+"72080820.tags" = "kvadratas | raudonas";
+// 🟧 - large_orange_square
+"72080830.name" = "oranžinis kvadratas";
+"72080830.tags" = "kvadratas | oranžinis";
+// 🟨 - large_yellow_square
+"72080835.name" = "geltonas kvadratas";
+"72080835.tags" = "geltonas | kvadratas";
+// 🟩 - large_green_square
+"72080840.name" = "žalias kvadratas";
+"72080840.tags" = "kvadratas | žalias";
+// 🟦 - large_blue_square
+"72080825.name" = "mėlynas kvadratas";
+"72080825.tags" = "kvadratas | mėlynas";
+// 🟪 - large_purple_square
+"72080845.name" = "violetinis kvadratas";
+"72080845.tags" = "kvadratas | violetinis";
+// 🟫 - large_brown_square
+"72080850.name" = "rudas kvadratas";
+"72080850.tags" = "kvadratas | rudas";
+// ⬛ - black_large_square
+"33876.name" = "juodas didelis kvadratas";
+"33876.tags" = "geometrija | juodas didelis kvadratas | kvadratas";
+// ⬜ - white_large_square
+"33879.name" = "baltas didelis kvadratas";
+"33879.tags" = "baltas didelis kvadratas | geometrija | kvadratas";
+// ◾ - black_medium_small_square
+"29949.name" = "juodas vidutiniškai mažas kvadratas";
+"29949.tags" = "geometrija | juodas vidutiniškai mažas kvadratas | kvadratas";
+// ◽ - white_medium_small_square
+"29946.name" = "baltas vidutiniškai mažas kvadratas";
+"29946.tags" = "baltas vidutiniškai mažas kvadratas | geometrija | kvadratas";
+// 🔶 - large_orange_diamond
+"72077385.name" = "didelis oranžinis deimantas";
+"72077385.tags" = "deimantas | didelis oranžinis deimantas | geometrija | oranžinis";
+// 🔷 - large_blue_diamond
+"72077390.name" = "didelis mėlynas deimantas";
+"72077390.tags" = "deimantas | didelis mėlynas deimantas | geometrija | mėlynas";
+// 🔸 - small_orange_diamond
+"72077395.name" = "mažas oranžinis deimantas";
+"72077395.tags" = "deimantas | geometrija | mažas oranžinis deimantas | oranžinis";
+// 🔹 - small_blue_diamond
+"72077400.name" = "mažas mėlynas deimantas";
+"72077400.tags" = "deimantas | geometrija | mažas mėlynas deimantas | mėlynas";
+// 🔺 - small_red_triangle
+"72077405.name" = "raudonas į viršų nukreiptas trikampis";
+"72077405.tags" = "geometrija | raudona | raudonas į viršų nukreiptas trikampis";
+// 🔻 - small_red_triangle_down
+"72077410.name" = "raudonas į apačią nukreiptas trikampis";
+"72077410.tags" = "geometrija | į apačią | raudona | raudonas į apačią nukreiptas trikampis";
+// 💠 - diamond_shape_with_a_dot_inside
+"72076635.name" = "deimantas su tašku";
+"72076635.tags" = "deimantas | deimantas su tašku | geometrija | komiksas | viduje";
+// 🔘 - radio_button
+"72077235.name" = "akutė";
+"72077235.tags" = "akutė | geometrija | mygtukas";
+// 🔳 - white_square_button
+"72077370.name" = "baltas kvadratinis mygtukas";
+"72077370.tags" = "baltas kvadratinis mygtukas | geometrija | kontūras | kvadratas | mygtukas";
+// 🔲 - black_square_button
+"72077365.name" = "juodas kvadratinis mygtukas";
+"72077365.tags" = "geometrija | juodas kvadratinis mygtukas | kvadratas | mygtukas";
+// 🏁 - checkered_flag
+"72079355.name" = "vėliava langeliais";
+"72079355.tags" = "langeliai | lenktynės | vėliava langeliais";
+// 🚩 - triangular_flag_on_post
+"72079240.name" = "trikampė vėliava";
+"72079240.tags" = "postas | trikampė vėliava";
+// 🎌 - crossed_flags
+"72079090.name" = "sukryžiuotos vėliavos";
+"72079090.tags" = "japonų | kryžius | sukryžiuotos vėliavos | šventė";
+// 🏴 - waving_black_flag
+"72079610.name" = "juoda vėliava";
+"72079610.tags" = "juoda vėliava | mojavimas";

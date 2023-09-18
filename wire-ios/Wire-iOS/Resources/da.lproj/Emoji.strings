@@ -1,0 +1,3714 @@
+//
+// Wire
+// Copyright (C) 2023 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
+
+// 😀 - grinning
+"72078395.name" = "grinende ansigt";
+"72078395.tags" = "glad | grinende ansigt | smilende ansigt | smiley";
+// 😃 - smiley
+"72078410.name" = "grinende ansigt med store øjne";
+"72078410.tags" = "glad | grinende ansigt med store øjne | smiler | smiley";
+// 😄 - smile
+"72078415.name" = "grinende ansigt med smilende øjne";
+"72078415.tags" = "glad | grinende ansigt med smilende øjne | smil | smileøjne | smiley";
+// 😁 - grin
+"72078400.name" = "strålende ansigt med smilende øjne";
+"72078400.tags" = "ansigt der griner | glad | smiley | strålende ansigt med smilende øjne";
+// 😆 - laughing
+"72078425.name" = "grinende ansigt med lukkede øjne";
+"72078425.tags" = "glad | grinende ansigt med åben mund og lukkede øjne | grinende ansigt med lukkede øjne | lukkede øjne | smil | smil med lukkede øjne";
+// 😅 - sweat_smile
+"72078420.name" = "grinende ansigt med sveddråbe";
+"72078420.tags" = "åben mund | grine | grinende ansigt med sveddråbe | sved";
+// 🤣 - rolling_on_the_floor_laughing
+"72078575.name" = "ruller rundt på gulvet af grin";
+"72078575.tags" = "ansigt | griner | gulv | ler | ruller | ruller rundt på gulvet af grin";
+// 😂 - joy
+"72078405.name" = "ansigt med glædestårer";
+"72078405.tags" = "ansigt med glædestårer | glad | glæde | tårer";
+// 🙂 - slightly_smiling_face
+"72078725.name" = "let smilende ansigt";
+"72078725.tags" = "ansigt | let smilende ansigt | smil";
+// 🙃 - upside_down_face
+"72078730.name" = "omvendt ansigt";
+"72078730.tags" = "ansigt | omvendt | på hovedet";
+// 🫠 - melting_face
+"72080800.name" = "smeltende ansigt";
+"72080800.tags" = "flydende | forsvinde | opløse | smelte | smeltende ansigt";
+// 😉 - wink
+"72078440.name" = "blinkende ansigt";
+"72078440.tags" = "ansigt | ansigt der blinker | blink | blinkende ansigt";
+// 😊 - blush
+"72078445.name" = "smilende ansigt og øjne";
+"72078445.tags" = "smil med smileøjne | smilende ansigt og øjne | smileøjne";
+// 😇 - innocent
+"72078430.name" = "smilende ansigt med glorie";
+"72078430.tags" = "engel | glorie | smil | smilende ansigt med glorie | uskyldig";
+// 🥰 - smiling_face_with_3_hearts
+"72078960.name" = "smilende ansigt med tre hjerter";
+"72078960.tags" = "forelsket | forgude | kærlighed | smilende ansigt med tre hjerter | være lun på";
+// 😍 - heart_eyes
+"72078460.name" = "smilende ansigt med hjerteøjne";
+"72078460.tags" = "hjerteøjne | hjerter | kærlighed | smilende ansigt med hjerteøjne";
+// 🤩 - star-struck
+"72078605.name" = "benovet";
+"72078605.tags" = "ansigt | benovet | leende | øjne | stjerne";
+// 😘 - kissing_heart
+"72078515.name" = "kyssende ansigt";
+"72078515.tags" = "ansigt | kyssende ansigt | sender kys";
+// 😗 - kissing
+"72078510.name" = "kysseansigt";
+"72078510.tags" = "ansigt | kys | kysseansigt | kysser";
+// 😚 - kissing_closed_eyes
+"72078525.name" = "kysseansigt med lukkede øjne";
+"72078525.tags" = "ansigt | kys | kysseansigt med lukkede øjne | lukkede øjne";
+// 😙 - kissing_smiling_eyes
+"72078520.name" = "kysseansigt med smilende øjne";
+"72078520.tags" = "ansigt | kysseansigt med smilende øjne | smilende øjne";
+// 🥲 - smiling_face_with_tear
+"72078970.name" = "smilende ansigt med tåre";
+"72078970.tags" = "lettet | rørt | smilende | smilende ansigt med tåre | stolt | taknemmelig | tåre";
+// 😋 - yum
+"72078450.name" = "nydende ansigt";
+"72078450.tags" = "ansigt | god mad | nydende ansigt | smil";
+// 😛 - stuck_out_tongue
+"72078530.name" = "ansigt med tungen ude";
+"72078530.tags" = "ansigt | ansigt med tungen ude | række tunge";
+// 😜 - stuck_out_tongue_winking_eye
+"72078535.name" = "ansigt med tungen ude og blinkende øje";
+"72078535.tags" = "ansigt med tungen ude og blinkende øje | blink | blinke | drille | række tunge";
+// 🤪 - zany_face
+"72078610.name" = "skørt ansigt";
+"72078610.tags" = "fjoget | fjollet | lille | øje | skørt ansigt | stort";
+// 😝 - stuck_out_tongue_closed_eyes
+"72078540.name" = "ansigt med tungen ude og sammenknebne øjne";
+"72078540.tags" = "ansigt | ansigt med tungen ude og sammenknebne øjne | rækker tunge";
+// 🤑 - money_mouth_face
+"72078485.name" = "ansigt med dollartegn";
+"72078485.tags" = "ansigt | ansigt med dollartegn | mund | penge";
+// 🤗 - hugging_face
+"72078515.name" = "krammende ansigt";
+"72078515.tags" = "ansigt | knus | knuser | kram | kramme | krammende ansigt";
+// 🤭 - face_with_hand_over_mouth
+"72078625.name" = "ansigt med hånd over munden";
+"72078625.tags" = "ansigt med hånd over munden | ups";
+// 🫢 - face_with_open_eyes_and_hand_over_mouth
+"72080810.name" = "ansigt med åbne øjne og hånden over munden";
+"72080810.tags" = "ærefrygt | ansigt med åbne øjne og hånden over munden | bange | forbavselse | forbløffelse | overraskelse | pinlig";
+// 🫣 - face_with_peeking_eye
+"72080815.name" = "ansigt, der smugkigger";
+"72080815.tags" = "ansigt | der smugkigger | betaget | fascineret | smugkigge | stirre";
+// 🤫 - shushing_face
+"72078615.name" = "tyssende ansigt";
+"72078615.tags" = "stille | tysse | tyssende ansigt";
+// 🤔 - thinking_face
+"72078500.name" = "tænkende ansigt";
+"72078500.tags" = "ansigt | tænkende | tanker";
+// 🫡 - saluting_face
+"72080805.name" = "ansigt, der gør honnør";
+"72080805.tags" = "ansigt | der gør honnør | gøre honnør | ja | militær | ok | solskin";
+// 🤐 - zipper_mouth_face
+"72078480.name" = "ansigt med lynlåsmund";
+"72078480.tags" = "ansigt | ansigt med lynlåsmund | lynlås | mund";
+// 🤨 - face_with_raised_eyebrow
+"72078600.name" = "ansigt med løftet øjenbryn";
+"72078600.tags" = "ansigt med løftet øjenbryn | mistro | skepsis";
+// 😐 - neutral_face
+"72078475.name" = "neutralt ansigt";
+"72078475.tags" = "ingen kommentar | neutralt ansigt | pokeransigt";
+// 😑 - expressionless
+"72078480.name" = "udtryksløst ansigt";
+"72078480.tags" = "ingen kommentar | pokeransigt | udtryksløst ansigt";
+// 😶 - no_mouth
+"72078665.name" = "ansigt uden mund";
+"72078665.tags" = "ansigt | ansigt uden mund | mund | stille | tavs";
+// 🫥 - dotted_line_face
+"72080825.name" = "stiplet linje ansigt";
+"72080825.tags" = "deprimeret | forsvinde | gemme | introvert | skjule | stiplet linje ansigt | usynlig";
+// 😏 - smirk
+"72078470.name" = "ansigt med smørret grin";
+"72078470.tags" = "ansigt | ansigt med smørret grin | smørret";
+// 😒 - unamused
+"72078485.name" = "uimponeret ansigt";
+"72078485.tags" = "ansigt | ikke glad | uimponeret ansigt";
+// 🙄 - face_with_rolling_eyes
+"72078735.name" = "ansigt med rullende øjne";
+"72078735.tags" = "ansigt | ansigt med rullende øjne | øjne | rullende";
+// 😬 - grimacing
+"72078615.name" = "sammenbidt ansigt";
+"72078615.tags" = "ansigt | lave grimasse | sammenbidt ansigt";
+// 😮‍💨 - face_exhaling
+"26809473017250.name" = "udåndende ansigt";
+"26809473017250.tags" = "ånde ud | ansigt | ekshalerende | fløjt | hvisken | lettelse | pift | pyha | udåndende ansigt | udånding";
+// 🤥 - lying_face
+"72078585.name" = "løgneransigt";
+"72078585.tags" = "ansigt | lang næse | løgn | løgneransigt | lyver | pinocchio";
+// 🫨 - shaking_face
+"72080840.name" = "rystende ansigt";
+"72080840.tags" = "ansigt | chok | jordskælv | rystende ansigt | ryster | vibrer";
+// 😌 - relieved
+"72078455.name" = "lettet ansigt";
+"72078455.tags" = "ansigt | lettelse | lettet ansigt";
+// 😔 - pensive
+"72078495.name" = "eftertænksomt ansigt";
+"72078495.tags" = "ansigt | eftertænksom | eftertænksomt ansigt | nedslået";
+// 😪 - sleepy
+"72078605.name" = "søvnigt ansigt";
+"72078605.tags" = "ansigt | dyb søvn | søvnigt ansigt | træt";
+// 🤤 - drooling_face
+"72078580.name" = "savlende ansigt";
+"72078580.tags" = "ansigt | savl | savlende ansigt | savler";
+// 😴 - sleeping
+"72078655.name" = "sovende ansigt";
+"72078655.tags" = "ansigt | sove | sovende ansigt | søvn | zzz";
+// 😷 - mask
+"72078670.name" = "ansigt med mundbind";
+"72078670.tags" = "ansigt med mundbind | doktor | forkølet | læge | maske | mundbind | syg";
+// 🤒 - face_with_thermometer
+"72078490.name" = "ansigt med termometer";
+"72078490.tags" = "ansigt | ansigt med termometer | syg | termometer";
+// 🤕 - face_with_head_bandage
+"72078505.name" = "ansigt med bandage";
+"72078505.tags" = "ansigt | ansigt med bandage | bandage | skade | smerte";
+// 🤢 - nauseated_face
+"72078570.name" = "ansigt med kvalme";
+"72078570.tags" = "ansigt med kvalme | bræk | kaste op | kvalme | opkast | syg";
+// 🤮 - face_vomiting
+"72078630.name" = "ansigt, der kaster op";
+"72078630.tags" = "ansigt | der kaster op | opkast | syg";
+// 🤧 - sneezing_face
+"72078595.name" = "nysende ansigt";
+"72078595.tags" = "forkølet | lommetørklæde | nys | nysende ansigt | nyser | prosit | pudser næse | syg | sygdom";
+// 🥵 - hot_face
+"72078985.name" = "svedende ansigt";
+"72078985.tags" = "feber | hedeslag | rød i hovedet | svede | svedende ansigt | varm";
+// 🥶 - cold_face
+"72078990.name" = "frysende ansigt";
+"72078990.tags" = "blåfrossen | forfrysning | fryse | frysende ansigt | istap | kold";
+// 🥴 - woozy_face
+"72078980.name" = "ørt ansigt";
+"72078980.tags" = "beruset | bølget mund | ørt ansigt | småfuld | svimmel | uens øjne";
+// 😵 - dizzy_face
+"72078660.name" = "svimmelt ansigt";
+"72078660.tags" = "ansigt | ør | svimmel | svimmelt ansigt";
+// 😵‍💫 - face_with_spiral_eyes
+"26813394148332.name" = "ansigt med spiraløjne";
+"26813394148332.tags" = "ansigt med spiraløjne | hypnose | hypnotiseret | problemer | spiral | svimmel";
+// 🤯 - exploding_head
+"72078635.name" = "hoved, der eksploderer";
+"72078635.tags" = "chokeret | hoved | der eksploderer";
+// 🤠 - face_with_cowboy_hat
+"72078560.name" = "ansigt med cowboyhat";
+"72078560.tags" = "ansigt | ansigt med cowboyhat | cowboy | cowboyhat | cowgirl | hat";
+// 🥳 - partying_face
+"72078975.name" = "festansigt";
+"72078975.tags" = "fejring | fest | festansigt | hat | truthorn";
+// 🥸 - disguised_face
+"72079000.name" = "maske";
+"72079000.tags" = "ansigt | briller | maske | maskeret | næse";
+// 😎 - sunglasses
+"72078465.name" = "smilende ansigt med solbriller";
+"72078465.tags" = "cool | sej | smil med solbriller | smilende ansigt med solbriller | solbriller";
+// 🤓 - nerd_face
+"72078495.name" = "nørdansigt";
+"72078495.tags" = "ansigt | nørd | nørdansigt";
+// 🧐 - face_with_monocle
+"72079440.name" = "ansigt med monokel";
+"72079440.tags" = "ansigt med monokel | gammeldags";
+// 😕 - confused
+"72078500.name" = "forvirret ansigt";
+"72078500.tags" = "ansigt | forvirret ansigt";
+// 🫤 - face_with_diagonal_mouth
+"72080820.name" = "ansigt med skrå mund";
+"72080820.tags" = "ansigt med skrå mund | nåh | skeptisk | skuffet | uimponeret | usikker";
+// 😟 - worried
+"72078550.name" = "bekymret ansigt";
+"72078550.tags" = "ansigt | bekymret | bekymring";
+// 🙁 - slightly_frowning_face
+"72078720.name" = "lidt trist ansigt";
+"72078720.tags" = "ansigt | lidt trist ansigt | trist";
+// 😮 - open_mouth
+"72078625.name" = "ansigt med åben mund";
+"72078625.tags" = "ansigt | ansigt med åben mund";
+// 😯 - hushed
+"72078630.name" = "tavst ansigt";
+"72078630.tags" = "stille ansigt | tavst ansigt";
+// 😲 - astonished
+"72078645.name" = "overrasket ansigt";
+"72078645.tags" = "chokeret | overrasket ansigt";
+// 😳 - flushed
+"72078650.name" = "rødmende ansigt";
+"72078650.tags" = "omtumlet | ør | røde kinder | rødme | rødmende ansigt";
+// 🥺 - pleading_face
+"72079010.name" = "bønfaldende ansigt";
+"72079010.tags" = "barmhjertighed | bede | bønfaldende ansigt | hundeøjne | trygle";
+// 🥹 - face_holding_back_tears
+"72079005.name" = "ansigt, der holder tårer tilbage";
+"72079005.tags" = "ansigt | der holder tårer tilbage | græde | ked af det | modstå | stolt | trist | vred";
+// 😦 - frowning
+"72078585.name" = "måbende ansigt med åben mund";
+"72078585.tags" = "åben mund | ansigt | måbende ansigt med åben mund";
+// 😧 - anguished
+"72078590.name" = "forpint ansigt";
+"72078590.tags" = "ansigt | forpint ansigt | lider | smerte";
+// 😨 - fearful
+"72078595.name" = "bange ansigt";
+"72078595.tags" = "bange ansigt | frygt";
+// 😰 - cold_sweat
+"72078635.name" = "ansigt med åben mund og koldsved";
+"72078635.tags" = "åben mund | ansigt med åben mund og koldsved | blå i ansigtet | koldsved";
+// 😥 - disappointed_relieved
+"72078580.name" = "skuffet men lettet ansigt";
+"72078580.tags" = "puha | skuffet med lettet | skuffet men lettet ansigt";
+// 😢 - cry
+"72078565.name" = "grædende ansigt";
+"72078565.tags" = "ansigt | grædende ansigt | ked af det | tårer";
+// 😭 - sob
+"72078620.name" = "stortudende ansigt";
+"72078620.tags" = "græde | hulke | stortude | stortudende ansigt | ulykkelig";
+// 😱 - scream
+"72078640.name" = "skrigende ansigt";
+"72078640.tags" = "angst | skrigende ansigt | skriget";
+// 😖 - confounded
+"72078505.name" = "forbistret ansigt";
+"72078505.tags" = "ansigt | forbandet | forbistret ansigt";
+// 😣 - persevere
+"72078570.name" = "stædigt ansigt";
+"72078570.tags" = "stædigt ansigt | udholdenhed";
+// 😞 - disappointed
+"72078545.name" = "skuffet ansigt";
+"72078545.tags" = "ansigt | skuffet ansigt";
+// 😓 - sweat
+"72078490.name" = "ansigt med koldsved";
+"72078490.tags" = "ansigt | ansigt med koldsved";
+// 😩 - weary
+"72078600.name" = "udmattet ansigt";
+"72078600.tags" = "udkørt | udmattet | udmattet ansigt";
+// 😫 - tired_face
+"72078610.name" = "træt ansigt";
+"72078610.tags" = "ansigt | træt ansigt";
+// 🥱 - yawning_face
+"72078965.name" = "gabende ansigt";
+"72078965.tags" = "gab | gabende ansigt | træt | uinteresseret";
+// 😤 - triumph
+"72078575.name" = "fnysende ansigt";
+"72078575.tags" = "fnysende ansigt | hånligt ansigt | jeg vandt";
+// 😡 - rage
+"72078560.name" = "surt ansigt";
+"72078560.tags" = "rød | surt ansigt | vred | vredt ansigt";
+// 😠 - angry
+"72078555.name" = "vredt ansigt";
+"72078555.tags" = "ansigt | vred | vredt ansigt";
+// 🤬 - face_with_symbols_on_mouth
+"72078620.name" = "ansigt med symboler på munden";
+"72078620.tags" = "ansigt med symboler på munden | bande";
+// 😈 - smiling_imp
+"72078435.name" = "glad lilla djævel";
+"72078435.tags" = "fantasi | glad lilla djævel | griner | smil";
+// 👿 - imp
+"72076470.name" = "sur lilla djævel";
+"72076470.tags" = "dæmon | horn | sur | sur lilla djævel";
+// 💀 - skull
+"72076475.name" = "kranium";
+"72076475.tags" = "dødningehoved | kranie | kranium";
+// 💩 - hankey
+"72076680.name" = "bæ";
+"72076680.tags" = "bæ | bunke bæ | dynge lort | lort";
+// 🤡 - clown_face
+"72078565.name" = "klovneansigt";
+"72078565.tags" = "ansigt | klovn | klovneansigt";
+// 👹 - japanese_ogre
+"72076440.name" = "uhyre";
+"72076440.tags" = "japansk uhyre | monster | trold | uhyre";
+// 👺 - japanese_goblin
+"72076445.name" = "ånd";
+"72076445.tags" = "ånd | japansk ånd";
+// 👻 - ghost
+"72076450.name" = "spøgelse";
+"72076450.tags" = "ansigt | eventyr | fantasi | gespenst | monster | spøgelse | væsen";
+// 👽 - alien
+"72076460.name" = "rumvæsen";
+"72076460.tags" = "alien | rumvæsen | ufo";
+// 👾 - space_invader
+"72076465.name" = "alien-monster";
+"72076465.tags" = "alien | alien-monster | rummet | rumvæsen | ufo";
+// 🤖 - robot_face
+"72078510.name" = "robot";
+"72078510.tags" = "ansigt | monster | robot | robotansigt";
+// 😺 - smiley_cat
+"72078685.name" = "smilende kat";
+"72078685.tags" = "glad kat | smilende kat";
+// 😸 - smile_cat
+"72078675.name" = "grinende kat";
+"72078675.tags" = "grinende kat | kat";
+// 😹 - joy_cat
+"72078680.name" = "kat med glædestårer";
+"72078680.tags" = "kat | kat med glædestårer";
+// 😻 - heart_eyes_cat
+"72078690.name" = "glad kat med hjerteøjne";
+"72078690.tags" = "glad kat med hjerteøjne | kat smiler";
+// 😼 - smirk_cat
+"72078695.name" = "kat med ironisk smil";
+"72078695.tags" = "ironisk kat | kat med ironisk smil";
+// 😽 - kissing_cat
+"72078700.name" = "kyssende kat";
+"72078700.tags" = "kat | kyssende kat | kysser";
+// 🙀 - scream_cat
+"72078715.name" = "overrasket kat";
+"72078715.tags" = "chokeret kat | overrasket kat";
+// 😿 - crying_cat_face
+"72078710.name" = "grædende kat";
+"72078710.tags" = "grædende kat | kat græder";
+// 😾 - pouting_cat
+"72078705.name" = "sur kat";
+"72078705.tags" = "sur kat | surmulende kat";
+// 🙈 - see_no_evil
+"72078755.name" = "ikke se";
+"72078755.tags" = "ikke se | tre vise aber";
+// 🙉 - hear_no_evil
+"72078760.name" = "ikke høre";
+"72078760.tags" = "ikke høre | tre vise aber";
+// 🙊 - speak_no_evil
+"72078765.name" = "ikke tale";
+"72078765.tags" = "ikke tale | tre vise aber";
+// 💌 - love_letter
+"72076535.name" = "kærlighedsbrev";
+"72076535.tags" = "brev med hjerte | kærestebrev | kærlighedsbrev";
+// 💘 - cupid
+"72076595.name" = "hjerte med pil";
+"72076595.tags" = "amor | følelser | hjerte | hjerte med pil | kærlighed";
+// 💝 - gift_heart
+"72076620.name" = "hjerte med bånd";
+"72076620.tags" = "bånd | følelser | hjerte | hjerte med bånd";
+// 💖 - sparkling_heart
+"72076585.name" = "hjerte med stjerner";
+"72076585.tags" = "følelser | funkle | hjerte med stjerner | kærlighed";
+// 💗 - heartpulse
+"72076590.name" = "voksende hjerte";
+"72076590.tags" = "følelser | hjerte | kærlighed | nervøs | voksende hjerte";
+// 💓 - heartbeat
+"72076570.name" = "bankende hjerte";
+"72076570.tags" = "bankende hjerte | hjerte | kærlighed | romantik";
+// 💞 - revolving_hearts
+"72076625.name" = "roterende hjerter";
+"72076625.tags" = "følelser | hjerter | roterende hjerter";
+// 💕 - two_hearts
+"72076580.name" = "to hjerter";
+"72076580.tags" = "kærlighed | romantik | to hjerter";
+// 💟 - heart_decoration
+"72076630.name" = "hjertedekoration";
+"72076630.tags" = "hjerte | hjertedekoration";
+// 💔 - broken_heart
+"72076575.name" = "knust hjerte";
+"72076575.tags" = "knust hjerte | ulykkelig kærlighed";
+// 🩷 - pink_heart
+"72080275.name" = "lyserødt hjerte";
+"72080275.tags" = "hjerte | kærlighed | lyserød | lyserødt hjerte | nuttet | synes om";
+// 🧡 - orange_heart
+"72079525.name" = "orange hjerte";
+"72079525.tags" = "følelser | hjerte | orange";
+// 💛 - yellow_heart
+"72076610.name" = "gult hjerte";
+"72076610.tags" = "følelser | gul | gult hjerte | hjerte";
+// 💚 - green_heart
+"72076605.name" = "grønt hjerte";
+"72076605.tags" = "følelser | grøn | grønt hjerte | hjerte";
+// 💙 - blue_heart
+"72076600.name" = "blåt hjerte";
+"72076600.tags" = "blå | blåt hjerte | følelser | hjerte";
+// 🩵 - light_blue_heart
+"72080265.name" = "lyseblåt hjerte";
+"72080265.tags" = "cyan | grønblå | hjerte | lyseblå | lyseblåt hjerte";
+// 💜 - purple_heart
+"72076615.name" = "violet hjerte";
+"72076615.tags" = "følelser | hjerte | violet";
+// 🤎 - brown_heart
+"72078470.name" = "brunt hjerte";
+"72078470.tags" = "brun | brunt hjerte | hjerte";
+// 🖤 - black_heart
+"72077935.name" = "sort hjerte";
+"72077935.tags" = "hjerte | ondskab | ondt | sort";
+// 🩶 - grey_heart
+"72080270.name" = "gråt hjerte";
+"72080270.tags" = "gråt | hjerte | skifer | sølv";
+// 🤍 - white_heart
+"72078465.name" = "hvidt hjerte";
+"72078465.tags" = "hjerte | hvid | hvidt hjerte";
+// 💋 - kiss
+"72076530.name" = "læbeaftryk";
+"72076530.tags" = "kys | læbeaftryk | læber | romantik";
+// 💯 - 100
+"72076710.name" = "100 point";
+"72076710.tags" = "100 | alle rigtige | hundrede | point";
+// 💢 - anger
+"72076645.name" = "vrede";
+"72076645.tags" = "følelse | tegn for vrede | vrede";
+// 💥 - boom
+"72076660.name" = "kollision";
+"72076660.tags" = "følelser | kollision | kollitionstegn";
+// 💫 - dizzy
+"72076690.name" = "svimmel";
+"72076690.tags" = "følelser | se stjerner | svimmel";
+// 💦 - sweat_drops
+"72076665.name" = "sveddråber";
+"72076665.tags" = "følelser | sved | sveddråber";
+// 💨 - dash
+"72076675.name" = "smutter";
+"72076675.tags" = "er løbet | følelser | løber væk | smutter";
+// 💬 - speech_balloon
+"72076695.name" = "taleboble";
+"72076695.tags" = "tale | taleboble";
+// 💭 - thought_balloon
+"72076700.name" = "tankeboble";
+"72076700.tags" = "tanke | tankeboble";
+// 💤 - zzz
+"72076655.name" = "søvnig";
+"72076655.tags" = "følelse | snorke | sove | søvnig";
+// 👋 - wave
+"72076210.name" = "vinker";
+"72076210.tags" = "hånd | vinker";
+// 🤚 - raised_back_of_hand
+"72078530.name" = "løftet håndryg";
+"72078530.tags" = "bagside af hånd | hånd | håndryg | løftet hånd | løftet håndryg";
+// ✋ - hand
+"30756.name" = "løftet hånd";
+"30756.tags" = "hånd | krop | løftet hånd";
+// 🖖 - spock-hand
+"72077865.name" = "vulcan-hilsen";
+"72077865.tags" = "finger | hånd | krop | spock | vulcan | vulcan-hilsen";
+// 🫱 - rightwards_hand
+"72080885.name" = "hånd til højre";
+"72080885.tags" = "hånd | hånd til højre | højre";
+// 🫲 - leftwards_hand
+"72080890.name" = "hånd til venstre";
+"72080890.tags" = "hånd | hånd til venstre | venstre";
+// 🫳 - palm_down_hand
+"72080895.name" = "håndflade nedad";
+"72080895.tags" = "afslå | afvise | genne væk | håndflade nedad | tabe";
+// 🫴 - palm_up_hand
+"72080900.name" = "håndflade opad";
+"72080900.tags" = "gribe | håndflade opad | kom | lokke | tilbyde | vinke hen";
+// 🫷 - leftwards_pushing_hand
+"72080915.name" = "hånd skubber mod venstre";
+"72080915.tags" = "afslå | hånd skubber mod venstre | highfive | mod venstre | skub | stop | vent";
+// 🫸 - rightwards_pushing_hand
+"72080920.name" = "hånd skubber mod højre";
+"72080920.tags" = "afslå | hånd skubber mod højre | highfive | mod højre | skub | stop | vent";
+// 👌 - ok_hand
+"72076215.name" = "ok-tegn";
+"72076215.tags" = "OK-håndtegn | ok-tegn | OK-tegn";
+// 🤌 - pinched_fingers
+"72078460.name" = "samlede fingre";
+"72078460.tags" = "fingre | gestus | håndtegn | samlede fingre | sammenknebne | sarkastisk | udspørge";
+// 🤏 - pinching_hand
+"72078475.name" = "lidt vist med tommel- og pegefinger";
+"72078475.tags" = "lidt | lidt vist med tommel- og pegefinger";
+// 🤞 - crossed_fingers
+"72078550.name" = "krydsede fingre";
+"72078550.tags" = "finger | håb | hånd | held og lykke | krop | krydsede fingre | krydser fingre";
+// 🫰 - hand_with_index_finger_and_thumb_crossed
+"72080880.name" = "krydset pegefinger og tommelfinger";
+"72080880.tags" = "dyrt | hjerte | kærlighed | knips | krydset pegefinger og tommelfinger | penge";
+// 🤟 - i_love_you_hand_sign
+"72078555.name" = "elsker dig-gestus";
+"72078555.tags" = "Elsker dig | elsker dig-gestus | Hånd";
+// 🤘 - the_horns
+"72078520.name" = "djævletegn";
+"72078520.tags" = "djævletegn | finger | hånd | heavy metal | horn | metal | rock";
+// 🤙 - call_me_hand
+"72078525.name" = "ring til mig-hånd";
+"72078525.tags" = "hånd | krop | opringning | ring til mig-hånd | ringer | telefonhånd";
+// 👈 - point_left
+"72076195.name" = "peger mod venstre";
+"72076195.tags" = "finger | finger peger til venstre | pegefinger | peger mod venstre | peger til venstre";
+// 👉 - point_right
+"72076200.name" = "peger mod højre";
+"72076200.tags" = "finger | finger peger til højre | pegefinger | peger mod højre | peger til højre";
+// 👆 - point_up_2
+"72076185.name" = "peger opad";
+"72076185.tags" = "finger | finger peger op | pegefinger | peger op | peger opad";
+// 🖕 - middle_finger
+"72077860.name" = "langefinger";
+"72077860.tags" = "finger | hånd | krop | langefinger";
+// 👇 - point_down
+"72076190.name" = "peger nedad";
+"72076190.tags" = "finger | finger peger ned | pegefinger | peger ned | peger nedad";
+// 🫵 - index_pointing_at_the_viewer
+"72080905.name" = "peger på seeren";
+"72080905.tags" = "dig | pegefinger | peger på seeren";
+// 👍 - +1
+"72076220.name" = "tommelfinger op";
+"72076220.tags" = "håndtegn | ok | OK | tommelfinger op";
+// 👎 - -1
+"72076225.name" = "tommelfinger ned";
+"72076225.tags" = "håndtegn | nedstemt | tommelfinger ned";
+// ✊ - fist
+"30753.name" = "løftet knytnæve";
+"30753.tags" = "hånd | knytnæve | knyttet | løftet knytnæve | slå";
+// 👊 - facepunch
+"72076205.name" = "knytnæve";
+"72076205.tags" = "hånd | knytnæve | knyttet hånd";
+// 🤛 - left-facing_fist
+"72078535.name" = "venstrevendt knytnæve";
+"72078535.tags" = "hånd | hånd knyttet mod venstre | knytnæve | knyttet hånd | venstre | venstrevendt";
+// 🤜 - right-facing_fist
+"72078540.name" = "højrevendt knytnæve";
+"72078540.tags" = "hånd | hånd knyttet mod højre | højre | højrevendt | knytnæve | knyttet hånd";
+// 👏 - clap
+"72076230.name" = "klappende hænder";
+"72076230.tags" = "applaus | bifald | klappende hænder | klapper | klapsalve";
+// 🙌 - raised_hands
+"72078775.name" = "løftede hænder";
+"72078775.tags" = "begge hænder oppe | hænderne over hovedet | hurra | juhu | løftede hænder";
+// 🫶 - heart_hands
+"72080910.name" = "hjertehænder";
+"72080910.tags" = "hjertehænder | kærlighed";
+// 👐 - open_hands
+"72076235.name" = "åbne hænder";
+"72076235.tags" = "åbne hænder | åbne hænder-tegn | håndtegn";
+// 🤲 - palms_up_together
+"72078650.name" = "håndflader samlet og løftet";
+"72078650.tags" = "bøn | håndflader samlet og løftet";
+// 🤝 - handshake
+"72078545.name" = "håndtryk";
+"72078545.tags" = "aftale | enighed | hænder | håndtryk | hilsen | mødes";
+// 🙏 - pray
+"72078790.name" = "foldede hænder";
+"72078790.tags" = "bøn | foldede hænder | namaste | namasté";
+// 💅 - nail_care
+"72076500.name" = "neglelak";
+"72076500.tags" = "kosmetik | manicure | negle | neglelak";
+// 🤳 - selfie
+"72078655.name" = "selfie";
+"72078655.tags" = "arm | foto | kamera | mobiltelefon | selfie | tager selfies | telefon";
+// 💪 - muscle
+"72076685.name" = "armmuskler";
+"72076685.tags" = "armmuskler | muskel | stærk";
+// 🦾 - mechanical_arm
+"72079350.name" = "mekanisk arm";
+"72079350.tags" = "handicap | mekanisk arm | protese";
+// 🦿 - mechanical_leg
+"72079355.name" = "mekanisk ben";
+"72079355.tags" = "handicap | mekanisk ben | protese";
+// 🦵 - leg
+"72079305.name" = "ben";
+"72079305.tags" = "ben | halte | humpe | sparke";
+// 🦶 - foot
+"72079310.name" = "fod";
+"72079310.tags" = "fod | sparke | trampe";
+// 👂 - ear
+"72076165.name" = "øre";
+"72076165.tags" = "høre | krop | øre";
+// 🦻 - ear_with_hearing_aid
+"72079335.name" = "øre med høreapparat";
+"72079335.tags" = "øre med høreapparat";
+// 👃 - nose
+"72076170.name" = "næse";
+"72076170.tags" = "dufte | krop | lugte ansigt | næse";
+// 🧠 - brain
+"72079520.name" = "hjerne";
+"72079520.tags" = "hjerne | intelligent";
+// 🫀 - anatomical_heart
+"72080640.name" = "hjerte";
+"72080640.tags" = "centrum | hjerte | hjerteslag | organ | puls";
+// 🫁 - lungs
+"72080645.name" = "lunger";
+"72080645.tags" = "ånde | åndedræt | indånding | lunger | organ | respiration | udånding | vejrtrækning";
+// 🦷 - tooth
+"72079315.name" = "tand";
+"72079315.tags" = "tand | tandlæge";
+// 🦴 - bone
+"72079300.name" = "knogle";
+"72079300.tags" = "knogle | skelet";
+// 👀 - eyes
+"72076155.name" = "øjne";
+"72076155.tags" = "ansigt | øjne | se";
+// 👅 - tongue
+"72076180.name" = "tunge";
+"72076180.tags" = "krop | smage | tunge";
+// 👄 - lips
+"72076175.name" = "mund";
+"72076175.tags" = "ansigt | krop | læber | mund";
+// 🫦 - biting_lip
+"72080830.name" = "bider i læben";
+"72080830.tags" = "angst | bange | bekymret | bider i læben | flirte | nervøs | utryg";
+// 👶 - baby
+"72076425.name" = "baby";
+"72076425.tags" = "baby | barn | menneske";
+// 🧒 - child
+"72079450.name" = "barn";
+"72079450.tags" = "barn | ungt menneske";
+// 👦 - boy
+"72076345.name" = "dreng";
+"72076345.tags" = "dreng | menneske | person | ung";
+// 👧 - girl
+"72076350.name" = "pige";
+"72076350.tags" = "menneske | person | pige | ung";
+// 🧑 - adult
+"72079445.name" = "voksen";
+"72079445.tags" = "person | voksen";
+// 👱 - person_with_blond_hair
+"72076400.name" = "blond person";
+"72076400.tags" = "blond | blond person | hår";
+// 👨 - man
+"72076355.name" = "mand";
+"72076355.tags" = "mand | menneske | person";
+// 🧔 - bearded_person
+"72079460.name" = "person med skæg";
+"72079460.tags" = "fuldskæg | person | person med skæg | skæg";
+// 👩 - woman
+"72076360.name" = "kvinde";
+"72076360.tags" = "kvinde | menneske | person";
+// 🧓 - older_adult
+"72079455.name" = "ældre menneske";
+"72079455.tags" = "ældre menneske | gammel person | voksen";
+// 👴 - older_man
+"72076415.name" = "gammel mand";
+"72076415.tags" = "gammel mand | mand | menneske";
+// 👵 - older_woman
+"72076420.name" = "gammel kvinde";
+"72076420.tags" = "gammel kvinde | kvinde | menneske";
+// 🙍 - person_frowning
+"72078780.name" = "Utilfreds person";
+"72078780.tags" = "alvorlig mine | udtryk | utilfreds | Utilfreds person";
+// 🙎 - person_with_pouting_face
+"72078785.name" = "surmulende person";
+"72078785.tags" = "gestus | surmule | surmulende person";
+// 🙅 - no_good
+"72078740.name" = "signalerer nej";
+"72078740.tags" = "forbudt | nej | signalerer nej";
+// 🙆 - ok_woman
+"72078745.name" = "signalerer ok";
+"72078745.tags" = "allright | ansigt | signalerer ok";
+// 💁 - information_desk_person
+"72076480.name" = "person vender håndfladen op";
+"72076480.tags" = "hjælp | person vender håndfladen op";
+// 🙋 - raising_hand
+"72078770.name" = "person med løftet hånd";
+"72078770.tags" = "hej | løftet hånd | person med løftet hånd";
+// 🧏 - deaf_person
+"72079435.name" = "døv person";
+"72079435.tags" = "døv | døv person | høre | øre | tilgængelighed";
+// 🙇 - bow
+"72078750.name" = "bukker";
+"72078750.tags" = "bukker | undskyld";
+// 🤦 - face_palm
+"72078590.name" = "slå sig for panden";
+"72078590.tags" = "ansigt | dumt | facepalm | hånd | irriteret | skepsis | slå sig for panden";
+// 🤷 - shrug
+"72078675.name" = "trækker på skuldrene";
+"72078675.tags" = "aner det ikke | ligeglad | ligegyldigt | pas | trækker på skuldrene | tvivl | ved det ikke";
+// 🧑‍🎓 - student
+"26901339530736.name" = "studerende";
+"26901339530736.tags" = "dimittend | kandidat | student | studerende";
+// 👨‍🎓 - male-student
+"26555159681094.name" = "mandlig studerende";
+"26555159681094.tags" = "dimittend | eksamenshat | mand | mandlig studerende | studerende";
+// 👩‍🎓 - female-student
+"26555719842663.name" = "kvindelig studerende";
+"26555719842663.tags" = "dimittend | eksamenshat | kvinde | kvindelig studerende | studerende";
+// 🧑‍🏫 - teacher
+"26901339533640.name" = "lærer";
+"26901339533640.tags" = "instruktor | lærer | lektor | professor | skolelærer | underviser";
+// 👨‍🏫 - male-teacher
+"26555159683998.name" = "mandlig lærer";
+"26555159683998.tags" = "lærer | mand | mandlig lærer | professor | underviser";
+// 👩‍🏫 - female-teacher
+"26555719845567.name" = "kvindelig lærer";
+"26555719845567.tags" = "kvinde | kvindelig lærer | lærerinde | professor | underviser";
+// 🧑‍🌾 - farmer
+"26901339527931.name" = "bonde";
+"26901339527931.tags" = "bonde | bondemand | gårdejer | gartner | landmand";
+// 👨‍🌾 - male-farmer
+"26555159678289.name" = "landmand";
+"26555159678289.tags" = "bonde | bondemand | gartner | landmand | mand";
+// 👩‍🌾 - female-farmer
+"26555719839858.name" = "kvindelig landmand";
+"26555719839858.tags" = "bonde | gartner | kvinde | kvindelig landmand | landmand";
+// 🧑‍🍳 - cook
+"26901339529680.name" = "kok";
+"26901339529680.tags" = "kok | køkkenchef";
+// 👨‍🍳 - male-cook
+"26555159680038.name" = "mandlig kok";
+"26555159680038.tags" = "kok | madlavning | mand | mandlig kok | stegepande";
+// 👩‍🍳 - female-cook
+"26555719841607.name" = "kvindelig kok";
+"26555719841607.tags" = "kok | kvinde | kvindelig kok | madlavning | stegepande";
+// 🧑‍🔧 - mechanic
+"26901339518757.name" = "mekaniker";
+"26901339518757.tags" = "elektriker | håndværker | mekaniker | skruenøgle | vvs-tekniker | vvs’er";
+// 👨‍🔧 - male-mechanic
+"26555159669115.name" = "mandlig mekaniker";
+"26555159669115.tags" = "håndværker | mand | mandlig mekaniker | mekaniker | skruenøgle | værktøj";
+// 👩‍🔧 - female-mechanic
+"26555719830684.name" = "kvindelig mekaniker";
+"26555719830684.tags" = "håndværker | kvinde | kvindelig mekaniker | mekaniker | skruenøgle | værktøj";
+// 🧑‍🏭 - factory_worker
+"26901339533706.name" = "fabriksarbejder";
+"26901339533706.tags" = "arbejder | fabrik | fabriksarbejder | industri | samlebånd";
+// 👨‍🏭 - male-factory-worker
+"26555159684064.name" = "mandlig fabriksarbejder";
+"26555159684064.tags" = "arbejder | fabrik | industri | mand | mandlig fabriksarbejder";
+// 👩‍🏭 - female-factory-worker
+"26555719845633.name" = "kvindelig fabriksarbejder";
+"26555719845633.tags" = "arbejder | fabrik | industri | kvinde | kvindelig fabriksarbejder";
+// 🧑‍💼 - office_worker
+"26901339515226.name" = "kontoransat";
+"26901339515226.tags" = "arkitekt | business | forretningsmand | funktionær | kontor | kontoransat | kontormedarbejder";
+// 👨‍💼 - male-office-worker
+"26555159665584.name" = "mandlig kontoransat";
+"26555159665584.tags" = "business | jakkesæt | kontor | kontormand | mandlig kontoransat | mappe";
+// 👩‍💼 - female-office-worker
+"26555719827153.name" = "kvindelig kontoransat";
+"26555719827153.tags" = "business | kontor | kvinde | kvindelig kontoransat | mappe";
+// 🧑‍🔬 - scientist
+"26901339518922.name" = "forsker";
+"26901339518922.tags" = "biolog | forsker | fysiker | ingeniør | kemiker | naturvidenskabsmand | videnskabsmand";
+// 👨‍🔬 - male-scientist
+"26555159669280.name" = "mandlig forsker";
+"26555159669280.tags" = "mandlig forsker | naturvidenskab | naturvidenskabsmand | videnskab | videnskabsmand";
+// 👩‍🔬 - female-scientist
+"26555719830849.name" = "kvindelig forsker";
+"26555719830849.tags" = "kvinde | kvindelig forsker | naturvidenskab | videnskab | videnskabsmand";
+// 🧑‍💻 - technologist
+"26901339515193.name" = "it-medarbejder";
+"26901339515193.tags" = "it-medarbejder | koder | opfinder | programmør | software | teknolog | udvikler";
+// 👨‍💻 - male-technologist
+"26555159665551.name" = "mandlig IT-medarbejder";
+"26555159665551.tags" = "computer | it | mand | mandlig IT-medarbejder | pc | programmør | skærm | software | teknologi | udvikler";
+// 👩‍💻 - female-technologist
+"26555719827120.name" = "kvindelig IT-medarbejder";
+"26555719827120.tags" = "computer | it | kvinde | kvindelig IT-medarbejder | pc | programmør | skærm | software | udvikler";
+// 🧑‍🎤 - singer
+"26901339531297.name" = "sanger";
+"26901339531297.tags" = "entertainer | popsanger | rock | rocksanger | sanger | sangsolist | skuespiller | stjerne";
+// 👨‍🎤 - male-singer
+"26555159681655.name" = "mandlig sanger";
+"26555159681655.tags" = "entertainer | karaoke | mand | mandlig sanger | sang | sanger | skuespiller | stjerne | synge";
+// 👩‍🎤 - female-singer
+"26555719843224.name" = "sangerinde";
+"26555719843224.tags" = "entertainer | karaoke | kvinde | sang | sangerinde | skuespiller | stjerne | synge";
+// 🧑‍🎨 - artist
+"26901339531429.name" = "kunstner";
+"26901339531429.tags" = "kunstmaler | kunstner | maler | palet";
+// 👨‍🎨 - male-artist
+"26555159681787.name" = "mandlig kunstner";
+"26555159681787.tags" = "billedkunstner | kreativ | kunstmaler | mandlig kunstner | palet | pensler";
+// 👩‍🎨 - female-artist
+"26555719843356.name" = "kvindelig kunstner";
+"26555719843356.tags" = "billedkunstner | kunstmaler | kvinde | kvindelig kunstner | palet | pensler";
+// 🧑‍🚀 - astronaut
+"26901339530142.name" = "astronaut";
+"26901339530142.tags" = "astronaut | raket | rummand";
+// 👨‍🚀 - male-astronaut
+"26555159680500.name" = "mandlig astronaut";
+"26555159680500.tags" = "mand | mandlig astronaut | raket | rumdragt | rumfartøj | rummet | rumskib";
+// 👩‍🚀 - female-astronaut
+"26555719842069.name" = "kvindelig astronaut";
+"26555719842069.tags" = "kvinde | kvindelig astronaut | raket | rumdragt | rumfartøj | rummet | rumskib";
+// 🧑‍🚒 - firefighter
+"26901339530736.name" = "brandfolk";
+"26901339530736.tags" = "brandbil | brandfolk | brandmand";
+// 👨‍🚒 - male-firefighter
+"26555159681094.name" = "brandmand";
+"26555159681094.tags" = "brand | brandbil | brandmand | hjelm | mand";
+// 👩‍🚒 - female-firefighter
+"26555719842663.name" = "kvindelig brandmand";
+"26555719842663.tags" = "brand | brandbil | hjelm | kvinde | kvindelig brandmand";
+// 👮 - cop
+"72076385.name" = "politibetjent";
+"72076385.tags" = "betjent | politi | politibetjent";
+// 💂 - guardsman
+"72076485.name" = "garder";
+"72076485.tags" = "garder | garderofficer | gardist";
+// 🥷 - ninja
+"72078995.name" = "ninja";
+"72078995.tags" = "ninja | ninjakriger | skjult | stealth";
+// 👷 - construction_worker
+"72076430.name" = "bygningsarbejder";
+"72076430.tags" = "arbejder | byggeri | bygningsarbejder";
+// 🫅 - person_with_crown
+"72080665.name" = "person med krone";
+"72080665.tags" = "adelig | kongelig | monark | person med krone | royal";
+// 🤴 - prince
+"72078660.name" = "prins";
+"72078660.tags" = "kongelig | kongesøn | krone | prins | royal";
+// 👸 - princess
+"72076435.name" = "prinsesse";
+"72076435.tags" = "eventyr | menneske | prinsesse";
+// 👳 - man_with_turban
+"72076410.name" = "person med turban";
+"72076410.tags" = "menneske | person med turban";
+// 👲 - man_with_gua_pi_mao
+"72076405.name" = "mand med kinesisk hat";
+"72076405.tags" = "mand med kinesisk hat | menneske";
+// 🧕 - person_with_headscarf
+"72079465.name" = "kvinde med tørklæde";
+"72079465.tags" = "hijab | kvinde med tørklæde | tørklæde";
+// 🤵 - person_in_tuxedo
+"72078665.name" = "person i smoking";
+"72078665.tags" = "brudgom | festdeltager | festtøj | gom | person | person i smoking | smoking";
+// 👰 - bride_with_veil
+"72076395.name" = "person med brudeslør";
+"72076395.tags" = "brud | brudeslør | bryllup | person | person med brudeslør";
+// 🤰 - pregnant_woman
+"72078640.name" = "gravid kvinde";
+"72078640.tags" = "gravid | kvinde | mave | mor | vordende mor";
+// 🫃 - pregnant_man
+"72080655.name" = "gravid mand";
+"72080655.tags" = "gravid | gravid mand | mæt | mave | oppustet";
+// 🫄 - pregnant_person
+"72080660.name" = "gravid person";
+"72080660.tags" = "gravid | gravid person | mæt | mave | oppustet";
+// 🤱 - breast-feeding
+"72078645.name" = "kvinde, der ammer";
+"72078645.tags" = "baby | bryst | kvinde | kvinde | der ammer";
+// 👩‍🍼 - woman_feeding_baby
+"26555719841904.name" = "kvinde, der mader baby";
+"26555719841904.tags" = "amme | baby | kvinde | kvinde | der mader baby | made";
+// 👨‍🍼 - man_feeding_baby
+"26555159680335.name" = "mand, der mader baby";
+"26555159680335.tags" = "amme | baby | made | mand | mand | der mader baby";
+// 🧑‍🍼 - person_feeding_baby
+"26901339529977.name" = "person, der mader baby";
+"26901339529977.tags" = "amme | baby | made | person | person | der mader baby";
+// 👼 - angel
+"72076455.name" = "babyengel";
+"72076455.tags" = "babyengel | engel";
+// 🎅 - santa
+"72079055.name" = "julemand";
+"72079055.tags" = "jul | julemand | nisse";
+// 🤶 - mrs_claus
+"72078670.name" = "julemandens kone";
+"72078670.tags" = "dame | fru julemand | jul | julekvinde | julemandens kone | kvinde";
+// 🧑‍🎄 - mx_claus
+"26901339530241.name" = "julenisse";
+"26901339530241.tags" = "jul | julenisse | nisse";
+// 🦸 - superhero
+"72079320.name" = "superhelt";
+"72079320.tags" = "god | helt | heltinde | superhelt | superkraft";
+// 🦹 - supervillain
+"72079325.name" = "superskurk";
+"72079325.tags" = "kriminel | ond | skurk | superkraft | superskurk";
+// 🧙 - mage
+"72079485.name" = "magiker";
+"72079485.tags" = "magi | magiker | mand";
+// 🧚 - fairy
+"72079490.name" = "fe";
+"72079490.tags" = "fe | magi";
+// 🧛 - vampire
+"72079495.name" = "vampyr";
+"72079495.tags" = "Dracula | levende død | vampyr";
+// 🧜 - merperson
+"72079500.name" = "havvæsen";
+"72079500.tags" = "hav | havfolk | havfrue | havvæsen";
+// 🧝 - elf
+"72079505.name" = "elver";
+"72079505.tags" = "elver | magi";
+// 🧞 - genie
+"72079510.name" = "magisk ånd";
+"72079510.tags" = "lampe | magi | magisk ånd";
+// 🧟 - zombie
+"72079515.name" = "zombie";
+"72079515.tags" = "levende død | zombie";
+// 🧌 - troll
+"72079420.name" = "trold";
+"72079420.tags" = "eventyr | fantasy | monster | trold";
+// 💆 - massage
+"72076505.name" = "ansigtsmassage";
+"72076505.tags" = "ansigtsmassage | massage | salon";
+// 💇 - haircut
+"72076510.name" = "bliver klippet";
+"72076510.tags" = "bliver klippet | hår | klipning";
+// 🚶 - walking
+"72079305.name" = "fodgænger";
+"72079305.tags" = "fodgænger | gå | gang | hike | vandre | vandring";
+// 🧍 - standing_person
+"72079425.name" = "stående person";
+"72079425.tags" = "stående | stående person | står";
+// 🧎 - kneeling_person
+"72079430.name" = "knælende person";
+"72079430.tags" = "knælende | knælende person | på knæ";
+// 🧑‍🦯 - person_with_probing_cane
+"26901339531726.name" = "person med blindestok";
+"26901339531726.tags" = "adgangsforhold | blind | handicap | person med blindestok | synshandicap";
+// 👨‍🦯 - man_with_probing_cane
+"26555159682084.name" = "mand med blindestok";
+"26555159682084.tags" = "adgangsforhold | blind | handicap | mand | mand med blindestok | synshandicap";
+// 👩‍🦯 - woman_with_probing_cane
+"26555719843653.name" = "kvinde med blindestok";
+"26555719843653.tags" = "adgangsforhold | blind | handicap | kvinde | kvinde med blindestok | synshandicap";
+// 🧑‍🦼 - person_in_motorized_wheelchair
+"26901339532155.name" = "person i elkørestol";
+"26901339532155.tags" = "adgang | adgangsforhold | handicap | kørestol | person i elkørestol";
+// 👨‍🦼 - man_in_motorized_wheelchair
+"26555159682513.name" = "mand i elektrisk kørestol";
+"26555159682513.tags" = "adgang | adgangsforhold | handicap | kørestol | mand | mand i elektrisk kørestol | mand i elkørestol";
+// 👩‍🦼 - woman_in_motorized_wheelchair
+"26555719844082.name" = "kvinde i elektrisk kørestol";
+"26555719844082.tags" = "adgang | adgangsforhold | handicap | kørestol | kvinde | kvinde i elektrisk kørestol | kvinde i elkørestol";
+// 🧑‍🦽 - person_in_manual_wheelchair
+"26901339532188.name" = "person i manuel kørestol";
+"26901339532188.tags" = "adgang | adgangsforhold | handicap | kørestol | person i manuel kørestol";
+// 👨‍🦽 - man_in_manual_wheelchair
+"26555159682546.name" = "mand i manuel kørestol";
+"26555159682546.tags" = "adgang | adgangsforhold | handicap | kørestol | mand | mand i manuel kørestol";
+// 👩‍🦽 - woman_in_manual_wheelchair
+"26555719844115.name" = "kvinde i manuel kørestol";
+"26555719844115.tags" = "adgang | adgangsforhold | handicap | kørestol | kvinde | kvinde i manuel kørestol";
+// 🏃 - runner
+"72079365.name" = "løber";
+"72079365.tags" = "løber | løbetræning | maraton | sport";
+// 💃 - dancer
+"72076490.name" = "danser";
+"72076490.tags" = "dans | danser";
+// 🕺 - man_dancing
+"72077725.name" = "dansende mand";
+"72077725.tags" = "dans | dansende mand | danser | mand";
+// 👯 - dancers
+"72076390.name" = "personer med kaninører";
+"72076390.tags" = "kvinder | ører | personer med kaninører";
+// 🧖 - person_in_steamy_room
+"72079470.name" = "person i dampbad";
+"72079470.tags" = "dampbad | person i dampbad | sauna";
+// 🧗 - person_climbing
+"72079475.name" = "bjergbestiger";
+"72079475.tags" = "bjerg | bjergbestiger | klatring";
+// 🤺 - fencer
+"72078690.name" = "fægter";
+"72078690.tags" = "fægter | fægtning | person | sport | sværd";
+// 🏇 - horse_racing
+"72079385.name" = "hestevæddeløb";
+"72079385.tags" = "galop | hest | hestesport | hestevæddeløb | jockey | væddeløbshest";
+// 🏂 - snowboarder
+"72079360.name" = "snowboarder";
+"72079360.tags" = "snowboard | snowboarder | snowboarding | sport";
+// 🏄 - surfer
+"72079370.name" = "surfer";
+"72079370.tags" = "sport | surfer | surfing";
+// 🚣 - rowboat
+"72079210.name" = "roer";
+"72079210.tags" = "båd | robåd | roer";
+// 🏊 - swimmer
+"72079400.name" = "svømmer";
+"72079400.tags" = "sport | svømme | svømmer | svømning";
+// 🚴 - bicyclist
+"72079295.name" = "cyklist";
+"72079295.tags" = "cykel | cyklist";
+// 🚵 - mountain_bicyclist
+"72079300.name" = "mountainbikerytter";
+"72079300.tags" = "bjerg | cykel | cyklist | mountainbike | mountainbikerytter";
+// 🤸 - person_doing_cartwheel
+"72078680.name" = "person slår vejrmølle";
+"72078680.tags" = "gymnastik | menneske | person | person slår vejrmølle | sport | vejrmølle";
+// 🤼 - wrestlers
+"72078700.name" = "brydere";
+"72078700.tags" = "bryder | brydere | brydning | personer | sport";
+// 🤽 - water_polo
+"72078705.name" = "vandpolospiller";
+"72078705.tags" = "polo | sport | vand | vandpolo | vandpolospiller | vandsport";
+// 🤾 - handball
+"72078710.name" = "håndboldspiller";
+"72078710.tags" = "bold | håndbold | håndboldspiller | sport";
+// 🤹 - juggling
+"72078685.name" = "jonglør";
+"72078685.tags" = "balance | behændighed | dygtighed | jonglere | jonglør | multitaske | multitasking";
+// 🧘 - person_in_lotus_position
+"72079480.name" = "lotusstilling";
+"72079480.tags" = "lotusstilling | meditation | yoga";
+// 🛀 - bath
+"72079355.name" = "bad";
+"72079355.tags" = "bad | badekar | karbad";
+// 🛌 - sleeping_accommodation
+"72079415.name" = "person i seng";
+"72079415.tags" = "hotel | person i seng | sove";
+// 🧑‍🤝‍🧑 - people_holding_hands
+"3200955216551984283.name" = "personer hånd i hånd";
+"3200955216551984283.tags" = "hånd | holde | holde i hånd | par | personer | personer hånd i hånd";
+// 👭 - two_women_holding_hands
+"72076380.name" = "to kvinder hånd i hånd";
+"72076380.tags" = "par | to kvinder hånd i hånd";
+// 👫 - man_and_woman_holding_hands
+"72076370.name" = "mand og kvinde hånd i hånd";
+"72076370.tags" = "mand og kvinde hånd i hånd | par";
+// 👬 - two_men_holding_hands
+"72076375.name" = "to mænd hånd i hånd";
+"72076375.tags" = "hånd i hånd | mænd | par | stjernetegn | to mænd hånd i hånd | tvillingen | tvillinger";
+// 💏 - couplekiss
+"72076550.name" = "kys";
+"72076550.tags" = "kærlighed | kys | par med hjerte | romantik";
+// 💑 - couple_with_heart
+"72076560.name" = "par med hjerte";
+"72076560.tags" = "kærlighed | par med hjerte | romantik";
+// 👪 - family
+"72076365.name" = "familie";
+"72076365.tags" = "barn | familie | far | menneske | mor";
+// 👤 - bust_in_silhouette
+"72076335.name" = "buste i silhuet";
+"72076335.tags" = "buste | buste i silhuet";
+// 👥 - busts_in_silhouette
+"72076340.name" = "buster i silhuet";
+"72076340.tags" = "buster | buster i silhuet";
+// 🫂 - people_hugging
+"72080650.name" = "knus";
+"72080650.tags" = "farvel | goddag | hej | knus | kram | tak";
+// 👣 - footprints
+"72076330.name" = "fodspor";
+"72076330.tags" = "fødder | fodspor";
+// 🏻 - skin-tone-2
+"72079645.name" = "lys teint";
+"72079645.tags" = "hudfarve | lys teint | type 1–2";
+// 🏼 - skin-tone-3
+"72079650.name" = "medium til lys teint";
+"72079650.tags" = "hudfarve | medium til lys teint | type 3";
+// 🏽 - skin-tone-4
+"72079655.name" = "medium teint";
+"72079655.tags" = "hudfarve | medium teint | type 4";
+// 🏾 - skin-tone-5
+"72079660.name" = "medium til mørk teint";
+"72079660.tags" = "hudfarve | medium til mørk teint | type 5";
+// 🏿 - skin-tone-6
+"72079665.name" = "mørk teint";
+"72079665.tags" = "hudfarve | mørk teint | type 6";
+// 🐵 - monkey_face
+"72076100.name" = "abehoved";
+"72076100.tags" = "abe | abehoved | dyr | hoved";
+// 🐒 - monkey
+"72075925.name" = "abe";
+"72075925.tags" = "abe | dyr";
+// 🦍 - gorilla
+"72079105.name" = "gorilla";
+"72079105.tags" = "abe | dyr | gorilla | hoved";
+// 🦧 - orangutan
+"72079235.name" = "orangutang";
+"72079235.tags" = "abe | orangutang";
+// 🐶 - dog
+"72076105.name" = "hundehoved";
+"72076105.tags" = "dyr | hoved | hund | hundehoved | kæledyr";
+// 🐕 - dog2
+"72075940.name" = "hund";
+"72075940.tags" = "dyr | hund | kæledyr";
+// 🦮 - guide_dog
+"72079270.name" = "førerhund";
+"72079270.tags" = "blind | førerhund | tilgængelighed";
+// 🐕‍🦺 - service_dog
+"26508666272220.name" = "servicehund";
+"26508666272220.tags" = "førerhund | hjælp | hund | servicehund | tilgængelighed";
+// 🐩 - poodle
+"72076040.name" = "puddel";
+"72076040.tags" = "dyr | hund | puddel";
+// 🐺 - wolf
+"72076125.name" = "ulvehoved";
+"72076125.tags" = "ulv | ulvehoved";
+// 🦊 - fox_face
+"72079090.name" = "rævehoved";
+"72079090.tags" = "ræv | rævehoved";
+// 🦝 - raccoon
+"72079185.name" = "vaskebjørn";
+"72079185.tags" = "nysgerrig | snu | vaskebjørn";
+// 🐱 - cat
+"72076080.name" = "kattehoved";
+"72076080.tags" = "dyr | hoved | kat | kattehoved";
+// 🐈 - cat2
+"72075875.name" = "kat";
+"72075875.tags" = "dyr | kæledyr | kat";
+// 🐈‍⬛ - black_cat
+"51973200513.name" = "sort kat";
+"51973200513.tags" = "kat | sort | uheldig | ulykke";
+// 🦁 - lion_face
+"72079045.name" = "løvehoved";
+"72079045.tags" = "hoved | løve | løvehoved | løven | stjernetegn";
+// 🐯 - tiger
+"72076070.name" = "tigerhoved";
+"72076070.tags" = "dyr | hoved | tiger | tigerhoved";
+// 🐅 - tiger2
+"72075860.name" = "tiger";
+"72075860.tags" = "dyr | tiger";
+// 🐆 - leopard
+"72075865.name" = "leopard";
+"72075865.tags" = "dyr | leopard";
+// 🐴 - horse
+"72076095.name" = "hestehoved";
+"72076095.tags" = "dyr | hest | hestehoved";
+// 🫎 - moose
+"72080710.name" = "elg";
+"72080710.tags" = "dyr | elg | elsdyr | gevir | pattedyr";
+// 🫏 - donkey
+"72080715.name" = "æsel";
+"72080715.tags" = "æsel | dyr | muldyr | pakæsel | pattedyr | stædig";
+// 🐎 - racehorse
+"72075905.name" = "hest";
+"72075905.tags" = "dyr | hest | hestevæddeløb | væddeløbshest";
+// 🦄 - unicorn_face
+"72079060.name" = "enhjørningehoved";
+"72079060.tags" = "enhjørningehoved | hoved";
+// 🦓 - zebra_face
+"72079135.name" = "zebra";
+"72079135.tags" = "dyr | striber | zebra";
+// 🦌 - deer
+"72079100.name" = "hjort";
+"72079100.tags" = "gevir | hjort | rådyr | rensdyr";
+// 🦬 - bison
+"72079260.name" = "bison";
+"72079260.tags" = "bison | bøffel | flok";
+// 🐮 - cow
+"72076065.name" = "kohoved";
+"72076065.tags" = "dyr | hoved | ko | kohoved";
+// 🐂 - ox
+"72075845.name" = "okse";
+"72075845.tags" = "dyr | okse";
+// 🐃 - water_buffalo
+"72075850.name" = "vandbøffel";
+"72075850.tags" = "bøffel | dyr | vandbøffel";
+// 🐄 - cow2
+"72075855.name" = "ko";
+"72075855.tags" = "dyr | ko";
+// 🐷 - pig
+"72076110.name" = "grisehoved";
+"72076110.tags" = "dyr | gris | grisehoved | hoved";
+// 🐖 - pig2
+"72075945.name" = "gris";
+"72075945.tags" = "dyr | gris";
+// 🐗 - boar
+"72075950.name" = "vildsvin";
+"72075950.tags" = "dyr | vildsvin";
+// 🐽 - pig_nose
+"72076140.name" = "grisetryne";
+"72076140.tags" = "dyr | grisetryne | hoved | tryne";
+// 🐏 - ram
+"72075910.name" = "vædder";
+"72075910.tags" = "dyr | stjernetegn | vædder | vædderen";
+// 🐑 - sheep
+"72075920.name" = "får";
+"72075920.tags" = "dyr | får";
+// 🐐 - goat
+"72075915.name" = "ged";
+"72075915.tags" = "dyr | ged";
+// 🐪 - dromedary_camel
+"72076045.name" = "dromedar";
+"72076045.tags" = "dromedar | dyr | pukkel";
+// 🐫 - camel
+"72076050.name" = "kamel";
+"72076050.tags" = "dyr | kamel | to pukler";
+// 🦙 - llama
+"72079165.name" = "lama";
+"72079165.tags" = "alpaka | guanako | lama | uld | vikunja";
+// 🦒 - giraffe_face
+"72079130.name" = "giraf";
+"72079130.tags" = "dyr | giraf | pletter";
+// 🐘 - elephant
+"72075955.name" = "elefant";
+"72075955.tags" = "dyr | elefant";
+// 🦣 - mammoth
+"72079215.name" = "mammut";
+"72079215.tags" = "mammut | stødtænder | stor | uddød | ulden";
+// 🦏 - rhinoceros
+"72079115.name" = "næsehorn";
+"72079115.tags" = "dyr | horn | næsehorn";
+// 🦛 - hippopotamus
+"72079175.name" = "flodhest";
+"72079175.tags" = "dyr | flodhest";
+// 🐭 - mouse
+"72076060.name" = "musehoved";
+"72076060.tags" = "dyr | hoved | mus | musehoved";
+// 🐁 - mouse2
+"72075840.name" = "mus";
+"72075840.tags" = "dyr | mus";
+// 🐀 - rat
+"72075835.name" = "rotte";
+"72075835.tags" = "dyr | rotte";
+// 🐹 - hamster
+"72076120.name" = "hamsterhoved";
+"72076120.tags" = "hamster | hamsterhoved | kæledyr";
+// 🐰 - rabbit
+"72076075.name" = "kaninhoved";
+"72076075.tags" = "dyr | hoved | kanin | kaninhoved";
+// 🐇 - rabbit2
+"72075870.name" = "kanin";
+"72075870.tags" = "dyr | kanin";
+// 🦫 - beaver
+"72079255.name" = "bæver";
+"72079255.tags" = "bæver | dæmning | gnaver";
+// 🦔 - hedgehog
+"72079140.name" = "pindsvin";
+"72079140.tags" = "pigge | pindsvin";
+// 🦇 - bat
+"72079075.name" = "flagermus";
+"72079075.tags" = "dyr | flagermus | nat | vampyr";
+// 🐻 - bear
+"72076130.name" = "bjørnehoved";
+"72076130.tags" = "bjørn | bjørnehoved";
+// 🐨 - koala
+"72076035.name" = "koala";
+"72076035.tags" = "dyr | koala";
+// 🐼 - panda_face
+"72076135.name" = "pandahoved";
+"72076135.tags" = "panda | pandahoved";
+// 🦥 - sloth
+"72079225.name" = "dovendyr";
+"72079225.tags" = "doven | dovendyr | langsom";
+// 🦦 - otter
+"72079230.name" = "odder";
+"72079230.tags" = "fisker | legesyg | odder";
+// 🦨 - skunk
+"72079240.name" = "stinkdyr";
+"72079240.tags" = "stank | stinkdyr";
+// 🦘 - kangaroo
+"72079160.name" = "kænguru";
+"72079160.tags" = "Australien | hop | kænguru | pungdyr";
+// 🦡 - badger
+"72079205.name" = "grævling";
+"72079205.tags" = "grævling | honninggrævling | plage";
+// 🐾 - feet
+"72076145.name" = "poteaftryk";
+"72076145.tags" = "dyr | poteaftryk | spor";
+// 🦃 - turkey
+"72079055.name" = "kalkun";
+"72079055.tags" = "fugl | kalkun";
+// 🐔 - chicken
+"72075935.name" = "høne";
+"72075935.tags" = "dyr | høne";
+// 🐓 - rooster
+"72075930.name" = "hane";
+"72075930.tags" = "dyr | hane";
+// 🐣 - hatching_chick
+"72076010.name" = "nyudklækket kylling";
+"72076010.tags" = "dyr | kylling | nyudklækket kylling";
+// 🐤 - baby_chick
+"72076015.name" = "kylling";
+"72076015.tags" = "dyr | kylling";
+// 🐥 - hatched_chick
+"72076020.name" = "kylling forfra";
+"72076020.tags" = "dyr | kylling forfra | kylling set forfra";
+// 🐦 - bird
+"72076025.name" = "fugl";
+"72076025.tags" = "dyr | fugl";
+// 🐧 - penguin
+"72076030.name" = "pingvin";
+"72076030.tags" = "dyr | pingvin";
+// 🦅 - eagle
+"72079065.name" = "ørn";
+"72079065.tags" = "dyr | fugl | ørn";
+// 🦆 - duck
+"72079070.name" = "and";
+"72079070.tags" = "and | andrik | dyr | fugl | svømmefugl";
+// 🦢 - swan
+"72079210.name" = "svane";
+"72079210.tags" = "fugl | grim ælling | svane | svaneunge";
+// 🦉 - owl
+"72079085.name" = "ugle";
+"72079085.tags" = "dyr | fugl | klog | klogskab | ugle | vis | visdom";
+// 🦤 - dodo
+"72079220.name" = "dronte";
+"72079220.tags" = "dronte | kæmpefugl | Mauritius | uddød | udryddet";
+// 🪶 - feather
+"72080590.name" = "fjer";
+"72080590.tags" = "fjer | fjerdragt | flyve | let";
+// 🦩 - flamingo
+"72079245.name" = "flamingo";
+"72079245.tags" = "flamboyant | flamingo | tropisk";
+// 🦚 - peacock
+"72079170.name" = "påfugl";
+"72079170.tags" = "fugl | påfugl | påfuglehøne | prangende | stolt";
+// 🦜 - parrot
+"72079180.name" = "papegøje";
+"72079180.tags" = "fugl | papegøje | sørøver | tale";
+// 🪽 - wing
+"72080625.name" = "vinge";
+"72080625.tags" = "engleagtig | flyver | flyvning | fugl | mytologi | vinge";
+// 🐦‍⬛ - black_bird
+"52006885503.name" = "sort fugl";
+"52006885503.tags" = "fugl | krage | råge | ravn | sort";
+// 🪿 - goose
+"72080635.name" = "gås";
+"72080635.tags" = "fjerkræ | fjollet | fugl | gås | skræp";
+// 🐸 - frog
+"72076115.name" = "frø";
+"72076115.tags" = "frø | frøhoved";
+// 🐊 - crocodile
+"72075885.name" = "krokodille";
+"72075885.tags" = "dyr | krokodille";
+// 🐢 - turtle
+"72076005.name" = "skildpadde";
+"72076005.tags" = "dyr | skildpadde";
+// 🦎 - lizard
+"72079110.name" = "firben";
+"72079110.tags" = "dyr | firben | krybdyr | reptil";
+// 🐍 - snake
+"72075900.name" = "slange";
+"72075900.tags" = "dyr | slange";
+// 🐲 - dragon_face
+"72076085.name" = "dragehoved";
+"72076085.tags" = "drage | dragehoved | hoved";
+// 🐉 - dragon
+"72075880.name" = "drage";
+"72075880.tags" = "drage | eventyr";
+// 🦕 - sauropod
+"72079145.name" = "sauropod";
+"72079145.tags" = "brachiosaurus | brontosaurus | diplodocus | sauropod";
+// 🦖 - t-rex
+"72079150.name" = "T-Rex";
+"72079150.tags" = "T-Rex | Tyrannosaurus Rex";
+// 🐳 - whale
+"72076090.name" = "hval med vandsprøjt";
+"72076090.tags" = "dyr | hval | hval med vandsprøjt";
+// 🐋 - whale2
+"72075890.name" = "hval";
+"72075890.tags" = "dyr | hval";
+// 🐬 - dolphin
+"72076055.name" = "delfin";
+"72076055.tags" = "delfin | dyr";
+// 🦭 - seal
+"72079265.name" = "sæl";
+"72079265.tags" = "sæl | søløve";
+// 🐟 - fish
+"72075990.name" = "fisk";
+"72075990.tags" = "dyr | fisk";
+// 🐠 - tropical_fish
+"72075995.name" = "tropisk fisk";
+"72075995.tags" = "dyr | fisk | tropisk fisk";
+// 🐡 - blowfish
+"72076000.name" = "kuglefisk";
+"72076000.tags" = "dyr | fisk | kuglefisk";
+// 🦈 - shark
+"72079080.name" = "haj";
+"72079080.tags" = "dyr | fisk | haj";
+// 🐙 - octopus
+"72075960.name" = "blæksprutte";
+"72075960.tags" = "blæksprutte | dyr";
+// 🐚 - shell
+"72075965.name" = "konkylie";
+"72075965.tags" = "dyr | konkylie";
+// 🪸 - coral
+"72080600.name" = "koral";
+"72080600.tags" = "hav | koral | rev";
+// 🪼 - jellyfish
+"72080620.name" = "gople";
+"72080620.tags" = "av | brandmand | fangtråd | gople | hav | hvirvelløs | svide";
+// 🐌 - snail
+"72075895.name" = "snegl";
+"72075895.tags" = "dyr | langsom | snegl";
+// 🦋 - butterfly
+"72079095.name" = "sommerfugl";
+"72079095.tags" = "dyr | insekt | sommer | sommerfugl | vinger";
+// 🐛 - bug
+"72075970.name" = "larve";
+"72075970.tags" = "dyr | larve | sommerfuglelarve | tusindben";
+// 🐜 - ant
+"72075975.name" = "myre";
+"72075975.tags" = "dyr | myre";
+// 🐝 - bee
+"72075980.name" = "honningbi";
+"72075980.tags" = "bi | dyr | honningbi";
+// 🪲 - beetle
+"72080570.name" = "bille";
+"72080570.tags" = "bille | insekt";
+// 🐞 - ladybug
+"72075985.name" = "mariehøne";
+"72075985.tags" = "dyr | mariehøne";
+// 🦗 - cricket
+"72079155.name" = "fårekylling";
+"72079155.tags" = "fårekylling | græshoppe";
+// 🪳 - cockroach
+"72080575.name" = "kakerlak";
+"72080575.tags" = "insekt | kakerlak | skadedyr";
+// 🦂 - scorpion
+"72079050.name" = "skorpion";
+"72079050.tags" = "skorpion | skorpionen | stjernetegn";
+// 🦟 - mosquito
+"72079195.name" = "myg";
+"72079195.tags" = "feber | insekt | malaria | myg | sygdom | virus";
+// 🪰 - fly
+"72080560.name" = "flue";
+"72080560.tags" = "flue | hestebremse | klæg | maddike | rådden | stueflue | sygdom | tsetse";
+// 🪱 - worm
+"72080565.name" = "orm";
+"72080565.tags" = "ledorm | orm | parasit | regnorm";
+// 🦠 - microbe
+"72079200.name" = "mikrobe";
+"72079200.tags" = "amøbe | bakterie | mikrobe | virus";
+// 💐 - bouquet
+"72076555.name" = "blomsterbuket";
+"72076555.tags" = "blomster | blomsterbuket | buket";
+// 🌸 - cherry_blossom
+"72078670.name" = "kirsebærblomst";
+"72078670.tags" = "blomst | blomstrende kirsebær | kirsebær | kirsebærblomst";
+// 💮 - white_flower
+"72076705.name" = "hvid blomst";
+"72076705.tags" = "blomst | hvid blomst";
+// 🪷 - lotus
+"72080595.name" = "lotus";
+"72080595.tags" = "blomst | buddhisme | hinduisme | Indien | lotus | renhed | Vietnam";
+// 🌹 - rose
+"72078675.name" = "rose";
+"72078675.tags" = "blomst | rose";
+// 🥀 - wilted_flower
+"72078720.name" = "vissen blomst";
+"72078720.tags" = "afblomstret | blomst | visnet | vissen";
+// 🌺 - hibiscus
+"72078680.name" = "hibiscus";
+"72078680.tags" = "blomst | hawaiiblomst | hibiscus";
+// 🌻 - sunflower
+"72078685.name" = "solsikke";
+"72078685.tags" = "blomst | solsikke";
+// 🌼 - blossom
+"72078690.name" = "blomst";
+"72078690.tags" = "blomst | gul blomst";
+// 🌷 - tulip
+"72078665.name" = "tulipan";
+"72078665.tags" = "blomst | tulipan";
+// 🪻 - hyacinth
+"72080615.name" = "hyacint";
+"72080615.tags" = "blå lupin | blomst | hyacint | lavendel | løvemund | lupin";
+// 🌱 - seedling
+"72078635.name" = "spire";
+"72078635.tags" = "plantespire | spire";
+// 🪴 - potted_plant
+"72080580.name" = "potteplante";
+"72080580.tags" = "hjem | hus | kedelig | nære | plante | pleje | potteplante | vokse";
+// 🌲 - evergreen_tree
+"72078640.name" = "nåletræ";
+"72078640.tags" = "nåletræ | stedsegrøn | træ";
+// 🌳 - deciduous_tree
+"72078645.name" = "løvtræ";
+"72078645.tags" = "løvfældende træ | løvtræ";
+// 🌴 - palm_tree
+"72078650.name" = "palme";
+"72078650.tags" = "palme | palmetræ";
+// 🌵 - cactus
+"72078655.name" = "kaktus";
+"72078655.tags" = "kaktus | kaktusplante | plante";
+// 🌾 - ear_of_rice
+"72078700.name" = "risplante";
+"72078700.tags" = "ris | risplante";
+// 🌿 - herb
+"72078705.name" = "urt";
+"72078705.tags" = "blade | urt";
+// 🍀 - four_leaf_clover
+"72078710.name" = "firkløver";
+"72078710.tags" = "firkløver | held | heldig | kløver";
+// 🍁 - maple_leaf
+"72078715.name" = "ahornblad";
+"72078715.tags" = "ahorn | ahornblad | efterår | efterårsblad";
+// 🍂 - fallen_leaf
+"72078720.name" = "faldende blade";
+"72078720.tags" = "blade | efterårsblade | faldende blade";
+// 🍃 - leaves
+"72078725.name" = "blade i vinden";
+"72078725.tags" = "blad | blade i vinden | blæst | vind";
+// 🪹 - empty_nest
+"72080605.name" = "tom rede";
+"72080605.tags" = "redebygning | tom rede";
+// 🪺 - nest_with_eggs
+"72080610.name" = "rede med æg";
+"72080610.tags" = "rede med æg | redebygning";
+// 🍄 - mushroom
+"72078730.name" = "svamp";
+"72078730.tags" = "plante | svamp";
+// 🍇 - grapes
+"72078745.name" = "vindruer";
+"72078745.tags" = "frugt | vin | vindruer";
+// 🍈 - melon
+"72078750.name" = "melon";
+"72078750.tags" = "frugt | melon";
+// 🍉 - watermelon
+"72078755.name" = "vandmelon";
+"72078755.tags" = "frugt | sommer | vandmelon";
+// 🍊 - tangerine
+"72078760.name" = "appelsin";
+"72078760.tags" = "appelsin | citrus | frugt | mandarin";
+// 🍋 - lemon
+"72078765.name" = "citron";
+"72078765.tags" = "citron | citrus | frugt | gul";
+// 🍌 - banana
+"72078770.name" = "banan";
+"72078770.tags" = "banan | frugt";
+// 🍍 - pineapple
+"72078775.name" = "ananas";
+"72078775.tags" = "ananas | frugt";
+// 🥭 - mango
+"72078945.name" = "mango";
+"72078945.tags" = "frugt | mango | tropisk";
+// 🍎 - apple
+"72078780.name" = "rødt æble";
+"72078780.tags" = "æble | frugt | rød | rødt æble";
+// 🍏 - green_apple
+"72078785.name" = "grønt æble";
+"72078785.tags" = "æble | frugt | grøn | grønt æble";
+// 🍐 - pear
+"72078790.name" = "pære";
+"72078790.tags" = "frugt | pære";
+// 🍑 - peach
+"72078795.name" = "fersken";
+"72078795.tags" = "fersken | frugt";
+// 🍒 - cherries
+"72078800.name" = "kirsebær";
+"72078800.tags" = "frugt | kirsebær";
+// 🍓 - strawberry
+"72078805.name" = "jordbær";
+"72078805.tags" = "bær | frugt | jordbær";
+// 🫐 - blueberries
+"72080720.name" = "blåbær";
+"72080720.tags" = "bær | blå | blåbær";
+// 🥝 - kiwifruit
+"72078865.name" = "kiwifrugt";
+"72078865.tags" = "frugt | kiwi | kiwifrugt | mad";
+// 🍅 - tomato
+"72078735.name" = "tomat";
+"72078735.tags" = "grøntsag | tomat";
+// 🫒 - olive
+"72080730.name" = "oliven";
+"72080730.tags" = "mad | oliven";
+// 🥥 - coconut
+"72078905.name" = "kokosnød";
+"72078905.tags" = "kokosnød | palme";
+// 🥑 - avocado
+"72078805.name" = "avokado";
+"72078805.tags" = "avocado | avokado | frugt | mad";
+// 🍆 - eggplant
+"72078740.name" = "aubergine";
+"72078740.tags" = "aubergine | grøntsag";
+// 🥔 - potato
+"72078820.name" = "kartoffel";
+"72078820.tags" = "grøntsag | kartoffel | mad | rodfrugt";
+// 🥕 - carrot
+"72078825.name" = "gulerod";
+"72078825.tags" = "grøntsag | gulerod | mad | rodfrugt";
+// 🌽 - corn
+"72078695.name" = "majs";
+"72078695.tags" = "majs | majskolbe";
+// 🫑 - bell_pepper
+"72080725.name" = "peberfrugt";
+"72080725.tags" = "grøntsag | paprika | peber | peberfrugt | rød peber";
+// 🥒 - cucumber
+"72078810.name" = "agurk";
+"72078810.tags" = "agurk | grøntsag | mad | pickle";
+// 🥬 - leafy_green
+"72078940.name" = "bladgrønt";
+"72078940.tags" = "bladgrønt | grønkål | kål | pak choi | salat";
+// 🥦 - broccoli
+"72078910.name" = "broccoli";
+"72078910.tags" = "broccoli | kål";
+// 🧄 - garlic
+"72079380.name" = "hvidløg";
+"72079380.tags" = "hvidløg | smag";
+// 🧅 - onion
+"72079385.name" = "løg";
+"72079385.tags" = "give smag | løg";
+// 🥜 - peanuts
+"72078860.name" = "jordnødder";
+"72078860.tags" = "jordnød | jordnødder | nød | nødder | peanut | peanuts | snack";
+// 🫘 - beans
+"72080760.name" = "bønner";
+"72080760.tags" = "bælgfrugt | bønner | kidney | mad";
+// 🌰 - chestnut
+"72078630.name" = "kastanje";
+"72078630.tags" = "kastanje | plante";
+// 🫚 - ginger_root
+"72080770.name" = "ingefærrod";
+"72080770.tags" = "ingefærrod | krydderi | øl | rod";
+// 🫛 - pea_pod
+"72080775.name" = "ærtebælg";
+"72080775.tags" = "ært | ærtebælg | bælg | bælgfrugt | bønner | edamame | grøntsag";
+// 🍞 - bread
+"72078860.name" = "brød";
+"72078860.tags" = "bage | brød";
+// 🥐 - croissant
+"72078800.name" = "croissant";
+"72078800.tags" = "brød | croissant | fransk | mad | morgenbrød | morgenmad";
+// 🥖 - baguette_bread
+"72078830.name" = "flute";
+"72078830.tags" = "baguette | brød | flute | franskbrød | mad";
+// 🫓 - flatbread
+"72080735.name" = "fladbrød";
+"72080735.tags" = "arepas | fladbrød | lavash | naan | nan | pita | pitabrød";
+// 🥨 - pretzel
+"72078920.name" = "kringle";
+"72078920.tags" = "kringle | saltkringle";
+// 🥯 - bagel
+"72078955.name" = "bagel";
+"72078955.tags" = "bagel | bagværk";
+// 🥞 - pancakes
+"72078870.name" = "pandekager";
+"72078870.tags" = "crêpe | mad | pandekage | pandekager";
+// 🧇 - waffle
+"72079395.name" = "vaffel";
+"72079395.tags" = "jern | ubeslutsom | vaffel";
+// 🧀 - cheese_wedge
+"72079360.name" = "et stykke ost";
+"72079360.tags" = "et stykke ost | ost";
+// 🍖 - meat_on_bone
+"72078820.name" = "kød";
+"72078820.tags" = "kød | kødben";
+// 🍗 - poultry_leg
+"72078825.name" = "kyllingelår";
+"72078825.tags" = "kylling | kyllingelår";
+// 🥩 - cut_of_meat
+"72078925.name" = "kødudskæring";
+"72078925.tags" = "bøf | kødudskæring | kotelet | lammekotelet | svinekotelet";
+// 🥓 - bacon
+"72078815.name" = "bacon";
+"72078815.tags" = "bacon | gris | kød | mad | svinekød";
+// 🍔 - hamburger
+"72078810.name" = "hamburger";
+"72078810.tags" = "burger | hamburger";
+// 🍟 - fries
+"72078865.name" = "pomfritter";
+"72078865.tags" = "pomfrit | pomfritter | pommes frites";
+// 🍕 - pizza
+"72078815.name" = "pizza";
+"72078815.tags" = "pizza | pizzastykke | stykke pizza";
+// 🌭 - hotdog
+"72078615.name" = "hotdog";
+"72078615.tags" = "frankfurter | hotdog | pølse";
+// 🥪 - sandwich
+"72078930.name" = "sandwich";
+"72078930.tags" = "brød | sandwich";
+// 🌮 - taco
+"72078620.name" = "taco";
+"72078620.tags" = "mexicansk | taco";
+// 🌯 - burrito
+"72078625.name" = "burrito";
+"72078625.tags" = "burrito | mexicansk";
+// 🫔 - tamale
+"72080740.name" = "tamales";
+"72080740.tags" = "mexicansk | tamales | wraps";
+// 🥙 - stuffed_flatbread
+"72078845.name" = "fyldt pitabrød";
+"72078845.tags" = "falafel | fladbrød | fyld | fyldt pitabrød | gyros | kebab | mad | pita";
+// 🧆 - falafel
+"72079390.name" = "falafel";
+"72079390.tags" = "falafel | kikært | kødbolle";
+// 🥚 - egg
+"72078850.name" = "æg";
+"72078850.tags" = "æg | mad";
+// 🍳 - fried_egg
+"72078965.name" = "stegepande";
+"72078965.tags" = "madlavning | spejlæg | stegepande | stegepande med æg";
+// 🥘 - shallow_pan_of_food
+"72078840.name" = "pande med mad";
+"72078840.tags" = "mad | paella | pande | pande med mad | pandestegt | steger";
+// 🍲 - stew
+"72078960.name" = "gryde med mad";
+"72078960.tags" = "gryde | gryde med mad | gryderet | suppe";
+// 🫕 - fondue
+"72080745.name" = "fondue";
+"72080745.tags" = "chokolade | fondue | gryde | ost | schweizisk | smeltet";
+// 🥣 - bowl_with_spoon
+"72078895.name" = "ske i skål";
+"72078895.tags" = "havregrød | morgenmad | mysli | ske i skål";
+// 🥗 - green_salad
+"72078835.name" = "grøn salat";
+"72078835.tags" = "grøn | mad | salat";
+// 🍿 - popcorn
+"72079025.name" = "popcorn";
+"72079025.tags" = "popcorn";
+// 🧈 - butter
+"72079400.name" = "smør";
+"72079400.tags" = "mejeriprodukt | smør";
+// 🧂 - salt
+"72079370.name" = "salt";
+"72079370.tags" = "krydderi | salt | saltbøsse";
+// 🥫 - canned_food
+"72078935.name" = "konserves";
+"72078935.tags" = "dåse | dåsemad | konserves";
+// 🍱 - bento
+"72078955.name" = "bento";
+"72078955.tags" = "bento | bentoboks | boks";
+// 🍘 - rice_cracker
+"72078830.name" = "riskiks";
+"72078830.tags" = "kiks | riskiks";
+// 🍙 - rice_ball
+"72078835.name" = "riskugle";
+"72078835.tags" = "onigiri | ris | riskugle";
+// 🍚 - rice
+"72078840.name" = "ris";
+"72078840.tags" = "restaurant | ris | skål ris";
+// 🍛 - curry
+"72078845.name" = "ris og karry";
+"72078845.tags" = "curry | ris | ris og karry";
+// 🍜 - ramen
+"72078850.name" = "nudler";
+"72078850.tags" = "nudler | ramen-nudler | restaurant | skål nudler";
+// 🍝 - spaghetti
+"72078855.name" = "spaghetti";
+"72078855.tags" = "pasta | restaurant | spaghetti";
+// 🍠 - sweet_potato
+"72078870.name" = "sød kartoffel";
+"72078870.tags" = "kartoffel | sød | stegt";
+// 🍢 - oden
+"72078880.name" = "mad på spyd";
+"72078880.tags" = "fisk | grillspyd | kebab | mad på spyd | pind | skaldyr | spyd";
+// 🍣 - sushi
+"72078885.name" = "sushi";
+"72078885.tags" = "sushi | sushi-restaurant";
+// 🍤 - fried_shrimp
+"72078890.name" = "dybstegt reje";
+"72078890.tags" = "dybstegt reje | reje";
+// 🍥 - fish_cake
+"72078895.name" = "fiskekage";
+"72078895.tags" = "fiskekage | fiskekage med spiral";
+// 🥮 - moon_cake
+"72078950.name" = "månekage";
+"72078950.tags" = "efterår | festival | månekage | yuèbǐng";
+// 🍡 - dango
+"72078875.name" = "dango";
+"72078875.tags" = "dango | iskugler";
+// 🥟 - dumpling
+"72078875.name" = "dumpling";
+"72078875.tags" = "dumpling | gyōza | jiaozi | pierogi | potsticker";
+// 🥠 - fortune_cookie
+"72078880.name" = "lykkekage";
+"72078880.tags" = "lykkekage | spådom";
+// 🥡 - takeout_box
+"72078885.name" = "kinesisk takeaway";
+"72078885.tags" = "china box | kinaboks | kinesisk takeaway | takeaway";
+// 🦀 - crab
+"72079040.name" = "krabbe";
+"72079040.tags" = "krabbe | krebsen | stjernetegn";
+// 🦞 - lobster
+"72079190.name" = "hummer";
+"72079190.tags" = "bisque | hummer | kløer | skaldyr";
+// 🦐 - shrimp
+"72079120.name" = "reje";
+"72079120.tags" = "dyr | havdyr | mad | reje | skaldyr";
+// 🦑 - squid
+"72079125.name" = "sprutte";
+"72079125.tags" = "arme | blæk | blæksprutte | bløddyr | flerarmet | havdyr | mad | multitasking | sprutte";
+// 🦪 - oyster
+"72079250.name" = "østers";
+"72079250.tags" = "dykke | østers | perle";
+// 🍦 - icecream
+"72078900.name" = "softice";
+"72078900.tags" = "is | softice";
+// 🍧 - shaved_ice
+"72078905.name" = "isdessert";
+"72078905.tags" = "is | isdessert | slush ice | snow cone";
+// 🍨 - ice_cream
+"72078910.name" = "is";
+"72078910.tags" = "is | isdessert";
+// 🍩 - doughnut
+"72078915.name" = "donut";
+"72078915.tags" = "donut | kage";
+// 🍪 - cookie
+"72078920.name" = "småkage";
+"72078920.tags" = "kage | småkage";
+// 🎂 - birthday
+"72079040.name" = "fødselsdagskage";
+"72079040.tags" = "fødselsdagskage | kage | lagkage";
+// 🍰 - cake
+"72078950.name" = "lagkage";
+"72078950.tags" = "et stykke kage | kage | lagkage";
+// 🧁 - cupcake
+"72079365.name" = "cupcake";
+"72079365.tags" = "bagværk | cupcake | kager | muffin";
+// 🥧 - pie
+"72078915.name" = "tærte";
+"72078915.tags" = "fyld | kage | tærte";
+// 🍫 - chocolate_bar
+"72078925.name" = "chokolade";
+"72078925.tags" = "chokolade | et stykke chokolade";
+// 🍬 - candy
+"72078930.name" = "bolsje";
+"72078930.tags" = "bolsje | slik";
+// 🍭 - lollipop
+"72078935.name" = "slikkepind";
+"72078935.tags" = "slik | slikkepind";
+// 🍮 - custard
+"72078940.name" = "dessert";
+"72078940.tags" = "budding | dessert";
+// 🍯 - honey_pot
+"72078945.name" = "honning";
+"72078945.tags" = "honning | honningkrukke | krukke honning";
+// 🍼 - baby_bottle
+"72079010.name" = "sutteflaske";
+"72079010.tags" = "flaske | mælk | sutteflaske";
+// 🥛 - glass_of_milk
+"72078855.name" = "glas mælk";
+"72078855.tags" = "drik | drikke | glas | mælk";
+// ☕ - coffee
+"30018.name" = "varm drik";
+"30018.tags" = "dampende | drik | drikkevare | kaffe | te | varm";
+// 🫖 - teapot
+"72080750.name" = "tekande";
+"72080750.tags" = "drik | kande | te | tekande | tepotte";
+// 🍵 - tea
+"72078975.name" = "tekrus";
+"72078975.tags" = "kop | te | tekrus | varm te";
+// 🍶 - sake
+"72078980.name" = "sake";
+"72078980.tags" = "flaske sake | sake | sakeflaske | sakekop";
+// 🍾 - champagne
+"72079020.name" = "flaske med flyvende prop";
+"72079020.tags" = "bar | drik | flaske | flaske med flyvende prop | prop";
+// 🍷 - wine_glass
+"72078985.name" = "vinglas";
+"72078985.tags" = "et glas vin | hvidvin | rødvin | vinglas";
+// 🍸 - cocktail
+"72078990.name" = "cocktailglas";
+"72078990.tags" = "cocktail | cocktailglas | martini";
+// 🍹 - tropical_drink
+"72078995.name" = "tropisk drink";
+"72078995.tags" = "cocktail | tropisk drink";
+// 🍺 - beer
+"72079000.name" = "ølkrus";
+"72079000.tags" = "krus | krus øl | ølglas | ølkrus";
+// 🍻 - beers
+"72079005.name" = "skålende ølkrus";
+"72079005.tags" = "krus | krus øl | ølglas | ølkrus | skål | skålende ølkrus";
+// 🥂 - clinking_glasses
+"72078730.name" = "skål";
+"72078730.tags" = "drikke | fejring | glas | skål | skåle";
+// 🥃 - tumbler_glass
+"72078735.name" = "fladbundet glas";
+"72078735.tags" = "fladbundet glas | shotglas | shots | spiritus | sprut | whisky";
+// 🫗 - pouring_liquid
+"72080755.name" = "hælde vand";
+"72080755.tags" = "drik | glas | hælde vand | spilde | tom";
+// 🥤 - cup_with_straw
+"72078900.name" = "bæger med sugerør";
+"72078900.tags" = "bæger | bæger med sugerør | glas med sugerør | sugerør";
+// 🧋 - bubble_tea
+"72079415.name" = "bubble tea";
+"72079415.tags" = "bobler | boblete | bubble tea | mælk | perler | te";
+// 🧃 - beverage_box
+"72079375.name" = "brik";
+"72079375.tags" = "brik | juicebrik";
+// 🧉 - mate_drink
+"72079405.name" = "mate";
+"72079405.tags" = "drik | mate";
+// 🧊 - ice_cube
+"72079410.name" = "isterning";
+"72079410.tags" = "isbjerg | isterning | kold";
+// 🥢 - chopsticks
+"72078890.name" = "spisepinde";
+"72078890.tags" = "asiatisk | spisepinde";
+// 🍴 - fork_and_knife
+"72078970.name" = "kniv og gaffel";
+"72078970.tags" = "bestik | gaffel | kniv | kniv og gaffel";
+// 🥄 - spoon
+"72078740.name" = "ske";
+"72078740.tags" = "bestik | ske";
+// 🔪 - hocho
+"72077325.name" = "køkkenkniv";
+"72077325.tags" = "kniv | køkkenkniv";
+// 🫙 - jar
+"72080765.name" = "krukke";
+"72080765.tags" = "beholder | glas | konservere | krukke | sylte | tilbehør | tom";
+// 🏺 - amphora
+"72079640.name" = "amfora";
+"72079640.tags" = "amfora | drik | kande | krukke | madlavning | stjernetegn | vandmand";
+// 🌍 - earth_africa
+"72078455.name" = "globus med Europa og Afrika";
+"72078455.tags" = "Afrika | Europa | globus med Europa og Afrika | jorden";
+// 🌎 - earth_americas
+"72078460.name" = "globus med Nord- og Sydamerika";
+"72078460.tags" = "Amerika | globus med Nord- og Sydamerika | jorden | Nord- og Sydamerika";
+// 🌏 - earth_asia
+"72078465.name" = "globus med Asien og Australien";
+"72078465.tags" = "Asien | Australien | globus med Asien og Australien | jorden";
+// 🌐 - globe_with_meridians
+"72078470.name" = "globus med meridianer";
+"72078470.tags" = "breddegrader | globus med meridianer | længdegrader";
+// 🗾 - japan
+"72078385.name" = "kort over Japan";
+"72078385.tags" = "Japan | kort | kort over Japan";
+// 🧭 - compass
+"72079585.name" = "kompas";
+"72079585.tags" = "kompas | magnetisk | navigation | verdenshjørne";
+// 🌋 - volcano
+"72078445.name" = "vulkan";
+"72078445.tags" = "vulkan | vulkanudbrud";
+// 🗻 - mount_fuji
+"72078370.name" = "Fuji-bjerget";
+"72078370.tags" = "bjerg | Fuji | Fuji-bjerget";
+// 🧱 - bricks
+"72079605.name" = "mursten";
+"72079605.tags" = "ler | mørtel | mur | mursten";
+// 🪨 - rock
+"72080520.name" = "sten";
+"72080520.tags" = "kampesten | klippe | solid | sten | tung";
+// 🪵 - wood
+"72080585.name" = "træ";
+"72080585.tags" = "brænde | tømmer | træ | træstamme";
+// 🛖 - hut
+"72079465.name" = "hytte";
+"72079465.tags" = "hus | hytte | jurte | rundhus";
+// 🏠 - house
+"72079510.name" = "hus";
+"72079510.tags" = "bygning | hjem | hus";
+// 🏡 - house_with_garden
+"72079515.name" = "hus med have";
+"72079515.tags" = "have | hjem | hus med have";
+// 🏢 - office
+"72079520.name" = "kontorbygning";
+"72079520.tags" = "bygning | kontor | kontorbygning";
+// 🏣 - post_office
+"72079525.name" = "japansk posthus";
+"72079525.tags" = "japansk | posthus | postkontor";
+// 🏤 - european_post_office
+"72079530.name" = "posthus";
+"72079530.tags" = "europæisk posthus | posthus";
+// 🏥 - hospital
+"72079535.name" = "hospital";
+"72079535.tags" = "bygning | doktor | hospital | læge | medicin | sygehus";
+// 🏦 - bank
+"72079540.name" = "bank";
+"72079540.tags" = "bank | bygning";
+// 🏨 - hotel
+"72079550.name" = "hotel";
+"72079550.tags" = "bygning | hotel";
+// 🏩 - love_hotel
+"72079555.name" = "kærlighedshotel";
+"72079555.tags" = "hotel | kærlighedshotel | romantik";
+// 🏪 - convenience_store
+"72079560.name" = "døgnkiosk";
+"72079560.tags" = "døgnkiosk | kiosk | købmand";
+// 🏫 - school
+"72079565.name" = "skole";
+"72079565.tags" = "bygning | skole";
+// 🏬 - department_store
+"72079570.name" = "stormagasin";
+"72079570.tags" = "butik | stormagasin | varehus";
+// 🏭 - factory
+"72079575.name" = "fabrik";
+"72079575.tags" = "bygning | fabrik";
+// 🏯 - japanese_castle
+"72079585.name" = "japansk slot";
+"72079585.tags" = "bygning | japansk slot | slot";
+// 🏰 - european_castle
+"72079590.name" = "slot";
+"72079590.tags" = "bygning | slot";
+// 💒 - wedding
+"72076565.name" = "bryllup";
+"72076565.tags" = "bryllup | kærlighed | kirke | romantik";
+// 🗼 - tokyo_tower
+"72078375.name" = "Tokyo Tower";
+"72078375.tags" = "Tokyo | Tokyo Tower";
+// 🗽 - statue_of_liberty
+"72078380.name" = "Frihedsgudinden";
+"72078380.tags" = "frihed | Frihedsgudinden | gudinde";
+// ⛪ - church
+"30657.name" = "kirke";
+"30657.tags" = "bygning | kirke | kors | kristen | religion";
+// 🕌 - mosque
+"72077495.name" = "moské";
+"72077495.tags" = "islam | moské | muslim | religion";
+// 🛕 - hindu_temple
+"72079460.name" = "hindutempel";
+"72079460.tags" = "hindu | hindutempel | tempel";
+// 🕍 - synagogue
+"72077500.name" = "synagoge";
+"72077500.tags" = "jøde | jødisk | religion | synagoge | tempel";
+// 🕋 - kaaba
+"72077490.name" = "Kabaen";
+"72077490.tags" = "islam | Kabaen | muslim | religion";
+// ⛲ - fountain
+"30681.name" = "springvand";
+"30681.tags" = "fontæne | springvand";
+// ⛺ - tent
+"30705.name" = "telt";
+"30705.tags" = "camping | telt";
+// 🌁 - foggy
+"72078395.name" = "tåget";
+"72078395.tags" = "tåge | tåget";
+// 🌃 - night_with_stars
+"72078405.name" = "stjernehimmel";
+"72078405.tags" = "nat | stjernehimmel | stjerner";
+// 🌄 - sunrise_over_mountains
+"72078410.name" = "solopgang over bjerge";
+"72078410.tags" = "bjerge | morgensol | solopgang over bjerge";
+// 🌅 - sunrise
+"72078415.name" = "solopgang";
+"72078415.tags" = "morgensol | solopgang";
+// 🌆 - city_sunset
+"72078420.name" = "by i solnedgang";
+"72078420.tags" = "aften | by | by i solnedgang | højhuse | solnedgang";
+// 🌇 - city_sunrise
+"72078425.name" = "solnedgang";
+"72078425.tags" = "skumring | solnedgang | solnedgang bag bygninger";
+// 🌉 - bridge_at_night
+"72078435.name" = "bro i mørke";
+"72078435.tags" = "bro i mørke | bro i natten | nat";
+// 🎠 - carousel_horse
+"72079190.name" = "karrusel";
+"72079190.tags" = "karrusel | karruselhest | karruseltur | køre i karrusel";
+// 🛝 - playground_slide
+"72079500.name" = "legeplads-rutsjebane";
+"72079500.tags" = "forlystelsespark | leg | legeplads-rutsjebane";
+// 🎡 - ferris_wheel
+"72079195.name" = "pariserhjul";
+"72079195.tags" = "forlystelse | forlystelsespark | pariserhjul | tivoli";
+// 🎢 - roller_coaster
+"72079200.name" = "rutsjebane";
+"72079200.tags" = "forlystelse | forlystelsespark | rutsjebane | tivoli";
+// 💈 - barber
+"72076515.name" = "barber";
+"72076515.tags" = "barber | barbersalon";
+// 🎪 - circus_tent
+"72079240.name" = "cirkus";
+"72079240.tags" = "cirkus | cirkustelt | telt";
+// 🚂 - steam_locomotive
+"72079045.name" = "lokomotiv";
+"72079045.tags" = "damplokomotiv | lokomotiv | tog";
+// 🚃 - railway_car
+"72079050.name" = "togvogn";
+"72079050.tags" = "tog | togvogn";
+// 🚄 - bullettrain_side
+"72079055.name" = "lyntog";
+"72079055.tags" = "lyntog | tog";
+// 🚅 - bullettrain_front
+"72079060.name" = "højhastighedstog";
+"72079060.tags" = "højhastighedstog | tog";
+// 🚆 - train2
+"72079065.name" = "tog";
+"72079065.tags" = "køretøj | tog";
+// 🚇 - metro
+"72079070.name" = "metro";
+"72079070.tags" = "køretøj | metro | undergrund | undergrundsbane";
+// 🚈 - light_rail
+"72079075.name" = "letbane";
+"72079075.tags" = "køretøj | letbane | tog";
+// 🚉 - station
+"72079080.name" = "togstation";
+"72079080.tags" = "station | tog | togstation";
+// 🚊 - tram
+"72079085.name" = "sporvogn";
+"72079085.tags" = "køretøj | sporvogn | trolleybus";
+// 🚝 - monorail
+"72079180.name" = "monorail";
+"72079180.tags" = "køretøj | monorail";
+// 🚞 - mountain_railway
+"72079185.name" = "bjergbane";
+"72079185.tags" = "bjergbane | svævebane";
+// 🚋 - train
+"72079090.name" = "vogn";
+"72079090.tags" = "køretøj | sporvogn | trolleybus | vogn";
+// 🚌 - bus
+"72079095.name" = "bus";
+"72079095.tags" = "bus | køretøj";
+// 🚍 - oncoming_bus
+"72079100.name" = "bus forfra";
+"72079100.tags" = "bus | forfra | kørende | køretøj";
+// 🚎 - trolleybus
+"72079105.name" = "trolleybus";
+"72079105.tags" = "bus | køretøj | sporvogn | trolley | trolleybus";
+// 🚐 - minibus
+"72079115.name" = "minibus";
+"72079115.tags" = "bus | minibus";
+// 🚑 - ambulance
+"72079120.name" = "ambulance";
+"72079120.tags" = "ambulance | køretøj";
+// 🚒 - fire_engine
+"72079125.name" = "brandbil";
+"72079125.tags" = "brand | brandbil | køretøj";
+// 🚓 - police_car
+"72079130.name" = "politibil";
+"72079130.tags" = "politi | politibil";
+// 🚔 - oncoming_police_car
+"72079135.name" = "politibil forfra";
+"72079135.tags" = "kørende politibil | politi | politibil forfra";
+// 🚕 - taxi
+"72079140.name" = "taxa";
+"72079140.tags" = "bil | køretøj | taxa | taxi";
+// 🚖 - oncoming_taxi
+"72079145.name" = "taxa forfra";
+"72079145.tags" = "kørende taxa | taxa forfra";
+// 🚗 - car
+"72079150.name" = "bil";
+"72079150.tags" = "bil | køretøj";
+// 🚘 - oncoming_automobile
+"72079155.name" = "bil forfra";
+"72079155.tags" = "bil | bil forfra | fartøj | kørende";
+// 🚙 - blue_car
+"72079160.name" = "firehjulstrækker";
+"72079160.tags" = "firehjulstrækker | fritid | jeep | køretøj";
+// 🛻 - pickup_truck
+"72079650.name" = "pickup";
+"72079650.tags" = "åbent lad | pickup | pickup truck | varevogn";
+// 🚚 - truck
+"72079165.name" = "lastbil";
+"72079165.tags" = "køretøj | lastbil | levering | transport | truck";
+// 🚛 - articulated_lorry
+"72079170.name" = "lastvogn";
+"72079170.tags" = "køretøj | lastbil | lastvogn | levering | transport | truck";
+// 🚜 - tractor
+"72079175.name" = "traktor";
+"72079175.tags" = "køretøj | traktor";
+// 🛵 - motor_scooter
+"72079620.name" = "scooter";
+"72079620.tags" = "scooter | transportmiddel";
+// 🦽 - manual_wheelchair
+"72079345.name" = "manuel kørestol";
+"72079345.tags" = "handikap | manuel kørestol";
+// 🦼 - motorized_wheelchair
+"72079340.name" = "elektrisk kørestol";
+"72079340.tags" = "elektrisk kørestol | handikap";
+// 🛺 - auto_rickshaw
+"72079645.name" = "motor-rickshaw";
+"72079645.tags" = "motor-rickshaw | tuk tuk";
+// 🚲 - bike
+"72079285.name" = "cykel";
+"72079285.tags" = "cykel | tohjulet";
+// 🛴 - scooter
+"72079615.name" = "løbehjul";
+"72079615.tags" = "løbehjul | transportmiddel";
+// 🛹 - skateboard
+"72079640.name" = "skateboard";
+"72079640.tags" = "bræt | skateboard";
+// 🛼 - roller_skate
+"72079655.name" = "rulleskøjte";
+"72079655.tags" = "rulle | rulleskøjte | skøjte";
+// 🚏 - busstop
+"72079110.name" = "busstoppested";
+"72079110.tags" = "bus | busstoppested | stoppested";
+// ⛽ - fuelpump
+"30714.name" = "tankstation";
+"30714.tags" = "benzinpumpe | tankstation";
+// 🛞 - wheel
+"72079505.name" = "hjul";
+"72079505.tags" = "cirkel | dæk | dreje | hjul";
+// 🚨 - rotating_light
+"72079235.name" = "politiblink";
+"72079235.tags" = "politi | politiblink | politilys | rødt blink | rotorblink";
+// 🚥 - traffic_light
+"72079220.name" = "liggende trafiklys";
+"72079220.tags" = "liggende trafiklys | lys | signal | trafik";
+// 🚦 - vertical_traffic_light
+"72079225.name" = "trafiklys";
+"72079225.tags" = "lys | signal | trafik | trafiklys";
+// 🛑 - octagonal_sign
+"72079440.name" = "stopskilt";
+"72079440.tags" = "ottekant | ottekantet | skilt | stop | stopskilt";
+// 🚧 - construction
+"72079230.name" = "byggeri";
+"72079230.tags" = "byggeri | spærring";
+// ⚓ - anchor
+"30396.name" = "anker";
+"30396.tags" = "anker | båd | skib | værktøj";
+// 🛟 - ring_buoy
+"72079510.name" = "redningskrans";
+"72079510.tags" = "bøje | flyde | livredder | redde | redningskrans | sikkerhed";
+// ⛵ - boat
+"30690.name" = "sejlbåd";
+"30690.tags" = "båd | sejlbåd";
+// 🛶 - canoe
+"72079625.name" = "kano";
+"72079625.tags" = "båd | kano | transportmiddel";
+// 🚤 - speedboat
+"72079215.name" = "speedbåd";
+"72079215.tags" = "båd | speedbåd";
+// 🚢 - ship
+"72079205.name" = "skib";
+"72079205.tags" = "fartøj | skib";
+// 🛫 - airplane_departure
+"72079570.name" = "flyafgang";
+"72079570.tags" = "afgang | afrejse | fartøj | fly | flyafgang | indtjekning";
+// 🛬 - airplane_arriving
+"72079575.name" = "flyankomst";
+"72079575.tags" = "ankomme | ankomst | fartøj | fly | flyankomst | landing";
+// 🪂 - parachute
+"72080330.name" = "faldskærm";
+"72080330.tags" = "faldskærm | hangglider | paraglider | skydiver";
+// 💺 - seat
+"72076765.name" = "sæde";
+"72076765.tags" = "plads | sæde | stol";
+// 🚁 - helicopter
+"72079040.name" = "helikopter";
+"72079040.tags" = "fartøj | helikopter";
+// 🚟 - suspension_railway
+"72079190.name" = "luftbane";
+"72079190.tags" = "fartøj | hængende | luftbane | togbane";
+// 🚠 - mountain_cableway
+"72079195.name" = "kabelbane";
+"72079195.tags" = "bjerg | fartøj | gondol | kabel | kabelbane";
+// 🚡 - aerial_tramway
+"72079200.name" = "svævebane";
+"72079200.tags" = "fartøj | gondol | kabel | svæve | svævebane";
+// 🚀 - rocket
+"72079035.name" = "raket";
+"72079035.tags" = "fartøj | raket | rumfartøj | rummet | rumskib";
+// 🛸 - flying_saucer
+"72079635.name" = "ufo";
+"72079635.tags" = "flyvende tallerken | ufo";
+// 🧳 - luggage
+"72079615.name" = "bagage";
+"72079615.tags" = "bagage | kuffert | pakke | rejse";
+// ⌛ - hourglass
+"27732.name" = "udløbet timeglas";
+"27732.tags" = "sand | tid | udløbet timeglas";
+// ⏳ - hourglass_flowing_sand
+"28380.name" = "timeglas med løbende sand";
+"28380.tags" = "sand | tid | timeglas | timeglas med løbende sand";
+// ⌚ - watch
+"27729.name" = "ur";
+"27729.tags" = "armbåndsur | ur";
+// ⏰ - alarm_clock
+"28371.name" = "vækkeur";
+"28371.tags" = "alarm | ur | vækkeur";
+// 🕛 - clock12
+"72077570.name" = "kl. tolv";
+"72077570.tags" = "12.00 | 24.00 | kl. 24 | kl. tolv";
+// 🕧 - clock1230
+"72077630.name" = "halv et";
+"72077630.tags" = "0.30 | 12.30 | halv et";
+// 🕐 - clock1
+"72077515.name" = "kl. et";
+"72077515.tags" = "1.00 | 13.00 | kl. 13 | kl. et";
+// 🕜 - clock130
+"72077575.name" = "halv to";
+"72077575.tags" = "1.30 | 13.30 | halv to";
+// 🕑 - clock2
+"72077520.name" = "kl. to";
+"72077520.tags" = "14.00 | 2.00 | kl. to | kl.14";
+// 🕝 - clock230
+"72077580.name" = "halv tre";
+"72077580.tags" = "14.30 | 2.30 | halv tre";
+// 🕒 - clock3
+"72077525.name" = "kl. tre";
+"72077525.tags" = "15.00 | 3.00 | kl. tre | kl.15";
+// 🕞 - clock330
+"72077585.name" = "halv fire";
+"72077585.tags" = "15.30 | 3.30 | halv fire";
+// 🕓 - clock4
+"72077530.name" = "kl. fire";
+"72077530.tags" = "16.00 | 4.00 | kl. 16 | kl. fire";
+// 🕟 - clock430
+"72077590.name" = "halv fem";
+"72077590.tags" = "16.30 | 4.30 | halv fem";
+// 🕔 - clock5
+"72077535.name" = "kl. fem";
+"72077535.tags" = "17.00 | 5.00 | kl. 17 | kl. fem";
+// 🕠 - clock530
+"72077595.name" = "halv seks";
+"72077595.tags" = "17.30 | 5.30 | halv seks";
+// 🕕 - clock6
+"72077540.name" = "kl. seks";
+"72077540.tags" = "18.00 | 6.00 | kl. 18 | kl. seks";
+// 🕡 - clock630
+"72077600.name" = "halv syv";
+"72077600.tags" = "18.30 | 6.30 | halv syv";
+// 🕖 - clock7
+"72077545.name" = "kl. syv";
+"72077545.tags" = "19.00 | 7.00 | kl. 19 | kl. syv";
+// 🕢 - clock730
+"72077605.name" = "halv otte";
+"72077605.tags" = "19.30 | 7.30 | halv otte";
+// 🕗 - clock8
+"72077550.name" = "kl. otte";
+"72077550.tags" = "20.00 | 8.00 | kl. 20 | kl. otte";
+// 🕣 - clock830
+"72077610.name" = "halv ni";
+"72077610.tags" = "20.30 | 8.30 | halv ni";
+// 🕘 - clock9
+"72077555.name" = "kl. ni";
+"72077555.tags" = "21.00 | 9.00 | kl. 21 | kl. ni";
+// 🕤 - clock930
+"72077615.name" = "halv ti";
+"72077615.tags" = "21.30 | 9.30 | halv ti";
+// 🕙 - clock10
+"72077560.name" = "kl. ti";
+"72077560.tags" = "10.00 | 22.00 | kl. 22 | kl. ti";
+// 🕥 - clock1030
+"72077620.name" = "halv elleve";
+"72077620.tags" = "10.30 | 22.30 | halv elleve";
+// 🕚 - clock11
+"72077565.name" = "kl. elleve";
+"72077565.tags" = "11.00 | 23.00 | kl. 23 | kl. elleve";
+// 🕦 - clock1130
+"72077625.name" = "halv tolv";
+"72077625.tags" = "11.30 | 23.30 | halv tolv";
+// 🌑 - new_moon
+"72078475.name" = "nymåne";
+"72078475.tags" = "måne | månefase | nymåne";
+// 🌒 - waxing_crescent_moon
+"72078480.name" = "tiltagende måne";
+"72078480.tags" = "måne | månefase | tiltagende måne";
+// 🌓 - first_quarter_moon
+"72078485.name" = "halvmåne 1. fjerdedel";
+"72078485.tags" = "første kvarter måne | halvmåne 1. fjerdedel | måne | månefase";
+// 🌔 - moon
+"72078490.name" = "tiltagende måne næsten fuld";
+"72078490.tags" = "måne | månefase | tiltagende måne næsten fuld";
+// 🌕 - full_moon
+"72078495.name" = "fuldmåne";
+"72078495.tags" = "fuldmåne | måne | månefase";
+// 🌖 - waning_gibbous_moon
+"72078500.name" = "aftagende måne næsten fuld";
+"72078500.tags" = "aftagende måne næsten fuld | måne | månefase";
+// 🌗 - last_quarter_moon
+"72078505.name" = "halvmåne 4. fjerdedel";
+"72078505.tags" = "halvmåne 4. fjerdedel | måne | månefase | sidste kvarter måne";
+// 🌘 - waning_crescent_moon
+"72078510.name" = "aftagende måne";
+"72078510.tags" = "aftagende måne | måne | månefase";
+// 🌙 - crescent_moon
+"72078515.name" = "halvmåne";
+"72078515.tags" = "halvmåne | tiltagende måne";
+// 🌚 - new_moon_with_face
+"72078520.name" = "nymåne med ansigt";
+"72078520.tags" = "ansigt i måne | nymåne | nymåne med ansigt";
+// 🌛 - first_quarter_moon_with_face
+"72078525.name" = "måne med ansigt 1. fjerdedel";
+"72078525.tags" = "måne | måne med ansigt 1. fjerdedel | måneansigt";
+// 🌜 - last_quarter_moon_with_face
+"72078530.name" = "måne med ansigt 4. fjerdedel";
+"72078530.tags" = "måne | måne med ansigt 4. fjerdedel | måneansigt";
+// 🌝 - full_moon_with_face
+"72078535.name" = "fuldmåne med ansigt";
+"72078535.tags" = "fuldmåne | fuldmåne med ansigt | fuldmåneansigt | måne med ansigt | måneansigt";
+// 🌞 - sun_with_face
+"72078540.name" = "sol med ansigt";
+"72078540.tags" = "ansigt | sol | sol med ansigt";
+// 🪐 - ringed_planet
+"72080400.name" = "planet med ringe";
+"72080400.tags" = "planet med ringe | Saturn";
+// ⭐ - star
+"34035.name" = "stjerne";
+"34035.tags" = "stjerne";
+// 🌟 - star2
+"72078545.name" = "blinkende stjerne";
+"72078545.tags" = "blinkende stjerne | lysende stjerne | lyser | skinner | stjerneskin";
+// 🌠 - stars
+"72078550.name" = "stjerneskud";
+"72078550.tags" = "stjerne | stjerneskud";
+// 🌌 - milky_way
+"72078450.name" = "mælkevejen";
+"72078450.tags" = "galakse | mælkevejen";
+// ⛅ - partly_sunny
+"30546.name" = "sol bag sky";
+"30546.tags" = "sky | sol | sol bag sky";
+// 🌀 - cyclone
+"72078390.name" = "cyklon";
+"72078390.tags" = "cyklon | svimmel | tornado | tyfon";
+// 🌈 - rainbow
+"72078430.name" = "regnbue";
+"72078430.tags" = "regn | regnbue | vejr";
+// 🌂 - closed_umbrella
+"72078400.name" = "lukket paraply";
+"72078400.tags" = "lukket paraply | regn | regnvejr";
+// ☔ - umbrella_with_rain_drops
+"30015.name" = "paraply med regndråber";
+"30015.tags" = "dråbe | paraply | paraply med regndråber | regn | vejr";
+// ⚡ - zap
+"30438.name" = "højspænding";
+"30438.tags" = "advarsel | fare | højspænding";
+// ⛄ - snowman_without_snow
+"30543.name" = "snemand uden snevejr";
+"30543.tags" = "sne | snemand uden snevejr";
+// 🔥 - fire
+"72077300.name" = "ild";
+"72077300.tags" = "flamme | ild";
+// 💧 - droplet
+"72076670.name" = "dråbe";
+"72076670.tags" = "dråbe | dråbe sved | følelser | koldsved";
+// 🌊 - ocean
+"72078440.name" = "bølge";
+"72078440.tags" = "bølge | havbølge | vandbølge";
+// 🎃 - jack_o_lantern
+"72079045.name" = "græskarmand";
+"72079045.tags" = "græskar | græskarlygte | græskarmand | halloween";
+// 🎄 - christmas_tree
+"72079050.name" = "juletræ";
+"72079050.tags" = "jul | juletræ | træ";
+// 🎆 - fireworks
+"72079060.name" = "fyrværkeri";
+"72079060.tags" = "fest | fyrværkeri | nytår";
+// 🎇 - sparkler
+"72079065.name" = "stjernekaster";
+"72079065.tags" = "fyrværkeri | nytår | stjernekaster";
+// 🧨 - firecracker
+"72079560.name" = "kanonslag";
+"72079560.tags" = "dynamit | eksplosiv | fyrværkeri | kanonslag";
+// ✨ - sparkles
+"30843.name" = "stjerner";
+"30843.tags" = "skinne | stjerne | stjerner";
+// 🎈 - balloon
+"72079070.name" = "ballon";
+"72079070.tags" = "ballon | fest | fødselsdag";
+// 🎉 - tada
+"72079075.name" = "bordbombe";
+"72079075.tags" = "bordbombe | fest | nytår";
+// 🎊 - confetti_ball
+"72079080.name" = "konfetti";
+"72079080.tags" = "fest | konfetti | konfettidåse | konfettiregn";
+// 🎋 - tanabata_tree
+"72079085.name" = "træ med papirpynt";
+"72079085.tags" = "festival | japansk | tanabata | træ med papirpynt";
+// 🎍 - bamboo
+"72079095.name" = "fyrretræsdekoration";
+"72079095.tags" = "fyrretræsdekoration | japansk nytår";
+// 🎎 - dolls
+"72079100.name" = "japanske dukker";
+"72079100.tags" = "fejring | festival | japansk | japanske dukker";
+// 🎏 - flags
+"72079105.name" = "karpevimpel";
+"72079105.tags" = "banner med fisk | banner med karper | karpevimpel";
+// 🎐 - wind_chime
+"72079110.name" = "vindspil";
+"72079110.tags" = "vindpiber | vindspil";
+// 🎑 - rice_scene
+"72079115.name" = "måneceremoni";
+"72079115.tags" = "ceremoni | fejring | måne | måneceremoni";
+// 🧧 - red_envelope
+"72079555.name" = "pengegave";
+"72079555.tags" = "gave | held og lykke | hóngbāo | lai see | penge | pengegave";
+// 🎀 - ribbon
+"72079030.name" = "sløjfe";
+"72079030.tags" = "fejring | sløjfe";
+// 🎁 - gift
+"72079035.name" = "gave";
+"72079035.tags" = "fødselsdag | gave | overraskelse | pakke";
+// 🎫 - ticket
+"72079245.name" = "billet";
+"72079245.tags" = "billet | entré | forlystelse | underholdning";
+// 🏆 - trophy
+"72079380.name" = "pokal";
+"72079380.tags" = "pokal | præmie | trofæ";
+// 🏅 - sports_medal
+"72079375.name" = "sportsmedalje";
+"72079375.tags" = "medalje | sportsmedalje";
+// 🥇 - first_place_medal
+"72078755.name" = "guldmedalje";
+"72078755.tags" = "førsteplads | førstepræmie | guld | guldmedalje | medalje | vinder";
+// 🥈 - second_place_medal
+"72078760.name" = "sølvmedalje";
+"72078760.tags" = "andenplads | andenpræmie | medalje | sølv | sølvmedalje | vinder";
+// 🥉 - third_place_medal
+"72078765.name" = "bronzemedalje";
+"72078765.tags" = "bronze | bronzemedalje | medalje | tredjeplads | tredjepræmie | vinder";
+// ⚽ - soccer
+"30522.name" = "fodbold";
+"30522.tags" = "bold | fodbold";
+// ⚾ - baseball
+"30525.name" = "baseball";
+"30525.tags" = "baseball | bold";
+// 🥎 - softball
+"72078790.name" = "softball";
+"72078790.tags" = "bold | handske | softball";
+// 🏀 - basketball
+"72079350.name" = "basketball";
+"72079350.tags" = "basketball | bold | sport";
+// 🏐 - volleyball
+"72079430.name" = "volleyball";
+"72079430.tags" = "bold | spil | volleyball";
+// 🏈 - football
+"72079390.name" = "amerikansk fodbold";
+"72079390.tags" = "amerikansk fodbold | football | sport";
+// 🏉 - rugby_football
+"72079395.name" = "rugbybold";
+"72079395.tags" = "bold | rugby | rugbybold | sport";
+// 🎾 - tennis
+"72079340.name" = "tennis";
+"72079340.tags" = "bold | sport | tennis | tennisbold | tennisbold og ketsjer";
+// 🥏 - flying_disc
+"72078795.name" = "frisbee";
+"72078795.tags" = "frisbee | ultimate";
+// 🎳 - bowling
+"72079285.name" = "bowling";
+"72079285.tags" = "bowling | bowlingkugle | spille";
+// 🏏 - cricket_bat_and_ball
+"72079425.name" = "cricket";
+"72079425.tags" = "bat | bold | cricket | spil";
+// 🏑 - field_hockey_stick_and_ball
+"72079435.name" = "hockey";
+"72079435.tags" = "bold | hockey | spil | stav";
+// 🏒 - ice_hockey_stick_and_puck
+"72079440.name" = "ishockey";
+"72079440.tags" = "hockey | is | ishockey | ishockeystav og puck | puck | spil | stav";
+// 🥍 - lacrosse
+"72078785.name" = "lacrosse";
+"72078785.tags" = "bold | lacrosse | mål | stav";
+// 🏓 - table_tennis_paddle_and_ball
+"72079445.name" = "bordtennis";
+"72079445.tags" = "bat | bold | bord | bordtennis | pingpong | spil | tennis";
+// 🏸 - badminton_racquet_and_shuttlecock
+"72079630.name" = "badminton";
+"72079630.tags" = "badminton | fjerbold | ketsjer | spil";
+// 🥊 - boxing_glove
+"72078770.name" = "boksehandske";
+"72078770.tags" = "bokse | boksehandske | boksning | handske | sport";
+// 🥋 - martial_arts_uniform
+"72078775.name" = "karatedragt";
+"72078775.tags" = "judo | kampsport | karate | karatedragt | sport | taekwondo | uniform";
+// 🥅 - goal_net
+"72078745.name" = "målnet";
+"72078745.tags" = "mål | målnet | net | sport";
+// ⛳ - golf
+"30684.name" = "golfhul med flag";
+"30684.tags" = "golf | golfhul med flag";
+// 🎣 - fishing_pole_and_fish
+"72079205.name" = "fiskestang";
+"72079205.tags" = "fiskeri | fiskestang | fiskestang med fisk";
+// 🤿 - diving_mask
+"72078715.name" = "dykkermaske";
+"72078715.tags" = "dykke | dykkermaske | maske | snorkel";
+// 🎽 - running_shirt_with_sash
+"72079335.name" = "løbetrøje";
+"72079335.tags" = "løbe | løbetrøje | løbetrøje med bånd";
+// 🎿 - ski
+"72079345.name" = "ski";
+"72079345.tags" = "ski | skisport";
+// 🛷 - sled
+"72079630.name" = "kælk";
+"72079630.tags" = "kælk | slæde";
+// 🥌 - curling_stone
+"72078780.name" = "curlingsten";
+"72078780.tags" = "curlingsten | spil | sten";
+// 🎯 - dart
+"72079265.name" = "pletskud";
+"72079265.tags" = "plet | pletskud";
+// 🪀 - yo-yo
+"72080320.name" = "yoyo";
+"72080320.tags" = "legetøj | yoyo";
+// 🪁 - kite
+"72080325.name" = "legetøjsdrage";
+"72080325.tags" = "flyve | legetøjsdrage | svæve";
+// 🔫 - gun
+"72077330.name" = "vandpistol";
+"72077330.tags" = "pistol | revolver | våben | vandpistol";
+// 🎱 - 8ball
+"72079275.name" = "billard";
+"72079275.tags" = "billard | billardkugle | pool";
+// 🔮 - crystal_ball
+"72077345.name" = "krystalkugle";
+"72077345.tags" = "krystalkugle | spådom | spådomskunst";
+// 🪄 - magic_wand
+"72080340.name" = "tryllestav";
+"72080340.tags" = "heks | magi | troldmand | tryllestav";
+// 🎮 - video_game
+"72079260.name" = "videospil";
+"72079260.tags" = "controller | håndcontroller | videospil";
+// 🎰 - slot_machine
+"72079270.name" = "spillemaskine";
+"72079270.tags" = "spil | spillemaskine";
+// 🎲 - game_die
+"72079280.name" = "terning";
+"72079280.tags" = "terning | terningspil";
+// 🧩 - jigsaw
+"72079565.name" = "brik til puslespil";
+"72079565.tags" = "brik | brik til puslespil | puslespil | sammenhængende | spor";
+// 🧸 - teddy_bear
+"72079640.name" = "bamse";
+"72079640.tags" = "bamse | bjørn | legetøj | plys";
+// 🪅 - pinata
+"72080345.name" = "piñata";
+"72080345.tags" = "fejring | fest | piñata";
+// 🪩 - mirror_ball
+"72080525.name" = "diskokugle";
+"72080525.tags" = "dans | disko | diskokugle | fest | glitter | spejlkugle";
+// 🪆 - nesting_dolls
+"72080350.name" = "russiske dukker";
+"72080350.tags" = "babusjka | dukke | matrjosjka | russisk | russiske dukker";
+// 🃏 - black_joker
+"72075585.name" = "joker";
+"72075585.tags" = "joker | kort | spillekort";
+// 🀄 - mahjong
+"72074570.name" = "mahjong-brik";
+"72074570.tags" = "drage | mahjong | mahjong-brik | rød drage";
+// 🎴 - flower_playing_cards
+"72079290.name" = "spillekort med blomster";
+"72079290.tags" = "japansk | kortspil | spillekort med blomster";
+// 🎭 - performing_arts
+"72079255.name" = "masker";
+"72079255.tags" = "masker | teater";
+// 🎨 - art
+"72079230.name" = "palet";
+"72079230.tags" = "farver | kunstner | maler | palet";
+// 🧵 - thread
+"72079625.name" = "tråd";
+"72079625.tags" = "nål | sy | tråd | trisse";
+// 🪡 - sewing_needle
+"72080485.name" = "synål";
+"72080485.tags" = "broderi | nål | skræddersyning | sting | sutur | synål | syning";
+// 🧶 - yarn
+"72079630.name" = "garn";
+"72079630.tags" = "garn | garnnøgle | hækle | strikke";
+// 🪢 - knot
+"72080490.name" = "knude";
+"72080490.tags" = "binde | knob | knude | reb | snor";
+// 👓 - eyeglasses
+"72076250.name" = "briller";
+"72076250.tags" = "beklædning | briller";
+// 🥽 - goggles
+"72079025.name" = "sikkerhedsbriller";
+"72079025.tags" = "øjenbeskyttelse | sikkerhedsbriller | svejse | svømme";
+// 🥼 - lab_coat
+"72079020.name" = "kittel";
+"72079020.tags" = "eksperiment | forsker | kittel | læge";
+// 🦺 - safety_vest
+"72079330.name" = "sikkerhedsvest";
+"72079330.tags" = "nødsituation | sikkerhed | sikkerhedsvest | vest";
+// 👔 - necktie
+"72076255.name" = "slips";
+"72076255.tags" = "beklædning | slips";
+// 👕 - shirt
+"72076260.name" = "T-shirt";
+"72076260.tags" = "beklædning | bluse | T-shirt | trøje";
+// 👖 - jeans
+"72076265.name" = "bukser";
+"72076265.tags" = "beklædning | bukser | jeans";
+// 🧣 - scarf
+"72079535.name" = "halstørklæde";
+"72079535.tags" = "beklædning | hals | halstørklæde | vinter";
+// 🧤 - gloves
+"72079540.name" = "handsker";
+"72079540.tags" = "beklædning | hånd | handsker | vinter";
+// 🧥 - coat
+"72079545.name" = "frakke";
+"72079545.tags" = "beklædning | frakke | jakke | vinter";
+// 🧦 - socks
+"72079550.name" = "sokker";
+"72079550.tags" = "beklædning | sokker | strømper";
+// 👗 - dress
+"72076270.name" = "kjole";
+"72076270.tags" = "beklædning | kjole";
+// 👘 - kimono
+"72076275.name" = "kimono";
+"72076275.tags" = "beklædning | kåbe | kimono";
+// 🥻 - sari
+"72079015.name" = "sari";
+"72079015.tags" = "kjole | sari | tøj";
+// 🩱 - one-piece_swimsuit
+"72080245.name" = "badedragt";
+"72080245.tags" = "badedragt";
+// 🩲 - briefs
+"72080250.name" = "badebukser";
+"72080250.tags" = "badebukser | badetøj | bikiniunderdel | undertøj";
+// 🩳 - shorts
+"72080255.name" = "shorts";
+"72080255.tags" = "badebukser | shorts | underbukser";
+// 👙 - bikini
+"72076280.name" = "bikini";
+"72076280.tags" = "badetøj | beklædning | bikini";
+// 👚 - womans_clothes
+"72076285.name" = "bluse";
+"72076285.tags" = "beklædning | bluse";
+// 🪭 - folding_hand_fan
+"72080545.name" = "sammenklappelig håndvifte";
+"72080545.tags" = "blafre | danse | genert | kølende | sammenklappelig håndvifte | varmt | vifte";
+// 👛 - purse
+"72076290.name" = "pung";
+"72076290.tags" = "pengepung | pung";
+// 👜 - handbag
+"72076295.name" = "håndtaske";
+"72076295.tags" = "håndtaske | taske";
+// 👝 - pouch
+"72076300.name" = "clutch";
+"72076300.tags" = "clutch | pung | taske";
+// 🎒 - school_satchel
+"72079120.name" = "rygsæk";
+"72079120.tags" = "rygsæk | skole | skoletaske | taske";
+// 🩴 - thong_sandal
+"72080260.name" = "klipklapper";
+"72080260.tags" = "klipklapper | sandaler | strandsandaler | zōri";
+// 👞 - mans_shoe
+"72076305.name" = "herresko";
+"72076305.tags" = "herresko | sko";
+// 👟 - athletic_shoe
+"72076310.name" = "løbesko";
+"72076310.tags" = "fritidssko | løbesko | sko | tennissko";
+// 🥾 - hiking_boot
+"72079030.name" = "vandrestøvle";
+"72079030.tags" = "backpacking | camping | friluft | støvle | vandre | vandrestøvle";
+// 🥿 - womans_flat_shoe
+"72079035.name" = "flad sko";
+"72079035.tags" = "ballerina | damesko | flad sko | slippers";
+// 👠 - high_heel
+"72076315.name" = "høje hæle";
+"72076315.tags" = "høje hæle | højhælet sko | sko | stiletter";
+// 👡 - sandal
+"72076320.name" = "damesandal";
+"72076320.tags" = "damesandal | sandaler";
+// 🩰 - ballet_shoes
+"72080240.name" = "balletsko";
+"72080240.tags" = "ballet | balletsko | dans";
+// 👢 - boot
+"72076325.name" = "damestøvle";
+"72076325.tags" = "damestøvle | støvler";
+// 🪮 - hair_pick
+"72080550.name" = "afrokam";
+"72080550.tags" = "afro | afrokam | hår | kam";
+// 👑 - crown
+"72076240.name" = "krone";
+"72076240.tags" = "diadem | dronning | konge | krone";
+// 👒 - womans_hat
+"72076245.name" = "hat";
+"72076245.tags" = "beklædning | damehat | hat";
+// 🎩 - tophat
+"72079235.name" = "høj hat";
+"72079235.tags" = "hat | høj hat | sort hat";
+// 🎓 - mortar_board
+"72079125.name" = "eksamenshat";
+"72079125.tags" = "eksamen | eksamenshat | hat";
+// 🧢 - billed_cap
+"72079530.name" = "kasket";
+"72079530.tags" = "baseballkasket | cap | kasket";
+// 🪖 - military_helmet
+"72080430.name" = "militærhjelm";
+"72080430.tags" = "hær | hjelm | krig | kriger | militær | militærhjelm | soldat";
+// 📿 - prayer_beads
+"72077110.name" = "bedekrans";
+"72077110.tags" = "bedekrans | bøn | halskæde | påklædning | perler | religion";
+// 💄 - lipstick
+"72076495.name" = "læbestift";
+"72076495.tags" = "kosmetik | læbestift | makeup";
+// 💍 - ring
+"72076540.name" = "ring";
+"72076540.tags" = "ring | romantik";
+// 💎 - gem
+"72076545.name" = "ædelsten";
+"72076545.tags" = "ædelsten | juvel | romantik";
+// 🔇 - mute
+"72077150.name" = "højttaler fra";
+"72077150.tags" = "højttaler | højttaler fra | lyd fra | lydløs | stille";
+// 🔈 - speaker
+"72077155.name" = "højttaler lav lydstyrke";
+"72077155.tags" = "højttaler lav lydstyrke | lav";
+// 🔉 - sound
+"72077160.name" = "højttaler mellem lydstyrke";
+"72077160.tags" = "højtaler med en lydbølge | højttaler medium volumen | højttaler mellem lydstyrke | lav volumen";
+// 🔊 - loud_sound
+"72077165.name" = "højttaler høj lydstyrke";
+"72077165.tags" = "høj volumen | højtaler med høj volumen | højttaler høj lydstyrke | højttaler høj volumen";
+// 📢 - loudspeaker
+"72076965.name" = "elektrisk megafon";
+"72076965.tags" = "elektrisk megafon | højttaler | offentlig tale | tale";
+// 📣 - mega
+"72076970.name" = "megafon";
+"72076970.tags" = "kommunikation | megafon";
+// 📯 - postal_horn
+"72077030.name" = "posthorn";
+"72077030.tags" = "post | posthorn";
+// 🔔 - bell
+"72077215.name" = "klokke";
+"72077215.tags" = "klokke";
+// 🔕 - no_bell
+"72077220.name" = "ingen klokke";
+"72077220.tags" = "ingen klokke | ingen lyd | klokke med streg over";
+// 🎼 - musical_score
+"72079330.name" = "partitur";
+"72079330.tags" = "g-nøgle | musik | partitur";
+// 🎵 - musical_note
+"72079295.name" = "node";
+"72079295.tags" = "musik | node";
+// 🎶 - notes
+"72079300.name" = "noder";
+"72079300.tags" = "musik | node | noder";
+// 🎤 - microphone
+"72079210.name" = "mikrofon";
+"72079210.tags" = "karaoke | mikrofon | sang | synge";
+// 🎧 - headphones
+"72079225.name" = "hovedtelefon";
+"72079225.tags" = "høretelefon | hovedtelefon | lytte | musik";
+// 📻 - radio
+"72077090.name" = "radio";
+"72077090.tags" = "æteren | radio";
+// 🎷 - saxophone
+"72079305.name" = "saxofon";
+"72079305.tags" = "instrument | musik | musikinstrument | sax | saxofon";
+// 🪗 - accordion
+"72080435.name" = "akkordeon";
+"72080435.tags" = "akkordeon | bandoneon | harmonika | koncertina | musette";
+// 🎸 - guitar
+"72079310.name" = "guitar";
+"72079310.tags" = "guitar | instrument | musik | musikinstrument | strengeinstrument";
+// 🎹 - musical_keyboard
+"72079315.name" = "klaver";
+"72079315.tags" = "instrument | keyboard | klaver | musik | musikinstrument";
+// 🎺 - trumpet
+"72079320.name" = "trompet";
+"72079320.tags" = "instrument | musik | musikinstrument | trompet";
+// 🎻 - violin
+"72079325.name" = "violin";
+"72079325.tags" = "instrument | musik | musikinstrument | strengeinstrument | violin";
+// 🪕 - banjo
+"72080425.name" = "banjo";
+"72080425.tags" = "banjo | musik | strengeinstrument";
+// 🥁 - drum_with_drumsticks
+"72078725.name" = "tromme";
+"72078725.tags" = "musik | rytme | tromme | trommestikker";
+// 🪘 - long_drum
+"72080440.name" = "høj tromme";
+"72080440.tags" = "beat | conga | høj tromme | rytme | slagtøj | taktslag | tromme";
+// 🪇 - maracas
+"72080355.name" = "maracas";
+"72080355.tags" = "instrument | maracas | musik | rangle | ryste | slagtøj";
+// 🪈 - flute
+"72080360.name" = "fløjte";
+"72080360.tags" = "blokfløjte | fløjte | musik | orgelpibe | træblæseinstrument";
+// 📱 - iphone
+"72077040.name" = "mobil";
+"72077040.tags" = "mobil | mobiltelefon";
+// 📲 - calling
+"72077045.name" = "mobil med pil";
+"72077045.tags" = "indgående opkald | lav et opkald | mobil med pil | modtag et opkald";
+// 📞 - telephone_receiver
+"72076945.name" = "telefonrør";
+"72076945.tags" = "kommunikation | telefonrør";
+// 📟 - pager
+"72076950.name" = "personsøger";
+"72076950.tags" = "bipper | kommunikation | personsøger";
+// 📠 - fax
+"72076955.name" = "fax";
+"72076955.tags" = "fax | faxmaskine | kommunikation | telefax";
+// 🔋 - battery
+"72077170.name" = "batteri";
+"72077170.tags" = "batteri | opladet | opladning";
+// 🪫 - low_battery
+"72080535.name" = "lavt batteriniveau";
+"72080535.tags" = "elektronik | lav energi | lavt batteriniveau";
+// 🔌 - electric_plug
+"72077175.name" = "stik";
+"72077175.tags" = "elektricitet | elektrisk | ledning | stik";
+// 💻 - computer
+"72076770.name" = "bærbar computer";
+"72076770.tags" = "bærbar computer | pc";
+// 💽 - minidisc
+"72076780.name" = "cd-rom";
+"72076780.tags" = "cd-rom | disk";
+// 💾 - floppy_disk
+"72076785.name" = "diskette";
+"72076785.tags" = "computer | diskette";
+// 💿 - cd
+"72076790.name" = "cd";
+"72076790.tags" = "cd | dvd";
+// 📀 - dvd
+"72076795.name" = "dvd";
+"72076795.tags" = "blu-ray | cd | computer | disk | dvd | optisk";
+// 🧮 - abacus
+"72079590.name" = "kugleramme";
+"72079590.tags" = "kugleramme | matematik | regne";
+// 🎥 - movie_camera
+"72079215.name" = "filmkamera";
+"72079215.tags" = "biograf | film | filme | filmkamera";
+// 🎬 - clapper
+"72079250.name" = "klaptræ";
+"72079250.tags" = "film | filmklapper | klapper | klaptræ";
+// 📺 - tv
+"72077085.name" = "tv";
+"72077085.tags" = "fjernsyn | tv";
+// 📷 - camera
+"72077070.name" = "kamera";
+"72077070.tags" = "kamera | video";
+// 📸 - camera_with_flash
+"72077075.name" = "kamera med blitz";
+"72077075.tags" = "blitz | kamera | kamera med blitz | video";
+// 📹 - video_camera
+"72077080.name" = "videokamera";
+"72077080.tags" = "kamera | video | videokamera";
+// 📼 - vhs
+"72077095.name" = "videobånd";
+"72077095.tags" = "video | videobånd";
+// 🔍 - mag
+"72077180.name" = "forstørrelsesglas til venstre";
+"72077180.tags" = "forstørrelse | forstørrelsesglas | forstørrelsesglas til venstre | søgning | værktøj";
+// 🔎 - mag_right
+"72077185.name" = "forstørrelsesglas til højre";
+"72077185.tags" = "forstørrelse | forstørrelsesglas | forstørrelsesglas til højre | søgning | værktøj";
+// 💡 - bulb
+"72076640.name" = "elpære";
+"72076640.tags" = "elpære | ide | idé | lys ide";
+// 🔦 - flashlight
+"72077305.name" = "lommelygte";
+"72077305.tags" = "lommelygte | lygte";
+// 🏮 - izakaya_lantern
+"72079580.name" = "papirlanterne";
+"72079580.tags" = "lanterne | papirlanterne | rød lygte";
+// 🪔 - diya_lamp
+"72080420.name" = "diya-lampe";
+"72080420.tags" = "diya | diya-lampe | lampe | olielampe";
+// 📔 - notebook_with_decorative_cover
+"72076895.name" = "notesbog med udsmykning";
+"72076895.tags" = "notesbog | notesbog med udsmykning";
+// 📕 - closed_book
+"72076900.name" = "lukket bog";
+"72076900.tags" = "bog | lukket bog";
+// 📖 - book
+"72076905.name" = "åben bog";
+"72076905.tags" = "åben bog | bog | læse";
+// 📗 - green_book
+"72076910.name" = "grøn bog";
+"72076910.tags" = "bog | grøn bog";
+// 📘 - blue_book
+"72076915.name" = "blå bog";
+"72076915.tags" = "blå bog | bog";
+// 📙 - orange_book
+"72076920.name" = "orange bog";
+"72076920.tags" = "bog | orange bog";
+// 📚 - books
+"72076925.name" = "bøger";
+"72076925.tags" = "bog | bøger";
+// 📓 - notebook
+"72076890.name" = "notesbog";
+"72076890.tags" = "noter | notesbog";
+// 📒 - ledger
+"72076885.name" = "regnskabsbog";
+"72076885.tags" = "notesbog | regnskabsbog";
+// 📃 - page_with_curl
+"72076810.name" = "side med fold";
+"72076810.tags" = "side | side med fold";
+// 📜 - scroll
+"72076935.name" = "skriftrulle";
+"72076935.tags" = "papir | skriftrulle";
+// 📄 - page_facing_up
+"72076815.name" = "dokument";
+"72076815.tags" = "dokument | side";
+// 📰 - newspaper
+"72077035.name" = "avis";
+"72077035.tags" = "avis | nyheder";
+// 📑 - bookmark_tabs
+"72076880.name" = "faner";
+"72076880.tags" = "bogmærke | faner | mærke";
+// 🔖 - bookmark
+"72077225.name" = "bogmærke";
+"72077225.tags" = "bogmærke | mærke";
+// 💰 - moneybag
+"72076715.name" = "pengepose";
+"72076715.tags" = "dollar | penge | pengepose";
+// 🪙 - coin
+"72080445.name" = "mønt";
+"72080445.tags" = "guld | metal | mønt | penge | skat | sølv";
+// 💴 - yen
+"72076735.name" = "yenseddel";
+"72076735.tags" = "penge | yen | yenseddel";
+// 💵 - dollar
+"72076740.name" = "dollarseddel";
+"72076740.tags" = "dollar | dollarseddel | penge";
+// 💶 - euro
+"72076745.name" = "euroseddel";
+"72076745.tags" = "euro | euroseddel | penge";
+// 💷 - pound
+"72076750.name" = "pundseddel";
+"72076750.tags" = "penge | pund | pundseddel";
+// 💸 - money_with_wings
+"72076755.name" = "flyvende penge";
+"72076755.tags" = "flyvende penge | forbrug | penge | penge med vinger";
+// 💳 - credit_card
+"72076730.name" = "kreditkort";
+"72076730.tags" = "bank | kort | kredit | kreditkort | penge";
+// 🧾 - receipt
+"72079670.name" = "kvittering";
+"72079670.tags" = "bevis | bilag | bogføring | kvittering | regnskab";
+// 💹 - chart
+"72076760.name" = "stigende marked";
+"72076760.tags" = "opadgående graf | stigende marked";
+// 📧 - e-mail
+"72076990.name" = "mail";
+"72076990.tags" = "brev | kommunikation | mail";
+// 📨 - incoming_envelope
+"72076995.name" = "indgående post";
+"72076995.tags" = "e-mail | indgående post | modtaget post";
+// 📩 - envelope_with_arrow
+"72077000.name" = "udgående post";
+"72077000.tags" = "e-mail | sendt post | udgående post";
+// 📤 - outbox_tray
+"72076975.name" = "udbakke";
+"72076975.tags" = "kommunikation | sendt | udbakke";
+// 📥 - inbox_tray
+"72076980.name" = "indbakke";
+"72076980.tags" = "indbakke | kommunikation | modtaget";
+// 📦 - package
+"72076985.name" = "pakke";
+"72076985.tags" = "kasse | pakke";
+// 📫 - mailbox
+"72077010.name" = "lukket postkasse med hævet flag";
+"72077010.tags" = "lukket postkasse med hævet flag | post | postkasse med flag op";
+// 📪 - mailbox_closed
+"72077005.name" = "lukket postkasse med sænket flag";
+"72077005.tags" = "lukket postkasse med sænket flag | post | postkasse med flag nede";
+// 📬 - mailbox_with_mail
+"72077015.name" = "åben postkasse med hævet flag";
+"72077015.tags" = "åben postkasse med hævet flag | post | postkasse med brev";
+// 📭 - mailbox_with_no_mail
+"72077020.name" = "åben postkasse med sænket flag";
+"72077020.tags" = "åben postkasse | åben postkasse med sænket flag | post";
+// 📮 - postbox
+"72077025.name" = "postkasse";
+"72077025.tags" = "post | postkasse";
+// 📝 - memo
+"72076940.name" = "notat";
+"72076940.tags" = "blyant | kommunikation | memo | notat";
+// 💼 - briefcase
+"72076775.name" = "attachémappe";
+"72076775.tags" = "attachémappe | mappe";
+// 📁 - file_folder
+"72076800.name" = "mappe";
+"72076800.tags" = "dokument | mappe";
+// 📂 - open_file_folder
+"72076805.name" = "åben mappe";
+"72076805.tags" = "åben mappe | dokument";
+// 📅 - date
+"72076820.name" = "kalender";
+"72076820.tags" = "dato | kalender";
+// 📆 - calendar
+"72076825.name" = "kalenderblok";
+"72076825.tags" = "afrivningskalender | kalender | kalenderblok";
+// 📇 - card_index
+"72076830.name" = "kartotek";
+"72076830.tags" = "indekskort | kartotek | kontakter";
+// 📈 - chart_with_upwards_trend
+"72076835.name" = "opadgående graf";
+"72076835.tags" = "graf | opadgående graf | tendens";
+// 📉 - chart_with_downwards_trend
+"72076840.name" = "nedadgående graf";
+"72076840.tags" = "graf | nedadgående graf | tendens";
+// 📊 - bar_chart
+"72076845.name" = "søjlediagram";
+"72076845.tags" = "diagram | søjlediagram";
+// 📋 - clipboard
+"72076850.name" = "clipboard";
+"72076850.tags" = "clipboard | udklipsholder";
+// 📌 - pushpin
+"72076855.name" = "tegnestift";
+"72076855.tags" = "stift | tegnestift";
+// 📍 - round_pushpin
+"72076860.name" = "rund tegnestift";
+"72076860.tags" = "rund tegnestift | stift | tegnestift";
+// 📎 - paperclip
+"72076865.name" = "papirclips";
+"72076865.tags" = "clips | papirclips";
+// 📏 - straight_ruler
+"72076870.name" = "lineal";
+"72076870.tags" = "lige kant | lineal";
+// 📐 - triangular_ruler
+"72076875.name" = "tegnetrekant";
+"72076875.tags" = "tegnetrekant | vinkel | vinkelmåler";
+// 🔒 - lock
+"72077205.name" = "lukket hængelås";
+"72077205.tags" = "låst | lukket hængelås";
+// 🔓 - unlock
+"72077210.name" = "åben hængelås";
+"72077210.tags" = "åben hængelås | åben lås | låst op";
+// 🔏 - lock_with_ink_pen
+"72077190.name" = "lukket hængelås med pen";
+"72077190.tags" = "fyldepen | lås med fyldepen | lukket hængelås med pen | privat";
+// 🔐 - closed_lock_with_key
+"72077195.name" = "lukket hængelås med nøgle";
+"72077195.tags" = "lås med nøgle | låst | lukket hængelås med nøgle | sikker";
+// 🔑 - key
+"72077200.name" = "nøgle";
+"72077200.tags" = "adgangskode | nøgle | password";
+// 🔨 - hammer
+"72077315.name" = "hammer";
+"72077315.tags" = "hammer | værktøj";
+// 🪓 - axe
+"72080415.name" = "økse";
+"72080415.tags" = "kløve brænde | økse | træ";
+// 💣 - bomb
+"72076650.name" = "bombe";
+"72076650.tags" = "bombe | følelse";
+// 🪃 - boomerang
+"72080335.name" = "boomerang";
+"72080335.tags" = "Australien | bagslag | boomerang | rikochettere | tilbagekastning | vende tilbage";
+// 🏹 - bow_and_arrow
+"72079635.name" = "bue og pil";
+"72079635.tags" = "bue | bue og pil | bueskytte | pil | skytten | stjernetegn | våben";
+// 🪚 - carpentry_saw
+"72080450.name" = "sav";
+"72080450.tags" = "sav | save | snedker | tømmer | tømrer | værktøj";
+// 🔧 - wrench
+"72077310.name" = "skruenøgle";
+"72077310.tags" = "skruenøgle | svensknøgle | værktøj";
+// 🪛 - screwdriver
+"72080455.name" = "skruetrækker";
+"72080455.tags" = "skrue | skruetrækker | værktøj";
+// 🔩 - nut_and_bolt
+"72077320.name" = "møtrik og bolt";
+"72077320.tags" = "bolt | møtrik | møtrik og bolt | værktøj";
+// 🦯 - probing_cane
+"72079275.name" = "blindestok";
+"72079275.tags" = "blind | blindestok | handicap";
+// 🔗 - link
+"72077230.name" = "link";
+"72077230.tags" = "link | link-tegn";
+// 🪝 - hook
+"72080465.name" = "krog";
+"72080465.tags" = "besnære | få på krogen | fange | fangst | hage | krog | lokkemiddel";
+// 🧰 - toolbox
+"72079600.name" = "værktøjskasse";
+"72079600.tags" = "håndværker | mekaniker | værktøj | værktøjskasse";
+// 🧲 - magnet
+"72079610.name" = "magnet";
+"72079610.tags" = "hestesko | magnet | magnetisk | tiltrækning";
+// 🪜 - ladder
+"72080460.name" = "stige";
+"72080460.tags" = "bestige | klatre | stige | trin";
+// 🧪 - test_tube
+"72079570.name" = "reagensglas";
+"72079570.tags" = "eksperiment | forskning | kemi | kemiker | laboratorium | reagensglas";
+// 🧫 - petri_dish
+"72079575.name" = "petriskål";
+"72079575.tags" = "bakterie | biolog | biologi | dyrkning | laboratorie | petriskål";
+// 🧬 - dna
+"72079580.name" = "dna";
+"72079580.tags" = "biolog | dna | evolution | gen | genetik | liv";
+// 🔬 - microscope
+"72077335.name" = "mikroskop";
+"72077335.tags" = "mikroskop | naturfag | redskab | værktøj | videnskab";
+// 🔭 - telescope
+"72077340.name" = "teleskop";
+"72077340.tags" = "astronomi | redskab | teleskop | værktøj | videnskab";
+// 📡 - satellite_antenna
+"72076960.name" = "parabolantenne";
+"72076960.tags" = "parabol | parabolantenne | satellit";
+// 💉 - syringe
+"72076520.name" = "sprøjte";
+"72076520.tags" = "indsprøjtning | injektion | læge | medicin | sprøjte";
+// 🩸 - drop_of_blood
+"72080280.name" = "bloddråbe";
+"72080280.tags" = "blod | bloddonor | bloddråbe | medicin | menstruation | sår";
+// 💊 - pill
+"72076525.name" = "pille";
+"72076525.tags" = "læge | medicin | pille";
+// 🩹 - adhesive_bandage
+"72080285.name" = "plaster";
+"72080285.tags" = "plaster";
+// 🩼 - crutch
+"72080300.name" = "krykke";
+"72080300.tags" = "handicap | hjælp til førlighed | invaliditet | krykke | skadet | stok";
+// 🩺 - stethoscope
+"72080290.name" = "stetoskop";
+"72080290.tags" = "doktor | hjerte | læge | medicin | stetoskop";
+// 🩻 - x-ray
+"72080295.name" = "røntgen";
+"72080295.tags" = "knogler | læge | medicinsk | røntgen | røntgenbillede | skelet | undersøgelse";
+// 🚪 - door
+"72079245.name" = "dør";
+"72079245.tags" = "dør | lukket dør";
+// 🛗 - elevator
+"72079470.name" = "elevator";
+"72079470.tags" = "adgangsforhold | elevator | handicapadgang | handicapvenligt | hejs | tilgængelighed";
+// 🪞 - mirror
+"72080470.name" = "spejl";
+"72080470.tags" = "genspejling | spejl | spejlbillede | spejling | spekulum";
+// 🪟 - window
+"72080475.name" = "vindue";
+"72080475.tags" = "åbning | frisk luft | gennemsigtig | gennemsigtighed | karm | rude | udsigt | vindue | vindueskarm";
+// 🪑 - chair
+"72080405.name" = "stol";
+"72080405.tags" = "stol";
+// 🚽 - toilet
+"72079340.name" = "toilet";
+"72079340.tags" = "toilet | wc";
+// 🪠 - plunger
+"72080480.name" = "svupper";
+"72080480.tags" = "blikkenslager | stoppet afløb | suge | sugekop | svupper | toilet | vvs | vvs-tekniker | wc";
+// 🚿 - shower
+"72079350.name" = "brusebad";
+"72079350.tags" = "bad | brusebad";
+// 🛁 - bathtub
+"72079360.name" = "badekar";
+"72079360.tags" = "bad | badekar | karbad";
+// 🪤 - mouse_trap
+"72080500.name" = "musefælde";
+"72080500.tags" = "fælde | fange | lokkemad | musefælde | snare";
+// 🪒 - razor
+"72080410.name" = "ragekniv";
+"72080410.tags" = "barbering | barberskraber | ragekniv | skraber";
+// 🧴 - lotion_bottle
+"72079620.name" = "bodylotion";
+"72079620.tags" = "bodylotion | fugtighedscreme | lotion | shampoo | solcreme";
+// 🧷 - safety_pin
+"72079635.name" = "sikkerhedsnål";
+"72079635.tags" = "ble | punk-rock | sikkerhedsnål";
+// 🧹 - broom
+"72079645.name" = "kost";
+"72079645.tags" = "feje | heks | kost | rengøring";
+// 🧺 - basket
+"72079650.name" = "kurv";
+"72079650.tags" = "indkøb | kurv | picnic | vasketøj";
+// 🧻 - roll_of_paper
+"72079655.name" = "papirrulle";
+"72079655.tags" = "køkkenrulle | papirrulle | toiletpapir";
+// 🪣 - bucket
+"72080495.name" = "spand";
+"72080495.tags" = "bassin | beholder | spand";
+// 🧼 - soap
+"72079660.name" = "sæbe";
+"72079660.tags" = "bad | håndsæbe | sæbe | sæbeskål | sæbeskum | vaske";
+// 🫧 - bubbles
+"72080835.name" = "bobler";
+"72080835.tags" = "bobler | bøvs | ren | sæbe | under vand | undervands";
+// 🪥 - toothbrush
+"72080505.name" = "tandbørste";
+"72080505.tags" = "badeværelse | børste | hygiejne | mund | mundhygiejne | rene tænder | tænder | tandbørste";
+// 🧽 - sponge
+"72079665.name" = "vaskesvamp";
+"72079665.tags" = "absorbere | porøs | vaske | vaskesvamp";
+// 🧯 - fire_extinguisher
+"72079595.name" = "brandslukker";
+"72079595.tags" = "brand | brandslukker | pulverslukker | slukke";
+// 🛒 - shopping_trolley
+"72079445.name" = "indkøbsvogn";
+"72079445.tags" = "butik | forretning | indkøb | indkøbsvogn | køb | shopping | vogn";
+// 🚬 - smoking
+"72079255.name" = "cigaret";
+"72079255.tags" = "cigaret | rygning tilladt";
+// 🪦 - headstone
+"72080510.name" = "gravsten";
+"72080510.tags" = "grav | gravsten | kirkegård";
+// 🧿 - nazar_amulet
+"72079675.name" = "nazaramulet";
+"72079675.tags" = "det onde øje | lykkebringer | nazar | nazaramulet | perle | talisman";
+// 🪬 - hamsa
+"72080540.name" = "hamsa";
+"72080540.tags" = "amulet | beskyttelse | Fatima | hamsa | hånd | Maria | Mirjam";
+// 🗿 - moyai
+"72078390.name" = "statue";
+"72078390.tags" = "Moai | Moai-statue | statue | stenstatue";
+// 🪧 - placard
+"72080515.name" = "skilt";
+"72080515.tags" = "banner | demo | demonstration | protest | protestskilt | skilt | strejke";
+// 🪪 - identification_card
+"72080530.name" = "legitimationskort";
+"72080530.tags" = "autorisation | brugeroplysninger | id | legitimationskort | sikkerhed | tilladelse";
+// 🏧 - atm
+"72079545.name" = "hæveautomat";
+"72079545.tags" = "dankortautomat | hæve penge | hæveautomat";
+// 🚮 - put_litter_in_its_place
+"72079265.name" = "brug affaldsspanden";
+"72079265.tags" = "brug affaldsspanden | skraldespand";
+// 🚰 - potable_water
+"72079275.name" = "drikkevand";
+"72079275.tags" = "drik | drikkevand | vand";
+// ♿ - wheelchair
+"30336.name" = "symbol for kørestol";
+"30336.tags" = "adgang | handicap | rullestol | symbol for kørestol";
+// 🚹 - mens
+"72079320.name" = "herretoilet";
+"72079320.tags" = "herrer | herretoilet | toilet | wc";
+// 🚺 - womens
+"72079325.name" = "dametoilet";
+"72079325.tags" = "damer | dametoilet | toilet | wc";
+// 🚻 - restroom
+"72079330.name" = "toiletskilt";
+"72079330.tags" = "toilet | toiletskilt | wc";
+// 🚼 - baby_symbol
+"72079335.name" = "babysymbol";
+"72079335.tags" = "baby | babyskilt | babysymbol | bleskift | skifte";
+// 🚾 - wc
+"72079345.name" = "wc";
+"72079345.tags" = "toilet | wc";
+// 🛂 - passport_control
+"72079365.name" = "paskontrol";
+"72079365.tags" = "pas | paskontrol";
+// 🛃 - customs
+"72079370.name" = "told";
+"72079370.tags" = "told";
+// 🛄 - baggage_claim
+"72079375.name" = "bagageudlevering";
+"72079375.tags" = "bagageudlevering | baggage";
+// 🛅 - left_luggage
+"72079380.name" = "bagageopbevaring";
+"72079380.tags" = "bagageopbevaring | locker | rejsegods";
+// 🚸 - children_crossing
+"72079315.name" = "børn krydser vej";
+"72079315.tags" = "børn | børn krydser vej | pas på børn";
+// ⛔ - no_entry
+"30591.name" = "adgang forbudt";
+"30591.tags" = "adgang | forbudt | ingen adgang | trafik";
+// 🚫 - no_entry_sign
+"72079250.name" = "ingen adgang";
+"72079250.tags" = "adgang forbudt | ingen adgang";
+// 🚳 - no_bicycles
+"72079290.name" = "cykler forbudt";
+"72079290.tags" = "cykler forbudt | ingen cykler";
+// 🚭 - no_smoking
+"72079260.name" = "rygning forbudt";
+"72079260.tags" = "rygning forbudt | rygning ikke tilladt";
+// 🚯 - do_not_litter
+"72079270.name" = "smid ikke affald";
+"72079270.tags" = "affald | forbudt | ikke tilladt | smid ikke affald";
+// 🚱 - non-potable_water
+"72079280.name" = "ikke drikkevand";
+"72079280.tags" = "drik | forbudt | ikke drikkevand | vand";
+// 🚷 - no_pedestrians
+"72079310.name" = "ingen fodgængere";
+"72079310.tags" = "fodgænger | forbudt | ingen fodgængere";
+// 📵 - no_mobile_phones
+"72077060.name" = "mobiltelefoner forbudt";
+"72077060.tags" = "ingen mobiltelefoner | mobiltelefoner forbudt";
+// 🔞 - underage
+"72077265.name" = "forbudt for under 18";
+"72077265.tags" = "forbudt for under 18 | ingen under 18";
+// 🔃 - arrows_clockwise
+"72077130.name" = "lodrette cirkulære pile med uret";
+"72077130.tags" = "cirkulære pile | genindlæs | lodrette cirkulære pile med uret | lodrette pile | med uret | vertikale pile";
+// 🔄 - arrows_counterclockwise
+"72077135.name" = "vandrette cirkulære pile mod uret";
+"72077135.tags" = "cirkulære pile | mod uret | vandrette cirkulære pile mod uret | vandrette pile";
+// 🔙 - back
+"72077240.name" = "BACK-pil";
+"72077240.tags" = "BACK-pil | tilbage-pil | venstrepil";
+// 🔚 - end
+"72077245.name" = "END-pil";
+"72077245.tags" = "end-pil | END-pil | venstrepil";
+// 🔛 - on
+"72077250.name" = "ON!-dobbeltpil";
+"72077250.tags" = "dobbeltpil | ON! | ON!-dobbeltpil | ON!-pil";
+// 🔜 - soon
+"72077255.name" = "SOON-pil";
+"72077255.tags" = "snart med højrepil | snart-tegn | SOON-pil";
+// 🔝 - top
+"72077260.name" = "TOP-pil";
+"72077260.tags" = "pil peger op | TOP-pil | toppil";
+// 🛐 - place_of_worship
+"72079435.name" = "bedested";
+"72079435.tags" = "bedested | bøn | religion";
+// 🕎 - menorah_with_nine_branches
+"72077505.name" = "syvarmet lysestage";
+"72077505.tags" = "lysestage | religion | syvarmet lysestage";
+// 🔯 - six_pointed_star
+"72077350.name" = "sekstakket stjerne med prik";
+"72077350.tags" = "horoskop | sekstakket stjerne med prik | stjerne";
+// 🪯 - khanda
+"72080555.name" = "khanda";
+"72080555.tags" = "khanda | religion | sikh";
+// ♈ - aries
+"30171.name" = "vædderen";
+"30171.tags" = "stjernetegn | vædderen";
+// ♉ - taurus
+"30174.name" = "tyren";
+"30174.tags" = "stjernetegn | tyren";
+// ♊ - gemini
+"30177.name" = "tvillingen";
+"30177.tags" = "stjernetegn | tvillingen";
+// ♋ - cancer
+"30180.name" = "krebsen";
+"30180.tags" = "krebsen | stjernetegn";
+// ♌ - leo
+"30183.name" = "løven";
+"30183.tags" = "løven | stjernetegn";
+// ♍ - virgo
+"30186.name" = "jomfruen";
+"30186.tags" = "jomfruen | stjernetegn";
+// ♎ - libra
+"30189.name" = "vægten";
+"30189.tags" = "stjernetegn | vægten";
+// ♏ - scorpius
+"30192.name" = "skorpionen";
+"30192.tags" = "skorpionen | stjernetegn";
+// ♐ - sagittarius
+"30195.name" = "skytten";
+"30195.tags" = "skytten | stjernetegn";
+// ♑ - capricorn
+"30198.name" = "stenbukken";
+"30198.tags" = "stenbukken | stjernetegn";
+// ♒ - aquarius
+"30201.name" = "vandmanden";
+"30201.tags" = "stjernetegn | vandmanden";
+// ♓ - pisces
+"30204.name" = "fisken";
+"30204.tags" = "fisken | stjernetegn";
+// ⛎ - ophiuchus
+"30573.name" = "slangebæreren";
+"30573.tags" = "slangebæreren | stjernebillede";
+// 🔀 - twisted_rightwards_arrows
+"72077115.name" = "bland sange-knap";
+"72077115.tags" = "bland sange | bland sange-knap | krydsende pile | mod højre | pile for bland";
+// 🔁 - repeat
+"72077120.name" = "gentageknap";
+"72077120.tags" = "gentag | gentageknap | med uret | pil";
+// 🔂 - repeat_one
+"72077125.name" = "knap til én gentagelse";
+"72077125.tags" = "én gang | knap til én gentagelse | med uret | pil";
+// ⏩ - fast_forward
+"28350.name" = "spol frem-knap";
+"28350.tags" = "dobbelt højrepil | højre | spol frem-knap";
+// ⏪ - rewind
+"28353.name" = "spol tilbage-knap";
+"28353.tags" = "dobbelt venstrepil | spol tilbage-knap | venstre";
+// 🔼 - arrow_up_small
+"72077415.name" = "op-knap";
+"72077415.tags" = "knap | op-knap | opad | pil";
+// ⏫ - arrow_double_up
+"28356.name" = "hurtigt op-knap";
+"28356.tags" = "dobbeltpil op | hurtigt op-knap | op";
+// 🔽 - arrow_down_small
+"72077420.name" = "ned-knap";
+"72077420.tags" = "knap | ned | ned-knap | nedad | pil";
+// ⏬ - arrow_double_down
+"28359.name" = "hurtigt ned-knap";
+"28359.tags" = "dobbeltpil ned | hurtigt ned-knap | ned";
+// 🎦 - cinema
+"72079220.name" = "film";
+"72079220.tags" = "biograf | film | filme | teater";
+// 🔅 - low_brightness
+"72077140.name" = "lav lysstyrke";
+"72077140.tags" = "dæmpet lysstyrke | lav lysstyrke";
+// 🔆 - high_brightness
+"72077145.name" = "høj lysstyrke";
+"72077145.tags" = "høj lysstyrke | lysstyrke";
+// 📶 - signal_strength
+"72077065.name" = "mobilsignal";
+"72077065.tags" = "mobilsignal | signalstyrke";
+// 🛜 - wireless
+"72079495.name" = "trådløs";
+"72079495.tags" = "computer | internet | netværk | trådløs";
+// 📳 - vibration_mode
+"72077050.name" = "vibration";
+"72077050.tags" = "mobil | vibration";
+// 📴 - mobile_phone_off
+"72077055.name" = "mobil slået fra";
+"72077055.tags" = "mobil | mobil slået fra";
+// ➕ - heavy_plus_sign
+"31170.name" = "plus";
+"31170.tags" = "+ | matematik | plus | plustegn | tegn";
+// ➖ - heavy_minus_sign
+"31173.name" = "minus";
+"31173.tags" = "- | − | matematik | minus | minustegn | tegn";
+// ➗ - heavy_division_sign
+"31176.name" = "dividere";
+"31176.tags" = "÷ | dividere | division | divisionstegn | matematik | tegn";
+// 🟰 - heavy_equals_sign
+"72080875.name" = "fedt lighedstegn";
+"72080875.tags" = "fedt lighedstegn | lighed | lighedstegn | matematik";
+// ❓ - question
+"30972.name" = "rødt spørgsmålstegn";
+"30972.tags" = "? | rødt spørgsmålstegn | spørgsmål | spørgsmålstegn | tegn | tegnsætning";
+// ❔ - grey_question
+"30975.name" = "hvidt spørgsmålstegn";
+"30975.tags" = "hvidt spørgsmålstegn | omrids | spørgsmål | tegn | tegnsætning";
+// ❕ - grey_exclamation
+"30978.name" = "hvidt udråbstegn";
+"30978.tags" = "hvidt udråbstegn | omrids | tegnsætning | udråb | udråbstegn";
+// ❗ - exclamation
+"30984.name" = "rødt udråbstegn";
+"30984.tags" = "! | rødt udråbstegn | tegnsætning | udråbstegn";
+// 💱 - currency_exchange
+"72076720.name" = "valutaveksling";
+"72076720.tags" = "bank | penge | valuta | valutaveksling | veksling";
+// 💲 - heavy_dollar_sign
+"72076725.name" = "dollartegn";
+"72076725.tags" = "dollar | dollartegn";
+// 🔱 - trident
+"72077360.name" = "trefork";
+"72077360.tags" = "trefork | trefork-symbol";
+// 📛 - name_badge
+"72076930.name" = "navneskilt";
+"72076930.tags" = "navn | navneskilt | skilt";
+// 🔰 - beginner
+"72077355.name" = "japansk begyndersymbol";
+"72077355.tags" = "grønt og gult | japansk begyndersymbol";
+// ⭕ - o
+"34050.name" = "stor rød cirkel";
+"34050.tags" = "bred | cirkel | kraftig | o | stor rød cirkel";
+// ✅ - white_check_mark
+"30738.name" = "hvidt flueben";
+"30738.tags" = "hvidt flueben | markering";
+// ❌ - x
+"30951.name" = "kryds";
+"30951.tags" = "× | annuller | gange | kryds | markering | multiplikation | x";
+// ❎ - negative_squared_cross_mark
+"30957.name" = "krydsknap";
+"30957.tags" = "krydsknap | kvadrat | mærke | x";
+// ➰ - curly_loop
+"31251.name" = "krølle";
+"31251.tags" = "krølle | løkke | loop";
+// ➿ - loop
+"31296.name" = "dobbelt krølle";
+"31296.tags" = "dobbelt | krølle | løkke | loop";
+// 🔠 - capital_abcd
+"72077275.name" = "store bogstaver";
+"72077275.tags" = "ABCD | store bogstaver | symbol for store bogstaver";
+// 🔡 - abcd
+"72077280.name" = "små bogstaver";
+"72077280.tags" = "abcd | små bogstaver | symbol for små bogstaver";
+// 🔢 - 1234
+"72077285.name" = "tal";
+"72077285.tags" = "1234 | symbol for tal | tal";
+// 🔣 - symbols
+"72077290.name" = "symboler";
+"72077290.tags" = "symbol for symboler | symboler";
+// 🔤 - abc
+"72077295.name" = "latinske alfabet";
+"72077295.tags" = "abc | latinske alfabet | symbol for latinske alfabet";
+// 🆎 - ab
+"72076540.name" = "blodtype AB";
+"72076540.tags" = "AB | blod | blodtype | type AB";
+// 🆑 - cl
+"72076555.name" = "CL-knap";
+"72076555.tags" = "CL-knap | CL-tegn | ryd-tegn";
+// 🆒 - cool
+"72076560.name" = "COOL-knap";
+"72076560.tags" = "COOL-knap | cool-tegn";
+// 🆓 - free
+"72076565.name" = "FREE-knap";
+"72076565.tags" = "FREE-knap | gratis-tegn";
+// 🆔 - id
+"72076570.name" = "ID-knap";
+"72076570.tags" = "ID-knap | id-tegn";
+// 🆕 - new
+"72076575.name" = "NEW-knap";
+"72076575.tags" = "NEW-knap | nyhed | nyt-tegn";
+// 🆖 - ng
+"72076580.name" = "NG-knap";
+"72076580.tags" = "ikke godt-tegn | NG-knap | NG-tegn";
+// 🆗 - ok
+"72076585.name" = "OK";
+"72076585.tags" = "OK | OK-tegn";
+// 🆘 - sos
+"72076590.name" = "SOS";
+"72076590.tags" = "hjælp | SOS | SOS-signal | SOS-tegn";
+// 🆙 - up
+"72076595.name" = "UP!-knap";
+"72076595.tags" = "OP!-tegn | UP!-knap | UP!-tegn";
+// 🆚 - vs
+"72076600.name" = "versus";
+"72076600.tags" = "versus | versus-tegn | vs. | vs.-tegn";
+// 🈁 - koko
+"72077115.name" = "kvadratisk ideogram for her";
+"72077115.tags" = "japansk | kvadratisk ideogram for her";
+// 🈶 - u6709
+"72077380.name" = "kvadratisk ideogram for ikke gratis";
+"72077380.tags" = "japansk | kvadratisk ideogram for ikke gratis";
+// 🈯 - u6307
+"72077345.name" = "kvadratisk ideogram for reserveret";
+"72077345.tags" = "japansk | kvadratisk ideogram for reserveret";
+// 🉐 - ideograph_advantage
+"72077510.name" = "cirkulært ideogram for tilbud";
+"72077510.tags" = "cirkulært ideogram for tilbud | japansk";
+// 🈹 - u5272
+"72077395.name" = "kvadratisk ideogram for rabat";
+"72077395.tags" = "japansk | kvadratisk ideogram for rabat";
+// 🈚 - u7121
+"72077240.name" = "kvadratisk ideogram for gratis";
+"72077240.tags" = "japansk | kvadratisk ideogram for gratis";
+// 🈲 - u7981
+"72077360.name" = "kvadratisk ideogram for forbud";
+"72077360.tags" = "japansk | kvadratisk ideogram for forbud";
+// 🉑 - accept
+"72077515.name" = "cirkulært ideogram for accept";
+"72077515.tags" = "cirkulært ideogram for accept | japansk";
+// 🈸 - u7533
+"72077390.name" = "kvadratisk ideogram for anvendelse";
+"72077390.tags" = "japansk | kvadratisk ideogram for anvendelse";
+// 🈴 - u5408
+"72077370.name" = "kvadratisk ideogram for bestået";
+"72077370.tags" = "japansk | kvadratisk ideogram for bestået";
+// 🈳 - u7a7a
+"72077365.name" = "kvadratisk ideogram for ledig";
+"72077365.tags" = "japansk | kvadratisk ideogram for ledig";
+// 🈺 - u55b6
+"72077400.name" = "kvadratisk ideogram for åben";
+"72077400.tags" = "japansk | kvadratisk ideogram for åben";
+// 🈵 - u6e80
+"72077375.name" = "kvadratisk ideogram for optaget";
+"72077375.tags" = "japansk | kvadratisk ideogram for optaget";
+// 🔴 - red_circle
+"72077375.name" = "rød cirkel";
+"72077375.tags" = "cirkel | geometrisk | rød";
+// 🟠 - large_orange_circle
+"72080795.name" = "orange cirkel";
+"72080795.tags" = "cirkel | orange";
+// 🟡 - large_yellow_circle
+"72080800.name" = "gul cirkel";
+"72080800.tags" = "cirkel | gul";
+// 🟢 - large_green_circle
+"72080805.name" = "grøn cirkel";
+"72080805.tags" = "cirkel | grøn";
+// 🔵 - large_blue_circle
+"72077380.name" = "blå cirkel";
+"72077380.tags" = "blå | cirkel | geometrisk";
+// 🟣 - large_purple_circle
+"72080810.name" = "lilla cirkel";
+"72080810.tags" = "cirkel | lilla";
+// 🟤 - large_brown_circle
+"72080815.name" = "brun cirkel";
+"72080815.tags" = "brun | cirkel";
+// ⚫ - black_circle
+"30468.name" = "sort cirkel";
+"30468.tags" = "cirkel | geometrisk | sort cirkel";
+// ⚪ - white_circle
+"30465.name" = "hvid cirkel";
+"30465.tags" = "cirkel | geometrisk | hvid cirkel";
+// 🟥 - large_red_square
+"72080820.name" = "rødt kvadrat";
+"72080820.tags" = "kvadrat | rød | rødt kvadrat";
+// 🟧 - large_orange_square
+"72080830.name" = "orange kvadrat";
+"72080830.tags" = "kvadrat | orange";
+// 🟨 - large_yellow_square
+"72080835.name" = "gult kvadrat";
+"72080835.tags" = "gul | gult | kvadrat";
+// 🟩 - large_green_square
+"72080840.name" = "grønt kvadrat";
+"72080840.tags" = "grøn | grønt | kvadrat";
+// 🟦 - large_blue_square
+"72080825.name" = "blåt kvadrat";
+"72080825.tags" = "blå | blåt | kvadrat";
+// 🟪 - large_purple_square
+"72080845.name" = "lilla kvadrat";
+"72080845.tags" = "kvadrat | lilla";
+// 🟫 - large_brown_square
+"72080850.name" = "brunt kvadrat";
+"72080850.tags" = "brun | brunt | kvadrat";
+// ⬛ - black_large_square
+"33876.name" = "stort sort kvadrat";
+"33876.tags" = "geometrisk | kvadrat | stort sort kvadrat";
+// ⬜ - white_large_square
+"33879.name" = "stort hvidt kvadrat";
+"33879.tags" = "geometrisk | kvadrat | stort hvidt kvadrat";
+// ◾ - black_medium_small_square
+"29949.name" = "halvlille sort kvadrat";
+"29949.tags" = "geometrisk | halvlille sort kvadrat | kvadrat";
+// ◽ - white_medium_small_square
+"29946.name" = "halvlille hvidt kvadrat";
+"29946.tags" = "geometrisk | halvlille hvidt kvadrat | kvadrat";
+// 🔶 - large_orange_diamond
+"72077385.name" = "stor orange ruder";
+"72077385.tags" = "geometrisk | orange | ruder | stor orange ruder";
+// 🔷 - large_blue_diamond
+"72077390.name" = "stor blå ruder";
+"72077390.tags" = "blå | geometrisk | ruder | stor blå ruder";
+// 🔸 - small_orange_diamond
+"72077395.name" = "lille orange ruder";
+"72077395.tags" = "geometrisk | lille orange ruder | orange | ruder";
+// 🔹 - small_blue_diamond
+"72077400.name" = "lille blå ruder";
+"72077400.tags" = "blå | geometrisk | lille blå ruder | ruder";
+// 🔺 - small_red_triangle
+"72077405.name" = "op-trekant";
+"72077405.tags" = "op | op-trekant | rød trekant | trekant";
+// 🔻 - small_red_triangle_down
+"72077410.name" = "ned-trekant";
+"72077410.tags" = "ned | ned-trekant | rød trekant | trekant";
+// 💠 - diamond_shape_with_a_dot_inside
+"72076635.name" = "ruder med prik";
+"72076635.tags" = "geometisk | ruder | ruder med prik";
+// 🔘 - radio_button
+"72077235.name" = "alternativknap";
+"72077235.tags" = "alternativknap";
+// 🔳 - white_square_button
+"72077370.name" = "hvid kvadratisk knap";
+"72077370.tags" = "geometrisk | hvid kvadratisk knap | knap | kvadrat | omrids";
+// 🔲 - black_square_button
+"72077365.name" = "sort kvadratisk knap";
+"72077365.tags" = "geometrisk | knap | kvadrat | sort kvadratisk knap";
+// 🏁 - checkered_flag
+"72079355.name" = "ternet flag";
+"72079355.tags" = "motorsport | ternet | ternet flag";
+// 🚩 - triangular_flag_on_post
+"72079240.name" = "trekantet flag";
+"72079240.tags" = "post | trekantet flag";
+// 🎌 - crossed_flags
+"72079090.name" = "to krydsede flag";
+"72079090.tags" = "fejring | japanske flag | kryds | to krydsede flag";
+// 🏴 - waving_black_flag
+"72079610.name" = "sort flag";
+"72079610.tags" = "blafrende | sort flag";

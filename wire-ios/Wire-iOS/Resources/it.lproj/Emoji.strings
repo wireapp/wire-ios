@@ -1,0 +1,3714 @@
+//
+// Wire
+// Copyright (C) 2023 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
+
+// 😀 - grinning
+"72078395.name" = "faccina con un gran sorriso";
+"72078395.tags" = "faccina | faccina che sogghigna | faccina con un gran sorriso | risata | sogghignare";
+// 😃 - smiley
+"72078410.name" = "faccina con un gran sorriso e occhi spalancati";
+"72078410.tags" = "faccina | faccina con un gran sorriso e occhi spalancati | faccina sorridente | risata | sorridere";
+// 😄 - smile
+"72078415.name" = "faccina con sorriso e occhi sorridenti";
+"72078415.tags" = "bocca aperta | faccina con sorriso e occhi sorridenti | faccina con un gran sorriso e occhi sorridenti | occhi felici | risata | sorriso";
+// 😁 - grin
+"72078400.name" = "faccina raggiante con occhi felici";
+"72078400.tags" = "faccina | faccina raggiante con occhi felici | occhi felici | risata | sogghignare";
+// 😆 - laughing
+"72078425.name" = "sorriso a bocca aperta con occhi chiusi";
+"72078425.tags" = "bocca aperta | occhi chiusi | sorriso | sorriso a bocca aperta con occhi chiusi";
+// 😅 - sweat_smile
+"72078420.name" = "faccina con un gran sorriso e goccia di sudore";
+"72078420.tags" = "faccina con un gran sorriso e goccia di sudore | goccia | sorriso teso | sudore";
+// 🤣 - rolling_on_the_floor_laughing
+"72078575.name" = "ridere a crepapelle";
+"72078575.tags" = "crepapelle | ridere | ridere a crepapelle";
+// 😂 - joy
+"72078405.name" = "faccina con lacrime di gioia";
+"72078405.tags" = "faccina | faccina con lacrime di gioia | gioia | lacrime | piangere dal ridere";
+// 🙂 - slightly_smiling_face
+"72078725.name" = "faccina con sorriso accennato";
+"72078725.tags" = "faccina con sorriso accennato | mezzo sorriso | sorriso | sorriso a bocca chiusa";
+// 🙃 - upside_down_face
+"72078730.name" = "faccina sottosopra";
+"72078730.tags" = "capovolta | faccina | scombussolata | sottosopra";
+// 🫠 - melting_face
+"72080800.name" = "faccina che si scioglie";
+"72080800.tags" = "dissolversi | faccina che si scioglie | liquefarsi | liquido | sciogliersi | sparire | squagliarsi";
+// 😉 - wink
+"72078440.name" = "faccina che fa l’occhiolino";
+"72078440.tags" = "faccina | faccina che fa l’occhiolino | fare l’occhiolino";
+// 😊 - blush
+"72078445.name" = "faccina con occhi sorridenti";
+"72078445.tags" = "faccina | faccina con occhi sorridenti | felice | occhi sorridenti | sorriso";
+// 😇 - innocent
+"72078430.name" = "faccina con sorriso e aureola";
+"72078430.tags" = "angioletto | aureola | faccina | faccina con sorriso e aureola | faccina sorridente con aureola";
+// 🥰 - smiling_face_with_3_hearts
+"72078960.name" = "faccina con cuoricini";
+"72078960.tags" = "adorazione | colpo di fulmine | faccina con cuoricini | faccina innamorata";
+// 😍 - heart_eyes
+"72078460.name" = "faccina con sorriso e occhi a cuore";
+"72078460.tags" = "amore | cuore | faccina | faccina con sorriso e occhi a cuore";
+// 🤩 - star-struck
+"72078605.name" = "colpo di fulmine";
+"72078605.tags" = "colpo di fulmine | faccia sorridente | occhi | stelline";
+// 😘 - kissing_heart
+"72078515.name" = "faccina che manda un bacio";
+"72078515.tags" = "baci | faccina | faccina che manda baci | faccina che manda un bacio";
+// 😗 - kissing
+"72078510.name" = "faccina che bacia";
+"72078510.tags" = "faccina | faccina che bacia | faccina che dà bacio";
+// 😚 - kissing_closed_eyes
+"72078525.name" = "faccina che bacia con occhi chiusi";
+"72078525.tags" = "baciare | bacio | faccina | faccina che bacia con occhi chiusi | occhi chiusi";
+// 😙 - kissing_smiling_eyes
+"72078520.name" = "faccina che bacia con occhi sorridenti";
+"72078520.tags" = "faccina | faccina che bacia con occhi sorridenti | faccina che manda baci | faccina sorridente";
+// 🥲 - smiling_face_with_tear
+"72078970.name" = "faccina sorridente con lacrima";
+"72078970.tags" = "emozionato | faccina sorridente con lacrima | grato | lacrima | orgoglioso | rincuorato | sorridente";
+// 😋 - yum
+"72078450.name" = "faccina che si lecca i baffi";
+"72078450.tags" = "buono | cibo delizioso | faccina | faccina che si lecca i baffi | gnam";
+// 😛 - stuck_out_tongue
+"72078530.name" = "faccina che mostra la lingua";
+"72078530.tags" = "faccina | faccina che mostra la lingua | faccina con lingua fuori | linguaccia";
+// 😜 - stuck_out_tongue_winking_eye
+"72078535.name" = "faccina che fa l’occhiolino e mostra la lingua";
+"72078535.tags" = "faccina | faccina che fa l’occhiolino e mostra la lingua | linguaccia con occhiolino | occhiolino | scherzo";
+// 🤪 - zany_face
+"72078610.name" = "faccina impazzita";
+"72078610.tags" = "faccina impazzita | grande | occhio | piccolo";
+// 😝 - stuck_out_tongue_closed_eyes
+"72078540.name" = "faccina che strizza gli occhi e mostra la lingua";
+"72078540.tags" = "bleah | faccina | faccina che strizza gli occhi e mostra la lingua | faccina con un gran sorriso che mostra la lingua | linguaccia | orribile";
+// 🤑 - money_mouth_face
+"72078485.name" = "faccina avida di denaro";
+"72078485.tags" = "avidità | faccina avida di denaro | guadagnare | ricchezza | soldi";
+// 🤗 - hugging_face
+"72078515.name" = "faccina che abbraccia";
+"72078515.tags" = "abbraccio | faccina | faccina che abbraccia | sorriso";
+// 🤭 - face_with_hand_over_mouth
+"72078625.name" = "faccina con mano sulla bocca";
+"72078625.tags" = "faccina con mano sulla bocca | oops";
+// 🫢 - face_with_open_eyes_and_hand_over_mouth
+"72080810.name" = "faccina con occhi aperti e mano sulla bocca";
+"72080810.tags" = "faccina con occhi aperti e mano sulla bocca | imbarazzo | incredulità | meraviglia | sorpresa | spavento | stupore";
+// 🫣 - face_with_peeking_eye
+"72080815.name" = "faccina che sbircia tra le dita";
+"72080815.tags" = "faccina che sbircia tra le dita | fissare | incuriosito | sbirciare | spiare";
+// 🤫 - shushing_face
+"72078615.name" = "faccina che zittisce";
+"72078615.tags" = "faccina che zittisce | silenzio | zittire";
+// 🤔 - thinking_face
+"72078500.name" = "faccina concentrata";
+"72078500.tags" = "concentrarsi | faccina | faccina concentrata | pensare";
+// 🫡 - saluting_face
+"72080805.name" = "faccina che fa il saluto";
+"72080805.tags" = "faccina che fa il saluto | militare | ok | saluto | signorsì | soleggiato | truppe";
+// 🤐 - zipper_mouth_face
+"72078480.name" = "faccina con bocca con cerniera";
+"72078480.tags" = "bocca cucita | faccina con bocca con cerniera | no comment | non posso parlare | zitto";
+// 🤨 - face_with_raised_eyebrow
+"72078600.name" = "faccia con sopracciglia alzate";
+"72078600.tags" = "diffidente | faccia con sopracciglia alzate | scettico";
+// 😐 - neutral_face
+"72078475.name" = "faccina neutra";
+"72078475.tags" = "faccina | impassibile | neutra | no comment";
+// 😑 - expressionless
+"72078480.name" = "faccina inespressiva";
+"72078480.tags" = "faccina | inespressiva | no comment";
+// 😶 - no_mouth
+"72078665.name" = "faccina senza bocca";
+"72078665.tags" = "faccina | faccina senza bocca | non posso parlare | senza bocca";
+// 🫥 - dotted_line_face
+"72080825.name" = "faccina tratteggiata";
+"72080825.tags" = "depresso | faccina tratteggiata | introverso | invisibile | nascondersi | scomparire | sparire";
+// 😏 - smirk
+"72078470.name" = "faccina con sorrisetto";
+"72078470.tags" = "faccina | faccina che sorride | faccina con sorrisetto | furbetto | malizioso";
+// 😒 - unamused
+"72078485.name" = "faccina contrariata";
+"72078485.tags" = "contrariata | faccina | triste";
+// 🙄 - face_with_rolling_eyes
+"72078735.name" = "faccina con occhi al cielo";
+"72078735.tags" = "faccina | faccina con occhi al cielo | guardare altrove | roteare gli occhi | sollevare gli occhi al cielo";
+// 😬 - grimacing
+"72078615.name" = "faccina con smorfia";
+"72078615.tags" = "faccina | faccina con smorfia";
+// 😮‍💨 - face_exhaling
+"26809473017250.name" = "faccina che espira";
+"26809473017250.tags" = "ansimare | espirare | faccina che espira | fischiare | sollievo | stanco | sussurrare";
+// 🤥 - lying_face
+"72078585.name" = "faccina bugiarda";
+"72078585.tags" = "bugia | bugiardo | faccina bugiarda | naso lungo | pinocchio";
+// 🫨 - shaking_face
+"72080840.name" = "faccina tremante";
+"72080840.tags" = "faccina | shock | terremoto | tremante | tremare";
+// 😌 - relieved
+"72078455.name" = "faccina sollevata";
+"72078455.tags" = "faccina | faccina sollevata";
+// 😔 - pensive
+"72078495.name" = "faccina pensierosa";
+"72078495.tags" = "faccina | pensierosa | scoraggiata";
+// 😪 - sleepy
+"72078605.name" = "faccina assonnata";
+"72078605.tags" = "assonnato | dormire | faccina | faccina assonnata | sonno";
+// 🤤 - drooling_face
+"72078580.name" = "faccina che sbava";
+"72078580.tags" = "bava | faccina | faccina che sbava | sbavare";
+// 😴 - sleeping
+"72078655.name" = "faccina che dorme";
+"72078655.tags" = "faccina | faccina che dorme | sonno";
+// 😷 - mask
+"72078670.name" = "faccina con mascherina";
+"72078670.tags" = "faccina | faccina con mascherina | maschera | mascherina";
+// 🤒 - face_with_thermometer
+"72078490.name" = "faccina con termometro";
+"72078490.tags" = "ammalato | faccina con termometro | febbre | influenza | termometro";
+// 🤕 - face_with_head_bandage
+"72078505.name" = "faccina con la testa bendata";
+"72078505.tags" = "bende | dolore | faccina | faccina bendata | faccina con la testa bendata | farsi male | fasciarsi la testa";
+// 🤢 - nauseated_face
+"72078570.name" = "faccina nauseata";
+"72078570.tags" = "faccina | faccina nauseata | nausea | vomito";
+// 🤮 - face_vomiting
+"72078630.name" = "faccina che vomita";
+"72078630.tags" = "faccina che vomita | nausea | vomito";
+// 🤧 - sneezing_face
+"72078595.name" = "faccina che starnutisce";
+"72078595.tags" = "faccina | faccina che starnutisce | raffreddore | starnuto";
+// 🥵 - hot_face
+"72078985.name" = "faccina accaldata";
+"72078985.tags" = "caldo | faccina accaldata | faccina sudata | febbricitante | sudore";
+// 🥶 - cold_face
+"72078990.name" = "faccina congelata";
+"72078990.tags" = "faccina blu | faccina congelata | freddo | gelone | ipotermia";
+// 🥴 - woozy_face
+"72078980.name" = "faccina stordita";
+"72078980.tags" = "faccina con occhi semiaperti | faccina stordita | frastornato | vertigini";
+// 😵 - dizzy_face
+"72078660.name" = "faccina frastornata";
+"72078660.tags" = "faccina frastornata | testa che gira";
+// 😵‍💫 - face_with_spiral_eyes
+"26813394148332.name" = "faccina con occhi a spirale";
+"26813394148332.tags" = "confuso | faccina con occhi a spirale | ipnotizzato | nausea | problema | stordito";
+// 🤯 - exploding_head
+"72078635.name" = "testa che esplode";
+"72078635.tags" = "scioccato | testa che esplode";
+// 🤠 - face_with_cowboy_hat
+"72078560.name" = "faccina con cappello da cowboy";
+"72078560.tags" = "cappello | cowboy | faccina | faccina con cappello da cowboy";
+// 🥳 - partying_face
+"72078975.name" = "faccina che festeggia";
+"72078975.tags" = "cappellino | faccina che festeggia | festa | festeggiamenti | party | trombetta";
+// 🥸 - disguised_face
+"72079000.name" = "faccina travestita";
+"72079000.tags" = "faccina | faccina travestita | incognito | naso | occhiali | travestimento";
+// 😎 - sunglasses
+"72078465.name" = "faccina con sorriso e occhiali da sole";
+"72078465.tags" = "faccina | faccina con sorriso e occhiali da sole | occhiali da sole | sorriso | spensierato";
+// 🤓 - nerd_face
+"72078495.name" = "faccina nerd";
+"72078495.tags" = "faccina nerd | nerd | occhiali da nerd | secchione | studioso";
+// 🧐 - face_with_monocle
+"72079440.name" = "faccina con monocolo";
+"72079440.tags" = "faccina con monocolo | sospetto";
+// 😕 - confused
+"72078500.name" = "faccina confusa";
+"72078500.tags" = "confusa | faccina";
+// 🫤 - face_with_diagonal_mouth
+"72080820.name" = "faccina perplessa";
+"72080820.tags" = "così così | deluso | dubbioso | faccina perplessa | meh | perplesso | scettico";
+// 😟 - worried
+"72078550.name" = "faccina preoccupata";
+"72078550.tags" = "faccina | faccina preoccupata | preoccupazione preoccupata";
+// 🙁 - slightly_frowning_face
+"72078720.name" = "faccina leggermente imbronciata";
+"72078720.tags" = "corrucciato | faccina | faccina leggermente imbronciata | imbronciato | mettere il muso";
+// 😮 - open_mouth
+"72078625.name" = "faccina con bocca aperta";
+"72078625.tags" = "bocca | faccina | faccina con bocca aperta | sorpreso | stupito";
+// 😯 - hushed
+"72078630.name" = "faccina sorpresa";
+"72078630.tags" = "faccina | sbalordita | sorpresa";
+// 😲 - astonished
+"72078645.name" = "faccina stupita";
+"72078645.tags" = "faccina | scioccata | stupita";
+// 😳 - flushed
+"72078650.name" = "faccina imbarazzata";
+"72078650.tags" = "confuso | faccina | faccina con guance rosse | faccina imbarazzata | imbarazzato";
+// 🥺 - pleading_face
+"72079010.name" = "faccina supplichevole";
+"72079010.tags" = "faccina sull’orlo delle lacrime | faccina supplichevole | implorare | lacrime | quasi in lacrime";
+// 🥹 - face_holding_back_tears
+"72079005.name" = "faccina che trattiene le lacrime";
+"72079005.tags" = "arrabbiato | faccina che trattiene le lacrime | fiero | piangere | resistere | triste";
+// 😦 - frowning
+"72078585.name" = "faccina imbronciata con bocca aperta";
+"72078585.tags" = "bocca aperta | corrucciata | corrucciata con bocca aperta | faccina | faccina imbronciata con bocca aperta";
+// 😧 - anguished
+"72078590.name" = "faccina angosciata";
+"72078590.tags" = "angosciata | faccina | sofferente";
+// 😨 - fearful
+"72078595.name" = "faccina impaurita";
+"72078595.tags" = "faccina | impaurita | paura";
+// 😰 - cold_sweat
+"72078635.name" = "faccina sudata in ansia";
+"72078635.tags" = "faccina | faccina blu sudata | faccina sotto pressione | faccina sudata in ansia | sudata";
+// 😥 - disappointed_relieved
+"72078580.name" = "faccina delusa ma sollevata";
+"72078580.tags" = "deluso | faccina | faccina delusa ma sollevata | sollevato";
+// 😢 - cry
+"72078565.name" = "faccina che piange";
+"72078565.tags" = "faccina | faccina che piange | lacrime | piangere | triste";
+// 😭 - sob
+"72078620.name" = "faccina disperata";
+"72078620.tags" = "faccina | faccina disperata | lacrime | piangere | pianto";
+// 😱 - scream
+"72078640.name" = "faccina terrorizzata";
+"72078640.tags" = "faccina | grido di paura | paura | terrorizzata";
+// 😖 - confounded
+"72078505.name" = "faccina frustrata";
+"72078505.tags" = "faccina | frustrata";
+// 😣 - persevere
+"72078570.name" = "faccina perseverante";
+"72078570.tags" = "faccina | perseverante";
+// 😞 - disappointed
+"72078545.name" = "faccina delusa";
+"72078545.tags" = "delusa | delusione | faccina";
+// 😓 - sweat
+"72078490.name" = "faccina abbattuta sudata";
+"72078490.tags" = "delusione | faccina | faccina abbattuta sudata | faccina sudata | sudore";
+// 😩 - weary
+"72078600.name" = "faccina esausta";
+"72078600.tags" = "esausta | faccina | sfinita";
+// 😫 - tired_face
+"72078610.name" = "faccina stanca";
+"72078610.tags" = "faccina | stanca";
+// 🥱 - yawning_face
+"72078965.name" = "faccina che sbadiglia";
+"72078965.tags" = "annoiata | annoiato | faccina che sbadiglia | sbadiglio | sonno | stanca | stanco";
+// 😤 - triumph
+"72078575.name" = "faccina che sbuffa";
+"72078575.tags" = "arrabbiarsi | faccina | faccina che sbuffa | sbuffare";
+// 😡 - rage
+"72078560.name" = "faccina accigliata";
+"72078560.tags" = "arrabbiata | broncio | faccina accigliata | faccina rossa | imbronciata | muso";
+// 😠 - angry
+"72078555.name" = "faccina arrabbiata";
+"72078555.tags" = "arrabbiata | faccina | rabbia";
+// 🤬 - face_with_symbols_on_mouth
+"72078620.name" = "faccina con simboli sulla bocca";
+"72078620.tags" = "faccina con simboli sulla bocca | imprecare";
+// 😈 - smiling_imp
+"72078435.name" = "faccina con sorriso e corna";
+"72078435.tags" = "corna | faccina | faccina con sorriso e corna | sorriso";
+// 👿 - imp
+"72076470.name" = "faccina arrabbiata con corna";
+"72076470.tags" = "diavolo | faccina | faccina arrabbiata con corna";
+// 💀 - skull
+"72076475.name" = "teschio";
+"72076475.tags" = "favola | morte | mostro | teschio";
+// 💩 - hankey
+"72076680.name" = "cacca";
+"72076680.tags" = "cacca | popò | pupù";
+// 🤡 - clown_face
+"72078565.name" = "faccina pagliaccio";
+"72078565.tags" = "clown | faccina | pagliaccio";
+// 👹 - japanese_ogre
+"72076440.name" = "orco";
+"72076440.tags" = "faccina | favola | mostro | orco | orco giapponese";
+// 👺 - japanese_goblin
+"72076445.name" = "goblin";
+"72076445.tags" = "elfo | folletto | goblin | malefico | mostro";
+// 👻 - ghost
+"72076450.name" = "fantasma";
+"72076450.tags" = "fantasma | favola | halloween | scherzo | storie di fantasmi";
+// 👽 - alien
+"72076460.name" = "alieno";
+"72076460.tags" = "alieno | extraterrestre | faccina | UFO";
+// 👾 - space_invader
+"72076465.name" = "mostro alieno";
+"72076465.tags" = "faccina | favola | mostro | mostro alieno | UFO";
+// 🤖 - robot_face
+"72078510.name" = "faccina di robot";
+"72078510.tags" = "faccina | faccina di robot | robot";
+// 😺 - smiley_cat
+"72078685.name" = "gatto che sorride";
+"72078685.tags" = "aperta | bocca | faccina | gatto | gatto che sorride";
+// 😸 - smile_cat
+"72078675.name" = "gatto che sogghigna";
+"72078675.tags" = "faccina | gatto | gatto che sogghigna | gatto con occhi sorridenti | ghigno";
+// 😹 - joy_cat
+"72078680.name" = "gatto con lacrime di gioia";
+"72078680.tags" = "faccina | gatto | gatto con lacrime di gioia | gatto lacrime di gioia | gioia | lacrime | lacrime di gioia";
+// 😻 - heart_eyes_cat
+"72078690.name" = "gatto innamorato";
+"72078690.tags" = "amore | cuore | faccina | gatto | gatto innamorato | gatto sorridente con occhi a cuore";
+// 😼 - smirk_cat
+"72078695.name" = "gatto con sorriso sarcastico";
+"72078695.tags" = "faccina | gatto | gatto con sorriso sarcastico | gatto sorriso sarcastico | sarcastico | sorriso ironico";
+// 😽 - kissing_cat
+"72078700.name" = "gatto che manda baci";
+"72078700.tags" = "bacio | faccina | gatto | gatto che manda baci | occhi chiusi";
+// 🙀 - scream_cat
+"72078715.name" = "gatto esterrefatto";
+"72078715.tags" = "esterrefatto | faccina | gatto | oh mio Dio";
+// 😿 - crying_cat_face
+"72078710.name" = "gatto che piange";
+"72078710.tags" = "faccina | gatto | gatto che piange | piangere";
+// 😾 - pouting_cat
+"72078705.name" = "gatto imbronciato";
+"72078705.tags" = "broncio | faccina | gatto | gatto imbronciato | muso";
+// 🙈 - see_no_evil
+"72078755.name" = "non vedo";
+"72078755.tags" = "non vedo | scimmietta | scimmietta non vedo";
+// 🙉 - hear_no_evil
+"72078760.name" = "non sento";
+"72078760.tags" = "non sento | scimmietta | scimmietta non sento";
+// 🙊 - speak_no_evil
+"72078765.name" = "non parlo";
+"72078765.tags" = "non parlo | scimmietta | scimmietta non parlo";
+// 💌 - love_letter
+"72076535.name" = "lettera d’amore";
+"72076535.tags" = "busta con cuore | cuore | lettera d’amore | romanticismo";
+// 💘 - cupid
+"72076595.name" = "cuore con freccia";
+"72076595.tags" = "amore | cuore | cuore con freccia | cupido | emozione | freccia";
+// 💝 - gift_heart
+"72076620.name" = "cuore con fiocco";
+"72076620.tags" = "cuore | cuore con fiocco | emozione | fiocco | San Valentino";
+// 💖 - sparkling_heart
+"72076585.name" = "cuore che luccica";
+"72076585.tags" = "amore | cuore che luccica | emozionato | emozione | luccichio";
+// 💗 - heartpulse
+"72076590.name" = "cuore che cresce";
+"72076590.tags" = "amore | cuore | cuore che cresce | emozionato | nervoso";
+// 💓 - heartbeat
+"72076570.name" = "cuore che batte";
+"72076570.tags" = "amore | battito | cuore | cuore che batte | pulsazione";
+// 💞 - revolving_hearts
+"72076625.name" = "cuori che girano";
+"72076625.tags" = "adorabile | amore | carino | cuore | cuori che girano";
+// 💕 - two_hearts
+"72076580.name" = "due cuori";
+"72076580.tags" = "amore | due cuori | emozione | innamorati";
+// 💟 - heart_decoration
+"72076630.name" = "decorazione con cuore";
+"72076630.tags" = "cuore | decorazione con cuore";
+// 💔 - broken_heart
+"72076575.name" = "cuore infranto";
+"72076575.tags" = "cuore | emozione | infranto | spezzato";
+// 🩷 - pink_heart
+"72080275.name" = "cuore rosa";
+"72080275.tags" = "amore | cuore | emozione | rosa";
+// 🧡 - orange_heart
+"72079525.name" = "cuore arancione";
+"72079525.tags" = "arancione | cuore | emozione";
+// 💛 - yellow_heart
+"72076610.name" = "cuore giallo";
+"72076610.tags" = "cuore | emozione | giallo";
+// 💚 - green_heart
+"72076605.name" = "cuore verde";
+"72076605.tags" = "cuore | emozione | verde";
+// 💙 - blue_heart
+"72076600.name" = "cuore blu";
+"72076600.tags" = "blu | cuore | emozione";
+// 🩵 - light_blue_heart
+"72080265.name" = "cuore azzurro";
+"72080265.tags" = "azzurro | celeste | cuore";
+// 💜 - purple_heart
+"72076615.name" = "cuore viola";
+"72076615.tags" = "cuore | emozione | viola";
+// 🤎 - brown_heart
+"72078470.name" = "cuore marrone";
+"72078470.tags" = "cuore | emozione | marrone";
+// 🖤 - black_heart
+"72077935.name" = "cuore nero";
+"72077935.tags" = "cuore | dolore | nero | tristezza";
+// 🩶 - grey_heart
+"72080270.name" = "cuore grigio";
+"72080270.tags" = "ardesia | argento | cuore | grigio";
+// 🤍 - white_heart
+"72078465.name" = "cuore bianco";
+"72078465.tags" = "bianco | cuore | emozione";
+// 💋 - kiss
+"72076530.name" = "impronta della bocca";
+"72076530.tags" = "bacio | impronta della bocca | labbra | romanticismo | segno delle labbra";
+// 💯 - 100
+"72076710.name" = "100 punti";
+"72076710.tags" = "100 | punteggio pieno | punti";
+// 💢 - anger
+"72076645.name" = "rabbia";
+"72076645.tags" = "arrabbiato | emozione | fumetto | rabbia | simbolo rabbia";
+// 💥 - boom
+"72076660.name" = "collisione";
+"72076660.tags" = "collisione | emozione | fumetto | simbolo collisione";
+// 💫 - dizzy
+"72076690.name" = "stella con scia";
+"72076690.tags" = "emozione | fumetto | stella con scia | stelle | vedere le stelle | vorticoso";
+// 💦 - sweat_drops
+"72076665.name" = "gocce di sudore";
+"72076665.tags" = "bagno di sudore | emozione | fumetto | gocce di sudore | sudato | sudore";
+// 💨 - dash
+"72076675.name" = "nuvola di polvere";
+"72076675.tags" = "emozione | fuga | fumetto | nuvola di polvere | scappare";
+// 💬 - speech_balloon
+"72076695.name" = "fumetto";
+"72076695.tags" = "dialogo | fumetto";
+// 💭 - thought_balloon
+"72076700.name" = "nuvoletta";
+"72076700.tags" = "fumetto | nuvoletta";
+// 💤 - zzz
+"72076655.name" = "sonno";
+"72076655.tags" = "dormire | russare | sonno | Zzz";
+// 👋 - wave
+"72076210.name" = "mano che saluta";
+"72076210.tags" = "mano | mano che saluta | salutare";
+// 🤚 - raised_back_of_hand
+"72078530.name" = "dorso mano alzata";
+"72078530.tags" = "alzata | dorso mano alzata | mano";
+// ✋ - hand
+"30756.name" = "mano alzata";
+"30756.tags" = "alzata | carta | mano";
+// 🖖 - spock-hand
+"72077865.name" = "saluto vulcaniano";
+"72077865.tags" = "saluto | saluto vulcaniano | Spock | Star Trek";
+// 🫱 - rightwards_hand
+"72080885.name" = "mano rivolta a destra";
+"72080885.tags" = "destra | mano | mano rivolta a destra | verso destra";
+// 🫲 - leftwards_hand
+"72080890.name" = "mano rivolta a sinistra";
+"72080890.tags" = "mano | mano rivolta a sinistra | sinistra | verso sinistra";
+// 🫳 - palm_down_hand
+"72080895.name" = "mano con il palmo verso il basso";
+"72080895.tags" = "cacciare | congedare | imporre | mano con il palmo verso il basso";
+// 🫴 - palm_up_hand
+"72080900.name" = "mano con il palmo verso l’alto";
+"72080900.tags" = "mano con il palmo verso l’alto | offrire | prendere | raccogliere | richiamare";
+// 🫷 - leftwards_pushing_hand
+"72080915.name" = "mano che spinge a sinistra";
+"72080915.tags" = "aspettare | fermare | mano che spinge a sinistra | palmo | rifiutare | sinistra | spingere";
+// 🫸 - rightwards_pushing_hand
+"72080920.name" = "mano che spinge a destra";
+"72080920.tags" = "aspettare | destra | fermare | mano che spinge a destra | palmo | rifiutare | spingere";
+// 👌 - ok_hand
+"72076215.name" = "mano che fa OK";
+"72076215.tags" = "mano | mano che fa OK | OK | segno di OK";
+// 🤌 - pinched_fingers
+"72078460.name" = "mano a pigna";
+"72078460.tags" = "dita | dita unite | gesto della mano | interrogativo | mano a pigna | sarcastico";
+// 🤏 - pinching_hand
+"72078475.name" = "mano che fa il gesto del pizzico";
+"72078475.tags" = "mano che fa il gesto del pizzico | piccola quantità | poco | un po’ | un pochino";
+// 🤞 - crossed_fingers
+"72078550.name" = "dita incrociate";
+"72078550.tags" = "dita | dita incrociate | fortuna | incrociare | mano";
+// 🫰 - hand_with_index_finger_and_thumb_crossed
+"72080880.name" = "mano con indice e pollice incrociati";
+"72080880.tags" = "amore | costoso | cuore | denaro | mano con indice e pollice incrociati | schioccare | soldi";
+// 🤟 - i_love_you_hand_sign
+"72078555.name" = "gesto ti amo";
+"72078555.tags" = "gesto ti amo | gesto tvb";
+// 🤘 - the_horns
+"72078520.name" = "segno delle corna";
+"72078520.tags" = "corna | fare le corna | rock and roll | segno delle corna";
+// 🤙 - call_me_hand
+"72078525.name" = "mano con gesto di chiamata";
+"72078525.tags" = "chiamare | mano | mano con gesto di chiamata | telefonare";
+// 👈 - point_left
+"72076195.name" = "indice verso sinistra";
+"72076195.tags" = "dito | dito indice | dito verso sinistra | indice verso sinistra";
+// 👉 - point_right
+"72076200.name" = "indice verso destra";
+"72076200.tags" = "dito | dito indice | dito verso destra | indice verso destra";
+// 👆 - point_up_2
+"72076185.name" = "indice alzato";
+"72076185.tags" = "dito alzato | dito in su | dito indice | indice alzato | indice in su";
+// 🖕 - middle_finger
+"72077860.name" = "dito medio";
+"72077860.tags" = "dito medio | insulto | offendere";
+// 👇 - point_down
+"72076190.name" = "indice abbassato";
+"72076190.tags" = "dito abbassato | dito in giù | dito indice | indice abbassato | indice in giù";
+// 🫵 - index_pointing_at_the_viewer
+"72080905.name" = "indice verso l’osservatore";
+"72080905.tags" = "indicare | indice verso l’osservatore | puntare | tu";
+// 👍 - +1
+"72076220.name" = "pollice in su";
+"72076220.tags" = "mano | pollice | pollice in su | segno | su";
+// 👎 - -1
+"72076225.name" = "pollice verso";
+"72076225.tags" = "giù | mano | pollice | pollice in giù | pollice verso";
+// ✊ - fist
+"30753.name" = "pugno";
+"30753.tags" = "alzato | pugno | sasso";
+// 👊 - facepunch
+"72076205.name" = "pugno chiuso";
+"72076205.tags" = "mano | pugno | pugno chiuso";
+// 🤛 - left-facing_fist
+"72078535.name" = "pugno a sinistra";
+"72078535.tags" = "pugno | pugno a sinistra | sinistra";
+// 🤜 - right-facing_fist
+"72078540.name" = "pugno a destra";
+"72078540.tags" = "destra | pugno | pugno a destra";
+// 👏 - clap
+"72076230.name" = "mani che applaudono";
+"72076230.tags" = "applaudire | applauso | mani | mani che applaudono";
+// 🙌 - raised_hands
+"72078775.name" = "mani alzate";
+"72078775.tags" = "evviva | mani | mani alzate | urrà | vittoria";
+// 🫶 - heart_hands
+"72080910.name" = "mani a cuore";
+"72080910.tags" = "amore | cuore | mani a cuore | ti amo | ti voglio bene";
+// 👐 - open_hands
+"72076235.name" = "mani aperte";
+"72076235.tags" = "aperta | mani aperte | mano | segno | segno delle mani aperte";
+// 🤲 - palms_up_together
+"72078650.name" = "mani unite in alto";
+"72078650.tags" = "mani unite in alto | preghiera";
+// 🤝 - handshake
+"72078545.name" = "stretta di mano";
+"72078545.tags" = "conoscere | mano | presentarsi | stretta di mano";
+// 🙏 - pray
+"72078790.name" = "mani giunte";
+"72078790.tags" = "gesto | mani giunte | mano | pregare | preghiera";
+// 💅 - nail_care
+"72076500.name" = "smalto per unghie";
+"72076500.tags" = "cosmetici | manicure | smalto | smalto per unghie";
+// 🤳 - selfie
+"72078655.name" = "selfie";
+"72078655.tags" = "autoscatto | fotocamera | selfie | telefono";
+// 💪 - muscle
+"72076685.name" = "bicipite";
+"72076685.tags" = "bicipite | forte | fumetto | muscolo | teso";
+// 🦾 - mechanical_arm
+"72079350.name" = "protesi robotica per il braccio";
+"72079350.tags" = "accessibilità | protesi | protesi robotica per il braccio";
+// 🦿 - mechanical_leg
+"72079355.name" = "protesi robotica per la gamba";
+"72079355.tags" = "accessibilità | protesi | protesi robotica per la gamba";
+// 🦵 - leg
+"72079305.name" = "gamba";
+"72079305.tags" = "arto | calcio | gamba";
+// 🦶 - foot
+"72079310.name" = "piede";
+"72079310.tags" = "calciare | camminare | piede";
+// 👂 - ear
+"72076165.name" = "orecchio";
+"72076165.tags" = "corpo | orecchio";
+// 🦻 - ear_with_hearing_aid
+"72079335.name" = "orecchio con apparecchio acustico";
+"72079335.tags" = "accessibilità | apparecchio acustico | non udente | non udenti | orecchio con apparecchio acustico | protesi acustica";
+// 👃 - nose
+"72076170.name" = "naso";
+"72076170.tags" = "corpo | faccia | naso";
+// 🧠 - brain
+"72079520.name" = "cervello";
+"72079520.tags" = "cervello | intelligente";
+// 🫀 - anatomical_heart
+"72080640.name" = "organo del cuore";
+"72080640.tags" = "battito | cardiologia | cuore | organo | organo del cuore | pulsazione";
+// 🫁 - lungs
+"72080645.name" = "polmoni";
+"72080645.tags" = "espirazione | inspirazione | organo | polmoni | respirazione | respiro";
+// 🦷 - tooth
+"72079315.name" = "dente";
+"72079315.tags" = "dente | dentista";
+// 🦴 - bone
+"72079300.name" = "osso";
+"72079300.tags" = "osso | scheletro";
+// 👀 - eyes
+"72076155.name" = "occhi";
+"72076155.tags" = "faccia | occhi";
+// 👅 - tongue
+"72076180.name" = "lingua";
+"72076180.tags" = "corpo | faccia | lingua";
+// 👄 - lips
+"72076175.name" = "bocca";
+"72076175.tags" = "bocca | corpo | faccia | labbra";
+// 🫦 - biting_lip
+"72080830.name" = "bocca che morde il labbro";
+"72080830.tags" = "ansia | bocca che morde il labbro | disagio | flirtare | nervoso | paura | preoccupato";
+// 👶 - baby
+"72076425.name" = "neonato";
+"72076425.tags" = "bebè | figlio | neonato | persone";
+// 🧒 - child
+"72079450.name" = "bimbo";
+"72079450.tags" = "bimbo | giovane";
+// 👦 - boy
+"72076345.name" = "bambino";
+"72076345.tags" = "bambino | persone | ragazzino";
+// 👧 - girl
+"72076350.name" = "bambina";
+"72076350.tags" = "bambina | persone | ragazzina";
+// 🧑 - adult
+"72079445.name" = "persona";
+"72079445.tags" = "adulto | persona";
+// 👱 - person_with_blond_hair
+"72076400.name" = "persona bionda";
+"72076400.tags" = "biondo | persona bionda | persone";
+// 👨 - man
+"72076355.name" = "uomo";
+"72076355.tags" = "maschio | persone | uomo";
+// 🧔 - bearded_person
+"72079460.name" = "persona con la barba";
+"72079460.tags" = "barba | persona | persona con la barba";
+// 👩 - woman
+"72076360.name" = "donna";
+"72076360.tags" = "donna | femmina | persone";
+// 🧓 - older_adult
+"72079455.name" = "persona anziana";
+"72079455.tags" = "adulto anziano | anziano | persona anziana";
+// 👴 - older_man
+"72076415.name" = "uomo anziano";
+"72076415.tags" = "anziano | nonno | persone | uomo";
+// 👵 - older_woman
+"72076420.name" = "donna anziana";
+"72076420.tags" = "anziana | donna | nonna | persone";
+// 🙍 - person_frowning
+"72078780.name" = "persona corrucciata";
+"72078780.tags" = "corrucciata | gesto | persona";
+// 🙎 - person_with_pouting_face
+"72078785.name" = "persona imbronciata";
+"72078785.tags" = "gesto | imbronciata | persona";
+// 🙅 - no_good
+"72078740.name" = "persona che fa segno di no";
+"72078740.tags" = "faccina | gesto di rifiuto | non bene | persona che fa segno di no | rifiuto | vietato";
+// 🙆 - ok_woman
+"72078745.name" = "persona con gesto OK";
+"72078745.tags" = "gesto | OK | persona con gesto OK | tutto bene";
+// 💁 - information_desk_person
+"72076480.name" = "persona al punto informazioni";
+"72076480.tags" = "assistenza | informazioni | persona al punto informazioni | persone";
+// 🙋 - raising_hand
+"72078770.name" = "persona con mano alzata";
+"72078770.tags" = "felice | gesto | mano alzata | persona | persona con mano alzata";
+// 🧏 - deaf_person
+"72079435.name" = "persona con problemi di udito";
+"72079435.tags" = "accessibilità | difficoltà uditive | persona con problemi di udito | problemi di udito | sordità";
+// 🙇 - bow
+"72078750.name" = "persona che fa un inchino profondo";
+"72078750.tags" = "gesto | mi dispiace | persona | persona che fa un inchino profondo";
+// 🤦 - face_palm
+"72078590.name" = "persona esasperata";
+"72078590.tags" = "esasperazione | facepalm | incredulità | mano in fronte | persona esasperata";
+// 🤷 - shrug
+"72078675.name" = "persona che scrolla le spalle";
+"72078675.tags" = "dubbio | indifferenza | noncuranza | persona che scrolla le spalle | spalle alzate";
+// 🧑‍🎓 - student
+"26901339530736.name" = "studente";
+"26901339530736.tags" = "diploma | studente | studentessa";
+// 👨‍🎓 - male-student
+"26555159681094.name" = "studente maschio";
+"26555159681094.tags" = "laurea | maschio | ragazzo | studente";
+// 👩‍🎓 - female-student
+"26555719842663.name" = "studentessa";
+"26555719842663.tags" = "femmina | laurea | ragazza | studentessa";
+// 🧑‍🏫 - teacher
+"26901339533640.name" = "insegnante";
+"26901339533640.tags" = "insegnante | maestra | maestro | professore | professoressa";
+// 👨‍🏫 - male-teacher
+"26555159683998.name" = "professore";
+"26555159683998.tags" = "insegnante | professore | scuola | studio";
+// 👩‍🏫 - female-teacher
+"26555719845567.name" = "professoressa";
+"26555719845567.tags" = "insegnante | professoressa | scuola | studio";
+// 🧑‍🌾 - farmer
+"26901339527931.name" = "agricoltore";
+"26901339527931.tags" = "agricoltore | allevatore | contadino | giardiniere";
+// 👨‍🌾 - male-farmer
+"26555159678289.name" = "contadino";
+"26555159678289.tags" = "allevatore | contadino | fattoria | uomo";
+// 👩‍🌾 - female-farmer
+"26555719839858.name" = "contadina";
+"26555719839858.tags" = "allevatrice | contadina | donna | fattoria";
+// 🧑‍🍳 - cook
+"26901339529680.name" = "persona che cucina";
+"26901339529680.tags" = "chef | cuoco | persona che cucina";
+// 👨‍🍳 - male-cook
+"26555159680038.name" = "cuoco";
+"26555159680038.tags" = "chef | cucinare | cuoco | uomo";
+// 👩‍🍳 - female-cook
+"26555719841607.name" = "cuoca";
+"26555719841607.tags" = "chef | cucinare | cuoca | donna";
+// 🧑‍🔧 - mechanic
+"26901339518757.name" = "meccanico";
+"26901339518757.tags" = "elettricista | idraulico | meccanico | tecnico specializzato";
+// 👨‍🔧 - male-mechanic
+"26555159669115.name" = "meccanico uomo";
+"26555159669115.tags" = "chiave inglese | idraulico | meccanico | tecnico specializzato | uomo";
+// 👩‍🔧 - female-mechanic
+"26555719830684.name" = "meccanico donna";
+"26555719830684.tags" = "chiave inglese | donna | idraulico donna | meccanico | tecnico specializzato";
+// 🧑‍🏭 - factory_worker
+"26901339533706.name" = "persona che lavora in fabbrica";
+"26901339533706.tags" = "assemblaggio | fabbrica | industria | operaio | persona che lavora in fabbrica";
+// 👨‍🏭 - male-factory-worker
+"26555159684064.name" = "operaio";
+"26555159684064.tags" = "fabbrica | industria | operaio | uomo";
+// 👩‍🏭 - female-factory-worker
+"26555719845633.name" = "operaia";
+"26555719845633.tags" = "donna | fabbrica | industria | operaia";
+// 🧑‍💼 - office_worker
+"26901339515226.name" = "persona che fa un lavoro d’ufficio";
+"26901339515226.tags" = "architetto | business | impiegato | manager | persona che fa un lavoro d’ufficio";
+// 👨‍💼 - male-office-worker
+"26555159665584.name" = "impiegato";
+"26555159665584.tags" = "architetto | business | impiegato | manager | ufficio | uomo";
+// 👩‍💼 - female-office-worker
+"26555719827153.name" = "impiegata";
+"26555719827153.tags" = "architetto | business | donna | impiegata | manager | ufficio";
+// 🧑‍🔬 - scientist
+"26901339518922.name" = "persona che lavora in campo scientifico";
+"26901339518922.tags" = "biologo | chimico | fisico | ingegnere | persona che lavora in campo scientifico | scienziato";
+// 👨‍🔬 - male-scientist
+"26555159669280.name" = "scienziato";
+"26555159669280.tags" = "biologia | chimica | scienza | scienziato | uomo";
+// 👩‍🔬 - female-scientist
+"26555719830849.name" = "scienziata";
+"26555719830849.tags" = "biologia | chimica | donna | scienza | scienziata";
+// 🧑‍💻 - technologist
+"26901339515193.name" = "persona esperta di tecnologia";
+"26901339515193.tags" = "inventore | persona esperta di tecnologia | programmatore | software | sviluppatore | tecnologo";
+// 👨‍💻 - male-technologist
+"26555159665551.name" = "tecnologo";
+"26555159665551.tags" = "computer | programmatore | sviluppatore | tecnologo | uomo";
+// 👩‍💻 - female-technologist
+"26555719827120.name" = "tecnologa";
+"26555719827120.tags" = "computer | donna | programmatrice | sviluppatrice | tecnologa";
+// 🧑‍🎤 - singer
+"26901339531297.name" = "cantante";
+"26901339531297.tags" = "attore | cantante | intrattenitore | rock | star";
+// 👨‍🎤 - male-singer
+"26555159681655.name" = "cantante uomo";
+"26555159681655.tags" = "attore | cantante | cantante uomo | musica | star";
+// 👩‍🎤 - female-singer
+"26555719843224.name" = "cantante donna";
+"26555719843224.tags" = "attrice | cantante | cantante donna | musica | star";
+// 🧑‍🎨 - artist
+"26901339531429.name" = "artista";
+"26901339531429.tags" = "artista | tavolozza";
+// 👨‍🎨 - male-artist
+"26555159681787.name" = "artista uomo";
+"26555159681787.tags" = "arte | artista | pittore | uomo";
+// 👩‍🎨 - female-artist
+"26555719843356.name" = "artista donna";
+"26555719843356.tags" = "arte | artista | donna | pittrice";
+// 🧑‍🚀 - astronaut
+"26901339530142.name" = "astronauta";
+"26901339530142.tags" = "astronauta | razzo";
+// 👨‍🚀 - male-astronaut
+"26555159680500.name" = "astronauta uomo";
+"26555159680500.tags" = "astronauta | razzo | spazio | uomo";
+// 👩‍🚀 - female-astronaut
+"26555719842069.name" = "astronauta donna";
+"26555719842069.tags" = "astronauta | donna | razzo | spazio";
+// 🧑‍🚒 - firefighter
+"26901339530736.name" = "pompiere";
+"26901339530736.tags" = "pompiere | vigile del fuoco";
+// 👨‍🚒 - male-firefighter
+"26555159681094.name" = "pompiere uomo";
+"26555159681094.tags" = "incendio | pompiere | uomo | vigile del fuoco";
+// 👩‍🚒 - female-firefighter
+"26555719842663.name" = "pompiere donna";
+"26555719842663.tags" = "donna | incendio | pompiere | vigile del fuoco";
+// 👮 - cop
+"72076385.name" = "agente di polizia";
+"72076385.tags" = "agente | agente di polizia | persone | polizia | poliziotto";
+// 💂 - guardsman
+"72076485.name" = "guardia";
+"72076485.tags" = "guardia";
+// 🥷 - ninja
+"72078995.name" = "ninja";
+"72078995.tags" = "guerriero | invisibile | nascosto | ninja";
+// 👷 - construction_worker
+"72076430.name" = "operaio edile";
+"72076430.tags" = "edile | operaio | persone";
+// 🫅 - person_with_crown
+"72080665.name" = "persona con corona";
+"72080665.tags" = "monarca | nobile | persona con corona | re | regale | regina";
+// 🤴 - prince
+"72078660.name" = "principe";
+"72078660.tags" = "principe";
+// 👸 - princess
+"72076435.name" = "principessa";
+"72076435.tags" = "favola | persone | principessa";
+// 👳 - man_with_turban
+"72076410.name" = "persona con turbante";
+"72076410.tags" = "persona con turbante | persone | turbante";
+// 👲 - man_with_gua_pi_mao
+"72076405.name" = "uomo con zucchetto cinese";
+"72076405.tags" = "persone | uomo con zucchetto | uomo con zucchetto cinese | zucchetto";
+// 🧕 - person_with_headscarf
+"72079465.name" = "donna con velo";
+"72079465.tags" = "donna con foulard | donna con hijab | donna con velo";
+// 🤵 - person_in_tuxedo
+"72078665.name" = "persona in smoking";
+"72078665.tags" = "persona | persona in smoking | smoking | sposo";
+// 👰 - bride_with_veil
+"72076395.name" = "persona con velo";
+"72076395.tags" = "matrimonio | persona | persona con velo | sposa | velo";
+// 🤰 - pregnant_woman
+"72078640.name" = "donna incinta";
+"72078640.tags" = "donna | gravidanza | incinta";
+// 🫃 - pregnant_man
+"72080655.name" = "uomo incinto";
+"72080655.tags" = "gonfio | gravido | incinto | pancia | pieno | uomo incinto";
+// 🫄 - pregnant_person
+"72080660.name" = "persona incinta";
+"72080660.tags" = "gonfio | gravido | incinto | pancia | persona incinta | pieno";
+// 🤱 - breast-feeding
+"72078645.name" = "allattare";
+"72078645.tags" = "allattamento | allattare | allattare al seno";
+// 👩‍🍼 - woman_feeding_baby
+"26555719841904.name" = "donna che allatta";
+"26555719841904.tags" = "allattamento | bebè | donna | donna che allatta | nutrire";
+// 👨‍🍼 - man_feeding_baby
+"26555159680335.name" = "uomo che allatta";
+"26555159680335.tags" = "allattamento | bebè | nutrire | uomo | uomo che allatta";
+// 🧑‍🍼 - person_feeding_baby
+"26901339529977.name" = "persona che allatta";
+"26901339529977.tags" = "allattamento | bebè | nutrire | persona | persona che allatta";
+// 👼 - angel
+"72076455.name" = "angioletto";
+"72076455.tags" = "angelo | angioletto | faccina | favola";
+// 🎅 - santa
+"72079055.name" = "Babbo Natale";
+"72079055.tags" = "Babbo Natale | festa | Natale";
+// 🤶 - mrs_claus
+"72078670.name" = "Mamma Natale";
+"72078670.tags" = "mamma natale | Mamma Natale | natale";
+// 🧑‍🎄 - mx_claus
+"26901339530241.name" = "Santa Claus";
+"26901339530241.tags" = "Claus | Natale | Santa Claus";
+// 🦸 - superhero
+"72079320.name" = "supereroe";
+"72079320.tags" = "eroina | supereroe | supereroina | superpoteri";
+// 🦹 - supervillain
+"72079325.name" = "supercattivo";
+"72079325.tags" = "cattivo | criminale | supercattivo | superpotere";
+// 🧙 - mage
+"72079485.name" = "mago";
+"72079485.tags" = "mago | strega | stregone";
+// 🧚 - fairy
+"72079490.name" = "fata";
+"72079490.tags" = "fata | Oberon | Puck | Titania";
+// 🧛 - vampire
+"72079495.name" = "vampiro";
+"72079495.tags" = "Dracula | morto vivente | vampiro";
+// 🧜 - merperson
+"72079500.name" = "sirena";
+"72079500.tags" = "sirena";
+// 🧝 - elf
+"72079505.name" = "elfo";
+"72079505.tags" = "elfo | magico";
+// 🧞 - genie
+"72079510.name" = "genio";
+"72079510.tags" = "djinn | genio";
+// 🧟 - zombie
+"72079515.name" = "zombie";
+"72079515.tags" = "morto vivente | zombie";
+// 🧌 - troll
+"72079420.name" = "troll";
+"72079420.tags" = "fantasia | favola | fiaba | mostro | troll";
+// 💆 - massage
+"72076505.name" = "persona che riceve un massaggio";
+"72076505.tags" = "centro estetico | massaggio | massaggio facciale | persona che riceve un massaggio";
+// 💇 - haircut
+"72076510.name" = "taglio di capelli";
+"72076510.tags" = "bellezza | salone | salone di bellezza | taglio di capelli";
+// 🚶 - walking
+"72079305.name" = "pedone";
+"72079305.tags" = "camminare | passeggiata | pedone | uomo";
+// 🧍 - standing_person
+"72079425.name" = "persona in piedi";
+"72079425.tags" = "in piedi | persona in piedi | stare in piedi";
+// 🧎 - kneeling_person
+"72079430.name" = "persona inginocchiata";
+"72079430.tags" = "in ginocchio | inginocchiarsi | persona inginocchiata";
+// 🧑‍🦯 - person_with_probing_cane
+"26901339531726.name" = "persona con bastone di orientamento";
+"26901339531726.tags" = "accessibilità | cecità | persona con bastone di orientamento";
+// 👨‍🦯 - man_with_probing_cane
+"26555159682084.name" = "uomo con bastone bianco di orientamento";
+"26555159682084.tags" = "accessibilità | ipovedente | ipovedenti | non vedente | non vedenti | uomo | uomo con bastone bianco di orientamento";
+// 👩‍🦯 - woman_with_probing_cane
+"26555719843653.name" = "donna con bastone bianco di orientamento";
+"26555719843653.tags" = "accessibilità | donna | donna con bastone bianco di orientamento | ipovedente | ipovedenti | non vedente | non vedenti";
+// 🧑‍🦼 - person_in_motorized_wheelchair
+"26901339532155.name" = "persona su sedia a rotelle motorizzata";
+"26901339532155.tags" = "accessibilità | persona su sedia a rotelle motorizzata | sedia a rotelle";
+// 👨‍🦼 - man_in_motorized_wheelchair
+"26555159682513.name" = "uomo su sedia a rotelle motorizzata";
+"26555159682513.tags" = "accessibilità | uomo in carrozzina | uomo in sedia a rotelle | uomo su sedia a rotelle motorizzata";
+// 👩‍🦼 - woman_in_motorized_wheelchair
+"26555719844082.name" = "donna su sedia a rotelle motorizzata";
+"26555719844082.tags" = "accessibilità | donna in carrozzina | donna in sedia a rotelle | donna su sedia a rotelle motorizzata";
+// 🧑‍🦽 - person_in_manual_wheelchair
+"26901339532188.name" = "persona su sedia a rotelle manuale";
+"26901339532188.tags" = "accessibilità | persona su sedia a rotelle manuale | sedia a rotelle";
+// 👨‍🦽 - man_in_manual_wheelchair
+"26555159682546.name" = "uomo su sedia a rotelle manuale";
+"26555159682546.tags" = "accessibilità | uomo in carrozzina | uomo in sedia a rotelle | uomo su sedia a rotelle manuale";
+// 👩‍🦽 - woman_in_manual_wheelchair
+"26555719844115.name" = "donna su sedia a rotelle manuale";
+"26555719844115.tags" = "accessibilità | donna in carrozzina | donna in sedia a rotelle | donna su sedia a rotelle manuale";
+// 🏃 - runner
+"72079365.name" = "persona che corre";
+"72079365.tags" = "corsa | maratona | persona che corre | sport";
+// 💃 - dancer
+"72076490.name" = "donna che balla";
+"72076490.tags" = "ballare | donna | donna che balla";
+// 🕺 - man_dancing
+"72077725.name" = "uomo che balla";
+"72077725.tags" = "ballare | uomo | uomo che balla";
+// 👯 - dancers
+"72076390.name" = "persone con orecchie da coniglio";
+"72076390.tags" = "donna | orecchie da coniglio | persone | persone con orecchie da coniglio | ragazza";
+// 🧖 - person_in_steamy_room
+"72079470.name" = "persona in sauna";
+"72079470.tags" = "bagno turco | persona in sauna | sauna";
+// 🧗 - person_climbing
+"72079475.name" = "persona che scala";
+"72079475.tags" = "persona che scala | scalatore";
+// 🤺 - fencer
+"72078690.name" = "schermidore";
+"72078690.tags" = "fioretto | persona | scherma | schermidore | spada";
+// 🏇 - horse_racing
+"72079385.name" = "ippica";
+"72079385.tags" = "cavallo | cavallo da corsa | corse | fantino | ippica";
+// 🏂 - snowboarder
+"72079360.name" = "persona sullo snowboard";
+"72079360.tags" = "persona sullo snowboard | snowboard | sport | uomo sullo snowboard";
+// 🏄 - surfer
+"72079370.name" = "persona che fa surf";
+"72079370.tags" = "persona che fa surf | sport";
+// 🚣 - rowboat
+"72079210.name" = "persona in barca a remi";
+"72079210.tags" = "barca | persona | persona in barca a remi | remi";
+// 🏊 - swimmer
+"72079400.name" = "persona che nuota";
+"72079400.tags" = "nuotare | nuoto | persona che nuota | sport";
+// 🚴 - bicyclist
+"72079295.name" = "ciclista";
+"72079295.tags" = "bici | ciclista";
+// 🚵 - mountain_bicyclist
+"72079300.name" = "ciclista di mountain bike";
+"72079300.tags" = "ciclista | ciclista di mountain bike | mountain bike";
+// 🤸 - person_doing_cartwheel
+"72078680.name" = "persona che fa la ruota";
+"72078680.tags" = "ginnasta | ginnastica | persona | persona che fa la ruota | ruota";
+// 🤼 - wrestlers
+"72078700.name" = "persone che fanno la lotta";
+"72078700.tags" = "persone | persone che fanno la lotta | sport | wrestler | wrestling";
+// 🤽 - water_polo
+"72078705.name" = "persona che gioca a pallanuoto";
+"72078705.tags" = "acqua | pallanuoto | persona | persona che gioca a pallanuoto | piscina";
+// 🤾 - handball
+"72078710.name" = "persona che gioca a pallamano";
+"72078710.tags" = "palla | pallamano | persona | persona che gioca a pallamano | sport";
+// 🤹 - juggling
+"72078685.name" = "persona che fa giocoleria";
+"72078685.tags" = "abilità | equilibrio | giocoliere | persona che fa giocoleria";
+// 🧘 - person_in_lotus_position
+"72079480.name" = "persona in posizione del loto";
+"72079480.tags" = "meditazione | persona in posizione del loto | yoga";
+// 🛀 - bath
+"72079355.name" = "persona che fa il bagno";
+"72079355.tags" = "fare il bagno | lavarsi | persona che fa il bagno";
+// 🛌 - sleeping_accommodation
+"72079415.name" = "persona a letto";
+"72079415.tags" = "dormire | hotel | letto | notte | persona a letto";
+// 🧑‍🤝‍🧑 - people_holding_hands
+"3200955216551984283.name" = "persone che si tengono per mano";
+"3200955216551984283.tags" = "coppia | coppia che si tiene per mano | coppia per mano | persone che si tengono per mano | tenersi per mano";
+// 👭 - two_women_holding_hands
+"72076380.name" = "due donne che si tengono per mano";
+"72076380.tags" = "coppia | due donne che si tengono per mano | due donne per mano | tenersi per mano";
+// 👫 - man_and_woman_holding_hands
+"72076370.name" = "uomo e donna che si tengono per mano";
+"72076370.tags" = "coppia | tenersi per mano | uomo | uomo e donna che si tengono per mano | uomo e donna per mano";
+// 👬 - two_men_holding_hands
+"72076375.name" = "due uomini che si tengono per mano";
+"72076375.tags" = "coppia | due uomini che si tengono per mano | due uomini per mano | persone | tenersi per mano";
+// 💏 - couplekiss
+"72076550.name" = "bacio tra coppia";
+"72076550.tags" = "baciarsi | bacio tra coppia | coppia | coppietta | persone";
+// 💑 - couple_with_heart
+"72076560.name" = "coppia con cuore";
+"72076560.tags" = "coppia con cuore | cuore | persone | romanticismo";
+// 👪 - family
+"72076365.name" = "famiglia";
+"72076365.tags" = "bambino | famiglia | mamma | papà | persone";
+// 👤 - bust_in_silhouette
+"72076335.name" = "profilo di persona";
+"72076335.tags" = "persona | profilo | profilo di persona";
+// 👥 - busts_in_silhouette
+"72076340.name" = "profilo di due persone";
+"72076340.tags" = "persone | profilo | profilo di due persone";
+// 🫂 - people_hugging
+"72080650.name" = "persone che si abbracciano";
+"72080650.tags" = "abbraccio | addio | ciao | grazie | persone che si abbracciano";
+// 👣 - footprints
+"72076330.name" = "impronta di piedi";
+"72076330.tags" = "corpo | impronta | impronta di piedi | piede";
+// 🏻 - skin-tone-2
+"72079645.name" = "carnagione chiara";
+"72079645.tags" = "carnagione chiara | colore della pelle | fototipo | pelle chiara | tonalità";
+// 🏼 - skin-tone-3
+"72079650.name" = "carnagione abbastanza chiara";
+"72079650.tags" = "carnagione abbastanza chiara | colore della pelle | fototipo | pelle abbastanza chiara | tonalità";
+// 🏽 - skin-tone-4
+"72079655.name" = "carnagione olivastra";
+"72079655.tags" = "carnagione olivastra | colore della pelle | fototipo | pelle olivastra | tonalità";
+// 🏾 - skin-tone-5
+"72079660.name" = "carnagione abbastanza scura";
+"72079660.tags" = "carnagione abbastanza scura | colore della pelle | fototipo | pelle abbastanza scura | tonalità";
+// 🏿 - skin-tone-6
+"72079665.name" = "carnagione scura";
+"72079665.tags" = "carnagione scura | colore della pelle | fototipo | pelle scura | tonalità";
+// 🐵 - monkey_face
+"72076100.name" = "muso di scimmia";
+"72076100.tags" = "animale | faccina | muso di scimmia | scimmia";
+// 🐒 - monkey
+"72075925.name" = "scimmia";
+"72075925.tags" = "animale | scimmia";
+// 🦍 - gorilla
+"72079105.name" = "gorilla";
+"72079105.tags" = "animale | gorilla";
+// 🦧 - orangutan
+"72079235.name" = "orangotango";
+"72079235.tags" = "orango | orangotango | scimmia | scimmione";
+// 🐶 - dog
+"72076105.name" = "muso di cane";
+"72076105.tags" = "animale | cane | faccina | muso di cane";
+// 🐕 - dog2
+"72075940.name" = "cane";
+"72075940.tags" = "animale | cane | cucciolo";
+// 🦮 - guide_dog
+"72079270.name" = "cane guida";
+"72079270.tags" = "accessibilità | cane da accompagnamento | cane guida | non vedenti";
+// 🐕‍🦺 - service_dog
+"26508666272220.name" = "cane da assistenza";
+"26508666272220.tags" = "accessibilità | cane d’assistenza | cane da assistenza | cane di servizio";
+// 🐩 - poodle
+"72076040.name" = "barboncino";
+"72076040.tags" = "animale | barboncino | cane";
+// 🐺 - wolf
+"72076125.name" = "lupo";
+"72076125.tags" = "animale | faccina | lupo | muso di lupo";
+// 🦊 - fox_face
+"72079090.name" = "volpe";
+"72079090.tags" = "animale | faccina volpe | muso di volpe | volpe";
+// 🦝 - raccoon
+"72079185.name" = "procione";
+"72079185.tags" = "animale furbo | curiosità | furbizia | procione";
+// 🐱 - cat
+"72076080.name" = "muso di gatto";
+"72076080.tags" = "animale | faccina | gatto | muso di gatto";
+// 🐈 - cat2
+"72075875.name" = "gatto";
+"72075875.tags" = "animale | gatto";
+// 🐈‍⬛ - black_cat
+"51973200513.name" = "gatto nero";
+"51973200513.tags" = "gatto | nero | sfortuna";
+// 🦁 - lion_face
+"72079045.name" = "leone";
+"72079045.tags" = "faccina | leone | muso di leone | segno zodiacale";
+// 🐯 - tiger
+"72076070.name" = "muso di tigre";
+"72076070.tags" = "animale | faccina | muso di tigre | tigre";
+// 🐅 - tiger2
+"72075860.name" = "tigre";
+"72075860.tags" = "animale | tigre";
+// 🐆 - leopard
+"72075865.name" = "leopardo";
+"72075865.tags" = "animale | leopardo";
+// 🐴 - horse
+"72076095.name" = "muso di cavallo";
+"72076095.tags" = "animale | cavallo | faccina | muso di cavallo";
+// 🫎 - moose
+"72080710.name" = "alce";
+"72080710.tags" = "alce | animale | corna | mammifero";
+// 🫏 - donkey
+"72080715.name" = "asino";
+"72080715.tags" = "animale | asino | mammifero | mulo | somaro | testardo";
+// 🐎 - racehorse
+"72075905.name" = "cavallo";
+"72075905.tags" = "animale | cavallo | cavallo da corsa | corse";
+// 🦄 - unicorn_face
+"72079060.name" = "unicorno";
+"72079060.tags" = "faccina | unicorno";
+// 🦓 - zebra_face
+"72079135.name" = "zebra";
+"72079135.tags" = "strisce | zebra";
+// 🦌 - deer
+"72079100.name" = "cervo";
+"72079100.tags" = "animale | cervo";
+// 🦬 - bison
+"72079260.name" = "bisonte";
+"72079260.tags" = "bisonte | mandria";
+// 🐮 - cow
+"72076065.name" = "muso di mucca";
+"72076065.tags" = "animale | faccina | mucca | muso di mucca";
+// 🐂 - ox
+"72075845.name" = "bue";
+"72075845.tags" = "animale | bue | segno zodiacale del toro | toro";
+// 🐃 - water_buffalo
+"72075850.name" = "bufalo d’acqua";
+"72075850.tags" = "animale | bufalo d’acqua";
+// 🐄 - cow2
+"72075855.name" = "mucca";
+"72075855.tags" = "animale | mucca";
+// 🐷 - pig
+"72076110.name" = "muso di maiale";
+"72076110.tags" = "animale | faccina | maiale | muso di maiale";
+// 🐖 - pig2
+"72075945.name" = "maiale";
+"72075945.tags" = "maiale | scrofa";
+// 🐗 - boar
+"72075950.name" = "cinghiale";
+"72075950.tags" = "animale | cinghiale";
+// 🐽 - pig_nose
+"72076140.name" = "naso da maiale";
+"72076140.tags" = "animale | faccina | maiale | naso | naso da maiale";
+// 🐏 - ram
+"72075910.name" = "montone";
+"72075910.tags" = "animale | ariete | montone | segno zodiacale dell’ariete";
+// 🐑 - sheep
+"72075920.name" = "pecora";
+"72075920.tags" = "animale | pecora";
+// 🐐 - goat
+"72075915.name" = "capra";
+"72075915.tags" = "animale | capra | capricorno | segno zodiacale del capricorno";
+// 🐪 - dromedary_camel
+"72076045.name" = "dromedario";
+"72076045.tags" = "animale | cammello | dromedario | gobba";
+// 🐫 - camel
+"72076050.name" = "cammello";
+"72076050.tags" = "animale | cammello | gobba";
+// 🦙 - llama
+"72079165.name" = "lama";
+"72079165.tags" = "alpaca | lama | lana di alpaca";
+// 🦒 - giraffe_face
+"72079130.name" = "giraffa";
+"72079130.tags" = "giraffa | puntini";
+// 🐘 - elephant
+"72075955.name" = "elefante";
+"72075955.tags" = "animale | elefante";
+// 🦣 - mammoth
+"72079215.name" = "mammut";
+"72079215.tags" = "estinzione | grande | lanoso | mammut | zanna";
+// 🦏 - rhinoceros
+"72079115.name" = "rinoceronte";
+"72079115.tags" = "animale | rinoceronte";
+// 🦛 - hippopotamus
+"72079175.name" = "ippopotamo";
+"72079175.tags" = "ippo | ippopotamo";
+// 🐭 - mouse
+"72076060.name" = "muso di topo";
+"72076060.tags" = "animale | faccina | muso di topo | topo";
+// 🐁 - mouse2
+"72075840.name" = "topo";
+"72075840.tags" = "animale | topo";
+// 🐀 - rat
+"72075835.name" = "ratto";
+"72075835.tags" = "animale | ratto";
+// 🐹 - hamster
+"72076120.name" = "criceto";
+"72076120.tags" = "animale | criceto | faccina | muso di criceto";
+// 🐰 - rabbit
+"72076075.name" = "muso di coniglio";
+"72076075.tags" = "animale | coniglio | faccina | muso di coniglio";
+// 🐇 - rabbit2
+"72075870.name" = "coniglio";
+"72075870.tags" = "animale | coniglietto | coniglio";
+// 🦫 - beaver
+"72079255.name" = "castoro";
+"72079255.tags" = "castoro | diga";
+// 🦔 - hedgehog
+"72079140.name" = "riccio";
+"72079140.tags" = "riccio | spinoso";
+// 🦇 - bat
+"72079075.name" = "pipistrello";
+"72079075.tags" = "animale | pipistrello | vampiro";
+// 🐻 - bear
+"72076130.name" = "orso";
+"72076130.tags" = "animale | faccina | muso di orso | orso";
+// 🐨 - koala
+"72076035.name" = "koala";
+"72076035.tags" = "animale | koala";
+// 🐼 - panda_face
+"72076135.name" = "panda";
+"72076135.tags" = "animale | faccina | muso di panda | panda";
+// 🦥 - sloth
+"72079225.name" = "bradipo";
+"72079225.tags" = "bradipo | calma | lentezza | pigrizia";
+// 🦦 - otter
+"72079230.name" = "lontra";
+"72079230.tags" = "lontra | lontra marina";
+// 🦨 - skunk
+"72079240.name" = "puzzola";
+"72079240.tags" = "puzza | puzzola";
+// 🦘 - kangaroo
+"72079160.name" = "canguro";
+"72079160.tags" = "animale che salta | Australia | canguro | marsupiale";
+// 🦡 - badger
+"72079205.name" = "tasso";
+"72079205.tags" = "infastidire | tasso | tasso del miele";
+// 🐾 - feet
+"72076145.name" = "impronte di zampe";
+"72076145.tags" = "animale | impronta | impronta di zampa | impronte di zampe";
+// 🦃 - turkey
+"72079055.name" = "tacchino";
+"72079055.tags" = "animale | tacchino";
+// 🐔 - chicken
+"72075935.name" = "gallina";
+"72075935.tags" = "animale | gallina";
+// 🐓 - rooster
+"72075930.name" = "gallo";
+"72075930.tags" = "animale | gallo";
+// 🐣 - hatching_chick
+"72076010.name" = "pulcino che nasce";
+"72076010.tags" = "gallina | pulcino | pulcino che nasce | uovo che si schiude";
+// 🐤 - baby_chick
+"72076015.name" = "pulcino";
+"72076015.tags" = "animale | cucciolo | gallina | pulcino";
+// 🐥 - hatched_chick
+"72076020.name" = "pulcino visto di fronte";
+"72076020.tags" = "animale | cucciolo | gallina | pulcino | pulcino visto di fronte";
+// 🐦 - bird
+"72076025.name" = "uccello";
+"72076025.tags" = "animale | uccello";
+// 🐧 - penguin
+"72076030.name" = "pinguino";
+"72076030.tags" = "animale | pinguino";
+// 🦅 - eagle
+"72079065.name" = "aquila";
+"72079065.tags" = "animale | aquila | uccello";
+// 🦆 - duck
+"72079070.name" = "anatra";
+"72079070.tags" = "anatra | animale | uccello";
+// 🦢 - swan
+"72079210.name" = "cigno";
+"72079210.tags" = "brutto anatroccolo | cigno | uccello | volatile";
+// 🦉 - owl
+"72079085.name" = "gufo";
+"72079085.tags" = "animale | fortuna | gufo | saggezza | uccello";
+// 🦤 - dodo
+"72079220.name" = "dodo";
+"72079220.tags" = "dodo | estinzione | grande | Mauritius";
+// 🪶 - feather
+"72080590.name" = "piuma";
+"72080590.tags" = "leggero | piuma | piumaggio | uccello | volo";
+// 🦩 - flamingo
+"72079245.name" = "fenicottero";
+"72079245.tags" = "fenicottero | fenicottero rosa | tropicale";
+// 🦚 - peacock
+"72079170.name" = "pavone";
+"72079170.tags" = "pavone | pavoneggiarsi | uccello | volatile";
+// 🦜 - parrot
+"72079180.name" = "pappagallo";
+"72079180.tags" = "pappagallo | pirati | uccello parlante";
+// 🪽 - wing
+"72080625.name" = "ala";
+"72080625.tags" = "ala | angelo | aviazione | mitologia | uccello | volare";
+// 🐦‍⬛ - black_bird
+"52006885503.name" = "merlo";
+"52006885503.tags" = "corvo | merlo | nero | uccello";
+// 🪿 - goose
+"72080635.name" = "oca";
+"72080635.tags" = "oca | pollame | starnazzare | stupidità | uccello";
+// 🐸 - frog
+"72076115.name" = "rana";
+"72076115.tags" = "animale | faccina | muso di rana | rana";
+// 🐊 - crocodile
+"72075885.name" = "coccodrillo";
+"72075885.tags" = "animale | coccodrillo";
+// 🐢 - turtle
+"72076005.name" = "tartaruga";
+"72076005.tags" = "animale | tartaruga";
+// 🦎 - lizard
+"72079110.name" = "lucertola";
+"72079110.tags" = "animale | lucertola | rettile";
+// 🐍 - snake
+"72075900.name" = "serpente";
+"72075900.tags" = "animale | serpente";
+// 🐲 - dragon_face
+"72076085.name" = "testa di drago";
+"72076085.tags" = "animale | drago | faccina | testa di drago";
+// 🐉 - dragon
+"72075880.name" = "drago";
+"72075880.tags" = "animale | drago";
+// 🦕 - sauropod
+"72079145.name" = "sauropode";
+"72079145.tags" = "brachiosauro | brontosauro | diplodoco | sauropode";
+// 🦖 - t-rex
+"72079150.name" = "T-Rex";
+"72079150.tags" = "T-Rex | Tirannosauro Rex";
+// 🐳 - whale
+"72076090.name" = "balena che spruzza acqua";
+"72076090.tags" = "animale | balena | balena che spruzza acqua | spruzzare";
+// 🐋 - whale2
+"72075890.name" = "balena";
+"72075890.tags" = "animale | balena";
+// 🐬 - dolphin
+"72076055.name" = "delfino";
+"72076055.tags" = "animale | delfino";
+// 🦭 - seal
+"72079265.name" = "foca";
+"72079265.tags" = "foca | leone marino | otaria";
+// 🐟 - fish
+"72075990.name" = "pesce";
+"72075990.tags" = "animale | pesce | segno zodiacale dei Pesci";
+// 🐠 - tropical_fish
+"72075995.name" = "pesce tropicale";
+"72075995.tags" = "animale | pesce | pesce tropicale";
+// 🐡 - blowfish
+"72076000.name" = "pesce palla";
+"72076000.tags" = "animale | pesce | pesce palla";
+// 🦈 - shark
+"72079080.name" = "squalo";
+"72079080.tags" = "aggressività | animale | pesce | squalo";
+// 🐙 - octopus
+"72075960.name" = "polpo";
+"72075960.tags" = "animale | polpo";
+// 🐚 - shell
+"72075965.name" = "conchiglia";
+"72075965.tags" = "animale | conchiglia | conchiglia a spirale";
+// 🪸 - coral
+"72080600.name" = "corallo";
+"72080600.tags" = "barriera | barriera corallina | corallo | oceano";
+// 🪼 - jellyfish
+"72080620.name" = "medusa";
+"72080620.tags" = "bruciatura | dolore | invertebrato | mare | medusa | trasparente | urticante";
+// 🐌 - snail
+"72075895.name" = "lumaca";
+"72075895.tags" = "animale | lumaca";
+// 🦋 - butterfly
+"72079095.name" = "farfalla";
+"72079095.tags" = "animale | farfalla | insetto";
+// 🐛 - bug
+"72075970.name" = "insetto";
+"72075970.tags" = "animale | bruco | insetto | millepiedi";
+// 🐜 - ant
+"72075975.name" = "formica";
+"72075975.tags" = "animale | formica";
+// 🐝 - bee
+"72075980.name" = "ape";
+"72075980.tags" = "animale | ape";
+// 🪲 - beetle
+"72080570.name" = "coleottero";
+"72080570.tags" = "cimice | coleottero | insetto";
+// 🐞 - ladybug
+"72075985.name" = "coccinella";
+"72075985.tags" = "animale | coccinella";
+// 🦗 - cricket
+"72079155.name" = "grillo";
+"72079155.tags" = "cavalletta | grillo";
+// 🪳 - cockroach
+"72080575.name" = "scarafaggio";
+"72080575.tags" = "blatta | infestante | insetto | scarafaggio";
+// 🦂 - scorpion
+"72079050.name" = "scorpione";
+"72079050.tags" = "animale | scorpione | segno zodiacale";
+// 🦟 - mosquito
+"72079195.name" = "zanzara";
+"72079195.tags" = "febbre | insetto | malaria | zanzara";
+// 🪰 - fly
+"72080560.name" = "mosca";
+"72080560.tags" = "decomposizione | infestante | larva | malattia | mosca";
+// 🪱 - worm
+"72080565.name" = "verme";
+"72080565.tags" = "anellide | lombrico | parassita | verme";
+// 🦠 - microbe
+"72079200.name" = "microbo";
+"72079200.tags" = "ameba | batteri | microbo | virus";
+// 💐 - bouquet
+"72076555.name" = "mazzo di fiori";
+"72076555.tags" = "fiore | mazzo di fiori | romanticismo";
+// 🌸 - cherry_blossom
+"72078670.name" = "fiore di ciliegio";
+"72078670.tags" = "ciliegio | fiore | fiore di ciliegio";
+// 💮 - white_flower
+"72076705.name" = "fiore bianco";
+"72076705.tags" = "fiore | fiore bianco | simbolo ben fatto";
+// 🪷 - lotus
+"72080595.name" = "loto";
+"72080595.tags" = "buddhismo | fiore | India | induismo | loto | purezza | Vietnam";
+// 🌹 - rose
+"72078675.name" = "rosa";
+"72078675.tags" = "fiore | rosa";
+// 🥀 - wilted_flower
+"72078720.name" = "fiore appassito";
+"72078720.tags" = "appassito | fiore";
+// 🌺 - hibiscus
+"72078680.name" = "ibisco";
+"72078680.tags" = "fiore | ibisco";
+// 🌻 - sunflower
+"72078685.name" = "girasole";
+"72078685.tags" = "fiore | girasole";
+// 🌼 - blossom
+"72078690.name" = "fiore";
+"72078690.tags" = "bocciolo | fiore";
+// 🌷 - tulip
+"72078665.name" = "tulipano";
+"72078665.tags" = "fiore | tulipano";
+// 🪻 - hyacinth
+"72080615.name" = "giacinto";
+"72080615.tags" = "bocca di leone | fiore | giacinto | lavanda | lupino";
+// 🌱 - seedling
+"72078635.name" = "germoglio";
+"72078635.tags" = "germoglio | piantina";
+// 🪴 - potted_plant
+"72080580.name" = "pianta in vaso";
+"72080580.tags" = "casa | coltivare | curare | inutile | noioso | pianta | pianta in vaso";
+// 🌲 - evergreen_tree
+"72078640.name" = "albero sempreverde";
+"72078640.tags" = "albero | sempreverde";
+// 🌳 - deciduous_tree
+"72078645.name" = "albero deciduo";
+"72078645.tags" = "albero | caduco | deciduo";
+// 🌴 - palm_tree
+"72078650.name" = "palma";
+"72078650.tags" = "albero | palma";
+// 🌵 - cactus
+"72078655.name" = "cactus";
+"72078655.tags" = "cactus | pianta";
+// 🌾 - ear_of_rice
+"72078700.name" = "pianta di riso";
+"72078700.tags" = "pianta di riso | riso | spiga | spiga di riso";
+// 🌿 - herb
+"72078705.name" = "pianta";
+"72078705.tags" = "foglia | pianta";
+// 🍀 - four_leaf_clover
+"72078710.name" = "quadrifoglio";
+"72078710.tags" = "foglia | fortuna | quadrifoglio | quattro";
+// 🍁 - maple_leaf
+"72078715.name" = "foglia d’acero";
+"72078715.tags" = "foglia | foglia caduta | foglia d’acero";
+// 🍂 - fallen_leaf
+"72078720.name" = "foglia caduta";
+"72078720.tags" = "cadute foglia | foglia caduta | foglie | foglie cadute";
+// 🍃 - leaves
+"72078725.name" = "foglia al vento";
+"72078725.tags" = "foglia | foglia al vento | vento | vento che soffia";
+// 🪹 - empty_nest
+"72080605.name" = "nido vuoto";
+"72080605.tags" = "nidificazione | nido vuoto";
+// 🪺 - nest_with_eggs
+"72080610.name" = "nido con uova";
+"72080610.tags" = "nidificazione | nido con uova";
+// 🍄 - mushroom
+"72078730.name" = "fungo";
+"72078730.tags" = "autunno | bosco | fungo";
+// 🍇 - grapes
+"72078745.name" = "uva";
+"72078745.tags" = "frutta | grappolo d’uva | uva";
+// 🍈 - melon
+"72078750.name" = "melone";
+"72078750.tags" = "frutta | melone";
+// 🍉 - watermelon
+"72078755.name" = "anguria";
+"72078755.tags" = "anguria | frutta";
+// 🍊 - tangerine
+"72078760.name" = "mandarino";
+"72078760.tags" = "arancia | frutta | mandarino";
+// 🍋 - lemon
+"72078765.name" = "limone";
+"72078765.tags" = "agrume | frutta | limone";
+// 🍌 - banana
+"72078770.name" = "banana";
+"72078770.tags" = "banana | frutta";
+// 🍍 - pineapple
+"72078775.name" = "ananas";
+"72078775.tags" = "ananas | frutta";
+// 🥭 - mango
+"72078945.name" = "mango";
+"72078945.tags" = "frutta | mango | tropicale";
+// 🍎 - apple
+"72078780.name" = "mela rossa";
+"72078780.tags" = "frutta | mela | rossa";
+// 🍏 - green_apple
+"72078785.name" = "mela verde";
+"72078785.tags" = "frutta | mela | verde";
+// 🍐 - pear
+"72078790.name" = "pera";
+"72078790.tags" = "frutta | pera";
+// 🍑 - peach
+"72078795.name" = "pesca";
+"72078795.tags" = "frutta | pesca";
+// 🍒 - cherries
+"72078800.name" = "ciliegie";
+"72078800.tags" = "ciliegia | ciliegie | frutta";
+// 🍓 - strawberry
+"72078805.name" = "fragola";
+"72078805.tags" = "fragola | frutta";
+// 🫐 - blueberries
+"72080720.name" = "mirtilli";
+"72080720.tags" = "bacca | blu | mirtilli | mirtillo";
+// 🥝 - kiwifruit
+"72078865.name" = "kiwi";
+"72078865.tags" = "cibo | frutta | kiwi";
+// 🍅 - tomato
+"72078735.name" = "pomodoro";
+"72078735.tags" = "pomodoro | verdura";
+// 🫒 - olive
+"72080730.name" = "oliva";
+"72080730.tags" = "cibo | oliva";
+// 🥥 - coconut
+"72078905.name" = "cocco";
+"72078905.tags" = "cocco | noce di cocco | palma | piña colada";
+// 🥑 - avocado
+"72078805.name" = "avocado";
+"72078805.tags" = "avocado | cibo | frutta";
+// 🍆 - eggplant
+"72078740.name" = "melanzana";
+"72078740.tags" = "melanzana | verdura";
+// 🥔 - potato
+"72078820.name" = "patata";
+"72078820.tags" = "cibo | ortaggio | patata | tubero";
+// 🥕 - carrot
+"72078825.name" = "carota";
+"72078825.tags" = "carota | cibo | ortaggio | radice";
+// 🌽 - corn
+"72078695.name" = "pannocchia";
+"72078695.tags" = "granoturco | mais | pannocchia";
+// 🫑 - bell_pepper
+"72080725.name" = "peperone";
+"72080725.tags" = "ortaggio | peperone";
+// 🥒 - cucumber
+"72078810.name" = "cetriolo";
+"72078810.tags" = "cetriolino sottaceto | cetriolo | cibo | ortaggio";
+// 🥬 - leafy_green
+"72078940.name" = "verdure a foglia";
+"72078940.tags" = "bok choy | cavolo nero | kale | lattuga | verdure a foglia";
+// 🥦 - broccoli
+"72078910.name" = "broccoli";
+"72078910.tags" = "broccoli | cavolo nero";
+// 🧄 - garlic
+"72079380.name" = "aglio";
+"72079380.tags" = "aglio | insaporire | insaporitore | spicchio d’aglio";
+// 🧅 - onion
+"72079385.name" = "cipolla";
+"72079385.tags" = "cipolla | insaporire | insaporitore | soffritto";
+// 🥜 - peanuts
+"72078860.name" = "arachidi";
+"72078860.tags" = "arachide | arachidi | cibo | frutta secca | nocciolina | noccioline";
+// 🫘 - beans
+"72080760.name" = "fagioli";
+"72080760.tags" = "cibo | fagioli | legume";
+// 🌰 - chestnut
+"72078630.name" = "castagna";
+"72078630.tags" = "autunno | bosco | castagna";
+// 🫚 - ginger_root
+"72080770.name" = "radice di zenzero";
+"72080770.tags" = "birra | radice | radice di zenzero | spezia";
+// 🫛 - pea_pod
+"72080775.name" = "baccello di piselli";
+"72080775.tags" = "baccello | baccello di piselli | edamame | legume | pisello | vegetale";
+// 🍞 - bread
+"72078860.name" = "pane in cassetta";
+"72078860.tags" = "pancarré | pane in cassetta";
+// 🥐 - croissant
+"72078800.name" = "croissant";
+"72078800.tags" = "cibo | colazione | cornetto | croissant | francese";
+// 🥖 - baguette_bread
+"72078830.name" = "baguette";
+"72078830.tags" = "baguette | cibo | filone | francese";
+// 🫓 - flatbread
+"72080735.name" = "focaccia";
+"72080735.tags" = "arepa | focaccia | lavash | naan | pita";
+// 🥨 - pretzel
+"72078920.name" = "pretzel";
+"72078920.tags" = "pretzel";
+// 🥯 - bagel
+"72078955.name" = "bagel";
+"72078955.tags" = "bagel | panetteria | spalmare formaggio sul bagel";
+// 🥞 - pancakes
+"72078870.name" = "pancake";
+"72078870.tags" = "americano | cibo | colazione | crêpe | pancake";
+// 🧇 - waffle
+"72079395.name" = "waffle";
+"72079395.tags" = "gaufre | waffle";
+// 🧀 - cheese_wedge
+"72079360.name" = "fetta di formaggio";
+"72079360.tags" = "fetta di formaggio | formaggio";
+// 🍖 - meat_on_bone
+"72078820.name" = "carne";
+"72078820.tags" = "carne | carne con osso | ristorante";
+// 🍗 - poultry_leg
+"72078825.name" = "coscia di pollo";
+"72078825.tags" = "coscia | coscia di pollo | pollo | ristorante";
+// 🥩 - cut_of_meat
+"72078925.name" = "taglio di carne";
+"72078925.tags" = "bistecca | costoletta d’agnello | costoletta di maiale | taglio | taglio di carne";
+// 🥓 - bacon
+"72078815.name" = "pancetta";
+"72078815.tags" = "bacon | carne | cibo | pancetta";
+// 🍔 - hamburger
+"72078810.name" = "hamburger";
+"72078810.tags" = "burger | hamburger";
+// 🍟 - fries
+"72078865.name" = "patatine";
+"72078865.tags" = "patatine | patatine fritte | ristorante";
+// 🍕 - pizza
+"72078815.name" = "pizza";
+"72078815.tags" = "fetta | pizza | ristorante";
+// 🌭 - hotdog
+"72078615.name" = "hot dog";
+"72078615.tags" = "hot dog | street food";
+// 🥪 - sandwich
+"72078930.name" = "sandwich";
+"72078930.tags" = "pane | sandwich";
+// 🌮 - taco
+"72078620.name" = "taco";
+"72078620.tags" = "cucina messicana | Messico | taco";
+// 🌯 - burrito
+"72078625.name" = "burrito";
+"72078625.tags" = "burrito | cucina messicana | Messico";
+// 🫔 - tamale
+"72080740.name" = "tamale";
+"72080740.tags" = "involtino | messicano | tamale";
+// 🥙 - stuffed_flatbread
+"72078845.name" = "pita farcita";
+"72078845.tags" = "falafel | gyro | kebab | pita farcita | ripieno";
+// 🧆 - falafel
+"72079390.name" = "falafel";
+"72079390.tags" = "ceci | falafel | polpette di ceci";
+// 🥚 - egg
+"72078850.name" = "uovo";
+"72078850.tags" = "cibo | uovo";
+// 🍳 - fried_egg
+"72078965.name" = "cucinare";
+"72078965.tags" = "cucinare | ristorante";
+// 🥘 - shallow_pan_of_food
+"72078840.name" = "padella con cibo";
+"72078840.tags" = "casseruola | cibo | padella | padella con cibo | paella";
+// 🍲 - stew
+"72078960.name" = "pentola di cibo";
+"72078960.tags" = "pentola di cibo | ristorante | stufato | zuppa";
+// 🫕 - fondue
+"72080745.name" = "fonduta";
+"72080745.tags" = "cioccolato | fonduta | formaggio | fuso | pentola | svizzero";
+// 🥣 - bowl_with_spoon
+"72078895.name" = "ciotola con cucchiaio";
+"72078895.tags" = "cereali | ciotola con cucchiaio | colazione";
+// 🥗 - green_salad
+"72078835.name" = "insalata verde";
+"72078835.tags" = "cibo | insalata | insalata verde";
+// 🍿 - popcorn
+"72079025.name" = "popcorn";
+"72079025.tags" = "cinema | mais | popcorn";
+// 🧈 - butter
+"72079400.name" = "burro";
+"72079400.tags" = "burro | latticini | latticino";
+// 🧂 - salt
+"72079370.name" = "sale";
+"72079370.tags" = "condimento | sale | saliera";
+// 🥫 - canned_food
+"72078935.name" = "cibo in scatola";
+"72078935.tags" = "cibo in scatola | scatoletta";
+// 🍱 - bento
+"72078955.name" = "bento box";
+"72078955.tags" = "bento box | lunch box | monoporzione | ristorante";
+// 🍘 - rice_cracker
+"72078830.name" = "galletta di riso";
+"72078830.tags" = "galletta di riso | riso";
+// 🍙 - rice_ball
+"72078835.name" = "onigiri";
+"72078835.tags" = "arancino di riso giapponese | onigiri | polpetta di riso giapponese | ristorante";
+// 🍚 - rice
+"72078840.name" = "riso bollito";
+"72078840.tags" = "riso | riso bollito | ristorante";
+// 🍛 - curry
+"72078845.name" = "riso al curry";
+"72078845.tags" = "curry | riso | riso al curry | ristorante";
+// 🍜 - ramen
+"72078850.name" = "ciotola fumante";
+"72078850.tags" = "ciotola di noodle | ciotola fumante | noodle | piatto caldo | ramen | ristorante";
+// 🍝 - spaghetti
+"72078855.name" = "spaghetti";
+"72078855.tags" = "pasta | ristorante | spaghetti";
+// 🍠 - sweet_potato
+"72078870.name" = "patata dolce arrosto";
+"72078870.tags" = "arrosto | dolce | patata arrosto | patata dolce | patata dolce arrosto";
+// 🍢 - oden
+"72078880.name" = "oden giapponese";
+"72078880.tags" = "oden | oden giapponese | pesce | ristorante | spiedino | spiedino di pesce";
+// 🍣 - sushi
+"72078885.name" = "sushi";
+"72078885.tags" = "ristorante | sushi";
+// 🍤 - fried_shrimp
+"72078890.name" = "gambero fritto";
+"72078890.tags" = "gambero | gambero fritto | ristorante";
+// 🍥 - fish_cake
+"72078895.name" = "tortino di pesce a spirale";
+"72078895.tags" = "crocchetta di pesce | pesce | ristorante | rotolo di pesce | tortino di pesce a spirale";
+// 🥮 - moon_cake
+"72078950.name" = "torta della luna";
+"72078950.tags" = "autunno | festival | moon cake | torta della luna | yuebing";
+// 🍡 - dango
+"72078875.name" = "dango";
+"72078875.tags" = "dango | dolcetto | palline di mochi | ristorante | spiedino di mochi";
+// 🥟 - dumpling
+"72078875.name" = "raviolo";
+"72078875.tags" = "empanada | gyoza | jiaozi | pierogi | ravioli | raviolo";
+// 🥠 - fortune_cookie
+"72078880.name" = "biscotto della fortuna";
+"72078880.tags" = "biscotto della fortuna | profezia";
+// 🥡 - takeout_box
+"72078885.name" = "confezione da asporto";
+"72078885.tags" = "confezione da asporto | scatola d’asporto";
+// 🦀 - crab
+"72079040.name" = "granchio";
+"72079040.tags" = "cancro | granchio | segno zodiacale";
+// 🦞 - lobster
+"72079190.name" = "aragosta";
+"72079190.tags" = "aragosta | chele | crostacei | zuppa";
+// 🦐 - shrimp
+"72079120.name" = "gamberetto";
+"72079120.tags" = "animale | cibo | crostaceo | gamberetto | gambero";
+// 🦑 - squid
+"72079125.name" = "calamaro";
+"72079125.tags" = "animale | calamaro | cibo | mollusco | totano";
+// 🦪 - oyster
+"72079250.name" = "ostrica";
+"72079250.tags" = "ostrea | ostrica | perla";
+// 🍦 - icecream
+"72078900.name" = "cono gelato";
+"72078900.tags" = "cono gelato | crema | gelato | ristorante";
+// 🍧 - shaved_ice
+"72078905.name" = "granita";
+"72078905.tags" = "estate | ghiaccio | granita | granita siciliana | Sicilia";
+// 🍨 - ice_cream
+"72078910.name" = "coppa di gelato";
+"72078910.tags" = "coppa di gelato | crema | gelato | ristorante";
+// 🍩 - doughnut
+"72078915.name" = "ciambella";
+"72078915.tags" = "ciambella | donut | ristorante";
+// 🍪 - cookie
+"72078920.name" = "biscotto";
+"72078920.tags" = "biscotto | cookie | ristorante";
+// 🎂 - birthday
+"72079040.name" = "torta di compleanno";
+"72079040.tags" = "compleanno | festa | torta | torta di compleanno";
+// 🍰 - cake
+"72078950.name" = "fetta di torta";
+"72078950.tags" = "fetta | fetta di torta | ristorante | torta";
+// 🧁 - cupcake
+"72079365.name" = "cupcake";
+"72079365.tags" = "cupcake | dolce | pasticceria";
+// 🥧 - pie
+"72078915.name" = "torta";
+"72078915.tags" = "apple pie | torta | torta di mele | tortino";
+// 🍫 - chocolate_bar
+"72078925.name" = "cioccolato";
+"72078925.tags" = "barretta | barretta di cioccolato | cioccolato | ristorante";
+// 🍬 - candy
+"72078930.name" = "caramella";
+"72078930.tags" = "caramella | dolciume";
+// 🍭 - lollipop
+"72078935.name" = "lecca lecca";
+"72078935.tags" = "caramella | lecca lecca | ristorante";
+// 🍮 - custard
+"72078940.name" = "budino";
+"72078940.tags" = "budino | pudding | ristorante";
+// 🍯 - honey_pot
+"72078945.name" = "barattolo di miele";
+"72078945.tags" = "barattolo di miele | miele | ristorante | vaso | vaso di miele";
+// 🍼 - baby_bottle
+"72079010.name" = "biberon";
+"72079010.tags" = "bere | biberon | latte";
+// 🥛 - glass_of_milk
+"72078855.name" = "bicchiere di latte";
+"72078855.tags" = "bevanda | bicchiere | bicchiere di latte | latte";
+// ☕ - coffee
+"30018.name" = "bevanda calda";
+"30018.tags" = "bevanda | bevanda calda | caffè | fumante | tè caldo";
+// 🫖 - teapot
+"72080750.name" = "teiera";
+"72080750.tags" = "bere | tè | teiera";
+// 🍵 - tea
+"72078975.name" = "tazza da tè senza manico";
+"72078975.tags" = "bere | tazza | tazza da tè senza manico | tazza di tè | tè";
+// 🍶 - sake
+"72078980.name" = "sakè";
+"72078980.tags" = "bar | bere | bottiglia | bottiglia e bicchiere di sakè | sakè";
+// 🍾 - champagne
+"72079020.name" = "bottiglia stappata";
+"72079020.tags" = "bar | bere | bottiglia | bottiglia stappata | festeggiare";
+// 🍷 - wine_glass
+"72078985.name" = "bicchiere di vino";
+"72078985.tags" = "bar | bere | bicchiere | bicchiere di vino | ristorante";
+// 🍸 - cocktail
+"72078990.name" = "cocktail";
+"72078990.tags" = "bar | bicchiere da cocktail | cocktail | ristorante";
+// 🍹 - tropical_drink
+"72078995.name" = "cocktail tropicale";
+"72078995.tags" = "bar | bere | cocktail tropicale | ristorante | tropicale";
+// 🍺 - beer
+"72079000.name" = "boccale di birra";
+"72079000.tags" = "bar | boccale | boccale di birra | ristorante";
+// 🍻 - beers
+"72079005.name" = "boccali di birra";
+"72079005.tags" = "bar | birra | boccale | boccali di birra | boccali di birra che brindano";
+// 🥂 - clinking_glasses
+"72078730.name" = "brindisi";
+"72078730.tags" = "auguri | bere | brindisi | cin cin | festeggiare";
+// 🥃 - tumbler_glass
+"72078735.name" = "bicchiere tumbler";
+"72078735.tags" = "bicchiere | liquore | tumbler | whisky";
+// 🫗 - pouring_liquid
+"72080755.name" = "liquido versato";
+"72080755.tags" = "bevanda | bicchiere | drink | liquido versato | versare";
+// 🥤 - cup_with_straw
+"72078900.name" = "bicchiere con cannuccia";
+"72078900.tags" = "bibita | bicchiere con cannuccia";
+// 🧋 - bubble_tea
+"72079415.name" = "bubble tea";
+"72079415.tags" = "bolla | bubble tea | latte | perla | sfera | tè";
+// 🧃 - beverage_box
+"72079375.name" = "bevanda monodose";
+"72079375.tags" = "bevanda in brick | bevanda monodose | succo di frutta in cartone";
+// 🧉 - mate_drink
+"72079405.name" = "mate";
+"72079405.tags" = "bevanda | erba Mate | mate";
+// 🧊 - ice_cube
+"72079410.name" = "cubetto di ghiaccio";
+"72079410.tags" = "cubetto di ghiaccio | ghiaccio in cubetti | ghiaccio in cubi";
+// 🥢 - chopsticks
+"72078890.name" = "bacchette";
+"72078890.tags" = "bacchette";
+// 🍴 - fork_and_knife
+"72078970.name" = "forchetta e coltello";
+"72078970.tags" = "coltello | forchetta | forchetta e coltello | ristorante";
+// 🥄 - spoon
+"72078740.name" = "cucchiaio";
+"72078740.tags" = "cucchiaio | posate";
+// 🔪 - hocho
+"72077325.name" = "coltello da cucina";
+"72077325.tags" = "coltello | coltello da cucina | cucina";
+// 🫙 - jar
+"72080765.name" = "barattolo";
+"72080765.tags" = "barattolo | condimento | conservare | contenitore | salsa | sugo | vuoto";
+// 🏺 - amphora
+"72079640.name" = "anfora";
+"72079640.tags" = "acquario | anfora | ornamento | reperto | segno zodiacale";
+// 🌍 - earth_africa
+"72078455.name" = "Europa e Africa";
+"72078455.tags" = "Africa | Europa | Europa e Africa | terra";
+// 🌎 - earth_americas
+"72078460.name" = "America";
+"72078460.tags" = "America | Americhe | terra";
+// 🌏 - earth_asia
+"72078465.name" = "Asia e Australia";
+"72078465.tags" = "Asia | Asia e Australia | Australia | terra";
+// 🌐 - globe_with_meridians
+"72078470.name" = "globo con meridiani";
+"72078470.tags" = "globo con meridiani | meridiani";
+// 🗾 - japan
+"72078385.name" = "mappa del Giappone";
+"72078385.tags" = "Giappone | mappa | mappa del Giappone";
+// 🧭 - compass
+"72079585.name" = "bussola";
+"72079585.tags" = "bussola | bussola magnetica | navigazione | orientamento";
+// 🌋 - volcano
+"72078445.name" = "vulcano";
+"72078445.tags" = "vulcano | vulcano in eruzione";
+// 🗻 - mount_fuji
+"72078370.name" = "Monte Fuji";
+"72078370.tags" = "montagna | Monte Fuji";
+// 🧱 - bricks
+"72079605.name" = "mattoni";
+"72079605.tags" = "malta | mattone | mattoni | muro di mattoni";
+// 🪨 - rock
+"72080520.name" = "roccia";
+"72080520.tags" = "masso | pesante | pietra | roccia | solido";
+// 🪵 - wood
+"72080585.name" = "legna";
+"72080585.tags" = "ciocco | legna | legname | tronco";
+// 🛖 - hut
+"72079465.name" = "capanna";
+"72079465.tags" = "capanna | capanno | iurta";
+// 🏠 - house
+"72079510.name" = "casa";
+"72079510.tags" = "abitazione | casa | edificio";
+// 🏡 - house_with_garden
+"72079515.name" = "casa con giardino";
+"72079515.tags" = "casa | casa con giardino | edificio | giardino";
+// 🏢 - office
+"72079520.name" = "edificio";
+"72079520.tags" = "edificio | edificio di uffici | ufficio";
+// 🏣 - post_office
+"72079525.name" = "ufficio postale giapponese";
+"72079525.tags" = "edificio | giapponese | posta | ufficio postale | ufficio postale giapponese";
+// 🏤 - european_post_office
+"72079530.name" = "ufficio postale";
+"72079530.tags" = "edificio | europeo | posta | ufficio postale";
+// 🏥 - hospital
+"72079535.name" = "ospedale";
+"72079535.tags" = "edificio | malattia | medici | ospedale";
+// 🏦 - bank
+"72079540.name" = "banca";
+"72079540.tags" = "banca | denaro | edificio";
+// 🏨 - hotel
+"72079550.name" = "hotel";
+"72079550.tags" = "edificio | hotel";
+// 🏩 - love_hotel
+"72079555.name" = "love hotel";
+"72079555.tags" = "amore | edificio | hotel | love hotel | motel";
+// 🏪 - convenience_store
+"72079560.name" = "minimarket";
+"72079560.tags" = "edificio | minimarket | negozio";
+// 🏫 - school
+"72079565.name" = "scuola";
+"72079565.tags" = "alunni | classi | edificio | imparare | scuola";
+// 🏬 - department_store
+"72079570.name" = "grande magazzino";
+"72079570.tags" = "centro | commerciale | grande magazzino";
+// 🏭 - factory
+"72079575.name" = "fabbrica";
+"72079575.tags" = "azienda | edificio | fabbrica | industria | produzione";
+// 🏯 - japanese_castle
+"72079585.name" = "castello giapponese";
+"72079585.tags" = "casa | castello giapponese | edificio";
+// 🏰 - european_castle
+"72079590.name" = "castello";
+"72079590.tags" = "castello | edificio";
+// 💒 - wedding
+"72076565.name" = "chiesa per matrimonio";
+"72076565.tags" = "cappella | chiesa | chiesa per matrimonio | matrimonio | romanticismo";
+// 🗼 - tokyo_tower
+"72078375.name" = "Torre di Tokyo";
+"72078375.tags" = "Tokyo | Tokyo Tower | torre | Torre di Tokyo";
+// 🗽 - statue_of_liberty
+"72078380.name" = "Statua della Libertà";
+"72078380.tags" = "libertà | statua | Statua della Libertà";
+// ⛪ - church
+"30657.name" = "chiesa";
+"30657.tags" = "chiesa | edificio";
+// 🕌 - mosque
+"72077495.name" = "moschea";
+"72077495.tags" = "islamismo | moschea | religione";
+// 🛕 - hindu_temple
+"72079460.name" = "tempio indù";
+"72079460.tags" = "induismo | tempio indù | tempio induista";
+// 🕍 - synagogue
+"72077500.name" = "sinagoga";
+"72077500.tags" = "ebraismo | religione | sinagoga | tempio ebraico";
+// 🕋 - kaaba
+"72077490.name" = "Kaaba";
+"72077490.tags" = "Arabia Saudita | islamismo | Kaaba | La Mecca | religione";
+// ⛲ - fountain
+"30681.name" = "fontana";
+"30681.tags" = "acqua che scorre | fontana";
+// ⛺ - tent
+"30705.name" = "tenda";
+"30705.tags" = "campeggio | tenda";
+// 🌁 - foggy
+"72078395.name" = "nebbioso";
+"72078395.tags" = "clima | meteo | nebbia | nebbioso";
+// 🌃 - night_with_stars
+"72078405.name" = "notte stellata";
+"72078405.tags" = "notte | notte stellata | stelle";
+// 🌄 - sunrise_over_mountains
+"72078410.name" = "alba sulle montagne";
+"72078410.tags" = "alba sulle montagne | sole che sorge";
+// 🌅 - sunrise
+"72078415.name" = "alba";
+"72078415.tags" = "alba | sole che sorge";
+// 🌆 - city_sunset
+"72078420.name" = "città al tramonto";
+"72078420.tags" = "città | città al tramonto | edifici | paesaggio | tramonto";
+// 🌇 - city_sunrise
+"72078425.name" = "tramonto";
+"72078425.tags" = "sole che tramonta sulla città | tramonto";
+// 🌉 - bridge_at_night
+"72078435.name" = "ponte di notte";
+"72078435.tags" = "notte | ponte | ponte di notte";
+// 🎠 - carousel_horse
+"72079190.name" = "cavallo da giostra";
+"72079190.tags" = "cavallo | cavallo da giostra | giostra | intrattenimento";
+// 🛝 - playground_slide
+"72079500.name" = "scivolo";
+"72079500.tags" = "area divertimento | area giochi | giocare | parco giochi | scivolo";
+// 🎡 - ferris_wheel
+"72079195.name" = "ruota panoramica";
+"72079195.tags" = "intrattenimento | panoramica | parco divertimenti | ruota";
+// 🎢 - roller_coaster
+"72079200.name" = "montagne russe";
+"72079200.tags" = "intrattenimento | montagne | parco divertimenti | russe";
+// 💈 - barber
+"72076515.name" = "barbiere";
+"72076515.tags" = "barbiere | insegna";
+// 🎪 - circus_tent
+"72079240.name" = "circo";
+"72079240.tags" = "circo | intrattenimento | tenda | tenda da circo";
+// 🚂 - steam_locomotive
+"72079045.name" = "locomotiva";
+"72079045.tags" = "locomotiva | locomotiva a vapore | treno | veicolo";
+// 🚃 - railway_car
+"72079050.name" = "vagone";
+"72079050.tags" = "elettrico | ferrovia | tram | treno | vagone";
+// 🚄 - bullettrain_side
+"72079055.name" = "treno alta velocità";
+"72079055.tags" = "treno | treno alta velocità | veicolo";
+// 🚅 - bullettrain_front
+"72079060.name" = "treno alta velocità punta arrotondata";
+"72079060.tags" = "alta velocità | punta arrotondata | treno | treno alta velocità punta arrotondata | veicolo";
+// 🚆 - train2
+"72079065.name" = "treno";
+"72079065.tags" = "ferrovia | treno | veicolo";
+// 🚇 - metro
+"72079070.name" = "metropolitana";
+"72079070.tags" = "metro | metropolitana | veicolo";
+// 🚈 - light_rail
+"72079075.name" = "metrotranvia";
+"72079075.tags" = "metrotranvia | veicolo";
+// 🚉 - station
+"72079080.name" = "stazione";
+"72079080.tags" = "stazione | treno";
+// 🚊 - tram
+"72079085.name" = "tram";
+"72079085.tags" = "tram | veicolo";
+// 🚝 - monorail
+"72079180.name" = "monorotaia";
+"72079180.tags" = "monorotaia | veicolo";
+// 🚞 - mountain_railway
+"72079185.name" = "ferrovia di montagna";
+"72079185.tags" = "ferrovia di montagna | veicolo";
+// 🚋 - train
+"72079090.name" = "vagone del tram";
+"72079090.tags" = "tram | vagone | vagone del tram | veicolo";
+// 🚌 - bus
+"72079095.name" = "bus";
+"72079095.tags" = "autobus | bus | veicolo";
+// 🚍 - oncoming_bus
+"72079100.name" = "bus in arrivo";
+"72079100.tags" = "bus | bus in arrivo | in arrivo | veicolo";
+// 🚎 - trolleybus
+"72079105.name" = "filobus";
+"72079105.tags" = "bus | filobus | veicolo";
+// 🚐 - minibus
+"72079115.name" = "pulmino";
+"72079115.tags" = "bus | pulmino | veicolo";
+// 🚑 - ambulance
+"72079120.name" = "ambulanza";
+"72079120.tags" = "ambulanza | veicolo";
+// 🚒 - fire_engine
+"72079125.name" = "camion dei pompieri";
+"72079125.tags" = "autopompa | camion dei pompieri | veicolo";
+// 🚓 - police_car
+"72079130.name" = "macchina della polizia";
+"72079130.tags" = "auto | macchina | macchina della polizia | polizia | veicolo";
+// 🚔 - oncoming_police_car
+"72079135.name" = "macchina della polizia in arrivo";
+"72079135.tags" = "auto | macchina | macchina della polizia in arrivo | polizia | veicolo";
+// 🚕 - taxi
+"72079140.name" = "taxi";
+"72079140.tags" = "taxi | veicolo";
+// 🚖 - oncoming_taxi
+"72079145.name" = "taxi in arrivo";
+"72079145.tags" = "taxi | taxi in arrivo | veicolo";
+// 🚗 - car
+"72079150.name" = "auto";
+"72079150.tags" = "auto | automobile | macchina | veicolo";
+// 🚘 - oncoming_automobile
+"72079155.name" = "auto in arrivo";
+"72079155.tags" = "auto in arrivo | automobile | automobile in arrivo | in arrivo | veicolo";
+// 🚙 - blue_car
+"72079160.name" = "SUV";
+"72079160.tags" = "auto | SUV | veicolo";
+// 🛻 - pickup_truck
+"72079650.name" = "pickup";
+"72079650.tags" = "camioncino | pick-up | pickup";
+// 🚚 - truck
+"72079165.name" = "camion";
+"72079165.tags" = "camion | veicolo";
+// 🚛 - articulated_lorry
+"72079170.name" = "autoarticolato";
+"72079170.tags" = "autoarticolato | camion | rimorchio | veicolo";
+// 🚜 - tractor
+"72079175.name" = "trattore";
+"72079175.tags" = "trattore | veicolo";
+// 🛵 - motor_scooter
+"72079620.name" = "scooter";
+"72079620.tags" = "motorino | scooter";
+// 🦽 - manual_wheelchair
+"72079345.name" = "sedia a rotelle manuale";
+"72079345.tags" = "accessibilità | carrozzina manuale | sedia a rotelle manuale";
+// 🦼 - motorized_wheelchair
+"72079340.name" = "sedia a rotelle motorizzata";
+"72079340.tags" = "accessibilità | carrozzina motorizzata | sedia a rotelle motorizzata";
+// 🛺 - auto_rickshaw
+"72079645.name" = "risciò a motore";
+"72079645.tags" = "risciò a motore | tuk tuk";
+// 🚲 - bike
+"72079285.name" = "bicicletta";
+"72079285.tags" = "bicicletta | veicolo";
+// 🛴 - scooter
+"72079615.name" = "monopattino";
+"72079615.tags" = "monopattino";
+// 🛹 - skateboard
+"72079640.name" = "skateboard";
+"72079640.tags" = "skateboard | tavola da skateboard";
+// 🛼 - roller_skate
+"72079655.name" = "pattini a rotelle";
+"72079655.tags" = "pattini | pattini a rotelle | rotelle";
+// 🚏 - busstop
+"72079110.name" = "fermata dell’autobus";
+"72079110.tags" = "autobus | fermata | fermata dell’autobus";
+// ⛽ - fuelpump
+"30714.name" = "stazione di servizio";
+"30714.tags" = "benzina | carburante | pompa di benzina | stazione | stazione di servizio";
+// 🛞 - wheel
+"72079505.name" = "ruota";
+"72079505.tags" = "cerchio | girare | gomma | pneumatico | ruota";
+// 🚨 - rotating_light
+"72079235.name" = "lampeggiante";
+"72079235.tags" = "lampeggiante | sirena della polizia";
+// 🚥 - traffic_light
+"72079220.name" = "semaforo orizzontale";
+"72079220.tags" = "orizzontale | semaforo";
+// 🚦 - vertical_traffic_light
+"72079225.name" = "semaforo verticale";
+"72079225.tags" = "semaforo | verticale";
+// 🛑 - octagonal_sign
+"72079440.name" = "segnale di stop";
+"72079440.tags" = "ottagonale | segnale | segnale di stop | stop";
+// 🚧 - construction
+"72079230.name" = "area cantiere";
+"72079230.tags" = "area cantiere | simbolo | simbolo area cantiere";
+// ⚓ - anchor
+"30396.name" = "ancora";
+"30396.tags" = "ancora | simbolo";
+// 🛟 - ring_buoy
+"72079510.name" = "salvagente";
+"72079510.tags" = "ciambella | galleggiante | gonfiabile | salvagente | salvare | sicurezza | soccorso";
+// ⛵ - boat
+"30690.name" = "barca a vela";
+"30690.tags" = "barca | barca a vela | località balneare | vela | yacht";
+// 🛶 - canoe
+"72079625.name" = "canoa";
+"72079625.tags" = "canoa | imbarcazione";
+// 🚤 - speedboat
+"72079215.name" = "motoscafo";
+"72079215.tags" = "barca | motoscafo | veicolo";
+// 🚢 - ship
+"72079205.name" = "nave";
+"72079205.tags" = "imbarcazione | nave | veicolo";
+// 🛫 - airplane_departure
+"72079570.name" = "decollo";
+"72079570.tags" = "aereo | check-in | decollo | partenza | partenze";
+// 🛬 - airplane_arriving
+"72079575.name" = "atterraggio";
+"72079575.tags" = "aereo | arrivi | arrivo | atterraggio | pista d’atterraggio";
+// 🪂 - parachute
+"72080330.name" = "paracadute";
+"72080330.tags" = "paracadute | paracadute ascensionale | paracadutismo | parasailing | skydiving";
+// 💺 - seat
+"72076765.name" = "sedile";
+"72076765.tags" = "sedia | sedile";
+// 🚁 - helicopter
+"72079040.name" = "elicottero";
+"72079040.tags" = "elicottero | veicolo | velivolo";
+// 🚟 - suspension_railway
+"72079190.name" = "ferrovia sospesa";
+"72079190.tags" = "ferrovia sospesa | veicolo";
+// 🚠 - mountain_cableway
+"72079195.name" = "funivia";
+"72079195.tags" = "cabina | funivia | montagna | veicolo";
+// 🚡 - aerial_tramway
+"72079200.name" = "funivia aerea";
+"72079200.tags" = "aerea | funivia | veicolo";
+// 🚀 - rocket
+"72079035.name" = "razzo";
+"72079035.tags" = "razzo | veicolo | viaggio";
+// 🛸 - flying_saucer
+"72079635.name" = "disco volante";
+"72079635.tags" = "disco volante | UFO";
+// 🧳 - luggage
+"72079615.name" = "valigia";
+"72079615.tags" = "bagagli | partenza | valigia | viaggiare";
+// ⌛ - hourglass
+"27732.name" = "clessidra";
+"27732.tags" = "clessidra | sabbia";
+// ⏳ - hourglass_flowing_sand
+"28380.name" = "clessidra che scorre";
+"28380.tags" = "clessidra | clessidra che scorre | sabbia";
+// ⌚ - watch
+"27729.name" = "orologio";
+"27729.tags" = "orologio | orologio da polso | tempo";
+// ⏰ - alarm_clock
+"28371.name" = "sveglia";
+"28371.tags" = "suono | sveglia | svegliarsi";
+// 🕛 - clock12
+"72077570.name" = "ore dodici";
+"72077570.tags" = "12:00 | mezzanotte | mezzogiorno | ore dodici | orologio";
+// 🕧 - clock1230
+"72077630.name" = "ore dodici e mezza";
+"72077630.tags" = "12:30 | mezzanotte e mezza | mezzogiorno e mezza | ore dodici e mezza";
+// 🕐 - clock1
+"72077515.name" = "ore una";
+"72077515.tags" = "1:00 | 13:00 | ore una | orologio";
+// 🕜 - clock130
+"72077575.name" = "ore una e mezza";
+"72077575.tags" = "1:30 | 13:30 | ore una e mezza | orologio";
+// 🕑 - clock2
+"72077520.name" = "ore due";
+"72077520.tags" = "14:00 | 2:00 | ore due | orologio";
+// 🕝 - clock230
+"72077580.name" = "ore due e mezza";
+"72077580.tags" = "14:30 | 2:30 | ore due e mezza | orologio";
+// 🕒 - clock3
+"72077525.name" = "ore tre";
+"72077525.tags" = "15:00 | 3:00 | ore tre | orologio";
+// 🕞 - clock330
+"72077585.name" = "ore tre e mezza";
+"72077585.tags" = "15:00 | 3:30 | ore tre e mezza | orologio";
+// 🕓 - clock4
+"72077530.name" = "ore quattro";
+"72077530.tags" = "16:00 | 4:00 | ore quattro | orologio";
+// 🕟 - clock430
+"72077590.name" = "ore quattro e mezza";
+"72077590.tags" = "16:30 | 4:30 | ore quattro e mezza | orologio";
+// 🕔 - clock5
+"72077535.name" = "ore cinque";
+"72077535.tags" = "17:00 | 5:00 | ore cinque | orologio";
+// 🕠 - clock530
+"72077595.name" = "ore cinque e mezza";
+"72077595.tags" = "17:30 | 5:30 | ore cinque e mezza | orologio";
+// 🕕 - clock6
+"72077540.name" = "ore sei";
+"72077540.tags" = "18:00 | 6:00 | ore sei | orologio";
+// 🕡 - clock630
+"72077600.name" = "ore sei e mezza";
+"72077600.tags" = "18:30 | 6:30 | ore sei e mezza | orologio";
+// 🕖 - clock7
+"72077545.name" = "ore sette";
+"72077545.tags" = "19:00 | 7:00 | ore sette | orologio";
+// 🕢 - clock730
+"72077605.name" = "ore sette e mezza";
+"72077605.tags" = "19:30 | 7:30 | ore sette e mezza | orologio";
+// 🕗 - clock8
+"72077550.name" = "ore otto";
+"72077550.tags" = "20:00 | 8:00 | ore otto | orologio";
+// 🕣 - clock830
+"72077610.name" = "ore otto e mezza";
+"72077610.tags" = "20:30 | 8:30 | ore otto e mezza | orologio";
+// 🕘 - clock9
+"72077555.name" = "ore nove";
+"72077555.tags" = "21:00 | 9:00 | ore nove | orologio";
+// 🕤 - clock930
+"72077615.name" = "ore nove e mezza";
+"72077615.tags" = "21:30 | 9:30 | ore nove e mezza | orologio";
+// 🕙 - clock10
+"72077560.name" = "ore dieci";
+"72077560.tags" = "10:00 | 22:00 | ore dieci | orologio";
+// 🕥 - clock1030
+"72077620.name" = "ore dieci e mezza";
+"72077620.tags" = "10:30 | 22:30 | ore dieci e mezza | orologio";
+// 🕚 - clock11
+"72077565.name" = "ore undici";
+"72077565.tags" = "11:00 | 23:00 | ore undici | orologio";
+// 🕦 - clock1130
+"72077625.name" = "ore undici e mezza";
+"72077625.tags" = "11:30 | 23:30 | ore undici e mezza | orologio";
+// 🌑 - new_moon
+"72078475.name" = "luna nuova";
+"72078475.tags" = "luna | novilunio | nuova";
+// 🌒 - waxing_crescent_moon
+"72078480.name" = "luna crescente";
+"72078480.tags" = "crescente | luna";
+// 🌓 - first_quarter_moon
+"72078485.name" = "primo quarto di luna";
+"72078485.tags" = "luna | primo quarto di luna | quarto";
+// 🌔 - moon
+"72078490.name" = "luna gibbosa crescente";
+"72078490.tags" = "crescente | gibbosa | luna";
+// 🌕 - full_moon
+"72078495.name" = "luna piena";
+"72078495.tags" = "luna | piena | plenilunio";
+// 🌖 - waning_gibbous_moon
+"72078500.name" = "luna gibbosa calante";
+"72078500.tags" = "calante | gibbosa | luna";
+// 🌗 - last_quarter_moon
+"72078505.name" = "ultimo quarto di luna";
+"72078505.tags" = "luna | quarto | ultimo quarto di luna";
+// 🌘 - waning_crescent_moon
+"72078510.name" = "luna calante";
+"72078510.tags" = "calante | luna";
+// 🌙 - crescent_moon
+"72078515.name" = "spicchio di luna";
+"72078515.tags" = "crescente | luna | spicchio di luna";
+// 🌚 - new_moon_with_face
+"72078520.name" = "faccina luna nuova";
+"72078520.tags" = "faccina | faccina luna nuova | luna | luna nuova | luna nuova con faccina";
+// 🌛 - first_quarter_moon_with_face
+"72078525.name" = "faccina primo quarto di luna";
+"72078525.tags" = "faccina | faccina primo quarto di luna | luna | luna con faccina | primo quarto di luna";
+// 🌜 - last_quarter_moon_with_face
+"72078530.name" = "faccina ultimo quarto di luna";
+"72078530.tags" = "faccina | faccina ultimo quarto di luna | luna | luna con faccina | ultimo quarto di luna";
+// 🌝 - full_moon_with_face
+"72078535.name" = "faccina luna piena";
+"72078535.tags" = "faccina | faccina luna piena | luna | luna con faccina | luna piena";
+// 🌞 - sun_with_face
+"72078540.name" = "faccina sole";
+"72078540.tags" = "faccina | sole";
+// 🪐 - ringed_planet
+"72080400.name" = "pianeta con satellite";
+"72080400.tags" = "pianeta con satellite | Saturno";
+// ⭐ - star
+"34035.name" = "stella";
+"34035.tags" = "astro | stella";
+// 🌟 - star2
+"72078545.name" = "stella che brilla";
+"72078545.tags" = "brillante | scintillante | stella | stella che brilla";
+// 🌠 - stars
+"72078550.name" = "stella cadente";
+"72078550.tags" = "cadente | stella";
+// 🌌 - milky_way
+"72078450.name" = "Via Lattea";
+"72078450.tags" = "lattea | Via Lattea";
+// ⛅ - partly_sunny
+"30546.name" = "sole coperto";
+"30546.tags" = "nuvola | sole | sole con nuvole | sole coperto";
+// 🌀 - cyclone
+"72078390.name" = "ciclone";
+"72078390.tags" = "ciclone | tifone | tornado";
+// 🌈 - rainbow
+"72078430.name" = "arcobaleno";
+"72078430.tags" = "arcobaleno | pioggia | sette colori";
+// 🌂 - closed_umbrella
+"72078400.name" = "ombrello chiuso";
+"72078400.tags" = "ombrello chiuso | pioggia";
+// ☔ - umbrella_with_rain_drops
+"30015.name" = "ombrello con gocce di pioggia";
+"30015.tags" = "gocce d’acqua | meteo | ombrello | ombrello bagnato | ombrello con gocce di pioggia | pioggia";
+// ⚡ - zap
+"30438.name" = "alta tensione";
+"30438.tags" = "alta | pericolo | simbolo | tensione";
+// ⛄ - snowman_without_snow
+"30543.name" = "pupazzo di neve senza neve";
+"30543.tags" = "neve | pupazzo | pupazzo di neve | pupazzo di neve senza neve";
+// 🔥 - fire
+"72077300.name" = "fuoco";
+"72077300.tags" = "fiamma | fuoco";
+// 💧 - droplet
+"72076670.name" = "goccia";
+"72076670.tags" = "acqua | fumetto | goccia | sudore | sudore freddo";
+// 🌊 - ocean
+"72078440.name" = "onda";
+"72078440.tags" = "onda | onda d’acqua | onda del mare";
+// 🎃 - jack_o_lantern
+"72079045.name" = "zucca di Halloween";
+"72079045.tags" = "festa | Halloween | zucca | zucca di Halloween";
+// 🎄 - christmas_tree
+"72079050.name" = "albero di Natale";
+"72079050.tags" = "albero | albero di Natale | festa | Natale";
+// 🎆 - fireworks
+"72079060.name" = "fuochi d’artificio";
+"72079060.tags" = "festa | fuochi d’artificio | fuoco d’artificio";
+// 🎇 - sparkler
+"72079065.name" = "stellina scintillante";
+"72079065.tags" = "festa | fuoco d’artificio | stellina scintillante | stelline scintillanti";
+// 🧨 - firecracker
+"72079560.name" = "petardo";
+"72079560.tags" = "dinamite | esplosivo | fuochi artificiali | petardo";
+// ✨ - sparkles
+"30843.name" = "stelline";
+"30843.tags" = "scintille | stelle | stelline";
+// 🎈 - balloon
+"72079070.name" = "palloncino";
+"72079070.tags" = "festa | palloncino";
+// 🎉 - tada
+"72079075.name" = "spara coriandoli";
+"72079075.tags" = "coriandoli | festa | party | spara coriandoli";
+// 🎊 - confetti_ball
+"72079080.name" = "coriandoli";
+"72079080.tags" = "coriandoli | festa | palla | palla di coriandoli";
+// 🎋 - tanabata_tree
+"72079085.name" = "albero di Tanabata";
+"72079085.tags" = "albero | albero di Tanabata | decorazioni di carta | festa | Festa delle stelle";
+// 🎍 - bamboo
+"72079095.name" = "bambù decorato";
+"72079095.tags" = "bambù | bambù decorato | decorazione kadomatsu | giapponese";
+// 🎎 - dolls
+"72079100.name" = "bambole giapponesi";
+"72079100.tags" = "bambole | festa | Festa delle bambole | giapponesi";
+// 🎏 - flags
+"72079105.name" = "aquilone a forma di carpa";
+"72079105.tags" = "aquilone | aquilone a forma di carpa | carpa | festa";
+// 🎐 - wind_chime
+"72079110.name" = "campana al vento";
+"72079110.tags" = "campana | campana al vento | festa | vento";
+// 🎑 - rice_scene
+"72079115.name" = "contemplazione della luna";
+"72079115.tags" = "contemplazione della luna | contemplazione festa | festa della contemplazione della luna | luna";
+// 🧧 - red_envelope
+"72079555.name" = "busta hongbao";
+"72079555.tags" = "buono auspicio | busta hongbao | busta rossa | hongbao | lai see | regalo | soldi";
+// 🎀 - ribbon
+"72079030.name" = "fiocco";
+"72079030.tags" = "festa | fiocco";
+// 🎁 - gift
+"72079035.name" = "regalo";
+"72079035.tags" = "dono | festa | pacchetto | regalo";
+// 🎫 - ticket
+"72079245.name" = "biglietto";
+"72079245.tags" = "biglietto | ingresso";
+// 🏆 - trophy
+"72079380.name" = "coppa";
+"72079380.tags" = "coppa | premio | trofeo";
+// 🏅 - sports_medal
+"72079375.name" = "medaglia sportiva";
+"72079375.tags" = "gara | medaglia | medaglia sportiva | podio";
+// 🥇 - first_place_medal
+"72078755.name" = "medaglia d’oro";
+"72078755.tags" = "medaglia | medaglia d’oro | oro | primo posto";
+// 🥈 - second_place_medal
+"72078760.name" = "medaglia d’argento";
+"72078760.tags" = "argento | medaglia | medaglia d’argento | secondo posto";
+// 🥉 - third_place_medal
+"72078765.name" = "medaglia di bronzo";
+"72078765.tags" = "bronzo | medaglia | medaglia di bronzo | terzo posto";
+// ⚽ - soccer
+"30522.name" = "pallone da calcio";
+"30522.tags" = "calcio | pallone | pallone da calcio";
+// ⚾ - baseball
+"30525.name" = "palla da baseball";
+"30525.tags" = "baseball | guantone | palla da baseball";
+// 🥎 - softball
+"72078790.name" = "palla da softball";
+"72078790.tags" = "guantone | palla | palla da softball | softball";
+// 🏀 - basketball
+"72079350.name" = "palla da pallacanestro";
+"72079350.tags" = "canestro | canestro da basket | palla da pallacanestro | pallone | sport";
+// 🏐 - volleyball
+"72079430.name" = "palla da pallavolo";
+"72079430.tags" = "palla | palla da pallavolo | pallavolo | rete | sport";
+// 🏈 - football
+"72079390.name" = "football americano";
+"72079390.tags" = "americano | football americano | palla | sport";
+// 🏉 - rugby_football
+"72079395.name" = "pallone da rugby";
+"72079395.tags" = "pallone | pallone da rugby | sport";
+// 🎾 - tennis
+"72079340.name" = "tennis";
+"72079340.tags" = "palla | palla da tennis | racchetta e palla da tennis | sport | tennis";
+// 🥏 - flying_disc
+"72078795.name" = "frisbee";
+"72078795.tags" = "frisbee | ultimate frisbee";
+// 🎳 - bowling
+"72079285.name" = "bowling";
+"72079285.tags" = "bowling | gioco | palla | palla da bowling";
+// 🏏 - cricket_bat_and_ball
+"72079425.name" = "cricket";
+"72079425.tags" = "cricket | mazza | palla | sport";
+// 🏑 - field_hockey_stick_and_ball
+"72079435.name" = "hockey su prato";
+"72079435.tags" = "campo | hockey su prato | mazza | palla | partita";
+// 🏒 - ice_hockey_stick_and_puck
+"72079440.name" = "hockey su ghiaccio";
+"72079440.tags" = "ghiaccio | hockey su ghiaccio | hockey sul ghiaccio | mazza | puck";
+// 🥍 - lacrosse
+"72078785.name" = "lacrosse";
+"72078785.tags" = "goal | lacrosse | palla | racchetta da lacrosse";
+// 🏓 - table_tennis_paddle_and_ball
+"72079445.name" = "ping pong";
+"72079445.tags" = "pallina | ping pong | racchetta | rete | tennis da tavolo";
+// 🏸 - badminton_racquet_and_shuttlecock
+"72079630.name" = "badminton";
+"72079630.tags" = "badminton | racchetta | sport | volano";
+// 🥊 - boxing_glove
+"72078770.name" = "guantone da pugilato";
+"72078770.tags" = "guantone | guantone da pugilato | pugilato | sport";
+// 🥋 - martial_arts_uniform
+"72078775.name" = "kimono per arti marziali";
+"72078775.tags" = "arti marziali | judo | karate | kimono | kimono per arti marziali";
+// 🥅 - goal_net
+"72078745.name" = "porta da calcio";
+"72078745.tags" = "gol | porta | porta da calcio | rete | sport";
+// ⛳ - golf
+"30684.name" = "bandiera in buca";
+"30684.tags" = "bandiera golf | bandiera in buca | buca | golf";
+// 🎣 - fishing_pole_and_fish
+"72079205.name" = "canna da pesca";
+"72079205.tags" = "canna da pesca | intrattenimento | lenza | pesca | pesce";
+// 🤿 - diving_mask
+"72078715.name" = "maschera da sub";
+"72078715.tags" = "diving | fare immersioni | immersioni | maschera da sub | snorkeling";
+// 🎽 - running_shirt_with_sash
+"72079335.name" = "maglia da corsa";
+"72079335.tags" = "corsa | maglia | maglia da corsa | maglia da corsa con fascia";
+// 🎿 - ski
+"72079345.name" = "sci";
+"72079345.tags" = "scarpone | scarpone da sci | sci | sport";
+// 🛷 - sled
+"72079630.name" = "slitta";
+"72079630.tags" = "slitta | slittino";
+// 🥌 - curling_stone
+"72078780.name" = "stone da curling";
+"72078780.tags" = "stone da curling";
+// 🎯 - dart
+"72079265.name" = "bersaglio";
+"72079265.tags" = "bersaglio | colpire | gioco | target";
+// 🪀 - yo-yo
+"72080320.name" = "yo-yo";
+"72080320.tags" = "giocattolo | rocchetto | yo-yo";
+// 🪁 - kite
+"72080325.name" = "aquilone";
+"72080325.tags" = "aquilone | planare | volare";
+// 🔫 - gun
+"72077330.name" = "pistola ad acqua";
+"72077330.tags" = "arma | pistola | pistola ad acqua | revolver";
+// 🎱 - 8ball
+"72079275.name" = "palla da biliardo";
+"72079275.tags" = "biliardo | gioco | palla da biliardo | palla otto";
+// 🔮 - crystal_ball
+"72077345.name" = "sfera di cristallo";
+"72077345.tags" = "chiaroveggenza | cristallo | futuro | sfera | sfera di cristallo";
+// 🪄 - magic_wand
+"72080340.name" = "bacchetta magica";
+"72080340.tags" = "bacchetta magica | maga | magia | mago | strega | stregone";
+// 🎮 - video_game
+"72079260.name" = "gamepad";
+"72079260.tags" = "console | console videogioco | gamepad | gioco";
+// 🎰 - slot_machine
+"72079270.name" = "slot machine";
+"72079270.tags" = "gioco | slot | slot machine";
+// 🎲 - game_die
+"72079280.name" = "dado";
+"72079280.tags" = "dadi | dado | gioco | gioco dei dadi";
+// 🧩 - jigsaw
+"72079565.name" = "pezzo di puzzle";
+"72079565.tags" = "pezzo di puzzle | puzzle | tessera del puzzle";
+// 🧸 - teddy_bear
+"72079640.name" = "orsetto";
+"72079640.tags" = "giocattolo | orsetto | peluche";
+// 🪅 - pinata
+"72080345.name" = "pentolaccia";
+"72080345.tags" = "divertimento | festa | pentolaccia";
+// 🪩 - mirror_ball
+"72080525.name" = "palla da discoteca";
+"72080525.tags" = "ballare | brillare | dance | discoteca | festa | glitter | palla da discoteca";
+// 🪆 - nesting_dolls
+"72080350.name" = "matrioska";
+"72080350.tags" = "bambola | matrioska | russia";
+// 🃏 - black_joker
+"72075585.name" = "jolly";
+"72075585.tags" = "carta | carta da gioco | jolly";
+// 🀄 - mahjong
+"72074570.name" = "tessera Mahjong";
+"72074570.tags" = "drago | drago rosso | Mahjong | tessera";
+// 🎴 - flower_playing_cards
+"72079290.name" = "carta da gioco Hanafuda";
+"72079290.tags" = "carta | carta da gioco | carta da gioco Hanafuda | carta dei fiori | gioco | Hanafuda";
+// 🎭 - performing_arts
+"72079255.name" = "maschere";
+"72079255.tags" = "arte | arti performative | intrattenimento | maschere | performance";
+// 🎨 - art
+"72079230.name" = "tavolozza";
+"72079230.tags" = "arte | colori | pittura | tavolozza | tavolozza dei colori";
+// 🧵 - thread
+"72079625.name" = "filo";
+"72079625.tags" = "ago | filo | rocchetto";
+// 🪡 - sewing_needle
+"72080485.name" = "ago da cucito";
+"72080485.tags" = "ago | ago da cucito | cucito | punti | ricamo | sartoria | suture";
+// 🧶 - yarn
+"72079630.name" = "gomitolo";
+"72079630.tags" = "fare a maglia | gomitolo | palla | uncinetto";
+// 🪢 - knot
+"72080490.name" = "nodo";
+"72080490.tags" = "annodato | corda | legare | nodo | spago";
+// 👓 - eyeglasses
+"72076250.name" = "occhiali da vista";
+"72076250.tags" = "abbigliamento | occhiali | occhiali da vista";
+// 🥽 - goggles
+"72079025.name" = "maschera";
+"72079025.tags" = "maschera | nuoto | occhiali di protezione | occhialini | saldatura";
+// 🥼 - lab_coat
+"72079020.name" = "camice";
+"72079020.tags" = "camice | dottore | esperimento | scienziato";
+// 🦺 - safety_vest
+"72079330.name" = "gilet di sicurezza";
+"72079330.tags" = "antinfortunistica | emergenza | gilet antinfortunistica | gilet di sicurezza";
+// 👔 - necktie
+"72076255.name" = "cravatta";
+"72076255.tags" = "abbigliamento | cravatta";
+// 👕 - shirt
+"72076260.name" = "t-shirt";
+"72076260.tags" = "abbigliamento | maglietta | t-shirt";
+// 👖 - jeans
+"72076265.name" = "jeans";
+"72076265.tags" = "abbigliamento | jeans";
+// 🧣 - scarf
+"72079535.name" = "sciarpa";
+"72079535.tags" = "collo | sciarpa";
+// 🧤 - gloves
+"72079540.name" = "guanti";
+"72079540.tags" = "guanti | mano";
+// 🧥 - coat
+"72079545.name" = "cappotto";
+"72079545.tags" = "cappotto | giacca";
+// 🧦 - socks
+"72079550.name" = "calzini";
+"72079550.tags" = "calze | calzini";
+// 👗 - dress
+"72076270.name" = "vestito";
+"72076270.tags" = "abbigliamento | abito | vestito";
+// 👘 - kimono
+"72076275.name" = "kimono";
+"72076275.tags" = "abbigliamento | kimono | vestito";
+// 🥻 - sari
+"72079015.name" = "sari";
+"72079015.tags" = "abbigliamento | abito tradizionale indiano | sari | vestito tradizionale";
+// 🩱 - one-piece_swimsuit
+"72080245.name" = "costume da bagno intero";
+"72080245.tags" = "costume da bagno | costume da bagno intero";
+// 🩲 - briefs
+"72080250.name" = "slip";
+"72080250.tags" = "costume da bagno maschile | costume da uomo | intimo | mutande da uomo | slip";
+// 🩳 - shorts
+"72080255.name" = "pantaloncini";
+"72080255.tags" = "boxer | costume da bagno maschile | costume da uomo | intimo | mutande da uomo | pantaloncini";
+// 👙 - bikini
+"72076280.name" = "bikini";
+"72076280.tags" = "abbigliamento | bikini | costume due pezzi";
+// 👚 - womans_clothes
+"72076285.name" = "maglietta da donna";
+"72076285.tags" = "abbigliamento | maglietta da donna | vestiti";
+// 🪭 - folding_hand_fan
+"72080545.name" = "ventaglio";
+"72080545.tags" = "aria | caldo | rinfrescare | sventolare | timidezza | ventaglio";
+// 👛 - purse
+"72076290.name" = "borsellino";
+"72076290.tags" = "abbigliamento | borsellino | moneta | porta monete";
+// 👜 - handbag
+"72076295.name" = "borsa";
+"72076295.tags" = "abbigliamento | borsa | borsetta";
+// 👝 - pouch
+"72076300.name" = "pochette";
+"72076300.tags" = "abbigliamento | borsa | pochette";
+// 🎒 - school_satchel
+"72079120.name" = "zaino";
+"72079120.tags" = "cartella | cartella di scuola | scuola | zaino | zaino per la scuola";
+// 🩴 - thong_sandal
+"72080260.name" = "infradito";
+"72080260.tags" = "ciabatte | infradito | sandali | spiaggia";
+// 👞 - mans_shoe
+"72076305.name" = "scarpa da uomo";
+"72076305.tags" = "abbigliamento | scarpa | scarpa da uomo";
+// 👟 - athletic_shoe
+"72076310.name" = "scarpa sportiva";
+"72076310.tags" = "abbigliamento | scarpa | scarpa sportiva | sneaker";
+// 🥾 - hiking_boot
+"72079030.name" = "stivale da trekking";
+"72079030.tags" = "campeggio | stivale | stivale da trekking | trekking | viaggio zaino in spalla | zaino in spalla";
+// 🥿 - womans_flat_shoe
+"72079035.name" = "ballerina";
+"72079035.tags" = "ballerina | scarpa senza lacci | scarpe da ballerina";
+// 👠 - high_heel
+"72076315.name" = "scarpa con il tacco";
+"72076315.tags" = "abbigliamento | scarpa | scarpa con il tacco | tacco";
+// 👡 - sandal
+"72076320.name" = "sandalo da donna";
+"72076320.tags" = "abbigliamento | donna | sandalo | sandalo da donna";
+// 🩰 - ballet_shoes
+"72080240.name" = "scarpette da ballerina";
+"72080240.tags" = "balletto | danza | danza classica | scarpette da ballerina | scarpette da ballo";
+// 👢 - boot
+"72076325.name" = "stivale da donna";
+"72076325.tags" = "abbigliamento | donna | stivale | stivale da donna";
+// 🪮 - hair_pick
+"72080550.name" = "pettine afro";
+"72080550.tags" = "afro | capelli | pettine";
+// 👑 - crown
+"72076240.name" = "corona";
+"72076240.tags" = "abbigliamento | corona | re | regina";
+// 👒 - womans_hat
+"72076245.name" = "cappello da donna";
+"72076245.tags" = "abbigliamento | cappello | cappello da donna";
+// 🎩 - tophat
+"72079235.name" = "cilindro";
+"72079235.tags" = "cappello | cilindro | intrattenimento";
+// 🎓 - mortar_board
+"72079125.name" = "cappello da laureato";
+"72079125.tags" = "cappello | cappello da laureato | festa | laurea";
+// 🧢 - billed_cap
+"72079530.name" = "cappello con visiera";
+"72079530.tags" = "cappello con visiera | cappello da baseball";
+// 🪖 - military_helmet
+"72080430.name" = "elmetto militare";
+"72080430.tags" = "elmetto | esercito | militare | soldato";
+// 📿 - prayer_beads
+"72077110.name" = "rosario";
+"72077110.tags" = "preghiera | rosario";
+// 💄 - lipstick
+"72076495.name" = "rossetto";
+"72076495.tags" = "cosmetici | makeup | rossetto | trucco";
+// 💍 - ring
+"72076540.name" = "anello";
+"72076540.tags" = "anello | anello di diamanti | diamante";
+// 💎 - gem
+"72076545.name" = "gemma";
+"72076545.tags" = "diamante | gemma | pietra preziosa | romanticismo";
+// 🔇 - mute
+"72077150.name" = "altoparlante disattivato";
+"72077150.tags" = "altoparlante barrato | altoparlante disattivato | silenzio | suono disattivato";
+// 🔈 - speaker
+"72077155.name" = "altoparlante a volume basso";
+"72077155.tags" = "altoparlante a basso volume | altoparlante a volume basso | basso volume | volume basso";
+// 🔉 - sound
+"72077160.name" = "altoparlante a volume intermedio";
+"72077160.tags" = "altoparlante a volume intermedio | volume intermedio | volume medio";
+// 🔊 - loud_sound
+"72077165.name" = "altoparlante a volume alto";
+"72077165.tags" = "altoparlante a volume alto | volume alto";
+// 📢 - loudspeaker
+"72076965.name" = "altoparlante";
+"72076965.tags" = "altoparlante | altoparlanti | megafoni | megafono";
+// 📣 - mega
+"72076970.name" = "megafono";
+"72076970.tags" = "altoparlante | altoparlanti | megafoni | megafono";
+// 📯 - postal_horn
+"72077030.name" = "corno postale";
+"72077030.tags" = "cornetta da postiglione | cornetto postale | corno postale";
+// 🔔 - bell
+"72077215.name" = "campana";
+"72077215.tags" = "campana | campanella";
+// 🔕 - no_bell
+"72077220.name" = "campana sbarrata";
+"72077220.tags" = "campana | campana sbarrata | silenzio";
+// 🎼 - musical_score
+"72079330.name" = "pentagramma";
+"72079330.tags" = "musica | partitura | pentagramma";
+// 🎵 - musical_note
+"72079295.name" = "nota musicale";
+"72079295.tags" = "musica | nota | nota musicale";
+// 🎶 - notes
+"72079300.name" = "note musicali";
+"72079300.tags" = "musica | nota | note | note musicali";
+// 🎤 - microphone
+"72079210.name" = "microfono";
+"72079210.tags" = "Karaoke | microfono";
+// 🎧 - headphones
+"72079225.name" = "cuffie";
+"72079225.tags" = "cuffie | intrattenimento";
+// 📻 - radio
+"72077090.name" = "radio";
+"72077090.tags" = "ascoltare la radio | musica | radio | stazioni radio";
+// 🎷 - saxophone
+"72079305.name" = "sassofono";
+"72079305.tags" = "musica | sassofono | sax | strumento | strumento musicale";
+// 🪗 - accordion
+"72080435.name" = "fisarmonica";
+"72080435.tags" = "concertina | fisarmonica | organetto";
+// 🎸 - guitar
+"72079310.name" = "chitarra";
+"72079310.tags" = "chitarra | musica | strumento | strumento musicale";
+// 🎹 - musical_keyboard
+"72079315.name" = "piano";
+"72079315.tags" = "musica | piano | pianoforte | strumento musicale | tastiera";
+// 🎺 - trumpet
+"72079320.name" = "tromba";
+"72079320.tags" = "musica | strumento | strumento musicale | tromba";
+// 🎻 - violin
+"72079325.name" = "violino";
+"72079325.tags" = "musica | strumento | strumento musicale | violino";
+// 🪕 - banjo
+"72080425.name" = "banjo";
+"72080425.tags" = "banjo | musica | strumento a corde";
+// 🥁 - drum_with_drumsticks
+"72078725.name" = "tamburo";
+"72078725.tags" = "bacchette | musica | tamburo";
+// 🪘 - long_drum
+"72080440.name" = "tamburo lungo";
+"72080440.tags" = "conga | percussioni | ritmo | tamburo | tamburo lungo";
+// 🪇 - maracas
+"72080355.name" = "maracas";
+"72080355.tags" = "agitare | maracas | musica | percussioni | scuotere | strumento";
+// 🪈 - flute
+"72080360.name" = "flauto";
+"72080360.tags" = "fiato | flauto | legno | musica | piffero | strumento";
+// 📱 - iphone
+"72077040.name" = "telefono cellulare";
+"72077040.tags" = "cellulare | telefono";
+// 📲 - calling
+"72077045.name" = "telefono cellulare con freccia";
+"72077045.tags" = "cellulare | cellulare con freccia | telefonare | telefono | telefono cellulare con freccia";
+// 📞 - telephone_receiver
+"72076945.name" = "cornetta";
+"72076945.tags" = "comunicazione | cornetta | cornetta del telefono | telefono";
+// 📟 - pager
+"72076950.name" = "cercapersone";
+"72076950.tags" = "cercapersone | comunicazione";
+// 📠 - fax
+"72076955.name" = "fax";
+"72076955.tags" = "comunicazione | fax";
+// 🔋 - battery
+"72077170.name" = "batteria";
+"72077170.tags" = "autonomia | batteria | batteria carica | batteria scarica | ricaricare";
+// 🪫 - low_battery
+"72080535.name" = "batteria scarica";
+"72080535.tags" = "batteria scarica | elettronica | energia bassa";
+// 🔌 - electric_plug
+"72077175.name" = "spina elettrica";
+"72077175.tags" = "elettricità | presa elettrica | spina elettrica";
+// 💻 - computer
+"72076770.name" = "computer portatile";
+"72076770.tags" = "computer portatile | PC | portatile";
+// 💽 - minidisc
+"72076780.name" = "minidisc";
+"72076780.tags" = "disc | MD | mini disc | minidisc";
+// 💾 - floppy_disk
+"72076785.name" = "floppy disc";
+"72076785.tags" = "disc | floppy";
+// 💿 - cd
+"72076790.name" = "disco ottico";
+"72076790.tags" = "blu-ray | CD | disco | disco ottico | DVD";
+// 📀 - dvd
+"72076795.name" = "DVD";
+"72076795.tags" = "blu-ray | computer disk | dvd | DVD";
+// 🧮 - abacus
+"72079590.name" = "abaco";
+"72079590.tags" = "abaco | fare i calcoli";
+// 🎥 - movie_camera
+"72079215.name" = "cinepresa";
+"72079215.tags" = "cinema | cinepresa | film | intrattenimento | telecamera";
+// 🎬 - clapper
+"72079250.name" = "ciak";
+"72079250.tags" = "ciak | cinema | film | intrattenimento";
+// 📺 - tv
+"72077085.name" = "televisore";
+"72077085.tags" = "televisione | televisore";
+// 📷 - camera
+"72077070.name" = "fotocamera";
+"72077070.tags" = "fotocamera | fotografare | macchina fotografica | ricordi | scattare foto";
+// 📸 - camera_with_flash
+"72077075.name" = "fotocamera con flash";
+"72077075.tags" = "fotocamera con flash | fotografare | macchina fotografica con flash | ricordi | scattare foto";
+// 📹 - video_camera
+"72077080.name" = "videocamera";
+"72077080.tags" = "telecamera | video | videocamera";
+// 📼 - vhs
+"72077095.name" = "videocassetta";
+"72077095.tags" = "cassetta | VHS | video | videocassetta";
+// 🔍 - mag
+"72077180.name" = "lente di ingrandimento rivolta a sinistra";
+"72077180.tags" = "cerca | lente | lente di ingrandimento rivolta a sinistra | lente ingrandimento | lente ingrandimento verso sinistra";
+// 🔎 - mag_right
+"72077185.name" = "lente di ingrandimento rivolta a destra";
+"72077185.tags" = "cerca | lente | lente di ingrandimento rivolta a destra | lente ingrandimento | lente ingrandimento verso destra";
+// 💡 - bulb
+"72076640.name" = "lampadina";
+"72076640.tags" = "elettrica | fumetto | idea | lampadina | luce";
+// 🔦 - flashlight
+"72077305.name" = "torcia";
+"72077305.tags" = "pila | torcia";
+// 🏮 - izakaya_lantern
+"72079580.name" = "lanterna rossa";
+"72079580.tags" = "izakaya | lanterna | lanterna giapponese | lanterna rossa";
+// 🪔 - diya_lamp
+"72080420.name" = "diya";
+"72080420.tags" = "deepak | deepam | divaa | diya | lampada a olio tradizionale";
+// 📔 - notebook_with_decorative_cover
+"72076895.name" = "quaderno con copertina decorata";
+"72076895.tags" = "copertina | quaderno con copertina decorata | taccuino | taccuino con decorazione | taccuino copertina decorata | taccuino decorato";
+// 📕 - closed_book
+"72076900.name" = "libro chiuso";
+"72076900.tags" = "libro | libro chiuso";
+// 📖 - book
+"72076905.name" = "libro aperto";
+"72076905.tags" = "libro | libro aperto";
+// 📗 - green_book
+"72076910.name" = "libro verde";
+"72076910.tags" = "libro | libro verde";
+// 📘 - blue_book
+"72076915.name" = "libro blu";
+"72076915.tags" = "libro | libro blu";
+// 📙 - orange_book
+"72076920.name" = "libro arancione";
+"72076920.tags" = "libro | libro arancione";
+// 📚 - books
+"72076925.name" = "libri";
+"72076925.tags" = "libri | pila di libri";
+// 📓 - notebook
+"72076890.name" = "quaderno";
+"72076890.tags" = "appunti | prendere nota | quaderno | taccuino";
+// 📒 - ledger
+"72076885.name" = "quaderno ad anelli";
+"72076885.tags" = "blocco | block notes | libro mastro | quaderno ad anelli | taccuino";
+// 📃 - page_with_curl
+"72076810.name" = "pagina con piega";
+"72076810.tags" = "documento | pagina | pagina arricciata | pagina con piega";
+// 📜 - scroll
+"72076935.name" = "pergamena";
+"72076935.tags" = "decreto | laurea | pergamena | rotolo";
+// 📄 - page_facing_up
+"72076815.name" = "pagina";
+"72076815.tags" = "documento | pagina";
+// 📰 - newspaper
+"72077035.name" = "quotidiano";
+"72077035.tags" = "giornale | quotidiano";
+// 📑 - bookmark_tabs
+"72076880.name" = "etichette segnalibro";
+"72076880.tags" = "etichette segnalibro | linguette | segnalibro";
+// 🔖 - bookmark
+"72077225.name" = "segnalibro";
+"72077225.tags" = "lettura | libro | segnalibro";
+// 💰 - moneybag
+"72076715.name" = "sacco di soldi";
+"72076715.tags" = "denaro | sacco | sacco di soldi";
+// 🪙 - coin
+"72080445.name" = "moneta";
+"72080445.tags" = "argento | denaro | metallo | moneta | oro | tesoro";
+// 💴 - yen
+"72076735.name" = "banconota Yen";
+"72076735.tags" = "banconota | denaro | Yen";
+// 💵 - dollar
+"72076740.name" = "banconota Dollaro";
+"72076740.tags" = "banconota | denaro | Dollaro";
+// 💶 - euro
+"72076745.name" = "banconota Euro";
+"72076745.tags" = "banconota | denaro | Euro";
+// 💷 - pound
+"72076750.name" = "banconota Sterlina";
+"72076750.tags" = "banconota | denaro | Sterlina";
+// 💸 - money_with_wings
+"72076755.name" = "soldi con le ali";
+"72076755.tags" = "banconota | banconota con le ali | soldi | soldi che volano | soldi con le ali";
+// 💳 - credit_card
+"72076730.name" = "carta di credito";
+"72076730.tags" = "carta | carta di credito | credito";
+// 🧾 - receipt
+"72079670.name" = "scontrino";
+"72079670.tags" = "contabilità | ricevuta di pagamento | scontrino";
+// 💹 - chart
+"72076760.name" = "grafico ascendente";
+"72076760.tags" = "ascendente | grafico | mercato | mercato in salita";
+// 📧 - e-mail
+"72076990.name" = "e-mail";
+"72076990.tags" = "comunicazione | e-mail | email | lettera | posta | posta elettronica";
+// 📨 - incoming_envelope
+"72076995.name" = "posta in arrivo";
+"72076995.tags" = "busta | comunicazione | email | in arrivo | lettera | posta in arrivo";
+// 📩 - envelope_with_arrow
+"72077000.name" = "posta in uscita";
+"72077000.tags" = "in uscita | lettera | posta | posta in uscita | posta inviata";
+// 📤 - outbox_tray
+"72076975.name" = "posta inviata";
+"72076975.tags" = "comunicazione | in uscita | inviata | posta | vaschetta";
+// 📥 - inbox_tray
+"72076980.name" = "posta ricevuta";
+"72076980.tags" = "comunicazione | posta | ricevuta | vaschetta";
+// 📦 - package
+"72076985.name" = "pacco";
+"72076985.tags" = "collo | pacco | scatola";
+// 📫 - mailbox
+"72077010.name" = "cassetta postale chiusa bandierina alzata";
+"72077010.tags" = "bandierina | cassetta postale | cassetta postale chiusa bandierina alzata | cassetta postale chiusa bandierina su | chiusa | posta";
+// 📪 - mailbox_closed
+"72077005.name" = "cassetta postale chiusa bandierina abbassata";
+"72077005.tags" = "bandierina | cassetta postale | cassetta postale chiusa bandierina abbassata | cassetta postale chiusa bandierina giù | chiusa | posta";
+// 📬 - mailbox_with_mail
+"72077015.name" = "cassetta postale aperta bandierina alzata";
+"72077015.tags" = "aperta | bandierina | cassetta postale | cassetta postale aperta bandierina alzata | cassetta postale aperta bandierina su | posta";
+// 📭 - mailbox_with_no_mail
+"72077020.name" = "cassetta postale aperta bandierina abbassata";
+"72077020.tags" = "aperta | bandierina | casetta postale aperta bandierina giù | cassetta postale | cassetta postale aperta bandierina abbassata | cassetta postale con bandierina abbassata | posta";
+// 📮 - postbox
+"72077025.name" = "cassetta delle lettere";
+"72077025.tags" = "buca delle lettere | cassetta delle lettere | posta | ricevere posta | spedire posta";
+// 📝 - memo
+"72076940.name" = "memo";
+"72076940.tags" = "block notes | matita | memo";
+// 💼 - briefcase
+"72076775.name" = "valigetta 24 ore";
+"72076775.tags" = "24 ore | documenti | ufficio | valigetta | valigetta 24 ore";
+// 📁 - file_folder
+"72076800.name" = "cartella file";
+"72076800.tags" = "cartella | file";
+// 📂 - open_file_folder
+"72076805.name" = "cartella aperta";
+"72076805.tags" = "aperta | cartella | file";
+// 📅 - date
+"72076820.name" = "calendario";
+"72076820.tags" = "calendario | data | giorno | ricorrenza";
+// 📆 - calendar
+"72076825.name" = "calendario a strappo";
+"72076825.tags" = "calendario | calendario a strappo";
+// 📇 - card_index
+"72076830.name" = "schedario";
+"72076830.tags" = "rolodex | schedario | schedario girevole";
+// 📈 - chart_with_upwards_trend
+"72076835.name" = "grafico con andamento positivo";
+"72076835.tags" = "andamento ascendente | ascendente | grafico | grafico con andamento positivo";
+// 📉 - chart_with_downwards_trend
+"72076840.name" = "grafico con andamento negativo";
+"72076840.tags" = "andamento discendente | discendente | grafico | grafico con andamento negativo";
+// 📊 - bar_chart
+"72076845.name" = "grafico a barre";
+"72076845.tags" = "barre | grafico | grafico a barre";
+// 📋 - clipboard
+"72076850.name" = "portablocco";
+"72076850.tags" = "appunti | portablocco";
+// 📌 - pushpin
+"72076855.name" = "puntina";
+"72076855.tags" = "puntina | puntina da disegno";
+// 📍 - round_pushpin
+"72076860.name" = "puntina arrotondata";
+"72076860.tags" = "puntina | puntina arrotondata | puntina da disegno";
+// 📎 - paperclip
+"72076865.name" = "graffetta";
+"72076865.tags" = "fermaglio | graffetta";
+// 📏 - straight_ruler
+"72076870.name" = "righello";
+"72076870.tags" = "geometria | misurare | righello | scuola | strumento";
+// 📐 - triangular_ruler
+"72076875.name" = "squadra";
+"72076875.tags" = "angoli | geometria | misurare | scuola | squadra";
+// 🔒 - lock
+"72077205.name" = "lucchetto chiuso";
+"72077205.tags" = "chiuso | lucchetto";
+// 🔓 - unlock
+"72077210.name" = "lucchetto aperto";
+"72077210.tags" = "aperto | lucchetto";
+// 🔏 - lock_with_ink_pen
+"72077190.name" = "lucchetto con penna stilo";
+"72077190.tags" = "lucchetto | lucchetto con penna stilo | privacy | stilografica";
+// 🔐 - closed_lock_with_key
+"72077195.name" = "lucchetto chiuso con chiave";
+"72077195.tags" = "chiave | lucchetto chiuso | lucchetto chiuso con chiave | sicuro";
+// 🔑 - key
+"72077200.name" = "chiave";
+"72077200.tags" = "chiave | password";
+// 🔨 - hammer
+"72077315.name" = "martello";
+"72077315.tags" = "attrezzo | martello | utensile";
+// 🪓 - axe
+"72080415.name" = "ascia";
+"72080415.tags" = "accetta | ascia | boscaiolo | taglialegna";
+// 💣 - bomb
+"72076650.name" = "bomba";
+"72076650.tags" = "bomba | emozione | fumetto";
+// 🪃 - boomerang
+"72080335.name" = "boomerang";
+"72080335.tags" = "australia | boomerang | rimbalzo | ripercussione";
+// 🏹 - bow_and_arrow
+"72079635.name" = "arco e freccia";
+"72079635.tags" = "arciere | arco e freccia | tiratore d’arco | tiro con l’arco";
+// 🪚 - carpentry_saw
+"72080450.name" = "sega da falegname";
+"72080450.tags" = "falegname | legname | sega | sega da falegname | utensile";
+// 🔧 - wrench
+"72077310.name" = "chiave inglese";
+"72077310.tags" = "attrezzo | chiave | inglese | utensile";
+// 🪛 - screwdriver
+"72080455.name" = "cacciavite";
+"72080455.tags" = "avvitare | cacciavite | utensile | vite";
+// 🔩 - nut_and_bolt
+"72077320.name" = "vite e bullone";
+"72077320.tags" = "bullonare | bullone | fissare | vite e bullone";
+// 🦯 - probing_cane
+"72079275.name" = "bastone per non vedenti";
+"72079275.tags" = "accessibilità | bastone bianco | bastone per ipovedenti | bastone per non vedenti";
+// 🔗 - link
+"72077230.name" = "collegamento";
+"72077230.tags" = "collegamento | due anelli | link | simbolo link";
+// 🪝 - hook
+"72080465.name" = "gancio";
+"72080465.tags" = "curva | fermaglio | gancio | intrappolare | punto vendita | uncino";
+// 🧰 - toolbox
+"72079600.name" = "cassetta degli attrezzi";
+"72079600.tags" = "attrezzi | cassetta degli attrezzi | meccanico | strumenti";
+// 🧲 - magnet
+"72079610.name" = "calamita";
+"72079610.tags" = "attrazione | calamita | ferro di cavallo | magnete | magnetica";
+// 🪜 - ladder
+"72080460.name" = "scala";
+"72080460.tags" = "arrampicarsi | piolo | scala | scalino";
+// 🧪 - test_tube
+"72079570.name" = "provetta";
+"72079570.tags" = "chimica | chimico | esperimenti | laboratorio | provetta";
+// 🧫 - petri_dish
+"72079575.name" = "piastra di Petri";
+"72079575.tags" = "batteri | biologia | biologo | cultura | piastra di Petri";
+// 🧬 - dna
+"72079580.name" = "dna";
+"72079580.tags" = "biologo | dna | evoluzione | genetica | geni | vita";
+// 🔬 - microscope
+"72077335.name" = "microscopio";
+"72077335.tags" = "analisi | esperimento | microscopio | scienza | strumento";
+// 🔭 - telescope
+"72077340.name" = "telescopio";
+"72077340.tags" = "astronomia | osservazione delle stelle | telescopi | telescopio";
+// 📡 - satellite_antenna
+"72076960.name" = "antenna satellitare";
+"72076960.tags" = "antenna parabolica | antenna satellitare | antenne paraboliche | antenne satellitari | satellite";
+// 💉 - syringe
+"72076520.name" = "siringa";
+"72076520.tags" = "ago | dottore | iniezione | medicina | siringa";
+// 🩸 - drop_of_blood
+"72080280.name" = "goccia di sangue";
+"72080280.tags" = "ciclo mestruale | donare il sangue | donazione di sangue | goccia di sangue | medicina | medicinale | mestruazioni";
+// 💊 - pill
+"72076525.name" = "pillola";
+"72076525.tags" = "dottore | medicina | pillola";
+// 🩹 - adhesive_bandage
+"72080285.name" = "cerotto";
+"72080285.tags" = "cerotto | cerotto adesivo";
+// 🩼 - crutch
+"72080300.name" = "stampella";
+"72080300.tags" = "ausilio | bastone | disabile | ferito | infortunio | stampella | supporto";
+// 🩺 - stethoscope
+"72080290.name" = "stetoscopio";
+"72080290.tags" = "cardiologo | dottore | fonendoscopio | medico | stetoscopio";
+// 🩻 - x-ray
+"72080295.name" = "radiografia";
+"72080295.tags" = "dottore | lastra | medico | ossa | radiografia | raggi x | scheletro";
+// 🚪 - door
+"72079245.name" = "porta";
+"72079245.tags" = "porta";
+// 🛗 - elevator
+"72079470.name" = "ascensore";
+"72079470.tags" = "accessibilità | ascensore | montacarichi";
+// 🪞 - mirror
+"72080470.name" = "specchio";
+"72080470.tags" = "riflesso | specchio";
+// 🪟 - window
+"72080475.name" = "finestra";
+"72080475.tags" = "apertura | aria fresca | finestra | telaio | trasparente | vista";
+// 🪑 - chair
+"72080405.name" = "sedia";
+"72080405.tags" = "mettersi seduti | sedersi | sedia";
+// 🚽 - toilet
+"72079340.name" = "toilette";
+"72079340.tags" = "toilette | water";
+// 🪠 - plunger
+"72080480.name" = "sturalavandini";
+"72080480.tags" = "aspirazione | idraulico | scarico | sturalavandini | ventosa";
+// 🚿 - shower
+"72079350.name" = "doccia";
+"72079350.tags" = "doccia | fare la doccia | lavarsi";
+// 🛁 - bathtub
+"72079360.name" = "vasca";
+"72079360.tags" = "vasca | vasca da bagno";
+// 🪤 - mouse_trap
+"72080500.name" = "trappola per topi";
+"72080500.tags" = "esca | trappola | trappola per topi";
+// 🪒 - razor
+"72080410.name" = "rasoio";
+"72080410.tags" = "farsi la barba | lama da barba | lama da barbiere | radersi | rasoio | rasoio da barbiere";
+// 🧴 - lotion_bottle
+"72079620.name" = "flacone";
+"72079620.tags" = "crema idratante | crema solare | flacone | lozione | shampoo";
+// 🧷 - safety_pin
+"72079635.name" = "spilla da balia";
+"72079635.tags" = "pannolone | punk rock | spilla da balia";
+// 🧹 - broom
+"72079645.name" = "scopa";
+"72079645.tags" = "pulire | scopa | scopare | spazzare | strega";
+// 🧺 - basket
+"72079650.name" = "cesto";
+"72079650.tags" = "bucato | cesto | orto | picnic";
+// 🧻 - roll_of_paper
+"72079655.name" = "rotolo di carta igienica";
+"72079655.tags" = "carta igienica | rotolo | rotolo di carta igienica";
+// 🪣 - bucket
+"72080495.name" = "secchio";
+"72080495.tags" = "secchia | secchio";
+// 🧼 - soap
+"72079660.name" = "sapone";
+"72079660.tags" = "bagno | sapone | saponetta | schiuma";
+// 🫧 - bubbles
+"72080835.name" = "bolle";
+"72080835.tags" = "bolle | bollicine | pulito | rutto | sapone | schiuma | sott’acqua | subacqueo";
+// 🪥 - toothbrush
+"72080505.name" = "spazzolino da denti";
+"72080505.tags" = "bagno | dentale | denti | igiene | pulito | spazzolino | spazzolino da denti";
+// 🧽 - sponge
+"72079665.name" = "spugna";
+"72079665.tags" = "assorbenza | pulizia | spugna | spugna porosa";
+// 🧯 - fire_extinguisher
+"72079595.name" = "estintore";
+"72079595.tags" = "estintore | fiamme | fuoco | spegnere un incendio";
+// 🛒 - shopping_trolley
+"72079445.name" = "carrello";
+"72079445.tags" = "carrello | carrello della spesa | centro commerciale | fare la spesa | supermercato";
+// 🚬 - smoking
+"72079255.name" = "sigaretta";
+"72079255.tags" = "area fumatori | fumo | sigaretta";
+// 🪦 - headstone
+"72080510.name" = "lapide";
+"72080510.tags" = "cimitero | lapide | pietra tombale | tomba";
+// 🧿 - nazar_amulet
+"72079675.name" = "occhio di Allah";
+"72079675.tags" = "amuleto | malocchio | nazar | occhio di Allah";
+// 🪬 - hamsa
+"72080540.name" = "mano di Fatima";
+"72080540.tags" = "amuleto | hamsa | khamsa | mano di Fatima | Maria | Miriam | protezione";
+// 🗿 - moyai
+"72078390.name" = "Moai";
+"72078390.tags" = "Moai | Moyai | statua dell’Isola di Pasqua";
+// 🪧 - placard
+"72080515.name" = "cartello";
+"72080515.tags" = "cartello | corteo | manifestazione | picchetto | protesta | striscione";
+// 🪪 - identification_card
+"72080530.name" = "carta d’identità";
+"72080530.tags" = "badge | carta d’identità | credenziali | documento d’identità | patente | sicurezza | tessera";
+// 🏧 - atm
+"72079545.name" = "simbolo dello sportello bancomat";
+"72079545.tags" = "ATM | bancomat | simbolo dello sportello bancomat";
+// 🚮 - put_litter_in_its_place
+"72079265.name" = "simbolo per la raccolta dei rifiuti";
+"72079265.tags" = "raccolta rifiuti | simbolo | simbolo per la raccolta dei rifiuti | simbolo raccolta rifiuti";
+// 🚰 - potable_water
+"72079275.name" = "acqua potabile";
+"72079275.tags" = "acqua | potabile | simbolo";
+// ♿ - wheelchair
+"30336.name" = "simbolo della disabilità";
+"30336.tags" = "accesso | accesso sedia a rotelle | sedia a rotelle | simbolo | simbolo della disabilità | simbolo sedia a rotelle";
+// 🚹 - mens
+"72079320.name" = "simbolo del bagno degli uomini";
+"72079320.tags" = "bagno uomini | simbolo | simbolo bagno uomini | simbolo del bagno degli uomini | Uomini";
+// 🚺 - womens
+"72079325.name" = "simbolo del bagno delle donne";
+"72079325.tags" = "bagno donne | Donne | simbolo | simbolo bagno donne | simbolo del bagno delle donne";
+// 🚻 - restroom
+"72079330.name" = "simbolo dei servizi igienici";
+"72079330.tags" = "bagni | simbolo | simbolo dei servizi igienici | wc";
+// 🚼 - baby_symbol
+"72079335.name" = "simbolo con immagine di bambino";
+"72079335.tags" = "cartello neonato | fasciatoio | simbolo con immagine di bambino | simbolo neonato";
+// 🚾 - wc
+"72079345.name" = "simbolo del WC";
+"72079345.tags" = "bagno | gabinetto | simbolo del WC | WC";
+// 🛂 - passport_control
+"72079365.name" = "simbolo del controllo passaporti";
+"72079365.tags" = "controllo | dogana | passaporti | simbolo del controllo passaporti";
+// 🛃 - customs
+"72079370.name" = "simbolo della dogana";
+"72079370.tags" = "confine di Stato | controllo doganale | dogana | frontiera | simbolo della dogana";
+// 🛄 - baggage_claim
+"72079375.name" = "simbolo del ritiro bagagli";
+"72079375.tags" = "bagagli | ritiro | simbolo del ritiro bagagli";
+// 🛅 - left_luggage
+"72079380.name" = "simbolo del deposito bagagli";
+"72079380.tags" = "bagagli | deposito bagagli | servizio bagagli | simbolo del deposito bagagli";
+// 🚸 - children_crossing
+"72079315.name" = "attraversamento bambini";
+"72079315.tags" = "attraversamento | attraversamento bambini | attraversamento pedonale | pedoni";
+// ⛔ - no_entry
+"30591.name" = "segnale di divieto di accesso";
+"30591.tags" = "accesso | divieto | divieto di accesso | segnale di divieto di accesso | simbolo";
+// 🚫 - no_entry_sign
+"72079250.name" = "segnale di divieto";
+"72079250.tags" = "divieto | segnale di divieto | simbolo | simbolo di divieto";
+// 🚳 - no_bicycles
+"72079290.name" = "segnale di divieto di transito delle biciclette";
+"72079290.tags" = "bicicletta | divieto transito biciclette | segnale di divieto di transito delle biciclette";
+// 🚭 - no_smoking
+"72079260.name" = "segnale di vietato fumare";
+"72079260.tags" = "segnale di vietato fumare | simbolo | simbolo vietato fumare | vietato fumare";
+// 🚯 - do_not_litter
+"72079270.name" = "simbolo del divieto di gettare rifiuti";
+"72079270.tags" = "simbolo | simbolo del divieto di gettare rifiuti | simbolo vietato gettare rifiuti | vietato gettare rifiuti";
+// 🚱 - non-potable_water
+"72079280.name" = "simbolo di acqua non potabile";
+"72079280.tags" = "acqua | acqua non potabile | non potabile | simbolo | simbolo acqua non potabile | simbolo di acqua non potabile";
+// 🚷 - no_pedestrians
+"72079310.name" = "simbolo del divieto di transito pedoni";
+"72079310.tags" = "divieto transito pedoni | pedone | simbolo | simbolo del divieto di transito pedoni";
+// 📵 - no_mobile_phones
+"72077060.name" = "simbolo che vieta l’uso dei cellulari";
+"72077060.tags" = "cellulare vietato | cellulari vietati | niente cellulare | niente cellulari | simbolo che vieta l’uso dei cellulari | simbolo che vieta l’utilizzo dei telefoni cellulari";
+// 🔞 - underage
+"72077265.name" = "simbolo di divieto ai minorenni";
+"72077265.tags" = "divieto ai minori | simbolo di divieto ai minorenni | vietato ai minori | vietato ai minori di anni 18";
+// 🔃 - arrows_clockwise
+"72077130.name" = "frecce verticali che ruotano in senso orario";
+"72077130.tags" = "frecce | frecce a cerchio verticali | frecce verticali che ruotano in senso orario | frecce verticali senso orario | ricarica | simbolo ricarica";
+// 🔄 - arrows_counterclockwise
+"72077135.name" = "frecce che ruotano in senso antiorario";
+"72077135.tags" = "antiorario | frecce | frecce a cerchio aperto | frecce che ruotano in senso antiorario | frecce senso antiorario | pulsante con frecce che ruotano in senso antiorario";
+// 🔙 - back
+"72077240.name" = "freccia BACK";
+"72077240.tags" = "freccia | freccia BACK | freccia verso sinistra | indietro | indietro con freccia verso sinistra";
+// 🔚 - end
+"72077245.name" = "freccia END";
+"72077245.tags" = "end con freccia verso sinistra | fine | freccia | freccia end | freccia END | freccia verso sinistra";
+// 🔛 - on
+"72077250.name" = "freccia ON";
+"72077250.tags" = "freccia | freccia ON | ON con freccia e punto esclamativo | punto esclamativo";
+// 🔜 - soon
+"72077255.name" = "freccia SOON";
+"72077255.tags" = "freccia | freccia SOON | presto | simbolo soon | soon con freccia verso destra";
+// 🔝 - top
+"72077260.name" = "freccia TOP";
+"72077260.tags" = "alto | freccia TOP | freccia verso l’alto | simbolo Top | Top con freccia verso l’alto";
+// 🛐 - place_of_worship
+"72079435.name" = "luogo di culto";
+"72079435.tags" = "luogo di culto | luogo di preghiera | luogo sacro | pregare | preghiera";
+// 🕎 - menorah_with_nine_branches
+"72077505.name" = "Menorah";
+"72077505.tags" = "candelabro | Ebraismo | Menorah | sette bracci";
+// 🔯 - six_pointed_star
+"72077350.name" = "stella a sei punte";
+"72077350.tags" = "chiromanzia | futuro | sei punte | stella | stella a sei punte";
+// 🪯 - khanda
+"72080555.name" = "khanda";
+"72080555.tags" = "khanda | religione | Sikh";
+// ♈ - aries
+"30171.name" = "Segno zodiacale dell’Ariete";
+"30171.tags" = "Ariete | Segno zodiacale dell’Ariete | zodiaco";
+// ♉ - taurus
+"30174.name" = "Segno zodiacale del Toro";
+"30174.tags" = "Segno zodiacale del Toro | Toro | zodiaco";
+// ♊ - gemini
+"30177.name" = "Segno zodiacale dei Gemelli";
+"30177.tags" = "Gemelli | Segno zodiacale dei Gemelli | zodiaco";
+// ♋ - cancer
+"30180.name" = "Segno zodiacale del Cancro";
+"30180.tags" = "Cancro | Segno zodiacale del Cancro | zodiaco";
+// ♌ - leo
+"30183.name" = "Segno zodiacale del Leone";
+"30183.tags" = "Leone | Segno zodiacale del Leone | zodiaco";
+// ♍ - virgo
+"30186.name" = "Segno zodiacale della Vergine";
+"30186.tags" = "Segno zodiacale della Vergine | Vergine | zodiaco";
+// ♎ - libra
+"30189.name" = "Segno zodiacale della Bilancia";
+"30189.tags" = "Bilancia | Segno zodiacale della Bilancia | zodiaco";
+// ♏ - scorpius
+"30192.name" = "Segno zodiacale dello Scorpione";
+"30192.tags" = "Scorpione | Segno zodiacale dello Scorpione | zodiaco";
+// ♐ - sagittarius
+"30195.name" = "Segno zodiacale del Saggitario";
+"30195.tags" = "Sagittario | Segno zodiacale del Saggitario | zodiaco";
+// ♑ - capricorn
+"30198.name" = "Segno zodiacale del Capricorno";
+"30198.tags" = "Capricorno | Segno zodiacale del Capricorno | zodiaco";
+// ♒ - aquarius
+"30201.name" = "Segno zodiacale dell’Acquario";
+"30201.tags" = "Acquario | Segno zodiacale dell’Acquario | zodiaco";
+// ♓ - pisces
+"30204.name" = "Segno zodiacale dei Pesci";
+"30204.tags" = "Pesci | Segno zodiacale dei Pesci | zodiaco";
+// ⛎ - ophiuchus
+"30573.name" = "Segno zodiacale dell’Ofiuco";
+"30573.tags" = "Ofiuco | Segno zodiacale dell’Ofiuco | zodiaco";
+// 🔀 - twisted_rightwards_arrows
+"72077115.name" = "pulsante di riproduzione casuale";
+"72077115.tags" = "frecce | frecce incrociate | frecce incrociate verso destra | pulsante di riproduzione casuale";
+// 🔁 - repeat
+"72077120.name" = "pulsante di ripetizione della riproduzione";
+"72077120.tags" = "frecce | frecce a cerchio | frecce senso orario | pulsante di ripetizione della riproduzione | senso orario";
+// 🔂 - repeat_one
+"72077125.name" = "pulsante di ripetizione della riproduzione di una traccia";
+"72077125.tags" = "frecce | frecce a cerchio numero 1 | frecce senso orario | frecce senso orario numero 1 | pulsante di ripetizione della riproduzione di una traccia | senso orario";
+// ⏩ - fast_forward
+"28350.name" = "pulsante di avanzamento rapido";
+"28350.tags" = "avanzamento rapido | destra | doppia freccia a destra | freccia | pulsante di avanzamento rapido";
+// ⏪ - rewind
+"28353.name" = "pulsante di riavvolgimento rapido";
+"28353.tags" = "doppia freccia a sinistra | freccia | pulsante di riavvolgimento rapido | riavvolgimento rapido | sinistra";
+// 🔼 - arrow_up_small
+"72077415.name" = "pulsante a triangolo rivolto verso l’alto";
+"72077415.tags" = "alto | pulsante | pulsante a triangolo rivolto verso l’alto | triangolo";
+// ⏫ - arrow_double_up
+"28356.name" = "pulsante doppia freccia in alto";
+"28356.tags" = "alto | doppia freccia in alto | freccia | pulsante doppia freccia in alto";
+// 🔽 - arrow_down_small
+"72077420.name" = "pulsante a triangolo rivolto verso il basso";
+"72077420.tags" = "basso | pulsante | pulsante a triangolo rivolto verso il basso | triangolo";
+// ⏬ - arrow_double_down
+"28359.name" = "doppia freccia in basso";
+"28359.tags" = "basso | doppia freccia in basso | freccia";
+// 🎦 - cinema
+"72079220.name" = "simbolo del cinema";
+"72079220.tags" = "cinema | film | intrattenimento | simbolo del cinema | simbolo film";
+// 🔅 - low_brightness
+"72077140.name" = "luminosità bassa";
+"72077140.tags" = "bassa | luminosità | simbolo luminosità | tenue";
+// 🔆 - high_brightness
+"72077145.name" = "luminosità elevata";
+"72077145.tags" = "alta luminosità | luminosità | luminosità elevata | luminoso | simbolo alta luminosità";
+// 📶 - signal_strength
+"72077065.name" = "segnale cellulare";
+"72077065.tags" = "antenna | antenna con tacche intensità segnale | cellulare | segnale | telefono";
+// 🛜 - wireless
+"72079495.name" = "wireless";
+"72079495.tags" = "computer | internet | rete | wireless";
+// 📳 - vibration_mode
+"72077050.name" = "modalità vibrazione";
+"72077050.tags" = "cellulare | modalità telefono | modalità vibrazione";
+// 📴 - mobile_phone_off
+"72077055.name" = "cellulare spento";
+"72077055.tags" = "cellulare | spento | telefono";
+// ➕ - heavy_plus_sign
+"31170.name" = "addizione";
+"31170.tags" = "+ | addizione | più | segno di addizione";
+// ➖ - heavy_minus_sign
+"31173.name" = "sottrazione";
+"31173.tags" = "- | meno | segno di sottrazione | sottrazione";
+// ➗ - heavy_division_sign
+"31176.name" = "divisione";
+"31176.tags" = "÷ | divisione | diviso | segno di divisione";
+// 🟰 - heavy_equals_sign
+"72080875.name" = "segno di uguaglianza";
+"72080875.tags" = "matematica | segno di uguaglianza | uguaglianza | uguale";
+// ❓ - question
+"30972.name" = "punto interrogativo rosso";
+"30972.tags" = "domanda | punto di domanda pieno | punto interrogativo rosso";
+// ❔ - grey_question
+"30975.name" = "punto interrogativo bianco";
+"30975.tags" = "domanda | punto di domanda vuoto | punto interrogativo bianco";
+// ❕ - grey_exclamation
+"30978.name" = "punto esclamativo bianco";
+"30978.tags" = "esclamazione | punto esclamativo bianco | punto esclamativo vuoto";
+// ❗ - exclamation
+"30984.name" = "punto esclamativo rosso";
+"30984.tags" = "esclamazione | punteggiatura | punto esclamativo | punto esclamativo pieno | punto esclamativo rosso";
+// 💱 - currency_exchange
+"72076720.name" = "cambio valuta";
+"72076720.tags" = "cambio | cambio di valuta | denaro | valuta";
+// 💲 - heavy_dollar_sign
+"72076725.name" = "Dollaro";
+"72076725.tags" = "denaro | Dollaro | simbolo del Dollaro";
+// 🔱 - trident
+"72077360.name" = "tridente";
+"72077360.tags" = "ancora | simbolo tridente | tridente";
+// 📛 - name_badge
+"72076930.name" = "tesserino per nome";
+"72076930.tags" = "nome | tesserino | tesserino per nome";
+// 🔰 - beginner
+"72077355.name" = "ideogramma giapponese di “Principiante”";
+"72077355.tags" = "etichetta gialla e verde principiante | ideogramma giapponese di “Principiante” | principiante | simbolo principiante Giappone";
+// ⭕ - o
+"34050.name" = "cerchio rosso vuoto";
+"34050.tags" = "cerchio rosso vuoto | gioco | pallino | tris";
+// ✅ - white_check_mark
+"30738.name" = "pulsante segno di spunta";
+"30738.tags" = "baffo | pulsante segno di spunta | segno di spunta";
+// ❌ - x
+"30951.name" = "croce";
+"30951.tags" = "croce | X";
+// ❎ - negative_squared_cross_mark
+"30957.name" = "croce con quadrato";
+"30957.tags" = "croce con quadrato | X con quadrato";
+// ➰ - curly_loop
+"31251.name" = "occhiello";
+"31251.tags" = "cerchio | occhiello";
+// ➿ - loop
+"31296.name" = "doppio occhiello";
+"31296.tags" = "doppio | occhiello";
+// 🔠 - capital_abcd
+"72077275.name" = "pulsante con lettere latine maiuscole";
+"72077275.tags" = "caratteri latini | inserire | lettere | maiuscole | pulsante con lettere latine maiuscole";
+// 🔡 - abcd
+"72077280.name" = "pulsante con lettere latine minuscole";
+"72077280.tags" = "caratteri latini | inserire | lettere | minuscole | pulsante con lettere latine minuscole";
+// 🔢 - 1234
+"72077285.name" = "pulsante con numeri";
+"72077285.tags" = "inserire | numeri | pulsante con numeri | tastierino numerico";
+// 🔣 - symbols
+"72077290.name" = "pulsante con simboli";
+"72077290.tags" = "inserire | pulsante con simboli | simboli | tastierino simboli";
+// 🔤 - abc
+"72077295.name" = "pulsante con lettere latine";
+"72077295.tags" = "ABC | alfabeto | caratteri alfabetici | inglese | inserire | pulsante con lettere latine";
+// 🆎 - ab
+"72076540.name" = "gruppo sanguigno AB";
+"72076540.tags" = "gruppo AB | gruppo sanguigno AB";
+// 🆑 - cl
+"72076555.name" = "pulsante CL";
+"72076555.tags" = "pulsante CL | simbolo CL";
+// 🆒 - cool
+"72076560.name" = "pulsante COOL";
+"72076560.tags" = "pulsante COOL | simbolo Cool";
+// 🆓 - free
+"72076565.name" = "pulsante FREE";
+"72076565.tags" = "gratis | pulsante FREE | simbolo Free | simbolo gratis";
+// 🆔 - id
+"72076570.name" = "pulsante ID";
+"72076570.tags" = "identità | pulsante ID | simbolo ID";
+// 🆕 - new
+"72076575.name" = "pulsante NEW";
+"72076575.tags" = "pulsante NEW | simbolo New";
+// 🆖 - ng
+"72076580.name" = "pulsante NG";
+"72076580.tags" = "pulsante NG | simbolo NG";
+// 🆗 - ok
+"72076585.name" = "pulsante OK";
+"72076585.tags" = "pulsante OK | simbolo OK";
+// 🆘 - sos
+"72076590.name" = "pulsante SOS";
+"72076590.tags" = "pulsante SOS | Segnale di SOS | simbolo di SOS | soccorsi | soccorso | SOS";
+// 🆙 - up
+"72076595.name" = "pulsante UP!";
+"72076595.tags" = "pulsante UP! | simbolo UP!";
+// 🆚 - vs
+"72076600.name" = "pulsante VS";
+"72076600.tags" = "pulsante VS | simbolo contro | versus | vs";
+// 🈁 - koko
+"72077115.name" = "ideogramma giapponese per “Qui”";
+"72077115.tags" = "ideogramma giapponese per “Qui” | ideogramma katakana qui | katakana | parola | qui | tabelloni";
+// 🈶 - u6709
+"72077380.name" = "ideogramma giapponese di “A pagamento”";
+"72077380.tags" = "esistere | giapponese | ideogramma | ideogramma giapponese di “A pagamento”";
+// 🈯 - u6307
+"72077345.name" = "ideogramma giapponese di “Riservato”";
+"72077345.tags" = "giapponese | ideogramma | ideogramma giapponese di “Riservato” | riservato";
+// 🉐 - ideograph_advantage
+"72077510.name" = "ideogramma giapponese di “Occasione”";
+"72077510.tags" = "giapponese | ideogramma | ideogramma giapponese di “Occasione” | vantaggio";
+// 🈹 - u5272
+"72077395.name" = "ideogramma giapponese di “Sconto”";
+"72077395.tags" = "giapponese | ideogramma | ideogramma giapponese di “Sconto” | prezzo scontato | sconto";
+// 🈚 - u7121
+"72077240.name" = "ideogramma giapponese di “Gratis”";
+"72077240.tags" = "giapponese | gratis | ideogramma | ideogramma giapponese di “Gratis”";
+// 🈲 - u7981
+"72077360.name" = "ideogramma giapponese di “Proibito”";
+"72077360.tags" = "giapponese | ideogramma | ideogramma giapponese di “Proibito” | proibito";
+// 🉑 - accept
+"72077515.name" = "ideogramma giapponese di “Accettabile”";
+"72077515.tags" = "accettabile | giapponese | ideogramma | ideogramma giapponese di “Accettabile”";
+// 🈸 - u7533
+"72077390.name" = "ideogramma giapponese di “Candidatura”";
+"72077390.tags" = "candidarsi | giapponese | ideogramma | ideogramma giapponese di “Candidatura”";
+// 🈴 - u5408
+"72077370.name" = "ideogramma giapponese di “Voto di sufficienza”";
+"72077370.tags" = "giapponese | ideogramma | ideogramma giapponese di “Voto di sufficienza” | sufficienza";
+// 🈳 - u7a7a
+"72077365.name" = "ideogramma giapponese di “Posto libero”";
+"72077365.tags" = "disponibilità | giapponese | ideogramma | ideogramma giapponese di “Posto libero” | libero | posto libero";
+// 🈺 - u55b6
+"72077400.name" = "ideogramma giapponese di “Aperto al pubblico”";
+"72077400.tags" = "aperto | aperto al pubblico | aperto per affari | giapponese | ideogramma | ideogramma giapponese di “Aperto al pubblico”";
+// 🈵 - u6e80
+"72077375.name" = "ideogramma giapponese di “Nessun posto libero”";
+"72077375.tags" = "giapponese | ideogramma | ideogramma giapponese di “Nessun posto libero” | nessun posto libero | pieno";
+// 🔴 - red_circle
+"72077375.name" = "cerchio rosso";
+"72077375.tags" = "cerchio | geometria | rosso";
+// 🟠 - large_orange_circle
+"72080795.name" = "cerchio arancione";
+"72080795.tags" = "cerchio | cerchio arancio | cerchio arancione";
+// 🟡 - large_yellow_circle
+"72080800.name" = "cerchio giallo";
+"72080800.tags" = "cerchio | cerchio di colore giallo | cerchio giallo";
+// 🟢 - large_green_circle
+"72080805.name" = "cerchio verde";
+"72080805.tags" = "cerchio | cerchio di colore verde | cerchio verde";
+// 🔵 - large_blue_circle
+"72077380.name" = "cerchio blu";
+"72077380.tags" = "blu | cerchio | geometria";
+// 🟣 - large_purple_circle
+"72080810.name" = "cerchio viola";
+"72080810.tags" = "cerchio | cerchio di colore viola | cerchio viola";
+// 🟤 - large_brown_circle
+"72080815.name" = "cerchio marrone";
+"72080815.tags" = "cerchio di colore marrone | cerchio marrone | marrone";
+// ⚫ - black_circle
+"30468.name" = "cerchio nero";
+"30468.tags" = "cerchio | geometria | nero";
+// ⚪ - white_circle
+"30465.name" = "cerchio bianco";
+"30465.tags" = "bianco | cerchio | geometria";
+// 🟥 - large_red_square
+"72080820.name" = "quadrato rosso";
+"72080820.tags" = "quadrato | quadrato di colore rosso | rosso";
+// 🟧 - large_orange_square
+"72080830.name" = "quadrato arancione";
+"72080830.tags" = "arancione | quadrato | quadrato di colore arancione";
+// 🟨 - large_yellow_square
+"72080835.name" = "quadrato giallo";
+"72080835.tags" = "giallo | quadrato | quadrato di colore giallo";
+// 🟩 - large_green_square
+"72080840.name" = "quadrato verde";
+"72080840.tags" = "quadrato | quadrato di colore verde | verde";
+// 🟦 - large_blue_square
+"72080825.name" = "quadrato blu";
+"72080825.tags" = "blu | quadrato | quadrato di colore blu";
+// 🟪 - large_purple_square
+"72080845.name" = "quadrato viola";
+"72080845.tags" = "quadrato | quadrato di colore viola | viola";
+// 🟫 - large_brown_square
+"72080850.name" = "quadrato marrone";
+"72080850.tags" = "quadrato | quadrato di colore marrone | quadrato marrone";
+// ⬛ - black_large_square
+"33876.name" = "quadrato nero grande";
+"33876.tags" = "geometria | quadrato | quadrato nero grande";
+// ⬜ - white_large_square
+"33879.name" = "quadrato bianco grande";
+"33879.tags" = "geometria | quadrato | quadrato bianco grande";
+// ◾ - black_medium_small_square
+"29949.name" = "quadrato nero medio-piccolo";
+"29949.tags" = "geometria | quadrato | quadrato nero medio-piccolo";
+// ◽ - white_medium_small_square
+"29946.name" = "quadrato bianco medio-piccolo";
+"29946.tags" = "geometria | quadrato | quadrato bianco medio-piccolo";
+// 🔶 - large_orange_diamond
+"72077385.name" = "rombo arancione grande";
+"72077385.tags" = "arancione | grande | rombo";
+// 🔷 - large_blue_diamond
+"72077390.name" = "rombo blu grande";
+"72077390.tags" = "blu | grande | rombo";
+// 🔸 - small_orange_diamond
+"72077395.name" = "rombo arancione piccolo";
+"72077395.tags" = "arancione | piccolo | rombo";
+// 🔹 - small_blue_diamond
+"72077400.name" = "rombo blu piccolo";
+"72077400.tags" = "blu | piccolo | rombo";
+// 🔺 - small_red_triangle
+"72077405.name" = "triangolo rosso con punta verso l’alto";
+"72077405.tags" = "alto | rosso | triangolo | triangolo rosso con punta verso l’alto | triangolo rosso punta in alto";
+// 🔻 - small_red_triangle_down
+"72077410.name" = "triangolo rosso con punta verso il basso";
+"72077410.tags" = "basso | rosso | triangolo | triangolo rosso con punta verso il basso | triangolo rosso punta in basso";
+// 💠 - diamond_shape_with_a_dot_inside
+"72076635.name" = "petalo di fiore";
+"72076635.tags" = "carino | diamante | emozione | fiore | forma di diamante | petalo di fiore";
+// 🔘 - radio_button
+"72077235.name" = "pulsante rotondo";
+"72077235.tags" = "opzione | pulsante | pulsante rotondo";
+// 🔳 - white_square_button
+"72077370.name" = "tasto quadrato nero con bordo bianco";
+"72077370.tags" = "contorno | pulsante | pulsante quadrato con contorno | tasto quadrato nero con bordo bianco";
+// 🔲 - black_square_button
+"72077365.name" = "tasto quadrato bianco con bordo nero";
+"72077365.tags" = "pulsante | pulsante quadrato pieno | quadrato | tasto quadrato bianco con bordo nero";
+// 🏁 - checkered_flag
+"72079355.name" = "bandiera a scacchi";
+"72079355.tags" = "bandiera a scacchi | podio";
+// 🚩 - triangular_flag_on_post
+"72079240.name" = "bandierina rossa";
+"72079240.tags" = "bandierina rossa | bandierina rossa triangolare";
+// 🎌 - crossed_flags
+"72079090.name" = "bandiere del Giappone incrociate";
+"72079090.tags" = "bandiere del Giappone incrociate | bandiere incrociate | festeggiamenti | Giappone | giapponesi";
+// 🏴 - waving_black_flag
+"72079610.name" = "bandiera nera";
+"72079610.tags" = "bandiera che sventola | bandiera nera";

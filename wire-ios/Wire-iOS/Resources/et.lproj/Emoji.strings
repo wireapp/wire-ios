@@ -1,0 +1,3714 @@
+//
+// Wire
+// Copyright (C) 2023 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
+
+// 😀 - grinning
+"72078395.name" = "laia naeratusega nägu";
+"72078395.tags" = "irve | laia naeratusega nägu | naeratus | nägu";
+// 😃 - smiley
+"72078410.name" = "suurte silmadega naerunägu";
+"72078410.tags" = "avatud | avatud suuga naerunägu | lahti | naeratus | nägu | suu | suurte silmadega naerunägu";
+// 😄 - smile
+"72078415.name" = "avatud suu ja naeratavate silmadega naerunägu";
+"72078415.tags" = "avatud | avatud suu ja naeratavate silmadega naerunägu | lahti | naeratus | nägu | silm | suu";
+// 😁 - grin
+"72078400.name" = "naerul silmade ja laia naeratusega nägu";
+"72078400.tags" = "irve | naeratus | naerul silmade ja laia naeratusega nägu | nägu | silm";
+// 😆 - laughing
+"72078425.name" = "avatud suu ja suletud silmadega naerunägu";
+"72078425.tags" = "avatud suu ja suletud silmadega naerunägu | lahti | naer | naeratus | nägu | rahul | suu";
+// 😅 - sweat_smile
+"72078420.name" = "higipiisa ja avatud suuga naerunägu";
+"72078420.tags" = "avatud | higi | higipiisa ja avatud suuga naerunägu | külm | külma higiga kaetud ja avatud suuga naerunägu | naeratus | nägu";
+// 🤣 - rolling_on_the_floor_laughing
+"72078575.name" = "naerust kõveras";
+"72078575.tags" = "kõver | naer | naerust kõveras";
+// 😂 - joy
+"72078405.name" = "rõõmupisaratega nägu";
+"72078405.tags" = "naer | nägu | pisar | rõõm | rõõmupisaratega nägu";
+// 🙂 - slightly_smiling_face
+"72078725.name" = "naeratusega nägu";
+"72078725.tags" = "naeratus | naeratusega nägu | nägu";
+// 🙃 - upside_down_face
+"72078730.name" = "tagurpidi nägu";
+"72078730.tags" = "nägu | tagurpidi";
+// 🫠 - melting_face
+"72080800.name" = "sulav nägu";
+"72080800.tags" = "kaduma | lahustuma | sulama | sulav nägu | vedel";
+// 😉 - wink
+"72078440.name" = "silma pilgutav nägu";
+"72078440.tags" = "nägu | silma pilgutav nägu | silmapilgutus";
+// 😊 - blush
+"72078445.name" = "naeratavate silmadega naerunägu";
+"72078445.tags" = "naeratavate silmadega naerunägu | naeratus | nägu | punastamine | silm";
+// 😇 - innocent
+"72078430.name" = "aupaistega naerunägu";
+"72078430.tags" = "aupaistega naerunägu | fantaasia | halo | ingel | naeratus | nägu | süütu";
+// 🥰 - smiling_face_with_3_hearts
+"72078960.name" = "naeratav südametega nägu";
+"72078960.tags" = "armunud | imetlev | naeratav kolme südamega nägu | naeratav südametega nägu | sisse võetud";
+// 😍 - heart_eyes
+"72078460.name" = "südamekujuliste silmadega naerunägu";
+"72078460.tags" = "armastus | naeratus | nägu | silm | süda | südamekujuliste silmadega naerunägu";
+// 🤩 - star-struck
+"72078605.name" = "staariga silmitsi";
+"72078605.tags" = "nägu | silmad | staar | staariga silmitsi | suu kõrvuni";
+// 😘 - kissing_heart
+"72078515.name" = "suudlust saatev nägu";
+"72078515.tags" = "nägu | süda | suudlus | suudlust saatev nägu";
+// 😗 - kissing
+"72078510.name" = "suudlev nägu";
+"72078510.tags" = "nägu | suudlev nägu | suudlus";
+// 😚 - kissing_closed_eyes
+"72078525.name" = "suletud silmadega suudlev nägu";
+"72078525.tags" = "nägu | silm | suletud | suletud silmadega suudlev nägu | suudlus";
+// 😙 - kissing_smiling_eyes
+"72078520.name" = "naeratavate silmadega suudlev nägu";
+"72078520.tags" = "naeratavate silmadega suudlev nägu | naeratus | nägu | silm | suudlus";
+// 🥲 - smiling_face_with_tear
+"72078970.name" = "naeratav pisaraga nägu";
+"72078970.tags" = "kergendus | liigutatud | naeratav | naeratav pisaraga nägu | pisar | uhke";
+// 😋 - yum
+"72078450.name" = "maitsvat toitu nautija nägu";
+"72078450.tags" = "maitsev | maitsvat toitu nautija nägu | naeratus | nägu | nautimine";
+// 😛 - stuck_out_tongue
+"72078530.name" = "suust väljas keelega nägu";
+"72078530.tags" = "keel | nägu | suust väljas keelega nägu";
+// 😜 - stuck_out_tongue_winking_eye
+"72078535.name" = "suust väljas keelega ja silma pilgutav nägu";
+"72078535.tags" = "keel | nägu | nali | silm | silmapilgutus | suust väljas keelega ja silma pilgutav nägu";
+// 🤪 - zany_face
+"72078610.name" = "pöörase ilmega nägu";
+"72078610.tags" = "pöörase ilmega nägu | silm | suur | väike";
+// 😝 - stuck_out_tongue_closed_eyes
+"72078540.name" = "keelt näitav suletud silmadega nägu";
+"72078540.tags" = "keel | keelt näitav suletud silmadega nägu | maitse | nägu | õudne | silm | suust väljas keelega ja suletud silmadega nägu";
+// 🤑 - money_mouth_face
+"72078485.name" = "nägu, millel on raha suus";
+"72078485.tags" = "nägu | nägu | millel on raha suus | raha | suu";
+// 🤗 - hugging_face
+"72078515.name" = "kallistav nägu";
+"72078515.tags" = "kallistamine | kallistav nägu | kallistus | nägu";
+// 🤭 - face_with_hand_over_mouth
+"72078625.name" = "kätt suul hoidev nägu";
+"72078625.tags" = "kätt suul hoidev nägu | ups";
+// 🫢 - face_with_open_eyes_and_hand_over_mouth
+"72080810.name" = "kätt suul hoidev pärani silmadega nägu";
+"72080810.tags" = "aukartus | hämming | kartlikkus | kätt suul hoidev pärani silmadega nägu | piinlikkus | üllatunud | uskumatus";
+// 🫣 - face_with_peeking_eye
+"72080815.name" = "käte vahelt piiluva silmaga nägu";
+"72080815.tags" = "haaratud | käte vahelt piiluva silmaga nägu | piiluma | vahtima";
+// 🤫 - shushing_face
+"72078615.name" = "sõrme suul hoidev nägu";
+"72078615.tags" = "kuss! | sõrme suul hoidev nägu | vaikust";
+// 🤔 - thinking_face
+"72078500.name" = "mõtlev nägu";
+"72078500.tags" = "mõtlemine | mõtlev nägu | nägu";
+// 🫡 - saluting_face
+"72080805.name" = "au andev nägu";
+"72080805.tags" = "anname au | au andev nägu | jah | ok | päikeseline | sõjavägi";
+// 🤐 - zipper_mouth_face
+"72078480.name" = "tõmblukusuuga nägu";
+"72078480.tags" = "nägu | suu | tõmblukk | tõmblukusuuga nägu";
+// 🤨 - face_with_raised_eyebrow
+"72078600.name" = "kergitatud kulmudega nägu";
+"72078600.tags" = "kergitatud kulmudega nägu | skeptiline | umbusaldav";
+// 😐 - neutral_face
+"72078475.name" = "erapooletu nägu";
+"72078475.tags" = "erapooletu nägu | nägu | neutraalne | surmtõsine";
+// 😑 - expressionless
+"72078480.name" = "ilmetu nägu";
+"72078480.tags" = "ilmetu | mittemidagiütlev | nägu | väheütlev";
+// 😶 - no_mouth
+"72078665.name" = "ilma suuta nägu";
+"72078665.tags" = "ilma suuta nägu | nägu | suu | vaikne | vaikus";
+// 🫥 - dotted_line_face
+"72080825.name" = "punktiirjoonega nägu";
+"72080825.tags" = "introvertne | kaduma | masenduses | nähtamatu | peitma | punktiirjoonega nägu";
+// 😏 - smirk
+"72078470.name" = "muigav nägu";
+"72078470.tags" = "irvitus | muigav nägu | nägu";
+// 😒 - unamused
+"72078485.name" = "põlglik nägu";
+"72078485.tags" = "nägu | õnnetu | põlglik";
+// 🙄 - face_with_rolling_eyes
+"72078735.name" = "pööritavate silmadega nägu";
+"72078735.tags" = "nägu | pööritamine | pööritavate silmadega nägu | silmad";
+// 😬 - grimacing
+"72078615.name" = "grimassitav nägu";
+"72078615.tags" = "grimass | grimassitav nägu | nägu";
+// 😮‍💨 - face_exhaling
+"26809473017250.name" = "väljahingav nägu";
+"26809473017250.tags" = "kergendus | ohkamine | sosistamine | väljahingamine | väljahingav nägu | vilistamine";
+// 🤥 - lying_face
+"72078585.name" = "valetav nägu";
+"72078585.tags" = "nägu | vale | valetav nägu";
+// 🫨 - shaking_face
+"72080840.name" = "värisev nägu";
+"72080840.tags" = "maavärin | nägu | šokk | värin | värisev nägu | vibratsioon";
+// 😌 - relieved
+"72078455.name" = "kergendust tundev nägu";
+"72078455.tags" = "kergendus | kergendust tundev nägu | nägu";
+// 😔 - pensive
+"72078495.name" = "mõtlik nägu";
+"72078495.tags" = "mõtlik | nägu | nukker";
+// 😪 - sleepy
+"72078605.name" = "unine nägu";
+"72078605.tags" = "magamine | nägu | unine nägu";
+// 🤤 - drooling_face
+"72078580.name" = "ilastav nägu";
+"72078580.tags" = "ila | ilastav nägu | nägu";
+// 😴 - sleeping
+"72078655.name" = "magav nägu";
+"72078655.tags" = "magav nägu | nägu | uni | zzz";
+// 😷 - mask
+"72078670.name" = "kirurgimaskiga kaetud nägu";
+"72078670.tags" = "arst | haige | kirurgimaskiga kaetud nägu | külm | mask | nägu | ravim";
+// 🤒 - face_with_thermometer
+"72078490.name" = "kraadiklaasiga nägu";
+"72078490.tags" = "haige | kraadiklaas | kraadiklaasiga nägu | nägu";
+// 🤕 - face_with_head_bandage
+"72078505.name" = "kinniseotud peaga nägu";
+"72078505.tags" = "kinniseotud | kinniseotud peaga nägu | nägu | side | vigastus";
+// 🤢 - nauseated_face
+"72078570.name" = "iiveldust tundev nägu";
+"72078570.tags" = "iiveldus | iiveldust tundev nägu | nägu | okse";
+// 🤮 - face_vomiting
+"72078630.name" = "oksendav nägu";
+"72078630.tags" = "iiveldus | okse | oksendav nägu";
+// 🤧 - sneezing_face
+"72078595.name" = "aevastav nägu";
+"72078595.tags" = "aevastav nägu | aevastus | nägu | terviseks";
+// 🥵 - hot_face
+"72078985.name" = "higistav nägu";
+"72078985.tags" = "higistav | higistav nägu | kuumarabandus | näost punane | palavikuline";
+// 🥶 - cold_face
+"72078990.name" = "külmunud nägu";
+"72078990.tags" = "jääpurikad | jäätuv | külmakahjustus | külmunud | külmunud nägu | näost sinine";
+// 🥴 - woozy_face
+"72078980.name" = "uimane nägu";
+"72078980.tags" = "alkoholiuimas | joobnud | lainelised huuled | oimetu | uimane nägu | üks silm poolkinni";
+// 😵 - dizzy_face
+"72078660.name" = "oimetu nägu";
+"72078660.tags" = "nägu | oimetu";
+// 😵‍💫 - face_with_spiral_eyes
+"26813394148332.name" = "spiraalsilmadega nägu";
+"26813394148332.tags" = "hüpnotiseeritud | probleem | spiraalne | spiraalsilmadega nägu | uimane";
+// 🤯 - exploding_head
+"72078635.name" = "plahvatav pea";
+"72078635.tags" = "plahvatav pea | šokeeritud";
+// 🤠 - face_with_cowboy_hat
+"72078560.name" = "kauboimütsiga nägu";
+"72078560.tags" = "kauboi | kauboimütsiga nägu | müts | nägu";
+// 🥳 - partying_face
+"72078975.name" = "pidutsev nägu";
+"72078975.tags" = "müts | peovile | pidu | pidutsemine | pidutsev nägu";
+// 🥸 - disguised_face
+"72079000.name" = "maskeeritud nägu";
+"72079000.tags" = "inkognito | maskeerima | maskeeritud nägu | nägu | nina | prillid";
+// 😎 - sunglasses
+"72078465.name" = "päikeseprillidega naerunägu";
+"72078465.tags" = "ere | lahe | naeratus | nägu | päike | päikeseprillid | päikeseprillidega naerunägu";
+// 🤓 - nerd_face
+"72078495.name" = "nohiku nägu";
+"72078495.tags" = "friik | nägu | nohik | nohiku nägu";
+// 🧐 - face_with_monocle
+"72079440.name" = "monokliga nägu";
+"72079440.tags" = "monokliga nägu | vanamoeline";
+// 😕 - confused
+"72078500.name" = "segaduses nägu";
+"72078500.tags" = "nägu | segaduses";
+// 🫤 - face_with_diagonal_mouth
+"72080820.name" = "diagonaalse suuga nägu";
+"72080820.tags" = "diagonaalse suuga nägu | kahtlev | pettunud | skeptiline";
+// 😟 - worried
+"72078550.name" = "murelik nägu";
+"72078550.tags" = "murelik | nägu";
+// 🙁 - slightly_frowning_face
+"72078720.name" = "veidi kulmu kortsutav nägu";
+"72078720.tags" = "kulmukortsutus | nägu | veidi kulmu kortsutav nägu";
+// 😮 - open_mouth
+"72078625.name" = "avatud suuga nägu";
+"72078625.tags" = "avatud | avatud suuga nägu | kaastunne | lahti | nägu | suu";
+// 😯 - hushed
+"72078630.name" = "vaigistatud nägu";
+"72078630.tags" = "hämmingus | nägu | üllatunud | vaigistatud";
+// 😲 - astonished
+"72078645.name" = "hämmastunud nägu";
+"72078645.tags" = "ehmunud | hämmastunud nägu | hämmastus | löödud | nägu";
+// 😳 - flushed
+"72078650.name" = "punastav nägu";
+"72078650.tags" = "nägu | punastamine | punastav nägu";
+// 🥺 - pleading_face
+"72079010.name" = "anuv nägu";
+"72079010.tags" = "anuv nägu | halastust ootav | kutsikasilmad | paluv";
+// 🥹 - face_holding_back_tears
+"72079005.name" = "pisaraid tagasi hoidev nägu";
+"72079005.tags" = "kurb | nuttev | pisaraid tagasi hoidev nägu | trotslik | uhke | vihane";
+// 😦 - frowning
+"72078585.name" = "avatud suuga mossitav nägu";
+"72078585.tags" = "avatud | avatud suuga mossitav nägu | mossis | nägu | suu";
+// 😧 - anguished
+"72078590.name" = "ahastuses nägu";
+"72078590.tags" = "ahastus | ahastuses nägu | nägu";
+// 😨 - fearful
+"72078595.name" = "hirmunud nägu";
+"72078595.tags" = "hirm | hirmunud nägu | hirmus | kartlik | nägu";
+// 😰 - cold_sweat
+"72078635.name" = "külma higiga kaetud ja avatud suuga nägu";
+"72078635.tags" = "avatud | higi | külm | külma higiga kaetud ja avatud suuga nägu | nägu | sinine | suu";
+// 😥 - disappointed_relieved
+"72078580.name" = "pettunud, kuid kergendust tundev nägu";
+"72078580.tags" = "kergendus | leevendus | nägu | pettunud | pettunud | kuid kergendust tundev nägu";
+// 😢 - cry
+"72078565.name" = "nuttev nägu";
+"72078565.tags" = "kurb | nägu | nutt | nuttev nägu | pisar";
+// 😭 - sob
+"72078620.name" = "valjusti nuttev nägu";
+"72078620.tags" = "kurb | nägu | nutmine | nutt | pisar | valjusti nuttev nägu";
+// 😱 - scream
+"72078640.name" = "hirmunult karjuv nägu";
+"72078640.tags" = "hirm | hirmul | hirmunud | hirmunult karjuv nägu | karje | munch | nägu";
+// 😖 - confounded
+"72078505.name" = "kimbatuses nägu";
+"72078505.tags" = "kimbatus | kimbatuses nägu | nägu";
+// 😣 - persevere
+"72078570.name" = "sihikindel nägu";
+"72078570.tags" = "kannatamine | nägu | sihikindel nägu";
+// 😞 - disappointed
+"72078545.name" = "pettunud nägu";
+"72078545.tags" = "kergendus | leevendus | nägu | pettunud";
+// 😓 - sweat
+"72078490.name" = "külma higiga kaetud nägu";
+"72078490.tags" = "higi | külm | külma higiga kaetud nägu | nägu";
+// 😩 - weary
+"72078600.name" = "rammestunud nägu";
+"72078600.tags" = "nägu | rammestunud | väsinud";
+// 😫 - tired_face
+"72078610.name" = "väsinud nägu";
+"72078610.tags" = "nägu | väsinud";
+// 🥱 - yawning_face
+"72078965.name" = "haigutav nägu";
+"72078965.tags" = "haigutamine | haigutav nägu | haigutus | igav | väsinud";
+// 😤 - triumph
+"72078575.name" = "ninast auru ajav nägu";
+"72078575.tags" = "aur | nägu | nina | ninast auru ajav nägu";
+// 😡 - rage
+"72078560.name" = "mossitav nägu";
+"72078560.tags" = "mossitav | nägu | punane | tige | viha | vihane";
+// 😠 - angry
+"72078555.name" = "tige nägu";
+"72078555.tags" = "nägu | tige | vihane";
+// 🤬 - face_with_symbols_on_mouth
+"72078620.name" = "suul olevate sümbolitega nägu";
+"72078620.tags" = "suul olevate sümbolitega nägu | vandumine";
+// 😈 - smiling_imp
+"72078435.name" = "sarviline naerunägu";
+"72078435.tags" = "fantaasia | muinasjutt | naeratus | nägu | sarved | sarviline naerunägu";
+// 👿 - imp
+"72076470.name" = "deemon";
+"72076470.tags" = "deemon | fantaasia | kurat | muinasjutt | nägu | paharet | saatan";
+// 💀 - skull
+"72076475.name" = "kolp";
+"72076475.tags" = "kolp | kondid | luud | muinasjutt | nägu | pealuu | surm";
+// 💩 - hankey
+"72076680.name" = "kakahunnik";
+"72076680.tags" = "kaka | kakahunnik | koletis | koll | koomiks | nägu | sõnnik";
+// 🤡 - clown_face
+"72078565.name" = "klouninägu";
+"72078565.tags" = "kloun | klouninägu | nägu";
+// 👹 - japanese_ogre
+"72076440.name" = "sookoll";
+"72076440.tags" = "fantaasia | koletis | koll | muinasjutt | nägu | olend | sookoll";
+// 👺 - japanese_goblin
+"72076445.name" = "mäekoll";
+"72076445.tags" = "fantaasia | koletis | koll | mäekoll | muinasjutt | nägu | olend";
+// 👻 - ghost
+"72076450.name" = "kummitus";
+"72076450.tags" = "kummitus | muinasjutt | nägu | olend | tont | viirastus";
+// 👽 - alien
+"72076460.name" = "tulnukas";
+"72076460.tags" = "fantaasia | maaväline | nägu | olend | tulnukas";
+// 👾 - space_invader
+"72076465.name" = "tulnukkoletis";
+"72076465.tags" = "koletis | maaväline | nägu | olend | tulnukas | tulnukkoletis | ufo";
+// 🤖 - robot_face
+"72078510.name" = "robot";
+"72078510.tags" = "koletis | nägu | robot | roboti nägu";
+// 😺 - smiley_cat
+"72078685.name" = "avatud suuga naeratav kass";
+"72078685.tags" = "avatud suuga naeratav kass | kass | lahti | naeratus | nägu | suu";
+// 😸 - smile_cat
+"72078675.name" = "lõbusate silmadega irvitav kass";
+"72078675.tags" = "irve | kass | lõbusate silmadega irvitav kass | naeratus | nägu | silm";
+// 😹 - joy_cat
+"72078680.name" = "rõõmupisarais kass";
+"72078680.tags" = "kass | nägu | pisar | rõõm | rõõmupisarais kass";
+// 😻 - heart_eyes_cat
+"72078690.name" = "südamekujuliste silmadega naeratav kass";
+"72078690.tags" = "armastus | kass | naeratus | nägu | süda | südamekujuliste silmadega naeratav kass";
+// 😼 - smirk_cat
+"72078695.name" = "virilalt naeratav kass";
+"72078695.tags" = "irooniline | kass | naeratus | nägu | viril | virilalt naeratav kass";
+// 😽 - kissing_cat
+"72078700.name" = "suletud silmadega suudlev kass";
+"72078700.tags" = "kass | nägu | silm | suletud silmadega suudlev kass | suudlus";
+// 🙀 - scream_cat
+"72078715.name" = "üllatunud kass";
+"72078715.tags" = "kass | nägu | ootamatu | üllatunud | üllatus";
+// 😿 - crying_cat_face
+"72078710.name" = "nuttev kass";
+"72078710.tags" = "kass | kurb | nägu | nutt | nuttev kass | pisar";
+// 😾 - pouting_cat
+"72078705.name" = "mossitav kass";
+"72078705.tags" = "kass | mossis | mossitav kass | nägu";
+// 🙈 - see_no_evil
+"72078755.name" = "kaetud silmadega ahv";
+"72078755.tags" = "ahv | kaetud silmadega ahv | keelatud | keeld | kuri | nägu | vaatamine";
+// 🙉 - hear_no_evil
+"72078760.name" = "kaetud kõrvadega ahv";
+"72078760.tags" = "ahv | kaetud kõrvadega ahv | keelatud | keeld | kuri | kuulamine | nägu";
+// 🙊 - speak_no_evil
+"72078765.name" = "kaetud suuga ahv";
+"72078765.tags" = "ahv | kaetud suuga ahv | keelatud | keeld | kuri | nägu | rääkimine";
+// 💌 - love_letter
+"72076535.name" = "armastuskiri";
+"72076535.tags" = "armastus | armastuskiri | kiri | romantika | süda";
+// 💘 - cupid
+"72076595.name" = "noolega süda";
+"72076595.tags" = "nool | noolega süda | romantika | süda";
+// 💝 - gift_heart
+"72076620.name" = "lindiga süda";
+"72076620.tags" = "lindiga süda | lint | sõbrapäev | süda";
+// 💖 - sparkling_heart
+"72076585.name" = "sädelev süda";
+"72076585.tags" = "elevil | sädelev süda | sära | süda";
+// 💗 - heartpulse
+"72076590.name" = "kasvav süda";
+"72076590.tags" = "kasvav | närviline | põnev | pulss | süda";
+// 💓 - heartbeat
+"72076570.name" = "tukslev süda";
+"72076570.tags" = "löök | pulss | süda | tukslev süda";
+// 💞 - revolving_hearts
+"72076625.name" = "pöörlevad südamed";
+"72076625.tags" = "pöörlev | pöörlevad südamed | süda";
+// 💕 - two_hearts
+"72076580.name" = "kaks südant";
+"72076580.tags" = "armastus | kaks südant | süda";
+// 💟 - heart_decoration
+"72076630.name" = "südamekujuline kaunistus";
+"72076630.tags" = "süda | südamekujuline kaunistus";
+// 💔 - broken_heart
+"72076575.name" = "murtud süda";
+"72076575.tags" = "murtud | süda";
+// 🩷 - pink_heart
+"72080275.name" = "roosa süda";
+"72080275.tags" = "armas | armastus | meeldib | roosa | süda";
+// 🧡 - orange_heart
+"72079525.name" = "oranž süda";
+"72079525.tags" = "oranž | oranž süda";
+// 💛 - yellow_heart
+"72076610.name" = "kollane süda";
+"72076610.tags" = "kollane | süda";
+// 💚 - green_heart
+"72076605.name" = "roheline süda";
+"72076605.tags" = "roheline | süda";
+// 💙 - blue_heart
+"72076600.name" = "sinine süda";
+"72076600.tags" = "sinine | süda";
+// 🩵 - light_blue_heart
+"72080265.name" = "helesinine süda";
+"72080265.tags" = "helesinine | rohekassinine | sinakasroheline | süda";
+// 💜 - purple_heart
+"72076615.name" = "lilla süda";
+"72076615.tags" = "lilla | süda";
+// 🤎 - brown_heart
+"72078470.name" = "pruun süda";
+"72078470.tags" = "pruun | süda";
+// 🖤 - black_heart
+"72077935.name" = "must süda";
+"72077935.tags" = "kuri | must | süda";
+// 🩶 - grey_heart
+"72080270.name" = "hall süda";
+"72080270.tags" = "hall | hõbedane | paehall | süda";
+// 🤍 - white_heart
+"72078465.name" = "valge süda";
+"72078465.tags" = "süda | valge";
+// 💋 - kiss
+"72076530.name" = "suudluse jälg";
+"72076530.tags" = "huuled | musi | romantika | süda | suudluse jälg";
+// 💯 - 100
+"72076710.name" = "sada punkti";
+"72076710.tags" = "100 | punkt | sada | sada punkti | täis";
+// 💢 - anger
+"72076645.name" = "viha sümbol";
+"72076645.tags" = "koomiks | tige | viha sümbol | vihane";
+// 💥 - boom
+"72076660.name" = "piraki";
+"72076660.tags" = "koomiks | piraki";
+// 💫 - dizzy
+"72076690.name" = "peadpööritav";
+"72076690.tags" = "koomiks | peadpööritav | täht";
+// 💦 - sweat_drops
+"72076665.name" = "higipiisad";
+"72076665.tags" = "higi | higipiisad | koomiks | piisad";
+// 💨 - dash
+"72076675.name" = "kiirustamine";
+"72076675.tags" = "jooksmine | kiirustamine | koomiks";
+// 💬 - speech_balloon
+"72076695.name" = "jutumull";
+"72076695.tags" = "dialoog | jutt | jutumull | koomiks | mull";
+// 💭 - thought_balloon
+"72076700.name" = "mõttemull";
+"72076700.tags" = "koomiks | mõte | mõttemull | mull";
+// 💤 - zzz
+"72076655.name" = "zzz";
+"72076655.tags" = "koomiks | uni | zzz";
+// 👋 - wave
+"72076210.name" = "lehvitav käsi";
+"72076210.tags" = "käsi | keha | lehvitav käsi | lehvitus";
+// 🤚 - raised_back_of_hand
+"72078530.name" = "tõstetud käsi";
+"72078530.tags" = "käsi | tõstetud";
+// ✋ - hand
+"30756.name" = "ülestõstetud käsi";
+"30756.tags" = "käsi | keha | ülestõstetud käsi";
+// 🖖 - spock-hand
+"72077865.name" = "vulcanite tervitus";
+"72077865.tags" = "käsi | keha | sõrm | spock | vulcan | vulcanite tervitus";
+// 🫱 - rightwards_hand
+"72080885.name" = "käsi paremale";
+"72080885.tags" = "käsi | parem | paremale";
+// 🫲 - leftwards_hand
+"72080890.name" = "käsi vasakule";
+"72080890.tags" = "käsi | vasak | vasakule";
+// 🫳 - palm_down_hand
+"72080895.name" = "käsi peopesaga allapoole";
+"72080895.tags" = "käsi peopesaga allapoole | kõss | lahti laskma | loobuma";
+// 🫴 - palm_up_hand
+"72080900.name" = "käsi peopesaga ülespoole";
+"72080900.tags" = "käsi peopesaga ülespoole | kutsuma | pakkuma | püüdma | tule";
+// 🫷 - leftwards_pushing_hand
+"72080915.name" = "vasakule lükkav käsi";
+"72080915.tags" = "keeldu | lükka | oota | stopp | vasakule | vasakule lükkav käsi | viska viis";
+// 🫸 - rightwards_pushing_hand
+"72080920.name" = "paremale lükkav käsi";
+"72080920.tags" = "keeldu | lükka | oota | paremale | paremale lükkav käsi | stopp | viska viis";
+// 👌 - ok_hand
+"72076215.name" = "OK-käemärk";
+"72076215.tags" = "käsi | keha | OK-käemärk";
+// 🤌 - pinched_fingers
+"72078460.name" = "kokkusurutud sõrmed";
+"72078460.tags" = "kokkusurutud | küsimus | sarkastiline | sõrmed | žest";
+// 🤏 - pinching_hand
+"72078475.name" = "näpistav käsi";
+"72078475.tags" = "näpistav käsi | pöialt ja nimetissõrme lähestikku hoidev käsi | väike kogus";
+// 🤞 - crossed_fingers
+"72078550.name" = "sõrmed risti";
+"72078550.tags" = "käsi | õnn | risti | sõrmed";
+// 🫰 - hand_with_index_finger_and_thumb_crossed
+"72080880.name" = "pöialt ja nimetissõrme risti hoidev käsi";
+"72080880.tags" = "armastus | kallis | nips | pöialt ja nimetissõrme risti hoidev käsi | raha | süda";
+// 🤟 - i_love_you_hand_sign
+"72078555.name" = "armastust väljendav žest";
+"72078555.tags" = "armastust väljendav žest | ILY | käsi";
+// 🤘 - the_horns
+"72078520.name" = "sarvede märk";
+"72078520.tags" = "käsi | keha | rokk | sarved | sarvede märk | sõrm";
+// 🤙 - call_me_hand
+"72078525.name" = "helista mulle";
+"72078525.tags" = "helista | helista mulle | käsi";
+// 👈 - point_left
+"72076195.name" = "vasakule osutav sõrm";
+"72076195.tags" = "käsi | keha | nimetissõrm | osutamine | sõrm | vasakule osutav sõrm";
+// 👉 - point_right
+"72076200.name" = "paremale osutav sõrm";
+"72076200.tags" = "käsi | keha | nimetissõrm | osutamine | paremale osutav sõrm | sõrm";
+// 👆 - point_up_2
+"72076185.name" = "üles osutav sõrm tagantvaates";
+"72076185.tags" = "käsi | keha | nimetissõrm | osutamine | sõrm | üles osutav sõrm tagantvaates";
+// 🖕 - middle_finger
+"72077860.name" = "keskmine sõrm";
+"72077860.tags" = "käsi | keha | keskmine | sõrm";
+// 👇 - point_down
+"72076190.name" = "alla osutav sõrm";
+"72076190.tags" = "alla osutav sõrm | käsi | keha | nimetissõrm | osutamine | sõrm";
+// 🫵 - index_pointing_at_the_viewer
+"72080905.name" = "vaataja poole osutav nimetissõrm";
+"72080905.tags" = "osutama | sina | vaataja poole osutav nimetissõrm";
+// 👍 - +1
+"72076220.name" = "meeldib";
+"72076220.tags" = "käsi | keha | meeldib | pöial";
+// 👎 - -1
+"72076225.name" = "ei meeldi";
+"72076225.tags" = "ei meeldi | käsi | keha | pöial";
+// ✊ - fist
+"30753.name" = "ülestõstetud rusikas";
+"30753.tags" = "käsi | keha | löök | rusikas | ülestõstetud rusikas";
+// 👊 - facepunch
+"72076205.name" = "rusikalöök";
+"72076205.tags" = "käsi | keha | löök | rusikalöök | rusikas";
+// 🤛 - left-facing_fist
+"72078535.name" = "vasakule suunatud rusikas";
+"72078535.tags" = "rusikas | vasakule | vasakule suunatud rusikas";
+// 🤜 - right-facing_fist
+"72078540.name" = "paremale suunatud rusikas";
+"72078540.tags" = "paremale | paremale suunatud rusikas | rusikas";
+// 👏 - clap
+"72076230.name" = "plaksutavad käed";
+"72076230.tags" = "aplaus | käsi | keha | plaksutamine | plaksutavad käed";
+// 🙌 - raised_hands
+"72078775.name" = "ülestõstetud käed";
+"72078775.tags" = "hurraa | käed | tähistamine | ülestõstetud käed | žest";
+// 🫶 - heart_hands
+"72080910.name" = "südant moodustavad käed";
+"72080910.tags" = "armastus | südant moodustavad käed";
+// 👐 - open_hands
+"72076235.name" = "avatud käed";
+"72076235.tags" = "avatud | avatud käed | käsi | keha";
+// 🤲 - palms_up_together
+"72078650.name" = "peopesad üleval koos";
+"72078650.tags" = "palve | peopesad üleval koos";
+// 🤝 - handshake
+"72078545.name" = "käepigistus";
+"72078545.tags" = "käepigistus | käsi | kohtumine | tervitus";
+// 🙏 - pray
+"72078790.name" = "palveasendis käed";
+"72078790.tags" = "aitäh | käed | palve | palveasendis käed | tänan | žest";
+// 💅 - nail_care
+"72076500.name" = "küünelakk";
+"72076500.tags" = "hooldus | keha | kosmeetika | küünelakk | küüs | lakk | maniküür";
+// 🤳 - selfie
+"72078655.name" = "selfi";
+"72078655.tags" = "kaamera | selfi | telefon";
+// 💪 - muscle
+"72076685.name" = "pingutatud biitseps";
+"72076685.tags" = "keha | lihas | muskel | pingutatud biitseps";
+// 🦾 - mechanical_arm
+"72079350.name" = "mehaaniline käsi";
+"72079350.tags" = "ligipääs | mehaaniline käsi | protees";
+// 🦿 - mechanical_leg
+"72079355.name" = "mehaaniline jalg";
+"72079355.tags" = "ligipääs | mehaaniline jalg | protees";
+// 🦵 - leg
+"72079305.name" = "jalg";
+"72079305.tags" = "jalalöök | jalg | jäse";
+// 🦶 - foot
+"72079310.name" = "jalalaba";
+"72079310.tags" = "jalalaba | jalalöök | trampimine";
+// 👂 - ear
+"72076165.name" = "kõrv";
+"72076165.tags" = "keha | kõrv";
+// 🦻 - ear_with_hearing_aid
+"72079335.name" = "kuuldeaparaadiga kõrv";
+"72079335.tags" = "juurdepääs | kuuldeaparaadiga kõrv | kuulmispuue";
+// 👃 - nose
+"72076170.name" = "nina";
+"72076170.tags" = "keha | nina";
+// 🧠 - brain
+"72079520.name" = "aju";
+"72079520.tags" = "aju | intelligentne";
+// 🫀 - anatomical_heart
+"72080640.name" = "süda";
+"72080640.tags" = "keskpunkt | organ | pulss | süda | südamelöök";
+// 🫁 - lungs
+"72080645.name" = "kopsud";
+"72080645.tags" = "hingamine | hingetõmme | kopsud | organ | sissehingamine | väljahingamine";
+// 🦷 - tooth
+"72079315.name" = "hammas";
+"72079315.tags" = "hambaarst | hammas";
+// 🦴 - bone
+"72079300.name" = "kont";
+"72079300.tags" = "kont | luustik";
+// 👀 - eyes
+"72076155.name" = "silmad";
+"72076155.tags" = "keha | nägu | silm | silmad";
+// 👅 - tongue
+"72076180.name" = "keel";
+"72076180.tags" = "keel | keha";
+// 👄 - lips
+"72076175.name" = "suu";
+"72076175.tags" = "huuled | suu";
+// 🫦 - biting_lip
+"72080830.name" = "huulde hammustav";
+"72080830.tags" = "ebamugav | flirtimine | hirm | huulde hammustav | mures | närviline | põnevil";
+// 👶 - baby
+"72076425.name" = "beebi";
+"72076425.tags" = "beebi | imik | tita | titt";
+// 🧒 - child
+"72079450.name" = "laps";
+"72079450.tags" = "laps | noor | sooliselt neutraalne";
+// 👦 - boy
+"72076345.name" = "poiss";
+"72076345.tags" = "noormees | poiss";
+// 👧 - girl
+"72076350.name" = "tüdruk";
+"72076350.tags" = "neiu | plika | tüdruk";
+// 🧑 - adult
+"72079445.name" = "täiskasvanu";
+"72079445.tags" = "sooliselt neutraalne | täiskasvanu";
+// 👱 - person_with_blond_hair
+"72076400.name" = "inimene: blondide juustega";
+"72076400.tags" = "blond | blondide juustega inimene | blondiin | inimene: blondide juustega";
+// 👨 - man
+"72076355.name" = "mees";
+"72076355.tags" = "mees";
+// 🧔 - bearded_person
+"72079460.name" = "mees: habemega";
+"72079460.tags" = "habe | habemega isik | mees: habemega";
+// 👩 - woman
+"72076360.name" = "naine";
+"72076360.tags" = "naine";
+// 🧓 - older_adult
+"72079455.name" = "eakas";
+"72079455.tags" = "eakas | sooliselt neutraalne | vana";
+// 👴 - older_man
+"72076415.name" = "eakas mees";
+"72076415.tags" = "eakas mees | mees | vana";
+// 👵 - older_woman
+"72076420.name" = "eakas naine";
+"72076420.tags" = "eakas naine | naine | vana";
+// 🙍 - person_frowning
+"72078780.name" = "kulmu kortsutav inimene";
+"72078780.tags" = "ilme | kulmu kortsutav inimene | kulmukortsutus";
+// 🙎 - person_with_pouting_face
+"72078785.name" = "mossitav inimene";
+"72078785.tags" = "ilme | mossis | mossitav | mossitav inimene";
+// 🙅 - no_good
+"72078740.name" = "eitav žest";
+"72078740.tags" = "ei | eitav žest | käed | keelatud | žest";
+// 🙆 - ok_woman
+"72078745.name" = "nõustuv žest";
+"72078745.tags" = "käed | nõustuv žest | ok | žest";
+// 💁 - information_desk_person
+"72076480.name" = "infoleti töötaja";
+"72076480.tags" = "abi | info | infoleti töötaja | käsi | teave";
+// 🙋 - raising_hand
+"72078770.name" = "kätt tõstev rõõmus inimene";
+"72078770.tags" = "käsi | kätt tõstev rõõmus inimene | õnnelik | rõõmus | žest";
+// 🧏 - deaf_person
+"72079435.name" = "kurt inimene";
+"72079435.tags" = "juurdepääs | kõrv | kurt | kurt inimene | kuulmine";
+// 🙇 - bow
+"72078750.name" = "kummardav inimene";
+"72078750.tags" = "kummardav inimene | kummardus | vabandus | žest";
+// 🤦 - face_palm
+"72078590.name" = "meeleheide";
+"72078590.tags" = "meeleheide | nägu | umbusk";
+// 🤷 - shrug
+"72078675.name" = "õlakehitus";
+"72078675.tags" = "kehitus | õlakehitus | õlg | ükskõiksus";
+// 🧑‍🎓 - student
+"26901339530736.name" = "õpilane";
+"26901339530736.tags" = "koolilõpetaja | õpilane";
+// 👨‍🎓 - male-student
+"26555159681094.name" = "meesõpilane";
+"26555159681094.tags" = "lõpetaja | mees | meesõpilane | õpilane";
+// 👩‍🎓 - female-student
+"26555719842663.name" = "naisõpilane";
+"26555719842663.tags" = "lõpetaja | naine | naisõpilane | õpilane";
+// 🧑‍🏫 - teacher
+"26901339533640.name" = "õpetaja";
+"26901339533640.tags" = "koolitaja | õpetaja | professor";
+// 👨‍🏫 - male-teacher
+"26555159683998.name" = "meesõpetaja";
+"26555159683998.tags" = "juhendaja | mees | meesõpetaja | õpetaja | professor";
+// 👩‍🏫 - female-teacher
+"26555719845567.name" = "naisõpetaja";
+"26555719845567.tags" = "juhendaja | naine | naisõpetaja | õpetaja | professor";
+// 🧑‍🌾 - farmer
+"26901339527931.name" = "talunik";
+"26901339527931.tags" = "aednik | farmer | talunik";
+// 👨‍🌾 - male-farmer
+"26555159678289.name" = "meesfarmer";
+"26555159678289.tags" = "aednik | farmer | mees | meesfarmer | põllumees";
+// 👩‍🌾 - female-farmer
+"26555719839858.name" = "naisfarmer";
+"26555719839858.tags" = "aednik | farmer | naine | naisfarmer";
+// 🧑‍🍳 - cook
+"26901339529680.name" = "kokk";
+"26901339529680.tags" = "kokk | peakokk";
+// 👨‍🍳 - male-cook
+"26555159680038.name" = "meeskokk";
+"26555159680038.tags" = "kokk | mees | meeskokk";
+// 👩‍🍳 - female-cook
+"26555719841607.name" = "naiskokk";
+"26555719841607.tags" = "kokk | naine | naiskokk";
+// 🧑‍🔧 - mechanic
+"26901339518757.name" = "mehaanik";
+"26901339518757.tags" = "elektrik | mehaanik | torulukksepp | torumees";
+// 👨‍🔧 - male-mechanic
+"26555159669115.name" = "meesmehaanik";
+"26555159669115.tags" = "elektrik | mees | meesmehaanik | mehaanik | torulukksepp | torumees";
+// 👩‍🔧 - female-mechanic
+"26555719830684.name" = "naismehaanik";
+"26555719830684.tags" = "elektrik | mehaanik | naine | naismehaanik | torulukksepp";
+// 🧑‍🏭 - factory_worker
+"26901339533706.name" = "tehasetööline";
+"26901339533706.tags" = "liinitööline | tehas | tehasetööline | tööline";
+// 👨‍🏭 - male-factory-worker
+"26555159684064.name" = "meessoost tehasetööline";
+"26555159684064.tags" = "liinitööline | mees | meessoost tehasetööline | tehas | tööline";
+// 👩‍🏭 - female-factory-worker
+"26555719845633.name" = "naissoost tehasetööline";
+"26555719845633.tags" = "liinitööline | naine | naissoost tehasetööline | tehas | tööline";
+// 🧑‍💼 - office_worker
+"26901339515226.name" = "kontoritöötaja";
+"26901339515226.tags" = "ametnik | arhitekt | ärimees | juhataja | kontoritöötaja | valgekrae";
+// 👨‍💼 - male-office-worker
+"26555159665584.name" = "meeskontoritöötaja";
+"26555159665584.tags" = "arhitekt | ärimees | juhataja | meeskontoritöötaja | valgekrae";
+// 👩‍💼 - female-office-worker
+"26555719827153.name" = "naiskontoritöötaja";
+"26555719827153.tags" = "arhitekt | ärinaine | juhataja | naiskontoritöötaja | valgekrae";
+// 🧑‍🔬 - scientist
+"26901339518922.name" = "teadlane";
+"26901339518922.tags" = "bioloog | füüsik | insener | keemik | teadlane";
+// 👨‍🔬 - male-scientist
+"26555159669280.name" = "meesteadlane";
+"26555159669280.tags" = "bioloog | füüsik | insener | keemik | meesteadlane";
+// 👩‍🔬 - female-scientist
+"26555719830849.name" = "naisteadlane";
+"26555719830849.tags" = "bioloog | füüsik | insener | keemik | naisteadlane";
+// 🧑‍💻 - technologist
+"26901339515193.name" = "programmeerija";
+"26901339515193.tags" = "arendaja | programmeerija | tarkvara | tehnoloog";
+// 👨‍💻 - male-technologist
+"26555159665551.name" = "meesprogrammeerija";
+"26555159665551.tags" = "arendaja | mees | meesprogrammeerija | programmeerija | tarkvara | tehnoloog";
+// 👩‍💻 - female-technologist
+"26555719827120.name" = "naisprogrammeerija";
+"26555719827120.tags" = "arendaja | naine | naisprogrammeerija | programmeerija | tarkvara | tehnoloog";
+// 🧑‍🎤 - singer
+"26901339531297.name" = "laulja";
+"26901339531297.tags" = "artist | laulja | meelelahutaja | staar";
+// 👨‍🎤 - male-singer
+"26555159681655.name" = "meeslaulja";
+"26555159681655.tags" = "artist | laulja | mees | meeslaulja | staar";
+// 👩‍🎤 - female-singer
+"26555719843224.name" = "naislaulja";
+"26555719843224.tags" = "artist | laulja | naine | naislaulja | staar";
+// 🧑‍🎨 - artist
+"26901339531429.name" = "kunstnik";
+"26901339531429.tags" = "kunstnik | palett";
+// 👨‍🎨 - male-artist
+"26555159681787.name" = "meeskunstnik";
+"26555159681787.tags" = "kunstnik | mees | meeskunstnik | palett";
+// 👩‍🎨 - female-artist
+"26555719843356.name" = "naiskunstnik";
+"26555719843356.tags" = "kunstnik | naine | naiskunstnik | palett";
+// 🧑‍🚀 - astronaut
+"26901339530142.name" = "astronaut";
+"26901339530142.tags" = "astronaut | rakett";
+// 👨‍🚀 - male-astronaut
+"26555159680500.name" = "meesastronaut";
+"26555159680500.tags" = "astronaut | kosmos | mees | meesastronaut | rakett";
+// 👩‍🚀 - female-astronaut
+"26555719842069.name" = "naisastronaut";
+"26555719842069.tags" = "astronaut | kosmos | naine | naisastronaut | rakett";
+// 🧑‍🚒 - firefighter
+"26901339530736.name" = "tuletõrjuja";
+"26901339530736.tags" = "tuletõrjeauto | tuletõrjuja";
+// 👨‍🚒 - male-firefighter
+"26555159681094.name" = "meestuletõrjuja";
+"26555159681094.tags" = "mees | meestuletõrjuja | tuletõrjeauto | tuletõrjuja";
+// 👩‍🚒 - female-firefighter
+"26555719842663.name" = "naistuletõrjuja";
+"26555719842663.tags" = "naine | naistuletõrjuja | tuletõrjeauto | tuletõrjuja";
+// 👮 - cop
+"72076385.name" = "politseinik";
+"72076385.tags" = "politsei | politseinik";
+// 💂 - guardsman
+"72076485.name" = "valvur";
+"72076485.tags" = "valvur";
+// 🥷 - ninja
+"72078995.name" = "ninja";
+"72078995.tags" = "jaapan | ninja | salakuulaja | sõdalane";
+// 👷 - construction_worker
+"72076430.name" = "ehitaja";
+"72076430.tags" = "ehitaja | ehitus | kiiver | tööline";
+// 🫅 - person_with_crown
+"72080665.name" = "krooniga inimene";
+"72080665.tags" = "krooniga inimene | kuningas | kuninglik | monarh | valitseja";
+// 🤴 - prince
+"72078660.name" = "prints";
+"72078660.tags" = "prints";
+// 👸 - princess
+"72076435.name" = "printsess";
+"72076435.tags" = "fantaasia | muinasjutt | printsess";
+// 👳 - man_with_turban
+"72076410.name" = "turbaniga inimene";
+"72076410.tags" = "mees | turban | turbaniga inimene";
+// 👲 - man_with_gua_pi_mao
+"72076405.name" = "Hiina mütsiga mees";
+"72076405.tags" = "hiina | Hiina mütsiga mees | mees | müts";
+// 🧕 - person_with_headscarf
+"72079465.name" = "pearätiga naine";
+"72079465.tags" = "hijab | mantilja | pearätiga naine | pearätik | tichel";
+// 🤵 - person_in_tuxedo
+"72078665.name" = "inimene smokingus";
+"72078665.tags" = "inimene smokingus | mees | peigmees";
+// 👰 - bride_with_veil
+"72076395.name" = "loori kandev inimene";
+"72076395.tags" = "loor | loori kandev inimene | loori kandev pruut | pruut | pulm";
+// 🤰 - pregnant_woman
+"72078640.name" = "rase naine";
+"72078640.tags" = "naine | rase";
+// 🫃 - pregnant_man
+"72080655.name" = "rase mees";
+"72080655.tags" = "kõht | pundunud | rase | rase mees | täis";
+// 🫄 - pregnant_person
+"72080660.name" = "rase inimene";
+"72080660.tags" = "kõht | pundunud | rase | rase inimene | täis";
+// 🤱 - breast-feeding
+"72078645.name" = "rinnaga toitmine";
+"72078645.tags" = "imetamine | imik | rind | rinnaga toitmine";
+// 👩‍🍼 - woman_feeding_baby
+"26555719841904.name" = "beebit toitev naine";
+"26555719841904.tags" = "beebi | beebit toitev naine | imetamine | naine | toitmine";
+// 👨‍🍼 - man_feeding_baby
+"26555159680335.name" = "beebit toitev mees";
+"26555159680335.tags" = "beebi | beebit toitev mees | imetamine | mees | toitmine";
+// 🧑‍🍼 - person_feeding_baby
+"26901339529977.name" = "beebit toitev inimene";
+"26901339529977.tags" = "beebi | beebit toitev inimene | imetamine | inimene | toitmine";
+// 👼 - angel
+"72076455.name" = "inglibeebi";
+"72076455.tags" = "ingel | inglibeebi | inglilaps | laps | lapsenägu | muinasjutt";
+// 🎅 - santa
+"72079055.name" = "jõuluvana";
+"72079055.tags" = "jõulud | jõuluvana | muinasjutt";
+// 🤶 - mrs_claus
+"72078670.name" = "jõuluvana abikaasa";
+"72078670.tags" = "abikaasa | jõuluvana";
+// 🧑‍🎄 - mx_claus
+"26901339530241.name" = "päkats";
+"26901339530241.tags" = "päkapikk | päkapikk | jõulud | päkats";
+// 🦸 - superhero
+"72079320.name" = "superkangelane";
+"72079320.tags" = "hea | kangelane | kangelanna | superkangelane | supervõime";
+// 🦹 - supervillain
+"72079325.name" = "superkurikael";
+"72079325.tags" = "kuri | kurikael | kurjategija | superkurikael | supervõimed";
+// 🧙 - mage
+"72079485.name" = "maag";
+"72079485.tags" = "maag | nõiamoor | nõid | võlur";
+// 🧚 - fairy
+"72079490.name" = "haldjas";
+"72079490.tags" = "haldjas | Oberon | Puck | Titania";
+// 🧛 - vampire
+"72079495.name" = "vampiir";
+"72079495.tags" = "Dracula | surematu | vampiir";
+// 🧜 - merperson
+"72079500.name" = "näkk";
+"72079500.tags" = "meesnäkk | merineitsi | naisnäkk | näkk";
+// 🧝 - elf
+"72079505.name" = "päkapikk";
+"72079505.tags" = "maagiline | päkapikk";
+// 🧞 - genie
+"72079510.name" = "džinn";
+"72079510.tags" = "džinn";
+// 🧟 - zombie
+"72079515.name" = "zombi";
+"72079515.tags" = "elav surnu | surematu | zombi";
+// 🧌 - troll
+"72079420.name" = "troll";
+"72079420.tags" = "fantaasia | koletis | muinasjutt | troll";
+// 💆 - massage
+"72076505.name" = "näomassaaž";
+"72076505.tags" = "massaaž | näomassaaž";
+// 💇 - haircut
+"72076510.name" = "juukselõikus";
+"72076510.tags" = "ilusalong | juukselõikus | juuksur";
+// 🚶 - walking
+"72079305.name" = "jalakäija";
+"72079305.tags" = "jalakäija | jalutamine | kõndimine";
+// 🧍 - standing_person
+"72079425.name" = "seisev inimene";
+"72079425.tags" = "inimene | seisev | seismine";
+// 🧎 - kneeling_person
+"72079430.name" = "põlvitav inimene";
+"72079430.tags" = "inimene | põlvili | põlvitav";
+// 🧑‍🦯 - person_with_probing_cane
+"26901339531726.name" = "valge kepiga inimene";
+"26901339531726.tags" = "ligipääs | pime | valge kepiga inimene";
+// 👨‍🦯 - man_with_probing_cane
+"26555159682084.name" = "valge kepiga mees";
+"26555159682084.tags" = "ligipääs | mees | pime | valge kepiga mees";
+// 👩‍🦯 - woman_with_probing_cane
+"26555719843653.name" = "valge kepiga naine";
+"26555719843653.tags" = "ligipääs | naine | pime | valge kepiga naine";
+// 🧑‍🦼 - person_in_motorized_wheelchair
+"26901339532155.name" = "elektrilises ratastoolis inimene";
+"26901339532155.tags" = "elektrilises ratastoolis inimene | ligipääsetavus | ratastool";
+// 👨‍🦼 - man_in_motorized_wheelchair
+"26555159682513.name" = "elektriratastoolis olev mees";
+"26555159682513.tags" = "elektriratastoolis mees | elektriratastoolis olev mees | ligipääs | mees | ratastool";
+// 👩‍🦼 - woman_in_motorized_wheelchair
+"26555719844082.name" = "elektriratastoolis olev naine";
+"26555719844082.tags" = "elektriratastoolis naine | elektriratastoolis olev naine | ligipääs | naine | ratastool";
+// 🧑‍🦽 - person_in_manual_wheelchair
+"26901339532188.name" = "manuaalses ratastoolis inimene";
+"26901339532188.tags" = "ligipääsetavus | manuaalses ratastoolis inimene | ratastool";
+// 👨‍🦽 - man_in_manual_wheelchair
+"26555159682546.name" = "manuaalratastoolis olev mees";
+"26555159682546.tags" = "ligipääs | manuaalratastoolis mees | manuaalratastoolis olev mees | mees | ratastool";
+// 👩‍🦽 - woman_in_manual_wheelchair
+"26555719844115.name" = "manuaalratastoolis olev naine";
+"26555719844115.tags" = "juurdepääs | manuaalratastoolis naine | manuaalratastoolis olev naine | naine | ratastool";
+// 🏃 - runner
+"72079365.name" = "jooksja";
+"72079365.tags" = "jooks | jooksja | maraton";
+// 💃 - dancer
+"72076490.name" = "tantsiv naine";
+"72076490.tags" = "naine | tants | tantsimine | tantsiv naine";
+// 🕺 - man_dancing
+"72077725.name" = "tantsiv mees";
+"72077725.tags" = "mees | tants | tantsiv mees";
+// 👯 - dancers
+"72076390.name" = "pidutsevad jänesekõrvadega inimesed";
+"72076390.tags" = "jänesekõrvadega tüdrukud | jänku | kõrvad | pidutsevad jänesekõrvadega inimesed | tants | tüdrukud";
+// 🧖 - person_in_steamy_room
+"72079470.name" = "inimene leiliruumis";
+"72079470.tags" = "inimene leiliruumis | leiliruum | leiliruumis olev inimene | saun";
+// 🧗 - person_climbing
+"72079475.name" = "mäkke roniv inimene";
+"72079475.tags" = "mägironija | mäkke roniv inimene";
+// 🤺 - fencer
+"72078690.name" = "vehkleja";
+"72078690.tags" = "inimene | mõõk | sport | vehkleja | vehklemine";
+// 🏇 - horse_racing
+"72079385.name" = "hobuste võiduajamine";
+"72079385.tags" = "hobune | hobuste võiduajamine | ratsutaja | võiduajamine";
+// 🏂 - snowboarder
+"72079360.name" = "lumelaudur";
+"72079360.tags" = "lumelaud | lumelaudur | lumi | suusk";
+// 🏄 - surfer
+"72079370.name" = "surfar";
+"72079370.tags" = "surfamine | surfar";
+// 🚣 - rowboat
+"72079210.name" = "aerupaadiga inimene";
+"72079210.tags" = "aerupaadiga inimene | paat | sõiduk";
+// 🏊 - swimmer
+"72079400.name" = "ujuja";
+"72079400.tags" = "ujuja | ujumine";
+// 🚴 - bicyclist
+"72079295.name" = "jalgrattur";
+"72079295.tags" = "jalgratas | jalgrattur | rattur";
+// 🚵 - mountain_bicyclist
+"72079300.name" = "mägirattur";
+"72079300.tags" = "jalgratas | mägi | mägirattur | rattur";
+// 🤸 - person_doing_cartwheel
+"72078680.name" = "hundiratast viskav inimene";
+"72078680.tags" = "hundiratas | hundiratast viskav inimene | iluvõimlemine | inimene | sport";
+// 🤼 - wrestlers
+"72078700.name" = "maadlejad";
+"72078700.tags" = "inimesed | maadlejad | maadlus | sport";
+// 🤽 - water_polo
+"72078705.name" = "veepalli mängiv inimene";
+"72078705.tags" = "inimene | sport | veepall | veepalli mängiv inimene";
+// 🤾 - handball
+"72078710.name" = "käsipalli mängiv inimene";
+"72078710.tags" = "inimene | käsipall | käsipalli mängiv inimene | pall | sport";
+// 🤹 - juggling
+"72078685.name" = "žonglöör";
+"72078685.tags" = "oskused | tasakaal | žongleerimine | žonglöör";
+// 🧘 - person_in_lotus_position
+"72079480.name" = "lootosasendis inimene";
+"72079480.tags" = "jooga | lootosasendis inimene | meditatsioon";
+// 🛀 - bath
+"72079355.name" = "inimene vannis";
+"72079355.tags" = "inimene vannis | vann";
+// 🛌 - sleeping_accommodation
+"72079415.name" = "inimene voodis";
+"72079415.tags" = "hotell | inimene voodis | uni";
+// 🧑‍🤝‍🧑 - people_holding_hands
+"3200955216551984283.name" = "inimesed hoiavad käest kinni";
+"3200955216551984283.tags" = "hoiavad käest | hoiavad käest kinni | inimene | inimesed hoiavad käest kinni | käed | paar";
+// 👭 - two_women_holding_hands
+"72076380.name" = "käest kinni hoidvad naised";
+"72076380.tags" = "käed | käest kinni hoidvad naised | kaks naist hoiavad käest kinni | naised | paar";
+// 👫 - man_and_woman_holding_hands
+"72076370.name" = "mees ja naine hoiavad käest kinni";
+"72076370.tags" = "käed | mees | mees ja naine hoiavad käest kinni | naine | paarike";
+// 👬 - two_men_holding_hands
+"72076375.name" = "käest kinni hoidvad mehed";
+"72076375.tags" = "käed | käest kinni hoidvad mehed | kaks meest hoiavad käest kinni | kaksikud | mehed | paar";
+// 💏 - couplekiss
+"72076550.name" = "musi";
+"72076550.tags" = "musi | suudlus";
+// 💑 - couple_with_heart
+"72076560.name" = "paarike südamega";
+"72076560.tags" = "armastus | paarike südamega | romantika | süda";
+// 👪 - family
+"72076365.name" = "perekond";
+"72076365.tags" = "ema | isa | laps | perekond";
+// 👤 - bust_in_silhouette
+"72076335.name" = "büsti siluett";
+"72076335.tags" = "büst | büsti siluett | siluett";
+// 👥 - busts_in_silhouette
+"72076340.name" = "büstide siluetid";
+"72076340.tags" = "büst | büstide siluetid | siluett";
+// 🫂 - people_hugging
+"72080650.name" = "kallistavad inimesed";
+"72080650.tags" = "hüvastijätt | kallistavad inimesed | kallistus | tänu | tervitus";
+// 👣 - footprints
+"72076330.name" = "jalajäljed";
+"72076330.tags" = "jalajälg | jalajäljed | jälg | keha";
+// 🏻 - skin-tone-2
+"72079645.name" = "hele nahatoon";
+"72079645.tags" = "hele nahatoon | nahatoon | nahk | tüüp 1–2";
+// 🏼 - skin-tone-3
+"72079650.name" = "keskmiselt hele nahatoon";
+"72079650.tags" = "keskmiselt hele nahatoon | nahatoon | nahk | tüüp 3";
+// 🏽 - skin-tone-4
+"72079655.name" = "keskmine nahatoon";
+"72079655.tags" = "keskmine nahatoon | nahatoon | nahk | tüüp 4";
+// 🏾 - skin-tone-5
+"72079660.name" = "keskmiselt tume nahatoon";
+"72079660.tags" = "keskmiselt tume nahatoon | nahatoon | nahk | tüüp 5";
+// 🏿 - skin-tone-6
+"72079665.name" = "tume nahatoon";
+"72079665.tags" = "nahatoon | nahk | tume nahatoon | tüüp 6";
+// 🐵 - monkey_face
+"72076100.name" = "ahvi nägu";
+"72076100.tags" = "ahv | ahvi nägu | nägu";
+// 🐒 - monkey
+"72075925.name" = "ahv";
+"72075925.tags" = "ahv";
+// 🦍 - gorilla
+"72079105.name" = "gorilla";
+"72079105.tags" = "gorilla | loom";
+// 🦧 - orangutan
+"72079235.name" = "orangutan";
+"72079235.tags" = "inimahv | orangutan";
+// 🐶 - dog
+"72076105.name" = "koera nägu";
+"72076105.tags" = "koer | koera nägu | lemmikloom | nägu";
+// 🐕 - dog2
+"72075940.name" = "koer";
+"72075940.tags" = "koer | lemmikloom";
+// 🦮 - guide_dog
+"72079270.name" = "juhtkoer";
+"72079270.tags" = "abi | juht | juhtkoer | koer | pime | vaegnägija";
+// 🐕‍🦺 - service_dog
+"26508666272220.name" = "teenistuskoer";
+"26508666272220.tags" = "abi | koer | politsei | teenistus | teenistuskoer";
+// 🐩 - poodle
+"72076040.name" = "puudel";
+"72076040.tags" = "koer | puudel";
+// 🐺 - wolf
+"72076125.name" = "hunt";
+"72076125.tags" = "hundi nägu | hunt | nägu";
+// 🦊 - fox_face
+"72079090.name" = "rebane";
+"72079090.tags" = "loom | nägu | rebane | rebase nägu";
+// 🦝 - raccoon
+"72079185.name" = "pesukaru";
+"72079185.tags" = "kaval | pesukaru | uudishimulik";
+// 🐱 - cat
+"72076080.name" = "kassi nägu";
+"72076080.tags" = "kass | kassi nägu | lemmikloom | nägu";
+// 🐈 - cat2
+"72075875.name" = "kass";
+"72075875.tags" = "kass | koer | lemmikloom";
+// 🐈‍⬛ - black_cat
+"51973200513.name" = "must kass";
+"51973200513.tags" = "ebaõnn | kass | must";
+// 🦁 - lion_face
+"72079045.name" = "lõvi nägu";
+"72079045.tags" = "lõvi | nägu | sodiaak";
+// 🐯 - tiger
+"72076070.name" = "tiigri nägu";
+"72076070.tags" = "nägu | tiiger | tiigri nägu";
+// 🐅 - tiger2
+"72075860.name" = "tiiger";
+"72075860.tags" = "tiiger";
+// 🐆 - leopard
+"72075865.name" = "leopard";
+"72075865.tags" = "leopard";
+// 🐴 - horse
+"72076095.name" = "hobuse nägu";
+"72076095.tags" = "hobune | hobuse nägu | nägu";
+// 🫎 - moose
+"72080710.name" = "põder";
+"72080710.tags" = "hirv | imetaja | loom | põder | sarved";
+// 🫏 - donkey
+"72080715.name" = "eesel";
+"72080715.tags" = "eesel | imetaja | jonnakas | kangekaelne | loom | muul";
+// 🐎 - racehorse
+"72075905.name" = "hobune";
+"72075905.tags" = "hobune | ratsasport | võiduajamine";
+// 🦄 - unicorn_face
+"72079060.name" = "ükssarvik";
+"72079060.tags" = "nägu | ükssarvik | ükssarviku nägu";
+// 🦓 - zebra_face
+"72079135.name" = "sebra";
+"72079135.tags" = "sebra | triibud | vöödid";
+// 🦌 - deer
+"72079100.name" = "hirv";
+"72079100.tags" = "hirv | loom";
+// 🦬 - bison
+"72079260.name" = "piison";
+"72079260.tags" = "kari | piison | pühvel | pürg";
+// 🐮 - cow
+"72076065.name" = "lehma nägu";
+"72076065.tags" = "lehm | lehma nägu | nägu";
+// 🐂 - ox
+"72075845.name" = "härg";
+"72075845.tags" = "härg | sodiaak | sõnn | veis";
+// 🐃 - water_buffalo
+"72075850.name" = "vesipühvel";
+"72075850.tags" = "pühvel | vesi | vesipühvel";
+// 🐄 - cow2
+"72075855.name" = "lehm";
+"72075855.tags" = "lehm | nägu";
+// 🐷 - pig
+"72076110.name" = "sea nägu";
+"72076110.tags" = "nägu | sea nägu | siga";
+// 🐖 - pig2
+"72075945.name" = "siga";
+"72075945.tags" = "emis | siga";
+// 🐗 - boar
+"72075950.name" = "metssiga";
+"72075950.tags" = "kult | metssiga";
+// 🐽 - pig_nose
+"72076140.name" = "sea kärss";
+"72076140.tags" = "nägu | nina | sea kärss | siga";
+// 🐏 - ram
+"72075910.name" = "oinas";
+"72075910.tags" = "jäär | oinas | sodiaak";
+// 🐑 - sheep
+"72075920.name" = "lammas";
+"72075920.tags" = "lammas";
+// 🐐 - goat
+"72075915.name" = "kits";
+"72075915.tags" = "kaljukits | kits | sodiaak";
+// 🐪 - dromedary_camel
+"72076045.name" = "kaamel";
+"72076045.tags" = "dromedar | kaamel | küür";
+// 🐫 - camel
+"72076050.name" = "kahe küüruga kaamel";
+"72076050.tags" = "baktrian | kaamel | kahe küüruga kaamel | küür";
+// 🦙 - llama
+"72079165.name" = "laama";
+"72079165.tags" = "alpaka | guanako | laama | vikunja | vill";
+// 🦒 - giraffe_face
+"72079130.name" = "kaelkirjak";
+"72079130.tags" = "kaelkirjak | laigud";
+// 🐘 - elephant
+"72075955.name" = "elevant";
+"72075955.tags" = "elevant";
+// 🦣 - mammoth
+"72079215.name" = "mammut";
+"72079215.tags" = "karvane | kihv | mammut | suur | väljasurnud";
+// 🦏 - rhinoceros
+"72079115.name" = "ninasarvik";
+"72079115.tags" = "loom | ninasarvik";
+// 🦛 - hippopotamus
+"72079175.name" = "jõehobu";
+"72079175.tags" = "jõehobu | jõehobuke";
+// 🐭 - mouse
+"72076060.name" = "hiire nägu";
+"72076060.tags" = "hiir | hiire nägu | nägu";
+// 🐁 - mouse2
+"72075840.name" = "hiir";
+"72075840.tags" = "hiir";
+// 🐀 - rat
+"72075835.name" = "rott";
+"72075835.tags" = "rott";
+// 🐹 - hamster
+"72076120.name" = "hamster";
+"72076120.tags" = "hamster | hamstri nägu | lemmikloom | nägu";
+// 🐰 - rabbit
+"72076075.name" = "jänese nägu";
+"72076075.tags" = "jänes | jänese nägu | lemmikloom | nägu";
+// 🐇 - rabbit2
+"72075870.name" = "jänes";
+"72075870.tags" = "jänes | lemmikloom";
+// 🦫 - beaver
+"72079255.name" = "kobras";
+"72079255.tags" = "kobras | tamm";
+// 🦔 - hedgehog
+"72079140.name" = "siil";
+"72079140.tags" = "okkaline | siil";
+// 🦇 - bat
+"72079075.name" = "nahkhiir";
+"72079075.tags" = "loom | nahkhiir | vampiir";
+// 🐻 - bear
+"72076130.name" = "karu";
+"72076130.tags" = "karu | nägu";
+// 🐨 - koala
+"72076035.name" = "koaala";
+"72076035.tags" = "koaala";
+// 🐼 - panda_face
+"72076135.name" = "panda";
+"72076135.tags" = "nägu | panda";
+// 🦥 - sloth
+"72079225.name" = "laiskloom";
+"72079225.tags" = "aeglane | laisik | laisk | laiskloom";
+// 🦦 - otter
+"72079230.name" = "saarmas";
+"72079230.tags" = "jõgi | kala | saarmas | udras";
+// 🦨 - skunk
+"72079240.name" = "skunk";
+"72079240.tags" = "hais | skunk";
+// 🦘 - kangaroo
+"72079160.name" = "känguru";
+"72079160.tags" = "Austraalia | hüpe | känguru | kukkur | kukkurloom";
+// 🦡 - badger
+"72079205.name" = "mäger";
+"72079205.tags" = "mäger | meemäger | nuhtlus";
+// 🐾 - feet
+"72076145.name" = "käpajäljed";
+"72076145.tags" = "jalg | jälg | käpajäljed | käpp";
+// 🦃 - turkey
+"72079055.name" = "kalkun";
+"72079055.tags" = "kalkun";
+// 🐔 - chicken
+"72075935.name" = "kana";
+"72075935.tags" = "kana";
+// 🐓 - rooster
+"72075930.name" = "kukk";
+"72075930.tags" = "kukk";
+// 🐣 - hatching_chick
+"72076010.name" = "kooruv tibu";
+"72076010.tags" = "koorumine | kooruv tibu | tibu";
+// 🐤 - baby_chick
+"72076015.name" = "väike tibu";
+"72076015.tags" = "tibu | väike tibu";
+// 🐥 - hatched_chick
+"72076020.name" = "väike tibu eestvaates";
+"72076020.tags" = "tibu | väike tibu eestvaates";
+// 🐦 - bird
+"72076025.name" = "lind";
+"72076025.tags" = "lind";
+// 🐧 - penguin
+"72076030.name" = "pingviin";
+"72076030.tags" = "pingviin";
+// 🦅 - eagle
+"72079065.name" = "kotkas";
+"72079065.tags" = "kotkas | lind";
+// 🦆 - duck
+"72079070.name" = "part";
+"72079070.tags" = "lind | part";
+// 🦢 - swan
+"72079210.name" = "luik";
+"72079210.tags" = "inetu pardipoeg | lind | luigepoeg | luik";
+// 🦉 - owl
+"72079085.name" = "öökull";
+"72079085.tags" = "lind | öökull";
+// 🦤 - dodo
+"72079220.name" = "dodo";
+"72079220.tags" = "dodo | lind | Mauritius | suur | väljasurev";
+// 🪶 - feather
+"72080590.name" = "sulg";
+"72080590.tags" = "kerge | lendama | suled | sulg";
+// 🦩 - flamingo
+"72079245.name" = "flamingo";
+"72079245.tags" = "flamingo | lind | troopiline";
+// 🦚 - peacock
+"72079170.name" = "paabulind";
+"72079170.tags" = "eneseimetlus | hooplemine | lind | paabulind | uhkus";
+// 🦜 - parrot
+"72079180.name" = "papagoi";
+"72079180.tags" = "jutt | lind | papagoi | piraat";
+// 🪽 - wing
+"72080625.name" = "tiib";
+"72080625.tags" = "ingel | lend | lendamine | lind | mütoloogia | tiib";
+// 🐦‍⬛ - black_bird
+"52006885503.name" = "must lind";
+"52006885503.tags" = "kaaren | lind | must | ronk | vares";
+// 🪿 - goose
+"72080635.name" = "hani";
+"72080635.tags" = "hani | jaht | lind | prääks | tobe";
+// 🐸 - frog
+"72076115.name" = "konn";
+"72076115.tags" = "konn | konna nägu | nägu";
+// 🐊 - crocodile
+"72075885.name" = "krokodill";
+"72075885.tags" = "krokodill";
+// 🐢 - turtle
+"72076005.name" = "kilpkonn";
+"72076005.tags" = "kilpkonn";
+// 🦎 - lizard
+"72079110.name" = "sisalik";
+"72079110.tags" = "roomaja | sisalik";
+// 🐍 - snake
+"72075900.name" = "madu";
+"72075900.tags" = "madu | maokandja | sodiaak";
+// 🐲 - dragon_face
+"72076085.name" = "draakoni nägu";
+"72076085.tags" = "draakon | draakoni nägu | muinasjutt | nägu";
+// 🐉 - dragon
+"72075880.name" = "draakon";
+"72075880.tags" = "draakon | muinasjutt";
+// 🦕 - sauropod
+"72079145.name" = "sauropood";
+"72079145.tags" = "brahhiosaurus | brontosaurus | diplodookus | sauropod | sauropood";
+// 🦖 - t-rex
+"72079150.name" = "türannosaurus";
+"72079150.tags" = "türannosaurus";
+// 🐳 - whale
+"72076090.name" = "vett pritsiv vaal";
+"72076090.tags" = "nägu | vaal | vesi | vett pritsiv vaal";
+// 🐋 - whale2
+"72075890.name" = "vaal";
+"72075890.tags" = "vaal";
+// 🐬 - dolphin
+"72076055.name" = "delfiin";
+"72076055.tags" = "delfiin | loib";
+// 🦭 - seal
+"72079265.name" = "hüljes";
+"72079265.tags" = "hüljes | merilõvi";
+// 🐟 - fish
+"72075990.name" = "kala";
+"72075990.tags" = "kala | sodiaak";
+// 🐠 - tropical_fish
+"72075995.name" = "troopiline kala";
+"72075995.tags" = "kala | troopiline";
+// 🐡 - blowfish
+"72076000.name" = "siilkala";
+"72076000.tags" = "kala | siilkala";
+// 🦈 - shark
+"72079080.name" = "hai";
+"72079080.tags" = "hai | kala";
+// 🐙 - octopus
+"72075960.name" = "kaheksajalg";
+"72075960.tags" = "kaheksajalg";
+// 🐚 - shell
+"72075965.name" = "spiraalne teokarp";
+"72075965.tags" = "karp | spiraalne | spiraalne teokarp";
+// 🪸 - coral
+"72080600.name" = "korall";
+"72080600.tags" = "korall | ookean | riff";
+// 🪼 - jellyfish
+"72080620.name" = "meduus";
+"72080620.tags" = "kõrvetus | meduus | mereelukas | mollusk | põletus | selgrootu";
+// 🐌 - snail
+"72075895.name" = "tigu";
+"72075895.tags" = "tigu";
+// 🦋 - butterfly
+"72079095.name" = "liblikas";
+"72079095.tags" = "ilus | liblikas | putukas";
+// 🐛 - bug
+"72075970.name" = "röövik";
+"72075970.tags" = "putukas | röövik";
+// 🐜 - ant
+"72075975.name" = "sipelgas";
+"72075975.tags" = "putukas | sipelgas";
+// 🐝 - bee
+"72075980.name" = "mesilane";
+"72075980.tags" = "mesilane | putukas";
+// 🪲 - beetle
+"72080570.name" = "mardikas";
+"72080570.tags" = "mardikas | putukas";
+// 🐞 - ladybug
+"72075985.name" = "lepatriinu";
+"72075985.tags" = "lepatriinu | põrnikas | putukas";
+// 🦗 - cricket
+"72079155.name" = "kilk";
+"72079155.tags" = "kilk | rohutirts";
+// 🪳 - cockroach
+"72080575.name" = "prussakas";
+"72080575.tags" = "prussakas | putukas | tarakan";
+// 🦂 - scorpion
+"72079050.name" = "suur skorpion";
+"72079050.tags" = "skorpion | sodiaak | suur skorpion";
+// 🦟 - mosquito
+"72079195.name" = "sääsk";
+"72079195.tags" = "haigus | malaaria | palavik | putukas | sääsk | viirus";
+// 🪰 - fly
+"72080560.name" = "kärbes";
+"72080560.tags" = "haigus | kärbes | parm | roiskumine | toakärbes | tõuk | tsetsekärbes";
+// 🪱 - worm
+"72080565.name" = "uss";
+"72080565.tags" = "parasiit | rõnguss | uss | vihmauss";
+// 🦠 - microbe
+"72079200.name" = "mikroob";
+"72079200.tags" = "amööb | bakter | mikroob | viirus";
+// 💐 - bouquet
+"72076555.name" = "kimp";
+"72076555.tags" = "kimp | lill | romantika | taim";
+// 🌸 - cherry_blossom
+"72078670.name" = "kirsiõis";
+"72078670.tags" = "kirsiõis | kirss | lill | õis | taim";
+// 💮 - white_flower
+"72076705.name" = "valge lill";
+"72076705.tags" = "lill | valge lill";
+// 🪷 - lotus
+"72080595.name" = "lootos";
+"72080595.tags" = "budism | hinduism | India | lill | lootos | puhtus | Vietnam";
+// 🌹 - rose
+"72078675.name" = "roos";
+"72078675.tags" = "lill | roos | taim";
+// 🥀 - wilted_flower
+"72078720.name" = "närbunud lill";
+"72078720.tags" = "lill | närbunud";
+// 🌺 - hibiscus
+"72078680.name" = "hibisk";
+"72078680.tags" = "hibisk | lill | taim";
+// 🌻 - sunflower
+"72078685.name" = "päevalill";
+"72078685.tags" = "lill | päevalill | päike | taim";
+// 🌼 - blossom
+"72078690.name" = "õis";
+"72078690.tags" = "lill | õis | taim";
+// 🌷 - tulip
+"72078665.name" = "tulp";
+"72078665.tags" = "lill | taim | tulp";
+// 🪻 - hyacinth
+"72080615.name" = "hüatsint";
+"72080615.tags" = "hüatsint | lavendel | lill | lõvilõug | lupiin";
+// 🌱 - seedling
+"72078635.name" = "võrse";
+"72078635.tags" = "idu | taim | võrse";
+// 🪴 - potted_plant
+"72080580.name" = "potilill";
+"72080580.tags" = "hoolitsema | igav | kasutu | kasvatama | potilill | taim | tuba";
+// 🌲 - evergreen_tree
+"72078640.name" = "igihaljas puu";
+"72078640.tags" = "igihaljas | puu | taim";
+// 🌳 - deciduous_tree
+"72078645.name" = "lehtpuu";
+"72078645.tags" = "leht | lehtpuu | puu | taim";
+// 🌴 - palm_tree
+"72078650.name" = "palmipuu";
+"72078650.tags" = "palm | palmipuu | puu | taim";
+// 🌵 - cactus
+"72078655.name" = "kaktus";
+"72078655.tags" = "kaktus | taim";
+// 🌾 - ear_of_rice
+"72078700.name" = "riisitaim";
+"72078700.tags" = "riis | riisitaim | taim | vihk";
+// 🌿 - herb
+"72078705.name" = "maitsetaim";
+"72078705.tags" = "leht | maitsetaim | taim";
+// 🍀 - four_leaf_clover
+"72078710.name" = "nelja lehega ristik";
+"72078710.tags" = "leht | neli | nelja lehega ristik | ristik | taim";
+// 🍁 - maple_leaf
+"72078715.name" = "vahtraleht";
+"72078715.tags" = "langev | leht | taim | vaher | vahtraleht";
+// 🍂 - fallen_leaf
+"72078720.name" = "langenud leht";
+"72078720.tags" = "langenud leht | langev | leht | taim";
+// 🍃 - leaves
+"72078725.name" = "tuules lendlev leht";
+"72078725.tags" = "leht | taim | tuul | tuules lendlev leht";
+// 🪹 - empty_nest
+"72080605.name" = "tühi pesa";
+"72080605.tags" = "pesitsemine | tühi pesa";
+// 🪺 - nest_with_eggs
+"72080610.name" = "munadega pesa";
+"72080610.tags" = "munadega pesa | pesitsemine";
+// 🍄 - mushroom
+"72078730.name" = "seen";
+"72078730.tags" = "mürgiseen | seen";
+// 🍇 - grapes
+"72078745.name" = "viinamarjad";
+"72078745.tags" = "puuvili | taim | viinamari | viinamarjad";
+// 🍈 - melon
+"72078750.name" = "melon";
+"72078750.tags" = "melon | puuvili | taim";
+// 🍉 - watermelon
+"72078755.name" = "arbuus";
+"72078755.tags" = "arbuus | puuvili | taim";
+// 🍊 - tangerine
+"72078760.name" = "mandariin";
+"72078760.tags" = "mandariin | puuvili | taim";
+// 🍋 - lemon
+"72078765.name" = "sidrun";
+"72078765.tags" = "puuvili | sidrun | taim";
+// 🍌 - banana
+"72078770.name" = "banaan";
+"72078770.tags" = "banaan | puuvili | taim";
+// 🍍 - pineapple
+"72078775.name" = "ananass";
+"72078775.tags" = "ananass | puuvili | taim";
+// 🥭 - mango
+"72078945.name" = "mango";
+"72078945.tags" = "mango | puuvili | troopiline";
+// 🍎 - apple
+"72078780.name" = "punane õun";
+"72078780.tags" = "õun | punane | puuvili | taim";
+// 🍏 - green_apple
+"72078785.name" = "roheline õun";
+"72078785.tags" = "õun | puuvili | roheline | taim";
+// 🍐 - pear
+"72078790.name" = "pirn";
+"72078790.tags" = "pirn | puuvili | taim";
+// 🍑 - peach
+"72078795.name" = "virsik";
+"72078795.tags" = "puuvili | taim | virsik";
+// 🍒 - cherries
+"72078800.name" = "kirsid";
+"72078800.tags" = "kirsid | kirss | puuvili | taim";
+// 🍓 - strawberry
+"72078805.name" = "maasikas";
+"72078805.tags" = "maasikas | mari | puuvili | taim";
+// 🫐 - blueberries
+"72080720.name" = "mustikad";
+"72080720.tags" = "mari | mustikad | mustikas | sinine";
+// 🥝 - kiwifruit
+"72078865.name" = "kiivi";
+"72078865.tags" = "kiivi | puuvili | toit";
+// 🍅 - tomato
+"72078735.name" = "tomat";
+"72078735.tags" = "köögivili | taim | tomat";
+// 🫒 - olive
+"72080730.name" = "oliiv";
+"72080730.tags" = "oliiv | toit";
+// 🥥 - coconut
+"72078905.name" = "kookospähkel";
+"72078905.tags" = "kookospähkel | palm | piña colada";
+// 🥑 - avocado
+"72078805.name" = "avokaado";
+"72078805.tags" = "avokaado | puuvili | toit";
+// 🍆 - eggplant
+"72078740.name" = "baklažaan";
+"72078740.tags" = "baklažaan | köögivili | taim";
+// 🥔 - potato
+"72078820.name" = "kartul";
+"72078820.tags" = "juurvili | kartul | toit";
+// 🥕 - carrot
+"72078825.name" = "porgand";
+"72078825.tags" = "juurvili | porgand | toit";
+// 🌽 - corn
+"72078695.name" = "maisitõlvik";
+"72078695.tags" = "mais | maisitõlvik | taim | tõlvik";
+// 🫑 - bell_pepper
+"72080725.name" = "paprika";
+"72080725.tags" = "köögivili | paprika | pipar";
+// 🥒 - cucumber
+"72078810.name" = "kurk";
+"72078810.tags" = "köögivili | kurk | toit";
+// 🥬 - leafy_green
+"72078940.name" = "lehtköögivili";
+"72078940.tags" = "hiina kapsas | kapsas | lehtkapsas | lehtköögivili | lehtsalat";
+// 🥦 - broccoli
+"72078910.name" = "brokoli";
+"72078910.tags" = "brokoli | metskapsas";
+// 🧄 - garlic
+"72079380.name" = "küüslauk";
+"72079380.tags" = "küüslauk | maitseaine";
+// 🧅 - onion
+"72079385.name" = "sibul";
+"72079385.tags" = "maitseaine | sibul";
+// 🥜 - peanuts
+"72078860.name" = "maapähklid";
+"72078860.tags" = "maapähkel | maapähklid | pähkel | toit";
+// 🫘 - beans
+"72080760.name" = "oad";
+"72080760.tags" = "kaunvili | oad | toit | uba";
+// 🌰 - chestnut
+"72078630.name" = "kastan";
+"72078630.tags" = "kastan | taim";
+// 🫚 - ginger_root
+"72080770.name" = "ingver";
+"72080770.tags" = "ingver | ingverijuur | õlu | vürts";
+// 🫛 - pea_pod
+"72080775.name" = "hernekaun";
+"72080775.tags" = "edamame | hernekaun | hernes | kaun | kaunvili | köögivili | oad";
+// 🍞 - bread
+"72078860.name" = "leib";
+"72078860.tags" = "leib | päts";
+// 🥐 - croissant
+"72078800.name" = "sarvesai";
+"72078800.tags" = "croissant | prantsuse | sai | sarvesai | toit";
+// 🥖 - baguette_bread
+"72078830.name" = "baguette";
+"72078830.tags" = "baguette | pikk | sai | toit";
+// 🫓 - flatbread
+"72080735.name" = "lameleib";
+"72080735.tags" = "arepa | lameleib | lavašš | naan | pita";
+// 🥨 - pretzel
+"72078920.name" = "soolakringel";
+"72078920.tags" = "keerutatud | soolakringel";
+// 🥯 - bagel
+"72078955.name" = "rõngassai";
+"72078955.tags" = "määre | pagaritoode | rõngassai";
+// 🥞 - pancakes
+"72078870.name" = "pannkoogid";
+"72078870.tags" = "crêpe | pannkoogid | pannkook | toit";
+// 🧇 - waffle
+"72079395.name" = "vahvel";
+"72079395.tags" = "kõhklev | vahvel | vahvliraud";
+// 🧀 - cheese_wedge
+"72079360.name" = "juustutükk";
+"72079360.tags" = "juust | juustutükk";
+// 🍖 - meat_on_bone
+"72078820.name" = "kondiga liha";
+"72078820.tags" = "kondiga liha | kont | liha | luu";
+// 🍗 - poultry_leg
+"72078825.name" = "kanakoib";
+"72078825.tags" = "kana | kanakoib | koib | kont | luu";
+// 🥩 - cut_of_meat
+"72078925.name" = "lihalõik";
+"72078925.tags" = "karbonaad | lambalihakarbonaad | lihalõik | praelõik | sealihakarbonaad";
+// 🥓 - bacon
+"72078815.name" = "peekon";
+"72078815.tags" = "liha | peekon | toit";
+// 🍔 - hamburger
+"72078810.name" = "hamburger";
+"72078810.tags" = "burger | hamburger";
+// 🍟 - fries
+"72078865.name" = "friikartulid";
+"72078865.tags" = "friikartul | friikartulid";
+// 🍕 - pizza
+"72078815.name" = "pitsa";
+"72078815.tags" = "juust | pitsa | pizza | viil";
+// 🌭 - hotdog
+"72078615.name" = "hot dog";
+"72078615.tags" = "hot dog | hotdog | viiner | vorst";
+// 🥪 - sandwich
+"72078930.name" = "võileib";
+"72078930.tags" = "leib | võileib";
+// 🌮 - taco
+"72078620.name" = "tako";
+"72078620.tags" = "mehhiko | tako";
+// 🌯 - burrito
+"72078625.name" = "burrito";
+"72078625.tags" = "burrito | mehhiko";
+// 🫔 - tamale
+"72080740.name" = "tamale";
+"72080740.tags" = "maisikakk | mehhiko | täidetud | tamale";
+// 🥙 - stuffed_flatbread
+"72078845.name" = "täidetud pita";
+"72078845.tags" = "falafel | kebab | täidetud pita | toit";
+// 🧆 - falafel
+"72079390.name" = "falafel";
+"72079390.tags" = "falafel | kikerhernes | lihapall";
+// 🥚 - egg
+"72078850.name" = "muna";
+"72078850.tags" = "muna | toit";
+// 🍳 - fried_egg
+"72078965.name" = "toiduvalmistamine";
+"72078965.tags" = "muna | pann | praadimine | toiduvalmistamine";
+// 🥘 - shallow_pan_of_food
+"72078840.name" = "panniroog";
+"72078840.tags" = "paella | panniroog | toit";
+// 🍲 - stew
+"72078960.name" = "potitäis toitu";
+"72078960.tags" = "hautis | potitäis toitu | pott";
+// 🫕 - fondue
+"72080745.name" = "fondüü";
+"72080745.tags" = "fondüü | juust | nõu | šokolaad | sulatatud | šveitsi";
+// 🥣 - bowl_with_spoon
+"72078895.name" = "lusikaga kauss";
+"72078895.tags" = "hommikueine | hommikusöögihelbed | lusikaga kauss | riisipuding";
+// 🥗 - green_salad
+"72078835.name" = "roheline salat";
+"72078835.tags" = "roheline | salat | toit";
+// 🍿 - popcorn
+"72079025.name" = "popkorn";
+"72079025.tags" = "mais | popkorn";
+// 🧈 - butter
+"72079400.name" = "või";
+"72079400.tags" = "piimatoode | või";
+// 🧂 - salt
+"72079370.name" = "sool";
+"72079370.tags" = "maitseaine | sool | soolatoos";
+// 🥫 - canned_food
+"72078935.name" = "toidukonserv";
+"72078935.tags" = "konserv | toidukonserv";
+// 🍱 - bento
+"72078955.name" = "bento einekarp";
+"72078955.tags" = "bento einekarp | karp | toit";
+// 🍘 - rice_cracker
+"72078830.name" = "riisiküpsis";
+"72078830.tags" = "leib | riis | riisiküpsis";
+// 🍙 - rice_ball
+"72078835.name" = "riisipall";
+"72078835.tags" = "pall | riis | riisipall";
+// 🍚 - rice
+"72078840.name" = "keedetud riis";
+"72078840.tags" = "keedetud | riis";
+// 🍛 - curry
+"72078845.name" = "karriga riis";
+"72078845.tags" = "karri | karriga riis | riis";
+// 🍜 - ramen
+"72078850.name" = "aurav kauss";
+"72078850.tags" = "aur | aurav kauss | kauss | nuudel";
+// 🍝 - spaghetti
+"72078855.name" = "spagetid";
+"72078855.tags" = "pasta | spagetid";
+// 🍠 - sweet_potato
+"72078870.name" = "röstitud bataat";
+"72078870.tags" = "kartul | röstitud | röstitud bataat";
+// 🍢 - oden
+"72078880.name" = "oden";
+"72078880.tags" = "kebab | mereannid | oden | pulk";
+// 🍣 - sushi
+"72078885.name" = "suši";
+"72078885.tags" = "suši";
+// 🍤 - fried_shrimp
+"72078890.name" = "praetud krevett";
+"72078890.tags" = "krevett | praetud | tempura";
+// 🍥 - fish_cake
+"72078895.name" = "keerdudega kalakotlet";
+"72078895.tags" = "keerdudega kalakotlet | kook | spiraal | tort";
+// 🥮 - moon_cake
+"72078950.name" = "kuukook";
+"72078950.tags" = "festival | kuukook | sügis | yuèbǐng";
+// 🍡 - dango
+"72078875.name" = "dango";
+"72078875.tags" = "dango | magus | magustoit | pulk";
+// 🥟 - dumpling
+"72078875.name" = "pelmeen";
+"72078875.tags" = "empanada | gyōza | jiaozi | pelmeen | pierogi";
+// 🥠 - fortune_cookie
+"72078880.name" = "õnneküpsis";
+"72078880.tags" = "ennustus | õnneküpsis";
+// 🥡 - takeout_box
+"72078885.name" = "kaasamüügikarp";
+"72078885.tags" = "kaasamüügikarp | kiirtoidukarp";
+// 🦀 - crab
+"72079040.name" = "krabi";
+"72079040.tags" = "krabi | sodiaak | vähk";
+// 🦞 - lobster
+"72079190.name" = "homaar";
+"72079190.tags" = "homaar | homaarisupp | mereannid | sõrad";
+// 🦐 - shrimp
+"72079120.name" = "krevett";
+"72079120.tags" = "koorikloom | krevett | toit";
+// 🦑 - squid
+"72079125.name" = "kalmaar";
+"72079125.tags" = "kalmaar | mollusk | toit";
+// 🦪 - oyster
+"72079250.name" = "auster";
+"72079250.tags" = "auster | elus | karp | pärl";
+// 🍦 - icecream
+"72078900.name" = "pehme jäätis";
+"72078900.tags" = "jäätis | magus | magustoit | pehme";
+// 🍧 - shaved_ice
+"72078905.name" = "mahlajää";
+"72078905.tags" = "jää | magus | magustoit | mahlajää";
+// 🍨 - ice_cream
+"72078910.name" = "jäätis";
+"72078910.tags" = "jäätis | magus | magustoit";
+// 🍩 - doughnut
+"72078915.name" = "sõõrik";
+"72078915.tags" = "magus | magustoit | sõõrik";
+// 🍪 - cookie
+"72078920.name" = "küpsis";
+"72078920.tags" = "küpsis | magus | magustoit";
+// 🎂 - birthday
+"72079040.name" = "sünnipäevatort";
+"72079040.tags" = "küünlad | magustoit | sünnipäev | sünnipäevatort | tort";
+// 🍰 - cake
+"72078950.name" = "liivataignakook";
+"72078950.tags" = "kook | liivataignakook | lõik | magus | magustoit";
+// 🧁 - cupcake
+"72079365.name" = "muffin";
+"72079365.tags" = "magus | muffin | pagaritoode";
+// 🥧 - pie
+"72078915.name" = "pirukas";
+"72078915.tags" = "pirukas | täidis";
+// 🍫 - chocolate_bar
+"72078925.name" = "šokolaaditahvel";
+"72078925.tags" = "magus | magustoit | šokolaad | šokolaaditahvel";
+// 🍬 - candy
+"72078930.name" = "komm";
+"72078930.tags" = "komm | magus | magustoit";
+// 🍭 - lollipop
+"72078935.name" = "pulgakomm";
+"72078935.tags" = "komm | magus | magustoit | pulgakomm";
+// 🍮 - custard
+"72078940.name" = "vanillipuding";
+"72078940.tags" = "magus | magustoit | puding | vanillipuding";
+// 🍯 - honey_pot
+"72078945.name" = "meepott";
+"72078945.tags" = "magus | meepott | mesi";
+// 🍼 - baby_bottle
+"72079010.name" = "lutipudel";
+"72079010.tags" = "beebi | lutipudel | piim | pudel";
+// 🥛 - glass_of_milk
+"72078855.name" = "klaas piima";
+"72078855.tags" = "jook | klaas | klaas piima | piim";
+// ☕ - coffee
+"30018.name" = "kuum jook";
+"30018.tags" = "jook | kohv | kuum | tee";
+// 🫖 - teapot
+"72080750.name" = "teekann";
+"72080750.tags" = "jooma | kann | tee | teekann";
+// 🍵 - tea
+"72078975.name" = "kõrvata teetass";
+"72078975.tags" = "jook | kõrvata teetass | tass | tee";
+// 🍶 - sake
+"72078980.name" = "riisiviin";
+"72078980.tags" = "baar | jook | pudel | riisiviin | tass";
+// 🍾 - champagne
+"72079020.name" = "pudeli avamine";
+"72079020.tags" = "baar | jook | kork | pudel | pudeli avamine";
+// 🍷 - wine_glass
+"72078985.name" = "veiniklaas";
+"72078985.tags" = "baar | jook | klaas | vein | veiniklaas";
+// 🍸 - cocktail
+"72078990.name" = "kokteiliklaas";
+"72078990.tags" = "baar | jook | klaas | kokteil | kokteiliklaas";
+// 🍹 - tropical_drink
+"72078995.name" = "troopiline jook";
+"72078995.tags" = "baar | jook | troopiline";
+// 🍺 - beer
+"72079000.name" = "õllekann";
+"72079000.tags" = "baar | jook | kann | õllekann | õlu";
+// 🍻 - beers
+"72079005.name" = "kõlisevad õllekannud";
+"72079005.tags" = "baar | jook | kann | kõlisevad õllekannud | õlu";
+// 🥂 - clinking_glasses
+"72078730.name" = "kõlisevad klaasid";
+"72078730.tags" = "jooma | klaasid | kõlisevad klaasid | kõlks | tähistama";
+// 🥃 - tumbler_glass
+"72078735.name" = "joogiklaas";
+"72078735.tags" = "joogiklaas | napsuklaas | viskiklaas";
+// 🫗 - pouring_liquid
+"72080755.name" = "vedeliku kallamine";
+"72080755.tags" = "jooma | klaas | maha voolama | tühi | vedeliku kallamine";
+// 🥤 - cup_with_straw
+"72078900.name" = "kõrrega tops";
+"72078900.tags" = "kõrrega tops | limonaad | mahl";
+// 🧋 - bubble_tea
+"72079415.name" = "pärlitee";
+"72079415.tags" = "mull | pärl | pärlitee | piim | tee";
+// 🧃 - beverage_box
+"72079375.name" = "joogipakk";
+"72079375.tags" = "joogipakk | mahlapakk";
+// 🧉 - mate_drink
+"72079405.name" = "mate";
+"72079405.tags" = "jook | mate | tee";
+// 🧊 - ice_cube
+"72079410.name" = "jääkuubik";
+"72079410.tags" = "jää | jääkuubik | külm | kuubik";
+// 🥢 - chopsticks
+"72078890.name" = "söögipulgad";
+"72078890.tags" = "hashi | söögipulgad";
+// 🍴 - fork_and_knife
+"72078970.name" = "kahvel ja nuga";
+"72078970.tags" = "kahvel | kahvel ja nuga | nuga | toit";
+// 🥄 - spoon
+"72078740.name" = "lusikas";
+"72078740.tags" = "lauanõud | lusikas";
+// 🔪 - hocho
+"72077325.name" = "kööginuga";
+"72077325.tags" = "kööginuga | köök | nuga | relv | tööriist";
+// 🫙 - jar
+"72080765.name" = "purk";
+"72080765.tags" = "anum | kaste | maitseaine | purk | säilitama | tühi";
+// 🏺 - amphora
+"72079640.name" = "amfora";
+"72079640.tags" = "amfora | jook | kann | vaas | veevalaja";
+// 🌍 - earth_africa
+"72078455.name" = "Euroopa ja Aafrika gloobusel";
+"72078455.tags" = "Aafrika | Euroopa | Euroopa ja Aafrika gloobusel | gloobus | maa | maailm";
+// 🌎 - earth_americas
+"72078460.name" = "Ameerika mandrid gloobusel";
+"72078460.tags" = "Ameerika | Ameerika mandrid gloobusel | gloobus | maa | maailm";
+// 🌏 - earth_asia
+"72078465.name" = "Aasia ja Austraalia gloobusel";
+"72078465.tags" = "Aasia | Aasia ja Austraalia gloobusel | austraalia | gloobus | maa | maailm";
+// 🌐 - globe_with_meridians
+"72078470.name" = "meridiaanidega gloobus";
+"72078470.tags" = "gloobus | maa | maailm | meridiaanid | meridiaanidega gloobus";
+// 🗾 - japan
+"72078385.name" = "Jaapani kaart";
+"72078385.tags" = "Jaapan | Jaapani kaart | kaart";
+// 🧭 - compass
+"72079585.name" = "kompass";
+"72079585.tags" = "kompass | magnetiline | navigeerimine | orienteerumine";
+// 🌋 - volcano
+"72078445.name" = "vulkaan";
+"72078445.tags" = "laava | mägi | purse | vulkaan";
+// 🗻 - mount_fuji
+"72078370.name" = "Fuji mägi";
+"72078370.tags" = "Fuji | mägi";
+// 🧱 - bricks
+"72079605.name" = "telliskivi";
+"72079605.tags" = "mört | savi | sein | telliskivi | telliskivid";
+// 🪨 - rock
+"72080520.name" = "kivi";
+"72080520.tags" = "kaljurahn | kivi | kivirahn | raske | tugev";
+// 🪵 - wood
+"72080585.name" = "puit";
+"72080585.tags" = "ehituspuit | palk | puit | saepuit";
+// 🛖 - hut
+"72079465.name" = "hütt";
+"72079465.tags" = "hütt | jurta | maja | tare";
+// 🏠 - house
+"72079510.name" = "maja";
+"72079510.tags" = "kodu | maja";
+// 🏡 - house_with_garden
+"72079515.name" = "aiaga maja";
+"72079515.tags" = "aed | aiaga maja | kodu | maja";
+// 🏢 - office
+"72079520.name" = "kontorihoone";
+"72079520.tags" = "hoone | kontorihoone | maja";
+// 🏣 - post_office
+"72079525.name" = "Jaapani postkontor";
+"72079525.tags" = "hoone | Jaapani postkontor | post";
+// 🏤 - european_post_office
+"72079530.name" = "postkontor";
+"72079530.tags" = "hoone | post | postkontor";
+// 🏥 - hospital
+"72079535.name" = "haigla";
+"72079535.tags" = "arst | haigla | hoone | meditsiin";
+// 🏦 - bank
+"72079540.name" = "pank";
+"72079540.tags" = "hoone | pank";
+// 🏨 - hotel
+"72079550.name" = "hotell";
+"72079550.tags" = "hoone | hotell";
+// 🏩 - love_hotel
+"72079555.name" = "armuhotell";
+"72079555.tags" = "armastus | armuhotell | hoone | hotell";
+// 🏪 - convenience_store
+"72079560.name" = "kauplus";
+"72079560.tags" = "hoone | kauplus | pood";
+// 🏫 - school
+"72079565.name" = "kool";
+"72079565.tags" = "hoone | kool";
+// 🏬 - department_store
+"72079570.name" = "kaubamaja";
+"72079570.tags" = "hoone | kaubamaja | pood";
+// 🏭 - factory
+"72079575.name" = "tehas";
+"72079575.tags" = "hoone | tehas";
+// 🏯 - japanese_castle
+"72079585.name" = "Jaapani loss";
+"72079585.tags" = "Jaapan | Jaapani loss | loss";
+// 🏰 - european_castle
+"72079590.name" = "loss";
+"72079590.tags" = "hoone | loss";
+// 💒 - wedding
+"72076565.name" = "pulmad";
+"72076565.tags" = "kabel | kirik | pulmad | romantika";
+// 🗼 - tokyo_tower
+"72078375.name" = "Tokyo torn";
+"72078375.tags" = "Tokyo | torn";
+// 🗽 - statue_of_liberty
+"72078380.name" = "Vabadussammas";
+"72078380.tags" = "kuju | sammas | vabadus | Vabadussammas";
+// ⛪ - church
+"30657.name" = "kirik";
+"30657.tags" = "kirik | kristlus | maja | rist | usk";
+// 🕌 - mosque
+"72077495.name" = "mošee";
+"72077495.tags" = "islam | mošee | moslem | usk";
+// 🛕 - hindu_temple
+"72079460.name" = "hinduistlik tempel";
+"72079460.tags" = "hindu | hinduism | hinduistlik tempel | tempel";
+// 🕍 - synagogue
+"72077500.name" = "sünagoog";
+"72077500.tags" = "judaism | juut | sünagoog | usk";
+// 🕋 - kaaba
+"72077490.name" = "kaaba";
+"72077490.tags" = "islam | kaaba | moslem | usk";
+// ⛲ - fountain
+"30681.name" = "purskkaev";
+"30681.tags" = "purskkaev";
+// ⛺ - tent
+"30705.name" = "telk";
+"30705.tags" = "laager | telk | telkimine";
+// 🌁 - foggy
+"72078395.name" = "udune";
+"72078395.tags" = "ilm | udu | udune";
+// 🌃 - night_with_stars
+"72078405.name" = "öine tähistaevas";
+"72078405.tags" = "ilm | öine tähistaevas | öö | täht";
+// 🌄 - sunrise_over_mountains
+"72078410.name" = "päikesetõus mägedes";
+"72078410.tags" = "hommik | ilm | mägi | päike | päikesetõus | päikesetõus mägedes";
+// 🌅 - sunrise
+"72078415.name" = "päikesetõus";
+"72078415.tags" = "hommik | ilm | päike | päikesetõus";
+// 🌆 - city_sunset
+"72078420.name" = "linna siluett videvikus";
+"72078420.tags" = "hoone | ilm | linna siluett videvikus | loojang | õhtu | siluett | videvik";
+// 🌇 - city_sunrise
+"72078425.name" = "päikeseloojang";
+"72078425.tags" = "hoone | ilm | loojang | päike | päikeseloojang";
+// 🌉 - bridge_at_night
+"72078435.name" = "sild öösel";
+"72078435.tags" = "ilm | öö | sild | sild öösel";
+// 🎠 - carousel_horse
+"72079190.name" = "karussellihobune";
+"72079190.tags" = "hobune | karussell | karussellihobune";
+// 🛝 - playground_slide
+"72079500.name" = "liumägi";
+"72079500.tags" = "liumägi | lõbustuspark | mängima";
+// 🎡 - ferris_wheel
+"72079195.name" = "vaateratas";
+"72079195.tags" = "lõbustuspark | vaateratas";
+// 🎢 - roller_coaster
+"72079200.name" = "Ameerika mäed";
+"72079200.tags" = "Ameerika | lõbustuspark | mäed";
+// 💈 - barber
+"72076515.name" = "habemeajaja tähis";
+"72076515.tags" = "habemeajaja | habemeajaja tähis | juuksur";
+// 🎪 - circus_tent
+"72079240.name" = "tsirkusetelk";
+"72079240.tags" = "telk | tsirkus | tsirkusetelk";
+// 🚂 - steam_locomotive
+"72079045.name" = "vedur";
+"72079045.tags" = "aur | raudtee | rong | sõiduk | vedur";
+// 🚃 - railway_car
+"72079050.name" = "rongivagun";
+"72079050.tags" = "rong | rongivagun | rööpad | sõiduk | tramm | troll | vagun";
+// 🚄 - bullettrain_side
+"72079055.name" = "kiirrong";
+"72079055.tags" = "kiirrong | raudtee | sõiduk";
+// 🚅 - bullettrain_front
+"72079060.name" = "terava ninaga kiirrong";
+"72079060.tags" = "kiirrong | raudtee | sõiduk | terava ninaga kiirrong";
+// 🚆 - train2
+"72079065.name" = "rong";
+"72079065.tags" = "raudtee | rong | sõiduk";
+// 🚇 - metro
+"72079070.name" = "metroo";
+"72079070.tags" = "metroo | rong | sõiduk";
+// 🚈 - light_rail
+"72079075.name" = "kergraudtee";
+"72079075.tags" = "kergraudtee | raudtee | rong";
+// 🚉 - station
+"72079080.name" = "jaam";
+"72079080.tags" = "jaam | raudtee | rong";
+// 🚊 - tram
+"72079085.name" = "tramm";
+"72079085.tags" = "tramm | troll";
+// 🚝 - monorail
+"72079180.name" = "üherööpmeline raudtee";
+"72079180.tags" = "raudtee | rong | sõiduk | üherööpmeline raudtee";
+// 🚞 - mountain_railway
+"72079185.name" = "mägiraudtee";
+"72079185.tags" = "mägi | mägiraudtee | raudtee | rong | vagun";
+// 🚋 - train
+"72079090.name" = "trammivagun";
+"72079090.tags" = "tramm | trammivagun | troll | vagun";
+// 🚌 - bus
+"72079095.name" = "buss";
+"72079095.tags" = "buss | sõiduk";
+// 🚍 - oncoming_bus
+"72079100.name" = "buss eestvaates";
+"72079100.tags" = "buss | buss eestvaates | eestvaade";
+// 🚎 - trolleybus
+"72079105.name" = "trollibuss";
+"72079105.tags" = "buss | tramm | troll | trollibuss";
+// 🚐 - minibus
+"72079115.name" = "väikebuss";
+"72079115.tags" = "buss | sõiduk | väikebuss";
+// 🚑 - ambulance
+"72079120.name" = "kiirabiauto";
+"72079120.tags" = "kiirabiauto | sõiduk";
+// 🚒 - fire_engine
+"72079125.name" = "tuletõrjeauto";
+"72079125.tags" = "auto | sõiduk | tuletõrje | tuletõrjeauto";
+// 🚓 - police_car
+"72079130.name" = "politseiauto";
+"72079130.tags" = "auto | patrull | politsei | politseiauto | sõiduk";
+// 🚔 - oncoming_police_car
+"72079135.name" = "politseiauto eestvaates";
+"72079135.tags" = "auto | eestvaade | politsei | politseiauto eestvaates | sõiduk";
+// 🚕 - taxi
+"72079140.name" = "takso";
+"72079140.tags" = "sõiduk | takso";
+// 🚖 - oncoming_taxi
+"72079145.name" = "takso eestvaates";
+"72079145.tags" = "eestvaade | sõiduk | takso | takso eestvaates";
+// 🚗 - car
+"72079150.name" = "auto";
+"72079150.tags" = "auto | sõiduk";
+// 🚘 - oncoming_automobile
+"72079155.name" = "auto eestvaates";
+"72079155.tags" = "auto | auto eestvaates | eestvaade | sõiduk";
+// 🚙 - blue_car
+"72079160.name" = "mahtuniversaal";
+"72079160.tags" = "auto | mahtuniversaal | sõiduk | universaal";
+// 🛻 - pickup_truck
+"72079650.name" = "pikap";
+"72079650.tags" = "kast | maastur | pikap";
+// 🚚 - truck
+"72079165.name" = "kulleriauto";
+"72079165.tags" = "kuller | kulleriauto | sõiduk | veoauto";
+// 🚛 - articulated_lorry
+"72079170.name" = "veok";
+"72079170.tags" = "sõiduk | veoauto | veok";
+// 🚜 - tractor
+"72079175.name" = "traktor";
+"72079175.tags" = "sõiduk | traktor";
+// 🛵 - motor_scooter
+"72079620.name" = "motoroller";
+"72079620.tags" = "motoroller | roller";
+// 🦽 - manual_wheelchair
+"72079345.name" = "manuaalratastool";
+"72079345.tags" = "juurdepääs | ligipääs | manuaalratastool | ratastool";
+// 🦼 - motorized_wheelchair
+"72079340.name" = "elektriratastool";
+"72079340.tags" = "elektriratastool | juurdepääs | ligipääs | ratastool";
+// 🛺 - auto_rickshaw
+"72079645.name" = "autorikša";
+"72079645.tags" = "autorikša | tuk-tuk";
+// 🚲 - bike
+"72079285.name" = "jalgratas";
+"72079285.tags" = "jalgratas | ratas | sõiduk";
+// 🛴 - scooter
+"72079615.name" = "tõukeratas";
+"72079615.tags" = "tõukekas | tõukeratas";
+// 🛹 - skateboard
+"72079640.name" = "rula";
+"72079640.tags" = "rula | rulalaud";
+// 🛼 - roller_skate
+"72079655.name" = "rulluisk";
+"72079655.tags" = "rulluisk | rulluisutama | uisk";
+// 🚏 - busstop
+"72079110.name" = "bussipeatus";
+"72079110.tags" = "buss | bussipeatus | peatus";
+// ⛽ - fuelpump
+"30714.name" = "tankur";
+"30714.tags" = "bensiin | kütus | pump | tankla | tankur";
+// 🛞 - wheel
+"72079505.name" = "ratas";
+"72079505.tags" = "pöörama | ratas | rehv | ring";
+// 🚨 - rotating_light
+"72079235.name" = "politseiauto vilkur";
+"72079235.tags" = "auto | politsei | politseiauto vilkur | pöörlemine | sõiduk | vilkur";
+// 🚥 - traffic_light
+"72079220.name" = "horisontaalne foor";
+"72079220.tags" = "foor | horisontaalne foor | liiklus";
+// 🚦 - vertical_traffic_light
+"72079225.name" = "vertikaalne foor";
+"72079225.tags" = "foor | liiklus | vertikaalne foor";
+// 🛑 - octagonal_sign
+"72079440.name" = "stoppmärk";
+"72079440.tags" = "liiklusmärk | märk | stopp | stoppmärk";
+// 🚧 - construction
+"72079230.name" = "ehitustööd";
+"72079230.tags" = "barjäär | ehitustööd | tõke";
+// ⚓ - anchor
+"30396.name" = "ankur";
+"30396.tags" = "ankur | laev | tööriist";
+// 🛟 - ring_buoy
+"72079510.name" = "päästerõngas";
+"72079510.tags" = "elupäästev | ohutus | päästerõngas | päästevahend | pinnal püsima | vetelpääste";
+// ⛵ - boat
+"30690.name" = "purjepaat";
+"30690.tags" = "jaht | meri | paat | puhkus | purjepaat | sõiduk";
+// 🛶 - canoe
+"72079625.name" = "kanuu";
+"72079625.tags" = "kanuu | paat";
+// 🚤 - speedboat
+"72079215.name" = "kiirkaater";
+"72079215.tags" = "kiirkaater | paat | sõiduk";
+// 🚢 - ship
+"72079205.name" = "laev";
+"72079205.tags" = "laev | sõiduk";
+// 🛫 - airplane_departure
+"72079570.name" = "õhkutõusev lennuk";
+"72079570.tags" = "lennuk | õhkutõus | õhkutõusev lennuk | sõiduk";
+// 🛬 - airplane_arriving
+"72079575.name" = "maanduv lennuk";
+"72079575.tags" = "lennuk | maandumine | maanduv lennuk | sõiduk";
+// 🪂 - parachute
+"72080330.name" = "langevarjur";
+"72080330.tags" = "langevari | langevarjuga hüppamine | langevarjuhüpe | langevarjur";
+// 💺 - seat
+"72076765.name" = "iste";
+"72076765.tags" = "iste | tool";
+// 🚁 - helicopter
+"72079040.name" = "helikopter";
+"72079040.tags" = "helikopter | sõiduk";
+// 🚟 - suspension_railway
+"72079190.name" = "rippraudtee";
+"72079190.tags" = "raudtee | rippraudtee | sõiduk | vagun";
+// 🚠 - mountain_cableway
+"72079195.name" = "köistee mägedes";
+"72079195.tags" = "gondel | köis | köistee mägedes | mägi | sõiduk | vagun";
+// 🚡 - aerial_tramway
+"72079200.name" = "köisraudtee";
+"72079200.tags" = "gondel | köis | köisraudtee | raudtee | sõiduk | vagun";
+// 🚀 - rocket
+"72079035.name" = "rakett";
+"72079035.tags" = "kosmos | rakett | sõiduk";
+// 🛸 - flying_saucer
+"72079635.name" = "lendav taldrik";
+"72079635.tags" = "lendav taldrik | UFO";
+// 🧳 - luggage
+"72079615.name" = "kohver";
+"72079615.tags" = "kohver | pakkimine | reis";
+// ⌛ - hourglass
+"27732.name" = "liivakell";
+"27732.tags" = "kell | liiv | liivakell";
+// ⏳ - hourglass_flowing_sand
+"28380.name" = "voolava liivaga kell";
+"28380.tags" = "kell | liiv | voolava liivaga kell";
+// ⌚ - watch
+"27729.name" = "käekell";
+"27729.tags" = "käekell | kell";
+// ⏰ - alarm_clock
+"28371.name" = "äratuskell";
+"28371.tags" = "äratus | äratuskell | kell";
+// 🕛 - clock12
+"72077570.name" = "kell kaksteist";
+"72077570.tags" = "00 | 12 | 12:00 | kaksteist | kell";
+// 🕧 - clock1230
+"72077630.name" = "kell pool üks";
+"72077630.tags" = "12 | 12:30 | 30 | kell | pool | üks";
+// 🕐 - clock1
+"72077515.name" = "kell üks";
+"72077515.tags" = "00 | 1 | 1:00 | kell | üks";
+// 🕜 - clock130
+"72077575.name" = "kell pool kaks";
+"72077575.tags" = "1 | 1:30 | 30 | kaks | kell | pool";
+// 🕑 - clock2
+"72077520.name" = "kell kaks";
+"72077520.tags" = "00 | 2 | 2:00 | kaks | kell";
+// 🕝 - clock230
+"72077580.name" = "kell pool kolm";
+"72077580.tags" = "2 | 2:30 | 30 | kell | kolm | pool";
+// 🕒 - clock3
+"72077525.name" = "kell kolm";
+"72077525.tags" = "00 | 3 | 3:00 | kell | kolm";
+// 🕞 - clock330
+"72077585.name" = "kell pool neli";
+"72077585.tags" = "3 | 3:30 | 30 | kell | neli | pool";
+// 🕓 - clock4
+"72077530.name" = "kell neli";
+"72077530.tags" = "00 | 4 | 4:00 | kell | neli";
+// 🕟 - clock430
+"72077590.name" = "kell pool viis";
+"72077590.tags" = "30 | 4 | 4:30 | kell | pool | viis";
+// 🕔 - clock5
+"72077535.name" = "kell viis";
+"72077535.tags" = "00 | 5 | 5:00 | kell | viis";
+// 🕠 - clock530
+"72077595.name" = "kell pool kuus";
+"72077595.tags" = "30 | 5 | 5:30 | kell | kuus | pool";
+// 🕕 - clock6
+"72077540.name" = "kell kuus";
+"72077540.tags" = "00 | 6 | 6:00 | kell | kuus";
+// 🕡 - clock630
+"72077600.name" = "kell pool seitse";
+"72077600.tags" = "30 | 6 | 6:30 | kell | pool | seitse";
+// 🕖 - clock7
+"72077545.name" = "kell seitse";
+"72077545.tags" = "00 | 7 | 7:00 | kell | seitse";
+// 🕢 - clock730
+"72077605.name" = "kell pool kaheksa";
+"72077605.tags" = "30 | 7 | 7:30 | kaheksa | kell | pool";
+// 🕗 - clock8
+"72077550.name" = "kell kaheksa";
+"72077550.tags" = "00 | 8 | 8:00 | kaheksa | kell";
+// 🕣 - clock830
+"72077610.name" = "kell pool üheksa";
+"72077610.tags" = "30 | 8 | 8:30 | kell | pool | üheksa";
+// 🕘 - clock9
+"72077555.name" = "kell üheksa";
+"72077555.tags" = "00 | 9 | 9:00 | kell | üheksa";
+// 🕤 - clock930
+"72077615.name" = "kell pool kümme";
+"72077615.tags" = "30 | 9 | 9:30 | kell | kümme | pool";
+// 🕙 - clock10
+"72077560.name" = "kell kümme";
+"72077560.tags" = "00 | 10 | 10:00 | kell | kümme";
+// 🕥 - clock1030
+"72077620.name" = "kell pool üksteist";
+"72077620.tags" = "10 | 10:30 | 30 | kell | pool | üksteist";
+// 🕚 - clock11
+"72077565.name" = "kell üksteist";
+"72077565.tags" = "00 | 11 | 11:00 | kell | üksteist";
+// 🕦 - clock1130
+"72077625.name" = "kell pool kaksteist";
+"72077625.tags" = "11 | 11:30 | 30 | kell | kell pool kaksteist | pool kaksteist";
+// 🌑 - new_moon
+"72078475.name" = "noorkuu";
+"72078475.tags" = "ilm | kosmos | kuu | noorkuu | pime";
+// 🌒 - waxing_crescent_moon
+"72078480.name" = "kasvav kuusirp";
+"72078480.tags" = "ilm | kasvav kuusirp | kosmos | kuu | noorkuu | sirp";
+// 🌓 - first_quarter_moon
+"72078485.name" = "kasvav poolkuu";
+"72078485.tags" = "ilm | kasvav poolkuu | kosmos | kuu | poolkuu";
+// 🌔 - moon
+"72078490.name" = "kasvav kuu";
+"72078490.tags" = "ilm | kasvav | kuu | poolkuu";
+// 🌕 - full_moon
+"72078495.name" = "täiskuu";
+"72078495.tags" = "ilm | kosmos | täiskuu";
+// 🌖 - waning_gibbous_moon
+"72078500.name" = "kahanev kuu";
+"72078500.tags" = "ilm | kahanev | kosmos | kuu";
+// 🌗 - last_quarter_moon
+"72078505.name" = "kahanev poolkuu";
+"72078505.tags" = "ilm | kahanev poolkuu | kosmos | kuu | poolkuu";
+// 🌘 - waning_crescent_moon
+"72078510.name" = "kahanev kuusirp";
+"72078510.tags" = "ilm | kahanev | kahanev kuusirp | kosmos | kuu | sirp";
+// 🌙 - crescent_moon
+"72078515.name" = "kuusirp";
+"72078515.tags" = "ilm | kosmos | kuu | kuusirp | sirp";
+// 🌚 - new_moon_with_face
+"72078520.name" = "näoga noorkuu";
+"72078520.tags" = "ilm | kosmos | kuu | nägu | näoga noorkuu";
+// 🌛 - first_quarter_moon_with_face
+"72078525.name" = "näoga kasvav kuu";
+"72078525.tags" = "ilm | kosmos | kuu | nägu | näoga kasvav kuu | poolkuu";
+// 🌜 - last_quarter_moon_with_face
+"72078530.name" = "näoga kahanev kuu";
+"72078530.tags" = "ilm | kosmos | kuu | nägu | näoga kahanev kuu | poolkuu";
+// 🌝 - full_moon_with_face
+"72078535.name" = "näoga täiskuu";
+"72078535.tags" = "ere | ilm | kosmos | kuu | nägu | näoga täiskuu | täiskuu";
+// 🌞 - sun_with_face
+"72078540.name" = "näoga päike";
+"72078540.tags" = "ere | ilm | kosmos | nägu | näoga päike | päike";
+// 🪐 - ringed_planet
+"72080400.name" = "rõngastega planeet";
+"72080400.tags" = "rõngastega planeet | Saturn";
+// ⭐ - star
+"34035.name" = "täht";
+"34035.tags" = "täht | tärn";
+// 🌟 - star2
+"72078545.name" = "helendav täht";
+"72078545.tags" = "helendav | sära | täht";
+// 🌠 - stars
+"72078550.name" = "langev täht";
+"72078550.tags" = "komeet | kosmos | langev | täht";
+// 🌌 - milky_way
+"72078450.name" = "Linnutee";
+"72078450.tags" = "kosmos | Linnutee | tähed";
+// ⛅ - partly_sunny
+"30546.name" = "päike pilve taga";
+"30546.tags" = "ilm | päike | päike pilve taga | pilv";
+// 🌀 - cyclone
+"72078390.name" = "tsüklon";
+"72078390.tags" = "ilm | orkaan | taifuun | tornaado | tsüklon";
+// 🌈 - rainbow
+"72078430.name" = "vikerkaar";
+"72078430.tags" = "ilm | vihm | vikerkaar";
+// 🌂 - closed_umbrella
+"72078400.name" = "suletud vihmavari";
+"72078400.tags" = "ilm | riided | suletud vihmavari | vihm | vihmavari";
+// ☔ - umbrella_with_rain_drops
+"30015.name" = "piiskadega vihmavari";
+"30015.tags" = "ilm | piisk | piiskadega vihmavari | riided | vihm | vihmavari";
+// ⚡ - zap
+"30438.name" = "kõrgepinge";
+"30438.tags" = "elekter | kõrgepinge | oht | pinge | šokk | välk";
+// ⛄ - snowman_without_snow
+"30543.name" = "lumeta lumememm";
+"30543.tags" = "ilm | külm | lumememm | lumeta lumememm | lumi";
+// 🔥 - fire
+"72077300.name" = "tuli";
+"72077300.tags" = "leek | tuli";
+// 💧 - droplet
+"72076670.name" = "piisk";
+"72076670.tags" = "higi | ilm | koomiks | külm | piisk";
+// 🌊 - ocean
+"72078440.name" = "veelaine";
+"72078440.tags" = "ilm | ookean | veelaine | vesi";
+// 🎃 - jack_o_lantern
+"72079045.name" = "kõrvitsalatern";
+"72079045.tags" = "halloween | kõrvits | kõrvitsalatern | latern";
+// 🎄 - christmas_tree
+"72079050.name" = "jõulupuu";
+"72079050.tags" = "jõulud | jõulupuu | kuusk | pühad";
+// 🎆 - fireworks
+"72079060.name" = "ilutulestik";
+"72079060.tags" = "ilutulestik | tähistamine";
+// 🎇 - sparkler
+"72079065.name" = "säraküünal";
+"72079065.tags" = "ilutulestik | säraküünal";
+// 🧨 - firecracker
+"72079560.name" = "ilutulestikurakett";
+"72079560.tags" = "dünamiit | ilutulestik | ilutulestikurakett | lõhkeaine";
+// ✨ - sparkles
+"30843.name" = "sädemed";
+"30843.tags" = "* | säde | sädemed | sära | täht";
+// 🎈 - balloon
+"72079070.name" = "õhupall";
+"72079070.tags" = "õhupall | tähistamine";
+// 🎉 - tada
+"72079075.name" = "pidupäev";
+"72079075.tags" = "pidu | pidupäev | sünnipäev | üllatus";
+// 🎊 - confetti_ball
+"72079080.name" = "konfetid";
+"72079080.tags" = "konfetid | pall | pidu";
+// 🎋 - tanabata_tree
+"72079085.name" = "tanabata soovipuu";
+"72079085.tags" = "pidu | puu | tanabata soovipuu";
+// 🎍 - bamboo
+"72079095.name" = "väravamänd";
+"72079095.tags" = "bambus | mänd | puu | taim | väravamänd";
+// 🎎 - dolls
+"72079100.name" = "Jaapani nukud";
+"72079100.tags" = "festival | Jaapani nukud | nukk";
+// 🎏 - flags
+"72079105.name" = "kalakujuline vimpel";
+"72079105.tags" = "kala | kalakujuline vimpel | lipp | vimpel";
+// 🎐 - wind_chime
+"72079110.name" = "tuulekell";
+"72079110.tags" = "kell | tuul | tuulekell";
+// 🎑 - rice_scene
+"72079115.name" = "kuutseremoonia";
+"72079115.tags" = "festival | kuu | kuutseremoonia | tseremoonia";
+// 🧧 - red_envelope
+"72079555.name" = "punane ümbrik";
+"72079555.tags" = "edu | hóngbāo | kingitus | õnn | punane ümbrik | raha";
+// 🎀 - ribbon
+"72079030.name" = "lint";
+"72079030.tags" = "lint | lips";
+// 🎁 - gift
+"72079035.name" = "kingipakk";
+"72079035.tags" = "karp | kingipakk | kink | pakitud";
+// 🎫 - ticket
+"72079245.name" = "pilet";
+"72079245.tags" = "pääse | pilet";
+// 🏆 - trophy
+"72079380.name" = "karikas";
+"72079380.tags" = "auhind | karikas";
+// 🏅 - sports_medal
+"72079375.name" = "medal";
+"72079375.tags" = "medal | sport";
+// 🥇 - first_place_medal
+"72078755.name" = "kuldmedal";
+"72078755.tags" = "esimene | kuld | kuldmedal | medal";
+// 🥈 - second_place_medal
+"72078760.name" = "hõbemedal";
+"72078760.tags" = "hõbe | hõbemedal | medal | teine";
+// 🥉 - third_place_medal
+"72078765.name" = "pronksmedal";
+"72078765.tags" = "kolmas | medal | pronks | pronksmedal";
+// ⚽ - soccer
+"30522.name" = "jalgpall";
+"30522.tags" = "jalgpall | pall";
+// ⚾ - baseball
+"30525.name" = "pesapall";
+"30525.tags" = "pall | pesapall";
+// 🥎 - softball
+"72078790.name" = "pehmepall";
+"72078790.tags" = "kindad | pall | pehmepall | vise";
+// 🏀 - basketball
+"72079350.name" = "korvpall";
+"72079350.tags" = "korvpall | pall";
+// 🏐 - volleyball
+"72079430.name" = "võrkpall";
+"72079430.tags" = "mäng | pall | võrkpall";
+// 🏈 - football
+"72079390.name" = "Ameerika jalgpall";
+"72079390.tags" = "Ameerika | jalgpall | pall";
+// 🏉 - rugby_football
+"72079395.name" = "ragbipall";
+"72079395.tags" = "jalgpall | pall | ragbi | ragbipall";
+// 🎾 - tennis
+"72079340.name" = "tennis";
+"72079340.tags" = "pall | reket | tennis | tennisepall";
+// 🥏 - flying_disc
+"72078795.name" = "visketaldrik";
+"72078795.tags" = "taldrikulennutamine | visketaldrik";
+// 🎳 - bowling
+"72079285.name" = "keegel";
+"72079285.tags" = "keegel | kurikas | kuul | mäng";
+// 🏏 - cricket_bat_and_ball
+"72079425.name" = "kriket";
+"72079425.tags" = "kriket | kurikas | mäng | pall";
+// 🏑 - field_hockey_stick_and_ball
+"72079435.name" = "maahoki";
+"72079435.tags" = "maahoki | maahokikepp | mäng | pall | väljak";
+// 🏒 - ice_hockey_stick_and_puck
+"72079440.name" = "jäähoki";
+"72079440.tags" = "jää | jäähoki | jäähokikepp | jäähokikepp ja litter | litter | mäng";
+// 🥍 - lacrosse
+"72078785.name" = "kahvpall";
+"72078785.tags" = "kahvpall | kahvpallikepp | kepp | pall | värav";
+// 🏓 - table_tennis_paddle_and_ball
+"72079445.name" = "pingpong";
+"72079445.tags" = "lauatennis | mäng | pall | pingpong | reket";
+// 🏸 - badminton_racquet_and_shuttlecock
+"72079630.name" = "sulgpall";
+"72079630.tags" = "mäng | reket | sulgpall";
+// 🥊 - boxing_glove
+"72078770.name" = "poksikinnas";
+"72078770.tags" = "kinnas | poks | poksikinnas | sport";
+// 🥋 - martial_arts_uniform
+"72078775.name" = "võitluskunstide riietus";
+"72078775.tags" = "džuudo | karate | riietus | võitluskunstid | võitluskunstide riietus";
+// 🥅 - goal_net
+"72078745.name" = "väravavõrk";
+"72078745.tags" = "sport | värav | väravavõrk | võrk";
+// ⛳ - golf
+"30684.name" = "golfilipp";
+"30684.tags" = "auk | golf | golfilipp";
+// 🎣 - fishing_pole_and_fish
+"72079205.name" = "õng";
+"72079205.tags" = "kala | õng";
+// 🤿 - diving_mask
+"72078715.name" = "sukeldumismask";
+"72078715.tags" = "akvalang | snorgeldamine | sukeldumine | sukeldumismask";
+// 🎽 - running_shirt_with_sash
+"72079335.name" = "jooksusärk";
+"72079335.tags" = "jooks | jooksusärk | särk";
+// 🎿 - ski
+"72079345.name" = "suusad";
+"72079345.tags" = "lumi | suusad | suusk";
+// 🛷 - sled
+"72079630.name" = "kelk";
+"72079630.tags" = "kelk | regi | saan";
+// 🥌 - curling_stone
+"72078780.name" = "jääkeegli kivi";
+"72078780.tags" = "jääkeegli kivi | kivi | mäng";
+// 🎯 - dart
+"72079265.name" = "täistabamus";
+"72079265.tags" = "noolemäng | sihtmärk | tabamus | täistabamus";
+// 🪀 - yo-yo
+"72080320.name" = "jojo";
+"72080320.tags" = "edasi-tagasi | jojo | keerlemine | ketas | mänguasi";
+// 🪁 - kite
+"72080325.name" = "tuulelohe";
+"72080325.tags" = "lennutamine | lohe | tuul | tuulelohe";
+// 🔫 - gun
+"72077330.name" = "veepüstol";
+"72077330.tags" = "püstol | relv | revolver | tööriist | veepüstol";
+// 🎱 - 8ball
+"72079275.name" = "piljardikuul";
+"72079275.tags" = "8 | kuul | mäng | piljard | piljardikuul";
+// 🔮 - crystal_ball
+"72077345.name" = "kristallkuul";
+"72077345.tags" = "ennustamine | kristallkuul | muinasjutt | tööriist";
+// 🪄 - magic_wand
+"72080340.name" = "võlukepp";
+"72080340.tags" = "maagia | nõid | võlukepp | võlur";
+// 🎮 - video_game
+"72079260.name" = "videomäng";
+"72079260.tags" = "mäng | pult | videomäng";
+// 🎰 - slot_machine
+"72079270.name" = "mänguautomaat";
+"72079270.tags" = "automaat | mäng | mänguautomaat";
+// 🎲 - game_die
+"72079280.name" = "täring";
+"72079280.tags" = "mäng | täring";
+// 🧩 - jigsaw
+"72079565.name" = "pusletükk";
+"72079565.tags" = "pusle | pusletükk | tükk | ühendamine";
+// 🧸 - teddy_bear
+"72079640.name" = "mängukaru";
+"72079640.tags" = "lelu | mänguasi | mängukaru | pehme | plüüs";
+// 🪅 - pinata
+"72080345.name" = "piñata";
+"72080345.tags" = "peomäng | pidu | piñata";
+// 🪩 - mirror_ball
+"72080525.name" = "diskokera";
+"72080525.tags" = "disko | diskokera | pidu | sära | tants";
+// 🪆 - nesting_dolls
+"72080350.name" = "matrjoška";
+"72080350.tags" = "matrjoška | matrjoškad | nukk | vene";
+// 🃏 - black_joker
+"72075585.name" = "jokker";
+"72075585.tags" = "jokker | kaart | mäng";
+// 🀄 - mahjong
+"72074570.name" = "mahjongi punane draakon";
+"72074570.tags" = "mahjong | mahjongi punane draakon | mäng | punane";
+// 🎴 - flower_playing_cards
+"72079290.name" = "mängukaardid";
+"72079290.tags" = "kaart | lill | mäng | mängukaardid";
+// 🎭 - performing_arts
+"72079255.name" = "lavakunst";
+"72079255.tags" = "kunst | lava | lavakunst | mask | teater";
+// 🎨 - art
+"72079230.name" = "kunstniku palett";
+"72079230.tags" = "kunst | kunstniku palett | maal | muuseum | palett";
+// 🧵 - thread
+"72079625.name" = "niit";
+"72079625.tags" = "niidirull | niit | nõel | õmblemine";
+// 🪡 - sewing_needle
+"72080485.name" = "õmblusnõel";
+"72080485.tags" = "nõel | õmblemine | õmblused | õmblusnõel | rätsep | tikkimine";
+// 🧶 - yarn
+"72079630.name" = "lõng";
+"72079630.tags" = "heegeldamine | kera | kudumine | lõng | lõngakera";
+// 🪢 - knot
+"72080490.name" = "sõlm";
+"72080490.tags" = "keerd | köis | nöör | siduma | sõlm";
+// 👓 - eyeglasses
+"72076250.name" = "prillid";
+"72076250.tags" = "mood | prillid | silm";
+// 🥽 - goggles
+"72079025.name" = "kaitseprillid";
+"72079025.tags" = "kaitseprillid | keevitamine | silmakaitse | ujumine";
+// 🥼 - lab_coat
+"72079020.name" = "laborikittel";
+"72079020.tags" = "arst | katse | laborant | laborikittel | teadlane";
+// 🦺 - safety_vest
+"72079330.name" = "ohutusvest";
+"72079330.tags" = "hädaolukord | ohutus | ohutusvest | vest";
+// 👔 - necktie
+"72076255.name" = "lips";
+"72076255.tags" = "lips | riided";
+// 👕 - shirt
+"72076260.name" = "T-särk";
+"72076260.tags" = "riided | särk | t-särk | T-särk";
+// 👖 - jeans
+"72076265.name" = "teksad";
+"72076265.tags" = "püksid | riided | teksad";
+// 🧣 - scarf
+"72079535.name" = "sall";
+"72079535.tags" = "kael | sall";
+// 🧤 - gloves
+"72079540.name" = "kindad";
+"72079540.tags" = "käsi | kindad";
+// 🧥 - coat
+"72079545.name" = "mantel";
+"72079545.tags" = "jakk | mantel";
+// 🧦 - socks
+"72079550.name" = "sokid";
+"72079550.tags" = "sokid | sukk";
+// 👗 - dress
+"72076270.name" = "kleit";
+"72076270.tags" = "kleit | riided";
+// 👘 - kimono
+"72076275.name" = "kimono";
+"72076275.tags" = "kimono | riided";
+// 🥻 - sari
+"72079015.name" = "sari";
+"72079015.tags" = "kleit | rõivas | sari";
+// 🩱 - one-piece_swimsuit
+"72080245.name" = "ujumistrikoo";
+"72080245.tags" = "trikoo | ujumiskostüüm | ujumistrikoo";
+// 🩲 - briefs
+"72080250.name" = "ujumispüksid";
+"72080250.tags" = "aluspesu | ujumiskostüüm | ujumispüksid | ujumisriie";
+// 🩳 - shorts
+"72080255.name" = "šortsid";
+"72080255.tags" = "aluspesu | lühikesed püksid | šortsid | ujumisriie";
+// 👙 - bikini
+"72076280.name" = "bikiinid";
+"72076280.tags" = "bikiinid | riided | ujumine";
+// 👚 - womans_clothes
+"72076285.name" = "naisteriided";
+"72076285.tags" = "naine | naisteriided | riided";
+// 🪭 - folding_hand_fan
+"72080545.name" = "volditav lehvik";
+"72080545.tags" = "häbelik | jahutus | kuum | tants | tuul | volditav lehvik";
+// 👛 - purse
+"72076290.name" = "ridikül";
+"72076290.tags" = "kott | münt | rahakott | ridikül";
+// 👜 - handbag
+"72076295.name" = "käekott";
+"72076295.tags" = "käekott | kott | riided";
+// 👝 - pouch
+"72076300.name" = "kott";
+"72076300.tags" = "kott | riided";
+// 🎒 - school_satchel
+"72079120.name" = "ranits";
+"72079120.tags" = "kool | kott | ranits";
+// 🩴 - thong_sandal
+"72080260.name" = "varbavahesandaalid";
+"72080260.tags" = "plätud | rannajalatsid | rannasandaalid | sandaalid | varbavahesandaalid";
+// 👞 - mans_shoe
+"72076305.name" = "meesteking";
+"72076305.tags" = "king | mees | meesteking | riided";
+// 👟 - athletic_shoe
+"72076310.name" = "jooksuking";
+"72076310.tags" = "jooksuking | king | riided | sport | toss";
+// 🥾 - hiking_boot
+"72079030.name" = "matkasaabas";
+"72079030.tags" = "matk | matkaja | matkamine | matkasaabas | saabas | seljakotimatk";
+// 🥿 - womans_flat_shoe
+"72079035.name" = "madal king";
+"72079035.tags" = "baleriina | madal king | paelteta king | sussking";
+// 👠 - high_heel
+"72076315.name" = "kõrge kontsaga king";
+"72076315.tags" = "king | konts | kõrge kontsaga king | naine | riided";
+// 👡 - sandal
+"72076320.name" = "naistesandaal";
+"72076320.tags" = "king | naine | naistesandaal | riided | sandaal";
+// 🩰 - ballet_shoes
+"72080240.name" = "balletikingad";
+"72080240.tags" = "balletikingad | ballett | tants";
+// 👢 - boot
+"72076325.name" = "naistesaabas";
+"72076325.tags" = "king | naine | naistesaabas | riided | saabas";
+// 🪮 - hair_pick
+"72080550.name" = "juuksehark";
+"72080550.tags" = "afro | hark | juuksed | juuksehark | kamm";
+// 👑 - crown
+"72076240.name" = "kroon";
+"72076240.tags" = "kroon | kuninganna | kuningas | riided";
+// 👒 - womans_hat
+"72076245.name" = "naistekübar";
+"72076245.tags" = "kübar | müts | naine | naistekübar | riided";
+// 🎩 - tophat
+"72079235.name" = "torukübar";
+"72079235.tags" = "kübar | müts | riided | torukübar";
+// 🎓 - mortar_board
+"72079125.name" = "koolilõpumüts";
+"72079125.tags" = "koolilõpumüts | lõpetamine | müts | riided";
+// 🧢 - billed_cap
+"72079530.name" = "nokkmüts";
+"72079530.tags" = "nokkmüts | pesapallimüts";
+// 🪖 - military_helmet
+"72080430.name" = "sõdurikiiver";
+"72080430.tags" = "armee | kiiver | sõdur | sõdurikiiver | sõjavägi";
+// 📿 - prayer_beads
+"72077110.name" = "palvehelmed";
+"72077110.tags" = "helmed | kaelakee | palvehelmed | palvetamine | riided | usk";
+// 💄 - lipstick
+"72076495.name" = "huulepulk";
+"72076495.tags" = "huulepulk | kosmeetika | meik";
+// 💍 - ring
+"72076540.name" = "sõrmus";
+"72076540.tags" = "romantika | sõrmus | teemant";
+// 💎 - gem
+"72076545.name" = "kalliskivi";
+"72076545.tags" = "juveel | kalliskivi | romantika | teemant";
+// 🔇 - mute
+"72077150.name" = "vaigistatud kõlar";
+"72077150.tags" = "heli | kõlar | vaigistatud kõlar | vaikne";
+// 🔈 - speaker
+"72077155.name" = "vaikse heliga kõlar";
+"72077155.tags" = "heli | vaikse heliga kõlar";
+// 🔉 - sound
+"72077160.name" = "poolvalju heliga kõlar";
+"72077160.tags" = "heli | kõlar | poolvalju heliga kõlar | vaikne";
+// 🔊 - loud_sound
+"72077165.name" = "valju heliga kõlar";
+"72077165.tags" = "heli | kõlar | vali | valju heliga kõlar";
+// 📢 - loudspeaker
+"72076965.name" = "valjuhääldi";
+"72076965.tags" = "avalik | kõne | vali | valjuhääldi";
+// 📣 - mega
+"72076970.name" = "megafon";
+"72076970.tags" = "kõne | megafon";
+// 📯 - postal_horn
+"72077030.name" = "postisarv";
+"72077030.tags" = "post | postisarv | sarv";
+// 🔔 - bell
+"72077215.name" = "kelluke";
+"72077215.tags" = "kell | kelluke";
+// 🔕 - no_bell
+"72077220.name" = "vaigistatud kelluke";
+"72077220.tags" = "keelatud | kelluke | kelluke keelumärgiga | vaigistatud kelluke | vaigistus | vaikne | vaikus";
+// 🎼 - musical_score
+"72079330.name" = "noodijoonestik";
+"72079330.tags" = "muusika | noodijoonestik | noot";
+// 🎵 - musical_note
+"72079295.name" = "noot";
+"72079295.tags" = "muusika | noot";
+// 🎶 - notes
+"72079300.name" = "noodid";
+"72079300.tags" = "muusika | noodid | noot";
+// 🎤 - microphone
+"72079210.name" = "mikrofon";
+"72079210.tags" = "karaoke | mikrofon";
+// 🎧 - headphones
+"72079225.name" = "kõrvaklapid";
+"72079225.tags" = "kõrvaklapid";
+// 📻 - radio
+"72077090.name" = "raadio";
+"72077090.tags" = "raadio";
+// 🎷 - saxophone
+"72079305.name" = "saksofon";
+"72079305.tags" = "muusika | pill | saksofon";
+// 🪗 - accordion
+"72080435.name" = "akordion";
+"72080435.tags" = "akordion | lõõts | lõõtspill";
+// 🎸 - guitar
+"72079310.name" = "kitarr";
+"72079310.tags" = "kitarr | muusika | pill";
+// 🎹 - musical_keyboard
+"72079315.name" = "klahvpill";
+"72079315.tags" = "klahvpill | klaver | muusika | pill";
+// 🎺 - trumpet
+"72079320.name" = "trompet";
+"72079320.tags" = "muusika | pill | trompet";
+// 🎻 - violin
+"72079325.name" = "viiul";
+"72079325.tags" = "muusika | pill | viiul";
+// 🪕 - banjo
+"72080425.name" = "bandžo";
+"72080425.tags" = "bandžo | keelpill | muusika";
+// 🥁 - drum_with_drumsticks
+"72078725.name" = "trumm";
+"72078725.tags" = "muusika | trumm | trummipulgad";
+// 🪘 - long_drum
+"72080440.name" = "aafrika trumm";
+"72080440.tags" = "aafrika | djembe | rütm | trumm";
+// 🪇 - maracas
+"72080355.name" = "marakas";
+"72080355.tags" = "instrument | kõristi | löökpill | marakas | muusika | raputus";
+// 🪈 - flute
+"72080360.name" = "flööt";
+"72080360.tags" = "flööt | muusika | puhkpill | puupuhkpill | vile | vilepill";
+// 📱 - iphone
+"72077040.name" = "mobiiltelefon";
+"72077040.tags" = "mobiil | mobiiltelefon | telefon";
+// 📲 - calling
+"72077045.name" = "noolega mobiiltelefon";
+"72077045.tags" = "kõne | mobiil | nool | noolega mobiiltelefon | telefon";
+// 📞 - telephone_receiver
+"72076945.name" = "telefonitoru";
+"72076945.tags" = "telefon | telefonitoru | toru";
+// 📟 - pager
+"72076950.name" = "piipar";
+"72076950.tags" = "peiler | piipar";
+// 📠 - fax
+"72076955.name" = "faksimasin";
+"72076955.tags" = "faks | faksimasin | masin";
+// 🔋 - battery
+"72077170.name" = "aku";
+"72077170.tags" = "aku | patarei";
+// 🪫 - low_battery
+"72080535.name" = "aku tühjeneb";
+"72080535.tags" = "aku tühjeneb | elektroonika | vähe energiat";
+// 🔌 - electric_plug
+"72077175.name" = "elektripistik";
+"72077175.tags" = "elekter | elektripistik | pistik";
+// 💻 - computer
+"72076770.name" = "sülearvuti";
+"72076770.tags" = "arvuti | sülearvuti";
+// 💽 - minidisc
+"72076780.name" = "arvutiketas";
+"72076780.tags" = "arvuti | arvutiketas | ketas | optiline";
+// 💾 - floppy_disk
+"72076785.name" = "diskett";
+"72076785.tags" = "arvuti | diskett | ketas";
+// 💿 - cd
+"72076790.name" = "optiline ketas";
+"72076790.tags" = "arvuti | CD | DVD | ketas | optiline";
+// 📀 - dvd
+"72076795.name" = "DVD";
+"72076795.tags" = "arvuti | blu-ray | DVD | ketas | optiline";
+// 🧮 - abacus
+"72079590.name" = "arvelaud";
+"72079590.tags" = "arvelaud | arvutamine";
+// 🎥 - movie_camera
+"72079215.name" = "filmikaamera";
+"72079215.tags" = "film | filmikaamera | kaamera | video";
+// 🎬 - clapper
+"72079250.name" = "klapptahvel";
+"72079250.tags" = "film | klapptahvel | video";
+// 📺 - tv
+"72077085.name" = "teler";
+"72077085.tags" = "teler | tv | video";
+// 📷 - camera
+"72077070.name" = "kaamera";
+"72077070.tags" = "kaamera | video";
+// 📸 - camera_with_flash
+"72077075.name" = "välguga kaamera";
+"72077075.tags" = "foto | kaamera | pildistamine | välguga kaamera | välk";
+// 📹 - video_camera
+"72077080.name" = "videokaamera";
+"72077080.tags" = "kaamera | video | videokaamera";
+// 📼 - vhs
+"72077095.name" = "videokassett";
+"72077095.tags" = "kassett | video | videokassett";
+// 🔍 - mag
+"72077180.name" = "vasakule kallutatud luup";
+"72077180.tags" = "otsi | suurendusklaas | tööriist | vasakule kallutatud luup";
+// 🔎 - mag_right
+"72077185.name" = "paremale kallutatud luup";
+"72077185.tags" = "otsi | paremale kallutatud luup | suurendusklaas | tööriist";
+// 💡 - bulb
+"72076640.name" = "lamp";
+"72076640.tags" = "elekter | idee | lamp | pirn | valgus";
+// 🔦 - flashlight
+"72077305.name" = "taskulamp";
+"72077305.tags" = "elekter | taskulamp | tööriist | valgus";
+// 🏮 - izakaya_lantern
+"72079580.name" = "punane paberlatern";
+"72079580.tags" = "lamp | latern | punane | punane paberlatern | valgus";
+// 🪔 - diya_lamp
+"72080420.name" = "diya-lamp";
+"72080420.tags" = "diya | diya-lamp | lamp | õli";
+// 📔 - notebook_with_decorative_cover
+"72076895.name" = "dekoratiivse kaanega märkmik";
+"72076895.tags" = "dekoratiivse kaanega märkmik | kaaned | märkmik | raamat";
+// 📕 - closed_book
+"72076900.name" = "suletud raamat";
+"72076900.tags" = "raamat | suletud";
+// 📖 - book
+"72076905.name" = "avatud raamat";
+"72076905.tags" = "avatud | raamat";
+// 📗 - green_book
+"72076910.name" = "roheline raamat";
+"72076910.tags" = "raamat | roheline";
+// 📘 - blue_book
+"72076915.name" = "sinine raamat";
+"72076915.tags" = "raamat | sinine";
+// 📙 - orange_book
+"72076920.name" = "oranž raamat";
+"72076920.tags" = "oranž | raamat";
+// 📚 - books
+"72076925.name" = "raamatud";
+"72076925.tags" = "raamat | raamatud";
+// 📓 - notebook
+"72076890.name" = "päevik";
+"72076890.tags" = "päevik | raamat";
+// 📒 - ledger
+"72076885.name" = "arveraamat";
+"72076885.tags" = "arve | arveraamat | raamat";
+// 📃 - page_with_curl
+"72076810.name" = "kaardunud paberileht";
+"72076810.tags" = "dokument | kaardunud paberileht | leht";
+// 📜 - scroll
+"72076935.name" = "käsikiri";
+"72076935.tags" = "käsikiri | paber";
+// 📄 - page_facing_up
+"72076815.name" = "paberilehe eestvaade";
+"72076815.tags" = "dokument | leht | paberilehe eestvaade";
+// 📰 - newspaper
+"72077035.name" = "ajaleht";
+"72077035.tags" = "ajaleht | uudised";
+// 📑 - bookmark_tabs
+"72076880.name" = "järjehoidjad";
+"72076880.tags" = "järjehoidja | järjehoidjad | märgis | marker";
+// 🔖 - bookmark
+"72077225.name" = "järjehoidja";
+"72077225.tags" = "järjehoidja";
+// 💰 - moneybag
+"72076715.name" = "rahapaun";
+"72076715.tags" = "dollar | kott | raha | rahakott | rahapaun";
+// 🪙 - coin
+"72080445.name" = "münt";
+"72080445.tags" = "hõbe | kuld | metall | münt | raha | varandus";
+// 💴 - yen
+"72076735.name" = "jeeni rahatäht";
+"72076735.tags" = "jeen | jeeni rahatäht | pank | raha | rahatäht | valuuta";
+// 💵 - dollar
+"72076740.name" = "dollari rahatäht";
+"72076740.tags" = "dollar | dollari rahatäht | pank | raha | rahatäht | valuuta";
+// 💶 - euro
+"72076745.name" = "euro rahatäht";
+"72076745.tags" = "euro | pank | raha | rahatäht | valuuta";
+// 💷 - pound
+"72076750.name" = "naela rahatäht";
+"72076750.tags" = "nael | naela rahatäht | naelsterling | pank | rahatäht | valuuta";
+// 💸 - money_with_wings
+"72076755.name" = "tiibadega raha";
+"72076755.tags" = "dollar | pank | raha | tiibadega raha | tiivad";
+// 💳 - credit_card
+"72076730.name" = "krediitkaart";
+"72076730.tags" = "kaart | krediit | krediitkaart | pank | raha";
+// 🧾 - receipt
+"72079670.name" = "kviitung";
+"72079670.tags" = "arvepidamine | kviitung | raamatupidamine | tõend";
+// 💹 - chart
+"72076760.name" = "tõusev graafik jeenisümboliga";
+"72076760.tags" = "graafik | jeen | kasv | tõusev graafik jeenisümboliga | turg | valuuta";
+// 📧 - e-mail
+"72076990.name" = "meilisõnum";
+"72076990.tags" = "kiri | meil | meilisõnum | ümbrik";
+// 📨 - incoming_envelope
+"72076995.name" = "sissetulev ümbrik";
+"72076995.tags" = "e-post | kiri | meil | sissetulev ümbrik | ümbrik";
+// 📩 - envelope_with_arrow
+"72077000.name" = "noolega ümbrik";
+"72077000.tags" = "e-kiri | nool | noolega ümbrik | saadetud | ümbrik";
+// 📤 - outbox_tray
+"72076975.name" = "väljaminev post";
+"72076975.tags" = "alus | kast | kiri | post | väljaminev post";
+// 📥 - inbox_tray
+"72076980.name" = "sissetulev post";
+"72076980.tags" = "alus | kast | kiri | post | sissetulev post";
+// 📦 - package
+"72076985.name" = "pakk";
+"72076985.tags" = "kast | pakk";
+// 📫 - mailbox
+"72077010.name" = "suletud postkast tõstetud lipuga";
+"72077010.tags" = "postkast | suletud | suletud postkast tõstetud lipuga";
+// 📪 - mailbox_closed
+"72077005.name" = "suletud postkast langetatud lipuga";
+"72077005.tags" = "postkast | suletud | suletud postkast langetatud lipuga";
+// 📬 - mailbox_with_mail
+"72077015.name" = "avatud postkast tõstetud lipuga";
+"72077015.tags" = "avatud | avatud postkast tõstetud lipuga | postkast";
+// 📭 - mailbox_with_no_mail
+"72077020.name" = "avatud postkast langetatud lipuga";
+"72077020.tags" = "avatud | avatud postkast langetatud lipuga | postkast";
+// 📮 - postbox
+"72077025.name" = "postkast";
+"72077025.tags" = "post | postkast";
+// 📝 - memo
+"72076940.name" = "memo";
+"72076940.tags" = "märge | memo | pliiats";
+// 💼 - briefcase
+"72076775.name" = "portfell";
+"72076775.tags" = "kohver | portfell";
+// 📁 - file_folder
+"72076800.name" = "kaust";
+"72076800.tags" = "dokument | fail | kaust";
+// 📂 - open_file_folder
+"72076805.name" = "avatud kaust";
+"72076805.tags" = "avatud | dokument | fail | kaust";
+// 📅 - date
+"72076820.name" = "kalender";
+"72076820.tags" = "kalender | kuupäev";
+// 📆 - calendar
+"72076825.name" = "rebitav kalender";
+"72076825.tags" = "kalender | kuupäev | rebitav kalender";
+// 📇 - card_index
+"72076830.name" = "kataloog";
+"72076830.tags" = "kaart | kataloog | register";
+// 📈 - chart_with_upwards_trend
+"72076835.name" = "tõusev graafik";
+"72076835.tags" = "graafik | kasv | tendents | tõusev graafik | üles";
+// 📉 - chart_with_downwards_trend
+"72076840.name" = "langev graafik";
+"72076840.tags" = "alla | graafik | langev graafik | langus | tendents";
+// 📊 - bar_chart
+"72076845.name" = "tulpdiagramm";
+"72076845.tags" = "diagramm | graafik | tulp | tulpdiagramm";
+// 📋 - clipboard
+"72076850.name" = "kirjutamisalus";
+"72076850.tags" = "alus | kirjutamisalus | leht | paber";
+// 📌 - pushpin
+"72076855.name" = "nööpnõel";
+"72076855.tags" = "nõel | nööpnõel";
+// 📍 - round_pushpin
+"72076860.name" = "ümara peaga nööpnõel";
+"72076860.tags" = "nõel | nööpnõel | ümara peaga nööpnõel";
+// 📎 - paperclip
+"72076865.name" = "kirjaklamber";
+"72076865.tags" = "kirjaklamber | klamber";
+// 📏 - straight_ruler
+"72076870.name" = "sirge joonlaud";
+"72076870.tags" = "sirge | sirge joonlaud";
+// 📐 - triangular_ruler
+"72076875.name" = "kolmnurkne joonlaud";
+"72076875.tags" = "joonlaud | kolmnurk | kolmnurkne joonlaud";
+// 🔒 - lock
+"72077205.name" = "lukk";
+"72077205.tags" = "lukk | lukus | suletud";
+// 🔓 - unlock
+"72077210.name" = "avatud lukk";
+"72077210.tags" = "avatud | lukk";
+// 🔏 - lock_with_ink_pen
+"72077190.name" = "lukk ja pastakas";
+"72077190.tags" = "lukk | lukk ja pastakas | lukk ja sulepea | privaatsus | sulepea | tint";
+// 🔐 - closed_lock_with_key
+"72077195.name" = "suletud lukk võtmega";
+"72077195.tags" = "lukk | lukus | suletud | suletud lukk võtmega | võti";
+// 🔑 - key
+"72077200.name" = "võti";
+"72077200.tags" = "lukk | parool | võti";
+// 🔨 - hammer
+"72077315.name" = "haamer";
+"72077315.tags" = "haamer | tööriist";
+// 🪓 - axe
+"72080415.name" = "kirves";
+"72080415.tags" = "kirves | lõhkumine | puud | raiumine";
+// 💣 - bomb
+"72076650.name" = "pomm";
+"72076650.tags" = "koomiks | pomm";
+// 🪃 - boomerang
+"72080335.name" = "bumerang";
+"72080335.tags" = "austraalia | bumerang | tagasilend | tagasipöördumine";
+// 🏹 - bow_and_arrow
+"72079635.name" = "vibu ja nool";
+"72079635.tags" = "ambur | nool | relv | vibu | vibu ja nool";
+// 🪚 - carpentry_saw
+"72080450.name" = "käsisaag";
+"72080450.tags" = "käsisaag | puit | puusepp | saag | tööriist";
+// 🔧 - wrench
+"72077310.name" = "mutrivõti";
+"72077310.tags" = "mutrivõti | tööriist";
+// 🪛 - screwdriver
+"72080455.name" = "kruvikeeraja";
+"72080455.tags" = "kruvi | kruvikeeraja | tööriist";
+// 🔩 - nut_and_bolt
+"72077320.name" = "polt ja mutter";
+"72077320.tags" = "mutter | polt | polt ja mutter | tööriist";
+// 🦯 - probing_cane
+"72079275.name" = "valge kepp";
+"72079275.tags" = "kohalejõudmine | ligipääs | pime | valge kepp";
+// 🔗 - link
+"72077230.name" = "lüli";
+"72077230.tags" = "lüli";
+// 🪝 - hook
+"72080465.name" = "konks";
+"72080465.tags" = "kinnitamine | konks | kõver | püük | tõstmine";
+// 🧰 - toolbox
+"72079600.name" = "tööriistakast";
+"72079600.tags" = "kast | laegas | tööriistad | tööriistakast";
+// 🧲 - magnet
+"72079610.name" = "magnet";
+"72079610.tags" = "atraktsioon | hobuseraud | magnet";
+// 🪜 - ladder
+"72080460.name" = "redel";
+"72080460.tags" = "aste | redel | ronima | trepp";
+// 🧪 - test_tube
+"72079570.name" = "katseklaas";
+"72079570.tags" = "katse | katseklaas | keemia | keemik | labor | teadus";
+// 🧫 - petri_dish
+"72079575.name" = "Petri tass";
+"72079575.tags" = "bakterid | bioloog | bioloogia | kultuur | labor | Petri tass";
+// 🧬 - dna
+"72079580.name" = "DNA";
+"72079580.tags" = "bioloog | DNA | elu | evolutsioon | geen | geneetika";
+// 🔬 - microscope
+"72077335.name" = "mikroskoop";
+"72077335.tags" = "mikroskoop | tööriist";
+// 🔭 - telescope
+"72077340.name" = "teleskoop";
+"72077340.tags" = "teleskoop | tööriist";
+// 📡 - satellite_antenna
+"72076960.name" = "satelliitantenn";
+"72076960.tags" = "antenn | satelliit | satelliitantenn | taldrik";
+// 💉 - syringe
+"72076520.name" = "süstal";
+"72076520.tags" = "arst | haigus | nõel | ravim | süstal";
+// 🩸 - drop_of_blood
+"72080280.name" = "veretilk";
+"72080280.tags" = "meditsiin | menstruatsioon | veredoonorlus | veretilk";
+// 💊 - pill
+"72076525.name" = "tablett";
+"72076525.tags" = "arst | haige | ravim | tablett";
+// 🩹 - adhesive_bandage
+"72080285.name" = "plaaster";
+"72080285.tags" = "meditsiin | plaaster";
+// 🩼 - crutch
+"72080300.name" = "kark";
+"72080300.tags" = "erivajadus | kark | kepp | liikumisabivahend | puue | valus";
+// 🩺 - stethoscope
+"72080290.name" = "stetoskoop";
+"72080290.tags" = "arst | kuuldetoru | meditsiin | stetoskoop | süda";
+// 🩻 - x-ray
+"72080295.name" = "röntgen";
+"72080295.tags" = "kondid | luud | meditsiin | röntgen | skelett";
+// 🚪 - door
+"72079245.name" = "uks";
+"72079245.tags" = "uks";
+// 🛗 - elevator
+"72079470.name" = "lift";
+"72079470.tags" = "elevaator | lift | ligipääs | tõstuk";
+// 🪞 - mirror
+"72080470.name" = "peegel";
+"72080470.tags" = "peegel | peegeldi | peegeldus";
+// 🪟 - window
+"72080475.name" = "aken";
+"72080475.tags" = "aken | avamine | läbipaistev | raam | vaade";
+// 🪑 - chair
+"72080405.name" = "tool";
+"72080405.tags" = "iste | istumine | tool";
+// 🚽 - toilet
+"72079340.name" = "WC-pott";
+"72079340.tags" = "tualett | wc | WC-pott";
+// 🪠 - plunger
+"72080480.name" = "valamupump";
+"72080480.tags" = "imipump | pump | pumpamine | ummistus | valamu | valamupump";
+// 🚿 - shower
+"72079350.name" = "dušš";
+"72079350.tags" = "dušš | vesi";
+// 🛁 - bathtub
+"72079360.name" = "vann";
+"72079360.tags" = "vann";
+// 🪤 - mouse_trap
+"72080500.name" = "hiirelõks";
+"72080500.tags" = "hiirelõks | lõks | püünis | sööt";
+// 🪒 - razor
+"72080410.name" = "habemenuga";
+"72080410.tags" = "habe | habemenuga | raseerimine | terav";
+// 🧴 - lotion_bottle
+"72079620.name" = "emulsioonipudel";
+"72079620.tags" = "emulsioon | emulsioonipudel | niisutav kreem | päevituskreem | šampoon";
+// 🧷 - safety_pin
+"72079635.name" = "haaknõel";
+"72079635.tags" = "haaknõel | mähe | punkrokk";
+// 🧹 - broom
+"72079645.name" = "luud";
+"72079645.tags" = "luud | nõid | puhastamine | pühkimine";
+// 🧺 - basket
+"72079650.name" = "korv";
+"72079650.tags" = "korv | pesu | piknik | taluelu";
+// 🧻 - roll_of_paper
+"72079655.name" = "paberirull";
+"72079655.tags" = "paberirull | paberkäterätid | tualettpaber";
+// 🪣 - bucket
+"72080495.name" = "ämber";
+"72080495.tags" = "ämber | pang";
+// 🧼 - soap
+"72079660.name" = "seep";
+"72079660.tags" = "pesemine | puhastamine | seebialus | seebivaht | seep | tükiseep";
+// 🫧 - bubbles
+"72080835.name" = "mullid";
+"72080835.tags" = "mullid | puhas | röhitsema | seep | vee all";
+// 🪥 - toothbrush
+"72080505.name" = "hambahari";
+"72080505.tags" = "hambad | hambahari | hari | hügieen | pesema | vannituba";
+// 🧽 - sponge
+"72079665.name" = "pesukäsn";
+"72079665.tags" = "imav | pesemine | pesukäsn | poorne";
+// 🧯 - fire_extinguisher
+"72079595.name" = "tulekustuti";
+"72079595.tags" = "kustutamine | summutamine | tulekustuti | tuli";
+// 🛒 - shopping_trolley
+"72079445.name" = "ostukäru";
+"72079445.tags" = "käru | ostma | ostukäru | poodlemine";
+// 🚬 - smoking
+"72079255.name" = "sigaret";
+"72079255.tags" = "sigaret | suitsetama";
+// 🪦 - headstone
+"72080510.name" = "hauakivi";
+"72080510.tags" = "hauakivi | haud | kalmistu | surnuaed";
+// 🧿 - nazar_amulet
+"72079675.name" = "Nazari amulett";
+"72079675.tags" = "amulett | helmes | kuri silm | Nazari amulett | Nazari silm | talisman";
+// 🪬 - hamsa
+"72080540.name" = "hamsa";
+"72080540.tags" = "amulett | Fatima | hamsa | kaitse | käsi | Mary | Miriam";
+// 🗿 - moyai
+"72078390.name" = "moai";
+"72078390.tags" = "kuju | moai | nägu";
+// 🪧 - placard
+"72080515.name" = "plakat";
+"72080515.tags" = "meeleavaldus | plakat | protest | silt";
+// 🪪 - identification_card
+"72080530.name" = "ID-kaart";
+"72080530.tags" = "ID | ID-kaart | litsents | luba | sisselogimisteave | turve";
+// 🏧 - atm
+"72079545.name" = "pangaautomaat";
+"72079545.tags" = "pangaautomaat | sularaha | teller";
+// 🚮 - put_litter_in_its_place
+"72079265.name" = "prügikasti silt";
+"72079265.tags" = "praht | prügikast | prügikasti silt";
+// 🚰 - potable_water
+"72079275.name" = "joogivesi";
+"72079275.tags" = "joodav | joogivesi | vesi";
+// ♿ - wheelchair
+"30336.name" = "ratastool";
+"30336.tags" = "juurdepääs | ratastool";
+// 🚹 - mens
+"72079320.name" = "meeste-WC";
+"72079320.tags" = "mees | meeste-WC | tualett | wc";
+// 🚺 - womens
+"72079325.name" = "naiste-WC";
+"72079325.tags" = "naine | naiste-WC | tualett | wc";
+// 🚻 - restroom
+"72079330.name" = "tualett";
+"72079330.tags" = "tualett | wc";
+// 🚼 - baby_symbol
+"72079335.name" = "beebi sümbol";
+"72079335.tags" = "beebi | beebi sümbol | imik | mähe";
+// 🚾 - wc
+"72079345.name" = "WC";
+"72079345.tags" = "tualett | vesi | wc | WC";
+// 🛂 - passport_control
+"72079365.name" = "passikontroll";
+"72079365.tags" = "kontroll | pass | passikontroll";
+// 🛃 - customs
+"72079370.name" = "toll";
+"72079370.tags" = "toll";
+// 🛄 - baggage_claim
+"72079375.name" = "pagasi kättesaamine";
+"72079375.tags" = "kättesaamine | pagas | pagasi kättesaamine";
+// 🛅 - left_luggage
+"72079380.name" = "hoiukapid";
+"72079380.tags" = "hoiukapid | kapp | pagas";
+// 🚸 - children_crossing
+"72079315.name" = "lapsed teel";
+"72079315.tags" = "jalakäija | laps | lapsed teel | liiklus | tänav";
+// ⛔ - no_entry
+"30591.name" = "sisenemine keelatud";
+"30591.tags" = "keelatud | liiklus | sisenemine";
+// 🚫 - no_entry_sign
+"72079250.name" = "keelatud";
+"72079250.tags" = "keelatud | sisenemine";
+// 🚳 - no_bicycles
+"72079290.name" = "jalgrattad keelatud";
+"72079290.tags" = "jalgratas | jalgrattad keelatud | keelatud | sõiduk";
+// 🚭 - no_smoking
+"72079260.name" = "suitsetamine keelatud";
+"72079260.tags" = "keelatud | suitsetamine";
+// 🚯 - do_not_litter
+"72079270.name" = "risustamine keelatud";
+"72079270.tags" = "keelatud | risustamine";
+// 🚱 - non-potable_water
+"72079280.name" = "joomiseks kõlbmatu vesi";
+"72079280.tags" = "joodav | joomiseks kõlbmatu vesi | keelatud | vesi";
+// 🚷 - no_pedestrians
+"72079310.name" = "jalakäijad keelatud";
+"72079310.tags" = "jalakäija | jalakäijad keelatud | keelatud";
+// 📵 - no_mobile_phones
+"72077060.name" = "telefonid on keelatud";
+"72077060.tags" = "ei | keelatud | mobiil | telefon | telefonid on keelatud";
+// 🔞 - underage
+"72077265.name" = "alla 18-aastastele keelatud";
+"72077265.tags" = "18 | alaealine | alla 18-aastastele keelatud | kaheksateist | keelatud | vanusepiirang";
+// 🔃 - arrows_clockwise
+"72077130.name" = "vertikaalsed nooled päripäeva";
+"72077130.tags" = "laadimine | nool | päripäeva | vertikaalsed nooled päripäeva";
+// 🔄 - arrows_counterclockwise
+"72077135.name" = "nooled vastupäeva";
+"72077135.tags" = "nool | nooled vastupäeva | vastupäeva";
+// 🔙 - back
+"72077240.name" = "nool BACK";
+"72077240.tags" = "nool | nool BACK | tagasi";
+// 🔚 - end
+"72077245.name" = "nool END";
+"72077245.tags" = "lõpp | nool | nool END";
+// 🔛 - on
+"72077250.name" = "nool ON!";
+"72077250.tags" = "märk | nool | nool ON!";
+// 🔜 - soon
+"72077255.name" = "nool SOON";
+"72077255.tags" = "nool | nool SOON | varsti";
+// 🔝 - top
+"72077260.name" = "nool TOP";
+"72077260.tags" = "nool | nool TOP | üles";
+// 🛐 - place_of_worship
+"72079435.name" = "pühakoda";
+"72079435.tags" = "palvetamine | pühakoda | usk";
+// 🕎 - menorah_with_nine_branches
+"72077505.name" = "menoraa";
+"72077505.tags" = "küünlajalg | menoraa | usk";
+// 🔯 - six_pointed_star
+"72077350.name" = "punktiga kuusnurkne täht";
+"72077350.tags" = "õnn | punktiga kuusnurkne täht | täht";
+// 🪯 - khanda
+"72080555.name" = "khanda";
+"72080555.tags" = "khanda | religioon | sikh | sikhism";
+// ♈ - aries
+"30171.name" = "Jäär";
+"30171.tags" = "Jäär | sodiaak";
+// ♉ - taurus
+"30174.name" = "Sõnn";
+"30174.tags" = "sodiaak | Sõnn";
+// ♊ - gemini
+"30177.name" = "Kaksikud";
+"30177.tags" = "Kaksikud | sodiaak";
+// ♋ - cancer
+"30180.name" = "Vähk";
+"30180.tags" = "sodiaak | Vähk";
+// ♌ - leo
+"30183.name" = "Lõvi";
+"30183.tags" = "Lõvi | sodiaak";
+// ♍ - virgo
+"30186.name" = "Neitsi";
+"30186.tags" = "Neitsi | sodiaak";
+// ♎ - libra
+"30189.name" = "Kaalud";
+"30189.tags" = "Kaalud | sodiaak";
+// ♏ - scorpius
+"30192.name" = "Skorpion";
+"30192.tags" = "Skorpion | sodiaak";
+// ♐ - sagittarius
+"30195.name" = "Ambur";
+"30195.tags" = "Ambur | sodiaak";
+// ♑ - capricorn
+"30198.name" = "Kaljukits";
+"30198.tags" = "Kaljukits | sodiaak";
+// ♒ - aquarius
+"30201.name" = "Veevalaja";
+"30201.tags" = "sodiaak | Veevalaja";
+// ♓ - pisces
+"30204.name" = "Kalad";
+"30204.tags" = "Kalad | sodiaak";
+// ⛎ - ophiuchus
+"30573.name" = "Maokandja";
+"30573.tags" = "Maokandja | sodiaak";
+// 🔀 - twisted_rightwards_arrows
+"72077115.name" = "juhusliku järjekorra nupp";
+"72077115.tags" = "juhuslik | juhusliku järjekorra nupp | nool | risti";
+// 🔁 - repeat
+"72077120.name" = "kordamisnupp";
+"72077120.tags" = "kordamisnupp | kordus | nool | päripäeva";
+// 🔂 - repeat_one
+"72077125.name" = "ühe korduse nupp";
+"72077125.tags" = "kordus | nool | päripäeva | ühe korduse nupp";
+// ⏩ - fast_forward
+"28350.name" = "edasikerimisnupp";
+"28350.tags" = "edasi | edasikerimisnupp | kerimine | nool | topelt";
+// ⏪ - rewind
+"28353.name" = "tagasikerimise nupp";
+"28353.tags" = "kerimine | kolmnurk | tagasi | tagasikerimise nupp | topelt";
+// 🔼 - arrow_up_small
+"72077415.name" = "ülesnupp";
+"72077415.tags" = "nool | nupp | üles | ülesnupp";
+// ⏫ - arrow_double_up
+"28356.name" = "kiirkerimine üles";
+"28356.tags" = "kiirkerimine üles | nool | topelt";
+// 🔽 - arrow_down_small
+"72077420.name" = "allanupp";
+"72077420.tags" = "alla | allanupp | nool | nupp";
+// ⏬ - arrow_double_down
+"28359.name" = "kiirkerimine alla";
+"28359.tags" = "alla | kiirkerimine alla | nool | topelt";
+// 🎦 - cinema
+"72079220.name" = "kino";
+"72079220.tags" = "film | kaamera | kino";
+// 🔅 - low_brightness
+"72077140.name" = "tuhmistamisnupp";
+"72077140.tags" = "eredus | hämar | tuhm | tuhmistamisnupp";
+// 🔆 - high_brightness
+"72077145.name" = "ereduse nupp";
+"72077145.tags" = "ere | eredus | ereduse nupp";
+// 📶 - signal_strength
+"72077065.name" = "levi";
+"72077065.tags" = "antenn | levi | mobiil | signaal | telefon";
+// 🛜 - wireless
+"72079495.name" = "juhtmevaba";
+"72079495.tags" = "arvuti | internet | juhtmevaba | võrk";
+// 📳 - vibration_mode
+"72077050.name" = "värinarežiim";
+"72077050.tags" = "mobiil | režiim | telefon | värin | värinarežiim";
+// 📴 - mobile_phone_off
+"72077055.name" = "väljalülitatud mobiiltelefon";
+"72077055.tags" = "mobiil | telefon | väljalülitatud mobiiltelefon | väljas";
+// ➕ - heavy_plus_sign
+"31170.name" = "liitmine";
+"31170.tags" = "+ | liitmine | matemaatika | pluss | plussmärk";
+// ➖ - heavy_minus_sign
+"31173.name" = "lahutamine";
+"31173.tags" = "- | − | lahutamine | matemaatika | miinus | miinusmärk";
+// ➗ - heavy_division_sign
+"31176.name" = "jagamine";
+"31176.tags" = "÷ | jagamine | jagamismärk | märk | matemaatika";
+// 🟰 - heavy_equals_sign
+"72080875.name" = "tugev võrdusmärk";
+"72080875.tags" = "matemaatika | tugev võrdusmärk | võrdsus";
+// ❓ - question
+"30972.name" = "punane küsimärk";
+"30972.tags" = "? | kirjavahemärk | küsimärk | küsimus | punane küsimärk";
+// ❔ - grey_question
+"30975.name" = "valge küsimärk";
+"30975.tags" = "? | kirjavahemärk | küsimärk | küsimus | valge küsimärk";
+// ❕ - grey_exclamation
+"30978.name" = "valge hüüumärk";
+"30978.tags" = "! | hüüumärk | valge hüüumärk";
+// ❗ - exclamation
+"30984.name" = "punane hüüumärk";
+"30984.tags" = "! | hüüumärk | kirjavahemärk | punane hüüumärk";
+// 💱 - currency_exchange
+"72076720.name" = "valuutavahetus";
+"72076720.tags" = "pank | raha | vahetus | valuuta | valuutavahetus";
+// 💲 - heavy_dollar_sign
+"72076725.name" = "suur dollarimärk";
+"72076725.tags" = "dollar | raha | suur dollarimärk | valuuta";
+// 🔱 - trident
+"72077360.name" = "kolmhargi sümbol";
+"72077360.tags" = "ankur | embleem | kolmhargi sümbol | kolmhark | laev";
+// 📛 - name_badge
+"72076930.name" = "nimesilt";
+"72076930.tags" = "märk | nimesilt | nimi";
+// 🔰 - beginner
+"72077355.name" = "algaja sümbol";
+"72077355.tags" = "algaja | algaja sümbol | kollane | leht | roheline";
+// ⭕ - o
+"34050.name" = "seest tühi punane ringjoon";
+"34050.tags" = "o | rõngas | seest tühi punane ringjoon | suur ringjoon";
+// ✅ - white_check_mark
+"30738.name" = "märkenupp";
+"30738.tags" = "märge | märkenupp | suur valge märge";
+// ❌ - x
+"30951.name" = "rist";
+"30951.tags" = "× | ei | korrutamine | korrutusmärk | rist | x";
+// ❎ - negative_squared_cross_mark
+"30957.name" = "korrutusmärgiga nupp";
+"30957.tags" = "× | korrutusmärgiga nupp | märk | ruut | x";
+// ➰ - curly_loop
+"31251.name" = "silmus";
+"31251.tags" = "lokk | silmus";
+// ➿ - loop
+"31296.name" = "topeltsilmus";
+"31296.tags" = "silmus | topelt | topeltsilmus";
+// 🔠 - capital_abcd
+"72077275.name" = "ladina suurtähed";
+"72077275.tags" = "abcd | ladina | suurtähed | tähed";
+// 🔡 - abcd
+"72077280.name" = "ladina väiketähed";
+"72077280.tags" = "abcd | ladina | tähed | väiketähed";
+// 🔢 - 1234
+"72077285.name" = "numbrid";
+"72077285.tags" = "1234 | numbrid";
+// 🔣 - symbols
+"72077290.name" = "sümbolid";
+"72077290.tags" = "sisestus | sümbolid";
+// 🔤 - abc
+"72077295.name" = "ladina tähed";
+"72077295.tags" = "abc | ladina | tähed | tähestik";
+// 🆎 - ab
+"72076540.name" = "nupp AB (veregrupp)";
+"72076540.tags" = "ab | nupp AB (veregrupp) | veri";
+// 🆑 - cl
+"72076555.name" = "nupp CL";
+"72076555.tags" = "cl | nupp CL";
+// 🆒 - cool
+"72076560.name" = "nupp COOL";
+"72076560.tags" = "lahe | nupp COOL";
+// 🆓 - free
+"72076565.name" = "nupp FREE";
+"72076565.tags" = "nupp FREE | tasuta";
+// 🆔 - id
+"72076570.name" = "nupp ID";
+"72076570.tags" = "id | identiteet | nupp ID";
+// 🆕 - new
+"72076575.name" = "nupp NEW";
+"72076575.tags" = "nupp NEW | uus";
+// 🆖 - ng
+"72076580.name" = "nupp NG";
+"72076580.tags" = "ng | nupp NG";
+// 🆗 - ok
+"72076585.name" = "nupp OK";
+"72076585.tags" = "nupp OK | ok";
+// 🆘 - sos
+"72076590.name" = "nupp SOS";
+"72076590.tags" = "abi | appi | nupp SOS | sos";
+// 🆙 - up
+"72076595.name" = "nupp UP!";
+"72076595.tags" = "märk | nupp UP! | üles";
+// 🆚 - vs
+"72076600.name" = "nupp VS";
+"72076600.tags" = "nupp VS | versus | vs";
+// 🈁 - koko
+"72077115.name" = "jaapani nupp "siin"";
+"72077115.tags" = ""siin" | jaapani keel | jaapani nupp "siin" | katakana";
+// 🈶 - u6709
+"72077380.name" = "jaapani nupp "pole tasuta"";
+"72077380.tags" = ""pole tasuta" | ideogramm | jaapani keel | jaapani nupp "pole tasuta"";
+// 🈯 - u6307
+"72077345.name" = "jaapani nupp "reserveeritud"";
+"72077345.tags" = ""reserveeritud" | ideogramm | jaapani keel | jaapani nupp "reserveeritud"";
+// 🉐 - ideograph_advantage
+"72077510.name" = "jaapani nupp "soodne"";
+"72077510.tags" = ""soodne" | ideogramm | jaapani keel | jaapani nupp "soodne"";
+// 🈹 - u5272
+"72077395.name" = "jaapani nupp "allahindlus"";
+"72077395.tags" = ""allahindlus" | ideogramm | jaapani keel | jaapani nupp "allahindlus"";
+// 🈚 - u7121
+"72077240.name" = "jaapani nupp "tasuta"";
+"72077240.tags" = ""tasuta" | ideogramm | jaapani keel | jaapani nupp "tasuta"";
+// 🈲 - u7981
+"72077360.name" = "jaapani nupp "keelatud"";
+"72077360.tags" = ""keelatud" | ideogramm | jaapani keel | jaapani nupp "keelatud"";
+// 🉑 - accept
+"72077515.name" = "jaapani nupp "vastuvõetav"";
+"72077515.tags" = ""vastuvõetav" | ideogramm | jaapani keel | jaapani nupp "vastuvõetav"";
+// 🈸 - u7533
+"72077390.name" = "jaapani nupp "rakendus"";
+"72077390.tags" = ""rakendus" | ideogramm | jaapani keel | jaapani nupp "rakendus"";
+// 🈴 - u5408
+"72077370.name" = "jaapani nupp "sooritatud"";
+"72077370.tags" = ""sooritatud" | ideogramm | jaapani keel | jaapani nupp "sooritatud"";
+// 🈳 - u7a7a
+"72077365.name" = "jaapani nupp "vaba"";
+"72077365.tags" = ""vaba" | ideogramm | jaapani keel | jaapani nupp "vaba"";
+// 🈺 - u55b6
+"72077400.name" = "jaapani nupp "avatud"";
+"72077400.tags" = ""avatud" | ideogramm | jaapani keel | jaapani nupp "avatud"";
+// 🈵 - u6e80
+"72077375.name" = "jaapani nupp "pole vaba"";
+"72077375.tags" = ""pole vaba" | ideogramm | jaapani keel | jaapani nupp "pole vaba"";
+// 🔴 - red_circle
+"72077375.name" = "punane ring";
+"72077375.tags" = "geomeetria | punane | ring";
+// 🟠 - large_orange_circle
+"72080795.name" = "oranž ring";
+"72080795.tags" = "kera | oranž | ring";
+// 🟡 - large_yellow_circle
+"72080800.name" = "kollane ring";
+"72080800.tags" = "kera | kollane | ring";
+// 🟢 - large_green_circle
+"72080805.name" = "roheline ring";
+"72080805.tags" = "kera | ring | roheline";
+// 🔵 - large_blue_circle
+"72077380.name" = "sinine ring";
+"72077380.tags" = "geomeetria | ring | sinine";
+// 🟣 - large_purple_circle
+"72080810.name" = "lilla ring";
+"72080810.tags" = "kera | lilla | ring";
+// 🟤 - large_brown_circle
+"72080815.name" = "pruun ring";
+"72080815.tags" = "kera | pruun | ring";
+// ⚫ - black_circle
+"30468.name" = "must ring";
+"30468.tags" = "geomeetria | must ring | ring";
+// ⚪ - white_circle
+"30465.name" = "valge ring";
+"30465.tags" = "geomeetria | ring | valge ring";
+// 🟥 - large_red_square
+"72080820.name" = "punane ruut";
+"72080820.tags" = "nelinurk | punane | ruut";
+// 🟧 - large_orange_square
+"72080830.name" = "oranž ruut";
+"72080830.tags" = "nelinurk | oranž | ruut";
+// 🟨 - large_yellow_square
+"72080835.name" = "kollane ruut";
+"72080835.tags" = "kollane | nelinurk | ruut";
+// 🟩 - large_green_square
+"72080840.name" = "roheline ruut";
+"72080840.tags" = "nelinurk | roheline | ruut";
+// 🟦 - large_blue_square
+"72080825.name" = "sinine ruut";
+"72080825.tags" = "nelinurk | ruut | sinine";
+// 🟪 - large_purple_square
+"72080845.name" = "lilla ruut";
+"72080845.tags" = "lilla | nelinurk | ruut";
+// 🟫 - large_brown_square
+"72080850.name" = "pruun ruut";
+"72080850.tags" = "nelinurk | pruun | ruut";
+// ⬛ - black_large_square
+"33876.name" = "suur must ruut";
+"33876.tags" = "geomeetria | ruut | suur must ruut";
+// ⬜ - white_large_square
+"33879.name" = "suur valge ruut";
+"33879.tags" = "geomeetria | ruut | suur valge ruut";
+// ◾ - black_medium_small_square
+"29949.name" = "väiksem must ruut";
+"29949.tags" = "geomeetria | ruut | väiksem must ruut";
+// ◽ - white_medium_small_square
+"29946.name" = "väiksem valge ruut";
+"29946.tags" = "geomeetria | ruut | väiksem valge ruut";
+// 🔶 - large_orange_diamond
+"72077385.name" = "suur oranž romb";
+"72077385.tags" = "geomeetria | oranž | romb | suur oranž romb | teemant";
+// 🔷 - large_blue_diamond
+"72077390.name" = "suur sinine romb";
+"72077390.tags" = "geomeetria | romb | sinine | suur sinine romb | teemant";
+// 🔸 - small_orange_diamond
+"72077395.name" = "väike oranž romb";
+"72077395.tags" = "geomeetria | oranž | romb | teemant | väike oranž romb";
+// 🔹 - small_blue_diamond
+"72077400.name" = "väike sinine romb";
+"72077400.tags" = "geomeetria | romb | sinine | teemant | väike sinine romb";
+// 🔺 - small_red_triangle
+"72077405.name" = "punane kolmnurk";
+"72077405.tags" = "geomeetria | punane | punane kolmnurk | üles";
+// 🔻 - small_red_triangle_down
+"72077410.name" = "punane tagurpidi kolmnurk";
+"72077410.tags" = "alla | geomeetria | punane | punane tagurpidi kolmnurk";
+// 💠 - diamond_shape_with_a_dot_inside
+"72076635.name" = "punktiga romb";
+"72076635.tags" = "geomeetria | koomiks | punktiga romb | romb | sees | teemant";
+// 🔘 - radio_button
+"72077235.name" = "raadionupp";
+"72077235.tags" = "geomeetria | nupp | raadio | raadionupp";
+// 🔳 - white_square_button
+"72077370.name" = "valge ruudukujuline nupp";
+"72077370.tags" = "geomeetria | nupp | piirjoon | ruut | valge ruudukujuline nupp";
+// 🔲 - black_square_button
+"72077365.name" = "must ruudukujuline nupp";
+"72077365.tags" = "geomeetria | must ruudukujuline nupp | nupp | piirjoon | ruut";
+// 🏁 - checkered_flag
+"72079355.name" = "ruudulipp";
+"72079355.tags" = "lipp | ruuduline | ruudulipp | võidusõit";
+// 🚩 - triangular_flag_on_post
+"72079240.name" = "kolmnurkne lipp";
+"72079240.tags" = "kolmnurk | kolmnurkne lipp | lipp";
+// 🎌 - crossed_flags
+"72079090.name" = "ristatud lipud";
+"72079090.tags" = "lipp | pidu | ristatud lipud | risti";
+// 🏴 - waving_black_flag
+"72079610.name" = "must lipp";
+"72079610.tags" = "lehvimine | lipp | must lipp";

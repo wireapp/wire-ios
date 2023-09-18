@@ -1,0 +1,3714 @@
+//
+// Wire
+// Copyright (C) 2023 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
+
+// 😀 - grinning
+"72078395.name" = "sırıtan yüz";
+"72078395.tags" = "gülen yüz | gülme | lol | neşeli | sırıtan yüz | yüz";
+// 😃 - smiley
+"72078410.name" = "ağzı açık sırıtma";
+"72078410.tags" = "ağzı açık gülen yüz | ağzı açık sırıtma | gülen yüz | gülme | gülümseme | lol | neşeli | yüz";
+// 😄 - smile
+"72078415.name" = "gülen gözlerle ağzı açık sırıtma";
+"72078415.tags" = "ağzı açık gülen gözler | gülen gözlerle ağzı açık sırıtma | gülen yüz | gülme | gülümseme | lol | neşeli";
+// 😁 - grin
+"72078400.name" = "gülen gözlerle sırıtma";
+"72078400.tags" = "gülen gözlerle sırıtan yüz | gülen gözlerle sırıtma | gülen yüz | gülme | gülümseme | gülümseyen gözler | lol | neşeli | yüz";
+// 😆 - laughing
+"72078425.name" = "kapalı gözlerle ağzı açık sırıtma";
+"72078425.tags" = "ağız açık | gözler kapalı | kapalı gözlerle ağzı açık sırıtma | kapalı gözlerle gülümseme | yüz";
+// 😅 - sweat_smile
+"72078420.name" = "soğuk terli ağzı açık gülümseme";
+"72078420.tags" = "soğuk ter | soğuk terli ağzı açık gülümseme";
+// 🤣 - rolling_on_the_floor_laughing
+"72078575.name" = "gülmekten yerlere yatma";
+"72078575.tags" = "gülme | gülmekten yerlere yatma | yatma | yer | yüz";
+// 😂 - joy
+"72078405.name" = "sevinç gözyaşları";
+"72078405.tags" = "gözyaşları | sevinç | sevinç gözyaşları olan yüz | yüz";
+// 🙂 - slightly_smiling_face
+"72078725.name" = "hafifçe gülümseyen yüz";
+"72078725.tags" = "gülme | hafifçe gülümseyen yüz | yüz";
+// 🙃 - upside_down_face
+"72078730.name" = "ters yüz";
+"72078730.tags" = "ters yüz | yüz";
+// 🫠 - melting_face
+"72080800.name" = "eriyen yüz";
+"72080800.tags" = "çözülme | erime | eriyen yüz | kaybolma | sıvılaşma";
+// 😉 - wink
+"72078440.name" = "göz kırpan yüz";
+"72078440.tags" = "göz kırpan yüz | göz kırpma | yüz";
+// 😊 - blush
+"72078445.name" = "ağzı açık gülme";
+"72078445.tags" = "ağzı açık gülme | gülümseyen gözler | gülümseyen yüz | gülümseyen yüz ve gözler | yüz";
+// 😇 - innocent
+"72078430.name" = "ışık halkalı gülümseme";
+"72078430.tags" = "gülümseme | ışık halkalı gülümseme | ışık halkası | yüz";
+// 🥰 - smiling_face_with_3_hearts
+"72078960.name" = "3 kalpli gülümseyen yüz";
+"72078960.tags" = "3 kalpli gülümseyen yüz | aşık olma | çarpılma | hayranlık | kalpler | kalpli gülümseyen yüz";
+// 😍 - heart_eyes
+"72078460.name" = "kalp gözlü gülümseme";
+"72078460.tags" = "aşk | değer verme | gözler | kalp | kalp gözlü gülümseme | yüz";
+// 🤩 - star-struck
+"72078605.name" = "yıldız çarpmış";
+"72078605.tags" = "gözler | sırıtan | yıldız | yıldız çarpmış | yüz";
+// 😘 - kissing_heart
+"72078515.name" = "öpücük gönderen yüz";
+"72078515.tags" = "öpücük gönderen yüz | yüz";
+// 😗 - kissing
+"72078510.name" = "öpen yüz";
+"72078510.tags" = "öpen yüz | öpücük | yüz";
+// 😚 - kissing_closed_eyes
+"72078525.name" = "kapalı gözlerle öpen yüz";
+"72078525.tags" = "gözler kapalı | gözler kapalı öpüşme | kapalı gözlerle öpen yüz | yüz";
+// 😙 - kissing_smiling_eyes
+"72078520.name" = "gülen gözlerle öpen yüz";
+"72078520.tags" = "gülen gözlerle öpen yüz | gülümseme | gülümseyen gözler | gülümseyerek öpen yüz | yüz";
+// 🥲 - smiling_face_with_tear
+"72078970.name" = "gözü yaşlı gülümseyen yüz";
+"72078970.tags" = "duygulanmış | gözü yaşlı gülümseyen yüz | gözyaşı | gülümseme | gururlu | hislenmiş | minnettar | rahatlamış";
+// 😋 - yum
+"72078450.name" = "lezzetli yiyecek beğenen yüz";
+"72078450.tags" = "gülümseyen yüz | harika yemek | lezzetli | lezzetli yiyecek beğenen yüz | oh oh harika | yüz";
+// 😛 - stuck_out_tongue
+"72078530.name" = "dil dışarıda";
+"72078530.tags" = "dil çıkarmış yüz | dil dışarıda | dil dışarıda kalmış | yüz";
+// 😜 - stuck_out_tongue_winking_eye
+"72078535.name" = "dili dışarda göz kırpma";
+"72078535.tags" = "dil dışardayken göz kırpma | dili dışarda göz kırpma | göz kırpma | kışkırtma | şaka | yüz";
+// 🤪 - zany_face
+"72078610.name" = "çılgın surat";
+"72078610.tags" = "büyük | çılgın surat | göz | küçük";
+// 😝 - stuck_out_tongue_closed_eyes
+"72078540.name" = "dil dışarıda ve gözler kapalı";
+"72078540.tags" = "dil dışarıda | dil dışarıda ve gözler kapalı | gözler kapalı | gözler kapalı ve dil dışarıda | korkunç | yüz";
+// 🤑 - money_mouth_face
+"72078485.name" = "para ağızlı yüz";
+"72078485.tags" = "ağız | para | para ağızlı yüz | yüz";
+// 🤗 - hugging_face
+"72078515.name" = "kucaklayarak gülümseme";
+"72078515.tags" = "kucaklama | kucaklayarak gülümseme | sarılma | yüz";
+// 🤭 - face_with_hand_over_mouth
+"72078625.name" = "eliyle ağzını kapatan yüz";
+"72078625.tags" = "eliyle ağzını kapatan yüz | tüh";
+// 🫢 - face_with_open_eyes_and_hand_over_mouth
+"72080810.name" = "gözleri açık ve eliyle ağzını kapatan yüz";
+"72080810.tags" = "gözleri açık ve eliyle ağzını kapatan yüz | hayret | inanamama | korku | şaşkınlık | sürpriz | utanma";
+// 🫣 - face_with_peeking_eye
+"72080815.name" = "gizlice bakan yüz";
+"72080815.tags" = "dikizleme | gizlice bakan yüz | gizlice bakma | gözetleme";
+// 🤫 - shushing_face
+"72078615.name" = "sus işareti yapan yüz";
+"72078615.tags" = "sessiz | şişt | sus işareti yapan yüz";
+// 🤔 - thinking_face
+"72078500.name" = "düşünen yüz";
+"72078500.tags" = "düşünen yüz | düşünme | yüz";
+// 🫡 - saluting_face
+"72080805.name" = "selamlayan yüz";
+"72080805.tags" = "asker | başüstüne | güneşli | onay | selam | selamlayan yüz";
+// 🤐 - zipper_mouth_face
+"72078480.name" = "ağzı fermuarlı yüz";
+"72078480.tags" = "ağız | ağzı fermuarlı yüz | fermuar | yüz";
+// 🤨 - face_with_raised_eyebrow
+"72078600.name" = "tek kaşı çatık yüz";
+"72078600.tags" = "güvenmeyen | şüpheci | tek kaşı çatık yüz";
+// 😐 - neutral_face
+"72078475.name" = "duygusuz yüz";
+"72078475.tags" = "duygusuz | nötr | yorum yok | yüz";
+// 😑 - expressionless
+"72078480.name" = "ifadesiz yüz";
+"72078480.tags" = "ifadesiz yüz | yorum yok | yüz";
+// 😶 - no_mouth
+"72078665.name" = "ağzı olmayan yüz";
+"72078665.tags" = "ağız | ağzı olmayan yüz | sakin | sessiz | yüz";
+// 🫥 - dotted_line_face
+"72080825.name" = "noktalı çizgili yüz";
+"72080825.tags" = "depresif | gizlenme | görünmez | içe dönük | kaybolma | noktalı çizgili yüz";
+// 😏 - smirk
+"72078470.name" = "imalı gülümseme";
+"72078470.tags" = "imalı gülümseme | yapmacık gülümseyen | yapmacık gülümseyen yüz | yüz";
+// 😒 - unamused
+"72078485.name" = "keyifsiz yüz";
+"72078485.tags" = "keyifsiz yüz | mutsuz | yüz";
+// 🙄 - face_with_rolling_eyes
+"72078735.name" = "gözlerini deviren yüz";
+"72078735.tags" = "gözler | gözlerini deviren yüz | yuvarlanma | yüz";
+// 😬 - grimacing
+"72078615.name" = "dişlerini gösteren yüz";
+"72078615.tags" = "dişlerini gösteren yüz | yüz";
+// 😮‍💨 - face_exhaling
+"26809473017250.name" = "nefes veren yüz";
+"26809473017250.tags" = "fısıldama | ıslık | nefes veren yüz | nefes verme | rahatlama | sızlanma";
+// 🤥 - lying_face
+"72078585.name" = "yalan söyleyen yüz";
+"72078585.tags" = "pinokyo | yalan söyleme | yalan söyleyen yüz | yüz";
+// 🫨 - shaking_face
+"72080840.name" = "sallanan yüz";
+"72080840.tags" = "deprem | sallanan yüz | sallanma | şok | titreme | yüz";
+// 😌 - relieved
+"72078455.name" = "rahatlamış yüz";
+"72078455.tags" = "rahatlamış | yüz";
+// 😔 - pensive
+"72078495.name" = "düşünceli yüz";
+"72078495.tags" = "düşünceli | karamsar | yüz";
+// 😪 - sleepy
+"72078605.name" = "uykulu yüz";
+"72078605.tags" = "uykulu yüz | yüz";
+// 🤤 - drooling_face
+"72078580.name" = "salya akıtan yüz";
+"72078580.tags" = "salya akıtan yüz | salya akıtma | yüz";
+// 😴 - sleeping
+"72078655.name" = "uyuyan yüz";
+"72078655.tags" = "uykulu yüz | uyuyan yüz | yüz";
+// 😷 - mask
+"72078670.name" = "maskeli yüz";
+"72078670.tags" = "maske | maskeli yüz | rahatsız | soğuk | tıbbi maske | yüz";
+// 🤒 - face_with_thermometer
+"72078490.name" = "ağzında termometre olan yüz";
+"72078490.tags" = "ağzında termometre olan yüz | hasta | termometre | yüz";
+// 🤕 - face_with_head_bandage
+"72078505.name" = "kafası sarılı yüz";
+"72078505.tags" = "bandaj | kafası sarılı yüz | yara | yüz";
+// 🤢 - nauseated_face
+"72078570.name" = "kusmak üzere olan yüz";
+"72078570.tags" = "istifra | kusmak üzere | kusmak üzere olan yüz | yüz";
+// 🤮 - face_vomiting
+"72078630.name" = "kusan yüz";
+"72078630.tags" = "hasta | istifra | kusan yüz | kusmak";
+// 🤧 - sneezing_face
+"72078595.name" = "hapşıran yüz";
+"72078595.tags" = "çok yaşa | hapşıran yüz | hapşırma | yüz";
+// 🥵 - hot_face
+"72078985.name" = "kızarmış yüz";
+"72078985.tags" = "ateşi çıkmış | kırmızı yüz | kızarmış yüz | sıcak | sıcak çarpması | terleme";
+// 🥶 - cold_face
+"72078990.name" = "üşümüş yüz";
+"72078990.tags" = "buz kesme | buz sarkıtları | donma | morarmış yüz | soğuk | üşümüş yüz";
+// 🥴 - woozy_face
+"72078980.name" = "sarhoş yüz";
+"72078980.tags" = "çakırkeyif | kaymış gözler | sarhoş | sarhoş yüz | sersemlemiş | titreyen ağız";
+// 😵 - dizzy_face
+"72078660.name" = "sersemlemiş yüz";
+"72078660.tags" = "sersemlemiş yüz | yüz";
+// 😵‍💫 - face_with_spiral_eyes
+"26813394148332.name" = "sarmal gözlü yüz";
+"26813394148332.tags" = "hipnotize | kafası bulanık | sarmal | sarmal gözlü yüz | sersem | sıkıntı";
+// 🤯 - exploding_head
+"72078635.name" = "patlayan kafa";
+"72078635.tags" = "patlayan kafa | şoke";
+// 🤠 - face_with_cowboy_hat
+"72078560.name" = "kovboy şapkalı yüz";
+"72078560.tags" = "kadın kovboy | kovboy | kovboy şapkalı yüz | şapka | yüz";
+// 🥳 - partying_face
+"72078975.name" = "partide eğlenen yüz";
+"72078975.tags" = "kutlama | parti | parti düdüğü | partide eğlenen yüz | şapka";
+// 🥸 - disguised_face
+"72079000.name" = "gizlenmiş yüz";
+"72079000.tags" = "burun | gizlenmiş yüz | gizli | gözlük | kimliğini gizleyen | maskeli | yüz";
+// 😎 - sunglasses
+"72078465.name" = "güneş gözlüklü gülümseme";
+"72078465.tags" = "gülümseme | güneş gözlükleri | güneş gözlükleriyle gülümseme | güneş gözlüklü gülümseme | soğukkanlı Jane | soğukkanlı Joe | yüz";
+// 🤓 - nerd_face
+"72078495.name" = "ukala yüz";
+"72078495.tags" = "bilgili | inek öğrenci | ukala | yüz";
+// 🧐 - face_with_monocle
+"72079440.name" = "tek cam gözlüklü yüz";
+"72079440.tags" = "kendini beğenmiş | tek cam gözlüklü yüz";
+// 😕 - confused
+"72078500.name" = "kafası karışık yüz";
+"72078500.tags" = "kafası karışık yüz | kafası karışmış | yüz";
+// 🫤 - face_with_diagonal_mouth
+"72080820.name" = "yamuk ağızlı yüz";
+"72080820.tags" = "hayal kırıklığına uğramış | hüsran | kırgın | şüpheli | şüpheli yüz | yamuk ağızlı yüz";
+// 😟 - worried
+"72078550.name" = "endişeli yüz";
+"72078550.tags" = "endişeli yüz | yüz";
+// 🙁 - slightly_frowning_face
+"72078720.name" = "biraz asık surat";
+"72078720.tags" = "asık surat | biraz asık surat | yüz";
+// 😮 - open_mouth
+"72078625.name" = "ağzı açık yüz";
+"72078625.tags" = "ağız | ağzı açık | ağzı açık yüz | yüz";
+// 😯 - hushed
+"72078630.name" = "şaşkın yüz";
+"72078630.tags" = "şaşırmış | şaşkın yüz | şok olmuş | yüz";
+// 😲 - astonished
+"72078645.name" = "afallamış yüz";
+"72078645.tags" = "afallamış | şoke olmuş | tamamen şoke olmuş | yüz";
+// 😳 - flushed
+"72078650.name" = "kızarmış ve şaşkın yüz";
+"72078650.tags" = "kızarmış ve şaşkın yüz | kızarmış yüz | şaşırmış | şaşkınlık içinde | yüz";
+// 🥺 - pleading_face
+"72079010.name" = "yalvaran yüz";
+"72079010.tags" = "acıklı bakışlar | merhamet | yalvaran yüz | yalvarma";
+// 🥹 - face_holding_back_tears
+"72079005.name" = "gözleri dolmuş yüz";
+"72079005.tags" = "ağlamaklı | direnme | gözleri dolmuş yüz | gözyaşlarını tutan yüz | gurur | kızgın | üzgün";
+// 😦 - frowning
+"72078585.name" = "hoşnutsuz yüz";
+"72078585.tags" = "açık ağızlı hoşnutsuz yüz | ağzı açık | hoşnutsuz | yüz";
+// 😧 - anguished
+"72078590.name" = "kederli yüz";
+"72078590.tags" = "acı çeken | kederli yüz | yüz";
+// 😨 - fearful
+"72078595.name" = "korkulu yüz";
+"72078595.tags" = "korkmuş | korkulu yüz | yüz";
+// 😰 - cold_sweat
+"72078635.name" = "terli ve endişeli yüz";
+"72078635.tags" = "açık ağız | soğuk ter | soğuk ter döken mavi yüz | terli ve endişeli yüz | yüz";
+// 😥 - disappointed_relieved
+"72078580.name" = "üzgün ama rahatlamış yüz";
+"72078580.tags" = "canı sıkkın | canı sıkkın ama rahatlamış | rahatlamış | üzgün ama rahatlamış yüz | yüz";
+// 😢 - cry
+"72078565.name" = "ağlayan yüz";
+"72078565.tags" = "ağlayan yüz | gözyaşları | üzüntülü | yüz";
+// 😭 - sob
+"72078620.name" = "avaz avaz ağlayan yüz";
+"72078620.tags" = "ağlama | avaz avaz ağlayan yüz | gözyaşları | yüz";
+// 😱 - scream
+"72078640.name" = "korkuyla çığlık atan yüz";
+"72078640.tags" = "korkmuş | korku | korku içinde bağıran yüz | korkunç | korkuyla çığlık atan yüz | korkuyla haykıran yüz | yüz";
+// 😖 - confounded
+"72078505.name" = "kafası çok karışık yüz";
+"72078505.tags" = "kafası çok karışık yüz | kafası çok karışmış | yüz";
+// 😣 - persevere
+"72078570.name" = "kararlı yüz";
+"72078570.tags" = "dayanıklı | kararlı yüz | yüz | zorlanan yüz";
+// 😞 - disappointed
+"72078545.name" = "memnuniyetsiz yüz";
+"72078545.tags" = "kırgın yüz | kırgınlık | memnuniyetsiz yüz | yüz";
+// 😓 - sweat
+"72078490.name" = "soğuk ter";
+"72078490.tags" = "soğuk ter | soğuk terli yüz | yüz";
+// 😩 - weary
+"72078600.name" = "çok yorgun";
+"72078600.tags" = "çok yorgun | yorgun yüz | yorulmuş | yüz";
+// 😫 - tired_face
+"72078610.name" = "yorgun yüz";
+"72078610.tags" = "yorgun yüz | yüz";
+// 🥱 - yawning_face
+"72078965.name" = "esneyen yüz";
+"72078965.tags" = "esneme | esneyen yüz | sıkılmış | yorgun";
+// 😤 - triumph
+"72078575.name" = "burnundan soluyan yüz";
+"72078575.tags" = "ben kazandım | ben kazandım yüzü | burnundan soluyan yüz | yüz | zafer";
+// 😡 - rage
+"72078560.name" = "somurtkan yüz";
+"72078560.tags" = "deli gibi | kırmızı somurtkan yüz | kırmızı yüz | öfkeli | somurtkan yüz | yüz";
+// 😠 - angry
+"72078555.name" = "öfkeli yüz";
+"72078555.tags" = "deli gibi | öfkeli yüz | yüz";
+// 🤬 - face_with_symbols_on_mouth
+"72078620.name" = "ağzında semboller olan yüz";
+"72078620.tags" = "ağzında semboller olan yüz | küfür eden";
+// 😈 - smiling_imp
+"72078435.name" = "boynuzlu gülen yüz";
+"72078435.tags" = "boynuzlar | boynuzlu gülen yüz | gülümseme | yüz";
+// 👿 - imp
+"72076470.name" = "boynuzlu kızgın yüz";
+"72076470.tags" = "boynuzlu kızgın yüz | küçük şeytan | şeytan | yüz";
+// 💀 - skull
+"72076475.name" = "kafatası";
+"72076475.tags" = "kafatası | masal | ölüm | yüz";
+// 💩 - hankey
+"72076680.name" = "kaka";
+"72076680.tags" = "kaka | kaka yığını | pislik | yığın";
+// 🤡 - clown_face
+"72078565.name" = "palyaço yüzü";
+"72078565.tags" = "palyaço | palyaço yüzü | yüz";
+// 👹 - japanese_ogre
+"72076440.name" = "dev";
+"72076440.tags" = "canavar | dev | japon canavarı | oni | peri masalı | yüz";
+// 👺 - japanese_goblin
+"72076445.name" = "goblin";
+"72076445.tags" = "canavar | goblin | japon cini | peri masalı | tengu | yüz";
+// 👻 - ghost
+"72076450.name" = "hayalet";
+"72076450.tags" = "hayalet | peri masalı | yüz";
+// 👽 - alien
+"72076460.name" = "uzaylı";
+"72076460.tags" = "dünya dışı | fantastik | UFO | uzaylı | yaratık | yüz";
+// 👾 - space_invader
+"72076465.name" = "uzaylı canavar";
+"72076465.tags" = "canavar | dünya dışı | UFO | uzaylı | yaratık | yüz";
+// 🤖 - robot_face
+"72078510.name" = "robot";
+"72078510.tags" = "canavar | robot | yüz";
+// 😺 - smiley_cat
+"72078685.name" = "sırıtan kedi";
+"72078685.tags" = "açık | ağız | gülümseme | kedi | sırıtan | yüz";
+// 😸 - smile_cat
+"72078675.name" = "gülen gözlerle sırıtan kedi";
+"72078675.tags" = "göz | gülen gözlerle sırıtan kedi | gülümseme | kedi | sırıtma | yüz";
+// 😹 - joy_cat
+"72078680.name" = "sevinç gözyaşları döken kedi";
+"72078680.tags" = "göz yaşı | kedi | sevinç | sevinç gözyaşları döken kedi | yüz";
+// 😻 - heart_eyes_cat
+"72078690.name" = "kalp gözlü gülümseyen kedi";
+"72078690.tags" = "aşk | gülümseme | kalp | kalp gözlü gülümseyen kedi | kedi | sevgi | yüz";
+// 😼 - smirk_cat
+"72078695.name" = "iğneleyici kedi yüzü";
+"72078695.tags" = "iğneleyici | iğneleyici gülümseme | iğneleyici kedi yüzü | ironik | kedi | yüz";
+// 😽 - kissing_cat
+"72078700.name" = "öpen kedi";
+"72078700.tags" = "göz | kedi | öpen kedi | öpücük | yüz";
+// 🙀 - scream_cat
+"72078715.name" = "korkuyla bağıran kedi";
+"72078715.tags" = "aman tanrım | kedi | korkuyla bağıran kedi | sahiden şaşırmış | şaşkın kedi yüzü | yüz";
+// 😿 - crying_cat_face
+"72078710.name" = "ağlayan kedi";
+"72078710.tags" = "ağlama | ağlayan kedi | göz yaşı | kedi | üzgün | yüz";
+// 😾 - pouting_cat
+"72078705.name" = "somurtan kedi";
+"72078705.tags" = "kedi | somurtan | somurtma | yüz";
+// 🙈 - see_no_evil
+"72078755.name" = "görmedim";
+"72078755.tags" = "görmedim | görmeyen maymun | maymun";
+// 🙉 - hear_no_evil
+"72078760.name" = "duymadım";
+"72078760.tags" = "duymadım | duymayan maymun | maymun";
+// 🙊 - speak_no_evil
+"72078765.name" = "bilmiyorum";
+"72078765.tags" = "bilmiyorum | maymun | söylemeyen maymun";
+// 💌 - love_letter
+"72076535.name" = "aşk mektubu";
+"72076535.tags" = "aşk mektubu | kalp | kalpli mektup | mektup | romantizm";
+// 💘 - cupid
+"72076595.name" = "ok saplanmış kalp";
+"72076595.tags" = "aşk | duygu | kalp | ok | ok saplanmış kalp";
+// 💝 - gift_heart
+"72076620.name" = "kurdeleli kalp";
+"72076620.tags" = "duygu | kalp | kurdele | kurdeleli kalp | sevgililer günü";
+// 💖 - sparkling_heart
+"72076585.name" = "pırıldayan kalp";
+"72076585.tags" = "duygu | heyecanlı | kalp | pırıldayan";
+// 💗 - heartpulse
+"72076590.name" = "büyüyen kalp";
+"72076590.tags" = "aşk | büyüyen kalp | coşkulu | duygu | kalp | sinirli";
+// 💓 - heartbeat
+"72076570.name" = "çarpan kalp";
+"72076570.tags" = "aşk | çarpan kalp | duygu | kalp";
+// 💞 - revolving_hearts
+"72076625.name" = "dönen kalpler";
+"72076625.tags" = "aşk | dönen | dönen kalpler | kalp | kawaii | sevimli";
+// 💕 - two_hearts
+"72076580.name" = "iki kalp";
+"72076580.tags" = "aşıklar | aşk | duygu | iki kalp";
+// 💟 - heart_decoration
+"72076630.name" = "kalpli dekorasyon";
+"72076630.tags" = "kalp | kalpli dekorasyon";
+// 💔 - broken_heart
+"72076575.name" = "kırık kalp";
+"72076575.tags" = "duygu | kalp | kırık kalp | kırılmış | kırma";
+// 🩷 - pink_heart
+"72080275.name" = "pembe kalp";
+"72080275.tags" = "aşk | beğen | kalp | pembe | şirin";
+// 🧡 - orange_heart
+"72079525.name" = "turuncu kalp";
+"72079525.tags" = "portakal | turuncu kalp";
+// 💛 - yellow_heart
+"72076610.name" = "sarı kalp";
+"72076610.tags" = "duygu | kalp | sarı";
+// 💚 - green_heart
+"72076605.name" = "yeşil kalp";
+"72076605.tags" = "duygu | kalp | yeşil";
+// 💙 - blue_heart
+"72076600.name" = "mavi kalp";
+"72076600.tags" = "duygu | kalp | mavi";
+// 🩵 - light_blue_heart
+"72080265.name" = "açık mavi kalp";
+"72080265.tags" = "açık mavi | açık mavi kalp | camgöbeği | deniz mavisi | kalp";
+// 💜 - purple_heart
+"72076615.name" = "mor kalp";
+"72076615.tags" = "duygu | kalp | mor";
+// 🤎 - brown_heart
+"72078470.name" = "kahverengi kalp";
+"72078470.tags" = "kahverengi | kalp";
+// 🖤 - black_heart
+"72077935.name" = "siyah kalp";
+"72077935.tags" = "fena | kalp | kötü | siyah";
+// 🩶 - grey_heart
+"72080270.name" = "gri kalp";
+"72080270.tags" = "gri | gümüş | kalp | kurşun | taş";
+// 🤍 - white_heart
+"72078465.name" = "beyaz kalp";
+"72078465.tags" = "beyaz | kalp";
+// 💋 - kiss
+"72076530.name" = "öpücük izi";
+"72076530.tags" = "dudaklar | öpücük | öpücük izi | romantizm";
+// 💯 - 100
+"72076710.name" = "yüz puan";
+"72076710.tags" = "100 | 100 puan | skor | yüz puan";
+// 💢 - anger
+"72076645.name" = "öfke simgesi";
+"72076645.tags" = "çizgi roman | duygu | öfke işareti | öfke simgesi | öfkeli";
+// 💥 - boom
+"72076660.name" = "çarpışma";
+"72076660.tags" = "çarpışma | çarpışma işareti | çizgi roman | duygu";
+// 💫 - dizzy
+"72076690.name" = "baş dönmesi";
+"72076690.tags" = "baş dönmesi | çizgi roman | duygu | yıldızlar | yıldızları görme";
+// 💦 - sweat_drops
+"72076665.name" = "ter damlası";
+"72076665.tags" = "çizgi roman | duygu | ter | ter damlası | terli";
+// 💨 - dash
+"72076675.name" = "hızla fırlama";
+"72076675.tags" = "çizgi roman | duygu | hızla fırlama | kaçma | koşma";
+// 💬 - speech_balloon
+"72076695.name" = "konuşma balonu";
+"72076695.tags" = "balon | çizgi roman | iletişim | iletişim balonu | konuşma balonu";
+// 💭 - thought_balloon
+"72076700.name" = "düşünce balonu";
+"72076700.tags" = "balon | çizgi roman | düşünce | düşünce balonu";
+// 💤 - zzz
+"72076655.name" = "zzz";
+"72076655.tags" = "çizgi roman | duygu | horlama | uyuma | zzz | Zzz";
+// 👋 - wave
+"72076210.name" = "el sallama";
+"72076210.tags" = "el | sallama";
+// 🤚 - raised_back_of_hand
+"72078530.name" = "elinin tersini kaldırma";
+"72078530.tags" = "elinin tersi | elinin tersini kaldırma | kaldırma";
+// ✋ - hand
+"30756.name" = "el kaldırma";
+"30756.tags" = "el kaldırma | havada el";
+// 🖖 - spock-hand
+"72077865.name" = "Vulkan selamı";
+"72077865.tags" = "beden | el | parmak | spock | vulcan selamı | vulkan | Vulkan selamı";
+// 🫱 - rightwards_hand
+"72080885.name" = "sağa bakan el";
+"72080885.tags" = "el | sağ | sağa bakan el";
+// 🫲 - leftwards_hand
+"72080890.name" = "sola bakan el";
+"72080890.tags" = "el | sol | sola bakan el";
+// 🫳 - palm_down_hand
+"72080895.name" = "avuç içi aşağı bakan el";
+"72080895.tags" = "atmak | avuç içi aşağı bakan el | düşürmek | kışkışlamak";
+// 🫴 - palm_up_hand
+"72080900.name" = "avuç içi yukarı bakan el";
+"72080900.tags" = "avuç içi yukarı bakan el | çağırmak | el etmek | gel | sunmak | yakalamak";
+// 🫷 - leftwards_pushing_hand
+"72080915.name" = "sola iten el";
+"72080915.tags" = "bekletme | çak | durdurma | itme | reddetme | sola | sola iten el";
+// 🫸 - rightwards_pushing_hand
+"72080920.name" = "sağa iten el";
+"72080920.tags" = "bekletme | çak | durdurma | itme | reddetme | sağa | sağa iten el";
+// 👌 - ok_hand
+"72076215.name" = "tamam işareti";
+"72076215.tags" = "el | işaret | Tamam | Tamam el işareti | tamam işareti";
+// 🤌 - pinched_fingers
+"72078460.name" = "kıstırma hareketi yapan parmaklar";
+"72078460.tags" = "bravo | çok güzel | harika | kıstırma hareketi yapan parmaklar | lezzetli | parmaklar";
+// 🤏 - pinching_hand
+"72078475.name" = "kıstırma hareketi yapan el";
+"72078475.tags" = "azıcık | bir tutam | kıstırma hareketi yapan el";
+// 🤞 - crossed_fingers
+"72078550.name" = "şans dileme";
+"72078550.tags" = "çapraz | el | parmak | şans | şans dileme";
+// 🫰 - hand_with_index_finger_and_thumb_crossed
+"72080880.name" = "işaret parmağı ve baş parmak birbirine geçmiş el";
+"72080880.tags" = "aşk | işaret parmağı ve baş parmak birbirine geçmiş el | kalp | pahalı | para";
+// 🤟 - i_love_you_hand_sign
+"72078555.name" = "seni seviyorum işareti";
+"72078555.tags" = "el | seni seviyorum işareti | SS";
+// 🤘 - the_horns
+"72078520.name" = "boynuz işareti";
+"72078520.tags" = "beden | boynuz | boynuz işareti | el | parmak | rock";
+// 🤙 - call_me_hand
+"72078525.name" = "beni ara işareti";
+"72078525.tags" = "ara | beni ara işareti | el";
+// 👈 - point_left
+"72076195.name" = "elinin tersiyle solu gösteren işaret parmağı";
+"72076195.tags" = "elin arkası | elinin tersiyle solu gösteren işaret parmağı | işaret parmağı | parmak | solu gösteren parmak";
+// 👉 - point_right
+"72076200.name" = "elinin tersiyle sağı gösteren işaret parmağı";
+"72076200.tags" = "elin arkası | elinin tersiyle sağı gösteren işaret parmağı | işaret parmağı | parmak | sağı gösteren parmak";
+// 👆 - point_up_2
+"72076185.name" = "elinin tersiyle yukarıyı gösteren işaret parmağı";
+"72076185.tags" = "elin arkası | elinin tersiyle yukarıyı gösteren işaret parmağı | işaret parmağı | parmak | yukarıyı gösteren parmak";
+// 🖕 - middle_finger
+"72077860.name" = "orta parmak";
+"72077860.tags" = "beden | el | orta parmak | parmak";
+// 👇 - point_down
+"72076190.name" = "elinin tersiyle aşağıyı gösteren işaret parmağı";
+"72076190.tags" = "aşağıyı gösteren parmak | elin arkası | elinin tersiyle aşağıyı gösteren işaret parmağı | işaret parmağı | parmak";
+// 🫵 - index_pointing_at_the_viewer
+"72080905.name" = "karşıyı işaret eden işaret parmağı";
+"72080905.tags" = "işaret | karşıyı işaret eden işaret parmağı | sen";
+// 👍 - +1
+"72076220.name" = "baş parmak yukarıda";
+"72076220.tags" = "baş parmak | baş parmak yukarıda | el | işaret | yukarı";
+// 👎 - -1
+"72076225.name" = "baş parmak aşağıda";
+"72076225.tags" = "aşağı | baş parmak | baş parmak aşağıda | el | işaret";
+// ✊ - fist
+"30753.name" = "yumruk kaldırma";
+"30753.tags" = "havada yumruk | yumruk kaldırma";
+// 👊 - facepunch
+"72076205.name" = "yaklaşan yumruk";
+"72076205.tags" = "el | yaklaşan yumruk | yumruk";
+// 🤛 - left-facing_fist
+"72078535.name" = "sola bakan yumruk";
+"72078535.tags" = "sola bakan yumruk | sola doğru | yumruk";
+// 🤜 - right-facing_fist
+"72078540.name" = "sağa bakan yumruk";
+"72078540.tags" = "sağa bakan yumruk | sağa doğru | yumruk";
+// 👏 - clap
+"72076230.name" = "el çırpma";
+"72076230.tags" = "çırpma | el çırpma | eller | işaret";
+// 🙌 - raised_hands
+"72078775.name" = "eller havaya";
+"72078775.tags" = "eller havaya | her iki el | kutlama | kutlamak için iki eli birden kaldırma";
+// 🫶 - heart_hands
+"72080910.name" = "kalp oluşturan eller";
+"72080910.tags" = "aşk | kalp | kalp oluşturan eller | sevgi";
+// 👐 - open_hands
+"72076235.name" = "eller açık";
+"72076235.tags" = "açık | el | eller açık | eller açık işareti | işaret";
+// 🤲 - palms_up_together
+"72078650.name" = "iki avuç açık";
+"72078650.tags" = "dua eden eller | iki avuç açık";
+// 🤝 - handshake
+"72078545.name" = "el sıkışma";
+"72078545.tags" = "anlaşma | el | el sıkışma | sallama | toplantı";
+// 🙏 - pray
+"72078790.name" = "birleşen eller";
+"72078790.tags" = "birleşen eller | dua | dua etme | el | hareket";
+// 💅 - nail_care
+"72076500.name" = "oje sürme";
+"72076500.tags" = "kozmetik | manikür | oje | oje sürme | tırnak";
+// 🤳 - selfie
+"72078655.name" = "selfie";
+"72078655.tags" = "kamera | selfie | telefon";
+// 💪 - muscle
+"72076685.name" = "pazı";
+"72076685.tags" = "çizgi roman | esnek | güçlü | kas | kas esnetme | pazı";
+// 🦾 - mechanical_arm
+"72079350.name" = "mekanik kol";
+"72079350.tags" = "erişilebilirlik | mekanik kol | protez";
+// 🦿 - mechanical_leg
+"72079355.name" = "mekanik bacak";
+"72079355.tags" = "erişilebilirlik | mekanik bacak | protez";
+// 🦵 - leg
+"72079305.name" = "bacak";
+"72079305.tags" = "bacak | tekme";
+// 🦶 - foot
+"72079310.name" = "ayak";
+"72079310.tags" = "ayak | tekme";
+// 👂 - ear
+"72076165.name" = "kulak";
+"72076165.tags" = "gövde | kulak";
+// 🦻 - ear_with_hearing_aid
+"72079335.name" = "işitme cihazı olan kulak";
+"72079335.tags" = "erişilebilirlik | işitme cihazı olan kulak | işitme güçlüğü";
+// 👃 - nose
+"72076170.name" = "burun";
+"72076170.tags" = "burun | gövde | yüz";
+// 🧠 - brain
+"72079520.name" = "beyin";
+"72079520.tags" = "beyin | zeki";
+// 🫀 - anatomical_heart
+"72080640.name" = "kalp";
+"72080640.tags" = "kalp | kalp atışı | kardiyoloji | merkez | nabız | organ";
+// 🫁 - lungs
+"72080645.name" = "akciğer";
+"72080645.tags" = "akciğer | nefes | organ | soluk | solunum";
+// 🦷 - tooth
+"72079315.name" = "diş";
+"72079315.tags" = "diş | diş hekimi | dişçi";
+// 🦴 - bone
+"72079300.name" = "kemik";
+"72079300.tags" = "iskelet | kemik";
+// 👀 - eyes
+"72076155.name" = "gözler";
+"72076155.tags" = "gözler | yüz";
+// 👅 - tongue
+"72076180.name" = "dil";
+"72076180.tags" = "dil | gövde | yüz";
+// 👄 - lips
+"72076175.name" = "ağız";
+"72076175.tags" = "ağız | dudaklar | gövde | yüz";
+// 🫦 - biting_lip
+"72080830.name" = "ısırılan dudak";
+"72080830.tags" = "davetkâr | endişeli | flört | gergin | ısırılan dudak | korku | rahatsız";
+// 👶 - baby
+"72076425.name" = "bebek";
+"72076425.tags" = "bebek | kişiler";
+// 🧒 - child
+"72079450.name" = "çocuk";
+"72079450.tags" = "çocuk | genç | kişi";
+// 👦 - boy
+"72076345.name" = "erkek çocuk";
+"72076345.tags" = "erkek çocuk | kişiler";
+// 👧 - girl
+"72076350.name" = "kız çocuk";
+"72076350.tags" = "genç | kişiler | kız çocuk";
+// 🧑 - adult
+"72079445.name" = "yetişkin";
+"72079445.tags" = "kişi | yetişkin";
+// 👱 - person_with_blond_hair
+"72076400.name" = "sarışın kişi";
+"72076400.tags" = "saç | sarı saçlı kişi | sarışın | sarışın kişi";
+// 👨 - man
+"72076355.name" = "erkek";
+"72076355.tags" = "erkek | kişiler";
+// 🧔 - bearded_person
+"72079460.name" = "sakallı kişi";
+"72079460.tags" = "sakal | sakallı kişi";
+// 👩 - woman
+"72076360.name" = "kadın";
+"72076360.tags" = "kadın | kişiler";
+// 🧓 - older_adult
+"72079455.name" = "yaşlı yetişkin";
+"72079455.tags" = "kişi | yaşlı | yaşlı yetişkin";
+// 👴 - older_man
+"72076415.name" = "yaşlı erkek";
+"72076415.tags" = "erkek | kişiler | yaşlı";
+// 👵 - older_woman
+"72076420.name" = "yaşlı kadın";
+"72076420.tags" = "kadın | kişiler | yaşlı";
+// 🙍 - person_frowning
+"72078780.name" = "somurtma";
+"72078780.tags" = "hareket | kişi | somurtan kişi | somurtma";
+// 🙎 - person_with_pouting_face
+"72078785.name" = "darılma";
+"72078785.tags" = "darılan kişi | darılma | hareket | kişi";
+// 🙅 - no_good
+"72078740.name" = "hayır hareketi";
+"72078740.tags" = "hareket | hayır | hayır hareketi | iyi değil | yasak | yüz";
+// 🙆 - ok_woman
+"72078745.name" = "tamam hareketi";
+"72078745.tags" = "hareket | oldu | tamam hareketi | yüz";
+// 💁 - information_desk_person
+"72076480.name" = "elini yana yatırma";
+"72076480.tags" = "bilgilendirme | elini yana yatırma | kişiler | yardım";
+// 🙋 - raising_hand
+"72078770.name" = "elini kaldırma";
+"72078770.tags" = "el kaldıran kişi | elini kaldırma | hareket | kalkan el | kişi | mutlu";
+// 🧏 - deaf_person
+"72079435.name" = "işitme engelli kişi";
+"72079435.tags" = "erişilebilirlik | işitme | işitme engelli | işitme engelli kişi | kulak";
+// 🙇 - bow
+"72078750.name" = "başını öne eğme";
+"72078750.tags" = "başını öne eğme | eğilme | hareket | kişi | üzgünüm";
+// 🤦 - face_palm
+"72078590.name" = "yüzünü eliyle kapama";
+"72078590.tags" = "avuç | çileden çıkma | inanmama | yüz | yüzünü eliyle kapama";
+// 🤷 - shrug
+"72078675.name" = "omuz silkme";
+"72078675.tags" = "bilmeme | ilgisizlik | kararsız | omuz silkme";
+// 🧑‍🎓 - student
+"26901339530736.name" = "öğrenci";
+"26901339530736.tags" = "mezun | öğrenci | talebe";
+// 👨‍🎓 - male-student
+"26555159681094.name" = "erkek öğrenci";
+"26555159681094.tags" = "adam | erkek | mezun | öğrenci";
+// 👩‍🎓 - female-student
+"26555719842663.name" = "kız öğrenci";
+"26555719842663.tags" = "bayan | kadın | kız öğrenci | mezun | öğrenci";
+// 🧑‍🏫 - teacher
+"26901339533640.name" = "öğretmen";
+"26901339533640.tags" = "doçent | eğitimci | öğretmen | profesör";
+// 👨‍🏫 - male-teacher
+"26555159683998.name" = "erkek öğretmen";
+"26555159683998.tags" = "adam | eğitmen | erkek | öğretmen | profesör";
+// 👩‍🏫 - female-teacher
+"26555719845567.name" = "kadın öğretmen";
+"26555719845567.tags" = "bayan | eğitmen | kadın | öğretmen | profesör";
+// 🧑‍🌾 - farmer
+"26901339527931.name" = "çiftçi";
+"26901339527931.tags" = "bahçıvan | çiftçi | rençper";
+// 👨‍🌾 - male-farmer
+"26555159678289.name" = "erkek çiftçi";
+"26555159678289.tags" = "adam | bahçıvan | çiftçi | çiftlik sahibi | erkek";
+// 👩‍🌾 - female-farmer
+"26555719839858.name" = "kadın çiftçi";
+"26555719839858.tags" = "bahçıvan | bayan | çiftçi | çiftlik sahibi | kadın";
+// 🧑‍🍳 - cook
+"26901339529680.name" = "aşçı";
+"26901339529680.tags" = "aşçı | yemek pişirme";
+// 👨‍🍳 - male-cook
+"26555159680038.name" = "erkek aşçı";
+"26555159680038.tags" = "adam | erkek | erkek aşçı | şef | yemek yapma";
+// 👩‍🍳 - female-cook
+"26555719841607.name" = "kadın aşçı";
+"26555719841607.tags" = "bayan | kadın | kadın aşçı | şef | yemek yapma";
+// 🧑‍🔧 - mechanic
+"26901339518757.name" = "tamirci";
+"26901339518757.tags" = "elektrikçi | tamirci | tesisatçı";
+// 👨‍🔧 - male-mechanic
+"26555159669115.name" = "erkek tamirci";
+"26555159669115.tags" = "adam | elektrikçi | erkek | esnaf | tamirci | tesisatçı";
+// 👩‍🔧 - female-mechanic
+"26555719830684.name" = "kadın tamirci";
+"26555719830684.tags" = "bayan | elektrikçi | esnaf | kadın | tamirci | tesisatçı";
+// 🧑‍🏭 - factory_worker
+"26901339533706.name" = "fabrika işçisi";
+"26901339533706.tags" = "endüstri | fabrika | fabrika işçisi | işçi | montaj | sanayi";
+// 👨‍🏭 - male-factory-worker
+"26555159684064.name" = "erkek fabrika işçisi";
+"26555159684064.tags" = "adam | erkek | erkek fabrika işçisi | fabrika | işçi | montaj | sanayi";
+// 👩‍🏭 - female-factory-worker
+"26555719845633.name" = "kadın fabrika işçisi";
+"26555719845633.tags" = "bayan | fabrika | işçi | kadın | kadın fabrika işçisi | montaj | sanayi";
+// 🧑‍💼 - office_worker
+"26901339515226.name" = "ofis çalışanı";
+"26901339515226.tags" = "beyaz yakalı | iş yeri | mimar | müdür | ofis çalışanı | yönetici";
+// 👨‍💼 - male-office-worker
+"26555159665584.name" = "erkek ofis çalışanı";
+"26555159665584.tags" = "adam | beyaz yaka | erkek | erkek ofis çalışanı | iş | mimar | ofis | yönetici";
+// 👩‍💼 - female-office-worker
+"26555719827153.name" = "kadın ofis çalışanı";
+"26555719827153.tags" = "bayan | beyaz yaka | iş | kadın | kadın ofis çalışanı | mimar | ofis | yönetici";
+// 🧑‍🔬 - scientist
+"26901339518922.name" = "bilim insanı";
+"26901339518922.tags" = "bilim insanı | biyolog | fizikçi | kimyacı | kimyager";
+// 👨‍🔬 - male-scientist
+"26555159669280.name" = "erkek bilim insanı";
+"26555159669280.tags" = "adam | bilim adamı | biyolog | erkek | erkek bilim insanı | fizikçi | kimyacı | matematikçi | mühendis";
+// 👩‍🔬 - female-scientist
+"26555719830849.name" = "kadın bilim insanı";
+"26555719830849.tags" = "bayan | bilim adamı | biyolog | fizikçi | kadın | kadın bilim insanı | kimyacı | matematikçi | mühendis";
+// 🧑‍💻 - technologist
+"26901339515193.name" = "teknoloji uzmanı";
+"26901339515193.tags" = "geliştirici | kodlayıcı | mucit | teknolog | teknoloji uzmanı | yazılım | yazılımcı";
+// 👨‍💻 - male-technologist
+"26555159665551.name" = "erkek teknoloji uzmanı";
+"26555159665551.tags" = "adam | erkek | erkek teknoloji uzmanı | geliştirici | kodlayıcı | mucit | teknoloji uzmanı | yazılım";
+// 👩‍💻 - female-technologist
+"26555719827120.name" = "kadın teknoloji uzmanı";
+"26555719827120.tags" = "bayan | geliştirici | kadın | kadın teknoloji uzmanı | kodlayıcı | mucit | teknoloji uzmanı | yazılım";
+// 🧑‍🎤 - singer
+"26901339531297.name" = "şarkıcı";
+"26901339531297.tags" = "aktör | aktris | gösterici | şarkıcı | star | yıldız";
+// 👨‍🎤 - male-singer
+"26555159681655.name" = "erkek şarkıcı";
+"26555159681655.tags" = "adam | aktör | erkek | gösterici | rock | şarkıcı | star";
+// 👩‍🎤 - female-singer
+"26555719843224.name" = "kadın şarkıcı";
+"26555719843224.tags" = "aktör | bayan | gösterici | kadın | rock | şarkıcı | star";
+// 🧑‍🎨 - artist
+"26901339531429.name" = "ressam";
+"26901339531429.tags" = "palet | ressam | sanatçı";
+// 👨‍🎨 - male-artist
+"26555159681787.name" = "erkek ressam";
+"26555159681787.tags" = "adam | erkek | erkek ressam | palet | sanatçı";
+// 👩‍🎨 - female-artist
+"26555719843356.name" = "kadın ressam";
+"26555719843356.tags" = "bayan | kadın | kadın ressam | palet | sanatçı";
+// 🧑‍🚀 - astronaut
+"26901339530142.name" = "astronot";
+"26901339530142.tags" = "astronot | roket | uzay";
+// 👨‍🚀 - male-astronaut
+"26555159680500.name" = "erkek astronot";
+"26555159680500.tags" = "adam | astronot | erkek | roket | uzay";
+// 👩‍🚀 - female-astronaut
+"26555719842069.name" = "kadın astronot";
+"26555719842069.tags" = "astronot | bayan | kadın | roket | uzay";
+// 🧑‍🚒 - firefighter
+"26901339530736.name" = "itfaiyeci";
+"26901339530736.tags" = "itfaiye aracı | itfaiyeci";
+// 👨‍🚒 - male-firefighter
+"26555159681094.name" = "erkek itfaiyeci";
+"26555159681094.tags" = "adam | erkek | itfaiye aracı | itfaiyeci";
+// 👩‍🚒 - female-firefighter
+"26555719842663.name" = "kadın itfaiyeci";
+"26555719842663.tags" = "bayan | itfaiye aracı | itfaiyeci | kadın";
+// 👮 - cop
+"72076385.name" = "polis memuru";
+"72076385.tags" = "görevli | kişiler | polis | polis memuru";
+// 💂 - guardsman
+"72076485.name" = "muhafız";
+"72076485.tags" = "bekçi | kişiler | muhafız";
+// 🥷 - ninja
+"72078995.name" = "ninja";
+"72078995.tags" = "dövüşçü | gizli | ninja | saklı";
+// 👷 - construction_worker
+"72076430.name" = "inşaat işçisi";
+"72076430.tags" = "inşaat | inşaat işçisi | işçi | kişiler";
+// 🫅 - person_with_crown
+"72080665.name" = "taç takmış insan";
+"72080665.tags" = "kral | kraliyet | soylu | taç takmış insan";
+// 🤴 - prince
+"72078660.name" = "prens";
+"72078660.tags" = "prens";
+// 👸 - princess
+"72076435.name" = "prenses";
+"72076435.tags" = "kişiler | peri masalı | prenses";
+// 👳 - man_with_turban
+"72076410.name" = "sarıklı kişi";
+"72076410.tags" = "kişiler | sarık | sarıklı erkek | sarıklı kişi";
+// 👲 - man_with_gua_pi_mao
+"72076405.name" = "çin şapkalı erkek";
+"72076405.tags" = "çin şapkalı erkek | gua pi mao | gua pi mao takan erkek | kişiler";
+// 🧕 - person_with_headscarf
+"72079465.name" = "başörtülü kadın";
+"72079465.tags" = "başörtülü kadın";
+// 🤵 - person_in_tuxedo
+"72078665.name" = "smokinli kişi";
+"72078665.tags" = "damat | kişi | smokin | smokinli kişi";
+// 👰 - bride_with_veil
+"72076395.name" = "duvaklı gelin";
+"72076395.tags" = "duvak | duvaklı gelin | evlilik | kişiler";
+// 🤰 - pregnant_woman
+"72078640.name" = "hamile kadın";
+"72078640.tags" = "hamile | kadın";
+// 🫃 - pregnant_man
+"72080655.name" = "hamile adam";
+"72080655.tags" = "göbekli | hamile | hamile adam | şişmiş";
+// 🫄 - pregnant_person
+"72080660.name" = "hamile kişi";
+"72080660.tags" = "göbekli | hamile | hamile kişi | şişmiş";
+// 🤱 - breast-feeding
+"72078645.name" = "emziren kadın";
+"72078645.tags" = "bebek | emziren kadın | emzirme | göğüs";
+// 👩‍🍼 - woman_feeding_baby
+"26555719841904.name" = "bebek emziren kadın";
+"26555719841904.tags" = "bakım | bebek | bebek emziren kadın | emzirme | kadın";
+// 👨‍🍼 - man_feeding_baby
+"26555159680335.name" = "bebek emziren erkek";
+"26555159680335.tags" = "bakıcılık | bebek | bebek emziren erkek | emzirme | erkek";
+// 🧑‍🍼 - person_feeding_baby
+"26901339529977.name" = "bebek emziren kişi";
+"26901339529977.tags" = "bakıcılık | bebek | bebek emziren kişi | emzirme | kişi";
+// 👼 - angel
+"72076455.name" = "bebek melek";
+"72076455.tags" = "bebek melek | melek | peri masalı | yüz";
+// 🎅 - santa
+"72079055.name" = "Noel Baba";
+"72079055.tags" = "kutlama | noel | Noel Baba | santa claus";
+// 🤶 - mrs_claus
+"72078670.name" = "Noel Anne";
+"72078670.tags" = "anne | noel | Noel Anne";
+// 🧑‍🎄 - mx_claus
+"26901339530241.name" = "cinsiyet belirtmeyen noel karakteri";
+"26901339530241.tags" = "cinsiyet belirtmeyen noel karakteri | noel | Noel figürü";
+// 🦸 - superhero
+"72079320.name" = "süper kahraman";
+"72079320.tags" = "iyi | kadın kahraman | kahraman | süper güç | süper kahraman";
+// 🦹 - supervillain
+"72079325.name" = "süper kötü";
+"72079325.tags" = "kötü | şeytani | suçlu | süper güç | süper kötü";
+// 🧙 - mage
+"72079485.name" = "büyücü";
+"72079485.tags" = "büyücü | cadı | sihirbaz";
+// 🧚 - fairy
+"72079490.name" = "peri";
+"72079490.tags" = "Oberon | peri | Puck | Titania";
+// 🧛 - vampire
+"72079495.name" = "vampir";
+"72079495.tags" = "Drakula | hortlak | vampir";
+// 🧜 - merperson
+"72079500.name" = "balık insan";
+"72079500.tags" = "balık insan";
+// 🧝 - elf
+"72079505.name" = "elf";
+"72079505.tags" = "elf | sihirli";
+// 🧞 - genie
+"72079510.name" = "cin";
+"72079510.tags" = "cin";
+// 🧟 - zombie
+"72079515.name" = "zombi";
+"72079515.tags" = "hortlak | yürüyen ölü | zombi";
+// 🧌 - troll
+"72079420.name" = "trol";
+"72079420.tags" = "fantezi | peri masalı | trol | yaratık";
+// 💆 - massage
+"72076505.name" = "yüz masajı";
+"72076505.tags" = "masaj | salon | yüz masajı";
+// 💇 - haircut
+"72076510.name" = "saç kesimi";
+"72076510.tags" = "güzellik | güzellik salonu | saç kesimi | salon";
+// 🚶 - walking
+"72079305.name" = "yürüyen kişi";
+"72079305.tags" = "yürüyen | yürüyen kişi";
+// 🧍 - standing_person
+"72079425.name" = "ayakta duran kişi";
+"72079425.tags" = "ayakta duran | ayakta duran kişi | ayakta durma";
+// 🧎 - kneeling_person
+"72079430.name" = "diz çöken kişi";
+"72079430.tags" = "diz çöken | diz çöken kişi | diz çökme";
+// 🧑‍🦯 - person_with_probing_cane
+"26901339531726.name" = "görme engelli bastonlu kişi";
+"26901339531726.tags" = "erişilebilirlik | görme engelli | görme engelli bastonlu kişi | kör";
+// 👨‍🦯 - man_with_probing_cane
+"26555159682084.name" = "görme engelli bastonlu erkek";
+"26555159682084.tags" = "erişilebilirlik | erkek | görme engelli | görme engelli bastonlu erkek";
+// 👩‍🦯 - woman_with_probing_cane
+"26555719843653.name" = "görme engelli bastonlu kadın";
+"26555719843653.tags" = "erişilebilirlik | görme engelli | görme engelli bastonlu kadın | kadın";
+// 🧑‍🦼 - person_in_motorized_wheelchair
+"26901339532155.name" = "elektrikli tekerlekli sandalyede kişi";
+"26901339532155.tags" = "elektrikli tekerlekli sandalyede kişi | erişilebilirlik | tekerlekli sandalye";
+// 👨‍🦼 - man_in_motorized_wheelchair
+"26555159682513.name" = "elektrikli tekerlekli sandalyede erkek";
+"26555159682513.tags" = "elektrikli tekerlekli sandalyede erkek | erişilebilirlik | erkek | tekerlekli sandalye";
+// 👩‍🦼 - woman_in_motorized_wheelchair
+"26555719844082.name" = "elektrikli tekerlekli sandalyede kadın";
+"26555719844082.tags" = "elektrikli tekerlekli sandalyede kadın | erişilebilirlik | kadın | tekerlekli sandalye";
+// 🧑‍🦽 - person_in_manual_wheelchair
+"26901339532188.name" = "tekerlekli sandalyede kişi";
+"26901339532188.tags" = "erişilebilirlik | tekerlekli sandalye | tekerlekli sandalyede kişi";
+// 👨‍🦽 - man_in_manual_wheelchair
+"26555159682546.name" = "tekerlekli sandalyede erkek";
+"26555159682546.tags" = "erişilebilirlik | erkek | tekerlekli sandalye | tekerlekli sandalyede erkek";
+// 👩‍🦽 - woman_in_manual_wheelchair
+"26555719844115.name" = "tekerlekli sandalyede kadın";
+"26555719844115.tags" = "erişilebilirlik | kadın | tekerlekli sandalye | tekerlekli sandalyede kadın";
+// 🏃 - runner
+"72079365.name" = "koşan kişi";
+"72079365.tags" = "koşan kişi | koşu | maraton | spor";
+// 💃 - dancer
+"72076490.name" = "dans eden kadın";
+"72076490.tags" = "dans | dans eden kadın | kişiler";
+// 🕺 - man_dancing
+"72077725.name" = "dans eden adam";
+"72077725.tags" = "adam | dans | dans eden adam";
+// 👯 - dancers
+"72076390.name" = "tavşan kulaklı kişiler";
+"72076390.tags" = "dansçı | parti | tavşan kulaklar | tavşan kulaklı kişiler";
+// 🧖 - person_in_steamy_room
+"72079470.name" = "buhar odasındaki kişi";
+"72079470.tags" = "buhar odası | buhar odasındaki kişi | sauna";
+// 🧗 - person_climbing
+"72079475.name" = "dağcı kişi";
+"72079475.tags" = "dağcı kişi";
+// 🤺 - fencer
+"72078690.name" = "eskrimci";
+"72078690.tags" = "birey | eskrim | eskrimci | kılıç | spor";
+// 🏇 - horse_racing
+"72079385.name" = "at yarışı";
+"72079385.tags" = "at | at yarışı | jokey | spor | yarış | yarış atı";
+// 🏂 - snowboarder
+"72079360.name" = "snowbordçu";
+"72079360.tags" = "snowboard | snowboard yapmak | snowbordçu | spor";
+// 🏄 - surfer
+"72079370.name" = "sörf yapan kişi";
+"72079370.tags" = "sörf yapan kişi | sörfçü | spor";
+// 🚣 - rowboat
+"72079210.name" = "sandalda kürek çeken kişi";
+"72079210.tags" = "sandalda kürek çeken kişi | taşıt | tekne";
+// 🏊 - swimmer
+"72079400.name" = "yüzen kişi";
+"72079400.tags" = "spor | yüzen kişi | yüzme";
+// 🚴 - bicyclist
+"72079295.name" = "bisiklet süren kişi";
+"72079295.tags" = "bisiklet | bisiklet süren kişi";
+// 🚵 - mountain_bicyclist
+"72079300.name" = "dağ bisikletçisi";
+"72079300.tags" = "bisiklet | bisikletçi | dağ | dağ bisikletçisi";
+// 🤸 - person_doing_cartwheel
+"72078680.name" = "perende atan kişi";
+"72078680.tags" = "birey | jimnastik | perende atan kişi | spor | yanlamasına takla";
+// 🤼 - wrestlers
+"72078700.name" = "güreşen kişiler";
+"72078700.tags" = "birey | güreş | güreşçi | güreşen kişiler | spor";
+// 🤽 - water_polo
+"72078705.name" = "su topu";
+"72078705.tags" = "birey | spor | su | su topu | top";
+// 🤾 - handball
+"72078710.name" = "hentbol";
+"72078710.tags" = "birey | hentbol | spor | top";
+// 🤹 - juggling
+"72078685.name" = "jonglör";
+"72078685.tags" = "aynı anda birçok iş yapma | denge | hokkabazlık | jonglör | yetenek";
+// 🧘 - person_in_lotus_position
+"72079480.name" = "lotus pozisyonundaki kişi";
+"72079480.tags" = "lotus pozisyonundaki kişi | meditasyon | yoga";
+// 🛀 - bath
+"72079355.name" = "banyo yapan kişi";
+"72079355.tags" = "banyo | banyo yapan kişi | küvet";
+// 🛌 - sleeping_accommodation
+"72079415.name" = "yatakta yatan kişi";
+"72079415.tags" = "otel | uyuma | yatakta yatan kişi";
+// 🧑‍🤝‍🧑 - people_holding_hands
+"3200955216551984283.name" = "el ele tutuşan insanlar";
+"3200955216551984283.tags" = "çift | el | el ele | el ele tutuşan insanlar | kişi | tutmak | tutuşan eller";
+// 👭 - two_women_holding_hands
+"72076380.name" = "el ele tutuşan kadınlar";
+"72076380.tags" = "çift | el | el ele tutuşan | el ele tutuşan kadınlar | kadınlar";
+// 👫 - man_and_woman_holding_hands
+"72076370.name" = "el ele tutuşan erkek ve kadın";
+"72076370.tags" = "çift | el ele tutuşan | el ele tutuşan erkek ve kadın | erkek | kadın";
+// 👬 - two_men_holding_hands
+"72076375.name" = "el ele tutuşan erkekler";
+"72076375.tags" = "çift | el ele tutuşan | el ele tutuşan erkekler | el ele tutuşan iki erkek | erkek | ikizler | kişiler";
+// 💏 - couplekiss
+"72076550.name" = "öpücük";
+"72076550.tags" = "kişiler | öpücük | öpüşme | romantizm";
+// 💑 - couple_with_heart
+"72076560.name" = "kalpli çift";
+"72076560.tags" = "kalp | kalpli çift | kişiler | romantizm";
+// 👪 - family
+"72076365.name" = "aile";
+"72076365.tags" = "aile | anne | baba | çocuk | kişiler";
+// 👤 - bust_in_silhouette
+"72076335.name" = "siluet büst";
+"72076335.tags" = "büst | kişiler | siluet";
+// 👥 - busts_in_silhouette
+"72076340.name" = "siluet büstler";
+"72076340.tags" = "büst | kişiler | siluet | siluet büstler";
+// 🫂 - people_hugging
+"72080650.name" = "kucaklaşan insanlar";
+"72080650.tags" = "güle güle | hoşçakal | hoşçakalın | kucaklaşan insanlar | merhaba | sağol | sağolun | selam | teşekkür | teşekkürler";
+// 👣 - footprints
+"72076330.name" = "ayak izi";
+"72076330.tags" = "ayak | ayak izi | gövde | iz";
+// 🏻 - skin-tone-2
+"72079645.name" = "açık cilt tonu";
+"72079645.tags" = "açık cilt tonu | cilt tonu | tip 1–2";
+// 🏼 - skin-tone-3
+"72079650.name" = "orta açık cilt tonu";
+"72079650.tags" = "cilt tonu | orta açık cilt tonu | tip 3";
+// 🏽 - skin-tone-4
+"72079655.name" = "orta cilt tonu";
+"72079655.tags" = "cilt tonu | orta cilt tonu | tip 4";
+// 🏾 - skin-tone-5
+"72079660.name" = "orta koyu cilt tonu";
+"72079660.tags" = "cilt tonu | orta koyu cilt tonu | tip 5";
+// 🏿 - skin-tone-6
+"72079665.name" = "koyu cilt tonu";
+"72079665.tags" = "cilt tonu | koyu cilt tonu | tip 6";
+// 🐵 - monkey_face
+"72076100.name" = "maymun yüzü";
+"72076100.tags" = "hayvan | maymun | maymun yüzü | yüz";
+// 🐒 - monkey
+"72075925.name" = "maymun";
+"72075925.tags" = "hayvan | maymun";
+// 🦍 - gorilla
+"72079105.name" = "goril";
+"72079105.tags" = "goril | hayvan";
+// 🦧 - orangutan
+"72079235.name" = "orangutan";
+"72079235.tags" = "maymun | orangutan";
+// 🐶 - dog
+"72076105.name" = "köpek yüzü";
+"72076105.tags" = "hayvan | köpek | köpek yüzü | yüz";
+// 🐕 - dog2
+"72075940.name" = "köpek";
+"72075940.tags" = "hayvan | köpek | süs köpeği";
+// 🦮 - guide_dog
+"72079270.name" = "rehber köpek";
+"72079270.tags" = "erişilebilirlik | görme engelli | rehber | rehber köpek";
+// 🐕‍🦺 - service_dog
+"26508666272220.name" = "yardımcı köpek";
+"26508666272220.tags" = "erişilebilirlik | köpek | rehberlik | yardım | yardımcı köpek";
+// 🐩 - poodle
+"72076040.name" = "kaniş";
+"72076040.tags" = "hayvan | kaniş | köpek";
+// 🐺 - wolf
+"72076125.name" = "kurt";
+"72076125.tags" = "kurt | yüz";
+// 🦊 - fox_face
+"72079090.name" = "tilki";
+"72079090.tags" = "tilki | yüz";
+// 🦝 - raccoon
+"72079185.name" = "rakun";
+"72079185.tags" = "meraklı | rakun | sinsi";
+// 🐱 - cat
+"72076080.name" = "kedi yüzü";
+"72076080.tags" = "hayvan | kedi | kedi yüzü | yüz";
+// 🐈 - cat2
+"72075875.name" = "kedi";
+"72075875.tags" = "hayvan | kedi";
+// 🐈‍⬛ - black_cat
+"51973200513.name" = "kara kedi";
+"51973200513.tags" = "kara | kedi | uğursuz";
+// 🦁 - lion_face
+"72079045.name" = "aslan";
+"72079045.tags" = "aslan | aslan yüzü | burç | yüz";
+// 🐯 - tiger
+"72076070.name" = "kaplan yüzü";
+"72076070.tags" = "kaplan | kaplan yüzü | yüz";
+// 🐅 - tiger2
+"72075860.name" = "kaplan";
+"72075860.tags" = "kaplan";
+// 🐆 - leopard
+"72075865.name" = "leopar";
+"72075865.tags" = "leopar";
+// 🐴 - horse
+"72076095.name" = "at yüzü";
+"72076095.tags" = "at | at yüzü | hayvan | yüz";
+// 🫎 - moose
+"72080710.name" = "sığın";
+"72080710.tags" = "elk | geyik boynuzları | hayvan | memeli | sığın";
+// 🫏 - donkey
+"72080715.name" = "eşek";
+"72080715.tags" = "eşek | hayvan | inatçı | katır | memeli | merkep";
+// 🐎 - racehorse
+"72075905.name" = "at";
+"72075905.tags" = "at | yarış | yarış atı";
+// 🦄 - unicorn_face
+"72079060.name" = "tek boynuzlu at";
+"72079060.tags" = "tek boynuzlu at | unicorn | yüz";
+// 🦓 - zebra_face
+"72079135.name" = "zebra";
+"72079135.tags" = "çizgili | şeritli | zebra";
+// 🦌 - deer
+"72079100.name" = "geyik";
+"72079100.tags" = "geyik | hayvan";
+// 🦬 - bison
+"72079260.name" = "bizon";
+"72079260.tags" = "bizon | bufalo | sürü";
+// 🐮 - cow
+"72076065.name" = "inek yüzü";
+"72076065.tags" = "hayvan | inek | inek yüzü | yüz";
+// 🐂 - ox
+"72075845.name" = "öküz";
+"72075845.tags" = "boğa | boğa burcu | burçlar | öküz";
+// 🐃 - water_buffalo
+"72075850.name" = "manda";
+"72075850.tags" = "buffalo | manda | su";
+// 🐄 - cow2
+"72075855.name" = "inek";
+"72075855.tags" = "inek";
+// 🐷 - pig
+"72076110.name" = "domuz yüzü";
+"72076110.tags" = "domuz | domuz yüzü | hayvan | yüz";
+// 🐖 - pig2
+"72075945.name" = "domuz";
+"72075945.tags" = "dişi domuz | domuz";
+// 🐗 - boar
+"72075950.name" = "yaban domuzu";
+"72075950.tags" = "domuz | yaban domuzu";
+// 🐽 - pig_nose
+"72076140.name" = "domuz burnu";
+"72076140.tags" = "burun | domuz | domuz burnu | hayvan | yüz";
+// 🐏 - ram
+"72075910.name" = "koç";
+"72075910.tags" = "burç | koç";
+// 🐑 - sheep
+"72075920.name" = "koyun";
+"72075920.tags" = "dişi koyun | koyun";
+// 🐐 - goat
+"72075915.name" = "keçi";
+"72075915.tags" = "burçlar | keçi | oğlak | oğlak burcu | oğlak burcu burçlar";
+// 🐪 - dromedary_camel
+"72076045.name" = "deve";
+"72076045.tags" = "deve | hayvan | hecin devesi | hörgüç";
+// 🐫 - camel
+"72076050.name" = "iki hörgüçlü deve";
+"72076050.tags" = "deve | hayvan | hörgüç | iki hörgüçlü deve";
+// 🦙 - llama
+"72079165.name" = "lama";
+"72079165.tags" = "alpaka | guanako | lama | vikunya | yün";
+// 🦒 - giraffe_face
+"72079130.name" = "zürafa";
+"72079130.tags" = "noktalar | puanlar | zürafa";
+// 🐘 - elephant
+"72075955.name" = "fil";
+"72075955.tags" = "fil";
+// 🦣 - mammoth
+"72079215.name" = "mamut";
+"72079215.tags" = "büyük | fil dişi | mamut | nesli tükenen | soyu tükenen";
+// 🦏 - rhinoceros
+"72079115.name" = "gergedan";
+"72079115.tags" = "gergedan | hayvan";
+// 🦛 - hippopotamus
+"72079175.name" = "hipopotam";
+"72079175.tags" = "hipo | hipopotam | su aygırı";
+// 🐭 - mouse
+"72076060.name" = "fare yüzü";
+"72076060.tags" = "fare | fare yüzü | hayvan | yüz";
+// 🐁 - mouse2
+"72075840.name" = "fare";
+"72075840.tags" = "fare";
+// 🐀 - rat
+"72075835.name" = "sıçan";
+"72075835.tags" = "sıçan";
+// 🐹 - hamster
+"72076120.name" = "hamster";
+"72076120.tags" = "evcil hayvan | hamster | yüz";
+// 🐰 - rabbit
+"72076075.name" = "tavşan yüzü";
+"72076075.tags" = "hayvan | tavşan | tavşan yüzü | yüz";
+// 🐇 - rabbit2
+"72075870.name" = "tavşan";
+"72075870.tags" = "hayvan | tavşan";
+// 🦫 - beaver
+"72079255.name" = "kunduz";
+"72079255.tags" = "baraj | kunduz";
+// 🦔 - hedgehog
+"72079140.name" = "kirpi";
+"72079140.tags" = "dikenli | kirpi";
+// 🦇 - bat
+"72079075.name" = "yarasa";
+"72079075.tags" = "hayvan | vampir | yarasa";
+// 🐻 - bear
+"72076130.name" = "ayı";
+"72076130.tags" = "ayı | yüz";
+// 🐨 - koala
+"72076035.name" = "koala";
+"72076035.tags" = "hayvan | koala | koala ayısı";
+// 🐼 - panda_face
+"72076135.name" = "panda";
+"72076135.tags" = "panda | yüz";
+// 🦥 - sloth
+"72079225.name" = "tembel hayvan";
+"72079225.tags" = "tembel | tembel hayvan | yavaş";
+// 🦦 - otter
+"72079230.name" = "su samuru";
+"72079230.tags" = "balık avlayan | oyuncu | su samuru";
+// 🦨 - skunk
+"72079240.name" = "kokarca";
+"72079240.tags" = "kokan | kokarca";
+// 🦘 - kangaroo
+"72079160.name" = "kanguru";
+"72079160.tags" = "Avustralya | kanguru | keseli | sıçrama | yavru keseli";
+// 🦡 - badger
+"72079205.name" = "porsuk";
+"72079205.tags" = "bal porsuğu | bela | porsuk";
+// 🐾 - feet
+"72076145.name" = "pençe izi";
+"72076145.tags" = "hayvan | iz | pençe izi";
+// 🦃 - turkey
+"72079055.name" = "hindi";
+"72079055.tags" = "hindi";
+// 🐔 - chicken
+"72075935.name" = "tavuk";
+"72075935.tags" = "kuş | tavuk";
+// 🐓 - rooster
+"72075930.name" = "horoz";
+"72075930.tags" = "horoz | kuş";
+// 🐣 - hatching_chick
+"72076010.name" = "yumurtadan çıkan civciv";
+"72076010.tags" = "civciv | hayvan | kuluçka | piliç | tavuk | yavru | yumurtadan çıkan civciv";
+// 🐤 - baby_chick
+"72076015.name" = "civciv";
+"72076015.tags" = "civciv | hayvan | piliç | tavuk | yavru";
+// 🐥 - hatched_chick
+"72076020.name" = "önden civciv";
+"72076020.tags" = "hayvan | önden civciv | piliç | tavuk | yavru | yüzü dönük civciv";
+// 🐦 - bird
+"72076025.name" = "kuş";
+"72076025.tags" = "hayvan | kuş";
+// 🐧 - penguin
+"72076030.name" = "penguen";
+"72076030.tags" = "hayvan | penguen";
+// 🦅 - eagle
+"72079065.name" = "kartal";
+"72079065.tags" = "kartal | kuş";
+// 🦆 - duck
+"72079070.name" = "ördek";
+"72079070.tags" = "kuş | ördek";
+// 🦢 - swan
+"72079210.name" = "kuğu";
+"72079210.tags" = "çirkin ördek yavrusu | kuğu | kuğu yavrusu | kuş";
+// 🦉 - owl
+"72079085.name" = "baykuş";
+"72079085.tags" = "baykuş | bilge | kuş";
+// 🦤 - dodo
+"72079220.name" = "dodo kuşu";
+"72079220.tags" = "büyük | dodo kuşu | Mauritius | nesli tükenmiş | soyu tükenmiş";
+// 🪶 - feather
+"72080590.name" = "kuş tüyü";
+"72080590.tags" = "hafif | kuş | kuş tüyü | tüylü | uçma";
+// 🦩 - flamingo
+"72079245.name" = "flamingo";
+"72079245.tags" = "flamingo | gösterişli | tropikal";
+// 🦚 - peacock
+"72079170.name" = "tavus kuşu";
+"72079170.tags" = "dişi tavus kuşu | gösterişli | gururlu | kuş | tavus kuşu";
+// 🦜 - parrot
+"72079180.name" = "papağan";
+"72079180.tags" = "konuşma | korsan | kuş | papağan";
+// 🪽 - wing
+"72080625.name" = "kanat";
+"72080625.tags" = "kanat | kuş | melek gibi | mitoloji | uçma | uçuş";
+// 🐦‍⬛ - black_bird
+"52006885503.name" = "siyah kuş";
+"52006885503.tags" = "kara | karga | kuş | kuzgun | siyah";
+// 🪿 - goose
+"72080635.name" = "kaz";
+"72080635.tags" = "kaz | kaz sesi | kümes hayvanı | kuş | şapşal";
+// 🐸 - frog
+"72076115.name" = "kurbağa";
+"72076115.tags" = "kurbağa | yüz";
+// 🐊 - crocodile
+"72075885.name" = "timsah";
+"72075885.tags" = "hayvan | timsah";
+// 🐢 - turtle
+"72076005.name" = "kaplumbağa";
+"72076005.tags" = "hayvan | kaplumbağa";
+// 🦎 - lizard
+"72079110.name" = "kertenkele";
+"72079110.tags" = "kertenkele | sürüngen";
+// 🐍 - snake
+"72075900.name" = "yılan";
+"72075900.tags" = "hayvan | yılan";
+// 🐲 - dragon_face
+"72076085.name" = "ejderha yüzü";
+"72076085.tags" = "ejderha | ejderha yüzü | hayvan | yüz";
+// 🐉 - dragon
+"72075880.name" = "ejderha";
+"72075880.tags" = "ejderha | hayvan";
+// 🦕 - sauropod
+"72079145.name" = "soropod";
+"72079145.tags" = "brachiosaurus | brontosaurus | brontozor | diplodocus | soropod";
+// 🦖 - t-rex
+"72079150.name" = "T-Rex";
+"72079150.tags" = "T-Rex | Tyrannosaurus Rex";
+// 🐳 - whale
+"72076090.name" = "su püskürten balina";
+"72076090.tags" = "balina | hayvan | su püskürten | su püskürten balina";
+// 🐋 - whale2
+"72075890.name" = "balina";
+"72075890.tags" = "balina | hayvan";
+// 🐬 - dolphin
+"72076055.name" = "yunus";
+"72076055.tags" = "hayvan | yunus";
+// 🦭 - seal
+"72079265.name" = "fok";
+"72079265.tags" = "ayı balığı | denizaslanı | fok | fok balığı";
+// 🐟 - fish
+"72075990.name" = "balık";
+"72075990.tags" = "balık | hayvan";
+// 🐠 - tropical_fish
+"72075995.name" = "tropikal balık";
+"72075995.tags" = "balık | hayvan | tropikal balık";
+// 🐡 - blowfish
+"72076000.name" = "balon balığı";
+"72076000.tags" = "balık | balon balığı | hayvan";
+// 🦈 - shark
+"72079080.name" = "köpek balığı";
+"72079080.tags" = "balık | köpek balığı";
+// 🐙 - octopus
+"72075960.name" = "ahtapot";
+"72075960.tags" = "ahtapot | hayvan";
+// 🐚 - shell
+"72075965.name" = "deniz kabuğu";
+"72075965.tags" = "deniz kabuğu | hayvan | spiral deniz kabuğu";
+// 🪸 - coral
+"72080600.name" = "mercan";
+"72080600.tags" = "mercan | okyanus | resif";
+// 🪼 - jellyfish
+"72080620.name" = "denizanası";
+"72080620.tags" = "ahh | deniz | denizanası | iğne | medüz | omurgasız | yanma";
+// 🐌 - snail
+"72075895.name" = "salyangoz";
+"72075895.tags" = "salyangoz";
+// 🦋 - butterfly
+"72079095.name" = "kelebek";
+"72079095.tags" = "böcek | kelebek | şirin";
+// 🐛 - bug
+"72075970.name" = "tırtıl";
+"72075970.tags" = "böcek | hayvan | kırkayak | tırtıl";
+// 🐜 - ant
+"72075975.name" = "karınca";
+"72075975.tags" = "böcek | karınca";
+// 🐝 - bee
+"72075980.name" = "bal arısı";
+"72075980.tags" = "arı | bal arısı | hayvan";
+// 🪲 - beetle
+"72080570.name" = "böcek";
+"72080570.tags" = "böcek | haşere";
+// 🐞 - ladybug
+"72075985.name" = "uğur böceği";
+"72075985.tags" = "böcek | hanım | hanımböceği | hayvan | uğur böceği";
+// 🦗 - cricket
+"72079155.name" = "cırcır böceği";
+"72079155.tags" = "çekirge | cırcır böceği";
+// 🪳 - cockroach
+"72080575.name" = "hamam böceği";
+"72080575.tags" = "böcek | hamam böceği | haşere | karafatma";
+// 🦂 - scorpion
+"72079050.name" = "akrep";
+"72079050.tags" = "akrep | burç";
+// 🦟 - mosquito
+"72079195.name" = "sivrisinek";
+"72079195.tags" = "ateş | böcek | hastalık | sivrisinek | sıtma | virüs";
+// 🪰 - fly
+"72080560.name" = "karasinek";
+"72080560.tags" = "böcek | çürüme | hastalık | karasinek | larva | sinek";
+// 🪱 - worm
+"72080565.name" = "solucan";
+"72080565.tags" = "kurt | kurtçuk | parazit | solucan";
+// 🦠 - microbe
+"72079200.name" = "mikrop";
+"72079200.tags" = "amip | bakteri | mikrop | virüs";
+// 💐 - bouquet
+"72076555.name" = "buket";
+"72076555.tags" = "buket | çiçek | romantizm";
+// 🌸 - cherry_blossom
+"72078670.name" = "kiraz çiçeği";
+"72078670.tags" = "çiçek | çiçek izleme | kiraz | kiraz çiçeği";
+// 💮 - white_flower
+"72076705.name" = "beyaz çiçek";
+"72076705.tags" = "beyaz çiçek | çiçek | damga | iyi çalışma damgası";
+// 🪷 - lotus
+"72080595.name" = "nilüfer";
+"72080595.tags" = "Budizm | çiçek | Hindistan | Hinduizm | nilüfer | saflık | Vietnam";
+// 🌹 - rose
+"72078675.name" = "gül";
+"72078675.tags" = "bitki | çiçek | gül";
+// 🥀 - wilted_flower
+"72078720.name" = "solmuş çiçek";
+"72078720.tags" = "çiçek | solmuş";
+// 🌺 - hibiscus
+"72078680.name" = "çingülü";
+"72078680.tags" = "bitki | çiçek | çingülü | hatmi çiçeği";
+// 🌻 - sunflower
+"72078685.name" = "ayçiçeği";
+"72078685.tags" = "ayçiçeği | bitki | çiçek | güneş";
+// 🌼 - blossom
+"72078690.name" = "çiçek açma";
+"72078690.tags" = "bitki | çiçek | çiçek açma";
+// 🌷 - tulip
+"72078665.name" = "lale";
+"72078665.tags" = "bitki | çiçek | lale";
+// 🪻 - hyacinth
+"72080615.name" = "sümbül";
+"72080615.tags" = "acı bakla | aslanağzı | çiçek | lavanta | lupin | sümbül";
+// 🌱 - seedling
+"72078635.name" = "filizlenme";
+"72078635.tags" = "fide | filizlenme | genç";
+// 🪴 - potted_plant
+"72080580.name" = "saksı bitkisi";
+"72080580.tags" = "bitki | ev | ev bitkisi | saksı | saksı bitkisi | yetiştirme";
+// 🌲 - evergreen_tree
+"72078640.name" = "yaprak dökmeyen ağaç";
+"72078640.tags" = "ağaç | yaprak dökmeyen | yaprak dökmeyen ağaç";
+// 🌳 - deciduous_tree
+"72078645.name" = "yaprak döken ağaç";
+"72078645.tags" = "ağaç | yaprak döken | yaprak döken ağaç";
+// 🌴 - palm_tree
+"72078650.name" = "palmiye ağacı";
+"72078650.tags" = "ağaç | palmiye | palmiye ağacı";
+// 🌵 - cactus
+"72078655.name" = "kaktüs";
+"72078655.tags" = "bitki | kaktüs";
+// 🌾 - ear_of_rice
+"72078700.name" = "pirinç bitkisi";
+"72078700.tags" = "başak | pirinç | pirinç başağı | pirinç bitkisi";
+// 🌿 - herb
+"72078705.name" = "ot";
+"72078705.tags" = "ot | yaprak";
+// 🍀 - four_leaf_clover
+"72078710.name" = "dört yapraklı yonca";
+"72078710.tags" = "dört | dört yapraklı yonca | şanslı | yaprak | yonca";
+// 🍁 - maple_leaf
+"72078715.name" = "akçaağaç yaprağı";
+"72078715.tags" = "akçaağaç yaprağı | düşen yaprak | yaprak";
+// 🍂 - fallen_leaf
+"72078720.name" = "düşen yapraklar";
+"72078720.tags" = "düşen | düşmüş | yaprak | yapraklar";
+// 🍃 - leaves
+"72078725.name" = "rüzgardaki yaprak";
+"72078725.tags" = "esen | rüzgar | rüzgardaki yaprak | yaprak";
+// 🪹 - empty_nest
+"72080605.name" = "boş yuva";
+"72080605.tags" = "boş yuva | yuva";
+// 🪺 - nest_with_eggs
+"72080610.name" = "yumurta bulunan yuva";
+"72080610.tags" = "yumurta bulunan yuva | yuva";
+// 🍄 - mushroom
+"72078730.name" = "mantar";
+"72078730.tags" = "bitki | mantar";
+// 🍇 - grapes
+"72078745.name" = "üzüm";
+"72078745.tags" = "meyve | üzüm";
+// 🍈 - melon
+"72078750.name" = "kavun";
+"72078750.tags" = "kavun | meyve";
+// 🍉 - watermelon
+"72078755.name" = "karpuz";
+"72078755.tags" = "karpuz | meyve";
+// 🍊 - tangerine
+"72078760.name" = "mandalina";
+"72078760.tags" = "mandalina | meyve | portakal";
+// 🍋 - lemon
+"72078765.name" = "limon";
+"72078765.tags" = "limon | meyve | narenciye";
+// 🍌 - banana
+"72078770.name" = "muz";
+"72078770.tags" = "meyve | muz";
+// 🍍 - pineapple
+"72078775.name" = "ananas";
+"72078775.tags" = "ananas | meyve";
+// 🥭 - mango
+"72078945.name" = "mango";
+"72078945.tags" = "mango | meyve | tropikal";
+// 🍎 - apple
+"72078780.name" = "kırmızı elma";
+"72078780.tags" = "elma | kırmızı | meyve";
+// 🍏 - green_apple
+"72078785.name" = "yeşil elma";
+"72078785.tags" = "elma | meyve | yeşil";
+// 🍐 - pear
+"72078790.name" = "armut";
+"72078790.tags" = "armut | meyve";
+// 🍑 - peach
+"72078795.name" = "şeftali";
+"72078795.tags" = "meyve | şeftali";
+// 🍒 - cherries
+"72078800.name" = "kiraz";
+"72078800.tags" = "kiraz | meyve";
+// 🍓 - strawberry
+"72078805.name" = "çilek";
+"72078805.tags" = "çilek | meyve | yumuşak meyve";
+// 🫐 - blueberries
+"72080720.name" = "yaban mersini";
+"72080720.tags" = "dağ mersini | mavi | mersin | yaban mersini";
+// 🥝 - kiwifruit
+"72078865.name" = "kivi";
+"72078865.tags" = "kivi | meyve | yiyecek";
+// 🍅 - tomato
+"72078735.name" = "domates";
+"72078735.tags" = "domates | meyve | sebze";
+// 🫒 - olive
+"72080730.name" = "zeytin";
+"72080730.tags" = "yiyecek | zeytin";
+// 🥥 - coconut
+"72078905.name" = "Hindistan cevizi";
+"72078905.tags" = "Hindistan cevizi | palmiye | pina colada";
+// 🥑 - avocado
+"72078805.name" = "avokado";
+"72078805.tags" = "avokado | meyve | yiyecek";
+// 🍆 - eggplant
+"72078740.name" = "patlıcan";
+"72078740.tags" = "patlıcan | sebze";
+// 🥔 - potato
+"72078820.name" = "patates";
+"72078820.tags" = "patates | sebze | yiyecek";
+// 🥕 - carrot
+"72078825.name" = "havuç";
+"72078825.tags" = "havuç | sebze | yiyecek";
+// 🌽 - corn
+"72078695.name" = "mısır koçanı";
+"72078695.tags" = "başak | mısır koçanı";
+// 🫑 - bell_pepper
+"72080725.name" = "dolma biber";
+"72080725.tags" = "biber | dolma biber | dolmalık biber | sebze";
+// 🥒 - cucumber
+"72078810.name" = "salatalık";
+"72078810.tags" = "salatalık | sebze | turşu | yiyecek";
+// 🥬 - leafy_green
+"72078940.name" = "yeşil yapraklı sebze";
+"72078940.tags" = "çin lahanası | karalahana | lahana | marul | yeşil yapraklı sebze";
+// 🥦 - broccoli
+"72078910.name" = "brokoli";
+"72078910.tags" = "brokoli | yabani lahana";
+// 🧄 - garlic
+"72079380.name" = "sarımsak";
+"72079380.tags" = "baharat | sarımsak";
+// 🧅 - onion
+"72079385.name" = "soğan";
+"72079385.tags" = "baharat | soğan";
+// 🥜 - peanuts
+"72078860.name" = "yer fıstığı";
+"72078860.tags" = "fındık | fıstık | sebze | yer fıstığı | yiyecek";
+// 🫘 - beans
+"72080760.name" = "fasulye";
+"72080760.tags" = "baklagil | barbunya | fasulye | gıda";
+// 🌰 - chestnut
+"72078630.name" = "kestane";
+"72078630.tags" = "bitki | kestane";
+// 🫚 - ginger_root
+"72080770.name" = "kök zencefil";
+"72080770.tags" = "baharat | bira | kök | kök zencefil | yumru";
+// 🫛 - pea_pod
+"72080775.name" = "kabuklu bezelye";
+"72080775.tags" = "baklagil | bezelye | edamame | fasulye | kabuklu bezelye | sebze";
+// 🍞 - bread
+"72078860.name" = "ekmek";
+"72078860.tags" = "ekmek | ekmek dilimi | restoran";
+// 🥐 - croissant
+"72078800.name" = "kruvasan";
+"72078800.tags" = "ay çöreği | ekmek | fransız | kruvasan | yiyecek";
+// 🥖 - baguette_bread
+"72078830.name" = "baget ekmek";
+"72078830.tags" = "baget | ekmek | fransız | yiyecek";
+// 🫓 - flatbread
+"72080735.name" = "yassı ekmek";
+"72080735.tags" = "bazlama | lavaş | naan | pide | pita | yassı ekmek";
+// 🥨 - pretzel
+"72078920.name" = "pretzel";
+"72078920.tags" = "burgu | pretzel";
+// 🥯 - bagel
+"72078955.name" = "simit";
+"72078955.tags" = "bagel | fırın | simit | sürme peynir";
+// 🥞 - pancakes
+"72078870.name" = "krep";
+"72078870.tags" = "gözleme | krep | pankek | yiyecek";
+// 🧇 - waffle
+"72079395.name" = "waffle";
+"72079395.tags" = "hamur | vafıl | waffle";
+// 🧀 - cheese_wedge
+"72079360.name" = "peynir dilimi";
+"72079360.tags" = "peynir | peynir dilimi";
+// 🍖 - meat_on_bone
+"72078820.name" = "kemikli et";
+"72078820.tags" = "kemikli et | restoran";
+// 🍗 - poultry_leg
+"72078825.name" = "tavuk butu";
+"72078825.tags" = "but | restoran | tavuk | tavuk butu";
+// 🥩 - cut_of_meat
+"72078925.name" = "parça et";
+"72078925.tags" = "biftek | kuşbaşı | parça et | sote | steak";
+// 🥓 - bacon
+"72078815.name" = "domuz pastırması";
+"72078815.tags" = "domuz pastırması | et | yiyecek";
+// 🍔 - hamburger
+"72078810.name" = "hamburger";
+"72078810.tags" = "hamburger | restoran";
+// 🍟 - fries
+"72078865.name" = "patates kızartması";
+"72078865.tags" = "kızartma patates | patates kızartması | restoran";
+// 🍕 - pizza
+"72078815.name" = "pizza dilimi";
+"72078815.tags" = "dilim | pizza | pizza dilimi | restoran";
+// 🌭 - hotdog
+"72078615.name" = "sosisli sandviç";
+"72078615.tags" = "hot dog | sosis | sosisli sandviç";
+// 🥪 - sandwich
+"72078930.name" = "sandviç";
+"72078930.tags" = "ekmek | sandviç";
+// 🌮 - taco
+"72078620.name" = "tako";
+"72078620.tags" = "Meksika sandviçi | tako";
+// 🌯 - burrito
+"72078625.name" = "burito";
+"72078625.tags" = "burito | Meksika dürümü";
+// 🫔 - tamale
+"72080740.name" = "tamale";
+"72080740.tags" = "dürüm | Meksika yemeği | tamale";
+// 🥙 - stuffed_flatbread
+"72078845.name" = "dürüm";
+"72078845.tags" = "döner | dürüm | falafel | kebap | pide | sarma | yiyecek";
+// 🧆 - falafel
+"72079390.name" = "falafel";
+"72079390.tags" = "falafel | köfte | nohut";
+// 🥚 - egg
+"72078850.name" = "yumurta";
+"72078850.tags" = "yiyecek | yumurta";
+// 🍳 - fried_egg
+"72078965.name" = "yemek pişirme";
+"72078965.tags" = "pişirme | restoran | yemek pişirme";
+// 🥘 - shallow_pan_of_food
+"72078840.name" = "sahanda yemek";
+"72078840.tags" = "güveç | küçük | paella | sahanda yemek | tava | yiyecek";
+// 🍲 - stew
+"72078960.name" = "yemek tenceresi";
+"72078960.tags" = "restoran | tencere yemeği | yemek tenceresi";
+// 🫕 - fondue
+"72080745.name" = "fondü";
+"72080745.tags" = "çikolata | erimiş | fondü | İsviçre | kap | peynir";
+// 🥣 - bowl_with_spoon
+"72078895.name" = "kaşıklı kase";
+"72078895.tags" = "kahvaltı | kaşıklı kase | pirinç lapası | tahıl gevreği";
+// 🥗 - green_salad
+"72078835.name" = "yeşil salata";
+"72078835.tags" = "salata | yeşil | yiyecek";
+// 🍿 - popcorn
+"72079025.name" = "patlamış mısır";
+"72079025.tags" = "mısır | patlamış mısır";
+// 🧈 - butter
+"72079400.name" = "tereyağı";
+"72079400.tags" = "süt ürünü | tereyağı";
+// 🧂 - salt
+"72079370.name" = "tuz";
+"72079370.tags" = "çeşni | tuz | tuzluk";
+// 🥫 - canned_food
+"72078935.name" = "konserve gıda";
+"72078935.tags" = "konserve | konserve gıda";
+// 🍱 - bento
+"72078955.name" = "bento";
+"72078955.tags" = "bento | bento paketi | paket | restoran";
+// 🍘 - rice_cracker
+"72078830.name" = "pirinç gevreği";
+"72078830.tags" = "pirinç | pirinç gevreği";
+// 🍙 - rice_ball
+"72078835.name" = "pirinç topu";
+"72078835.tags" = "onigiri | pirinç | pirinç topu | restoran";
+// 🍚 - rice
+"72078840.name" = "pilav";
+"72078840.tags" = "pilav | pirinç | restoran";
+// 🍛 - curry
+"72078845.name" = "körili pilav";
+"72078845.tags" = "köri | körili pilav | pirinç | restoran";
+// 🍜 - ramen
+"72078850.name" = "erişte";
+"72078850.tags" = "buharda pişmiş | erişte | noodle | noodle tabağı | restoran | tabak";
+// 🍝 - spaghetti
+"72078855.name" = "spagetti";
+"72078855.tags" = "makarna | restoran | spagetti";
+// 🍠 - sweet_potato
+"72078870.name" = "fırınlanmış patates";
+"72078870.tags" = "fırınlanmış patates | fırınlanmış tatlı patates | restoran | tatlı | tatlı patates | tırınlanmış";
+// 🍢 - oden
+"72078880.name" = "oden";
+"72078880.tags" = "çubuk | çubukta deniz ürünleri | oden | restoran";
+// 🍣 - sushi
+"72078885.name" = "suşi";
+"72078885.tags" = "restoran | suşi";
+// 🍤 - fried_shrimp
+"72078890.name" = "kızarmış karides";
+"72078890.tags" = "karides | kızarmış karides | restoran";
+// 🍥 - fish_cake
+"72078895.name" = "balık köftesi";
+"72078895.tags" = "balık | balık köftesi | restoran | rulo balık köftesi";
+// 🥮 - moon_cake
+"72078950.name" = "ay pastası";
+"72078950.tags" = "ay pastası | festival | sonbahar | yuèbǐng";
+// 🍡 - dango
+"72078875.name" = "pirinç tatlısı";
+"72078875.tags" = "çubukta pirinç tatlısı topları | dango | Japon pirinç tatlısı | pirinç tatlısı | pirinç tatlısı topları | restoran";
+// 🥟 - dumpling
+"72078875.name" = "mantı";
+"72078875.tags" = "empanada | gyōza | jiaozi | mantı | pierogi | potsticker";
+// 🥠 - fortune_cookie
+"72078880.name" = "fal kurabiyesi";
+"72078880.tags" = "fal kurabiyesi | kehanet";
+// 🥡 - takeout_box
+"72078885.name" = "yiyecek paketi";
+"72078885.tags" = "yiyecek paketi";
+// 🦀 - crab
+"72079040.name" = "yengeç";
+"72079040.tags" = "burç | ıstakoz | yengeç";
+// 🦞 - lobster
+"72079190.name" = "ıstakoz";
+"72079190.tags" = "bisque | deniz ürünü | ıstakoz | kıskaç";
+// 🦐 - shrimp
+"72079120.name" = "karides";
+"72079120.tags" = "kabuklu deniz hayvanı | karides | küçük | yiyecek";
+// 🦑 - squid
+"72079125.name" = "mürekkep balığı";
+"72079125.tags" = "mürekkep balığı | yiyecek | yumuşakçalar sınıfı";
+// 🦪 - oyster
+"72079250.name" = "istiridye";
+"72079250.tags" = "dalma | inci | istiridye";
+// 🍦 - icecream
+"72078900.name" = "yumuşak dondurma";
+"72078900.tags" = "dondurma | krema | restoran | yumuşak dondurma";
+// 🍧 - shaved_ice
+"72078905.name" = "meyveli buz";
+"72078905.tags" = "buz | meyveli | restoran";
+// 🍨 - ice_cream
+"72078910.name" = "dondurma";
+"72078910.tags" = "buz | dondurma | krema | restoran";
+// 🍩 - doughnut
+"72078915.name" = "donut";
+"72078915.tags" = "donat | donut | doughnut | restoran";
+// 🍪 - cookie
+"72078920.name" = "kurabiye";
+"72078920.tags" = "kurabiye | restoran";
+// 🎂 - birthday
+"72079040.name" = "doğum günü pastası";
+"72079040.tags" = "doğum günü | doğum günü pastası | kutlama | pasta";
+// 🍰 - cake
+"72078950.name" = "pasta dilimi";
+"72078950.tags" = "dilim pasta | pasta | pasta dilimi | restoran";
+// 🧁 - cupcake
+"72079365.name" = "cupcake";
+"72079365.tags" = "cupcake | fırın | kapkek | tatlı | top kek";
+// 🥧 - pie
+"72078915.name" = "tart";
+"72078915.tags" = "pasta | poğaça | tart";
+// 🍫 - chocolate_bar
+"72078925.name" = "çikolata";
+"72078925.tags" = "bar | çikolata | çikolata barı | restoran";
+// 🍬 - candy
+"72078930.name" = "şekerleme";
+"72078930.tags" = "restoran | şekerleme";
+// 🍭 - lollipop
+"72078935.name" = "lolipop";
+"72078935.tags" = "lolipop | restoran | şekerleme";
+// 🍮 - custard
+"72078940.name" = "krem karamel";
+"72078940.tags" = "krem karamel | puding | restoran";
+// 🍯 - honey_pot
+"72078945.name" = "bal kabı";
+"72078945.tags" = "bal | bal kabı | kap | restoran";
+// 🍼 - baby_bottle
+"72079010.name" = "biberon";
+"72079010.tags" = "biberon | içecek | şişe | süt";
+// 🥛 - glass_of_milk
+"72078855.name" = "süt bardağı";
+"72078855.tags" = "bardak | içecek | süt | süt bardağı";
+// ☕ - coffee
+"30018.name" = "sıcak içecek";
+"30018.tags" = "çay | dumanı tüten | içecek | kahve | sıcak";
+// 🫖 - teapot
+"72080750.name" = "demlik";
+"72080750.tags" = "çay | çaydanlık | demlik | içecek";
+// 🍵 - tea
+"72078975.name" = "çay fincanı";
+"72078975.tags" = "çay | çay fincanı | içecek";
+// 🍶 - sake
+"72078980.name" = "sake";
+"72078980.tags" = "bar | fincan | içecek | restoran | sake | sake şişesi ve fincanı | şişe";
+// 🍾 - champagne
+"72079020.name" = "patlayan mantarlı şişe";
+"72079020.tags" = "bar | içki | mantar | patlayan mantarlı şişe | şişe";
+// 🍷 - wine_glass
+"72078985.name" = "şarap kadehi";
+"72078985.tags" = "bar | bardak | bardak şarap | içecek | kadeh | şarap bardağı | şarap kadehi";
+// 🍸 - cocktail
+"72078990.name" = "kokteyl kadehi";
+"72078990.tags" = "bar | kokteyl bardağı | kokteyl kadehi | restoran";
+// 🍹 - tropical_drink
+"72078995.name" = "tropik içecek";
+"72078995.tags" = "bar | içecek | restoran | tropik";
+// 🍺 - beer
+"72079000.name" = "bira kupası";
+"72079000.tags" = "bar | bira kupası | kupa | restoran";
+// 🍻 - beers
+"72079005.name" = "bira kupaları tokuşturma";
+"72079005.tags" = "bar | bira | bira kupaları tokuşturma | kupa | kupalar | restoran";
+// 🥂 - clinking_glasses
+"72078730.name" = "kadeh tokuşturma";
+"72078730.tags" = "bardak | içecek | kadeh tokuşturma | kutlama | tokuşturma";
+// 🥃 - tumbler_glass
+"72078735.name" = "kısa ve geniş bardak";
+"72078735.tags" = "bardak | kısa ve geniş | kısa ve geniş bardak | likör | tek içki | viski";
+// 🫗 - pouring_liquid
+"72080755.name" = "dökülen sıvı";
+"72080755.tags" = "bardak | boş | dökme | dökülen sıvı | içecek | sıvı";
+// 🥤 - cup_with_straw
+"72078900.name" = "pipetli bardak";
+"72078900.tags" = "pipetli bardak";
+// 🧋 - bubble_tea
+"72079415.name" = "bubble tea";
+"72079415.tags" = "baloncuk | bubble tea | çay | inci | inci çayı | süt";
+// 🧃 - beverage_box
+"72079375.name" = "içecek kutusu";
+"72079375.tags" = "içecek kutusu | kutu meyve suyu";
+// 🧉 - mate_drink
+"72079405.name" = "mate çayı";
+"72079405.tags" = "içecek | mate çayı";
+// 🧊 - ice_cube
+"72079410.name" = "buz küpü";
+"72079410.tags" = "aysberg | buz küpü | soğuk";
+// 🥢 - chopsticks
+"72078890.name" = "yemek çubukları";
+"72078890.tags" = "chopsticks | yemek çubukları";
+// 🍴 - fork_and_knife
+"72078970.name" = "çatal ve bıçak";
+"72078970.tags" = "bıçak | çatal | çatal ve bıçak | restoran";
+// 🥄 - spoon
+"72078740.name" = "kaşık";
+"72078740.tags" = "kaşık | yemek takımı";
+// 🔪 - hocho
+"72077325.name" = "mutfak bıçağı";
+"72077325.tags" = "bıçak | mutfak bıçağı";
+// 🫙 - jar
+"72080765.name" = "kavanoz";
+"72080765.tags" = "baharatlık | boş | kavanoz | saklama kabı | sos";
+// 🏺 - amphora
+"72079640.name" = "amfora";
+"72079640.tags" = "alet | amfora | antika | içecek | kap | silah";
+// 🌍 - earth_africa
+"72078455.name" = "yerkürede Avrupa-Afrika";
+"72078455.tags" = "Afrika | Avrupa | dünya | yerkürede Avrupa-Afrika";
+// 🌎 - earth_americas
+"72078460.name" = "yerkürede Amerika";
+"72078460.tags" = "Amerika | Amerika bölgeleri | dünya | yerkürede Amerika";
+// 🌏 - earth_asia
+"72078465.name" = "yerkürede Asya-Avustralya";
+"72078465.tags" = "Asya | Avustralya | dünya | yerkürede Asya-Avustralya";
+// 🌐 - globe_with_meridians
+"72078470.name" = "meridyenli yerküre";
+"72078470.tags" = "boylamlar | dünya | meridyen | meridyenli yerküre | yerküre";
+// 🗾 - japan
+"72078385.name" = "Japonya haritası";
+"72078385.tags" = "harita | Japonya | Japonya haritası";
+// 🧭 - compass
+"72079585.name" = "pusula";
+"72079585.tags" = "hedef bulma | manyetik | navigasyon | oryantiring | pusula | yön bulma";
+// 🌋 - volcano
+"72078445.name" = "yanardağ";
+"72078445.tags" = "dağ | volkan | yanardağ | yanardağ patlaması";
+// 🗻 - mount_fuji
+"72078370.name" = "Fuji Dağı";
+"72078370.tags" = "dağ | Fuji Dağı";
+// 🧱 - bricks
+"72079605.name" = "tuğla";
+"72079605.tags" = "duvar | harç | kil | tuğla | tuğlalar";
+// 🪨 - rock
+"72080520.name" = "kaya";
+"72080520.tags" = "ağır | katı | kaya | kayalık | sert | taş";
+// 🪵 - wood
+"72080585.name" = "kütük";
+"72080585.tags" = "ağaç | ahşap | kereste | kütük | tomruk";
+// 🛖 - hut
+"72079465.name" = "kulübe";
+"72079465.tags" = "ev | kulübe | yurt";
+// 🏠 - house
+"72079510.name" = "ev";
+"72079510.tags" = "bina | ev";
+// 🏡 - house_with_garden
+"72079515.name" = "bahçeli ev";
+"72079515.tags" = "bahçe | bahçeli ev | bina";
+// 🏢 - office
+"72079520.name" = "ofis binası";
+"72079520.tags" = "bina | ofis binası";
+// 🏣 - post_office
+"72079525.name" = "Japon postanesi";
+"72079525.tags" = "bina | Japon | Japon postanesi | posta";
+// 🏤 - european_post_office
+"72079530.name" = "postane";
+"72079530.tags" = "Avrupa | Avrupa postanesi | bina | posta | postane";
+// 🏥 - hospital
+"72079535.name" = "hastane";
+"72079535.tags" = "bina | hastane";
+// 🏦 - bank
+"72079540.name" = "banka";
+"72079540.tags" = "banka | bina";
+// 🏨 - hotel
+"72079550.name" = "otel";
+"72079550.tags" = "bina | otel";
+// 🏩 - love_hotel
+"72079555.name" = "aşk oteli";
+"72079555.tags" = "aşk | aşk oteli | bina | otel";
+// 🏪 - convenience_store
+"72079560.name" = "sürekli açık market";
+"72079560.tags" = "bina | market | sürekli açık | sürekli açık market";
+// 🏫 - school
+"72079565.name" = "okul";
+"72079565.tags" = "bina | okul | okul binası";
+// 🏬 - department_store
+"72079570.name" = "çok katlı mağaza";
+"72079570.tags" = "çok katlı | çok katlı mağaza | mağaza";
+// 🏭 - factory
+"72079575.name" = "fabrika";
+"72079575.tags" = "bina | fabrika";
+// 🏯 - japanese_castle
+"72079585.name" = "Japon şatosu";
+"72079585.tags" = "bina | Japon şatosu | kale | şato";
+// 🏰 - european_castle
+"72079590.name" = "şato";
+"72079590.tags" = "bina | kale | şato";
+// 💒 - wedding
+"72076565.name" = "düğün";
+"72076565.tags" = "düğün | evlenme | kilise | kilisede evlenme | romantizm";
+// 🗼 - tokyo_tower
+"72078375.name" = "Tokyo kulesi";
+"72078375.tags" = "kule | Tokyo | Tokyo kulesi";
+// 🗽 - statue_of_liberty
+"72078380.name" = "Özgürlük Heykeli";
+"72078380.tags" = "heykel | özgürlük | Özgürlük Heykeli";
+// ⛪ - church
+"30657.name" = "kilise";
+"30657.tags" = "din | haç | Hristiyan | kilise";
+// 🕌 - mosque
+"72077495.name" = "cami";
+"72077495.tags" = "cami | din | İslam | Müslüman";
+// 🛕 - hindu_temple
+"72079460.name" = "Hindu tapınağı";
+"72079460.tags" = "hindu | Hindu tapınağı | tapınak";
+// 🕍 - synagogue
+"72077500.name" = "sinagog";
+"72077500.tags" = "din | sinagog | tapınak | Yahudi";
+// 🕋 - kaaba
+"72077490.name" = "Kâbe";
+"72077490.tags" = "din | islam | Kâbe | müslüman";
+// ⛲ - fountain
+"30681.name" = "fıskiye";
+"30681.tags" = "çeşme | fıskiye";
+// ⛺ - tent
+"30705.name" = "çadır";
+"30705.tags" = "çadır | kamp yeri";
+// 🌁 - foggy
+"72078395.name" = "sisli";
+"72078395.tags" = "sis | sisli";
+// 🌃 - night_with_stars
+"72078405.name" = "yıldızlı gece";
+"72078405.tags" = "gece | yıldızlar | yıldızlı gece";
+// 🌄 - sunrise_over_mountains
+"72078410.name" = "dağların arasından güneşin doğuşu";
+"72078410.tags" = "dağ | dağların arasından güneşin doğuşu | dağların ardında güneş | sabah güneşi";
+// 🌅 - sunrise
+"72078415.name" = "güneşin doğuşu";
+"72078415.tags" = "gün doğumu | güneş | güneşin doğuşu | sabah | sabah güneşi | şafak";
+// 🌆 - city_sunset
+"72078420.name" = "şehirde alacakaranlık";
+"72078420.tags" = "akşam | alacakaranlık | bina | gün batımı | manzara | şehir | şehirde alacakaranlık";
+// 🌇 - city_sunrise
+"72078425.name" = "gün batımı";
+"72078425.tags" = "alacakaranlık | bina | binaların üzerinden gün batımı | gün batımı";
+// 🌉 - bridge_at_night
+"72078435.name" = "gece vakti köprü";
+"72078435.tags" = "gece | gece vakti köprü";
+// 🎠 - carousel_horse
+"72079190.name" = "atlıkarınca";
+"72079190.tags" = "at | atlıkarınca | atlıkarınca atı | eğlence";
+// 🛝 - playground_slide
+"72079500.name" = "kaydırak";
+"72079500.tags" = "eğlence parkı | kaydırak | oyun";
+// 🎡 - ferris_wheel
+"72079195.name" = "dönme dolap";
+"72079195.tags" = "dolap | dönme | eğlence | eğlence parkı";
+// 🎢 - roller_coaster
+"72079200.name" = "hız treni";
+"72079200.tags" = "eğlence | eğlence parkı | hız | hız treni | tren";
+// 💈 - barber
+"72076515.name" = "berber dükkanı";
+"72076515.tags" = "berber | berber dükkanı | berber işareti | işaret";
+// 🎪 - circus_tent
+"72079240.name" = "sirk çadırı";
+"72079240.tags" = "çadır | eğlence | sirk çadırı";
+// 🚂 - steam_locomotive
+"72079045.name" = "buharlı lokomotif";
+"72079045.tags" = "buharlı lokomotif | lokomotif | taşıt | tren";
+// 🚃 - railway_car
+"72079050.name" = "vagon";
+"72079050.tags" = "demir yolu | elektrik | elektrikli tren | taşıt | tramvay | vagon";
+// 🚄 - bullettrain_side
+"72079055.name" = "yüksek hızlı tren";
+"72079055.tags" = "shinkansen | taşıt | tren | yüksek hızlı tren";
+// 🚅 - bullettrain_front
+"72079060.name" = "yuvarlak uçlu yüksek hızlı tren";
+"72079060.tags" = "mermi burunlu | mermi burunlu shinkansen | shinkansen | taşıt | tren | yuvarlak uçlu yüksek hızlı tren";
+// 🚆 - train2
+"72079065.name" = "tren";
+"72079065.tags" = "demiryolu | taşıt | tren";
+// 🚇 - metro
+"72079070.name" = "metro";
+"72079070.tags" = "metro | taşıt";
+// 🚈 - light_rail
+"72079075.name" = "hafif raylı";
+"72079075.tags" = "demiryolu | hafif | hafif raylı | taşıt";
+// 🚉 - station
+"72079080.name" = "tren istasyonu";
+"72079080.tags" = "istasyon | tren | tren istasyonu";
+// 🚊 - tram
+"72079085.name" = "tramvay";
+"72079085.tags" = "taşıt | tramvay";
+// 🚝 - monorail
+"72079180.name" = "monoray";
+"72079180.tags" = "monoray | taşıt";
+// 🚞 - mountain_railway
+"72079185.name" = "dağ demiryolu";
+"72079185.tags" = "dağ | dağ teleferiği | demiryolu | taşıt | vagon";
+// 🚋 - train
+"72079090.name" = "tramvay vagonu";
+"72079090.tags" = "taşıt | tramvay | tramvay vagonu | vagon";
+// 🚌 - bus
+"72079095.name" = "otobüs";
+"72079095.tags" = "otobüs | taşıt";
+// 🚍 - oncoming_bus
+"72079100.name" = "yaklaşan otobüs";
+"72079100.tags" = "otobüs | taşıt | yaklaşan";
+// 🚎 - trolleybus
+"72079105.name" = "troleybüs";
+"72079105.tags" = "otobüs | taşıt | troley | troleybüs";
+// 🚐 - minibus
+"72079115.name" = "minibüs";
+"72079115.tags" = "minibüs | otobüs | taşıt";
+// 🚑 - ambulance
+"72079120.name" = "ambulans";
+"72079120.tags" = "ambulans | taşıt";
+// 🚒 - fire_engine
+"72079125.name" = "itfaiye arabası";
+"72079125.tags" = "araba | itfaiye arabası | itfaiye kamyonu | taşıt | yangın";
+// 🚓 - police_car
+"72079130.name" = "polis arabası";
+"72079130.tags" = "devriye arabası | polis | polis arabası | taşıt";
+// 🚔 - oncoming_police_car
+"72079135.name" = "yaklaşan polis arabası";
+"72079135.tags" = "polis | polis arabası | taşıt | yaklaşan polis arabası";
+// 🚕 - taxi
+"72079140.name" = "taksi";
+"72079140.tags" = "taksi | taşıt";
+// 🚖 - oncoming_taxi
+"72079145.name" = "yaklaşan taksi";
+"72079145.tags" = "taksi | taşıt | yaklaşan taksi";
+// 🚗 - car
+"72079150.name" = "araba";
+"72079150.tags" = "araba | otomobil | taşıt";
+// 🚘 - oncoming_automobile
+"72079155.name" = "yaklaşan araba";
+"72079155.tags" = "araba | otomobil | taşıt | yaklaşan";
+// 🚙 - blue_car
+"72079160.name" = "cip";
+"72079160.tags" = "araba | cip | eğlence taşıtı | taşıt";
+// 🛻 - pickup_truck
+"72079650.name" = "pikap";
+"72079650.tags" = "kamyon | kamyonet | pikap";
+// 🚚 - truck
+"72079165.name" = "nakliye kamyonu";
+"72079165.tags" = "kamyon | nakliye kamyonu | taşıt";
+// 🚛 - articulated_lorry
+"72079170.name" = "tır";
+"72079170.tags" = "çekici | çekici kamyon | taşıt | tır | treyler";
+// 🚜 - tractor
+"72079175.name" = "traktör";
+"72079175.tags" = "taşıt | traktör";
+// 🛵 - motor_scooter
+"72079620.name" = "motorlu skuter";
+"72079620.tags" = "motor | motorlu skuter | skuter";
+// 🦽 - manual_wheelchair
+"72079345.name" = "tekerlekli sandalye";
+"72079345.tags" = "erişilebilirlik | tekerlekli sandalye";
+// 🦼 - motorized_wheelchair
+"72079340.name" = "elektrikli tekerlekli sandalye";
+"72079340.tags" = "elektrikli tekerlekli sandalye | erişilebilirlik";
+// 🛺 - auto_rickshaw
+"72079645.name" = "elektrikli çekçek";
+"72079645.tags" = "elektrikli çekçek | tuk tuk";
+// 🚲 - bike
+"72079285.name" = "bisiklet";
+"72079285.tags" = "bisiklet | taşıt";
+// 🛴 - scooter
+"72079615.name" = "ayakla sürülen skuter";
+"72079615.tags" = "ayak | ayakla sürülen skuter | skuter";
+// 🛹 - skateboard
+"72079640.name" = "kaykay";
+"72079640.tags" = "kaykay | tahta";
+// 🛼 - roller_skate
+"72079655.name" = "paten";
+"72079655.tags" = "paten | tekerlek | tekerlekli paten";
+// 🚏 - busstop
+"72079110.name" = "otobüs durağı";
+"72079110.tags" = "durak | otobüs | otobüs durağı";
+// ⛽ - fuelpump
+"30714.name" = "akaryakıt istasyonu";
+"30714.tags" = "akaryakıt istasyonu | benzin | istasyon | yakıt | yakıt pompası";
+// 🛞 - wheel
+"72079505.name" = "tekerlek";
+"72079505.tags" = "çark | dönüş | lastik | tekerlek";
+// 🚨 - rotating_light
+"72079235.name" = "polis lambası";
+"72079235.tags" = "polis arabası | polis lambası | polis tepe lambası";
+// 🚥 - traffic_light
+"72079220.name" = "yatay trafik ışıkları";
+"72079220.tags" = "ışık | trafik | trafik sinyalleri | yatay trafik ışığı | yatay trafik ışıkları";
+// 🚦 - vertical_traffic_light
+"72079225.name" = "dikey trafik ışıkları";
+"72079225.tags" = "dikey trafik ışığı | dikey trafik ışıkları | ışık | trafik | trafik sinyalleri";
+// 🛑 - octagonal_sign
+"72079440.name" = "dur işareti";
+"72079440.tags" = "dur | dur işareti | işaret | sekizgen";
+// 🚧 - construction
+"72079230.name" = "inşaat";
+"72079230.tags" = "inşaat | inşaat işareti | işaret";
+// ⚓ - anchor
+"30396.name" = "çıpa";
+"30396.tags" = "çıpa | gemi | işaret";
+// 🛟 - ring_buoy
+"72079510.name" = "cankurtaran simidi";
+"72079510.tags" = "can simidi | cankurtaran | cankurtaran simidi | güvenlik | hayat kurtaran | yüzme";
+// ⛵ - boat
+"30690.name" = "yelkenli tekne";
+"30690.tags" = "deniz tatil yeri | tatil yeri | tekne | yat | yelkenli tekne";
+// 🛶 - canoe
+"72079625.name" = "kano";
+"72079625.tags" = "bot | kano";
+// 🚤 - speedboat
+"72079215.name" = "sürat teknesi";
+"72079215.tags" = "sürat teknesi | taşıt | tekne";
+// 🚢 - ship
+"72079205.name" = "gemi";
+"72079205.tags" = "gemi | taşıt";
+// 🛫 - airplane_departure
+"72079570.name" = "kalkan uçak";
+"72079570.tags" = "check in | kalkan uçak | kalkış | taşıt | uçak";
+// 🛬 - airplane_arriving
+"72079575.name" = "inen uçak";
+"72079575.tags" = "inen uçak | iniş | inme | taşıt | uçak | varış";
+// 🪂 - parachute
+"72080330.name" = "paraşüt";
+"72080330.tags" = "delta kanat | deniz paraşütü | paraşüt | paraşütle atlama";
+// 💺 - seat
+"72076765.name" = "koltuk";
+"72076765.tags" = "koltuk | sandalye";
+// 🚁 - helicopter
+"72079040.name" = "helikopter";
+"72079040.tags" = "helikopter | taşıt";
+// 🚟 - suspension_railway
+"72079190.name" = "asma demiryolu";
+"72079190.tags" = "asma | demiryolu | taşıt";
+// 🚠 - mountain_cableway
+"72079195.name" = "dağ teleferik hattı";
+"72079195.tags" = "dağ | dağ teleferiği | dağ teleferik hattı | kablo | taşıt | vagon";
+// 🚡 - aerial_tramway
+"72079200.name" = "teleferik";
+"72079200.tags" = "gondol | hava tramvayı | havadan yol | kablo yolu | taşıt | teleferik | tramvay";
+// 🚀 - rocket
+"72079035.name" = "roket";
+"72079035.tags" = "roket | taşıt";
+// 🛸 - flying_saucer
+"72079635.name" = "uçan daire";
+"72079635.tags" = "uçan daire | UFO";
+// 🧳 - luggage
+"72079615.name" = "bavul";
+"72079615.tags" = "bagaj | bavul | seyahat | valiz";
+// ⌛ - hourglass
+"27732.name" = "kum saati";
+"27732.tags" = "kum | kum saati";
+// ⏳ - hourglass_flowing_sand
+"28380.name" = "akan kum saati";
+"28380.tags" = "akan kum saati | sayaç | zamanlayıcı";
+// ⌚ - watch
+"27729.name" = "kol saati";
+"27729.tags" = "kol saati | saat";
+// ⏰ - alarm_clock
+"28371.name" = "çalar saat";
+"28371.tags" = "alarm | çalar saat | saat";
+// 🕛 - clock12
+"72077570.name" = "saat 12";
+"72077570.tags" = "12:00 | on iki | saat | saat 12";
+// 🕧 - clock1230
+"72077630.name" = "on iki buçuk";
+"72077630.tags" = "12:30 | on iki buçuk | on iki otuz | saat | yarım";
+// 🕐 - clock1
+"72077515.name" = "saat 1";
+"72077515.tags" = "1:00 | bir | saat | saat 1";
+// 🕜 - clock130
+"72077575.name" = "bir buçuk";
+"72077575.tags" = "1:30 | bir buçuk | saat";
+// 🕑 - clock2
+"72077520.name" = "saat 2";
+"72077520.tags" = "2:00 | iki | saat | saat 2";
+// 🕝 - clock230
+"72077580.name" = "iki buçuk";
+"72077580.tags" = "2:30 | iki buçuk | saat";
+// 🕒 - clock3
+"72077525.name" = "saat 3";
+"72077525.tags" = "3:00 | saat | saat 3 | üç";
+// 🕞 - clock330
+"72077585.name" = "üç buçuk";
+"72077585.tags" = "3:30 | saat | üç buçuk";
+// 🕓 - clock4
+"72077530.name" = "saat 4";
+"72077530.tags" = "4:00 | dört | saat | saat 4";
+// 🕟 - clock430
+"72077590.name" = "dört buçuk";
+"72077590.tags" = "4:30 | dört buçuk | saat";
+// 🕔 - clock5
+"72077535.name" = "saat 5";
+"72077535.tags" = "5:00 | beş | saat | saat 5";
+// 🕠 - clock530
+"72077595.name" = "beş buçuk";
+"72077595.tags" = "5:30 | beş buçuk | saat";
+// 🕕 - clock6
+"72077540.name" = "saat 6";
+"72077540.tags" = "6:00 | altı | saat | saat 6";
+// 🕡 - clock630
+"72077600.name" = "altı buçuk";
+"72077600.tags" = "6:30 | altı buçuk | saat";
+// 🕖 - clock7
+"72077545.name" = "saat 7";
+"72077545.tags" = "7:00 | saat | saat 7 | yedi";
+// 🕢 - clock730
+"72077605.name" = "yedi buçuk";
+"72077605.tags" = "7:30 | saat | yedi buçuk";
+// 🕗 - clock8
+"72077550.name" = "saat 8";
+"72077550.tags" = "8:00 | saat | saat 8 | sekiz";
+// 🕣 - clock830
+"72077610.name" = "sekiz buçuk";
+"72077610.tags" = "8:30 | saat | sekiz buçuk";
+// 🕘 - clock9
+"72077555.name" = "saat 9";
+"72077555.tags" = "9:00 | dokuz | saat | saat 9";
+// 🕤 - clock930
+"72077615.name" = "dokuz buçuk";
+"72077615.tags" = "9:30 | dokuz buçuk | saat";
+// 🕙 - clock10
+"72077560.name" = "saat 10";
+"72077560.tags" = "10:00 | on | saat | saat 10";
+// 🕥 - clock1030
+"72077620.name" = "on buçuk";
+"72077620.tags" = "10:30 | on buçuk | saat";
+// 🕚 - clock11
+"72077565.name" = "saat 11";
+"72077565.tags" = "11:00 | on bir | saat | saat 11";
+// 🕦 - clock1130
+"72077625.name" = "on bir buçuk";
+"72077625.tags" = "11:30 | on bir buçuk | saat";
+// 🌑 - new_moon
+"72078475.name" = "yeni ay";
+"72078475.tags" = "ay | karanlık | yeni";
+// 🌒 - waxing_crescent_moon
+"72078480.name" = "büyüyen ay";
+"72078480.tags" = "ay | büyüyen ay | yükselen";
+// 🌓 - first_quarter_moon
+"72078485.name" = "ilk dördün";
+"72078485.tags" = "ay | ilk dördün";
+// 🌔 - moon
+"72078490.name" = "geniş ay";
+"72078490.tags" = "ay | geniş ay | şişkin | yükselen";
+// 🌕 - full_moon
+"72078495.name" = "dolunay";
+"72078495.tags" = "ay | dolu | dolunay | parlak";
+// 🌖 - waning_gibbous_moon
+"72078500.name" = "küçülen ay";
+"72078500.tags" = "ay | küçülen ay | şişkin | solgun";
+// 🌗 - last_quarter_moon
+"72078505.name" = "son dördün";
+"72078505.tags" = "ay | dördün | son dördün";
+// 🌘 - waning_crescent_moon
+"72078510.name" = "ince ay";
+"72078510.tags" = "ay | ince ay | solgun";
+// 🌙 - crescent_moon
+"72078515.name" = "hilal";
+"72078515.tags" = "ay | hilal";
+// 🌚 - new_moon_with_face
+"72078520.name" = "yeni ay yüzü";
+"72078520.tags" = "ay | yeni ay | yeni ay yüzü | yüz | yüzü olan yeni ay";
+// 🌛 - first_quarter_moon_with_face
+"72078525.name" = "ilk dördün ay yüzü";
+"72078525.tags" = "ay | dördün | ilk dördün | ilk dördün ay yüzü | yüz | yüzü olan ay | yüzü olan ilk dördün";
+// 🌜 - last_quarter_moon_with_face
+"72078530.name" = "son dördün ay yüzü";
+"72078530.tags" = "ay | dördün | son dördün | son dördün ay yüzü | yüz | yüzü olan ay | yüzü olan son dördün";
+// 🌝 - full_moon_with_face
+"72078535.name" = "dolunay yüzü";
+"72078535.tags" = "ay | dolu | dolunay | dolunay yüzü | yüz | yüzü olan ay | yüzü olan dolunay";
+// 🌞 - sun_with_face
+"72078540.name" = "güneş yüz";
+"72078540.tags" = "güneş | yüz";
+// 🪐 - ringed_planet
+"72080400.name" = "halkalı gezegen";
+"72080400.tags" = "halkalı gezegen | satürn";
+// ⭐ - star
+"34035.name" = "yıldız";
+"34035.tags" = "beyaz orta yıldız | yıldız";
+// 🌟 - star2
+"72078545.name" = "parıldayan yıldız";
+"72078545.tags" = "kıvılcım | parıldama | parıldayan yıldız | pırıltı | yıldız";
+// 🌠 - stars
+"72078550.name" = "yıldız kayması";
+"72078550.tags" = "kayan | yıldız | yıldız kayması";
+// 🌌 - milky_way
+"72078450.name" = "samanyolu";
+"72078450.tags" = "gökyüzü | samanyolu | uzay";
+// ⛅ - partly_sunny
+"30546.name" = "bulutlar ardındaki güneş";
+"30546.tags" = "bulut | bulutlar ardındaki güneş | bulutlu güneş | güneş";
+// 🌀 - cyclone
+"72078390.name" = "siklon";
+"72078390.tags" = "baş dönmesi | hortum | siklon | tayfun";
+// 🌈 - rainbow
+"72078430.name" = "gökkuşağı";
+"72078430.tags" = "gökkuşağı | hava durumu | yağmur";
+// 🌂 - closed_umbrella
+"72078400.name" = "kapalı şemsiye";
+"72078400.tags" = "kapalı şemsiye | yağmur | yağmurlu";
+// ☔ - umbrella_with_rain_drops
+"30015.name" = "yağmur damlalı şemsiye";
+"30015.tags" = "giyim | hava durumu | yağmur | yağmur damlalı şemsiye";
+// ⚡ - zap
+"30438.name" = "yüksek voltaj";
+"30438.tags" = "işaret | tehlike | voltaj | yüksek | yüksek voltaj işareti | yüksek voltaj tehlikesi";
+// ⛄ - snowman_without_snow
+"30543.name" = "kar yağmadan kardan adam";
+"30543.tags" = "kar | kar yağmadan kardan adam | karsız kardan adam";
+// 🔥 - fire
+"72077300.name" = "ateş";
+"72077300.tags" = "alev | ateş";
+// 💧 - droplet
+"72076670.name" = "damlacık";
+"72076670.tags" = "çizgi roman | damlacık | ter | terli";
+// 🌊 - ocean
+"72078440.name" = "dalga";
+"72078440.tags" = "dalga | okyanus dalgası | su dalgası";
+// 🎃 - jack_o_lantern
+"72079045.name" = "kabak fener";
+"72079045.tags" = "cadılar bayramı | fener | halloween | jack | kabak | kutlama";
+// 🎄 - christmas_tree
+"72079050.name" = "Noel ağacı";
+"72079050.tags" = "ağaç | kutlama | Noel ağacı";
+// 🎆 - fireworks
+"72079060.name" = "havai fişek";
+"72079060.tags" = "havai fişek | kutlama";
+// 🎇 - sparkler
+"72079065.name" = "fişek";
+"72079065.tags" = "fişek | havai fişek | kutlama";
+// 🧨 - firecracker
+"72079560.name" = "maytap";
+"72079560.tags" = "dinamit | havai fişek | maytap | patlayıcı";
+// ✨ - sparkles
+"30843.name" = "parıltılar";
+"30843.tags" = "* | parıltı | parıltılar | pırıltı | yıldız";
+// 🎈 - balloon
+"72079070.name" = "balon";
+"72079070.tags" = "balon | kutlama";
+// 🎉 - tada
+"72079075.name" = "parti konfetisi";
+"72079075.tags" = "konfeti | kutlama | parti | parti konfetisi";
+// 🎊 - confetti_ball
+"72079080.name" = "konfeti";
+"72079080.tags" = "konfeti | konfeti topu | kutlama | top";
+// 🎋 - tanabata_tree
+"72079085.name" = "tanabata ağacı";
+"72079085.tags" = "ağaç | kağıt şeritler | kutlama | Star Festivali | tanabata ağacı";
+// 🎍 - bamboo
+"72079095.name" = "çam süsleme";
+"72079095.tags" = "çam | çam süsleme | Japon | kutlama | Yeni Yıl";
+// 🎎 - dolls
+"72079100.name" = "Japon oyuncak bebekleri";
+"72079100.tags" = "Bebek Festivali | festival | Japon | Japon oyuncak bebekleri | kutlama";
+// 🎏 - flags
+"72079105.name" = "sazan şekilli flama";
+"72079105.tags" = "flama | kutlama | sazan şekilli flama";
+// 🎐 - wind_chime
+"72079110.name" = "rüzgar çanı";
+"72079110.tags" = "çan | rüzgar çanı";
+// 🎑 - rice_scene
+"72079115.name" = "ay izleme";
+"72079115.tags" = "ay | ay izleme töreni | izleme | kutlama";
+// 🧧 - red_envelope
+"72079555.name" = "kırmızı zarf";
+"72079555.tags" = "hediye | hóngbāo | iyi şanslar | kırmızı zarf | lai see | para";
+// 🎀 - ribbon
+"72079030.name" = "kurdele";
+"72079030.tags" = "kurdele | kutlama";
+// 🎁 - gift
+"72079035.name" = "paketlenmiş hediye";
+"72079035.tags" = "kutlama | paketlenmiş hediye | paketli | paketli hediye";
+// 🎫 - ticket
+"72079245.name" = "bilet";
+"72079245.tags" = "bilet | giriş";
+// 🏆 - trophy
+"72079380.name" = "zafer kupası";
+"72079380.tags" = "ödül | zafer kupası";
+// 🏅 - sports_medal
+"72079375.name" = "spor madalyası";
+"72079375.tags" = "madalya | spor madalyası";
+// 🥇 - first_place_medal
+"72078755.name" = "birincilik madalyası";
+"72078755.tags" = "altın | birinci | birincilik madalyası | madalya";
+// 🥈 - second_place_medal
+"72078760.name" = "ikincilik madalyası";
+"72078760.tags" = "gümüş | ikinci | ikincilik madalyası | madalya";
+// 🥉 - third_place_medal
+"72078765.name" = "üçüncülük madalyası";
+"72078765.tags" = "bronz | madalya | üçüncü | üçüncülük madalyası";
+// ⚽ - soccer
+"30522.name" = "futbol topu";
+"30522.tags" = "futbol | futbol topu | top";
+// ⚾ - baseball
+"30525.name" = "beyzbol";
+"30525.tags" = "beyzbol | top";
+// 🥎 - softball
+"72078790.name" = "softball";
+"72078790.tags" = "eldiven | kol | softball | top";
+// 🏀 - basketball
+"72079350.name" = "basketbol";
+"72079350.tags" = "basketbol | basketbol potası | pota | spor | top";
+// 🏐 - volleyball
+"72079430.name" = "voleybol";
+"72079430.tags" = "maç | top | voleybol";
+// 🏈 - football
+"72079390.name" = "amerikan futbolu";
+"72079390.tags" = "amerikan | amerikan futbolu | spor | top";
+// 🏉 - rugby_football
+"72079395.name" = "ragbi";
+"72079395.tags" = "futbol topu | ragbi | spor | top";
+// 🎾 - tennis
+"72079340.name" = "tenis";
+"72079340.tags" = "spor | tenis | tenis raketi ve topu | tenis topu | top";
+// 🥏 - flying_disc
+"72078795.name" = "frizbi";
+"72078795.tags" = "frizbi | ultimate";
+// 🎳 - bowling
+"72079285.name" = "bovling";
+"72079285.tags" = "bovling | bovling topu | oyun | top";
+// 🏏 - cricket_bat_and_ball
+"72079425.name" = "kriket";
+"72079425.tags" = "kriket | maç | sopa | top";
+// 🏑 - field_hockey_stick_and_ball
+"72079435.name" = "çim hokeyi";
+"72079435.tags" = "çim hokeyi | hokey | maç | saha | sopa | top";
+// 🏒 - ice_hockey_stick_and_puck
+"72079440.name" = "buz hokeyi";
+"72079440.tags" = "buz | buz hokeyi | disk | hokey | maç | sopa";
+// 🥍 - lacrosse
+"72078785.name" = "lakros";
+"72078785.tags" = "gol | lakros | sopa | top";
+// 🏓 - table_tennis_paddle_and_ball
+"72079445.name" = "masa tenisi";
+"72079445.tags" = "maç | masa tenisi | pinpon | raket | top";
+// 🏸 - badminton_racquet_and_shuttlecock
+"72079630.name" = "badminton";
+"72079630.tags" = "badminton | maç | raket | tüylü top";
+// 🥊 - boxing_glove
+"72078770.name" = "boks eldiveni";
+"72078770.tags" = "boks | boks eldiveni | eldiven | spor";
+// 🥋 - martial_arts_uniform
+"72078775.name" = "dövüş sporu forması";
+"72078775.tags" = "dövüş sporu | dövüş sporu forması | forma | judo | karate | spor | tekvando";
+// 🥅 - goal_net
+"72078745.name" = "kale ağı";
+"72078745.tags" = "ağ | kale | kale ağı | spor";
+// ⛳ - golf
+"30684.name" = "delikteki bayrak";
+"30684.tags" = "delik | delikteki bayrak | golf | golf bayrağı";
+// 🎣 - fishing_pole_and_fish
+"72079205.name" = "olta";
+"72079205.tags" = "balık | dinlenme | eğlence | kamış | kamış olta ve balık | olta";
+// 🤿 - diving_mask
+"72078715.name" = "dalgıç maskesi";
+"72078715.tags" = "aletli dalış | dalgıç maskesi | dalış | şnorkelle dalış";
+// 🎽 - running_shirt_with_sash
+"72079335.name" = "koşu tişörtü";
+"72079335.tags" = "çizgi | çizgili koşu tişörtü | koşu | koşu tişörtü | spor | tişört";
+// 🎿 - ski
+"72079345.name" = "kayak";
+"72079345.tags" = "bot | kayak | kayak ve bot | spor";
+// 🛷 - sled
+"72079630.name" = "kızak";
+"72079630.tags" = "kızak";
+// 🥌 - curling_stone
+"72078780.name" = "curling taşı";
+"72078780.tags" = "curling taşı | körling taşı | oyun | taş";
+// 🎯 - dart
+"72079265.name" = "tam isabet";
+"72079265.tags" = "hedef | hedefe isabet | isabet | oyun | tam isabet";
+// 🪀 - yo-yo
+"72080320.name" = "yoyo";
+"72080320.tags" = "inip çıkma | oyuncak | yoyo";
+// 🪁 - kite
+"72080325.name" = "uçurtma";
+"72080325.tags" = "süzülme | uçma | uçurtma";
+// 🔫 - gun
+"72077330.name" = "su tabancası";
+"72077330.tags" = "revolver | silah | su tabancası | tabanca";
+// 🎱 - 8ball
+"72079275.name" = "bilardo";
+"72079275.tags" = "bilardo | oyun | sekiz top";
+// 🔮 - crystal_ball
+"72077345.name" = "kristal küre";
+"72077345.tags" = "fal | fal bakma | kristal | küre";
+// 🪄 - magic_wand
+"72080340.name" = "sihirli asa";
+"72080340.tags" = "büyücü | cadı | sihir | sihirli asa";
+// 🎮 - video_game
+"72079260.name" = "video oyunu";
+"72079260.tags" = "kontrol cihazı | oyun | oyun kontrol cihazı | video oyunu";
+// 🎰 - slot_machine
+"72079270.name" = "kumar makinesi";
+"72079270.tags" = "kumar | kumar makinesi | oyun";
+// 🎲 - game_die
+"72079280.name" = "oyun zarı";
+"72079280.tags" = "oyun | oyun zarı | zar";
+// 🧩 - jigsaw
+"72079565.name" = "yapboz parçası";
+"72079565.tags" = "ipucu | kenetleme | parça | puzzle | yapboz | yapboz parçası";
+// 🧸 - teddy_bear
+"72079640.name" = "oyuncak ayı";
+"72079640.tags" = "dolgu | oyun | oyuncak | oyuncak ayı | pelüş";
+// 🪅 - pinata
+"72080345.name" = "pinyata";
+"72080345.tags" = "kutlama | parti | pinyata";
+// 🪩 - mirror_ball
+"72080525.name" = "aynalı küre";
+"72080525.tags" = "aynalı küre | dans | disko | parlak | parti";
+// 🪆 - nesting_dolls
+"72080350.name" = "matruşka";
+"72080350.tags" = "bebek | iç içe | matruşka | Rusya";
+// 🃏 - black_joker
+"72075585.name" = "joker";
+"72075585.tags" = "iskambil kartı | joker | kart";
+// 🀄 - mahjong
+"72074570.name" = "kızıl ejder mahjong taşı";
+"72074570.tags" = "Ejderha | Kızıl Ejder | kızıl ejder mahjong taşı | mahjong | taş";
+// 🎴 - flower_playing_cards
+"72079290.name" = "çiçekli oyun kağıtları";
+"72079290.tags" = "çiçek | çiçekli kart | çiçekli oyun kağıtları | hanafuda | kağıt oyunu | kart | oyun";
+// 🎭 - performing_arts
+"72079255.name" = "sahne sanatları";
+"72079255.tags" = "eğlence | performans | performans sanatı | sahne sanatları | sanat";
+// 🎨 - art
+"72079230.name" = "boya paleti";
+"72079230.tags" = "boya | boya paleti | palet | sanat | sanatçı | sanatçı paleti";
+// 🧵 - thread
+"72079625.name" = "iplik";
+"72079625.tags" = "dikiş | iğne | iplik | makara";
+// 🪡 - sewing_needle
+"72080485.name" = "dikiş iğnesi";
+"72080485.tags" = "dikiş | dikiş iğnesi | dikme | iğne | nakış | sökük | terzi";
+// 🧶 - yarn
+"72079630.name" = "iplik yumağı";
+"72079630.tags" = "iplik yumağı | kroşe | top | yumak";
+// 🪢 - knot
+"72080490.name" = "denizci düğümü";
+"72080490.tags" = "bağlı | denizci düğümü | dolaşık | düğüm | halat | sicim";
+// 👓 - eyeglasses
+"72076250.name" = "gözlük";
+"72076250.tags" = "giyim | gözlük";
+// 🥽 - goggles
+"72079025.name" = "koruyucu gözlük";
+"72079025.tags" = "göz koruması | kaynak | koruyucu gözlük | yüzme";
+// 🥼 - lab_coat
+"72079020.name" = "laboratuvar önlüğü";
+"72079020.tags" = "bilim insanı | deney | doktor | laboratuvar önlüğü";
+// 🦺 - safety_vest
+"72079330.name" = "güvenlik yeleği";
+"72079330.tags" = "acil durum | güvenlik | güvenlik yeleği | yelek";
+// 👔 - necktie
+"72076255.name" = "kravat";
+"72076255.tags" = "giyim | kravat";
+// 👕 - shirt
+"72076260.name" = "tişört";
+"72076260.tags" = "giyim | gömlek | tişört";
+// 👖 - jeans
+"72076265.name" = "kot";
+"72076265.tags" = "blucin | blue jean | giyim | kot | pantolon";
+// 🧣 - scarf
+"72079535.name" = "atkı";
+"72079535.tags" = "atkı | yaka";
+// 🧤 - gloves
+"72079540.name" = "eldiven";
+"72079540.tags" = "el | eldiven";
+// 🧥 - coat
+"72079545.name" = "kaban";
+"72079545.tags" = "kaban";
+// 🧦 - socks
+"72079550.name" = "çorap";
+"72079550.tags" = "çorap";
+// 👗 - dress
+"72076270.name" = "elbise";
+"72076270.tags" = "elbise | giyim | tek parça";
+// 👘 - kimono
+"72076275.name" = "kimono";
+"72076275.tags" = "elbise | giyim | kimono";
+// 🥻 - sari
+"72079015.name" = "sari";
+"72079015.tags" = "elbise | giysi | sari";
+// 🩱 - one-piece_swimsuit
+"72080245.name" = "tek parça mayo";
+"72080245.tags" = "mayo | tek parça mayo";
+// 🩲 - briefs
+"72080250.name" = "slip mayo";
+"72080250.tags" = "alt | mayo | slip | tek parça";
+// 🩳 - shorts
+"72080255.name" = "şort";
+"72080255.tags" = "alt | mayo | şort";
+// 👙 - bikini
+"72076280.name" = "bikini";
+"72076280.tags" = "bikini | deniz giysisi | giyim";
+// 👚 - womans_clothes
+"72076285.name" = "kadın giysisi";
+"72076285.tags" = "giyim | giysiler | kadın giysisi";
+// 🪭 - folding_hand_fan
+"72080545.name" = "yelpaze";
+"72080545.tags" = "dans | heyecan | serinletme | sıcak | utangaç | yelpaze";
+// 👛 - purse
+"72076290.name" = "cüzdan";
+"72076290.tags" = "bozuk para | bozuk para çantası | cüzdan | giyim";
+// 👜 - handbag
+"72076295.name" = "el çantası";
+"72076295.tags" = "çanta | el çantası | giyim";
+// 👝 - pouch
+"72076300.name" = "para kesesi";
+"72076300.tags" = "çanta | giyim | para kesesi";
+// 🎒 - school_satchel
+"72079120.name" = "okul çantası";
+"72079120.tags" = "okul | okul çantası | okul sırt çantası | sırt çantası";
+// 🩴 - thong_sandal
+"72080260.name" = "parmak arası terlik";
+"72080260.tags" = "deniz terliği | kumsal terliği | parmak arası | parmak arası terlik | sandalet";
+// 👞 - mans_shoe
+"72076305.name" = "erkek ayakkabısı";
+"72076305.tags" = "ayakkabı | erkek ayakkabısı | giyim";
+// 👟 - athletic_shoe
+"72076310.name" = "koşu ayakkabısı";
+"72076310.tags" = "ayakkabı | bez ayakkabı | giyim | koşu ayakkabısı";
+// 🥾 - hiking_boot
+"72079030.name" = "yürüyüş botu";
+"72079030.tags" = "bot | kamp | sırt çantası | yürüyüş | yürüyüş botu";
+// 🥿 - womans_flat_shoe
+"72079035.name" = "düz ayakkabı";
+"72079035.tags" = "babet | düz ayakkabı | terlik | topuksuz";
+// 👠 - high_heel
+"72076315.name" = "yüksek topuklu ayakkabı";
+"72076315.tags" = "ayakkabı | giyim | yüksek topuklu ayakkabı";
+// 👡 - sandal
+"72076320.name" = "kadın sandaleti";
+"72076320.tags" = "giyim | kadın | kadın sandaleti | sandalet";
+// 🩰 - ballet_shoes
+"72080240.name" = "bale ayakkabıları";
+"72080240.tags" = "bale | bale ayakkabıları | dans";
+// 👢 - boot
+"72076325.name" = "kadın botu";
+"72076325.tags" = "bot | giyim | kadın | kadın botu";
+// 🪮 - hair_pick
+"72080550.name" = "perma tarağı";
+"72080550.tags" = "Afro saç | kıvırcık saç | perma tarağı | saç | seçme | tarak";
+// 👑 - crown
+"72076240.name" = "taç";
+"72076240.tags" = "giyim | taç";
+// 👒 - womans_hat
+"72076245.name" = "kadın şapkası";
+"72076245.tags" = "giyim | kadın şapkası | şapka";
+// 🎩 - tophat
+"72079235.name" = "silindir şapka";
+"72079235.tags" = "eğlence | şapka | silindir şapka";
+// 🎓 - mortar_board
+"72079125.name" = "mezuniyet kepi";
+"72079125.tags" = "kep | kutlama | mezuniyet | mezuniyet kepi";
+// 🧢 - billed_cap
+"72079530.name" = "siperli şapka";
+"72079530.tags" = "beyzbol şapkası | siperli şapka";
+// 🪖 - military_helmet
+"72080430.name" = "asker kaskı";
+"72080430.tags" = "asker | asker kaskı | askerlik | kask | ordu | savaşçı";
+// 📿 - prayer_beads
+"72077110.name" = "tespih";
+"72077110.tags" = "boncuk | din | dua | giyim | kolye | tesbih | tespih";
+// 💄 - lipstick
+"72076495.name" = "ruj";
+"72076495.tags" = "kozmetik | makyaj | ruj";
+// 💍 - ring
+"72076540.name" = "yüzük";
+"72076540.tags" = "romantizm | tek taş | yüzük";
+// 💎 - gem
+"72076545.name" = "mücevher";
+"72076545.tags" = "elmas | mücevher | mücevher taşı | romantizm";
+// 🔇 - mute
+"72077150.name" = "ses kapalı";
+"72077150.tags" = "iptal işaretli hoparlör | lütfen sessiz olun | ses kapalı | sessiz olun";
+// 🔈 - speaker
+"72077155.name" = "kısık ses";
+"72077155.tags" = "kısık ses | ses düzeyi";
+// 🔉 - sound
+"72077160.name" = "ses açık";
+"72077160.tags" = "düşük | düşük ses | düşük sesli hoparlör | ses açık";
+// 🔊 - loud_sound
+"72077165.name" = "yüksek ses";
+"72077165.tags" = "yüksek | yüksek ses | yüksek sesli hoparlör";
+// 📢 - loudspeaker
+"72076965.name" = "hoparlör";
+"72076965.tags" = "halka hitap | hoparlör | iletişim | megafon";
+// 📣 - mega
+"72076970.name" = "megafon";
+"72076970.tags" = "iletişim | karşılama | megafon";
+// 📯 - postal_horn
+"72077030.name" = "posta klaksonu";
+"72077030.tags" = "klakson | posta | posta klaksonu";
+// 🔔 - bell
+"72077215.name" = "zil";
+"72077215.tags" = "çan | kilise | zil";
+// 🔕 - no_bell
+"72077220.name" = "üzeri çizili zil";
+"72077220.tags" = "çan | iptal işaretli çan | ses yok | üzeri çizili zil";
+// 🎼 - musical_score
+"72079330.name" = "sol anahtarı";
+"72079330.tags" = "müzik | partisyon | sol anahtarı";
+// 🎵 - musical_note
+"72079295.name" = "müzik notası";
+"72079295.tags" = "müzik | müzik notası | nota";
+// 🎶 - notes
+"72079300.name" = "müzik notaları";
+"72079300.tags" = "müzik | müzik notaları | nota | notalar";
+// 🎤 - microphone
+"72079210.name" = "mikrofon";
+"72079210.tags" = "eğlence | Karaoke | mikrofon";
+// 🎧 - headphones
+"72079225.name" = "kulaklık";
+"72079225.tags" = "eğlence | kulaklık";
+// 📻 - radio
+"72077090.name" = "radyo";
+"72077090.tags" = "radyo | video";
+// 🎷 - saxophone
+"72079305.name" = "saksafon";
+"72079305.tags" = "alet | müzik | müzik aleti | saksafon";
+// 🪗 - accordion
+"72080435.name" = "akordiyon";
+"72080435.tags" = "akordeon | akordiyon";
+// 🎸 - guitar
+"72079310.name" = "gitar";
+"72079310.tags" = "alet | gitar | müzik | müzik aleti";
+// 🎹 - musical_keyboard
+"72079315.name" = "müzik klavyesi";
+"72079315.tags" = "alet | klavye | müzik | müzik aleti | müzik klavyesi";
+// 🎺 - trumpet
+"72079320.name" = "trompet";
+"72079320.tags" = "alet | müzik | müzik aleti | trompet";
+// 🎻 - violin
+"72079325.name" = "keman";
+"72079325.tags" = "alet | keman | müzik | müzik aleti";
+// 🪕 - banjo
+"72080425.name" = "banjo";
+"72080425.tags" = "banjo | müzik | yaylı";
+// 🥁 - drum_with_drumsticks
+"72078725.name" = "davul";
+"72078725.tags" = "davul | müzik | tokmak";
+// 🪘 - long_drum
+"72080440.name" = "uzun davul";
+"72080440.tags" = "conga | davul | ritm | tempo | uzun davul | vuruş";
+// 🪇 - maracas
+"72080355.name" = "marakas";
+"72080355.tags" = "alet | çıngırak | marakas | müzik | müzik aleti | perküsyon | sallama | vurmalı";
+// 🪈 - flute
+"72080360.name" = "flüt";
+"72080360.tags" = "ahşap üflemeli | boru | fife | flüt | kaval | müzik | nefesli | recorder";
+// 📱 - iphone
+"72077040.name" = "cep telefonu";
+"72077040.tags" = "cep telefonu | mobil telefon | telefon";
+// 📲 - calling
+"72077045.name" = "ok işaretli cep telefonu";
+"72077045.tags" = "çağrı yapmak | mobil telefon | ok işaretli cep telefonu | telefon";
+// 📞 - telephone_receiver
+"72076945.name" = "ahize";
+"72076945.tags" = "ahize | alıcı | telefon";
+// 📟 - pager
+"72076950.name" = "çağrı cihazı";
+"72076950.tags" = "çağrı cihazı | iletişim";
+// 📠 - fax
+"72076955.name" = "faks makinesi";
+"72076955.tags" = "faks makinesi | iletişim";
+// 🔋 - battery
+"72077170.name" = "pil";
+"72077170.tags" = "pil";
+// 🪫 - low_battery
+"72080535.name" = "düşük pil";
+"72080535.tags" = "düşük enerji | düşük pil | elektronik";
+// 🔌 - electric_plug
+"72077175.name" = "elektrik fişi";
+"72077175.tags" = "elektrik | elektrik fişi";
+// 💻 - computer
+"72076770.name" = "dizüstü bilgisayar";
+"72076770.tags" = "bilgisayar | dizüstü bilgisayar | kişisel";
+// 💽 - minidisc
+"72076780.name" = "mini disk";
+"72076780.tags" = "disk | mini disk";
+// 💾 - floppy_disk
+"72076785.name" = "disket";
+"72076785.tags" = "disket | floppy";
+// 💿 - cd
+"72076790.name" = "optik disk";
+"72076790.tags" = "CD | disk | DVD | optik disk";
+// 📀 - dvd
+"72076795.name" = "dvd";
+"72076795.tags" = "blu-ray | disk | dvd | DVD disk";
+// 🧮 - abacus
+"72079590.name" = "abaküs";
+"72079590.tags" = "abaküs | hesaplama";
+// 🎥 - movie_camera
+"72079215.name" = "film kamerası";
+"72079215.tags" = "eğlence | film | film kamerası | sinema";
+// 🎬 - clapper
+"72079250.name" = "film tahtası";
+"72079250.tags" = "eğlence | film | film tahtası | tahta";
+// 📺 - tv
+"72077085.name" = "televizyon";
+"72077085.tags" = "televizyon | tv | video";
+// 📷 - camera
+"72077070.name" = "fotoğraf makinesi";
+"72077070.tags" = "fotoğraf makinesi | video";
+// 📸 - camera_with_flash
+"72077075.name" = "flaşlı fotoğraf makinesi";
+"72077075.tags" = "flaş | flaşlı fotoğraf makinesi | kamera | video";
+// 📹 - video_camera
+"72077080.name" = "video kamera";
+"72077080.tags" = "kamera | video";
+// 📼 - vhs
+"72077095.name" = "videokaset";
+"72077095.tags" = "teyp | video | video kaseti | videokaset";
+// 🔍 - mag
+"72077180.name" = "sola dönük büyüteç";
+"72077180.tags" = "arama | cam | sola dönük büyüteç | solu gösteren | solu gösteren büyüteç";
+// 🔎 - mag_right
+"72077185.name" = "sağa dönük büyüteç";
+"72077185.tags" = "arama | cam | sağa dönük büyüteç | sağı gösteren | sağı gösteren büyüteç";
+// 💡 - bulb
+"72076640.name" = "ampul";
+"72076640.tags" = "ampul | bir fikrim var | çizgi roman | elektrik | ışık";
+// 🔦 - flashlight
+"72077305.name" = "el feneri";
+"72077305.tags" = "el feneri | elektrik | ışık";
+// 🏮 - izakaya_lantern
+"72079580.name" = "kırmızı kağıt fener";
+"72079580.tags" = "bar | fener | izakaya | kırmızı | kırmızı kağıt fener | restoran";
+// 🪔 - diya_lamp
+"72080420.name" = "diya lamba";
+"72080420.tags" = "diya | lamba | yağ";
+// 📔 - notebook_with_decorative_cover
+"72076895.name" = "süslü not defteri";
+"72076895.tags" = "dekorasyonlu not defteri | kapak | not defteri | süslü not defteri";
+// 📕 - closed_book
+"72076900.name" = "kapalı kitap";
+"72076900.tags" = "kapalı kitap | kitap";
+// 📖 - book
+"72076905.name" = "açık kitap";
+"72076905.tags" = "açık kitap | kitap";
+// 📗 - green_book
+"72076910.name" = "yeşil kitap";
+"72076910.tags" = "kitap | yeşil kitap";
+// 📘 - blue_book
+"72076915.name" = "mavi kitap";
+"72076915.tags" = "kitap | mavi kitap";
+// 📙 - orange_book
+"72076920.name" = "turuncu kitap";
+"72076920.tags" = "kitap | turuncu kitap";
+// 📚 - books
+"72076925.name" = "kitaplar";
+"72076925.tags" = "kitap | kitaplar";
+// 📓 - notebook
+"72076890.name" = "not defteri";
+"72076890.tags" = "not defteri";
+// 📒 - ledger
+"72076885.name" = "resmi defter";
+"72076885.tags" = "not defteri | resmi defter";
+// 📃 - page_with_curl
+"72076810.name" = "kıvrık sayfa";
+"72076810.tags" = "kenarı kıvrılmış sayfa | kıvrık sayfa | sayfa";
+// 📜 - scroll
+"72076935.name" = "parşömen";
+"72076935.tags" = "kağıt parşömen | parşömen";
+// 📄 - page_facing_up
+"72076815.name" = "yüzü yukarıda sayfa";
+"72076815.tags" = "doküman | ön yüz | ön yüzü görünen sayfa | sayfa | yüzü yukarıda sayfa";
+// 📰 - newspaper
+"72077035.name" = "gazete";
+"72077035.tags" = "gazete | haber | kâğıt";
+// 📑 - bookmark_tabs
+"72076880.name" = "sayfa ayraçları";
+"72076880.tags" = "ayraçlar | işaretçi | sayfa ayraçları | sayfa işareti";
+// 🔖 - bookmark
+"72077225.name" = "yer işareti";
+"72077225.tags" = "işaret | yer işareti";
+// 💰 - moneybag
+"72076715.name" = "para torbası";
+"72076715.tags" = "çanta | dolar çantası | para | para torbası";
+// 🪙 - coin
+"72080445.name" = "bozuk para";
+"72080445.tags" = "altın | bozuk para | gümüş | hazine | jeton | metal | para | sikke";
+// 💴 - yen
+"72076735.name" = "yen banknot";
+"72076735.tags" = "banknot | döviz | para | yen";
+// 💵 - dollar
+"72076740.name" = "dolar banknot";
+"72076740.tags" = "banknot | dolar | döviz | para";
+// 💶 - euro
+"72076745.name" = "euro banknot";
+"72076745.tags" = "avro | banknot | döviz | euro | para";
+// 💷 - pound
+"72076750.name" = "sterlin banknot";
+"72076750.tags" = "banknot | döviz | para | sterlin";
+// 💸 - money_with_wings
+"72076755.name" = "kanatlı para";
+"72076755.tags" = "banka | banknot | kanatlı para | para | uçan banknot";
+// 💳 - credit_card
+"72076730.name" = "kredi kartı";
+"72076730.tags" = "kart | kredi | kredi kartı";
+// 🧾 - receipt
+"72079670.name" = "makbuz";
+"72079670.tags" = "defter tutma | kanıt | kayıt | makbuz | muhasebe";
+// 💹 - chart
+"72076760.name" = "yen simgeli artış grafiği";
+"72076760.tags" = "grafik | piyasa | yen simgeli artış grafiği | yukarı giden grafik | yukarı yönlü";
+// 📧 - e-mail
+"72076990.name" = "e-posta";
+"72076990.tags" = "e-posta | ileti | iletişim | mektup | posta";
+// 📨 - incoming_envelope
+"72076995.name" = "gelen zarf";
+"72076995.tags" = "alınan posta | e-posta | gelen | iletişim | mektup | posta | zarf";
+// 📩 - envelope_with_arrow
+"72077000.name" = "oklu zarf";
+"72077000.tags" = "e-posta | giden | gönderilen posta | oklu zarf | zarf";
+// 📤 - outbox_tray
+"72076975.name" = "giden kutusu";
+"72076975.tags" = "giden | giden kutusu | iletişim | kutu | posta | tepsi";
+// 📥 - inbox_tray
+"72076980.name" = "gelen kutusu";
+"72076980.tags" = "gelen | gelen kutusu | iletişim | kutu | posta | tepsi";
+// 📦 - package
+"72076985.name" = "paket";
+"72076985.tags" = "kutu | paket";
+// 📫 - mailbox
+"72077010.name" = "işareti yukarıda kapalı posta kutusu";
+"72077010.tags" = "işaret | işareti kaldırılmış posta kutusu | işareti yukarıda kapalı posta kutusu | kapalı | posta";
+// 📪 - mailbox_closed
+"72077005.name" = "işareti aşağıda kapalı posta kutusu";
+"72077005.tags" = "işaret | işareti aşağıda kapalı posta kutusu | işareti indirilmiş posta kutusu | kapalı | posta";
+// 📬 - mailbox_with_mail
+"72077015.name" = "işareti yukarıda açık posta kutusu";
+"72077015.tags" = "açık | işaret | işareti kaldırılmış açık posta kutusu | işareti yukarıda açık posta kutusu | posta";
+// 📭 - mailbox_with_no_mail
+"72077020.name" = "işareti aşağıda açık posta kutusu";
+"72077020.tags" = "açık | işaret | işareti aşağıda açık posta kutusu | işareti indirilmiş açık posta kutusu | posta";
+// 📮 - postbox
+"72077025.name" = "posta kutusu";
+"72077025.tags" = "posta | posta kutusu";
+// 📝 - memo
+"72076940.name" = "not";
+"72076940.tags" = "iletişim | not | not defteri";
+// 💼 - briefcase
+"72076775.name" = "evrak çantası";
+"72076775.tags" = "evrak çantası";
+// 📁 - file_folder
+"72076800.name" = "dosya klasörü";
+"72076800.tags" = "dosya | dosya klasörü | klasör";
+// 📂 - open_file_folder
+"72076805.name" = "açık dosya klasörü";
+"72076805.tags" = "açık | açık dosya klasörü | dosya | klasör";
+// 📅 - date
+"72076820.name" = "takvim";
+"72076820.tags" = "takvim | tarih";
+// 📆 - calendar
+"72076825.name" = "koparmalı takvim";
+"72076825.tags" = "koparmalı takvim | takvim";
+// 📇 - card_index
+"72076830.name" = "kart dizini";
+"72076830.tags" = "dizin | kart dizini | rolodeks";
+// 📈 - chart_with_upwards_trend
+"72076835.name" = "artış grafiği";
+"72076835.tags" = "artış grafiği | grafik | yukarı yönlü | yükselen grafik";
+// 📉 - chart_with_downwards_trend
+"72076840.name" = "iniş grafiği";
+"72076840.tags" = "alçalan grafik | aşağı yönlü | grafik | iniş grafiği";
+// 📊 - bar_chart
+"72076845.name" = "çubuk grafiği";
+"72076845.tags" = "çubuk grafiği | grafik";
+// 📋 - clipboard
+"72076850.name" = "pano";
+"72076850.tags" = "pano";
+// 📌 - pushpin
+"72076855.name" = "raptiye";
+"72076855.tags" = "iğne | raptiye";
+// 📍 - round_pushpin
+"72076860.name" = "yuvarlak raptiye";
+"72076860.tags" = "iğne | raptiye | yuvarlak raptiye";
+// 📎 - paperclip
+"72076865.name" = "ataş";
+"72076865.tags" = "ataş | klips";
+// 📏 - straight_ruler
+"72076870.name" = "düz cetvel";
+"72076870.tags" = "cetvel | düz cetvel";
+// 📐 - triangular_ruler
+"72076875.name" = "gönye";
+"72076875.tags" = "cetvel | gönye | üçgen";
+// 🔒 - lock
+"72077205.name" = "kilit";
+"72077205.tags" = "kapalı kilit | kilit";
+// 🔓 - unlock
+"72077210.name" = "açık kilit";
+"72077210.tags" = "açık | kilidini açma | kilit";
+// 🔏 - lock_with_ink_pen
+"72077190.name" = "kilit ve kalem";
+"72077190.tags" = "gizlilik | kilit ve kalem | mürekkepli kalem | mürekkepli kalemli kilit";
+// 🔐 - closed_lock_with_key
+"72077195.name" = "anahtarlı kapalı kilit";
+"72077195.tags" = "anahtarlı kapalı kilit | anahtarlı kilit | güvenli";
+// 🔑 - key
+"72077200.name" = "anahtar";
+"72077200.tags" = "anahtar | kilit | parola | şifre";
+// 🔨 - hammer
+"72077315.name" = "çekiç";
+"72077315.tags" = "araç | çekiç";
+// 🪓 - axe
+"72080415.name" = "balta";
+"72080415.tags" = "ağaç | balta | kesme | kısa balta | yarma";
+// 💣 - bomb
+"72076650.name" = "bomba";
+"72076650.tags" = "bomba | çizgi roman | duygu";
+// 🪃 - boomerang
+"72080335.name" = "bumerang";
+"72080335.tags" = "avustralya | bumerang | geri tepme | sekme | tepki";
+// 🏹 - bow_and_arrow
+"72079635.name" = "ok ve yay";
+"72079635.tags" = "araç | burç | ok | ok ve yay | okçu | silah | yay";
+// 🪚 - carpentry_saw
+"72080450.name" = "testere";
+"72080450.tags" = "alet | kereste | marangoz | testere";
+// 🔧 - wrench
+"72077310.name" = "somun anahtarı";
+"72077310.tags" = "araç | ingiliz anahtarı | somun anahtarı";
+// 🪛 - screwdriver
+"72080455.name" = "tornavida";
+"72080455.tags" = "alet | sıkma | tornavida | vida";
+// 🔩 - nut_and_bolt
+"72077320.name" = "somun ve vida";
+"72077320.tags" = "araç | somun | somun ve vida | vida";
+// 🦯 - probing_cane
+"72079275.name" = "görme engelli bastonu";
+"72079275.tags" = "erişilebilirlik | görme engelli | görme engelli bastonu";
+// 🔗 - link
+"72077230.name" = "bağlantı işareti";
+"72077230.tags" = "bağlantı işareti | bağlantılar | iki halka";
+// 🪝 - hook
+"72080465.name" = "çengel";
+"72080465.tags" = "askı | çengel | eğri | kanca";
+// 🧰 - toolbox
+"72079600.name" = "alet çantası";
+"72079600.tags" = "alet | alet çantası | sandık | tamirci";
+// 🧲 - magnet
+"72079610.name" = "mıknatıs";
+"72079610.tags" = "at nalı | çekim | manyetik | mıknatıs";
+// 🪜 - ladder
+"72080460.name" = "merdiven";
+"72080460.tags" = "adım | basamak | merdiven | tırmanış";
+// 🧪 - test_tube
+"72079570.name" = "deney tüpü";
+"72079570.tags" = "bilim | deney | deney tüpü | kimya | kimyacı | laboratuvar";
+// 🧫 - petri_dish
+"72079575.name" = "petri kabı";
+"72079575.tags" = "bakteri | biyolog | biyoloji | kültür | laboratuvar | petri kabı";
+// 🧬 - dna
+"72079580.name" = "dna";
+"72079580.tags" = "biyolog | dna | evrim | gen | genetik | yaşam";
+// 🔬 - microscope
+"72077335.name" = "mikroskop";
+"72077335.tags" = "alet | bilim | mikroskop";
+// 🔭 - telescope
+"72077340.name" = "teleskop";
+"72077340.tags" = "alet | teleskop";
+// 📡 - satellite_antenna
+"72076960.name" = "uydu anteni";
+"72076960.tags" = "anten | çanak | iletişim | uydu | uydu anteni";
+// 💉 - syringe
+"72076520.name" = "şırınga";
+"72076520.tags" = "doktor | iğne | ilaç | şırınga";
+// 🩸 - drop_of_blood
+"72080280.name" = "kan damlası";
+"72080280.tags" = "âdet | aybaşı | ilaç | kan bağışı | kan damlası | mens | regl";
+// 💊 - pill
+"72076525.name" = "hap";
+"72076525.tags" = "doktor | hap | ilaç";
+// 🩹 - adhesive_bandage
+"72080285.name" = "yara bandı";
+"72080285.tags" = "bandaj | bant | yapışkanlı bandaj | yara bandı";
+// 🩼 - crutch
+"72080300.name" = "koltuk değneği";
+"72080300.tags" = "baston | değnek | engelli | engellilik | koltuk değneği | yürüme yardımı";
+// 🩺 - stethoscope
+"72080290.name" = "stetoskop";
+"72080290.tags" = "doktor | kalp | stetoskop | tıp";
+// 🩻 - x-ray
+"72080295.name" = "x ışını";
+"72080295.tags" = "doktor | iskelet | kemik | röntgen | tıbbi | x ışını";
+// 🚪 - door
+"72079245.name" = "kapı";
+"72079245.tags" = "kapı";
+// 🛗 - elevator
+"72079470.name" = "asansör";
+"72079470.tags" = "asansör | erişilebilirlik | lift";
+// 🪞 - mirror
+"72080470.name" = "ayna";
+"72080470.tags" = "ayna | reflektör | spekulum | yansıma | yansıtıcı";
+// 🪟 - window
+"72080475.name" = "pencere";
+"72080475.tags" = "açılım | çerçeve | manzara | pencere | saydam | şeffaf | temiz hava";
+// 🪑 - chair
+"72080405.name" = "sandalye";
+"72080405.tags" = "iskemle | oturma | sandalye";
+// 🚽 - toilet
+"72079340.name" = "klozet";
+"72079340.tags" = "klozet | tuvalet | WC";
+// 🪠 - plunger
+"72080480.name" = "lavabo pompası";
+"72080480.tags" = "açıcı | çekme | lavabo açıcı | lavabo pompası | tuvalet";
+// 🚿 - shower
+"72079350.name" = "duş";
+"72079350.tags" = "duş | su";
+// 🛁 - bathtub
+"72079360.name" = "banyo küveti";
+"72079360.tags" = "banyo | banyo küveti";
+// 🪤 - mouse_trap
+"72080500.name" = "fare kapanı";
+"72080500.tags" = "fare kapanı | kapan | kıskaç | tuzak";
+// 🪒 - razor
+"72080410.name" = "ustura";
+"72080410.tags" = "keskin | tıraş | ustura";
+// 🧴 - lotion_bottle
+"72079620.name" = "losyon şişesi";
+"72079620.tags" = "güneş kremi | losyon | losyon şişesi | nemlendirici | şampuan";
+// 🧷 - safety_pin
+"72079635.name" = "çengelli iğne";
+"72079635.tags" = "bebek bezi | çengelli iğne | punk rock";
+// 🧹 - broom
+"72079645.name" = "süpürge";
+"72079645.tags" = "cadı | süpürge | süpürme | temizlik";
+// 🧺 - basket
+"72079650.name" = "sepet";
+"72079650.tags" = "çamaşır | çiftçilik | piknik | sepet";
+// 🧻 - roll_of_paper
+"72079655.name" = "kağıt rulosu";
+"72079655.tags" = "kağıt havlu | kağıt rulosu | tuvalet kağıdı";
+// 🪣 - bucket
+"72080495.name" = "kova";
+"72080495.tags" = "fıçı | kap | kepçe | kova";
+// 🧼 - soap
+"72079660.name" = "sabun";
+"72079660.tags" = "banyo | kalıp | köpük | sabun | sabunluk | temizlik";
+// 🫧 - bubbles
+"72080835.name" = "baloncuk";
+"72080835.tags" = "baloncuk | kabarcık | sabun | su altı | temiz";
+// 🪥 - toothbrush
+"72080505.name" = "diş fırçası";
+"72080505.tags" = "banyo | dental | diş | diş fırçası | fırça | hijyen | lavabo";
+// 🧽 - sponge
+"72079665.name" = "sünger";
+"72079665.tags" = "emici | gözenekli | sünger | temizlik";
+// 🧯 - fire_extinguisher
+"72079595.name" = "yangın söndürücü";
+"72079595.tags" = "ateş | söndürme | yangın | yangın söndürücü";
+// 🛒 - shopping_trolley
+"72079445.name" = "alışveriş arabası";
+"72079445.tags" = "alışveriş | alışveriş arabası | araba | pazar arabası";
+// 🚬 - smoking
+"72079255.name" = "sigara";
+"72079255.tags" = "işaret | sigara | sigara içilebilir | sigara içme";
+// 🪦 - headstone
+"72080510.name" = "mezar taşı";
+"72080510.tags" = "defin | mezar | mezar taşı | mezarlık";
+// 🧿 - nazar_amulet
+"72079675.name" = "nazarlık";
+"72079675.tags" = "boncuk | kem göz | mavi boncuk | muska | nazar | nazarlık | tılsım";
+// 🪬 - hamsa
+"72080540.name" = "Fatıma’nın Eli";
+"72080540.tags" = "Fatıma | Fatıma’nın Eli | Fatma Ana’nın Eli | Fatma’nın Eli | Meryem | muska | nazarlık";
+// 🗿 - moyai
+"72078390.name" = "moyai heykeli";
+"72078390.tags" = "heykel | Moyai | moyai heykeli";
+// 🪧 - placard
+"72080515.name" = "tabela";
+"72080515.tags" = "gösteri | işaret | protesto | tabela";
+// 🪪 - identification_card
+"72080530.name" = "kimlik kartı";
+"72080530.tags" = "güvenlik | kimlik | kimlik bilgisi | kimlik kartı | lisans";
+// 🏧 - atm
+"72079545.name" = "ATM işareti";
+"72079545.tags" = "ATM işareti | otomatik | vezne";
+// 🚮 - put_litter_in_its_place
+"72079265.name" = "çöp kutusu işareti";
+"72079265.tags" = "çöp kutusu | çöp kutusu işareti | çöpü yerine atın | işaret";
+// 🚰 - potable_water
+"72079275.name" = "içilebilir su";
+"72079275.tags" = "içilebilir su | içme suyu | işaret";
+// ♿ - wheelchair
+"30336.name" = "tekerlekli sandalye sembolü";
+"30336.tags" = "erişim | işaret | tekerlekli sandalye | tekerlekli sandalye erişimi | tekerlekli sandalye sembolü | tekerlekli sandalye simgesi";
+// 🚹 - mens
+"72079320.name" = "erkekler tuvaleti";
+"72079320.tags" = "erkekler tuvaleti | işaret | tuvalet";
+// 🚺 - womens
+"72079325.name" = "kadınlar tuvaleti";
+"72079325.tags" = "işaret | kadınlar tuvaleti | tuvalet";
+// 🚻 - restroom
+"72079330.name" = "tuvalet";
+"72079330.tags" = "lavabo | tuvalet | wc";
+// 🚼 - baby_symbol
+"72079335.name" = "bebek işareti";
+"72079335.tags" = "bebek | bebek alt değiştirme yeri | bebek işareti | bebek teknede";
+// 🚾 - wc
+"72079345.name" = "wc";
+"72079345.tags" = "lavabo | tuvalet | wc | WC";
+// 🛂 - passport_control
+"72079365.name" = "pasaport kontrolü";
+"72079365.tags" = "kontrol | pasaport | pasaport kontrolü";
+// 🛃 - customs
+"72079370.name" = "gümrük";
+"72079370.tags" = "gümrük";
+// 🛄 - baggage_claim
+"72079375.name" = "bagaj teslim";
+"72079375.tags" = "bagaj | bagaj teslim";
+// 🛅 - left_luggage
+"72079380.name" = "eşya emanet";
+"72079380.tags" = "bagaj | bagaj hizmeti | eşya emanet";
+// 🚸 - children_crossing
+"72079315.name" = "karşıya geçen çocuklar";
+"72079315.tags" = "çocuklar | işaret | karşıya geçen çocuklar | karşıya geçiş";
+// ⛔ - no_entry
+"30591.name" = "girilmez";
+"30591.tags" = "girilmez | Girilmez | hayır | işaret | yasak";
+// 🚫 - no_entry_sign
+"72079250.name" = "girmek yasak";
+"72079250.tags" = "Girilmez | girmek yasak | işaret";
+// 🚳 - no_bicycles
+"72079290.name" = "bisiklet yasak";
+"72079290.tags" = "bisiklet | bisiklet giremez | bisiklet yasak | taşıt";
+// 🚭 - no_smoking
+"72079260.name" = "sigara içilmez";
+"72079260.tags" = "duman | sigara içilmez | tütün | yasak";
+// 🚯 - do_not_litter
+"72079270.name" = "çöp atılmaz";
+"72079270.tags" = "çöp atılmaz | çöp atmayın | çöp atmayın işareti | işaret";
+// 🚱 - non-potable_water
+"72079280.name" = "içilmeyen su";
+"72079280.tags" = "içilmeyen | içilmez | su";
+// 🚷 - no_pedestrians
+"72079310.name" = "yayalara yasak";
+"72079310.tags" = "işaret | yaya | yayalar giremez | yayalara yasak";
+// 📵 - no_mobile_phones
+"72077060.name" = "cep telefonu yasak";
+"72077060.tags" = "çağrı yapılmaz | cep telefonu yasak | mobil | telefon";
+// 🔞 - underage
+"72077265.name" = "18 yaş altı yasak";
+"72077265.tags" = "18 | 18 yaş altı | 18 yaş altı yasak | 18 yaş altı yasaktır";
+// 🔃 - arrows_clockwise
+"72077130.name" = "saat yönünde dönen oklar";
+"72077130.tags" = "oklar | saat yönünde dikey oklar | saat yönünde dönen oklar | saat yönüne dönen oklar | yeniden yükle işareti";
+// 🔄 - arrows_counterclockwise
+"72077135.name" = "saat yönünün tersinde dönen oklar";
+"72077135.tags" = "oklar | saat yönünün tersinde dönen oklar | saat yönünün tersine | saat yönünün tersine dönen oklar";
+// 🔙 - back
+"72077240.name" = "geri oku";
+"72077240.tags" = "geri oku | ok | sol geri ok | sol ok";
+// 🔚 - end
+"72077245.name" = "bitiş oku";
+"72077245.tags" = "bitiş oku | ok | sol bitiş oku | sol ok";
+// 🔛 - on
+"72077250.name" = "açık oku";
+"72077250.tags" = "açık oku | ok | ünlem | ünlem işareti | ünlem işareti ve okla AÇIK";
+// 🔜 - soon
+"72077255.name" = "yakında işareti";
+"72077255.tags" = "ok | sağ okla Yakında | Yakında | yakında işareti";
+// 🔝 - top
+"72077260.name" = "yukarı oku";
+"72077260.tags" = "yukarı | Yukarı | yukarı ok | yukarı okla Yukarı | yukarı oku";
+// 🛐 - place_of_worship
+"72079435.name" = "ibadethane";
+"72079435.tags" = "din | ibadethane | tapınma";
+// 🕎 - menorah_with_nine_branches
+"72077505.name" = "Yahudi şamdanı";
+"72077505.tags" = "din | menora | mum | şamdan | Yahudi şamdanı";
+// 🔯 - six_pointed_star
+"72077350.name" = "altı köşeli yıldız";
+"72077350.tags" = "altı köşeli | altı köşeli yıldız | fal | fal bakma | yıldız";
+// 🪯 - khanda
+"72080555.name" = "khanda";
+"72080555.tags" = "din | khanda | Sih";
+// ♈ - aries
+"30171.name" = "koç burcu";
+"30171.tags" = "burçlar | koç burcu";
+// ♉ - taurus
+"30174.name" = "boğa burcu";
+"30174.tags" = "boğa burcu | burçlar";
+// ♊ - gemini
+"30177.name" = "ikizler burcu";
+"30177.tags" = "burçlar | ikizler burcu";
+// ♋ - cancer
+"30180.name" = "yengeç burcu";
+"30180.tags" = "burçlar | yengeç burcu";
+// ♌ - leo
+"30183.name" = "aslan burcu";
+"30183.tags" = "aslan burcu | burçlar";
+// ♍ - virgo
+"30186.name" = "başak burcu";
+"30186.tags" = "başak burcu | burçlar";
+// ♎ - libra
+"30189.name" = "terazi burcu";
+"30189.tags" = "burçlar | terazi burcu";
+// ♏ - scorpius
+"30192.name" = "akrep burcu";
+"30192.tags" = "akrep burcu | burçlar";
+// ♐ - sagittarius
+"30195.name" = "yay burcu";
+"30195.tags" = "burçlar | yay burcu";
+// ♑ - capricorn
+"30198.name" = "oğlak burcu";
+"30198.tags" = "burçlar | oğlak burcu";
+// ♒ - aquarius
+"30201.name" = "kova burcu";
+"30201.tags" = "burçlar | kova burcu";
+// ♓ - pisces
+"30204.name" = "balık burcu";
+"30204.tags" = "balık burcu | burçlar";
+// ⛎ - ophiuchus
+"30573.name" = "Yılancı";
+"30573.tags" = "burçlar | Yılancı";
+// 🔀 - twisted_rightwards_arrows
+"72077115.name" = "parça karıştırma düğmesi";
+"72077115.tags" = "çapraz sağ oklar | oklar | parça karıştırma düğmesi";
+// 🔁 - repeat
+"72077120.name" = "tekrarlama düğmesi";
+"72077120.tags" = "oklar | saat yönünde | tekrarlama düğmesi";
+// 🔂 - repeat_one
+"72077125.name" = "tek parça tekrarlama düğmesi";
+"72077125.tags" = "1 sayısı | 1 sayısı olan saat yönünde oklar | oklar | saat yönünde | tek parça tekrarlama düğmesi";
+// ⏩ - fast_forward
+"28350.name" = "ileri sarma düğmesi";
+"28350.tags" = "ileri sarma düğmesi | ok | sağ | sağa çift ok";
+// ⏪ - rewind
+"28353.name" = "hızlı geri düğmesi";
+"28353.tags" = "hızlı geri düğmesi | ok | sol | sola çift ok";
+// 🔼 - arrow_up_small
+"72077415.name" = "yukarı düğmesi";
+"72077415.tags" = "düğme | üçgen | yukarı düğmesi | yukarı üçgen düğmesi";
+// ⏫ - arrow_double_up
+"28356.name" = "hızlı yukarı düğmesi";
+"28356.tags" = "hızlı yukarı düğmesi | ok | yukarı | yukarı çift ok";
+// 🔽 - arrow_down_small
+"72077420.name" = "aşağı düğmesi";
+"72077420.tags" = "aşağı düğmesi | aşağı üçgen düğmesi | düğme | üçgen";
+// ⏬ - arrow_double_down
+"28359.name" = "hızlı aşağı düğmesi";
+"28359.tags" = "aşağı | aşağı çift ok | hızlı aşağı düğmesi | ok";
+// 🎦 - cinema
+"72079220.name" = "sinema";
+"72079220.tags" = "eğlence | film işareti | sinema";
+// 🔅 - low_brightness
+"72077140.name" = "düşük parlaklık";
+"72077140.tags" = "düşük | düşük parlaklık işareti | karanlık | parlaklık";
+// 🔆 - high_brightness
+"72077145.name" = "yüksek parlaklık";
+"72077145.tags" = "parlak | parlaklık | yüksek parlaklık | yüksek parlaklık işareti";
+// 📶 - signal_strength
+"72077065.name" = "sinyal gücü";
+"72077065.tags" = "anten | çubuk işaretli anten | mobil | sinyal | sinyal gücü | telefon";
+// 🛜 - wireless
+"72079495.name" = "kablosuz";
+"72079495.tags" = "ağ | bilgisayar | internet | kablosuz";
+// 📳 - vibration_mode
+"72077050.name" = "titreşim modu";
+"72077050.tags" = "cep telefonu | mobil | mod | telefon | titreşim modu";
+// 📴 - mobile_phone_off
+"72077055.name" = "cep telefonu kapalı";
+"72077055.tags" = "cep telefonu | cep telefonu kapalı | kapalı | mobil | telefon";
+// ➕ - heavy_plus_sign
+"31170.name" = "artı";
+"31170.tags" = "+ | artı | artı işareti | işaret | matematik";
+// ➖ - heavy_minus_sign
+"31173.name" = "eksi";
+"31173.tags" = "- | − | eksi | eksi işareti | işaret | matematik";
+// ➗ - heavy_division_sign
+"31176.name" = "bölü işareti";
+"31176.tags" = "÷ | bölü | bölü işareti | işaret | matematik";
+// 🟰 - heavy_equals_sign
+"72080875.name" = "kalın eşittir işareti";
+"72080875.tags" = "eşitlik | kalın eşittir işareti | matematik";
+// ❓ - question
+"30972.name" = "kırmızı soru işareti";
+"30972.tags" = "? | işaret | kırmızı soru işareti | noktalama | soru | soru işareti";
+// ❔ - grey_question
+"30975.name" = "beyaz soru işareti";
+"30975.tags" = "? | beyaz soru işareti | işaret | noktalama | soru";
+// ❕ - grey_exclamation
+"30978.name" = "beyaz ünlem işareti";
+"30978.tags" = "! | beyaz ünlem işareti | işaret | noktalama | ünlem";
+// ❗ - exclamation
+"30984.name" = "kırmızı ünlem işareti";
+"30984.tags" = "! | kırmızı ünlem işareti | noktalama | ünlem | ünlem işareti";
+// 💱 - currency_exchange
+"72076720.name" = "kambiyo";
+"72076720.tags" = "bozdurma | döviz | kambiyo | para";
+// 💲 - heavy_dollar_sign
+"72076725.name" = "dolar işareti";
+"72076725.tags" = "dolar | dolar işareti | koyu renk dolar işareti | para";
+// 🔱 - trident
+"72077360.name" = "üçlü çatal işareti";
+"72077360.tags" = "amblem | çıpa | üçlü çatal | üçlü çatal işareti";
+// 📛 - name_badge
+"72076930.name" = "ad rozeti";
+"72076930.tags" = "ad | ad rozeti | rozet";
+// 🔰 - beginner
+"72077355.name" = "Japonca yeni başlayan sembolü";
+"72077355.tags" = "Japonca | Japonca yeni başlayan sembolü | yeni başlayan | yeşil ve sarı | yeşil ve sarı yaprak";
+// ⭕ - o
+"34050.name" = "kalın kırmızı çember";
+"34050.tags" = "çember | kalın çember | kalın kırmızı çember | o";
+// ✅ - white_check_mark
+"30738.name" = "onay işareti düğmesi";
+"30738.tags" = "✓ | düğme | işaret | onay | onay işareti düğmesi";
+// ❌ - x
+"30951.name" = "çarpı işareti";
+"30951.tags" = "× | çarpı | çarpı işareti | çarpma | iptal | işaret | x";
+// ❎ - negative_squared_cross_mark
+"30957.name" = "çarpı işareti düğmesi";
+"30957.tags" = "× | çarpı işareti düğmesi | kare | x";
+// ➰ - curly_loop
+"31251.name" = "kıvrık döngü";
+"31251.tags" = "döngü | dönüş | kıvrık döngü";
+// ➿ - loop
+"31296.name" = "çift kıvrık döngü";
+"31296.tags" = "çift kıvrık döngü | Japonya | kıvrık döngü | ücretsiz numara";
+// 🔠 - capital_abcd
+"72077275.name" = "büyük harfler";
+"72077275.tags" = "büyük harf | büyük harfler | Latin | Latin büyük harfleri | Latin büyük harfleriyle giriş";
+// 🔡 - abcd
+"72077280.name" = "küçük harfler";
+"72077280.tags" = "küçük harf | küçük harfler | Latin | Latin küçük harfleri | Latin küçük harfleriyle giriş";
+// 🔢 - 1234
+"72077285.name" = "sayılar";
+"72077285.tags" = "sayı girişi | sayılar";
+// 🔣 - symbols
+"72077290.name" = "işaretler";
+"72077290.tags" = "işaret girişi | işaretler";
+// 🔤 - abc
+"72077295.name" = "Latin alfabesi";
+"72077295.tags" = "ABC | İngilizce | Latin | Latin alfabesi | Latin alfabesiyle giriş";
+// 🆎 - ab
+"72076540.name" = "AB düğmesi (kan grubu)";
+"72076540.tags" = "AB | AB düğmesi (kan grubu) | AB grubu kan | kan | kan grubu | kan grubu AB";
+// 🆑 - cl
+"72076555.name" = "CL düğmesi";
+"72076555.tags" = "CL | CL düğmesi | CL işareti | sil";
+// 🆒 - cool
+"72076560.name" = "COOL düğmesi";
+"72076560.tags" = "COOL düğmesi | harika | hoş | serin | serin işareti";
+// 🆓 - free
+"72076565.name" = "FREE düğmesi";
+"72076565.tags" = "bedava | bedelsiz | FREE düğmesi | işaret | ücretsiz | ücretsiz işareti";
+// 🆔 - id
+"72076570.name" = "ID düğmesi";
+"72076570.tags" = "ID düğmesi | işaret | kimlik | kimlik işareti";
+// 🆕 - new
+"72076575.name" = "NEW düğmesi";
+"72076575.tags" = "işaret | NEW düğmesi | yeni | Yeni işareti";
+// 🆖 - ng
+"72076580.name" = "NG düğmesi";
+"72076580.tags" = "işaret | ng | NG düğmesi | NG işareti";
+// 🆗 - ok
+"72076585.name" = "OK düğmesi";
+"72076585.tags" = "OK düğmesi | OK işareti | tamam | tamam işareti";
+// 🆘 - sos
+"72076590.name" = "SOS düğmesi";
+"72076590.tags" = "işaret | SOS | SOS düğmesi | SOS işareti | Yardım";
+// 🆙 - up
+"72076595.name" = "UP! düğmesi";
+"72076595.tags" = "işaret | UP! düğmesi | YUKARI! | YUKARI! işareti";
+// 🆚 - vs
+"72076600.name" = "VS düğmesi";
+"72076600.tags" = "işaret | karşılaştırma | karşılaştırma işareti | vs | VS düğmesi";
+// 🈁 - koko
+"72077115.name" = "Japonca "burada" düğmesi";
+"72077115.tags" = "Japonca | Japonca "burada" düğmesi";
+// 🈶 - u6709
+"72077380.name" = "Japonca "ücretsiz değil" düğmesi";
+"72077380.tags" = "Japonca | Japonca "ücretsiz değil" düğmesi";
+// 🈯 - u6307
+"72077345.name" = "Japonca "rezerve" düğmesi";
+"72077345.tags" = "Japonca | Japonca "rezerve" düğmesi";
+// 🉐 - ideograph_advantage
+"72077510.name" = "Japonca "avantaj" düğmesi";
+"72077510.tags" = "Japonca | Japonca "avantaj" düğmesi";
+// 🈹 - u5272
+"72077395.name" = "Japonca "indirim" düğmesi";
+"72077395.tags" = "Japonca | Japonca "indirim" düğmesi";
+// 🈚 - u7121
+"72077240.name" = "Japonca "ücretsiz" düğmesi";
+"72077240.tags" = "Japonca | Japonca "ücretsiz" düğmesi";
+// 🈲 - u7981
+"72077360.name" = "Japonca "yasak" düğmesi";
+"72077360.tags" = "Japonca | Japonca "yasak" düğmesi";
+// 🉑 - accept
+"72077515.name" = "Japonca "kabul edilebilir" düğmesi";
+"72077515.tags" = "Japonca | Japonca "kabul edilebilir" düğmesi";
+// 🈸 - u7533
+"72077390.name" = "Japonca "uygulama" düğmesi";
+"72077390.tags" = "Japonca | Japonca "uygulama" düğmesi";
+// 🈴 - u5408
+"72077370.name" = "Japonca "geçer not" düğmesi";
+"72077370.tags" = "Japonca | Japonca "geçer not" düğmesi";
+// 🈳 - u7a7a
+"72077365.name" = "Japonca "yer var" düğmesi";
+"72077365.tags" = "Japonca | Japonca "yer var" düğmesi";
+// 🈺 - u55b6
+"72077400.name" = "Japonca "hizmete hazır" düğmesi";
+"72077400.tags" = "Japonca | Japonca "hizmete hazır" düğmesi";
+// 🈵 - u6e80
+"72077375.name" = "Japonca "yer yok" düğmesi";
+"72077375.tags" = "Japonca | Japonca "yer yok" düğmesi";
+// 🔴 - red_circle
+"72077375.name" = "kırmızı daire";
+"72077375.tags" = "büyük kırmızı çember | çember | kırmızı | kırmızı daire";
+// 🟠 - large_orange_circle
+"72080795.name" = "turuncu daire";
+"72080795.tags" = "daire | turuncu";
+// 🟡 - large_yellow_circle
+"72080800.name" = "sarı daire";
+"72080800.tags" = "daire | sarı";
+// 🟢 - large_green_circle
+"72080805.name" = "yeşil daire";
+"72080805.tags" = "daire | yeşil";
+// 🔵 - large_blue_circle
+"72077380.name" = "mavi daire";
+"72077380.tags" = "büyük mavi çember | çember | mavi | mavi daire";
+// 🟣 - large_purple_circle
+"72080810.name" = "mor daire";
+"72080810.tags" = "daire | mor";
+// 🟤 - large_brown_circle
+"72080815.name" = "kahverengi daire";
+"72080815.tags" = "daire | kahverengi";
+// ⚫ - black_circle
+"30468.name" = "siyah daire";
+"30468.tags" = "daire | geometri | siyah daire";
+// ⚪ - white_circle
+"30465.name" = "beyaz daire";
+"30465.tags" = "beyaz daire | daire | geometri";
+// 🟥 - large_red_square
+"72080820.name" = "kırmızı kare";
+"72080820.tags" = "kare | kırmızı";
+// 🟧 - large_orange_square
+"72080830.name" = "turuncu kare";
+"72080830.tags" = "kare | turuncu";
+// 🟨 - large_yellow_square
+"72080835.name" = "sarı kare";
+"72080835.tags" = "kare | sarı";
+// 🟩 - large_green_square
+"72080840.name" = "yeşil kare";
+"72080840.tags" = "kare | yeşil";
+// 🟦 - large_blue_square
+"72080825.name" = "mavi kare";
+"72080825.tags" = "kare | mavi";
+// 🟪 - large_purple_square
+"72080845.name" = "mor kare";
+"72080845.tags" = "kare | mor";
+// 🟫 - large_brown_square
+"72080850.name" = "kahverengi kare";
+"72080850.tags" = "kahverengi | kare";
+// ⬛ - black_large_square
+"33876.name" = "büyük siyah kare";
+"33876.tags" = "büyük siyah kare | geometri | kare";
+// ⬜ - white_large_square
+"33879.name" = "büyük beyaz kare";
+"33879.tags" = "büyük beyaz kare | geometri | kare";
+// ◾ - black_medium_small_square
+"29949.name" = "küçük-orta siyah kare";
+"29949.tags" = "geometri | kare | küçük-orta siyah kare";
+// ◽ - white_medium_small_square
+"29946.name" = "küçük-orta beyaz kare";
+"29946.tags" = "geometri | kare | küçük-orta beyaz kare";
+// 🔶 - large_orange_diamond
+"72077385.name" = "büyük turuncu karo";
+"72077385.tags" = "büyük turuncu karo | karo | turuncu";
+// 🔷 - large_blue_diamond
+"72077390.name" = "büyük mavi karo";
+"72077390.tags" = "büyük mavi karo | karo | mavi";
+// 🔸 - small_orange_diamond
+"72077395.name" = "küçük turuncu karo";
+"72077395.tags" = "karo | küçük turuncu karo | turuncu";
+// 🔹 - small_blue_diamond
+"72077400.name" = "küçük mavi karo";
+"72077400.tags" = "karo | küçük mavi karo | mavi";
+// 🔺 - small_red_triangle
+"72077405.name" = "yukarı bakan kırmızı üçgen";
+"72077405.tags" = "kırmızı | üçgen | yukarı bakan kırmızı üçgen | yukarı kırmızı üçgen";
+// 🔻 - small_red_triangle_down
+"72077410.name" = "aşağı bakan kırmızı üçgen";
+"72077410.tags" = "aşağı bakan kırmızı üçgen | aşağı kırmızı üçgen | kırmızı | üçgen";
+// 💠 - diamond_shape_with_a_dot_inside
+"72076635.name" = "içinde noktalı karo";
+"72076635.tags" = "baklava | çizgi roman | geometrik | içinde noktalı baklava şekli | içinde noktalı karo | karo";
+// 🔘 - radio_button
+"72077235.name" = "radyo düğmesi";
+"72077235.tags" = "düğme | radyo | radyo düğmesi";
+// 🔳 - white_square_button
+"72077370.name" = "beyaz kare düğme";
+"72077370.tags" = "beyaz kare düğme | düğme | kare";
+// 🔲 - black_square_button
+"72077365.name" = "siyah kare düğme";
+"72077365.tags" = "düğme | kare | siyah kare düğme";
+// 🏁 - checkered_flag
+"72079355.name" = "damalı bayrak";
+"72079355.tags" = "bayrak | damalı | spor | yarış";
+// 🚩 - triangular_flag_on_post
+"72079240.name" = "üçgen bayrak";
+"72079240.tags" = "işaret | konum | konum bilgisi işareti | üçgen bayrak | üçgen işaret | üçgen konum işareti";
+// 🎌 - crossed_flags
+"72079090.name" = "çapraz bayraklar";
+"72079090.tags" = "bayraklar | çapraz | çapraz Japon bayrakları | kutlama";
+// 🏴 - waving_black_flag
+"72079610.name" = "siyah bayrak";
+"72079610.tags" = "bayrak | siyah bayrak";

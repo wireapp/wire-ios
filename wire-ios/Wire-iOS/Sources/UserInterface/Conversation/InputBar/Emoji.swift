@@ -30,6 +30,23 @@ struct Emoji: Decodable, Hashable {
     let addedIn: String
     let sortOrder: Int
 
+    var localizedName: String {
+        return NSLocalizedString(
+            "\(shortName).name",
+            tableName: "Emoji",
+            comment: ""
+        )
+    }
+
+    var localizedTags: Set<String> {
+        let tagsString = NSLocalizedString("\(shortName).tags", tableName: "Emoji", comment: "")
+        let tags = tagsString
+            .split(separator: "|")
+            .map { $0.trimmingCharacters(in: .whitespaces) }
+
+        return Set(tags)
+    }
+
     func matchesSearchQuery(_ query: String) -> Bool {
         return [name, shortName, category.rawValue, subcategory].contains {
             $0.lowercased().contains(query)

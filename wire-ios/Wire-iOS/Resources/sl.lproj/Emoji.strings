@@ -1,0 +1,3714 @@
+//
+// Wire
+// Copyright (C) 2023 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
+
+// 😀 - grinning
+"72078395.name" = "režeči obraz";
+"72078395.tags" = "obraz | režanje | režeči obraz";
+// 😃 - smiley
+"72078410.name" = "smejoči obraz z odprtimi usti";
+"72078410.tags" = "nasmeh | obraz | odprto | smejoči obraz z odprtimi usti | usta";
+// 😄 - smile
+"72078415.name" = "smejoči obraz z odprtimi usti in smejočimi očmi";
+"72078415.tags" = "nasmeh | obraz | oči | odprto | smejoči obraz z odprtimi usti in smejočimi očmi | usta";
+// 😁 - grin
+"72078400.name" = "režeči obraz s smejočimi očmi";
+"72078400.tags" = "nasmeh | obraz | oči | režanje | režeči obraz s smejočimi očmi";
+// 😆 - laughing
+"72078425.name" = "smejoči obraz z odprtimi usti in trdno zaprtimi očmi";
+"72078425.tags" = "nasmeh | obraz | odprto | smejoči obraz z odprtimi usti in trdno zaprtimi očmi | usta | zadovoljno";
+// 😅 - sweat_smile
+"72078420.name" = "smejoči obraz z odprtimi usti in mrzlim potom";
+"72078420.tags" = "mrzlo | nasmeh | obraz | odprto | pot | smejoči obraz z odprtimi usti in mrzlim potom";
+// 🤣 - rolling_on_the_floor_laughing
+"72078575.name" = "krohotanje";
+"72078575.tags" = "krohotanje | smeh | tla | valjanje po tleh";
+// 😂 - joy
+"72078405.name" = "obraz s solzami veselja";
+"72078405.tags" = "obraz | obraz s solzami veselja | smeh | solze | veselje";
+// 🙂 - slightly_smiling_face
+"72078725.name" = "rahlo smejoči obraz";
+"72078725.tags" = "nasmeh | obraz | rahlo smejoči obraz";
+// 🙃 - upside_down_face
+"72078730.name" = "na glavo obrnjen obraz";
+"72078730.tags" = "na glavo obrnjen obraz | narobe obrnjeno | obraz";
+// 🫠 - melting_face
+"72080800.name" = "taleči se obraz";
+"72080800.tags" = "izginjanje | raztapljanje | taleči se obraz | taljenje | tekočina";
+// 😉 - wink
+"72078440.name" = "obraz s pomežikom";
+"72078440.tags" = "obraz | obraz s pomežikom | pomežik";
+// 😊 - blush
+"72078445.name" = "smejoči obraz s smejočimi očmi";
+"72078445.tags" = "nasmeh | obraz | oči | smejoči obraz s smejočimi očmi | zardevanje";
+// 😇 - innocent
+"72078430.name" = "smejoči obraz s svetniškim sijem";
+"72078430.tags" = "angel | avra | fantazija | nasmeh | nedolžno | obraz | smejoči obraz s svetniškim sijem";
+// 🥰 - smiling_face_with_3_hearts
+"72078960.name" = "smejoči obraz s srčki";
+"72078960.tags" = "ljubezen | oboževanje | smejoči obraz s srčki | zaljubljenost";
+// 😍 - heart_eyes
+"72078460.name" = "smejoči obraz z očmi v obliki srčka";
+"72078460.tags" = "ljubezen | nasmeh | obraz | oči | smejoči obraz z očmi v obliki srčka | srce";
+// 🤩 - star-struck
+"72078605.name" = "obraz z očmi v obliki zvezdic";
+"72078605.tags" = "obraz z očmi v obliki zvezdic";
+// 😘 - kissing_heart
+"72078515.name" = "obraz, ki pošlje ljubčka";
+"72078515.tags" = "obraz | obraz | ki pošlje ljubčka | poljub | srce";
+// 😗 - kissing
+"72078510.name" = "obraz, ki poljublja";
+"72078510.tags" = "obraz | obraz | ki poljublja | poljub";
+// 😚 - kissing_closed_eyes
+"72078525.name" = "obraz z zaprtimi očmi, ki poljublja";
+"72078525.tags" = "obraz | obraz z zaprtimi očmi | ki poljublja | oči | poljub | zaprto";
+// 😙 - kissing_smiling_eyes
+"72078520.name" = "obraz s smejočimi očmi, ki poljublja";
+"72078520.tags" = "nasmeh | obraz | obraz s smejočimi očmi | ki poljublja | oči | poljub";
+// 🥲 - smiling_face_with_tear
+"72078970.name" = "smejoči obraz s solzo";
+"72078970.tags" = "ganjenost | hvaležnost | nasmeh | olajšanje | ponos | smejoči obraz s solzo | solza";
+// 😋 - yum
+"72078450.name" = "obraz, ki z užitkom pomalica okusno hrano";
+"72078450.tags" = "nasmeh | njam | obraz | obraz | ki z užitkom pomalica okusno hrano | okušanje | slastno";
+// 😛 - stuck_out_tongue
+"72078530.name" = "obraz z molečim jezikom";
+"72078530.tags" = "jezik | obraz | obraz z molečim jezikom";
+// 😜 - stuck_out_tongue_winking_eye
+"72078535.name" = "obraz z molečim jezikom in pomežikom";
+"72078535.tags" = "jezik | mežik | obraz | obraz z molečim jezikom in pomežikom | oči | šala";
+// 🤪 - zany_face
+"72078610.name" = "nor obraz";
+"72078610.tags" = "majhen | nor obraz | oko | velik";
+// 😝 - stuck_out_tongue_closed_eyes
+"72078540.name" = "obraz z molečim jezikom in zaprtimi očmi";
+"72078540.tags" = "grozno | jezik | obraz | obraz z molečim jezikom in trdno zaprtimi očmi | obraz z molečim jezikom in zaprtimi očmi | oči | okus";
+// 🤑 - money_mouth_face
+"72078485.name" = "obraz z denarjem namesto ust";
+"72078485.tags" = "denar | obraz | obraz z denarjem namesto ust | usta";
+// 🤗 - hugging_face
+"72078515.name" = "obraz, ki objema";
+"72078515.tags" = "objem | objemanje | obraz | obraz | ki objema";
+// 🤭 - face_with_hand_over_mouth
+"72078625.name" = "obraz z roko čez usta";
+"72078625.tags" = "obraz z roko čez usta";
+// 🫢 - face_with_open_eyes_and_hand_over_mouth
+"72080810.name" = "obraz z razprtimi očmi in roko pred usti";
+"72080810.tags" = "nejevera | obraz z razprtimi očmi in roko pred usti | osuplost | presenečenost | prestrašenost | sram | začudenje";
+// 🫣 - face_with_peeking_eye
+"72080815.name" = "obraz s pogledujočim očesom";
+"72080815.tags" = "obraz s pogledujočim očesom | pogledovanje | prevzetost | strmenje";
+// 🤫 - shushing_face
+"72078615.name" = "obraz s prstom čez usta";
+"72078615.tags" = "obraz s prstom čez usta";
+// 🤔 - thinking_face
+"72078500.name" = "razmišljujoči obraz";
+"72078500.tags" = "obraz | razmišljanje | razmišljujoči obraz";
+// 🫡 - saluting_face
+"72080805.name" = "salutirajoč obraz";
+"72080805.tags" = "da | enote | salutirajoč obraz | salutiranje | sončno | strinjanje | v redu";
+// 🤐 - zipper_mouth_face
+"72078480.name" = "obraz z usti v obliki zadrge";
+"72078480.tags" = "obraz | obraz z usti v obliki zadrge | usta | zadrga | zapečateno | zaprto";
+// 🤨 - face_with_raised_eyebrow
+"72078600.name" = "obraz z dvignjenimi obrvmi";
+"72078600.tags" = "obraz z dvignjenimi obrvmi";
+// 😐 - neutral_face
+"72078475.name" = "nevtralni obraz";
+"72078475.tags" = "mrtvo hladno | nevtralni obraz | nevtralno | obraz";
+// 😑 - expressionless
+"72078480.name" = "brezizrazni obraz";
+"72078480.tags" = "brezizrazni obraz | brezizrazno | neprizadeto | obraz | prazno";
+// 😶 - no_mouth
+"72078665.name" = "obraz brez ust";
+"72078665.tags" = "molčeče | obraz | obraz brez ust | tiho | usta";
+// 🫥 - dotted_line_face
+"72080825.name" = "obraz s črtkasto črto";
+"72080825.tags" = "introvertiranost | izginjanje | nevidnost | obraz s črtkasto črto | potrtost | skrivanje";
+// 😏 - smirk
+"72078470.name" = "obraz s privoščljivim nasmeškom";
+"72078470.tags" = "obraz | obraz s privoščljivim nasmeškom | privoščljiv nasmešek";
+// 😒 - unamused
+"72078485.name" = "obraz s hladnim nasmeškom";
+"72078485.tags" = "nenaklonjeno | nezadovoljno | obraz | obraz s hladnim nasmeškom";
+// 🙄 - face_with_rolling_eyes
+"72078735.name" = "obraz z zavijajočimi očmi";
+"72078735.tags" = "obraz | obraz z zavijajočimi očmi | oči | zavijanje";
+// 😬 - grimacing
+"72078615.name" = "spačen obraz";
+"72078615.tags" = "grimasa | obraz | spačen obraz";
+// 😮‍💨 - face_exhaling
+"26809473017250.name" = "obraz med izdihovanjem";
+"26809473017250.tags" = "godrnjanje | izdih | obraz med izdihovanjem | olajšanje | šepet | sopih | žvižganje";
+// 🤥 - lying_face
+"72078585.name" = "lažnivi obraz";
+"72078585.tags" = "laž | lažnivec | lažnivi obraz | ostržek";
+// 🫨 - shaking_face
+"72080840.name" = "tresoči se obraz";
+"72080840.tags" = "obraz | potres | šok | tresenje | tresoči se obraz | vibriranje";
+// 😌 - relieved
+"72078455.name" = "olajšan obraz";
+"72078455.tags" = "obraz | olajšan obraz | olajšano";
+// 😔 - pensive
+"72078495.name" = "brezvoljen obraz";
+"72078495.tags" = "brezvoljen obraz | brezvoljno | obraz | pobito";
+// 😪 - sleepy
+"72078605.name" = "zaspan obraz";
+"72078605.tags" = "obraz | spanje | zaspan obraz";
+// 🤤 - drooling_face
+"72078580.name" = "obraz, ki se slini";
+"72078580.tags" = "obraz | obraz | ki se slini | slinjenje";
+// 😴 - sleeping
+"72078655.name" = "speči obraz";
+"72078655.tags" = "obraz | spanje | speči obraz | zzz";
+// 😷 - mask
+"72078670.name" = "obraz z medicinsko masko";
+"72078670.tags" = "bolno | maska | obraz | obraz z medicinsko masko | prehlad | zdravilo | zdravnik";
+// 🤒 - face_with_thermometer
+"72078490.name" = "obraz s termometrom";
+"72078490.tags" = "bolno | obraz | obraz s termometrom | slabotno | termometer";
+// 🤕 - face_with_head_bandage
+"72078505.name" = "obraz, obvezan s povojem";
+"72078505.tags" = "obraz | obraz | obvezan s povojem | poškodba | poškodovano | povoj";
+// 🤢 - nauseated_face
+"72078570.name" = "obraz, ki se počuti slabo";
+"72078570.tags" = "bruhanje | obraz | ki se počuti slabo | slabost";
+// 🤮 - face_vomiting
+"72078630.name" = "obraz, ki bruha";
+"72078630.tags" = "obraz | ki bruha";
+// 🤧 - sneezing_face
+"72078595.name" = "obraz, ki kiha";
+"72078595.tags" = "kihanje | na zdravje | obraz | ki kiha";
+// 🥵 - hot_face
+"72078985.name" = "vroč obraz";
+"72078985.tags" = "poten | rdeč obraz | vroč obraz | vroče | vročina | vročinska kap";
+// 🥶 - cold_face
+"72078990.name" = "mrzel obraz";
+"72078990.tags" = "ledene sveče | mrzel | mrzel obraz | ozebline | plav obraz | premražen";
+// 🥴 - woozy_face
+"72078980.name" = "okajen obraz";
+"72078980.tags" = "okajen obraz | omotičen | različni očesi | v rožicah | valovita usta | vinjen";
+// 😵 - dizzy_face
+"72078660.name" = "omotičen obraz";
+"72078660.tags" = "obraz | omotičen obraz | omotično";
+// 😵‍💫 - face_with_spiral_eyes
+"26813394148332.name" = "obraz s spiralnimi očmi";
+"26813394148332.tags" = "hipnoza | obraz s spiralnimi očmi | omotica | spirala | težave | vau";
+// 🤯 - exploding_head
+"72078635.name" = "eksplozija v glavi";
+"72078635.tags" = "eksplozija v glavi";
+// 🤠 - face_with_cowboy_hat
+"72078560.name" = "obraz s kavbojskim klobukom";
+"72078560.tags" = "kavboj | klobuk | obraz s kavbojskim klobukom";
+// 🥳 - partying_face
+"72078975.name" = "praznujoči obraz";
+"72078975.tags" = "hupa | klobuček | praznovanje | praznujoči obraz | zabava";
+// 🥸 - disguised_face
+"72079000.name" = "maska";
+"72079000.tags" = "inkognito | maska | nos | obraz | očala | preobleka";
+// 😎 - sunglasses
+"72078465.name" = "smejoči obraz s sončnimi očali";
+"72078465.tags" = "frajersko | obraz | smejoči obraz s sončnimi očali | sonce | sončna očala | svetlo";
+// 🤓 - nerd_face
+"72078495.name" = "piflarski obraz";
+"72078495.tags" = "frik | obraz | piflar | piflarski obraz | znalec";
+// 🧐 - face_with_monocle
+"72079440.name" = "obraz z monoklom";
+"72079440.tags" = "obraz z monoklom";
+// 😕 - confused
+"72078500.name" = "zmeden obraz";
+"72078500.tags" = "obraz | zmeden obraz | zmedeno";
+// 🫤 - face_with_diagonal_mouth
+"72080820.name" = "obraz s poševnimi usti";
+"72080820.tags" = "dvom | negotovost | obraz s poševnimi usti | razočaranost | vzdih";
+// 😟 - worried
+"72078550.name" = "zaskrbljen obraz";
+"72078550.tags" = "obraz | zaskrbljen obraz | zaskrbljeno";
+// 🙁 - slightly_frowning_face
+"72078720.name" = "nekoliko namrščen obraz";
+"72078720.tags" = "mrščenje | nekoliko namrščen obraz | obraz";
+// 😮 - open_mouth
+"72078625.name" = "obraz z odprtimi usti";
+"72078625.tags" = "obraz | obraz z odprtimi usti | odprto | sočutje | usta";
+// 😯 - hushed
+"72078630.name" = "osupljen obraz";
+"72078630.tags" = "obraz | osupljen obraz | osuplo | presenečeno | tiho";
+// 😲 - astonished
+"72078645.name" = "začuden obraz";
+"72078645.tags" = "frapirano | obraz | popolnoma | presenečeno | začuden obraz | začudeno";
+// 😳 - flushed
+"72078650.name" = "zardeli obraz";
+"72078650.tags" = "obraz | zardeli obraz | zardelo | zmedeno";
+// 🥺 - pleading_face
+"72079010.name" = "proseč obraz";
+"72079010.tags" = "kužkove oči | milost | moledovanje | proseč obraz";
+// 🥹 - face_holding_back_tears
+"72079005.name" = "obraz, ki zadržuje jok";
+"72079005.tags" = "jeza | jok | obraz | ki zadržuje jok | ponos | upor | žalost";
+// 😦 - frowning
+"72078585.name" = "namrščen obraz z odprtimi usti";
+"72078585.tags" = "namrščen obraz z odprtimi usti | namrščenost | obraz | odprto | usta";
+// 😧 - anguished
+"72078590.name" = "trpeč obraz";
+"72078590.tags" = "obraz | trpeč obraz | trpeče";
+// 😨 - fearful
+"72078595.name" = "bojazljiv obraz";
+"72078595.tags" = "bojazljiv obraz | obraz | preplašeno | prestrašeno | strah";
+// 😰 - cold_sweat
+"72078635.name" = "obraz z odprtimi usti in mrzlim potom";
+"72078635.tags" = "hladno | modro | obraz | obraz z odprtimi usti in mrzlim potom | odprto | pot | usta";
+// 😥 - disappointed_relieved
+"72078580.name" = "razočaran, a olajšan obraz";
+"72078580.tags" = "fiju | obraz | olajšano | razočaran | a olajšan obraz | razočarano";
+// 😢 - cry
+"72078565.name" = "jokajoči obraz";
+"72078565.tags" = "jokajoči obraz | jokanje | obraz | solza | žalostno";
+// 😭 - sob
+"72078620.name" = "cmerajoči obraz";
+"72078620.tags" = "cmerajoči obraz | ihtenje | jokanje | obraz | solze | žalostno";
+// 😱 - scream
+"72078640.name" = "obraz, ki kriči od strahu";
+"72078640.tags" = "krik | munch | obraz | obraz | ki kriči od strahu | preplašeno | prestrašeno | strah";
+// 😖 - confounded
+"72078505.name" = "zbegan obraz";
+"72078505.tags" = "obraz | zbegan obraz | zbegano";
+// 😣 - persevere
+"72078570.name" = "vztrajen obraz";
+"72078570.tags" = "obraz | vztrajanje | vztrajen obraz";
+// 😞 - disappointed
+"72078545.name" = "razočaran obraz";
+"72078545.tags" = "obraz | razočaran obraz | razočarano";
+// 😓 - sweat
+"72078490.name" = "obraz z mrzlim potom";
+"72078490.tags" = "mrzlo | obraz | obraz z mrzlim potom | pot";
+// 😩 - weary
+"72078600.name" = "izčrpan obraz";
+"72078600.tags" = "izčrpan obraz | izčrpano | obraz | utrujeno";
+// 😫 - tired_face
+"72078610.name" = "utrujen obraz";
+"72078610.tags" = "obraz | utrujen obraz | utrujeno";
+// 🥱 - yawning_face
+"72078965.name" = "zehajoč obraz";
+"72078965.tags" = "dolgčas | utrujen | zehajoč obraz | zehanje";
+// 😤 - triumph
+"72078575.name" = "obraz s paro skozi nos";
+"72078575.tags" = "obraz | obraz s paro skozi nos | zmaga | zmagoslavje";
+// 😡 - rage
+"72078560.name" = "obraz, ki kuha mulo";
+"72078560.tags" = "besno | gnev | jezno | kujanje | obraz | obraz | ki kuha mulo | rdeče";
+// 😠 - angry
+"72078555.name" = "jezen obraz";
+"72078555.tags" = "besno | jezen obraz | jezno | obraz";
+// 🤬 - face_with_symbols_on_mouth
+"72078620.name" = "obraz, ki kolne";
+"72078620.tags" = "obraz | ki kolne";
+// 😈 - smiling_imp
+"72078435.name" = "smejoči obraz z rogovi";
+"72078435.tags" = "fantazija | nasmeh | obraz | pravljica | rogovi | smejoči obraz z rogovi";
+// 👿 - imp
+"72076470.name" = "vragec";
+"72076470.tags" = "demon | fantazija | hudič | obraz | pravljica | vragec";
+// 💀 - skull
+"72076475.name" = "mrtvaška glava";
+"72076475.tags" = "mrtvaška glava | obraz | pošast | pravljica | smrt | telo";
+// 💩 - hankey
+"72076680.name" = "kup kakca";
+"72076680.tags" = "drekec | iztrebki | kakec | kup kakca | obraz | pošast | strip";
+// 🤡 - clown_face
+"72078565.name" = "klovnovski obraz";
+"72078565.tags" = "klovn | klovnesa | klovnovski obraz";
+// 👹 - japanese_ogre
+"72076440.name" = "pošastni velikan";
+"72076440.tags" = "bitje | fantazija | japonsko | obraz | pošast | pošastni velikan | pravljica";
+// 👺 - japanese_goblin
+"72076445.name" = "škratelj";
+"72076445.tags" = "bitje | fantazija | japonsko | obraz | pošast | pravljica | škratelj";
+// 👻 - ghost
+"72076450.name" = "duh";
+"72076450.tags" = "bitje | duh | fantazija | obraz | pošast | pravljica";
+// 👽 - alien
+"72076460.name" = "vesoljec";
+"72076460.tags" = "bitje | fantazija | nezemljan | nlp | obraz | vesolje | vesoljec";
+// 👾 - space_invader
+"72076465.name" = "vesoljska pošast";
+"72076465.tags" = "bitje | nezemljan | nlp | obraz | vesolje | vesoljec | vesoljska pošast";
+// 🤖 - robot_face
+"72078510.name" = "robot";
+"72078510.tags" = "obraz | pošast | robot";
+// 😺 - smiley_cat
+"72078685.name" = "režeča se mačka";
+"72078685.tags" = "mačka | nasmeh | obraz | odprta | režeča se mačka | smeh | usta";
+// 😸 - smile_cat
+"72078675.name" = "režeča se mačka s smejočimi očmi";
+"72078675.tags" = "mačka | nasmeh | obraz | oko | režanje | režeča se mačka s smejočimi očmi";
+// 😹 - joy_cat
+"72078680.name" = "mačka s solzami sreče";
+"72078680.tags" = "mačji obraz s solzami sreče | mačka | mačka s solzami sreče | obraz | solze | veselje";
+// 😻 - heart_eyes_cat
+"72078690.name" = "smejoča se mačka z očmi v obliki srčka";
+"72078690.tags" = "ljubezen | mačka | nasmeh | obraz | oči | smejoča se mačka z očmi v obliki srčka | srce";
+// 😼 - smirk_cat
+"72078695.name" = "mačka s prifrknjenim nasmeškom";
+"72078695.tags" = "ironično | mačji obraz s prifrknjenim nasmeškom | mačka | mačka s prifrknjenim nasmeškom | nasmeh | obraz | porogljivo";
+// 😽 - kissing_cat
+"72078700.name" = "mačka poljublja z zaprtimi očmi";
+"72078700.tags" = "mačji obraz z zaprtimi očmi | ki poljublja | mačka | mačka poljublja z zaprtimi očmi | obraz | oči | poljub";
+// 🙀 - scream_cat
+"72078715.name" = "presenečena mačka";
+"72078715.tags" = "mačka | naveličano | obraz | odprta usta | presenečena mačka | presenečeno";
+// 😿 - crying_cat_face
+"72078710.name" = "jokajoča mačka";
+"72078710.tags" = "jokajoča mačka | jokajoči mačji obraz | jokanje | mačka | obraz | solza | žalostno";
+// 😾 - pouting_cat
+"72078705.name" = "mačka kuha mulo";
+"72078705.tags" = "kujanje | mačji obraz | ki kuha mulo | mačka | mačka kuha mulo | obraz";
+// 🙈 - see_no_evil
+"72078755.name" = "opica, ki ne vidi ničesar";
+"72078755.tags" = "obraz | opica | opica | ki ne vidi ničesar | prepovedano | videti | zlobno";
+// 🙉 - hear_no_evil
+"72078760.name" = "opica, ki ne sliši ničesar";
+"72078760.tags" = "obraz | opica | opica | ki ne sliši ničesar | prepovedano | slišati | zlobno";
+// 🙊 - speak_no_evil
+"72078765.name" = "opica, ki ničesar ne govori";
+"72078765.tags" = "govoriti | obraz | opica | opica | ki ničesar ne govori | prepovedano | zlobno";
+// 💌 - love_letter
+"72076535.name" = "ljubezensko pismo";
+"72076535.tags" = "ljubezen | ljubezensko pismo | pismo | pošta | romanca | srce";
+// 💘 - cupid
+"72076595.name" = "srce s puščico";
+"72076595.tags" = "kupid | puščica | romanca | srce | srce s puščico";
+// 💝 - gift_heart
+"72076620.name" = "srce s pentljo";
+"72076620.tags" = "pentlja | srce | srce s pentljo | valentin";
+// 💖 - sparkling_heart
+"72076585.name" = "lesketajoče srce";
+"72076585.tags" = "lesketajoče srce | lesketati se | srce | vznemirjeno";
+// 💗 - heartpulse
+"72076590.name" = "rastoče srce";
+"72076590.tags" = "rastoče | srce | srčni utrip | vznemirjeno | živčno";
+// 💓 - heartbeat
+"72076570.name" = "utripajoče srce";
+"72076570.tags" = "bitje | srce | srčni utrip | utripajoče srce | utripanje";
+// 💞 - revolving_hearts
+"72076625.name" = "vrteči se srci";
+"72076625.tags" = "srce | vrteči se srci | vrtenje";
+// 💕 - two_hearts
+"72076580.name" = "dve srci";
+"72076580.tags" = "dve srci | ljubezen | srce";
+// 💟 - heart_decoration
+"72076630.name" = "okrasje s srcem";
+"72076630.tags" = "okrasje s srcem | srce";
+// 💔 - broken_heart
+"72076575.name" = "strto srce";
+"72076575.tags" = "počeno | srce | strto srce | zlomiti";
+// 🩷 - pink_heart
+"72080275.name" = "rožnato srce";
+"72080275.tags" = "ljubezen | prisrčno | rožnato | srce | všeč";
+// 🧡 - orange_heart
+"72079525.name" = "oranžno srce";
+"72079525.tags" = "oranžno srce";
+// 💛 - yellow_heart
+"72076610.name" = "rumeno srce";
+"72076610.tags" = "rumeno | srce";
+// 💚 - green_heart
+"72076605.name" = "zeleno srce";
+"72076605.tags" = "srce | zeleno";
+// 💙 - blue_heart
+"72076600.name" = "modro srce";
+"72076600.tags" = "modro | srce";
+// 🩵 - light_blue_heart
+"72080265.name" = "svetlomodro srce";
+"72080265.tags" = "cijan | srce | svetlomodra | svetlomodro srce | zelenomodra";
+// 💜 - purple_heart
+"72076615.name" = "vijolično srce";
+"72076615.tags" = "srce | vijolično";
+// 🤎 - brown_heart
+"72078470.name" = "rjavo srce";
+"72078470.tags" = "rjavo | srce";
+// 🖤 - black_heart
+"72077935.name" = "črno srce";
+"72077935.tags" = "črno | hudobno | podlo | srce | zlobno";
+// 🩶 - grey_heart
+"72080270.name" = "sivo srce";
+"72080270.tags" = "sivo | skrilasto | srce | srebrno";
+// 🤍 - white_heart
+"72078465.name" = "belo srce";
+"72078465.tags" = "belo | srce";
+// 💋 - kiss
+"72076530.name" = "sled šminke po poljubu";
+"72076530.tags" = "odtis | poljub | romanca | sled šminke po poljubu | srce | ustnice";
+// 💯 - 100
+"72076710.name" = "sto točk";
+"72076710.tags" = "100 | sto | sto točk";
+// 💢 - anger
+"72076645.name" = "simbol jeze";
+"72076645.tags" = "divje | jezno | simbol jeze | strip";
+// 💥 - boom
+"72076660.name" = "trk";
+"72076660.tags" = "bum | eksplozija | strip | trk";
+// 💫 - dizzy
+"72076690.name" = "omotica";
+"72076690.tags" = "omotica | omotično | planeti | strip | zvezda";
+// 💦 - sweat_drops
+"72076665.name" = "potne kapljice";
+"72076665.tags" = "pljuskanje | pot | potne kapljice | strip";
+// 💨 - dash
+"72076675.name" = "švigniti";
+"72076675.tags" = "strip | švigati | švigniti | tek";
+// 💬 - speech_balloon
+"72076695.name" = "oblaček z govorom";
+"72076695.tags" = "balon | dialog | govor | oblaček | oblaček z govorom | strip";
+// 💭 - thought_balloon
+"72076700.name" = "oblaček z mislimi";
+"72076700.tags" = "balon | misel | oblaček | oblaček z mislimi | strip";
+// 💤 - zzz
+"72076655.name" = "spanec";
+"72076655.tags" = "spanec | spanje | strip | zzz";
+// 👋 - wave
+"72076210.name" = "mahajoča dlan";
+"72076210.tags" = "dlan | mahajoča dlan | mahanje | mahati | telo";
+// 🤚 - raised_back_of_hand
+"72078530.name" = "dvignjena hrbtna stran dlani";
+"72078530.tags" = "dlan | dvignjena | dvignjena hrbtna stran dlani | hrbtna stran";
+// ✋ - hand
+"30756.name" = "dvignjena dlan";
+"30756.tags" = "dlan | dvignjena dlan | telo";
+// 🖖 - spock-hand
+"72077865.name" = "vulkanski pozdrav";
+"72077865.tags" = "dlan | prst | spock | telo | vulkan | vulkanski pozdrav";
+// 🫱 - rightwards_hand
+"72080885.name" = "roka, obrnjena v desno";
+"72080885.tags" = "desno | obrnjena v desno | roka | roka | obrnjena v desno";
+// 🫲 - leftwards_hand
+"72080890.name" = "roka, obrnjena v levo";
+"72080890.tags" = "levo | obrnjena v levo | roka | roka | obrnjena v levo";
+// 🫳 - palm_down_hand
+"72080895.name" = "roka z dlanjo navzdol";
+"72080895.tags" = "nehati | odslovitev | opustitev | roka z dlanjo navzdol";
+// 🫴 - palm_up_hand
+"72080900.name" = "roka z dlanjo navzgor";
+"72080900.tags" = "namig | ponuditi | priti | roka z dlanjo navzgor | ujeti";
+// 🫷 - leftwards_pushing_hand
+"72080915.name" = "dlan, ki potiska v levo";
+"72080915.tags" = "dlan | ki potiska v levo | petka | počakati | potisniti | stop | v levo | zavrniti";
+// 🫸 - rightwards_pushing_hand
+"72080920.name" = "dlan, ki potiska v desno";
+"72080920.tags" = "dlan | ki potiska v desno | petka | počakati | potisniti | stop | v desno | zavrniti";
+// 👌 - ok_hand
+"72076215.name" = "roka, ki kaže V REDU";
+"72076215.tags" = "dlan | roka | ki kaže V REDU | telo | v redu";
+// 🤌 - pinched_fingers
+"72078460.name" = "prsti, stisnjeni skupaj";
+"72078460.tags" = "izpraševanje | kretnja z roko | prsti | prsti | stisnjeni skupaj | sarkastično | stisnjen";
+// 🤏 - pinching_hand
+"72078475.name" = "roka s ščepcem";
+"72078475.tags" = "majhna količina | malo | roka s ščepcem";
+// 🤞 - crossed_fingers
+"72078550.name" = "prekrižani prsti";
+"72078550.tags" = "prekrižani prsti | prsti | roka | sreča";
+// 🫰 - hand_with_index_finger_and_thumb_crossed
+"72080880.name" = "roka s prekrižanima kazalcem in palcem";
+"72080880.tags" = "denar | drago | pri srcu | priljubljeno | roka s prekrižanima kazalcem in palcem | tlesk";
+// 🤟 - i_love_you_hand_sign
+"72078555.name" = "znak za ljubim te";
+"72078555.tags" = "roka | RTM | znak za ljubim te";
+// 🤘 - the_horns
+"72078520.name" = "znak za rogove";
+"72078520.tags" = "dlan | prst | rock za vedno | rogovi | telo | znak za rogove";
+// 🤙 - call_me_hand
+"72078525.name" = "pokliči me";
+"72078525.tags" = "pokliči | pokliči me | roka";
+// 👈 - point_left
+"72076195.name" = "hrbtna stran dlani s kazalcem, ki kaže levo";
+"72076195.tags" = "dlan | hrbtna stran | hrbtna stran dlani s kazalcem | ki kaže levo | kazalec | kazati | prst | telo";
+// 👉 - point_right
+"72076200.name" = "hrbtna stran dlani s kazalcem, ki kaže desno";
+"72076200.tags" = "dlan | hrbtna stran | hrbtna stran dlani s kazalcem | ki kaže desno | kazalec | kazati | prst | telo";
+// 👆 - point_up_2
+"72076185.name" = "hrbtna stran dlani s kazalcem, ki kaže gor";
+"72076185.tags" = "dlan | gor | hrbtna stran | hrbtna stran dlani s kazalcem | ki kaže gor | kazalec | kazati | prst";
+// 🖕 - middle_finger
+"72077860.name" = "sredinec";
+"72077860.tags" = "dlan | kazati | prst | sredinec | telo";
+// 👇 - point_down
+"72076190.name" = "hrbtna stran dlani s kazalcem, ki kaže dol";
+"72076190.tags" = "dlan | dol | hrbtna stran | hrbtna stran dlani s kazalcem | ki kaže dol | kazalec | kazati | prst";
+// 🫵 - index_pointing_at_the_viewer
+"72080905.name" = "kazalec, usmerjen v opazovalca";
+"72080905.tags" = "kazalec | usmerjen v opazovalca | kazati | ti";
+// 👍 - +1
+"72076220.name" = "palec gor";
+"72076220.tags" = "+1 | dlan | gor | palec | telo";
+// 👎 - -1
+"72076225.name" = "palec dol";
+"72076225.tags" = "-1 | dlan | dol | palec | telo";
+// ✊ - fist
+"30753.name" = "dvignjena pest";
+"30753.tags" = "dlan | dvignjena pest | pest | pokrčeno | telo | udarec";
+// 👊 - facepunch
+"72076205.name" = "bližajoča se pest";
+"72076205.tags" = "bližajoča se pest | dlan | pest | pokrčeno | telo | udarec";
+// 🤛 - left-facing_fist
+"72078535.name" = "pest, obrnjena levo";
+"72078535.tags" = "levo | pest | pest | obrnjena levo";
+// 🤜 - right-facing_fist
+"72078540.name" = "pest, obrnjena desno";
+"72078540.tags" = "desno | pest | pest | obrnjena desno";
+// 👏 - clap
+"72076230.name" = "ploskajoči dlani";
+"72076230.tags" = "dlan | ploskajoči dlani | ploskati | telo";
+// 🙌 - raised_hands
+"72078775.name" = "oseba, ki dvigne roke";
+"72078775.tags" = "dvignjeno | gesta | hura | oseba | ki dvigne roke | roka | slavje | telo";
+// 🫶 - heart_hands
+"72080910.name" = "roki, sklenjeni v obliki srca";
+"72080910.tags" = "ljubezen | roki | sklenjeni v obliki srca";
+// 👐 - open_hands
+"72076235.name" = "odprti dlani";
+"72076235.tags" = "dlan | odprti dlani | odprto | telo";
+// 🤲 - palms_up_together
+"72078650.name" = "dvignjeni odprti dlani";
+"72078650.tags" = "dvignjeni odprti dlani | molitev";
+// 🤝 - handshake
+"72078545.name" = "rokovanje";
+"72078545.tags" = "roka | rokovanje | sporazum | srečanje";
+// 🙏 - pray
+"72078790.name" = "staknjeni dlani";
+"72078790.tags" = "hvala | moliti | prosim | prositi | roka | sklenjeno | staknjeni dlani";
+// 💅 - nail_care
+"72076500.name" = "lak za nohte";
+"72076500.tags" = "kozmetika | lak | lak za nohte | manikira | nega | noht | telo";
+// 🤳 - selfie
+"72078655.name" = "selfi";
+"72078655.tags" = "fotoaparat | kamera | mobilni telefon | selfi";
+// 💪 - muscle
+"72076685.name" = "napeti bicepsi";
+"72076685.tags" = "biceps | mišica | napenjati | napeti bicepsi | strip | telo";
+// 🦾 - mechanical_arm
+"72079350.name" = "mehanska roka";
+"72079350.tags" = "invalid | mehanska roka | proteza | umetni ud";
+// 🦿 - mechanical_leg
+"72079355.name" = "mehanska noga";
+"72079355.tags" = "invalid | mehanska noga | proteza | umetni ud";
+// 🦵 - leg
+"72079305.name" = "noga";
+"72079305.tags" = "brca | noga | okončina";
+// 🦶 - foot
+"72079310.name" = "stopalo";
+"72079310.tags" = "brca | stopalo | topot";
+// 👂 - ear
+"72076165.name" = "uho";
+"72076165.tags" = "telo | uho";
+// 🦻 - ear_with_hearing_aid
+"72079335.name" = "uho s slušnim aparatom";
+"72079335.tags" = "naglušni | okvara sluha | uho s slušnim aparatom";
+// 👃 - nose
+"72076170.name" = "nos";
+"72076170.tags" = "nos | telo";
+// 🧠 - brain
+"72079520.name" = "možgani";
+"72079520.tags" = "inteligenca | možgani";
+// 🫀 - anatomical_heart
+"72080640.name" = "človeško srce";
+"72080640.tags" = "človeško | kardiologija | organ | srce | srčni utrip | utrip";
+// 🫁 - lungs
+"72080645.name" = "pljuča";
+"72080645.tags" = "dih | dihanje | izdih | organ | pljuča | vdih";
+// 🦷 - tooth
+"72079315.name" = "zob";
+"72079315.tags" = "zob | zobozdravnik";
+// 🦴 - bone
+"72079300.name" = "kost";
+"72079300.tags" = "kost | okostje";
+// 👀 - eyes
+"72076155.name" = "oči";
+"72076155.tags" = "obraz | oči | telo";
+// 👅 - tongue
+"72076180.name" = "jezik";
+"72076180.tags" = "jezik | telo";
+// 👄 - lips
+"72076175.name" = "usta";
+"72076175.tags" = "telo | usta | ustnice";
+// 🫦 - biting_lip
+"72080830.name" = "grizenje ustnice";
+"72080830.tags" = "grizenje ustnice | nelagodje | spogledovanje | strah | vznemirjenost | zaskrbljenost | živčnost";
+// 👶 - baby
+"72076425.name" = "dojenček";
+"72076425.tags" = "dojenček";
+// 🧒 - child
+"72079450.name" = "otrok";
+"72079450.tags" = "otrok";
+// 👦 - boy
+"72076345.name" = "fant";
+"72076345.tags" = "deček | fant";
+// 👧 - girl
+"72076350.name" = "dekle";
+"72076350.tags" = "dekle | devica | zodiak";
+// 🧑 - adult
+"72079445.name" = "odrasla oseba";
+"72079445.tags" = "odrasla oseba";
+// 👱 - person_with_blond_hair
+"72076400.name" = "oseba: svetli lasje";
+"72076400.tags" = "lasje | oseba: svetli lasje | svetli lasje | svetlolasa oseba";
+// 👨 - man
+"72076355.name" = "moški";
+"72076355.tags" = "fant | moški";
+// 🧔 - bearded_person
+"72079460.name" = "oseba: brada";
+"72079460.tags" = "brada | moški | moški: brada | oseba | oseba: brada";
+// 👩 - woman
+"72076360.name" = "ženska";
+"72076360.tags" = "dekle | ženska";
+// 🧓 - older_adult
+"72079455.name" = "starejši odrasli";
+"72079455.tags" = "spolno nevtralen | starejši | starejši odrasli";
+// 👴 - older_man
+"72076415.name" = "starec";
+"72076415.tags" = "moški | starec | staro";
+// 👵 - older_woman
+"72076420.name" = "starka";
+"72076420.tags" = "starka | staro | ženska";
+// 🙍 - person_frowning
+"72078780.name" = "oseba, ki se mršči";
+"72078780.tags" = "gesta | mrščenje | oseba | ki se mršči";
+// 🙎 - person_with_pouting_face
+"72078785.name" = "oseba, ki kuha mulo";
+"72078785.tags" = "gesta | kujanje | oseba | ki kuha mulo";
+// 🙅 - no_good
+"72078740.name" = "oseba, ki kaže NE";
+"72078740.tags" = "gesta | ne | ni dovoljeno | oseba | ki kaže NE | prepovedano | roka";
+// 🙆 - ok_woman
+"72078745.name" = "oseba, ki kaže V REDU";
+"72078745.tags" = "gesta | oseba | ki kaže V REDU | roka | v redu";
+// 💁 - information_desk_person
+"72076480.name" = "oseba, ki dela na informacijah";
+"72076480.tags" = "informacije | oseba | ki dela na informacijah | pomoč | roka | zgovorno | živahno";
+// 🙋 - raising_hand
+"72078770.name" = "vesela oseba, ki dvigne roko";
+"72078770.tags" = "dvignjeno | gesta | roka | vesela oseba | ki dvigne roko | veselo";
+// 🧏 - deaf_person
+"72079435.name" = "gluha oseba";
+"72079435.tags" = "gluh | gluha oseba | invalid | sluh | uho";
+// 🙇 - bow
+"72078750.name" = "oseba, ki se prikloni";
+"72078750.tags" = "gesta | opravičilo | oprosti | oseba | ki se prikloni | priklon";
+// 🤦 - face_palm
+"72078590.name" = "oseba z dlanjo na obrazu";
+"72078590.tags" = "dvom | nejevera | oseba z dlanjo na obrazu | skepsa | skomigniti";
+// 🤷 - shrug
+"72078675.name" = "oseba, ki skomiga";
+"72078675.tags" = "brezbrižnost | oseba | ki skomiga | skomigniti";
+// 🧑‍🎓 - student
+"26901339530736.name" = "diplomant";
+"26901339530736.tags" = "diplomant | diplomantka | študent";
+// 👨‍🎓 - male-student
+"26555159681094.name" = "študent";
+"26555159681094.tags" = "diplomant | fant | maturant | moški | študent";
+// 👩‍🎓 - female-student
+"26555719842663.name" = "študentka";
+"26555719842663.tags" = "dekle | diplomantka | maturantka | študentka | ženska";
+// 🧑‍🏫 - teacher
+"26901339533640.name" = "profesor";
+"26901339533640.tags" = "inštruktor | profesor | učitelj";
+// 👨‍🏫 - male-teacher
+"26555159683998.name" = "učitelj";
+"26555159683998.tags" = "fant | inštruktor | moški | profesor | učitelj";
+// 👩‍🏫 - female-teacher
+"26555719845567.name" = "učiteljica";
+"26555719845567.tags" = "dekle | inštruktorica | profesorica | učiteljica | ženska";
+// 🧑‍🌾 - farmer
+"26901339527931.name" = "kmet";
+"26901339527931.tags" = "kmet | vrtnar | živinorejec";
+// 👨‍🌾 - male-farmer
+"26555159678289.name" = "kmetovalec";
+"26555159678289.tags" = "fant | kavboj | kmet | kmetovalec | moški | vrtnar | živinorejec";
+// 👩‍🌾 - female-farmer
+"26555719839858.name" = "kmetovalka";
+"26555719839858.tags" = "dekle | kmetica | kmetovalka | vrtnarka | ženska | živinorejka";
+// 🧑‍🍳 - cook
+"26901339529680.name" = "kuharski mojster";
+"26901339529680.tags" = "kuhar | kuharski mojster";
+// 👨‍🍳 - male-cook
+"26555159680038.name" = "kuhar";
+"26555159680038.tags" = "chef | fant | kuhar | moški | šef kuhinje";
+// 👩‍🍳 - female-cook
+"26555719841607.name" = "kuharica";
+"26555719841607.tags" = "chef | dekle | kuharica | šefinja kuhinje | ženska";
+// 🧑‍🔧 - mechanic
+"26901339518757.name" = "serviser";
+"26901339518757.tags" = "električar | mehanik | serviser | trgovec | vodovodar";
+// 👨‍🔧 - male-mechanic
+"26555159669115.name" = "mehanik";
+"26555159669115.tags" = "avtomehanik | električar | fant | mehanična delavnica | mehanik | moški | orodje | prodajalec | vodovodar";
+// 👩‍🔧 - female-mechanic
+"26555719830684.name" = "mehaničarka";
+"26555719830684.tags" = "avtomehaničarka | dekle | električarka | mehaničarka | mehanična delavnica | orodje | prodajalka | vodovodarka | ženska";
+// 🧑‍🏭 - factory_worker
+"26901339533706.name" = "tovarniški delavec";
+"26901339533706.tags" = "delavec | industrijski | tekoči trak | tovarna | tovarniški delavec";
+// 👨‍🏭 - male-factory-worker
+"26555159684064.name" = "delavec v tovarni";
+"26555159684064.tags" = "delavec | delavec v tovarni | fant | industrijski | moški | proizvodnja | tekoči trak | tovarna | tovarnar";
+// 👩‍🏭 - female-factory-worker
+"26555719845633.name" = "delavka v tovarni";
+"26555719845633.tags" = "dekle | delavka | delavka v tovarni | industrijski | proizvodnja | tekoči trak | tovarna | tovarnarka | ženska";
+// 🧑‍💼 - office_worker
+"26901339515226.name" = "delavec v pisarni";
+"26901339515226.tags" = "arhitekt | delavec v pisarni | direktor | pisarniški delavec | podjetje";
+// 👨‍💼 - male-office-worker
+"26555159665584.name" = "pisarniški delavec";
+"26555159665584.tags" = "arhitekt | direktor | fant | moški | pisarna | pisarniški | pisarniški delavec | podjetje | tajnik";
+// 👩‍💼 - female-office-worker
+"26555719827153.name" = "pisarniška delavka";
+"26555719827153.tags" = "arhitektka | dekle | direktorica | pisarna | pisarniška delavka | pisarniški | podjetje | tajnica | ženska";
+// 🧑‍🔬 - scientist
+"26901339518922.name" = "raziskovalec";
+"26901339518922.tags" = "biolog | fizik | inženir | kemik | matematik | raziskovalec | znanstvenik";
+// 👨‍🔬 - male-scientist
+"26555159669280.name" = "znanstvenik";
+"26555159669280.tags" = "biolog | fant | fizik | inženir | kemik | matematik | moški | znanstvenik";
+// 👩‍🔬 - female-scientist
+"26555719830849.name" = "znanstvenica";
+"26555719830849.tags" = "biologinja | dekle | fizika | inženirka | kemija | matematika | ženska | znanstvenica";
+// 🧑‍💻 - technologist
+"26901339515193.name" = "strokovnjak za tehnologijo";
+"26901339515193.tags" = "izumitelj | programer | programska oprema | računalnik | razvijalec | strokovnjak za tehnologijo | tehnolog | tehnologija";
+// 👨‍💻 - male-technologist
+"26555159665551.name" = "tehnolog";
+"26555159665551.tags" = "fant | izumitelj | moški | programer | programska oprema | računalnik | razvijalec | tehnolog | tehnologija";
+// 👩‍💻 - female-technologist
+"26555719827120.name" = "tehnologinja";
+"26555719827120.tags" = "dekle | izumiteljica | programerka | programska oprema | računalnik | razvijalka | tehnologija | tehnologinja | ženska";
+// 🧑‍🎤 - singer
+"26901339531297.name" = "izvajalec";
+"26901339531297.tags" = "igralec | izvajalec | komik | pevec | roker | zabavljač | zvezdnik";
+// 👨‍🎤 - male-singer
+"26555159681655.name" = "pevec";
+"26555159681655.tags" = "fant | igralec | komik | moški | pevec | roker | zabavljač | zvezdnik";
+// 👩‍🎤 - female-singer
+"26555719843224.name" = "pevka";
+"26555719843224.tags" = "dekle | igralka | pevka | rokerica | zabavljačica | ženska | zvezdnica";
+// 🧑‍🎨 - artist
+"26901339531429.name" = "slikar";
+"26901339531429.tags" = "paleta | slikar | umetnik";
+// 👨‍🎨 - male-artist
+"26555159681787.name" = "umetnik";
+"26555159681787.tags" = "fant | moški | paleta | slikar | umetnik | umetnost";
+// 👩‍🎨 - female-artist
+"26555719843356.name" = "umetnica";
+"26555719843356.tags" = "dekle | paleta | slikarka | umetnica | umetnost | ženska";
+// 🧑‍🚀 - astronaut
+"26901339530142.name" = "kozmonavt";
+"26901339530142.tags" = "astronavt | kozmonavt | raketa";
+// 👨‍🚀 - male-astronaut
+"26555159680500.name" = "astronavt";
+"26555159680500.tags" = "astronavt | fant | moški | raketa | vesolje";
+// 👩‍🚀 - female-astronaut
+"26555719842069.name" = "astronavtka";
+"26555719842069.tags" = "astronavtka | dekle | raketa | vesolje | ženska";
+// 🧑‍🚒 - firefighter
+"26901339530736.name" = "poklicni gasilec";
+"26901339530736.tags" = "gasilec | gasilni avto | poklicni gasilec";
+// 👨‍🚒 - male-firefighter
+"26555159681094.name" = "gasilec";
+"26555159681094.tags" = "fant | gasilec | gasilni avto | moški | ogenj";
+// 👩‍🚒 - female-firefighter
+"26555719842663.name" = "gasilka";
+"26555719842663.tags" = "dekle | gasilka | gasilni avto | ogenj | ženska";
+// 👮 - cop
+"72076385.name" = "policaj";
+"72076385.tags" = "policaj | policija";
+// 💂 - guardsman
+"72076485.name" = "stražar";
+"72076485.tags" = "stražar | stražar | čuvaj";
+// 🥷 - ninja
+"72078995.name" = "nindža";
+"72078995.tags" = "bojevnik | nindža | prikrivanje | skrivanje";
+// 👷 - construction_worker
+"72076430.name" = "gradbenik";
+"72076430.tags" = "čepica | delavec | gradbenik | gradnja";
+// 🫅 - person_with_crown
+"72080665.name" = "oseba s krono";
+"72080665.tags" = "kraljev | kraljeva oseba | monarh | oseba s krono | plemič";
+// 🤴 - prince
+"72078660.name" = "princ";
+"72078660.tags" = "princ";
+// 👸 - princess
+"72076435.name" = "princesa";
+"72076435.tags" = "fantazija | pravljica | princesa";
+// 👳 - man_with_turban
+"72076410.name" = "oseba s turbanom";
+"72076410.tags" = "moški | oseba s turbanom | turban";
+// 👲 - man_with_gua_pi_mao
+"72076405.name" = "moški s kitajsko čepico";
+"72076405.tags" = "čepica | kitajska čepica | moški | moški s kitajsko čepico";
+// 🧕 - person_with_headscarf
+"72079465.name" = "ženska z naglavno ruto";
+"72079465.tags" = "hidžab | mantilja | naglavna ruta | ženska z naglavno ruto";
+// 🤵 - person_in_tuxedo
+"72078665.name" = "oseba v smokingu";
+"72078665.tags" = "oseba | oseba v smokingu | smoking | ženin";
+// 👰 - bride_with_veil
+"72076395.name" = "oseba s pajčolanom";
+"72076395.tags" = "nevesta | oseba | oseba s pajčolanom | pajčolan | poroka";
+// 🤰 - pregnant_woman
+"72078640.name" = "nosečnica";
+"72078640.tags" = "nosečnica | ženska";
+// 🫃 - pregnant_man
+"72080655.name" = "noseč moški";
+"72080655.tags" = "napihnjen | noseč | noseč moški | poln | trebuh";
+// 🫄 - pregnant_person
+"72080660.name" = "noseča oseba";
+"72080660.tags" = "napihnjen | noseč | noseča oseba | poln | trebuh";
+// 🤱 - breast-feeding
+"72078645.name" = "dojenje";
+"72078645.tags" = "dojenček | dojenje | prsi";
+// 👩‍🍼 - woman_feeding_baby
+"26555719841904.name" = "ženska, ki doji dojenčka";
+"26555719841904.tags" = "dojenček | dojenje | hranjenje | ženska | ženska | ki doji dojenčka";
+// 👨‍🍼 - man_feeding_baby
+"26555159680335.name" = "moški, ki hrani dojenčka";
+"26555159680335.tags" = "dojenček | dojenje | hranjenje | moški | moški | ki hrani dojenčka";
+// 🧑‍🍼 - person_feeding_baby
+"26901339529977.name" = "oseba, ki hrani dojenčka";
+"26901339529977.tags" = "dojenček | dojenje | hranjenje | oseba | oseba | ki hrani dojenčka";
+// 👼 - angel
+"72076455.name" = "angelček";
+"72076455.tags" = "angel | angelček | dojenček | fantazija | obraz | pravljica";
+// 🎅 - santa
+"72079055.name" = "Božiček";
+"72079055.tags" = "božič | božiček | Božiček | fantazija | oče | pravljica | slavje";
+// 🤶 - mrs_claus
+"72078670.name" = "gospa Božiček";
+"72078670.tags" = "Božič | gospa | gospa Božiček";
+// 🧑‍🎄 - mx_claus
+"26901339530241.name" = "mx božiček";
+"26901339530241.tags" = "božiček | božič | mx božiček";
+// 🦸 - superhero
+"72079320.name" = "superjunak/superjunakinja";
+"72079320.tags" = "dober | junak | junakinja | super moč | superjunak/superjunakinja";
+// 🦹 - supervillain
+"72079325.name" = "super negativec";
+"72079325.tags" = "kriminalec | negativec | super moč | super negativec | zloben";
+// 🧙 - mage
+"72079485.name" = "oseba, ki čara";
+"72079485.tags" = "čarovnica | čarovnik | oseba | ki čara";
+// 🧚 - fairy
+"72079490.name" = "vilinsko bitje";
+"72079490.tags" = "vilinsko bitje";
+// 🧛 - vampire
+"72079495.name" = "vampirji";
+"72079495.tags" = "Drakula | nesmrtnost | vampir | vampirji";
+// 🧜 - merperson
+"72079500.name" = "morska oseba";
+"72079500.tags" = "morska deklica | morska oseba | morska ženska | morski mož";
+// 🧝 - elf
+"72079505.name" = "škrati";
+"72079505.tags" = "čarovnija | škrati | vilin";
+// 🧞 - genie
+"72079510.name" = "duh iz steklenice";
+"72079510.tags" = "duh iz steklenice";
+// 🧟 - zombie
+"72079515.name" = "zombi";
+"72079515.tags" = "nemrtev | živi mrtvec | zombi";
+// 🧌 - troll
+"72079420.name" = "trol";
+"72079420.tags" = "domišljija | pošast | pravljica | trol";
+// 💆 - massage
+"72076505.name" = "masaža obraza";
+"72076505.tags" = "masaža | masaža obraza | salon";
+// 💇 - haircut
+"72076510.name" = "striženje";
+"72076510.tags" = "brivec | frizura | lepota | salon | striženje";
+// 🚶 - walking
+"72079305.name" = "pešec";
+"72079305.tags" = "hoja | pešec | pohod | sprehod";
+// 🧍 - standing_person
+"72079425.name" = "stoječa oseba";
+"72079425.tags" = "pokonci | stati | stoječa oseba";
+// 🧎 - kneeling_person
+"72079430.name" = "klečeča oseba";
+"72079430.tags" = "klečanje | klečeča oseba";
+// 🧑‍🦯 - person_with_probing_cane
+"26901339531726.name" = "oseba s palico za slepe";
+"26901339531726.tags" = "invalid | oseba s palico za slepe | slep";
+// 👨‍🦯 - man_with_probing_cane
+"26555159682084.name" = "moški s palico za slepe";
+"26555159682084.tags" = "invalid | moški | moški s palico za slepe | slep";
+// 👩‍🦯 - woman_with_probing_cane
+"26555719843653.name" = "ženska s palico za slepe";
+"26555719843653.tags" = "invalid | slepa | ženska | ženska s palico za slepe";
+// 🧑‍🦼 - person_in_motorized_wheelchair
+"26901339532155.name" = "oseba na motoriziranem invalidskem vozičku";
+"26901339532155.tags" = "invalid | oseba na motoriziranem invalidskem vozičku | voziček";
+// 👨‍🦼 - man_in_motorized_wheelchair
+"26555159682513.name" = "moški na motoriziranem invalidskem vozičku";
+"26555159682513.tags" = "invalid | moški | moški na motoriziranem invalidskem vozičku | voziček";
+// 👩‍🦼 - woman_in_motorized_wheelchair
+"26555719844082.name" = "ženska na motoriziranem invalidskem vozičku";
+"26555719844082.tags" = "invalid | voziček | ženska | ženska na motoriziranem invalidskem vozičku";
+// 🧑‍🦽 - person_in_manual_wheelchair
+"26901339532188.name" = "oseba na ročnem invalidskem vozičku";
+"26901339532188.tags" = "invalid | oseba na ročnem invalidskem vozičku | voziček";
+// 👨‍🦽 - man_in_manual_wheelchair
+"26555159682546.name" = "moški na ročnem invalidskem vozičku";
+"26555159682546.tags" = "invalid | moški | moški na ročnem invalidskem vozičku | voziček";
+// 👩‍🦽 - woman_in_manual_wheelchair
+"26555719844115.name" = "ženska na ročnem invalidskem vozičku";
+"26555719844115.tags" = "invalid | voziček | ženska | ženska na ročnem invalidskem vozičku";
+// 🏃 - runner
+"72079365.name" = "tekač";
+"72079365.tags" = "maraton | tek | tekač";
+// 💃 - dancer
+"72076490.name" = "ženska, ki pleše";
+"72076490.tags" = "ples | plesalka | ženska | ženska | ki pleše";
+// 🕺 - man_dancing
+"72077725.name" = "plesalec";
+"72077725.tags" = "moški | ples | plesalec";
+// 👯 - dancers
+"72076390.name" = "žurerski ženski";
+"72076390.tags" = "dekle | plesalka | uho | zabava | zajčica | ženska | žur | žurerski ženski";
+// 🧖 - person_in_steamy_room
+"72079470.name" = "oseba v parni savni";
+"72079470.tags" = "oseba v parni savni | parna savna | savna";
+// 🧗 - person_climbing
+"72079475.name" = "oseba, ki pleza";
+"72079475.tags" = "oseba | ki pleza | plezalec";
+// 🤺 - fencer
+"72078690.name" = "sabljanje";
+"72078690.tags" = "meč | sabljač | sabljanje | šport";
+// 🏇 - horse_racing
+"72079385.name" = "konjske dirke";
+"72079385.tags" = "dirkalni konj | dirkanje | džokej | konj | konjske dirke";
+// 🏂 - snowboarder
+"72079360.name" = "deskar na snegu";
+"72079360.tags" = "deskar na snegu | smučati | sneg | snežna deska";
+// 🏄 - surfer
+"72079370.name" = "oseba deska";
+"72079370.tags" = "deskanje | oseba deska";
+// 🚣 - rowboat
+"72079210.name" = "oseba v čolnu na vesla";
+"72079210.tags" = "čoln | oseba v čolnu na vesla | vozilo";
+// 🏊 - swimmer
+"72079400.name" = "oseba plava";
+"72079400.tags" = "oseba plava | plavati";
+// 🚴 - bicyclist
+"72079295.name" = "oseba na kolesu";
+"72079295.tags" = "kolesar | kolesarjenje | kolo | oseba na kolesu";
+// 🚵 - mountain_bicyclist
+"72079300.name" = "gorski kolesar";
+"72079300.tags" = "gora | gorski kolesar | kolesar | kolo";
+// 🤸 - person_doing_cartwheel
+"72078680.name" = "oseba izvaja kolo";
+"72078680.tags" = "gimnastika | kolo | oseba izvaja kolo | šport";
+// 🤼 - wrestlers
+"72078700.name" = "rokoborba";
+"72078700.tags" = "rokoborba | šport";
+// 🤽 - water_polo
+"72078705.name" = "vaterpolo";
+"72078705.tags" = "bazen | šport | vaterpolo | žoga";
+// 🤾 - handball
+"72078710.name" = "rokomet";
+"72078710.tags" = "rokomet | šport | žoga";
+// 🤹 - juggling
+"72078685.name" = "žongliranje";
+"72078685.tags" = "ravnotežje | spretnost | večopravilnost | žongliranje";
+// 🧘 - person_in_lotus_position
+"72079480.name" = "oseba v lotusovem položaju";
+"72079480.tags" = "joga | meditacija | oseba v lotusovem položaju";
+// 🛀 - bath
+"72079355.name" = "oseba, ki se kopa";
+"72079355.tags" = "kad | kopel | oseba | ki se kopa";
+// 🛌 - sleeping_accommodation
+"72079415.name" = "oseba v postelji";
+"72079415.tags" = "hotel | oseba v postelji | spanje";
+// 🧑‍🤝‍🧑 - people_holding_hands
+"3200955216551984283.name" = "osebi se držita za roke";
+"3200955216551984283.tags" = "držati | oseba | osebi se držita za roke | par | roka";
+// 👭 - two_women_holding_hands
+"72076380.name" = "ženski se držita za roke";
+"72076380.tags" = "držati | par | roka | ženska | ženski se držita za roke";
+// 👫 - man_and_woman_holding_hands
+"72076370.name" = "moški in ženska se držita za roke";
+"72076370.tags" = "držati | moški | moški in ženska se držita za roke | par | roka | ženska";
+// 👬 - two_men_holding_hands
+"72076375.name" = "moška se držita za roke";
+"72076375.tags" = "dvojčka | moška se držita za roke | moški | par | zodiak";
+// 💏 - couplekiss
+"72076550.name" = "poljub";
+"72076550.tags" = "par | poljub | romanca";
+// 💑 - couple_with_heart
+"72076560.name" = "par s srčkom";
+"72076560.tags" = "ljubezen | par | par s srčkom | romanca | srce";
+// 👪 - family
+"72076365.name" = "družina";
+"72076365.tags" = "družina | mati | oče | otrok";
+// 👤 - bust_in_silhouette
+"72076335.name" = "silhueta doprsja";
+"72076335.tags" = "doprsje | silhueta | silhueta doprsja";
+// 👥 - busts_in_silhouette
+"72076340.name" = "silhueti doprsja";
+"72076340.tags" = "doprsje | silhueta | silhueti doprsja";
+// 🫂 - people_hugging
+"72080650.name" = "osebi, ki se objemata";
+"72080650.tags" = "hvala | nasvidenje | objem | osebi | ki se objemata | živijo";
+// 👣 - footprints
+"72076330.name" = "stopinje";
+"72076330.tags" = "oblačila | odtis | stopinja | stopinje | telo";
+// 🏻 - skin-tone-2
+"72079645.name" = "svetel ten kože";
+"72079645.tags" = "svetel ten kože | ten | vrsti 1 in 2";
+// 🏼 - skin-tone-3
+"72079650.name" = "srednje svetel ten kože";
+"72079650.tags" = "srednje svetel ten kože | ten | vrsta 3";
+// 🏽 - skin-tone-4
+"72079655.name" = "srednji ten kože";
+"72079655.tags" = "srednji ten kože | ten | vrsta 4";
+// 🏾 - skin-tone-5
+"72079660.name" = "srednje temen ten kože";
+"72079660.tags" = "srednje temen ten kože | ten | vrsta 5";
+// 🏿 - skin-tone-6
+"72079665.name" = "temen ten kože";
+"72079665.tags" = "temen ten kože | ten | vrsta 6";
+// 🐵 - monkey_face
+"72076100.name" = "opičji obraz";
+"72076100.tags" = "obraz | opica | opičji obraz";
+// 🐒 - monkey
+"72075925.name" = "opica";
+"72075925.tags" = "opica";
+// 🦍 - gorilla
+"72079105.name" = "gorila";
+"72079105.tags" = "gorila | žival";
+// 🦧 - orangutan
+"72079235.name" = "orangutan";
+"72079235.tags" = "opica | orangutan";
+// 🐶 - dog
+"72076105.name" = "pasji obraz";
+"72076105.tags" = "domači ljubljenček | obraz | pasji obraz | pes";
+// 🐕 - dog2
+"72075940.name" = "pes";
+"72075940.tags" = "domači ljubljenček | pes";
+// 🦮 - guide_dog
+"72079270.name" = "pes vodnik";
+"72079270.tags" = "pes vodnik | slepi | vodnik";
+// 🐕‍🦺 - service_dog
+"26508666272220.name" = "službeni pes";
+"26508666272220.tags" = "policijski | pomoč | reševalni | službeni pes | vojaški";
+// 🐩 - poodle
+"72076040.name" = "pudelj";
+"72076040.tags" = "pes | pudelj";
+// 🐺 - wolf
+"72076125.name" = "volk";
+"72076125.tags" = "obraz | volk";
+// 🦊 - fox_face
+"72079090.name" = "lisica";
+"72079090.tags" = "lisica | obraz";
+// 🦝 - raccoon
+"72079185.name" = "rakun";
+"72079185.tags" = "radoveden | rakun | zvijačen";
+// 🐱 - cat
+"72076080.name" = "mačji obraz";
+"72076080.tags" = "domači ljubljenček | mačji obraz | mačka | obraz";
+// 🐈 - cat2
+"72075875.name" = "mačka";
+"72075875.tags" = "domači ljubljenček | mačka";
+// 🐈‍⬛ - black_cat
+"51973200513.name" = "črna mačka";
+"51973200513.tags" = "črna | mačka | smola";
+// 🦁 - lion_face
+"72079045.name" = "lev";
+"72079045.tags" = "lev | obraz | zodiak";
+// 🐯 - tiger
+"72076070.name" = "tigrov obraz";
+"72076070.tags" = "obraz | tiger | tigrov obraz";
+// 🐅 - tiger2
+"72075860.name" = "tiger";
+"72075860.tags" = "tiger";
+// 🐆 - leopard
+"72075865.name" = "leopard";
+"72075865.tags" = "leopard";
+// 🐴 - horse
+"72076095.name" = "konjev obraz";
+"72076095.tags" = "konj | konjev obraz | obraz";
+// 🫎 - moose
+"72080710.name" = "los";
+"72080710.tags" = "los | rogovje | sesalec | žival";
+// 🫏 - donkey
+"72080715.name" = "osel";
+"72080715.tags" = "mula | osel | osliček | sesalec | trmast | žival";
+// 🐎 - racehorse
+"72075905.name" = "konj";
+"72075905.tags" = "dirkanje | konj | konjske dirke";
+// 🦄 - unicorn_face
+"72079060.name" = "samorog";
+"72079060.tags" = "obraz | samorog";
+// 🦓 - zebra_face
+"72079135.name" = "zebra";
+"72079135.tags" = "zebra";
+// 🦌 - deer
+"72079100.name" = "jelen";
+"72079100.tags" = "jelen | žival";
+// 🦬 - bison
+"72079260.name" = "bizon";
+"72079260.tags" = "bivol | bizon | čreda | zober";
+// 🐮 - cow
+"72076065.name" = "kravji obraz";
+"72076065.tags" = "krava | kravji obraz | obraz";
+// 🐂 - ox
+"72075845.name" = "vol";
+"72075845.tags" = "bik | vol | zodiak";
+// 🐃 - water_buffalo
+"72075850.name" = "vodni bivol";
+"72075850.tags" = "bivol | voda | vodni bivol";
+// 🐄 - cow2
+"72075855.name" = "krava";
+"72075855.tags" = "krava";
+// 🐷 - pig
+"72076110.name" = "prašičji obraz";
+"72076110.tags" = "obraz | prašič | prašičji obraz";
+// 🐖 - pig2
+"72075945.name" = "prašič";
+"72075945.tags" = "prašič | svinja";
+// 🐗 - boar
+"72075950.name" = "divja svinja";
+"72075950.tags" = "divja svinja | divji | prašič";
+// 🐽 - pig_nose
+"72076140.name" = "prašičji rilec";
+"72076140.tags" = "obraz | prašič | prašičji rilec | rilec";
+// 🐏 - ram
+"72075910.name" = "oven";
+"72075910.tags" = "ovca | oven | zodiak";
+// 🐑 - sheep
+"72075920.name" = "ovca";
+"72075920.tags" = "ovca | ovčka";
+// 🐐 - goat
+"72075915.name" = "koza";
+"72075915.tags" = "koza | kozorog | zodiak";
+// 🐪 - dromedary_camel
+"72076045.name" = "kamela";
+"72076045.tags" = "dromedar | grba | kamela";
+// 🐫 - camel
+"72076050.name" = "dvogrba kamela";
+"72076050.tags" = "dvogrba kamela | dvogrbo | grba | kamela";
+// 🦙 - llama
+"72079165.name" = "lama";
+"72079165.tags" = "alpaka | gvanako | lama | vikunja | volna";
+// 🦒 - giraffe_face
+"72079130.name" = "žirafa";
+"72079130.tags" = "žirafa";
+// 🐘 - elephant
+"72075955.name" = "slon";
+"72075955.tags" = "slon";
+// 🦣 - mammoth
+"72079215.name" = "mamut";
+"72079215.tags" = "izumrtje | mamut | okel | velik | volnatost";
+// 🦏 - rhinoceros
+"72079115.name" = "nosorog";
+"72079115.tags" = "nosorog | žival";
+// 🦛 - hippopotamus
+"72079175.name" = "povodni konj";
+"72079175.tags" = "hipo | povodni konj";
+// 🐭 - mouse
+"72076060.name" = "mišji obraz";
+"72076060.tags" = "miš | mišji obraz | obraz";
+// 🐁 - mouse2
+"72075840.name" = "miš";
+"72075840.tags" = "miš | miška";
+// 🐀 - rat
+"72075835.name" = "podgana";
+"72075835.tags" = "podgana";
+// 🐹 - hamster
+"72076120.name" = "hrček";
+"72076120.tags" = "domači ljubljenček | hrček | obraz";
+// 🐰 - rabbit
+"72076075.name" = "zajčji obraz";
+"72076075.tags" = "domači ljubljenček | obraz | zajček | zajčji obraz | zajec";
+// 🐇 - rabbit2
+"72075870.name" = "zajec";
+"72075870.tags" = "domači ljubljenček | zajček | zajec";
+// 🦫 - beaver
+"72079255.name" = "bober";
+"72079255.tags" = "bober | jez";
+// 🦔 - hedgehog
+"72079140.name" = "jež";
+"72079140.tags" = "jež";
+// 🦇 - bat
+"72079075.name" = "netopir";
+"72079075.tags" = "netopir | žival";
+// 🐻 - bear
+"72076130.name" = "medved";
+"72076130.tags" = "medved | obraz";
+// 🐨 - koala
+"72076035.name" = "koala";
+"72076035.tags" = "koala | medved";
+// 🐼 - panda_face
+"72076135.name" = "panda";
+"72076135.tags" = "obraz | panda";
+// 🦥 - sloth
+"72079225.name" = "lenivec";
+"72079225.tags" = "len | lenivec | počasen | zaspan";
+// 🦦 - otter
+"72079230.name" = "vidra";
+"72079230.tags" = "igriva | lovi ribe | vidra";
+// 🦨 - skunk
+"72079240.name" = "skunk";
+"72079240.tags" = "skunk | smrdi";
+// 🦘 - kangaroo
+"72079160.name" = "kenguru";
+"72079160.tags" = "Avstralija | kenguru | mlad kenguru | skok | vrečar";
+// 🦡 - badger
+"72079205.name" = "jazbec";
+"72079205.tags" = "jazbec | medarski jazbec | nadloga";
+// 🐾 - feet
+"72076145.name" = "odtisi tac";
+"72076145.tags" = "odtis | odtisi tac | šapa | tace";
+// 🦃 - turkey
+"72079055.name" = "puran";
+"72079055.tags" = "puran";
+// 🐔 - chicken
+"72075935.name" = "kokoš";
+"72075935.tags" = "kokoš | kokoška | kura";
+// 🐓 - rooster
+"72075930.name" = "petelin";
+"72075930.tags" = "petelin";
+// 🐣 - hatching_chick
+"72076010.name" = "pišče, ki se izvali";
+"72076010.tags" = "mladič | piščanček | pišče | ki se izvali | valjenje";
+// 🐤 - baby_chick
+"72076015.name" = "piščanček";
+"72076015.tags" = "mladič | piščanček | valjenje";
+// 🐥 - hatched_chick
+"72076020.name" = "piščanček, gleda naprej";
+"72076020.tags" = "mladič | piščanček | piščanček | gleda naprej";
+// 🐦 - bird
+"72076025.name" = "ptica";
+"72076025.tags" = "ptič | ptica | ptiček";
+// 🐧 - penguin
+"72076030.name" = "pingvin";
+"72076030.tags" = "pingvin";
+// 🦅 - eagle
+"72079065.name" = "orel";
+"72079065.tags" = "orel | ptica";
+// 🦆 - duck
+"72079070.name" = "raca";
+"72079070.tags" = "ptica | raca";
+// 🦢 - swan
+"72079210.name" = "labod";
+"72079210.tags" = "grdi raček | labod | mlad labod | ptica";
+// 🦉 - owl
+"72079085.name" = "sova";
+"72079085.tags" = "pamet | ptica | sova";
+// 🦤 - dodo
+"72079220.name" = "dodo";
+"72079220.tags" = "dodo | izumrtje | Mavricij | velik";
+// 🪶 - feather
+"72080590.name" = "pero";
+"72080590.tags" = "lahek | letenje | perje | pero | ptica";
+// 🦩 - flamingo
+"72079245.name" = "flamingo";
+"72079245.tags" = "flamingo | nastopaški | tropski | vpadljiv";
+// 🦚 - peacock
+"72079170.name" = "pav";
+"72079170.tags" = "bahava | pav | pavica | ponosna | ptica";
+// 🦜 - parrot
+"72079180.name" = "papagaj";
+"72079180.tags" = "govor | papagaj | pirat | ptič";
+// 🪽 - wing
+"72080625.name" = "krilo";
+"72080625.tags" = "angelsko | krilo | letalstvo | letenje | mitologija | ptica";
+// 🐦‍⬛ - black_bird
+"52006885503.name" = "kos";
+"52006885503.tags" = "črna | kos | krokar | poljska vrana | ptica | vrana";
+// 🪿 - goose
+"72080635.name" = "gos";
+"72080635.tags" = "gaganje | gos | neumno | perutnica | ptica";
+// 🐸 - frog
+"72076115.name" = "žaba";
+"72076115.tags" = "obraz | žaba";
+// 🐊 - crocodile
+"72075885.name" = "krokodil";
+"72075885.tags" = "krokodil";
+// 🐢 - turtle
+"72076005.name" = "želva";
+"72076005.tags" = "želva";
+// 🦎 - lizard
+"72079110.name" = "kuščar";
+"72079110.tags" = "kuščar | plazilec";
+// 🐍 - snake
+"72075900.name" = "kača";
+"72075900.tags" = "kača | kačenosec | prinašalec | zodiak";
+// 🐲 - dragon_face
+"72076085.name" = "zmajski obraz";
+"72076085.tags" = "obraz | pravljica | zmaj | zmajski obraz";
+// 🐉 - dragon
+"72075880.name" = "zmaj";
+"72075880.tags" = "pravljica | zmaj";
+// 🦕 - sauropod
+"72079145.name" = "zavropod";
+"72079145.tags" = "brahiozaver | brontozaver | diplodok | zavropod";
+// 🦖 - t-rex
+"72079150.name" = "tiranozaver";
+"72079150.tags" = "tiranozaver";
+// 🐳 - whale
+"72076090.name" = "kit, ki brizga vodo";
+"72076090.tags" = "brizganje | kit | kit | ki brizga vodo | obraz";
+// 🐋 - whale2
+"72075890.name" = "kit";
+"72075890.tags" = "kit";
+// 🐬 - dolphin
+"72076055.name" = "delfin";
+"72076055.tags" = "delfin | fliper";
+// 🦭 - seal
+"72079265.name" = "tjulenj";
+"72079265.tags" = "morski lev | tjulenj";
+// 🐟 - fish
+"72075990.name" = "riba";
+"72075990.tags" = "riba | ribi | zodiak";
+// 🐠 - tropical_fish
+"72075995.name" = "tropska riba";
+"72075995.tags" = "riba | tropska riba | tropsko";
+// 🐡 - blowfish
+"72076000.name" = "riba napihovalka";
+"72076000.tags" = "riba | riba napihovalka | tropsko";
+// 🦈 - shark
+"72079080.name" = "morski pes";
+"72079080.tags" = "morski pes | riba";
+// 🐙 - octopus
+"72075960.name" = "hobotnica";
+"72075960.tags" = "hobotnica";
+// 🐚 - shell
+"72075965.name" = "spiralna školjka";
+"72075965.tags" = "školjka | spiralna školjka | spiralno";
+// 🪸 - coral
+"72080600.name" = "korala";
+"72080600.tags" = "greben | korala | ocean";
+// 🪼 - jellyfish
+"72080620.name" = "meduza";
+"72080620.tags" = "au | meduza | morska | nevretenčar | opeklina | želo";
+// 🐌 - snail
+"72075895.name" = "polž";
+"72075895.tags" = "polž";
+// 🦋 - butterfly
+"72079095.name" = "metulj";
+"72079095.tags" = "insekt | lep | metulj";
+// 🐛 - bug
+"72075970.name" = "žuželka";
+"72075970.tags" = "žuželka";
+// 🐜 - ant
+"72075975.name" = "mravlja";
+"72075975.tags" = "mravlja | žuželka";
+// 🐝 - bee
+"72075980.name" = "čebela";
+"72075980.tags" = "čebela | žuželka";
+// 🪲 - beetle
+"72080570.name" = "hrošč";
+"72080570.tags" = "hrošč | insekt | žuželka";
+// 🐞 - ladybug
+"72075985.name" = "pikapolonica";
+"72075985.tags" = "hrošč | pikapolonica | žuželka";
+// 🦗 - cricket
+"72079155.name" = "muren";
+"72079155.tags" = "muren";
+// 🪳 - cockroach
+"72080575.name" = "ščurek";
+"72080575.tags" = "ščurek | žuželka";
+// 🦂 - scorpion
+"72079050.name" = "škorpijon";
+"72079050.tags" = "škorpijon | zodiak";
+// 🦟 - mosquito
+"72079195.name" = "komar";
+"72079195.tags" = "bolezen | insekt | komar | malarija | mrzlica | virus";
+// 🪰 - fly
+"72080560.name" = "muha";
+"72080560.tags" = "bolezen | domača muha | gnitje | ličinka | muha | muha cece | obad";
+// 🪱 - worm
+"72080565.name" = "črv";
+"72080565.tags" = "črv | deževnik | kolobarnik | zajedavec";
+// 🦠 - microbe
+"72079200.name" = "mikrob";
+"72079200.tags" = "ameba | bakterija | mikrob | virus";
+// 💐 - bouquet
+"72076555.name" = "šopek";
+"72076555.tags" = "rastlina | romanca | roža | šopek";
+// 🌸 - cherry_blossom
+"72078670.name" = "češnjev cvet";
+"72078670.tags" = "češnja | češnjev cvet | cvet | rastlina | roža";
+// 💮 - white_flower
+"72076705.name" = "bela cvetlica";
+"72076705.tags" = "bela cvetlica | roža";
+// 🪷 - lotus
+"72080595.name" = "lotos";
+"72080595.tags" = "budizem | čistost | cvet | hinduizem | Indija | lotos | Vietnam";
+// 🌹 - rose
+"72078675.name" = "vrtnica";
+"72078675.tags" = "rastlina | roža | vrtnica";
+// 🥀 - wilted_flower
+"72078720.name" = "ovenela roža";
+"72078720.tags" = "ovenela | roža";
+// 🌺 - hibiscus
+"72078680.name" = "hibiskus";
+"72078680.tags" = "hibiskus | rastlina | roža";
+// 🌻 - sunflower
+"72078685.name" = "sončnica";
+"72078685.tags" = "rastlina | roža | sonce | sončnica";
+// 🌼 - blossom
+"72078690.name" = "cvet";
+"72078690.tags" = "cvet | rastlina | roža";
+// 🌷 - tulip
+"72078665.name" = "tulipan";
+"72078665.tags" = "rastlina | roža | tulipan";
+// 🪻 - hyacinth
+"72080615.name" = "hijacinta";
+"72080615.tags" = "bob | hijacinta | odolina | roža | sivka | volčji bob";
+// 🌱 - seedling
+"72078635.name" = "sadika";
+"72078635.tags" = "mlado | rastlina | sadika";
+// 🪴 - potted_plant
+"72080580.name" = "lončnica";
+"72080580.tags" = "dolgčas | gojenje | hiša | lončnica | neuporabno | rasti | rastlina";
+// 🌲 - evergreen_tree
+"72078640.name" = "zimzeleno drevo";
+"72078640.tags" = "drevo | rastlina | zimzeleno drevo";
+// 🌳 - deciduous_tree
+"72078645.name" = "listnato drevo";
+"72078645.tags" = "drevo | listnato | odpadanje | rastlina";
+// 🌴 - palm_tree
+"72078650.name" = "palma";
+"72078650.tags" = "drevo | palma | rastlina";
+// 🌵 - cactus
+"72078655.name" = "kaktus";
+"72078655.tags" = "kaktus | rastlina";
+// 🌾 - ear_of_rice
+"72078700.name" = "snop riža";
+"72078700.tags" = "klas | rastlina | riž | snop riža";
+// 🌿 - herb
+"72078705.name" = "zelišče";
+"72078705.tags" = "list | rastlina | zelišče";
+// 🍀 - four_leaf_clover
+"72078710.name" = "štiriperesna deteljica";
+"72078710.tags" = "4 | detelja | list | rastlina | štiri | štiriperesna deteljica";
+// 🍁 - maple_leaf
+"72078715.name" = "javorov list";
+"72078715.tags" = "javor | javorov list | list | padanje | rastlina";
+// 🍂 - fallen_leaf
+"72078720.name" = "padlo listje";
+"72078720.tags" = "list | padanje | padlo listje | rastlina";
+// 🍃 - leaves
+"72078725.name" = "listje, ki se vrtinči v vetru";
+"72078725.tags" = "list | listje | ki se vrtinči v vetru | pihati | rastlina | veter | vrtinčiti se";
+// 🪹 - empty_nest
+"72080605.name" = "prazno gnezdo";
+"72080605.tags" = "gnezdenje | prazno gnezdo";
+// 🪺 - nest_with_eggs
+"72080610.name" = "gnezdo z jajcema";
+"72080610.tags" = "gnezdenje | gnezdo z jajcema";
+// 🍄 - mushroom
+"72078730.name" = "goba";
+"72078730.tags" = "goba | rastlina";
+// 🍇 - grapes
+"72078745.name" = "grozdje";
+"72078745.tags" = "grozd | grozdje | rastlina | sadje";
+// 🍈 - melon
+"72078750.name" = "melona";
+"72078750.tags" = "melona | rastlina | sadje";
+// 🍉 - watermelon
+"72078755.name" = "lubenica";
+"72078755.tags" = "lubenica | rastlina | sadje";
+// 🍊 - tangerine
+"72078760.name" = "mandarina";
+"72078760.tags" = "mandarina | pomaranča | rastlina | sadje";
+// 🍋 - lemon
+"72078765.name" = "limona";
+"72078765.tags" = "agrum | limona | rastlina | sadje";
+// 🍌 - banana
+"72078770.name" = "banana";
+"72078770.tags" = "banana | rastlina | sadje";
+// 🍍 - pineapple
+"72078775.name" = "ananas";
+"72078775.tags" = "ananas | rastlina | sadje";
+// 🥭 - mango
+"72078945.name" = "mango";
+"72078945.tags" = "mango | sadež | tropski";
+// 🍎 - apple
+"72078780.name" = "rdeče jabolko";
+"72078780.tags" = "jabolko | rastlina | rdeče | sadje";
+// 🍏 - green_apple
+"72078785.name" = "zeleno jabolko";
+"72078785.tags" = "jabolko | rastlina | sadje | zeleno";
+// 🍐 - pear
+"72078790.name" = "hruška";
+"72078790.tags" = "hruška | rastlina | sadje";
+// 🍑 - peach
+"72078795.name" = "breskev";
+"72078795.tags" = "breskev | rastlina | sadje";
+// 🍒 - cherries
+"72078800.name" = "češnje";
+"72078800.tags" = "češnja | češnje | rastlina | sadje";
+// 🍓 - strawberry
+"72078805.name" = "jagoda";
+"72078805.tags" = "jagoda | rastina | sadje";
+// 🫐 - blueberries
+"72080720.name" = "borovnice";
+"72080720.tags" = "borovnica | borovnice | črnica | jagoda | modra";
+// 🥝 - kiwifruit
+"72078865.name" = "kivi";
+"72078865.tags" = "hrana | kivi | sadje";
+// 🍅 - tomato
+"72078735.name" = "paradižnik";
+"72078735.tags" = "paradižnik | rastlina | zelenjava";
+// 🫒 - olive
+"72080730.name" = "oliva";
+"72080730.tags" = "hrana | oliva";
+// 🥥 - coconut
+"72078905.name" = "kokos";
+"72078905.tags" = "kokos";
+// 🥑 - avocado
+"72078805.name" = "avokado";
+"72078805.tags" = "avokado | hrana | sadje";
+// 🍆 - eggplant
+"72078740.name" = "jajčevec";
+"72078740.tags" = "jajčevec | rastlina | zelenjava";
+// 🥔 - potato
+"72078820.name" = "krompir";
+"72078820.tags" = "hrana | krompir | zelenjava";
+// 🥕 - carrot
+"72078825.name" = "korenje";
+"72078825.tags" = "hrana | korenje | zelenjava";
+// 🌽 - corn
+"72078695.name" = "koruzni storž";
+"72078695.tags" = "klas | koruza | koruzni storž | rastlina";
+// 🫑 - bell_pepper
+"72080725.name" = "paprika";
+"72080725.tags" = "babura | capsicum | paprika | zelenjava";
+// 🥒 - cucumber
+"72078810.name" = "kumara";
+"72078810.tags" = "hrana | kumara | zelenjava";
+// 🥬 - leafy_green
+"72078940.name" = "listnato zelena";
+"72078940.tags" = "kitajsko zelje | listnato zelena | listni ohrovt | solata | zelje";
+// 🥦 - broccoli
+"72078910.name" = "brokoli";
+"72078910.tags" = "brokoli";
+// 🧄 - garlic
+"72079380.name" = "česen";
+"72079380.tags" = "aromatično | česen | dišavnica | začimba";
+// 🧅 - onion
+"72079385.name" = "čebula";
+"72079385.tags" = "aromatično | čebula | solzenje";
+// 🥜 - peanuts
+"72078860.name" = "arašidi";
+"72078860.tags" = "arašid | arašidi | hrana | oreški | zelenjava";
+// 🫘 - beans
+"72080760.name" = "fižol";
+"72080760.tags" = "fižol | stročnica | živilo";
+// 🌰 - chestnut
+"72078630.name" = "kostanj";
+"72078630.tags" = "kostanj | rastlina";
+// 🫚 - ginger_root
+"72080770.name" = "korenina ingverja";
+"72080770.tags" = "ingverjevo | korenina ingverja | pivo | začimba";
+// 🫛 - pea_pod
+"72080775.name" = "strok graha";
+"72080775.tags" = "edamame | grah | seme | stročnice | strok | strok graha | zelenjava";
+// 🍞 - bread
+"72078860.name" = "kruh";
+"72078860.tags" = "kruh | štruca";
+// 🥐 - croissant
+"72078800.name" = "rogljič";
+"72078800.tags" = "francoski | hrana | pecivo | rogljič";
+// 🥖 - baguette_bread
+"72078830.name" = "bageta";
+"72078830.tags" = "bageta | francoska | hrana | kruh";
+// 🫓 - flatbread
+"72080735.name" = "indijski kruh";
+"72080735.tags" = "arepa | indijski kruh | lavaš | naan | pita";
+// 🥨 - pretzel
+"72078920.name" = "presta";
+"72078920.tags" = "presta";
+// 🥯 - bagel
+"72078955.name" = "bagel";
+"72078955.tags" = "bagel | namaz | pekarna";
+// 🥞 - pancakes
+"72078870.name" = "palačinke";
+"72078870.tags" = "hrana | palačinke";
+// 🧇 - waffle
+"72079395.name" = "vafelj";
+"72079395.tags" = "oblat | pecivo | vafelj";
+// 🧀 - cheese_wedge
+"72079360.name" = "kos sira";
+"72079360.tags" = "kos sira | sir";
+// 🍖 - meat_on_bone
+"72078820.name" = "meso s kostjo";
+"72078820.tags" = "kost | meso | meso s kostjo";
+// 🍗 - poultry_leg
+"72078825.name" = "piščančje bedro";
+"72078825.tags" = "bedro | kost | perutnina | piščančje bedro | piščanec";
+// 🥩 - cut_of_meat
+"72078925.name" = "kos mesa";
+"72078925.tags" = "kos mesa";
+// 🥓 - bacon
+"72078815.name" = "slanina";
+"72078815.tags" = "hrana | meso | slanina";
+// 🍔 - hamburger
+"72078810.name" = "hamburger";
+"72078810.tags" = "hamburger";
+// 🍟 - fries
+"72078865.name" = "krompirček";
+"72078865.tags" = "krompirček | ocvrt krompirček | pomfrit";
+// 🍕 - pizza
+"72078815.name" = "pica";
+"72078815.tags" = "pica | rezina | sir";
+// 🌭 - hotdog
+"72078615.name" = "hot dog";
+"72078615.tags" = "hot dog | hrenovka";
+// 🥪 - sandwich
+"72078930.name" = "sendvič";
+"72078930.tags" = "sendvič";
+// 🌮 - taco
+"72078620.name" = "taco";
+"72078620.tags" = "mehiški prigrizek | taco";
+// 🌯 - burrito
+"72078625.name" = "burito";
+"72078625.tags" = "burito | mehiški prigrizek";
+// 🫔 - tamale
+"72080740.name" = "tamale";
+"72080740.tags" = "mehiška | tamale | zavitek";
+// 🥙 - stuffed_flatbread
+"72078845.name" = "kebab";
+"72078845.tags" = "falafel | gyros | hrana | kebab | nadev";
+// 🧆 - falafel
+"72079390.name" = "falafel";
+"72079390.tags" = "čičerika | falafel | kroglica";
+// 🥚 - egg
+"72078850.name" = "jajce";
+"72078850.tags" = "hrana | jajca | jajce";
+// 🍳 - fried_egg
+"72078965.name" = "kuhanje";
+"72078965.tags" = "cvrtje | jajce | kuhanje | ponev";
+// 🥘 - shallow_pan_of_food
+"72078840.name" = "kozica s hrano";
+"72078840.tags" = "hrana | kozica | kozica s hrano | paella | ponev";
+// 🍲 - stew
+"72078960.name" = "skodelica hrane";
+"72078960.tags" = "obara | skodelica | skodelica hrane";
+// 🫕 - fondue
+"72080745.name" = "fondi";
+"72080745.tags" = "čokolada | fondi | lonček | sir | stopljena | švicarski";
+// 🥣 - bowl_with_spoon
+"72078895.name" = "skodelica z žlico";
+"72078895.tags" = "skodelica z žlico";
+// 🥗 - green_salad
+"72078835.name" = "zelena solata";
+"72078835.tags" = "hrana | solata | zelena";
+// 🍿 - popcorn
+"72079025.name" = "pokovka";
+"72079025.tags" = "kokice | pokovka";
+// 🧈 - butter
+"72079400.name" = "maslo";
+"72079400.tags" = "maslo | mlečni izdelek | mlečno";
+// 🧂 - salt
+"72079370.name" = "sol";
+"72079370.tags" = "sol | solnica | začimba";
+// 🥫 - canned_food
+"72078935.name" = "konzervirana hrana";
+"72078935.tags" = "konzervirana hrana";
+// 🍱 - bento
+"72078955.name" = "posoda za malico bento";
+"72078955.tags" = "bento | japonsko | malica | posoda | posoda za malico bento";
+// 🍘 - rice_cracker
+"72078830.name" = "rižev kreker";
+"72078830.tags" = "kreker | riž | rižev kreker";
+// 🍙 - rice_ball
+"72078835.name" = "riževa kroglica";
+"72078835.tags" = "japonsko | kroglica | riž | riževa kroglica";
+// 🍚 - rice
+"72078840.name" = "kuhan riž";
+"72078840.tags" = "kuhan riž | kuhano | riž";
+// 🍛 - curry
+"72078845.name" = "riž s karijem";
+"72078845.tags" = "kari | riž | riž s karijem";
+// 🍜 - ramen
+"72078850.name" = "skleda rezancev";
+"72078850.tags" = "ramen | rezanci | skleda | skleda rezancev | vrelo";
+// 🍝 - spaghetti
+"72078855.name" = "špageti";
+"72078855.tags" = "špageti | testenine";
+// 🍠 - sweet_potato
+"72078870.name" = "pečeni sladki krompir";
+"72078870.tags" = "krompir | pečeni sladki krompir | pečeno | sladko";
+// 🍢 - oden
+"72078880.name" = "oden";
+"72078880.tags" = "kebab | morska hrana | oden | paličica | špila";
+// 🍣 - sushi
+"72078885.name" = "suši";
+"72078885.tags" = "suši";
+// 🍤 - fried_shrimp
+"72078890.name" = "ocvrt rakec";
+"72078890.tags" = "kozica | ocvrt rakec | ocvrto | rakec | tempura";
+// 🍥 - fish_cake
+"72078895.name" = "ribji kolač s spiralo";
+"72078895.tags" = "kolač | pecivo | riba | ribji kolač s spiralo | spirala";
+// 🥮 - moon_cake
+"72078950.name" = "lunina torta";
+"72078950.tags" = "festival | jesen | lunina torta | yuebing";
+// 🍡 - dango
+"72078875.name" = "dango";
+"72078875.tags" = "dango | japonsko | paličica | posladek | sladko | špila";
+// 🥟 - dumpling
+"72078875.name" = "cmok";
+"72078875.tags" = "cmok";
+// 🥠 - fortune_cookie
+"72078880.name" = "piškotek sreče";
+"72078880.tags" = "piškotek sreče";
+// 🥡 - takeout_box
+"72078885.name" = "embalaža za hrano";
+"72078885.tags" = "embalaža za hrano | kartonska embalaža za hrano";
+// 🦀 - crab
+"72079040.name" = "rakovica";
+"72079040.tags" = "rak | rakovica | zodiak";
+// 🦞 - lobster
+"72079190.name" = "jastog";
+"72079190.tags" = "jastog | klešče | kremna juha | morska hrana";
+// 🦐 - shrimp
+"72079120.name" = "morski rakec";
+"72079120.tags" = "hrana | kozica | morski rakec | rak | škamp";
+// 🦑 - squid
+"72079125.name" = "ligenj";
+"72079125.tags" = "hrana | ligenj | mehkužec";
+// 🦪 - oyster
+"72079250.name" = "ostriga";
+"72079250.tags" = "biser | ostriga | potapljanje | školjka";
+// 🍦 - icecream
+"72078900.name" = "rahel sladoled";
+"72078900.tags" = "krema | led | mehko | posladek | rahel sladoled | sladko | sladoled";
+// 🍧 - shaved_ice
+"72078905.name" = "nastrgan led";
+"72078905.tags" = "led | nastrgan led | nastrgano | posladek | sladko";
+// 🍨 - ice_cream
+"72078910.name" = "sladoled";
+"72078910.tags" = "krema | led | posladek | sladko | sladoled";
+// 🍩 - doughnut
+"72078915.name" = "krof";
+"72078915.tags" = "krof | posladek | sladko";
+// 🍪 - cookie
+"72078920.name" = "piškot";
+"72078920.tags" = "piškot | posladek | sladko";
+// 🎂 - birthday
+"72079040.name" = "rojstnodnevna torta";
+"72079040.tags" = "pecivo | posladek | rojstni dan | rojstnodnevna torta | sladko | slavje | torta";
+// 🍰 - cake
+"72078950.name" = "krhek kolač";
+"72078950.tags" = "krhek kolač | pecivo | posladek | rezina | sladko | torta";
+// 🧁 - cupcake
+"72079365.name" = "kolaček";
+"72079365.tags" = "kolaček | pekarna | posladek";
+// 🥧 - pie
+"72078915.name" = "pita";
+"72078915.tags" = "pita";
+// 🍫 - chocolate_bar
+"72078925.name" = "tablica čokolade";
+"72078925.tags" = "čokolada | posladek | sladko | tablica | tablica čokolade";
+// 🍬 - candy
+"72078930.name" = "bonbon";
+"72078930.tags" = "bonbon | posladek | sladko";
+// 🍭 - lollipop
+"72078935.name" = "lizika";
+"72078935.tags" = "lizika | posladek | sladkarija | sladko";
+// 🍮 - custard
+"72078940.name" = "vanilijev puding";
+"72078940.tags" = "posladek | puding | sladko | vanilijev puding";
+// 🍯 - honey_pot
+"72078945.name" = "vrč medu";
+"72078945.tags" = "kozarec za med | lonček | med | sladko | vrč medu";
+// 🍼 - baby_bottle
+"72079010.name" = "steklenička";
+"72079010.tags" = "dojenček | mleko | piti | steklenica | steklenička";
+// 🥛 - glass_of_milk
+"72078855.name" = "kozarec mleka";
+"72078855.tags" = "kozarec | kozarec mleka | mleko | pijača";
+// ☕ - coffee
+"30018.name" = "vroč napitek";
+"30018.tags" = "čaj | kava | napitek | piti | vrelo | vroč napitek | vroče";
+// 🫖 - teapot
+"72080750.name" = "čajnik";
+"72080750.tags" = "čaj | čajnik | pijača | vrč";
+// 🍵 - tea
+"72078975.name" = "čajna skodelica brez ročaja";
+"72078975.tags" = "čaj | čajna skodelica brez ročaja | napitek | piti | skodelica | skodelica čaja";
+// 🍶 - sake
+"72078980.name" = "sake";
+"72078980.tags" = "bar | napitek | pijača | sake | skodelica | steklenica";
+// 🍾 - champagne
+"72079020.name" = "odpiranje penine";
+"72079020.tags" = "bar | odleteti | odpiranje penine | pijača | steklenica | zamašek";
+// 🍷 - wine_glass
+"72078985.name" = "vinski kozarec";
+"72078985.tags" = "bar | napitek | pijača | steklenica | vino | vinski kozarec";
+// 🍸 - cocktail
+"72078990.name" = "kozarec za koktajl";
+"72078990.tags" = "bar | koktajl | kozarec | kozarec za koktajl | pijača";
+// 🍹 - tropical_drink
+"72078995.name" = "tropska pijača";
+"72078995.tags" = "bar | pijača | tropska pijača | tropsko";
+// 🍺 - beer
+"72079000.name" = "vrček za pivo";
+"72079000.tags" = "bar | pijača | pivo | vrček | vrček za pivo";
+// 🍻 - beers
+"72079005.name" = "nazdravljanje z vrčkoma za pivo";
+"72079005.tags" = "bar | nazdravljanje z vrčkoma za pivo | pijača | pivo | trkanje | vrček";
+// 🥂 - clinking_glasses
+"72078730.name" = "nazdravljanje";
+"72078730.tags" = "nazdravljanje | pijača | praznovanje | trkanje";
+// 🥃 - tumbler_glass
+"72078735.name" = "kozarec žgane pijače";
+"72078735.tags" = "kozarec | kozarec žgane pijače | merica | viski | žgane pijače";
+// 🫗 - pouring_liquid
+"72080755.name" = "zlivanje tekočine";
+"72080755.tags" = "kozarec | pijača | polivanje | prazen | zlivanje tekočine";
+// 🥤 - cup_with_straw
+"72078900.name" = "kozarec s slamico";
+"72078900.tags" = "kozarec s slamico";
+// 🧋 - bubble_tea
+"72079415.name" = "čaj s kroglicami";
+"72079415.tags" = "biser | čaj | čaj s kroglicami | mleko | pena";
+// 🧃 - beverage_box
+"72079375.name" = "tetrapak s pijačo";
+"72079375.tags" = "tetrapak s pijačo | tetrapak s sokom";
+// 🧉 - mate_drink
+"72079405.name" = "mate čaj";
+"72079405.tags" = "mate čaj | napitek | pijača";
+// 🧊 - ice_cube
+"72079410.name" = "ledena kocka";
+"72079410.tags" = "hladno | ledena kocka | ledeno | ohladitev";
+// 🥢 - chopsticks
+"72078890.name" = "jedilne paličice";
+"72078890.tags" = "jedilne paličice";
+// 🍴 - fork_and_knife
+"72078970.name" = "vilice in nož";
+"72078970.tags" = "kuhanje | nož | vilice | vilice in nož";
+// 🥄 - spoon
+"72078740.name" = "žlica";
+"72078740.tags" = "pribor | žlica";
+// 🔪 - hocho
+"72077325.name" = "kuhinjski nož";
+"72077325.tags" = "hocho | kuhanje | kuhinjski nož | nož | orodje | orožje";
+// 🫙 - jar
+"72080765.name" = "kozarec za vlaganje";
+"72080765.tags" = "kozarec za vlaganje | omaka | posoda | prazna | shramba | začimba";
+// 🏺 - amphora
+"72079640.name" = "amfora";
+"72079640.tags" = "amfora | kuhanje | orodje | orožje | pijača | vodnar | vrč | zodiak";
+// 🌍 - earth_africa
+"72078455.name" = "globus z Evropo in Afriko";
+"72078455.tags" = "Afrika | Evropa | globus | globus z Evropo in Afriko | svet | zemlja";
+// 🌎 - earth_americas
+"72078460.name" = "globus s Severno in Južno Ameriko";
+"72078460.tags" = "Ameriki | globus | globus s Severno in Južno Ameriko | svet | zemlja";
+// 🌏 - earth_asia
+"72078465.name" = "globus z Azijo in Avstralijo";
+"72078465.tags" = "Avstralija | Azija | globus | globus z Azijo in Avstralijo | svet | zemlja";
+// 🌐 - globe_with_meridians
+"72078470.name" = "globus s poldnevniki";
+"72078470.tags" = "globus | globus s poldnevniki | poldnevniki | svet | zemlja";
+// 🗾 - japan
+"72078385.name" = "zemljevid Japonske";
+"72078385.tags" = "Japonska | zemljevid | zemljevid Japonske";
+// 🧭 - compass
+"72079585.name" = "kompas";
+"72079585.tags" = "kompas | magnet | navigacija | orientacija";
+// 🌋 - volcano
+"72078445.name" = "vulkan";
+"72078445.tags" = "gora | izbruh | vreme | vulkan";
+// 🗻 - mount_fuji
+"72078370.name" = "gora Fuji";
+"72078370.tags" = "Fuji | gora";
+// 🧱 - bricks
+"72079605.name" = "opeka";
+"72079605.tags" = "glina | malta | opeka | opeke | zid";
+// 🪨 - rock
+"72080520.name" = "skala";
+"72080520.tags" = "kamen | pečina | skala | težek | trd";
+// 🪵 - wood
+"72080585.name" = "les";
+"72080585.tags" = "bruna | debla | klada | les";
+// 🛖 - hut
+"72079465.name" = "koča";
+"72079465.tags" = "hiša | jurta | koča | okrogla hiša";
+// 🏠 - house
+"72079510.name" = "hiša";
+"72079510.tags" = "dom | hiša | zgradba";
+// 🏡 - house_with_garden
+"72079515.name" = "hiša z vrtom";
+"72079515.tags" = "dom | hiša | hiša z vrtom | vrt | zgradba";
+// 🏢 - office
+"72079520.name" = "poslovna stavba";
+"72079520.tags" = "poslovna stavba | zgradba";
+// 🏣 - post_office
+"72079525.name" = "japonska pošta";
+"72079525.tags" = "japonska pošta | japonsko | pošta | zgradba";
+// 🏤 - european_post_office
+"72079530.name" = "pošta";
+"72079530.tags" = "evropsko | pošta | zgradba";
+// 🏥 - hospital
+"72079535.name" = "bolnišnica";
+"72079535.tags" = "bolnišnica | zdravilo | zdravnik | zgradba";
+// 🏦 - bank
+"72079540.name" = "banka";
+"72079540.tags" = "banka | zgradba";
+// 🏨 - hotel
+"72079550.name" = "hotel";
+"72079550.tags" = "hotel | zgradba";
+// 🏩 - love_hotel
+"72079555.name" = "ljubezenski hotel";
+"72079555.tags" = "hotel | ljubezen | ljubezenski hotel | zgradba";
+// 🏪 - convenience_store
+"72079560.name" = "trgovina z mešanim blagom";
+"72079560.tags" = "hotel | komfort | trgovina | trgovina z mešanim blagom";
+// 🏫 - school
+"72079565.name" = "šola";
+"72079565.tags" = "šola | zgradba";
+// 🏬 - department_store
+"72079570.name" = "veleblagovnica";
+"72079570.tags" = "blago | trgovina | veleblagovnica | zgradba";
+// 🏭 - factory
+"72079575.name" = "tovarna";
+"72079575.tags" = "tovarna | zgradba";
+// 🏯 - japanese_castle
+"72079585.name" = "japonski grad";
+"72079585.tags" = "grad | japonski grad | japonsko | zgradba";
+// 🏰 - european_castle
+"72079590.name" = "grad";
+"72079590.tags" = "evropsko | grad | zgradba";
+// 💒 - wedding
+"72076565.name" = "poročna kapela";
+"72076565.tags" = "kapela | poročna kapela | romanca";
+// 🗼 - tokyo_tower
+"72078375.name" = "tokijski stolp";
+"72078375.tags" = "stolp | tokijski stolp | Tokio";
+// 🗽 - statue_of_liberty
+"72078380.name" = "kip svobode";
+"72078380.tags" = "kip | kip svobode | svoboda";
+// ⛪ - church
+"30657.name" = "cerkev";
+"30657.tags" = "cerkev | križ | krščansko | vera | zgradba";
+// 🕌 - mosque
+"72077495.name" = "mošeja";
+"72077495.tags" = "islam | mošeja | muslimansko | vera";
+// 🛕 - hindu_temple
+"72079460.name" = "hindujski tempelj";
+"72079460.tags" = "hindu | hindujski tempelj | tempelj";
+// 🕍 - synagogue
+"72077500.name" = "sinagoga";
+"72077500.tags" = "jud | judovsko | sinagoga | tempelj | vera";
+// 🕋 - kaaba
+"72077490.name" = "kaaba";
+"72077490.tags" = "islam | kaaba | muslimansko | vera";
+// ⛲ - fountain
+"30681.name" = "fontana";
+"30681.tags" = "fontana | vodnjak";
+// ⛺ - tent
+"30705.name" = "šotor";
+"30705.tags" = "šotor | taborjenje";
+// 🌁 - foggy
+"72078395.name" = "megleno";
+"72078395.tags" = "megla | megleno | vreme";
+// 🌃 - night_with_stars
+"72078405.name" = "zvezdnata noč";
+"72078405.tags" = "noč | vreme | zvezda | zvezdnata noč";
+// 🌄 - sunrise_over_mountains
+"72078410.name" = "sončni vzhod v gorah";
+"72078410.tags" = "gora | jutro | sonce | sončni vzhod | sončni vzhod v gorah | vreme";
+// 🌅 - sunrise
+"72078415.name" = "sončni vzhod";
+"72078415.tags" = "jutro | sonce | sončni vzhod | vreme";
+// 🌆 - city_sunset
+"72078420.name" = "mestna pokrajina v mraku";
+"72078420.tags" = "mestna pokrajina v mraku | mesto | mrak | pokrajina | sonce | sončni zahod | večer | vreme | zgradba";
+// 🌇 - city_sunrise
+"72078425.name" = "sončni zahod";
+"72078425.tags" = "mrak | sonce | sončni zahod | vreme | zgradba";
+// 🌉 - bridge_at_night
+"72078435.name" = "most ponoči";
+"72078435.tags" = "most | most ponoči | noč | vreme";
+// 🎠 - carousel_horse
+"72079190.name" = "konj na vrtiljaku";
+"72079190.tags" = "konj | konj na vrtiljaku | vrtiljak";
+// 🛝 - playground_slide
+"72079500.name" = "tobogan";
+"72079500.tags" = "igra | tobogan | zabaviščni park";
+// 🎡 - ferris_wheel
+"72079195.name" = "panoramsko kolo";
+"72079195.tags" = "lunapark | panoramsko kolo";
+// 🎢 - roller_coaster
+"72079200.name" = "vlakec smrti";
+"72079200.tags" = "lunapark | vlak smrti | vlakec smrti";
+// 💈 - barber
+"72076515.name" = "brivski izvesek";
+"72076515.tags" = "brivec | brivski izvesek | izvesek | striženje";
+// 🎪 - circus_tent
+"72079240.name" = "cirkuški šotor";
+"72079240.tags" = "cirkus | cirkuški šotor | šotor";
+// 🚂 - steam_locomotive
+"72079045.name" = "lokomotiva";
+"72079045.tags" = "lokomotiva | para | stroj | vlak | vozilo | železnica";
+// 🚃 - railway_car
+"72079050.name" = "železniški vagon";
+"72079050.tags" = "avtomobil | električno | tramvaj | trolejbus | vlak | vozilo | železnica | železniški vagon";
+// 🚄 - bullettrain_side
+"72079055.name" = "hitri vlak";
+"72079055.tags" = "hitri vlak | hitrost | shinkansen | vlak | vozilo | železnica";
+// 🚅 - bullettrain_front
+"72079060.name" = "hitri vlak s koničastim nosom";
+"72079060.tags" = "hitri vlak s koničastim nosom | hitrost | koničast nos | shinkansen | vlak | vozilo | železnica";
+// 🚆 - train2
+"72079065.name" = "vlak";
+"72079065.tags" = "vlak | vozilo | železnica";
+// 🚇 - metro
+"72079070.name" = "podzemni vlak";
+"72079070.tags" = "podzemna železnica | podzemni vlak | vozilo";
+// 🚈 - light_rail
+"72079075.name" = "ozkotirna železnica";
+"72079075.tags" = "ozkotirna železnica | vozilo | železnica";
+// 🚉 - station
+"72079080.name" = "postaja";
+"72079080.tags" = "postaja | vlak | vozilo | železnica";
+// 🚊 - tram
+"72079085.name" = "tramvaj";
+"72079085.tags" = "tramvaj | trolejbus | vozilo";
+// 🚝 - monorail
+"72079180.name" = "enotirna železnica";
+"72079180.tags" = "enotirna železnica | vozilo";
+// 🚞 - mountain_railway
+"72079185.name" = "gorska železnica";
+"72079185.tags" = "avto | gora | gorska železnica | vozilo | železnica";
+// 🚋 - train
+"72079090.name" = "vagon tramvaja";
+"72079090.tags" = "tramvaj | trolejbus | vagon | vagon tramvaja | vozilo";
+// 🚌 - bus
+"72079095.name" = "avtobus";
+"72079095.tags" = "avtobus | vozilo";
+// 🚍 - oncoming_bus
+"72079100.name" = "prihajajoči avtobus";
+"72079100.tags" = "avtobus | prihajajoče | prihajajoči avtobus | vozilo";
+// 🚎 - trolleybus
+"72079105.name" = "trolejbus";
+"72079105.tags" = "avtobus | tramvaj | trolejbus | vozilo";
+// 🚐 - minibus
+"72079115.name" = "minibus";
+"72079115.tags" = "avtobus | minibus | vozilo";
+// 🚑 - ambulance
+"72079120.name" = "reševalno vozilo";
+"72079120.tags" = "reševalno vozilo | vozilo";
+// 🚒 - fire_engine
+"72079125.name" = "gasilsko vozilo";
+"72079125.tags" = "avto | gasilsko | požar | vozilo";
+// 🚓 - police_car
+"72079130.name" = "policijsko vozilo";
+"72079130.tags" = "avto | patruljno | policija | policijsko vozilo | vozilo";
+// 🚔 - oncoming_police_car
+"72079135.name" = "prihajajoče policijsko vozilo";
+"72079135.tags" = "avto | policija | prihajajoče | prihajajoče policijsko vozilo | vozilo";
+// 🚕 - taxi
+"72079140.name" = "taksi";
+"72079140.tags" = "taksi | vozilo";
+// 🚖 - oncoming_taxi
+"72079145.name" = "prihajajoči taksi";
+"72079145.tags" = "prihajajoče | prihajajoči taksi | taksi | vozilo";
+// 🚗 - car
+"72079150.name" = "avtomobil";
+"72079150.tags" = "avto | avtomobil | vozilo";
+// 🚘 - oncoming_automobile
+"72079155.name" = "prihajajoči avtomobil";
+"72079155.tags" = "avto | avtomobil | prihajajoče | prihajajoči avtomobil | vozilo";
+// 🚙 - blue_car
+"72079160.name" = "cestni terenec";
+"72079160.tags" = "cestni terenec | prostočasno | vozilo";
+// 🛻 - pickup_truck
+"72079650.name" = "poltovornjak";
+"72079650.tags" = "pick-up | pickup | poltovornjak";
+// 🚚 - truck
+"72079165.name" = "dostavno vozilo";
+"72079165.tags" = "dostavno | poltovornjak | vozilo";
+// 🚛 - articulated_lorry
+"72079170.name" = "tovornjak s prikolico";
+"72079170.tags" = "kamion | polpriklopnik | tovornjak | tovornjak s prikolico | vozilo";
+// 🚜 - tractor
+"72079175.name" = "traktor";
+"72079175.tags" = "traktor | vozilo";
+// 🛵 - motor_scooter
+"72079620.name" = "skuter";
+"72079620.tags" = "motor | skuter";
+// 🦽 - manual_wheelchair
+"72079345.name" = "ročni invalidski voziček";
+"72079345.tags" = "invalid | ročni invalidski voziček";
+// 🦼 - motorized_wheelchair
+"72079340.name" = "motoriziran invalidski voziček";
+"72079340.tags" = "invalid | motoriziran invalidski voziček";
+// 🛺 - auto_rickshaw
+"72079645.name" = "rikša z motorjem";
+"72079645.tags" = "rikša z motorjem | tuk tuk";
+// 🚲 - bike
+"72079285.name" = "kolo";
+"72079285.tags" = "kolo | vozilo";
+// 🛴 - scooter
+"72079615.name" = "skiro";
+"72079615.tags" = "poganjanje | skiro";
+// 🛹 - skateboard
+"72079640.name" = "rolka";
+"72079640.tags" = "deska | rolka";
+// 🛼 - roller_skate
+"72079655.name" = "kotalke";
+"72079655.tags" = "kotalka | kotalke | roler";
+// 🚏 - busstop
+"72079110.name" = "avtobusna postaja";
+"72079110.tags" = "avtobus | avtobusna postaja | avtobusno postajališče | postajališče";
+// ⛽ - fuelpump
+"30714.name" = "črpalka za gorivo";
+"30714.tags" = "bencin | črpalka | črpalka za gorivo | gorivo | servis";
+// 🛞 - wheel
+"72079505.name" = "avtomobilsko kolo";
+"72079505.tags" = "avtomobilsko kolo | krog | pnevmatika | vrtenje";
+// 🚨 - rotating_light
+"72079235.name" = "policijska luč";
+"72079235.tags" = "avto | luč | policija | policijska luč | rotacijska luč | vozilo | vrteče";
+// 🚥 - traffic_light
+"72079220.name" = "vodoravni semafor";
+"72079220.tags" = "luč | promet | semafor | vodoravni semafor";
+// 🚦 - vertical_traffic_light
+"72079225.name" = "navpični semafor";
+"72079225.tags" = "luč | navpični semafor | promet | semafor";
+// 🛑 - octagonal_sign
+"72079440.name" = "znak stop";
+"72079440.tags" = "osemkotnik | stop | znak";
+// 🚧 - construction
+"72079230.name" = "zaprto zaradi gradnje";
+"72079230.tags" = "prepreka | zaprto zaradi gradnje";
+// ⚓ - anchor
+"30396.name" = "sidro";
+"30396.tags" = "ladja | orodje | sidro";
+// 🛟 - ring_buoy
+"72079510.name" = "rešilni obroč";
+"72079510.tags" = "plavajoč | reševanje | rešilni jopič | rešilni obroč | rešilni pripomoček | varnost";
+// ⛵ - boat
+"30690.name" = "jadrnica";
+"30690.tags" = "čoln | jadrnica | jahta | letovišče | morje | vozilo";
+// 🛶 - canoe
+"72079625.name" = "kanu";
+"72079625.tags" = "čoln | kanu";
+// 🚤 - speedboat
+"72079215.name" = "gliser";
+"72079215.tags" = "čoln | gliser | vozilo";
+// 🚢 - ship
+"72079205.name" = "ladja";
+"72079205.tags" = "ladja | vozilo";
+// 🛫 - airplane_departure
+"72079570.name" = "odhod letala";
+"72079570.tags" = "letalo | odhod | odhod letala | odhodi | prijava | vozilo";
+// 🛬 - airplane_arriving
+"72079575.name" = "prihod letala";
+"72079575.tags" = "letalo | prihod | prihod letala | prihodi | pristanek | vozilo";
+// 🪂 - parachute
+"72080330.name" = "padalo";
+"72080330.tags" = "jadralni zmaj | jadralno padalo | padalo | parasailing | skok s padalom";
+// 💺 - seat
+"72076765.name" = "sedež";
+"72076765.tags" = "sedež | stol";
+// 🚁 - helicopter
+"72079040.name" = "helikopter";
+"72079040.tags" = "helikopter | vozilo";
+// 🚟 - suspension_railway
+"72079190.name" = "viseča železnica";
+"72079190.tags" = "viseča železnica | viseče | vozilo | železnica";
+// 🚠 - mountain_cableway
+"72079195.name" = "nihalka";
+"72079195.tags" = "gondola | gora | jeklena vrv | nihalka | vozilo";
+// 🚡 - aerial_tramway
+"72079200.name" = "žičnica";
+"72079200.tags" = "gondola | jeklena vrv | tramvaj | vagon | vozilo | žičnica | zračno";
+// 🚀 - rocket
+"72079035.name" = "raketa";
+"72079035.tags" = "raketa | vesolje | vozilo";
+// 🛸 - flying_saucer
+"72079635.name" = "leteči krožnik";
+"72079635.tags" = "leteči krožnik";
+// 🧳 - luggage
+"72079615.name" = "prtljaga";
+"72079615.tags" = "pakiranje | potovanje | prtljaga";
+// ⌛ - hourglass
+"27732.name" = "peščena ura";
+"27732.tags" = "časovnik | peščena ura | pesek";
+// ⏳ - hourglass_flowing_sand
+"28380.name" = "peščena ura, ki teče";
+"28380.tags" = "časovnik | peščena ura | peščena ura | ki teče | pesek";
+// ⌚ - watch
+"27729.name" = "ročna ura";
+"27729.tags" = "ročna ura | ura";
+// ⏰ - alarm_clock
+"28371.name" = "budilka";
+"28371.tags" = "alarm | budilka | ura";
+// 🕛 - clock12
+"72077570.name" = "poldne";
+"72077570.tags" = "00 | 12 | dvanajst | poldne | ura";
+// 🕧 - clock1230
+"72077630.name" = "pol enih";
+"72077630.tags" = "12 | 12.30 | 30 | dvanajst | ena | pol | pol enih | ura";
+// 🕐 - clock1
+"72077515.name" = "ura je ena";
+"72077515.tags" = "00 | 1 | 1.00 | ena | ura | ura je ena";
+// 🕜 - clock130
+"72077575.name" = "pol dveh";
+"72077575.tags" = "1 | 1.30 | 30 | dve | ena | pol | pol dveh | ura";
+// 🕑 - clock2
+"72077520.name" = "ura je dve";
+"72077520.tags" = "00 | 2 | 2.00 | dve | ura | ura je dve";
+// 🕝 - clock230
+"72077580.name" = "pol treh";
+"72077580.tags" = "2 | 2.30 | 30 | dve | pol | pol treh | tri | ura";
+// 🕒 - clock3
+"72077525.name" = "ura je tri";
+"72077525.tags" = "00 | 3 | 3.00 | tri | ura | ura je tri";
+// 🕞 - clock330
+"72077585.name" = "pol štirih";
+"72077585.tags" = "3 | 3.30 | 30 | pol | pol štirih | štiri | tri | ura";
+// 🕓 - clock4
+"72077530.name" = "ura je štiri";
+"72077530.tags" = "00 | 4 | 4.00 | štiri | ura | ura je štiri";
+// 🕟 - clock430
+"72077590.name" = "pol petih";
+"72077590.tags" = "30 | 4 | 4.30 | pet | pol | pol petih | štiri | ura";
+// 🕔 - clock5
+"72077535.name" = "ura je pet";
+"72077535.tags" = "00 | 5 | 5.00 | pet | ura | ura je pet";
+// 🕠 - clock530
+"72077595.name" = "pol šestih";
+"72077595.tags" = "30 | 5 | 5.30 | pet | pol | pol šestih | šest | ura";
+// 🕕 - clock6
+"72077540.name" = "ura je šest";
+"72077540.tags" = "00 | 6 | 6.00 | šest | ura | ura je šest";
+// 🕡 - clock630
+"72077600.name" = "pol sedmih";
+"72077600.tags" = "30 | 6 | 6.30 | pol | pol sedmih | sedem | šest | ura";
+// 🕖 - clock7
+"72077545.name" = "ura je sedem";
+"72077545.tags" = "00 | 7 | 7.00 | sedem | ura | ura je sedem";
+// 🕢 - clock730
+"72077605.name" = "pol osmih";
+"72077605.tags" = "30 | 7 | 7.30 | osem | pol | pol osmih | sedem | ura";
+// 🕗 - clock8
+"72077550.name" = "ura je osem";
+"72077550.tags" = "00 | 8 | 8.00 | osem | ura | ura je osem";
+// 🕣 - clock830
+"72077610.name" = "pol devetih";
+"72077610.tags" = "30 | 8 | 8.30 | devet | osem | pol | pol devetih | ura";
+// 🕘 - clock9
+"72077555.name" = "ura je devet";
+"72077555.tags" = "00 | 9 | 9.00 | devet | ura | ura je devet";
+// 🕤 - clock930
+"72077615.name" = "pol desetih";
+"72077615.tags" = "30 | 9 | 9.30 | deset | devet | pol | pol desetih | ura";
+// 🕙 - clock10
+"72077560.name" = "ura je deset";
+"72077560.tags" = "00 | 10 | 10.00 | deset | ura | ura je deset";
+// 🕥 - clock1030
+"72077620.name" = "pol enajstih";
+"72077620.tags" = "10 | 10.30 | 30 | deset | enajst | pol | pol enajstih | ura";
+// 🕚 - clock11
+"72077565.name" = "ura je enajst";
+"72077565.tags" = "00 | 11 | 11.00 | enajst | ura | ura je enajst";
+// 🕦 - clock1130
+"72077625.name" = "pol dvanajstih";
+"72077625.tags" = "11 | 11.30 | 30 | dvanajst | enajst | pol | pol dvanajstih | ura";
+// 🌑 - new_moon
+"72078475.name" = "mlada luna";
+"72078475.tags" = "luna | mlada luna | tema | vesolje | vreme";
+// 🌒 - waxing_crescent_moon
+"72078480.name" = "prvi krajec";
+"72078480.tags" = "krajec | luna | prvi | vesolje | vreme";
+// 🌓 - first_quarter_moon
+"72078485.name" = "polovično osvetljena luna v prvem krajcu";
+"72078485.tags" = "četrt | luna | polovično osvetljena luna v prvem krajcu | vesolje | vreme";
+// 🌔 - moon
+"72078490.name" = "več kot polovično osvetljen prvi krajec";
+"72078490.tags" = "luna | polovično | prvi | več kot polovično osvetljen prvi krajec | vesolje | vreme";
+// 🌕 - full_moon
+"72078495.name" = "polna luna";
+"72078495.tags" = "luna | polna luna | polno | vesolje | vreme";
+// 🌖 - waning_gibbous_moon
+"72078500.name" = "več kot polovično osvetljen zadnji krajec";
+"72078500.tags" = "luna | polovično | več kot polovično osvetljen zadnji krajec | vesolje | vreme | zadnji";
+// 🌗 - last_quarter_moon
+"72078505.name" = "polovično osvetljena luna v zadnjem krajcu";
+"72078505.tags" = "četrt | luna | polovično osvetljena luna v zadnjem krajcu | vesolje | vreme";
+// 🌘 - waning_crescent_moon
+"72078510.name" = "zadnji krajec";
+"72078510.tags" = "krajec | luna | vesolje | vreme | zadnji";
+// 🌙 - crescent_moon
+"72078515.name" = "lunin srp";
+"72078515.tags" = "krajec | luna | lunin srp | vesolje | vreme";
+// 🌚 - new_moon_with_face
+"72078520.name" = "mlada luna z obrazom";
+"72078520.tags" = "luna | mlada luna z obrazom | obraz | vesolje | vreme";
+// 🌛 - first_quarter_moon_with_face
+"72078525.name" = "polovično osvetljena luna v prvem krajcu z obrazom";
+"72078525.tags" = "četrt | luna | obraz | polovično osvetljena luna v prvem krajcu z obrazom | vesolje | vreme";
+// 🌜 - last_quarter_moon_with_face
+"72078530.name" = "polovično osvetljena luna v zadnjem krajcu z obrazom";
+"72078530.tags" = "četrt | luna | obraz | polovično osvetljena luna v zadnjem krajcu z obrazom | vesolje | vreme";
+// 🌝 - full_moon_with_face
+"72078535.name" = "polna luna z obrazom";
+"72078535.tags" = "luna | obraz | polna luna z obrazom | polno | svetlo | vesolje | vreme";
+// 🌞 - sun_with_face
+"72078540.name" = "sonce z obrazom";
+"72078540.tags" = "obraz | sonce | sonce z obrazom | svetlo | vesolje | vreme";
+// 🪐 - ringed_planet
+"72080400.name" = "planet z obročem";
+"72080400.tags" = "planet z obročem | saturn | saturnov obroč";
+// ⭐ - star
+"34035.name" = "bela srednja zvezda";
+"34035.tags" = "bela srednja zvezda | zvezda";
+// 🌟 - star2
+"72078545.name" = "žareča zvezda";
+"72078545.tags" = "bleščeče | lesketanje | sijanje | žar | žareča zvezda | zvezda";
+// 🌠 - stars
+"72078550.name" = "utrinek";
+"72078550.tags" = "padanje | repatica | utrinek | vesolje | zvezda";
+// 🌌 - milky_way
+"72078450.name" = "rimska cesta";
+"72078450.tags" = "rimska cesta | vesolje | vreme";
+// ⛅ - partly_sunny
+"30546.name" = "sonce za oblakom";
+"30546.tags" = "oblak | sonce | sonce za oblakom | vreme";
+// 🌀 - cyclone
+"72078390.name" = "ciklon";
+"72078390.tags" = "ciklon | tajfun | tornado | vreme | vrtoglavica";
+// 🌈 - rainbow
+"72078430.name" = "mavrica";
+"72078430.tags" = "dež | mavrica | vreme";
+// 🌂 - closed_umbrella
+"72078400.name" = "zaprt dežnik";
+"72078400.tags" = "dež | dežnik | oblačila | vreme | zaprt dežnik";
+// ☔ - umbrella_with_rain_drops
+"30015.name" = "dežnik z dežnimi kapljami";
+"30015.tags" = "dež | dežnik | dežnik z dežnimi kapljami | kaplja | oblačila | vreme";
+// ⚡ - zap
+"30438.name" = "visoka napetost";
+"30438.tags" = "električno | elektrika | napetost | nevarnost | strela | sunek | visoka napetost";
+// ⛄ - snowman_without_snow
+"30543.name" = "snežak brez snega";
+"30543.tags" = "mrzlo | sneg | snežak | snežak brez snega | vreme";
+// 🔥 - fire
+"72077300.name" = "ogenj";
+"72077300.tags" = "ogenj | orodje | plamen";
+// 💧 - droplet
+"72076670.name" = "kapljica";
+"72076670.tags" = "kaplja | kapljica | mrzlo | pot | strip | vreme";
+// 🌊 - ocean
+"72078440.name" = "vodni val";
+"72078440.tags" = "morje | val | voda | vodni val | vreme";
+// 🎃 - jack_o_lantern
+"72079045.name" = "izrezljana buča";
+"72079045.tags" = "buča | izrezljana buča | laterna | noč čarovnic | slavje";
+// 🎄 - christmas_tree
+"72079050.name" = "jelka";
+"72079050.tags" = "božič | drevešček | jelka | slavje";
+// 🎆 - fireworks
+"72079060.name" = "ognjemet";
+"72079060.tags" = "ognjemet | slavje";
+// 🎇 - sparkler
+"72079065.name" = "sibirska lučka";
+"72079065.tags" = "iskrenje | ognjemet | sibirska lučka | slavje";
+// 🧨 - firecracker
+"72079560.name" = "petarda";
+"72079560.tags" = "dinamit | eksploziv | ognjemet | petarda";
+// ✨ - sparkles
+"30843.name" = "iskrice";
+"30843.tags" = "* | iskrenje | iskrice | zvezda";
+// 🎈 - balloon
+"72079070.name" = "balon";
+"72079070.tags" = "balon | slavje";
+// 🎉 - tada
+"72079075.name" = "pokalica za zabave";
+"72079075.tags" = "pokalica | pokalica za zabave | slavje | zabava";
+// 🎊 - confetti_ball
+"72079080.name" = "konfeti";
+"72079080.tags" = "konfeti | krogla | slavje";
+// 🎋 - tanabata_tree
+"72079085.name" = "drevo za tanabato";
+"72079085.tags" = "drevo | drevo za tanabato | japonsko | pasica | slavje";
+// 🎍 - bamboo
+"72079095.name" = "okrasitev bora";
+"72079095.tags" = "bambus | bor | japonsko | okrasitev bora | rastlina | slavje";
+// 🎎 - dolls
+"72079100.name" = "japonski lutki";
+"72079100.tags" = "festival | japonski lutki | japonsko | lutka | slavje";
+// 🎏 - flags
+"72079105.name" = "zastavni trak z ribama";
+"72079105.tags" = "barvno | riba | slavje | trak | zastavni trak z ribama";
+// 🎐 - wind_chime
+"72079110.name" = "vetrni zvončki";
+"72079110.tags" = "slavje | veter | vetrni zvončki | zvonček | zvonec";
+// 🎑 - rice_scene
+"72079115.name" = "lunino slavje";
+"72079115.tags" = "luna | lunino slavje | obred | slavje";
+// 🧧 - red_envelope
+"72079555.name" = "rdeča ovojnica";
+"72079555.tags" = "darilo | denar | hóngbāo | lai see | rdeča ovojnica | sreča";
+// 🎀 - ribbon
+"72079030.name" = "pentlja";
+"72079030.tags" = "pentlja | slavje";
+// 🎁 - gift
+"72079035.name" = "zavito darilo";
+"72079035.tags" = "dar | darilo | škatla | slavje | zavito";
+// 🎫 - ticket
+"72079245.name" = "vstopnica";
+"72079245.tags" = "vstopnica | vstopnina";
+// 🏆 - trophy
+"72079380.name" = "trofeja";
+"72079380.tags" = "nagrada | trofeja";
+// 🏅 - sports_medal
+"72079375.name" = "športna medalja";
+"72079375.tags" = "medalja | športna medalja";
+// 🥇 - first_place_medal
+"72078755.name" = "zlata medalja";
+"72078755.tags" = "medalja | prvo mesto | zlata medalja | zlato";
+// 🥈 - second_place_medal
+"72078760.name" = "srebrna medalja";
+"72078760.tags" = "drugo mesto | medalja | srebrna medalja | srebro";
+// 🥉 - third_place_medal
+"72078765.name" = "bronasta medalja";
+"72078765.tags" = "bron | bronasta medalja | medalja | tretje mesto";
+// ⚽ - soccer
+"30522.name" = "nogometna žoga";
+"30522.tags" = "nogomet | nogometna žoga | žoga";
+// ⚾ - baseball
+"30525.name" = "žogica za baseball";
+"30525.tags" = "žoga | žogica za baseball";
+// 🥎 - softball
+"72078790.name" = "žoga za softball";
+"72078790.tags" = "pod roko | rokavica | žoga | žoga za softball";
+// 🏀 - basketball
+"72079350.name" = "košarkarska žoga";
+"72079350.tags" = "koš | košarkarska žoga | obroč | žoga";
+// 🏐 - volleyball
+"72079430.name" = "žoga za odbojko";
+"72079430.tags" = "igra | žoga | žoga za odbojko";
+// 🏈 - football
+"72079390.name" = "žoga za ameriški nogomet";
+"72079390.tags" = "ameriško | nogomet | žoga | žoga za ameriški nogomet";
+// 🏉 - rugby_football
+"72079395.name" = "žoga za ragbi";
+"72079395.tags" = "nogomet | ragbi | žoga | žoga za ragbi";
+// 🎾 - tennis
+"72079340.name" = "tenis";
+"72079340.tags" = "lopar | tenis | žoga";
+// 🥏 - flying_disc
+"72078795.name" = "frizbi";
+"72078795.tags" = "frizbi | najboljši";
+// 🎳 - bowling
+"72079285.name" = "kegljanje";
+"72079285.tags" = "igra | kegljanje | krogla";
+// 🏏 - cricket_bat_and_ball
+"72079425.name" = "kriket";
+"72079425.tags" = "igra | kij | kriket | žogica";
+// 🏑 - field_hockey_stick_and_ball
+"72079435.name" = "hokej na travi";
+"72079435.tags" = "hokej | hokej na travi | igra | palica | polje | žogica";
+// 🏒 - ice_hockey_stick_and_puck
+"72079440.name" = "hokejska palica in plošček";
+"72079440.tags" = "hokej | hokejska palica in plošček | igra | led | palica | plošček";
+// 🥍 - lacrosse
+"72078785.name" = "lacrosse";
+"72078785.tags" = "gol | lacrosse | palica | žoga";
+// 🏓 - table_tennis_paddle_and_ball
+"72079445.name" = "namizni tenis";
+"72079445.tags" = "igra | kij | lopar | namizni tenis | žogica";
+// 🏸 - badminton_racquet_and_shuttlecock
+"72079630.name" = "badminton";
+"72079630.tags" = "badminton | igra | lopar | perjanica | žogica";
+// 🥊 - boxing_glove
+"72078770.name" = "boksarska rokavica";
+"72078770.tags" = "boks | boksarska rokavica | rokavica | šport";
+// 🥋 - martial_arts_uniform
+"72078775.name" = "kimono za borilne športe";
+"72078775.tags" = "borilne veščine | judo | karate | kimono za borilne športe | šport | taekwondo | uniforma";
+// 🥅 - goal_net
+"72078745.name" = "gol";
+"72078745.tags" = "gol | mreža | šport";
+// ⛳ - golf
+"30684.name" = "zastavica v luknji";
+"30684.tags" = "golf | luknja | zastavica v luknji";
+// 🎣 - fishing_pole_and_fish
+"72079205.name" = "ribiška palica";
+"72079205.tags" = "palica | riba | ribiška palica";
+// 🤿 - diving_mask
+"72078715.name" = "potapljaška maska";
+"72078715.tags" = "na dah | potapljanje | potapljaška maska | snorkljanje";
+// 🎽 - running_shirt_with_sash
+"72079335.name" = "tekaška majica";
+"72079335.tags" = "lenta | majica | tek | tekaška majica";
+// 🎿 - ski
+"72079345.name" = "smučke";
+"72079345.tags" = "smučati | smučke | sneg";
+// 🛷 - sled
+"72079630.name" = "sanke";
+"72079630.tags" = "sanke";
+// 🥌 - curling_stone
+"72078780.name" = "curling";
+"72078780.tags" = "curling";
+// 🎯 - dart
+"72079265.name" = "zadetek v polno";
+"72079265.tags" = "igra | pikado | središče | zadetek | zadetek v polno";
+// 🪀 - yo-yo
+"72080320.name" = "jojo";
+"72080320.tags" = "igrača | jojo | nihanje | proč sem";
+// 🪁 - kite
+"72080325.name" = "zmaj (igrača)";
+"72080325.tags" = "jadrati | leteti | zmaj (igrača)";
+// 🔫 - gun
+"72077330.name" = "vodna pištola";
+"72077330.tags" = "orodje | orožje | pištola | revolver | vodna pištola";
+// 🎱 - 8ball
+"72079275.name" = "biljard";
+"72079275.tags" = "8 | biljard | igra | krogla | osmica";
+// 🔮 - crystal_ball
+"72077345.name" = "kristalna krogla";
+"72077345.tags" = "fantazija | kristalna | krogla | orodje | pravljica | prerokba";
+// 🪄 - magic_wand
+"72080340.name" = "čarobna palica";
+"72080340.tags" = "čarobna palica | čarovnica | čarovnija | čarovnik";
+// 🎮 - video_game
+"72079260.name" = "videoigra";
+"72079260.tags" = "igra | krmilnik | videoigra";
+// 🎰 - slot_machine
+"72079270.name" = "igralni avtomat";
+"72079270.tags" = "avtomat | igra | igralni avtomat";
+// 🎲 - game_die
+"72079280.name" = "igralna kocka";
+"72079280.tags" = "igra | igralna kocka | kocka";
+// 🧩 - jigsaw
+"72079565.name" = "delček sestavljanke";
+"72079565.tags" = "delček | delček sestavljanke | namig | prileganje | sestavljanka";
+// 🧸 - teddy_bear
+"72079640.name" = "medvedek";
+"72079640.tags" = "igrača | lutka | medvedek | plišasta | polnjena";
+// 🪅 - pinata
+"72080345.name" = "pinjata";
+"72080345.tags" = "pinjata | praznovanje | zabava";
+// 🪩 - mirror_ball
+"72080525.name" = "disko krogla";
+"72080525.tags" = "bleščanje | disko | disko krogla | ples | zabava";
+// 🪆 - nesting_dolls
+"72080350.name" = "babuška";
+"72080350.tags" = "babuška | gnezdenje | lutka | rusija";
+// 🃏 - black_joker
+"72075585.name" = "joker";
+"72075585.tags" = "igra | igranje | joker | karta";
+// 🀄 - mahjong
+"72074570.name" = "rdeči zmaj v mahjongu";
+"72074570.tags" = "igra | mahjong | rdeče | rdeči zmaj v mahjongu";
+// 🎴 - flower_playing_cards
+"72079290.name" = "rožne igralne karte";
+"72079290.tags" = "igra | igranje | japonsko | karta | roža | rožne igralne karte";
+// 🎭 - performing_arts
+"72079255.name" = "scenske umetnosti";
+"72079255.tags" = "gledališče | maska | nastopanje | scenske umetnosti | umetnost";
+// 🎨 - art
+"72079230.name" = "slikarska paleta";
+"72079230.tags" = "muzej | paleta | slika | slikarska paleta | umetnost";
+// 🧵 - thread
+"72079625.name" = "sukanec";
+"72079625.tags" = "navitek | nit | šivanje | šivanka | sukanec";
+// 🪡 - sewing_needle
+"72080485.name" = "šivanka";
+"72080485.tags" = "igla | krojenje | šivanje | šivanka | šivi | spoji | vezenje";
+// 🧶 - yarn
+"72079630.name" = "preja";
+"72079630.tags" = "klobčič | kvačkanje | pletenje | preja";
+// 🪢 - knot
+"72080490.name" = "vozel";
+"72080490.tags" = "sukanec | vozel | vrv | vrvica | zanka";
+// 👓 - eyeglasses
+"72076250.name" = "očala";
+"72076250.tags" = "oblačila | očala | oči";
+// 🥽 - goggles
+"72079025.name" = "zaščitna očala";
+"72079025.tags" = "plavanje | varjenje | zaščita oči | zaščitna očala";
+// 🥼 - lab_coat
+"72079020.name" = "laboratorijska halja";
+"72079020.tags" = "eksperiment | laboratorijska halja | zdravnik | znanstvenik";
+// 🦺 - safety_vest
+"72079330.name" = "varnostni jopič";
+"72079330.tags" = "jopič | reševalni | v sili | varnostni jopič";
+// 👔 - necktie
+"72076255.name" = "kravata";
+"72076255.tags" = "kravata | oblačila";
+// 👕 - shirt
+"72076260.name" = "majica";
+"72076260.tags" = "kratka majica | majica | oblačila | srajca";
+// 👖 - jeans
+"72076265.name" = "kavbojke";
+"72076265.tags" = "hlače | kavbojke | oblačila";
+// 🧣 - scarf
+"72079535.name" = "šal";
+"72079535.tags" = "šal";
+// 🧤 - gloves
+"72079540.name" = "rokavice";
+"72079540.tags" = "rokavice";
+// 🧥 - coat
+"72079545.name" = "plašč";
+"72079545.tags" = "plašč";
+// 🧦 - socks
+"72079550.name" = "nogavice";
+"72079550.tags" = "nogavice";
+// 👗 - dress
+"72076270.name" = "ženska obleka";
+"72076270.tags" = "oblačila | ženska obleka";
+// 👘 - kimono
+"72076275.name" = "kimono";
+"72076275.tags" = "kimono | oblačila";
+// 🥻 - sari
+"72079015.name" = "sari";
+"72079015.tags" = "oblačilo | obleka | ogrinjalo | sari";
+// 🩱 - one-piece_swimsuit
+"72080245.name" = "enodelne kopalke";
+"72080245.tags" = "enodelne kopalke | kopalna obleka | ženske kopalke";
+// 🩲 - briefs
+"72080250.name" = "spodnje hlače";
+"72080250.tags" = "enodelno | kopalke | kopalno oblačilo | spodnje hlače | spodnje perilo";
+// 🩳 - shorts
+"72080255.name" = "kratke hlače";
+"72080255.tags" = "kopalke | kopalne hlače | kratke hlače | spodnje perilo";
+// 👙 - bikini
+"72076280.name" = "bikini";
+"72076280.tags" = "bikini | oblačila | plavati";
+// 👚 - womans_clothes
+"72076285.name" = "ženska oblačila";
+"72076285.tags" = "oblačila | ženska";
+// 🪭 - folding_hand_fan
+"72080545.name" = "pahljača";
+"72080545.tags" = "hlajenje | pahljača | pahljati | ples | sramežljiv | trepetati | vroče";
+// 👛 - purse
+"72076290.name" = "drobižnica";
+"72076290.tags" = "drobižnica | kovanec | oblačila";
+// 👜 - handbag
+"72076295.name" = "ročna torbica";
+"72076295.tags" = "oblačila | ročna torbica | torbica";
+// 👝 - pouch
+"72076300.name" = "večerna torbica";
+"72076300.tags" = "oblačila | torbica | večerna torbica";
+// 🎒 - school_satchel
+"72079120.name" = "šolski nahrbtnik";
+"72079120.tags" = "nahrbtnik | šola | šolski nahrbtnik | torba";
+// 🩴 - thong_sandal
+"72080260.name" = "japonke";
+"72080260.tags" = "japonke | obuvalo za plažo | sandali | sandali za plažo | zōri";
+// 👞 - mans_shoe
+"72076305.name" = "moški čevelj";
+"72076305.tags" = "čevelj | moški | oblačila";
+// 👟 - athletic_shoe
+"72076310.name" = "tekaški čevelj";
+"72076310.tags" = "čevelj | oblačila | športno | superga | tekaški čevelj";
+// 🥾 - hiking_boot
+"72079030.name" = "pohodniški čevelj";
+"72079030.tags" = "čevelj | kampiranje | planinarjenje | pohodniški čevelj | pohodništvo";
+// 🥿 - womans_flat_shoe
+"72079035.name" = "balerinke";
+"72079035.tags" = "balerinke | balernike | brez pete | natakniti";
+// 👠 - high_heel
+"72076315.name" = "čevelj z visoko peto";
+"72076315.tags" = "čevelj | čevelj z visoko peto | oblačila | peta | ženska";
+// 👡 - sandal
+"72076320.name" = "ženski sandali";
+"72076320.tags" = "čevelj | oblačila | sandal | ženska | ženski sandali";
+// 🩰 - ballet_shoes
+"72080240.name" = "baletni čeveljci";
+"72080240.tags" = "balet | baletni čeveljci | ples";
+// 👢 - boot
+"72076325.name" = "ženski škorenj";
+"72076325.tags" = "čevelj | oblačila | škorenj | ženska | ženski škorenj";
+// 🪮 - hair_pick
+"72080550.name" = "glavnik za v lase";
+"72080550.tags" = "afro | česati | glavnik | glavnik za v lase | lasje";
+// 👑 - crown
+"72076240.name" = "krona";
+"72076240.tags" = "kralj | kraljica | krona | oblačila";
+// 👒 - womans_hat
+"72076245.name" = "ženski klobuk";
+"72076245.tags" = "klobuk | oblačila | ženska | ženski klobuk";
+// 🎩 - tophat
+"72079235.name" = "cilinder";
+"72079235.tags" = "cilinder | klobuk | oblačila";
+// 🎓 - mortar_board
+"72079125.name" = "maturantska kapa";
+"72079125.tags" = "kapa | klobuk | matura | maturantska kapa | oblačila | slavje";
+// 🧢 - billed_cap
+"72079530.name" = "kapa s ščitom";
+"72079530.tags" = "kapa s ščitom";
+// 🪖 - military_helmet
+"72080430.name" = "vojaška čelada";
+"72080430.tags" = "armada | bojevnik | čelada | vojak | vojaška čelada | vojska";
+// 📿 - prayer_beads
+"72077110.name" = "rožni venec";
+"72077110.tags" = "koralde | molitev | oblačila | ogrlica | rožni venec | vera";
+// 💄 - lipstick
+"72076495.name" = "šminka";
+"72076495.tags" = "kozmetika | ličila | šminka";
+// 💍 - ring
+"72076540.name" = "prstan";
+"72076540.tags" = "diamant | prstan | romanca";
+// 💎 - gem
+"72076545.name" = "dragulj";
+"72076545.tags" = "diamant | dragi kamen | dragulj | romanca";
+// 🔇 - mute
+"72077150.name" = "ugasnjen zvočnik";
+"72077150.tags" = "brez zvoka | glasnost | tiho | ugasnjen zvočnik | zvočnik";
+// 🔈 - speaker
+"72077155.name" = "zvočnik pri nizki glasnosti";
+"72077155.tags" = "glasnost | zvočnik pri nizki glasnosti";
+// 🔉 - sound
+"72077160.name" = "zvočnik pri zmerni glasnosti";
+"72077160.tags" = "glasnost | nizko | val | zvočnik | zvočnik pri zmerni glasnosti";
+// 🔊 - loud_sound
+"72077165.name" = "zvočnik na glas";
+"72077165.tags" = "glasno | zvočnik na glas";
+// 📢 - loudspeaker
+"72076965.name" = "javni zvočnik";
+"72076965.tags" = "glasnost | javna objava | javni zvočnik";
+// 📣 - mega
+"72076970.name" = "megafon";
+"72076970.tags" = "megafon | skandiranje";
+// 📯 - postal_horn
+"72077030.name" = "poštni rog";
+"72077030.tags" = "poštni rog | poštno | rog";
+// 🔔 - bell
+"72077215.name" = "zvonec";
+"72077215.tags" = "zvonec";
+// 🔕 - no_bell
+"72077220.name" = "prečrtan zvonec";
+"72077220.tags" = "brez zvoka | molčeče | ne | ni dovoljeno | prečrtan zvonec | prepovedano | tiho | zvonec";
+// 🎼 - musical_score
+"72079330.name" = "partitura";
+"72079330.tags" = "glasba | partitura";
+// 🎵 - musical_note
+"72079295.name" = "glasbena nota";
+"72079295.tags" = "glasba | glasbena nota | nota";
+// 🎶 - notes
+"72079300.name" = "glasbene note";
+"72079300.tags" = "glasba | glasbene note | nota | note";
+// 🎤 - microphone
+"72079210.name" = "mikrofon";
+"72079210.tags" = "karaoke | mikrofon";
+// 🎧 - headphones
+"72079225.name" = "slušalka";
+"72079225.tags" = "slušalka | ušesna slušalka";
+// 📻 - radio
+"72077090.name" = "radio";
+"72077090.tags" = "glasba | radio";
+// 🎷 - saxophone
+"72079305.name" = "saksofon";
+"72079305.tags" = "glasba | instrument | saksofon";
+// 🪗 - accordion
+"72080435.name" = "harmonika";
+"72080435.tags" = "harmonika | kromatična harmonika | meh";
+// 🎸 - guitar
+"72079310.name" = "kitara";
+"72079310.tags" = "glasba | glasbilo | kitara";
+// 🎹 - musical_keyboard
+"72079315.name" = "klaviatura";
+"72079315.tags" = "glasba | glasbilo | klaviatura | klavir";
+// 🎺 - trumpet
+"72079320.name" = "trobenta";
+"72079320.tags" = "glasba | glasbilo | trobenta";
+// 🎻 - violin
+"72079325.name" = "violina";
+"72079325.tags" = "glasba | glasbilo | violina";
+// 🪕 - banjo
+"72080425.name" = "bendžo";
+"72080425.tags" = "bendžo | brenkalo | glasba | glasbilo | strune";
+// 🥁 - drum_with_drumsticks
+"72078725.name" = "boben";
+"72078725.tags" = "boben | glasba | tolkalo";
+// 🪘 - long_drum
+"72080440.name" = "visok boben";
+"72080440.tags" = "boben | kongo | ritem | visok boben";
+// 🪇 - maracas
+"72080355.name" = "marake";
+"72080355.tags" = "glasba | glasbilo | marake | ropotulja | stresaj | tolkala";
+// 🪈 - flute
+"72080360.name" = "flavta";
+"72080360.tags" = "flavta | glasba | pihala | piščal | snemalnik";
+// 📱 - iphone
+"72077040.name" = "mobilni telefon";
+"72077040.tags" = "mobilni telefon | mobilnik | mobilno | telefon";
+// 📲 - calling
+"72077045.name" = "mobilni telefon s puščico";
+"72077045.tags" = "klic | mobilni telefon s puščico | mobilnik | mobilno | puščica | sprejeti | telefon";
+// 📞 - telephone_receiver
+"72076945.name" = "telefonska slušalka";
+"72076945.tags" = "sprejemnik | telefon | telefonska slušalka";
+// 📟 - pager
+"72076950.name" = "pozivnik";
+"72076950.tags" = "pozivnik";
+// 📠 - fax
+"72076955.name" = "telefaks";
+"72076955.tags" = "faks | telefaks";
+// 🔋 - battery
+"72077170.name" = "baterija";
+"72077170.tags" = "baterija";
+// 🪫 - low_battery
+"72080535.name" = "skoraj prazna baterija";
+"72080535.tags" = "elektronsko | nizka raven energije | skoraj prazna baterija";
+// 🔌 - electric_plug
+"72077175.name" = "električni vtikač";
+"72077175.tags" = "električni vtikač | električno | elektrika | vtikač";
+// 💻 - computer
+"72076770.name" = "prenosnik";
+"72076770.tags" = "osebno | prenosnik | računalnik | sistem | windows";
+// 💽 - minidisc
+"72076780.name" = "minidisk";
+"72076780.tags" = "disk | minidisk | optično | računalnik";
+// 💾 - floppy_disk
+"72076785.name" = "disketa";
+"72076785.tags" = "disk | disketa | računalnik";
+// 💿 - cd
+"72076790.name" = "optični disk";
+"72076790.tags" = "blu-ray | cd | disk | dvd | optični disk | optično | računalnik";
+// 📀 - dvd
+"72076795.name" = "dvd";
+"72076795.tags" = "blu-ray | cd | disk | dvd | optično | računalnik";
+// 🧮 - abacus
+"72079590.name" = "abak";
+"72079590.tags" = "abak | izračun";
+// 🎥 - movie_camera
+"72079215.name" = "filmska kamera";
+"72079215.tags" = "film | filmska kamera | kamera | kino";
+// 🎬 - clapper
+"72079250.name" = "klapa";
+"72079250.tags" = "film | klapa";
+// 📺 - tv
+"72077085.name" = "televizija";
+"72077085.tags" = "televizija | tv | video";
+// 📷 - camera
+"72077070.name" = "fotoaparat";
+"72077070.tags" = "fotoaparat | video";
+// 📸 - camera_with_flash
+"72077075.name" = "fotoaparat z bliskavico";
+"72077075.tags" = "bliskavica | fotoaparat | fotoaparat z bliskavico | video";
+// 📹 - video_camera
+"72077080.name" = "videokamera";
+"72077080.tags" = "video | videokamera";
+// 📼 - vhs
+"72077095.name" = "videokaseta";
+"72077095.tags" = "kaseta | vhs | video | videokaseta";
+// 🔍 - mag
+"72077180.name" = "povečevalno steklo, usmerjeno v levo";
+"72077180.tags" = "iskanje | orodje | povečevalno | povečevalno steklo | usmerjeno v levo | steklo";
+// 🔎 - mag_right
+"72077185.name" = "povečevalno steklo, usmerjeno v desno";
+"72077185.tags" = "iskanje | orodje | povečevalno | povečevalno steklo | usmerjeno v desno | steklo";
+// 💡 - bulb
+"72076640.name" = "žarnica";
+"72076640.tags" = "električno | luč | strip | zamisel | žarnica";
+// 🔦 - flashlight
+"72077305.name" = "svetilka";
+"72077305.tags" = "električno | luč | orodje | svetilka";
+// 🏮 - izakaya_lantern
+"72079580.name" = "rdeči lampijon";
+"72079580.tags" = "bar | japonsko | lampijon | luč | rdeče | rdeči lampijon";
+// 🪔 - diya_lamp
+"72080420.name" = "oljna lučka";
+"72080420.tags" = "dyja | lučka | olje | oljna lučka | svetilka";
+// 📔 - notebook_with_decorative_cover
+"72076895.name" = "zvezek z okrasno platnico";
+"72076895.tags" = "knjiga | okrašeno | platnica | zvezek | zvezek z okrasno platnico";
+// 📕 - closed_book
+"72076900.name" = "zaprta knjiga";
+"72076900.tags" = "knjiga | zaprta knjiga | zaprto";
+// 📖 - book
+"72076905.name" = "odprta knjiga";
+"72076905.tags" = "knjiga | odprta knjiga | odprto";
+// 📗 - green_book
+"72076910.name" = "zelena knjiga";
+"72076910.tags" = "knjiga | zelena knjiga | zeleno";
+// 📘 - blue_book
+"72076915.name" = "modra knjiga";
+"72076915.tags" = "knjiga | modra knjiga | modro";
+// 📙 - orange_book
+"72076920.name" = "oranžna knjiga";
+"72076920.tags" = "knjiga | oranžna knjiga | oranžno";
+// 📚 - books
+"72076925.name" = "knjige";
+"72076925.tags" = "knjiga | knjige";
+// 📓 - notebook
+"72076890.name" = "zvezek";
+"72076890.tags" = "zvezek";
+// 📒 - ledger
+"72076885.name" = "zvezek s spiralno vezavo";
+"72076885.tags" = "zvezek | zvezek s spiralno vezavo";
+// 📃 - page_with_curl
+"72076810.name" = "zvita stran";
+"72076810.tags" = "dokument | nagrbančiti se | stran | zvita stran";
+// 📜 - scroll
+"72076935.name" = "zvitek";
+"72076935.tags" = "papir | zvitek";
+// 📄 - page_facing_up
+"72076815.name" = "list s prikazano popisano stranjo";
+"72076815.tags" = "dokument | list s prikazano popisano stranjo | stran";
+// 📰 - newspaper
+"72077035.name" = "časopis";
+"72077035.tags" = "časopis | novice";
+// 📑 - bookmark_tabs
+"72076880.name" = "zaznamki na straneh";
+"72076880.tags" = "marker | oznaka | zavihki | zaznamek | zaznamki na straneh";
+// 🔖 - bookmark
+"72077225.name" = "zaznamek";
+"72077225.tags" = "oznaka | zaznamek";
+// 💰 - moneybag
+"72076715.name" = "vreča denarja";
+"72076715.tags" = "denar | dolar | vreča | vreča denarja";
+// 🪙 - coin
+"72080445.name" = "kovanec";
+"72080445.tags" = "denar | kovanec | kovina | srebro | zaklad | zlato";
+// 💴 - yen
+"72076735.name" = "bankovec za jen";
+"72076735.tags" = "apoen | banka | bankovec | bankovec za jen | denar | jen | valuta";
+// 💵 - dollar
+"72076740.name" = "dolarski bankovec";
+"72076740.tags" = "apoen | banka | bankovec | denar | dolar | dolarski bankovec | valuta";
+// 💶 - euro
+"72076745.name" = "evrski bankovec";
+"72076745.tags" = "apoen | banka | bankovec | denar | evro | evrski bankovec | valuta";
+// 💷 - pound
+"72076750.name" = "bankovec za funt";
+"72076750.tags" = "apoen | banka | bankovec | bankovec za funt | denar | funt | valuta";
+// 💸 - money_with_wings
+"72076755.name" = "denar s krili";
+"72076755.tags" = "apoen | banka | bankovec | denar | denar s krili | dolar | krila | leteti | valuta";
+// 💳 - credit_card
+"72076730.name" = "kreditna kartica";
+"72076730.tags" = "banka | denar | kartica | kreditna kartica | kreditno";
+// 🧾 - receipt
+"72079670.name" = "račun";
+"72079670.tags" = "dokaz | dokazilo | knjigovodstvo | račun | računovodstvo";
+// 💹 - chart
+"72076760.name" = "grafikon rasti za jen";
+"72076760.tags" = "banka | denar | graf | grafikon | grafikon rasti za jen | jen | navzgor | rast | rasti | trend | trg | valuta";
+// 📧 - e-mail
+"72076990.name" = "e-pošta";
+"72076990.tags" = "e-pošta | elektronska pošta | pismo | pošta";
+// 📨 - incoming_envelope
+"72076995.name" = "dohodna ovojnica";
+"72076995.tags" = "dohodna ovojnica | dohodno | e-pošta | elektronska pošta | pismo | pošta | prejeti";
+// 📩 - envelope_with_arrow
+"72077000.name" = "ovojnica s puščico";
+"72077000.tags" = "e-pošta | elektronska pošta | kuverta | navzdol | odhodno | ovojnica s puščico | pismo | poslano | pošta | puščica";
+// 📤 - outbox_tray
+"72076975.name" = "pladenj za odhodno pošto";
+"72076975.tags" = "nabiralnik | odhodna pošta | pismo | pladenj | pladenj za odhodno pošto | poslano | pošta";
+// 📥 - inbox_tray
+"72076980.name" = "pladenj za dohodno pošto";
+"72076980.tags" = "dohodna pošta | nabiralnik | pismo | pladenj | pladenj za dohodno pošto | pošta | prejeti";
+// 📦 - package
+"72076985.name" = "paket";
+"72076985.tags" = "nabiralnik | paket";
+// 📫 - mailbox
+"72077010.name" = "zaprt poštni nabiralnik z dvignjeno zastavico";
+"72077010.tags" = "pošta | poštni nabiralnik | zaprt poštni nabiralnik z dvignjeno zastavico | zaprto";
+// 📪 - mailbox_closed
+"72077005.name" = "zaprt poštni nabiralnik s spuščeno zastavico";
+"72077005.tags" = "pošta | poštni nabiralnik | spuščeno | zaprt poštni nabiralnik s spuščeno zastavico | zaprto";
+// 📬 - mailbox_with_mail
+"72077015.name" = "odprt poštni nabiralnik z dvignjeno zastavico";
+"72077015.tags" = "odprt poštni nabiralnik z dvignjeno zastavico | odprto | pošta | poštni nabiralnik";
+// 📭 - mailbox_with_no_mail
+"72077020.name" = "odprt poštni nabiralnik s spuščeno zastavico";
+"72077020.tags" = "odprt poštni nabiralnik s spuščeno zastavico | odprto | pošta | poštni nabiralnik | spuščeno";
+// 📮 - postbox
+"72077025.name" = "poštni nabiralnik";
+"72077025.tags" = "pošta | poštni nabiralnik";
+// 📝 - memo
+"72076940.name" = "zapisek";
+"72076940.tags" = "svinčnik | zapisek";
+// 💼 - briefcase
+"72076775.name" = "kovček";
+"72076775.tags" = "aktovka | kovček";
+// 📁 - file_folder
+"72076800.name" = "mapa za spise";
+"72076800.tags" = "mapa | mapa za spise | spis";
+// 📂 - open_file_folder
+"72076805.name" = "odprta mapa za spise";
+"72076805.tags" = "mapa | odprta mapa za spise | odprto | spis";
+// 📅 - date
+"72076820.name" = "koledar";
+"72076820.tags" = "datum | koledar";
+// 📆 - calendar
+"72076825.name" = "koledar z odstranljivimi listi";
+"72076825.tags" = "koledar | koledar z odstranljivimi listi";
+// 📇 - card_index
+"72076830.name" = "organizator vizitk";
+"72076830.tags" = "kartica | kartoteka | organizator vizitk";
+// 📈 - chart_with_upwards_trend
+"72076835.name" = "grafikon rasti";
+"72076835.tags" = "graf | grafikon | grafikon rasti | navzgor | rast | trend";
+// 📉 - chart_with_downwards_trend
+"72076840.name" = "grafikon padca";
+"72076840.tags" = "graf | grafikon | grafikon padca | navzdol | trend";
+// 📊 - bar_chart
+"72076845.name" = "črtni grafikon";
+"72076845.tags" = "črtni grafikon | črtno | graf | grafikon";
+// 📋 - clipboard
+"72076850.name" = "podložna mapa";
+"72076850.tags" = "podložna mapa";
+// 📌 - pushpin
+"72076855.name" = "risalni žebljiček";
+"72076855.tags" = "risalni žebljiček";
+// 📍 - round_pushpin
+"72076860.name" = "okrogli risalni žebljiček";
+"72076860.tags" = "okrogli risalni žebljiček | risalni žebljiček";
+// 📎 - paperclip
+"72076865.name" = "sponka za papir";
+"72076865.tags" = "sponka za papir";
+// 📏 - straight_ruler
+"72076870.name" = "ravnilo";
+"72076870.tags" = "merilo | ravnilo";
+// 📐 - triangular_ruler
+"72076875.name" = "trikotno ravnilo";
+"72076875.tags" = "merilo | nastaviti | trikotnik | trikotno ravnilo";
+// 🔒 - lock
+"72077205.name" = "ključavnica";
+"72077205.tags" = "ključavnica | zaklenjena ključavnica";
+// 🔓 - unlock
+"72077210.name" = "odklenjena ključavnica";
+"72077210.tags" = "ključavnica | odkleniti | odklenjena ključavnica | odprto";
+// 🔏 - lock_with_ink_pen
+"72077190.name" = "ključavnica s peresom";
+"72077190.tags" = "črnilo | ključavnica | ključavnica s peresom | konica | pero | zasebnost";
+// 🔐 - closed_lock_with_key
+"72077195.name" = "zaprta ključavnica s ključem";
+"72077195.tags" = "ključ | ključavnica | varno | zaprta ključavnica s ključem | zaprto";
+// 🔑 - key
+"72077200.name" = "ključ";
+"72077200.tags" = "geslo | ključ | ključavnica";
+// 🔨 - hammer
+"72077315.name" = "kladivo";
+"72077315.tags" = "kladivo | orodje";
+// 🪓 - axe
+"72080415.name" = "sekira";
+"72080415.tags" = "cepljenje | drva | les | sekanje | sekira";
+// 💣 - bomb
+"72076650.name" = "bomba";
+"72076650.tags" = "bomba | strip";
+// 🪃 - boomerang
+"72080335.name" = "bumerang";
+"72080335.tags" = "avstralija | bumerang | udarec nazaj | vračanje";
+// 🏹 - bow_and_arrow
+"72079635.name" = "lok in puščica";
+"72079635.tags" = "lok | lok in puščica | lokostrelec | orodje | orožje | puščica | strelec | zodiak";
+// 🪚 - carpentry_saw
+"72080450.name" = "lisičja žaga";
+"72080450.tags" = "lisičja žaga | mizar | orodje | žaga | žagati";
+// 🔧 - wrench
+"72077310.name" = "ključ za matice";
+"72077310.tags" = "ključ za matice | orodje";
+// 🪛 - screwdriver
+"72080455.name" = "izvijač";
+"72080455.tags" = "izvijač | orodje | vijak";
+// 🔩 - nut_and_bolt
+"72077320.name" = "matica in vijak";
+"72077320.tags" = "matica | matica in vijak | orodje | vijak";
+// 🦯 - probing_cane
+"72079275.name" = "palica za slepe";
+"72079275.tags" = "invalid | palica za slepe | slepota";
+// 🔗 - link
+"72077230.name" = "člen";
+"72077230.tags" = "člen";
+// 🪝 - hook
+"72080465.name" = "kljuka";
+"72080465.tags" = "kavelj | kljuka | krivuljnik | prednost | zanka | zaponka";
+// 🧰 - toolbox
+"72079600.name" = "zaboj za orodje";
+"72079600.tags" = "mehanik | orodje | zaboj | zaboj za orodje";
+// 🧲 - magnet
+"72079610.name" = "magnet";
+"72079610.tags" = "magnet | magnetno | podkev | privlačnost";
+// 🪜 - ladder
+"72080460.name" = "lestev";
+"72080460.tags" = "klin | lestev | plezanje | prečka";
+// 🧪 - test_tube
+"72079570.name" = "epruveta";
+"72079570.tags" = "eksperiment | epruveta | kemija | kemik | laboratorij | znanost";
+// 🧫 - petri_dish
+"72079575.name" = "petrijevka";
+"72079575.tags" = "bakterije | biolog | biologija | kultura | laboratorij | petrijevka";
+// 🧬 - dna
+"72079580.name" = "dnk";
+"72079580.tags" = "biolog | dnk | evolucija | gen | genetika | življenje";
+// 🔬 - microscope
+"72077335.name" = "mikroskop";
+"72077335.tags" = "mikroskop | orodje";
+// 🔭 - telescope
+"72077340.name" = "teleskop";
+"72077340.tags" = "orodje | teleskop";
+// 📡 - satellite_antenna
+"72076960.name" = "satelitska antena";
+"72076960.tags" = "antena | krožnik | satelitska antena | satelitsko";
+// 💉 - syringe
+"72076520.name" = "injekcija";
+"72076520.tags" = "bolno | igla | injekcija | medicina | orodje | zdravnik";
+// 🩸 - drop_of_blood
+"72080280.name" = "kaplja krvi";
+"72080280.tags" = "kaplja krvi | krvodajalstvo | medicina | menstruacija | zdravstvo";
+// 💊 - pill
+"72076525.name" = "tableta";
+"72076525.tags" = "bolno | tableta | zdravilo | zdravnik";
+// 🩹 - adhesive_bandage
+"72080285.name" = "samolepilni obliž";
+"72080285.tags" = "hanzaplast | rana | samolepilni obliž";
+// 🩼 - crutch
+"72080300.name" = "bergla";
+"72080300.tags" = "bergla | invalidnost | opora | palica | poškodba | pripomoček za mobilnost";
+// 🩺 - stethoscope
+"72080290.name" = "stetoskop";
+"72080290.tags" = "medicina | pljuča | prsni koš | srce | stetoskop | zdravnik";
+// 🩻 - x-ray
+"72080295.name" = "rentgen";
+"72080295.tags" = "kosti | okostje | rentgen | zdravnik | zdravniški";
+// 🚪 - door
+"72079245.name" = "vrata";
+"72079245.tags" = "vrata";
+// 🛗 - elevator
+"72079470.name" = "dvigalo";
+"72079470.tags" = "dostopnost | dvigalo | elevator | lift";
+// 🪞 - mirror
+"72080470.name" = "zrcalo";
+"72080470.tags" = "odsev | ogledalo | zrcalo";
+// 🪟 - window
+"72080475.name" = "okno";
+"72080475.tags" = "odprtina | okno | okvir | pogled | prosojno | svež zrak";
+// 🪑 - chair
+"72080405.name" = "stol";
+"72080405.tags" = "sedeti | sedež | stol";
+// 🚽 - toilet
+"72079340.name" = "straniščna školjka";
+"72079340.tags" = "stranišče | straniščna školjka";
+// 🪠 - plunger
+"72080480.name" = "odmaševalnik";
+"72080480.tags" = "odmaševalnik | sesalna skodela | sesanje | stranišče | vodoinštalater";
+// 🚿 - shower
+"72079350.name" = "tuš";
+"72079350.tags" = "tuš | voda";
+// 🛁 - bathtub
+"72079360.name" = "kad";
+"72079360.tags" = "banja | kad";
+// 🪤 - mouse_trap
+"72080500.name" = "mišolovka";
+"72080500.tags" = "mišolovka | past za miši | vaba";
+// 🪒 - razor
+"72080410.name" = "britev";
+"72080410.tags" = "britev | britje | britvica | ostro";
+// 🧴 - lotion_bottle
+"72079620.name" = "steklenička losjona";
+"72079620.tags" = "krema za sončenje | losjon | šampon | steklenička losjona | vlažilna krema";
+// 🧷 - safety_pin
+"72079635.name" = "varnostna zaponka";
+"72079635.tags" = "plenica | punk rock | varnostna zaponka";
+// 🧹 - broom
+"72079645.name" = "metla";
+"72079645.tags" = "čarovnica | čiščenje | metla | pometanje";
+// 🧺 - basket
+"72079650.name" = "košara";
+"72079650.tags" = "kmetovanje | košara | perilo | piknik";
+// 🧻 - roll_of_paper
+"72079655.name" = "zvitek papirja";
+"72079655.tags" = "papirnate brisače | toaletni papir | zvitek papirja";
+// 🪣 - bucket
+"72080495.name" = "vedro";
+"72080495.tags" = "čeber | škaf | sod | vedro";
+// 🧼 - soap
+"72079660.name" = "milo";
+"72079660.tags" = "čiščenje | kopanje | kos | milo | pena | posodica za milo";
+// 🫧 - bubbles
+"72080835.name" = "mehurčki";
+"72080835.tags" = "čisto | kupček | mehurčki | milo | podvodni";
+// 🪥 - toothbrush
+"72080505.name" = "zobna ščetka";
+"72080505.tags" = "čisto | higiena | kopalnica | ščetka | zobje | zobna";
+// 🧽 - sponge
+"72079665.name" = "spužva";
+"72079665.tags" = "čiščenje | porozno | spužva | vpojno";
+// 🧯 - fire_extinguisher
+"72079595.name" = "gasilni aparat";
+"72079595.tags" = "gašenje | gasilni aparat | ogenj | pogasiti";
+// 🛒 - shopping_trolley
+"72079445.name" = "nakupovalni voziček";
+"72079445.tags" = "košarica | nakupovalni voziček | nakupovanje | voziček";
+// 🚬 - smoking
+"72079255.name" = "kajenje";
+"72079255.tags" = "cigara | cigareta | kajenje";
+// 🪦 - headstone
+"72080510.name" = "nagrobnik";
+"72080510.tags" = "grob | grobovi | nagrobnik | pokopališče | spomenik";
+// 🧿 - nazar_amulet
+"72079675.name" = "amulet zlobno oko";
+"72079675.tags" = "amulet | amulet zlobno oko | koralda | nazar | talisman | zlobno oko";
+// 🪬 - hamsa
+"72080540.name" = "roka Fatime";
+"72080540.tags" = "amulet | Fatima | Marija | Mirjam | roka | roka Fatime | zaščita";
+// 🗿 - moyai
+"72078390.name" = "moai";
+"72078390.tags" = "kip | moai | obraz";
+// 🪧 - placard
+"72080515.name" = "plakat";
+"72080515.tags" = "demonstracija | kol | plakat | protest | znak";
+// 🪪 - identification_card
+"72080530.name" = "osebni dokument";
+"72080530.tags" = "dovoljenje | osebni dokument | poverilnice | varnost";
+// 🏧 - atm
+"72079545.name" = "znak za bankomat";
+"72079545.tags" = "avtomat | bankomat | denar | znak za bankomat";
+// 🚮 - put_litter_in_its_place
+"72079265.name" = "znak za smeti v košu";
+"72079265.tags" = "koš | smeti | znak za smeti v košu";
+// 🚰 - potable_water
+"72079275.name" = "pitna voda";
+"72079275.tags" = "piti | pitna voda | pitno | voda";
+// ♿ - wheelchair
+"30336.name" = "invalidski voziček";
+"30336.tags" = "dostop | invalidski voziček";
+// 🚹 - mens
+"72079320.name" = "stranišče za moške";
+"72079320.tags" = "moški | stranišče | stranišče za moške | wc";
+// 🚺 - womens
+"72079325.name" = "stranišče za ženske";
+"72079325.tags" = "stranišče | stranišče za ženske | wc | ženska";
+// 🚻 - restroom
+"72079330.name" = "javno stranišče";
+"72079330.tags" = "javno stranišče | wc";
+// 🚼 - baby_symbol
+"72079335.name" = "simbol dojenčka";
+"72079335.tags" = "dojenček | previjanje | simbol dojenčka";
+// 🚾 - wc
+"72079345.name" = "wc";
+"72079345.tags" = "stranišče | voda | wc";
+// 🛂 - passport_control
+"72079365.name" = "pregled dokumentov";
+"72079365.tags" = "nadzor | potni list | pregled dokumentov";
+// 🛃 - customs
+"72079370.name" = "carina";
+"72079370.tags" = "carina | carinik";
+// 🛄 - baggage_claim
+"72079375.name" = "prevzem prtljage";
+"72079375.tags" = "prevzem | prevzem prtljage | prtljaga";
+// 🛅 - left_luggage
+"72079380.name" = "prtljaga v garderobi";
+"72079380.tags" = "kovčki | omarica | prtljaga | prtljaga v garderobi";
+// 🚸 - children_crossing
+"72079315.name" = "otroci prečkajo cesto";
+"72079315.tags" = "otroci prečkajo cesto | otrok | pešec | prehod | promet";
+// ⛔ - no_entry
+"30591.name" = "ni prehoda";
+"30591.tags" = "ne | ni dovoljeno | ni prehoda | prepovedano | promet | vstop";
+// 🚫 - no_entry_sign
+"72079250.name" = "prepovedano";
+"72079250.tags" = "ne | prepovedano | vstop";
+// 🚳 - no_bicycles
+"72079290.name" = "prepovedano za kolesa";
+"72079290.tags" = "kolo | ne | ni dovoljeno | prepovedano | prepovedano za kolesa | vozilo";
+// 🚭 - no_smoking
+"72079260.name" = "prepovedano kajenje";
+"72079260.tags" = "kajenje | ne | ni dovoljeno | prepovedano";
+// 🚯 - do_not_litter
+"72079270.name" = "prepovedano odlaganje smeti";
+"72079270.tags" = "ne | ni dovoljeno | odlagati | prepovedano | prepovedano odlaganje smeti | smeti";
+// 🚱 - non-potable_water
+"72079280.name" = "voda ni pitna";
+"72079280.tags" = "ne | ni dovoljeno | piti | pitno | prepovedati | voda | voda ni pitna";
+// 🚷 - no_pedestrians
+"72079310.name" = "prepovedano za pešce";
+"72079310.tags" = "ne | ni dovoljeno | pešec | prepovedano | prepovedano za pešce";
+// 📵 - no_mobile_phones
+"72077060.name" = "mobilni telefoni prepovedani";
+"72077060.tags" = "mobilni telefoni prepovedani | mobilnik | mobilno | ne | ni dovoljeno | prepovedano | telefon";
+// 🔞 - underage
+"72077265.name" = "prepovedano za mlajše od 18 let";
+"72077265.tags" = "18 | mladoletno | ne | ni dovoljeno | omejitev starosti | osemnajst | prepovedano | prepovedano za mlajše od 18 let";
+// 🔃 - arrows_clockwise
+"72077130.name" = "navpični puščici, ki se ukrivljata v smeri urnega kazalca";
+"72077130.tags" = "navpični puščici | ki se ukrivljata v smeri urnega kazalca | puščica | smer urnega kazalca | vnovično nalaganje";
+// 🔄 - arrows_counterclockwise
+"72077135.name" = "gumb s puščicama, ki se ukrivljata v obratni smeri urnega kazalca";
+"72077135.tags" = "gumb s puščicama | ki se ukrivljata v obratni smeri urnega kazalca | nasprotna smer urnega kazalca | nazaj | puščica";
+// 🔙 - back
+"72077240.name" = "puščica nazaj";
+"72077240.tags" = "nazaj | puščica";
+// 🔚 - end
+"72077245.name" = "puščica konec";
+"72077245.tags" = "konec | puščica";
+// 🔛 - on
+"72077250.name" = "puščica NAPREJ!";
+"72077250.tags" = "puščica | puščica NAPREJ! | vklop | znak";
+// 🔜 - soon
+"72077255.name" = "puščica kmalu";
+"72077255.tags" = "kmalu | puščica";
+// 🔝 - top
+"72077260.name" = "puščica na vrh";
+"72077260.tags" = "navzgor | puščica | puščica na vrh | zgoraj";
+// 🛐 - place_of_worship
+"72079435.name" = "božji hram";
+"72079435.tags" = "božji hram | čaščenje | vera";
+// 🕎 - menorah_with_nine_branches
+"72077505.name" = "menora";
+"72077505.tags" = "menora | namizni svečnik | svečnik | vera";
+// 🔯 - six_pointed_star
+"72077350.name" = "šestkraka zvezda s piko";
+"72077350.tags" = "šestkraka zvezda s piko | sreča | zvezda";
+// 🪯 - khanda
+"72080555.name" = "khanda";
+"72080555.tags" = "khanda | sikh | veroizpoved";
+// ♈ - aries
+"30171.name" = "astrološki znak ovna";
+"30171.tags" = "astrološki znak ovna | oven | zodiak";
+// ♉ - taurus
+"30174.name" = "bik";
+"30174.tags" = "bik | vol | zodiak";
+// ♊ - gemini
+"30177.name" = "dvojčka";
+"30177.tags" = "dvojčka | zodiak";
+// ♋ - cancer
+"30180.name" = "rak";
+"30180.tags" = "rak | zodiak";
+// ♌ - leo
+"30183.name" = "zodiak: lev";
+"30183.tags" = "lev | zodiak | zodiak: lev";
+// ♍ - virgo
+"30186.name" = "devica";
+"30186.tags" = "deva | devica | zodiak";
+// ♎ - libra
+"30189.name" = "tehnica";
+"30189.tags" = "pravičnost | ravnovesje | tehnica | tehtnica | zodiak";
+// ♏ - scorpius
+"30192.name" = "astrološki znak škorpijona";
+"30192.tags" = "astrološki znak škorpijona | škorpijon | zodiak";
+// ♐ - sagittarius
+"30195.name" = "strelec";
+"30195.tags" = "strelec | zodiak";
+// ♑ - capricorn
+"30198.name" = "kozorog";
+"30198.tags" = "koza | kozorog | zodiak";
+// ♒ - aquarius
+"30201.name" = "vodnar";
+"30201.tags" = "nosec | voda | vodnar | zodiak";
+// ♓ - pisces
+"30204.name" = "ribi";
+"30204.tags" = "riba | ribi | zodiak";
+// ⛎ - ophiuchus
+"30573.name" = "kačenosec";
+"30573.tags" = "kača | kačenosec | nosec | zodiak";
+// 🔀 - twisted_rightwards_arrows
+"72077115.name" = "gumb za naključno predvajanje";
+"72077115.tags" = "gumb za naključno predvajanje | prekrižano | puščica";
+// 🔁 - repeat
+"72077120.name" = "gumb za vnovično predvajanje";
+"72077120.tags" = "gumb za vnovično predvajanje | ponavljanje | puščica | smer urnega kazalca";
+// 🔂 - repeat_one
+"72077125.name" = "gumb za vnovično posamezno predvajanje";
+"72077125.tags" = "enkratno | gumb za vnovično posamezno predvajanje | puščica | smer urnega kazalca";
+// ⏩ - fast_forward
+"28350.name" = "gumb za hitro previjanje naprej";
+"28350.tags" = "dvojno | gumb za hitro previjanje naprej | hitro | naprej | puščica";
+// ⏪ - rewind
+"28353.name" = "gumb za hitro previjanje nazaj";
+"28353.tags" = "dvojno | gumb za hitro previjanje nazaj | previjanje nazaj | puščica";
+// 🔼 - arrow_up_small
+"72077415.name" = "gumb za gor";
+"72077415.tags" = "gumb | gumb za gor | puščica | rdeče";
+// ⏫ - arrow_double_up
+"28356.name" = "gumb za hitro gor";
+"28356.tags" = "dvojno | gumb za hitro gor | puščica";
+// 🔽 - arrow_down_small
+"72077420.name" = "gumb za dol";
+"72077420.tags" = "gumb | gumb za dol | navzdol | puščica | rdeče";
+// ⏬ - arrow_double_down
+"28359.name" = "gumb za hitro dol";
+"28359.tags" = "dvojno | gumb za hitro dol | navzdol | puščica";
+// 🎦 - cinema
+"72079220.name" = "kino";
+"72079220.tags" = "film | kamera | kino";
+// 🔅 - low_brightness
+"72077140.name" = "gumb za zatemnitev";
+"72077140.tags" = "gumb za zatemnitev | nizko | svetlost | zatemnitev";
+// 🔆 - high_brightness
+"72077145.name" = "gumb za svetlost";
+"72077145.tags" = "gumb za svetlost | svetlo | svetlost";
+// 📶 - signal_strength
+"72077065.name" = "signal";
+"72077065.tags" = "antena | mobilnik | mobilno | signal | stolpec | telefon";
+// 🛜 - wireless
+"72079495.name" = "brezžična povezava";
+"72079495.tags" = "brezžična povezava | internet | omrežje | računalnik";
+// 📳 - vibration_mode
+"72077050.name" = "način vibriranja";
+"72077050.tags" = "mobilnik | mobilno | način | način vibriranja | telefon | vibriranje";
+// 📴 - mobile_phone_off
+"72077055.name" = "mobilni telefon izklopljen";
+"72077055.tags" = "izklopljeno | mobilni telefon izklopljen | mobilnik | mobilno | telefon";
+// ➕ - heavy_plus_sign
+"31170.name" = "plus";
+"31170.tags" = "+ | matematika | plus | znak";
+// ➖ - heavy_minus_sign
+"31173.name" = "minus";
+"31173.tags" = "- | − | matematika | minus | znak";
+// ➗ - heavy_division_sign
+"31176.name" = "deli";
+"31176.tags" = "÷ | deli | deljenje | matematika | znak | znak za deljenje";
+// 🟰 - heavy_equals_sign
+"72080875.name" = "znak za enakovrednost";
+"72080875.tags" = "enakovrednost | matematika | znak za enakovrednost";
+// ❓ - question
+"30972.name" = "rdeč vprašaj";
+"30972.tags" = "? | ločilo | rdeč vprašaj | vprašaj | znak";
+// ❔ - grey_question
+"30975.name" = "bel vprašaj";
+"30975.tags" = "? | bel vprašaj | ločilo | obrobljeno | oznaka | vprašaj | vprašanje";
+// ❕ - grey_exclamation
+"30978.name" = "bel klicaj";
+"30978.tags" = "! | bel klicaj | klicaj | obrobljeno | znak";
+// ❗ - exclamation
+"30984.name" = "rdeč klicaj";
+"30984.tags" = "! | klicaj | ločilo | rdeč klicaj | znak";
+// 💱 - currency_exchange
+"72076720.name" = "menjava valut";
+"72076720.tags" = "banka | denar | menjava | menjava valut | valuta";
+// 💲 - heavy_dollar_sign
+"72076725.name" = "znak za dolar";
+"72076725.tags" = "denar | dolar | valuta | znak za dolar";
+// 🔱 - trident
+"72077360.name" = "trizobo znamenje";
+"72077360.tags" = "ladja | orodje | sidro | trizob | trizobo znamenje | znamenje";
+// 📛 - name_badge
+"72076930.name" = "značka za ime";
+"72076930.tags" = "ime | značka | značka za ime";
+// 🔰 - beginner
+"72077355.name" = "japonski simbol za začetnika";
+"72077355.tags" = "cik-cak | japonski simbol za začetnika | japonsko | list | orodje | puščica | rumeno | začetnik | zeleno";
+// ⭕ - o
+"34050.name" = "velik prazen krog";
+"34050.tags" = "krog | o | rdeč | velik | velik prazen krog";
+// ✅ - white_check_mark
+"30738.name" = "gumb s kljukico";
+"30738.tags" = "✓ | gumb | gumb s kljukico | kljukica | potrditev";
+// ❌ - x
+"30951.name" = "križec";
+"30951.tags" = "× | križec | množenje | množiti | oznaka | preklic | x";
+// ❎ - negative_squared_cross_mark
+"30957.name" = "gumb s križcem";
+"30957.tags" = "× | gumb s križcem | kvadrat | oznaka | x";
+// ➰ - curly_loop
+"31251.name" = "zavita pentlja";
+"31251.tags" = "pentlja | spirala | zanka | zavita pentlja";
+// ➿ - loop
+"31296.name" = "dvojna zavita pentlja";
+"31296.tags" = "dvojna zavita pentlja | dvojno | pentlja | spirala | zanka";
+// 🔠 - capital_abcd
+"72077275.name" = "vnos velikih črk latinice";
+"72077275.tags" = "črke | latinica | velike črke | vnos | vnos velikih črk latinice";
+// 🔡 - abcd
+"72077280.name" = "vnos malih črk latinice";
+"72077280.tags" = "abcd | črke | latinica | male črke | vnos | vnos malih črk latinice";
+// 🔢 - 1234
+"72077285.name" = "vnos številk";
+"72077285.tags" = "1234 | številke | vnos | vnos številk";
+// 🔣 - symbols
+"72077290.name" = "vnos simbolov";
+"72077290.tags" = "vnos | vnos simbolov";
+// 🔤 - abc
+"72077295.name" = "vnos črk latinice";
+"72077295.tags" = "abc | abeceda | črke | latinica | vnos | vnos črk latinice";
+// 🆎 - ab
+"72076540.name" = "gumb AB (krvna skupina)";
+"72076540.tags" = "ab | gumb AB (krvna skupina) | kri";
+// 🆑 - cl
+"72076555.name" = "gumb CL";
+"72076555.tags" = "cl | gumb CL";
+// 🆒 - cool
+"72076560.name" = "gumb COOL";
+"72076560.tags" = "frajersko | gumb COOL";
+// 🆓 - free
+"72076565.name" = "gumb FREE";
+"72076565.tags" = "gumb FREE | prosto";
+// 🆔 - id
+"72076570.name" = "gumb ID";
+"72076570.tags" = "gumb ID | id | identiteta";
+// 🆕 - new
+"72076575.name" = "gumb NEW";
+"72076575.tags" = "gumb NEW | novo";
+// 🆖 - ng
+"72076580.name" = "gumb NG";
+"72076580.tags" = "gumb NG | ng";
+// 🆗 - ok
+"72076585.name" = "gumb OK";
+"72076585.tags" = "gumb OK | v redu";
+// 🆘 - sos
+"72076590.name" = "gumb SOS";
+"72076590.tags" = "gumb SOS | na pomoč | sos";
+// 🆙 - up
+"72076595.name" = "gumb z besedo up in klicajem";
+"72076595.tags" = "gumb z besedo up in klicajem | navzgor | znak";
+// 🆚 - vs
+"72076600.name" = "gumb VS";
+"72076600.tags" = "gumb VS | proti";
+// 🈁 - koko
+"72077115.name" = "gumb za »tukaj« v japonščini";
+"72077115.tags" = "gumb za »tukaj« v japonščini | japonsko | katakana | pisava | tukaj";
+// 🈶 - u6709
+"72077380.name" = "gumb za »ni brezplačno« v japonščini";
+"72077380.tags" = "gumb za »ni brezplačno« v japonščini | ideogram | japonsko | ni brezplačno | plačljivo | pojmovni znak";
+// 🈯 - u6307
+"72077345.name" = "gumb za »rezervirano« v japonščini";
+"72077345.tags" = "gumb za »rezervirano« v japonščini | ideogram | japonsko | pojmovni znak | rezervirano";
+// 🉐 - ideograph_advantage
+"72077510.name" = "gumb za »ugodno« v japonščini";
+"72077510.tags" = "gumb za »ugodno« v japonščini | ideogram | japonsko | pojmovni znak | ugoden nakup";
+// 🈹 - u5272
+"72077395.name" = "gumb za »popust« v japonščini";
+"72077395.tags" = "gumb za »popust« v japonščini | ideogram | japonsko | pojmovni znak | popust";
+// 🈚 - u7121
+"72077240.name" = "gumb za »brezplačno« v japonščini";
+"72077240.tags" = "brezplačno | gumb za »brezplačno« v japonščini | ideogram | japonsko | pojmovni znak";
+// 🈲 - u7981
+"72077360.name" = "gumb za »prepovedano« v japonščini";
+"72077360.tags" = "gumb za »prepovedano« v japonščini | ideogram | japonsko | pojmovni znak | prepovedano";
+// 🉑 - accept
+"72077515.name" = "gumb za »sprejemljivo« v japonščini";
+"72077515.tags" = "gumb za »sprejemljivo« v japonščini | ideogram | japonsko | pojmovni znak | sprejemljivo";
+// 🈸 - u7533
+"72077390.name" = "gumb za »aplikacija« v japonščini";
+"72077390.tags" = "gumb za »aplikacija« v japonščini | ideogram | japonsko | pojmovni znak | uporaba";
+// 🈴 - u5408
+"72077370.name" = "pojmovni znak za skupaj v kvadratu";
+"72077370.tags" = "ideogram | japonsko | pojmovni znak | pojmovni znak za skupaj v kvadratu | zadostna ocena | zadostni uspeh";
+// 🈳 - u7a7a
+"72077365.name" = "gumb za »prosto« v japonščini";
+"72077365.tags" = "gumb za »prosto« v japonščini | ideogram | japonsko | pojmovni znak | prazno | prosto";
+// 🈺 - u55b6
+"72077400.name" = "gumb za »odprto« v japonščini";
+"72077400.tags" = "gumb za »odprto« v japonščini | ideogram | japonsko | odprto za poslovanje | pojmovni znak";
+// 🈵 - u6e80
+"72077375.name" = "gumb za »ni prosto« v japonščini";
+"72077375.tags" = "gumb za »ni prosto« v japonščini | ideogram | japonsko | ni prosto | pojmovni znak | zasedeno";
+// 🔴 - red_circle
+"72077375.name" = "rdeč krog";
+"72077375.tags" = "geometrično | krog | rdeč krog | rdeče";
+// 🟠 - large_orange_circle
+"72080795.name" = "oranžen krog";
+"72080795.tags" = "krog | oranžen";
+// 🟡 - large_yellow_circle
+"72080800.name" = "rumen krog";
+"72080800.tags" = "krog | rumen";
+// 🟢 - large_green_circle
+"72080805.name" = "zelen krog";
+"72080805.tags" = "krog | zelen";
+// 🔵 - large_blue_circle
+"72077380.name" = "moder krog";
+"72077380.tags" = "geometrično | krog | moder krog | modro";
+// 🟣 - large_purple_circle
+"72080810.name" = "škrlaten krog";
+"72080810.tags" = "krog | škrlaten";
+// 🟤 - large_brown_circle
+"72080815.name" = "rjav krog";
+"72080815.tags" = "krog | rjav";
+// ⚫ - black_circle
+"30468.name" = "črn krog";
+"30468.tags" = "črn krog | geometrično | krog";
+// ⚪ - white_circle
+"30465.name" = "bel krog";
+"30465.tags" = "bel krog | geometrično | krog";
+// 🟥 - large_red_square
+"72080820.name" = "rdeč kvadrat";
+"72080820.tags" = "kvadrat | rdeč";
+// 🟧 - large_orange_square
+"72080830.name" = "oranžen kvadrat";
+"72080830.tags" = "kvadrat | oranžen";
+// 🟨 - large_yellow_square
+"72080835.name" = "rumen kvadrat";
+"72080835.tags" = "kvadrat | rumen";
+// 🟩 - large_green_square
+"72080840.name" = "zelen kvadrat";
+"72080840.tags" = "kvadrat | zelen";
+// 🟦 - large_blue_square
+"72080825.name" = "moder kvadrat";
+"72080825.tags" = "kvadrat | moder";
+// 🟪 - large_purple_square
+"72080845.name" = "škrlaten kvadrat";
+"72080845.tags" = "kvadrat | škrlaten";
+// 🟫 - large_brown_square
+"72080850.name" = "rjav kvadrat";
+"72080850.tags" = "kvadrat | rjav";
+// ⬛ - black_large_square
+"33876.name" = "velik črn kvadrat";
+"33876.tags" = "geometrično | kvadrat | velik črn kvadrat";
+// ⬜ - white_large_square
+"33879.name" = "velik bel kvadrat";
+"33879.tags" = "geometrično | kvadrat | velik bel kvadrat";
+// ◾ - black_medium_small_square
+"29949.name" = "srednje majhen črn kvadrat";
+"29949.tags" = "geometrično | kvadrat | srednje majhen črn kvadrat";
+// ◽ - white_medium_small_square
+"29946.name" = "srednje mali beli kvadrat";
+"29946.tags" = "geometrično | kvadrat | srednje mali beli kvadrat";
+// 🔶 - large_orange_diamond
+"72077385.name" = "velik oranžen karo";
+"72077385.tags" = "geometrično | karo | oranžno | velik oranžen karo";
+// 🔷 - large_blue_diamond
+"72077390.name" = "velik moder karo";
+"72077390.tags" = "geometrično | karo | modro | velik moder karo";
+// 🔸 - small_orange_diamond
+"72077395.name" = "majhen oranžen karo";
+"72077395.tags" = "geometrično | karo | majhen oranžen karo | oranžno";
+// 🔹 - small_blue_diamond
+"72077400.name" = "majhen moder karo";
+"72077400.tags" = "geometrično | karo | majhen moder karo | modro";
+// 🔺 - small_red_triangle
+"72077405.name" = "rdeč trikotnik gor";
+"72077405.tags" = "geometrično | rdeč trikotnik gor | rdeče";
+// 🔻 - small_red_triangle_down
+"72077410.name" = "rdeč trikotnik dol";
+"72077410.tags" = "geometrično | navzdol | rdeč trikotnik dol | rdeče";
+// 💠 - diamond_shape_with_a_dot_inside
+"72076635.name" = "karo s piko";
+"72076635.tags" = "geometrično | karo | karo s piko | strip | znotraj";
+// 🔘 - radio_button
+"72077235.name" = "izbirni gumb";
+"72077235.tags" = "geometrično | gumb | izbirni";
+// 🔳 - white_square_button
+"72077370.name" = "gumb z belim kvadratom";
+"72077370.tags" = "geometrično | gumb | gumb z belim kvadratom | kvadrat | obrobljeno";
+// 🔲 - black_square_button
+"72077365.name" = "gumb s črnim kvadratom";
+"72077365.tags" = "geometrično | gumb | gumb s črnim kvadratom | kvadrat";
+// 🏁 - checkered_flag
+"72079355.name" = "kockasta zastava";
+"72079355.tags" = "dirkanje | kockasta zastava | kockasto | zastava";
+// 🚩 - triangular_flag_on_post
+"72079240.name" = "trikotna zastava";
+"72079240.tags" = "trikotna zastava | zastavica";
+// 🎌 - crossed_flags
+"72079090.name" = "prekrižani zastavi";
+"72079090.tags" = "japonsko | križ | prekrižani zastavi | prekrižano | slavje";
+// 🏴 - waving_black_flag
+"72079610.name" = "črna zastava";
+"72079610.tags" = "črna zastava | plapolanje";

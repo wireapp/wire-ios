@@ -1,0 +1,3714 @@
+//
+// Wire
+// Copyright (C) 2023 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
+
+// 😀 - grinning
+"72078395.name" = "grijnzend gezicht";
+"72078395.tags" = "gezicht | grijns | grijnzend gezicht";
+// 😃 - smiley
+"72078410.name" = "grijnzend gezicht met grote ogen";
+"72078410.tags" = "gezicht | grijnzend gezicht met grote ogen | lach | mond | open";
+// 😄 - smile
+"72078415.name" = "grijnzend gezicht met lachende ogen";
+"72078415.tags" = "gezicht | grijnzend gezicht met lachende ogen | lach | mond | oog | open";
+// 😁 - grin
+"72078400.name" = "stralend gezicht met lachende ogen";
+"72078400.tags" = "gezicht | grijns | lach | oog | stralend gezicht met lachende ogen";
+// 😆 - laughing
+"72078425.name" = "grijnzend gezicht met stijf dichtgeknepen ogen";
+"72078425.tags" = "gezicht | glimlach | grijnzend gezicht met stijf dichtgeknepen ogen | lach | mond | open | tevreden";
+// 😅 - sweat_smile
+"72078420.name" = "grijnzend gezicht met zweetdruppels";
+"72078420.tags" = "gezicht | grijnzend gezicht met zweetdruppels | koud | lach | open | zweet";
+// 🤣 - rolling_on_the_floor_laughing
+"72078575.name" = "gezicht dat op de grond rolt van het lachen";
+"72078575.tags" = "gezicht | gezicht dat op de grond rolt van het lachen | grond | lachen | rollen";
+// 😂 - joy
+"72078405.name" = "gezicht met tranen van vreugde";
+"72078405.tags" = "gezicht | gezicht met tranen van vreugde | lach | traan | vreugde";
+// 🙂 - slightly_smiling_face
+"72078725.name" = "enigszins lachend gezicht";
+"72078725.tags" = "enigszins lachend gezicht | gezicht | glimlach";
+// 🙃 - upside_down_face
+"72078730.name" = "omgekeerd gezicht";
+"72078730.tags" = "gezicht | omgekeerd gezicht | ondersteboven | op de kop";
+// 🫠 - melting_face
+"72080800.name" = "smeltend gezicht";
+"72080800.tags" = "oplossen | smelten | smeltend gezicht | verdwijnen | vloeibaar";
+// 😉 - wink
+"72078440.name" = "knipogend gezicht";
+"72078440.tags" = "gezicht | knipogend gezicht | knipoog";
+// 😊 - blush
+"72078445.name" = "lachend gezicht met lachende ogen";
+"72078445.tags" = "blozen | gezicht | glimlach | lachend gezicht met lachende ogen | oog";
+// 😇 - innocent
+"72078430.name" = "lachend gezicht met halo";
+"72078430.tags" = "engel | fantasie | gezicht | halo | lachend gezicht met halo | onschuldig";
+// 🥰 - smiling_face_with_3_hearts
+"72078960.name" = "lachend gezicht met hartjes";
+"72078960.tags" = "dol | hartjes | lachend gezicht met hartjes | smoor | verliefd";
+// 😍 - heart_eyes
+"72078460.name" = "lachend gezicht met hartvormige ogen";
+"72078460.tags" = "gezicht | glimlach | lachend gezicht met hartvormige ogen | liefde | oog";
+// 🤩 - star-struck
+"72078605.name" = "sterren in de ogen";
+"72078605.tags" = "gezicht | grijnzend | ogen | ster | sterren in de ogen";
+// 😘 - kissing_heart
+"72078515.name" = "gezicht dat kus toeblaast";
+"72078515.tags" = "gezicht | gezicht dat kus toeblaast | kus";
+// 😗 - kissing
+"72078510.name" = "kussend gezicht";
+"72078510.tags" = "gezicht | kus | kussend gezicht";
+// 😚 - kissing_closed_eyes
+"72078525.name" = "kussend gezicht met gesloten ogen";
+"72078525.tags" = "gesloten | gezicht | kus | kussend gezicht met gesloten ogen | oog";
+// 😙 - kissing_smiling_eyes
+"72078520.name" = "kussend gezicht met lachende ogen";
+"72078520.tags" = "gezicht | glimlach | kus | kussend gezicht met lachende ogen | oog";
+// 🥲 - smiling_face_with_tear
+"72078970.name" = "lachend gezicht met traan";
+"72078970.tags" = "aangedaan | dankbaar | enigszins lachend | lachend gezicht met traan | opgelucht | traan | trots";
+// 😋 - yum
+"72078450.name" = "lachend gezicht dat lippen likt";
+"72078450.tags" = "genieten | gezicht | glimlach | jammie | lachend gezicht dat lippen likt | lekker | mmm";
+// 😛 - stuck_out_tongue
+"72078530.name" = "gezicht met uitgestoken tong";
+"72078530.tags" = "gezicht | gezicht met uitgestoken tong | tong";
+// 😜 - stuck_out_tongue_winking_eye
+"72078535.name" = "knipoog met uitgestoken tong";
+"72078535.tags" = "gezicht | grap | knipoog | knipoog met uitgestoken tong | oog | tong";
+// 🤪 - zany_face
+"72078610.name" = "gek gezicht";
+"72078610.tags" = "gek gezicht | groot | klein | oog";
+// 😝 - stuck_out_tongue_closed_eyes
+"72078540.name" = "gezicht met uitgestoken tong en dichtgeknepen ogen";
+"72078540.tags" = "gezicht | gezicht met uitgestoken tong en dichtgeknepen ogen | oog | smaak | tong | vreselijk";
+// 🤑 - money_mouth_face
+"72078485.name" = "gezicht met geld in de mond";
+"72078485.tags" = "geld | geldmond | gezicht | gezicht met geld in de mond | mond";
+// 🤗 - hugging_face
+"72078515.name" = "blij gezicht met uitgestoken handen";
+"72078515.tags" = "blij gezicht | blij gezicht met open handen | blij gezicht met uitgestoken handen | gezicht | knuffel | knuffelen | uitgestoken handen";
+// 🤭 - face_with_hand_over_mouth
+"72078625.name" = "gezicht met hand over de mond";
+"72078625.tags" = "gezicht met hand over de mond | oeps";
+// 🫢 - face_with_open_eyes_and_hand_over_mouth
+"72080810.name" = "gezicht met open ogen en hand voor mond";
+"72080810.tags" = "bang | gezicht met open ogen en hand voor mond | ongeloof | ontzag | schaamte | verbazing | verrassing";
+// 🫣 - face_with_peeking_eye
+"72080815.name" = "gezicht met glurend oog";
+"72080815.tags" = "geboeid | gezicht met glurend oog | gluren | staren";
+// 🤫 - shushing_face
+"72078615.name" = "gezicht dat tot stilte maant";
+"72078615.tags" = "gezicht dat tot stilte maant | sst | stil";
+// 🤔 - thinking_face
+"72078500.name" = "nadenkend gezicht";
+"72078500.tags" = "denken | gezicht | nadenkend gezicht";
+// 🫡 - saluting_face
+"72080805.name" = "saluerend gezicht";
+"72080805.tags" = "ja | oké | saluerend gezicht | saluut | troepen | zonnig";
+// 🤐 - zipper_mouth_face
+"72078480.name" = "gezicht met een rits als mond";
+"72078480.tags" = "gezicht | gezicht met een rits als mond | mond | rits";
+// 🤨 - face_with_raised_eyebrow
+"72078600.name" = "gezicht met opgeheven wenkbrauw";
+"72078600.tags" = "gezicht met opgeheven wenkbrauw | sceptisch | wantrouwen";
+// 😐 - neutral_face
+"72078475.name" = "neutraal gezicht";
+"72078475.tags" = "gezicht | neutraal | uitgestreken";
+// 😑 - expressionless
+"72078480.name" = "uitdrukkingsloos gezicht";
+"72078480.tags" = "geen commentaar | geen uitdrukking | gezicht | uitdrukkingsloos";
+// 😶 - no_mouth
+"72078665.name" = "gezicht zonder mond";
+"72078665.tags" = "gezicht | gezicht zonder mond | mond | rustig | stil";
+// 🫥 - dotted_line_face
+"72080825.name" = "gezicht in stippellijn";
+"72080825.tags" = "depressief | gezicht in stippellijn | introvert | onzichtbaar | verbergen | verdwijnen";
+// 😏 - smirk
+"72078470.name" = "gniffelend gezicht";
+"72078470.tags" = "gezicht | gniffelen | gniffelend gezicht";
+// 😒 - unamused
+"72078485.name" = "chagrijnig gezicht";
+"72078485.tags" = "chagrijnig gezicht | gezicht | niet blij | niet leuk | ongelukkig";
+// 🙄 - face_with_rolling_eyes
+"72078735.name" = "gezicht met rollende ogen";
+"72078735.tags" = "gezicht | gezicht met rollende ogen | ogen | rollen";
+// 😬 - grimacing
+"72078615.name" = "gezicht met grimas";
+"72078615.tags" = "gezicht | gezicht met grimas | grimas";
+// 😮‍💨 - face_exhaling
+"26809473017250.name" = "gezicht dat uitademt";
+"26809473017250.tags" = "fluisteren | fluiten | gezicht dat uitademt | kreunen | naar adem snakken | opgelucht | uitademen";
+// 🤥 - lying_face
+"72078585.name" = "liegend gezicht";
+"72078585.tags" = "gezicht | liegen | liegend gezicht | pinokkio";
+// 🫨 - shaking_face
+"72080840.name" = "schuddend gezicht";
+"72080840.tags" = "aardbeving | gezicht | schok | schudden | schuddend gezicht | vibreren";
+// 😌 - relieved
+"72078455.name" = "opgelucht gezicht";
+"72078455.tags" = "gezicht | opgelucht";
+// 😔 - pensive
+"72078495.name" = "peinzend gezicht";
+"72078495.tags" = "gezicht | moedeloos | peinzend";
+// 😪 - sleepy
+"72078605.name" = "slaperig gezicht";
+"72078605.tags" = "gezicht | slaap | slaperig gezicht";
+// 🤤 - drooling_face
+"72078580.name" = "kwijlend gezicht";
+"72078580.tags" = "gezicht | kwijlen | kwijlend gezicht";
+// 😴 - sleeping
+"72078655.name" = "slapend gezicht";
+"72078655.tags" = "gezicht | slaap | slapend gezicht | zzz";
+// 😷 - mask
+"72078670.name" = "gezicht met doktersmasker";
+"72078670.tags" = "dokter | gezicht | gezicht met doktersmasker | koud | masker | medicijn | ziek";
+// 🤒 - face_with_thermometer
+"72078490.name" = "gezicht met thermometer";
+"72078490.tags" = "gezicht | gezicht met thermometer | niet lekker | thermometer | ziek";
+// 🤕 - face_with_head_bandage
+"72078505.name" = "gezicht met een verband om het hoofd";
+"72078505.tags" = "gewond | gezicht | gezicht met een verband om het hoofd | pijn | verband | verwonding | wond";
+// 🤢 - nauseated_face
+"72078570.name" = "misselijk gezicht";
+"72078570.tags" = "gezicht | misselijk | overgeven";
+// 🤮 - face_vomiting
+"72078630.name" = "brakend gezicht";
+"72078630.tags" = "braaksel | brakend gezicht | ziek";
+// 🤧 - sneezing_face
+"72078595.name" = "niezend gezicht";
+"72078595.tags" = "gezicht | gezondheid | niezen | niezend gezicht";
+// 🥵 - hot_face
+"72078985.name" = "heet gezicht";
+"72078985.tags" = "heet | heet gezicht | koortsig | rood gezicht | zonnesteek | zweten";
+// 🥶 - cold_face
+"72078990.name" = "koud gezicht";
+"72078990.tags" = "bevriezing | blauw gezicht | ijspegels | koud | koud gezicht | vriezen";
+// 🥴 - woozy_face
+"72078980.name" = "wazig gezicht";
+"72078980.tags" = "aangeschoten | dronken | duizelig | golvende mond | oneven ogen | wazig gezicht";
+// 😵 - dizzy_face
+"72078660.name" = "duizelig gezicht";
+"72078660.tags" = "duizelig | gezicht";
+// 😵‍💫 - face_with_spiral_eyes
+"26813394148332.name" = "gezicht met spiraalvormige ogen";
+"26813394148332.tags" = "duizelig | gehypnotiseerd | gezicht met spiraalvormige ogen | probleem | spiraalvormig | wow";
+// 🤯 - exploding_head
+"72078635.name" = "ontploffend hoofd";
+"72078635.tags" = "geschokt | ontploffend hoofd";
+// 🤠 - face_with_cowboy_hat
+"72078560.name" = "gezicht met cowboyhoed";
+"72078560.tags" = "cowboy | cowgirl | gezicht | gezicht met cowboyhoed | hoed";
+// 🥳 - partying_face
+"72078975.name" = "feestend gezicht";
+"72078975.tags" = "feest | feestend gezicht | hoedje | roltong | viering";
+// 🥸 - disguised_face
+"72079000.name" = "vermomd gezicht";
+"72079000.tags" = "bril | gezicht | incognito | neus | vermomd gezicht | vermomming";
+// 😎 - sunglasses
+"72078465.name" = "lachend gezicht met zonnebril";
+"72078465.tags" = "cool | gezicht | lachend gezicht met zonnebril | zon | zonnebril | zonnig";
+// 🤓 - nerd_face
+"72078495.name" = "nerdgezicht";
+"72078495.tags" = "geek | gezicht | nerd | nerderig | nerdgezicht";
+// 🧐 - face_with_monocle
+"72079440.name" = "gezicht met monocle";
+"72079440.tags" = "gezicht met monocle | saai";
+// 😕 - confused
+"72078500.name" = "verward gezicht";
+"72078500.tags" = "gezicht | verward";
+// 🫤 - face_with_diagonal_mouth
+"72080820.name" = "gezicht met schuine mond";
+"72080820.tags" = "gezicht met schuine mond | meh | onzeker | sceptisch | teleurgesteld";
+// 😟 - worried
+"72078550.name" = "bezorgd gezicht";
+"72078550.tags" = "bezorgd | gezicht";
+// 🙁 - slightly_frowning_face
+"72078720.name" = "licht fronsend gezicht";
+"72078720.tags" = "frons | fronsend | gezicht | licht fronsend gezicht";
+// 😮 - open_mouth
+"72078625.name" = "gezicht met open mond";
+"72078625.tags" = "gezicht | gezicht met open mond | mond | open | sympathie";
+// 😯 - hushed
+"72078630.name" = "verstomd gezicht";
+"72078630.tags" = "gezicht | verbaasd | verrast | verstomd";
+// 😲 - astonished
+"72078645.name" = "verbaasd gezicht";
+"72078645.tags" = "gechoqueerd | geschokt | gezicht | totaal gechoqueerd | verbaasd gezicht";
+// 😳 - flushed
+"72078650.name" = "blozend gezicht";
+"72078650.tags" = "blozend | gezicht | verbijsterd";
+// 🥺 - pleading_face
+"72079010.name" = "smekend gezicht";
+"72079010.tags" = "genade | smeken | smekend gezicht | zielig gezicht";
+// 🥹 - face_holding_back_tears
+"72079005.name" = "gezicht dat tranen tegenhoudt";
+"72079005.tags" = "boos | gezicht dat tranen tegenhoudt | huilen | trots | verdrietig | verzetten";
+// 😦 - frowning
+"72078585.name" = "fronsend gezicht met open mond";
+"72078585.tags" = "frons | fronsend gezicht met open mond | gezicht | mond | open";
+// 😧 - anguished
+"72078590.name" = "gekweld gezicht";
+"72078590.tags" = "gekweld gezicht | gezicht | lijdend";
+// 😨 - fearful
+"72078595.name" = "bang gezicht";
+"72078595.tags" = "angst | angstig | bang | gezicht";
+// 😰 - cold_sweat
+"72078635.name" = "angstig gezicht met zweetdruppel";
+"72078635.tags" = "angstig gezicht met zweetdruppel | blauw | gehaast | gezicht | koud | zweet";
+// 😥 - disappointed_relieved
+"72078580.name" = "teleurgesteld maar opgelucht gezicht";
+"72078580.tags" = "gezicht | oef | opgelucht | teleurgesteld | teleurgesteld maar opgelucht gezicht";
+// 😢 - cry
+"72078565.name" = "huilend gezicht";
+"72078565.tags" = "bedroefd | gezicht | huilen | huilend gezicht | traan";
+// 😭 - sob
+"72078620.name" = "hard huilend gezicht";
+"72078620.tags" = "bedroefd | gezicht | hard huilend gezicht | huilen | snikken | traan";
+// 😱 - scream
+"72078640.name" = "angstig schreeuwend gezicht";
+"72078640.tags" = "angst | angstig | angstig schreeuwend gezicht | bang | gezicht | munch | schreeuw";
+// 😖 - confounded
+"72078505.name" = "onthutst gezicht";
+"72078505.tags" = "gezicht | onthutst";
+// 😣 - persevere
+"72078570.name" = "volhardend gezicht";
+"72078570.tags" = "gezicht | volhardend";
+// 😞 - disappointed
+"72078545.name" = "teleurgesteld gezicht";
+"72078545.tags" = "gezicht | teleurgesteld gezicht | teleurstelling";
+// 😓 - sweat
+"72078490.name" = "neerslachtig gezicht met zweetdruppel";
+"72078490.tags" = "gezicht | koud | neerslachtig gezicht met zweetdruppel | zweet";
+// 😩 - weary
+"72078600.name" = "moe gezicht";
+"72078600.tags" = "gezicht | moe | vermoeid";
+// 😫 - tired_face
+"72078610.name" = "vermoeid gezicht";
+"72078610.tags" = "gezicht | moe | vermoeid";
+// 🥱 - yawning_face
+"72078965.name" = "gapend gezicht";
+"72078965.tags" = "gaap | gapend gezicht | vermoeid | verveeld";
+// 😤 - triumph
+"72078575.name" = "gezicht blazend van woede";
+"72078575.tags" = "gewonnen | gezicht | gezicht blazend van woede | triomf";
+// 😡 - rage
+"72078560.name" = "pruilend gezicht";
+"72078560.tags" = "boos | gezicht | kwaad | pruilend | rood | woede";
+// 😠 - angry
+"72078555.name" = "boos gezicht";
+"72078555.tags" = "boos | gezicht | kwaad";
+// 🤬 - face_with_symbols_on_mouth
+"72078620.name" = "gezicht met symbolen op mond";
+"72078620.tags" = "gezicht met symbolen op mond | vloeken";
+// 😈 - smiling_imp
+"72078435.name" = "lachend gezicht met hoorns";
+"72078435.tags" = "fantasie | gezicht | glimlach | hoorns | lach | lachend gezicht met hoorns | sprookje";
+// 👿 - imp
+"72076470.name" = "boos gezicht met hoorns";
+"72076470.tags" = "boos gezicht met hoorns | demon | duivel | fantasie | gezicht | kleine duivel | sprookje";
+// 💀 - skull
+"72076475.name" = "schedel";
+"72076475.tags" = "dood | gezicht | monster | schedel | sprookje";
+// 💩 - hankey
+"72076680.name" = "drol";
+"72076680.tags" = "drol | grappig | monster";
+// 🤡 - clown_face
+"72078565.name" = "clownsgezicht";
+"72078565.tags" = "clown | clownsgezicht | gezicht";
+// 👹 - japanese_ogre
+"72076440.name" = "boeman";
+"72076440.tags" = "boeman | fantasie | gezicht | monster | sprookje | wezen";
+// 👺 - japanese_goblin
+"72076445.name" = "kobold";
+"72076445.tags" = "fantasie | gezicht | kobold | monster | sprookje | wezen";
+// 👻 - ghost
+"72076450.name" = "spook";
+"72076450.tags" = "fantasie | gezicht | monster | spook | sprookje | wezen";
+// 👽 - alien
+"72076460.name" = "buitenaards wezen";
+"72076460.tags" = "buitenaards | fantasie | gezicht | monster | sprookje | ufo | wezen";
+// 👾 - space_invader
+"72076465.name" = "buitenaards monster";
+"72076465.tags" = "alien | buitenaards | gezicht | monster | ufo | wezen";
+// 🤖 - robot_face
+"72078510.name" = "robot";
+"72078510.tags" = "gezicht | monster | robot";
+// 😺 - smiley_cat
+"72078685.name" = "grijnzende kat";
+"72078685.tags" = "gezicht | grijnzen | grijnzende kat | kat | lach | mond | open";
+// 😸 - smile_cat
+"72078675.name" = "grijnzende kat met lachende ogen";
+"72078675.tags" = "gezicht | grijns | grijnzende kat met lachende ogen | kat | lach | oog";
+// 😹 - joy_cat
+"72078680.name" = "kat met tranen van vreugde";
+"72078680.tags" = "gezicht | kat | kat met tranen van vreugde | traan | vreugde";
+// 😻 - heart_eyes_cat
+"72078690.name" = "lachende kat met hartvormige ogen";
+"72078690.tags" = "gezicht | hart | kat | lach | lachende kat met hartvormige ogen | liefde | oog";
+// 😼 - smirk_cat
+"72078695.name" = "gniffelende kat";
+"72078695.tags" = "gezicht | gniffelende kat | ironisch | kat | lach | spottend";
+// 😽 - kissing_cat
+"72078700.name" = "kussende kat";
+"72078700.tags" = "gezicht | kat | kus | kussende kat | oog";
+// 🙀 - scream_cat
+"72078715.name" = "vermoeide kat";
+"72078715.tags" = "gezicht | kat | oh nee | vermoeid | vermoeide kat | verrast";
+// 😿 - crying_cat_face
+"72078710.name" = "huilende kat";
+"72078710.tags" = "gezicht | huilen | huilende kat | kat | traan | verdrietig";
+// 😾 - pouting_cat
+"72078705.name" = "pruilende kat";
+"72078705.tags" = "gezicht | kat | pruilen | pruilende kat";
+// 🙈 - see_no_evil
+"72078755.name" = "geen kwaad zien";
+"72078755.tags" = "aap | geen kwaad zien | gezicht | kwaad | verboden | zie";
+// 🙉 - hear_no_evil
+"72078760.name" = "geen kwaad horen";
+"72078760.tags" = "aap | geen kwaad horen | gezicht | horen | kwaad | verboden";
+// 🙊 - speak_no_evil
+"72078765.name" = "geen kwaad spreken";
+"72078765.tags" = "aap | geen kwaad spreken | gezicht | kwaad | spreken | verboden";
+// 💌 - love_letter
+"72076535.name" = "liefdesbrief";
+"72076535.tags" = "brief | hart | liefde | liefdesbrief | post";
+// 💘 - cupid
+"72076595.name" = "hart met pijl";
+"72076595.tags" = "cupido | hart met pijl | pijl";
+// 💝 - gift_heart
+"72076620.name" = "hart met strik";
+"72076620.tags" = "hart met strik | strik | valentijn";
+// 💖 - sparkling_heart
+"72076585.name" = "fonkelend hart";
+"72076585.tags" = "fonkelend | fonkelend hart | spannend";
+// 💗 - heartpulse
+"72076590.name" = "groeiend hart";
+"72076590.tags" = "groeiend | groeiend hart | hartslag | nerveus | spannend";
+// 💓 - heartbeat
+"72076570.name" = "kloppend hart";
+"72076570.tags" = "hartslag | kloppen | kloppend hart | slaan";
+// 💞 - revolving_hearts
+"72076625.name" = "ronddraaiende harten";
+"72076625.tags" = "draaien | hart | ronddraaiende harten";
+// 💕 - two_hearts
+"72076580.name" = "twee harten";
+"72076580.tags" = "liefde | twee harten";
+// 💟 - heart_decoration
+"72076630.name" = "decoratief hart";
+"72076630.tags" = "decoratief hart | hart";
+// 💔 - broken_heart
+"72076575.name" = "gebroken hart";
+"72076575.tags" = "breken | gebroken | gebroken hart";
+// 🩷 - pink_heart
+"72080275.name" = "roze hart";
+"72080275.tags" = "hart | leuk | liefde | roze | schattig";
+// 🧡 - orange_heart
+"72079525.name" = "oranje hart";
+"72079525.tags" = "oranje | oranje hart";
+// 💛 - yellow_heart
+"72076610.name" = "geel hart";
+"72076610.tags" = "geel | geel hart";
+// 💚 - green_heart
+"72076605.name" = "groen hart";
+"72076605.tags" = "groen | groen hart";
+// 💙 - blue_heart
+"72076600.name" = "blauw hart";
+"72076600.tags" = "blauw | blauw hart";
+// 🩵 - light_blue_heart
+"72080265.name" = "lichtblauw hart";
+"72080265.tags" = "blauwgroen | groenblauw | hart | lichtblauw";
+// 💜 - purple_heart
+"72076615.name" = "paars hart";
+"72076615.tags" = "paars | paars hart";
+// 🤎 - brown_heart
+"72078470.name" = "bruin hart";
+"72078470.tags" = "bruin | hart";
+// 🖤 - black_heart
+"72077935.name" = "zwart hart";
+"72077935.tags" = "slecht | verdorven | zwart | zwart hart";
+// 🩶 - grey_heart
+"72080270.name" = "grijs hart";
+"72080270.tags" = "grijs | hart | leigrijs | zilver";
+// 🤍 - white_heart
+"72078465.name" = "wit hart";
+"72078465.tags" = "hart | wit";
+// 💋 - kiss
+"72076530.name" = "lipafdruk";
+"72076530.tags" = "kus | lipafdruk | lippen";
+// 💯 - 100
+"72076710.name" = "maximumscore";
+"72076710.tags" = "100 | 100 punten | maximumscore | score";
+// 💢 - anger
+"72076645.name" = "woedesymbool";
+"72076645.tags" = "boos | kwaad | strip | woedesymbool";
+// 💥 - boom
+"72076660.name" = "botsing";
+"72076660.tags" = "boem | botsing | strip";
+// 💫 - dizzy
+"72076690.name" = "duizelig";
+"72076690.tags" = "duizelig | ster | strip";
+// 💦 - sweat_drops
+"72076665.name" = "zweetdruppels";
+"72076665.tags" = "druppels | strip | zweet | zweetdruppels";
+// 💨 - dash
+"72076675.name" = "wegrennen";
+"72076675.tags" = "rennen | strip | wegrennen";
+// 💬 - speech_balloon
+"72076695.name" = "spraakballon";
+"72076695.tags" = "ballon | dialoog | spraak | spraakballon | strip | tekstballon";
+// 💭 - thought_balloon
+"72076700.name" = "gedachteballon";
+"72076700.tags" = "ballon | denkwolkje | gedachteballon | gedachten | strip";
+// 💤 - zzz
+"72076655.name" = "slaapsymbool";
+"72076655.tags" = "slaapsymbool | slapen | strip";
+// 👋 - wave
+"72076210.name" = "zwaaiende hand";
+"72076210.tags" = "hand | zwaai | zwaaien | zwaaiende hand";
+// 🤚 - raised_back_of_hand
+"72078530.name" = "achterkant van opgeheven hand";
+"72078530.tags" = "achterkant van opgeheven hand | hand | handrug | opgestoken";
+// ✋ - hand
+"30756.name" = "opgeheven hand";
+"30756.tags" = "hand | opgeheven hand";
+// 🖖 - spock-hand
+"72077865.name" = "Vulcaanse groet";
+"72077865.tags" = "hand | spock | vinger | Vulcaanse groet | vulcan";
+// 🫱 - rightwards_hand
+"72080885.name" = "hand naar rechts";
+"72080885.tags" = "hand | hand naar rechts | naar rechts | rechts";
+// 🫲 - leftwards_hand
+"72080890.name" = "hand naar links";
+"72080890.tags" = "hand | hand naar links | links | naar links";
+// 🫳 - palm_down_hand
+"72080895.name" = "handpalm omlaag";
+"72080895.tags" = "handpalm omlaag | laten vallen | wegjagen | wegsturen";
+// 🫴 - palm_up_hand
+"72080900.name" = "handpalm omhoog";
+"72080900.tags" = "aanbieden | handpalm omhoog | kom | vangen | wenken";
+// 🫷 - leftwards_pushing_hand
+"72080915.name" = "hand die naar links duwt";
+"72080915.tags" = "duwen | hand die naar links duwt | high five | naar links | stoppen | wachten | weigeren";
+// 🫸 - rightwards_pushing_hand
+"72080920.name" = "hand die naar rechts duwt";
+"72080920.tags" = "duwen | hand die naar rechts duwt | high five | naar rechts | stoppen | wachten | weigeren";
+// 👌 - ok_hand
+"72076215.name" = "OK-handgebaar";
+"72076215.tags" = "hand | OK | OK-handgebaar";
+// 🤌 - pinched_fingers
+"72078460.name" = "samengeknepen vingers";
+"72078460.tags" = "handgebaar | ondervraging | samengeknepen | sarcastisch | vingers";
+// 🤏 - pinching_hand
+"72078475.name" = "hand met samengeknepen vingers";
+"72078475.tags" = "gebaar voor kleine hoeveelheid | hand met samengeknepen vingers";
+// 🤞 - crossed_fingers
+"72078550.name" = "gekruiste vingers";
+"72078550.tags" = "gekruist | gekruiste vingers | geluk | hand | vinger";
+// 🫰 - hand_with_index_finger_and_thumb_crossed
+"72080880.name" = "hand met wijsvinger en duim gekruist";
+"72080880.tags" = "duur | geld | hand met wijsvinger en duim gekruist | hart | liefde | vingerknip";
+// 🤟 - i_love_you_hand_sign
+"72078555.name" = "ik-hou-van-je-gebaar";
+"72078555.tags" = "hand | ik-hou-van-je-gebaar | ILY";
+// 🤘 - the_horns
+"72078520.name" = "duivelshorens";
+"72078520.tags" = "duivelshorens | hand | hoorns | rock on | vinger";
+// 🤙 - call_me_hand
+"72078525.name" = "bel me-gebaar";
+"72078525.tags" = "bel me-gebaar | bellen | hand";
+// 👈 - point_left
+"72076195.name" = "achterkant van hand met naar links wijzende wijsvinger";
+"72076195.tags" = "achterkant van de hand | achterkant van de hand met naar links wijzende wijsvinger | achterkant van hand met naar links wijzende wijsvinger | hand | vinger | wijsvinger | wijzen";
+// 👉 - point_right
+"72076200.name" = "achterkant van hand met naar rechts wijzende wijsvinger";
+"72076200.tags" = "achterkant van de hand | achterkant van de hand met naar rechts wijzende wijsvinger | achterkant van hand met naar rechts wijzende wijsvinger | hand | vinger | wijsvinger | wijzen";
+// 👆 - point_up_2
+"72076185.name" = "achterkant van hand met omhoog wijzende wijsvinger";
+"72076185.tags" = "achterkant van hand met omhoog wijzende wijsvinger | hand | hand met rug naar voren | omhoog | vinger | wijsvinger | wijzen";
+// 🖕 - middle_finger
+"72077860.name" = "middelvinger";
+"72077860.tags" = "hand | middelvinger | vinger";
+// 👇 - point_down
+"72076190.name" = "achterkant van hand met omlaag wijzende wijsvinger";
+"72076190.tags" = "achterkant van hand met omlaag wijzende wijsvinger | hand | hand met rug naar voren | omlaag | vinger | wijsvinger | wijzen";
+// 🫵 - index_pointing_at_the_viewer
+"72080905.name" = "wijsvinger die naar de kijker wijst";
+"72080905.tags" = "jij | wijsvinger die naar de kijker wijst | wijzen";
+// 👍 - +1
+"72076220.name" = "duim omhoog";
+"72076220.tags" = "+1 | duim | hand | omhoog";
+// 👎 - -1
+"72076225.name" = "duim omlaag";
+"72076225.tags" = "-1 | duim | hand | lichaam | omlaag";
+// ✊ - fist
+"30753.name" = "opgeheven vuist";
+"30753.tags" = "gebald | hand | opgeheven vuist | stoot | vuist";
+// 👊 - facepunch
+"72076205.name" = "stotende vuist";
+"72076205.tags" = "gebald | hand | stoot | stotende vuist | vuist";
+// 🤛 - left-facing_fist
+"72078535.name" = "naar links gerichte vuist";
+"72078535.tags" = "linksom | naar links gerichte vuist | vuist";
+// 🤜 - right-facing_fist
+"72078540.name" = "naar rechts gerichte vuist";
+"72078540.tags" = "naar rechts gerichte vuist | rechtsom | vuist";
+// 👏 - clap
+"72076230.name" = "klappende handen";
+"72076230.tags" = "hand | klappen | klappende handen";
+// 🙌 - raised_hands
+"72078775.name" = "juichend omhooggestoken handen";
+"72078775.tags" = "gebaar | hand | hoera | juichend omhooggestoken handen | omhoog | viering";
+// 🫶 - heart_hands
+"72080910.name" = "handen in de vorm van een hart";
+"72080910.tags" = "handen in de vorm van een hart | liefde";
+// 👐 - open_hands
+"72076235.name" = "open handen";
+"72076235.tags" = "hand | open | open handen";
+// 🤲 - palms_up_together
+"72078650.name" = "beide handpalmen omhoog";
+"72078650.tags" = "beide handpalmen omhoog | gebed";
+// 🤝 - handshake
+"72078545.name" = "handdruk";
+"72078545.tags" = "deal | hand | handdruk | ontmoeting | overeenkomst";
+// 🙏 - pray
+"72078790.name" = "gevouwen handen";
+"72078790.tags" = "alsjeblieft | bedankt | bidden | gevouwen handen | hand | vragen";
+// 💅 - nail_care
+"72076500.name" = "nagellak";
+"72076500.tags" = "cosmetica | lak | manicure | nagel | nagellak | verzorging";
+// 🤳 - selfie
+"72078655.name" = "selfie";
+"72078655.tags" = "camera | selfie | telefoon";
+// 💪 - muscle
+"72076685.name" = "spierballen";
+"72076685.tags" = "biceps | spannen | spier | spierballen | strip";
+// 🦾 - mechanical_arm
+"72079350.name" = "armprothese";
+"72079350.tags" = "armprothese | prothese | toegankelijkheid";
+// 🦿 - mechanical_leg
+"72079355.name" = "beenprothese";
+"72079355.tags" = "beenprothese | prothese | toegankelijkheid";
+// 🦵 - leg
+"72079305.name" = "been";
+"72079305.tags" = "been | ledemaat | schoppen";
+// 🦶 - foot
+"72079310.name" = "voet";
+"72079310.tags" = "schoppen | stampen | voet";
+// 👂 - ear
+"72076165.name" = "oor";
+"72076165.tags" = "lichaam | oor";
+// 🦻 - ear_with_hearing_aid
+"72079335.name" = "oor met gehoorapparaat";
+"72079335.tags" = "oor met gehoorapparaat | slechthorend | toegankelijkheid";
+// 👃 - nose
+"72076170.name" = "neus";
+"72076170.tags" = "lichaam | neus";
+// 🧠 - brain
+"72079520.name" = "brein";
+"72079520.tags" = "brein | intelligent";
+// 🫀 - anatomical_heart
+"72080640.name" = "hart";
+"72080640.tags" = "anatomisch | cardiologie | hart | orgaan | polsslag";
+// 🫁 - lungs
+"72080645.name" = "longen";
+"72080645.tags" = "adem | ademhaling | inademen | longen | orgaan | uitademen";
+// 🦷 - tooth
+"72079315.name" = "tand";
+"72079315.tags" = "tand | tandarts";
+// 🦴 - bone
+"72079300.name" = "bot";
+"72079300.tags" = "bot | skelet";
+// 👀 - eyes
+"72076155.name" = "ogen";
+"72076155.tags" = "gezicht | ogen | oog";
+// 👅 - tongue
+"72076180.name" = "tong";
+"72076180.tags" = "lichaam | tong";
+// 👄 - lips
+"72076175.name" = "mond";
+"72076175.tags" = "lippen | mond";
+// 🫦 - biting_lip
+"72080830.name" = "mond die op lip bijt";
+"72080830.tags" = "angst | bezorgd | flirten | mond die op lip bijt | nerveus | ongemakkelijk | ongerust";
+// 👶 - baby
+"72076425.name" = "baby";
+"72076425.tags" = "baby | jong";
+// 🧒 - child
+"72079450.name" = "kind";
+"72079450.tags" = "genderneutraal | jong | kind";
+// 👦 - boy
+"72076345.name" = "jongen";
+"72076345.tags" = "jong | jongen";
+// 👧 - girl
+"72076350.name" = "meisje";
+"72076350.tags" = "jong | maagd | meisje | sterrenbeeld";
+// 🧑 - adult
+"72079445.name" = "volwassene";
+"72079445.tags" = "genderneutraal | volwassene";
+// 👱 - person_with_blond_hair
+"72076400.name" = "persoon met blond haar";
+"72076400.tags" = "blond | haar | persoon met blond haar";
+// 👨 - man
+"72076355.name" = "man";
+"72076355.tags" = "man";
+// 🧔 - bearded_person
+"72079460.name" = "persoon: baard";
+"72079460.tags" = "baard | persoon | persoon: baard";
+// 👩 - woman
+"72076360.name" = "vrouw";
+"72076360.tags" = "vrouw";
+// 🧓 - older_adult
+"72079455.name" = "oudere persoon";
+"72079455.tags" = "genderneutraal | niet nader omschreven geslacht | oud | ouder persoon | oudere persoon | volwassene";
+// 👴 - older_man
+"72076415.name" = "oude man";
+"72076415.tags" = "man | oud | oude man | ouder";
+// 👵 - older_woman
+"72076420.name" = "oude vrouw";
+"72076420.tags" = "oud | oude vrouw | ouder | vrouw";
+// 🙍 - person_frowning
+"72078780.name" = "fronsend persoon";
+"72078780.tags" = "frons | fronsend persoon | uitdrukking";
+// 🙎 - person_with_pouting_face
+"72078785.name" = "pruilend persoon";
+"72078785.tags" = "pruilen | pruilend persoon | uitdrukking";
+// 🙅 - no_good
+"72078740.name" = "persoon die nee-gebaar maakt";
+"72078740.tags" = "gebaar | hand | illegaal | persoon die nee-gebaar maakt | verboden";
+// 🙆 - ok_woman
+"72078745.name" = "persoon die OK-gebaar maakt";
+"72078745.tags" = "gebaar | hand | OK | persoon die OK-gebaar maakt";
+// 💁 - information_desk_person
+"72076480.name" = "persoon achter informatiebalie";
+"72076480.tags" = "brutaal | hand | hulp | informatie | knikken | persoon achter informatiebalie";
+// 🙋 - raising_hand
+"72078770.name" = "persoon met opgeheven hand";
+"72078770.tags" = "blij | gebaar | hand | omhoog | persoon met opgeheven hand";
+// 🧏 - deaf_person
+"72079435.name" = "doof persoon";
+"72079435.tags" = "doof | doof persoon | horen | oor | toegankelijkheid";
+// 🙇 - bow
+"72078750.name" = "buigende persoon";
+"72078750.tags" = "buigende persoon | buiging | excuses | gebaar | sorry";
+// 🤦 - face_palm
+"72078590.name" = "persoon die het gezicht met de hand bedekt";
+"72078590.tags" = "ergernis | gezicht | ongeloof | palm | persoon die het gezicht met de hand bedekt";
+// 🤷 - shrug
+"72078675.name" = "persoon die schouders ophaalt";
+"72078675.tags" = "onverschilligheid | onwetendheid | persoon die schouders ophaalt | schouderophalen | twijfel";
+// 🧑‍🎓 - student
+"26901339530736.name" = "student";
+"26901339530736.tags" = "scholier | student";
+// 👨‍🎓 - male-student
+"26555159681094.name" = "mannelijke student";
+"26555159681094.tags" = "man | mannelijke student | scholier | student";
+// 👩‍🎓 - female-student
+"26555719842663.name" = "studente";
+"26555719842663.tags" = "scholiere | studente | vrouw";
+// 🧑‍🏫 - teacher
+"26901339533640.name" = "docent";
+"26901339533640.tags" = "docent | leraar | professor";
+// 👨‍🏫 - male-teacher
+"26555159683998.name" = "mannelijke docent";
+"26555159683998.tags" = "docent | leraar | mannelijke docent | meester | professor";
+// 👩‍🏫 - female-teacher
+"26555719845567.name" = "docente";
+"26555719845567.tags" = "docente | juf | lerares | professor";
+// 🧑‍🌾 - farmer
+"26901339527931.name" = "boer";
+"26901339527931.tags" = "boer | tuinder | veehouder";
+// 👨‍🌾 - male-farmer
+"26555159678289.name" = "mannelijke boer";
+"26555159678289.tags" = "boer | man | mannelijke boer | tuinder | veehouder";
+// 👩‍🌾 - female-farmer
+"26555719839858.name" = "boerin";
+"26555719839858.tags" = "boerin | tuinder | veehouder | vrouw";
+// 🧑‍🍳 - cook
+"26901339529680.name" = "kok";
+"26901339529680.tags" = "chef-kok | kok";
+// 👨‍🍳 - male-cook
+"26555159680038.name" = "mannelijke kok";
+"26555159680038.tags" = "chef-kok | kok | man | mannelijke kok";
+// 👩‍🍳 - female-cook
+"26555719841607.name" = "kokkin";
+"26555719841607.tags" = "chef-kok | kokkin | vrouw";
+// 🧑‍🔧 - mechanic
+"26901339518757.name" = "monteur";
+"26901339518757.tags" = "elektricien | handelsman | loodgieter | monteur";
+// 👨‍🔧 - male-mechanic
+"26555159669115.name" = "mannelijke monteur";
+"26555159669115.tags" = "elektricien | handelsman | loodgieter | man | mannelijke monteur | monteur";
+// 👩‍🔧 - female-mechanic
+"26555719830684.name" = "monteuse";
+"26555719830684.tags" = "elektricien | handelsvrouw | loodgieter | monteuse | vrouw";
+// 🧑‍🏭 - factory_worker
+"26901339533706.name" = "fabrieksarbeider";
+"26901339533706.tags" = "arbeider | fabriek | fabrieksarbeider | industrieel | lopende band";
+// 👨‍🏭 - male-factory-worker
+"26555159684064.name" = "mannelijke fabrieksarbeider";
+"26555159684064.tags" = "arbeider | fabriek | industrieel | lopende band | man | mannelijke fabrieksarbeider";
+// 👩‍🏭 - female-factory-worker
+"26555719845633.name" = "fabrieksarbeidster";
+"26555719845633.tags" = "arbeidster | fabriek | fabrieksarbeidster | industrieel | lopende band | vrouw";
+// 🧑‍💼 - office_worker
+"26901339515226.name" = "kantoormedewerker";
+"26901339515226.tags" = "architect | bedrijf | kantoormedewerker | manager";
+// 👨‍💼 - male-office-worker
+"26555159665584.name" = "mannelijke kantoormedewerker";
+"26555159665584.tags" = "architect | bedrijf | kantoor | kantoormedewerker | man | manager | mannelijke kantoormedewerker";
+// 👩‍💼 - female-office-worker
+"26555719827153.name" = "kantoormedewerkster";
+"26555719827153.tags" = "architecte | bedrijf | kantoor | kantoormedewerkster | manager | vrouw";
+// 🧑‍🔬 - scientist
+"26901339518922.name" = "wetenschapper";
+"26901339518922.tags" = "bioloog | ingenieur | natuurkundige | scheikundige | wetenschapper";
+// 👨‍🔬 - male-scientist
+"26555159669280.name" = "mannelijke wetenschapper";
+"26555159669280.tags" = "bioloog | ingenieur | man | mannelijke wetenschapper | natuurkundige | scheikundige | wetenschapper";
+// 👩‍🔬 - female-scientist
+"26555719830849.name" = "wetenschapster";
+"26555719830849.tags" = "biologe | ingenieur | natuurkundige | scheikundige | vrouw | wetenschapster";
+// 🧑‍💻 - technologist
+"26901339515193.name" = "technoloog";
+"26901339515193.tags" = "ontwikkelaar | programmeur | techneut | technoloog | uitvinder";
+// 👨‍💻 - male-technologist
+"26555159665551.name" = "mannelijke technoloog";
+"26555159665551.tags" = "man | mannelijke technoloog | ontwikkelaar | programmeur | techneut | technoloog";
+// 👩‍💻 - female-technologist
+"26555719827120.name" = "technologe";
+"26555719827120.tags" = "ontwikkelaar | programmeur | techneut | technologe | vrouw";
+// 🧑‍🎤 - singer
+"26901339531297.name" = "zanger";
+"26901339531297.tags" = "acteur | entertainer | rock | ster | zanger";
+// 👨‍🎤 - male-singer
+"26555159681655.name" = "mannelijke zanger";
+"26555159681655.tags" = "acteur | entertainer | man | mannelijke zanger | rock | ster | zanger";
+// 👩‍🎤 - female-singer
+"26555719843224.name" = "zangeres";
+"26555719843224.tags" = "actrice | entertainer | rock | ster | vrouw | zangeres";
+// 🧑‍🎨 - artist
+"26901339531429.name" = "kunstenaar";
+"26901339531429.tags" = "kunstenaar | palet";
+// 👨‍🎨 - male-artist
+"26555159681787.name" = "mannelijke kunstenaar";
+"26555159681787.tags" = "kunstenaar | man | mannelijke kunstenaar | palet";
+// 👩‍🎨 - female-artist
+"26555719843356.name" = "kunstenares";
+"26555719843356.tags" = "kunstenares | palet | vrouw";
+// 🧑‍🚀 - astronaut
+"26901339530142.name" = "astronaut";
+"26901339530142.tags" = "astronaut | raket";
+// 👨‍🚀 - male-astronaut
+"26555159680500.name" = "mannelijke astronaut";
+"26555159680500.tags" = "astronaut | man | mannelijke astronaut | raket";
+// 👩‍🚀 - female-astronaut
+"26555719842069.name" = "astronaute";
+"26555719842069.tags" = "astronaute | raket | vrouw";
+// 🧑‍🚒 - firefighter
+"26901339530736.name" = "brandweerman";
+"26901339530736.tags" = "brandweerman | brandweerwagen";
+// 👨‍🚒 - male-firefighter
+"26555159681094.name" = "mannelijke brandweerman";
+"26555159681094.tags" = "brandweerman | brandweerwagen | man | mannelijke brandweerman";
+// 👩‍🚒 - female-firefighter
+"26555719842663.name" = "brandweervrouw";
+"26555719842663.tags" = "brandweervrouw | brandweerwagen | vrouw";
+// 👮 - cop
+"72076385.name" = "politieagent";
+"72076385.tags" = "agent | politie | politieagent";
+// 💂 - guardsman
+"72076485.name" = "wachter";
+"72076485.tags" = "wachter";
+// 🥷 - ninja
+"72078995.name" = "ninja";
+"72078995.tags" = "geheim | krijger | ninja | verborgen";
+// 👷 - construction_worker
+"72076430.name" = "bouwvakker";
+"72076430.tags" = "bouw | bouwvakker | helm | klusser";
+// 🫅 - person_with_crown
+"72080665.name" = "persoon met kroon";
+"72080665.tags" = "edele | heerser | iemand van koninklijken bloede | persoon met kroon | regaal";
+// 🤴 - prince
+"72078660.name" = "prins";
+"72078660.tags" = "prins";
+// 👸 - princess
+"72076435.name" = "prinses";
+"72076435.tags" = "fantasie | prinses | sprookje";
+// 👳 - man_with_turban
+"72076410.name" = "persoon met tulband";
+"72076410.tags" = "persoon met tulband | tulband";
+// 👲 - man_with_gua_pi_mao
+"72076405.name" = "man met Chinees petje";
+"72076405.tags" = "gua pi mao | hoed | man | man met Chinees petje";
+// 🧕 - person_with_headscarf
+"72079465.name" = "vrouw met hoofddoek";
+"72079465.tags" = "hidjab | hoofddoek | mantilla | vrouw met hoofddoek";
+// 🤵 - person_in_tuxedo
+"72078665.name" = "persoon in smoking";
+"72078665.tags" = "bruidegom | persoon | persoon in smoking | smoking";
+// 👰 - bride_with_veil
+"72076395.name" = "persoon met sluier";
+"72076395.tags" = "bruid | huwelijk | persoon | persoon met sluier | sluier";
+// 🤰 - pregnant_woman
+"72078640.name" = "zwangere vrouw";
+"72078640.tags" = "vrouw | zwanger | zwangere vrouw";
+// 🫃 - pregnant_man
+"72080655.name" = "zwangere man";
+"72080655.tags" = "buik | opgeblazen | vol | zwanger | zwangere man";
+// 🫄 - pregnant_person
+"72080660.name" = "zwanger persoon";
+"72080660.tags" = "buik | opgeblazen | vol | zwanger | zwanger persoon";
+// 🤱 - breast-feeding
+"72078645.name" = "borstvoeding";
+"72078645.tags" = "baby | borst | borstvoeding | de borst geven";
+// 👩‍🍼 - woman_feeding_baby
+"26555719841904.name" = "vrouw die een baby voedt";
+"26555719841904.tags" = "baby | borstvoeding | voeding | vrouw | vrouw die een baby voedt";
+// 👨‍🍼 - man_feeding_baby
+"26555159680335.name" = "man die een baby voedt";
+"26555159680335.tags" = "baby | borstvoeding | man | man die een baby voedt | voeding";
+// 🧑‍🍼 - person_feeding_baby
+"26901339529977.name" = "persoon die een baby voedt";
+"26901339529977.tags" = "baby | borstvoeding | persoon | persoon die een baby voedt | voeding";
+// 👼 - angel
+"72076455.name" = "baby-engel";
+"72076455.tags" = "baby | baby-engel | engel | fantasie | gezicht | sprookje";
+// 🎅 - santa
+"72079055.name" = "kerstman";
+"72079055.tags" = "kerstman | Kerstmis | viering";
+// 🤶 - mrs_claus
+"72078670.name" = "kerstvrouw";
+"72078670.tags" = "kerstmis | kerstvrouw | moedertje kerst";
+// 🧑‍🎄 - mx_claus
+"26901339530241.name" = "kersttransgender";
+"26901339530241.tags" = "Kerstman | kerst | kersttransgender";
+// 🦸 - superhero
+"72079320.name" = "superheld";
+"72079320.tags" = "goed | held | heldin | superheld | superkrachten";
+// 🦹 - supervillain
+"72079325.name" = "superschurk";
+"72079325.tags" = "boef | crimineel | slecht | superkrachten | superschurk";
+// 🧙 - mage
+"72079485.name" = "magiër";
+"72079485.tags" = "heks | magiër | tovenaar | tovenares";
+// 🧚 - fairy
+"72079490.name" = "elfje";
+"72079490.tags" = "elfje | Oberon | Puck | Titania";
+// 🧛 - vampire
+"72079495.name" = "vampier";
+"72079495.tags" = "Dracula | ondode | vampier";
+// 🧜 - merperson
+"72079500.name" = "zeemeermin";
+"72079500.tags" = "meerman | meermin | sirene | zeemeermin";
+// 🧝 - elf
+"72079505.name" = "elf";
+"72079505.tags" = "elf | magisch";
+// 🧞 - genie
+"72079510.name" = "geest in de fles";
+"72079510.tags" = "djinn | geest in de fles";
+// 🧟 - zombie
+"72079515.name" = "zombie";
+"72079515.tags" = "lopende dode | ondode | zombie";
+// 🧌 - troll
+"72079420.name" = "trol";
+"72079420.tags" = "fantasie | monster | sprookje | trol";
+// 💆 - massage
+"72076505.name" = "persoon die hoofdmassage krijgt";
+"72076505.tags" = "gezicht | massage | persoon die hoofdmassage krijgt | salon";
+// 💇 - haircut
+"72076510.name" = "persoon die wordt geknipt";
+"72076510.tags" = "kapper | kapsel | persoon die wordt geknipt | salon | schoonheid";
+// 🚶 - walking
+"72079305.name" = "voetganger";
+"72079305.tags" = "lopen | voetganger | wandelaar | wandelen";
+// 🧍 - standing_person
+"72079425.name" = "staande persoon";
+"72079425.tags" = "sta | staan | staande persoon";
+// 🧎 - kneeling_person
+"72079430.name" = "knielende persoon";
+"72079430.tags" = "kniel | knielen | knielende persoon";
+// 🧑‍🦯 - person_with_probing_cane
+"26901339531726.name" = "persoon met taststok";
+"26901339531726.tags" = "blind | persoon met taststok | toegankelijkheid";
+// 👨‍🦯 - man_with_probing_cane
+"26555159682084.name" = "man met taststok";
+"26555159682084.tags" = "blind | man | man met taststok | toegankelijkheid";
+// 👩‍🦯 - woman_with_probing_cane
+"26555719843653.name" = "vrouw met taststok";
+"26555719843653.tags" = "blind | toegankelijkheid | vrouw | vrouw met taststok";
+// 🧑‍🦼 - person_in_motorized_wheelchair
+"26901339532155.name" = "persoon in elektrische rolstoel";
+"26901339532155.tags" = "persoon in elektrische rolstoel | rolstoel | toegankelijkheid";
+// 👨‍🦼 - man_in_motorized_wheelchair
+"26555159682513.name" = "man in elektrische rolstoel";
+"26555159682513.tags" = "man | man in elektrische rolstoel | rolstoel | toegankelijkheid";
+// 👩‍🦼 - woman_in_motorized_wheelchair
+"26555719844082.name" = "vrouw in elektrische rolstoel";
+"26555719844082.tags" = "rolstoel | toegankelijkheid | vrouw | vrouw in elektrische rolstoel";
+// 🧑‍🦽 - person_in_manual_wheelchair
+"26901339532188.name" = "persoon in rolstoel";
+"26901339532188.tags" = "persoon in rolstoel | rolstoel | toegankelijkheid";
+// 👨‍🦽 - man_in_manual_wheelchair
+"26555159682546.name" = "man in rolstoel";
+"26555159682546.tags" = "man | man in rolstoel | rolstoel | toegankelijkheid";
+// 👩‍🦽 - woman_in_manual_wheelchair
+"26555719844115.name" = "vrouw in rolstoel";
+"26555719844115.tags" = "rolstoel | toegankelijkheid | vrouw | vrouw in rolstoel";
+// 🏃 - runner
+"72079365.name" = "hardloper";
+"72079365.tags" = "hardlopen | hardloper | marathon";
+// 💃 - dancer
+"72076490.name" = "dansende vrouw";
+"72076490.tags" = "dansen | dansende vrouw | vrouw";
+// 🕺 - man_dancing
+"72077725.name" = "dansende man";
+"72077725.tags" = "dansen | dansende man | man";
+// 👯 - dancers
+"72076390.name" = "mensen met konijnenoren";
+"72076390.tags" = "danser | feesten | konijnenoor | mensen met konijnenoren";
+// 🧖 - person_in_steamy_room
+"72079470.name" = "persoon in ruimte vol stoom";
+"72079470.tags" = "persoon in ruimte vol stoom | sauna | stoomruimte";
+// 🧗 - person_climbing
+"72079475.name" = "klimmende persoon";
+"72079475.tags" = "klimmende persoon | klimmer";
+// 🤺 - fencer
+"72078690.name" = "schermer";
+"72078690.tags" = "degen | schermen | schermende persoon | schermer";
+// 🏇 - horse_racing
+"72079385.name" = "jockey op renpaard";
+"72079385.tags" = "jockey | jockey op renpaard | paard | racen | renpaard";
+// 🏂 - snowboarder
+"72079360.name" = "snowboarder";
+"72079360.tags" = "ski | sneeuw | snowboard | snowboarder";
+// 🏄 - surfer
+"72079370.name" = "surfer";
+"72079370.tags" = "surfen | surfer";
+// 🚣 - rowboat
+"72079210.name" = "persoon in roeiboot";
+"72079210.tags" = "boot | persoon in roeiboot | roeiboot";
+// 🏊 - swimmer
+"72079400.name" = "zwemmende persoon";
+"72079400.tags" = "zwemmen | zwemmende persoon";
+// 🚴 - bicyclist
+"72079295.name" = "fietsende persoon";
+"72079295.tags" = "fiets | fietsen | fietsende persoon | wielrennen | wielrenner";
+// 🚵 - mountain_bicyclist
+"72079300.name" = "persoon op mountainbike";
+"72079300.tags" = "berg | fiets | fietsen | fietser | persoon op mountainbike | wielrenner";
+// 🤸 - person_doing_cartwheel
+"72078680.name" = "persoon die een radslag doet";
+"72078680.tags" = "gymnastiek | persoon die een radslag doet | radslag";
+// 🤼 - wrestlers
+"72078700.name" = "personen die worstelen";
+"72078700.tags" = "personen die worstelen | worstelaar | worstelen";
+// 🤽 - water_polo
+"72078705.name" = "persoon die waterpolo speelt";
+"72078705.tags" = "persoon die waterpolo speelt | polo | water";
+// 🤾 - handball
+"72078710.name" = "persoon die handbal speelt";
+"72078710.tags" = "bal | handbal | persoon die handbal speelt";
+// 🤹 - juggling
+"72078685.name" = "persoon die jongleert";
+"72078685.tags" = "balans | jongleur | multitasken | persoon die jongleert | vaardigheid";
+// 🧘 - person_in_lotus_position
+"72079480.name" = "persoon in lotushouding";
+"72079480.tags" = "meditatie | persoon in lotushouding | yoga";
+// 🛀 - bath
+"72079355.name" = "persoon in badkuip";
+"72079355.tags" = "bad | badkuip | persoon in badkuip";
+// 🛌 - sleeping_accommodation
+"72079415.name" = "persoon in bed";
+"72079415.tags" = "hotel | persoon in bed | slapen";
+// 🧑‍🤝‍🧑 - people_holding_hands
+"3200955216551984283.name" = "personen hand in hand";
+"3200955216551984283.tags" = "hand | hand in hand | personen hand in hand | persoon | stel | vasthouden";
+// 👭 - two_women_holding_hands
+"72076380.name" = "vrouwen hand in hand";
+"72076380.tags" = "hand | hand in hand | stel | vrouwen | vrouwen hand in hand";
+// 👫 - man_and_woman_holding_hands
+"72076370.name" = "man en vrouw hand in hand";
+"72076370.tags" = "hand | hand in hand | man | man en vrouw hand in hand | stel | vasthouden | vrouw";
+// 👬 - two_men_holding_hands
+"72076375.name" = "mannen hand in hand";
+"72076375.tags" = "hand in hand | man | mannen | mannen hand in hand | stel | sterrenbeeld | tweeling | Tweelingen";
+// 💏 - couplekiss
+"72076550.name" = "kus";
+"72076550.tags" = "kus | stelletje";
+// 💑 - couple_with_heart
+"72076560.name" = "stel met hart";
+"72076560.tags" = "liefde | stel met hart | stelletje";
+// 👪 - family
+"72076365.name" = "gezin";
+"72076365.tags" = "gezin | kind | mensen | moeder | vader";
+// 👤 - bust_in_silhouette
+"72076335.name" = "silhouet van persoon";
+"72076335.tags" = "buste | silhouet | silhouet van persoon";
+// 👥 - busts_in_silhouette
+"72076340.name" = "silhouet van twee personen";
+"72076340.tags" = "buste | silhouet | silhouet van twee personen";
+// 🫂 - people_hugging
+"72080650.name" = "personen in een omhelzing";
+"72080650.tags" = "bedankt | dag | hallo | omhelzing | personen in een omhelzing";
+// 👣 - footprints
+"72076330.name" = "voetafdrukken";
+"72076330.tags" = "afdruk | kleding | voetafdruk | voetafdrukken";
+// 🏻 - skin-tone-2
+"72079645.name" = "lichte huidskleur";
+"72079645.tags" = "huidskleur | lichte huidskleur | type 1–2";
+// 🏼 - skin-tone-3
+"72079650.name" = "lichtgetinte huidskleur";
+"72079650.tags" = "huidskleur | lichtgetinte huidskleur | type 3";
+// 🏽 - skin-tone-4
+"72079655.name" = "getinte huidskleur";
+"72079655.tags" = "getinte huidskleur | huidskleur | type 4";
+// 🏾 - skin-tone-5
+"72079660.name" = "donkergetinte huidskleur";
+"72079660.tags" = "donkergetinte huidskleur | huidskleur | type 5";
+// 🏿 - skin-tone-6
+"72079665.name" = "donkere huidskleur";
+"72079665.tags" = "donkere huidskleur | huidskleur | type 6";
+// 🐵 - monkey_face
+"72076100.name" = "apengezicht";
+"72076100.tags" = "aap | apengezicht | gezicht";
+// 🐒 - monkey
+"72075925.name" = "aap";
+"72075925.tags" = "aap";
+// 🦍 - gorilla
+"72079105.name" = "gorilla";
+"72079105.tags" = "gorilla";
+// 🦧 - orangutan
+"72079235.name" = "orang-oetang";
+"72079235.tags" = "aap | orang-oetang";
+// 🐶 - dog
+"72076105.name" = "hondengezicht";
+"72076105.tags" = "gezicht | hond | hondengezicht | huisdier";
+// 🐕 - dog2
+"72075940.name" = "hond";
+"72075940.tags" = "hond | huisdier";
+// 🦮 - guide_dog
+"72079270.name" = "blindengeleidehond";
+"72079270.tags" = "blind | blindengeleidehond | geleide | toegankelijkheid";
+// 🐕‍🦺 - service_dog
+"26508666272220.name" = "assistentiehond";
+"26508666272220.tags" = "assistentie | assistentiehond | hond | hulp | toegankelijkheid";
+// 🐩 - poodle
+"72076040.name" = "poedel";
+"72076040.tags" = "hond | poedel";
+// 🐺 - wolf
+"72076125.name" = "wolf";
+"72076125.tags" = "gezicht | wolf";
+// 🦊 - fox_face
+"72079090.name" = "vos";
+"72079090.tags" = "gezicht | vos";
+// 🦝 - raccoon
+"72079185.name" = "wasbeer";
+"72079185.tags" = "nieuwsgierig | sluw | wasbeer";
+// 🐱 - cat
+"72076080.name" = "kattengezicht";
+"72076080.tags" = "gezicht | huisdier | kat | kattengezicht";
+// 🐈 - cat2
+"72075875.name" = "kat";
+"72075875.tags" = "huisdier | kat";
+// 🐈‍⬛ - black_cat
+"51973200513.name" = "zwarte kat";
+"51973200513.tags" = "kat | ongeluk | zwart | zwarte kat";
+// 🦁 - lion_face
+"72079045.name" = "leeuw";
+"72079045.tags" = "gezicht | leeuw | Leo | sterrenbeeld";
+// 🐯 - tiger
+"72076070.name" = "tijgergezicht";
+"72076070.tags" = "gezicht | tijger | tijgergezicht";
+// 🐅 - tiger2
+"72075860.name" = "tijger";
+"72075860.tags" = "tijger";
+// 🐆 - leopard
+"72075865.name" = "luipaard";
+"72075865.tags" = "luipaard";
+// 🐴 - horse
+"72076095.name" = "paardengezicht";
+"72076095.tags" = "gezicht | paard | paardengezicht";
+// 🫎 - moose
+"72080710.name" = "eland";
+"72080710.tags" = "dier | eland | gewei | zoogdier";
+// 🫏 - donkey
+"72080715.name" = "ezel";
+"72080715.tags" = "dier | ezel | grauwtje | koppig | muildier | pakezel | zoogdier";
+// 🐎 - racehorse
+"72075905.name" = "paard";
+"72075905.tags" = "paard | racen | renpaard | ruitersport";
+// 🦄 - unicorn_face
+"72079060.name" = "eenhoorn";
+"72079060.tags" = "eenhoorn | gezicht";
+// 🦓 - zebra_face
+"72079135.name" = "zebra";
+"72079135.tags" = "streep | zebra";
+// 🦌 - deer
+"72079100.name" = "hert";
+"72079100.tags" = "hert";
+// 🦬 - bison
+"72079260.name" = "bizon";
+"72079260.tags" = "bizon | buffel | kudde | wisent";
+// 🐮 - cow
+"72076065.name" = "koeiengezicht";
+"72076065.tags" = "gezicht | koe | koeiengezicht";
+// 🐂 - ox
+"72075845.name" = "os";
+"72075845.tags" = "os | sterrenbeeld | stier | Taurus";
+// 🐃 - water_buffalo
+"72075850.name" = "waterbuffel";
+"72075850.tags" = "buffel | water | waterbuffel";
+// 🐄 - cow2
+"72075855.name" = "koe";
+"72075855.tags" = "koe";
+// 🐷 - pig
+"72076110.name" = "varkensgezicht";
+"72076110.tags" = "gezicht | varken | varkensgezicht";
+// 🐖 - pig2
+"72075945.name" = "varken";
+"72075945.tags" = "varken | zeug";
+// 🐗 - boar
+"72075950.name" = "zwijn";
+"72075950.tags" = "varken | zwijn";
+// 🐽 - pig_nose
+"72076140.name" = "varkensneus";
+"72076140.tags" = "gezicht | neus | varken | varkensneus";
+// 🐏 - ram
+"72075910.name" = "ram";
+"72075910.tags" = "Aries | mannelijk | ram | schaap | sterrenbeeld";
+// 🐑 - sheep
+"72075920.name" = "ooi";
+"72075920.tags" = "ooi | schaap | vrouwelijk";
+// 🐐 - goat
+"72075915.name" = "geit";
+"72075915.tags" = "geit | steenbok | sterrenbeeld";
+// 🐪 - dromedary_camel
+"72076045.name" = "dromedaris";
+"72076045.tags" = "bult | dromedaris | kameel met één bult";
+// 🐫 - camel
+"72076050.name" = "kameel";
+"72076050.tags" = "bult | kameel | kameel met twee bulten";
+// 🦙 - llama
+"72079165.name" = "lama";
+"72079165.tags" = "alpaca | guanaco | lama | vicuña | wol";
+// 🦒 - giraffe_face
+"72079130.name" = "giraffe";
+"72079130.tags" = "giraffe | vlekken";
+// 🐘 - elephant
+"72075955.name" = "olifant";
+"72075955.tags" = "olifant";
+// 🦣 - mammoth
+"72079215.name" = "mammoet";
+"72079215.tags" = "groot | mammoet | slagtand | uitsterven | wollig";
+// 🦏 - rhinoceros
+"72079115.name" = "neushoorn";
+"72079115.tags" = "neushoorn";
+// 🦛 - hippopotamus
+"72079175.name" = "nijlpaard";
+"72079175.tags" = "hippopotamus | nijlpaard";
+// 🐭 - mouse
+"72076060.name" = "muizengezicht";
+"72076060.tags" = "gezicht | muis | muizengezicht";
+// 🐁 - mouse2
+"72075840.name" = "muis";
+"72075840.tags" = "muis";
+// 🐀 - rat
+"72075835.name" = "rat";
+"72075835.tags" = "rat";
+// 🐹 - hamster
+"72076120.name" = "hamster";
+"72076120.tags" = "gezicht | hamster | huisdier";
+// 🐰 - rabbit
+"72076075.name" = "konijnengezicht";
+"72076075.tags" = "gezicht | huisdier | konijn | konijnengezicht | konijntje";
+// 🐇 - rabbit2
+"72075870.name" = "konijn";
+"72075870.tags" = "huisdier | konijn | konijntje";
+// 🦫 - beaver
+"72079255.name" = "bever";
+"72079255.tags" = "bever | dam";
+// 🦔 - hedgehog
+"72079140.name" = "egel";
+"72079140.tags" = "egel | stekelig";
+// 🦇 - bat
+"72079075.name" = "vleermuis";
+"72079075.tags" = "vampier | vleermuis";
+// 🐻 - bear
+"72076130.name" = "beer";
+"72076130.tags" = "beer | gezicht";
+// 🐨 - koala
+"72076035.name" = "koala";
+"72076035.tags" = "beer | koala";
+// 🐼 - panda_face
+"72076135.name" = "panda";
+"72076135.tags" = "gezicht | panda";
+// 🦥 - sloth
+"72079225.name" = "luiaard";
+"72079225.tags" = "lui | luiaard | traag";
+// 🦦 - otter
+"72079230.name" = "otter";
+"72079230.tags" = "otter | speels | vissen";
+// 🦨 - skunk
+"72079240.name" = "stinkdier";
+"72079240.tags" = "stinkdier | stinken";
+// 🦘 - kangaroo
+"72079160.name" = "kangoeroe";
+"72079160.tags" = "Australië | buideldier | kangoeroe | springen | wallaby";
+// 🦡 - badger
+"72079205.name" = "das";
+"72079205.tags" = "das | honingdas | kwellen";
+// 🐾 - feet
+"72076145.name" = "pootafdrukken";
+"72076145.tags" = "afdruk | poot | pootafdrukken | poten";
+// 🦃 - turkey
+"72079055.name" = "kalkoen";
+"72079055.tags" = "gevogelte | kalkoen";
+// 🐔 - chicken
+"72075935.name" = "kip";
+"72075935.tags" = "gevogelte | kip";
+// 🐓 - rooster
+"72075930.name" = "haan";
+"72075930.tags" = "gevogelte | haan";
+// 🐣 - hatching_chick
+"72076010.name" = "kuiken uit ei";
+"72076010.tags" = "baby | gevogelte | kuiken | kuiken uit ei | uit ei komen";
+// 🐤 - baby_chick
+"72076015.name" = "kuikentje";
+"72076015.tags" = "baby | gevogelte | kuiken | kuikentje";
+// 🐥 - hatched_chick
+"72076020.name" = "naar voren kijkend kuikentje";
+"72076020.tags" = "baby | gevogelte | kuiken | naar voren kijkend kuikentje";
+// 🐦 - bird
+"72076025.name" = "vogel";
+"72076025.tags" = "vogel";
+// 🐧 - penguin
+"72076030.name" = "pinguïn";
+"72076030.tags" = "pinguïn | vogel";
+// 🦅 - eagle
+"72079065.name" = "adelaar";
+"72079065.tags" = "adelaar | arend | vogel";
+// 🦆 - duck
+"72079070.name" = "eend";
+"72079070.tags" = "eend | vogel";
+// 🦢 - swan
+"72079210.name" = "zwaan";
+"72079210.tags" = "lelijk eendje | vogel | zwaan | zwanenjong";
+// 🦉 - owl
+"72079085.name" = "uil";
+"72079085.tags" = "uil | vogel | wijs | wijsheid";
+// 🦤 - dodo
+"72079220.name" = "dodo";
+"72079220.tags" = "dodo | groot | Mauritius | uitsterven";
+// 🪶 - feather
+"72080590.name" = "veer";
+"72080590.tags" = "licht | pluimage | veer | vliegen";
+// 🦩 - flamingo
+"72079245.name" = "flamingo";
+"72079245.tags" = "flamboyant | flamingo | tropisch";
+// 🦚 - peacock
+"72079170.name" = "pauw";
+"72079170.tags" = "opzichtig | pauw | pauwhen | trots | vogel";
+// 🦜 - parrot
+"72079180.name" = "papegaai";
+"72079180.tags" = "papegaai | piraat | praten | vogel";
+// 🪽 - wing
+"72080625.name" = "vleugel";
+"72080625.tags" = "engelachtig | luchtvaart | mythologie | vleugel | vliegen | vogel";
+// 🐦‍⬛ - black_bird
+"52006885503.name" = "merel";
+"52006885503.tags" = "kauw | kraai | merel | raaf | vogel | zwart";
+// 🪿 - goose
+"72080635.name" = "gans";
+"72080635.tags" = "gans | gevogelte | onnozel | snateren | vogel";
+// 🐸 - frog
+"72076115.name" = "kikker";
+"72076115.tags" = "gezicht | kikker";
+// 🐊 - crocodile
+"72075885.name" = "krokodil";
+"72075885.tags" = "krokodil";
+// 🐢 - turtle
+"72076005.name" = "schildpad";
+"72076005.tags" = "schildpad | waterschildpad";
+// 🦎 - lizard
+"72079110.name" = "hagedis";
+"72079110.tags" = "gekko | hagedis | reptiel";
+// 🐍 - snake
+"72075900.name" = "slang";
+"72075900.tags" = "ophiuchus | serpent | slang | slangendrager | sterrenbeeld";
+// 🐲 - dragon_face
+"72076085.name" = "drakengezicht";
+"72076085.tags" = "draak | drakengezicht | gezicht | sprookje";
+// 🐉 - dragon
+"72075880.name" = "draak";
+"72075880.tags" = "draak | sprookje";
+// 🦕 - sauropod
+"72079145.name" = "sauropode";
+"72079145.tags" = "brachiosaurus | brontosaurus | diplodocus | sauropode";
+// 🦖 - t-rex
+"72079150.name" = "T-Rex";
+"72079150.tags" = "T-Rex | Tyrannosaurus Rex";
+// 🐳 - whale
+"72076090.name" = "spuitende walvis";
+"72076090.tags" = "gezicht | spuitend | spuitende walvis | walvis";
+// 🐋 - whale2
+"72075890.name" = "walvis";
+"72075890.tags" = "walvis";
+// 🐬 - dolphin
+"72076055.name" = "dolfijn";
+"72076055.tags" = "dolfijn | flipper";
+// 🦭 - seal
+"72079265.name" = "zeehond";
+"72079265.tags" = "zeehond | zeeleeuw";
+// 🐟 - fish
+"72075990.name" = "vis";
+"72075990.tags" = "sterrenbeeld | vis | vissen";
+// 🐠 - tropical_fish
+"72075995.name" = "tropische vis";
+"72075995.tags" = "tropisch | tropische vis | vis";
+// 🐡 - blowfish
+"72076000.name" = "kogelvis";
+"72076000.tags" = "kogelvis | vis";
+// 🦈 - shark
+"72079080.name" = "haai";
+"72079080.tags" = "haai | vis";
+// 🐙 - octopus
+"72075960.name" = "octopus";
+"72075960.tags" = "octopus";
+// 🐚 - shell
+"72075965.name" = "schelp";
+"72075965.tags" = "schelp | spiraal";
+// 🪸 - coral
+"72080600.name" = "koraal";
+"72080600.tags" = "koraal | oceaan | rif";
+// 🪼 - jellyfish
+"72080620.name" = "kwal";
+"72080620.tags" = "au | branden | gelei | kwal | ongewerveld | stekel | zee";
+// 🐌 - snail
+"72075895.name" = "slak";
+"72075895.tags" = "slak";
+// 🦋 - butterfly
+"72079095.name" = "vlinder";
+"72079095.tags" = "insect | mooi | vlinder";
+// 🐛 - bug
+"72075970.name" = "insect";
+"72075970.tags" = "beestje | insect";
+// 🐜 - ant
+"72075975.name" = "mier";
+"72075975.tags" = "insect | mier";
+// 🐝 - bee
+"72075980.name" = "honingbij";
+"72075980.tags" = "bij | honingbij | insect";
+// 🪲 - beetle
+"72080570.name" = "kever";
+"72080570.tags" = "beestje | insect | kever";
+// 🐞 - ladybug
+"72075985.name" = "lieveheersbeestje";
+"72075985.tags" = "insect | kever | lieveheersbeest | lieveheersbeestje";
+// 🦗 - cricket
+"72079155.name" = "krekel";
+"72079155.tags" = "krekel | sprinkhaan";
+// 🪳 - cockroach
+"72080575.name" = "kakkerlak";
+"72080575.tags" = "bakkerstor | insect | kakkerlak | ongedierte";
+// 🦂 - scorpion
+"72079050.name" = "schorpioen";
+"72079050.tags" = "schorpioen | Scorpio | sterrenbeeld";
+// 🦟 - mosquito
+"72079195.name" = "mug";
+"72079195.tags" = "insect | koorts | malaria | mug | virus | ziekte";
+// 🪰 - fly
+"72080560.name" = "vlieg";
+"72080560.tags" = "daas | huisvlieg | made | rottend | tseetseevlieg | vlieg | ziekte";
+// 🪱 - worm
+"72080565.name" = "worm";
+"72080565.tags" = "parasiet | regenworm | ringworm | worm";
+// 🦠 - microbe
+"72079200.name" = "microbe";
+"72079200.tags" = "amoeba | bacterie | microbe | virus";
+// 💐 - bouquet
+"72076555.name" = "boeket";
+"72076555.tags" = "bloem | boeket";
+// 🌸 - cherry_blossom
+"72078670.name" = "kersenbloesem";
+"72078670.tags" = "bloem | bloesem | kers | kersenbloesem";
+// 💮 - white_flower
+"72076705.name" = "witte bloem";
+"72076705.tags" = "bloem | witte bloem";
+// 🪷 - lotus
+"72080595.name" = "lotus";
+"72080595.tags" = "bloem | boeddhisme | hindoeïsme | lotus | puurheid";
+// 🌹 - rose
+"72078675.name" = "roos";
+"72078675.tags" = "bloem | roos";
+// 🥀 - wilted_flower
+"72078720.name" = "verwelkte bloem";
+"72078720.tags" = "bloem | verwelkt | verwelkte bloem";
+// 🌺 - hibiscus
+"72078680.name" = "hibiscus";
+"72078680.tags" = "bloem | hibiscus";
+// 🌻 - sunflower
+"72078685.name" = "zonnebloem";
+"72078685.tags" = "bloem | zon | zonnebloem";
+// 🌼 - blossom
+"72078690.name" = "bloesem";
+"72078690.tags" = "bloem | bloesem";
+// 🌷 - tulip
+"72078665.name" = "tulp";
+"72078665.tags" = "bloem | tulp";
+// 🪻 - hyacinth
+"72080615.name" = "hyacint";
+"72080615.tags" = "bloem | hyacint | lavendel | leeuwenbek | lupine | vlinderbloemige";
+// 🌱 - seedling
+"72078635.name" = "zaailing";
+"72078635.tags" = "jong | zaailing";
+// 🪴 - potted_plant
+"72080580.name" = "potplant";
+"72080580.tags" = "groeien | huis | nutteloos | plant | potplant | saai | verzorgen";
+// 🌲 - evergreen_tree
+"72078640.name" = "naaldboom";
+"72078640.tags" = "boom | naaldboom";
+// 🌳 - deciduous_tree
+"72078645.name" = "loofboom";
+"72078645.tags" = "bladeren verliezen | boom | loof verliezen | loofboom";
+// 🌴 - palm_tree
+"72078650.name" = "palmboom";
+"72078650.tags" = "boom | palm | palmboom";
+// 🌵 - cactus
+"72078655.name" = "cactus";
+"72078655.tags" = "cactus | plant";
+// 🌾 - ear_of_rice
+"72078700.name" = "rijstplant";
+"72078700.tags" = "aar | graan | rijst | rijstplant";
+// 🌿 - herb
+"72078705.name" = "kruid";
+"72078705.tags" = "blad | kruid";
+// 🍀 - four_leaf_clover
+"72078710.name" = "klavertjevier";
+"72078710.tags" = "4 | blad | klaver | klavertjevier | vier";
+// 🍁 - maple_leaf
+"72078715.name" = "esdoornblad";
+"72078715.tags" = "blad | esdoorn | esdoornblad | vallend";
+// 🍂 - fallen_leaf
+"72078720.name" = "vallende bladeren";
+"72078720.tags" = "blad | vallend | vallende bladeren";
+// 🍃 - leaves
+"72078725.name" = "blad in de wind";
+"72078725.tags" = "blad | blad in de wind | waaiend | waait | wind";
+// 🪹 - empty_nest
+"72080605.name" = "leeg nest";
+"72080605.tags" = "leeg nest | nestelen";
+// 🪺 - nest_with_eggs
+"72080610.name" = "nest met eieren";
+"72080610.tags" = "nest met eieren | nestelen";
+// 🍄 - mushroom
+"72078730.name" = "paddenstoel";
+"72078730.tags" = "paddenstoel | zwam";
+// 🍇 - grapes
+"72078745.name" = "druiven";
+"72078745.tags" = "druif | druiven | fruit";
+// 🍈 - melon
+"72078750.name" = "meloen";
+"72078750.tags" = "fruit | meloen";
+// 🍉 - watermelon
+"72078755.name" = "watermeloen";
+"72078755.tags" = "fruit | watermeloen";
+// 🍊 - tangerine
+"72078760.name" = "mandarijn";
+"72078760.tags" = "fruit | mandarijn | sinaasappel";
+// 🍋 - lemon
+"72078765.name" = "citroen";
+"72078765.tags" = "citroen | citrus | fruit";
+// 🍌 - banana
+"72078770.name" = "banaan";
+"72078770.tags" = "banaan | fruit";
+// 🍍 - pineapple
+"72078775.name" = "ananas";
+"72078775.tags" = "ananas | fruit";
+// 🥭 - mango
+"72078945.name" = "mango";
+"72078945.tags" = "fruit | mango | tropisch";
+// 🍎 - apple
+"72078780.name" = "rode appel";
+"72078780.tags" = "appel | fruit | rode appel | rood";
+// 🍏 - green_apple
+"72078785.name" = "groene appel";
+"72078785.tags" = "appel | fruit | groen | groene appel";
+// 🍐 - pear
+"72078790.name" = "peer";
+"72078790.tags" = "fruit | peer";
+// 🍑 - peach
+"72078795.name" = "perzik";
+"72078795.tags" = "fruit | perzik";
+// 🍒 - cherries
+"72078800.name" = "kersen";
+"72078800.tags" = "bessen | fruit | kers | kersen | rood";
+// 🍓 - strawberry
+"72078805.name" = "aardbei";
+"72078805.tags" = "aardbei | bes | fruit";
+// 🫐 - blueberries
+"72080720.name" = "bosbessen";
+"72080720.tags" = "bes | blauw | blauwbes | bosbes | bosbessen";
+// 🥝 - kiwifruit
+"72078865.name" = "kiwi";
+"72078865.tags" = "fruit | kiwi | voedsel";
+// 🍅 - tomato
+"72078735.name" = "tomaat";
+"72078735.tags" = "fruit | groente | tomaat";
+// 🫒 - olive
+"72080730.name" = "olijf";
+"72080730.tags" = "olijf | voedsel";
+// 🥥 - coconut
+"72078905.name" = "kokosnoot";
+"72078905.tags" = "kokosnoot | palm | pina colada";
+// 🥑 - avocado
+"72078805.name" = "avocado";
+"72078805.tags" = "avocado | fruit | voedsel";
+// 🍆 - eggplant
+"72078740.name" = "aubergine";
+"72078740.tags" = "aubergine | groente";
+// 🥔 - potato
+"72078820.name" = "aardappel";
+"72078820.tags" = "aardappel | groente | voedsel";
+// 🥕 - carrot
+"72078825.name" = "wortel";
+"72078825.tags" = "groente | voedsel | wortel";
+// 🌽 - corn
+"72078695.name" = "maïskolf";
+"72078695.tags" = "kolf | maïskolf | plant";
+// 🫑 - bell_pepper
+"72080725.name" = "paprika";
+"72080725.tags" = "capsicum | groente | paprika | peper";
+// 🥒 - cucumber
+"72078810.name" = "komkommer";
+"72078810.tags" = "augurk | groente | komkommer | voedsel";
+// 🥬 - leafy_green
+"72078940.name" = "bladgroente";
+"72078940.tags" = "bladgroente | boerenkool | kool | paksoi | sla";
+// 🥦 - broccoli
+"72078910.name" = "broccoli";
+"72078910.tags" = "broccoli | wilde kool";
+// 🧄 - garlic
+"72079380.name" = "knoflook";
+"72079380.tags" = "knoflook | smaakmaker";
+// 🧅 - onion
+"72079385.name" = "ui";
+"72079385.tags" = "smaakmaker | ui";
+// 🥜 - peanuts
+"72078860.name" = "pinda’s";
+"72078860.tags" = "groente | noot | pinda | pinda’s | voedsel";
+// 🫘 - beans
+"72080760.name" = "bonen";
+"72080760.tags" = "bonen | kidneyboon | peulvrucht | voedsel";
+// 🌰 - chestnut
+"72078630.name" = "kastanje";
+"72078630.tags" = "kastanje | plant";
+// 🫚 - ginger_root
+"72080770.name" = "gemberwortel";
+"72080770.tags" = "bier | gemberwortel | specerij | wortel";
+// 🫛 - pea_pod
+"72080775.name" = "erwtendop";
+"72080775.tags" = "bonen | dop | edamame | erwt | erwtendop | groente | peulvrucht";
+// 🍞 - bread
+"72078860.name" = "brood";
+"72078860.tags" = "brood";
+// 🥐 - croissant
+"72078800.name" = "croissant";
+"72078800.tags" = "brood | croissant | frans | voedsel";
+// 🥖 - baguette_bread
+"72078830.name" = "stokbrood";
+"72078830.tags" = "brood | frans | stokbrood | voedsel";
+// 🫓 - flatbread
+"72080735.name" = "platbrood";
+"72080735.tags" = "arepa | lavash | naan | pita | platbrood";
+// 🥨 - pretzel
+"72078920.name" = "pretzel";
+"72078920.tags" = "gedraaid | pretzel";
+// 🥯 - bagel
+"72078955.name" = "bagel";
+"72078955.tags" = "bagel | bakkerij | spread";
+// 🥞 - pancakes
+"72078870.name" = "pannenkoeken";
+"72078870.tags" = "crêpe | flensjes | pannenkoek | pannenkoeken | voedsel";
+// 🧇 - waffle
+"72079395.name" = "wafel";
+"72079395.tags" = "ijzer | wafel | weifelend";
+// 🧀 - cheese_wedge
+"72079360.name" = "stuk kaas";
+"72079360.tags" = "kaas | stuk kaas";
+// 🍖 - meat_on_bone
+"72078820.name" = "vlees met bot";
+"72078820.tags" = "bot | vlees | vlees met bot";
+// 🍗 - poultry_leg
+"72078825.name" = "kippenpoot";
+"72078825.tags" = "bot | gevogelte | kip | kippenpoot | poot";
+// 🥩 - cut_of_meat
+"72078925.name" = "vlees";
+"72078925.tags" = "biefstuk | kotelet | lamskotelet | varkenslap | vlees";
+// 🥓 - bacon
+"72078815.name" = "bacon";
+"72078815.tags" = "bacon | vlees | voedsel";
+// 🍔 - hamburger
+"72078810.name" = "hamburger";
+"72078810.tags" = "burger | hamburger";
+// 🍟 - fries
+"72078865.name" = "patat";
+"72078865.tags" = "frietjes | patat";
+// 🍕 - pizza
+"72078815.name" = "pizzapunt";
+"72078815.tags" = "kaas | pizzapunt | punt";
+// 🌭 - hotdog
+"72078615.name" = "hotdog";
+"72078615.tags" = "frankfurter | hotdog | worst";
+// 🥪 - sandwich
+"72078930.name" = "boterham";
+"72078930.tags" = "boterham | brood";
+// 🌮 - taco
+"72078620.name" = "taco";
+"72078620.tags" = "mexicaans | taco";
+// 🌯 - burrito
+"72078625.name" = "burrito";
+"72078625.tags" = "burrito | mexicaans | wrap";
+// 🫔 - tamale
+"72080740.name" = "tamale";
+"72080740.tags" = "gevuld | Mexicaans | tamale";
+// 🥙 - stuffed_flatbread
+"72078845.name" = "gevuld pitabroodje";
+"72078845.tags" = "falafel | gevuld | gyros | kebab | pitabroodje | voedsel";
+// 🧆 - falafel
+"72079390.name" = "falafel";
+"72079390.tags" = "falafel | gehaktbal | kikkererwt";
+// 🥚 - egg
+"72078850.name" = "ei";
+"72078850.tags" = "ei | voedsel";
+// 🍳 - fried_egg
+"72078965.name" = "koken";
+"72078965.tags" = "bakken | ei | koekenpan | koken | ontbijt";
+// 🥘 - shallow_pan_of_food
+"72078840.name" = "paellapan";
+"72078840.tags" = "casserole | paella | paellapan | pan | voedsel | wok";
+// 🍲 - stew
+"72078960.name" = "stoofschotel";
+"72078960.tags" = "eenpansgerecht | stoofschotel";
+// 🫕 - fondue
+"72080745.name" = "fondue";
+"72080745.tags" = "chocola | fondue | gesmolten | kaas | pan | Zwitsers";
+// 🥣 - bowl_with_spoon
+"72078895.name" = "kom met lepel";
+"72078895.tags" = "cornflakes | kom met lepel | muesli | ontbijt";
+// 🥗 - green_salad
+"72078835.name" = "groene salade";
+"72078835.tags" = "groen | groene salade | salade | voedsel";
+// 🍿 - popcorn
+"72079025.name" = "popcorn";
+"72079025.tags" = "popcorn";
+// 🧈 - butter
+"72079400.name" = "boter";
+"72079400.tags" = "boter | zuivel";
+// 🧂 - salt
+"72079370.name" = "zout";
+"72079370.tags" = "tafelzout | zout | zoutvaatje";
+// 🥫 - canned_food
+"72078935.name" = "blikvoedsel";
+"72078935.tags" = "blik | blikvoedsel";
+// 🍱 - bento
+"72078955.name" = "bentobox";
+"72078955.tags" = "bento | bentobox | box";
+// 🍘 - rice_cracker
+"72078830.name" = "rijstwafel";
+"72078830.tags" = "cracker | rijst | rijstwafel";
+// 🍙 - rice_ball
+"72078835.name" = "rijstballetje";
+"72078835.tags" = "balletje | japans | rijst | rijstballetje";
+// 🍚 - rice
+"72078840.name" = "gekookte rijst";
+"72078840.tags" = "gekookt | gekookte rijst | rijst";
+// 🍛 - curry
+"72078845.name" = "curry en rijst";
+"72078845.tags" = "curry | curry en rijst | rijst";
+// 🍜 - ramen
+"72078850.name" = "dampende kom";
+"72078850.tags" = "dampend | dampende kom | kom | noedels | ramen";
+// 🍝 - spaghetti
+"72078855.name" = "spaghetti";
+"72078855.tags" = "pasta | spaghetti";
+// 🍠 - sweet_potato
+"72078870.name" = "gepofte zoete aardappel";
+"72078870.tags" = "aardappel | gepoft | gepofte zoete aardappel | zoet";
+// 🍢 - oden
+"72078880.name" = "oden";
+"72078880.tags" = "kebab | oden | spies | stokje | zeevruchten";
+// 🍣 - sushi
+"72078885.name" = "sushi";
+"72078885.tags" = "sushi";
+// 🍤 - fried_shrimp
+"72078890.name" = "gefrituurde garnaal";
+"72078890.tags" = "garnaal | gefrituurd | gefrituurde garnaal | tempura";
+// 🍥 - fish_cake
+"72078895.name" = "viskoekje met krul";
+"72078895.tags" = "koekje | krul | vis | viskoekje | viskoekje met krul";
+// 🥮 - moon_cake
+"72078950.name" = "maancake";
+"72078950.tags" = "festival | herfst | maancake | yuèbǐng";
+// 🍡 - dango
+"72078875.name" = "dango";
+"72078875.tags" = "dango | dessert | japans | spies | stokje | zoet";
+// 🥟 - dumpling
+"72078875.name" = "knoedel";
+"72078875.tags" = "empanada | gyoza | jiaozi | knoedel | pirog";
+// 🥠 - fortune_cookie
+"72078880.name" = "gelukskoekje";
+"72078880.tags" = "gelukskoekje | profetie";
+// 🥡 - takeout_box
+"72078885.name" = "afhaalmaaltijd";
+"72078885.tags" = "afhaalmaaltijd | oesteremmer";
+// 🦀 - crab
+"72079040.name" = "krab";
+"72079040.tags" = "krab | kreeft | sterrenbeeld";
+// 🦞 - lobster
+"72079190.name" = "kreeft";
+"72079190.tags" = "bisque | kreeft | scharen | zeevruchten";
+// 🦐 - shrimp
+"72079120.name" = "garnaal";
+"72079120.tags" = "garnaal | klein | schaaldier | voedsel";
+// 🦑 - squid
+"72079125.name" = "inktvis";
+"72079125.tags" = "calamaris | inktvis | voedsel | weekdier";
+// 🦪 - oyster
+"72079250.name" = "oester";
+"72079250.tags" = "duiken | oester | parel";
+// 🍦 - icecream
+"72078900.name" = "softijs";
+"72078900.tags" = "dessert | ijs | roomijs | softijs | zacht | zoet";
+// 🍧 - shaved_ice
+"72078905.name" = "geschaafd ijs";
+"72078905.tags" = "dessert | geschaafd | ijs | zoet";
+// 🍨 - ice_cream
+"72078910.name" = "ijs";
+"72078910.tags" = "dessert | ijs | room | zoet";
+// 🍩 - doughnut
+"72078915.name" = "donut";
+"72078915.tags" = "dessert | donut | zoet";
+// 🍪 - cookie
+"72078920.name" = "koekje";
+"72078920.tags" = "dessert | koekje | zoet";
+// 🎂 - birthday
+"72079040.name" = "verjaardagstaart";
+"72079040.tags" = "dessert | feest | gebak | taart | verjaardag | verjaardagstaart | zoet";
+// 🍰 - cake
+"72078950.name" = "cake";
+"72078950.tags" = "cake | dessert | gebak | plak | taart | zoet";
+// 🧁 - cupcake
+"72079365.name" = "cupcake";
+"72079365.tags" = "bakkerij | cupcake | zoet";
+// 🥧 - pie
+"72078915.name" = "taart";
+"72078915.tags" = "gebakje | taart | vulling";
+// 🍫 - chocolate_bar
+"72078925.name" = "chocoladereep";
+"72078925.tags" = "chocolade | chocoladereep | dessert | reep | zoet";
+// 🍬 - candy
+"72078930.name" = "snoep";
+"72078930.tags" = "dessert | snoep | zoet";
+// 🍭 - lollipop
+"72078935.name" = "lolly";
+"72078935.tags" = "dessert | lolly | snoep | zoet";
+// 🍮 - custard
+"72078940.name" = "vla";
+"72078940.tags" = "dessert | pudding | vla | zoet";
+// 🍯 - honey_pot
+"72078945.name" = "honingpot";
+"72078945.tags" = "honing | honingpot | pot | zoet";
+// 🍼 - baby_bottle
+"72079010.name" = "babyflesje";
+"72079010.tags" = "baby | babyflesje | drinken | flesje | melk";
+// 🥛 - glass_of_milk
+"72078855.name" = "glas melk";
+"72078855.tags" = "drank | glas | melk";
+// ☕ - coffee
+"30018.name" = "warme drank";
+"30018.tags" = "drankje | drinken | koffie | stomend | thee | warm | warme drank";
+// 🫖 - teapot
+"72080750.name" = "theepot";
+"72080750.tags" = "drinken | pot | thee | theepot";
+// 🍵 - tea
+"72078975.name" = "theekopje zonder oor";
+"72078975.tags" = "drankje | drinken | kop | thee | theekopje | theekopje zonder oor";
+// 🍶 - sake
+"72078980.name" = "sake";
+"72078980.tags" = "bar | drankje | drinken | fles | kopje | sake";
+// 🍾 - champagne
+"72079020.name" = "fles met knallende kurk";
+"72079020.tags" = "bar | drinken | fles | fles met knallende kurk | knallend | kurk";
+// 🍷 - wine_glass
+"72078985.name" = "wijnglas";
+"72078985.tags" = "bar | drankje | drinken | glas | wijn | wijnglas";
+// 🍸 - cocktail
+"72078990.name" = "cocktailglas";
+"72078990.tags" = "bar | cocktail | cocktailglas | drinken | glas";
+// 🍹 - tropical_drink
+"72078995.name" = "tropisch drankje";
+"72078995.tags" = "bar | drinken | tropisch | tropisch drankje";
+// 🍺 - beer
+"72079000.name" = "bierglas";
+"72079000.tags" = "bar | bier | bierglas | drinken | glas";
+// 🍻 - beers
+"72079005.name" = "klinkende bierglazen";
+"72079005.tags" = "bar | bier | drinken | glas | klinkende bierglazen | proosten";
+// 🥂 - clinking_glasses
+"72078730.name" = "klinkende glazen";
+"72078730.tags" = "drinken | glas | klinken | klinkende glazen | vieren";
+// 🥃 - tumbler_glass
+"72078735.name" = "tumblerglas";
+"72078735.tags" = "borrel | drank | glas | tumbler | tumblerglas | whiskey | whisky";
+// 🫗 - pouring_liquid
+"72080755.name" = "vloeistof uitgieten";
+"72080755.tags" = "drinken | glas | leeg | morsen | vloeistof uitgieten";
+// 🥤 - cup_with_straw
+"72078900.name" = "beker met rietje";
+"72078900.tags" = "beker met rietje | frisdrank | sap";
+// 🧋 - bubble_tea
+"72079415.name" = "bubbelthee";
+"72079415.tags" = "bubbel | bubbelthee | melk | parel | thee";
+// 🧃 - beverage_box
+"72079375.name" = "pakje drinken";
+"72079375.tags" = "drankje | pakje | pakje drinken | rietje | sap | zoet";
+// 🧉 - mate_drink
+"72079405.name" = "maté";
+"72079405.tags" = "drank | maté";
+// 🧊 - ice_cube
+"72079410.name" = "ijsklontje";
+"72079410.tags" = "ijs | ijsberg | ijsklontje | koud";
+// 🥢 - chopsticks
+"72078890.name" = "chopsticks";
+"72078890.tags" = "chopsticks | eetstokjes";
+// 🍴 - fork_and_knife
+"72078970.name" = "mes en vork";
+"72078970.tags" = "koken | mes | mes en vork | vork";
+// 🥄 - spoon
+"72078740.name" = "lepel";
+"72078740.tags" = "bestek | lepel | tafelgerei";
+// 🔪 - hocho
+"72077325.name" = "keukenmes";
+"72077325.tags" = "keukenmes | koken | mes | wapen";
+// 🫙 - jar
+"72080765.name" = "pot";
+"72080765.tags" = "bewaren | leeg | pot | saus | specerij | verpakking";
+// 🏺 - amphora
+"72079640.name" = "amfora";
+"72079640.tags" = "amfora | drinken | koken | kruik | sterrenbeeld | waterman";
+// 🌍 - earth_africa
+"72078455.name" = "wereldbol met Europa-Afrika";
+"72078455.tags" = "aarde | Afrika | Europa | wereld | wereldbol | wereldbol met Europa-Afrika";
+// 🌎 - earth_americas
+"72078460.name" = "wereldbol met Noord- en Zuid-Amerika";
+"72078460.tags" = "aarde | Noord- en Zuid-Amerika | wereld | wereldbol | wereldbol met Noord- en Zuid-Amerika";
+// 🌏 - earth_asia
+"72078465.name" = "wereldbol met Azië-Australië";
+"72078465.tags" = "aarde | Australië | Azië | wereld | wereldbol | wereldbol met Azië-Australië";
+// 🌐 - globe_with_meridians
+"72078470.name" = "wereldbol met meridianen";
+"72078470.tags" = "aarde | meridianen | wereld | wereldbol | wereldbol met meridianen";
+// 🗾 - japan
+"72078385.name" = "kaart van Japan";
+"72078385.tags" = "Japan | kaart | kaart van Japan";
+// 🧭 - compass
+"72079585.name" = "kompas";
+"72079585.tags" = "kompas | magnetisch | navigatie | oriëntatielopen";
+// 🌋 - volcano
+"72078445.name" = "vulkaan";
+"72078445.tags" = "berg | vulkaan | vulkaanuitbarsting";
+// 🗻 - mount_fuji
+"72078370.name" = "berg Fuji";
+"72078370.tags" = "berg | Fuji";
+// 🧱 - bricks
+"72079605.name" = "baksteen";
+"72079605.tags" = "baksteen | bakstenen | cement | klei | muur";
+// 🪨 - rock
+"72080520.name" = "rots";
+"72080520.tags" = "rots | rotsblok | steen";
+// 🪵 - wood
+"72080585.name" = "hout";
+"72080585.tags" = "balk | boomstam | hout | timmerhout";
+// 🛖 - hut
+"72079465.name" = "hut";
+"72079465.tags" = "huis | hut | joert | ronde hut";
+// 🏠 - house
+"72079510.name" = "huis";
+"72079510.tags" = "huis | thuis";
+// 🏡 - house_with_garden
+"72079515.name" = "huis met tuin";
+"72079515.tags" = "huis | huis met tuin | thuis | tuin";
+// 🏢 - office
+"72079520.name" = "kantoorgebouw";
+"72079520.tags" = "gebouw | kantoorgebouw";
+// 🏣 - post_office
+"72079525.name" = "Japans postkantoor";
+"72079525.tags" = "Japans | Japans postkantoor | post";
+// 🏤 - european_post_office
+"72079530.name" = "postkantoor";
+"72079530.tags" = "Europees | post | postkantoor";
+// 🏥 - hospital
+"72079535.name" = "ziekenhuis";
+"72079535.tags" = "dokter | medicijnen | ziekenhuis";
+// 🏦 - bank
+"72079540.name" = "bank";
+"72079540.tags" = "bank | gebouw";
+// 🏨 - hotel
+"72079550.name" = "hotel";
+"72079550.tags" = "gebouw | hotel";
+// 🏩 - love_hotel
+"72079555.name" = "love-hotel";
+"72079555.tags" = "hotel | liefde | love-hotel";
+// 🏪 - convenience_store
+"72079560.name" = "supermarkt";
+"72079560.tags" = "boodschappen | supermarkt | winkel";
+// 🏫 - school
+"72079565.name" = "school";
+"72079565.tags" = "gebouw | school";
+// 🏬 - department_store
+"72079570.name" = "warenhuis";
+"72079570.tags" = "warenhuis | winkel | winkelen";
+// 🏭 - factory
+"72079575.name" = "fabriek";
+"72079575.tags" = "fabriek | gebouw";
+// 🏯 - japanese_castle
+"72079585.name" = "Japans kasteel";
+"72079585.tags" = "Japans | kasteel";
+// 🏰 - european_castle
+"72079590.name" = "kasteel";
+"72079590.tags" = "europees | kasteel";
+// 💒 - wedding
+"72076565.name" = "bruiloft";
+"72076565.tags" = "bruiloft | kapel | romantiek";
+// 🗼 - tokyo_tower
+"72078375.name" = "Tokio-toren";
+"72078375.tags" = "Tokio | Tokio-toren | toren";
+// 🗽 - statue_of_liberty
+"72078380.name" = "vrijheidsbeeld";
+"72078380.tags" = "beeld | vrijheid | vrijheidsbeeld";
+// ⛪ - church
+"30657.name" = "kerk";
+"30657.tags" = "christelijk | geloof | kerk | kruis";
+// 🕌 - mosque
+"72077495.name" = "moskee";
+"72077495.tags" = "geloof | islam | moskee | moslim";
+// 🛕 - hindu_temple
+"72079460.name" = "hindoetempel";
+"72079460.tags" = "hindoe | hindoetempel | tempel";
+// 🕍 - synagogue
+"72077500.name" = "synagoge";
+"72077500.tags" = "geloof | jood | joods | synagoge | tempel";
+// 🕋 - kaaba
+"72077490.name" = "kaäba";
+"72077490.tags" = "geloof | islam | kaäba | moslim";
+// ⛲ - fountain
+"30681.name" = "fontein";
+"30681.tags" = "fontein";
+// ⛺ - tent
+"30705.name" = "tent";
+"30705.tags" = "kamperen | tent";
+// 🌁 - foggy
+"72078395.name" = "mistig";
+"72078395.tags" = "mist | mistig";
+// 🌃 - night_with_stars
+"72078405.name" = "sterrenhemel";
+"72078405.tags" = "nacht | sterren | sterrenhemel";
+// 🌄 - sunrise_over_mountains
+"72078410.name" = "zonsopgang in de bergen";
+"72078410.tags" = "berg | ochtend | zon | zonsopgang | zonsopgang in de bergen";
+// 🌅 - sunrise
+"72078415.name" = "zonsopgang";
+"72078415.tags" = "ochtend | zon | zonsopgang";
+// 🌆 - city_sunset
+"72078420.name" = "stad bij schemering";
+"72078420.tags" = "avond | landschap | schemer | stad | stad bij schemering | zonsondergang";
+// 🌇 - city_sunrise
+"72078425.name" = "zonsondergang";
+"72078425.tags" = "schemer | zon | zonsondergang";
+// 🌉 - bridge_at_night
+"72078435.name" = "brug bij nacht";
+"72078435.tags" = "brug | brug bij nacht | nacht";
+// 🎠 - carousel_horse
+"72079190.name" = "draaimolenpaard";
+"72079190.tags" = "draaimolen | draaimolenpaard | paard";
+// 🛝 - playground_slide
+"72079500.name" = "glijbaan";
+"72079500.tags" = "glijbaan | speeltuin | spelen";
+// 🎡 - ferris_wheel
+"72079195.name" = "reuzenrad";
+"72079195.tags" = "pretpark | rad | reuzenrad";
+// 🎢 - roller_coaster
+"72079200.name" = "achtbaan";
+"72079200.tags" = "achtbaan | baan | pretpark";
+// 💈 - barber
+"72076515.name" = "kapperspaal";
+"72076515.tags" = "kapper | kapperspaal | kapsel | paal";
+// 🎪 - circus_tent
+"72079240.name" = "circustent";
+"72079240.tags" = "circus | circustent | tent";
+// 🚂 - steam_locomotive
+"72079045.name" = "locomotief";
+"72079045.tags" = "locomotief | spoor | stoom | trein | voertuig";
+// 🚃 - railway_car
+"72079050.name" = "treinwagon";
+"72079050.tags" = "elektrisch | spoor | tram | trein | treinwagon | trolleybus | wagon";
+// 🚄 - bullettrain_side
+"72079055.name" = "hogesnelheidstrein";
+"72079055.tags" = "hogesnelheidstrein | shinkansen | snelheid | spoor | trein";
+// 🚅 - bullettrain_front
+"72079060.name" = "hogesnelheidstrein met kogelneus";
+"72079060.tags" = "hogesnelheidstrein met kogelneus | kogeltrein | Shinkansen | snelheid | spoorweg | trein";
+// 🚆 - train2
+"72079065.name" = "trein";
+"72079065.tags" = "spoor | trein";
+// 🚇 - metro
+"72079070.name" = "metro";
+"72079070.tags" = "metro | ondergrondse";
+// 🚈 - light_rail
+"72079075.name" = "lightrail";
+"72079075.tags" = "lightrail | spoor";
+// 🚉 - station
+"72079080.name" = "treinstation";
+"72079080.tags" = "spoor | trein | treinstation";
+// 🚊 - tram
+"72079085.name" = "tram";
+"72079085.tags" = "tram | trolleybus";
+// 🚝 - monorail
+"72079180.name" = "monorail";
+"72079180.tags" = "monorail | voertuig";
+// 🚞 - mountain_railway
+"72079185.name" = "bergspoor";
+"72079185.tags" = "berg | bergspoor | spoor | wagon";
+// 🚋 - train
+"72079090.name" = "tramwagon";
+"72079090.tags" = "tram | tramwagon | trolleybus | wagon";
+// 🚌 - bus
+"72079095.name" = "bus";
+"72079095.tags" = "bus | voertuig";
+// 🚍 - oncoming_bus
+"72079100.name" = "naderende bus";
+"72079100.tags" = "bus | naderend | naderende bus";
+// 🚎 - trolleybus
+"72079105.name" = "trolleybus";
+"72079105.tags" = "bus | tram | trolley | trolleybus";
+// 🚐 - minibus
+"72079115.name" = "minibus";
+"72079115.tags" = "bus | minibus";
+// 🚑 - ambulance
+"72079120.name" = "ambulance";
+"72079120.tags" = "ambulance | voertuig";
+// 🚒 - fire_engine
+"72079125.name" = "brandweerauto";
+"72079125.tags" = "auto | brand | brandweerauto | voertuig";
+// 🚓 - police_car
+"72079130.name" = "politieauto";
+"72079130.tags" = "auto | politie | politieauto | politiewagen";
+// 🚔 - oncoming_police_car
+"72079135.name" = "naderende politieauto";
+"72079135.tags" = "auto | naderend | naderende politieauto | politie";
+// 🚕 - taxi
+"72079140.name" = "taxi";
+"72079140.tags" = "taxi | voertuig";
+// 🚖 - oncoming_taxi
+"72079145.name" = "naderende taxi";
+"72079145.tags" = "naderend | naderende taxi | taxi";
+// 🚗 - car
+"72079150.name" = "auto";
+"72079150.tags" = "auto | automobiel";
+// 🚘 - oncoming_automobile
+"72079155.name" = "naderende auto";
+"72079155.tags" = "auto | automobiel | naderend | naderende auto";
+// 🚙 - blue_car
+"72079160.name" = "SUV";
+"72079160.tags" = "auto | kampeerauto | SUV | voertuig";
+// 🛻 - pickup_truck
+"72079650.name" = "pick-up";
+"72079650.tags" = "bestelbak | laadbakwagen | pick-up";
+// 🚚 - truck
+"72079165.name" = "bestelbus";
+"72079165.tags" = "bestelbus | bezorging | bus";
+// 🚛 - articulated_lorry
+"72079170.name" = "vrachtwagen";
+"72079170.tags" = "truck | vrachtauto | vrachtwagen | vrachtwagen met oplegger";
+// 🚜 - tractor
+"72079175.name" = "tractor";
+"72079175.tags" = "tractor | voertuig";
+// 🛵 - motor_scooter
+"72079620.name" = "scooter";
+"72079620.tags" = "brommer | motor | scooter";
+// 🦽 - manual_wheelchair
+"72079345.name" = "rolstoel";
+"72079345.tags" = "rolstoel | toegankelijkheid";
+// 🦼 - motorized_wheelchair
+"72079340.name" = "elektrische rolstoel";
+"72079340.tags" = "elektrische rolstoel | toegankelijkheid";
+// 🛺 - auto_rickshaw
+"72079645.name" = "riksja";
+"72079645.tags" = "riksja | tuktuk";
+// 🚲 - bike
+"72079285.name" = "fiets";
+"72079285.tags" = "fiets | rijwiel";
+// 🛴 - scooter
+"72079615.name" = "step";
+"72079615.tags" = "autoped | step | steppen";
+// 🛹 - skateboard
+"72079640.name" = "skateboard";
+"72079640.tags" = "deck | skateboard";
+// 🛼 - roller_skate
+"72079655.name" = "rolschaats";
+"72079655.tags" = "rollerskate | rolschaats";
+// 🚏 - busstop
+"72079110.name" = "bushalte";
+"72079110.tags" = "bus | bushalte | halte";
+// ⛽ - fuelpump
+"30714.name" = "benzinestation";
+"30714.tags" = "benzine | benzinepomp | benzinestation | brandstof | pomp | station";
+// 🛞 - wheel
+"72079505.name" = "wiel";
+"72079505.tags" = "cirkel | draaien | wiel";
+// 🚨 - rotating_light
+"72079235.name" = "zwaailicht van politieauto";
+"72079235.tags" = "auto | draaiend | licht | politie | sein | zwaailicht van politieauto";
+// 🚥 - traffic_light
+"72079220.name" = "horizontaal verkeerslicht";
+"72079220.tags" = "horizontaal verkeerslicht | licht | verkeer | verkeerslichten";
+// 🚦 - vertical_traffic_light
+"72079225.name" = "verticaal verkeerslicht";
+"72079225.tags" = "licht | verkeer | verkeerslichten | verticaal verkeerslicht";
+// 🛑 - octagonal_sign
+"72079440.name" = "stopteken";
+"72079440.tags" = "achthoekig | bord | stop | stopteken | verkeersteken";
+// 🚧 - construction
+"72079230.name" = "bouwwerkzaamheden";
+"72079230.tags" = "barricade | bouwwerkzaamheden";
+// ⚓ - anchor
+"30396.name" = "anker";
+"30396.tags" = "anker | hulpmiddel | schip";
+// 🛟 - ring_buoy
+"72079510.name" = "reddingsboei";
+"72079510.tags" = "drijven | redden | reddingsboei | reddingsgordel | reddingsvest | veiligheid";
+// ⛵ - boat
+"30690.name" = "zeilboot";
+"30690.tags" = "boot | jacht | jachthaven | zee | zeilboot";
+// 🛶 - canoe
+"72079625.name" = "kano";
+"72079625.tags" = "boot | kano";
+// 🚤 - speedboat
+"72079215.name" = "speedboot";
+"72079215.tags" = "boot | speedboot";
+// 🚢 - ship
+"72079205.name" = "schip";
+"72079205.tags" = "boot | passagier | schip";
+// 🛫 - airplane_departure
+"72079570.name" = "vertrek van vliegtuig";
+"72079570.tags" = "inchecken | vertrek | vertrek van vliegtuig | vertrekken | vliegmachine | vliegtuig";
+// 🛬 - airplane_arriving
+"72079575.name" = "aankomst van vliegtuig";
+"72079575.tags" = "aankomen | aankomst | aankomst van vliegtuig | landen | vliegmachine | vliegtuig";
+// 🪂 - parachute
+"72080330.name" = "parachute";
+"72080330.tags" = "hanggliden | parachute | parasailen | skydiven";
+// 💺 - seat
+"72076765.name" = "stoel";
+"72076765.tags" = "stoel";
+// 🚁 - helicopter
+"72079040.name" = "helikopter";
+"72079040.tags" = "helikopter | voertuig";
+// 🚟 - suspension_railway
+"72079190.name" = "zweeftrein";
+"72079190.tags" = "spoor | zweeftrein | zwevend";
+// 🚠 - mountain_cableway
+"72079195.name" = "bergkabelbaan";
+"72079195.tags" = "berg | bergkabelbaan | gondel | kabel";
+// 🚡 - aerial_tramway
+"72079200.name" = "kabelbaan";
+"72079200.tags" = "baan | gondel | kabel | kabelbaan | transportbaan";
+// 🚀 - rocket
+"72079035.name" = "raket";
+"72079035.tags" = "raket | ruimte";
+// 🛸 - flying_saucer
+"72079635.name" = "vliegende schotel";
+"72079635.tags" = "ufo | vliegende schotel";
+// 🧳 - luggage
+"72079615.name" = "bagage";
+"72079615.tags" = "bagage | inpakken | reizen";
+// ⌛ - hourglass
+"27732.name" = "zandloper";
+"27732.tags" = "timer | zand | zandloper";
+// ⏳ - hourglass_flowing_sand
+"28380.name" = "zandloper met stromend zand";
+"28380.tags" = "timer | zand | zandloper | zandloper met stromend zand";
+// ⌚ - watch
+"27729.name" = "horloge";
+"27729.tags" = "horloge | klok";
+// ⏰ - alarm_clock
+"28371.name" = "wekker";
+"28371.tags" = "alarm | klok | wekker";
+// 🕛 - clock12
+"72077570.name" = "twaalf uur";
+"72077570.tags" = "00 | 12 | 12:00 | klok | twaalf | uur";
+// 🕧 - clock1230
+"72077630.name" = "half één";
+"72077630.tags" = "12 | 12:30 | 30 | dertig | half één | twaalf";
+// 🕐 - clock1
+"72077515.name" = "één uur";
+"72077515.tags" = "00 | 1 | 1:00 | één | klok | uur";
+// 🕜 - clock130
+"72077575.name" = "half twee";
+"72077575.tags" = "1 | 1:30 | dertig | één | half twee | klok";
+// 🕑 - clock2
+"72077520.name" = "twee uur";
+"72077520.tags" = "00 | 2 | 2:00 | klok | twee | uur";
+// 🕝 - clock230
+"72077580.name" = "half drie";
+"72077580.tags" = "2 | 2:30 | dertig | half drie | klok | twee";
+// 🕒 - clock3
+"72077525.name" = "drie uur";
+"72077525.tags" = "00 | 3 | 3:00 | drie | klok | uur";
+// 🕞 - clock330
+"72077585.name" = "half vier";
+"72077585.tags" = "3 | 3:30 | dertig | drie | half vier | klok";
+// 🕓 - clock4
+"72077530.name" = "vier uur";
+"72077530.tags" = "00 | 4 | 4:00 | klok | uur | vier";
+// 🕟 - clock430
+"72077590.name" = "half vijf";
+"72077590.tags" = "4 | 4:30 | dertig | half vijf | klok | vier";
+// 🕔 - clock5
+"72077535.name" = "vijf uur";
+"72077535.tags" = "00 | 5 | 5:00 | klok | uur | vijf";
+// 🕠 - clock530
+"72077595.name" = "half zes";
+"72077595.tags" = "5 | 5:30 | dertig | half zes | klok | vijf";
+// 🕕 - clock6
+"72077540.name" = "zes uur";
+"72077540.tags" = "00 | 6 | 6:00 | klok | uur | zes";
+// 🕡 - clock630
+"72077600.name" = "half zeven";
+"72077600.tags" = "6 | 6:30 | dertig | half zeven | klok | zes";
+// 🕖 - clock7
+"72077545.name" = "zeven uur";
+"72077545.tags" = "00 | 7 | 7:00 | klok | uur | zeven";
+// 🕢 - clock730
+"72077605.name" = "half acht";
+"72077605.tags" = "7 | 7:30 | dertig | half acht | klok | zeven";
+// 🕗 - clock8
+"72077550.name" = "acht uur";
+"72077550.tags" = "00 | 8 | 8:00 | acht | klok | uur";
+// 🕣 - clock830
+"72077610.name" = "half negen";
+"72077610.tags" = "8 | 8:30 | acht | dertig | half negen | klok";
+// 🕘 - clock9
+"72077555.name" = "negen uur";
+"72077555.tags" = "00 | 9 | 9:00 | klok | negen | uur";
+// 🕤 - clock930
+"72077615.name" = "half tien";
+"72077615.tags" = "9 | 9:30 | dertig | half tien | klok | negen";
+// 🕙 - clock10
+"72077560.name" = "tien uur";
+"72077560.tags" = "00 | 10 | 10:00 | klok | tien | uur";
+// 🕥 - clock1030
+"72077620.name" = "half elf";
+"72077620.tags" = "10 | 10:30 | dertig | half elf | klok | tien";
+// 🕚 - clock11
+"72077565.name" = "elf uur";
+"72077565.tags" = "00 | 11 | 11:00 | elf | klok | uur";
+// 🕦 - clock1130
+"72077625.name" = "half twaalf";
+"72077625.tags" = "11 | 11:30 | dertig | elf | half twaalf | klok";
+// 🌑 - new_moon
+"72078475.name" = "nieuwe maan";
+"72078475.tags" = "donker | maan | nieuwe maan";
+// 🌒 - waxing_crescent_moon
+"72078480.name" = "jonge maansikkel";
+"72078480.tags" = "jonge maansikkel | maan | sikkel | wassend";
+// 🌓 - first_quarter_moon
+"72078485.name" = "maan in eerste kwartier";
+"72078485.tags" = "kwartier | maan | maan in eerste kwartier";
+// 🌔 - moon
+"72078490.name" = "wassende maan";
+"72078490.tags" = "bolvormig | maan | wassend | wassende maan";
+// 🌕 - full_moon
+"72078495.name" = "volle maan";
+"72078495.tags" = "maan | vol | volle maan";
+// 🌖 - waning_gibbous_moon
+"72078500.name" = "afnemende maan";
+"72078500.tags" = "afnemend | afnemende maan | bolvormig | maan";
+// 🌗 - last_quarter_moon
+"72078505.name" = "maan in laatste kwartier";
+"72078505.tags" = "kwartier | maan | maan in laatste kwartier";
+// 🌘 - waning_crescent_moon
+"72078510.name" = "asgrauwe maan";
+"72078510.tags" = "afnemend | asgrauwe maan | maan | sikkel";
+// 🌙 - crescent_moon
+"72078515.name" = "maansikkel";
+"72078515.tags" = "maan | maansikkel | sikkel";
+// 🌚 - new_moon_with_face
+"72078520.name" = "nieuwe maan met gezicht";
+"72078520.tags" = "gezicht | maan | nieuwe maan met gezicht";
+// 🌛 - first_quarter_moon_with_face
+"72078525.name" = "maan met gezicht in eerste kwartier";
+"72078525.tags" = "gezicht | kwartier | maan | maan met gezicht in eerste kwartier";
+// 🌜 - last_quarter_moon_with_face
+"72078530.name" = "maan met gezicht in laatste kwartier";
+"72078530.tags" = "gezicht | kwartier | maan | maan met gezicht in laatste kwartier";
+// 🌝 - full_moon_with_face
+"72078535.name" = "volle maan met gezicht";
+"72078535.tags" = "gezicht | helder | maan | vol | volle maan met gezicht";
+// 🌞 - sun_with_face
+"72078540.name" = "zon met gezicht";
+"72078540.tags" = "gezicht | helder | zon | zon met gezicht";
+// 🪐 - ringed_planet
+"72080400.name" = "planeet met ringen";
+"72080400.tags" = "planeet met ringen | Saturnus | zwaarmoedig";
+// ⭐ - star
+"34035.name" = "witte middelgrote ster";
+"34035.tags" = "ster | witte middelgrote ster";
+// 🌟 - star2
+"72078545.name" = "stralende ster";
+"72078545.tags" = "fonkelend | schitterend | schittering | ster | stralen | stralende ster";
+// 🌠 - stars
+"72078550.name" = "vallende ster";
+"72078550.tags" = "ster | vallen | vallend | vallende ster";
+// 🌌 - milky_way
+"72078450.name" = "melkweg";
+"72078450.tags" = "melkweg | ruimte";
+// ⛅ - partly_sunny
+"30546.name" = "zon achter wolk";
+"30546.tags" = "wolk | zon | zon achter wolk";
+// 🌀 - cyclone
+"72078390.name" = "cycloon";
+"72078390.tags" = "cycloon | duizelig | twister | tyfoon";
+// 🌈 - rainbow
+"72078430.name" = "regenboog";
+"72078430.tags" = "regen | regenboog";
+// 🌂 - closed_umbrella
+"72078400.name" = "ingevouwen paraplu";
+"72078400.tags" = "ingevouwen paraplu | kleding | paraplu | regen";
+// ☔ - umbrella_with_rain_drops
+"30015.name" = "paraplu met regendruppels";
+"30015.tags" = "druppels | kleding | paraplu | paraplu met regendruppels | regen";
+// ⚡ - zap
+"30438.name" = "hoog voltage";
+"30438.tags" = "bliksem | elektrisch | gevaar | hoog voltage | schok | voltage";
+// ⛄ - snowman_without_snow
+"30543.name" = "sneeuwpop zonder sneeuwvlokken";
+"30543.tags" = "koud | sneeuw | sneeuwpop | sneeuwpop zonder sneeuwvlokken";
+// 🔥 - fire
+"72077300.name" = "vuur";
+"72077300.tags" = "hulpmiddel | vlam | vuur";
+// 💧 - droplet
+"72076670.name" = "druppel";
+"72076670.tags" = "druppel | koud | strip | zweet";
+// 🌊 - ocean
+"72078440.name" = "golf";
+"72078440.tags" = "golf | oceaan | water";
+// 🎃 - jack_o_lantern
+"72079045.name" = "halloweenlantaarn";
+"72079045.tags" = "feest | halloween | halloweenlantaarn | lantaarn | pompoen";
+// 🎄 - christmas_tree
+"72079050.name" = "kerstboom";
+"72079050.tags" = "boom | kerstboom | Kerstmis | viering";
+// 🎆 - fireworks
+"72079060.name" = "vuurwerk";
+"72079060.tags" = "feest | vuurwerk";
+// 🎇 - sparkler
+"72079065.name" = "sterretje";
+"72079065.tags" = "feest | sterretje | vuurwerk | vuurwerksterretje";
+// 🧨 - firecracker
+"72079560.name" = "rotje";
+"72079560.tags" = "dynamiet | explosief | rotje | vuurwerk";
+// ✨ - sparkles
+"30843.name" = "sterretjes";
+"30843.tags" = "* | glinsteren | ster | sterretjes";
+// 🎈 - balloon
+"72079070.name" = "ballon";
+"72079070.tags" = "ballon | feest";
+// 🎉 - tada
+"72079075.name" = "feestknaller";
+"72079075.tags" = "feest | feestknaller | hoera | knaller | viering";
+// 🎊 - confetti_ball
+"72079080.name" = "confettibal";
+"72079080.tags" = "bal | confetti | confettibal | viering";
+// 🎋 - tanabata_tree
+"72079085.name" = "tanabataboom";
+"72079085.tags" = "boom | feest | japans | papierlinten | tanabataboom";
+// 🎍 - bamboo
+"72079095.name" = "dennenboomversiering";
+"72079095.tags" = "bamboe | den | dennenboomversiering | feest | japans";
+// 🎎 - dolls
+"72079100.name" = "Japanse poppen";
+"72079100.tags" = "feest | festival | japans | Japanse poppen | pop";
+// 🎏 - flags
+"72079105.name" = "karperslinger";
+"72079105.tags" = "feest | karper | karperslinger | slinger";
+// 🎐 - wind_chime
+"72079110.name" = "windorgel";
+"72079110.tags" = "bel | feest | wind | windorgel";
+// 🎑 - rice_scene
+"72079115.name" = "maanobservatieceremonie";
+"72079115.tags" = "ceremonie | feest | maan | maanobservatieceremonie";
+// 🧧 - red_envelope
+"72079555.name" = "rode envelop";
+"72079555.tags" = "cadeau | geld | hóngbāo | lai see | rode envelop | voorspoed";
+// 🎀 - ribbon
+"72079030.name" = "strik";
+"72079030.tags" = "feest | strik";
+// 🎁 - gift
+"72079035.name" = "ingepakt cadeau";
+"72079035.tags" = "cadeau | cadeautje | feest | ingepakt | verpakking";
+// 🎫 - ticket
+"72079245.name" = "ticket";
+"72079245.tags" = "entree | ticket";
+// 🏆 - trophy
+"72079380.name" = "trofee";
+"72079380.tags" = "prijs | trofee";
+// 🏅 - sports_medal
+"72079375.name" = "sportmedaille";
+"72079375.tags" = "medaille | sportmedaille";
+// 🥇 - first_place_medal
+"72078755.name" = "medaille 1e plaats";
+"72078755.tags" = "eerste | goud | gouden | medaille | medaille 1e plaats";
+// 🥈 - second_place_medal
+"72078760.name" = "medaille 2e plaats";
+"72078760.tags" = "medaille | medaille 2e plaats | tweede | zilver";
+// 🥉 - third_place_medal
+"72078765.name" = "medaille 3e plaats";
+"72078765.tags" = "brons | bronzen | derde | medaille | medaille 3e plaats";
+// ⚽ - soccer
+"30522.name" = "voetbal";
+"30522.tags" = "bal | voetbal";
+// ⚾ - baseball
+"30525.name" = "honkbal";
+"30525.tags" = "bal | honkbal";
+// 🥎 - softball
+"72078790.name" = "softbal";
+"72078790.tags" = "bal | handschoen | onderarm | softbal";
+// 🏀 - basketball
+"72079350.name" = "basketbal";
+"72079350.tags" = "bal | basket | basketbal";
+// 🏐 - volleyball
+"72079430.name" = "volleybal";
+"72079430.tags" = "bal | volleybal | wedstrijd";
+// 🏈 - football
+"72079390.name" = "american football";
+"72079390.tags" = "american football | amerikaans | bal | football";
+// 🏉 - rugby_football
+"72079395.name" = "rugby";
+"72079395.tags" = "bal | rugby | voetbal";
+// 🎾 - tennis
+"72079340.name" = "tennis";
+"72079340.tags" = "bal | tennis | tennisracket";
+// 🥏 - flying_disc
+"72078795.name" = "frisbee";
+"72078795.tags" = "frisbee | ultiem";
+// 🎳 - bowling
+"72079285.name" = "bowlen";
+"72079285.tags" = "bal | bowlen | spel";
+// 🏏 - cricket_bat_and_ball
+"72079425.name" = "cricket";
+"72079425.tags" = "bal | bat | cricket | wedstrijd";
+// 🏑 - field_hockey_stick_and_ball
+"72079435.name" = "hockey";
+"72079435.tags" = "bal | hockey | stick | veld | wedstrijd";
+// 🏒 - ice_hockey_stick_and_puck
+"72079440.name" = "ijshockeystick en puck";
+"72079440.tags" = "ijs | ijshockey | ijshockeystick en puck | puck | stick | wedstrijd";
+// 🥍 - lacrosse
+"72078785.name" = "lacrosse";
+"72078785.tags" = "bal | doel | lacrosse | stick";
+// 🏓 - table_tennis_paddle_and_ball
+"72079445.name" = "pingpong";
+"72079445.tags" = "bal | bat | batje | pingpong | tafeltennis | wedstrijd";
+// 🏸 - badminton_racquet_and_shuttlecock
+"72079630.name" = "badminton";
+"72079630.tags" = "badminton | pluimbal | racket | shuttle | wedstrijd";
+// 🥊 - boxing_glove
+"72078770.name" = "bokshandschoen";
+"72078770.tags" = "boksen | bokshandschoen | handschoen";
+// 🥋 - martial_arts_uniform
+"72078775.name" = "pak voor vechtsporten";
+"72078775.tags" = "judo | karate | pak voor vechtsporten | taekwondo | uniform | vechtsport";
+// 🥅 - goal_net
+"72078745.name" = "doelnet";
+"72078745.tags" = "doel | doelnet | net";
+// ⛳ - golf
+"30684.name" = "vlag in hole";
+"30684.tags" = "golf | hole | vlag in hole";
+// 🎣 - fishing_pole_and_fish
+"72079205.name" = "vishengel";
+"72079205.tags" = "hengel | vis | vishengel";
+// 🤿 - diving_mask
+"72078715.name" = "duikbril";
+"72078715.tags" = "duikbril | duiken | scubaduiken | snorkelen";
+// 🎽 - running_shirt_with_sash
+"72079335.name" = "hardloopshirt";
+"72079335.tags" = "atletiek | hardloopshirt | hardlopen | shirt | sjerp";
+// 🎿 - ski
+"72079345.name" = "ski’s";
+"72079345.tags" = "ski | ski’s | sneeuw";
+// 🛷 - sled
+"72079630.name" = "slee";
+"72079630.tags" = "slede | slee | sleetje";
+// 🥌 - curling_stone
+"72078780.name" = "curlingsteen";
+"72078780.tags" = "curlingsteen | kei | spel";
+// 🎯 - dart
+"72079265.name" = "directe treffer";
+"72079265.tags" = "bull’s eye | darts | directe treffer | doelwit | spel | treffer";
+// 🪀 - yo-yo
+"72080320.name" = "jojo";
+"72080320.tags" = "fluctueren | jojo | speelgoed";
+// 🪁 - kite
+"72080325.name" = "vlieger";
+"72080325.tags" = "vliegen | vlieger | zweven";
+// 🔫 - gun
+"72077330.name" = "waterpistool";
+"72077330.tags" = "gereedschap | pistool | revolver | vuurwapen | wapen | water | waterpistool";
+// 🎱 - 8ball
+"72079275.name" = "biljart";
+"72079275.tags" = "8 | 8 ball | acht | bal | biljart | spel";
+// 🔮 - crystal_ball
+"72077345.name" = "kristallen bol";
+"72077345.tags" = "bol | kristal | kristallen bol | waarzeggen | waarzeggerij";
+// 🪄 - magic_wand
+"72080340.name" = "toverstok";
+"72080340.tags" = "heks | magie | tovenaar | toverstok";
+// 🎮 - video_game
+"72079260.name" = "videogame";
+"72079260.tags" = "controller | game | videogame";
+// 🎰 - slot_machine
+"72079270.name" = "fruitautomaat";
+"72079270.tags" = "fruitautomaat | spel";
+// 🎲 - game_die
+"72079280.name" = "dobbelsteen";
+"72079280.tags" = "dobbelsteen | dobbelstenen | spel";
+// 🧩 - jigsaw
+"72079565.name" = "puzzelstukje";
+"72079565.tags" = "aanwijzing | gekoppeld | legpuzzel | puzzel | puzzelstukje";
+// 🧸 - teddy_bear
+"72079640.name" = "teddybeer";
+"72079640.tags" = "knuffel | pluche | speelgoed | speeltje | teddybeer";
+// 🪅 - pinata
+"72080345.name" = "piñata";
+"72080345.tags" = "feest | piñata | viering";
+// 🪩 - mirror_ball
+"72080525.name" = "spiegelbal";
+"72080525.tags" = "dans | disco | feest | glitter | spiegelbal";
+// 🪆 - nesting_dolls
+"72080350.name" = "matroesjka";
+"72080350.tags" = "matroesjka | pop | poppetjes | rusland";
+// 🃏 - black_joker
+"72075585.name" = "Jokerkaart";
+"72075585.tags" = "joker | jokerkaart | Jokerkaart | kaart | spel";
+// 🀄 - mahjong
+"72074570.name" = "mahjong rode draak";
+"72074570.tags" = "mahjong | mahjong rode draak | rood | spel";
+// 🎴 - flower_playing_cards
+"72079290.name" = "speelkaarten";
+"72079290.tags" = "bloem | bloemspeelkaarten | japans | kaart | speelkaarten | spel | spelen";
+// 🎭 - performing_arts
+"72079255.name" = "toneelkunsten";
+"72079255.tags" = "kunst | masker | optreden | theater | toneel | toneelkunsten";
+// 🎨 - art
+"72079230.name" = "schilderspalet";
+"72079230.tags" = "kunst | museum | palet | schilderij | schilderspalet";
+// 🧵 - thread
+"72079625.name" = "garen";
+"72079625.tags" = "draad | garen | klos | naaien | naald";
+// 🪡 - sewing_needle
+"72080485.name" = "naald";
+"72080485.tags" = "borduren | hechten | hechtingen | kleermaken | naaien | naald";
+// 🧶 - yarn
+"72079630.name" = "wol";
+"72079630.tags" = "bal | breien | haken | wol";
+// 🪢 - knot
+"72080490.name" = "knoop";
+"72080490.tags" = "geknoopt | knoop | knopen | kronkel | streng | touw";
+// 👓 - eyeglasses
+"72076250.name" = "bril";
+"72076250.tags" = "bril | brillen | kleding | oog";
+// 🥽 - goggles
+"72079025.name" = "oogscherm";
+"72079025.tags" = "lassen | oogbescherming | oogscherm | zwemmen";
+// 🥼 - lab_coat
+"72079020.name" = "labjas";
+"72079020.tags" = "dokter | experiment | labjas | wetenschapper";
+// 🦺 - safety_vest
+"72079330.name" = "veiligheidsvest";
+"72079330.tags" = "noodgeval | veiligheid | veiligheidsvest | vest";
+// 👔 - necktie
+"72076255.name" = "stropdas";
+"72076255.tags" = "kleding | stropdas";
+// 👕 - shirt
+"72076260.name" = "T-shirt";
+"72076260.tags" = "kleding | shirt | T-shirt";
+// 👖 - jeans
+"72076265.name" = "spijkerbroek";
+"72076265.tags" = "jeans | kleding | spijkerbroek";
+// 🧣 - scarf
+"72079535.name" = "sjaal";
+"72079535.tags" = "nek | sjaal";
+// 🧤 - gloves
+"72079540.name" = "handschoenen";
+"72079540.tags" = "hand | handschoenen";
+// 🧥 - coat
+"72079545.name" = "jas";
+"72079545.tags" = "blazer | jas";
+// 🧦 - socks
+"72079550.name" = "sokken";
+"72079550.tags" = "kousen | sokken";
+// 👗 - dress
+"72076270.name" = "jurk";
+"72076270.tags" = "jurk | kleding";
+// 👘 - kimono
+"72076275.name" = "kimono";
+"72076275.tags" = "kimono | kleding";
+// 🥻 - sari
+"72079015.name" = "sari";
+"72079015.tags" = "jurk | kleding | sari";
+// 🩱 - one-piece_swimsuit
+"72080245.name" = "badpak";
+"72080245.tags" = "badpak | zwempak";
+// 🩲 - briefs
+"72080250.name" = "slip";
+"72080250.tags" = "onderbroek | ondergoed | slip | zwembroek | zwemkleding";
+// 🩳 - shorts
+"72080255.name" = "korte broek";
+"72080255.tags" = "korte broek | onderbroek | shorts | zwembroek";
+// 👙 - bikini
+"72076280.name" = "bikini";
+"72076280.tags" = "bikini | kleding | zwemmen";
+// 👚 - womans_clothes
+"72076285.name" = "dameskleding";
+"72076285.tags" = "dames | dameskleding | kleding";
+// 🪭 - folding_hand_fan
+"72080545.name" = "opvouwbare waaier";
+"72080545.tags" = "afkoelen | dansen | fladderen | heet | opvouwbare waaier | verlegen | waaier";
+// 👛 - purse
+"72076290.name" = "portemonnee";
+"72076290.tags" = "kleding | munt | portemonnee";
+// 👜 - handbag
+"72076295.name" = "handtas";
+"72076295.tags" = "handtas | kleding | tas";
+// 👝 - pouch
+"72076300.name" = "tasje";
+"72076300.tags" = "enveloptas | kleding | tas | tasje";
+// 🎒 - school_satchel
+"72079120.name" = "schooltas";
+"72079120.tags" = "rugzak | school | schooltas | tas";
+// 🩴 - thong_sandal
+"72080260.name" = "teenslipper";
+"72080260.tags" = "slipper | strandslipper | teenslipper | teenslof | zori";
+// 👞 - mans_shoe
+"72076305.name" = "herenschoen";
+"72076305.tags" = "herenschoen | kleding | man | schoen";
+// 👟 - athletic_shoe
+"72076310.name" = "sportschoen";
+"72076310.tags" = "atletiek | kleding | schoen | sneaker | sportschoen";
+// 🥾 - hiking_boot
+"72079030.name" = "wandelschoen";
+"72079030.tags" = "kamperen | schoen | wandelen | wandelschoen";
+// 🥿 - womans_flat_shoe
+"72079035.name" = "platte schoen";
+"72079035.tags" = "ballerina | instapper | platte schoen | slip-on";
+// 👠 - high_heel
+"72076315.name" = "schoen met hoge hak";
+"72076315.tags" = "hak | kleding | schoen | schoen met hoge hak | vrouw";
+// 👡 - sandal
+"72076320.name" = "damessandaal";
+"72076320.tags" = "damessandaal | kleding | sandaal | schoen | vrouw";
+// 🩰 - ballet_shoes
+"72080240.name" = "balletschoenen";
+"72080240.tags" = "ballet | balletschoenen | dans";
+// 👢 - boot
+"72076325.name" = "dameslaars";
+"72076325.tags" = "dameslaars | kleding | laars | schoen | vrouw";
+// 🪮 - hair_pick
+"72080550.name" = "haarkam";
+"72080550.tags" = "afro | haar | haarkam | kam | kroes";
+// 👑 - crown
+"72076240.name" = "kroon";
+"72076240.tags" = "kleding | koning | koningin | kroon";
+// 👒 - womans_hat
+"72076245.name" = "dameshoed";
+"72076245.tags" = "dameshoed | hoed | kleding | vrouw";
+// 🎩 - tophat
+"72079235.name" = "hoge hoed";
+"72079235.tags" = "hoed | hoge hoed | hoog | kleding";
+// 🎓 - mortar_board
+"72079125.name" = "academische baret";
+"72079125.tags" = "academische baret | eindexamen | hoed | kleding | viering";
+// 🧢 - billed_cap
+"72079530.name" = "pet";
+"72079530.tags" = "baseballcap | pet";
+// 🪖 - military_helmet
+"72080430.name" = "legerhelm";
+"72080430.tags" = "helm | leger | legerhelm | militair | soldaat | vechter";
+// 📿 - prayer_beads
+"72077110.name" = "gebedssnoer";
+"72077110.tags" = "gebed | gebedssnoer | geloof | ketting | kleding | kralen";
+// 💄 - lipstick
+"72076495.name" = "lippenstift";
+"72076495.tags" = "cosmetica | lippenstift | make-up";
+// 💍 - ring
+"72076540.name" = "ring";
+"72076540.tags" = "diamant | ring";
+// 💎 - gem
+"72076545.name" = "edelsteen";
+"72076545.tags" = "diamant | edelsteen | juweel | romantiek";
+// 🔇 - mute
+"72077150.name" = "speaker uit";
+"72077150.tags" = "dempen | luidspreker | speaker uit | stil | volume";
+// 🔈 - speaker
+"72077155.name" = "speaker";
+"72077155.tags" = "speaker | volume";
+// 🔉 - sound
+"72077160.name" = "speaker aan";
+"72077160.tags" = "speaker | speaker aan";
+// 🔊 - loud_sound
+"72077165.name" = "speaker luid";
+"72077165.tags" = "luid | speaker luid";
+// 📢 - loudspeaker
+"72076965.name" = "luidspreker";
+"72076965.tags" = "luid | luidspreker | toespraak";
+// 📣 - mega
+"72076970.name" = "megafoon";
+"72076970.tags" = "juichen | megafoon";
+// 📯 - postal_horn
+"72077030.name" = "posthoorn";
+"72077030.tags" = "hoorn | post | posthoorn";
+// 🔔 - bell
+"72077215.name" = "bel";
+"72077215.tags" = "bel | klok";
+// 🔕 - no_bell
+"72077220.name" = "doorgestreepte bel";
+"72077220.tags" = "bel | doorgestreepte bel | geen | geluid uit | niet toegestaan | stil";
+// 🎼 - musical_score
+"72079330.name" = "notenschift";
+"72079330.tags" = "muziek | notenschift | partituur";
+// 🎵 - musical_note
+"72079295.name" = "muzieknoot";
+"72079295.tags" = "muziek | muzieknoot | noot";
+// 🎶 - notes
+"72079300.name" = "muzieknoten";
+"72079300.tags" = "muziek | muzieknoten | noot | noten";
+// 🎤 - microphone
+"72079210.name" = "microfoon";
+"72079210.tags" = "karaoke | microfoon";
+// 🎧 - headphones
+"72079225.name" = "hoofdtelefoon";
+"72079225.tags" = "hoofdtelefoon | oordopje";
+// 📻 - radio
+"72077090.name" = "radio";
+"72077090.tags" = "muziek | radio";
+// 🎷 - saxophone
+"72079305.name" = "saxofoon";
+"72079305.tags" = "instrument | muziek | sax | saxofoon";
+// 🪗 - accordion
+"72080435.name" = "accordeon";
+"72080435.tags" = "accordeon | bandoneon | concertina | trekzak";
+// 🎸 - guitar
+"72079310.name" = "gitaar";
+"72079310.tags" = "gitaar | instrument | muziek";
+// 🎹 - musical_keyboard
+"72079315.name" = "piano";
+"72079315.tags" = "instrument | keyboard | muziek | muziekinstrument | piano";
+// 🎺 - trumpet
+"72079320.name" = "trompet";
+"72079320.tags" = "instrument | muziek | trompet";
+// 🎻 - violin
+"72079325.name" = "viool";
+"72079325.tags" = "instrument | muziek | viool";
+// 🪕 - banjo
+"72080425.name" = "banjo";
+"72080425.tags" = "banjo | besnaard | muziek";
+// 🥁 - drum_with_drumsticks
+"72078725.name" = "trommel";
+"72078725.tags" = "drummen | muziek | trommel | trommelstokken";
+// 🪘 - long_drum
+"72080440.name" = "hoge trom";
+"72080440.tags" = "beat | conga | drummen | hoge trom | ritme";
+// 🪇 - maracas
+"72080355.name" = "sambaballen";
+"72080355.tags" = "instrument | muziek | percussie | ratelen | sambaballen | schudden";
+// 🪈 - flute
+"72080360.name" = "fluit";
+"72080360.tags" = "blokfluit | dwarsfluit | fluit | houtblazer | muziek | pijperfluit";
+// 📱 - iphone
+"72077040.name" = "mobiele telefoon";
+"72077040.tags" = "mobiel | mobiele telefoon | telefoon";
+// 📲 - calling
+"72077045.name" = "mobiel met pijl";
+"72077045.tags" = "mobiel | mobiel met pijl | mobiele telefoon | ontvangen | pijl | telefoon";
+// 📞 - telephone_receiver
+"72076945.name" = "telefoonhoorn";
+"72076945.tags" = "hoorn | telefoon | telefoonhoorn";
+// 📟 - pager
+"72076950.name" = "pager";
+"72076950.tags" = "pager";
+// 📠 - fax
+"72076955.name" = "fax";
+"72076955.tags" = "fax | faxapparaat";
+// 🔋 - battery
+"72077170.name" = "batterij";
+"72077170.tags" = "batterij";
+// 🪫 - low_battery
+"72080535.name" = "batterij bijna leeg";
+"72080535.tags" = "batterij bijna leeg | electronisch | weinig batterijlading";
+// 🔌 - electric_plug
+"72077175.name" = "stekker";
+"72077175.tags" = "elektriciteit | elektrisch | stekker";
+// 💻 - computer
+"72076770.name" = "laptop";
+"72076770.tags" = "computer | laptop | pc | personal computer";
+// 💽 - minidisc
+"72076780.name" = "harddisk";
+"72076780.tags" = "computer | disk | harddisk | optisch";
+// 💾 - floppy_disk
+"72076785.name" = "floppydisk";
+"72076785.tags" = "disk | diskette | floppy | floppydisk";
+// 💿 - cd
+"72076790.name" = "optische schijf";
+"72076790.tags" = "cd | computer | optisch | optische schijf | schijf";
+// 📀 - dvd
+"72076795.name" = "dvd";
+"72076795.tags" = "blu-ray | computer | dvd | optisch | schijf";
+// 🧮 - abacus
+"72079590.name" = "abacus";
+"72079590.tags" = "abacus | berekenen | telraam";
+// 🎥 - movie_camera
+"72079215.name" = "filmcamera";
+"72079215.tags" = "bioscoop | camera | film | filmcamera";
+// 🎬 - clapper
+"72079250.name" = "klapbord";
+"72079250.tags" = "film | klapbord | klapper";
+// 📺 - tv
+"72077085.name" = "tv";
+"72077085.tags" = "beeld | televisie | tv";
+// 📷 - camera
+"72077070.name" = "camera";
+"72077070.tags" = "camera | video";
+// 📸 - camera_with_flash
+"72077075.name" = "camera met flitser";
+"72077075.tags" = "camera | camera met flitser | flitser | video";
+// 📹 - video_camera
+"72077080.name" = "videocamera";
+"72077080.tags" = "camera | video | videocamera";
+// 📼 - vhs
+"72077095.name" = "videoband";
+"72077095.tags" = "band | vhs | video | videoband";
+// 🔍 - mag
+"72077180.name" = "vergrootglas naar links gericht";
+"72077180.tags" = "gereedschap | glas | vergrootglas naar links gericht | vergroten | zoeken";
+// 🔎 - mag_right
+"72077185.name" = "vergrootglas naar rechts gericht";
+"72077185.tags" = "gereedschap | glas | vergrootglas naar rechts gericht | vergroten | zoeken";
+// 💡 - bulb
+"72076640.name" = "gloeilamp";
+"72076640.tags" = "elektrisch | gloeilamp | idee | licht | strip";
+// 🔦 - flashlight
+"72077305.name" = "zaklamp";
+"72077305.tags" = "elektrisch | lamp | licht | zaklamp | zaklantaarn";
+// 🏮 - izakaya_lantern
+"72079580.name" = "rode papieren lantaarn";
+"72079580.tags" = "bar | lantaarn | licht | rode papieren lantaarn | rood";
+// 🪔 - diya_lamp
+"72080420.name" = "diya-lamp";
+"72080420.tags" = "diya | diya-lamp | lamp | olie";
+// 📔 - notebook_with_decorative_cover
+"72076895.name" = "versierd schrift";
+"72076895.tags" = "boek | notitieboekje | omslag | schrift | versierd";
+// 📕 - closed_book
+"72076900.name" = "gesloten boek";
+"72076900.tags" = "boek | gesloten";
+// 📖 - book
+"72076905.name" = "geopend boek";
+"72076905.tags" = "boek | geopend | open";
+// 📗 - green_book
+"72076910.name" = "groen boek";
+"72076910.tags" = "boek | groen";
+// 📘 - blue_book
+"72076915.name" = "blauw boek";
+"72076915.tags" = "blauw | boek";
+// 📙 - orange_book
+"72076920.name" = "oranje boek";
+"72076920.tags" = "boek | oranje";
+// 📚 - books
+"72076925.name" = "boeken";
+"72076925.tags" = "boek | boeken";
+// 📓 - notebook
+"72076890.name" = "schrift";
+"72076890.tags" = "notitieboek | schrift";
+// 📒 - ledger
+"72076885.name" = "grootboek";
+"72076885.tags" = "grootboek | notitieboek | schrift";
+// 📃 - page_with_curl
+"72076810.name" = "omkrullende pagina";
+"72076810.tags" = "document | krul | omkrullende pagina | pagina | pagina met krul";
+// 📜 - scroll
+"72076935.name" = "rol";
+"72076935.tags" = "papierrol | rol";
+// 📄 - page_facing_up
+"72076815.name" = "pagina met bovenzijde omhoog";
+"72076815.tags" = "document | pagina | pagina met bovenzijde omhoog";
+// 📰 - newspaper
+"72077035.name" = "krant";
+"72077035.tags" = "krant | nieuws | nieuwsblad";
+// 📑 - bookmark_tabs
+"72076880.name" = "bladwijzertabs";
+"72076880.tags" = "bladwijzer | bladwijzertabs | markering | tabs";
+// 🔖 - bookmark
+"72077225.name" = "bladwijzer";
+"72077225.tags" = "bladwijzer | markering";
+// 💰 - moneybag
+"72076715.name" = "zak met geld";
+"72076715.tags" = "dollar | geld | geldzak | zak | zak met geld";
+// 🪙 - coin
+"72080445.name" = "munt";
+"72080445.tags" = "geld | goud | metaal | munt | schat | zilver";
+// 💴 - yen
+"72076735.name" = "yenbiljet";
+"72076735.tags" = "bankbiljet | biljet | briefje | geld | valuta | yen | yenbiljet";
+// 💵 - dollar
+"72076740.name" = "dollarbiljet";
+"72076740.tags" = "bankbiljet | biljet | briefje | dollar | dollarbiljet | geld | valuta";
+// 💶 - euro
+"72076745.name" = "eurobiljet";
+"72076745.tags" = "bankbiljet | biljet | briefje | euro | eurobiljet | geld | valuta";
+// 💷 - pound
+"72076750.name" = "pondbiljet";
+"72076750.tags" = "bankbiljet | biljet | briefje | geld | pond | pondbiljet | valuta";
+// 💸 - money_with_wings
+"72076755.name" = "vliegend geld";
+"72076755.tags" = "bankbiljet | biljet | geld | geld met vleugels | vleugels | vliegen | vliegend geld";
+// 💳 - credit_card
+"72076730.name" = "creditcard";
+"72076730.tags" = "creditcard | geld | kaart | krediet";
+// 🧾 - receipt
+"72079670.name" = "kassabon";
+"72079670.tags" = "administratie | bewijs | boekhouding | kassabon | kwitantie";
+// 💹 - chart
+"72076760.name" = "stijgende grafiek met yenteken";
+"72076760.tags" = "diagram | geld | grafiek | groei | stijgende grafiek met yenteken | yen";
+// 📧 - e-mail
+"72076990.name" = "e-mail";
+"72076990.tags" = "brief | e-mail | mail | post";
+// 📨 - incoming_envelope
+"72076995.name" = "inkomende post";
+"72076995.tags" = "brief | e-mail | elektronische post | envelop | inkomend | inkomende post | ontvangen";
+// 📩 - envelope_with_arrow
+"72077000.name" = "envelop met pijl";
+"72077000.tags" = "e-mail | elektronische post | envelop | envelop met pijl | pijl | uitgaand";
+// 📤 - outbox_tray
+"72076975.name" = "postvak uit";
+"72076975.tags" = "brief | mail | post | postvak | postvak uit | verzonden";
+// 📥 - inbox_tray
+"72076980.name" = "postvak in";
+"72076980.tags" = "brief | mail | ontvangen | post | postvak | postvak in";
+// 📦 - package
+"72076985.name" = "pakket";
+"72076985.tags" = "doos | pakket | pakketje";
+// 📫 - mailbox
+"72077010.name" = "gesloten brievenbus met vlaggetje omhoog";
+"72077010.tags" = "brievenbus | gesloten | gesloten brievenbus met vlaggetje omhoog | post | postbus";
+// 📪 - mailbox_closed
+"72077005.name" = "gesloten brievenbus met vlaggetje omlaag";
+"72077005.tags" = "brievenbus | gesloten | gesloten brievenbus met vlaggetje omlaag | omlaag | post | postbus";
+// 📬 - mailbox_with_mail
+"72077015.name" = "open brievenbus met vlaggetje omhoog";
+"72077015.tags" = "brievenbus | open | open brievenbus met vlaggetje omhoog | post | postbus";
+// 📭 - mailbox_with_no_mail
+"72077020.name" = "open brievenbus met vlaggetje omlaag";
+"72077020.tags" = "brievenbus | omlaag | open | open brievenbus met vlaggetje omlaag | post | postbus";
+// 📮 - postbox
+"72077025.name" = "brievenbus";
+"72077025.tags" = "brievenbus | post | postbus";
+// 📝 - memo
+"72076940.name" = "memo";
+"72076940.tags" = "memo | potlood";
+// 💼 - briefcase
+"72076775.name" = "aktentas";
+"72076775.tags" = "aktentas";
+// 📁 - file_folder
+"72076800.name" = "bestandsmap";
+"72076800.tags" = "bestand | bestandsmap | map";
+// 📂 - open_file_folder
+"72076805.name" = "geopende map";
+"72076805.tags" = "bestand | geopende map | map | open";
+// 📅 - date
+"72076820.name" = "kalender";
+"72076820.tags" = "datum | kalender";
+// 📆 - calendar
+"72076825.name" = "scheurkalender";
+"72076825.tags" = "kalender | scheurkalender";
+// 📇 - card_index
+"72076830.name" = "kaartindex";
+"72076830.tags" = "index | kaart | kaartindex | rolodex";
+// 📈 - chart_with_upwards_trend
+"72076835.name" = "stijgende trend";
+"72076835.tags" = "diagram | grafiek | grafiek met stijgende trend | stijgend | stijgende trend";
+// 📉 - chart_with_downwards_trend
+"72076840.name" = "dalende trend";
+"72076840.tags" = "dalend | dalende trend | diagram | grafiek | grafiek met dalende trend";
+// 📊 - bar_chart
+"72076845.name" = "staafdiagram";
+"72076845.tags" = "diagram | grafiek | staaf | staafdiagram";
+// 📋 - clipboard
+"72076850.name" = "klembord";
+"72076850.tags" = "klembord";
+// 📌 - pushpin
+"72076855.name" = "punaise";
+"72076855.tags" = "punaise | speld";
+// 📍 - round_pushpin
+"72076860.name" = "ronde speld";
+"72076860.tags" = "kopspeld | ronde speld | speld";
+// 📎 - paperclip
+"72076865.name" = "paperclip";
+"72076865.tags" = "clip | paperclip";
+// 📏 - straight_ruler
+"72076870.name" = "liniaal";
+"72076870.tags" = "liniaal | rechte lijn";
+// 📐 - triangular_ruler
+"72076875.name" = "geodriehoek";
+"72076875.tags" = "driehoek | geo | geodriehoek | liniaal";
+// 🔒 - lock
+"72077205.name" = "slot";
+"72077205.tags" = "gesloten slot | slot";
+// 🔓 - unlock
+"72077210.name" = "geopend hangslot";
+"72077210.tags" = "geopend | geopend hangslot | open | openen";
+// 🔏 - lock_with_ink_pen
+"72077190.name" = "slot met pen";
+"72077190.tags" = "inkt | pen | privacy | slot | slot met pen | vulpen";
+// 🔐 - closed_lock_with_key
+"72077195.name" = "gesloten slot met sleutel";
+"72077195.tags" = "beveiligd | gesloten | gesloten slot met sleutel | sleutel | slok";
+// 🔑 - key
+"72077200.name" = "sleutel";
+"72077200.tags" = "beveiligd | sleutel | wachtwoord";
+// 🔨 - hammer
+"72077315.name" = "hamer";
+"72077315.tags" = "gereedschap | hamer";
+// 🪓 - axe
+"72080415.name" = "bijl";
+"72080415.tags" = "bijl | hakken | hout | splijten";
+// 💣 - bomb
+"72076650.name" = "bom";
+"72076650.tags" = "bom | strip";
+// 🪃 - boomerang
+"72080335.name" = "boemerang";
+"72080335.tags" = "Australië | boemerang | reactie | terugslag";
+// 🏹 - bow_and_arrow
+"72079635.name" = "pijl en boog";
+"72079635.tags" = "boog | boogschutter | pijl | pijl en boog | wapen";
+// 🪚 - carpentry_saw
+"72080450.name" = "houtzaag";
+"72080450.tags" = "gereedschap | hout | houtzaag | timmerman | zaag";
+// 🔧 - wrench
+"72077310.name" = "moersleutel";
+"72077310.tags" = "gereedschap | moersleutel | schroefsleutel";
+// 🪛 - screwdriver
+"72080455.name" = "schroevendraaier";
+"72080455.tags" = "gereedschap | schroef | schroevendraaier";
+// 🔩 - nut_and_bolt
+"72077320.name" = "bout en moer";
+"72077320.tags" = "bout | bout en moer | gereedschap | moer";
+// 🦯 - probing_cane
+"72079275.name" = "taststok";
+"72079275.tags" = "blind | taststok | toegankelijkheid";
+// 🔗 - link
+"72077230.name" = "schakels";
+"72077230.tags" = "schakels | twee ringen";
+// 🪝 - hook
+"72080465.name" = "haak";
+"72080465.tags" = "aanbeveling | bocht | haak | kronkel | vangen | verstrikken";
+// 🧰 - toolbox
+"72079600.name" = "gereedschapskist";
+"72079600.tags" = "gereedschap | gereedschapskist | kist | monteur";
+// 🧲 - magnet
+"72079610.name" = "magneet";
+"72079610.tags" = "aantrekkingskracht | hoefijzer | magneet | magnetisch";
+// 🪜 - ladder
+"72080460.name" = "ladder";
+"72080460.tags" = "klimmen | ladder | sport | trede";
+// 🧪 - test_tube
+"72079570.name" = "reageerbuis";
+"72079570.tags" = "experiment | laboratorium | reageerbuis | scheikunde | scheikundige | wetenschap";
+// 🧫 - petri_dish
+"72079575.name" = "petrischaal";
+"72079575.tags" = "bacterie | biologie | bioloog | cultuur | laboratorium | petrischaal";
+// 🧬 - dna
+"72079580.name" = "DNA";
+"72079580.tags" = "bioloog | DNA | evolutie | gen | genetica | leven";
+// 🔬 - microscope
+"72077335.name" = "microscoop";
+"72077335.tags" = "gereedschap | microscoop | wetenschap";
+// 🔭 - telescope
+"72077340.name" = "telescoop";
+"72077340.tags" = "gereedschap | telescoop | wetenschap";
+// 📡 - satellite_antenna
+"72076960.name" = "satellietschotel";
+"72076960.tags" = "antenne | satelliet | satellietschotel | schotel";
+// 💉 - syringe
+"72076520.name" = "injectiespuit";
+"72076520.tags" = "geneeskunde | injectie | injectiespuit | naald | ziek";
+// 🩸 - drop_of_blood
+"72080280.name" = "bloeddruppel";
+"72080280.tags" = "bloeddonor | bloeddruppel | bloeden | geneeskunde | menstruatie | verwonding";
+// 💊 - pill
+"72076525.name" = "pil";
+"72076525.tags" = "dokter | geneeskunde | pil | ziek";
+// 🩹 - adhesive_bandage
+"72080285.name" = "pleister";
+"72080285.tags" = "pleister | verband";
+// 🩼 - crutch
+"72080300.name" = "kruk";
+"72080300.tags" = "gewond | handicap | kruk | mobiliteitshulp | stok | wandelstok";
+// 🩺 - stethoscope
+"72080290.name" = "stethoscoop";
+"72080290.tags" = "dokter | geneeskunde | hart | stethoscoop";
+// 🩻 - x-ray
+"72080295.name" = "röntgenfoto";
+"72080295.tags" = "botten | dokter | medisch | röntgenfoto | skelet";
+// 🚪 - door
+"72079245.name" = "deur";
+"72079245.tags" = "deur";
+// 🛗 - elevator
+"72079470.name" = "lift";
+"72079470.tags" = "hijstoestel | lift | personenlift | toegankelijkheid";
+// 🪞 - mirror
+"72080470.name" = "spiegel";
+"72080470.tags" = "reflector | speculum | spiegel | weerspiegeling";
+// 🪟 - window
+"72080475.name" = "raam";
+"72080475.tags" = "doorzichtig | frisse lucht | kozijn | opening | raam | uitzicht";
+// 🪑 - chair
+"72080405.name" = "hoge stoel";
+"72080405.tags" = "hoge stoel | stoel | zitten";
+// 🚽 - toilet
+"72079340.name" = "toilet";
+"72079340.tags" = "toilet | wc";
+// 🪠 - plunger
+"72080480.name" = "ontstopper";
+"72080480.tags" = "loodgieter | ontstopper | toilet | zuiger | zuigkracht";
+// 🚿 - shower
+"72079350.name" = "douche";
+"72079350.tags" = "douche | water";
+// 🛁 - bathtub
+"72079360.name" = "badkuip";
+"72079360.tags" = "bad | badkuip";
+// 🪤 - mouse_trap
+"72080500.name" = "muizenval";
+"72080500.tags" = "aas | muizenval | strik | valstrik";
+// 🪒 - razor
+"72080410.name" = "scheermes";
+"72080410.tags" = "scheermes | scheren | scherp";
+// 🧴 - lotion_bottle
+"72079620.name" = "lotionfles";
+"72079620.tags" = "hydraterende lotion | lotion | lotionfles | shampoo | zonnebrandolie";
+// 🧷 - safety_pin
+"72079635.name" = "veiligheidsspeld";
+"72079635.tags" = "luier | punk | veiligheidsspeld";
+// 🧹 - broom
+"72079645.name" = "bezem";
+"72079645.tags" = "bezem | heks | schoonmaken | vegen";
+// 🧺 - basket
+"72079650.name" = "mand";
+"72079650.tags" = "mand | oogsten | picknick | wasgoed";
+// 🧻 - roll_of_paper
+"72079655.name" = "rol papier";
+"72079655.tags" = "keukenrol | rol papier | wc-rol";
+// 🪣 - bucket
+"72080495.name" = "emmer";
+"72080495.tags" = "aker | emmer | putemmer | vat";
+// 🧼 - soap
+"72079660.name" = "zeep";
+"72079660.tags" = "baden | schoonmaken | schuim | stuk zeep | zeep | zeephouder";
+// 🫧 - bubbles
+"72080835.name" = "zeepbellen";
+"72080835.tags" = "bubbel | onderwater | schoon | zeep | zeepbellen";
+// 🪥 - toothbrush
+"72080505.name" = "tandenborstel";
+"72080505.tags" = "badkamer | hygiëne | poetsen | reinigen | tand | tanden | tandenborstel";
+// 🧽 - sponge
+"72079665.name" = "spons";
+"72079665.tags" = "absorberend | poreus | schoonmaken | spons";
+// 🧯 - fire_extinguisher
+"72079595.name" = "brandblusapparaat";
+"72079595.tags" = "blussen | brandblusapparaat | doven | vuur";
+// 🛒 - shopping_trolley
+"72079445.name" = "winkelwagen";
+"72079445.tags" = "shoppen | wagen | wagentje | winkelen | winkelwagen";
+// 🚬 - smoking
+"72079255.name" = "sigaret";
+"72079255.tags" = "roken | sigaret";
+// 🪦 - headstone
+"72080510.name" = "grafsteen";
+"72080510.tags" = "begraafplaats | graf | grafsteen | grafzerk | kerkhof";
+// 🧿 - nazar_amulet
+"72079675.name" = "Nazar-amulet";
+"72079675.tags" = "amulet | boze oog | kraal | Nazar | Nazar-amulet | talisman";
+// 🪬 - hamsa
+"72080540.name" = "hamsa";
+"72080540.tags" = "amulet | bescherming | Fatima | hamsa | hand | Maria | Mirjam";
+// 🗿 - moyai
+"72078390.name" = "moai-beeld";
+"72078390.tags" = "gezicht | moai | moai-beeld | standbeeld";
+// 🪧 - placard
+"72080515.name" = "plakkaat";
+"72080515.tags" = "bord | demonstratie | plakkaat | poster | protest";
+// 🪪 - identification_card
+"72080530.name" = "legitimatiebewijs";
+"72080530.tags" = "beveiliging | ID | legitimatiebewijs | vergunning";
+// 🏧 - atm
+"72079545.name" = "pinautomaat";
+"72079545.tags" = "automaat | pinautomaat | pinnen";
+// 🚮 - put_litter_in_its_place
+"72079265.name" = "prullenbaksymbool";
+"72079265.tags" = "afval | prullenbak | prullenbaksymbool";
+// 🚰 - potable_water
+"72079275.name" = "drinkwater";
+"72079275.tags" = "drinkwater | drinkwatersymbool";
+// ♿ - wheelchair
+"30336.name" = "rolstoelsymbool";
+"30336.tags" = "rolstoelsymbool | toegang";
+// 🚹 - mens
+"72079320.name" = "herentoilet";
+"72079320.tags" = "herentoilet | man | toilet | wc";
+// 🚺 - womens
+"72079325.name" = "damestoilet";
+"72079325.tags" = "damestoilet | toilet | vrouw | wc";
+// 🚻 - restroom
+"72079330.name" = "toiletten";
+"72079330.tags" = "toilet | toiletten | wc";
+// 🚼 - baby_symbol
+"72079335.name" = "babysymbool";
+"72079335.tags" = "baby | baby aan boord | babyruimte | babysymbool";
+// 🚾 - wc
+"72079345.name" = "wc";
+"72079345.tags" = "toilet | wasgelegenheid | water | wc";
+// 🛂 - passport_control
+"72079365.name" = "paspoortcontrole";
+"72079365.tags" = "controle | paspoort | paspoortcontrole";
+// 🛃 - customs
+"72079370.name" = "douane";
+"72079370.tags" = "douane";
+// 🛄 - baggage_claim
+"72079375.name" = "bagage afhalen";
+"72079375.tags" = "bagage | bagage afhalen";
+// 🛅 - left_luggage
+"72079380.name" = "bagagekluis";
+"72079380.tags" = "bagage | bagagekluis | bagageservice | koffers";
+// 🚸 - children_crossing
+"72079315.name" = "overstekende kinderen";
+"72079315.tags" = "kind | oversteekplaats | overstekende kinderen | verkeer | voetganger";
+// ⛔ - no_entry
+"30591.name" = "geen toegang";
+"30591.tags" = "geen toegang | nee | symbool | verboden | Verboden toegang";
+// 🚫 - no_entry_sign
+"72079250.name" = "verboden";
+"72079250.tags" = "nee | niet | niet toegestaan | toegang | verboden";
+// 🚳 - no_bicycles
+"72079290.name" = "geen fietsen";
+"72079290.tags" = "fiets | fietsen | geen fietsen | nee | niet toegestaan | verboden";
+// 🚭 - no_smoking
+"72079260.name" = "niet roken";
+"72079260.tags" = "nee | niet | niet toegestaan | roken | verboden";
+// 🚯 - do_not_litter
+"72079270.name" = "geen afval weggooien";
+"72079270.tags" = "afval | geen afval weggooien | nee | niet | niet toegestaan | verboden";
+// 🚱 - non-potable_water
+"72079280.name" = "geen drinkwater";
+"72079280.tags" = "geen drinkwater | niet drinken | water";
+// 🚷 - no_pedestrians
+"72079310.name" = "geen voetgangers";
+"72079310.tags" = "geen voetgangers | nee | niet | niet toegestaan | verboden | voetganger";
+// 📵 - no_mobile_phones
+"72077060.name" = "geen mobiele telefoon";
+"72077060.tags" = "geen mobiele telefoon | mobiel | mobiele telefoon | nee | telefoon | verboden";
+// 🔞 - underage
+"72077265.name" = "niemand onder de 18";
+"72077265.tags" = "18 | achttien | leeftijdsbeperking | minderjarig | niemand onder de 18 | niemand onder de achttien | verboden";
+// 🔃 - arrows_clockwise
+"72077130.name" = "verticale pijlen met de klok mee";
+"72077130.tags" = "met de klok mee | opnieuw laden | pijl | verticale pijlen met de klok mee";
+// 🔄 - arrows_counterclockwise
+"72077135.name" = "pijlen tegen de klok in";
+"72077135.tags" = "achteruit | in tegengestelde richting | pijl | pijlen tegen de klok in | tegen de klok in";
+// 🔙 - back
+"72077240.name" = "BACK-pijl";
+"72077240.tags" = "BACK-pijl | pijl | terug";
+// 🔚 - end
+"72077245.name" = "END-pijl";
+"72077245.tags" = "einde | END-pijl | pijl";
+// 🔛 - on
+"72077250.name" = "ON!-pijl";
+"72077250.tags" = "aan | ON!-pijl | pijl | teken";
+// 🔜 - soon
+"72077255.name" = "SOON-pijl";
+"72077255.tags" = "binnenkort | pijl | SOON-pijl";
+// 🔝 - top
+"72077260.name" = "TOP-pijl";
+"72077260.tags" = "bovenkant | omhoog | pijl | TOP-pijl";
+// 🛐 - place_of_worship
+"72079435.name" = "gebedsruimte";
+"72079435.tags" = "bidden | gebedsruimte | religie";
+// 🕎 - menorah_with_nine_branches
+"72077505.name" = "menora";
+"72077505.tags" = "kandelaar | kandelaber | menora | religie";
+// 🔯 - six_pointed_star
+"72077350.name" = "zespuntige ster";
+"72077350.tags" = "ster | waarzeggen | zespuntige ster";
+// 🪯 - khanda
+"72080555.name" = "khanda";
+"72080555.tags" = "khanda | religie | sikh";
+// ♈ - aries
+"30171.name" = "ram (sterrenbeeld)";
+"30171.tags" = "Aries | dierenriem | ram | ram (sterrenbeeld)";
+// ♉ - taurus
+"30174.name" = "stier (sterrenbeeld)";
+"30174.tags" = "dierenriem | os | stier | stier (sterrenbeeld) | Taurus";
+// ♊ - gemini
+"30177.name" = "tweelingen (sterrenbeeld)";
+"30177.tags" = "dierenriem | Gemini | tweelingen | tweelingen (sterrenbeeld)";
+// ♋ - cancer
+"30180.name" = "kreeft (sterrenbeeld)";
+"30180.tags" = "Cancer | dierenriem | kreeft | kreeft (sterrenbeeld)";
+// ♌ - leo
+"30183.name" = "leeuw (sterrenbeeld)";
+"30183.tags" = "dierenriem | leeuw | leeuw (sterrenbeeld) | Leo";
+// ♍ - virgo
+"30186.name" = "maagd (sterrenbeeld)";
+"30186.tags" = "dierenriem | maagd (sterrenbeeld) | Virgo";
+// ♎ - libra
+"30189.name" = "weegschaal (sterrenbeeld)";
+"30189.tags" = "balans | dierenriem | gerechtigheid | Libra | weegschaal | weegschaal (sterrenbeeld)";
+// ♏ - scorpius
+"30192.name" = "schorpioen (sterrenbeeld)";
+"30192.tags" = "dierenriem | schorpioen | schorpioen (sterrenbeeld) | Scorpio | scorpius";
+// ♐ - sagittarius
+"30195.name" = "boogschutter (sterrenbeeld)";
+"30195.tags" = "boogschutter | boogschutter (sterrenbeeld) | dierenriem | Sagittarius";
+// ♑ - capricorn
+"30198.name" = "steenbok (sterrenbeeld)";
+"30198.tags" = "Capricorn | dierenriem | steenbok | steenbok (sterrenbeeld)";
+// ♒ - aquarius
+"30201.name" = "waterman (sterrenbeeld)";
+"30201.tags" = "Aquarius | dierenriem | drager | water | waterman (sterrenbeeld)";
+// ♓ - pisces
+"30204.name" = "vissen (sterrenbeeld)";
+"30204.tags" = "dierenriem | Pisces | vissen | vissen (sterrenbeeld)";
+// ⛎ - ophiuchus
+"30573.name" = "slangendrager (sterrenbeeld)";
+"30573.tags" = "dierenriem | drager | Ophiuchus | serpent | slang | slangendrager (sterrenbeeld)";
+// 🔀 - twisted_rightwards_arrows
+"72077115.name" = "knop voor shuffle";
+"72077115.tags" = "gekruist | knop voor shuffle | pijl";
+// 🔁 - repeat
+"72077120.name" = "knop voor herhalen";
+"72077120.tags" = "herhalen | knop voor herhalen | met de klok mee | pijl";
+// 🔂 - repeat_one
+"72077125.name" = "knop voor één herhalen";
+"72077125.tags" = "eenmaal | knop voor één herhalen | met de klok mee | pijl";
+// ⏩ - fast_forward
+"28350.name" = "knop voor snel vooruitspoelen";
+"28350.tags" = "dubbel | knop voor snel vooruitspoelen | pijl | snel | vooruit";
+// ⏪ - rewind
+"28353.name" = "knop voor versneld terugspoelen";
+"28353.tags" = "dubbele pijl links | knop voor versneld terugspoelen | links | pijl | terugspoelen";
+// 🔼 - arrow_up_small
+"72077415.name" = "knop voor omhoog";
+"72077415.tags" = "knop | knop voor omhoog | pijl | rood";
+// ⏫ - arrow_double_up
+"28356.name" = "knop voor versneld omhoog";
+"28356.tags" = "dubbel | knop voor versneld omhoog | pijl";
+// 🔽 - arrow_down_small
+"72077420.name" = "knop voor omlaag";
+"72077420.tags" = "knop | knop voor omlaag | omlaag | pijl | rood";
+// ⏬ - arrow_double_down
+"28359.name" = "knop voor versneld omlaag";
+"28359.tags" = "dubbel | knop voor versneld omlaag | omlaag | pijl";
+// 🎦 - cinema
+"72079220.name" = "knop voor filmen";
+"72079220.tags" = "bioscoop | camera | film | filmen | knop voor filmen";
+// 🔅 - low_brightness
+"72077140.name" = "knop voor lagere helderheid";
+"72077140.tags" = "dimmen | helderheid | knop voor lagere helderheid | laag";
+// 🔆 - high_brightness
+"72077145.name" = "knop voor hogere helderheid";
+"72077145.tags" = "helder | helderheid | knop voor hogere helderheid";
+// 📶 - signal_strength
+"72077065.name" = "mobiel signaal";
+"72077065.tags" = "antenne | mobiel | mobiel signaal | mobiele telefoon | streep | telefoon";
+// 🛜 - wireless
+"72079495.name" = "draadloos";
+"72079495.tags" = "computer | draadloos | internet | netwerk";
+// 📳 - vibration_mode
+"72077050.name" = "trilstand";
+"72077050.tags" = "mobiel | mobiele telefoon | modus | telefoon | trilstand";
+// 📴 - mobile_phone_off
+"72077055.name" = "telefoon uit";
+"72077055.tags" = "mobiel | mobiele telefoon | mobiele telefoon uit | telefoon | uit";
+// ➕ - heavy_plus_sign
+"31170.name" = "plus";
+"31170.tags" = "+ | plus | teken | wiskunde";
+// ➖ - heavy_minus_sign
+"31173.name" = "min";
+"31173.tags" = "- | − | min | teken | wiskunde";
+// ➗ - heavy_division_sign
+"31176.name" = "delen";
+"31176.tags" = "÷ | delen | teken | wiskunde";
+// 🟰 - heavy_equals_sign
+"72080875.name" = "vetgedrukt gelijkteken";
+"72080875.tags" = "gelijkheid | vetgedrukt gelijkteken | wiskunde";
+// ❓ - question
+"30972.name" = "rood vraagteken";
+"30972.tags" = "? | interpunctie | rood vraagteken | teken | vraag";
+// ❔ - grey_question
+"30975.name" = "wit vraagteken";
+"30975.tags" = "? | contour | interpunctie | teken | vraag | wit vraagteken";
+// ❕ - grey_exclamation
+"30978.name" = "wit uitroepteken";
+"30978.tags" = "! | contour | interpunctie | teken | uitroep | wit uitroepteken";
+// ❗ - exclamation
+"30984.name" = "rood uitroepteken";
+"30984.tags" = "! | interpunctie | rood uitroepteken | teken | uitroep";
+// 💱 - currency_exchange
+"72076720.name" = "geld wisselen";
+"72076720.tags" = "geld | valuta | wisselen";
+// 💲 - heavy_dollar_sign
+"72076725.name" = "vetgedrukt dollarteken";
+"72076725.tags" = "dollar | dollarteken | geld | vetgedrukt dollarteken";
+// 🔱 - trident
+"72077360.name" = "drietand-symbool";
+"72077360.tags" = "anker | drietand | drietand-symbool | gereedschap | schip | symbool";
+// 📛 - name_badge
+"72076930.name" = "naamkaartje";
+"72076930.tags" = "kaartje | naam | naamkaartje";
+// 🔰 - beginner
+"72077355.name" = "Japans symbool voor beginner";
+"72077355.tags" = "beginner | blad | chevron | Japans | Japans symbool voor beginner";
+// ⭕ - o
+"34050.name" = "lege rode cirkel";
+"34050.tags" = "cirkel | groot | lege rode cirkel | o | rood";
+// ✅ - white_check_mark
+"30738.name" = "knop voor vinkje";
+"30738.tags" = "✓ | knop | knop voor vinkje | teken | vinkje";
+// ❌ - x
+"30951.name" = "kruisteken";
+"30951.tags" = "× | annuleren | kruis | kruisteken | teken | vermenigvuldigen | vermenigvuldiging | x";
+// ❎ - negative_squared_cross_mark
+"30957.name" = "knop voor kruis";
+"30957.tags" = "× | knop voor kruis | teken | vierkant | x";
+// ➰ - curly_loop
+"31251.name" = "gekrulde lus";
+"31251.tags" = "gedraaid | gekrulde lus | lus";
+// ➿ - loop
+"31296.name" = "dubbele gekrulde lus";
+"31296.tags" = "dubbel | dubbele gekrulde lus | krul | lus";
+// 🔠 - capital_abcd
+"72077275.name" = "hoofdletters";
+"72077275.tags" = "ABCD | hoofdletters | invoeren | Latijns | letters";
+// 🔡 - abcd
+"72077280.name" = "kleine letters";
+"72077280.tags" = "abcd | invoeren | kleine letters | Latijns | letters";
+// 🔢 - 1234
+"72077285.name" = "cijfers";
+"72077285.tags" = "1234 | cijfers | invoeren";
+// 🔣 - symbols
+"72077290.name" = "symbolen";
+"72077290.tags" = "〒♪&% | invoeren | symbolen";
+// 🔤 - abc
+"72077295.name" = "Latijns alfabet";
+"72077295.tags" = "abc | alfabet | invoeren | Latijns | letters";
+// 🆎 - ab
+"72076540.name" = "bloedgroep AB";
+"72076540.tags" = "ab | bloedgroep | bloedgroep AB";
+// 🆑 - cl
+"72076555.name" = "CL-knop";
+"72076555.tags" = "cl | CL-knop";
+// 🆒 - cool
+"72076560.name" = "COOL-knop";
+"72076560.tags" = "cool | COOL-knop";
+// 🆓 - free
+"72076565.name" = "FREE-knop";
+"72076565.tags" = "FREE-knop | gratis";
+// 🆔 - id
+"72076570.name" = "ID-knop";
+"72076570.tags" = "id | ID-knop | identiteit";
+// 🆕 - new
+"72076575.name" = "NEW-knop";
+"72076575.tags" = "NEW-knop | nieuw";
+// 🆖 - ng
+"72076580.name" = "NG-knop";
+"72076580.tags" = "ng | NG-knop";
+// 🆗 - ok
+"72076585.name" = "OK-knop";
+"72076585.tags" = "OK | OK-knop";
+// 🆘 - sos
+"72076590.name" = "SOS-knop";
+"72076590.tags" = "help | sos | SOS-knop";
+// 🆙 - up
+"72076595.name" = "UP!-knop";
+"72076595.tags" = "omhoog | teken | UP!-knop";
+// 🆚 - vs
+"72076600.name" = "VS-knop";
+"72076600.tags" = "versus | vs | VS-knop";
+// 🈁 - koko
+"72077115.name" = "Japans teken voor ‘hier’";
+"72077115.tags" = "‘hier’ | Japans | Japans teken voor ‘hier’ | katakana | ココ";
+// 🈶 - u6709
+"72077380.name" = "Japans teken voor ‘niet gratis’";
+"72077380.tags" = "‘niet gratis’ | ideogram | Japans | Japans teken voor ‘niet gratis’ | 有";
+// 🈯 - u6307
+"72077345.name" = "Japans teken voor ‘gereserveerd’";
+"72077345.tags" = "‘gereserveerd’ | ideogram | Japans | Japans teken voor ‘gereserveerd’ | 指";
+// 🉐 - ideograph_advantage
+"72077510.name" = "Japans teken voor ‘koopje’";
+"72077510.tags" = "‘koopje’ | ideogram | Japans | Japans teken voor ‘koopje’ | 得";
+// 🈹 - u5272
+"72077395.name" = "Japans teken voor ‘korting’";
+"72077395.tags" = "‘korting’ | ideogram | Japans | Japans teken voor ‘korting’ | 割";
+// 🈚 - u7121
+"72077240.name" = "Japans teken voor ‘gratis’";
+"72077240.tags" = "‘gratis’ | ideogram | Japans | Japans teken voor ‘gratis’ | 無";
+// 🈲 - u7981
+"72077360.name" = "Japans teken voor ‘verboden’";
+"72077360.tags" = "‘verboden’ | ideogram | Japans | Japans teken voor ‘verboden’ | 禁";
+// 🉑 - accept
+"72077515.name" = "Japans teken voor ‘acceptabel’";
+"72077515.tags" = "‘acceptabel’ | ideogram | Japans | Japans teken voor ‘acceptabel’ | 可";
+// 🈸 - u7533
+"72077390.name" = "Japans teken voor ‘toepassing’";
+"72077390.tags" = "‘toepassing’ | ideogram | Japans | Japans teken voor ‘toepassing’ | 申";
+// 🈴 - u5408
+"72077370.name" = "Japans teken voor ‘voldoende (cijfer)‘";
+"72077370.tags" = "‘voldoende (cijfer)‘ | ideogram | Japans | Japans teken voor ‘voldoende (cijfer)‘ | 合";
+// 🈳 - u7a7a
+"72077365.name" = "Japans teken voor ‘plaats vrij’";
+"72077365.tags" = "‘plaats vrij’ | ideogram | Japans | Japans teken voor ‘plaats vrij’ | 空";
+// 🈺 - u55b6
+"72077400.name" = "Japans teken voor ‘geopend’";
+"72077400.tags" = "‘geopend’ | ideogram | Japans | Japans teken voor ‘geopend’ | 営";
+// 🈵 - u6e80
+"72077375.name" = "Japans teken voor ‘vol, geen plaats’";
+"72077375.tags" = "‘vol | geen plaats’ | ideogram | Japans | Japans teken voor ‘vol | geen plaats’ | 満";
+// 🔴 - red_circle
+"72077375.name" = "rode cirkel";
+"72077375.tags" = "cirkel | geometrisch | rode cirkel | rood";
+// 🟠 - large_orange_circle
+"72080795.name" = "oranje cirkel";
+"72080795.tags" = "cirkel | oranje";
+// 🟡 - large_yellow_circle
+"72080800.name" = "gele cirkel";
+"72080800.tags" = "cirkel | geel | gele cirkel";
+// 🟢 - large_green_circle
+"72080805.name" = "groene cirkel";
+"72080805.tags" = "cirkel | groen | groene cirkel";
+// 🔵 - large_blue_circle
+"72077380.name" = "blauwe cirkel";
+"72077380.tags" = "blauw | blauwe cirkel | cirkel | geometrisch";
+// 🟣 - large_purple_circle
+"72080810.name" = "paarse cirkel";
+"72080810.tags" = "cirkel | paars | paarse cirkel";
+// 🟤 - large_brown_circle
+"72080815.name" = "bruine cirkel";
+"72080815.tags" = "bruin | bruine cirkel | cirkel";
+// ⚫ - black_circle
+"30468.name" = "zwarte cirkel";
+"30468.tags" = "cirkel | geometrisch | zwarte cirkel";
+// ⚪ - white_circle
+"30465.name" = "witte cirkel";
+"30465.tags" = "cirkel | geometrisch | witte cirkel";
+// 🟥 - large_red_square
+"72080820.name" = "rood vierkant";
+"72080820.tags" = "rood | vierkant";
+// 🟧 - large_orange_square
+"72080830.name" = "oranje vierkant";
+"72080830.tags" = "oranje | vierkant";
+// 🟨 - large_yellow_square
+"72080835.name" = "geel vierkant";
+"72080835.tags" = "geel | vierkant";
+// 🟩 - large_green_square
+"72080840.name" = "groen vierkant";
+"72080840.tags" = "groen | vierkant";
+// 🟦 - large_blue_square
+"72080825.name" = "blauw vierkant";
+"72080825.tags" = "blauw | vierkant";
+// 🟪 - large_purple_square
+"72080845.name" = "paars vierkant";
+"72080845.tags" = "paars | vierkant";
+// 🟫 - large_brown_square
+"72080850.name" = "bruin vierkant";
+"72080850.tags" = "bruin | vierkant";
+// ⬛ - black_large_square
+"33876.name" = "groot zwart vierkant";
+"33876.tags" = "geometrisch | groot zwart vierkant | vierkant";
+// ⬜ - white_large_square
+"33879.name" = "groot wit vierkant";
+"33879.tags" = "geometrisch | groot wit vierkant | vierkant";
+// ◾ - black_medium_small_square
+"29949.name" = "klein tot middelgroot zwart vierkant";
+"29949.tags" = "geometrisch | klein tot middelgroot zwart vierkant | vierkant";
+// ◽ - white_medium_small_square
+"29946.name" = "klein tot middelgroot wit vierkant";
+"29946.tags" = "klein tot middelgroot wit vierkant | redelijk klein | vierkant | wit";
+// 🔶 - large_orange_diamond
+"72077385.name" = "grote oranje ruit";
+"72077385.tags" = "geometrisch | grote oranje ruit | oranje | ruit";
+// 🔷 - large_blue_diamond
+"72077390.name" = "grote blauwe ruit";
+"72077390.tags" = "blauw | geometrisch | grote blauwe ruit | ruit";
+// 🔸 - small_orange_diamond
+"72077395.name" = "kleine oranje ruit";
+"72077395.tags" = "geometrisch | kleine oranje ruit | oranje | ruit";
+// 🔹 - small_blue_diamond
+"72077400.name" = "kleine blauwe ruit";
+"72077400.tags" = "blauw | geometrisch | kleine blauwe ruit | ruit";
+// 🔺 - small_red_triangle
+"72077405.name" = "rode omhoogwijzende driehoek";
+"72077405.tags" = "geometrisch | rode omhoogwijzende driehoek | rood";
+// 🔻 - small_red_triangle_down
+"72077410.name" = "rode omlaagwijzende driehoek";
+"72077410.tags" = "geometrisch | omlaag | rode omlaagwijzende driehoek | rood";
+// 💠 - diamond_shape_with_a_dot_inside
+"72076635.name" = "ruitvorm met stip erin";
+"72076635.tags" = "binnen | geometrisch | ruit | ruitvorm met stip erin | strip";
+// 🔘 - radio_button
+"72077235.name" = "keuzerondje";
+"72077235.tags" = "geometrisch | keuze | keuzerondje | rondje";
+// 🔳 - white_square_button
+"72077370.name" = "witte vierkante knop";
+"72077370.tags" = "geometrisch | knop | omlijnd | vierkant | witte vierkante knop";
+// 🔲 - black_square_button
+"72077365.name" = "zwarte vierkante knop";
+"72077365.tags" = "geometrisch | knop | vierkant | zwarte vierkante knop";
+// 🏁 - checkered_flag
+"72079355.name" = "geblokte vlag";
+"72079355.tags" = "geblokt | geblokte vlag | racen";
+// 🚩 - triangular_flag_on_post
+"72079240.name" = "driehoekige vlag";
+"72079240.tags" = "driehoekige vlag | locatie";
+// 🎌 - crossed_flags
+"72079090.name" = "gekruiste vlaggen";
+"72079090.tags" = "feest | gekruist | gekruiste vlaggen | japans | kruis";
+// 🏴 - waving_black_flag
+"72079610.name" = "zwarte vlag";
+"72079610.tags" = "vlag | zwart | zwarte vlag";
