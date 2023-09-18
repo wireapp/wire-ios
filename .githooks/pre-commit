@@ -65,12 +65,6 @@ commit_hash = `git rev-parse -q --verify MERGE_HEAD`
 
 puts("Running pre-commit hook")
 
-unless swiftlint_exists
-	puts "Error: SwiftLint is not installed."
-	puts "Please install SwiftLint by following the instructions at: https://github.com/realm/SwiftLint#installation"
-	exit 1
-end
-
 unless commit_hash.empty?
   exit 0
 end
@@ -79,6 +73,12 @@ staged_swift_files = get_swift_files(get_paths_to_staged_files)
 
 if running_on_ci || staged_swift_files.empty?
   exit 0
+end
+
+unless swiftlint_exists
+	puts "Error: SwiftLint is not installed."
+	puts "Please install SwiftLint by following the instructions at: https://github.com/realm/SwiftLint#installation"
+	exit 1
 end
 
 relative_staged_swift_files = map_to_relative_paths(staged_swift_files)
