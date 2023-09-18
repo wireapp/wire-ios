@@ -83,8 +83,6 @@ class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
         return label
     }()
 
-    var icon: StyleKitIcon?
-
     private lazy var dateLabel: UILabel = {
         let label = UILabel()
         label.font = FontSpec.mediumRegularFont.font!
@@ -164,11 +162,12 @@ class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
 
     private func configureAuthorLabel(object: Configuration) {
         let textColor: UIColor = object.user.isServiceUser ? SemanticColors.Label.textDefault : object.user.accentColor
-        var attributedString = NSMutableAttributedString(
+        let attributedString = NSMutableAttributedString(
             string: object.user.name ?? "",
             attributes: [
                 .foregroundColor: textColor,
-                .font: UIFont.mediumSemiboldFont]
+                .font: UIFont.mediumSemiboldFont
+                ]
         )
 
         switch object.indicator {
@@ -209,7 +208,6 @@ class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
                 attachment(
                     from: .externalPartner,
                     size: 12
-
                 )
             )
         case .federated:
@@ -239,12 +237,20 @@ class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
     private func attachment(from icon: StyleKitIcon, size: CGFloat) -> NSAttributedString {
         let textColor: UIColor = SemanticColors.Icon.foregroundDefault
         let attachment = NSTextAttachment()
-        let image = icon.makeImage(
+
+        let icon = icon.makeImage(
             size: StyleKitIcon.Size(floatLiteral: size),
             color: textColor
         ).with(insets: UIEdgeInsets(top: 0, left: 8, bottom: 0, right: 0), backgroundColor: .clear)
 
-        attachment.image = image
+        let iconSize = icon?.size
+
+        let iconBounds = CGRect(x: CGFloat(0),
+                                y: (UIFont.mediumSemiboldFont.capHeight - iconSize!.height) / 2.0,
+                                width: iconSize!.width,
+                                height: iconSize!.height)
+        attachment.bounds = iconBounds
+        attachment.image = icon
 
         return NSAttributedString(attachment: attachment)
     }
