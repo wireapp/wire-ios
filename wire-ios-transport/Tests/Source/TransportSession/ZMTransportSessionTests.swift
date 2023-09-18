@@ -86,7 +86,8 @@ class ZMTransportSessionTests_Initialization: ZMTBaseTest {
                                  reachability: reachability,
                                  initialAccessToken: nil,
                                  applicationGroupIdentifier: containerIdentifier,
-                                 applicationVersion: "1.0")
+                                 applicationVersion: "1.0",
+                                 minTLSVersion: nil)
     }
 
     override func tearDown() {

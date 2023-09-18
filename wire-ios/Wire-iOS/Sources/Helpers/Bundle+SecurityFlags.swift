@@ -18,7 +18,8 @@
 
 import Foundation
 
-enum SecurityFlags {
+public enum SecurityFlags {
+
     case generateLinkPreviews
     case forceConstantBitRateCalls
     case customBackend
@@ -31,6 +32,10 @@ enum SecurityFlags {
     /// Whether encryption at rest is enabled and can't be disabled.
 
     case forceEncryptionAtRest
+
+    /// The minimum TLS version supported by the app.
+
+    case minTLSVersion
 
     var bundleKey: String {
         switch self {
@@ -52,18 +57,22 @@ enum SecurityFlags {
             return "FileSharingEnabled"
         case .forceCallKitDisabled:
             return "ForceCallKitDisabled"
+        case .minTLSVersion:
+            return "MinTLSVersion"
         }
     }
 
-    var intValue: Int? {
-        guard let string = Bundle.appMainBundle.infoForKey(bundleKey) else {
-            return nil
-        }
-
+    public var intValue: Int? {
+        guard let string = stringValue else { return nil }
         return Int(string)
     }
 
-    var isEnabled: Bool {
-        return Bundle.appMainBundle.infoForKey(bundleKey) == "1"
+    public var stringValue: String? {
+        return Bundle.appMainBundle.infoForKey(bundleKey)
     }
+
+    public var isEnabled: Bool {
+        return stringValue == "1"
+    }
+
 }
