@@ -21,8 +21,6 @@ protocol EventData {
     static var eventType: ZMUpdateEventType { get }
 }
 
-
-
 typealias CodableEventData = EventData & Codable
 
 extension Payload {
@@ -341,11 +339,6 @@ extension Payload {
         static var eventType: ZMUpdateEventType {
             return .conversationMemberUpdate
         }
-        
-        
-        
-        
-        
 
         let id: UUID?
         let qualifiedID: QualifiedID?
@@ -462,9 +455,6 @@ extension Payload {
         let qualifiedUserIDs: [QualifiedID]?
         let role: String
 
-        
-        
-        
         init?(userIDs: [UUID]? = nil, qualifiedUserIDs: [QualifiedID]? = nil) {
             self.userIDs = userIDs
             self.qualifiedUserIDs = qualifiedUserIDs

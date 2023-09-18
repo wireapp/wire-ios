@@ -54,11 +54,22 @@ def running_on_ci
 	!ENV['CI'].nil?
 end
 
+def swiftlint_exists
+	`which swiftlint`
+	puts $?.success?
+end
+
 # Checking if current commit is not a merge commit. For merge commits we don't want to perform linting
 # since we would be linting changes not related to our work.
 commit_hash = `git rev-parse -q --verify MERGE_HEAD`
 
 puts("Running pre-commit hook")
+
+unless swiftlint_exists
+	puts "Error: SwiftLint is not installed."
+	puts "Please install SwiftLint by following the instructions at: https://github.com/realm/SwiftLint#installation"
+	exit 1
+end
 
 unless commit_hash.empty?
   exit 0
