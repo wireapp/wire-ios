@@ -79,6 +79,16 @@ final class CompleteReactionPickerViewControllerTests: BaseSnapshotTestCase {
         verify(matching: sut)
     }
 
+    func testReactionPicker_withSearchQuery() {
+        // GIVEN & WHEN
+        sut = setUpCompleteReactionPickerViewController(selectedReactions: [.videoGameController])
+        sut.searchBar(UISearchBar(), textDidChange: "su")
+        scrollToSection(1)
+
+        // THEN
+        verify(matching: sut)
+    }
+
     // MARK: Helper Methods
 
     private func setUpCompleteReactionPickerViewController(
