@@ -27,7 +27,7 @@ class FetchPublicGroupStateActionHandler: ActionHandler<FetchPublicGroupStateAct
     override func request(for action: FetchPublicGroupStateAction, apiVersion: APIVersion) -> ZMTransportRequest? {
         var action = action
 
-        guard apiVersion > .v2 else {
+        guard apiVersion >= .v5 else {
             action.fail(with: .endpointUnavailable)
             return nil
         }
