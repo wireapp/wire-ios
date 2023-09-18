@@ -144,6 +144,7 @@
 		EE67F6F1296F079E001D7C88 /* WireUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F6F0296F079E001D7C88 /* WireUtilities.framework */; };
 		EE7F3DEB29548F88000D247D /* WireUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE7F3DEA29548F88000D247D /* WireUtilities.framework */; };
 		EE7F3DEC29548F88000D247D /* WireUtilities.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EE7F3DEA29548F88000D247D /* WireUtilities.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		EE98AD0F2AAAF114005C30AD /* TLSVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE98AD0E2AAAF114005C30AD /* TLSVersion.swift */; };
 		EF1A09A41FF6AC7500F89634 /* ZMPersistentCookieStorage+Testing.h in Headers */ = {isa = PBXBuildFile; fileRef = EF1A09A31FF6A73200F89634 /* ZMPersistentCookieStorage+Testing.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F108BCC821C3CB6D00E1BBE3 /* Backend.bundle in Resources */ = {isa = PBXBuildFile; fileRef = F108BCC721C3CB6C00E1BBE3 /* Backend.bundle */; };
 		F118CBBF1F432F25004DCF96 /* ZMTransportSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F118CBBC1F432E75004DCF96 /* ZMTransportSessionTests.swift */; };
@@ -370,6 +371,7 @@
 		EE67F6ED296F074C001D7C88 /* WireTesting.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTesting.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE67F6F0296F079E001D7C88 /* WireUtilities.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireUtilities.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE7F3DEA29548F88000D247D /* WireUtilities.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireUtilities.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		EE98AD0E2AAAF114005C30AD /* TLSVersion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TLSVersion.swift; sourceTree = "<group>"; };
 		EF1A09A31FF6A73200F89634 /* ZMPersistentCookieStorage+Testing.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ZMPersistentCookieStorage+Testing.h"; sourceTree = "<group>"; };
 		EF1A09A51FF6BEE300F89634 /* testing.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = testing.modulemap; sourceTree = "<group>"; };
 		F108BCC721C3CB6C00E1BBE3 /* Backend.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Backend.bundle; sourceTree = "<group>"; };
@@ -644,6 +646,7 @@
 				54CA15401B32F2C1008D3787 /* TransportSession */,
 				54CA15461B32F2C1008D3787 /* URLSession */,
 				5499FF6D1B31C66C00835C8B /* PushChannel */,
+				EE98AD0E2AAAF114005C30AD /* TLSVersion.swift */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -1050,6 +1053,7 @@
 				F186BD572265DD780072A85F /* BackendEnvironment+Fetching.swift in Sources */,
 				F1EDA286221AB6CB00DAF906 /* URLSessionsDirectory.swift in Sources */,
 				01D97B14294CBAC0001A04BD /* ResponseLog.swift in Sources */,
+				EE98AD0F2AAAF114005C30AD /* TLSVersion.swift in Sources */,
 				F1858A84226874C300FA2ACE /* Logging.swift in Sources */,
 				54CA15BF1B32F2C1008D3787 /* NSString+UUID.m in Sources */,
 				F19E554A22AFD227005C792D /* BackgroundActivity+SafeForLogging.swift in Sources */,
