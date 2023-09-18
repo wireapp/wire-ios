@@ -56,7 +56,7 @@ end
 
 def swiftlint_exists
 	`which swiftlint`
-	puts $?.success?
+	$?.success?
 end
 
 # Checking if current commit is not a merge commit. For merge commits we don't want to perform linting
