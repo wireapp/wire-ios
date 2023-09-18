@@ -22,6 +22,7 @@ import WireSyncEngine
 import avs
 import WireCoreCrypto
 
+
 enum ApplicationLaunchType {
     case unknown
     case direct

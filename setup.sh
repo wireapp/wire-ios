@@ -40,7 +40,7 @@ XCODE_VERSION=( ${version//./ } )
 [[ ${CARTHAGE_VERSION[0]} -gt 0 || ${CARTHAGE_VERSION[1]} -ge 38 ]] || die "Carthage should be at least version 0.38"
 [[ ${XCODE_VERSION[0]} -gt 14 || ( ${XCODE_VERSION[0]} -eq 14 && ${XCODE_VERSION[1]} -ge 2 ) ]] || die "Xcode version should be at least 14.2. The current version is ${XCODE_VERSION}. If you have multiple versions of Xcode installed, please run: sudo xcode-select --switch /Applications/Xcode_14.2.app/Contents/Developer"
 
-# SETUP
+# SETUPgi
 
 # Workaround for carthage "The file couldn’t be saved." error
 rm -rf ${TMPDIR}/TemporaryItems/*carthage*
@@ -87,6 +87,10 @@ echo "ℹ️  Doing additional postprocessing..."
 scripts/postprocess.sh
 echo ""
 
+echo "ℹ️ Install Git hook"
+scripts/githooks-install.sh
+echo ""
+
 cd wire-ios
 
 echo "ℹ️  [CodeGen] Update StyleKit Icons..."
@@ -97,9 +101,6 @@ echo "ℹ️ Update Licenses File..."
 swift run --package-path Scripts/updateLicenses
 echo ""
 
-echo "ℹ️ Install Git hook"
-scripts/githooks-install.sh
-echo ""
 
 cd ..
 
