@@ -43,7 +43,6 @@ class ReactionsSortingTests: BaseZMMessageTests {
         // when
         message.setReactions(["🙏", "🤖", "🚀", "👽", "🎃", "😍", "👾", "🥇", "😻"], forUser: selfUser, newReactionsCreationDate: Date())
         self.uiMOC.saveOrRollback()
-        print(expectedOrder.map { $0.unicodeScalars.first?.properties.name })
         // then
         let result = message.reactionsSortedByCreationDate().map { $0.reactionString }
         XCTAssertEqual(result, expectedOrder)
