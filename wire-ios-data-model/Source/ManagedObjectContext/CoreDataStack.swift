@@ -18,6 +18,7 @@
 
 import Foundation
 import CoreData
+import WireSystem
 
 @objc
 public protocol ContextProvider {
@@ -196,12 +197,18 @@ public class CoreDataStack: NSObject, ContextProvider {
 
         dispatchGroup.enter()
         loadMessagesStore { (error) in
+            if let error = error {
+                WireLogger.localStorage.error("failed to load message store: \(error)")
+            }
             loadingStoreError = loadingStoreError ?? error
             dispatchGroup.leave()
         }
 
         dispatchGroup.enter()
         loadEventStore { (error) in
+            if let error = error {
+                WireLogger.localStorage.error("failed to load event store: \(error)")
+            }
             loadingStoreError = loadingStoreError ?? error
             dispatchGroup.leave()
         }
@@ -315,7 +322,7 @@ public class CoreDataStack: NSObject, ContextProvider {
             context.undoManager = nil
             context.mergePolicy = NSMergePolicy(merge: .mergeByPropertyObjectTrumpMergePolicyType)
 
-            FeatureService(context: context).createDefaultConfigsIfNeeded()
+            FeatureRepository(context: context).createDefaultConfigsIfNeeded()
         }
 
         // this will be done async, not to block the UI thread, but

@@ -19,7 +19,8 @@ import XCTest
 import SnapshotTesting
 @testable import Wire
 
-final class WipeDatabaseViewControllerTests: ZMSnapshotTestCase {
+final class WipeDatabaseViewControllerTests: BaseSnapshotTestCase {
+
     var sut: WipeDatabaseViewController!
 
     override func tearDown() {
@@ -33,17 +34,17 @@ final class WipeDatabaseViewControllerTests: ZMSnapshotTestCase {
     }
 
     func testForDarkTheme() {
-		let createSut: () -> UIViewController = {
-			let navigationController = UIViewController().wrapInNavigationController(navigationBarClass: TransparentNavigationBar.self)
-			navigationController.pushViewController(WipeDatabaseViewController(), animated: false)
+        let createSut: () -> UIViewController = {
+            let navigationController = UIViewController().wrapInNavigationController(navigationBarClass: TransparentNavigationBar.self)
+            navigationController.pushViewController(WipeDatabaseViewController(), animated: false)
 
-			return navigationController
-		}
+            return navigationController
+        }
 
         verifyInDarkScheme(createSut: createSut)
     }
 
-    func testForConfirmAlert() {
+    func testForConfirmAlert() throws {
         // GIVEN
         sut = WipeDatabaseViewController()
 
@@ -51,6 +52,6 @@ final class WipeDatabaseViewControllerTests: ZMSnapshotTestCase {
         sut.presentConfirmAlert()
 
         // THEN
-        verify(matching: sut.confirmController!.alertController)
+        try verify(matching: sut.confirmController!.alertController)
     }
 }

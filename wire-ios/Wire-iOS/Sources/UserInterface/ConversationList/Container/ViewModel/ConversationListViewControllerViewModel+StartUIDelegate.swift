@@ -20,8 +20,6 @@ import WireDataModel
 import UIKit
 import WireSyncEngine
 
-private typealias ConversationCreatedBlock = (ZMConversation?) -> Void
-
 extension ConversationListViewController.ViewModel: StartUIDelegate {
     func startUI(_ startUI: StartUIViewController, didSelect user: UserType) {
         oneToOneConversationWithUser(user, callback: { conversation in
@@ -37,87 +35,24 @@ extension ConversationListViewController.ViewModel: StartUIDelegate {
         }
     }
 
-    func startUI(
-        _ startUI: StartUIViewController,
-        createConversationWith users: UserSet,
-        name: String,
-        allowGuests: Bool,
-        allowServices: Bool,
-        enableReceipts: Bool,
-        encryptionProtocol: EncryptionProtocol
-    ) {
-        guard let viewController = viewController as? UIViewController else { return }
-
-        viewController.dismissIfNeeded {
-            self.createConversation(
-                withUsers: users,
-                name: name,
-                allowGuests: allowGuests,
-                allowServices: allowServices,
-                enableReceipts: enableReceipts,
-                encryptionProtocol: encryptionProtocol
-            )
-        }
-    }
-
     /// Create a new conversation or open existing 1-to-1 conversation
     ///
     /// - Parameters:
     ///   - user: the user which we want to have a 1-to-1 conversation with
     ///   - onConversationCreated: a ConversationCreatedBlock which has the conversation created
-    private func oneToOneConversationWithUser(_ user: UserType, callback onConversationCreated: @escaping ConversationCreatedBlock) {
-
+    private func oneToOneConversationWithUser(
+        _ user: UserType,
+        callback onConversationCreated: @escaping ConversationCreatedBlock
+    ) {
         guard let userSession = ZMUserSession.shared() else { return }
 
         viewController?.setState(.conversationList, animated: true) {
-            var oneToOneConversation: ZMConversation?
-            userSession.enqueue({
-                oneToOneConversation = user.oneToOneConversation
-            }, completionHandler: {
-                delay(0.3) {
-                    onConversationCreated(oneToOneConversation)
+            if let conversation = user.oneToOneConversation {
+                onConversationCreated(conversation)
+            } else {
+                user.createTeamOneToOneConversation(in: userSession.viewContext) { conversation in
+                    onConversationCreated(conversation)
                 }
-            })
-        }
-    }
-
-    private func createConversation(
-        withUsers users: UserSet?,
-        name: String?,
-        allowGuests: Bool,
-        allowServices: Bool,
-        enableReceipts: Bool,
-        encryptionProtocol: EncryptionProtocol
-    ) {
-        guard
-            let users = users,
-            let userSession = ZMUserSession.shared()
-        else {
-            return
-        }
-
-        var conversation: ZMConversation?
-
-        userSession.enqueue {
-            conversation = ZMConversation.insertGroupConversation(
-                moc: userSession.viewContext,
-                participants: users.materialize(in: userSession.viewContext),
-                name: name,
-                team: ZMUser.selfUser().team,
-                allowGuests: allowGuests,
-                allowServices: allowServices,
-                readReceipts: enableReceipts,
-                messageProtocol: encryptionProtocol == .mls ? .mls : .proteus
-            )
-        } completionHandler: {
-            guard let conversation = conversation else {return }
-
-            delay(0.3) {
-                ZClientViewController.shared?.select(
-                    conversation: conversation,
-                    focusOnView: true,
-                    animated: true
-                )
             }
         }
     }

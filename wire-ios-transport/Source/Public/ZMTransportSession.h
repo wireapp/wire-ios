@@ -84,7 +84,8 @@ extern NSString * const ZMTransportSessionReachabilityIsEnabled;
                        reachability:(id<ReachabilityProvider, TearDownCapable>)reachability
                  initialAccessToken:(nullable ZMAccessToken *)initialAccessToken
          applicationGroupIdentifier:(nullable NSString *)applicationGroupIdentifier
-                 applicationVersion:(nonnull NSString *)applicationVersion;
+                 applicationVersion:(nonnull NSString *)applicationVersion
+                      minTLSVersion:(nullable NSString *)minTLSVersion;
 
 - (void)tearDown;
 

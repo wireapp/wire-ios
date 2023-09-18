@@ -77,8 +77,8 @@ extension NSMutableAttributedString {
         let backgroundColor: UIColor
 
         if user.isSelfUser {
-            color = ColorScheme.default.color(named: .textForeground)
-            backgroundColor = ColorScheme.default.color(named: .selfMentionHighlight)
+            color = .accent()
+            backgroundColor = .lowAccentColorForUsernameMention()
         } else {
             color = .accent()
             backgroundColor = .clear

@@ -27,7 +27,7 @@ class UpdateConnectionActionHandler: ActionHandler<UpdateConnectionAction> {
         case .v0:
             return v0Request(for: action)
 
-        case .v1, .v2, .v3, .v4:
+        case .v1, .v2, .v3, .v4, .v5:
             return v1Request(for: action)
         }
     }
@@ -109,6 +109,8 @@ class UpdateConnectionActionHandler: ActionHandler<UpdateConnectionAction> {
                 action.notifyResult(.failure(.notConnected))
             case (403, .connectionLimit):
                 action.notifyResult(.failure(.connectionLimitReached))
+            case (422, .federationDenied):
+                action.notifyResult(.failure(.federationDenied))
             default:
                 action.notifyResult(.failure(.unknown))
             }

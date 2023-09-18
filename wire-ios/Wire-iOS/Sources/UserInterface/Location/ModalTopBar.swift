@@ -68,9 +68,10 @@ final class ModalTopBar: UIView {
 
     private var title: String? {
         didSet {
-            titleLabel.text = title?.capitalized
+            titleLabel.text = title?.capitalizingFirstCharacterOnly
             titleLabel.isHidden = title == nil
             titleLabel.accessibilityLabel = title
+            titleLabel.accessibilityValue = title
             titleLabel.accessibilityTraits.insert(.header)
         }
     }
@@ -80,6 +81,7 @@ final class ModalTopBar: UIView {
             subtitleLabel.text = subtitle?.capitalized
             subtitleLabel.isHidden = subtitle == nil
             subtitleLabel.accessibilityLabel = subtitle
+            subtitleLabel.accessibilityValue = subtitle
         }
     }
 
@@ -114,7 +116,7 @@ final class ModalTopBar: UIView {
         self.subtitle = subtitle
     }
 
-    fileprivate func configureViews() {
+    private func configureViews() {
         backgroundColor = ViewColors.backgroundDefault
         titleLabel.isHidden = true
         subtitleLabel.isHidden = true
@@ -130,7 +132,7 @@ final class ModalTopBar: UIView {
         dismissButton.hitAreaPadding = CGSize(width: 20, height: 20)
     }
 
-    fileprivate func createConstraints() {
+    private func createConstraints() {
         contentStackView.translatesAutoresizingMaskIntoConstraints = false
         dismissButton.translatesAutoresizingMaskIntoConstraints = false
         separatorView.translatesAutoresizingMaskIntoConstraints = false
@@ -161,7 +163,7 @@ final class ModalTopBar: UIView {
         subtitleLabel.setContentCompressionResistancePriority(UILayoutPriority(rawValue: 750), for: .horizontal)
     }
 
-    @objc fileprivate func dismissButtonTapped(_ sender: IconButton) {
+    @objc private func dismissButtonTapped(_ sender: IconButton) {
         delegate?.modelTopBarWantsToBeDismissed(self)
     }
 

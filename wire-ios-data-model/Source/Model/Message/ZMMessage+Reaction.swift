@@ -19,16 +19,41 @@
 import Foundation
 
 extension ZMMessage {
-    static func add(reaction: WireProtos.Reaction, senderID: UUID, conversation: ZMConversation, inContext moc: NSManagedObjectContext) {
+
+    static func add(
+        reaction: WireProtos.Reaction,
+        senderID: UUID,
+        conversation: ZMConversation,
+        inContext context: NSManagedObjectContext
+    ) {
         guard
-            let user = ZMUser.fetch(with: senderID, in: moc),
+            let user = ZMUser.fetch(with: senderID, in: context),
             let nonce = UUID(uuidString: reaction.messageID),
-            let localMessage = ZMMessage.fetch(withNonce: nonce, for: conversation, in: moc)
+            let localMessage = ZMMessage.fetch(withNonce: nonce, for: conversation, in: context)
         else {
             return
         }
 
-        localMessage.addReaction(reaction.emoji, forUser: user)
+        localMessage.setReactions(reaction.toReactionSet(), forUser: user)
         localMessage.updateCategoryCache()
     }
+
+    func selfUserReactions() -> Set<String> {
+        let result = usersReaction
+            .filter { _, users in users.contains(where: \.isSelfUser) }
+            .map { $0.key }
+
+        return Set(result)
+    }
+
+    public func otherUsersReactions() -> Set<String> {
+        let result = usersReaction
+            .filter { _, users in users.contains { user in
+                !user.isSelfUser
+            }}
+            .map { $0.key }
+
+        return Set(result)
+    }
+
 }

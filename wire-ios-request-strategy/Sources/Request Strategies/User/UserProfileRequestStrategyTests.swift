@@ -271,6 +271,36 @@ class UserProfileRequestStrategyTests: MessagingTestBase {
         }
     }
 
+    func testThatItIsPendingMetadataRefresh_WhenSuccessfullyProcessingResponseWithFailedUsers_V4() {
+        syncMOC.performGroupedBlockAndWait {
+            // given
+            self.apiVersion = .v4
+            self.otherUser.domain = "example.com"
+            self.otherUser.needsToBeUpdatedFromBackend = true
+            self.sut.objectsDidChange(Set([self.otherUser]))
+            let failedUser: QualifiedID = QualifiedID(uuid: self.otherUser.remoteIdentifier, domain: self.otherUser.domain ?? "")
+            guard let request = self.sut.nextRequest(for: self.apiVersion) else {
+                return XCTFail("No request generated")
+            }
+
+            // when
+            guard let payload = Payload.QualifiedUserIDList(request) else {
+                return XCTFail("Payload is invalid")
+            }
+
+            guard let response = self.successfulResponse(for: payload, failed: [failedUser], apiVersion: self.apiVersion) else {
+                return XCTFail("Response is invalid")
+            }
+            request.complete(with: response)
+        }
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        syncMOC.performGroupedBlockAndWait {
+            // then
+            XCTAssertTrue(self.otherUser.isPendingMetadataRefresh)
+        }
+    }
+
     func testThatNeedsToUpdatedFromBackendIsReset_WhenSuccessfullyProcessingResponseFromLegacyEndpoint() {
         syncMOC.performGroupedBlockAndWait {
             // given
@@ -465,7 +495,7 @@ class UserProfileRequestStrategyTests: MessagingTestBase {
                              source: .webSocket)!
     }
 
-    func successfulResponse(for request: Payload.QualifiedUserIDList, apiVersion: APIVersion) -> ZMTransportResponse? {
+    func successfulResponse(for request: Payload.QualifiedUserIDList, failed: [QualifiedID]? = nil, apiVersion: APIVersion) -> ZMTransportResponse? {
         let userProfiles = request.qualifiedIDs.map({
             return userProfile(for: $0.uuid, domain: $0.domain)
         })
@@ -474,8 +504,8 @@ class UserProfileRequestStrategyTests: MessagingTestBase {
         switch apiVersion {
         case .v0, .v1, .v2, .v3:
             payloadData = userProfiles.payloadData()
-        case .v4:
-            let userProfiles = Payload.UserProfilesV4(found: userProfiles, failed: nil)
+        case .v4, .v5:
+            let userProfiles = Payload.UserProfilesV4(found: userProfiles, failed: failed)
             payloadData = userProfiles.payloadData()
         }
 

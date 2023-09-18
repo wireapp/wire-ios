@@ -156,7 +156,8 @@ class LinkPreviewUpdateRequestStrategyTests: MessagingTestBase {
                                                        missing: [:],
                                                        redundant: [:],
                                                        deleted: [:],
-                                                       failedToSend: [:])
+                                                       failedToSend: [:],
+                                                       failedToConfirm: [:])
             let payloadAsString = String(bytes: payload.payloadData()!, encoding: .utf8)!
             let response = ZMTransportResponse(payload: payloadAsString as ZMTransportData,
                                                httpStatus: 201,
@@ -207,7 +208,7 @@ class LinkPreviewUpdateRequestStrategyTests: MessagingTestBase {
         case .v0:
             XCTAssertEqual(request?.path, "/conversations/\(conversationID)/otr/messages", file: file, line: line)
 
-        case .v1, .v2, .v3, .v4:
+        case .v1, .v2, .v3, .v4, .v5:
             let domain = conversation.domain!
             XCTAssertEqual(request?.path, "/v\(apiVersion.rawValue)/conversations/\(domain)/\(conversationID)/proteus/messages", file: file, line: line)
         }

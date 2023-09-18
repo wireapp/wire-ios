@@ -53,6 +53,7 @@ public class ProteusMessageSync<Message: ProteusMessage>: NSObject, EntityTransc
     }
 
     public func nextRequest(for apiVersion: APIVersion) -> ZMTransportRequest? {
+        WireLogger.messaging.debug("next request for proteus sync")
         return dependencySync.nextRequest(for: apiVersion)
     }
 
@@ -61,19 +62,24 @@ public class ProteusMessageSync<Message: ProteusMessage>: NSObject, EntityTransc
     }
 
     public func sync(_ message: Message, completion: @escaping EntitySyncHandler) {
+        WireLogger.messaging.debug("sync proteus message \(message.debugInfo)")
         dependencySync.synchronize(entity: message, completion: completion)
         RequestAvailableNotification.notifyNewRequestsAvailable(nil)
     }
 
     public func expireMessages(withDependency dependency: NSObject) {
+        WireLogger.messaging.warn("expiring messages with dependency: \(String(describing: dependency))")
         dependencySync.expireEntities(withDependency: dependency)
     }
 
     public func request(forEntity entity: Message, apiVersion: APIVersion) -> ZMTransportRequest? {
+        WireLogger.messaging.debug("request for message \(entity.debugInfo)")
+
         guard
             let conversation = entity.conversation,
             let request = requestFactory.upstreamRequestForMessage(entity, in: conversation, apiVersion: apiVersion)
         else {
+            WireLogger.messaging.warn("no request for message \(entity.debugInfo)")
             return nil
         }
 
@@ -87,34 +93,67 @@ public class ProteusMessageSync<Message: ProteusMessage>: NSObject, EntityTransc
     }
 
     public func request(forEntity entity: Message, didCompleteWithResponse response: ZMTransportResponse) {
+        WireLogger.messaging.debug("request for message did complete \(entity.debugInfo)")
         entity.delivered(with: response)
 
-        guard let apiVersion = APIVersion(rawValue: response.apiVersion) else { return }
+        guard let apiVersion = APIVersion(rawValue: response.apiVersion) else {
+            WireLogger.messaging.error("failed to get api version from response, not handling response")
+            return
+        }
 
         switch apiVersion {
         case .v0:
             _ = entity.parseUploadResponse(response, clientRegistrationDelegate: applicationStatus.clientRegistrationDelegate)
-        case .v1, .v2, .v3, .v4:
-            let payload = Payload.MessageSendingStatus(response, decoder: .defaultDecoder)
-            _ = payload?.updateClientsChanges(for: entity)
+        case .v1, .v2, .v3, .v4, .v5:
+            if let payload = Payload.MessageSendingStatus(response, decoder: .defaultDecoder) {
+                _ = payload.updateClientsChanges(for: entity)
+            } else {
+                WireLogger.messaging.warn("failed to get payload from response")
+            }
         }
 
         purgeEncryptedPayloadCache()
     }
 
-    public func shouldTryToResend(entity: Message, afterFailureWithResponse response: ZMTransportResponse) -> Bool {
-        guard let apiVersion = APIVersion(rawValue: response.apiVersion) else { return false }
+    public func shouldTryToResend(
+        entity: Message,
+        afterFailureWithResponse response: ZMTransportResponse
+    ) -> Bool {
+        WireLogger.messaging.debug("should try to resend for message \(entity.debugInfo)?")
+
+        guard let apiVersion = APIVersion(rawValue: response.apiVersion) else {
+            WireLogger.messaging.warn("not trying to resend, no api version")
+            return false
+        }
 
         switch response.httpStatus {
         case 412:
             switch apiVersion {
             case .v0:
                 return entity.parseUploadResponse(response, clientRegistrationDelegate: applicationStatus.clientRegistrationDelegate).contains(.missing)
-            case .v1, .v2, .v3, .v4:
+            case .v1, .v2, .v3, .v4, .v5:
                 let payload = Payload.MessageSendingStatus(response, decoder: .defaultDecoder)
-                return payload?.updateClientsChanges(for: entity) ?? false
+                let shouldRetry = payload?.updateClientsChanges(for: entity) ?? false
+                WireLogger.messaging.debug("got 412, will retry: \(shouldRetry)")
+                return shouldRetry
             }
 
+        case 533:
+            guard 
+                let payload = Payload.ResponseFailure(response, decoder: .defaultDecoder),
+                let data = payload.data
+            else {
+                return false
+            }
+
+            switch data.type {
+            case .federation:
+                payload.updateExpirationReason(for: entity, with: .federationRemoteError)
+            case .unknown:
+                payload.updateExpirationReason(for: entity, with: .unknown)
+            }
+
+            return false
         default:
             let payload = Payload.ResponseFailure(response, decoder: .defaultDecoder)
             if payload?.label == .unknownClient {
@@ -122,8 +161,10 @@ public class ProteusMessageSync<Message: ProteusMessage>: NSObject, EntityTransc
             }
 
             if case .permanentError = response.result {
+                WireLogger.messaging.warn("got \(response.httpStatus), not retrying")
                 return false
             } else {
+                WireLogger.messaging.warn("got \(response.httpStatus), retrying")
                 return true
             }
         }

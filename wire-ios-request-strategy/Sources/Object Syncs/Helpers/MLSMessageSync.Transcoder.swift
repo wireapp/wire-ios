@@ -41,11 +41,11 @@ extension MLSMessageSync {
 
         func request(forEntity entity: Message, apiVersion: APIVersion) -> ZMTransportRequest? {
             switch apiVersion {
-            case .v0, .v1:
+            case .v0, .v1, .v2, .v3, .v4:
                 Logging.mls.warn("can't send mls message on api version: \(apiVersion.rawValue)")
                 return nil
 
-            case .v2, .v3, .v4:
+            case .v5:
                 return internalRequest(for: entity, apiVersion: apiVersion)
             }
         }
@@ -112,15 +112,15 @@ extension MLSMessageSync {
             guard let apiVersion = APIVersion(rawValue: response.apiVersion) else { return }
 
             switch apiVersion {
-            case .v0, .v1:
+            case .v0, .v1, .v2, .v3, .v4:
                 return
 
-            case .v2, .v3, .v4:
-                v2processResponse(response, for: entity)
+            case .v5:
+                processResponse(response, for: entity)
             }
         }
 
-        private func v2processResponse(
+        private func processResponse(
             _ response: ZMTransportResponse,
             for entity: Message
         ) {
@@ -129,6 +129,8 @@ extension MLSMessageSync {
                 return
             }
 
+            let payload = Payload.MLSMessageSendingStatus(response, decoder: .defaultDecoder)
+            payload?.updateFailedRecipients(for: entity)
             entity.delivered(with: response)
         }
 
@@ -136,7 +138,26 @@ extension MLSMessageSync {
             entity: Entity,
             afterFailureWithResponse response: ZMTransportResponse
         ) -> Bool {
-            return false
+            switch response.httpStatus {
+            case 533:
+                guard
+                    let payload = Payload.ResponseFailure(response, decoder: .defaultDecoder),
+                    let data = payload.data
+                else {
+                    return false
+                }
+
+                switch data.type {
+                case .federation:
+                    payload.updateExpirationReason(for: entity, with: .federationRemoteError)
+                case .unknown:
+                    payload.updateExpirationReason(for: entity, with: .unknown)
+                }
+
+                return false
+            default:
+                return false
+            }
         }
 
     }

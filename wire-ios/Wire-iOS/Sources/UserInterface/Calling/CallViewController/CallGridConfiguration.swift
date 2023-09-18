@@ -126,8 +126,7 @@ extension VoiceChannel {
             return Stream(
                 streamId: participant.streamId,
                 user: participant.user,
-                microphoneState: participant.state.microphoneState,
-                videoState: participant.state.videoState,
+                callParticipantState: participant.state,
                 activeSpeakerState: participant.activeSpeakerState,
                 isPaused: participant.state.videoState?.isPaused ?? false
             )
@@ -157,8 +156,8 @@ extension VoiceChannel {
         return Stream(
             streamId: AVSClient(userId: selfUser.avsIdentifier, clientId: clientId),
             user: selfUser,
-            microphoneState: .unmuted,
-            videoState: videoState,
+            callParticipantState: .connected(videoState: videoState,
+                                             microphoneState: .unmuted),
             activeSpeakerState: .inactive,
             isPaused: isPaused
         )
@@ -189,7 +188,6 @@ extension VoiceChannel {
     }
 
     fileprivate var shouldShowActiveSpeakerFrame: Bool {
-        if DeveloperFlag.isUpdatedCallingUI { return true }
         return participants.count > 2 && videoGridPresentationMode == .allVideoStreams
     }
 

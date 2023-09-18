@@ -103,10 +103,6 @@ extension ZMConversation {
         managedObjectContext?.saveOrRollback()
     }
 
-    public func notifyMissingLegalHoldConsent() {
-        notifyOnUI(name: ZMConversation.missingLegalHoldConsentNotificationName)
-    }
-
     // MARK: - Events
 
     /// Should be called when a message is received.
@@ -438,6 +434,7 @@ extension ZMConversation {
                 // Delivery receipt: just expire it
                 message.expire()
             } else {
+                WireLogger.messaging.warn("expiring message due to security degradation \(message.nonce?.transportString().readableHash)")
                 // All other messages: expire and mark that it caused security degradation
                 message.expire()
                 message.causedSecurityLevelDegradation = true
@@ -595,7 +592,9 @@ extension ZMConversation {
                              timestamp: Date,
                              duration: TimeInterval? = nil,
                              messageTimer: Double? = nil,
-                             relevantForStatus: Bool = true) -> ZMSystemMessage {
+                             relevantForStatus: Bool = true,
+                             removedReason: ZMParticipantsRemovedReason = .none,
+                             domains: [String]? = nil) -> ZMSystemMessage {
         let systemMessage = ZMSystemMessage(nonce: UUID(), managedObjectContext: managedObjectContext!)
         systemMessage.systemMessageType = type
         systemMessage.sender = sender
@@ -612,6 +611,8 @@ extension ZMConversation {
         }
 
         systemMessage.relevantForConversationStatus = relevantForStatus
+        systemMessage.participantsRemovedReason = removedReason
+        systemMessage.domains = domains
 
         self.append(systemMessage)
 

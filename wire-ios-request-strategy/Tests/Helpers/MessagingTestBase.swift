@@ -317,34 +317,111 @@ extension MessagingTestBase {
 
     /// Creates a user and a client
     func createUser(alsoCreateClient: Bool = false) -> ZMUser {
-        let user = ZMUser.insertNewObject(in: self.syncMOC)
+        return createUser(
+            alsoCreateClient: alsoCreateClient,
+            in: syncMOC
+        )
+    }
+
+    /// Creates a new client for a user
+    func createUser(
+        alsoCreateClient: Bool = false,
+        in context: NSManagedObjectContext
+    ) -> ZMUser {
+        let user = ZMUser.insertNewObject(in: context)
         user.remoteIdentifier = UUID.create()
         user.domain = owningDomain
+
         if alsoCreateClient {
-            _ = self.createClient(user: user)
+            _ = self.createClient(
+                user: user,
+                in: context
+            )
         }
+
         return user
     }
 
     /// Creates a new client for a user
     func createClient(user: ZMUser) -> UserClient {
-        let client = UserClient.insertNewObject(in: self.syncMOC)
+        return createClient(
+            user: user,
+            in: syncMOC
+        )
+    }
+
+    /// Creates a group conversation with a user
+    func createClient(
+        user: ZMUser,
+        in context: NSManagedObjectContext
+    ) -> UserClient {
+        let client = UserClient.insertNewObject(in: context)
         client.remoteIdentifier = UUID.create().transportString()
         client.user = user
-        self.syncMOC.saveOrRollback()
+        context.saveOrRollback()
         return client
     }
 
     /// Creates a group conversation with a user
     func createGroupConversation(with user: ZMUser) -> ZMConversation {
-        let conversation = ZMConversation.insertNewObject(in: syncMOC)
+        return createGroupConversation(
+            with: user,
+            in: syncMOC
+        )
+    }
+
+    /// Creates a group conversation with a user
+    func createGroupConversation(
+        with user: ZMUser,
+        in context: NSManagedObjectContext
+    ) -> ZMConversation {
+        let conversation = ZMConversation.insertNewObject(in: context)
         conversation.conversationType = .group
         conversation.domain = owningDomain
         conversation.remoteIdentifier = UUID.create()
         conversation.addParticipantAndUpdateConversationState(user: user, role: nil)
-        conversation.addParticipantAndUpdateConversationState(user: ZMUser.selfUser(in: syncMOC), role: nil)
+        conversation.addParticipantAndUpdateConversationState(user: ZMUser.selfUser(in: context), role: nil)
         conversation.needsToBeUpdatedFromBackend = false
         return conversation
+    }
+
+    func createOneToOneConversation(
+        with user: ZMUser,
+        in context: NSManagedObjectContext
+    ) -> ZMConversation {
+        let conversation = ZMConversation.insertNewObject(in: context)
+        conversation.conversationType = .oneOnOne
+        conversation.domain = owningDomain
+        conversation.remoteIdentifier = UUID.create()
+        conversation.connection = ZMConnection.insertNewObject(in: context)
+        conversation.connection?.to = user
+        conversation.connection?.status = .accepted
+        conversation.addParticipantAndUpdateConversationState(user: user, role: nil)
+        return conversation
+    }
+
+    @discardableResult
+    func createTeam() -> Team {
+        return createTeam(in: syncMOC)
+    }
+
+    @discardableResult
+    func createTeam(in context: NSManagedObjectContext) -> Team {
+        let selfUser = ZMUser.selfUser(in: context)
+        let teamID = UUID.create()
+        selfUser.teamIdentifier = teamID
+
+        let team = Team.insertNewObject(in: context)
+        team.remoteIdentifier = teamID
+
+        let member = Member.insertNewObject(in: context)
+        member.team = team
+        member.user = selfUser
+        member.remoteIdentifier = selfUser.remoteIdentifier
+        member.needsToBeUpdatedFromBackend = true
+        member.permissions.insert(.member)
+
+        return team
     }
 
     /// Creates an encryption context in a temp folder and creates keys

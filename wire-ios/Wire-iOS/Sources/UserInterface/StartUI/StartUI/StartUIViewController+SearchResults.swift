@@ -130,50 +130,62 @@ extension StartUIViewController: SearchResultsViewControllerDelegate {
 
         isLoadingViewVisible = true
 
-        userSession.perform { [weak self] in
-            guard let weakSelf = self else { return }
+        let service = ConversationService(context: userSession.viewContext)
+        service.createGroupConversation(
+            name: L10n.Localizable.General.guestRoomName,
+            users: [],
+            allowGuests: true,
+            allowServices: true,
+            enableReceipts: false,
+            messageProtocol: .proteus
+        ) { [weak self] in
+            switch $0 {
+            case .success(let conversation):
+                guard let self = self else { return }
+                self.delegate?.startUI(
+                    self,
+                    didSelect: conversation
+                )
 
-            if let conversation = ZMConversation.insertGroupConversation(session: userSession,
-                                                                      participants: [],
-                                                                      name: "general.guest-room-name".localized,
-                                                                      team: ZMUser.selfUser().team) {
-                weakSelf.delegate?.startUI(weakSelf, didSelect: conversation)
+            case .failure(let error):
+                WireLogger.conversation.error("failed to create guest room: \(String(describing: error))")
             }
+
         }
     }
 }
 
 extension StartUIViewController: ConversationCreationControllerDelegate {
-    func dismiss(controller: ConversationCreationController, completion: (() -> Void)? = nil) {
-        if traitCollection.horizontalSizeClass == .compact {
-            navigationController?.popToRootViewController(animated: true) {
-                completion?()
-            }
-        } else {
-            controller.navigationController?.dismiss(animated: true, completion: completion)
-        }
-    }
 
     func conversationCreationController(
         _ controller: ConversationCreationController,
-        didSelectName name: String,
-        participants: UserSet,
-        allowGuests: Bool,
-        allowServices: Bool,
-        enableReceipts: Bool,
-        encryptionProtocol: EncryptionProtocol
+        didCreateConversation conversation: ZMConversation
     ) {
         dismiss(controller: controller) { [weak self] in
-            guard let weakSelf = self else { return }
+            guard let self = self else { return }
 
-            weakSelf.delegate?.startUI(
-                weakSelf,
-                createConversationWith: participants,
-                name: name,
-                allowGuests: allowGuests,
-                allowServices: allowServices,
-                enableReceipts: enableReceipts,
-                encryptionProtocol: encryptionProtocol
+            delegate?.startUI(
+                self,
+                didSelect: conversation
+            )
+        }
+    }
+
+    func dismiss(
+        controller: ConversationCreationController,
+        completion: (() -> Void)? = nil
+    ) {
+        switch traitCollection.horizontalSizeClass {
+        case .compact:
+            navigationController?.popToRootViewController(
+                animated: true,
+                completion: completion
+            )
+
+        default:
+            controller.navigationController?.dismiss(
+                animated: true,
+                completion: completion
             )
         }
     }

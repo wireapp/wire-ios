@@ -122,7 +122,8 @@ public class NotificationSession {
         accountIdentifier: UUID,
         environment: BackendEnvironmentProvider,
         analytics: AnalyticsType?,
-        sharedUserDefaults: UserDefaults
+        sharedUserDefaults: UserDefaults,
+        minTLSVersion: String?
     ) throws {
         let sharedContainerURL = FileManager.sharedContainerDirectory(for: applicationGroupIdentifier)
         let accountManager = AccountManager(sharedDirectory: sharedContainerURL)
@@ -136,8 +137,10 @@ public class NotificationSession {
             applicationContainer: sharedContainerURL
         )
 
-        coreDataStack.loadStores { _ in
-            // TODO jacob error handling
+        coreDataStack.loadStores { error in
+            if let error = error {
+                WireLogger.notifications.error("Loading coreDataStack with error: \(error.localizedDescription)")
+            }
         }
 
         let cookieStorage = ZMPersistentCookieStorage(forServerName: environment.backendURL.host!, userIdentifier: accountIdentifier)
@@ -155,7 +158,8 @@ public class NotificationSession {
             reachability: reachability,
             initialAccessToken: nil,
             applicationGroupIdentifier: applicationGroupIdentifier,
-            applicationVersion: "1.0.0"
+            applicationVersion: "1.0.0",
+            minTLSVersion: minTLSVersion
         )
 
         try self.init(
@@ -219,7 +223,8 @@ public class NotificationSession {
             applicationStatusDirectory: applicationStatusDirectory,
             operationLoop: operationLoop,
             accountIdentifier: accountIdentifier,
-            pushNotificationStrategy: pushNotificationStrategy
+            pushNotificationStrategy: pushNotificationStrategy,
+            earService: EARService(accountID: accountIdentifier, sharedUserDefaults: sharedUserDefaults)
         )
     }
 
@@ -233,7 +238,7 @@ public class NotificationSession {
         accountIdentifier: UUID,
         pushNotificationStrategy: PushNotificationStrategy,
         cryptoboxMigrationManager: CryptoboxMigrationManagerInterface = CryptoboxMigrationManager(),
-        earService: EARServiceInterface? = nil
+        earService: EARServiceInterface
     ) throws {
         self.coreDataStack = coreDataStack
         self.transportSession = transportSession
@@ -241,7 +246,7 @@ public class NotificationSession {
         self.applicationStatusDirectory = applicationStatusDirectory
         self.operationLoop = operationLoop
         self.accountIdentifier = accountIdentifier
-        self.earService = earService ?? EARService(accountID: accountIdentifier)
+        self.earService = earService
 
         eventDecoder = EventDecoder(
             eventMOC: coreDataStack.eventContext,

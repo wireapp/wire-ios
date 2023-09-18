@@ -30,7 +30,7 @@ class MockContainerViewController: UIViewController, NetworkStatusBarDelegate {
 }
 
 /// Snapshot tests for differnt margin and size of NetworkStatusViewController.view for all value of ZMNetworkState with other UIView at the bottom.
-final class NetworkStatusViewControllerSnapshotTests: ZMSnapshotTestCase {
+final class NetworkStatusViewControllerSnapshotTests: BaseSnapshotTestCase {
 
     var sut: NetworkStatusViewController!
     var mockContainerViewController: MockContainerViewController!
@@ -75,7 +75,7 @@ final class NetworkStatusViewControllerSnapshotTests: ZMSnapshotTestCase {
         super.tearDown()
     }
 
-    fileprivate func verify(for newState: ZMNetworkState, file: StaticString = #file, line: UInt = #line) {
+    private func verify(for newState: ZMNetworkState, file: StaticString = #file, line: UInt = #line) {
         // GIVEN
         sut.didChangeAvailability(newState: newState)
 
@@ -84,7 +84,7 @@ final class NetworkStatusViewControllerSnapshotTests: ZMSnapshotTestCase {
         sut.view.layer.speed = 0 // freeze animations for deterministic tests
 
         // THEN
-        verify(view: mockContainerViewController.view, file: file, line: line)
+        verify(matching: mockContainerViewController.view, file: file, line: line)
     }
 
     func testOnlineState() {

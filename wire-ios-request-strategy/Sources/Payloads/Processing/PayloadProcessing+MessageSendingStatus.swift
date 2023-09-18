@@ -33,15 +33,23 @@ extension Payload.MessageSendingStatus {
     /// If a message was missing clients we should attempt to send the message again
     /// after establishing sessions with the missing clients.
     ///
-    func updateClientsChanges(for message: OTREntity) -> Bool {
+    func updateClientsChanges(for message: any ProteusMessage) -> Bool {
+        WireLogger.messaging.debug("update client changes for message \(message.debugInfo)")
 
         let deletedClients = deleted.fetchClients(in: message.context)
+
+        if !deletedClients.isEmpty {
+            WireLogger.messaging.debug("detected deleted clients")
+        }
+
         for (_, deletedClients) in deletedClients {
             deletedClients.forEach { $0.deleteClientAndEndSession() }
         }
 
         let redundantUsers = redundant.fetchUsers(in: message.context)
         if !redundantUsers.isEmpty {
+            WireLogger.messaging.debug("detected redundant users")
+
             // if the BE tells us that these users are not in the
             // conversation anymore, it means that we are out of sync
             // with the list of participants
@@ -55,10 +63,20 @@ extension Payload.MessageSendingStatus {
         }
 
         let missingClients = missing.fetchOrCreateClients(in: message.context)
+
+        if !missingClients.isEmpty {
+            WireLogger.messaging.debug("detected missing clients")
+        }
+
         for (user, userClients) in missingClients {
             userClients.forEach({ $0.discoveredByMessage = message as? ZMOTRMessage })
             message.registersNewMissingClients(Set(userClients))
             message.conversation?.addParticipantAndSystemMessageIfMissing(user, date: nil)
+        }
+
+        let failedToConfirmUsers = failedToConfirm.fetchUsers(in: message.context)
+        if !failedToConfirmUsers.isEmpty {
+            message.addFailedToSendRecipients(failedToConfirmUsers)
         }
 
         return !missingClients.isEmpty

@@ -16,14 +16,19 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 import WireCommonComponents
 import WireUtilities
+import WireSyncEngine
 
 final class CallParticipantDetailsView: RoundedBlurView {
-    private let nameLabel: UILabel
 
+    // MARK: - Properties
+
+    typealias IconColors = SemanticColors.Icon
+
+    private let nameLabel: UILabel
+    private let connectingLabel: UILabel
     private let microphoneIconView = PulsingIconImageView()
 
     var name: String? {
@@ -32,113 +37,120 @@ final class CallParticipantDetailsView: RoundedBlurView {
         }
     }
 
-    private let labelContainerView = UIView()
+    private let labelsContainerView = UIStackView(axis: .horizontal)
     private let microphoneImageView = UIImageView()
     private var microphoneWidth: NSLayoutConstraint?
 
     var microphoneIconStyle: MicrophoneIconStyle = .hidden {
         didSet {
-            microphoneIconView.set(style: microphoneIconStyle)
-            guard DeveloperFlag.isUpdatedCallingUI else { return }
-            makeMicrophone(hidden: true)
-            labelContainerView.backgroundColor = .black
-            nameLabel.textColor = .white
+            updateMicrophoneView()
+        }
+    }
 
-            switch microphoneIconStyle {
-            case .unmutedPulsing:
-                labelContainerView.backgroundColor = UIColor.accent()
-                nameLabel.textColor = SemanticColors.Label.textDefaultWhite
-            case .muted:
-                makeMicrophone(hidden: false)
-            case .unmuted, .hidden:
-                break
+    var callState: CallParticipantState = .connecting {
+        didSet {
+            switch callState {
+            case .unconnectedButMayConnect, .connecting:
+                connectingLabel.isHidden = false
+                nameLabel.textColor =  SemanticColors.Label.textInactive
+            default:
+                nameLabel.textColor =  SemanticColors.Label.textWhite
+                connectingLabel.isHidden = true
             }
         }
     }
 
+    // MARK: - Init
+
     override init() {
-        nameLabel = DeveloperFlag.isUpdatedCallingUI
-        ? DynamicFontLabel(fontSpec: .mediumRegularFont, color: SemanticColors.Label.textWhite)
-                    : UILabel(key: nil, size: .medium, weight: .semibold, color: .textForeground, variant: .dark)
+        nameLabel = DynamicFontLabel(fontSpec: .mediumRegularFont,
+                                     color: SemanticColors.Label.textWhite)
+        connectingLabel = DynamicFontLabel(fontSpec: .smallSemiboldFont,
+                                           color: SemanticColors.Label.textParticipantDisconnected)
+        connectingLabel.text = L10n.Localizable.Call.Grid.connecting
         super.init()
     }
 
+    // MARK: - Setup Views
+
     override func setupViews() {
         super.setupViews()
-        if DeveloperFlag.isUpdatedCallingUI {
-            [microphoneImageView, labelContainerView].forEach {
-                $0.translatesAutoresizingMaskIntoConstraints = false
-                addSubview($0)
-            }
-            nameLabel.translatesAutoresizingMaskIntoConstraints = false
-            labelContainerView.addSubview(nameLabel)
-            labelContainerView.backgroundColor = .black
-            labelContainerView.layer.cornerRadius = 3.0
-            labelContainerView.layer.masksToBounds = true
-            microphoneImageView.image = StyleKitIcon.microphoneOff.makeImage(size: .tiny,
-                                                                             color: SemanticColors.Icon.foregroundMicrophone)
-            microphoneImageView.backgroundColor = SemanticColors.Icon.foregroundDefaultWhite
-            microphoneImageView.contentMode = .center
-            microphoneImageView.layer.cornerRadius = 3.0
-            microphoneImageView.layer.masksToBounds = true
-            blurView.alpha = 0
-        } else {
-            setCornerRadius(12)
-            microphoneIconView.set(size: .tiny, color: .white)
-            [microphoneIconView, nameLabel].forEach {
-                $0.translatesAutoresizingMaskIntoConstraints = false
-                addSubview($0)
-            }
+        [microphoneImageView, labelsContainerView].forEach {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+            addSubview($0)
         }
+        [nameLabel, connectingLabel].forEach {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+            labelsContainerView.addArrangedSubview($0)
+        }
+        connectingLabel.isHidden = true
+        connectingLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
+
+        labelsContainerView.backgroundColor = .black
+        labelsContainerView.layer.cornerRadius = 3.0
+        labelsContainerView.spacing = 6.0
+        labelsContainerView.layer.masksToBounds = true
+        labelsContainerView.layoutMargins = UIEdgeInsets(top: 4, left: 4, bottom: 4, right: 4)
+        labelsContainerView.isLayoutMarginsRelativeArrangement = true
+
+        microphoneImageView.image = StyleKitIcon.microphoneOff.makeImage(size: .tiny,
+                                                                         color: IconColors.foregroundMicrophone)
+        microphoneImageView.backgroundColor = IconColors.foregroundDefaultWhite
+        microphoneImageView.contentMode = .center
+        microphoneImageView.layer.cornerRadius = 3.0
+        microphoneImageView.layer.masksToBounds = true
+
+        blurView.alpha = 0
     }
 
     override func createConstraints() {
         super.createConstraints()
-        if DeveloperFlag.isUpdatedCallingUI {
-            createUpdatedUIContraints()
-            return
-        }
 
-        NSLayoutConstraint.activate([
-            nameLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -8),
-            nameLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
-            nameLabel.leadingAnchor.constraint(equalTo: microphoneIconView.trailingAnchor, constant: 4),
-            microphoneIconView.centerYAnchor.constraint(equalTo: centerYAnchor),
-            microphoneIconView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 4),
-            microphoneIconView.widthAnchor.constraint(equalToConstant: 16),
-            microphoneIconView.heightAnchor.constraint(equalToConstant: 16)
-        ])
-    }
-
-    private func makeMicrophone(hidden: Bool) {
-            self.microphoneWidth?.constant = hidden ? 0 : 22
-            self.setNeedsDisplay()
-    }
-
-    private func createUpdatedUIContraints() {
-        labelContainerView.setContentCompressionResistancePriority(.required, for: .horizontal)
+        labelsContainerView.setContentCompressionResistancePriority(.required, for: .horizontal)
         microphoneWidth = microphoneImageView.widthAnchor.constraint(equalToConstant: 22)
         NSLayoutConstraint.activate([
-            labelContainerView.centerXAnchor.constraint(equalTo: centerXAnchor).withPriority(.defaultLow),
-            labelContainerView.centerYAnchor.constraint(equalTo: centerYAnchor),
-            labelContainerView.leadingAnchor.constraint(greaterThanOrEqualTo: microphoneImageView.trailingAnchor, constant: 2.0),
-            labelContainerView.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor),
+            labelsContainerView.centerXAnchor.constraint(equalTo: centerXAnchor).withPriority(.defaultLow),
+            labelsContainerView.centerYAnchor.constraint(equalTo: centerYAnchor),
+            labelsContainerView.leadingAnchor.constraint(greaterThanOrEqualTo: microphoneImageView.trailingAnchor, constant: 2.0),
+            labelsContainerView.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor),
             microphoneImageView.centerYAnchor.constraint(equalTo: centerYAnchor),
             microphoneImageView.leadingAnchor.constraint(equalTo: leadingAnchor),
             microphoneImageView.heightAnchor.constraint(equalToConstant: 22),
             microphoneWidth!
         ])
-        NSLayoutConstraint.activate(
-            NSLayoutConstraint.forView(view: nameLabel,
-                                       inContainer: labelContainerView,
-                                       withInsets: UIEdgeInsets.init(top: 4, left: 4, bottom: 4, right: 4))
-        )
+        updateMicrophoneView()
+
+    }
+
+    // MARK: - Methods to update the state of the microphone view
+
+    private func updateMicrophoneView() {
+        microphoneIconView.set(style: microphoneIconStyle)
+        makeMicrophone(hidden: true)
+        labelsContainerView.backgroundColor = .black
+        nameLabel.textColor = .white
+
+        switch microphoneIconStyle {
+        case .unmutedPulsing:
+            labelsContainerView.backgroundColor = UIColor.accent()
+            nameLabel.textColor = SemanticColors.Label.textDefaultWhite
+        case .muted:
+            makeMicrophone(hidden: false)
+        case .unmuted, .hidden:
+            break
+        }
+    }
+
+    private func makeMicrophone(hidden: Bool) {
+        self.microphoneWidth?.constant = hidden ? 0 : 22
+        self.microphoneImageView.isHidden = hidden
+        self.setNeedsDisplay()
     }
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
         guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else { return }
         microphoneImageView.image = StyleKitIcon.microphoneOff.makeImage(size: .tiny,
-                                                                         color: SemanticColors.Icon.foregroundMicrophone)
+                                                                         color: IconColors.foregroundMicrophone)
     }
 }

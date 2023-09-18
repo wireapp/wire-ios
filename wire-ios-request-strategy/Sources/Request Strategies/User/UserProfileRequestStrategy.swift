@@ -94,7 +94,7 @@ public class UserProfileRequestStrategy: AbstractRequestStrategy, IdentifierObje
         case .v0:
             userProfileByID.sync(identifiers: users.compactMap(\.remoteIdentifier))
 
-        case .v1, .v2, .v3, .v4:
+        case .v1, .v2, .v3, .v4, .v5:
             if let qualifiedUserIDs = users.qualifiedUserIDs {
                 userProfileByQualifiedID.sync(identifiers: qualifiedUserIDs)
             } else if let domain = BackendInfo.domain {
@@ -323,7 +323,7 @@ class UserProfileByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
             let missingIdentifiers = identifiers.subtracting(payload.compactMap(\.qualifiedID))
             markUserProfilesAsFetched(missingIdentifiers)
 
-        case .v4:
+        case .v4, .v5:
             guard
                 let rawData = response.rawData,
                 let payload = Payload.UserProfilesV4(rawData, decoder: decoder)
@@ -334,8 +334,9 @@ class UserProfileByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
             let foundUsers = payload.found
             foundUsers.updateUserProfiles(in: context)
 
-            let missingIdentifiers = identifiers.subtracting(foundUsers.compactMap(\.qualifiedID))
-            markUserProfilesAsFetched(missingIdentifiers)
+            if let failedIdentifiers = payload.failed {
+                markUserProfilesAsUnavailable(Set(failedIdentifiers))
+            }
         }
     }
 
@@ -349,7 +350,7 @@ class UserProfileByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
     private func markUserProfilesAsUnavailable(_ users: Set<QualifiedID>) {
         for qualifiedID in users {
             let user = ZMUser.fetch(with: qualifiedID.uuid, domain: qualifiedID.domain, in: context)
-            user?.name = "Username unavailable"
+            user?.isPendingMetadataRefresh = true
             user?.needsToBeUpdatedFromBackend = false
         }
     }

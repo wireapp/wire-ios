@@ -20,20 +20,28 @@ import UIKit
 import XCTest
 @testable import Wire
 
+// MARK: - MockDestination
+
 final class MockDestination: NSObject, ShareDestination {
 
     var isUnderLegalHold: Bool
 
     var showsGuestIcon: Bool
 
-    var displayName: String
+    var displayNameWithFallback: String
 
     var securityLevel: ZMConversationSecurityLevel
 
     var avatarView: UIView?
 
-    init(displayName: String, avatarView: UIView? = nil, securityLevel: ZMConversationSecurityLevel = .notSecure, showsGuestIcon: Bool = false, isUnderLegalHold: Bool = false) {
-        self.displayName = displayName
+    init(
+        displayName: String,
+        avatarView: UIView? = nil,
+        securityLevel: ZMConversationSecurityLevel = .notSecure,
+        showsGuestIcon: Bool = false,
+        isUnderLegalHold: Bool = false
+    ) {
+        self.displayNameWithFallback = displayName
         self.securityLevel = securityLevel
         self.avatarView = avatarView
         self.showsGuestIcon = showsGuestIcon
@@ -41,7 +49,11 @@ final class MockDestination: NSObject, ShareDestination {
     }
 }
 
-final class ShareDestinationCellTests: ZMSnapshotTestCase {
+// MARK: - ShareDestinationCellTests
+
+final class ShareDestinationCellTests: BaseSnapshotTestCase {
+
+    // MARK: - Properties
 
     var sut: ShareDestinationCell<MockDestination>!
     var destination: MockDestination?
@@ -53,14 +65,19 @@ final class ShareDestinationCellTests: ZMSnapshotTestCase {
         return imageView
     }
 
+    // MARK: - setUp
+
     override func setUp() {
         super.setUp()
 
+        // TODO: check what would be the default value after test
         accentColor = .vividRed
         sut = ShareDestinationCell(style: .default, reuseIdentifier: "reuseIdentifier")
         sut.overrideUserInterfaceStyle = .dark
         sut.backgroundColor = .black
     }
+
+    // MARK: - tearDown
 
     override func tearDown() {
         sut = nil
@@ -68,216 +85,237 @@ final class ShareDestinationCellTests: ZMSnapshotTestCase {
         super.tearDown()
     }
 
+    // MARK: - Snapshot Tests
+
     func testThatItRendersCorrectly_CellWithPersonalNameAndPicture_NotSecure_Unchecked() {
-        // given
+        // GIVEN
         let destination = MockDestination(displayName: "John Burger",
                                           avatarView: mockAvatarView,
                                           securityLevel: .notSecure)
-        // when
+        // WHEN
         sut.destination = destination
-        let view = sut.prepareForSnapshots()
-        // then
-        verify(matching: view)
+
+        // THEN
+        verify(matching: sut.prepareForSnapshots())
     }
 
     func testThatItRendersCorrectly_CellWithPersonalNameAndPicture_NotSecure_Unchecked_Guest() {
-        // given
+        // GIVEN
         let destination = MockDestination(displayName: "John Burger",
                                           avatarView: mockAvatarView,
                                           securityLevel: .notSecure,
                                           showsGuestIcon: true)
-        // when
+        // WHEN
         sut.destination = destination
-        // then
+
+        // THEN
         verify(matching: sut.prepareForSnapshots())
     }
 
     func testThatItRendersCorrectly_CellWithPersonalNameAndPicture_NotSecure_Unchecked_LegalHold() {
-        // given
+        // GIVEN
         let destination = MockDestination(displayName: "John Burger",
                                           avatarView: mockAvatarView,
                                           securityLevel: .notSecure,
                                           isUnderLegalHold: true)
-        // when
+        // WHEN
         sut.destination = destination
-        // then
+
+        // THEN
         verify(matching: sut.prepareForSnapshots())
     }
 
     func testThatItRendersCorrectly_CellWithLongPersonalNameAndPicture_NotSecure_Unchecked() {
-        // given
+        // GIVEN
         let destination = MockDestination(displayName: "His Majesty John Carl Steven Bob Burger II",
                                           avatarView: mockAvatarView,
                                           securityLevel: .notSecure)
-        // when
+        // WHEN
         sut.destination = destination
-        // then
+
+        // THEN
         verify(matching: sut.prepareForSnapshots())
     }
 
     func testThatItRendersCorrectly_CellWithLongPersonalNameAndPicture_NotSecure_Unchecked_Guest() {
-        // given
+        // GIVEN
         let destination = MockDestination(displayName: "His Majesty John Carl Steven Bob Burger II",
                                           avatarView: mockAvatarView,
                                           securityLevel: .notSecure,
                                           showsGuestIcon: true)
-        // when
+        // WHEN
         sut.destination = destination
-        // then
+
+        // THEN
         verify(matching: sut.prepareForSnapshots())
     }
 
     func testThatItRendersCorrectly_CellWithPersonalNameAndPicture_NotSecure_Checked() {
-        // given
+        // GIVEN
         let destination = MockDestination(displayName: "John Burger",
                                           avatarView: mockAvatarView,
                                           securityLevel: .notSecure)
-        // when
+        // WHEN
         sut.destination = destination
-        // then
+
+        // THEN
         verify(matching: sut.prepareForSnapshotWithCellSelected())
     }
 
     func testThatItRendersCorrectly_CellWithPersonalNameAndPicture_NotSecure_Checked_Guest() {
-        // given
+        // GIVEN
         let destination = MockDestination(displayName: "John Burger",
                                           avatarView: mockAvatarView,
                                           securityLevel: .notSecure,
                                           showsGuestIcon: true)
-        // when
+        // WHEN
         sut.destination = destination
-        // then
+
+        // THEN
         verify(matching: sut.prepareForSnapshotWithCellSelected())
     }
 
     func testThatItRendersCorrectly_CellWithLongPersonalNameAndPicture_NotSecure_Checked() {
-        // given
+        // GIVEN
         let destination = MockDestination(displayName: "His Majesty John Carl Steven Bob Burger II",
                                           avatarView: mockAvatarView,
                                           securityLevel: .notSecure)
-        // when
+        // WHEN
         sut.destination = destination
-        // then
+
+        // THEN
         verify(matching: sut.prepareForSnapshotWithCellSelected())
     }
 
     func testThatItRendersCorrectly_CellWithLongPersonalNameAndPicture_NotSecure_Checked_Guest() {
-        // given
+        // GIVEN
         let destination = MockDestination(displayName: "His Majesty John Carl Steven Bob Burger II",
                                           avatarView: mockAvatarView,
                                           securityLevel: .notSecure,
                                           showsGuestIcon: true)
-        // when
+        // WHEN
         sut.destination = destination
-        // then
+
+        // THEN
         verify(matching: sut.prepareForSnapshotWithCellSelected())
     }
 
     func testThatItRendersCorrectly_CellWithPersonalNameAndPicture_Secure_Unchecked() {
-        // given
+        // GIVEN
         let destination = MockDestination(displayName: "John Burger",
                                           avatarView: mockAvatarView,
                                           securityLevel: .secure)
-        // when
+        // WHEN
         sut.destination = destination
-        // then
+
+        // THEN
         verify(matching: sut.prepareForSnapshots())
     }
 
     func testThatItRendersCorrectly_CellWithPersonalNameAndPicture_Secure_Unchecked_Guest() {
-        // given
+        // GIVEN
         let destination = MockDestination(displayName: "John Burger",
                                           avatarView: mockAvatarView,
                                           securityLevel: .secure,
                                           showsGuestIcon: true)
-        // when
+        // WHEN
         sut.destination = destination
-        // then
+
+        // THEN
         verify(matching: sut.prepareForSnapshots())
     }
 
     func testThatItRendersCorrectly_CellWithPersonalNameAndPicture_Secure_Unchecked_Guest_LegalHold() {
-        // given
+        // GIVEN
         let destination = MockDestination(displayName: "John Burger",
                                           avatarView: mockAvatarView,
                                           securityLevel: .secure,
                                           showsGuestIcon: true,
                                           isUnderLegalHold: true)
-        // when
+        // WHEN
         sut.destination = destination
-        // then
+
+        // THEN
         verify(matching: sut.prepareForSnapshots())
     }
 
     func testThatItRendersCorrectly_CellWithLongPersonalNameAndPicture_Secure_Unchecked() {
-        // given
+        // GIVEN
         let destination = MockDestination(displayName: "His Majesty John Carl Steven Bob Burger II",
                                           avatarView: mockAvatarView,
                                           securityLevel: .secure)
-        // when
+        // WHEN
         sut.destination = destination
-        // then
+
+        // THEN
         verify(matching: sut.prepareForSnapshots())
     }
 
     func testThatItRendersCorrectly_CellWithLongPersonalNameAndPicture_Secure_Unchecked_Guest() {
-        // given
+        // GIVEN
         let destination = MockDestination(displayName: "His Majesty John Carl Steven Bob Burger II",
                                           avatarView: mockAvatarView,
                                           securityLevel: .secure,
                                           showsGuestIcon: true)
-        // when
+        // WHEN
         sut.destination = destination
-        // then
+
+        // THEN
         verify(matching: sut.prepareForSnapshots())
     }
 
     func testThatItRendersCorrectly_CellWithPersonalNameAndPicture_Secure_Checked() {
-        // given
+        // GIVEN
         let destination = MockDestination(displayName: "John Burger",
                                           avatarView: mockAvatarView,
                                           securityLevel: .secure)
-        // when
+        // WHEN
         sut.destination = destination
-        // then
+
+        // THEN
         verify(matching: sut.prepareForSnapshotWithCellSelected())
     }
 
     func testThatItRendersCorrectly_CellWithPersonalNameAndPicture_Secure_Checked_Guest() {
-        // given
+        // GIVEN
         let destination = MockDestination(displayName: "John Burger",
                                           avatarView: mockAvatarView,
                                           securityLevel: .secure,
                                           showsGuestIcon: true)
-        // when
+        // WHEN
         sut.destination = destination
-        // then
+
+        // THEN
         verify(matching: sut.prepareForSnapshotWithCellSelected())
     }
 
     func testThatItRendersCorrectly_CellWithLongPersonalNameAndPicture_Secure_Checked() {
-        // given
+        // GIVEN
         let destination = MockDestination(displayName: "His Majesty John Carl Steven Bob Burger II",
                                           avatarView: mockAvatarView,
                                           securityLevel: .secure)
-        // when
+        // WHEN
         sut.destination = destination
-        // then
+
+        // THEN
         verify(matching: sut.prepareForSnapshotWithCellSelected())
     }
 
     func testThatItRendersCorrectly_CellWithLongPersonalNameAndPicture_Secure_Checked_Guest() {
-        // given
+        // GIVEN
         let destination = MockDestination(displayName: "His Majesty John Carl Steven Bob Burger II",
                                           avatarView: mockAvatarView,
                                           securityLevel: .secure,
                                           showsGuestIcon: true)
-        // when
+        // WHEN
         sut.destination = destination
-        // then
+
+        // THEN
         verify(matching: sut.prepareForSnapshotWithCellSelected())
     }
 }
+
+// MARK: - Helper
 
 fileprivate extension UITableViewCell {
 

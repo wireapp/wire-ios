@@ -94,62 +94,6 @@ class ConversationRequestStrategyTests: MessagingTestBase {
         }
     }
 
-    func testThatRequestToCreateConversationIsGenerated_WhenRemoteIdentifierIsNotSet() {
-        syncMOC.performGroupedBlockAndWait {
-            // given
-            self.apiVersion = .v1
-            let selfUser = ZMUser.selfUser(in: self.syncMOC)
-            let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
-            conversation.conversationType = .group
-            conversation.userDefinedName = "Hello World"
-            conversation.addParticipantAndUpdateConversationState(user: self.otherUser, role: nil)
-            conversation.addParticipantAndUpdateConversationState(user: selfUser, role: nil)
-            self.sut.contextChangeTrackers.forEach({ $0.objectsDidChange(Set([conversation])) })
-
-            // when
-            let request = self.sut.nextRequest(for: self.apiVersion)!
-            let payload = Payload.NewConversation(request)
-
-            // then
-            XCTAssertEqual(request.path, "/v1/conversations")
-            XCTAssertEqual(request.method, .methodPOST)
-            XCTAssertEqual(payload?.name, conversation.userDefinedName)
-            XCTAssertEqual(Set(payload!.qualifiedUsers!), Set(conversation.localParticipantsExcludingSelf.qualifiedUserIDs!))
-        }
-    }
-
-    func testThatRequestToCreateConversationIsGenerated_V2() {
-        syncMOC.performGroupedBlockAndWait {
-            // given
-            self.apiVersion = .v2
-            let selfUser = ZMUser.selfUser(in: self.syncMOC)
-            let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
-            conversation.conversationType = .group
-            conversation.userDefinedName = "Hello World"
-            conversation.messageProtocol = .mls
-            conversation.addParticipantAndUpdateConversationState(user: self.otherUser, role: nil)
-            conversation.addParticipantAndUpdateConversationState(user: selfUser, role: nil)
-            self.sut.contextChangeTrackers.forEach({ $0.objectsDidChange(Set([conversation])) })
-
-            // when
-            let request = self.sut.nextRequest(for: self.apiVersion)!
-
-            guard let payload = Payload.NewConversation(request) else {
-                XCTFail("failed to create payload")
-                return
-            }
-
-            // then
-            XCTAssertEqual(request.path, "/v2/conversations")
-            XCTAssertEqual(request.method, .methodPOST)
-            XCTAssertEqual(payload.name, conversation.userDefinedName)
-            XCTAssertEqual(payload.messageProtocol, "mls")
-            XCTAssertNil(payload.qualifiedUsers)
-            XCTAssertNil(payload.users)
-            XCTAssertEqual(payload.creatorClient, self.selfClient.remoteIdentifier!)
-        }
-    }
-
     func testThatRequestToUpdateConversationNameIsGenerated_WhenModifiedKeyIsSet() {
         syncMOC.performGroupedBlockAndWait {
             // given
@@ -324,6 +268,21 @@ class ConversationRequestStrategyTests: MessagingTestBase {
         }
     }
 
+    func testThatConversationIsPendingMetadataRefresh_WhenFailedDuringSlowSyncPhase() {
+        // given
+        self.apiVersion = .v4
+        startSlowSync()
+        fetchConversationListDuringSlowSync()
+
+        // when
+        fetchConversationsDuringSlowSync(failed: [qualifiedID(for: groupConversation)])
+
+        // then
+        syncMOC.performGroupedBlockAndWait {
+            XCTAssertTrue(self.groupConversation.isPendingMetadataRefresh)
+        }
+    }
+
     func testThatConversationIsCreatedAndMarkedToFetched_WhenFailingDuringSlowSyncPhase() throws {
         // given
         self.apiVersion = .v1
@@ -344,61 +303,6 @@ class ConversationRequestStrategyTests: MessagingTestBase {
     }
 
     // MARK: - Response processing
-
-    func testThatMLSGroupIsCreated() {
-        self.syncMOC.performGroupedBlockAndWait {
-            // given
-            let mlsService = MockMLSService()
-            self.syncMOC.mlsService = mlsService
-
-            let id = UUID.create()
-            let qualifiedID = QualifiedID(uuid: id, domain: self.owningDomain)
-            let mlsGroupID = MLSGroupID([1, 2, 3])
-
-            guard let request = self.sut.request(
-                forInserting: self.groupConversation,
-                forKeys: nil,
-                apiVersion: .v2
-            ) else {
-                XCTFail("Failed to create request")
-                return
-            }
-
-            let payload = Payload.Conversation(
-                qualifiedID: qualifiedID,
-                id: id,
-                type: BackendConversationType.group.rawValue,
-                messageProtocol: "mls",
-                mlsGroupID: mlsGroupID.base64EncodedString
-            )
-
-            let payloadData = payload.payloadData()!
-            let payloadString = String(bytes: payloadData, encoding: .utf8)!
-
-            let response = ZMTransportResponse(
-                payload: payloadString as ZMTransportData,
-                httpStatus: 201,
-                transportSessionError: nil,
-                apiVersion: 2
-            )
-
-            // when
-            self.sut.updateInsertedObject(
-                self.groupConversation,
-                request: request,
-                response: response
-            )
-
-            // then
-            XCTAssertEqual(mlsService.createGroupCalls.count, 1)
-
-            let createGroupCall = mlsService.createGroupCalls.element(atIndex: 0)
-            XCTAssertEqual(createGroupCall, self.groupConversation.mlsGroupID)
-            XCTAssertEqual(self.groupConversation.mlsStatus, .ready)
-        }
-
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-    }
 
     func testThatConversationResetsNeedsToBeUpdatedFromBackend_OnPermanentErrors() {
         // given
@@ -493,7 +397,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
             self.sut?.processEvents([event], liveEvents: true, prefetchResult: nil)
 
             // THEN
-            XCTAssertTrue(self.groupConversation.isDeleted)
+            XCTAssertTrue(self.groupConversation.isDeletedRemotely)
         }
     }
 

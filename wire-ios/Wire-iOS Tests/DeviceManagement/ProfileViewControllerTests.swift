@@ -20,13 +20,17 @@ import SnapshotTesting
 import XCTest
 @testable import Wire
 
-final class ProfileViewControllerTests: ZMSnapshotTestCase {
+final class ProfileViewControllerTests: BaseSnapshotTestCase {
+
+    // MARK: - Properties
 
     private var sut: ProfileViewController!
     private var mockUser: MockUser!
     private var selfUser: MockUser!
     private var teamIdentifier: UUID!
     private var mockClassificationProvider: MockClassificationProvider!
+
+    // MARK: - setUp
 
     override func setUp() {
         super.setUp()
@@ -43,6 +47,8 @@ final class ProfileViewControllerTests: ZMSnapshotTestCase {
         mockClassificationProvider = MockClassificationProvider()
     }
 
+    // MARK: - tearDown
+
     override func tearDown() {
         sut = nil
         mockUser = nil
@@ -52,6 +58,8 @@ final class ProfileViewControllerTests: ZMSnapshotTestCase {
 
         super.tearDown()
     }
+
+    // MARK: - Snapshot Tests
 
     // MARK: - .profileViewer  Context
 
@@ -156,6 +164,25 @@ final class ProfileViewControllerTests: ZMSnapshotTestCase {
         verify(matching: navWrapperController)
     }
 
+    func testForContextProfileViewer_ForUserWithoutName() {
+        // GIVEN
+        selfUser.teamRole = .member
+        mockUser = MockUser.createConnectedUser(name: "Catherine Jackson", inTeam: nil)
+        mockUser.name = nil
+        mockUser.domain = "foma.wire.link"
+        mockUser.initials = ""
+
+        // WHEN
+        sut = ProfileViewController(user: mockUser,
+                                    viewer: selfUser,
+                                    context: .profileViewer)
+        let navWrapperController = sut.wrapInNavigationController()
+        sut.viewDidAppear(false)
+
+        // THEN
+        verify(matching: navWrapperController)
+    }
+
     func testItRequestsDataRefeshForTeamMembers() {
         // GIVEN
         mockUser.isTeamMember = true
@@ -180,7 +207,6 @@ final class ProfileViewControllerTests: ZMSnapshotTestCase {
                                     context: .profileViewer)
 
         // THEN
-        XCTAssertEqual(mockUser.refreshDataCount, 0)
         XCTAssertEqual(mockUser.refreshMembershipCount, 0)
     }
 

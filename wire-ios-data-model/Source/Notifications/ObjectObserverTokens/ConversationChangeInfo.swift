@@ -46,7 +46,8 @@ extension ZMConversation: ObjectInSnapshot {
                     #keyPath(ZMConversation.legalHoldStatus),
                     #keyPath(ZMConversation.labels),
                     #keyPath(ZMConversation.localParticipants),
-                    ZMConversation.mlsStatusKey
+                    ZMConversation.mlsStatusKey,
+                    #keyPath(ZMConversation.isDeletedRemotely)
             ])
     }
 
@@ -64,6 +65,10 @@ extension ZMConversation: ObjectInSnapshot {
 ////////////////////
 
 @objcMembers public final class ConversationChangeInfo: ObjectChangeInfo {
+
+    public var isDeletedChanged: Bool {
+        return changedKeysContain(keys: #keyPath(ZMConversation.isDeletedRemotely))
+    }
 
     public var languageChanged: Bool {
         return changedKeysContain(keys: #keyPath(ZMConversation.language))
@@ -126,10 +131,6 @@ extension ZMConversation: ObjectInSnapshot {
         return changedKeysContain(keys: SecurityLevelKey)
     }
 
-    public var createdRemotelyChanged: Bool {
-        return changedKeysContain(keys: #keyPath(ZMConversation.remoteIdentifier))
-    }
-
     public var allowGuestsChanged: Bool {
         return changedKeysContain(keys: #keyPath(ZMConversation.accessModeStrings)) ||
                changedKeysContain(keys: #keyPath(ZMConversation.accessRoleString)) ||
@@ -183,7 +184,6 @@ extension ZMConversation: ObjectInSnapshot {
                 "clearedChanged \(clearedChanged)",
                 "securityLevelChanged \(securityLevelChanged)",
                 "teamChanged \(teamChanged)",
-                "createdRemotelyChanged \(createdRemotelyChanged)",
                 "destructionTimeoutChanged \(destructionTimeoutChanged)",
                 "languageChanged \(languageChanged)",
                 "hasReadReceiptsEnabledChanged \(hasReadReceiptsEnabledChanged)",

@@ -176,7 +176,7 @@ final class CallInfoViewController: UIViewController, CallActionsViewDelegate, C
         } else {
             let label = UILabel()
             label.translatesAutoresizingMaskIntoConstraints = false
-            label.attributedText = configuration.networkQuality.attributedString(color: UIColor.nameColor(for: .brightOrange, variant: .light))
+            label.attributedText = configuration.networkQuality.attributedString(color: SemanticColors.Label.textDefault)
             label.font = FontSpec(.small, .semibold).font
             navigationItem.titleView = label
         }

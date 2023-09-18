@@ -69,7 +69,7 @@ final class ConversationListCellTests: ZMSnapshotTestCase {
     // MARK: - Setup
 
     var sut: ConversationListCell!
-    fileprivate var otherUserConversation: MockConversation!
+    private var otherUserConversation: MockConversation!
     var otherUser: MockUserType!
 
     override func setUp() {
@@ -96,13 +96,21 @@ final class ConversationListCellTests: ZMSnapshotTestCase {
     // MARK: - Helper
 
     private func createNewMessage(text: String = "Hey there!") -> MockMessage {
-        let message: MockMessage = MockMessageFactory.textMessage(withText: text, sender: otherUser, conversation: otherUserConversation)
+        let message: MockMessage = MockMessageFactory.textMessage(
+            withText: text,
+            sender: otherUser,
+            conversation: otherUserConversation
+        )
 
         return message
     }
 
     private func createMentionSelfMessage() -> MockMessage {
-        let mentionMessage: MockMessage = MockMessageFactory.textMessage(withText: "@self test", sender: otherUser, conversation: otherUserConversation)
+        let mentionMessage: MockMessage = MockMessageFactory.textMessage(
+            withText: "@self test",
+            sender: otherUser,
+            conversation: otherUserConversation
+        )
 
         return mentionMessage
     }
@@ -297,7 +305,11 @@ final class ConversationListCellTests: ZMSnapshotTestCase {
         // when
         let message = createNewMessage()
 
-        let mentionMessage: MockMessage = MockMessageFactory.textMessage(withText: "@self test", sender: otherUser, conversation: otherUserConversation)
+        let mentionMessage: MockMessage = MockMessageFactory.textMessage(
+            withText: "@self test",
+            sender: otherUser,
+            conversation: otherUserConversation
+        )
 
         let status = ConversationStatus(isGroup: false,
                                         hasMessages: false,

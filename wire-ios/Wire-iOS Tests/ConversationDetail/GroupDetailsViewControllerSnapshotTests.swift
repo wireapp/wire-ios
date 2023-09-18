@@ -19,7 +19,7 @@
 import XCTest
 @testable import Wire
 
-final class GroupDetailsViewControllerSnapshotTests: ZMSnapshotTestCase {
+final class GroupDetailsViewControllerSnapshotTests: BaseSnapshotTestCase {
 
     var sut: GroupDetailsViewController!
     var mockConversation: MockGroupDetailsConversation!
@@ -152,22 +152,22 @@ final class GroupDetailsViewControllerSnapshotTests: ZMSnapshotTestCase {
     }
 
     private func verifyConversationActionController(file: StaticString = #file,
-                                                    line: UInt = #line) {
+                                                    line: UInt = #line) throws {
         sut = GroupDetailsViewController(conversation: mockConversation)
         sut.footerView(GroupDetailsFooterView(), shouldPerformAction: .more)
-        verify(matching: (sut?.actionController?.alertController)!, file: file, line: line)
+        try verify(matching: (sut?.actionController?.alertController)!, file: file, line: line)
     }
 
-    func testForActionMenu() {
+    func testForActionMenu() throws {
         mockSelfUser.hasTeam = true
-        verifyConversationActionController()
+        try verifyConversationActionController()
     }
 
-    func testForActionMenu_NonTeam() {
-        verifyConversationActionController()
+    func testForActionMenu_NonTeam() throws {
+        try verifyConversationActionController()
     }
 
-    func testForOptionsForTeamUserInTeamConversation_Admins() {
+    func testForOptionsForTeamUserInTeamConversation_Admins() throws {
         // GIVEN
         setSelfUserInTeam()
         mockSelfUser.teamRole = .admin

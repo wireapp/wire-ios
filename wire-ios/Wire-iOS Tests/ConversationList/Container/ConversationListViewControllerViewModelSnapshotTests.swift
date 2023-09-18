@@ -22,7 +22,7 @@ import XCTest
 final class ConversationListViewControllerViewModelSnapshotTests: XCTestCase {
     var sut: ConversationListViewController.ViewModel!
     var mockView: UIView!
-    fileprivate var mockViewController: MockConversationListContainer!
+    private var mockViewController: MockConversationListContainer!
 
     var coreDataFixture: CoreDataFixture!
 
@@ -50,25 +50,25 @@ final class ConversationListViewControllerViewModelSnapshotTests: XCTestCase {
     }
 
     // MARK: - Action menu
-    func testForActionMenu() {
-        coreDataFixture.teamTest {
+    func testForActionMenu() throws {
+        try coreDataFixture.teamTest {
             sut.showActionMenu(for: coreDataFixture.otherUserConversation, from: mockViewController.view)
-            verify(matching: (sut?.actionsController?.alertController)!)
+            try verify(matching: (sut?.actionsController?.alertController)!)
         }
     }
 
-    func testForActionMenu_archive() {
-        coreDataFixture.teamTest {
+    func testForActionMenu_archive() throws {
+        try coreDataFixture.teamTest {
             coreDataFixture.otherUserConversation.isArchived = true
             sut.showActionMenu(for: coreDataFixture.otherUserConversation, from: mockViewController.view)
-            verify(matching: (sut?.actionsController?.alertController)!)
+            try verify(matching: (sut?.actionsController?.alertController)!)
         }
     }
 
-    func testForActionMenu_NoTeam() {
-        coreDataFixture.nonTeamTest {
+    func testForActionMenu_NoTeam() throws {
+        try coreDataFixture.nonTeamTest {
             sut.showActionMenu(for: coreDataFixture.otherUserConversation, from: mockViewController.view)
-            verify(matching: (sut?.actionsController?.alertController)!)
+            try verify(matching: (sut?.actionsController?.alertController)!)
         }
     }
 }

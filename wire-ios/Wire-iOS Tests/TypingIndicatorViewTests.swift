@@ -20,9 +20,13 @@ import XCTest
 @testable import Wire
 import SnapshotTesting
 
-final class TypingIndicatorViewSnapshotTests: ZMSnapshotTestCase {
+final class TypingIndicatorViewSnapshotTests: BaseSnapshotTestCase {
+
+    // MARK: - Properties
 
     var sut: TypingIndicatorView!
+
+    // MARK: - setUp
 
     override func setUp() {
         super.setUp()
@@ -30,10 +34,14 @@ final class TypingIndicatorViewSnapshotTests: ZMSnapshotTestCase {
         sut.translatesAutoresizingMaskIntoConstraints = false
     }
 
+    // MARK: - tearDown
+
     override func tearDown() {
         sut = nil
         super.tearDown()
     }
+
+    // MARK: - Snapshot Tests
 
     func testOneTypingUser() {
         sut.typingUsers = Array(SwiftMockLoader.mockUsers().prefix(1))
@@ -52,6 +60,8 @@ final class TypingIndicatorViewSnapshotTests: ZMSnapshotTestCase {
         sut.typingUsers = Array(SwiftMockLoader.mockUsers().prefix(5))
         verify(matching: sut)
     }
+
+    // MARK: - Unit Tests
 
     func testThatContainerIsHidden() {
         sut.typingUsers = Array(SwiftMockLoader.mockUsers().prefix(5))

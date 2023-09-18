@@ -199,6 +199,15 @@ extension AuthenticationCoordinator: AuthenticationStateControllerDelegate {
             viewControllers[viewControllers.count - 1] = stepViewController
             stateController.transition(to: .landingScreen, mode: .reset)
             presenter.setViewControllers(viewControllers, animated: true)
+        case .rewindToOrReset(let milestone):
+            var viewControllers = presenter.viewControllers
+            let rewindedController = viewControllers.first { milestone.shouldRewind(to: $0) }
+            if let rewindedController = rewindedController {
+                viewControllers = [viewControllers.prefix { !milestone.shouldRewind(to: $0)}, [rewindedController], [stepViewController]].flatMap { $0 }
+                presenter.setViewControllers(viewControllers, animated: true)
+            } else {
+                presenter.setViewControllers([stepViewController], animated: true)
+            }
         }
     }
 
@@ -423,7 +432,7 @@ extension AuthenticationCoordinator {
 
     func makeUnregisteredUser() -> UnregisteredUser {
         let user = UnregisteredUser()
-        user.accentColor = .random
+        user.accentColor = .blue
         return user
     }
 
@@ -470,8 +479,8 @@ extension AuthenticationCoordinator {
         } else {
             guard let accountId = unauthenticatedSession.accountId,
                   let unauthenticatedAccount = sessionManager.accountManager.account(with: accountId) else {
-                      fatal("No unauthenticated account to log out from")
-                  }
+                fatal("No unauthenticated account to log out from")
+            }
 
             sessionManager.delete(account: unauthenticatedAccount)
         }
@@ -850,6 +859,15 @@ extension AuthenticationCoordinator {
                 self?.sessionManager.markNetworkSessionsAsReady(false)
             }
             action(error)
+        }
+    }
+}
+
+private extension AuthenticationStateController.RewindMilestone {
+    func shouldRewind(to step: UIViewController) -> Bool {
+        switch self {
+        case .createCredentials:
+            return (step as? AuthenticationCredentialsViewController) != nil
         }
     }
 }

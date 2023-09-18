@@ -108,8 +108,8 @@ public class MockEARServiceInterface: EARServiceInterface {
 
     public var fetchPublicKeys_Invocations: [Void] = []
     public var fetchPublicKeys_MockError: Error?
-    public var fetchPublicKeys_MockMethod: (() throws -> EARPublicKeys)?
-    public var fetchPublicKeys_MockValue: EARPublicKeys?
+    public var fetchPublicKeys_MockMethod: (() throws -> EARPublicKeys?)?
+    public var fetchPublicKeys_MockValue: EARPublicKeys??
 
     public func fetchPublicKeys() throws -> EARPublicKeys? {
         fetchPublicKeys_Invocations.append(())
@@ -131,8 +131,8 @@ public class MockEARServiceInterface: EARServiceInterface {
 
     public var fetchPrivateKeysIncludingPrimary_Invocations: [Bool] = []
     public var fetchPrivateKeysIncludingPrimary_MockError: Error?
-    public var fetchPrivateKeysIncludingPrimary_MockMethod: ((Bool) throws -> EARPrivateKeys)?
-    public var fetchPrivateKeysIncludingPrimary_MockValue: EARPrivateKeys?
+    public var fetchPrivateKeysIncludingPrimary_MockMethod: ((Bool) throws -> EARPrivateKeys?)?
+    public var fetchPrivateKeysIncludingPrimary_MockValue: EARPrivateKeys??
 
     public func fetchPrivateKeys(includingPrimary: Bool) throws -> EARPrivateKeys? {
         fetchPrivateKeysIncludingPrimary_Invocations.append(includingPrimary)
@@ -148,6 +148,21 @@ public class MockEARServiceInterface: EARServiceInterface {
         } else {
             fatalError("no mock for `fetchPrivateKeysIncludingPrimary`")
         }
+    }
+
+    // MARK: - setInitialEARFlagValue
+
+    public var setInitialEARFlagValue_Invocations: [Bool] = []
+    public var setInitialEARFlagValue_MockMethod: ((Bool) -> Void)?
+
+    public func setInitialEARFlagValue(_ enabled: Bool) {
+        setInitialEARFlagValue_Invocations.append(enabled)
+
+        guard let mock = setInitialEARFlagValue_MockMethod else {
+            fatalError("no mock for `setInitialEARFlagValue`")
+        }
+
+        mock(enabled)
     }
 
 }

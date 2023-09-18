@@ -100,10 +100,6 @@ final class ConversationMessageActionController {
             return message.canBeDownloaded
         case .forward:
             return message.canBeForwarded
-        case .like:
-            return message.canBeLiked && !message.liked
-        case .unlike:
-            return message.canBeLiked && message.liked
         case .resend:
             return message.canBeResent
         case .showInConversation:
@@ -111,6 +107,8 @@ final class ConversationMessageActionController {
         case .sketchDraw,
              .sketchEmoji:
             return message.isImage
+        case .react:
+            return message.canAddReaction
         case .present,
              .openQuote,
              .resetSession:
@@ -177,12 +175,12 @@ final class ConversationMessageActionController {
     }
 
     var doubleTapAction: MessageAction? {
-        return message.canBeLiked ? .like : nil
+        return message.canAddReaction ? .react(.like) : nil
     }
 
     // MARK: - Handler
 
-    private func perform(action: MessageAction) {
+    func perform(action: MessageAction) {
         responder?.perform(action: action,
                            for: message,
                            view: view)
@@ -224,14 +222,6 @@ final class ConversationMessageActionController {
         perform(action: .forward)
     }
 
-    @objc func likeMessage() {
-        perform(action: .like)
-    }
-
-    @objc func unlikeMessage() {
-        perform(action: .like)
-    }
-
     @objc func deleteMessage() {
         perform(action: .delete)
     }
@@ -242,6 +232,10 @@ final class ConversationMessageActionController {
 
     @objc func revealMessage() {
         perform(action: .showInConversation)
+    }
+
+    @objc func addReaction(reaction: Emoji) {
+        perform(action: .react(reaction))
     }
 
 }

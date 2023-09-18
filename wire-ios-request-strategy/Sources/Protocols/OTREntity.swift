@@ -42,6 +42,9 @@ private let zmLog = ZMSLog(tag: "Dependencies")
 
     func delivered(with response: ZMTransportResponse)
 
+    /// Add users who didn't receive the message to failedToSendRecipients
+    func addFailedToSendRecipients(_ recipients: [ZMUser])
+
 }
 
 /// HTTP status of a request that has
@@ -141,7 +144,7 @@ extension OTREntity {
                 return []
             }
             clientListByUser = clientListByUserID.materializingUsers(withDomain: nil, in: context)
-        case .v1, .v2, .v3, .v4:
+        case .v1, .v2, .v3, .v4, .v5:
             guard let payload = Payload.MessageSendingStatus(response) else {
                 return []
             }

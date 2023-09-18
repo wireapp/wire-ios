@@ -126,7 +126,8 @@ final class DeveloperToolsViewModel: ObservableObject {
             header: "App info",
             items: [
                 .text(TextItem(title: "App version", value: appVersion)),
-                .text(TextItem(title: "Build number", value: buildNumber))
+                .text(TextItem(title: "Build number", value: buildNumber)),
+                .text(TextItem(title: "Bundle Identifier", value: bundleIdentifier))
             ]
         ))
 
@@ -187,6 +188,9 @@ final class DeveloperToolsViewModel: ObservableObject {
         })))
 
         items.append(.text(TextItem(title: "Is federation enabled?", value: isFederationEnabled)))
+        items.append(.button(ButtonItem(title: "Stop federating with Foma", action: stopFederatingFoma)))
+        items.append(.button(ButtonItem(title: "Stop federating with Bella", action: stopFederatingBella)))
+        items.append(.button(ButtonItem(title: "Stop Bella Foma federating", action: stopBellaFomaFederating)))
 
         return Section(
             header: header,
@@ -266,6 +270,10 @@ final class DeveloperToolsViewModel: ObservableObject {
         return Bundle.main.shortVersionString ?? "Unknown"
     }
 
+    private var bundleIdentifier: String {
+        return Bundle.main.bundleIdentifier ?? "Unknown"
+    }
+
     private var buildNumber: String {
         return Bundle.main.infoDictionary?[kCFBundleVersionKey as String] as? String ?? "Unknown"
     }
@@ -295,6 +303,38 @@ final class DeveloperToolsViewModel: ObservableObject {
     private var selfClient: UserClient? {
         guard let session = ZMUserSession.shared() else { return nil }
         return session.selfUserClient
+    }
+
+    private func stopFederatingBella() {
+        stopFederatingDomain(domain: "bella.wire.link")
+    }
+
+    private func stopFederatingFoma() {
+        stopFederatingDomain(domain: "foma.wire.link")
+    }
+
+    private func stopBellaFomaFederating() {
+        guard
+            let selfClient = selfClient,
+            let context = selfClient.managedObjectContext
+        else {
+            return
+        }
+
+        let manager = FederationTerminationManager(with: context)
+        manager.handleFederationTerminationBetween("bella.wire.link", otherDomain: "foma.wire.link")
+    }
+
+    private func stopFederatingDomain(domain: String) {
+        guard
+            let selfClient = selfClient,
+            let context = selfClient.managedObjectContext
+        else {
+            return
+        }
+
+        let manager = FederationTerminationManager(with: context)
+        manager.handleFederationTerminationWith(domain)
     }
 
 }

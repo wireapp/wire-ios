@@ -66,13 +66,17 @@ extension ZMConversation {
         }
     }
 
+    /// FOR TESTS ONLY.
+    /// To create new conversations see ConversationService.
+
     @objc(insertGroupConversationIntoManagedObjectContext:withParticipants:)
     static public func insertGroupConversation(moc: NSManagedObjectContext,
                                                participants: [ZMUser]) -> ZMConversation? {
         return self.insertGroupConversation(moc: moc, participants: participants, name: nil)
     }
 
-    /// Insert a new group conversation with name into the user session
+    /// FOR TESTS ONLY.
+    /// To create new conversations see ConversationService.
 
     @objc
     static public func insertGroupConversation(session: ContextProvider,
@@ -93,6 +97,9 @@ extension ZMConversation {
                                             participantsRole: participantsRole)
     }
 
+    /// FOR TESTS ONLY.
+    /// To create new conversations see ConversationService.
+
     @objc
     static public func insertGroupConversation(moc: NSManagedObjectContext,
                                                participants: [ZMUser],
@@ -102,34 +109,21 @@ extension ZMConversation {
                                                allowServices: Bool = true,
                                                readReceipts: Bool = false,
                                                participantsRole: Role? = nil) -> ZMConversation? {
-        return insertGroupConversation(moc: moc,
-                                       participants: participants,
-                                       name: name,
-                                       team: team,
-                                       allowGuests: allowGuests,
-                                       allowServices: allowServices,
-                                       readReceipts: readReceipts,
-                                       participantsRole: participantsRole,
-                                       type: .group)
+        return insertConversation(moc: moc,
+                                  participants: participants,
+                                  name: name,
+                                  team: team,
+                                  allowGuests: allowGuests,
+                                  allowServices: allowServices,
+                                  readReceipts: readReceipts,
+                                  participantsRole: participantsRole,
+                                  type: .group)
     }
 
-    /// insert a conversation with group type
-    ///
-    /// - Parameters:
-    ///   - moc: the NSManagedObjectContext
-    ///   - participants: the participants
-    ///   - name: the name of the convo
-    ///   - team: the team of the convo
-    ///   - allowGuests: allow guest or not
-    ///   - allowServices: allow services or not
-    ///   - readReceipts: allow read receipts or not
-    ///   - participantsRole: the participants' role
-    ///   - type: the convo type want to be created (for permission check)
-    ///   - messageProtocol: the protocol used to exchange EE2E communication
-    ///
-    /// - Returns: the created conversation, nullable
+    /// FOR TESTS ONLY.
+    /// To create new conversations see ConversationService.
 
-    static public func insertGroupConversation(
+    static public func insertConversation(
         moc: NSManagedObjectContext,
         participants: [ZMUser],
         name: String? = nil,
@@ -138,7 +132,7 @@ extension ZMConversation {
         allowServices: Bool = true,
         readReceipts: Bool = false,
         participantsRole: Role? = nil,
-        type: ZMConversationType = .group,
+        type: ZMConversationType,
         messageProtocol: MessageProtocol = .proteus
     ) -> ZMConversation? {
         let selfUser = ZMUser.selfUser(in: moc)
@@ -150,7 +144,7 @@ extension ZMConversation {
         let conversation = ZMConversation.insertNewObject(in: moc)
         conversation.messageProtocol = messageProtocol
         conversation.lastModifiedDate = Date()
-        conversation.conversationType = .group
+        conversation.conversationType = type
         conversation.creator = selfUser
         conversation.team = team
         conversation.userDefinedName = name
@@ -177,31 +171,21 @@ extension ZMConversation {
         return conversation
     }
 
-    @objc
-    static func fetchOrCreateOneToOneTeamConversation(
+    static func fetchOneToOneTeamConversation(
         moc: NSManagedObjectContext,
         participant: ZMUser,
-        team: Team?,
-        participantRole: Role? = nil) -> ZMConversation? {
+        team: Team?
+    ) -> ZMConversation? {
         guard let team = team,
-            !participant.isSelfUser
+              !participant.isSelfUser
         else { return nil }
 
-        if let conversation = self.existingTeamConversation(moc: moc, participant: participant, team: team) {
-            return conversation
-        }
-
-        return insertGroupConversation(moc: moc,
-                                       participants: [participant],
-                                       name: nil,
-                                       team: team,
-                                       participantsRole: participantRole,
-                                       type: .oneOnOne)
+        return self.existingTeamConversation(moc: moc, participant: participant, team: team)
     }
 
-    private static func existingTeamConversation(moc: NSManagedObjectContext,
-                                                 participant: ZMUser,
-                                                 team: Team) -> ZMConversation? {
+    static func existingTeamConversation(moc: NSManagedObjectContext,
+                                         participant: ZMUser,
+                                         team: Team) -> ZMConversation? {
 
         // We consider a conversation being an existing 1:1 team conversation in case the following point are true:
         //  1. It is a conversation inside the team

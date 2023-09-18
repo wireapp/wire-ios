@@ -55,7 +55,7 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
 
     func reactionEventInOneOnOneConversation() -> ZMUpdateEvent {
         let message = try! oneOnOneConversation.appendText(content: "text") as! ZMClientMessage
-        let reaction = GenericMessage(content: ProtosReactionFactory.createReaction(emoji: "❤️", messageID: message.nonce!) as! MessageCapable)
+        let reaction = GenericMessage(content: ProtosReactionFactory.createReaction(emojis: ["❤️"], messageID: message.nonce!) as! MessageCapable)
         let event = createUpdateEvent(UUID.create(), conversationID: oneOnOneConversation.remoteIdentifier!, genericMessage: reaction, senderID: sender.remoteIdentifier!)
         return event
     }
@@ -64,7 +64,7 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
 
         // given
         let message = try! conversation.appendText(content: "text") as! ZMClientMessage
-        let reaction = GenericMessage(content: ProtosReactionFactory.createReaction(emoji: "❤️", messageID: message.nonce!) as! MessageCapable)
+        let reaction = GenericMessage(content: ProtosReactionFactory.createReaction(emojis: ["❤️"], messageID: message.nonce!) as! MessageCapable)
         let event = createUpdateEvent(UUID.create(), conversationID: conversation.remoteIdentifier!, genericMessage: reaction, senderID: aSender.remoteIdentifier!)
 
         // when
@@ -79,7 +79,7 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
 
         // given
         let message = try! conversation.appendText(content: "text") as! ZMClientMessage
-        let reaction = GenericMessage(content: ProtosReactionFactory.createReaction(emoji: "❤️", messageID: message.nonce!) as! MessageCapable)
+        let reaction = GenericMessage(content: ProtosReactionFactory.createReaction(emojis: ["❤️"], messageID: message.nonce!) as! MessageCapable)
         let event = createUpdateEvent(UUID.create(), conversationID: conversation.remoteIdentifier!, genericMessage: reaction, senderID: aSender.remoteIdentifier!)
 
         // when
@@ -233,190 +233,12 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
         }
     }
 
-    // MARK: - Reactions
-
-    func testThatItCreatesANotifcationForAReaction_SelfUserIsSenderOfOriginalMessage_OtherUserSendsLike() {
-
-        // given
-        syncMOC.performGroupedBlockAndWait {
-            let event = self.reactionEventInOneOnOneConversation()
-
-            // when
-            let note = ZMLocalNotification(event: event, conversation: self.oneOnOneConversation, managedObjectContext: self.syncMOC)
-
-            // then
-            XCTAssertNotNil(note)
-            XCTAssertEqual(note!.body, "❤️ your message")
-        }
-    }
-
-    func testThatItDoesNotCreateANotifcationWhenTheConversationIsSilenced() {
-
-        // given
-        syncMOC.performGroupedBlockAndWait {
-            self.oneOnOneConversation.mutedMessageTypes = .all
-            let event = self.reactionEventInOneOnOneConversation()
-
-            // when
-            let note = ZMLocalNotification(event: event, conversation: self.oneOnOneConversation, managedObjectContext: self.syncMOC)
-
-            // then
-            XCTAssertNil(note)
-        }
-    }
-
-    func testThatItSavesTheSenderOfANotification() {
-
-        // given
-        syncMOC.performGroupedBlockAndWait {
-            let event = self.reactionEventInOneOnOneConversation()
-
-            // when
-            let note = ZMLocalNotification(event: event, conversation: self.oneOnOneConversation, managedObjectContext: self.syncMOC)
-
-            // then
-            XCTAssertNotNil(note)
-            XCTAssertEqual(note!.senderID, self.sender.remoteIdentifier)
-        }
-    }
-
-    func testThatItSavesTheConversationOfANotification() {
-
-        // given
-        syncMOC.performGroupedBlockAndWait {
-            let event = self.reactionEventInOneOnOneConversation()
-
-            // when
-            let note = ZMLocalNotification(event: event, conversation: self.oneOnOneConversation, managedObjectContext: self.syncMOC)
-
-            // then
-            XCTAssertNotNil(note)
-            XCTAssertEqual(note!.conversationID, self.oneOnOneConversation.remoteIdentifier)
-        }
-    }
-
-    func testThatItSavesTheMessageNonce() {
-
-        // given
-        syncMOC.performGroupedBlockAndWait {
-            let message = try! self.oneOnOneConversation.appendText(content: "text") as! ZMClientMessage
-            let reaction = GenericMessage(content: ProtosReactionFactory.createReaction(emoji: "liked", messageID: message.nonce!) as! MessageCapable)
-            let eventNonce = UUID.create()
-            let event = self.createUpdateEvent(eventNonce, conversationID: self.oneOnOneConversation.remoteIdentifier!, genericMessage: reaction, senderID: self.sender.remoteIdentifier!)
-
-            // when
-            let note = ZMLocalNotification(event: event, conversation: self.oneOnOneConversation, managedObjectContext: self.syncMOC)
-
-            // then
-            XCTAssertNotNil(note)
-            XCTAssertEqual(note!.messageNonce, message.nonce)
-        }
-    }
-
-    func testThatItCreatesTheCorrectAlertBody_ConvWithoutName() {
-        syncMOC.performGroupedBlockAndWait {
-            guard let alertBody = self.alertBody(self.groupConversationWithoutName, aSender: self.otherUser1) else {
-                return XCTFail("Alert body is missing")
-            }
-            XCTAssertEqual(alertBody, "Other User1 ❤️ your message in a conversation")
-        }
-    }
-
-    func testThatItCreatesTheCorrectAlertBody() {
-        syncMOC.performGroupedBlockAndWait {
-            guard let alertBody = self.alertBody(self.groupConversation, aSender: self.otherUser1) else {
-                return XCTFail("Alert body is missing")
-            }
-            XCTAssertEqual(alertBody, "Other User1 ❤️ your message")
-        }
-    }
-
-    func testThatItCreatesTheCorrectAlertBody_UnknownUser() {
-        syncMOC.performGroupedBlockAndWait {
-            self.otherUser1.name = ""
-            guard let alertBody = self.alertBody(self.groupConversation, aSender: self.otherUser1) else {
-                return XCTFail("Alert body is missing")
-            }
-            XCTAssertEqual(alertBody, "Someone ❤️ your message")
-        }
-    }
-
-        func testThatItCreatesTheCorrectAlertBody_UnknownUser_UnknownConversationName() {
-            syncMOC.performGroupedBlockAndWait {
-                self.otherUser1.name = ""
-                guard let alertBody = self.alertBody(self.groupConversationWithoutName, aSender: self.otherUser1) else {
-                    return XCTFail("Alert body is missing")
-                }
-                XCTAssertEqual(alertBody, "Someone ❤️ your message in a conversation")
-            }
-        }
-
-        func testThatItCreatesTheCorrectAlertBody_UnknownUser_OneOnOneConv() {
-            syncMOC.performGroupedBlockAndWait {
-                self.otherUser1.name = ""
-                guard let alertBody = self.alertBody(self.oneOnOneConversation, aSender: self.otherUser1) else {
-                    return XCTFail("Alert body is missing")
-                }
-                XCTAssertEqual(alertBody, "Someone ❤️ your message")
-            }
-        }
-
-    func testThatItDoesNotCreateANotifcationForAnUnlikeReaction() {
-
-        // given
-        syncMOC.performGroupedBlockAndWait {
-            let message = try! self.oneOnOneConversation.appendText(content: "text") as! ZMClientMessage
-            let reaction = GenericMessage(content: ProtosReactionFactory.createReaction(emoji: "", messageID: message.nonce!) as! MessageCapable)
-            let event = self.createUpdateEvent(UUID.create(), conversationID: self.oneOnOneConversation.remoteIdentifier!, genericMessage: reaction, senderID: self.sender.remoteIdentifier!)
-
-            // when
-            let note = ZMLocalNotification(event: event, conversation: self.oneOnOneConversation, managedObjectContext: self.syncMOC)
-
-            // then
-            XCTAssertNil(note)
-        }
-    }
-
-    func testThatItDoesNotCreateANotificationForAReaction_SelfUserIsSenderOfOriginalMessage_SelfUserSendsLike() {
-
-        // given
-        syncMOC.performGroupedBlockAndWait {
-            let message = try! self.oneOnOneConversation.appendText(content: "text") as! ZMClientMessage
-            let reaction = GenericMessage(content: ProtosReactionFactory.createReaction(emoji: "❤️", messageID: message.nonce!) as! MessageCapable)
-            let event = self.createUpdateEvent(UUID.create(), conversationID: self.oneOnOneConversation.remoteIdentifier!, genericMessage: reaction, senderID: self.selfUser.remoteIdentifier!)
-
-            // when
-            let note = ZMLocalNotification(event: event, conversation: self.oneOnOneConversation, managedObjectContext: self.syncMOC)
-
-            // then
-            XCTAssertNil(note)
-        }
-    }
-
-    func testThatItDoesNotCreateANotificationForAReaction_OtherUserIsSenderOfOriginalMessage_OtherUserSendsLike() {
-
-        // given
-        syncMOC.performGroupedBlockAndWait {
-            let message = try! self.oneOnOneConversation.appendText(content: "text") as! ZMClientMessage
-            message.sender = self.otherUser1
-
-            let reaction = GenericMessage(content: ProtosReactionFactory.createReaction(emoji: "❤️", messageID: message.nonce!) as! MessageCapable)
-            let event = self.createUpdateEvent(UUID.create(), conversationID: self.oneOnOneConversation.remoteIdentifier!, genericMessage: reaction, senderID: self.sender.remoteIdentifier!)
-
-            // when
-            let note = ZMLocalNotification(event: event, conversation: self.oneOnOneConversation, managedObjectContext: self.syncMOC)
-
-            // then
-            XCTAssertNil(note)
-        }
-    }
-
     // MARK: - Message Timer System Message
 
     func testThatItCreatesANotificationForMessageTimerUpdateSystemMessages() {
         // given
         syncMOC.performGroupedBlockAndWait {
-            let event = self.createMessageTimerUpdateEvent(self.otherUser1.remoteIdentifier, conversationID: self.groupConversation.remoteIdentifier!, senderID: self.otherUser1.remoteIdentifier!, timer: 86400, timestamp: Date())
+            let event = self.createMessageTimerUpdateEvent(self.otherUser1.remoteIdentifier, conversationID: self.groupConversation.remoteIdentifier!, senderID: self.otherUser1.remoteIdentifier!, timer: 86400000, timestamp: Date())
 
             // when
             let note = ZMLocalNotification(event: event, conversation: self.groupConversation, managedObjectContext: self.syncMOC)
@@ -431,28 +253,28 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
         // given
         syncMOC.performGroupedBlockAndWait {
             self.otherUser1.name = nil
-            let event = self.createMessageTimerUpdateEvent(self.otherUser1.remoteIdentifier, conversationID: self.groupConversation.remoteIdentifier!, senderID: self.otherUser1.remoteIdentifier!, timer: 86400, timestamp: Date())
+            let event = self.createMessageTimerUpdateEvent(self.otherUser1.remoteIdentifier, conversationID: self.groupConversation.remoteIdentifier!, senderID: self.otherUser1.remoteIdentifier!, timer: 2419200000, timestamp: Date())
 
             // when
             let note = ZMLocalNotification(event: event, conversation: self.groupConversation, managedObjectContext: self.syncMOC)
 
             // then
             XCTAssertNotNil(note)
-            XCTAssertEqual(note?.body, "Someone set the message timer to 1 day")
+            XCTAssertEqual(note?.body, "Someone set the message timer to 4 weeks")
         }
     }
 
     func testThatItCreatesANotificationForMessageTimerUpdateSystemMessages_NoConversationName() {
         // given
         syncMOC.performGroupedBlockAndWait {
-            let event = self.createMessageTimerUpdateEvent(self.otherUser1.remoteIdentifier, conversationID: self.groupConversationWithoutName.remoteIdentifier!, senderID: self.otherUser1.remoteIdentifier!, timer: 86400, timestamp: Date())
+            let event = self.createMessageTimerUpdateEvent(self.otherUser1.remoteIdentifier, conversationID: self.groupConversationWithoutName.remoteIdentifier!, senderID: self.otherUser1.remoteIdentifier!, timer: 10000, timestamp: Date())
 
             // when
             let note = ZMLocalNotification(event: event, conversation: self.groupConversationWithoutName, managedObjectContext: self.syncMOC)
 
             // then
             XCTAssertNotNil(note)
-            XCTAssertEqual(note?.body, "Other User1 set the message timer to 1 day in a conversation")
+            XCTAssertEqual(note?.body, "Other User1 set the message timer to 10 seconds in a conversation")
         }
     }
 
@@ -460,14 +282,14 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
         // given
         syncMOC.performGroupedBlockAndWait {
             self.otherUser1.name = nil
-            let event = self.createMessageTimerUpdateEvent(self.otherUser1.remoteIdentifier, conversationID: self.groupConversationWithoutName.remoteIdentifier!, senderID: self.otherUser1.remoteIdentifier!, timer: 86400, timestamp: Date())
+            let event = self.createMessageTimerUpdateEvent(self.otherUser1.remoteIdentifier, conversationID: self.groupConversationWithoutName.remoteIdentifier!, senderID: self.otherUser1.remoteIdentifier!, timer: 300000, timestamp: Date())
 
             // when
             let note = ZMLocalNotification(event: event, conversation: self.groupConversationWithoutName, managedObjectContext: self.syncMOC)
 
             // then
             XCTAssertNotNil(note)
-            XCTAssertEqual(note?.body, "Someone set the message timer to 1 day in a conversation")
+            XCTAssertEqual(note?.body, "Someone set the message timer to 5 minutes in a conversation")
         }
     }
 
@@ -526,38 +348,6 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
             // then
             XCTAssertNotNil(note)
             XCTAssertEqual(note?.body, "Someone turned off the message timer in a conversation")
-        }
-    }
-
-    // MARK: - Notification title
-
-    func testThatItAddsATitleIfTheUserIsPartOfATeam() {
-
-        // given
-        syncMOC.performGroupedBlockAndWait {
-            let team = Team.insertNewObject(in: self.syncMOC)
-            team.name = "Wire Amazing Team"
-            let user = ZMUser.selfUser(in: self.syncMOC)
-            _ = Member.getOrCreateMember(for: user, in: team, context: self.syncMOC)
-            XCTAssertNotNil(user.team)
-
-            // when
-            let note = self.note(self.oneOnOneConversation, aSender: self.sender)
-
-            // then
-            XCTAssertNotNil(note)
-            XCTAssertEqual(note!.title, "Super User in \(team.name!)")
-        }
-    }
-
-    func testThatItDoesNotAddATitleIfTheUserIsNotPartOfATeam() {
-        syncMOC.performGroupedBlockAndWait {
-            // when
-            let note = self.note(self.oneOnOneConversation, aSender: self.sender)
-
-            // then
-            XCTAssertNotNil(note)
-            XCTAssertEqual(note!.title, "Super User")
         }
     }
 

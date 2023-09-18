@@ -114,12 +114,13 @@ extension LocalNotificationDispatcherTests {
 
     func testThatItCreatesNotificationFromSystemMessagesIfNotActive() {
         // GIVEN
+        let messageTimer = MessageDestructionTimeoutValue.fiveMinutes
         let payload: [String: Any] = [
             "id": UUID.create().transportString(),
             "from": self.user1.remoteIdentifier.transportString(),
             "conversation": self.conversation1.remoteIdentifier!.transportString(),
             "time": Date().transportString(),
-            "data": ["message_timer": MessageDestructionTimeoutValue.fiveMinutes.rawValue],
+            "data": ["message_timer": messageTimer.rawValue * 1000],
             "type": "conversation.message-timer-update"
         ]
         let event = ZMUpdateEvent(fromEventStreamPayload: payload as ZMTransportData, uuid: UUID.create())!
@@ -250,7 +251,7 @@ extension LocalNotificationDispatcherTests {
         // THEN
         XCTAssertEqual(self.scheduledRequests.count, 1)
         XCTAssertEqual(self.scheduledRequests[0].content.body, "New message")
-        XCTAssertEqual(self.scheduledRequests[0].content.sound, UNNotificationSound(named: convertToUNNotificationSoundName("new_message_apns.caf")))
+        XCTAssertEqual(self.scheduledRequests[0].content.sound, UNNotificationSound(named: convertToUNNotificationSoundName("default")))
     }
 
     func testThatItDoesNotCreateNotificationForTwoMessageEventsWithTheSameNonce() {
@@ -325,7 +326,7 @@ extension LocalNotificationDispatcherTests {
         XCTAssertTrue(self.scheduledRequests.first!.content.body.contains(text))
     }
 
-    func testThatItDoesNotCreateNotificationForOtherGroupParticipation() { //
+    func testThatItDoesNotCreateNotificationForOtherGroupParticipation() {
         // GIVEN
         let payload: [String: Any] = [
             "from": self.user1.remoteIdentifier.transportString(),
@@ -347,31 +348,6 @@ extension LocalNotificationDispatcherTests {
 
         // THEN
         XCTAssertEqual(self.scheduledRequests.count, 0)
-    }
-
-    func testThatItCancelsNotificationWhenUserDeletesLike() {
-        let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
-        conversation.remoteIdentifier = UUID.create()
-        let sender = ZMUser.insertNewObject(in: self.syncMOC)
-        sender.remoteIdentifier = UUID.create()
-
-        let message = try! conversation.appendText(content: "text") as! ZMClientMessage
-
-        let reaction1 = GenericMessage(content: ProtosReactionFactory.createReaction(emoji: "❤️", messageID: message.nonce!) as! MessageCapable)
-        let reaction2 = GenericMessage(content: ProtosReactionFactory.createReaction(emoji: "", messageID: message.nonce!) as! MessageCapable)
-
-        let event1 = createUpdateEvent(UUID.create(), conversationID: conversation.remoteIdentifier!, genericMessage: reaction1, senderID: sender.remoteIdentifier!)
-        let event2 = createUpdateEvent(UUID.create(), conversationID: conversation.remoteIdentifier!, genericMessage: reaction2, senderID: sender.remoteIdentifier!)
-
-        sut.didReceive(events: [event1], conversationMap: [:])
-        XCTAssertEqual(self.scheduledRequests.count, 1)
-        let id = self.scheduledRequests.first!.identifier
-
-        // WHEN
-        sut.didReceive(events: [event2], conversationMap: [:])
-
-        // THEN
-        XCTAssertTrue(self.notificationCenter.removedNotifications.contains(id))
     }
 
     func testThatNotifyAvailabilityBehaviourChangedIfNeededSchedulesNotification_WhenNeedsToNotifyAvailabilityBehaviourChangeIsSet() {

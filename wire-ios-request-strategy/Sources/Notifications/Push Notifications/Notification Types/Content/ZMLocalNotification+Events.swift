@@ -126,7 +126,7 @@ private class EventNotificationBuilder: NotificationBuilder {
         userInfo.conversationID = conversation?.remoteIdentifier
         userInfo.messageNonce = event.messageNonce
         userInfo.eventTime = event.timestamp
-        userInfo.conversationName = conversation?.meaningfulDisplayName
+        userInfo.conversationName = conversation?.displayName
         userInfo.teamName = selfUser.team?.name
 
         return userInfo
@@ -165,17 +165,7 @@ private class ReactionEventNotificationBuilder: EventNotificationBuilder {
     }
 
     override func shouldCreateNotification() -> Bool {
-        guard super.shouldCreateNotification() else { return false }
-
-        // If the message is an "unlike", we don't want to display a notification
-        guard message.reaction.emoji != "" else { return false }
-
-        // fetch message that was reacted to and make sure the sender of the original message is the selfUser
-        guard let conversation = conversation,
-              let reactionMessage = ZMMessage.fetch(withNonce: UUID(uuidString: message.reaction.messageID), for: conversation, in: moc),
-            reactionMessage.sender == ZMUser.selfUser(in: moc) else { return false }
-
-        return true
+        return false
     }
 
     override func userInfo() -> NotificationUserInfo? {

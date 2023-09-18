@@ -22,7 +22,7 @@ import SnapshotTesting
 
 final class UIAlertControllerFeatureConfigSnapshotTests: XCTestCase {
 
-    private func createSut(for featureChange: FeatureService.FeatureChange) -> UIAlertController? {
+    private func createSut(for featureChange: FeatureRepository.FeatureChange) -> UIAlertController? {
         let result = UIAlertController.fromFeatureChange(featureChange,
                                                          acknowledger: MockFeatureChangeAcknowledger())
         result?.view.backgroundColor = .white
@@ -31,24 +31,24 @@ final class UIAlertControllerFeatureConfigSnapshotTests: XCTestCase {
 
     // MARK: - Tests
 
-    func testSelfDeletingMessagesIsDisabled() {
-        verify(matching: createSut(for: .selfDeletingMessagesIsDisabled)!)
+    func testSelfDeletingMessagesIsDisabled() throws {
+        try verify(matching: createSut(for: .selfDeletingMessagesIsDisabled)!)
     }
 
-    func testSelfDeletingMessagsIsEnabled() {
-        verify(matching: createSut(for: .selfDeletingMessagesIsEnabled(enforcedTimeout: nil))!)
+    func testSelfDeletingMessagsIsEnabled() throws {
+        try verify(matching: createSut(for: .selfDeletingMessagesIsEnabled(enforcedTimeout: nil))!)
     }
 
-    func testSelfDeletingMessagesIsForcedOn() {
-        verify(matching: createSut(for: .selfDeletingMessagesIsEnabled(enforcedTimeout: 300))!)
+    func testSelfDeletingMessagesIsForcedOn() throws {
+        try verify(matching: createSut(for: .selfDeletingMessagesIsEnabled(enforcedTimeout: 300))!)
     }
 
-    func testFileSharingEnabled() {
-        verify(matching: createSut(for: .fileSharingEnabled)!)
+    func testFileSharingEnabled() throws {
+        try verify(matching: createSut(for: .fileSharingEnabled)!)
     }
 
-    func testFileSharingDisabled() {
-        verify(matching: createSut(for: .fileSharingDisabled)!)
+    func testFileSharingDisabled() throws {
+        try verify(matching: createSut(for: .fileSharingDisabled)!)
     }
 
 }

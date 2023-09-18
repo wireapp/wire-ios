@@ -90,7 +90,9 @@ struct PhoneNumber: Equatable {
     static func == (lhs: PhoneNumber, rhs: PhoneNumber) -> Bool {
         if lhs.fullNumber == rhs.fullNumber { return true }
 
-        let phoneUtil = NBPhoneNumberUtil()
+        guard let phoneUtil = NBPhoneNumberUtil.sharedInstance() else {
+            return false
+        }
         do {
             let phoneNumberLhs: NBPhoneNumber = try phoneUtil.parse(lhs.fullNumber, defaultRegion: "DE")
 

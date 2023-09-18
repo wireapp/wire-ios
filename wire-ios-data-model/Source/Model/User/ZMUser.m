@@ -95,6 +95,8 @@ static NSString *const ParticipantRolesKey = @"participantRoles";
 static NSString *const AnalyticsIdentifierKey = @"analyticsIdentifier";
 
 static NSString *const DomainKey = @"domain";
+static NSString *const IsPendingMetadataRefreshKey = @"isPendingMetadataRefresh";
+static NSString *const MessagesFailedToSendRecipientKey = @"messagesFailedToSendRecipient";
 
 @interface ZMBoxedSelfUser : NSObject
 
@@ -243,20 +245,6 @@ static NSString *const DomainKey = @"domain";
     return self.managedBy == nil || [self.managedBy isEqualToString:@"wire"];
 }
 
-- (ZMConversation *)oneToOneConversation
-{
-    if (self.isSelfUser) {
-        return [ZMConversation selfConversationInContext:self.managedObjectContext];
-    } else if (self.isTeamMember) {
-        return [ZMConversation fetchOrCreateOneToOneTeamConversationWithMoc:self.managedObjectContext
-                                                        participant:self
-                                                               team:self.team
-                                                    participantRole:nil];
-    } else {
-        return self.connection.conversation;
-    }
-}
-
 - (BOOL)canBeConnected;
 {
     if (self.isServiceUser || self.isWirelessUser) {
@@ -367,7 +355,9 @@ static NSString *const DomainKey = @"domain";
                                            NeedsToAcknowledgeLegalHoldStatusKey,
                                            NeedsToRefetchLabelsKey,
                                            @"lastServerSyncedActiveConversations", // OBSOLETE
-                                           DomainKey
+                                           DomainKey,
+                                           MessagesFailedToSendRecipientKey,
+                                           IsPendingMetadataRefreshKey
                                            ]];
         keys = [ignoredKeys copy];
     });

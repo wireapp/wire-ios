@@ -24,7 +24,6 @@ typealias CallParticipantsList = [CallParticipantsListCellConfiguration]
 
 protocol CallParticipantsListCellConfigurable: Reusable {
     func configure(with configuration: CallParticipantsListCellConfiguration,
-                   variant: ColorSchemeVariant,
                    selfUser: UserType)
 }
 
@@ -32,8 +31,7 @@ enum CallParticipantsListCellConfiguration: Hashable {
 
     case callParticipant(
         user: HashBoxUser,
-        videoState: VideoState?,
-        microphoneState: MicrophoneState?,
+        callParticipantState: CallParticipantState,
         activeSpeakerState: ActiveSpeakerState
     )
     case showAll(totalCount: Int)
@@ -61,24 +59,13 @@ enum CallParticipantsListCellConfiguration: Hashable {
     }
 }
 
-final class CallParticipantsListView: UICollectionView, Themeable {
+final class CallParticipantsListView: UICollectionView {
     let selfUser: UserType
 
     var rows = CallParticipantsList() {
         didSet {
             reloadData()
         }
-    }
-
-    @objc dynamic var colorSchemeVariant: ColorSchemeVariant = ColorScheme.default.variant {
-        didSet {
-            guard oldValue != colorSchemeVariant else { return }
-            applyColorScheme(colorSchemeVariant)
-        }
-    }
-
-    func applyColorScheme(_ colorSchemeVariant: ColorSchemeVariant) {
-        reloadData()
     }
 
     init(collectionViewLayout: UICollectionViewLayout, selfUser: UserType) {
@@ -113,7 +100,6 @@ extension CallParticipantsListView: UICollectionViewDataSource {
 
         if let configurableCell = cell as? CallParticipantsListCellConfigurable {
             configurableCell.configure(with: cellConfiguration,
-                                       variant: colorSchemeVariant,
                                        selfUser: selfUser)
         }
         return cell
@@ -124,20 +110,39 @@ extension CallParticipantsListView: UICollectionViewDataSource {
 extension UserCell: CallParticipantsListCellConfigurable {
 
     func configure(with configuration: CallParticipantsListCellConfiguration,
-                   variant: ColorSchemeVariant,
                    selfUser: UserType) {
-        guard case let .callParticipant(user, videoState, microphoneState, activeSpeakerState) = configuration else { preconditionFailure() }
-        colorSchemeVariant = variant
-        contentBackgroundColor = .clear
+        guard case let .callParticipant(user, callParticipantState, activeSpeakerState) = configuration else { preconditionFailure() }
         hidesSubtitle = true
         accessoryIconView.isHidden = true
-        microphoneIconView.set(style: MicrophoneIconStyle(
-            state: microphoneState,
-            shouldPulse: activeSpeakerState.isSpeakingNow)
-        )
-        videoIconView.set(style: VideoIconStyle(state: videoState))
+        switch callParticipantState {
+        case .connected(let videoState, let microphoneState):
+            microphoneIconView.set(style: MicrophoneIconStyle(
+                state: microphoneState,
+                shouldPulse: activeSpeakerState.isSpeakingNow)
+            )
+            videoIconView.set(style: VideoIconStyle(state: videoState))
+            connectingLabel.isHidden = true
+            unconnectedStateOverlay.isHidden = true
+        case .connecting, .unconnectedButMayConnect:
+            microphoneIconView.set(style: MicrophoneIconStyle(
+                state: nil,
+                shouldPulse: false)
+            )
+            videoIconView.set(style: VideoIconStyle(state: nil))
+            connectingLabel.isHidden = false
+            unconnectedStateOverlay.isHidden = false
+
+        default:
+            microphoneIconView.set(style: MicrophoneIconStyle(
+                state: nil,
+                shouldPulse: activeSpeakerState.isSpeakingNow)
+            )
+            videoIconView.set(style: VideoIconStyle(state: nil))
+            connectingLabel.isHidden = true
+            unconnectedStateOverlay.isHidden = true
+
+        }
         configure(with: user.value, selfUser: selfUser)
-        guard DeveloperFlag.isUpdatedCallingUI else { return }
         backgroundColor = SemanticColors.View.backgroundDefaultWhite
     }
 

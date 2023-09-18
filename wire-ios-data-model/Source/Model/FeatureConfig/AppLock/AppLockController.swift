@@ -77,18 +77,18 @@ public final class AppLockController: AppLockType {
 
     public var needsToNotifyUser: Bool {
         get {
-            featureService.needsToNotifyUser(for: .appLock)
+            featureRepository.needsToNotifyUser(for: .appLock)
         }
 
         set {
-            featureService.setNeedsToNotifyUser(newValue, for: .appLock)
+            featureRepository.setNeedsToNotifyUser(newValue, for: .appLock)
         }
     }
 
     // MARK: - Private properties
 
     private let selfUser: ZMUser
-    private let featureService: FeatureService
+    private let featureRepository: FeatureRepository
 
     private(set) var state = State.locked
 
@@ -107,7 +107,7 @@ public final class AppLockController: AppLockType {
     private let legacyConfig: LegacyConfig?
 
     private var config: Config {
-        let appLock = featureService.fetchAppLock()
+        let appLock = featureRepository.fetchAppLock()
 
         return Config(isAvailable: appLock.status == .enabled,
                       isForced: appLock.config.enforceAppLock,
@@ -124,7 +124,7 @@ public final class AppLockController: AppLockType {
         self.selfUser = selfUser
         self.legacyConfig = legacyConfig
 
-        featureService = FeatureService(context: selfUser.managedObjectContext!)
+        featureRepository = FeatureRepository(context: selfUser.managedObjectContext!)
     }
 
     // MARK: - Methods

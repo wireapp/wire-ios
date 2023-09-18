@@ -22,7 +22,7 @@ extension ZMConversation {
 
     override open class func predicateForFilteringResults() -> NSPredicate {
         let selfType = ZMConversationType.init(rawValue: 1)!
-        return NSPredicate(format: "\(ZMConversationConversationTypeKey) != \(ZMConversationType.invalid.rawValue) && \(ZMConversationConversationTypeKey) != \(selfType.rawValue)")
+        return NSPredicate(format: "\(ZMConversationConversationTypeKey) != \(ZMConversationType.invalid.rawValue) && \(ZMConversationConversationTypeKey) != \(selfType.rawValue) && \(#keyPath(ZMConversation.isDeletedRemotely)) == NO")
     }
 
     @objc
@@ -181,6 +181,11 @@ extension ZMConversation {
     class func predicateForConversationsNeedingToBeCalculatedUnreadMessages() -> NSPredicate {
          return NSPredicate(format: "%K == YES", ZMConversationNeedsToCalculateUnreadMessagesKey)
     }
+
+    public static func predicateForConversationsArePendingToRefreshMetadata() -> NSPredicate {
+        return NSPredicate(format: "\(ZMConversationIsPendingMetadataRefreshKey) == YES")
+    }
+
 }
 
 extension String {

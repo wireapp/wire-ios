@@ -299,6 +299,22 @@ extension WireCallCenterV3 {
         return isConversationDegraded || isCallDegraded
     }
 
+    func canJoinCall(conversationId: AVSIdentifier) -> Bool {
+        guard
+            isEnabled,
+            let context = uiMOC,
+            let conversation = ZMConversation.fetch(
+                with: conversationId.identifier,
+                domain: conversationId.domain,
+                in: context
+            )
+        else {
+            return  false
+        }
+
+        return conversation.isSelfAnActiveMember && !conversation.isDeletedRemotely
+    }
+
     /// Returns conversations with active calls.
     public func activeCallConversations(in userSession: ZMUserSession) -> [ZMConversation] {
         guard isEnabled else { return  [] }
@@ -516,7 +532,7 @@ extension WireCallCenterV3 {
             return true
         }
         guard let context = uiMOC else { return false }
-        let conferenceCalling = FeatureService(context: context).fetchConferenceCalling()
+        let conferenceCalling = FeatureRepository(context: context).fetchConferenceCalling()
         return conferenceCalling.status == .enabled
     }
 
@@ -754,7 +770,7 @@ extension WireCallCenterV3 {
 
         var callState = callState
 
-        if case .terminating(reason: .stillOngoing) = callState {
+        if case .terminating(reason: .stillOngoing) = callState, canJoinCall(conversationId: conversationId) {
             callState = .incoming(video: false, shouldRing: false, degraded: isDegraded(conversationId: conversationId))
         }
 

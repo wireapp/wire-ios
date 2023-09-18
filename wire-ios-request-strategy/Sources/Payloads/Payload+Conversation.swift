@@ -25,7 +25,7 @@ typealias CodableEventData = EventData & Codable
 
 extension Payload {
 
-    struct NewConversation: EncodableAPIVersionAware {
+    struct NewConversation: EncodableAPIVersionAware, Equatable {
         enum CodingKeys: String, CodingKey {
             case users
             case qualifiedUsers = "qualified_users"
@@ -56,6 +56,32 @@ extension Payload {
         let creatorClient: String?
         let messageProtocol: String?
 
+        init(_ action: CreateGroupConversationAction) {
+            switch action.messageProtocol {
+            case .mls:
+                messageProtocol = "mls"
+                creatorClient = action.creatorClientID
+                qualifiedUsers = nil
+                users = nil
+
+            case .proteus:
+                messageProtocol = "proteus"
+                creatorClient = nil
+                qualifiedUsers = action.qualifiedUserIDs
+                users = action.unqualifiedUserIDs
+            }
+
+            name = action.name
+            access = action.accessMode?.stringValue
+            legacyAccessRole = action.legacyAccessRole?.rawValue
+            accessRoles = action.accessRoles.map(\.rawValue)
+            conversationRole = ZMConversation.defaultMemberRoleName
+            team = action.teamID.map { ConversationTeamInfo(teamID: $0) }
+            readReceiptMode = action.isReadReceiptsEnabled ? 1 : 0
+            messageTimer = nil
+        }
+
+        @available(*, deprecated, message: "Use a CreateConversationAction instead")
         init(_ conversation: ZMConversation, selfClientID: String) {
             switch conversation.messageProtocol {
             case .mls:
@@ -105,14 +131,13 @@ extension Payload {
             case .v0, .v1, .v2:
                 try container.encodeIfPresent(legacyAccessRole, forKey: .accessRole)
                 try container.encodeIfPresent(accessRoles, forKey: .accessRoleV2)
-            case .v3, .v4:
+            case .v3, .v4, .v5:
                 try container.encodeIfPresent(accessRoles, forKey: .accessRole)
             }
         }
     }
 
     struct Conversation: DecodableAPIVersionAware, EventData {
-
         enum CodingKeys: String, CodingKey {
             case qualifiedID = "qualified_id"
             case id
@@ -138,23 +163,23 @@ extension Payload {
             return .conversationCreate
         }
 
-        let qualifiedID: QualifiedID?
-        let id: UUID?
-        let type: Int?
-        let creator: UUID?
-        let access: [String]?
-        let accessRoles: [String]?
-        let legacyAccessRole: String?
-        let name: String?
-        let members: ConversationMembers?
-        let lastEvent: String?
-        let lastEventTime: String?
-        let teamID: UUID?
-        let messageTimer: TimeInterval?
-        let readReceiptMode: Int?
-        let messageProtocol: String?
-        let mlsGroupID: String?
-        let epoch: UInt?
+        var qualifiedID: QualifiedID?
+        var id: UUID?
+        var type: Int?
+        var creator: UUID?
+        var access: [String]?
+        var accessRoles: [String]?
+        var legacyAccessRole: String?
+        var name: String?
+        var members: ConversationMembers?
+        var lastEvent: String?
+        var lastEventTime: String?
+        var teamID: UUID?
+        var messageTimer: TimeInterval?
+        var readReceiptMode: Int?
+        var messageProtocol: String?
+        var mlsGroupID: String?
+        var epoch: UInt?
 
         init(qualifiedID: QualifiedID? = nil,
              id: UUID?  = nil,
@@ -216,7 +241,7 @@ extension Payload {
             case .v0, .v1, .v2:
                 legacyAccessRole = try container.decodeIfPresent(String.self, forKey: .accessRole)
                 accessRoles = try container.decodeIfPresent([String].self, forKey: .accessRoleV2)
-            case .v3, .v4:
+            case .v3, .v4, .v5:
 
                 // v3 replaces the field "access_role_v2" with "access_role".
                 // However, since the format of update events does not depend on versioning,
@@ -370,7 +395,7 @@ extension Payload {
         let others: [ConversationMember]
     }
 
-    struct ConversationTeamInfo: Codable {
+    struct ConversationTeamInfo: Codable, Equatable {
         enum CodingKeys: String, CodingKey {
             case teamID = "teamid"
             case managed
@@ -658,7 +683,7 @@ extension Payload.NewConversation: DecodableAPIVersionAware {
         case .v0, .v1, .v2:
             legacyAccessRole = try container.decodeIfPresent(String.self, forKey: .accessRole)
             accessRoles = try container.decodeIfPresent([String].self, forKey: .accessRoleV2)
-        case .v3, .v4:
+        case .v3, .v4, .v5:
             accessRoles = try container.decodeIfPresent([String].self, forKey: .accessRole)
             legacyAccessRole = nil
         }
@@ -718,7 +743,7 @@ extension Payload.Conversation: EncodableAPIVersionAware {
         case .v0, .v1, .v2:
             try container.encodeIfPresent(legacyAccessRole, forKey: .accessRole)
             try container.encodeIfPresent(accessRoles, forKey: .accessRoleV2)
-        case .v3, .v4:
+        case .v3, .v4, .v5:
             if legacyAccessRole == nil {
                 try container.encodeIfPresent(accessRoles, forKey: .accessRole)
             } else {

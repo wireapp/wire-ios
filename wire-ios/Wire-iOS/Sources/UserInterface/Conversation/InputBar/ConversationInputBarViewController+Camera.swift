@@ -20,6 +20,7 @@ import MobileCoreServices
 import Photos
 import FLAnimatedImage
 import WireSyncEngine
+import WireCommonComponents
 
 private let zmLog = ZMSLog(tag: "UI")
 
@@ -88,7 +89,7 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
                                                                             }
                                                             })
             let confirmVideoViewController = ConfirmAssetViewController(context: context)
-            confirmVideoViewController.previewTitle = self.conversation.displayName.localized
+            confirmVideoViewController.previewTitle = self.conversation.displayNameWithFallback.localized
 
             endEditing()
             present(confirmVideoViewController, animated: true)
@@ -166,7 +167,7 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
                                                                     })
 
         let confirmImageViewController = ConfirmAssetViewController(context: context)
-        confirmImageViewController.previewTitle = conversation.displayName.localized
+        confirmImageViewController.previewTitle = conversation.displayNameWithFallback.localized
 
         endEditing()
         present(confirmImageViewController, animated: true)

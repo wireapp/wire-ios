@@ -16,33 +16,35 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
+import SnapshotTesting
 import WireUtilities
+import XCTest
 @testable import Wire
 
-final class SecurityLevelViewTests: ZMSnapshotTestCase {
-    private var callingUIFlag: DeveloperFlag!
-    private var deprecatedUIFlagStateBackup: Bool!
+final class SecurityLevelViewTests: BaseSnapshotTestCase {
+
+    // MARK: - Properties
 
     private var sut: SecurityLevelView!
 
+    // MARK: - setUp
+
     override func setUp() {
         super.setUp()
-        callingUIFlag = DeveloperFlag.deprecatedCallingUI
-        deprecatedUIFlagStateBackup = callingUIFlag.isOn
-        callingUIFlag.isOn = false
         sut = SecurityLevelView()
         sut.backgroundColor = SemanticColors.View.backgroundDefaultWhite
         sut.translatesAutoresizingMaskIntoConstraints = true
         sut.frame = CGRect(x: 0, y: 0, width: 375, height: 24)
     }
 
+    // MARK: - tearDown
+
     override func tearDown() {
-        callingUIFlag.isOn = deprecatedUIFlagStateBackup
         sut = nil
-        callingUIFlag = nil
         super.tearDown()
     }
+
+    // MARK: - SnapshotTests
 
     func testThatItRendersWithNotClassified() {
         sut.configure(with: .notClassified)

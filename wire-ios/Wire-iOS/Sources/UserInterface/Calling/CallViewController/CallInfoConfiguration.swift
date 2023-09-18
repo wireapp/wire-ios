@@ -18,6 +18,7 @@
 
 import Foundation
 import avs
+import WireCommonComponents
 import WireSyncEngine
 
 extension VoiceChannel {
@@ -39,8 +40,7 @@ extension VoiceChannel {
              .incoming(_, shouldRing: false, _):
             return .participantsList(sortedParticipants().map {
                 .callParticipant(user: HashBox(value: $0.user),
-                                 videoState: $0.state.videoState,
-                                 microphoneState: $0.state.microphoneState,
+                                 callParticipantState: $0.state,
                                  activeSpeakerState: $0.activeSpeakerState)
             })
         }
@@ -116,7 +116,6 @@ struct CallInfoConfiguration: CallInfoViewControllerInput {
     let callState: CallStateExtending
     let videoGridPresentationMode: VideoGridPresentationMode
     let allowPresentationModeUpdates: Bool
-    let variant: ColorSchemeVariant
     let classification: SecurityClassification
 
     private let voiceChannelSnapshot: VoiceChannelSnapshot
@@ -151,7 +150,6 @@ struct CallInfoConfiguration: CallInfoViewControllerInput {
             callState = voiceChannel.state
             videoGridPresentationMode = voiceChannel.videoGridPresentationMode
             allowPresentationModeUpdates = voiceChannel.allowPresentationModeUpdates
-            variant = ColorScheme.default.variant
     }
 
     // This property has to be computed in order to return the correct call duration

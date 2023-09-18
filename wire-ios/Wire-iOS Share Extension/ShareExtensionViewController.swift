@@ -73,19 +73,19 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
         return imageView
     }()
 
-    fileprivate var postContent: PostContent?
-    fileprivate var sharingSession: SharingSession?
+    private var postContent: PostContent?
+    private var sharingSession: SharingSession?
 
     /// stores extensionContext?.attachments
-    fileprivate var attachments: [AttachmentType: [NSItemProvider]] = [:]
+    private var attachments: [AttachmentType: [NSItemProvider]] = [:]
 
-    fileprivate var currentAccount: Account? {
+    private var currentAccount: Account? {
         didSet {
             localAuthenticationStatus = .denied
         }
     }
 
-    fileprivate var localAuthenticationStatus: LocalAuthenticationStatus = .denied
+    private var localAuthenticationStatus: LocalAuthenticationStatus = .denied
     private var observer: SendableBatchObserver?
     private weak var progressViewController: SendingProgressViewController?
 
@@ -175,7 +175,9 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
             accountIdentifier: accountIdentifier,
             hostBundleIdentifier: hostBundleIdentifier,
             environment: BackendEnvironment.shared,
-            appLockConfig: legacyConfig
+            appLockConfig: legacyConfig,
+            sharedUserDefaults: .applicationGroup,
+            minTLSVersion: SecurityFlags.minTLSVersion.stringValue
         )
     }
 

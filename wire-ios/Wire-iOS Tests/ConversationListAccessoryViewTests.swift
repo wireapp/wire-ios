@@ -20,7 +20,7 @@ import Foundation
 import XCTest
 @testable import Wire
 
-final class ConversationListAccessoryViewTests: ZMSnapshotTestCase {
+final class ConversationListAccessoryViewTests: BaseSnapshotTestCase {
     var sut: ConversationListAccessoryView!
 
     override func setUp() {

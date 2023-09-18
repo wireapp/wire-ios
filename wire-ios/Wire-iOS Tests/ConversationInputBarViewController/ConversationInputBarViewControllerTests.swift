@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import SnapshotTesting
 import XCTest
 import WireCommonComponents
 @testable import Wire
@@ -24,18 +25,23 @@ import WireCommonComponents
 // The first and last button for the input bar look like they have 4 rounded corners
 // instead of 2. That's because snapshot tests don't work well with maskedCorners and CI.
 // More on the issue can be found here: https://github.com/pointfreeco/swift-snapshot-testing/issues/358#issuecomment-939854566
-final class ConversationInputBarViewControllerTests: ZMSnapshotTestCase {
+final class ConversationInputBarViewControllerTests: BaseSnapshotTestCase {
+
+    // MARK: - Properties
 
     private var mockConversation: MockInputBarConversationType!
     private var mockClassificationProvider: MockClassificationProvider!
 
+    // MARK: - setUp
+
     override func setUp() {
         super.setUp()
-
         UIColor.setAccentOverride(.vividRed)
         mockConversation = MockInputBarConversationType()
         mockClassificationProvider = MockClassificationProvider()
     }
+
+    // MARK: - tearDown
 
     override func tearDown() {
         mockConversation = nil
@@ -239,12 +245,12 @@ final class ConversationInputBarViewControllerTests: ZMSnapshotTestCase {
 
     // MARK: - file action sheet
 
-    func testUploadFileActionSheet() {
+    func testUploadFileActionSheet() throws {
         let sut = ConversationInputBarViewController(conversation: mockConversation)
 
         let alert: UIAlertController = sut.createDocUploadActionSheet()
 
-        verify(matching: alert)
+        try verify(matching: alert)
     }
 
     // MARK: - Classification
