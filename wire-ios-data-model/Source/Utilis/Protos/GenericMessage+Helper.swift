@@ -516,10 +516,10 @@ extension LastRead {
         self = LastRead.with {
             $0.conversationID = conversationID.uuid.transportString()
             $0.lastReadTimestamp = Int64(lastReadTimestamp.timeIntervalSince1970 * 1000)
-//            $0.qualifiedConversationID =  WireProtos.QualifiedConversationId.with {
-//                $0.id = conversationID.uuid.transportString()
-//                $0.domain = conversationID.domain
-//            }
+            $0.qualifiedConversationID = WireProtos.QualifiedConversationId.with {
+                $0.id = conversationID.uuid.transportString()
+                $0.domain = conversationID.domain
+            }
         }
     }
 }

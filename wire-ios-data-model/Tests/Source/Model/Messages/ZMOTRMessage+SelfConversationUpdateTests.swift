@@ -47,7 +47,8 @@ class ZMOTRMessage_SelfConversationUpdateEventTests: BaseZMClientMessageTests {
             let nonce = UUID()
             let lastReadDate = Date()
             let selfConversation = ZMConversation.selfConversation(in: self.syncMOC)
-            let message = GenericMessage(content: LastRead(conversationID: self.syncConversation.remoteIdentifier!, lastReadTimestamp: lastReadDate), nonce: nonce)
+            let conversationID = QualifiedID(uuid: self.syncConversation.remoteIdentifier!, domain: "")
+            let message = GenericMessage(content: LastRead(conversationID: conversationID, lastReadTimestamp: lastReadDate), nonce: nonce)
             let event = self.createUpdateEvent(nonce, conversationID: selfConversation.remoteIdentifier!, timestamp: Date(), genericMessage: message, senderID: UUID(), eventSource: ZMUpdateEventSource.download)
             self.syncConversation.lastReadServerTimeStamp = nil
 
