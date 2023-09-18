@@ -35,7 +35,6 @@ final class CallStatusViewTests: BaseSnapshotTestCase {
 
     override func setUp() {
         super.setUp()
-        sut.backgroundColor = .white
         sut = CallStatusView(
             configuration: MockStatusViewConfiguration(
             state: .connecting,
@@ -47,6 +46,7 @@ final class CallStatusViewTests: BaseSnapshotTestCase {
             classification: .none
             )
         )
+        sut.backgroundColor = .white
         sut.translatesAutoresizingMaskIntoConstraints = false
         sut.widthAnchor.constraint(equalToConstant: 320).isActive = true
         sut.setNeedsLayout()
