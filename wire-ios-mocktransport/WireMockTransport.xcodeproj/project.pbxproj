@@ -806,6 +806,7 @@
 				54C9022E1B7532DD007162A8 /* Sources */,
 				54C9022F1B7532DD007162A8 /* Frameworks */,
 				54C902301B7532DD007162A8 /* Headers */,
+				AD4812A62AB98F7500ED208C /* Run Swiftlint */,
 				54C902311B7532DD007162A8 /* Resources */,
 			);
 			buildRules = (
@@ -895,6 +896,28 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		AD4812A62AB98F7500ED208C /* Run Swiftlint */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/../scripts/run-swiftlint.sh",
+			);
+			name = "Run Swiftlint";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "../scripts/run-swiftlint.sh\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		54C9022E1B7532DD007162A8 /* Sources */ = {
