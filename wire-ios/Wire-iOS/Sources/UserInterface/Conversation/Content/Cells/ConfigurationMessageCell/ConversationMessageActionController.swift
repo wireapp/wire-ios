@@ -175,7 +175,7 @@ final class ConversationMessageActionController {
     }
 
     var doubleTapAction: MessageAction? {
-        return message.canAddReaction ? .react(Emoji.like.id) : nil
+        return message.canAddReaction ? .react(Emoji.like.value) : nil
     }
 
     // MARK: - Handler

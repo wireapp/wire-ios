@@ -3252,8 +3252,6 @@
 		EE08ADEE29C8863000B6C14D /* SwitchBackendViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwitchBackendViewModel.swift; sourceTree = "<group>"; };
 		EE09DE5E25B24B2000B515F0 /* AppLockModuleRouterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockModuleRouterTests.swift; sourceTree = "<group>"; };
 		EE0CAEB32AB048BB00BD2DB7 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/Emoji.strings; sourceTree = "<group>"; };
-		EE0CAEB52AB0515500BD2DB7 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Emoji.strings; sourceTree = "<group>"; };
-		EE0CAEB62AB0519900BD2DB7 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/Emoji.strings; sourceTree = "<group>"; };
 		EE0DE1CC21B172BF00CF3C4E /* ConversationCreateGuestsSectionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationCreateGuestsSectionController.swift; sourceTree = "<group>"; };
 		EE118BFF2031D17000BC68D6 /* MarkdownTextViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownTextViewTests.swift; sourceTree = "<group>"; };
 		EE1AFBFD2124330B003D1AE1 /* UNUserNotificationCenter+Permission.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UNUserNotificationCenter+Permission.swift"; sourceTree = "<group>"; };
@@ -3405,23 +3403,25 @@
 		EEF6E3C328D86408001C1799 /* MessageProtocolSectionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageProtocolSectionController.swift; sourceTree = "<group>"; };
 		EEF71F6221B1973D00F0FB30 /* ConversationCreateReceiptsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationCreateReceiptsCell.swift; sourceTree = "<group>"; };
 		EEF71F6421B19F5300F0FB30 /* ConversationCreateReceiptsSectionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationCreateReceiptsSectionController.swift; sourceTree = "<group>"; };
-		EEFAB4742AB810E2003140DF /* ar */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ar; path = ar.lproj/Emoji.strings; sourceTree = "<group>"; };
-		EEFAB4752AB810ED003140DF /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Emoji.strings"; sourceTree = "<group>"; };
-		EEFAB4762AB810EE003140DF /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/Emoji.strings"; sourceTree = "<group>"; };
-		EEFAB4772AB810EF003140DF /* da */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = da; path = da.lproj/Emoji.strings; sourceTree = "<group>"; };
-		EEFAB4782AB810F0003140DF /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = nl.lproj/Emoji.strings; sourceTree = "<group>"; };
-		EEFAB4792AB810F1003140DF /* et */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = et; path = et.lproj/Emoji.strings; sourceTree = "<group>"; };
-		EEFAB47A2AB810F2003140DF /* fi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fi; path = fi.lproj/Emoji.strings; sourceTree = "<group>"; };
-		EEFAB47B2AB810F3003140DF /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/Emoji.strings; sourceTree = "<group>"; };
-		EEFAB47C2AB810F4003140DF /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Emoji.strings; sourceTree = "<group>"; };
-		EEFAB47D2AB810F4003140DF /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/Emoji.strings; sourceTree = "<group>"; };
-		EEFAB47E2AB810F5003140DF /* lt */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = lt; path = lt.lproj/Emoji.strings; sourceTree = "<group>"; };
-		EEFAB47F2AB810F6003140DF /* pt-BR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-BR"; path = "pt-BR.lproj/Emoji.strings"; sourceTree = "<group>"; };
-		EEFAB4802AB810F7003140DF /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Emoji.strings; sourceTree = "<group>"; };
-		EEFAB4812AB810F8003140DF /* sl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = sl; path = sl.lproj/Emoji.strings; sourceTree = "<group>"; };
-		EEFAB4822AB810F9003140DF /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Emoji.strings; sourceTree = "<group>"; };
-		EEFAB4832AB810FA003140DF /* tr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = tr; path = tr.lproj/Emoji.strings; sourceTree = "<group>"; };
-		EEFAB4842AB810FB003140DF /* uk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = uk; path = uk.lproj/Emoji.strings; sourceTree = "<group>"; };
+		EEFAB4872AB83AAB003140DF /* ar */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ar; path = ar.lproj/Emoji.strings; sourceTree = "<group>"; };
+		EEFAB4882AB83AAE003140DF /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Emoji.strings"; sourceTree = "<group>"; };
+		EEFAB4892AB83AAF003140DF /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/Emoji.strings"; sourceTree = "<group>"; };
+		EEFAB48A2AB83AB0003140DF /* da */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = da; path = da.lproj/Emoji.strings; sourceTree = "<group>"; };
+		EEFAB48B2AB83AB2003140DF /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = nl.lproj/Emoji.strings; sourceTree = "<group>"; };
+		EEFAB48C2AB83AB3003140DF /* et */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = et; path = et.lproj/Emoji.strings; sourceTree = "<group>"; };
+		EEFAB48D2AB83AB4003140DF /* fi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fi; path = fi.lproj/Emoji.strings; sourceTree = "<group>"; };
+		EEFAB48E2AB83AB5003140DF /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/Emoji.strings; sourceTree = "<group>"; };
+		EEFAB48F2AB83AB6003140DF /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Emoji.strings; sourceTree = "<group>"; };
+		EEFAB4902AB83AB7003140DF /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/Emoji.strings; sourceTree = "<group>"; };
+		EEFAB4912AB83AB8003140DF /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Emoji.strings; sourceTree = "<group>"; };
+		EEFAB4922AB83AB9003140DF /* lt */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = lt; path = lt.lproj/Emoji.strings; sourceTree = "<group>"; };
+		EEFAB4932AB83ABB003140DF /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/Emoji.strings; sourceTree = "<group>"; };
+		EEFAB4942AB83ABC003140DF /* pt-BR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-BR"; path = "pt-BR.lproj/Emoji.strings"; sourceTree = "<group>"; };
+		EEFAB4952AB83AC0003140DF /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Emoji.strings; sourceTree = "<group>"; };
+		EEFAB4962AB83AC1003140DF /* sl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = sl; path = sl.lproj/Emoji.strings; sourceTree = "<group>"; };
+		EEFAB4972AB83AC2003140DF /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Emoji.strings; sourceTree = "<group>"; };
+		EEFAB4982AB83AC4003140DF /* tr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = tr; path = tr.lproj/Emoji.strings; sourceTree = "<group>"; };
+		EEFAB4992AB83AC5003140DF /* uk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = uk; path = uk.lproj/Emoji.strings; sourceTree = "<group>"; };
 		EEFF3E7921B67990000834A6 /* ConversationCreateOptionsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationCreateOptionsCell.swift; sourceTree = "<group>"; };
 		EEFF3E7B21B6D1FB000834A6 /* ConversationCreateSectionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationCreateSectionController.swift; sourceTree = "<group>"; };
 		EF00FD731FDA97BA0059FEDC /* UIViewController+Orientation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Orientation.swift"; sourceTree = "<group>"; };
@@ -10237,25 +10237,25 @@
 			isa = PBXVariantGroup;
 			children = (
 				EE0CAEB32AB048BB00BD2DB7 /* Base */,
-				EE0CAEB52AB0515500BD2DB7 /* de */,
-				EE0CAEB62AB0519900BD2DB7 /* fr */,
-				EEFAB4742AB810E2003140DF /* ar */,
-				EEFAB4752AB810ED003140DF /* zh-Hans */,
-				EEFAB4762AB810EE003140DF /* zh-Hant */,
-				EEFAB4772AB810EF003140DF /* da */,
-				EEFAB4782AB810F0003140DF /* nl */,
-				EEFAB4792AB810F1003140DF /* et */,
-				EEFAB47A2AB810F2003140DF /* fi */,
-				EEFAB47B2AB810F3003140DF /* it */,
-				EEFAB47C2AB810F4003140DF /* ja */,
-				EEFAB47D2AB810F4003140DF /* pl */,
-				EEFAB47E2AB810F5003140DF /* lt */,
-				EEFAB47F2AB810F6003140DF /* pt-BR */,
-				EEFAB4802AB810F7003140DF /* ru */,
-				EEFAB4812AB810F8003140DF /* sl */,
-				EEFAB4822AB810F9003140DF /* es */,
-				EEFAB4832AB810FA003140DF /* tr */,
-				EEFAB4842AB810FB003140DF /* uk */,
+				EEFAB4872AB83AAB003140DF /* ar */,
+				EEFAB4882AB83AAE003140DF /* zh-Hans */,
+				EEFAB4892AB83AAF003140DF /* zh-Hant */,
+				EEFAB48A2AB83AB0003140DF /* da */,
+				EEFAB48B2AB83AB2003140DF /* nl */,
+				EEFAB48C2AB83AB3003140DF /* et */,
+				EEFAB48D2AB83AB4003140DF /* fi */,
+				EEFAB48E2AB83AB5003140DF /* fr */,
+				EEFAB48F2AB83AB6003140DF /* de */,
+				EEFAB4902AB83AB7003140DF /* it */,
+				EEFAB4912AB83AB8003140DF /* ja */,
+				EEFAB4922AB83AB9003140DF /* lt */,
+				EEFAB4932AB83ABB003140DF /* pl */,
+				EEFAB4942AB83ABC003140DF /* pt-BR */,
+				EEFAB4952AB83AC0003140DF /* ru */,
+				EEFAB4962AB83AC1003140DF /* sl */,
+				EEFAB4972AB83AC2003140DF /* es */,
+				EEFAB4982AB83AC4003140DF /* tr */,
+				EEFAB4992AB83AC5003140DF /* uk */,
 			);
 			name = Emoji.strings;
 			sourceTree = "<group>";

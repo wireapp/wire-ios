@@ -118,9 +118,9 @@ final class CompleteReactionPickerViewController: UIViewController {
 
     func cellForEmoji(_ emoji: Emoji, indexPath: IndexPath) -> UICollectionViewCell {
         let cell = self.collectionView.dequeueReusableCell(withReuseIdentifier: EmojiCollectionViewCell.zm_reuseIdentifier, for: indexPath) as! EmojiCollectionViewCell
-        cell.titleLabel.text = emoji.id
+        cell.titleLabel.text = emoji.value
         cell.titleLabel.font = UIFont.preferredFont(forTextStyle: .largeTitle)
-        cell.isCurrent = selectedReactions.contains(emoji.id)
+        cell.isCurrent = selectedReactions.contains(emoji.value)
         return cell
     }
 

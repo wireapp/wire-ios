@@ -22,7 +22,7 @@ struct Emoji: Decodable, Hashable {
 
     typealias ID = String
 
-    let id: ID
+    let value: ID
     let name: String
     let shortName: String
     let category: EmojiCategory
@@ -30,16 +30,18 @@ struct Emoji: Decodable, Hashable {
     let addedIn: String
     let sortOrder: Int
 
-    var localizedName: String {
-        return NSLocalizedString(
-            "\(shortName).name",
-            tableName: "Emoji",
-            comment: ""
-        )
+    let nameLocalizationKey: String?
+    let tagsLocalizationKey: String?
+
+    var localizedName: String? {
+        guard let key = nameLocalizationKey else { return nil }
+        return Bundle.main.localizedString(forKey: key, value: nil, table: "Emoji")
     }
 
-    var localizedTags: Set<String> {
-        let tagsString = NSLocalizedString("\(shortName).tags", tableName: "Emoji", comment: "")
+    // should be lazy loaded
+    var localizedTags: Set<String>? {
+        guard let key = tagsLocalizationKey else { return nil }
+        let tagsString = Bundle.main.localizedString(forKey: key, value: nil, table: "Emoji")
         let tags = tagsString
             .split(separator: "|")
             .map { $0.trimmingCharacters(in: .whitespaces) }
@@ -48,7 +50,9 @@ struct Emoji: Decodable, Hashable {
     }
 
     func matchesSearchQuery(_ query: String) -> Bool {
-        return [name, shortName, category.rawValue, subcategory].contains {
+        let query = query.lowercased()
+        let tags = localizedTags ?? [name, shortName, category.rawValue, subcategory]
+        return tags.contains {
             $0.lowercased().contains(query)
         }
     }
@@ -60,13 +64,15 @@ extension Emoji {
     // We should have a basic set to load from.
 
     static let like = Emoji(
-        id: "❤️",
+        value: "❤️",
         name: "heart",
         shortName: "heart",
         category: .symbols,
         subcategory: "",
         addedIn: "",
-        sortOrder: 0
+        sortOrder: 0,
+        nameLocalizationKey: nil,
+        tagsLocalizationKey: nil
     )
 
 }
