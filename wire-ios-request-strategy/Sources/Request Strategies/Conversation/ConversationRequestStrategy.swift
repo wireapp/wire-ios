@@ -127,7 +127,9 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
 
     public override func nextRequestIfAllowed(for apiVersion: APIVersion) async -> ZMTransportRequest? {
         if syncProgress.currentSyncPhase == .fetchingConversations {
-            fetchAllConversations(for: apiVersion)
+            managedObjectContext.performAndWait {
+                fetchAllConversations(for: apiVersion)
+            }
         }
 
         return await requestGenerators.nextRequest(for: apiVersion)

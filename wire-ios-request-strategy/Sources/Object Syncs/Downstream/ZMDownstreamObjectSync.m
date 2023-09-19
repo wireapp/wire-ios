@@ -131,32 +131,37 @@
 {
     id<ZMDownstreamTranscoder> transcoder = self.transcoder;
 
-    ZMManagedObject *nextObject;
-    while ( (nextObject = [self.objectsToDownload nextObjectToSynchronize]) != nil) {
+    __block ZMTransportRequest *returnedRequest = nil;
 
-        if(![self.predicateForObjectsToDownload evaluateWithObject:nextObject]) {
-            [self.objectsToDownload removeObject:nextObject];
-            continue;
+    [self.context performBlockAndWait:^{
+        ZMManagedObject *nextObject;
+
+        while ( (nextObject = [self.objectsToDownload nextObjectToSynchronize]) != nil) {
+
+            if(![self.predicateForObjectsToDownload evaluateWithObject:nextObject]) {
+                [self.objectsToDownload removeObject:nextObject];
+                continue;
+            }
+
+            ZMTransportRequest *request = [transcoder requestForFetchingObject:nextObject downstreamSync:self apiVersion:apiVersion];
+            if(request == nil) {
+                [self.objectsToDownload removeObject:nextObject];
+                continue;
+            }
+            [request setDebugInformationTranscoder:transcoder];
+
+            ZMSyncToken *token = [self.objectsToDownload didStartSynchronizingKeys:nil forObject:nextObject];
+            ZM_WEAK(self);
+            [request addCompletionHandler:[ZMCompletionHandler handlerOnGroupQueue:self.context block:^(ZMTransportResponse *response) {
+                ZM_STRONG(self);
+                [self processResponse:response forObject:nextObject token:token transcoder:self.transcoder];
+            }]];
+            returnedRequest = request;
+            break;
         }
-    
-        ZMTransportRequest *request = [transcoder requestForFetchingObject:nextObject downstreamSync:self apiVersion:apiVersion];
-        if(request == nil) {
-            [self.objectsToDownload removeObject:nextObject];
-            continue;
-        }
-        [request setDebugInformationTranscoder:transcoder];
-        
-        ZMSyncToken *token = [self.objectsToDownload didStartSynchronizingKeys:nil forObject:nextObject];
-        ZM_WEAK(self);
-        [request addCompletionHandler:[ZMCompletionHandler handlerOnGroupQueue:self.context block:^(ZMTransportResponse *response) {
-            ZM_STRONG(self);
-            [self processResponse:response forObject:nextObject token:token transcoder:self.transcoder];
-        }]];
-        completionBlock(request);
-        return;
-    }
-    
-    completionBlock(nil);
+    }];
+
+    completionBlock(returnedRequest);
 }
 
 - (BOOL)hasOutstandingItems;

@@ -186,9 +186,21 @@ public class TypingStrategy: AbstractRequestStrategy, TearDownCapable, ZMEventCo
     }
 
     public override func nextRequestIfAllowed(for apiVersion: APIVersion) async -> ZMTransportRequest? {
-        guard let typingEvent = typingEventQueue.nextEvent(),
-              let conversation = managedObjectContext.object(with: typingEvent.objectID) as? ZMConversation,
-              let remoteIdentifier = conversation.remoteIdentifier
+        var typingEvent: TypingEvent?
+        var remoteIdentifier: UUID?
+        var domain: String?
+
+        managedObjectContext.performAndWait {
+            typingEvent = typingEventQueue.nextEvent()
+            guard let typingEvent = typingEvent else { return }
+
+            let conversation = managedObjectContext.object(with: typingEvent.objectID) as? ZMConversation
+            domain = conversation?.domain.nonEmptyValue ?? BackendInfo.domain
+            remoteIdentifier = conversation?.remoteIdentifier
+        }
+
+        guard let typingEvent = typingEvent,
+              let remoteIdentifier = remoteIdentifier
         else { return nil }
 
         let path: String

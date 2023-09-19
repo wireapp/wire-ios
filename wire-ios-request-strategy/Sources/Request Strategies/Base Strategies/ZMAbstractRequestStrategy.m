@@ -40,7 +40,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"Request Configuration";
 
 - (void)nextRequestIfAllowedForAPIVersion:(APIVersion)apiVersion completion:(void (^_Nonnull)(ZMTransportRequest *_Nullable))completionBlock
 {
-    [NSException raise:NSInvalidArgumentException format:@"You must subclass nextRequestIfAllowed"];
+    [NSException raise:NSInvalidArgumentException format:@"You must subclass nextRequestIfAllowed %s",object_getClassName(self)];
     completionBlock(nil);
 }
 

@@ -178,8 +178,11 @@ ZM_EMPTY_ASSERTING_INIT()
         __block ZMTransportRequest* returnedRequest = nil;
 
         for (id<RequestStrategy> requestStrategy in self.strategyDirectory.requestStrategies) {
+
             [requestStrategy nextRequestForAPIVersion:apiVersion completion:^(ZMTransportRequest * _Nullable request) {
-                returnedRequest = request;
+                if  (request != nil) {
+                    returnedRequest = request;
+                }
                 dispatch_semaphore_signal(semaphore);
             }];
 

@@ -198,7 +198,11 @@ ZM_EMPTY_ASSERTING_INIT();
 
 - (void)nextRequestForAPIVersion:(APIVersion)apiVersion completion:(void (^)(ZMTransportRequest * _Nullable))completionBlock
 {
-    completionBlock([self processNextUpdateWithAPIVersion:apiVersion]);
+    __block ZMTransportRequest * request = nil;
+    [self.context performBlockAndWait:^{
+        request = [self processNextUpdateWithAPIVersion:apiVersion];
+    }];
+    completionBlock(request);
 }
 
 - (void)addUpdatedObject:(ZMManagedObject *)mo
@@ -253,22 +257,23 @@ ZM_EMPTY_ASSERTING_INIT();
 
     ZMUpstreamRequest *request = [transcoder requestForUpdatingObject:objectWithKeys.object forKeys:objectWithKeys.keysToSync apiVersion:apiVersion];
     [request.transportRequest setDebugInformationTranscoder:transcoder];
-    
+
     if (request == nil) {
         RequireString(request != nil, "Transcoder %s returns nil request for keys: %s",
                       NSStringFromClass(transcoder.class).UTF8String,
                       [objectWithKeys.keysToSync.allObjects componentsJoinedByString:@", "].UTF8String);
     }
-    
+
     ZMModifiedObjectSyncToken *token = [self.updatedObjects didStartSynchronizingKeys:request.keys forObject:objectWithKeys];
     NSDictionary *userInfo = request.userInfo;
     NSSet *keys = request.keys;
-    
+
     ZM_WEAK(self);
     ZM_WEAK(request);
     [request.transportRequest addCompletionHandler:[ZMCompletionHandler handlerOnGroupQueue:self.context block:^(ZMTransportResponse *response) {
         ZM_STRONG(self);
         ZM_STRONG(request);
+
         id <ZMUpstreamTranscoder> localTranscoder = self.transcoder;
         NSSet *keysToParse = [self.updatedObjects keysToParseAfterSyncingToken:token];
         if(response.result == ZMTransportResponseStatusSuccess) {
@@ -314,8 +319,6 @@ ZM_EMPTY_ASSERTING_INIT();
                 objectToRefetch.needsToBeUpdatedFromBackend = YES;
             }
         }
-        
-        
     }]];
 
     return request.transportRequest;

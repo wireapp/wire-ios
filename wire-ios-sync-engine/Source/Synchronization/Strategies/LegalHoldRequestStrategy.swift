@@ -42,17 +42,24 @@ public class LegalHoldRequestStrategy: AbstractRequestStrategy, ZMSingleRequestT
     }
 
     public func request(for sync: ZMSingleRequestSync, apiVersion: APIVersion) -> ZMTransportRequest? {
-        let selfUser = ZMUser.selfUser(in: managedObjectContext)
+        var userID: UUID?
+        var teamID: UUID?
 
-        guard let teamID = selfUser.team?.remoteIdentifier else {
+        managedObjectContext.performAndWait {
+            let selfUser = ZMUser.selfUser(in: managedObjectContext)
+            teamID = selfUser.team?.remoteIdentifier
+            userID = selfUser.remoteIdentifier
+        }
+
+        guard let teamID = teamID?.transportString() else {
                 // Skip sync phase if the user doesn't belong to a team
                 syncStatus.finishCurrentSyncPhase(phase: .fetchingLegalHoldStatus)
                 return nil
         }
 
-        guard let userID = selfUser.remoteIdentifier else { return nil }
+        guard let userID = userID?.transportString() else { return nil }
 
-        return ZMTransportRequest(getFromPath: "/teams/\(teamID.transportString())/legalhold/\(userID.transportString())", apiVersion: apiVersion.rawValue)
+        return ZMTransportRequest(getFromPath: "/teams/\(teamID)/legalhold/\(userID)", apiVersion: apiVersion.rawValue)
     }
 
     public func didReceive(_ response: ZMTransportResponse, forSingleRequest sync: ZMSingleRequestSync) {

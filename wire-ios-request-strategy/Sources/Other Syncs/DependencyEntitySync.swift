@@ -94,79 +94,86 @@ class DependencyEntitySync<Transcoder: EntityTranscoder>: NSObject, ZMContextCha
     }
 
     func nextRequest(for apiVersion: APIVersion) async -> ZMTransportRequest? {
-        guard let entity = entitiesWithoutDependencies.first else { return nil }
-
-        if let message = entity as? (any ProteusMessage) {
-            WireLogger.messaging.debug("generating request for message \(message.debugInfo)")
-        }
-
-        entitiesWithoutDependencies.removeFirst()
-
-        let completionHandler = completionHandlers.removeValue(forKey: entity)
-
-        guard !entity.isExpired else {
-            if let message = entity as? (any ProteusMessage) {
-                WireLogger.messaging.error("dependency sync will not generate a request for message \(message.debugInfo): entity is expired")
-            }
-
-            return nil
-        }
-
-        guard let request = transcoder?.request(forEntity: entity, apiVersion: apiVersion) else {
-            if let message = entity as? (any ProteusMessage) {
-                WireLogger.messaging.error("dependency sync could not generate a request for message \(message.debugInfo): transcoder returned nil")
-            }
-
-            return nil
-        }
-
-        if let message = entity as? (any ProteusMessage) {
-            WireLogger.messaging.debug("generated request for message \(message.debugInfo)")
-        }
-
-        request.add(ZMCompletionHandler(on: context, block: { [weak self] (response) in
-            guard
-                let `self` = self,
-                let transcoder = self.transcoder
-            else {
-                if let message = entity as? (any ProteusMessage) {
-                    WireLogger.messaging.debug("dependency sync can not process response for message \(message.debugInfo): missing self or transcoder")
-                }
+        var returnedRequest: ZMTransportRequest?
+        context.performAndWait {
+            guard let entity = entitiesWithoutDependencies.first else {
+                returnedRequest = nil
                 return
             }
 
-            switch response.result {
-            case .success:
-                if let message = entity as? (any ProteusMessage) {
-                    WireLogger.messaging.debug("dependency sync got a success response for message \(message.debugInfo)")
-                }
-                transcoder.request(forEntity: entity, didCompleteWithResponse: response)
-                completionHandler?(.success(()), response)
-
-            case .expired:
-                if let message = entity as? (any ProteusMessage) {
-                    WireLogger.messaging.error("dependency sync got an expired response for message \(message.debugInfo)")
-                }
-                completionHandler?(.failure(EntitySyncError.expired), response)
-
-            default:
-                let retry = transcoder.shouldTryToResend(entity: entity, afterFailureWithResponse: response)
-
-                if retry {
-                    if let message = entity as? (any ProteusMessage) {
-                        WireLogger.messaging.warn("dependency sync will retry request for message \(message.debugInfo)")
-                    }
-                    self.synchronize(entity: entity, completion: completionHandler)
-                } else {
-                    if let message = entity as? (any ProteusMessage) {
-                        WireLogger.messaging.error("dependency sync gave up retrying for message \(message.debugInfo)")
-                    }
-                    completionHandler?(.failure(EntitySyncError.gaveUpRetrying), response)
-                }
+            if let message = entity as? (any ProteusMessage) {
+                WireLogger.messaging.debug("generating request for message \(message.debugInfo)")
             }
-        }))
 
-        return request
+            entitiesWithoutDependencies.removeFirst()
+
+            let completionHandler = completionHandlers.removeValue(forKey: entity)
+
+            guard !entity.isExpired else {
+                if let message = entity as? (any ProteusMessage) {
+                    WireLogger.messaging.error("dependency sync will not generate a request for message \(message.debugInfo): entity is expired")
+                }
+                returnedRequest = nil
+                return
+            }
+
+            guard let request = transcoder?.request(forEntity: entity, apiVersion: apiVersion) else {
+                if let message = entity as? (any ProteusMessage) {
+                    WireLogger.messaging.error("dependency sync could not generate a request for message \(message.debugInfo): transcoder returned nil")
+                }
+                returnedRequest = nil
+                return
+            }
+
+            if let message = entity as? (any ProteusMessage) {
+                WireLogger.messaging.debug("generated request for message \(message.debugInfo)")
+            }
+
+            request.add(ZMCompletionHandler(on: context, block: { [weak self] (response) in
+                guard
+                    let `self` = self,
+                    let transcoder = self.transcoder
+                else {
+                    if let message = entity as? (any ProteusMessage) {
+                        WireLogger.messaging.debug("dependency sync can not process response for message \(message.debugInfo): missing self or transcoder")
+                    }
+                    return
+                }
+
+                switch response.result {
+                case .success:
+                    if let message = entity as? (any ProteusMessage) {
+                        WireLogger.messaging.debug("dependency sync got a success response for message \(message.debugInfo)")
+                    }
+                    transcoder.request(forEntity: entity, didCompleteWithResponse: response)
+                    completionHandler?(.success(()), response)
+
+                case .expired:
+                    if let message = entity as? (any ProteusMessage) {
+                        WireLogger.messaging.error("dependency sync got an expired response for message \(message.debugInfo)")
+                    }
+                    completionHandler?(.failure(EntitySyncError.expired), response)
+
+                default:
+                    let retry = transcoder.shouldTryToResend(entity: entity, afterFailureWithResponse: response)
+
+                    if retry {
+                        if let message = entity as? (any ProteusMessage) {
+                            WireLogger.messaging.warn("dependency sync will retry request for message \(message.debugInfo)")
+                        }
+                        self.synchronize(entity: entity, completion: completionHandler)
+                    } else {
+                        if let message = entity as? (any ProteusMessage) {
+                            WireLogger.messaging.error("dependency sync gave up retrying for message \(message.debugInfo)")
+                        }
+                        completionHandler?(.failure(EntitySyncError.gaveUpRetrying), response)
+                    }
+                }
+            }))
+
+            returnedRequest = request
+        }
+        return returnedRequest
     }
 
     public func fetchRequestForTrackedObjects() -> NSFetchRequest<NSFetchRequestResult>? {

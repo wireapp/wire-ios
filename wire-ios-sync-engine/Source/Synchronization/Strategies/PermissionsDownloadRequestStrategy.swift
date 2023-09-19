@@ -108,8 +108,20 @@ public final class PermissionsDownloadRequestStrategy: AbstractRequestStrategy, 
     // MARK: - ZMDownstreamTranscoder
 
     public func request(forFetching object: ZMManagedObject!, downstreamSync: ZMObjectSync!, apiVersion: APIVersion) -> ZMTransportRequest! {
-        guard let member = object as? Member, downstreamSync as? ZMDownstreamObjectSync == sync else { fatal("Wrong object: \(object.safeForLoggingDescription)") }
-        guard let identifier = member.remoteIdentifier, let teamId = member.team?.remoteIdentifier else { fatal("No ids to sync: \(object.safeForLoggingDescription)") }
+
+        guard downstreamSync as? ZMDownstreamObjectSync == sync else { fatal("Wrong sync") }
+
+        var identifier: UUID?
+        var teamId: UUID?
+
+        managedObjectContext.performAndWait {
+            let member = object as? Member
+            identifier = member?.remoteIdentifier
+            teamId = member?.team?.remoteIdentifier
+        }
+
+        guard let identifier = identifier, let teamId = teamId else { fatal("No ids to sync: \(object.safeForLoggingDescription)") }
+        
         return TeamDownloadRequestFactory.getSingleMemberRequest(for: identifier, in: teamId, apiVersion: apiVersion)
     }
 

@@ -83,14 +83,15 @@
     return self.syncStatus.currentSyncPhase == self.expectedSyncPhase;
 }
 
-- (ZMTransportRequest *)nextRequestIfAllowedForAPIVersion:(APIVersion)apiVersion
+- (void)nextRequestForAPIVersion:(APIVersion)apiVersion completion:(void (^)(ZMTransportRequest * _Nullable))completionBlock
 {
     if (self.isSyncing && !self.isDownloadingLastUpdateEventID) {
         [self startRequestingLastUpdateEventIDWithoutPersistingIt];
-        return [self.requestGenerators nextRequestForAPIVersion:apiVersion];
+        completionBlock([self.requestGenerators nextRequestForAPIVersion:apiVersion]);
+        return;
     }
     
-    return nil;
+    completionBlock(nil);
 }
 
 - (NSArray *)requestGenerators;
@@ -114,10 +115,16 @@
 {
     NOT_USED(sync);
     NSURLComponents *components = [NSURLComponents componentsWithString:@"/notifications/last"];
-    
-    UserClient *selfClient = [ZMUser selfUserInContext:self.managedObjectContext].selfClient;
-    if (selfClient.remoteIdentifier != nil) {
-        components.queryItems = @[[NSURLQueryItem queryItemWithName:@"client" value:selfClient.remoteIdentifier]];
+
+    __block NSString* remoteIdentifier = nil;
+    [self.managedObjectContext performBlockAndWait:^{
+        UserClient *selfClient = [ZMUser selfUserInContext:self.managedObjectContext].selfClient;
+        remoteIdentifier = selfClient.remoteIdentifier;
+
+    }];
+
+    if (remoteIdentifier != nil) {
+        components.queryItems = @[[NSURLQueryItem queryItemWithName:@"client" value:remoteIdentifier]];
     }
     
     return [ZMTransportRequest requestGetFromPath:components.string apiVersion:apiVersion];

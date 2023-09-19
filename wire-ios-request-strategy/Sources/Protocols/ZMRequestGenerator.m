@@ -35,6 +35,7 @@
 
     for (uint i = 0; i < self.count; i++) {
         dispatch_group_enter(group);
+        NSLog(@"🕵🏽 object %@", [[self objectAtIndex:i] class]);
         [[self objectAtIndex:i] nextRequestForAPIVersion:apiVersion completion:^(ZMTransportRequest * _Nullable request) {
             returnedRequest = request;
             dispatch_group_leave(group);

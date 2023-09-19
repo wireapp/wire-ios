@@ -61,7 +61,13 @@ public final class TeamImageAssetUpdateStrategy: AbstractRequestStrategy, ZMCont
     // MARK: - ZMDownstreamTranscoder
 
     public func request(forFetching object: ZMManagedObject!, downstreamSync: ZMObjectSync!, apiVersion: APIVersion) -> ZMTransportRequest! {
-        guard let team = object as? Team, let assetId = team.pictureAssetId else { return nil }
+        var assetId: String?
+        managedObjectContext.performAndWait {
+            let team = object as? Team
+            assetId = team?.pictureAssetId
+        }
+
+        guard let assetId = assetId else { return nil }
 
         let path: String
 

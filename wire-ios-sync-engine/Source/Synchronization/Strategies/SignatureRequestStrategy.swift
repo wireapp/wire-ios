@@ -46,11 +46,16 @@ public final class SignatureRequestStrategy: AbstractRequestStrategy, ZMSingleRe
 
     @objc
     public override func nextRequestIfAllowed(for apiVersion: APIVersion) async -> ZMTransportRequest? {
-        guard let signatureStatus = syncContext.signatureStatus else {
+        var signatureStatusState: PDFSigningState?
+        managedObjectContext.performAndWait {
+            signatureStatusState = syncContext.signatureStatus?.state
+        }
+
+        guard let signatureStatusState = signatureStatusState else {
             return nil
         }
 
-        switch signatureStatus.state {
+        switch signatureStatusState {
         case .initial:
             break
         case .waitingForConsentURL:
