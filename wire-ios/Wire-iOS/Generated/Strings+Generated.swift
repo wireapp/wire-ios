@@ -821,16 +821,6 @@ internal enum L10n {
         internal static let description = L10n.tr("Accessibility", "profile.closeButton.description", fallback: "Close profile")
       }
     }
-    internal enum ReactionPicker {
-      internal enum DismissButton {
-        /// Dismiss emoji keyboard
-        internal static let description = L10n.tr("Accessibility", "reactionPicker.dismissButton.description", fallback: "Dismiss emoji keyboard")
-      }
-      internal enum SearchFieldPlaceholder {
-        /// Search for emoji
-        internal static let description = L10n.tr("Accessibility", "reactionPicker.searchFieldPlaceholder.description", fallback: "Search for emoji")
-      }
-    }
     internal enum SearchView {
       internal enum ClearButton {
         /// Clear
@@ -1626,10 +1616,10 @@ internal enum L10n {
         internal static let unableToPlay = L10n.tr("Localizable", "content.player.unable_to_play", fallback: "UNABLE TO PLAY TRACK")
       }
       internal enum Reactions {
-        /// Search for emoji
-        internal static let search = L10n.tr("Localizable", "content.reactions.search", fallback: "Search for emoji")
-        /// Select reaction
-        internal static let title = L10n.tr("Localizable", "content.reactions.title", fallback: "Select reaction")
+        /// Search for Emoji
+        internal static let search = L10n.tr("Localizable", "content.reactions.search", fallback: "Search for Emoji")
+        /// Select Reaction
+        internal static let title = L10n.tr("Localizable", "content.reactions.title", fallback: "Select Reaction")
       }
       internal enum ReactionsList {
         /// Liked by
@@ -5564,10 +5554,6 @@ internal enum L10n {
         /// Verification
         internal static let headline = L10n.tr("Localizable", "team.phone_activation_code.headline", fallback: "Verification")
       }
-    }
-    internal enum Time {
-      /// Just now
-      internal static let justNow = L10n.tr("Localizable", "time.just_now", fallback: "Just now")
     }
     internal enum ToolTip {
       internal enum Contacts {

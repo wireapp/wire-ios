@@ -58,11 +58,11 @@ class ReactionToggle: UIControl {
         self.onToggle = onToggle
 
         super.init(frame: .zero)
+
         emojiLabel.text = emoji.value
         counterLabel.text = String(count)
 
         let stackView = UIStackView(arrangedSubviews: [emojiLabel, counterLabel])
-
         stackView.axis = .horizontal
         stackView.distribution = .fill
         stackView.alignment = .center
@@ -84,11 +84,6 @@ class ReactionToggle: UIControl {
 
         updateAppearance()
         addTarget(self, action: #selector(didToggle), for: .touchUpInside)
-
-        setupAccessibility(
-            value: emoji.value,
-            count: count
-        )
     }
 
     required init?(coder: NSCoder) {
@@ -119,16 +114,6 @@ class ReactionToggle: UIControl {
     @objc
     private func didToggle() {
         onToggle?()
-    }
-
-    // MARK: - Accessibility
-
-    func setupAccessibility(
-        value: String,
-        count: UInt
-    ) {
-        self.isAccessibilityElement = true
-        self.accessibilityIdentifier = "value: \(value), count: \(count)"
     }
 
 }

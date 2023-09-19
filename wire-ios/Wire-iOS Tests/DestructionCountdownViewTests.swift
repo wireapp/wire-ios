@@ -19,26 +19,18 @@
 import XCTest
 @testable import Wire
 
-final class DestructionCountdownViewTests: BaseSnapshotTestCase {
-
-    // MARK: - Properties
+final class DestructionCountdownViewTests: ZMSnapshotTestCase {
 
     var sut: DestructionCountdownView!
-
-    // MARK: - setUp
 
     override func setUp() {
         super.setUp()
     }
 
-    // MARK: - tearDown
-
     override func tearDown() {
         sut = nil
         super.tearDown()
     }
-
-    // MARK: - Helper method
 
     func prepareSut(uiInterfaceStyle: UIUserInterfaceStyle = .light) {
         sut = DestructionCountdownView(frame: CGRect(x: 0, y: 0, width: 100, height: 100))
@@ -46,123 +38,83 @@ final class DestructionCountdownViewTests: BaseSnapshotTestCase {
         sut.backgroundColor = UIColor.clear
     }
 
-    // MARK: - Snapshot Tests
-
     func testThatItRendersCorrectlyInInitialState() {
-        // GIVEN
         prepareSut()
 
-        // WHEN
         sut.setNeedsLayout()
         sut.layoutIfNeeded()
-
-        // THEN
-        verify(matching: sut)
+        verify(view: sut)
     }
 
     func testThatItRendersCorrectly_80_Percent_Progress() {
-        // GIVEN
         prepareSut()
 
-        // WHEN
         sut.setProgress(0.8)
         sut.setNeedsLayout()
         sut.layoutIfNeeded()
-
-        // THEN
-        verify(matching: sut)
+        verify(view: sut)
     }
 
     func testThatItRendersCorrectly_60_Percent_Progress() {
-        // GIVEN
         prepareSut()
 
-        // WHEN
         sut.setProgress(0.6)
         sut.setNeedsLayout()
         sut.layoutIfNeeded()
-
-        // THEN
-        verify(matching: sut)
+        verify(view: sut)
     }
 
     func testThatItRendersCorrectly_50_Percent_Progress() {
-        // GIVEN
         prepareSut()
 
-        // WHEN
         sut.setProgress(0.5)
         sut.setNeedsLayout()
         sut.layoutIfNeeded()
-
-        // THEN
-        verify(matching: sut)
+        verify(view: sut)
     }
 
     func testThatItRendersCorrectly_40_Percent_Progress() {
-        // GIVEN
         prepareSut()
 
-        // WHEN
         sut.setProgress(0.4)
         sut.setNeedsLayout()
         sut.layoutIfNeeded()
-
-        // THEN
-        verify(matching: sut)
-    }
+        verify(view: sut)    }
 
     func testThatItRendersCorrectly_20_Percent_Progress() {
-        // GIVEN
         prepareSut()
 
-        // WHEN
         sut.setProgress(0.2)
         sut.setNeedsLayout()
         sut.layoutIfNeeded()
-
-        // THEN
-        verify(matching: sut)
+        verify(view: sut)
     }
 
     func testThatItRendersCorrectly_0_Percent_Progress() {
-        // GIVEN
         prepareSut()
 
-        // WHEN
         sut.setProgress(0)
         sut.setNeedsLayout()
         sut.layoutIfNeeded()
+        verify(view: sut)
+    }
 
-        // THEN
-        verify(matching: sut)
+    func testThatItAnimatesProgress() {
+        prepareSut()
+
+        sut.startAnimating(duration: 5, currentProgress: 0.2)
+        XCTAssertTrue(sut.isAnimatingProgress)
+
+        sut.stopAnimating()
+        XCTAssertFalse(sut.isAnimatingProgress)
     }
 
     func testThatItRendersCorrectly_80_Percent_Progress_in_dark_theme() {
-        // GIVEN
         prepareSut(uiInterfaceStyle: .dark)
 
-        // WHEN
         sut.setProgress(0.8)
         sut.setNeedsLayout()
         sut.layoutIfNeeded()
-
-        // THEN
-        verify(matching: sut)
-    }
-
-    // MARK: - Unit Test
-
-    func testThatItAnimatesProgress() {
-        // GIVEN
-        prepareSut()
-
-        // WHEN
-        sut.startAnimating(duration: 5, currentProgress: 0.2)
-        XCTAssertTrue(sut.isAnimatingProgress)
-        sut.stopAnimating()
-
-        // THEN
-        XCTAssertFalse(sut.isAnimatingProgress)
+        verify(view: sut)
     }
 }

@@ -102,11 +102,11 @@ final class MessageReactionsCell: UIView, ConversationMessageCell {
 
         reactionsView.configure(views: reactionToggles)
     }
-
+    
     func prepareForReuse() {
         reactionsView.prepareForReuse()
     }
-
+    
     override func systemLayoutSizeFitting(
         _ targetSize: CGSize,
         withHorizontalFittingPriority horizontalFittingPriority: UILayoutPriority,

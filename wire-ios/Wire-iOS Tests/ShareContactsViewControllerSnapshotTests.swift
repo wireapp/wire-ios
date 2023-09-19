@@ -16,11 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SnapshotTesting
 import XCTest
 @testable import Wire
+import SnapshotTesting
 
-final class ShareContactsViewControllerSnapshotTests: BaseSnapshotTestCase {
+final class ShareContactsViewControllerSnapshotTests: ZMSnapshotTestCase {
 
     var sut: ShareContactsViewController!
 

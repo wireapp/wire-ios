@@ -20,9 +20,7 @@ import SnapshotTesting
 import XCTest
 @testable import Wire
 
-final class ConversationMessageSenderSnapshotTests: BaseSnapshotTestCase {
-
-    // MARK: - Properties
+final class ConversationMessageSenderSnapshotTests: ZMSnapshotTestCase {
 
     var sut: SenderCellComponent!
     var teamID = UUID()
@@ -30,8 +28,6 @@ final class ConversationMessageSenderSnapshotTests: BaseSnapshotTestCase {
     var oneToOneConversation: SwiftMockConversation!
     var mockUser: MockUserType!
     var mockSelfUser: MockUserType!
-
-    // MARK: - setUp
 
     override func setUp() {
         super.setUp()
@@ -48,8 +44,6 @@ final class ConversationMessageSenderSnapshotTests: BaseSnapshotTestCase {
         sut.backgroundColor = SemanticColors.View.backgroundConversationView
     }
 
-    // MARK: - tearDown
-
     override func tearDown() {
         sut = nil
         groupConversation = nil
@@ -58,8 +52,6 @@ final class ConversationMessageSenderSnapshotTests: BaseSnapshotTestCase {
         mockSelfUser = nil
         super.tearDown()
     }
-
-    // MARK: - Snapshot Tests
 
     // MARK: - 1:1
 
@@ -77,6 +69,7 @@ final class ConversationMessageSenderSnapshotTests: BaseSnapshotTestCase {
     func test_SenderIsExternal_OneOnOneConversation_DarkMode() {
         // GIVEN
         sut.overrideUserInterfaceStyle = .dark
+
         mockUser.teamRole = .partner
 
         // WHEN
@@ -151,6 +144,7 @@ final class ConversationMessageSenderSnapshotTests: BaseSnapshotTestCase {
         // GIVEN
         sut.overrideUserInterfaceStyle = .dark
         mockUser.teamIdentifier = nil
+
         mockUser.isGuestInConversation = true
 
         // WHEN
@@ -176,6 +170,18 @@ final class ConversationMessageSenderSnapshotTests: BaseSnapshotTestCase {
         mockUser.teamRole = .member
         mockUser.isGuestInConversation = false
         mockUser.mockedIsServiceUser = false
+
+        // WHEN
+        sut.configure(with: mockUser)
+
+        // THEN
+        verify(matching: sut)
+    }
+
+    func test_SenderIsWithoutMetadata_GroupConversation() {
+        // GIVEN
+        mockUser.teamRole = .member
+        mockUser.name = nil
 
         // WHEN
         sut.configure(with: mockUser)

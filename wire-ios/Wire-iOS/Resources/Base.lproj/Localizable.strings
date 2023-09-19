@@ -620,8 +620,8 @@
 "content.file.too_big" = "You can send files up to %@";
 
 // Reactions
-"content.reactions.title" = "Select reaction";
-"content.reactions.search" = "Search for emoji";
+"content.reactions.title" = "Select Reaction";
+"content.reactions.search" = "Search for Emoji";
 
 // Someone pinged
 "content.ping.text" = "%@ pinged";
@@ -2017,7 +2017,3 @@ to reset this device and log in again";
 "drawing.colors.pink" = "pink";
 "drawing.colors.chocolate" = "chocolate";
 "drawing.colors.gray" = "gray";
-
-// MARK: - Time
-
-"time.just_now" = "Just now";

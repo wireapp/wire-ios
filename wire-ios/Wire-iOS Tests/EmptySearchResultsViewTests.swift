@@ -19,123 +19,76 @@
 import XCTest
 @testable import Wire
 
-final class EmptySearchResultsViewTests: BaseSnapshotTestCase {
-
-    // MARK: - Properties
-
-    var sut: EmptySearchResultsView!
-
-    override func setUp() {
-        super.setUp()
-        sut = setupEmptySearchResultsView(
-            isSelfUserAdmin: false,
-            isFederationEnabled: false,
-            searchingForServices: false,
-            hasFilter: true
-        )
-    }
-
-    // MARK: - tearDown
-
-    override func tearDown() {
-        sut = nil
-        super.tearDown()
-    }
-
-    // MARK: - Snapshot Tests
+final class EmptySearchResultsViewTests: ZMSnapshotTestCase {
 
     func testNoResultsForUsers() {
+        // given
+        let sut = EmptySearchResultsView(isSelfUserAdmin: false, isFederationEnabled: false)
+        sut.overrideUserInterfaceStyle = .dark
+        sut.updateStatus(searchingForServices: false, hasFilter: true)
+        configureBounds(for: sut)
+
+        // then
         verify(matching: sut)
     }
 
     func testNoResultsForUsers_WhenFederationIsEnabled() {
-        // GIVEN && WHEN
-        sut = setupEmptySearchResultsView(
-            isSelfUserAdmin: false,
-            isFederationEnabled: true,
-            searchingForServices: false,
-            hasFilter: true
-        )
+        // given
+        let sut = EmptySearchResultsView(isSelfUserAdmin: false, isFederationEnabled: true)
+        sut.overrideUserInterfaceStyle = .dark
+        sut.updateStatus(searchingForServices: false, hasFilter: true)
+        configureBounds(for: sut)
 
-        // THEN
+        // then
         verify(matching: sut)
 
     }
 
     func testNoResultsForUsers_WhenEveryoneHaveBeenAdded() {
-        // GIVEN && WHEN
-        sut = setupEmptySearchResultsView(
-            isSelfUserAdmin: false,
-            isFederationEnabled: false,
-            searchingForServices: false,
-            hasFilter: false
-        )
+        // given
+        let sut = EmptySearchResultsView(isSelfUserAdmin: false, isFederationEnabled: false)
+        sut.overrideUserInterfaceStyle = .dark
+        sut.updateStatus(searchingForServices: false, hasFilter: false)
+        configureBounds(for: sut)
 
-        // THEN
+        // then
         verify(matching: sut)
     }
 
     func testNoResultsForServices() {
-        // GIVEN && WHEN
-        sut = setupEmptySearchResultsView(
-            isSelfUserAdmin: false,
-            isFederationEnabled: false,
-            searchingForServices: true,
-            hasFilter: true
-        )
+        // given
+        let sut = EmptySearchResultsView(isSelfUserAdmin: false, isFederationEnabled: false)
+        sut.overrideUserInterfaceStyle = .dark
+        sut.updateStatus(searchingForServices: true, hasFilter: true)
+        configureBounds(for: sut)
 
-        // THEN
+        // then
         verify(matching: sut)
     }
 
     func testServicesNotEnabled() {
-        // GIVEN && WHEN
-        sut = setupEmptySearchResultsView(
-            isSelfUserAdmin: false,
-            isFederationEnabled: false,
-            searchingForServices: true,
-            hasFilter: false
-        )
+        // given
+        let sut = EmptySearchResultsView(isSelfUserAdmin: false, isFederationEnabled: false)
+        sut.overrideUserInterfaceStyle = .dark
+        sut.updateStatus(searchingForServices: true, hasFilter: false)
+        configureBounds(for: sut)
 
-        // THEN
+        // then
         verify(matching: sut)
     }
 
     func testServicesNotEnabled_WhenAdmin() {
-        // GIVEN && WHEN
-        sut = setupEmptySearchResultsView(
-            isSelfUserAdmin: true,
-            isFederationEnabled: false,
-            searchingForServices: true,
-            hasFilter: false
-        )
+        // given
+        let sut = EmptySearchResultsView(isSelfUserAdmin: true, isFederationEnabled: false)
+        sut.overrideUserInterfaceStyle = .dark
+        sut.updateStatus(searchingForServices: true, hasFilter: false)
+        configureBounds(for: sut)
 
-        // THEN
+        // then
         verify(matching: sut)
     }
 
     // MARK: - Helpers
-
-    func setupEmptySearchResultsView(
-        isSelfUserAdmin: Bool,
-        isFederationEnabled: Bool,
-        searchingForServices: Bool,
-        hasFilter: Bool
-    ) -> EmptySearchResultsView {
-
-        let sut = EmptySearchResultsView(
-            isSelfUserAdmin: isSelfUserAdmin,
-            isFederationEnabled: isFederationEnabled
-        )
-        sut.overrideUserInterfaceStyle = .dark
-        sut.updateStatus(
-            searchingForServices: searchingForServices,
-            hasFilter: hasFilter
-        )
-        configureBounds(for: sut)
-
-        return sut
-    }
 
     func configureBounds(for view: UIView) {
         view.bounds.size = view.systemLayoutSizeFitting(
@@ -143,7 +96,7 @@ final class EmptySearchResultsViewTests: BaseSnapshotTestCase {
             withHorizontalFittingPriority: .required,
             verticalFittingPriority: .fittingSizeLevel
         )
-        view.backgroundColor = SemanticColors.View.backgroundDefault
+        view.backgroundColor = .black
     }
 
 }

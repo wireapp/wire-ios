@@ -16,11 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SnapshotTesting
 import XCTest
 @testable import Wire
 
-final class ThumbnailCreationTests: XCTestCase {
+final class ThumbnailCreationTests: ZMSnapshotTestCase {
 
     func testThatItCreatesThumbnailForSquareImage() {
         // Given
@@ -36,7 +35,7 @@ final class ThumbnailCreationTests: XCTestCase {
         // Then
         XCTAssertEqual(thumbnail.size.width, 100, accuracy: 1)
         XCTAssertEqual(thumbnail.size.height, 100, accuracy: 1)
-        verify(matching: thumbnail.wrappedInImageView())
+        verify(view: thumbnail.wrappedInImageView())
     }
 
     func testThatItCreatesThumbnailForVerticalPanorama() {
@@ -53,7 +52,7 @@ final class ThumbnailCreationTests: XCTestCase {
 
         // Then
         XCTAssertEqual(thumbnail.size.width, 100, accuracy: 1)
-        verify(matching: thumbnail.wrappedInImageView())
+        verify(view: thumbnail.wrappedInImageView())
     }
 
     func testThatItCreatesThumbnailForHorizontalPanorama() {
@@ -70,7 +69,7 @@ final class ThumbnailCreationTests: XCTestCase {
 
         // Then
         XCTAssertEqual(thumbnail.size.height, 100, accuracy: 1)
-        verify(matching: thumbnail.wrappedInImageView())
+        verify(view: thumbnail.wrappedInImageView())
     }
 
     func testThatItReturnsEarlyForInvalidImage() {

@@ -21,13 +21,13 @@ import SnapshotTesting
 import WireCommonComponents
 @testable import Wire
 
-final class AccentColorPickerSnapshotTests: BaseSnapshotTestCase {
+final class AccentColorPickerSnapshotTests: ZMSnapshotTestCase {
 
     func testItIsLaidOutCorrectly() {
-        // GIVEN
+        // Given
         let sut = AccentColorPickerController()
 
-        // THEN
+        // Then
         verify(matching: sut)
     }
 

@@ -620,7 +620,7 @@
 "content.file.too_big" = "Sie können Dateien bis zu %@ senden";
 
 // Reactions
-"content.reactions.title" = "Reaktion auswählen";
+"content.reactions.title" = "Wähle eine Reaktion aus";
 "content.reactions.search" = "Nach Emoji suchen";
 
 // Someone pinged
@@ -2016,7 +2016,3 @@
 "drawing.colors.pink" = "pink";
 "drawing.colors.chocolate" = "dunkelbraun";
 "drawing.colors.gray" = "grau";
-
-// MARK: - Time
-
-"time.just_now" = "Gerade eben";

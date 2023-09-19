@@ -16,18 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SnapshotTesting
-import WireUtilities
 import XCTest
+import WireUtilities
 @testable import Wire
 
-final class SecurityLevelViewTests: BaseSnapshotTestCase {
-
-    // MARK: - Properties
+final class SecurityLevelViewTests: ZMSnapshotTestCase {
 
     private var sut: SecurityLevelView!
-
-    // MARK: - setUp
 
     override func setUp() {
         super.setUp()
@@ -37,14 +32,10 @@ final class SecurityLevelViewTests: BaseSnapshotTestCase {
         sut.frame = CGRect(x: 0, y: 0, width: 375, height: 24)
     }
 
-    // MARK: - tearDown
-
     override func tearDown() {
         sut = nil
         super.tearDown()
     }
-
-    // MARK: - SnapshotTests
 
     func testThatItRendersWithNotClassified() {
         sut.configure(with: .notClassified)

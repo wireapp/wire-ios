@@ -20,8 +20,6 @@ import XCTest
 @testable import Wire
 import WireLinkPreview
 
-// MARK: - UIView extension
-
 extension UIView {
     fileprivate func prepareForSnapshot(_ size: CGSize = CGSize(width: 320, height: 216)) -> UIView {
         let container = ReplyRoundCornersView(containedView: self)
@@ -35,24 +33,15 @@ extension UIView {
     }
 }
 
-// MARK: - MessageReplyPreviewViewTests
-
-final class MessageReplyPreviewViewTests: BaseSnapshotTestCase {
-
-    // MARK: - setUp
-
+final class MessageReplyPreviewViewTests: ZMSnapshotTestCase {
     override func setUp() {
         super.setUp()
     }
-
-    // MARK: - tearDown
 
     override func tearDown() {
         invalidateStyle()
         super.tearDown()
     }
-
-    // MARK: - Helper methods
 
     func invalidateStyle() {
         NSAttributedString.invalidateMarkdownStyle()
@@ -76,8 +65,6 @@ final class MessageReplyPreviewViewTests: BaseSnapshotTestCase {
         verifyViewInDarkScheme(createSut: { sut
         }, file: file, testName: testName, line: line)
     }
-
-    // MARK: - Snapshot Tests
 
     func testThatItRendersTextMessagePreview() {
         let message = MockMessageFactory.textMessage(withText: "Lorem Ipsum Dolor Sit Amed.")
@@ -103,8 +90,6 @@ final class MessageReplyPreviewViewTests: BaseSnapshotTestCase {
         verifyInDarkMode(message: message)
     }
 
-    // MARK: - Helper method
-
     private func mentionMessage() -> MockMessage {
         let message = MockMessageFactory.messageTemplate()
 
@@ -117,8 +102,6 @@ final class MessageReplyPreviewViewTests: BaseSnapshotTestCase {
 
         return message
     }
-
-    // MARK: - Snapshot Tests
 
     func testThatItRendersMention() {
 		verifyInLightMode(message: mentionMessage())
@@ -207,8 +190,6 @@ final class MessageReplyPreviewViewTests: BaseSnapshotTestCase {
 
         verify(matching: previewView.prepareForSnapshot())
     }
-
-    // MARK: - Unit Test
 
     func testDeallocation() {
         let message = MockMessageFactory.textMessage(withText: "Lorem Ipsum Dolor Sit Amed.")

@@ -67,7 +67,7 @@ final class NetworkStatusViewTests: XCTestCase {
     }
 }
 
-final class NetworkStatusViewSnapShotTests: BaseSnapshotTestCase {
+final class NetworkStatusViewSnapShotTests: ZMSnapshotTestCase {
 
     var sut: NetworkStatusView!
     var mockContainer: MockContainer!
@@ -92,7 +92,7 @@ final class NetworkStatusViewSnapShotTests: BaseSnapshotTestCase {
         // GIVEN
         sut.state = .offlineExpanded
         // WHEN && THEN
-        verifyInAllPhoneWidths(matching: sut)
+        verifyInAllPhoneWidths(view: sut)
     }
 
     func testOnlineSynchronizing() {
@@ -100,7 +100,7 @@ final class NetworkStatusViewSnapShotTests: BaseSnapshotTestCase {
         sut.state = .onlineSynchronizing
         sut.layer.speed = 0 // freeze animations for deterministic tests
         // WHEN && THEN
-        verifyInAllPhoneWidths(matching: sut)
+        verifyInAllPhoneWidths(view: sut)
     }
 
 }

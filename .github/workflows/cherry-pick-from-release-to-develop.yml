@@ -31,6 +31,7 @@ jobs:
         run: |
             git fetch origin develop:develop
             git checkout -b ${{ steps.extract.outputs.newBranchName }} develop
+            git submodule update --init --recursive || true
             # Cherry-picking the last commit on the base branch
             git cherry-pick -x ${{ github.event.pull_request.merge_commit_sha }} --strategy-option theirs || true
             git add .

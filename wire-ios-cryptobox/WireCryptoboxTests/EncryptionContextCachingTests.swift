@@ -27,7 +27,7 @@ class DebugEncryptor: Encryptor {
         var result = plainText
         result.append(recipientIdentifier.rawValue.data(using: .utf8)!)
         result.append("\(index)".data(using: .utf8)!)
-        index += 1
+        index = index + 1
         return result
     }
 }

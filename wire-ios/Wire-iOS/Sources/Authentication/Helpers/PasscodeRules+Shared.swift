@@ -18,8 +18,11 @@
 
 import Foundation
 import WireUtilities
+import FormatterKit
 
 extension PasswordRuleSet {
+
+    private static let arrayFormatter = TTTArrayFormatter()
 
     /// The shared rule set.
     static let shared: PasswordRuleSet = {
@@ -55,8 +58,7 @@ extension PasswordRuleSet {
             }
         }
 
-        let formattedRulesList = ListFormatter.localizedString(byJoining: localizedRules)
-
+        let formattedRulesList = PasswordRuleSet.arrayFormatter.string(from: localizedRules)!
         return "registration.password.rules.with_requirements".localized(args: minLengthRule, formattedRulesList)
     }()
 

@@ -19,14 +19,9 @@
 import XCTest
 @testable import Wire
 
-final class ConversationLinkAttachmentMessageCellTests: BaseSnapshotTestCase {
-
-    // MARK: - Properties
+final class ConversationLinkAttachmentMessageCellTests: ZMSnapshotTestCase {
 
     var mockThumbnail: MockImageResource!
-    var sut: ConversationLinkAttachmentCell!
-
-    // MARK: - setUp
 
     override func setUp() {
         super.setUp()
@@ -35,26 +30,11 @@ final class ConversationLinkAttachmentMessageCellTests: BaseSnapshotTestCase {
         mockThumbnail.imageData = imageData.pngData()!
     }
 
-    // MARK: - tearDown
-
     override func tearDown() {
         MediaAssetCache.defaultImageCache.cache.removeAllObjects()
-        sut = nil
         mockThumbnail = nil
         super.tearDown()
     }
-
-    // MARK: - Helper method
-
-    func setUpCell(configuration: ConversationLinkAttachmentCell.Configuration) -> ConversationLinkAttachmentCell {
-        let cell = ConversationLinkAttachmentCell()
-        cell.configure(with: configuration, animated: false)
-        cell.frame.size = cell.systemLayoutSizeFitting(CGSize(width: 414, height: 0))
-
-        return cell
-    }
-
-    // MARK: - Snapshot Tests
 
     func testThatItRendersYouTubeLinkAttachment() {
         // GIVEN
@@ -66,10 +46,12 @@ final class ConversationLinkAttachmentMessageCellTests: BaseSnapshotTestCase {
         let configuration = ConversationLinkAttachmentCell.Configuration(attachment: attachment, thumbnailResource: mockThumbnail)
 
         // WHEN
-        sut = setUpCell(configuration: configuration)
+        let cell = ConversationLinkAttachmentCell()
+        cell.configure(with: configuration, animated: false)
+        cell.frame.size = cell.systemLayoutSizeFitting(CGSize(width: 414, height: 0))
 
         // THEN
-        verify(matching: sut)
+        verify(matching: cell)
     }
 
     func testThatItRendersSoundCloudSongAttachment() {
@@ -82,10 +64,12 @@ final class ConversationLinkAttachmentMessageCellTests: BaseSnapshotTestCase {
         let configuration = ConversationLinkAttachmentCell.Configuration(attachment: attachment, thumbnailResource: mockThumbnail)
 
         // WHEN
-        sut = setUpCell(configuration: configuration)
+        let cell = ConversationLinkAttachmentCell()
+        cell.configure(with: configuration, animated: false)
+        cell.frame.size = cell.systemLayoutSizeFitting(CGSize(width: 414, height: 0))
 
         // THEN
-        verify(matching: sut)
+        verify(matching: cell)
     }
 
     func testThatItRendersSoundCloudPlaylistAttachment() {
@@ -98,10 +82,12 @@ final class ConversationLinkAttachmentMessageCellTests: BaseSnapshotTestCase {
         let configuration = ConversationLinkAttachmentCell.Configuration(attachment: attachment, thumbnailResource: mockThumbnail)
 
         // WHEN
-        sut = setUpCell(configuration: configuration)
+        let cell = ConversationLinkAttachmentCell()
+        cell.configure(with: configuration, animated: false)
+        cell.frame.size = cell.systemLayoutSizeFitting(CGSize(width: 414, height: 0))
 
         // THEN
-        verify(matching: sut)
+        verify(matching: cell)
     }
 
 }

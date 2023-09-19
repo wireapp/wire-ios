@@ -126,8 +126,7 @@ final class DeveloperToolsViewModel: ObservableObject {
             header: "App info",
             items: [
                 .text(TextItem(title: "App version", value: appVersion)),
-                .text(TextItem(title: "Build number", value: buildNumber)),
-                .text(TextItem(title: "Bundle Identifier", value: bundleIdentifier))
+                .text(TextItem(title: "Build number", value: buildNumber))
             ]
         ))
 
@@ -268,10 +267,6 @@ final class DeveloperToolsViewModel: ObservableObject {
 
     private var appVersion: String {
         return Bundle.main.shortVersionString ?? "Unknown"
-    }
-
-    private var bundleIdentifier: String {
-        return Bundle.main.bundleIdentifier ?? "Unknown"
     }
 
     private var buildNumber: String {

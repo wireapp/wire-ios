@@ -16,10 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
-import SnapshotTesting
 @testable import Wire
 
-class AudioButtonOverlayTests: BaseSnapshotTestCase {
+class AudioButtonOverlayTests: ZMSnapshotTestCase {
 
     var sut: AudioButtonOverlay!
     var buttonTapHistory: [AudioButtonOverlay.AudioButtonOverlayButtonType]!
@@ -39,35 +38,35 @@ class AudioButtonOverlayTests: BaseSnapshotTestCase {
 
     func testThatItRendersTheButtonOverlayCorrectInitially_Recording() {
         sut.setOverlayState(.default)
-        verify(matching: sut)
+        verify(view: sut)
     }
 
     func testThatItRendersTheButtonOverlayCorrectInitially_FinishedRecording() {
         sut.recordingState = .finishedRecording
         sut.setOverlayState(.default)
-        verify(matching: sut)
+        verify(view: sut)
     }
 
     func testThatItRendersTheButtonOverlayCorrectInitially_FinishedRecording_PlayingAudio() {
         sut.recordingState = .finishedRecording
         sut.playingState = .playing
         sut.setOverlayState(.default)
-        verify(matching: sut)
+        verify(view: sut)
     }
 
     func testThatItChangesItsSize_Expanded() {
         sut.setOverlayState(.expanded(0))
-        verify(matching: sut)
+        verify(view: sut)
     }
 
     func testThatItChangesItsSize_Expanded_Half() {
         sut.setOverlayState(.expanded(0.5))
-        verify(matching: sut)
+        verify(view: sut)
     }
 
     func testThatItChangesItsSize_Expanded_Full() {
         sut.setOverlayState(.expanded(1))
-        verify(matching: sut)
+        verify(view: sut)
     }
 
     func testThatItCallsTheButtonHandlerWithTheCorrectButtonType() {

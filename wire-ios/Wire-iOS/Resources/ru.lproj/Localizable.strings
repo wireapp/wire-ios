@@ -2016,7 +2016,3 @@
 "drawing.colors.pink" = "розовый";
 "drawing.colors.chocolate" = "шоколад";
 "drawing.colors.gray" = "серый";
-
-// MARK: - Time
-
-"time.just_now" = "Только что";

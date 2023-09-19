@@ -41,7 +41,7 @@ final class MockTeam: TeamType {
     }
 }
 
-final class AddParticipantsViewControllerSnapshotTests: BaseSnapshotTestCase, CoreDataFixtureTestHelper {
+final class AddParticipantsViewControllerSnapshotTests: ZMSnapshotTestCase, CoreDataFixtureTestHelper {
     var coreDataFixture: CoreDataFixture!
 
     var sut: AddParticipantsViewController!

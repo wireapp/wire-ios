@@ -70,7 +70,7 @@ final class RecentlyUsedEmojiPeristenceCoordinator {
     private static func loadFromDisk() -> RecentlyUsedEmojiSection? {
         guard let emojiUrl = url,
               let stringValues = NSArray(contentsOf: emojiUrl) as? [String] else { return nil }
-
+        
         let emoji = stringValues.map { Emoji(value: $0) }
         return RecentlyUsedEmojiSection(capacity: 15, elements: emoji)
     }

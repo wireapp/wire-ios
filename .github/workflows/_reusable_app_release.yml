@@ -46,50 +46,8 @@ permissions:
   checks: write
 
 jobs:
-  changelog:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: 'Checkout Git repository with history for all branches and tags'
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: 'Calculate diff between HEAD and latest tag'
-        run: echo "HEAD_TAG_DIFF=$(git diff HEAD $(git tag | grep -E '[a,A][p,P]+[s,S][t,T][o,O][r,R][e,E]\/[0-9]+\.[0-9]+.*' | tail -n 1) | wc -l | xargs)" >> "$GITHUB_ENV"
-     
-      - name: 'Set current Git tag to HEAD'
-        if: "${{ env.HEAD_TAG_DIFF != '0' }}"
-        run: echo "CURRENT_TAG=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
-      - name: 'Set previous Git tag to latest tag if comparing to head'
-        if: "${{ env.HEAD_TAG_DIFF != '0' }}"
-        run: echo "PREVIOUS_TAG=$(git tag | grep -E '[a,A][p,P]+[s,S][t,T][o,O][r,R][e,E]\/[0-9]+\.[0-9]+.*' | tail -n 1)" >> "$GITHUB_ENV"
-
-      - name: 'Set current Git tag to latest tagged commit'
-        if: "${{ env.HEAD_TAG_DIFF == '0' }}"
-        run: echo "CURRENT_TAG=$(git tag | grep -E '[a,A][p,P]+[s,S][t,T][o,O][r,R][e,E]\/[0-9]+\.[0-9]+.*' | tail -n 1)" >> "$GITHUB_ENV"
-      - name: 'Set previous Git tag previous tag because head is latest tag'
-        if: "${{ env.HEAD_TAG_DIFF == '0' }}"
-        run: echo "PREVIOUS_TAG=$(git tag | grep -E '[a,A][p,P]+[s,S][t,T][o,O][r,R][e,E]\/[0-9]+\.[0-9]+.*' | tail -n 2 | head -n 1)" >> "$GITHUB_ENV"
-
-      - name: 'Print environment variables'
-        run: |
-          echo -e "PREVIOUS_TAG = $PREVIOUS_TAG"
-          echo -e "CURRENT_TAG = $CURRENT_TAG"
-          echo -e "Node.js version = $(node --version)"
-
-      - name: 'Generate changelog'
-        run: |
-          echo "{}" > ./package.json
-          npx generate-changelog@1.8.0 -t "$PREVIOUS_TAG...$CURRENT_TAG"
-      - name: 'Upload changelog'
-        uses: actions/upload-artifact@v2
-        with:
-          name: CHANGELOG.md
-          path: ./CHANGELOG.md
-
   build_and_release:
     runs-on: ghcr.io/cirruslabs/macos-ventura-xcode:14.3.1
-    needs: changelog
     env:
       KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
       MATCH_KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
@@ -118,10 +76,6 @@ jobs:
         with:
           token: ${{ secrets.SUBMODULE_PAT }}
           submodules: recursive
-      - name: Download changelog
-        uses: actions/download-artifact@v3
-        with:
-          name: CHANGELOG.md
       - name: Restore Carthage Cache
         uses: actions/cache@v3
         id: cache-carthage

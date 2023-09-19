@@ -15,11 +15,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SnapshotTesting
 import XCTest
 @testable import Wire
+import SnapshotTesting
 
-final class TokenFieldTests: BaseSnapshotTestCase {
+final class TokenFieldTests: ZMSnapshotTestCase {
     var sut: TokenField!
 
     override func setUp() {

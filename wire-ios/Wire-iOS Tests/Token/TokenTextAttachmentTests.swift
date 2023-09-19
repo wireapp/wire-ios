@@ -15,11 +15,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SnapshotTesting
 import XCTest
 @testable import Wire
+import SnapshotTesting
 
-final class TokenTextAttachmentTests: BaseSnapshotTestCase {
+final class TokenTextAttachmentTests: ZMSnapshotTestCase {
     var sut: TokenTextAttachment!
 
     override func setUp() {
@@ -33,7 +33,6 @@ final class TokenTextAttachmentTests: BaseSnapshotTestCase {
 
     override func tearDown() {
         sut = nil
-        super.tearDown()
     }
 
     func testTokenAttachmentImage() {

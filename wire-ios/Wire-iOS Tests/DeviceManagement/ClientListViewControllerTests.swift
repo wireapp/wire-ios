@@ -19,7 +19,7 @@
 import XCTest
 @testable import Wire
 
-final class ClientListViewControllerTests: BaseSnapshotTestCase, CoreDataFixtureTestHelper {
+final class ClientListViewControllerTests: ZMSnapshotTestCase, CoreDataFixtureTestHelper {
     var coreDataFixture: CoreDataFixture!
 
     var sut: ClientListViewController!
@@ -53,9 +53,9 @@ final class ClientListViewControllerTests: BaseSnapshotTestCase, CoreDataFixture
     /// Prepare SUT for snapshot tests
     ///
     /// - Parameters:
-    /// - userInterfaceStyle: the color for UIUserInterfaceStyle
+    /// - mode: the color for UIUserInterfaceStyle
     /// - numberOfClients: number of clients other than self device. Default: display 3 cells, to show footer in same screen
-    func prepareSut(userInterfaceStyle: UIUserInterfaceStyle = .light, numberOfClients: Int = 3) {
+    func prepareSut(mode: UIUserInterfaceStyle = .light, numberOfClients: Int = 3) {
         var clientsList: [UserClient]?
 
         for _ in 0 ..< numberOfClients {
@@ -72,7 +72,7 @@ final class ClientListViewControllerTests: BaseSnapshotTestCase, CoreDataFixture
                                        showTemporary: true)
 
         sut.isLoadingViewVisible = false
-        sut.overrideUserInterfaceStyle = userInterfaceStyle
+        sut.overrideUserInterfaceStyle = mode
     }
 
     func testThatObserverIsNonRetained() {
@@ -94,7 +94,7 @@ final class ClientListViewControllerTests: BaseSnapshotTestCase, CoreDataFixture
     }
 
     func testForDarkTheme() {
-        prepareSut(userInterfaceStyle: .dark)
+        prepareSut(mode: .dark)
         verify(matching: sut)
     }
 

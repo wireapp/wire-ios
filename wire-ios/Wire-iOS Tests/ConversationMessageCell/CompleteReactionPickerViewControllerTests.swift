@@ -65,6 +65,7 @@ final class CompleteReactionPickerViewControllerTests: BaseSnapshotTestCase {
         verify(matching: sut)
     }
 
+
     func testReactionPicker_withRecentReactionsSection() {
         // GIVEN
         let emojis = [Emoji(value: "😂"), Emoji(value: "🆎"), Emoji(value: "🫥"), Emoji(value: "🐞"), .monkey]
@@ -75,6 +76,16 @@ final class CompleteReactionPickerViewControllerTests: BaseSnapshotTestCase {
         sut = setUpCompleteReactionPickerViewController(selectedReactions: [.monkey])
 
         // // THEN
+        verify(matching: sut)
+    }
+
+    func testReactionPicker_withSearchQuery() {
+        // GIVEN & WHEN
+        sut = setUpCompleteReactionPickerViewController(selectedReactions: [.videoGameController])
+        sut.searchBar(UISearchBar(), textDidChange: "su")
+        scrollToSection(1)
+
+        // THEN
         verify(matching: sut)
     }
 

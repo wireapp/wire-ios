@@ -19,80 +19,59 @@
 import XCTest
 @testable import Wire
 
-class ProfileFooterViewTests: BaseSnapshotTestCase {
-
-    // MARK: - Properties
-
-    var sut: ProfileFooterView!
-
-    // MARK: - setUp
+class ProfileFooterViewTests: ZMSnapshotTestCase {
 
     override func setUp() {
         super.setUp()
-        sut = ProfileFooterView()
     }
-
-    // MARK: - tearDown
-
-    override func tearDown() {
-        sut = nil
-        super.tearDown()
-    }
-
-    // MARK: - Unit Test
 
     func testThatItOnlyAllowsEligibleActionsAsKey() {
+        let view = ProfileFooterView()
 
         // WHEN: the first action is eligible
-        sut.configure(with: [.openOneToOne, .archive])
-        XCTAssertEqual(sut.leftAction, .openOneToOne)
-        XCTAssertEqual(sut.rightActions, [.archive])
+        view.configure(with: [.openOneToOne, .archive])
+        XCTAssertEqual(view.leftAction, .openOneToOne)
+        XCTAssertEqual(view.rightActions, [.archive])
 
         // WHEN: the first action is not eligible
-        sut.configure(with: [.archive, .openOneToOne])
-        XCTAssertEqual(sut.leftAction, nil)
-        XCTAssertEqual(sut.rightActions, [.archive, .openOneToOne])
+        view.configure(with: [.archive, .openOneToOne])
+        XCTAssertEqual(view.leftAction, nil)
+        XCTAssertEqual(view.rightActions, [.archive, .openOneToOne])
 
         // WHEN: the only action is eligible
-        sut.configure(with: [.openOneToOne])
-        XCTAssertEqual(sut.leftAction, .openOneToOne)
-        XCTAssertEqual(sut.rightActions, [])
+        view.configure(with: [.openOneToOne])
+        XCTAssertEqual(view.leftAction, .openOneToOne)
+        XCTAssertEqual(view.rightActions, [])
 
         // WHEN: the only action is not eligible
-        sut.configure(with: [.archive])
-        XCTAssertEqual(sut.leftAction, nil)
-        XCTAssertEqual(sut.rightActions, [.archive])
+        view.configure(with: [.archive])
+        XCTAssertEqual(view.leftAction, nil)
+        XCTAssertEqual(view.rightActions, [.archive])
     }
 
-    // MARK: - Snapshot Tests
-
     func testWithOneAction() {
-        sut = setupProfileFooterView(configureProfileActions: [.openOneToOne])
-        verify(matching: sut)
+        let view = ProfileFooterView()
+        view.overrideUserInterfaceStyle = .light
+        view.configure(with: [.openOneToOne])
+        view.frame.size = view.systemLayoutSizeFitting(CGSize(width: 375, height: 0))
+        verify(view: view)
     }
 
     func testWithMultipleActions() {
-        sut = setupProfileFooterView(configureProfileActions: [.openOneToOne, .archive])
-        verify(matching: sut)
+        let view = ProfileFooterView()
+        view.overrideUserInterfaceStyle = .light
+        view.configure(with: [.openOneToOne, .archive])
+        view.frame.size = view.systemLayoutSizeFitting(CGSize(width: 375, height: 0))
+        verify(view: view)
     }
 
     func testThatItUpdates() {
-        sut = setupProfileFooterView(configureProfileActions: [.openOneToOne, .archive, .createGroup])
-        verify(matching: sut)
-    }
-
-    // MARK: - Helper Method
-
-    func setupProfileFooterView
-    (
-        userInterfaceStyle: UIUserInterfaceStyle = .light,
-        configureProfileActions: [ProfileAction]
-    ) -> ProfileFooterView {
         let view = ProfileFooterView()
-        view.overrideUserInterfaceStyle = userInterfaceStyle
+        view.overrideUserInterfaceStyle = .light
+        view.configure(with: [.openOneToOne, .archive])
+        view.configure(with: [.createGroup])
         view.frame.size = view.systemLayoutSizeFitting(CGSize(width: 375, height: 0))
-
-        return view
+        verify(view: view)
     }
 
 }

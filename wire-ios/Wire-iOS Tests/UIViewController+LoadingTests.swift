@@ -16,25 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SnapshotTesting
 import XCTest
 @testable import Wire
-
-// MARK: - MockLoadingViewController
+import SnapshotTesting
 
 final class MockLoadingViewController: SpinnerCapableViewController {
     var dismissSpinner: SpinnerCompletion?
 }
 
-// MARK: - LoadingViewControllerTests
-
-final class LoadingViewControllerTests: BaseSnapshotTestCase {
-
-    // MARK: - Properties
-
+final class LoadingViewControllerTests: ZMSnapshotTestCase {
     var sut: MockLoadingViewController!
-
-    // MARK: - setUp
 
     override func setUp() {
         super.setUp()
@@ -42,39 +33,39 @@ final class LoadingViewControllerTests: BaseSnapshotTestCase {
         sut.view.backgroundColor = .white
     }
 
-    // MARK: - tearDown
-
     override func tearDown() {
         sut = nil
         super.tearDown()
     }
 
-    // MARK: - Snapshot Tests
-
     func testThatItShowsLoadingIndicator() {
-        // GIVEN && WHEN
+        // Given
+
+        // when
         sut.isLoadingViewVisible = true
 
-        // THEN
+        // then
         XCTAssert(sut.isLoadingViewVisible)
         verifyInAllDeviceSizes(matching: sut)
     }
 
     func testThatItDismissesLoadingIndicator() {
-        // GIVEN && WHEN
+        // given & when
         sut.isLoadingViewVisible = true
         sut.isLoadingViewVisible = false
 
-        // THEN
+        // then
         XCTAssertFalse(sut.isLoadingViewVisible)
         verify(matching: sut)
     }
 
     func testThatItShowsLoadingIndicatorWithSubtitle() {
-        // GIVEN && WHEN
+        // Given
+
+        // when
         sut.showLoadingView(title: "RESTORING…")
 
-        // THEN
+        // then
         verifyInAllDeviceSizes(matching: sut)
     }
 

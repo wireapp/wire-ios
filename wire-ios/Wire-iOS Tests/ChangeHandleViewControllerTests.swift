@@ -24,6 +24,7 @@ class ChangeHandleViewControllerTests: ZMSnapshotTestCase {
 
     override func setUp() {
         super.setUp()
+
         accentColor = .strongBlue
         let mockSelfUser = MockUserType.createSelfUser(name: "selfUser")
         mockSelfUser.handle = nil

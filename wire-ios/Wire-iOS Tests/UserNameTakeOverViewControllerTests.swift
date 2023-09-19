@@ -19,25 +19,20 @@
 import XCTest
 @testable import Wire
 
-class UserNameTakeOverViewControllerTests: BaseSnapshotTestCase {
-
-    var sut: UserNameTakeOverViewController!
+class UserNameTakeOverViewControllerTests: ZMSnapshotTestCase {
 
     override func setUp() {
         super.setUp()
+        snapshotBackgroundColor = .darkGray
         accentColor = .vividRed
     }
 
-    override func tearDown() {
-        sut = nil
-        super.tearDown()
-    }
-
     func testThatItRendersCorrectInitally() {
-        sut = UserNameTakeOverViewController(suggestedHandle: "joseluis4839", name: "Jose Luis")
-        sut.view.backgroundColor = SemanticColors.View.backgroundDefault
+        let sut = UserNameTakeOverViewController(suggestedHandle: "joseluis4839", name: "Jose Luis")
+        sut.overrideUserInterfaceStyle = .light
+        sut.setNeedsStatusBarAppearanceUpdate()
 
-        verify(matching: sut.view)
+        verifyInIPhoneSize(view: sut.view, size: XCTestCase.DeviceSizeIPhone6)
     }
 
 }

@@ -20,13 +20,17 @@ import SnapshotTesting
 import XCTest
 @testable import Wire
 
-final class ConversationListHeaderViewSnapshotTests: BaseSnapshotTestCase {
+final class ConversationListHeaderViewSnapshotTests: ZMSnapshotTestCase {
 
     var sut: ConversationListHeaderView!
 
     override func setUp() {
         super.setUp()
-        sut = setupConversationListHeaderView()
+
+        sut = ConversationListHeaderView(frame: CGRect(origin: .zero, size: CGSize(width: 320, height: CGFloat.ConversationListSectionHeader.height)))
+
+        sut.title = "THISISAVERYVERYVERYVERYVERYVERYVERYVERYLONGFOLDERNAME"
+
     }
 
     override func tearDown() {
@@ -39,30 +43,18 @@ final class ConversationListHeaderViewSnapshotTests: BaseSnapshotTestCase {
     }
 
     func testForCollapsed() {
-        sut = setupConversationListHeaderView(isCollapsed: true)
+        sut.collapsed = true
+
         verify(matching: sut)
     }
 
     func testForBadgeNumberHitLimit() {
-        sut = setupConversationListHeaderView(folderBadge: 999)
+        sut.folderBadge = 999
         verify(matching: sut)
     }
 
     func testForBadgeNumberEquals10() {
-        sut = setupConversationListHeaderView(folderBadge: 10)
+        sut.folderBadge = 10
         verify(matching: sut)
-    }
-
-
-    private func setupConversationListHeaderView (
-        folderBadge: Int = 0,
-        isCollapsed: Bool = false
-    ) -> ConversationListHeaderView {
-        let view = ConversationListHeaderView(frame: CGRect(origin: .zero, size: CGSize(width: 320, height: CGFloat.ConversationListSectionHeader.height)))
-        view.title = "THISISAVERYVERYVERYVERYVERYVERYVERYVERYLONGFOLDERNAME"
-        view.folderBadge = folderBadge
-        view.collapsed = isCollapsed
-
-        return view
     }
 }

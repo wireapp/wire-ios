@@ -19,46 +19,25 @@ import XCTest
 import SnapshotTesting
 @testable import Wire
 
-final class SettingsTechnicalReportViewControllerSnapshotTests: BaseSnapshotTestCase {
-
-    // MARK: - Properties
-
+final class SettingsTechnicalReportViewControllerSnapshotTests: ZMSnapshotTestCase {
     var sut: SettingsTechnicalReportViewController!
-
-    // MARK: - setUp
 
     override func setUp() {
         super.setUp()
         accentColor = .strongBlue
+        sut = SettingsTechnicalReportViewController()
+        sut.overrideUserInterfaceStyle = .dark
     }
-
-    // MARK: - tearDown
 
     override func tearDown() {
         sut = nil
         super.tearDown()
     }
 
-    // MARK: - Snapshot Test
-
     func testForInitState() {
-        verify(matching: setupTechnicalViewController())
+        let naviViewController = sut.wrapInNavigationController(navigationControllerClass: SettingsStyleNavigationController.self)
+        naviViewController.view.backgroundColor = .black
+        naviViewController.overrideUserInterfaceStyle = .dark
+        verify(matching: naviViewController)
     }
-
-    // MARK: - Helper method
-
-    func setupTechnicalViewController() -> UINavigationController {
-        sut = SettingsTechnicalReportViewController()
-
-        let navigationViewController = sut.wrapInNavigationController(
-            navigationControllerClass: SettingsStyleNavigationController.self
-        )
-
-        navigationViewController.view.backgroundColor = .black
-        sut.overrideUserInterfaceStyle = .dark
-        navigationViewController.overrideUserInterfaceStyle = .dark
-
-       return navigationViewController
-    }
-
 }

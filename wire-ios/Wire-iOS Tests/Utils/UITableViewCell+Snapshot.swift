@@ -22,12 +22,11 @@ import UIKit
 enum PhoneWidth: CGFloat {
     case iPhone4 = 320
     case iPhone4_7 = 375
-    case iPhone14 = 390
 }
 
 extension UITableViewCell {
 
-    func prepareForSnapshots(width: PhoneWidth = .iPhone14) -> UITableView {
+    func prepareForSnapshots(width: PhoneWidth = .iPhone4_7) -> UITableView {
 
         bounds.size = systemLayoutSizeFitting(
             CGSize(width: width.rawValue, height: 0),

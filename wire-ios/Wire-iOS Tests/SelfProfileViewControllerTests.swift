@@ -19,15 +19,10 @@
 import XCTest
 @testable import Wire
 
-final class SelfProfileViewControllerTests: BaseSnapshotTestCase, CoreDataFixtureTestHelper {
-
-    // MARK: - Properties
-
+final class SelfProfileViewControllerTests: ZMSnapshotTestCase, CoreDataFixtureTestHelper {
     var coreDataFixture: CoreDataFixture!
     var sut: SelfProfileViewController!
     var selfUser: MockUserType!
-
-    // MARK: - setUp
 
     override func setUp() {
         super.setUp()
@@ -35,26 +30,20 @@ final class SelfProfileViewControllerTests: BaseSnapshotTestCase, CoreDataFixtur
         SelfUser.provider = coreDataFixture.selfUserProvider
     }
 
-    // MARK: - tearDown
-
     override func tearDown() {
         sut = nil
-        coreDataFixture = nil
-        SelfUser.provider = nil
         selfUser = nil
         super.tearDown()
     }
 
-    // MARK: - Snapshot Tests
-
     func testForAUserWithNoTeam() {
         createSut(userName: "Tarja Turunen", teamMember: false)
-        verify(matching: sut.view)
+        verify(view: sut.view)
     }
 
     func testForAUserWithALongName() {
-        createSut(userName: "Johannes Chrysostomus Wolfgangus Theophilus Mozart", teamMember: true)
-        verify(matching: sut.view)
+        createSut(userName: "Johannes Chrysostomus Wolfgangus Theophilus Mozart")
+        verify(view: sut.view)
     }
 
     func testItRequestsToRefreshTeamMetadataIfSelfUserIsTeamMember() {
@@ -67,13 +56,11 @@ final class SelfProfileViewControllerTests: BaseSnapshotTestCase, CoreDataFixtur
         XCTAssertEqual(selfUser.refreshTeamDataCount, 0)
     }
 
-    // MARK: Helper Method
-
-    private func createSut(userName: String, teamMember: Bool) {
+    private func createSut(userName: String, teamMember: Bool = true) {
         // prevent app crash when checking Analytics.shared.isOptout
         Analytics.shared = Analytics(optedOut: true)
         selfUser = MockUserType.createSelfUser(name: userName, inTeam: teamMember ? UUID() : nil)
         sut = SelfProfileViewController(selfUser: selfUser, userRightInterfaceType: MockUserRight.self, userSession: MockZMUserSession())
-        sut.view.backgroundColor = SemanticColors.View.backgroundDefault
+        sut.view.backgroundColor = .black
     }
 }
