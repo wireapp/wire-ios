@@ -22,20 +22,20 @@ require 'shellwords'
 require 'set'
 
 def get_paths_to_staged_files
-  `git diff --cached --diff-filter=d --name-only`.split("\n")
+    `git diff --cached --diff-filter=d --name-only`.split("\n")
 end
 
 def map_to_relative_paths(files)
-  relative_path = Dir.pwd
-  files.map { |file_path| 
-    temporary_path = file_path
-    temporary_path.slice(relative_path)
-    temporary_path
-  }
+    relative_path = Dir.pwd
+    files.map { |file_path| 
+        temporary_path = file_path
+        temporary_path.slice(relative_path)
+        temporary_path
+    }
 end
 
 def get_swift_files(files)
-  files.select { |file| file[/\.swift$/] }
+    files.select { |file| file[/\.swift$/] }
 end
 
 def compose_swiftlint_command(changed_files, autoformat)
@@ -66,13 +66,13 @@ commit_hash = `git rev-parse -q --verify MERGE_HEAD`
 puts("Running pre-commit hook")
 
 unless commit_hash.empty?
-  exit 0
+    exit 0
 end
 
 staged_swift_files = get_swift_files(get_paths_to_staged_files)
 
 if running_on_ci || staged_swift_files.empty?
-  exit 0
+    exit 0
 end
 
 unless swiftlint_exists
@@ -85,16 +85,16 @@ relative_staged_swift_files = map_to_relative_paths(staged_swift_files)
 print "Formatting your changed Swift files (if any)...\n"
 `#{compose_swiftlint_command(relative_staged_swift_files, true)}`
 staged_swift_files.each { |filename|
-  `git add "#{filename}"`
+    `git add "#{filename}"`
 }
 print "Linting Swift in your changed Swift files (if any)...\n"
 result = `#{compose_swiftlint_command(relative_staged_swift_files, false)}`
 unless result.empty? 
-  abort(result)
+    abort(result)
 end
 
 staged_swift_files = get_swift_files(get_paths_to_staged_files)
 if staged_swift_files.empty?
-  puts("All changes have been reverted by formatters. No code left to commit.")
-  exit 1
+    puts("All changes have been reverted by formatters. No code left to commit.")
+    exit 1
 end
