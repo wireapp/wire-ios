@@ -279,6 +279,8 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
 
         case .create:
             guard let userSession = ZMUserSession.shared() else { return }
+
+            addParticipantsViewController.setLoadingView(isVisible: true)
             let service = ConversationService(context: userSession.viewContext)
 
             let users = values.participants

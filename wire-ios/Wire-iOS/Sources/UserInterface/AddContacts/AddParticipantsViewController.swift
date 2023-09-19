@@ -347,10 +347,7 @@ final class AddParticipantsViewController: UIViewController, SpinnerCapable {
     @objc private func rightNavigationItemTapped(_ sender: Any!) {
         switch viewModel.context {
         case .add: navigationController?.dismiss(animated: true, completion: nil)
-
-        case .create:
-            setLoadingView(isVisible: true)
-            conversationCreationDelegate?.addParticipantsViewController(self, didPerform: .create)
+        case .create: conversationCreationDelegate?.addParticipantsViewController(self, didPerform: .create)
         }
     }
 
