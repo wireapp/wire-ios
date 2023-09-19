@@ -77,7 +77,8 @@ class ProfileFooterViewTests: BaseSnapshotTestCase {
     }
 
     func testThatItUpdates() {
-        sut = setupProfileFooterView(configureProfileActions: [.openOneToOne, .archive, .createGroup])
+        sut = setupProfileFooterView(configureProfileActions: [.openOneToOne, .archive])
+        sut.configure(with: [.createGroup])
         verify(matching: sut)
     }
 
@@ -90,6 +91,7 @@ class ProfileFooterViewTests: BaseSnapshotTestCase {
     ) -> ProfileFooterView {
         let view = ProfileFooterView()
         view.overrideUserInterfaceStyle = userInterfaceStyle
+        view.configure(with: configureProfileActions)
         view.frame.size = view.systemLayoutSizeFitting(CGSize(width: 375, height: 0))
 
         return view
