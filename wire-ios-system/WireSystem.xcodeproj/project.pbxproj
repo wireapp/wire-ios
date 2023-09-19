@@ -300,6 +300,7 @@
 				3ECC35121AD436750089FD4B /* Sources */,
 				3ECC35131AD436750089FD4B /* Frameworks */,
 				3ECC35141AD436750089FD4B /* Headers */,
+				AD4812AC2AB9912400ED208C /* Run Swiftlint */,
 				3ECC35151AD436750089FD4B /* Resources */,
 			);
 			buildRules = (
@@ -398,6 +399,25 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "# artificial delay or file won't be seen by the next step\nsleep 1";
+		};
+		AD4812AC2AB9912400ED208C /* Run Swiftlint */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/../scripts/run-swiftlint.sh",
+			);
+			name = "Run Swiftlint";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "../scripts/run-swiftlint.sh\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

@@ -31,7 +31,13 @@
       location = "group:scripts"
       name = "scripts">
       <FileRef
-         location = "group:download-assets.sh">
+         location = "group:githooks-install.sh">
+      </FileRef>
+      <FileRef
+         location = "group:override-configuration_if_needed.sh">
+      </FileRef>
+      <FileRef
+         location = "group:run-swiftlint.sh">
       </FileRef>
       <FileRef
          location = "group:postprocess.sh">

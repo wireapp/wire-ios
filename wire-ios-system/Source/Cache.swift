@@ -61,7 +61,7 @@ public class Cache<Key: Hashable, Value> {
     public func set(value: Value, for key: Key, cost: Int) -> Bool {
         assert(cost > 0, "Cost must be greather than 0")
         cache[key] = EntryMetadata(value: value, cost: cost)
-        currentCost = currentCost + cost
+        currentCost += cost
 
         var didPurgeItems = false
         didPurgeItems = didPurgeItems || purgeBasedOnElementsCount(adding: key)
@@ -91,7 +91,7 @@ public class Cache<Key: Hashable, Value> {
             return false
         }
         let metadata = cache[discardedElement]!
-        currentCost = currentCost - metadata.cost
+        currentCost -= metadata.cost
 
         cache[discardedElement] = nil
 
@@ -113,11 +113,11 @@ public class Cache<Key: Hashable, Value> {
             let metadata = cache[key]!
 
             // Advance one index forward
-            elementsToDiscard = elementsToDiscard + 1
+            elementsToDiscard += 1
 
             // Erase cached object from the cache
             cache[key] = nil
-            currentCost = currentCost - metadata.cost
+            currentCost -= metadata.cost
 
             // check if the cost is back to normal
             if currentCost <= maxCost {

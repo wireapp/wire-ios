@@ -71,7 +71,7 @@ public extension String {
         // With moving window from the end to the start
         var currentWindowPosition: Int = -1
         for scalar in unicodeScalars {
-            currentWindowPosition = currentWindowPosition + 1
+            currentWindowPosition += 1
 
             let endOfRange = min(isDiacriticsMap.endIndex, currentWindowPosition + extremeDiacriticsViewWindowSize)
             let range = currentWindowPosition..<endOfRange
