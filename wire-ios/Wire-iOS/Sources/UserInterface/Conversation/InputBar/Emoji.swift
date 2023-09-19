@@ -85,6 +85,16 @@ extension Emoji: Hashable {
 
 }
 
+extension Emoji.ID {
+
+    static let like = "❤️"
+    static let thumbsUp = "👍"
+    static let thumbsDown = "👎"
+    static let smile = "🙂"
+    static let frown = "☹️"
+
+}
+
 enum EmojiCategory: String, CaseIterable, Decodable {
 
     case smileysAndEmotion = "Smileys & Emotion"

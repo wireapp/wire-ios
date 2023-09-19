@@ -31,11 +31,14 @@ final class CompleteReactionPickerViewController: UIViewController {
 
     private var deleting = false
 
-    init(selectedReactions: Set<Emoji.ID>) {
+    init(
+        selectedReactions: Set<Emoji.ID>,
+        emojiRepository: EmojiRepositoryInterface = EmojiRepository()
+    ) {
         self.selectedReactions = selectedReactions
         super.init(nibName: nil, bundle: nil)
 
-        emojiDataSource = EmojiDataSource(provider: cellForEmoji)
+        emojiDataSource = EmojiDataSource(provider: cellForEmoji, emojiRepository: emojiRepository)
         collectionView.dataSource = emojiDataSource
         collectionView.delegate = self
         searchBar.delegate = self

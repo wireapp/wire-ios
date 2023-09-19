@@ -24,7 +24,7 @@ protocol EmojiRepositoryInterface {
     func allEmojis() -> [Emoji]
     func emojis(for category: EmojiCategory) -> [Emoji]
     func emoji(for id: String) -> Emoji?
-    func registerRecentlyUsedEmojis(_ emojis: [Emoji])
+    func registerRecentlyUsedEmojis(_ emojis: [Emoji.ID])
     func fetchRecentlyUsedEmojis() -> [Emoji]
 
 }
@@ -63,7 +63,7 @@ final class EmojiRepository: EmojiRepositoryInterface {
 
     // MARK: - Recently used
 
-    func registerRecentlyUsedEmojis(_ emojis: [Emoji]) {
+    func registerRecentlyUsedEmojis(_ emojis: [Emoji.ID]) {
         guard
             let emojiDirectory = emojiDirectory,
             let recentlyUsedEmojisURL = recentlyUsedEmojisURL
@@ -72,8 +72,7 @@ final class EmojiRepository: EmojiRepositoryInterface {
         }
 
         FileManager.default.createAndProtectDirectory(at: emojiDirectory)
-        let emojiValues = emojis.map(\.value)
-        (emojiValues as NSArray).write(to: recentlyUsedEmojisURL, atomically: true)
+        (emojis as NSArray).write(to: recentlyUsedEmojisURL, atomically: true)
     }
 
     func fetchRecentlyUsedEmojis() -> [Emoji] {

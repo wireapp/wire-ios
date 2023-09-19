@@ -135,7 +135,7 @@ final class EmojiDataSource: NSObject, UICollectionViewDataSource {
         let shouldInsert = insertRecentlyUsedSectionIfNeeded()
 
         defer {
-            emojiRepository.registerRecentlyUsedEmojis(recentlyUsed.items)
+            emojiRepository.registerRecentlyUsedEmojis(recentlyUsed.items.map(\.value))
         }
 
         switch (shouldInsert, shouldReload) {
