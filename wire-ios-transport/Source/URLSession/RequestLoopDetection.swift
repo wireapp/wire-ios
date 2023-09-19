@@ -95,11 +95,9 @@ extension RequestLoopDetection: RequestRecorder {
         // I assume most (if not all) request are inserted in ascending order, so I will
         // search backwards
         var insertionIndex = 0
-        for i in (0..<self.recordedRequests.count).lazy.reversed() {
-            if self.recordedRequests[i].date < identifier.date {
-                insertionIndex = i+1
-                break
-            }
+        for i in (0..<recordedRequests.count).lazy.reversed() where recordedRequests[i].date < identifier.date {
+            insertionIndex = i+1
+            break
         }
         self.recordedRequests.insert(identifier, at: insertionIndex)
     }

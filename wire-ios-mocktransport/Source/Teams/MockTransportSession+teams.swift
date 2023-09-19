@@ -107,15 +107,13 @@ extension MockTransportSession {
     private func paginate(teams: [MockTeam], start: String?, size: Int?) -> ([MockTeam], Bool) {
         var startTeamIndex: Int?
         if let start = start {
-            for (idx, team) in teams.enumerated() {
-                if team.identifier == start {
-                    if idx + 1 < teams.count {
-                        startTeamIndex = idx + 1
-                    } else {
-                        startTeamIndex = teams.count - 1
-                    }
-                    break
+            for (idx, team) in teams.enumerated() where team.identifier == start {
+                if idx + 1 < teams.count {
+                    startTeamIndex = idx + 1
+                } else {
+                    startTeamIndex = teams.count - 1
                 }
+                break
             }
             // The queried team was not found
             if startTeamIndex == nil {

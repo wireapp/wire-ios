@@ -35,18 +35,14 @@ enum InvalidDomainRemoval {
         let duplicatedConversations: [Data: [ZMConversation]] = moc.findDuplicated(by: ZMManagedObject.remoteIdentifierDataKey()!)
 
         duplicatedUsers.forEach { (_, users) in
-            for user in users {
-                if user.domain != selfDomain {
-                    moc.delete(user)
-                }
+            for user in users where user.domain != selfDomain {
+                moc.delete(user)
             }
         }
 
         duplicatedConversations.forEach { (_, conversations) in
-            for conversation in conversations {
-                if conversation.domain != selfDomain {
-                    moc.delete(conversation)
-                }
+            for conversation in conversations where conversation.domain != selfDomain {
+                moc.delete(conversation)
             }
         }
     }

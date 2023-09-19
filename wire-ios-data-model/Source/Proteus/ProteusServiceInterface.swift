@@ -68,3 +68,5 @@ public protocol ProteusServiceInterface {
 }
 
 public typealias IdPrekeyTuple = (id: UInt16, prekey: String)
+
+// swiftlint:enable orphaned_doc_comment

@@ -23,6 +23,6 @@ extension NSString {
     /// Returns a random string with alphanumerical characters
     @objc(createAlphanumericalString)
     static public func createAlphanumerical() -> NSString {
-        return NSString(format: "%llx", arc4random())
+        return NSString(format: "%llx", arc4random()) // swiftlint:disable:this legacy_random
     }
 }

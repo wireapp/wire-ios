@@ -27,6 +27,7 @@ disabled_rules:
     - legacy_cggeometry_functions
     - legacy_constructor
     - legacy_hashing
+    - no_fallthrough_only
 
 excluded:
     - sourcery

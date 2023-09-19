@@ -157,8 +157,8 @@ enum Payload {
     struct UserProfilesV4: Codable {
 
         enum CodingKeys: String, CodingKey {
-            case found = "found"
-            case failed = "failed"
+            case found
+            case failed
         }
 
         let found: [Payload.UserProfile]
