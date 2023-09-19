@@ -353,6 +353,8 @@ extension NetworkSocket: StreamDelegate {
                 return
             }
             self.onHasSpaceAvailable()
+        case (_, .errorOccurred):
+            fallthrough
         case (_, .endEncountered):
             self.close()
         default:
