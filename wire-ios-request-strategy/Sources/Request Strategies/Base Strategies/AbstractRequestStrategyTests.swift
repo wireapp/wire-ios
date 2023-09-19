@@ -27,11 +27,12 @@ protocol TestableAbstractRequestStrategy: AnyObject {
 
 }
 
+// TODO: check what's the difference here between Objc and normal
 class TestRequestStrategyObjc: ZMAbstractRequestStrategy, TestableAbstractRequestStrategy {
 
     internal var mutableConfiguration: ZMStrategyConfigurationOption = []
 
-    override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
+    override func nextRequestIfAllowed(for apiVersion: APIVersion) async -> ZMTransportRequest? {
         return ZMTransportRequest(getFromPath: "dummy/request", apiVersion: APIVersion.v0.rawValue)
     }
 
@@ -45,7 +46,7 @@ class TestRequestStrategy: AbstractRequestStrategy, TestableAbstractRequestStrat
 
     internal var mutableConfiguration: ZMStrategyConfigurationOption = []
 
-    override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
+    override func nextRequestIfAllowed(for apiVersion: APIVersion) async -> ZMTransportRequest? {
         return ZMTransportRequest(getFromPath: "dummy/request", apiVersion: APIVersion.v0.rawValue)
     }
 
@@ -60,136 +61,136 @@ class AbstractRequestStrategyTests: MessagingTestBase {
 
     let mockApplicationStatus = MockApplicationStatus()
 
-    func checkAllPermutations(on sut: RequestStrategy & TestableAbstractRequestStrategy) {
-        checkRequirementsDependingOn_SynchronizationState(on: sut)
-        checkRequirementsDependingOn_OperationState(on: sut)
+    func checkAllPermutations(on sut: RequestStrategy & TestableAbstractRequestStrategy) async {
+        await checkRequirementsDependingOn_SynchronizationState(on: sut)
+        await checkRequirementsDependingOn_OperationState(on: sut)
     }
 
-    func checkRequirementsDependingOn_SynchronizationState(on sut: RequestStrategy & TestableAbstractRequestStrategy) {
+    func checkRequirementsDependingOn_SynchronizationState(on sut: RequestStrategy & TestableAbstractRequestStrategy) async {
 
         // online
 
-        assertPass(withConfiguration: [.allowsRequestsWhileOnline],
+        await assertPass(withConfiguration: [.allowsRequestsWhileOnline],
                    operationState: .foreground,
                    synchronizationState: .online,
                    sut: sut)
 
-        assertFail(withConfiguration: [.allowsRequestsWhileOnline],
+        await assertFail(withConfiguration: [.allowsRequestsWhileOnline],
                    operationState: .foreground,
                    synchronizationState: .slowSyncing,
                    sut: sut)
 
-        assertFail(withConfiguration: [.allowsRequestsWhileOnline],
+        await assertFail(withConfiguration: [.allowsRequestsWhileOnline],
                    operationState: .foreground,
                    synchronizationState: .quickSyncing,
                    sut: sut)
 
-        assertFail(withConfiguration: [.allowsRequestsWhileOnline],
+        await assertFail(withConfiguration: [.allowsRequestsWhileOnline],
                    operationState: .foreground,
                    synchronizationState: .unauthenticated,
                    sut: sut)
 
         // slow sync
 
-        assertPass(withConfiguration: [.allowsRequestsDuringSlowSync],
+        await assertPass(withConfiguration: [.allowsRequestsDuringSlowSync],
                    operationState: .foreground,
                    synchronizationState: .slowSyncing,
                    sut: sut)
 
-        assertFail(withConfiguration: [.allowsRequestsDuringSlowSync],
+        await assertFail(withConfiguration: [.allowsRequestsDuringSlowSync],
                    operationState: .foreground,
                    synchronizationState: .online,
                    sut: sut)
 
-        assertFail(withConfiguration: [.allowsRequestsDuringSlowSync],
+        await assertFail(withConfiguration: [.allowsRequestsDuringSlowSync],
                    operationState: .foreground,
                    synchronizationState: .unauthenticated,
                    sut: sut)
 
         // waiting for websocket
 
-        assertPass(withConfiguration: [.allowsRequestsWhileWaitingForWebsocket],
+        await assertPass(withConfiguration: [.allowsRequestsWhileWaitingForWebsocket],
                    operationState: .foreground,
                    synchronizationState: .establishingWebsocket,
                    sut: sut)
 
-        assertFail(withConfiguration: [.allowsRequestsWhileWaitingForWebsocket],
+        await assertFail(withConfiguration: [.allowsRequestsWhileWaitingForWebsocket],
                    operationState: .foreground,
                    synchronizationState: .quickSyncing,
                    sut: sut)
 
-        assertFail(withConfiguration: [.allowsRequestsWhileWaitingForWebsocket],
+        await assertFail(withConfiguration: [.allowsRequestsWhileWaitingForWebsocket],
                    operationState: .foreground,
                    synchronizationState: .online,
                    sut: sut)
 
-        assertFail(withConfiguration: [.allowsRequestsWhileWaitingForWebsocket],
+        await assertFail(withConfiguration: [.allowsRequestsWhileWaitingForWebsocket],
                    operationState: .foreground,
                    synchronizationState: .unauthenticated,
                    sut: sut)
 
         // quick sync
 
-        assertPass(withConfiguration: [.allowsRequestsDuringQuickSync],
+        await assertPass(withConfiguration: [.allowsRequestsDuringQuickSync],
                    operationState: .foreground,
                    synchronizationState: .quickSyncing,
                    sut: sut)
 
-        assertFail(withConfiguration: [.allowsRequestsDuringQuickSync],
+        await assertFail(withConfiguration: [.allowsRequestsDuringQuickSync],
                    operationState: .foreground,
                    synchronizationState: .establishingWebsocket,
                    sut: sut)
 
-        assertFail(withConfiguration: [.allowsRequestsDuringQuickSync],
+        await assertFail(withConfiguration: [.allowsRequestsDuringQuickSync],
                    operationState: .foreground,
                    synchronizationState: .slowSyncing,
                    sut: sut)
 
-        assertFail(withConfiguration: [.allowsRequestsDuringQuickSync],
+        await assertFail(withConfiguration: [.allowsRequestsDuringQuickSync],
                    operationState: .foreground,
                    synchronizationState: .online,
                    sut: sut)
 
-        assertFail(withConfiguration: [.allowsRequestsDuringQuickSync],
+        await assertFail(withConfiguration: [.allowsRequestsDuringQuickSync],
                    operationState: .foreground,
                    synchronizationState: .unauthenticated,
                    sut: sut)
 
         // unauthenticated
 
-        assertPass(withConfiguration: [.allowsRequestsWhileUnauthenticated],
+        await assertPass(withConfiguration: [.allowsRequestsWhileUnauthenticated],
                    operationState: .foreground,
                    synchronizationState: .unauthenticated,
                    sut: sut)
 
-        assertFail(withConfiguration: [.allowsRequestsWhileUnauthenticated],
+        await assertFail(withConfiguration: [.allowsRequestsWhileUnauthenticated],
                    operationState: .foreground,
                    synchronizationState: .online,
                    sut: sut)
 
-        assertFail(withConfiguration: [.allowsRequestsWhileUnauthenticated],
+        await assertFail(withConfiguration: [.allowsRequestsWhileUnauthenticated],
                    operationState: .foreground,
                    synchronizationState: .slowSyncing,
                    sut: sut)
 
-        assertFail(withConfiguration: [.allowsRequestsWhileUnauthenticated],
+        await assertFail(withConfiguration: [.allowsRequestsWhileUnauthenticated],
                    operationState: .foreground,
                    synchronizationState: .quickSyncing,
                    sut: sut)
     }
 
-    func checkRequirementsDependingOn_OperationState(on sut: RequestStrategy & TestableAbstractRequestStrategy) {
-        assertPass(withConfiguration: [.allowsRequestsWhileOnline, .allowsRequestsWhileInBackground],
+    func checkRequirementsDependingOn_OperationState(on sut: RequestStrategy & TestableAbstractRequestStrategy) async {
+        await assertPass(withConfiguration: [.allowsRequestsWhileOnline, .allowsRequestsWhileInBackground],
                    operationState: .background,
                    synchronizationState: .online,
                    sut: sut)
 
-        assertPass(withConfiguration: [.allowsRequestsDuringQuickSync, .allowsRequestsWhileInBackground],
+        await assertPass(withConfiguration: [.allowsRequestsDuringQuickSync, .allowsRequestsWhileInBackground],
                    operationState: .background,
                    synchronizationState: .quickSyncing,
                    sut: sut)
 
-        assertPass(withConfiguration: [.allowsRequestsWhileUnauthenticated, .allowsRequestsWhileInBackground],
+        await assertPass(withConfiguration: [.allowsRequestsWhileUnauthenticated, .allowsRequestsWhileInBackground],
                    operationState: .background,
                    synchronizationState: .unauthenticated,
                    sut: sut)
@@ -200,7 +201,7 @@ class AbstractRequestStrategyTests: MessagingTestBase {
                     synchronizationState: SynchronizationState,
                     sut: RequestStrategy & TestableAbstractRequestStrategy,
                     file: StaticString = #file,
-                    line: UInt = #line) {
+                    line: UInt = #line) async {
 
         // given
         sut.mutableConfiguration = configuration
@@ -208,7 +209,8 @@ class AbstractRequestStrategyTests: MessagingTestBase {
         mockApplicationStatus.mockSynchronizationState = synchronizationState
 
         // then
-        XCTAssertNotNil(sut.nextRequest(for: .v0), "expected \(configuration) to pass", file: file, line: line)
+        let result = await sut.nextRequest(for: .v0)
+        XCTAssertNotNil(result, "expected \(configuration) to pass", file: file, line: line)
     }
 
     func assertFail(withConfiguration configuration: ZMStrategyConfigurationOption,
@@ -216,7 +218,7 @@ class AbstractRequestStrategyTests: MessagingTestBase {
                     synchronizationState: SynchronizationState,
                     sut: RequestStrategy & TestableAbstractRequestStrategy,
                     file: StaticString = #file,
-                    line: UInt = #line) {
+                    line: UInt = #line) async {
 
         // given
         sut.mutableConfiguration = configuration
@@ -224,15 +226,16 @@ class AbstractRequestStrategyTests: MessagingTestBase {
         mockApplicationStatus.mockSynchronizationState = synchronizationState
 
         // then
-        XCTAssertNil(sut.nextRequest(for: .v0), "expected \(configuration) to fail", file: file, line: line)
+        let result = await sut.nextRequest(for: .v0)
+        XCTAssertNil(result, "expected \(configuration) to fail", file: file, line: line)
     }
 
-    func testAbstractRequestStrategy() {
-        checkAllPermutations(on: TestRequestStrategy(withManagedObjectContext: syncMOC, applicationStatus: mockApplicationStatus))
+    func testAbstractRequestStrategy() async {
+        await checkAllPermutations(on: TestRequestStrategy(withManagedObjectContext: syncMOC, applicationStatus: mockApplicationStatus))
     }
 
-    func testAbstractRequestStrategyObjC() {
-        checkAllPermutations(on: TestRequestStrategyObjc(managedObjectContext: syncMOC, applicationStatus: mockApplicationStatus))
+    func testAbstractRequestStrategyObjC() async {
+        await checkAllPermutations(on: TestRequestStrategyObjc(managedObjectContext: syncMOC, applicationStatus: mockApplicationStatus))
     }
 
 }

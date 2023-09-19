@@ -33,8 +33,8 @@
 
 @implementation FakeRequestGenerator
 
-- (ZMTransportRequest * _Nullable)nextRequestForAPIVersion:(APIVersion)apiVersion {
-    return _nextRequest;
+- (void)nextRequestForAPIVersion:(APIVersion)apiVersion completion:(void (^ _Nonnull)(ZMTransportRequest * _Nullable))completionBlock {
+    completionBlock(_nextRequest);
 }
 
 @end

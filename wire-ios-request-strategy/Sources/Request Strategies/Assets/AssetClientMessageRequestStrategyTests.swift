@@ -161,10 +161,10 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
     }
 
     @discardableResult
-    private func assertCreatesValidRequestForAsset(in conversation: ZMConversation, line: UInt = #line) -> ZMTransportRequest! {
+    private func assertCreatesValidRequestForAsset(in conversation: ZMConversation, line: UInt = #line) async -> ZMTransportRequest! {
         switch apiVersion! {
         case .v0:
-            guard let request = sut.nextRequest(for: self.apiVersion) else {
+            guard let request = await sut.nextRequest(for: self.apiVersion) else {
                 XCTFail("No request generated", line: line)
                 return nil
             }
@@ -176,7 +176,7 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
             return request
 
         case .v1, .v2, .v3, .v4, .v5:
-            guard let request = sut.nextRequest(for: self.apiVersion) else {
+            guard let request = await sut.nextRequest(for: self.apiVersion) else {
                 XCTFail("No request generated", line: line)
                 return nil
             }
@@ -192,60 +192,65 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
 
     // MARK: Request Generation
 
-    func testThatItDoesNotCreateARequestIfThereIsNoMatchingMessage() {
-        XCTAssertNil(sut.nextRequest(for: apiVersion))
+    func testThatItDoesNotCreateARequestIfThereIsNoMatchingMessage() async {
+        let result = await sut.nextRequest(for: apiVersion)
+        XCTAssertNil(result)
     }
 
-    func testThatItDoesNotCreateARequestForAnImageMessageUploadedByOtherUser() {
+    func testThatItDoesNotCreateARequestForAnImageMessageUploadedByOtherUser() async {
         self.syncMOC.performGroupedBlockAndWait {
             // GIVEN
             self.createMessage(uploaded: true, sender: self.otherUser)
-
-            // THEN
-            XCTAssertNil(self.sut.nextRequest(for: self.apiVersion))
         }
+
+        // THEN
+        let result = await self.sut.nextRequest(for: self.apiVersion)
+        XCTAssertNil(result)
+
     }
 
-    func testThatItDoesNotCreateARequestForAnImageMessageWhichIsExpired() {
+    func testThatItDoesNotCreateARequestForAnImageMessageWhichIsExpired() async {
         self.syncMOC.performGroupedBlockAndWait {
             // GIVEN
             let message = self.createMessage(uploaded: true)
             message.expire()
-
-            // THEN
-            XCTAssertNil(self.sut.nextRequest(for: self.apiVersion))
         }
+
+        // THEN
+        let result = await self.sut.nextRequest(for: self.apiVersion)
+        XCTAssertNil(result)
     }
 
-    func testThatItDoesNotCreateARequestForAnImageMessageWithoutUploaded() {
+    func testThatItDoesNotCreateARequestForAnImageMessageWithoutUploaded() async {
         self.syncMOC.performGroupedBlockAndWait {
             // GIVEN
             self.createMessage(uploaded: false)
-
-            // THEN
-            XCTAssertNil(self.sut.nextRequest(for: self.apiVersion))
         }
+
+        // THEN
+        let result = await self.sut.nextRequest(for: self.apiVersion)
+        XCTAssertNil(result)
     }
 
-    func testThatItDoesNotCreateARequestForAnImageMessageWithUploadedAndAssetIdInTheWrongTransferState() {
+    func testThatItDoesNotCreateARequestForAnImageMessageWithUploadedAndAssetIdInTheWrongTransferState() async {
         self.syncMOC.performGroupedBlockAndWait {
             // GIVEN
             let message = self.createMessage()
             message.updateTransferState(.uploaded, synchronize: true)
-
-            // THEN
-            XCTAssertNil(self.sut.nextRequest(for: self.apiVersion))
         }
+        // THEN
+        let result = await self.sut.nextRequest(for: self.apiVersion)
+        XCTAssertNil(result)
     }
 
-    func testThatItCreatesARequestForAnUploadedImageMessage() {
+    func testThatItCreatesARequestForAnUploadedImageMessage() async {
         self.syncMOC.performGroupedBlockAndWait {
             // GIVEN
             self.createMessage(uploaded: true, assetId: true)
-
-            // THEN
-            self.assertCreatesValidRequestForAsset(in: self.groupConversation)
         }
+
+        // THEN
+        await self.assertCreatesValidRequestForAsset(in: self.groupConversation)
     }
 
     func testThatItCreatesARequestForAnUploadedImageMessage_WithFederationEndpointEnabled() {
