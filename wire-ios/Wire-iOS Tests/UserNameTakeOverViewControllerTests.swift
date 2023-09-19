@@ -25,7 +25,8 @@ class UserNameTakeOverViewControllerTests: BaseSnapshotTestCase {
 
     override func setUp() {
         super.setUp()
-        accentColor = .vividRed
+        sut = UserNameTakeOverViewController(suggestedHandle: "joseluis4839", name: "Jose Luis")
+        sut.view.backgroundColor = SemanticColors.View.backgroundDefault
     }
 
     override func tearDown() {
@@ -34,9 +35,6 @@ class UserNameTakeOverViewControllerTests: BaseSnapshotTestCase {
     }
 
     func testThatItRendersCorrectInitally() {
-        sut = UserNameTakeOverViewController(suggestedHandle: "joseluis4839", name: "Jose Luis")
-        sut.view.backgroundColor = SemanticColors.View.backgroundDefault
-
         verify(matching: sut.view)
     }
 
