@@ -24,6 +24,7 @@
 @class ZMTransportResponse;
 @class ZMSingleRequestSync;
 #import "ZMRequestGenerator.h"
+
 NS_ASSUME_NONNULL_BEGIN
 
 @protocol ZMSingleRequestTranscoder <NSObject>
