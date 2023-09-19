@@ -133,7 +133,7 @@ final class MessageActionsViewControllerTests: XCTestCase {
 
 }
 
-final class BasicReactionPickerTests: ZMSnapshotTestCase {
+final class BasicReactionPickerTests: BaseSnapshotTestCase {
 
     func test_BasicReactionPicker() {
         // GIVEN WHEN
