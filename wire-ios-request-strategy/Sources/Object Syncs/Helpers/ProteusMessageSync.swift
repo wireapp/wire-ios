@@ -139,7 +139,7 @@ public class ProteusMessageSync<Message: ProteusMessage>: NSObject, EntityTransc
             }
 
         case 533:
-            guard 
+            guard
                 let payload = Payload.ResponseFailure(response, decoder: .defaultDecoder),
                 let data = payload.data
             else {
