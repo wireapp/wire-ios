@@ -48,7 +48,7 @@ extension SanitizedString: StringInterpolationProtocol {
         value += x?.safeForLoggingDescription ?? "nil"
     }
 
-    public static func +<T: SafeForLoggingStringConvertible>(lhs: SanitizedString, rhs: T) -> SanitizedString {
+    public static func + <T: SafeForLoggingStringConvertible>(lhs: SanitizedString, rhs: T) -> SanitizedString {
         return SanitizedString(value: lhs.value + rhs.safeForLoggingDescription)
     }
 }

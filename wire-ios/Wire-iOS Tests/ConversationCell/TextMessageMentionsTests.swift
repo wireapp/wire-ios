@@ -106,12 +106,10 @@ final class TextMessageMentionsTests: BaseSnapshotTestCase {
     }
 
     func testThatItRendersMentions_SelfMention_LongText() {
-        // swiftlint:disable line_length
         let messageText =
         """
         She was a liar. She had no diseases at all. I had seen her at Free and Clear, my blood parasites group Thursdays. Then at Hope, my bimonthly sickle cell circle. And again at Seize the Day, my tuberculosis Friday night. @Marla, the big tourist. Her lie reflected my lie, and suddenly, I felt nothing.
         """
-        // swiftlint:enable line_length
 
         selfUser.name = "Tyler Durden"
         selfUser.initials = "TD"
@@ -122,12 +120,10 @@ final class TextMessageMentionsTests: BaseSnapshotTestCase {
     func testThatItRendersMentions_SelfMention_LongText_Dark() {
         setColorScheme(.dark)
 
-        // swiftlint:disable line_length
         let messageText =
         """
         She was a liar. She had no diseases at all. I had seen her at Free and Clear, my blood parasites group Thursdays. Then at Hope, my bimonthly sickle cell circle. And again at Seize the Day, my tuberculosis Friday night. @Marla, the big tourist. Her lie reflected my lie, and suddenly, I felt nothing.
         """
-        // swiftlint:enable line_length
 
         selfUser.name = "Tyler Durden"
         selfUser.initials = "TD"

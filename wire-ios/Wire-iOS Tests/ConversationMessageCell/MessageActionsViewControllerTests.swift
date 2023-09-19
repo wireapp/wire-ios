@@ -165,15 +165,11 @@ fileprivate extension UIView {
 
     func containsBasicReactionPicker() -> Bool {
         if self.subviews.contains(where: { $0.isKind(of: BasicReactionPicker.self) }) {
-                    return true
-                }
-
-                for subview in self.subviews {
-                    if subview.containsBasicReactionPicker() {
-                        return true
-                    }
-                }
-
-                return false
+            return true
+        }
+        if subviews.contains(where: { $0.containsBasicReactionPicker() }) {
+            return true
+        }
+        return false
     }
 }
