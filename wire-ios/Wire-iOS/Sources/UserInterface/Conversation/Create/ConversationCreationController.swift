@@ -295,6 +295,8 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
             ) { [weak self] in
                 guard let self = self else { return }
 
+                addParticipantsViewController.setLoadingView(isVisible: false)
+
                 switch $0 {
                 case .success(let conversation):
                     delegate?.conversationCreationController(
