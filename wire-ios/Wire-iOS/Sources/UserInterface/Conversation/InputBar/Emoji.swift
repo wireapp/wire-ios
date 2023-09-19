@@ -18,7 +18,7 @@
 
 import Foundation
 
-struct Emoji: Decodable, Hashable {
+final class Emoji: Decodable {
 
     typealias ID = String
 
@@ -33,21 +33,35 @@ struct Emoji: Decodable, Hashable {
     let nameLocalizationKey: String?
     let tagsLocalizationKey: String?
 
-    var localizedName: String? {
-        guard let key = nameLocalizationKey else { return nil }
-        return Bundle.main.localizedString(forKey: key, value: nil, table: "Emoji")
-    }
+    lazy var localizedName: String? = {
+        guard let key = nameLocalizationKey else {
+            return nil
+        }
 
-    // should be lazy loaded
-    var localizedTags: Set<String>? {
-        guard let key = tagsLocalizationKey else { return nil }
-        let tagsString = Bundle.main.localizedString(forKey: key, value: nil, table: "Emoji")
+        return Bundle.main.localizedString(
+            forKey: key,
+            value: nil,
+            table: "Emoji"
+        )
+    }()
+
+    lazy var localizedTags: Set<String>? = {
+        guard let key = tagsLocalizationKey else {
+            return nil
+        }
+
+        let tagsString = Bundle.main.localizedString(
+            forKey: key,
+            value: nil,
+            table: "Emoji"
+        )
+
         let tags = tagsString
             .split(separator: "|")
             .map { $0.trimmingCharacters(in: .whitespaces) }
 
         return Set(tags)
-    }
+    }()
 
     func matchesSearchQuery(_ query: String) -> Bool {
         let query = query.lowercased()
@@ -59,39 +73,14 @@ struct Emoji: Decodable, Hashable {
 
 }
 
-extension Emoji {
+extension Emoji: Hashable {
 
-    // We should have a basic set to load from.
+    static func == (lhs: Emoji, rhs: Emoji) -> Bool {
+        return lhs.value == rhs.value
+    }
 
-    static let like = Emoji(
-        value: "❤️",
-        name: "heart",
-        shortName: "heart",
-        category: .symbols,
-        subcategory: "",
-        addedIn: "",
-        sortOrder: 0,
-        nameLocalizationKey: nil,
-        tagsLocalizationKey: nil
-    )
-
-}
-
-extension Emoji {
-
-    static func loadAllFromDisk() throws -> [Emoji] {
-        guard let url = Bundle.main.url(
-            forResource: "emojis",
-            withExtension: "json"
-        ) else {
-            return []
-        }
-
-        let data = try Data(contentsOf: url)
-        return try JSONDecoder().decode(
-            [Emoji].self,
-            from: data
-        )
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(value)
     }
 
 }

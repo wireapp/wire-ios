@@ -26,7 +26,7 @@ class MessageActionsViewController: UIAlertController {
 
     static func controller(withActions actions: [MessageAction],
                            actionController: ConversationMessageActionController) -> MessageActionsViewController {
-        let title = actionController.canPerformAction(action: .react(Emoji.like.value)) ? MessageLabelMarker : nil
+        let title = actionController.canPerformAction(action: .react("❤️")) ? MessageLabelMarker : nil
         let controller = MessageActionsViewController(title: title,
                                             message: nil,
                                             preferredStyle: .actionSheet)

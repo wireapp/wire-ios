@@ -40,12 +40,12 @@ extension ZMConversationMessage {
         set {
             if newValue {
                 ZMMessage.addReaction(
-                    Emoji.like.value,
+                    "❤️",
                     to: self
                 )
             } else {
                 ZMMessage.removeReaction(
-                    Emoji.like.value,
+                    "❤️",
                     from: self
                 )
             }
@@ -67,7 +67,7 @@ extension ZMConversationMessage {
     }
 
     var likers: [UserType] {
-        return usersReaction[Emoji.like.value] ?? []
+        return usersReaction["❤️"] ?? []
     }
 
     var sortedLikers: [UserType] {
