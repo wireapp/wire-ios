@@ -699,28 +699,58 @@ class ConversationMissingMessagesSystemMessageCellDescription: ConversationMessa
     private static func makeAttributedString(systemMessageData: ZMSystemMessageData) -> NSAttributedString {
         let font = UIFont.mediumFont
         let color = LabelColors.textDefault
+        let addedUsernames = systemMessageData.addedUserTypes.compactMap { $0 as? UserType }.compactMap { $0.name }.joined(separator: ", ")
+        let removedUserNames = systemMessageData.removedUserTypes.compactMap { $0 as? UserType }.compactMap { $0.name }.joined(separator: ", ")
 
-        func attributedLocalizedUppercaseString(_ localizationKey: String, _ users: [AnyHashable]) -> NSAttributedString? {
-            guard !users.isEmpty else { return nil }
-            let userNames = users.compactMap { ($0 as? UserType)?.name }.joined(separator: ", ")
-            let string = localizationKey.localized(args: userNames + " ", users.count) + ". "
-            && font && color
-            return string
-        }
+        let addedUsersCount = systemMessageData.addedUserTypes.count
+        let removedUsersCount = systemMessageData.removedUserTypes.count
 
-        var title = L10n.Localizable.Content.System.MissingMessages.title && font && color
+        typealias MissingMessagesLocalizable = L10n.Localizable.Content.System.MissingMessages
 
-        // We only want to display the subtitle if we have the final added and removed users and either one is not empty
+        var string: String = ""
+
         let addedOrRemovedUsers = !systemMessageData.addedUserTypes.isEmpty || !systemMessageData.removedUserTypes.isEmpty
-        if !systemMessageData.needsUpdatingUsers && addedOrRemovedUsers {
-            title += "\n\n" + L10n.Localizable.Content.System.MissingMessages.subtitleStart + " " && font && color
-            title += attributedLocalizedUppercaseString("content.system.missing_messages.subtitle_added", Array(systemMessageData.addedUserTypes))
-            title += attributedLocalizedUppercaseString("content.system.missing_messages.subtitle_removed", Array(systemMessageData.removedUserTypes))
+
+        if systemMessageData.addedUserTypes.count == 0 && systemMessageData.removedUserTypes.count == 0 {
+            string = L10n.Localizable.Content.System.missingMessages
         }
 
-        return title
-    }
+        if !systemMessageData.needsUpdatingUsers && addedOrRemovedUsers {
 
+            // If users added and no users removed
+            if !systemMessageData.addedUserTypes.isEmpty && systemMessageData.removedUserTypes.isEmpty {
+                if addedUsersCount == 1 {
+                    string = MissingMessagesLocalizable.UsersAdded.singular(addedUsernames)
+                } else if addedUsersCount > 1 {
+                    string = MissingMessagesLocalizable.UsersAdded.plural(addedUsernames)
+                }
+
+                // if no users added and users removed
+            } else if systemMessageData.addedUserTypes.isEmpty && !systemMessageData.removedUserTypes.isEmpty {
+                if removedUsersCount == 1 {
+                    string = MissingMessagesLocalizable.UsersRemoved.singular(removedUserNames)
+                } else if removedUsersCount > 1 {
+                    string = MissingMessagesLocalizable.UsersRemoved.plural(removedUserNames)
+                }
+
+                // if users added and users removed
+            } else if !systemMessageData.addedUserTypes.isEmpty || !systemMessageData.removedUserTypes.isEmpty {
+                // One user added, one user removed
+                if addedUsersCount == 1 &&  removedUsersCount == 1 {
+                    string = MissingMessagesLocalizable.UsersAddedAndRemoved.singular(addedUsernames, removedUserNames)
+                    // One user added, multiple users removed
+                } else if addedUsersCount == 1 && removedUsersCount > 1 {
+                    string = MissingMessagesLocalizable.UsersAddedAndRemoved.singularPlural(addedUsernames, removedUserNames)
+                    // Multiple users added, one user removed
+                } else if addedUsersCount > 1 && removedUsersCount == 1 {
+                    string = MissingMessagesLocalizable.UsersAddedAndRemoved.pluralSingular(addedUsernames, removedUserNames)
+                }
+
+            }
+
+        }
+        return NSAttributedString(string: string) && font && color
+    }
 }
 
 class ConversationIgnoredDeviceSystemMessageCellDescription: ConversationMessageCellDescription {

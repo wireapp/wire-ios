@@ -432,18 +432,25 @@
 "content.system.missing_messages" = "You haven’t used this device for a while. Some messages may not appear here.";
 // Placeholder contains a single name, e.g "Alice"
 "content.system.missing_messages.users_added.singular" = "You haven’t used this device for a while. Some messages may not appear here.\n\nMeanwhile, %@ has been added.";
+
 // Placeholder contains a localized list of names, e.g "Alice, Bob, and Cate"
 "content.system.missing_messages.users_added.plural" = "You haven’t used this device for a while. Some messages may not appear here.\n\nMeanwhile, %@ have been added.";
+
 // Placeholder contains a single name, e.g "Alice"
 "content.system.missing_messages.users_removed.singular" = "You haven’t used this device for a while. Some messages may not appear here.\n\nMeanwhile, %@ has been removed.";
+
 // Placeholder contains a localized list of names, e.g "Alice, Bob, and Cate"
 "content.system.missing_messages.users_removed.plural" = "You haven’t used this device for a while. Some messages may not appear here.\n\nMeanwhile, %@ have been removed.";
+
 // Both placesholders contains a single name, e.g "Alice"
 "content.system.missing_messages.users_added_and_removed.singular" = "You haven’t used this device for a while. Some messages may not appear here.\n\nMeanwhile, %1$@ has been added. %2$@ has been removed.";
+
 // Placeholder 1 contains a single name: e.g "Alice. Placeholder 2 contains a localized list of names, e.g "Alice, Bob, and Cate"
 "content.system.missing_messages.users_added_and_removed.singular_plural" = "You haven’t used this device for a while. Some messages may not appear here.\n\nMeanwhile, %1$@ has been added. %2$@ have been removed.";
+
 // Placeholder 1 contains a localized list of names, e.g "Alice, Bob, and Cate". Placeholder 2 contains a single name: e.g "Alice.
 "content.system.missing_messages.users_added_and_removed.plural_singular" = "You haven’t used this device for a while. Some messages may not appear here.\n\nMeanwhile, %1$@ have been added. %2$@ has been removed.";
+
 // Both placesholders contains a localized list of names, e.g "Alice, Bob, and Cate"
 "content.system.missing_messages.users_added_and_removed.plural" = "You haven’t used this device for a while. Some messages may not appear here.\n\nMeanwhile, %1$@ have been added. %2$@ have been removed.";
 
