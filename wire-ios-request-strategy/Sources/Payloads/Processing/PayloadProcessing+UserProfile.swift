@@ -94,6 +94,10 @@ extension Payload.UserProfile {
 
         updateAssets(for: user, authoritative: authoritative)
 
+        if let supportedProtocols = supportedProtocols {
+            user.supportedProtocols = Set(supportedProtocols.map(\.dataModelMessageProtocol))
+        }
+
         if authoritative {
             user.needsToBeUpdatedFromBackend = false
         }
@@ -139,6 +143,20 @@ extension Payload.UserProfiles {
             }
 
             userProfile.updateUserProfile(for: user)
+        }
+    }
+
+}
+
+private extension Payload.UserProfile.MessageProtocol {
+
+    var dataModelMessageProtocol: WireDataModel.MessageProtocol {
+        switch self {
+        case .proteus:
+            return .proteus
+
+        case .mls:
+            return .mls
         }
     }
 

@@ -35,8 +35,8 @@ class SendCommitBundleActionHandlerTests: ActionHandlerTestBase<SendCommitBundle
             expectedPath: "/v5/mls/commit-bundles",
             expectedMethod: .methodPOST,
             expectedData: commitBundle,
-            apiVersion: .v5
             expectedContentType: "message/mls",
+            apiVersion: .v5
         )
     }
 
@@ -48,7 +48,7 @@ class SendCommitBundleActionHandlerTests: ActionHandlerTestBase<SendCommitBundle
                 expectedError: .endpointUnavailable
             )
         }
-        
+
         test_itDoesntGenerateARequest(
             action: SendCommitBundleAction(commitBundle: Data()),
             apiVersion: .v5,
