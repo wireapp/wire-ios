@@ -61,7 +61,7 @@ platform :ios do
     
     desc "Build & Upload Development build"
     lane :development do |options|
-        options[:build_type] = "Developmentt"
+        options[:build_type] = "Development"
         options[:upload_app_center] = true
         options[:upload_dsyms_to_datadog] = true
         options[:produce_debug_builds] = true
