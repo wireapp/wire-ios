@@ -109,16 +109,14 @@ func getLicenseURL(in directory: URL) -> URL? {
         return nil
     }
 
-    for spelling in licenseSpellings {
-        if topLevelItems.contains(spelling) {
-            let possibleURL = directory.appendingPathComponent(spelling)
+    for spelling in licenseSpellings where topLevelItems.contains(spelling) {
+        let possibleURL = directory.appendingPathComponent(spelling)
 
-            guard FileManager.default.fileExists(atPath: possibleURL.path) else {
-                continue
-            }
-
-            return possibleURL
+        guard FileManager.default.fileExists(atPath: possibleURL.path) else {
+            continue
         }
+
+        return possibleURL
     }
 
     return nil
