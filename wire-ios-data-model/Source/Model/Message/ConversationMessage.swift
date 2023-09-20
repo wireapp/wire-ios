@@ -103,6 +103,8 @@ public protocol ZMConversationMessage: NSObjectProtocol {
     var locationMessageData: LocationMessageData? { get }
 
     var usersReaction: [String: [UserType]] { get }
+    var reactionData: Set<ReactionData> { get }
+    func reactionsSortedByCreationDate() -> [ReactionData]
 
     /// In case this message failed to deliver, this will resend it
     func resend()
@@ -340,12 +342,30 @@ extension ZMMessage {
         return .delivered
     }
 
-    @objc public var usersReaction: [String: [UserType]] {
-        var result = [String: [ZMUser]]()
+    @objc public var reactionData: Set<ReactionData> {
+        var result = Set<ReactionData>()
         for reaction in reactions where reaction.users.count > 0 {
-            result[reaction.unicodeValue!] = [ZMUser](reaction.users)
+            result.insert(
+                ReactionData(
+                    reactionString: reaction.unicodeValue!,
+                    users: Array(reaction.users),
+                    creationDate: reaction.creationDate
+                )
+            )
         }
         return result
+    }
+
+    @objc public var usersReaction: [String: [UserType]] {
+        return Array(reactionData)
+            .partition(by: \.reactionString)
+            .mapValues { $0.flatMap { $0.users } }
+    }
+
+    @objc public func reactionsSortedByCreationDate() -> [ReactionData] {
+        return self.reactionData.sorted {
+            return $0.creationDate < $1.creationDate
+        }
     }
 
     @objc public var canBeDeleted: Bool {
