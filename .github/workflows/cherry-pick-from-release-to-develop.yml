@@ -19,6 +19,7 @@ jobs:
         with:
           token: ${{ secrets.SUBMODULE_PAT }}
           submodules: recursive
+          fetch-depth: 0
 
       - name: Append -cherry-pick to branch name
         id: extract
