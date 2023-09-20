@@ -40,6 +40,7 @@ final class ClientMessageTests_OTR: BaseZMClientMessageTests {
         mockProteusService = nil
 
         DeveloperFlag.storage = UserDefaults.standard
+        BackendInfo.domain = nil
         super.tearDown()
     }
 

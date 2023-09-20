@@ -31,6 +31,7 @@ final class ClientMessageTests_OTR_Legacy: BaseZMClientMessageTests {
 
     override func tearDown() {
         super.tearDown()
+        BackendInfo.domain = nil
         DeveloperFlag.storage = UserDefaults.standard
     }
 
