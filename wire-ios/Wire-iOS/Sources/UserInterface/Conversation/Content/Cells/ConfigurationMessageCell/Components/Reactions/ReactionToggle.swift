@@ -49,7 +49,7 @@ class ReactionToggle: UIControl {
     // MARK: - Life cycle
 
     init(
-        emoji: Emoji,
+        emoji: Emoji.ID,
         count: UInt,
         isToggled: Bool = false,
         onToggle: (() -> Void)? = nil
@@ -58,7 +58,8 @@ class ReactionToggle: UIControl {
         self.onToggle = onToggle
 
         super.init(frame: .zero)
-        emojiLabel.text = emoji.value
+
+        emojiLabel.text = emoji
         counterLabel.text = String(count)
 
         let stackView = UIStackView(arrangedSubviews: [emojiLabel, counterLabel])
