@@ -77,7 +77,7 @@ extension ZMOTRMessage {
             ZMMessage.remove(remotelyDeletedMessage: message.deleted, inConversation: conversation, senderID: senderID, inContext: moc)
 
         case .reaction:
-            ZMMessage.add(reaction: message.reaction, senderID: senderID, conversation: conversation, inContext: moc)
+            ZMMessage.add(reaction: message.reaction, senderID: senderID, conversation: conversation, creationDate: updateEvent.timestamp, inContext: moc)
 
         case .confirmation:
             ZMMessageConfirmation.createMessageConfirmations(message.confirmation, conversation: conversation, updateEvent: updateEvent)
