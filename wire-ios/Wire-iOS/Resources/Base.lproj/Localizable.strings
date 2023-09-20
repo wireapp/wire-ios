@@ -429,6 +429,15 @@
 
 "content.system.services.warning" = "Services have access to the content of this conversation";
 
+"content.system.missing_messages_user_added" = "Meanwhile, %@ has been added";
+"content.system.missing_messages_users_added" = "Meanwhile, %@ have been added";
+
+"content.system.missing_messages_user_removed" = "Meanwhile, %@ has been removed";
+"content.system.missing_messages_users_removed" = "Meanwhile, %@ have been removed";
+
+"content.system.missing_messages_user_added_and_user_removed" = "Meanwhile, %@ has been added. %@ has been removed";
+"content.system.missing_messages_users_added_and_users_removed" = "Meanwhile, %@ have been added. %@ have been removed";
+
 // Link attachment messages
 
 "content.message.link_attachment.accessibility_label.youtube" = "YouTube video preview";

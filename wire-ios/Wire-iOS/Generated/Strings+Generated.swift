@@ -1698,6 +1698,30 @@ internal enum L10n {
         internal static func messageTimerOffYou(_ p1: Any) -> String {
           return L10n.tr("Localizable", "content.system.message_timer_off-you", String(describing: p1), fallback: "%@ turned off the message timer")
         }
+        /// Meanwhile, %@ has been added
+        internal static func missingMessagesUserAdded(_ p1: Any) -> String {
+          return L10n.tr("Localizable", "content.system.missing_messages_user_added", String(describing: p1), fallback: "Meanwhile, %@ has been added")
+        }
+        /// Meanwhile, %@ has been added. %@ has been removed
+        internal static func missingMessagesUserAddedAndUserRemoved(_ p1: Any, _ p2: Any) -> String {
+          return L10n.tr("Localizable", "content.system.missing_messages_user_added_and_user_removed", String(describing: p1), String(describing: p2), fallback: "Meanwhile, %@ has been added. %@ has been removed")
+        }
+        /// Meanwhile, %@ has been removed
+        internal static func missingMessagesUserRemoved(_ p1: Any) -> String {
+          return L10n.tr("Localizable", "content.system.missing_messages_user_removed", String(describing: p1), fallback: "Meanwhile, %@ has been removed")
+        }
+        /// Meanwhile, %@ have been added
+        internal static func missingMessagesUsersAdded(_ p1: Any) -> String {
+          return L10n.tr("Localizable", "content.system.missing_messages_users_added", String(describing: p1), fallback: "Meanwhile, %@ have been added")
+        }
+        /// Meanwhile, %@ have been added. %@ have been removed
+        internal static func missingMessagesUsersAddedAndUsersRemoved(_ p1: Any, _ p2: Any) -> String {
+          return L10n.tr("Localizable", "content.system.missing_messages_users_added_and_users_removed", String(describing: p1), String(describing: p2), fallback: "Meanwhile, %@ have been added. %@ have been removed")
+        }
+        /// Meanwhile, %@ have been removed
+        internal static func missingMessagesUsersRemoved(_ p1: Any) -> String {
+          return L10n.tr("Localizable", "content.system.missing_messages_users_removed", String(describing: p1), fallback: "Meanwhile, %@ have been removed")
+        }
         /// Plural format key: "%#@d_new_devices@"
         internal static func newDevices(_ p1: Int) -> String {
           return L10n.tr("Localizable", "content.system.new_devices", p1, fallback: "Plural format key: \"%#@d_new_devices@\"")
