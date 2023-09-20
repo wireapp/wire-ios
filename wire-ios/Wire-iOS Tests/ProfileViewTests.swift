@@ -76,6 +76,7 @@ final class ProfileViewTests: BaseSnapshotTestCase {
         options: ProfileHeaderViewController.Options,
         availability: AvailabilityKind = .available,
         file: StaticString = #file,
+        testName: String = #function,
         line: UInt = #line
     ) {
         let selfUser = MockUserType.createSelfUser(name: "selfUser", inTeam: UUID())
@@ -85,7 +86,7 @@ final class ProfileViewTests: BaseSnapshotTestCase {
 
         let sut = setupProfileHeaderViewController(user: selfUser, viewer: selfUser, options: options)
 
-        verify(matching: sut.view, file: file, line: line)
+        verify(matching: sut.view, file: file, testName: testName, line: line)
     }
 
     func setupProfileHeaderViewController(
