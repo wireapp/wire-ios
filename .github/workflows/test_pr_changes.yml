@@ -72,22 +72,22 @@ jobs:
 
   trigger_tests:
     needs: detect-changes
-    if: ${{ needs.detect-changes.outputs.any == 'true' }}
+    # if: ${{ needs.detect-changes.outputs.any == 'true' }}
     uses: ./.github/workflows/_reusable_run_tests.yml
     with:
-      wire-ios: ${{ needs.detect-changes.outputs.wire-ios == 'true' }}
-      wire-ios-sync-engine: ${{ needs.detect-changes.outputs.wire-ios-sync-engine == 'true' }}
-      wire-ios-data-model: ${{ needs.detect-changes.outputs.wire-ios-data-model == 'true' }}
-      wire-ios-system: ${{ needs.detect-changes.outputs.wire-ios-system == 'true' }}
-      wire-ios-request-strategy: ${{ needs.detect-changes.outputs.wire-ios-request-strategy == 'true' }}
-      wire-ios-transport: ${{ needs.detect-changes.outputs.wire-ios-transport == 'true' }}
-      wire-ios-share-engine: ${{ needs.detect-changes.outputs.wire-ios-share-engine == 'true' }}
-      wire-ios-cryptobox: ${{ needs.detect-changes.outputs.wire-ios-cryptobox == 'true' }}
-      wire-ios-mocktransport: ${{ needs.detect-changes.outputs.wire-ios-mocktransport == 'true' }}
-      wire-ios-notification-engine: ${{ needs.detect-changes.outputs.wire-ios-notification-engine == 'true' }}
-      wire-ios-protos: ${{ needs.detect-changes.outputs.wire-ios-protos == 'true' }}
-      wire-ios-images: ${{ needs.detect-changes.outputs.wire-ios-images == 'true' }}
-      wire-ios-link-preview: ${{ needs.detect-changes.outputs.wire-ios-link-preview == 'true' }}
-      wire-ios-utilities: ${{ needs.detect-changes.outputs.wire-ios-utilities == 'true' }}
-      wire-ios-testing: ${{ needs.detect-changes.outputs.wire-ios-testing == 'true' }}
+      wire-ios: true # ${{ needs.detect-changes.outputs.wire-ios == 'true' }}
+      wire-ios-sync-engine: true #${{ needs.detect-changes.outputs.wire-ios-sync-engine == 'true' }}
+      wire-ios-data-model: true #${{ needs.detect-changes.outputs.wire-ios-data-model == 'true' }}
+      wire-ios-system: true #${{ needs.detect-changes.outputs.wire-ios-system == 'true' }}
+      wire-ios-request-strategy: true #${{ needs.detect-changes.outputs.wire-ios-request-strategy == 'true' }}
+      wire-ios-transport: true #${{ needs.detect-changes.outputs.wire-ios-transport == 'true' }}
+      wire-ios-share-engine: true #${{ needs.detect-changes.outputs.wire-ios-share-engine == 'true' }}
+      wire-ios-cryptobox: true #${{ needs.detect-changes.outputs.wire-ios-cryptobox == 'true' }}
+      wire-ios-mocktransport: true #${{ needs.detect-changes.outputs.wire-ios-mocktransport == 'true' }}
+      wire-ios-notification-engine: true #${{ needs.detect-changes.outputs.wire-ios-notification-engine == 'true' }}
+      wire-ios-protos: true #${{ needs.detect-changes.outputs.wire-ios-protos == 'true' }}
+      wire-ios-images: true #${{ needs.detect-changes.outputs.wire-ios-images == 'true' }}
+      wire-ios-link-preview: true #${{ needs.detect-changes.outputs.wire-ios-link-preview == 'true' }}
+      wire-ios-utilities: true #${{ needs.detect-changes.outputs.wire-ios-utilities == 'true' }}
+      wire-ios-testing: true #${{ needs.detect-changes.outputs.wire-ios-testing == 'true' }}
     secrets: inherit
