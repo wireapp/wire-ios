@@ -65,8 +65,8 @@ platform :ios do
         options[:upload_app_center] = true
         options[:upload_dsyms_to_datadog] = true
         options[:produce_debug_builds] = true
-        build_and_upload_app(options)
         save_app_name('Development')
+        build_and_upload_app(options)
     end
 
     desc "Build & Upload Playground build"
@@ -75,8 +75,9 @@ platform :ios do
         options[:upload_testflight] = true
         options[:upload_dsyms_to_datadog] = true
         options[:produce_debug_builds] = true
-        build_and_upload_app(options)
         save_app_name('Playground')
+        build_and_upload_app(options)
+        `export TEMP='APPCENTER_INSTALL_LINK=For \'Playground\' build there is no AppCenter link, please visit Testflight to install the app' && echo $TEMP >> ./.post_build/.env`
     end
 
     desc "Build & Upload Testflight Beta build"
@@ -85,9 +86,9 @@ platform :ios do
         options[:upload_testflight] = true
         options[:upload_dsyms_to_datadog] = true
         options[:produce_debug_builds] = true
+        save_app_name('Testflight Beta')
         build_and_upload_app(options)
         `export TEMP='APPCENTER_INSTALL_LINK=For \'Beta\' build there is no AppCenter link, please visit Testflight to install the app' && echo $TEMP >> ./.post_build/.env`
-        save_app_name('Testflight Beta')
     end
 
     desc "Build & Upload Public AppStore build"
@@ -96,8 +97,8 @@ platform :ios do
         options[:upload_dsyms_to_app_center] = true
         options[:upload_app_store] = true
         options[:upload_app_center] = true
-        build_and_upload_app(options)
         save_app_name('Public AppStore Production')
+        build_and_upload_app(options)
     end
     
     desc "Build & Upload Col 1 Restricted AppStore build"
@@ -110,8 +111,8 @@ platform :ios do
         options[:upload_app_store] = true
         options[:upload_app_center] = true
         options[:produce_debug_builds] = true
-        build_and_upload_app(options)
         save_app_name('Column 1 Restricted')
+        build_and_upload_app(options)
     end
 
     desc "Build & Upload Col 3 Restricted AppStore build"
@@ -124,8 +125,8 @@ platform :ios do
         options[:upload_app_store] = true
         options[:upload_app_center] = true
         options[:produce_debug_builds] = true
-        build_and_upload_app(options)
         save_app_name('Column 3 Restricted')
+        build_and_upload_app(options)
     end
 
     desc "Build & Upload Col 1 Production AppStore build"
@@ -137,8 +138,8 @@ platform :ios do
         options[:run_security_tests] = !ENV['SKIP_SECURITY_TESTS'] || true
         options[:upload_app_store] = true
         options[:upload_app_center] = true
-        build_and_upload_app(options)
         save_app_name('Column 1 Production')
+        build_and_upload_app(options)
     end
 
     desc "Build & Upload Col 3 Production AppStore build"
@@ -150,8 +151,8 @@ platform :ios do
         options[:run_security_tests] = !ENV['SKIP_SECURITY_TESTS'] || true
         options[:upload_app_store] = true
         options[:upload_app_center] = true
-        build_and_upload_app(options)
         save_app_name('Column 3 Production')
+        build_and_upload_app(options)
     end
 
     def build_and_upload_app(options)
@@ -255,11 +256,11 @@ platform :ios do
 
             build = Build.new(options: options)
 
+            `echo BUILD_VERSION=#{build.version_from_xcconfig} >> ./.post_build/.env`
+
             sh "cd .. && ./setup.sh -o \'./wire-ios-build-assets/#{override_folder}/#{build_type}\'"
             # Adding extra information to the icon must be done after we check them out in setup script
             build.process_icon()
-
-            `echo BUILD_VERSION=#{build.version_from_xcconfig} >> ./.post_build/.env`
 
             download_distribution_certificate_and_profiles(build, options)
         end
