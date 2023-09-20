@@ -102,7 +102,7 @@ public struct FrameworkVersion: Comparable, Equatable {
         self.components = components
     }
 
-    public static func <(lhs: FrameworkVersion, rhs: FrameworkVersion) -> Bool {
+    public static func < (lhs: FrameworkVersion, rhs: FrameworkVersion) -> Bool {
         for comp in zip(lhs.components, rhs.components) {
             if comp.0 < comp.1 {
                 return true
@@ -114,6 +114,6 @@ public struct FrameworkVersion: Comparable, Equatable {
     }
 }
 
-public func ==(lhs: FrameworkVersion, rhs: FrameworkVersion) -> Bool {
+public func == (lhs: FrameworkVersion, rhs: FrameworkVersion) -> Bool {
     return lhs.components == rhs.components
 }
