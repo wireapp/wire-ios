@@ -32,7 +32,6 @@ final class ConversationSenderMessageDetailsCellSnapshotTests: BaseSnapshotTestC
 
     override func setUp() {
         super.setUp()
-        isRecording = true
         mockUser = MockUserType.createUser(name: "Bruno", inTeam: teamID)
         mockUser.isConnected = true
         sut = ConversationSenderMessageDetailsCell()

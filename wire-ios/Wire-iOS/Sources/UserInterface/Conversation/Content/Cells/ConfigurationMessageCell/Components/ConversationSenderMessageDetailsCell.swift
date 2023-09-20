@@ -199,7 +199,7 @@ class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
             attributedString.append(
                 attachment(
                     from: .guest,
-                    size: 12
+                    size: 14
                 )
             )
         case .externalPartner:
@@ -207,7 +207,7 @@ class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
             attributedString.append(
                 attachment(
                     from: .externalPartner,
-                    size: 12
+                    size: 16
                 )
             )
         case .federated:
@@ -215,7 +215,7 @@ class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
             attributedString.append(
                 attachment(
                     from: .federated,
-                    size: 12
+                    size: 14
                 )
             )
         case .service:
@@ -223,7 +223,7 @@ class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
             attributedString.append(
                 attachment(
                     from: .bot,
-                    size: 12
+                    size: 14
                 )
             )
 
