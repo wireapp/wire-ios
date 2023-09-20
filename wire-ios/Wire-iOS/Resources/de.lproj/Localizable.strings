@@ -429,6 +429,15 @@
 
 "content.system.services.warning" = "Dienste haben Zugriff auf den Inhalt dieser Unterhaltung";
 
+"content.system.missing_messages_user_added" = "In der Zwischenzeit wurde %@ hinzugefügt";
+"content.system.missing_messages_users_added" = "In der Zwischenzeit wurden %@ hinzugefügt";
+
+"content.system.missing_messages_user_removed" = "In der Zwischenzeit wurde %@ entfernt";
+"content.system.missing_messages_users_removed" = "In der Zwischenzeit wurden %@ entfernt";
+
+"content.system.missing_messages_user_added_and_user_removed" = "In der Zwischenzeit wurde %@ hinzugefügt. Wurde %@ entfernt";
+"content.system.missing_messages_users_added_and_users_removed" = "In der Zwischenzeit wurden %@ hinzugefügt. Wurden %@ entfernt";
+
 // Link attachment messages
 
 "content.message.link_attachment.accessibility_label.youtube" = "YouTube Video-Vorschau";
