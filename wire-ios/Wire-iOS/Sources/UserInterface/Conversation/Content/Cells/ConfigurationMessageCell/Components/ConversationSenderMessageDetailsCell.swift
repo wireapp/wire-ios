@@ -231,6 +231,11 @@ class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
             accessibilityIdentifier = "img.member"
         }
 
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.maximumLineHeight = UIFont.mediumSemiboldFont.lineHeight
+
+        attributedString.addAttribute(.paragraphStyle, value: paragraphStyle, range: attributedString.wholeRange)
+
         authorLabel.attributedText = attributedString
     }
 
