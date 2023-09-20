@@ -161,32 +161,27 @@ class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
     }
 
     private func configureAuthorLabel(object: Configuration) {
+        var icon: StyleKitIcon?
         let textColor: UIColor = object.user.isServiceUser ? SemanticColors.Label.textDefault : object.user.accentColor
         let attributedString = NSMutableAttributedString(
             string: object.user.name ?? "",
             attributes: [
                 .foregroundColor: textColor,
                 .font: UIFont.mediumSemiboldFont
-                ]
+            ]
         )
 
         switch object.indicator {
 
         case .deleted:
-            attributedString.append(
-                attachment(
-                    from: .trash,
-                    size: 8
-                ) ?? NSAttributedString(string: "")
-            )
+            if let attachment = attachment(from: .trash, size: 8) {
+                attributedString.append(attachment)
+            }
 
         case .edited:
-            attributedString.append(
-                attachment(
-                    from: .pencil,
-                    size: 8
-                ) ?? NSAttributedString(string: "")
-            )
+            if let attachment = attachment(from: .pencil, size: 8) {
+                attributedString.append(attachment)
+            }
 
         default:
             break
@@ -196,36 +191,25 @@ class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
 
         case .guest:
             accessibilityIdentifier = "img.guest"
-            attributedString.append(
-                attachment(
-                    from: .guest,
-                    size: 14
-                ) ?? NSAttributedString(string: "")
-            )
+            if let attachment = attachment(from: .guest, size: 14) {
+                attributedString.append(attachment)
+            }
+
         case .externalPartner:
             accessibilityIdentifier = "img.externalPartner"
-            attributedString.append(
-                attachment(
-                    from: .externalPartner,
-                    size: 16
-                ) ?? NSAttributedString(string: "")
-            )
+            if let attachment = attachment(from: .externalPartner, size: 16) {
+                attributedString.append(attachment)
+            }
         case .federated:
             accessibilityIdentifier = "img.federatedUser"
-            attributedString.append(
-                attachment(
-                    from: .federated,
-                    size: 14
-                ) ?? NSAttributedString(string: "")
-            )
+            if let attachment = attachment(from: .federated, size: 14) {
+                attributedString.append(attachment)
+            }
         case .service:
             accessibilityIdentifier = "img.serviceUser"
-            attributedString.append(
-                attachment(
-                    from: .bot,
-                    size: 14
-                ) ?? NSAttributedString(string: "")
-            )
+            if let attachment = attachment(from: .bot, size: 14) {
+                attributedString.append(attachment)
+            }
 
         default:
             accessibilityIdentifier = "img.member"
