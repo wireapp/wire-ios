@@ -1,33 +1,33 @@
-// 
+////
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
-// 
+// Copyright (C) 2023 Wire Swiss GmbH
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
-// 
+//
 
-WIRE_BUILD_NUMBER = $(BUILD_NUMBER)
-SSO_URL_SCHEME = wire-sso
-WIRE_URL_SCHEME = wire
-WIRE_BUNDLE_ID = com.wearezeta.zclient.ios
+@objc public class ReactionData: NSObject {
+    public let reactionString: String
+    public let users: [UserType]
+    public let creationDate: Date
 
-//Code Signing
-CODE_SIGN_IDENTITY = iPhone Distribution: Wire Swiss GmbH (EDF3JCE8BC)
+    public init(reactionString: String, users: [UserType], creationDate: Date) {
+        self.reactionString = reactionString
+        self.users = users
+        self.creationDate = creationDate
+    }
 
-DEVELOPMENT_TEAM = EDF3JCE8BC
-PROVISIONING_PROFILE_SPECIFIER_APP = Wire Public iOS
-PROVISIONING_PROFILE_SPECIFIER_SHARE_EXT = Wire Public iOS SE
-PROVISIONING_PROFILE_SPECIFIER_NOTIFICATION_EXT = Wire Public iOS NSE
-
-// App icon from asset bundle
-APPICON_NAME = AppIcon
+    override public var hash: Int {
+        return reactionString.hash
+    }
+}
