@@ -36,7 +36,7 @@ jobs:
       - name: Cherry-pick commits
         run: |
             git fetch origin develop:develop
-            git checkout -b ${{ steps.extract.outputs.newBranchName }} develop
+            git checkout -b ${{ env.newBranchName }} develop
             git submodule update --init --recursive || true
             OUTPUT=$(git cherry-pick ${{ github.event.pull_request.merge_commit_sha }} --strategy-option theirs || true)
             CONFLICTS=$(echo "$OUTPUT" | grep 'CONFLICT' || echo "")
@@ -48,11 +48,9 @@ jobs:
             echo "conflicts=$CONFLICTS" >> $GITHUB_ENV
 
       - name: Create PR
-        id: cpr
-        uses: peter-evans/create-pull-request@v5
-        with:
-            title: ${{ github.event.pull_request.title }}
-            base: develop
-            assignees: ${{ github.event.pull_request.user.login }}
-            branch: "${{ steps.extract.outputs.newBranchName }}"
-            body: "${{ format('Cherry pick from the original PR: \n- #{0}\n\n ---- \n{1}', github.event.pull_request.number, github.event.pull_request.body) }}"
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_BRANCH: ${{ env.newBranchName }}
+          PR_ASSIGNEE: ${{ github.event.pull_request.user.login }}
+          PR_BODY: "${{ format('Cherry pick from the original PR: \n- #{0}\n\n---- \n\n ⚠️ Conflicts during cherry-pick:\n{1}\n\n{2}', github.event.pull_request.number, env.conflicts, github.event.pull_request.body) }}"
+        run: gh pr create --title "$PR_TITLE" --body "$PR_BODY" --base develop --head "$PR_BRANCH" --label "cherry-pick" --assignee "$PR_ASSIGNEE"
