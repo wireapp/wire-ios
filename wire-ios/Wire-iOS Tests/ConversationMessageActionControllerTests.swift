@@ -75,7 +75,7 @@ final class ConversationMessageActionControllerTests: XCTestCase, CoreDataFixtur
         let doubleTapAction = actionController.doubleTapAction
 
         // THEN
-        XCTAssertEqual(doubleTapAction, .react(.like))
+        XCTAssertEqual(doubleTapAction, .react("❤️"))
     }
 
     func testThatItDoesNotAllowToLikeEphemeralMessage() {
