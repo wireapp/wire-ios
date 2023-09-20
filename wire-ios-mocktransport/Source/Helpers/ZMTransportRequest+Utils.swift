@@ -91,7 +91,7 @@ public extension ZMTransportRequest {
         }) == nil
     }
 
-    static func ~=(path: String, request: ZMTransportRequest) -> Bool {
+    static func ~= (path: String, request: ZMTransportRequest) -> Bool {
         return request.matches(path: path)
     }
 }
