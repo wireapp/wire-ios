@@ -177,7 +177,7 @@ class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
                 attachment(
                     from: .trash,
                     size: 8
-                )
+                ) ?? NSAttributedString(string: "")
             )
 
         case .edited:
@@ -185,7 +185,7 @@ class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
                 attachment(
                     from: .pencil,
                     size: 8
-                )
+                ) ?? NSAttributedString(string: "")
             )
 
         default:
@@ -200,7 +200,7 @@ class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
                 attachment(
                     from: .guest,
                     size: 14
-                )
+                ) ?? NSAttributedString(string: "")
             )
         case .externalPartner:
             accessibilityIdentifier = "img.externalPartner"
@@ -208,7 +208,7 @@ class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
                 attachment(
                     from: .externalPartner,
                     size: 16
-                )
+                ) ?? NSAttributedString(string: "")
             )
         case .federated:
             accessibilityIdentifier = "img.federatedUser"
@@ -216,7 +216,7 @@ class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
                 attachment(
                     from: .federated,
                     size: 14
-                )
+                ) ?? NSAttributedString(string: "")
             )
         case .service:
             accessibilityIdentifier = "img.serviceUser"
@@ -224,7 +224,7 @@ class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
                 attachment(
                     from: .bot,
                     size: 14
-                )
+                ) ?? NSAttributedString(string: "")
             )
 
         default:
@@ -239,7 +239,7 @@ class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
         authorLabel.attributedText = attributedString
     }
 
-    private func attachment(from icon: StyleKitIcon, size: CGFloat) -> NSAttributedString {
+    private func attachment(from icon: StyleKitIcon, size: CGFloat) -> NSAttributedString? {
         let textColor: UIColor = SemanticColors.Icon.foregroundDefault
         let attachment = NSTextAttachment()
 
@@ -248,12 +248,14 @@ class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
             color: textColor
         ).with(insets: UIEdgeInsets(top: 0, left: 8, bottom: 0, right: 0), backgroundColor: .clear)
 
-        let iconSize = icon?.size
+        guard let icon = icon else { return nil }
+
+        let iconSize = icon.size
 
         let iconBounds = CGRect(x: CGFloat(0),
-                                y: (UIFont.mediumSemiboldFont.capHeight - iconSize!.height) / 2.0,
-                                width: iconSize!.width,
-                                height: iconSize!.height)
+                                y: (UIFont.mediumSemiboldFont.capHeight - iconSize.height) / 2.0,
+                                width: iconSize.width,
+                                height: iconSize.height)
         attachment.bounds = iconBounds
         attachment.image = icon
 
