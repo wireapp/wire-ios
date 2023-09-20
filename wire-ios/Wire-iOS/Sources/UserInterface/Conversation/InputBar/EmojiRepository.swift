@@ -42,9 +42,9 @@ final class EmojiRepository: EmojiRepositoryInterface {
     // MARK: - Life cycle
 
     init() {
-        allEmojiData = Self.loadAllFromDisk().sorted {
-            $0.sortOrder < $1.sortOrder
-        }
+        allEmojiData = Self.loadAllFromDisk()
+            .filter { Self.isEmojiAvailable($0) }
+            .sorted { $0.sortOrder < $1.sortOrder }
     }
 
     // MARK: - Fetch
@@ -88,6 +88,30 @@ final class EmojiRepository: EmojiRepositoryInterface {
 
     private lazy var emojiDirectory = URL.directoryURL("emoji")
     private lazy var recentlyUsedEmojisURL = emojiDirectory?.appendingPathComponent("recently_used.plist")
+
+    // MARK: - Availability
+
+    private static func isEmojiAvailable(_ emoji: Emoji) -> Bool {
+        guard let emojiVersion = Double(emoji.addedIn) else { return false }
+        let emojiVersionTruncated = (emojiVersion * 100.0).rounded() / 100.0
+        return emojiVersionTruncated <= supportedEmojiVersion
+    }
+
+    private static let supportedEmojiVersion: Double = {
+        if #available(iOS 16.4, *) {
+            return 15.0
+        } else if #available(iOS 15.4, *) {
+            return 14.0
+        } else if #available(iOS 14.5, *) {
+            return 13.1
+        } else if #available(iOS 14.2, *) {
+            return 13.0
+        } else if #available(iOS 13.2, *) {
+            return 12.1
+        } else {
+            return 11.0
+        }
+    }()
 
 }
 
