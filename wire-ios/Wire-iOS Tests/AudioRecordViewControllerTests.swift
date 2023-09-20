@@ -41,6 +41,7 @@ final class AudioRecordViewControllerTests: BaseSnapshotTestCase {
         super.setUp()
         accentColor = .strongBlue
         sut = AudioRecordViewController()
+        sut.view.backgroundColor = SemanticColors.View.backgroundDefault
         delegate = MockAudioRecordViewControllerDelegate()
         sut.delegate = delegate
         sut.updateTimeLabel(123)
@@ -53,8 +54,16 @@ final class AudioRecordViewControllerTests: BaseSnapshotTestCase {
         super.tearDown()
     }
 
-    func verify() {
-        verifyInAllPhoneWidths(matching: sut.prepareForSnapshot())
+    func verify(file: StaticString = #file,
+                testName: String = #function,
+                line: UInt = #line) {
+
+        verifyInAllPhoneWidths(
+            matching: sut.prepareForSnapshot(),
+            file: file,
+            testName: testName,
+            line: line
+        )
     }
 
     func testThatItRendersViewControllerCorrectlyState_Recording() {
