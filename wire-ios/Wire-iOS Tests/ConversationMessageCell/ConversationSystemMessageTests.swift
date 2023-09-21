@@ -280,12 +280,14 @@ final class ConversationSystemMessageTests: ZMSnapshotTestCase {
     // MARK: - potential gap
 
     func testPotentialGap() {
+        isRecording = true
         let message = MockMessageFactory.systemMessage(with: .potentialGap)!
 
         verify(message: message)
     }
 
     func testPotentialGap_addedUser() {
+        isRecording = true
         let message = MockMessageFactory.systemMessage(with: .potentialGap)!
 
         message.assignMockAddedUser()
@@ -294,6 +296,7 @@ final class ConversationSystemMessageTests: ZMSnapshotTestCase {
     }
 
     func testPotentialGap_addedUsers() {
+        isRecording = true
         let message = MockMessageFactory.systemMessage(with: .potentialGap)!
 
         message.assignMockAddedUsers(users: SwiftMockLoader.mockUsers().prefix(4))
@@ -302,6 +305,7 @@ final class ConversationSystemMessageTests: ZMSnapshotTestCase {
     }
 
     func testPotentialGap_removedUser() {
+        isRecording = true
         let message = MockMessageFactory.systemMessage(with: .potentialGap)!
 
         message.assignMockRemovedUsers(users: SwiftMockLoader.mockUsers().prefix(1))
@@ -310,6 +314,7 @@ final class ConversationSystemMessageTests: ZMSnapshotTestCase {
     }
 
     func testPotentialGap_removedUsers() {
+        isRecording = true
         let message = MockMessageFactory.systemMessage(with: .potentialGap)!
 
         message.assignMockRemovedUsers(users: SwiftMockLoader.mockUsers().prefix(4))
@@ -318,6 +323,7 @@ final class ConversationSystemMessageTests: ZMSnapshotTestCase {
     }
 
     func testPotentialGap_addedAndRemovedOneUser() {
+        isRecording = true
         let message = MockMessageFactory.systemMessage(with: .potentialGap)!
 
         message.assignMockAddedUser()
@@ -327,6 +333,7 @@ final class ConversationSystemMessageTests: ZMSnapshotTestCase {
     }
 
     func testPotentialGap_addedOneUserAndRemovedMultipleUsers() {
+        isRecording = true
         let message = MockMessageFactory.systemMessage(with: .potentialGap)!
 
         message.assignMockAddedUser()
@@ -336,6 +343,7 @@ final class ConversationSystemMessageTests: ZMSnapshotTestCase {
     }
 
     func testPotentialGap_addedMultipleUsersAndRemovedOneUser() {
+        isRecording = true
         let message = MockMessageFactory.systemMessage(with: .potentialGap)!
 
         message.assignMockAddedUsers(users: SwiftMockLoader.mockUsers().suffix(4))
@@ -389,7 +397,7 @@ extension MockMessage {
     }
 
     func assignMockAddedUsers(users: ArraySlice<MockUserType>) {
-        backingSystemMessageData?.removedUserTypes = Set<MockUserType>(users)
+        backingSystemMessageData?.addedUserTypes = Set<MockUserType>(users)
     }
 
     func assignMockRemovedUsers(users: ArraySlice<MockUserType>) {
