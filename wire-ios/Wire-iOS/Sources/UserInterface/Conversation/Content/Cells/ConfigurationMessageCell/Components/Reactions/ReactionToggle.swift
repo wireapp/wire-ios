@@ -87,7 +87,7 @@ class ReactionToggle: UIControl {
         addTarget(self, action: #selector(didToggle), for: .touchUpInside)
 
         setupAccessibility(
-            value: emoji.value,
+            value: emoji,
             count: count
         )
     }
