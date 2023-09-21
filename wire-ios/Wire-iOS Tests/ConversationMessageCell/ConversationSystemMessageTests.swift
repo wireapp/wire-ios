@@ -29,7 +29,6 @@ final class ConversationSystemMessageTests: ZMSnapshotTestCase {
 
     override func tearDown() {
         SelfUser.provider = nil
-        UserDefaults.standard.set(["Base"], forKey: "AppleLanguages")
         super.tearDown()
     }
 
