@@ -31,7 +31,7 @@
       },
       {
         "key" : "SNAPSHOT_ARTIFACTS",
-        "value" : "$(SOURCE_ROOT)\/SnapshotResultsde"
+        "value" : "$(SOURCE_ROOT)\/SnapshotResults\/de"
       }
     ],
     "language" : "de",
