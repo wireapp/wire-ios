@@ -347,12 +347,14 @@ final class ConversationSystemMessageTests: ZMSnapshotTestCase {
     // MARK: - Potential Gap German Translation
 
     func testPotentialGap_DE() {
+        UserDefaults.standard.set(["de"], forKey: "AppleLanguages")
         let message = MockMessageFactory.systemMessage(with: .potentialGap)!
 
         verify(message: message)
     }
 
     func testPotentialGap_addedUser_DE() {
+        UserDefaults.standard.set(["de"], forKey: "AppleLanguages")
         let message = MockMessageFactory.systemMessage(with: .potentialGap)!
 
         message.assignMockAddedUser()
@@ -361,6 +363,7 @@ final class ConversationSystemMessageTests: ZMSnapshotTestCase {
     }
 
     func testPotentialGap_addedUsers_DE() {
+        UserDefaults.standard.set(["de"], forKey: "AppleLanguages")
         let message = MockMessageFactory.systemMessage(with: .potentialGap)!
 
         message.assignMockAddedUsers(users: SwiftMockLoader.mockUsers().prefix(4))
@@ -369,6 +372,7 @@ final class ConversationSystemMessageTests: ZMSnapshotTestCase {
     }
 
     func testPotentialGap_removedUser_DE() {
+        UserDefaults.standard.set(["de"], forKey: "AppleLanguages")
         let message = MockMessageFactory.systemMessage(with: .potentialGap)!
 
         message.assignMockRemovedUsers(users: SwiftMockLoader.mockUsers().prefix(1))
@@ -377,6 +381,7 @@ final class ConversationSystemMessageTests: ZMSnapshotTestCase {
     }
 
     func testPotentialGap_removedUsers_DE() {
+        UserDefaults.standard.set(["de"], forKey: "AppleLanguages")
         let message = MockMessageFactory.systemMessage(with: .potentialGap)!
 
         message.assignMockRemovedUsers(users: SwiftMockLoader.mockUsers().prefix(4))
@@ -385,6 +390,7 @@ final class ConversationSystemMessageTests: ZMSnapshotTestCase {
     }
 
     func testPotentialGap_addedAndRemovedOneUser_DE() {
+        UserDefaults.standard.set(["de"], forKey: "AppleLanguages")
         let message = MockMessageFactory.systemMessage(with: .potentialGap)!
 
         message.assignMockAddedUser()
@@ -394,6 +400,7 @@ final class ConversationSystemMessageTests: ZMSnapshotTestCase {
     }
 
     func testPotentialGap_addedOneUserAndRemovedMultipleUsers_DE() {
+        UserDefaults.standard.set(["de"], forKey: "AppleLanguages")
         let message = MockMessageFactory.systemMessage(with: .potentialGap)!
 
         message.assignMockAddedUser()
@@ -403,6 +410,7 @@ final class ConversationSystemMessageTests: ZMSnapshotTestCase {
     }
 
     func testPotentialGap_addedMultipleUsersAndRemovedOneUser_DE() {
+        UserDefaults.standard.set(["de"], forKey: "AppleLanguages")
         let message = MockMessageFactory.systemMessage(with: .potentialGap)!
 
         message.assignMockAddedUsers(users: SwiftMockLoader.mockUsers().suffix(4))
