@@ -19,7 +19,7 @@
 
 import Foundation
 
-extension Array {
+public extension Array {
 
     enum Cardinality {
 
