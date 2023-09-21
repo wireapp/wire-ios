@@ -28,6 +28,10 @@ jobs:
             NEW_BRANCH_NAME="${PR_BRANCH}-cherry-pick"
             echo "New branch name: $NEW_BRANCH_NAME"
             echo "newBranchName=$NEW_BRANCH_NAME" >> $GITHUB_ENV
+      - name: Configure user to bot
+        run: |  
+            git config user.name 'github-actions[bot]'
+            git config user.email 'github-actions[bot]@users.noreply.github.com'
 
       - name: Cherry-pick commits
         run: |
@@ -42,6 +46,7 @@ jobs:
             fi
             git push origin ${{ env.newBranchName }} || (echo "Failed to push to origin" && exit 1)
             echo "conflicts=$CONFLICTS" >> $GITHUB_ENV
+
       - name: Create PR
         env:
           PR_TITLE: ${{ github.event.pull_request.title }}
