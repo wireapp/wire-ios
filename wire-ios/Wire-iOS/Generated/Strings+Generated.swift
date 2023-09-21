@@ -2031,14 +2031,6 @@ internal enum L10n {
           internal static let learnMore = L10n.tr("Localizable", "content.system.message_legal_hold.learn_more", fallback: "Learn more")
         }
         internal enum MissingMessages {
-          /// Plural format key: "%@ %#@lu_number_of_users@"
-          internal static func subtitleAdded(_ p1: Any, _ p2: Int) -> String {
-            return L10n.tr("Localizable", "content.system.missing_messages.subtitle_added", String(describing: p1), p2, fallback: "Plural format key: \"%@ %#@lu_number_of_users@\"")
-          }
-          /// Plural format key: "%@ %#@lu_number_of_users@"
-          internal static func subtitleRemoved(_ p1: Any, _ p2: Int) -> String {
-            return L10n.tr("Localizable", "content.system.missing_messages.subtitle_removed", String(describing: p1), p2, fallback: "Plural format key: \"%@ %#@lu_number_of_users@\"")
-          }
           internal enum UsersAdded {
             /// You haven’t used this device for a while. Some messages may not appear here.
             /// 
