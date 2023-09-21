@@ -19,19 +19,19 @@
       },
       {
         "key" : "SNAPSHOT_REFERENCE_DIR",
-        "value" : "$(SOURCE_ROOT)\/$(PROJECT_NAME) Tests\/ReferenceImages"
+        "value" : "$(SOURCE_ROOT)\/$(PROJECT_NAME) Tests\/ReferenceImagesDE"
       },
       {
         "key" : "FB_REFERENCE_IMAGE_DIR",
-        "value" : "$(SOURCE_ROOT)\/$(PROJECT_NAME) Tests\/ReferenceImages"
+        "value" : "$(SOURCE_ROOT)\/$(PROJECT_NAME) Tests\/ReferenceImagesDE"
       },
       {
         "key" : "IMAGE_DIFF_DIR",
-        "value" : "$(SOURCE_ROOT)\/SnapshotResults"
+        "value" : "$(SOURCE_ROOT)\/SnapshotResultsDE"
       },
       {
         "key" : "SNAPSHOT_ARTIFACTS",
-        "value" : "$(SOURCE_ROOT)\/SnapshotResults"
+        "value" : "$(SOURCE_ROOT)\/SnapshotResultsDE"
       }
     ],
     "language" : "de",
