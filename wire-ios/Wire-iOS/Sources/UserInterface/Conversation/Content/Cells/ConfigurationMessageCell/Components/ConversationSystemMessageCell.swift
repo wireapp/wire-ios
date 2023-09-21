@@ -22,6 +22,33 @@ import WireDataModel
 import WireSyncEngine
 import Down
 
+// MARK: - Array extension
+
+extension Array {
+
+    enum Cardinality {
+
+        case zero
+        case singular
+        case plural
+
+    }
+
+    var cardinality: Cardinality {
+        switch count {
+        case 0:
+            return .zero
+
+        case 1:
+            return .singular
+
+        default:
+            return .plural
+        }
+    }
+
+}
+
 // MARK: Properties
 
 private typealias IconColors = SemanticColors.Icon
@@ -697,59 +724,58 @@ class ConversationMissingMessagesSystemMessageCellDescription: ConversationMessa
     }
 
     private static func makeAttributedString(systemMessageData: ZMSystemMessageData) -> NSAttributedString {
-        let font = UIFont.mediumFont
-        let color = LabelColors.textDefault
-        let addedUsernames = systemMessageData.addedUserTypes.compactMap { $0 as? UserType }.compactMap { $0.name }.joined(separator: ", ")
-        let removedUserNames = systemMessageData.removedUserTypes.compactMap { $0 as? UserType }.compactMap { $0.name }.joined(separator: ", ")
+        let string = localizedString(systemMessageData: systemMessageData)
+        return NSAttributedString(string: string) && UIFont.mediumFont && LabelColors.textDefault
+    }
 
-        let addedUsersCount = systemMessageData.addedUserTypes.count
-        let removedUsersCount = systemMessageData.removedUserTypes.count
+    private static func localizedString(systemMessageData: ZMSystemMessageData) -> String {
+        typealias Strings = L10n.Localizable.Content.System
 
-        typealias MissingMessagesLocalizable = L10n.Localizable.Content.System.MissingMessages
-
-        var string: String = ""
-
-        let addedOrRemovedUsers = !systemMessageData.addedUserTypes.isEmpty || !systemMessageData.removedUserTypes.isEmpty
-
-        if systemMessageData.addedUserTypes.count == 0 && systemMessageData.removedUserTypes.count == 0 {
-            string = L10n.Localizable.Content.System.missingMessages
+        guard !systemMessageData.needsUpdatingUsers else {
+            return Strings.missingMessages
         }
 
-        if !systemMessageData.needsUpdatingUsers && addedOrRemovedUsers {
-
-            // If users added and no users removed
-            if !systemMessageData.addedUserTypes.isEmpty && systemMessageData.removedUserTypes.isEmpty {
-                if addedUsersCount == 1 {
-                    string = MissingMessagesLocalizable.UsersAdded.singular(addedUsernames)
-                } else if addedUsersCount > 1 {
-                    string = MissingMessagesLocalizable.UsersAdded.plural(addedUsernames)
-                }
-
-                // if no users added and users removed
-            } else if systemMessageData.addedUserTypes.isEmpty && !systemMessageData.removedUserTypes.isEmpty {
-                if removedUsersCount == 1 {
-                    string = MissingMessagesLocalizable.UsersRemoved.singular(removedUserNames)
-                } else if removedUsersCount > 1 {
-                    string = MissingMessagesLocalizable.UsersRemoved.plural(removedUserNames)
-                }
-
-                // if users added and users removed
-            } else if !systemMessageData.addedUserTypes.isEmpty || !systemMessageData.removedUserTypes.isEmpty {
-                // One user added, one user removed
-                if addedUsersCount == 1 &&  removedUsersCount == 1 {
-                    string = MissingMessagesLocalizable.UsersAddedAndRemoved.singular(addedUsernames, removedUserNames)
-                    // One user added, multiple users removed
-                } else if addedUsersCount == 1 && removedUsersCount > 1 {
-                    string = MissingMessagesLocalizable.UsersAddedAndRemoved.singularPlural(addedUsernames, removedUserNames)
-                    // Multiple users added, one user removed
-                } else if addedUsersCount > 1 && removedUsersCount == 1 {
-                    string = MissingMessagesLocalizable.UsersAddedAndRemoved.pluralSingular(addedUsernames, removedUserNames)
-                }
-
-            }
-
+        let namesOfAddedUsers: [String] = systemMessageData.addedUserTypes.compactMap {
+            guard let user = $0 as? UserType else { return nil }
+            return user.name
         }
-        return NSAttributedString(string: string) && font && color
+
+        let namesOfRemovedUsers: [String] = systemMessageData.removedUserTypes.compactMap {
+            guard let user = $0 as? UserType else { return nil }
+            return user.name
+        }
+
+        let listOfAddedUsers = ListFormatter.localizedString(byJoining: namesOfAddedUsers)
+        let listOfRemovedUsers = ListFormatter.localizedString(byJoining: namesOfRemovedUsers)
+
+        switch (namesOfAddedUsers.cardinality, namesOfRemovedUsers.cardinality) {
+        case (.zero, .zero):
+            return Strings.missingMessages
+
+        case (.singular, .zero):
+            return Strings.MissingMessages.UsersAdded.singular(listOfAddedUsers)
+
+        case (.plural, .zero):
+            return Strings.MissingMessages.UsersAdded.plural(listOfAddedUsers)
+
+        case (.zero, .singular):
+            return Strings.MissingMessages.UsersRemoved.singular(listOfRemovedUsers)
+
+        case (.zero, .plural):
+            return Strings.MissingMessages.UsersRemoved.plural(listOfRemovedUsers)
+
+        case (.singular, .singular):
+            return Strings.MissingMessages.UsersAddedAndRemoved.singular(listOfAddedUsers, listOfRemovedUsers)
+
+        case (.plural, .singular):
+            return Strings.MissingMessages.UsersAddedAndRemoved.pluralSingular(listOfAddedUsers, listOfRemovedUsers)
+
+        case (.singular, .plural):
+            return Strings.MissingMessages.UsersAddedAndRemoved.singularPlural(listOfAddedUsers, listOfRemovedUsers)
+
+        case (.plural, .plural):
+            return Strings.MissingMessages.UsersAddedAndRemoved.plural(listOfAddedUsers, listOfRemovedUsers)
+        }
     }
 }
 
