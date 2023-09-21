@@ -297,28 +297,13 @@ class ConversationSenderMessageCellDescription: ConversationMessageCellDescripti
     init(sender: UserType, message: ZMConversationMessage, timestamp: String?) {
         self.message = message
 
-        var teamRoleIndicator: TeamRoleIndicator?
+        let teamRoleIndicator = sender.teamRoleIndicator()
         var indicator: Indicator?
 
         if message.isDeletion {
             indicator = .deleted
         } else if message.updatedAt != nil {
             indicator = .edited
-        }
-
-        if sender.isServiceUser {
-            teamRoleIndicator = .service
-
-        } else if sender.isExternalPartner {
-            teamRoleIndicator = .externalPartner
-
-        } else if sender.isFederated {
-            teamRoleIndicator = .federated
-
-        } else if !sender.isTeamMember,
-                  let selfUser = SelfUser.provider?.selfUser,
-                  selfUser.isTeamMember {
-            teamRoleIndicator = .guest
         }
 
         self.configuration = View.Configuration(
@@ -350,6 +335,28 @@ class ConversationSenderMessageCellDescription: ConversationMessageCellDescripti
             }
         } else {
             accessibilityLabel = nil
+        }
+    }
+
+}
+
+private extension UserType {
+    func teamRoleIndicator(with provider: SelfUserProvider? = SelfUser.provider) -> TeamRoleIndicator? {
+        if self.isServiceUser {
+            return .service
+
+        } else if self.isExternalPartner {
+            return .externalPartner
+
+        } else if self.isFederated {
+            return .federated
+
+        } else if !self.isTeamMember,
+                  let selfUser = provider?.selfUser,
+                  selfUser.isTeamMember {
+            return .guest
+        } else {
+            return nil
         }
     }
 
