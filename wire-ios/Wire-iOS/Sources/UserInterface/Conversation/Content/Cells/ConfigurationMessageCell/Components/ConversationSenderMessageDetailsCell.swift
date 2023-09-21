@@ -151,11 +151,15 @@ class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
             dateLabel.leadingAnchor.constraint(equalTo: authorLabel.trailingAnchor, constant: 8),
             trailingDateLabelConstraint,
 
-            authorLabel.topAnchor.constraint(equalTo: self.topAnchor),
+            dateLabel.centerYAnchor.constraint(equalTo: avatar.centerYAnchor),
+            authorLabel.topAnchor.constraint(greaterThanOrEqualTo: self.topAnchor),
             self.bottomAnchor.constraint(greaterThanOrEqualTo: authorLabel.bottomAnchor),
             self.bottomAnchor.constraint(greaterThanOrEqualTo: avatar.bottomAnchor),
 
-            avatar.centerYAnchor.constraint(equalTo: authorLabel.centerYAnchor),
+            avatar.heightAnchor.constraint(equalTo: avatar.widthAnchor),
+            avatar.heightAnchor.constraint(equalToConstant: CGFloat(avatar.size.rawValue)),
+
+            avatar.topAnchor.constraint(greaterThanOrEqualTo: self.topAnchor),
             dateLabel.firstBaselineAnchor.constraint(equalTo: authorLabel.firstBaselineAnchor)
         ])
     }
