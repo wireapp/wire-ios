@@ -2,9 +2,17 @@
   "configurations" : [
     {
       "id" : "CC7A4AB7-6BA6-405E-95D7-9A6FF0FC136A",
-      "name" : "Configuration 1",
+      "name" : "English Configuration",
       "options" : {
 
+      }
+    },
+    {
+      "id" : "9419338B-E10C-4872-B5C5-69E190918399",
+      "name" : "German Configuration",
+      "options" : {
+        "language" : "de",
+        "region" : "DE"
       }
     }
   ],
