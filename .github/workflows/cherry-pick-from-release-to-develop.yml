@@ -29,7 +29,8 @@ jobs:
             echo "New branch name: $NEW_BRANCH_NAME"
             echo "newBranchName=$NEW_BRANCH_NAME" >> $GITHUB_ENV
       - name: Configure user
-        run: |
+        run: |  
+              echo ${{ github.event.pull_request.user }}
               git config --global user.email ${{ github.event.pull_request.user.email }}
               git config --global user.name ${{ github.event.pull_request.user.name }}
 
