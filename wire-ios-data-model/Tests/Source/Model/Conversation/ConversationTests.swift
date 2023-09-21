@@ -160,7 +160,12 @@ extension ConversationTests {
             updatedConversation?.remoteIdentifier = UUID.create()
             updatedConversation?.lastReadServerTimeStamp = oldLastRead
 
-            let message = GenericMessage(content: LastRead(conversationID: updatedConversation!.remoteIdentifier!, lastReadTimestamp: newLastRead), nonce: UUID.create())
+            guard let remoteIdentifier = updatedConversation?.remoteIdentifier else {
+                XCTFail("There's no remoteIdentifier")
+                return
+            }
+            let conversationID = QualifiedID(uuid: remoteIdentifier, domain: "")
+            let message = GenericMessage(content: LastRead(conversationID: conversationID, lastReadTimestamp: newLastRead), nonce: UUID.create())
             let contentData = try? message.serializedData()
             let data = contentData?.base64EncodedString()
 
