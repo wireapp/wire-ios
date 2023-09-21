@@ -21,33 +21,7 @@ import WireCommonComponents
 import WireDataModel
 import WireSyncEngine
 import Down
-
-// MARK: - Array extension
-
-extension Array {
-
-    enum Cardinality {
-
-        case zero
-        case singular
-        case plural
-
-    }
-
-    var cardinality: Cardinality {
-        switch count {
-        case 0:
-            return .zero
-
-        case 1:
-            return .singular
-
-        default:
-            return .plural
-        }
-    }
-
-}
+import WireUtilities
 
 // MARK: Properties
 
