@@ -28,13 +28,10 @@ jobs:
             NEW_BRANCH_NAME="${PR_BRANCH}-cherry-pick"
             echo "New branch name: $NEW_BRANCH_NAME"
             echo "newBranchName=$NEW_BRANCH_NAME" >> $GITHUB_ENV
-      - name: Configure user
+      - name: Configure user to bot
         run: |  
-              echo ${{ github.event.pull_request.user.email }}
-              echo ${{ github.event.pull_request.user.name }}
-              echo ${{ github.event.pull_request.user.login }}
-              git config --global user.email ${{ github.event.pull_request.user.email }}
-              git config --global user.name ${{ github.event.pull_request.user.name }}
+            git config user.name 'github-actions[bot]'
+            git config user.email 'github-actions[bot]@users.noreply.github.com'
 
       - name: Cherry-pick commits
         run: |
