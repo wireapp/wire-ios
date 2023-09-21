@@ -29,6 +29,7 @@ final class ConversationSystemMessageTests: ZMSnapshotTestCase {
 
     override func tearDown() {
         SelfUser.provider = nil
+        UserDefaults.standard.set("AppleLanguages", forKey: "en")
         super.tearDown()
     }
 
@@ -336,6 +337,81 @@ final class ConversationSystemMessageTests: ZMSnapshotTestCase {
     }
 
     func testPotentialGap_addedMultipleUsersAndRemovedOneUser() {
+        let message = MockMessageFactory.systemMessage(with: .potentialGap)!
+
+        message.assignMockAddedUsers(users: SwiftMockLoader.mockUsers().suffix(4))
+        message.assignMockRemovedUsers(users: SwiftMockLoader.mockUsers().suffix(1))
+
+        verify(message: message)
+    }
+
+    // MARK: - Potential Gap German Translation
+
+    func testPotentialGap_DE() {
+        UserDefaults.standard.set("AppleLanguages", forKey: "de")
+        let message = MockMessageFactory.systemMessage(with: .potentialGap)!
+
+        verify(message: message)
+    }
+
+    func testPotentialGap_addedUser_DE() {
+        UserDefaults.standard.set("AppleLanguages", forKey: "de")
+        let message = MockMessageFactory.systemMessage(with: .potentialGap)!
+
+        message.assignMockAddedUser()
+
+        verify(message: message)
+    }
+
+    func testPotentialGap_addedUsers_DE() {
+        UserDefaults.standard.set("AppleLanguages", forKey: "de")
+        let message = MockMessageFactory.systemMessage(with: .potentialGap)!
+
+        message.assignMockAddedUsers(users: SwiftMockLoader.mockUsers().prefix(4))
+
+        verify(message: message)
+    }
+
+    func testPotentialGap_removedUser_DE() {
+        UserDefaults.standard.set("AppleLanguages", forKey: "de")
+        let message = MockMessageFactory.systemMessage(with: .potentialGap)!
+
+        message.assignMockRemovedUsers(users: SwiftMockLoader.mockUsers().prefix(1))
+
+        verify(message: message)
+    }
+
+    func testPotentialGap_removedUsers_DE() {
+        UserDefaults.standard.set("AppleLanguages", forKey: "de")
+        let message = MockMessageFactory.systemMessage(with: .potentialGap)!
+
+        message.assignMockRemovedUsers(users: SwiftMockLoader.mockUsers().prefix(4))
+
+        verify(message: message)
+    }
+
+    func testPotentialGap_addedAndRemovedOneUser_DE() {
+        UserDefaults.standard.set("AppleLanguages", forKey: "de")
+        let message = MockMessageFactory.systemMessage(with: .potentialGap)!
+
+        message.assignMockAddedUser()
+        message.assignMockRemovedUsers(users: SwiftMockLoader.mockUsers().suffix(1))
+
+        verify(message: message)
+    }
+
+    func testPotentialGap_addedOneUserAndRemovedMultipleUsers_DE() {
+        UserDefaults.standard.set("AppleLanguages", forKey: "de")
+        let message = MockMessageFactory.systemMessage(with: .potentialGap)!
+
+        message.assignMockAddedUser()
+        message.assignMockRemovedUsers(users: SwiftMockLoader.mockUsers().suffix(4))
+
+        verify(message: message)
+    }
+
+    func testPotentialGap_addedMultipleUsersAndRemovedOneUser_DE() {
+        UserDefaults.standard.set("AppleLanguages", forKey: "de")
         let message = MockMessageFactory.systemMessage(with: .potentialGap)!
 
         message.assignMockAddedUsers(users: SwiftMockLoader.mockUsers().suffix(4))
