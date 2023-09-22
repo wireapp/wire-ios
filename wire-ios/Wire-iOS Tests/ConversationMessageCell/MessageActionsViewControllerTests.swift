@@ -145,13 +145,13 @@ final class BasicReactionPickerTests: BaseSnapshotTestCase {
 
     func test_BasicReactionPicker_withSelectedReaction() {
         // GIVEN WHEN
-        let sut = pickerWithReaction([Emoji.thumbsUp])
+        let sut = pickerWithReaction([Emoji.ID.thumbsUp])
 
         // THEN
         verify(matching: sut)
     }
 
-    private func pickerWithReaction(_ reaction: Set<Emoji>?) -> BasicReactionPicker {
+    private func pickerWithReaction(_ reaction: Set<Emoji.ID>?) -> BasicReactionPicker {
         var picker = BasicReactionPicker(selectedReactions: reaction ?? [])
         picker.sizeToFit()
         picker.backgroundColor = .white
