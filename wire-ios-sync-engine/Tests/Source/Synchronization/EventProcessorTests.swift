@@ -219,7 +219,7 @@ class EventProcessorTests: MessagingTest {
                 sharedUserDefaults: UserDefaults.random()!
             )
             earService.setInitialEARFlagValue(true)
-            
+
             try earService.enableEncryptionAtRest(
                 context: syncMOC,
                 skipMigration: true

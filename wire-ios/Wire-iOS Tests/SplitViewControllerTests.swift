@@ -86,9 +86,9 @@ final class SplitViewControllerTests: XCTestCase {
     }
 
     private func setupLeftView(isLeftViewControllerRevealed: Bool,
-                                   animated: Bool = true,
-                                   file: StaticString = #file,
-                                   line: UInt = #line) {
+                               animated: Bool = true,
+                               file: StaticString = #file,
+                               line: UInt = #line) {
         sut.leftViewController = UIViewController()
         sut.rightViewController = UIViewController()
 

@@ -24,6 +24,7 @@ extension ZMMessage {
         reaction: WireProtos.Reaction,
         senderID: UUID,
         conversation: ZMConversation,
+        creationDate: Date?,
         inContext context: NSManagedObjectContext
     ) {
         guard
@@ -34,7 +35,7 @@ extension ZMMessage {
             return
         }
 
-        localMessage.setReactions(reaction.toReactionSet(), forUser: user)
+        localMessage.setReactions(reaction.toReactionSet(), forUser: user, newReactionsCreationDate: creationDate)
         localMessage.updateCategoryCache()
     }
 

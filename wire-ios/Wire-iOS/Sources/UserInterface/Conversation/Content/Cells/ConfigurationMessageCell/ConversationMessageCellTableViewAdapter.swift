@@ -194,7 +194,7 @@ class ConversationMessageCellTableViewAdapter<C: ConversationMessageCellDescript
 
         if let popoverPresentationController = actionsMenuController.popoverPresentationController {
             popoverPresentationController.sourceView = cellView
-            popoverPresentationController.permittedArrowDirections = .left
+            popoverPresentationController.permittedArrowDirections = [.down, .left]
         }
 
         return actionsMenuController

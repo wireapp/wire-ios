@@ -48,7 +48,7 @@ class SendMLSMessageActionHandlerTests: ActionHandlerTestBase<SendMLSMessageActi
                 expectedError: .endpointUnavailable
             )
         }
-        
+
         test_itDoesntGenerateARequest(
             action: SendMLSMessageAction(message: Data()),
             apiVersion: .v5,

@@ -169,7 +169,7 @@ extension MockTransportSession {
         }
 
         // link already exists
-        if let _ = conversation.link {
+        if conversation.link != nil {
             conversation.link = nil
             return ZMTransportResponse(payload: nil, httpStatus: 200, transportSessionError: nil, apiVersion: apiVersion.rawValue)
         }

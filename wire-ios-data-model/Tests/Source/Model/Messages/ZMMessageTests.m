@@ -1393,8 +1393,8 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
     
     //when
     NSString *reactionUnicode = @"❤️";
-    [textMessage setReactions:[NSSet setWithObjects:reactionUnicode, nil] forUser:selfUser];
-    [textMessage setReactions:[NSSet setWithObjects:reactionUnicode, nil] forUser:user1];
+    [textMessage setReactions:[NSSet setWithObjects:reactionUnicode, nil] forUser:selfUser newReactionsCreationDate: nil];
+    [textMessage setReactions:[NSSet setWithObjects:reactionUnicode, nil] forUser:user1 newReactionsCreationDate: nil];
     [self.uiMOC saveOrRollback];
     
     

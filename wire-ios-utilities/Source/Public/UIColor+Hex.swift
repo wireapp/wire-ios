@@ -34,14 +34,11 @@ public extension UIColor {
     }
 
     var alpha: CGFloat {
-        get {
-            var alpha: CGFloat = 0
-            guard self.getRed(nil, green: nil, blue: nil, alpha: &alpha) else {
-                return 0
-            }
-
-            return alpha
+        var alpha: CGFloat = 0
+        guard self.getRed(nil, green: nil, blue: nil, alpha: &alpha) else {
+            return 0
         }
+        return alpha
     }
 
 }

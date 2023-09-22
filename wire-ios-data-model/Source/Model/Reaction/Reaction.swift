@@ -37,11 +37,17 @@ public let ZMReactionUsersValueKey      = "users"
     @NSManaged var unicodeValue: String?
     @NSManaged var message: ZMMessage?
     @NSManaged var users: Set<ZMUser>
+    @NSManaged private var firstReactionDate: Date?
 
-    public static func insertReaction(_ unicodeValue: String, users: [ZMUser], inMessage message: ZMMessage) -> Reaction {
+    public var creationDate: Date {
+        return firstReactionDate ?? Date.distantPast
+    }
+
+    public static func insertReaction(_ unicodeValue: String, users: [ZMUser], inMessage message: ZMMessage, creationDate: Date?) -> Reaction {
         let reaction = insertNewObject(in: message.managedObjectContext!)
         reaction.message = message
         reaction.unicodeValue = unicodeValue
+        reaction.firstReactionDate = creationDate ?? Date()
         reaction.mutableSetValue(forKey: ZMReactionUsersValueKey).addObjects(from: users)
         return reaction
     }

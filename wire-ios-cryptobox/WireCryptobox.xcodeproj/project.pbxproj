@@ -570,6 +570,7 @@
 				0928E2301BA0777A0057232E /* Frameworks */,
 				0928E2311BA0777A0057232E /* Headers */,
 				0928E2321BA0777A0057232E /* Resources */,
+				AD4812A72AB98FBF00ED208C /* Run Swiftlint */,
 			);
 			buildRules = (
 			);
@@ -704,6 +705,25 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "mkdir -p Carthage/Build\n";
+		};
+		AD4812A72AB98FBF00ED208C /* Run Swiftlint */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/../scripts/run-swiftlint.sh",
+			);
+			name = "Run Swiftlint";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "../scripts/run-swiftlint.sh\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

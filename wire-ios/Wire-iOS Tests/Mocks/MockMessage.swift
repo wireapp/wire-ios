@@ -19,6 +19,7 @@
 import Foundation
 import WireLinkPreview
 import XCTest
+import WireDataModel
 
 final class MockCompositeMessageData: NSObject, CompositeMessageData {
     var items: [CompositeMessageItem] = []
@@ -306,7 +307,6 @@ final class MockLocationMessageData: NSObject, LocationMessageData {
 }
 
 class MockMessage: NSObject, ZMConversationMessage, ConversationCompositeMessage, SwiftConversationMessage {
-
     // MARK: - ConversationCompositeMessage
     var compositeMessageData: CompositeMessageData?
 
@@ -389,7 +389,17 @@ class MockMessage: NSObject, ZMConversationMessage, ConversationCompositeMessage
         return backingUsersReaction
     }
 
+    func reactionsSortedByCreationDate() -> [ReactionData] {
+        return backingSortedReactions
+    }
+
+    var reactionData: Set<ReactionData> {
+        return backingReactionData
+    }
+
     var backingUsersReaction: UsersByReaction = [:]
+    var backingSortedReactions: [ReactionData] = []
+    var backingReactionData: Set<ReactionData> = []
     var backingTextMessageData: MockTextMessageData! = .none
     var backingFileMessageData: MockFileMessageDataType! = .none
     var backingLocationMessageData: MockLocationMessageData! = .none

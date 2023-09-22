@@ -43,7 +43,7 @@ public final class PrivateUserDefaults<Key: DefaultsKey> {
 }
 
 extension PrivateUserDefaults {
-    
+
     public func setUUID(_ uuid: UUID?, forKey key: Key) {
         storage.set(uuid?.uuidString, forKey: scopeKey(key))
     }
@@ -52,7 +52,7 @@ extension PrivateUserDefaults {
         guard let uuidString = storage.string(forKey: scopeKey(key)) else { return nil }
         return UUID(uuidString: uuidString)
     }
-    
+
     public func set(_ value: Bool, forKey key: Key) {
         storage.set(value, forKey: scopeKey(key))
     }

@@ -53,7 +53,6 @@ final class ConversationListHeaderViewSnapshotTests: BaseSnapshotTestCase {
         verify(matching: sut)
     }
 
-
     private func setupConversationListHeaderView (
         folderBadge: Int = 0,
         isCollapsed: Bool = false

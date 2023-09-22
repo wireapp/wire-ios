@@ -66,7 +66,7 @@ class MockServicesTests: MockTransportSessionTests {
         let data: [String: Any?] = mackUser.data
 
         /// then
-        if let _ = data["service"] {
+        if data["service"] != nil {
             XCTFail("service should be nil!")
         }
     }

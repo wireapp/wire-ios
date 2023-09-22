@@ -782,7 +782,7 @@ extension EncryptionSessionsDirectoryTests {
     func checkIfPersonAlreadyDecryptedMessage(_ person: Person, message: Data) -> Bool {
         let clientId = person.identifier
         let status = person == .Alice ? statusAlice : statusBob
-        guard let _ = try? status?.decrypt(message, from: clientId) else {
+        guard (try? status?.decrypt(message, from: clientId)) != nil else {
             return true
         }
         status?.discardCache()

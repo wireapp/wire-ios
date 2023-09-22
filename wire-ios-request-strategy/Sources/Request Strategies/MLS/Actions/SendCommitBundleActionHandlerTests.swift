@@ -48,7 +48,7 @@ class SendCommitBundleActionHandlerTests: ActionHandlerTestBase<SendCommitBundle
                 expectedError: .endpointUnavailable
             )
         }
-        
+
         test_itDoesntGenerateARequest(
             action: SendCommitBundleAction(commitBundle: Data()),
             apiVersion: .v5,

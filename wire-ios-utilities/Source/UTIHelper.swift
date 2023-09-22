@@ -218,13 +218,7 @@ public final class UTIHelper: NSObject {
     #if targetEnvironment(simulator)
     @available(iOSApplicationExtension 14.0, *)
     private class func createUTType(mime: String) -> UTType? {
-        for type in utTypes {
-            if mime == type.mimeType {
-                return type
-            }
-        }
-
-        return nil
+        utTypes.first(where: { $0.mimeType == mime })
     }
     #endif
 
@@ -260,12 +254,7 @@ public final class UTIHelper: NSObject {
             #if targetEnvironment(simulator)
             /// HACK: hard code MIME when preferredMIMEType is nil for M1 simulator, we should file a ticket to apple for this issue
             if utType == nil {
-                for type in utTypes {
-                    if fileExtension == type.fileExtension {
-                        utType = type
-                        break
-                    }
-                }
+                utType = utTypes.first(where: { $0.fileExtension == fileExtension })
             }
             #endif
 
