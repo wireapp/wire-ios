@@ -28,7 +28,7 @@ final class EmojiKeyboardViewController: UIViewController {
     weak var delegate: EmojiPickerViewControllerDelegate?
     fileprivate var emojiDataSource: EmojiDataSource!
     fileprivate let collectionView = EmojiCollectionView()
-    let sectionViewController = EmojiSectionViewController(types: EmojiSectionType.all)
+    let sectionViewController = EmojiSectionViewController(types: EmojiSectionType.allCases)
 
     private var deleting = false
 
@@ -97,7 +97,7 @@ final class EmojiKeyboardViewController: UIViewController {
     func updateSectionSelection() {
         let minSection = Set(self.collectionView.indexPathsForVisibleItems.map { $0.section }).min()
         guard let section = minSection  else { return }
-        self.sectionViewController.didSelectSection(self.emojiDataSource[section].type)
+        self.sectionViewController.didSelectSection(self.emojiDataSource[section].id)
     }
 
     @objc func backspaceTapped(_ sender: IconButton) {
