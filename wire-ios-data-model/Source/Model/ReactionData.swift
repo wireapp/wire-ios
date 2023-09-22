@@ -1,6 +1,6 @@
-//
+////
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2023 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,13 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+@objc public class ReactionData: NSObject {
+    public let reactionString: String
+    public let users: [UserType]
+    public let creationDate: Date
 
-extension NSString {
+    public init(reactionString: String, users: [UserType], creationDate: Date) {
+        self.reactionString = reactionString
+        self.users = users
+        self.creationDate = creationDate
+    }
 
-    /// Returns a random string with alphanumerical characters
-    @objc(createAlphanumericalString)
-    static public func createAlphanumerical() -> NSString {
-        return NSString(format: "%llx", arc4random()) // swiftlint:disable:this legacy_random
+    override public var hash: Int {
+        return reactionString.hash
     }
 }
