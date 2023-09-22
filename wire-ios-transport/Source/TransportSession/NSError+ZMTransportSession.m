@@ -48,6 +48,11 @@ NSString * const ZMTransportSessionErrorDomain = @"ZMTransportSession";
     return [NSError errorWithDomain:ZMTransportSessionErrorDomain code:ZMTransportSessionErrorCodeRequestExpired userInfo:nil];
 }
 
++ (NSError *)requestCancelledError;
+{
+    return [NSError errorWithDomain:ZMTransportSessionErrorDomain code:ZMTransportSessionErrorCodeCancelled userInfo:nil];
+}
+
 + (NSError *)tryAgainLaterError;
 {
     return [self.class tryAgainLaterErrorWithUserInfo:nil];
@@ -89,8 +94,14 @@ NSString * const ZMTransportSessionErrorDomain = @"ZMTransportSession";
             return nil;
         }
     } else if (urlError.isCancelledURLTaskError && expired) {
+        NSLog(@"qqq transportERROR expired task: %@", task);
         return [NSError requestExpiredError];
     }
+    else if (urlError.isCancelledURLTaskError && !expired) {
+        NSLog(@"qqq transportERROR notExpired task: %@", task);
+        return [NSError requestCancelledError];
+    }
+    NSLog(@"qqq transportERROR otherCase task: %@", task);
     NSDictionary *userInfo = @{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Request finished with task error %@.", task.error.localizedDescription]};
     return [NSError tryAgainLaterErrorWithUserInfo:userInfo];
 }

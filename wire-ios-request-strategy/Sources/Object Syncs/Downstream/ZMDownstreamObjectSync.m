@@ -166,7 +166,7 @@
 - (void)processResponse:(ZMTransportResponse *)response forObject:(ZMManagedObject *)object token:(ZMSyncToken *)token transcoder:(id<ZMDownstreamTranscoder>)transcoder
 {
     NSSet *keys = [self.objectsToDownload keysForWhichToApplyResultsAfterFinishedSynchronizingSyncWithToken:token forObject:object result:response.result];
-    switch (response.result) {
+    switch (response.result) { //~!@#$%^&*
         case ZMTransportResponseStatusTryAgainLater: {
             break;
         }
@@ -180,7 +180,8 @@
         }
         case ZMTransportResponseStatusTemporaryError:
         case ZMTransportResponseStatusPermanentError:
-        case ZMTransportResponseStatusExpired: {
+        case ZMTransportResponseStatusExpired:
+        case ZMTransportResponseStatusCancelled:{
             [self.objectsToDownload removeObject:object];
             [transcoder deleteObject:object withResponse:response downstreamSync:self];
             break;
