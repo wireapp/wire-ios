@@ -46,14 +46,18 @@
   "testTargets" : [
     {
       "selectedTests" : [
-        "ConversationSystemMessageTests\/testPotentialGap_DE()",
-        "ConversationSystemMessageTests\/testPotentialGap_addedAndRemovedOneUser_DE()",
-        "ConversationSystemMessageTests\/testPotentialGap_addedMultipleUsersAndRemovedOneUser_DE()",
-        "ConversationSystemMessageTests\/testPotentialGap_addedOneUserAndRemovedMultipleUsers_DE()",
-        "ConversationSystemMessageTests\/testPotentialGap_addedUser_DE()",
-        "ConversationSystemMessageTests\/testPotentialGap_addedUsers_DE()",
-        "ConversationSystemMessageTests\/testPotentialGap_removedUser_DE()",
-        "ConversationSystemMessageTests\/testPotentialGap_removedUsers_DE()"
+        "ConversationSystemMessageTests\/testPotentialGap()",
+        "ConversationSystemMessageTests\/testPotentialGap_addedAndRemovedOneUser()",
+        "ConversationSystemMessageTests\/testPotentialGap_addedMultipleUsersAndRemovedOneUser()",
+        "ConversationSystemMessageTests\/testPotentialGap_addedOneUserAndRemovedMultipleUsers()",
+        "ConversationSystemMessageTests\/testPotentialGap_addedUser()",
+        "ConversationSystemMessageTests\/testPotentialGap_addedUsers()",
+        "ConversationSystemMessageTests\/testPotentialGap_removedUser()",
+        "ConversationSystemMessageTests\/testPotentialGap_removedUsers()",
+        "ConversationSystemMessageTests\/testRemoveParticipant_federationTermination()",
+        "ConversationSystemMessageTests\/testRemoveParticipants_federationTermination()",
+        "ConversationSystemMessageTests\/testSelfDomainStoppedFederatingWithOtherDomain()",
+        "ConversationSystemMessageTests\/testTwoDomainsStoppedFederating()"
       ],
       "target" : {
         "containerPath" : "container:Wire-iOS.xcodeproj",
