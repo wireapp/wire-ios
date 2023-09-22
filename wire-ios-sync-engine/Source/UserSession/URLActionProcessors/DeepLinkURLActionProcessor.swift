@@ -36,11 +36,14 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
     func process(urlAction: URLAction, delegate: PresentationDelegate?) {
         switch urlAction {
         case let .joinConversation(key: key, code: code):
-            ZMConversation.fetchIdAndName(key: key,
-                                          code: code,
-                                          transportSession: transportSession,
-                                          eventProcessor: eventProcessor,
-                                          contextProvider: contextProvider) { [weak self] (response) in
+            ZMConversation.fetchIdAndName(
+                key: key,
+                code: code,
+                transportSession: transportSession,
+                eventProcessor: eventProcessor,
+                contextProvider: contextProvider
+            ) { [weak self] (response) in
+
                 guard let strongSelf = self,
                       let delegate = delegate else {
                     return
@@ -58,31 +61,38 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
                         delegate.completedURLAction(urlAction)
                     } else {
                         delegate.shouldPerformActionWithMessage(conversationName, action: urlAction) { shouldJoin in
+
                             guard shouldJoin else {
                                 delegate.completedURLAction(urlAction)
                                 return
                             }
-                            ZMConversation.join(key: key,
-                                                code: code,
-                                                transportSession: strongSelf.transportSession,
-                                                eventProcessor: strongSelf.eventProcessor,
-                                                contextProvider: strongSelf.contextProvider) { (response) in
+
+                            ZMConversation.join(
+                                key: key,
+                                code: code,
+                                transportSession: strongSelf.transportSession,
+                                eventProcessor: strongSelf.eventProcessor,
+                                contextProvider: strongSelf.contextProvider
+                            ) { [weak self] (response) in
+
+                                guard let strongSelf = self else { return }
+
                                 switch response {
                                 case .success(let conversation):
                                     strongSelf.synchronise(conversation) { result in
                                         DispatchQueue.main.async {
                                             switch result {
-                                                case .success(let syncConversion):
-                                                    delegate.showConversation(syncConversion, at: nil)
-                                                case .failure(let error):
-                                                    delegate.failedToPerformAction(urlAction, error: error)
+                                            case .success(let syncConversation):
+                                                delegate.showConversation(syncConversation, at: nil)
+                                            case .failure(let error):
+                                                delegate.failedToPerformAction(urlAction, error: error)
                                             }
                                         }
                                     }
-
                                 case .failure(let error):
                                     delegate.failedToPerformAction(urlAction, error: error)
                                 }
+
                                 delegate.completedURLAction(urlAction)
                             }
                         }

@@ -37,6 +37,7 @@
                      readyForRequests:(BOOL)readyForRequests
                          workingGroup:(ZMSDispatchGroup * _Nullable)workingGroup
                           application:(id<ZMApplication>)application
+                        minTLSVersion:(NSString * _Nullable)minTLSVersion
                     blacklistCallback:(void (^)(BOOL))blacklistCallback
 {
     return [self initWithCheckInterval:checkInterval
@@ -47,6 +48,7 @@
                       readyForRequests:readyForRequests
                           workingGroup:workingGroup
                            application:application
+                         minTLSVersion:minTLSVersion
                      blacklistCallback:blacklistCallback
                         blacklistClass:ZMBlacklistDownloader.class];
 }
@@ -59,6 +61,7 @@
                      readyForRequests:(BOOL)readyForRequests
                          workingGroup:(ZMSDispatchGroup *)workingGroup
                           application:(id<ZMApplication>)application
+                        minTLSVersion:(NSString * _Nullable)minTLSVersion
                     blacklistCallback:(void (^)(BOOL))blacklistCallback
                        blacklistClass:(Class)blacklistClass
 {
@@ -71,6 +74,7 @@
                                                           readyForRequests:readyForRequests
                                                               workingGroup:workingGroup
                                                                application:application
+                                                             minTLSVersion:minTLSVersion
                                                          completionHandler:^(NSString *minVersion, NSArray *excludedVersions) {
             [ZMBlacklistVerificator checkIfVersionIsBlacklisted:version completion:blacklistCallback minVersion:minVersion excludedVersions:excludedVersions];
         }];

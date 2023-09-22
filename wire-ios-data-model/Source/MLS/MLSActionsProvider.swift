@@ -81,6 +81,11 @@ protocol MLSActionsProviderProtocol {
         context: NotificationContext
     ) async throws
 
+    func syncConversation(
+        qualifiedID: QualifiedID,
+        context: NotificationContext
+    ) async throws
+
 }
 
 final class MLSActionsProvider: MLSActionsProviderProtocol {
@@ -211,6 +216,14 @@ final class MLSActionsProvider: MLSActionsProviderProtocol {
             subconversationType: subconversationType
         )
 
+        try await action.perform(in: context)
+    }
+
+    func syncConversation(
+        qualifiedID: QualifiedID,
+        context: NotificationContext
+    ) async throws {
+        var action = SyncConversationAction(qualifiedID: qualifiedID)
         try await action.perform(in: context)
     }
 

@@ -81,6 +81,8 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
 
     func generateNewEpoch(groupID: MLSGroupID) async throws
 
+    func subconversationMembers(for subconversationGroupID: MLSGroupID) throws -> [MLSClientID]
+  
     func repairOutOfSyncConversations()
 
 }
@@ -311,6 +313,23 @@ public final class MLSService: MLSServiceInterface {
             logger.warn("failed to generate conference info: \(String(describing: error))")
             throw MLSConferenceInfoError.failedToGenerateConferenceInfo
         }
+    }
+
+    public func subconversationMembers(for subconversationGroupID: MLSGroupID) throws -> [MLSClientID] {
+        do {
+            return try coreCrypto.perform {
+                return try $0.getClientIds(conversationId: subconversationGroupID.bytes).compactMap {
+                    MLSClientID(data: $0.data)
+                }
+            }
+        } catch {
+            logger.warn("failed to get subconversation client ids: \(String(describing: error))")
+            throw MLSSubconversationMembersError.failedToGetSubconversationMembers
+        }
+    }
+
+    public enum MLSSubconversationMembersError: Error, Equatable {
+        case failedToGetSubconversationMembers
     }
 
     public enum MLSConferenceInfoError: Error, Equatable {
@@ -832,11 +851,121 @@ public final class MLSService: MLSServiceInterface {
             launchConversationRepairTaskIfNotInProgress(for: groupID) {
                 do {
                     try await self.joinGroup(with: groupID)
-                    self.logger.info("repaired out of sync conversation (\(groupID))")
+                    self.logger.info("repaired out of sync conversation (\(groupID.safeForLoggingDescription))")
                 } catch {
-                    self.logger.warn("failed to repair out of sync conversation (\(groupID)). error: \(String(describing: error))")
+                    self.logger.warn("failed to repair out of sync conversation (\(groupID.safeForLoggingDescription)). error: \(String(describing: error))")
                 }
             }
+        }
+    }
+
+    func fetchAndRepairConversation(
+        with groupID: MLSGroupID,
+        subconversationType: SubgroupType?
+    ) {
+        launchConversationRepairTaskIfNotInProgress(for: groupID) {
+            switch subconversationType {
+            case .none:
+                await self.fetchAndRepairConversation(with: groupID)
+            case .conference:
+                await self.fetchAndRepairSubgroup(parentGroupID: groupID)
+            }
+        }
+    }
+
+    private func fetchAndRepairConversation(with groupID: MLSGroupID) async {
+        guard let context = context else {
+            return
+        }
+
+        do {
+            logger.info("repairing out of sync conversation... (\(groupID.safeForLoggingDescription))")
+
+            guard let conversationInfo = fetchConversationInfo(
+                with: groupID,
+                in: context
+            ) else {
+                logger.warn("conversation not found (\(groupID.safeForLoggingDescription))")
+                return
+            }
+
+            try await actionsProvider.syncConversation(
+                qualifiedID: conversationInfo.qualifiedID,
+                context: context.notificationContext
+            )
+
+            guard isConversationOutOfSync(
+                conversationInfo.conversation,
+                context: context
+            ) else {
+                logger.info("conversation is not out of sync (\(groupID.safeForLoggingDescription))")
+                return
+            }
+
+            try await joinGroup(with: groupID)
+
+            logger.info("repaired out of sync conversation! (\(groupID.safeForLoggingDescription))")
+
+            appendGapSystemMessage(
+                in: conversationInfo.conversation,
+                context: context
+            )
+
+            logger.info("inserted gap system message in conversation (\(groupID.safeForLoggingDescription))")
+        } catch {
+            logger.warn("failed to repair conversation (\(groupID.safeForLoggingDescription)). error: \(String(describing: error))")
+        }
+
+    }
+
+    private func appendGapSystemMessage(
+        in conversation: ZMConversation,
+        context: NSManagedObjectContext
+    ) {
+        context.perform {
+            conversation.appendNewPotentialGapSystemMessage(
+                users: conversation.localParticipants,
+                timestamp: Date()
+            )
+        }
+    }
+
+    private func fetchAndRepairSubgroup(parentGroupID: MLSGroupID) async {
+        guard let context = context else { return }
+
+        do {
+            logger.info("repairing out of sync subgroup... (parent: \(parentGroupID.safeForLoggingDescription))")
+
+            guard let conversationInfo = fetchConversationInfo(
+                with: parentGroupID,
+                in: context
+            ) else {
+                logger.warn("conversation not found (\(parentGroupID.safeForLoggingDescription))")
+                return
+            }
+
+            let subgroup = try await fetchSubgroup(
+                parentID: conversationInfo.qualifiedID,
+                context: context.notificationContext
+            )
+
+            guard isConversationOutOfSync(
+                conversationInfo.conversation,
+                subgroup: subgroup,
+                context: context
+            ) else {
+                logger.info("subgroup is not out of sync (parent: \(parentGroupID.safeForLoggingDescription), subgroup: \(subgroup.groupID.safeForLoggingDescription))")
+                return
+            }
+
+            try await joinSubgroup(
+                parentID: parentGroupID,
+                subgroupID: subgroup.groupID
+            )
+
+            logger.info("repaired out of sync subgroup! (parent: \(parentGroupID.safeForLoggingDescription), subgroup: \(subgroup.groupID.safeForLoggingDescription))")
+        } catch {
+            logger.warn("failed to repair subgroup (parent: \(parentGroupID.safeForLoggingDescription)). error: \(String(describing: error))")
         }
     }
 
@@ -871,23 +1000,52 @@ public final class MLSService: MLSServiceInterface {
 
     private func isConversationOutOfSync(
         _ conversation: ZMConversation,
+        subgroup: MLSSubgroup? = nil,
         coreCrypto: CoreCryptoProtocol,
         context: NSManagedObjectContext
     ) -> Bool {
         var isOutOfSync: Bool = false
 
         context.performAndWait {
-            guard
-                let groupID = conversation.mlsGroupID,
-                let epoch = try? coreCrypto.conversationEpoch(conversationId: groupID.bytes)
-            else {
-                return
+            var groupID: MLSGroupID?
+            var epoch: UInt64
+
+            if let subgroup = subgroup {
+                groupID = subgroup.groupID
+                epoch = UInt64(subgroup.epoch)
+            } else {
+                groupID = conversation.mlsGroupID
+                epoch = conversation.epoch
             }
 
-            isOutOfSync = epoch != conversation.epoch
+            guard let groupID = groupID else { return }
+
+            do {
+                let localEpoch = try coreCrypto.conversationEpoch(conversationId: groupID.bytes)
+                isOutOfSync = localEpoch != epoch
+                logger.info("epochs(remote: \(epoch), local: \(localEpoch)) for (\(groupID.safeForLoggingDescription))")
+            } catch {
+                logger.info("cannot resolve conversation epoch \(String(describing: error)) for (\(groupID.safeForLoggingDescription))")
+                return
+            }
         }
 
         return isOutOfSync
+    }
+
+    private func isConversationOutOfSync(
+        _ conversation: ZMConversation,
+        subgroup: MLSSubgroup? = nil,
+        context: NSManagedObjectContext
+    ) -> Bool {
+        return coreCrypto.perform {
+            return isConversationOutOfSync(
+                conversation,
+                subgroup: subgroup,
+                coreCrypto: $0,
+                context: context
+            )
+        }
     }
 
     // MARK: - External Proposals
@@ -990,8 +1148,8 @@ public final class MLSService: MLSServiceInterface {
             }
 
             let groupInfo = try await actionsProvider.fetchConversationGroupInfo(
-                conversationId: parentConversationInfo.identifier,
-                domain: parentConversationInfo.domain,
+                conversationId: parentConversationInfo.qualifiedID.uuid,
+                domain: parentConversationInfo.qualifiedID.domain,
                 subgroupType: subgroupType,
                 context: context.notificationContext
             )
@@ -1026,27 +1184,24 @@ public final class MLSService: MLSServiceInterface {
     private func fetchConversationInfo(
         with groupID: MLSGroupID,
         in context: NSManagedObjectContext
-    ) -> (conversation: ZMConversation, identifier: UUID, domain: String)? {
+    ) -> (conversation: ZMConversation, qualifiedID: QualifiedID, groupID: MLSGroupID)? {
 
         var conversation: ZMConversation?
-        var identifier: UUID?
-        var domain: String?
+        var qualifiedID: QualifiedID?
 
         context.performAndWait {
             conversation = ZMConversation.fetch(with: groupID, in: context)
-            identifier = conversation?.remoteIdentifier
-            domain = conversation?.domain
+            qualifiedID = conversation?.qualifiedID
         }
 
         guard
             let conversation = conversation,
-            let identifier = identifier,
-            let domain = domain?.selfOrNilIfEmpty ?? BackendInfo.domain
+            let qualifiedID = qualifiedID
         else {
             return nil
         }
 
-        return (conversation, identifier, domain)
+        return (conversation, qualifiedID, groupID)
     }
 
     // MARK: - Encrypt message
@@ -1068,11 +1223,23 @@ public final class MLSService: MLSServiceInterface {
         for groupID: MLSGroupID,
         subconversationType: SubgroupType?
     ) throws -> MLSDecryptResult? {
-        return try decryptionService.decrypt(
-            message: message,
-            for: groupID,
-            subconversationType: subconversationType
-        )
+        typealias DecryptionError = MLSDecryptionService.MLSMessageDecryptionError
+
+        do {
+            return try decryptionService.decrypt(
+                message: message,
+                for: groupID,
+                subconversationType: subconversationType
+            )
+        } catch DecryptionError.wrongEpoch {
+            fetchAndRepairConversation(
+                with: groupID,
+                subconversationType: subconversationType
+            )
+            throw DecryptionError.wrongEpoch
+        } catch {
+            throw error
+        }
     }
 
     // MARK: - Pending proposals
@@ -1351,14 +1518,14 @@ public final class MLSService: MLSServiceInterface {
         subgroupID: MLSGroupID
     ) async throws {
         do {
-            logger.info("joining subgroup (parent: \(parentID), subgroup: \(subgroupID))")
+            logger.info("joining subgroup (parent: \(parentID.safeForLoggingDescription), subgroup: \(subgroupID.safeForLoggingDescription))")
             try await joinSubgroupByExternalCommit(
                 parentID: parentID,
                 subgroupID: subgroupID,
                 subgroupType: .conference
             )
         } catch {
-            logger.error("failed to join subgroup (parent: \(parentID), subgroup: \(subgroupID)): \(String(describing: error))")
+            logger.error("failed to join subgroup (parent: \(parentID.safeForLoggingDescription), subgroup: \(subgroupID.safeForLoggingDescription)): \(String(describing: error))")
             throw SubgroupFailure.failedToJoinSubgroup
         }
     }

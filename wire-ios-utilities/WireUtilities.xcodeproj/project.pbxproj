@@ -99,6 +99,7 @@
 		5EE020C7214A9FC5001669F0 /* ZMAtomicInteger.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EE020C5214A9FC5001669F0 /* ZMAtomicInteger.m */; };
 		6323786A2508D34D00AD4346 /* Array+Shift.swift in Sources */ = {isa = PBXBuildFile; fileRef = 632378692508D34D00AD4346 /* Array+Shift.swift */; };
 		6323786C2508D51C00AD4346 /* ArrayShiftTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6323786B2508D51C00AD4346 /* ArrayShiftTests.swift */; };
+		636F70472A65AD7900E086B6 /* TimerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 636F70462A65AD7800E086B6 /* TimerManager.swift */; };
 		63DFEAD129A3845600FCA830 /* DeveloperFlag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DFEAD029A3845600FCA830 /* DeveloperFlag.swift */; };
 		7C358075231E534600D994FD /* ZMAccentColorValidatorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 7C358072231E524A00D994FD /* ZMAccentColorValidatorTests.m */; };
 		7C35807A231E5DA000D994FD /* ZMEmailAddressValidatorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 7C358077231E5D9300D994FD /* ZMEmailAddressValidatorTests.m */; };
@@ -343,6 +344,7 @@
 		5EE020C5214A9FC5001669F0 /* ZMAtomicInteger.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ZMAtomicInteger.m; sourceTree = "<group>"; };
 		632378692508D34D00AD4346 /* Array+Shift.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Array+Shift.swift"; sourceTree = "<group>"; };
 		6323786B2508D51C00AD4346 /* ArrayShiftTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArrayShiftTests.swift; sourceTree = "<group>"; };
+		636F70462A65AD7800E086B6 /* TimerManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerManager.swift; sourceTree = "<group>"; };
 		63DFEAD029A3845600FCA830 /* DeveloperFlag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeveloperFlag.swift; sourceTree = "<group>"; };
 		7C358072231E524A00D994FD /* ZMAccentColorValidatorTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ZMAccentColorValidatorTests.m; sourceTree = "<group>"; };
 		7C358077231E5D9300D994FD /* ZMEmailAddressValidatorTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ZMEmailAddressValidatorTests.m; sourceTree = "<group>"; };
@@ -596,6 +598,7 @@
 				A9C6EDE326B32E9D007F61C5 /* UTIHelper.swift */,
 				63DFEAD029A3845600FCA830 /* DeveloperFlag.swift */,
 				06CDC6F92A2F2B4B00EB518D /* TimeInterval+Units.swift */,
+				636F70462A65AD7800E086B6 /* TimerManager.swift */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -901,6 +904,7 @@
 				3E88BD331B1F3EA300232589 /* Sources */,
 				3E88BD341B1F3EA300232589 /* Frameworks */,
 				3E88BD351B1F3EA300232589 /* Headers */,
+				AD4812AA2AB9905E00ED208C /* Run Swiftlint */,
 				3E88BD361B1F3EA300232589 /* Resources */,
 			);
 			buildRules = (
@@ -1017,6 +1021,28 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		AD4812AA2AB9905E00ED208C /* Run Swiftlint */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/../scripts/run-swiftlint.sh",
+			);
+			name = "Run Swiftlint";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "../scripts/run-swiftlint.sh\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		09F028CA1B78BE2700BADDB6 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -1048,6 +1074,7 @@
 				54024FE61DF81C8E009BF6A0 /* Dictionary.swift in Sources */,
 				54CA313D1B74F36B00B820C0 /* SwiftDebugging.swift in Sources */,
 				EECE92301FFBC5540096387F /* FixedWidthInteger+Random.swift in Sources */,
+				636F70472A65AD7900E086B6 /* TimerManager.swift in Sources */,
 				5E0A1FF92105DBBA00949B3E /* Map+KeyPath.swift in Sources */,
 				3E88BE3D1B1F478200232589 /* ZMDebugHelpers.m in Sources */,
 				3E88BF451B1F66B100232589 /* NSUUID+Data.m in Sources */,

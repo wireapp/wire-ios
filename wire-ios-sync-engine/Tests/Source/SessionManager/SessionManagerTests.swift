@@ -170,7 +170,8 @@ final class SessionManagerTests: IntegrationTest {
             requiredPushTokenType: .standard,
             callKitManager: MockCallKitManager(),
             isUnauthenticatedTransportSessionReady: true,
-            sharedUserDefaults: sharedUserDefaults
+            sharedUserDefaults: sharedUserDefaults,
+            minTLSVersion: nil
         )
 
         let environment = MockEnvironment()
@@ -261,7 +262,8 @@ final class SessionManagerTests: IntegrationTest {
             requiredPushTokenType: .standard,
             callKitManager: MockCallKitManager(),
             isUnauthenticatedTransportSessionReady: true,
-            sharedUserDefaults: sharedUserDefaults
+            sharedUserDefaults: sharedUserDefaults,
+            minTLSVersion: nil
         )
 
         let environment = MockEnvironment()
@@ -323,7 +325,8 @@ final class SessionManagerTests: IntegrationTest {
             requiredPushTokenType: .standard,
             callKitManager: MockCallKitManager(),
             isUnauthenticatedTransportSessionReady: true,
-            sharedUserDefaults: sharedUserDefaults
+            sharedUserDefaults: sharedUserDefaults,
+            minTLSVersion: nil
         )
 
         XCTAssertTrue(self.delegate.jailbroken)
@@ -1118,7 +1121,8 @@ final class SessionManagerTests_MultiUserSession: IntegrationTest {
             requiredPushTokenType: .standard,
             callKitManager: MockCallKitManager(),
             isUnauthenticatedTransportSessionReady: true,
-            sharedUserDefaults: sharedUserDefaults
+            sharedUserDefaults: sharedUserDefaults,
+            minTLSVersion: nil
         )
 
         let environment = MockEnvironment()
@@ -1175,7 +1179,8 @@ final class SessionManagerTests_MultiUserSession: IntegrationTest {
             configuration: SessionManagerConfiguration(blacklistDownloadInterval: -1),
             requiredPushTokenType: .standard,
             callKitManager: MockCallKitManager(),
-            sharedUserDefaults: sharedUserDefaults
+            sharedUserDefaults: sharedUserDefaults,
+            minTLSVersion: nil
         )
 
         let environment = MockEnvironment()

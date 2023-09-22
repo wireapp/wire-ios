@@ -1089,6 +1089,26 @@ class MockMLSActionsProviderProtocol: MLSActionsProviderProtocol {
         try await mock(conversationID, domain, subconversationType, context)            
     }
 
+    // MARK: - syncConversation
+
+    var syncConversationQualifiedIDContext_Invocations: [(qualifiedID: QualifiedID, context: NotificationContext)] = []
+    var syncConversationQualifiedIDContext_MockError: Error?
+    var syncConversationQualifiedIDContext_MockMethod: ((QualifiedID, NotificationContext) async throws -> Void)?
+
+    func syncConversation(qualifiedID: QualifiedID, context: NotificationContext) async throws {
+        syncConversationQualifiedIDContext_Invocations.append((qualifiedID: qualifiedID, context: context))
+
+        if let error = syncConversationQualifiedIDContext_MockError {
+            throw error
+        }
+
+        guard let mock = syncConversationQualifiedIDContext_MockMethod else {
+            fatalError("no mock for `syncConversationQualifiedIDContext`")
+        }
+
+        try await mock(qualifiedID, context)            
+    }
+
 }
 public class MockMLSDecryptionServiceInterface: MLSDecryptionServiceInterface {
 
