@@ -712,12 +712,12 @@ class ConversationMissingMessagesSystemMessageCellDescription: ConversationMessa
         let namesOfAddedUsers: [String] = systemMessageData.addedUserTypes.compactMap {
             guard let user = $0 as? UserType else { return nil }
             return user.name
-        }
+        }.sorted(by: { $0 > $1 })
 
         let namesOfRemovedUsers: [String] = systemMessageData.removedUserTypes.compactMap {
             guard let user = $0 as? UserType else { return nil }
             return user.name
-        }
+        }.sorted(by: { $0 > $1 })
 
         let listOfAddedUsers = ListFormatter.localizedString(byJoining: namesOfAddedUsers)
         let listOfRemovedUsers = ListFormatter.localizedString(byJoining: namesOfRemovedUsers)
