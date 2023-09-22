@@ -40,22 +40,22 @@ extension ZMConversationMessage {
         set {
             if newValue {
                 ZMMessage.addReaction(
-                    Emoji.like.value,
+                    "❤️",
                     to: self
                 )
             } else {
                 ZMMessage.removeReaction(
-                    Emoji.like.value,
+                    "❤️",
                     from: self
                 )
             }
         }
     }
 
-    func selfUserReactions() -> Set<Emoji> {
+    func selfUserReactions() -> Set<Emoji.ID> {
         let result = usersReaction
             .filter { _, users in users.contains(where: \.isSelfUser) }
-            .map { Emoji(value: $0.key) }
+            .map(\.key)
 
         return Set(result)
     }
@@ -67,7 +67,7 @@ extension ZMConversationMessage {
     }
 
     var likers: [UserType] {
-        return usersReaction[Emoji.like.value] ?? []
+        return usersReaction["❤️"] ?? []
     }
 
     var sortedLikers: [UserType] {
@@ -78,15 +78,15 @@ extension ZMConversationMessage {
         return readReceipts.sorted { $0.userType.name < $1.userType.name }
     }
 
-    func react(_ reaction: Emoji) {
+    func react(_ reaction: Emoji.ID) {
         if selfUserReactions().contains(reaction) {
             ZMMessage.removeReaction(
-                reaction.value,
+                reaction,
                 from: self
             )
         } else {
             ZMMessage.addReaction(
-                reaction.value,
+                reaction,
                 to: self
             )
         }

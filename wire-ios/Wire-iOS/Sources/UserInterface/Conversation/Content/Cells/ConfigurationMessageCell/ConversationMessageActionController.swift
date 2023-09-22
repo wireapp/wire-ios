@@ -175,7 +175,7 @@ final class ConversationMessageActionController {
     }
 
     var doubleTapAction: MessageAction? {
-        return message.canAddReaction ? .react(.like) : nil
+        return message.canAddReaction ? .react("❤️") : nil
     }
 
     // MARK: - Handler
@@ -234,7 +234,7 @@ final class ConversationMessageActionController {
         perform(action: .showInConversation)
     }
 
-    @objc func addReaction(reaction: Emoji) {
+    @objc func addReaction(reaction: Emoji.ID) {
         perform(action: .react(reaction))
     }
 

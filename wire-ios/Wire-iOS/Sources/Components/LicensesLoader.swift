@@ -30,9 +30,6 @@ final class LicensesLoader {
     /// The shared loader.
     static let shared = LicensesLoader()
 
-    private let sourceName = "Licenses.generated"
-    private let sourceExtension = "plist"
-
     private(set) var cache: [SettingsLicenseItem]?
     private var memoryWarningToken: Any?
 
@@ -57,14 +54,29 @@ final class LicensesLoader {
         }
 
         guard
-            let plistURL = Bundle.main.url(forResource: sourceName, withExtension: sourceExtension),
+            let generatedLicenses = loadLicensesFromPlist(named: "Licenses.generated"),
+            let licenses = loadLicensesFromPlist(named: "Licenses")
+        else {
+            return nil
+        }
+
+        let allLicenses = (generatedLicenses + licenses).sorted {
+            $0.name.lexicographicallyPrecedes($1.name)
+        }
+
+        self.cache = allLicenses
+        return allLicenses
+    }
+
+    private func loadLicensesFromPlist(named plistName: String) -> [SettingsLicenseItem]? {
+        guard
+            let plistURL = Bundle.main.url(forResource: plistName, withExtension: "plist"),
             let plistContents = try? Data(contentsOf: plistURL),
             let decodedPlist = try? PropertyListDecoder().decode([SettingsLicenseItem].self, from: plistContents)
         else {
             return nil
         }
 
-        self.cache = decodedPlist
         return decodedPlist
     }
 
