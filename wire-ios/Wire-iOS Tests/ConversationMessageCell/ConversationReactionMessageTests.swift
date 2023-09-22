@@ -31,7 +31,10 @@ final class ConversationReactionMessageTests: BaseSnapshotTestCase {
     override func setUp() {
         super.setUp()
         sut = MessageReactionsCell()
-        sut.frame = CGRect(x: 0, y: 0, width: 375, height: 70)
+        sut.translatesAutoresizingMaskIntoConstraints = false
+        sut.widthAnchor.constraint(equalToConstant: 375).isActive = true
+        // We need to pass an estimated cell size to help the cell layout properly
+        sut.systemLayoutSizeFitting(CGSize(width: 375, height: 100))
     }
 
     // MARK: - tearDown
@@ -93,8 +96,6 @@ final class ConversationReactionMessageTests: BaseSnapshotTestCase {
             slightlySmilingReaction,
             frowningFaceReaction
         ]
-
-        sut.frame = CGRect(x: 0, y: 0, width: 375, height: 90)
 
         // WHEN
         sut.configure(with: configuration, animated: false)
