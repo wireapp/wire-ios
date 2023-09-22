@@ -72,6 +72,16 @@ final class AppStateCalculatorTests: XCTestCase {
         XCTAssertTrue(delegate.wasNotified)
     }
 
+    func testThatAppStateChanges_OnDatabaseRecovery() {
+        // WHEN
+        sut.applicationDidBecomeActive()
+        sut.sessionManagerAsksToRecoverDatabase()
+
+        // THEN
+        XCTAssertEqual(sut.appState, .recovery)
+        XCTAssertTrue(delegate.wasNotified)
+    }
+
     func testThatAppStateChanges_OnWillMigrateAccount() {
         // GIVEN
         let account = Account(userName: "dummy", userIdentifier: UUID())

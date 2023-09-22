@@ -59,6 +59,7 @@ public protocol SessionManagerDelegate: SessionActivationObserver {
     func sessionManagerDidBlacklistJailbrokenDevice()
     func sessionManagerDidPerformFederationMigration(authenticated: Bool)
     func sessionManagerDidPerformAPIMigrations()
+    func sessionManagerAsksToRecoverDatabase()
 
     var isInAuthenticatedAppState: Bool { get }
     var isInUnathenticatedAppState: Bool { get }
@@ -875,6 +876,10 @@ public final class SessionManager: NSObject, SessionManagerType {
                 }
             }
         }
+    }
+
+    public func recoverDatabase() {
+        self.delegate?.sessionManagerAsksToRecoverDatabase()
     }
 
     /// Migrates all existing proteus data created by Cryptobox into Core Crypto, if needed.
