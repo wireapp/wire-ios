@@ -8,7 +8,11 @@
 
  strings:
    inputs:
-     - Resources/Base.lproj
+     - Resources/Base.lproj/Accessibility.strings
+     - Resources/Base.lproj/InfoPlist.strings
+     - Resources/Base.lproj/Localizable.strings
+     - Resources/Base.lproj/Localizable.stringsdict
+   filter: 
    outputs:
      - templateName: structured-swift5
        output: Strings+Generated.swift
