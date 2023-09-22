@@ -195,6 +195,9 @@
 		16F7341624F95F9D00AB93B1 /* store2-85-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = 16F7341524F95F9100AB93B1 /* store2-85-0.wiredatabase */; };
 		2BB20770292B787000FB6468 /* PatchApplicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BB2076F292B787000FB6468 /* PatchApplicator.swift */; };
 		2BB20771292B791400FB6468 /* PatchApplicatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BB2076D292B781E00FB6468 /* PatchApplicatorTests.swift */; };
+		4058AAA22AA76BFA0013DE71 /* ReactionData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4058AAA12AA76BFA0013DE71 /* ReactionData.swift */; };
+		4058AAA62AAA017F0013DE71 /* store2-109-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = 4058AAA52AAA017F0013DE71 /* store2-109-0.wiredatabase */; };
+		4058AAA82AAB65530013DE71 /* ReactionsSortingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4058AAA72AAB65530013DE71 /* ReactionsSortingTests.swift */; };
 		54178A1C1E02EA9900860ECE /* store2-24-1.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = 54178A1A1E02E9FB00860ECE /* store2-24-1.wiredatabase */; };
 		541E4F951CBD182100D82D69 /* FileAssetCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 541E4F941CBD182100D82D69 /* FileAssetCache.swift */; };
 		54363A011D7876200048FD7D /* ZMClientMessage+Encryption.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54363A001D7876200048FD7D /* ZMClientMessage+Encryption.swift */; };
@@ -1050,6 +1053,10 @@
 		2B7AB1B729A4EAC500D9A63A /* SecurityTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = SecurityTests.xctestplan; sourceTree = "<group>"; };
 		2BB2076D292B781E00FB6468 /* PatchApplicatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatchApplicatorTests.swift; sourceTree = "<group>"; };
 		2BB2076F292B787000FB6468 /* PatchApplicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatchApplicator.swift; sourceTree = "<group>"; };
+		4058AAA02AA73F1D0013DE71 /* zmessaging2.109.0.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = zmessaging2.109.0.xcdatamodel; sourceTree = "<group>"; };
+		4058AAA12AA76BFA0013DE71 /* ReactionData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionData.swift; sourceTree = "<group>"; };
+		4058AAA52AAA017F0013DE71 /* store2-109-0.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; path = "store2-109-0.wiredatabase"; sourceTree = "<group>"; };
+		4058AAA72AAB65530013DE71 /* ReactionsSortingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionsSortingTests.swift; sourceTree = "<group>"; };
 		54178A1A1E02E9FB00860ECE /* store2-24-1.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; name = "store2-24-1.wiredatabase"; path = "Tests/Resources/store2-24-1.wiredatabase"; sourceTree = SOURCE_ROOT; };
 		541E4F941CBD182100D82D69 /* FileAssetCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FileAssetCache.swift; sourceTree = "<group>"; };
 		54207D4924A4B28C00D40D4F /* zmessaging2.82.0.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = zmessaging2.82.0.xcdatamodel; sourceTree = "<group>"; };
@@ -2170,6 +2177,7 @@
 			isa = PBXGroup;
 			children = (
 				CE4EDC081D6D9A3D002A20AA /* Reaction.swift */,
+				4058AAA12AA76BFA0013DE71 /* ReactionData.swift */,
 			);
 			name = Reaction;
 			sourceTree = "<group>";
@@ -2961,6 +2969,7 @@
 				166D189D230E9E66001288CD /* ZMMessage+DataRetentionTests.swift */,
 				0680A9C42460627B000F80F3 /* ZMMessage+Reaction.swift */,
 				EE6CB3DD24E2D24F00B0EADD /* ZMGenericMessageDataTests.swift */,
+				4058AAA72AAB65530013DE71 /* ReactionsSortingTests.swift */,
 			);
 			name = Messages;
 			path = Tests/Source/Model/Messages;
@@ -3212,6 +3221,7 @@
 		F9C9A83D1CAEDBC40039E10C /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				4058AAA52AAA017F0013DE71 /* store2-109-0.wiredatabase */,
 				065BB3C32A8FA77A0027007A /* store2-108-0.wiredatabase */,
 				6391A7FE2A6FDB9100832665 /* store2-107-0.wiredatabase */,
 				EEFFBEB42A67D9CF0058C343 /* store2-106-0.wiredatabase */,
@@ -3504,6 +3514,7 @@
 				F188A89B2225698C00BA53A5 /* store2-64-0.wiredatabase in Resources */,
 				BF6ACFFB21060F7200FD762B /* store2-48-0.wiredatabase in Resources */,
 				54829DAE1DE6F7BA009100D3 /* store1-25.wiredatabase in Resources */,
+				4058AAA62AAA017F0013DE71 /* store2-109-0.wiredatabase in Resources */,
 				87FFC71A20DBF2820005076E /* store2-47-0.wiredatabase in Resources */,
 				87C1C267207F921A0083BF6B /* store2-46-0.wiredatabase in Resources */,
 				55C40BDD22B24AA600EFD8BD /* store2-73-0.wiredatabase in Resources */,
@@ -3604,6 +3615,7 @@
 			inputFileListPaths = (
 			);
 			inputPaths = (
+				"$(SRCROOT)/../scripts/run-swiftlint.sh",
 			);
 			name = "Run Swiftlint";
 			outputFileListPaths = (
@@ -3612,7 +3624,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Adds support for Apple Silicon brew directory\nexport PATH=\"$PATH:/opt/homebrew/bin\"\n \nif which swiftlint >/dev/null; then\n  swiftlint\nelse\n  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n";
+			shellScript = "../scripts/run-swiftlint.sh\n";
 		};
 		EE47346529A377D100E6C04E /* Run Sourcery */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -3838,6 +3850,7 @@
 				068DCC5729BB816300F7E4F1 /* ZMOTRMessage+FailedToSendReason.swift in Sources */,
 				F963E9811D9C09E700098AD3 /* ZMMessageTimer.m in Sources */,
 				EE79699629D4684C00075E38 /* CryptoboxMigrationManager.swift in Sources */,
+				4058AAA22AA76BFA0013DE71 /* ReactionData.swift in Sources */,
 				0129E7FB29A520EB0065E6DB /* SafeFileContext.swift in Sources */,
 				63370CC4242CFA860072C37F /* ZMAssetClientMessage+UpdateEvent.swift in Sources */,
 				F9A706C61CAEE01D00C2F5FE /* ZMFetchRequestBatch.m in Sources */,
@@ -4188,6 +4201,7 @@
 				0651D00823FC4FDD00411A22 /* GenericMessageTests+LegalHoldStatus.swift in Sources */,
 				F99C5B8C1ED466760049CCD7 /* TeamObserverTests.swift in Sources */,
 				EE46B92828A511630063B38D /* ZMClientMessageTests+MLSEncryptedPayloadGenerator.swift in Sources */,
+				4058AAA82AAB65530013DE71 /* ReactionsSortingTests.swift in Sources */,
 				F9A7083C1CAEEB7500C2F5FE /* MockModelObjectContextFactory.m in Sources */,
 				F9331C5C1CB3BF9F00139ECC /* UserClientKeyStoreTests.swift in Sources */,
 				87C1C261207F812F0083BF6B /* InvalidGenericMessageDataRemovalTests.swift in Sources */,
@@ -4491,6 +4505,7 @@
 		F189988C1E7BE03800E579A2 /* zmessaging.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+				4058AAA02AA73F1D0013DE71 /* zmessaging2.109.0.xcdatamodel */,
 				066A8C322A8A2DC5001434DA /* zmessaging2.108.0.xcdatamodel */,
 				6391A7F42A6FD62700832665 /* zmessaging2.107.0.xcdatamodel */,
 				EEFFBEB32A67D8D30058C343 /* zmessaging2.106.0.xcdatamodel */,
@@ -4589,7 +4604,7 @@
 				F18998A41E7BE03800E579A2 /* zmessaging2.8.xcdatamodel */,
 				F18998A51E7BE03800E579A2 /* zmessaging2.9.xcdatamodel */,
 			);
-			currentVersion = 066A8C322A8A2DC5001434DA /* zmessaging2.108.0.xcdatamodel */;
+			currentVersion = 4058AAA02AA73F1D0013DE71 /* zmessaging2.109.0.xcdatamodel */;
 			path = zmessaging.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;

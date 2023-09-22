@@ -24,7 +24,7 @@ extension NSString {
     ///
     @objc(createAlphanumericalString)
     static public func createAlphanumerical() -> NSString {
-        return NSString(format: "%llx", arc4random())
+        return NSString(format: "%llx", arc4random()) // swiftlint:disable:this legacy_random
     }
 
 }
