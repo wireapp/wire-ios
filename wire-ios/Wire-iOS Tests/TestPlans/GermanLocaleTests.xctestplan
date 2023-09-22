@@ -53,11 +53,7 @@
         "ConversationSystemMessageTests\/testPotentialGap_addedUser()",
         "ConversationSystemMessageTests\/testPotentialGap_addedUsers()",
         "ConversationSystemMessageTests\/testPotentialGap_removedUser()",
-        "ConversationSystemMessageTests\/testPotentialGap_removedUsers()",
-        "ConversationSystemMessageTests\/testRemoveParticipant_federationTermination()",
-        "ConversationSystemMessageTests\/testRemoveParticipants_federationTermination()",
-        "ConversationSystemMessageTests\/testSelfDomainStoppedFederatingWithOtherDomain()",
-        "ConversationSystemMessageTests\/testTwoDomainsStoppedFederating()"
+        "ConversationSystemMessageTests\/testPotentialGap_removedUsers()"
       ],
       "target" : {
         "containerPath" : "container:Wire-iOS.xcodeproj",
