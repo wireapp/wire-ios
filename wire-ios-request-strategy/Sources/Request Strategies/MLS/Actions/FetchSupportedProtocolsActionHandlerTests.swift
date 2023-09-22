@@ -88,7 +88,7 @@ final class FetchSupportedProtocolsActionHandlerTests: ActionHandlerTestBase<Fet
         )
     }
 
-    func test_itDosentGenerateRequests_InvalidParameters_Domain() {
+    func test_itDoesntGenerateRequests_InvalidParameters_Domain() {
         action = FetchSupportedProtocolsAction(userID: QualifiedID(
             uuid: .create(),
             domain: ""
