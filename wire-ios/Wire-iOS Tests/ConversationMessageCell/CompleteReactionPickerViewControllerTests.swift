@@ -61,6 +61,7 @@ final class CompleteReactionPickerViewControllerTests: BaseSnapshotTestCase {
         // GIVEN & WHEN
         sut = setUpCompleteReactionPickerViewController(selectedReactions: [.argentinaFlag])
         scrollToSection(7)
+
         // THEN
         verify(matching: sut)
     }
