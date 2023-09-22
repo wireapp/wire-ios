@@ -73,7 +73,7 @@ on:
 
 jobs:
   run-tests:
-    runs-on: macos-13
+    runs-on: macos-13-xl
     env:
       GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       GITHUB_USERNAME: ${{ secrets.ZENKINS_USERNAME }}
@@ -308,26 +308,12 @@ jobs:
             /Users/runner/Library/Developer/Xcode/DerivedData/**/Logs/**
             ~/Library/Logs/DiagnosticReports/**
 
-      - name: Archiving env variables
-        if: always()
-        uses: actions/upload-artifact@v2
-        with:
-          name: post-build-env
-          path: |
-            **/.post_build/*.env
-
-      - name: Load .env file
-        if: always()
-        uses: xom9ikk/dotenv@v2
-        with:
-          path: fastlane/.post_build
-
       - name: Notify on Wire if failed
         if: ${{ failure() && github.ref_name == 'develop' }}
         uses: 8398a7/action-slack@v3
         with:
           status: ${{ job.status }}
-          text: "🆘 Tests for 'develop' failed for commit: *${{ github.sha }}* 🆘\n**Triggered by:** ${{ github.triggering_actor }}\n**Build log:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\n"
+          text: "🆘 Tests for 'develop' failed 🆘\ncommit: https://github.com/wireapp/wire-ios-mono/commit/${{ github.sha }}\n**Triggered by:** ${{ github.triggering_actor }}\n**Build log:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\n"
 
   upload-test-results-datadadog:
     runs-on: ubuntu-latest
