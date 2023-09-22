@@ -283,7 +283,7 @@ ZM_EMPTY_ASSERTING_INIT();
         }
         else if (response.result == ZMTransportResponseStatusTemporaryError ||
                  response.result == ZMTransportResponseStatusTryAgainLater) {
-            [self.updatedObjects didNotFinishToSynchronizeToken:token];
+            [self.updatedObjects didFailToSynchronizeToken:token];
         }
         else if (response.result == ZMTransportResponseStatusExpired) {
             [self.updatedObjects didFailToSynchronizeToken:token];
