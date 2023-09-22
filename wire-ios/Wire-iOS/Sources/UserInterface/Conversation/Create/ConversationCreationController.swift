@@ -310,9 +310,25 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
 
                 case .failure(let error):
                     WireLogger.conversation.error("failed to create conversation: \(String(describing: error))")
+                    showGenericErrorAlert()
                 }
             }
         }
+    }
+
+    private func showGenericErrorAlert() {
+        typealias ConnectionError = L10n.Localizable.Error.Connection
+
+        let alert = UIAlertController(
+            title: ConnectionError.title,
+            message: ConnectionError.genericError,
+            alertAction: .ok(style: .cancel)
+        )
+
+        present(
+            alert,
+            animated: true
+        )
     }
 
     private func showMissingLegalholdConsentAlert() {
