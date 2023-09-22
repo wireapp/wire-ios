@@ -75,12 +75,18 @@ final class MessageDetailsDataSource: NSObject, ZMMessageObserver, ZMUserObserve
     /// The object that receives information when the message details changes.
     weak var observer: MessageDetailsDataSourceObserver?
 
+    private let emojiRepository: EmojiRepositoryInterface
+
     // MARK: - Initialization
 
     private var observationTokens: [Any] = []
 
-    init(message: ZMConversationMessage) {
+    init(
+        message: ZMConversationMessage,
+        emojiRepository: EmojiRepositoryInterface = EmojiRepository()
+    ) {
         self.message = message
+        self.emojiRepository = emojiRepository
         self.conversation = message.conversation!
 
         // Compute the title and display mode
@@ -164,17 +170,17 @@ final class MessageDetailsDataSource: NSObject, ZMMessageObserver, ZMUserObserve
     }
 
     private func setupReactions() {
-        reactions = message.usersReaction.map { reaction, users in
-            let emoji = Emoji(value: reaction)
-            return MessageDetailsSectionDescription(
-                headerText: "\(emoji.value) \(emoji.name?.capitalizingFirstCharacterOnly ?? "") (\(users.count))",
-                items: MessageDetailsCellDescription.makeReactionCells(users)
-            )
-        }.filter {
-            !$0.items.isEmpty
-        }
-
-        self.reactions.sort(by: { $0.items.count > $1.items.count })
+        reactions = message.usersReaction.lazy
+            .compactMap { reaction, users in
+                guard let emoji = self.emojiRepository.emoji(for: reaction) else { return nil }
+                let name = emoji.localizedName ?? emoji.name
+                return MessageDetailsSectionDescription(
+                    headerText: "\(emoji.value) \(name.capitalizingFirstCharacterOnly) (\(users.count))",
+                    items: MessageDetailsCellDescription.makeReactionCells(users)
+                )
+            }
+            .filter { !$0.items.isEmpty }
+            .sorted { $0.items.count > $1.items.count }
     }
 
     func setupReadReceipts() {

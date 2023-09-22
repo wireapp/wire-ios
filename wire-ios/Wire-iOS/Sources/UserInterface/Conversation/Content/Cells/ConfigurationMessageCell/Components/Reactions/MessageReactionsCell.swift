@@ -24,7 +24,7 @@ import WireDataModel
 
 public struct MessageReactionMetadata: Equatable {
 
-    let emoji: Emoji
+    let emoji: Emoji.ID
     let count: UInt
     let isSelfUserReacting: Bool
 
