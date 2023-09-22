@@ -19,30 +19,40 @@
 @testable import Wire
 import XCTest
 
-final class RecentlyUsedEmojiPeristenceCoordinatorTests: XCTestCase {
+final class EmojiRepositoryTests: XCTestCase {
+
+    var sut: EmojiRepository!
 
     // MARK: setUp
 
+    override func setUp() {
+        super.setUp()
+        sut = EmojiRepository()
+    }
+
     override func tearDown() {
-        RecentlyUsedEmojiPeristenceCoordinator.store(RecentlyUsedEmojiSection(capacity: 15))
+        sut.registerRecentlyUsedEmojis([])
+        sut = nil
         super.tearDown()
     }
 
     func test_recentlyUsedEmoji_isEmpty() {
-        // THEN
-        XCTAssertArrayEqual(RecentlyUsedEmojiPeristenceCoordinator.loadOrCreate().emojis, [])
+        // When
+        let emojis = sut.fetchRecentlyUsedEmojis()
+
+        // Then
+        XCTAssertTrue(emojis.isEmpty)
     }
 
     func test_storeAndLoadEmojis() {
-        // GIVEN
-        let emojis = [Emoji(value: "😂"), Emoji(value: "🆎"), Emoji(value: "🫥"), Emoji(value: "🐞")]
-        let emojiSection = RecentlyUsedEmojiSection(capacity: 15, elements: emojis)
+        // Given
+        let emojis = ["😂", "🆎", "🫥", "🐞"]
 
-        // WHEN
-        RecentlyUsedEmojiPeristenceCoordinator.store(emojiSection)
+        // When
+        sut.registerRecentlyUsedEmojis(emojis)
 
-        // THEN
-        XCTAssertArrayEqual(RecentlyUsedEmojiPeristenceCoordinator.loadOrCreate().emojis, emojis)
-
+        // Then
+        XCTAssertArrayEqual(sut.fetchRecentlyUsedEmojis().map(\.value), emojis)
     }
+
 }
