@@ -1745,6 +1745,10 @@ class SessionManagerTestDelegate: SessionManagerDelegate {
     func sessionManagerDidPerformAPIMigrations() {
         // no op
     }
+
+    public func sessionManagerAsksToRecoverDatabase() {
+        // no op
+    }
 }
 
 class SessionManagerObserverMock: SessionManagerCreatedSessionObserver, SessionManagerDestroyedSessionObserver {

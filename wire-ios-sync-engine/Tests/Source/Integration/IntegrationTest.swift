@@ -713,6 +713,10 @@ extension IntegrationTest: SessionManagerDelegate {
     public func sessionManagerDidPerformAPIMigrations() {
         // no op
     }
+
+    public func sessionManagerAsksToRecoverDatabase() {
+        // no op
+    }
 }
 
 @objcMembers
