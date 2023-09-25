@@ -20,7 +20,7 @@ import XCTest
 @testable import Wire
 import SnapshotTesting
 
-final class ConversationReactionMessageTests: ZMSnapshotTestCase {
+final class ConversationReactionMessageTests: BaseSnapshotTestCase {
 
     // MARK: - Properties
 
@@ -31,7 +31,10 @@ final class ConversationReactionMessageTests: ZMSnapshotTestCase {
     override func setUp() {
         super.setUp()
         sut = MessageReactionsCell()
-        sut.frame = CGRect(x: 0, y: 0, width: 375, height: 70)
+        sut.translatesAutoresizingMaskIntoConstraints = false
+        sut.widthAnchor.constraint(equalToConstant: 375).isActive = true
+        // We need to pass an estimated cell size to help the cell layout properly
+        sut.systemLayoutSizeFitting(CGSize(width: 375, height: 100))
     }
 
     // MARK: - tearDown
@@ -51,7 +54,7 @@ final class ConversationReactionMessageTests: ZMSnapshotTestCase {
         sut.configure(with: configuration, animated: false)
 
         // THEN
-        verify(view: sut)
+        verify(matching: sut)
     }
 
     func testThatItConfiguresWithOtherReactions() {
@@ -70,13 +73,11 @@ final class ConversationReactionMessageTests: ZMSnapshotTestCase {
             frowningFaceReaction
         ]
 
-        sut.frame = CGRect(x: 0, y: 0, width: 375, height: 90)
-
         // WHEN
         sut.configure(with: configuration, animated: false)
 
         // THEN
-        verify(view: sut)
+        verify(matching: sut)
     }
 
 }
