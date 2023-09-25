@@ -55,7 +55,6 @@ final class FetchSupportedProtocolsActionHandlerTests: ActionHandlerTestBase<Fet
         )
     }
 
-
     func test_itDoesntGenerateRequests_APIV3() {
         test_itDoesntGenerateARequest(
             action: action,

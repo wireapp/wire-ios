@@ -279,7 +279,7 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
         payload: Data,
         currentTimestamp: TimeInterval,
         eventTimestamp: Date) {
-            
+
             let identifier = !callingConversationId.id.isEmpty ? UUID(uuidString: callingConversationId.id)! : conversationUUID
             let domain = !callingConversationId.domain.isEmpty ? callingConversationId.domain : conversationDomain
 
@@ -292,7 +292,7 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
                 identifier: senderUUID,
                 domain: senderDomain
             )
-            
+
             let callEvent = CallEvent(
                 data: payload,
                 currentTimestamp: Date().addingTimeInterval(currentTimestamp),
@@ -301,7 +301,7 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
                 userId: userId,
                 clientId: clientId
             )
-            
+
             callEventStatus.scheduledCallEventForProcessing()
             callCenter?.processCallEvent(callEvent, completionHandler: { [weak self] in
                 self?.zmLog.debug("processed calling message")
