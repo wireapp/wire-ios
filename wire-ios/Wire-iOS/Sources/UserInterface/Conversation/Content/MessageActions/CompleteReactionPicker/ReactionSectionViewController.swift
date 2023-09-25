@@ -47,7 +47,7 @@ final class ReactionSectionViewController: UIViewController {
     }
 
     private let types: [EmojiSectionType]
-    private let panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(didPan))
+    private let panGestureRecognizer = UIPanGestureRecognizer(target: ReactionSectionViewController.self, action: #selector(didPan))
     weak var sectionDelegate: EmojiSectionViewControllerDelegate?
 
     init(types: [EmojiSectionType]) {
