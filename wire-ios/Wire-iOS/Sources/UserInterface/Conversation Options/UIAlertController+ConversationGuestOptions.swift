@@ -104,6 +104,7 @@ extension UIAlertController {
 
         controller.addAction(optionOneAction)
         controller.addAction(optionTwoAction)
+        controller.addAction(.cancel { completion(false) })
 
         return controller
     }
