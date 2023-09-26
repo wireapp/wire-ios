@@ -144,6 +144,29 @@ final class ConversationEventPayloadProcessor {
         }
     }
 
+    // MARK: - Conversation rename
+
+    func processPayload(
+        _ payload: Payload.ConversationEvent<Payload.UpdateConversationName>,
+        originalEvent: ZMUpdateEvent,
+        in context: NSManagedObjectContext
+    ) {
+        guard let conversation = fetchOrCreateConversation(
+            from: payload,
+            in: context
+        ) else {
+            Logging.eventProcessing.error("Conversation name update missing conversation, aborting...")
+            return
+        }
+
+        if conversation.userDefinedName != payload.data.name || ((conversation.modifiedKeys?.contains(ZMConversationUserDefinedNameKey)) != nil) {
+            // TODO jacob refactor to append method on conversation
+            _ = ZMSystemMessage.createOrUpdate(from: originalEvent, in: context)
+        }
+
+        conversation.userDefinedName = payload.data.name
+    }
+
     // MARK: - Helpers
 
     @discardableResult

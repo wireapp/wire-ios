@@ -388,6 +388,7 @@ extension Payload.ConversationEvent {
 
 extension Payload.ConversationEvent where T == Payload.UpdateConversationName {
 
+    // TODO: [John] Delete
     func process(in context: NSManagedObjectContext, originalEvent: ZMUpdateEvent) {
         guard
             let conversation = fetchOrCreateConversation(in: context)
