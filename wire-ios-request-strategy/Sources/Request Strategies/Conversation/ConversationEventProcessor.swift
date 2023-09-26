@@ -126,8 +126,14 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
                     }
 
                 case .conversationConnectRequest:
-                    let conversationEvent = event.eventPayload(type: Payload.ConversationEvent<Payload.UpdateConversationConnectionRequest>.self)
-                    conversationEvent?.process(in: context, originalEvent: event)
+                    if let payload = event.eventPayload(type: Payload.ConversationEvent<Payload.UpdateConversationConnectionRequest>.self) {
+                        let processor = ConversationEventPayloadProcessor()
+                        processor.processPayload(
+                            payload,
+                            originalEvent: event,
+                            in: context
+                        )
+                    }
 
                 case .conversationMLSWelcome:
                     guard let data = event.payloadData else { break }

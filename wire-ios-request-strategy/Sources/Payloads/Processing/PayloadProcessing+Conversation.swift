@@ -582,6 +582,7 @@ extension Payload.ConversationEvent where T == Payload.UpdateConversationDeleted
 
     extension Payload.ConversationEvent where T == Payload.UpdateConversationConnectionRequest {
 
+        // TODO: [John] Delete
         func process(in context: NSManagedObjectContext, originalEvent: ZMUpdateEvent) {
             // TODO jacob refactor to append method on conversation
             _ = ZMSystemMessage.createOrUpdate(from: originalEvent, in: context)

@@ -283,6 +283,17 @@ final class ConversationEventPayloadProcessor {
         conversation.appendMessageReceiptModeChangedMessage(fromUser: sender, timestamp: timestamp, enabled: enabled)
     }
 
+    // MARK: - Connection request
+
+    func processPayload(
+        _ payload: Payload.ConversationEvent<Payload.UpdateConversationConnectionRequest>,
+        originalEvent: ZMUpdateEvent,
+        in context: NSManagedObjectContext
+    ) {
+        // TODO jacob refactor to append method on conversation
+        _ = ZMSystemMessage.createOrUpdate(from: originalEvent, in: context)
+    }
+
     // MARK: - Helpers
 
     @discardableResult
