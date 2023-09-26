@@ -81,90 +81,85 @@ class AssetV3UploadRequestStrategyTests: MessagingTestBase {
 
     // MARK: - Request generation
 
-    func testThatItGeneratesRequestWhenAssetIsPreprocessed() {
+    func testThatItGeneratesRequestWhenAssetIsPreprocessed() async {
         syncMOC.performGroupedBlockAndWait {
             // given
             let message = self.createFileMessage()
             let messageSet: Set<NSManagedObject> = [message]
             self.sut.upstreamSync?.objectsDidChange(messageSet)
-
-            // when
-            let request = self.sut.nextRequest(for: .v0)
-
-            // then
-            XCTAssertNotNil(request)
         }
+        // when
+        let request = await self.sut.nextRequest(for: .v0)
+
+        // then
+        XCTAssertNotNil(request)
     }
 
-    func testThatItDoesNotGenerateRequestForVersion2Assets() {
+    func testThatItDoesNotGenerateRequestForVersion2Assets() async {
         syncMOC.performGroupedBlockAndWait {
             // given
             let message = self.createFileMessage()
             message.version = 2
             let messageSet: Set<NSManagedObject> = [message]
             self.sut.upstreamSync?.objectsDidChange(messageSet)
-
-            // when
-            let request = self.sut.nextRequest(for: .v0)
-
-            // then
-            XCTAssertNil(request)
         }
+        // when
+        let request = await self.sut.nextRequest(for: .v0)
+
+        // then
+        XCTAssertNil(request)
     }
 
-    func testThatItDoesNotGenerateRequestForDeliveredMessages() {
+    func testThatItDoesNotGenerateRequestForDeliveredMessages() async {
         syncMOC.performGroupedBlockAndWait {
             // given
             let message = self.createFileMessage()
             message.delivered = true
             let messageSet: Set<NSManagedObject> = [message]
             self.sut.upstreamSync?.objectsDidChange(messageSet)
-
-            // when
-            let request = self.sut.nextRequest(for: .v0)
-
-            // then
-            XCTAssertNil(request)
         }
+        // when
+        let request = await self.sut.nextRequest(for: .v0)
+
+        // then
+        XCTAssertNil(request)
     }
 
-    func testThatItDoesNotGenerateRequestWhilePreprocessingIsNotCompleted() {
+    func testThatItDoesNotGenerateRequestWhilePreprocessingIsNotCompleted() async {
         syncMOC.performGroupedBlockAndWait {
             // given
             let message = self.createFileMessage(hasCompletedPreprocessing: false)
             let messageSet: Set<NSManagedObject> = [message]
             self.sut.upstreamSync?.objectsDidChange(messageSet)
+        }
+        // when
+        let request = await self.sut.nextRequest(for: .v0)
 
+        // then
+        XCTAssertNil(request)
+    }
+
+    func testThatItDoesNotGenerateRequestWhenTransferStateIsNotUploading() async {
+        let allTransferStatesExpectUploading: [AssetTransferState] = [.uploaded, .uploadingFailed, .uploadingCancelled]
+
+        for transferState in allTransferStatesExpectUploading {
+            syncMOC.performGroupedBlockAndWait {
+                // given
+                let message = self.createFileMessage(transferState: transferState)
+                let messageSet: Set<NSManagedObject> = [message]
+                self.sut.upstreamSync?.objectsDidChange(messageSet)
+            }
             // when
-            let request = self.sut.nextRequest(for: .v0)
+            let request = await self.sut.nextRequest(for: .v0)
 
             // then
             XCTAssertNil(request)
         }
     }
 
-    func testThatItDoesNotGenerateRequestWhenTransferStateIsNotUploading() {
-        let allTransferStatesExpectUploading: [AssetTransferState] = [.uploaded, .uploadingFailed, .uploadingCancelled]
-
-        allTransferStatesExpectUploading.forEach { transferState in
-            syncMOC.performGroupedBlockAndWait {
-                // given
-                let message = self.createFileMessage(transferState: transferState)
-                let messageSet: Set<NSManagedObject> = [message]
-                self.sut.upstreamSync?.objectsDidChange(messageSet)
-
-                // when
-                let request = self.sut.nextRequest(for: .v0)
-
-                // then
-                XCTAssertNil(request)
-            }
-        }
-    }
-
     // MARK: - Request cancellation
 
-    func testThatItCancelsRequest_WhenTransferStateChangesToUploadingCancelled() {
+    func testThatItCancelsRequest_WhenTransferStateChangesToUploadingCancelled() async {
         let expectedIdentifier: UInt = 42
         var message: ZMAssetClientMessage!
         syncMOC.performGroupedBlockAndWait {
@@ -172,9 +167,10 @@ class AssetV3UploadRequestStrategyTests: MessagingTestBase {
             message = self.createFileMessage()
             let messageSet: Set<NSManagedObject> = [message]
             self.sut.upstreamSync?.objectsDidChange(messageSet)
-            guard let request = self.sut.nextRequest(for: .v0) else { return XCTFail("Request is nil") }
-            request.callTaskCreationHandlers(withIdentifier: expectedIdentifier, sessionIdentifier: self.name)
         }
+
+        guard let request = await self.sut.nextRequest(for: .v0) else { return XCTFail("Request is nil") }
+        request.callTaskCreationHandlers(withIdentifier: expectedIdentifier, sessionIdentifier: self.name)
 
         self.syncMOC.performGroupedBlock {
             // when
@@ -195,7 +191,7 @@ class AssetV3UploadRequestStrategyTests: MessagingTestBase {
 
     // MARK: - Response handling
 
-    func testThatItUpdatesUploadProgress() {
+    func testThatItUpdatesUploadProgress() async {
         let expectedProgress: Float = 0.5
         var message: ZMAssetClientMessage!
         syncMOC.performGroupedBlockAndWait {
@@ -203,11 +199,11 @@ class AssetV3UploadRequestStrategyTests: MessagingTestBase {
             message = self.createFileMessage()
             let messageSet: Set<NSManagedObject> = [message]
             self.sut.upstreamSync?.objectsDidChange(messageSet)
-            let request = self.sut.nextRequest(for: .v0)
-
-            // when
-            request?.updateProgress(expectedProgress)
         }
+
+        let request = await self.sut.nextRequest(for: .v0)
+        // when
+        request?.updateProgress(expectedProgress)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         syncMOC.performGroupedBlockAndWait {
@@ -216,17 +212,19 @@ class AssetV3UploadRequestStrategyTests: MessagingTestBase {
         }
     }
 
-    func testThatItUpdatesTransferState_OnSuccessfulResponse() {
+    func testThatItUpdatesTransferState_OnSuccessfulResponse() async {
         var message: ZMAssetClientMessage!
         syncMOC.performGroupedBlockAndWait {
             // given
             message = self.createImageMessage()
             let messageSet: Set<NSManagedObject> = [message]
             self.sut.upstreamSync?.objectsDidChange(messageSet)
-            let request = self.sut.nextRequest(for: .v0)
+        }
 
-            // when
-            request?.complete(with: ZMTransportResponse(payload: ["key": "asset-id-123"] as ZMTransportData, httpStatus: 201, transportSessionError: nil, apiVersion: 0))
+        let request = await self.sut.nextRequest(for: .v0)
+
+        // when
+        request?.complete(with: ZMTransportResponse(payload: ["key": "asset-id-123"] as ZMTransportData, httpStatus: 201, transportSessionError: nil, apiVersion: 0))
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
