@@ -50,8 +50,10 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
             for event in events {
                 switch event.type {
                 case .conversationCreate:
-                    let conversationEvent = event.eventPayload(type: Payload.ConversationEvent<Payload.Conversation>.self)
-                    conversationEvent?.process(in: context, originalEvent: event)
+                    if let payload = event.eventPayload(type: Payload.ConversationEvent<Payload.Conversation>.self) {
+                        let processor = ConversationEventPayloadProcessor()
+                        processor.processPayload(payload, in: context)
+                    }
 
                 case .conversationDelete:
                     let conversationEvent = event.eventPayload(type: Payload.ConversationEvent<Payload.UpdateConversationDeleted>.self)

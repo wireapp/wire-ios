@@ -240,6 +240,7 @@
 		EE7F022B2A8391C500FE5695 /* ConversationServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE7F022A2A8391C500FE5695 /* ConversationServiceTests.swift */; };
 		EE7F022D2A8392EF00FE5695 /* MockActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE7F022C2A8392EF00FE5695 /* MockActionHandler.swift */; };
 		EE82318927D22D79008CD77B /* String+Random.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE82318827D22D79008CD77B /* String+Random.swift */; };
+		EE88078D2AC31FAE00278E3C /* ConversationEventPayloadProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE88078C2AC31FAE00278E3C /* ConversationEventPayloadProcessor.swift */; };
 		EE8DC53728C0EFA700AC4E3D /* FetchUserClientsActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE8DC53628C0EFA700AC4E3D /* FetchUserClientsActionHandler.swift */; };
 		EE8DC53928C0F04B00AC4E3D /* FetchUserClientsActionHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE8DC53828C0F04B00AC4E3D /* FetchUserClientsActionHandlerTests.swift */; };
 		EE90C29E282E785800474379 /* PushTokenStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE90C29D282E785800474379 /* PushTokenStrategy.swift */; };
@@ -669,6 +670,7 @@
 		EE7F022A2A8391C500FE5695 /* ConversationServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationServiceTests.swift; sourceTree = "<group>"; };
 		EE7F022C2A8392EF00FE5695 /* MockActionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockActionHandler.swift; sourceTree = "<group>"; };
 		EE82318827D22D79008CD77B /* String+Random.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Random.swift"; sourceTree = "<group>"; };
+		EE88078C2AC31FAE00278E3C /* ConversationEventPayloadProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationEventPayloadProcessor.swift; sourceTree = "<group>"; };
 		EE8DC53628C0EFA700AC4E3D /* FetchUserClientsActionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchUserClientsActionHandler.swift; sourceTree = "<group>"; };
 		EE8DC53828C0F04B00AC4E3D /* FetchUserClientsActionHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchUserClientsActionHandlerTests.swift; sourceTree = "<group>"; };
 		EE90C29D282E785800474379 /* PushTokenStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushTokenStrategy.swift; sourceTree = "<group>"; };
@@ -1170,6 +1172,7 @@
 		16E70F5E270EE96200718E5D /* Processing */ = {
 			isa = PBXGroup;
 			children = (
+				EE88078C2AC31FAE00278E3C /* ConversationEventPayloadProcessor.swift */,
 				63DA339D286DF6DA00818C3C /* Helpers */,
 				169BA1CC25E95DC900374343 /* Payload+Processing.swift */,
 				16367F2126FDB2A10028AF8B /* PayloadProcessing+Connection.swift */,
@@ -1958,6 +1961,7 @@
 				06C394C5248E851000AE736A /* NotificationsTracker.swift in Sources */,
 				0649D14324F63B52001DDC78 /* NotificationUserInfo.swift in Sources */,
 				161E05442665465A00DADC3D /* SyncProgress.swift in Sources */,
+				EE88078D2AC31FAE00278E3C /* ConversationEventPayloadProcessor.swift in Sources */,
 				EE47346E29A3A17900E6C04E /* EventDecoder+MLS.swift in Sources */,
 				63CC83E2285C9C6C008549AD /* UploadSelfMLSKeyPackagesActionHandler.swift in Sources */,
 				166901D41D7081C7000FE4AF /* ZMDownstreamObjectSync.m in Sources */,

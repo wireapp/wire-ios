@@ -55,11 +55,13 @@ extension Payload.ConversationMembers {
 
 extension Payload.Conversation {
 
+    // TODO: [John] Delete
     enum Source {
         case slowSync
         case eventStream
     }
 
+    // TODO: [John] payload
     func fetchCreator(in context: NSManagedObjectContext) -> ZMUser? {
         guard let userID = creator else { return nil }
 
@@ -67,6 +69,7 @@ extension Payload.Conversation {
         return ZMUser.fetchOrCreate(with: userID, domain: qualifiedID?.domain, in: context)
     }
 
+    // TODO: [John] Delete
     @discardableResult
     func updateOrCreate(
         in context: NSManagedObjectContext,
@@ -104,6 +107,7 @@ extension Payload.Conversation {
         }
     }
 
+    // TODO: [John] Delete
     @discardableResult
     func updateOrCreateOneToOneConversation(
         in context: NSManagedObjectContext,
@@ -159,6 +163,7 @@ extension Payload.Conversation {
         return conversation
     }
 
+    // TODO: [John] Delete
     @discardableResult
     func updateOrCreateSelfConversation(
         in context: NSManagedObjectContext,
@@ -190,6 +195,7 @@ extension Payload.Conversation {
         return conversation
     }
 
+    // TODO: [John] delete
     @discardableResult
     func updateOrCreateGroupConversation(
         in context: NSManagedObjectContext,
@@ -237,6 +243,7 @@ extension Payload.Conversation {
         return conversation
     }
 
+    // TODO: [John] Delete
     // There is a bug in the backend where the conversation type is not correct for
     // connection requests across federated backends. Instead of returning `.connection` type,
     // it returns `oneOnOne.
@@ -253,6 +260,7 @@ extension Payload.Conversation {
         }
     }
 
+    // TODO: [John] delete
     func updateMetadata(for conversation: ZMConversation, context: NSManagedObjectContext) {
         if let teamID = teamID {
             conversation.updateTeam(identifier: teamID)
@@ -267,6 +275,7 @@ extension Payload.Conversation {
         }
     }
 
+    // TODO: [John] delete
     func updateMembers(for conversation: ZMConversation, context: NSManagedObjectContext) {
         if let members = members {
             let otherMembers = members.fetchOtherMembers(in: context, conversation: conversation)
@@ -275,6 +284,7 @@ extension Payload.Conversation {
         }
     }
 
+    // TODO: [John] delete
     func updateConversationTimestamps(for conversation: ZMConversation, serverTimestamp: Date) {
         // If the lastModifiedDate is non-nil, e.g. restore from backup, do not update the lastModifiedDate
         if conversation.lastModifiedDate == nil { // TODO jacob review this logic
@@ -284,6 +294,7 @@ extension Payload.Conversation {
         conversation.updateServerModified(serverTimestamp)
     }
 
+    // TODO: [John] delete
     func updateConversationStatus(for conversation: ZMConversation) {
 
         if let selfMember = members?.selfMember {
@@ -309,6 +320,7 @@ extension Payload.Conversation {
         }
     }
 
+    // TODO: [John] delete
     private func updateMessageProtocol(for conversation: ZMConversation) {
         guard let messageProtocolString = messageProtocol else {
             Logging.eventProcessing.warn("message protocol is missing")
@@ -323,6 +335,7 @@ extension Payload.Conversation {
         conversation.messageProtocol = messageProtocol
     }
 
+    // TODO: [John] delete
     private func updateMLSStatus(for conversation: ZMConversation, context: NSManagedObjectContext, source: Source) {
         let mlsEventProcessor = MLSEventProcessor.shared
 
@@ -527,6 +540,7 @@ extension Payload.ConversationEvent where T == Payload.UpdateConversationReceipt
 
 extension Payload.ConversationEvent where T == Payload.Conversation {
 
+    // TODO: [John] Delete
     func process(in context: NSManagedObjectContext, originalEvent: ZMUpdateEvent) {
         guard
             let timestamp = timestamp
