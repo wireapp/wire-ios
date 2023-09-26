@@ -117,8 +117,13 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
                     }
 
                 case .conversationReceiptModeUpdate:
-                    let conversationEvent = event.eventPayload(type: Payload.ConversationEvent<Payload.UpdateConversationReceiptMode>.self)
-                    conversationEvent?.process(in: context, originalEvent: event)
+                    if let payload = event.eventPayload(type: Payload.ConversationEvent<Payload.UpdateConversationReceiptMode>.self) {
+                        let processor = ConversationEventPayloadProcessor()
+                        processor.processPayload(
+                            payload,
+                            in: context
+                        )
+                    }
 
                 case .conversationConnectRequest:
                     let conversationEvent = event.eventPayload(type: Payload.ConversationEvent<Payload.UpdateConversationConnectionRequest>.self)

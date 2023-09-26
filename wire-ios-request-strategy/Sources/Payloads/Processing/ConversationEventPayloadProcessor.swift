@@ -256,6 +256,33 @@ final class ConversationEventPayloadProcessor {
         conversation.setMessageDestructionTimeoutValue(.init(rawValue: timeoutValue), for: .groupConversation)
     }
 
+    // MARK: - Receipt mode update
+
+    func processPayload(
+        _ payload: Payload.ConversationEvent<Payload.UpdateConversationReceiptMode>,
+        in context: NSManagedObjectContext
+    ) {
+        guard
+            let sender = fetchOrCreateSender(
+                from: payload,
+                in: context
+            ),
+            let conversation = fetchOrCreateConversation(
+                from: payload,
+                in: context
+            ),
+            let timestamp = payload.timestamp,
+            timestamp > conversation.lastServerTimeStamp // Discard event if it has already been applied
+        else {
+            Logging.eventProcessing.error("Conversation receipt mode has already been updated, aborting...")
+            return
+        }
+
+        let enabled = payload.data.readReceiptMode > 0
+        conversation.hasReadReceiptsEnabled = enabled
+        conversation.appendMessageReceiptModeChangedMessage(fromUser: sender, timestamp: timestamp, enabled: enabled)
+    }
+
     // MARK: - Helpers
 
     @discardableResult

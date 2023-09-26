@@ -531,6 +531,7 @@ extension Payload.ConversationEvent where T == Payload.UpdateConversationMessage
 
 extension Payload.ConversationEvent where T == Payload.UpdateConversationReceiptMode {
 
+    // TODO: [John] Delete
     func process(in context: NSManagedObjectContext, originalEvent: ZMUpdateEvent) {
         guard
             let sender = fetchOrCreateSender(in: context),
