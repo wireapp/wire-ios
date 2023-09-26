@@ -41,34 +41,37 @@ class UserRichProfileRequestStrategyTests: MessagingTestBase {
         super.tearDown()
     }
 
-    func testThatItGeneratesARequestWhenSettingIsModified() {
+    func testThatItGeneratesARequestWhenSettingIsModified() async {
+        let userID = UUID()
         self.syncMOC.performGroupedAndWait { _ in
             // given
-            let userID = UUID()
+
             let user = ZMUser.fetchOrCreate(with: userID, domain: nil, in: self.syncMOC)
             user.needsRichProfileUpdate = true
             self.sut.contextChangeTrackers.forEach({ $0.addTrackedObjects(Set<NSManagedObject>(arrayLiteral: user)) })
-
-            // when
-            guard let request = self.sut.nextRequest(for: .v0) else { XCTFail("Request is nil"); return }
-
-            // then
-            XCTAssertEqual(request.path, "/users/\(userID)/rich-info")
-            XCTAssertEqual(request.method, .methodGET)
         }
+        // when
+        guard let request = await self.sut.nextRequest(for: .v0) else { XCTFail("Request is nil"); return }
+
+        // then
+        XCTAssertEqual(request.path, "/users/\(userID)/rich-info")
+        XCTAssertEqual(request.method, .methodGET)
     }
 
-    func testThatItParsesAResponse() {
+    func testThatItParsesAResponse() async {
+        var user: ZMUser!
         self.syncMOC.performGroupedAndWait { _ in
             // given
             let userID = UUID()
-            let user = ZMUser.fetchOrCreate(with: userID, domain: nil, in: self.syncMOC)
+            user = ZMUser.fetchOrCreate(with: userID, domain: nil, in: self.syncMOC)
             user.needsRichProfileUpdate = true
             self.sut.contextChangeTrackers.forEach({ $0.addTrackedObjects(Set<NSManagedObject>(arrayLiteral: user)) })
-            let request = self.sut.nextRequest(for: .v0)
-            XCTAssertNotNil(request)
+        }
+        let request = await self.sut.nextRequest(for: .v0)
+        XCTAssertNotNil(request)
 
-            // when
+        // when
+        self.syncMOC.performGroupedAndWait { _ in
             let type = "some"
             let value = "value"
             let payload = [
@@ -85,16 +88,20 @@ class UserRichProfileRequestStrategyTests: MessagingTestBase {
         }
     }
 
-    func testThatItResetsTheFlagOnError() {
+    func testThatItResetsTheFlagOnError() async {
+        var user: ZMUser!
+
         self.syncMOC.performGroupedAndWait { _ in
             // given
             let userID = UUID()
-            let user = ZMUser.fetchOrCreate(with: userID, domain: nil, in: self.syncMOC)
+            user = ZMUser.fetchOrCreate(with: userID, domain: nil, in: self.syncMOC)
             user.needsRichProfileUpdate = true
             self.sut.contextChangeTrackers.forEach({ $0.addTrackedObjects(Set<NSManagedObject>(arrayLiteral: user)) })
-            let request = self.sut.nextRequest(for: .v0)
-            XCTAssertNotNil(request)
+        }
+        let request = await self.sut.nextRequest(for: .v0)
+        XCTAssertNotNil(request)
 
+        self.syncMOC.performGroupedAndWait { _ in
             // when
             let response = ZMTransportResponse(payload: nil, httpStatus: 404, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
             self.sut.delete(user, with: response, downstreamSync: nil)
