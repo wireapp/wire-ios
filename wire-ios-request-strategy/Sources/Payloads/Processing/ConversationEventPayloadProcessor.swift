@@ -204,6 +204,28 @@ final class ConversationEventPayloadProcessor {
         }
     }
 
+    // MARK: - Access mode update
+
+    func processPayload(
+        _ payload: Payload.ConversationEvent<Payload.UpdateConversationAccess>,
+        in context: NSManagedObjectContext
+    ) {
+        guard let conversation = fetchOrCreateConversation(
+            from: payload,
+            in: context
+        ) else {
+            Logging.eventProcessing.error("Converation access update missing conversation, aborting...")
+            return
+        }
+
+        if let accessRoles = payload.data.accessRoleV2 {
+            conversation.updateAccessStatus(accessModes: payload.data.access, accessRoles: accessRoles)
+        } else if let accessRole = payload.data.accessRole, let legacyAccessRole = ConversationAccessRole(rawValue: accessRole) {
+            let accessRoles = ConversationAccessRoleV2.fromLegacyAccessRole(legacyAccessRole)
+            conversation.updateAccessStatus(accessModes: payload.data.access, accessRoles: accessRoles.map(\.rawValue))
+        }
+    }
+
     // MARK: - Helpers
 
     @discardableResult
