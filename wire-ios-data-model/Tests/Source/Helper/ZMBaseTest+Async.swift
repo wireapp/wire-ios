@@ -36,4 +36,9 @@ extension ZMTBaseTest {
         XCTAssert(waitForCustomExpectations(withTimeout: timeout))
     }
 
+    public func performAsyncIgnoringZMLogError(timeout: TimeInterval, block: @escaping () async -> Void) {
+        performIgnoringZMLogError {
+            self.wait(timeout: timeout, forAsyncBlock: block)
+        }
+    }
 }
