@@ -79,7 +79,7 @@ NSString * const FederationNotAvailableError = @"federation-not-available";
     return [NSError transportErrorFromURLTask:task expired:expired payloadLabel:nil];
 }
 
-+ (nullable NSError *)transportErrorFromURLTask:(NSURLSessionTask *)task expired:(BOOL)expired payloadLabel:(nullable NSString *) payloadLabel;
++ (NSError *)transportErrorFromURLTask:(NSURLSessionTask *)task expired:(BOOL)expired payloadLabel:(nullable NSString *) payloadLabel;
 {
     NSError *urlError = task.error;
     if (urlError == nil) {
