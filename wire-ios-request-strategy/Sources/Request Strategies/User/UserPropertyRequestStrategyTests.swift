@@ -41,20 +41,19 @@ class UserPropertyRequestStrategyTests: MessagingTestBase {
         super.tearDown()
     }
 
-    func testThatItGeneratesARequestWhenSettingIsModified() {
+    func testThatItGeneratesARequestWhenSettingIsModified() async {
         self.syncMOC.performGroupedAndWait { moc in
             // given
             let selfUser = ZMUser.selfUser(in: moc)
             selfUser.needsToBeUpdatedFromBackend = false
             selfUser.readReceiptsEnabled = true
             self.sut.contextChangeTrackers.forEach({ $0.addTrackedObjects(Set<NSManagedObject>(arrayLiteral: selfUser)) })
-
-            // when
-            let request = self.sut.nextRequest(for: .v0)
-
-            // then
-            XCTAssertNotNil(request)
         }
+        // when
+        let request = await self.sut.nextRequest(for: .v0)
+
+        // then
+        XCTAssertNotNil(request)
     }
 
     func testThatItUpdatesPropertyFromUpdateEvent() {
@@ -122,20 +121,22 @@ class UserPropertyRequestStrategyTests: MessagingTestBase {
 
 // MARK: - Downstream sync
 extension UserPropertyRequestStrategyTests {
-    func testThatItIsFetchingPropertyValue() {
+    func testThatItIsFetchingPropertyValue() async {
+        var selfUser: ZMUser!
         self.syncMOC.performGroupedAndWait { moc in
             // given
-            let selfUser = ZMUser.selfUser(in: moc)
+            selfUser = ZMUser.selfUser(in: moc)
+        }
+        // when
+        let request = await self.sut.nextRequestIfAllowed(for: .v0)
 
-            // when
-            let request = self.sut.nextRequestIfAllowed(for: .v0)
+        XCTAssertNotNil(request)
+        XCTAssertEqual(request!.method, .methodGET)
+        XCTAssertEqual(request!.path, "properties/WIRE_RECEIPT_MODE")
 
-            XCTAssertNotNil(request)
-            XCTAssertEqual(request!.method, .methodGET)
-            XCTAssertEqual(request!.path, "properties/WIRE_RECEIPT_MODE")
+        let response = ZMTransportResponse(payload: "1" as ZMTransportData, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
 
-            let response = ZMTransportResponse(payload: "1" as ZMTransportData, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
-
+        self.syncMOC.performGroupedAndWait { _ in
             self.sut.didReceive(response, forSingleRequest: self.sut.downstreamSync)
 
             // then
@@ -145,20 +146,22 @@ extension UserPropertyRequestStrategyTests {
         }
     }
 
-    func testThatItIsFetchingPropertyValue_404() {
+    func testThatItIsFetchingPropertyValue_404() async {
+        var selfUser: ZMUser!
         self.syncMOC.performGroupedAndWait { moc in
             // given
-            let selfUser = ZMUser.selfUser(in: moc)
+            selfUser = ZMUser.selfUser(in: moc)
+        }
+        // when
+        let request = await self.sut.nextRequestIfAllowed(for: .v0)
 
-            // when
-            let request = self.sut.nextRequestIfAllowed(for: .v0)
+        XCTAssertNotNil(request)
+        XCTAssertEqual(request!.method, .methodGET)
+        XCTAssertEqual(request!.path, "properties/WIRE_RECEIPT_MODE")
 
-            XCTAssertNotNil(request)
-            XCTAssertEqual(request!.method, .methodGET)
-            XCTAssertEqual(request!.path, "properties/WIRE_RECEIPT_MODE")
+        let response = ZMTransportResponse(payload: nil, httpStatus: 404, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
 
-            let response = ZMTransportResponse(payload: nil, httpStatus: 404, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
-
+        self.syncMOC.performGroupedAndWait { _ in
             self.sut.didReceive(response, forSingleRequest: self.sut.downstreamSync)
 
             // then

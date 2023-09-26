@@ -45,7 +45,6 @@ class UserRichProfileRequestStrategyTests: MessagingTestBase {
         let userID = UUID()
         self.syncMOC.performGroupedAndWait { _ in
             // given
-
             let user = ZMUser.fetchOrCreate(with: userID, domain: nil, in: self.syncMOC)
             user.needsRichProfileUpdate = true
             self.sut.contextChangeTrackers.forEach({ $0.addTrackedObjects(Set<NSManagedObject>(arrayLiteral: user)) })
