@@ -370,6 +370,7 @@ extension Payload.QualifiedConversationList {
 
 extension Payload.ConversationEvent {
 
+    // TODO: [John] Delete
     func fetchOrCreateConversation(in context: NSManagedObjectContext) -> ZMConversation? {
         guard let conversationID = id ?? qualifiedID?.uuid else { return nil }
         return ZMConversation.fetchOrCreate(with: conversationID, domain: qualifiedID?.domain, in: context)
@@ -555,6 +556,7 @@ extension Payload.ConversationEvent where T == Payload.Conversation {
 
 extension Payload.ConversationEvent where T == Payload.UpdateConversationDeleted {
 
+    // TODO: [John] Delete
     func process(in context: NSManagedObjectContext, originalEvent: ZMUpdateEvent) {
         guard
             let conversation = fetchOrCreateConversation(in: context)

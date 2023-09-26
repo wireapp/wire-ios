@@ -44,6 +44,25 @@ final class ConversationEventPayloadProcessor {
         )
     }
 
+    // MARK: - Conversation deletion
+
+    func processPayload(
+        _ payload: Payload.ConversationEvent<Payload.UpdateConversationDeleted>,
+        in context: NSManagedObjectContext
+    ) {
+        guard let conversation = fetchOrCreateConversation(
+            from: payload,
+            in: context
+        ) else {
+            Logging.eventProcessing.error("Conversation deletion missing conversation in event, aborting...")
+            return
+        }
+
+        conversation.isDeletedRemotely = true
+    }
+
+    // MARK: - Helpers
+
     @discardableResult
     private func updateOrCreateConversation(
         from payload: Payload.Conversation,
@@ -363,6 +382,22 @@ final class ConversationEventPayloadProcessor {
             return type
         }
     }
+
+    func fetchOrCreateConversation<T>(
+        from payload: Payload.ConversationEvent<T>,
+        in context: NSManagedObjectContext
+    ) -> ZMConversation? {
+        guard let conversationID = payload.id ?? payload.qualifiedID?.uuid else {
+            return nil
+        }
+
+        return ZMConversation.fetchOrCreate(
+            with: conversationID,
+            domain: payload.qualifiedID?.domain,
+            in: context
+        )
+    }
+
 
 
 }
