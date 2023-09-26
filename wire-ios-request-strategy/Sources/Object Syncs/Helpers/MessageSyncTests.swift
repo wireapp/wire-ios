@@ -45,7 +45,7 @@ final class MessageSyncTests: MessagingTestBase {
 
     // MARK: - Syncing message
 
-    func test_SyncingMessage_Proteus() {
+    func test_SyncingMessage_Proteus() async {
         syncMOC.performGroupedBlockAndWait {
             // Given
             self.groupConversation.messageProtocol = .proteus
@@ -57,9 +57,9 @@ final class MessageSyncTests: MessagingTestBase {
 
             // When
             self.sut.sync(message) { _, _ in }
-
+        }
             // Then
-            guard let request = self.sut.nextRequest(for: .v1) else {
+            guard let request = await self.sut.nextRequest(for: .v1) else {
                 XCTFail("no request generated")
                 return
             }
@@ -67,10 +67,10 @@ final class MessageSyncTests: MessagingTestBase {
             XCTAssertEqual(request.path, "/v1/conversations/example.com/\(self.conversationID.transportString())/proteus/messages")
             XCTAssertEqual(request.method, .methodPOST)
             XCTAssertEqual(request.binaryDataType, "application/x-protobuf")
-        }
     }
 
-    func test_SyncingMessage_MLS() {
+    func test_SyncingMessage_MLS() async {
+        let awaitExpectation = self.expectation(description: "wait for next request")
         syncMOC.performGroupedBlockAndWait {
             // Given
             self.groupConversation.messageProtocol = .mls
@@ -81,31 +81,38 @@ final class MessageSyncTests: MessagingTestBase {
                 conversation: self.groupConversation,
                 context: self.syncMOC
             )
-
             // When
             self.sut.sync(message) { _, _ in
                 // Then
-                guard let request = self.sut.nextRequest(for: .v5) else {
-                    XCTFail("no request generated")
-                    return
+                Task {
+                    guard let request = await self.sut.nextRequest(for: .v5) else {
+                        XCTFail("no request generated")
+                        awaitExpectation.fulfill()
+                        return
+                    }
+
+                    XCTAssertEqual(request.path, "/v5/mls/messages")
+                    XCTAssertEqual(request.method, .methodPOST)
+                    XCTAssertEqual(request.binaryDataType, "message/mls")
+                    awaitExpectation.fulfill()
                 }
-
-                XCTAssertEqual(request.path, "/v5/mls/messages")
-                XCTAssertEqual(request.method, .methodPOST)
-                XCTAssertEqual(request.binaryDataType, "message/mls")
             }
         }
 
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        await fulfillment(of: [awaitExpectation], timeout: 1.0)
     }
 
-    func test_ItDoesntGenerate_SyncingMessage_MLS_Request() {
-        [.v0, .v1, .v2, .v3, .v4].forEach {
-            internalTest_ItDoesntGenerateARequest(apiVersion: $0)
+    func test_ItDoesntGenerate_SyncingMessage_MLS_Request() async {
+        let apiVersions: [APIVersion] = [.v0, .v1, .v2, .v3, .v4]
+        for version in apiVersions {
+            await internalTest_ItDoesntGenerateARequest(apiVersion: version)
         }
     }
 
-    private func internalTest_ItDoesntGenerateARequest(apiVersion: APIVersion) {
+    private func internalTest_ItDoesntGenerateARequest(apiVersion: APIVersion) async {
+        let awaitExpectation = self.expectation(description: "wait for next request")
+
         syncMOC.performGroupedBlockAndWait {
             // Given
             self.groupConversation.messageProtocol = .mls
@@ -120,12 +127,16 @@ final class MessageSyncTests: MessagingTestBase {
             // When
             self.sut.sync(message) { _, _ in
                 // Then
-                let request = self.sut.nextRequest(for: apiVersion)
-                XCTAssertNil(request)
+                Task {
+                    let request = await self.sut.nextRequest(for: apiVersion)
+                    XCTAssertNil(request)
+                    awaitExpectation.fulfill()
+                }
             }
         }
 
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        await fulfillment(of: [awaitExpectation], timeout: 1.0)
     }
 
     func test_SyncingMessage_Failed_MessageProtocolMissing() {
