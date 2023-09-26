@@ -714,7 +714,7 @@ extension IntegrationTest: SessionManagerDelegate {
         // no op
     }
 
-    public func sessionManagerAsksToRecoverDatabase() {
+    public func sessionManagerAsksToRetryStart() {
         // no op
     }
 }

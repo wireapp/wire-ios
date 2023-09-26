@@ -1746,7 +1746,7 @@ class SessionManagerTestDelegate: SessionManagerDelegate {
         // no op
     }
 
-    public func sessionManagerAsksToRecoverDatabase() {
+    public func sessionManagerAsksToRetryStart() {
         // no op
     }
 }

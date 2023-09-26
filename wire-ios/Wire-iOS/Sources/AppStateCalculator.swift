@@ -20,7 +20,7 @@ import Foundation
 import WireSyncEngine
 
 enum AppState: Equatable {
-    case recovery
+    case retryStart
     case headless
     case locked
     case authenticated(completedRegistration: Bool)
@@ -51,7 +51,7 @@ enum AppState: Equatable {
             return true
         case let (loading(accountTo1, accountFrom1), loading(accountTo2, accountFrom2)):
             return accountTo1 == accountTo2 && accountFrom1 == accountFrom2
-        case (.recovery, .recovery):
+        case (.retryStart, .retryStart):
             return true
         default:
             return false
@@ -219,8 +219,8 @@ extension AppStateCalculator: SessionManagerDelegate {
         transition(to: .authenticated(completedRegistration: false))
     }
 
-    func sessionManagerAsksToRecoverDatabase() {
-        transition(to: .recovery)
+    func sessionManagerAsksToRetryStart() {
+        transition(to: .retryStart)
     }
 }
 

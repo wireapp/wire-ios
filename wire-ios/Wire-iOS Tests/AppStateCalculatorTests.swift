@@ -72,13 +72,13 @@ final class AppStateCalculatorTests: XCTestCase {
         XCTAssertTrue(delegate.wasNotified)
     }
 
-    func testThatAppStateChanges_OnDatabaseRecovery() {
+    func testThatAppStateChanges_OnRetryStart() {
         // WHEN
         sut.applicationDidBecomeActive()
-        sut.sessionManagerAsksToRecoverDatabase()
+        sut.sessionManagerAsksToRetryStart()
 
         // THEN
-        XCTAssertEqual(sut.appState, .recovery)
+        XCTAssertEqual(sut.appState, .retryStart)
         XCTAssertTrue(delegate.wasNotified)
     }
 

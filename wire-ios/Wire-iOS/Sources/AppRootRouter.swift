@@ -196,8 +196,8 @@ extension AppRootRouter: AppStateCalculatorDelegate {
         }
 
         switch appState {
-        case .recovery:
-            showRecovery(completion: completionBlock)
+        case .retryStart:
+            retryStart(completion: completionBlock)
         case .blacklisted(reason: let reason):
             showBlacklisted(reason: reason, completion: completionBlock)
         case .jailbroken:
@@ -372,7 +372,7 @@ extension AppRootRouter {
                                completion: completion)
     }
 
-    private func showRecovery(completion: @escaping () -> Void) {
+    private func retryStart(completion: @escaping () -> Void) {
         guard let launchOptions = lastLaunchOptions else { return }
         completion()
         enqueueTransition(to: .headless) { [weak self] in

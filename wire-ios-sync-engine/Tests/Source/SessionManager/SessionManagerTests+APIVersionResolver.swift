@@ -134,7 +134,7 @@ private class MockSessionManagerDelegate: SessionManagerDelegate {
         // no op
     }
 
-    public func sessionManagerAsksToRecoverDatabase() {
+    public func sessionManagerAsksToRetryStart() {
         // no op
     }
 
