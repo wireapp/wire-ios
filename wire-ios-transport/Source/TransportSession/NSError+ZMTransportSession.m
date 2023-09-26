@@ -91,7 +91,6 @@ NSString * const FederationNotAvailableError = @"federation-not-available";
                                       (statusCode <= 599));
         BOOL const isFederationError = ([payloadLabel isEqualToString:FederationNotAvailableError]);
 
-
         if ((!isBackOff && !isInternalError) || isFederationError) {
             return nil;
         }
