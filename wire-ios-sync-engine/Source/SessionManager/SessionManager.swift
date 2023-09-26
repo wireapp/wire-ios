@@ -854,7 +854,12 @@ public final class SessionManager: NSObject, SessionManagerType {
                 }
 
                 coreDataStack.loadStores { error in
-                    if error != nil {
+                    if DeveloperFlag.forceDatabaseLoadingFailure.isOn {
+                        var flag = DeveloperFlag.forceDatabaseLoadingFailure
+                        flag.isOn = false
+                        self.delegate?.sessionManagerDidFailToLoadDatabase()
+                    }
+                    else if error != nil {
                         self.delegate?.sessionManagerDidFailToLoadDatabase()
                     } else {
                         let userSession = self.startBackgroundSession(
