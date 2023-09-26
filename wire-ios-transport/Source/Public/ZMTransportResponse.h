@@ -57,7 +57,7 @@ typedef NS_ENUM(uint8_t, ZMTransportResponseStatus) {
 @property (nonatomic, readonly, copy, nullable) NSDictionary * headers;
 
 @property (nonatomic, readonly) NSInteger HTTPStatus;
-@property (nonatomic, nullable) NSError * transportSessionError;
+@property (nonatomic, readonly, nullable) NSError * transportSessionError;
 @property (nonatomic) ZMSDispatchGroup *dispatchGroup;
 
 @property (nonatomic, readonly, nullable) NSHTTPURLResponse * rawResponse;
