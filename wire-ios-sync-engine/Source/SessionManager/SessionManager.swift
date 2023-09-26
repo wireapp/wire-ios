@@ -855,6 +855,7 @@ public final class SessionManager: NSObject, SessionManagerType {
 
                 coreDataStack.loadStores { error in
                     if DeveloperFlag.forceDatabaseLoadingFailure.isOn {
+                        // flip off the flag in order not to be stuck in failure
                         var flag = DeveloperFlag.forceDatabaseLoadingFailure
                         flag.isOn = false
                         self.delegate?.sessionManagerDidFailToLoadDatabase()
