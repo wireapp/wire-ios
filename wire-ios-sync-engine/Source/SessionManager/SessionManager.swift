@@ -884,7 +884,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         }
     }
 
-    public func enqueueRetryStart() {
+    public func retryStart() {
         self.delegate?.sessionManagerAsksToRetryStart()
     }
 
