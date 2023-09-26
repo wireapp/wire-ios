@@ -480,7 +480,6 @@ static NSInteger const DefaultMaximumRequests = 6;
         NSError *tryAgainError = [NSError tryAgainLaterErrorWithUserInfo:userInfo];
         ZMTransportResponse *tryAgainResponse = [ZMTransportResponse responseWithTransportSessionError:tryAgainError apiVersion:request.apiVersion];
         [request completeWithResponse:tryAgainResponse];
-
     } else {
         [request completeWithResponse:response];
     }
