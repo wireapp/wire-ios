@@ -82,6 +82,7 @@ final class CompleteReactionPickerViewControllerTests: BaseSnapshotTestCase {
     func testReactionPicker_withSearchQuery() {
         // GIVEN & WHEN
         sut = setUpCompleteReactionPickerViewController(selectedReactions: ["🫠"])
+        sut = setUpCompleteReactionPickerViewController(selectedReactions: ["🙈"])
         sut.searchBar(UISearchBar(), textDidChange: "face")
         scrollToSection(1)
 
