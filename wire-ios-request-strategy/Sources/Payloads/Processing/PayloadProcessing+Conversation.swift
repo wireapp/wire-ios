@@ -29,6 +29,7 @@ extension Payload.ConversationMember {
                 conversationRole.map({conversation.fetchOrCreateRoleForConversation(name: $0) }))
     }
 
+    // TODO: [John] Delete
     func updateStatus(for conversation: ZMConversation) {
 
         if let mutedStatus = mutedStatus,
@@ -452,6 +453,7 @@ extension Payload.ConversationEvent where T == Payload.UpdateConverationMemberLe
 
 extension Payload.ConversationEvent where T == Payload.ConversationMember {
 
+    // TODO: [John] Delete
     func fetchOrCreateTargetUser(in context: NSManagedObjectContext) -> ZMUser? {
         guard
             let userID = data.target ?? data.qualifiedTarget?.uuid
@@ -462,6 +464,7 @@ extension Payload.ConversationEvent where T == Payload.ConversationMember {
         return ZMUser.fetchOrCreate(with: userID, domain: data.qualifiedTarget?.domain, in: context)
     }
 
+    // TODO: [John] Delete
     func process(in context: NSManagedObjectContext, originalEvent: ZMUpdateEvent) {
         guard
             let conversation = fetchOrCreateConversation(in: context),

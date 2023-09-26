@@ -167,6 +167,43 @@ final class ConversationEventPayloadProcessor {
         conversation.userDefinedName = payload.data.name
     }
 
+    // MARK: - Member update
+
+    func processPayload(
+        _ payload: Payload.ConversationEvent<Payload.ConversationMember>,
+        in context: NSManagedObjectContext
+    ) {
+        guard
+            let conversation = fetchOrCreateConversation(
+                from: payload,
+                in: context
+            ),
+            let targetUser = fetchOrCreateTargetUser(
+                from: payload.data,
+                in: context
+            )
+        else {
+            Logging.eventProcessing.error("Conversation member update missing conversation or target user, aborting...")
+            return
+        }
+
+        if targetUser.isSelfUser {
+            if let mutedStatus = payload.data.mutedStatus,
+               let mutedReference = payload.data.mutedReference {
+                conversation.updateMutedStatus(status: Int32(mutedStatus), referenceDate: mutedReference)
+            }
+
+            if let archived = payload.data.archived,
+               let archivedReference = payload.data.archivedReference {
+                conversation.updateArchivedStatus(archived: archived, referenceDate: archivedReference)
+            }
+        }
+
+        if let role = payload.data.conversationRole.map({conversation.fetchOrCreateRoleForConversation(name: $0) }) {
+            conversation.addParticipantAndUpdateConversationState(user: targetUser, role: role)
+        }
+    }
+
     // MARK: - Helpers
 
     @discardableResult
@@ -530,6 +567,21 @@ final class ConversationEventPayloadProcessor {
         return ZMUser.fetchOrCreate(
             with: userID,
             domain: payload.qualifiedFrom?.domain,
+            in: context
+        )
+    }
+
+    func fetchOrCreateTargetUser(
+        from payload: Payload.ConversationMember,
+        in context: NSManagedObjectContext
+    ) -> ZMUser? {
+        guard let userID = payload.target ?? payload.qualifiedTarget?.uuid else {
+            return nil
+        }
+
+        return ZMUser.fetchOrCreate(
+            with: userID,
+            domain: payload.qualifiedTarget?.domain,
             in: context
         )
     }

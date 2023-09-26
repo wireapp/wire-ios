@@ -90,8 +90,13 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
                     }
 
                 case .conversationMemberUpdate:
-                    let conversationEvent = event.eventPayload(type: Payload.ConversationEvent<Payload.ConversationMember>.self)
-                    conversationEvent?.process(in: context, originalEvent: event)
+                    if let payload = event.eventPayload(type: Payload.ConversationEvent<Payload.ConversationMember>.self) {
+                        let processor = ConversationEventPayloadProcessor()
+                        processor.processPayload(
+                            payload,
+                            in: context
+                        )
+                    }
 
                 case .conversationAccessModeUpdate:
                     let conversationEvent = event.eventPayload(type: Payload.ConversationEvent<Payload.UpdateConversationAccess>.self)
