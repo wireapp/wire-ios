@@ -225,7 +225,8 @@ class AssetV3UploadRequestStrategyTests: MessagingTestBase {
 
         // when
         request?.complete(with: ZMTransportResponse(payload: ["key": "asset-id-123"] as ZMTransportData, httpStatus: 201, transportSessionError: nil, apiVersion: 0))
-        }
+
+    // TODO: fix error
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         syncMOC.performGroupedBlockAndWait {
@@ -233,18 +234,19 @@ class AssetV3UploadRequestStrategyTests: MessagingTestBase {
         }
     }
 
-    func testThatItDoesNotUpdateTransferState_OnSuccessfulResponse_WhenThereIsMoreAssetsToUpload() {
+    func testThatItDoesNotUpdateTransferState_OnSuccessfulResponse_WhenThereIsMoreAssetsToUpload() async {
         var message: ZMAssetClientMessage!
         syncMOC.performGroupedBlockAndWait {
             // given
             message = self.createFileMessage() // has two assets (file and thumbnail)
             let messageSet: Set<NSManagedObject> = [message]
             self.sut.upstreamSync?.objectsDidChange(messageSet)
-            let request = self.sut.nextRequest(for: .v0)
+        }
+            let request = await self.sut.nextRequest(for: .v0)
 
             // when
             request?.complete(with: ZMTransportResponse(payload: ["key": "asset-id-123"] as ZMTransportData, httpStatus: 201, transportSessionError: nil, apiVersion: 0))
-        }
+
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         syncMOC.performGroupedBlockAndWait {
@@ -252,7 +254,7 @@ class AssetV3UploadRequestStrategyTests: MessagingTestBase {
         }
     }
 
-    func testThatItAddsAssetId_OnSuccessfulResponse() {
+    func testThatItAddsAssetId_OnSuccessfulResponse() async {
         let expectedAssetId = "asset-id-123"
         var message: ZMAssetClientMessage!
         syncMOC.performGroupedBlockAndWait {
@@ -260,11 +262,12 @@ class AssetV3UploadRequestStrategyTests: MessagingTestBase {
             message = self.createImageMessage()
             let messageAsset: Set<NSManagedObject> = [message]
             self.sut.upstreamSync?.objectsDidChange(messageAsset)
-            let request = self.sut.nextRequest(for: .v0)
-
-            // when
-            request?.complete(with: ZMTransportResponse(payload: ["key": expectedAssetId] as ZMTransportData, httpStatus: 201, transportSessionError: nil, apiVersion: 0))
         }
+        let request = await self.sut.nextRequest(for: .v0)
+
+        // when
+        request?.complete(with: ZMTransportResponse(payload: ["key": expectedAssetId] as ZMTransportData, httpStatus: 201, transportSessionError: nil, apiVersion: 0))
+
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         syncMOC.performGroupedBlockAndWait {
@@ -272,18 +275,19 @@ class AssetV3UploadRequestStrategyTests: MessagingTestBase {
         }
     }
 
-    func testThatItExpiresTheMessage_OnPermanentFailureResponse() {
+    func testThatItExpiresTheMessage_OnPermanentFailureResponse() async {
         var message: ZMAssetClientMessage!
         syncMOC.performGroupedBlockAndWait {
             // given
             message = self.createImageMessage()
             let messageSet: Set<NSManagedObject> = [message]
             self.sut.upstreamSync?.objectsDidChange(messageSet)
-            let request = self.sut.nextRequest(for: .v0)
-
-            // when
-            request?.complete(with: ZMTransportResponse(payload: nil, httpStatus: 404, transportSessionError: nil, apiVersion: 0))
         }
+        let request = await self.sut.nextRequest(for: .v0)
+
+        // when
+        request?.complete(with: ZMTransportResponse(payload: nil, httpStatus: 404, transportSessionError: nil, apiVersion: 0))
+
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         syncMOC.performGroupedBlockAndWait {
