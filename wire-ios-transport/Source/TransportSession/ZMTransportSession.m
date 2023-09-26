@@ -459,6 +459,10 @@ static NSInteger const DefaultMaximumRequests = 6;
     ZMTransportResponse *response = [self transportResponseFromURLResponse:httpResponse data:data error:transportError apiVersion:request.apiVersion];
     [self.remoteMonitoring logWithResponse:httpResponse];
 
+    /// If the label is "federation-not-available" we should not try again this request
+    if ([[response payloadLabel] isEqualToString:@"federation-not-available"]) {
+        response.transportSessionError = nil;
+    }
     ZMLogDebug(@"ConnectionProxyDictionary: %@,", session.configuration.connectionProxyDictionary);
     if (response.result == ZMTransportResponseStatusExpired) {
         [request completeWithResponse:response];
@@ -475,6 +479,12 @@ static NSInteger const DefaultMaximumRequests = 6;
         NSError *tryAgainError = [NSError tryAgainLaterErrorWithUserInfo:userInfo];
         ZMTransportResponse *tryAgainResponse = [ZMTransportResponse responseWithTransportSessionError:tryAgainError apiVersion:request.apiVersion];
         [request completeWithResponse:tryAgainResponse];
+
+    // If the label is "federation-not-available", we shouldn't try this request again.
+//    } else if ((httpResponse.statusCode == 500) && [[response payloadLabel] isEqualToString:@"federation-not-available"]) {
+//        ZMTransportResponse *newResponse = [self transportResponseFromURLResponse:httpResponse data:data error:nil apiVersion:request.apiVersion];
+//        [request completeWithResponse:newResponse];
+
     } else {
         [request completeWithResponse:response];
     }
