@@ -62,8 +62,10 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
                     }
 
                 case .conversationMemberLeave:
-                    let conversationEvent = event.eventPayload(type: Payload.ConversationEvent<Payload.UpdateConverationMemberLeave>.self)
-                    conversationEvent?.process(in: context, originalEvent: event)
+                    if let payload = event.eventPayload(type: Payload.ConversationEvent<Payload.UpdateConverationMemberLeave>.self) {
+                        let processor = ConversationEventPayloadProcessor()
+                        processor.processPayload(payload, originalEvent: event, in: context)
+                    }
 
                 case .conversationMemberJoin:
                     if let conversationEvent = event.eventPayload(type: Payload.ConversationEvent<Payload.UpdateConverationMemberJoin>.self) {

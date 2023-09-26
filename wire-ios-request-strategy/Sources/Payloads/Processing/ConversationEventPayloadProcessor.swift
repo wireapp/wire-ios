@@ -61,6 +61,49 @@ final class ConversationEventPayloadProcessor {
         conversation.isDeletedRemotely = true
     }
 
+    // MARK: - Member leave
+
+    func processPayload(
+        _ payload: Payload.ConversationEvent<Payload.UpdateConverationMemberLeave>,
+        originalEvent: ZMUpdateEvent,
+        in context: NSManagedObjectContext
+    ) {
+        guard
+            let conversation = fetchOrCreateConversation(
+                from: payload,
+                in: context
+            ),
+            let removedUsers = fetchRemovedUsers(
+                from: payload.data,
+                in: context
+            )
+        else {
+            Logging.eventProcessing.error("Member leave update missing conversation or users, aborting...")
+            return
+        }
+
+        if !conversation.localParticipants.isDisjoint(with: removedUsers) {
+            // TODO jacob refactor to append method on conversation
+            _ = ZMSystemMessage.createOrUpdate(
+                from: originalEvent,
+                in: context
+            )
+        }
+
+        let sender = fetchOrCreateSender(
+            from: payload,
+            in: context
+        )
+
+        // Idea for improvement, return removed users from this call to benefit from
+        // checking that the participants are in the conversation before being removed
+        conversation.removeParticipantsAndUpdateConversationState(users: Set(removedUsers), initiatingUser: sender)
+
+        if removedUsers.contains(where: \.isSelfUser), conversation.messageProtocol == .mls {
+            MLSEventProcessor.shared.wipeMLSGroup(forConversation: conversation, context: context)
+        }
+    }
+
     // MARK: - Helpers
 
     @discardableResult
@@ -398,6 +441,34 @@ final class ConversationEventPayloadProcessor {
         )
     }
 
+    func fetchRemovedUsers(
+        from payload: Payload.UpdateConverationMemberLeave,
+        in context: NSManagedObjectContext
+    ) -> [ZMUser]? {
+        if let users = payload.qualifiedUserIDs?.map({ ZMUser.fetchOrCreate(with: $0.uuid, domain: $0.domain, in: context) }) {
+            return users
+        }
 
+        if let users = payload.userIDs?.map({ ZMUser.fetchOrCreate(with: $0, domain: nil, in: context) }) {
+            return users
+        }
+
+        return nil
+    }
+
+    func fetchOrCreateSender<T>(
+        from payload: Payload.ConversationEvent<T>,
+        in context: NSManagedObjectContext
+    ) -> ZMUser? {
+        guard let userID = payload.from ?? payload.qualifiedFrom?.uuid else {
+            return nil
+        }
+
+        return ZMUser.fetchOrCreate(
+            with: userID,
+            domain: payload.qualifiedFrom?.domain,
+            in: context
+        )
+    }
 
 }

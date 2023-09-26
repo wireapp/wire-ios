@@ -376,6 +376,7 @@ extension Payload.ConversationEvent {
         return ZMConversation.fetchOrCreate(with: conversationID, domain: qualifiedID?.domain, in: context)
     }
 
+    // TODO: [John] Delete
     func fetchOrCreateSender(in context: NSManagedObjectContext) -> ZMUser? {
         guard let userID = from ?? qualifiedFrom?.uuid else { return nil }
         return ZMUser.fetchOrCreate(with: userID, domain: qualifiedFrom?.domain, in: context)
@@ -407,6 +408,7 @@ extension Payload.ConversationEvent where T == Payload.UpdateConversationName {
 
 extension Payload.ConversationEvent where T == Payload.UpdateConverationMemberLeave {
 
+    // TODO: [John] Delete
     func fetchRemovedUsers(in context: NSManagedObjectContext) -> [ZMUser]? {
         if let users = data.qualifiedUserIDs?.map({ ZMUser.fetchOrCreate(with: $0.uuid, domain: $0.domain, in: context) }) {
             return users
@@ -419,6 +421,7 @@ extension Payload.ConversationEvent where T == Payload.UpdateConverationMemberLe
         return nil
     }
 
+    // TODO: [John] Delete
     func process(in context: NSManagedObjectContext, originalEvent: ZMUpdateEvent) {
         guard
             let conversation = fetchOrCreateConversation(in: context),
