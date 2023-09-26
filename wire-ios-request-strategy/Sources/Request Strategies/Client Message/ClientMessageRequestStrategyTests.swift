@@ -75,7 +75,7 @@ class ClientMessageRequestStrategyTests: MessagingTestBase {
 
 extension ClientMessageRequestStrategyTests {
 
-    func testThatItDoesNotGenerateARequestIfSenderIsNotSelfUser() {
+    func testThatItDoesNotGenerateARequestIfSenderIsNotSelfUser() async {
 
         self.syncMOC.performGroupedBlockAndWait {
 
@@ -87,28 +87,32 @@ extension ClientMessageRequestStrategyTests {
 
             // WHEN
             self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([message])) }
-
-            // THEN
-            XCTAssertNil(self.sut.nextRequest(for: self.apiVersion))
         }
+            // THEN
+            let result = await self.sut.nextRequest(for: self.apiVersion)
+            XCTAssertNil(result)
     }
 
-    func testThatItUpdatesExpectsReadConfirmationFlagWhenSendingMessageInOneToOne() {
+    func testThatItUpdatesExpectsReadConfirmationFlagWhenSendingMessageInOneToOne() async {
+        var message: ZMClientMessage!
         self.syncMOC.performGroupedBlockAndWait {
 
             // GIVEN
             ZMUser.selfUser(in: self.syncMOC).readReceiptsEnabled = true
             let text = "Lorem ipsum"
-            let message = try! self.oneToOneConversation.appendText(content: text) as! ZMClientMessage
+            message = try! self.oneToOneConversation.appendText(content: text) as! ZMClientMessage
             self.syncMOC.saveOrRollback()
 
             // WHEN
             self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([message])) }
-            if self.sut.nextRequest(for: self.apiVersion) == nil {
+        }
+
+        if await self.sut.nextRequest(for: self.apiVersion) == nil {
                 XCTFail("Next request is nil")
                 return
             }
 
+        self.syncMOC.performGroupedBlockAndWait {
             // THEN
             switch message.underlyingMessage?.content {
             case .text(let data)?:
@@ -119,22 +123,25 @@ extension ClientMessageRequestStrategyTests {
         }
     }
 
-    func testThatItDoesntUpdateExpectsReadConfirmationFlagWhenSendingMessageInGroup() {
+    func testThatItDoesntUpdateExpectsReadConfirmationFlagWhenSendingMessageInGroup() async {
+        var message: ZMClientMessage!
         self.syncMOC.performGroupedBlockAndWait {
 
             // GIVEN
             ZMUser.selfUser(in: self.syncMOC).readReceiptsEnabled = true
             let text = "Lorem ipsum"
-            let message = try! self.groupConversation.appendText(content: text) as! ZMClientMessage
+            message = try! self.groupConversation.appendText(content: text) as! ZMClientMessage
             self.syncMOC.saveOrRollback()
 
             // WHEN
             self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([message])) }
-            if self.sut.nextRequest(for: self.apiVersion) == nil {
+        }
+            if await self.sut.nextRequest(for: self.apiVersion) == nil {
                 XCTFail("Next request is nil")
                 return
             }
 
+        self.syncMOC.performGroupedBlockAndWait {
             // THEN
             switch message.underlyingMessage?.content {
             case .text(let data)?:
@@ -145,13 +152,14 @@ extension ClientMessageRequestStrategyTests {
         }
     }
 
-    func testThatItUpdateExpectsReadConfirmationFlagWhenReadReceiptsAreDisabled() {
+    func testThatItUpdateExpectsReadConfirmationFlagWhenReadReceiptsAreDisabled() async {
+        var message: ZMClientMessage!
         self.syncMOC.performGroupedBlockAndWait {
 
             // GIVEN
             ZMUser.selfUser(in: self.syncMOC).readReceiptsEnabled = false
             let text = "Lorem ipsum"
-            let message = try! self.oneToOneConversation.appendText(content: text) as! ZMClientMessage
+            message = try! self.oneToOneConversation.appendText(content: text) as! ZMClientMessage
             var genericMessage = message.underlyingMessage!
             genericMessage.setExpectsReadConfirmation(true)
             do {
@@ -163,17 +171,20 @@ extension ClientMessageRequestStrategyTests {
 
             // WHEN
             self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([message])) }
-            if self.sut.nextRequest(for: self.apiVersion) == nil {
+        }
+            if await self.sut.nextRequest(for: self.apiVersion) == nil {
                 XCTFail("Next request is nil")
                 return
             }
 
+        self.syncMOC.performGroupedBlockAndWait {
             // THEN
             XCTAssertFalse(message.underlyingMessage!.text.expectsReadConfirmation)
         }
     }
 
-    func testThatItUpdatesLegalHoldStatusFlagWhenLegalHoldIsEnabled() {
+    func testThatItUpdatesLegalHoldStatusFlagWhenLegalHoldIsEnabled() async {
+        var message: ZMClientMessage!
         self.syncMOC.performGroupedBlockAndWait {
 
             // GIVEN
@@ -187,7 +198,7 @@ extension ClientMessageRequestStrategyTests {
             XCTAssertTrue(conversation.isUnderLegalHold)
 
             let text = "Lorem ipsum"
-            let message = try! conversation.appendText(content: text) as! ZMClientMessage
+            message = try! conversation.appendText(content: text) as! ZMClientMessage
             var genericMessage = message.underlyingMessage!
             genericMessage.setLegalHoldStatus(.disabled)
             do {
@@ -199,17 +210,20 @@ extension ClientMessageRequestStrategyTests {
 
             // WHEN
             self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([message])) }
-            if self.sut.nextRequest(for: self.apiVersion) == nil {
+        }
+            if await self.sut.nextRequest(for: self.apiVersion) == nil {
                 XCTFail("Next request is nil")
                 return
             }
 
+        self.syncMOC.performGroupedBlockAndWait {
             // THEN
             XCTAssertEqual(message.underlyingMessage!.text.legalHoldStatus, .enabled)
         }
     }
 
-    func testThatItUpdatesLegalHoldStatusFlagWhenLegalHoldIsDisabled() {
+    func testThatItUpdatesLegalHoldStatusFlagWhenLegalHoldIsDisabled() async {
+        var message: ZMClientMessage!
         self.syncMOC.performGroupedBlockAndWait {
 
             // GIVEN
@@ -217,7 +231,7 @@ extension ClientMessageRequestStrategyTests {
             XCTAssertFalse(conversation.isUnderLegalHold)
 
             let text = "Lorem ipsum"
-            let message = try! conversation.appendText(content: text) as! ZMClientMessage
+            message = try! conversation.appendText(content: text) as! ZMClientMessage
             var genericMessage = message.underlyingMessage!
             genericMessage.setLegalHoldStatus(.enabled)
             do {
@@ -229,31 +243,37 @@ extension ClientMessageRequestStrategyTests {
 
             // WHEN
             self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([message])) }
-            if self.sut.nextRequest(for: self.apiVersion) == nil {
+        }
+            if await self.sut.nextRequest(for: self.apiVersion) == nil {
                 XCTFail("Next request is nil")
                 return
             }
 
+        self.syncMOC.performGroupedBlockAndWait {
             // THEN
            XCTAssertEqual(message.underlyingMessage!.text.legalHoldStatus, .disabled)
         }
     }
 
-    func testThatItGeneratesARequestToSendAClientMessage() {
+    func testThatItGeneratesARequestToSendAClientMessage() async {
+        var message: ZMClientMessage!
+        // GIVEN
+        let text = "Lorem ipsum"
+
         self.syncMOC.performGroupedBlockAndWait {
 
-            // GIVEN
-            let text = "Lorem ipsum"
-            let message = try! self.groupConversation.appendText(content: text) as! ZMClientMessage
+            message = try! self.groupConversation.appendText(content: text) as! ZMClientMessage
             self.syncMOC.saveOrRollback()
 
             // WHEN
             self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([message])) }
-            guard let request = self.sut.nextRequest(for: self.apiVersion) else {
+        }
+            guard let request = await self.sut.nextRequest(for: self.apiVersion) else {
                 XCTFail("Request is nil")
                 return
             }
 
+        self.syncMOC.performGroupedBlockAndWait {
             // THEN
             XCTAssertEqual(request.path, "/conversations/\(self.groupConversation.remoteIdentifier!.transportString())/otr/messages")
             XCTAssertEqual(request.method, .methodPOST)
@@ -267,25 +287,34 @@ extension ClientMessageRequestStrategyTests {
         }
     }
 
-    func testThatItGeneratesARequestToSendAClientMessage_WithFederationEndpointEnabled() {
+    func testThatItGeneratesARequestToSendAClientMessage_WithFederationEndpointEnabled() async {
         apiVersion = .v1
+
+        var conversationID: String?
+        var conversationDomain: String?
 
         self.syncMOC.performGroupedBlockAndWait {
 
             // GIVEN
             let text = "Lorem ipsum"
             let message = try! self.groupConversation.appendText(content: text) as! ZMClientMessage
-            let conversationID = self.groupConversation.remoteIdentifier!.transportString()
-            let conversationDomain = self.groupConversation.domain!
+            conversationID = self.groupConversation.remoteIdentifier?.transportString()
+            conversationDomain = self.groupConversation.domain
             self.syncMOC.saveOrRollback()
 
             // WHEN
             self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([message])) }
-            guard let request = self.sut.nextRequest(for: self.apiVersion) else {
+        }
+            guard let request = await self.sut.nextRequest(for: self.apiVersion) else {
                 XCTFail("Request is nil")
                 return
             }
 
+        self.syncMOC.performGroupedBlockAndWait {
+            guard let conversationID = conversationID, let conversationDomain = conversationDomain else {
+                XCTFail("missing conversationID and conversationDomain")
+                return
+            }
             // THEN
             XCTAssertEqual(request.path, "/v1/conversations/\(conversationDomain)/\(conversationID)/proteus/messages")
             XCTAssertEqual(request.method, .methodPOST)
@@ -294,21 +323,24 @@ extension ClientMessageRequestStrategyTests {
         }
     }
 
-    func testThatItGeneratesARequestToSendAClientMessageExternalWithExternalBlob() {
+    func testThatItGeneratesARequestToSendAClientMessageExternalWithExternalBlob() async {
+        // GIVEN
+        let text = String(repeating: "Hi", count: 100000)
+
         self.syncMOC.performGroupedBlockAndWait {
 
-            // GIVEN
-            let text = String(repeating: "Hi", count: 100000)
             let message = try! self.groupConversation.appendText(content: text) as! ZMClientMessage
             self.syncMOC.saveOrRollback()
 
             // WHEN
             self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([message])) }
-            guard let request = self.sut.nextRequest(for: self.apiVersion) else {
+        }
+            guard let request = await self.sut.nextRequest(for: self.apiVersion) else {
                 XCTFail("Request is nil")
                 return
             }
 
+        self.syncMOC.performGroupedBlockAndWait {
             // THEN
             XCTAssertEqual(request.path, "/conversations/\(self.groupConversation.remoteIdentifier!.transportString())/otr/messages")
             XCTAssertEqual(request.method, .methodPOST)
@@ -350,7 +382,7 @@ extension ClientMessageRequestStrategyTests {
         }
     }
 
-    func testThatItDeletesTheConfirmationMessageWhenSentSuccessfully() {
+    func testThatItDeletesTheConfirmationMessageWhenSentSuccessfully() async {
 
         // GIVEN
         var confirmationMessage: ZMMessage!
@@ -359,9 +391,10 @@ extension ClientMessageRequestStrategyTests {
             confirmationMessage = try! self.oneToOneConversation.appendClientMessage(with: GenericMessage(content: Confirmation(messageId: UUID(), type: .delivered)))
             self.syncMOC.saveOrRollback()
             self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([confirmationMessage])) }
-
+        }
             // WHEN
-            guard let request = self.sut.nextRequest(for: self.apiVersion) else { return XCTFail("Request is nil") }
+            guard let request = await self.sut.nextRequest(for: self.apiVersion) else { return XCTFail("Request is nil") }
+        self.syncMOC.performGroupedBlockAndWait {
             request.complete(with: ZMTransportResponse(payload: NSDictionary(), httpStatus: 200, transportSessionError: nil, apiVersion: self.apiVersion.rawValue))
         }
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -372,7 +405,7 @@ extension ClientMessageRequestStrategyTests {
         }
     }
 
-    func testThatItNotifiesWhenMessageCannotBeSent_MissingLegalholdConsent() {
+    func testThatItNotifiesWhenMessageCannotBeSent_MissingLegalholdConsent() async {
 
         // GIVEN
         var confirmationMessage: ZMMessage!
@@ -389,9 +422,11 @@ extension ClientMessageRequestStrategyTests {
                                                       object: nil) {_ in
                 expectation.fulfill()
             }
-
+        }
             // WHEN
-            guard let request = self.sut.nextRequest(for: self.apiVersion) else { return XCTFail("Request is nil") }
+            guard let request = await self.sut.nextRequest(for: self.apiVersion) else { return XCTFail("Request is nil") }
+
+        self.syncMOC.performGroupedBlockAndWait {
             let payload = ["label": "missing-legalhold-consent", "code": 403, "message": ""] as NSDictionary
             request.complete(with: ZMTransportResponse(payload: payload, httpStatus: 403, transportSessionError: nil, apiVersion: self.apiVersion.rawValue))
         }
@@ -453,5 +488,4 @@ extension ClientMessageRequestStrategyTests {
             XCTAssertEqual((self.groupConversation.lastMessage as? ZMClientMessage)?.textMessageData?.messageText, text)
         }
     }
-
 }
