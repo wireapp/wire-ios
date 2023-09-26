@@ -68,8 +68,15 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
                     }
 
                 case .conversationMemberJoin:
-                    if let conversationEvent = event.eventPayload(type: Payload.ConversationEvent<Payload.UpdateConverationMemberJoin>.self) {
-                        processMemberJoin(payload: conversationEvent, originalEvent: event)
+                    if let payload = event.eventPayload(type: Payload.ConversationEvent<Payload.UpdateConverationMemberJoin>.self) {
+                        let processor = ConversationEventPayloadProcessor()
+                        processor.processPayload(
+                            payload,
+                            originalEvent: event,
+                            in: context
+                        )
+
+                        syncConversationForMLSStatus(payload: payload)
                     }
 
                 case .conversationRename:

@@ -104,6 +104,46 @@ final class ConversationEventPayloadProcessor {
         }
     }
 
+    // MARK: - Member join
+
+    func processPayload(
+        _ payload: Payload.ConversationEvent<Payload.UpdateConverationMemberJoin>,
+        originalEvent: ZMUpdateEvent,
+        in context: NSManagedObjectContext
+    ) {
+        guard let conversation = fetchOrCreateConversation(
+            from: payload,
+            in: context
+        ) else {
+            Logging.eventProcessing.error("Member join update missing conversation, aborting...")
+            return
+        }
+
+        if let usersAndRoles = payload.data.users?.map({ $0.fetchUserAndRole(in: context, conversation: conversation)! }) {
+            let selfUser = ZMUser.selfUser(in: context)
+            let users = Set(usersAndRoles.map { $0.0 })
+            let newUsers = !users.subtracting(conversation.localParticipants).isEmpty
+
+            if users.contains(selfUser) || newUsers {
+                // TODO jacob refactor to append method on conversation
+                _ = ZMSystemMessage.createOrUpdate(from: originalEvent, in: context)
+            }
+
+            conversation.addParticipantsAndUpdateConversationState(usersAndRoles: usersAndRoles)
+        } else if let users = payload.data.userIDs?.map({ ZMUser.fetchOrCreate(with: $0, domain: nil, in: context)}) {
+            // NOTE: legacy code path for backwards compatibility with servers without role support
+
+            let users = Set(users)
+            let selfUser = ZMUser.selfUser(in: context)
+
+            if !users.isSubset(of: conversation.localParticipantsExcludingSelf) || users.contains(selfUser) {
+                // TODO jacob refactor to append method on conversation
+                _ = ZMSystemMessage.createOrUpdate(from: originalEvent, in: context)
+            }
+            conversation.addParticipantsAndUpdateConversationState(users: users, role: nil)
+        }
+    }
+
     // MARK: - Helpers
 
     @discardableResult
