@@ -1154,7 +1154,7 @@
 		D550F57020444924009E09DD /* ConversationActionController+ClearContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = D550F56F20444924009E09DD /* ConversationActionController+ClearContent.swift */; };
 		D550F57520444CF8009E09DD /* AlertResultConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = D550F57420444CF8009E09DD /* AlertResultConfiguration.swift */; };
 		D550F5772044532D009E09DD /* ConversationAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = D550F5762044532D009E09DD /* ConversationAction.swift */; };
-		D550F57920445AD7009E09DD /* UIAlertController+ConfirmRemovingGuests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D550F57820445AD7009E09DD /* UIAlertController+ConfirmRemovingGuests.swift */; };
+		D550F57920445AD7009E09DD /* UIAlertController+ConversationGuestOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D550F57820445AD7009E09DD /* UIAlertController+ConversationGuestOptions.swift */; };
 		D5674610208F39D200DC7F26 /* TintColorCorrectedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D567460F208F39D200DC7F26 /* TintColorCorrectedViewController.swift */; };
 		D5677158202B496700308448 /* CreateGroupSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5677157202B496700308448 /* CreateGroupSection.swift */; };
 		D5694B5220441EE900C84C8F /* UILabel+Convenience.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5694B5120441EE900C84C8F /* UILabel+Convenience.swift */; };
@@ -3161,7 +3161,7 @@
 		D550F56F20444924009E09DD /* ConversationActionController+ClearContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConversationActionController+ClearContent.swift"; sourceTree = "<group>"; };
 		D550F57420444CF8009E09DD /* AlertResultConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertResultConfiguration.swift; sourceTree = "<group>"; };
 		D550F5762044532D009E09DD /* ConversationAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationAction.swift; sourceTree = "<group>"; };
-		D550F57820445AD7009E09DD /* UIAlertController+ConfirmRemovingGuests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIAlertController+ConfirmRemovingGuests.swift"; sourceTree = "<group>"; };
+		D550F57820445AD7009E09DD /* UIAlertController+ConversationGuestOptions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIAlertController+ConversationGuestOptions.swift"; sourceTree = "<group>"; };
 		D567460F208F39D200DC7F26 /* TintColorCorrectedViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TintColorCorrectedViewController.swift; sourceTree = "<group>"; };
 		D5677157202B496700308448 /* CreateGroupSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateGroupSection.swift; sourceTree = "<group>"; };
 		D5694B5120441EE900C84C8F /* UILabel+Convenience.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UILabel+Convenience.swift"; sourceTree = "<group>"; };
@@ -7228,7 +7228,7 @@
 				D518947A20504C6A00C095C1 /* LoadingIndicatorCell.swift */,
 				D54224C320513A9800526A57 /* TextCell.swift */,
 				D53D390B2057F8ED00B87DAD /* TintCorrectedActivityController.swift */,
-				D550F57820445AD7009E09DD /* UIAlertController+ConfirmRemovingGuests.swift */,
+				D550F57820445AD7009E09DD /* UIAlertController+ConversationGuestOptions.swift */,
 				D5CA8E562045718900D2F16E /* UINavigationController+CloseButton.swift */,
 				E9559B4827B3D3580020B431 /* UIAlertController+ConfirmRemovingServices.swift */,
 			);
@@ -9126,7 +9126,7 @@
 				EF2388882211B8C500331C07 /* UserType+DisplayString.swift in Sources */,
 				A90BECF124A23E6500E5C008 /* LinkViewDelegate.swift in Sources */,
 				A993719123F7461600881564 /* UIView+ExtendedBlockAnimations.swift in Sources */,
-				D550F57920445AD7009E09DD /* UIAlertController+ConfirmRemovingGuests.swift in Sources */,
+				D550F57920445AD7009E09DD /* UIAlertController+ConversationGuestOptions.swift in Sources */,
 				871BC3601D34F94200DF0793 /* SettingsPropertyFactory.swift in Sources */,
 				EF2C246F22AFA76C009389C6 /* ZClientViewController+ZMUserObserver.swift in Sources */,
 				6328284324A11847000748D2 /* UserTypeIconStyle.swift in Sources */,

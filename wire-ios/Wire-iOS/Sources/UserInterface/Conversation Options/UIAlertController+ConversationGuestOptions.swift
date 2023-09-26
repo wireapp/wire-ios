@@ -18,9 +18,9 @@
 
 import UIKit
 
-extension UIAlertController {
+private typealias GuestRoom = L10n.Localizable.GuestRoom
 
-    typealias GuestRoom = L10n.Localizable.GuestRoom
+extension UIAlertController {
 
     static func checkYourConnection() -> UIAlertController {
         let controller = UIAlertController(
@@ -33,12 +33,25 @@ extension UIAlertController {
         return controller
     }
 
-    static func confirmRemovingGuests(_ completion: @escaping (Bool) -> Void) -> UIAlertController {
+    static func confirmRemovingGuests(
+        _ completion: @escaping (Bool) -> Void
+    ) -> UIAlertController {
         return confirmController(
             title: GuestRoom.RemoveGuests.message,
             confirmTitle: GuestRoom.RemoveGuests.action,
             completion: completion
         )
+    }
+
+    static func confirmGuestLinkCreationWithOptionalPassword(
+        _ completion: @escaping (Bool) -> Void
+    ) -> UIAlertController {
+        return confirmControllerWithTwoOptions(
+            optionOne: GuestRoom.Create.LinkWithPassword.action,
+            optionTwo: GuestRoom.Create.LinkWithoutPassword.action,
+            completion: completion
+        )
+
     }
 
     static func confirmRevokingLink(_ completion: @escaping (Bool) -> Void) -> UIAlertController {
@@ -73,5 +86,25 @@ extension UIAlertController {
                                                    message: message,
                                                    confirmAction: confirmAction,
                                                    completion: completion)
+    }
+
+    static func confirmControllerWithTwoOptions(
+        optionOne: String,
+        optionTwo: String,
+        completion: @escaping (Bool) -> Void
+    ) -> UIAlertController {
+        let controller = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        let optionOneAction = UIAlertAction(title: optionOne, style: .default) { _ in
+            completion(true)
+        }
+
+        let optionTwoAction = UIAlertAction(title: optionTwo, style: .default) { _ in
+            completion(false)
+        }
+
+        controller.addAction(optionOneAction)
+        controller.addAction(optionTwoAction)
+
+        return controller
     }
 }
