@@ -226,6 +226,36 @@ final class ConversationEventPayloadProcessor {
         }
     }
 
+    // MARK: - Message timer update
+
+    func processPayload(
+        _ payload: Payload.ConversationEvent<Payload.UpdateConversationMessageTimer>,
+        in context: NSManagedObjectContext
+    ) {
+        guard
+            let sender = fetchOrCreateSender(
+                from: payload,
+                in: context
+            ),
+            let conversation = fetchOrCreateConversation(
+                from: payload,
+                in: context
+            )
+        else {
+            Logging.eventProcessing.error("Conversation message timer update missing sender or conversation, aborting...")
+            return
+        }
+
+        let timeoutValue = (payload.data.messageTimer ?? 0) / 1000
+        let timeout: MessageDestructionTimeoutValue = .init(rawValue: timeoutValue)
+        let currentTimeout = conversation.activeMessageDestructionTimeoutValue ?? .init(rawValue: 0)
+
+        if let timestamp = payload.timestamp, currentTimeout != timeout {
+            conversation.appendMessageTimerUpdateMessage(fromUser: sender, timer: timeoutValue, timestamp: timestamp)
+        }
+        conversation.setMessageDestructionTimeoutValue(.init(rawValue: timeoutValue), for: .groupConversation)
+    }
+
     // MARK: - Helpers
 
     @discardableResult

@@ -507,6 +507,7 @@ extension Payload.ConversationEvent where T == Payload.UpdateConversationAccess 
 
 extension Payload.ConversationEvent where T == Payload.UpdateConversationMessageTimer {
 
+    // TODO: [John] Delete
     func process(in context: NSManagedObjectContext, originalEvent: ZMUpdateEvent) {
         guard
             let sender = fetchOrCreateSender(in: context),
