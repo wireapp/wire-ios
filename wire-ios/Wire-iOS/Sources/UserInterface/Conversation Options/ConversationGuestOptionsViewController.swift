@@ -132,6 +132,19 @@ final class ConversationGuestOptionsViewController: UIViewController,
         return alertController
     }
 
+    func viewModel(
+        _ viewModel: ConversationGuestOptionsViewModel,
+        sourceView: UIView? = nil,
+        confirmGuestLinkWithOptionalPassword completion: @escaping (Bool) -> Void
+    ) -> UIAlertController? {
+        let alertController = UIAlertController.confirmGuestLinkCreationWithOptionalPassword(completion)
+        present(alertController, animated: true)
+
+        alertController.configPopover(pointToView: sourceView ?? view)
+
+        return alertController
+    }
+
     func viewModel(_ viewModel: ConversationGuestOptionsViewModel, sourceView: UIView? = nil, confirmRevokingLink completion: @escaping (Bool) -> Void) {
         let alertController = UIAlertController.confirmRevokingLink(completion)
         present(alertController, animated: true)

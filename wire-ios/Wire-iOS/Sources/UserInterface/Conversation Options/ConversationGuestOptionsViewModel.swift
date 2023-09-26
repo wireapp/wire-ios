@@ -18,6 +18,7 @@
 
 import UIKit
 import WireUtilities
+import WireTransport
 
 protocol ConversationGuestOptionsViewModelConfiguration: AnyObject {
     var allowGuests: Bool { get }
@@ -37,6 +38,7 @@ protocol ConversationGuestOptionsViewModelDelegate: AnyObject {
     func viewModel(_ viewModel: ConversationGuestOptionsViewModel, didUpdateState state: ConversationGuestOptionsViewModel.State)
     func viewModel(_ viewModel: ConversationGuestOptionsViewModel, didReceiveError error: Error)
     func viewModel(_ viewModel: ConversationGuestOptionsViewModel, sourceView: UIView?, confirmRemovingGuests completion: @escaping (Bool) -> Void) -> UIAlertController?
+    func viewModel(_ viewModel: ConversationGuestOptionsViewModel, sourceView: UIView?, confirmGuestLinkWithOptionalPassword completion: @escaping (Bool) -> Void) -> UIAlertController?
     func viewModel(_ viewModel: ConversationGuestOptionsViewModel, sourceView: UIView?, confirmRevokingLink completion: @escaping (Bool) -> Void)
     func viewModel(_ viewModel: ConversationGuestOptionsViewModel, wantsToShareMessage message: String, sourceView: UIView?)
 }
@@ -126,8 +128,8 @@ final class ConversationGuestOptionsViewModel {
                     rows.append(.shareLink { [weak self] view in self?.shareLink(view: view) })
                     rows.append(.revokeLink { [weak self] _ in self?.revokeLink() })
                 } else {
-                    rows.append(.createLinkButton { [weak self] _ in
-                        self?.createLink() })
+                    rows.append(.createLinkButton { [weak self] view in
+                        self?.createGuestLink(view: view) })
                 }
             }
             return rows
@@ -230,6 +232,28 @@ final class ConversationGuestOptionsViewModel {
             item.cancel()
             self.showLoadingCell = false
         }
+    }
+
+    /// Creates a Guest Link
+    /// - Parameter view: the source view which triggers create action
+    /// - Returns: alert controller
+    @discardableResult
+    func createGuestLink(view: UIView? = nil) -> UIAlertController? {
+        guard let apiVersion = BackendInfo.apiVersion else { return nil }
+        if apiVersion >= .v4 {
+            return delegate?.viewModel(self, sourceView: view, confirmGuestLinkWithOptionalPassword: { [weak self] guestLinkWithPassword in
+                guard let `self` = self else { return }
+                guard guestLinkWithPassword else {
+                    return self.createLink()
+                }
+                // TODO: - AGIS - Present the new view
+            })
+        } else {
+            createLink()
+        }
+
+        return nil
+
     }
 
     /// set conversation option AllowGuests
