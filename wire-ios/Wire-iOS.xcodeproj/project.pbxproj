@@ -1221,6 +1221,7 @@
 		E9D25C8727D9FB07007CB532 /* AuthenticationEmailVerificationRequiredErrorHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9D25C8627D9FB07007CB532 /* AuthenticationEmailVerificationRequiredErrorHandlerTests.swift */; };
 		E9D6C37D289A9DC100861E4C /* StylableButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9D6C37C289A9DC100861E4C /* StylableButton.swift */; };
 		E9DA4685286C547A00F47C14 /* UIWindow+Orientation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9DA4684286C547A00F47C14 /* UIWindow+Orientation.swift */; };
+		E9DFF5122AC3099B00BDC25C /* AutoMockable.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9DFF5112AC3099B00BDC25C /* AutoMockable.generated.swift */; };
 		E9E335932A8A27EC00B304F3 /* BaseSnapshotTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9E335922A8A27EC00B304F3 /* BaseSnapshotTestCase.swift */; };
 		E9EBE0D028194D7E0058C793 /* DynamicTypeCapable.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9EBE0CF28194D7E0058C793 /* DynamicTypeCapable.swift */; };
 		E9EBE0D228194F2D0058C793 /* FontScheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9EBE0D128194F2D0058C793 /* FontScheme.swift */; };
@@ -3228,6 +3229,9 @@
 		E9D25C8627D9FB07007CB532 /* AuthenticationEmailVerificationRequiredErrorHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationEmailVerificationRequiredErrorHandlerTests.swift; sourceTree = "<group>"; };
 		E9D6C37C289A9DC100861E4C /* StylableButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StylableButton.swift; sourceTree = "<group>"; };
 		E9DA4684286C547A00F47C14 /* UIWindow+Orientation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIWindow+Orientation.swift"; sourceTree = "<group>"; };
+		E9DFF50E2AC3063000BDC25C /* AutoMockable.stencil */ = {isa = PBXFileReference; lastKnownFileType = text; path = AutoMockable.stencil; sourceTree = "<group>"; };
+		E9DFF50F2AC3063000BDC25C /* config.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = config.yml; sourceTree = "<group>"; };
+		E9DFF5112AC3099B00BDC25C /* AutoMockable.generated.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AutoMockable.generated.swift; sourceTree = "<group>"; };
 		E9E335922A8A27EC00B304F3 /* BaseSnapshotTestCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseSnapshotTestCase.swift; sourceTree = "<group>"; };
 		E9EBE0CF28194D7E0058C793 /* DynamicTypeCapable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DynamicTypeCapable.swift; sourceTree = "<group>"; };
 		E9EBE0D128194F2D0058C793 /* FontScheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FontScheme.swift; sourceTree = "<group>"; };
@@ -5848,6 +5852,7 @@
 		8F42C52F199244A700288E4D = {
 			isa = PBXGroup;
 			children = (
+				E9DFF50B2AC3063000BDC25C /* sourcery */,
 				01A5E043297FDAB500624B65 /* README.md */,
 				01A5E045297FDAB500624B65 /* Scripts */,
 				87C8D7FB1BA8261C00B0530B /* Entitlements-Dev.entitlements */,
@@ -7270,6 +7275,15 @@
 			path = Reactions;
 			sourceTree = "<group>";
 		};
+		E9DFF50B2AC3063000BDC25C /* sourcery */ = {
+			isa = PBXGroup;
+			children = (
+				E9DFF50E2AC3063000BDC25C /* AutoMockable.stencil */,
+				E9DFF50F2AC3063000BDC25C /* config.yml */,
+			);
+			path = sourcery;
+			sourceTree = "<group>";
+		};
 		E9E6F09C2861E549004A4BD6 /* Styles */ = {
 			isa = PBXGroup;
 			children = (
@@ -7406,6 +7420,7 @@
 			children = (
 				0637968E2964E2FE00674AAA /* Assets+Generated.swift */,
 				EEA65C2625D27A8300AA7519 /* Strings+Generated.swift */,
+				E9DFF5112AC3099B00BDC25C /* AutoMockable.generated.swift */,
 			);
 			name = Generated;
 			path = "Wire-iOS/Generated";
@@ -9936,6 +9951,7 @@
 				6340660925B204B100C0B4BA /* StreamStubProvider.swift in Sources */,
 				EF5871662166802B00E47E73 /* GroupDetailsViewControllerSnapshotTests.swift in Sources */,
 				636E57BD2386BFD9005B4FD8 /* AvailabilityStringBuilderTests.swift in Sources */,
+				E9DFF5122AC3099B00BDC25C /* AutoMockable.generated.swift in Sources */,
 				06C1074825B99D1400C099D3 /* PasswordRuleSetTests.swift in Sources */,
 				D35EEDBE28C2004000949F02 /* NetworkSession.swift in Sources */,
 				1651F9BC1D352C5700A9FAE8 /* ArticleViewTests.swift in Sources */,

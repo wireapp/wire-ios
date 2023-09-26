@@ -34,6 +34,7 @@ protocol ConversationGuestOptionsViewModelConfiguration: AnyObject {
     func deleteLink(completion: @escaping (VoidResult) -> Void)
 }
 
+// sourcery: AutoMockable
 protocol ConversationGuestOptionsViewModelDelegate: AnyObject {
     func viewModel(_ viewModel: ConversationGuestOptionsViewModel, didUpdateState state: ConversationGuestOptionsViewModel.State)
     func viewModel(_ viewModel: ConversationGuestOptionsViewModel, didReceiveError error: Error)

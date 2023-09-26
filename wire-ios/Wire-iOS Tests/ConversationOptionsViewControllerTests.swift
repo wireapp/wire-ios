@@ -60,6 +60,17 @@ final class MockOptionsViewModelConfiguration: ConversationGuestOptionsViewModel
 
 final class ConversationOptionsViewControllerTests: ZMSnapshotTestCase {
 
+    override func setUp() {
+        super.setUp()
+        BackendInfo.storage = UserDefaults(suiteName: UUID().uuidString)!
+
+    }
+
+    override func tearDown() {
+        BackendInfo.storage = UserDefaults.standard
+        super.tearDown()
+    }
+
     // MARK: Renders Guests Screen when AllowGuests is either enabled or disabled
 
     func testThatItRendersGuestsScreenWhenAllowGuestsIsEnabled() {
@@ -350,6 +361,36 @@ final class ConversationOptionsViewControllerTests: ZMSnapshotTestCase {
         // Show the alert
         let sut = viewModel.setAllowGuests(false)
         // THEN
+        XCTAssertNil(sut)
+    }
+
+    func testThatGuestLinkWithOptionalPasswordAlertShowIfApiVersionIsFourAndAbove() {
+        BackendInfo.apiVersion = .v4
+        let config = MockOptionsViewModelConfiguration(allowGuests: true)
+        let viewModel = ConversationGuestOptionsViewModel(configuration: config)
+        let mock = MockConversationGuestOptionsViewModelDelegate()
+        mock.viewModelDidUpdateState_MockMethod = { _, _ in }
+        viewModel.delegate = mock
+
+        mock.viewModelSourceViewConfirmGuestLinkWithOptionalPassword_MockValue = UIAlertController()
+        // Show the alert
+        let sut = viewModel.createGuestLink()
+
+        XCTAssertNotNil(sut)
+    }
+
+    func testThatGuestLinkWithOptionalPasswordAlertIsNotShownIfApiVersionIsBelowFour() {
+        BackendInfo.apiVersion = .v3
+        let config = MockOptionsViewModelConfiguration(allowGuests: true)
+        let viewModel = ConversationGuestOptionsViewModel(configuration: config)
+        let mock = MockConversationGuestOptionsViewModelDelegate()
+        mock.viewModelDidUpdateState_MockMethod = { _, _ in }
+        viewModel.delegate = mock
+
+        mock.viewModelSourceViewConfirmGuestLinkWithOptionalPassword_MockValue = nil
+        // Show the alert
+        let sut = viewModel.createGuestLink()
+
         XCTAssertNil(sut)
     }
 
