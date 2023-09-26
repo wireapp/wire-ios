@@ -81,12 +81,13 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
 
     // MARK: Request generation
 
-    func testThatItCreatesARequest_WhenConversationNeedsToVerifyLegalHold() {
-        testThatItCreatesARequest_WhenConversationNeedsToVerifyLegalHold(apiVersion: .v0)
-        testThatItCreatesARequest_WhenConversationNeedsToVerifyLegalHold(apiVersion: .v1)
+    func testThatItCreatesARequest_WhenConversationNeedsToVerifyLegalHold() async {
+        await testThatItCreatesARequest_WhenConversationNeedsToVerifyLegalHold(apiVersion: .v0)
+        await testThatItCreatesARequest_WhenConversationNeedsToVerifyLegalHold(apiVersion: .v1)
     }
 
-    func testThatItCreatesARequest_WhenConversationNeedsToVerifyLegalHold(apiVersion: APIVersion) {
+    func testThatItCreatesARequest_WhenConversationNeedsToVerifyLegalHold(apiVersion: APIVersion) async {
+        var expectedPath: String!
         syncMOC.performGroupedBlockAndWait {
             // GIVEN
             let conversation = self.createGroupConversation(with: self.otherUser)
@@ -97,21 +98,21 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
             self.sut.objectsDidChange(conversationSet)
 
             // THEN
-            var expectedPath: String
             switch apiVersion {
             case .v0:
                 expectedPath = "/conversations/\(conversation.remoteIdentifier!.transportString())/otr/messages"
             case .v1, .v2, .v3, .v4, .v5:
                 expectedPath = "/v\(apiVersion.rawValue)/conversations/\(conversation.domain!)/\(conversation.remoteIdentifier!.transportString())/proteus/messages"
             }
-
-            XCTAssertEqual(self.sut.nextRequest(for: apiVersion)?.path, expectedPath)
         }
+
+        let request = await self.sut.nextRequest(for: apiVersion)
+        XCTAssertEqual(request?.path, expectedPath)
     }
 
     // MARK: Response handling
 
-    func testThatItResetsNeedsToVerifyLegalHoldFlag_WhenReceivingTheResponse() {
+    func testThatItResetsNeedsToVerifyLegalHoldFlag_WhenReceivingTheResponse() async {
         var conversation: ZMConversation!
         syncMOC.performGroupedBlockAndWait {
             // GIVEN
@@ -119,11 +120,12 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
             conversation.setValue(true, forKey: #keyPath(ZMConversation.needsToVerifyLegalHold))
             let conversationSet: Set<NSManagedObject> = [conversation]
             self.sut.objectsDidChange(conversationSet)
-            let request = self.sut.nextRequest(for: .v0)
+        }
+            let request = await self.sut.nextRequest(for: .v0)
 
             // WHEN
-            request?.complete(with: ZMTransportResponse(payload: [:] as ZMTransportData, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue))
-        }
+            request?.complete(with: ZMTransportResponse(payload: [String: Any]() as ZMTransportData, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue))
+
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // THEN
@@ -132,12 +134,12 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
         }
     }
 
-    func testThatItRegistersMissingClients() {
-        testThatItRegistersMissingClients(apiVersion: .v0)
-        testThatItRegistersMissingClients(apiVersion: .v1)
+    func testThatItRegistersMissingClients() async {
+        await testThatItRegistersMissingClients(apiVersion: .v0)
+        await testThatItRegistersMissingClients(apiVersion: .v1)
     }
 
-    private func testThatItRegistersMissingClients(apiVersion: APIVersion) {
+    private func testThatItRegistersMissingClients(apiVersion: APIVersion) async {
         var conversation: ZMConversation!
         let clientID = "client123"
 
@@ -148,7 +150,10 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
             conversation.setValue(true, forKey: #keyPath(ZMConversation.needsToVerifyLegalHold))
 
             self.sut.objectsDidChange(conversationSet)
-            let request = self.sut.nextRequest(for: apiVersion)
+        }
+            let request = await self.sut.nextRequest(for: apiVersion)
+
+        syncMOC.performGroupedBlockAndWait {
             let clientListByUserID = [self.otherUser.remoteIdentifier.transportString(): [clientID]]
 
             var transportData: ZMTransportData
@@ -173,12 +178,12 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
         }
     }
 
-    func testThatItDeletesDeletedClients() {
-        testThatItRegistersMissingClients(apiVersion: .v0)
-        testThatItRegistersMissingClients(apiVersion: .v1)
+    func testThatItDeletesDeletedClients() async {
+        await testThatItRegistersMissingClients(apiVersion: .v0)
+        await testThatItRegistersMissingClients(apiVersion: .v1)
     }
 
-    private func testThatItDeletesDeletedClients(apiVersion: APIVersion) {
+    private func testThatItDeletesDeletedClients(apiVersion: APIVersion) async {
         var conversation: ZMConversation!
         let deletedClientID = "client1"
         let existingClientID = "client2"
@@ -191,8 +196,12 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
             let conversationSet: Set<NSManagedObject> = [conversation]
             conversation.setValue(true, forKey: #keyPath(ZMConversation.needsToVerifyLegalHold))
             self.sut.objectsDidChange(conversationSet)
+        }
 
-            let request = self.sut.nextRequest(for: apiVersion)
+        let request = await self.sut.nextRequest(for: apiVersion)
+
+        syncMOC.performGroupedBlockAndWait {
+
             let clientListByUserID = [self.otherUser.remoteIdentifier.transportString(): [existingClientID]]
 
             var transportData: ZMTransportData
@@ -217,12 +226,12 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
         }
     }
 
-    func testThatItDeletesAllClients_WhenUserHasNoMissingClientEntry() {
-        testThatItDeletesAllClients_WhenUserHasNoMissingClientEntry(apiVersion: .v0)
-        testThatItDeletesAllClients_WhenUserHasNoMissingClientEntry(apiVersion: .v1)
+    func testThatItDeletesAllClients_WhenUserHasNoMissingClientEntry() async {
+        await testThatItDeletesAllClients_WhenUserHasNoMissingClientEntry(apiVersion: .v0)
+        await testThatItDeletesAllClients_WhenUserHasNoMissingClientEntry(apiVersion: .v1)
     }
 
-    private func testThatItDeletesAllClients_WhenUserHasNoMissingClientEntry(apiVersion: APIVersion) {
+    private func testThatItDeletesAllClients_WhenUserHasNoMissingClientEntry(apiVersion: APIVersion) async {
         var conversation: ZMConversation!
         let deletedClientID = "client1"
         syncMOC.performGroupedBlockAndWait {
@@ -233,9 +242,11 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
             let conversationSet: Set<NSManagedObject> = [conversation]
             conversation.setValue(true, forKey: #keyPath(ZMConversation.needsToVerifyLegalHold))
             self.sut.objectsDidChange(conversationSet)
+        }
 
-            let request = self.sut.nextRequest(for: apiVersion)
+        let request = await self.sut.nextRequest(for: apiVersion)
 
+        syncMOC.performGroupedBlockAndWait {
             var transportData: ZMTransportData
             switch apiVersion {
             case .v0:
@@ -255,14 +266,16 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
         }
     }
 
-    func testThatItIgnoresMissingSelfClients() {
-        testThatItIgnoresMissingSelfClients(apiVersion: .v0)
-        testThatItIgnoresMissingSelfClients(apiVersion: .v1)
+    func testThatItIgnoresMissingSelfClients() async {
+        await testThatItIgnoresMissingSelfClients(apiVersion: .v0)
+        await testThatItIgnoresMissingSelfClients(apiVersion: .v1)
     }
 
-    private func testThatItIgnoresMissingSelfClients(apiVersion: APIVersion) {
+    private func testThatItIgnoresMissingSelfClients(apiVersion: APIVersion) async {
         var conversation: ZMConversation!
         let selfClientID = "selfClient1"
+
+        var selfUser: ZMUser!
 
         syncMOC.performGroupedBlockAndWait {
             // GIVEN
@@ -271,9 +284,13 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
             let clientSet: Set<NSManagedObject> = [conversation]
             self.sut.objectsDidChange(clientSet)
 
-            let selfUser = ZMUser.selfUser(in: self.syncMOC)
+            selfUser = ZMUser.selfUser(in: self.syncMOC)
             selfUser.domain = "example.com"
-            let request = self.sut.nextRequest(for: apiVersion)
+        }
+
+        let request = await self.sut.nextRequest(for: apiVersion)
+
+        syncMOC.performGroupedBlockAndWait {
             let clientListByUserID = [selfUser.remoteIdentifier.transportString(): [selfClientID]]
 
             var transportData: ZMTransportData
