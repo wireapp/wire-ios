@@ -50,6 +50,7 @@ final class BlockerViewController: LaunchImageViewController {
     }
 
     override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
         showAlert()
     }
 
