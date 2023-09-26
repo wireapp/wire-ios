@@ -1,4 +1,4 @@
-////
+//
 // Wire
 // Copyright (C) 2023 Wire Swiss GmbH
 //
@@ -18,24 +18,32 @@
 
 import Foundation
 
-public enum ConversationRemoveParticipantError: Error {
-    case unknown,
-         invalidOperation,
-         conversationNotFound,
-         failedToRemoveMLSMembers
-}
+public final class FetchSupportedProtocolsAction: EntityAction {
 
-public class RemoveParticipantAction: EntityAction {
+    public typealias Result = Set<MessageProtocol>
+
+    public enum Failure: Error, Equatable {
+
+        case endpointUnavailable
+        case invalidParameters
+        case invalidResponse
+        case unknown(status: Int, label: String, message: String)
+
+    }
+
+    // MARK: - Properties
+
+    public let userID: QualifiedID
     public var resultHandler: ResultHandler?
 
-    public typealias Result = Void
-    public typealias Failure = ConversationRemoveParticipantError
+    // MARK: - Life cycle
 
-    public let userID: NSManagedObjectID
-    public let conversationID: NSManagedObjectID
-
-    public required init(user: ZMUser, conversation: ZMConversation) {
-        userID = user.objectID
-        conversationID = conversation.objectID
+    public init(
+        userID: QualifiedID,
+        resultHandler: ResultHandler? = nil
+    ) {
+        self.userID = userID
+        self.resultHandler = resultHandler
     }
+
 }
