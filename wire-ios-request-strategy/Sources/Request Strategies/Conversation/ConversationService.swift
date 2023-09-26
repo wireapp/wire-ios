@@ -268,7 +268,7 @@ public final class ConversationService: ConversationServiceInterface {
 
     public func syncConversation(
         qualifiedID: QualifiedID,
-        completion: @escaping () -> Void
+        completion: @escaping () -> Void = {}
     ) {
         var action = SyncConversationAction(qualifiedID: qualifiedID)
         action.perform(in: context.notificationContext) { _ in

@@ -21,7 +21,7 @@ import WireDataModel
 protocol MLSEventProcessing {
 
     func updateConversationIfNeeded(conversation: ZMConversation, groupID: String?, context: NSManagedObjectContext)
-    func process(welcomeMessage: String, in context: NSManagedObjectContext)
+    func process(welcomeMessage: String, conversationID: QualifiedID, in context: NSManagedObjectContext)
     func joinMLSGroupWhenReady(forConversation conversation: ZMConversation, context: NSManagedObjectContext)
     func wipeMLSGroup(forConversation conversation: ZMConversation, context: NSManagedObjectContext)
 
@@ -95,7 +95,11 @@ class MLSEventProcessor: MLSEventProcessing {
 
     // MARK: - Process welcome message
 
-    func process(welcomeMessage: String, in context: NSManagedObjectContext) {
+    func process(
+        welcomeMessage: String,
+        conversationID: QualifiedID,
+        in context: NSManagedObjectContext
+    ) {
         Logging.mls.info("MLS event processor is processing welcome message")
 
         guard let mlsService = context.mlsService else {
@@ -105,10 +109,15 @@ class MLSEventProcessor: MLSEventProcessing {
         do {
             let groupID = try mlsService.processWelcomeMessage(welcomeMessage: welcomeMessage)
 
-            guard let conversation = ZMConversation.fetch(with: groupID, in: context) else {
+            guard let conversation = ZMConversation.fetch(with: conversationID, in: context) else {
+                // Conversation doesn't exist locally yet, so fetch it from the backend.
+                // It'll be marked as ready when it's synced locally.
+                let service = ConversationService(context: context)
+                service.syncConversation(qualifiedID: conversationID)
                 return logWarn(aborting: .processingWelcome, withReason: .other(reason: "conversation does not exist in db"))
             }
 
+            conversation.mlsGroupID = groupID
             conversation.mlsStatus = .ready
             context.saveOrRollback()
 

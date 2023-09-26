@@ -608,12 +608,16 @@ extension Payload.ConversationEvent where T == Payload.UpdateConversationDeleted
     extension Payload.UpdateConversationMLSWelcome {
 
         func process(in context: NSManagedObjectContext, originalEvent: ZMUpdateEvent) {
+            guard let qualifiedID else {
+                return
+            }
+
             MLSEventProcessor.shared.process(
                 welcomeMessage: data,
+                conversationID: qualifiedID,
                 in: context
             )
         }
-
     }
 
     extension Payload.ConversationEvent where T == Payload.UpdateConverationMemberJoin {
