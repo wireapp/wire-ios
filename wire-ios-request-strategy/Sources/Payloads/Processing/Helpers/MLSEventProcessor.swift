@@ -20,10 +20,27 @@ import WireDataModel
 
 protocol MLSEventProcessing {
 
-    func updateConversationIfNeeded(conversation: ZMConversation, groupID: String?, context: NSManagedObjectContext)
-    func process(welcomeMessage: String, conversationID: QualifiedID, in context: NSManagedObjectContext)
-    func joinMLSGroupWhenReady(forConversation conversation: ZMConversation, context: NSManagedObjectContext)
-    func wipeMLSGroup(forConversation conversation: ZMConversation, context: NSManagedObjectContext)
+    func updateConversationIfNeeded(
+        conversation: ZMConversation,
+        groupID: String?,
+        context: NSManagedObjectContext
+    )
+
+    func process(
+        welcomeMessage: String,
+        conversationID: QualifiedID,
+        in context: NSManagedObjectContext
+    )
+
+    func joinMLSGroupWhenReady(
+        forConversation conversation: ZMConversation,
+        context: NSManagedObjectContext
+    )
+
+    func wipeMLSGroup(
+        forConversation conversation: ZMConversation,
+        context: NSManagedObjectContext
+    )
 
 }
 
@@ -70,7 +87,10 @@ class MLSEventProcessor: MLSEventProcessing {
 
     // MARK: - Joining new conversations
 
-    func joinMLSGroupWhenReady(forConversation conversation: ZMConversation, context: NSManagedObjectContext) {
+    func joinMLSGroupWhenReady(
+        forConversation conversation: ZMConversation,
+        context: NSManagedObjectContext
+    ) {
         Logging.mls.info("MLS event processor is adding group to join")
 
         guard conversation.messageProtocol == .mls else {
@@ -131,7 +151,10 @@ class MLSEventProcessor: MLSEventProcessing {
 
     // MARK: - Wipe conversation
 
-    func wipeMLSGroup(forConversation conversation: ZMConversation, context: NSManagedObjectContext) {
+    func wipeMLSGroup(
+        forConversation conversation: ZMConversation,
+        context: NSManagedObjectContext
+    ) {
         Logging.mls.info("MLS event processor is wiping conversation")
 
         guard conversation.messageProtocol == .mls else {
@@ -151,7 +174,10 @@ class MLSEventProcessor: MLSEventProcessing {
 
     // MARK: Log Helpers
 
-    private func logWarn(aborting action: ActionLog, withReason reason: AbortReason) {
+    private func logWarn(
+        aborting action: ActionLog,
+        withReason reason: AbortReason
+    ) {
         Logging.mls.warn("MLS event processor aborting \(action.rawValue): \(reason.stringValue)")
     }
 
