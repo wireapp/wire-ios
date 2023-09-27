@@ -82,7 +82,7 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
     func generateNewEpoch(groupID: MLSGroupID) async throws
 
     func subconversationMembers(for subconversationGroupID: MLSGroupID) throws -> [MLSClientID]
-  
+
     func repairOutOfSyncConversations()
 
 }

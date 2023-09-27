@@ -109,7 +109,7 @@ public class WireCallCenterV3: NSObject {
     /// once, but we may need to provide AVS with an updated list during the call.
     var clientsRequestCompletionsByConversationId = [AVSIdentifier: (String) -> Void]()
 
-    private let onParticipantsChangedSubject = PassthroughSubject<[CallParticipant], Never>()
+    private let onParticipantsChangedSubject = PassthroughSubject<ConferenceParticipantsInfo, Never>()
 
     let encoder = JSONEncoder()
     let decoder = JSONDecoder()
@@ -431,7 +431,12 @@ extension WireCallCenterV3 {
         callSnapshots[conversationId]?.callParticipants.callParticipantsChanged(participants: participants)
 
         if let participants = callSnapshots[conversationId]?.callParticipants.participants {
-            onParticipantsChangedSubject.send(participants)
+            onParticipantsChangedSubject.send(
+                ConferenceParticipantsInfo(
+                    participants: participants,
+                    selfUserID: selfUserId
+                )
+            )
         }
     }
 
@@ -443,7 +448,7 @@ extension WireCallCenterV3 {
         snapshot?.callParticipantNetworkQualityChanged(client: client, networkQuality: quality)
     }
 
-    func onParticipantsChanged() -> AnyPublisher<[CallParticipant], Never> {
+    func onParticipantsChanged() -> AnyPublisher<ConferenceParticipantsInfo, Never> {
         return onParticipantsChangedSubject.eraseToAnyPublisher()
     }
 

@@ -33,7 +33,7 @@ class MLSConferenceStaleParticipantsRemover: Subscriber {
     private let syncContext: NSManagedObjectContext
     private var previousInput: MLSConferenceParticipantsInfo?
 
-    private static let defaultRemovalTimeout: TimeInterval = 190
+    private static let defaultRemovalTimeout: TimeInterval = 180
 
     private typealias TimerError = TimerManager<MLSClientID>.TimerError
 
@@ -55,9 +55,7 @@ class MLSConferenceStaleParticipantsRemover: Subscriber {
     }
 
     func receive(_ input: MLSConferenceParticipantsInfo) -> Subscribers.Demand {
-        syncContext.perform {
-            self.process(input: input)
-        }
+        process(input: input)
         return .unlimited
     }
 
@@ -68,9 +66,7 @@ class MLSConferenceStaleParticipantsRemover: Subscriber {
     // MARK: - Interface
 
     func cancelPendingRemovals() {
-        syncContext.perform {
-            self.timerManager.cancelAllTimers()
-        }
+        timerManager.cancelAllTimers()
     }
 
     // MARK: - Participants change handling
@@ -86,7 +82,7 @@ class MLSConferenceStaleParticipantsRemover: Subscriber {
             and: input.participants
         )
 
-        newAndChangedParticipants.excludingSelf(in: syncContext).forEach {
+        newAndChangedParticipants.excludingParticipant(withID: input.selfUserID).forEach {
 
             guard let clientID = MLSClientID(callParticipant: $0) else {
                 return
@@ -154,11 +150,11 @@ class MLSConferenceStaleParticipantsRemover: Subscriber {
                 }
             )
 
-            logger.info("started timer for removal of stale participant (clientdID: \(clientID), groupID: \(groupID))")
+            logger.info("started timer for removal of stale participant (clientdID: \(clientID), groupID: \(groupID.safeForLoggingDescription))")
         } catch TimerError.timerAlreadyExists {
             // timer already exists, do nothing
         } catch {
-            logger.warn("failed to start timer for removal of stale participant (clientdID: \(clientID), groupID: \(groupID)). error: (\(error))")
+            logger.warn("failed to start timer for removal of stale participant (clientdID: \(clientID), groupID: \(groupID.safeForLoggingDescription)). error: (\(error))")
         }
     }
 
@@ -174,11 +170,12 @@ class MLSConferenceStaleParticipantsRemover: Subscriber {
                     let subconversationMembers = try self.mlsService.subconversationMembers(for: groupID)
 
                     guard subconversationMembers.contains(clientID) else {
+                        self.logger.info("didn't remove participant because they're not a part of the subconversation \(groupID.safeForLoggingDescription)")
                         return
                     }
 
                     try await self.mlsService.removeMembersFromConversation(with: [clientID], for: groupID)
-                    self.logger.info("removed stale participant from subconversation (clientID: \(clientID), groupID: \(groupID))")
+                    self.logger.info("removed stale participant from subconversation (clientID: \(clientID), groupID: \(groupID.safeForLoggingDescription))")
                 } catch {
                     self.logger.error("failed to remove stale participant from subconversation: \(String(describing: error))")
                 }
@@ -196,20 +193,14 @@ class MLSConferenceStaleParticipantsRemover: Subscriber {
             logger.warn("failed to cancel removal of participant (\(clientID))")
         }
     }
+
 }
 
 private extension Array where Element == CallParticipant {
 
-    func excludingSelf(in context: NSManagedObjectContext) -> Self {
-        var selfUserID: AVSIdentifier!
-
-        context.performAndWait {
-            let selfUser = ZMUser.selfUser(in: context)
-            selfUserID = selfUser.avsIdentifier
-        }
-
+    func excludingParticipant(withID userID: AVSIdentifier) -> Self {
         return self.filter {
-            $0.userId != selfUserID
+            $0.userId != userID
         }
     }
 
