@@ -239,7 +239,7 @@ final class ConversationGuestOptionsViewModel {
     /// - Parameter view: the source view which triggers create action
     /// - Returns: alert controller
     @discardableResult
-    func createGuestLink(view: UIView? = nil) -> UIAlertController? {
+    func showAlertForGuestLink(from view: UIView? = nil) -> UIAlertController? {
         guard let apiVersion = BackendInfo.apiVersion else { return nil }
         if apiVersion >= .v4 {
             return delegate?.viewModel(self, sourceView: view, confirmGuestLinkWithOptionalPassword: { [weak self] guestLinkWithPassword in
