@@ -168,7 +168,6 @@
 		16E5F71826EF4DBF00F35FBA /* ConversationRequestStrategyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16E5F71726EF4DBF00F35FBA /* ConversationRequestStrategyTests.swift */; };
 		16E70F5B270DCCB900718E5D /* UpdateConnectionActionHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16E70F5A270DCCB900718E5D /* UpdateConnectionActionHandlerTests.swift */; };
 		16E70F6E270EE9F800718E5D /* PayloadProcessing+MessageSendingStatusTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16A4891526849258001F9127 /* PayloadProcessing+MessageSendingStatusTests.swift */; };
-		16E70F78270EEA0100718E5D /* PayloadProcessing+UserProfileTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 162F5799266DE67600337797 /* PayloadProcessing+UserProfileTests.swift */; };
 		16E70F7E270EEA5400718E5D /* PayloadProcessing+UserProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16E70F7D270EEA5400718E5D /* PayloadProcessing+UserProfile.swift */; };
 		16E70F8A270EEB2300718E5D /* PayloadProcessing+Conversation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16E70F89270EEB2300718E5D /* PayloadProcessing+Conversation.swift */; };
 		16E70F8E270EEBB700718E5D /* PayloadProcessing+MessageSendingStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16E70F8D270EEBB700718E5D /* PayloadProcessing+MessageSendingStatus.swift */; };
@@ -242,6 +241,8 @@
 		EE88078F2AC376B300278E3C /* ConversationEventPayloadProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE88078E2AC376B300278E3C /* ConversationEventPayloadProcessorTests.swift */; };
 		EE8807912AC4080A00278E3C /* ConnectionPayloadProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE8807902AC4080900278E3C /* ConnectionPayloadProcessor.swift */; };
 		EE8807932AC40AB100278E3C /* ConnectionPayloadProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE8807922AC40AB100278E3C /* ConnectionPayloadProcessorTests.swift */; };
+		EE8807952AC40CA600278E3C /* UserProfilePayloadProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE8807942AC40CA600278E3C /* UserProfilePayloadProcessor.swift */; };
+		EE8807972AC40E1400278E3C /* UserProfilePayloadProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE8807962AC40E1400278E3C /* UserProfilePayloadProcessorTests.swift */; };
 		EE8DC53728C0EFA700AC4E3D /* FetchUserClientsActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE8DC53628C0EFA700AC4E3D /* FetchUserClientsActionHandler.swift */; };
 		EE8DC53928C0F04B00AC4E3D /* FetchUserClientsActionHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE8DC53828C0F04B00AC4E3D /* FetchUserClientsActionHandlerTests.swift */; };
 		EE90C29E282E785800474379 /* PushTokenStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE90C29D282E785800474379 /* PushTokenStrategy.swift */; };
@@ -502,7 +503,6 @@
 		16229483221EBB8000A98679 /* ZMImagePreprocessingTracker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMImagePreprocessingTracker.m; sourceTree = "<group>"; };
 		16229484221EBB8000A98679 /* ZMImagePreprocessingTracker+Testing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ZMImagePreprocessingTracker+Testing.h"; sourceTree = "<group>"; };
 		16229485221EBB8000A98679 /* ZMImagePreprocessingTrackerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMImagePreprocessingTrackerTests.m; sourceTree = "<group>"; };
-		162F5799266DE67600337797 /* PayloadProcessing+UserProfileTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PayloadProcessing+UserProfileTests.swift"; sourceTree = "<group>"; };
 		16367F1D26FDB0740028AF8B /* Payload+Connection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Payload+Connection.swift"; sourceTree = "<group>"; };
 		16367F2126FDB2A10028AF8B /* PayloadProcessing+Connection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PayloadProcessing+Connection.swift"; sourceTree = "<group>"; };
 		16367F2526FDB4720028AF8B /* ConnectionRequestStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionRequestStrategy.swift; sourceTree = "<group>"; };
@@ -673,6 +673,8 @@
 		EE88078E2AC376B300278E3C /* ConversationEventPayloadProcessorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationEventPayloadProcessorTests.swift; sourceTree = "<group>"; };
 		EE8807902AC4080900278E3C /* ConnectionPayloadProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionPayloadProcessor.swift; sourceTree = "<group>"; };
 		EE8807922AC40AB100278E3C /* ConnectionPayloadProcessorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionPayloadProcessorTests.swift; sourceTree = "<group>"; };
+		EE8807942AC40CA600278E3C /* UserProfilePayloadProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfilePayloadProcessor.swift; sourceTree = "<group>"; };
+		EE8807962AC40E1400278E3C /* UserProfilePayloadProcessorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfilePayloadProcessorTests.swift; sourceTree = "<group>"; };
 		EE8DC53628C0EFA700AC4E3D /* FetchUserClientsActionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchUserClientsActionHandler.swift; sourceTree = "<group>"; };
 		EE8DC53828C0F04B00AC4E3D /* FetchUserClientsActionHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchUserClientsActionHandlerTests.swift; sourceTree = "<group>"; };
 		EE90C29D282E785800474379 /* PushTokenStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushTokenStrategy.swift; sourceTree = "<group>"; };
@@ -1178,11 +1180,12 @@
 				EE88078E2AC376B300278E3C /* ConversationEventPayloadProcessorTests.swift */,
 				EE8807902AC4080900278E3C /* ConnectionPayloadProcessor.swift */,
 				EE8807922AC40AB100278E3C /* ConnectionPayloadProcessorTests.swift */,
+				EE8807942AC40CA600278E3C /* UserProfilePayloadProcessor.swift */,
+				EE8807962AC40E1400278E3C /* UserProfilePayloadProcessorTests.swift */,
 				63DA339D286DF6DA00818C3C /* Helpers */,
 				169BA1CC25E95DC900374343 /* Payload+Processing.swift */,
 				16367F2126FDB2A10028AF8B /* PayloadProcessing+Connection.swift */,
 				16E70F7D270EEA5400718E5D /* PayloadProcessing+UserProfile.swift */,
-				162F5799266DE67600337797 /* PayloadProcessing+UserProfileTests.swift */,
 				16E70F89270EEB2300718E5D /* PayloadProcessing+Conversation.swift */,
 				16E70F8D270EEBB700718E5D /* PayloadProcessing+MessageSendingStatus.swift */,
 				16A4891526849258001F9127 /* PayloadProcessing+MessageSendingStatusTests.swift */,
@@ -1970,6 +1973,7 @@
 				166901D41D7081C7000FE4AF /* ZMDownstreamObjectSync.m in Sources */,
 				EE7F02272A80E5F400FE5695 /* CreateGroupConversationActionHandler.swift in Sources */,
 				0649D14524F63BBD001DDC78 /* LocalNotificationType+Configuration.swift in Sources */,
+				EE8807952AC40CA600278E3C /* UserProfilePayloadProcessor.swift in Sources */,
 				7AEBB677285A10620090B524 /* CountSelfMLSKeyPackagesActionHandler.swift in Sources */,
 				F18401C32073BE0800E9F4CC /* AssetV3DownloadRequestStrategy.swift in Sources */,
 				0649D19B24F66E9E001DDC78 /* ZMLocalNotification+Events.swift in Sources */,
@@ -2064,6 +2068,7 @@
 				160ADE9C270DBD0A003FA638 /* ConnectToUserActionHandlerTests.swift in Sources */,
 				F1956201202A141E005347C0 /* ZMDownstreamObjectSyncTests.m in Sources */,
 				F18401F32073C26C00E9F4CC /* AssetClientMessageRequestStrategyTests.swift in Sources */,
+				EE8807972AC40E1400278E3C /* UserProfilePayloadProcessorTests.swift in Sources */,
 				1621D2621D75C745007108C2 /* ZMDownstreamObjectSyncWithWhitelistTests.m in Sources */,
 				16E70F6E270EE9F800718E5D /* PayloadProcessing+MessageSendingStatusTests.swift in Sources */,
 				1621D2291D75AB2D007108C2 /* MockEntity2.m in Sources */,
@@ -2081,7 +2086,6 @@
 				F18401E52073C26200E9F4CC /* FetchingClientRequestStrategyTests.swift in Sources */,
 				70C781FD2732B0100059DF07 /* UpdateRoleActionHandlerTests.swift in Sources */,
 				164D00742225624E00A8F264 /* ZMImagePreprocessingTrackerTests.m in Sources */,
-				16E70F78270EEA0100718E5D /* PayloadProcessing+UserProfileTests.swift in Sources */,
 				EE90C2B0282EA1F200474379 /* GetPushTokensActionHandlerTests.swift in Sources */,
 				EE04084A28C9E63E009E4B8D /* FetchBackendMLSPublicKeysActionHandlerTests.swift in Sources */,
 				16824631257A23E8002AF17B /* KeyPathObjectSyncTests.swift in Sources */,

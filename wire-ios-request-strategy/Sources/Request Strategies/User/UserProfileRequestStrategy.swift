@@ -182,10 +182,18 @@ extension UserProfileRequestStrategy: ZMEventConsumer {
             return Logging.eventProcessing.error("Malformed user.update update event, skipping...")
         }
 
-        let user = ZMUser.fetchOrCreate(with: userID,
-                                        domain: userProfile.qualifiedID?.domain,
-                                        in: managedObjectContext)
-        userProfile.updateUserProfile(for: user, authoritative: false)
+        let user = ZMUser.fetchOrCreate(
+            with: userID,
+            domain: userProfile.qualifiedID?.domain,
+            in: managedObjectContext
+        )
+
+        let processor = UserProfilePayloadProcessor()
+        processor.updateUserProfile(
+            from: userProfile,
+            for: user,
+            authoritative: false
+        )
     }
 
     func processUserDeletion(_ updateEvent: ZMUpdateEvent) {
