@@ -82,6 +82,25 @@ class UserProfileRequestStrategyTests: MessagingTestBase {
         }
     }
 
+    func testThatRequestInV4_DoesNotUseLegacyEndpointWhenNoRequestFromCurrentEndpoint() {
+        syncMOC.performGroupedBlockAndWait {
+            // given
+            self.apiVersion = .v0
+            self.otherUser.domain = "example.com"
+            self.otherUser.needsToBeUpdatedFromBackend = true
+            // set object to sync to legacy endpoint transcoder
+            self.sut.objectsDidChange(Set([self.otherUser]))
+
+            // when
+            // use v4 endpoint
+            self.apiVersion = .v4
+            let request = self.sut.nextRequest(for: self.apiVersion)
+
+            // then
+            // .v0 endpoint should not be used
+            XCTAssertNil(request)
+        }
+    }
     // MARK: - Slow Sync
 
     func testThatRequestToFetchConnectedUsersIsGenerated_DuringFetchingUsersSyncPhase() {
@@ -201,6 +220,7 @@ class UserProfileRequestStrategyTests: MessagingTestBase {
     // MARK: - Response processing
 
     func testThatUsesLegacyEndpoint_WhenFederatedEndpointIsDisabled() {
+        // TODO: check if this test is right?
         syncMOC.performGroupedBlockAndWait {
             // given
             self.otherUser.domain = "example.com"
