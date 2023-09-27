@@ -85,12 +85,35 @@ final class MessageSendingStatusPayloadProcessor {
         from payload: Payload.MessageSendingStatus,
         context: NSManagedObjectContext
     ) -> Payload.ClientListByUser {
-        let clientIDsByUser = payload.missing.flatMap { (domain, clientIDsByUserID) in
-            clientIDsByUserID.materializingUsers(withDomain: domain, in: context)
+        let clientIDsByUser = payload.missing.flatMap { domain, clientIDsByUserID in
+            materializingUsers(
+                from: clientIDsByUserID,
+                withDomain: domain,
+                in: context
+            )
         }
 
         return Payload.ClientListByUser(clientIDsByUser, uniquingKeysWith: +)
     }
 
+    func materializingUsers(
+        from clientsListByUserID: Payload.ClientListByUserID,
+        withDomain domain: String?,
+        in context: NSManagedObjectContext
+    ) -> [ZMUser: Payload.ClientList] {
+        return clientsListByUserID.reduce(into: Payload.ClientListByUser()) { result, next in
+            guard let userID = UUID(uuidString: next.key) else {
+                return
+            }
+
+            let user = ZMUser.fetchOrCreate(
+                with: userID,
+                domain: domain,
+                in: context
+            )
+
+            result[user] = next.value
+        }
+    }
 
 }
