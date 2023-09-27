@@ -83,14 +83,14 @@ class ProfileFooterViewTests: BaseSnapshotTestCase {
 
     // MARK: - Helper Method
 
-    func setupProfileFooterView
-    (
+    func setupProfileFooterView(
         userInterfaceStyle: UIUserInterfaceStyle = .light,
         configureProfileActions: [ProfileAction]
     ) -> ProfileFooterView {
         let view = ProfileFooterView()
         view.overrideUserInterfaceStyle = userInterfaceStyle
         view.frame.size = view.systemLayoutSizeFitting(CGSize(width: 375, height: 0))
+        view.configure(with: configureProfileActions)
 
         return view
     }
