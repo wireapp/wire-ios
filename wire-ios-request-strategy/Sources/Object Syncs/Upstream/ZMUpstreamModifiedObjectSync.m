@@ -296,9 +296,7 @@ ZM_EMPTY_ASSERTING_INIT();
                 [localTranscoder requestExpiredForObject:objectWithKeys.object forKeys:objectWithKeys.keysToSync];
             }
         }
-        else {
-            NSLog(@"qqq result = unknown");
-            BOOL shouldResyncObject = NO;
+        else {            BOOL shouldResyncObject = NO;
             if ([localTranscoder respondsToSelector:@selector(shouldRetryToSyncAfterFailedToUpdateObject:request:response:keysToParse:)]) {
                 shouldResyncObject = [localTranscoder shouldRetryToSyncAfterFailedToUpdateObject:objectWithKeys.object request:request response:response keysToParse:keysToParse];
             }
