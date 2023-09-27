@@ -77,7 +77,8 @@ class LinkPreviewUpdateRequestStrategyTests: MessagingTestBase {
         self.syncMOC.performGroupedAndWait { _ in
 
             // Then
-            XCTAssertNil(self.sut.nextRequest(for: self.apiVersion))
+            let result = await self.sut.nextRequest(for: self.apiVersion)
+            XCTAssertNil(result)
         }
     }
 
@@ -168,7 +169,8 @@ class LinkPreviewUpdateRequestStrategyTests: MessagingTestBase {
         self.syncMOC.performGroupedAndWait { _ in
             // Then
             XCTAssertEqual(message.linkPreviewState, .done)
-            XCTAssertNil(self.sut.nextRequest(for: self.apiVersion))
+            let result = await self.sut.nextRequest(for: self.apiVersion)
+            XCTAssertNil(result)
         }
     }
 
@@ -193,7 +195,8 @@ class LinkPreviewUpdateRequestStrategyTests: MessagingTestBase {
         self.syncMOC.performGroupedAndWait { _ in
 
             // Then
-            XCTAssertNil(self.sut.nextRequest(for: self.apiVersion))
+            let result = await self.sut.nextRequest(for: self.apiVersion)
+            XCTAssertNil(result)
         }
     }
 

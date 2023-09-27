@@ -48,27 +48,29 @@ class UserProfileUpdateRequestStrategyTests: MessagingTest {
 // MARK: - Request generation
 extension UserProfileUpdateRequestStrategyTests {
 
-    func testThatItDoesNotCreateAnyRequestWhenNotAuthenticated() {
+    func testThatItDoesNotCreateAnyRequestWhenNotAuthenticated() async {
 
         // GIVEN
         self.userProfileUpdateStatus.requestPhoneVerificationCode(phoneNumber: "+15553453453")
         self.mockApplicationStatus.mockSynchronizationState = .unauthenticated
 
         // THEN
-        XCTAssertNil(self.sut.nextRequest(for: .v0))
+        let result = await self.sut.nextRequest(for: .v0)
+        XCTAssertNil(result)
 
     }
 
-    func testThatItDoesNotCreateAnyRequestWhenIdle() {
+    func testThatItDoesNotCreateAnyRequestWhenIdle() async {
 
         // GIVEN
         // already authenticated in setup
 
         // THEN
-        XCTAssertNil(self.sut.nextRequest(for: .v0))
+        let result = await self.sut.nextRequest(for: .v0)
+        XCTAssertNil(result)
     }
 
-    func testThatItCreatesARequestToRequestAPhoneVerificationCode() {
+    func testThatItCreatesARequestToRequestAPhoneVerificationCode() async {
 
         // GIVEN
         let phone = "+155523123123"
@@ -76,14 +78,14 @@ extension UserProfileUpdateRequestStrategyTests {
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // WHEN
-        let request = self.sut.nextRequest(for: .v0)
+        let request = await self.sut.nextRequest(for: .v0)
 
         // THEN
         let expected = ZMTransportRequest(path: "/self/phone", method: .methodPUT, payload: ["phone": phone] as NSDictionary, apiVersion: APIVersion.v0.rawValue)
         XCTAssertEqual(request, expected)
     }
 
-    func testThatItCreatesARequestToChangePhone() {
+    func testThatItCreatesARequestToChangePhone() async {
 
         // GIVEN
         ZMUser.selfUser(in: self.uiMOC).setValue("+155534534566", forKey: #keyPath(ZMUser.phoneNumber))
@@ -92,7 +94,7 @@ extension UserProfileUpdateRequestStrategyTests {
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // WHEN
-        let request = self.sut.nextRequest(for: .v0)
+        let request = await self.sut.nextRequest(for: .v0)
 
         // THEN
         let expected = ZMTransportRequest(path: "/activate", method: .methodPOST, payload: [
@@ -103,7 +105,7 @@ extension UserProfileUpdateRequestStrategyTests {
         XCTAssertEqual(request, expected)
     }
 
-    func testThatItCreatesARequestToAddPhone() {
+    func testThatItCreatesARequestToAddPhone() async {
 
         // GIVEN
         ZMUser.selfUser(in: self.uiMOC).setValue(nil, forKey: #keyPath(ZMUser.phoneNumber))
@@ -112,7 +114,7 @@ extension UserProfileUpdateRequestStrategyTests {
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // WHEN
-        let request = self.sut.nextRequest(for: .v0)
+        let request = await self.sut.nextRequest(for: .v0)
 
         // THEN
         let expected = ZMTransportRequest(path: "/activate", method: .methodPOST, payload: [
@@ -123,7 +125,7 @@ extension UserProfileUpdateRequestStrategyTests {
         XCTAssertEqual(request, expected)
     }
 
-    func testThatItCreatesARequestToUpdatePassword() {
+    func testThatItCreatesARequestToUpdatePassword() async {
 
         // GIVEN
         let credentials = ZMEmailCredentials(email: "mario@example.com", password: "princess")
@@ -131,7 +133,7 @@ extension UserProfileUpdateRequestStrategyTests {
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // WHEN
-        let request = self.sut.nextRequest(for: .v0)
+        let request = await self.sut.nextRequest(for: .v0)
 
         // THEN
         let expected = ZMTransportRequest(path: "/self/password", method: .methodPUT, payload: [
@@ -140,7 +142,7 @@ extension UserProfileUpdateRequestStrategyTests {
         XCTAssertEqual(request, expected)
     }
 
-    func testThatItCreatesARequestToChangeEmail() {
+    func testThatItCreatesARequestToChangeEmail() async {
 
         // GIVEN
         let selfUser = ZMUser.selfUser(in: self.uiMOC)
@@ -151,7 +153,7 @@ extension UserProfileUpdateRequestStrategyTests {
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // WHEN
-        let request = self.sut.nextRequest(for: .v0)
+        let request = await self.sut.nextRequest(for: .v0)
 
         // THEN
         XCTAssertEqual(request?.path, "/access/self/email")
@@ -161,7 +163,7 @@ extension UserProfileUpdateRequestStrategyTests {
         XCTAssertEqual(emailInPayload, newEmail)
     }
 
-    func testThatItCreatesARequestToRemovePhoneNumber() {
+    func testThatItCreatesARequestToRemovePhoneNumber() async {
 
         // GIVEN
         let selfUser = ZMUser.selfUser(in: self.uiMOC)
@@ -171,7 +173,7 @@ extension UserProfileUpdateRequestStrategyTests {
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // WHEN
-        let request = self.sut.nextRequest(for: .v0)
+        let request = await self.sut.nextRequest(for: .v0)
 
         // THEN
         XCTAssertEqual(request?.path, "/self/phone")
@@ -179,7 +181,7 @@ extension UserProfileUpdateRequestStrategyTests {
         XCTAssertNil(request?.payload)
     }
 
-    func testThatItCreatesARequestToUpdateEmailAfterUpdatingPassword() {
+    func testThatItCreatesARequestToUpdateEmailAfterUpdatingPassword() async {
 
         // GIVEN
         let credentials = ZMEmailCredentials(email: "mario@example.com", password: "princess")
@@ -188,7 +190,7 @@ extension UserProfileUpdateRequestStrategyTests {
         self.userProfileUpdateStatus.didUpdatePasswordSuccessfully()
 
         // WHEN
-        let request = self.sut.nextRequest(for: .v0)
+        let request = await self.sut.nextRequest(for: .v0)
 
         // THEN
         let expected = ZMTransportRequest(path: "/access/self/email", method: .methodPUT, payload: [
@@ -198,7 +200,7 @@ extension UserProfileUpdateRequestStrategyTests {
 
     }
 
-    func testThatItCreatesARequestToCheckHandleAvailability() {
+    func testThatItCreatesARequestToCheckHandleAvailability() async {
 
         // GIVEN
         let handle = "martha"
@@ -206,14 +208,14 @@ extension UserProfileUpdateRequestStrategyTests {
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // WHEN
-        let request = self.sut.nextRequest(for: .v0)
+        let request = await self.sut.nextRequest(for: .v0)
 
         // THEN
         let expected = ZMTransportRequest(path: "/users/handles/\(handle)", method: .methodHEAD, payload: nil, apiVersion: APIVersion.v0.rawValue)
         XCTAssertEqual(request, expected)
     }
 
-    func testThatItCreatesARequestToSetHandle() {
+    func testThatItCreatesARequestToSetHandle() async {
 
         // GIVEN
         let handle = "martha"
@@ -221,7 +223,7 @@ extension UserProfileUpdateRequestStrategyTests {
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // WHEN
-        let request = self.sut.nextRequest(for: .v0)
+        let request = await self.sut.nextRequest(for: .v0)
 
         // THEN
         let payload: NSDictionary = ["handle": handle]
@@ -229,7 +231,7 @@ extension UserProfileUpdateRequestStrategyTests {
         XCTAssertEqual(request, expected)
     }
 
-    func testThatItCreatesARequestToFindHandleSuggestion() {
+    func testThatItCreatesARequestToFindHandleSuggestion() async {
 
         // GIVEN
         self.userProfileUpdateStatus.suggestHandles()
@@ -240,7 +242,7 @@ extension UserProfileUpdateRequestStrategyTests {
         }
 
         // WHEN
-        let possibleRequest = self.sut.nextRequest(for: .v0)
+        let possibleRequest = await self.sut.nextRequest(for: .v0)
 
         // THEN
         guard let request = possibleRequest else {
@@ -265,7 +267,7 @@ extension UserProfileUpdateRequestStrategyTests {
 extension UserProfileUpdateRequestStrategyTests {
 
     // MARK: - Phone verification code
-    func testThatItCallsDidRequestPhoneVerificationCodeSuccessfully() {
+    func testThatItCallsDidRequestPhoneVerificationCodeSuccessfully() async {
 
         // GIVEN
         let phone = "+155523123123"
@@ -273,7 +275,7 @@ extension UserProfileUpdateRequestStrategyTests {
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // WHEN
-        let request = self.sut.nextRequest(for: .v0)
+        let request = await self.sut.nextRequest(for: .v0)
         request?.complete(with: self.successResponse())
 
         // THEN
@@ -281,7 +283,7 @@ extension UserProfileUpdateRequestStrategyTests {
         XCTAssertEqual(self.userProfileUpdateStatus.recordedDidRequestPhoneVerificationCodeSuccessfully, 1)
     }
 
-    func testThatItCallsDidFailPhoneVerificationCodeRequest() {
+    func testThatItCallsDidFailPhoneVerificationCodeRequest() async {
 
         // GIVEN
         let phone = "+155523123123"
@@ -289,7 +291,7 @@ extension UserProfileUpdateRequestStrategyTests {
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // WHEN
-        let request = self.sut.nextRequest(for: .v0)
+        let request = await self.sut.nextRequest(for: .v0)
         request?.complete(with: self.invalidPhoneNumberResponse())
 
         // THEN
@@ -299,7 +301,7 @@ extension UserProfileUpdateRequestStrategyTests {
         XCTAssertEqual((error as NSError).code, Int(ZMUserSessionErrorCode.invalidPhoneNumber.rawValue))
     }
 
-    func testThatItGetsInvalidPhoneNumberErrorOnBadRequestResponse() {
+    func testThatItGetsInvalidPhoneNumberErrorOnBadRequestResponse() async {
 
         // GIVEN
         let phone = "+155523123123"
@@ -307,7 +309,7 @@ extension UserProfileUpdateRequestStrategyTests {
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // WHEN
-        let request = self.sut.nextRequest(for: .v0)
+        let request = await self.sut.nextRequest(for: .v0)
         request?.complete(with: self.badRequestResponse())
 
         // THEN
@@ -317,7 +319,7 @@ extension UserProfileUpdateRequestStrategyTests {
         XCTAssertEqual((error as NSError).code, Int(ZMUserSessionErrorCode.invalidPhoneNumber.rawValue))
     }
 
-    func testThatItGetsDuplicatePhoneNumberErrorOnDuplicatePhoneNumber() {
+    func testThatItGetsDuplicatePhoneNumberErrorOnDuplicatePhoneNumber() async {
 
         // GIVEN
         let phone = "+155523123123"
@@ -325,7 +327,7 @@ extension UserProfileUpdateRequestStrategyTests {
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // WHEN
-        let request = self.sut.nextRequest(for: .v0)
+        let request = await self.sut.nextRequest(for: .v0)
         request?.complete(with: self.keyExistsResponse())
 
         // THEN
@@ -336,7 +338,7 @@ extension UserProfileUpdateRequestStrategyTests {
     }
 
     // MARK: - Phone number change
-    func testThatItCallsDidChangePhoneSuccessfully() {
+    func testThatItCallsDidChangePhoneSuccessfully() async {
 
         // GIVEN
         let credentials = ZMPhoneCredentials(phoneNumber: "+155523123123", verificationCode: "12345")
@@ -344,7 +346,7 @@ extension UserProfileUpdateRequestStrategyTests {
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // WHEN
-        let request = self.sut.nextRequest(for: .v0)
+        let request = await self.sut.nextRequest(for: .v0)
         request?.complete(with: self.successResponse())
 
         // THEN
@@ -352,7 +354,7 @@ extension UserProfileUpdateRequestStrategyTests {
         XCTAssertEqual(self.userProfileUpdateStatus.recordedDidChangePhoneSuccesfully, 1)
     }
 
-    func testThatItCallsDidFailChangePhone() {
+    func testThatItCallsDidFailChangePhone() async {
 
         // GIVEN
         let credentials = ZMPhoneCredentials(phoneNumber: "+155523123123", verificationCode: "12345")
@@ -360,7 +362,7 @@ extension UserProfileUpdateRequestStrategyTests {
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // WHEN
-        let request = self.sut.nextRequest(for: .v0)
+        let request = await self.sut.nextRequest(for: .v0)
         request?.complete(with: self.errorResponse())
 
         // THEN
@@ -371,7 +373,7 @@ extension UserProfileUpdateRequestStrategyTests {
     }
 
     // MARK: - Setting email and password
-    func testThatCallsDidUpdatePasswordSuccessfully() {
+    func testThatCallsDidUpdatePasswordSuccessfully() async {
 
         // GIVEN
         let credentials = ZMEmailCredentials(email: "mario@example.com", password: "princess")
@@ -379,7 +381,7 @@ extension UserProfileUpdateRequestStrategyTests {
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // WHEN
-        let request = self.sut.nextRequest(for: .v0)
+        let request = await self.sut.nextRequest(for: .v0)
         request?.complete(with: self.successResponse())
 
         // THEN
@@ -387,7 +389,7 @@ extension UserProfileUpdateRequestStrategyTests {
         XCTAssertEqual(self.userProfileUpdateStatus.recordedDidUpdatePasswordSuccessfully, 1)
     }
 
-    func testThatCallsDidUpdatePasswordSuccessfullyOn403() {
+    func testThatCallsDidUpdatePasswordSuccessfullyOn403() async {
 
         // GIVEN
         let credentials = ZMEmailCredentials(email: "mario@example.com", password: "princess")
@@ -395,7 +397,7 @@ extension UserProfileUpdateRequestStrategyTests {
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // WHEN
-        let request = self.sut.nextRequest(for: .v0)
+        let request = await self.sut.nextRequest(for: .v0)
         request?.complete(with: self.invalidCredentialsResponse())
 
         // THEN
@@ -403,7 +405,7 @@ extension UserProfileUpdateRequestStrategyTests {
         XCTAssertEqual(self.userProfileUpdateStatus.recordedDidUpdatePasswordSuccessfully, 1)
     }
 
-    func testThatCallsDidFailPasswordUpdateOn400() {
+    func testThatCallsDidFailPasswordUpdateOn400() async {
 
         // GIVEN
         let credentials = ZMEmailCredentials(email: "mario@example.com", password: "princess")
@@ -411,7 +413,7 @@ extension UserProfileUpdateRequestStrategyTests {
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // WHEN
-        let request = self.sut.nextRequest(for: .v0)
+        let request = await self.sut.nextRequest(for: .v0)
         request?.complete(with: self.errorResponse())
 
         // THEN
@@ -419,7 +421,7 @@ extension UserProfileUpdateRequestStrategyTests {
         XCTAssertEqual(self.userProfileUpdateStatus.recordedDidFailPasswordUpdate, 1)
     }
 
-    func testThatItCallsDidUpdateEmailSuccessfullyWhenSettingEmailAndPassword() {
+    func testThatItCallsDidUpdateEmailSuccessfullyWhenSettingEmailAndPassword() async {
 
         // GIVEN
         let credentials = ZMEmailCredentials(email: "mario@example.com", password: "princess")
@@ -428,7 +430,7 @@ extension UserProfileUpdateRequestStrategyTests {
         self.userProfileUpdateStatus.didUpdatePasswordSuccessfully()
 
         // WHEN
-        let request = self.sut.nextRequest(for: .v0)
+        let request = await self.sut.nextRequest(for: .v0)
         request?.complete(with: self.successResponse())
 
         // THEN
@@ -436,7 +438,7 @@ extension UserProfileUpdateRequestStrategyTests {
         XCTAssertEqual(self.userProfileUpdateStatus.recordedDidUpdateEmailSuccessfully, 1)
     }
 
-    func testThatItCallsDidFailEmailUpdateWithInvalidEmail() {
+    func testThatItCallsDidFailEmailUpdateWithInvalidEmail() async {
 
         // GIVEN
         let credentials = ZMEmailCredentials(email: "mario@example.com", password: "princess")
@@ -445,7 +447,7 @@ extension UserProfileUpdateRequestStrategyTests {
         self.userProfileUpdateStatus.didUpdatePasswordSuccessfully()
 
         // WHEN
-        let request = self.sut.nextRequest(for: .v0)
+        let request = await self.sut.nextRequest(for: .v0)
         request?.complete(with: self.invalidEmailResponse())
 
         // THEN
@@ -455,7 +457,7 @@ extension UserProfileUpdateRequestStrategyTests {
         XCTAssertEqual((error as NSError).code, Int(ZMUserSessionErrorCode.invalidEmail.rawValue))
     }
 
-    func testThatItCallsDidFailEmailUpdateWithDuplicatedEmail() {
+    func testThatItCallsDidFailEmailUpdateWithDuplicatedEmail() async {
 
         // GIVEN
         let credentials = ZMEmailCredentials(email: "mario@example.com", password: "princess")
@@ -464,7 +466,7 @@ extension UserProfileUpdateRequestStrategyTests {
         self.userProfileUpdateStatus.didUpdatePasswordSuccessfully()
 
         // WHEN
-        let request = self.sut.nextRequest(for: .v0)
+        let request = await self.sut.nextRequest(for: .v0)
         request?.complete(with: self.keyExistsResponse())
 
         // THEN
@@ -474,7 +476,7 @@ extension UserProfileUpdateRequestStrategyTests {
         XCTAssertEqual((error as NSError).code, Int(ZMUserSessionErrorCode.emailIsAlreadyRegistered.rawValue))
     }
 
-    func testThatItCallsDidFailEmailUpdateWithUnknownError() {
+    func testThatItCallsDidFailEmailUpdateWithUnknownError() async {
 
         // GIVEN
         let credentials = ZMEmailCredentials(email: "mario@example.com", password: "princess")
@@ -483,7 +485,7 @@ extension UserProfileUpdateRequestStrategyTests {
         self.userProfileUpdateStatus.didUpdatePasswordSuccessfully()
 
         // WHEN
-        let request = self.sut.nextRequest(for: .v0)
+        let request = await self.sut.nextRequest(for: .v0)
         request?.complete(with: self.errorResponse())
 
         // THEN
@@ -495,7 +497,7 @@ extension UserProfileUpdateRequestStrategyTests {
     }
 
     // MARK: - Email change
-    func testThatItCallsDidUpdateEmailSuccessfullyWhenChangingEmail() {
+    func testThatItCallsDidUpdateEmailSuccessfullyWhenChangingEmail() async {
 
         // GIVEN
         let selfUser = ZMUser.selfUser(in: self.uiMOC)
@@ -504,7 +506,7 @@ extension UserProfileUpdateRequestStrategyTests {
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // WHEN
-        let request = self.sut.nextRequest(for: .v0)
+        let request = await self.sut.nextRequest(for: .v0)
         request?.complete(with: self.successResponse())
 
         // THEN
@@ -513,7 +515,7 @@ extension UserProfileUpdateRequestStrategyTests {
     }
 
     // MARK: - Removing phone number
-    func testThatItCallsDidRemovePhoneNumberSuccessfully() {
+    func testThatItCallsDidRemovePhoneNumberSuccessfully() async {
         // GIVEN
         let selfUser = ZMUser.selfUser(in: self.uiMOC)
         selfUser.setValue("+155534534566", forKey: #keyPath(ZMUser.phoneNumber))
@@ -522,7 +524,7 @@ extension UserProfileUpdateRequestStrategyTests {
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // WHEN
-        let request = self.sut.nextRequest(for: .v0)
+        let request = await self.sut.nextRequest(for: .v0)
         XCTAssertNotNil(request)
         request?.complete(with: self.successResponse())
 
@@ -532,7 +534,7 @@ extension UserProfileUpdateRequestStrategyTests {
         XCTAssertEqual(self.userProfileUpdateStatus.recordedDidRemovePhoneNumberSuccessfully, 1)
     }
 
-    func testThatItCallsDidFailRemovePhoneNumberWhenItsLastIdentity() {
+    func testThatItCallsDidFailRemovePhoneNumberWhenItsLastIdentity() async {
 
         // GIVEN
         let selfUser = ZMUser.selfUser(in: self.uiMOC)
@@ -542,7 +544,7 @@ extension UserProfileUpdateRequestStrategyTests {
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // WHEN
-        let request = self.sut.nextRequest(for: .v0)
+        let request = await self.sut.nextRequest(for: .v0)
         request?.complete(with: self.lastIdentityResponse())
 
         // THEN
@@ -552,7 +554,7 @@ extension UserProfileUpdateRequestStrategyTests {
         XCTAssertEqual((error as NSError).code, Int(ZMUserSessionErrorCode.lastUserIdentityCantBeDeleted.rawValue))
     }
 
-    func testThatItCallsDidFailRemovePhoneNumberOnOtherErrors() {
+    func testThatItCallsDidFailRemovePhoneNumberOnOtherErrors() async {
 
         // GIVEN
         let selfUser = ZMUser.selfUser(in: self.uiMOC)
@@ -562,7 +564,7 @@ extension UserProfileUpdateRequestStrategyTests {
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // WHEN
-        let request = self.sut.nextRequest(for: .v0)
+        let request = await self.sut.nextRequest(for: .v0)
         request?.complete(with: self.errorResponse())
 
         // THEN
@@ -573,7 +575,7 @@ extension UserProfileUpdateRequestStrategyTests {
     }
 
     // MARK: - Check handle availability
-    func testThatItCallsDidFetchHandle() {
+    func testThatItCallsDidFetchHandle() async {
 
         // GIVEN
         let handle = "martha"
@@ -581,7 +583,7 @@ extension UserProfileUpdateRequestStrategyTests {
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // WHEN
-        let request = self.sut.nextRequest(for: .v0)
+        let request = await self.sut.nextRequest(for: .v0)
         request?.complete(with: self.successResponse(path: request?.path))
 
         // THEN
@@ -589,7 +591,7 @@ extension UserProfileUpdateRequestStrategyTests {
         XCTAssertEqual(self.userProfileUpdateStatus.recordedDidFetchHandle, [handle])
     }
 
-    func testThatItCallsDidNotFindHandle() {
+    func testThatItCallsDidNotFindHandle() async {
 
         // GIVEN
         let handle = "martha"
@@ -597,7 +599,7 @@ extension UserProfileUpdateRequestStrategyTests {
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // WHEN
-        let request = self.sut.nextRequest(for: .v0)
+        let request = await self.sut.nextRequest(for: .v0)
         request?.complete(with: self.notFoundResponse(path: request!.path))
 
         // THEN
@@ -605,7 +607,7 @@ extension UserProfileUpdateRequestStrategyTests {
         XCTAssertEqual(self.userProfileUpdateStatus.recordedDidNotFindHandle, [handle])
     }
 
-    func testThatItCallsFailedToCheckHandleAvailability() {
+    func testThatItCallsFailedToCheckHandleAvailability() async {
 
         // GIVEN
         let handle = "martha"
@@ -613,7 +615,7 @@ extension UserProfileUpdateRequestStrategyTests {
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // WHEN
-        let request = self.sut.nextRequest(for: .v0)
+        let request = await self.sut.nextRequest(for: .v0)
         request?.complete(with: self.errorResponse(path: request?.path))
 
         // THEN
@@ -622,7 +624,7 @@ extension UserProfileUpdateRequestStrategyTests {
     }
 
     // MARK: - Setting handle
-    func testThatItCallsSuccessSetHandle() {
+    func testThatItCallsSuccessSetHandle() async {
 
         // GIVEN
         let handle = "martha"
@@ -630,7 +632,7 @@ extension UserProfileUpdateRequestStrategyTests {
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // WHEN
-        let request = self.sut.nextRequest(for: .v0)
+        let request = await self.sut.nextRequest(for: .v0)
         request?.complete(with: self.successResponse())
 
         // THEN
@@ -638,7 +640,7 @@ extension UserProfileUpdateRequestStrategyTests {
         XCTAssertEqual(self.userProfileUpdateStatus.recordedDidSetHandle, 1)
     }
 
-    func testThatItCallsFailedToSetHandle() {
+    func testThatItCallsFailedToSetHandle() async {
 
         // GIVEN
         let handle = "martha"
@@ -646,7 +648,7 @@ extension UserProfileUpdateRequestStrategyTests {
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // WHEN
-        let request = self.sut.nextRequest(for: .v0)
+        let request = await self.sut.nextRequest(for: .v0)
         request?.complete(with: self.errorResponse())
 
         // THEN
@@ -654,7 +656,7 @@ extension UserProfileUpdateRequestStrategyTests {
         XCTAssertEqual(self.userProfileUpdateStatus.recordedDidFailToSetHandle, 1)
     }
 
-    func testThatItCallsFailedToSetHandleBecauseExisting() {
+    func testThatItCallsFailedToSetHandleBecauseExisting() async {
 
         // GIVEN
         let handle = "martha"
@@ -662,7 +664,7 @@ extension UserProfileUpdateRequestStrategyTests {
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // WHEN
-        let request = self.sut.nextRequest(for: .v0)
+        let request = await self.sut.nextRequest(for: .v0)
         request?.complete(with: self.keyExistsResponse())
 
         // THEN
@@ -671,7 +673,7 @@ extension UserProfileUpdateRequestStrategyTests {
     }
 
     // MARK: - Suggesting handles
-    func testThatItCallsDidFinddHandleSuggestion() {
+    func testThatItCallsDidFinddHandleSuggestion() async {
 
         // GIVEN
         self.userProfileUpdateStatus.suggestHandles()
@@ -683,7 +685,7 @@ extension UserProfileUpdateRequestStrategyTests {
         let expectedHandle = handles[5]
 
         // WHEN
-        let request = self.sut.nextRequest(for: .v0)
+        let request = await self.sut.nextRequest(for: .v0)
         let handlesInResponse = [handles[5], handles[9], handles[10]]
         request?.complete(with: ZMTransportResponse(payload: handlesInResponse as NSArray, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue))
 
@@ -692,14 +694,14 @@ extension UserProfileUpdateRequestStrategyTests {
         XCTAssertEqual(self.userProfileUpdateStatus.recordedDidFindHandleSuggestion, [expectedHandle])
     }
 
-    func testThatItCallsFailedToFindHandleSuggestionIfNoHandlesAreReturned() {
+    func testThatItCallsFailedToFindHandleSuggestionIfNoHandlesAreReturned() async {
 
         // GIVEN
         self.userProfileUpdateStatus.suggestHandles()
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // WHEN
-        let request = self.sut.nextRequest(for: .v0)
+        let request = await self.sut.nextRequest(for: .v0)
         request?.complete(with: ZMTransportResponse(payload: [] as NSArray, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue))
 
         // THEN
@@ -707,7 +709,7 @@ extension UserProfileUpdateRequestStrategyTests {
         XCTAssertEqual(self.userProfileUpdateStatus.recordedDidNotFindAvailableHandleSuggestion, 1)
     }
 
-    func testThatItCallsFailedToFindHandleSuggestionInCaseOfError() {
+    func testThatItCallsFailedToFindHandleSuggestionInCaseOfError() async {
 
         // GIVEN
         self.userProfileUpdateStatus.suggestHandles()
@@ -715,7 +717,7 @@ extension UserProfileUpdateRequestStrategyTests {
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // WHEN
-        guard let request = self.sut.nextRequest(for: .v0) else {
+        guard let request = await self.sut.nextRequest(for: .v0) else {
             XCTFail()
             return
         }

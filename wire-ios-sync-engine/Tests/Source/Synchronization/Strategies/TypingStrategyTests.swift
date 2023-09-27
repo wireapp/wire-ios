@@ -516,7 +516,7 @@ extension TypingStrategyTests {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
-        let request = self.sut.nextRequest(for: .v0)
+        let request = await self.sut.nextRequest(for: .v0)
 
         // then
         XCTAssertNil(request)
@@ -532,7 +532,7 @@ extension TypingStrategyTests {
 
         // when
         mockApplicationStatus.mockSynchronizationState = .unauthenticated
-        let request = self.sut.nextRequest(for: .v0)
+        let request = await self.sut.nextRequest(for: .v0)
 
         // then
         XCTAssertNil(request)
@@ -590,7 +590,7 @@ extension TypingStrategyTests {
                 Thread.sleep(forTimeInterval: interval)
             }
 
-            let request = self.sut.nextRequest(for: .v0)
+            let request = await self.sut.nextRequest(for: .v0)
             result.append(request)
 
             if delay == .clearTranscoder {

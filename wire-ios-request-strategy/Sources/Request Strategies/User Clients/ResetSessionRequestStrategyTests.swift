@@ -45,14 +45,17 @@ class ResetSessionRequestStrategyTests: MessagingTestBase {
 
     // MARK: Request generation
 
-    func testThatItCreatesARequest_WhenUserClientNeedsToNotifyOtherUserAboutSessionReset() {
+    func testThatItCreatesARequest_WhenUserClientNeedsToNotifyOtherUserAboutSessionReset() async {
+        var conversationDomain: String!
+        var conversationID: String!
+
         syncMOC.performGroupedBlockAndWait {
             // GIVEN
             let otherUser = self.createUser()
             let otherClient = self.createClient(user: otherUser)
             let conversation = self.setupOneToOneConversation(with: otherUser)
-            let conversationID = conversation.remoteIdentifier!.transportString()
-            let conversationDomain = conversation.domain!
+            conversationID = conversation.remoteIdentifier!.transportString()
+            conversationDomain = conversation.domain!
             otherClient.needsToNotifyOtherUserAboutSessionReset = true
 
             // WHEN
@@ -60,15 +63,16 @@ class ResetSessionRequestStrategyTests: MessagingTestBase {
                 let otherClientSet: Set<NSManagedObject> = [otherClient]
                 $0.objectsDidChange(otherClientSet)
             }
+        }
 
             // THEN
-            XCTAssertEqual(self.sut.nextRequest(for: .v1)?.path, "/v1/conversations/\(conversationDomain)/\(conversationID)/proteus/messages")
-        }
+            let request = await self.sut.nextRequest(for: .v1)
+        XCTAssertEqual(request?.path, "/v1/conversations/\(conversationDomain!)/\(conversationID!)/proteus/messages")
     }
 
     // MARK: Response handling
 
-    func testThatItResetsNeedsToNotifyOtherUserAboutSessionReset_WhenReceivingTheResponse() {
+    func testThatItResetsNeedsToNotifyOtherUserAboutSessionReset_WhenReceivingTheResponse() async {
         var otherClient: UserClient!
         syncMOC.performGroupedBlockAndWait {
             // GIVEN
@@ -81,11 +85,12 @@ class ResetSessionRequestStrategyTests: MessagingTestBase {
                 let otherClientSet: Set<NSManagedObject> = [otherClient]
                 $0.objectsDidChange(otherClientSet)
             }
-            let request = self.sut.nextRequest(for: .v0)
+        }
+            let request = await self.sut.nextRequest(for: .v0)
 
             // WHEN
             request?.complete(with: ZMTransportResponse(payload: [:] as ZMTransportData, httpStatus: 200, transportSessionError: nil, apiVersion: 0))
-        }
+
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // THEN

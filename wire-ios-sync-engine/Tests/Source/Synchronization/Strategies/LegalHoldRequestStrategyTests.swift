@@ -118,7 +118,7 @@ class LegalHoldRequestStrategyTests: MessagingTest {
             _ = Member.getOrCreateMember(for: selfUser, in: team, context: self.syncMOC)
 
             // WHEN
-            guard let request = self.sut.nextRequest(for: .v0) else { return XCTFail() }
+            guard let request = await self.sut.nextRequest(for: .v0) else { return XCTFail() }
 
             // THEN
             XCTAssertEqual(request.path, "/teams/\(team.remoteIdentifier!.transportString())/legalhold/\(selfUser.remoteIdentifier.transportString())")
@@ -144,7 +144,7 @@ class LegalHoldRequestStrategyTests: MessagingTest {
             self.mockSyncStatus.mockPhase = .fetchingLegalHoldStatus
 
             // WHEN
-            let request = self.sut.nextRequest(for: .v0)
+            let request = await self.sut.nextRequest(for: .v0)
             request?.complete(with: ZMTransportResponse(payload: nil, httpStatus: 500, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue))
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -168,7 +168,7 @@ class LegalHoldRequestStrategyTests: MessagingTest {
             expectedLegalHoldRequest = type(of: self).legalHoldRequest(for: selfUser)
 
             let payload = type(of: self).payloadForReceivingLegalHoldRequestStatus(request: expectedLegalHoldRequest)
-            guard let request = self.sut.nextRequest(for: .v0) else { return XCTFail() }
+            guard let request = await self.sut.nextRequest(for: .v0) else { return XCTFail() }
             request.complete(with: ZMTransportResponse(payload: payload, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue))
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -197,7 +197,7 @@ class LegalHoldRequestStrategyTests: MessagingTest {
             let payload: [AnyHashable: Any] = [
                 "status": "disabled"
             ]
-            guard let request = self.sut.nextRequest(for: .v0) else { return XCTFail() }
+            guard let request = await self.sut.nextRequest(for: .v0) else { return XCTFail() }
             request.complete(with: ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue))
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))

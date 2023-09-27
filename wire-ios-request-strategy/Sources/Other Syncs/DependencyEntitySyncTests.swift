@@ -94,7 +94,7 @@ class DependencyEntitySyncTests: ZMTBaseTest {
 
     // Mark - Request creation
 
-    func testThatTranscoderIsAskedToCreateRequest_whenEntityHasNoDependencies() {
+    func testThatTranscoderIsAskedToCreateRequest_whenEntityHasNoDependencies() async {
 
         // given
         let entity = MockDependencyEntity()
@@ -107,7 +107,7 @@ class DependencyEntitySyncTests: ZMTBaseTest {
         XCTAssertEqual(mockTranscoder.didCallRequestForEntityCount, 1)
     }
 
-    func testThatTranscoderIsNotAskedToCreateRequest_whenEntityHasDependencies() {
+    func testThatTranscoderIsNotAskedToCreateRequest_whenEntityHasDependencies() async {
 
         // given
         let entity = MockDependencyEntity()

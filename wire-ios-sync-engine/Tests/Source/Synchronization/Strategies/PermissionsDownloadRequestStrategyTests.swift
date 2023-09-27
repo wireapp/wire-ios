@@ -52,7 +52,8 @@ class PermissionsDownloadRequestStrategyTests: MessagingTest {
             self.boostrapChangeTrackers(with: member)
 
             // then
-            XCTAssertNil(self.sut.nextRequest(for: .v0))
+            let result = await self.sut.nextRequest(for: .v0)
+        XCTAssertNil(result)
         }
     }
 
@@ -72,7 +73,7 @@ class PermissionsDownloadRequestStrategyTests: MessagingTest {
             self.boostrapChangeTrackers(with: member)
 
             // then
-            guard let request = self.sut.nextRequest(for: .v0) else { return XCTFail("No request generated") }
+            guard let request = await self.sut.nextRequest(for: .v0) else { return XCTFail("No request generated") }
             XCTAssertEqual(request.method, .methodGET)
             XCTAssertEqual(request.path, "/teams/\(teamId.transportString())/members/\(userId.transportString())")
         }
@@ -90,7 +91,8 @@ class PermissionsDownloadRequestStrategyTests: MessagingTest {
             self.boostrapChangeTrackers(with: member)
 
             // then
-            XCTAssertNil(self.sut.nextRequest(for: .v0))
+            let result = await self.sut.nextRequest(for: .v0)
+        XCTAssertNil(result)
         }
     }
 
@@ -109,7 +111,7 @@ class PermissionsDownloadRequestStrategyTests: MessagingTest {
 
             member.needsToBeUpdatedFromBackend = true
             self.boostrapChangeTrackers(with: member)
-            guard let request = self.sut.nextRequest(for: .v0) else { return XCTFail("No request generated") }
+            guard let request = await self.sut.nextRequest(for: .v0) else { return XCTFail("No request generated") }
 
             // when
             let payload: [String: Any] = [
@@ -155,7 +157,7 @@ class PermissionsDownloadRequestStrategyTests: MessagingTest {
             member.needsToBeUpdatedFromBackend = true
 
             self.boostrapChangeTrackers(with: member)
-            guard let request = self.sut.nextRequest(for: .v0) else { return XCTFail("No request generated") }
+            guard let request = await self.sut.nextRequest(for: .v0) else { return XCTFail("No request generated") }
 
             // when
             let response = ZMTransportResponse(payload: [] as ZMTransportData, httpStatus: 404, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)

@@ -41,7 +41,8 @@ class DeleteAccountRequestStrategyTests: MessagingTest, AccountDeletedObserver {
     }
 
     func testThatItGeneratesNoRequestsIfTheStatusIsEmpty() {
-        XCTAssertNil(self.sut.nextRequest(for: .v0))
+        let result = await self.sut.nextRequest(for: .v0)
+        XCTAssertNil(result)
     }
 
     func testThatItGeneratesARequest() {

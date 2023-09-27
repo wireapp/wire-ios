@@ -99,7 +99,7 @@ class GenericMessageRequestStrategyTests: MessagingTestBase {
             self.sut.schedule(message: genericMessage, inConversation: self.groupConversation) { ( _ ) in }
 
             // WHEN
-            let request = self.sut.nextRequest(for: .v0)
+            let request = await self.sut.nextRequest(for: .v0)
 
             // THEN
             XCTAssertEqual(request!.method, .methodPOST)

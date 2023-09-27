@@ -121,7 +121,7 @@ class ImageV2DownloadRequestStrategyTests: MessagingTestBase {
             }
 
             // WHEN
-            let request = self.sut.nextRequest(for: .v0)
+            let request = await self.sut.nextRequest(for: .v0)
 
             // THEN
             XCTAssertEqual(request?.path, "/conversations/\(message.conversation!.remoteIdentifier!.transportString())/otr/assets/\(message.assetId!.transportString())")
@@ -144,7 +144,7 @@ class ImageV2DownloadRequestStrategyTests: MessagingTestBase {
 
         syncMOC.performGroupedBlockAndWait {
             // WHEN
-            let request = self.sut.nextRequest(for: .v0)
+            let request = await self.sut.nextRequest(for: .v0)
 
             // THEN
             XCTAssertNil(request)
@@ -166,7 +166,7 @@ class ImageV2DownloadRequestStrategyTests: MessagingTestBase {
 
         syncMOC.performGroupedBlockAndWait {
             // WHEN
-            let request = self.sut.nextRequest(for: .v0)
+            let request = await self.sut.nextRequest(for: .v0)
 
             // THEN
             XCTAssertNil(request)
@@ -188,7 +188,7 @@ class ImageV2DownloadRequestStrategyTests: MessagingTestBase {
 
         syncMOC.performGroupedBlockAndWait {
             // WHEN
-            let request = self.sut.nextRequest(for: .v0)
+            let request = await self.sut.nextRequest(for: .v0)
 
             // THEN
             XCTAssertNil(request)
@@ -255,7 +255,7 @@ class ImageV2DownloadRequestStrategyTests: MessagingTestBase {
 
         syncMOC.performGroupedBlock {
             // WHEN
-            let request = self.sut.nextRequest(for: .v0)
+            let request = await self.sut.nextRequest(for: .v0)
             request?.complete(with: ZMTransportResponse(imageData: encryptedData, httpStatus: 200, transportSessionError: nil, headers: nil, apiVersion: APIVersion.v0.rawValue))
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))

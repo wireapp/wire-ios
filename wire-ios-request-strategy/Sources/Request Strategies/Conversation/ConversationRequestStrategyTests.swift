@@ -68,7 +68,10 @@ class ConversationRequestStrategyTests: MessagingTestBase {
             self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([self.groupConversation])) }
 
             // when
-            let request = self.sut.nextRequest(for: self.apiVersion)!
+                        guard let request = await self.sut.nextRequest(for: self.apiVersion) else {
+                XCTFail("missing expected request")
+                return
+            }
 
             // then
             XCTAssertEqual(request.path, "/v1/conversations/\(domain)/\(conversationID.transportString())")
@@ -86,7 +89,10 @@ class ConversationRequestStrategyTests: MessagingTestBase {
             self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([self.groupConversation])) }
 
             // when
-            let request = self.sut.nextRequest(for: self.apiVersion)!
+                        guard let request = await self.sut.nextRequest(for: self.apiVersion) else {
+                XCTFail("missing expected request")
+                return
+            }
 
             // then
             XCTAssertEqual(request.path, "/conversations/\(conversationID.transportString())")
@@ -106,7 +112,11 @@ class ConversationRequestStrategyTests: MessagingTestBase {
             self.sut.contextChangeTrackers.forEach({ $0.objectsDidChange(Set([self.groupConversation])) })
 
             // when
-            let request = self.sut.nextRequest(for: self.apiVersion)!
+                        guard let request = await self.sut.nextRequest(for: self.apiVersion) else {
+                XCTFail("missing expected request")
+                return
+            }
+
             let payload = Payload.UpdateConversationName(request)
 
             // then
@@ -128,7 +138,11 @@ class ConversationRequestStrategyTests: MessagingTestBase {
             self.sut.contextChangeTrackers.forEach({ $0.objectsDidChange(Set([self.groupConversation])) })
 
             // when
-            let request = self.sut.nextRequest(for: self.apiVersion)!
+                        guard let request = await self.sut.nextRequest(for: self.apiVersion) else {
+                XCTFail("missing expected request")
+                return
+            }
+
             let payload = Payload.UpdateConversationStatus(request)
 
             // then
@@ -150,7 +164,11 @@ class ConversationRequestStrategyTests: MessagingTestBase {
             self.sut.contextChangeTrackers.forEach({ $0.objectsDidChange(Set([self.groupConversation])) })
 
             // when
-            let request = self.sut.nextRequest(for: self.apiVersion)!
+                        guard let request = await self.sut.nextRequest(for: self.apiVersion) else {
+                XCTFail("missing expected request")
+                return
+            }
+
             let payload = Payload.UpdateConversationStatus(request)
 
             // then
@@ -169,7 +187,10 @@ class ConversationRequestStrategyTests: MessagingTestBase {
             self.mockSyncProgress.currentSyncPhase = .fetchingConversations
 
             // when
-            let request = self.sut.nextRequest(for: self.apiVersion)!
+                        guard let request = await self.sut.nextRequest(for: self.apiVersion) else {
+                XCTFail("missing expected request")
+                return
+            }
 
             // then
             XCTAssertEqual(request.path, "/v1/conversations/list-ids")
@@ -181,10 +202,11 @@ class ConversationRequestStrategyTests: MessagingTestBase {
             // given
             self.apiVersion = .v1
             self.mockSyncProgress.currentSyncPhase = .fetchingConversations
-            _ = self.sut.nextRequest(for: self.apiVersion)!
+            _ = await self.sut.nextRequest(for: self.apiVersion)
 
             // when
-            XCTAssertNil(self.sut.nextRequest(for: self.apiVersion))
+            let result = await self.sut.nextRequest(for: self.apiVersion)
+            XCTAssertNil(result)
         }
     }
 
@@ -1035,7 +1057,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
             self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([conversation])) }
 
             // when
-            let request = self.sut.nextRequest(for: apiVersion)!
+            let request = await self.sut.nextRequest(for: apiVersion)!
             request.complete(with: response)
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -1058,7 +1080,11 @@ class ConversationRequestStrategyTests: MessagingTestBase {
 
     func fetchConversationListDuringSlowSyncWithEmptyResponse() {
         syncMOC.performGroupedBlockAndWait {
-            let request = self.sut.nextRequest(for: self.apiVersion)!
+                        guard let request = await self.sut.nextRequest(for: self.apiVersion) else {
+                XCTFail("missing expected request")
+                return
+            }
+
             guard let listPayload = Payload.PaginationStatus(request) else {
                 return XCTFail("List payload is invalid")
             }
@@ -1070,7 +1096,11 @@ class ConversationRequestStrategyTests: MessagingTestBase {
 
     func fetchConversationListDuringSlowSyncWithPermanentError() {
         syncMOC.performGroupedBlockAndWait {
-            let request = self.sut.nextRequest(for: self.apiVersion)!
+                        guard let request = await self.sut.nextRequest(for: self.apiVersion) else {
+                XCTFail("missing expected request")
+                return
+            }
+
             request.complete(with: self.responseFailure(code: 404, label: .noEndpoint, apiVersion: .v1))
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -1081,7 +1111,10 @@ class ConversationRequestStrategyTests: MessagingTestBase {
         syncMOC.performGroupedBlockAndWait {
 
             // when
-            let request = self.sut.nextRequest(for: self.apiVersion)!
+                        guard let request = await self.sut.nextRequest(for: self.apiVersion) else {
+                XCTFail("missing expected request")
+                return
+            }
 
             guard let payload = Payload.QualifiedUserIDList(request) else {
                 return XCTFail("Payload is invalid")

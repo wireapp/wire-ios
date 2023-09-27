@@ -128,84 +128,83 @@ class MissingClientsRequestStrategyTests: MessagingTestBase {
         }
     }
 
-    func testThatItCreatesARequestToFetchMissedKeys_WhenClientHasMissingClientsAndMissingKeyIsModified() {
+    func testThatItCreatesARequestToFetchMissedKeys_WhenClientHasMissingClientsAndMissingKeyIsModified() async {
         self.syncMOC.performGroupedAndWait { _ in
             // GIVEN
 
             self.selfClient.missesClient(self.otherClient)
             self.sut.notifyChangeTrackers(self.selfClient)
-
+        }
             // WHEN
-            guard let request = self.sut.nextRequest(for: .v0) else {
+            guard let request = await self.sut.nextRequest(for: .v0) else {
                 XCTFail("Request is nil"); return
             }
 
             // THEN
+        self.syncMOC.performGroupedAndWait { _ in
             self.checkRequestForClientsPrekeys(request, expectedClients: [self.otherClient])
         }
     }
 
-    func testThatItCreatesARequestToFetchMissedKeys_WhenFederationEndpointIsAvailable() {
+    func testThatItCreatesARequestToFetchMissedKeys_WhenFederationEndpointIsAvailable() async {
         self.syncMOC.performGroupedAndWait { _ in
             // GIVEN
             self.selfClient.missesClient(self.otherClient)
             self.sut.notifyChangeTrackers(self.selfClient)
-
+        }
             // WHEN
-            guard let request = self.sut.nextRequest(for: .v1) else {
+            guard let request = await self.sut.nextRequest(for: .v1) else {
                 XCTFail("Request is nil"); return
             }
 
             // THEN
+        self.syncMOC.performGroupedAndWait { _ in
             self.checkFederatedRequestForClientsPrekeys(request, expectedClients: [self.otherClient])
         }
     }
 
-    func testThatItDoesNotCreateARequestToFetchMissedKeysIfClientHasMissingClientsAndMissingKeyIsNotModified() {
+    func testThatItDoesNotCreateARequestToFetchMissedKeysIfClientHasMissingClientsAndMissingKeyIsNotModified() async {
         self.syncMOC.performGroupedAndWait { _ in
             // GIVEN
             self.selfClient.mutableSetValue(forKey: ZMUserClientMissingKey).add(self.otherClient!)
             self.sut.notifyChangeTrackers(self.selfClient)
-
+        }
             // WHEN
-            let request = self.sut.nextRequest(for: .v0)
+            let request = await self.sut.nextRequest(for: .v0)
 
             // THEN
             XCTAssertNil(request, "Should not fetch missing clients keys if missing key is not modified")
-        }
     }
 
-    func testThatItDoesNotCreateARequestToFetchMissedKeysIfClientDoesNotHaveMissingClientsAndMissingKeyIsNotModified() {
+    func testThatItDoesNotCreateARequestToFetchMissedKeysIfClientDoesNotHaveMissingClientsAndMissingKeyIsNotModified() async {
         self.syncMOC.performGroupedAndWait { _ in
             // GIVEN
             self.selfClient.missingClients = nil
             self.sut.notifyChangeTrackers(self.selfClient)
-
+        }
             // WHEN
-            let request = self.sut.nextRequest(for: .v0)
+            let request = await self.sut.nextRequest(for: .v0)
 
             // THEN
             XCTAssertNil(request, "Should not fetch missing clients keys if missing key is not modified")
-        }
     }
 
-    func testThatItDoesNotCreateARequestToFetchMissedKeysIfClientDoesNotHaveMissingClientsAndMissingKeyIsModified() {
+    func testThatItDoesNotCreateARequestToFetchMissedKeysIfClientDoesNotHaveMissingClientsAndMissingKeyIsModified() async {
         self.syncMOC.performGroupedAndWait { _ in
             // GIVEN
             self.selfClient.missingClients = nil
             let userClientMissingKey: Set<AnyHashable> = [ZMUserClientMissingKey]
             self.selfClient.setLocallyModifiedKeys(userClientMissingKey)
             self.sut.notifyChangeTrackers(self.selfClient)
-
+        }
             // WHEN
-            let request = self.sut.nextRequest(for: .v0)
+            let request = await self.sut.nextRequest(for: .v0)
 
             // THEN
             XCTAssertNil(request, "Should not fetch missing clients keys if missing key is not modified")
-        }
     }
 
-    func testThatItPaginatesMissedClientsRequest() {
+    func testThatItPaginatesMissedClientsRequest() async {
         var user: ZMUser!
         var firstEntry: (key: String, value: [String])!
         var otherClient2: UserClient!
@@ -219,7 +218,7 @@ class MissingClientsRequestStrategyTests: MessagingTestBase {
             self.selfClient.missesClient(otherClient2)
 
             self.sut.notifyChangeTrackers(self.selfClient)
-
+        }
             // WHEN
             guard let firstRequest = self.sut.nextRequest(for: .v0) else {
                 XCTFail("Failed to create request")
@@ -243,15 +242,15 @@ class MissingClientsRequestStrategyTests: MessagingTestBase {
             }
             firstEntry = first
             firstRequest.complete(with: self.successfulResponse(for: firstPayload))
-        }
 
         var secondEntry: (key: String, value: [String])!
+
+        // and when
+        guard let secondRequest = await self.sut.nextRequest(for: .v0) else {
+            XCTFail("Failed to create request")
+            return
+        }
         self.syncMOC.performGroupedAndWait { _ in
-            // and when
-            guard let secondRequest = self.sut.nextRequest(for: .v0) else {
-                XCTFail("Failed to create request")
-                return
-            }
             guard let payloadData = (secondRequest.payload as? String)?.data(using: .utf8) else {
                 XCTFail("Payload data is missing")
                 return
@@ -273,9 +272,10 @@ class MissingClientsRequestStrategyTests: MessagingTestBase {
             secondRequest.complete(with: self.successfulResponse(for: secondPayload))
         }
 
+        // and when
+        let thirdRequest = await self.sut.nextRequest(for: .v0)
+
         self.syncMOC.performGroupedAndWait { _ in
-            // and when
-            let thirdRequest = self.sut.nextRequest(for: .v0)
 
             // THEN
             XCTAssertNil(thirdRequest, "Should not request clients keys any more")
@@ -662,7 +662,7 @@ class MissingClientsRequestStrategyTests: MessagingTestBase {
             self.sut.notifyChangeTrackers(self.selfClient)
 
             // WHEN
-            guard let request = self.sut.nextRequest(for: .v0) else {
+            guard let request = await self.sut.nextRequest(for: .v0) else {
                 XCTFail("Request is nil"); return
             }
 

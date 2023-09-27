@@ -55,7 +55,7 @@ class ConnectionRequestStrategyTests: MessagingTestBase {
 
     // MARK: Request generation
 
-    func testThatRequestToFetchConversationIsGenerated_WhenNeedsToBeUpdatedFromBackendIsTrue_Federated() {
+    func testThatRequestToFetchConversationIsGenerated_WhenNeedsToBeUpdatedFromBackendIsTrue_Federated() async {
         syncMOC.performGroupedBlockAndWait {
             // given
             self.apiVersion = .v1
@@ -64,75 +64,79 @@ class ConnectionRequestStrategyTests: MessagingTestBase {
             connection.to = self.otherUser
             connection.needsToBeUpdatedFromBackend = true
             self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([connection])) }
-
+        }
             // when
-            let request = self.sut.nextRequest(for: self.apiVersion)!
+        guard let request = await self.sut.nextRequest(for: self.apiVersion) else {
+            XCTFail("missing expected request")
+        }
 
             // then
             XCTAssertEqual(request.path, "/v1/connections/\(self.otherUser.domain!)/\(self.otherUser.remoteIdentifier!.transportString())")
             XCTAssertEqual(request.method, .methodGET)
-        }
     }
 
-    func testThatRequestToFetchConversationIsGenerated_WhenNeedsToBeUpdatedFromBackendIsTrue_NonFederated() {
+    func testThatRequestToFetchConversationIsGenerated_WhenNeedsToBeUpdatedFromBackendIsTrue_NonFederated() async {
         syncMOC.performGroupedBlockAndWait {
             // given
             let connection = ZMConnection.insertNewObject(in: self.syncMOC)
             connection.to = self.otherUser
             connection.needsToBeUpdatedFromBackend = true
             self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([connection])) }
+        }
 
             // when
-            let request = self.sut.nextRequest(for: self.apiVersion)!
+            guard let request = await self.sut.nextRequest(for: self.apiVersion) else {
+                XCTFail("missing expected request")
+            }
 
             // then
             XCTAssertEqual(request.path, "/connections/\(self.otherUser.remoteIdentifier!.transportString())")
             XCTAssertEqual(request.method, .methodGET)
-        }
     }
 
     // MARK: Slow sync
 
-    func testThatRequestToFetchAllConnectionsIsGenerated_DuringFetchingConnectionsSyncPhase_Federated() {
-        syncMOC.performGroupedBlockAndWait {
-            // given
-            self.apiVersion = .v1
+    func testThatRequestToFetchAllConnectionsIsGenerated_DuringFetchingConnectionsSyncPhase_Federated() async {
+        // given
+        self.apiVersion = .v1
 
-            self.mockSyncProgress.currentSyncPhase = .fetchingConnections
+        self.mockSyncProgress.currentSyncPhase = .fetchingConnections
 
-            // when
-            let request = self.sut.nextRequest(for: self.apiVersion)!
-
-            // then
-            XCTAssertEqual(request.path, "/v1/list-connections")
-            XCTAssertEqual(request.method, .methodPOST)
+        // when
+        guard let request = await self.sut.nextRequest(for: self.apiVersion) else {
+            XCTFail("missing expected request")
         }
+
+        // then
+        XCTAssertEqual(request.path, "/v1/list-connections")
+        XCTAssertEqual(request.method, .methodPOST)
     }
 
     func testThatRequestToFetchAllConnectionsIsGenerated_DuringFetchingConnectionsSyncPhase_NonFederated() {
-        syncMOC.performGroupedBlockAndWait {
-            // given
-            self.mockSyncProgress.currentSyncPhase = .fetchingConnections
+        // given
+        self.mockSyncProgress.currentSyncPhase = .fetchingConnections
 
-            // when
-            let request = self.sut.nextRequest(for: self.apiVersion)!
-
-            // then
-            XCTAssertEqual(request.path, "/connections?size=200")
-            XCTAssertEqual(request.method, .methodGET)
+        // when
+        guard let request = await self.sut.nextRequest(for: self.apiVersion) else {
+            XCTFail("missing expected request")
         }
+
+        // then
+        XCTAssertEqual(request.path, "/connections?size=200")
+        XCTAssertEqual(request.method, .methodGET)
     }
 
-    func testThatRequestToFetchAllConnectionsIsNotGenerated_WhenFetchIsAlreadyInProgress() {
-        syncMOC.performGroupedBlockAndWait {
-            // given
-            self.apiVersion = .v1
-            self.mockSyncProgress.currentSyncPhase = .fetchingConnections
-            XCTAssertNotNil(self.sut.nextRequest(for: self.apiVersion))
+    func testThatRequestToFetchAllConnectionsIsNotGenerated_WhenFetchIsAlreadyInProgress() async {
+        // given
+        self.apiVersion = .v1
+        self.mockSyncProgress.currentSyncPhase = .fetchingConnections
 
-            // then
-            XCTAssertNil(self.sut.nextRequest(for: self.apiVersion))
-        }
+        var request = await self.sut.nextRequest(for: self.apiVersion)
+        XCTAssertNotNil(request)
+
+        // then
+        request = await self.sut.nextRequest(for: self.apiVersion)
+        XCTAssertNil(request)
     }
 
     func testThatFetchingConnectionsSyncPhaseIsFinished_WhenFetchIsCompleted() {
@@ -269,22 +273,30 @@ class ConnectionRequestStrategyTests: MessagingTestBase {
         }
     }
 
-    func fetchConnection(_ connection: ZMConnection, response: ZMTransportResponse) {
+    func fetchConnection(_ connection: ZMConnection, response: ZMTransportResponse) async {
         syncMOC.performGroupedBlockAndWait {
             // given
             connection.needsToBeUpdatedFromBackend = true
             self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([connection])) }
-
-            // when
-            let request = self.sut.nextRequest(for: self.apiVersion)!
-            request.complete(with: response)
         }
+            // when
+        guard let request = await self.sut.nextRequest(for: self.apiVersion) else {
+            XCTFail("missing expected request")
+            return
+        }
+        request.complete(with: response)
+
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
 
-    func fetchConnectionsDuringSlowSync(connections: [Payload.Connection]) {
+    func fetchConnectionsDuringSlowSync(connections: [Payload.Connection]) async {
+        guard let request = await self.sut.nextRequest(for: self.apiVersion) else {
+            XCTFail("missing expected request")
+            return
+        }
+
         syncMOC.performGroupedBlockAndWait {
-            let request = self.sut.nextRequest(for: self.apiVersion)!
+
             guard let payload = Payload.PaginationStatus(request) else {
                 return XCTFail("Invalid Payload")
             }
@@ -294,9 +306,14 @@ class ConnectionRequestStrategyTests: MessagingTestBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
 
-    func fetchConnectionsDuringSlowSyncWithPermanentError() {
+    func fetchConnectionsDuringSlowSyncWithPermanentError() async {
+        guard let request = await self.sut.nextRequest(for: self.apiVersion) else {
+            XCTFail("missing expected request")
+            return
+        }
+
         syncMOC.performGroupedBlockAndWait {
-            let request = self.sut.nextRequest(for: self.apiVersion)!
+
             request.complete(with: self.responseFailure(code: 404, label: .noEndpoint, apiVersion: self.apiVersion))
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))

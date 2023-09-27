@@ -135,7 +135,7 @@ extension LinkPreviewAssetUploadRequestStrategyTests {
             self.process(self.sut, message: message)
 
             // WHEN
-            let request = self.sut.nextRequest(for: .v0)
+            let request = await self.sut.nextRequest(for: .v0)
 
             // THEN
             XCTAssertNotNil(request)
@@ -154,7 +154,7 @@ extension LinkPreviewAssetUploadRequestStrategyTests {
             self.mockApplicationStatus.mockSynchronizationState = .unauthenticated
 
             // WHEN
-            let request = self.sut.nextRequest(for: .v0)
+            let request = await self.sut.nextRequest(for: .v0)
 
             // THEN
             XCTAssertNil(request)
@@ -170,7 +170,7 @@ extension LinkPreviewAssetUploadRequestStrategyTests {
             self.process(self.sut, message: message)
 
             // WHEN
-            let request = self.sut.nextRequest(for: .v0)
+            let request = await self.sut.nextRequest(for: .v0)
 
             // THEN
             XCTAssertNil(request)
@@ -186,7 +186,7 @@ extension LinkPreviewAssetUploadRequestStrategyTests {
             self.process(self.sut, message: message)
 
             // WHEN
-            let request = self.sut.nextRequest(for: .v0)
+            let request = await self.sut.nextRequest(for: .v0)
 
             // THEN
             XCTAssertNil(request)
@@ -201,7 +201,8 @@ extension LinkPreviewAssetUploadRequestStrategyTests {
             self.process(self.sut, message: message)
 
             // WHEN & THEN
-            XCTAssertNil(self.sut.nextRequest(for: .v0))
+            let result = await self.sut.nextRequest(for: .v0)
+        XCTAssertNil(result)
         }
     }
 
@@ -227,7 +228,7 @@ extension LinkPreviewAssetUploadRequestStrategyTests {
             self.syncMOC.saveOrRollback()
 
             self.process(self.sut, message: message)
-            let request = self.sut.nextRequest(for: .v0)
+            let request = await self.sut.nextRequest(for: .v0)
 
             // WHEN
             self.completeRequest(message, request: request, assetId: assetId, token: token, domain: domain)
@@ -258,7 +259,7 @@ extension LinkPreviewAssetUploadRequestStrategyTests {
             self.syncMOC.saveOrRollback()
 
             self.process(self.sut, message: message)
-            let request = self.sut.nextRequest(for: .v0)
+            let request = await self.sut.nextRequest(for: .v0)
 
             let assetId = "id123"
             let token = "qJ8JPFLsiYGx7fnrlL+7Yk9="
@@ -301,7 +302,7 @@ extension LinkPreviewAssetUploadRequestStrategyTests {
             self.syncMOC.saveOrRollback()
 
             self.process(self.sut, message: message)
-            let request = self.sut.nextRequest(for: .v0)
+            let request = await self.sut.nextRequest(for: .v0)
 
             XCTAssertTrue(message.isEphemeral)
 

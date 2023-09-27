@@ -133,10 +133,11 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
         }
         self.syncMOC.performGroupedAndWait { _ in
             // THEN
-            guard let request = self.sut.nextRequest(for: self.apiVersion) else { XCTFail("No request generated"); return }
+            guard let request = await self.sut.nextRequest(for: self.apiVersion) else { XCTFail("No request generated"); return }
             XCTAssertEqual(request.path, "/assets/v3/\(assetID)")
             XCTAssertEqual(request.method, ZMTransportRequestMethod.methodGET)
-            XCTAssertNil(self.sut.nextRequest(for: self.apiVersion))
+            let result = await self.sut.nextRequest(for: self.apiVersion)
+            XCTAssertNil(result)
         }
     }
 
@@ -158,10 +159,11 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
         }
         self.syncMOC.performGroupedAndWait { _ in
             // THEN
-            guard let request = self.sut.nextRequest(for: self.apiVersion) else { XCTFail("No request generated"); return }
+            guard let request = await self.sut.nextRequest(for: self.apiVersion) else { XCTFail("No request generated"); return }
             XCTAssertEqual(request.path, "/assets/v3/\(assetID)")
             XCTAssertEqual(request.method, ZMTransportRequestMethod.methodGET)
-            XCTAssertNil(self.sut.nextRequest(for: self.apiVersion))
+            let result = await self.sut.nextRequest(for: self.apiVersion)
+            XCTAssertNil(result)
         }
     }
 
@@ -185,10 +187,11 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
         }
         self.syncMOC.performGroupedAndWait { _ in
             // THEN
-            guard let request = self.sut.nextRequest(for: self.apiVersion) else { XCTFail("No request generated"); return }
+            guard let request = await self.sut.nextRequest(for: self.apiVersion) else { XCTFail("No request generated"); return }
             XCTAssertEqual(request.path, "/v1/assets/v4/\(assetDomain)/\(assetID)")
             XCTAssertEqual(request.method, ZMTransportRequestMethod.methodGET)
-            XCTAssertNil(self.sut.nextRequest(for: self.apiVersion))
+            let result = await self.sut.nextRequest(for: self.apiVersion)
+            XCTAssertNil(result)
         }
     }
 
@@ -212,10 +215,11 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
         }
         self.syncMOC.performGroupedAndWait { _ in
             // THEN
-            guard let request = self.sut.nextRequest(for: self.apiVersion) else { XCTFail("No request generated"); return }
+            guard let request = await self.sut.nextRequest(for: self.apiVersion) else { XCTFail("No request generated"); return }
             XCTAssertEqual(request.path, "/v1/assets/v4/\(assetDomain)/\(assetID)")
             XCTAssertEqual(request.method, ZMTransportRequestMethod.methodGET)
-            XCTAssertNil(self.sut.nextRequest(for: self.apiVersion))
+            let result = await self.sut.nextRequest(for: self.apiVersion)
+            XCTAssertNil(result)
         }
     }
 
@@ -240,7 +244,8 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
         // THEN
         self.syncMOC.performGroupedAndWait { _ in
             // THEN
-            XCTAssertNil(self.sut.nextRequest(for: self.apiVersion))
+            let result = await self.sut.nextRequest(for: self.apiVersion)
+            XCTAssertNil(result)
         }
     }
 
@@ -262,7 +267,8 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
         }
         self.syncMOC.performGroupedAndWait { _ in
             // THEN
-            XCTAssertNil(self.sut.nextRequest(for: self.apiVersion))
+            let result = await self.sut.nextRequest(for: self.apiVersion)
+            XCTAssertNil(result)
         }
     }
 
@@ -286,7 +292,8 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
         }
         self.syncMOC.performGroupedAndWait { _ in
             // THEN
-            XCTAssertNil(self.sut.nextRequest(for: self.apiVersion))
+            let result = await self.sut.nextRequest(for: self.apiVersion)
+            XCTAssertNil(result)
         }
     }
 
@@ -317,7 +324,7 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
         }
         self.syncMOC.performGroupedAndWait { _ in
             // THEN
-            guard let request = self.sut.nextRequest(for: self.apiVersion) else { XCTFail("No request generated"); return }
+            guard let request = await self.sut.nextRequest(for: self.apiVersion) else { XCTFail("No request generated"); return }
             let response = ZMTransportResponse(imageData: encrypted, httpStatus: 200, transportSessionError: nil, headers: nil, apiVersion: self.apiVersion.rawValue)
 
             // WHEN
@@ -351,7 +358,7 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
 
         self.syncMOC.performGroupedAndWait { _ in
             // THEN
-            guard let request = self.sut.nextRequest(for: self.apiVersion) else { XCTFail("No request generated"); return }
+            guard let request = await self.sut.nextRequest(for: self.apiVersion) else { XCTFail("No request generated"); return }
             let response = ZMTransportResponse(imageData: .secureRandomData(length: 256), httpStatus: 400, transportSessionError: nil, headers: nil, apiVersion: self.apiVersion.rawValue)
             // WHEN
             request.complete(with: response)

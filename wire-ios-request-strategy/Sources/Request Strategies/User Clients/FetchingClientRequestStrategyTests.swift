@@ -129,7 +129,7 @@ extension FetchClientRequestStrategyTests {
             // WHEN
             client.needsToBeUpdatedFromBackend = true
             self.sut.objectsDidChange(clientSet)
-            let request = self.sut.nextRequest(for: self.apiVersion)
+            let request = await self.sut.nextRequest(for: self.apiVersion)
             request?.complete(with: ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: 200, transportSessionError: nil, apiVersion: self.apiVersion.rawValue))
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
@@ -154,7 +154,7 @@ extension FetchClientRequestStrategyTests {
             // WHEN
             client.needsToBeUpdatedFromBackend = true
             self.sut.objectsDidChange(clientSet)
-            let request = self.sut.nextRequest(for: self.apiVersion)
+            let request = await self.sut.nextRequest(for: self.apiVersion)
             request?.complete(with: ZMTransportResponse(payload: nil, httpStatus: 404, transportSessionError: nil, apiVersion: self.apiVersion.rawValue))
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
@@ -171,7 +171,7 @@ extension FetchClientRequestStrategyTests {
 
 extension FetchClientRequestStrategyTests {
 
-    func testThatItCreatesABatchRequest_WhenUserClientNeedsToBeUpdatedFromBackend_AndDomainIsAvailble() {
+    func testThatItCreatesABatchRequest_WhenUserClientNeedsToBeUpdatedFromBackend_AndDomainIsAvailble() async {
         syncMOC.performGroupedBlockAndWait {
             // GIVEN
             self.apiVersion = .v1
@@ -183,13 +183,13 @@ extension FetchClientRequestStrategyTests {
             // WHEN
             client.needsToBeUpdatedFromBackend = true
             self.sut.objectsDidChange(clientSet)
-
-            // THEN
-            XCTAssertEqual(self.sut.nextRequest(for: self.apiVersion)?.path, "/v1/users/list-clients/v2")
         }
+            // THEN
+            let request = await self.sut.nextRequest(for: self.apiVersion)
+            XCTAssertEqual(request?.path, "/v1/users/list-clients/v2")
     }
 
-    func testThatItUpdatesTheClient_WhenReceivingTheBatchResponse() {
+    func testThatItUpdatesTheClient_WhenReceivingTheBatchResponse() async {
         apiVersion = .v1
 
         var client: UserClient!
@@ -215,14 +215,14 @@ extension FetchClientRequestStrategyTests {
             // WHEN
             client.needsToBeUpdatedFromBackend = true
             self.sut.objectsDidChange(clientSet)
-            let request = self.sut.nextRequest(for: self.apiVersion)
+        }
+            let request = await self.sut.nextRequest(for: self.apiVersion)
             let response = ZMTransportResponse(payload: payloadAsString as ZMTransportData,
                                                httpStatus: 200,
                                                transportSessionError: nil,
                                                apiVersion: self.apiVersion.rawValue)
 
             request?.complete(with: response)
-        }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // THEN
@@ -250,7 +250,7 @@ extension FetchClientRequestStrategyTests {
             // WHEN
             client.needsToBeUpdatedFromBackend = true
             self.sut.objectsDidChange(clientSet)
-            let request = self.sut.nextRequest(for: self.apiVersion)
+            let request = await self.sut.nextRequest(for: self.apiVersion)
             request?.complete(with: ZMTransportResponse(payload: payloadAsString as ZMTransportData,
                                                         httpStatus: 200,
                                                         transportSessionError: nil,
@@ -286,7 +286,7 @@ extension FetchClientRequestStrategyTests {
             // WHEN
             existingClient.needsToBeUpdatedFromBackend = true
             self.sut.objectsDidChange(existingClientSet)
-            let request = self.sut.nextRequest(for: self.apiVersion)
+            let request = await self.sut.nextRequest(for: self.apiVersion)
             request?.complete(with: ZMTransportResponse(payload: payloadAsString as ZMTransportData,
                                                         httpStatus: 200,
                                                         transportSessionError: nil,
@@ -349,7 +349,7 @@ extension FetchClientRequestStrategyTests {
 
         // WHEN
         self.syncMOC.performGroupedBlockAndWait {
-            let request = self.sut.nextRequest(for: self.apiVersion)
+            let request = await self.sut.nextRequest(for: self.apiVersion)
             request?.complete(with: response)
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
@@ -384,7 +384,7 @@ extension FetchClientRequestStrategyTests {
 
         // WHEN
         self.syncMOC.performGroupedBlockAndWait {
-            let request = self.sut.nextRequest(for: self.apiVersion)
+            let request = await self.sut.nextRequest(for: self.apiVersion)
             request?.complete(with: response)
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
@@ -415,7 +415,7 @@ extension FetchClientRequestStrategyTests {
 
         // WHEN
         self.syncMOC.performGroupedBlockAndWait {
-            let request = self.sut.nextRequest(for: self.apiVersion)
+            let request = await self.sut.nextRequest(for: self.apiVersion)
             request?.complete(with: response)
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
@@ -439,7 +439,7 @@ extension FetchClientRequestStrategyTests {
 
         self.syncMOC.performGroupedBlockAndWait {
             // WHEN
-            let request = self.sut.nextRequest(for: self.apiVersion)
+            let request = await self.sut.nextRequest(for: self.apiVersion)
 
             // THEN
             if let request = request {
@@ -466,7 +466,7 @@ extension FetchClientRequestStrategyTests {
 
         self.syncMOC.performGroupedBlockAndWait {
             // WHEN
-            let request = self.sut.nextRequest(for: self.apiVersion)
+            let request = await self.sut.nextRequest(for: self.apiVersion)
 
             // THEN
             if let request = request {
@@ -493,7 +493,7 @@ extension FetchClientRequestStrategyTests {
 
         self.syncMOC.performGroupedBlockAndWait {
             // WHEN
-            let request = self.sut.nextRequest(for: self.apiVersion)
+            let request = await self.sut.nextRequest(for: self.apiVersion)
 
             // THEN
             if let request = request {
@@ -524,7 +524,7 @@ extension FetchClientRequestStrategyTests {
 
         // WHEN
         self.syncMOC.performGroupedBlockAndWait {
-            let request = self.sut.nextRequest(for: self.apiVersion)
+            let request = await self.sut.nextRequest(for: self.apiVersion)
             request?.complete(with: response)
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
@@ -548,7 +548,7 @@ extension FetchClientRequestStrategyTests {
 
         // WHEN
         self.syncMOC.performGroupedBlockAndWait {
-            let request = self.sut.nextRequest(for: self.apiVersion)
+            let request = await self.sut.nextRequest(for: self.apiVersion)
             request?.complete(with: response)
         }
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
@@ -575,7 +575,7 @@ extension FetchClientRequestStrategyTests {
 
         // WHEN
         self.syncMOC.performGroupedBlockAndWait {
-            let request = self.sut.nextRequest(for: self.apiVersion)
+            let request = await self.sut.nextRequest(for: self.apiVersion)
             request?.complete(with: response)
         }
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
@@ -606,7 +606,7 @@ extension FetchClientRequestStrategyTests {
 
         // WHEN
         self.syncMOC.performGroupedBlockAndWait {
-            let request = self.sut.nextRequest(for: self.apiVersion)
+            let request = await self.sut.nextRequest(for: self.apiVersion)
             request?.complete(with: response)
         }
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
@@ -632,7 +632,7 @@ extension FetchClientRequestStrategyTests {
 
         // WHEN
         self.syncMOC.performGroupedBlockAndWait {
-            let request = self.sut.nextRequest(for: self.apiVersion)
+            let request = await self.sut.nextRequest(for: self.apiVersion)
             request?.complete(with: response)
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
@@ -669,7 +669,7 @@ extension FetchClientRequestStrategyTests {
             }
 
             // THEN
-            let request = self.sut.nextRequest(for: self.apiVersion)
+            let request = await self.sut.nextRequest(for: self.apiVersion)
             if let request = request {
                 completion(request)
             } else {
