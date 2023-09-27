@@ -93,7 +93,9 @@ extension UIAlertController {
         optionTwo: String,
         completion: @escaping (Bool) -> Void
     ) -> UIAlertController {
+
         let controller = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+
         let optionOneAction = UIAlertAction(title: optionOne, style: .default) { _ in
             completion(true)
         }
@@ -104,7 +106,9 @@ extension UIAlertController {
 
         controller.addAction(optionOneAction)
         controller.addAction(optionTwoAction)
-        controller.addAction(.cancel { completion(false) })
+        controller.addAction(.cancel {
+            controller.dismiss(animated: true)
+        })
 
         return controller
     }
