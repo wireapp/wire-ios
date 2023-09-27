@@ -299,14 +299,6 @@ class UserProfileByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
             return
         }
 
-        // TODO: [John] proper federation error handling.
-        // This is a quick fix to make the app somewhat usable when
-        // a remote federated backend is down.
-        if response.httpStatus == 533 {
-            markUserProfilesAsUnavailable(identifiers)
-            return
-        }
-
         guard let apiVersion = APIVersion(rawValue: response.apiVersion) else { return }
         switch apiVersion {
         case .v0, .v1, .v2, .v3:
