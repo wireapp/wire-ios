@@ -114,7 +114,14 @@ public class ConnectionRequestStrategy: AbstractRequestStrategy, ZMRequestGenera
     }
 
     private func createConnectionsAndFinishSyncPhase(_ connections: [Payload.Connection], hasMore: Bool) {
-        connections.forEach { $0.updateOrCreate(in: managedObjectContext) }
+        let processor = ConnectionPayloadProcessor()
+
+        for connection in connections {
+            processor.updateOrCreateConnection(
+                from: connection,
+                in: managedObjectContext
+            )
+        }
 
         if !hasMore {
             syncProgress.finishCurrentSyncPhase(phase: .fetchingConnections)
@@ -205,6 +212,8 @@ class ConnectionByIDTranscoder: IdentifierObjectSyncTranscoder {
     let decoder: JSONDecoder = .defaultDecoder
     let encoder: JSONEncoder = .defaultEncoder
 
+    private let processor = ConnectionPayloadProcessor()
+
     init(context: NSManagedObjectContext) {
         self.context = context
     }
@@ -238,7 +247,10 @@ class ConnectionByIDTranscoder: IdentifierObjectSyncTranscoder {
             return
         }
 
-        payload.update(connection, in: context)
+        processor.updateOrCreateConnection(
+            from: payload,
+            in: context
+        )
     }
 
 }
@@ -251,6 +263,8 @@ class ConnectionByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
     let context: NSManagedObjectContext
     let decoder: JSONDecoder = .defaultDecoder
     let encoder: JSONEncoder = .defaultEncoder
+
+    private let processor = ConnectionPayloadProcessor()
 
     init(context: NSManagedObjectContext) {
         self.context = context
@@ -290,7 +304,10 @@ class ConnectionByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
             return
         }
 
-        payload.update(connection, in: context)
+        processor.updateOrCreateConnection(
+            from: payload,
+            in: context
+        )
     }
 
 }

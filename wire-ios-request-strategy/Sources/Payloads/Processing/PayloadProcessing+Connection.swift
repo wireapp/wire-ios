@@ -62,47 +62,17 @@ extension Payload.ConnectionStatus {
     }
 }
 
-extension Payload.Connection {
-
-    func updateOrCreate(in context: NSManagedObjectContext) {
-        guard let userID = to ?? qualifiedTo?.uuid else {
-            Logging.eventProcessing.error("Missing to field in connection payload, aborting...")
-            return
-        }
-
-        let connection = ZMConnection.fetchOrCreate(userID: userID, domain: qualifiedTo?.domain, in: context)
-        update(connection, in: context)
-    }
-
-    func update(_ connection: ZMConnection, in context: NSManagedObjectContext) {
-        guard
-            let conversationID = conversationID ?? qualifiedConversationID?.uuid
-        else {
-            Logging.eventProcessing.error("Missing conversation field in connection payload, aborting...")
-            return
-        }
-
-        let conversation = ZMConversation.fetchOrCreate(with: conversationID,
-                                                        domain: qualifiedConversationID?.domain,
-                                                        in: context)
-
-        conversation.needsToBeUpdatedFromBackend = true
-        conversation.lastModifiedDate = self.lastUpdate
-        conversation.addParticipantAndUpdateConversationState(user: connection.to, role: nil)
-
-        connection.conversation = conversation
-        connection.status = self.status.internalStatus
-        connection.lastUpdateDateInGMT = self.lastUpdate
-    }
-
-}
 
 // MARK: - Connection events
 
 extension Payload.UserConnectionEvent {
 
     func process(in context: NSManagedObjectContext) {
-        connection.updateOrCreate(in: context)
+        let processor = ConnectionPayloadProcessor()
+        processor.updateOrCreateConnection(
+            from: connection,
+            in: context
+        )
     }
 
 }
