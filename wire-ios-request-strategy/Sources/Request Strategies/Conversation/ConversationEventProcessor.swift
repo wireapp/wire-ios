@@ -127,9 +127,17 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
                     }
 
                 case .conversationMLSWelcome:
-                    guard let data = event.payloadData else { break }
-                    let conversationEvent = Payload.UpdateConversationMLSWelcome(data)
-                    conversationEvent?.process(in: context, originalEvent: event)
+                    guard
+                        let data = event.payloadData,
+                        let payload = Payload.UpdateConversationMLSWelcome(data)
+                    else {
+                        break
+                    }
+
+                    MLSEventProcessor.shared.process(
+                        welcomeMessage: payload.data,
+                        in: context
+                    )
 
                 default:
                     break
