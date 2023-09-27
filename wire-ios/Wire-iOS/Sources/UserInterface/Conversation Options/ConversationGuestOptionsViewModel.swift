@@ -130,7 +130,7 @@ final class ConversationGuestOptionsViewModel {
                     rows.append(.revokeLink { [weak self] _ in self?.revokeLink() })
                 } else {
                     rows.append(.createLinkButton { [weak self] view in
-                        self?.createGuestLink(view: view) })
+                        self?.showAlertForGuestLink(from: view) })
                 }
             }
             return rows
