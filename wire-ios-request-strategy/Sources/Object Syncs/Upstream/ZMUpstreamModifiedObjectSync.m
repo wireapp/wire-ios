@@ -271,31 +271,26 @@ ZM_EMPTY_ASSERTING_INIT();
         ZM_STRONG(request);
         id <ZMUpstreamTranscoder> localTranscoder = self.transcoder;
         NSSet *keysToParse = [self.updatedObjects keysToParseAfterSyncingToken:token];
-        //  self.remoteMonitoring = [[RemoteMonitoring alloc] initWithLevel: LevelInfo];
         if(response.result == ZMTransportResponseStatusSuccess) {
             BOOL transcoderNeedsMoreRequests = [localTranscoder updateUpdatedObject:objectWithKeys.object requestUserInfo:userInfo response:response keysToParse:keysToParse];
             BOOL needsMoreRequests = (keysToParse.count > 0) && transcoderNeedsMoreRequests;
             if (needsMoreRequests) {
                 [self.updatedObjects didNotFinishToSynchronizeToken:token];
-                NSLog(@"qqq didNotFinishToSynchronizeToken");
             } else {
                 [self.updatedObjects didSynchronizeToken:token];
-                NSLog(@"qqq didSynchronizeToken");
             }
         }
         else if (response.result ==  ZMTransportResponseStatusCancelled) {
-//            NSLog(@"qqq result = CANCELLED");
-            NSLog(@"qqq CANCELLED token: %@", token);
             [self.updatedObjects didFailToSynchronizeToken:token];
+            if ([localTranscoder respondsToSelector:@selector(requestExpiredForObject:forKeys:)]) {
+                [localTranscoder requestExpiredForObject:objectWithKeys.object forKeys:objectWithKeys.keysToSync];
+            }
         }
         else if (response.result == ZMTransportResponseStatusTemporaryError ||
                  response.result == ZMTransportResponseStatusTryAgainLater) {
-//            NSLog(@"qqq result = TRY AGAIN LATER");
-            NSLog(@"qqq TRY AGAIN LATER token: %@", token);
             [self.updatedObjects didNotFinishToSynchronizeToken:token];
         }
         else if (response.result == ZMTransportResponseStatusExpired) {
-            NSLog(@"qqq result = expired");
             [self.updatedObjects didFailToSynchronizeToken:token];
             if ([localTranscoder respondsToSelector:@selector(requestExpiredForObject:forKeys:)]) {
                 [localTranscoder requestExpiredForObject:objectWithKeys.object forKeys:objectWithKeys.keysToSync];

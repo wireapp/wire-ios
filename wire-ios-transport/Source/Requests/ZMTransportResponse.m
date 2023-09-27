@@ -121,7 +121,6 @@ static NSString* ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_NETWORK;
 - (ZMTransportResponseStatus)result
 {
     if (self.transportSessionError) {
-        NSLog(@"qqq error domain: %@", self.transportSessionError);
         if ([self.transportSessionError.domain isEqualToString:ZMTransportSessionErrorDomain]) {
             switch ((ZMTransportSessionErrorCode) self.transportSessionError.code) {
                 case ZMTransportSessionErrorCodeRequestExpired:
