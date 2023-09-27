@@ -17,51 +17,6 @@
 
 import Foundation
 
-extension Payload.ConnectionStatus {
-
-    var internalStatus: ZMConnectionStatus {
-        switch self {
-        case .sent:
-            return .sent
-        case .accepted:
-            return .accepted
-        case .pending:
-            return .pending
-        case .blocked:
-            return .blocked
-        case .cancelled:
-            return .cancelled
-        case .ignored:
-            return .ignored
-        case .missingLegalholdConsent:
-            return .blockedMissingLegalholdConsent
-        }
-    }
-
-    init?(_ status: ZMConnectionStatus) {
-        switch status {
-        case .invalid:
-            return nil
-        case .accepted:
-            self = .accepted
-        case .pending:
-            self = .pending
-        case .ignored:
-            self = .ignored
-        case .blocked:
-            self = .blocked
-        case .sent:
-            self = .sent
-        case .cancelled:
-            self = .cancelled
-        case .blockedMissingLegalholdConsent:
-            self = .missingLegalholdConsent
-        @unknown default:
-            return nil
-        }
-    }
-}
-
 
 // MARK: - Connection events
 
