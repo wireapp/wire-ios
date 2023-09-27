@@ -365,6 +365,7 @@ final class ConversationOptionsViewControllerTests: ZMSnapshotTestCase {
     }
 
     func testThatGuestLinkWithOptionalPasswordAlertShowIfApiVersionIsFourAndAbove() {
+        // GIVEN
         BackendInfo.apiVersion = .v4
         let config = MockOptionsViewModelConfiguration(allowGuests: true)
         let viewModel = ConversationGuestOptionsViewModel(configuration: config)
@@ -373,13 +374,15 @@ final class ConversationOptionsViewControllerTests: ZMSnapshotTestCase {
         viewModel.delegate = mock
 
         mock.viewModelSourceViewConfirmGuestLinkWithOptionalPassword_MockValue = UIAlertController()
-        // Show the alert
+        // WHEN
         let sut = viewModel.createGuestLink()
 
+        // THEN
         XCTAssertNotNil(sut)
     }
 
     func testThatGuestLinkWithOptionalPasswordAlertIsNotShownIfApiVersionIsBelowFour() {
+        // GIVEN
         BackendInfo.apiVersion = .v3
         let config = MockOptionsViewModelConfiguration(allowGuests: true)
         let viewModel = ConversationGuestOptionsViewModel(configuration: config)
@@ -388,9 +391,10 @@ final class ConversationOptionsViewControllerTests: ZMSnapshotTestCase {
         viewModel.delegate = mock
 
         mock.viewModelSourceViewConfirmGuestLinkWithOptionalPassword_MockValue = nil
-        // Show the alert
+        // WHEN
         let sut = viewModel.createGuestLink()
 
+        // THEN
         XCTAssertNil(sut)
     }
 
