@@ -965,6 +965,9 @@
 "group_details.conversation_admins_header.title" = "Group admins";
 "group_details.conversation_members_header.title" = "Group members";
 
+// Secured Guest link with password
+"group_details.guest_options_create_password_secured_link.title" = "Create password secured link";
+
 
 // Legal hold details
 
