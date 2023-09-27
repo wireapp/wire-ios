@@ -65,20 +65,17 @@ class MockConversationGuestOptionsViewModelDelegate: ConversationGuestOptionsVie
 
     // MARK: - viewModel
 
-    var viewModelSourceViewConfirmGuestLinkWithOptionalPassword_Invocations: [(viewModel: ConversationGuestOptionsViewModel, sourceView: UIView?, completion: (Bool) -> Void)] = []
-    var viewModelSourceViewConfirmGuestLinkWithOptionalPassword_MockMethod: ((ConversationGuestOptionsViewModel, UIView?, @escaping (Bool) -> Void) -> UIAlertController?)?
-    var viewModelSourceViewConfirmGuestLinkWithOptionalPassword_MockValue: UIAlertController??
+    var viewModelSourceViewPresentGuestLinkTypeSelection_Invocations: [(viewModel: ConversationGuestOptionsViewModel, sourceView: UIView?, completion: (GuestLinkType) -> Void)] = []
+    var viewModelSourceViewPresentGuestLinkTypeSelection_MockMethod: ((ConversationGuestOptionsViewModel, UIView?, @escaping (GuestLinkType) -> Void) -> Void)?
 
-    func viewModel(_ viewModel: ConversationGuestOptionsViewModel, sourceView: UIView?, confirmGuestLinkWithOptionalPassword completion: @escaping (Bool) -> Void) -> UIAlertController? {
-        viewModelSourceViewConfirmGuestLinkWithOptionalPassword_Invocations.append((viewModel: viewModel, sourceView: sourceView, completion: completion))
+    func viewModel(_ viewModel: ConversationGuestOptionsViewModel, sourceView: UIView?, presentGuestLinkTypeSelection completion: @escaping (GuestLinkType) -> Void) {
+        viewModelSourceViewPresentGuestLinkTypeSelection_Invocations.append((viewModel: viewModel, sourceView: sourceView, completion: completion))
 
-        if let mock = viewModelSourceViewConfirmGuestLinkWithOptionalPassword_MockMethod {
-            return mock(viewModel, sourceView, completion)
-        } else if let mock = viewModelSourceViewConfirmGuestLinkWithOptionalPassword_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `viewModelSourceViewConfirmGuestLinkWithOptionalPassword`")
+        guard let mock = viewModelSourceViewPresentGuestLinkTypeSelection_MockMethod else {
+            fatalError("no mock for `viewModelSourceViewPresentGuestLinkTypeSelection`")
         }
+
+        mock(viewModel, sourceView, completion)
     }
 
     // MARK: - viewModel
@@ -112,5 +109,4 @@ class MockConversationGuestOptionsViewModelDelegate: ConversationGuestOptionsVie
     }
 
 }
-
 // swiftlint:enable variable_name
