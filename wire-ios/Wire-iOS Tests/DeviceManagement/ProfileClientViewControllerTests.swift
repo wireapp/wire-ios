@@ -44,31 +44,21 @@ final class ProfileClientViewControllerTests: ZMSnapshotTestCase {
         super.tearDown()
     }
 
-    func verify() {
+    func setupProfileClientViewController(userInterfaceStyle: UIUserInterfaceStyle) {
         sut = ProfileClientViewController(client: client)
-        sut.overrideUserInterfaceStyle = .light
+        sut.overrideUserInterfaceStyle = userInterfaceStyle
         sut.spinner.stopAnimating()
         sut.spinner.isHidden = true
         sut.showBackButton = false
-
-        verify(view: sut.view, tolerance: 0.1)
-    }
-
-    func verifyInDarkMode() {
-        sut = ProfileClientViewController(client: client)
-        sut.overrideUserInterfaceStyle = .dark
-        sut.spinner.stopAnimating()
-        sut.spinner.isHidden = true
-        sut.showBackButton = false
-
-        verify(view: sut.view, tolerance: 0.1)
     }
 
     func testTestForLightTheme() {
-        verify()
+        setupProfileClientViewController(userInterfaceStyle: .light)
+        verify(matching: sut)
     }
 
     func testTestForDarkTheme() {
-        verifyInDarkMode()
+        setupProfileClientViewController(userInterfaceStyle: .dark)
+        verify(matching: sut)
     }
 }

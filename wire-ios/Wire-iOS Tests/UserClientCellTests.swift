@@ -19,7 +19,7 @@
 import XCTest
 @testable import Wire
 
-class UserClientCellTests: ZMSnapshotTestCase {
+class UserClientCellTests: BaseSnapshotTestCase {
 
     override func setUp() {
         super.setUp()
@@ -37,7 +37,7 @@ class UserClientCellTests: ZMSnapshotTestCase {
         client.remoteIdentifier = "102030405060708090"
         client.deviceClass = .tablet
 
-        verifyInAllColorSchemes(view: cell({ (cell) in
+        verifyInAllColorSchemes(matching: cell({ (cell) in
             cell.configure(with: client)
         }))
     }
@@ -47,7 +47,7 @@ class UserClientCellTests: ZMSnapshotTestCase {
         client.remoteIdentifier = "807060504030201"
         client.deviceClass = .desktop
 
-        verifyInAllColorSchemes(view: cell({ (cell) in
+        verifyInAllColorSchemes(matching: cell({ (cell) in
             cell.configure(with: client)
         }))
     }
@@ -57,7 +57,7 @@ class UserClientCellTests: ZMSnapshotTestCase {
         client.remoteIdentifier = "7060504030201"
         client.deviceClass = .desktop
 
-        verifyInAllColorSchemes(view: cell({ (cell) in
+        verifyInAllColorSchemes(matching: cell({ (cell) in
             cell.configure(with: client)
         }))
     }
@@ -68,7 +68,7 @@ class UserClientCellTests: ZMSnapshotTestCase {
         client.deviceClass = .desktop
         client.verified = true
 
-        verifyInAllColorSchemes(view: cell({ (cell) in
+        verifyInAllColorSchemes(matching: cell({ (cell) in
             cell.configure(with: client)
         }))
     }
@@ -79,7 +79,7 @@ class UserClientCellTests: ZMSnapshotTestCase {
         client.deviceClass = .legalHold
         client.verified = true
 
-        verifyInAllColorSchemes(view: cell({ (cell) in
+        verifyInAllColorSchemes(matching: cell({ (cell) in
             cell.configure(with: client)
         }))
     }
