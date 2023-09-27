@@ -167,7 +167,6 @@
 		16E5F6DD26EF1E3200F35FBA /* Payload+Conversation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16E5F6DC26EF1E3200F35FBA /* Payload+Conversation.swift */; };
 		16E5F71826EF4DBF00F35FBA /* ConversationRequestStrategyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16E5F71726EF4DBF00F35FBA /* ConversationRequestStrategyTests.swift */; };
 		16E70F5B270DCCB900718E5D /* UpdateConnectionActionHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16E70F5A270DCCB900718E5D /* UpdateConnectionActionHandlerTests.swift */; };
-		16E70F6E270EE9F800718E5D /* PayloadProcessing+MessageSendingStatusTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16A4891526849258001F9127 /* PayloadProcessing+MessageSendingStatusTests.swift */; };
 		16E70F7E270EEA5400718E5D /* PayloadProcessing+UserProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16E70F7D270EEA5400718E5D /* PayloadProcessing+UserProfile.swift */; };
 		16E70F8A270EEB2300718E5D /* PayloadProcessing+Conversation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16E70F89270EEB2300718E5D /* PayloadProcessing+Conversation.swift */; };
 		16E70F8E270EEBB700718E5D /* PayloadProcessing+MessageSendingStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16E70F8D270EEBB700718E5D /* PayloadProcessing+MessageSendingStatus.swift */; };
@@ -243,6 +242,8 @@
 		EE8807932AC40AB100278E3C /* ConnectionPayloadProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE8807922AC40AB100278E3C /* ConnectionPayloadProcessorTests.swift */; };
 		EE8807952AC40CA600278E3C /* UserProfilePayloadProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE8807942AC40CA600278E3C /* UserProfilePayloadProcessor.swift */; };
 		EE8807972AC40E1400278E3C /* UserProfilePayloadProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE8807962AC40E1400278E3C /* UserProfilePayloadProcessorTests.swift */; };
+		EE8807992AC423A200278E3C /* MessageSendingStatusPayloadProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE8807982AC423A200278E3C /* MessageSendingStatusPayloadProcessor.swift */; };
+		EE88079B2AC425CB00278E3C /* MessageSendingStatusPayloadProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE88079A2AC425CB00278E3C /* MessageSendingStatusPayloadProcessorTests.swift */; };
 		EE8DC53728C0EFA700AC4E3D /* FetchUserClientsActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE8DC53628C0EFA700AC4E3D /* FetchUserClientsActionHandler.swift */; };
 		EE8DC53928C0F04B00AC4E3D /* FetchUserClientsActionHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE8DC53828C0F04B00AC4E3D /* FetchUserClientsActionHandlerTests.swift */; };
 		EE90C29E282E785800474379 /* PushTokenStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE90C29D282E785800474379 /* PushTokenStrategy.swift */; };
@@ -582,7 +583,6 @@
 		16972DEC2668E699008AF3A2 /* UserProfileRequestStrategyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileRequestStrategyTests.swift; sourceTree = "<group>"; };
 		169BA1CA25E9507600374343 /* Payload+Coding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Payload+Coding.swift"; sourceTree = "<group>"; };
 		169BA1CC25E95DC900374343 /* Payload+Processing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Payload+Processing.swift"; sourceTree = "<group>"; };
-		16A4891526849258001F9127 /* PayloadProcessing+MessageSendingStatusTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PayloadProcessing+MessageSendingStatusTests.swift"; sourceTree = "<group>"; };
 		16A489192685CECC001F9127 /* ProteusMessageSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProteusMessageSync.swift; sourceTree = "<group>"; };
 		16A48935268A0665001F9127 /* ModifiedKeyObjectSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModifiedKeyObjectSync.swift; sourceTree = "<group>"; };
 		16A48939268A080E001F9127 /* InsertedObjectSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InsertedObjectSync.swift; sourceTree = "<group>"; };
@@ -675,6 +675,8 @@
 		EE8807922AC40AB100278E3C /* ConnectionPayloadProcessorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionPayloadProcessorTests.swift; sourceTree = "<group>"; };
 		EE8807942AC40CA600278E3C /* UserProfilePayloadProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfilePayloadProcessor.swift; sourceTree = "<group>"; };
 		EE8807962AC40E1400278E3C /* UserProfilePayloadProcessorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfilePayloadProcessorTests.swift; sourceTree = "<group>"; };
+		EE8807982AC423A200278E3C /* MessageSendingStatusPayloadProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageSendingStatusPayloadProcessor.swift; sourceTree = "<group>"; };
+		EE88079A2AC425CB00278E3C /* MessageSendingStatusPayloadProcessorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageSendingStatusPayloadProcessorTests.swift; sourceTree = "<group>"; };
 		EE8DC53628C0EFA700AC4E3D /* FetchUserClientsActionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchUserClientsActionHandler.swift; sourceTree = "<group>"; };
 		EE8DC53828C0F04B00AC4E3D /* FetchUserClientsActionHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchUserClientsActionHandlerTests.swift; sourceTree = "<group>"; };
 		EE90C29D282E785800474379 /* PushTokenStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushTokenStrategy.swift; sourceTree = "<group>"; };
@@ -1182,13 +1184,14 @@
 				EE8807922AC40AB100278E3C /* ConnectionPayloadProcessorTests.swift */,
 				EE8807942AC40CA600278E3C /* UserProfilePayloadProcessor.swift */,
 				EE8807962AC40E1400278E3C /* UserProfilePayloadProcessorTests.swift */,
+				EE8807982AC423A200278E3C /* MessageSendingStatusPayloadProcessor.swift */,
+				EE88079A2AC425CB00278E3C /* MessageSendingStatusPayloadProcessorTests.swift */,
 				63DA339D286DF6DA00818C3C /* Helpers */,
 				169BA1CC25E95DC900374343 /* Payload+Processing.swift */,
 				16367F2126FDB2A10028AF8B /* PayloadProcessing+Connection.swift */,
 				16E70F7D270EEA5400718E5D /* PayloadProcessing+UserProfile.swift */,
 				16E70F89270EEB2300718E5D /* PayloadProcessing+Conversation.swift */,
 				16E70F8D270EEBB700718E5D /* PayloadProcessing+MessageSendingStatus.swift */,
-				16A4891526849258001F9127 /* PayloadProcessing+MessageSendingStatusTests.swift */,
 				063139DC2A56BD380083D5D2 /* PayloadProcessing+MLSMessageSendingStatus.swift */,
 				063139DE2A56BD6A0083D5D2 /* PayloadProcessing+MLSMessageSendingStatusTests.swift */,
 			);
@@ -1998,6 +2001,7 @@
 				EEE0EDB12858906500BBEE29 /* MLSRequestStrategy.swift in Sources */,
 				168D7CB726FB0E9200789960 /* AddParticipantActionHandler.swift in Sources */,
 				70E77B79273187660021EE70 /* UpdateRoleActionHandler.swift in Sources */,
+				EE8807992AC423A200278E3C /* MessageSendingStatusPayloadProcessor.swift in Sources */,
 				166901D91D7081C7000FE4AF /* ZMLocallyInsertedObjectSet.m in Sources */,
 				EEB5DE05283773C3009B4741 /* GetFeatureConfigsAction.swift in Sources */,
 				06A9FDD428B3701000B3C730 /* UpdateAccessRolesActionHandler.swift in Sources */,
@@ -2070,7 +2074,6 @@
 				F18401F32073C26C00E9F4CC /* AssetClientMessageRequestStrategyTests.swift in Sources */,
 				EE8807972AC40E1400278E3C /* UserProfilePayloadProcessorTests.swift in Sources */,
 				1621D2621D75C745007108C2 /* ZMDownstreamObjectSyncWithWhitelistTests.m in Sources */,
-				16E70F6E270EE9F800718E5D /* PayloadProcessing+MessageSendingStatusTests.swift in Sources */,
 				1621D2291D75AB2D007108C2 /* MockEntity2.m in Sources */,
 				F18401DB2073C25300E9F4CC /* EventDecoderDecryptionTestsTests.swift in Sources */,
 				D5D65A062073C8F800D7F3C3 /* AssetRequestFactoryTests.swift in Sources */,
@@ -2148,6 +2151,7 @@
 				16189D02268B104C004831BE /* ProteusMessageSyncTests.swift in Sources */,
 				16189D0A268B2C34004831BE /* ModifiedKeyObjectSyncTests.swift in Sources */,
 				F1956200202A141B005347C0 /* ZMDownstreamObjectSyncOrderingTests.m in Sources */,
+				EE88079B2AC425CB00278E3C /* MessageSendingStatusPayloadProcessorTests.swift in Sources */,
 				6397F6E628F6DD8B00298DB1 /* SendCommitBundleActionHandlerTests.swift in Sources */,
 				06A9FDD628B3702700B3C730 /* UpdateAccessRolesActionHandlerTests.swift in Sources */,
 				EE90C2AA282E855B00474379 /* RegisterPushTokenActionHandlerTests.swift in Sources */,

@@ -148,7 +148,12 @@ extension OTREntity {
             guard let payload = Payload.MessageSendingStatus(response) else {
                 return []
             }
-            clientListByUser = payload.missingClientListByUser(context: context)
+
+            let processor = MessageSendingStatusPayloadProcessor()
+            clientListByUser = processor.missingClientListByUser(
+                from: payload,
+                context: context
+            )
         }
 
         return parseMissingClients(clientListByUser, in: conversation)
