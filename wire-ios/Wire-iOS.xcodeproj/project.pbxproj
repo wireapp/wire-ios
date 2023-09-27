@@ -1281,7 +1281,6 @@
 		EE5F54D2259B77DD00F11F3C /* Viper+Interfaces.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE5F54D0259B77DD00F11F3C /* Viper+Interfaces.swift */; };
 		EE67F6CF296F067F001D7C88 /* Countly.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F6CE296F067F001D7C88 /* Countly.xcframework */; };
 		EE67F6D0296F067F001D7C88 /* Countly.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F6CE296F067F001D7C88 /* Countly.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		EE67F6D3296F0692001D7C88 /* DifferenceKit.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F6D1296F0692001D7C88 /* DifferenceKit.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EE67F6D5296F06A3001D7C88 /* Down.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F6D4296F06A3001D7C88 /* Down.xcframework */; };
 		EE67F6D6296F06A3001D7C88 /* Down.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F6D4296F06A3001D7C88 /* Down.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EE67F6D8296F06B3001D7C88 /* FLAnimatedImage.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F6D7296F06B3001D7C88 /* FLAnimatedImage.xcframework */; };
@@ -1843,7 +1842,6 @@
 				EE67F6D6296F06A3001D7C88 /* Down.xcframework in Embed Frameworks */,
 				EE82971129719F9A00F12CAA /* Starscream.xcframework in Embed Frameworks */,
 				EEE25B3629719BD30008B894 /* WireCryptobox.framework in Embed Frameworks */,
-				EE67F6D3296F0692001D7C88 /* DifferenceKit.xcframework in Embed Frameworks */,
 				EE33C48E296485FA00C058D1 /* WireShareEngine.framework in Embed Frameworks */,
 				EEE25B5129719D2F0008B894 /* avs.xcframework in Embed Frameworks */,
 				EE67F73F296F0E7D001D7C88 /* Ziphy.framework in Embed Frameworks */,
