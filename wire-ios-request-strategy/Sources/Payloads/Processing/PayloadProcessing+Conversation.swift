@@ -20,40 +20,6 @@ import WireDataModel
 
 // MARK: - Conversation
 
-extension Payload.ConversationMember {
-
-    func fetchUserAndRole(in context: NSManagedObjectContext,
-                          conversation: ZMConversation) -> (ZMUser, Role?)? {
-        guard let userID = id ?? qualifiedID?.uuid else { return nil }
-        return (ZMUser.fetchOrCreate(with: userID, domain: qualifiedID?.domain, in: context),
-                conversationRole.map({conversation.fetchOrCreateRoleForConversation(name: $0) }))
-    }
-
-    // TODO: [John] Delete
-    func updateStatus(for conversation: ZMConversation) {
-
-        if let mutedStatus = mutedStatus,
-           let mutedReference = mutedReference {
-            conversation.updateMutedStatus(status: Int32(mutedStatus), referenceDate: mutedReference)
-        }
-
-        if let archived = archived,
-           let archivedReference = archivedReference {
-            conversation.updateArchivedStatus(archived: archived, referenceDate: archivedReference)
-        }
-
-    }
-
-}
-
-extension Payload.ConversationMembers {
-
-    func fetchOtherMembers(in context: NSManagedObjectContext, conversation: ZMConversation) -> [(ZMUser, Role?)] {
-        return others.compactMap({ $0.fetchUserAndRole(in: context, conversation: conversation) })
-    }
-
-}
-
 private extension ZMConversation {
 
     func firstSystemMessage(for systemMessageType: ZMSystemMessageType) -> ZMSystemMessage? {

@@ -24,6 +24,7 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
 
     let context: NSManagedObjectContext
     let conversationService: ConversationServiceInterface
+    private let processor = ConversationEventPayloadProcessor()
 
     // MARK: - Life cycle
 
@@ -51,25 +52,21 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
                 switch event.type {
                 case .conversationCreate:
                     if let payload = event.eventPayload(type: Payload.ConversationEvent<Payload.Conversation>.self) {
-                        let processor = ConversationEventPayloadProcessor()
                         processor.processPayload(payload, in: context)
                     }
 
                 case .conversationDelete:
                     if let payload = event.eventPayload(type: Payload.ConversationEvent<Payload.UpdateConversationDeleted>.self) {
-                        let processor = ConversationEventPayloadProcessor()
                         processor.processPayload(payload, in: context)
                     }
 
                 case .conversationMemberLeave:
                     if let payload = event.eventPayload(type: Payload.ConversationEvent<Payload.UpdateConverationMemberLeave>.self) {
-                        let processor = ConversationEventPayloadProcessor()
                         processor.processPayload(payload, originalEvent: event, in: context)
                     }
 
                 case .conversationMemberJoin:
                     if let payload = event.eventPayload(type: Payload.ConversationEvent<Payload.UpdateConverationMemberJoin>.self) {
-                        let processor = ConversationEventPayloadProcessor()
                         processor.processPayload(
                             payload,
                             originalEvent: event,
@@ -81,7 +78,6 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
 
                 case .conversationRename:
                     if let payload = event.eventPayload(type: Payload.ConversationEvent<Payload.UpdateConversationName>.self) {
-                        let processor = ConversationEventPayloadProcessor()
                         processor.processPayload(
                             payload,
                             originalEvent: event,
@@ -91,7 +87,6 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
 
                 case .conversationMemberUpdate:
                     if let payload = event.eventPayload(type: Payload.ConversationEvent<Payload.ConversationMember>.self) {
-                        let processor = ConversationEventPayloadProcessor()
                         processor.processPayload(
                             payload,
                             in: context
@@ -100,7 +95,6 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
 
                 case .conversationAccessModeUpdate:
                     if let payload = event.eventPayload(type: Payload.ConversationEvent<Payload.UpdateConversationAccess>.self) {
-                        let processor = ConversationEventPayloadProcessor()
                         processor.processPayload(
                             payload,
                             in: context
@@ -109,7 +103,6 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
 
                 case .conversationMessageTimerUpdate:
                     if let payload = event.eventPayload(type: Payload.ConversationEvent<Payload.UpdateConversationMessageTimer>.self) {
-                        let processor = ConversationEventPayloadProcessor()
                         processor.processPayload(
                             payload,
                             in: context
@@ -118,7 +111,6 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
 
                 case .conversationReceiptModeUpdate:
                     if let payload = event.eventPayload(type: Payload.ConversationEvent<Payload.UpdateConversationReceiptMode>.self) {
-                        let processor = ConversationEventPayloadProcessor()
                         processor.processPayload(
                             payload,
                             in: context
@@ -127,7 +119,6 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
 
                 case .conversationConnectRequest:
                     if let payload = event.eventPayload(type: Payload.ConversationEvent<Payload.UpdateConversationConnectionRequest>.self) {
-                        let processor = ConversationEventPayloadProcessor()
                         processor.processPayload(
                             payload,
                             originalEvent: event,
@@ -169,7 +160,13 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
                 return
             }
 
-            if let usersAndRoles = payload.data.users?.map({ $0.fetchUserAndRole(in: self.context, conversation: conversation)! }) {
+            if let usersAndRoles = payload.data.users?.map({
+                self.processor.fetchUserAndRole(
+                    from: $0,
+                    for: conversation,
+                    in: self.context
+                )!
+            }) {
                 let selfUser = ZMUser.selfUser(in: self.context)
                 let users = Set(usersAndRoles.map { $0.0 })
 

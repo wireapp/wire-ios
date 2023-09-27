@@ -145,7 +145,13 @@ final class ConversationEventPayloadProcessor {
             return
         }
 
-        if let usersAndRoles = payload.data.users?.map({ $0.fetchUserAndRole(in: context, conversation: conversation)! }) {
+        if let usersAndRoles = payload.data.users?.map({
+            fetchUserAndRole(
+                from: $0,
+                for: conversation,
+                in: context
+            )!
+        }) {
             let selfUser = ZMUser.selfUser(in: context)
             let users = Set(usersAndRoles.map { $0.0 })
             let newUsers = !users.subtracting(conversation.localParticipants).isEmpty
@@ -525,11 +531,23 @@ final class ConversationEventPayloadProcessor {
         for conversation: ZMConversation,
         context: NSManagedObjectContext
     ) {
-        if let members = payload.members {
-            let otherMembers = members.fetchOtherMembers(in: context, conversation: conversation)
-            let selfUserRole = members.selfMember.fetchUserAndRole(in: context, conversation: conversation)?.1
-            conversation.updateMembers(otherMembers, selfUserRole: selfUserRole)
+        guard let members = payload.members else {
+            return
         }
+
+        let otherMembers = fetchOtherMembers(
+            from: members,
+            conversation: conversation,
+            in: context
+        )
+
+        let selfUserRole = fetchUserAndRole(
+            from: members.selfMember,
+            for: conversation,
+            in: context
+        )?.1
+
+        conversation.updateMembers(otherMembers, selfUserRole: selfUserRole)
     }
 
     func updateConversationTimestamps(
@@ -549,7 +567,10 @@ final class ConversationEventPayloadProcessor {
         for conversation: ZMConversation
     ) {
         if let selfMember = payload.members?.selfMember {
-            selfMember.updateStatus(for: conversation)
+            updateMemberStatus(
+                from: selfMember,
+                for: conversation
+            )
         }
 
         if let readReceiptMode = payload.readReceiptMode {
@@ -700,6 +721,57 @@ final class ConversationEventPayloadProcessor {
             domain: payload.qualifiedTarget?.domain,
             in: context
         )
+    }
+
+    func fetchOtherMembers(
+        from payload: Payload.ConversationMembers,
+        conversation: ZMConversation,
+        in context: NSManagedObjectContext
+    ) -> [(ZMUser, Role?)] {
+        return payload.others.compactMap {
+            fetchUserAndRole(
+                from: $0,
+                for: conversation,
+                in: context
+            )
+        }
+    }
+
+    func fetchUserAndRole(
+        from payload: Payload.ConversationMember,
+        for conversation: ZMConversation,
+        in context: NSManagedObjectContext
+    ) -> (ZMUser, Role?)? {
+        guard let userID = payload.id ?? payload.qualifiedID?.uuid else {
+            return nil
+        }
+
+        let user = ZMUser.fetchOrCreate(
+            with: userID,
+            domain: payload.qualifiedID?.domain,
+            in: context
+        )
+
+        let role = payload.conversationRole.map {
+            conversation.fetchOrCreateRoleForConversation(name: $0)
+        }
+
+        return (user, role)
+    }
+
+    private func updateMemberStatus(
+        from payload: Payload.ConversationMember,
+        for conversation: ZMConversation
+    ) {
+        if let mutedStatus = payload.mutedStatus,
+           let mutedReference = payload.mutedReference {
+            conversation.updateMutedStatus(status: Int32(mutedStatus), referenceDate: mutedReference)
+        }
+
+        if let archived = payload.archived,
+           let archivedReference = payload.archivedReference {
+            conversation.updateArchivedStatus(archived: archived, referenceDate: archivedReference)
+        }
     }
 
 }
