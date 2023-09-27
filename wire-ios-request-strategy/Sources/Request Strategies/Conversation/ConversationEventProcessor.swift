@@ -151,13 +151,6 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
 
     typealias MemberJoinPayload = Payload.ConversationEvent<Payload.UpdateConverationMemberJoin>
 
-    func processMemberJoin(payload: MemberJoinPayload, originalEvent: ZMUpdateEvent) {
-        payload.process(in: context, originalEvent: originalEvent)
-
-        // MLS specific sync
-        syncConversationForMLSStatus(payload: payload)
-    }
-
     func fetchOrCreateConversation(id: UUID?, qualifiedID: QualifiedID?, in context: NSManagedObjectContext) -> ZMConversation? {
         guard let conversationID = id ?? qualifiedID?.uuid else { return nil }
         return ZMConversation.fetchOrCreate(with: conversationID, domain: qualifiedID?.domain, in: context)

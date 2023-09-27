@@ -297,7 +297,7 @@ final class ConversationEventPayloadProcessor {
     // MARK: - Helpers
 
     @discardableResult
-    private func updateOrCreateConversation(
+    func updateOrCreateConversation(
         from payload: Payload.Conversation,
         serverTimestamp: Date = Date(),
         source: Source = .eventStream,
