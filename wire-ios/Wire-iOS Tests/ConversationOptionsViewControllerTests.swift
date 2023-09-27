@@ -20,6 +20,8 @@ import XCTest
 @testable import Wire
 import SnapshotTesting
 
+// MARK: - MockOptionsViewModelConfiguration
+
 final class MockOptionsViewModelConfiguration: ConversationGuestOptionsViewModelConfiguration {
 
     typealias SetHandler = (Bool, (VoidResult) -> Void) -> Void
@@ -58,13 +60,18 @@ final class MockOptionsViewModelConfiguration: ConversationGuestOptionsViewModel
     }
 }
 
+// MARK: - ConversationOptionsViewControllerTests
+
 final class ConversationOptionsViewControllerTests: ZMSnapshotTestCase {
+
+    // MARK: - setUp method
 
     override func setUp() {
         super.setUp()
         BackendInfo.storage = UserDefaults(suiteName: UUID().uuidString)!
-
     }
+
+    // MARK: - tearDown method
 
     override func tearDown() {
         BackendInfo.storage = UserDefaults.standard
@@ -364,6 +371,20 @@ final class ConversationOptionsViewControllerTests: ZMSnapshotTestCase {
         XCTAssertNil(sut)
     }
 
+    func testThatItRendersRemoveGuestsWarning() throws {
+        // GIVEN
+        let config = MockOptionsViewModelConfiguration(allowGuests: true)
+        let viewModel = ConversationGuestOptionsViewModel(configuration: config)
+        // for ConversationOptionsViewModel's delegate
+        _ = ConversationGuestOptionsViewController(viewModel: viewModel)
+        // Show the alert
+        let sut = viewModel.setAllowGuests(false)!
+        // THEN
+        try verify(matching: sut)
+    }
+
+    // MARK: - Unit Tests
+
     func testThatGuestLinkWithOptionalPasswordAlertShowIfApiVersionIsFourAndAbove() {
         // GIVEN
         BackendInfo.apiVersion = .v4
@@ -400,15 +421,4 @@ final class ConversationOptionsViewControllerTests: ZMSnapshotTestCase {
         XCTAssert(mock.viewModelSourceViewPresentGuestLinkTypeSelection_Invocations.count == 0)
     }
 
-    func testThatItRendersRemoveGuestsWarning() throws {
-        // GIVEN
-        let config = MockOptionsViewModelConfiguration(allowGuests: true)
-        let viewModel = ConversationGuestOptionsViewModel(configuration: config)
-        // for ConversationOptionsViewModel's delegate
-        _ = ConversationGuestOptionsViewController(viewModel: viewModel)
-        // Show the alert
-        let sut = viewModel.setAllowGuests(false)!
-        // THEN
-        try verify(matching: sut)
-    }
 }
