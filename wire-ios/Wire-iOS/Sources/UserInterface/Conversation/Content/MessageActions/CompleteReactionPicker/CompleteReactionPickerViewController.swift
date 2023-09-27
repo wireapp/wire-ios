@@ -24,21 +24,21 @@ final class CompleteReactionPickerViewController: UIViewController {
     weak var delegate: EmojiPickerViewControllerDelegate?
     private var emojiDataSource: EmojiDataSource!
     private let collectionView = ReactionsCollectionView()
-    private let sectionViewController: ReactionSectionViewController
+    private lazy var sectionViewController = ReactionSectionViewController(types: emojiDataSource.sectionTypes)
     private let topBar = ModalTopBar()
     private let searchBar = UISearchBar()
-    private let selectedReactions: Set<Emoji>
+    private let selectedReactions: Set<Emoji.ID>
 
     private var deleting = false
 
-    init(selectedReactions: Set<Emoji>) {
+    init(
+        selectedReactions: Set<Emoji.ID>,
+        emojiRepository: EmojiRepositoryInterface = EmojiRepository()
+    ) {
         self.selectedReactions = selectedReactions
-        let hasNoRecentlyUsedReactions =  RecentlyUsedEmojiPeristenceCoordinator.loadOrCreate().emojis.isEmpty
-        let sectionTypes: [EmojiSectionType] = hasNoRecentlyUsedReactions ? EmojiSectionType.basicTypes : EmojiSectionType.all
-        sectionViewController = ReactionSectionViewController(types: sectionTypes)
         super.init(nibName: nil, bundle: nil)
 
-        emojiDataSource = EmojiDataSource(provider: cellForEmoji)
+        emojiDataSource = EmojiDataSource(provider: cellForEmoji, emojiRepository: emojiRepository)
         collectionView.dataSource = emojiDataSource
         collectionView.delegate = self
         searchBar.delegate = self
@@ -123,14 +123,14 @@ final class CompleteReactionPickerViewController: UIViewController {
         let cell = self.collectionView.dequeueReusableCell(withReuseIdentifier: EmojiCollectionViewCell.zm_reuseIdentifier, for: indexPath) as! EmojiCollectionViewCell
         cell.titleLabel.text = emoji.value
         cell.titleLabel.font = UIFont.preferredFont(forTextStyle: .largeTitle)
-        cell.isCurrent = selectedReactions.contains(emoji)
+        cell.isCurrent = selectedReactions.contains(emoji.value)
         return cell
     }
 
     func updateSectionSelection() {
         let minSection = Set(self.collectionView.indexPathsForVisibleItems.map { $0.section }).min()
         guard let section = minSection  else { return }
-        self.sectionViewController.didSelectSection(self.emojiDataSource[section].type)
+        self.sectionViewController.didSelectSection(self.emojiDataSource[section].id)
     }
 
     @objc func preferredContentSizeChanged(_ notification: Notification) {
