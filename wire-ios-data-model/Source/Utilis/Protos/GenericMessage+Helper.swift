@@ -19,7 +19,6 @@
 import Foundation
 import WireProtos
 
-
 // MARK: - GenericMessage
 
 public extension GenericMessage {
