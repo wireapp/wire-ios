@@ -23,8 +23,7 @@
 
 
 NSString * const ZMTransportSessionErrorDomain = @"ZMTransportSession";
-
-
+NSString * const FederationNotAvailableError = @"federation-not-available";
 
 @implementation NSError (ZMTransportSession)
 
@@ -82,6 +81,11 @@ NSString * const ZMTransportSessionErrorDomain = @"ZMTransportSession";
 
 + (NSError *)transportErrorFromURLTask:(NSURLSessionTask *)task expired:(BOOL)expired;
 {
+    return [NSError transportErrorFromURLTask:task expired:expired payloadLabel:nil];
+}
+
++ (NSError *)transportErrorFromURLTask:(NSURLSessionTask *)task expired:(BOOL)expired payloadLabel:(nullable NSString *) payloadLabel;
+{
     NSError *urlError = task.error;
     if (urlError == nil) {
         // Check for 420 / 429 / internal server error
@@ -90,7 +94,9 @@ NSString * const ZMTransportSessionErrorDomain = @"ZMTransportSession";
                                 (statusCode == EnhanceYourCalmStatusCode));
         BOOL const isInternalError = ((statusCode >= 500) &&
                                       (statusCode <= 599));
-        if (!isBackOff && !isInternalError) {
+        BOOL const isFederationError = ([payloadLabel isEqualToString:FederationNotAvailableError]);
+
+        if ((!isBackOff && !isInternalError) || isFederationError) {
             return nil;
         }
     } else if (urlError.isCancelledURLTaskError && expired) {
