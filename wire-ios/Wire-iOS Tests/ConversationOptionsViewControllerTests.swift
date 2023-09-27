@@ -370,15 +370,16 @@ final class ConversationOptionsViewControllerTests: ZMSnapshotTestCase {
         let config = MockOptionsViewModelConfiguration(allowGuests: true)
         let viewModel = ConversationGuestOptionsViewModel(configuration: config)
         let mock = MockConversationGuestOptionsViewModelDelegate()
+        mock.viewModelSourceViewPresentGuestLinkTypeSelection_MockMethod = { _, _, _ in }
         mock.viewModelDidUpdateState_MockMethod = { _, _ in }
+        mock.viewModelDidReceiveError_MockMethod = { _, _ in }
         viewModel.delegate = mock
 
-        mock.viewModelSourceViewConfirmGuestLinkWithOptionalPassword_MockValue = UIAlertController()
         // WHEN
-        let sut = viewModel.createGuestLink()
+        viewModel.startGuestLinkCreationFlow()
 
         // THEN
-        XCTAssertNotNil(sut)
+        XCTAssert(mock.viewModelSourceViewPresentGuestLinkTypeSelection_Invocations.count == 1)
     }
 
     func testThatGuestLinkWithOptionalPasswordAlertIsNotShownIfApiVersionIsBelowFour() {
@@ -387,15 +388,16 @@ final class ConversationOptionsViewControllerTests: ZMSnapshotTestCase {
         let config = MockOptionsViewModelConfiguration(allowGuests: true)
         let viewModel = ConversationGuestOptionsViewModel(configuration: config)
         let mock = MockConversationGuestOptionsViewModelDelegate()
+        mock.viewModelSourceViewPresentGuestLinkTypeSelection_MockMethod = { _, _, _ in }
         mock.viewModelDidUpdateState_MockMethod = { _, _ in }
+        mock.viewModelDidReceiveError_MockMethod = { _, _ in }
         viewModel.delegate = mock
 
-        mock.viewModelSourceViewConfirmGuestLinkWithOptionalPassword_MockValue = nil
         // WHEN
-        let sut = viewModel.createGuestLink()
+        viewModel.startGuestLinkCreationFlow()
 
         // THEN
-        XCTAssertNil(sut)
+        XCTAssert(mock.viewModelSourceViewPresentGuestLinkTypeSelection_Invocations.count == 0)
     }
 
     func testThatItRendersRemoveGuestsWarning() throws {
