@@ -20,6 +20,28 @@ import Foundation
 
 final class UserProfilePayloadProcessor {
 
+    /// Update all user entities with the data from the user profiles.
+    ///
+    /// - parameter context: `NSManagedObjectContext` on which the update should be performed.
+    func updateUserProfiles(
+        from userProfiles: Payload.UserProfiles,
+        in context: NSManagedObjectContext
+    ) {
+        for userProfile in userProfiles {
+            guard
+                let id = userProfile.id ?? userProfile.qualifiedID?.uuid,
+                let user = ZMUser.fetch(with: id, domain: userProfile.qualifiedID?.domain, in: context)
+            else {
+                continue
+            }
+
+            updateUserProfile(
+                from: userProfile,
+                for: user
+            )
+        }
+    }
+
     /// Update a user entity with the data from a user profile payload.
     ///
     /// A user profile payload comes in two variants: full and delta, a full update is

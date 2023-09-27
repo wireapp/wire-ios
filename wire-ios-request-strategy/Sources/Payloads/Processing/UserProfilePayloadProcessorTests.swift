@@ -558,7 +558,10 @@ final class UserProfilePayloadProcessorTests: MessagingTestBase {
             self.syncMOC.saveOrRollback()
 
             // when
-            [userProfile].updateUserProfiles(in: self.syncMOC)
+            self.sut.updateUserProfiles(
+                from: [userProfile],
+                in: self.syncMOC
+            )
 
             // then
             XCTAssertEqual(self.otherUser.name, name)
