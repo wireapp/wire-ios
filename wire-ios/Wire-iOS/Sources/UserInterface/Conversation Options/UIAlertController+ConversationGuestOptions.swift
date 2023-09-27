@@ -18,6 +18,11 @@
 
 import UIKit
 
+enum GuestLinkType {
+    case secure
+    case normal
+}
+
 private typealias GuestRoom = L10n.Localizable.GuestRoom
 
 extension UIAlertController {
@@ -41,17 +46,6 @@ extension UIAlertController {
             confirmTitle: GuestRoom.RemoveGuests.action,
             completion: completion
         )
-    }
-
-    static func confirmGuestLinkCreationWithOptionalPassword(
-        _ completion: @escaping (Bool) -> Void
-    ) -> UIAlertController {
-        return confirmControllerWithTwoOptions(
-            optionOne: GuestRoom.Create.LinkWithPassword.action,
-            optionTwo: GuestRoom.Create.LinkWithoutPassword.action,
-            completion: completion
-        )
-
     }
 
     static func confirmRevokingLink(_ completion: @escaping (Bool) -> Void) -> UIAlertController {
@@ -88,20 +82,17 @@ extension UIAlertController {
                                                    completion: completion)
     }
 
-    static func confirmControllerWithTwoOptions(
-        optionOne: String,
-        optionTwo: String,
-        completion: @escaping (Bool) -> Void
+    static func guestLinkTypeController(
+        completion: @escaping (GuestLinkType) -> Void
     ) -> UIAlertController {
-
         let controller = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
 
-        let optionOneAction = UIAlertAction(title: optionOne, style: .default) { _ in
-            completion(true)
+        let optionOneAction = UIAlertAction(title: GuestRoom.Create.LinkWithPassword.action, style: .default) { _ in
+            completion(.secure)
         }
 
-        let optionTwoAction = UIAlertAction(title: optionTwo, style: .default) { _ in
-            completion(false)
+        let optionTwoAction = UIAlertAction(title: GuestRoom.Create.LinkWithoutPassword.action, style: .default) { _ in
+            completion(.normal)
         }
 
         controller.addAction(optionOneAction)

@@ -39,7 +39,7 @@ protocol ConversationGuestOptionsViewModelDelegate: AnyObject {
     func viewModel(_ viewModel: ConversationGuestOptionsViewModel, didUpdateState state: ConversationGuestOptionsViewModel.State)
     func viewModel(_ viewModel: ConversationGuestOptionsViewModel, didReceiveError error: Error)
     func viewModel(_ viewModel: ConversationGuestOptionsViewModel, sourceView: UIView?, confirmRemovingGuests completion: @escaping (Bool) -> Void) -> UIAlertController?
-    func viewModel(_ viewModel: ConversationGuestOptionsViewModel, sourceView: UIView?, confirmGuestLinkWithOptionalPassword completion: @escaping (Bool) -> Void) -> UIAlertController?
+    func viewModel(_ viewModel: ConversationGuestOptionsViewModel, sourceView: UIView?, presentGuestLinkTypeSelection completion: @escaping (GuestLinkType) -> Void)
     func viewModel(_ viewModel: ConversationGuestOptionsViewModel, sourceView: UIView?, confirmRevokingLink completion: @escaping (Bool) -> Void)
     func viewModel(_ viewModel: ConversationGuestOptionsViewModel, wantsToShareMessage message: String, sourceView: UIView?)
 }
@@ -130,7 +130,7 @@ final class ConversationGuestOptionsViewModel {
                     rows.append(.revokeLink { [weak self] _ in self?.revokeLink() })
                 } else {
                     rows.append(.createLinkButton { [weak self] view in
-                        self?.showAlertForGuestLink(from: view) })
+                        self?.startGuestLinkCreationFlow(from: view) })
                 }
             }
             return rows
@@ -235,25 +235,22 @@ final class ConversationGuestOptionsViewModel {
         }
     }
 
-    /// Creates a Guest Link
+    /// Starts the Guest Link Creation Flow
     /// - Parameter view: the source view which triggers create action
-    /// - Returns: alert controller
-    @discardableResult
-    func showAlertForGuestLink(from view: UIView? = nil) -> UIAlertController? {
-        guard let apiVersion = BackendInfo.apiVersion else { return nil }
+    func startGuestLinkCreationFlow(from view: UIView? = nil) {
+        guard let apiVersion = BackendInfo.apiVersion else { return }
         if apiVersion >= .v4 {
-            return delegate?.viewModel(self, sourceView: view, confirmGuestLinkWithOptionalPassword: { [weak self] guestLinkWithPassword in
+             delegate?.viewModel(self, sourceView: view, presentGuestLinkTypeSelection: { [weak self] guestLinkType in
                 guard let `self` = self else { return }
-                guard guestLinkWithPassword else {
-                    return self.createLink()
-                }
-                // TODO: - AGIS - Present the new view
+                 switch guestLinkType {
+                 case .secure: break
+                 case .normal:
+                     createLink()
+                 }
             })
         } else {
             createLink()
         }
-
-        return nil
 
     }
 
