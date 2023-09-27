@@ -18,18 +18,6 @@
 import Foundation
 import WireDataModel
 
-// MARK: - Conversation
-
-private extension ZMConversation {
-
-    func firstSystemMessage(for systemMessageType: ZMSystemMessageType) -> ZMSystemMessage? {
-
-        return allMessages
-            .compactMap { $0 as? ZMSystemMessage }
-            .first(where: { $0.systemMessageType == systemMessageType })
-    }
-}
-
 extension Payload.UpdateConversationMLSWelcome {
 
     func process(in context: NSManagedObjectContext, originalEvent: ZMUpdateEvent) {
