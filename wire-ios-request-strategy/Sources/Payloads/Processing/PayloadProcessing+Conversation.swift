@@ -54,36 +54,6 @@ extension Payload.ConversationMembers {
 
 }
 
-extension Payload.ConversationList {
-
-    func updateOrCreateConverations(in context: NSManagedObjectContext) {
-        let processor = ConversationEventPayloadProcessor()
-        for payload in conversations {
-            processor.updateOrCreateConversation(
-                from: payload,
-                source: .slowSync,
-                in: context
-            )
-        }
-    }
-
-}
-
-extension Payload.QualifiedConversationList {
-
-    func updateOrCreateConverations(in context: NSManagedObjectContext) {
-        let processor = ConversationEventPayloadProcessor()
-        for payload in found {
-            processor.updateOrCreateConversation(
-                from: payload,
-                source: .slowSync,
-                in: context
-            )
-        }
-    }
-
-}
-
 private extension ZMConversation {
 
     func firstSystemMessage(for systemMessageType: ZMSystemMessageType) -> ZMSystemMessage? {

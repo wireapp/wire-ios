@@ -658,6 +658,8 @@ class ConversationByIDListTranscoder: IdentifierObjectSyncTranscoder {
     let decoder: JSONDecoder = .defaultDecoder
     let encoder: JSONEncoder = .defaultEncoder
 
+    private let processor = ConversationEventPayloadProcessor()
+
     init(context: NSManagedObjectContext) {
         self.context = context
     }
@@ -679,7 +681,10 @@ class ConversationByIDListTranscoder: IdentifierObjectSyncTranscoder {
             return
         }
 
-        payload.updateOrCreateConverations(in: context)
+        processor.updateOrCreateConverations(
+            from: payload,
+            in: context
+        )
 
         let missingIdentifiers = identifiers.subtracting(payload.conversations.compactMap(\.id))
         queryStatusForMissingConversations(missingIdentifiers)
@@ -704,6 +709,8 @@ class ConversationByQualifiedIDListTranscoder: IdentifierObjectSyncTranscoder {
     let context: NSManagedObjectContext
     let decoder: JSONDecoder = .defaultDecoder
     let encoder: JSONEncoder = .defaultEncoder
+
+    private let processor = ConversationEventPayloadProcessor()
 
     init(context: NSManagedObjectContext) {
         self.context = context
@@ -732,7 +739,10 @@ class ConversationByQualifiedIDListTranscoder: IdentifierObjectSyncTranscoder {
             return
         }
 
-        payload.updateOrCreateConverations(in: context)
+        processor.updateOrCreateConverations(
+            from: payload,
+            in: context
+        )
 
         queryStatusForMissingConversations(payload.notFound)
         queryStatusForFailedConversations(payload.failed)

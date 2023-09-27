@@ -27,6 +27,32 @@ final class ConversationEventPayloadProcessor {
 
     // MARK: - Conversation creation
 
+    func updateOrCreateConverations(
+        from payload: Payload.ConversationList,
+        in context: NSManagedObjectContext
+    ) {
+        for payload in payload.conversations {
+            updateOrCreateConversation(
+                from: payload,
+                source: .slowSync,
+                in: context
+            )
+        }
+    }
+
+    func updateOrCreateConverations(
+        from payload: Payload.QualifiedConversationList,
+        in context: NSManagedObjectContext
+    ) {
+        for payload in payload.found {
+            updateOrCreateConversation(
+                from: payload,
+                source: .slowSync,
+                in: context
+            )
+        }
+    }
+
     func processPayload(
         _ payload: Payload.ConversationEvent<Payload.Conversation>,
         in context: NSManagedObjectContext
