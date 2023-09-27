@@ -193,8 +193,14 @@ extension ConnectionRequestStrategy: ZMEventConsumer {
 
             switch event.type {
             case .userConnection:
-                let conversationEvent = Payload.UserConnectionEvent(payloadData)
-                conversationEvent?.process(in: managedObjectContext)
+                if let conversationEvent = Payload.UserConnectionEvent(payloadData) {
+                    let processor = ConnectionPayloadProcessor()
+                    processor.processPayload(
+                        conversationEvent,
+                        in: managedObjectContext
+                    )
+                }
+
             default:
                 break
             }

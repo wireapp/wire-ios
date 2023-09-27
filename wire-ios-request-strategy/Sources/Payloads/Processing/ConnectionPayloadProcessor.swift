@@ -20,6 +20,16 @@ import Foundation
 
 final class ConnectionPayloadProcessor {
 
+    func processPayload(
+        _ payload: Payload.UserConnectionEvent,
+        in context: NSManagedObjectContext
+    ) {
+        updateOrCreateConnection(
+            from: payload.connection,
+            in: context
+        )
+    }
+
     func updateOrCreateConnection(
         from payload: Payload.Connection,
         in context: NSManagedObjectContext
