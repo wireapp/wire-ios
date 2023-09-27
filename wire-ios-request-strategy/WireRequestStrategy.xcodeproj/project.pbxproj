@@ -13,8 +13,6 @@
 		060ED6D62499F41000412C4A /* PushNotificationStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 060ED6D52499F41000412C4A /* PushNotificationStatus.swift */; };
 		062285C8276BB5B000B87C91 /* UpdateEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 062285C7276BB5B000B87C91 /* UpdateEventProcessor.swift */; };
 		062DD2D82760CFAA00E27FD9 /* UUID+SafeLogging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 062DD2D72760CFAA00E27FD9 /* UUID+SafeLogging.swift */; };
-		063139DD2A56BD380083D5D2 /* PayloadProcessing+MLSMessageSendingStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 063139DC2A56BD380083D5D2 /* PayloadProcessing+MLSMessageSendingStatus.swift */; };
-		063139DF2A56BD6A0083D5D2 /* PayloadProcessing+MLSMessageSendingStatusTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 063139DE2A56BD6A0083D5D2 /* PayloadProcessing+MLSMessageSendingStatusTests.swift */; };
 		06474D4B24AF6858002C695D /* EventDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06474D4A24AF6858002C695D /* EventDecoder.swift */; };
 		06474D4D24AF68AD002C695D /* StoreUpdateEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06474D4C24AF68AD002C695D /* StoreUpdateEvent.swift */; };
 		06474D5E24B30C79002C695D /* PushNotificationStatusTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06474D5C24B30C75002C695D /* PushNotificationStatusTests.swift */; };
@@ -244,6 +242,8 @@
 		EE8807972AC40E1400278E3C /* UserProfilePayloadProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE8807962AC40E1400278E3C /* UserProfilePayloadProcessorTests.swift */; };
 		EE8807992AC423A200278E3C /* MessageSendingStatusPayloadProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE8807982AC423A200278E3C /* MessageSendingStatusPayloadProcessor.swift */; };
 		EE88079B2AC425CB00278E3C /* MessageSendingStatusPayloadProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE88079A2AC425CB00278E3C /* MessageSendingStatusPayloadProcessorTests.swift */; };
+		EE88079D2AC427D600278E3C /* MLSMessageSendingStatusPayloadProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE88079C2AC427D600278E3C /* MLSMessageSendingStatusPayloadProcessor.swift */; };
+		EE88079F2AC4288200278E3C /* MLSMessageSendingStatusPayloadProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE88079E2AC4288200278E3C /* MLSMessageSendingStatusPayloadProcessorTests.swift */; };
 		EE8DC53728C0EFA700AC4E3D /* FetchUserClientsActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE8DC53628C0EFA700AC4E3D /* FetchUserClientsActionHandler.swift */; };
 		EE8DC53928C0F04B00AC4E3D /* FetchUserClientsActionHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE8DC53828C0F04B00AC4E3D /* FetchUserClientsActionHandlerTests.swift */; };
 		EE90C29E282E785800474379 /* PushTokenStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE90C29D282E785800474379 /* PushTokenStrategy.swift */; };
@@ -393,8 +393,6 @@
 		060ED6D52499F41000412C4A /* PushNotificationStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushNotificationStatus.swift; sourceTree = "<group>"; };
 		062285C7276BB5B000B87C91 /* UpdateEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateEventProcessor.swift; sourceTree = "<group>"; };
 		062DD2D72760CFAA00E27FD9 /* UUID+SafeLogging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UUID+SafeLogging.swift"; sourceTree = "<group>"; };
-		063139DC2A56BD380083D5D2 /* PayloadProcessing+MLSMessageSendingStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PayloadProcessing+MLSMessageSendingStatus.swift"; sourceTree = "<group>"; };
-		063139DE2A56BD6A0083D5D2 /* PayloadProcessing+MLSMessageSendingStatusTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PayloadProcessing+MLSMessageSendingStatusTests.swift"; sourceTree = "<group>"; };
 		06474D4A24AF6858002C695D /* EventDecoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventDecoder.swift; sourceTree = "<group>"; };
 		06474D4C24AF68AD002C695D /* StoreUpdateEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreUpdateEvent.swift; sourceTree = "<group>"; };
 		06474D5C24B30C75002C695D /* PushNotificationStatusTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushNotificationStatusTests.swift; sourceTree = "<group>"; };
@@ -677,6 +675,8 @@
 		EE8807962AC40E1400278E3C /* UserProfilePayloadProcessorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfilePayloadProcessorTests.swift; sourceTree = "<group>"; };
 		EE8807982AC423A200278E3C /* MessageSendingStatusPayloadProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageSendingStatusPayloadProcessor.swift; sourceTree = "<group>"; };
 		EE88079A2AC425CB00278E3C /* MessageSendingStatusPayloadProcessorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageSendingStatusPayloadProcessorTests.swift; sourceTree = "<group>"; };
+		EE88079C2AC427D600278E3C /* MLSMessageSendingStatusPayloadProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLSMessageSendingStatusPayloadProcessor.swift; sourceTree = "<group>"; };
+		EE88079E2AC4288200278E3C /* MLSMessageSendingStatusPayloadProcessorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLSMessageSendingStatusPayloadProcessorTests.swift; sourceTree = "<group>"; };
 		EE8DC53628C0EFA700AC4E3D /* FetchUserClientsActionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchUserClientsActionHandler.swift; sourceTree = "<group>"; };
 		EE8DC53828C0F04B00AC4E3D /* FetchUserClientsActionHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchUserClientsActionHandlerTests.swift; sourceTree = "<group>"; };
 		EE90C29D282E785800474379 /* PushTokenStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushTokenStrategy.swift; sourceTree = "<group>"; };
@@ -1186,14 +1186,14 @@
 				EE8807962AC40E1400278E3C /* UserProfilePayloadProcessorTests.swift */,
 				EE8807982AC423A200278E3C /* MessageSendingStatusPayloadProcessor.swift */,
 				EE88079A2AC425CB00278E3C /* MessageSendingStatusPayloadProcessorTests.swift */,
+				EE88079C2AC427D600278E3C /* MLSMessageSendingStatusPayloadProcessor.swift */,
+				EE88079E2AC4288200278E3C /* MLSMessageSendingStatusPayloadProcessorTests.swift */,
 				63DA339D286DF6DA00818C3C /* Helpers */,
 				169BA1CC25E95DC900374343 /* Payload+Processing.swift */,
 				16367F2126FDB2A10028AF8B /* PayloadProcessing+Connection.swift */,
 				16E70F7D270EEA5400718E5D /* PayloadProcessing+UserProfile.swift */,
 				16E70F89270EEB2300718E5D /* PayloadProcessing+Conversation.swift */,
 				16E70F8D270EEBB700718E5D /* PayloadProcessing+MessageSendingStatus.swift */,
-				063139DC2A56BD380083D5D2 /* PayloadProcessing+MLSMessageSendingStatus.swift */,
-				063139DE2A56BD6A0083D5D2 /* PayloadProcessing+MLSMessageSendingStatusTests.swift */,
 			);
 			path = Processing;
 			sourceTree = "<group>";
@@ -1912,6 +1912,7 @@
 				EE90C29E282E785800474379 /* PushTokenStrategy.swift in Sources */,
 				166901D61D7081C7000FE4AF /* ZMDownstreamObjectSyncWithWhitelist.m in Sources */,
 				7AA8560C28FDAD0B00088D41 /* FetchPublicGroupStateActionHandler.swift in Sources */,
+				EE88079D2AC427D600278E3C /* MLSMessageSendingStatusPayloadProcessor.swift in Sources */,
 				16E70F8A270EEB2300718E5D /* PayloadProcessing+Conversation.swift in Sources */,
 				EE402C0328996C2500CA0E40 /* MLSMessageSync.Transcoder.swift in Sources */,
 				16E5F6D626EF1BE100F35FBA /* PaginatedSync.swift in Sources */,
@@ -1928,7 +1929,6 @@
 				EECBE8EC28E71ED7005DE5DD /* SyncConversationAction.swift in Sources */,
 				F963E8E11D955D5500098AD3 /* SharedProtocols.swift in Sources */,
 				166901F21D7081C7000FE4AF /* ZMUpstreamModifiedObjectSync.m in Sources */,
-				063139DD2A56BD380083D5D2 /* PayloadProcessing+MLSMessageSendingStatus.swift in Sources */,
 				16FFDE441DF6C668003494D6 /* DependencyEntitySync.swift in Sources */,
 				166A22912577C06B00EF313D /* ResetSessionRequestStrategy.swift in Sources */,
 				166901E41D7081C7000FE4AF /* ZMSingleRequestSync.m in Sources */,
@@ -2102,7 +2102,6 @@
 				EE7F022B2A8391C500FE5695 /* ConversationServiceTests.swift in Sources */,
 				7AEBB679285A16400090B524 /* CountSelfMLSKeyPackagesActionHandlerTests.swift in Sources */,
 				16A86B4622A5485E00A674F8 /* IdentifierObjectSyncTests.swift in Sources */,
-				063139DF2A56BD6A0083D5D2 /* PayloadProcessing+MLSMessageSendingStatusTests.swift in Sources */,
 				A90C56E62685C20E00F1007B /* ZMImagePreprocessingTrackerTests.swift in Sources */,
 				EEE0EE0728591E9C00BBEE29 /* AssetDownloadRequestFactoryTests.swift in Sources */,
 				16972DED2668E699008AF3A2 /* UserProfileRequestStrategyTests.swift in Sources */,
@@ -2128,6 +2127,7 @@
 				F18401E02073C25900E9F4CC /* ClientMessageRequestFactoryTests.swift in Sources */,
 				63CC83B3285A1E59008549AD /* ClaimMLSKeyPackageActionHandlerTests.swift in Sources */,
 				F18401F42073C27200E9F4CC /* LinkPreviewPreprocessorTests.swift in Sources */,
+				EE88079F2AC4288200278E3C /* MLSMessageSendingStatusPayloadProcessorTests.swift in Sources */,
 				0693114C24F79A0E00D14DF5 /* ZMLocalNotificationSetTests.swift in Sources */,
 				EEAC16D6281AEB0200B7A34D /* CallEventContentTests.swift in Sources */,
 				EE82318927D22D79008CD77B /* String+Random.swift in Sources */,
