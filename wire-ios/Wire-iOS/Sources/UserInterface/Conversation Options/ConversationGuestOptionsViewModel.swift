@@ -76,6 +76,12 @@ final class ConversationGuestOptionsViewModel {
         }
     }
 
+    private var isGuestLinkWithPasswordAvailable: Bool {
+        guard let apiVersion = BackendInfo.apiVersion else { return false }
+
+        return apiVersion >= .v4
+    }
+
     private let configuration: ConversationGuestOptionsViewModelConfiguration
 
     init(configuration: ConversationGuestOptionsViewModelConfiguration) {
@@ -238,15 +244,14 @@ final class ConversationGuestOptionsViewModel {
     /// Starts the Guest Link Creation Flow
     /// - Parameter view: the source view which triggers create action
     func startGuestLinkCreationFlow(from view: UIView? = nil) {
-        guard let apiVersion = BackendInfo.apiVersion else { return }
-        if apiVersion >= .v4 {
-             delegate?.viewModel(self, sourceView: view, presentGuestLinkTypeSelection: { [weak self] guestLinkType in
+        if isGuestLinkWithPasswordAvailable {
+            delegate?.viewModel(self, sourceView: view, presentGuestLinkTypeSelection: { [weak self] guestLinkType in
                 guard let `self` = self else { return }
-                 switch guestLinkType {
-                 case .secure: break
-                 case .normal:
-                     createLink()
-                 }
+                switch guestLinkType {
+                case .secure: break
+                case .normal:
+                    createLink()
+                }
             })
         } else {
             createLink()
