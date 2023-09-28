@@ -939,7 +939,7 @@ class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
         let otherUnverifiedUsers = self.setupUnverifiedUsers(count: 1)
 
         // THEN
-        XCTAssertEqual(conversation.allMessages.count, 4)
+        XCTAssertEqual(conversation.allMessages.count, 2)
         guard let lastMessage1 = conversation.lastMessage as? ZMSystemMessage else {
             return XCTFail()
         }
@@ -950,7 +950,7 @@ class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
         _ = self.simulateAdding(users: otherUnverifiedUsers, conversation: conversation, by: selfUser)
 
         // THEN
-        XCTAssertEqual(conversation.allMessages.count, 5)
+        XCTAssertEqual(conversation.allMessages.count, 3)
         guard let lastMessage2 = conversation.lastMessage as? ZMSystemMessage else {
             return XCTFail()
         }
@@ -973,13 +973,33 @@ class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
         XCTAssertEqual(conversation.securityLevel, .secure)
     }
 
-    func testThatSecurityLevelIsIncreased_WhenAddingSelfUserToAnExistingConversation() {
+    func testThatSecurityLevelIsNotIncreased_WhenAddingOnlySelfClientToANewConversation() {
         // given
         let selfUser = ZMUser.selfUser(in: self.uiMOC)
         self.createSelfClient(onMOC: self.uiMOC)
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.conversationType = .group
         conversation.remoteIdentifier = UUID()
+
+        // when
+        conversation.addParticipantAndUpdateConversationState(user: selfUser, role: nil)
+
+        // then
+        XCTAssertEqual(conversation.securityLevel, .notSecure)
+    }
+
+    func testThatSecurityLevelIsIncreased_WhenAddingSelfUserWithVerifiedClientsToANewConversation() {
+        // given
+        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        conversation.conversationType = .group
+        conversation.remoteIdentifier = UUID()
+
+        let selfUser = ZMUser.selfUser(in: self.uiMOC)
+        let selfClient = self.createSelfClient(onMOC: self.uiMOC)
+
+        let verifiedUserClient = UserClient.insertNewObject(in: self.uiMOC)
+        verifiedUserClient.user = selfUser
+        selfClient.trustClients(Set([verifiedUserClient]))
 
         // when
         conversation.addParticipantAndUpdateConversationState(user: selfUser, role: nil)
