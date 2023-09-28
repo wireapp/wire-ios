@@ -141,7 +141,6 @@ final class ConversationGuestOptionsViewController: UIViewController,
         present(alertController, animated: true)
 
         alertController.configPopover(pointToView: sourceView ?? view)
-
     }
 
     func viewModel(_ viewModel: ConversationGuestOptionsViewModel, sourceView: UIView? = nil, confirmRevokingLink completion: @escaping (Bool) -> Void) {
