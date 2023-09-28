@@ -68,6 +68,7 @@ extension CoreDataStack {
                 try fileManager.removeItem(at: url)
             } catch {
                 log.debug("error removing directory: \(error)")
+                WireLogger.localStorage.debug("backup: clearBackupDirectory got error removing directory: \(error)")
             }
         }
 
@@ -120,6 +121,7 @@ extension CoreDataStack {
                 let options = NSPersistentStoreCoordinator.persistentStoreOptions(supportsMigration: false)
 
                 // Recreate the persistent store inside a new location
+                WireLogger.localStorage.debug("backup: Recreate the persistent store inside a new location")
                 try coordinator.replacePersistentStore(
                     at: backupLocation,
                     destinationOptions: options,
@@ -128,6 +130,7 @@ extension CoreDataStack {
                     ofType: NSSQLiteStoreType
                 )
 
+                WireLogger.localStorage.debug("backup: prepareStoreForBackupExport")
                 try prepareStoreForBackupExport(
                     coordinator: coordinator,
                     location: backupLocation,
@@ -136,6 +139,7 @@ extension CoreDataStack {
                 )
 
                 // Create & write metadata
+                WireLogger.localStorage.debug("backup: Create & write metadata")
                 let metadata = BackupMetadata(userIdentifier: accountIdentifier, clientIdentifier: clientIdentifier)
                 try metadata.write(to: metadataURL)
                 log.info("successfully created backup at: \(backupDirectory.path), metadata: \(metadata)")
@@ -166,6 +170,7 @@ extension CoreDataStack {
         ) {
 
         func fail(_ error: BackupImportError) {
+            WireLogger.localStorage.debug("backup: error backing up local store: \(error)")
             log.debug("error backing up local store: \(error)")
             DispatchQueue.main.async(group: dispatchGroup) {
                 completion(.failure(error))
@@ -192,9 +197,11 @@ extension CoreDataStack {
                 try fileManager.createDirectory(at: accountStoreFile.deletingLastPathComponent(), withIntermediateDirectories: true, attributes: nil)
                 let options = NSPersistentStoreCoordinator.persistentStoreOptions(supportsMigration: true)
 
+                WireLogger.localStorage.debug("backup: import prepare")
                 try prepareStoreForBackupImport(coordinator: coordinator, location: backupStoreFile, options: options)
 
                 // Import the persistent store to the account data directory
+                WireLogger.localStorage.debug("backup: import the persistent store to the account data directory")
                 try coordinator.replacePersistentStore(
                     at: accountStoreFile,
                     destinationOptions: options,

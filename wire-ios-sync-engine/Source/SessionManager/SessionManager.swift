@@ -712,6 +712,7 @@ public final class SessionManager: NSObject, SessionManagerType {
     }
 
     fileprivate func logout(account: Account, error: Error? = nil) {
+        WireLogger.session.debug("Logging out account \(account.userIdentifier)...")
         log.debug("Logging out account \(account.userIdentifier)...")
 
         if let session = backgroundUserSessions[account.userIdentifier] {
@@ -1040,6 +1041,7 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     internal func tearDownBackgroundSession(for accountId: UUID) {
         guard let userSession = self.backgroundUserSessions[accountId] else {
+            WireLogger.session.error("No session to tear down for \(accountId), known sessions: \(self.backgroundUserSessions)")
             log.error("No session to tear down for \(accountId), known sessions: \(self.backgroundUserSessions)")
             return
         }
