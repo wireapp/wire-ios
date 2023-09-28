@@ -87,7 +87,7 @@ final class MessageToolboxViewTests: CoreDataSnapshotTestCase {
         sut.configureForMessage(message, animated: false)
 
         // THEN
-        verify(view: sut)
+        verify(matching: sut)
     }
 
     func testThatItConfiguresWithGroupConversationReadReceipt() {
@@ -102,7 +102,7 @@ final class MessageToolboxViewTests: CoreDataSnapshotTestCase {
         sut.configureForMessage(message, animated: false)
 
         // THEN
-        verify(view: sut)
+        verify(matching: sut)
     }
 
     // MARK: - Tap Gesture
