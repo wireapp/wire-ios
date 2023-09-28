@@ -17,6 +17,43 @@
 //
 
 import UIKit
+import WireCommonComponents
+
+final class GeneratePasswordButton: IconButton {
+    init() {
+        super.init()
+
+        clipsToBounds = true
+        titleLabel?.font = FontSpec.normalSemiboldFont.font!
+        applyStyle(.secondaryTextButtonStyle)
+        layer.cornerRadius = 12
+        contentEdgeInsets = UIEdgeInsets(top: 4, left: 16, bottom: 4, right: 16)
+    }
+
+    convenience init(fontSpec: FontSpec, insets: UIEdgeInsets) {
+        self.init()
+
+        titleLabel?.font = fontSpec.font
+        self.contentEdgeInsets = insets
+    }
+
+    override var isHighlighted: Bool {
+        didSet {
+            applyStyle(.secondaryTextButtonStyle)
+        }
+    }
+}
+
+extension NSMutableAttributedString {
+    func bold(_ value: String) -> NSMutableAttributedString {
+
+        let attributes: [NSAttributedString.Key: Any] = [
+            .font: FontSpec.mediumSemiboldFont.font!]
+
+        self.append(NSAttributedString(string: value, attributes: attributes))
+        return self
+    }
+}
 
 class CreatePasswordSecuredLinkViewController: UIViewController {
 
@@ -25,10 +62,32 @@ class CreatePasswordSecuredLinkViewController: UIViewController {
     typealias ViewColors = SemanticColors.View
     typealias LabelColors = SemanticColors.Label
 
+    private let generatePasswordButton = GeneratePasswordButton(fontSpec: FontSpec.buttonSmallSemibold,
+                                           insets: UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8))
+
+    private let warningLabel: UILabel = {
+
+        var paragraphStyle = NSMutableParagraphStyle()
+        var label = UILabel()
+        label.textColor = SemanticColors.Label.textDefault
+        label.font = FontSpec.mediumFont.font!
+        label.numberOfLines = 0
+        label.lineBreakMode = .byWordWrapping
+        paragraphStyle.lineHeightMultiple = 0.98
+        label.attributedText = NSMutableAttributedString(
+            string: "People who want to join the conversation via the guest link need to enter this password first.",
+            attributes: [NSAttributedString.Key.paragraphStyle: paragraphStyle]).bold("\nYou can’t change the password later. Make sure to copy and store it."
+        )
+
+        return label
+    }()
+
     // MARK: - Override methods
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        setUpViews()
+        setupConstraints()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -38,11 +97,36 @@ class CreatePasswordSecuredLinkViewController: UIViewController {
 
     // MARK: - Setup UI
 
+    private func setUpViews() {
+
+        generatePasswordButton.setTitle("Generate Password", for: .normal)
+        generatePasswordButton.setImage(UIImage(named: "Shield"), for: .normal)
+        generatePasswordButton.imageEdgeInsets.right = 10.0
+        view.addSubview(warningLabel)
+        view.addSubview(generatePasswordButton)
+    }
+
     private func setupNavigationBar() {
         navigationController?.navigationBar.backgroundColor = ViewColors.backgroundDefault
         navigationController?.navigationBar.tintColor = LabelColors.textDefault
         navigationItem.setupNavigationBarTitle(title: L10n.Localizable.GroupDetails.GuestOptionsCreatePasswordSecuredLink.title)
         navigationItem.rightBarButtonItem = navigationController?.closeItem()
+    }
+
+    private func setupConstraints() {
+        [generatePasswordButton, warningLabel].prepareForLayout()
+
+        NSLayoutConstraint.activate([
+            warningLabel.safeLeadingAnchor.constraint(equalTo: self.view.safeLeadingAnchor, constant: 20),
+            warningLabel.safeTrailingAnchor.constraint(equalTo: self.view.safeTrailingAnchor, constant: -20),
+            warningLabel.safeTopAnchor.constraint(equalTo: self.view.safeTopAnchor, constant: 30),
+
+            generatePasswordButton.topAnchor.constraint(equalTo: warningLabel.bottomAnchor, constant: 40),
+            generatePasswordButton.safeLeadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 20),
+            // This is a temporary constraint for the height.
+            // It will change as soon as we add more elements to the View Controller
+            generatePasswordButton.heightAnchor.constraint(equalToConstant: 32)
+        ])
     }
 
 }

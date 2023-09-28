@@ -180,6 +180,7 @@ internal enum Asset {
     internal static let foldersOutline = ImageAsset(name: "Folders Outline")
     internal static let attention = ImageAsset(name: "Attention")
     internal static let check = ImageAsset(name: "Check")
+    internal static let shield = ImageAsset(name: "Shield")
     internal static let unavailableUser = ImageAsset(name: "Unavailable user")
   }
 }
@@ -343,3 +344,4 @@ private final class BundleToken {
   }()
 }
 // swiftlint:enable convenience_type
+// swiftlint:disable all

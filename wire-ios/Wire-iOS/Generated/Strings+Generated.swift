@@ -4715,6 +4715,13 @@ internal enum L10n {
         }
       }
     }
+    internal enum SecuredGuestLinkWithPasswordWarningLabel {
+      /// 
+      /// You can’t change the password later. Make sure to copy and store it.
+      internal static let subtitle = L10n.tr("Localizable", "secured_guest_link_with_password_warning_label.subtitle", fallback: "\nYou can’t change the password later. Make sure to copy and store it.")
+      /// People who want to join the conversation via the guest link need to enter this password first.
+      internal static let title = L10n.tr("Localizable", "secured_guest_link_with_password_warning_label.title", fallback: "People who want to join the conversation via the guest link need to enter this password first.")
+    }
     internal enum SecurityClassification {
       /// Security level:
       internal static let securityLevel = L10n.tr("Localizable", "security_classification.security_level", fallback: "Security level:")
