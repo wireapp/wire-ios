@@ -26,6 +26,7 @@ public extension NSManagedObjectContext {
             let result = try fetch(request)
             return result
         } catch let error {
+            WireLogger.localStorage.error("CoreData: Error in fetching request : \(request),  \(error.localizedDescription)")
             fatal("Error in fetching \(error.localizedDescription)")
         }
     }
