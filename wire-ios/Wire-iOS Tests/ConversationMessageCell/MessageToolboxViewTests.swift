@@ -138,7 +138,7 @@ final class MessageToolboxViewTests: CoreDataSnapshotTestCase {
         sut.configureForMessage(message, animated: false)
 
         // THEN
-        verify(view: sut)
+        verify(matching: sut)
     }
 
     func testThatItDisplaysTimestamp_ReadReceipts_Countdown_SelfUser() {
@@ -154,7 +154,7 @@ final class MessageToolboxViewTests: CoreDataSnapshotTestCase {
         sut.configureForMessage(message, animated: false)
 
         // THEN
-        verify(view: sut)
+        verify(matching: sut)
     }
 
 }
