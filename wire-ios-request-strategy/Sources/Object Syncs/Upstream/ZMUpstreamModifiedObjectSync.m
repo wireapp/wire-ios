@@ -280,7 +280,7 @@ ZM_EMPTY_ASSERTING_INIT();
                 [self.updatedObjects didSynchronizeToken:token];
             }
         }
-        else if (response.result ==  ZMTransportResponseStatusCancelled) {
+        else if (response.result == ZMTransportResponseStatusCancelled) {
             [self.updatedObjects didFailToSynchronizeToken:token];
             if ([localTranscoder respondsToSelector:@selector(requestExpiredForObject:forKeys:)]) {
                 [localTranscoder requestExpiredForObject:objectWithKeys.object forKeys:objectWithKeys.keysToSync];
