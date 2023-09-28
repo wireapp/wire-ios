@@ -123,7 +123,7 @@ static NSString* ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_NETWORK;
     // This is a quick fix to handle remote federation errors. Without it, we would
     // return a "try again" error, which would cause infinite failures if the
     // remote federated backend is down.
-    if (self.HTTPStatus == 533) {
+    if (self.HTTPStatus == FederationRemoteError) {
         return ZMTransportResponseStatusPermanentError;
     }
 
