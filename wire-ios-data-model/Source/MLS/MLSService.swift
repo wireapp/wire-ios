@@ -848,7 +848,7 @@ public final class MLSService: MLSServiceInterface {
         logger.info("found \(outOfSync.count) conversations out of sync")
 
         outOfSync.forEach { groupID in
-            launchConversationRepairTaskIfNotInProgress(for: groupID) {
+            launchGroupRepairTaskIfNotInProgress(for: groupID) {
                 do {
                     try await self.joinGroup(with: groupID)
                     self.logger.info("repaired out of sync conversation (\(groupID.safeForLoggingDescription))")
@@ -859,21 +859,21 @@ public final class MLSService: MLSServiceInterface {
         }
     }
 
-    func fetchAndRepairConversation(
-        with groupID: MLSGroupID,
-        subconversationType: SubgroupType?
-    ) {
-        launchConversationRepairTaskIfNotInProgress(for: groupID) {
-            switch subconversationType {
-            case .none:
-                await self.fetchAndRepairConversation(with: groupID)
-            case .conference:
-                await self.fetchAndRepairSubgroup(parentGroupID: groupID)
-            }
+    private func fetchAndRepairGroupIfPossible(with groupID: MLSGroupID) {
+        launchGroupRepairTaskIfNotInProgress(for: groupID) {
+            await self.fetchAndRepairGroup(with: groupID)
         }
     }
 
-    private func fetchAndRepairConversation(with groupID: MLSGroupID) async {
+    private func fetchAndRepairGroup(with groupID: MLSGroupID) async {
+        if let subgroupInfo = subconverationGroupIDRepository.findSubgroupTypeAndParentID(for: groupID) {
+            await fetchAndRepairSubgroup(parentGroupID: subgroupInfo.parentID)
+        } else {
+            await fetchAndRepairParentGroup(with: groupID)
+        }
+    }
+
+    private func fetchAndRepairParentGroup(with groupID: MLSGroupID) async {
         guard let context = context else {
             return
         }
@@ -969,20 +969,20 @@ public final class MLSService: MLSServiceInterface {
         }
     }
 
-    private var conversationsBeingRepaired = Set<MLSGroupID>()
+    private var groupsBeingRepaired = Set<MLSGroupID>()
 
-    private func launchConversationRepairTaskIfNotInProgress(
+    private func launchGroupRepairTaskIfNotInProgress(
         for groupID: MLSGroupID,
         repairOperation: @escaping () async -> Void
     ) {
-        guard !conversationsBeingRepaired.contains(groupID) else {
+        guard !groupsBeingRepaired.contains(groupID) else {
             return
         }
 
         Task {
-            conversationsBeingRepaired.insert(groupID)
+            groupsBeingRepaired.insert(groupID)
             await repairOperation()
-            conversationsBeingRepaired.remove(groupID)
+            groupsBeingRepaired.remove(groupID)
         }
     }
 
@@ -1232,10 +1232,7 @@ public final class MLSService: MLSServiceInterface {
                 subconversationType: subconversationType
             )
         } catch DecryptionError.wrongEpoch {
-            fetchAndRepairConversation(
-                with: groupID,
-                subconversationType: subconversationType
-            )
+            fetchAndRepairGroupIfPossible(with: groupID)
             throw DecryptionError.wrongEpoch
         } catch {
             throw error
@@ -1377,31 +1374,39 @@ public final class MLSService: MLSServiceInterface {
         for groupID: MLSGroupID,
         operation: @escaping () async throws -> Void
     ) async throws {
+        typealias Error = MLSActionExecutor.Error
+
         do {
             try await operation()
 
-        } catch MLSActionExecutor.Error.failedToSendCommit(recovery: .commitPendingProposalsAfterQuickSync) {
+        } catch Error.failedToSendCommit(recovery: .commitPendingProposalsAfterQuickSync) {
             logger.warn("failed to send commit, syncing then committing pending proposals...")
             await syncStatus.performQuickSync()
             logger.info("sync finished, committing pending proposals...")
             try await commitPendingProposals(in: groupID)
 
-        } catch MLSActionExecutor.Error.failedToSendCommit(recovery: .retryAfterQuickSync) {
+        } catch Error.failedToSendCommit(recovery: .retryAfterQuickSync) {
             logger.warn("failed to send commit, syncing then retrying operation...")
             await syncStatus.performQuickSync()
             logger.info("sync finished, retying operation...")
             try await retryOnCommitFailure(for: groupID, operation: operation)
 
-        } catch MLSActionExecutor.Error.failedToSendCommit(recovery: .giveUp) {
+        } catch Error.failedToSendCommit(recovery: .retryAfterRepairingGroup) {
+            logger.warn("failed to send commit, repairing group then retrying operation...")
+            await fetchAndRepairGroup(with: groupID)
+            logger.info("repair finished, retrying operation...")
+            try await operation()
+
+        } catch Error.failedToSendCommit(recovery: .giveUp) {
             logger.warn("failed to send commit, giving up...")
             // TODO: [John] inform user
-            throw MLSActionExecutor.Error.failedToSendCommit(recovery: .giveUp)
+            throw Error.failedToSendCommit(recovery: .giveUp)
 
-        } catch MLSActionExecutor.Error.failedToSendExternalCommit(recovery: .retry) {
+        } catch Error.failedToSendExternalCommit(recovery: .retry) {
             logger.warn("failed to send external commit, retrying operation...")
             try await retryOnCommitFailure(for: groupID, operation: operation)
 
-        } catch MLSActionExecutor.Error.failedToSendExternalCommit(recovery: .giveUp) {
+        } catch Error.failedToSendExternalCommit(recovery: .giveUp) {
             logger.warn("failed to send external commit, giving up...")
             throw MLSActionExecutor.Error.failedToSendExternalCommit(recovery: .giveUp)
 

@@ -98,6 +98,13 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
 
         case retryAfterQuickSync
 
+        /// Repair (re-join) the group and retry the action
+        ///
+        /// We may have missed a few commits so we will rejoin the group
+        /// and try again.
+
+        case retryAfterRepairingGroup
+
         /// Abort the action and inform the user.
         ///
         /// There is no way to automatically recover from the error.
@@ -111,7 +118,7 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
             case .commitPendingProposalsAfterQuickSync:
                 return false
 
-            case .retryAfterQuickSync, .giveUp:
+            case .retryAfterQuickSync, .giveUp, .retryAfterRepairingGroup:
                 return true
             }
         }
@@ -401,8 +408,11 @@ extension SendCommitBundleAction.Failure {
         case .mlsClientMismatch:
             return .retryAfterQuickSync
 
-        case .mlsStaleMessage, .mlsCommitMissingReferences:
+        case .mlsCommitMissingReferences:
             return .commitPendingProposalsAfterQuickSync
+
+        case .mlsStaleMessage:
+            return .retryAfterRepairingGroup
 
         default:
             return .giveUp

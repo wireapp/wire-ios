@@ -32,6 +32,9 @@ public protocol SubconversationGroupIDRepositoryInterface {
         parentGroupID: MLSGroupID
     ) -> MLSGroupID?
 
+    func findSubgroupTypeAndParentID(
+        for targetGroupID: MLSGroupID
+    ) -> (parentID: MLSGroupID, type: SubgroupType)?
 }
 
 public final class SubconversationGroupIDRepository: SubconversationGroupIDRepositoryInterface {
@@ -65,4 +68,20 @@ public final class SubconversationGroupIDRepository: SubconversationGroupIDRepos
         return storage[parentGroupID]?[type]
     }
 
+    // MARK: - Finding subgroup
+
+    public func findSubgroupTypeAndParentID(
+        for targetGroupID: MLSGroupID
+    ) -> (parentID: MLSGroupID, type: SubgroupType)? {
+
+        for (parentID, subgroups) in storage {
+            if let subgroup = subgroups.first(where: {
+                $1 == targetGroupID
+            }) {
+                return (parentID, subgroup.key)
+            }
+        }
+
+        return nil
+    }
 }
