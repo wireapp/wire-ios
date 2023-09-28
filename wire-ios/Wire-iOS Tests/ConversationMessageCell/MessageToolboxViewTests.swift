@@ -25,6 +25,7 @@ final class MessageToolboxViewTests: CoreDataSnapshotTestCase {
 
     var message: MockMessage!
     var sut: MessageToolboxView!
+    private var backgroundColor = SemanticColors.View.backgroundConversationView
 
     // MARK: - setUp
 
@@ -58,7 +59,11 @@ final class MessageToolboxViewTests: CoreDataSnapshotTestCase {
         sut.configureForMessage(message, animated: false)
 
         // THEN
-        verifyView(view: sut, width: defaultIPhoneSize.width)
+        verifyInWidths(
+            matching: sut,
+            widths: [defaultIPhoneSize.width],
+            snapshotBackgroundColor: backgroundColor
+        )
     }
 
     func testThatItConfiguresWithFailedToSendAndReason() {
@@ -73,6 +78,11 @@ final class MessageToolboxViewTests: CoreDataSnapshotTestCase {
 
         // THEN
         verifyView(view: sut, width: defaultIPhoneSize.width)
+        verifyInWidths(
+            matching: sut,
+            widths: [defaultIPhoneSize.width],
+            snapshotBackgroundColor: backgroundColor
+        )
     }
 
     func testThatItConfiguresWith1To1ConversationReadReceipt() {
