@@ -29,39 +29,29 @@ class SendCommitBundleActionHandlerTests: ActionHandlerTestBase<SendCommitBundle
     }
 
     // MARK: - Request generation
-    func test_itGenerateARequest() throws {
+    func test_itGenerateARequest_APIV5() throws {
         try test_itGeneratesARequest(
             for: action,
-            expectedPath: "/v3/mls/commit-bundles",
+            expectedPath: "/v5/mls/commit-bundles",
             expectedMethod: .methodPOST,
             expectedData: commitBundle,
             expectedContentType: "application/x-protobuf",
-            apiVersion: .v3
+            apiVersion: .v5
         )
     }
 
-    func test_itFailsToGenerateRequests() {
-        test_itDoesntGenerateARequest(
-            action: action,
-            apiVersion: .v0,
-            expectedError: .endpointUnavailable
-        )
-
-        test_itDoesntGenerateARequest(
-            action: action,
-            apiVersion: .v1,
-            expectedError: .endpointUnavailable
-        )
-
-        test_itDoesntGenerateARequest(
-            action: action,
-            apiVersion: .v2,
-            expectedError: .endpointUnavailable
-        )
+    func test_itFailsToGenerateRequests_APIBelowV5() {
+        [.v0, .v1, .v2, .v3, .v4].forEach {
+            test_itDoesntGenerateARequest(
+                action: action,
+                apiVersion: $0,
+                expectedError: .endpointUnavailable
+            )
+        }
 
         test_itDoesntGenerateARequest(
             action: SendCommitBundleAction(commitBundle: Data()),
-            apiVersion: .v3,
+            apiVersion: .v5,
             expectedError: .malformedRequest
         )
     }

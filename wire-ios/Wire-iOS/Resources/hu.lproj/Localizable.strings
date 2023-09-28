@@ -599,6 +599,7 @@
 "content.message.copy" = "Másolás";
 "content.message.download" = "Letöltés";
 "content.message.details" = "Részletek";
+"content.message.reactions" = "Reactions";
 
 // Reply
 "content.message.reply" = "Válasz";
@@ -617,6 +618,11 @@
 "content.reactions_list.likers" = "Tetszett neki(k)";
 
 "content.file.too_big" = "Maximum %@ méretű fájlokat küldhetsz";
+
+// Reactions
+"content.reactions.title" = "Select Reaction";
+"content.reactions.search" = "Search for Emoji";
+
 // Someone pinged
 "content.ping.text" = "%@ pinged";
 "content.ping.text-you" = "%@ pinged";
@@ -1848,14 +1854,14 @@
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Message Details
-"message_details.empty_likes" = "Még senkinek nem tetszett ez az üzenet.";
+"message_details.empty_likes" = "No one has reacted to this message yet.";
 "message_details.empty_read_receipts" = "Még senki nem olvasta el az üzenetet.";
 "message_details.read_receipts_disabled" = "Az olvasási visszaigazolás nem voltak bekapcsolva, amikor ezt az üzenetet elküldték.";
 "message_details.combined_title" = "Message Details";
-"message_details.likes_title" = "Liked";
+"message_details.reactions_title" = "Reactions";
 "message_details.receipts_title" = "Read";
 "message_details.tabs.seen" = "Read (%d)";
-"message_details.tabs.likes" = "Liked (%d)";
+"message_details.tabs.reactions" = "Reactions (%d)";
 "message_details.subtitle_send_date" = "Sent: %@";
 "message_details.subtitle_edit_date" = "Szerkesztve ekkor: %@";
 "message_details.subtitle_label_voiceOver" = "Message Details";
@@ -2010,3 +2016,7 @@
 "drawing.colors.pink" = "pink";
 "drawing.colors.chocolate" = "chocolate";
 "drawing.colors.gray" = "gray";
+
+// MARK: - Time
+
+"time.just_now" = "Just now";

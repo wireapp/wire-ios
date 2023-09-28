@@ -16,11 +16,30 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import WireCommonComponents
+import WireDataModel
 import UIKit
 
-enum MessageAction: CaseIterable {
+enum MessageAction: CaseIterable, Equatable {
+    static var allCases: [MessageAction] = [.digitallySign,
+                                            .copy,
+                                            .reply,
+                                            .openDetails,
+                                            .edit,
+                                            .save,
+                                            .cancel,
+                                            .download,
+                                            .forward,
+                                            .resend,
+                                            .showInConversation,
+                                            .sketchDraw,
+                                            .sketchEmoji,
+                                            .present,
+                                            .openQuote,
+                                            .resetSession,
+                                            .delete,
+                                            .react("❤️")]
+
     case
     digitallySign,
     copy,
@@ -32,8 +51,6 @@ enum MessageAction: CaseIterable {
     cancel,
     download,
     forward,
-    like,
-    unlike,
     resend,
     showInConversation,
     sketchDraw,
@@ -41,7 +58,8 @@ enum MessageAction: CaseIterable {
     // Not included in ConversationMessageActionController.allMessageActions, for image viewer/open quote
     present,
     openQuote,
-    resetSession
+    resetSession,
+    react(Emoji.ID)
 
     var title: String? {
         let key: String?
@@ -67,10 +85,6 @@ enum MessageAction: CaseIterable {
             key = "content.message.download"
         case .forward:
             key = "content.message.forward"
-        case .like:
-            key = "content.message.like"
-        case .unlike:
-            key = "content.message.unlike"
         case .resend:
             key = "content.message.resend"
         case .showInConversation:
@@ -81,7 +95,8 @@ enum MessageAction: CaseIterable {
             key = "image.add_emoji"
         case .present,
              .openQuote,
-             .resetSession:
+             .resetSession,
+             .react:
             key = nil
         }
 
@@ -108,10 +123,6 @@ enum MessageAction: CaseIterable {
             return .downArrow
         case .forward:
             return .export
-        case .like:
-            return .liked
-        case .unlike:
-            return .like
         case .resend:
             return .redo
         case .showInConversation:
@@ -123,7 +134,8 @@ enum MessageAction: CaseIterable {
         case .present,
              .openQuote,
              .digitallySign,
-             .resetSession:
+             .resetSession,
+             .react:
             return nil
         }
     }
@@ -153,10 +165,6 @@ enum MessageAction: CaseIterable {
             imageName = "chevron.down"
         case .forward:
             imageName = "square.and.arrow.up"
-        case .like:
-            imageName = "suit.heart"
-        case .unlike:
-            imageName = "suit.heart.fill"
         case .resend:
             imageName = "arrow.clockwise"
         case .showInConversation:
@@ -168,7 +176,8 @@ enum MessageAction: CaseIterable {
         case .present,
              .openQuote,
              .digitallySign,
-             .resetSession:
+             .resetSession,
+             .react:
             imageName = nil
         }
 
@@ -197,14 +206,12 @@ enum MessageAction: CaseIterable {
             return #selector(ConversationMessageActionController.downloadMessage)
         case .forward:
             return #selector(ConversationMessageActionController.forwardMessage)
-        case .like:
-            return #selector(ConversationMessageActionController.likeMessage)
-        case .unlike:
-            return #selector(ConversationMessageActionController.unlikeMessage)
         case .resend:
             return #selector(ConversationMessageActionController.resendMessage)
         case .showInConversation:
             return #selector(ConversationMessageActionController.revealMessage)
+        case .react:
+            return #selector(ConversationMessageActionController.addReaction(reaction:) )
         case .present,
              .sketchDraw,
              .sketchEmoji,
@@ -231,10 +238,6 @@ enum MessageAction: CaseIterable {
             return MessageAction.RevealButton.description
         case .delete:
             return MessageAction.DeleteButton.description
-        case .unlike:
-            return MessageAction.LikeButton.description
-        case .like:
-            return MessageAction.UnlikeButton.description
         default:
             return nil
         }

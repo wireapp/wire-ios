@@ -599,6 +599,7 @@
 "content.message.copy" = "Copier";
 "content.message.download" = "Télécharger";
 "content.message.details" = "Informations";
+"content.message.reactions" = "Reactions";
 
 // Reply
 "content.message.reply" = "Répondre";
@@ -617,6 +618,11 @@
 "content.reactions_list.likers" = "Aimé par";
 
 "content.file.too_big" = "Vous pouvez envoyer des fichiers jusqu'à %@";
+
+// Reactions
+"content.reactions.title" = "Select Reaction";
+"content.reactions.search" = "Search for Emoji";
+
 // Someone pinged
 "content.ping.text" = "%@ a fait un signe";
 "content.ping.text-you" = "%@ a fait un signe";
@@ -1848,14 +1854,14 @@
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Message Details
-"message_details.empty_likes" = "Personne n’a encore aimé ce message.";
+"message_details.empty_likes" = "No one has reacted to this message yet.";
 "message_details.empty_read_receipts" = "Personne n’a encore lu ce message.";
 "message_details.read_receipts_disabled" = "Les accusés de lecture n’étaient pas activés quand ce message a été envoyé.";
 "message_details.combined_title" = "Détails du Message";
-"message_details.likes_title" = "J'aime";
+"message_details.reactions_title" = "Reactions";
 "message_details.receipts_title" = "Lu";
 "message_details.tabs.seen" = "Lu (%d)";
-"message_details.tabs.likes" = "J'aime (%d)";
+"message_details.tabs.reactions" = "Reactions (%d)";
 "message_details.subtitle_send_date" = "Envoyé le : %@";
 "message_details.subtitle_edit_date" = "Modifié : %@";
 "message_details.subtitle_label_voiceOver" = "Détails du Message";
@@ -2010,3 +2016,7 @@
 "drawing.colors.pink" = "rose";
 "drawing.colors.chocolate" = "chocolat";
 "drawing.colors.gray" = "gray";
+
+// MARK: - Time
+
+"time.just_now" = "Just now";

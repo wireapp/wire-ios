@@ -25,6 +25,11 @@ public let ZMReactionUsersValueKey      = "users"
 @objc public enum TransportReaction: UInt32 {
     case none  = 0
     case heart = 1
+    case thumbsUp
+    case thumbsDown
+    case slightlySmiling
+    case beamingFace
+    case frowningFace
 }
 
 @objcMembers open class Reaction: ZMManagedObject {
@@ -32,11 +37,17 @@ public let ZMReactionUsersValueKey      = "users"
     @NSManaged var unicodeValue: String?
     @NSManaged var message: ZMMessage?
     @NSManaged var users: Set<ZMUser>
+    @NSManaged private var firstReactionDate: Date?
 
-    public static func insertReaction(_ unicodeValue: String, users: [ZMUser], inMessage message: ZMMessage) -> Reaction {
+    public var creationDate: Date {
+        return firstReactionDate ?? Date.distantPast
+    }
+
+    public static func insertReaction(_ unicodeValue: String, users: [ZMUser], inMessage message: ZMMessage, creationDate: Date?) -> Reaction {
         let reaction = insertNewObject(in: message.managedObjectContext!)
         reaction.message = message
         reaction.unicodeValue = unicodeValue
+        reaction.firstReactionDate = creationDate ?? Date()
         reaction.mutableSetValue(forKey: ZMReactionUsersValueKey).addObjects(from: users)
         return reaction
     }
@@ -53,19 +64,14 @@ public let ZMReactionUsersValueKey      = "users"
         return ZMReactionUnicodeValueKey
     }
 
-    public static func transportReaction(from unicode: String) -> TransportReaction {
-        switch unicode {
-        case MessageReaction.like.unicodeValue:
-            return .heart
-        default:
-            return .none
-        }
-
-    }
-
     public static func validate(unicode: String) -> Bool {
         let isDelete = unicode.count == 0
-        let isValidReaction = Reaction.transportReaction(from: unicode) != .none
+        let unicodeScalars = unicode.unicodeScalars
+        guard let firstScalar = unicodeScalars.first else {
+            return false
+        }
+        let isValidReaction = firstScalar.properties.isEmojiPresentation || firstScalar.properties.isEmoji
+
         return isDelete || isValidReaction
     }
 }

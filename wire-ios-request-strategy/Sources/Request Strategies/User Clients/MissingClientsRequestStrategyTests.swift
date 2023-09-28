@@ -507,6 +507,14 @@ class MissingClientsRequestStrategyTests: MessagingTestBase {
     }
 
     func testThatItRemovesMessagesMissingClientWhenEstablishedSessionWithClient_V4() {
+        internalTestThatItRemovesMessagesMissingClientWhenEstablishedSessionWithClient(apiVersion: .v4)
+    }
+
+    func testThatItRemovesMessagesMissingClientWhenEstablishedSessionWithClient_V5() {
+        internalTestThatItRemovesMessagesMissingClientWhenEstablishedSessionWithClient(apiVersion: .v5)
+    }
+
+    func internalTestThatItRemovesMessagesMissingClientWhenEstablishedSessionWithClient(apiVersion: APIVersion) {
         syncMOC.performGroupedBlockAndWait {
             // GIVEN
             let message = self.message(missingRecipient: self.otherClient)
@@ -514,7 +522,7 @@ class MissingClientsRequestStrategyTests: MessagingTestBase {
 
             // WHEN
             XCTAssertEqual(message.missingRecipients.count, 1)
-            guard let response = self.response(forMissing: [self.otherClient], apiVersion: .v4) else {
+            guard let response = self.response(forMissing: [self.otherClient], apiVersion: apiVersion) else {
                 return XCTFail("Response is invalid")
             }
             _ = self.sut.updateUpdatedObject(self.selfClient,
@@ -754,7 +762,7 @@ extension MissingClientsRequestStrategyTests {
         switch apiVersion {
         case .v0:
             XCTAssertEqual(request.path, "/users/list-prekeys", file: file, line: line)
-        case .v1, .v2, .v3, .v4:
+        case .v1, .v2, .v3, .v4, .v5:
             XCTAssertEqual(request.path, "/v\(apiVersion.rawValue)/users/list-prekeys", file: file, line: line)
         }
 
@@ -842,7 +850,7 @@ extension MissingClientsRequestStrategyTests {
                                        transportSessionError: nil,
                                        apiVersion: apiVersion.rawValue)
 
-        case .v4:
+        case .v4, .v5:
             let prekeyByQualifiedUser_V4 = Payload.PrekeyByQualifiedUserIDV4(prekeyByQualifiedUserID: prekeyByQualifiedUser, failed: nil)
             guard let payloadData = prekeyByQualifiedUser_V4.payloadData() else {
                 return nil

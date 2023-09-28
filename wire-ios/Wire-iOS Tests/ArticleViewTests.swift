@@ -1,45 +1,70 @@
-// 
+//
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
-// 
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
-// 
+//
 
-import XCTest
-import WireLinkPreview
 import WireDataModel
+import WireLinkPreview
+import XCTest
 @testable import Wire
 
+// MARK: - MockConversationMessageCellDelegate
+
 final class MockConversationMessageCellDelegate: ConversationMessageCellDelegate {
+
+    func conversationMessageWantsToShowActionsController(
+        _ cell: UIView,
+        actionsController: Wire.MessageActionsViewController
+    ) {
+
+    }
+
     func conversationMessageShouldBecomeFirstResponderWhenShowingMenuForCell(_ cell: UIView) -> Bool {
         // no-op
         return false
     }
 
-    func conversationMessageWantsToOpenUserDetails(_ cell: UIView, user: UserType, sourceView: UIView, frame: CGRect) {
+    func conversationMessageWantsToOpenUserDetails(
+        _ cell: UIView,
+        user: UserType,
+        sourceView: UIView,
+        frame: CGRect
+    ) {
         // no-op
     }
 
-    func conversationMessageWantsToOpenMessageDetails(_ cell: UIView, messageDetailsViewController: MessageDetailsViewController) {
+    func conversationMessageWantsToOpenMessageDetails(
+        _ cell: UIView,
+        messageDetailsViewController: MessageDetailsViewController
+    ) {
         // no-op
     }
 
-    func conversationMessageWantsToOpenGuestOptionsFromView(_ cell: UIView, sourceView: UIView) {
+    func conversationMessageWantsToOpenGuestOptionsFromView(
+        _ cell: UIView,
+        sourceView: UIView
+    ) {
         // no-op
     }
 
-    func conversationMessageWantsToOpenParticipantsDetails(_ cell: UIView, selectedUsers: [UserType], sourceView: UIView) {
+    func conversationMessageWantsToOpenParticipantsDetails(
+        _ cell: UIView,
+        selectedUsers: [UserType],
+        sourceView: UIView
+    ) {
         // no-op
     }
 
@@ -47,10 +72,16 @@ final class MockConversationMessageCellDelegate: ConversationMessageCellDelegate
         // no-op
     }
 
-    func perform(action: MessageAction, for message: ZMConversationMessage!, view: UIView) {
+    func perform(
+        action: MessageAction,
+        for message: ZMConversationMessage!,
+        view: UIView
+    ) {
         // no-op
     }
 }
+
+// MARK: - MockArticleViewDelegate
 
 final class MockArticleViewDelegate: ContextMenuLinkViewDelegate {
     var url: URL?
@@ -66,9 +97,15 @@ final class MockArticleViewDelegate: ContextMenuLinkViewDelegate {
     }
 }
 
-final class ArticleViewTests: ZMSnapshotTestCase {
+// MARK: - ArticleViewTests
+
+final class ArticleViewTests: BaseSnapshotTestCase {
+
+    // MARK: - Properties
 
     var sut: ArticleView!
+
+    // MARK: - setUp
 
     override func setUp() {
         super.setUp()
@@ -76,14 +113,15 @@ final class ArticleViewTests: ZMSnapshotTestCase {
         accentColor = .strongBlue
     }
 
-    override func tearDown() {
+    // MARK: - tearDown
 
+    override func tearDown() {
         MediaAssetCache.defaultImageCache.cache.removeAllObjects()
         sut = nil
         super.tearDown()
     }
 
-    // MARK: - Fixture
+    // MARK: - Fixture - Helper methods
 
     func articleWithoutPicture() -> MockTextMessageData {
         let article = ArticleMetadata(originalURLString: "https://www.example.com/article/1",
@@ -152,7 +190,7 @@ final class ArticleViewTests: ZMSnapshotTestCase {
         return textMessageData
     }
 
-    // MARK: - Tests
+    // MARK: - Unit Test
 
     func testContextMenuIsCreatedWithDeleteItem() {
         SelfUser.setupMockSelfUser()
@@ -171,61 +209,74 @@ final class ArticleViewTests: ZMSnapshotTestCase {
         XCTAssertEqual(children.first?.title, "Delete")
     }
 
-    // MARK: - Snapshot Tests
+    func setUpArticleView(
+        withImagePlaceholder: Bool,
+        textMessageData: ZMTextMessageData
+    ) -> ArticleView {
 
-    func testArticleViewWithoutPicture() {
-        sut = ArticleView(withImagePlaceholder: false)
+        let sut = ArticleView(withImagePlaceholder: withImagePlaceholder)
         sut.translatesAutoresizingMaskIntoConstraints = false
-        sut.configure(withTextMessageData: articleWithoutPicture(), obfuscated: false)
-        sut.layoutIfNeeded()
-        XCTAssertTrue(waitForGroupsToBeEmpty([MediaAssetCache.defaultImageCache.dispatchGroup]))
-
-        verifyInAllPhoneWidths(matching: sut)
-    }
-
-    func testArticleViewWithPicture() {
-
-        verifyInAllPhoneWidths(createSut: {
-            self.sut = ArticleView(withImagePlaceholder: true)
-            self.sut.translatesAutoresizingMaskIntoConstraints = false
-            self.sut.configure(withTextMessageData: self.articleWithPicture(), obfuscated: false)
-            XCTAssert(self.waitForGroupsToBeEmpty([MediaAssetCache.defaultImageCache.dispatchGroup]))
-
-            return self.sut
-        } as () -> UIView)
-    }
-
-    func testArticleViewWithPictureStillDownloading() {
-
-        sut = ArticleView(withImagePlaceholder: true)
-        sut.layer.speed = 0 // freeze animations for deterministic tests
-        sut.layer.beginTime = 0
-        sut.translatesAutoresizingMaskIntoConstraints = false
-        let textMessageData = articleWithPicture()
-        textMessageData.imageData = .none
         sut.configure(withTextMessageData: textMessageData, obfuscated: false)
         sut.layoutIfNeeded()
         XCTAssertTrue(waitForGroupsToBeEmpty([MediaAssetCache.defaultImageCache.dispatchGroup]))
 
+        return sut
+    }
+
+    // MARK: - Snapshot Tests
+
+    func testArticleViewWithoutPicture() {
+        // GIVEN && WHEN
+        sut = setUpArticleView(
+            withImagePlaceholder: false,
+            textMessageData: articleWithoutPicture()
+        )
+
+        // THEN
+        verifyInAllPhoneWidths(matching: sut)
+    }
+
+    func testArticleViewWithPicture() {
+        // GIVEN && WHEN
+        sut = setUpArticleView(
+            withImagePlaceholder: true,
+            textMessageData: articleWithPicture()
+        )
+
+        // THEN
+        verifyInAllPhoneWidths(matching: sut)
+    }
+
+    func testArticleViewWithPictureStillDownloading() {
+        // GIVEN && WHEN
+        let textMessageData = articleWithPicture()
+        textMessageData.imageData = .none
+
+        sut = setUpArticleView(
+            withImagePlaceholder: true,
+            textMessageData: textMessageData
+        )
+        sut.layer.speed = 0 // freeze animations for deterministic tests
+        sut.layer.beginTime = 0
+
+        // THEN
         verifyInAllPhoneWidths(matching: sut)
     }
 
     func disable_testArticleViewWithTruncatedURL() {
-        sut = ArticleView(withImagePlaceholder: true)
-        sut.translatesAutoresizingMaskIntoConstraints = false
-        sut.configure(withTextMessageData: articleWithLongURL(), obfuscated: false)
-        sut.layoutIfNeeded()
-        XCTAssertTrue(waitForGroupsToBeEmpty([MediaAssetCache.defaultImageCache.dispatchGroup]))
+        // GIVEN && WHEN
+        sut = setUpArticleView(
+            withImagePlaceholder: true,
+            textMessageData: articleWithLongURL()
+        )
 
+        // THEN
         verifyInAllPhoneWidths(matching: sut)
     }
 
     func testArticleViewWithTwitterStatusWithoutPicture() {
-        sut = ArticleView(withImagePlaceholder: false)
-        sut.translatesAutoresizingMaskIntoConstraints = false
-        sut.configure(withTextMessageData: twitterStatusWithoutPicture(), obfuscated: false)
-        sut.layoutIfNeeded()
-        XCTAssertTrue(waitForGroupsToBeEmpty([MediaAssetCache.defaultImageCache.dispatchGroup]))
+        // GIVEN && WHEN
+        sut = setUpArticleView(withImagePlaceholder: false, textMessageData: twitterStatusWithoutPicture())
 
         verifyInAllPhoneWidths(matching: sut)
     }
@@ -265,13 +316,13 @@ final class ArticleViewTests: ZMSnapshotTestCase {
                                            line: UInt = #line) {
 
         verifyInAllPhoneWidths(createSut: {
-                self.sut = ArticleView(withImagePlaceholder: true)
-                self.sut.translatesAutoresizingMaskIntoConstraints = false
-                self.sut.configure(withTextMessageData: self.articleWithPicture(imageNamed: named), obfuscated: false)
-                XCTAssert(self.waitForGroupsToBeEmpty([MediaAssetCache.defaultImageCache.dispatchGroup]))
+            self.sut = ArticleView(withImagePlaceholder: true)
+            self.sut.translatesAutoresizingMaskIntoConstraints = false
+            self.sut.configure(withTextMessageData: self.articleWithPicture(imageNamed: named), obfuscated: false)
+            XCTAssert(self.waitForGroupsToBeEmpty([MediaAssetCache.defaultImageCache.dispatchGroup]))
 
-                return self.sut
-            } as () -> UIView,
+            return self.sut
+        } as () -> UIView,
                                file: file,
                                testName: testName,
                                line: line)

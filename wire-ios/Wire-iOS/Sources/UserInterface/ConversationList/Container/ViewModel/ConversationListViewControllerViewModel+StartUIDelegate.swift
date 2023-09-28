@@ -20,8 +20,6 @@ import WireDataModel
 import UIKit
 import WireSyncEngine
 
-private typealias ConversationCreatedBlock = (ZMConversation?) -> Void
-
 extension ConversationListViewController.ViewModel: StartUIDelegate {
     func startUI(_ startUI: StartUIViewController, didSelect user: UserType) {
         oneToOneConversationWithUser(user, callback: { conversation in
@@ -42,20 +40,20 @@ extension ConversationListViewController.ViewModel: StartUIDelegate {
     /// - Parameters:
     ///   - user: the user which we want to have a 1-to-1 conversation with
     ///   - onConversationCreated: a ConversationCreatedBlock which has the conversation created
-    private func oneToOneConversationWithUser(_ user: UserType, callback onConversationCreated: @escaping ConversationCreatedBlock) {
-
+    private func oneToOneConversationWithUser(
+        _ user: UserType,
+        callback onConversationCreated: @escaping ConversationCreatedBlock
+    ) {
         guard let userSession = ZMUserSession.shared() else { return }
 
         viewController?.setState(.conversationList, animated: true) {
-            var oneToOneConversation: ZMConversation?
-            userSession.enqueue({
-                oneToOneConversation = user.oneToOneConversation
-            }, completionHandler: {
-                delay(0.3) {
-                    onConversationCreated(oneToOneConversation)
+            if let conversation = user.oneToOneConversation {
+                onConversationCreated(conversation)
+            } else {
+                user.createTeamOneToOneConversation(in: userSession.viewContext) { conversation in
+                    onConversationCreated(conversation)
                 }
-            })
+            }
         }
     }
-
 }

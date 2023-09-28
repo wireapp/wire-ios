@@ -1,0 +1,56 @@
+name: "Cherry-pick from release branch to develop"
+
+on:
+  pull_request:
+    branches:
+      - release/*
+    types:
+      - closed
+
+jobs:
+  cherry-pick:
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.SUBMODULE_PAT }}
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Append -cherry-pick to branch name
+        id: extract
+        run: |
+            PR_BRANCH="${{ github.event.pull_request.head.ref }}"
+            NEW_BRANCH_NAME="${PR_BRANCH}-cherry-pick"
+            echo "New branch name: $NEW_BRANCH_NAME"
+            echo "newBranchName=$NEW_BRANCH_NAME" >> $GITHUB_ENV
+      - name: Configure user to bot
+        run: |  
+            git config user.name 'github-actions[bot]'
+            git config user.email 'github-actions[bot]@users.noreply.github.com'
+
+      - name: Cherry-pick commits
+        run: |
+            git fetch origin develop:develop
+            git checkout -b ${{ env.newBranchName }} develop
+            git submodule update --init --recursive || true
+            OUTPUT=$(git cherry-pick ${{ github.event.pull_request.merge_commit_sha }} --strategy-option theirs || true)
+            CONFLICTS=$(echo "$OUTPUT" | grep 'CONFLICT' || echo "")
+            if [ -n "$CONFLICTS" ]; then
+                git add .
+                git cherry-pick --continue || true
+            fi
+            git push origin ${{ env.newBranchName }} || (echo "Failed to push to origin" && exit 1)
+            echo "conflicts=$CONFLICTS" >> $GITHUB_ENV
+
+      - name: Create PR
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_BRANCH: ${{ env.newBranchName }}
+          PR_ASSIGNEE: ${{ github.event.pull_request.user.login }}
+          PR_BODY: "${{ format('Cherry pick from the original PR: \n- #{0}\n\n---- \n\n ⚠️ Conflicts during cherry-pick:\n{1}\n\n{2}', github.event.pull_request.number, env.conflicts, github.event.pull_request.body) }}"
+        run: gh pr create --title "$PR_TITLE" --body "$PR_BODY" --base develop --head "$PR_BRANCH" --label "cherry-pick" --assignee "$PR_ASSIGNEE"

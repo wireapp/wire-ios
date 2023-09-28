@@ -35,9 +35,6 @@ final class MediaPreviewView: RoundedView {
         super.init(frame: .zero)
         setupSubviews()
         setupLayout()
-
-        addInteraction(UIContextMenuInteraction(delegate: self))
-
     }
 
     @available(*, unavailable)
@@ -103,23 +100,5 @@ final class MediaPreviewView: RoundedView {
             playButton.centerXAnchor.constraint(equalTo: centerXAnchor),
             playButton.centerYAnchor.constraint(equalTo: centerYAnchor)
         ])
-    }
-
-}
-
-// MARK: - UIContextMenuInteractionDelegate
-
-extension MediaPreviewView: UIContextMenuInteractionDelegate {
-
-    func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
-        return delegate?.linkPreviewContextMenu(view: self)
-    }
-
-    func contextMenuInteraction(_ interaction: UIContextMenuInteraction,
-                                willPerformPreviewActionForMenuWith configuration: UIContextMenuConfiguration,
-                                animator: UIContextMenuInteractionCommitAnimating) {
-        animator.addCompletion {
-            self.delegate?.linkViewWantsToOpenURL(self)
-        }
     }
 }

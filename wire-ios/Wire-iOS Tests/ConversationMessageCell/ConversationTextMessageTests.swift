@@ -16,34 +16,48 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import SnapshotTesting
 import XCTest
 import WireLinkPreview
 @testable import Wire
 
-final class ConversationTextMessageTests: ZMSnapshotTestCase {
+final class ConversationTextMessageTests: BaseSnapshotTestCase {
+
+    // MARK: - Properties
 
     var mockOtherUser: MockUserType!
+    var message: MockMessage!
+
+    // MARK: - setUp
 
     override func setUp() {
         super.setUp()
         UIColor.setAccentOverride(.vividRed)
-
-        mockOtherUser = MockUserType.createConnectedUser(name: "Bruno")
+        message = createMessage()
     }
+
+    // MARK: - tearDown
 
     override func tearDown() {
         mockOtherUser = nil
-
+        message = nil
         super.tearDown()
     }
 
-    func testPlainText() {
-        // GIVEN
-        // swiftlint:disable:next line_length
-        let message = MockMessageFactory.textMessage(withText: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. ")
-        message.senderUser = mockOtherUser
+    // MARK: - Snapshot Tests
+
+    func testPlainText_WithALongUsernameAndShowingTheDateOfTheMessage() {
+        // GIVEN, WHEN
+        message = createMessage(withText: "Welcome to Dub Dub 2023",
+                                userName: "Bruno with a long long long long long long long long long long long long name")
+
+        message.deliveryState = .delivered
 
         // THEN
+        verify(message: message, allWidths: true)
+    }
+
+    func testPlainText() {
         verify(message: message)
     }
 
@@ -58,8 +72,7 @@ final class ConversationTextMessageTests: ZMSnapshotTestCase {
             $0.summary = ""
         }
         let article = ArticleMetadata(protocolBuffer: linkPreview)
-        let message = MockMessageFactory.textMessage(withText: "http://www.example.com")
-        message.senderUser = mockOtherUser
+        message = createMessage(withText: "http://www.example.com")
         message.backingTextMessageData.backingLinkPreview = article
 
         // THEN
@@ -77,8 +90,7 @@ final class ConversationTextMessageTests: ZMSnapshotTestCase {
             $0.summary = ""
         }
         let article = ArticleMetadata(protocolBuffer: linkPreview)
-        let message = MockMessageFactory.textMessage(withText: "What do you think about this http://www.example.com")
-        message.senderUser = mockOtherUser
+        message = createMessage(withText: "What do you think about this http://www.example.com")
         message.backingTextMessageData.backingLinkPreview = article
 
         // THEN
@@ -88,11 +100,10 @@ final class ConversationTextMessageTests: ZMSnapshotTestCase {
     func testTextWithQuote() {
         // GIVEN
         let conversation = SwiftMockConversation()
-        let quote = MockMessageFactory.textMessage(withText: "Who is responsible for this!")
+        let quote = createMessage(withText: "Who is responsible for this!")
         quote.conversationLike = conversation
         quote.serverTimestamp = Date.distantPast
         let message = MockMessageFactory.textMessage(withText: "I am")
-        message.senderUser = mockOtherUser
         message.backingTextMessageData.hasQuote = true
         message.backingTextMessageData.quoteMessage = quote
 
@@ -112,11 +123,10 @@ final class ConversationTextMessageTests: ZMSnapshotTestCase {
         }
         let article = ArticleMetadata(protocolBuffer: linkPreview)
         let conversation = SwiftMockConversation()
-        let quote = MockMessageFactory.textMessage(withText: "Who is responsible for this!")
+        let quote = createMessage(withText: "Who is responsible for this!")
         quote.conversationLike = conversation
         quote.serverTimestamp = Date.distantPast
-        let message = MockMessageFactory.textMessage(withText: "I am http://www.example.com")
-        message.senderUser = mockOtherUser
+        let message = createMessage(withText: "I am http://www.example.com")
         message.backingTextMessageData.backingLinkPreview = article
         message.backingTextMessageData.hasQuote = true
         message.backingTextMessageData.quoteMessage = quote
@@ -127,8 +137,7 @@ final class ConversationTextMessageTests: ZMSnapshotTestCase {
 
     func testMediaPreviewAttachment() {
         // GIVEN
-        let message = MockMessageFactory.textMessage(withText: "https://www.youtube.com/watch?v=l7aqpSTa234")
-        message.senderUser = mockOtherUser
+        message = createMessage(withText: "https://www.youtube.com/watch?v=l7aqpSTa234")
         message.linkAttachments = [
             LinkAttachment(type: .youTubeVideo, title: "Lagar mat med Fernando Di Luca",
                            permalink: URL(string: "https://www.youtube.com/watch?v=l7aqpSTa234")!,
@@ -141,8 +150,7 @@ final class ConversationTextMessageTests: ZMSnapshotTestCase {
 
     func testSoundCloudMediaPreviewAttachment() {
         // GIVEN
-        let message = MockMessageFactory.textMessage(withText: "https://soundcloud.com/bridgitmendler/bridgit-mendler-atlantis-feat-kaiydo")
-        message.senderUser = mockOtherUser
+        message = createMessage(withText: "https://soundcloud.com/bridgitmendler/bridgit-mendler-atlantis-feat-kaiydo")
         message.linkAttachments = [
             LinkAttachment(type: .soundCloudTrack, title: "Bridgit Mendler - Atlantis feat. Kaiydo",
                            permalink: URL(string: "https://soundcloud.com/bridgitmendler/bridgit-mendler-atlantis-feat-kaiydo")!,
@@ -150,21 +158,20 @@ final class ConversationTextMessageTests: ZMSnapshotTestCase {
         ]
 
         // THEN
-        #if targetEnvironment(simulator) && swift(>=5.4)
+#if targetEnvironment(simulator) && swift(>=5.4)
         let options = XCTExpectedFailure.Options()
         options.isStrict = false
         XCTExpectFailure("This test is flaky, may be related to sound cloud preview text view?", options: options) {
             verify(message: message, waitForTextViewToLoad: true)
         }
-        #else
+#else
         verify(message: message, waitForTextViewToLoad: true)
-        #endif
+#endif
     }
 
     func testSoundCloudSetMediaPreviewAttachment() {
         // GIVEN
-        let message = MockMessageFactory.textMessage(withText: "https://soundcloud.com/playback/sets/2019-artists-to-watch")
-        message.senderUser = mockOtherUser
+        message = createMessage(withText: "https://soundcloud.com/playback/sets/2019-artists-to-watch")
         message.linkAttachments = [
             LinkAttachment(type: .soundCloudPlaylist, title: "Artists To Watch 2019",
                            permalink: URL(string: "https://soundcloud.com/playback/sets/2019-artists-to-watch")!,
@@ -186,8 +193,7 @@ final class ConversationTextMessageTests: ZMSnapshotTestCase {
             $0.summary = ""
         }
         let article = ArticleMetadata(protocolBuffer: linkPreview)
-        let message = MockMessageFactory.textMessage(withText: "Look at this! https://www.youtube.com/watch?v=l7aqpSTa234")
-        message.senderUser = mockOtherUser
+        message = createMessage(withText: "Look at this! https://www.youtube.com/watch?v=l7aqpSTa234")
         message.backingTextMessageData.backingLinkPreview = article
         message.linkAttachments = [
             LinkAttachment(type: .youTubeVideo, title: "Lagar mat med Fernando Di Luca",
@@ -198,4 +204,15 @@ final class ConversationTextMessageTests: ZMSnapshotTestCase {
         // THEN
         verify(message: message)
     }
+
+    // MARK: - Helper Methods
+
+    func createMessage(withText: String = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem.",
+                       userName: String = "Bruno") -> MockMessage {
+        let message = MockMessageFactory.textMessage(withText: withText)
+        mockOtherUser = MockUserType.createConnectedUser(name: userName)
+        message.senderUser = mockOtherUser
+        return message
+    }
+
 }

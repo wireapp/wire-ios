@@ -51,37 +51,17 @@ extension Unicode.Scalar {
 
 extension Character {
     var isEmoji: Bool {
-        for scalar in self.unicodeScalars {
-            if scalar.isEmoji {
-                return true
-            }
-        }
-
-        return false
+        unicodeScalars.contains(where: \.isEmoji)
     }
 
     public func contains(anyCharacterFrom characterSet: CharacterSet) -> Bool {
-        for scalar in self.unicodeScalars {
-            if characterSet.contains(scalar) {
-                return true
-            }
-        }
-        return false
+        unicodeScalars.contains(where: characterSet.contains)
     }
-
 }
 
 extension String {
     public var containsEmoji: Bool {
-        guard count > 0 else { return false }
-
-        for char in self {
-            if char.isEmoji {
-                return true
-            }
-        }
-
-        return false
+        contains(where: \.isEmoji)
     }
 
     public var containsOnlyEmojiWithSpaces: Bool {
@@ -99,11 +79,7 @@ extension String {
                 continue
             }
 
-            for scalar in char.unicodeScalars {
-                if !scalar.isEmoji {
-                    return false
-                }
-            }
+            if char.unicodeScalars.contains(where: { !$0.isEmoji }) { return false }
         }
 
         return true

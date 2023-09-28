@@ -48,6 +48,7 @@ static MockBlacklistDownloader *generatedDownloader;
                         readyForRequests:(BOOL)readyForRequests
                             workingGroup:(ZMSDispatchGroup * __unused)group
                              application:(id<ZMApplication>)application
+                           minTLSVersion:(NSString * _Nullable)minTLSVersion
                        completionHandler:(void (^)(NSString *minVersion, NSArray *excludedVersions))completionHandler {
     self = [super init];
     if(self) {
@@ -56,6 +57,7 @@ static MockBlacklistDownloader *generatedDownloader;
         NOT_USED(proxyUsername);
         NOT_USED(proxyPassword);
         NOT_USED(readyForRequests);
+        NOT_USED(minTLSVersion);
         generatedDownloader = self;
         self.downloadInterval = downloadInterval;
         self.completionHandler = completionHandler;
@@ -92,6 +94,7 @@ static MockBlacklistDownloader *generatedDownloader;
                                                                         readyForRequests:YES
                                                                             workingGroup:self.syncMOC.dispatchGroup
                                                                              application:self.application
+                                                                           minTLSVersion:nil
                                                                        blacklistCallback:^(BOOL result) {
         verificationResult = result;
         [expectation fulfill];

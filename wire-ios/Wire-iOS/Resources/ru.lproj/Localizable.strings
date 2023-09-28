@@ -599,6 +599,7 @@
 "content.message.copy" = "Скопировать";
 "content.message.download" = "Скачать";
 "content.message.details" = "Профиль";
+"content.message.reactions" = "Реакции";
 
 // Reply
 "content.message.reply" = "Ответить";
@@ -617,6 +618,11 @@
 "content.reactions_list.likers" = "Понравилось";
 
 "content.file.too_big" = "Вы можете отправлять файлы до %@";
+
+// Reactions
+"content.reactions.title" = "Выбрать реакцию";
+"content.reactions.search" = "Поиск смайликов";
+
 // Someone pinged
 "content.ping.text" = "%@ отправил(-а) пинг";
 "content.ping.text-you" = "%@ отправили пинг";
@@ -1848,14 +1854,14 @@
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Message Details
-"message_details.empty_likes" = "Это сообщение никому пока не понравилось.";
+"message_details.empty_likes" = "На сообщение еще никто не отреагировал";
 "message_details.empty_read_receipts" = "Сообщение еще никем не прочитано.";
 "message_details.read_receipts_disabled" = "Отчетов о прочтении не существовало, когда это сообщение было отправлено.";
 "message_details.combined_title" = "Сведения о сообщении";
-"message_details.likes_title" = "Понравилось";
+"message_details.reactions_title" = "Реакции";
 "message_details.receipts_title" = "Прочитано";
 "message_details.tabs.seen" = "Прочитано (%d)";
-"message_details.tabs.likes" = "Понравилось (%d)";
+"message_details.tabs.reactions" = "Реакции (%d)";
 "message_details.subtitle_send_date" = "Отправлено: %@";
 "message_details.subtitle_edit_date" = "Изменено: %@";
 "message_details.subtitle_label_voiceOver" = "Сведения о сообщении";
@@ -2010,3 +2016,7 @@
 "drawing.colors.pink" = "розовый";
 "drawing.colors.chocolate" = "шоколад";
 "drawing.colors.gray" = "серый";
+
+// MARK: - Time
+
+"time.just_now" = "Только что";

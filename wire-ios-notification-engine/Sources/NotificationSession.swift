@@ -122,7 +122,8 @@ public class NotificationSession {
         accountIdentifier: UUID,
         environment: BackendEnvironmentProvider,
         analytics: AnalyticsType?,
-        sharedUserDefaults: UserDefaults
+        sharedUserDefaults: UserDefaults,
+        minTLSVersion: String?
     ) throws {
         let sharedContainerURL = FileManager.sharedContainerDirectory(for: applicationGroupIdentifier)
         let accountManager = AccountManager(sharedDirectory: sharedContainerURL)
@@ -157,7 +158,8 @@ public class NotificationSession {
             reachability: reachability,
             initialAccessToken: nil,
             applicationGroupIdentifier: applicationGroupIdentifier,
-            applicationVersion: "1.0.0"
+            applicationVersion: "1.0.0",
+            minTLSVersion: minTLSVersion
         )
 
         try self.init(

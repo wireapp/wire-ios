@@ -1341,7 +1341,7 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
 
     // when
     // this is the UI facing call to add reaction
-    [ZMMessage addReaction:MessageReactionLike toMessage:message];
+    [ZMMessage addReaction:@"❤️" to:message];
     [self.uiMOC saveOrRollback];
 
     //then
@@ -1364,7 +1364,7 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
     //when
     NSString *reactionUnicode = @"❤️";
     // this is the UI facing call to add reaction
-    [textMessage addReaction:reactionUnicode forUser:selfUser];
+    [ZMMessage addReaction:reactionUnicode to:textMessage];
     [self.uiMOC saveOrRollback];
     
     
@@ -1376,45 +1376,6 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
     NSArray<ZMUser *> *usersThatReacted = reactions[reactionUnicode];
     XCTAssertEqual(usersThatReacted.count, 1lu);
     XCTAssertEqualObjects([usersThatReacted lastObject], selfUser);
-}
-
-- (void)testThatAddingAReactionWithoutUnicodeRemoveUserOnReaction;
-{
-    //given
-    ZMUser *selfUser = [ZMUser selfUserInContext:self.uiMOC];
-    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    conversation.remoteIdentifier = [NSUUID createUUID];
-    
-    NSUUID *nonce = [NSUUID createUUID];
-    ZMTextMessage *textMessage = [[ZMTextMessage alloc] initWithNonce:nonce managedObjectContext:self.uiMOC];
-    textMessage.visibleInConversation = conversation;
-    [self.uiMOC saveOrRollback];
-    
-    NSString *reactionUnicode = @"❤️";
-    // this is the UI facing call to add reaction
-    [textMessage addReaction:reactionUnicode forUser:selfUser];
-    [self.uiMOC saveOrRollback];
-
-    //sanity check
-    
-    textMessage = (ZMTextMessage *)[ZMMessage fetchMessageWithNonce:nonce forConversation:conversation inManagedObjectContext:self.uiMOC];
-    
-    NSDictionary *reactions = textMessage.usersReaction;
-    XCTAssertEqual(reactions.count, 1lu);
-    NSArray<ZMUser *> *usersThatReacted = reactions[reactionUnicode];
-    XCTAssertEqual(usersThatReacted.count, 1lu);
-    XCTAssertEqualObjects([usersThatReacted lastObject], selfUser);
-
-    //when
-    [textMessage addReaction:@"" forUser:selfUser];
-    [self.uiMOC saveOrRollback];
-    
-    //then
-    reactions = textMessage.usersReaction;
-    XCTAssertEqual(reactions.count, 0lu);
-    usersThatReacted = reactions[reactionUnicode];
-    XCTAssertEqual(usersThatReacted.count, 0lu);
-
 }
 
 - (void)testThatAddingAReactionForTwoUserWithSameUnicodeAgregates;
@@ -1432,8 +1393,8 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
     
     //when
     NSString *reactionUnicode = @"❤️";
-    [textMessage addReaction:reactionUnicode forUser:selfUser];
-    [textMessage addReaction:reactionUnicode forUser:user1];
+    [textMessage setReactions:[NSSet setWithObjects:reactionUnicode, nil] forUser:selfUser newReactionsCreationDate: nil];
+    [textMessage setReactions:[NSSet setWithObjects:reactionUnicode, nil] forUser:user1 newReactionsCreationDate: nil];
     [self.uiMOC saveOrRollback];
     
     

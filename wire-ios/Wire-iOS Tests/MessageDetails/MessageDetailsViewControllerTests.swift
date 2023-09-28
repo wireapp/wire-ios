@@ -19,11 +19,15 @@
 import XCTest
 @testable import Wire
 
-final class MessageDetailsViewControllerTests: ZMSnapshotTestCase {
+final class MessageDetailsViewControllerTests: BaseSnapshotTestCase {
+
+    // MARK: - Properties
 
     var conversation: SwiftMockConversation!
     var mockSelfUser: MockUserType!
     var otherUser: MockUserType!
+
+    // MARK: - setUp method
 
     override func setUp() {
         super.setUp()
@@ -33,6 +37,8 @@ final class MessageDetailsViewControllerTests: ZMSnapshotTestCase {
         SelfUser.provider = SelfProvider(selfUser: mockSelfUser)
     }
 
+    // MARK: - tearDown method
+
     override func tearDown() {
         SelfUser.provider = nil
         conversation = nil
@@ -40,15 +46,7 @@ final class MessageDetailsViewControllerTests: ZMSnapshotTestCase {
         super.tearDown()
     }
 
-    private func createReceipts(users: [UserType]) -> [MockReadReceipt] {
-        let receipts: [MockReadReceipt] = users.map({ user in
-            let receipt = MockReadReceipt(user: ZMUser())
-            receipt.userType = user
-            return receipt
-        })
-
-        return receipts
-    }
+    // MARK: - Snapshot Tests
 
     // MARK: - Seen
     func testThatItShowsReceipts_ShortList_11() {
@@ -66,22 +64,14 @@ final class MessageDetailsViewControllerTests: ZMSnapshotTestCase {
         })
 
         message.readReceipts = createReceipts(users: users)
-        message.backingUsersReaction = [MessageReaction.like.unicodeValue: Array(users.prefix(upTo: 4))]
+        message.backingUsersReaction = [Emoji.ID.like: Array(users.prefix(upTo: 4))]
 
         // WHEN
         let detailsViewController = MessageDetailsViewController(message: message)
         detailsViewController.container.selectIndex(0, animated: false)
 
         // THEN
-        snapshot(detailsViewController)
-    }
-
-    private func createGroupConversation() -> SwiftMockConversation {
-        let conversation = SwiftMockConversation()
-        conversation.teamRemoteIdentifier = UUID()
-        conversation.mockLocalParticipantsContain = true
-
-        return conversation
+        verify(detailsViewController)
     }
 
     func testThatItShowsReceipts_ShortList_Edited_11() {
@@ -101,14 +91,14 @@ final class MessageDetailsViewControllerTests: ZMSnapshotTestCase {
 
         message.readReceipts = createReceipts(users: users)
 
-        message.backingUsersReaction = [MessageReaction.like.unicodeValue: Array(users.prefix(upTo: 4))]
+        message.backingUsersReaction = [Emoji.ID.like: Array(users.prefix(upTo: 4))]
 
         // WHEN
         let detailsViewController = MessageDetailsViewController(message: message)
         detailsViewController.container.selectIndex(0, animated: false)
 
         // THEN
-        snapshot(detailsViewController)
+        verify(detailsViewController)
     }
 
     func testThatItShowsReceipts_LongList_12() {
@@ -127,14 +117,14 @@ final class MessageDetailsViewControllerTests: ZMSnapshotTestCase {
         })
 
         message.readReceipts = createReceipts(users: users)
-        message.backingUsersReaction = [MessageReaction.like.unicodeValue: Array(users.prefix(upTo: 4))]
+        message.backingUsersReaction = [Emoji.ID.like: Array(users.prefix(upTo: 4))]
 
         // WHEN
         let detailsViewController = MessageDetailsViewController(message: message)
         detailsViewController.container.selectIndex(0, animated: false)
 
         // THEN
-        snapshot(detailsViewController)
+        verify(detailsViewController)
     }
 
     func testThatItShowsLikes_13() {
@@ -154,14 +144,45 @@ final class MessageDetailsViewControllerTests: ZMSnapshotTestCase {
         })
 
         message.readReceipts = createReceipts(users: users)
-        message.backingUsersReaction = [MessageReaction.like.unicodeValue: Array(users.prefix(upTo: 4))]
+        message.backingUsersReaction = [Emoji.ID.like: Array(users.prefix(upTo: 4))]
 
         // WHEN
         let detailsViewController = MessageDetailsViewController(message: message)
         detailsViewController.container.selectIndex(1, animated: false)
 
         // THEN
-        snapshot(detailsViewController)
+        verify(detailsViewController)
+    }
+
+    func testThatItShowsDifferentReactions() {
+        // GIVEN
+        conversation = createGroupConversation()
+
+        let message = MockMessageFactory.textMessage(withText: "Message")
+        message.senderUser = SelfUser.current
+        message.conversationLike = conversation
+        message.deliveryState = .read
+        message.needsReadConfirmation = true
+
+        let users: [UserType] = MockUserType.usernames.prefix(upTo: 22).map({
+            let user = MockUserType.createUser(name: $0)
+            user.handle = nil
+            return user
+        })
+
+        message.readReceipts = createReceipts(users: users)
+        message.backingUsersReaction = [
+            Emoji.ID.thumbsUp: Array(users.prefix(upTo: 6)),
+            Emoji.ID.like: Array(users.prefix(upTo: 4)),
+            Emoji.ID.frown: Array(users.prefix(upTo: 1))
+        ]
+
+        // WHEN
+        let detailsViewController = MessageDetailsViewController(message: message)
+        detailsViewController.container.selectIndex(1, animated: false)
+
+        // THEN
+        verify(detailsViewController)
     }
 
     // MARK: - Empty State
@@ -181,7 +202,7 @@ final class MessageDetailsViewControllerTests: ZMSnapshotTestCase {
         detailsViewController.container.selectIndex(1, animated: false)
 
         // THEN
-        snapshot(detailsViewController)
+        verify(detailsViewController)
     }
 
     func testThatItShowsNoReceiptsEmptyState_DisabledInConversation_15() {
@@ -200,7 +221,7 @@ final class MessageDetailsViewControllerTests: ZMSnapshotTestCase {
         detailsViewController.container.selectIndex(0, animated: false)
 
         // THEN
-        snapshot(detailsViewController)
+        verify(detailsViewController)
     }
 
     func testThatItShowsNoReceiptsEmptyState_EnabledInConversation_16() {
@@ -219,7 +240,7 @@ final class MessageDetailsViewControllerTests: ZMSnapshotTestCase {
         detailsViewController.container.selectIndex(0, animated: false)
 
         // THEN
-        snapshot(detailsViewController)
+        verify(detailsViewController)
     }
 
     func testThatItShowsBothTabs_WhenMessageIsSeenButNotLiked() {
@@ -240,7 +261,7 @@ final class MessageDetailsViewControllerTests: ZMSnapshotTestCase {
         detailsViewController.container.selectIndex(0, animated: false)
 
         // THEN
-        snapshot(detailsViewController)
+        verify(detailsViewController)
     }
 
     // MARK: - Non-Combined Scenarios
@@ -253,14 +274,14 @@ final class MessageDetailsViewControllerTests: ZMSnapshotTestCase {
         message.senderUser = SelfUser.current
         message.conversationLike = conversation
         message.isEphemeral = true
-        message.backingUsersReaction = [MessageReaction.like.unicodeValue: [otherUser]]
+        message.backingUsersReaction = [Emoji.ID.like: [otherUser]]
         message.needsReadConfirmation = true
 
         // WHEN
         let detailsViewController = MessageDetailsViewController(message: message)
 
         // THEN
-        snapshot(detailsViewController)
+        verify(detailsViewController)
     }
 
     func testThatItShowsLikesOnly_FromSelf_Consumer_17() {
@@ -276,7 +297,7 @@ final class MessageDetailsViewControllerTests: ZMSnapshotTestCase {
         let detailsViewController = MessageDetailsViewController(message: message)
 
         // THEN
-        snapshot(detailsViewController)
+        verify(detailsViewController)
     }
 
     func testThatItShowsLikesOnly_FromOther_Team_17() {
@@ -292,7 +313,7 @@ final class MessageDetailsViewControllerTests: ZMSnapshotTestCase {
         let detailsViewController = MessageDetailsViewController(message: message)
 
         // THEN
-        snapshot(detailsViewController)
+        verify(detailsViewController)
     }
 
     func testThatItShowsReceiptsOnly_Pings() {
@@ -308,7 +329,7 @@ final class MessageDetailsViewControllerTests: ZMSnapshotTestCase {
         let detailsViewController = MessageDetailsViewController(message: message)
 
         // THEN
-        snapshot(detailsViewController)
+        verify(detailsViewController)
     }
 
     // MARK: - Deallocation
@@ -327,7 +348,7 @@ final class MessageDetailsViewControllerTests: ZMSnapshotTestCase {
             })
 
             message.readReceipts = createReceipts(users: users)
-            message.backingUsersReaction = [MessageReaction.like.unicodeValue: Array(users.prefix(upTo: 4))]
+            message.backingUsersReaction = [Emoji.ID.like: Array(users.prefix(upTo: 4))]
 
             // WHEN
             let detailsViewController = MessageDetailsViewController(message: message)
@@ -338,10 +359,29 @@ final class MessageDetailsViewControllerTests: ZMSnapshotTestCase {
 
     // MARK: - Helpers
 
-    private func snapshot(_ detailsViewController: MessageDetailsViewController, configuration: ((MessageDetailsViewController) -> Void)? = nil,
-                          file: StaticString = #file,
-                          testName: String = #function,
-                          line: UInt = #line) {
+    private func createGroupConversation() -> SwiftMockConversation {
+        let conversation = SwiftMockConversation()
+        conversation.teamRemoteIdentifier = UUID()
+        conversation.mockLocalParticipantsContain = true
+
+        return conversation
+    }
+
+    private func createReceipts(users: [UserType]) -> [MockReadReceipt] {
+        let receipts: [MockReadReceipt] = users.map({ user in
+            let receipt = MockReadReceipt(user: ZMUser())
+            receipt.userType = user
+            return receipt
+        })
+
+        return receipts
+    }
+
+    private func verify(_ detailsViewController: MessageDetailsViewController,
+                        configuration: ((MessageDetailsViewController) -> Void)? = nil,
+                        file: StaticString = #file,
+                        testName: String = #function,
+                        line: UInt = #line) {
         detailsViewController.reloadData()
         configuration?(detailsViewController)
         verify(matching: detailsViewController,

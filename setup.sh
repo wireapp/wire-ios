@@ -87,6 +87,10 @@ echo "ℹ️  Doing additional postprocessing..."
 scripts/postprocess.sh
 echo ""
 
+echo "ℹ️ Install Git hook"
+scripts/githooks-install.sh
+echo ""
+
 cd wire-ios
 
 echo "ℹ️  [CodeGen] Update StyleKit Icons..."

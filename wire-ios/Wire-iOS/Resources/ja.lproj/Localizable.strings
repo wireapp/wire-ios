@@ -599,6 +599,7 @@
 "content.message.copy" = "コピー";
 "content.message.download" = "ダウンロード";
 "content.message.details" = "詳細";
+"content.message.reactions" = "Reactions";
 
 // Reply
 "content.message.reply" = "返信";
@@ -617,6 +618,11 @@
 "content.reactions_list.likers" = "いいね！しました";
 
 "content.file.too_big" = "%@までのファイルを送信できます。";
+
+// Reactions
+"content.reactions.title" = "Select Reaction";
+"content.reactions.search" = "Search for Emoji";
+
 // Someone pinged
 "content.ping.text" = "%@ Pingしました";
 "content.ping.text-you" = "%@ Pingしました";
@@ -1848,14 +1854,14 @@
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Message Details
-"message_details.empty_likes" = "まだ、誰もこのメッセージに「いいね！」していません。";
+"message_details.empty_likes" = "No one has reacted to this message yet.";
 "message_details.empty_read_receipts" = "まだ、誰もこのメッセージを読んでいません。";
 "message_details.read_receipts_disabled" = "このメッセージが送信された時、開封通知はオフでした。";
 "message_details.combined_title" = "メッセージの詳細";
-"message_details.likes_title" = "いいね！済み";
+"message_details.reactions_title" = "Reactions";
 "message_details.receipts_title" = "開封通知";
 "message_details.tabs.seen" = "開封通知 (%d)";
-"message_details.tabs.likes" = "いいね (%d)";
+"message_details.tabs.reactions" = "Reactions (%d)";
 "message_details.subtitle_send_date" = "送信済: %@";
 "message_details.subtitle_edit_date" = "編集済: %@";
 "message_details.subtitle_label_voiceOver" = "メッセージの詳細";
@@ -2010,3 +2016,7 @@
 "drawing.colors.pink" = "pink";
 "drawing.colors.chocolate" = "chocolate";
 "drawing.colors.gray" = "gray";
+
+// MARK: - Time
+
+"time.just_now" = "Just now";

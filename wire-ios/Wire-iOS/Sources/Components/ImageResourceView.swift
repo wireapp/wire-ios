@@ -97,50 +97,10 @@ final class ImageResourceView: FLAnimatedImageView {
         NSLayoutConstraint.activate([
             centerXAnchor.constraint(equalTo: loadingView.centerXAnchor),
             centerYAnchor.constraint(equalTo: loadingView.centerYAnchor)])
-
-            let interaction = UIContextMenuInteraction(delegate: self)
-            addInteraction(interaction)
     }
 
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-
-}
-
-// MARK: - UIContextMenuInteractionDelegate
-
-extension ImageResourceView: UIContextMenuInteractionDelegate {
-
-    func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
-
-        let previewProvider: UIContextMenuContentPreviewProvider = {
-            guard let message = self.delegate?.message,
-                  let actionResponder = self.delegate?.delegate else {
-                    return nil
-            }
-
-            return self.messagePresenter.viewController(forImageMessagePreview: message, actionResponder: actionResponder)
-        }
-
-        return UIContextMenuConfiguration(identifier: nil,
-                                          previewProvider: previewProvider,
-                                          actionProvider: { _ in
-                                            return self.delegate?.makeContextMenu(title: "conversation.input_bar.message_preview.image".localized, view: self)
-        })
-    }
-
-    func contextMenuInteraction(_ interaction: UIContextMenuInteraction,
-                                willPerformPreviewActionForMenuWith configuration: UIContextMenuConfiguration,
-                                animator: UIContextMenuInteractionCommitAnimating) {
-        guard let message = delegate?.message,
-            let actionResponder = delegate?.delegate else {
-                return
-        }
-
-        animator.addCompletion {
-            self.messagePresenter.open(message, targetView: self, actionResponder: actionResponder)
-        }
     }
 }
