@@ -936,7 +936,7 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     fileprivate func deleteAccountData(for account: Account) {
         log.debug("Deleting the data for \(account.userName) -- \(account.userIdentifier)")
-
+        WireLogger.session.debug("Deleting the data for \(account.userName) -- \(account.userIdentifier)")
         environment.cookieStorage(for: account).deleteKeychainItems()
         account.deleteKeychainItems()
 
@@ -947,6 +947,7 @@ public final class SessionManager: NSObject, SessionManagerType {
             try FileManager.default.removeItem(at: CoreDataStack.accountDataFolder(accountIdentifier: accountID, applicationContainer: sharedContainerURL))
         } catch let error {
             log.error("Impossible to delete the acccount \(account): \(error)")
+            WireLogger.session.error("Impossible to delete the acccount \(account): \(error)")
         }
     }
 
