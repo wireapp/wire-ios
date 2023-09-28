@@ -62,7 +62,7 @@ final class MockOptionsViewModelConfiguration: ConversationGuestOptionsViewModel
 
 // MARK: - ConversationOptionsViewControllerTests
 
-final class ConversationOptionsViewControllerTests: ZMSnapshotTestCase {
+final class ConversationOptionsViewControllerTests: BaseSnapshotTestCase {
 
     // MARK: - setUp method
 
