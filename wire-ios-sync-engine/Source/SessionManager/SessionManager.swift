@@ -936,7 +936,7 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     fileprivate func deleteAccountData(for account: Account) {
         log.debug("Deleting the data for \(account.userName) -- \(account.userIdentifier)")
-        WireLogger.session.debug("Deleting the data for \(account.userName) -- \(account.userIdentifier)")
+        WireLogger.session.debug("Deleting the data for account \(account)")
         environment.cookieStorage(for: account).deleteKeychainItems()
         account.deleteKeychainItems()
 
