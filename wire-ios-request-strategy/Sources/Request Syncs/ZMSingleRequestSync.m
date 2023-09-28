@@ -107,6 +107,7 @@
         case ZMTransportResponseStatusSuccess:
         case ZMTransportResponseStatusPermanentError:
         case ZMTransportResponseStatusExpired: // TODO Offline
+        case ZMTransportResponseStatusCancelled:
         {
             self.status = ZMSingleRequestCompleted;
             [self.transcoder didReceiveResponse:response forSingleRequest:self];

@@ -497,7 +497,7 @@ static NSString *foo = @"foo";
     WaitForAllGroupsToBeEmpty(0.5);
 }
 
-- (void)testThatItCallsDidFailToSynchronizeTokenWhenTheRequestFailsWithATemporaryError
+- (void)testThatItCallsDidNotFinishToSynchronizeTokenWhenTheRequestFailsWithATemporaryError
 {
     // given
     [[[(id)self.mockTranscoder stub] andReturnValue:OCMOCK_VALUE(YES)] shouldCreateRequestToSyncObject:OCMOCK_ANY forKeys:OCMOCK_ANY withSync:OCMOCK_ANY];
@@ -515,7 +515,7 @@ static NSString *foo = @"foo";
     [(ZMLocallyModifiedObjectSet *)[[self.mockLocallyModifiedSet expect] andReturn:token] didStartSynchronizingKeys:keysToSync forObject:fakeObjectWithKeys];
     [[[(id)self.mockTranscoder expect] andReturn:fakeRequest] requestForUpdatingObject:entity forKeys:keysToSync apiVersion:APIVersionV0];
     [[(id)self.mockLocallyModifiedSet expect] keysToParseAfterSyncingToken:OCMOCK_ANY];
-    [[self.mockLocallyModifiedSet expect] didFailToSynchronizeToken:token];
+    [[self.mockLocallyModifiedSet expect] didNotFinishToSynchronizeToken:token];
     
     // when
     ZMTransportRequest *request = [self.sut nextRequestForAPIVersion:APIVersionV0];
