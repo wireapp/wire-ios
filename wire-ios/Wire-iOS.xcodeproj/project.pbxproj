@@ -1220,6 +1220,7 @@
 		E9C68C052A29DB0100CDCAFD /* WireCoreCrypto.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = E9C68C032A29DB0100CDCAFD /* WireCoreCrypto.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		E9CCCF9729101D8D006E0153 /* UINavigationItem+NavigationBarTitle.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9CCCF9629101D8D006E0153 /* UINavigationItem+NavigationBarTitle.swift */; };
 		E9D141602AC6F4FA005EE75D /* NSMutableAttributedString+UIFontSemibold.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9D1415F2AC6F4FA005EE75D /* NSMutableAttributedString+UIFontSemibold.swift */; };
+		E9D141622AC704DF005EE75D /* CreatePasswordSecuredLinkViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9D141612AC704DF005EE75D /* CreatePasswordSecuredLinkViewModel.swift */; };
 		E9D25C8727D9FB07007CB532 /* AuthenticationEmailVerificationRequiredErrorHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9D25C8627D9FB07007CB532 /* AuthenticationEmailVerificationRequiredErrorHandlerTests.swift */; };
 		E9D6C37D289A9DC100861E4C /* StylableButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9D6C37C289A9DC100861E4C /* StylableButton.swift */; };
 		E9DA4685286C547A00F47C14 /* UIWindow+Orientation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9DA4684286C547A00F47C14 /* UIWindow+Orientation.swift */; };
@@ -3227,6 +3228,7 @@
 		E9C68C032A29DB0100CDCAFD /* WireCoreCrypto.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = WireCoreCrypto.xcframework; path = ../Carthage/Build/WireCoreCrypto.xcframework; sourceTree = "<group>"; };
 		E9CCCF9629101D8D006E0153 /* UINavigationItem+NavigationBarTitle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UINavigationItem+NavigationBarTitle.swift"; sourceTree = "<group>"; };
 		E9D1415F2AC6F4FA005EE75D /* NSMutableAttributedString+UIFontSemibold.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSMutableAttributedString+UIFontSemibold.swift"; sourceTree = "<group>"; };
+		E9D141612AC704DF005EE75D /* CreatePasswordSecuredLinkViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreatePasswordSecuredLinkViewModel.swift; sourceTree = "<group>"; };
 		E9D25C8627D9FB07007CB532 /* AuthenticationEmailVerificationRequiredErrorHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationEmailVerificationRequiredErrorHandlerTests.swift; sourceTree = "<group>"; };
 		E9D6C37C289A9DC100861E4C /* StylableButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StylableButton.swift; sourceTree = "<group>"; };
 		E9DA4684286C547A00F47C14 /* UIWindow+Orientation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIWindow+Orientation.swift"; sourceTree = "<group>"; };
@@ -7239,7 +7241,7 @@
 				D550F57820445AD7009E09DD /* UIAlertController+ConversationGuestOptions.swift */,
 				D5CA8E562045718900D2F16E /* UINavigationController+CloseButton.swift */,
 				E9559B4827B3D3580020B431 /* UIAlertController+ConfirmRemovingServices.swift */,
-				E9E20AE92AC42ED3005D7E00 /* CreatePasswordSecuredLinkViewController.swift */,
+				E9D141632AC704E9005EE75D /* CreatePasswordSecuredLink */,
 			);
 			path = "Conversation Options";
 			sourceTree = "<group>";
@@ -7277,6 +7279,15 @@
 				E9B8EB7F2A0CEE160056E417 /* ReactionToggle.swift */,
 			);
 			path = Reactions;
+			sourceTree = "<group>";
+		};
+		E9D141632AC704E9005EE75D /* CreatePasswordSecuredLink */ = {
+			isa = PBXGroup;
+			children = (
+				E9E20AE92AC42ED3005D7E00 /* CreatePasswordSecuredLinkViewController.swift */,
+				E9D141612AC704DF005EE75D /* CreatePasswordSecuredLinkViewModel.swift */,
+			);
+			path = CreatePasswordSecuredLink;
 			sourceTree = "<group>";
 		};
 		E9DFF50B2AC3063000BDC25C /* sourcery */ = {
@@ -8752,6 +8763,7 @@
 				BFF8076420BC072A0063E5D4 /* CallHapticsGenerator.swift in Sources */,
 				F1199D411FC849450070FAC3 /* TextFieldDescription.swift in Sources */,
 				16814840228C6E120069F16F /* UserClientCell.swift in Sources */,
+				E9D141622AC704DF005EE75D /* CreatePasswordSecuredLinkViewModel.swift in Sources */,
 				D58192002091CEBF003BA7EC /* UIStackView+Helper.swift in Sources */,
 				EF20BE4322CB57B1004F8910 /* UIViewController+Present.swift in Sources */,
 				EF2A8DED214AA36E002C9058 /* SeparatorViewProtocol.swift in Sources */,
