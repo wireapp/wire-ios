@@ -17,3 +17,56 @@
 //
 
 import Foundation
+
+// MARK: - CreatePasswordSecuredLinkViewModelDelegate
+
+protocol CreatePasswordSecuredLinkViewModelDelegate: AnyObject {
+    func generateButtonDidTap(_ password: String)
+}
+
+// MARK: - CreatePasswordSecuredLinkViewModel
+
+final class CreatePasswordSecuredLinkViewModel {
+
+    // MARK: - Properties
+
+    weak var delegate: CreatePasswordSecuredLinkViewModelDelegate?
+
+    // MARK: - Methods
+
+    func requestRandomPassword() {
+        let randomPassword = generateRandomPassword()
+        delegate?.generateButtonDidTap(randomPassword)
+    }
+
+    func generateRandomPassword() -> String {
+        let length = 8
+        let lowercaseLetters = "abcdefghijklmnopqrstuvwxyz"
+        let uppercaseLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        let numbers = "0123456789"
+        let specialCharacters = "!@#$%^&*()-_+=<>?/[]{|}"
+
+        let allCharacters = lowercaseLetters + uppercaseLetters + numbers + specialCharacters
+
+        var password = ""
+
+        password += String(lowercaseLetters.randomElement()!)
+
+        password += String(uppercaseLetters.randomElement()!)
+
+        password += String(numbers.randomElement()!)
+
+        password += String(specialCharacters.randomElement()!)
+
+        for _ in 4..<length {
+            let randomIndex = Int.random(in: 0..<allCharacters.count)
+            let randomCharacter = allCharacters[allCharacters.index(allCharacters.startIndex, offsetBy: randomIndex)]
+            password += String(randomCharacter)
+        }
+
+        password = String(password.shuffled())
+
+        return password
+    }
+
+}

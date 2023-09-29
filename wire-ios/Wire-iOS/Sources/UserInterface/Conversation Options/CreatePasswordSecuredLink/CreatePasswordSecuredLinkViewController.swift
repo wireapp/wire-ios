@@ -19,7 +19,7 @@
 import UIKit
 import WireCommonComponents
 
-class CreatePasswordSecuredLinkViewController: UIViewController {
+class CreatePasswordSecuredLinkViewController: UIViewController, CreatePasswordSecuredLinkViewModelDelegate {
 
     // MARK: - Properties
 
@@ -29,6 +29,8 @@ class CreatePasswordSecuredLinkViewController: UIViewController {
 
     private let generatePasswordButton = SecondaryTextButton(fontSpec: FontSpec.buttonSmallSemibold,
                                                              insets: UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8))
+
+    private var viewModel = CreatePasswordSecuredLinkViewModel()
 
     private let warningLabel: UILabel = {
 
@@ -55,6 +57,8 @@ class CreatePasswordSecuredLinkViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        viewModel.delegate = self
         setUpViews()
         setupConstraints()
     }
@@ -82,6 +86,7 @@ class CreatePasswordSecuredLinkViewController: UIViewController {
     private func setupGeneratePasswordButton() {
         generatePasswordButton.setTitle("Generate Password", for: .normal)
         generatePasswordButton.setImage(UIImage(named: "Shield"), for: .normal)
+        generatePasswordButton.addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
         generatePasswordButton.imageEdgeInsets.right = 10.0
     }
 
@@ -99,6 +104,19 @@ class CreatePasswordSecuredLinkViewController: UIViewController {
             // It will change as soon as we add more elements to the View Controller
             generatePasswordButton.heightAnchor.constraint(equalToConstant: 32)
         ])
+    }
+
+    // MARK: - Button Actions
+
+    @objc
+    func buttonTapped() {
+        viewModel.requestRandomPassword()
+    }
+
+    // MARK: - CreatePasswordSecuredLinkViewModelDelegate
+
+    func generateButtonDidTap(_ password: String) {
+        print("Generated Password: \(password)")
     }
 
 }
