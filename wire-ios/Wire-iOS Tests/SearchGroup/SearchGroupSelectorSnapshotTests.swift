@@ -23,10 +23,6 @@ import XCTest
 final class SearchGroupSelectorSnapshotTests: XCTestCase {
     var sut: SearchGroupSelector!
 
-    override func setUp() {
-        super.setUp()
-    }
-
     override func tearDown() {
         sut = nil
 

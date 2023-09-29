@@ -79,10 +79,9 @@ final class MessagePresenter: NSObject {
 
         documentInteractionController = UIDocumentInteractionController(url: URL(fileURLWithPath: tmpPath))
         documentInteractionController?.delegate = self
-        if (!preview || false == documentInteractionController?.presentPreview(animated: true)),
-            let rect = targetViewController?.view.convert(targetView.bounds, from: targetView),
-        let view = targetViewController?.view {
-
+        if !preview || false == documentInteractionController?.presentPreview(animated: true),
+           let rect = targetViewController?.view.convert(targetView.bounds, from: targetView),
+           let view = targetViewController?.view {
             documentInteractionController?.presentOptionsMenu(from: rect, in: view, animated: true)
         }
     }

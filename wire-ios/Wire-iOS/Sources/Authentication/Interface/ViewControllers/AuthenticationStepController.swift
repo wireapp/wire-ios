@@ -113,10 +113,6 @@ class AuthenticationStepController: AuthenticationStepViewController {
         UIAccessibility.post(notification: .screenChanged, argument: headlineLabel)
     }
 
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-    }
-
     public override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
         updateConstraints(forRegularLayout: traitCollection.horizontalSizeClass == .regular)

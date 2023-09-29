@@ -37,10 +37,6 @@ class AvailabilityTests: IntegrationTest {
         return mockTeam
     }
 
-    override func tearDown() {
-        super.tearDown()
-    }
-
     func testThatAvailabilityIsBroadcastedWhenChanged() {
         // given
         XCTAssertTrue(login())
