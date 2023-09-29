@@ -19,31 +19,6 @@
 import UIKit
 import WireCommonComponents
 
-final class GeneratePasswordButton: IconButton {
-    init() {
-        super.init()
-
-        clipsToBounds = true
-        titleLabel?.font = FontSpec.normalSemiboldFont.font!
-        applyStyle(.secondaryTextButtonStyle)
-        layer.cornerRadius = 12
-        contentEdgeInsets = UIEdgeInsets(top: 4, left: 16, bottom: 4, right: 16)
-    }
-
-    convenience init(fontSpec: FontSpec, insets: UIEdgeInsets) {
-        self.init()
-
-        titleLabel?.font = fontSpec.font
-        self.contentEdgeInsets = insets
-    }
-
-    override var isHighlighted: Bool {
-        didSet {
-            applyStyle(.secondaryTextButtonStyle)
-        }
-    }
-}
-
 class CreatePasswordSecuredLinkViewController: UIViewController {
 
     // MARK: - Properties
@@ -51,8 +26,8 @@ class CreatePasswordSecuredLinkViewController: UIViewController {
     typealias ViewColors = SemanticColors.View
     typealias LabelColors = SemanticColors.Label
 
-    private let generatePasswordButton = GeneratePasswordButton(fontSpec: FontSpec.buttonSmallSemibold,
-                                                                insets: UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8))
+    private let generatePasswordButton = SecondaryTextButton(fontSpec: FontSpec.buttonSmallSemibold,
+                                                             insets: UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8))
 
     private let warningLabel: UILabel = {
 

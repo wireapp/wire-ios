@@ -66,7 +66,7 @@ final class GuestsAllowedCell: UIView, ConversationMessageCell {
 
     private let stackView = UIStackView()
     private let titleLabel = UILabel()
-    let inviteButton = InviteButton()
+    let inviteButton = SecondaryTextButton()
     var isSelected: Bool = false
 
     // MARK: initialization
