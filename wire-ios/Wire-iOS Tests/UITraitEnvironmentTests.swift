@@ -24,10 +24,6 @@ final class UITraitEnvironmentTests: XCTestCase {
     let compactMargins = HorizontalMargins(userInterfaceSizeClass: .compact)
     let regularMargins = HorizontalMargins(userInterfaceSizeClass: .regular)
 
-    override func setUp() {
-        super.setUp()
-    }
-
     override func tearDown() {
         sut = nil
         super.tearDown()

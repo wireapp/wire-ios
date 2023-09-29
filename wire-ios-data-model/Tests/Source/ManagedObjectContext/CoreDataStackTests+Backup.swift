@@ -189,7 +189,7 @@ class CoreDataStackTests_Backup: DatabaseBaseTest {
             switch failureError as? CoreDataStack.BackupError {
             case .missingEAREncryptionKey: break
             default: XCTFail("unexpected error type")
-        }
+            }
         default: XCTFail("unexpected error type")
         }
     }

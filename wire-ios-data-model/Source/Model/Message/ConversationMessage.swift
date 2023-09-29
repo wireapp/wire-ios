@@ -292,9 +292,8 @@ extension ZMMessage: ZMConversationMessage {
     }
 
     public var isRestricted: Bool {
-        guard
-            (self.isFile || self.isImage),
-            let managedObjectContext = self.managedObjectContext
+        guard self.isFile || self.isImage,
+              let managedObjectContext = self.managedObjectContext
         else { return false }
 
         let featureRepository = FeatureRepository(context: managedObjectContext)

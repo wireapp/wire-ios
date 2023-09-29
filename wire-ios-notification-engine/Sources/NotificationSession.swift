@@ -443,8 +443,7 @@ extension NotificationSession: PushNotificationStrategyDelegate {
         if let selfUserID = ZMUser.selfUser(in: context).remoteIdentifier,
            let callerID = callContent.callerID,
            callerID == selfUserID,
-           (callContent.isIncomingCall || callContent.isEndCall)
-        {
+           callContent.isIncomingCall || callContent.isEndCall {
             WireLogger.calling.info("should not handle call event: self call")
             return nil
         }
