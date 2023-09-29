@@ -111,7 +111,7 @@ final class BlockerViewController: LaunchImageViewController {
             title: L10n.Localizable.Databaseloadingfailure.Alert.retry,
             style: .default,
             handler: { [weak self] _ in
-                self?.sessionManager?.enqueueRetryStart()
+                self?.sessionManager?.retryStart()
             }
         )
 
