@@ -3124,10 +3124,6 @@ internal enum L10n {
         /// Guests
         internal static let title = L10n.tr("Localizable", "group_details.guest_options_cell.title", fallback: "Guests")
       }
-      internal enum GuestOptionsCreatePasswordSecuredLink {
-        /// Create password secured link
-        internal static let title = L10n.tr("Localizable", "group_details.guest_options_create_password_secured_link.title", fallback: "Create password secured link")
-      }
       internal enum MessageProtocol {
         /// Cipher Suite
         internal static let cipherSuite = L10n.tr("Localizable", "group_details.message_protocol.cipher_suite", fallback: "Cipher Suite")
@@ -4715,11 +4711,17 @@ internal enum L10n {
         }
       }
     }
-    internal enum SecuredGuestLinkWithPasswordWarningLabel {
-      /// People who want to join the conversation via the guest link need to enter this password first.
-      internal static let subtitle = L10n.tr("Localizable", "secured_guest_link_with_password_warning_label.subtitle", fallback: "People who want to join the conversation via the guest link need to enter this password first.")
-      /// People who want to join the conversation via the guest link need to enter this password first.
-      internal static let title = L10n.tr("Localizable", "secured_guest_link_with_password_warning_label.title", fallback: "People who want to join the conversation via the guest link need to enter this password first.")
+    internal enum SecuredGuestLinkWithPassword {
+      internal enum Header {
+        /// Create password secured link
+        internal static let title = L10n.tr("Localizable", "secured_guest_link_with_password.header.title", fallback: "Create password secured link")
+      }
+      internal enum WarningLabel {
+        /// People who want to join the conversation via the guest link need to enter this password first.
+        internal static let subtitle = L10n.tr("Localizable", "secured_guest_link_with_password.warning_label.subtitle", fallback: "People who want to join the conversation via the guest link need to enter this password first.")
+        /// People who want to join the conversation via the guest link need to enter this password first.
+        internal static let title = L10n.tr("Localizable", "secured_guest_link_with_password.warning_label.title", fallback: "People who want to join the conversation via the guest link need to enter this password first.")
+      }
     }
     internal enum SecurityClassification {
       /// Security level:

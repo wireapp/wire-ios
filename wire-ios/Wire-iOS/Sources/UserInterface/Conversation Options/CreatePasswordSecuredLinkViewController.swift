@@ -25,6 +25,7 @@ class CreatePasswordSecuredLinkViewController: UIViewController {
 
     typealias ViewColors = SemanticColors.View
     typealias LabelColors = SemanticColors.Label
+    typealias SecuredGuestLinkWithPasswordLocale = L10n.Localizable.SecuredGuestLinkWithPassword
 
     private let generatePasswordButton = SecondaryTextButton(fontSpec: FontSpec.buttonSmallSemibold,
                                                              insets: UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8))
@@ -39,8 +40,13 @@ class CreatePasswordSecuredLinkViewController: UIViewController {
         label.lineBreakMode = .byWordWrapping
         paragraphStyle.lineHeightMultiple = 0.98
         label.attributedText = NSMutableAttributedString(
-            string: "People who want to join the conversation via the guest link need to enter this password first.",
-            attributes: [NSAttributedString.Key.paragraphStyle: paragraphStyle]).semiBold("\nYou can’t change the password later. Make sure to copy and store it.", font: FontSpec.mediumSemiboldFont.font!)
+            string: SecuredGuestLinkWithPasswordLocale.WarningLabel.title,
+            attributes: [
+                NSAttributedString.Key.paragraphStyle: paragraphStyle
+            ]).semiBold(
+                SecuredGuestLinkWithPasswordLocale.WarningLabel.subtitle,
+                font: FontSpec.mediumSemiboldFont.font!
+            )
 
         return label
     }()
@@ -69,7 +75,7 @@ class CreatePasswordSecuredLinkViewController: UIViewController {
     private func setupNavigationBar() {
         navigationController?.navigationBar.backgroundColor = ViewColors.backgroundDefault
         navigationController?.navigationBar.tintColor = LabelColors.textDefault
-        navigationItem.setupNavigationBarTitle(title: L10n.Localizable.GroupDetails.GuestOptionsCreatePasswordSecuredLink.title)
+        navigationItem.setupNavigationBarTitle(title: SecuredGuestLinkWithPasswordLocale.Header.title)
         navigationItem.rightBarButtonItem = navigationController?.closeItem()
     }
 

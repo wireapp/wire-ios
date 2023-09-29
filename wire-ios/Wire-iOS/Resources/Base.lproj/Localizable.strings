@@ -966,10 +966,10 @@
 "group_details.conversation_members_header.title" = "Group members";
 
 // Secured Guest link with password
-"group_details.guest_options_create_password_secured_link.title" = "Create password secured link";
+"secured_guest_link_with_password.header.title" = "Create password secured link";
 
-"secured_guest_link_with_password_warning_label.title" = "People who want to join the conversation via the guest link need to enter this password first.";
-"secured_guest_link_with_password_warning_label.subtitle" = "People who want to join the conversation via the guest link need to enter this password first.";
+"secured_guest_link_with_password.warning_label.title" = "People who want to join the conversation via the guest link need to enter this password first.";
+"secured_guest_link_with_password.warning_label.subtitle" = "People who want to join the conversation via the guest link need to enter this password first.";
 
 // Legal hold details
 
