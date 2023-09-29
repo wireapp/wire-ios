@@ -183,11 +183,6 @@ private class ConversationCreateEventNotificationBuilder: EventNotificationBuild
     override var notificationType: LocalNotificationType {
         return LocalNotificationType.event(.conversationCreated)
     }
-
-    override func shouldCreateNotification() -> Bool {
-        return super.shouldCreateNotification()
-    }
-
 }
 
 // MARK: - Conversation Delete Event

@@ -70,7 +70,8 @@ public final class MissingClientsRequestStrategy: AbstractRequestStrategy, ZMUps
 
         var keysToSync = keys
         if keys.contains(ZMUserClientMissingKey),
-            let client = managedObject as? UserClient, (client.missingClients == nil || client.missingClients?.count == 0) {
+            let client = managedObject as? UserClient,
+            client.missingClients == nil || client.missingClients?.count == 0 {
             let userClientMissingKeySet: Set<AnyHashable> = [ZMUserClientMissingKey]
             let clientSet: Set<NSManagedObject> = [client]
             keysToSync.remove(ZMUserClientMissingKey)

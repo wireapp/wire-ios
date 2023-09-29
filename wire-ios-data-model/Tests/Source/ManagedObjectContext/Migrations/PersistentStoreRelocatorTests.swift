@@ -21,14 +21,6 @@ import XCTest
 
 class PersistentStoreRelocatorTests: DatabaseBaseTest {
 
-    override func setUp() {
-        super.setUp()
-    }
-
-    override func tearDown() {
-        super.tearDown()
-    }
-
     func testThatItFindsPreviousStoreInCachesDirectory() {
 
         // given

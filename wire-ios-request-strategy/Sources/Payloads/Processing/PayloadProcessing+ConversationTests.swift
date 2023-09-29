@@ -20,10 +20,6 @@ import XCTest
 
 class PayloadProcessing_ConversationTests: MessagingTestBase {
 
-    override func setUp() {
-        super.setUp()
-    }
-
     override func tearDown() {
         BackendInfo.isFederationEnabled = false
         super.tearDown()
