@@ -20,6 +20,7 @@ import Foundation
 
 // MARK: - CreatePasswordSecuredLinkViewModelDelegate
 
+// sourcery: AutoMockable
 protocol CreatePasswordSecuredLinkViewModelDelegate: AnyObject {
     func generateButtonDidTap(_ password: String)
 }

@@ -1,4 +1,4 @@
-// Generated using Sourcery 2.0.2 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 2.1.1 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 // swiftlint:disable variable_name
 
@@ -106,6 +106,26 @@ class MockConversationGuestOptionsViewModelDelegate: ConversationGuestOptionsVie
         }
 
         mock(viewModel, message, sourceView)
+    }
+
+}
+class MockCreatePasswordSecuredLinkViewModelDelegate: CreatePasswordSecuredLinkViewModelDelegate {
+
+    // MARK: - Life cycle
+
+    // MARK: - generateButtonDidTap
+
+    var generateButtonDidTap_Invocations: [String] = []
+    var generateButtonDidTap_MockMethod: ((String) -> Void)?
+
+    func generateButtonDidTap(_ password: String) {
+        generateButtonDidTap_Invocations.append(password)
+
+        guard let mock = generateButtonDidTap_MockMethod else {
+            fatalError("no mock for `generateButtonDidTap`")
+        }
+
+        mock(password)
     }
 
 }
