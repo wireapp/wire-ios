@@ -389,6 +389,20 @@ final class UserClientByQualifiedUserIDTranscoder: IdentifierObjectSyncTranscode
         }
     }
 
+    private func markAllClientsAsUpdated(identifiers: Set<QualifiedID>) {
+        let clients = UserClient.fetchClientsNeedingUpdateFromBackend(in: managedObjectContext)
+
+        for client in clients {
+            if let qualifiedID = client.user?.qualifiedID {
+                if identifiers.contains(qualifiedID) {
+                    client.needsToBeUpdatedFromBackend = false
+                }
+            }
+        }
+
+        managedObjectContext.saveOrRollback()
+    }
+
 }
 
 final class UserClientByUserIDTranscoder: IdentifierObjectSyncTranscoder {
