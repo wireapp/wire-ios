@@ -44,17 +44,6 @@ final class GeneratePasswordButton: IconButton {
     }
 }
 
-extension NSMutableAttributedString {
-    func bold(_ value: String) -> NSMutableAttributedString {
-
-        let attributes: [NSAttributedString.Key: Any] = [
-            .font: FontSpec.mediumSemiboldFont.font!]
-
-        self.append(NSAttributedString(string: value, attributes: attributes))
-        return self
-    }
-}
-
 class CreatePasswordSecuredLinkViewController: UIViewController {
 
     // MARK: - Properties
@@ -63,7 +52,7 @@ class CreatePasswordSecuredLinkViewController: UIViewController {
     typealias LabelColors = SemanticColors.Label
 
     private let generatePasswordButton = GeneratePasswordButton(fontSpec: FontSpec.buttonSmallSemibold,
-                                           insets: UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8))
+                                                                insets: UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8))
 
     private let warningLabel: UILabel = {
 
@@ -76,8 +65,7 @@ class CreatePasswordSecuredLinkViewController: UIViewController {
         paragraphStyle.lineHeightMultiple = 0.98
         label.attributedText = NSMutableAttributedString(
             string: "People who want to join the conversation via the guest link need to enter this password first.",
-            attributes: [NSAttributedString.Key.paragraphStyle: paragraphStyle]).bold("\nYou can’t change the password later. Make sure to copy and store it."
-        )
+            attributes: [NSAttributedString.Key.paragraphStyle: paragraphStyle]).semiBold("\nYou can’t change the password later. Make sure to copy and store it.", font: FontSpec.mediumSemiboldFont.font!)
 
         return label
     }()
@@ -98,10 +86,7 @@ class CreatePasswordSecuredLinkViewController: UIViewController {
     // MARK: - Setup UI
 
     private func setUpViews() {
-
-        generatePasswordButton.setTitle("Generate Password", for: .normal)
-        generatePasswordButton.setImage(UIImage(named: "Shield"), for: .normal)
-        generatePasswordButton.imageEdgeInsets.right = 10.0
+        setupGeneratePasswordButton()
         view.addSubview(warningLabel)
         view.addSubview(generatePasswordButton)
     }
@@ -111,6 +96,12 @@ class CreatePasswordSecuredLinkViewController: UIViewController {
         navigationController?.navigationBar.tintColor = LabelColors.textDefault
         navigationItem.setupNavigationBarTitle(title: L10n.Localizable.GroupDetails.GuestOptionsCreatePasswordSecuredLink.title)
         navigationItem.rightBarButtonItem = navigationController?.closeItem()
+    }
+
+    private func setupGeneratePasswordButton() {
+        generatePasswordButton.setTitle("Generate Password", for: .normal)
+        generatePasswordButton.setImage(UIImage(named: "Shield"), for: .normal)
+        generatePasswordButton.imageEdgeInsets.right = 10.0
     }
 
     private func setupConstraints() {
