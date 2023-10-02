@@ -2659,6 +2659,8 @@ internal enum L10n {
         internal static let deleteDatabase = L10n.tr("Localizable", "databaseloadingfailure.alert.delete_database", fallback: "Delete Database")
         /// The database could not be loaded due to insufficient storage. Review your device storage usage and try again.
         internal static let message = L10n.tr("Localizable", "databaseloadingfailure.alert.message", fallback: "The database could not be loaded due to insufficient storage. Review your device storage usage and try again.")
+        /// Retry
+        internal static let retry = L10n.tr("Localizable", "databaseloadingfailure.alert.retry", fallback: "Retry")
         /// Go to Settings
         internal static let settings = L10n.tr("Localizable", "databaseloadingfailure.alert.settings", fallback: "Go to Settings")
         /// Not Enough Storage
@@ -4712,6 +4714,10 @@ internal enum L10n {
       }
     }
     internal enum SecuredGuestLinkWithPassword {
+      internal enum GeneratePasswordButton {
+        /// Generate password
+        internal static let title = L10n.tr("Localizable", "secured_guest_link_with_password.generate_password_button.title", fallback: "Generate password")
+      }
       internal enum Header {
         /// Create password secured link
         internal static let title = L10n.tr("Localizable", "secured_guest_link_with_password.header.title", fallback: "Create password secured link")

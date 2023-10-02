@@ -158,9 +158,9 @@ class CreatePasswordSecuredLinkViewController: UIViewController,
     }
 
     private func setupGeneratePasswordButton() {
-        generatePasswordButton.setTitle("Generate Password", for: .normal)
+        generatePasswordButton.setTitle(SecuredGuestLinkWithPasswordLocale.GeneratePasswordButton.title, for: .normal)
         generatePasswordButton.setImage(UIImage(named: "Shield"), for: .normal)
-        generatePasswordButton.addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
+        generatePasswordButton.addTarget(self, action: #selector(generatePasswordButtonTapped), for: .touchUpInside)
         generatePasswordButton.imageEdgeInsets.right = 10.0
     }
 
@@ -212,7 +212,7 @@ class CreatePasswordSecuredLinkViewController: UIViewController,
     // MARK: - Button Actions
 
     @objc
-    func buttonTapped() {
+    func generatePasswordButtonTapped() {
         viewModel.requestRandomPassword()
     }
 

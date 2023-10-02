@@ -967,6 +967,7 @@
 
 // Secured Guest link with password
 "secured_guest_link_with_password.header.title" = "Create password secured link";
+"secured_guest_link_with_password.generate_password_button.title" = "Generate password";
 "secured_guest_link_with_password.warning_label.title" = "People who want to join the conversation via the guest link need to enter this password first.";
 "secured_guest_link_with_password.warning_label.subtitle" = "People who want to join the conversation via the guest link need to enter this password first.";
 "secured_guest_link_with_password.textfield.header" = "Set password";
@@ -1738,6 +1739,7 @@
 "databaseloadingfailure.alert.delete_database" = "Delete Database";
 "databaseloadingfailure.alert.delete_database.message" = "By deleting the database, all local data and messages for this account will be permanently deleted.";
 "databaseloadingfailure.alert.delete_database.continue" = "Continue";
+"databaseloadingfailure.alert.retry" = "Retry";
 
 // Backend not supported alert
 "backend_not_supported.alert.title" = "Server version not supported";

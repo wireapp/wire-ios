@@ -59,6 +59,7 @@ public protocol SessionManagerDelegate: SessionActivationObserver {
     func sessionManagerDidBlacklistJailbrokenDevice()
     func sessionManagerDidPerformFederationMigration(authenticated: Bool)
     func sessionManagerDidPerformAPIMigrations()
+    func sessionManagerAsksToRetryStart()
 
     var isInAuthenticatedAppState: Bool { get }
     var isInUnathenticatedAppState: Bool { get }
@@ -853,7 +854,13 @@ public final class SessionManager: NSObject, SessionManagerType {
                 }
 
                 coreDataStack.loadStores { error in
-                    if error != nil {
+                    if DeveloperFlag.forceDatabaseLoadingFailure.isOn {
+                        // flip off the flag in order not to be stuck in failure
+                        var flag = DeveloperFlag.forceDatabaseLoadingFailure
+                        flag.isOn = false
+                        self.delegate?.sessionManagerDidFailToLoadDatabase()
+                    }
+                    else if error != nil {
                         self.delegate?.sessionManagerDidFailToLoadDatabase()
                     } else {
                         let userSession = self.startBackgroundSession(
@@ -875,6 +882,10 @@ public final class SessionManager: NSObject, SessionManagerType {
                 }
             }
         }
+    }
+
+    public func retryStart() {
+        self.delegate?.sessionManagerAsksToRetryStart()
     }
 
     /// Migrates all existing proteus data created by Cryptobox into Core Crypto, if needed.
