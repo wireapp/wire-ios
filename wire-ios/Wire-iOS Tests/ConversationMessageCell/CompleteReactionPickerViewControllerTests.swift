@@ -24,11 +24,13 @@ final class CompleteReactionPickerViewControllerTests: BaseSnapshotTestCase {
     // MARK: Properties
 
     var sut: CompleteReactionPickerViewController!
+    var emojiRepository: EmojiRepository!
 
     // MARK: setUp
 
     override func setUp() {
         super.setUp()
+        emojiRepository = EmojiRepository()
         sut = setUpCompleteReactionPickerViewController()
     }
 
@@ -36,21 +38,22 @@ final class CompleteReactionPickerViewControllerTests: BaseSnapshotTestCase {
 
     override func tearDown() {
         sut = nil
-        RecentlyUsedEmojiPeristenceCoordinator.store(RecentlyUsedEmojiSection(capacity: 15))
+        emojiRepository.registerRecentlyUsedEmojis([])
+        emojiRepository = nil
         super.tearDown()
     }
 
     // MARK: Snapshot Tests
 
     func testReactionPicker() {
-        sut = setUpCompleteReactionPickerViewController(selectedReactions: [.monkey])
+        sut = setUpCompleteReactionPickerViewController(selectedReactions: ["🐒"])
         scrollToSection(1)
         verify(matching: sut)
     }
 
     func testReactionPicker_scrolledToMiddle() {
         // GIVEN & WHEN
-        sut = setUpCompleteReactionPickerViewController(selectedReactions: [.videoGameController])
+        sut = setUpCompleteReactionPickerViewController(selectedReactions: ["⛺"])
         scrollToSection(4)
 
         // THEN
@@ -59,34 +62,42 @@ final class CompleteReactionPickerViewControllerTests: BaseSnapshotTestCase {
 
     func testReactionPicker_scrolledToBottom() {
         // GIVEN & WHEN
-        sut = setUpCompleteReactionPickerViewController(selectedReactions: [.argentinaFlag])
+        sut = setUpCompleteReactionPickerViewController(selectedReactions: ["🇦🇷"])
         scrollToSection(7)
+
         // THEN
         verify(matching: sut)
     }
 
     func testReactionPicker_withRecentReactionsSection() {
         // GIVEN
-        let emojis = [Emoji(value: "😂"), Emoji(value: "🆎"), Emoji(value: "🫥"), Emoji(value: "🐞"), .monkey]
-        let emojiSection = RecentlyUsedEmojiSection(capacity: 15, elements: emojis)
+        let emojis = ["😂", "🆎", "🫥", "🐞", "🐒"]
+        emojiRepository.registerRecentlyUsedEmojis(emojis)
+        sut = setUpCompleteReactionPickerViewController(selectedReactions: ["🐒"])
 
-        // WHEN
-        RecentlyUsedEmojiPeristenceCoordinator.store(emojiSection)
-        sut = setUpCompleteReactionPickerViewController(selectedReactions: [.monkey])
+        // THEN
+        verify(matching: sut)
+    }
 
-        // // THEN
+    func testReactionPicker_withSearchQuery() {
+        // GIVEN & WHEN
+        sut = setUpCompleteReactionPickerViewController(selectedReactions: ["🫠"])
+        sut = setUpCompleteReactionPickerViewController(selectedReactions: ["🙈"])
+        sut.searchBar(UISearchBar(), textDidChange: "face")
+        scrollToSection(1)
+
+        // THEN
         verify(matching: sut)
     }
 
     // MARK: Helper Methods
 
     private func setUpCompleteReactionPickerViewController(
-        selectedReactions: Set<Emoji> = [.smile]
+        selectedReactions: Set<Emoji.ID> = ["😄"]
     ) -> CompleteReactionPickerViewController {
         let vc = CompleteReactionPickerViewController(selectedReactions: selectedReactions)
         vc.view.setNeedsLayout()
         vc.view.layoutIfNeeded()
-
         return vc
     }
 
@@ -100,21 +111,4 @@ final class CompleteReactionPickerViewControllerTests: BaseSnapshotTestCase {
         }
     }
 
-}
-
-// MARK: - Emoji extension
-
-fileprivate extension Emoji {
-
-    static var videoGameController: Emoji {
-        return Emoji(value: "🎮")
-    }
-
-    static var argentinaFlag: Emoji {
-        return Emoji(value: "🇦🇷")
-    }
-
-    static var monkey: Emoji {
-        return Emoji(value: "🐒")
-    }
 }

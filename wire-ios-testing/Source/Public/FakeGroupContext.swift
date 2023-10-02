@@ -38,7 +38,7 @@ import WireSystem
     }
 
     public override convenience init() {
-        self.init(queue: DispatchQueue(label: "FakeGroupContextPrivateQueue-\(arc4random()%1000)"), group: ZMSDispatchGroup(label: "FakeGroupContext"))
+        self.init(queue: DispatchQueue(label: "FakeGroupContextPrivateQueue-\(arc4random()%1000)"), group: ZMSDispatchGroup(label: "FakeGroupContext")) // swiftlint:disable:this legacy_random
     }
 
     public func performGroupedBlock(_ block: @escaping () -> Void) {

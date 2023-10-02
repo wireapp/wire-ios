@@ -145,13 +145,13 @@ final class BasicReactionPickerTests: ZMSnapshotTestCase {
 
     func test_BasicReactionPicker_withSelectedReaction() {
         // GIVEN WHEN
-        let sut = pickerWithReaction([Emoji.thumbsUp])
+        let sut = pickerWithReaction([Emoji.ID.thumbsUp])
 
         // THEN
         verify(matching: sut)
     }
 
-    private func pickerWithReaction(_ reaction: Set<Emoji>?) -> BasicReactionPicker {
+    private func pickerWithReaction(_ reaction: Set<Emoji.ID>?) -> BasicReactionPicker {
         var picker = BasicReactionPicker(selectedReactions: reaction ?? [])
         picker.sizeToFit()
         picker.backgroundColor = .white
@@ -165,15 +165,11 @@ fileprivate extension UIView {
 
     func containsBasicReactionPicker() -> Bool {
         if self.subviews.contains(where: { $0.isKind(of: BasicReactionPicker.self) }) {
-                    return true
-                }
-
-                for subview in self.subviews {
-                    if subview.containsBasicReactionPicker() {
-                        return true
-                    }
-                }
-
-                return false
+            return true
+        }
+        if subviews.contains(where: { $0.containsBasicReactionPicker() }) {
+            return true
+        }
+        return false
     }
 }

@@ -63,7 +63,7 @@ extension MockTransportSession {
         guard
             let payload = payload?.asDictionary() as? [String: String],
             let token = payload["token"],
-            let _ = payload["app"],
+            payload["app"] != nil,
             let transport = payload["transport"], transport == transportType
         else {
             return ZMTransportResponse(payload: nil, httpStatus: 400, transportSessionError: nil, apiVersion: apiVersion.rawValue)
