@@ -378,7 +378,9 @@ final class ConversationOptionsViewControllerTests: BaseSnapshotTestCase {
         // for ConversationOptionsViewModel's delegate
         _ = ConversationGuestOptionsViewController(viewModel: viewModel)
         // Show the alert
-        let sut = viewModel.setAllowGuests(false)!
+        guard let sut = viewModel.setAllowGuests(false) else {
+            return XCTFail("This sut shouldn't be nil")
+        }
         // THEN
         try verify(matching: sut)
     }
