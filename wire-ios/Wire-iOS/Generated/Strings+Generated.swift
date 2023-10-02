@@ -4712,6 +4712,10 @@ internal enum L10n {
       }
     }
     internal enum SecuredGuestLinkWithPassword {
+      internal enum GeneratePasswordButton {
+        /// Generate password
+        internal static let title = L10n.tr("Localizable", "secured_guest_link_with_password.generate_password_button.title", fallback: "Generate password")
+      }
       internal enum Header {
         /// Create password secured link
         internal static let title = L10n.tr("Localizable", "secured_guest_link_with_password.header.title", fallback: "Create password secured link")
