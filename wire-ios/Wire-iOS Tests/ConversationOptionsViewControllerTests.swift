@@ -68,7 +68,7 @@ final class ConversationOptionsViewControllerTests: BaseSnapshotTestCase {
 
     override func setUp() {
         super.setUp()
-        BackendInfo.storage = UserDefaults(suiteName: UUID().uuidString)!
+        BackendInfo.storage = .random()!
     }
 
     // MARK: - tearDown method
@@ -378,7 +378,9 @@ final class ConversationOptionsViewControllerTests: BaseSnapshotTestCase {
         // for ConversationOptionsViewModel's delegate
         _ = ConversationGuestOptionsViewController(viewModel: viewModel)
         // Show the alert
-        let sut = viewModel.setAllowGuests(false)!
+        guard let sut = viewModel.setAllowGuests(false) else {
+            return XCTFail("This sut shouldn't be nil")
+        }
         // THEN
         try verify(matching: sut)
     }
@@ -400,7 +402,7 @@ final class ConversationOptionsViewControllerTests: BaseSnapshotTestCase {
         viewModel.startGuestLinkCreationFlow()
 
         // THEN
-        XCTAssert(mock.viewModelSourceViewPresentGuestLinkTypeSelection_Invocations.count == 1)
+        XCTAssertEqual(mock.viewModelSourceViewPresentGuestLinkTypeSelection_Invocations.count, 1)
     }
 
     func testThatGuestLinkWithOptionalPasswordAlertIsNotShownIfApiVersionIsBelowFour() {
@@ -418,7 +420,7 @@ final class ConversationOptionsViewControllerTests: BaseSnapshotTestCase {
         viewModel.startGuestLinkCreationFlow()
 
         // THEN
-        XCTAssert(mock.viewModelSourceViewPresentGuestLinkTypeSelection_Invocations.count == 0)
+        XCTAssertEqual(mock.viewModelSourceViewPresentGuestLinkTypeSelection_Invocations.count, 0)
     }
 
 }

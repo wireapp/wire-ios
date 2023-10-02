@@ -87,19 +87,17 @@ extension UIAlertController {
     ) -> UIAlertController {
         let controller = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
 
-        let optionOneAction = UIAlertAction(title: GuestRoom.Create.LinkWithPassword.action, style: .default) { _ in
+        let createGuestLinkWithPasswordAction = UIAlertAction(title: GuestRoom.Create.LinkWithPassword.action, style: .default) { _ in
             completion(.secure)
         }
 
-        let optionTwoAction = UIAlertAction(title: GuestRoom.Create.LinkWithoutPassword.action, style: .default) { _ in
+        let createGuestLinkWithoutPasswordAction = UIAlertAction(title: GuestRoom.Create.LinkWithoutPassword.action, style: .default) { _ in
             completion(.normal)
         }
 
-        controller.addAction(optionOneAction)
-        controller.addAction(optionTwoAction)
-        controller.addAction(.cancel {
-            controller.dismiss(animated: true)
-        })
+        controller.addAction(createGuestLinkWithPasswordAction)
+        controller.addAction(createGuestLinkWithoutPasswordAction)
+        controller.addAction(.cancel())
 
         return controller
     }
