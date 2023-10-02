@@ -97,9 +97,7 @@ extension UIAlertController {
 
         controller.addAction(createGuestLinkWithPasswordAction)
         controller.addAction(createGuestLinkWithoutPasswordAction)
-        controller.addAction(.cancel {
-            controller.dismiss(animated: true)
-        })
+        controller.addAction(.cancel())
 
         return controller
     }
