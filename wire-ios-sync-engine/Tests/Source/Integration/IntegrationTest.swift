@@ -718,6 +718,10 @@ extension IntegrationTest: SessionManagerDelegate {
     public func sessionManagerDidPerformAPIMigrations() {
         // no op
     }
+
+    public func sessionManagerAsksToRetryStart() {
+        // no op
+    }
 }
 
 @objcMembers
