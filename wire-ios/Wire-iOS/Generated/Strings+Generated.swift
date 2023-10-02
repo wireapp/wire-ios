@@ -4716,6 +4716,20 @@ internal enum L10n {
         /// Create password secured link
         internal static let title = L10n.tr("Localizable", "secured_guest_link_with_password.header.title", fallback: "Create password secured link")
       }
+      internal enum Textfield {
+        /// Use at least 8 characters, with one lowercase letter, one capital letter, a number, and a special character.
+        internal static let footer = L10n.tr("Localizable", "secured_guest_link_with_password.textfield.footer", fallback: "Use at least 8 characters, with one lowercase letter, one capital letter, a number, and a special character.")
+        /// Set password
+        internal static let header = L10n.tr("Localizable", "secured_guest_link_with_password.textfield.header", fallback: "Set password")
+        /// Enter password
+        internal static let placeholder = L10n.tr("Localizable", "secured_guest_link_with_password.textfield.placeholder", fallback: "Enter password")
+      }
+      internal enum VerifyPasswordTextField {
+        /// Confirm password
+        internal static let header = L10n.tr("Localizable", "secured_guest_link_with_password.verifyPasswordTextField.header", fallback: "Confirm password")
+        /// Confirm your password
+        internal static let placeholder = L10n.tr("Localizable", "secured_guest_link_with_password.verifyPasswordTextField.placeholder", fallback: "Confirm your password")
+      }
       internal enum WarningLabel {
         /// People who want to join the conversation via the guest link need to enter this password first.
         internal static let subtitle = L10n.tr("Localizable", "secured_guest_link_with_password.warning_label.subtitle", fallback: "People who want to join the conversation via the guest link need to enter this password first.")

@@ -1,6 +1,5 @@
-// Generated using Sourcery 2.0.2 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 2.1.1 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
-// swiftlint:disable line_length
 // swiftlint:disable variable_name
 
 import Foundation
@@ -14,32 +13,11 @@ import LocalAuthentication
 
 @testable import WireDataModel
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 public class MockCryptoboxMigrationManagerInterface: CryptoboxMigrationManagerInterface {
 
     // MARK: - Life cycle
 
     public init() {}
-
 
     // MARK: - isMigrationNeeded
 
@@ -76,7 +54,7 @@ public class MockCryptoboxMigrationManagerInterface: CryptoboxMigrationManagerIn
             fatalError("no mock for `performMigrationAccountDirectorySyncContext`")
         }
 
-        try mock(accountDirectory, syncContext)            
+        try mock(accountDirectory, syncContext)
     }
 
     // MARK: - completeMigration
@@ -96,15 +74,13 @@ public class MockCryptoboxMigrationManagerInterface: CryptoboxMigrationManagerIn
             fatalError("no mock for `completeMigrationSyncContext`")
         }
 
-        try mock(syncContext)            
+        try mock(syncContext)
     }
 
 }
 class MockEARKeyEncryptorInterface: EARKeyEncryptorInterface {
 
     // MARK: - Life cycle
-
-
 
     // MARK: - encryptDatabaseKey
 
@@ -159,7 +135,6 @@ public class MockEARKeyRepositoryInterface: EARKeyRepositoryInterface {
 
     public init() {}
 
-
     // MARK: - storePublicKey
 
     public var storePublicKeyDescriptionKey_Invocations: [(description: PublicEARKeyDescription, key: SecKey)] = []
@@ -177,7 +152,7 @@ public class MockEARKeyRepositoryInterface: EARKeyRepositoryInterface {
             fatalError("no mock for `storePublicKeyDescriptionKey`")
         }
 
-        try mock(description, key)            
+        try mock(description, key)
     }
 
     // MARK: - fetchPublicKey
@@ -220,7 +195,7 @@ public class MockEARKeyRepositoryInterface: EARKeyRepositoryInterface {
             fatalError("no mock for `deletePublicKeyDescription`")
         }
 
-        try mock(description)            
+        try mock(description)
     }
 
     // MARK: - fetchPrivateKey
@@ -263,7 +238,7 @@ public class MockEARKeyRepositoryInterface: EARKeyRepositoryInterface {
             fatalError("no mock for `deletePrivateKeyDescription`")
         }
 
-        try mock(description)            
+        try mock(description)
     }
 
     // MARK: - storeDatabaseKey
@@ -283,7 +258,7 @@ public class MockEARKeyRepositoryInterface: EARKeyRepositoryInterface {
             fatalError("no mock for `storeDatabaseKeyDescriptionKey`")
         }
 
-        try mock(description, key)            
+        try mock(description, key)
     }
 
     // MARK: - fetchDatabaseKey
@@ -326,7 +301,7 @@ public class MockEARKeyRepositoryInterface: EARKeyRepositoryInterface {
             fatalError("no mock for `deleteDatabaseKeyDescription`")
         }
 
-        try mock(description)            
+        try mock(description)
     }
 
     // MARK: - clearCache
@@ -341,7 +316,7 @@ public class MockEARKeyRepositoryInterface: EARKeyRepositoryInterface {
             fatalError("no mock for `clearCache`")
         }
 
-        mock()            
+        mock()
     }
 
 }
@@ -354,7 +329,6 @@ public class MockEARServiceInterface: EARServiceInterface {
     // MARK: - delegate
 
     public var delegate: EARServiceDelegate?
-
 
     // MARK: - enableEncryptionAtRest
 
@@ -373,7 +347,7 @@ public class MockEARServiceInterface: EARServiceInterface {
             fatalError("no mock for `enableEncryptionAtRestContextSkipMigration`")
         }
 
-        try mock(context, skipMigration)            
+        try mock(context, skipMigration)
     }
 
     // MARK: - disableEncryptionAtRest
@@ -393,7 +367,7 @@ public class MockEARServiceInterface: EARServiceInterface {
             fatalError("no mock for `disableEncryptionAtRestContextSkipMigration`")
         }
 
-        try mock(context, skipMigration)            
+        try mock(context, skipMigration)
     }
 
     // MARK: - lockDatabase
@@ -408,7 +382,7 @@ public class MockEARServiceInterface: EARServiceInterface {
             fatalError("no mock for `lockDatabase`")
         }
 
-        mock()            
+        mock()
     }
 
     // MARK: - unlockDatabase
@@ -428,7 +402,7 @@ public class MockEARServiceInterface: EARServiceInterface {
             fatalError("no mock for `unlockDatabaseContext`")
         }
 
-        try mock(context)            
+        try mock(context)
     }
 
     // MARK: - fetchPublicKeys
@@ -489,7 +463,7 @@ public class MockEARServiceInterface: EARServiceInterface {
             fatalError("no mock for `setInitialEARFlagValue`")
         }
 
-        mock(enabled)            
+        mock(enabled)
     }
 
 }
@@ -498,7 +472,6 @@ public class MockFeatureRepositoryInterface: FeatureRepositoryInterface {
     // MARK: - Life cycle
 
     public init() {}
-
 
     // MARK: - fetchAppLock
 
@@ -530,7 +503,7 @@ public class MockFeatureRepositoryInterface: FeatureRepositoryInterface {
             fatalError("no mock for `storeAppLock`")
         }
 
-        mock(appLock)            
+        mock(appLock)
     }
 
     // MARK: - fetchConferenceCalling
@@ -563,7 +536,7 @@ public class MockFeatureRepositoryInterface: FeatureRepositoryInterface {
             fatalError("no mock for `storeConferenceCalling`")
         }
 
-        mock(conferenceCalling)            
+        mock(conferenceCalling)
     }
 
     // MARK: - fetchFileSharing
@@ -596,7 +569,7 @@ public class MockFeatureRepositoryInterface: FeatureRepositoryInterface {
             fatalError("no mock for `storeFileSharing`")
         }
 
-        mock(fileSharing)            
+        mock(fileSharing)
     }
 
     // MARK: - fetchSelfDeletingMesssages
@@ -629,7 +602,7 @@ public class MockFeatureRepositoryInterface: FeatureRepositoryInterface {
             fatalError("no mock for `storeSelfDeletingMessages`")
         }
 
-        mock(selfDeletingMessages)            
+        mock(selfDeletingMessages)
     }
 
     // MARK: - fetchConversationGuestLinks
@@ -662,7 +635,7 @@ public class MockFeatureRepositoryInterface: FeatureRepositoryInterface {
             fatalError("no mock for `storeConversationGuestLinks`")
         }
 
-        mock(conversationGuestLinks)            
+        mock(conversationGuestLinks)
     }
 
     // MARK: - fetchClassifiedDomains
@@ -695,7 +668,7 @@ public class MockFeatureRepositoryInterface: FeatureRepositoryInterface {
             fatalError("no mock for `storeClassifiedDomains`")
         }
 
-        mock(classifiedDomains)            
+        mock(classifiedDomains)
     }
 
     // MARK: - fetchDigitalSignature
@@ -728,7 +701,7 @@ public class MockFeatureRepositoryInterface: FeatureRepositoryInterface {
             fatalError("no mock for `storeDigitalSignature`")
         }
 
-        mock(digitalSignature)            
+        mock(digitalSignature)
     }
 
     // MARK: - fetchMLS
@@ -761,15 +734,13 @@ public class MockFeatureRepositoryInterface: FeatureRepositoryInterface {
             fatalError("no mock for `storeMLS`")
         }
 
-        mock(mls)            
+        mock(mls)
     }
 
 }
 class MockFileManagerInterface: FileManagerInterface {
 
     // MARK: - Life cycle
-
-
 
     // MARK: - fileExists
 
@@ -806,7 +777,7 @@ class MockFileManagerInterface: FileManagerInterface {
             fatalError("no mock for `removeItemAt`")
         }
 
-        try mock(url)            
+        try mock(url)
     }
 
     // MARK: - cryptoboxDirectory
@@ -843,7 +814,6 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
 
     public var underlyingLastPrekeyID: UInt16!
 
-
     // MARK: - completeInitialization
 
     public var completeInitialization_Invocations: [Void] = []
@@ -861,7 +831,7 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
             fatalError("no mock for `completeInitialization`")
         }
 
-        try mock()            
+        try mock()
     }
 
     // MARK: - establishSession
@@ -881,7 +851,7 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
             fatalError("no mock for `establishSessionIdFromPrekey`")
         }
 
-        try mock(id, fromPrekey)            
+        try mock(id, fromPrekey)
     }
 
     // MARK: - deleteSession
@@ -901,7 +871,7 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
             fatalError("no mock for `deleteSessionId`")
         }
 
-        try mock(id)            
+        try mock(id)
     }
 
     // MARK: - sessionExists
@@ -1146,7 +1116,8 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
             fatalError("no mock for `migrateCryptoboxSessionsAt`")
         }
 
-        try mock(url)            
+        try mock(url)
     }
 
 }
+// swiftlint: enable variable_name

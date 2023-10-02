@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import UIKit
 
 // MARK: - CreatePasswordSecuredLinkViewModelDelegate
 
@@ -38,6 +39,17 @@ final class CreatePasswordSecuredLinkViewModel {
     func requestRandomPassword() {
         let randomPassword = generateRandomPassword()
         delegate?.generateButtonDidTap(randomPassword)
+    }
+
+    func validatePassword(textfield: UITextField, with string: String) -> Bool {
+
+        let updatedString = (textfield.text as NSString?)?.replacingCharacters(in: NSRange(location: 0, length: 0), with: string) ?? string
+
+        // Ensure at least 8 characters with one lowercase letter, one capital letter, a number, and a special character
+        let passwordRegex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^a-zA-Z\\d]).{8,}$"
+        let passwordPredicate = NSPredicate(format: "SELF MATCHES %@", passwordRegex)
+
+        return passwordPredicate.evaluate(with: updatedString)
     }
 
     func generateRandomPassword() -> String {
