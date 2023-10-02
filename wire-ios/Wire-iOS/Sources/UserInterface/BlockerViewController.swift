@@ -28,9 +28,10 @@ enum BlockerViewControllerContext {
 }
 
 final class BlockerViewController: LaunchImageViewController {
-
     private var context: BlockerViewControllerContext = .blacklist
     private var sessionManager: SessionManager?
+
+    private var observerTokens = [Any]()
 
     init(context: BlockerViewControllerContext, sessionManager: SessionManager? = nil) {
         self.context = context
@@ -43,7 +44,13 @@ final class BlockerViewController: LaunchImageViewController {
         fatalError("init?(coder aDecoder: NSCoder) is not implemented")
     }
 
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        setupApplicationNotifications()
+    }
+
     override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
         showAlert()
     }
 
@@ -100,6 +107,16 @@ final class BlockerViewController: LaunchImageViewController {
 
         databaseFailureAlert.addAction(settingsAction)
 
+        let retryAction = UIAlertAction(
+            title: L10n.Localizable.Databaseloadingfailure.Alert.retry,
+            style: .default,
+            handler: { [weak self] _ in
+                self?.sessionManager?.retryStart()
+            }
+        )
+
+        databaseFailureAlert.addAction(retryAction)
+
         let deleteDatabaseAction = UIAlertAction(
             title: L10n.Localizable.Databaseloadingfailure.Alert.deleteDatabase,
             style: .destructive,
@@ -138,5 +155,16 @@ final class BlockerViewController: LaunchImageViewController {
 
         deleteDatabaseConfirmationAlert.addAction(cancelAction)
         present(deleteDatabaseConfirmationAlert, animated: true)
+    }
+}
+
+// MARK: - Application state observing
+extension BlockerViewController: ApplicationStateObserving {
+    func addObserverToken(_ token: NSObjectProtocol) {
+        observerTokens.append(token)
+    }
+
+    func applicationDidBecomeActive() {
+        showAlert()
     }
 }
