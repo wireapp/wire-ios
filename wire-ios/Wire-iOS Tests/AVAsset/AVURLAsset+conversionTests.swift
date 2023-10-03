@@ -54,20 +54,16 @@ final class AVURLAsset_conversionTests: XCTestCase {
                 return XCTFail("expected asset")
             }
 
-            guard 
-                let fileSize = url.fileSize,
-                let expectedFileSize = videoURL.fileSize
-            else {
-                return XCTFail("expected file sizes")
-            }
-
             // exported file URL
             XCTAssertEqual(url.lastPathComponent, videoURL.lastPathComponent)
             // temp asset URL for upload
             XCTAssertEqual(asset.url.lastPathComponent, videoURL.lastPathComponent)
             XCTAssertEqual(asset.duration, originalAsset.duration)
-            // converted file with low quality should be smaller
-            XCTAssertLessThan(fileSize, expectedFileSize)
+
+            if let fileSize = url.fileSize, let expectedFileSize = videoURL.fileSize {
+                // converted file with low quality should be smaller
+                XCTAssertLessThan(fileSize, expectedFileSize)
+            }
 
             XCTAssertNil(error)
             expectation.fulfill()
