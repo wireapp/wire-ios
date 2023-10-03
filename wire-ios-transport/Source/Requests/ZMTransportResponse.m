@@ -136,6 +136,8 @@ static NSString* ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_NETWORK;
                     return ZMTransportResponseStatusTryAgainLater;
                 case ZMTransportSessionErrorCodeAuthenticationFailed:
                     return ZMTransportResponseStatusPermanentError;
+                case ZMTransportSessionErrorCodeCancelled:
+                    return ZMTransportResponseStatusCancelled;
                 default:
                     ZMLogWarn(@"Invalid ZMTransportSessionErrorCode %d", (int) self.transportSessionError.code);
                     break;
