@@ -18,7 +18,7 @@
 
 import Foundation
 
-extension ZMTransportResponse {
+public extension ZMTransportResponse {
 
     var errorInfo: (status: Int, label: String, message: String) {
         let payload = self.payload?.asDictionary()
