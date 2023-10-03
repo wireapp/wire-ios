@@ -363,6 +363,12 @@ final class UserClientByQualifiedUserIDTranscoder: IdentifierObjectSyncTranscode
     }
 
     private func commonResponseHandling(response: ZMTransportResponse, for identifiers: Set<QualifiedID>) {
+        defer {
+            // We mark all clients as synced, even if they did not appear in
+            // the reponse payload, in order to avoid a possible request loop.
+            markAllClientsAsUpdated(identifiers: identifiers)
+        }
+
         guard
             let rawData = response.rawData,
             let payload = ResponsePayload(rawData, decoder: decoder),
@@ -387,6 +393,22 @@ final class UserClientByQualifiedUserIDTranscoder: IdentifierObjectSyncTranscode
                 clientPayloads.updateClients(for: user, selfClient: selfClient)
             }
         }
+    }
+
+    private func markAllClientsAsUpdated(identifiers: Set<QualifiedID>) {
+        for identifier in identifiers {
+            if let user = ZMUser.fetch(
+                with: identifier.uuid,
+                domain: identifier.domain,
+                in: managedObjectContext
+            ) {
+                for client in user.clients {
+                    client.needsToBeUpdatedFromBackend = false
+                }
+            }
+        }
+
+        managedObjectContext.enqueueDelayedSave()
     }
 
 }
