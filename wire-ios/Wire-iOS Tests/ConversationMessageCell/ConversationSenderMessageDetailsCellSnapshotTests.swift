@@ -211,4 +211,22 @@ final class ConversationSenderMessageDetailsCellSnapshotTests: BaseSnapshotTestC
         verify(matching: sut)
     }
 
+    func test_SenderIsWithoutMetadata_GroupConversation() {
+        // GIVEN
+        mockUser.name = nil
+        mockUser.teamRole = .member
+        let configuration = ConversationSenderMessageDetailsCell.Configuration(
+            user: mockUser,
+            indicator: .none,
+            teamRoleIndicator: .none,
+            timestamp: "1/1/70, 1:00 AM"
+        )
+
+        // WHEN
+        sut.configure(with: configuration, animated: false)
+
+        // THEN
+        verify(matching: sut)
+    }
+
 }
