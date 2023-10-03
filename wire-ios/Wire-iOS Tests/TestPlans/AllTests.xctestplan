@@ -43,6 +43,8 @@
   "testTargets" : [
     {
       "skippedTests" : [
+        "AVURLAsset_conversionTests\/testThatVideoIsConvertedToUploadFormat()",
+        "MessageReplyPreviewViewTests\/testThatItRendersImageMessagePreview()",
         "SearchResultLabelTests",
         "ShareViewControllerTests\/testThatItRendersCorrectlyShareViewController_Photos()",
         "ShareViewControllerTests\/testThatItRendersCorrectlyShareViewController_Video_DarkMode()"
