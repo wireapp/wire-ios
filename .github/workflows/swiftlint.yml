@@ -22,5 +22,4 @@ jobs:
           with:
             args: --strict
           env:
-            DIFF_BASE: ${{ github.base_ref }}
-	    
+            DIFF_BASE: ${{ github.base_ref }}   
