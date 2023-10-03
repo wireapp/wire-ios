@@ -32,7 +32,7 @@ final private class MockAudioRecordViewControllerDelegate: NSObject, AudioRecord
     func audioRecordViewControllerWantsToSendAudio(_ audioRecordViewController: AudioRecordBaseViewController, recordingURL: URL, duration: TimeInterval, filter: AVSAudioEffectType) {}
 }
 
-final class AudioRecordViewControllerTests: ZMSnapshotTestCase {
+final class AudioRecordViewControllerTests: BaseSnapshotTestCase {
 
     var sut: AudioRecordViewController!
     fileprivate var delegate: MockAudioRecordViewControllerDelegate!
@@ -41,6 +41,7 @@ final class AudioRecordViewControllerTests: ZMSnapshotTestCase {
         super.setUp()
         accentColor = .strongBlue
         sut = AudioRecordViewController()
+        sut.view.backgroundColor = SemanticColors.View.backgroundDefault
         delegate = MockAudioRecordViewControllerDelegate()
         sut.delegate = delegate
         sut.updateTimeLabel(123)
@@ -53,8 +54,16 @@ final class AudioRecordViewControllerTests: ZMSnapshotTestCase {
         super.tearDown()
     }
 
-    func verify() {
-        verifyInAllPhoneWidths(view: sut.prepareForSnapshot(), tolerance: 0.05)
+    func verify(file: StaticString = #file,
+                testName: String = #function,
+                line: UInt = #line) {
+
+        verifyInAllPhoneWidths(
+            matching: sut.prepareForSnapshot(),
+            file: file,
+            testName: testName,
+            line: line
+        )
     }
 
     func testThatItRendersViewControllerCorrectlyState_Recording() {
