@@ -48,13 +48,12 @@ extension ZMConversation {
 
         guard
             let moc = conversation.managedObjectContext,
-            let convID = conversation.remoteIdentifier,
-            convID != ZMConversation.selfConversationIdentifier(in: moc)
+            let conversationID = conversation.qualifiedID,
+            conversationID.uuid != ZMConversation.selfConversationIdentifier(in: moc)
         else {
             throw UpdateSelfConversationError.invalidConversation
         }
-
-        let lastRead = LastRead(conversationID: convID, lastReadTimestamp: lastReadTimeStamp)
+        let lastRead = LastRead(conversationID: conversationID, lastReadTimestamp: lastReadTimeStamp)
         let message = GenericMessage(content: lastRead, nonce: .init())
         return try appendMessageToSelfConversation(message, in: moc)
     }

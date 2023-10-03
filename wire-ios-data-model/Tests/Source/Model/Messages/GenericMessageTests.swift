@@ -33,7 +33,8 @@ class GenericMessageTests: XCTestCase {
     }
 
     func testThatItConsidersLastReadMessageTypeAsKnownMessage() {
-        let lastReadMessageType = GenericMessage(content: LastRead(conversationID: UUID.create(), lastReadTimestamp: Date()))
+        let conversationID = QualifiedID(uuid: UUID.create(), domain: "")
+        let lastReadMessageType = GenericMessage(content: LastRead(conversationID: conversationID, lastReadTimestamp: Date()))
         XCTAssertTrue(lastReadMessageType.knownMessage)
     }
 
