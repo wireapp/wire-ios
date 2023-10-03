@@ -167,7 +167,7 @@ class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
     private func configureAuthorLabel(object: Configuration) {
         let textColor: UIColor = object.user.isServiceUser ? SemanticColors.Label.textDefault : object.user.accentColor
         let attributedString = NSMutableAttributedString(
-            string: object.user.name ?? "",
+            string: object.user.name ?? L10n.Localizable.Profile.Details.Title.unavailable,
             attributes: [
                 .foregroundColor: textColor,
                 .font: UIFont.mediumSemiboldFont
