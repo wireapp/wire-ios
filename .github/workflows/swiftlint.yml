@@ -6,6 +6,8 @@ on:
       - '.github/workflows/swiftlint.yml'
       - '.swiftlint.yml'
       - '**/*.swift'
+  merge_group:
+    types: [checks_requested]
 
 # This is what will cancel the workflow
 concurrency:
