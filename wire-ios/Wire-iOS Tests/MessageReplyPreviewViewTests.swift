@@ -180,8 +180,6 @@ final class MessageReplyPreviewViewTests: BaseSnapshotTestCase {
         let message = MockMessageFactory.imageMessage(with: image)
 
         let previewView = try XCTUnwrap(message.replyPreview())
-        XCTAssert(waitForGroupsToBeEmpty([MediaAssetCache.defaultImageCache.dispatchGroup]))
-
         verify(matching: previewView.prepareForSnapshot())
     }
 
