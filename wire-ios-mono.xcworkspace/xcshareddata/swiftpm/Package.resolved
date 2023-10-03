@@ -2,6 +2,15 @@
   "object": {
     "pins": [
       {
+        "package": "DifferenceKit",
+        "repositoryURL": "https://github.com/wireapp/DifferenceKit",
+        "state": {
+          "branch": null,
+          "revision": "eaf29c583df322d1d7c4c72c46a59eeb33bb54bf",
+          "version": "1.3.0"
+        }
+      },
+      {
         "package": "swift-snapshot-testing",
         "repositoryURL": "https://github.com/pointfreeco/swift-snapshot-testing",
         "state": {
