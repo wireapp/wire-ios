@@ -1929,8 +1929,8 @@ static XCTestCase *currentTestCase;
     
     XCTAssertNotNil(receivedResponse.transportSessionError);
     XCTAssertEqualObjects(receivedResponse.transportSessionError.domain, ZMTransportSessionErrorDomain);
-    XCTAssertEqual(receivedResponse.transportSessionError.code, (long)ZMTransportSessionErrorCodeTryAgainLater);
-    XCTAssertEqual(receivedResponse.result, ZMTransportResponseStatusTryAgainLater);
+    XCTAssertEqual(receivedResponse.transportSessionError.code, (long)ZMTransportSessionErrorCodeCancelled);
+    XCTAssertEqual(receivedResponse.result, ZMTransportResponseStatusCancelled);
     XCTAssertNil(receivedResponse.payload);
     
 }
