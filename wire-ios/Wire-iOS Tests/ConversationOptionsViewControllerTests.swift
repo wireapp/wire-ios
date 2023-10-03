@@ -20,6 +20,8 @@ import XCTest
 @testable import Wire
 import SnapshotTesting
 
+// MARK: - MockOptionsViewModelConfiguration
+
 final class MockOptionsViewModelConfiguration: ConversationGuestOptionsViewModelConfiguration {
 
     typealias SetHandler = (Bool, (VoidResult) -> Void) -> Void
@@ -58,7 +60,23 @@ final class MockOptionsViewModelConfiguration: ConversationGuestOptionsViewModel
     }
 }
 
+// MARK: - ConversationOptionsViewControllerTests
+
 final class ConversationOptionsViewControllerTests: BaseSnapshotTestCase {
+
+    // MARK: - setUp method
+
+    override func setUp() {
+        super.setUp()
+        BackendInfo.storage = .random()!
+    }
+
+    // MARK: - tearDown method
+
+    override func tearDown() {
+        BackendInfo.storage = UserDefaults.standard
+        super.tearDown()
+    }
 
     // MARK: Renders Guests Screen when AllowGuests is either enabled or disabled
 
@@ -360,8 +378,49 @@ final class ConversationOptionsViewControllerTests: BaseSnapshotTestCase {
         // for ConversationOptionsViewModel's delegate
         _ = ConversationGuestOptionsViewController(viewModel: viewModel)
         // Show the alert
-        let sut = viewModel.setAllowGuests(false)!
+        guard let sut = viewModel.setAllowGuests(false) else {
+            return XCTFail("This sut shouldn't be nil")
+        }
         // THEN
         try verify(matching: sut)
     }
+
+    // MARK: - Unit Tests
+
+    func testThatGuestLinkWithOptionalPasswordAlertShowIfApiVersionIsFourAndAbove() {
+        // GIVEN
+        BackendInfo.apiVersion = .v4
+        let config = MockOptionsViewModelConfiguration(allowGuests: true)
+        let viewModel = ConversationGuestOptionsViewModel(configuration: config)
+        let mock = MockConversationGuestOptionsViewModelDelegate()
+        mock.viewModelSourceViewPresentGuestLinkTypeSelection_MockMethod = { _, _, _ in }
+        mock.viewModelDidUpdateState_MockMethod = { _, _ in }
+        mock.viewModelDidReceiveError_MockMethod = { _, _ in }
+        viewModel.delegate = mock
+
+        // WHEN
+        viewModel.startGuestLinkCreationFlow()
+
+        // THEN
+        XCTAssertEqual(mock.viewModelSourceViewPresentGuestLinkTypeSelection_Invocations.count, 1)
+    }
+
+    func testThatGuestLinkWithOptionalPasswordAlertIsNotShownIfApiVersionIsBelowFour() {
+        // GIVEN
+        BackendInfo.apiVersion = .v3
+        let config = MockOptionsViewModelConfiguration(allowGuests: true)
+        let viewModel = ConversationGuestOptionsViewModel(configuration: config)
+        let mock = MockConversationGuestOptionsViewModelDelegate()
+        mock.viewModelSourceViewPresentGuestLinkTypeSelection_MockMethod = { _, _, _ in }
+        mock.viewModelDidUpdateState_MockMethod = { _, _ in }
+        mock.viewModelDidReceiveError_MockMethod = { _, _ in }
+        viewModel.delegate = mock
+
+        // WHEN
+        viewModel.startGuestLinkCreationFlow()
+
+        // THEN
+        XCTAssertEqual(mock.viewModelSourceViewPresentGuestLinkTypeSelection_Invocations.count, 0)
+    }
+
 }

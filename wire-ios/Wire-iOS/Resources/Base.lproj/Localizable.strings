@@ -1391,6 +1391,9 @@
 
 "guest_room.link.button.title" = "Create Link";
 
+"guest_room.create.link_with_password.action" = "Create password secured link";
+"guest_room.create.link_without_password.action" = "Create link without password";
+
 "guest_room.actions.copy_link" = "Copy Link";
 "guest_room.actions.copied_link" = "Link Copied!";
 "guest_room.actions.share_link" = "Share Link";

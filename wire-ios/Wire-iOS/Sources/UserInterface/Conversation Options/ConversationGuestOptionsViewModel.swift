@@ -18,6 +18,7 @@
 
 import UIKit
 import WireUtilities
+import WireTransport
 
 protocol ConversationGuestOptionsViewModelConfiguration: AnyObject {
     var allowGuests: Bool { get }
@@ -33,10 +34,12 @@ protocol ConversationGuestOptionsViewModelConfiguration: AnyObject {
     func deleteLink(completion: @escaping (VoidResult) -> Void)
 }
 
+// sourcery: AutoMockable
 protocol ConversationGuestOptionsViewModelDelegate: AnyObject {
     func viewModel(_ viewModel: ConversationGuestOptionsViewModel, didUpdateState state: ConversationGuestOptionsViewModel.State)
     func viewModel(_ viewModel: ConversationGuestOptionsViewModel, didReceiveError error: Error)
     func viewModel(_ viewModel: ConversationGuestOptionsViewModel, sourceView: UIView?, confirmRemovingGuests completion: @escaping (Bool) -> Void) -> UIAlertController?
+    func viewModel(_ viewModel: ConversationGuestOptionsViewModel, sourceView: UIView?, presentGuestLinkTypeSelection completion: @escaping (GuestLinkType) -> Void)
     func viewModel(_ viewModel: ConversationGuestOptionsViewModel, sourceView: UIView?, confirmRevokingLink completion: @escaping (Bool) -> Void)
     func viewModel(_ viewModel: ConversationGuestOptionsViewModel, wantsToShareMessage message: String, sourceView: UIView?)
 }
@@ -71,6 +74,12 @@ final class ConversationGuestOptionsViewModel {
         didSet {
             delegate?.viewModel(self, didUpdateState: state)
         }
+    }
+
+    private var isGuestLinkWithPasswordAvailable: Bool {
+        guard let apiVersion = BackendInfo.apiVersion else { return false }
+
+        return apiVersion >= .v4
     }
 
     private let configuration: ConversationGuestOptionsViewModelConfiguration
@@ -126,8 +135,8 @@ final class ConversationGuestOptionsViewModel {
                     rows.append(.shareLink { [weak self] view in self?.shareLink(view: view) })
                     rows.append(.revokeLink { [weak self] _ in self?.revokeLink() })
                 } else {
-                    rows.append(.createLinkButton { [weak self] _ in
-                        self?.createLink() })
+                    rows.append(.createLinkButton { [weak self] view in
+                        self?.startGuestLinkCreationFlow(from: view) })
                 }
             }
             return rows
@@ -230,6 +239,24 @@ final class ConversationGuestOptionsViewModel {
             item.cancel()
             self.showLoadingCell = false
         }
+    }
+
+    /// Starts the Guest Link Creation Flow
+    /// - Parameter view: the source view which triggers create action
+    func startGuestLinkCreationFlow(from view: UIView? = nil) {
+        if isGuestLinkWithPasswordAvailable {
+            delegate?.viewModel(self, sourceView: view, presentGuestLinkTypeSelection: { [weak self] guestLinkType in
+                guard let `self` = self else { return }
+                switch guestLinkType {
+                case .secure: break
+                case .normal:
+                    createLink()
+                }
+            })
+        } else {
+            createLink()
+        }
+
     }
 
     /// set conversation option AllowGuests

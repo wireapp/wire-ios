@@ -3176,6 +3176,16 @@ internal enum L10n {
         /// Allow guests
         internal static let title = L10n.tr("Localizable", "guest_room.allow_guests.title", fallback: "Allow guests")
       }
+      internal enum Create {
+        internal enum LinkWithPassword {
+          /// Create password secured link
+          internal static let action = L10n.tr("Localizable", "guest_room.create.link_with_password.action", fallback: "Create password secured link")
+        }
+        internal enum LinkWithoutPassword {
+          /// Create link without password
+          internal static let action = L10n.tr("Localizable", "guest_room.create.link_without_password.action", fallback: "Create link without password")
+        }
+      }
       internal enum Error {
         internal enum Generic {
           /// Check your connection and try again
@@ -5925,3 +5935,4 @@ private final class BundleToken {
   }()
 }
 // swiftlint:enable convenience_type
+// swiftlint:enable all

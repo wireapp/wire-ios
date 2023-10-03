@@ -18,9 +18,14 @@
 
 import UIKit
 
-extension UIAlertController {
+enum GuestLinkType {
+    case secure
+    case normal
+}
 
-    typealias GuestRoom = L10n.Localizable.GuestRoom
+private typealias GuestRoom = L10n.Localizable.GuestRoom
+
+extension UIAlertController {
 
     static func checkYourConnection() -> UIAlertController {
         let controller = UIAlertController(
@@ -33,7 +38,9 @@ extension UIAlertController {
         return controller
     }
 
-    static func confirmRemovingGuests(_ completion: @escaping (Bool) -> Void) -> UIAlertController {
+    static func confirmRemovingGuests(
+        _ completion: @escaping (Bool) -> Void
+    ) -> UIAlertController {
         return confirmController(
             title: GuestRoom.RemoveGuests.message,
             confirmTitle: GuestRoom.RemoveGuests.action,
@@ -73,5 +80,25 @@ extension UIAlertController {
                                                    message: message,
                                                    confirmAction: confirmAction,
                                                    completion: completion)
+    }
+
+    static func guestLinkTypeController(
+        completion: @escaping (GuestLinkType) -> Void
+    ) -> UIAlertController {
+        let controller = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+
+        let createGuestLinkWithPasswordAction = UIAlertAction(title: GuestRoom.Create.LinkWithPassword.action, style: .default) { _ in
+            completion(.secure)
+        }
+
+        let createGuestLinkWithoutPasswordAction = UIAlertAction(title: GuestRoom.Create.LinkWithoutPassword.action, style: .default) { _ in
+            completion(.normal)
+        }
+
+        controller.addAction(createGuestLinkWithPasswordAction)
+        controller.addAction(createGuestLinkWithoutPasswordAction)
+        controller.addAction(.cancel())
+
+        return controller
     }
 }
