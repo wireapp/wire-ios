@@ -338,7 +338,12 @@ class ModelValidationTests: XCTestCase {
 
     func testThatItCreatesLastReadWithValidFields() {
 
-        let lastRead = LastRead(conversationID: UUID(uuidString: "8783C4BD-A5D3-4F6B-8C41-A6E75F12926F")!, lastReadTimestamp: Date(timeIntervalSince1970: 25_000))
+        guard let uuid = UUID(uuidString: "8783C4BD-A5D3-4F6B-8C41-A6E75F12926F") else {
+            XCTFail("There's no uuid")
+            return
+        }
+        let conversationID = QualifiedID(uuid: uuid, domain: "")
+        let lastRead = LastRead(conversationID: conversationID, lastReadTimestamp: Date(timeIntervalSince1970: 25_000))
         let message = GenericMessage(content: lastRead).validatingFields()
 
         XCTAssertNotNil(message)
