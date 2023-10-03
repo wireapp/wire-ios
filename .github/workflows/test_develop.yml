@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - 'develop'
+      - 'gh-readonly-queue/develop/**'
 
 # This is what will cancel the workflow
 concurrency:

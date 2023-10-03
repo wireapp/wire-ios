@@ -6,6 +6,9 @@ on:
       - '.github/workflows/swiftlint.yml'
       - '.swiftlint.yml'
       - '**/*.swift'
+  push:
+    branches:
+      - 'gh-readonly-queue/develop/**'
 
 # This is what will cancel the workflow
 concurrency:
