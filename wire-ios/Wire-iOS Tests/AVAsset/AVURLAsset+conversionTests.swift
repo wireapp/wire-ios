@@ -40,21 +40,37 @@ final class AVURLAsset_conversionTests: XCTestCase {
         // WHEN
         let expectation = self.expectation(description: "Video converted")
 
-        AVURLAsset.convertVideoToUploadFormat(at: videoURL,
-                                              quality: AVAssetExportPresetLowQuality,
-                                              deleteSourceFile: false) { url, asset, error in
-                                                // THEN
+        AVURLAsset.convertVideoToUploadFormat(
+            at: videoURL,
+            quality: AVAssetExportPresetLowQuality,
+            deleteSourceFile: false
+        ) { url, asset, error in
+            // THEN
+            guard let url else {
+                return XCTFail("expected url")
+            }
 
-                                                // exported file URL
-                                                XCTAssertEqual(url?.lastPathComponent, videoURL.lastPathComponent)
-                                                // temp asset URL for upload
-                                                XCTAssertEqual(asset?.url.lastPathComponent, videoURL.lastPathComponent)
-                                                XCTAssertEqual(asset?.duration, originalAsset.duration)
-                                                // converted file with low quality should be smaller
-                                                XCTAssertLessThan(url!.fileSize!, videoURL.fileSize!)
+            guard let asset else {
+                return XCTFail("expected asset")
+            }
 
-                                                XCTAssertNil(error)
-                                                expectation.fulfill()
+            guard 
+                let fileSize = url.fileSize,
+                let expectedFileSize = videoURL.fileSize
+            else {
+                return XCTFail("expected file sizes")
+            }
+
+            // exported file URL
+            XCTAssertEqual(url.lastPathComponent, videoURL.lastPathComponent)
+            // temp asset URL for upload
+            XCTAssertEqual(asset.url.lastPathComponent, videoURL.lastPathComponent)
+            XCTAssertEqual(asset.duration, originalAsset.duration)
+            // converted file with low quality should be smaller
+            XCTAssertLessThan(fileSize, expectedFileSize)
+
+            XCTAssertNil(error)
+            expectation.fulfill()
         }
 
         waitForExpectations(timeout: 10) { error in
