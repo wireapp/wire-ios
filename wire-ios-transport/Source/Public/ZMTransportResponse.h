@@ -36,6 +36,7 @@ typedef NS_ENUM(uint8_t, ZMTransportResponseStatus) {
     ZMTransportResponseStatusPermanentError,
     ZMTransportResponseStatusExpired,
     ZMTransportResponseStatusTryAgainLater,
+    ZMTransportResponseStatusCancelled,
 };
 
 
