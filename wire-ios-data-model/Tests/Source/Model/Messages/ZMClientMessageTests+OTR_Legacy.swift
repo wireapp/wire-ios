@@ -31,6 +31,7 @@ final class ClientMessageTests_OTR_Legacy: BaseZMClientMessageTests {
 
     override func tearDown() {
         super.tearDown()
+        BackendInfo.domain = nil
         DeveloperFlag.storage = UserDefaults.standard
     }
 
@@ -262,6 +263,8 @@ extension ClientMessageTests_OTR_Legacy {
     func testThatItCreatesPayloadForZMLastReadMessages() {
         self.syncMOC.performGroupedBlockAndWait {
             // given
+            let domain = "example.domain.com"
+            BackendInfo.domain = domain
             self.syncConversation.lastReadServerTimeStamp = Date()
             self.syncConversation.remoteIdentifier = UUID()
             guard let message = try? ZMConversation.updateSelfConversation(withLastReadOf: self.syncConversation) else { return XCTFail() }

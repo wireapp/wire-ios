@@ -378,6 +378,8 @@ class ZMConversationTests_Timestamps: ZMConversationTestsBase {
     func testThatTheParentMessageIsReturnedIfItHasUnreadChildMessages() {
         // given
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        let domain = "example.domain.com"
+        BackendInfo.domain = domain
 
         let systemMessage1 = ZMSystemMessage(nonce: UUID(), managedObjectContext: uiMOC)
         systemMessage1.systemMessageType = .missedCall
