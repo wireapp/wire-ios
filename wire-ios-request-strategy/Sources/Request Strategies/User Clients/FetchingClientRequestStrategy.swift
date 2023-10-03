@@ -396,19 +396,17 @@ final class UserClientByQualifiedUserIDTranscoder: IdentifierObjectSyncTranscode
     }
 
     private func markAllClientsAsUpdated(identifiers: Set<QualifiedID>) {
-        for identifier in identifiers {
-            if let user = ZMUser.fetch(
-                with: identifier.uuid,
-                domain: identifier.domain,
-                in: managedObjectContext
-            ) {
-                for client in user.clients {
+        let clients = UserClient.fetchClientsNeedingUpdateFromBackend(in: managedObjectContext)
+
+        for client in clients {
+            if let qualifiedID = client.user?.qualifiedID {
+                if identifiers.contains(qualifiedID) {
                     client.needsToBeUpdatedFromBackend = false
                 }
             }
         }
 
-        managedObjectContext.enqueueDelayedSave()
+        managedObjectContext.saveOrRollback()
     }
 
 }
