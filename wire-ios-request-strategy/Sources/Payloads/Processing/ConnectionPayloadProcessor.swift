@@ -45,8 +45,7 @@ final class ConnectionPayloadProcessor {
             in: context
         )
 
-        guard let conversationID = payload.conversationID ?? payload.qualifiedConversationID?.uuid
-        else {
+        guard let conversationID = payload.conversationID ?? payload.qualifiedConversationID?.uuid else {
             Logging.eventProcessing.error("Missing conversation field in connection payload, aborting...")
             return
         }

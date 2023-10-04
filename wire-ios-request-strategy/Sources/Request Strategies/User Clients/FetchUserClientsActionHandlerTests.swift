@@ -60,10 +60,10 @@ class FetchUserClientsActionHandlerTests: ActionHandlerTestBase<FetchUserClients
         // Then
         try test_itGeneratesARequest(
             for: action,
-               expectedPath: "/v3/users/list-clients",
-               expectedPayload: expectedPayload,
-               expectedMethod: .methodPOST,
-               apiVersion: .v3
+            expectedPath: "/v3/users/list-clients",
+            expectedPayload: expectedPayload,
+            expectedMethod: .methodPOST,
+            apiVersion: .v3
         )
     }
 
