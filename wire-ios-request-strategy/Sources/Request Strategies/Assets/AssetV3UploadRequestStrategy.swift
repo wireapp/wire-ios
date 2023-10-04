@@ -184,10 +184,14 @@ extension AssetV3UploadRequestStrategy: ZMUpstreamTranscoder {
                                              response: ZMTransportResponse,
                                              keysToParse keys: Set<String>) -> Bool {
         guard let message = managedObject as? ZMAssetClientMessage else { return false }
-
         message.expire()
-
         return false
+    }
+
+    public func requestExpired(for managedObject: ZMManagedObject, forKeys keys: Set<String>) {
+        guard let message = managedObject as? ZMAssetClientMessage else { return  }
+        message.expire()
+        return
     }
 
     public func objectToRefetchForFailedUpdate(of managedObject: ZMManagedObject) -> ZMManagedObject? {
