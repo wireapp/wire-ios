@@ -89,9 +89,9 @@ class ZMSnapshotTestCase: FBSnapshotTestCase {
     override open func setUp() {
         super.setUp()
 
-        XCTAssertEqual(UIScreen.main.scale, 2, "Snapshot tests need to be run on a device with a 2x scale")
-        if UIDevice.current.systemVersion.compare("13", options: .numeric, range: nil, locale: .current) == .orderedAscending {
-            XCTFail("Snapshot tests need to be run on a device running at least iOS 13")
+        XCTAssertEqual(UIScreen.main.scale, 3, "Snapshot tests need to be run on a device with a 3x scale")
+        if UIDevice.current.systemVersion.compare("17", options: .numeric, range: nil, locale: .current) == .orderedAscending {
+            XCTFail("Snapshot tests need to be run on a device running at least iOS 17")
         }
         AppRootRouter.configureAppearance()
         FontScheme.configure(with: .large)
@@ -102,7 +102,6 @@ class ZMSnapshotTestCase: FBSnapshotTestCase {
 
         // Enable when the design of the view has changed in order to update the reference snapshots
         recordMode = strcmp(getenv("RECORDING_SNAPSHOTS"), "YES") == 0
-
         usesDrawViewHierarchyInRect = true
 
         do {
