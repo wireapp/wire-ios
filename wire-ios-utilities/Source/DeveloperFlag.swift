@@ -26,6 +26,7 @@ public enum DeveloperFlag: String, CaseIterable {
     case showCreateMLSGroupToggle
     case proteusViaCoreCrypto
     case nseV2
+    case forceDatabaseLoadingFailure
 
     public var description: String {
         switch self {
@@ -40,6 +41,8 @@ public enum DeveloperFlag: String, CaseIterable {
 
         case .nseV2:
             return "Turn on to use the new implementation of the notification service extension."
+        case .forceDatabaseLoadingFailure:
+            return "Turn on to force database loading failure in the process of database migration"
         }
     }
 
@@ -74,6 +77,8 @@ public enum DeveloperFlag: String, CaseIterable {
             return "CreateMLSGroupEnabled"
         case .proteusViaCoreCrypto:
             return "ProteusByCoreCryptoEnabled"
+        case .forceDatabaseLoadingFailure:
+            return "ForceDatabaseLoadingFailure"
         case .nseV2:
             return nil
         }

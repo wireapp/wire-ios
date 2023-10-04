@@ -55,7 +55,6 @@ public class ProteusMessageSync<Message: ProteusMessage>: NSObject, EntityTransc
     }
 
     public func nextRequest(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        WireLogger.messaging.debug("next request for proteus sync")
         return dependencySync.nextRequest(for: apiVersion)
     }
 

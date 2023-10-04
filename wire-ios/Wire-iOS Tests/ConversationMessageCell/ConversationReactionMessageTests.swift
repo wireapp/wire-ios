@@ -59,11 +59,35 @@ final class ConversationReactionMessageTests: BaseSnapshotTestCase {
 
     func testThatItConfiguresWithOtherReactions() {
         // GIVEN
-        let likeReaction = MessageReactionMetadata(emoji: .like, count: 4, isSelfUserReacting: false)
-        let thumbsUpReaction = MessageReactionMetadata(emoji: .thumbsUp, count: 1, isSelfUserReacting: false)
-        let thumbsDownReaction = MessageReactionMetadata(emoji: .thumbsDown, count: 6, isSelfUserReacting: false)
-        let slightlySmilingReaction = MessageReactionMetadata(emoji: .smile, count: 8, isSelfUserReacting: false)
-        let frowningFaceReaction = MessageReactionMetadata(emoji: .frown, count: 10, isSelfUserReacting: false)
+        let likeReaction = MessageReactionMetadata(
+            emoji: .like,
+            count: 4,
+            isSelfUserReacting: false
+        )
+
+        let thumbsUpReaction = MessageReactionMetadata(
+            emoji: .thumbsUp,
+            count: 1,
+            isSelfUserReacting: false
+        )
+
+        let thumbsDownReaction = MessageReactionMetadata(
+            emoji: .thumbsDown,
+            count: 6,
+            isSelfUserReacting: false
+        )
+
+        let slightlySmilingReaction = MessageReactionMetadata(
+            emoji: .smile,
+            count: 8,
+            isSelfUserReacting: false
+        )
+
+        let frowningFaceReaction = MessageReactionMetadata(
+            emoji: .frown,
+            count: 10,
+            isSelfUserReacting: false
+        )
 
         let configuration = [
             likeReaction,
