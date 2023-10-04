@@ -32,6 +32,9 @@ class CreatePasswordSecuredLinkViewController: UIViewController, CreatePasswordS
             fontSpec: FontSpec.buttonSmallSemibold,
             insets: UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
         )
+
+        button.setTitle(SecuredGuestLinkWithPasswordLocale.GeneratePasswordButton.title, for: .normal)
+        button.setImage(Asset.Images.shield.image, for: .normal)
         button.addTarget(self, action: #selector(generatePasswordButtonTapped), for: .touchUpInside)
         button.imageEdgeInsets.right = 10.0
         return button
@@ -113,7 +116,7 @@ class CreatePasswordSecuredLinkViewController: UIViewController, CreatePasswordS
     // MARK: - CreatePasswordSecuredLinkViewModelDelegate
 
     func generateButtonDidTap(_ password: String) {
-        print("Generated Password: \(password)")
+        print(String(describing: "Generated Password: \(password)"))
     }
 
 }
