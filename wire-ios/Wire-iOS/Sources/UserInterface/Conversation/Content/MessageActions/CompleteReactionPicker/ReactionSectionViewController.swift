@@ -29,13 +29,25 @@ final class ReactionSectionViewController: UIViewController {
 
     private var selectedType: EmojiSectionType? {
         willSet(value) {
-            guard let type = value else { return }
+            guard isEnabled, let type = value else { return }
             typesByButton.forEach { button, sectionType in
                 button.isSelected = type == sectionType
             }
         }
     }
+
+    var isEnabled = true {
+        didSet {
+            panGestureRecognizer.isEnabled = isEnabled
+            typesByButton.forEach { button, sectionType in
+                button.isEnabled = isEnabled
+                button.isSelected = isEnabled && sectionType == selectedType
+            }
+        }
+    }
+
     private let types: [EmojiSectionType]
+    private let panGestureRecognizer = UIPanGestureRecognizer(target: ReactionSectionViewController.self, action: #selector(didPan))
     weak var sectionDelegate: EmojiSectionViewControllerDelegate?
 
     init(types: [EmojiSectionType]) {
@@ -45,7 +57,7 @@ final class ReactionSectionViewController: UIViewController {
 
         setupViews()
         createConstraints()
-        view.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: #selector(didPan)))
+        view.addGestureRecognizer(panGestureRecognizer)
     }
 
     @available(*, unavailable)

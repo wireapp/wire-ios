@@ -119,10 +119,27 @@ extension ZMConversation {
             }
         }
 
+        func completeAndAddSystemMessage() {
+            appendFailedToAddUsersSystemMessage(
+                users: Set(users),
+                sender: creator,
+                at: lastServerTimeStamp ?? Date()
+            )
+            completion(.success(()))
+        }
+
         internalAddParticipants(users) { result in
             switch result {
             case .failure(.unreachableDomains(let domains)):
-                retry(excludingDomains: domains)
+                if users.belongingTo(domains: domains).isEmpty {
+                    /// If there are no users from unreachable domains, this means that the backend tried and failed to check for non-fully connected graphs
+                    /// because some of the existing participants are currently unreachable.
+                    /// As a result, we should inform that users can't be added and not retry the request.
+                    /// https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/822149401/Non-fully+connected+federation+graphs
+                    completeAndAddSystemMessage()
+                } else {
+                    retry(excludingDomains: domains)
+                }
 
             case .failure(.nonFederatingDomains(let domains)):
                 retry(excludingDomains: domains)

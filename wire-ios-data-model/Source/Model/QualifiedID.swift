@@ -59,9 +59,8 @@ public extension ZMConversation {
 
     var qualifiedID: QualifiedID? {
         guard
-            let context = managedObjectContext,
             let uuid = remoteIdentifier,
-            let domain = domain ?? ZMUser.selfUser(in: context).domain
+            let domain = domain ?? BackendInfo.domain
         else {
             return nil
         }

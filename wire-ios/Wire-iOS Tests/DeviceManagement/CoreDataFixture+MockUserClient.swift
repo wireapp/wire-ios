@@ -32,13 +32,7 @@ extension CoreDataFixture {
         let fingerprint: Data? = fingerprintString.data(using: .utf8)
 
         client.fingerprint = fingerprint
-
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy/MM/dd HH:mm"
-        let activationDate = formatter.date(from: "2016/05/01 14:31")
-
-        client.activationDate = activationDate
-
+        client.activationDate = Date(timeIntervalSince1970: 1664717723)
         return client
     }
 }

@@ -20,7 +20,7 @@ import XCTest
 @testable import Wire
 import SnapshotTesting
 
-final class ConversationReactionMessageTests: ZMSnapshotTestCase {
+final class ConversationReactionMessageTests: BaseSnapshotTestCase {
 
     // MARK: - Properties
 
@@ -31,7 +31,10 @@ final class ConversationReactionMessageTests: ZMSnapshotTestCase {
     override func setUp() {
         super.setUp()
         sut = MessageReactionsCell()
-        sut.frame = CGRect(x: 0, y: 0, width: 375, height: 70)
+        sut.translatesAutoresizingMaskIntoConstraints = false
+        sut.widthAnchor.constraint(equalToConstant: 375).isActive = true
+        // We need to pass an estimated cell size to help the cell layout properly
+        sut.systemLayoutSizeFitting(CGSize(width: 375, height: 100))
     }
 
     // MARK: - tearDown
@@ -51,16 +54,40 @@ final class ConversationReactionMessageTests: ZMSnapshotTestCase {
         sut.configure(with: configuration, animated: false)
 
         // THEN
-        verify(view: sut)
+        verify(matching: sut)
     }
 
     func testThatItConfiguresWithOtherReactions() {
         // GIVEN
-        let likeReaction = MessageReactionMetadata(emoji: .like, count: 4, isSelfUserReacting: false)
-        let thumbsUpReaction = MessageReactionMetadata(emoji: .thumbsUp, count: 1, isSelfUserReacting: false)
-        let thumbsDownReaction = MessageReactionMetadata(emoji: .thumbsDown, count: 6, isSelfUserReacting: false)
-        let slightlySmilingReaction = MessageReactionMetadata(emoji: .smile, count: 8, isSelfUserReacting: false)
-        let frowningFaceReaction = MessageReactionMetadata(emoji: .frown, count: 10, isSelfUserReacting: false)
+        let likeReaction = MessageReactionMetadata(
+            emoji: .like,
+            count: 4,
+            isSelfUserReacting: false
+        )
+
+        let thumbsUpReaction = MessageReactionMetadata(
+            emoji: .thumbsUp,
+            count: 1,
+            isSelfUserReacting: false
+        )
+
+        let thumbsDownReaction = MessageReactionMetadata(
+            emoji: .thumbsDown,
+            count: 6,
+            isSelfUserReacting: false
+        )
+
+        let slightlySmilingReaction = MessageReactionMetadata(
+            emoji: .smile,
+            count: 8,
+            isSelfUserReacting: false
+        )
+
+        let frowningFaceReaction = MessageReactionMetadata(
+            emoji: .frown,
+            count: 10,
+            isSelfUserReacting: false
+        )
 
         let configuration = [
             likeReaction,
@@ -70,13 +97,11 @@ final class ConversationReactionMessageTests: ZMSnapshotTestCase {
             frowningFaceReaction
         ]
 
-        sut.frame = CGRect(x: 0, y: 0, width: 375, height: 90)
-
         // WHEN
         sut.configure(with: configuration, animated: false)
 
         // THEN
-        verify(view: sut)
+        verify(matching: sut)
     }
 
 }

@@ -19,7 +19,7 @@
 import XCTest
 @testable import Wire
 
-class DecodeImageOperationTests: ZMSnapshotTestCase {
+class DecodeImageOperationTests: BaseSnapshotTestCase {
 
     var operationQueue: OperationQueue!
     var sut: UIImageView!
@@ -56,7 +56,7 @@ class DecodeImageOperationTests: ZMSnapshotTestCase {
 
         // THEN
         sut.image = image
-        verify(view: sut)
+        verify(matching: sut)
     }
 
     func testThatItDoesNotDecodeInvalidImageData() {

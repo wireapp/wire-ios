@@ -513,10 +513,14 @@ public enum ProtosReactionFactory {
 // MARK: - LastRead
 
 extension LastRead {
-    public init(conversationID: UUID, lastReadTimestamp: Date) {
+    public init(conversationID: QualifiedID, lastReadTimestamp: Date) {
         self = LastRead.with {
-            $0.conversationID = conversationID.transportString()
+            $0.conversationID = conversationID.uuid.transportString()
             $0.lastReadTimestamp = Int64(lastReadTimestamp.timeIntervalSince1970 * 1000)
+            $0.qualifiedConversationID = WireProtos.QualifiedConversationId.with {
+                $0.id = conversationID.uuid.transportString()
+                $0.domain = conversationID.domain
+            }
         }
     }
 }
