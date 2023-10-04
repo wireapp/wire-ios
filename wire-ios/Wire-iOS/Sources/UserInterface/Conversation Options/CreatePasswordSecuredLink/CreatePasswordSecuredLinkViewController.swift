@@ -27,8 +27,15 @@ class CreatePasswordSecuredLinkViewController: UIViewController, CreatePasswordS
     typealias LabelColors = SemanticColors.Label
     typealias SecuredGuestLinkWithPasswordLocale = L10n.Localizable.SecuredGuestLinkWithPassword
 
-    private let generatePasswordButton = SecondaryTextButton(fontSpec: FontSpec.buttonSmallSemibold,
-                                                             insets: UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8))
+    private lazy var generatePasswordButton: SecondaryTextButton = {
+        let button = SecondaryTextButton(
+            fontSpec: FontSpec.buttonSmallSemibold,
+            insets: UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
+        )
+        button.addTarget(self, action: #selector(generatePasswordButtonTapped), for: .touchUpInside)
+        button.imageEdgeInsets.right = 10.0
+        return button
+    }()
 
     private var viewModel = CreatePasswordSecuredLinkViewModel()
 
@@ -69,7 +76,6 @@ class CreatePasswordSecuredLinkViewController: UIViewController, CreatePasswordS
     // MARK: - Setup UI
 
     private func setUpViews() {
-        setupGeneratePasswordButton()
         view.addSubview(warningLabel)
         view.addSubview(generatePasswordButton)
     }
@@ -79,13 +85,6 @@ class CreatePasswordSecuredLinkViewController: UIViewController, CreatePasswordS
         navigationController?.navigationBar.tintColor = LabelColors.textDefault
         navigationItem.setupNavigationBarTitle(title: SecuredGuestLinkWithPasswordLocale.Header.title)
         navigationItem.rightBarButtonItem = navigationController?.closeItem()
-    }
-
-    private func setupGeneratePasswordButton() {
-        generatePasswordButton.setTitle(SecuredGuestLinkWithPasswordLocale.GeneratePasswordButton.title, for: .normal)
-        generatePasswordButton.setImage(Asset.Images.shield.image, for: .normal)
-        generatePasswordButton.addTarget(self, action: #selector(generatePasswordButtonTapped), for: .touchUpInside)
-        generatePasswordButton.imageEdgeInsets.right = 10.0
     }
 
     private func setupConstraints() {

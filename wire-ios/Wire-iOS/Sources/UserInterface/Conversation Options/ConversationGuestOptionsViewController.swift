@@ -147,7 +147,6 @@ final class ConversationGuestOptionsViewController: UIViewController,
                     animated: true
                 )
             case .normal: break
-
             }
         }
         present(alertController, animated: true)
