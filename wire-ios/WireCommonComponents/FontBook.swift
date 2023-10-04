@@ -52,40 +52,57 @@ extension UIFont {
             return .preferredFont(forTextStyle: .caption1)
 
         case .title3Bold:
-            return .preferredFont(forTextStyle: .title3).fontWeight(.bold)
+            return .preferredFont(forTextStyle: .title3).withWeight(.bold)
 
         case .calloutBold:
-            return .preferredFont(forTextStyle: .callout).fontWeight(.bold)
+            return .preferredFont(forTextStyle: .callout).withWeight(.bold)
 
         case .footnoteSemibold:
-            return .preferredFont(forTextStyle: .footnote).fontWeight(.semibold)
+            return .preferredFont(forTextStyle: .footnote).withWeight(.semibold)
 
         case .bodyTwoSemibold:
-            return  .systemFont(ofSize: 16, weight: .semibold)
+            return preferredFont(forTextStyle: .body).withSize(16).withWeight(.semibold)
 
         case .buttonSmallSemibold:
             return  .systemFont(ofSize: 14, weight: .semibold)
 
         case .buttonBigSemibold:
-            return  .preferredFont(forTextStyle: .title3).fontWeight(.bold)
+            return  .preferredFont(forTextStyle: .title3).withWeight(.bold)
         }
     }
 
     /// Returns a new font with the weight specified
     ///
     /// - Parameter weight: The new font weight
-    public func fontWeight(_ weight: UIFont.Weight) -> UIFont {
-        let fontDescriptor = UIFontDescriptor(fontAttributes: [
-            UIFontDescriptor.AttributeName.size: pointSize,
-            UIFontDescriptor.AttributeName.family: familyName
-        ])
+    func withWeight(_ weight: UIFont.Weight) -> UIFont {
+        var weightTraits: [UIFontDescriptor.TraitKey: Any] = [:]
 
-        // Add the font weight to the descriptor
-        let weightedFontDescriptor = fontDescriptor.addingAttributes([
-            UIFontDescriptor.AttributeName.traits: [
-                UIFontDescriptor.TraitKey.weight: weight
-            ]
-        ])
-        return UIFont(descriptor: weightedFontDescriptor, size: 0)
+        switch weight {
+        case .ultraLight:
+            weightTraits = [.weight: -0.8]
+        case .thin:
+            weightTraits = [.weight: -0.6]
+        case .light:
+            weightTraits = [.weight: -0.4]
+        case .regular:
+            weightTraits = [:]
+        case .medium:
+            weightTraits = [.weight: 0.23]
+        case .semibold:
+            weightTraits = [.weight: 0.3]
+        case .bold:
+            weightTraits = [.weight: 0.4]
+        case .heavy:
+            weightTraits = [.weight: 0.56]
+        case .black:
+            weightTraits = [.weight: 0.63]
+        default:
+            // Handle other weights or return nil if not supported
+            break
+        }
+
+         let descriptor = fontDescriptor.addingAttributes([.traits: weightTraits])
+
+        return UIFont(descriptor: descriptor, size: pointSize)
     }
 }

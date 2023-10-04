@@ -23,15 +23,6 @@ import XCTest
 
 final class FontBookSnapshotTests: XCTestCase {
 
-    override func setUp() {
-        super.setUp()
-    }
-
-    override func tearDown() {
-        super.tearDown()
-
-    }
-
     // MARK: Helper Method
 
     func setupLabel(style: UIFont.FontStyle, width: Int = 320, height: Int = 200) -> UILabel {
@@ -64,6 +55,14 @@ final class FontBookSnapshotTests: XCTestCase {
 
     func testForCaption1FontStyle() {
         verifyForDynamicType(matching: setupLabel(style: .caption1))
+    }
+
+    func testForTitle3BoldFontStyle() {
+        verifyForDynamicType(matching: setupLabel(style: .title3Bold))
+    }
+
+    func testForCalloutBoldFontStyle() {
+        verifyForDynamicType(matching: setupLabel(style: .calloutBold))
     }
 
 }
