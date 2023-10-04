@@ -87,7 +87,7 @@ extension AddParticipantsViewController.Context {
     }
 }
 
-final class AddParticipantsViewController: UIViewController {
+final class AddParticipantsViewController: UIViewController, SpinnerCapable {
 
     enum CreateAction {
         case updatedUsers(UserSet)
@@ -120,6 +120,8 @@ final class AddParticipantsViewController: UIViewController {
             updateValues()
         }
     }
+
+    var dismissSpinner: SpinnerCompletion?
 
     deinit {
         userSelection.remove(observer: self)
@@ -347,6 +349,11 @@ final class AddParticipantsViewController: UIViewController {
         case .add: navigationController?.dismiss(animated: true, completion: nil)
         case .create: conversationCreationDelegate?.addParticipantsViewController(self, didPerform: .create)
         }
+    }
+
+    func setLoadingView(isVisible: Bool) {
+        isLoadingViewVisible = isVisible
+        navigationItem.rightBarButtonItem?.isEnabled = !isVisible
     }
 
     @objc func keyboardFrameWillChange(notification: Notification) {

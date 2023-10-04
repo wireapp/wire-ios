@@ -44,10 +44,15 @@ class ZMOTRMessage_SelfConversationUpdateEventTests: BaseZMClientMessageTests {
 
         syncMOC.performGroupedBlockAndWait {
             // given
+            guard let remoteIdentifier = self.syncConversation.remoteIdentifier else {
+                XCTFail("There's no remoteIdentifier")
+                return
+            }
             let nonce = UUID()
             let lastReadDate = Date()
             let selfConversation = ZMConversation.selfConversation(in: self.syncMOC)
-            let message = GenericMessage(content: LastRead(conversationID: self.syncConversation.remoteIdentifier!, lastReadTimestamp: lastReadDate), nonce: nonce)
+            let conversationID = QualifiedID(uuid: remoteIdentifier, domain: "")
+            let message = GenericMessage(content: LastRead(conversationID: conversationID, lastReadTimestamp: lastReadDate), nonce: nonce)
             let event = self.createUpdateEvent(nonce, conversationID: selfConversation.remoteIdentifier!, timestamp: Date(), genericMessage: message, senderID: UUID(), eventSource: ZMUpdateEventSource.download)
             self.syncConversation.lastReadServerTimeStamp = nil
 

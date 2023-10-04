@@ -50,13 +50,13 @@ extension ZMConversation {
 
         guard
             let context = conversation.managedObjectContext,
-            let convID = conversation.remoteIdentifier,
-            convID != ZMConversation.selfConversationIdentifier(in: context)
+            let conversationID = conversation.qualifiedID,
+            conversationID.uuid != ZMConversation.selfConversationIdentifier(in: context)
         else {
             throw UpdateSelfConversationError.invalidConversation
         }
 
-        let lastRead = LastRead(conversationID: convID, lastReadTimestamp: lastReadTimeStamp)
+        let lastRead = LastRead(conversationID: conversationID, lastReadTimestamp: lastReadTimeStamp)
         let messages = try sendMessageToSelfClients(lastRead, in: context)
         return messages.proteus
     }
