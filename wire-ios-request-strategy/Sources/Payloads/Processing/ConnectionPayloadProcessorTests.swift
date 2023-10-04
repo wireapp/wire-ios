@@ -26,6 +26,7 @@ final class ConnectionPayloadProcessorTests: MessagingTestBase {
     override func setUp() {
         super.setUp()
         sut = ConnectionPayloadProcessor()
+        BackendInfo.storage = .random()!
     }
 
     override func tearDown() {
@@ -90,10 +91,13 @@ final class ConnectionPayloadProcessorTests: MessagingTestBase {
     func testThatANonExistingConversationIsCreatedAndLinkedToTheConnection() {
         syncMOC.performGroupedBlockAndWait {
             // given
+            BackendInfo.isFederationEnabled = true
             let conversationID: QualifiedID = .randomID()
             let connection = self.oneToOneConversation.connection!
-            let payload = self.createConnectionPayload(to: self.otherUser.qualifiedID!,
-                                                                 conversation: conversationID)
+            let payload = self.createConnectionPayload(
+                to: self.otherUser.qualifiedID!,
+                conversation: conversationID
+            )
 
             // when
             self.sut.updateOrCreateConnection(
