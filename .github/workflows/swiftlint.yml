@@ -6,6 +6,8 @@ on:
       - '.github/workflows/swiftlint.yml'
       - '.swiftlint.yml'
       - '**/*.swift'
+  merge_group:
+    types: [checks_requested]
 
 # This is what will cancel the workflow
 concurrency:
@@ -22,5 +24,4 @@ jobs:
           with:
             args: --strict
           env:
-            DIFF_BASE: ${{ github.base_ref }}
-	    
+            DIFF_BASE: ${{ github.base_ref }}   
