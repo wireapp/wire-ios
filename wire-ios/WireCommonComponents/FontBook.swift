@@ -65,7 +65,8 @@ extension UIFont {
             return UIFontMetrics.default.scaledFont(for: baseFont.withWeight(.semibold))
 
         case .buttonSmallSemibold:
-            return  .systemFont(ofSize: 14, weight: .semibold)
+            let baseFont = UIFont.systemFont(ofSize: 14)
+            return UIFontMetrics.default.scaledFont(for: baseFont.withWeight(.semibold))
 
         case .buttonBigSemibold:
             return  .preferredFont(forTextStyle: .title3).withWeight(.bold)
