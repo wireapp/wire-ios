@@ -69,4 +69,8 @@ final class FontBookSnapshotTests: XCTestCase {
         verifyForDynamicType(matching: setupLabel(style: .footnoteSemibold))
     }
 
+    func testForBodyTwoSemiboldFontStyle() {
+        verifyForDynamicType(matching: setupLabel(style: .bodyTwoSemibold))
+    }
+
 }

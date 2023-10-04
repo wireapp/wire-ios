@@ -61,7 +61,8 @@ extension UIFont {
             return .preferredFont(forTextStyle: .footnote).withWeight(.semibold)
 
         case .bodyTwoSemibold:
-            return preferredFont(forTextStyle: .body).withSize(16).withWeight(.semibold)
+            let baseFont = UIFont.preferredFont(forTextStyle: .body).withSize(16)
+            return UIFontMetrics.default.scaledFont(for: baseFont.withWeight(.semibold))
 
         case .buttonSmallSemibold:
             return  .systemFont(ofSize: 14, weight: .semibold)
