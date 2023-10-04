@@ -25,7 +25,11 @@ final class FontBookSnapshotTests: XCTestCase {
 
     // MARK: Helper Method
 
-    func setupLabel(style: UIFont.FontStyle, width: Int = 320, height: Int = 200) -> UILabel {
+    func setupLabel(
+        style: UIFont.FontStyle,
+        width: Int = 320,
+        height: Int = 200
+    ) -> UILabel {
         let sutLabel = DynamicFontLabel(text: "Welcome to Dub Dub",
                                         style: style,
                                         color: SemanticColors.Label.textDefault)
