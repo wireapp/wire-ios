@@ -18,10 +18,15 @@
 
 import Foundation
 import UIKit
+import WireCommonComponents
 
 extension NSMutableAttributedString {
 
-    func semiBold(_ value: String, font: UIFont) -> NSMutableAttributedString {
+    func semiBold(_ value: String, fontspec: FontSpec) -> NSMutableAttributedString {
+        guard let font = fontspec.font else {
+            self.append(NSAttributedString(string: value))
+            return self
+        }
 
         let attributes: [NSAttributedString.Key: Any] = [
             .font: font]

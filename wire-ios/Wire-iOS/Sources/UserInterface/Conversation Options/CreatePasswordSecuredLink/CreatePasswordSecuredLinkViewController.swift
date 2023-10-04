@@ -32,12 +32,10 @@ class CreatePasswordSecuredLinkViewController: UIViewController, CreatePasswordS
 
     private var viewModel = CreatePasswordSecuredLinkViewModel()
 
-    private let warningLabel: UILabel = {
+    private let warningLabel: DynamicFontLabel = {
 
         var paragraphStyle = NSMutableParagraphStyle()
-        var label = UILabel()
-        label.textColor = SemanticColors.Label.textDefault
-        label.font = FontSpec.mediumFont.font!
+        var label = DynamicFontLabel(fontSpec: .mediumFont, color: LabelColors.textDefault)
         label.numberOfLines = 0
         label.lineBreakMode = .byWordWrapping
         paragraphStyle.lineHeightMultiple = 0.98
@@ -47,7 +45,7 @@ class CreatePasswordSecuredLinkViewController: UIViewController, CreatePasswordS
                 NSAttributedString.Key.paragraphStyle: paragraphStyle
             ]).semiBold(
                 SecuredGuestLinkWithPasswordLocale.WarningLabel.subtitle,
-                font: FontSpec.mediumSemiboldFont.font!
+                fontspec: .mediumSemiboldFont
             )
 
         return label
@@ -85,7 +83,7 @@ class CreatePasswordSecuredLinkViewController: UIViewController, CreatePasswordS
 
     private func setupGeneratePasswordButton() {
         generatePasswordButton.setTitle(SecuredGuestLinkWithPasswordLocale.GeneratePasswordButton.title, for: .normal)
-        generatePasswordButton.setImage(UIImage(named: "Shield"), for: .normal)
+        generatePasswordButton.setImage(Asset.Images.shield.image, for: .normal)
         generatePasswordButton.addTarget(self, action: #selector(generatePasswordButtonTapped), for: .touchUpInside)
         generatePasswordButton.imageEdgeInsets.right = 10.0
     }
