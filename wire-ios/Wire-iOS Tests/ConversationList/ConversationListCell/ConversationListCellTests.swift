@@ -64,7 +64,7 @@ private final class MockConversation: MockStableRandomParticipantsConversation, 
     }
 }
 
-final class ConversationListCellTests: ZMSnapshotTestCase {
+final class ConversationListCellTests: BaseSnapshotTestCase {
 
     // MARK: - Setup
 

@@ -82,6 +82,25 @@ class UserProfileRequestStrategyTests: MessagingTestBase {
         }
     }
 
+    func testThatRequestInV4_DoesNotUseLegacyEndpointWhenNoRequestFromCurrentEndpoint() {
+        syncMOC.performGroupedBlockAndWait {
+            // given
+            self.apiVersion = .v0
+            self.otherUser.domain = "example.com"
+            self.otherUser.needsToBeUpdatedFromBackend = true
+            // By reporting the otherUser did change while on v0, sut will case the legacy transcoder to get in a state where it would produce a next request
+            self.sut.objectsDidChange(Set([self.otherUser]))
+
+            // when
+            // By switching to v4 and asking for a next request, we get nil because we would only ask the non legacy transcoder for a request, but it's not in a state to do that
+            self.apiVersion = .v4
+            let request = self.sut.nextRequest(for: self.apiVersion)
+
+            // then
+            // non legacy transcoder's endpoint should not be used
+            XCTAssertNil(request)
+        }
+    }
     // MARK: - Slow Sync
 
     func testThatRequestToFetchConnectedUsersIsGenerated_DuringFetchingUsersSyncPhase() {
@@ -200,7 +219,7 @@ class UserProfileRequestStrategyTests: MessagingTestBase {
 
     // MARK: - Response processing
 
-    func testThatUsesLegacyEndpoint_WhenFederatedEndpointIsDisabled() {
+    func testThatUsesLegacyEndpointOnV0_WhenFederatedEndpointIsDisabled() {
         syncMOC.performGroupedBlockAndWait {
             // given
             self.otherUser.domain = "example.com"

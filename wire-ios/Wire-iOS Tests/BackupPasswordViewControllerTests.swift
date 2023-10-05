@@ -20,18 +20,17 @@ import Foundation
 import XCTest
 @testable import Wire
 
-class BackupPasswordViewControllerTests: ZMSnapshotTestCase {
+class BackupPasswordViewControllerTests: BaseSnapshotTestCase {
 
     func testDefaultState() {
         // GIVEN
         let sut = BackupPasswordViewController { _, _ in }
         // WHEN & THEN
-        self.verifyInIPhoneSize(view: sut.view)
+        verify(matching: sut.view)
     }
 
     func testThatItCallsTheCallback() {
         // GIVEN
-
         let validPassword = "Password123!"
         let expectation = self.expectation(description: "Callback called")
         let sut = BackupPasswordViewController { _, password in
