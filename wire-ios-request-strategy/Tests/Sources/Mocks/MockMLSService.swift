@@ -164,6 +164,10 @@ class MockMLSService: MLSServiceInterface {
         fatalError("not implemented")
     }
 
+    func subconversationMembers(for subconversationGroupID: WireDataModel.MLSGroupID) throws -> [WireDataModel.MLSClientID] {
+        fatalError("not implemented")
+    }
+
     // MARK: - New epoch
 
     func generateNewEpoch(groupID: MLSGroupID) async throws {
