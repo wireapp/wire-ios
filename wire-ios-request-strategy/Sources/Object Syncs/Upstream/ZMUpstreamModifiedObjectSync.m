@@ -269,7 +269,6 @@ ZM_EMPTY_ASSERTING_INIT();
     [request.transportRequest addCompletionHandler:[ZMCompletionHandler handlerOnGroupQueue:self.context block:^(ZMTransportResponse *response) {
         ZM_STRONG(self);
         ZM_STRONG(request);
-        
         id <ZMUpstreamTranscoder> localTranscoder = self.transcoder;
         NSSet *keysToParse = [self.updatedObjects keysToParseAfterSyncingToken:token];
         if(response.result == ZMTransportResponseStatusSuccess) {
@@ -281,9 +280,15 @@ ZM_EMPTY_ASSERTING_INIT();
                 [self.updatedObjects didSynchronizeToken:token];
             }
         }
+        else if (response.result == ZMTransportResponseStatusCancelled) {
+            [self.updatedObjects didFailToSynchronizeToken:token];
+            if ([localTranscoder respondsToSelector:@selector(requestExpiredForObject:forKeys:)]) {
+                [localTranscoder requestExpiredForObject:objectWithKeys.object forKeys:objectWithKeys.keysToSync];
+            }
+        }
         else if (response.result == ZMTransportResponseStatusTemporaryError ||
                  response.result == ZMTransportResponseStatusTryAgainLater) {
-            [self.updatedObjects didFailToSynchronizeToken:token];
+            [self.updatedObjects didNotFinishToSynchronizeToken:token];
         }
         else if (response.result == ZMTransportResponseStatusExpired) {
             [self.updatedObjects didFailToSynchronizeToken:token];
@@ -292,7 +297,7 @@ ZM_EMPTY_ASSERTING_INIT();
             }
         }
         else {
-            BOOL shouldResyncObject = NO;
+         BOOL shouldResyncObject = NO;
             if ([localTranscoder respondsToSelector:@selector(shouldRetryToSyncAfterFailedToUpdateObject:request:response:keysToParse:)]) {
                 shouldResyncObject = [localTranscoder shouldRetryToSyncAfterFailedToUpdateObject:objectWithKeys.object request:request response:response keysToParse:keysToParse];
             }

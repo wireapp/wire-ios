@@ -169,11 +169,11 @@ final class MessageReplyPreviewViewTests: BaseSnapshotTestCase {
         verify(matching: previewView.prepareForSnapshot())
     }
 
-    func testThatItRendersImageMessagePreview() {
+    func testThatItRendersImageMessagePreview() throws {
         let image = self.image(inTestBundleNamed: "unsplash_matterhorn.jpg")
         let message = MockMessageFactory.imageMessage(with: image)
 
-        let previewView = message.replyPreview()!
+        let previewView = try XCTUnwrap(message.replyPreview())
         XCTAssert(waitForGroupsToBeEmpty([MediaAssetCache.defaultImageCache.dispatchGroup]))
 
         verify(matching: previewView.prepareForSnapshot())

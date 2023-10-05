@@ -98,6 +98,7 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
         successResponsePayloadMLS.epoch = 0
 
         BackendInfo.storage = .random()!
+        BackendInfo.domain = "example.com"
     }
 
     override func tearDown() {
