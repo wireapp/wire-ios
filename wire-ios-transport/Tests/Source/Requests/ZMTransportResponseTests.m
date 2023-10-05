@@ -167,6 +167,11 @@
             continue;
         }
 
+        // Federation errors
+        if (i == 533) {
+            continue;
+        }
+
         ZMTransportResponse *imageResponse = [[ZMTransportResponse alloc] initWithImageData:[NSData data] HTTPStatus:i transportSessionError:nil headers:nil apiVersion:0];
         ZMTransportResponse *payloadResponse = [[ZMTransportResponse alloc] initWithPayload:@{} HTTPStatus:i transportSessionError:nil headers:nil apiVersion:0];
         XCTAssertNotEqual(imageResponse.result, ZMTransportResponseStatusPermanentError);
