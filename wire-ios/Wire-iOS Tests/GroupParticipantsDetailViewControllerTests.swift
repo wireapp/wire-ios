@@ -47,6 +47,9 @@ private final class MockConversation: MockStableRandomParticipantsConversation, 
     var syncedMessageDestructionTimeout: TimeInterval = 0
 
     var messageProtocol: MessageProtocol = .proteus
+
+    var mlsGroupID: WireDataModel.MLSGroupID?
+    
 }
 
 final class GroupParticipantsDetailViewControllerTests: ZMSnapshotTestCase {
