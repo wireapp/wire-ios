@@ -278,7 +278,10 @@ extension GiphySearchViewController {
 
         pendingFetchTask = searchResultsController.fetchMoreResults { [weak self] result in
             if case let .success(ziphs) = result {
-                self?.insertSearchResults(ziphs)
+                self?.collectionView.performBatchUpdates {
+                    self?.insertSearchResults(ziphs)
+                }
+
             }
 
             self?.pendingFetchTask = nil
@@ -298,7 +301,7 @@ extension GiphySearchViewController {
     @discardableResult
     func pushConfirmationViewController(ziph: Ziph?, previewImage: FLAnimatedImage?, animated: Bool = true) -> GiphyConfirmationViewController {
         let confirmationController = GiphyConfirmationViewController(withZiph: ziph, previewImage: previewImage, searchResultController: searchResultsController)
-        confirmationController.title = conversation.displayNameWithFallback.localizedUppercase
+        confirmationController.title = conversation.displayNameWithFallback
         confirmationController.delegate = self
         navigationController?.pushViewController(confirmationController, animated: animated)
 
