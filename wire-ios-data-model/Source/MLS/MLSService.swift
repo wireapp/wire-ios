@@ -85,6 +85,8 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
 
     func repairOutOfSyncConversations()
 
+    func fetchAndRepairGroup(with groupID: MLSGroupID) async
+
 }
 
 public protocol MLSServiceDelegate: AnyObject {
@@ -865,7 +867,7 @@ public final class MLSService: MLSServiceInterface {
         }
     }
 
-    private func fetchAndRepairGroup(with groupID: MLSGroupID) async {
+    public func fetchAndRepairGroup(with groupID: MLSGroupID) async {
         if let subgroupInfo = subconverationGroupIDRepository.findSubgroupTypeAndParentID(for: groupID) {
             await fetchAndRepairSubgroup(parentGroupID: subgroupInfo.parentID)
         } else {

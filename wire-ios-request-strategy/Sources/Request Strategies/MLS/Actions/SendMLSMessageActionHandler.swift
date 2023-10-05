@@ -59,8 +59,9 @@ class SendMLSMessageActionHandler: ActionHandler<SendMLSMessageAction> {
     ) {
         var action = action
 
-        switch (response.httpStatus, response.payloadLabel()) {
-        case (201, _):
+        if let error = SendMLSMessageAction.Failure(from: response) {
+            action.fail(with: error)
+        } else {
             guard
                 let payload = response.payload?.asDictionary(),
                 let eventsData = payload["events"] as? [EventPayload]
@@ -80,65 +81,77 @@ class SendMLSMessageActionHandler: ActionHandler<SendMLSMessageAction> {
             }
 
             action.succeed(with: updateEvents)
+        }
+
+    }
+}
+
+extension SendMLSMessageAction.Failure {
+
+    init?(from response: ZMTransportResponse) {
+        switch (response.httpStatus, response.payloadLabel()) {
+        case (201, _):
+            return nil
 
         case (400, "mls-group-conversation-mismatch"):
-            action.fail(with: .mlsGroupConversationMismatch)
+            self = .mlsGroupConversationMismatch
 
         case (400, "mls-client-sender-user-mismatch"):
-            action.fail(with: .mlsClientSenderUserMismatch)
+            self = .mlsClientSenderUserMismatch
 
         case (400, "mls-self-removal-not-allowed"):
-            action.fail(with: .mlsSelfRemovalNotAllowed)
+            self = .mlsSelfRemovalNotAllowed
 
         case (400, "mls-commit-missing-references"):
-            action.fail(with: .mlsCommitMissingReferences)
+            self = .mlsCommitMissingReferences
 
         case (400, "mls-protocol-error"):
-            action.fail(with: .mlsProtocolError)
+            self = .mlsProtocolError
 
         case (400, _):
-            action.fail(with: .invalidRequestBody)
+            self = .invalidRequestBody
 
         case (403, "missing-legalhold-consent"):
-            action.fail(with: .missingLegalHoldConsent)
+            self = .missingLegalHoldConsent
 
         case (403, "legalhold-not-enabled"):
-            action.fail(with: .legalHoldNotEnabled)
+            self = .legalHoldNotEnabled
 
         case (403, "access-denied"):
-            action.fail(with: .accessDenied)
+            self = .accessDenied
 
         case (404, "mls-proposal-not-found"):
-            action.fail(with: .mlsProposalNotFound)
+            self = .mlsProposalNotFound
 
         case (404, "mls-key-package-ref-not-found"):
-            action.fail(with: .mlsKeyPackageRefNotFound)
+            self = .mlsKeyPackageRefNotFound
 
         case (404, "no-conversation"):
-            action.fail(with: .noConversation)
+            self = .noConversation
 
         case (404, "no-conversation-member"):
-            action.fail(with: .noConversationMember)
+            self = .noConversationMember
 
         case (409, "mls-stale-message"):
-            action.fail(with: .mlsStaleMessage)
+            self = .mlsStaleMessage
 
         case (409, "mls-client-mismatch"):
-            action.fail(with: .mlsClientMismatch)
+            self = .mlsClientMismatch
 
         case (422, "mls-unsupported-proposal"):
-            action.fail(with: .mlsUnsupportedProposal)
+            self = .mlsUnsupportedProposal
 
         case (422, "mls-unsupported-message"):
-            action.fail(with: .mlsUnsupportedMessage)
+            self = .mlsUnsupportedMessage
 
         default:
             let errorInfo = response.errorInfo
-            action.fail(with: .unknown(
+            self = .unknown(
                 status: response.httpStatus,
                 label: errorInfo.label,
                 message: errorInfo.message
-            ))
+            )
         }
     }
+
 }
