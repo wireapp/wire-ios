@@ -455,7 +455,12 @@ static NSInteger const DefaultMaximumRequests = 6;
     if (task.error != nil) {
         ZMLogDebug(@"Task %lu finished with error: %@", (unsigned long) task.taskIdentifier, task.error.description);
     }
-    NSError *transportError = [NSError transportErrorFromURLTask:task expired:expired];
+
+    // If the error response contains a label, we should send it to the transportError initializer.
+    id<ZMTransportData> responsePayload = [ZMTransportCodec interpretResponse:httpResponse data:data error:nil];
+    NSString *label = [[responsePayload asDictionary] optionalStringForKey:@"label"];
+
+    NSError *transportError = [NSError transportErrorFromURLTask:task expired:expired payloadLabel:label];
     ZMTransportResponse *response = [self transportResponseFromURLResponse:httpResponse data:data error:transportError apiVersion:request.apiVersion];
     [self.remoteMonitoring logWithResponse:httpResponse];
 

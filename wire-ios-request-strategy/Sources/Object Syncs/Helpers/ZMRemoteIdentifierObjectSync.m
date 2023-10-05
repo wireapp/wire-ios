@@ -79,6 +79,7 @@
                 break;
             }
             case ZMTransportResponseStatusExpired:
+            case ZMTransportResponseStatusCancelled:
                 break;
             case ZMTransportResponseStatusTemporaryError:
             case ZMTransportResponseStatusTryAgainLater: {

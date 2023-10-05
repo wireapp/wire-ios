@@ -20,7 +20,7 @@ import XCTest
 import SnapshotTesting
 @testable import Wire
 
-class ChangeHandleViewControllerTests: ZMSnapshotTestCase {
+class ChangeHandleViewControllerTests: BaseSnapshotTestCase {
 
     override func setUp() {
         super.setUp()
@@ -66,18 +66,6 @@ class ChangeHandleViewControllerTests: ZMSnapshotTestCase {
 }
 
 fileprivate extension UIViewController {
-
-    func prepareForSnapshots() -> UIView {
-        let navigationController = wrapInNavigationController(navigationControllerClass: NavigationController.self)
-
-        beginAppearanceTransition(true, animated: false)
-        endAppearanceTransition()
-
-        view.setNeedsLayout()
-        view.layoutIfNeeded()
-        navigationController.view.backgroundColor = .darkGray
-        return navigationController.view
-    }
 
     func prepareForSettingsSnapshots() -> UIView {
         let navigationController = wrapInNavigationController(navigationControllerClass: NavigationController.self)

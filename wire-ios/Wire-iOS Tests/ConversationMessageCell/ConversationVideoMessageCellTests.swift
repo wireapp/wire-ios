@@ -19,7 +19,7 @@
 import XCTest
 @testable import Wire
 
-final class ConversationVideoMessageCellTests: ZMSnapshotTestCase {
+final class ConversationVideoMessageCellTests: BaseSnapshotTestCase {
 
     var message: MockMessage!
     var mockSelfUser: MockUserType!
@@ -30,8 +30,10 @@ final class ConversationVideoMessageCellTests: ZMSnapshotTestCase {
 
         mockSelfUser = MockUserType.createDefaultSelfUser()
 
-        message = MockMessageFactory.videoMessage(sender: mockSelfUser,
-                                                  previewImage: image(inTestBundleNamed: "unsplash_matterhorn.jpg"))
+        message = MockMessageFactory.videoMessage(
+            sender: mockSelfUser,
+            previewImage: image(inTestBundleNamed: "unsplash_matterhorn.jpg")
+        )
     }
 
     override func tearDown() {

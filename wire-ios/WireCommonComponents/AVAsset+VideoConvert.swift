@@ -61,6 +61,14 @@ extension AVAsset {
 public typealias ConvertVideoCompletion = (URL?, AVURLAsset?, Error?) -> Void
 
 extension AVURLAsset {
+
+    enum ConversionFailure: Error {
+
+        case missingVideoTrack
+        case exportSessionUnavailable
+
+    }
+
     public static let defaultVideoQuality: String = AVAssetExportPresetHighestQuality
     /// Convert a Video file URL to a upload format
     ///
@@ -69,14 +77,21 @@ extension AVURLAsset {
     ///   - quality: video quality, default is AVAssetExportPresetHighestQuality
     ///   - deleteSourceFile: set to false for testing only
     ///   - completion: ConvertVideoCompletion closure. URL: exported file's URL. AVURLAsset: assert of converted video. Error: error of conversion
-    public static func convertVideoToUploadFormat(at url: URL,
-                                                  quality: String = AVURLAsset.defaultVideoQuality,
-                                                  deleteSourceFile: Bool = true,
-                                                  fileLengthLimit: Int64? = nil,
-                                                  completion: @escaping ConvertVideoCompletion ) {
+    public static func convertVideoToUploadFormat(
+        at url: URL,
+        quality: String = AVURLAsset.defaultVideoQuality,
+        deleteSourceFile: Bool = true,
+        fileLengthLimit: Int64? = nil,
+        completion: @escaping ConvertVideoCompletion
+    ) {
         let filename = url.deletingPathExtension().lastPathComponent + ".mp4"
         let asset: AVURLAsset = AVURLAsset(url: url, options: nil)
-        guard let track = AVAsset(url: url as URL).tracks(withMediaType: AVMediaType.video).first else { return }
+        
+        guard let track = AVAsset(url: url as URL).tracks(withMediaType: AVMediaType.video).first else {
+            completion(nil, nil, ConversionFailure.missingVideoTrack)
+            return
+        }
+        
         let size = track.naturalSize
 
         let cappedQuality: String
@@ -85,23 +100,31 @@ extension AVURLAsset {
         } else {
             cappedQuality = quality
         }
-        asset.convert(filename: filename,
-                      quality: cappedQuality, fileLengthLimit: fileLengthLimit) { URL, asset, error in
-            completion(URL, asset, error)
+
+        asset.convert(
+            filename: filename,
+            quality: cappedQuality,
+            fileLengthLimit: fileLengthLimit
+        ) { URL, asset, error in
             if deleteSourceFile {
                 do {
                     try FileManager.default.removeItem(at: url)
                 } catch let deleteError {
                     zmLog.error("Cannot delete file: \(url) (\(deleteError))")
+
                 }
             }
+
+            completion(URL, asset, error)
         }
     }
 
-    public func convert(filename: String,
-                        quality: String = defaultVideoQuality,
-                        fileLengthLimit: Int64? = nil,
-                        completion: @escaping ConvertVideoCompletion) {
+    public func convert(
+        filename: String,
+        quality: String = defaultVideoQuality,
+        fileLengthLimit: Int64? = nil,
+        completion: @escaping ConvertVideoCompletion
+    ) {
         let outputURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(filename)
         if FileManager.default.fileExists(atPath: outputURL.path) {
             do {
@@ -110,14 +133,19 @@ extension AVURLAsset {
                 zmLog.error("Cannot delete old leftover at \(outputURL): \(deleteError)")
             }
         }
-        guard let exportSession = AVAssetExportSession(asset: self, presetName: quality) else { return }
+
+        guard let exportSession = AVAssetExportSession(asset: self, presetName: quality) else {
+            return completion(nil, nil, ConversionFailure.exportSessionUnavailable)
+        }
+
         if let fileLengthLimit = fileLengthLimit {
             exportSession.fileLengthLimit = fileLengthLimit
         }
+
         exportSession.exportVideo(exportURL: outputURL) { _, error in
-            DispatchQueue.main.async(execute: {
+            DispatchQueue.main.async {
                 completion(outputURL, self, error)
-            })
+            }
         }
     }
 }

@@ -209,6 +209,7 @@ extension ZMConversation {
             securityLevel != .secure &&
             allUsersTrusted &&
             allParticipantsHaveClients &&
+            hasMoreClientsThanSelfClient &&
             conversationType.isOne(of: .group, .oneOnOne, .invalid)
         else {
             return
@@ -674,6 +675,23 @@ extension ZMConversation {
 
     fileprivate var allParticipantsHaveClients: Bool {
         return self.localParticipants.first { $0.clients.count == 0 } == nil
+    }
+
+    fileprivate var hasMoreClientsThanSelfClient: Bool {
+        guard
+            let context = managedObjectContext,
+            let selfClient = ZMUser.selfUser(in: context).selfClient()
+        else {
+            return false
+        }
+
+        let clients = localParticipants.flatMap(\.clients)
+
+        if clients.contains(selfClient) && clients.count == 1 {
+            return false
+        }
+
+        return true
     }
 
     /// If true the conversation might still be trusted / ignored

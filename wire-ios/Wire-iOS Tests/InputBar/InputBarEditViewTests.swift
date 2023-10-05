@@ -18,14 +18,16 @@
 
 @testable import Wire
 
-class InputBarEditViewTests: ZMSnapshotTestCase {
+class InputBarEditViewTests: BaseSnapshotTestCase {
 
     var sut: InputBarEditView!
 
     override func setUp() {
         super.setUp()
-        snapshotBackgroundColor = UIColor.white
+        accentColor = .strongBlue
         sut = InputBarEditView()
+
+        sut.backgroundColor = UIColor.lowAccentColor()
         sut.translatesAutoresizingMaskIntoConstraints = false
         sut.heightAnchor.constraint(equalToConstant: 56).isActive = true
     }
@@ -36,7 +38,11 @@ class InputBarEditViewTests: ZMSnapshotTestCase {
     }
 
     func testThatItRendersTheEditViewCorrectly() {
-        verifyInAllPhoneWidths(view: sut)
+        verifyInWidths(
+            matching: sut,
+            widths: phoneWidths(),
+            snapshotBackgroundColor: sut.backgroundColor ?? .white
+        )
     }
 
 }
