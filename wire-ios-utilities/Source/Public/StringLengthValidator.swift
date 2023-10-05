@@ -47,9 +47,9 @@ import Foundation
     }
 
     @discardableResult static public func validateStringValue(_ ioValue: inout Any?,
-                                     minimumStringLength: UInt32,
-                                     maximumStringLength: UInt32,
-                                     maximumByteLength: UInt32) throws -> Bool {
+                                                              minimumStringLength: UInt32,
+                                                              maximumStringLength: UInt32,
+                                                              maximumByteLength: UInt32) throws -> Bool {
         guard let string = ioValue as? String else {
             throw StringLengthError.tooShort
         }

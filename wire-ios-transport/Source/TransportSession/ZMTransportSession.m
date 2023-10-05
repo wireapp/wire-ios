@@ -86,6 +86,8 @@ static NSInteger const DefaultMaximumRequests = 6;
 @property (nonatomic) ZMAtomicInteger *numberOfRequestsInProgress;
 @property (nonatomic, strong) RemoteMonitoring* remoteMonitoring;
 
+@property (nonatomic) NSString *minTLSVersion;
+
 @end
 
 
@@ -102,58 +104,8 @@ static NSInteger const DefaultMaximumRequests = 6;
                   initialAccessToken:nil
           applicationGroupIdentifier:nil
                   applicationVersion:@"1.0"
+                       minTLSVersion:nil
     ];
-}
-
-+ (void)setUpConfiguration:(NSURLSessionConfiguration *)configuration;
-{
-    // Don't accept any cookies. We store these ourselves.
-    configuration.HTTPCookieAcceptPolicy = NSHTTPCookieAcceptPolicyNever;
-    
-    // Turn on HTTP pipelining
-    // RFC 2616 recommends no more than 2 connections per host when using pipelining.
-    // https://tools.ietf.org/html/rfc2616
-    configuration.HTTPShouldUsePipelining = YES;
-    configuration.HTTPMaximumConnectionsPerHost = 1;
-
-    configuration.TLSMinimumSupportedProtocolVersion = tls_protocol_version_TLSv12;
-    
-    configuration.URLCache = nil;
-}
-
-+ (NSURLSessionConfiguration *)foregroundSessionConfiguration
-{
-    NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration ephemeralSessionConfiguration];
-    
-    // If not data is transmitted for this amount of time for a request, it will time out.
-    // <https://wearezeta.atlassian.net/browse/MEC-622>.
-    // Note that it is ok for the request to take longer, we just require there to be _some_ data to be transmitted within this time window.
-    configuration.timeoutIntervalForRequest = 60;
-    
-    // This is a conservative (!) upper bound for a requested resource:
-    configuration.timeoutIntervalForResource = 12 * 60;
-    
-    // NB.: that TCP will on it's own retry. We should be very careful not to stop a request too early. It is better for a request to complete after 50 s (on a high latency network) in stead of continuously trying and timing out after 30 s.
-    
-    [self setUpConfiguration:configuration];
-    return configuration;
-}
-
-+ (NSURLSessionConfiguration *)backgroundSessionConfigurationWithSharedContainerIdentifier:(NSString *)sharedContainerIdentifier
-                                                                            userIdentifier:(NSUUID *)userIdentifier
-{
-    NSString *bundleIdentifier = [NSBundle mainBundle].bundleIdentifier;
-    NSString *resolvedBundleIdentifier = bundleIdentifier ? bundleIdentifier : @"com.wire.background-session";
-    
-    NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration backgroundSessionConfigurationWithIdentifier:[ZMTransportSession identifierWithPrefix:resolvedBundleIdentifier userIdentifier:userIdentifier]];
-    [self setUpConfiguration:configuration];
-    configuration.sharedContainerIdentifier = sharedContainerIdentifier;
-    return configuration;
-}
-
-+ (NSString *)identifierWithPrefix:(NSString *)prefix userIdentifier:(NSUUID *)userIdentifier
-{
-    return [NSString stringWithFormat:@"%@-%@", prefix, userIdentifier.transportString];
 }
 
 - (instancetype)initWithEnvironment:(id<BackendEnvironmentProvider>)environment
@@ -163,7 +115,8 @@ static NSInteger const DefaultMaximumRequests = 6;
                        reachability:(id<ReachabilityProvider, TearDownCapable>)reachability
                  initialAccessToken:(ZMAccessToken *)initialAccessToken
          applicationGroupIdentifier:(NSString *)applicationGroupIdentifier
-                  applicationVersion:(NSString *)appliationVersion
+                 applicationVersion:(NSString *)appliationVersion
+                      minTLSVersion:(NSString * _Nullable)minTLSVersion
 {
     NSString *userAgent = [ZMUserAgent userAgentWithAppVersion:appliationVersion];
     NSUUID *userIdentifier = cookieStorage.userIdentifier;
@@ -176,7 +129,7 @@ static NSInteger const DefaultMaximumRequests = 6;
     // foregroundSession
     NSString *foregroundIdentifier = [ZMTransportSession identifierWithPrefix:ZMURLSessionForegroundIdentifier userIdentifier:userIdentifier];
 
-    NSURLSessionConfiguration *foregroundConfiguration = [[self class] foregroundSessionConfiguration];
+    NSURLSessionConfiguration *foregroundConfiguration = [[self class] foregroundSessionConfigurationWithMinTLSVersion:minTLSVersion];
     foregroundConfiguration.connectionProxyDictionary = proxyDictionary;
 
     ZMURLSession *foregroundSession = [[ZMURLSession alloc] initWithConfiguration:foregroundConfiguration
@@ -190,9 +143,9 @@ static NSInteger const DefaultMaximumRequests = 6;
     NSString *backgroundIdentifier = [ZMTransportSession identifierWithPrefix:ZMURLSessionBackgroundIdentifier
                                                                userIdentifier:userIdentifier];
 
-    NSURLSessionConfiguration *backgroundConfiguration = [[self class]
-                                                                 backgroundSessionConfigurationWithSharedContainerIdentifier:applicationGroupIdentifier
-                                                                 userIdentifier:userIdentifier];
+    NSURLSessionConfiguration *backgroundConfiguration = [[self class] backgroundSessionConfigurationWithSharedContainerIdentifier:applicationGroupIdentifier
+                                                                                                                    userIdentifier:userIdentifier
+                                                                                                                     minTLSVersion:minTLSVersion];
     backgroundConfiguration.connectionProxyDictionary = proxyDictionary;
 
 
@@ -222,7 +175,8 @@ static NSInteger const DefaultMaximumRequests = 6;
                              pushChannelClass:nil
                                 cookieStorage:cookieStorage
                            initialAccessToken:initialAccessToken
-                                    userAgent:userAgent];
+                                    userAgent:userAgent
+                                minTLSVersion:minTLSVersion];
 }
 
 - (instancetype)initWithURLSessionsDirectory:(id<URLSessionsDirectory, TearDownCapable>)directory
@@ -237,6 +191,7 @@ static NSInteger const DefaultMaximumRequests = 6;
                                cookieStorage:(ZMPersistentCookieStorage *)cookieStorage
                           initialAccessToken:(ZMAccessToken *)initialAccessToken
                                    userAgent:(NSString *)userAgent
+                               minTLSVersion:(NSString * _Nullable)minTLSVersion
 {
     self = [super init];
     if (self) {
@@ -262,16 +217,18 @@ static NSInteger const DefaultMaximumRequests = 6;
         }
         
         self.maximumConcurrentRequests = DefaultMaximumRequests;
+        self.minTLSVersion = minTLSVersion;
 
         if (pushChannelClass == nil) {
             pushChannelClass = StarscreamPushChannel.class;
         }
         self.transportPushChannel = [[pushChannelClass alloc] initWithScheduler:self.requestScheduler
-                                                                     userAgentString:userAgent
-                                                                         environment:environment
-                                                                       proxyUsername:proxyUsername
-                                                                       proxyPassword:proxyPassword
-                                                                                queue:queue];
+                                                                userAgentString:userAgent
+                                                                    environment:environment
+                                                                  proxyUsername:proxyUsername
+                                                                  proxyPassword:proxyPassword
+                                                                  minTLSVersion:minTLSVersion
+                                                                          queue:queue];
 
         self.firstRequestFired = NO;
         self.accessTokenHandler = [[ZMAccessTokenHandler alloc] initWithBaseURL:self.baseURL
@@ -498,7 +455,12 @@ static NSInteger const DefaultMaximumRequests = 6;
     if (task.error != nil) {
         ZMLogDebug(@"Task %lu finished with error: %@", (unsigned long) task.taskIdentifier, task.error.description);
     }
-    NSError *transportError = [NSError transportErrorFromURLTask:task expired:expired];
+
+    // If the error response contains a label, we should send it to the transportError initializer.
+    id<ZMTransportData> responsePayload = [ZMTransportCodec interpretResponse:httpResponse data:data error:nil];
+    NSString *label = [[responsePayload asDictionary] optionalStringForKey:@"label"];
+
+    NSError *transportError = [NSError transportErrorFromURLTask:task expired:expired payloadLabel:label];
     ZMTransportResponse *response = [self transportResponseFromURLResponse:httpResponse data:data error:transportError apiVersion:request.apiVersion];
     [self.remoteMonitoring logWithResponse:httpResponse];
 

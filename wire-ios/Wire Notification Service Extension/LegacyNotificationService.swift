@@ -178,7 +178,8 @@ public class LegacyNotificationService: UNNotificationServiceExtension, Notifica
           accountIdentifier: accountID,
           environment: BackendEnvironment.shared,
           analytics: nil,
-          sharedUserDefaults: .applicationGroup
+          sharedUserDefaults: .applicationGroup,
+          minTLSVersion: SecurityFlags.minTLSVersion.stringValue
       )
 
       session.delegate = self

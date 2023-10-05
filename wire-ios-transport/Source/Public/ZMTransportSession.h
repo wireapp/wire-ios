@@ -52,6 +52,7 @@ typedef NS_ENUM(NSInteger, ZMTransportSessionErrorCode) {
     ZMTransportSessionErrorCodeAuthenticationFailed, ///< Unable to get access token / cookie
     ZMTransportSessionErrorCodeRequestExpired, ///< Request went over its expiration date
     ZMTransportSessionErrorCodeTryAgainLater, ///< c.f. @code -[NSError isTryAgainLaterError] @endcode
+    ZMTransportSessionErrorCodeCancelled,
 };
 
 extern NSString * const ZMTransportSessionNewRequestAvailableNotification;
@@ -84,7 +85,8 @@ extern NSString * const ZMTransportSessionReachabilityIsEnabled;
                        reachability:(id<ReachabilityProvider, TearDownCapable>)reachability
                  initialAccessToken:(nullable ZMAccessToken *)initialAccessToken
          applicationGroupIdentifier:(nullable NSString *)applicationGroupIdentifier
-                 applicationVersion:(nonnull NSString *)applicationVersion;
+                 applicationVersion:(nonnull NSString *)applicationVersion
+                      minTLSVersion:(nullable NSString *)minTLSVersion;
 
 - (void)tearDown;
 

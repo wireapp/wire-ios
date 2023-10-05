@@ -53,7 +53,6 @@ public class ProteusMessageSync<Message: ProteusMessage>: NSObject, EntityTransc
     }
 
     public func nextRequest(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        WireLogger.messaging.debug("next request for proteus sync")
         return dependencySync.nextRequest(for: apiVersion)
     }
 
@@ -139,7 +138,7 @@ public class ProteusMessageSync<Message: ProteusMessage>: NSObject, EntityTransc
             }
 
         case 533:
-            guard 
+            guard
                 let payload = Payload.ResponseFailure(response, decoder: .defaultDecoder),
                 let data = payload.data
             else {

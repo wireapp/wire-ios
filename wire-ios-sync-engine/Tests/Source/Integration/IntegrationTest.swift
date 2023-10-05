@@ -39,7 +39,8 @@ final class MockAuthenticatedSessionFactory: AuthenticatedSessionFactory {
             proxyUsername: nil,
             proxyPassword: nil,
             reachability: reachability,
-            analytics: nil
+            analytics: nil,
+            minTLSVersion: nil
         )
     }
 
@@ -633,7 +634,12 @@ extension IntegrationTest {
 
     @objc(remotelyAppendSelfConversationWithZMLastReadForMockConversation:atTime:)
     func remotelyAppendSelfConversationWithZMLastRead(for mockConversation: MockConversation, at time: Date) {
-        let genericMessage = GenericMessage(content: LastRead(conversationID: UUID(uuidString: mockConversation.identifier)!, lastReadTimestamp: time))
+        guard let uuid = UUID(uuidString: mockConversation.identifier) else {
+            XCTFail("There's no uuid")
+            return
+        }
+        let conversationID = QualifiedID(uuid: uuid, domain: "")
+        let genericMessage = GenericMessage(content: LastRead(conversationID: conversationID, lastReadTimestamp: time))
         mockTransportSession.performRemoteChanges { _ in
             do {
                 self.selfConversation.insertClientMessage(from: self.selfUser, data: try genericMessage.serializedData())
@@ -710,6 +716,10 @@ extension IntegrationTest: SessionManagerDelegate {
     }
 
     public func sessionManagerDidPerformAPIMigrations() {
+        // no op
+    }
+
+    public func sessionManagerAsksToRetryStart() {
         // no op
     }
 }

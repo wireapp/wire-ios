@@ -6,18 +6,22 @@ on:
       - '.github/workflows/swiftlint.yml'
       - '.swiftlint.yml'
       - '**/*.swift'
+  merge_group:
+    types: [checks_requested]
 
 # This is what will cancel the workflow
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-
 jobs:
   SwiftLint:
       runs-on: ubuntu-latest
       steps:
-        - uses: actions/checkout@v1
+        - uses: actions/checkout@v4
         - name: GitHub Action for SwiftLint
           uses: norio-nomura/action-swiftlint@3.2.1
-
+          with:
+            args: --strict
+          env:
+            DIFF_BASE: ${{ github.base_ref }}   

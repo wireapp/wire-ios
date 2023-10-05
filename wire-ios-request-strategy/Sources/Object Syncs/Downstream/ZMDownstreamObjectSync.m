@@ -180,7 +180,8 @@
         }
         case ZMTransportResponseStatusTemporaryError:
         case ZMTransportResponseStatusPermanentError:
-        case ZMTransportResponseStatusExpired: {
+        case ZMTransportResponseStatusExpired:
+        case ZMTransportResponseStatusCancelled:{
             [self.objectsToDownload removeObject:object];
             [transcoder deleteObject:object withResponse:response downstreamSync:self];
             break;

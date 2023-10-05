@@ -20,7 +20,7 @@ import XCTest
 import WireProtos
 
 @testable import WireDataModel
-// swiftlint:disable line_length
+
 class ProtosTests: XCTestCase {
 
     func testTextMessageEncodingPerformance() {
@@ -117,7 +117,7 @@ class ProtosTests: XCTestCase {
     }
 
     func testThatItCanCreateLastRead() {
-        let conversationID = UUID.create()
+        let conversationID = QualifiedID(uuid: UUID.create(), domain: "")
         let timeStamp = NSDate(timeIntervalSince1970: 5000)
         let nonce = UUID.create()
         let message = GenericMessage(content: LastRead(conversationID: conversationID, lastReadTimestamp: timeStamp as Date), nonce: nonce)
@@ -125,7 +125,7 @@ class ProtosTests: XCTestCase {
         XCTAssertNotNil(message)
         XCTAssertTrue(message.hasLastRead)
         XCTAssertEqual(message.messageID, nonce.transportString())
-        XCTAssertEqual(message.lastRead.conversationID, conversationID.transportString())
+        XCTAssertEqual(message.lastRead.conversationID, conversationID.uuid.transportString())
         XCTAssertEqual(message.lastRead.lastReadTimestamp, Int64(timeStamp.timeIntervalSince1970 * 1000))
         let storedDate = NSDate(timeIntervalSince1970: Double(message.lastRead.lastReadTimestamp/1000))
         XCTAssertEqual(storedDate, timeStamp)

@@ -59,6 +59,7 @@ class NativePushChannelTests_ServerTrust: XCTestCase {
                                 environment: mockEnvironment,
                                 proxyUsername: nil,
                                 proxyPassword: nil,
+                                minTLSVersion: nil,
                                 queue: .main)
     }
 
