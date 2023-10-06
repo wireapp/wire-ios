@@ -144,6 +144,9 @@ class MLSEventProcessor: MLSEventProcessing {
             WireLogger.mls.info(
                 "MLS event processor set mlsStatus to \(conversation.mlsStatus) for group \(groupID.safeForLoggingDescription)"
             )
+
+            mlsService.uploadKeyPackagesIfNeeded()
+
         } catch {
             return WireLogger.mls.warn("MLS event processor aborting processing welcome message: \(String(describing: error))")
         }
