@@ -681,7 +681,7 @@ class ConversationByIDListTranscoder: IdentifierObjectSyncTranscoder {
             return
         }
 
-        processor.updateOrCreateConverations(
+        processor.updateOrCreateConversations(
             from: payload,
             in: context
         )

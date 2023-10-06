@@ -27,7 +27,7 @@ final class ConversationEventPayloadProcessor {
 
     // MARK: - Conversation creation
 
-    func updateOrCreateConverations(
+    func updateOrCreateConversations(
         from payload: Payload.ConversationList,
         in context: NSManagedObjectContext
     ) {
