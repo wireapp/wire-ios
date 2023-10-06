@@ -31,6 +31,7 @@ final class ConnectionPayloadProcessorTests: MessagingTestBase {
 
     override func tearDown() {
         sut = nil
+        BackendInfo.storage = .standard
         super.tearDown()
     }
 
