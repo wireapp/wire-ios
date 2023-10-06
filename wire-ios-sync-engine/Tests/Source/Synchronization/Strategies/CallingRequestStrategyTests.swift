@@ -808,7 +808,7 @@ class CallingRequestStrategyTests: MessagingTest {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         syncMOC.performGroupedBlock {
-            nextRequest = self.sut.nextRequest(for: .v4)
+            nextRequest = self.sut.nextRequest(for: .v5)
         }
 
         // give more time so Task is executed.
