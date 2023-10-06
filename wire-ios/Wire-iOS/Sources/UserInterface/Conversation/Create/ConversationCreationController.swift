@@ -279,6 +279,8 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
 
         case .create:
             guard let userSession = ZMUserSession.shared() else { return }
+
+            addParticipantsViewController.setLoadingView(isVisible: true)
             let service = ConversationService(context: userSession.viewContext)
 
             let users = values.participants
@@ -295,6 +297,8 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
             ) { [weak self] in
                 guard let self = self else { return }
 
+                addParticipantsViewController.setLoadingView(isVisible: false)
+
                 switch $0 {
                 case .success(let conversation):
                     delegate?.conversationCreationController(
@@ -310,9 +314,25 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
 
                 case .failure(let error):
                     WireLogger.conversation.error("failed to create conversation: \(String(describing: error))")
+                    showGenericErrorAlert()
                 }
             }
         }
+    }
+
+    private func showGenericErrorAlert() {
+        typealias ConnectionError = L10n.Localizable.Error.Connection
+
+        let alert = UIAlertController(
+            title: ConnectionError.title,
+            message: ConnectionError.genericError,
+            alertAction: .ok(style: .cancel)
+        )
+
+        present(
+            alert,
+            animated: true
+        )
     }
 
     private func showMissingLegalholdConsentAlert() {
