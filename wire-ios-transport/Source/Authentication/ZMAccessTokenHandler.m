@@ -305,7 +305,8 @@ static NSTimeInterval const GraceperiodToRenewAccessToken = 40;
         
     } else if (response.result == ZMTransportResponseStatusPermanentError &&
                response.HTTPStatus != EnhanceYourCalmStatusCode &&
-               response.HTTPStatus != TooManyRequestsStatusCode)
+               response.HTTPStatus != TooManyRequestsStatusCode &&
+               response.HTTPStatus != FederationRemoteError)
     {
         didFail = YES;
         needsToReRun = NO;
