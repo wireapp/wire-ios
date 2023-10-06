@@ -130,7 +130,9 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
                     guard
                         let data = event.payloadData,
                         let payload = Payload.UpdateConversationMLSWelcome(data),
-                        let qualifiedID = payload.qualifiedID
+                        let qualifiedID = payload.qualifiedID ?? BackendInfo.domain.map({
+                            QualifiedID(uuid: payload.id, domain: $0)
+                        })
                     else {
                         break
                     }

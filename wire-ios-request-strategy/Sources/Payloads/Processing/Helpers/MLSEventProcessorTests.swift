@@ -23,17 +23,21 @@ class MLSEventProcessorTests: MessagingTestBase {
 
     var mlsServiceMock: MockMLSService!
     var conversation: ZMConversation!
-    var domain = "example.com"
+
+    var qualifiedID: QualifiedID!
     let groupIdString = "identifier".data(using: .utf8)!.base64EncodedString()
 
     override func setUp() {
         super.setUp()
+
+        qualifiedID = QualifiedID(uuid: .create(), domain: "example.com")
         syncMOC.performGroupedBlockAndWait {
             self.mlsServiceMock = MockMLSService()
             self.syncMOC.mlsService = self.mlsServiceMock
             self.conversation = ZMConversation.insertNewObject(in: self.syncMOC)
+            self.conversation.remoteIdentifier = self.qualifiedID.uuid
             self.conversation.mlsGroupID = MLSGroupID(self.groupIdString.base64DecodedBytes!)
-            self.conversation.domain = self.domain
+            self.conversation.domain = self.qualifiedID.domain
             self.conversation.messageProtocol = .mls
         }
     }
@@ -41,6 +45,7 @@ class MLSEventProcessorTests: MessagingTestBase {
     override func tearDown() {
         mlsServiceMock = nil
         conversation = nil
+        qualifiedID = nil
         super.tearDown()
     }
 
@@ -54,14 +59,10 @@ class MLSEventProcessorTests: MessagingTestBase {
             self.conversation.mlsStatus = .pendingJoin
             XCTAssertEqual(self.conversation.mlsStatus, .pendingJoin)
 
-            guard let qualifiedID = self.conversation.qualifiedID else {
-                return XCTFail("need a qualified id")
-            }
-
             // When
             MLSEventProcessor.shared.process(
                 welcomeMessage: message,
-                conversationID: qualifiedID,
+                conversationID: self.qualifiedID,
                 in: self.syncMOC
             )
 
