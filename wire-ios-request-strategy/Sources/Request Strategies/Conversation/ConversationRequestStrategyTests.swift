@@ -1005,7 +1005,9 @@ class ConversationRequestStrategyTests: MessagingTestBase {
             self.sut.processEvents([updateEvent], liveEvents: true, prefetchResult: nil)
 
             // THEN
-            XCTAssertEqual(mlsEventProcessorMock.calls.processWelcomeMessage.first, message)
+            let invocation = mlsEventProcessorMock.calls.processWelcomeMessage.first
+            XCTAssertEqual(invocation?.0, message)
+            XCTAssertEqual(invocation?.1, self.groupConversation.qualifiedID)
 
             MLSEventProcessor.reset()
         }

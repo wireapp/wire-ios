@@ -25,7 +25,6 @@ public class MockFeatureRepositoryInterface: FeatureRepositoryInterface {
 
     public init() {}
 
-
     // MARK: - fetchAppLock
 
     public var fetchAppLock_Invocations: [Void] = []

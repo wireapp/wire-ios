@@ -20,6 +20,8 @@ import WireDataModel
 
 final class SyncConversationActionHandler: ActionHandler<SyncConversationAction> {
 
+    private let processor = ConversationEventPayloadProcessor()
+
     // MARK: - Request generation
 
     struct RequestPayload: Codable, Equatable {
@@ -89,7 +91,11 @@ final class SyncConversationActionHandler: ActionHandler<SyncConversationAction>
                 return
             }
 
-            conversationData.updateOrCreate(in: context)
+            processor.updateOrCreateConversation(
+                from: conversationData,
+                in: context
+            )
+
             action.succeed()
 
         case 400:

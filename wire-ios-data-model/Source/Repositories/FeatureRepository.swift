@@ -173,21 +173,21 @@ public class FeatureRepository: FeatureRepositoryInterface {
     public func storeSelfDeletingMessages(_ selfDeletingMessages: Feature.SelfDeletingMessages) {
         do {
             let config = try JSONEncoder().encode(selfDeletingMessages.config)
-            
+
             Feature.updateOrCreate(havingName: .selfDeletingMessages, in: context) {
                 $0.status = selfDeletingMessages.status
                 $0.config = config
             }
-            
+
             guard needsToNotifyUser(for: .selfDeletingMessages) else { return }
-            
+
             switch (selfDeletingMessages.status, selfDeletingMessages.config.enforcedTimeoutSeconds) {
             case (.disabled, _):
                 notifyChange(.selfDeletingMessagesIsDisabled)
-                
+
             case (.enabled, let enforcedTimeout) where enforcedTimeout > 0:
                 notifyChange(.selfDeletingMessagesIsEnabled(enforcedTimeout: enforcedTimeout))
-                
+
             case (.enabled, _):
                 notifyChange(.selfDeletingMessagesIsEnabled(enforcedTimeout: nil))
             }

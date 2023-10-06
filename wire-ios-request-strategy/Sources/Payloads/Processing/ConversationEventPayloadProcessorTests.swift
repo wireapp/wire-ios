@@ -1,5 +1,6 @@
+//
 // Wire
-// Copyright (C) 2021 Wire Swiss GmbH
+// Copyright (C) 2023 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,37 +19,44 @@
 import XCTest
 @testable import WireRequestStrategy
 
-class PayloadProcessing_ConversationTests: MessagingTestBase {
+final class ConversationEventPayloadProcessorTests: MessagingTestBase {
 
+    var sut: ConversationEventPayloadProcessor!
     var mockMLSService: MockMLSService!
 
     override func setUp() {
         super.setUp()
+        sut = ConversationEventPayloadProcessor()
         mockMLSService = MockMLSService()
     }
 
     override func tearDown() {
-        BackendInfo.isFederationEnabled = false
+        sut = nil
         mockMLSService = nil
+        BackendInfo.isFederationEnabled = false
         super.tearDown()
     }
 
-    // MARK: Group conversations
+    // MARK: - Group conversations
 
     func testUpdateOrCreateConversation_Group_UpdatesQualifiedID() throws {
         syncMOC.performGroupedBlockAndWait {
-            // given
+            // Given
             BackendInfo.isFederationEnabled = true
             let qualifiedID = self.groupConversation.qualifiedID!
-            let conversation = Payload.Conversation.stub(
+
+            let payload = Payload.Conversation.stub(
                 qualifiedID: qualifiedID,
                 type: .group
             )
 
-            // when
-            conversation.updateOrCreate(in: self.syncMOC)
+            // When
+            self.sut.updateOrCreateConversation(
+                from: payload,
+                in: self.syncMOC
+            )
 
-            // then
+            // Then
             XCTAssertEqual(self.groupConversation.remoteIdentifier, qualifiedID.uuid)
             XCTAssertEqual(self.groupConversation.domain, qualifiedID.domain)
         }
@@ -59,14 +67,17 @@ class PayloadProcessing_ConversationTests: MessagingTestBase {
             // given
             BackendInfo.isFederationEnabled = false
             let qualifiedID = self.groupConversation.qualifiedID!
-            let conversation = Payload.Conversation.stub(
+            let payload = Payload.Conversation.stub(
                 qualifiedID: qualifiedID,
                 id: qualifiedID.uuid,
                 type: .group
             )
 
             // when
-            conversation.updateOrCreate(in: self.syncMOC)
+            self.sut.updateOrCreateConversation(
+                from: payload,
+                in: self.syncMOC
+            )
 
             // then
             XCTAssertEqual(self.groupConversation.remoteIdentifier, qualifiedID.uuid)
@@ -79,13 +90,16 @@ class PayloadProcessing_ConversationTests: MessagingTestBase {
             // given
             self.groupConversation.needsToBeUpdatedFromBackend = true
             let qualifiedID = self.groupConversation.qualifiedID!
-            let conversationPayload = Payload.Conversation.stub(
+            let payload = Payload.Conversation.stub(
                 qualifiedID: qualifiedID,
                 type: .group
             )
 
             // when
-            conversationPayload.updateOrCreate(in: self.syncMOC)
+            self.sut.updateOrCreateConversation(
+                from: payload,
+                in: self.syncMOC
+            )
 
             // then
             XCTAssertFalse(self.groupConversation.needsToBeUpdatedFromBackend)
@@ -96,13 +110,16 @@ class PayloadProcessing_ConversationTests: MessagingTestBase {
         syncMOC.performGroupedBlockAndWait {
             // given
             let qualifiedID = QualifiedID(uuid: UUID(), domain: self.owningDomain)
-            let conversationPayload = Payload.Conversation.stub(
+            let payload = Payload.Conversation.stub(
                 qualifiedID: qualifiedID,
                 type: .group
             )
 
             // when
-            conversationPayload.updateOrCreate(in: self.syncMOC)
+            self.sut.updateOrCreateConversation(
+                from: payload,
+                in: self.syncMOC
+            )
 
             // then
             XCTAssertNotNil(ZMConversation.fetch(with: qualifiedID.uuid, domain: qualifiedID.domain, in: self.syncMOC))
@@ -113,13 +130,16 @@ class PayloadProcessing_ConversationTests: MessagingTestBase {
         syncMOC.performGroupedBlockAndWait {
             // given
             let qualifiedID = QualifiedID(uuid: UUID(), domain: self.owningDomain)
-            let conversationPayload = Payload.Conversation.stub(
+            let payload = Payload.Conversation.stub(
                 qualifiedID: qualifiedID,
                 type: .group
             )
 
             // when
-            conversationPayload.updateOrCreate(in: self.syncMOC)
+            self.sut.updateOrCreateConversation(
+                from: payload,
+                in: self.syncMOC
+            )
 
             // then
             let conversation = ZMConversation.fetch(with: qualifiedID.uuid, domain: qualifiedID.domain, in: self.syncMOC)
@@ -132,13 +152,17 @@ class PayloadProcessing_ConversationTests: MessagingTestBase {
             // given
             let serverTimestamp = Date()
             let qualifiedID = self.groupConversation.qualifiedID!
-            let conversationPayload = Payload.Conversation.stub(
+            let payload = Payload.Conversation.stub(
                 qualifiedID: qualifiedID,
                 type: .group
             )
 
             // when
-            conversationPayload.updateOrCreate(in: self.syncMOC, serverTimestamp: serverTimestamp)
+            self.sut.updateOrCreateConversation(
+                from: payload,
+                serverTimestamp: serverTimestamp,
+                in: self.syncMOC
+            )
 
             // then
             XCTAssertEqual(self.groupConversation.lastServerTimeStamp, serverTimestamp)
@@ -150,10 +174,13 @@ class PayloadProcessing_ConversationTests: MessagingTestBase {
             // given
             self.groupConversation.isPendingMetadataRefresh = true
             let qualifiedID = self.groupConversation.qualifiedID!
-            let conversationPayload = Payload.Conversation(qualifiedID: qualifiedID,
+            let payload = Payload.Conversation(qualifiedID: qualifiedID,
                                                            type: BackendConversationType.group.rawValue)
             // when
-            conversationPayload.updateOrCreate(in: self.syncMOC)
+            self.sut.updateOrCreateConversation(
+                from: payload,
+                in: self.syncMOC
+            )
 
             // then
             XCTAssertFalse(self.groupConversation.isPendingMetadataRefresh)
@@ -165,14 +192,17 @@ class PayloadProcessing_ConversationTests: MessagingTestBase {
             // given
             let name = "Example name"
             let qualifiedID = self.groupConversation.qualifiedID!
-            let conversationPayload = Payload.Conversation.stub(
+            let payload = Payload.Conversation.stub(
                 qualifiedID: qualifiedID,
                 type: .group,
                 name: name
             )
 
             // when
-            conversationPayload.updateOrCreate(in: self.syncMOC)
+            self.sut.updateOrCreateConversation(
+                from: payload,
+                in: self.syncMOC
+            )
 
             // then
             XCTAssertEqual(self.groupConversation.userDefinedName, name)
@@ -184,14 +214,17 @@ class PayloadProcessing_ConversationTests: MessagingTestBase {
             // given
             let teamID = UUID()
             let qualifiedID = self.groupConversation.qualifiedID!
-            let conversationPayload = Payload.Conversation.stub(
+            let payload = Payload.Conversation.stub(
                 qualifiedID: qualifiedID,
                 type: .group,
                 teamID: teamID
             )
 
             // when
-            conversationPayload.updateOrCreate(in: self.syncMOC)
+            self.sut.updateOrCreateConversation(
+                from: payload,
+                in: self.syncMOC
+            )
 
             // then
             XCTAssertEqual(self.groupConversation.teamRemoteIdentifier, teamID)
@@ -203,14 +236,17 @@ class PayloadProcessing_ConversationTests: MessagingTestBase {
             // given
             let creator = self.otherUser.remoteIdentifier
             let qualifiedID = self.groupConversation.qualifiedID!
-            let conversationPayload = Payload.Conversation.stub(
+            let payload = Payload.Conversation.stub(
                 qualifiedID: qualifiedID,
                 type: .group,
                 creator: creator
             )
 
             // when
-            conversationPayload.updateOrCreate(in: self.syncMOC)
+            self.sut.updateOrCreateConversation(
+                from: payload,
+                in: self.syncMOC
+            )
 
             // then
             XCTAssertEqual(self.groupConversation.creator, self.otherUser)
@@ -225,14 +261,17 @@ class PayloadProcessing_ConversationTests: MessagingTestBase {
             let selfMember = Payload.ConversationMember(qualifiedID: selfUser.qualifiedID!)
             let otherMember = Payload.ConversationMember(qualifiedID: self.otherUser.qualifiedID!)
             let members = Payload.ConversationMembers(selfMember: selfMember, others: [otherMember])
-            let conversationPayload = Payload.Conversation.stub(
+            let payload = Payload.Conversation.stub(
                 qualifiedID: qualifiedID,
                 type: .group,
                 members: members
             )
 
             // when
-            conversationPayload.updateOrCreate(in: self.syncMOC)
+            self.sut.updateOrCreateConversation(
+                from: payload,
+                in: self.syncMOC
+            )
 
             // then
             let otherUserSet: Set<ZMUser?> = [self.otherUser, selfUser]
@@ -244,14 +283,17 @@ class PayloadProcessing_ConversationTests: MessagingTestBase {
         syncMOC.performGroupedBlockAndWait {
             // given
             let qualifiedID = self.groupConversation.qualifiedID!
-            let conversationPayload = Payload.Conversation.stub(
+            let payload = Payload.Conversation.stub(
                 qualifiedID: qualifiedID,
                 type: .group,
                 readReceiptMode: 1
             )
 
             // when
-            conversationPayload.updateOrCreate(in: self.syncMOC)
+            self.sut.updateOrCreateConversation(
+                from: payload,
+                in: self.syncMOC
+            )
 
             // then
             XCTAssertTrue(self.groupConversation.hasReadReceiptsEnabled)
@@ -265,7 +307,7 @@ class PayloadProcessing_ConversationTests: MessagingTestBase {
             let accessRole: Set<ConversationAccessRoleV2> = [.teamMember]
             let qualifiedID = self.groupConversation.qualifiedID!
 
-            let conversationPayload = Payload.Conversation.stub(
+            let payload = Payload.Conversation.stub(
                 qualifiedID: qualifiedID,
                 type: .group,
                 access: accessMode.stringValue,
@@ -273,7 +315,10 @@ class PayloadProcessing_ConversationTests: MessagingTestBase {
             )
 
             // when
-            conversationPayload.updateOrCreate(in: self.syncMOC)
+            self.sut.updateOrCreateConversation(
+                from: payload,
+                in: self.syncMOC
+            )
 
             // then
             XCTAssertEqual(self.groupConversation.accessMode, accessMode)
@@ -288,7 +333,7 @@ class PayloadProcessing_ConversationTests: MessagingTestBase {
             let accessRoleV2: Set<ConversationAccessRoleV2> = [.teamMember, .nonTeamMember, .guest]
             let qualifiedID = self.groupConversation.qualifiedID!
 
-            let conversationPayload = Payload.Conversation.stub(
+            let payload = Payload.Conversation.stub(
                 qualifiedID: qualifiedID,
                 type: .group,
                 access: accessMode.stringValue,
@@ -296,11 +341,13 @@ class PayloadProcessing_ConversationTests: MessagingTestBase {
             )
 
             // WHEN
-            conversationPayload.updateOrCreate(in: self.syncMOC)
+            self.sut.updateOrCreateConversation(
+                from: payload,
+                in: self.syncMOC
+            )
 
             // THEN
             XCTAssertEqual(self.groupConversation.accessRoles, accessRoleV2)
-
         }
     }
 
@@ -311,7 +358,7 @@ class PayloadProcessing_ConversationTests: MessagingTestBase {
             let accessMode: ConversationAccessMode = .teamOnly
             let qualifiedID = self.groupConversation.qualifiedID!
 
-            let conversationPayload = Payload.Conversation(
+            let payload = Payload.Conversation(
                 qualifiedID: qualifiedID,
                 type: BackendConversationType.group.rawValue,
                 access: accessMode.stringValue,
@@ -319,7 +366,10 @@ class PayloadProcessing_ConversationTests: MessagingTestBase {
             )
 
             // WHEN
-            conversationPayload.updateOrCreate(in: self.syncMOC)
+            self.sut.updateOrCreateConversation(
+                from: payload,
+                in: self.syncMOC
+            )
 
             // THEN
             let accessRoleV2 = ConversationAccessRoleV2.fromLegacyAccessRole(accessRole)
@@ -333,14 +383,17 @@ class PayloadProcessing_ConversationTests: MessagingTestBase {
             let messageTimer = MessageDestructionTimeoutValue.fiveMinutes
             let qualifiedID = self.groupConversation.qualifiedID!
 
-            let conversationPayload = Payload.Conversation.stub(
+            let payload = Payload.Conversation.stub(
                 qualifiedID: qualifiedID,
                 type: .group,
                 messageTimer: messageTimer.rawValue * 1000
             )
 
             // when
-            conversationPayload.updateOrCreate(in: self.syncMOC)
+            self.sut.updateOrCreateConversation(
+                from: payload,
+                in: self.syncMOC
+            )
 
             // then
             XCTAssertEqual(self.groupConversation.activeMessageDestructionTimeoutValue, messageTimer)
@@ -360,14 +413,17 @@ class PayloadProcessing_ConversationTests: MessagingTestBase {
                 mutedReference: Date()
             )
             let members = Payload.ConversationMembers(selfMember: selfMember, others: [])
-            let conversationPayload = Payload.Conversation.stub(
+            let payload = Payload.Conversation.stub(
                 qualifiedID: qualifiedID,
                 type: .group,
                 members: members
             )
 
             // when
-            conversationPayload.updateOrCreate(in: self.syncMOC)
+            self.sut.updateOrCreateConversation(
+                from: payload,
+                in: self.syncMOC
+            )
 
             // then
             XCTAssertEqual(self.groupConversation.mutedMessageTypes, mutedMessageTypes)
@@ -383,14 +439,17 @@ class PayloadProcessing_ConversationTests: MessagingTestBase {
                                                         archived: true,
                                                         archivedReference: Date())
             let members = Payload.ConversationMembers(selfMember: selfMember, others: [])
-            let conversationPayload = Payload.Conversation.stub(
+            let payload = Payload.Conversation.stub(
                 qualifiedID: qualifiedID,
                 type: .group,
                 members: members
             )
 
             // when
-            conversationPayload.updateOrCreate(in: self.syncMOC)
+            self.sut.updateOrCreateConversation(
+                from: payload,
+                in: self.syncMOC
+            )
 
             // then
             XCTAssertTrue(self.groupConversation.isArchived)
@@ -402,14 +461,17 @@ class PayloadProcessing_ConversationTests: MessagingTestBase {
             // given
             self.groupConversation.messageProtocol = .proteus
             let qualifiedID = self.groupConversation.qualifiedID!
-            let conversationPayload = Payload.Conversation.stub(
+            let payload = Payload.Conversation.stub(
                 qualifiedID: qualifiedID,
                 type: .group,
                 messageProtocol: "mls"
             )
 
             // when
-            conversationPayload.updateOrCreate(in: self.syncMOC)
+            self.sut.updateOrCreateConversation(
+                from: payload,
+                in: self.syncMOC
+            )
 
             // then
             XCTAssertEqual(self.groupConversation.messageProtocol, .mls)
@@ -430,13 +492,16 @@ class PayloadProcessing_ConversationTests: MessagingTestBase {
             let otherMember = Payload.ConversationMember(qualifiedID: self.otherUser.qualifiedID!)
             let members = Payload.ConversationMembers(selfMember: selfMember, others: [otherMember])
             let qualifiedID = QualifiedID(uuid: conversationID, domain: self.owningDomain)
-            let conversationPayload = Payload.Conversation(qualifiedID: qualifiedID,
+            let payload = Payload.Conversation(qualifiedID: qualifiedID,
                                                            type: BackendConversationType.oneOnOne.rawValue,
                                                            members: members)
             let otherUserSet: Set<ZMUser> = [selfUser, self.otherUser]
 
             // when
-            conversationPayload.updateOrCreate(in: self.syncMOC)
+            self.sut.updateOrCreateConversation(
+                from: payload,
+                in: self.syncMOC
+            )
 
             // then
             XCTAssertEqual(self.otherUser.connection?.conversation?.remoteIdentifier, conversationID)
@@ -458,12 +523,15 @@ class PayloadProcessing_ConversationTests: MessagingTestBase {
             let otherMember = Payload.ConversationMember(qualifiedID: self.otherUser.qualifiedID!)
             let members = Payload.ConversationMembers(selfMember: selfMember, others: [otherMember])
             let qualifiedID = QualifiedID(uuid: conversationID, domain: self.owningDomain)
-            let conversationPayload = Payload.Conversation(qualifiedID: qualifiedID,
+            let payload = Payload.Conversation(qualifiedID: qualifiedID,
                                                            type: BackendConversationType.oneOnOne.rawValue,
                                                            members: members)
 
             // when
-            conversationPayload.updateOrCreate(in: self.syncMOC)
+            self.sut.updateOrCreateConversation(
+                from: payload,
+                in: self.syncMOC
+            )
 
             // then
             XCTAssertEqual(self.otherUser.connection?.conversation?.remoteIdentifier, conversationID)
@@ -478,10 +546,13 @@ class PayloadProcessing_ConversationTests: MessagingTestBase {
             conversation.remoteIdentifier = UUID()
             conversation.domain = self.owningDomain
             let qualifiedID = conversation.qualifiedID!
-            let conversationPayload = Payload.Conversation(qualifiedID: qualifiedID, type: BackendConversationType.connection.rawValue)
+            let payload = Payload.Conversation(qualifiedID: qualifiedID, type: BackendConversationType.connection.rawValue)
 
             // when
-            conversationPayload.updateOrCreate(in: self.syncMOC)
+            self.sut.updateOrCreateConversation(
+                from: payload,
+                in: self.syncMOC
+            )
 
             // then
             XCTAssertEqual(conversation.conversationType, .connection)
@@ -497,12 +568,16 @@ class PayloadProcessing_ConversationTests: MessagingTestBase {
             let otherMember = Payload.ConversationMember(qualifiedID: self.otherUser.qualifiedID!)
             let members = Payload.ConversationMembers(selfMember: selfMember, others: [otherMember])
             let qualifiedID = self.oneToOneConversation.qualifiedID!
-            let conversationPayload = Payload.Conversation(qualifiedID: qualifiedID,
+            let payload = Payload.Conversation(qualifiedID: qualifiedID,
                                                            type: BackendConversationType.oneOnOne.rawValue,
                                                            members: members)
 
             // when
-            conversationPayload.updateOrCreate(in: self.syncMOC, serverTimestamp: serverTimestamp)
+            self.sut.updateOrCreateConversation(
+                from: payload,
+                serverTimestamp: serverTimestamp,
+                in: self.syncMOC
+            )
 
             // then
             XCTAssertEqual(self.oneToOneConversation.lastServerTimeStamp, serverTimestamp)
@@ -518,12 +593,15 @@ class PayloadProcessing_ConversationTests: MessagingTestBase {
             self.otherUser.isPendingMetadataRefresh = true
             let members = Payload.ConversationMembers(selfMember: selfMember, others: [otherMember])
             let qualifiedID = self.oneToOneConversation.qualifiedID!
-            let conversationPayload = Payload.Conversation(qualifiedID: qualifiedID,
+            let payload = Payload.Conversation(qualifiedID: qualifiedID,
                                                            type: BackendConversationType.oneOnOne.rawValue,
                                                            members: members)
 
             // when
-            conversationPayload.updateOrCreate(in: self.syncMOC)
+            self.sut.updateOrCreateConversation(
+                from: payload,
+                in: self.syncMOC
+            )
 
             // then
             XCTAssertEqual(self.oneToOneConversation.isPendingMetadataRefresh, self.otherUser.isPendingMetadataRefresh)
@@ -549,12 +627,15 @@ class PayloadProcessing_ConversationTests: MessagingTestBase {
             let selfMember = Payload.ConversationMember(qualifiedID: selfUser.qualifiedID!)
             let otherMember = Payload.ConversationMember(qualifiedID: self.otherUser.qualifiedID!)
             let members = Payload.ConversationMembers(selfMember: selfMember, others: [otherMember])
-            let conversationPayload = Payload.Conversation(qualifiedID: existingConversation.qualifiedID!,
+            let payload = Payload.Conversation(qualifiedID: existingConversation.qualifiedID!,
                                                            type: BackendConversationType.connection.rawValue,
                                                            members: members)
 
             // when
-            conversationPayload.updateOrCreate(in: self.syncMOC)
+            self.sut.updateOrCreateConversation(
+                from: payload,
+                in: self.syncMOC
+            )
 
             // then
             XCTAssertTrue(existingConversation.isZombieObject)
@@ -573,11 +654,14 @@ class PayloadProcessing_ConversationTests: MessagingTestBase {
             let otherMember = Payload.ConversationMember(qualifiedID: self.otherUser.qualifiedID!)
             let members = Payload.ConversationMembers(selfMember: selfMember, others: [otherMember])
             let qualifiedID = self.oneToOneConversation.qualifiedID!
-            let conversationPayload = Payload.Conversation(qualifiedID: qualifiedID,
+            let payload = Payload.Conversation(qualifiedID: qualifiedID,
                                                            type: BackendConversationType.oneOnOne.rawValue,
                                                            members: members)
             // when
-            conversationPayload.updateOrCreate(in: self.syncMOC)
+            self.sut.updateOrCreateConversation(
+                from: payload,
+                in: self.syncMOC
+            )
 
             // then
             XCTAssertEqual(self.oneToOneConversation.mutedMessageTypes, mutedMessageTypes)
@@ -594,11 +678,14 @@ class PayloadProcessing_ConversationTests: MessagingTestBase {
             let otherMember = Payload.ConversationMember(qualifiedID: self.otherUser.qualifiedID!)
             let members = Payload.ConversationMembers(selfMember: selfMember, others: [otherMember])
             let qualifiedID = self.oneToOneConversation.qualifiedID!
-            let conversationPayload = Payload.Conversation(qualifiedID: qualifiedID,
+            let payload = Payload.Conversation(qualifiedID: qualifiedID,
                                                            type: BackendConversationType.oneOnOne.rawValue,
                                                            members: members)
             // when
-            conversationPayload.updateOrCreate(in: self.syncMOC)
+            self.sut.updateOrCreateConversation(
+                from: payload,
+                in: self.syncMOC
+            )
 
             // then
             XCTAssertTrue(self.oneToOneConversation.isArchived)
@@ -612,10 +699,13 @@ class PayloadProcessing_ConversationTests: MessagingTestBase {
             // given
             BackendInfo.isFederationEnabled = true
             let qualifiedID = QualifiedID(uuid: UUID(), domain: self.owningDomain)
-            let conversationPayload = Payload.Conversation(qualifiedID: qualifiedID, type: BackendConversationType.`self`.rawValue)
+            let payload = Payload.Conversation(qualifiedID: qualifiedID, type: BackendConversationType.`self`.rawValue)
 
             // when
-            conversationPayload.updateOrCreate(in: self.syncMOC)
+            self.sut.updateOrCreateConversation(
+                from: payload,
+                in: self.syncMOC
+            )
 
             // then
             let conversation = try XCTUnwrap(ZMConversation.fetch(with: qualifiedID.uuid, domain: qualifiedID.domain, in: self.syncMOC))
@@ -628,10 +718,13 @@ class PayloadProcessing_ConversationTests: MessagingTestBase {
             // given
             BackendInfo.isFederationEnabled = false
             let qualifiedID = QualifiedID(uuid: UUID(), domain: self.owningDomain)
-            let conversationPayload = Payload.Conversation(qualifiedID: qualifiedID, type: BackendConversationType.`self`.rawValue)
+            let payload = Payload.Conversation(qualifiedID: qualifiedID, type: BackendConversationType.`self`.rawValue)
 
             // when
-            conversationPayload.updateOrCreate(in: self.syncMOC)
+            self.sut.updateOrCreateConversation(
+                from: payload,
+                in: self.syncMOC
+            )
 
             // then
             let conversation = try XCTUnwrap(ZMConversation.fetch(with: qualifiedID.uuid, domain: nil, in: self.syncMOC))
@@ -648,10 +741,13 @@ class PayloadProcessing_ConversationTests: MessagingTestBase {
             conversation.remoteIdentifier = UUID()
             conversation.domain = self.owningDomain
             let qualifiedID = conversation.qualifiedID!
-            let conversationPayload = Payload.Conversation(qualifiedID: qualifiedID, type: BackendConversationType.`self`.rawValue)
+            let payload = Payload.Conversation(qualifiedID: qualifiedID, type: BackendConversationType.`self`.rawValue)
 
             // when
-            conversationPayload.updateOrCreate(in: self.syncMOC)
+            self.sut.updateOrCreateConversation(
+                from: payload,
+                in: self.syncMOC
+            )
 
             // then
             XCTAssertFalse(conversation.needsToBeUpdatedFromBackend)
@@ -665,10 +761,14 @@ class PayloadProcessing_ConversationTests: MessagingTestBase {
             let selfConversation = ZMConversation.insertNewObject(in: self.syncMOC)
             selfConversation.remoteIdentifier = ZMConversation.selfConversationIdentifier(in: self.syncMOC)
             selfConversation.domain = self.owningDomain
-            let conversationPayload = Payload.Conversation(qualifiedID: selfConversation.qualifiedID!,
+            let payload = Payload.Conversation(qualifiedID: selfConversation.qualifiedID!,
                                                            type: BackendConversationType.`self`.rawValue)
             // when
-            conversationPayload.updateOrCreate(in: self.syncMOC, serverTimestamp: serverTimestamp)
+            self.sut.updateOrCreateConversation(
+                from: payload,
+                serverTimestamp: serverTimestamp,
+                in: self.syncMOC
+            )
 
             // then
             XCTAssertEqual(selfConversation.lastServerTimeStamp, serverTimestamp)
@@ -682,10 +782,13 @@ class PayloadProcessing_ConversationTests: MessagingTestBase {
             selfConversation.remoteIdentifier = ZMConversation.selfConversationIdentifier(in: self.syncMOC)
             selfConversation.domain = self.owningDomain
             selfConversation.isPendingMetadataRefresh = true
-            let conversationPayload = Payload.Conversation(qualifiedID: selfConversation.qualifiedID!,
+            let payload = Payload.Conversation(qualifiedID: selfConversation.qualifiedID!,
                                                            type: BackendConversationType.`self`.rawValue)
             // when
-            conversationPayload.updateOrCreate(in: self.syncMOC)
+            self.sut.updateOrCreateConversation(
+                from: payload,
+                in: self.syncMOC
+            )
 
             // then
             XCTAssertFalse(selfConversation.isPendingMetadataRefresh)
@@ -701,11 +804,14 @@ class PayloadProcessing_ConversationTests: MessagingTestBase {
             MLSEventProcessor.setMock(mockEventProcessor)
 
             let qualifiedID = groupConversation.qualifiedID!
-            let conversation = Payload.Conversation(qualifiedID: qualifiedID,
+            let payload = Payload.Conversation(qualifiedID: qualifiedID,
                                                     type: BackendConversationType.group.rawValue,
                                                     messageProtocol: "mls")
             // when
-            conversation.updateOrCreate(in: syncMOC)
+            sut.updateOrCreateConversation(
+                from: payload,
+                in: syncMOC
+            )
 
             // then
             let updateConversationCalls = mockEventProcessor.calls.updateConversationIfNeeded
@@ -721,11 +827,15 @@ class PayloadProcessing_ConversationTests: MessagingTestBase {
             MLSEventProcessor.setMock(mockEventProcessor)
 
             let qualifiedID = groupConversation.qualifiedID!
-            let conversation = Payload.Conversation(qualifiedID: qualifiedID,
+            let payload = Payload.Conversation(qualifiedID: qualifiedID,
                                                     type: BackendConversationType.group.rawValue,
                                                     messageProtocol: "mls")
             // when
-            conversation.updateOrCreate(in: syncMOC, source: .slowSync)
+            sut.updateOrCreateConversation(
+                from: payload,
+                source: .slowSync,
+                in: syncMOC
+            )
 
             // then
             let joinMLSGroupWhenReadyCalls = mockEventProcessor.calls.joinMLSGroupWhenReady
@@ -741,11 +851,15 @@ class PayloadProcessing_ConversationTests: MessagingTestBase {
             MLSEventProcessor.setMock(mockEventProcessor)
 
             let qualifiedID = groupConversation.qualifiedID!
-            let conversation = Payload.Conversation(qualifiedID: qualifiedID,
+            let payload = Payload.Conversation(qualifiedID: qualifiedID,
                                                     type: BackendConversationType.group.rawValue,
                                                     messageProtocol: "mls")
             // when
-            conversation.updateOrCreate(in: syncMOC, source: .eventStream)
+            sut.updateOrCreateConversation(
+                from: payload,
+                source: .eventStream,
+                in: syncMOC
+            )
 
             // then
             XCTAssertEqual(mockEventProcessor.calls.joinMLSGroupWhenReady.count, 0)
@@ -758,146 +872,24 @@ class PayloadProcessing_ConversationTests: MessagingTestBase {
             MLSEventProcessor.setMock(MockMLSEventProcessor())
             groupConversation.epoch = 0
 
-            let conversation = Payload.Conversation(
+            let payload = Payload.Conversation(
                 qualifiedID: groupConversation.qualifiedID!,
                 type: BackendConversationType.group.rawValue,
                 epoch: 1
             )
 
             // when
-            conversation.updateOrCreate(in: syncMOC)
+            let conversation = sut.updateOrCreateConversation(
+                from: payload,
+                in: syncMOC
+            )
 
             // then
-            XCTAssertEqual(conversation.epoch, 1)
+            XCTAssertEqual(conversation?.epoch, 1)
         }
     }
 
-    // MARK: - MLS: Welcome Message
-
-    func testUpdateConversationMLSWelcome_AsksToProcessWelcomeMessage() {
-        syncMOC.performAndWait {
-            // given
-            let mockEventProcessor = MockMLSEventProcessor()
-            MLSEventProcessor.setMock(mockEventProcessor)
-
-            let message = "welcome message"
-            let event = Payload.UpdateConversationMLSWelcome(
-                id: groupConversation.remoteIdentifier!,
-                qualifiedID: groupConversation.qualifiedID,
-                from: otherUser.remoteIdentifier,
-                qualifiedFrom: otherUser.qualifiedID,
-                timestamp: Date(),
-                type: "conversation.mls-welcome",
-                data: message
-            )
-            let updateEvent = self.updateEvent(from: event.payloadData()!)
-
-            // when
-            event.process(in: syncMOC, originalEvent: updateEvent)
-
-            // then
-            XCTAssertEqual(message, mockEventProcessor.calls.processWelcomeMessage.first)
-        }
-    }
-
-    // MARK: - MLS: Conversation Member Leave
-
-    func test_UpdateConversationMemberLeave_WipesMLSGroup() {
-        syncMOC.performAndWait {
-            // Given
-
-            // set mock event processor
-            let mockEventProcessor = MockMLSEventProcessor()
-            MLSEventProcessor.setMock(mockEventProcessor)
-
-            // create self user
-            let selfUser = ZMUser.selfUser(in: syncMOC)
-            selfUser.remoteIdentifier = UUID.create()
-            selfUser.domain = groupConversation.domain
-
-            // set message protocol
-            groupConversation.messageProtocol = .mls
-
-            // create the event
-            let payload = Payload.UpdateConverationMemberLeave(
-                userIDs: [selfUser.remoteIdentifier],
-                qualifiedUserIDs: [selfUser.qualifiedID!]
-            )
-            let updateEvent = self.updateEvent(from: payload)
-            let event = conversationEvent(with: payload)
-
-            // When
-            event.process(in: syncMOC, originalEvent: updateEvent)
-
-            // Then
-            XCTAssertEqual(mockEventProcessor.calls.wipeGroup.count, 1)
-            XCTAssertEqual(mockEventProcessor.calls.wipeGroup.first, groupConversation)
-        }
-    }
-
-    func test_UpdateConversationMemberLeave_DoesntWipeMLSGroup_WhenSelfUserIsNotRemoved() {
-        syncMOC.performAndWait {
-            // Given
-
-            // set mock event processor
-            let mockEventProcessor = MockMLSEventProcessor()
-            MLSEventProcessor.setMock(mockEventProcessor)
-
-            // create user
-            let user = ZMUser.insertNewObject(in: syncMOC)
-            user.remoteIdentifier = UUID.create()
-            user.domain = groupConversation.domain
-
-            // set message protocol
-            groupConversation.messageProtocol = .mls
-
-            // create the event
-            let payload = Payload.UpdateConverationMemberLeave(
-                userIDs: [user.remoteIdentifier],
-                qualifiedUserIDs: [user.qualifiedID!]
-            )
-            let updateEvent = self.updateEvent(from: payload)
-            let event = conversationEvent(with: payload)
-
-            // When
-            event.process(in: syncMOC, originalEvent: updateEvent)
-
-            // Then
-            XCTAssertEqual(mockEventProcessor.calls.wipeGroup.count, 0)
-        }
-    }
-
-    func test_UpdateConversationMemberLeave_DoesntWipeMLSGroup_WhenProtocolIsNotMLS() {
-        syncMOC.performAndWait {
-            // Given
-
-            // set mock event processor
-            let mockEventProcessor = MockMLSEventProcessor()
-            MLSEventProcessor.setMock(mockEventProcessor)
-
-            // create self user
-            let selfUser = ZMUser.selfUser(in: syncMOC)
-            selfUser.remoteIdentifier = UUID.create()
-            selfUser.domain = groupConversation.domain
-
-            // set message protocol
-            groupConversation.messageProtocol = .proteus
-
-            // create the event
-            let payload = Payload.UpdateConverationMemberLeave(
-                userIDs: [selfUser.remoteIdentifier],
-                qualifiedUserIDs: [selfUser.qualifiedID!]
-            )
-            let updateEvent = self.updateEvent(from: payload)
-            let event = conversationEvent(with: payload)
-
-            // When
-            event.process(in: syncMOC, originalEvent: updateEvent)
-
-            // Then
-            XCTAssertEqual(mockEventProcessor.calls.wipeGroup.count, 0)
-        }
-    }
+    // MARK: - MLS Self Group
 
     func testUpdateOrCreate_withMLSSelfGroupEpoch0_callsMLSServiceCreateGroup() {
         let didCallCreateGroup = XCTestExpectation(description: "didCallCreateGroup")
@@ -943,32 +935,10 @@ class PayloadProcessing_ConversationTests: MessagingTestBase {
             )
 
             // when
-            conversation.updateOrCreate(in: syncMOC)
+            self.sut.updateOrCreateConversation(from: conversation, in: syncMOC)
         }
     }
 
-    // MARK: - Helpers
-
-    func updateEvent<T: CodableEventData>(from payload: T) -> ZMUpdateEvent {
-        return updateEvent(
-            from: payload,
-            conversationID: groupConversation.qualifiedID,
-            senderID: otherUser.qualifiedID,
-            timestamp: nil
-        )
-    }
-
-    func conversationEvent<T: CodableEventData>(with payload: T) -> Payload.ConversationEvent<T> {
-        return Payload.ConversationEvent(
-            id: groupConversation.remoteIdentifier,
-            qualifiedID: groupConversation.qualifiedID,
-            from: otherUser.remoteIdentifier,
-            qualifiedFrom: otherUser.qualifiedID,
-            timestamp: nil,
-            type: nil,
-            data: payload
-        )
-    }
 }
 
 extension Payload.Conversation {

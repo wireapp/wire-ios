@@ -25,7 +25,6 @@ public class MockUserRepositoryInterface: UserRepositoryInterface {
 
     public init() {}
 
-
     // MARK: - selfUser
 
     public var selfUser_Invocations: [Void] = []
@@ -45,4 +44,3 @@ public class MockUserRepositoryInterface: UserRepositoryInterface {
     }
 
 }
-

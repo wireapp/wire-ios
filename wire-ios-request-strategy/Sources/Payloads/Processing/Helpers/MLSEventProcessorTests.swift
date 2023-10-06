@@ -54,8 +54,16 @@ class MLSEventProcessorTests: MessagingTestBase {
             self.conversation.mlsStatus = .pendingJoin
             XCTAssertEqual(self.conversation.mlsStatus, .pendingJoin)
 
+            guard let qualifiedID = self.conversation.qualifiedID else {
+                return XCTFail("need a qualified id")
+            }
+
             // When
-            MLSEventProcessor.shared.process(welcomeMessage: message, in: self.syncMOC)
+            MLSEventProcessor.shared.process(
+                welcomeMessage: message,
+                conversationID: qualifiedID,
+                in: self.syncMOC
+            )
 
             // Then
             XCTAssertEqual(message, self.mlsServiceMock.processedWelcomeMessage)
