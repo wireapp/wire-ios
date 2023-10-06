@@ -471,7 +471,6 @@ final class ConversationEventPayloadProcessor {
             let otherUserID = otherMember.id ?? otherMember.qualifiedID?.uuid
         else {
             let conversation = ZMConversation.fetch(with: conversationID, domain: payload.qualifiedID?.domain, in: context)
-            // TODO: use conversation type from the backend once it returns the correct value
             conversation?.conversationType = self.conversationType(for: conversation, from: conversationType)
             conversation?.needsToBeUpdatedFromBackend = false
             return conversation
@@ -490,8 +489,6 @@ final class ConversationEventPayloadProcessor {
 
         conversation.remoteIdentifier = conversationID
         conversation.domain = BackendInfo.isFederationEnabled ? payload.qualifiedID?.domain : nil
-
-        // TODO: use conversation type from the backend once it returns the correct value
         conversation.conversationType = self.conversationType(for: conversation, from: conversationType)
 
         updateMetadata(from: payload, for: conversation, context: context)
@@ -644,10 +641,6 @@ final class ConversationEventPayloadProcessor {
         )
     }
 
-    // There is a bug in the backend where the conversation type is not correct for
-    // connection requests across federated backends. Instead of returning `.connection` type,
-    // it returns `oneOnOne.
-    // We fix this temporarily on our side by checking the connection status of the conversation.
     private func conversationType(
         for conversation: ZMConversation?,
         from type: ZMConversationType
@@ -656,6 +649,8 @@ final class ConversationEventPayloadProcessor {
             return type
         }
 
+        // The backend can't distinguish between one-to-one and connection conversation
+        // types across federated enviroments so check locally if it's a connection.
         if conversation.connection?.status == .sent {
             return .connection
         } else {
