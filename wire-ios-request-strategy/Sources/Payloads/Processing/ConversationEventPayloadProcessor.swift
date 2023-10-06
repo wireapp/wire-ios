@@ -551,8 +551,9 @@ final class ConversationEventPayloadProcessor {
         for conversation: ZMConversation,
         serverTimestamp: Date
     ) {
-        // If the lastModifiedDate is non-nil, e.g. restore from backup, do not update the lastModifiedDate
-        if conversation.lastModifiedDate == nil { // TODO jacob review this logic
+        // If the lastModifiedDate is non-nil, e.g. restore from backup,
+        // do not update the lastModifiedDate.
+        if conversation.lastModifiedDate == nil {
             conversation.updateLastModified(serverTimestamp)
         }
 
