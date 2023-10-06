@@ -34,6 +34,8 @@ extension UpdateAccessRolesError {
 
 final class UpdateAccessRolesActionHandler: ActionHandler<UpdateAccessRolesAction> {
 
+    private lazy var eventProcessor = ConversationEventProcessor(context: context)
+
     // MARK: - Methods
 
     override func request(for action: UpdateAccessRolesAction, apiVersion: APIVersion) -> ZMTransportRequest? {
@@ -71,16 +73,14 @@ final class UpdateAccessRolesActionHandler: ActionHandler<UpdateAccessRolesActio
         case 200:
             guard
                 let payload = response.payload,
-                let updateEvent = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil),
-                let rawData = response.rawData,
-                let conversationEvent = Payload.ConversationEvent<Payload.UpdateConversationAccess>(rawData, decoder: .defaultDecoder)
+                let updateEvent = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil)
             else {
                 Logging.network.warn("Can't process response, aborting.")
                 action.notifyResult(.failure(.unknown))
                 return
             }
 
-            conversationEvent.process(in: context, originalEvent: updateEvent)
+            eventProcessor.processConversationEvents([updateEvent])
             action.notifyResult(.success(Void()))
 
         default:

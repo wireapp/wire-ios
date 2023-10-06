@@ -1,5 +1,6 @@
+//
 // Wire
-// Copyright (C) 2021 Wire Swiss GmbH
+// Copyright (C) 2023 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,16 +19,24 @@
 import XCTest
 @testable import WireRequestStrategy
 
-class PayloadProcessing_MessageSendingStatusTests: MessagingTestBase {
+final class MessageSendingStatusPayloadProcessorTests: MessagingTestBase {
 
     let domain =  "example.com"
+    var sut: MessageSendingStatusPayloadProcessor!
 
     override func setUp() {
         super.setUp()
 
+        sut = MessageSendingStatusPayloadProcessor()
+
         syncMOC.performGroupedBlockAndWait {
             self.otherUser.domain = self.domain
         }
+    }
+
+    override func tearDown() {
+        sut = nil
+        super.tearDown()
     }
 
     // MARK: - Client Updates
@@ -48,7 +57,10 @@ class PayloadProcessing_MessageSendingStatusTests: MessagingTestBase {
                                                        failedToConfirm: [:])
 
             // when
-            _ = payload.updateClientsChanges(for: message)
+            self.sut.updateClientsChanges(
+                from: payload,
+                for: message
+            )
 
             // then
             XCTAssertTrue(self.otherClient.isDeleted)
@@ -72,7 +84,10 @@ class PayloadProcessing_MessageSendingStatusTests: MessagingTestBase {
                                                        failedToConfirm: [:])
 
             // when
-            _ = payload.updateClientsChanges(for: message)
+            self.sut.updateClientsChanges(
+                from: payload,
+                for: message
+            )
 
             // then
             XCTAssertEqual(self.selfClient.missingClients!.count, 1)
@@ -101,7 +116,10 @@ class PayloadProcessing_MessageSendingStatusTests: MessagingTestBase {
                                                        failedToConfirm: [:])
 
             // when
-            _ = payload.updateClientsChanges(for: message)
+            self.sut.updateClientsChanges(
+                from: payload,
+                for: message
+            )
 
             // then
             XCTAssertEqual(self.selfClient.missingClients!.count, 0)
@@ -124,7 +142,10 @@ class PayloadProcessing_MessageSendingStatusTests: MessagingTestBase {
                                                        failedToConfirm: [:])
 
             // when
-            _ = payload.updateClientsChanges(for: message)
+            self.sut.updateClientsChanges(
+                from: payload,
+                for: message
+            )
 
             // then
             XCTAssertTrue(self.otherUser.needsToBeUpdatedFromBackend)
@@ -147,7 +168,10 @@ class PayloadProcessing_MessageSendingStatusTests: MessagingTestBase {
                                                        failedToConfirm: [:])
 
             // when
-            _ = payload.updateClientsChanges(for: message)
+            self.sut.updateClientsChanges(
+                from: payload,
+                for: message
+            )
 
             // then
             XCTAssertTrue(message.conversation!.needsToBeUpdatedFromBackend)
@@ -171,7 +195,10 @@ class PayloadProcessing_MessageSendingStatusTests: MessagingTestBase {
                                                        failedToConfirm: failedToConfirm)
 
             // when
-            _ = payload.updateClientsChanges(for: message)
+            self.sut.updateClientsChanges(
+                from: payload,
+                for: message
+            )
 
             // then
             XCTAssertEqual(message.isFailedToSendUsers, true)
@@ -201,7 +228,11 @@ class PayloadProcessing_MessageSendingStatusTests: MessagingTestBase {
                                                        deleted: [:],
                                                        failedToSend: [:],
                                                        failedToConfirm: failedToConfirm)
-            _ = payload.updateClientsChanges(for: message)
+
+            self.sut.updateClientsChanges(
+                from: payload,
+                for: message
+            )
 
             // Then
             XCTAssertEqual(message.failedToSendRecipients?.count, 1)
@@ -232,7 +263,10 @@ class PayloadProcessing_MessageSendingStatusTests: MessagingTestBase {
                                                        failedToConfirm: [:])
 
             // when
-            let clientListByUser = payload.missingClientListByUser(context: self.syncMOC)
+            let clientListByUser = self.sut.missingClientListByUser(
+                from: payload,
+                context: self.syncMOC
+            )
 
             // then
             let otherUserClientList = clientListByUser[self.otherUser]
@@ -263,7 +297,10 @@ class PayloadProcessing_MessageSendingStatusTests: MessagingTestBase {
         // when
         var clientListByUser = Payload.ClientListByUser()
         syncMOC.performGroupedBlockAndWait {
-            clientListByUser = payload.missingClientListByUser(context: self.syncMOC)
+            clientListByUser = self.sut.missingClientListByUser(
+                from: payload,
+                context: self.syncMOC
+            )
         }
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))

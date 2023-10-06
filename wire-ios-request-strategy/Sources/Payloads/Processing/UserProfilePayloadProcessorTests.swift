@@ -1,5 +1,6 @@
+//
 // Wire
-// Copyright (C) 2021 Wire Swiss GmbH
+// Copyright (C) 2023 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,10 +19,13 @@
 import XCTest
 @testable import WireRequestStrategy
 
-class PayloadProcessing_UserProfileTests: MessagingTestBase {
+final class UserProfilePayloadProcessorTests: MessagingTestBase {
+
+    var sut: UserProfilePayloadProcessor!
 
     override func setUp() {
         super.setUp()
+        sut = UserProfilePayloadProcessor()
 
         syncMOC.performGroupedBlockAndWait {
             self.otherUser.remoteIdentifier = nil
@@ -30,6 +34,7 @@ class PayloadProcessing_UserProfileTests: MessagingTestBase {
     }
 
     override func tearDown() {
+        sut = nil
         BackendInfo.isFederationEnabled = false
         super.tearDown()
     }
@@ -40,7 +45,11 @@ class PayloadProcessing_UserProfileTests: MessagingTestBase {
             let userProfile = Payload.UserProfile(id: UUID())
 
             // when
-            userProfile.updateUserProfile(for: self.otherUser, authoritative: true)
+            self.sut.updateUserProfile(
+                from: userProfile,
+                for: self.otherUser,
+                authoritative: true
+            )
 
             // then
             XCTAssertEqual(self.otherUser.remoteIdentifier, userProfile.id)
@@ -55,7 +64,11 @@ class PayloadProcessing_UserProfileTests: MessagingTestBase {
             let userProfile = Payload.UserProfile(qualifiedID: qualifiedID)
 
             // when
-            userProfile.updateUserProfile(for: self.otherUser, authoritative: true)
+            self.sut.updateUserProfile(
+                from: userProfile,
+                for: self.otherUser,
+                authoritative: true
+            )
 
             // then
             XCTAssertEqual(self.otherUser.remoteIdentifier, qualifiedID.uuid)
@@ -71,7 +84,11 @@ class PayloadProcessing_UserProfileTests: MessagingTestBase {
             let userProfile = Payload.UserProfile(id: qualifiedID.uuid, qualifiedID: qualifiedID)
 
             // when
-            userProfile.updateUserProfile(for: self.otherUser, authoritative: true)
+            self.sut.updateUserProfile(
+                from: userProfile,
+                for: self.otherUser,
+                authoritative: true
+            )
 
             // then
             XCTAssertEqual(self.otherUser.remoteIdentifier, qualifiedID.uuid)
@@ -86,7 +103,11 @@ class PayloadProcessing_UserProfileTests: MessagingTestBase {
             let userProfile = Payload.UserProfile(qualifiedID: qualifiedID, teamID: UUID())
 
             // when
-            userProfile.updateUserProfile(for: self.otherUser, authoritative: true)
+            self.sut.updateUserProfile(
+                from: userProfile,
+                for: self.otherUser,
+                authoritative: true
+            )
 
             // then
             XCTAssertEqual(self.otherUser.teamIdentifier, userProfile.teamID)
@@ -100,7 +121,11 @@ class PayloadProcessing_UserProfileTests: MessagingTestBase {
             let userProfile = Payload.UserProfile(qualifiedID: qualifiedID, updatedKeys: [.teamID])
 
             // when
-            userProfile.updateUserProfile(for: self.otherUser, authoritative: false)
+            self.sut.updateUserProfile(
+                from: userProfile,
+                for: self.otherUser,
+                authoritative: false
+            )
 
             // then
             XCTAssertNil(self.otherUser.teamIdentifier)
@@ -117,7 +142,11 @@ class PayloadProcessing_UserProfileTests: MessagingTestBase {
             let userProfile = Payload.UserProfile(qualifiedID: qualifiedID, teamID: teamID)
 
             // when
-            userProfile.updateUserProfile(for: self.otherUser, authoritative: true)
+            self.sut.updateUserProfile(
+                from: userProfile,
+                for: self.otherUser,
+                authoritative: true
+            )
 
             // then
             XCTAssertEqual(self.otherUser.membership?.team, team)
@@ -132,7 +161,11 @@ class PayloadProcessing_UserProfileTests: MessagingTestBase {
             let userProfile = Payload.UserProfile(qualifiedID: qualifiedID, serviceID: serviceID)
 
             // when
-            userProfile.updateUserProfile(for: self.otherUser, authoritative: true)
+            self.sut.updateUserProfile(
+                from: userProfile,
+                for: self.otherUser,
+                authoritative: true
+            )
 
             // then
             XCTAssertEqual(self.otherUser.serviceIdentifier, serviceID.id.transportString())
@@ -148,7 +181,11 @@ class PayloadProcessing_UserProfileTests: MessagingTestBase {
             let userProfile = Payload.UserProfile(qualifiedID: qualifiedID, SSOID: SSOID)
 
             // when
-            userProfile.updateUserProfile(for: self.otherUser, authoritative: true)
+            self.sut.updateUserProfile(
+                from: userProfile,
+                for: self.otherUser,
+                authoritative: true
+            )
 
             // then
             XCTAssertTrue(self.otherUser.usesCompanyLogin)
@@ -163,7 +200,11 @@ class PayloadProcessing_UserProfileTests: MessagingTestBase {
             let userProfile = Payload.UserProfile(qualifiedID: qualifiedID, name: name)
 
             // when
-            userProfile.updateUserProfile(for: self.otherUser, authoritative: true)
+            self.sut.updateUserProfile(
+                from: userProfile,
+                for: self.otherUser,
+                authoritative: true
+            )
 
             // then
             XCTAssertEqual(self.otherUser.name, name)
@@ -181,7 +222,11 @@ class PayloadProcessing_UserProfileTests: MessagingTestBase {
             let userProfile = Payload.UserProfile(qualifiedID: qualifiedID, name: newName)
 
             // when
-            userProfile.updateUserProfile(for: self.otherUser, authoritative: true)
+            self.sut.updateUserProfile(
+                from: userProfile,
+                for: self.otherUser,
+                authoritative: true
+            )
 
             // then
             XCTAssertEqual(self.otherUser.name, oldName)
@@ -196,7 +241,11 @@ class PayloadProcessing_UserProfileTests: MessagingTestBase {
             let userProfile = Payload.UserProfile(qualifiedID: qualifiedID, handle: handle)
 
             // when
-            userProfile.updateUserProfile(for: self.otherUser, authoritative: true)
+            self.sut.updateUserProfile(
+                from: userProfile,
+                for: self.otherUser,
+                authoritative: true
+            )
 
             // then
             XCTAssertEqual(self.otherUser.handle, handle)
@@ -214,7 +263,11 @@ class PayloadProcessing_UserProfileTests: MessagingTestBase {
             let userProfile = Payload.UserProfile(qualifiedID: qualifiedID, handle: newhandle)
 
             // when
-            userProfile.updateUserProfile(for: self.otherUser, authoritative: true)
+            self.sut.updateUserProfile(
+                from: userProfile,
+                for: self.otherUser,
+                authoritative: true
+            )
 
             // then
             XCTAssertEqual(self.otherUser.handle, oldHandle)
@@ -229,7 +282,11 @@ class PayloadProcessing_UserProfileTests: MessagingTestBase {
             let userProfile = Payload.UserProfile(qualifiedID: qualifiedID, phone: phone)
 
             // when
-            userProfile.updateUserProfile(for: self.otherUser, authoritative: true)
+            self.sut.updateUserProfile(
+                from: userProfile,
+                for: self.otherUser,
+                authoritative: true
+            )
 
             // then
             XCTAssertEqual(self.otherUser.phoneNumber, phone)
@@ -245,7 +302,11 @@ class PayloadProcessing_UserProfileTests: MessagingTestBase {
             self.otherUser.phoneNumber = "+123456789"
 
             // when
-            userProfile.updateUserProfile(for: self.otherUser, authoritative: false)
+            self.sut.updateUserProfile(
+                from: userProfile,
+                for: self.otherUser,
+                authoritative: false
+            )
 
             // then
             XCTAssertNil(self.otherUser.phoneNumber)
@@ -263,7 +324,11 @@ class PayloadProcessing_UserProfileTests: MessagingTestBase {
             let userProfile = Payload.UserProfile(qualifiedID: qualifiedID, phone: newPhone)
 
             // when
-            userProfile.updateUserProfile(for: self.otherUser, authoritative: true)
+            self.sut.updateUserProfile(
+                from: userProfile,
+                for: self.otherUser,
+                authoritative: true
+            )
 
             // then
             XCTAssertEqual(self.otherUser.phoneNumber, oldPhone)
@@ -278,7 +343,11 @@ class PayloadProcessing_UserProfileTests: MessagingTestBase {
             let userProfile = Payload.UserProfile(qualifiedID: qualifiedID, email: email)
 
             // when
-            userProfile.updateUserProfile(for: self.otherUser, authoritative: true)
+            self.sut.updateUserProfile(
+                from: userProfile,
+                for: self.otherUser,
+                authoritative: true
+            )
 
             // then
             XCTAssertEqual(self.otherUser.emailAddress, email)
@@ -294,7 +363,11 @@ class PayloadProcessing_UserProfileTests: MessagingTestBase {
             self.otherUser.emailAddress = "john.doe@example.com"
 
             // when
-            userProfile.updateUserProfile(for: self.otherUser, authoritative: false)
+            self.sut.updateUserProfile(
+                from: userProfile,
+                for: self.otherUser,
+                authoritative: false
+            )
 
             // then
             XCTAssertNil(self.otherUser.emailAddress)
@@ -312,7 +385,11 @@ class PayloadProcessing_UserProfileTests: MessagingTestBase {
             let userProfile = Payload.UserProfile(qualifiedID: qualifiedID, email: newEmail)
 
             // when
-            userProfile.updateUserProfile(for: self.otherUser, authoritative: true)
+            self.sut.updateUserProfile(
+                from: userProfile,
+                for: self.otherUser,
+                authoritative: true
+            )
 
             // then
             XCTAssertEqual(self.otherUser.emailAddress, oldEmail)
@@ -329,7 +406,11 @@ class PayloadProcessing_UserProfileTests: MessagingTestBase {
             let userProfile = Payload.UserProfile(qualifiedID: qualifiedID, assets: assets)
 
             // when
-            userProfile.updateUserProfile(for: self.otherUser, authoritative: true)
+            self.sut.updateUserProfile(
+                from: userProfile,
+                for: self.otherUser,
+                authoritative: true
+            )
 
             // then
             XCTAssertEqual(self.otherUser.previewProfileAssetIdentifier, previewAsset.key)
@@ -355,7 +436,11 @@ class PayloadProcessing_UserProfileTests: MessagingTestBase {
             let userProfile = Payload.UserProfile(qualifiedID: qualifiedID, assets: assets)
 
             // when
-            userProfile.updateUserProfile(for: selfUser, authoritative: true)
+            self.sut.updateUserProfile(
+                from: userProfile,
+                for: selfUser,
+                authoritative: true
+            )
 
             // then
             XCTAssertEqual(selfUser.previewProfileAssetIdentifier, oldPreviewAssetKey)
@@ -375,7 +460,11 @@ class PayloadProcessing_UserProfileTests: MessagingTestBase {
             let userProfile = Payload.UserProfile(qualifiedID: qualifiedID, assets: assets)
 
             // when
-            userProfile.updateUserProfile(for: self.otherUser, authoritative: true)
+            self.sut.updateUserProfile(
+                from: userProfile,
+                for: self.otherUser,
+                authoritative: true
+            )
 
             // then
             XCTAssertNil(self.otherUser.previewProfileAssetIdentifier)
@@ -391,7 +480,11 @@ class PayloadProcessing_UserProfileTests: MessagingTestBase {
             let userProfile = Payload.UserProfile(qualifiedID: qualifiedID, managedBy: managedBy)
 
             // when
-            userProfile.updateUserProfile(for: self.otherUser, authoritative: true)
+            self.sut.updateUserProfile(
+                from: userProfile,
+                for: self.otherUser,
+                authoritative: true
+            )
 
             // then
             XCTAssertTrue(self.otherUser.managedByWire)
@@ -406,7 +499,11 @@ class PayloadProcessing_UserProfileTests: MessagingTestBase {
             let userProfile = Payload.UserProfile(qualifiedID: qualifiedID, accentColor: Int(accentColor!.rawValue))
 
             // when
-            userProfile.updateUserProfile(for: self.otherUser, authoritative: true)
+            self.sut.updateUserProfile(
+                from: userProfile,
+                for: self.otherUser,
+                authoritative: true
+            )
 
             // then
             XCTAssertEqual(self.otherUser.accentColorValue, accentColor)
@@ -420,7 +517,11 @@ class PayloadProcessing_UserProfileTests: MessagingTestBase {
             let userProfile = Payload.UserProfile(qualifiedID: qualifiedID, isDeleted: true)
 
             // when
-            userProfile.updateUserProfile(for: self.otherUser, authoritative: true)
+            self.sut.updateUserProfile(
+                from: userProfile,
+                for: self.otherUser,
+                authoritative: true
+            )
 
             // then
             XCTAssertTrue(self.otherUser.isAccountDeleted)
@@ -435,7 +536,11 @@ class PayloadProcessing_UserProfileTests: MessagingTestBase {
             let userProfile = Payload.UserProfile(qualifiedID: qualifiedID, expiresAt: expiresAt)
 
             // when
-            userProfile.updateUserProfile(for: self.otherUser, authoritative: true)
+            self.sut.updateUserProfile(
+                from: userProfile,
+                for: self.otherUser,
+                authoritative: true
+            )
 
             // then
             XCTAssertEqual(self.otherUser.expiresAt, expiresAt)
@@ -453,7 +558,10 @@ class PayloadProcessing_UserProfileTests: MessagingTestBase {
             self.syncMOC.saveOrRollback()
 
             // when
-            [userProfile].updateUserProfiles(in: self.syncMOC)
+            self.sut.updateUserProfiles(
+                from: [userProfile],
+                in: self.syncMOC
+            )
 
             // then
             XCTAssertEqual(self.otherUser.name, name)
@@ -468,7 +576,11 @@ class PayloadProcessing_UserProfileTests: MessagingTestBase {
             let userProfile = Payload.UserProfile(qualifiedID: qualifiedID)
 
             // when
-            userProfile.updateUserProfile(for: self.otherUser, authoritative: true)
+            self.sut.updateUserProfile(
+                from: userProfile,
+                for: self.otherUser,
+                authoritative: true
+            )
 
             // then
             XCTAssertFalse(self.otherUser.isPendingMetadataRefresh)

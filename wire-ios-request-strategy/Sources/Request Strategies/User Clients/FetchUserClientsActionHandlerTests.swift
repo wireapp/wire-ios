@@ -54,45 +54,45 @@ class FetchUserClientsActionHandlerTests: ActionHandlerTestBase<FetchUserClients
     // MARK: - Request generation
 
     func test_itGenerateARequest_APIV3() throws {
-        // Given
-        let expectedPayload = try XCTUnwrap(RequestPayload(qualified_users: action.userIDs).payloadString())
-
         // Then
-        try test_itGeneratesARequest(
+        let request = try test_itGeneratesARequest(
             for: action,
-               expectedPath: "/v3/users/list-clients",
-               expectedPayload: expectedPayload,
-               expectedMethod: .methodPOST,
-               apiVersion: .v3
+            expectedPath: "/v3/users/list-clients",
+            expectedMethod: .methodPOST,
+            apiVersion: .v3
         )
+
+        let expectedPayload = try XCTUnwrap(RequestPayload(qualified_users: action.userIDs))
+        let actualPayload = try XCTUnwrap(RequestPayload(request))
+        XCTAssertEqual(actualPayload, expectedPayload)
     }
 
     func test_itGenerateARequest_APIV2() throws {
-        // Given
-        let expectedPayload = try XCTUnwrap(RequestPayload(qualified_users: action.userIDs).payloadString())
-
         // Then
-        try test_itGeneratesARequest(
+        let request = try test_itGeneratesARequest(
             for: action,
             expectedPath: "/v2/users/list-clients",
-            expectedPayload: expectedPayload,
             expectedMethod: .methodPOST,
             apiVersion: .v2
         )
+
+        let expectedPayload = try XCTUnwrap(RequestPayload(qualified_users: action.userIDs))
+        let actualPayload = try XCTUnwrap(RequestPayload(request))
+        XCTAssertEqual(actualPayload, expectedPayload)
     }
 
     func test_itGenerateARequest_APIV1() throws {
-        // Given
-        let expectedPayload = try XCTUnwrap(RequestPayload(qualified_users: action.userIDs).payloadString())
-
         // Then
-        try test_itGeneratesARequest(
+        let request = try test_itGeneratesARequest(
             for: action,
             expectedPath: "/v1/users/list-clients",
-            expectedPayload: expectedPayload,
             expectedMethod: .methodPOST,
             apiVersion: .v1
         )
+
+        let expectedPayload = try XCTUnwrap(RequestPayload(qualified_users: action.userIDs))
+        let actualPayload = try XCTUnwrap(RequestPayload(request))
+        XCTAssertEqual(actualPayload, expectedPayload)
     }
 
     func test_itFailsToGenerateRequest_APIV0() {
