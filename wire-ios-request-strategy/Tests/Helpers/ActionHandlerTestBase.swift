@@ -35,6 +35,7 @@ class ActionHandlerTestBase<Action: EntityAction, Handler: ActionHandler<Action>
 
     // MARK: Request Generation
 
+    @discardableResult
     func test_itGeneratesARequest<Payload: Equatable>(
         for action: Action,
         expectedPath: String,
@@ -42,7 +43,7 @@ class ActionHandlerTestBase<Action: EntityAction, Handler: ActionHandler<Action>
         expectedMethod: ZMTransportRequestMethod,
         expectedAcceptType: ZMTransportAccept? = nil,
         apiVersion: APIVersion = .v1
-    ) throws {
+    ) throws -> ZMTransportRequest{
         // Given
         let sut = Handler(context: syncMOC)
 
@@ -52,11 +53,16 @@ class ActionHandlerTestBase<Action: EntityAction, Handler: ActionHandler<Action>
         // Then
         XCTAssertEqual(request.path, expectedPath)
         XCTAssertEqual(request.method, expectedMethod)
-        XCTAssertEqual(request.payload as? Payload, expectedPayload)
+
+        if let expectedPayload {
+            XCTAssertEqual(request.payload as? Payload, expectedPayload)
+        }
 
         if let expectedAcceptType = expectedAcceptType {
             XCTAssertEqual(request.acceptedResponseMediaTypes, expectedAcceptType)
         }
+
+        return request
     }
 
     func test_itGeneratesARequest(
@@ -143,14 +149,15 @@ extension ActionHandlerTestBase {
 
     struct DefaultEquatable: Equatable {}
 
+    @discardableResult
     func test_itGeneratesARequest(
         for action: Action,
         expectedPath: String,
         expectedMethod: ZMTransportRequestMethod,
         expectedAcceptType: ZMTransportAccept? = nil,
         apiVersion: APIVersion = .v1
-    ) throws {
-        try test_itGeneratesARequest(
+    ) throws -> ZMTransportRequest {
+        return try test_itGeneratesARequest(
             for: action,
             expectedPath: expectedPath,
             expectedPayload: DefaultEquatable?.none,

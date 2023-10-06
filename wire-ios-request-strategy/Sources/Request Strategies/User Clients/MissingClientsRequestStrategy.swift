@@ -25,6 +25,8 @@ public final class MissingClientsRequestStrategy: AbstractRequestStrategy, ZMUps
     fileprivate(set) var modifiedSync: ZMUpstreamModifiedObjectSync! = nil
     public var requestsFactory = MissingClientsRequestFactory()
 
+    private let processor = PrekeyPayloadProcessor()
+
     public override init(withManagedObjectContext managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus) {
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
@@ -116,11 +118,13 @@ public final class MissingClientsRequestStrategy: AbstractRequestStrategy, ZMUps
     }
 
     /// Returns whether synchronization of this object needs additional requests
-    public func updateUpdatedObject(_ managedObject: ZMManagedObject,
-                                    requestUserInfo: [AnyHashable: Any]?,
-                                    response: ZMTransportResponse,
-                                    keysToParse: Set<String>) -> Bool {
 
+    public func updateUpdatedObject(
+        _ managedObject: ZMManagedObject,
+        requestUserInfo: [AnyHashable: Any]?,
+        response: ZMTransportResponse,
+        keysToParse: Set<String>
+    ) -> Bool {
         guard let apiVersion = APIVersion(rawValue: response.apiVersion) else {
             return false
         }
@@ -128,34 +132,50 @@ public final class MissingClientsRequestStrategy: AbstractRequestStrategy, ZMUps
         if keysToParse.contains(ZMUserClientMissingKey) {
             switch apiVersion {
             case .v0:
-                guard let rawData = response.rawData,
-                      let prekeys = Payload.PrekeyByUserID(rawData),
-                      let selfClient = ZMUser.selfUser(in: managedObjectContext).selfClient()
+                guard 
+                    let rawData = response.rawData,
+                    let prekeys = Payload.PrekeyByUserID(rawData),
+                    let selfClient = ZMUser.selfUser(in: managedObjectContext).selfClient()
                 else {
                     return false
                 }
 
-                return prekeys.establishSessions(with: selfClient, context: managedObjectContext)
+                return processor.establishSessions(
+                    from: prekeys,
+                    with: selfClient,
+                    context: managedObjectContext
+                )
 
             case .v1, .v2, .v3:
-                guard let rawData = response.rawData,
-                      let prekeys = Payload.PrekeyByQualifiedUserID(rawData),
-                      let selfClient = ZMUser.selfUser(in: managedObjectContext).selfClient()
+                guard 
+                    let rawData = response.rawData,
+                    let prekeys = Payload.PrekeyByQualifiedUserID(rawData),
+                    let selfClient = ZMUser.selfUser(in: managedObjectContext).selfClient()
                 else {
                     return false
                 }
 
-                return prekeys.establishSessions(with: selfClient, context: managedObjectContext)
+                return processor.establishSessions(
+                    from: prekeys,
+                    with: selfClient,
+                    context: managedObjectContext
+                )
 
             case .v4, .v5:
-                guard let rawData = response.rawData,
-                      let payload = Payload.PrekeyByQualifiedUserIDV4(rawData),
-                      let selfClient = ZMUser.selfUser(in: managedObjectContext).selfClient()
+                guard
+                    let rawData = response.rawData,
+                    let payload = Payload.PrekeyByQualifiedUserIDV4(rawData),
+                    let selfClient = ZMUser.selfUser(in: managedObjectContext).selfClient()
                 else {
                     return false
                 }
+
                 let prekeys = payload.prekeyByQualifiedUserID
-                return prekeys.establishSessions(with: selfClient, context: managedObjectContext)
+                return processor.establishSessions(
+                    from: prekeys,
+                    with: selfClient,
+                    context: managedObjectContext
+                )
             }
         } else {
             fatal("We only expect request about missing clients")

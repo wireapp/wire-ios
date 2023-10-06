@@ -462,6 +462,8 @@ class ConversationByIDTranscoder: IdentifierObjectSyncTranscoder {
     let decoder: JSONDecoder = .defaultDecoder
     let encoder: JSONEncoder = .defaultEncoder
 
+    private let processor = ConversationEventPayloadProcessor()
+
     init(context: NSManagedObjectContext) {
         self.context = context
     }
@@ -499,7 +501,10 @@ class ConversationByIDTranscoder: IdentifierObjectSyncTranscoder {
             return
         }
 
-        payload.updateOrCreate(in: context)
+        processor.updateOrCreateConversation(
+            from: payload,
+            in: context
+        )
     }
 
     private func deleteConversations(_ conversations: Set<UUID>) {
@@ -554,6 +559,8 @@ class ConversationByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
     let decoder: JSONDecoder = .defaultDecoder
     let encoder: JSONEncoder = .defaultEncoder
 
+    private let processor = ConversationEventPayloadProcessor()
+
     init(context: NSManagedObjectContext) {
         self.context = context
     }
@@ -590,14 +597,19 @@ class ConversationByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
         guard
             let apiVersion = APIVersion(rawValue: response.apiVersion),
             let rawData = response.rawData,
-            let payload = Payload.Conversation(rawData,
-                                               apiVersion: apiVersion,
-                                               decoder: decoder)
+            let payload = Payload.Conversation(
+                rawData,
+                apiVersion: apiVersion,
+                decoder: decoder
+            )
         else {
             return Logging.network.warn("Can't process response, aborting.")
         }
 
-        payload.updateOrCreate(in: context)
+        processor.updateOrCreateConversation(
+            from: payload,
+            in: context
+        )
     }
 
     private func deleteConversations(_ conversations: Set<QualifiedID>) {
@@ -649,6 +661,8 @@ class ConversationByIDListTranscoder: IdentifierObjectSyncTranscoder {
     let decoder: JSONDecoder = .defaultDecoder
     let encoder: JSONEncoder = .defaultEncoder
 
+    private let processor = ConversationEventPayloadProcessor()
+
     init(context: NSManagedObjectContext) {
         self.context = context
     }
@@ -670,7 +684,10 @@ class ConversationByIDListTranscoder: IdentifierObjectSyncTranscoder {
             return
         }
 
-        payload.updateOrCreateConverations(in: context)
+        processor.updateOrCreateConversations(
+            from: payload,
+            in: context
+        )
 
         let missingIdentifiers = identifiers.subtracting(payload.conversations.compactMap(\.id))
         queryStatusForMissingConversations(missingIdentifiers)
@@ -695,6 +712,8 @@ class ConversationByQualifiedIDListTranscoder: IdentifierObjectSyncTranscoder {
     let context: NSManagedObjectContext
     let decoder: JSONDecoder = .defaultDecoder
     let encoder: JSONEncoder = .defaultEncoder
+
+    private let processor = ConversationEventPayloadProcessor()
 
     init(context: NSManagedObjectContext) {
         self.context = context
@@ -723,7 +742,10 @@ class ConversationByQualifiedIDListTranscoder: IdentifierObjectSyncTranscoder {
             return
         }
 
-        payload.updateOrCreateConverations(in: context)
+        processor.updateOrCreateConverations(
+            from: payload,
+            in: context
+        )
 
         queryStatusForMissingConversations(payload.notFound)
         queryStatusForFailedConversations(payload.failed)

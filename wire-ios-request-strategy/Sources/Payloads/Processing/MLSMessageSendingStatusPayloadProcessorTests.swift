@@ -1,3 +1,4 @@
+//
 // Wire
 // Copyright (C) 2023 Wire Swiss GmbH
 //
@@ -18,16 +19,24 @@
 import XCTest
 @testable import WireRequestStrategy
 
-class PayloadProcessing_MLSMessageSendingStatusTests: MessagingTestBase {
+final class MLSMessageSendingStatusPayloadProcessorTests: MessagingTestBase {
 
     let domain = "example.com"
+    var sut: MLSMessageSendingStatusPayloadProcessor!
 
     override func setUp() {
         super.setUp()
 
+        sut = MLSMessageSendingStatusPayloadProcessor()
+
         syncMOC.performGroupedBlockAndWait {
             self.otherUser.domain = self.domain
         }
+    }
+
+    override func tearDown() {
+        sut = nil
+        super.tearDown()
     }
 
     func testThatItAddsFailedToSendRecipients() throws {
@@ -46,7 +55,10 @@ class PayloadProcessing_MLSMessageSendingStatusTests: MessagingTestBase {
             let payload = Payload.MLSMessageSendingStatus(time: Date(),
                                                           events: [Data()],
                                                           failedToSend: failedToSendUsers)
-            payload.updateFailedRecipients(for: message)
+            self.sut.updateFailedRecipients(
+                from: payload,
+                for: message
+            )
 
             // Then
             XCTAssertEqual(message.failedToSendRecipients?.count, 1)

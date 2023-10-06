@@ -83,6 +83,8 @@ public final class CreateGroupConversationAction: EntityAction {
 
 final class CreateGroupConversationActionHandler: ActionHandler<CreateGroupConversationAction> {
 
+    private let processor = ConversationEventPayloadProcessor()
+
     // MARK: - Request generation
 
     override func request(
@@ -189,7 +191,10 @@ final class CreateGroupConversationActionHandler: ActionHandler<CreateGroupConve
             let apiVersion = APIVersion(rawValue: response.apiVersion),
             let rawData = response.rawData,
             let payload = Payload.Conversation(rawData, apiVersion: apiVersion),
-            let newConversation = payload.updateOrCreate(in: context)
+            let newConversation = processor.updateOrCreateConversation(
+                from: payload,
+                in: context
+            )
         else {
             Logging.network.warn("Can't process response, aborting.")
             action.fail(with: .proccessingError)
