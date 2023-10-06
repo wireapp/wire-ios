@@ -22,6 +22,8 @@ class ConnectToUserActionHandler: ActionHandler<ConnectToUserAction> {
     let decoder: JSONDecoder = .defaultDecoder
     let encoder: JSONEncoder = .defaultEncoder
 
+    private let processor = ConnectionPayloadProcessor()
+
     override func request(for action: ActionHandler<ConnectToUserAction>.Action, apiVersion: APIVersion) -> ZMTransportRequest? {
         switch apiVersion {
         case .v0:
@@ -92,9 +94,14 @@ class ConnectToUserActionHandler: ActionHandler<ConnectToUserAction> {
             return
         }
 
-        let connection = Payload.Connection(response, decoder: decoder)
-        connection?.updateOrCreate(in: context)
-        context.saveOrRollback()
+        if let connection = Payload.Connection(response, decoder: decoder) {
+            processor.updateOrCreateConnection(
+                from: connection,
+                in: context
+            )
+            context.saveOrRollback()
+        }
+
         action.notifyResult(.success(Void()))
     }
 

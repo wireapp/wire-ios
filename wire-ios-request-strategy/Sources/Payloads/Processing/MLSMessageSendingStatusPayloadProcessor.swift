@@ -1,3 +1,4 @@
+//
 // Wire
 // Copyright (C) 2023 Wire Swiss GmbH
 //
@@ -17,10 +18,13 @@
 
 import Foundation
 
-extension Payload.MLSMessageSendingStatus {
+final class MLSMessageSendingStatusPayloadProcessor {
 
-    func updateFailedRecipients(for message: OTREntity) {
-        guard let failedToSendUserIDs = failedToSend else {
+    func updateFailedRecipients(
+        from payload: Payload.MLSMessageSendingStatus,
+        for message: OTREntity
+    ) {
+        guard let failedToSendUserIDs = payload.failedToSend else {
             return
         }
 
@@ -31,7 +35,6 @@ extension Payload.MLSMessageSendingStatus {
         if !failedToSendUsers.isEmpty {
             message.addFailedToSendRecipients(failedToSendUsers)
         }
-
     }
 
 }
