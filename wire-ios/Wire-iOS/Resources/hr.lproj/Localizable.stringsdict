@@ -103,11 +103,11 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>lu</string>
         <key>one</key>
-        <string>je dodan</string>
+        <string>has been added</string>
         <key>few</key>
-        <string>su dodana</string>
+        <string>have been added</string>
         <key>other</key>
-        <string>su dodana</string>
+        <string>have been added</string>
       </dict>
     </dict>
     <key>content.system.missing_messages.subtitle_removed</key>
@@ -121,11 +121,11 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>lu</string>
         <key>one</key>
-        <string>je uklonjen</string>
+        <string>has been removed</string>
         <key>few</key>
-        <string>je uklonjena</string>
+        <string>have been removed</string>
         <key>other</key>
-        <string>je uklonjeno</string>
+        <string>have been removed</string>
       </dict>
     </dict>
     <key>list.connect_request.people_waiting</key>

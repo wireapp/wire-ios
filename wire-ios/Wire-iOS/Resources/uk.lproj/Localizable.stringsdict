@@ -113,13 +113,13 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>lu</string>
         <key>one</key>
-        <string>був(-ла) доданий(-а)</string>
+        <string>has been added</string>
         <key>few</key>
-        <string>було додано</string>
+        <string>have been added</string>
         <key>many</key>
-        <string>було додано</string>
+        <string>have been added</string>
         <key>other</key>
-        <string>було додано</string>
+        <string>have been added</string>
       </dict>
     </dict>
     <key>content.system.missing_messages.subtitle_removed</key>
@@ -133,13 +133,13 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>lu</string>
         <key>one</key>
-        <string>був(-ла) видалений(-а)</string>
+        <string>has been removed</string>
         <key>few</key>
-        <string>було видалено</string>
+        <string>have been removed</string>
         <key>many</key>
-        <string>було видалено</string>
+        <string>have been removed</string>
         <key>other</key>
-        <string>було видалено</string>
+        <string>have been removed</string>
       </dict>
     </dict>
     <key>list.connect_request.people_waiting</key>

@@ -552,8 +552,8 @@
 "content.system.unverified_self_devices" = " Вы отозвали верификацию одного из [своих устройств](%@)";
 "content.system.unverified_other_devices" = "Вы отозвали верификацию одного из [%1$@ устройств](%2$@)";
 
-"content.system.missing_messages.title" = "Вы не использовали это устройство продолжительное время. Некоторые сообщения могут не отображаться.";
-"content.system.missing_messages.subtitle_start" = "Тем временем,";
+"content.system.missing_messages.title" = "You haven’t used this device for a while. Some messages may not appear here.";
+"content.system.missing_messages.subtitle_start" = "Meanwhile,";
 
 "content.system.cannot_decrypt.self" = "Не удалось расшифровать ваше сообщение.";
 "content.system.cannot_decrypt.other" = "Не удалось расшифровать сообщение от %@.";
@@ -620,8 +620,8 @@
 "content.file.too_big" = "Вы можете отправлять файлы до %@";
 
 // Reactions
-"content.reactions.title" = "Выбрать реакцию";
-"content.reactions.search" = "Поиск смайликов";
+"content.reactions.title" = "Select reaction";
+"content.reactions.search" = "Search for emoji";
 
 // Someone pinged
 "content.ping.text" = "%@ отправил(-а) пинг";
@@ -1726,6 +1726,7 @@
 "databaseloadingfailure.alert.delete_database" = "Удалить базу данных";
 "databaseloadingfailure.alert.delete_database.message" = "При удалении базы данных все локальные данные и сообщения этого аккаунта будут удалены навсегда.";
 "databaseloadingfailure.alert.delete_database.continue" = "Продолжить";
+"databaseloadingfailure.alert.retry" = "Повторить";
 
 // Backend not supported alert
 "backend_not_supported.alert.title" = "Версия сервера не поддерживается";
@@ -2019,4 +2020,4 @@
 
 // MARK: - Time
 
-"time.just_now" = "Только что";
+"time.just_now" = "Just now";

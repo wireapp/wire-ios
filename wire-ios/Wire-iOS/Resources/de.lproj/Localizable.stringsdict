@@ -13,9 +13,9 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>%2$@ konnte nicht zur Gruppe hinzugefügt werden.</string>
+        <string>%2$@ konnte der Gruppe nicht hinzugefügt werden.</string>
         <key>other</key>
-        <string>%2$@ konnten nicht zur Gruppe hinzugefügt werden.</string>
+        <string>%2$@ konnten der Gruppe nicht hinzugefügt werden.</string>
       </dict>
     </dict>
     <key>content.system.failedtosend_participants.will_never_get_message</key>
@@ -93,9 +93,9 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>lu</string>
         <key>one</key>
-        <string>wurde hinzugefügt</string>
+        <string>has been added</string>
         <key>other</key>
-        <string>wurden hinzugefügt</string>
+        <string>have been added</string>
       </dict>
     </dict>
     <key>content.system.missing_messages.subtitle_removed</key>
@@ -109,9 +109,9 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>lu</string>
         <key>one</key>
-        <string>wurde entfernt</string>
+        <string>has been removed</string>
         <key>other</key>
-        <string>wurden entfernt</string>
+        <string>have been removed</string>
       </dict>
     </dict>
     <key>list.connect_request.people_waiting</key>

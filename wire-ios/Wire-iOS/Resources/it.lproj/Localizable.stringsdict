@@ -93,9 +93,9 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>lu</string>
         <key>one</key>
-        <string>è stato aggiunto</string>
+        <string>has been added</string>
         <key>other</key>
-        <string>sono stati aggiunti</string>
+        <string>have been added</string>
       </dict>
     </dict>
     <key>content.system.missing_messages.subtitle_removed</key>
@@ -109,9 +109,9 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>lu</string>
         <key>one</key>
-        <string>è stato rimosso</string>
+        <string>has been removed</string>
         <key>other</key>
-        <string>sono stati rimossi</string>
+        <string>have been removed</string>
       </dict>
     </dict>
     <key>list.connect_request.people_waiting</key>

@@ -95,7 +95,7 @@
         <key>one</key>
         <string>has been added</string>
         <key>other</key>
-        <string>er lagt til</string>
+        <string>have been added</string>
       </dict>
     </dict>
     <key>content.system.missing_messages.subtitle_removed</key>

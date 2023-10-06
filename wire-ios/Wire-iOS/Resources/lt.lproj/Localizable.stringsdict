@@ -113,13 +113,13 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>lu</string>
         <key>one</key>
-        <string>buvo pridėtas</string>
+        <string>has been added</string>
         <key>few</key>
-        <string>buvo pridėti</string>
+        <string>have been added</string>
         <key>many</key>
-        <string>buvo pridėta</string>
+        <string>have been added</string>
         <key>other</key>
-        <string>buvo pridėtų</string>
+        <string>have been added</string>
       </dict>
     </dict>
     <key>content.system.missing_messages.subtitle_removed</key>
@@ -133,13 +133,13 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>lu</string>
         <key>one</key>
-        <string>buvo pašalintas</string>
+        <string>has been removed</string>
         <key>few</key>
-        <string>buvo pašalinti</string>
+        <string>have been removed</string>
         <key>many</key>
-        <string>bus pašalinta</string>
+        <string>have been removed</string>
         <key>other</key>
-        <string>buvo pašalintų</string>
+        <string>have been removed</string>
       </dict>
     </dict>
     <key>list.connect_request.people_waiting</key>

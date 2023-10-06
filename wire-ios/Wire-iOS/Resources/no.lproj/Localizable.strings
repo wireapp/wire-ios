@@ -552,8 +552,8 @@
 "content.system.unverified_self_devices" = "You unverified one of [your devices](%@)";
 "content.system.unverified_other_devices" = "You unverified one of [%1$@’s devices](%2$@)";
 
-"content.system.missing_messages.title" = "Du har ikke brukt denne enheten på en stund. Noen meldinger vises kanskje ikke her.";
-"content.system.missing_messages.subtitle_start" = "I mellomtiden,";
+"content.system.missing_messages.title" = "You haven’t used this device for a while. Some messages may not appear here.";
+"content.system.missing_messages.subtitle_start" = "Meanwhile,";
 
 "content.system.cannot_decrypt.self" = "A message from you could not be decrypted.";
 "content.system.cannot_decrypt.other" = "A message from %@ could not be decrypted.";
@@ -620,8 +620,8 @@
 "content.file.too_big" = "Du kan sende filer opp til %@";
 
 // Reactions
-"content.reactions.title" = "Select Reaction";
-"content.reactions.search" = "Search for Emoji";
+"content.reactions.title" = "Select reaction";
+"content.reactions.search" = "Search for emoji";
 
 // Someone pinged
 "content.ping.text" = "%@ pinged";
@@ -1726,6 +1726,7 @@
 "databaseloadingfailure.alert.delete_database" = "Delete Database";
 "databaseloadingfailure.alert.delete_database.message" = "By deleting the database, all local data and messages for this account will be permanently deleted.";
 "databaseloadingfailure.alert.delete_database.continue" = "Fortsett";
+"databaseloadingfailure.alert.retry" = "Retry";
 
 // Backend not supported alert
 "backend_not_supported.alert.title" = "Server version not supported";

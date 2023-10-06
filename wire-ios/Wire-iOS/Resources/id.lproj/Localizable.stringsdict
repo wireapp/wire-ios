@@ -83,7 +83,7 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>lu</string>
         <key>other</key>
-        <string>telah ditambahkan</string>
+        <string>have been added</string>
       </dict>
     </dict>
     <key>content.system.missing_messages.subtitle_removed</key>
@@ -97,7 +97,7 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>lu</string>
         <key>other</key>
-        <string>telah dihapus</string>
+        <string>have been removed</string>
       </dict>
     </dict>
     <key>list.connect_request.people_waiting</key>

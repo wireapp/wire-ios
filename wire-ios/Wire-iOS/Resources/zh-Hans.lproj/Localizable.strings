@@ -552,8 +552,8 @@
 "content.system.unverified_self_devices" = "You unverified one of [your devices](%@)";
 "content.system.unverified_other_devices" = "You unverified one of [%1$@’s devices](%2$@)";
 
-"content.system.missing_messages.title" = "你有一段沒有使用此设备, 一些信息可能不会在这里出现";
-"content.system.missing_messages.subtitle_start" = "同时，";
+"content.system.missing_messages.title" = "You haven’t used this device for a while. Some messages may not appear here.";
+"content.system.missing_messages.subtitle_start" = "Meanwhile,";
 
 "content.system.cannot_decrypt.self" = "A message from you could not be decrypted.";
 "content.system.cannot_decrypt.other" = "A message from %@ could not be decrypted.";
@@ -620,8 +620,8 @@
 "content.file.too_big" = "您可以发送最大%@的文件。";
 
 // Reactions
-"content.reactions.title" = "Select Reaction";
-"content.reactions.search" = "Search for Emoji";
+"content.reactions.title" = "Select reaction";
+"content.reactions.search" = "Search for emoji";
 
 // Someone pinged
 "content.ping.text" = "%@ping了一下";
@@ -1726,6 +1726,7 @@
 "databaseloadingfailure.alert.delete_database" = "删除数据库";
 "databaseloadingfailure.alert.delete_database.message" = "By deleting the database, all local data and messages for this account will be permanently deleted.";
 "databaseloadingfailure.alert.delete_database.continue" = "继续";
+"databaseloadingfailure.alert.retry" = "Retry";
 
 // Backend not supported alert
 "backend_not_supported.alert.title" = "Server version not supported";
