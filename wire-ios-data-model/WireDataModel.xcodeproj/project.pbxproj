@@ -572,6 +572,7 @@
 		EEB5DE112837BD52009B4741 /* store2-101-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = EEB5DE102837BD52009B4741 /* store2-101-0.wiredatabase */; };
 		EEB803AB283F61E600412F62 /* Feature.MLS.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEB803AA283F61E600412F62 /* Feature.MLS.swift */; };
 		EEB930B32ABD59CB00FB35B2 /* store2-110-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = EEB930B22ABD59CB00FB35B2 /* store2-110-0.wiredatabase */; };
+		EEB930B52ABD5A9B00FB35B2 /* FetchSupportedProtocolsAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEB930B42ABD5A9B00FB35B2 /* FetchSupportedProtocolsAction.swift */; };
 		EEBACDA525B9C243000210AC /* LAContextProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEBACDA425B9C243000210AC /* LAContextProtocol.swift */; };
 		EEBACDA725B9C2C6000210AC /* AppLockType.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEBACDA625B9C2C6000210AC /* AppLockType.swift */; };
 		EEBACDA925B9C47E000210AC /* AppLockController.Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEBACDA825B9C47E000210AC /* AppLockController.Config.swift */; };
@@ -1482,6 +1483,7 @@
 		EEB803AA283F61E600412F62 /* Feature.MLS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Feature.MLS.swift; sourceTree = "<group>"; };
 		EEB930B12ABD57A700FB35B2 /* zmessaging2.110.0.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = zmessaging2.110.0.xcdatamodel; sourceTree = "<group>"; };
 		EEB930B22ABD59CB00FB35B2 /* store2-110-0.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; path = "store2-110-0.wiredatabase"; sourceTree = "<group>"; };
+		EEB930B42ABD5A9B00FB35B2 /* FetchSupportedProtocolsAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchSupportedProtocolsAction.swift; sourceTree = "<group>"; };
 		EEBACDA425B9C243000210AC /* LAContextProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LAContextProtocol.swift; sourceTree = "<group>"; };
 		EEBACDA625B9C2C6000210AC /* AppLockType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockType.swift; sourceTree = "<group>"; };
 		EEBACDA825B9C47E000210AC /* AppLockController.Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockController.Config.swift; sourceTree = "<group>"; };
@@ -2117,6 +2119,7 @@
 				6308F8A32A273C680072A177 /* FetchMLSSubconversationGroupInfoAction.swift */,
 				EE0DE5032A24D2A10029746C /* DeleteSubgroupAction.swift */,
 				EEE95CD42A432FA100E136CB /* LeaveSubconversationAction.swift */,
+				EEB930B42ABD5A9B00FB35B2 /* FetchSupportedProtocolsAction.swift */,
 			);
 			path = Actions;
 			sourceTree = "<group>";
@@ -3817,6 +3820,7 @@
 				F1FDF2F721B152BC00E037A1 /* GenericMessage+Helper.swift in Sources */,
 				16030DC521AEE25500F8032E /* ZMOTRMessage+Confirmations.swift in Sources */,
 				D5FA30C52063DC2D00716618 /* BackupMetadata.swift in Sources */,
+				EEB930B52ABD5A9B00FB35B2 /* FetchSupportedProtocolsAction.swift in Sources */,
 				BF8361DA1F0A3C41009AE5AC /* NSSecureCoding+Swift.swift in Sources */,
 				16CDEBFB2209D13B00E74A41 /* ZMMessage+Quotes.swift in Sources */,
 				EE997A1425062295008336D2 /* Logging.swift in Sources */,

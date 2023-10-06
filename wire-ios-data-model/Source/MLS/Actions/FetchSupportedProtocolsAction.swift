@@ -16,31 +16,34 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-@testable import WireSyncEngine
+import Foundation
 
-public class MockUserRepositoryInterface: UserRepositoryInterface {
+public final class FetchSupportedProtocolsAction: EntityAction {
+
+    public typealias Result = Set<MessageProtocol>
+
+    public enum Failure: Error, Equatable {
+
+        case endpointUnavailable
+        case invalidParameters
+        case invalidResponse
+        case unknown(status: Int, label: String, message: String)
+
+    }
+
+    // MARK: - Properties
+
+    public let userID: QualifiedID
+    public var resultHandler: ResultHandler?
 
     // MARK: - Life cycle
 
-    public init() {}
-
-    // MARK: - selfUser
-
-    public var selfUser_Invocations: [Void] = []
-    public var selfUser_MockMethod: (() -> ZMUser)?
-    public var selfUser_MockValue: ZMUser?
-
-    public func selfUser() -> ZMUser {
-        selfUser_Invocations.append(())
-
-        if let mock = selfUser_MockMethod {
-            return mock()
-        } else if let mock = selfUser_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `selfUser`")
-        }
+    public init(
+        userID: QualifiedID,
+        resultHandler: ResultHandler? = nil
+    ) {
+        self.userID = userID
+        self.resultHandler = resultHandler
     }
 
 }
