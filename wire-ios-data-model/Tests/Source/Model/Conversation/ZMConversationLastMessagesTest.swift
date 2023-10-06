@@ -21,7 +21,7 @@ import XCTest
 import WireTesting
 @testable import WireDataModel
 
-class ZMConversationLastMessagesTest: ZMBaseManagedObjectTest {
+class ZMConversationLastMessagesTest : ZMBaseManagedObjectTest {
 
     override class func setUp() {
         DeveloperFlag.storage = UserDefaults(suiteName: UUID().uuidString)!
