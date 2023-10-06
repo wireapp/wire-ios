@@ -20,8 +20,14 @@ import Foundation
 import Combine
 import WireDataModel
 
+struct ConferenceParticipantsInfo {
+    let participants: [CallParticipant]
+    let selfUserID: AVSIdentifier
+}
+
 struct MLSConferenceParticipantsInfo {
     let participants: [CallParticipant]
+    let selfUserID: AVSIdentifier
     let subconversationID: MLSGroupID
 }
 
@@ -32,7 +38,8 @@ extension WireCallCenterV3 {
     ) -> AnyPublisher<MLSConferenceParticipantsInfo, Never> {
         onParticipantsChanged().compactMap {
             MLSConferenceParticipantsInfo(
-                participants: $0,
+                participants: $0.participants,
+                selfUserID: $0.selfUserID,
                 subconversationID: subconversationID
             )
         }.eraseToAnyPublisher()

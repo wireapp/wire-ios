@@ -103,7 +103,7 @@ class MockCoreCrypto: CoreCryptoProtocol {
 
     // MARK: - createConversation
 
-    var mockCreateConversation: ((ConversationId, MlsCredentialType,  ConversationConfiguration) throws -> Void)?
+    var mockCreateConversation: ((ConversationId, MlsCredentialType, ConversationConfiguration) throws -> Void)?
 
     func createConversation(conversationId: ConversationId, creatorCredentialType: MlsCredentialType, config: ConversationConfiguration) throws {
         guard let mock = mockCreateConversation else {

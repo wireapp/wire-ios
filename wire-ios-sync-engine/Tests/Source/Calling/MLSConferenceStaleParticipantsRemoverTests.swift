@@ -31,6 +31,7 @@ class MLSConferenceStaleParticipantsRemoverTests: MessagingTest {
 
     private var mlsService: MockMLSService!
     private var sut: MLSConferenceStaleParticipantsRemover!
+    private var selfUserID: AVSIdentifier!
 
     override func setUp() {
         super.setUp()
@@ -41,8 +42,7 @@ class MLSConferenceStaleParticipantsRemoverTests: MessagingTest {
             removalTimeout: 0.4
         )
 
-        let selfUser = ZMUser.selfUser(in: uiMOC)
-        selfUser.remoteIdentifier = UUID()
+        selfUserID = AVSIdentifier(identifier: UUID(), domain: domain)
     }
 
     override func tearDown() {
@@ -78,6 +78,7 @@ class MLSConferenceStaleParticipantsRemoverTests: MessagingTest {
         _ = sut.receive(
             MLSConferenceParticipantsInfo(
                 participants: participants.map(\.callParticipant),
+                selfUserID: selfUserID,
                 subconversationID: groupID
             )
         )
@@ -105,6 +106,7 @@ class MLSConferenceStaleParticipantsRemoverTests: MessagingTest {
         _ = sut.receive(
             MLSConferenceParticipantsInfo(
                 participants: participants.map(\.callParticipant),
+                selfUserID: selfUserID,
                 subconversationID: groupID
             )
         )
@@ -121,6 +123,7 @@ class MLSConferenceStaleParticipantsRemoverTests: MessagingTest {
         _ = sut.receive(
             MLSConferenceParticipantsInfo(
                 participants: participants.map(\.callParticipant),
+                selfUserID: selfUserID,
                 subconversationID: groupID
             )
         )
@@ -156,6 +159,7 @@ class MLSConferenceStaleParticipantsRemoverTests: MessagingTest {
         _ = sut.receive(
             MLSConferenceParticipantsInfo(
                 participants: participants.map(\.callParticipant),
+                selfUserID: selfUserID,
                 subconversationID: groupID
             )
         )
@@ -190,6 +194,7 @@ class MLSConferenceStaleParticipantsRemoverTests: MessagingTest {
         _ = sut.receive(
             MLSConferenceParticipantsInfo(
                 participants: participants.map(\.callParticipant),
+                selfUserID: selfUserID,
                 subconversationID: groupID
             )
         )
