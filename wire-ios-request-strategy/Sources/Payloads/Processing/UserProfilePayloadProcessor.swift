@@ -1,5 +1,6 @@
+//
 // Wire
-// Copyright (C) 2021 Wire Swiss GmbH
+// Copyright (C) 2023 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,7 +18,29 @@
 
 import Foundation
 
-extension Payload.UserProfile {
+final class UserProfilePayloadProcessor {
+
+    /// Update all user entities with the data from the user profiles.
+    ///
+    /// - parameter context: `NSManagedObjectContext` on which the update should be performed.
+    func updateUserProfiles(
+        from userProfiles: Payload.UserProfiles,
+        in context: NSManagedObjectContext
+    ) {
+        for userProfile in userProfiles {
+            guard
+                let id = userProfile.id ?? userProfile.qualifiedID?.uuid,
+                let user = ZMUser.fetch(with: id, domain: userProfile.qualifiedID?.domain, in: context)
+            else {
+                continue
+            }
+
+            updateUserProfile(
+                from: userProfile,
+                for: user
+            )
+        }
+    }
 
     /// Update a user entity with the data from a user profile payload.
     ///
@@ -29,70 +52,78 @@ extension Payload.UserProfile {
     /// - parameter authoritative: If **true** the update will be applied as if the update
     ///                            is a full update, any missing fields will be removed from
     ///                            the entity.
-    func updateUserProfile(for user: ZMUser, authoritative: Bool = true) {
-        if let qualifiedID = qualifiedID, BackendInfo.isFederationEnabled {
+
+    func updateUserProfile(
+        from payload: Payload.UserProfile,
+        for user: ZMUser,
+        authoritative: Bool = true
+    ) {
+        if let qualifiedID = payload.qualifiedID, BackendInfo.isFederationEnabled {
             precondition(user.remoteIdentifier == nil || user.remoteIdentifier == qualifiedID.uuid)
             precondition(user.domain == nil || user.domain == qualifiedID.domain)
 
             user.remoteIdentifier = qualifiedID.uuid
             user.domain = qualifiedID.domain
-        } else if let id = id {
+        } else if let id = payload.id {
             precondition(user.remoteIdentifier == nil || user.remoteIdentifier == id)
-
             user.remoteIdentifier = id
         }
 
-        if let serviceID = serviceID {
+        if let serviceID = payload.serviceID {
             user.serviceIdentifier = serviceID.id.transportString()
             user.providerIdentifier = serviceID.provider.transportString()
         }
 
-        if updatedKeys.contains(.teamID) || authoritative {
-            user.teamIdentifier = teamID
+        if payload.updatedKeys.contains(.teamID) || authoritative {
+            user.teamIdentifier = payload.teamID
             user.createOrDeleteMembershipIfBelongingToTeam()
         }
 
-        if SSOID != nil || authoritative {
-            if let subject = SSOID?.subject {
+        if payload.SSOID != nil || authoritative {
+            if let subject = payload.SSOID?.subject {
                 user.usesCompanyLogin = !subject.isEmpty
             } else {
                 user.usesCompanyLogin = false
             }
         }
 
-        if isDeleted == true {
+        if payload.isDeleted == true {
             user.markAccountAsDeleted(at: Date())
         }
 
-        if (name != nil || authoritative) && !user.isAccountDeleted {
-            user.name = name
+        if (payload.name != nil || authoritative) && !user.isAccountDeleted {
+            user.name = payload.name
         }
 
-        if (updatedKeys.contains(.phone) || authoritative) && !user.isAccountDeleted {
-            user.phoneNumber = phone?.removingExtremeCombiningCharacters
+        if (payload.updatedKeys.contains(.phone) || authoritative) && !user.isAccountDeleted {
+            user.phoneNumber = payload.phone?.removingExtremeCombiningCharacters
         }
 
-        if (updatedKeys.contains(.email) || authoritative) && !user.isAccountDeleted {
-            user.emailAddress = email?.removingExtremeCombiningCharacters
+        if (payload.updatedKeys.contains(.email) || authoritative) && !user.isAccountDeleted {
+            user.emailAddress = payload.email?.removingExtremeCombiningCharacters
         }
 
-        if (handle != nil || authoritative) && !user.isAccountDeleted {
-            user.handle = handle
+        if (payload.handle != nil || authoritative) && !user.isAccountDeleted {
+            user.handle = payload.handle
         }
 
-        if managedBy != nil || authoritative {
-             user.managedBy = managedBy
+        if payload.managedBy != nil || authoritative {
+            user.managedBy = payload.managedBy
         }
 
-        if let accentColor = accentColor, let accentColorValue = ZMAccentColor(rawValue: Int16(accentColor)) {
+        if let accentColor = payload.accentColor, let accentColorValue = ZMAccentColor(rawValue: Int16(accentColor)) {
             user.accentColorValue = accentColorValue
         }
 
-        if let expiresAt = expiresAt {
+        if let expiresAt = payload.expiresAt {
             user.expiresAt = expiresAt
         }
 
-        updateAssets(for: user, authoritative: authoritative)
+        updateAssets(
+            from: payload,
+            for: user,
+            authoritative: authoritative
+        )
 
         if authoritative {
             user.needsToBeUpdatedFromBackend = false
@@ -102,13 +133,20 @@ extension Payload.UserProfile {
         user.updatePotentialGapSystemMessagesIfNeeded()
     }
 
-    func updateAssets(for user: ZMUser, authoritative: Bool = true) {
-        let assetKeys: Set<String> = [ZMUser.previewProfileAssetIdentifierKey, ZMUser.completeProfileAssetIdentifierKey]
+    func updateAssets(
+        from payload: Payload.UserProfile,
+        for user: ZMUser,
+        authoritative: Bool = true
+    ) {
+        let assetKeys: Set<String> = [
+            ZMUser.previewProfileAssetIdentifierKey,
+            ZMUser.completeProfileAssetIdentifierKey
+        ]
         guard !user.hasLocalModifications(forKeys: assetKeys) else {
             return
         }
 
-        let validAssets = assets?.filter(\.key.isValidAssetID)
+        let validAssets = payload.assets?.filter(\.key.isValidAssetID)
         let previewAssetKey = validAssets?.first(where: {$0.size == .preview }).map(\.key)
         let completeAssetKey = validAssets?.first(where: {$0.size == .complete }).map(\.key)
 
@@ -118,27 +156,6 @@ extension Payload.UserProfile {
 
         if completeAssetKey != nil || authoritative {
             user.completeProfileAssetIdentifier = completeAssetKey
-        }
-    }
-
-}
-
-extension Payload.UserProfiles {
-
-    /// Update all user entities with the data from the user profiles.
-    ///
-    /// - parameter context: `NSManagedObjectContext` on which the update should be performed.
-    func updateUserProfiles(in context: NSManagedObjectContext) {
-
-        for userProfile in self {
-            guard
-                let id = userProfile.id ?? userProfile.qualifiedID?.uuid,
-                let user = ZMUser.fetch(with: id, domain: userProfile.qualifiedID?.domain, in: context)
-            else {
-                continue
-            }
-
-            userProfile.updateUserProfile(for: user)
         }
     }
 

@@ -134,6 +134,8 @@ extension OTREntity {
             return []
         }
 
+        let processor = MessageSendingStatusPayloadProcessor()
+
         var clientListByUser = Payload.ClientListByUser()
         switch apiVersion {
         case .v0:
@@ -143,12 +145,22 @@ extension OTREntity {
             else {
                 return []
             }
-            clientListByUser = clientListByUserID.materializingUsers(withDomain: nil, in: context)
+
+            clientListByUser = processor.materializingUsers(
+                from: clientListByUserID,
+                withDomain: nil,
+                in: context
+            )
+
         case .v1, .v2, .v3, .v4, .v5:
             guard let payload = Payload.MessageSendingStatus(response) else {
                 return []
             }
-            clientListByUser = payload.missingClientListByUser(context: context)
+
+            clientListByUser = processor.missingClientListByUser(
+                from: payload,
+                context: context
+            )
         }
 
         return parseMissingClients(clientListByUser, in: conversation)

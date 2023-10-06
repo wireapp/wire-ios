@@ -1,5 +1,6 @@
+//
 // Wire
-// Copyright (C) 2021 Wire Swiss GmbH
+// Copyright (C) 2023 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,13 +18,7 @@
 
 import Foundation
 
-// MARK: - Message sending
-
-extension Payload {
-    typealias ClientListByUser = [ZMUser: ClientList]
-}
-
-extension Payload.MessageSendingStatus {
+final class MessageSendingStatusPayloadProcessor {
 
     /// Updates the reported client changes after an attempt to send the message
     ///
@@ -32,11 +27,15 @@ extension Payload.MessageSendingStatus {
     ///
     /// If a message was missing clients we should attempt to send the message again
     /// after establishing sessions with the missing clients.
-    ///
-    func updateClientsChanges(for message: any ProteusMessage) -> Bool {
+
+    @discardableResult
+    func updateClientsChanges(
+        from payload: Payload.MessageSendingStatus,
+        for message: any ProteusMessage
+    ) -> Bool {
         WireLogger.messaging.debug("update client changes for message \(message.debugInfo)")
 
-        let deletedClients = deleted.fetchClients(in: message.context)
+        let deletedClients = payload.deleted.fetchClients(in: message.context)
 
         if !deletedClients.isEmpty {
             WireLogger.messaging.debug("detected deleted clients")
@@ -46,7 +45,7 @@ extension Payload.MessageSendingStatus {
             deletedClients.forEach { $0.deleteClientAndEndSession() }
         }
 
-        let redundantUsers = redundant.fetchUsers(in: message.context)
+        let redundantUsers = payload.redundant.fetchUsers(in: message.context)
         if !redundantUsers.isEmpty {
             WireLogger.messaging.debug("detected redundant users")
 
@@ -62,7 +61,7 @@ extension Payload.MessageSendingStatus {
             message.detectedRedundantUsers(redundantUsers)
         }
 
-        let missingClients = missing.fetchOrCreateClients(in: message.context)
+        let missingClients = payload.missing.fetchOrCreateClients(in: message.context)
 
         if !missingClients.isEmpty {
             WireLogger.messaging.debug("detected missing clients")
@@ -74,7 +73,7 @@ extension Payload.MessageSendingStatus {
             message.conversation?.addParticipantAndSystemMessageIfMissing(user, date: nil)
         }
 
-        let failedToConfirmUsers = failedToConfirm.fetchUsers(in: message.context)
+        let failedToConfirmUsers = payload.failedToConfirm.fetchUsers(in: message.context)
         if !failedToConfirmUsers.isEmpty {
             message.addFailedToSendRecipients(failedToConfirmUsers)
         }
@@ -82,25 +81,38 @@ extension Payload.MessageSendingStatus {
         return !missingClients.isEmpty
     }
 
-    func missingClientListByUser(context: NSManagedObjectContext) -> Payload.ClientListByUser {
-
-        let clientIDsByUser = missing.flatMap { (domain, clientIDsByUserID) in
-            clientIDsByUserID.materializingUsers(withDomain: domain, in: context)
+    func missingClientListByUser(
+        from payload: Payload.MessageSendingStatus,
+        context: NSManagedObjectContext
+    ) -> Payload.ClientListByUser {
+        let clientIDsByUser = payload.missing.flatMap { domain, clientIDsByUserID in
+            materializingUsers(
+                from: clientIDsByUserID,
+                withDomain: domain,
+                in: context
+            )
         }
 
         return Payload.ClientListByUser(clientIDsByUser, uniquingKeysWith: +)
     }
 
-}
+    func materializingUsers(
+        from clientsListByUserID: Payload.ClientListByUserID,
+        withDomain domain: String?,
+        in context: NSManagedObjectContext
+    ) -> [ZMUser: Payload.ClientList] {
+        return clientsListByUserID.reduce(into: Payload.ClientListByUser()) { result, next in
+            guard let userID = UUID(uuidString: next.key) else {
+                return
+            }
 
-extension Payload.ClientListByUserID {
+            let user = ZMUser.fetchOrCreate(
+                with: userID,
+                domain: domain,
+                in: context
+            )
 
-    func materializingUsers(withDomain domain: String?, in context: NSManagedObjectContext) -> Payload.ClientListByUser {
-
-        return reduce(into: Payload.ClientListByUser()) { (result, tuple: (userID: String, clientIDs: [String])) in
-            guard let userID = UUID(uuidString: tuple.userID) else { return }
-            let user = ZMUser.fetchOrCreate(with: userID, domain: domain, in: context)
-            result[user] = tuple.clientIDs
+            result[user] = next.value
         }
     }
 
