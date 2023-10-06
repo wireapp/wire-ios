@@ -38,6 +38,7 @@ excluded:
     - "**/*.pb.swift"
     - "**/*.generated.swift"
     - "**/*+Generated.swift"
+    - "wire-ios/Wire-iOS/Generated/Strings+Generated.swift"
 
 # In order to deal with the huge number of violations, first set
 # very high limits then iteratively reduce the limits and resolve
