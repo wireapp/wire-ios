@@ -258,14 +258,14 @@ extension ZMConversation {
                 do {
                     try await mlsService.addMembersToConversation(with: mlsUsers, for: mlsGroupID)
 
-                    await context.perform {
+                    context.perform {
                         completion(.success(()))
                     }
 
                 } catch {
                     Logging.mls.error("failed to add members to conversation (\(String(describing: qualifiedID))): \(String(describing: error))")
 
-                    await context.perform {
+                    context.perform {
                         completion(.failure(.failedToAddMLSMembers))
                     }
 

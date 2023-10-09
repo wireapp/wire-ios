@@ -264,7 +264,6 @@ public final class UTIHelper: NSObject {
 
     @objc
     public class func convertToMime(uti: String) -> String? {
-        print("something")
         guard let utType = UTType(uti) else {
             return nil
         }
