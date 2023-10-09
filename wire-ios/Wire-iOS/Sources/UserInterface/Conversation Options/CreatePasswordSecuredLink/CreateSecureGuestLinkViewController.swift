@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Down
 import UIKit
 import WireCommonComponents
 
@@ -42,19 +43,12 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
 
     private var viewModel = CreateSecureGuestLinkViewModel()
 
-    private let warningLabel: DynamicFontLabel = {
-
+    private let warningLabel: UILabel = {
         var paragraphStyle = NSMutableParagraphStyle()
-        var label = DynamicFontLabel(fontSpec: .mediumFont, color: LabelColors.textDefault)
+        var label = UILabel()
         label.numberOfLines = 0
-        label.lineBreakMode = .byWordWrapping
-        paragraphStyle.lineHeightMultiple = 0.98
-        label.attributedText = NSMutableAttributedString(
-            string: SecuredGuestLinkWithPasswordLocale.WarningLabel.title,
-            attributes: [
-                NSAttributedString.Key.paragraphStyle: paragraphStyle
-            ])
-
+        label.adjustsFontForContentSizeCategory = true
+        label.attributedText = .markdown(from: SecuredGuestLinkWithPasswordLocale.WarningLabel.title, style: .warningLabelStyle)
         return label
     }()
 
@@ -117,6 +111,21 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
         didGeneratePassword password: String
     ) {
         print(String(describing: "Generated Password: \(password)"))
+    }
+
+}
+
+private extension DownStyle {
+
+    static var warningLabelStyle: DownStyle {
+        let paragraphStyle = NSMutableParagraphStyle()
+        let style = DownStyle()
+        style.baseFont = .preferredFont(forTextStyle: .caption1)
+        style.baseFontColor = SemanticColors.Label.textDefault
+        paragraphStyle.lineBreakMode = .byWordWrapping
+        paragraphStyle.lineHeightMultiple = 0.98
+        style.baseParagraphStyle = paragraphStyle
+        return style
     }
 
 }

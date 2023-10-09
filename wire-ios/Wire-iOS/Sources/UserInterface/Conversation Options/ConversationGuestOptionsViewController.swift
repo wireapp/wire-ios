@@ -29,8 +29,6 @@ final class ConversationGuestOptionsViewController: UIViewController,
     private let tableView = UITableView()
     private var viewModel: ConversationGuestOptionsViewModel
 
-    private var createPasswordGuestLinkViewController = CreateSecureGuestLinkViewController()
-
     var dismissSpinner: SpinnerCompletion?
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
@@ -143,9 +141,7 @@ final class ConversationGuestOptionsViewController: UIViewController,
             switch guestLinkType {
             case .secure:
                 self.present(
-                    self.createPasswordGuestLinkViewController.wrapInNavigationController(setBackgroundColor: true),
-                    animated: true
-                )
+                    CreateSecureGuestLinkViewController().wrapInNavigationController(setBackgroundColor: true), animated: true)
             case .normal: break
             }
         }
