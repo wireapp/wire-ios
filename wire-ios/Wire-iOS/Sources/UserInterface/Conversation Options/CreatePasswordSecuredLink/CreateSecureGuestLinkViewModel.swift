@@ -46,28 +46,19 @@ final class CreateSecureGuestLinkViewModel {
         let uppercaseLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
         let numbers = "0123456789"
         let specialCharacters = "!@#$%^&*()-_+=<>?/[]{|}"
-
         let allCharacters = lowercaseLetters + uppercaseLetters + numbers + specialCharacters
 
-        var password = ""
+        var characters = [Character]()
+        characters.append(lowercaseLetters.randomElement()!)
+        characters.append(uppercaseLetters.randomElement()!)
+        characters.append(numbers.randomElement()!)
+        characters.append(specialCharacters.randomElement()!)
 
-        password += String(lowercaseLetters.randomElement()!)
-
-        password += String(uppercaseLetters.randomElement()!)
-
-        password += String(numbers.randomElement()!)
-
-        password += String(specialCharacters.randomElement()!)
-
-        for _ in 4..<length {
-            let randomIndex = Int.random(in: 0..<allCharacters.count)
-            let randomCharacter = allCharacters[allCharacters.index(allCharacters.startIndex, offsetBy: randomIndex)]
-            password += String(randomCharacter)
+        for _ in 0..<(length - characters.count) {
+            characters.append(allCharacters.randomElement()!)
         }
 
-        password = String(password.shuffled())
-
-        return password
+        return String(characters.shuffled())
     }
 
 }
