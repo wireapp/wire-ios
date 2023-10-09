@@ -1708,6 +1708,8 @@ internal enum L10n {
         internal static func messageTimerOffYou(_ p1: Any) -> String {
           return L10n.tr("Localizable", "content.system.message_timer_off-you", String(describing: p1), fallback: "%@ turned off the message timer")
         }
+        /// You haven’t used this device for a while. Some messages may not appear here.
+        internal static let missingMessages = L10n.tr("Localizable", "content.system.missing_messages", fallback: "You haven’t used this device for a while. Some messages may not appear here.")
         /// Plural format key: "%#@d_new_devices@"
         internal static func newDevices(_ p1: Int) -> String {
           return L10n.tr("Localizable", "content.system.new_devices", p1, fallback: "Plural format key: \"%#@d_new_devices@\"")
@@ -2039,18 +2041,60 @@ internal enum L10n {
           internal static let learnMore = L10n.tr("Localizable", "content.system.message_legal_hold.learn_more", fallback: "Learn more")
         }
         internal enum MissingMessages {
-          /// Plural format key: "%@ %#@lu_number_of_users@"
-          internal static func subtitleAdded(_ p1: Any, _ p2: Int) -> String {
-            return L10n.tr("Localizable", "content.system.missing_messages.subtitle_added", String(describing: p1), p2, fallback: "Plural format key: \"%@ %#@lu_number_of_users@\"")
+          internal enum UsersAdded {
+            /// You haven’t used this device for a while. Some messages may not appear here.
+            /// 
+            /// Meanwhile, %@ have been added.
+            internal static func plural(_ p1: Any) -> String {
+              return L10n.tr("Localizable", "content.system.missing_messages.users_added.plural", String(describing: p1), fallback: "You haven’t used this device for a while. Some messages may not appear here.\n\nMeanwhile, %@ have been added.")
+            }
+            /// You haven’t used this device for a while. Some messages may not appear here.
+            /// 
+            /// Meanwhile, %@ has been added.
+            internal static func singular(_ p1: Any) -> String {
+              return L10n.tr("Localizable", "content.system.missing_messages.users_added.singular", String(describing: p1), fallback: "You haven’t used this device for a while. Some messages may not appear here.\n\nMeanwhile, %@ has been added.")
+            }
           }
-          /// Plural format key: "%@ %#@lu_number_of_users@"
-          internal static func subtitleRemoved(_ p1: Any, _ p2: Int) -> String {
-            return L10n.tr("Localizable", "content.system.missing_messages.subtitle_removed", String(describing: p1), p2, fallback: "Plural format key: \"%@ %#@lu_number_of_users@\"")
+          internal enum UsersAddedAndRemoved {
+            /// You haven’t used this device for a while. Some messages may not appear here.
+            /// 
+            /// Meanwhile, %1$@ have been added. %2$@ have been removed.
+            internal static func plural(_ p1: Any, _ p2: Any) -> String {
+              return L10n.tr("Localizable", "content.system.missing_messages.users_added_and_removed.plural", String(describing: p1), String(describing: p2), fallback: "You haven’t used this device for a while. Some messages may not appear here.\n\nMeanwhile, %1$@ have been added. %2$@ have been removed.")
+            }
+            /// You haven’t used this device for a while. Some messages may not appear here.
+            /// 
+            /// Meanwhile, %1$@ have been added. %2$@ has been removed.
+            internal static func pluralSingular(_ p1: Any, _ p2: Any) -> String {
+              return L10n.tr("Localizable", "content.system.missing_messages.users_added_and_removed.plural_singular", String(describing: p1), String(describing: p2), fallback: "You haven’t used this device for a while. Some messages may not appear here.\n\nMeanwhile, %1$@ have been added. %2$@ has been removed.")
+            }
+            /// You haven’t used this device for a while. Some messages may not appear here.
+            /// 
+            /// Meanwhile, %1$@ has been added. %2$@ has been removed.
+            internal static func singular(_ p1: Any, _ p2: Any) -> String {
+              return L10n.tr("Localizable", "content.system.missing_messages.users_added_and_removed.singular", String(describing: p1), String(describing: p2), fallback: "You haven’t used this device for a while. Some messages may not appear here.\n\nMeanwhile, %1$@ has been added. %2$@ has been removed.")
+            }
+            /// You haven’t used this device for a while. Some messages may not appear here.
+            /// 
+            /// Meanwhile, %1$@ has been added. %2$@ have been removed.
+            internal static func singularPlural(_ p1: Any, _ p2: Any) -> String {
+              return L10n.tr("Localizable", "content.system.missing_messages.users_added_and_removed.singular_plural", String(describing: p1), String(describing: p2), fallback: "You haven’t used this device for a while. Some messages may not appear here.\n\nMeanwhile, %1$@ has been added. %2$@ have been removed.")
+            }
           }
-          /// Meanwhile,
-          internal static let subtitleStart = L10n.tr("Localizable", "content.system.missing_messages.subtitle_start", fallback: "Meanwhile,")
-          /// You haven’t used this device for a while. Some messages may not appear here.
-          internal static let title = L10n.tr("Localizable", "content.system.missing_messages.title", fallback: "You haven’t used this device for a while. Some messages may not appear here.")
+          internal enum UsersRemoved {
+            /// You haven’t used this device for a while. Some messages may not appear here.
+            /// 
+            /// Meanwhile, %@ have been removed.
+            internal static func plural(_ p1: Any) -> String {
+              return L10n.tr("Localizable", "content.system.missing_messages.users_removed.plural", String(describing: p1), fallback: "You haven’t used this device for a while. Some messages may not appear here.\n\nMeanwhile, %@ have been removed.")
+            }
+            /// You haven’t used this device for a while. Some messages may not appear here.
+            /// 
+            /// Meanwhile, %@ has been removed.
+            internal static func singular(_ p1: Any) -> String {
+              return L10n.tr("Localizable", "content.system.missing_messages.users_removed.singular", String(describing: p1), fallback: "You haven’t used this device for a while. Some messages may not appear here.\n\nMeanwhile, %@ has been removed.")
+            }
+          }
         }
         internal enum RenamedConv {
           /// %@ renamed the conversation
