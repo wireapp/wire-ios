@@ -20,6 +20,40 @@ import UIKit
 
 extension UIFont {
 
+//     Constants for weight values
+//     Those values come directly from the system
+//     DON"T MODIFY THOSE VALUES
+//     You can verify those values by running:
+//     let familyName = "SF Pro"
+//     Define the font weights and their respective values
+//        let fontWeights: [(weight: UIFont.Weight, name: String)] = [
+//            (.ultraLight, "Ultra Light"),
+//            (.thin, "Thin"),
+//            (.light, "Light"),
+//            (.regular, "Regular"),
+//            (.medium, "Medium"),
+//            (.semibold, "Semibold"),
+//            (.bold, "Bold"),
+//            (.heavy, "Heavy"),
+//            (.black, "Black")
+//        ]
+//    
+//        print("Font weights for \(familyName):")
+//        for (weight, weightName) in fontWeights {
+//            print("\(weight.rawValue): \(weightName)")
+//        }
+    private struct WeightValues {
+        static let ultraLight: CGFloat = -0.8
+        static let thin: CGFloat = -0.6
+        static let light: CGFloat = -0.4
+        static let regular: CGFloat = 0.0
+        static let medium: CGFloat = 0.23
+        static let semibold: CGFloat = 0.3
+        static let bold: CGFloat = 0.4
+        static let heavy: CGFloat = 0.56
+        static let black: CGFloat = 0.62
+    }
+
     public enum FontStyle {
         case title3
         case headline
@@ -81,29 +115,29 @@ extension UIFont {
 
         switch weight {
         case .ultraLight:
-            weightTraits = [.weight: -0.8]
+            weightTraits = [.weight: WeightValues.ultraLight]
         case .thin:
-            weightTraits = [.weight: -0.6]
+            weightTraits = [.weight: WeightValues.thin]
         case .light:
-            weightTraits = [.weight: -0.4]
+            weightTraits = [.weight: WeightValues.light]
         case .regular:
             weightTraits = [:]
         case .medium:
-            weightTraits = [.weight: 0.23]
+            weightTraits = [.weight: WeightValues.medium]
         case .semibold:
-            weightTraits = [.weight: 0.3]
+            weightTraits = [.weight: WeightValues.semibold]
         case .bold:
-            weightTraits = [.weight: 0.4]
+            weightTraits = [.weight: WeightValues.bold]
         case .heavy:
-            weightTraits = [.weight: 0.56]
+            weightTraits = [.weight: WeightValues.heavy]
         case .black:
-            weightTraits = [.weight: 0.63]
+            weightTraits = [.weight: WeightValues.black]
         default:
             // Handle other weights or return nil if not supported
             break
         }
 
-         let descriptor = fontDescriptor.addingAttributes([.traits: weightTraits])
+        let descriptor = fontDescriptor.addingAttributes([.traits: weightTraits])
 
         return UIFont(descriptor: descriptor, size: pointSize)
     }
