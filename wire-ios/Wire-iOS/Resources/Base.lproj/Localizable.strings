@@ -968,8 +968,7 @@
 // Secured Guest link with password
 "secured_guest_link_with_password.header.title" = "Create password secured link";
 "secured_guest_link_with_password.generate_password_button.title" = "Generate password";
-"secured_guest_link_with_password.warning_label.title" = "People who want to join the conversation via the guest link need to enter this password first.";
-"secured_guest_link_with_password.warning_label.subtitle" = "You can’t change the password later. Make sure to copy and store it.";
+"secured_guest_link_with_password.warning_label.title" = "People who want to join the conversation via the guest link need to enter this password first.\n**You can’t change the password later. Make sure to copy and store it.**";
 
 // Legal hold details
 
