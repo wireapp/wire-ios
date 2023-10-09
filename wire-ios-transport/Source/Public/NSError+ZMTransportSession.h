@@ -44,6 +44,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (nullable NSError *)transportErrorFromURLTask:(NSURLSessionTask *)task expired:(BOOL)expired;
 
++ (nullable NSError *)transportErrorFromURLTask:(NSURLSessionTask *)task expired:(BOOL)expired payloadLabel:(nullable NSString *) payloadLabel;
+
 @end
 
 NS_ASSUME_NONNULL_END

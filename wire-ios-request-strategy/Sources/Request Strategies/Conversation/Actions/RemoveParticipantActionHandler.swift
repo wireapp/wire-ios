@@ -32,6 +32,8 @@ extension ConversationRemoveParticipantError {
 
 class RemoveParticipantActionHandler: ActionHandler<RemoveParticipantAction> {
 
+    private lazy var eventProcessor = ConversationEventProcessor(context: context)
+
     override func request(for action: RemoveParticipantAction, apiVersion: APIVersion) -> ZMTransportRequest? {
         switch apiVersion {
         case .v0:
@@ -84,15 +86,11 @@ class RemoveParticipantActionHandler: ActionHandler<RemoveParticipantAction> {
 
         switch response.httpStatus {
         case 200:
-
             guard
                 let user = ZMUser.existingObject(for: action.userID, in: context),
                 let conversation = ZMConversation.existingObject(for: action.conversationID, in: context),
                 let payload = response.payload,
-                let updateEvent = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil),
-                let rawData = response.rawData,
-                let apiVersion = APIVersion(rawValue: response.apiVersion),
-                let conversationEvent = decodeResponse(data: rawData, apiVersion: apiVersion)
+                let updateEvent = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil)
             else {
                 Logging.network.warn("Can't process response, aborting.")
                 action.notifyResult(.failure(.unknown))
@@ -105,21 +103,15 @@ class RemoveParticipantActionHandler: ActionHandler<RemoveParticipantAction> {
                 conversation.updateCleared(fromPostPayloadEvent: updateEvent)
             }
 
-            conversationEvent.process(in: context, originalEvent: updateEvent)
+            eventProcessor.processConversationEvents([updateEvent])
 
             action.notifyResult(.success(Void()))
 
         case 204:
             action.notifyResult(.success(Void()))
+
         default:
             action.notifyResult(.failure(ConversationRemoveParticipantError(response: response) ?? .unknown))
-        }
-    }
-
-    private func decodeResponse(data: Data, apiVersion: APIVersion) -> Payload.ConversationEvent<Payload.UpdateConverationMemberLeave>? {
-        switch apiVersion {
-        case .v0, .v1, .v2, .v3, .v4, .v5:
-            return Payload.ConversationEvent<Payload.UpdateConverationMemberLeave>(data, decoder: .defaultDecoder)
         }
     }
 
