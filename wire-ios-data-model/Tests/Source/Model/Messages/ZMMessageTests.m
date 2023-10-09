@@ -22,6 +22,7 @@
 @import Foundation;
 @import MobileCoreServices;
 @import WireImages;
+@import UniformTypeIdentifiers;
 
 #import "ModelObjectsTests.h"
 #import "ZMMessage+Internal.h"
@@ -574,7 +575,7 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
     XCTAssertNotNil(message.mediumData);
     
     // then
-    NSString *expected = (__bridge NSString *) kUTTypeJPEG;
+    NSString *expected = UTTypeJPEG.identifier;
     XCTAssertEqualObjects(message.imageType, expected);
 }
 
@@ -590,7 +591,7 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
     XCTAssertNotNil(message.mediumData);
     
     // then
-    NSString *expected = (__bridge NSString *) kUTTypeGIF;
+    NSString *expected = UTTypeGIF.identifier;
     XCTAssertEqualObjects(message.imageType, expected);
 }
 
@@ -606,7 +607,7 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
     XCTAssertNotNil(message.mediumData);
     
     // then
-    NSString *expected = (__bridge NSString *) kUTTypeGIF;
+    NSString *expected = UTTypeGIF.identifier;
     XCTAssertEqualObjects(message.imageType, expected);
 }
 
