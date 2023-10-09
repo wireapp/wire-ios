@@ -24,7 +24,7 @@ final class DotView: UIView {
     private let circleView = ShapeView()
     private let centerView = ShapeView()
     private var userObserver: NSObjectProtocol!
-    private var clientsObserverTokens: [NSObjectProtocol?] = []
+    private var clientsObserverTokens: [NSObjectProtocol] = []
     private let user: ZMUser?
     public var hasUnreadMessages: Bool = false {
         didSet { self.updateIndicator() }
@@ -88,7 +88,7 @@ final class DotView: UIView {
 
     private func createClientObservers() {
         guard let user = user else { return }
-        clientsObserverTokens = user.clients.map { UserClientChangeInfo.add(observer: self, for: $0) }
+        clientsObserverTokens = user.clients.compactMap { UserClientChangeInfo.add(observer: self, for: $0) }
     }
 
     func updateIndicator() {
