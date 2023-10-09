@@ -53,10 +53,7 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
             string: SecuredGuestLinkWithPasswordLocale.WarningLabel.title,
             attributes: [
                 NSAttributedString.Key.paragraphStyle: paragraphStyle
-            ]).semiBold(
-                SecuredGuestLinkWithPasswordLocale.WarningLabel.subtitle,
-                fontspec: .mediumSemiboldFont
-            )
+            ])
 
         return label
     }()

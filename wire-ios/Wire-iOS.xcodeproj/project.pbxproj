@@ -1219,7 +1219,6 @@
 		E9C68C042A29DB0100CDCAFD /* WireCoreCrypto.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9C68C032A29DB0100CDCAFD /* WireCoreCrypto.xcframework */; };
 		E9C68C052A29DB0100CDCAFD /* WireCoreCrypto.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = E9C68C032A29DB0100CDCAFD /* WireCoreCrypto.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		E9CCCF9729101D8D006E0153 /* UINavigationItem+NavigationBarTitle.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9CCCF9629101D8D006E0153 /* UINavigationItem+NavigationBarTitle.swift */; };
-		E9D141602AC6F4FA005EE75D /* NSMutableAttributedString+UIFontSemibold.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9D1415F2AC6F4FA005EE75D /* NSMutableAttributedString+UIFontSemibold.swift */; };
 		E9D141622AC704DF005EE75D /* CreateSecureGuestLinkViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9D141612AC704DF005EE75D /* CreateSecureGuestLinkViewModel.swift */; };
 		E9D141652AC71719005EE75D /* CreatePasswordSecuredLinkViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9D141642AC71719005EE75D /* CreatePasswordSecuredLinkViewModelTests.swift */; };
 		E9D25C8727D9FB07007CB532 /* AuthenticationEmailVerificationRequiredErrorHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9D25C8627D9FB07007CB532 /* AuthenticationEmailVerificationRequiredErrorHandlerTests.swift */; };
@@ -3228,7 +3227,6 @@
 		E9B8EB7F2A0CEE160056E417 /* ReactionToggle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionToggle.swift; sourceTree = "<group>"; };
 		E9C68C032A29DB0100CDCAFD /* WireCoreCrypto.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = WireCoreCrypto.xcframework; path = ../Carthage/Build/WireCoreCrypto.xcframework; sourceTree = "<group>"; };
 		E9CCCF9629101D8D006E0153 /* UINavigationItem+NavigationBarTitle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UINavigationItem+NavigationBarTitle.swift"; sourceTree = "<group>"; };
-		E9D1415F2AC6F4FA005EE75D /* NSMutableAttributedString+UIFontSemibold.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSMutableAttributedString+UIFontSemibold.swift"; sourceTree = "<group>"; };
 		E9D141612AC704DF005EE75D /* CreateSecureGuestLinkViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateSecureGuestLinkViewModel.swift; sourceTree = "<group>"; };
 		E9D141642AC71719005EE75D /* CreatePasswordSecuredLinkViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreatePasswordSecuredLinkViewModelTests.swift; sourceTree = "<group>"; };
 		E9D25C8627D9FB07007CB532 /* AuthenticationEmailVerificationRequiredErrorHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationEmailVerificationRequiredErrorHandlerTests.swift; sourceTree = "<group>"; };
@@ -6090,7 +6088,6 @@
 				E9F3183A28D9B03100FDB244 /* UIButton+RoundedCorners.swift */,
 				E9CCCF9629101D8D006E0153 /* UINavigationItem+NavigationBarTitle.swift */,
 				E9A60C7229716A70001D0E14 /* UITextField+DoneBarButtonItem.swift */,
-				E9D1415F2AC6F4FA005EE75D /* NSMutableAttributedString+UIFontSemibold.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -8564,7 +8561,6 @@
 				EEF6E3C428D86408001C1799 /* MessageProtocolSectionController.swift in Sources */,
 				5E8DA76A211B2E8700360979 /* AuthenticationCoordinator+InitialSync.swift in Sources */,
 				A9CBBEBE24CF09ED006543D4 /* PasscodeSetupInteractor.swift in Sources */,
-				E9D141602AC6F4FA005EE75D /* NSMutableAttributedString+UIFontSemibold.swift in Sources */,
 				1648EEF12049A69800CC6B37 /* GroupConversationSectionController.swift in Sources */,
 				BF515F941D9D1C1900C786FB /* EmojiSectionViewController.swift in Sources */,
 				EF42658B2333DB9800DDAD0A /* ConversationListViewModelDelegate.swift in Sources */,
