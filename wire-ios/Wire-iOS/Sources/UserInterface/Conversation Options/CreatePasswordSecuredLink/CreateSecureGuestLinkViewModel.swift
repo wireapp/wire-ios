@@ -22,7 +22,7 @@ import Foundation
 
 // sourcery: AutoMockable
 protocol CreatePasswordSecuredLinkViewModelDelegate: AnyObject {
-    func generateButtonDidTap(_ password: String)
+    func viewModel(_ viewModel: CreateSecureGuestLinkViewModel, didGeneratePassword password: String)
 }
 
 // MARK: - CreatePasswordSecuredLinkViewModel
@@ -37,7 +37,7 @@ final class CreateSecureGuestLinkViewModel {
 
     func requestRandomPassword() {
         let randomPassword = generateRandomPassword()
-        delegate?.generateButtonDidTap(randomPassword)
+        delegate?.viewModel(self, didGeneratePassword: randomPassword)
     }
 
     func generateRandomPassword() -> String {

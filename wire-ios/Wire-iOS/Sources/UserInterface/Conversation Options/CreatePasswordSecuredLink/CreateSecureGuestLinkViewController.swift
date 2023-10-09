@@ -115,7 +115,10 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
 
     // MARK: - CreatePasswordSecuredLinkViewModelDelegate
 
-    func generateButtonDidTap(_ password: String) {
+    func viewModel(
+        _ viewModel: CreateSecureGuestLinkViewModel,
+        didGeneratePassword password: String
+    ) {
         print(String(describing: "Generated Password: \(password)"))
     }
 
