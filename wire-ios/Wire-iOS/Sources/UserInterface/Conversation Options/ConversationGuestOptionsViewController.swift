@@ -29,7 +29,7 @@ final class ConversationGuestOptionsViewController: UIViewController,
     private let tableView = UITableView()
     private var viewModel: ConversationGuestOptionsViewModel
 
-    private var createPasswordGuestLinkViewController = CreatePasswordSecuredLinkViewController()
+    private var createPasswordGuestLinkViewController = CreateSecureGuestLinkViewController()
 
     var dismissSpinner: SpinnerCompletion?
 

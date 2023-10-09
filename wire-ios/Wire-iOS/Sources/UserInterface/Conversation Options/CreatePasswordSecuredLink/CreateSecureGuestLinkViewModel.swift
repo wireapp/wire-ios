@@ -27,7 +27,7 @@ protocol CreatePasswordSecuredLinkViewModelDelegate: AnyObject {
 
 // MARK: - CreatePasswordSecuredLinkViewModel
 
-final class CreatePasswordSecuredLinkViewModel {
+final class CreateSecureGuestLinkViewModel {
 
     // MARK: - Properties
 

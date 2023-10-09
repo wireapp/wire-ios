@@ -23,14 +23,14 @@ class CreatePasswordSecuredLinkViewModelTests: XCTestCase {
 
     // MARK: - Properties
 
-    var viewModel: CreatePasswordSecuredLinkViewModel!
+    var viewModel: CreateSecureGuestLinkViewModel!
     var mockDelegate: MockCreatePasswordSecuredLinkViewModelDelegate!
 
     // MARK: - setUp
 
     override func setUp() {
         super.setUp()
-        viewModel = CreatePasswordSecuredLinkViewModel()
+        viewModel = CreateSecureGuestLinkViewModel()
         mockDelegate = MockCreatePasswordSecuredLinkViewModelDelegate()
         viewModel.delegate = mockDelegate
     }

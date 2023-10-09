@@ -19,7 +19,7 @@
 import UIKit
 import WireCommonComponents
 
-class CreatePasswordSecuredLinkViewController: UIViewController, CreatePasswordSecuredLinkViewModelDelegate {
+class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecuredLinkViewModelDelegate {
 
     // MARK: - Properties
 
@@ -40,7 +40,7 @@ class CreatePasswordSecuredLinkViewController: UIViewController, CreatePasswordS
         return button
     }()
 
-    private var viewModel = CreatePasswordSecuredLinkViewModel()
+    private var viewModel = CreateSecureGuestLinkViewModel()
 
     private let warningLabel: DynamicFontLabel = {
 
