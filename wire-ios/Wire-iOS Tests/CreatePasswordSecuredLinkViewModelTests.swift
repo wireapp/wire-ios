@@ -59,14 +59,13 @@ class CreatePasswordSecuredLinkViewModelTests: XCTestCase {
 
     func testRequestRandomPassword() {
         // GIVEN
-        mockDelegate.generateButtonDidTap_MockMethod = { _ in }
+        mockDelegate.viewModelDidGeneratePassword_MockMethod = { _, _ in }
 
         // WHEN
         viewModel.requestRandomPassword()
 
         // THEN
-        XCTAssertEqual(mockDelegate.generateButtonDidTap_Invocations.count, 1)
-        XCTAssertFalse(mockDelegate.generateButtonDidTap_Invocations.first!.isEmpty)
+        XCTAssertEqual(mockDelegate.viewModelDidGeneratePassword_Invocations.count, 1)
     }
 
 }
