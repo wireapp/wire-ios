@@ -112,6 +112,7 @@ public final class MLSService: MLSServiceInterface {
     private let userDefaults: UserDefaults
     private let logger = WireLogger.mls
     private var groupsPendingJoin = Set<MLSGroupID>()
+    private let groupsBeingRepaired = GroupsBeingRepaired()
 
     private let syncStatus: SyncStatusProtocol
 
@@ -971,20 +972,18 @@ public final class MLSService: MLSServiceInterface {
         }
     }
 
-    private var groupsBeingRepaired = Set<MLSGroupID>()
-
     private func launchGroupRepairTaskIfNotInProgress(
         for groupID: MLSGroupID,
         repairOperation: @escaping () async -> Void
     ) {
-        guard !groupsBeingRepaired.contains(groupID) else {
-            return
-        }
-
         Task {
-            groupsBeingRepaired.insert(groupID)
+            guard await !groupsBeingRepaired.contains(group: groupID) else {
+                return
+            }
+
+            await groupsBeingRepaired.insert(group: groupID)
             await repairOperation()
-            groupsBeingRepaired.remove(groupID)
+            await groupsBeingRepaired.remove(group: groupID)
         }
     }
 
@@ -1812,4 +1811,20 @@ extension CiphersuiteName {
         }
     }
 
+}
+
+actor GroupsBeingRepaired {
+    var values = Set<MLSGroupID>()
+
+    func contains(group: MLSGroupID) -> Bool {
+        values.contains(group)
+    }
+
+    func insert(group: MLSGroupID) {
+        values.insert(group)
+    }
+
+    func remove(group: MLSGroupID) {
+        values.remove(group)
+    }
 }
