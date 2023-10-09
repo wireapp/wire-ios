@@ -49,15 +49,15 @@ extension ZMConversation {
         }
 
         guard
-            let moc = conversation.managedObjectContext,
+            let context = conversation.managedObjectContext,
             let conversationID = conversation.qualifiedID,
-            conversationID.uuid != ZMConversation.selfConversationIdentifier(in: moc)
+            conversationID.uuid != ZMConversation.selfConversationIdentifier(in: context)
         else {
             throw UpdateSelfConversationError.invalidConversation
         }
 
         let lastRead = LastRead(conversationID: conversationID, lastReadTimestamp: lastReadTimeStamp)
-        let messages = try sendMessageToSelfClients(lastRead, in: moc)
+        let messages = try sendMessageToSelfClients(lastRead, in: context)
         return messages.proteus
     }
 
