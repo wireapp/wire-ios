@@ -1,4 +1,4 @@
-// Generated using Sourcery 2.1.1 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 2.0.2 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 // swiftlint:disable variable_name
 
@@ -109,23 +109,24 @@ class MockConversationGuestOptionsViewModelDelegate: ConversationGuestOptionsVie
     }
 
 }
+
 class MockCreatePasswordSecuredLinkViewModelDelegate: CreatePasswordSecuredLinkViewModelDelegate {
 
     // MARK: - Life cycle
 
-    // MARK: - generateButtonDidTap
+    // MARK: - viewModel
 
-    var generateButtonDidTap_Invocations: [String] = []
-    var generateButtonDidTap_MockMethod: ((String) -> Void)?
+    var viewModelDidGeneratePassword_Invocations: [(viewModel: CreateSecureGuestLinkViewModel, password: String)] = []
+    var viewModelDidGeneratePassword_MockMethod: ((CreateSecureGuestLinkViewModel, String) -> Void)?
 
-    func generateButtonDidTap(_ password: String) {
-        generateButtonDidTap_Invocations.append(password)
+    func viewModel(_ viewModel: CreateSecureGuestLinkViewModel, didGeneratePassword password: String) {
+        viewModelDidGeneratePassword_Invocations.append((viewModel: viewModel, password: password))
 
-        guard let mock = generateButtonDidTap_MockMethod else {
-            fatalError("no mock for `generateButtonDidTap`")
+        guard let mock = viewModelDidGeneratePassword_MockMethod else {
+            fatalError("no mock for `viewModelDidGeneratePassword`")
         }
 
-        mock(password)
+        mock(viewModel, password)
     }
 
 }

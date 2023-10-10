@@ -39,6 +39,8 @@ public class ProteusMessageSync<Message: ProteusMessage>: NSObject, EntityTransc
     let context: NSManagedObjectContext
     var onRequestScheduledHandler: OnRequestScheduledHandler?
 
+    private let processor = MessageSendingStatusPayloadProcessor()
+
     public init(context: NSManagedObjectContext, applicationStatus: ApplicationStatus) {
         self.context = context
         self.applicationStatus = applicationStatus
@@ -53,7 +55,6 @@ public class ProteusMessageSync<Message: ProteusMessage>: NSObject, EntityTransc
     }
 
     public func nextRequest(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        WireLogger.messaging.debug("next request for proteus sync")
         return dependencySync.nextRequest(for: apiVersion)
     }
 
@@ -106,7 +107,10 @@ public class ProteusMessageSync<Message: ProteusMessage>: NSObject, EntityTransc
             _ = entity.parseUploadResponse(response, clientRegistrationDelegate: applicationStatus.clientRegistrationDelegate)
         case .v1, .v2, .v3, .v4, .v5:
             if let payload = Payload.MessageSendingStatus(response, decoder: .defaultDecoder) {
-                _ = payload.updateClientsChanges(for: entity)
+                processor.updateClientsChanges(
+                    from: payload,
+                    for: entity
+                )
             } else {
                 WireLogger.messaging.warn("failed to get payload from response")
             }
@@ -132,8 +136,15 @@ public class ProteusMessageSync<Message: ProteusMessage>: NSObject, EntityTransc
             case .v0:
                 return entity.parseUploadResponse(response, clientRegistrationDelegate: applicationStatus.clientRegistrationDelegate).contains(.missing)
             case .v1, .v2, .v3, .v4, .v5:
-                let payload = Payload.MessageSendingStatus(response, decoder: .defaultDecoder)
-                let shouldRetry = payload?.updateClientsChanges(for: entity) ?? false
+                var shouldRetry = false
+
+                if let payload = Payload.MessageSendingStatus(response, decoder: .defaultDecoder) {
+                    shouldRetry = processor.updateClientsChanges(
+                        from: payload,
+                        for: entity
+                    )
+                }
+
                 WireLogger.messaging.debug("got 412, will retry: \(shouldRetry)")
                 return shouldRetry
             }

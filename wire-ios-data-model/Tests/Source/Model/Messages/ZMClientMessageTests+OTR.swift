@@ -40,6 +40,7 @@ final class ClientMessageTests_OTR: BaseZMClientMessageTests {
         mockProteusService = nil
 
         DeveloperFlag.storage = UserDefaults.standard
+        BackendInfo.domain = nil
         super.tearDown()
     }
 
@@ -317,6 +318,8 @@ final class ClientMessageTests_OTR: BaseZMClientMessageTests {
     func testThatItCreatesPayloadForZMLastReadMessages() {
         self.syncMOC.performGroupedBlockAndWait {
             // Given
+            let domain = "example.domain.com"
+            BackendInfo.domain = domain
             self.syncConversation.lastReadServerTimeStamp = Date()
             self.syncConversation.remoteIdentifier = UUID()
             guard let message = try? ZMConversation.updateSelfConversation(withLastReadOf: self.syncConversation) else { return XCTFail() }

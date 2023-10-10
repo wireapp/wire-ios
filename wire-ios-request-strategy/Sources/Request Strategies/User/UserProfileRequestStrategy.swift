@@ -58,7 +58,12 @@ public class UserProfileRequestStrategy: AbstractRequestStrategy, IdentifierObje
 
     public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
         fetchAllConnectedUsers(for: apiVersion)
-        return userProfileByQualifiedID.nextRequest(for: apiVersion) ?? userProfileByID.nextRequest(for: apiVersion)
+        switch apiVersion {
+        case .v0:
+            return userProfileByID.nextRequest(for: apiVersion)
+        case .v1, .v2, .v3, .v4, .v5:
+            return userProfileByQualifiedID.nextRequest(for: apiVersion)
+        }
     }
 
     func fetchAllConnectedUsers(for apiVersion: APIVersion) {
@@ -182,10 +187,18 @@ extension UserProfileRequestStrategy: ZMEventConsumer {
             return Logging.eventProcessing.error("Malformed user.update update event, skipping...")
         }
 
-        let user = ZMUser.fetchOrCreate(with: userID,
-                                        domain: userProfile.qualifiedID?.domain,
-                                        in: managedObjectContext)
-        userProfile.updateUserProfile(for: user, authoritative: false)
+        let user = ZMUser.fetchOrCreate(
+            with: userID,
+            domain: userProfile.qualifiedID?.domain,
+            in: managedObjectContext
+        )
+
+        let processor = UserProfilePayloadProcessor()
+        processor.updateUserProfile(
+            from: userProfile,
+            for: user,
+            authoritative: false
+        )
     }
 
     func processUserDeletion(_ updateEvent: ZMUpdateEvent) {
@@ -221,6 +234,8 @@ class UserProfileByIDTranscoder: IdentifierObjectSyncTranscoder {
     let decoder: JSONDecoder = .defaultDecoder
     let encoder: JSONEncoder = .defaultEncoder
 
+    private let processor = UserProfilePayloadProcessor()
+
     init(context: NSManagedObjectContext) {
         self.context = context
     }
@@ -248,7 +263,10 @@ class UserProfileByIDTranscoder: IdentifierObjectSyncTranscoder {
             return
         }
 
-        payload.updateUserProfiles(in: context)
+        processor.updateUserProfiles(
+            from: payload,
+            in: context
+        )
 
         let missingIdentifiers = identifiers.subtracting(payload.compactMap(\.id))
         markUserProfilesAsFetched(missingIdentifiers)
@@ -273,6 +291,8 @@ class UserProfileByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
     let context: NSManagedObjectContext
     let decoder: JSONDecoder = .defaultDecoder
     let encoder: JSONEncoder = .defaultEncoder
+
+    private let processor = UserProfilePayloadProcessor()
 
     init(context: NSManagedObjectContext) {
         self.context = context
@@ -318,7 +338,10 @@ class UserProfileByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
                 return
             }
 
-            payload.updateUserProfiles(in: context)
+            processor.updateUserProfiles(
+                from: payload,
+                in: context
+            )
 
             let missingIdentifiers = identifiers.subtracting(payload.compactMap(\.qualifiedID))
             markUserProfilesAsFetched(missingIdentifiers)
@@ -331,8 +354,11 @@ class UserProfileByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
                 Logging.network.warn("Can't process response, aborting.")
                 return
             }
-            let foundUsers = payload.found
-            foundUsers.updateUserProfiles(in: context)
+
+            processor.updateUserProfiles(
+                from: payload.found,
+                in: context
+            )
 
             if let failedIdentifiers = payload.failed {
                 markUserProfilesAsUnavailable(Set(failedIdentifiers))
