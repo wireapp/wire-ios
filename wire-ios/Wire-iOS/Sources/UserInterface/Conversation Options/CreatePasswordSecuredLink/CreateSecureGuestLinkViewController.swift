@@ -110,7 +110,6 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
         _ viewModel: CreateSecureGuestLinkViewModel,
         didGeneratePassword password: String
     ) {
-        print(String(describing: "Generated Password: \(password)"))
     }
 
 }
