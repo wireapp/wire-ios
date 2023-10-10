@@ -41,9 +41,9 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
         return button
     }()
 
-    private var viewModel: CreateSecureGuestLinkViewModel {
-       return CreateSecureGuestLinkViewModel(delegate: self)
-    }
+    private lazy var viewModel: CreateSecureGuestLinkViewModel = {
+        CreateSecureGuestLinkViewModel(delegate: self)
+    }()
 
     private let warningLabel: UILabel = {
         var paragraphStyle = NSMutableParagraphStyle()
