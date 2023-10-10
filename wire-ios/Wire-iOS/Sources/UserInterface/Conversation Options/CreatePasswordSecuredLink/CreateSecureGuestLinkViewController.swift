@@ -218,6 +218,8 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
 
 }
 
+// MARK: - UITextFieldDelegate
+
 extension CreateSecureGuestLinkViewController: UITextFieldDelegate {
 
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
@@ -233,6 +235,8 @@ extension CreateSecureGuestLinkViewController: UITextFieldDelegate {
     }
 }
 
+// MARK: - ValidatedTextFieldDelegate
+
 extension CreateSecureGuestLinkViewController: ValidatedTextFieldDelegate {
 
     func buttonPressed(_ sender: UIButton) {
@@ -242,6 +246,9 @@ extension CreateSecureGuestLinkViewController: ValidatedTextFieldDelegate {
         securedGuestLinkPasswordValidatedTextField.updatePasscodeIcon()
     }
 }
+
+// MARK: - DownStyle
+
 private extension DownStyle {
 
     static var warningLabelStyle: DownStyle {
@@ -256,3 +263,4 @@ private extension DownStyle {
     }
 
 }
+ g
