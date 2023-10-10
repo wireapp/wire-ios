@@ -83,7 +83,7 @@ public final class CreateGroupConversationAction: EntityAction {
 
 final class CreateGroupConversationActionHandler: ActionHandler<CreateGroupConversationAction> {
 
-    private let processor = ConversationEventPayloadProcessor()
+    private lazy var processor = ConversationEventPayloadProcessor(context: context)
 
     // MARK: - Request generation
 

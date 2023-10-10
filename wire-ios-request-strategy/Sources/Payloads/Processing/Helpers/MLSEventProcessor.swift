@@ -18,7 +18,7 @@
 import Foundation
 import WireDataModel
 
-protocol MLSEventProcessing {
+public protocol MLSEventProcessing {
 
     func updateConversationIfNeeded(
         conversation: ZMConversation,
@@ -44,13 +44,25 @@ protocol MLSEventProcessing {
 
 }
 
-class MLSEventProcessor: MLSEventProcessing {
+public class MLSEventProcessor: MLSEventProcessing {
 
-    private(set) static var shared: MLSEventProcessing = MLSEventProcessor()
+    // MARK: - Properties
+
+    private let conversationService: ConversationServiceInterface
+
+    // MARK: - Life cycle
+
+    convenience init(context: NSManagedObjectContext) {
+        self.init(conversationService: ConversationService(context: context))
+    }
+
+    init(conversationService: ConversationServiceInterface) {
+        self.conversationService = conversationService
+    }
 
     // MARK: - Update conversation
 
-    func updateConversationIfNeeded(
+    public func updateConversationIfNeeded(
         conversation: ZMConversation,
         groupID: String?,
         context: NSManagedObjectContext
@@ -87,7 +99,7 @@ class MLSEventProcessor: MLSEventProcessing {
 
     // MARK: - Joining new conversations
 
-    func joinMLSGroupWhenReady(
+    public func joinMLSGroupWhenReady(
         forConversation conversation: ZMConversation,
         context: NSManagedObjectContext
     ) {
@@ -115,7 +127,7 @@ class MLSEventProcessor: MLSEventProcessing {
 
     // MARK: - Process welcome message
 
-    func process(
+    public func process(
         welcomeMessage: String,
         conversationID: QualifiedID,
         in context: NSManagedObjectContext
@@ -154,7 +166,7 @@ class MLSEventProcessor: MLSEventProcessing {
 
     // MARK: - Wipe conversation
 
-    func wipeMLSGroup(
+    public func wipeMLSGroup(
         forConversation conversation: ZMConversation,
         context: NSManagedObjectContext
     ) {
@@ -229,20 +241,5 @@ extension MLSGroupID {
         }
 
         self.init(bytes)
-    }
-}
-
-extension MLSEventProcessor {
-
-    /// Use this method to set the `MLSEventProcessor` singleton to a custom class instance
-    /// Don't forget to call `MLSEventProcessor.reset()` after your test is done
-    /// - Parameter mock: a custom class instance conforming to the `MLSEventProcessing` protocol
-    static func setMock(_ mock: MLSEventProcessing) {
-        Self.shared = mock
-    }
-
-    /// Use this method to reset the `MLSEventProcessor` singleton to its original state
-    static func reset() {
-        Self.shared = MLSEventProcessor()
     }
 }

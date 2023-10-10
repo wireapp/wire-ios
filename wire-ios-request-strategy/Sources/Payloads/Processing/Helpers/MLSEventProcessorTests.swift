@@ -21,6 +21,7 @@ import XCTest
 
 class MLSEventProcessorTests: MessagingTestBase {
 
+    var sut: MLSEventProcessor!
     var mlsServiceMock: MockMLSService!
     var conversation: ZMConversation!
 
@@ -40,12 +41,15 @@ class MLSEventProcessorTests: MessagingTestBase {
             self.conversation.domain = self.qualifiedID.domain
             self.conversation.messageProtocol = .mls
         }
+
+        sut = MLSEventProcessor(context: syncMOC)
     }
 
     override func tearDown() {
         mlsServiceMock = nil
         conversation = nil
         qualifiedID = nil
+        sut = nil
         super.tearDown()
     }
 
@@ -60,7 +64,7 @@ class MLSEventProcessorTests: MessagingTestBase {
             XCTAssertEqual(self.conversation.mlsStatus, .pendingJoin)
 
             // When
-            MLSEventProcessor.shared.process(
+            self.sut.process(
                 welcomeMessage: message,
                 conversationID: self.qualifiedID,
                 in: self.syncMOC
@@ -69,6 +73,29 @@ class MLSEventProcessorTests: MessagingTestBase {
             // Then
             XCTAssertEqual(message, self.mlsServiceMock.processedWelcomeMessage)
             XCTAssertEqual(self.conversation.mlsStatus, .ready)
+            XCTAssertTrue(self.mlsServiceMock.uploadKeyPackesIfNeededCalled)
+        }
+    }
+
+    func test_itProcessesMessage_ConversationDoesNotExist() {
+        syncMOC.performGroupedBlockAndWait {
+            // Given
+            let message = "welcome message"
+            let mlsGroupID = MLSGroupID.random()
+            let qualifiedID = QualifiedID.random()
+            self.mlsServiceMock.groupID = mlsGroupID
+
+            // When
+            self.sut.process(
+                welcomeMessage: message,
+                conversationID: qualifiedID,
+                in: self.syncMOC
+            )
+
+            // Then
+            XCTAssertEqual(message, self.mlsServiceMock.processedWelcomeMessage)
+            // assert we requested a sync
+            XCTAssertTrue(self.mlsServiceMock.uploadKeyPackesIfNeededCalled)
         }
     }
 
@@ -80,7 +107,7 @@ class MLSEventProcessorTests: MessagingTestBase {
             self.conversation.mlsGroupID = nil
 
             // When
-            MLSEventProcessor.shared.updateConversationIfNeeded(
+            self.sut.updateConversationIfNeeded(
                 conversation: self.conversation,
                 groupID: self.groupIdString,
                 context: self.syncMOC
@@ -125,7 +152,7 @@ class MLSEventProcessorTests: MessagingTestBase {
             self.conversation.mlsStatus = .pendingJoin
 
             // When
-            MLSEventProcessor.shared.joinMLSGroupWhenReady(
+            self.sut.joinMLSGroupWhenReady(
                 forConversation: self.conversation,
                 context: self.syncMOC
             )
@@ -152,7 +179,7 @@ class MLSEventProcessorTests: MessagingTestBase {
             conversation.mlsGroupID = groupID
 
             // When
-            MLSEventProcessor.shared.wipeMLSGroup(
+            self.sut.wipeMLSGroup(
                 forConversation: conversation,
                 context: syncMOC
             )
@@ -170,7 +197,7 @@ class MLSEventProcessorTests: MessagingTestBase {
             conversation.mlsGroupID = MLSGroupID(Data.random())
 
             // When
-            MLSEventProcessor.shared.wipeMLSGroup(
+            self.sut.wipeMLSGroup(
                 forConversation: conversation,
                 context: syncMOC
             )
@@ -188,7 +215,7 @@ class MLSEventProcessorTests: MessagingTestBase {
             self.conversation.mlsStatus = status
 
             // When
-            MLSEventProcessor.shared.joinMLSGroupWhenReady(
+            self.sut.joinMLSGroupWhenReady(
                 forConversation: self.conversation,
                 context: self.syncMOC
             )
@@ -211,7 +238,7 @@ class MLSEventProcessorTests: MessagingTestBase {
             self.mlsServiceMock.hasWelcomeMessageBeenProcessed = mockHasWelcomeMessageBeenProcessed
 
             // When
-            MLSEventProcessor.shared.updateConversationIfNeeded(
+            self.sut.updateConversationIfNeeded(
                 conversation: self.conversation,
                 groupID: self.groupIdString,
                 context: self.syncMOC

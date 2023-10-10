@@ -25,6 +25,20 @@ final class ConversationEventPayloadProcessor {
         case eventStream
     }
 
+    // MARK: - Properties
+
+    private let mlsEventProcessor: MLSEventProcessing
+
+    // MARK: - Life cycle
+
+    convenience init(context: NSManagedObjectContext) {
+        self.init(mlsEventProcessor: MLSEventProcessor(context: context))
+    }
+
+    init(mlsEventProcessor: MLSEventProcessing) {
+        self.mlsEventProcessor = mlsEventProcessor
+    }
+
     // MARK: - Conversation creation
 
     func updateOrCreateConversations(
@@ -126,7 +140,7 @@ final class ConversationEventPayloadProcessor {
         conversation.removeParticipantsAndUpdateConversationState(users: Set(removedUsers), initiatingUser: sender)
 
         if removedUsers.contains(where: \.isSelfUser), conversation.messageProtocol == .mls {
-            MLSEventProcessor.shared.wipeMLSGroup(forConversation: conversation, context: context)
+            mlsEventProcessor.wipeMLSGroup(forConversation: conversation, context: context)
         }
     }
 
@@ -646,8 +660,6 @@ final class ConversationEventPayloadProcessor {
         context: NSManagedObjectContext,
         source: Source
     ) {
-        let mlsEventProcessor = MLSEventProcessor.shared
-
         mlsEventProcessor.updateConversationIfNeeded(
             conversation: conversation,
             groupID: payload.mlsGroupID,

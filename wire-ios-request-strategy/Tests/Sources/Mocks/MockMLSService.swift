@@ -65,8 +65,9 @@ class MockMLSService: MLSServiceInterface {
         return groupID ?? MLSGroupID(Data())
     }
 
+    var uploadKeyPackesIfNeededCalled = false
     func uploadKeyPackagesIfNeeded() {
-
+        uploadKeyPackesIfNeededCalled = true
     }
 
     var createGroupCalls = [MLSGroupID]()
