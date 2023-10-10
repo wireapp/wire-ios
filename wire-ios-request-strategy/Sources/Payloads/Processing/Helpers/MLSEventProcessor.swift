@@ -142,21 +142,17 @@ public class MLSEventProcessor: MLSEventProcessing {
             let groupID = try mlsService.processWelcomeMessage(welcomeMessage: welcomeMessage)
             mlsService.uploadKeyPackagesIfNeeded()
 
-            guard let conversation = ZMConversation.fetch(with: conversationID, in: context) else {
+            if let conversation = ZMConversation.fetch(with: conversationID, in: context) {
+                conversation.mlsGroupID = groupID
+                conversation.mlsStatus = .ready
+                WireLogger.mls.info("MLS event processor set mlsStatus to ready for group \(groupID.safeForLoggingDescription)")
+                context.saveOrRollback()
+            } else {
                 // Conversation doesn't exist locally yet, so fetch it from the backend.
                 // It'll be marked as ready when it's synced locally.
                 let service = ConversationService(context: context)
                 service.syncConversation(qualifiedID: conversationID)
-                return logWarn(aborting: .processingWelcome, withReason: .other(reason: "conversation does not exist in db"))
             }
-
-            conversation.mlsGroupID = groupID
-            conversation.mlsStatus = .ready
-            context.saveOrRollback()
-
-            WireLogger.mls.info(
-                "MLS event processor set mlsStatus to \(conversation.mlsStatus) for group \(groupID.safeForLoggingDescription)"
-            )
         } catch {
             return WireLogger.mls.warn("MLS event processor aborting processing welcome message: \(String(describing: error))")
         }
