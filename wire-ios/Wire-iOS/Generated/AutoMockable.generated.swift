@@ -109,4 +109,25 @@ class MockConversationGuestOptionsViewModelDelegate: ConversationGuestOptionsVie
     }
 
 }
+
+class MockCreatePasswordSecuredLinkViewModelDelegate: CreatePasswordSecuredLinkViewModelDelegate {
+
+    // MARK: - Life cycle
+
+    // MARK: - viewModel
+
+    var viewModelDidGeneratePassword_Invocations: [(viewModel: CreateSecureGuestLinkViewModel, password: String)] = []
+    var viewModelDidGeneratePassword_MockMethod: ((CreateSecureGuestLinkViewModel, String) -> Void)?
+
+    func viewModel(_ viewModel: CreateSecureGuestLinkViewModel, didGeneratePassword password: String) {
+        viewModelDidGeneratePassword_Invocations.append((viewModel: viewModel, password: password))
+
+        guard let mock = viewModelDidGeneratePassword_MockMethod else {
+            fatalError("no mock for `viewModelDidGeneratePassword`")
+        }
+
+        mock(viewModel, password)
+    }
+
+}
 // swiftlint:enable variable_name

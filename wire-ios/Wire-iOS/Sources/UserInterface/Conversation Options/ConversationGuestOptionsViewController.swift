@@ -137,7 +137,16 @@ final class ConversationGuestOptionsViewController: UIViewController,
         sourceView: UIView? = nil,
         presentGuestLinkTypeSelection completion: @escaping (GuestLinkType) -> Void
     ) {
-        let alertController = UIAlertController.guestLinkTypeController(completion: completion)
+        let alertController = UIAlertController.guestLinkTypeController { guestLinkType in
+            switch guestLinkType {
+            case .secure:
+                self.present(
+                    CreateSecureGuestLinkViewController().wrapInNavigationController(setBackgroundColor: true), 
+                    animated: true
+                )
+            case .normal: break
+            }
+        }
         present(alertController, animated: true)
 
         alertController.configPopover(pointToView: sourceView ?? view)

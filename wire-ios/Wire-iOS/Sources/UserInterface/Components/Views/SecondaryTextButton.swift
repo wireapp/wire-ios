@@ -20,7 +20,7 @@ import Foundation
 import UIKit
 import WireCommonComponents
 
-final class InviteButton: IconButton {
+final class SecondaryTextButton: IconButton {
     init() {
         super.init()
 

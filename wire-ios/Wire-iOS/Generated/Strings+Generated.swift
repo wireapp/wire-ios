@@ -4757,6 +4757,21 @@ internal enum L10n {
         }
       }
     }
+    internal enum SecuredGuestLinkWithPassword {
+      internal enum GeneratePasswordButton {
+        /// Generate password
+        internal static let title = L10n.tr("Localizable", "secured_guest_link_with_password.generate_password_button.title", fallback: "Generate password")
+      }
+      internal enum Header {
+        /// Create password secured link
+        internal static let title = L10n.tr("Localizable", "secured_guest_link_with_password.header.title", fallback: "Create password secured link")
+      }
+      internal enum WarningLabel {
+        /// People who want to join the conversation via the guest link need to enter this password first.
+        /// **You can’t change the password later. Make sure to copy and store it.**
+        internal static let title = L10n.tr("Localizable", "secured_guest_link_with_password.warning_label.title", fallback: "People who want to join the conversation via the guest link need to enter this password first.\n**You can’t change the password later. Make sure to copy and store it.**")
+      }
+    }
     internal enum SecurityClassification {
       /// Security level:
       internal static let securityLevel = L10n.tr("Localizable", "security_classification.security_level", fallback: "Security level:")
