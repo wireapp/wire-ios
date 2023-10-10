@@ -34,7 +34,7 @@ final class MessageActionsViewControllerTests: XCTestCase {
         let actionController = ConversationMessageActionController(responder: nil, message: message, context: .content, view: UIView())
         // WHEN
         let messageActionsViewController = MessageActionsViewController.controller(withActions: MessageAction.allCases,
-                                                                            actionController: actionController)
+                                                                                   actionController: actionController)
         // THEN
         XCTAssertTrue(messageActionsViewController.view.containsBasicReactionPicker())
     }
@@ -46,7 +46,7 @@ final class MessageActionsViewControllerTests: XCTestCase {
         let actionController = ConversationMessageActionController(responder: nil, message: message, context: .content, view: UIView())
         // WHEN
         let messageActionsViewController = MessageActionsViewController.controller(withActions: MessageAction.allCases,
-                                                                            actionController: actionController)
+                                                                                   actionController: actionController)
         // THEN
         XCTAssertFalse(messageActionsViewController.view.containsBasicReactionPicker())
     }
@@ -58,7 +58,7 @@ final class MessageActionsViewControllerTests: XCTestCase {
         let actionController = ConversationMessageActionController(responder: nil, message: message, context: .content, view: UIView())
         // WHEN
         let messageActionsViewController = MessageActionsViewController.controller(withActions: MessageAction.allCases,
-                                                                            actionController: actionController)
+                                                                                   actionController: actionController)
         // THEN
         XCTAssertFalse(messageActionsViewController.view.containsBasicReactionPicker())
     }
@@ -164,12 +164,18 @@ final class BasicReactionPickerTests: BaseSnapshotTestCase {
 fileprivate extension UIView {
 
     func containsBasicReactionPicker() -> Bool {
-        if self.subviews.contains(where: { $0.isKind(of: BasicReactionPicker.self) }) {
+        if self.subviews.contains(
+            where: { $0.isKind(of: BasicReactionPicker.self) }
+        ) {
             return true
         }
-        if subviews.contains(where: { $0.containsBasicReactionPicker() }) {
+
+        for subview in self.subviews
+        where subview.containsBasicReactionPicker() {
             return true
         }
+
         return false
     }
+
 }

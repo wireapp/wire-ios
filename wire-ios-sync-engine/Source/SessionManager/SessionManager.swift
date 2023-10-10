@@ -59,6 +59,7 @@ public protocol SessionManagerDelegate: SessionActivationObserver {
     func sessionManagerDidBlacklistJailbrokenDevice()
     func sessionManagerDidPerformFederationMigration(authenticated: Bool)
     func sessionManagerDidPerformAPIMigrations()
+    func sessionManagerAsksToRetryStart()
 
     var isInAuthenticatedAppState: Bool { get }
     var isInUnathenticatedAppState: Bool { get }
@@ -712,6 +713,7 @@ public final class SessionManager: NSObject, SessionManagerType {
     }
 
     fileprivate func logout(account: Account, error: Error? = nil) {
+        WireLogger.session.debug("Logging out account \(account.userIdentifier)...")
         log.debug("Logging out account \(account.userIdentifier)...")
 
         if let session = backgroundUserSessions[account.userIdentifier] {
@@ -853,7 +855,13 @@ public final class SessionManager: NSObject, SessionManagerType {
                 }
 
                 coreDataStack.loadStores { error in
-                    if error != nil {
+                    if DeveloperFlag.forceDatabaseLoadingFailure.isOn {
+                        // flip off the flag in order not to be stuck in failure
+                        var flag = DeveloperFlag.forceDatabaseLoadingFailure
+                        flag.isOn = false
+                        self.delegate?.sessionManagerDidFailToLoadDatabase()
+                    }
+                    else if error != nil {
                         self.delegate?.sessionManagerDidFailToLoadDatabase()
                     } else {
                         let userSession = self.startBackgroundSession(
@@ -875,6 +883,10 @@ public final class SessionManager: NSObject, SessionManagerType {
                 }
             }
         }
+    }
+
+    public func retryStart() {
+        self.delegate?.sessionManagerAsksToRetryStart()
     }
 
     /// Migrates all existing proteus data created by Cryptobox into Core Crypto, if needed.
@@ -935,7 +947,7 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     fileprivate func deleteAccountData(for account: Account) {
         log.debug("Deleting the data for \(account.userName) -- \(account.userIdentifier)")
-
+        WireLogger.session.debug("Deleting the data for account \(account)")
         environment.cookieStorage(for: account).deleteKeychainItems()
         account.deleteKeychainItems()
 
@@ -946,6 +958,7 @@ public final class SessionManager: NSObject, SessionManagerType {
             try FileManager.default.removeItem(at: CoreDataStack.accountDataFolder(accountIdentifier: accountID, applicationContainer: sharedContainerURL))
         } catch let error {
             log.error("Impossible to delete the acccount \(account): \(error)")
+            WireLogger.session.error("Impossible to delete the acccount \(account): \(error)")
         }
     }
 
@@ -1040,6 +1053,7 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     internal func tearDownBackgroundSession(for accountId: UUID) {
         guard let userSession = self.backgroundUserSessions[accountId] else {
+            WireLogger.session.error("No session to tear down for \(accountId), known sessions: \(self.backgroundUserSessions)")
             log.error("No session to tear down for \(accountId), known sessions: \(self.backgroundUserSessions)")
             return
         }

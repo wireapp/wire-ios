@@ -222,6 +222,7 @@ final class UserClientByUserClientIDTranscoder: IdentifierObjectSyncTranscoder {
 
     var managedObjectContext: NSManagedObjectContext
     let decoder: JSONDecoder = .defaultDecoder
+    private let processor = UserClientPayloadProcessor()
 
     init(managedObjectContext: NSManagedObjectContext) {
         self.managedObjectContext = managedObjectContext
@@ -256,7 +257,11 @@ final class UserClientByUserClientIDTranscoder: IdentifierObjectSyncTranscoder {
             client.deleteClientAndEndSession()
         } else if let rawData = response.rawData,
                   let payload = Payload.UserClient(rawData, decoder: decoder) {
-            payload.update(client)
+            processor.updateClient(
+                client,
+                from: payload
+            )
+
             let selfClient = ZMUser.selfUser(in: managedObjectContext).selfClient()
             let clientSet: Set<UserClient> = [client]
             selfClient?.updateSecurityLevelAfterDiscovering(clientSet)
@@ -272,6 +277,8 @@ final class UserClientByQualifiedUserIDTranscoder: IdentifierObjectSyncTranscode
     var managedObjectContext: NSManagedObjectContext
     let decoder: JSONDecoder = .defaultDecoder
     let encoder: JSONEncoder = .defaultEncoder
+
+    private let processor = UserClientPayloadProcessor()
 
     init(managedObjectContext: NSManagedObjectContext) {
         self.managedObjectContext = managedObjectContext
@@ -363,6 +370,12 @@ final class UserClientByQualifiedUserIDTranscoder: IdentifierObjectSyncTranscode
     }
 
     private func commonResponseHandling(response: ZMTransportResponse, for identifiers: Set<QualifiedID>) {
+        defer {
+            // We mark all clients as synced, even if they did not appear in
+            // the reponse payload, in order to avoid a possible request loop.
+            markAllClientsAsUpdated(identifiers: identifiers)
+        }
+
         guard
             let rawData = response.rawData,
             let payload = ResponsePayload(rawData, decoder: decoder),
@@ -384,9 +397,27 @@ final class UserClientByQualifiedUserIDTranscoder: IdentifierObjectSyncTranscode
                     in: managedObjectContext
                 )
 
-                clientPayloads.updateClients(for: user, selfClient: selfClient)
+                processor.createOrUpdateClients(
+                    from: clientPayloads,
+                    for: user,
+                    selfClient: selfClient
+                )
             }
         }
+    }
+
+    private func markAllClientsAsUpdated(identifiers: Set<QualifiedID>) {
+        let clients = UserClient.fetchClientsNeedingUpdateFromBackend(in: managedObjectContext)
+
+        for client in clients {
+            if let qualifiedID = client.user?.qualifiedID {
+                if identifiers.contains(qualifiedID) {
+                    client.needsToBeUpdatedFromBackend = false
+                }
+            }
+        }
+
+        managedObjectContext.saveOrRollback()
     }
 
 }
@@ -397,6 +428,8 @@ final class UserClientByUserIDTranscoder: IdentifierObjectSyncTranscoder {
 
     var managedObjectContext: NSManagedObjectContext
     let decoder: JSONDecoder = .defaultDecoder
+
+    private let processor = UserClientPayloadProcessor()
 
     init(managedObjectContext: NSManagedObjectContext) {
         self.managedObjectContext = managedObjectContext
@@ -425,7 +458,16 @@ final class UserClientByUserIDTranscoder: IdentifierObjectSyncTranscoder {
             return
         }
 
-        let user = ZMUser.fetchOrCreate(with: identifier, domain: nil, in: managedObjectContext)
-        payload.updateClients(for: user, selfClient: selfClient)
+        let user = ZMUser.fetchOrCreate(
+            with: identifier,
+            domain: nil,
+            in: managedObjectContext
+        )
+
+        processor.createOrUpdateClients(
+            from: payload,
+            for: user,
+            selfClient: selfClient
+        )
     }
 }
