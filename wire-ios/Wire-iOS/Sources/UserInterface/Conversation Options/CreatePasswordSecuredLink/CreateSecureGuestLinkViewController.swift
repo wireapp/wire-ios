@@ -20,8 +20,7 @@ import Down
 import UIKit
 import WireCommonComponents
 
-
-class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecuredLinkViewModelDelegate, VerifiedTextfieldDelegate {
+class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecuredLinkViewModelDelegate {
 
     // MARK: - Properties
 
@@ -29,7 +28,18 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
     typealias LabelColors = SemanticColors.Label
     typealias SecuredGuestLinkWithPasswordLocale = L10n.Localizable.SecuredGuestLinkWithPassword
 
+    weak var delegate: ValidatedTextFieldDelegate?
+
     private var viewModel = CreateSecureGuestLinkViewModel()
+
+    private let warningLabel: UILabel = {
+        var label = UILabel()
+        label.numberOfLines = 0
+        label.adjustsFontForContentSizeCategory = true
+        label.attributedText = .markdown(from: SecuredGuestLinkWithPasswordLocale.WarningLabel.title, style: .warningLabelStyle)
+        return label
+    }()
+
     private lazy var generatePasswordButton: SecondaryTextButton = {
         let button = SecondaryTextButton(
             fontSpec: FontSpec.buttonSmallSemibold,
@@ -41,16 +51,6 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
         button.addTarget(self, action: #selector(generatePasswordButtonTapped), for: .touchUpInside)
         button.imageEdgeInsets.right = 10.0
         return button
-    }()
-
-
-    private let warningLabel: UILabel = {
-        var paragraphStyle = NSMutableParagraphStyle()
-        var label = UILabel()
-        label.numberOfLines = 0
-        label.adjustsFontForContentSizeCategory = true
-        label.attributedText = .markdown(from: SecuredGuestLinkWithPasswordLocale.WarningLabel.title, style: .warningLabelStyle)
-        return label
     }()
 
     private let setPasswordLabel: DynamicFontLabel = {
@@ -72,11 +72,9 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
             setNewColors: true,
             style: .default
         )
-
-        textField.showConfirmButton = false
+        textField.addRevealButton(delegate: self)
         textField.placeholder = SecuredGuestLinkWithPasswordLocale.Textfield.placeholder
-
-        // textField.delegate = self
+        textField.delegate = self
         textField.addDoneButtonOnKeyboard()
         return textField
     }()
@@ -113,6 +111,7 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
         )
 
         textField.showConfirmButton = false
+        textField.addRevealButton(delegate: self)
         textField.placeholder = SecuredGuestLinkWithPasswordLocale.VerifyPasswordTextField.placeholder
         textField.delegate = self
         textField.addDoneButtonOnKeyboard()
@@ -219,7 +218,7 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
 
 }
 
-extension CreatePasswordSecuredLinkViewController: UITextFieldDelegate {
+extension CreateSecureGuestLinkViewController: UITextFieldDelegate {
 
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
 
@@ -232,7 +231,17 @@ extension CreatePasswordSecuredLinkViewController: UITextFieldDelegate {
 
         return true
     }
+}
 
+extension CreateSecureGuestLinkViewController: ValidatedTextFieldDelegate {
+
+    func buttonPressed(_ sender: UIButton) {
+        securedGuestLinkPasswordTextfield.isSecureTextEntry.toggle()
+        securedGuestLinkPasswordTextfield.updatePasscodeIcon()
+        securedGuestLinkPasswordValidatedTextField.isSecureTextEntry.toggle()
+        securedGuestLinkPasswordValidatedTextField.updatePasscodeIcon()
+    }
+}
 private extension DownStyle {
 
     static var warningLabelStyle: DownStyle {

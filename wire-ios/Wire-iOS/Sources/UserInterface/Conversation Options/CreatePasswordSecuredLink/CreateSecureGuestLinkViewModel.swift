@@ -26,7 +26,7 @@ protocol CreatePasswordSecuredLinkViewModelDelegate: AnyObject {
     func viewModel(_ viewModel: CreateSecureGuestLinkViewModel, didGeneratePassword password: String)
 }
 
-// MARK: - CreatePasswordSecuredLinkViewModel
+// MARK: - CreateSecureGuestLinkViewModel
 
 final class CreateSecureGuestLinkViewModel {
 
@@ -45,8 +45,8 @@ final class CreateSecureGuestLinkViewModel {
 
         let updatedString = (textfield.text as NSString?)?.replacingCharacters(in: NSRange(location: 0, length: 0), with: string) ?? string
 
-        // Ensure at least 8 characters with one lowercase letter, one capital letter, a number, and a special character
-        let passwordRegex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^a-zA-Z\\d]).{8,}$"
+        // Ensure 15 to 20 characters with one lowercase letter, one capital letter, a number, and a special character
+        let passwordRegex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^a-zA-Z\\d]).{15,20}$"
         let passwordPredicate = NSPredicate(format: "SELF MATCHES %@", passwordRegex)
 
         return passwordPredicate.evaluate(with: updatedString)

@@ -4767,8 +4767,8 @@ internal enum L10n {
         internal static let title = L10n.tr("Localizable", "secured_guest_link_with_password.header.title", fallback: "Create password secured link")
       }
       internal enum Textfield {
-        /// Use at least 8 characters, with one lowercase letter, one capital letter, a number, and a special character.
-        internal static let footer = L10n.tr("Localizable", "secured_guest_link_with_password.textfield.footer", fallback: "Use at least 8 characters, with one lowercase letter, one capital letter, a number, and a special character.")
+        /// Use at least 15 characters, with one lowercase letter, one capital letter, a number, and a special character.
+        internal static let footer = L10n.tr("Localizable", "secured_guest_link_with_password.textfield.footer", fallback: "Use at least 15 characters, with one lowercase letter, one capital letter, a number, and a special character.")
         /// Set password
         internal static let header = L10n.tr("Localizable", "secured_guest_link_with_password.textfield.header", fallback: "Set password")
         /// Enter password
