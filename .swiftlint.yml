@@ -39,6 +39,7 @@ excluded:
     - "**/*.generated.swift"
     - "**/*+Generated.swift"
     - "wire-ios/Wire-iOS/Generated/Strings+Generated.swift"
+    - "wire-ios/Wire-iOS/Generated/Assets+Generated.swift"
     - "wire-ios-data-model/sourcery/generated/AutoMockable.generated.swift"
 
 # In order to deal with the huge number of violations, first set
