@@ -23,8 +23,9 @@ class MLSEventProcessorTests: MessagingTestBase {
 
     var sut: MLSEventProcessor!
     var mlsServiceMock: MockMLSService!
-    var conversation: ZMConversation!
+    var conversationServiceMock: MockConversationService!
 
+    var conversation: ZMConversation!
     var qualifiedID: QualifiedID!
     let groupIdString = "identifier".data(using: .utf8)!.base64EncodedString()
 
@@ -32,6 +33,7 @@ class MLSEventProcessorTests: MessagingTestBase {
         super.setUp()
 
         qualifiedID = QualifiedID(uuid: .create(), domain: "example.com")
+
         syncMOC.performGroupedBlockAndWait {
             self.mlsServiceMock = MockMLSService()
             self.syncMOC.mlsService = self.mlsServiceMock
@@ -42,11 +44,13 @@ class MLSEventProcessorTests: MessagingTestBase {
             self.conversation.messageProtocol = .mls
         }
 
-        sut = MLSEventProcessor(context: syncMOC)
+        conversationServiceMock = MockConversationService()
+        sut = MLSEventProcessor(conversationService: conversationServiceMock)
     }
 
     override func tearDown() {
         mlsServiceMock = nil
+        conversationServiceMock = nil
         conversation = nil
         qualifiedID = nil
         sut = nil
@@ -94,7 +98,7 @@ class MLSEventProcessorTests: MessagingTestBase {
 
             // Then
             XCTAssertEqual(message, self.mlsServiceMock.processedWelcomeMessage)
-            // assert we requested a sync
+            XCTAssertEqual(self.conversationServiceMock.syncConversationInvocations, [qualifiedID])
             XCTAssertTrue(self.mlsServiceMock.uploadKeyPackesIfNeededCalled)
         }
     }

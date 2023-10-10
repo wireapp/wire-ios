@@ -150,8 +150,9 @@ public class MLSEventProcessor: MLSEventProcessing {
             } else {
                 // Conversation doesn't exist locally yet, so fetch it from the backend.
                 // It'll be marked as ready when it's synced locally.
-                let service = ConversationService(context: context)
-                service.syncConversation(qualifiedID: conversationID)
+                conversationService.syncConversation(qualifiedID: conversationID) {
+                    // no op
+                }
             }
         } catch {
             return WireLogger.mls.warn("MLS event processor aborting processing welcome message: \(String(describing: error))")
