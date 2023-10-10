@@ -50,7 +50,6 @@ public enum FontWeight: String, CaseIterable {
     case black
 }
 
-@available(iOSApplicationExtension 8.2, *)
 extension FontWeight {
     static let weightMapping: [FontWeight: UIFont.Weight] = [
         .ultraLight: UIFont.Weight.ultraLight,

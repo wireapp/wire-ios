@@ -1063,12 +1063,8 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
     
     // then
     XCTAssertNotNil(imageData);
-    if (@available(iOS 14, *)) {
         // TODO:  [Bill] check why 1 btye is removed from jpegData?
-        XCTAssertEqual(imageData.length, jpegData.length + 1);
-    } else {
-        XCTAssertEqual(imageData.length, jpegData.length);
-    }
+    XCTAssertEqual(imageData.length, jpegData.length + 1);
 }
 
 - (void)testThatFlagIsSetWhenSenderIsTheOnlyUser
