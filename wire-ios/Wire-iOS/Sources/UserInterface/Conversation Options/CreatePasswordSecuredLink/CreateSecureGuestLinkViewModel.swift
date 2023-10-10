@@ -41,7 +41,10 @@ final class CreateSecureGuestLinkViewModel {
     }
 
     func generateRandomPassword() -> String {
-        let length = 8
+        let minLength = 15
+        let maxLength = 20
+        let selectedLength = Int.random(in: minLength...maxLength)
+
         let lowercaseLetters = "abcdefghijklmnopqrstuvwxyz"
         let uppercaseLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
         let numbers = "0123456789"
@@ -54,7 +57,7 @@ final class CreateSecureGuestLinkViewModel {
         characters.append(numbers.randomElement()!)
         characters.append(specialCharacters.randomElement()!)
 
-        for _ in 0..<(length - characters.count) {
+        for _ in 0..<(selectedLength - characters.count) {
             characters.append(allCharacters.randomElement()!)
         }
 
