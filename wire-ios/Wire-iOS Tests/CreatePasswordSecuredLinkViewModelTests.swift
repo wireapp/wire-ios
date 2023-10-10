@@ -30,7 +30,7 @@ class CreatePasswordSecuredLinkViewModelTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        viewModel = CreateSecureGuestLinkViewModel()
+        viewModel = CreateSecureGuestLinkViewModel(delegate: mockDelegate)
         mockDelegate = MockCreatePasswordSecuredLinkViewModelDelegate()
         viewModel.delegate = mockDelegate
     }

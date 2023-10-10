@@ -30,7 +30,9 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
 
     weak var delegate: ValidatedTextFieldDelegate?
 
-    private var viewModel = CreateSecureGuestLinkViewModel()
+    private lazy var viewModel: CreateSecureGuestLinkViewModel = {
+        CreateSecureGuestLinkViewModel(delegate: self)
+    }()
 
     private let warningLabel: UILabel = {
         var label = UILabel()
@@ -125,7 +127,6 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        viewModel.delegate = self
         setUpViews()
         setupConstraints()
     }
@@ -214,6 +215,7 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
     ) {
         securedGuestLinkPasswordTextfield.text = password
         securedGuestLinkPasswordValidatedTextField.text = password
+
     }
 
 }

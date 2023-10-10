@@ -34,6 +34,12 @@ final class CreateSecureGuestLinkViewModel {
 
     weak var delegate: CreatePasswordSecuredLinkViewModelDelegate?
 
+    // MARK: - Init
+
+    init(delegate: CreatePasswordSecuredLinkViewModelDelegate?) {
+        self.delegate = delegate
+    }
+
     // MARK: - Methods
 
     func requestRandomPassword() {
