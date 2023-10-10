@@ -122,7 +122,7 @@ public final class MLSService: MLSServiceInterface {
     let targetUnclaimedKeyPackageCount = 100
     let actionsProvider: MLSActionsProviderProtocol
 
-    private let subconverationGroupIDRepository: SubconversationGroupIDRepositoryInterface
+    private let subconversationGroupIDRepository: SubconversationGroupIDRepositoryInterface
 
     var lastKeyMaterialUpdateCheck = Date.distantPast
     var keyMaterialUpdateCheckTimer: Timer?
@@ -195,7 +195,7 @@ public final class MLSService: MLSServiceInterface {
         self.userDefaults = userDefaults
         self.delegate = delegate
         self.syncStatus = syncStatus
-        self.subconverationGroupIDRepository = subconversationGroupIDRepository
+        self.subconversationGroupIDRepository = subconversationGroupIDRepository
 
         self.encryptionService = encryptionService ?? MLSEncryptionService(coreCrypto: coreCrypto)
         self.decryptionService = decryptionService ?? MLSDecryptionService(
@@ -862,14 +862,14 @@ public final class MLSService: MLSServiceInterface {
         }
     }
 
-    private func fetchAndRepairGroupIfPossible(with groupID: MLSGroupID) {
+    func fetchAndRepairGroupIfPossible(with groupID: MLSGroupID) {
         launchGroupRepairTaskIfNotInProgress(for: groupID) {
             await self.fetchAndRepairGroup(with: groupID)
         }
     }
 
     public func fetchAndRepairGroup(with groupID: MLSGroupID) async {
-        if let subgroupInfo = subconverationGroupIDRepository.findSubgroupTypeAndParentID(for: groupID) {
+        if let subgroupInfo = subconversationGroupIDRepository.findSubgroupTypeAndParentID(for: groupID) {
             await fetchAndRepairSubgroup(parentGroupID: subgroupInfo.parentID)
         } else {
             await fetchAndRepairParentGroup(with: groupID)
@@ -1298,7 +1298,7 @@ public final class MLSService: MLSServiceInterface {
 
                 // The pending proposal might be for the subconversation,
                 // so include it just in case.
-                if let subgroupID = subconverationGroupIDRepository.fetchSubconversationGroupID(
+                if let subgroupID = subconversationGroupIDRepository.fetchSubconversationGroupID(
                     forType: .conference,
                     parentGroupID: groupID
                 ) {
@@ -1459,7 +1459,7 @@ public final class MLSService: MLSServiceInterface {
                 )
             }
 
-            subconverationGroupIDRepository.storeSubconversationGroupID(
+            subconversationGroupIDRepository.storeSubconversationGroupID(
                 subgroup.groupID,
                 forType: .conference,
                 parentGroupID: parentID
@@ -1564,7 +1564,7 @@ public final class MLSService: MLSServiceInterface {
         }
 
         if
-            let subConversationGroupID = subconverationGroupIDRepository.fetchSubconversationGroupID(
+            let subConversationGroupID = subconversationGroupIDRepository.fetchSubconversationGroupID(
                 forType: subconversationType,
                 parentGroupID: parentGroupID
             ),
@@ -1589,7 +1589,7 @@ public final class MLSService: MLSServiceInterface {
         parentGroupID: MLSGroupID,
         subconversationType: SubgroupType
     ) async throws {
-        guard let subconversationGroupID = subconverationGroupIDRepository.fetchSubconversationGroupID(
+        guard let subconversationGroupID = subconversationGroupIDRepository.fetchSubconversationGroupID(
             forType: subconversationType,
             parentGroupID: parentGroupID
         ) else {
@@ -1624,7 +1624,7 @@ public final class MLSService: MLSServiceInterface {
                 context: context
             )
 
-            subconverationGroupIDRepository.storeSubconversationGroupID(
+            subconversationGroupIDRepository.storeSubconversationGroupID(
                 nil,
                 forType: subconversationType,
                 parentGroupID: parentGroupID

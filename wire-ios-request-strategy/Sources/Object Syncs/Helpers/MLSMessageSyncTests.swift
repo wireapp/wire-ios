@@ -19,15 +19,40 @@
 import XCTest
 @testable import WireRequestStrategy
 
+private typealias MockMLSMessageSync = MLSMessageSync<MockOTREntity>
+private typealias MockMLSMessageTranscoder = MockMLSMessageSync.Transcoder<MockOTREntity>
+
+private class MockDependencyEntitySync: DependencyEntitySync<MockMLSMessageTranscoder> {
+
+    typealias SynchronizeMock = (MockOTREntity, EntitySyncHandler?) -> Void
+
+    var synchronizeMocks = [SynchronizeMock]()
+
+    override func synchronize(entity: MockOTREntity, completion: EntitySyncHandler? = nil) {
+        guard !synchronizeMocks.isEmpty else { return }
+        let mock = synchronizeMocks.removeFirst()
+        mock(entity, completion)
+    }
+}
+
 final class MLSMessageSyncTests: MessagingTestBase {
 
-    var sut: MLSMessageSync<MockOTREntity>!
-    var mockMLSService: MockMLSService!
-    var mockMessage: MockOTREntity!
+    private var sut: MLSMessageSync<MockOTREntity>!
+    private var mockMLSService: MockMLSService!
+    private var mockMessage: MockOTREntity!
+    private var mockDependencySync: MockDependencyEntitySync!
+    private let groupID = MLSGroupID([1, 2, 3])
 
     override func setUp() {
         super.setUp()
-        sut = MLSMessageSync(context: syncMOC)
+        mockDependencySync = MockDependencyEntitySync(
+            transcoder: MockMLSMessageTranscoder(context: syncMOC),
+            context: syncMOC
+        )
+        sut = MLSMessageSync(
+            context: syncMOC,
+            dependencySync: mockDependencySync
+        )
         mockMLSService = MockMLSService()
         mockMessage = MockOTREntity(
             messageData: Data([1, 2, 3]),
@@ -35,8 +60,8 @@ final class MLSMessageSyncTests: MessagingTestBase {
             context: syncMOC
         )
 
-        syncMOC.performGroupedBlockAndWait {
-            self.groupConversation.mlsGroupID = MLSGroupID([1, 2, 3])
+        syncMOC.performAndWait {
+            self.groupConversation.mlsGroupID = groupID
             self.groupConversation.messageProtocol = .mls
             self.syncMOC.mlsService = self.mockMLSService
         }
@@ -46,13 +71,14 @@ final class MLSMessageSyncTests: MessagingTestBase {
         sut = nil
         mockMLSService = nil
         mockMessage = nil
+        mockDependencySync = nil
         super.tearDown()
     }
 
     // MARK: - Message syncing
 
     func test_SyncMessage() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performAndWait {
             // Expect
             self.expectation(
                 forNotification: Notification.Name("RequestAvailableNotification"),
@@ -70,7 +96,51 @@ final class MLSMessageSyncTests: MessagingTestBase {
         XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 0.5))
 
         // Then it preemptively commits pending proposals.
-        XCTAssertEqual(self.mockMLSService.calls.commitPendingProposalsInGroup, [MLSGroupID([1, 2, 3])])
+        XCTAssertEqual(self.mockMLSService.calls.commitPendingProposalsInGroup, [groupID])
+    }
+
+    func test_SyncMessage_RepairsGroupAndRetriesToSync_OnMLSStaleMessage() {
+        // Given
+
+        // Mock stale message response on first synchronization
+        mockDependencySync.synchronizeMocks.append({ _, completion in
+            let response = self.responseFailure(
+                code: 409,
+                label: .mlsStaleMessage,
+                apiVersion: .v5
+            )
+            completion?(.failure(.gaveUpRetrying), response)
+        })
+
+        // Mock group repair and set expectation
+        let repairExpectation = XCTestExpectation(description: "fetched and repaired group")
+        mockMLSService.fetchAndRepairGroupMock = { groupID in
+            XCTAssertEqual(self.groupID, groupID)
+            repairExpectation.fulfill()
+        }
+
+        // Mock success response
+        let successResponse = ZMTransportResponse(
+            payload: nil,
+            httpStatus: 200,
+            transportSessionError: nil,
+            apiVersion: 5
+        )
+
+        // Mock success on the second synchronization and set expectation
+        let retryExpectation = XCTestExpectation(description: "retried synchronization")
+        mockDependencySync.synchronizeMocks.append({ _, completion in
+            completion?(.success(()), successResponse)
+            retryExpectation.fulfill()
+        })
+
+        // When
+        syncMOC.performAndWait {
+            self.sut.sync(mockMessage) { _, _ in }
+        }
+
+        // Then
+        wait(for: [repairExpectation, retryExpectation], timeout: 0.5)
     }
 
     // MARK: - Request generation
