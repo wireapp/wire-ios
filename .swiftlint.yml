@@ -35,9 +35,9 @@ excluded:
     - Carthage
     - vendor
     - wire-ios/Templates
-    - "**/*.pb.swift"
-    - "**/*.generated.swift"
-    - "**/*+Generated.swift"
+    - "*/*.pb.swift"
+    - "*/*.generated.swift"
+    - "*/*+Generated.swift"
     - "wire-ios/Wire-iOS/Generated/Strings+Generated.swift"
 
 # In order to deal with the huge number of violations, first set
