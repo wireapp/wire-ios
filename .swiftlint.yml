@@ -35,9 +35,9 @@ excluded:
     - Carthage
     - vendor
     - wire-ios/Templates
-    - "*/*.pb.swift"
-    - "*/*.generated.swift"
-    - "*/*+Generated.swift"
+    - "**/*.pb.swift"
+    - "**/*.generated.swift"
+    - "**/*+Generated.swift"
     - "wire-ios/Wire-iOS/Generated/Strings+Generated.swift"
     - "wire-ios-data-model/sourcery/generated/AutoMockable.generated.swift"
 
