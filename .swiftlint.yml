@@ -35,7 +35,6 @@ excluded:
     - Carthage
     - vendor
     - wire-ios/Templates
-    - "wire-ios/Wire-iOS/Generated/Strings+Generated.swift"
     - "wire-ios/Wire-iOS/Generated/Assets+Generated.swift"
     - "wire-ios/Wire-iOS/Generated/Strings+Generated.swift"
     - "wire-ios-protos/Protos/messages.pb.swift"
