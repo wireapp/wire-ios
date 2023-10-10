@@ -41,9 +41,7 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
         return button
     }()
 
-    private var viewModel: CreateSecureGuestLinkViewModel {
-       return CreateSecureGuestLinkViewModel(delegate: self)
-    }
+    private var viewModel = CreateSecureGuestLinkViewModel()
 
     private let warningLabel: UILabel = {
         var paragraphStyle = NSMutableParagraphStyle()
@@ -59,6 +57,7 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        viewModel.delegate = self
         setUpViews()
         setupConstraints()
     }
