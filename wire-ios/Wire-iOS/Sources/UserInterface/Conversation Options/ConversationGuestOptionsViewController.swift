@@ -141,7 +141,9 @@ final class ConversationGuestOptionsViewController: UIViewController,
             switch guestLinkType {
             case .secure:
                 self.present(
-                    CreateSecureGuestLinkViewController().wrapInNavigationController(setBackgroundColor: true), animated: true)
+                    CreateSecureGuestLinkViewController().wrapInNavigationController(setBackgroundColor: true), 
+                    animated: true
+                )
             case .normal: break
             }
         }
