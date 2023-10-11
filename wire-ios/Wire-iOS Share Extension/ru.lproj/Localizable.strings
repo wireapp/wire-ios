@@ -20,6 +20,11 @@
 
 
 
+
+
+
+
+"test" = "test";
 "general.ok" = "OK";
 
 "share_extension.conversation_selection.account" = "Аккаунт:";
