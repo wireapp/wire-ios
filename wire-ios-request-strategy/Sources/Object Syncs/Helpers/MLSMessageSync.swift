@@ -83,7 +83,6 @@ class MLSMessageSync<Message: MLSMessage>: NSObject, ZMContextChangeTrackerSourc
             context.performGroupedBlock { [dependencySync] in
                 dependencySync.synchronize(entity: message, completion: completion)
                 RequestAvailableNotification.notifyNewRequestsAvailable(nil)
-                completion(.success(()), .init())
             }
         }
     }
