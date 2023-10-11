@@ -38,10 +38,6 @@ class ProxiedRequestsStatusTests: MessagingTest {
         self.sut = ProxiedRequestsStatus(requestCancellation: mockRequestCancellation)
     }
 
-    override func tearDown() {
-        super.tearDown()
-    }
-
     func testThatRequestIsAddedToPendingRequest() {
         // given
         let request = ProxyRequest(type: .giphy, path: "foo/bar", method: .methodGET, callback: nil)
