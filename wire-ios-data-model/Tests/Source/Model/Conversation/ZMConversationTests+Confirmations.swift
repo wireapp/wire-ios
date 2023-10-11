@@ -82,9 +82,9 @@ class ZMConversationTests_Confirmations: ZMConversationTestsBase {
         conversation.conversationType = .group
         conversation.lastReadServerTimeStamp = .distantPast
 
-        message1.serverTimestamp = Date.init(timeIntervalSinceNow: -35)
-        message2.serverTimestamp = Date.init(timeIntervalSinceNow: -30)
-        message3.serverTimestamp = Date.init(timeIntervalSinceNow: -25)
+        message1.updateTimestamp(with: 10)
+        message2.updateTimestamp(with: 20)
+        message3.updateTimestamp(with: 30)
 
         // when
         let confirmMessages = conversation.confirmUnreadMessagesAsRead(in: conversation.lastReadServerTimeStamp!...message2.serverTimestamp!)
@@ -115,10 +115,10 @@ class ZMConversationTests_Confirmations: ZMConversationTestsBase {
 
         conversation.conversationType = .group
 
-        message1.serverTimestamp = Date.init(timeIntervalSinceNow: -35)
-        message2.serverTimestamp = Date.init(timeIntervalSinceNow: -30)
-        message3.serverTimestamp = Date.init(timeIntervalSinceNow: -25)
-        message4.serverTimestamp = Date.init(timeIntervalSinceNow: -20)
+        message1.updateTimestamp(with: 10)
+        message2.updateTimestamp(with: 20)
+        message3.updateTimestamp(with: 30)
+        message4.updateTimestamp(with: 40)
 
         // When
         // Before we confirm the unread messages, advance the last read server timestamp.

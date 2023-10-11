@@ -50,7 +50,7 @@ class ZMConversationLastMessagesTest: ZMBaseManagedObjectTest {
         // WHEN
         try (0...40).forEach { i in
             let message = try conversation.appendText(content: "\(i)") as! ZMClientMessage
-            message.serverTimestamp = Date.init(timeIntervalSinceNow: -Double(40 - i))
+            message.updateTimestamp(with: Double(i))
         }
 
         // THEN
@@ -64,7 +64,7 @@ class ZMConversationLastMessagesTest: ZMBaseManagedObjectTest {
         // WHEN
         try (0...40).forEach { i in
             let message = try conversation.appendText(content: "\(i)") as! ZMClientMessage
-            message.serverTimestamp = Date.init(timeIntervalSinceNow: -Double(40 - i))
+            message.updateTimestamp(with: Double(i))
         }
 
         // THEN
@@ -81,7 +81,7 @@ class ZMConversationLastMessagesTest: ZMBaseManagedObjectTest {
         // WHEN
         try (0...40).forEach { i in
             let message = try conversation.appendText(content: "\(i)") as! ZMClientMessage
-            message.serverTimestamp = Date.init(timeIntervalSinceNow: -Double(41 - i))
+            message.updateTimestamp(with: Double(i))
         }
 
         // THEN
@@ -99,12 +99,12 @@ class ZMConversationLastMessagesTest: ZMBaseManagedObjectTest {
         // WHEN
         try (1...10).forEach { i in
             let message = try conversation.appendText(content: "\(i)") as! ZMClientMessage
-            message.serverTimestamp = Date.init(timeIntervalSinceNow: -Double(10 - i))
+            message.updateTimestamp(with: Double(i))
         }
 
         try (1...10).forEach { i in
             let message = try otherConversation.appendText(content: "Other \(i)") as! ZMClientMessage
-            message.serverTimestamp = Date.init(timeIntervalSinceNow: -Double(10 - i))
+            message.updateTimestamp(with: Double(i))
         }
 
         // THEN
@@ -129,6 +129,14 @@ class ZMConversationLastMessagesTest: ZMBaseManagedObjectTest {
 
         // then
         XCTAssertEqual(conversation.lastEditableMessage, message)
+    }
+
+}
+
+extension ZMMessage {
+
+    func updateTimestamp(with timeInterval: TimeInterval) {
+        self.serverTimestamp = Date(timeIntervalSince1970: timeInterval)
     }
 
 }

@@ -384,7 +384,8 @@ class ZMConversationTests_Timestamps: ZMConversationTestsBase {
         let systemMessage1 = ZMSystemMessage(nonce: UUID(), managedObjectContext: uiMOC)
         systemMessage1.systemMessageType = .missedCall
         systemMessage1.visibleInConversation = conversation
-        systemMessage1.serverTimestamp = Date.init(timeIntervalSinceNow: -30)
+        systemMessage1.updateTimestamp(with: 10)
+
         conversation.lastReadServerTimeStamp = systemMessage1.serverTimestamp
 
         // when
@@ -392,7 +393,7 @@ class ZMConversationTests_Timestamps: ZMConversationTestsBase {
         systemMessage2.systemMessageType = .missedCall
         systemMessage2.hiddenInConversation = conversation
         systemMessage2.parentMessage = systemMessage1
-        systemMessage2.serverTimestamp = Date.init(timeIntervalSinceNow: -20)
+        systemMessage2.updateTimestamp(with: 20)
 
         // then
         XCTAssertEqual(conversation.firstUnreadMessage as? ZMSystemMessage, systemMessage1)
