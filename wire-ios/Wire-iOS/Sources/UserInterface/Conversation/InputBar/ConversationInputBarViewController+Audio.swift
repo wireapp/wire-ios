@@ -109,7 +109,7 @@ extension ConversationInputBarViewController {
         audioRecordViewContainer.fitIn(view: inputBar)
         audioRecordViewContainer.addSubview(audioRecordViewController.view)
 
-        let recordButtonFrame = inputBar.convert(audioButton.bounds, from: audioButton)
+        _ = inputBar.convert(audioButton.bounds, from: audioButton)
 
         NSLayoutConstraint.activate([
             audioRecordViewController.view.trailingAnchor.constraint(equalTo: audioRecordViewContainer.trailingAnchor),

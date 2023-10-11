@@ -21,11 +21,8 @@ import SnapshotTesting
 @testable import Wire
 
 class RoundedSegmentedViewTests: XCTestCase {
-    var sut: RoundedSegmentedView!
 
-    override func setUp() {
-        super.setUp()
-    }
+    var sut: RoundedSegmentedView!
 
     override func tearDown() {
         sut = nil

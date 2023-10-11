@@ -40,7 +40,7 @@ extension CallStatusViewState {
         switch self {
         case .none: return ""
         case .connecting: return CallStatus.connecting
-        case .ringingIncoming(name: let name?): return CallStatus.Incoming.user("\(name ?? "")")
+        case .ringingIncoming(name: let name?): return CallStatus.Incoming.user("\(name)")
         case .ringingIncoming(name: nil): return CallStatus.incoming
         case .ringingOutgoing: return CallStatus.outgoing
         case .established(duration: let duration): return callDurationFormatter.string(from: duration) ?? ""
