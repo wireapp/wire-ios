@@ -77,7 +77,6 @@ final class MessageToolboxViewTests: CoreDataSnapshotTestCase {
         sut.configureForMessage(message, animated: false)
 
         // THEN
-        verifyView(view: sut, width: defaultIPhoneSize.width)
         verifyInWidths(
             matching: sut,
             widths: [defaultIPhoneSize.width],
