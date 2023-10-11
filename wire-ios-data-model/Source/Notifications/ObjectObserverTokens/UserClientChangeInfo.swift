@@ -91,11 +91,14 @@ extension UserClientChangeInfo {
     /// Adds an observer for the specified userclient
     /// You must hold on to the token and use it to unregister
     @objc(addObserver:forClient:)
-    public static func add(observer: UserClientObserver, for client: UserClient) -> NSObjectProtocol {
-        return ManagedObjectObserverToken(name: .UserClientChange, managedObjectContext: client.managedObjectContext!, object: client) { [weak observer] (note) in
+    public static func add(observer: UserClientObserver, for client: UserClient) -> NSObjectProtocol? {
+        guard let managedObjectContext = client.managedObjectContext else {
+            return nil
+        }
+        return ManagedObjectObserverToken(name: .UserClientChange, managedObjectContext: managedObjectContext, object: client) { [weak observer] (note) in
             guard let `observer` = observer,
-                let changeInfo = note.changeInfo as? UserClientChangeInfo
-                else { return }
+                  let changeInfo = note.changeInfo as? UserClientChangeInfo
+            else { return }
 
             observer.userClientDidChange(changeInfo)
         }
