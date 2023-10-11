@@ -123,7 +123,7 @@ class ConversationStatusLineTests: CoreDataSnapshotTestCase {
         // GIVEN
         let sut = self.otherUserConversation!
         for index in 1...5 {
-            let message = try sut.appendText(content: "test \(index)") as! ZMClientMessage
+            let message = try sut.appendText(content: "test \(index)") as? ZMClientMessage
             message.sender = self.otherUser
             message.serverTimestamp = Date(timeIntervalSinceNow: TimeInterval(index))
         }
