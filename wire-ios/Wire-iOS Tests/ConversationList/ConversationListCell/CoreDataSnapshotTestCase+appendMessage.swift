@@ -47,7 +47,6 @@ extension CoreDataSnapshotTestCase {
         let message = (try! conversation.appendText(content: text, replyingTo: selfMessage) as! ZMMessage)
         message.sender = self.otherUser
         message.serverTimestamp = timestamp
-        print("AGIS: \(String(describing: message.serverTimestamp))")
         conversation.setPrimitiveValue(1, forKey: ZMConversationInternalEstimatedUnreadSelfReplyCountKey)
         conversation.lastReadServerTimeStamp = Date.distantPast
     }
