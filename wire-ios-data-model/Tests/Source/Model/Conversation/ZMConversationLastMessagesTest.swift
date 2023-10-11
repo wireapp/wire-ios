@@ -49,7 +49,8 @@ class ZMConversationLastMessagesTest: ZMBaseManagedObjectTest {
 
         // WHEN
         try (0...40).forEach { i in
-            try conversation.appendText(content: "\(i)")
+            let message = try conversation.appendText(content: "\(i)") as! ZMClientMessage
+            message.serverTimestamp = Date.init(timeIntervalSinceNow: -Double(40 - i))
         }
 
         // THEN
@@ -62,7 +63,8 @@ class ZMConversationLastMessagesTest: ZMBaseManagedObjectTest {
 
         // WHEN
         try (0...40).forEach { i in
-            try conversation.appendText(content: "\(i)")
+            let message = try conversation.appendText(content: "\(i)") as! ZMClientMessage
+            message.serverTimestamp = Date.init(timeIntervalSinceNow: -Double(40 - i))
         }
 
         // THEN
@@ -78,7 +80,8 @@ class ZMConversationLastMessagesTest: ZMBaseManagedObjectTest {
 
         // WHEN
         try (0...40).forEach { i in
-            try conversation.appendText(content: "\(i)")
+            let message = try conversation.appendText(content: "\(i)") as! ZMClientMessage
+            message.serverTimestamp = Date.init(timeIntervalSinceNow: -Double(41 - i))
         }
 
         // THEN
@@ -95,11 +98,13 @@ class ZMConversationLastMessagesTest: ZMBaseManagedObjectTest {
 
         // WHEN
         try (1...10).forEach { i in
-            try conversation.appendText(content: "\(i)")
+            let message = try conversation.appendText(content: "\(i)") as! ZMClientMessage
+            message.serverTimestamp = Date.init(timeIntervalSinceNow: -Double(10 - i))
         }
 
         try (1...10).forEach { i in
-            try otherConversation.appendText(content: "Other \(i)")
+            let message = try otherConversation.appendText(content: "Other \(i)") as! ZMClientMessage
+            message.serverTimestamp = Date.init(timeIntervalSinceNow: -Double(10 - i))
         }
 
         // THEN

@@ -17,7 +17,6 @@
 //
 
 import XCTest
-
 @testable import WireDataModel
 
 class ZMConversationTests_Confirmations: ZMConversationTestsBase {
@@ -83,6 +82,10 @@ class ZMConversationTests_Confirmations: ZMConversationTestsBase {
         conversation.conversationType = .group
         conversation.lastReadServerTimeStamp = .distantPast
 
+        message1.serverTimestamp = Date.init(timeIntervalSinceNow: -35)
+        message2.serverTimestamp = Date.init(timeIntervalSinceNow: -30)
+        message3.serverTimestamp = Date.init(timeIntervalSinceNow: -25)
+
         // when
         let confirmMessages = conversation.confirmUnreadMessagesAsRead(in: conversation.lastReadServerTimeStamp!...message2.serverTimestamp!)
 
@@ -111,6 +114,11 @@ class ZMConversationTests_Confirmations: ZMConversationTestsBase {
         message4.sender = user1
 
         conversation.conversationType = .group
+
+        message1.serverTimestamp = Date.init(timeIntervalSinceNow: -35)
+        message2.serverTimestamp = Date.init(timeIntervalSinceNow: -30)
+        message3.serverTimestamp = Date.init(timeIntervalSinceNow: -25)
+        message4.serverTimestamp = Date.init(timeIntervalSinceNow: -20)
 
         // When
         // Before we confirm the unread messages, advance the last read server timestamp.
