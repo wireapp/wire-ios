@@ -140,7 +140,7 @@ class ConversationStatusLineTests: CoreDataSnapshotTestCase {
         // GIVEN
         let sut = self.otherUserConversation!
 
-        let selfMessage = appendSelfMessage(to: sut) as! ZMClientMessage
+        let selfMessage = appendSelfMessage(to: sut)
 
         for index in 1...2 {
             appendReply(
