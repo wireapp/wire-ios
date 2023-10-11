@@ -82,12 +82,14 @@ final class BackupRestoreController: NSObject {
             guard let `self` = self else { return }
             switch result {
             case .failure(SessionManager.BackupError.decryptionError):
+                WireLogger.localStorage.error("Failed restoring backup: \(SessionManager.BackupError.decryptionError)")
                 self.target.isLoadingViewVisible = false
                 self.showWrongPasswordAlert { _ in
                     self.restore(with: url)
                 }
 
             case .failure(let error):
+                WireLogger.localStorage.error("Failed restoring backup: \(error)")
                 BackupEvent.importFailed.track()
                 self.showRestoreError(error)
                 self.target.isLoadingViewVisible = false

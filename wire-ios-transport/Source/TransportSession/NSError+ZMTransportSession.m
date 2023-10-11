@@ -23,8 +23,7 @@
 
 
 NSString * const ZMTransportSessionErrorDomain = @"ZMTransportSession";
-
-
+NSString * const FederationNotAvailableError = @"federation-not-available";
 
 @implementation NSError (ZMTransportSession)
 
@@ -46,6 +45,11 @@ NSString * const ZMTransportSessionErrorDomain = @"ZMTransportSession";
 + (NSError *)requestExpiredError;
 {
     return [NSError errorWithDomain:ZMTransportSessionErrorDomain code:ZMTransportSessionErrorCodeRequestExpired userInfo:nil];
+}
+
++ (NSError *)requestCancelledError;
+{
+    return [NSError errorWithDomain:ZMTransportSessionErrorDomain code:ZMTransportSessionErrorCodeCancelled userInfo:nil];
 }
 
 + (NSError *)tryAgainLaterError;
@@ -77,6 +81,11 @@ NSString * const ZMTransportSessionErrorDomain = @"ZMTransportSession";
 
 + (NSError *)transportErrorFromURLTask:(NSURLSessionTask *)task expired:(BOOL)expired;
 {
+    return [NSError transportErrorFromURLTask:task expired:expired payloadLabel:nil];
+}
+
++ (NSError *)transportErrorFromURLTask:(NSURLSessionTask *)task expired:(BOOL)expired payloadLabel:(nullable NSString *) payloadLabel;
+{
     NSError *urlError = task.error;
     if (urlError == nil) {
         // Check for 420 / 429 / internal server error
@@ -85,11 +94,16 @@ NSString * const ZMTransportSessionErrorDomain = @"ZMTransportSession";
                                 (statusCode == EnhanceYourCalmStatusCode));
         BOOL const isInternalError = ((statusCode >= 500) &&
                                       (statusCode <= 599));
-        if (!isBackOff && !isInternalError) {
+        BOOL const isFederationError = ([payloadLabel isEqualToString:FederationNotAvailableError]);
+
+        if ((!isBackOff && !isInternalError) || isFederationError) {
             return nil;
         }
     } else if (urlError.isCancelledURLTaskError && expired) {
         return [NSError requestExpiredError];
+    }
+    else if (urlError.isCancelledURLTaskError && !expired) {
+        return [NSError requestCancelledError];
     }
     NSDictionary *userInfo = @{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Request finished with task error %@.", task.error.localizedDescription]};
     return [NSError tryAgainLaterErrorWithUserInfo:userInfo];
