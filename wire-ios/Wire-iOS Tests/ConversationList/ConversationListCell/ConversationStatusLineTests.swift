@@ -119,11 +119,11 @@ class ConversationStatusLineTests: CoreDataSnapshotTestCase {
         XCTAssertEqual(status.string, "")
     }
 
-    func testStatusForMultipleTextMessagesInConversation() {
+    func testStatusForMultipleTextMessagesInConversation() throws {
         // GIVEN
         let sut = self.otherUserConversation!
         for index in 1...5 {
-            let message = try! sut.appendText(content: "test \(index)") as! ZMClientMessage
+            let message = try sut.appendText(content: "test \(index)") as! ZMClientMessage
             message.sender = self.otherUser
             message.serverTimestamp = Date.init(timeIntervalSinceNow: Double(index))
         }
