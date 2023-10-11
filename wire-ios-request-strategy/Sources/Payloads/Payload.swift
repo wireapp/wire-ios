@@ -16,6 +16,7 @@
 //
 
 import Foundation
+import WireDataModel
 
 enum Payload {
 
@@ -28,6 +29,7 @@ enum Payload {
     typealias ClientList = [String]
     typealias ClientListByUserID = [String: ClientList]
     typealias ClientListByQualifiedUserID = [String: ClientListByUserID]
+    typealias ClientListByUser = [ZMUser: ClientList]
     typealias UserProfiles = [Payload.UserProfile]
 
     struct EventContainer<T: Codable>: Codable {

@@ -32,6 +32,8 @@ extension MLSMessageSync {
         let context: NSManagedObjectContext
         var onRequestScheduledHandler: OnRequestScheduledHandler?
 
+        private let processor = MLSMessageSendingStatusPayloadProcessor()
+
         // MARK: - Life cycle {
 
         init(context: NSManagedObjectContext) {
@@ -133,8 +135,13 @@ extension MLSMessageSync {
                 return
             }
 
-            let payload = Payload.MLSMessageSendingStatus(response, decoder: .defaultDecoder)
-            payload?.updateFailedRecipients(for: entity)
+            if let payload = Payload.MLSMessageSendingStatus(response, decoder: .defaultDecoder) {
+                processor.updateFailedRecipients(
+                    from: payload,
+                    for: entity
+                )
+            }
+
             entity.delivered(with: response)
         }
 

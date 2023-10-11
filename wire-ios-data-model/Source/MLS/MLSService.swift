@@ -396,12 +396,12 @@ public final class MLSService: MLSServiceInterface {
 
     private func internalUpdateKeyMaterial(for groupID: MLSGroupID) async throws {
         do {
-            Logging.mls.info("updating key material for group (\(groupID))")
+            Logging.mls.info("updating key material for group (\(groupID.safeForLoggingDescription))")
             let events = try await mlsActionExecutor.updateKeyMaterial(for: groupID)
             staleKeyMaterialDetector.keyingMaterialUpdated(for: groupID)
             conversationEventProcessor.processConversationEvents(events)
         } catch {
-            Logging.mls.warn("failed to update key material for group (\(groupID)): \(String(describing: error))")
+            Logging.mls.warn("failed to update key material for group (\(groupID.safeForLoggingDescription)): \(String(describing: error))")
             throw error
         }
     }
@@ -421,7 +421,7 @@ public final class MLSService: MLSServiceInterface {
     ///   - MLSGroupCreationError if the group could not be created.
 
     public func createGroup(for groupID: MLSGroupID) throws {
-        logger.info("creating group for id: \(groupID)")
+        logger.info("creating group for id: \(groupID.safeForLoggingDescription)")
 
         do {
             let config = ConversationConfiguration(
@@ -438,7 +438,7 @@ public final class MLSService: MLSServiceInterface {
                 )
             }
         } catch let error {
-            logger.warn("failed to create group (\(groupID)): \(String(describing: error))")
+            logger.warn("failed to create group (\(groupID.safeForLoggingDescription)): \(String(describing: error))")
             throw MLSGroupCreationError.failedToCreateGroup
         }
 
@@ -496,7 +496,7 @@ public final class MLSService: MLSServiceInterface {
         for groupID: MLSGroupID
     ) async throws {
         do {
-            logger.info("adding members to group (\(groupID)) with users: \(users)")
+            logger.info("adding members to group (\(groupID.safeForLoggingDescription)) with users: \(users)")
             guard !users.isEmpty else { throw MLSAddMembersError.noMembersToAdd }
             let keyPackages = try await claimKeyPackages(for: users)
             let invitees = keyPackages.map(Invitee.init(from:))
@@ -508,7 +508,7 @@ public final class MLSService: MLSServiceInterface {
             let events = try await mlsActionExecutor.addMembers(invitees, to: groupID)
             conversationEventProcessor.processConversationEvents(events)
         } catch {
-            logger.warn("failed to add members to group (\(groupID)): \(String(describing: error))")
+            logger.warn("failed to add members to group (\(groupID.safeForLoggingDescription)): \(String(describing: error))")
             throw error
         }
     }
@@ -572,13 +572,13 @@ public final class MLSService: MLSServiceInterface {
         for groupID: MLSGroupID
     ) async throws {
         do {
-            logger.info("removing members from group (\(groupID)), members: \(clientIds)")
+            logger.info("removing members from group (\(groupID.safeForLoggingDescription)), members: \(clientIds)")
             guard !clientIds.isEmpty else { throw MLSRemoveParticipantsError.noClientsToRemove }
             let clientIds = clientIds.compactMap { $0.rawValue.utf8Data?.bytes }
             let events = try await mlsActionExecutor.removeClients(clientIds, from: groupID)
             conversationEventProcessor.processConversationEvents(events)
         } catch {
-            logger.warn("failed to remove members from group (\(groupID)): \(String(describing: error))")
+            logger.warn("failed to remove members from group (\(groupID.safeForLoggingDescription)): \(String(describing: error))")
             throw error
         }
     }
@@ -586,11 +586,11 @@ public final class MLSService: MLSServiceInterface {
     // MARK: - Remove group
 
     public func wipeGroup(_ groupID: MLSGroupID) {
-        logger.info("wiping group (\(groupID))")
+        logger.info("wiping group (\(groupID.safeForLoggingDescription))")
         do {
             try coreCrypto.perform { try $0.wipeConversation(conversationId: groupID.bytes) }
         } catch {
-            logger.warn("failed to wipe group (\(groupID)): \(String(describing: error))")
+            logger.warn("failed to wipe group (\(groupID.safeForLoggingDescription)): \(String(describing: error))")
         }
     }
 
@@ -825,12 +825,12 @@ public final class MLSService: MLSServiceInterface {
         return groupsPendingJoin.compactMap { groupID in
 
             guard let conversation = ZMConversation.fetch(with: groupID, in: context) else {
-                logger.warn("conversation not found for group (\(groupID))")
+                logger.warn("conversation not found for group (\(groupID.safeForLoggingDescription))")
                 return nil
             }
 
             guard let status = conversation.mlsStatus, status == .pendingJoin else {
-                logger.warn("group (\(groupID)) status is not pending join")
+                logger.warn("group (\(groupID.safeForLoggingDescription)) status is not pending join")
                 return nil
             }
 
@@ -1052,7 +1052,7 @@ public final class MLSService: MLSServiceInterface {
     // MARK: - External Proposals
 
     private func sendExternalAddProposal(_ groupID: MLSGroupID, epoch: UInt64) async {
-        logger.info("requesting to join group (\(groupID)")
+        logger.info("requesting to join group (\(groupID.safeForLoggingDescription)")
 
         do {
             let proposal = try coreCrypto.perform {
@@ -1063,10 +1063,10 @@ public final class MLSService: MLSServiceInterface {
             }
 
             try await sendProposal(proposal, groupID: groupID)
-            logger.info("success: requested to join group (\(groupID)")
+            logger.info("success: requested to join group (\(groupID.safeForLoggingDescription)")
         } catch {
             logger.warn(
-                "failed to request join for group (\(groupID)): \(String(describing: error))"
+                "failed to request join for group (\(groupID.safeForLoggingDescription)): \(String(describing: error))"
             )
         }
     }
@@ -1077,7 +1077,7 @@ public final class MLSService: MLSServiceInterface {
 
     private func sendProposal(_ bytes: [Byte], groupID: MLSGroupID) async throws {
         do {
-            logger.info("sending proposal in group (\(groupID))")
+            logger.info("sending proposal in group (\(groupID.safeForLoggingDescription))")
 
             guard let context = context else { return }
 
@@ -1089,7 +1089,7 @@ public final class MLSService: MLSServiceInterface {
             conversationEventProcessor.processConversationEvents(updateEvents)
 
         } catch let error {
-            logger.warn("failed to send proposal in group (\(groupID)): \(String(describing: error))")
+            logger.warn("failed to send proposal in group (\(groupID.safeForLoggingDescription)): \(String(describing: error))")
             throw MLSSendProposalError.failedToSendProposal
         }
     }
@@ -1134,7 +1134,7 @@ public final class MLSService: MLSServiceInterface {
         let subgroupID = subgroupIDAndType?.0
         let subgroupType = subgroupIDAndType?.1
 
-        let logInfo = "parent: \(parentID), subgroup: \(String(describing: subgroupID)), subgroup type: \(String(describing: subgroupType))"
+        let logInfo = "parent: \(parentID.safeForLoggingDescription), subgroup: \(String(describing: subgroupID?.safeForLoggingDescription)), subgroup type: \(String(describing: subgroupType))"
 
         do {
             logger.info("sending external commit to join group (\(logInfo))")
@@ -1317,9 +1317,9 @@ public final class MLSService: MLSServiceInterface {
         guard existsPendingProposals(in: groupID) else { return }
         // Sending a message while there are pending proposals will result in an error,
         // so commit any first.
-        logger.info("preemptively committing pending proposals in group (\(groupID))")
+        logger.info("preemptively committing pending proposals in group (\(groupID.safeForLoggingDescription))")
         try await commitPendingProposals(in: groupID)
-        logger.info("success: committed pending proposals in group (\(groupID))")
+        logger.info("success: committed pending proposals in group (\(groupID.safeForLoggingDescription))")
     }
 
     private func existsPendingProposals(in groupID: MLSGroupID) -> Bool {
@@ -1344,16 +1344,16 @@ public final class MLSService: MLSServiceInterface {
 
     private func internalCommitPendingProposals(in groupID: MLSGroupID) async throws {
         do {
-            logger.info("committing pending proposals in: \(groupID)")
+            logger.info("committing pending proposals in: \(groupID.safeForLoggingDescription)")
             let events = try await mlsActionExecutor.commitPendingProposals(in: groupID)
             conversationEventProcessor.processConversationEvents(events)
             clearPendingProposalCommitDate(for: groupID)
             delegate?.mlsServiceDidCommitPendingProposal(for: groupID)
         } catch MLSActionExecutor.Error.noPendingProposals {
-            logger.info("no proposals to commit in group (\(groupID))...")
+            logger.info("no proposals to commit in group (\(groupID.safeForLoggingDescription))...")
             clearPendingProposalCommitDate(for: groupID)
         } catch {
-            logger.info("failed to commit pending proposals in \(groupID): \(String(describing: error))")
+            logger.info("failed to commit pending proposals in \(groupID.safeForLoggingDescription): \(String(describing: error))")
             throw error
         }
     }
@@ -1492,11 +1492,11 @@ public final class MLSService: MLSServiceInterface {
 
     private func createSubgroup(with id: MLSGroupID) async throws {
         do {
-            logger.info("creating subgroup with id (\(id))")
+            logger.info("creating subgroup with id (\(id.safeForLoggingDescription))")
             try createGroup(for: id)
             try await updateKeyMaterial(for: id)
         } catch {
-            logger.error("failed to create subgroup with id (\(id)): \(String(describing: error))")
+            logger.error("failed to create subgroup with id (\(id.safeForLoggingDescription)): \(String(describing: error))")
             throw SubgroupFailure.failedToCreateSubgroup
         }
     }
@@ -1538,12 +1538,12 @@ public final class MLSService: MLSServiceInterface {
 
     private func getMembers(for groupID: MLSGroupID) throws -> [MLSClientID] {
         do {
-            logger.info("getting members for group (\(groupID))")
+            logger.info("getting members for group (\(groupID.safeForLoggingDescription))")
             return try coreCrypto
                 .perform { try $0.getClientIds(conversationId: groupID.bytes) }
                 .compactMap { MLSClientID(data: Data($0)) }
         } catch {
-            logger.error("failed to get members for group (\(groupID)): \(String(describing: error))")
+            logger.error("failed to get members for group (\(groupID.safeForLoggingDescription)): \(String(describing: error))")
             throw error
         }
     }
@@ -1650,7 +1650,7 @@ public final class MLSService: MLSServiceInterface {
     // MARK: - Generate new epoch
 
     public func generateNewEpoch(groupID: MLSGroupID) async throws {
-        logger.info("generating new epoch in subconveration (\(groupID))")
+        logger.info("generating new epoch in subconveration (\(groupID.safeForLoggingDescription))")
         try await updateKeyMaterial(for: groupID)
     }
 

@@ -27,21 +27,13 @@ class FetchMLSConversationGroupInfoActionHandlerTests: BaseFetchMLSGroupInfoActi
         action = FetchMLSConversationGroupInfoAction(conversationId: conversationId, domain: domain)
     }
 
-    func test_itGeneratesARequest_APIV4() throws {
+    func test_itGeneratesARequest_APIV5() throws {
         try test_itGeneratesARequest(
             for: action,
-            expectedPath: "/v4/conversations/\(domain)/\(conversationId.transportString())/groupinfo",
+            expectedPath: "/v5/conversations/\(domain)/\(conversationId.transportString())/groupinfo",
             expectedMethod: .methodGET,
             expectedAcceptType: .messageMLS,
-            apiVersion: .v4
-        )
-    }
-
-    func test_itDoesntGenerateRequests_APIV3() {
-        test_itDoesntGenerateARequest(
-            action: action,
-            apiVersion: .v3,
-            expectedError: .endpointUnavailable
+            apiVersion: .v5
         )
     }
 

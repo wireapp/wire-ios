@@ -37,7 +37,7 @@ final class FetchMLSSubconversationGroupInfoActionHandler: BaseFetchMLSGroupInfo
             for: action,
             path: "/conversations/\(action.domain)/\(action.conversationId.transportString())/subconversations/\(action.subgroupType)/groupinfo",
             apiVersion: apiVersion,
-            minRequiredAPIVersion: .v4
+            minRequiredAPIVersion: .v5
         )
     }
 }

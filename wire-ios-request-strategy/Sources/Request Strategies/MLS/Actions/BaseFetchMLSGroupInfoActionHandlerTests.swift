@@ -34,15 +34,6 @@ class BaseFetchMLSGroupInfoActionHandlerTests<
     }
     // MARK: - Request generation
 
-    func test_itGeneratesARequest_APIV5() throws {
-        try test_itGeneratesARequest(
-            for: action,
-            expectedPath: "/v5/conversations/\(domain)/\(conversationId.transportString())/groupinfo",
-            expectedMethod: .methodGET,
-            apiVersion: .v5
-        )
-    }
-
     func test_itDoesntGenerateRequests_APIBelowV5() {
         [.v0, .v1, .v2, .v3, .v4].forEach {
             test_itDoesntGenerateARequest(
