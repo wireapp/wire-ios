@@ -160,7 +160,6 @@ final class PinnableThumbnailViewController: UIViewController {
         })
     }
 
-    @available(iOS 11, *)
     override func viewSafeAreaInsetsDidChange() {
         super.viewSafeAreaInsetsDidChange()
         view.layoutIfNeeded()
