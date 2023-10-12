@@ -138,6 +138,7 @@
 		CE3677691D48B4BA00A8015A /* BackgroundActivityFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE3677681D48B4BA00A8015A /* BackgroundActivityFactory.swift */; };
 		E91D2222287429EE0030B481 /* MD5DigestHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = E91D2221287429EE0030B481 /* MD5DigestHelper.swift */; };
 		EE0FBF1C290FCBB1005B93BC /* BackendInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0FBF1B290FCBB1005B93BC /* BackendInfo.swift */; };
+		EE50CA142AB19746007A07BF /* ZMAccessTokenHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE50CA132AB19746007A07BF /* ZMAccessTokenHandler.swift */; };
 		EE67F6B5296F0591001D7C88 /* Starscream.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F6B4296F0591001D7C88 /* Starscream.xcframework */; };
 		EE67F6EE296F074C001D7C88 /* WireTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F6ED296F074C001D7C88 /* WireTesting.framework */; };
 		EE67F6EF296F074C001D7C88 /* WireTesting.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F6ED296F074C001D7C88 /* WireTesting.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -367,6 +368,7 @@
 		CE3677681D48B4BA00A8015A /* BackgroundActivityFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BackgroundActivityFactory.swift; sourceTree = "<group>"; };
 		E91D2221287429EE0030B481 /* MD5DigestHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MD5DigestHelper.swift; sourceTree = "<group>"; };
 		EE0FBF1B290FCBB1005B93BC /* BackendInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackendInfo.swift; sourceTree = "<group>"; };
+		EE50CA132AB19746007A07BF /* ZMAccessTokenHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZMAccessTokenHandler.swift; sourceTree = "<group>"; };
 		EE67F6B4296F0591001D7C88 /* Starscream.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = Starscream.xcframework; path = ../Carthage/Build/Starscream.xcframework; sourceTree = "<group>"; };
 		EE67F6ED296F074C001D7C88 /* WireTesting.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTesting.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE67F6F0296F079E001D7C88 /* WireUtilities.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireUtilities.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -677,6 +679,7 @@
 				A93DCD7923B6654100AD8575 /* AccessToken.swift */,
 				54CA15001B32F2C1008D3787 /* ZMAccessTokenHandler.h */,
 				54CA15011B32F2C1008D3787 /* ZMAccessTokenHandler.m */,
+				EE50CA132AB19746007A07BF /* ZMAccessTokenHandler.swift */,
 				EF1A09A31FF6A73200F89634 /* ZMPersistentCookieStorage+Testing.h */,
 				54CA15021B32F2C1008D3787 /* ZMPersistentCookieStorage.m */,
 				871667FC1BB2CD1E009C6EEA /* ZMKeychain.m */,
@@ -1118,6 +1121,7 @@
 				54CA15C11B32F2C1008D3787 /* ZMTransportCodec.m in Sources */,
 				54CA15B71B32F2C1008D3787 /* ZMTransportRequest.m in Sources */,
 				54CA15C71B32F2C1008D3787 /* ZMTransportRequestScheduler.m in Sources */,
+				EE50CA142AB19746007A07BF /* ZMAccessTokenHandler.swift in Sources */,
 				BF3A7A641D8AD5430034FF40 /* SwiftStructs+TransportEncoding.swift in Sources */,
 				BF453F1E1CC63C4800403E1C /* ZMTaskIdentifier.m in Sources */,
 				BF3EDB251F2619820015D158 /* ZMPersistentCookieStorage+Label.swift in Sources */,
