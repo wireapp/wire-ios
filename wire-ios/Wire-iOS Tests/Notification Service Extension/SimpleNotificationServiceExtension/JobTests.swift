@@ -19,7 +19,6 @@
 import XCTest
 @testable import Wire_Notification_Service_Extension
 
-@available(iOS 15, *)
 class JobTests: XCTestCase {
 
     var mockNetworkSession: MockNetworkSession!

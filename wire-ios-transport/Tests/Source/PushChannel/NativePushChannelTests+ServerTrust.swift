@@ -28,7 +28,6 @@ class MockURLProtectionSpace: URLProtectionSpace {
     }
 }
 
-@available(iOS 13.0, *)
 class NativePushChannelTests_ServerTrust: XCTestCase {
 
     var mockEnvironment: MockEnvironment!

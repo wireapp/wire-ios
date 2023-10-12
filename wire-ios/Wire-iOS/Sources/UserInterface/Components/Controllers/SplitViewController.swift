@@ -322,11 +322,7 @@ final class SplitViewController: UIViewController, SplitLayoutObservable {
     }
 
     private var isiOSAppOnMac: Bool {
-        if #available(iOS 14.0, *) {
-            return ProcessInfo.processInfo.isiOSAppOnMac
-        }
-
-        return false
+        return ProcessInfo.processInfo.isiOSAppOnMac
     }
 
     /// Update layoutSize for the change of traitCollection and the current orientation
