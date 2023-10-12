@@ -19,7 +19,6 @@
 import Foundation
 import Starscream
 
-@available(iOSApplicationExtension 13.0, iOS 13.0, *)
 @objcMembers
 class StarscreamPushChannel: NSObject, PushChannelType {
 
@@ -212,7 +211,6 @@ class StarscreamPushChannel: NSObject, PushChannelType {
     }
 }
 
-@available(iOSApplicationExtension 13.0, iOS 13.0, *)
 extension StarscreamPushChannel: ZMTimerClient {
 
     func timerDidFire(_ timer: ZMTimer!) {
@@ -223,7 +221,6 @@ extension StarscreamPushChannel: ZMTimerClient {
 
 }
 
-@available(iOSApplicationExtension 13.0, iOS 13.0, *)
 extension StarscreamPushChannel: WebSocketDelegate {
     func didReceive(event: WebSocketEvent, client: WebSocketClient) {
         switch event {
