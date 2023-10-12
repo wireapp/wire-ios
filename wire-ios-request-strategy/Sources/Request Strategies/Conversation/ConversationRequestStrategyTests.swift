@@ -980,37 +980,6 @@ class ConversationRequestStrategyTests: MessagingTestBase {
         }
     }
 
-    // MARK: - MLS Welcome
-
-    func testThatItProcessesMLSWelcomeEvents() {
-        syncMOC.performAndWait {
-            // GIVEN
-            let mlsEventProcessorMock = MockMLSEventProcessor()
-            MLSEventProcessor.setMock(mlsEventProcessorMock)
-
-            let message = "welcome message"
-            let event = Payload.UpdateConversationMLSWelcome(
-                id: self.groupConversation.remoteIdentifier!,
-                qualifiedID: self.groupConversation.qualifiedID,
-                from: self.otherUser.remoteIdentifier,
-                qualifiedFrom: self.otherUser.qualifiedID,
-                timestamp: Date(),
-                type: "conversation.mls-welcome",
-                data: message
-            )
-
-            let updateEvent = self.updateEvent(from: event.payloadData()!)
-
-            // WHEN
-            self.sut.processEvents([updateEvent], liveEvents: true, prefetchResult: nil)
-
-            // THEN
-            XCTAssertEqual(mlsEventProcessorMock.calls.processWelcomeMessage.first, message)
-
-            MLSEventProcessor.reset()
-        }
-    }
-
     // MARK: - Helpers
 
     func qualifiedID(for conversation: ZMConversation) -> QualifiedID {

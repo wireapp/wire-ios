@@ -18,27 +18,56 @@
 import Foundation
 import WireDataModel
 
-protocol MLSEventProcessing {
-
-    func updateConversationIfNeeded(conversation: ZMConversation, groupID: String?, context: NSManagedObjectContext)
-    func process(welcomeMessage: String, in context: NSManagedObjectContext)
-    func joinMLSGroupWhenReady(forConversation conversation: ZMConversation, context: NSManagedObjectContext)
-    func wipeMLSGroup(forConversation conversation: ZMConversation, context: NSManagedObjectContext)
-
-}
-
-class MLSEventProcessor: MLSEventProcessing {
-
-    private(set) static var shared: MLSEventProcessing = MLSEventProcessor()
-
-    // MARK: - Update conversation
+public protocol MLSEventProcessing {
 
     func updateConversationIfNeeded(
         conversation: ZMConversation,
         groupID: String?,
         context: NSManagedObjectContext
+    )
+
+    func process(
+        welcomeMessage: String,
+        conversationID: QualifiedID,
+        in context: NSManagedObjectContext
+    )
+
+    func joinMLSGroupWhenReady(
+        forConversation conversation: ZMConversation,
+        context: NSManagedObjectContext
+    )
+
+    func wipeMLSGroup(
+        forConversation conversation: ZMConversation,
+        context: NSManagedObjectContext
+    )
+
+}
+
+public class MLSEventProcessor: MLSEventProcessing {
+
+    // MARK: - Properties
+
+    private let conversationService: ConversationServiceInterface
+
+    // MARK: - Life cycle
+
+    convenience init(context: NSManagedObjectContext) {
+        self.init(conversationService: ConversationService(context: context))
+    }
+
+    init(conversationService: ConversationServiceInterface) {
+        self.conversationService = conversationService
+    }
+
+    // MARK: - Update conversation
+
+    public func updateConversationIfNeeded(
+        conversation: ZMConversation,
+        groupID: String?,
+        context: NSManagedObjectContext
     ) {
-        Logging.mls.info("MLS event processor updating conversation if needed")
+        WireLogger.mls.debug("MLS event processor updating conversation if needed")
 
         guard conversation.messageProtocol == .mls else {
             return logWarn(aborting: .conversationUpdate, withReason: .notMLSConversation)
@@ -49,29 +78,32 @@ class MLSEventProcessor: MLSEventProcessing {
         }
 
         if conversation.mlsGroupID == nil {
-           conversation.mlsGroupID = mlsGroupID
-           Logging.mls.info("MLS event processor set the group ID to value: (\(mlsGroupID)) for conversation: (\(String(describing: conversation.qualifiedID))")
+            conversation.mlsGroupID = mlsGroupID
+            WireLogger.mls.debug("set group ID \(mlsGroupID.safeForLoggingDescription) for conversation \(conversation.qualifiedID)")
         }
 
         guard let mlsService = context.mlsService else {
             return logWarn(aborting: .conversationUpdate, withReason: .missingMLSService)
         }
 
-        let previousStatus = conversation.mlsStatus
         let conversationExists = mlsService.conversationExists(groupID: mlsGroupID)
-        conversation.mlsStatus = conversationExists ? .ready : .pendingJoin
-
+        let previousStatus = conversation.mlsStatus
+        let newStatus = conversationExists ? MLSGroupStatus.ready : .pendingJoin
+        conversation.mlsStatus = newStatus
         context.saveOrRollback()
 
-        Logging.mls.info(
-            "MLS event processor updated previous mlsStatus (\(String(describing: previousStatus))) with new value (\(String(describing: conversation.mlsStatus))) for conversation (\(String(describing: conversation.qualifiedID)))"
-        )
+        if newStatus != previousStatus {
+            WireLogger.mls.debug("conversation \(conversation.qualifiedID) status changed: \(previousStatus) -> \(newStatus))")
+        }
     }
 
     // MARK: - Joining new conversations
 
-    func joinMLSGroupWhenReady(forConversation conversation: ZMConversation, context: NSManagedObjectContext) {
-        Logging.mls.info("MLS event processor is adding group to join")
+    public func joinMLSGroupWhenReady(
+        forConversation conversation: ZMConversation,
+        context: NSManagedObjectContext
+    ) {
+        WireLogger.mls.info("MLS event processor is adding group to join")
 
         guard conversation.messageProtocol == .mls else {
             return logWarn(aborting: .joiningGroup, withReason: .notMLSConversation)
@@ -90,13 +122,17 @@ class MLSEventProcessor: MLSEventProcessing {
         }
 
         mlsService.registerPendingJoin(groupID)
-        Logging.mls.info("MLS event processor added group (\(groupID)) to be joined")
+        WireLogger.mls.info("MLS event processor added group (\(groupID.safeForLoggingDescription)) to be joined")
     }
 
     // MARK: - Process welcome message
 
-    func process(welcomeMessage: String, in context: NSManagedObjectContext) {
-        Logging.mls.info("MLS event processor is processing welcome message")
+    public func process(
+        welcomeMessage: String,
+        conversationID: QualifiedID,
+        in context: NSManagedObjectContext
+    ) {
+        WireLogger.mls.info("MLS event processor is processing welcome message")
 
         guard let mlsService = context.mlsService else {
             return logWarn(aborting: .processingWelcome, withReason: .missingMLSService)
@@ -104,26 +140,32 @@ class MLSEventProcessor: MLSEventProcessing {
 
         do {
             let groupID = try mlsService.processWelcomeMessage(welcomeMessage: welcomeMessage)
+            mlsService.uploadKeyPackagesIfNeeded()
 
-            guard let conversation = ZMConversation.fetch(with: groupID, in: context) else {
-                return logWarn(aborting: .processingWelcome, withReason: .other(reason: "conversation does not exist in db"))
+            if let conversation = ZMConversation.fetch(with: conversationID, in: context) {
+                conversation.mlsGroupID = groupID
+                conversation.mlsStatus = .ready
+                WireLogger.mls.info("MLS event processor set mlsStatus to ready for group \(groupID.safeForLoggingDescription)")
+                context.saveOrRollback()
+            } else {
+                // Conversation doesn't exist locally yet, so fetch it from the backend.
+                // It'll be marked as ready when it's synced locally.
+                conversationService.syncConversation(qualifiedID: conversationID) {
+                    // no op
+                }
             }
-
-            conversation.mlsStatus = .ready
-            context.saveOrRollback()
-
-            Logging.mls.info(
-                "MLS event processor set mlsStatus to (\(String(describing: conversation.mlsStatus)) for group (\(groupID))"
-            )
         } catch {
-            return Logging.mls.warn("MLS event processor aborting processing welcome message: \(String(describing: error))")
+            return WireLogger.mls.warn("MLS event processor aborting processing welcome message: \(String(describing: error))")
         }
     }
 
     // MARK: - Wipe conversation
 
-    func wipeMLSGroup(forConversation conversation: ZMConversation, context: NSManagedObjectContext) {
-        Logging.mls.info("MLS event processor is wiping conversation")
+    public func wipeMLSGroup(
+        forConversation conversation: ZMConversation,
+        context: NSManagedObjectContext
+    ) {
+        WireLogger.mls.info("MLS event processor is wiping conversation")
 
         guard conversation.messageProtocol == .mls else {
             return logWarn(aborting: .conversationWipe, withReason: .notMLSConversation)
@@ -142,8 +184,11 @@ class MLSEventProcessor: MLSEventProcessing {
 
     // MARK: Log Helpers
 
-    private func logWarn(aborting action: ActionLog, withReason reason: AbortReason) {
-        Logging.mls.warn("MLS event processor aborting \(action.rawValue): \(reason.stringValue)")
+    private func logWarn(
+        aborting action: ActionLog,
+        withReason reason: AbortReason
+    ) {
+        WireLogger.mls.warn("MLS event processor aborting \(action.rawValue): \(reason.stringValue)")
     }
 
     private enum ActionLog: String {
@@ -191,20 +236,5 @@ extension MLSGroupID {
         }
 
         self.init(bytes)
-    }
-}
-
-extension MLSEventProcessor {
-
-    /// Use this method to set the `MLSEventProcessor` singleton to a custom class instance
-    /// Don't forget to call `MLSEventProcessor.reset()` after your test is done
-    /// - Parameter mock: a custom class instance conforming to the `MLSEventProcessing` protocol
-    static func setMock(_ mock: MLSEventProcessing) {
-        Self.shared = mock
-    }
-
-    /// Use this method to reset the `MLSEventProcessor` singleton to its original state
-    static func reset() {
-        Self.shared = MLSEventProcessor()
     }
 }

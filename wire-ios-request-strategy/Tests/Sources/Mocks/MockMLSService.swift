@@ -65,8 +65,9 @@ class MockMLSService: MLSServiceInterface {
         return groupID ?? MLSGroupID(Data())
     }
 
+    var uploadKeyPackesIfNeededCalled = false
     func uploadKeyPackagesIfNeeded() {
-
+        uploadKeyPackesIfNeededCalled = true
     }
 
     var createGroupCalls = [MLSGroupID]()
@@ -186,12 +187,6 @@ class MockMLSService: MLSServiceInterface {
             return
         }
         mock()
-    }
-
-    // MARK: - Subconversation members
-
-    func subconversationMembers(for subconversationGroupID: MLSGroupID) throws -> [MLSClientID] {
-        fatalError("not implemented")
     }
 
 }

@@ -21,26 +21,39 @@ import XCTest
 
 class MLSEventProcessorTests: MessagingTestBase {
 
+    var sut: MLSEventProcessor!
     var mlsServiceMock: MockMLSService!
+    var conversationServiceMock: MockConversationService!
+
     var conversation: ZMConversation!
-    var domain = "example.com"
+    var qualifiedID: QualifiedID!
     let groupIdString = "identifier".data(using: .utf8)!.base64EncodedString()
 
     override func setUp() {
         super.setUp()
+
+        qualifiedID = QualifiedID(uuid: .create(), domain: "example.com")
+
         syncMOC.performGroupedBlockAndWait {
             self.mlsServiceMock = MockMLSService()
             self.syncMOC.mlsService = self.mlsServiceMock
             self.conversation = ZMConversation.insertNewObject(in: self.syncMOC)
+            self.conversation.remoteIdentifier = self.qualifiedID.uuid
             self.conversation.mlsGroupID = MLSGroupID(self.groupIdString.base64DecodedBytes!)
-            self.conversation.domain = self.domain
+            self.conversation.domain = self.qualifiedID.domain
             self.conversation.messageProtocol = .mls
         }
+
+        conversationServiceMock = MockConversationService()
+        sut = MLSEventProcessor(conversationService: conversationServiceMock)
     }
 
     override func tearDown() {
         mlsServiceMock = nil
+        conversationServiceMock = nil
         conversation = nil
+        qualifiedID = nil
+        sut = nil
         super.tearDown()
     }
 
@@ -55,11 +68,38 @@ class MLSEventProcessorTests: MessagingTestBase {
             XCTAssertEqual(self.conversation.mlsStatus, .pendingJoin)
 
             // When
-            MLSEventProcessor.shared.process(welcomeMessage: message, in: self.syncMOC)
+            self.sut.process(
+                welcomeMessage: message,
+                conversationID: self.qualifiedID,
+                in: self.syncMOC
+            )
 
             // Then
             XCTAssertEqual(message, self.mlsServiceMock.processedWelcomeMessage)
             XCTAssertEqual(self.conversation.mlsStatus, .ready)
+            XCTAssertTrue(self.mlsServiceMock.uploadKeyPackesIfNeededCalled)
+        }
+    }
+
+    func test_itProcessesMessage_ConversationDoesNotExist() {
+        syncMOC.performGroupedBlockAndWait {
+            // Given
+            let message = "welcome message"
+            let mlsGroupID = MLSGroupID.random()
+            let qualifiedID = QualifiedID.random()
+            self.mlsServiceMock.groupID = mlsGroupID
+
+            // When
+            self.sut.process(
+                welcomeMessage: message,
+                conversationID: qualifiedID,
+                in: self.syncMOC
+            )
+
+            // Then
+            XCTAssertEqual(message, self.mlsServiceMock.processedWelcomeMessage)
+            XCTAssertEqual(self.conversationServiceMock.syncConversationInvocations, [qualifiedID])
+            XCTAssertTrue(self.mlsServiceMock.uploadKeyPackesIfNeededCalled)
         }
     }
 
@@ -71,7 +111,7 @@ class MLSEventProcessorTests: MessagingTestBase {
             self.conversation.mlsGroupID = nil
 
             // When
-            MLSEventProcessor.shared.updateConversationIfNeeded(
+            self.sut.updateConversationIfNeeded(
                 conversation: self.conversation,
                 groupID: self.groupIdString,
                 context: self.syncMOC
@@ -116,7 +156,7 @@ class MLSEventProcessorTests: MessagingTestBase {
             self.conversation.mlsStatus = .pendingJoin
 
             // When
-            MLSEventProcessor.shared.joinMLSGroupWhenReady(
+            self.sut.joinMLSGroupWhenReady(
                 forConversation: self.conversation,
                 context: self.syncMOC
             )
@@ -143,7 +183,7 @@ class MLSEventProcessorTests: MessagingTestBase {
             conversation.mlsGroupID = groupID
 
             // When
-            MLSEventProcessor.shared.wipeMLSGroup(
+            self.sut.wipeMLSGroup(
                 forConversation: conversation,
                 context: syncMOC
             )
@@ -161,7 +201,7 @@ class MLSEventProcessorTests: MessagingTestBase {
             conversation.mlsGroupID = MLSGroupID(Data.random())
 
             // When
-            MLSEventProcessor.shared.wipeMLSGroup(
+            self.sut.wipeMLSGroup(
                 forConversation: conversation,
                 context: syncMOC
             )
@@ -179,7 +219,7 @@ class MLSEventProcessorTests: MessagingTestBase {
             self.conversation.mlsStatus = status
 
             // When
-            MLSEventProcessor.shared.joinMLSGroupWhenReady(
+            self.sut.joinMLSGroupWhenReady(
                 forConversation: self.conversation,
                 context: self.syncMOC
             )
@@ -202,7 +242,7 @@ class MLSEventProcessorTests: MessagingTestBase {
             self.mlsServiceMock.hasWelcomeMessageBeenProcessed = mockHasWelcomeMessageBeenProcessed
 
             // When
-            MLSEventProcessor.shared.updateConversationIfNeeded(
+            self.sut.updateConversationIfNeeded(
                 conversation: self.conversation,
                 groupID: self.groupIdString,
                 context: self.syncMOC

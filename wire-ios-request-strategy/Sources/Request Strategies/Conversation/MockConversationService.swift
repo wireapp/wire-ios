@@ -31,10 +31,12 @@ final class MockConversationService: ConversationServiceInterface {
         fatalError("not implemented")
     }
 
+    var syncConversationInvocations = [QualifiedID]()
     func syncConversation(
         qualifiedID: QualifiedID,
         completion: @escaping () -> Void
     ) {
+        syncConversationInvocations.append(qualifiedID)
         completion()
     }
 
