@@ -18,7 +18,6 @@
 
 import SwiftUI
 
-@available(iOS 14, *)
 struct PreferredAPIVersionView: View {
 
     // MARK: - Properties
@@ -61,7 +60,6 @@ struct PreferredAPIVersionView: View {
 
 // MARK: - Previews
 
-@available(iOS 14, *)
 struct PreferredAPIVersionView_Previews: PreviewProvider {
 
     static var previews: some View {

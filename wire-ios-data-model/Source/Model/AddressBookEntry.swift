@@ -52,7 +52,6 @@ import AddressBook
 
 extension AddressBookEntry {
 
-    @available(iOSApplicationExtension 9.0, *)
     @objc(createFromContact:managedObjectContext:user:)
     static public func create(from contact: CNContact, managedObjectContext: NSManagedObjectContext, user: ZMUser? = nil) -> AddressBookEntry {
         let entry = AddressBookEntry.insertNewObject(in: managedObjectContext)

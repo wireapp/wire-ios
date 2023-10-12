@@ -19,7 +19,6 @@
 import Foundation
 import WireTransport
 
-@available(iOS 14, *)
 final class SwitchBackendViewModel: ObservableObject {
 
     // MARK: - Models
