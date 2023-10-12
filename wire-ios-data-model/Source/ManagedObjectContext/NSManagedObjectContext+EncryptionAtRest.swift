@@ -197,12 +197,17 @@ extension NSManagedObjectContext {
     enum EncryptionError: LocalizedError {
 
         case missingDatabaseKey
+        case missingContextData
         case cryptobox(error: ChaCha20Poly1305.AEADEncryption.EncryptionError)
 
         var errorDescription: String? {
             switch self {
             case .missingDatabaseKey:
                 return "Database key not found. Perhaps the database is locked."
+
+            case .missingContextData:
+                return "Couldn't obtain context data."
+
             case .cryptobox(let error):
                 return error.errorDescription
             }
@@ -225,7 +230,9 @@ extension NSManagedObjectContext {
         data: Data,
         key: VolatileData
     ) throws -> (data: Data, nonce: Data) {
-        let context = contextData()
+        guard let context = contextData() else {
+            throw EncryptionError.missingContextData
+        }
 
         do {
             let (ciphertext, nonce) = try ChaCha20Poly1305.AEADEncryption.encrypt(message: data, context: context, key: key._storage)
@@ -255,7 +262,9 @@ extension NSManagedObjectContext {
         nonce: Data,
         key: VolatileData
     ) throws -> Data {
-        let context = contextData()
+        guard let context = contextData() else {
+            throw EncryptionError.missingContextData
+        }
 
         do {
             return try ChaCha20Poly1305.AEADEncryption.decrypt(ciphertext: data, nonce: nonce, context: context, key: key._storage)
@@ -264,7 +273,7 @@ extension NSManagedObjectContext {
         }
     }
 
-    private func contextData() -> Data {
+    private func contextData() -> Data? {
         let selfUser = ZMUser.selfUser(in: self)
 
         guard
@@ -273,7 +282,8 @@ extension NSManagedObjectContext {
             let selfClientId = selfClient.remoteIdentifier,
             let context = (selfUserId + selfClientId).data(using: .utf8)
         else {
-            fatalError("Could not obtain self user id and self client id")
+            assertionFailure("Could not obtain self user id and self client id")
+            return nil
         }
 
         return context
