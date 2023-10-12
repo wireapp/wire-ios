@@ -268,3 +268,7 @@
 
 "connection.archiveButton.description" = "Архівувати запит на додавання";
 "connection.cancelButton.description" = "Скасувати запит на додавання";
+
+// MARK: - Reactions
+"reactionPicker.dismissButton.description" = "Dismiss emoji keyboard";
+"reactionPicker.searchFieldPlaceholder.description" = "Search for emoji";

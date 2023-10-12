@@ -268,3 +268,7 @@
 
 "connection.archiveButton.description" = "Unterhaltung archivieren";
 "connection.cancelButton.description" = "Verbindung abbrechen";
+
+// MARK: - Reactions
+"reactionPicker.dismissButton.description" = "Emoji-Tastatur schließen";
+"reactionPicker.searchFieldPlaceholder.description" = "Nach Emoji suchen";
