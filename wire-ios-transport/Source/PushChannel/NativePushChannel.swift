@@ -18,7 +18,6 @@
 
 import Foundation
 
-@available(iOSApplicationExtension 13.0, iOS 13.0, *)
 @objcMembers
 class NativePushChannel: NSObject, PushChannelType {
 
@@ -221,7 +220,6 @@ class NativePushChannel: NSObject, PushChannelType {
 
 }
 
-@available(iOSApplicationExtension 13.0, iOS 13.0, *)
 extension NativePushChannel: ZMTimerClient {
 
     func timerDidFire(_ timer: ZMTimer!) {
@@ -236,7 +234,6 @@ extension NativePushChannel: ZMTimerClient {
 
 }
 
-@available(iOSApplicationExtension 13.0, iOS 13.0, *)
 extension NativePushChannel: URLSessionWebSocketDelegate {
 
     func urlSession(_ session: URLSession, webSocketTask: URLSessionWebSocketTask, didOpenWithProtocol protocol: String?) {
@@ -252,7 +249,6 @@ extension NativePushChannel: URLSessionWebSocketDelegate {
     }
 }
 
-@available(iOSApplicationExtension 13.0, iOS 13.0, *)
 extension NativePushChannel: URLSessionDataDelegate {
 
     func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {

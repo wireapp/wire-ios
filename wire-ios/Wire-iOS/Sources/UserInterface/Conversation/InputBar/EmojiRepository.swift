@@ -102,14 +102,8 @@ final class EmojiRepository: EmojiRepositoryInterface {
             return 15.0
         } else if #available(iOS 15.4, *) {
             return 14.0
-        } else if #available(iOS 14.5, *) {
-            return 13.1
-        } else if #available(iOS 14.2, *) {
-            return 13.0
-        } else if #available(iOS 13.2, *) {
-            return 12.1
         } else {
-            return 11.0
+            return 13.1
         }
     }()
 

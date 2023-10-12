@@ -18,7 +18,6 @@
 
 import SwiftUI
 
-@available(iOS 14, *)
 struct DeveloperToolsView: View {
 
     // MARK: - Properties
@@ -89,7 +88,6 @@ struct DeveloperToolsView: View {
 
 // MARK: - Subviews
 
-@available(iOS 14, *)
 private struct TextItemCell: View {
 
     let title: String
@@ -111,7 +109,6 @@ private struct TextItemCell: View {
 
 // MARK: - Previews
 
-@available(iOS 14, *)
 struct DeveloperToolsView_Previews: PreviewProvider {
 
     static var previews: some View {
