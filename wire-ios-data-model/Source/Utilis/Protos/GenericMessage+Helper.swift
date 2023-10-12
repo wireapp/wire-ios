@@ -341,7 +341,7 @@ public extension Proteus_UserEntry {
 // MARK: - QualifiedNewOtrMessage
 
 public extension Proteus_QualifiedNewOtrMessage {
-    init(withSender sender: UserClient,
+    init(withProteusSenderId senderId: Proteus_ClientId,
          nativePush: Bool,
          recipients: [Proteus_QualifiedUserEntry],
          missingClientsStrategy: MissingClientsStrategy,
@@ -349,7 +349,7 @@ public extension Proteus_QualifiedNewOtrMessage {
 
         self = Proteus_QualifiedNewOtrMessage.with {
             $0.nativePush = nativePush
-            $0.sender = sender.clientId
+            $0.sender = senderId
             $0.recipients = recipients
 
             if let blob = blob {
@@ -376,6 +376,19 @@ public extension Proteus_QualifiedNewOtrMessage {
                 }))
             }
         }
+    }
+
+    init(withSender sender: UserClient,
+         nativePush: Bool,
+         recipients: [Proteus_QualifiedUserEntry],
+         missingClientsStrategy: MissingClientsStrategy,
+         blob: Data? = nil ) {
+
+        self.init(withProteusSenderId: sender.clientId,
+              nativePush: nativePush,
+              recipients: recipients,
+              missingClientsStrategy: missingClientsStrategy,
+              blob: blob)
     }
 }
 
