@@ -20,6 +20,7 @@
 @import WireUtilities;
 @import WireTesting;
 @import WireTransport;
+@import UniformTypeIdentifiers;
 #import "MockPicture.h"
 #import "MockTransportSession+conversations.h"
 #import "MockTransportSession+internal.h"
@@ -294,7 +295,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
 
 + (NSString *)binaryDataTypeAsMIME:(NSString *)type;
 {
-    return CFBridgingRelease(UTTypeCopyPreferredTagWithClass((__bridge CFStringRef) type, kUTTagClassMIMEType));
+    return [[UTType typeWithIdentifier:type] preferredMIMEType];
 }
 
 - (BOOL)waitForAllRequestsToCompleteWithTimeout:(NSTimeInterval)timeout;

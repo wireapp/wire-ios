@@ -221,11 +221,7 @@ import Foundation
     fileprivate let dataBuffer = DataBuffer()
 
     @inline(__always) fileprivate func preconditionQueue() {
-        if #available(iOSApplicationExtension 10.0, *) {
-            dispatchPrecondition(condition: .onQueue(queue))
-        } else {
-            precondition(isOnQueue(), "called from the wrong queue")
-        }
+        dispatchPrecondition(condition: .onQueue(queue))
     }
 
     fileprivate func isOnQueue() -> Bool {
