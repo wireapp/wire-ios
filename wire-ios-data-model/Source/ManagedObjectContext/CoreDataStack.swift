@@ -115,9 +115,7 @@ public class CoreDataStack: NSObject, ContextProvider {
                 inMemoryStore: Bool = false,
                 dispatchGroup: ZMSDispatchGroup? = nil) {
 
-        if #available(iOSApplicationExtension 12.0, *) {
-            ExtendedSecureUnarchiveFromData.register()
-        }
+        ExtendedSecureUnarchiveFromData.register()
 
         self.applicationContainer = applicationContainer
         self.account = account

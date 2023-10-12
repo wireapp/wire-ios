@@ -253,7 +253,6 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
 
     // MARK: - Response handling
 
-    @available(iOS 15, *)
     func test_HandleResponse_200() throws {
         try syncMOC.performAndWait {
             // Given
@@ -273,7 +272,6 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
         }
     }
 
-    @available(iOS 15, *)
     func test_HandleResponse_201() throws {
         try syncMOC.performAndWait {
             // Given
@@ -305,7 +303,6 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
         XCTAssertTrue(conversation.hasReadReceiptsEnabled)
     }
 
-    @available(iOS 15, *)
     func test_ItCreatesMLSGroup() throws {
         try syncMOC.performAndWait {
             // Given

@@ -22,6 +22,7 @@
 @import Foundation;
 @import MobileCoreServices;
 @import WireImages;
+@import UniformTypeIdentifiers;
 
 #import "ModelObjectsTests.h"
 #import "ZMMessage+Internal.h"
@@ -574,7 +575,7 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
     XCTAssertNotNil(message.mediumData);
     
     // then
-    NSString *expected = (__bridge NSString *) kUTTypeJPEG;
+    NSString *expected = UTTypeJPEG.identifier;
     XCTAssertEqualObjects(message.imageType, expected);
 }
 
@@ -590,7 +591,7 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
     XCTAssertNotNil(message.mediumData);
     
     // then
-    NSString *expected = (__bridge NSString *) kUTTypeGIF;
+    NSString *expected = UTTypeGIF.identifier;
     XCTAssertEqualObjects(message.imageType, expected);
 }
 
@@ -606,7 +607,7 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
     XCTAssertNotNil(message.mediumData);
     
     // then
-    NSString *expected = (__bridge NSString *) kUTTypeGIF;
+    NSString *expected = UTTypeGIF.identifier;
     XCTAssertEqualObjects(message.imageType, expected);
 }
 
@@ -1062,12 +1063,8 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
     
     // then
     XCTAssertNotNil(imageData);
-    if (@available(iOS 14, *)) {
         // TODO:  [Bill] check why 1 btye is removed from jpegData?
-        XCTAssertEqual(imageData.length, jpegData.length + 1);
-    } else {
-        XCTAssertEqual(imageData.length, jpegData.length);
-    }
+    XCTAssertEqual(imageData.length, jpegData.length + 1);
 }
 
 - (void)testThatFlagIsSetWhenSenderIsTheOnlyUser

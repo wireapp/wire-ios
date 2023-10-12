@@ -59,7 +59,6 @@ private var logTagToLogger: [String: OSLog] = [:]
         }
     }
 
-    @available(iOS 10, *)
     static func logger(tag: String?) -> OSLog {
         guard let tag = tag else { return OSLog.default }
         if logTagToLogger[tag] == nil {

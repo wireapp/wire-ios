@@ -136,7 +136,6 @@ class AssetRequestFactoryTests: MessagingTestBase {
         XCTAssertEqual(request.path, "/v2/assets")
     }
 
-    @available(iOS 15, *)
     func test_BackgroundUpstreamRequest_V0() throws {
         try coreDataStack.syncContext.performAndWait {
             // Given
@@ -162,7 +161,6 @@ class AssetRequestFactoryTests: MessagingTestBase {
         }
     }
 
-    @available(iOS 15, *)
     func test_BackgroundUpstreamRequest_V1() throws {
         try coreDataStack.syncContext.performAndWait {
             // Given
@@ -188,7 +186,6 @@ class AssetRequestFactoryTests: MessagingTestBase {
         }
     }
 
-    @available(iOS 15, *)
     func test_BackgroundUpstreamRequest_V2() throws {
         try coreDataStack.syncContext.performAndWait {
             // Given

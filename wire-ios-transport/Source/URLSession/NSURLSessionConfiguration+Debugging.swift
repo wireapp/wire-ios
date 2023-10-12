@@ -35,9 +35,8 @@ extension URLSessionConfiguration {
             "tlsMinimumSupportedProtocol: \(self.tlsMinimumSupportedProtocol)",
             "networkServiceType: \(self.networkServiceType.rawValue)"
         ]
-        if #available(iOSApplicationExtension 9.0, *) {
-            dump.append("shouldUseExtendedBackgroundIdleMode: \(self.shouldUseExtendedBackgroundIdleMode)")
-        }
+        dump.append("shouldUseExtendedBackgroundIdleMode: \(self.shouldUseExtendedBackgroundIdleMode)")
+
         return dump.joined(separator: "\n\t")
     }
 }
