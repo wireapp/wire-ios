@@ -200,7 +200,6 @@ extension ZMSLog {
 }
 
 extension ZMLogLevel_t {
-    @available(iOS 10.0, *)
     var logLevel: OSLogType {
         switch self {
         case .public, .error, .warn:

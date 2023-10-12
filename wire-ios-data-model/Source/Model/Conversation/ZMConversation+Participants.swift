@@ -204,14 +204,14 @@ extension ZMConversation {
                 do {
                     try await mlsService.addMembersToConversation(with: mlsUsers, for: mlsGroupID)
 
-                    context.perform {
+                    await context.perform {
                         completion(.success(()))
                     }
 
                 } catch {
                     Logging.mls.error("failed to add members to conversation (\(String(describing: qualifiedID))): \(String(describing: error))")
 
-                    context.perform {
+                    await context.perform {
                         completion(.failure(.failedToAddMLSMembers))
                     }
 
@@ -280,12 +280,12 @@ extension ZMConversation {
                     let clientIDs = try await provider.fetchUserClients(for: userID, in: context.notificationContext)
                     try await mlsService.removeMembersFromConversation(with: clientIDs, for: groupID)
 
-                    context.perform {
+                    await context.perform {
                         completion(.success(()))
                     }
 
                 } catch {
-                    context.perform {
+                    await context.perform {
                         Logging.mls.warn("failed to remove participant from conversation (\(String(describing: self.qualifiedID))): \(String(describing: error))")
                         completion(.failure(.failedToRemoveMLSMembers))
                     }

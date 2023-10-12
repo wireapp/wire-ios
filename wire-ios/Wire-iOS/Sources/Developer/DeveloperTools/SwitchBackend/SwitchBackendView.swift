@@ -18,7 +18,6 @@
 
 import SwiftUI
 
-@available(iOS 14, *)
 struct SwitchBackendView: View {
 
     // MARK: - Properties
@@ -59,7 +58,6 @@ struct SwitchBackendView: View {
 
 // MARK: - Previews
 
-@available(iOS 14, *)
 struct SwitchBackendView_Previews: PreviewProvider {
 
     static var previews: some View {

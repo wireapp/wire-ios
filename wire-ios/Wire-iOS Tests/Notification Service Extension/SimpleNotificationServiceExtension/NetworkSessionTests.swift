@@ -19,7 +19,6 @@
 import XCTest
 import WireTransport
 
-@available(iOS 15, *)
 class NetworkSessionTests: XCTestCase {
 
     var mockURLSession: URLSessionMock!

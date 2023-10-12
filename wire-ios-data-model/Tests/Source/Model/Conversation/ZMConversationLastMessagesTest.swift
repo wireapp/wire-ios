@@ -49,7 +49,8 @@ class ZMConversationLastMessagesTest: ZMBaseManagedObjectTest {
 
         // WHEN
         try (0...40).forEach { i in
-            try conversation.appendText(content: "\(i)")
+            let message = try conversation.appendText(content: "\(i)") as? ZMClientMessage
+            message?.updateTimestamp(with: Double(i))
         }
 
         // THEN
@@ -62,7 +63,8 @@ class ZMConversationLastMessagesTest: ZMBaseManagedObjectTest {
 
         // WHEN
         try (0...40).forEach { i in
-            try conversation.appendText(content: "\(i)")
+            let message = try conversation.appendText(content: "\(i)") as? ZMClientMessage
+            message?.updateTimestamp(with: Double(i))
         }
 
         // THEN
@@ -78,7 +80,8 @@ class ZMConversationLastMessagesTest: ZMBaseManagedObjectTest {
 
         // WHEN
         try (0...40).forEach { i in
-            try conversation.appendText(content: "\(i)")
+            let message = try conversation.appendText(content: "\(i)") as? ZMClientMessage
+            message?.updateTimestamp(with: Double(i))
         }
 
         // THEN
@@ -95,11 +98,13 @@ class ZMConversationLastMessagesTest: ZMBaseManagedObjectTest {
 
         // WHEN
         try (1...10).forEach { i in
-            try conversation.appendText(content: "\(i)")
+            let message = try conversation.appendText(content: "\(i)") as? ZMClientMessage
+            message?.updateTimestamp(with: Double(i))
         }
 
         try (1...10).forEach { i in
-            try otherConversation.appendText(content: "Other \(i)")
+            let message = try otherConversation.appendText(content: "Other \(i)") as? ZMClientMessage
+            message?.updateTimestamp(with: Double(i))
         }
 
         // THEN
@@ -124,6 +129,14 @@ class ZMConversationLastMessagesTest: ZMBaseManagedObjectTest {
 
         // then
         XCTAssertEqual(conversation.lastEditableMessage, message)
+    }
+
+}
+
+extension ZMMessage {
+
+    func updateTimestamp(with timeInterval: TimeInterval) {
+        self.serverTimestamp = Date(timeIntervalSince1970: timeInterval)
     }
 
 }

@@ -20,7 +20,6 @@ import Foundation
 import WireTransport
 import WireSyncEngine
 
-@available(iOS 14, *)
 final class PreferredAPIVersionViewModel: ObservableObject {
 
     // MARK: - Models

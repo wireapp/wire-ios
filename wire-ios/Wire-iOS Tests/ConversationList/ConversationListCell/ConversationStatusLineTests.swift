@@ -119,11 +119,13 @@ class ConversationStatusLineTests: CoreDataSnapshotTestCase {
         XCTAssertEqual(status.string, "")
     }
 
-    func testStatusForMultipleTextMessagesInConversation() {
+    func testStatusForMultipleTextMessagesInConversation() throws {
         // GIVEN
         let sut = self.otherUserConversation!
         for index in 1...5 {
-            (try! sut.appendText(content: "test \(index)") as! ZMMessage).sender = self.otherUser
+            let message = try sut.appendText(content: "test \(index)") as? ZMClientMessage
+            message?.sender = self.otherUser
+            message?.serverTimestamp = Date(timeIntervalSince1970: Double(index))
         }
         markAllMessagesAsUnread(in: sut)
 
@@ -141,7 +143,12 @@ class ConversationStatusLineTests: CoreDataSnapshotTestCase {
         let selfMessage = appendSelfMessage(to: sut)
 
         for index in 1...2 {
-            appendReply(to: sut, selfMessage: selfMessage, text: "reply test \(index)")
+            appendReply(
+                to: sut,
+                selfMessage: selfMessage,
+                text: "reply test \(index)",
+                timestamp: Date(timeIntervalSince1970: -Double((2 - index)))
+            )
         }
 
         markAllMessagesAsUnread(in: sut)

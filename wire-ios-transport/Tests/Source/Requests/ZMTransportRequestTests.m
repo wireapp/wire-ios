@@ -22,6 +22,7 @@
 @import WireTransport;
 @import WireSystem;
 @import WireUtilities;
+@import UniformTypeIdentifiers;
 
 #if TARGET_OS_IPHONE
 @import MobileCoreServices;
@@ -121,8 +122,8 @@
     NSDictionary * const disposition = @{@"zasset": [NSNull null], @"conv_id": [NSUUID createUUID].transportString};
     
     // when
-    ZMTransportRequest *request = [[ZMTransportRequest alloc] initWithPath:path method:method binaryData:data type:(__bridge id) kUTTypePNG contentDisposition:disposition apiVersion:0];
-    
+    ZMTransportRequest *request = [[ZMTransportRequest alloc] initWithPath:path method:method binaryData:data type: UTTypePNG.identifier contentDisposition:disposition apiVersion:0];
+
     // then
     XCTAssertNotNil(request);
     XCTAssertNil(request.payload);
@@ -130,7 +131,7 @@
     XCTAssertEqual(request.method, method);
     XCTAssertEqualObjects(request.contentDisposition, disposition);
     XCTAssertEqualObjects(request.binaryData, data);
-    XCTAssertEqualObjects(request.binaryDataType, (__bridge id) kUTTypePNG);
+    XCTAssertEqualObjects(request.binaryDataType, UTTypePNG.identifier);
     XCTAssertFalse(request.shouldFailInsteadOfRetry);
 }
 
@@ -145,7 +146,7 @@
     NSDictionary * const disposition = @{@"zasset": [NSNull null], @"conv_id": [NSUUID createUUID].transportString};
 
     // when
-    ZMTransportRequest *request = [[ZMTransportRequest alloc] initWithPath:path method:method binaryData:data type:(__bridge id) kUTTypePNG contentDisposition:disposition apiVersion:apiVersion];
+    ZMTransportRequest *request = [[ZMTransportRequest alloc] initWithPath:path method:method binaryData:data type:UTTypePNG.identifier contentDisposition:disposition apiVersion:apiVersion];
 
     // then
     XCTAssertNotNil(request);
@@ -154,7 +155,7 @@
     XCTAssertEqual(request.method, method);
     XCTAssertEqualObjects(request.contentDisposition, disposition);
     XCTAssertEqualObjects(request.binaryData, data);
-    XCTAssertEqualObjects(request.binaryDataType, (__bridge id) kUTTypePNG);
+    XCTAssertEqualObjects(request.binaryDataType, UTTypePNG.identifier);
     XCTAssertFalse(request.shouldFailInsteadOfRetry);
 }
 
@@ -209,7 +210,7 @@
     // given
     NSString * const path = @"/some/path";
     ZMTransportRequestMethod const method = ZMMethodPUT;
-    
+
     // when
     ZMTransportRequest *request = [ZMTransportRequest emptyPutRequestWithPath:path apiVersion:0];
     NSMutableURLRequest *httpRequest = [[NSMutableURLRequest alloc] init];
@@ -272,7 +273,7 @@
     XCTAssertEqualObjects(request.contentDisposition, disposition);
     XCTAssertEqualObjects(request.binaryData, data);
     XCTAssertFalse(request.shouldFailInsteadOfRetry);
-    XCTAssertEqualObjects(request.binaryDataType, (__bridge id) kUTTypeJPEG);
+    XCTAssertEqualObjects(request.binaryDataType, UTTypeJPEG.identifier);
 }
 
 - (void)testThatImagePostRequestSetsPropertiesWithAPIVersion;
@@ -295,7 +296,7 @@
     XCTAssertEqualObjects(request.contentDisposition, disposition);
     XCTAssertEqualObjects(request.binaryData, data);
     XCTAssertFalse(request.shouldFailInsteadOfRetry);
-    XCTAssertEqualObjects(request.binaryDataType, (__bridge id) kUTTypeJPEG);
+    XCTAssertEqualObjects(request.binaryDataType, UTTypeJPEG.identifier);
 }
 
 - (void)testThatImagePostRequestIsNilForNonImageData
@@ -902,7 +903,7 @@
 {
     // given
     NSData *data = [@"jhasdhjkadshjklad" dataUsingEncoding:NSUTF8StringEncoding];
-    ZMTransportRequest *sut = [[ZMTransportRequest alloc] initWithPath:@"/foo" method:ZMMethodPOST binaryData:data type:(__bridge NSString *) kUTTypeJPEG contentDisposition:nil apiVersion:0];
+    ZMTransportRequest *sut = [[ZMTransportRequest alloc] initWithPath:@"/foo" method:ZMMethodPOST binaryData:data type:(NSString *) UTTypeJPEG.identifier contentDisposition:nil apiVersion:0];
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
     
     // when
@@ -951,7 +952,7 @@
     // given
     NSData *data = [@"jhasdhjkadshjklad" dataUsingEncoding:NSUTF8StringEncoding];
     NSDictionary *disposition = @{@"A": @YES, @"b": @1, @"c": @"foo bar", @"d": @"z", @"e": [NSNull null]};
-    ZMTransportRequest *sut = [[ZMTransportRequest alloc] initWithPath:@"/foo" method:ZMMethodPOST binaryData:data type:(__bridge NSString *) kUTTypeJPEG contentDisposition:disposition apiVersion:0];
+    ZMTransportRequest *sut = [[ZMTransportRequest alloc] initWithPath:@"/foo" method:ZMMethodPOST binaryData:data type:(NSString *) UTTypeJPEG contentDisposition:disposition apiVersion:0];
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
     
     // when
@@ -965,7 +966,7 @@
 {
     // given
     NSData *data = [@"jhasdhjkadshjklad" dataUsingEncoding:NSUTF8StringEncoding];
-    ZMTransportRequest *sut = [[ZMTransportRequest alloc] initWithPath:@"/foo" method:ZMMethodPOST binaryData:data type:(__bridge NSString *) kUTTypeJPEG contentDisposition:nil apiVersion:0];
+    ZMTransportRequest *sut = [[ZMTransportRequest alloc] initWithPath:@"/foo" method:ZMMethodPOST binaryData:data type:(NSString *) UTTypeJPEG contentDisposition:nil apiVersion:0];
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
     
     // when

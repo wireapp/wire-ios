@@ -19,7 +19,6 @@
 import WireTesting
 @testable import WireRequestStrategy
 
-@available(iOS 15, *)
 class StoreUpdateEventTests: MessagingTestBase {
 
     struct Failure: Error {

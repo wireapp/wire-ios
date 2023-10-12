@@ -22,7 +22,6 @@ import Foundation
 /// custom classes.
 ///
 /// NOTE: Every transformable property should use this secure transformer.
-@available(iOS 12.0, iOSApplicationExtension 12.0, *)
 public class ExtendedSecureUnarchiveFromData: NSSecureUnarchiveFromDataTransformer {
 
     /// The name of the transformer. This is the name used to register the transformer using ValueTransformer.setValueTrandformer(_"forName:)`.

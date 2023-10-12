@@ -102,46 +102,6 @@
         <string>%lu учасників</string>
       </dict>
     </dict>
-    <key>content.system.missing_messages.subtitle_added</key>
-    <dict>
-      <key>NSStringLocalizedFormatKey</key>
-      <string>%@ %#@lu_number_of_users@</string>
-      <key>lu_number_of_users</key>
-      <dict>
-        <key>NSStringFormatSpecTypeKey</key>
-        <string>NSStringPluralRuleType</string>
-        <key>NSStringFormatValueTypeKey</key>
-        <string>lu</string>
-        <key>one</key>
-        <string>був(-ла) доданий(-а)</string>
-        <key>few</key>
-        <string>було додано</string>
-        <key>many</key>
-        <string>було додано</string>
-        <key>other</key>
-        <string>було додано</string>
-      </dict>
-    </dict>
-    <key>content.system.missing_messages.subtitle_removed</key>
-    <dict>
-      <key>NSStringLocalizedFormatKey</key>
-      <string>%@ %#@lu_number_of_users@</string>
-      <key>lu_number_of_users</key>
-      <dict>
-        <key>NSStringFormatSpecTypeKey</key>
-        <string>NSStringPluralRuleType</string>
-        <key>NSStringFormatValueTypeKey</key>
-        <string>lu</string>
-        <key>one</key>
-        <string>був(-ла) видалений(-а)</string>
-        <key>few</key>
-        <string>було видалено</string>
-        <key>many</key>
-        <string>було видалено</string>
-        <key>other</key>
-        <string>було видалено</string>
-      </dict>
-    </dict>
     <key>list.connect_request.people_waiting</key>
     <dict>
       <key>NSStringLocalizedFormatKey</key>
