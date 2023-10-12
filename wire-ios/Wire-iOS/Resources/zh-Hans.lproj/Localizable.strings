@@ -642,8 +642,8 @@
 "content.file.too_big" = "您可以发送最大%@的文件。";
 
 // Reactions
-"content.reactions.title" = "Select Reaction";
-"content.reactions.search" = "Search for Emoji";
+"content.reactions.title" = "Select reaction";
+"content.reactions.search" = "Search for emoji";
 
 // Someone pinged
 "content.ping.text" = "%@ping了一下";
@@ -1748,6 +1748,7 @@
 "databaseloadingfailure.alert.delete_database" = "删除数据库";
 "databaseloadingfailure.alert.delete_database.message" = "By deleting the database, all local data and messages for this account will be permanently deleted.";
 "databaseloadingfailure.alert.delete_database.continue" = "继续";
+"databaseloadingfailure.alert.retry" = "Retry";
 
 // Backend not supported alert
 "backend_not_supported.alert.title" = "Server version not supported";
