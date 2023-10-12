@@ -124,8 +124,8 @@ class ConversationStatusLineTests: CoreDataSnapshotTestCase {
         let sut = self.otherUserConversation!
         for index in 1...5 {
             let message = try sut.appendText(content: "test \(index)") as? ZMClientMessage
-            message.sender = self.otherUser
-            message.serverTimestamp = Date(timeIntervalSinceNow: TimeInterval(index))
+            message?.sender = self.otherUser
+            message?.serverTimestamp = Date(timeIntervalSince1970: TimeInterval(index))
         }
         markAllMessagesAsUnread(in: sut)
 
@@ -147,7 +147,7 @@ class ConversationStatusLineTests: CoreDataSnapshotTestCase {
                 to: sut,
                 selfMessage: selfMessage,
                 text: "reply test \(index)",
-                timestamp: Date(timeIntervalSinceNow: -Double(2 - index))
+                timestamp: Date(timeIntervalSince1970: -TimeInterval(2 - index))
             )
         }
 
