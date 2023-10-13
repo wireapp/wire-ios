@@ -49,6 +49,19 @@ extension Set {
         }
         return dict
     }
+
+    public func compactMapToDictionary<Key, Value>(with keyBlock: (Element) -> Key?, valueBlock: (Element) -> Value?) -> [Key: Value] {
+        var dict = [Key: Value]()
+        forEach {
+            if let key = keyBlock($0) {
+                if let value = valueBlock($0) {
+                    dict.updateValue(value, forKey: key)
+                }
+            }
+
+        }
+        return dict
+    }
 }
 
 public protocol Mergeable {
