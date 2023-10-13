@@ -29,6 +29,14 @@ extension PasswordRuleSet {
         return try! decoder.decode(PasswordRuleSet.self, from: fileData)
     }()
 
+    /// The guestLinkWithPassword rule set.
+    static let guestLinkWithPasswordRuleSet: PasswordRuleSet = {
+        let fileURL = Bundle.main.url(forResource: "guestLinkWithPassword_rules", withExtension: "json")!
+        let fileData = try! Data(contentsOf: fileURL)
+        let decoder = JSONDecoder()
+        return try! decoder.decode(PasswordRuleSet.self, from: fileData)
+    }()
+
     // MARK: - Localized Description
 
     /// The localized error message for the shared rule set.
