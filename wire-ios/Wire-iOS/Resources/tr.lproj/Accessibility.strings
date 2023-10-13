@@ -22,60 +22,60 @@
 ///  "<screen>.<component>.<usage>"
 
 
-"conversation.backButton.description" = "Go back to conversation list";
-"conversation.searchButton.description" = "Open search";
+"conversation.backButton.description" = " Sohbet listesine geri dön";
+"conversation.searchButton.description" = "Aramayı aç";
 "conversation.profileImage.description" = "Profil resmi";
-"conversation.profileImage.hint" = "Double tap to open profile";
-"conversation.titleViewForGroup.hint" = "Double tap to open conversation details";
-"conversation.titleViewForOneToOne.hint" = "Double tap to open profile";
+"conversation.profileImage.hint" = "Profili açmak için iki kez dokun";
+"conversation.titleViewForGroup.hint" = "Sohbet detaylarını açmak için iki kez dokun";
+"conversation.titleViewForOneToOne.hint" = "Profili açmak için iki kez dokun";
 "conversation.legalHoldIcon.description" = "Legal hold";
 "conversation.verifiedIcon.description" = "Doğrulandı";
 
-"conversation.sendButton.description" = "Send this message";
-"conversation.openFormattingButton.description" = "Open formatting options";
-"conversation.hideFormattingButton.description" = "Hide formatting options";
+"conversation.sendButton.description" = "Mesajı gönder";
+"conversation.openFormattingButton.description" = "Biçimlendirme seçeneklerini aç";
+"conversation.hideFormattingButton.description" = "Biçimlendirme seçeneklerini gizle";
 "conversation.timerButton.description" = "Set a timer for self-deleting messages";
-"conversation.mentionButton.description" = "Mention someone";
-"conversation.cameraButton.description" = "Take or select a photo";
+"conversation.mentionButton.description" = "Birinden bahset";
+"conversation.cameraButton.description" = "Fotoğraf çekin veya seçin";
 "conversation.sketchButton.description" = "Open sketch to draw or write";
-"conversation.gifButton.description" = "Select a GIF";
-"conversation.audioButton.description" = "Record an audio message";
-"conversation.pingButton.description" = "Send a ping";
-"conversation.uploadFileButton.description" = "Share a file";
-"conversation.locationButton.description" = "Share your location";
+"conversation.gifButton.description" = "GIF seç";
+"conversation.audioButton.description" = "Sesli mesaj kaydet";
+"conversation.pingButton.description" = "Ping gönder";
+"conversation.uploadFileButton.description" = "Bir dosya paylaş";
+"conversation.locationButton.description" = "Konumunu paylaş";
 "conversation.videoButton.description" = "Bir video kaydet";
-"conversation.moreButton.description" = "Open more messaging options";
+"conversation.moreButton.description" = "Diğer mesajlaşma seçeneklerini aç";
 "conversation.emphemeralButton.description" = "Set a timer for self-deleting messages";
-"conversation.timerForSelfDeletingMessagesSeconds.value" = "%@ seconds";
-"conversation.timerForSelfDeletingMessagesMinutes.value" = "%@ minutes";
-"conversation.timerForSelfDeletingMessagesHour.value" = "%@ hour";
-"conversation.timerForSelfDeletingMessagesDay.value" = "%@ day";
-"conversation.timerForSelfDeletingMessagesWeek.value" = "%@ week";
-"conversation.timerForSelfDeletingMessagesWeeks.value" = "%@ weeks";
+"conversation.timerForSelfDeletingMessagesSeconds.value" = "%@ saniye";
+"conversation.timerForSelfDeletingMessagesMinutes.value" = "%@ dakika";
+"conversation.timerForSelfDeletingMessagesHour.value" = "%@ saat";
+"conversation.timerForSelfDeletingMessagesDay.value" = "%@ gün";
+"conversation.timerForSelfDeletingMessagesWeek.value" = "%@ hafta";
+"conversation.timerForSelfDeletingMessagesWeeks.value" = "%@ hafta";
 
-"conversation.headerButton.description" = "Use a heading";
-"conversation.boldButton.description" = "Use bolded text";
-"conversation.italicButton.description" = "Use italic text";
-"conversation.numberListButton.description" = "Use number list";
+"conversation.headerButton.description" = "Başlık kullan";
+"conversation.boldButton.description" = "Kalın yazı kullan";
+"conversation.italicButton.description" = "İtalik yazı kullan";
+"conversation.numberListButton.description" = "Sıralı liste kullan";
 "conversation.bulletListButton.description" = "Use bullet list";
-"conversation.codeButton.description" = "Use code format";
-"conversation.messageInfo.hint" = "Double tap to hide or show message info";
-"conversation.messageOptions.hint" = "Triple tap to open messaging options";
+"conversation.codeButton.description" = "Kod kullan";
+"conversation.messageInfo.hint" = "Mesaj bilgisini görüntülemek veya gizlemek için iki kez dokun";
+"conversation.messageOptions.hint" = "Mesajlaşma seçenekleri için üç kez dokun";
 
-"conversationSearch.closeButton.description" = "Close search";
-"conversationSearch.backButton.description" = "Go back to search";
-"conversationSearch.imagesSection.description" = "Pictures in this conversation";
-"conversationSearch.filesSection.description" = "Files in this conversation";
-"conversationSearch.videosSection.description" = "Videos in this conversation";
-"conversationSearch.linksSection.description" = "Links in this conversation";
-"conversationSearch.section.hint" = "Double tap to open all";
+"conversationSearch.closeButton.description" = "Aramayı kapat";
+"conversationSearch.backButton.description" = "Aramaya dön";
+"conversationSearch.imagesSection.description" = "Bu sohbetteki görseller";
+"conversationSearch.filesSection.description" = "Bu sohbetteki dosyalar";
+"conversationSearch.videosSection.description" = "Bu sohbetteki videolar";
+"conversationSearch.linksSection.description" = "Bu sohbetteki bağlantılar";
+"conversationSearch.section.hint" = "Hepsini açmak için iki kez dokun";
 "conversationSearch.emptyResult.description" = "Sonuç yok";
 "conversationSearch.noItems.description" = "Koleksiyonda hiçbir şey yok";
 "conversationSearch.imageMessage.description" = "Resim";
 "conversationSearch.videoMessage.description" = "Video mesajı";
 "conversationSearch.audioMessage.description" = "Sesli mesaj";
-"conversationSearch.linkMessage.description" = "Link";
-"conversationSearch.sentBy.description" = "Sent by %@";
+"conversationSearch.linkMessage.description" = "Bağlantı";
+"conversationSearch.sentBy.description" = "%@ tarafından gönderildi";
 "conversationSearch.fileName.description" = "File name";
 "conversationSearch.fileSize.description" = "Size";
 "conversationSearch.fileType.description" = "Type";
@@ -108,7 +108,7 @@
 "messageAction.sketchButton.description" = "Sketch over picture";
 "messageAction.emojiButton.description" = "Sketch emoji over picture";
 "messageAction.copyButton.description" = "Copy picture";
-"messageAction.moreButton.description" = "Open more messaging options";
+"messageAction.moreButton.description" = "Diğer mesajlaşma seçeneklerini aç";
 "messageAction.saveButton.description" = "Save picture";
 "messageAction.revealButton.description" = "Reveal in conversation";
 "messageAction.deleteButton.description" = "Delete picture";
@@ -135,7 +135,7 @@
 "conversationDetails.closeButton.description" = "Close conversation details";
 "conversationDetails.moreButton.description" = "Open conversation options";
 "conversationDetails.showParticipantsButton.hint" = "Double tap to open participant list";
-"conversationDetails.participantCell.hint" = "Double tap to open profile";
+"conversationDetails.participantCell.hint" = "Profili açmak için iki kez dokun";
 
 "createConversation.backButton.description" = "Go back to contact list";
 "createConversation.hideSettings.hint" = "Double tap to hide settings";
@@ -193,7 +193,7 @@
 "contactsList.federatedIcon.description" = "Federe";
 "contactsList.memberIcon.description" = "Member";
 "contactsList.userCell.hint" = "Double tap to open conversation";
-"contactsList.pendingConnection.hint" = "Double tap to open profile";
+"contactsList.pendingConnection.hint" = "Profili açmak için iki kez dokun";
 "contactsList.closeButton.description" = "Close contact list";
 
 "servicesList.serviceCell.hint" = "Double tap to open service details";
@@ -215,7 +215,7 @@
 "conversationsList.joinButton.description" = "Katıl";
 "conversationsList.joinButton.hint" = "Double tap to join the call";
 "conversationsList.connectionRequest.description" = "Pending approval of connection request";
-"conversationsList.connectionRequest.hint" = "Double tap to open profile";
+"conversationsList.connectionRequest.hint" = "Profili açmak için iki kez dokun";
 
 "conversationAnnouncement.text.description" = "Text message received from %@";
 "conversationAnnouncement.picture.description" = "Picture received from %@";
@@ -268,3 +268,7 @@
 
 "connection.archiveButton.description" = "Archive connection";
 "connection.cancelButton.description" = "Cancel connection";
+
+// MARK: - Reactions
+"reactionPicker.dismissButton.description" = "Dismiss emoji keyboard";
+"reactionPicker.searchFieldPlaceholder.description" = "Search for emoji";

@@ -642,8 +642,8 @@
 "content.file.too_big" = "Możesz wysyłać pliki do %@";
 
 // Reactions
-"content.reactions.title" = "Select Reaction";
-"content.reactions.search" = "Search for Emoji";
+"content.reactions.title" = "Select reaction";
+"content.reactions.search" = "Search for emoji";
 
 // Someone pinged
 "content.ping.text" = "%@ zaczepił(a)";
@@ -1748,6 +1748,7 @@
 "databaseloadingfailure.alert.delete_database" = "Usuń bazę danych";
 "databaseloadingfailure.alert.delete_database.message" = "Usuwając bazę danych, wszystkie lokalne dane i wiadomości dla tego konta zostaną trwale usunięte.";
 "databaseloadingfailure.alert.delete_database.continue" = "Kontynuuj";
+"databaseloadingfailure.alert.retry" = "Retry";
 
 // Backend not supported alert
 "backend_not_supported.alert.title" = "Server version not supported";
