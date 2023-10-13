@@ -3210,6 +3210,7 @@
 		E94784E8278EDDC200F9FE80 /* ConversationCreateServicesSectionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationCreateServicesSectionController.swift; sourceTree = "<group>"; };
 		E94784EA278EE5EB00F9FE80 /* ConversationServicesOptionsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationServicesOptionsViewModel.swift; sourceTree = "<group>"; };
 		E94784EC278EF1E100F9FE80 /* ConversationServicesOptionsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationServicesOptionsViewController.swift; sourceTree = "<group>"; };
+		E950F5EF2ABC67FC00B09C43 /* GermanLocaleTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = GermanLocaleTests.xctestplan; sourceTree = "<group>"; };
 		E9559B4827B3D3580020B431 /* UIAlertController+ConfirmRemovingServices.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIAlertController+ConfirmRemovingServices.swift"; sourceTree = "<group>"; };
 		E961C0742A332E7400A36DE6 /* ConversationReactionMessageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationReactionMessageTests.swift; sourceTree = "<group>"; };
 		E964168528997173007F9756 /* ButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonStyle.swift; sourceTree = "<group>"; };
@@ -4272,6 +4273,7 @@
 			children = (
 				2B6F6AB329ACC04A001BB36F /* AllTests.xctestplan */,
 				2B56189E29A517E800D8CCCA /* SecurityTests.xctestplan */,
+				E950F5EF2ABC67FC00B09C43 /* GermanLocaleTests.xctestplan */,
 			);
 			path = TestPlans;
 			sourceTree = "<group>";
@@ -10324,7 +10326,6 @@
 				INFOPLIST_FILE = "$(INFOPLIST_FILE)";
 				INFOPLIST_KEY_CFBundleDisplayName = "Wire Notification Service Extension";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Zeta Project Germany GmbH. All rights reserved.";
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -10406,7 +10407,6 @@
 				INFOPLIST_FILE = "$(INFOPLIST_FILE)";
 				INFOPLIST_KEY_CFBundleDisplayName = "Wire Notification Service Extension";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Zeta Project Germany GmbH. All rights reserved.";
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -10533,7 +10533,6 @@
 					"\"$(SRCROOT)/Carthage/Build/SnapshotTesting.xcframework/ios-arm64_x86_64-simulator\"",
 					"\"$(SRCROOT)/Carthage/Build/WireTesting.xcframework/ios-arm64_x86_64-simulator\"",
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				ONLY_ACTIVE_ARCH = YES;
 				VALIDATE_WORKSPACE = YES;
 			};
@@ -10555,7 +10554,6 @@
 					"\"$(SRCROOT)/Carthage/Build/SnapshotTesting.xcframework/ios-arm64_x86_64-simulator\"",
 					"\"$(SRCROOT)/Carthage/Build/WireTesting.xcframework/ios-arm64_x86_64-simulator\"",
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				ONLY_ACTIVE_ARCH = NO;
 				VALIDATE_WORKSPACE = NO;
 			};

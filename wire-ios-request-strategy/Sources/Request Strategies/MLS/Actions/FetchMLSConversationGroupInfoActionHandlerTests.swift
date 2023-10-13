@@ -27,7 +27,7 @@ class FetchMLSConversationGroupInfoActionHandlerTests: BaseFetchMLSGroupInfoActi
         action = FetchMLSConversationGroupInfoAction(conversationId: conversationId, domain: domain)
     }
 
-    override func test_itGeneratesARequest_APIV5() throws {
+    func test_itGeneratesARequest_APIV5() throws {
         try test_itGeneratesARequest(
             for: action,
             expectedPath: "/v5/conversations/\(domain)/\(conversationId.transportString())/groupinfo",

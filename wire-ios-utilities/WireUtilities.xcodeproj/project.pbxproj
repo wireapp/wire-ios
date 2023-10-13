@@ -156,6 +156,7 @@
 		D53DB9A2203ED6E100655CB4 /* ResultTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D53DB9A0203ED6DC00655CB4 /* ResultTests.swift */; };
 		D56A2D4A207E408C00DB59F5 /* NSManagedObjectContext+SwiftTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D56A2D49207E408C00DB59F5 /* NSManagedObjectContext+SwiftTests.swift */; };
 		D5D65A13207631A100D7F3C3 /* NSManagedObjectContext+PerformGrouped.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5D65A12207631A100D7F3C3 /* NSManagedObjectContext+PerformGrouped.swift */; };
+		E9C337542ABC91DE0084ABCF /* Array+Cardinality.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C337532ABC91DE0084ABCF /* Array+Cardinality.swift */; };
 		EE162710250BA12900D35062 /* VolatileData.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE16270F250BA12900D35062 /* VolatileData.swift */; };
 		EE162712250BA6E600D35062 /* VolatileDataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE162711250BA6E600D35062 /* VolatileDataTests.swift */; };
 		EE1E354221E7739400F1144B /* DarwinNotificationCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE1E354121E7739400F1144B /* DarwinNotificationCenter.swift */; };
@@ -402,6 +403,7 @@
 		D53DB9A0203ED6DC00655CB4 /* ResultTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultTests.swift; sourceTree = "<group>"; };
 		D56A2D49207E408C00DB59F5 /* NSManagedObjectContext+SwiftTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSManagedObjectContext+SwiftTests.swift"; sourceTree = "<group>"; };
 		D5D65A12207631A100D7F3C3 /* NSManagedObjectContext+PerformGrouped.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSManagedObjectContext+PerformGrouped.swift"; sourceTree = "<group>"; };
+		E9C337532ABC91DE0084ABCF /* Array+Cardinality.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+Cardinality.swift"; sourceTree = "<group>"; };
 		EE16270F250BA12900D35062 /* VolatileData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VolatileData.swift; sourceTree = "<group>"; };
 		EE162711250BA6E600D35062 /* VolatileDataTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = VolatileDataTests.swift; path = Source/VolatileDataTests.swift; sourceTree = "<group>"; };
 		EE1E354121E7739400F1144B /* DarwinNotificationCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DarwinNotificationCenter.swift; sourceTree = "<group>"; };
@@ -599,6 +601,7 @@
 				63DFEAD029A3845600FCA830 /* DeveloperFlag.swift */,
 				06CDC6F92A2F2B4B00EB518D /* TimeInterval+Units.swift */,
 				636F70462A65AD7800E086B6 /* TimerManager.swift */,
+  			E9C337532ABC91DE0084ABCF /* Array+Cardinality.swift */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -1139,6 +1142,7 @@
 				16D964DC1F79454000390417 /* SelfUnregisteringNotificationCenterToken.swift in Sources */,
 				870FFA821D82B73B007E9806 /* Data+ZMSCrypto.swift in Sources */,
 				D53DB99F203ED59C00655CB4 /* Result.swift in Sources */,
+				E9C337542ABC91DE0084ABCF /* Array+Cardinality.swift in Sources */,
 				A9CDCDC2237D9928008A9BC6 /* UIColor+Hex.swift in Sources */,
 				8735AE6F2035E3BC00DCE66E /* StringLengthValidator.swift in Sources */,
 				F9479C751E4A2D0F0039F55F /* NSOrderedSet.swift in Sources */,

@@ -29,7 +29,7 @@ class FetchMLSSubconversationGroupInfoActionHandlerTests: BaseFetchMLSGroupInfoA
         action = FetchMLSSubconversationGroupInfoAction(conversationId: conversationId, domain: domain, subgroupType: subgroupType)
     }
 
-    override func test_itGeneratesARequest_APIV5() throws {
+    func test_itGeneratesARequest_APIV5() throws {
         try test_itGeneratesARequest(
             for: action,
             expectedPath: "/v5/conversations/\(domain)/\(conversationId.transportString())/subconversations/\(subgroupType.rawValue)/groupinfo",

@@ -19,7 +19,6 @@
 import Foundation
 import WireUtilities
 
-@available(iOS 14, *)
 final class DeveloperFlagsViewModel: ObservableObject {
 
     // MARK: - State

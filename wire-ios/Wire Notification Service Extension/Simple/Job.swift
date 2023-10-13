@@ -22,7 +22,6 @@ import WireTransport
 import WireSyncEngine
 import WireCommonComponents
 
-@available(iOS 15, *)
 final class Job: NSObject, Loggable {
 
     // MARK: - Types

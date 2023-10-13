@@ -122,7 +122,7 @@ public class MLSEventProcessor: MLSEventProcessing {
         }
 
         mlsService.registerPendingJoin(groupID)
-        WireLogger.mls.info("MLS event processor added group (\(groupID.safeForLoggingDescription)) to be joined")
+        Logging.mls.info("MLS event processor added group (\(groupID.safeForLoggingDescription)) to be joined")
     }
 
     // MARK: - Process welcome message

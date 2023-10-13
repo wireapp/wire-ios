@@ -291,7 +291,7 @@
 "conversation.input_bar.audio_message.keyboard.filter_tip" = "Wählen Sie einen Filter aus";
 
 "conversation.call.many_participants_confirmation.title" = "Sind Sie sicher, dass Sie %d Personen anrufen möchten?";
-"conversation.call.many_participants_confirmation.call" = "Anruf";
+"conversation.call.many_participants_confirmation.call" = "Anrufen";
 
 "conversation.connection_view.in_address_book" = "in Kontakte";
 "conversation.connection_view.encryption_info" = "Kommunikation in Wire ist immer Ende-zu-Ende verschlüsselt. Alles, was Sie in dieser Unterhaltung senden und empfangen, ist nur für Sie und Ihren Kontakt zugänglich.";
@@ -324,7 +324,7 @@
 "conversation.create.mls.picker_title" = "Protokoll wählen";
 "conversation.create.mls.cancel" = "Abbrechen";
 "conversation.create.non_federating_domains_error.title" = "Gruppe kann nicht erstellt werden";
-"conversation.create.non_federating_domains_error.message" = "Personen aus den Backends %@ können nicht an derselben Gruppenunterhaltung teilnehmen.\nUm die Gruppe zu erstellen, entfernen Sie die betroffenen Teilnehmer.";
+"conversation.create.non_federating_domains_error.message" = "Personen der Backends %@ können nicht derselben Gruppenunterhaltung beitreten.\nUm die Gruppe zu erstellen, entfernen Sie die betroffenen Teilnehmer.";
 "conversation.create.non_federating_domains_error.edit_participant_list" = "Teilnehmerliste bearbeiten";
 "conversation.create.non_federating_domains_error.learn_more" = "Mehr erfahren";
 "conversation.create.non_federating_domains_error.abort" = "Gruppenerstellung verwerfen";
@@ -429,6 +429,31 @@
 
 "content.system.services.warning" = "Dienste haben Zugriff auf den Inhalt dieser Unterhaltung";
 
+"content.system.missing_messages" = "Sie haben das Gerät eine Weile nicht benutzt. Einige Nachrichten werden hier eventuell nicht angezeigt.";
+// Placeholder contains a single name, e.g "Alice"
+"content.system.missing_messages.users_added.singular" = "Sie haben das Gerät eine Weile nicht benutzt. Einige Nachrichten werden hier eventuell nicht angezeigt.\n\nIn der Zwischenzeit wurde %@ hinzugefügt.";
+
+// Placeholder contains a localized list of names, e.g "Alice, Bob, and Cate"
+"content.system.missing_messages.users_added.plural" = "Sie haben das Gerät eine Weile nicht benutzt. Einige Nachrichten werden hier eventuell nicht angezeigt.\n\nIn der Zwischenzeit wurden %@ hinzugefügt.";
+
+// Placeholder contains a single name, e.g "Alice"
+"content.system.missing_messages.users_removed.singular" = "Sie haben das Gerät eine Weile nicht benutzt. Einige Nachrichten werden hier eventuell nicht angezeigt.\n\nIn der Zwischenzeit wurde %@ entfernt.";
+
+// Placeholder contains a localized list of names, e.g "Alice, Bob, and Cate"
+"content.system.missing_messages.users_removed.plural" = "Sie haben das Gerät eine Weile nicht benutzt. Einige Nachrichten werden hier eventuell nicht angezeigt.\n\nIn der Zwischenzeit wurden %@ entfernt.";
+
+// Both placesholders contains a single name, e.g "Alice"
+"content.system.missing_messages.users_added_and_removed.singular" = "Sie haben das Gerät eine Weile nicht benutzt. Einige Nachrichten werden hier eventuell nicht angezeigt.\n\nIn der Zwischenzeit wurde %1$@ hinzugefügt. %2$@ wurde entfernt.";
+
+// Placeholder 1 contains a single name: e.g "Alice. Placeholder 2 contains a localized list of names, e.g "Alice, Bob, and Cate"
+"content.system.missing_messages.users_added_and_removed.singular_plural" = "Sie haben das Gerät eine Weile nicht benutzt. Einige Nachrichten werden hier eventuell nicht angezeigt.\n\nIn der Zwischenzeit wurde %1$@ hinzugefügt. %2$@ wurden entfernt.";
+
+// Placeholder 1 contains a localized list of names, e.g "Alice, Bob, and Cate". Placeholder 2 contains a single name: e.g "Alice.
+"content.system.missing_messages.users_added_and_removed.plural_singular" = "Sie haben das Gerät eine Weile nicht benutzt. Einige Nachrichten werden hier eventuell nicht angezeigt.\n\nIn der Zwischenzeit wurden %1$@ hinzugefügt. %2$@ wurde entfernt.";
+
+// Both placesholders contains a localized list of names, e.g "Alice, Bob, and Cate"
+"content.system.missing_messages.users_added_and_removed.plural" = "Sie haben das Gerät eine Weile nicht benutzt. Einige Nachrichten werden hier eventuell nicht angezeigt.\n\nIn der Zwischenzeit wurden %1$@ hinzugefügt. %2$@ wurden entfernt.";
+
 // Link attachment messages
 
 "content.message.link_attachment.accessibility_label.youtube" = "YouTube Video-Vorschau";
@@ -469,7 +494,7 @@
 "content.system.message_delivered_timestamp" = "Zugestellt";
 "content.system.message_read_timestamp" = "Gesehen";
 "content.system.failedtosend_message.general_reason" = "Nachricht konnte aufgrund von Verbindungsproblemen nicht gesendet werden.";
-"content.system.failedtosend_message.federation_remote_error_reason" = "Nachricht konnte nicht gesendet werden, da das Backend **%@** nicht erreichbar ist. [Mehr erfahren](%@)";
+"content.system.failedtosend_message.federation_remote_error_reason" = "Nachricht nicht gesendet, da das Backend **%@**  nicht erreichbar ist. [Mehr erfahren](%@)";
 "content.system.failedtosend_message.retry" = "Wiederholen";
 
 "content.system.failedtosend_participants.show_details" = "Details anzeigen";
@@ -478,7 +503,7 @@
 "content.system.failedtosend_participants.from" = "**%@ von %@**";
 "content.system.failed_participants.learn_more" = "Mehr erfahren";
 
-"content.system.failedtoadd_participants.count" = "**%@ Teilnehmer** konnten nicht zu der Gruppe hinzugefügt werden.";
+"content.system.failedtoadd_participants.count" = "**%@Teilnehmer** konnten der Gruppe nicht hinzugefügt werden.";
 
 "content.system.like_tooltip" = "Gefällt mir";
 "content.system.deleted_message_prefix_timestamp" = "Entfernt: %@";
@@ -520,8 +545,8 @@
 "content.system.message_timer_off" = "%@ hat selbstlöschende Nachrichten ausgeschaltet";
 "content.system.message_timer_off-you" = "%@ haben selbstlöschende Nachrichten ausgeschaltet";
 
-"content.system.backends_stop_federating.self_backend" = "**Ihr Backend** föderiert nicht mehr mit **%@**. [Mehr erfahren](%@)";
-"content.system.backends_stop_federating.other_backends" = "Die Backends **%@** und **%@** föderieren nicht mehr. [Mehr erfahren](%@)";
+"content.system.backends_stop_federating.self_backend" = "**Ihr Backend** ist nicht mehr mit **%@** verbunden. [Mehr erfahren](%@)";
+"content.system.backends_stop_federating.other_backends" = "Backends **%@** und **%@** sind nicht mehr verbunden. [Mehr erfahren](%@)";
 
 // read receipt
 
@@ -551,9 +576,6 @@
 
 "content.system.unverified_self_devices" = "Sie haben eines [Ihrer Geräte](%@) nicht überprüft";
 "content.system.unverified_other_devices" = "Sie haben eines von [%1$@s Geräten](%2$@) nicht überprüft";
-
-"content.system.missing_messages.title" = "Sie haben das Gerät eine Weile nicht benutzt. Einige Nachrichten werden hier eventuell nicht angezeigt.";
-"content.system.missing_messages.subtitle_start" = "In der Zwischenzeit";
 
 "content.system.cannot_decrypt.self" = "Eine Nachricht von Ihnen konnte nicht entschlüsselt werden.";
 "content.system.cannot_decrypt.other" = "Eine Nachricht von %@ konnte nicht entschlüsselt werden.";
@@ -647,7 +669,7 @@
 "error.connection.title" = "Fehler";
 "error.connection.missing_legalhold_consent" = "Sie können sich mit diesem Nutzer nicht verbinden, da die gesetzliche Aufbewahrung aktiviert ist.";
 "error.connection.generic_error" = "Ein Fehler ist aufgetreten, bitte nochmal versuchen";
-"error.connection.federation_denied_message" = "Ihr Backend föderiert nicht mit dem Backend %@. Sie können sich nicht mit ihnen verbinden.";
+"error.connection.federation_denied_message" = "Ihr Backend ist nicht mit dem Backend von %@ verbunden. Sie können sich mit dieser Person nicht verbinden.";
 
 // Save image errors
 "library.alert.permission_warning.title" = "Wire benötigt Zugriff auf Ihre Fotos.";
@@ -1339,7 +1361,7 @@
 "landing.create_team.title" = "Pro";
 "landing.create_team.subtitle" = "Sichere Zusammenarbeit für Unternehmen, Institutionen und Organisationen";
 "landing.login.hints" = "Haben Sie bereits ein Benutzerkonto?";
-"landing.login.button.title" = "Login";
+"landing.login.button.title" = "Anmelden";
 "landing.login.email.button.title" = "Mit E-Mail anmelden";
 "landing.login.enterprise.button.title" = "Anmeldung für Unternehmen";
 "landing.login.sso.button.title" = "Mit SSO anmelden";
@@ -1443,7 +1465,7 @@
 "registration.alert.account_exists.message_email" = "Die für die Registrierung verwendete E-Mail-Adresse ist bereits mit einem Konto verknüpft.\n\nBitte andere E-Mail-Adresse nutzen oder versuchen, sich mit dieser E-Mail-Adresse einzuloggen.";
 "registration.alert.change_email_action" = "Mit einer andern E-Mail registrieren";
 "registration.alert.change_phone_action" = "Bitte mit anderer Nummer registrieren";
-"registration.alert.change_signin_action" = "Einloggen";
+"registration.alert.change_signin_action" = "Anmelden";
 
 // Restore History Warning Alert
 "registration.no_history.restore_backup_warning.title" = "Gesprächsverlauf wiederherstellen";
@@ -1469,7 +1491,7 @@
 "login.sso.alert.title" = "Anmeldung für Unternehmen";
 "login.sso.alert.message.sso_and_email" = "Bitte geben Sie Ihre E-Mail-Adresse oder den SSO-Code ein. Wenn Ihre E-Mail mit einer Installation von Wire übereinstimmt, verbindet sich die App mit dem Server.";
 "login.sso.alert.message.sso_only" = "Bitte den SSO-Code eingeben:";
-"login.sso.alert.action" = "Einloggen";
+"login.sso.alert.action" = "Anmelden";
 "login.sso.alert.text_field.placeholder.sso_and_email" = "E-Mail-Adresse oder SSO-Code";
 "login.sso.alert.text_field.placeholder.sso_only" = "SSO Zugangscode";
 
@@ -1541,7 +1563,7 @@
 "registration.push_access_denied.maybe_later_button.title" = "Vielleicht später";
 
 "registration.personal.title" = "Ein Konto erstellen";
-"registration.signin.title" = "Login";
+"registration.signin.title" = "Anmelden";
 "registration.signin.too_many_devices.title" = "Zu viele Geräte";
 "registration.signin.too_many_devices.subtitle" = "Entfernen Sie eines Ihrer anderen Geräte, um Wire hier zu nutzen.";
 "registration.signin.too_many_devices.manage_button.title" = "Geräte verwalten";
@@ -1564,7 +1586,7 @@
 "signin.forgot_password" = "Passwort vergessen?";
 "signin.use_one_password.label" = "Mit 1Password anmelden";
 "signin.use_one_password.hint" = "Doppelt antippen, um Ihr Passwort mit 1Passwort einzugeben.";
-"signin.confirm" = "Einloggen";
+"signin.confirm" = "Anmelden";
 "signin.company_idp.button.title" = "Für Unternehmen";
 
 "signin_logout.subheadline" = "Die Session ist abgelaufen. Zum Fortfahren bitte erneut einloggen.";
@@ -1632,7 +1654,7 @@
 "error.user.registration_unknown_error" = "Ein Fehler ist aufgetreten, bitte erneut versuchen.";
 "error.user.device_deleted_remotely" = "Sie wurden von einem anderen Gerät abgemeldet.";
 "error.user.last_identity_cant_be_deleted" = "Es ist entweder eine E-Mail-Adresse oder eine Telefonnummer erforderlich.";
-"error.user.account_suspended" = "Benutzerkonto ist nicht mehr zum Login berechtigt.";
+"error.user.account_suspended" = "Benutzerkonto ist nicht mehr zur Anmeldung berechtigt.";
 "error.user.account_limit_reached" = "Es können maximal 3 Konten genutzt werden.";
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -1726,6 +1748,7 @@
 "databaseloadingfailure.alert.delete_database" = "Datenbank löschen";
 "databaseloadingfailure.alert.delete_database.message" = "Durch das Löschen der Datenbank werden alle lokalen Daten und Nachrichten für dieses Konto dauerhaft gelöscht.";
 "databaseloadingfailure.alert.delete_database.continue" = "Weiter";
+"databaseloadingfailure.alert.retry" = "Wiederholen";
 
 // Backend not supported alert
 "backend_not_supported.alert.title" = "Serverversion wird nicht unterstützt";
@@ -1943,7 +1966,7 @@
 // Wipe database
 
 "wipe_database.title_label" = "Kennwort der App-Sperre vergessen?";
-"wipe_database.info_label" = "Der Zugang zu auf diesem Gerät gespeicherten Daten ist nur mit Ihrem App-Sperre-Kennwort möglich. Wenn Sie Ihr Kennwort vergessen haben, können Sie das Gerät zurücksetzen. Bitte geben Sie das Passwort Ihres Wire-Benutzerkonto ein, um dieses Gerät zurückzusetzen und sich erneut anzumelden. Indem Sie Ihr Gerät zurücksetzen, ";
+"wipe_database.info_label" = "Der Zugang zu auf diesem Gerät gespeicherten Daten ist nur mit Ihrem Kennwort möglich. Wenn Sie es vergessen haben, können Sie das Gerät zurücksetzen. Bitte geben Sie das Passwort Ihres Wire-Benutzerkontos ein, um dieses Gerät zurückzusetzen und sich erneut anzumelden. Indem Sie Ihr Gerät zurücksetzen, ";
 "wipe_database.info_label.highlighted" = "werden alle lokalen Daten und Nachrichten für dieses Konto dauerhaft gelöscht.";
 
 "wipe_database.button.title" = "Gerät zurücksetzen";
