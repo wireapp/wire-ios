@@ -19,9 +19,10 @@
 import Foundation
 
 typealias Domain = String
+typealias UserId_ClientIds = [UUID: [Proteus_ClientId]]
 
 struct OTRMessageQualifiedEncryptionInput {
-    var info: [Domain: [UUID: [Proteus_ClientId]]]
+    var info: [Domain: UserId_ClientIds]
     var plainData: Data
     var proteusSessionId: ProteusSessionID
     var senderId: Proteus_ClientId
@@ -31,7 +32,7 @@ struct OTRMessageQualifiedEncryptionInput {
 
 struct OTRMessageEncryptionInput {
     //    UUID = Proteus_UserId
-    var info: [UUID: [Proteus_ClientId]]
+    var info: UserId_ClientIds
     var plainData: Data
     var proteusSessionId: ProteusSessionID
     var senderId: Proteus_ClientId
@@ -39,28 +40,33 @@ struct OTRMessageEncryptionInput {
     var blob: Data?
 }
 
+/*
+
+ encrypt(usingProteusService
+ otrMessage
+ userEntriesWithEncryptedData
+ clientEntriesWithEncryptedData
+ clientEntry which uses the encryptionFunction (proteusService.)
+ */
+
 class EncryptOTRMessageUseCase {
+
     typealias QualifiedInput = [Domain: [UUID: [Proteus_ClientId]]]
     typealias Input = [UUID: [Proteus_ClientId]]
 
-    var proteusService: ProteusService!
-    var context: NSManagedObjectContext!
+    let proteusService: ProteusService
+    let context: NSManagedObjectContext
+
+    init(proteusService: ProteusService, context: NSManagedObjectContext) {
+        self.proteusService = proteusService
+        self.context = context
+    }
+
+    // MARK: - Encryption
 
     func encrypt(_ input: OTRMessageEncryptionInput) -> Proteus_NewOtrMessage {
 
-        var userEntries = [Proteus_UserEntry]()
-
-        for (userId, clients) in input.info {
-            var clientEntries = [Proteus_ClientEntry]()
-            for client in clients {
-                if let clientEntry = encryptedData(input.plainData,
-                                                   with: client,
-                                                   and: input.proteusSessionId) {
-                    clientEntries.append(clientEntry)
-                }
-            }
-            userEntries.append(.init(withUserId: userId, clientEntries: clientEntries))
-        }
+        let userEntries = userEntries(for: input.info, plainData: input.plainData, sessionId: input.proteusSessionId)
         return Proteus_NewOtrMessage(withSenderId: input.senderId,
                                      nativePush: input.nativePush,
                                      recipients: userEntries,
@@ -71,18 +77,9 @@ class EncryptOTRMessageUseCase {
 
         var qualifiedUserEntries = [Proteus_QualifiedUserEntry]()
         for (domain, users) in input.info {
-            var userEntries = [Proteus_UserEntry]()
-            for (userId, clients) in users {
-                var clientEntries = [Proteus_ClientEntry]()
-                for client in clients {
-                    if let clientEntry = encryptedData(input.plainData,
-                                                       with: client,
-                                                       and: input.proteusSessionId) {
-                        clientEntries.append(clientEntry)
-                    }
-                }
-                userEntries.append(.init(withUserId: userId, clientEntries: clientEntries))
-            }
+            let userEntries = userEntries(for: users,
+                                          plainData: input.plainData,
+                                          sessionId: input.proteusSessionId)
             qualifiedUserEntries.append(.init(withDomain: domain, userEntries: userEntries))
         }
 
@@ -91,6 +88,26 @@ class EncryptOTRMessageUseCase {
                                               recipients: qualifiedUserEntries,
                                               missingClientsStrategy: .doNotIgnoreAnyMissingClient,// TODO: replace me
                                               blob: input.blob)
+    }
+
+    // MARK: - Helpers
+
+    private func userEntries(for users: UserId_ClientIds,
+                             plainData: Data,
+                             sessionId: ProteusSessionID) -> [Proteus_UserEntry] {
+        var userEntries = [Proteus_UserEntry]()
+        for (userId, clients) in users {
+            var clientEntries = [Proteus_ClientEntry]()
+            for client in clients {
+                if let clientEntry = encryptedData(plainData,
+                                                   with: client,
+                                                   and: sessionId) {
+                    clientEntries.append(clientEntry)
+                }
+            }
+            userEntries.append(.init(withUserId: userId, clientEntries: clientEntries))
+        }
+        return userEntries
     }
 
     private func encryptedData(_ plainText: Data, with clientId: Proteus_ClientId, and sessionID: ProteusSessionID) -> Proteus_ClientEntry? {
@@ -103,97 +120,3 @@ class EncryptOTRMessageUseCase {
         }
     }
 }
-//
-// extension
-//    private func clientEntry(
-//        for client: UserClient,
-//        using encryptionFunction: EncryptionFunction
-//    ) -> Proteus_ClientEntry? {
-//        guard let sessionID = client.proteusSessionID else {
-//            return nil
-//        }
-//
-//        guard !client.failedToEstablishSession else {
-//            // If the session is corrupted, we will send a special payload.
-//            let data = ZMFailedToCreateEncryptedMessagePayloadString.data(using: String.Encoding.utf8)!
-//            WireLogger.proteus.error("Failed to encrypt payload: session is not established with client: \(client.remoteIdentifier)", attributes: nil)
-//            return Proteus_ClientEntry(withClient: client, data: data)
-//        }
-//
-//        do {
-//            let plainText = try serializedData()
-//            let encryptedData = try encryptionFunction(sessionID, plainText)
-//            guard let data = encryptedData else { return nil }
-//            return Proteus_ClientEntry(withClient: client, data: data)
-//        } catch {
-//            WireLogger.proteus.error("failed to encrypt payload for a client: \(String(describing: error))")
-//            return nil
-//        }
-//    }
-    /*
-
-     encrypt(usingProteusService
-        otrMessage
-            userEntriesWithEncryptedData
-                clientEntriesWithEncryptedData
-                    clientEntry which uses the encryptionFunction (proteusService.)
-
-     */
-
-//
-//    func encrypt(for c_ genericMessage: GenericMessage) -> Proteus_NewOtrMessage {
-//
-//        // 1) extract values from NSManagedObject
-//
-//
-//        context.performAndWait {
-//            let user = ZMUser.selfUser(in: context)
-//            guard
-//                let selfClient = user.selfClient(),
-//                selfClient.remoteIdentifier != nil
-//            else {
-//                return nil
-//            }
-//        }
-////        genericMessage
-////        let userEntries: [Proteus_UserEntry]
-////        let qualifiedUserEntries = qualifiedUserEntriesWithEncryptedData(
-////            selfClient,
-////            selfDomain: selfDomain,
-////            recipients: recipients,
-////            using: encryptionFunction
-////        )
-////
-////        // We do not want to send pushes for delivery receipts.
-////        let nativePush = !hasConfirmation
-////
-////        return Proteus_QualifiedNewOtrMessage(
-////            withSender: selfClient,
-////            nativePush: nativePush,
-////            recipients: qualifiedUserEntries,
-////            missingClientsStrategy: missingClientsStrategy,
-////            blob: externalData
-//
-//    }
-//
-//
-//    func encrypt(_ genericMessage: GenericMessage) throws ->  Proteus_QualifiedNewOtrMessage {
-//
-//
-//
-//
-
-//
-//        var plainText: Data
-//        var sessionID: ProteusSessionID
-//        let result = try proteusService.encrypt(
-//            data: plainText,
-//            forSession: sessionID
-//        )
-//
-////        return Proteus_QualifiedNewOtrMessage(withProteusSenderId: Proteus_ClientId,
-////                                              nativePush: <#T##Bool#>,
-////                                              recipients: <#T##[Proteus_QualifiedUserEntry]#>,
-////                                              missingClientsStrategy: <#T##MissingClientsStrategy#>,
-////                                              blob: <#T##Data?#>)
-//    }
