@@ -47,17 +47,6 @@ final class CreateSecureGuestLinkViewModel {
         delegate?.viewModel(self, didGeneratePassword: randomPassword)
     }
 
-    func validatePassword(textfield: UITextField, with string: String) -> Bool {
-
-        let updatedString = (textfield.text as NSString?)?.replacingCharacters(in: NSRange(location: 0, length: 0), with: string) ?? string
-
-        // Ensure 15 to 20 characters with one lowercase letter, one capital letter, a number, and a special character
-        let passwordRegex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^a-zA-Z\\d]).{15,20}$"
-        let passwordPredicate = NSPredicate(format: "SELF MATCHES %@", passwordRegex)
-
-        return passwordPredicate.evaluate(with: updatedString)
-    }
-
     func generateRandomPassword() -> String {
         let minLength = 15
         let maxLength = 20
