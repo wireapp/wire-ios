@@ -33,20 +33,23 @@ class SharingSessionTestsCryptoStack: BaseTest {
 
     override class func setUp() {
         super.setUp()
+
         createCoreCryptoKeyIfNeeded()
     }
 
     override func setUp() {
         super.setUp()
+        BackendInfo.storage = UserDefaults(suiteName: UUID().uuidString)!
         proteusFlag.isOn = false
         mlsFlag.isOn = false
-        BackendInfo.apiVersion = .v2
+        BackendInfo.apiVersion = .v5
     }
 
     override func tearDown() {
         proteusFlag.isOn = false
         mlsFlag.isOn = false
         BackendInfo.apiVersion = nil
+        BackendInfo.storage = UserDefaults.standard
         super.tearDown()
     }
 
@@ -105,7 +108,7 @@ class SharingSessionTestsCryptoStack: BaseTest {
         XCTAssertNotNil(context.coreCrypto)
     }
 
-    func test_CryptoStackSetup_DontSetupMLSIfAPIV2IsNotAvailable() throws {
+    func test_CryptoStackSetup_DontSetupMLSIfAPIV5IsNotAvailable() throws {
         // GIVEN
         mlsFlag.isOn = true
         BackendInfo.apiVersion = .v1
