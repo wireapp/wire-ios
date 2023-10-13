@@ -19,7 +19,7 @@
 import XCTest
 @testable import Wire
 
-class CreateSecureGuestLinkViewModelTests: XCTestCase {
+class CreateSecureGuestLinkViewModelTests: BaseSnapshotTestCase {
 
     // MARK: - Properties
 
