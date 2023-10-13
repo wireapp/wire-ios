@@ -103,7 +103,7 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
         return label
     }()
 
-    lazy var securedGuestLinkPasswordValidatedTextField: ValidatedTextField = {
+    private lazy var securedGuestLinkPasswordValidatedTextField: ValidatedTextField = {
         let textField = ValidatedTextField(
             kind: .password(isNew: true),
             leftInset: 8,
@@ -113,6 +113,7 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
             style: .default
         )
         textField.showConfirmButton = false
+        textField.addTarget(self, action: #selector(handlePasswordValidation), for: .editingChanged)
         textField.addRevealButton(delegate: self)
         textField.placeholder = SecuredGuestLinkWithPasswordLocale.VerifyPasswordTextField.placeholder
         textField.addDoneButtonOnKeyboard()
@@ -241,13 +242,11 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
         }
 
         let isValid: Bool
-        if textField == securedGuestLinkPasswordValidatedTextField {
-            isValid = updatedString == securedGuestLinkPasswordTextfield.text
-            print("Is passwords match: \(isValid)")
-        } else {
+        if textField == securedGuestLinkPasswordTextfield {
             textField.updateText(updatedString)
-            isValid = textField.isInputValid
-            print("Is password valid: \(isValid)")
+            isValid = textField.isValid
+        } else {
+            isValid = updatedString == securedGuestLinkPasswordTextfield.text
         }
 
         if isValid {

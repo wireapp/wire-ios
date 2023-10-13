@@ -315,6 +315,10 @@ final class ValidatedTextField: AccessoryTextField, TextContainer, Themeable {
         return enableConfirmButton?() ?? !input.isEmpty
     }
 
+    var isValid: Bool {
+        return validateInput(useGuestLinkRuleset: true)
+    }
+
     func updateText(_ text: String) {
         self.text = text
     }
@@ -335,9 +339,12 @@ final class ValidatedTextField: AccessoryTextField, TextContainer, Themeable {
         validateInput()
     }
 
-    func validateInput() {
-        let error = textFieldValidator.validate(text: text, kind: kind)
+    @discardableResult
+    func validateInput(useGuestLinkRuleset: Bool = false) -> Bool {
+        let error = textFieldValidator.validate(text: text, kind: kind, useGuestLinkRuleset: useGuestLinkRuleset)
         textFieldValidationDelegate?.validationUpdated(sender: self, error: error)
         updateConfirmButton()
+        return error == nil
     }
+
 }

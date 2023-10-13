@@ -35,10 +35,14 @@ final class TextFieldValidator {
 
     private func validatePasscode(text: String,
                                   kind: ValidatedTextField.Kind,
-                                  isNew: Bool) -> TextFieldValidator.ValidationError? {
+                                  isNew: Bool,
+                                  useGuestLinkRuleset: Bool = false) -> TextFieldValidator.ValidationError? {
+
+        let ruleSet: PasswordRuleSet = useGuestLinkRuleset ? .guestLinkWithPasswordRuleSet : .shared
+
         if isNew {
             // If the user is registering, enforce the password rules
-            let result = PasswordRuleSet.shared.validatePassword(text)
+            let result = ruleSet.validatePassword(text)
             switch result {
             case .valid:
                 return nil
@@ -51,7 +55,7 @@ final class TextFieldValidator {
         }
     }
 
-    func validate(text: String?, kind: ValidatedTextField.Kind) -> TextFieldValidator.ValidationError? {
+    func validate(text: String?, kind: ValidatedTextField.Kind, useGuestLinkRuleset: Bool = false) -> TextFieldValidator.ValidationError? {
         guard let text = text else {
             return nil
         }
@@ -69,7 +73,7 @@ final class TextFieldValidator {
             }
 
         case .password(let isNew):
-            return validatePasscode(text: text, kind: kind, isNew: isNew)
+            return validatePasscode(text: text, kind: kind, isNew: isNew, useGuestLinkRuleset: useGuestLinkRuleset)
         case .passcode(let isNew):
             return validatePasscode(text: text, kind: kind, isNew: isNew)
         case .name:
