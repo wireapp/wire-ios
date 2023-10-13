@@ -314,6 +314,13 @@ public extension Proteus_ClientEntry {
             $0.text = data
         }
     }
+
+    init(withClientId clientId: Proteus_ClientId, data: Data) {
+        self = Proteus_ClientEntry.with {
+            $0.client = clientId
+            $0.text = data
+        }
+    }
 }
 
 // MARK: - QualifiedUserEntry
@@ -333,6 +340,15 @@ public extension Proteus_UserEntry {
     init(withUser user: ZMUser, clientEntries: [Proteus_ClientEntry]) {
         self = Proteus_UserEntry.with {
             $0.user = user.userId
+            $0.clients = clientEntries
+        }
+    }
+
+    init(withUserId userId: UUID, clientEntries: [Proteus_ClientEntry]) {
+        self = Proteus_UserEntry.with {
+            $0.user = Proteus_UserId.with {
+                $0.uuid = userId.uuidData
+            }
             $0.clients = clientEntries
         }
     }
@@ -361,6 +377,7 @@ public extension Proteus_QualifiedNewOtrMessage {
                 $0.clientMismatchStrategy = .reportAll(.init())
             case .ignoreAllMissingClients:
                 $0.clientMismatchStrategy = .ignoreAll(.init())
+                // FIXME: extract the domain remoteId before creating this
             case .ignoreAllMissingClientsNotFromUsers(users: let users):
                 $0.clientMismatchStrategy = .reportOnly(.with({
                     $0.userIds = users.compactMap({
@@ -399,6 +416,17 @@ public extension Proteus_NewOtrMessage {
         self = Proteus_NewOtrMessage.with {
             $0.nativePush = nativePush
             $0.sender = sender.clientId
+            $0.recipients = recipients
+            if blob != nil {
+                $0.blob = blob!
+            }
+        }
+    }
+
+    init(withSenderId clientId: Proteus_ClientId, nativePush: Bool, recipients: [Proteus_UserEntry], blob: Data? = nil) {
+        self = Proteus_NewOtrMessage.with {
+            $0.nativePush = nativePush
+            $0.sender = clientId
             $0.recipients = recipients
             if blob != nil {
                 $0.blob = blob!
