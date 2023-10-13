@@ -25,6 +25,8 @@ class CreateSecureGuestLinkViewModelTests: XCTestCase {
 
     var viewModel: CreateSecureGuestLinkViewModel!
     var mockDelegate: MockCreatePasswordSecuredLinkViewModelDelegate!
+    var textField: ValidatedTextField!
+    var confirmPasswordField: ValidatedTextField!
 
     // MARK: - setUp
 
@@ -33,6 +35,8 @@ class CreateSecureGuestLinkViewModelTests: XCTestCase {
         viewModel = CreateSecureGuestLinkViewModel(delegate: mockDelegate)
         mockDelegate = MockCreatePasswordSecuredLinkViewModelDelegate()
         viewModel.delegate = mockDelegate
+        textField = ValidatedTextField(style: .default)
+        confirmPasswordField = ValidatedTextField(style: .default)
     }
 
     // MARK: - tearDown
@@ -40,6 +44,8 @@ class CreateSecureGuestLinkViewModelTests: XCTestCase {
     override func tearDown() {
         viewModel = nil
         mockDelegate = nil
+        textField = nil
+        confirmPasswordField = nil
         super.tearDown()
     }
 
@@ -48,38 +54,38 @@ class CreateSecureGuestLinkViewModelTests: XCTestCase {
     // MARK: - Validation
 
     func testPasswordValidationWithEmptyTextField() {
-        let textField = ValidatedTextField(style: .default)
+        // GIVEN
         textField.text = ""
-        let confirmPasswordField = ValidatedTextField(style: .default)
         confirmPasswordField.text = "somePassword"
 
+        // WHEN && THEN
         XCTAssertFalse(viewModel.validatePassword(for: textField, against: confirmPasswordField))
     }
 
     func testPasswordValidationWithInvalidPassword() {
-        let textField = ValidatedTextField(style: .default)
+        // GIVEN
         textField.text = "invalid"
-        let confirmPasswordField = ValidatedTextField(style: .default)
         confirmPasswordField.text = "invalid"
 
+        // WHEN && THEN
         XCTAssertFalse(viewModel.validatePassword(for: textField, against: confirmPasswordField))
     }
 
     func testPasswordValidationWithValidPasswordAndMatchedPasswords() {
-        let textField = ValidatedTextField(style: .default)
+        // GIVEN
         textField.text = "Aqa123456!Aqa123"
-        let confirmPasswordField = ValidatedTextField(style: .default)
         confirmPasswordField.text = "Aqa123456!Aqa123"
 
+        // WHEN && THEN
         XCTAssertTrue(viewModel.validatePassword(for: textField, against: confirmPasswordField))
     }
 
     func testPasswordValidationWithValidPasswordAndMismatchedPasswords() {
-        let textField = ValidatedTextField(style: .default)
+        // GIVEN
         textField.text = "Aqa123456!Aqa123"
-        let confirmPasswordField = ValidatedTextField(style: .default)
         confirmPasswordField.text = "Aqa123456!Aqa12"
 
+        // WHEN && THEN
         XCTAssertFalse(viewModel.validatePassword(for: textField, against: confirmPasswordField))
     }
 
