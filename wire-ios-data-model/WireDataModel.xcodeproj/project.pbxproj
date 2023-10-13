@@ -3,10 +3,11 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 52;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0120E1D62AD840BA005A0C2D /* EncryptOTRMessageUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0120E1D52AD840BA005A0C2D /* EncryptOTRMessageUseCase.swift */; };
 		0129E7F929A520870065E6DB /* SafeCoreCrypto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0129E7F829A520870065E6DB /* SafeCoreCrypto.swift */; };
 		0129E7FB29A520EB0065E6DB /* SafeFileContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0129E7FA29A520EB0065E6DB /* SafeFileContext.swift */; };
 		017CA4442A2742B800E8E778 /* WireCoreCrypto.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 017CA4432A2742B800E8E778 /* WireCoreCrypto.xcframework */; };
@@ -844,6 +845,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		0120E1D52AD840BA005A0C2D /* EncryptOTRMessageUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EncryptOTRMessageUseCase.swift; sourceTree = "<group>"; };
 		0129E7F829A520870065E6DB /* SafeCoreCrypto.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SafeCoreCrypto.swift; sourceTree = "<group>"; };
 		0129E7FA29A520EB0065E6DB /* SafeFileContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafeFileContext.swift; sourceTree = "<group>"; };
 		017CA4432A2742B800E8E778 /* WireCoreCrypto.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = WireCoreCrypto.xcframework; path = ../Carthage/Build/WireCoreCrypto.xcframework; sourceTree = "<group>"; };
@@ -2583,6 +2585,7 @@
 				165124D52188CF66006A3C75 /* ZMClientMessage+Editing.swift */,
 				EEDA9C132513A0A5003A5B27 /* ZMClientMessage+EncryptionAtRest.swift */,
 				F9A705F81CAEE01D00C2F5FE /* ZMExternalEncryptedDataWithKeys.h */,
+				0120E1D52AD840BA005A0C2D /* EncryptOTRMessageUseCase.swift */,
 				F9A705F91CAEE01D00C2F5FE /* ZMExternalEncryptedDataWithKeys.m */,
 				63298D992434D04D006B6018 /* GenericMessage+External.swift */,
 				63B658DD243754E100EF463F /* GenericMessage+UpdateEvent.swift */,
@@ -3944,6 +3947,7 @@
 				63B1336429A503D100009D84 /* UploadSelfMLSKeyPackagesAction.swift in Sources */,
 				165124D62188CF66006A3C75 /* ZMClientMessage+Editing.swift in Sources */,
 				165D3A2D1E1D47AB0052E654 /* ZMCallState.swift in Sources */,
+				0120E1D62AD840BA005A0C2D /* EncryptOTRMessageUseCase.swift in Sources */,
 				F9A706731CAEE01D00C2F5FE /* AssetEncryption.swift in Sources */,
 				F9FD75731E2E6A2100B4558B /* ConversationListObserverCenter.swift in Sources */,
 				F1FDF2FA21B1555A00E037A1 /* ZMClientMessage+Location.swift in Sources */,
