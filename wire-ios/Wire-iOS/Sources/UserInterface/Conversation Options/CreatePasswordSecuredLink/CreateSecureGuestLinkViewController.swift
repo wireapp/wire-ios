@@ -75,7 +75,7 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
             style: .default
         )
         textField.addRevealButton(delegate: self)
-        textField.addTarget(self, action: #selector(handlePasswordValidation), for: .editingChanged)
+        textField.addTarget(self, action: #selector(handlePasswordValidation(for:)), for: .editingChanged)
 
         textField.placeholder = SecuredGuestLinkWithPasswordLocale.Textfield.placeholder
         textField.addDoneButtonOnKeyboard()
@@ -113,7 +113,7 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
             style: .default
         )
         textField.showConfirmButton = false
-        textField.addTarget(self, action: #selector(handlePasswordValidation), for: .editingChanged)
+        textField.addTarget(self, action: #selector(handlePasswordValidation(for:)), for: .editingChanged)
         textField.addRevealButton(delegate: self)
         textField.placeholder = SecuredGuestLinkWithPasswordLocale.VerifyPasswordTextField.placeholder
         textField.addDoneButtonOnKeyboard()
@@ -233,21 +233,9 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
 
     @objc
     func handlePasswordValidation(for textField: ValidatedTextField) -> Bool {
-
         let labels: [UILabel] = textField == securedGuestLinkPasswordTextfield ? [passwordRequirementsLabel, setPasswordLabel] : [confirmPasswordLabel]
 
-        guard let updatedString = textField.text, !updatedString.isEmpty else {
-            resetPasswordDefaultState(for: [textField], for: labels)
-            return false
-        }
-
-        let isValid: Bool
-        if textField == securedGuestLinkPasswordTextfield {
-            textField.updateText(updatedString)
-            isValid = textField.isValid
-        } else {
-            isValid = updatedString == securedGuestLinkPasswordTextfield.text
-        }
+        let isValid = viewModel.validatePassword(for: textField, against: securedGuestLinkPasswordTextfield)
 
         if isValid {
             resetPasswordDefaultState(for: [textField], for: labels)
@@ -257,7 +245,6 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
 
         return isValid
     }
-
     // MARK: - CreatePasswordSecuredLinkViewModelDelegate
 
     func viewModel(

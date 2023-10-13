@@ -45,6 +45,46 @@ class CreateSecureGuestLinkViewModelTests: XCTestCase {
 
     // MARK: - Unit Tests
 
+    // MARK: - Validation
+
+    func testPasswordValidationWithEmptyTextField() {
+        let textField = ValidatedTextField(style: .default)
+        textField.text = ""
+        let confirmPasswordField = ValidatedTextField(style: .default)
+        confirmPasswordField.text = "somePassword"
+
+        XCTAssertFalse(viewModel.validatePassword(for: textField, against: confirmPasswordField))
+    }
+
+    func testPasswordValidationWithInvalidPassword() {
+        let textField = ValidatedTextField(style: .default)
+        textField.text = "invalid"
+        let confirmPasswordField = ValidatedTextField(style: .default)
+        confirmPasswordField.text = "invalid"
+
+        XCTAssertFalse(viewModel.validatePassword(for: textField, against: confirmPasswordField))
+    }
+
+    func testPasswordValidationWithValidPasswordAndMatchedPasswords() {
+        let textField = ValidatedTextField(style: .default)
+        textField.text = "Aqa123456!Aqa123"
+        let confirmPasswordField = ValidatedTextField(style: .default)
+        confirmPasswordField.text = "Aqa123456!Aqa123"
+
+        XCTAssertTrue(viewModel.validatePassword(for: textField, against: confirmPasswordField))
+    }
+
+    func testPasswordValidationWithValidPasswordAndMismatchedPasswords() {
+        let textField = ValidatedTextField(style: .default)
+        textField.text = "Aqa123456!Aqa123"
+        let confirmPasswordField = ValidatedTextField(style: .default)
+        confirmPasswordField.text = "Aqa123456!Aqa12"
+
+        XCTAssertFalse(viewModel.validatePassword(for: textField, against: confirmPasswordField))
+    }
+
+    // MARK: - Generation of Password
+
     func testGenerateRandomPassword() {
         // GIVEN && WHEN
         let randomPassword = viewModel.generateRandomPassword()
