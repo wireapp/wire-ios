@@ -74,11 +74,11 @@ public final class SubconversationGroupIDRepository: SubconversationGroupIDRepos
         for targetGroupID: MLSGroupID
     ) -> (parentID: MLSGroupID, type: SubgroupType)? {
 
-        for (parentID, subgroups) in storage {
-            if let subgroup = subgroups.first(where: {
-                $1 == targetGroupID
+        for (parentID, subgroupIDsByType) in storage {
+            if let entry = subgroupIDsByType.first(where: { _, subgroupID in
+                subgroupID == targetGroupID
             }) {
-                return (parentID, subgroup.key)
+                return (parentID: parentID, type: entry.key)
             }
         }
 

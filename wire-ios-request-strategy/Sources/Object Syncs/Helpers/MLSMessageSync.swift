@@ -93,16 +93,15 @@ class MLSMessageSync<Message: MLSMessage>: NSObject, ZMContextChangeTrackerSourc
                     self.synchronize(entity: message, in: self.context, completion: completion)
                 }
             }
-
-            RequestAvailableNotification.notifyNewRequestsAvailable(nil)
         }
-
     }
 
     private func synchronize(entity: Message, in context: NSManagedObjectContext, completion: @escaping EntitySyncHandler) {
         context.perform { [dependencySync] in
             dependencySync.synchronize(entity: entity, completion: completion)
         }
+
+        RequestAvailableNotification.notifyNewRequestsAvailable(nil)
     }
 
     private func commitPendingProposals(
