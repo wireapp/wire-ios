@@ -285,7 +285,7 @@ final class ConversationSystemMessageTests: BaseSnapshotTestCase {
         verify(message: message)
     }
 
-    func testPotentialGap_addedUsers() {
+    func testPotentialGap_addedUser() {
         let message = MockMessageFactory.systemMessage(with: .potentialGap)!
 
         message.assignMockAddedUser()
@@ -293,7 +293,15 @@ final class ConversationSystemMessageTests: BaseSnapshotTestCase {
         verify(message: message)
     }
 
-    func testPotentialGap_removedUsers() {
+    func testPotentialGap_addedUsers() {
+        let message = MockMessageFactory.systemMessage(with: .potentialGap)!
+
+        message.assignMockAddedUsers(users: SwiftMockLoader.mockUsers().prefix(4))
+
+        verify(message: message)
+    }
+
+    func testPotentialGap_removedUser() {
         let message = MockMessageFactory.systemMessage(with: .potentialGap)!
 
         message.assignMockRemovedUsers(users: SwiftMockLoader.mockUsers().prefix(1))
@@ -301,10 +309,36 @@ final class ConversationSystemMessageTests: BaseSnapshotTestCase {
         verify(message: message)
     }
 
-    func testPotentialGap_addedAndRemovedUsers() {
+    func testPotentialGap_removedUsers() {
+        let message = MockMessageFactory.systemMessage(with: .potentialGap)!
+
+        message.assignMockRemovedUsers(users: SwiftMockLoader.mockUsers().prefix(4))
+
+        verify(message: message)
+    }
+
+    func testPotentialGap_addedAndRemovedOneUser() {
         let message = MockMessageFactory.systemMessage(with: .potentialGap)!
 
         message.assignMockAddedUser()
+        message.assignMockRemovedUsers(users: SwiftMockLoader.mockUsers().suffix(1))
+
+        verify(message: message)
+    }
+
+    func testPotentialGap_addedOneUserAndRemovedMultipleUsers() {
+        let message = MockMessageFactory.systemMessage(with: .potentialGap)!
+
+        message.assignMockAddedUser()
+        message.assignMockRemovedUsers(users: SwiftMockLoader.mockUsers().suffix(4))
+
+        verify(message: message)
+    }
+
+    func testPotentialGap_addedMultipleUsersAndRemovedOneUser() {
+        let message = MockMessageFactory.systemMessage(with: .potentialGap)!
+
+        message.assignMockAddedUsers(users: SwiftMockLoader.mockUsers().suffix(4))
         message.assignMockRemovedUsers(users: SwiftMockLoader.mockUsers().suffix(1))
 
         verify(message: message)
@@ -352,6 +386,10 @@ final class ConversationSystemMessageTests: BaseSnapshotTestCase {
 extension MockMessage {
     func assignMockAddedUser() {
         backingSystemMessageData?.addedUserTypes = Set<AnyHashable>(Array(SwiftMockLoader.mockUsers().prefix(1)))
+    }
+
+    func assignMockAddedUsers(users: ArraySlice<MockUserType>) {
+        backingSystemMessageData?.addedUserTypes = Set<MockUserType>(users)
     }
 
     func assignMockRemovedUsers(users: ArraySlice<MockUserType>) {

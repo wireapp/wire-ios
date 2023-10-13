@@ -429,6 +429,31 @@
 
 "content.system.services.warning" = "Сервисы имеют доступ к контенту этой беседы";
 
+"content.system.missing_messages" = "Вы не использовали это устройство продолжительное время. Некоторые сообщения могут не отображаться.";
+// Placeholder contains a single name, e.g "Alice"
+"content.system.missing_messages.users_added.singular" = "Вы не использовали это устройство продолжительное время. Некоторые сообщения могут не отображаться.\n\nЗа это время был(а) добавлен(а) %@.";
+
+// Placeholder contains a localized list of names, e.g "Alice, Bob, and Cate"
+"content.system.missing_messages.users_added.plural" = "Вы не использовали это устройство продолжительное время. Некоторые сообщения могут не отображаться.\n\nЗа это время были добавлены %@.";
+
+// Placeholder contains a single name, e.g "Alice"
+"content.system.missing_messages.users_removed.singular" = "Вы не использовали это устройство продолжительное время. Некоторые сообщения могут не отображаться.\n\nЗа это время был(а) удален(а) %@.";
+
+// Placeholder contains a localized list of names, e.g "Alice, Bob, and Cate"
+"content.system.missing_messages.users_removed.plural" = "Вы не использовали это устройство продолжительное время. Некоторые сообщения могут не отображаться.\n\nЗа это время были удалены %@.";
+
+// Both placesholders contains a single name, e.g "Alice"
+"content.system.missing_messages.users_added_and_removed.singular" = "Вы не использовали это устройство продолжительное время. Некоторые сообщения могут не отображаться.\n\nЗа это время был(а) добавлен(а) %1$@, был(а) удален(а) %2$@.";
+
+// Placeholder 1 contains a single name: e.g "Alice. Placeholder 2 contains a localized list of names, e.g "Alice, Bob, and Cate"
+"content.system.missing_messages.users_added_and_removed.singular_plural" = "Вы не использовали это устройство продолжительное время. Некоторые сообщения могут не отображаться.\n\nЗа это время был(а) добавлен(а) %1$@, были удалены %2$@.";
+
+// Placeholder 1 contains a localized list of names, e.g "Alice, Bob, and Cate". Placeholder 2 contains a single name: e.g "Alice.
+"content.system.missing_messages.users_added_and_removed.plural_singular" = "Вы не использовали это устройство продолжительное время. Некоторые сообщения могут не отображаться.\n\nЗа это время были добавлены %1$@, был(а) удален(а) %2$@.";
+
+// Both placesholders contains a localized list of names, e.g "Alice, Bob, and Cate"
+"content.system.missing_messages.users_added_and_removed.plural" = "Вы не использовали это устройство продолжительное время. Некоторые сообщения могут не отображаться.\n\nЗа это время были добавлены %1$@, были удалены %2$@.";
+
 // Link attachment messages
 
 "content.message.link_attachment.accessibility_label.youtube" = "Предварительный просмотр видео с YouTube";
@@ -551,9 +576,6 @@
 
 "content.system.unverified_self_devices" = " Вы отозвали верификацию одного из [своих устройств](%@)";
 "content.system.unverified_other_devices" = "Вы отозвали верификацию одного из [%1$@ устройств](%2$@)";
-
-"content.system.missing_messages.title" = "Вы не использовали это устройство продолжительное время. Некоторые сообщения могут не отображаться.";
-"content.system.missing_messages.subtitle_start" = "Тем временем,";
 
 "content.system.cannot_decrypt.self" = "Не удалось расшифровать ваше сообщение.";
 "content.system.cannot_decrypt.other" = "Не удалось расшифровать сообщение от %@.";
@@ -1726,6 +1748,7 @@
 "databaseloadingfailure.alert.delete_database" = "Удалить базу данных";
 "databaseloadingfailure.alert.delete_database.message" = "При удалении базы данных все локальные данные и сообщения этого аккаунта будут удалены навсегда.";
 "databaseloadingfailure.alert.delete_database.continue" = "Продолжить";
+"databaseloadingfailure.alert.retry" = "Повторить";
 
 // Backend not supported alert
 "backend_not_supported.alert.title" = "Версия сервера не поддерживается";

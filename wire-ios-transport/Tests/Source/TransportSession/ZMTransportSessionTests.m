@@ -22,6 +22,7 @@
 @import OCMock;
 @import WireTesting;
 @import WireTransport;
+@import UniformTypeIdentifiers;
 
 #if TARGET_OS_IPHONE
 @import MobileCoreServices;
@@ -881,7 +882,7 @@ static XCTestCase *currentTestCase;
     }];
     NSData *binaryData = [@"foo" dataUsingEncoding:NSUTF8StringEncoding];
     NSDictionary *contentDisposition = @{@"conv_id": @"912c7fc66cfb", @"width": @2};
-    ZMTransportRequest *request = [[ZMTransportRequest alloc] initWithPath:self.dummyPath method:ZMMethodPOST binaryData:binaryData type:(__bridge NSString *) kUTTypeJPEG contentDisposition:contentDisposition apiVersion:0];
+    ZMTransportRequest *request = [[ZMTransportRequest alloc] initWithPath:self.dummyPath method:ZMMethodPOST binaryData:binaryData type:(NSString *) UTTypeJPEG.identifier contentDisposition:contentDisposition apiVersion:0];
     __block id<ZMTransportData> receivedPayload;
     [request addCompletionHandler:
      [ZMCompletionHandler handlerOnGroupQueue:self.fakeSyncContext block:^(ZMTransportResponse *response ZM_UNUSED) {

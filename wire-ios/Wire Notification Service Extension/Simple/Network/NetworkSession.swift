@@ -28,7 +28,6 @@ protocol NetworkSessionProtocol: AnyObject {
 
 }
 
-@available(iOS 15, *)
 final class NetworkSession: NSObject, NetworkSessionProtocol, URLSessionTaskDelegate, Loggable {
 
     // MARK: - Types

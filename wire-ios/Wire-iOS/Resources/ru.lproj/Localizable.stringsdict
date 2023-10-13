@@ -102,46 +102,6 @@
         <string>%lu человек</string>
       </dict>
     </dict>
-    <key>content.system.missing_messages.subtitle_added</key>
-    <dict>
-      <key>NSStringLocalizedFormatKey</key>
-      <string>%@ %#@lu_number_of_users@</string>
-      <key>lu_number_of_users</key>
-      <dict>
-        <key>NSStringFormatSpecTypeKey</key>
-        <string>NSStringPluralRuleType</string>
-        <key>NSStringFormatValueTypeKey</key>
-        <string>lu</string>
-        <key>one</key>
-        <string>был добавлен</string>
-        <key>few</key>
-        <string>было добавлено</string>
-        <key>many</key>
-        <string>были добавлены</string>
-        <key>other</key>
-        <string>были добавлены</string>
-      </dict>
-    </dict>
-    <key>content.system.missing_messages.subtitle_removed</key>
-    <dict>
-      <key>NSStringLocalizedFormatKey</key>
-      <string>%@ %#@lu_number_of_users@</string>
-      <key>lu_number_of_users</key>
-      <dict>
-        <key>NSStringFormatSpecTypeKey</key>
-        <string>NSStringPluralRuleType</string>
-        <key>NSStringFormatValueTypeKey</key>
-        <string>lu</string>
-        <key>one</key>
-        <string>был удален</string>
-        <key>few</key>
-        <string>было удалено</string>
-        <key>many</key>
-        <string>были удалены</string>
-        <key>other</key>
-        <string>были удалены</string>
-      </dict>
-    </dict>
     <key>list.connect_request.people_waiting</key>
     <dict>
       <key>NSStringLocalizedFormatKey</key>

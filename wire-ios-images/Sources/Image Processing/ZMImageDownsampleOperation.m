@@ -20,6 +20,7 @@
 @import CoreGraphics;
 @import ImageIO;
 @import WireSystem;
+@import UniformTypeIdentifiers;
 
 #if TARGET_OS_IPHONE
 @import MobileCoreServices;
@@ -35,8 +36,8 @@ static const int TiffOrientationCorrect = 1;
 static const int TiffOrientationNotSet = 0;
 static const double ScaleFudgeFactor = 1.3; ///< We will not require scaling if the image is within 30% of the target size
 
-static BOOL isFormatKindOfFormat(NSString *format1, CFStringRef format2) {
-    return (BOOL) UTTypeConformsTo((__bridge CFStringRef) format1, format2);
+static BOOL isFormatKindOfFormat(NSString *format1, UTType *format2) {
+    return (BOOL) [[UTType typeWithIdentifier:format1] conformsToType:format2];
 }
 static CGContextRef createBitmapContext(size_t width, size_t height);
 static void bitmapContextReleaseData(void *releaseInfo, void *data);
@@ -193,8 +194,8 @@ static void bitmapContextReleaseData(void *releaseInfo, void *data);
     const CGSize finalSize = [self finalSizeForOriginalSize:originalSize];
     CGImageRef scaledImage = [self scaleImage:image toSize:finalSize];
     
-    NSString *format = self.forceLossy ? (id)kUTTypeJPEG : self.formatForScaling;
-    
+    NSString *format = self.forceLossy ? UTTypeJPEG.identifier : self.formatForScaling;
+
     self.downsampleImageData = [self createCompressImageDataFromImage:scaledImage format:format];
     self.imageFormat = format;
     CGImageRelease(scaledImage);
@@ -203,7 +204,7 @@ static void bitmapContextReleaseData(void *releaseInfo, void *data);
 
 - (BOOL)originalImageByteSizeTooBig
 {
-    const BOOL isGif = isFormatKindOfFormat(self.imageFormat, kUTTypeGIF);
+    const BOOL isGif = isFormatKindOfFormat(self.imageFormat, UTTypeGIF);
     if (isGif) {
         return (self.loadOperation.originalImageData.length > MaximumGIFImageByteCount);
     } else {
@@ -215,16 +216,16 @@ static void bitmapContextReleaseData(void *releaseInfo, void *data);
 - (NSString*)recompressImage:(CGImageRef)image
 {
     // Try to recompress it to see if that helps:
-    NSString *format = self.forceLossy ? (id)kUTTypeJPEG : self.loadOperation.computedImageProperties.mimeType;
+    NSString *format = self.forceLossy ? UTTypeJPEG.identifier : self.loadOperation.computedImageProperties.mimeType;
     NSData *compressedData = [self createCompressImageDataFromImage:image format:format];
     
     NSString *finalFormat = format;
     // too big? if not JPEG...
-    if(! isFormatKindOfFormat(format, kUTTypeJPEG) && compressedData.length > self.targetByteCount)
+    if(! isFormatKindOfFormat(format, UTTypeJPEG) && compressedData.length > self.targetByteCount)
     {
         // Force JPEG:
-        compressedData = [self createCompressImageDataFromImage:image format:(__bridge id)kUTTypeJPEG];
-        finalFormat = (__bridge NSString *)kUTTypeJPEG;
+        compressedData = [self createCompressImageDataFromImage:image format:UTTypeJPEG.identifier];
+        finalFormat = (NSString *)UTTypeJPEG;
     }
     
     // did I not achieve any sensible compression?
@@ -349,7 +350,7 @@ static void bitmapContextReleaseData(void *releaseInfo, void *data);
 
 - (NSString *)formatForScaling
 {
-    return (__bridge id)kUTTypeJPEG;
+    return (NSString *)UTTypeJPEG.identifier;
 }
 
 - (BOOL)forceLossy

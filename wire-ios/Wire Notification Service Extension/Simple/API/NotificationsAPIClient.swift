@@ -25,7 +25,6 @@ protocol NotificationsAPIClientProtocol {
 
 }
 
-@available(iOS 15, *)
 final class NotificationsAPIClient: NotificationsAPIClientProtocol, Loggable {
 
     // MARK: - Properties

@@ -429,6 +429,31 @@
 
 "content.system.services.warning" = "Services have access to the content of this conversation";
 
+"content.system.missing_messages" = "You haven’t used this device for a while. Some messages may not appear here.";
+// Placeholder contains a single name, e.g "Alice"
+"content.system.missing_messages.users_added.singular" = "You haven’t used this device for a while. Some messages may not appear here.\n\nMeanwhile, %@ has been added.";
+
+// Placeholder contains a localized list of names, e.g "Alice, Bob, and Cate"
+"content.system.missing_messages.users_added.plural" = "You haven’t used this device for a while. Some messages may not appear here.\n\nMeanwhile, %@ have been added.";
+
+// Placeholder contains a single name, e.g "Alice"
+"content.system.missing_messages.users_removed.singular" = "You haven’t used this device for a while. Some messages may not appear here.\n\nMeanwhile, %@ has been removed.";
+
+// Placeholder contains a localized list of names, e.g "Alice, Bob, and Cate"
+"content.system.missing_messages.users_removed.plural" = "You haven’t used this device for a while. Some messages may not appear here.\n\nMeanwhile, %@ have been removed.";
+
+// Both placesholders contains a single name, e.g "Alice"
+"content.system.missing_messages.users_added_and_removed.singular" = "You haven’t used this device for a while. Some messages may not appear here.\n\nMeanwhile, %1$@ has been added. %2$@ has been removed.";
+
+// Placeholder 1 contains a single name: e.g "Alice. Placeholder 2 contains a localized list of names, e.g "Alice, Bob, and Cate"
+"content.system.missing_messages.users_added_and_removed.singular_plural" = "You haven’t used this device for a while. Some messages may not appear here.\n\nMeanwhile, %1$@ has been added. %2$@ have been removed.";
+
+// Placeholder 1 contains a localized list of names, e.g "Alice, Bob, and Cate". Placeholder 2 contains a single name: e.g "Alice.
+"content.system.missing_messages.users_added_and_removed.plural_singular" = "You haven’t used this device for a while. Some messages may not appear here.\n\nMeanwhile, %1$@ have been added. %2$@ has been removed.";
+
+// Both placesholders contains a localized list of names, e.g "Alice, Bob, and Cate"
+"content.system.missing_messages.users_added_and_removed.plural" = "You haven’t used this device for a while. Some messages may not appear here.\n\nMeanwhile, %1$@ have been added. %2$@ have been removed.";
+
 // Link attachment messages
 
 "content.message.link_attachment.accessibility_label.youtube" = "YouTube video preview";
@@ -552,9 +577,6 @@
 "content.system.unverified_self_devices" = "You unverified one of [your devices](%@)";
 "content.system.unverified_other_devices" = "You unverified one of [%1$@’s devices](%2$@)";
 
-"content.system.missing_messages.title" = "Anda belum pernah menggunakan perangkat ini untuk sementara waktu. Beberapa pesan mungkin tidak muncul di sini.";
-"content.system.missing_messages.subtitle_start" = "Sementara itu,";
-
 "content.system.cannot_decrypt.self" = "A message from you could not be decrypted.";
 "content.system.cannot_decrypt.other" = "A message from %@ could not be decrypted.";
 "content.system.cannot_decrypt.reset_session" = "Fix future messages";
@@ -620,8 +642,8 @@
 "content.file.too_big" = "Anda dapat mengirim file ke %@";
 
 // Reactions
-"content.reactions.title" = "Select Reaction";
-"content.reactions.search" = "Search for Emoji";
+"content.reactions.title" = "Select reaction";
+"content.reactions.search" = "Search for emoji";
 
 // Someone pinged
 "content.ping.text" = "%@ pinged";
@@ -1726,6 +1748,7 @@
 "databaseloadingfailure.alert.delete_database" = "Delete Database";
 "databaseloadingfailure.alert.delete_database.message" = "By deleting the database, all local data and messages for this account will be permanently deleted.";
 "databaseloadingfailure.alert.delete_database.continue" = "Lanjutkan";
+"databaseloadingfailure.alert.retry" = "Retry";
 
 // Backend not supported alert
 "backend_not_supported.alert.title" = "Server version not supported";

@@ -1,0 +1,66 @@
+{
+  "configurations" : [
+    {
+      "id" : "9EE4E393-4136-4602-8B2B-6C76C7AE396A",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "commandLineArgumentEntries" : [
+
+    ],
+    "environmentVariableEntries" : [
+      {
+        "key" : "RECORDING_SNAPSHOTS",
+        "value" : "NO"
+      },
+      {
+        "key" : "SNAPSHOT_REFERENCE_DIR",
+        "value" : "$(SOURCE_ROOT)\/$(PROJECT_NAME) Tests\/ReferenceImages\/de"
+      },
+      {
+        "key" : "FB_REFERENCE_IMAGE_DIR",
+        "value" : "$(SOURCE_ROOT)\/$(PROJECT_NAME) Tests\/ReferenceImages\/de"
+      },
+      {
+        "key" : "IMAGE_DIFF_DIR",
+        "value" : "$(SOURCE_ROOT)\/SnapshotResults\/de"
+      },
+      {
+        "key" : "SNAPSHOT_ARTIFACTS",
+        "value" : "$(SOURCE_ROOT)\/SnapshotResults\/de"
+      }
+    ],
+    "language" : "de",
+    "region" : "DE",
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:Wire-iOS.xcodeproj",
+      "identifier" : "8F42C537199244A700288E4D",
+      "name" : "Wire-iOS"
+    },
+    "testTimeoutsEnabled" : true
+  },
+  "testTargets" : [
+    {
+      "selectedTests" : [
+        "ConversationSystemMessageTests\/testPotentialGap()",
+        "ConversationSystemMessageTests\/testPotentialGap_addedAndRemovedOneUser()",
+        "ConversationSystemMessageTests\/testPotentialGap_addedMultipleUsersAndRemovedOneUser()",
+        "ConversationSystemMessageTests\/testPotentialGap_addedOneUserAndRemovedMultipleUsers()",
+        "ConversationSystemMessageTests\/testPotentialGap_addedUser()",
+        "ConversationSystemMessageTests\/testPotentialGap_addedUsers()",
+        "ConversationSystemMessageTests\/testPotentialGap_removedUser()",
+        "ConversationSystemMessageTests\/testPotentialGap_removedUsers()"
+      ],
+      "target" : {
+        "containerPath" : "container:Wire-iOS.xcodeproj",
+        "identifier" : "BACB88501AF7C48900DDCDB0",
+        "name" : "Wire-iOS-Tests"
+      }
+    }
+  ],
+  "version" : 1
+}

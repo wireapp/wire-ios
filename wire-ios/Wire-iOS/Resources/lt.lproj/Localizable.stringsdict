@@ -102,46 +102,6 @@
         <string>%lu žmonių</string>
       </dict>
     </dict>
-    <key>content.system.missing_messages.subtitle_added</key>
-    <dict>
-      <key>NSStringLocalizedFormatKey</key>
-      <string>%@ %#@lu_number_of_users@</string>
-      <key>lu_number_of_users</key>
-      <dict>
-        <key>NSStringFormatSpecTypeKey</key>
-        <string>NSStringPluralRuleType</string>
-        <key>NSStringFormatValueTypeKey</key>
-        <string>lu</string>
-        <key>one</key>
-        <string>buvo pridėtas</string>
-        <key>few</key>
-        <string>buvo pridėti</string>
-        <key>many</key>
-        <string>buvo pridėta</string>
-        <key>other</key>
-        <string>buvo pridėtų</string>
-      </dict>
-    </dict>
-    <key>content.system.missing_messages.subtitle_removed</key>
-    <dict>
-      <key>NSStringLocalizedFormatKey</key>
-      <string>%@ %#@lu_number_of_users@</string>
-      <key>lu_number_of_users</key>
-      <dict>
-        <key>NSStringFormatSpecTypeKey</key>
-        <string>NSStringPluralRuleType</string>
-        <key>NSStringFormatValueTypeKey</key>
-        <string>lu</string>
-        <key>one</key>
-        <string>buvo pašalintas</string>
-        <key>few</key>
-        <string>buvo pašalinti</string>
-        <key>many</key>
-        <string>bus pašalinta</string>
-        <key>other</key>
-        <string>buvo pašalintų</string>
-      </dict>
-    </dict>
     <key>list.connect_request.people_waiting</key>
     <dict>
       <key>NSStringLocalizedFormatKey</key>

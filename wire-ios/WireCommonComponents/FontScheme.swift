@@ -50,7 +50,6 @@ public enum FontWeight: String, CaseIterable {
     case black
 }
 
-@available(iOSApplicationExtension 8.2, *)
 extension FontWeight {
     static let weightMapping: [FontWeight: UIFont.Weight] = [
         .ultraLight: UIFont.Weight.ultraLight,
@@ -94,11 +93,7 @@ extension FontWeight {
 
 extension UIFont {
     public static func systemFont(ofSize size: CGFloat, contentSizeCategory: UIContentSizeCategory, weight: FontWeight) -> UIFont {
-        if #available(iOSApplicationExtension 8.2, *) {
-            return self.systemFont(ofSize: round(size * UIFont.wr_preferredContentSizeMultiplier(for: contentSizeCategory)), weight: weight.fontWeight())
-        } else {
-            return self.systemFont(ofSize: round(size * UIFont.wr_preferredContentSizeMultiplier(for: contentSizeCategory)))
-        }
+        return self.systemFont(ofSize: round(size * UIFont.wr_preferredContentSizeMultiplier(for: contentSizeCategory)), weight: weight.fontWeight())
     }
 }
 

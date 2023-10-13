@@ -99,7 +99,6 @@ class UserClientByQualifiedUserIDTranscoderTests: MessagingTestBase {
 
     typealias ReponsePayload = UserClientByQualifiedUserIDTranscoder.ResponsePayload
 
-    @available(iOS 15.0, *)
     func test_responseProcessing_EmptyResults() throws {
         try syncMOC.performAndWait {
             // Given

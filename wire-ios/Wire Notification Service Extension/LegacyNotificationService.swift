@@ -131,9 +131,7 @@ public class LegacyNotificationService: UNNotificationServiceExtension, Notifica
             return finishWithoutShowingNotification()
         }
 
-        if #available(iOS 15, *) {
-            content.interruptionLevel = .timeSensitive
-        }
+        content.interruptionLevel = .timeSensitive
 
         if let badgeCount = totalUnreadCount(unreadConversationCount) {
             WireLogger.notifications.info("setting badge count to \(badgeCount.intValue)")

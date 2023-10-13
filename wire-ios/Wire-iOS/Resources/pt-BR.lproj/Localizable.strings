@@ -429,6 +429,31 @@
 
 "content.system.services.warning" = "Serviços têm acesso ao conteúdo dessa conversa";
 
+"content.system.missing_messages" = "You haven’t used this device for a while. Some messages may not appear here.";
+// Placeholder contains a single name, e.g "Alice"
+"content.system.missing_messages.users_added.singular" = "You haven’t used this device for a while. Some messages may not appear here.\n\nMeanwhile, %@ has been added.";
+
+// Placeholder contains a localized list of names, e.g "Alice, Bob, and Cate"
+"content.system.missing_messages.users_added.plural" = "You haven’t used this device for a while. Some messages may not appear here.\n\nMeanwhile, %@ have been added.";
+
+// Placeholder contains a single name, e.g "Alice"
+"content.system.missing_messages.users_removed.singular" = "You haven’t used this device for a while. Some messages may not appear here.\n\nMeanwhile, %@ has been removed.";
+
+// Placeholder contains a localized list of names, e.g "Alice, Bob, and Cate"
+"content.system.missing_messages.users_removed.plural" = "You haven’t used this device for a while. Some messages may not appear here.\n\nMeanwhile, %@ have been removed.";
+
+// Both placesholders contains a single name, e.g "Alice"
+"content.system.missing_messages.users_added_and_removed.singular" = "You haven’t used this device for a while. Some messages may not appear here.\n\nMeanwhile, %1$@ has been added. %2$@ has been removed.";
+
+// Placeholder 1 contains a single name: e.g "Alice. Placeholder 2 contains a localized list of names, e.g "Alice, Bob, and Cate"
+"content.system.missing_messages.users_added_and_removed.singular_plural" = "You haven’t used this device for a while. Some messages may not appear here.\n\nMeanwhile, %1$@ has been added. %2$@ have been removed.";
+
+// Placeholder 1 contains a localized list of names, e.g "Alice, Bob, and Cate". Placeholder 2 contains a single name: e.g "Alice.
+"content.system.missing_messages.users_added_and_removed.plural_singular" = "You haven’t used this device for a while. Some messages may not appear here.\n\nMeanwhile, %1$@ have been added. %2$@ has been removed.";
+
+// Both placesholders contains a localized list of names, e.g "Alice, Bob, and Cate"
+"content.system.missing_messages.users_added_and_removed.plural" = "You haven’t used this device for a while. Some messages may not appear here.\n\nMeanwhile, %1$@ have been added. %2$@ have been removed.";
+
 // Link attachment messages
 
 "content.message.link_attachment.accessibility_label.youtube" = "Prévia de vídeo do YouTube";
@@ -552,9 +577,6 @@
 "content.system.unverified_self_devices" = "Você não verificou um dos [seus dispositivos](%@)";
 "content.system.unverified_other_devices" = "Você não verificou um dos [dispositivos de %1$@](%2$@)";
 
-"content.system.missing_messages.title" = "Você não usou este dispositivo por algum um tempo. Algumas mensagens podem não aparecer aqui.";
-"content.system.missing_messages.subtitle_start" = "Enquanto isso,";
-
 "content.system.cannot_decrypt.self" = "Uma mensagem sua não pôde ser descriptografada.";
 "content.system.cannot_decrypt.other" = "Uma mensagem de %@ não pôde ser descriptografada.";
 "content.system.cannot_decrypt.reset_session" = "Corrigir mensagens futuras";
@@ -620,8 +642,8 @@
 "content.file.too_big" = "Você pode enviar arquivos de até %@";
 
 // Reactions
-"content.reactions.title" = "Select Reaction";
-"content.reactions.search" = "Search for Emoji";
+"content.reactions.title" = "Select reaction";
+"content.reactions.search" = "Search for emoji";
 
 // Someone pinged
 "content.ping.text" = "%@ pingou";
@@ -1726,6 +1748,7 @@
 "databaseloadingfailure.alert.delete_database" = "Excluir Banco de Dados";
 "databaseloadingfailure.alert.delete_database.message" = "Ao excluir o banco de dados, todos os dados e mensagens locais para esta conta serão excluídos permanentemente.";
 "databaseloadingfailure.alert.delete_database.continue" = "Continuar";
+"databaseloadingfailure.alert.retry" = "Retry";
 
 // Backend not supported alert
 "backend_not_supported.alert.title" = "Versão do servidor não suportada";

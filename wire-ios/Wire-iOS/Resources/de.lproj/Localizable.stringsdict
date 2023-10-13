@@ -13,9 +13,9 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>%2$@ konnte nicht zur Gruppe hinzugefügt werden.</string>
+        <string>%2$@ konnte der Gruppe nicht hinzugefügt werden.</string>
         <key>other</key>
-        <string>%2$@ konnten nicht zur Gruppe hinzugefügt werden.</string>
+        <string>%2$@ konnten der Gruppe nicht hinzugefügt werden.</string>
       </dict>
     </dict>
     <key>content.system.failedtosend_participants.will_never_get_message</key>
@@ -80,38 +80,6 @@
         <string>Eine Kontaktanfrage</string>
         <key>other</key>
         <string>%lu Personen</string>
-      </dict>
-    </dict>
-    <key>content.system.missing_messages.subtitle_added</key>
-    <dict>
-      <key>NSStringLocalizedFormatKey</key>
-      <string>%@ %#@lu_number_of_users@</string>
-      <key>lu_number_of_users</key>
-      <dict>
-        <key>NSStringFormatSpecTypeKey</key>
-        <string>NSStringPluralRuleType</string>
-        <key>NSStringFormatValueTypeKey</key>
-        <string>lu</string>
-        <key>one</key>
-        <string>wurde hinzugefügt</string>
-        <key>other</key>
-        <string>wurden hinzugefügt</string>
-      </dict>
-    </dict>
-    <key>content.system.missing_messages.subtitle_removed</key>
-    <dict>
-      <key>NSStringLocalizedFormatKey</key>
-      <string>%@ %#@lu_number_of_users@</string>
-      <key>lu_number_of_users</key>
-      <dict>
-        <key>NSStringFormatSpecTypeKey</key>
-        <string>NSStringPluralRuleType</string>
-        <key>NSStringFormatValueTypeKey</key>
-        <string>lu</string>
-        <key>one</key>
-        <string>wurde entfernt</string>
-        <key>other</key>
-        <string>wurden entfernt</string>
       </dict>
     </dict>
     <key>list.connect_request.people_waiting</key>

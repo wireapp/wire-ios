@@ -25,7 +25,7 @@
 
 @import WireImages;
 @import WireTesting;
-
+@import UniformTypeIdentifiers;
 
 
 @interface ZMImageLoadOperationTests : ZMTBaseTest
@@ -55,7 +55,7 @@
     XCTAssertEqualObjects(sut.sourceImageProperties[(__bridge id) kCGImagePropertyPixelHeight], @346);
     XCTAssertEqualObjects(sut.sourceImageProperties[(__bridge id) kCGImagePropertyPixelWidth], @531);
     AssertEqualData(sut.originalImageData, imageData);
-    XCTAssertEqualObjects(sut.computedImageProperties.mimeType, (__bridge id)kUTTypeJPEG);
+    XCTAssertEqualObjects(sut.computedImageProperties.mimeType, UTTypeJPEG.identifier);
     XCTAssertEqual(sut.tiffOrientation, 2);
     AssertEqualSizes(sut.computedImageProperties.size, CGSizeMake(531, 346));
 }

@@ -248,7 +248,7 @@
 "calling.swipeUpParticipants.hint" = "Doppeltippen, um nach oben zu wischen und alle Teilnehmerdetails anzuzeigen";
 "calling.swipeDownParticipants.hint" = "Doppeltippen, um nach unten zu wischen und die Teilnehmerdetails zu verbergen";
 "calling.headerBar.description" = "Anrufansicht verkleinern";
-"calling.status.connecting" = "Verbinden…";
+"calling.status.connecting" = "Verbindung wird hergestellt";
 
 "tabBar.contacts.description" = "Kontakte";
 "tabBar.contacts.hint" = "Doppeltippen, um nach Personen zu suchen und Kontaktliste zu öffnen";
@@ -268,3 +268,7 @@
 
 "connection.archiveButton.description" = "Unterhaltung archivieren";
 "connection.cancelButton.description" = "Verbindung abbrechen";
+
+// MARK: - Reactions
+"reactionPicker.dismissButton.description" = "Emoji-Tastatur schließen";
+"reactionPicker.searchFieldPlaceholder.description" = "Nach Emoji suchen";

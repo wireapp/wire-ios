@@ -138,7 +138,7 @@
 // Conversation List Bottom Bar
 "conversation_list.bottom_bar.contacts.title" = "Kişiler";
 "conversation_list.bottom_bar.conversations.title" = "Konuşmalar";
-"conversation_list.bottom_bar.folders.title" = "Folders";
+"conversation_list.bottom_bar.folders.title" = "Klasörler";
 "conversation_list.bottom_bar.archived.title" = "Arşivle";
 
 // Conversation List Data Usage Permission Dialog
@@ -276,7 +276,7 @@
 
 "conversation.input_bar.verified" = "Doğrulandı";
 "conversation.input_bar.placeholder" = "Bir mesaj yazın";
-"conversation.input_bar.placeholder_ephemeral" = "Self-deleting message";
+"conversation.input_bar.placeholder_ephemeral" = "Kendini silen mesaj";
 
 "conversation.input_bar.audio_message.tooltip.pull_send" = "Göndermek için kaydırın";
 "conversation.input_bar.audio_message.tooltip.tap_send" = "Göndermek için tıkla";
@@ -290,12 +290,12 @@
 "conversation.input_bar.audio_message.keyboard.record_tip" = "Kaydetmek için tıkla\nDaha sonra %@ bilirsin";
 "conversation.input_bar.audio_message.keyboard.filter_tip" = "Yukarıdan bir filtre seçin";
 
-"conversation.call.many_participants_confirmation.title" = "Are you sure you want to call %d people?";
+"conversation.call.many_participants_confirmation.title" = "%d kişiyi aramak istediğinize emin misiniz?";
 "conversation.call.many_participants_confirmation.call" = "Ara";
 
 "conversation.connection_view.in_address_book" = "Kişilerde";
-"conversation.connection_view.encryption_info" = "Communication in Wire is always end-to-end encrypted. Everything you send and receive in this conversation is only accessible to you and your contact.";
-"conversation.connection_view.sensitive_information_warning" = "Please still be careful with who you share sensitive information.";
+"conversation.connection_view.encryption_info" = "Wire'da tüm iletişim uçtan uca şifrelenmektedir. Bu sohbette gönderdiğiniz veya size gönderilen her şeye sadece siz ve karşıdaki kişi tarafından erişilebilir.";
+"conversation.connection_view.sensitive_information_warning" = "Lütfen bu hassas bilgiyi paylaştığınız kişilerle ilgili dikkatli olun.";
 
 "conversation.input_bar.shortcut.send" = "Mesaj Gönder";
 "conversation.input_bar.shortcut.newline" = "Insert Line Break";
@@ -429,6 +429,31 @@
 
 "content.system.services.warning" = "Hizmetler bu sohbetin içeriğine erişebilir";
 
+"content.system.missing_messages" = "You haven’t used this device for a while. Some messages may not appear here.";
+// Placeholder contains a single name, e.g "Alice"
+"content.system.missing_messages.users_added.singular" = "You haven’t used this device for a while. Some messages may not appear here.\n\nMeanwhile, %@ has been added.";
+
+// Placeholder contains a localized list of names, e.g "Alice, Bob, and Cate"
+"content.system.missing_messages.users_added.plural" = "You haven’t used this device for a while. Some messages may not appear here.\n\nMeanwhile, %@ have been added.";
+
+// Placeholder contains a single name, e.g "Alice"
+"content.system.missing_messages.users_removed.singular" = "You haven’t used this device for a while. Some messages may not appear here.\n\nMeanwhile, %@ has been removed.";
+
+// Placeholder contains a localized list of names, e.g "Alice, Bob, and Cate"
+"content.system.missing_messages.users_removed.plural" = "You haven’t used this device for a while. Some messages may not appear here.\n\nMeanwhile, %@ have been removed.";
+
+// Both placesholders contains a single name, e.g "Alice"
+"content.system.missing_messages.users_added_and_removed.singular" = "You haven’t used this device for a while. Some messages may not appear here.\n\nMeanwhile, %1$@ has been added. %2$@ has been removed.";
+
+// Placeholder 1 contains a single name: e.g "Alice. Placeholder 2 contains a localized list of names, e.g "Alice, Bob, and Cate"
+"content.system.missing_messages.users_added_and_removed.singular_plural" = "You haven’t used this device for a while. Some messages may not appear here.\n\nMeanwhile, %1$@ has been added. %2$@ have been removed.";
+
+// Placeholder 1 contains a localized list of names, e.g "Alice, Bob, and Cate". Placeholder 2 contains a single name: e.g "Alice.
+"content.system.missing_messages.users_added_and_removed.plural_singular" = "You haven’t used this device for a while. Some messages may not appear here.\n\nMeanwhile, %1$@ have been added. %2$@ has been removed.";
+
+// Both placesholders contains a localized list of names, e.g "Alice, Bob, and Cate"
+"content.system.missing_messages.users_added_and_removed.plural" = "You haven’t used this device for a while. Some messages may not appear here.\n\nMeanwhile, %1$@ have been added. %2$@ have been removed.";
+
 // Link attachment messages
 
 "content.message.link_attachment.accessibility_label.youtube" = "YouTube video önizlemesi";
@@ -552,9 +577,6 @@
 "content.system.unverified_self_devices" = "You unverified one of [your devices](%@)";
 "content.system.unverified_other_devices" = "You unverified one of [%1$@’s devices](%2$@)";
 
-"content.system.missing_messages.title" = "Bu cihazı bir süredir kullanmıyorsunuz. Bazı mesajlar burada görünmeyebilir.";
-"content.system.missing_messages.subtitle_start" = "Bu sırada,";
-
 "content.system.cannot_decrypt.self" = "A message from you could not be decrypted.";
 "content.system.cannot_decrypt.other" = "A message from %@ could not be decrypted.";
 "content.system.cannot_decrypt.reset_session" = "Fix future messages";
@@ -620,8 +642,8 @@
 "content.file.too_big" = "En fazla %@ dosya yükleyebilirsin";
 
 // Reactions
-"content.reactions.title" = "Select Reaction";
-"content.reactions.search" = "Search for Emoji";
+"content.reactions.title" = "Select reaction";
+"content.reactions.search" = "Search for emoji";
 
 // Someone pinged
 "content.ping.text" = "%@ ping attı";
@@ -1726,6 +1748,7 @@
 "databaseloadingfailure.alert.delete_database" = "Veritabanını sil";
 "databaseloadingfailure.alert.delete_database.message" = "By deleting the database, all local data and messages for this account will be permanently deleted.";
 "databaseloadingfailure.alert.delete_database.continue" = "Devam et";
+"databaseloadingfailure.alert.retry" = "Retry";
 
 // Backend not supported alert
 "backend_not_supported.alert.title" = "Server version not supported";

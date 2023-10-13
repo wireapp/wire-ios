@@ -82,38 +82,6 @@
         <string>%lu kişi</string>
       </dict>
     </dict>
-    <key>content.system.missing_messages.subtitle_added</key>
-    <dict>
-      <key>NSStringLocalizedFormatKey</key>
-      <string>%@ %#@lu_number_of_users@</string>
-      <key>lu_number_of_users</key>
-      <dict>
-        <key>NSStringFormatSpecTypeKey</key>
-        <string>NSStringPluralRuleType</string>
-        <key>NSStringFormatValueTypeKey</key>
-        <string>lu</string>
-        <key>one</key>
-        <string>eklendi</string>
-        <key>other</key>
-        <string>eklendi</string>
-      </dict>
-    </dict>
-    <key>content.system.missing_messages.subtitle_removed</key>
-    <dict>
-      <key>NSStringLocalizedFormatKey</key>
-      <string>%@ %#@lu_number_of_users@</string>
-      <key>lu_number_of_users</key>
-      <dict>
-        <key>NSStringFormatSpecTypeKey</key>
-        <string>NSStringPluralRuleType</string>
-        <key>NSStringFormatValueTypeKey</key>
-        <string>lu</string>
-        <key>one</key>
-        <string>kaldırıldı</string>
-        <key>other</key>
-        <string>kaldırıldı</string>
-      </dict>
-    </dict>
     <key>list.connect_request.people_waiting</key>
     <dict>
       <key>NSStringLocalizedFormatKey</key>

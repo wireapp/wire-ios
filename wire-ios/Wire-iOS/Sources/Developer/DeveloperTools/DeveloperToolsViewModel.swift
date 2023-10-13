@@ -25,7 +25,6 @@ import UIKit
 import SwiftUI
 import WireCommonComponents
 
-@available(iOS 14, *)
 final class DeveloperToolsViewModel: ObservableObject {
 
     // MARK: - Models

@@ -82,38 +82,6 @@
         <string>%lu contacts</string>
       </dict>
     </dict>
-    <key>content.system.missing_messages.subtitle_added</key>
-    <dict>
-      <key>NSStringLocalizedFormatKey</key>
-      <string>%@ %#@lu_number_of_users@</string>
-      <key>lu_number_of_users</key>
-      <dict>
-        <key>NSStringFormatSpecTypeKey</key>
-        <string>NSStringPluralRuleType</string>
-        <key>NSStringFormatValueTypeKey</key>
-        <string>lu</string>
-        <key>one</key>
-        <string>a été ajouté</string>
-        <key>other</key>
-        <string>ont été ajoutés</string>
-      </dict>
-    </dict>
-    <key>content.system.missing_messages.subtitle_removed</key>
-    <dict>
-      <key>NSStringLocalizedFormatKey</key>
-      <string>%@ %#@lu_number_of_users@</string>
-      <key>lu_number_of_users</key>
-      <dict>
-        <key>NSStringFormatSpecTypeKey</key>
-        <string>NSStringPluralRuleType</string>
-        <key>NSStringFormatValueTypeKey</key>
-        <string>lu</string>
-        <key>one</key>
-        <string>a été supprimé</string>
-        <key>other</key>
-        <string>ont été supprimés</string>
-      </dict>
-    </dict>
     <key>list.connect_request.people_waiting</key>
     <dict>
       <key>NSStringLocalizedFormatKey</key>

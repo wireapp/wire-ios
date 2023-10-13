@@ -21,6 +21,7 @@
 @import WireSystem;
 @import ImageIO;
 @import MobileCoreServices;
+@import UniformTypeIdentifiers;
 
 #import <WireTransport/WireTransport-Swift.h>
 
@@ -228,7 +229,7 @@ typedef NS_ENUM(NSUInteger, ZMTransportRequestSessionType) {
 
 + (instancetype)emptyPutRequestWithPath:(NSString *)path apiVersion:(int)apiVersion;
 {
-    NSString *type = (__bridge NSString *) kUTTypeJSON;
+    NSString *type = (NSString *) UTTypeJSON.identifier;
     return [[self alloc] initWithPath:path method:ZMMethodPUT binaryData:[NSData data] type:type contentDisposition:nil apiVersion:apiVersion];
 }
 

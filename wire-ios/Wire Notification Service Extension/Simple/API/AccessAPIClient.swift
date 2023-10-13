@@ -25,7 +25,6 @@ protocol AccessAPIClientProtocol {
 
 }
 
-@available(iOS 15, *)
 final class AccessAPIClient: AccessAPIClientProtocol, Loggable {
 
     // MARK: - Properties

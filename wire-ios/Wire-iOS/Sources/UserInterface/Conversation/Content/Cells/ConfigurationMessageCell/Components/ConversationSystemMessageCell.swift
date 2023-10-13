@@ -16,11 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Down
 import UIKit
 import WireCommonComponents
 import WireDataModel
 import WireSyncEngine
-import Down
+import WireUtilities
 
 // MARK: Properties
 
@@ -697,30 +698,59 @@ class ConversationMissingMessagesSystemMessageCellDescription: ConversationMessa
     }
 
     private static func makeAttributedString(systemMessageData: ZMSystemMessageData) -> NSAttributedString {
-        let font = UIFont.mediumFont
-        let color = LabelColors.textDefault
-
-        func attributedLocalizedUppercaseString(_ localizationKey: String, _ users: [AnyHashable]) -> NSAttributedString? {
-            guard !users.isEmpty else { return nil }
-            let userNames = users.compactMap { ($0 as? UserType)?.name }.joined(separator: ", ")
-            let string = localizationKey.localized(args: userNames + " ", users.count) + ". "
-            && font && color
-            return string
-        }
-
-        var title = L10n.Localizable.Content.System.MissingMessages.title && font && color
-
-        // We only want to display the subtitle if we have the final added and removed users and either one is not empty
-        let addedOrRemovedUsers = !systemMessageData.addedUserTypes.isEmpty || !systemMessageData.removedUserTypes.isEmpty
-        if !systemMessageData.needsUpdatingUsers && addedOrRemovedUsers {
-            title += "\n\n" + L10n.Localizable.Content.System.MissingMessages.subtitleStart + " " && font && color
-            title += attributedLocalizedUppercaseString("content.system.missing_messages.subtitle_added", Array(systemMessageData.addedUserTypes))
-            title += attributedLocalizedUppercaseString("content.system.missing_messages.subtitle_removed", Array(systemMessageData.removedUserTypes))
-        }
-
-        return title
+        let string = localizedString(systemMessageData: systemMessageData)
+        return NSAttributedString(string: string) && UIFont.mediumFont && LabelColors.textDefault
     }
 
+    private static func localizedString(systemMessageData: ZMSystemMessageData) -> String {
+        typealias Strings = L10n.Localizable.Content.System
+
+        guard !systemMessageData.needsUpdatingUsers else {
+            return Strings.missingMessages
+        }
+
+        let namesOfAddedUsers: [String] = systemMessageData.addedUserTypes.compactMap {
+            guard let user = $0 as? UserType else { return nil }
+            return user.name
+        }.sorted(by: { $0 > $1 })
+
+        let namesOfRemovedUsers: [String] = systemMessageData.removedUserTypes.compactMap {
+            guard let user = $0 as? UserType else { return nil }
+            return user.name
+        }.sorted(by: { $0 > $1 })
+
+        let listOfAddedUsers = ListFormatter.localizedString(byJoining: namesOfAddedUsers)
+        let listOfRemovedUsers = ListFormatter.localizedString(byJoining: namesOfRemovedUsers)
+
+        switch (namesOfAddedUsers.cardinality, namesOfRemovedUsers.cardinality) {
+        case (.zero, .zero):
+            return Strings.missingMessages
+
+        case (.singular, .zero):
+            return Strings.MissingMessages.UsersAdded.singular(listOfAddedUsers)
+
+        case (.plural, .zero):
+            return Strings.MissingMessages.UsersAdded.plural(listOfAddedUsers)
+
+        case (.zero, .singular):
+            return Strings.MissingMessages.UsersRemoved.singular(listOfRemovedUsers)
+
+        case (.zero, .plural):
+            return Strings.MissingMessages.UsersRemoved.plural(listOfRemovedUsers)
+
+        case (.singular, .singular):
+            return Strings.MissingMessages.UsersAddedAndRemoved.singular(listOfAddedUsers, listOfRemovedUsers)
+
+        case (.plural, .singular):
+            return Strings.MissingMessages.UsersAddedAndRemoved.pluralSingular(listOfAddedUsers, listOfRemovedUsers)
+
+        case (.singular, .plural):
+            return Strings.MissingMessages.UsersAddedAndRemoved.singularPlural(listOfAddedUsers, listOfRemovedUsers)
+
+        case (.plural, .plural):
+            return Strings.MissingMessages.UsersAddedAndRemoved.plural(listOfAddedUsers, listOfRemovedUsers)
+        }
+    }
 }
 
 class ConversationIgnoredDeviceSystemMessageCellDescription: ConversationMessageCellDescription {
