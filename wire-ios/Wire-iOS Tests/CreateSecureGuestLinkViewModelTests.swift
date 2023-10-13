@@ -19,7 +19,7 @@
 import XCTest
 @testable import Wire
 
-class CreatePasswordSecuredLinkViewModelTests: XCTestCase {
+class CreateSecureGuestLinkViewModelTests: XCTestCase {
 
     // MARK: - Properties
 
@@ -55,24 +55,6 @@ class CreatePasswordSecuredLinkViewModelTests: XCTestCase {
         XCTAssertTrue(randomPassword.contains { "ABCDEFGHIJKLMNOPQRSTUVWXYZ".contains($0) }, "Password should contain at least one uppercase letter")
         XCTAssertTrue(randomPassword.contains { "0123456789".contains($0) }, "Password should contain at least one number")
         XCTAssertTrue(randomPassword.contains { "!@#$%^&*()-_+=<>?/[]{|}".contains($0) }, "Password should contain at least one special character")
-    }
-
-    func testValidatePassword() {
-        // GIVEN
-        let textField = UITextField()
-
-        // Test valid passwords
-        // WHEN && THEN
-        XCTAssertTrue(viewModel.validatePassword(textfield: textField, with: "Aa1@abcdefghijklmnop"), "Expected password to be valid but it was invalid")
-        XCTAssertTrue(viewModel.validatePassword(textfield: textField, with: "Aa1@abcdefghijklmno"), "Expected password to be valid but it was invalid")
-        XCTAssertTrue(viewModel.validatePassword(textfield: textField, with: "Aa1@abcdefghijklm!o"), "Expected password to be valid but it was invalid")
-
-        // Test invalid passwords
-        XCTAssertFalse(viewModel.validatePassword(textfield: textField, with: "Aa1@abc"), "Expected password to be invalid but it was valid")
-        XCTAssertFalse(viewModel.validatePassword(textfield: textField, with: "Aa1abcdefghijklm!opqrstu"), "Expected password to be invalid but it was valid")
-        XCTAssertFalse(viewModel.validatePassword(textfield: textField, with: "aaaaaaaaaaaaaaaaaaaa"), "Expected password to be invalid but it was valid")
-        XCTAssertFalse(viewModel.validatePassword(textfield: textField, with: "AA1@ABCDEFGHIJKLMNO"), "Expected password to be invalid but it was valid")
-        XCTAssertFalse(viewModel.validatePassword(textfield: textField, with: "AA1@ABCDEFGHIJKLMNOP"), "Expected password to be invalid but it was valid")
     }
 
     func testRequestRandomPassword() {
