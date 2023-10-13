@@ -100,7 +100,7 @@ final class ConversationGuestOptionsViewController: UIViewController,
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-            ])
+        ])
     }
 
     // MARK: – ConversationOptionsViewModelDelegate
@@ -140,11 +140,9 @@ final class ConversationGuestOptionsViewController: UIViewController,
         let alertController = UIAlertController.guestLinkTypeController { guestLinkType in
             switch guestLinkType {
             case .secure:
-                self.present(
-                    CreateSecureGuestLinkViewController().wrapInNavigationController(setBackgroundColor: true), 
-                    animated: true
-                )
-            case .normal: break
+                self.present(CreateSecureGuestLinkViewController().wrapInNavigationController(setBackgroundColor: true), animated: true)
+            case .normal:
+                completion(.normal)
             }
         }
         present(alertController, animated: true)
