@@ -132,7 +132,7 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
         return button
     }()
 
-    private var validationErrorTextColor = SemanticColors.Label.textErrorDefault
+    private var createSecureGuestLinkPasswordValidatorHelper = CreateSecureGuestLinkPasswordValidatorHelper()
 
     // MARK: - Override methods
 
@@ -186,8 +186,6 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
 
             generatePasswordButton.topAnchor.constraint(equalTo: warningLabel.bottomAnchor, constant: 40),
             generatePasswordButton.safeLeadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 20),
-            // This is a temporary constraint for the height.
-            // It will change as soon as we add more elements to the View Controller
             generatePasswordButton.heightAnchor.constraint(equalToConstant: 32),
 
             setPasswordLabel.safeLeadingAnchor.constraint(equalTo: securedGuestLinkPasswordTextfield.safeLeadingAnchor),
@@ -228,7 +226,6 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
     @objc
     func createSecuredLinkButtonTapped(_ sender: UIButton) {
         if handlePasswordValidation(for: securedGuestLinkPasswordTextfield) {
-            // Copy to clipboard.
             UIPasteboard.general.string = securedGuestLinkPasswordTextfield.text
 
             UIAlertController.presentPasswordCopiedAlert(
@@ -237,33 +234,7 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
                 message: SecuredGuestLinkWithPasswordLocale.AlertController.message
             )
         } else {
-            // Handle validation error.
-            // You can show another alert or indicate the error some other way.
-        }
-
-    }
-
-    // MARK: - Validation
-
-    func displayPasswordErrorState(for textFields: [UITextField], for labels: [UILabel]) {
-        for textField in textFields {
-            textField.textColor = validationErrorTextColor
-            textField.layer.borderColor = validationErrorTextColor.cgColor
-        }
-
-        for label in labels {
-            label.textColor = validationErrorTextColor
-        }
-
-    }
-
-    func resetPasswordDefaultState(for textFields: [UITextField], for labels: [UILabel]) {
-        for textField in textFields {
-            textField.applyStyle(.default)
-        }
-
-        for label in labels {
-            label.textColor = SemanticColors.Label.textFieldFloatingLabel
+            // TODO: [AGIS] Sync with Wolfgang on the alert with the error
         }
 
     }
@@ -275,9 +246,9 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
         let isValid = viewModel.validatePassword(for: textField, against: securedGuestLinkPasswordTextfield)
 
         if isValid {
-            resetPasswordDefaultState(for: [textField], for: labels)
+            createSecureGuestLinkPasswordValidatorHelper.resetPasswordDefaultState(for: [textField], for: labels)
         } else {
-            displayPasswordErrorState(for: [textField], for: labels)
+            createSecureGuestLinkPasswordValidatorHelper.displayPasswordErrorState(for: [textField], for: labels)
         }
 
         return isValid
@@ -322,23 +293,6 @@ extension CreateSecureGuestLinkViewController: UITextFieldDelegate {
         } else {
             createSecuredLinkButton.isEnabled = false
         }
-    }
-
-}
-
-// MARK: - DownStyle
-
-private extension DownStyle {
-
-    static var warningLabelStyle: DownStyle {
-        let paragraphStyle = NSMutableParagraphStyle()
-        let style = DownStyle()
-        style.baseFont = .preferredFont(forTextStyle: .caption1)
-        style.baseFontColor = SemanticColors.Label.textDefault
-        paragraphStyle.lineBreakMode = .byWordWrapping
-        paragraphStyle.lineHeightMultiple = 0.98
-        style.baseParagraphStyle = paragraphStyle
-        return style
     }
 
 }
