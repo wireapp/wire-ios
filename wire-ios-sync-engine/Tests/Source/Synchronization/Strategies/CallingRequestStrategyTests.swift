@@ -26,6 +26,7 @@ class CallingRequestStrategyTests: MessagingTest {
     var mockApplicationStatus: MockApplicationStatus!
     var mockRegistrationDelegate: ClientRegistrationDelegate!
     var mockFetchUserClientsUseCase: MockFetchUserClientsUseCase!
+    var mockMessageSync: MockGenericMessageSyncInterface!
 
     override class func setUp() {
         super.setUp()
@@ -39,13 +40,16 @@ class CallingRequestStrategyTests: MessagingTest {
         mockApplicationStatus.mockSynchronizationState = .online
         mockRegistrationDelegate = MockClientRegistrationDelegate()
         mockFetchUserClientsUseCase = MockFetchUserClientsUseCase()
+        mockMessageSync = MockGenericMessageSyncInterface()
+
         sut = CallingRequestStrategy(
             managedObjectContext: syncMOC,
             applicationStatus: mockApplicationStatus,
             clientRegistrationDelegate: mockRegistrationDelegate,
             flowManager: FlowManagerMock(),
             callEventStatus: CallEventStatus(),
-            fetchUserClientsUseCase: mockFetchUserClientsUseCase
+            fetchUserClientsUseCase: mockFetchUserClientsUseCase,
+            messageSync: mockMessageSync
         )
         sut.callCenter = WireCallCenterV3Mock(
             userId: .stub,
@@ -796,6 +800,16 @@ class CallingRequestStrategyTests: MessagingTest {
         let avsClient1 = AVSClient(userId: user1.avsIdentifier, clientId: client1.remoteIdentifier!)
         let targets = [avsClient1]
 
+        mockMessageSync.syncCompletion_MockMethod = { _, completion in
+            completion(.success(()), ZMTransportResponse())
+        }
+        mockMessageSync.nextRequestFor_MockMethod = { apiVersion in
+            if apiVersion == .v5 {
+                return ZMTransportRequest()
+            }
+            return nil
+        }
+
         let expectation = self.expectation(description: "reject message is sent to MLS self conversation")
         // When we schedule the message
         syncMOC.performGroupedBlock {
@@ -804,15 +818,14 @@ class CallingRequestStrategyTests: MessagingTest {
             }
         }
 
-        XCTAssertTrue(waitForCustomExpectations(withTimeout: 5))
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         syncMOC.performGroupedBlock {
             nextRequest = self.sut.nextRequest(for: .v5)
         }
 
-        // give more time so Task is executed.
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         XCTAssertNotNil(nextRequest)
     }
