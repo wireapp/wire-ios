@@ -64,8 +64,8 @@ class CreateSecureGuestLinkViewModelTests: BaseSnapshotTestCase {
 
     func testPasswordValidationWithInvalidPassword() {
         // GIVEN
-        textField.text = "invalid"
-        confirmPasswordField.text = "invalid"
+        textField.text = "invalidddndhdhdfh"
+        confirmPasswordField.text = "invaliddjhdhd"
 
         // WHEN && THEN
         XCTAssertFalse(viewModel.validatePassword(for: textField, against: confirmPasswordField))
