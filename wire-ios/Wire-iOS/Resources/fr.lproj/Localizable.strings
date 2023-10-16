@@ -429,7 +429,7 @@
 
 "content.system.services.warning" = "Les services ont accès au contenu de la conversation";
 
-"content.system.missing_messages" = "You haven’t used this device for a while. Some messages may not appear here.";
+"content.system.missing_messages" = "Vous n’avez pas utilisé cet appareil depuis un moment. Il est possible que certains messages n’apparaissent pas ici.";
 // Placeholder contains a single name, e.g "Alice"
 "content.system.missing_messages.users_added.singular" = "You haven’t used this device for a while. Some messages may not appear here.\n\nMeanwhile, %@ has been added.";
 
@@ -642,8 +642,8 @@
 "content.file.too_big" = "Vous pouvez envoyer des fichiers jusqu'à %@";
 
 // Reactions
-"content.reactions.title" = "Select Reaction";
-"content.reactions.search" = "Search for Emoji";
+"content.reactions.title" = "Sélectionner une réaction";
+"content.reactions.search" = "Rechercher un émoji";
 
 // Someone pinged
 "content.ping.text" = "%@ a fait un signe";
@@ -718,7 +718,7 @@
 "voice.top_overlay.tap_to_return" = "Cliquez pour revenir à l'appel";
 "voice.top_overlay.accessibility_title" = "Appel en cours";
 
-"voice.flip_camera_button.title" = "Flip";
+"voice.flip_camera_button.title" = "Tourner";
 
 // Voice New
 
@@ -1748,6 +1748,7 @@
 "databaseloadingfailure.alert.delete_database" = "Supprimer la base de données";
 "databaseloadingfailure.alert.delete_database.message" = "En supprimant la base de données, toutes les données locales et les messages de ce compte seront supprimés définitivement.";
 "databaseloadingfailure.alert.delete_database.continue" = "Continuer";
+"databaseloadingfailure.alert.retry" = "Retry";
 
 // Backend not supported alert
 "backend_not_supported.alert.title" = "La version du serveur n'est pas supportée";
@@ -1999,16 +2000,16 @@
 "keyboardshortcut.openPeople" = "Contacts";
 
 // MARK: - Security classification
-"security_classification.security_level" = "Security level:";
+"security_classification.security_level" = "Niveau de sécurité :";
 "security_classification.level.bund" = "VS-NfD";
 "security_classification.level.not_classified" = "NON CLASSIFIÉ";
 
-"proxy-credentials.title" = "Proxy Credentials";
+"proxy-credentials.title" = "Identifiants du proxy";
 // url of proxy server as backend
-"proxy-credentials.caption" = "This backend is configured to use the following proxy server: %@.";
-"proxy-credentials.username.label" = "Proxy Email or Username";
+"proxy-credentials.caption" = "Ce backend est configuré pour utiliser le serveur proxy suivant : %@.";
+"proxy-credentials.username.label" = "E-mail ou nom d'utilisateur du proxy";
 "proxy-credentials.username.placeholder" = "E-mail ou nom d'utilisateur";
-"proxy-credentials.password.label" = "Proxy Password";
+"proxy-credentials.password.label" = "Mot de passe du proxy";
 "proxy-credentials.password.placeholder" = "Mot de passe";
 
 "landing.alert.create-new-account.not-supported.title" = "Non supporté";
@@ -2037,8 +2038,8 @@
 "drawing.colors.coral" = "corail";
 "drawing.colors.pink" = "rose";
 "drawing.colors.chocolate" = "chocolat";
-"drawing.colors.gray" = "gray";
+"drawing.colors.gray" = "gris";
 
 // MARK: - Time
 
-"time.just_now" = "Just now";
+"time.just_now" = "À l'instant";
