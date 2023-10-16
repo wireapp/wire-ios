@@ -4758,6 +4758,12 @@ internal enum L10n {
       }
     }
     internal enum SecuredGuestLinkWithPassword {
+      internal enum AlertController {
+        /// The password was copied to your device clipboard.
+        internal static let message = L10n.tr("Localizable", "secured_guest_link_with_password.alertController.message", fallback: "The password was copied to your device clipboard.")
+        /// Password copied
+        internal static let title = L10n.tr("Localizable", "secured_guest_link_with_password.alertController.title", fallback: "Password copied")
+      }
       internal enum GeneratePasswordButton {
         /// Generate password
         internal static let title = L10n.tr("Localizable", "secured_guest_link_with_password.generate_password_button.title", fallback: "Generate password")

@@ -231,10 +231,11 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
             // Copy to clipboard.
             UIPasteboard.general.string = securedGuestLinkPasswordTextfield.text
 
-            // Present alert.
-            let alertController = UIAlertController(title: "Password Copied", message: "The password was copied to your device clipboard.", preferredStyle: .alert)
-            alertController.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-            present(alertController, animated: true, completion: nil)
+            UIAlertController.presentPasswordCopiedAlert(
+                on: self,
+                title: SecuredGuestLinkWithPasswordLocale.AlertController.title,
+                message: SecuredGuestLinkWithPasswordLocale.AlertController.message
+            )
         } else {
             // Handle validation error.
             // You can show another alert or indicate the error some other way.
@@ -309,8 +310,14 @@ extension CreateSecureGuestLinkViewController: ValidatedTextFieldDelegate {
 
 extension CreateSecureGuestLinkViewController: UITextFieldDelegate {
 
-    @objc func textFieldDidChange(_ textField: UITextField) {
-        if let text1 = securedGuestLinkPasswordTextfield.text, let text2 = securedGuestLinkPasswordValidatedTextField.text, !text1.isEmpty, !text2.isEmpty {
+    @objc
+    func textFieldDidChange(_ textField: UITextField) {
+        if let text1 = securedGuestLinkPasswordTextfield.text,
+           let text2 = securedGuestLinkPasswordValidatedTextField.text,
+           !text1.isEmpty,
+           !text2.isEmpty,
+           handlePasswordValidation(for: securedGuestLinkPasswordTextfield),
+           text1 == text2 {
             createSecuredLinkButton.isEnabled = true
         } else {
             createSecuredLinkButton.isEnabled = false

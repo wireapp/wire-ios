@@ -1204,6 +1204,7 @@
 		E94784E9278EDDC200F9FE80 /* ConversationCreateServicesSectionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E94784E8278EDDC200F9FE80 /* ConversationCreateServicesSectionController.swift */; };
 		E94784EB278EE5EB00F9FE80 /* ConversationServicesOptionsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E94784EA278EE5EB00F9FE80 /* ConversationServicesOptionsViewModel.swift */; };
 		E94784ED278EF1E100F9FE80 /* ConversationServicesOptionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E94784EC278EF1E100F9FE80 /* ConversationServicesOptionsViewController.swift */; };
+		E94BF7852ADD5CD200DE9523 /* UIAlertController+CreateSecureGuestLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = E94BF7842ADD5CD200DE9523 /* UIAlertController+CreateSecureGuestLink.swift */; };
 		E9559B4927B3D3580020B431 /* UIAlertController+ConfirmRemovingServices.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9559B4827B3D3580020B431 /* UIAlertController+ConfirmRemovingServices.swift */; };
 		E961C0752A332E7400A36DE6 /* ConversationReactionMessageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E961C0742A332E7400A36DE6 /* ConversationReactionMessageTests.swift */; };
 		E964168628997173007F9756 /* ButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = E964168528997173007F9756 /* ButtonStyle.swift */; };
@@ -3215,6 +3216,7 @@
 		E94784E8278EDDC200F9FE80 /* ConversationCreateServicesSectionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationCreateServicesSectionController.swift; sourceTree = "<group>"; };
 		E94784EA278EE5EB00F9FE80 /* ConversationServicesOptionsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationServicesOptionsViewModel.swift; sourceTree = "<group>"; };
 		E94784EC278EF1E100F9FE80 /* ConversationServicesOptionsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationServicesOptionsViewController.swift; sourceTree = "<group>"; };
+		E94BF7842ADD5CD200DE9523 /* UIAlertController+CreateSecureGuestLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIAlertController+CreateSecureGuestLink.swift"; sourceTree = "<group>"; };
 		E950F5EF2ABC67FC00B09C43 /* GermanLocaleTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = GermanLocaleTests.xctestplan; sourceTree = "<group>"; };
 		E9559B4827B3D3580020B431 /* UIAlertController+ConfirmRemovingServices.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIAlertController+ConfirmRemovingServices.swift"; sourceTree = "<group>"; };
 		E961C0742A332E7400A36DE6 /* ConversationReactionMessageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationReactionMessageTests.swift; sourceTree = "<group>"; };
@@ -7290,6 +7292,7 @@
 			children = (
 				E9E20AE92AC42ED3005D7E00 /* CreateSecureGuestLinkViewController.swift */,
 				E9D141612AC704DF005EE75D /* CreateSecureGuestLinkViewModel.swift */,
+				E94BF7842ADD5CD200DE9523 /* UIAlertController+CreateSecureGuestLink.swift */,
 			);
 			path = CreateSecureGuestLink;
 			sourceTree = "<group>";
@@ -9628,6 +9631,7 @@
 				A9D19B16238441B500F6E14A /* ConversationViewController+ProfileViewControllerDelegate.swift in Sources */,
 				D39210A32A1CC1C100FA616A /* ReactionCategoryButton.swift in Sources */,
 				D525426B2093637D001C04C1 /* IconButton+Factory.swift in Sources */,
+				E94BF7852ADD5CD200DE9523 /* UIAlertController+CreateSecureGuestLink.swift in Sources */,
 				EF68E71B20BD5B5A003F3594 /* IPadPopoverConstants.swift in Sources */,
 				A9681D8123883877004FE917 /* IconToggleSubtitleCell.swift in Sources */,
 				D5F4387B206BBBB9003F1F14 /* Analytics+HistoryBackup.swift in Sources */,
