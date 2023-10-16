@@ -660,14 +660,6 @@ private extension GenericMessageEntity {
 
         return message.calling.isRejected
     }
-//
-//    func send(with messageSync: MessageSync<GenericMessageEntity>, completion: @escaping (Int) -> Void) {
-//        messageSync.sync(self) { result, response in
-//            if case .success = result {
-//                completion(response.httpStatus)
-//            }
-//        }
-//    }
 
     func send(with messageSync: GenericMessageSyncInterface, completion: @escaping (Int) -> Void) {
         messageSync.sync(self) { result, response in
