@@ -125,8 +125,12 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
     }()
 
     private lazy var createSecuredLinkButton: Button = {
-        let button = Button(style: .primaryTextButtonStyle, cornerRadius: 16, fontSpec: .buttonBigSemibold)
-        button.setTitle("Create Link", for: .normal)
+        let button = Button(
+            style: .primaryTextButtonStyle,
+            cornerRadius: 16,
+            fontSpec: .buttonBigSemibold
+        )
+        button.setTitle(SecuredGuestLinkWithPasswordLocale.CreateLinkButton.title, for: .normal)
         button.addTarget(self, action: #selector(createSecuredLinkButtonTapped), for: .touchUpInside)
         button.titleLabel?.numberOfLines = 0
         return button

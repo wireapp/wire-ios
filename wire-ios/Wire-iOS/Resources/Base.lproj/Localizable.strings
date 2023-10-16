@@ -997,6 +997,8 @@
 "secured_guest_link_with_password.verifyPasswordTextField.header" = "Confirm password";
 "secured_guest_link_with_password.verifyPasswordTextField.placeholder" = "Confirm your password";
 
+"secured_guest_link_with_password.createLinkButton.title" = "Create Link";
+
 // Secured Guest link with password and UIAlertController
 "secured_guest_link_with_password.alertController.title" = "Password copied";
 "secured_guest_link_with_password.alertController.message" = "The password was copied to your device clipboard.";
