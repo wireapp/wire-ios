@@ -23,8 +23,9 @@ class CreateSecureGuestLinkPasswordValidatorHelper {
 
     // MARK: - Properties
 
-    private var validationErrorTextColor: UIColor = SemanticColors.Label.textErrorDefault
-    private var defaultTextColor: UIColor = SemanticColors.Label.textFieldFloatingLabel
+    typealias LabelColors = SemanticColors.Label
+    private var validationErrorTextColor: UIColor = LabelColors.textErrorDefault
+    private var defaultTextColor: UIColor = LabelColors.textFieldFloatingLabel
 
     /// Displays the elements such as text fields and/or labels on their error state
     /// - Parameters:
