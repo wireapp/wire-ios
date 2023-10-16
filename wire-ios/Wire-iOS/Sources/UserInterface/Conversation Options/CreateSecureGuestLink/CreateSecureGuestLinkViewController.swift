@@ -47,7 +47,7 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
             fontSpec: FontSpec.buttonSmallSemibold,
             insets: UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
         )
-
+        button.titleLabel?.adjustsFontForContentSizeCategory = true
         button.setTitle(SecuredGuestLinkWithPasswordLocale.GeneratePasswordButton.title, for: .normal)
         button.setImage(Asset.Images.shield.image, for: .normal)
         button.addTarget(self, action: #selector(generatePasswordButtonTapped), for: .touchUpInside)
@@ -76,6 +76,7 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
         )
         textField.addRevealButton(delegate: self)
         textField.addTarget(self, action: #selector(handlePasswordValidation(for:)), for: .editingChanged)
+        textField.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
 
         textField.placeholder = SecuredGuestLinkWithPasswordLocale.Textfield.placeholder
         textField.addDoneButtonOnKeyboard()
@@ -114,12 +115,21 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
         )
         textField.showConfirmButton = false
         textField.addTarget(self, action: #selector(handlePasswordValidation(for:)), for: .editingChanged)
+        textField.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
         textField.addRevealButton(delegate: self)
         textField.placeholder = SecuredGuestLinkWithPasswordLocale.VerifyPasswordTextField.placeholder
         textField.addDoneButtonOnKeyboard()
         textField.returnKeyType = .done
 
         return textField
+    }()
+
+    private lazy var createSecuredLinkButton: Button = {
+        let button = Button(style: .primaryTextButtonStyle, cornerRadius: 16, fontSpec: .buttonBigSemibold)
+        button.setTitle("Create Link", for: .normal)
+        button.addTarget(self, action: #selector(createSecuredLinkButtonTapped), for: .touchUpInside)
+        button.titleLabel?.numberOfLines = 0
+        return button
     }()
 
     private var validationErrorTextColor = SemanticColors.Label.textErrorDefault
@@ -130,6 +140,8 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
         super.viewDidLoad()
         setUpViews()
         setupConstraints()
+        textFieldDidChange(securedGuestLinkPasswordTextfield)
+
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -147,6 +159,7 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
         view.addSubview(passwordRequirementsLabel)
         view.addSubview(confirmPasswordLabel)
         view.addSubview(securedGuestLinkPasswordValidatedTextField)
+        view.addSubview(createSecuredLinkButton)
     }
 
     private func setupNavigationBar() {
@@ -163,7 +176,8 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
          securedGuestLinkPasswordTextfield,
          passwordRequirementsLabel,
          confirmPasswordLabel,
-         securedGuestLinkPasswordValidatedTextField].prepareForLayout()
+         securedGuestLinkPasswordValidatedTextField,
+         createSecuredLinkButton].prepareForLayout()
 
         NSLayoutConstraint.activate([
             warningLabel.safeLeadingAnchor.constraint(equalTo: self.view.safeLeadingAnchor, constant: 20),
@@ -194,7 +208,12 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
 
             securedGuestLinkPasswordValidatedTextField.topAnchor.constraint(equalTo: confirmPasswordLabel.bottomAnchor, constant: 6),
             securedGuestLinkPasswordValidatedTextField.safeLeadingAnchor.constraint(equalTo: self.view.safeLeadingAnchor, constant: 16),
-            securedGuestLinkPasswordValidatedTextField.safeTrailingAnchor.constraint(equalTo: self.view.safeTrailingAnchor, constant: -16)
+            securedGuestLinkPasswordValidatedTextField.safeTrailingAnchor.constraint(equalTo: self.view.safeTrailingAnchor, constant: -16),
+
+            createSecuredLinkButton.safeBottomAnchor.constraint(equalTo: view.safeBottomAnchor, constant: -24),
+            createSecuredLinkButton.safeLeadingAnchor.constraint(equalTo: view.safeLeadingAnchor, constant: 18),
+            createSecuredLinkButton.safeTrailingAnchor.constraint(equalTo: view.safeTrailingAnchor, constant: -18),
+            createSecuredLinkButton.heightAnchor.constraint(equalToConstant: 56)
         ])
 
     }
@@ -204,6 +223,23 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
     @objc
     func generatePasswordButtonTapped() {
         viewModel.requestRandomPassword()
+    }
+
+    @objc
+    func createSecuredLinkButtonTapped(_ sender: UIButton) {
+        if handlePasswordValidation(for: securedGuestLinkPasswordTextfield) {
+            // Copy to clipboard.
+            UIPasteboard.general.string = securedGuestLinkPasswordTextfield.text
+
+            // Present alert.
+            let alertController = UIAlertController(title: "Password Copied", message: "The password was copied to your device clipboard.", preferredStyle: .alert)
+            alertController.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+            present(alertController, animated: true, completion: nil)
+        } else {
+            // Handle validation error.
+            // You can show another alert or indicate the error some other way.
+        }
+
     }
 
     // MARK: - Validation
@@ -267,6 +303,20 @@ extension CreateSecureGuestLinkViewController: ValidatedTextFieldDelegate {
         securedGuestLinkPasswordValidatedTextField.isSecureTextEntry.toggle()
         securedGuestLinkPasswordValidatedTextField.updatePasscodeIcon()
     }
+}
+
+// MARK: - UITextFieldDelegate
+
+extension CreateSecureGuestLinkViewController: UITextFieldDelegate {
+
+    @objc func textFieldDidChange(_ textField: UITextField) {
+        if let text1 = securedGuestLinkPasswordTextfield.text, let text2 = securedGuestLinkPasswordValidatedTextField.text, !text1.isEmpty, !text2.isEmpty {
+            createSecuredLinkButton.isEnabled = true
+        } else {
+            createSecuredLinkButton.isEnabled = false
+        }
+    }
+
 }
 
 // MARK: - DownStyle

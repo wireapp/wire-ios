@@ -7245,7 +7245,7 @@
 				D550F57820445AD7009E09DD /* UIAlertController+ConversationGuestOptions.swift */,
 				D5CA8E562045718900D2F16E /* UINavigationController+CloseButton.swift */,
 				E9559B4827B3D3580020B431 /* UIAlertController+ConfirmRemovingServices.swift */,
-				E9D141632AC704E9005EE75D /* CreatePasswordSecuredLink */,
+				E9D141632AC704E9005EE75D /* CreateSecureGuestLink */,
 			);
 			path = "Conversation Options";
 			sourceTree = "<group>";
@@ -7285,13 +7285,13 @@
 			path = Reactions;
 			sourceTree = "<group>";
 		};
-		E9D141632AC704E9005EE75D /* CreatePasswordSecuredLink */ = {
+		E9D141632AC704E9005EE75D /* CreateSecureGuestLink */ = {
 			isa = PBXGroup;
 			children = (
 				E9E20AE92AC42ED3005D7E00 /* CreateSecureGuestLinkViewController.swift */,
 				E9D141612AC704DF005EE75D /* CreateSecureGuestLinkViewModel.swift */,
 			);
-			path = CreatePasswordSecuredLink;
+			path = CreateSecureGuestLink;
 			sourceTree = "<group>";
 		};
 		E9DFF50B2AC3063000BDC25C /* sourcery */ = {
