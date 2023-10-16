@@ -145,7 +145,6 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
         setUpViews()
         setupConstraints()
         textFieldDidChange(securedGuestLinkPasswordTextfield)
-
     }
 
     override func viewWillAppear(_ animated: Bool) {
