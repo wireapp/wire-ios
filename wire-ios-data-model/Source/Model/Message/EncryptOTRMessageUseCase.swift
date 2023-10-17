@@ -18,93 +18,12 @@
 
 import Foundation
 
-typealias Domain = String
-typealias UserId_ClientIds = [UUID: [Proteus_ClientId]]
-
-struct OTRMessageQualifiedEncryptionInput {
-    var info: [Domain: UserId_ClientIds]
-    var plainData: Data
-    var proteusSessionId: ProteusSessionID
-    var senderId: Proteus_ClientId
-    var nativePush: Bool // !hasConfirmation
-    var blob: Data?
-}
-
-struct OTRMessageEncryptionInput {
-    //    UUID = Proteus_UserId
-    var info: UserId_ClientIds
-    var plainData: Data
-    var proteusSessionId: ProteusSessionID
-    var senderId: Proteus_ClientId
-    var nativePush: Bool // !hasConfirmation
-    var blob: Data?
-}
-
-/*
-
- encrypt(usingProteusService
- otrMessage
- userEntriesWithEncryptedData
- clientEntriesWithEncryptedData
- clientEntry which uses the encryptionFunction (proteusService.)
- */
-
 class EncryptOTRMessageUseCase {
 
     let proteusService: ProteusService
-    let context: NSManagedObjectContext
 
-    init(proteusService: ProteusService, context: NSManagedObjectContext) {
+    init(proteusService: ProteusService) {
         self.proteusService = proteusService
-        self.context = context
-    }
-
-    // MARK: - Extract info
-
-    public func createInput(from genericMessage: GenericMessage, for conversation: ZMConversation) -> OTRMessageEncryptionInput? {
-        var input: OTRMessageEncryptionInput?
-        context.performAndWait {
-            let selfUser = ZMUser.selfUser(in: context)
-
-            guard let selfClient = selfUser.selfClient(), selfClient.remoteIdentifier != nil,
-                    let sessionId = selfClient.proteusSessionID else {
-                return
-            }
-
-            let (users, _) = genericMessage.recipientUsersForMessage(in: conversation, selfUser: selfUser)
-            let recipients = users.mapToDictionary { $0.clients }
-
-            let userIds_ClientIds = users.compactMapToDictionary(with: { $0.remoteIdentifier }, valueBlock: { $0.clients.map { client in client.clientId } })
-
-            do {
-                let plainText = try genericMessage.serializedData()
-                input = .init(info: userIds_ClientIds,
-                              plainData: plainText,
-                              proteusSessionId: sessionId,
-                              senderId: selfClient.clientId,
-                              nativePush: !genericMessage.hasConfirmation,
-                              blob: nil)
-            } catch {
-                WireLogger.proteus.error("could not serialized generic message to encrypt")
-                input = nil
-            }
-        }
-
-        /*
-         encryptedData = encrypt(
-             using: proteusService,
-             for: recipients,
-             with: missingClientsStrategy,
-             externalData: externalData,
-             useQualifiedIdentifiers: useQualifiedIdentifiers,
-             in: context
-         )
-         */
-        return input
-    }
-
-    public func createQualifiedInput(from genericMessage: GenericMessage) -> OTRMessageEncryptionInput {
-
     }
 
     // MARK: - Encryption
@@ -131,7 +50,7 @@ class EncryptOTRMessageUseCase {
         return Proteus_QualifiedNewOtrMessage(withProteusSenderId: input.senderId,
                                               nativePush: input.nativePush,
                                               recipients: qualifiedUserEntries,
-                                              missingClientsStrategy: .doNotIgnoreAnyMissingClient,// TODO: replace me
+                                              missingClientsStrategy: input.missingClientsStrategy,
                                               blob: input.blob)
     }
 
