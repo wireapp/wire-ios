@@ -18,12 +18,23 @@
 
 import Foundation
 
-class EncryptOTRMessageUseCase {
+class EncryptProteusMessageUseCase {
+    enum InitializationError: Error {
+        case wrongContext
+    }
 
-    let proteusService: ProteusService
+    let proteusProvider: ProteusProviding
 
-    init(proteusService: ProteusService) {
-        self.proteusService = proteusService
+    convenience init(managedObjectContext: NSManagedObjectContext) throws {
+        guard let proteusService = managedObjectContext.zm_sync else {
+            throw InitializationError.wrongContext
+        }
+
+        self.init(proteusProvider: managedObjectContext.proteusProvider)
+    }
+
+    init(proteusProvider: ProteusProviding) {
+        self.proteusProvider = proteusProvider
     }
 
     // MARK: - Encryption
@@ -76,7 +87,24 @@ class EncryptOTRMessageUseCase {
 
     private func encryptedData(_ plainText: Data, with clientId: Proteus_ClientId, and sessionID: ProteusSessionID) -> Proteus_ClientEntry? {
         do {
-            let encryptedData = try proteusService.encrypt(data: plainText, forSession: sessionID)
+            let encryptedData = try proteusProvider.perform(withProteusService: { proteusServive in
+                try proteusServive.encrypt(data: plainText, forSession: sessionID)
+            }) { keyStore in
+                var result: Data!
+                var keyStoreError: Error?
+                keyStore.encryptionContext.perform { sessionsDirectory in
+                    do {
+                        result = try sessionsDirectory.encryptCaching(
+                            plainText,
+                            for: sessionID.mapToEncryptionSessionID()
+                        )
+                    } catch {
+                        keyStoreError =  error
+                    }
+                }
+                try keyStoreError.flatMap { throw $0 }
+                return result
+            }
             return Proteus_ClientEntry(withClientId: clientId, data: encryptedData)
         } catch {
             WireLogger.proteus.error("failed to encrypt payload for a client: \(String(describing: error))")
