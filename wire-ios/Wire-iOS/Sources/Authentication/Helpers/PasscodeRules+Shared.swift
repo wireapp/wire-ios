@@ -30,11 +30,21 @@ extension PasswordRuleSet {
     }()
 
     /// The guestLinkWithPassword rule set.
-    static let guestLinkWithPasswordRuleSet: PasswordRuleSet = {
-        let fileURL = Bundle.main.url(forResource: "guestLinkWithPassword_rules", withExtension: "json")!
-        let fileData = try! Data(contentsOf: fileURL)
+    static let guestLinkWithPasswordRuleSet: PasswordRuleSet? = {
+        guard let fileURL = Bundle.main.url(forResource: "guestLinkWithPassword_rules", withExtension: "json"),
+              let fileData = try? Data(contentsOf: fileURL) else {
+            return nil
+        }
+
         let decoder = JSONDecoder()
-        return try! decoder.decode(PasswordRuleSet.self, from: fileData)
+
+        do {
+            let ruleSet = try decoder.decode(PasswordRuleSet.self, from: fileData)
+            return ruleSet
+        } catch {
+            WireLogger.passwordRuleSet.error("Failed to decode password rule set: \(error)")
+            return nil
+        }
     }()
 
     // MARK: - Localized Description

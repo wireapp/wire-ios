@@ -38,7 +38,9 @@ final class TextFieldValidator {
                                   isNew: Bool,
                                   useGuestLinkRuleset: Bool = false) -> TextFieldValidator.ValidationError? {
 
-        let ruleSet: PasswordRuleSet = useGuestLinkRuleset ? .guestLinkWithPasswordRuleSet : .shared
+        guard let guestLinkPasswordRuleSet: PasswordRuleSet = .guestLinkWithPasswordRuleSet else { return nil }
+
+        let ruleSet: PasswordRuleSet = useGuestLinkRuleset ? guestLinkPasswordRuleSet : .shared
 
         if isNew {
             // If the user is registering, enforce the password rules
