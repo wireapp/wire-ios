@@ -26,7 +26,7 @@ public struct BackendMLSPublicKeys: Equatable {
         self.removal = removal
     }
 
-    var ed25519Keys: [Bytes] {
+    var ed25519Keys: [[Byte]] {
         return [removal.ed25519]
             .compactMap(\.self)
             .map(\.bytes)

@@ -11,7 +11,6 @@
 		166DCD9E2552969B004F4F59 /* SharingSessionTests+EncryptionAtRest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 166DCD9D2552969B004F4F59 /* SharingSessionTests+EncryptionAtRest.swift */; };
 		5470D3F31D76E1B000FDE440 /* WireShareEngine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5470D3E81D76E1B000FDE440 /* WireShareEngine.framework */; };
 		63172F792902A42700DBECC9 /* SharingSession+CoreCrypto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63172F782902A42700DBECC9 /* SharingSession+CoreCrypto.swift */; };
-		63172F96290AB47500DBECC9 /* MLSEncryptionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63172F95290AB47500DBECC9 /* MLSEncryptionService.swift */; };
 		637ED12E29119689001157F4 /* SharingSessionTests+CryptoStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637ED12D29119689001157F4 /* SharingSessionTests+CryptoStack.swift */; };
 		BFA18BD41D806050005C281B /* BaseSharingSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFA18BD31D806050005C281B /* BaseSharingSessionTests.swift */; };
 		CE7FBFC41E015C5900E1C4C9 /* RequestGeneratorStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7FBFC31E015C5900E1C4C9 /* RequestGeneratorStoreTests.swift */; };
@@ -97,7 +96,6 @@
 		5470D42B1D770CEE00FDE440 /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		5470D42C1D770CEE00FDE440 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		63172F782902A42700DBECC9 /* SharingSession+CoreCrypto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SharingSession+CoreCrypto.swift"; sourceTree = "<group>"; };
-		63172F95290AB47500DBECC9 /* MLSEncryptionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLSEncryptionService.swift; sourceTree = "<group>"; };
 		637ED12D29119689001157F4 /* SharingSessionTests+CryptoStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SharingSessionTests+CryptoStack.swift"; sourceTree = "<group>"; };
 		BFA18BD31D806050005C281B /* BaseSharingSessionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseSharingSessionTests.swift; sourceTree = "<group>"; };
 		CE7FBFC31E015C5900E1C4C9 /* RequestGeneratorStoreTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestGeneratorStoreTests.swift; sourceTree = "<group>"; };
@@ -242,7 +240,6 @@
 			isa = PBXGroup;
 			children = (
 				63172F782902A42700DBECC9 /* SharingSession+CoreCrypto.swift */,
-				63172F95290AB47500DBECC9 /* MLSEncryptionService.swift */,
 			);
 			path = CoreCrypto;
 			sourceTree = "<group>";
@@ -449,7 +446,6 @@
 				F1DABFA31E9B8B6100AD2324 /* Conversation.swift in Sources */,
 				F1DABFAB1E9B8B6100AD2324 /* ZMConversation+Conversation.swift in Sources */,
 				165C55F62551AF1300731CA9 /* SharingSession+EncryptionAtRest.swift in Sources */,
-				63172F96290AB47500DBECC9 /* MLSEncryptionService.swift in Sources */,
 				F1DABFA21E9B8B6100AD2324 /* AuthenticationStatusProvider.swift in Sources */,
 				F1DABFA41E9B8B6100AD2324 /* OperationLoop.swift in Sources */,
 				F1DABFA91E9B8B6100AD2324 /* StrategyFactory.swift in Sources */,

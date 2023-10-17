@@ -80,6 +80,7 @@ typedef NS_ENUM(int8_t, ZMTransportAccept) {
     ZMTransportAcceptAnything, ///< Maps to "Accept: */*" HTTP header
     ZMTransportAcceptTransportData, ///< Maps to "Accept: application/json" HTTP header
     ZMTransportAcceptImage, ///< Maps to "Accept: image/*" HTTP header
+    ZMTransportAcceptMessageMLS ///< Maps to "Accept: message/mls" HTTP header
 };
 
 

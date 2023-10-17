@@ -20,6 +20,17 @@ import Foundation
 import WireRequestStrategy
 import WireDataModel
 
+// sourcery: AutoMockable
+public protocol GenericMessageSyncInterface {
+
+    var contextChangeTrackers: [ZMContextChangeTracker] { get }
+    func sync(_ message: GenericMessageEntity, completion: @escaping EntitySyncHandler)
+    func nextRequest(for apiVersion: APIVersion) -> ZMTransportRequest?
+    func expireMessages(withDependency dependency: NSObject)
+}
+
+extension MessageSync<GenericMessageEntity>: GenericMessageSyncInterface {}
+
 @objcMembers
 public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequestTranscoder, ZMContextChangeTracker, ZMContextChangeTrackerSource, ZMEventConsumer {
 
@@ -29,7 +40,7 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
 
     private let zmLog = ZMSLog(tag: "calling")
 
-    private let messageSync: MessageSync<GenericMessageEntity>
+    private let messageSync: GenericMessageSyncInterface
     private let flowManager: FlowManagerType
     private let decoder = JSONDecoder()
 
@@ -56,9 +67,10 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
         clientRegistrationDelegate: ClientRegistrationDelegate,
         flowManager: FlowManagerType,
         callEventStatus: CallEventStatus,
-        fetchUserClientsUseCase: FetchUserClientsUseCaseProtocol = FetchUserClientsUseCase()
+        fetchUserClientsUseCase: FetchUserClientsUseCaseProtocol = FetchUserClientsUseCase(),
+        messageSync: GenericMessageSyncInterface? = nil
     ) {
-        self.messageSync = MessageSync(context: managedObjectContext, appStatus: applicationStatus)
+        self.messageSync = messageSync ?? MessageSync(context: managedObjectContext, appStatus: applicationStatus)
         self.flowManager = flowManager
         self.callEventStatus = callEventStatus
         self.fetchUserClientsUseCase = fetchUserClientsUseCase
@@ -89,8 +101,8 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
 
     public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
         let request = callConfigRequestSync.nextRequest(for: apiVersion) ??
-                      clientDiscoverySync.nextRequest(for: apiVersion) ??
-                      messageSync.nextRequest(for: apiVersion)
+        clientDiscoverySync.nextRequest(for: apiVersion) ??
+        messageSync.nextRequest(for: apiVersion)
 
         return request
     }
@@ -237,12 +249,13 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
 
             guard
                 let payload = genericMessage.calling.content.data(using: .utf8, allowLossyConversion: false),
-                let callEventContent = CallEventContent(from: payload, with: decoder),
+
+                    let callEventContent = CallEventContent(from: payload, with: decoder),
                 let senderUUID = event.senderUUID,
                 let conversationUUID = event.conversationUUID,
                 let eventTimestamp = event.timestamp
             else {
-                zmLog.error("ignoring calling message: \(genericMessage.debugDescription)")
+                zmLog.error("ignoring calling message: \(genericMessage)")
                 return
             }
 
@@ -255,6 +268,7 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
             }
 
             processCallEvent(
+                callingConversationId: genericMessage.calling.qualifiedConversationID,
                 conversationUUID: conversationUUID,
                 senderUUID: senderUUID,
                 clientId: event.senderClientID ?? callEventContent.callerClientID,
@@ -267,39 +281,45 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
         }
     }
 
-    func processCallEvent(conversationUUID: UUID,
-                          senderUUID: UUID,
-                          clientId: String,
-                          conversationDomain: String?,
-                          senderDomain: String?,
-                          payload: Data,
-                          currentTimestamp: TimeInterval,
-                          eventTimestamp: Date) {
-        let conversationId = AVSIdentifier(
-            identifier: conversationUUID,
-            domain: conversationDomain
-        )
-        let userId = AVSIdentifier(
-            identifier: senderUUID,
-            domain: senderDomain
-        )
+    func processCallEvent(
+        callingConversationId: QualifiedConversationId,
+        conversationUUID: UUID,
+        senderUUID: UUID,
+        clientId: String,
+        conversationDomain: String?,
+        senderDomain: String?,
+        payload: Data,
+        currentTimestamp: TimeInterval,
+        eventTimestamp: Date) {
 
-        let callEvent = CallEvent(
-            data: payload,
-            currentTimestamp: Date().addingTimeInterval(currentTimestamp),
-            serverTimestamp: eventTimestamp,
-            conversationId: conversationId,
-            userId: userId,
-            clientId: clientId
-        )
+            let identifier = !callingConversationId.id.isEmpty ? UUID(uuidString: callingConversationId.id)! : conversationUUID
+            let domain = !callingConversationId.domain.isEmpty ? callingConversationId.domain : conversationDomain
 
-        callEventStatus.scheduledCallEventForProcessing()
+            let conversationId = AVSIdentifier(
+                identifier: identifier,
+                domain: domain
+            )
 
-        callCenter?.processCallEvent(callEvent, completionHandler: { [weak self] in
-            self?.zmLog.debug("processed calling message")
-            self?.callEventStatus.finishedProcessingCallEvent()
-        })
-    }
+            let userId = AVSIdentifier(
+                identifier: senderUUID,
+                domain: senderDomain
+            )
+
+            let callEvent = CallEvent(
+                data: payload,
+                currentTimestamp: Date().addingTimeInterval(currentTimestamp),
+                serverTimestamp: eventTimestamp,
+                conversationId: conversationId,
+                userId: userId,
+                clientId: clientId
+            )
+
+            callEventStatus.scheduledCallEventForProcessing()
+            callCenter?.processCallEvent(callEvent, completionHandler: { [weak self] in
+                self?.zmLog.debug("processed calling message")
+                self?.callEventStatus.finishedProcessingCallEvent()
+            })
+        }
 
 }
 
@@ -311,6 +331,7 @@ extension CallingRequestStrategy: WireCallCenterTransport {
         data: Data,
         conversationId: AVSIdentifier,
         targets: [AVSClient]?,
+        overMLSSelfConversation: Bool,
         completionHandler: @escaping ((Int) -> Void)
     ) {
         guard let dataString = String(data: data, encoding: .utf8) else {
@@ -318,6 +339,8 @@ extension CallingRequestStrategy: WireCallCenterTransport {
             completionHandler(500)
             return
         }
+
+        let callingContent = Calling(content: dataString, conversationId: conversationId.toQualifiedId())
 
         managedObjectContext.performGroupedBlock {
             guard let conversation = ZMConversation.fetch(
@@ -330,27 +353,47 @@ extension CallingRequestStrategy: WireCallCenterTransport {
                 return
             }
 
+            let genericMessage = GenericMessage(content: callingContent)
+
             self.zmLog.debug("schedule calling message")
 
-            let genericMessage = GenericMessage(content: Calling(content: dataString))
             let recipients = targets.map { self.recipients(for: $0, in: self.managedObjectContext) } ?? .conversationParticipants
 
-            let message = GenericMessageEntity(
-                conversation: conversation,
-                message: genericMessage,
-                targetRecipients: recipients,
-                completionHandler: nil
-            )
+            let message: GenericMessageEntity
+
+            if overMLSSelfConversation, conversation.messageProtocol == .mls {
+                guard let selfConversation = ZMConversation.fetchSelfMLSConversation(in: self.managedObjectContext) else {
+                    WireLogger.mls.error("missing self conversation for sending message to own clients")
+                    completionHandler(500)
+                    return
+                }
+
+                message = GenericMessageEntity(
+                    conversation: selfConversation,
+                    message: genericMessage,
+                    targetRecipients: recipients,
+                    completionHandler: nil
+                )
+            } else {
+                message = GenericMessageEntity(
+                    conversation: conversation,
+                    message: genericMessage,
+                    targetRecipients: recipients,
+                    completionHandler: nil
+                )
+            }
 
             switch (conversation.messageProtocol, recipients) {
             case (.proteus, _), (.mls, .conversationParticipants):
                 message.send(with: self.messageSync, completion: completionHandler)
 
             case (.mls, _):
-                if message.isConferenceKey {
+                // TODO: review the `isConferenceKey` case once subconversations are available
+                // to target all conference members
+                if message.isConferenceKey || overMLSSelfConversation {
                     message.send(with: self.messageSync, completion: completionHandler)
                 } else {
-                    Logging.mls.info("ignoring targeted outgoing calling message b/c its not CONFKEY")
+                    Logging.mls.info("ignoring targeted outgoing calling message b/c it's not CONFKEY nor sent over self conversation")
                 }
             }
         }
@@ -602,8 +645,36 @@ private extension GenericMessageEntity {
 
     var isConferenceKey: Bool {
         guard
-            message.hasCalling,
-            let payload = message.calling.content.data(using: .utf8, allowLossyConversion: false),
+            message.hasCalling else {
+            return false
+        }
+
+        return message.calling.isConferenceKey
+    }
+
+    var isRejected: Bool {
+        guard
+            message.hasCalling else {
+            return false
+        }
+
+        return message.calling.isRejected
+    }
+
+    func send(with messageSync: GenericMessageSyncInterface, completion: @escaping (Int) -> Void) {
+        messageSync.sync(self) { result, response in
+            if case .success = result {
+                completion(response.httpStatus)
+            }
+        }
+    }
+}
+
+private extension Calling {
+
+    var isConferenceKey: Bool {
+        guard
+            let payload = content.data(using: .utf8, allowLossyConversion: false),
             let callContent = CallEventContent(from: payload)
         else {
             return false
@@ -612,12 +683,20 @@ private extension GenericMessageEntity {
         return callContent.isConferenceKey
     }
 
-    func send(with messageSync: MessageSync<GenericMessageEntity>, completion: @escaping (Int) -> Void) {
-        messageSync.sync(self) { result, response in
-            if case .success = result {
-                completion(response.httpStatus)
-            }
+    var isRejected: Bool {
+        guard
+            let payload = content.data(using: .utf8, allowLossyConversion: false),
+            let callContent = CallEventContent(from: payload)
+        else {
+            return false
         }
-    }
 
+        return callContent.isRejected
+    }
+}
+
+private extension AVSIdentifier {
+    func toQualifiedId() -> QualifiedID {
+        QualifiedID(uuid: identifier, domain: domain ?? BackendInfo.domain ?? "")
+    }
 }

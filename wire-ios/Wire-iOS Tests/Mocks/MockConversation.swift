@@ -84,6 +84,9 @@ final class MockGroupDetailsConversation: SwiftMockConversation, GroupDetailsCon
     var syncedMessageDestructionTimeout: TimeInterval = 0
 
     var messageProtocol: MessageProtocol = .proteus
+
+    var mlsGroupID: WireDataModel.MLSGroupID?
+
 }
 
 final class MockInputBarConversationType: SwiftMockConversation, InputBarConversation, TypingStatusProvider {

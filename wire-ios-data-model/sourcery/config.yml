@@ -6,5 +6,5 @@ output:
   ./generated
 args:
   autoMockableTestableImports: ["WireDataModel"]
-  autoMockableImports: ["LocalAuthentication"]
+  autoMockableImports: ["LocalAuthentication", "Combine"]
  

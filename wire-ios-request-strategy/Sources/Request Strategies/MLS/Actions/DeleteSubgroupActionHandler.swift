@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2023 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,56 +17,71 @@
 //
 
 import Foundation
-import WireTransport
 import WireDataModel
 
-class FetchPublicGroupStateActionHandler: ActionHandler<FetchPublicGroupStateAction> {
+final class DeleteSubgroupActionHandler: ActionHandler<DeleteSubgroupAction> {
 
-    // MARK: - Methods
+    // MARK: - Request
 
-    override func request(for action: FetchPublicGroupStateAction, apiVersion: APIVersion) -> ZMTransportRequest? {
+    override func request(
+        for action: Action,
+        apiVersion: APIVersion
+    ) -> ZMTransportRequest? {
         var action = action
 
-        guard apiVersion >= .v5 else {
+        guard apiVersion >= .v4 else {
             action.fail(with: .endpointUnavailable)
             return nil
         }
 
+        let domain = action.domain
+        let conversationID = action.conversationID.transportString()
+        let subgroupType = action.subgroupType.rawValue
+
         guard
-            !action.domain.isEmpty,
-            !action.conversationId.uuidString.isEmpty
+            !domain.isEmpty,
+            !conversationID.isEmpty,
+            !subgroupType.isEmpty
         else {
-            action.fail(with: .emptyParameters)
+            action.fail(with: .invalidParameters)
             return nil
         }
 
         return ZMTransportRequest(
-            path: "/conversations/\(action.domain)/\(action.conversationId.transportString())/groupinfo",
-            method: .methodGET,
+            path: "/conversations/\(domain)/\(conversationID)/subconversations/\(subgroupType)",
+            method: .methodDELETE,
             payload: nil,
             apiVersion: apiVersion.rawValue
         )
     }
 
-    override func handleResponse(_ response: ZMTransportResponse, action: FetchPublicGroupStateAction) {
+    // MARK: - Response
+
+    override func handleResponse(
+        _ response: ZMTransportResponse,
+        action: Action
+    ) {
         var action = action
 
         switch (response.httpStatus, response.payloadLabel()) {
         case (200, _):
-            guard
-                let data = response.rawData,
-                let payload = try? JSONDecoder().decode(ResponsePayload.self, from: data)
-            else {
-                action.fail(with: .malformedResponse)
-                return
-            }
-            action.succeed(with: payload.groupState)
-        case (404, "mls-missing-group-info"):
-            action.fail(with: .missingGroupInfo)
+            action.succeed()
+
+        case (400, "mls-not-enabled"):
+            action.fail(with: .mlsNotEnabled)
+
+        case (400, _):
+            action.fail(with: .invalidParameters)
+
+        case (403, "access-denied"):
+            action.fail(with: .accessDenied)
+
         case (404, "no-conversation"):
             action.fail(with: .noConversation)
-        case (404, _):
-            action.fail(with: .conversationIdOrDomainNotFound)
+
+        case (409, "mls-stale-message"):
+            action.fail(with: .mlsStaleMessage)
+
         default:
             let errorInfo = response.errorInfo
             action.fail(with: .unknown(
@@ -76,13 +91,5 @@ class FetchPublicGroupStateActionHandler: ActionHandler<FetchPublicGroupStateAct
             ))
         }
     }
-}
 
-extension FetchPublicGroupStateActionHandler {
-
-    // MARK: - Payload
-
-    struct ResponsePayload: Codable {
-        let groupState: Data
-    }
 }

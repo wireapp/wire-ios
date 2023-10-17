@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2023 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,28 +18,38 @@
 
 import Foundation
 
-/// MLS qualified client identifier for initialising Corecrypto
-public struct MLSQualifiedClientID {
+public typealias Byte = UInt8
 
-    // MARK: - Properties
+public extension Data {
 
-    private let user: ZMUser
+    var bytes: [Byte] {
+        return [Byte](self)
+    }
 
-    public var qualifiedClientId: String? {
-        guard
-            let clientId = user.selfClient()?.remoteIdentifier,
-            let userId = user.remoteIdentifier,
-            let domain = user.domain?.selfOrNilIfEmpty ?? BackendInfo.domain
-        else {
-            return nil
+    static func random(byteCount: UInt = 8) -> Data {
+        return Data([Byte].random(length: byteCount))
+    }
+
+}
+
+public extension [Byte] {
+
+    var data: Data {
+        return Data(self)
+    }
+
+    static func random(length: UInt = 8) -> [Byte] {
+        return (0..<length).map { _ in
+            Byte.random()
         }
-
-        return "\(userId.transportString()):\(clientId)@\(domain)".lowercased()
     }
 
-    // MARK: - Methods
+}
 
-    public init(user: ZMUser) {
-        self.user = user
+public extension Byte {
+
+    static func random() -> Byte {
+        return random(in: (.min)...(.max))
     }
+
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2023 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,20 +18,10 @@
 
 import Foundation
 
-typealias Byte = UInt8
+public extension Collection {
 
-extension Data {
-
-    var bytes: [Byte] {
-        return [Byte](self)
-    }
-
-}
-
-extension Sequence where Element == Byte {
-
-    var data: Data {
-        return Data(self)
+    var isNonEmpty: Bool {
+        return !isEmpty
     }
 
 }

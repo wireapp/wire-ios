@@ -21,7 +21,7 @@ import WireTransport
 
 /// An ID representing a identifying a single user client.
 
-public struct MLSClientID: Equatable {
+public struct MLSClientID: Equatable, Hashable {
 
     // MARK: - Properties
 
@@ -31,9 +31,14 @@ public struct MLSClientID: Equatable {
 
     // The string representation of the id.
 
-    public let string: String
+    public let rawValue: String
 
     // MARK: - Life cycle
+
+    public init?(user: ZMUser) {
+        guard let selfClient = user.selfClient() else { return nil }
+        self.init(userClient: selfClient)
+    }
 
     public init?(userClient: UserClient) {
         guard
@@ -61,24 +66,24 @@ public struct MLSClientID: Equatable {
 
     public init?(data: Data) {
         guard let string = String(data: data, encoding: .utf8) else { return nil }
-        self.init(string: string)
+        self.init(rawValue: string)
     }
 
-    public init?(string: String) {
+    public init?(rawValue: String) {
         guard
             let regex = try? NSRegularExpression(pattern: "(.+):(.+)@(.+)", options: []),
-            let result = regex.firstMatch(in: string, options: [], range: NSRange(location: 0, length: string.utf16.count)),
-            let userIDRange = Range(result.range(at: 1), in: string),
-            let clientIDRange = Range(result.range(at: 2), in: string),
-            let domainRange = Range(result.range(at: 3), in: string)
+            let result = regex.firstMatch(in: rawValue, options: [], range: NSRange(location: 0, length: rawValue.utf16.count)),
+            let userIDRange = Range(result.range(at: 1), in: rawValue),
+            let clientIDRange = Range(result.range(at: 2), in: rawValue),
+            let domainRange = Range(result.range(at: 3), in: rawValue)
         else {
             return nil
         }
 
         self.init(
-            userID: String(string[userIDRange]),
-            clientID: String(string[clientIDRange]),
-            domain: String(string[domainRange])
+            userID: String(rawValue[userIDRange]),
+            clientID: String(rawValue[clientIDRange]),
+            domain: String(rawValue[domainRange])
         )
     }
 
@@ -90,7 +95,7 @@ public struct MLSClientID: Equatable {
         self.userID = userID.lowercased()
         self.clientID = clientID.lowercased()
         self.domain = domain.lowercased()
-        self.string = "\(self.userID):\(self.clientID)@\(self.domain)"
+        self.rawValue = "\(self.userID):\(self.clientID)@\(self.domain)"
     }
 
 }
@@ -98,7 +103,19 @@ public struct MLSClientID: Equatable {
 extension MLSClientID: CustomStringConvertible {
 
     public var description: String {
-        return string
+        return rawValue
+    }
+
+}
+
+public extension MLSClientID {
+
+    static func random() -> MLSClientID {
+        return MLSClientID(
+            userID: UUID().transportString(),
+            clientID: .random(length: 8),
+            domain: .randomDomain()
+        )
     }
 
 }

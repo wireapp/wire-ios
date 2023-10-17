@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireRequestStrategy
 
 class DeepLinkURLActionProcessor: URLActionProcessor {
 
@@ -35,11 +36,14 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
     func process(urlAction: URLAction, delegate: PresentationDelegate?) {
         switch urlAction {
         case let .joinConversation(key: key, code: code):
-            ZMConversation.fetchIdAndName(key: key,
-                                          code: code,
-                                          transportSession: transportSession,
-                                          eventProcessor: eventProcessor,
-                                          contextProvider: contextProvider) { [weak self] (response) in
+            ZMConversation.fetchIdAndName(
+                key: key,
+                code: code,
+                transportSession: transportSession,
+                eventProcessor: eventProcessor,
+                contextProvider: contextProvider
+            ) { [weak self] (response) in
+
                 guard let strongSelf = self,
                       let delegate = delegate else {
                     return
@@ -57,21 +61,38 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
                         delegate.completedURLAction(urlAction)
                     } else {
                         delegate.shouldPerformActionWithMessage(conversationName, action: urlAction) { shouldJoin in
+
                             guard shouldJoin else {
                                 delegate.completedURLAction(urlAction)
                                 return
                             }
-                            ZMConversation.join(key: key,
-                                                code: code,
-                                                transportSession: strongSelf.transportSession,
-                                                eventProcessor: strongSelf.eventProcessor,
-                                                contextProvider: strongSelf.contextProvider) { (response) in
+
+                            ZMConversation.join(
+                                key: key,
+                                code: code,
+                                transportSession: strongSelf.transportSession,
+                                eventProcessor: strongSelf.eventProcessor,
+                                contextProvider: strongSelf.contextProvider
+                            ) { [weak self] (response) in
+
+                                guard let strongSelf = self else { return }
+
                                 switch response {
                                 case .success(let conversation):
-                                    delegate.showConversation(conversation, at: nil)
+                                    strongSelf.synchronise(conversation) { result in
+                                        DispatchQueue.main.async {
+                                            switch result {
+                                            case .success(let syncConversation):
+                                                delegate.showConversation(syncConversation, at: nil)
+                                            case .failure(let error):
+                                                delegate.failedToPerformAction(urlAction, error: error)
+                                            }
+                                        }
+                                    }
                                 case .failure(let error):
                                     delegate.failedToPerformAction(urlAction, error: error)
                                 }
+
                                 delegate.completedURLAction(urlAction)
                             }
                         }
@@ -105,6 +126,38 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
 
         default:
             delegate?.completedURLAction(urlAction)
+        }
+    }
+
+    private func synchronise(_ conversation: ZMConversation, completion: @escaping (Result<ZMConversation>) -> Void) {
+        guard let qualifiedID = conversation.qualifiedID else {
+            completion(.success(conversation))
+            return
+        }
+
+        let service = ConversationService(context: contextProvider.syncContext)
+        let viewContext = contextProvider.viewContext
+
+        service.syncConversation(qualifiedID: qualifiedID) {
+            guard let upToDateConversation = ZMConversation.fetch(with: qualifiedID, in: viewContext) else {
+                // proceed showing the group anyway
+                completion(.success(conversation))
+                return
+            }
+
+            guard let groupId = upToDateConversation.mlsGroupID, upToDateConversation.messageProtocol == .mls else {
+                completion(.success(upToDateConversation))
+                return
+            }
+
+            upToDateConversation.joinNewMLSGroup(id: groupId) { error in
+                if let error = error {
+                    WireLogger.mls.debug("failed to join MLS group: \(error)")
+                    completion(.failure(error))
+                } else {
+                    completion(.success(upToDateConversation))
+                }
+            }
         }
     }
 }

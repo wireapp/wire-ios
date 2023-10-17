@@ -90,7 +90,7 @@ class MLSEventProcessor: MLSEventProcessing {
         }
 
         mlsService.registerPendingJoin(groupID)
-        Logging.mls.info("MLS event processor added group (\(groupID)) to be joined")
+        Logging.mls.info("MLS event processor added group (\(groupID.safeForLoggingDescription)) to be joined")
     }
 
     // MARK: - Process welcome message
@@ -113,7 +113,7 @@ class MLSEventProcessor: MLSEventProcessing {
             context.saveOrRollback()
 
             Logging.mls.info(
-                "MLS event processor set mlsStatus to (\(String(describing: conversation.mlsStatus)) for group (\(groupID))"
+                "MLS event processor set mlsStatus to (\(String(describing: conversation.mlsStatus)) for group (\(groupID.safeForLoggingDescription))"
             )
         } catch {
             return Logging.mls.warn("MLS event processor aborting processing welcome message: \(String(describing: error))")
@@ -185,7 +185,7 @@ extension MLSGroupID {
         guard
             let groupID = groupIdString,
             !groupID.isEmpty,
-            let bytes = groupID.base64EncodedBytes
+            let bytes = groupID.base64DecodedBytes
         else {
             return nil
         }

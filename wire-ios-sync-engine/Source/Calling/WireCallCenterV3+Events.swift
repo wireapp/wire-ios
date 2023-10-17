@@ -216,7 +216,8 @@ extension WireCallCenterV3 {
                                            senderUserId: AVSIdentifier,
                                            senderClientId: String,
                                            targets: AVSClientList?,
-                                           data: Data) {
+                                           data: Data,
+                                           overMLSSelfConversation: Bool = false) {
 
         guard isEnabled else { return }
 
@@ -236,7 +237,8 @@ extension WireCallCenterV3 {
                 conversationId: conversationId,
                 targets: targets,
                 data: data,
-                dataLength: data.count
+                dataLength: data.count,
+                overMLSSelfConversation: overMLSSelfConversation
             )
         }
     }
@@ -374,6 +376,29 @@ extension WireCallCenterV3 {
                 }
             } catch {
                 zmLog.safePublic("Cannot decode active speakers change JSON")
+            }
+        }
+    }
+
+    func handleNewEpochRequest(conversationID: AVSIdentifier) {
+        handleEvent("new-epoch-request") {
+            guard
+                let viewContext = self.uiMOC,
+                let syncContext = viewContext.zm_sync,
+                let snapshot = self.callSnapshots[conversationID],
+                let groupIDs = snapshot.groupIDs
+            else {
+                return
+            }
+
+            syncContext.perform {
+                guard let mlsService = syncContext.mlsService else {
+                    return
+                }
+
+                Task {
+                    try await mlsService.generateNewEpoch(groupID: groupIDs.subconversation)
+                }
             }
         }
     }

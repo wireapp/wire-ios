@@ -1,4 +1,4 @@
-//
+////
 // Wire
 // Copyright (C) 2023 Wire Swiss GmbH
 //
@@ -17,32 +17,13 @@
 //
 
 import Foundation
+import WireDataModel
 
-public typealias Bytes = [UInt8]
+extension ZMUserSession {
 
-public extension Bytes {
-
-    var data: Data {
-        return .init(self)
-    }
-
-    var base64EncodedString: String {
-        return data.base64EncodedString()
-    }
-
-    init?(base64Encoded: String) {
-        guard let bytes = Data(base64Encoded: base64Encoded)?.bytes else {
-            return nil
-        }
-        self = bytes
-    }
-
-}
-
-public extension Data {
-
-    var bytes: Bytes {
-        return .init(self)
+    public func setBogusLastEventID() {
+        let uuidV1 = UUID(uuidString: "0747b970-472d-11ee-be56-0242ac120002")
+        lastEventIDRepository.storeLastEventID(uuidV1)
     }
 
 }

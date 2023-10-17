@@ -94,7 +94,10 @@ public class CoreCryptoConfigProvider {
     }
 
     public func clientID(of selfUser: ZMUser) throws -> String {
-        guard let clientID = MLSQualifiedClientID(user: selfUser).qualifiedClientId else {
+        guard
+            let selfClient = selfUser.selfClient(),
+            let clientID = MLSClientID(userClient: selfClient)?.rawValue
+        else {
             throw ConfigurationSetupFailure.failedToGetClientId
         }
 

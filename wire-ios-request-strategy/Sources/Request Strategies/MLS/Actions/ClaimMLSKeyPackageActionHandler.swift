@@ -81,6 +81,7 @@ class ClaimMLSKeyPackageActionHandler: ActionHandler<ClaimMLSKeyPackageAction> {
             action.fail(with: .unknown(status: response.httpStatus))
         }
     }
+
 }
 
 extension ClaimMLSKeyPackageActionHandler {

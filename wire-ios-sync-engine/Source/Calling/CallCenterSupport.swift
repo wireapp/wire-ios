@@ -72,9 +72,16 @@ public protocol WireCallCenterTransport: AnyObject {
     ///     - data: The message payload.
     ///     - conversationId: The conversation in which the message is sent.
     ///     - targets: Exact recipients of the message. If `nil`, all conversation participants are recipients.
+    ///     - overMLSSelfConversation: True if message should be sent to self clients only. Can be ignored for Proteus
     ///     - completionHandler: A handler when the network request completes with http status code.
 
-    func send(data: Data, conversationId: AVSIdentifier, targets: [AVSClient]?, completionHandler: @escaping ((_ status: Int) -> Void))
+    func send(
+        data: Data,
+        conversationId: AVSIdentifier,
+        targets: [AVSClient]?,
+        overMLSSelfConversation: Bool,
+        completionHandler: @escaping ((Int) -> Void)
+    )
 
     /// Send a calling message to the SFT server (for conference calling).
     ///

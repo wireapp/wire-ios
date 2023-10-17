@@ -49,8 +49,7 @@ public class SafeCoreCrypto: SafeCoreCryptoProtocol {
             path: config.path,
             key: config.key,
             clientId: clientID,
-            ciphersuites: [defaultCipherSuite],
-            entropySeed: nil
+            ciphersuites: [defaultCipherSuite.rawValue]
         )
 
         self.init(coreCrypto: coreCrypto, databasePath: config.path)
@@ -61,8 +60,7 @@ public class SafeCoreCrypto: SafeCoreCryptoProtocol {
         let coreCrypto = try CoreCrypto.deferredInit(
             path: path,
             key: key,
-            ciphersuites: [defaultCipherSuite],
-            entropySeed: nil
+            ciphersuites: [defaultCipherSuite.rawValue]
         )
 
         self.init(coreCrypto: coreCrypto, databasePath: path)
@@ -76,7 +74,7 @@ public class SafeCoreCrypto: SafeCoreCryptoProtocol {
         }
 
         try coreCrypto.mlsInit(clientId: clientIdBytes,
-                               ciphersuites: [defaultCipherSuite])
+                               ciphersuites: [defaultCipherSuite.rawValue])
         didInitializeMLS = true
     }
 

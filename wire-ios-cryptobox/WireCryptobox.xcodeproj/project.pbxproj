@@ -94,7 +94,6 @@
 		EE97411D295493B9000C9340 /* WireUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE97411C295493B9000C9340 /* WireUtilities.framework */; };
 		EEA2B85D24DAD1E700C6659E /* AEADEncryption.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEA2B85C24DAD1E700C6659E /* AEADEncryption.swift */; };
 		EEA2B85F24DC26BD00C6659E /* ChaCha20AEADEncryptionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEA2B85E24DC26BD00C6659E /* ChaCha20AEADEncryptionTests.swift */; };
-		EEA2B86124DC3F1600C6659E /* Byte.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEA2B86024DC3F1600C6659E /* Byte.swift */; };
 		EEE25B2229719A240008B894 /* cryptobox.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F6B9296F05BF001D7C88 /* cryptobox.xcframework */; };
 		EEE25B2429719A250008B894 /* Clibsodium.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F6B8296F05BF001D7C88 /* Clibsodium.xcframework */; };
 		EEF6714324E681DE00BDB9B9 /* ChaCha20Poly1305.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEF6714224E681DE00BDB9B9 /* ChaCha20Poly1305.swift */; };
@@ -233,7 +232,6 @@
 		EE97411C295493B9000C9340 /* WireUtilities.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireUtilities.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EEA2B85C24DAD1E700C6659E /* AEADEncryption.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AEADEncryption.swift; sourceTree = "<group>"; };
 		EEA2B85E24DC26BD00C6659E /* ChaCha20AEADEncryptionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChaCha20AEADEncryptionTests.swift; sourceTree = "<group>"; };
-		EEA2B86024DC3F1600C6659E /* Byte.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Byte.swift; sourceTree = "<group>"; };
 		EEF6714224E681DE00BDB9B9 /* ChaCha20Poly1305.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChaCha20Poly1305.swift; sourceTree = "<group>"; };
 		F1E148D0207D06EF00F81833 /* ios-test-target.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "ios-test-target.xcconfig"; sourceTree = "<group>"; };
 		F1E148D1207D06EF00F81833 /* ios-test-host.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "ios-test-host.xcconfig"; sourceTree = "<group>"; };
@@ -438,7 +436,6 @@
 				54060B7C1DB771B400AEA9BB /* Logs.swift */,
 				54EA12231D2A9AA400D2CFD1 /* CryptoBoxError.swift */,
 				EEF6714424E682EA00BDB9B9 /* ChaCha20Poly1305 */,
-				EEA2B86024DC3F1600C6659E /* Byte.swift */,
 				87B43C5820F4AAA00031DE41 /* GenericHash.swift */,
 				0928E36F1BA090A00057232E /* Supporting Files */,
 			);
@@ -742,7 +739,6 @@
 				5421C5F91D2C152C00048251 /* NSData+CBox.swift in Sources */,
 				54EA12241D2A9AA400D2CFD1 /* CryptoBoxError.swift in Sources */,
 				5471A6741D242D740092A9A9 /* PointerWrapper.swift in Sources */,
-				EEA2B86124DC3F1600C6659E /* Byte.swift in Sources */,
 				87B43C5920F4AAA00031DE41 /* GenericHash.swift in Sources */,
 				54C69DDA1D216A6B0060FBEC /* EncryptionContext.swift in Sources */,
 				54060B7D1DB771B400AEA9BB /* Logs.swift in Sources */,

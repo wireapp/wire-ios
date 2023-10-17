@@ -45,7 +45,7 @@ class SendCommitBundleActionHandler: ActionHandler<SendCommitBundleAction> {
             path: "/mls/commit-bundles",
             method: .methodPOST,
             binaryData: action.commitBundle,
-            type: "application/x-protobuf",
+            type: "message/mls",
             contentDisposition: nil,
             shouldCompress: false,
             apiVersion: apiVersion.rawValue

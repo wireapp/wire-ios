@@ -3,7 +3,7 @@ set -e
 
 # 1) Find Carthage
 BASE_FOLDER=`pwd`
-CARTHAGE=`Scripts/find-carthage.py`
+CARTHAGE="../Carthage"
 MESSAGES_PROTO_DIR="${CARTHAGE}/Checkouts/generic-message-proto/proto"
 
 echo "Found carthage folder in ${CARTHAGE}"

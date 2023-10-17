@@ -18,20 +18,25 @@
 
 import Foundation
 
-public struct QualifiedID: Codable, Hashable {
+public struct QualifiedID: Codable, Hashable, CustomDebugStringConvertible {
 
     enum CodingKeys: String, CodingKey {
         case uuid = "id"
         case domain
     }
 
+    public let uuid: UUID
+    public let domain: String
+
     public init(uuid: UUID, domain: String) {
         self.uuid = uuid
         self.domain = domain
     }
 
-    public let uuid: UUID
-    public let domain: String
+    public var debugDescription: String {
+        return "\(uuid)@\(domain)"
+    }
+
 }
 
 public extension ZMUser {
@@ -81,6 +86,17 @@ public extension Collection where Element == ZMConversation {
         let list = compactMap(\.qualifiedID)
 
         return list.count == count ? list : nil
+    }
+
+}
+
+public extension QualifiedID {
+
+    static func random() -> QualifiedID {
+        return QualifiedID(
+            uuid: UUID(),
+            domain: .randomDomain()
+        )
     }
 
 }

@@ -71,11 +71,13 @@ final class StaleMLSKeyDetector: StaleMLSKeyDetectorProtocol {
     func keyingMaterialUpdated(for groupID: MLSGroupID) {
         Logging.mls.info("Tracking key material update date for group (\(groupID))")
 
-        MLSGroup.updateOrCreate(
-            id: groupID,
-            inSyncContext: context
-        ) {
-            $0.lastKeyMaterialUpdate = Date()
+        context.performGroupedBlock {
+            MLSGroup.updateOrCreate(
+                id: groupID,
+                inSyncContext: self.context
+            ) {
+                $0.lastKeyMaterialUpdate = Date()
+            }
         }
     }
 

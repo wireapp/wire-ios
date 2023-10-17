@@ -69,7 +69,7 @@ class FetchBackendMLSPublicKeysActionHandler: ActionHandler<FetchBackendMLSPubli
             }
 
             let ed25519RemovalKey = payload.removal.ed25519
-                .flatMap(\.base64EncodedBytes)
+                .flatMap(\.base64DecodedBytes)
                 .map(\.data)
 
             action.succeed(with: Action.Result(removal: .init(ed25519: ed25519RemovalKey)))

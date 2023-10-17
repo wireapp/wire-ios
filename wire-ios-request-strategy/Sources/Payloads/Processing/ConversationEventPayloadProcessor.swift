@@ -391,11 +391,8 @@ final class ConversationEventPayloadProcessor {
 
         conversation.conversationType = .group
         conversation.remoteIdentifier = conversationID
-        conversation.domain = BackendInfo.isFederationEnabled ? payload.qualifiedID?.domain : nil
-        conversation.needsToBeUpdatedFromBackend = false
         conversation.isPendingMetadataRefresh = false
-        conversation.epoch = UInt64(payload.epoch ?? 0)
-
+        updateAttributes(from: payload, for: conversation, context: context)
         updateMetadata(from: payload, for: conversation, context: context)
         updateMembers(from: payload, for: conversation, context: context)
         updateConversationTimestamps(for: conversation, serverTimestamp: serverTimestamp)
@@ -438,15 +435,38 @@ final class ConversationEventPayloadProcessor {
         )
 
         conversation.conversationType = .`self`
-        conversation.domain = BackendInfo.isFederationEnabled ? payload.qualifiedID?.domain : nil
-        conversation.needsToBeUpdatedFromBackend = false
         conversation.isPendingMetadataRefresh = false
-
+        updateAttributes(from: payload, for: conversation, context: context)
         updateMetadata(from: payload, for: conversation, context: context)
         updateMembers(from: payload, for: conversation, context: context)
         updateConversationTimestamps(for: conversation, serverTimestamp: serverTimestamp)
+        updateMessageProtocol(from: payload, for: conversation)
+
+        if conversation.mlsGroupID != nil {
+            createOrJoinSelfConversation(from: conversation)
+        }
 
         return conversation
+    }
+
+    func createOrJoinSelfConversation(from conversation: ZMConversation) {
+        guard
+            let groupId = conversation.mlsGroupID,
+            let mlsService = conversation.managedObjectContext?.mlsService
+        else {
+            WireLogger.mls.warn("no mlsService to createOrJoinSelfConversation")
+            return
+        }
+
+        WireLogger.mls.debug("createOrJoinSelfConversation for \(groupId.safeForLoggingDescription); conv payload: \(String(describing: self))")
+
+        if conversation.epoch <= 0 {
+            mlsService.createSelfGroup(for: groupId)
+        } else if !mlsService.conversationExists(groupID: groupId) {
+            Task {
+                try await mlsService.joinGroup(with: groupId)
+            }
+        }
     }
 
     @discardableResult
@@ -500,6 +520,17 @@ final class ConversationEventPayloadProcessor {
         conversation.isPendingMetadataRefresh = otherUser.isPendingMetadataRefresh
 
         return conversation
+    }
+
+    private func updateAttributes(
+        from payload: Payload.Conversation,
+        for conversation: ZMConversation,
+        context: NSManagedObjectContext
+    ) {
+        conversation.domain = BackendInfo.isFederationEnabled ? payload.qualifiedID?.domain : nil
+        conversation.needsToBeUpdatedFromBackend = false
+        conversation.epoch = UInt64(payload.epoch ?? 0)
+        conversation.mlsGroupID = payload.mlsGroupID.flatMap { MLSGroupID(base64Encoded: $0) }
     }
 
     func updateMetadata(
@@ -578,8 +609,10 @@ final class ConversationEventPayloadProcessor {
         if let accessModes = payload.access {
             if let accessRoles = payload.accessRoles {
                 conversation.updateAccessStatus(accessModes: accessModes, accessRoles: accessRoles)
-            } else if let accessRole = payload.legacyAccessRole,
-            let legacyAccessRole = ConversationAccessRole(rawValue: accessRole) {
+            } else if 
+                let accessRole = payload.legacyAccessRole,
+                let legacyAccessRole = ConversationAccessRole(rawValue: accessRole) 
+            {
                 let accessRoles = ConversationAccessRoleV2.fromLegacyAccessRole(legacyAccessRole)
                 conversation.updateAccessStatus(accessModes: accessModes, accessRoles: accessRoles.map(\.rawValue))
             }
@@ -622,7 +655,10 @@ final class ConversationEventPayloadProcessor {
         )
 
         if source == .slowSync {
-            mlsEventProcessor.joinMLSGroupWhenReady(forConversation: conversation, context: context)
+            mlsEventProcessor.joinMLSGroupWhenReady(
+                forConversation: conversation,
+                context: context
+            )
         }
     }
 

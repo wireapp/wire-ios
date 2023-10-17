@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2023 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,16 +18,18 @@
 
 import Foundation
 
-extension Bytes {
+public extension String {
 
-    public static func random(in range: ClosedRange<UInt8> = 1...10, length: Int = 3) -> Self {
-        var bytes = Bytes()
+    static func randomDomain(hostLength: UInt = 5) -> String {
+        return "\(String.random(length: hostLength)).com"
+    }
 
-        for _ in 1...length {
-            bytes.append(UInt8.random(in: range))
+    static func random(length: UInt) -> String {
+        let randomChars = (0..<length).compactMap { _ in
+            "a...z".randomElement()
         }
 
-        return bytes
+        return String(randomChars)
     }
 
 }

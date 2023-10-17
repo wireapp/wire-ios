@@ -212,7 +212,7 @@ final class CreateGroupConversationActionHandler: ActionHandler<CreateGroupConve
             // Self user is creator, so we don't need to process a welcome message
             newConversation.mlsStatus = .ready
 
-            guard let mlsService = context.mlsService else {
+            guard let mlsService = context.zm_sync.mlsService else {
                 Logging.mls.warn("failed to create mls group: mlsService doesn't exist")
                 action.fail(with: .proccessingError)
                 return

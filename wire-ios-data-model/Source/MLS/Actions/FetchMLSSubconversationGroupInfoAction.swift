@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2023 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,10 +18,21 @@
 
 import Foundation
 
-extension String {
+public final class FetchMLSSubconversationGroupInfoAction: BaseFetchMLSGroupInfoAction {
 
-    public var base64EncodedBytes: Bytes? {
-        return Bytes(base64Encoded: self)
+    public var conversationId: UUID
+    public var domain: String
+    public var subgroupType: SubgroupType
+
+    public init(
+        conversationId: UUID,
+        domain: String,
+        subgroupType: SubgroupType,
+        resultHandler: ResultHandler? = nil
+    ) {
+        self.conversationId = conversationId
+        self.domain = domain
+        self.subgroupType = subgroupType
+        super.init(resultHandler: resultHandler)
     }
-
 }

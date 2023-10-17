@@ -37,7 +37,7 @@ class MLSClientIdTests: ZMConversationTestsBase {
 
         // THEN
         let expectedID = "\(userID):\(clientID)@\(domain)"
-        XCTAssertEqual(sut.string, expectedID)
+        XCTAssertEqual(sut.rawValue, expectedID)
     }
 
 }

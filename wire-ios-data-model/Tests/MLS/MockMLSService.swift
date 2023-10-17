@@ -18,6 +18,7 @@
 
 import Foundation
 import WireDataModel
+import Combine
 
 class MockMLSService: MLSServiceInterface {
 
@@ -35,8 +36,8 @@ class MockMLSService: MLSServiceInterface {
         var createGroup = [MLSGroupID]()
         var conversationExists = [MLSGroupID]()
         var processWelcomeMessage = [String]()
-        var enccrypt = [(Bytes, MLSGroupID)]()
-        var decrypt = [(String, MLSGroupID)]()
+        var enccrypt = [([Byte], MLSGroupID)]()
+        var decrypt = [(String, MLSGroupID, SubgroupType?)]()
         var addMembersToConversation = [([MLSUser], MLSGroupID)]()
         var removeMembersFromConversation = [([MLSClientID], MLSGroupID)]()
         var commitPendingProposals: [Void] = []
@@ -45,12 +46,28 @@ class MockMLSService: MLSServiceInterface {
         var registerPendingJoin = [MLSGroupID]()
         var performPendingJoins: [Void] = []
         var wipeGroup = [MLSGroupID]()
+        var generateConferenceInfo = [(MLSGroupID, MLSGroupID)]()
 
     }
 
     // MARK: - Properties
 
     var calls = Calls()
+
+    // MARK: - Conference info
+
+    typealias GenerateConferenceInfoMock = (MLSGroupID, MLSGroupID) throws -> MLSConferenceInfo
+
+    var generateConferenceInfoMock: GenerateConferenceInfoMock?
+
+    func generateConferenceInfo(
+        parentGroupID: MLSGroupID,
+        subconversationGroupID: MLSGroupID
+    ) throws -> MLSConferenceInfo {
+        calls.generateConferenceInfo.append((parentGroupID, subconversationGroupID))
+        guard let mock = generateConferenceInfoMock else { throw MockError.unmockedMethodCalled }
+        return try mock(parentGroupID, subconversationGroupID)
+    }
 
     // MARK: - Key packages
 
@@ -89,11 +106,10 @@ class MockMLSService: MLSServiceInterface {
 
     // MARK: - Encrypt
 
-    typealias EncryptMock = (Bytes, MLSGroupID) throws -> Bytes
-
+    typealias EncryptMock = ([Byte], MLSGroupID) throws -> [Byte]
     var encryptMock: EncryptMock?
 
-    func encrypt(message: Bytes, for groupID: MLSGroupID) throws -> Bytes {
+    func encrypt(message: [Byte], for groupID: MLSGroupID) throws -> [Byte] {
         calls.enccrypt.append((message, groupID))
         guard let mock = encryptMock else { throw MockError.unmockedMethodCalled }
         return try mock(message, groupID)
@@ -101,14 +117,14 @@ class MockMLSService: MLSServiceInterface {
 
     // MARK: - Decrypt
 
-    typealias DecryptMock = (String, MLSGroupID) throws -> MLSDecryptResult?
+    typealias DecryptMock = (String, MLSGroupID, SubgroupType?) throws -> MLSDecryptResult?
 
     var decryptMock: DecryptMock?
 
-    func decrypt(message: String, for groupID: MLSGroupID) throws -> MLSDecryptResult? {
-        calls.decrypt.append((message, groupID))
+    func decrypt(message: String, for groupID: MLSGroupID, subconversationType: SubgroupType?) throws -> MLSDecryptResult? {
+        calls.decrypt.append((message, groupID, subconversationType))
         guard let mock = decryptMock else { throw MockError.unmockedMethodCalled }
-        return try mock(message, groupID)
+        return try mock(message, groupID, subconversationType)
     }
 
     // MARK: - Add members
@@ -157,6 +173,78 @@ class MockMLSService: MLSServiceInterface {
 
     func scheduleCommitPendingProposals(groupID: MLSGroupID, at commitDate: Date) {
         calls.scheduleCommitPendingProposals.append((groupID, commitDate))
+    }
+
+    func createOrJoinSubgroup(
+        parentQualifiedID: QualifiedID,
+        parentID: MLSGroupID
+    ) async throws -> MLSGroupID {
+        fatalError("not implemented")
+    }
+
+    func onConferenceInfoChange(parentGroupID: MLSGroupID, subConversationGroupID: MLSGroupID) -> AnyPublisher<MLSConferenceInfo, Never> {
+        fatalError("not implemented")
+    }
+
+    func onEpochChanged() -> AnyPublisher<MLSGroupID, Never> {
+        fatalError("not implemented")
+    }
+
+    // MARK: - Self Group
+
+    func createSelfGroup(for groupID: MLSGroupID) {
+        fatalError("not implemented")
+    }
+
+    func joinGroup(with groupID: MLSGroupID) async throws {
+        fatalError("not implemented")
+    }
+
+    func joinNewGroup(with groupID: MLSGroupID) async throws {
+        fatalError("not implemented")
+    }
+
+    // MARK: - Subconversation
+
+    func leaveSubconversation(
+        parentQualifiedID: QualifiedID,
+        parentGroupID: MLSGroupID,
+        subconversationType: SubgroupType
+    ) async throws {
+        fatalError("not implemented")
+    }
+
+    func leaveSubconversationIfNeeded(
+        parentQualifiedID: QualifiedID,
+        parentGroupID: MLSGroupID,
+        subconversationType: SubgroupType,
+        selfClientID: MLSClientID
+    ) async throws {
+        fatalError("not implemented")
+    }
+
+    // MARK: - New epoch
+
+    func generateNewEpoch(groupID: MLSGroupID) async throws {
+        fatalError("not implemented")
+    }
+
+    // MARK: - Subconversation Members
+
+    func subconversationMembers(for subconversationGroupID: MLSGroupID) throws -> [MLSClientID] {
+        fatalError("not implemented")
+    }
+
+    // MARK: - Out of sync
+
+    typealias RepairOutOfSyncConversationsMock = () -> Void
+    var repairOutOfSyncConversationsMock: RepairOutOfSyncConversationsMock?
+
+    func repairOutOfSyncConversations() {
+        guard let mock = repairOutOfSyncConversationsMock else {
+            return
+        }
+        mock()
     }
 
 }

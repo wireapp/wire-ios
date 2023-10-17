@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2023 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -50,8 +50,7 @@ import SwiftProtobuf
 // incompatible with the version of SwiftProtobuf to which you are linking.
 // Please ensure that you are building against the same version of the API
 // that was used to generate this file.
-// swiftlint:disable all
-private struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAPIVersionCheck {
+fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAPIVersionCheck {
   struct _2: SwiftProtobuf.ProtobufAPIVersion_2 {}
   typealias Version = _2
 }
@@ -173,7 +172,7 @@ public struct GenericMessage {
   /// Clears the value of `messageID`. Subsequent reads from it will return its default value.
   public mutating func clearMessageID() {self._messageID = nil}
 
-  public var content: GenericMessage.OneOf_Content?
+  public var content: GenericMessage.OneOf_Content? = nil
 
   public var text: Text {
     get {
@@ -559,7 +558,7 @@ public struct GenericMessage {
 
   public init() {}
 
-  fileprivate var _messageID: String?
+  fileprivate var _messageID: String? = nil
 }
 
 public struct QualifiedUserId {
@@ -589,8 +588,8 @@ public struct QualifiedUserId {
 
   public init() {}
 
-  fileprivate var _id: String?
-  fileprivate var _domain: String?
+  fileprivate var _id: String? = nil
+  fileprivate var _domain: String? = nil
 }
 
 public struct QualifiedConversationId {
@@ -620,8 +619,8 @@ public struct QualifiedConversationId {
 
   public init() {}
 
-  fileprivate var _id: String?
-  fileprivate var _domain: String?
+  fileprivate var _id: String? = nil
+  fileprivate var _domain: String? = nil
 }
 
 public struct Composite {
@@ -656,7 +655,7 @@ public struct Composite {
     // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
     // methods supported on all messages.
 
-    public var content: Composite.Item.OneOf_Content?
+    public var content: Composite.Item.OneOf_Content? = nil
 
     public var text: Text {
       get {
@@ -721,8 +720,8 @@ public struct Composite {
 
   public init() {}
 
-  fileprivate var _expectsReadConfirmation: Bool?
-  fileprivate var _legalHoldStatus: LegalHoldStatus?
+  fileprivate var _expectsReadConfirmation: Bool? = nil
+  fileprivate var _legalHoldStatus: LegalHoldStatus? = nil
 }
 
 public struct Button {
@@ -752,8 +751,8 @@ public struct Button {
 
   public init() {}
 
-  fileprivate var _text: String?
-  fileprivate var _id: String?
+  fileprivate var _text: String? = nil
+  fileprivate var _id: String? = nil
 }
 
 public struct ButtonAction {
@@ -783,8 +782,8 @@ public struct ButtonAction {
 
   public init() {}
 
-  fileprivate var _buttonID: String?
-  fileprivate var _referenceMessageID: String?
+  fileprivate var _buttonID: String? = nil
+  fileprivate var _referenceMessageID: String? = nil
 }
 
 public struct ButtonActionConfirmation {
@@ -815,8 +814,8 @@ public struct ButtonActionConfirmation {
 
   public init() {}
 
-  fileprivate var _referenceMessageID: String?
-  fileprivate var _buttonID: String?
+  fileprivate var _referenceMessageID: String? = nil
+  fileprivate var _buttonID: String? = nil
 }
 
 public struct Availability {
@@ -869,7 +868,7 @@ public struct Availability {
 
   public init() {}
 
-  fileprivate var _type: Availability.TypeEnum?
+  fileprivate var _type: Availability.TypeEnum? = nil
 }
 
 #if swift(>=4.2)
@@ -894,7 +893,7 @@ public struct Ephemeral {
   /// Clears the value of `expireAfterMillis`. Subsequent reads from it will return its default value.
   public mutating func clearExpireAfterMillis() {self._expireAfterMillis = nil}
 
-  public var content: Ephemeral.OneOf_Content?
+  public var content: Ephemeral.OneOf_Content? = nil
 
   public var text: Text {
     get {
@@ -1009,7 +1008,7 @@ public struct Ephemeral {
 
   public init() {}
 
-  fileprivate var _expireAfterMillis: Int64?
+  fileprivate var _expireAfterMillis: Int64? = nil
 }
 
 public struct Text {
@@ -1065,10 +1064,10 @@ public struct Text {
 
   public init() {}
 
-  fileprivate var _content: String?
-  fileprivate var _quote: Quote?
-  fileprivate var _expectsReadConfirmation: Bool?
-  fileprivate var _legalHoldStatus: LegalHoldStatus?
+  fileprivate var _content: String? = nil
+  fileprivate var _quote: Quote? = nil
+  fileprivate var _expectsReadConfirmation: Bool? = nil
+  fileprivate var _legalHoldStatus: LegalHoldStatus? = nil
 }
 
 public struct Knock {
@@ -1109,9 +1108,9 @@ public struct Knock {
 
   public init() {}
 
-  fileprivate var _hotKnock: Bool?
-  fileprivate var _expectsReadConfirmation: Bool?
-  fileprivate var _legalHoldStatus: LegalHoldStatus?
+  fileprivate var _hotKnock: Bool? = nil
+  fileprivate var _expectsReadConfirmation: Bool? = nil
+  fileprivate var _legalHoldStatus: LegalHoldStatus? = nil
 }
 
 public struct LinkPreview {
@@ -1138,7 +1137,7 @@ public struct LinkPreview {
   /// Clears the value of `urlOffset`. Subsequent reads from it will return its default value.
   public mutating func clearURLOffset() {self._urlOffset = nil}
 
-  public var preview: LinkPreview.OneOf_Preview?
+  public var preview: LinkPreview.OneOf_Preview? = nil
 
   /// deprecated - use meta_data
   public var article: Article {
@@ -1185,7 +1184,7 @@ public struct LinkPreview {
   /// Clears the value of `image`. Subsequent reads from it will return its default value.
   public mutating func clearImage() {self._image = nil}
 
-  public var metaData: LinkPreview.OneOf_MetaData?
+  public var metaData: LinkPreview.OneOf_MetaData? = nil
 
   public var tweet: Tweet {
     get {
@@ -1241,12 +1240,12 @@ public struct LinkPreview {
 
   public init() {}
 
-  fileprivate var _url: String?
-  fileprivate var _urlOffset: Int32?
-  fileprivate var _permanentURL: String?
-  fileprivate var _title: String?
-  fileprivate var _summary: String?
-  fileprivate var _image: Asset?
+  fileprivate var _url: String? = nil
+  fileprivate var _urlOffset: Int32? = nil
+  fileprivate var _permanentURL: String? = nil
+  fileprivate var _title: String? = nil
+  fileprivate var _summary: String? = nil
+  fileprivate var _image: Asset? = nil
 }
 
 public struct Tweet {
@@ -1276,8 +1275,8 @@ public struct Tweet {
 
   public init() {}
 
-  fileprivate var _author: String?
-  fileprivate var _username: String?
+  fileprivate var _author: String? = nil
+  fileprivate var _username: String? = nil
 }
 
 /// deprecated - use the additional fields in LinkPreview
@@ -1326,10 +1325,10 @@ public struct Article {
 
   public init() {}
 
-  fileprivate var _permanentURL: String?
-  fileprivate var _title: String?
-  fileprivate var _summary: String?
-  fileprivate var _image: Asset?
+  fileprivate var _permanentURL: String? = nil
+  fileprivate var _title: String? = nil
+  fileprivate var _summary: String? = nil
+  fileprivate var _image: Asset? = nil
 }
 
 public struct Mention {
@@ -1356,7 +1355,7 @@ public struct Mention {
   /// Clears the value of `length`. Subsequent reads from it will return its default value.
   public mutating func clearLength() {self._length = nil}
 
-  public var mentionType: Mention.OneOf_MentionType?
+  public var mentionType: Mention.OneOf_MentionType? = nil
 
   /// deprecated. Should be set such that old clients always fail when looking
   /// up the user. Ideally, this should not be a problem, as a non-federation
@@ -1404,9 +1403,9 @@ public struct Mention {
 
   public init() {}
 
-  fileprivate var _start: Int32?
-  fileprivate var _length: Int32?
-  fileprivate var _qualifiedUserID: QualifiedUserId?
+  fileprivate var _start: Int32? = nil
+  fileprivate var _length: Int32? = nil
+  fileprivate var _qualifiedUserID: QualifiedUserId? = nil
 }
 
 public struct LastRead {
@@ -1448,9 +1447,9 @@ public struct LastRead {
 
   public init() {}
 
-  fileprivate var _conversationID: String?
-  fileprivate var _lastReadTimestamp: Int64?
-  fileprivate var _qualifiedConversationID: QualifiedConversationId?
+  fileprivate var _conversationID: String? = nil
+  fileprivate var _lastReadTimestamp: Int64? = nil
+  fileprivate var _qualifiedConversationID: QualifiedConversationId? = nil
 }
 
 public struct Cleared {
@@ -1492,9 +1491,9 @@ public struct Cleared {
 
   public init() {}
 
-  fileprivate var _conversationID: String?
-  fileprivate var _clearedTimestamp: Int64?
-  fileprivate var _qualifiedConversationID: QualifiedConversationId?
+  fileprivate var _conversationID: String? = nil
+  fileprivate var _clearedTimestamp: Int64? = nil
+  fileprivate var _qualifiedConversationID: QualifiedConversationId? = nil
 }
 
 public struct MessageHide {
@@ -1536,9 +1535,9 @@ public struct MessageHide {
 
   public init() {}
 
-  fileprivate var _conversationID: String?
-  fileprivate var _messageID: String?
-  fileprivate var _qualifiedConversationID: QualifiedConversationId?
+  fileprivate var _conversationID: String? = nil
+  fileprivate var _messageID: String? = nil
+  fileprivate var _qualifiedConversationID: QualifiedConversationId? = nil
 }
 
 public struct MessageDelete {
@@ -1559,7 +1558,7 @@ public struct MessageDelete {
 
   public init() {}
 
-  fileprivate var _messageID: String?
+  fileprivate var _messageID: String? = nil
 }
 
 public struct MessageEdit {
@@ -1576,7 +1575,7 @@ public struct MessageEdit {
   /// Clears the value of `replacingMessageID`. Subsequent reads from it will return its default value.
   public mutating func clearReplacingMessageID() {self._replacingMessageID = nil}
 
-  public var content: MessageEdit.OneOf_Content?
+  public var content: MessageEdit.OneOf_Content? = nil
 
   public var text: Text {
     get {
@@ -1640,7 +1639,7 @@ public struct MessageEdit {
 
   public init() {}
 
-  fileprivate var _replacingMessageID: String?
+  fileprivate var _replacingMessageID: String? = nil
 }
 
 public struct Quote {
@@ -1670,8 +1669,8 @@ public struct Quote {
 
   public init() {}
 
-  fileprivate var _quotedMessageID: String?
-  fileprivate var _quotedMessageSha256: Data?
+  fileprivate var _quotedMessageID: String? = nil
+  fileprivate var _quotedMessageSha256: Data? = nil
 }
 
 public struct Confirmation {
@@ -1729,8 +1728,8 @@ public struct Confirmation {
 
   public init() {}
 
-  fileprivate var _type: Confirmation.TypeEnum?
-  fileprivate var _firstMessageID: String?
+  fileprivate var _type: Confirmation.TypeEnum? = nil
+  fileprivate var _firstMessageID: String? = nil
 }
 
 #if swift(>=4.2)
@@ -1808,12 +1807,12 @@ public struct Location {
 
   public init() {}
 
-  fileprivate var _longitude: Float?
-  fileprivate var _latitude: Float?
-  fileprivate var _name: String?
-  fileprivate var _zoom: Int32?
-  fileprivate var _expectsReadConfirmation: Bool?
-  fileprivate var _legalHoldStatus: LegalHoldStatus?
+  fileprivate var _longitude: Float? = nil
+  fileprivate var _latitude: Float? = nil
+  fileprivate var _name: String? = nil
+  fileprivate var _zoom: Int32? = nil
+  fileprivate var _expectsReadConfirmation: Bool? = nil
+  fileprivate var _legalHoldStatus: LegalHoldStatus? = nil
 }
 
 /// deprecated in favour of Asset.Original.ImageMetaData
@@ -1928,17 +1927,17 @@ public struct ImageAsset {
 
   public init() {}
 
-  fileprivate var _tag: String?
-  fileprivate var _width: Int32?
-  fileprivate var _height: Int32?
-  fileprivate var _originalWidth: Int32?
-  fileprivate var _originalHeight: Int32?
-  fileprivate var _mimeType: String?
-  fileprivate var _size: Int32?
-  fileprivate var _otrKey: Data?
-  fileprivate var _macKey: Data?
-  fileprivate var _mac: Data?
-  fileprivate var _sha256: Data?
+  fileprivate var _tag: String? = nil
+  fileprivate var _width: Int32? = nil
+  fileprivate var _height: Int32? = nil
+  fileprivate var _originalWidth: Int32? = nil
+  fileprivate var _originalHeight: Int32? = nil
+  fileprivate var _mimeType: String? = nil
+  fileprivate var _size: Int32? = nil
+  fileprivate var _otrKey: Data? = nil
+  fileprivate var _macKey: Data? = nil
+  fileprivate var _mac: Data? = nil
+  fileprivate var _sha256: Data? = nil
 }
 
 public struct Asset {
@@ -2096,7 +2095,7 @@ public struct Asset {
     /// Clears the value of `name`. Subsequent reads from it will return its default value.
     public mutating func clearName() {self._name = nil}
 
-    public var metaData: Asset.Original.OneOf_MetaData?
+    public var metaData: Asset.Original.OneOf_MetaData? = nil
 
     public var image: Asset.ImageMetaData {
       get {
@@ -2180,11 +2179,11 @@ public struct Asset {
 
     public init() {}
 
-    fileprivate var _mimeType: String?
-    fileprivate var _size: UInt64?
-    fileprivate var _name: String?
-    fileprivate var _source: String?
-    fileprivate var _caption: String?
+    fileprivate var _mimeType: String? = nil
+    fileprivate var _size: UInt64? = nil
+    fileprivate var _name: String? = nil
+    fileprivate var _source: String? = nil
+    fileprivate var _caption: String? = nil
   }
 
   public struct Preview {
@@ -2219,7 +2218,7 @@ public struct Asset {
     /// Clears the value of `remote`. Subsequent reads from it will return its default value.
     public mutating func clearRemote() {self._remote = nil}
 
-    public var metaData: Asset.Preview.OneOf_MetaData?
+    public var metaData: Asset.Preview.OneOf_MetaData? = nil
 
     public var image: Asset.ImageMetaData {
       get {
@@ -2256,9 +2255,9 @@ public struct Asset {
 
     public init() {}
 
-    fileprivate var _mimeType: String?
-    fileprivate var _size: UInt64?
-    fileprivate var _remote: Asset.RemoteData?
+    fileprivate var _mimeType: String? = nil
+    fileprivate var _size: UInt64? = nil
+    fileprivate var _remote: Asset.RemoteData? = nil
   }
 
   public struct ImageMetaData {
@@ -2297,9 +2296,9 @@ public struct Asset {
 
     public init() {}
 
-    fileprivate var _width: Int32?
-    fileprivate var _height: Int32?
-    fileprivate var _tag: String?
+    fileprivate var _width: Int32? = nil
+    fileprivate var _height: Int32? = nil
+    fileprivate var _tag: String? = nil
   }
 
   public struct VideoMetaData {
@@ -2338,9 +2337,9 @@ public struct Asset {
 
     public init() {}
 
-    fileprivate var _width: Int32?
-    fileprivate var _height: Int32?
-    fileprivate var _durationInMillis: UInt64?
+    fileprivate var _width: Int32? = nil
+    fileprivate var _height: Int32? = nil
+    fileprivate var _durationInMillis: UInt64? = nil
   }
 
   public struct AudioMetaData {
@@ -2371,8 +2370,8 @@ public struct Asset {
 
     public init() {}
 
-    fileprivate var _durationInMillis: UInt64?
-    fileprivate var _normalizedLoudness: Data?
+    fileprivate var _durationInMillis: UInt64? = nil
+    fileprivate var _normalizedLoudness: Data? = nil
   }
 
   public struct RemoteData {
@@ -2440,12 +2439,12 @@ public struct Asset {
 
     public init() {}
 
-    fileprivate var _otrKey: Data?
-    fileprivate var _sha256: Data?
-    fileprivate var _assetID: String?
-    fileprivate var _assetToken: String?
-    fileprivate var _assetDomain: String?
-    fileprivate var _encryption: EncryptionAlgorithm?
+    fileprivate var _otrKey: Data? = nil
+    fileprivate var _sha256: Data? = nil
+    fileprivate var _assetID: String? = nil
+    fileprivate var _assetToken: String? = nil
+    fileprivate var _assetDomain: String? = nil
+    fileprivate var _encryption: EncryptionAlgorithm? = nil
   }
 
   public init() {}
@@ -2499,9 +2498,9 @@ public struct External {
 
   public init() {}
 
-  fileprivate var _otrKey: Data?
-  fileprivate var _sha256: Data?
-  fileprivate var _encryption: EncryptionAlgorithm?
+  fileprivate var _otrKey: Data? = nil
+  fileprivate var _sha256: Data? = nil
+  fileprivate var _encryption: EncryptionAlgorithm? = nil
 }
 
 public struct Reaction {
@@ -2542,9 +2541,9 @@ public struct Reaction {
 
   public init() {}
 
-  fileprivate var _emoji: String?
-  fileprivate var _messageID: String?
-  fileprivate var _legalHoldStatus: LegalHoldStatus?
+  fileprivate var _emoji: String? = nil
+  fileprivate var _messageID: String? = nil
+  fileprivate var _legalHoldStatus: LegalHoldStatus? = nil
 }
 
 public struct Calling {
@@ -2561,11 +2560,21 @@ public struct Calling {
   /// Clears the value of `content`. Subsequent reads from it will return its default value.
   public mutating func clearContent() {self._content = nil}
 
+  public var qualifiedConversationID: QualifiedConversationId {
+    get {return _qualifiedConversationID ?? QualifiedConversationId()}
+    set {_qualifiedConversationID = newValue}
+  }
+  /// Returns true if `qualifiedConversationID` has been explicitly set.
+  public var hasQualifiedConversationID: Bool {return self._qualifiedConversationID != nil}
+  /// Clears the value of `qualifiedConversationID`. Subsequent reads from it will return its default value.
+  public mutating func clearQualifiedConversationID() {self._qualifiedConversationID = nil}
+
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
 
-  fileprivate var _content: String?
+  fileprivate var _content: String? = nil
+  fileprivate var _qualifiedConversationID: QualifiedConversationId? = nil
 }
 
 public struct DataTransfer {
@@ -2586,7 +2595,7 @@ public struct DataTransfer {
 
   public init() {}
 
-  fileprivate var _trackingIdentifier: TrackingIdentifier?
+  fileprivate var _trackingIdentifier: TrackingIdentifier? = nil
 }
 
 public struct TrackingIdentifier {
@@ -2607,7 +2616,7 @@ public struct TrackingIdentifier {
 
   public init() {}
 
-  fileprivate var _identifier: String?
+  fileprivate var _identifier: String? = nil
 }
 
 #if swift(>=5.5) && canImport(_Concurrency)
@@ -2670,14 +2679,14 @@ extension TrackingIdentifier: @unchecked Sendable {}
 
 extension ClientAction: SwiftProtobuf._ProtoNameProviding {
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    0: .same(proto: "RESET_SESSION")
+    0: .same(proto: "RESET_SESSION"),
   ]
 }
 
 extension EncryptionAlgorithm: SwiftProtobuf._ProtoNameProviding {
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     0: .same(proto: "AES_CBC"),
-    1: .same(proto: "AES_GCM")
+    1: .same(proto: "AES_GCM"),
   ]
 }
 
@@ -2685,7 +2694,7 @@ extension LegalHoldStatus: SwiftProtobuf._ProtoNameProviding {
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     0: .same(proto: "UNKNOWN"),
     1: .same(proto: "DISABLED"),
-    2: .same(proto: "ENABLED")
+    2: .same(proto: "ENABLED"),
   ]
 }
 
@@ -2713,7 +2722,7 @@ extension GenericMessage: SwiftProtobuf.Message, SwiftProtobuf._MessageImplement
     20: .same(proto: "composite"),
     21: .same(proto: "buttonAction"),
     22: .same(proto: "buttonActionConfirmation"),
-    23: .same(proto: "dataTransfer")
+    23: .same(proto: "dataTransfer"),
   ]
 
   public var isInitialized: Bool {
@@ -3112,7 +3121,7 @@ extension QualifiedUserId: SwiftProtobuf.Message, SwiftProtobuf._MessageImplemen
   public static let protoMessageName: String = "QualifiedUserId"
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "id"),
-    2: .same(proto: "domain")
+    2: .same(proto: "domain"),
   ]
 
   public var isInitialized: Bool {
@@ -3160,7 +3169,7 @@ extension QualifiedConversationId: SwiftProtobuf.Message, SwiftProtobuf._Message
   public static let protoMessageName: String = "QualifiedConversationId"
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "id"),
-    2: .same(proto: "domain")
+    2: .same(proto: "domain"),
   ]
 
   public var isInitialized: Bool {
@@ -3209,7 +3218,7 @@ extension Composite: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementation
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "items"),
     2: .standard(proto: "expects_read_confirmation"),
-    3: .standard(proto: "legal_hold_status")
+    3: .standard(proto: "legal_hold_status"),
   ]
 
   public var isInitialized: Bool {
@@ -3261,7 +3270,7 @@ extension Composite.Item: SwiftProtobuf.Message, SwiftProtobuf._MessageImplement
   public static let protoMessageName: String = Composite.protoMessageName + ".Item"
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "text"),
-    2: .same(proto: "button")
+    2: .same(proto: "button"),
   ]
 
   public var isInitialized: Bool {
@@ -3336,7 +3345,7 @@ extension Button: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBas
   public static let protoMessageName: String = "Button"
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "text"),
-    2: .same(proto: "id")
+    2: .same(proto: "id"),
   ]
 
   public var isInitialized: Bool {
@@ -3384,7 +3393,7 @@ extension ButtonAction: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementat
   public static let protoMessageName: String = "ButtonAction"
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .standard(proto: "button_id"),
-    2: .standard(proto: "reference_message_id")
+    2: .standard(proto: "reference_message_id"),
   ]
 
   public var isInitialized: Bool {
@@ -3432,7 +3441,7 @@ extension ButtonActionConfirmation: SwiftProtobuf.Message, SwiftProtobuf._Messag
   public static let protoMessageName: String = "ButtonActionConfirmation"
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .standard(proto: "reference_message_id"),
-    2: .standard(proto: "button_id")
+    2: .standard(proto: "button_id"),
   ]
 
   public var isInitialized: Bool {
@@ -3478,7 +3487,7 @@ extension ButtonActionConfirmation: SwiftProtobuf.Message, SwiftProtobuf._Messag
 extension Availability: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   public static let protoMessageName: String = "Availability"
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "type")
+    1: .same(proto: "type"),
   ]
 
   public var isInitialized: Bool {
@@ -3521,7 +3530,7 @@ extension Availability.TypeEnum: SwiftProtobuf._ProtoNameProviding {
     0: .same(proto: "NONE"),
     1: .same(proto: "AVAILABLE"),
     2: .same(proto: "AWAY"),
-    3: .same(proto: "BUSY")
+    3: .same(proto: "BUSY"),
   ]
 }
 
@@ -3533,7 +3542,7 @@ extension Ephemeral: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementation
     3: .same(proto: "image"),
     4: .same(proto: "knock"),
     5: .same(proto: "asset"),
-    6: .same(proto: "location")
+    6: .same(proto: "location"),
   ]
 
   public var isInitialized: Bool {
@@ -3669,7 +3678,7 @@ extension Text: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase,
     4: .same(proto: "mentions"),
     5: .same(proto: "quote"),
     6: .standard(proto: "expects_read_confirmation"),
-    7: .standard(proto: "legal_hold_status")
+    7: .standard(proto: "legal_hold_status"),
   ]
 
   public var isInitialized: Bool {
@@ -3740,7 +3749,7 @@ extension Knock: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .standard(proto: "hot_knock"),
     2: .standard(proto: "expects_read_confirmation"),
-    3: .standard(proto: "legal_hold_status")
+    3: .standard(proto: "legal_hold_status"),
   ]
 
   public var isInitialized: Bool {
@@ -3798,7 +3807,7 @@ extension LinkPreview: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementati
     6: .same(proto: "title"),
     7: .same(proto: "summary"),
     8: .same(proto: "image"),
-    9: .same(proto: "tweet")
+    9: .same(proto: "tweet"),
   ]
 
   public var isInitialized: Bool {
@@ -3902,7 +3911,7 @@ extension Tweet: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase
   public static let protoMessageName: String = "Tweet"
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "author"),
-    2: .same(proto: "username")
+    2: .same(proto: "username"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -3946,7 +3955,7 @@ extension Article: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBa
     1: .standard(proto: "permanent_url"),
     2: .same(proto: "title"),
     3: .same(proto: "summary"),
-    4: .same(proto: "image")
+    4: .same(proto: "image"),
   ]
 
   public var isInitialized: Bool {
@@ -4006,7 +4015,7 @@ extension Mention: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBa
     1: .same(proto: "start"),
     2: .same(proto: "length"),
     3: .standard(proto: "user_id"),
-    4: .standard(proto: "qualified_user_id")
+    4: .standard(proto: "qualified_user_id"),
   ]
 
   public var isInitialized: Bool {
@@ -4073,7 +4082,7 @@ extension LastRead: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationB
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .standard(proto: "conversation_id"),
     2: .standard(proto: "last_read_timestamp"),
-    3: .standard(proto: "qualified_conversation_id")
+    3: .standard(proto: "qualified_conversation_id"),
   ]
 
   public var isInitialized: Bool {
@@ -4128,7 +4137,7 @@ extension Cleared: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBa
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .standard(proto: "conversation_id"),
     2: .standard(proto: "cleared_timestamp"),
-    3: .standard(proto: "qualified_conversation_id")
+    3: .standard(proto: "qualified_conversation_id"),
   ]
 
   public var isInitialized: Bool {
@@ -4183,7 +4192,7 @@ extension MessageHide: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementati
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .standard(proto: "conversation_id"),
     2: .standard(proto: "message_id"),
-    3: .standard(proto: "qualified_conversation_id")
+    3: .standard(proto: "qualified_conversation_id"),
   ]
 
   public var isInitialized: Bool {
@@ -4236,7 +4245,7 @@ extension MessageHide: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementati
 extension MessageDelete: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   public static let protoMessageName: String = "MessageDelete"
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .standard(proto: "message_id")
+    1: .standard(proto: "message_id"),
   ]
 
   public var isInitialized: Bool {
@@ -4279,7 +4288,7 @@ extension MessageEdit: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementati
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .standard(proto: "replacing_message_id"),
     2: .same(proto: "text"),
-    3: .same(proto: "composite")
+    3: .same(proto: "composite"),
   ]
 
   public var isInitialized: Bool {
@@ -4360,7 +4369,7 @@ extension Quote: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase
   public static let protoMessageName: String = "Quote"
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .standard(proto: "quoted_message_id"),
-    2: .standard(proto: "quoted_message_sha256")
+    2: .standard(proto: "quoted_message_sha256"),
   ]
 
   public var isInitialized: Bool {
@@ -4408,7 +4417,7 @@ extension Confirmation: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementat
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     2: .same(proto: "type"),
     1: .standard(proto: "first_message_id"),
-    3: .standard(proto: "more_message_ids")
+    3: .standard(proto: "more_message_ids"),
   ]
 
   public var isInitialized: Bool {
@@ -4460,7 +4469,7 @@ extension Confirmation: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementat
 extension Confirmation.TypeEnum: SwiftProtobuf._ProtoNameProviding {
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     0: .same(proto: "DELIVERED"),
-    1: .same(proto: "READ")
+    1: .same(proto: "READ"),
   ]
 }
 
@@ -4472,7 +4481,7 @@ extension Location: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationB
     3: .same(proto: "name"),
     4: .same(proto: "zoom"),
     5: .standard(proto: "expects_read_confirmation"),
-    6: .standard(proto: "legal_hold_status")
+    6: .standard(proto: "legal_hold_status"),
   ]
 
   public var isInitialized: Bool {
@@ -4549,7 +4558,7 @@ extension ImageAsset: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementatio
     8: .standard(proto: "otr_key"),
     9: .standard(proto: "mac_key"),
     10: .same(proto: "mac"),
-    11: .same(proto: "sha256")
+    11: .same(proto: "sha256"),
   ]
 
   public var isInitialized: Bool {
@@ -4651,15 +4660,15 @@ extension Asset: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase
     4: .same(proto: "uploaded"),
     5: .same(proto: "preview"),
     6: .standard(proto: "expects_read_confirmation"),
-    7: .standard(proto: "legal_hold_status")
+    7: .standard(proto: "legal_hold_status"),
   ]
 
   fileprivate class _StorageClass {
-    var _original: Asset.Original?
+    var _original: Asset.Original? = nil
     var _status: Asset.OneOf_Status?
-    var _preview: Asset.Preview?
-    var _expectsReadConfirmation: Bool?
-    var _legalHoldStatus: LegalHoldStatus?
+    var _preview: Asset.Preview? = nil
+    var _expectsReadConfirmation: Bool? = nil
+    var _legalHoldStatus: LegalHoldStatus? = nil
 
     static let defaultInstance = _StorageClass()
 
@@ -4784,7 +4793,7 @@ extension Asset: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase
 extension Asset.NotUploaded: SwiftProtobuf._ProtoNameProviding {
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     0: .same(proto: "CANCELLED"),
-    1: .same(proto: "FAILED")
+    1: .same(proto: "FAILED"),
   ]
 }
 
@@ -4798,7 +4807,7 @@ extension Asset.Original: SwiftProtobuf.Message, SwiftProtobuf._MessageImplement
     5: .same(proto: "video"),
     6: .same(proto: "audio"),
     7: .same(proto: "source"),
-    8: .same(proto: "caption")
+    8: .same(proto: "caption"),
   ]
 
   public var isInitialized: Bool {
@@ -4919,7 +4928,7 @@ extension Asset.Preview: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementa
     1: .standard(proto: "mime_type"),
     2: .same(proto: "size"),
     3: .same(proto: "remote"),
-    4: .same(proto: "image")
+    4: .same(proto: "image"),
   ]
 
   public var isInitialized: Bool {
@@ -4992,7 +5001,7 @@ extension Asset.ImageMetaData: SwiftProtobuf.Message, SwiftProtobuf._MessageImpl
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "width"),
     2: .same(proto: "height"),
-    3: .same(proto: "tag")
+    3: .same(proto: "tag"),
   ]
 
   public var isInitialized: Bool {
@@ -5046,7 +5055,7 @@ extension Asset.VideoMetaData: SwiftProtobuf.Message, SwiftProtobuf._MessageImpl
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "width"),
     2: .same(proto: "height"),
-    3: .standard(proto: "duration_in_millis")
+    3: .standard(proto: "duration_in_millis"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -5093,7 +5102,7 @@ extension Asset.AudioMetaData: SwiftProtobuf.Message, SwiftProtobuf._MessageImpl
   public static let protoMessageName: String = Asset.protoMessageName + ".AudioMetaData"
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .standard(proto: "duration_in_millis"),
-    3: .standard(proto: "normalized_loudness")
+    3: .standard(proto: "normalized_loudness"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -5139,7 +5148,7 @@ extension Asset.RemoteData: SwiftProtobuf.Message, SwiftProtobuf._MessageImpleme
     3: .standard(proto: "asset_id"),
     5: .standard(proto: "asset_token"),
     7: .standard(proto: "asset_domain"),
-    6: .same(proto: "encryption")
+    6: .same(proto: "encryption"),
   ]
 
   public var isInitialized: Bool {
@@ -5208,7 +5217,7 @@ extension External: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationB
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .standard(proto: "otr_key"),
     2: .same(proto: "sha256"),
-    3: .same(proto: "encryption")
+    3: .same(proto: "encryption"),
   ]
 
   public var isInitialized: Bool {
@@ -5261,7 +5270,7 @@ extension Reaction: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationB
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "emoji"),
     2: .standard(proto: "message_id"),
-    3: .standard(proto: "legal_hold_status")
+    3: .standard(proto: "legal_hold_status"),
   ]
 
   public var isInitialized: Bool {
@@ -5312,11 +5321,13 @@ extension Reaction: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationB
 extension Calling: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   public static let protoMessageName: String = "Calling"
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "content")
+    1: .same(proto: "content"),
+    2: .standard(proto: "qualified_conversation_id"),
   ]
 
   public var isInitialized: Bool {
     if self._content == nil {return false}
+    if let v = self._qualifiedConversationID, !v.isInitialized {return false}
     return true
   }
 
@@ -5327,6 +5338,7 @@ extension Calling: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBa
       // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
       case 1: try { try decoder.decodeSingularStringField(value: &self._content) }()
+      case 2: try { try decoder.decodeSingularMessageField(value: &self._qualifiedConversationID) }()
       default: break
       }
     }
@@ -5340,11 +5352,15 @@ extension Calling: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBa
     try { if let v = self._content {
       try visitor.visitSingularStringField(value: v, fieldNumber: 1)
     } }()
+    try { if let v = self._qualifiedConversationID {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
+    } }()
     try unknownFields.traverse(visitor: &visitor)
   }
 
   public static func ==(lhs: Calling, rhs: Calling) -> Bool {
     if lhs._content != rhs._content {return false}
+    if lhs._qualifiedConversationID != rhs._qualifiedConversationID {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
@@ -5353,7 +5369,7 @@ extension Calling: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBa
 extension DataTransfer: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   public static let protoMessageName: String = "DataTransfer"
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "trackingIdentifier")
+    1: .same(proto: "trackingIdentifier"),
   ]
 
   public var isInitialized: Bool {
@@ -5394,7 +5410,7 @@ extension DataTransfer: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementat
 extension TrackingIdentifier: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   public static let protoMessageName: String = "TrackingIdentifier"
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "identifier")
+    1: .same(proto: "identifier"),
   ]
 
   public var isInitialized: Bool {

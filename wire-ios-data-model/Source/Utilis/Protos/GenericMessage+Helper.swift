@@ -527,9 +527,13 @@ extension LastRead {
 // MARK: - Calling
 
 extension Calling {
-    public init(content: String) {
+    public init(content: String, conversationId: QualifiedID) {
         self = Calling.with {
             $0.content = content
+            $0.qualifiedConversationID = QualifiedConversationId.with {
+                $0.domain = conversationId.domain
+                $0.id = conversationId.uuid.transportString()
+            }
         }
     }
 }

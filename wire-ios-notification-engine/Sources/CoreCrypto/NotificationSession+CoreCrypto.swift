@@ -49,8 +49,8 @@ extension NotificationSession {
                     syncContext.proteusService = ProteusService(coreCrypto: safeCoreCrypto)
                 }
 
-                if DeveloperFlag.enableMLSSupport.isOn, syncContext.mlsService == nil {
-                    syncContext.mlsService = MLSDecryptionService(
+                if DeveloperFlag.enableMLSSupport.isOn, syncContext.mlsDecryptionService == nil {
+                    syncContext.mlsDecryptionService = MLSDecryptionService(
                         context: syncContext,
                         coreCrypto: safeCoreCrypto
                     )
@@ -72,7 +72,7 @@ extension NotificationSession {
     }
 
     private var shouldSetupMLSService: Bool {
-        return DeveloperFlag.enableMLSSupport.isOn && (BackendInfo.apiVersion ?? .v0) >= .v2
+        return DeveloperFlag.enableMLSSupport.isOn && (BackendInfo.apiVersion ?? .v0) >= .v5
     }
 
 }

@@ -28,6 +28,8 @@ extension ZMConversation {
 
     }
 
+    // MARK: - Sync upstream
+
     /// Append a `LastRead` message derived from a given conversation to the self conversation.
     ///
     /// - Parameters:
@@ -47,15 +49,16 @@ extension ZMConversation {
         }
 
         guard
-            let moc = conversation.managedObjectContext,
+            let context = conversation.managedObjectContext,
             let conversationID = conversation.qualifiedID,
-            conversationID.uuid != ZMConversation.selfConversationIdentifier(in: moc)
+            conversationID.uuid != ZMConversation.selfConversationIdentifier(in: context)
         else {
             throw UpdateSelfConversationError.invalidConversation
         }
+
         let lastRead = LastRead(conversationID: conversationID, lastReadTimestamp: lastReadTimeStamp)
-        let message = GenericMessage(content: lastRead, nonce: .init())
-        return try appendMessageToSelfConversation(message, in: moc)
+        let messages = try sendMessageToSelfClients(lastRead, in: context)
+        return messages.proteus
     }
 
     /// Append a `Cleared` message derived from a given conversation to the self conversation.
@@ -77,54 +80,102 @@ extension ZMConversation {
         }
 
         guard
-            let moc = conversation.managedObjectContext,
+            let context = conversation.managedObjectContext,
             let convId = conversation.remoteIdentifier,
-            convId != ZMConversation.selfConversationIdentifier(in: moc)
+            convId != ZMConversation.selfConversationIdentifier(in: context)
         else {
             throw UpdateSelfConversationError.invalidConversation
         }
 
         let cleared = Cleared(timestamp: clearedTimestamp, conversationID: convId)
-        let message = GenericMessage(content: cleared, nonce: UUID())
-        return try appendMessageToSelfConversation(message, in: moc)
+        let messages = try sendMessageToSelfClients(cleared, in: context)
+        return messages.proteus
     }
 
-    /// Append a generic message to the self conversation.
-    ///
-    /// - Parameters:
-    ///     - message: The generic message to append.
-    ///     - moc: The managed object context in which the self conversatino should be fetched.
-    ///
-    /// - Throws:
-    ///     - `AppendMessageError` if the message couldn't be appended.
-    ///
-    /// - Returns:
-    ///     The appended message.
+    @discardableResult
+    static func sendMessageToSelfClients(
+        _ content: MessageCapable,
+        in context: NSManagedObjectContext
+    ) throws -> (proteus: ZMClientMessage, mls: ZMClientMessage?) {
+        let proteusMessage = try sendMessageOverProteusSelfConversation(
+            content,
+            in: context
+        )
 
-    public static func appendMessageToSelfConversation(_ message: GenericMessage, in moc: NSManagedObjectContext) throws -> ZMClientMessage {
-        let selfConversation = ZMConversation.selfConversation(in: moc)
+        let mlsMessage = try sendMessageOverMLSSelfConversation(
+            content,
+            in: context
+        )
+
+        return (proteusMessage, mlsMessage)
+    }
+
+    private static func sendMessageOverProteusSelfConversation(
+        _ content: MessageCapable,
+        in context: NSManagedObjectContext
+    ) throws -> ZMClientMessage {
+        let message = GenericMessage(content: content, nonce: UUID())
+        let selfConversation = ZMConversation.selfConversation(in: context)
         return try selfConversation.appendClientMessage(with: message, expires: false, hidden: false)
     }
 
-    static func updateConversation(withLastReadFromSelfConversation lastRead: LastRead, inContext moc: NSManagedObjectContext) {
-        let newTimeStamp = Double(integerLiteral: lastRead.lastReadTimestamp)
-        let timestamp = Date(timeIntervalSince1970: newTimeStamp/1000)
+    private static func sendMessageOverMLSSelfConversation(
+        _ content: MessageCapable,
+        in context: NSManagedObjectContext
+    ) throws -> ZMClientMessage? {
+        guard let selfConversation = ZMConversation.fetchSelfMLSConversation(in: context) else {
+            return nil
+        }
+
+        let message = GenericMessage(content: content, nonce: UUID())
+        return try selfConversation.appendClientMessage(with: message, expires: false, hidden: false)
+    }
+
+    // MARK: - Sync downstream
+
+    static func updateConversation(
+        withLastReadFromSelfConversation lastRead: LastRead,
+        in context: NSManagedObjectContext
+    ) {
         guard let conversationID = UUID(uuidString: lastRead.conversationID) else {
             return
         }
-        let conversation = ZMConversation.fetchOrCreate(with: conversationID, domain: lastRead.qualifiedConversationID.domain, in: moc)
-        conversation.updateLastRead(timestamp, synchronize: false)
+
+        let conversation = ZMConversation.fetchOrCreate(
+            with: conversationID,
+            domain: lastRead.qualifiedConversationID.domain,
+            in: context
+        )
+
+        conversation.updateLastRead(
+            dateFromTimestamp(lastRead.lastReadTimestamp),
+            synchronize: false
+        )
     }
 
-    static func updateConversation(withClearedFromSelfConversation cleared: Cleared, inContext moc: NSManagedObjectContext) {
-        let newTimeStamp = Double(integerLiteral: cleared.clearedTimestamp)
-        let timestamp = Date(timeIntervalSince1970: newTimeStamp/1000)
+    static func updateConversation(
+        withClearedFromSelfConversation cleared: Cleared,
+        in context: NSManagedObjectContext
+    ) {
         guard let conversationID = UUID(uuidString: cleared.conversationID) else {
             return
         }
-        let conversation = ZMConversation.fetchOrCreate(with: conversationID, domain: cleared.qualifiedConversationID.domain, in: moc)
-        conversation.updateCleared(timestamp, synchronize: false)
 
+        let conversation = ZMConversation.fetchOrCreate(
+            with: conversationID,
+            domain: cleared.qualifiedConversationID.domain,
+            in: context
+        )
+
+        conversation.updateCleared(
+            dateFromTimestamp(cleared.clearedTimestamp),
+            synchronize: false
+        )
+    }
+
+    private static func dateFromTimestamp(_ timestamp: Int64) -> Date {
+        let interval = Double(integerLiteral: timestamp) / 1000
+        return Date(timeIntervalSince1970: interval)
     }
 
 }
