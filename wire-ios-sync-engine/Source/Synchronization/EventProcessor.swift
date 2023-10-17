@@ -46,6 +46,9 @@ class EventProcessor: UpdateEventProcessor {
         // that require writes to the database.
         guard !syncContext.isLocked else { return false }
 
+        // Don't process events if this developer flag is on
+        guard !DeveloperFlag.ignoreIncomingEvents.isOn else { return false }
+
         return true
     }
 
@@ -132,7 +135,7 @@ class EventProcessor: UpdateEventProcessor {
                 self.syncContext.saveOrRollback()
                 NotificationInContext(name: .calculateBadgeCount, context: self.syncContext.notificationContext).post()
             }
-        } else {
+        } else if !DeveloperFlag.ignoreIncomingEvents.isOn {
             Logging.eventProcessing.info("Buffering \(updateEvents.count) event(s)")
             updateEvents.forEach({ eventBuffer?.addUpdateEvent($0) })
         }
