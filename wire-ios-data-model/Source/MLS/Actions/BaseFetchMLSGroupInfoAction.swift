@@ -1,4 +1,6 @@
-// Copyright (C) 2022 Wire Swiss GmbH
+//
+// Wire
+// Copyright (C) 2023 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,9 +18,7 @@
 
 import Foundation
 
-public final class FetchPublicGroupStateAction: EntityAction {
-
-    // MARK: - Types
+public class BaseFetchMLSGroupInfoAction: EntityAction {
 
     public typealias Result = Data
 
@@ -30,11 +30,12 @@ public final class FetchPublicGroupStateAction: EntityAction {
         case conversationIdOrDomainNotFound
         case malformedResponse
         case emptyParameters
+        case invalidParameters
+        case mlsNotEnabled
         case unknown(status: Int, label: String, message: String)
 
         public var errorDescription: String? {
             switch self {
-
             case .endpointUnavailable:
                 return "Endpoint unavailable."
             case .noConversation:
@@ -47,27 +48,20 @@ public final class FetchPublicGroupStateAction: EntityAction {
                 return "Malformed response"
             case .emptyParameters:
                 return "Empty parameters."
+            case .invalidParameters:
+                return "Invalid conversation ID or domain"
+            case .mlsNotEnabled:
+                return "MLS is not configured on this backend"
             case let .unknown(status, label, message):
                 return "Unknown error (response status: \(status), label: \(label), message: \(message))"
             }
         }
     }
 
-    // MARK: - Properties
-
     public var resultHandler: ResultHandler?
-    public var conversationId: UUID
-    public var domain: String
 
-    // MARK: - Life cycle
-
-    public init(
-        conversationId: UUID,
-        domain: String,
-        resultHandler: ResultHandler? = nil
-    ) {
-        self.conversationId = conversationId
-        self.domain = domain
+    init(resultHandler: ResultHandler? = nil) {
         self.resultHandler = resultHandler
     }
+
 }

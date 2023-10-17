@@ -80,27 +80,30 @@ extension MLSMessageSync {
                 let conversation = message.conversation,
                 conversation.messageProtocol == .mls
             else {
-                Logging.mls.warn("failed to encrypt message: it doesn't belong to an mls conversation.")
+                WireLogger.mls.error("failed to encrypt message: it doesn't belong to an mls conversation.")
                 return nil
             }
 
             guard let groupID = conversation.mlsGroupID else {
-                Logging.mls.warn("failed to encrypt message: group id is missing.")
+                WireLogger.mls.error("failed to encrypt message: group id is missing.")
                 return nil
             }
 
-            guard let mlsService = context.mlsService else {
-                Logging.mls.warn("failed to encrypt message: mlsService is missing.")
+            guard let encryptionService = context.mlsEncryptionService else {
+                WireLogger.mls.error("failed to encrypt message: mlsEncryptionService is missing.")
                 return nil
             }
 
             do {
                 return try message.encryptForTransport { messageData in
-                    let encryptedBytes = try mlsService.encrypt(message: messageData.bytes, for: groupID)
+                    let encryptedBytes = try encryptionService.encrypt(
+                        message: messageData.bytes,
+                        for: groupID
+                    )
                     return encryptedBytes.data
                 }
             } catch let error {
-                Logging.mls.warn("failed to encrypt message: \(String(describing: error))")
+                WireLogger.mls.error("failed to encrypt message: \(String(describing: error))")
                 return nil
             }
         }

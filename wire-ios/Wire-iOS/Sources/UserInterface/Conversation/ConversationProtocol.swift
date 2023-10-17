@@ -101,6 +101,8 @@ protocol GroupDetailsConversation {
     var syncedMessageDestructionTimeout: TimeInterval { get }
 
     var messageProtocol: MessageProtocol { get }
+
+    var mlsGroupID: MLSGroupID? { get }
 }
 
 typealias GroupDetailsConversationType = GroupDetailsConversation & Conversation
