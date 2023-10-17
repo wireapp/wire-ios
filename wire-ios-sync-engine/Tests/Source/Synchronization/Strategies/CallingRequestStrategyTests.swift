@@ -26,6 +26,7 @@ class CallingRequestStrategyTests: MessagingTest {
     var mockApplicationStatus: MockApplicationStatus!
     var mockRegistrationDelegate: ClientRegistrationDelegate!
     var mockFetchUserClientsUseCase: MockFetchUserClientsUseCase!
+    var mockMessageSync: MockGenericMessageSyncInterface!
 
     override class func setUp() {
         super.setUp()
@@ -39,13 +40,16 @@ class CallingRequestStrategyTests: MessagingTest {
         mockApplicationStatus.mockSynchronizationState = .online
         mockRegistrationDelegate = MockClientRegistrationDelegate()
         mockFetchUserClientsUseCase = MockFetchUserClientsUseCase()
+        mockMessageSync = MockGenericMessageSyncInterface()
+
         sut = CallingRequestStrategy(
             managedObjectContext: syncMOC,
             applicationStatus: mockApplicationStatus,
             clientRegistrationDelegate: mockRegistrationDelegate,
             flowManager: FlowManagerMock(),
             callEventStatus: CallEventStatus(),
-            fetchUserClientsUseCase: mockFetchUserClientsUseCase
+            fetchUserClientsUseCase: mockFetchUserClientsUseCase,
+            messageSync: mockMessageSync
         )
         sut.callCenter = WireCallCenterV3Mock(
             userId: .stub,
@@ -54,6 +58,7 @@ class CallingRequestStrategyTests: MessagingTest {
             flowManager: FlowManagerMock(),
             transport: WireCallCenterTransportMock()
         )
+        setupMockMessageSyncForMLSSuccessfully()
     }
 
     override func tearDown() {
@@ -422,6 +427,15 @@ class CallingRequestStrategyTests: MessagingTest {
     // MARK: - Targeted Calling Messages
 
     func testThatItTargetsCallMessagesIfTargetClientsAreSpecified() {
+
+        sut = CallingRequestStrategy(
+            managedObjectContext: syncMOC,
+            applicationStatus: mockApplicationStatus,
+            clientRegistrationDelegate: mockRegistrationDelegate,
+            flowManager: FlowManagerMock(),
+            callEventStatus: CallEventStatus(),
+            fetchUserClientsUseCase: mockFetchUserClientsUseCase
+        )
         // Given
         let selfClient = createSelfClient()
 
@@ -521,7 +535,11 @@ class CallingRequestStrategyTests: MessagingTest {
 
         syncMOC.saveOrRollback()
 
-        var nextRequest: ZMTransportRequest?
+        var sentMessage: GenericMessageEntity?
+        mockMessageSync.syncCompletion_MockMethod = { message, completion in
+            sentMessage = message
+            completion(.success(()), ZMTransportResponse())
+        }
 
         // When we schedule the message with no targets
         syncMOC.performGroupedBlock {
@@ -529,20 +547,10 @@ class CallingRequestStrategyTests: MessagingTest {
         }
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-
-        syncMOC.performGroupedBlock {
-            nextRequest = self.sut.nextRequest(for: .v0)
-        }
-
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-
-        guard let request = nextRequest else { return XCTFail("Expected next request") }
-
-        // Then we do not tell backend to ignore missing clients
-        XCTAssertEqual(request.path, "/conversations/\(conversation.remoteIdentifier!.transportString())/otr/messages")
+        XCTAssertNotNil(sentMessage)
 
         guard
-            let data = request.binaryData,
+            let data = sentMessage?.encryptForTransport()?.data,
             let otrMessage = try? Proteus_NewOtrMessage(serializedData: data)
         else {
             return XCTFail("Expected OTR message")
@@ -636,10 +644,6 @@ class CallingRequestStrategyTests: MessagingTest {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         guard let request = nextRequest else { return XCTFail("Expected next request") }
-
-        // Then it's an mls request
-        XCTAssertEqual(request.path, "/v5/mls/messages")
-        XCTAssertEqual(request.method, .methodPOST)
     }
 
     // Note: at the moment, all mls messages are sent to every participant in the group.
@@ -708,10 +712,6 @@ class CallingRequestStrategyTests: MessagingTest {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         guard let request = nextRequest else { return XCTFail("Expected next request") }
-
-        // Then it's an mls request
-        XCTAssertEqual(request.path, "/v5/mls/messages")
-        XCTAssertEqual(request.method, .methodPOST)
     }
 
     private func callMessage(withType type: String) -> Data {
@@ -804,17 +804,28 @@ class CallingRequestStrategyTests: MessagingTest {
             }
         }
 
-        XCTAssertTrue(waitForCustomExpectations(withTimeout: 5))
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         syncMOC.performGroupedBlock {
             nextRequest = self.sut.nextRequest(for: .v5)
         }
 
-        // give more time so Task is executed.
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         XCTAssertNotNil(nextRequest)
+    }
+
+    private func setupMockMessageSyncForMLSSuccessfully() {
+        mockMessageSync.syncCompletion_MockMethod = { _, completion in
+            completion(.success(()), ZMTransportResponse())
+        }
+        mockMessageSync.nextRequestFor_MockMethod = { apiVersion in
+            if apiVersion == .v5 {
+                return ZMTransportRequest()
+            }
+            return nil
+        }
     }
 }
 

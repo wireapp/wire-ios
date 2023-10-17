@@ -37,7 +37,7 @@ extension ZMUserSession {
         switch stage {
         case .proteus(let userID) where shouldSetupProteus:
             setupProteus(userID: userID)
-        case .mls where shouldSetupMLS:
+        case .mls where shouldSetupMLSService:
             setupMLS()
         default:
             break
@@ -167,7 +167,7 @@ extension ZMUserSession {
     }
 
     private var shouldSetupCryptoStack: Bool {
-        return shouldSetupProteus || shouldSetupMLS
+        return shouldSetupProteus || shouldSetupMLSService
     }
 
     // MARK: - Proteus
@@ -194,7 +194,7 @@ extension ZMUserSession {
         clientID: String
     ) throws {
         guard
-            shouldSetupMLS,
+            shouldSetupMLSService,
             syncContext.mlsService == nil
         else {
             return
@@ -217,8 +217,8 @@ extension ZMUserSession {
         )
     }
 
-    private var shouldSetupMLS: Bool {
-        return DeveloperFlag.enableMLSSupport.isOn && (BackendInfo.apiVersion ?? .v0) >= .v2
+    private var shouldSetupMLSService: Bool {
+        return DeveloperFlag.enableMLSSupport.isOn && (BackendInfo.apiVersion ?? .v0) >= .v5
     }
 
     private enum MLSServiceSetupFailure: Error {

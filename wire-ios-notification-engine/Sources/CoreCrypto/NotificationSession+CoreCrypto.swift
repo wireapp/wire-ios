@@ -72,7 +72,7 @@ extension NotificationSession {
     }
 
     private var shouldSetupMLSService: Bool {
-        return DeveloperFlag.enableMLSSupport.isOn && (BackendInfo.apiVersion ?? .v0) >= .v2
+        return DeveloperFlag.enableMLSSupport.isOn && (BackendInfo.apiVersion ?? .v0) >= .v5
     }
 
 }

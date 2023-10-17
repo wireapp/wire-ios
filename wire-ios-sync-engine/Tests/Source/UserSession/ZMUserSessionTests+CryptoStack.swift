@@ -31,7 +31,7 @@ class ZMUserSessionTests_CryptoStack: MessagingTest {
         super.setUp()
         proteusFlag.isOn = true
         mlsFlag.isOn = true
-        BackendInfo.apiVersion = .v2
+        BackendInfo.apiVersion = .v5
     }
 
     override func tearDown() {
@@ -130,7 +130,7 @@ class ZMUserSessionTests_CryptoStack: MessagingTest {
         XCTAssertNotNil(syncMOC.mlsDecryptionService)
     }
 
-    func test_CryptoStackSetup_DontSetupMLSIfAPIV2IsNotAvailable() throws {
+    func test_CryptoStackSetup_DontSetupMLSIfAPIV5IsNotAvailable() throws {
         // GIVEN
         proteusFlag.isOn = false
         BackendInfo.apiVersion = .v1

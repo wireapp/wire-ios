@@ -39,7 +39,7 @@ class NotificationSessionTests_CryptoStack: BaseTest {
         super.setUp()
         proteusFlag.isOn = false
         mlsFlag.isOn = false
-        BackendInfo.apiVersion = .v2
+        BackendInfo.apiVersion = .v5
     }
 
     override func tearDown() {
@@ -104,7 +104,7 @@ class NotificationSessionTests_CryptoStack: BaseTest {
         XCTAssertNotNil(context.coreCrypto)
     }
 
-    func test_CryptoStackSetup_DontSetupMLSIfAPIV2IsNotAvailable() throws {
+    func test_CryptoStackSetup_DontSetupMLSIfAPIV5IsNotAvailable() throws {
         // GIVEN
         mlsFlag.isOn = true
         BackendInfo.apiVersion = .v1
