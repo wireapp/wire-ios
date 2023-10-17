@@ -341,10 +341,21 @@ final class ValidatedTextField: AccessoryTextField, TextContainer, Themeable {
 
     @discardableResult
     func isValidInput(usingGuestLinkRuleset: Bool = false) -> Bool {
-        let error = textFieldValidator.validate(text: text, kind: kind, useGuestLinkRuleset: usingGuestLinkRuleset)
-        textFieldValidationDelegate?.validationUpdated(sender: self, error: error)
+        let error = textFieldValidator.validate(
+            text: text,
+            kind: kind,
+            useGuestLinkRuleset: usingGuestLinkRuleset
+        )
+
+        if error != nil {
+            textFieldValidationDelegate?.validationUpdated(sender: self, error: error)
+            updateConfirmButton()
+            return false
+        }
+
+        textFieldValidationDelegate?.validationUpdated(sender: self, error: nil)
         updateConfirmButton()
-        return error == nil
+        return true
     }
 
 }
