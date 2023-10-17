@@ -58,9 +58,7 @@ final class ServerCertificateTrust: NSObject, BackendTrustProvider {
         let policy = SecPolicyCreateBasicX509()
 
         // leaf certificate
-        let certificate: SecCertificate? = SecTrustGetCertificateAtIndex(serverTrust, 0)
-
-        let certificatesCArray = [certificate] as CFArray
+        let certificatesCArray: CFArray = SecTrustCopyCertificateChain(serverTrust) ?? [] as CFArray
         var secTrust: SecTrust?
 
         guard SecTrustCreateWithCertificates(certificatesCArray, policy, &secTrust) == noErr,

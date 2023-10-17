@@ -168,9 +168,7 @@ public class AVSWrapper: AVSWrapperType {
             buffer = Data(count: 0)
         }
 
-        buffer.withUnsafeBytes { (bytes: UnsafePointer<UInt8>) in
-            wcall_sft_resp(handle, error, bytes, buffer.count, context)
-        }
+        buffer.withUnsafeBytes { wcall_sft_resp(handle, error, $0.bindMemory(to: UInt8.self).baseAddress!, buffer.count, context)}
     }
 
     /// Notifies AVS that we received a remote event.

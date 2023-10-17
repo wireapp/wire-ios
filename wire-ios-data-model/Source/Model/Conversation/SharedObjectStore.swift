@@ -136,7 +136,7 @@ public class SharedObjectStore<T>: NSObject, NSKeyedUnarchiverDelegate {
         do {
             var current = load()
             current.append(object)
-            let archived = NSKeyedArchiver.archivedData(withRootObject: current)
+            let archived = try NSKeyedArchiver.archivedData(withRootObject: current, requiringSecureCoding: true)
             try archived.write(to: url, options: [.atomic, .completeFileProtectionUntilFirstUserAuthentication])
             zmLog.debug("Stored object in shared container at \(url), object: \(object), all objects: \(current)")
             return true

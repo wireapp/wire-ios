@@ -45,9 +45,12 @@ class PasscodeTextField: AccessoryTextField {
 
         iconButton.tintColor = UIColor.Team.textColor
         iconButton.setBackgroundImage(UIImage.singlePixelImage(with: .clear), for: state)
-
-        iconButton.adjustsImageWhenDisabled = false
-
+        iconButton.configurationUpdateHandler = { button in
+            switch button.state {
+            default:
+                button.imageView?.tintAdjustmentMode = .normal
+            }
+        }
         iconButton.accessibilityIdentifier = "passcode_text_field.button.reveal"
         iconButton.accessibilityLabel = "share_extension.unlock.reveal_passcode".localized
         iconButton.isEnabled = true

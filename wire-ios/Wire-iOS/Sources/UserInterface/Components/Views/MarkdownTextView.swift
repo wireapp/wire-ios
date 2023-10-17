@@ -22,6 +22,7 @@ import Down
 import UIKit
 import WireSyncEngine
 import WireCommonComponents
+import UniformTypeIdentifiers
 
 extension Notification.Name {
     static let MarkdownTextViewDidChangeActiveMarkdown = Notification.Name("MarkdownTextViewDidChangeActiveMarkdown")
@@ -147,7 +148,7 @@ final class MarkdownTextView: NextResponderTextView {
         let copiedAttributedText = attributedText.attributedSubstring(from: selectedRange)
         let copiedAttributedTextPlainText = replaceMentionAttachmentsWithPlainText(in: copiedAttributedText)
 
-        UIPasteboard.general.setValue(copiedAttributedTextPlainText, forPasteboardType: kUTTypeUTF8PlainText as String)
+        UIPasteboard.general.setValue(copiedAttributedTextPlainText, forPasteboardType: UTType.plainText.identifier)
 
         replace(selectedTextRange, withText: "")
     }
@@ -156,7 +157,7 @@ final class MarkdownTextView: NextResponderTextView {
         let copiedAttributedText = attributedText.attributedSubstring(from: selectedRange)
         let copiedAttributedTextPlainText = replaceMentionAttachmentsWithPlainText(in: copiedAttributedText)
 
-        UIPasteboard.general.setValue(copiedAttributedTextPlainText, forPasteboardType: kUTTypeUTF8PlainText as String)
+        UIPasteboard.general.setValue(copiedAttributedTextPlainText, forPasteboardType: UTType.plainText.identifier)
     }
 
     public override var selectedTextRange: UITextRange? {

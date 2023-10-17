@@ -28,7 +28,6 @@ extension XCTestCase {
             kSecAttrKeySizeInBits as String: 256
             ] as CFDictionary
         SecKeyGeneratePair(keyattribute, &publicKeySec, &privateKeySec)
-
         return (publicKeySec!, privateKeySec!)
     }
 
