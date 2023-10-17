@@ -49,10 +49,10 @@ class CreateSecureGuestLinkPasswordValidatorHelper {
     func resetPasswordDefaultState(for textFields: [UITextField], for labels: [UILabel]) {
         for textField in textFields {
             textField.applyStyle(.default)
+        }
 
-            for label in labels {
-                label.textColor = defaultTextColor
-            }
+        for label in labels {
+            label.textColor = defaultTextColor
         }
     }
 }
