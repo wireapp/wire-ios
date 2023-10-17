@@ -71,6 +71,8 @@ class OTRMessageEncryptionInputBuilder {
             let userIds_ClientIds = users.compactMapToDictionary(with: { $0.remoteIdentifier }, valueBlock: { $0.clients.map { client in client.clientId } })
 
             let plainText = try genericMessage.serializedData()
+            // TODO: can we already know that we should drop/ rollback the message Data here
+
             return .init(info: userIds_ClientIds,
                          plainData: plainText,
                          proteusSessionId: sessionId,

@@ -103,6 +103,8 @@ class EncryptProteusMessageUseCase {
                     }
                 }
                 try keyStoreError.flatMap { throw $0 }
+
+                // TODO: handle error message is too big or other data rollback here
                 return result
             }
             return Proteus_ClientEntry(withClientId: clientId, data: encryptedData)
