@@ -316,7 +316,7 @@ final class ValidatedTextField: AccessoryTextField, TextContainer, Themeable {
     }
 
     var isValid: Bool {
-        return isValidInput(usingGuestLinkRuleset: true)
+        return isValidInput(ruleSet: .guestLinkRuleSet)
     }
 
     func updateText(_ text: String) {
@@ -340,11 +340,11 @@ final class ValidatedTextField: AccessoryTextField, TextContainer, Themeable {
     }
 
     @discardableResult
-    func isValidInput(usingGuestLinkRuleset: Bool = false) -> Bool {
+    func isValidInput(ruleSet: PasswordValidationRuleSet = .defaultRuleSet) -> Bool {
         let error = textFieldValidator.validate(
             text: text,
             kind: kind,
-            useGuestLinkRuleset: usingGuestLinkRuleset
+            ruleSet: ruleSet
         )
 
         if error != nil {
