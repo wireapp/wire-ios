@@ -119,7 +119,7 @@ final class DeveloperToolsViewModel: ObservableObject {
                 .destination(DestinationItem(title: "Configure flags", makeView: {
                     AnyView(DeveloperFlagsView(viewModel: DeveloperFlagsViewModel()))
                 })),
-                .button(ButtonItem(title: "E2EI: Get id token", action: getAccessToken))
+                .button(ButtonItem(title: "E2EI: Get id token", action: getIdToken))
             ]
         ))
 
@@ -239,11 +239,11 @@ final class DeveloperToolsViewModel: ObservableObject {
         }
     }
 
-    private func getAccessToken() {
+    private func getIdToken() {
         Task {
-            let certificateManager = OAuthAuthentication()
-            let googleAccounts = URL(string: "https://accounts.google.com")
-            let token = try? await certificateManager.getIdToken(from: googleAccounts!)
+            let oauthManager = OAuthAuthentication()
+            let idP = URL(string: "https://accounts.google.com")
+            let token = try? await oauthManager.getIdToken(from: idP!)
             print(token)
         }
     }

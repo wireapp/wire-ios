@@ -24,7 +24,8 @@ import AppAuth
 let logger = WireLogger(tag: "end-to-end-identity")
 
 /// This step provides control over the display name and Wire handle included in the identity token.
-/// The client uses the authorization endpoint and the token endpoint on the identity provider (IdP)  to get the identity token.
+/// The client uses the authorization endpoint
+/// and the token endpoint on the identity provider (IdP) to get the identity token.
 
 public protocol OAuthAuthenticationInterface {
 
