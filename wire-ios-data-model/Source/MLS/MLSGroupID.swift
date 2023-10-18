@@ -33,7 +33,7 @@ public struct MLSGroupID: Equatable, Hashable {
         self.init(data)
     }
 
-    public init(_ bytes: Bytes) {
+    public init(_ bytes: [Byte]) {
         self.init(bytes.data)
     }
 
@@ -52,7 +52,7 @@ public struct MLSGroupID: Equatable, Hashable {
 
     /// The byte array representing the id.
 
-    public var bytes: Bytes {
+    public var bytes: [Byte] {
         return data.bytes
     }
 
@@ -62,6 +62,22 @@ extension MLSGroupID: CustomStringConvertible {
 
     public var description: String {
         return base64EncodedString
+    }
+
+}
+
+extension MLSGroupID: SafeForLoggingStringConvertible {
+
+    public var safeForLoggingDescription: String {
+        data.readableHash
+    }
+
+}
+
+public extension MLSGroupID {
+
+    static func random() -> MLSGroupID {
+        return MLSGroupID(Data.random(byteCount: 32))
     }
 
 }

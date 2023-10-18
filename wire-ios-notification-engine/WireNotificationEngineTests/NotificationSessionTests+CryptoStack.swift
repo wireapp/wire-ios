@@ -39,7 +39,7 @@ class NotificationSessionTests_CryptoStack: BaseTest {
         super.setUp()
         proteusFlag.isOn = false
         mlsFlag.isOn = false
-        BackendInfo.apiVersion = .v2
+        BackendInfo.apiVersion = .v5
     }
 
     override func tearDown() {
@@ -65,6 +65,8 @@ class NotificationSessionTests_CryptoStack: BaseTest {
         let context = coreDataStack.syncContext
 
         XCTAssertNil(context.mlsService)
+        XCTAssertNil(context.mlsEncryptionService)
+        XCTAssertNil(context.mlsDecryptionService)
         XCTAssertNil(context.proteusService)
         XCTAssertNil(context.coreCrypto)
 
@@ -73,6 +75,8 @@ class NotificationSessionTests_CryptoStack: BaseTest {
 
         // THEN
         XCTAssertNil(context.mlsService)
+        XCTAssertNil(context.mlsEncryptionService)
+        XCTAssertNil(context.mlsDecryptionService)
         XCTAssertNotNil(context.proteusService)
         XCTAssertNotNil(context.coreCrypto)
     }
@@ -84,6 +88,8 @@ class NotificationSessionTests_CryptoStack: BaseTest {
         let context = coreDataStack.syncContext
 
         XCTAssertNil(context.mlsService)
+        XCTAssertNil(context.mlsEncryptionService)
+        XCTAssertNil(context.mlsDecryptionService)
         XCTAssertNil(context.proteusService)
         XCTAssertNil(context.coreCrypto)
 
@@ -91,12 +97,14 @@ class NotificationSessionTests_CryptoStack: BaseTest {
         _ = try createNotificationSession()
 
         // THEN
-        XCTAssertNotNil(context.mlsService)
+        XCTAssertNil(context.mlsService)
+        XCTAssertNil(context.mlsEncryptionService)
+        XCTAssertNotNil(context.mlsDecryptionService)
         XCTAssertNil(context.proteusService)
         XCTAssertNotNil(context.coreCrypto)
     }
 
-    func test_CryptoStackSetup_DontSetupMLSIfAPIV2IsNotAvailable() throws {
+    func test_CryptoStackSetup_DontSetupMLSIfAPIV5IsNotAvailable() throws {
         // GIVEN
         mlsFlag.isOn = true
         BackendInfo.apiVersion = .v1
@@ -104,6 +112,8 @@ class NotificationSessionTests_CryptoStack: BaseTest {
         let context = coreDataStack.syncContext
 
         XCTAssertNil(context.mlsService)
+        XCTAssertNil(context.mlsEncryptionService)
+        XCTAssertNil(context.mlsDecryptionService)
         XCTAssertNil(context.proteusService)
         XCTAssertNil(context.coreCrypto)
 
@@ -112,6 +122,8 @@ class NotificationSessionTests_CryptoStack: BaseTest {
 
         // THEN
         XCTAssertNil(context.mlsService)
+        XCTAssertNil(context.mlsEncryptionService)
+        XCTAssertNil(context.mlsDecryptionService)
         XCTAssertNil(context.proteusService)
         XCTAssertNil(context.coreCrypto)
     }
@@ -124,6 +136,8 @@ class NotificationSessionTests_CryptoStack: BaseTest {
         let context = coreDataStack.syncContext
 
         XCTAssertNil(context.mlsService)
+        XCTAssertNil(context.mlsEncryptionService)
+        XCTAssertNil(context.mlsDecryptionService)
         XCTAssertNil(context.proteusService)
         XCTAssertNil(context.coreCrypto)
 
@@ -131,7 +145,9 @@ class NotificationSessionTests_CryptoStack: BaseTest {
         _ = try createNotificationSession()
 
         // THEN
-        XCTAssertNotNil(context.mlsService)
+        XCTAssertNil(context.mlsService)
+        XCTAssertNil(context.mlsEncryptionService)
+        XCTAssertNotNil(context.mlsDecryptionService)
         XCTAssertNotNil(context.proteusService)
         XCTAssertNotNil(context.coreCrypto)
     }
@@ -144,6 +160,8 @@ class NotificationSessionTests_CryptoStack: BaseTest {
         let context = coreDataStack.syncContext
 
         XCTAssertNil(context.mlsService)
+        XCTAssertNil(context.mlsEncryptionService)
+        XCTAssertNil(context.mlsDecryptionService)
         XCTAssertNil(context.proteusService)
         XCTAssertNil(context.coreCrypto)
 
@@ -152,6 +170,8 @@ class NotificationSessionTests_CryptoStack: BaseTest {
 
         // THEN
         XCTAssertNil(context.mlsService)
+        XCTAssertNil(context.mlsEncryptionService)
+        XCTAssertNil(context.mlsDecryptionService)
         XCTAssertNil(context.proteusService)
         XCTAssertNil(context.coreCrypto)
     }

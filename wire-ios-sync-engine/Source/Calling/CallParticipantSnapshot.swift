@@ -36,7 +36,7 @@ class CallParticipantsSnapshot {
         }
     }
 
-    private var participants = [CallParticipant]() {
+    private(set) var participants = [CallParticipant]() {
         didSet {
             updateUserVerifiedMap()
             notifyChange()
