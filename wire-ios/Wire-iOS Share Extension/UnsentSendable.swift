@@ -273,7 +273,7 @@ class UnsentFileSendable: UnsentSendableBase, UnsentSendable {
 
                 // Generating PDF previews can be expensive. To avoid hitting the Share Extension's
                 // memory budget we should avoid to generate previews if the file is a PDF.
-                guard !UTTypeConformsTo(url.UTI() as CFString, kUTTypePDF) else {
+                guard let type = UTType(url.UTI()), type.conforms(to: UTType.pdf) else {
                     self?.metadata = ZMFileMetadata(fileURL: url)
                     completion()
                     return
@@ -318,7 +318,7 @@ class UnsentFileSendable: UnsentSendableBase, UnsentSendable {
     private func convertVideoIfNeeded(UTI: String,
                                       fileURL: URL,
                                       completion: @escaping SendingCompletion) {
-        if UTTypeConformsTo(UTI as CFString, kUTTypeMovie) {
+        if UTType(UTI)?.conforms(to: UTType.movie) ?? false {
             AVURLAsset.convertVideoToUploadFormat(at: fileURL) { (url, _, error) in
                 completion(url, error)
             }
@@ -384,7 +384,7 @@ class UnsentFileSendable: UnsentSendableBase, UnsentSendable {
     }
 
     private func nameForFile(withUTI UTI: String, name: String?) -> String? {
-        if let fileExtension = UTTypeCopyPreferredTagWithClass(UTI as CFString, kUTTagClassFilenameExtension)?.takeRetainedValue() as String? {
+        if let fileExtension = UTType(UTI)?.preferredFilenameExtension {
             return "\(UUID().uuidString).\(fileExtension)"
         }
         return name
