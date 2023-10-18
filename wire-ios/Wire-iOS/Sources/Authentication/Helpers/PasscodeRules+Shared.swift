@@ -30,7 +30,7 @@ extension PasswordRuleSet {
     }()
 
     /// The guestLinkWithPassword rule set.
-    static let guestLinkWithPasswordRuleSet: PasswordRuleSet? = {
+    static let guestLinkPassword: PasswordRuleSet? = {
         guard let fileURL = Bundle.main.url(forResource: "guestLinkWithPassword_rules", withExtension: "json"),
               let fileData = try? Data(contentsOf: fileURL) else {
             return nil

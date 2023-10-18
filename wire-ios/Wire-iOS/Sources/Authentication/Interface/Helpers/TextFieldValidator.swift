@@ -46,7 +46,7 @@ final class TextFieldValidator {
         let currentRuleSet: PasswordRuleSet?
         switch ruleSet {
         case .guestLinkRuleSet:
-            currentRuleSet = PasswordRuleSet.guestLinkWithPasswordRuleSet
+            currentRuleSet = PasswordRuleSet.guestLinkPassword
         case .defaultRuleSet:
             currentRuleSet = PasswordRuleSet.shared
             // add other cases as required
