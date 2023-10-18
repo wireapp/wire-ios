@@ -9,6 +9,7 @@ import AppKit
 #endif
 
 import LocalAuthentication
+import Combine
 
 @testable import WireDataModel
 
@@ -826,6 +827,334 @@ class MockFileManagerInterface: FileManagerInterface {
     }
 
 }
+class MockMLSActionsProviderProtocol: MLSActionsProviderProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - fetchBackendPublicKeys
+
+    var fetchBackendPublicKeysIn_Invocations: [NotificationContext] = []
+    var fetchBackendPublicKeysIn_MockError: Error?
+    var fetchBackendPublicKeysIn_MockMethod: ((NotificationContext) async throws -> BackendMLSPublicKeys)?
+    var fetchBackendPublicKeysIn_MockValue: BackendMLSPublicKeys?
+
+    func fetchBackendPublicKeys(in context: NotificationContext) async throws -> BackendMLSPublicKeys {
+        fetchBackendPublicKeysIn_Invocations.append(context)
+
+        if let error = fetchBackendPublicKeysIn_MockError {
+            throw error
+        }
+
+        if let mock = fetchBackendPublicKeysIn_MockMethod {
+            return try await mock(context)
+        } else if let mock = fetchBackendPublicKeysIn_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchBackendPublicKeysIn`")
+        }
+    }
+
+    // MARK: - countUnclaimedKeyPackages
+
+    var countUnclaimedKeyPackagesClientIDContext_Invocations: [(clientID: String, context: NotificationContext)] = []
+    var countUnclaimedKeyPackagesClientIDContext_MockError: Error?
+    var countUnclaimedKeyPackagesClientIDContext_MockMethod: ((String, NotificationContext) async throws -> Int)?
+    var countUnclaimedKeyPackagesClientIDContext_MockValue: Int?
+
+    func countUnclaimedKeyPackages(clientID: String, context: NotificationContext) async throws -> Int {
+        countUnclaimedKeyPackagesClientIDContext_Invocations.append((clientID: clientID, context: context))
+
+        if let error = countUnclaimedKeyPackagesClientIDContext_MockError {
+            throw error
+        }
+
+        if let mock = countUnclaimedKeyPackagesClientIDContext_MockMethod {
+            return try await mock(clientID, context)
+        } else if let mock = countUnclaimedKeyPackagesClientIDContext_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `countUnclaimedKeyPackagesClientIDContext`")
+        }
+    }
+
+    // MARK: - uploadKeyPackages
+
+    var uploadKeyPackagesClientIDKeyPackagesContext_Invocations: [(clientID: String, keyPackages: [String], context: NotificationContext)] = []
+    var uploadKeyPackagesClientIDKeyPackagesContext_MockError: Error?
+    var uploadKeyPackagesClientIDKeyPackagesContext_MockMethod: ((String, [String], NotificationContext) async throws -> Void)?
+
+    func uploadKeyPackages(clientID: String, keyPackages: [String], context: NotificationContext) async throws {
+        uploadKeyPackagesClientIDKeyPackagesContext_Invocations.append((clientID: clientID, keyPackages: keyPackages, context: context))
+
+        if let error = uploadKeyPackagesClientIDKeyPackagesContext_MockError {
+            throw error
+        }
+
+        guard let mock = uploadKeyPackagesClientIDKeyPackagesContext_MockMethod else {
+            fatalError("no mock for `uploadKeyPackagesClientIDKeyPackagesContext`")
+        }
+
+        try await mock(clientID, keyPackages, context)            
+    }
+
+    // MARK: - claimKeyPackages
+
+    var claimKeyPackagesUserIDDomainExcludedSelfClientIDIn_Invocations: [(userID: UUID, domain: String?, excludedSelfClientID: String?, context: NotificationContext)] = []
+    var claimKeyPackagesUserIDDomainExcludedSelfClientIDIn_MockError: Error?
+    var claimKeyPackagesUserIDDomainExcludedSelfClientIDIn_MockMethod: ((UUID, String?, String?, NotificationContext) async throws -> [KeyPackage])?
+    var claimKeyPackagesUserIDDomainExcludedSelfClientIDIn_MockValue: [KeyPackage]?
+
+    func claimKeyPackages(userID: UUID, domain: String?, excludedSelfClientID: String?, in context: NotificationContext) async throws -> [KeyPackage] {
+        claimKeyPackagesUserIDDomainExcludedSelfClientIDIn_Invocations.append((userID: userID, domain: domain, excludedSelfClientID: excludedSelfClientID, context: context))
+
+        if let error = claimKeyPackagesUserIDDomainExcludedSelfClientIDIn_MockError {
+            throw error
+        }
+
+        if let mock = claimKeyPackagesUserIDDomainExcludedSelfClientIDIn_MockMethod {
+            return try await mock(userID, domain, excludedSelfClientID, context)
+        } else if let mock = claimKeyPackagesUserIDDomainExcludedSelfClientIDIn_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `claimKeyPackagesUserIDDomainExcludedSelfClientIDIn`")
+        }
+    }
+
+    // MARK: - sendMessage
+
+    var sendMessageIn_Invocations: [(message: Data, context: NotificationContext)] = []
+    var sendMessageIn_MockError: Error?
+    var sendMessageIn_MockMethod: ((Data, NotificationContext) async throws -> [ZMUpdateEvent])?
+    var sendMessageIn_MockValue: [ZMUpdateEvent]?
+
+    func sendMessage(_ message: Data, in context: NotificationContext) async throws -> [ZMUpdateEvent] {
+        sendMessageIn_Invocations.append((message: message, context: context))
+
+        if let error = sendMessageIn_MockError {
+            throw error
+        }
+
+        if let mock = sendMessageIn_MockMethod {
+            return try await mock(message, context)
+        } else if let mock = sendMessageIn_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `sendMessageIn`")
+        }
+    }
+
+    // MARK: - sendCommitBundle
+
+    var sendCommitBundleIn_Invocations: [(bundle: Data, context: NotificationContext)] = []
+    var sendCommitBundleIn_MockError: Error?
+    var sendCommitBundleIn_MockMethod: ((Data, NotificationContext) async throws -> [ZMUpdateEvent])?
+    var sendCommitBundleIn_MockValue: [ZMUpdateEvent]?
+
+    func sendCommitBundle(_ bundle: Data, in context: NotificationContext) async throws -> [ZMUpdateEvent] {
+        sendCommitBundleIn_Invocations.append((bundle: bundle, context: context))
+
+        if let error = sendCommitBundleIn_MockError {
+            throw error
+        }
+
+        if let mock = sendCommitBundleIn_MockMethod {
+            return try await mock(bundle, context)
+        } else if let mock = sendCommitBundleIn_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `sendCommitBundleIn`")
+        }
+    }
+
+    // MARK: - fetchConversationGroupInfo
+
+    var fetchConversationGroupInfoConversationIdDomainSubgroupTypeContext_Invocations: [(conversationId: UUID, domain: String, subgroupType: SubgroupType?, context: NotificationContext)] = []
+    var fetchConversationGroupInfoConversationIdDomainSubgroupTypeContext_MockError: Error?
+    var fetchConversationGroupInfoConversationIdDomainSubgroupTypeContext_MockMethod: ((UUID, String, SubgroupType?, NotificationContext) async throws -> Data)?
+    var fetchConversationGroupInfoConversationIdDomainSubgroupTypeContext_MockValue: Data?
+
+    func fetchConversationGroupInfo(conversationId: UUID, domain: String, subgroupType: SubgroupType?, context: NotificationContext) async throws -> Data {
+        fetchConversationGroupInfoConversationIdDomainSubgroupTypeContext_Invocations.append((conversationId: conversationId, domain: domain, subgroupType: subgroupType, context: context))
+
+        if let error = fetchConversationGroupInfoConversationIdDomainSubgroupTypeContext_MockError {
+            throw error
+        }
+
+        if let mock = fetchConversationGroupInfoConversationIdDomainSubgroupTypeContext_MockMethod {
+            return try await mock(conversationId, domain, subgroupType, context)
+        } else if let mock = fetchConversationGroupInfoConversationIdDomainSubgroupTypeContext_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchConversationGroupInfoConversationIdDomainSubgroupTypeContext`")
+        }
+    }
+
+    // MARK: - fetchSubgroup
+
+    var fetchSubgroupConversationIDDomainTypeContext_Invocations: [(conversationID: UUID, domain: String, type: SubgroupType, context: NotificationContext)] = []
+    var fetchSubgroupConversationIDDomainTypeContext_MockError: Error?
+    var fetchSubgroupConversationIDDomainTypeContext_MockMethod: ((UUID, String, SubgroupType, NotificationContext) async throws -> MLSSubgroup)?
+    var fetchSubgroupConversationIDDomainTypeContext_MockValue: MLSSubgroup?
+
+    func fetchSubgroup(conversationID: UUID, domain: String, type: SubgroupType, context: NotificationContext) async throws -> MLSSubgroup {
+        fetchSubgroupConversationIDDomainTypeContext_Invocations.append((conversationID: conversationID, domain: domain, type: type, context: context))
+
+        if let error = fetchSubgroupConversationIDDomainTypeContext_MockError {
+            throw error
+        }
+
+        if let mock = fetchSubgroupConversationIDDomainTypeContext_MockMethod {
+            return try await mock(conversationID, domain, type, context)
+        } else if let mock = fetchSubgroupConversationIDDomainTypeContext_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchSubgroupConversationIDDomainTypeContext`")
+        }
+    }
+
+    // MARK: - deleteSubgroup
+
+    var deleteSubgroupConversationIDDomainSubgroupTypeContext_Invocations: [(conversationID: UUID, domain: String, subgroupType: SubgroupType, context: NotificationContext)] = []
+    var deleteSubgroupConversationIDDomainSubgroupTypeContext_MockError: Error?
+    var deleteSubgroupConversationIDDomainSubgroupTypeContext_MockMethod: ((UUID, String, SubgroupType, NotificationContext) async throws -> Void)?
+
+    func deleteSubgroup(conversationID: UUID, domain: String, subgroupType: SubgroupType, context: NotificationContext) async throws {
+        deleteSubgroupConversationIDDomainSubgroupTypeContext_Invocations.append((conversationID: conversationID, domain: domain, subgroupType: subgroupType, context: context))
+
+        if let error = deleteSubgroupConversationIDDomainSubgroupTypeContext_MockError {
+            throw error
+        }
+
+        guard let mock = deleteSubgroupConversationIDDomainSubgroupTypeContext_MockMethod else {
+            fatalError("no mock for `deleteSubgroupConversationIDDomainSubgroupTypeContext`")
+        }
+
+        try await mock(conversationID, domain, subgroupType, context)            
+    }
+
+    // MARK: - leaveSubconversation
+
+    var leaveSubconversationConversationIDDomainSubconversationTypeContext_Invocations: [(conversationID: UUID, domain: String, subconversationType: SubgroupType, context: NotificationContext)] = []
+    var leaveSubconversationConversationIDDomainSubconversationTypeContext_MockError: Error?
+    var leaveSubconversationConversationIDDomainSubconversationTypeContext_MockMethod: ((UUID, String, SubgroupType, NotificationContext) async throws -> Void)?
+
+    func leaveSubconversation(conversationID: UUID, domain: String, subconversationType: SubgroupType, context: NotificationContext) async throws {
+        leaveSubconversationConversationIDDomainSubconversationTypeContext_Invocations.append((conversationID: conversationID, domain: domain, subconversationType: subconversationType, context: context))
+
+        if let error = leaveSubconversationConversationIDDomainSubconversationTypeContext_MockError {
+            throw error
+        }
+
+        guard let mock = leaveSubconversationConversationIDDomainSubconversationTypeContext_MockMethod else {
+            fatalError("no mock for `leaveSubconversationConversationIDDomainSubconversationTypeContext`")
+        }
+
+        try await mock(conversationID, domain, subconversationType, context)            
+    }
+
+    // MARK: - syncConversation
+
+    var syncConversationQualifiedIDContext_Invocations: [(qualifiedID: QualifiedID, context: NotificationContext)] = []
+    var syncConversationQualifiedIDContext_MockError: Error?
+    var syncConversationQualifiedIDContext_MockMethod: ((QualifiedID, NotificationContext) async throws -> Void)?
+
+    func syncConversation(qualifiedID: QualifiedID, context: NotificationContext) async throws {
+        syncConversationQualifiedIDContext_Invocations.append((qualifiedID: qualifiedID, context: context))
+
+        if let error = syncConversationQualifiedIDContext_MockError {
+            throw error
+        }
+
+        guard let mock = syncConversationQualifiedIDContext_MockMethod else {
+            fatalError("no mock for `syncConversationQualifiedIDContext`")
+        }
+
+        try await mock(qualifiedID, context)            
+    }
+
+}
+public class MockMLSDecryptionServiceInterface: MLSDecryptionServiceInterface {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - onEpochChanged
+
+    public var onEpochChanged_Invocations: [Void] = []
+    public var onEpochChanged_MockMethod: (() -> AnyPublisher<MLSGroupID, Never>)?
+    public var onEpochChanged_MockValue: AnyPublisher<MLSGroupID, Never>?
+
+    public func onEpochChanged() -> AnyPublisher<MLSGroupID, Never> {
+        onEpochChanged_Invocations.append(())
+
+        if let mock = onEpochChanged_MockMethod {
+            return mock()
+        } else if let mock = onEpochChanged_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `onEpochChanged`")
+        }
+    }
+
+    // MARK: - decrypt
+
+    public var decryptMessageForSubconversationType_Invocations: [(message: String, groupID: MLSGroupID, subconversationType: SubgroupType?)] = []
+    public var decryptMessageForSubconversationType_MockError: Error?
+    public var decryptMessageForSubconversationType_MockMethod: ((String, MLSGroupID, SubgroupType?) throws -> MLSDecryptResult?)?
+    public var decryptMessageForSubconversationType_MockValue: MLSDecryptResult??
+
+    public func decrypt(message: String, for groupID: MLSGroupID, subconversationType: SubgroupType?) throws -> MLSDecryptResult? {
+        decryptMessageForSubconversationType_Invocations.append((message: message, groupID: groupID, subconversationType: subconversationType))
+
+        if let error = decryptMessageForSubconversationType_MockError {
+            throw error
+        }
+
+        if let mock = decryptMessageForSubconversationType_MockMethod {
+            return try mock(message, groupID, subconversationType)
+        } else if let mock = decryptMessageForSubconversationType_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `decryptMessageForSubconversationType`")
+        }
+    }
+
+}
+public class MockMLSEncryptionServiceInterface: MLSEncryptionServiceInterface {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - encrypt
+
+    public var encryptMessageFor_Invocations: [(message: [Byte], groupID: MLSGroupID)] = []
+    public var encryptMessageFor_MockError: Error?
+    public var encryptMessageFor_MockMethod: (([Byte], MLSGroupID) throws -> [Byte])?
+    public var encryptMessageFor_MockValue: [Byte]?
+
+    public func encrypt(message: [Byte], for groupID: MLSGroupID) throws -> [Byte] {
+        encryptMessageFor_Invocations.append((message: message, groupID: groupID))
+
+        if let error = encryptMessageFor_MockError {
+            throw error
+        }
+
+        if let mock = encryptMessageFor_MockMethod {
+            return try mock(message, groupID)
+        } else if let mock = encryptMessageFor_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `encryptMessageFor`")
+        }
+    }
+
+}
 public class MockProteusServiceInterface: ProteusServiceInterface {
 
     // MARK: - Life cycle
@@ -1145,6 +1474,48 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
         }
 
         try mock(url)            
+    }
+
+}
+
+public class MockSubconversationGroupIDRepositoryInterface: SubconversationGroupIDRepositoryInterface {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - storeSubconversationGroupID
+
+    public var storeSubconversationGroupIDForTypeParentGroupID_Invocations: [(groupID: MLSGroupID?, type: SubgroupType, parentGroupID: MLSGroupID)] = []
+    public var storeSubconversationGroupIDForTypeParentGroupID_MockMethod: ((MLSGroupID?, SubgroupType, MLSGroupID) -> Void)?
+
+    public func storeSubconversationGroupID(_ groupID: MLSGroupID?, forType type: SubgroupType, parentGroupID: MLSGroupID) {
+        storeSubconversationGroupIDForTypeParentGroupID_Invocations.append((groupID: groupID, type: type, parentGroupID: parentGroupID))
+
+        guard let mock = storeSubconversationGroupIDForTypeParentGroupID_MockMethod else {
+            fatalError("no mock for `storeSubconversationGroupIDForTypeParentGroupID`")
+        }
+
+        mock(groupID, type, parentGroupID)            
+    }
+
+    // MARK: - fetchSubconversationGroupID
+
+    public var fetchSubconversationGroupIDForTypeParentGroupID_Invocations: [(type: SubgroupType, parentGroupID: MLSGroupID)] = []
+    public var fetchSubconversationGroupIDForTypeParentGroupID_MockMethod: ((SubgroupType, MLSGroupID) -> MLSGroupID?)?
+    public var fetchSubconversationGroupIDForTypeParentGroupID_MockValue: MLSGroupID??
+
+    public func fetchSubconversationGroupID(forType type: SubgroupType, parentGroupID: MLSGroupID) -> MLSGroupID? {
+        fetchSubconversationGroupIDForTypeParentGroupID_Invocations.append((type: type, parentGroupID: parentGroupID))
+
+        if let mock = fetchSubconversationGroupIDForTypeParentGroupID_MockMethod {
+            return mock(type, parentGroupID)
+        } else if let mock = fetchSubconversationGroupIDForTypeParentGroupID_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchSubconversationGroupIDForTypeParentGroupID`")
+        }
     }
 
 }

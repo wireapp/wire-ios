@@ -18,14 +18,14 @@
 
 import Foundation
 import avs
+import Combine
 @testable import WireSyncEngine
 
 class WireCallCenterTransportMock: WireCallCenterTransport {
-
     var mockCallConfigResponse: (String, Int)?
     var mockClientsRequestResponse: [AVSClient]?
 
-    func send(data: Data, conversationId: AVSIdentifier, targets: [AVSClient]?, completionHandler: @escaping ((Int) -> Void)) {
+    func send(data: Data, conversationId: AVSIdentifier, targets: [AVSClient]?, overMLSSelfConversation: Bool, completionHandler: @escaping ((Int) -> Void)) {
 
     }
 
@@ -67,14 +67,17 @@ class WireCallCenterV3Tests: MessagingTest {
     override func setUp() {
         super.setUp()
 
+        BackendInfo.storage = UserDefaults(suiteName: UUID().uuidString)!
+        BackendInfo.domain = "wire.com"
+
         let selfUser = ZMUser.selfUser(in: uiMOC)
         selfUser.remoteIdentifier = UUID.create()
-        selfUser.domain = "wire.com"
+        selfUser.domain = BackendInfo.domain
         selfUserID = selfUser.avsIdentifier
 
         let otherUser = ZMUser.insertNewObject(in: uiMOC)
         otherUser.remoteIdentifier = UUID()
-        otherUser.domain = "wire.com"
+        otherUser.domain = BackendInfo.domain
         self.otherUser = otherUser
         otherUserID = otherUser.avsIdentifier
 
@@ -123,7 +126,7 @@ class WireCallCenterV3Tests: MessagingTest {
         super.tearDown()
     }
 
-    func checkThatItPostsNotification(expectedCallState: CallState, expectedCallerId: AVSIdentifier, expectedConversationId: AVSIdentifier, line: UInt = #line, file: StaticString = #file, actionBlock: () -> Void) {
+    func checkThatItPostsNotification(expectedCallState: CallState, expectedCallerId: AVSIdentifier, expectedConversationId: AVSIdentifier, line: UInt = #line, file: StaticString = #file, actionBlock: () throws -> Void) rethrows {
         // expect
         expectation(forNotification: WireCallCenterCallStateNotification.notificationName, object: nil) { wrappedNote in
             guard let note = wrappedNote.userInfo?[WireCallCenterCallStateNotification.userInfoKey] as? WireCallCenterCallStateNotification else { return false }
@@ -135,7 +138,7 @@ class WireCallCenterV3Tests: MessagingTest {
         }
 
         // when
-        actionBlock()
+        try actionBlock()
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -323,7 +326,7 @@ class WireCallCenterV3Tests: MessagingTest {
         }
     }
 
-    func testThatOtherIncomingCallsAreRejectedWhenWeAnswerCall() {
+    func testThatOtherIncomingCallsAreRejectedWhenWeAnswerCall() throws {
         // given
         sut.handleIncomingCall(conversationId: oneOnOneConversationID,
                                messageTime: Date(),
@@ -342,15 +345,15 @@ class WireCallCenterV3Tests: MessagingTest {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
-        XCTAssertTrue(sut.answerCall(conversation: oneOnOneConversation, video: false))
+        XCTAssertNoThrow(try sut.answerCall(conversation: oneOnOneConversation, video: false))
 
         // then
         XCTAssertTrue(mockAVSWrapper.didCallRejectCall)
     }
 
-    func testThatOtherOutgoingCallsAreCanceledWhenWeAnswerCall() {
+    func testThatOtherOutgoingCallsAreCanceledWhenWeAnswerCall() throws {
         // given
-        XCTAssertTrue(sut.startCall(conversation: groupConversation, video: false))
+        try sut.startCall(in: groupConversation, isVideo: false)
 
         sut.handleIncomingCall(conversationId: oneOnOneConversationID,
                                messageTime: Date(),
@@ -362,13 +365,13 @@ class WireCallCenterV3Tests: MessagingTest {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
-        XCTAssertTrue(sut.answerCall(conversation: oneOnOneConversation, video: false))
+        XCTAssertNoThrow(try sut.answerCall(conversation: oneOnOneConversation, video: false))
 
         // then
         XCTAssertTrue(mockAVSWrapper.didCallEndCall)
     }
 
-    func testThatOtherIncomingCallsAreRejectedWhenWeStartCall() {
+    func testThatOtherIncomingCallsAreRejectedWhenWeStartCall() throws {
         // given
         sut.handleIncomingCall(conversationId: oneOnOneConversationID,
                                messageTime: Date(),
@@ -380,7 +383,7 @@ class WireCallCenterV3Tests: MessagingTest {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
-        XCTAssertTrue(sut.startCall(conversation: groupConversation, video: false))
+        try sut.startCall(in: groupConversation, isVideo: false)
 
         // then
         XCTAssertTrue(mockAVSWrapper.didCallRejectCall)
@@ -444,7 +447,7 @@ class WireCallCenterV3Tests: MessagingTest {
         XCTAssertTrue(mockAVSWrapper.didCallRejectCall)
     }
 
-    func testThatItAnswersACall_oneToOne() {
+    func testThatItAnswersACall_oneToOne() throws {
         // given
         sut.handleIncomingCall(conversationId: oneOnOneConversationID,
                                messageTime: Date(),
@@ -455,16 +458,155 @@ class WireCallCenterV3Tests: MessagingTest {
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        checkThatItPostsNotification(expectedCallState: .answered(degraded: false), expectedCallerId: otherUserID, expectedConversationId: oneOnOneConversationID) {
+        try checkThatItPostsNotification(expectedCallState: .answered(degraded: false), expectedCallerId: otherUserID, expectedConversationId: oneOnOneConversationID) {
             // when
-            _ = sut.answerCall(conversation: oneOnOneConversation, video: false)
+            _ = try sut.answerCall(conversation: oneOnOneConversation, video: false)
 
             // then
             XCTAssertEqual(mockAVSWrapper.answerCallArguments?.callType, AVSCallType.normal)
         }
     }
 
-    func testThatItAnswersACall_oneToOne_normal() {
+    func testThatLeavingAnMLSConferenceLeavesTheSubconversation() throws {
+        // Given
+        let conversationID = try XCTUnwrap(groupConversationID)
+        groupConversation.messageProtocol = .mls
+        groupConversation.mlsGroupID = .random()
+
+        let mlsService = MockMLSService()
+        syncMOC.performAndWait {
+            syncMOC.mlsService = mlsService
+        }
+
+        let didLeaveSubconversation = expectation(description: "didLeaveSubconversation")
+        mlsService.mockLeaveSubconversation = { parentID, parentGroupID, subconversationType in
+            XCTAssertEqual(parentID, self.groupConversation.qualifiedID)
+            XCTAssertEqual(parentGroupID, self.groupConversation.mlsGroupID)
+            XCTAssertEqual(subconversationType, .conference)
+            didLeaveSubconversation.fulfill()
+        }
+
+        // When
+        sut.closeCall(conversationId: conversationID)
+
+        // Then
+        XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
+    }
+
+    func testThatItLeavesSubconversationIfNeededOnIncoming() throws {
+        // Given
+        groupConversation.messageProtocol = .mls
+        groupConversation.mlsGroupID = .random()
+
+        let selfUser = ZMUser.selfUser(in: uiMOC)
+        let selfClient = setupSelfClient(inMoc: uiMOC)
+        selfClient.user = selfUser
+        let selfClientID = try XCTUnwrap(MLSClientID(userClient: selfClient))
+
+        let mlsService = MockMLSService()
+        syncMOC.performAndWait {
+            syncMOC.mlsService = mlsService
+        }
+
+        let didLeaveSubconversationIfNeeded = expectation(description: "didLeaveSubconversationIfNeeded")
+        mlsService.mockLeaveSubconversationIfNeeded = {
+            XCTAssertEqual($0, self.groupConversation.qualifiedID)
+            XCTAssertEqual($1, self.groupConversation.mlsGroupID)
+            XCTAssertEqual($2, .conference)
+            XCTAssertEqual($3, selfClientID)
+            didLeaveSubconversationIfNeeded.fulfill()
+        }
+
+        // When
+        sut.handleIncomingCall(
+            conversationId: groupConversationID,
+            messageTime: Date(),
+            client: AVSClient(
+                userId: otherUserID,
+                clientId: otherUserClientID
+            ),
+            isVideoCall: false,
+            shouldRing: false,
+            conversationType: .mlsConference
+        )
+
+        // Then
+        XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
+    }
+
+    func testThatItLeavesSubconversationIfNeededOnTerminating() throws {
+        // Given
+        groupConversation.messageProtocol = .mls
+        groupConversation.mlsGroupID = .random()
+
+        let selfUser = ZMUser.selfUser(in: uiMOC)
+        let selfClient = setupSelfClient(inMoc: uiMOC)
+        selfClient.user = selfUser
+        let selfClientID = try XCTUnwrap(MLSClientID(userClient: selfClient))
+
+        let mlsService = MockMLSService()
+        syncMOC.performAndWait {
+            syncMOC.mlsService = mlsService
+        }
+
+        let didLeaveSubconversationIfNeeded = expectation(description: "didLeaveSubconversationIfNeeded")
+        mlsService.mockLeaveSubconversationIfNeeded = {
+            XCTAssertEqual($0, self.groupConversation.qualifiedID)
+            XCTAssertEqual($1, self.groupConversation.mlsGroupID)
+            XCTAssertEqual($2, .conference)
+            XCTAssertEqual($3, selfClientID)
+            didLeaveSubconversationIfNeeded.fulfill()
+        }
+
+        // When
+        sut.handleCallEnd(
+            reason: .normal,
+            conversationId: groupConversationID,
+            messageTime: nil,
+            userId: otherUserID
+        )
+
+        // Then
+        XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
+    }
+
+    func testThatItLeavesSubconversationIfNeededOnMissed() throws {
+        // Given
+        groupConversation.messageProtocol = .mls
+        groupConversation.mlsGroupID = .random()
+
+        let selfUser = ZMUser.selfUser(in: uiMOC)
+        let selfClient = setupSelfClient(inMoc: uiMOC)
+        selfClient.user = selfUser
+        let selfClientID = try XCTUnwrap(MLSClientID(userClient: selfClient))
+
+        let mlsService = MockMLSService()
+        syncMOC.performAndWait {
+            syncMOC.mlsService = mlsService
+        }
+
+        let didLeaveSubconversationIfNeeded = expectation(description: "didLeaveSubconversationIfNeeded")
+        mlsService.mockLeaveSubconversationIfNeeded = {
+            XCTAssertEqual($0, self.groupConversation.qualifiedID)
+            XCTAssertEqual($1, self.groupConversation.mlsGroupID)
+            XCTAssertEqual($2, .conference)
+            XCTAssertEqual($3, selfClientID)
+            didLeaveSubconversationIfNeeded.fulfill()
+        }
+
+        // When
+        sut.handleMissedCall(
+            conversationId: groupConversationID,
+            messageTime: Date(),
+            userId: otherUserID,
+            isVideoCall: false
+        )
+
+        // Then
+        XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
+    }
+
+    func testThatItAnswersACall_oneToOne_normal() throws {
         // given
         sut.handleIncomingCall(conversationId: oneOnOneConversationID,
                                messageTime: Date(),
@@ -475,9 +617,9 @@ class WireCallCenterV3Tests: MessagingTest {
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        checkThatItPostsNotification(expectedCallState: .answered(degraded: false), expectedCallerId: otherUserID, expectedConversationId: oneOnOneConversationID) {
+        try checkThatItPostsNotification(expectedCallState: .answered(degraded: false), expectedCallerId: otherUserID, expectedConversationId: oneOnOneConversationID) {
             // when
-            _ = sut.answerCall(conversation: oneOnOneConversation, video: false)
+            _ = try sut.answerCall(conversation: oneOnOneConversation, video: false)
 
             // then
             XCTAssertEqual(mockAVSWrapper.answerCallArguments?.callType, AVSCallType.normal)
@@ -485,7 +627,7 @@ class WireCallCenterV3Tests: MessagingTest {
         }
     }
 
-    func testThatItAnswersACall_oneToOne_video() {
+    func testThatItAnswersACall_oneToOne_video() throws {
         // given
         sut.handleIncomingCall(conversationId: oneOnOneConversationID,
                                messageTime: Date(),
@@ -496,9 +638,9 @@ class WireCallCenterV3Tests: MessagingTest {
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        checkThatItPostsNotification(expectedCallState: .answered(degraded: false), expectedCallerId: otherUserID, expectedConversationId: oneOnOneConversationID) {
+        try checkThatItPostsNotification(expectedCallState: .answered(degraded: false), expectedCallerId: otherUserID, expectedConversationId: oneOnOneConversationID) {
             // when
-            _ = sut.answerCall(conversation: oneOnOneConversation, video: true)
+            _ = try sut.answerCall(conversation: oneOnOneConversation, video: true)
 
             // then
             XCTAssertEqual(mockAVSWrapper.answerCallArguments?.callType, AVSCallType.video)
@@ -506,7 +648,7 @@ class WireCallCenterV3Tests: MessagingTest {
         }
     }
 
-    func testThatItAnswersACall_legacy_largeGroup_audioOnly() {
+    func testThatItAnswersACall_legacy_largeGroup_audioOnly() throws {
         // given
         // Make sure group conversation has at least 5 participants (including self)
         for _ in 0..<4 {
@@ -524,16 +666,16 @@ class WireCallCenterV3Tests: MessagingTest {
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        checkThatItPostsNotification(expectedCallState: .answered(degraded: false), expectedCallerId: otherUserID, expectedConversationId: groupConversationID) {
+        try checkThatItPostsNotification(expectedCallState: .answered(degraded: false), expectedCallerId: otherUserID, expectedConversationId: groupConversationID) {
             // when
-            _ = sut.answerCall(conversation: groupConversation, video: false)
+            _ = try sut.answerCall(conversation: groupConversation, video: false)
 
             // then
             XCTAssertEqual(mockAVSWrapper.answerCallArguments?.callType, AVSCallType.audioOnly)
         }
     }
 
-    func testThatItAnswersACall_legacy_smallGroup_normal() {
+    func testThatItAnswersACall_legacy_smallGroup_normal() throws {
         // given
         sut.handleIncomingCall(conversationId: groupConversationID,
                                messageTime: Date(),
@@ -544,16 +686,16 @@ class WireCallCenterV3Tests: MessagingTest {
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        checkThatItPostsNotification(expectedCallState: .answered(degraded: false), expectedCallerId: otherUserID, expectedConversationId: groupConversationID) {
+        try checkThatItPostsNotification(expectedCallState: .answered(degraded: false), expectedCallerId: otherUserID, expectedConversationId: groupConversationID) {
             // when
-            _ = sut.answerCall(conversation: groupConversation, video: false)
+            _ = try sut.answerCall(conversation: groupConversation, video: false)
 
             // then
             XCTAssertEqual(mockAVSWrapper.answerCallArguments?.callType, AVSCallType.normal)
         }
     }
 
-    func testThatItAnswersACall_legacy_smallGroup_video() {
+    func testThatItAnswersACall_legacy_smallGroup_video() throws {
         // given
         sut.handleIncomingCall(conversationId: groupConversationID,
                                messageTime: Date(),
@@ -564,16 +706,16 @@ class WireCallCenterV3Tests: MessagingTest {
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        checkThatItPostsNotification(expectedCallState: .answered(degraded: false), expectedCallerId: otherUserID, expectedConversationId: groupConversationID) {
+        try checkThatItPostsNotification(expectedCallState: .answered(degraded: false), expectedCallerId: otherUserID, expectedConversationId: groupConversationID) {
             // when
-            _ = sut.answerCall(conversation: groupConversation, video: true)
+            _ = try sut.answerCall(conversation: groupConversation, video: true)
 
             // then
             XCTAssertEqual(mockAVSWrapper.answerCallArguments?.callType, AVSCallType.video)
         }
     }
 
-    func testThatItAnswersACall_conference_normal() {
+    func testThatItAnswersACall_conference_normal() throws {
         // given
         sut.handleIncomingCall(conversationId: groupConversationID,
                                messageTime: Date(),
@@ -584,16 +726,42 @@ class WireCallCenterV3Tests: MessagingTest {
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        checkThatItPostsNotification(expectedCallState: .answered(degraded: false), expectedCallerId: otherUserID, expectedConversationId: groupConversationID) {
+        try checkThatItPostsNotification(expectedCallState: .answered(degraded: false), expectedCallerId: otherUserID, expectedConversationId: groupConversationID) {
             // when
-            _ = sut.answerCall(conversation: groupConversation, video: false)
+            _ = try sut.answerCall(conversation: groupConversation, video: false)
 
             // then
             XCTAssertEqual(mockAVSWrapper.answerCallArguments?.callType, AVSCallType.normal)
         }
     }
 
-    func testThatItAnswersACall_conference_video() {
+    func testThatItAnswersACall_conference_mls() throws {
+        // given
+        sut.handleIncomingCall(
+            conversationId: groupConversationID,
+            messageTime: Date(),
+            client: AVSClient(userId: otherUserID, clientId: otherUserClientID),
+            isVideoCall: false,
+            shouldRing: true,
+            conversationType: .mlsConference
+        )
+
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        try assertMLSConference(
+            expectedCallState: .answered(degraded: false),
+            expectedCallerID: otherUserID,
+            expectedConversationID: groupConversationID
+        ) {
+            // when
+            _ = try sut.answerCall(conversation: groupConversation, video: false)
+
+            // then
+            XCTAssertEqual(mockAVSWrapper.answerCallArguments?.callType, AVSCallType.normal)
+        }
+    }
+
+    func testThatItAnswersACall_conference_video() throws {
         // given
         sut.handleIncomingCall(conversationId: groupConversationID,
                                messageTime: Date(),
@@ -604,20 +772,20 @@ class WireCallCenterV3Tests: MessagingTest {
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        checkThatItPostsNotification(expectedCallState: .answered(degraded: false), expectedCallerId: otherUserID, expectedConversationId: groupConversationID) {
+        try checkThatItPostsNotification(expectedCallState: .answered(degraded: false), expectedCallerId: otherUserID, expectedConversationId: groupConversationID) {
             // when
-            _ = sut.answerCall(conversation: groupConversation, video: true)
+            _ = try sut.answerCall(conversation: groupConversation, video: true)
 
             // then
             XCTAssertEqual(mockAVSWrapper.answerCallArguments?.callType, AVSCallType.video)
         }
     }
 
-    func testThatItStartsACall_oneToOne_normal() {
+    func testThatItStartsACall_oneToOne_normal() throws {
         // given
-        checkThatItPostsNotification(expectedCallState: .outgoing(degraded: false), expectedCallerId: selfUserID, expectedConversationId: oneOnOneConversationID) {
+        try checkThatItPostsNotification(expectedCallState: .outgoing(degraded: false), expectedCallerId: selfUserID, expectedConversationId: oneOnOneConversationID) {
             // when
-            _ = sut.startCall(conversation: oneOnOneConversation, video: false)
+            try sut.startCall(in: oneOnOneConversation, isVideo: false)
 
             // then
             XCTAssertEqual(mockAVSWrapper.startCallArguments?.conversationType, AVSConversationType.oneToOne)
@@ -625,11 +793,11 @@ class WireCallCenterV3Tests: MessagingTest {
         }
     }
 
-    func testThatItStartsACall_conference_normal() {
+    func testThatItStartsACall_conference_normal() throws {
         // given
-        checkThatItPostsNotification(expectedCallState: .outgoing(degraded: false), expectedCallerId: selfUserID, expectedConversationId: groupConversationID) {
+        try checkThatItPostsNotification(expectedCallState: .outgoing(degraded: false), expectedCallerId: selfUserID, expectedConversationId: groupConversationID) {
             // when
-            _ = sut.startCall(conversation: groupConversation, video: false)
+            try sut.startCall(in: groupConversation, isVideo: false)
 
             // then
             XCTAssertEqual(mockAVSWrapper.startCallArguments?.conversationType, AVSConversationType.conference)
@@ -637,7 +805,95 @@ class WireCallCenterV3Tests: MessagingTest {
         }
     }
 
-    func testThatItDoesNotStartAConferenceCall_IfConferenceCallingFeatureStatusIsDisabled() {
+    func testThatItStartsACall_conference_mls() throws {
+        try assertMLSConference(
+            expectedCallState: .outgoing(degraded: false),
+            expectedCallerID: selfUserID,
+            expectedConversationID: groupConversationID
+        ) {
+            // when
+            try sut.startCall(in: groupConversation, isVideo: false)
+
+            // then
+            XCTAssertEqual(mockAVSWrapper.startCallArguments?.conversationType, AVSConversationType.mlsConference)
+            XCTAssertEqual(mockAVSWrapper.startCallArguments?.callType, AVSCallType.normal)
+        }
+    }
+
+    func assertMLSConference(
+        expectedCallState: CallState,
+        expectedCallerID: AVSIdentifier,
+        expectedConversationID: AVSIdentifier,
+        when block: () throws -> Void
+    ) rethrows {
+        // given
+        let parentGroupID = MLSGroupID(Data.random())
+        let subconversationGroupID = MLSGroupID(Data.random())
+        let conferenceInfo1 = MLSConferenceInfo.random()
+        let conferenceInfo2 = MLSConferenceInfo.random()
+
+        groupConversation.messageProtocol = .mls
+        groupConversation.mlsGroupID = parentGroupID
+
+        let mlsService = MockMLSService()
+
+        let didJoinSubgroup = expectation(description: "didJoinSubgroup")
+        mlsService.mockCreateOrJoinSubgroup = {
+            defer { didJoinSubgroup.fulfill() }
+            XCTAssertEqual($0, self.groupConversation.qualifiedID)
+            XCTAssertEqual($1, parentGroupID)
+            return subconversationGroupID
+        }
+
+        let didGenerateConferenceInfo1 = expectation(description: "didGenerateConferenceInfo1")
+        mlsService.mockGenerateConferenceInfo = {
+            XCTAssertEqual($0, parentGroupID)
+            XCTAssertEqual($1, subconversationGroupID)
+            defer { didGenerateConferenceInfo1.fulfill() }
+            return conferenceInfo1
+        }
+
+        let didSetConferenceInfo1 = expectation(description: "didSetConferenceInfo1")
+        mockAVSWrapper.mockSetMLSConferenceInfo = {
+            XCTAssertEqual($0, self.groupConversation.avsIdentifier)
+            XCTAssertEqual($1, conferenceInfo1)
+            didSetConferenceInfo1.fulfill()
+        }
+
+        syncMOC.performAndWait {
+            syncMOC.mlsService = mlsService
+        }
+
+        // So we can inform of new conference infos
+        let conferenceInfoChangeSubject = PassthroughSubject<MLSConferenceInfo, Never>()
+        mlsService.mockOnConferenceInfoChange = { _, _ in
+            return conferenceInfoChangeSubject.eraseToAnyPublisher()
+        }
+
+        try checkThatItPostsNotification(
+            expectedCallState: expectedCallState,
+            expectedCallerId: expectedCallerID,
+            expectedConversationId: expectedConversationID
+        ) {
+            // when
+            try block()
+        }
+
+        let didSetConferenceInfo2 = expectation(description: "didSetConferenceInfo2")
+        mockAVSWrapper.mockSetMLSConferenceInfo = {
+            XCTAssertEqual($0, self.groupConversation.avsIdentifier)
+            XCTAssertEqual($1, conferenceInfo2)
+            didSetConferenceInfo2.fulfill()
+        }
+
+        // and when the conference info changes
+        conferenceInfoChangeSubject.send(conferenceInfo2)
+
+        // then we set conference info 2 to avs (see expectations)
+        XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
+    }
+
+    func testThatItDoesNotStartAConferenceCall_IfConferenceCallingFeatureStatusIsDisabled() throws {
         // given
         conferenceCalling.status = .disabled
 
@@ -645,20 +901,23 @@ class WireCallCenterV3Tests: MessagingTest {
         expectation(forNotification: WireCallCenterConferenceCallingUnavailableNotification.notificationName, object: nil)
 
         // when
-        _ = sut.startCall(conversation: groupConversation, video: false)
+        assertItThrows(error: WireCallCenterV3.Failure.missingConferencingPermission) {
+            try sut.startCall(in: groupConversation, isVideo: false)
+        }
+
         XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
 
         // then
         XCTAssertNil(mockAVSWrapper.startCallArguments)
     }
 
-    func testThatItStartsAConferenceCall_IfPackagingFeatureIsDisabledByInternalFlag() {
+    func testThatItStartsAConferenceCall_IfPackagingFeatureIsDisabledByInternalFlag() throws {
         // given
         sut.usePackagingFeatureConfig = false
         conferenceCalling.status = .disabled
 
         // when
-        _ = sut.startCall(conversation: groupConversation, video: false)
+        try sut.startCall(in: groupConversation, isVideo: false)
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -666,11 +925,11 @@ class WireCallCenterV3Tests: MessagingTest {
         XCTAssertEqual(mockAVSWrapper.startCallArguments?.callType, AVSCallType.normal)
     }
 
-    func testThatItStartsACall_conference_video() {
+    func testThatItStartsACall_conference_video() throws {
         // given
-        checkThatItPostsNotification(expectedCallState: .outgoing(degraded: false), expectedCallerId: selfUserID, expectedConversationId: groupConversationID) {
+        try checkThatItPostsNotification(expectedCallState: .outgoing(degraded: false), expectedCallerId: selfUserID, expectedConversationId: groupConversationID) {
             // when
-            _ = sut.startCall(conversation: groupConversation, video: true)
+            try sut.startCall(in: groupConversation, isVideo: true)
 
             // then
             XCTAssertEqual(mockAVSWrapper.startCallArguments?.conversationType, AVSConversationType.conference)
@@ -1115,7 +1374,7 @@ extension WireCallCenterV3Tests {
         }
     }
 
-    func testThat_ItMutesUser_When_AnsweringCall_InGroupConversation() {
+    func testThat_ItMutesUser_When_AnsweringCall_InGroupConversation() throws {
         // given
         sut.handleIncomingCall(conversationId: groupConversationID,
                                messageTime: Date(),
@@ -1127,13 +1386,13 @@ extension WireCallCenterV3Tests {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
-        XCTAssertTrue(sut.answerCall(conversation: groupConversation, video: false))
+        XCTAssertNoThrow(try sut.answerCall(conversation: groupConversation, video: false))
 
         // then
         XCTAssertTrue(sut.muted)
     }
 
-    func testThat_ItDoesntMuteUser_When_AnsweringCall_InOneToOneConversation() {
+    func testThat_ItDoesntMuteUser_When_AnsweringCall_InOneToOneConversation() throws {
         // given
         sut.handleIncomingCall(conversationId: oneOnOneConversationID,
                                messageTime: Date(),
@@ -1145,7 +1404,7 @@ extension WireCallCenterV3Tests {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
-        XCTAssertTrue(sut.answerCall(conversation: oneOnOneConversation, video: false))
+        XCTAssertNoThrow(try sut.answerCall(conversation: oneOnOneConversation, video: false))
 
         // then
         XCTAssertFalse(sut.muted)
@@ -1265,9 +1524,9 @@ extension WireCallCenterV3Tests {
         sut.handleParticipantChange(conversationId: conversationId, data: string)
     }
 
-    func testThatItDoesNotIgnore_WhenGroupHandlerIsCalledForOneToOne() {
+    func testThatItDoesNotIgnore_WhenGroupHandlerIsCalledForOneToOne() throws {
         // when
-        _ = sut.startCall(conversation: oneOnOneConversation, video: false)
+        try sut.startCall(in: oneOnOneConversation, isVideo: false)
         callBackMemberHandler(conversationId: oneOnOneConversationID, userId: otherUserID, clientId: otherUserClientID, audioEstablished: false)
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -1277,9 +1536,9 @@ extension WireCallCenterV3Tests {
         XCTAssertEqual(actual, expected)
     }
 
-    func testThatItUpdatesTheParticipantsWhenGroupHandlerIsCalled() {
+    func testThatItUpdatesTheParticipantsWhenGroupHandlerIsCalled() throws {
         // when
-        _ = sut.startCall(conversation: groupConversation, video: false)
+        try sut.startCall(in: groupConversation, isVideo: false)
         callBackMemberHandler(conversationId: groupConversationID, userId: otherUserID, clientId: otherUserClientID, audioEstablished: false)
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -1578,6 +1837,69 @@ extension WireCallCenterV3Tests {
         XCTAssertNotNil(mockAVSWrapper.requestVideoStreamsArguments)
         XCTAssertEqual(mockAVSWrapper.requestVideoStreamsArguments?.uuid, conversationId)
         XCTAssertEqual(mockAVSWrapper.requestVideoStreamsArguments?.videoStreams, expectedResult)
+    }
+}
+
+// MARK: - Request new epoch
+
+extension WireCallCenterV3Tests {
+
+    func testHandleNewEpochRequest() throws {
+        // Given
+        let conversationID = try XCTUnwrap(groupConversationID)
+        let qualifiedID = try XCTUnwrap(groupConversation.qualifiedID)
+        let parentGroupID = MLSGroupID.random()
+        let subconversationGroupID = MLSGroupID.random()
+
+        createsMLSConferenceSnapshot(
+            conversationID: conversationID,
+            qualifiedID: qualifiedID,
+            parentGroupID: parentGroupID,
+            subconversationGroupID: subconversationGroupID
+        )
+
+        let mlsService = MockMLSService()
+        uiMOC.zm_sync.mlsService = mlsService
+
+        let didGenereateNewEpoch = expectation(description: "didGenerateNewEpoch")
+        mlsService.mockGenerateNewEpoch = {
+            XCTAssertEqual($0, subconversationGroupID)
+            didGenereateNewEpoch.fulfill()
+        }
+
+        // When
+        sut.handleNewEpochRequest(conversationID: conversationID)
+
+        // Then
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
+    }
+
+    private func createsMLSConferenceSnapshot(
+        conversationID: AVSIdentifier,
+        qualifiedID: QualifiedID,
+        parentGroupID: MLSGroupID,
+        subconversationGroupID: MLSGroupID
+    ) {
+        sut.callSnapshots[conversationID] = CallSnapshot(
+            qualifiedID: qualifiedID,
+            groupIDs: (parentGroupID, subconversationGroupID),
+            callParticipants: CallParticipantsSnapshot(
+                conversationId: conversationID,
+                members: [],
+                callCenter: sut
+            ),
+            callState: .established,
+            callStarter: selfUserID,
+            isVideo: false,
+            isGroup: true,
+            isConstantBitRate: false,
+            videoState: .stopped,
+            networkQuality: .normal,
+            isConferenceCall: true,
+            degradedUser: nil,
+            activeSpeakers: [],
+            videoGridPresentationMode: .allVideoStreams
+        )
     }
 }
 

@@ -50,8 +50,8 @@ final class ValidatedTextField: AccessoryTextField, TextContainer, Themeable {
 
     override var text: String? {
         didSet {
-            validateInput()
-            boundTextField?.validateInput()
+            isValidInput()
+            boundTextField?.isValidInput()
         }
     }
 
@@ -316,7 +316,7 @@ final class ValidatedTextField: AccessoryTextField, TextContainer, Themeable {
     }
 
     var isValid: Bool {
-        return validateInput(useGuestLinkRuleset: true)
+        return isValidInput(ruleSet: .guestLinkRuleSet)
     }
 
     func updateText(_ text: String) {
@@ -336,15 +336,26 @@ final class ValidatedTextField: AccessoryTextField, TextContainer, Themeable {
     @objc
     private func confirmButtonTapped(button: UIButton) {
         validatedTextFieldDelegate?.buttonPressed(button)
-        validateInput()
+        isValidInput()
     }
 
     @discardableResult
-    func validateInput(useGuestLinkRuleset: Bool = false) -> Bool {
-        let error = textFieldValidator.validate(text: text, kind: kind, useGuestLinkRuleset: useGuestLinkRuleset)
-        textFieldValidationDelegate?.validationUpdated(sender: self, error: error)
+    func isValidInput(ruleSet: PasswordValidationRuleSet = .defaultRuleSet) -> Bool {
+        let error = textFieldValidator.validate(
+            text: text,
+            kind: kind,
+            ruleSet: ruleSet
+        )
+
+        if error != nil {
+            textFieldValidationDelegate?.validationUpdated(sender: self, error: error)
+            updateConfirmButton()
+            return false
+        }
+
+        textFieldValidationDelegate?.validationUpdated(sender: self, error: nil)
         updateConfirmButton()
-        return error == nil
+        return true
     }
 
 }

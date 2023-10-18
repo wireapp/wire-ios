@@ -51,15 +51,11 @@ final class CreateSecureGuestLinkViewModel {
         for textField: ValidatedTextField,
         against confirmPasswordField: ValidatedTextField
     ) -> Bool {
-        guard let updatedString = textField.text, !updatedString.isEmpty else {
-            return false
-        }
 
-        if !textField.isValid {
-            return false
-        }
-
-        if confirmPasswordField.text != updatedString {
+        guard let enteredPassword = textField.text,
+              !enteredPassword.isEmpty,
+              textField.isValid,
+              confirmPasswordField.text == enteredPassword else {
             return false
         }
 

@@ -377,7 +377,7 @@ class PhoneNumberInputView: UIView, UITextFieldDelegate, TextFieldValidationDele
     }
 
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        self.textField.validateInput()
+        self.textField.isValidInput()
 
         if self.validationError == .none {
             submitValue()

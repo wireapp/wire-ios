@@ -20,6 +20,11 @@ import Foundation
 import WireUtilities
 import UIKit
 
+enum PasswordValidationRuleSet {
+    case defaultRuleSet
+    case guestLinkRuleSet
+}
+
 final class TextFieldValidator {
 
     var customValidator: ((String) -> ValidationError?)?
@@ -36,9 +41,21 @@ final class TextFieldValidator {
     private func validatePasscode(text: String,
                                   kind: ValidatedTextField.Kind,
                                   isNew: Bool,
-                                  useGuestLinkRuleset: Bool = false) -> TextFieldValidator.ValidationError? {
+                                  ruleSet: PasswordValidationRuleSet = .defaultRuleSet) -> TextFieldValidator.ValidationError? {
 
-        let ruleSet: PasswordRuleSet = useGuestLinkRuleset ? .guestLinkWithPasswordRuleSet : .shared
+        let currentRuleSet: PasswordRuleSet?
+        switch ruleSet {
+        case .guestLinkRuleSet:
+            currentRuleSet = PasswordRuleSet.guestLinkWithPasswordRuleSet
+        case .defaultRuleSet:
+            currentRuleSet = PasswordRuleSet.shared
+            // add other cases as required
+        }
+
+        guard let ruleSet = currentRuleSet else {
+
+            return nil
+        }
 
         if isNew {
             // If the user is registering, enforce the password rules
@@ -55,7 +72,11 @@ final class TextFieldValidator {
         }
     }
 
-    func validate(text: String?, kind: ValidatedTextField.Kind, useGuestLinkRuleset: Bool = false) -> TextFieldValidator.ValidationError? {
+    func validate(
+        text: String?,
+        kind: ValidatedTextField.Kind,
+        ruleSet: PasswordValidationRuleSet = .defaultRuleSet
+    ) -> TextFieldValidator.ValidationError? {
         guard let text = text else {
             return nil
         }
@@ -73,7 +94,7 @@ final class TextFieldValidator {
             }
 
         case .password(let isNew):
-            return validatePasscode(text: text, kind: kind, isNew: isNew, useGuestLinkRuleset: useGuestLinkRuleset)
+            return validatePasscode(text: text, kind: kind, isNew: isNew, ruleSet: ruleSet)
         case .passcode(let isNew):
             return validatePasscode(text: text, kind: kind, isNew: isNew)
         case .name:
@@ -90,8 +111,8 @@ final class TextFieldValidator {
         }
 
         return .none
-
     }
+
 }
 
 extension TextFieldValidator {
@@ -139,8 +160,8 @@ extension TextFieldValidator.ValidationError: LocalizedError {
             return description
         case .invalidPassword(let violations):
             return violations.contains(.tooLong)
-                ? "password.guidance.toolong".localized
-                : PasswordRuleSet.localizedErrorMessage
+            ? "password.guidance.toolong".localized
+            : PasswordRuleSet.localizedErrorMessage
         }
     }
 

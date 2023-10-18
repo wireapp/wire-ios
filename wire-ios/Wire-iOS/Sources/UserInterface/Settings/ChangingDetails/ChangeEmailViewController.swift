@@ -252,7 +252,7 @@ extension ChangeEmailViewController: TextFieldValidationDelegate {
 
     @objc func emailTextFieldEditingChanged(sender: ValidatedTextField) {
         state.newEmail = sender.input.trimmingCharacters(in: .whitespacesAndNewlines)
-        sender.validateInput()
+        sender.isValidInput()
     }
 
     func validationUpdated(sender: UITextField, error: TextFieldValidator.ValidationError?) {

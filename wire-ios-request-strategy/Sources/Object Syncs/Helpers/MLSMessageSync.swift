@@ -74,7 +74,7 @@ class MLSMessageSync<Message: MLSMessage>: NSObject, ZMContextChangeTrackerSourc
 
         Task {
             do {
-                Logging.mls.info("preemptively commiting pending proposals before sending message in group (\(groupID))")
+                Logging.mls.info("preemptively commiting pending proposals before sending message in group (\(groupID.safeForLoggingDescription))")
                 try await mlsService.commitPendingProposals(in: groupID)
             } catch {
                 Logging.mls.info("failed: preemptively commiting pending proposals before sending message in group (\(groupID)): \(String(describing: error))")
@@ -83,7 +83,6 @@ class MLSMessageSync<Message: MLSMessage>: NSObject, ZMContextChangeTrackerSourc
             context.performGroupedBlock { [dependencySync] in
                 dependencySync.synchronize(entity: message, completion: completion)
                 RequestAvailableNotification.notifyNewRequestsAvailable(nil)
-                completion(.success(()), .init())
             }
         }
     }
