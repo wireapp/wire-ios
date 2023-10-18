@@ -198,6 +198,7 @@ class UserProfileRequestStrategyTests: MessagingTestBase {
         syncMOC.performGroupedBlockAndWait {
             // then
             XCTAssertEqual(self.mockSyncProgress.didFinishCurrentSyncPhase, .fetchingUsers)
+            XCTAssertFalse(self.sut.isFetchingAllConnectedUsers)
         }
     }
 
@@ -214,6 +215,7 @@ class UserProfileRequestStrategyTests: MessagingTestBase {
 
             // then
             XCTAssertEqual(self.mockSyncProgress.didFinishCurrentSyncPhase, .fetchingUsers)
+            XCTAssertFalse(self.sut.isFetchingAllConnectedUsers)
         }
     }
 
