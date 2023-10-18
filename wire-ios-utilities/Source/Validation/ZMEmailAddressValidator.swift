@@ -88,8 +88,8 @@ import UIKit
         let emailScanner = Scanner(string: emailAddress! as String)
         emailScanner.charactersToBeSkipped = CharacterSet()
         emailScanner.locale = Locale(identifier: "en_US_POSIX")
-
         let local: String? =  emailScanner.scanUpToString("@")
+        _ = emailScanner.scanString("@")
         let domain: String? = emailScanner.scanUpToString("@")
 
         guard let local = local, let domain = domain, !local.isEmpty, !domain.isEmpty else {
