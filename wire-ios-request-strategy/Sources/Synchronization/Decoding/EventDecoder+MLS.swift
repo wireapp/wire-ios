@@ -26,56 +26,61 @@ extension EventDecoder {
     ) -> ZMUpdateEvent? {
         Logging.mls.info("decrypting mls message")
 
-        guard let mlsService = context.mlsService else {
-            Logging.mls.warn("failed to decrypt mls message: mlsService is missing")
+        guard let decryptionService = context.mlsDecryptionService else {
+            WireLogger.mls.critical("failed to decrypt mls message: mlsDecyptionService is missing")
             fatalError("failed to decrypt mls message: mlsService is missing")
         }
 
         guard let payload = updateEvent.eventPayload(type: Payload.UpdateConversationMLSMessageAdd.self) else {
-            Logging.mls.warn("failed to decrypt mls message: invalid update event payload")
+            WireLogger.mls.error("failed to decrypt mls message: invalid update event payload")
             return nil
         }
 
         guard let conversation = ZMConversation.fetch(with: payload.id, domain: payload.qualifiedID?.domain, in: context) else {
-            Logging.mls.warn("failed to decrypt mls message: conversation not found in db")
+            WireLogger.mls.error("failed to decrypt mls message: conversation not found in db")
             return nil
         }
 
         guard conversation.mlsStatus == .ready else {
-            Logging.mls.warn("failed to decrypt mls message: conversation is not ready (status: \(String(describing: conversation.mlsStatus)))")
+            WireLogger.mls.warn("failed to decrypt mls message: conversation is not ready (status: \(String(describing: conversation.mlsStatus)))")
             return nil
         }
 
         guard let groupID = conversation.mlsGroupID else {
-            Logging.mls.warn("failed to decrypt mls message: missing MLS group ID")
+            WireLogger.mls.error("failed to decrypt mls message: missing MLS group ID")
             return nil
         }
 
         do {
             guard
-                let result = try mlsService.decrypt(message: payload.data,
-                                                       for: groupID)
+                let result = try decryptionService.decrypt(
+                    message: payload.data,
+                    for: groupID,
+                    subconversationType: payload.subconversationType
+                )
             else {
-                Logging.mls.info("successfully decrypted mls message but no result was returned")
+                WireLogger.mls.info("successfully decrypted mls message but no result was returned")
                 return nil
             }
 
             switch result {
             case .message(let decryptedData, let senderClientID):
                 return updateEvent.decryptedMLSEvent(decryptedData: decryptedData, senderClientID: senderClientID)
+
             case .proposal(let commitDelay):
                 let scheduledDate = (updateEvent.timestamp ?? Date()) + TimeInterval(commitDelay)
-                mlsService.scheduleCommitPendingProposals(groupID: groupID, at: scheduledDate)
+                conversation.commitPendingProposalDate = scheduledDate
 
-                if updateEvent.source == .webSocket {
+                if let mlsService = context.mlsService, updateEvent.source == .webSocket {
                     Task {
                         do {
                             try await mlsService.commitPendingProposals()
                         } catch {
-                            Logging.mls.error("Failed to commit pending proposals: \(String(describing: error))")
+                            WireLogger.mls.error("failed to commit pending proposals: \(String(describing: error))")
                         }
                     }
                 }
+
                 return nil
             }
 

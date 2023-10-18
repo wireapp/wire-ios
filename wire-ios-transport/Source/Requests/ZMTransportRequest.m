@@ -326,6 +326,9 @@ typedef NS_ENUM(NSUInteger, ZMTransportRequestSessionType) {
         case ZMTransportAcceptImage:
             accept = [[self imageMediaTypes] componentsJoinedByString:@", "];
             break;
+        case ZMTransportAcceptMessageMLS:
+            accept = @"message/mls";
+            break;
     }
     [URLRequest addValue:accept forHTTPHeaderField:@"Accept"];
 }

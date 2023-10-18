@@ -41,6 +41,7 @@ class ActionHandlerTestBase<Action: EntityAction, Handler: ActionHandler<Action>
         expectedPath: String,
         expectedPayload: Payload?,
         expectedMethod: ZMTransportRequestMethod,
+        expectedAcceptType: ZMTransportAccept? = nil,
         apiVersion: APIVersion = .v1
     ) throws -> ZMTransportRequest {
         // Given
@@ -55,6 +56,10 @@ class ActionHandlerTestBase<Action: EntityAction, Handler: ActionHandler<Action>
 
         if let expectedPayload {
             XCTAssertEqual(request.payload as? Payload, expectedPayload)
+        }
+
+        if let expectedAcceptType = expectedAcceptType {
+            XCTAssertEqual(request.acceptedResponseMediaTypes, expectedAcceptType)
         }
 
         return request
@@ -149,6 +154,7 @@ extension ActionHandlerTestBase {
         for action: Action,
         expectedPath: String,
         expectedMethod: ZMTransportRequestMethod,
+        expectedAcceptType: ZMTransportAccept? = nil,
         apiVersion: APIVersion = .v1
     ) throws -> ZMTransportRequest {
         return try test_itGeneratesARequest(
@@ -156,6 +162,7 @@ extension ActionHandlerTestBase {
             expectedPath: expectedPath,
             expectedPayload: DefaultEquatable?.none,
             expectedMethod: expectedMethod,
+            expectedAcceptType: expectedAcceptType,
             apiVersion: apiVersion
         )
     }
@@ -257,7 +264,7 @@ extension ActionHandlerTestBase {
     // MARK: Payload Encoding
 
     func transportData<Payload: Encodable>(for payload: Payload?) -> ZMTransportData? {
-        let data = try! JSONEncoder().encode(payload)
+        let data = try! JSONEncoder.defaultEncoder.encode(payload)
         return String(bytes: data, encoding: .utf8) as ZMTransportData?
     }
 }

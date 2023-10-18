@@ -19,6 +19,7 @@
 import Foundation
 @testable import WireDataModel
 import WireCoreCrypto
+import Combine
 
 class MockMLSActionExecutor: MLSActionExecutorProtocol {
 
@@ -49,36 +50,56 @@ class MockMLSActionExecutor: MLSActionExecutorProtocol {
     // MARK: - Update key material
 
     var mockUpdateKeyMaterial: ((MLSGroupID) async throws -> [ZMUpdateEvent])?
+    var updateKeyMaterialCount = 0
 
     func updateKeyMaterial(for groupID: MLSGroupID) async throws -> [ZMUpdateEvent] {
         guard let mock = mockUpdateKeyMaterial else {
             fatalError("no mock for `updateKeyMaterial`")
         }
 
+        updateKeyMaterialCount += 1
         return try await mock(groupID)
     }
 
     // MARK: - Commit pending proposals
 
     var mockCommitPendingProposals: ((MLSGroupID) async throws -> [ZMUpdateEvent])?
+    var commitPendingProposalsCount = 0
 
     func commitPendingProposals(in groupID: MLSGroupID) async throws -> [ZMUpdateEvent] {
         guard let mock = mockCommitPendingProposals else {
             fatalError("no mock for `commitPendingProposals`")
         }
 
+        commitPendingProposalsCount += 1
         return try await mock(groupID)
     }
 
     // MARK: - Join group
 
     var mockJoinGroup: ((MLSGroupID, Data) async throws -> [ZMUpdateEvent])?
+    var mockJoinGroupCount = 0
 
-    func joinGroup(_ groupID: MLSGroupID, publicGroupState: Data) async throws -> [ZMUpdateEvent] {
+    func joinGroup(_ groupID: MLSGroupID, groupInfo: Data) async throws -> [ZMUpdateEvent] {
         guard let mock = mockJoinGroup else {
             fatalError("no mock for `joinGroup`")
         }
 
-        return try await mock(groupID, publicGroupState)
+        mockJoinGroupCount += 1
+        return try await mock(groupID, groupInfo)
+    }
+
+    // MARK: - On epoch changed
+
+    var mockOnEpochChanged: (() -> AnyPublisher<MLSGroupID, Never>)?
+    var mockOnEpochChangedCount = 0
+
+    func onEpochChanged() -> AnyPublisher<MLSGroupID, Never> {
+        guard let mock = mockOnEpochChanged else {
+            fatalError("no mock for `onEpochChanged`")
+        }
+
+        mockOnEpochChangedCount += 1
+        return mock()
     }
 }

@@ -104,41 +104,42 @@ public class Label: ZMManagedObject, LabelType {
         // (1) the persistent store coordinator and the SQLite engine, and (2) touch the file system.
         // Looping through all objects in the context is way cheaper, because it does not involve (1)
         // taking any locks, nor (2) touching the file system.
-
-        guard let entity = context.persistentStoreCoordinator?.managedObjectModel.entitiesByName[entityName()] else {
-            fatal("Label entity not registered in managed object model")
-        }
-
-        for managedObject in context.registeredObjects where managedObject.entity == entity && !managedObject.isFault {
-            guard let label = managedObject as? Label, label.kind == .favorite else { continue }
-            return label
-
-        }
-
-        let fetchRequest = NSFetchRequest<Label>(entityName: Label.entityName())
-        fetchRequest.predicate = NSPredicate(format: "type = \(Kind.favorite.rawValue)")
-        fetchRequest.fetchLimit = 2
-
-        let results = context.fetchOrAssert(request: fetchRequest)
-
-        require(results.count <= 1, "More than favorite label")
-
-        if let label = results.first {
-            return label
-        } else if create {
-            let label = Label.insertNewObject(in: context)
-            label.remoteIdentifier = UUID()
-            label.kind = .favorite
-
-            do {
-                try context.save()
-            } catch {
-                fatal("Failure creating favorite label")
+        return context.performAndWait {
+            guard let entity = context.persistentStoreCoordinator?.managedObjectModel.entitiesByName[entityName()] else {
+                fatal("Label entity not registered in managed object model")
             }
 
-            return label
-        } else {
-            fatal("The favorite label is always expected to exist at all times")
+            for managedObject in context.registeredObjects where managedObject.entity == entity && !managedObject.isFault {
+                guard let label = managedObject as? Label, label.kind == .favorite else { continue }
+                return label
+
+            }
+
+            let fetchRequest = NSFetchRequest<Label>(entityName: Label.entityName())
+            fetchRequest.predicate = NSPredicate(format: "type = \(Kind.favorite.rawValue)")
+            fetchRequest.fetchLimit = 2
+
+            let results = context.fetchOrAssert(request: fetchRequest)
+
+            require(results.count <= 1, "More than favorite label")
+
+            if let label = results.first {
+                return label
+            } else if create {
+                let label = Label.insertNewObject(in: context)
+                label.remoteIdentifier = UUID()
+                label.kind = .favorite
+
+                do {
+                    try context.save()
+                } catch {
+                    fatal("Failure creating favorite label")
+                }
+
+                return label
+            } else {
+                fatal("The favorite label is always expected to exist at all times")
+            }
         }
     }
 

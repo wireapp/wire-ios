@@ -39,6 +39,7 @@ public protocol AVSWrapperType {
     func handleSFTResponse(data: Data?, context: WireCallMessageToken)
     func update(callConfig: String?, httpStatusCode: Int)
     func requestVideoStreams(_ videoStreams: AVSVideoStreams, conversationId: AVSIdentifier)
+    func setMLSConferenceInfo(conversationId: AVSIdentifier, info: MLSConferenceInfo)
     var muted: Bool { get set }
 }
 
@@ -102,6 +103,7 @@ public class AVSWrapper: AVSWrapperType {
         wcall_set_participant_changed_handler(handle, callParticipantHandler, observer)
         wcall_set_req_clients_handler(handle, requestClientsHandler)
         wcall_set_active_speaker_handler(handle, activeSpeakersHandler)
+        wcall_set_req_new_epoch_handler(handle, requestNewEpochHandler)
         Self.logger.info("init finished")
     }
 
@@ -199,6 +201,32 @@ public class AVSWrapper: AVSWrapperType {
         wcall_request_video_streams(handle, conversationId.serialized, 0, videoStreams.jsonString(encoder))
     }
 
+    /// Set the MLS conference info for a given conversation.
+    ///
+    /// - Parameters:
+    ///   - conversationId: The conversation hosting the MLS conference.
+    ///   - info: The MLS conference info.
+
+    public func setMLSConferenceInfo(
+        conversationId: AVSIdentifier,
+        info: MLSConferenceInfo
+    ) {
+        let clients = info.members.compactMap(AVSClient.init)
+        let clientList = AVSClientList(clients: clients)
+
+        guard let clientListJSON = clientList.jsonString() else {
+            return
+        }
+
+        wcall_set_epoch_info(
+            handle,
+            conversationId.serialized,
+            UInt32(info.epoch),
+            clientListJSON,
+            info.keyData.base64EncodedString()
+        )
+    }
+
     // MARK: - C Callback Handlers
 
     private let constantBitRateChangeHandler: Handler.ConstantBitRateChange = { _, _, enabledFlag, contextRef in
@@ -285,7 +313,7 @@ public class AVSWrapper: AVSWrapperType {
         }
     }
 
-    private let sendCallMessageHandler: Handler.CallMessageSend = { token, conversationId, senderUserId, senderClientId, targetsCString, _, data, dataLength, _, _, contextRef in
+    private let sendCallMessageHandler: Handler.CallMessageSend = { token, conversationId, senderUserId, senderClientId, targetsCString, _, data, dataLength, _, myClientsOnly, contextRef in
         guard let token = token else {
             return EINVAL
         }
@@ -303,7 +331,8 @@ public class AVSWrapper: AVSWrapperType {
                                         senderUserId: AVSIdentifier.from(string: $2),
                                         senderClientId: $3,
                                         targets: targets,
-                                        data: transformedData)
+                                        data: transformedData,
+                                        overMLSSelfConversation: myClientsOnly == 1)
         }
     }
 
@@ -366,6 +395,12 @@ public class AVSWrapper: AVSWrapperType {
     private let activeSpeakersHandler: Handler.ActiveSpeakersChange = { _, conversationIdRef, json, contextRef in
         AVSWrapper.withCallCenter(contextRef, conversationIdRef, json) {
             $0.handleActiveSpeakersChange(conversationId: AVSIdentifier.from(string: $1), data: $2)
+        }
+    }
+
+    private let requestNewEpochHandler: Handler.RequestNewEpoch = { _, conversationIdRef, contextRef in
+        AVSWrapper.withCallCenter(contextRef, conversationIdRef) { (callCenter, conversationID: String) in
+            callCenter.handleNewEpochRequest(conversationID: .from(string: conversationID))
         }
     }
 
