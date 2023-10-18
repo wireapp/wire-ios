@@ -18,6 +18,7 @@
 
 import Foundation
 
+// sourcery: AutoMockable
 protocol MLSActionsProviderProtocol {
 
     func fetchBackendPublicKeys(
@@ -52,15 +53,42 @@ protocol MLSActionsProviderProtocol {
         in context: NotificationContext
     ) async throws -> [ZMUpdateEvent]
 
-    func fetchPublicGroupState(
+    func fetchConversationGroupInfo(
         conversationId: UUID,
         domain: String,
+        subgroupType: SubgroupType?,
         context: NotificationContext
     ) async throws -> Data
 
+    func fetchSubgroup(
+        conversationID: UUID,
+        domain: String,
+        type: SubgroupType,
+        context: NotificationContext
+    ) async throws -> MLSSubgroup
+
+    func deleteSubgroup(
+        conversationID: UUID,
+        domain: String,
+        subgroupType: SubgroupType,
+        context: NotificationContext
+    ) async throws
+
+    func leaveSubconversation(
+        conversationID: UUID,
+        domain: String,
+        subconversationType: SubgroupType,
+        context: NotificationContext
+    ) async throws
+
+    func syncConversation(
+        qualifiedID: QualifiedID,
+        context: NotificationContext
+    ) async throws
+
 }
 
-class MLSActionsProvider: MLSActionsProviderProtocol {
+final class MLSActionsProvider: MLSActionsProviderProtocol {
 
     func fetchBackendPublicKeys(
         in context: NotificationContext
@@ -121,16 +149,82 @@ class MLSActionsProvider: MLSActionsProviderProtocol {
         return try await action.perform(in: context)
     }
 
-    func fetchPublicGroupState(
+    func fetchConversationGroupInfo(
         conversationId: UUID,
         domain: String,
+        subgroupType: SubgroupType?,
         context: NotificationContext
     ) async throws -> Data {
-        var action = FetchPublicGroupStateAction(
-            conversationId: conversationId,
-            domain: domain
+        if let subgroupType = subgroupType {
+            var action = FetchMLSSubconversationGroupInfoAction(
+                conversationId: conversationId,
+                domain: domain,
+                subgroupType: subgroupType
+            )
+
+            return try await action.perform(in: context)
+
+        } else {
+            var action = FetchMLSConversationGroupInfoAction(
+                conversationId: conversationId,
+                domain: domain
+            )
+
+            return try await action.perform(in: context)
+        }
+    }
+
+    func fetchSubgroup(
+        conversationID: UUID,
+        domain: String,
+        type: SubgroupType,
+        context: NotificationContext
+    ) async throws -> MLSSubgroup {
+        var action = FetchSubgroupAction(
+            domain: domain,
+            conversationId: conversationID,
+            type: type
         )
 
         return try await action.perform(in: context)
     }
+
+    func deleteSubgroup(
+        conversationID: UUID,
+        domain: String,
+        subgroupType: SubgroupType,
+        context: NotificationContext
+    ) async throws {
+        var action = DeleteSubgroupAction(
+            conversationID: conversationID,
+            domain: domain,
+            subgroupType: subgroupType
+        )
+
+        try await action.perform(in: context)
+    }
+
+    func leaveSubconversation(
+        conversationID: UUID,
+        domain: String,
+        subconversationType: SubgroupType,
+        context: NotificationContext
+    ) async throws {
+        var action = LeaveSubconversationAction(
+            conversationID: conversationID,
+            domain: domain,
+            subconversationType: subconversationType
+        )
+
+        try await action.perform(in: context)
+    }
+
+    func syncConversation(
+        qualifiedID: QualifiedID,
+        context: NotificationContext
+    ) async throws {
+        var action = SyncConversationAction(qualifiedID: qualifiedID)
+        try await action.perform(in: context)
+    }
+
 }

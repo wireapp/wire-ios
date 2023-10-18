@@ -17,12 +17,17 @@
 //
 
 import Foundation
+import Combine
 
 /**
  * The snapshot of the state of a call.
  */
 
 struct CallSnapshot {
+
+    var qualifiedID: QualifiedID?
+    var groupIDs: (parent: MLSGroupID, subconversation: MLSGroupID)?
+
     let callParticipants: CallParticipantsSnapshot
     let callState: CallState
     let callStarter: AVSIdentifier
@@ -36,6 +41,8 @@ struct CallSnapshot {
     let activeSpeakers: [AVSActiveSpeakersChange.ActiveSpeaker]
     let videoGridPresentationMode: VideoGridPresentationMode
     var conversationObserverToken: NSObjectProtocol?
+    var onConferenceInfoChangedToken: AnyCancellable?
+    var mlsConferenceStaleParticipantsRemover: MLSConferenceStaleParticipantsRemover?
 
     var isDegradedCall: Bool {
         return degradedUser != nil
@@ -47,19 +54,25 @@ struct CallSnapshot {
      */
 
     func update(with callState: CallState) -> CallSnapshot {
-        return CallSnapshot(callParticipants: callParticipants,
-                            callState: callState,
-                            callStarter: callStarter,
-                            isVideo: isVideo,
-                            isGroup: isGroup,
-                            isConstantBitRate: isConstantBitRate,
-                            videoState: videoState,
-                            networkQuality: networkQuality,
-                            isConferenceCall: isConferenceCall,
-                            degradedUser: degradedUser,
-                            activeSpeakers: activeSpeakers,
-                            videoGridPresentationMode: videoGridPresentationMode,
-                            conversationObserverToken: conversationObserverToken)
+        return CallSnapshot(
+            qualifiedID: qualifiedID,
+            groupIDs: groupIDs,
+            callParticipants: callParticipants,
+            callState: callState,
+            callStarter: callStarter,
+            isVideo: isVideo,
+            isGroup: isGroup,
+            isConstantBitRate: isConstantBitRate,
+            videoState: videoState,
+            networkQuality: networkQuality,
+            isConferenceCall: isConferenceCall,
+            degradedUser: degradedUser,
+            activeSpeakers: activeSpeakers,
+            videoGridPresentationMode: videoGridPresentationMode,
+            conversationObserverToken: conversationObserverToken,
+            onConferenceInfoChangedToken: onConferenceInfoChangedToken,
+            mlsConferenceStaleParticipantsRemover: mlsConferenceStaleParticipantsRemover
+        )
     }
 
     /**
@@ -68,19 +81,25 @@ struct CallSnapshot {
      */
 
     func updateConstantBitrate(_ enabled: Bool) -> CallSnapshot {
-        return CallSnapshot(callParticipants: callParticipants,
-                            callState: callState,
-                            callStarter: callStarter,
-                            isVideo: isVideo,
-                            isGroup: isGroup,
-                            isConstantBitRate: enabled,
-                            videoState: videoState,
-                            networkQuality: networkQuality,
-                            isConferenceCall: isConferenceCall,
-                            degradedUser: degradedUser,
-                            activeSpeakers: activeSpeakers,
-                            videoGridPresentationMode: videoGridPresentationMode,
-                            conversationObserverToken: conversationObserverToken)
+        return CallSnapshot(
+            qualifiedID: qualifiedID,
+            groupIDs: groupIDs,
+            callParticipants: callParticipants,
+            callState: callState,
+            callStarter: callStarter,
+            isVideo: isVideo,
+            isGroup: isGroup,
+            isConstantBitRate: enabled,
+            videoState: videoState,
+            networkQuality: networkQuality,
+            isConferenceCall: isConferenceCall,
+            degradedUser: degradedUser,
+            activeSpeakers: activeSpeakers,
+            videoGridPresentationMode: videoGridPresentationMode,
+            conversationObserverToken: conversationObserverToken,
+            onConferenceInfoChangedToken: onConferenceInfoChangedToken,
+            mlsConferenceStaleParticipantsRemover: mlsConferenceStaleParticipantsRemover
+        )
     }
 
     /**
@@ -89,19 +108,25 @@ struct CallSnapshot {
      */
 
     func updateVideoState(_ videoState: VideoState) -> CallSnapshot {
-        return CallSnapshot(callParticipants: callParticipants,
-                            callState: callState,
-                            callStarter: callStarter,
-                            isVideo: isVideo,
-                            isGroup: isGroup,
-                            isConstantBitRate: isConstantBitRate,
-                            videoState: videoState,
-                            networkQuality: networkQuality,
-                            isConferenceCall: isConferenceCall,
-                            degradedUser: degradedUser,
-                            activeSpeakers: activeSpeakers,
-                            videoGridPresentationMode: videoGridPresentationMode,
-                            conversationObserverToken: conversationObserverToken)
+        return CallSnapshot(
+            qualifiedID: qualifiedID,
+            groupIDs: groupIDs,
+            callParticipants: callParticipants,
+            callState: callState,
+            callStarter: callStarter,
+            isVideo: isVideo,
+            isGroup: isGroup,
+            isConstantBitRate: isConstantBitRate,
+            videoState: videoState,
+            networkQuality: networkQuality,
+            isConferenceCall: isConferenceCall,
+            degradedUser: degradedUser,
+            activeSpeakers: activeSpeakers,
+            videoGridPresentationMode: videoGridPresentationMode,
+            conversationObserverToken: conversationObserverToken,
+            onConferenceInfoChangedToken: onConferenceInfoChangedToken,
+            mlsConferenceStaleParticipantsRemover: mlsConferenceStaleParticipantsRemover
+        )
     }
 
     /**
@@ -110,19 +135,25 @@ struct CallSnapshot {
      */
 
     func updateNetworkQuality(_ networkQuality: NetworkQuality) -> CallSnapshot {
-        return CallSnapshot(callParticipants: callParticipants,
-                            callState: callState,
-                            callStarter: callStarter,
-                            isVideo: isVideo,
-                            isGroup: isGroup,
-                            isConstantBitRate: isConstantBitRate,
-                            videoState: videoState,
-                            networkQuality: networkQuality,
-                            isConferenceCall: isConferenceCall,
-                            degradedUser: degradedUser,
-                            activeSpeakers: activeSpeakers,
-                            videoGridPresentationMode: videoGridPresentationMode,
-                            conversationObserverToken: conversationObserverToken)
+        return CallSnapshot(
+            qualifiedID: qualifiedID,
+            groupIDs: groupIDs,
+            callParticipants: callParticipants,
+            callState: callState,
+            callStarter: callStarter,
+            isVideo: isVideo,
+            isGroup: isGroup,
+            isConstantBitRate: isConstantBitRate,
+            videoState: videoState,
+            networkQuality: networkQuality,
+            isConferenceCall: isConferenceCall,
+            degradedUser: degradedUser,
+            activeSpeakers: activeSpeakers,
+            videoGridPresentationMode: videoGridPresentationMode,
+            conversationObserverToken: conversationObserverToken,
+            onConferenceInfoChangedToken: onConferenceInfoChangedToken,
+            mlsConferenceStaleParticipantsRemover: mlsConferenceStaleParticipantsRemover
+        )
     }
 
     /**
@@ -135,19 +166,25 @@ struct CallSnapshot {
      */
 
     func updateDegradedUser(_ degradedUser: ZMUser) -> CallSnapshot {
-        return CallSnapshot(callParticipants: callParticipants,
-                            callState: callState,
-                            callStarter: callStarter,
-                            isVideo: isVideo,
-                            isGroup: isGroup,
-                            isConstantBitRate: isConstantBitRate,
-                            videoState: videoState,
-                            networkQuality: networkQuality,
-                            isConferenceCall: isConferenceCall,
-                            degradedUser: degradedUser,
-                            activeSpeakers: activeSpeakers,
-                            videoGridPresentationMode: videoGridPresentationMode,
-                            conversationObserverToken: conversationObserverToken)
+        return CallSnapshot(
+            qualifiedID: qualifiedID,
+            groupIDs: groupIDs,
+            callParticipants: callParticipants,
+            callState: callState,
+            callStarter: callStarter,
+            isVideo: isVideo,
+            isGroup: isGroup,
+            isConstantBitRate: isConstantBitRate,
+            videoState: videoState,
+            networkQuality: networkQuality,
+            isConferenceCall: isConferenceCall,
+            degradedUser: degradedUser,
+            activeSpeakers: activeSpeakers,
+            videoGridPresentationMode: videoGridPresentationMode,
+            conversationObserverToken: conversationObserverToken,
+            onConferenceInfoChangedToken: onConferenceInfoChangedToken,
+            mlsConferenceStaleParticipantsRemover: mlsConferenceStaleParticipantsRemover
+        )
     }
 
     /**
@@ -156,19 +193,25 @@ struct CallSnapshot {
      */
 
     func updateActiveSpeakers(_ activeSpeakers: [AVSActiveSpeakersChange.ActiveSpeaker]) -> CallSnapshot {
-        return CallSnapshot(callParticipants: callParticipants,
-                            callState: callState,
-                            callStarter: callStarter,
-                            isVideo: isVideo,
-                            isGroup: isGroup,
-                            isConstantBitRate: isConstantBitRate,
-                            videoState: videoState,
-                            networkQuality: networkQuality,
-                            isConferenceCall: isConferenceCall,
-                            degradedUser: degradedUser,
-                            activeSpeakers: activeSpeakers,
-                            videoGridPresentationMode: videoGridPresentationMode,
-                            conversationObserverToken: conversationObserverToken)
+        return CallSnapshot(
+            qualifiedID: qualifiedID,
+            groupIDs: groupIDs,
+            callParticipants: callParticipants,
+            callState: callState,
+            callStarter: callStarter,
+            isVideo: isVideo,
+            isGroup: isGroup,
+            isConstantBitRate: isConstantBitRate,
+            videoState: videoState,
+            networkQuality: networkQuality,
+            isConferenceCall: isConferenceCall,
+            degradedUser: degradedUser,
+            activeSpeakers: activeSpeakers,
+            videoGridPresentationMode: videoGridPresentationMode,
+            conversationObserverToken: conversationObserverToken,
+            onConferenceInfoChangedToken: onConferenceInfoChangedToken,
+            mlsConferenceStaleParticipantsRemover: mlsConferenceStaleParticipantsRemover
+        )
     }
 
     /**
@@ -177,18 +220,24 @@ struct CallSnapshot {
      */
 
     func updateVideoGridPresentationMode(_ presentationMode: VideoGridPresentationMode) -> CallSnapshot {
-        return CallSnapshot(callParticipants: callParticipants,
-                            callState: callState,
-                            callStarter: callStarter,
-                            isVideo: isVideo,
-                            isGroup: isGroup,
-                            isConstantBitRate: isConstantBitRate,
-                            videoState: videoState,
-                            networkQuality: networkQuality,
-                            isConferenceCall: isConferenceCall,
-                            degradedUser: degradedUser,
-                            activeSpeakers: activeSpeakers,
-                            videoGridPresentationMode: presentationMode,
-                            conversationObserverToken: conversationObserverToken)
+        return CallSnapshot(
+            qualifiedID: qualifiedID,
+            groupIDs: groupIDs,
+            callParticipants: callParticipants,
+            callState: callState,
+            callStarter: callStarter,
+            isVideo: isVideo,
+            isGroup: isGroup,
+            isConstantBitRate: isConstantBitRate,
+            videoState: videoState,
+            networkQuality: networkQuality,
+            isConferenceCall: isConferenceCall,
+            degradedUser: degradedUser,
+            activeSpeakers: activeSpeakers,
+            videoGridPresentationMode: presentationMode,
+            conversationObserverToken: conversationObserverToken,
+            onConferenceInfoChangedToken: onConferenceInfoChangedToken,
+            mlsConferenceStaleParticipantsRemover: mlsConferenceStaleParticipantsRemover
+        )
     }
 }

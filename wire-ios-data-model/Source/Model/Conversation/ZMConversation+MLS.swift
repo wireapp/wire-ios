@@ -159,4 +159,74 @@ public extension ZMConversation {
         return context.executeFetchRequestOrAssert(request) as? [ZMConversation] ?? []
     }
 
+    static func fetchSelfMLSConversation(
+        in context: NSManagedObjectContext
+    ) -> ZMConversation? {
+        let request = Self.fetchRequest()
+        request.fetchLimit = 2
+        request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+            .isSelfConversation, .isMLSConversation
+        ])
+
+        let result = context.executeFetchRequestOrAssert(request)
+        require(result.count <= 1, "More than one conversation found for a single group id")
+        return result.first as? ZMConversation
+    }
+
+    static func fetchMLSConversations(in context: NSManagedObjectContext) -> [ZMConversation] {
+        let request = NSFetchRequest<Self>(entityName: Self.entityName())
+        request.predicate = .isMLSConversation
+        return context.fetchOrAssert(request: request)
+    }
+
+    enum ZMConversationError: Error {
+        case couldNotFindSyncContext
+    }
+
+    func joinNewMLSGroup(id mlsGroupID: MLSGroupID, completion: ((Error?) -> Void)?) {
+        guard let syncContext = self.managedObjectContext?.zm_sync else {
+            completion?(ZMConversationError.couldNotFindSyncContext)
+            return
+        }
+
+        syncContext.perform {
+            guard let mlsService = syncContext.mlsService else { return }
+
+            Task {
+                do {
+                    try await mlsService.joinNewGroup(with: mlsGroupID)
+                } catch {
+                    WireLogger.mls.error("failed to join new MLS Group \(mlsGroupID.safeForLoggingDescription)")
+                    completion?(error)
+                    return
+                }
+                completion?(nil)
+            }
+        }
+    }
+}
+
+private extension NSPredicate {
+
+    static var isMLSConversation: NSPredicate {
+        NSPredicate(
+            format: "%K == %i && %K != nil",
+            argumentArray: [
+                ZMConversation.messageProtocolKey,
+                MessageProtocol.mls.rawValue,
+                ZMConversation.mlsGroupIdKey
+            ]
+        )
+    }
+
+    static var isSelfConversation: NSPredicate {
+        NSPredicate(
+            format: "%K == %i",
+            argumentArray: [
+                ZMConversationConversationTypeKey,
+                ZMConversationType.`self`.rawValue
+            ]
+        )
+    }
+
 }
