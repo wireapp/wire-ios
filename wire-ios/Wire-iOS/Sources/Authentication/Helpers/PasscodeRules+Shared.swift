@@ -21,6 +21,8 @@ import WireUtilities
 
 extension PasswordRuleSet {
 
+    static let passwordRuleSetLogger = WireLogger(tag: "password-rule-set")
+
     /// The shared rule set.
     static let shared: PasswordRuleSet = {
         let fileURL = Bundle.main.url(forResource: "password_rules", withExtension: "json")!
@@ -42,7 +44,7 @@ extension PasswordRuleSet {
             let ruleSet = try decoder.decode(PasswordRuleSet.self, from: fileData)
             return ruleSet
         } catch {
-            WireLogger.passwordRuleSet.error("Failed to decode password rule set: \(error)")
+            passwordRuleSetLogger.error("Failed to decode password rule set: \(error)")
             return nil
         }
     }()
