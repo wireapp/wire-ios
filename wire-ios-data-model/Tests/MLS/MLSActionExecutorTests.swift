@@ -18,19 +18,20 @@
 
 import Foundation
 import XCTest
-@testable import WireDataModel
 import WireCoreCrypto
+import Combine
+@testable import WireDataModel
 
 class MLSActionExecutorTests: ZMBaseManagedObjectTest {
 
     var mockCoreCrypto: MockCoreCrypto!
-    var mockActionsProvider: MockMLSActionsProvider!
+    var mockActionsProvider: MockMLSActionsProviderProtocol!
     var sut: MLSActionExecutor!
 
     override func setUp() {
         super.setUp()
         mockCoreCrypto = MockCoreCrypto()
-        mockActionsProvider = MockMLSActionsProvider()
+        mockActionsProvider = MockMLSActionsProviderProtocol()
         sut = MLSActionExecutor(
             coreCrypto: MockSafeCoreCrypto(coreCrypto: mockCoreCrypto),
             context: uiMOC,
@@ -67,13 +68,13 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
 
     func test_AddMembers() async throws {
         // Given
-        let groupID = MLSGroupID(.random())
+        let groupID = MLSGroupID.random()
         let invitees = [Invitee(id: .random(), kp: .random())]
 
-        let mockCommit = Bytes.random()
-        let mockWelcome = Bytes.random()
+        let mockCommit = Data.random().bytes
+        let mockWelcome = Data.random().bytes
         let mockUpdateEvent = mockMemberJoinUpdateEvent()
-        let mockPublicGroupState = PublicGroupStateBundle(
+        let mockGroupInfo = GroupInfoBundle(
             encryptionType: .plaintext,
             ratchetTreeType: .full,
             payload: .random()
@@ -81,25 +82,23 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         let mockMemberAddedMessages = MemberAddedMessages(
             commit: mockCommit,
             welcome: mockWelcome,
-            publicGroupState: mockPublicGroupState
+            groupInfo: mockGroupInfo
         )
 
         // Mock add clients.
-        var mockAddClientsArguments = [(Bytes, [Invitee])]()
+        var mockAddClientsArguments = [([Byte], [Invitee])]()
         mockCoreCrypto.mockAddClientsToConversation = {
             mockAddClientsArguments.append(($0, $1))
             return mockMemberAddedMessages
         }
 
         // Mock send commit bundle.
-        var mockSendCommitBundleArguments = [Data]()
-        mockActionsProvider.sendCommitBundleMocks.append({
-            mockSendCommitBundleArguments.append($0)
+        mockActionsProvider.sendCommitBundleIn_MockMethod = { _, _ in
             return [mockUpdateEvent]
-        })
+        }
 
         // Mock merge commit.
-        var mockCommitAcceptedArguments = [Bytes]()
+        var mockCommitAcceptedArguments = [[Byte]]()
         mockCoreCrypto.mockCommitAccepted = {
             mockCommitAcceptedArguments.append($0)
         }
@@ -116,10 +115,11 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         let expectedCommitBundle = CommitBundle(
             welcome: mockWelcome,
             commit: mockCommit,
-            publicGroupState: mockPublicGroupState
+            groupInfo: mockGroupInfo
         )
-        XCTAssertEqual(mockSendCommitBundleArguments.count, 1)
-        XCTAssertEqual(mockSendCommitBundleArguments.first, try expectedCommitBundle.protobufData())
+
+        XCTAssertEqual(mockActionsProvider.sendCommitBundleIn_Invocations.count, 1)
+        XCTAssertEqual(mockActionsProvider.sendCommitBundleIn_Invocations.first?.bundle, expectedCommitBundle.transportData())
 
         // Then the commit was merged.
         XCTAssertEqual(mockCommitAcceptedArguments.count, 1)
@@ -133,18 +133,18 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
 
     func test_RemoveClients() async throws {
         // Given
-        let groupID = MLSGroupID(.random())
+        let groupID = MLSGroupID.random()
         let mlsClientID = MLSClientID(
             userID: UUID.create().uuidString,
             clientID: UUID.create().uuidString,
             domain: "example.com"
         )
 
-        let clientIds =  [mlsClientID].compactMap { $0.string.utf8Data?.bytes }
+        let clientIds =  [mlsClientID].compactMap { $0.rawValue.utf8Data?.bytes }
 
-        let mockCommit = Bytes.random()
+        let mockCommit = Data.random().bytes
         let mockUpdateEvent = mockMemberLeaveUpdateEvent()
-        let mockPublicGroupState = PublicGroupStateBundle(
+        let mockGroupInfo = GroupInfoBundle(
             encryptionType: .plaintext,
             ratchetTreeType: .full,
             payload: .random()
@@ -152,25 +152,23 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         let mockCommitBundle = CommitBundle(
             welcome: nil,
             commit: mockCommit,
-            publicGroupState: mockPublicGroupState
+            groupInfo: mockGroupInfo
         )
 
         // Mock remove clients.
-        var mockRemoveClientsArguments = [(Bytes, [ClientId])]()
+        var mockRemoveClientsArguments = [([Byte], [ClientId])]()
         mockCoreCrypto.mockRemoveClientsFromConversation = {
             mockRemoveClientsArguments.append(($0, $1))
             return mockCommitBundle
         }
 
         // Mock send commit bundle.
-        var mockSendCommitBundleArguments = [Data]()
-        mockActionsProvider.sendCommitBundleMocks.append({
-            mockSendCommitBundleArguments.append($0)
+        mockActionsProvider.sendCommitBundleIn_MockMethod = { _, _ in
             return [mockUpdateEvent]
-        })
+        }
 
         // Mock merge commit.
-        var mockCommitAcceptedArguments = [Bytes]()
+        var mockCommitAcceptedArguments = [[Byte]]()
         mockCoreCrypto.mockCommitAccepted = {
             mockCommitAcceptedArguments.append($0)
         }
@@ -184,8 +182,8 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         XCTAssertEqual(mockRemoveClientsArguments.first?.1, clientIds)
 
         // Then the commit bundle was sent.
-        XCTAssertEqual(mockSendCommitBundleArguments.count, 1)
-        XCTAssertEqual(mockSendCommitBundleArguments.first, try mockCommitBundle.protobufData())
+        XCTAssertEqual(mockActionsProvider.sendCommitBundleIn_Invocations.count, 1)
+        XCTAssertEqual(mockActionsProvider.sendCommitBundleIn_Invocations.first?.bundle, mockCommitBundle.transportData())
 
         // Then the commit was merged.
         XCTAssertEqual(mockCommitAcceptedArguments.count, 1)
@@ -199,10 +197,9 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
 
     func test_UpdateKeyMaterial() async throws {
         // Given
-        let groupID = MLSGroupID(.random())
-
-        let mockCommit = Bytes.random()
-        let mockPublicGroupState = PublicGroupStateBundle(
+        let groupID = MLSGroupID.random()
+        let mockCommit = Data.random().bytes
+        let mockGroupInfo = GroupInfoBundle(
             encryptionType: .plaintext,
             ratchetTreeType: .full,
             payload: .random()
@@ -210,25 +207,23 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         let mockCommitBundle = CommitBundle(
             welcome: nil,
             commit: mockCommit,
-            publicGroupState: mockPublicGroupState
+            groupInfo: mockGroupInfo
         )
 
         // Mock Update key material.
-        var mockUpdateKeyMaterialArguments = [Bytes]()
+        var mockUpdateKeyMaterialArguments = [[Byte]]()
         mockCoreCrypto.mockUpdateKeyingMaterial = {
             mockUpdateKeyMaterialArguments.append($0)
             return mockCommitBundle
         }
 
         // Mock send commit bundle.
-        var mockSendCommitBundleArguments = [Data]()
-        mockActionsProvider.sendCommitBundleMocks.append({
-            mockSendCommitBundleArguments.append($0)
+        mockActionsProvider.sendCommitBundleIn_MockMethod = { _, _ in
             return []
-        })
+        }
 
         // Mock merge commit.
-        var mockCommitAcceptedArguments = [Bytes]()
+        var mockCommitAcceptedArguments = [[Byte]]()
         mockCoreCrypto.mockCommitAccepted = {
             mockCommitAcceptedArguments.append($0)
         }
@@ -241,8 +236,8 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         XCTAssertEqual(mockUpdateKeyMaterialArguments.first, groupID.bytes)
 
         // Then the commit bundle was sent.
-        XCTAssertEqual(mockSendCommitBundleArguments.count, 1)
-        XCTAssertEqual(mockSendCommitBundleArguments.first, try mockCommitBundle.protobufData())
+        XCTAssertEqual(mockActionsProvider.sendCommitBundleIn_Invocations.count, 1)
+        XCTAssertEqual(mockActionsProvider.sendCommitBundleIn_Invocations.first?.bundle, mockCommitBundle.transportData())
 
         // Then the commit was merged.
         XCTAssertEqual(mockCommitAcceptedArguments.count, 1)
@@ -256,12 +251,12 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
 
     func test_CommitPendingProposals() async throws {
         // Given
-        let groupID = MLSGroupID(.random())
+        let groupID = MLSGroupID.random()
 
-        let mockCommit = Bytes.random()
-        let mockWelcome = Bytes.random()
+        let mockCommit = Data.random().bytes
+        let mockWelcome = Data.random().bytes
         let mockUpdateEvent = mockMemberLeaveUpdateEvent()
-        let mockPublicGroupState = PublicGroupStateBundle(
+        let mockGroupInfo = GroupInfoBundle(
             encryptionType: .plaintext,
             ratchetTreeType: .full,
             payload: .random()
@@ -269,29 +264,27 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         let mockCommitBundle = CommitBundle(
             welcome: mockWelcome,
             commit: mockCommit,
-            publicGroupState: mockPublicGroupState
+            groupInfo: mockGroupInfo
         )
 
         // Mock Commit pending proposals.
-        var mockCommitPendingProposals = [Bytes]()
+        var mockCommitPendingProposals = [[Byte]]()
         mockCoreCrypto.mockCommitPendingProposals = {
             mockCommitPendingProposals.append($0)
             return CommitBundle(
                 welcome: mockWelcome,
                 commit: mockCommit,
-                publicGroupState: mockPublicGroupState
+                groupInfo: mockGroupInfo
             )
         }
 
         // Mock send commit bundle.
-        var mockSendCommitBundleArguments = [Data]()
-        mockActionsProvider.sendCommitBundleMocks.append({
-            mockSendCommitBundleArguments.append($0)
+        mockActionsProvider.sendCommitBundleIn_MockMethod = { _, _ in
             return [mockUpdateEvent]
-        })
+        }
 
         // Mock merge commit.
-        var mockCommitAcceptedArguments = [Bytes]()
+        var mockCommitAcceptedArguments = [[Byte]]()
         mockCoreCrypto.mockCommitAccepted = {
             mockCommitAcceptedArguments.append($0)
         }
@@ -304,8 +297,8 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         XCTAssertEqual(mockCommitPendingProposals.first, groupID.bytes)
 
         // Then the commit bundle was sent.
-        XCTAssertEqual(mockSendCommitBundleArguments.count, 1)
-        XCTAssertEqual(mockSendCommitBundleArguments.first, try mockCommitBundle.protobufData())
+        XCTAssertEqual(mockActionsProvider.sendCommitBundleIn_Invocations.count, 1)
+        XCTAssertEqual(mockActionsProvider.sendCommitBundleIn_Invocations.first?.bundle, mockCommitBundle.transportData())
 
         // Then the commit was merged.
         XCTAssertEqual(mockCommitAcceptedArguments.count, 1)
@@ -319,10 +312,10 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
 
     func test_JoinGroup() async throws {
         // Given
-        let groupID = MLSGroupID(.random())
-        let mockCommit = Bytes.random()
-        let mockPublicGroupState = Bytes.random().data
-        let mockPublicGroupStateBundle = PublicGroupStateBundle(
+        let groupID = MLSGroupID.random()
+        let mockCommit = Data.random().bytes
+        let mockGroupInfo = Data.random()
+        let mockGroupInfoBundle = GroupInfoBundle(
             encryptionType: .plaintext,
             ratchetTreeType: .full,
             payload: []
@@ -330,46 +323,44 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         let mockCommitBundle = CommitBundle(
             welcome: nil,
             commit: mockCommit,
-            publicGroupState: mockPublicGroupStateBundle
+            groupInfo: mockGroupInfoBundle
         )
         // TODO: Mock properly
         let mockUpdateEvents = [ZMUpdateEvent]()
 
         // Mock join by external commit
-        var mockJoinByExternalCommitArguments = [Bytes]()
+        var mockJoinByExternalCommitArguments = [[Byte]]()
 
         mockCoreCrypto.mockJoinByExternalCommit = { groupState, _, _ in
             mockJoinByExternalCommitArguments.append(groupState)
             return .init(
                 conversationId: groupID.bytes,
                 commit: mockCommit,
-                publicGroupState: mockPublicGroupStateBundle
+                groupInfo: mockGroupInfoBundle
             )
         }
 
         // Mock send commit bundle
-        var mockSendCommitBundleArguments = [Data]()
-        mockActionsProvider.sendCommitBundleMocks.append({
-            mockSendCommitBundleArguments.append($0)
+        mockActionsProvider.sendCommitBundleIn_MockMethod = { _, _ in
             return mockUpdateEvents
-        })
+        }
 
         // Mock merge pending group
-        var mockMergePendingGroupArguments = [Bytes]()
+        var mockMergePendingGroupArguments = [[Byte]]()
         mockCoreCrypto.mockMergePendingGroupFromExternalCommit = { conversationId in
             mockMergePendingGroupArguments.append(conversationId)
         }
 
         // When
-        let updateEvents = try await sut.joinGroup(groupID, publicGroupState: mockPublicGroupState)
+        let updateEvents = try await sut.joinGroup(groupID, groupInfo: mockGroupInfo)
 
         // Then core crypto creates conversation init bundle
         XCTAssertEqual(mockJoinByExternalCommitArguments.count, 1)
-        XCTAssertEqual(mockJoinByExternalCommitArguments.first, mockPublicGroupState.bytes)
+        XCTAssertEqual(mockJoinByExternalCommitArguments.first, mockGroupInfo.bytes)
 
         // Then commit bundle was sent
-        XCTAssertEqual(mockSendCommitBundleArguments.count, 1)
-        XCTAssertEqual(mockSendCommitBundleArguments.first, try mockCommitBundle.protobufData())
+        XCTAssertEqual(mockActionsProvider.sendCommitBundleIn_Invocations.count, 1)
+        XCTAssertEqual(mockActionsProvider.sendCommitBundleIn_Invocations.first?.bundle, mockCommitBundle.transportData())
 
         // Then pending group is merged
         XCTAssertEqual(mockMergePendingGroupArguments.count, 1)
@@ -392,7 +383,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
 
     func test_JoinGroup_ThrowsErrorWithGiveUpRecoveryStrategy() async throws {
         // Given
-        let groupID = MLSGroupID(.random())
+        let groupID = MLSGroupID.random()
         let error = SendCommitBundleAction.Failure.unknown(
             status: 999,
             label: "unknown",
@@ -413,47 +404,45 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
 
     private typealias AssertRecoveryBlock = (
         _ recovery: MLSActionExecutor.ExternalCommitErrorRecovery,
-        _ clearPendingGroupArguments: [Bytes]
+        _ clearPendingGroupArguments: [[Byte]]
     ) -> Void
 
     private func test_JoinGroupThrowsErrorWithRecoveryStrategy(
-        groupID: MLSGroupID = MLSGroupID(.random()),
+        groupID: MLSGroupID = .random(),
         sendCommitBundleError: Error,
         assertRecovery: AssertRecoveryBlock
     ) async throws {
         // Given
-        let mockCommit = Bytes.random()
-        let mockPublicGroupStateBundle = PublicGroupStateBundle(
+        let mockCommit = Data.random().bytes
+        let mockGroupInfoBundle = GroupInfoBundle(
             encryptionType: .plaintext,
             ratchetTreeType: .full,
             payload: []
         )
 
         // Mock join by external commit
-        var mockJoinByExternalCommitArguments = [Bytes]()
+        var mockJoinByExternalCommitArguments = [[Byte]]()
         mockCoreCrypto.mockJoinByExternalCommit = { groupState, _, _ in
             mockJoinByExternalCommitArguments.append(groupState)
             return .init(
                 conversationId: groupID.bytes,
                 commit: mockCommit,
-                publicGroupState: mockPublicGroupStateBundle
+                groupInfo: mockGroupInfoBundle
             )
         }
 
         // Mock send commit bundle
-        mockActionsProvider.sendCommitBundleMocks.append({ _ in
-            throw sendCommitBundleError
-        })
+        mockActionsProvider.sendCommitBundleIn_MockError = sendCommitBundleError
 
         // Mock clear pending group
-        var mockClearPendingGroupArguments = [Bytes]()
+        var mockClearPendingGroupArguments = [[Byte]]()
         mockCoreCrypto.mockClearPendingGroupFromExternalCommit = {
             mockClearPendingGroupArguments.append($0)
         }
 
         // When / Then
         do {
-            _ = try await sut.joinGroup(groupID, publicGroupState: Data())
+            _ = try await sut.joinGroup(groupID, groupInfo: Data())
             XCTFail("expected an error")
         } catch MLSActionExecutor.Error.failedToSendExternalCommit(recovery: let recovery) {
             assertRecovery(recovery, mockClearPendingGroupArguments)
@@ -461,4 +450,42 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
             XCTFail("wrong error")
         }
     }
+
+    // MARK: - Epoch change
+
+    func test_OnEpochChanged() async throws {
+        // Given
+        let groupID = MLSGroupID.random()
+
+        var receivedGroupIDs = [MLSGroupID]()
+        let didReceiveGroupIDs = expectation(description: "didReceiveGroupIDs")
+        let cancellable = sut.onEpochChanged().collect(1).sink {
+            receivedGroupIDs = $0
+            didReceiveGroupIDs.fulfill()
+        }
+
+        let mockCommit = Data.random().bytes
+        let mockGroupInfo = GroupInfoBundle(
+            encryptionType: .plaintext,
+            ratchetTreeType: .full,
+            payload: .random()
+        )
+        let mockCommitBundle = CommitBundle(
+            welcome: nil,
+            commit: mockCommit,
+            groupInfo: mockGroupInfo
+        )
+
+        // When we make a commit
+        mockCoreCrypto.mockUpdateKeyingMaterial = { _ in return mockCommitBundle }
+        mockActionsProvider.sendCommitBundleIn_MockMethod = { _, _ in return [] }
+        mockCoreCrypto.mockCommitAccepted = { _ in }
+        _ = try await sut.updateKeyMaterial(for: groupID)
+
+        // Then
+        XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
+        cancellable.cancel()
+        XCTAssertEqual(receivedGroupIDs, [groupID])
+    }
+
 }

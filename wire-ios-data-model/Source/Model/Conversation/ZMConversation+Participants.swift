@@ -19,60 +19,6 @@
 import Foundation
 import WireProtos
 
-public class AddParticipantAction: EntityAction {
-    public var resultHandler: ResultHandler?
-
-    public typealias Result = Void
-    public typealias Failure = ConversationAddParticipantsError
-
-    public let userIDs: [NSManagedObjectID]
-    public let conversationID: NSManagedObjectID
-
-    public required init(users: [ZMUser], conversation: ZMConversation) {
-        userIDs = users.map(\.objectID)
-        conversationID = conversation.objectID
-    }
-}
-
-public enum ConversationAddParticipantsError: Error, Equatable {
-
-    case unknown
-    case invalidOperation
-    case accessDenied
-    case notConnectedToUser
-    case conversationNotFound
-    case tooManyMembers
-    case missingLegalHoldConsent
-    case failedToAddMLSMembers
-    case unreachableDomains(Set<String>)
-    case nonFederatingDomains(Set<String>)
-
-}
-
-public class RemoveParticipantAction: EntityAction {
-    public var resultHandler: ResultHandler?
-
-    public typealias Result = Void
-    public typealias Failure = ConversationRemoveParticipantError
-
-    public let userID: NSManagedObjectID
-    public let conversationID: NSManagedObjectID
-
-    public required init(user: ZMUser, conversation: ZMConversation) {
-        userID = user.objectID
-        conversationID = conversation.objectID
-    }
-}
-
-public enum ConversationRemoveParticipantError: Error {
-
-    case unknown
-    case invalidOperation
-    case conversationNotFound
-    case failedToRemoveMLSMembers
-
-}
-
 class MLSClientIDsProvider {
 
     func fetchUserClients(
