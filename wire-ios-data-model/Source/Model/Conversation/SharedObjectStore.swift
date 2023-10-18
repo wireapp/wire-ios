@@ -113,7 +113,7 @@ private let zmLog = ZMSLog(tag: "shared object store")
 class SharedObjectTestClass: NSObject, NSSecureCoding {
     var flag: Bool
     static var supportsSecureCoding: Bool {
-        return true
+        return false
     }
     override init() { flag = false }
     public func encode(with aCoder: NSCoder) { aCoder.encode(flag, forKey: "flag") }
