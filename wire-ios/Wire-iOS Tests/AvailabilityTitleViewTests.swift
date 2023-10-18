@@ -93,14 +93,22 @@ class AvailabilityTitleViewTests: ZMSnapshotTestCase {
 
     // MARK: - Common methods
 
-    private func createTest(for options: AvailabilityTitleView.Options, with availability: AvailabilityKind, on user: ZMUser, hasDarkMode: Bool = true, file: StaticString = #file, line: UInt = #line) {
+    private func createTest(
+        for options: AvailabilityTitleView.Options,
+        with availability: AvailabilityKind,
+        on user: ZMUser,
+        hasDarkMode: Bool = true,
+        file: StaticString = #file,
+        line: UInt = #line,
+        testName: String = #function
+    ) {
         updateAvailability(for: user, newValue: availability)
         let sut = AvailabilityTitleView(user: user, options: options)
 
         sut.overrideUserInterfaceStyle = hasDarkMode ? .dark : .light
         sut.backgroundColor = hasDarkMode ? .black : .white
         sut.frame = CGRect(origin: .zero, size: CGSize(width: 320, height: 44))
-        verify(view: sut, file: file, line: line)
+        verify(matching: sut, file: file, testName: testName, line: line)
     }
 
     func updateAvailability(for user: ZMUser, newValue: AvailabilityKind) {
