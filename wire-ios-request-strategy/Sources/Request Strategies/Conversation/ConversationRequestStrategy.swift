@@ -153,7 +153,7 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
 
         isFetchingAllConversations = true
 
-        // Mark all existing conversationt to be re-fetched since they might have
+        // Mark all existing conversations to be re-fetched since they might have
         // been deleted. If not the flag will be reset after syncing the conversations
         // with the BE and no extra work will be done.
         ZMUser.selfUser(in: managedObjectContext).conversations.forEach {

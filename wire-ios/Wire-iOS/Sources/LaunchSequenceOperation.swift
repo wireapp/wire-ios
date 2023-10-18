@@ -74,6 +74,11 @@ final class AVSLoggingOperation: LaunchSequenceOperation {
 final class AutomationHelperOperation: LaunchSequenceOperation {
     func execute() {
         AutomationHelper.sharedHelper.installDebugDataIfNeeded()
+
+        if AutomationHelper.sharedHelper.enableMLSSupport == true {
+            var flag = DeveloperFlag.enableMLSSupport
+            flag.isOn = true
+        }
     }
 }
 

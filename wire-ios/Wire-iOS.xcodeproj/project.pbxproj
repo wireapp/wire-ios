@@ -3239,7 +3239,6 @@
 		E9EC273329D4440C00599D0A /* String+Capitalization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "String+Capitalization.swift"; path = "Wire-iOS/Sources/Helpers/String+Capitalization.swift"; sourceTree = SOURCE_ROOT; };
 		E9EC273529D4462000599D0A /* StringCapitalizationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringCapitalizationTests.swift; sourceTree = "<group>"; };
 		E9F3183A28D9B03100FDB244 /* UIButton+RoundedCorners.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIButton+RoundedCorners.swift"; sourceTree = "<group>"; };
-		EE00ACE225E44506005FEC14 /* .swiftlint.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = .swiftlint.yml; sourceTree = "<group>"; };
 		EE01D08025ADA3D5001DB205 /* AppLockModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockModule.swift; sourceTree = "<group>"; };
 		EE01D08125ADA3D5001DB205 /* AppLockModule.Presenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockModule.Presenter.swift; sourceTree = "<group>"; };
 		EE01D08225ADA3D5001DB205 /* AppLockModule.Router.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockModule.Router.swift; sourceTree = "<group>"; };
@@ -5868,7 +5867,6 @@
 				8F42C539199244A700288E4D /* Products */,
 				8286E48D7CC440448CBD8F48 /* Frameworks */,
 				5EDD254221412ED200C0E254 /* EmbeddedDependencies.plist */,
-				EE00ACE225E44506005FEC14 /* .swiftlint.yml */,
 			);
 			indentWidth = 4;
 			sourceTree = "<group>";
