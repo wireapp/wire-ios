@@ -20,11 +20,6 @@ import Foundation
 import WireUtilities
 import UIKit
 
-enum PasswordValidationRuleSet {
-    case defaultRuleSet
-    case guestLinkRuleSet
-}
-
 final class TextFieldValidator {
 
     var customValidator: ((String) -> ValidationError?)?

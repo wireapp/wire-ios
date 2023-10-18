@@ -1225,7 +1225,6 @@
 		E9D6C37D289A9DC100861E4C /* StylableButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9D6C37C289A9DC100861E4C /* StylableButton.swift */; };
 		E9DA4685286C547A00F47C14 /* UIWindow+Orientation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9DA4684286C547A00F47C14 /* UIWindow+Orientation.swift */; };
 		E9DFF5122AC3099B00BDC25C /* AutoMockable.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9DFF5112AC3099B00BDC25C /* AutoMockable.generated.swift */; };
-		E9E16AA82AD9545D001D9A45 /* guestLinkWithPassword_rules.json in Resources */ = {isa = PBXBuildFile; fileRef = E9E16AA72AD9545D001D9A45 /* guestLinkWithPassword_rules.json */; };
 		E9E20AEA2AC42ED3005D7E00 /* CreateSecureGuestLinkViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9E20AE92AC42ED3005D7E00 /* CreateSecureGuestLinkViewController.swift */; };
 		E9E335932A8A27EC00B304F3 /* BaseSnapshotTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9E335922A8A27EC00B304F3 /* BaseSnapshotTestCase.swift */; };
 		E9EBE0D028194D7E0058C793 /* DynamicTypeCapable.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9EBE0CF28194D7E0058C793 /* DynamicTypeCapable.swift */; };
@@ -3237,7 +3236,6 @@
 		E9DFF50E2AC3063000BDC25C /* AutoMockable.stencil */ = {isa = PBXFileReference; lastKnownFileType = text; path = AutoMockable.stencil; sourceTree = "<group>"; };
 		E9DFF50F2AC3063000BDC25C /* config.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = config.yml; sourceTree = "<group>"; };
 		E9DFF5112AC3099B00BDC25C /* AutoMockable.generated.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AutoMockable.generated.swift; sourceTree = "<group>"; };
-		E9E16AA72AD9545D001D9A45 /* guestLinkWithPassword_rules.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = guestLinkWithPassword_rules.json; sourceTree = "<group>"; };
 		E9E20AE92AC42ED3005D7E00 /* CreateSecureGuestLinkViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateSecureGuestLinkViewController.swift; sourceTree = "<group>"; };
 		E9E335922A8A27EC00B304F3 /* BaseSnapshotTestCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseSnapshotTestCase.swift; sourceTree = "<group>"; };
 		E9EBE0CF28194D7E0058C793 /* DynamicTypeCapable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DynamicTypeCapable.swift; sourceTree = "<group>"; };
@@ -7833,7 +7831,6 @@
 			children = (
 				A9E674D624F514700058FC72 /* email.json */,
 				EF2B0DD021CA8DF7003B2882 /* url.json */,
-				E9E16AA72AD9545D001D9A45 /* guestLinkWithPassword_rules.json */,
 				5E39FC5E225CBBD300C682B8 /* password_rules.json */,
 				161041B622D764C1001109D7 /* session_manager.json */,
 				F1FDF2C521ADA3F000E037A1 /* Images.xcassets */,
@@ -8245,7 +8242,6 @@
 				EE7844852ABAE22100B20E41 /* Licenses.plist in Resources */,
 				87A4DA9D1D34FEF400105D44 /* audio-notifications in Resources */,
 				BF732A7A1D9C14C7003077DB /* emoji_travel.plist in Resources */,
-				E9E16AA82AD9545D001D9A45 /* guestLinkWithPassword_rules.json in Resources */,
 				1658D2061D3E742A00249609 /* ringing_from_them_long.caf in Resources */,
 				874C09361B4A8EF40077393B /* InfoPlist.strings in Resources */,
 				EE469EB62A9E3AE800620EA4 /* emojis.json in Resources */,
