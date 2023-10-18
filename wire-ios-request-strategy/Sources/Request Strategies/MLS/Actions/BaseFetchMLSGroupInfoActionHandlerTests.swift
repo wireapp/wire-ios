@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2023 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,34 +17,22 @@
 //
 
 import XCTest
-
 import WireDataModel
 @testable import WireRequestStrategy
 
-class FetchPublicGroupStateActionHandlerTests: ActionHandlerTestBase<FetchPublicGroupStateAction, FetchPublicGroupStateActionHandler> {
+class BaseFetchMLSGroupInfoActionHandlerTests<
+    Action: BaseFetchMLSGroupInfoAction,
+    Handler: BaseFetchMLSGroupInfoActionHandler<Action>
+>: ActionHandlerTestBase<Action, Handler> {
 
     let domain = "example.com"
     let conversationId = UUID()
-
-    override func setUp() {
-        super.setUp()
-        action = FetchPublicGroupStateAction(conversationId: conversationId, domain: domain)
-    }
 
     override func tearDown() {
         action = nil
         super.tearDown()
     }
     // MARK: - Request generation
-
-    func test_itGeneratesARequest_APIV5() throws {
-        try test_itGeneratesARequest(
-            for: action,
-            expectedPath: "/v5/conversations/\(domain)/\(conversationId.transportString())/groupinfo",
-            expectedMethod: .methodGET,
-            apiVersion: .v5
-        )
-    }
 
     func test_itDoesntGenerateRequests_APIBelowV5() {
         [.v0, .v1, .v2, .v3, .v4].forEach {
@@ -58,29 +46,26 @@ class FetchPublicGroupStateActionHandlerTests: ActionHandlerTestBase<FetchPublic
 
     // MARK: - Response handling
 
-    private typealias ResponsePayload = FetchPublicGroupStateActionHandler.ResponsePayload
-
-    func test_itHandlesSuccess() {
+    func test_itHandlesSuccess() throws {
         // Given
         let groupState = Data([1, 2, 3])
-        let payload = ResponsePayload(groupState: groupState)
+        let payload = try XCTUnwrap(String(data: groupState, encoding: .utf8)) as ZMTransportData
 
         // When
-        let receivedKeyPackagesCount = test_itHandlesSuccess(status: 200, payload: transportData(for: payload))
+        let receivedGroupState = test_itHandlesSuccess(status: 200, payload: payload)
 
         // Then
-        XCTAssertEqual(receivedKeyPackagesCount, payload.groupState)
+        XCTAssertEqual(receivedGroupState, groupState)
     }
 
     func test_itHandlesFailures() {
         test_itHandlesFailures([
-            .failure(status: 200, error: .malformedResponse),
+            .failure(status: 400, error: .invalidParameters),
+            .failure(status: 400, error: .mlsNotEnabled, label: "mls-not-enabled"),
             .failure(status: 404, error: .conversationIdOrDomainNotFound),
             .failure(status: 404, error: .noConversation, label: "no-conversation"),
             .failure(status: 404, error: .missingGroupInfo, label: "mls-missing-group-info"),
             .failure(status: 999, error: .unknown(status: 999, label: "foo", message: "?"), label: "foo")
-
         ])
     }
-
 }

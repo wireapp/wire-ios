@@ -22,14 +22,17 @@ import XCTest
 final class ConversationEventPayloadProcessorTests: MessagingTestBase {
 
     var sut: ConversationEventPayloadProcessor!
+    var mockMLSService: MockMLSService!
 
     override func setUp() {
         super.setUp()
         sut = ConversationEventPayloadProcessor()
+        mockMLSService = MockMLSService()
     }
 
     override func tearDown() {
         sut = nil
+        mockMLSService = nil
         BackendInfo.isFederationEnabled = false
         super.tearDown()
     }
@@ -886,6 +889,56 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
         }
     }
 
+    // MARK: - MLS Self Group
+
+    func testUpdateOrCreate_withMLSSelfGroupEpoch0_callsMLSServiceCreateGroup() {
+        let didCallCreateGroup = XCTestExpectation(description: "didCallCreateGroup")
+        mockMLSService.mockCreateSelfGroup = { _ in
+            didCallCreateGroup.fulfill()
+        }
+
+        internalTest_UpdateOrCreate_withMLSSelfGroupEpoch(epoch: 0)
+        wait(for: [didCallCreateGroup], timeout: 0.5)
+
+        // then
+        XCTAssertFalse(mockMLSService.calls.createSelfGroup.isEmpty)
+    }
+
+    func testUpdateOrCreate_withMLSSelfGroupEpoch1_callsMLSServiceJoinGroup() {
+        let didJoinGroup = XCTestExpectation(description: "didJoinGroup")
+        mockMLSService.mockJoinGroup = { _ in
+            didJoinGroup.fulfill()
+        }
+
+        internalTest_UpdateOrCreate_withMLSSelfGroupEpoch(epoch: 1)
+        wait(for: [didJoinGroup], timeout: 0.5)
+
+        // then
+        XCTAssertFalse(mockMLSService.calls.joinGroup.isEmpty)
+    }
+
+    func internalTest_UpdateOrCreate_withMLSSelfGroupEpoch(epoch: UInt?) {
+        syncMOC.performAndWait {
+            syncMOC.mlsService = mockMLSService
+
+            MLSEventProcessor.setMock(MockMLSEventProcessor())
+            let domain = "example.com"
+
+            let id = QualifiedID(uuid: UUID(), domain: domain)
+            // given
+            let conversation = Payload.Conversation(
+                qualifiedID: id,
+                type: BackendConversationType.`self`.rawValue,
+                messageProtocol: "mls",
+                mlsGroupID: "test",
+                epoch: epoch
+            )
+
+            // when
+            self.sut.updateOrCreateConversation(from: conversation, in: syncMOC)
+        }
+    }
+
 }
 
 extension Payload.Conversation {
@@ -929,5 +982,4 @@ extension Payload.Conversation {
         )
 
     }
-
 }

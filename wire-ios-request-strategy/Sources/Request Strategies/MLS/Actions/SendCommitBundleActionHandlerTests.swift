@@ -35,7 +35,7 @@ class SendCommitBundleActionHandlerTests: ActionHandlerTestBase<SendCommitBundle
             expectedPath: "/v5/mls/commit-bundles",
             expectedMethod: .methodPOST,
             expectedData: commitBundle,
-            expectedContentType: "application/x-protobuf",
+            expectedContentType: "message/mls",
             apiVersion: .v5
         )
     }
