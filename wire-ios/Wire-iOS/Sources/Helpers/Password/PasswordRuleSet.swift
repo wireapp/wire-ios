@@ -22,7 +22,7 @@ import Foundation
  * A set of password rules that can be used to check if a password is valid.
  */
 
-public struct PasswordRuleSet: Decodable {
+public struct PasswordRuleSet: Decodable, Equatable {
 
     /// The minimum length of the password.
     public let minimumLength: UInt

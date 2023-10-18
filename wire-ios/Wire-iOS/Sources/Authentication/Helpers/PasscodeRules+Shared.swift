@@ -31,23 +31,28 @@ extension PasswordRuleSet {
         return try! decoder.decode(PasswordRuleSet.self, from: fileData)
     }()
 
+    static let accountRegistration = PasswordRuleSet.shared
+    static let applockPasscode = PasswordRuleSet.shared
+
+    static let nonEmpty = PasswordRuleSet(
+        minimumLength: 1,
+        maximumLength: .max,
+        allowedCharacters: [.unicode],
+        requiredCharacters: []
+    )
+
     /// The guestLinkWithPassword rule set.
-    static let guestLinkPassword: PasswordRuleSet? = {
-        guard let fileURL = Bundle.main.url(forResource: "guestLinkWithPassword_rules", withExtension: "json"),
-              let fileData = try? Data(contentsOf: fileURL) else {
-            return nil
-        }
-
-        let decoder = JSONDecoder()
-
-        do {
-            let ruleSet = try decoder.decode(PasswordRuleSet.self, from: fileData)
-            return ruleSet
-        } catch {
-            passwordRuleSetLogger.error("Failed to decode password rule set: \(error)")
-            return nil
-        }
-    }()
+    static let guestLinkPassword = PasswordRuleSet(
+        minimumLength: 15,
+        maximumLength: 20,
+        allowedCharacters: [.unicode],
+        requiredCharacters: [
+            .lowercase,
+            .uppercase,
+            .digits,
+            .special
+        ]
+    )
 
     // MARK: - Localized Description
 

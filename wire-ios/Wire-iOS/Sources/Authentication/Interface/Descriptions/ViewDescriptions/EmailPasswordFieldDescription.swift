@@ -38,7 +38,8 @@ final class EmailPasswordFieldDescription: ValueSubmission {
 
 extension EmailPasswordFieldDescription: ViewDescriptor {
     func create() -> UIView {
-        textField.passwordField.kind = .password(isNew: forRegistration)
+        let rules = forRegistration ? PasswordRuleSet.accountRegistration : .nonEmpty
+        textField.passwordField.kind = ValidatedTextField.Kind.password(rules, isNew: forRegistration)
         textField.prefill(email: prefilledEmail)
         textField.emailField.validateInput()
         textField.passwordField.addRevealButton(delegate: self)
