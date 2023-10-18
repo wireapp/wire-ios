@@ -21,6 +21,7 @@ import WireCommonComponents
 import WireSyncEngine
 import avs
 import WireCoreCrypto
+import AppAuth
 
 enum ApplicationLaunchType {
     case unknown
@@ -76,6 +77,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     // MARK: - Public Set Property
     var window: UIWindow?
+    var currentAuthorizationFlow: OIDExternalUserAgentSession?
 
     // Singletons
     var unauthenticatedSession: UnauthenticatedSession? {
