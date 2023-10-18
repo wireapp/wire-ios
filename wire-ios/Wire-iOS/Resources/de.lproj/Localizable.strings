@@ -1748,6 +1748,7 @@
 "databaseloadingfailure.alert.delete_database" = "Datenbank löschen";
 "databaseloadingfailure.alert.delete_database.message" = "Durch das Löschen der Datenbank werden alle lokalen Daten und Nachrichten für dieses Konto dauerhaft gelöscht.";
 "databaseloadingfailure.alert.delete_database.continue" = "Weiter";
+"databaseloadingfailure.alert.retry" = "Wiederholen";
 
 // Backend not supported alert
 "backend_not_supported.alert.title" = "Serverversion wird nicht unterstützt";
@@ -1965,7 +1966,7 @@
 // Wipe database
 
 "wipe_database.title_label" = "Kennwort der App-Sperre vergessen?";
-"wipe_database.info_label" = "Der Zugang zu auf diesem Gerät gespeicherten Daten ist nur mit Ihrem App-Sperre-Kennwort möglich. Wenn Sie Ihr Kennwort vergessen haben, können Sie das Gerät zurücksetzen. Bitte geben Sie das Passwort Ihres Wire-Benutzerkonto ein, um dieses Gerät zurückzusetzen und sich erneut anzumelden. Indem Sie Ihr Gerät zurücksetzen, ";
+"wipe_database.info_label" = "Der Zugang zu auf diesem Gerät gespeicherten Daten ist nur mit Ihrem Kennwort möglich. Wenn Sie es vergessen haben, können Sie das Gerät zurücksetzen. Bitte geben Sie das Passwort Ihres Wire-Benutzerkontos ein, um dieses Gerät zurückzusetzen und sich erneut anzumelden. Indem Sie Ihr Gerät zurücksetzen, ";
 "wipe_database.info_label.highlighted" = "werden alle lokalen Daten und Nachrichten für dieses Konto dauerhaft gelöscht.";
 
 "wipe_database.button.title" = "Gerät zurücksetzen";

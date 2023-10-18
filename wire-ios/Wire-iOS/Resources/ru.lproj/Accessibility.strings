@@ -269,3 +269,7 @@
 
 "connection.archiveButton.description" = "Архивировать контакт";
 "connection.cancelButton.description" = "Отменить подключение";
+
+// MARK: - Reactions
+"reactionPicker.dismissButton.description" = "Отключить клавиатуру смайликов";
+"reactionPicker.searchFieldPlaceholder.description" = "Поиск смайликов";

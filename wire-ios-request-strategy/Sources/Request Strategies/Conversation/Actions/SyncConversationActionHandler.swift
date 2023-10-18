@@ -16,6 +16,7 @@
 //
 
 import Foundation
+import WireDataModel
 
 final class SyncConversationActionHandler: ActionHandler<SyncConversationAction> {
 

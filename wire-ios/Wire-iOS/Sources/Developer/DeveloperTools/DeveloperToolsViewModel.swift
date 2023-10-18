@@ -115,6 +115,7 @@ final class DeveloperToolsViewModel: ObservableObject {
             items: [
                 .button(ButtonItem(title: "Send debug logs", action: sendDebugLogs)),
                 .button(ButtonItem(title: "Perform quick sync", action: performQuickSync)),
+                .button(ButtonItem(title: "Break next quick sync", action: breakNextQuickSync)),
                 .destination(DestinationItem(title: "Configure flags", makeView: {
                     AnyView(DeveloperFlagsView(viewModel: DeveloperFlagsViewModel()))
                 })),
@@ -222,6 +223,10 @@ final class DeveloperToolsViewModel: ObservableObject {
     }
 
     // MARK: - Actions
+
+    private func breakNextQuickSync() {
+        ZMUserSession.shared()?.setBogusLastEventID()
+    }
 
     private func sendDebugLogs() {
         DebugLogSender.sendLogsByEmail(message: "Send logs")
