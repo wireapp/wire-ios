@@ -226,9 +226,9 @@ class EmailPasswordTextField: UIView, MagicTappable {
 
     @objc private func textInputDidChange(sender: UITextField) {
         if sender == emailField {
-            emailField.isValidInput()
+            emailField.validateInput()
         } else if sender == passwordField {
-            passwordField.isValidInput()
+            passwordField.validateInput()
         }
 
         delegate?.textFieldDidUpdateText(self)
@@ -253,8 +253,8 @@ extension EmailPasswordTextField: UITextFieldDelegate {
         if textField == emailField {
             passwordField.becomeFirstResponder()
         } else if textField == passwordField {
-            emailField.isValidInput()
-            passwordField.isValidInput()
+            emailField.validateInput()
+            passwordField.validateInput()
             confirmButtonTapped()
         }
 

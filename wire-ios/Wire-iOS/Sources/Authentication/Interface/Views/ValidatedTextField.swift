@@ -50,8 +50,8 @@ final class ValidatedTextField: AccessoryTextField, TextContainer, Themeable {
 
     override var text: String? {
         didSet {
-            isValidInput()
-            boundTextField?.isValidInput()
+            validateInput()
+            boundTextField?.validateInput()
         }
     }
 
@@ -316,7 +316,7 @@ final class ValidatedTextField: AccessoryTextField, TextContainer, Themeable {
     }
 
     var isValid: Bool {
-        return isValidInput(ruleSet: .guestLinkRuleSet)
+        return validateInput(ruleSet: .guestLinkRuleSet)
     }
 
     func updateText(_ text: String) {
@@ -336,11 +336,11 @@ final class ValidatedTextField: AccessoryTextField, TextContainer, Themeable {
     @objc
     private func confirmButtonTapped(button: UIButton) {
         validatedTextFieldDelegate?.buttonPressed(button)
-        isValidInput()
+        validateInput()
     }
 
     @discardableResult
-    func isValidInput(ruleSet: PasswordValidationRuleSet = .defaultRuleSet) -> Bool {
+    func validateInput(ruleSet: PasswordValidationRuleSet = .defaultRuleSet) -> Bool {
         let error = textFieldValidator.validate(
             text: text,
             kind: kind,

@@ -40,7 +40,7 @@ extension EmailPasswordFieldDescription: ViewDescriptor {
     func create() -> UIView {
         textField.passwordField.kind = .password(isNew: forRegistration)
         textField.prefill(email: prefilledEmail)
-        textField.emailField.isValidInput()
+        textField.emailField.validateInput()
         textField.passwordField.addRevealButton(delegate: self)
         return textField
     }
