@@ -63,7 +63,7 @@ private extension OAuthAuthentication {
 
         guard let bundleID = Bundle.main.bundleIdentifier,
               let redirectURI = URL(string: "\(bundleID):/oauth2redirect"),
-              let clientID = Bundle.clientID
+              let clientID = Bundle.idPClientID
         else {
             return
         }

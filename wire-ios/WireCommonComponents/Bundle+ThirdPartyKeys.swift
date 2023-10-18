@@ -35,7 +35,7 @@ public extension Bundle {
     }
 
     // MARK: - Identity provider
-    static var clientID: String? {
-        return Bundle.main.infoForKey("ClientID")
+    static var idPClientID: String? {
+        return Bundle.main.infoForKey("IdentityProviderClientID")
     }
 }
