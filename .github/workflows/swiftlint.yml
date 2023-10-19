@@ -20,8 +20,8 @@ jobs:
       steps:
         - uses: actions/checkout@v4
         - name: GitHub Action for SwiftLint
-          uses: norio-nomura/action-swiftlint@3.2.1
+          uses: sinoru/actions-swiftlint@v6
           with:
-            args: --strict
+            swiftlint-args: --strict
           env:
             DIFF_BASE: ${{ github.base_ref }}   
