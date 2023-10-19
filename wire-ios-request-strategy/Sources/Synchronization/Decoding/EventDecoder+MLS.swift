@@ -27,8 +27,8 @@ extension EventDecoder {
         Logging.mls.info("decrypting mls message")
 
         guard let decryptionService = context.mlsDecryptionService else {
-            WireLogger.mls.critical("failed to decrypt mls message: mlsDecyptionService is missing")
-            fatalError("failed to decrypt mls message: mlsService is missing")
+            WireLogger.mls.warn("failed to decrypt mls message: mlsDecyptionService is missing, maybe apiV5 not available")
+            return nil
         }
 
         guard let payload = updateEvent.eventPayload(type: Payload.UpdateConversationMLSMessageAdd.self) else {
