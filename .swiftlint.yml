@@ -51,3 +51,5 @@ excluded:
 line_length:
     warning: 500
     error: 500
+
+swiftlint_version: 0.53.0
