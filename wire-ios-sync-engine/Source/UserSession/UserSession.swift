@@ -35,11 +35,34 @@ public protocol UserSession: AnyObject {
 
     var requiresScreenCurtain: Bool { get }
 
+    /// Whether the user should be notified of the app lock being disabled.
+
+    var shouldNotifyUserOfDisabledAppLock: Bool { get }
+
+    /// Delete the app lock passcode if it exists.
+
+    func deleteAppLockPasscode() throws
+
     /// The user who is logged into this session.
     ///
     /// This can only be used on the main thread.
 
     var selfUser: ZMUser { get }
+
+    func perform(_ changes: @escaping () -> Void)
+
+    func enqueue(_ changes: @escaping () -> Void)
+
+    func enqueue(
+        _ changes: @escaping () -> Void,
+        completionHandler: (() -> Void)?
+    )
+
+    // TODO: rename to "shouldHideNotificationContent"
+    var isNotificationContentHidden: Bool { get set }
+
+    // TODO: rename to "isEncryptionAtRestEnabled"
+    var encryptMessagesAtRest: Bool { get }
 
 }
 
@@ -51,6 +74,14 @@ extension ZMUserSession: UserSession {
 
     public var requiresScreenCurtain: Bool {
         return appLockController.isActive || encryptMessagesAtRest
+    }
+
+    public var shouldNotifyUserOfDisabledAppLock: Bool {
+        return appLockController.needsToNotifyUser && !appLockController.isActive
+    }
+
+    public func deleteAppLockPasscode() throws {
+        try appLockController.deletePasscode()
     }
 
     public var selfUser: ZMUser {

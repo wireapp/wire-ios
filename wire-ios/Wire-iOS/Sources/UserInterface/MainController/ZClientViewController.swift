@@ -23,7 +23,7 @@ import WireCommonComponents
 
 final class ZClientViewController: UIViewController {
 
-    let session: UserSession
+    let userSession: UserSession
 
     private(set) var conversationRootViewController: UIViewController?
     private(set) var currentConversation: ZMConversation?
@@ -56,8 +56,6 @@ final class ZClientViewController: UIViewController {
     private var networkAvailabilityObserverToken: Any?
     private var pendingInitialStateRestore = false
 
-    var _userSession: UserSessionInterface?
-
     /// init method for testing allows injecting an Account object and self user
     ///
     /// - Parameters:
@@ -65,14 +63,18 @@ final class ZClientViewController: UIViewController {
     ///   - selfUser: a SelfUserType object
     required init(
         account: Account,
-        session: UserSession,
-        userSession: UserSessionInterface? = ZMUserSession.shared()
+        userSession: UserSession
     ) {
-        // TODO: Get rid of usersessioninterface
-        self.session = session
-        _userSession = userSession
-        backgroundViewController = BackgroundViewController(user: session.selfUser, userSession: userSession as? ZMUserSession)
-        conversationListViewController = ConversationListViewController(account: account, selfUser: session.selfUser)
+        self.userSession = userSession
+        backgroundViewController = BackgroundViewController(
+            user: userSession.selfUser,
+            userSession: userSession as? ZMUserSession
+        )
+        
+        conversationListViewController = ConversationListViewController(
+            account: account,
+            selfUser: userSession.selfUser
+        )
 
         super.init(nibName: nil, bundle: nil)
 
