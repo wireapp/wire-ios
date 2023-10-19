@@ -21,12 +21,19 @@ import Foundation
 /// An abstraction of the user session for use in the presentation
 /// layer.
 
-public protocol UserSession {
+public protocol UserSession: AnyObject {
 
     /// Whether the session needs to be unlocked by the user
     /// via passcode or biometric authentication.
 
     var isLocked: Bool { get }
+
+    /// Whether the screen curtain is required.
+    ///
+    /// The screen curtain hides the contents of the app while it is
+    /// not in actvie, such as when it is in the task switcher.
+
+    var requiresScreenCurtain: Bool { get }
 
     /// The user who is logged into this session.
     ///
@@ -40,6 +47,10 @@ extension ZMUserSession: UserSession {
 
     public var isLocked: Bool {
         return isDatabaseLocked || appLockController.isLocked
+    }
+
+    public var requiresScreenCurtain: Bool {
+        return appLockController.isActive || encryptMessagesAtRest
     }
 
     public var selfUser: ZMUser {

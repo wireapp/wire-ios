@@ -22,6 +22,9 @@ import avs
 import WireCommonComponents
 
 final class ZClientViewController: UIViewController {
+
+    let session: UserSession
+
     private(set) var conversationRootViewController: UIViewController?
     private(set) var currentConversation: ZMConversation?
 
@@ -60,12 +63,16 @@ final class ZClientViewController: UIViewController {
     /// - Parameters:
     ///   - account: an Account object
     ///   - selfUser: a SelfUserType object
-    required init(account: Account,
-                  selfUser: SelfUserType,
-                  userSession: UserSessionInterface? = ZMUserSession.shared()) {
+    required init(
+        account: Account,
+        session: UserSession,
+        userSession: UserSessionInterface? = ZMUserSession.shared()
+    ) {
+        // TODO: Get rid of usersessioninterface
+        self.session = session
         _userSession = userSession
-        backgroundViewController = BackgroundViewController(user: selfUser, userSession: userSession as? ZMUserSession)
-        conversationListViewController = ConversationListViewController(account: account, selfUser: selfUser)
+        backgroundViewController = BackgroundViewController(user: session.selfUser, userSession: userSession as? ZMUserSession)
+        conversationListViewController = ConversationListViewController(account: account, selfUser: session.selfUser)
 
         super.init(nibName: nil, bundle: nil)
 

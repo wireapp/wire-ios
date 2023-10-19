@@ -52,20 +52,23 @@ class AuthenticatedRouter: NSObject {
 
     // MARK: - Init
 
-    init(rootViewController: RootViewController,
-         account: Account,
-         selfUser: SelfUserType,
-         isComingFromRegistration: Bool,
-         needToShowDataUsagePermissionDialog: Bool,
-         featureRepositoryProvider: FeatureRepositoryProvider) {
-
+    init(
+        rootViewController: RootViewController,
+        account: Account,
+        userSession: UserSession,
+        isComingFromRegistration: Bool,
+        needToShowDataUsagePermissionDialog: Bool,
+        featureRepositoryProvider: FeatureRepositoryProvider
+    ) {
         self.rootViewController = rootViewController
         activeCallRouter = ActiveCallRouter(rootviewController: rootViewController)
 
-        builder = AuthenticatedWireFrame(account: account,
-                                         selfUser: selfUser,
-                                         isComingFromRegistration: needToShowDataUsagePermissionDialog,
-                                         needToShowDataUsagePermissionDialog: needToShowDataUsagePermissionDialog)
+        builder = AuthenticatedWireFrame(
+            account: account,
+            userSession: userSession,
+            isComingFromRegistration: needToShowDataUsagePermissionDialog,
+            needToShowDataUsagePermissionDialog: needToShowDataUsagePermissionDialog
+        )
 
         self.featureRepositoryProvider = featureRepositoryProvider
 
@@ -120,25 +123,27 @@ extension AuthenticatedRouter: AuthenticatedRouterProtocol {
 // MARK: - AuthenticatedWireFrame
 struct AuthenticatedWireFrame {
     private var account: Account
-    private var selfUser: SelfUserType
+    private var userSession: UserSession
     private var isComingFromRegistration: Bool
     private var needToShowDataUsagePermissionDialog: Bool
 
-    init(account: Account,
-         selfUser: SelfUserType,
-         isComingFromRegistration: Bool,
-         needToShowDataUsagePermissionDialog: Bool) {
+    init(
+        account: Account,
+        userSession: UserSession,
+        isComingFromRegistration: Bool,
+        needToShowDataUsagePermissionDialog: Bool
+    ) {
         self.account = account
-        self.selfUser = selfUser
+        self.userSession = userSession
         self.isComingFromRegistration = isComingFromRegistration
         self.needToShowDataUsagePermissionDialog = needToShowDataUsagePermissionDialog
     }
 
     func build(router: AuthenticatedRouterProtocol) -> ZClientViewController {
-        let viewController = ZClientViewController(account: account, selfUser: selfUser)
+        let viewController = ZClientViewController(account: account, session: userSession)
         viewController.isComingFromRegistration = isComingFromRegistration
         viewController.needToShowDataUsagePermissionDialog = needToShowDataUsagePermissionDialog
-        viewController.router =  router
+        viewController.router = router
         return viewController
     }
 }
