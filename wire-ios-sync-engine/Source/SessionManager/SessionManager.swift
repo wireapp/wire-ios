@@ -44,7 +44,7 @@ public extension Bundle {
 
 public protocol SessionActivationObserver: AnyObject {
     func sessionManagerDidChangeActiveUserSession(userSession: ZMUserSession)
-    func sessionManagerDidReportLockChange(forSession session: UserSessionAppLockInterface)
+    func sessionManagerDidReportLockChange(forSession session: UserSession)
 }
 
 public protocol SessionManagerDelegate: SessionActivationObserver {

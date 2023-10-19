@@ -197,7 +197,7 @@ extension AppStateCalculator: SessionManagerDelegate {
         // No op
     }
 
-    func sessionManagerDidReportLockChange(forSession session: UserSessionAppLockInterface) {
+    func sessionManagerDidReportLockChange(forSession session: UserSession) {
         if session.isLocked {
             transition(to: .locked)
         } else {
