@@ -52,7 +52,7 @@ import UserNotifications
 
         guard
             let archive = keyValueStore.storedValue(key: archivingKey) as? Data,
-            let unarchivedNotes = try? NSKeyedUnarchiver.unarchivedArrayOfObjects(ofClass: NotificationUserInfo.self, from: archive)
+            let unarchivedNotes = NSKeyedUnarchiver.unarchiveObject(with: archive) as? [NotificationUserInfo]
 
         else {
             return

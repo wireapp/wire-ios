@@ -262,9 +262,3 @@ extension UNNotificationResponse {
     }
 
 }
-
-extension NotificationUserInfo: NSSecureCoding {
-    public static var supportsSecureCoding: Bool {
-        false
-    }
-}
