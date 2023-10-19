@@ -110,11 +110,8 @@ private let zmLog = ZMSLog(tag: "shared object store")
 
 // This class is needed to test unarchiving data saved before project rename
 // It has to be added to WireDataModel module because it won't be resolved otherwise
-class SharedObjectTestClass: NSObject, NSSecureCoding {
+class SharedObjectTestClass: NSObject, NSCoding {
     var flag: Bool
-    static var supportsSecureCoding: Bool {
-        return false
-    }
     override init() { flag = false }
     public func encode(with aCoder: NSCoder) { aCoder.encode(flag, forKey: "flag") }
     public required init?(coder aDecoder: NSCoder) { flag = aDecoder.decodeBool(forKey: "flag") }
@@ -139,7 +136,7 @@ public class SharedObjectStore<T>: NSObject, NSKeyedUnarchiverDelegate {
         do {
             var current = load()
             current.append(object)
-            let archived = try NSKeyedArchiver.archivedData(withRootObject: current, requiringSecureCoding: true)
+            let archived = try NSKeyedArchiver.archivedData(withRootObject: current, requiringSecureCoding: false)
             try archived.write(to: url, options: [.atomic, .completeFileProtectionUntilFirstUserAuthentication])
             zmLog.debug("Stored object in shared container at \(url), object: \(object), all objects: \(current)")
             return true
@@ -158,6 +155,7 @@ public class SharedObjectStore<T>: NSObject, NSKeyedUnarchiverDelegate {
         do {
             let data = try Data(contentsOf: url)
             let unarchiver = try NSKeyedUnarchiver(forReadingFrom: data)
+            unarchiver.requiresSecureCoding = false
             unarchiver.delegate = self // If we are loading data saved before project rename the class will not be found
             let stored = unarchiver.decodeObject(forKey: NSKeyedArchiveRootObjectKey) as? [T]
             zmLog.debug("Loaded shared objects from \(url): \(String(describing: stored))")
