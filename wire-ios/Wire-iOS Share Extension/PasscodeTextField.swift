@@ -47,8 +47,10 @@ class PasscodeTextField: AccessoryTextField {
         iconButton.setBackgroundImage(UIImage.singlePixelImage(with: .clear), for: state)
         iconButton.configurationUpdateHandler = { button in
             switch button.state {
-            default:
+            case .disabled:
                 button.imageView?.tintAdjustmentMode = .normal
+            default:
+                break
             }
         }
         iconButton.accessibilityIdentifier = "passcode_text_field.button.reveal"

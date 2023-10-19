@@ -152,7 +152,7 @@ class MockProvider: CXProvider {
     var connectedCalls: Set<UUID> = Set()
 
     convenience init(foo: Bool) {
-        self.init(configuration: CXProviderConfiguration(localizedName: "test"))
+        self.init(configuration: CXProviderConfiguration())
     }
 
     override func reportOutgoingCall(with UUID: UUID, startedConnectingAt dateStartedConnecting: Date?) {
