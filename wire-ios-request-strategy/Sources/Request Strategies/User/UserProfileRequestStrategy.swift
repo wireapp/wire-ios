@@ -80,9 +80,8 @@ public class UserProfileRequestStrategy: AbstractRequestStrategy, IdentifierObje
             syncProgress.finishCurrentSyncPhase(phase: .fetchingUsers)
         } else {
             fetch(users: allConnectedUsers, for: apiVersion)
+            isFetchingAllConnectedUsers = true
         }
-
-        isFetchingAllConnectedUsers = true
     }
 
     func allConnectedUsers() -> Set<ZMUser> {
