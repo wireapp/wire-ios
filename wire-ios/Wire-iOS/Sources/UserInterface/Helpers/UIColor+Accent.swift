@@ -31,7 +31,7 @@ extension UIColor {
     /// - Parameter accentColor: the accent color
     class func setAccent(_ accentColor: ZMAccentColor) {
         ZMUserSession.shared()?.enqueue {
-            SelfUser.provider?.selfUser.accentColorValue = accentColor
+            SelfUser.provider?.providedSelfUser.accentColorValue = accentColor
         }
     }
 
@@ -43,14 +43,14 @@ extension UIColor {
 
         guard
             let activeUserSession = SessionManager.shared?.activeUserSession,
-            activeUserSession.selfUser.accentColorValue != .undefined
+            activeUserSession.providedSelfUser.accentColorValue != .undefined
         else {
             // priority 3: default color
             return .strongBlue
         }
 
         // priority 2: color from self user
-        return activeUserSession.selfUser.accentColorValue
+        return activeUserSession.providedSelfUser.accentColorValue
     }
 
     /// Set override accent color. Can set to ZMAccentColorUndefined to remove override.

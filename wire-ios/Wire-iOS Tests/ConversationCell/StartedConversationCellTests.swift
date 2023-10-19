@@ -165,7 +165,7 @@ final class StartedConversationCellTests: XCTestCase {
     func testThatItRendersNewConversationCell_SelfIsGuest_AllowGuests() {
         // self user is not in a team
         mockSelfUser = MockUserType.createSelfUser(name: "selfUser")
-        SelfUser.provider = SelfProvider(selfUser: mockSelfUser)
+        SelfUser.provider = SelfProvider(providedSelfUser: mockSelfUser)
         let message = cell(for: .newConversation, text: "Italy Trip", allowGuests: true, numberOfGuests: 1)
         verify(message: message)
     }

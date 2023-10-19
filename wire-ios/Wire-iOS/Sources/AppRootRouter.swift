@@ -381,7 +381,7 @@ extension AppRootRouter {
     private func setupAnalyticsSharing() {
         guard
             appStateCalculator.wasUnauthenticated,
-            let selfUser = SelfUser.provider?.selfUser,
+            let selfUser = SelfUser.provider?.providedSelfUser,
             selfUser.isTeamMember
         else {
             return

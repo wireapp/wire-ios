@@ -1230,7 +1230,7 @@ final class DomainsStoppedFederatingCellDescription: ConversationMessageCellDesc
 private extension Array where Element == String {
 
     var hasSelfDomain: Bool {
-        return self.contains(SelfUser.provider?.selfUser.domain ?? "")
+        return self.contains(SelfUser.provider?.providedSelfUser.domain ?? "")
     }
 
 }

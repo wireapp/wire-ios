@@ -36,7 +36,7 @@ final class GroupDetailsViewControllerSnapshotTests: ZMSnapshotTestCase {
         mockSelfUser = MockUserType.createSelfUser(name: "selfUser")
         mockSelfUser.handle = nil
 
-        SelfUser.provider = SelfProvider(selfUser: mockSelfUser)
+        SelfUser.provider = SelfProvider(providedSelfUser: mockSelfUser)
 
         otherUser = MockUserType.createUser(name: "Bruno")
         otherUser.isConnected = true
