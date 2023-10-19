@@ -36,10 +36,10 @@ final class ImageResourceView: FLAnimatedImageView {
     /// This token is changes everytime the cell is re-used. Useful when performing
     /// asynchronous tasks where the cell might have been re-used in the mean time.
     fileprivate var reuseToken = UUID()
-    fileprivate var imageResourceInternal: ImageResource?
+    fileprivate var imageResourceInternal: WireImageResource?
 
     var imageSizeLimit: ImageSizeLimit = .deviceOptimized
-    var imageResource: ImageResource? {
+    var imageResource: WireImageResource? {
         get {
             return imageResourceInternal
         }
@@ -49,7 +49,7 @@ final class ImageResourceView: FLAnimatedImageView {
         }
     }
 
-    func setImageResource(_ imageResource: ImageResource?,
+    func setImageResource(_ imageResource: WireImageResource?,
                           hideLoadingView: Bool = false,
                           completion: Completion? = nil) {
         let token = UUID()

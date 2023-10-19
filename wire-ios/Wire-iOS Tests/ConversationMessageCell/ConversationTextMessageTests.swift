@@ -205,7 +205,7 @@ final class ConversationTextMessageTests: ConversationMessageSnapshotTestCase {
 
     // MARK: - Helper Methods
 
-    func createMessage(withText: String = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem.",
+    func createMessage(withText: String = "Lorem ipsum ",
                        userName: String = "Bruno") -> MockMessage {
         let message = MockMessageFactory.textMessage(withText: withText)
         mockOtherUser = MockUserType.createConnectedUser(name: userName)
