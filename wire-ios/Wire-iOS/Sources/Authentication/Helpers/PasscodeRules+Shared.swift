@@ -21,6 +21,8 @@ import WireUtilities
 
 extension PasswordRuleSet {
 
+    static let passwordRuleSetLogger = WireLogger(tag: "password-rule-set")
+
     /// The shared rule set.
     static let shared: PasswordRuleSet = {
         let fileURL = Bundle.main.url(forResource: "password_rules", withExtension: "json")!
@@ -29,23 +31,31 @@ extension PasswordRuleSet {
         return try! decoder.decode(PasswordRuleSet.self, from: fileData)
     }()
 
+    static let accountRegistration = PasswordRuleSet.shared
+    static let applockPasscode = PasswordRuleSet.shared
+
+    static let nonEmpty = PasswordRuleSet(
+        minimumLength: 1,
+        maximumLength: .max,
+        allowedCharacters: [.unicode],
+        requiredCharacters: []
+    )
+
     /// The guestLinkWithPassword rule set.
-    static let guestLinkWithPasswordRuleSet: PasswordRuleSet? = {
-        guard let fileURL = Bundle.main.url(forResource: "guestLinkWithPassword_rules", withExtension: "json"),
-              let fileData = try? Data(contentsOf: fileURL) else {
-            return nil
-        }
-
-        let decoder = JSONDecoder()
-
-        do {
-            let ruleSet = try decoder.decode(PasswordRuleSet.self, from: fileData)
-            return ruleSet
-        } catch {
-            WireLogger.passwordRuleSet.error("Failed to decode password rule set: \(error)")
-            return nil
-        }
-    }()
+    /// This rule set is hardcoded, if you end up changing this ruleSet
+    /// don't forget to update this string: **secured_guest_link_with_password.textfield.footer**
+    /// in Localizable.strings file to reflect the changes in the ruleSet.
+    static let guestLinkPassword = PasswordRuleSet(
+        minimumLength: 15,
+        maximumLength: 20,
+        allowedCharacters: [.unicode],
+        requiredCharacters: [
+            .lowercase,
+            .uppercase,
+            .digits,
+            .special
+        ]
+    )
 
     // MARK: - Localized Description
 

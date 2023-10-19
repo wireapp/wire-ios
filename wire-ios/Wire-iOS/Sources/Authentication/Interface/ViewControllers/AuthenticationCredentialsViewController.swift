@@ -506,7 +506,7 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
     }
 
     @objc private func emailTextInputDidChange(sender: ValidatedTextField) {
-        sender.isValidInput()
+        sender.validateInput()
     }
 
     func validationUpdated(sender: UITextField, error: TextFieldValidator.ValidationError?) {

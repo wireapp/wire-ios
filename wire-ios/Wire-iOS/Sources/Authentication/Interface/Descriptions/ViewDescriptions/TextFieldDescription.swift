@@ -105,7 +105,7 @@ extension TextFieldDescription: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         guard let textField = self.textField, acceptsInput else { return false }
 
-        textField.isValidInput()
+        textField.validateInput()
 
         if validationError == .none || useDeferredValidation {
             submitValue(with: textField.input)

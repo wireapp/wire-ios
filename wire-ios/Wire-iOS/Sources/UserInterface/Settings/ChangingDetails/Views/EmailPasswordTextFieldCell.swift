@@ -22,7 +22,7 @@ class EmailPasswordTextFieldCell: UITableViewCell {
 
     let textField: EmailPasswordTextField = {
         let textField = EmailPasswordTextField()
-        textField.passwordField.kind = .password(isNew: true)
+        textField.passwordField.kind = .password(.accountRegistration, isNew: true)
         textField.colorSchemeVariant = .dark
         return textField
     }()

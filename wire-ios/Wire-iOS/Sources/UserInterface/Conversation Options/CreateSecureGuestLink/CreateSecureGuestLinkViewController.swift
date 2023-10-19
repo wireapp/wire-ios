@@ -67,7 +67,7 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
 
     private lazy var securedGuestLinkPasswordTextfield: ValidatedTextField = {
         let textField = ValidatedTextField(
-            kind: .password(isNew: true),
+            kind: .password(.guestLinkPassword, isNew: true),
             leftInset: 8,
             accessoryTrailingInset: 0,
             cornerRadius: 12,
@@ -106,7 +106,7 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
 
     private lazy var securedGuestLinkPasswordValidatedTextField: ValidatedTextField = {
         let textField = ValidatedTextField(
-            kind: .password(isNew: true),
+            kind: .password(.guestLinkPassword, isNew: true),
             leftInset: 8,
             accessoryTrailingInset: 0,
             cornerRadius: 12,

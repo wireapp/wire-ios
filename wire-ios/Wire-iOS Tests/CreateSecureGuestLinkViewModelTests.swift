@@ -17,9 +17,10 @@
 //
 
 import XCTest
+import WireCommonComponents
 @testable import Wire
 
-class CreateSecureGuestLinkViewModelTests: BaseSnapshotTestCase {
+class CreateSecureGuestLinkViewModelTests: XCTestCase {
 
     // MARK: - Properties
 
@@ -32,6 +33,7 @@ class CreateSecureGuestLinkViewModelTests: BaseSnapshotTestCase {
 
     override func setUp() {
         super.setUp()
+        FontScheme.configure(with: .large)
         viewModel = CreateSecureGuestLinkViewModel(delegate: mockDelegate)
         mockDelegate = MockCreatePasswordSecuredLinkViewModelDelegate()
         viewModel.delegate = mockDelegate

@@ -38,8 +38,8 @@ final class ValidatedTextField: AccessoryTextField, TextContainer, Themeable {
     enum Kind: Equatable {
         case email
         case name(isTeam: Bool)
-        case password(isNew: Bool)
-        case passcode(isNew: Bool)
+        case password(PasswordRuleSet, isNew: Bool)
+        case passcode(PasswordRuleSet, isNew: Bool)
         case phoneNumber
         case unknown
     }
@@ -50,8 +50,8 @@ final class ValidatedTextField: AccessoryTextField, TextContainer, Themeable {
 
     override var text: String? {
         didSet {
-            isValidInput()
-            boundTextField?.isValidInput()
+            validateInput()
+            boundTextField?.validateInput()
         }
     }
 
@@ -215,12 +215,12 @@ final class ValidatedTextField: AccessoryTextField, TextContainer, Themeable {
             autocapitalizationType = .none
             accessibilityIdentifier = "EmailField"
             textContentType = .emailAddress
-        case .password(let isNew):
+        case let .password(rules, isNew):
             isSecureTextEntry = true
             accessibilityIdentifier = "PasswordField"
             autocapitalizationType = .none
             textContentType = isNew ? .newPassword : .password
-            passwordRules = textFieldValidator.passwordRules
+            passwordRules = rules.textInputPasswordRules
         case .name(let isTeam):
             autocapitalizationType = .words
             accessibilityIdentifier = "NameField"
@@ -232,7 +232,7 @@ final class ValidatedTextField: AccessoryTextField, TextContainer, Themeable {
         case .unknown:
             keyboardType = .asciiCapable
             textContentType = nil
-        case .passcode(let isNew):
+        case let .passcode(rules, isNew):
             keyboardType = .asciiCapable
             isSecureTextEntry = true
             accessibilityIdentifier = "PasscodeField"
@@ -240,7 +240,7 @@ final class ValidatedTextField: AccessoryTextField, TextContainer, Themeable {
             returnKeyType = isNew ? .default : .continue
             // Hack: disable auto fill passcode
             textContentType = .oneTimeCode
-            passwordRules = textFieldValidator.passwordRules
+            passwordRules = rules.textInputPasswordRules
         }
     }
 
@@ -316,7 +316,7 @@ final class ValidatedTextField: AccessoryTextField, TextContainer, Themeable {
     }
 
     var isValid: Bool {
-        return isValidInput(ruleSet: .guestLinkRuleSet)
+        return (textFieldValidator.validate(text: text, kind: kind) == nil)
     }
 
     func updateText(_ text: String) {
@@ -336,26 +336,22 @@ final class ValidatedTextField: AccessoryTextField, TextContainer, Themeable {
     @objc
     private func confirmButtonTapped(button: UIButton) {
         validatedTextFieldDelegate?.buttonPressed(button)
-        isValidInput()
+        validateInput()
     }
 
-    @discardableResult
-    func isValidInput(ruleSet: PasswordValidationRuleSet = .defaultRuleSet) -> Bool {
+    func validateInput() {
         let error = textFieldValidator.validate(
             text: text,
-            kind: kind,
-            ruleSet: ruleSet
+            kind: kind
         )
 
         if error != nil {
             textFieldValidationDelegate?.validationUpdated(sender: self, error: error)
             updateConfirmButton()
-            return false
         }
 
         textFieldValidationDelegate?.validationUpdated(sender: self, error: nil)
         updateConfirmButton()
-        return true
     }
 
 }

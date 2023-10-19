@@ -52,7 +52,7 @@ class RevisedEmailPasswordTextField: EmailPasswordTextField {
 class EmailPasswordTextField: UIView, MagicTappable {
 
     let emailField = ValidatedTextField(kind: .email, cornerRadius: 12, setNewColors: true, style: .default)
-    let passwordField = ValidatedTextField(kind: .password(isNew: false), cornerRadius: 12, setNewColors: true, style: .default)
+    let passwordField = ValidatedTextField(kind: .password(.nonEmpty, isNew: false), cornerRadius: 12, setNewColors: true, style: .default)
     let contentStack = UIStackView()
 
     var hasPrefilledValue: Bool = false
@@ -226,9 +226,9 @@ class EmailPasswordTextField: UIView, MagicTappable {
 
     @objc private func textInputDidChange(sender: UITextField) {
         if sender == emailField {
-            emailField.isValidInput()
+            emailField.validateInput()
         } else if sender == passwordField {
-            passwordField.isValidInput()
+            passwordField.validateInput()
         }
 
         delegate?.textFieldDidUpdateText(self)
@@ -253,8 +253,8 @@ extension EmailPasswordTextField: UITextFieldDelegate {
         if textField == emailField {
             passwordField.becomeFirstResponder()
         } else if textField == passwordField {
-            emailField.isValidInput()
-            passwordField.isValidInput()
+            emailField.validateInput()
+            passwordField.validateInput()
             confirmButtonTapped()
         }
 
