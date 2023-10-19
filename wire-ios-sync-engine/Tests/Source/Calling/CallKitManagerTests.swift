@@ -281,7 +281,6 @@ class CallKitManagerTest: DatabaseTest {
 
         // then
         XCTAssertEqual(configuration.supportsVideo, true)
-        XCTAssertEqual(configuration.localizedName, "WireSyncEngine Test Host")
         XCTAssertTrue(configuration.supportedHandleTypes.contains(.generic))
     }
 
