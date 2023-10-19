@@ -22,7 +22,7 @@ import WireSyncEngine
 enum AppState: Equatable {
     case headless
     case locked
-    case authenticated(completedRegistration: Bool)
+    case authenticated(UserSession, completedRegistration: Bool)
     case unauthenticated(error: NSError?)
     case blacklisted(reason: BlacklistReason)
     case jailbroken
@@ -201,30 +201,38 @@ extension AppStateCalculator: SessionManagerDelegate {
         if session.isLocked {
             transition(to: .locked)
         } else {
-            transition(to: .authenticated(completedRegistration: false))
+            transition(to: .authenticated(session, completedRegistration: false))
         }
     }
 
-    func sessionManagerDidPerformFederationMigration(authenticated: Bool) {
-        let state: AppState = authenticated ?
-            .authenticated(completedRegistration: false) :
-            .unauthenticated(error: NSError(code: .needsAuthenticationAfterMigration, userInfo: nil))
-        transition(to: state)
+    func sessionManagerDidPerformFederationMigration(activeSession: UserSession?) {
+        if let activeSession {
+            transition(to: .authenticated(activeSession, completedRegistration: false))
+        } else {
+            let error = NSError(code: .needsAuthenticationAfterMigration, userInfo: nil)
+            transition(to: .unauthenticated(error: error))
+        }
     }
 
-    func sessionManagerDidPerformAPIMigrations() {
-        transition(to: .authenticated(completedRegistration: false))
+    func sessionManagerDidPerformAPIMigrations(activeSession: UserSession?) {
+        if let activeSession {
+            transition(to: .authenticated(activeSession, completedRegistration: false))
+        } else {
+            let error = NSError(code: .needsAuthenticationAfterMigration, userInfo: nil)
+            transition(to: .unauthenticated(error: error))
+        }
     }
 }
 
 // MARK: - AuthenticationCoordinatorDelegate
 extension AppStateCalculator: AuthenticationCoordinatorDelegate {
     func userAuthenticationDidComplete(addedAccount: Bool) {
-        // TODO: [John] Avoid singleton.
-        if ZMUserSession.shared()?.isLocked == true {
+        let userSession = SessionManager.shared!.activeUserSession!
+
+        if userSession.isLocked {
             transition(to: .locked)
         } else {
-            transition(to: .authenticated(completedRegistration: addedAccount))
+            transition(to: .authenticated(userSession, completedRegistration: addedAccount))
         }
     }
 }

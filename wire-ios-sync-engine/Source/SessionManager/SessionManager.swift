@@ -57,8 +57,8 @@ public protocol SessionManagerDelegate: SessionActivationObserver {
     func sessionManagerDidFailToLoadDatabase()
     func sessionManagerDidBlacklistCurrentVersion(reason: BlacklistReason)
     func sessionManagerDidBlacklistJailbrokenDevice()
-    func sessionManagerDidPerformFederationMigration(authenticated: Bool)
-    func sessionManagerDidPerformAPIMigrations()
+    func sessionManagerDidPerformFederationMigration(activeSession: UserSession?)
+    func sessionManagerDidPerformAPIMigrations(activeSession: UserSession?)
 
     var isInAuthenticatedAppState: Bool { get }
     var isInUnathenticatedAppState: Bool { get }

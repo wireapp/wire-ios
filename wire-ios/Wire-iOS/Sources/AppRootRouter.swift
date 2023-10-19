@@ -205,7 +205,7 @@ extension AppRootRouter: AppStateCalculatorDelegate {
             screenCurtain.delegate = nil
             configureUnauthenticatedAppearance()
             showUnauthenticatedFlow(error: error, completion: completionBlock)
-        case .authenticated(completedRegistration: let completedRegistration):
+        case let .authenticated(userSession, completedRegistration):
             configureAuthenticatedAppearance()
             executeAuthenticatedBlocks()
             // TODO: [John] Avoid singleton.
