@@ -167,8 +167,12 @@ public class AVSWrapper: AVSWrapperType {
             error = EPROTO
             buffer = Data(count: 0)
         }
-
-        buffer.withUnsafeBytes { wcall_sft_resp(handle, error, $0.bindMemory(to: UInt8.self).baseAddress!, buffer.count, context)}
+        buffer.withUnsafeBytes {
+            guard let baseAddress = $0.bindMemory(to: UInt8.self).baseAddress else {
+                return
+            }
+            wcall_sft_resp(handle, error, baseAddress, buffer.count, context)
+        }
     }
 
     /// Notifies AVS that we received a remote event.
