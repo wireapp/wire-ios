@@ -316,7 +316,7 @@ final class ValidatedTextField: AccessoryTextField, TextContainer, Themeable {
     }
 
     var isValid: Bool {
-        return validateInput()
+        return (textFieldValidator.validate(text: text, kind: kind) == nil)
     }
 
     func updateText(_ text: String) {
@@ -339,8 +339,7 @@ final class ValidatedTextField: AccessoryTextField, TextContainer, Themeable {
         validateInput()
     }
 
-    @discardableResult
-    func validateInput() -> Bool {
+    func validateInput() {
         let error = textFieldValidator.validate(
             text: text,
             kind: kind
@@ -349,12 +348,10 @@ final class ValidatedTextField: AccessoryTextField, TextContainer, Themeable {
         if error != nil {
             textFieldValidationDelegate?.validationUpdated(sender: self, error: error)
             updateConfirmButton()
-            return false
         }
 
         textFieldValidationDelegate?.validationUpdated(sender: self, error: nil)
         updateConfirmButton()
-        return true
     }
 
 }
