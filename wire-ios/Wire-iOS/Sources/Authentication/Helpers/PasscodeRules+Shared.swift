@@ -42,6 +42,9 @@ extension PasswordRuleSet {
     )
 
     /// The guestLinkWithPassword rule set.
+    /// This rule set is hardcoded, if you end up changing this ruleSet
+    /// don't forget to update this string: **secured_guest_link_with_password.textfield.footer**
+    /// in Localizable.strings file to reflect the changes in the ruleSet.
     static let guestLinkPassword = PasswordRuleSet(
         minimumLength: 15,
         maximumLength: 20,
