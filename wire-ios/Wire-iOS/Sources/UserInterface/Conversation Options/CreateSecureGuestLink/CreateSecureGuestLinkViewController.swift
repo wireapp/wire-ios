@@ -136,8 +136,8 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
             setNewColors: true,
             style: .default
         )
-        textField.accessibilityLabel = "Guest Link Password"
-        textField.accessibilityHint = "Enter the password for the secure guest link"
+        textField.accessibilityLabel = SecureGuestLinkAccessibilityLocale.SecuredGuestLinkPasswordValidatedTextField.description
+        textField.accessibilityHint = SecureGuestLinkAccessibilityLocale.SecuredGuestLinkPasswordValidatedTextField.hint
 
         textField.showConfirmButton = false
         textField.addTarget(self, action: #selector(handlePasswordValidation(for:)), for: .editingChanged)
