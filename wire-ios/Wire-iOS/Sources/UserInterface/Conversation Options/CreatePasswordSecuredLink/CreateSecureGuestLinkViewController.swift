@@ -129,7 +129,8 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
         return textField
     }()
 
-    private var validationErrorTextColor = SemanticColors.Label.textErrorDefault
+    private let validationErrorTextColor = LabelColors.textErrorDefault
+    private let defaultLabelColor = LabelColors.textFieldFloatingLabel
 
     // MARK: - Override methods
 
@@ -229,35 +230,43 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
 
 extension CreateSecureGuestLinkViewController: TextFieldValidationDelegate {
 
-    func validationUpdated(sender: UITextField, error: TextFieldValidator.ValidationError?) {
-        switch sender {
-        case securedGuestLinkPasswordTextfield:
-            if let error {
-                securedGuestLinkPasswordTextfield.textColor = validationErrorTextColor
-                securedGuestLinkPasswordTextfield.layer.borderColor = validationErrorTextColor.cgColor
-                passwordRequirementsLabel.textColor = validationErrorTextColor
-                setPasswordLabel.textColor = validationErrorTextColor
-            } else {
-                securedGuestLinkPasswordTextfield.applyStyle(.default)
-                passwordRequirementsLabel.textColor = SemanticColors.Label.textFieldFloatingLabel
-                setPasswordLabel.textColor = SemanticColors.Label.textFieldFloatingLabel
-            }
-
-        case securedGuestLinkPasswordValidatedTextField:
-            if let error {
-                securedGuestLinkPasswordValidatedTextField.textColor = validationErrorTextColor
-                securedGuestLinkPasswordValidatedTextField.layer.borderColor = validationErrorTextColor.cgColor
-                confirmPasswordLabel.textColor = validationErrorTextColor
-            } else {
-                securedGuestLinkPasswordValidatedTextField.applyStyle(.default)
-                confirmPasswordLabel.textColor = SemanticColors.Label.textFieldFloatingLabel
-            }
-
-        default:
-            break
-        }
+    private func displayPasswordErrorState(to textField: UITextField, for labels: [UILabel]) {
+        textField.textColor = validationErrorTextColor
+        textField.layer.borderColor = validationErrorTextColor.cgColor
+        labels.forEach { $0.textColor = validationErrorTextColor }
     }
 
+    private func resetPasswordDefaultState(to textField: UITextField, for labels: [UILabel]) {
+        textField.applyStyle(.default)
+        labels.forEach { $0.textColor = defaultLabelColor }
+    }
+
+    func validationUpdated(sender: UITextField, error: TextFieldValidator.ValidationError?) {
+        if let error = error {
+            switch sender {
+            case securedGuestLinkPasswordTextfield:
+                displayPasswordErrorState(to: sender, for: [passwordRequirementsLabel, setPasswordLabel])
+
+            case securedGuestLinkPasswordValidatedTextField:
+                displayPasswordErrorState(to: sender, for: [confirmPasswordLabel])
+
+            default:
+                break
+            }
+
+        } else {
+            switch sender {
+            case securedGuestLinkPasswordTextfield:
+                resetPasswordDefaultState(to: sender, for: [passwordRequirementsLabel, setPasswordLabel])
+
+            case securedGuestLinkPasswordValidatedTextField:
+                resetPasswordDefaultState(to: sender, for: [confirmPasswordLabel])
+
+            default:
+                break
+            }
+        }
+    }
 }
 
 extension CreateSecureGuestLinkViewController: ValidatedTextFieldDelegate {
