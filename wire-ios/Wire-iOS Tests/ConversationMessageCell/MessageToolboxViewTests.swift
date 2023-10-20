@@ -25,7 +25,6 @@ final class MessageToolboxViewTests: CoreDataSnapshotTestCase {
 
     var message: MockMessage!
     var sut: MessageToolboxView!
-    private var backgroundColor = SemanticColors.View.backgroundConversationView
 
     // MARK: - setUp
 
@@ -59,11 +58,7 @@ final class MessageToolboxViewTests: CoreDataSnapshotTestCase {
         sut.configureForMessage(message, animated: false)
 
         // THEN
-        verifyInWidths(
-            matching: sut,
-            widths: [defaultIPhoneSize.width],
-            snapshotBackgroundColor: backgroundColor
-        )
+        verifyView(view: sut, width: defaultIPhoneSize.width)
     }
 
     func testThatItConfiguresWithFailedToSendAndReason() {
@@ -77,11 +72,7 @@ final class MessageToolboxViewTests: CoreDataSnapshotTestCase {
         sut.configureForMessage(message, animated: false)
 
         // THEN
-        verifyInWidths(
-            matching: sut,
-            widths: [defaultIPhoneSize.width],
-            snapshotBackgroundColor: backgroundColor
-        )
+        verifyView(view: sut, width: defaultIPhoneSize.width)
     }
 
     func testThatItConfiguresWith1To1ConversationReadReceipt() {
@@ -96,7 +87,7 @@ final class MessageToolboxViewTests: CoreDataSnapshotTestCase {
         sut.configureForMessage(message, animated: false)
 
         // THEN
-        verify(matching: sut)
+        verify(view: sut)
     }
 
     func testThatItConfiguresWithGroupConversationReadReceipt() {
@@ -111,7 +102,7 @@ final class MessageToolboxViewTests: CoreDataSnapshotTestCase {
         sut.configureForMessage(message, animated: false)
 
         // THEN
-        verify(matching: sut)
+        verify(view: sut)
     }
 
     // MARK: - Tap Gesture
@@ -137,7 +128,7 @@ final class MessageToolboxViewTests: CoreDataSnapshotTestCase {
         sut.configureForMessage(message, animated: false)
 
         // THEN
-        verify(matching: sut)
+        verify(view: sut)
     }
 
     func testThatItDisplaysTimestamp_ReadReceipts_Countdown_SelfUser() {
@@ -153,7 +144,7 @@ final class MessageToolboxViewTests: CoreDataSnapshotTestCase {
         sut.configureForMessage(message, animated: false)
 
         // THEN
-        verify(matching: sut)
+        verify(view: sut)
     }
 
 }

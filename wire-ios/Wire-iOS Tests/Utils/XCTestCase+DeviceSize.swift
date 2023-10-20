@@ -63,7 +63,6 @@ extension XCTestCase {
         }))
     }
 
-    // TODO: [AGIS] - Check if that's still the case when we drop iOS 13 and 14
     /// return the smallest iPhone screen size that Wire app supports
     public var defaultIPhoneSize: CGSize {
         return XCTestCase.DeviceSizeIPhone5

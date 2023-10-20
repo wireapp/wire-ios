@@ -50,7 +50,7 @@ final class SettingsTextCellSnapshotTests: CoreDataSnapshotTestCase {
 
         XCTAssert(sut.textInput.isEnabled)
 
-        verify(matching: mockTableView)
+        verify(view: mockTableView)
     }
 
     func testThatTextFieldIsDisabledWhenEnabledFlagIsFalse() {

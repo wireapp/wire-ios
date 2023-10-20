@@ -40,23 +40,23 @@ class GroupDetailsNotificationOptionsCellTests: CoreDataSnapshotTestCase {
 
     func testThatItDisplaysCell_NoMuted() {
         update(.none)
-        verify(matching: cell)
+        verify(view: cell)
     }
 
     func testThatItDisplaysCell_NonMentionsMuted() {
         update(.regular)
-        verify(matching: cell)
+        verify(view: cell)
     }
 
     func testThatItDisplaysCell_AllMuted() {
         update(.all)
-        verify(matching: cell)
+        verify(view: cell)
     }
 
     func testThatItDisplaysCell_Dark() {
         cell.overrideUserInterfaceStyle = .dark
         update(.all)
-        verify(matching: cell)
+        verify(view: cell)
     }
 
     private func update(_ newValue: MutedMessageTypes) {
