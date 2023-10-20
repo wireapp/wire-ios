@@ -99,14 +99,15 @@ private extension OAuthAuthentication {
         }
 
         delegate?.currentAuthorizationFlow = OIDAuthState.authState(byPresenting: authorizationRequest,
-                                                                             externalUserAgent: agent,
-                                                                             callback: { authState, error in
+                                                                    externalUserAgent: agent,
+                                                                    callback: { authState, error in
             guard error == nil else {
                 logger.error("Error sending request: \(error?.localizedDescription ?? "Unknown error")")
 
                 return completion(.failure(OAuthAuthenticationError.failedToSendRequest))
             }
 
+            /// Performing userinfo request
             authState?.performAction { (_, idToken, error) in
                 guard error == nil else {
                     logger.error("Error sending request: \(error?.localizedDescription ?? "Unknown error")")

@@ -50,7 +50,6 @@
 		06717E5E2865188000AF442C /* SemanticColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06717E582865178F00AF442C /* SemanticColors.swift */; };
 		067197532ADE9AB600D96598 /* AppAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 067197522ADE9AB600D96598 /* AppAuth */; };
 		067197552ADE9AB600D96598 /* AppAuthCore in Frameworks */ = {isa = PBXBuildFile; productRef = 067197542ADE9AB600D96598 /* AppAuthCore */; };
-		067197572ADE9AB600D96598 /* AppAuthTV in Frameworks */ = {isa = PBXBuildFile; productRef = 067197562ADE9AB600D96598 /* AppAuthTV */; };
 		067197582ADE9C0300D96598 /* OAuthAuthentication.swift in Sources */ = {isa = PBXBuildFile; fileRef = 067197462AD8448E00D96598 /* OAuthAuthentication.swift */; };
 		0671975C2AE002C200D96598 /* OIDAuthorizationDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0671975B2AE002C200D96598 /* OIDAuthorizationDelegate.swift */; };
 		067EF352288FCAB700B2659A /* Accessibility.strings in Resources */ = {isa = PBXBuildFile; fileRef = 067EF350288FCAB600B2659A /* Accessibility.strings */; };
@@ -3809,7 +3808,6 @@
 				A96867DC26A5E71900679D95 /* CallKit.framework in Frameworks */,
 				EE67F6D8296F06B3001D7C88 /* FLAnimatedImage.xcframework in Frameworks */,
 				EEE25B3E29719C580008B894 /* WireProtos.framework in Frameworks */,
-				067197572ADE9AB600D96598 /* AppAuthTV in Frameworks */,
 				EE33C48A296485F400C058D1 /* WireSyncEngine.framework in Frameworks */,
 				EE82970D29719F6C00F12CAA /* PINCache.xcframework in Frameworks */,
 				EEE25B5029719D2F0008B894 /* avs.xcframework in Frameworks */,
@@ -8068,7 +8066,6 @@
 				407831AC2AC4636F005C2978 /* DifferenceKit */,
 				067197522ADE9AB600D96598 /* AppAuth */,
 				067197542ADE9AB600D96598 /* AppAuthCore */,
-				067197562ADE9AB600D96598 /* AppAuthTV */,
 			);
 			productName = "ZClient iOS";
 			productReference = 8F42C538199244A700288E4D /* Wire.app */;
@@ -10730,11 +10727,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 067197512ADE9AB600D96598 /* XCRemoteSwiftPackageReference "AppAuth-iOS" */;
 			productName = AppAuthCore;
-		};
-		067197562ADE9AB600D96598 /* AppAuthTV */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 067197512ADE9AB600D96598 /* XCRemoteSwiftPackageReference "AppAuth-iOS" */;
-			productName = AppAuthTV;
 		};
 		407831AC2AC4636F005C2978 /* DifferenceKit */ = {
 			isa = XCSwiftPackageProductDependency;

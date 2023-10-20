@@ -116,10 +116,10 @@ final class DeveloperToolsViewModel: ObservableObject {
                 .button(ButtonItem(title: "Send debug logs", action: sendDebugLogs)),
                 .button(ButtonItem(title: "Perform quick sync", action: performQuickSync)),
                 .button(ButtonItem(title: "Break next quick sync", action: breakNextQuickSync)),
+                .button(ButtonItem(title: "E2EI: Get id token", action: getIdToken)),
                 .destination(DestinationItem(title: "Configure flags", makeView: {
                     AnyView(DeveloperFlagsView(viewModel: DeveloperFlagsViewModel()))
-                })),
-                .button(ButtonItem(title: "E2EI: Get id token", action: getIdToken))
+                }))
             ]
         ))
 
