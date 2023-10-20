@@ -196,17 +196,20 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
     // MARK: - Setup UI
 
     private func setUpViews() {
-        contentView.addSubview(warningLabel)
-        contentView.addSubview(generatePasswordButton)
-        contentView.addSubview(setPasswordLabel)
-        contentView.addSubview(securedGuestLinkPasswordTextfield)
-        contentView.addSubview(passwordRequirementsLabel)
-        contentView.addSubview(confirmPasswordLabel)
-        contentView.addSubview(securedGuestLinkPasswordValidatedTextField)
-        contentView.addSubview(createSecuredLinkButton)
+        let contentSubviews: [UIView] = [
+            warningLabel,
+            generatePasswordButton,
+            setPasswordLabel,
+            securedGuestLinkPasswordTextfield,
+            passwordRequirementsLabel,
+            confirmPasswordLabel,
+            securedGuestLinkPasswordValidatedTextField,
+            createSecuredLinkButton
+        ]
+
+        contentSubviews.forEach { contentView.addSubview($0) }
 
         scrollView.addSubview(contentView)
-
         view.addSubview(scrollView)
     }
 
@@ -215,6 +218,7 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
         navigationController?.navigationBar.tintColor = LabelColors.textDefault
         navigationItem.setupNavigationBarTitle(title: SecuredGuestLinkWithPasswordLocale.Header.title)
         navigationItem.rightBarButtonItem = navigationController?.closeItem()
+        navigationItem.rightBarButtonItem?.accessibilityLabel = L10n.Accessibility.CreateSecureGuestLink.CloseButton.description
     }
 
     private func setupConstraints() {
@@ -324,9 +328,15 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
 
     func announcePasswordValidationErrorForVoiceOver(for textField: ValidatedTextField) {
         if textField == securedGuestLinkPasswordTextfield {
-            UIAccessibility.post(notification: .announcement, argument: SecureGuestLinkAccessibilityLocale.SecuredGuestLinkPasswordTextfield.announcement)
+            UIAccessibility.post(
+                notification: .announcement,
+                argument: SecureGuestLinkAccessibilityLocale.SecuredGuestLinkPasswordTextfield.announcement
+            )
         } else {
-            UIAccessibility.post(notification: .announcement, argument: SecureGuestLinkAccessibilityLocale.SecuredGuestLinkPasswordValidatedTextField.announcement)
+            UIAccessibility.post(
+                notification: .announcement,
+                argument: SecureGuestLinkAccessibilityLocale.SecuredGuestLinkPasswordValidatedTextField.announcement
+            )
         }
 
     }
