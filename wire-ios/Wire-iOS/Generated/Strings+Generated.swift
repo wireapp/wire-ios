@@ -707,12 +707,14 @@ internal enum L10n {
       internal enum CreateLinkButton {
         /// Create guest link
         internal static let description = L10n.tr("Accessibility", "createSecureGuestLink.CreateLinkButton.description", fallback: "Create guest link")
+        /// Tap to create a secure guest link
+        internal static let hint = L10n.tr("Accessibility", "createSecureGuestLink.CreateLinkButton.hint", fallback: "Tap to create a secure guest link")
       }
       internal enum GeneratePasswordButton {
         /// Generate password
         internal static let description = L10n.tr("Accessibility", "createSecureGuestLink.GeneratePasswordButton.description", fallback: "Generate password")
-        /// Tap to create a secure guest link
-        internal static let hint = L10n.tr("Accessibility", "createSecureGuestLink.GeneratePasswordButton.hint", fallback: "Tap to create a secure guest link")
+        /// Tap to generate a random password
+        internal static let hint = L10n.tr("Accessibility", "createSecureGuestLink.GeneratePasswordButton.hint", fallback: "Tap to generate a random password")
       }
       internal enum CloseButton {
         /// Close Secure guest link

@@ -289,4 +289,4 @@
 "createSecureGuestLink.securedGuestLinkPasswordValidatedTextField.announcement" = "Password validation error. Please make sure the password matches the one above";
 
 "createSecureGuestLink.CreateLinkButton.description" = "Create guest link";
-"createSecureGuestLink.GeneratePasswordButton.hint" = "Tap to create a secure guest link";
+"createSecureGuestLink.CreateLinkButton.hint" = "Tap to create a secure guest link";

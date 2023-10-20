@@ -156,6 +156,11 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
             cornerRadius: 16,
             fontSpec: .buttonBigSemibold
         )
+
+        button.accessibilityLabel = SecureGuestLinkAccessibilityLocale.CreateLinkButton.description
+        button.accessibilityHint = SecureGuestLinkAccessibilityLocale.CreateLinkButton.hint
+        button.accessibilityTraits = [.button]
+
         button.setTitle(SecuredGuestLinkWithPasswordLocale.CreateLinkButton.title, for: .normal)
         button.addTarget(self, action: #selector(createSecuredLinkButtonTapped), for: .touchUpInside)
         button.titleLabel?.numberOfLines = 0
@@ -223,6 +228,7 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
          createSecuredLinkButton,
          contentView,
          scrollView].prepareForLayout()
+
         let heightConstraint = contentView.heightAnchor.constraint(greaterThanOrEqualTo: scrollView.heightAnchor)
         heightConstraint.priority = UILayoutPriority.defaultLow
 
@@ -316,7 +322,7 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
 
     // MARK: - Accessibility
 
-    func announcePasswordValidationErrorForVoiceOver(for textField: UITextField) {
+    func announcePasswordValidationErrorForVoiceOver(for textField: ValidatedTextField) {
         if textField == securedGuestLinkPasswordTextfield {
             UIAccessibility.post(notification: .announcement, argument: SecureGuestLinkAccessibilityLocale.SecuredGuestLinkPasswordTextfield.announcement)
         } else {
