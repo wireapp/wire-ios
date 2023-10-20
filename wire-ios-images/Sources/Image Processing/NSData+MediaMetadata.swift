@@ -19,6 +19,7 @@
 import Foundation
 import ImageIO
 import MobileCoreServices
+import UniformTypeIdentifiers
 
 public enum MetadataError: Error {
     case unknownFormat
@@ -59,7 +60,7 @@ public extension NSData {
         }
 
         // GIF file does not have properties in nullMetadataProperties. Tested some recreated GIF data from CGImageDestinationAddImageFromSource have the file size increased and lost animation. e.g. 1.6MB -> 9MB
-        if type == kUTTypeGIF {
+        if type == UTType.gif.identifier as CFString {
             return self
         }
 

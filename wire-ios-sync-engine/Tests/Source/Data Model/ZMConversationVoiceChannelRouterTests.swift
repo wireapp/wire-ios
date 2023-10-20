@@ -35,10 +35,6 @@ class ZMConversationVoiceChannelTests: MessagingTest {
         groupConversation.conversationType = .group
     }
 
-    override func tearDown() {
-        super.tearDown()
-    }
-
     func testThatItReturnsAVoiceChannelForAOneOnOneConversations() {
         // when
         let voiceChannel = oneToOneconversation.voiceChannel

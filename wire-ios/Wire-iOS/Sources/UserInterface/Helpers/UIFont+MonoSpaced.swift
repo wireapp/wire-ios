@@ -19,8 +19,8 @@
 import UIKit
 
 private let monospacedFeatureSettingsAttribute = [
-    UIFontDescriptor.FeatureKey.featureIdentifier: kNumberSpacingType,
-    UIFontDescriptor.FeatureKey.typeIdentifier: kMonospacedNumbersSelector
+    UIFontDescriptor.FeatureKey.type: kNumberSpacingType,
+    UIFontDescriptor.FeatureKey.selector: kMonospacedNumbersSelector
 ]
 
 private let monospaceAttribute = [
@@ -28,18 +28,18 @@ private let monospaceAttribute = [
 ]
 
 private let smallCapsFeatureSettingsAttributeLowerCase = [
-    UIFontDescriptor.FeatureKey.featureIdentifier: kLowerCaseType,
-    UIFontDescriptor.FeatureKey.typeIdentifier: kLowerCaseSmallCapsSelector
+    UIFontDescriptor.FeatureKey.type: kLowerCaseType,
+    UIFontDescriptor.FeatureKey.selector: kLowerCaseSmallCapsSelector
 ]
 
 private let smallCapsFeatureSettingsAttributeUpperCase = [
-    UIFontDescriptor.FeatureKey.featureIdentifier: kUpperCaseType,
-    UIFontDescriptor.FeatureKey.typeIdentifier: kUpperCaseSmallCapsSelector
+    UIFontDescriptor.FeatureKey.type: kUpperCaseType,
+    UIFontDescriptor.FeatureKey.selector: kUpperCaseSmallCapsSelector
 ]
 
 private let proportionalNumberSpacingFeatureSettingAttribute = [
-    UIFontDescriptor.FeatureKey.featureIdentifier: kNumberSpacingType,
-    UIFontDescriptor.FeatureKey.typeIdentifier: kProportionalNumbersSelector
+    UIFontDescriptor.FeatureKey.type: kNumberSpacingType,
+    UIFontDescriptor.FeatureKey.selector: kProportionalNumbersSelector
 ]
 
 private let smallCapsAttribute = [

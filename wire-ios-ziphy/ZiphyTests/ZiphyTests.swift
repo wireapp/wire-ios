@@ -23,10 +23,6 @@ final class ZiphTests: XCTestCase {
 
     var sut: Ziph!
 
-    override func setUp() {
-        super.setUp()
-    }
-
     override func tearDown() {
         sut = nil
         super.tearDown()

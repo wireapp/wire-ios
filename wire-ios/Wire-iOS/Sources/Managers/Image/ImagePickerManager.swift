@@ -19,6 +19,7 @@
 import UIKit
 import MobileCoreServices
 import WireSyncEngine
+import UniformTypeIdentifiers
 
 extension UIImage {
     var jpegData: Data? {
@@ -84,7 +85,7 @@ class ImagePickerManager: NSObject {
         let imagePickerController = UIImagePickerController()
         imagePickerController.delegate = self
         imagePickerController.sourceType = sourceType
-        imagePickerController.mediaTypes = [kUTTypeImage as String]
+        imagePickerController.mediaTypes = [UTType.image.identifier]
 
         switch sourceType {
         case .camera:

@@ -289,8 +289,14 @@ final class ValidatedTextField: AccessoryTextField, TextContainer, Themeable {
                 confirmButton.setBackgroundImageColor(UIColor.Team.inactiveButtonColor, for: .disabled)
             }
         }
-
-        confirmButton.adjustsImageWhenDisabled = false
+        confirmButton.configurationUpdateHandler = { button in
+            switch button.state {
+            case .disabled:
+                button.imageView?.tintAdjustmentMode = .normal
+            default:
+                break
+            }
+        }
     }
 
     private func setup() {

@@ -19,26 +19,27 @@
 import Foundation
 import MobileCoreServices
 import FLAnimatedImage
+import UniformTypeIdentifiers
 
 extension UIPasteboard {
 
     func pasteboardType(forMediaAsset mediaAsset: MediaAsset) -> String {
         if mediaAsset.isGIF {
-            return kUTTypeGIF as String
+            return UTType.gif.identifier
         } else if mediaAsset.isTransparent {
-            return kUTTypePNG as String
+            return UTType.png.identifier
         } else {
-            return kUTTypeJPEG as String
+            return UTType.jpeg.identifier
         }
     }
 
     /// TODO: get/set
     func mediaAsset() -> MediaAsset? {
-        if contains(pasteboardTypes: [kUTTypeGIF as String]) {
-            let data: Data? = self.data(forPasteboardType: kUTTypeGIF as String)
+        if contains(pasteboardTypes: [UTType.gif.identifier]) {
+            let data: Data? = self.data(forPasteboardType: UTType.gif.identifier)
             return FLAnimatedImage(animatedGIFData: data)
-        } else if contains(pasteboardTypes: [kUTTypePNG as String]) {
-            let data: Data? = self.data(forPasteboardType: kUTTypePNG as String)
+        } else if contains(pasteboardTypes: [UTType.png.identifier]) {
+            let data: Data? = self.data(forPasteboardType: UTType.png.identifier)
             if let aData = data {
                 return UIImage(data: aData)
             }

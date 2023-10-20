@@ -115,7 +115,7 @@ final class ImageFilePreviewGenerator: NSObject, FilePreviewGenerator {
         super.init()
     }
     public func canGeneratePreviewForFile(_ fileURL: URL, UTI uti: String) -> Bool {
-        return UTTypeConformsTo(uti as CFString, kUTTypeImage)
+        return UTType(uti)?.conforms(to: UTType.image) ?? false
     }
     public func generatePreview(_ fileURL: URL, UTI: String, completion: @escaping (UIImage?) -> Void) {
         var result: UIImage? = .none

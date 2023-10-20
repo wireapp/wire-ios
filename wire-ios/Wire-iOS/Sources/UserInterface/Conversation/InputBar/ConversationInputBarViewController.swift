@@ -767,9 +767,9 @@ extension ConversationInputBarViewController: UIImagePickerControllerDelegate {
 
         let mediaType = info[UIImagePickerController.InfoKey.mediaType] as? String
 
-        if mediaType == kUTTypeMovie as String {
+        if mediaType == UTType.movie.identifier {
             processVideo(info: info, picker: picker)
-        } else if mediaType == kUTTypeImage as String {
+        } else if mediaType == UTType.image.identifier {
             let image: UIImage? = (info[UIImagePickerController.InfoKey.editedImage] as? UIImage) ?? info[UIImagePickerController.InfoKey.originalImage] as? UIImage
 
             if let image = image,

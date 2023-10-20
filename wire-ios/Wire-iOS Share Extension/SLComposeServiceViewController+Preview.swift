@@ -20,6 +20,7 @@ import UIKit
 import Social
 import MobileCoreServices
 import WireCommonComponents
+import UniformTypeIdentifiers
 
 /**
  * The description of the preview that can be displayed for an attachment.
@@ -152,7 +153,7 @@ extension SLComposeServiceViewController {
              .fileUrl:
             return .document
         case .rawFile:
-            if item.hasItemConformingToTypeIdentifier(kUTTypeAudio as String) {
+            if item.hasItemConformingToTypeIdentifier(UTType.audio.identifier) {
                 return .microphone
             } else {
                 return .document

@@ -53,7 +53,7 @@ final class LocationSelectionViewController: UIViewController {
     fileprivate var mapDidRender = false
 
     fileprivate var userLocationAuthorized: Bool {
-        let status = CLLocationManager.authorizationStatus()
+        let status = locationManager.authorizationStatus
         return status == .authorizedAlways || status == .authorizedWhenInUse
     }
 

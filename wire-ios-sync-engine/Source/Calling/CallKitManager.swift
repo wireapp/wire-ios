@@ -162,9 +162,7 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
     }
 
     static var providerConfiguration: CXProviderConfiguration {
-        let localizedName = Bundle.main.infoDictionary?["CFBundleName"] as? String ?? "Wire"
-        let configuration = CXProviderConfiguration(localizedName: localizedName)
-
+        let configuration = CXProviderConfiguration()
         configuration.supportsVideo = true
         configuration.maximumCallGroups = 1
         configuration.maximumCallsPerCallGroup = 1

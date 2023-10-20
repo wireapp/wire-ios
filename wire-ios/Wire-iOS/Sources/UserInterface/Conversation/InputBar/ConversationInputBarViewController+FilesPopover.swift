@@ -18,6 +18,7 @@
 
 import MobileCoreServices
 import WireSyncEngine
+import UniformTypeIdentifiers
 
 extension ConversationInputBarViewController: UIDocumentPickerDelegate {
 
@@ -78,7 +79,7 @@ extension ConversationInputBarViewController {
 
         let uploadVideoHandler: ((UIAlertAction) -> Void) = { _ in
             self.presentImagePicker(with: .photoLibrary,
-                                    mediaTypes: [kUTTypeMovie as String], allowsEditing: true,
+                                    mediaTypes: [UTType.movie.identifier], allowsEditing: true,
                                     pointToView: self.videoButton.imageView)
         }
 
@@ -97,7 +98,8 @@ extension ConversationInputBarViewController {
                                            handler: takeVideoHandler))
 
         let browseHandler: ((UIAlertAction) -> Void) = { _ in
-            let documentPickerViewController = UIDocumentPickerViewController(documentTypes: [kUTTypeItem as String], in: .import)
+
+            let documentPickerViewController = UIDocumentPickerViewController(forOpeningContentTypes: [UTType.item])
             documentPickerViewController.modalPresentationStyle = self.isIPadRegular() ? .popover : .fullScreen
             if self.isIPadRegular(),
                 let sourceView = self.parent?.view,
@@ -139,7 +141,7 @@ extension ConversationInputBarViewController {
     private func recordVideo() {
         guard !CameraAccess.displayAlertIfOngoingCall(at: .recordVideo, from: self) else { return }
 
-        presentImagePicker(with: .camera, mediaTypes: [kUTTypeMovie as String], allowsEditing: false, pointToView: videoButton.imageView)
+        presentImagePicker(with: .camera, mediaTypes: [UTType.movie.identifier], allowsEditing: false, pointToView: videoButton.imageView)
     }
 
     #if targetEnvironment(simulator)

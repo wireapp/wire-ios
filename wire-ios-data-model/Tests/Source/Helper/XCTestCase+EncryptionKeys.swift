@@ -23,12 +23,15 @@ extension XCTestCase {
 
     private func generatePublicPrivateKey() -> (SecKey, SecKey) {
         var publicKeySec, privateKeySec: SecKey?
-        let keyattribute = [
+        var error: Unmanaged<CFError>?
+        let keyattributes = [
             kSecAttrKeyType as String: kSecAttrKeyTypeECSECPrimeRandom,
             kSecAttrKeySizeInBits as String: 256
             ] as CFDictionary
-        SecKeyGeneratePair(keyattribute, &publicKeySec, &privateKeySec)
-
+        privateKeySec = SecKeyCreateRandomKey(keyattributes, &error)
+        if let privateKeySec = privateKeySec {
+            publicKeySec = SecKeyCopyPublicKey(privateKeySec)
+        }
         return (publicKeySec!, privateKeySec!)
     }
 
