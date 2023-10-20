@@ -47,21 +47,6 @@ final class CreateSecureGuestLinkViewModel {
         delegate?.viewModel(self, didGeneratePassword: randomPassword)
     }
 
-    func validatePassword(
-        for textField: ValidatedTextField,
-        against confirmPasswordField: ValidatedTextField
-    ) -> Bool {
-
-        guard let enteredPassword = textField.text,
-              !enteredPassword.isEmpty,
-              textField.isValid,
-              confirmPasswordField.text == enteredPassword else {
-            return false
-        }
-
-        return true
-    }
-
     func generateRandomPassword() -> String {
         let minLength = 15
         let maxLength = 20
