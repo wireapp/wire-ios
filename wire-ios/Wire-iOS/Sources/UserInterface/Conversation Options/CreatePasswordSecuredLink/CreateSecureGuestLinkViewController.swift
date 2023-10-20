@@ -232,7 +232,7 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
     }
 
     @objc
-    func handlePasswordValidation(for textField: ValidatedTextField) -> Bool {
+    func handlePasswordValidation(for textField: ValidatedTextField) {
         let labels: [UILabel] = textField == securedGuestLinkPasswordTextfield ? [passwordRequirementsLabel, setPasswordLabel] : [confirmPasswordLabel]
 
         let isValid = viewModel.validatePassword(for: textField, against: securedGuestLinkPasswordTextfield)
@@ -243,8 +243,8 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
             displayPasswordErrorState(for: [textField], for: labels)
         }
 
-        return isValid
     }
+
     // MARK: - CreatePasswordSecuredLinkViewModelDelegate
 
     func viewModel(
