@@ -16,10 +16,9 @@ jobs:
       steps:
         - uses: actions/checkout@v4
         - name: GitHub Action for SwiftLint
-          uses: sinoru/actions-swiftlint@v6.0.4
+          uses: sinoru/actions-swiftlint@v6
           with:
             swiftlint-version: 0.53.0
             swiftlint-args: --strict
           env:
             DIFF_BASE: ${{ github.base_ref }}
-            DIFF_HEAD: HEAD
