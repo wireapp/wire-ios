@@ -308,13 +308,7 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
             createSecureGuestLinkPasswordValidatorHelper.resetPasswordDefaultState(for: [textField], for: labels)
         } else {
             createSecureGuestLinkPasswordValidatorHelper.displayPasswordErrorState(for: [textField], for: labels)
-
-            if textField == securedGuestLinkPasswordTextfield {
-                UIAccessibility.post(notification: .announcement, argument: SecureGuestLinkAccessibilityLocale.SecuredGuestLinkPasswordTextfield.announcement)
-            } else {
-                UIAccessibility.post(notification: .announcement, argument: SecureGuestLinkAccessibilityLocale.SecuredGuestLinkPasswordValidatedTextField.announcement)
-                announcePasswordValidationErrorForVoiceOver(for: textField)
-            }
+            announcePasswordValidationErrorForVoiceOver(for: textField)
         }
 
         return isValid
