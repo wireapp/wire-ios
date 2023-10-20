@@ -312,6 +312,7 @@ final class InputBarButtonsView: UIView {
         let firstTitleMargin = (conversationHorizontalMargins.left / 2) - constants.iconSize - (firstButtonLabelSize.width / 2)
         firstButton.contentHorizontalAlignment = .center
         firstButton.imageView?.contentMode = .center
+
         firstButton.titleEdgeInsets = UIEdgeInsets(top: constants.iconSize + firstButtonLabelSize.height + constants.titleTopMargin, left: firstTitleMargin, bottom: 0, right: 0)
 
         if rowIsFull {
