@@ -239,8 +239,8 @@ extension CreateSecureGuestLinkViewController: TextFieldValidationDelegate {
                 setPasswordLabel.textColor = validationErrorTextColor
             } else {
                 securedGuestLinkPasswordTextfield.applyStyle(.default)
-                passwordRequirementsLabel.textColor = validationErrorTextColor
-                setPasswordLabel.textColor = validationErrorTextColor
+                passwordRequirementsLabel.textColor = SemanticColors.Label.textFieldFloatingLabel
+                setPasswordLabel.textColor = SemanticColors.Label.textFieldFloatingLabel
             }
 
         case securedGuestLinkPasswordValidatedTextField:
