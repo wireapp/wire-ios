@@ -21,4 +21,5 @@ jobs:
             swiftlint-version: 0.53.0
             swiftlint-args: --strict
           env:
-            DIFF_BASE: ${{ github.base_ref }}   
+            DIFF_BASE: ${{ github.base_ref }}
+            DIFF_HEAD: HEAD
