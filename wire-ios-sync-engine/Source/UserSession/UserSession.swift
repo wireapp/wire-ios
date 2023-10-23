@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireDataModel
 
 /// An abstraction of the user session for use in the presentation
 /// layer.
@@ -69,6 +70,9 @@ public protocol UserSession: AnyObject {
         for: UserType
     ) -> NSObjectProtocol?
 
+    func conversationList() -> ZMConversationList
+
+    var ringingCallConversation: ZMConversation? { get }
 }
 
 extension ZMUserSession: UserSession {
@@ -104,4 +108,27 @@ extension ZMUserSession: UserSession {
         )
     }
 
+    public func conversationList() -> ZMConversationList {
+        return .conversations(inUserSession: self)
+    }
+
+    public var ringingCallConversation: ZMConversation? {
+        guard let callCenter = self.callCenter else {
+            return nil
+        }
+
+        return callCenter.nonIdleCallConversations(in: self).first { conversation in
+            guard let callState = conversation.voiceChannel?.state else {
+                return false
+            }
+
+            switch callState {
+            case .incoming, .outgoing:
+                return true
+
+            default:
+                return false
+            }
+        }
+    }
 }

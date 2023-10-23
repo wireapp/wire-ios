@@ -273,9 +273,7 @@ final class ZClientViewController: UIViewController {
     ///
     /// - Parameter completion: completion handler
     func hideIncomingContactRequests(completion: Completion? = nil) {
-        guard let userSession = ZMUserSession.shared() else { return }
-
-        let conversationsList = ZMConversationList.conversations(inUserSession: userSession)
+        let conversationsList = userSession.conversationList()
         if let conversation = (conversationsList as? [ZMConversation])?.first {
             select(conversation: conversation)
         }
@@ -391,9 +389,7 @@ final class ZClientViewController: UIViewController {
             }
         }
 
-        let ringingCallConversation = ZMUserSession.shared()?.ringingCallConversation
-
-        if ringingCallConversation != nil {
+        if userSession.ringingCallConversation != nil {
             dismissAction()
         } else {
             minimizeCallOverlay(animated: true, withCompletion: dismissAction)
@@ -401,10 +397,6 @@ final class ZClientViewController: UIViewController {
     }
 
     // MARK: - Getters/Setters
-
-    var context: ZMUserSession? {
-        return ZMUserSession.shared()
-    }
 
     // MARK: - ColorSchemeControllerDidApplyChangesNotification
     private func reloadCurrentConversation() {
@@ -469,11 +461,9 @@ final class ZClientViewController: UIViewController {
      * This handles the case where we have to select a list item on startup but there is no previous item saved
      */
     func selectListItemWhenNoPreviousItemSelected() {
-        guard let userSession = ZMUserSession.shared() else { return }
-
         // check for conversations and pick the first one.. this can be tricky if there are pending updates and
         // we haven't synced yet, but for now we just pick the current first item
-        let list = ZMConversationList.conversations(inUserSession: userSession) as? [ZMConversation]
+        let list = userSession.conversationList() as? [ZMConversation]
 
         if let conversation = list?.first {
             // select the first conversation and don't focus on it
