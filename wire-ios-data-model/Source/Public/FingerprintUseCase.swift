@@ -106,11 +106,11 @@ public class FingerprintUseCase {
 
 class MessagingService {
 
-    let proteusProvider: ProteusProvider
+    let proteusProvider: ProteusProviding
     let mlsService: MLSServiceInterface?
     let managedObjectContext: NSManagedObjectContext
 
-    init(proteusProvider: ProteusProvider, mlsService: MLSServiceInterface?, managedObjectContext: NSManagedObjectContext) {
+    init(proteusProvider: ProteusProviding, mlsService: MLSServiceInterface?, managedObjectContext: NSManagedObjectContext) {
         self.proteusProvider = proteusProvider
         self.mlsService = mlsService
         self.managedObjectContext = managedObjectContext

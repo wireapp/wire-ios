@@ -21,37 +21,6 @@ import UIKit
 import WireSyncEngine
 import WireCommonComponents
 
-final class ProfileClientViewModel {
-    let userClient: UserClient
-    private let fingerprintUseCase: FingerprintUseCase
-    private (set) var fingerprintData: Data?
-
-    var fingerprintDataClosure: ((Data?) -> Void)?
-
-    init(userClient: UserClient, fingerprintUseCase: FingerprintUseCase? = nil) {
-        guard let useCase = fingerprintUseCase ?? ZMUserSession.shared()?.fingerprintUseCase else {
-            fatalError("Missing fingerprintUseCase, check the setup")
-        }
-        self.fingerprintUseCase = useCase
-        self.userClient = userClient
-    }
-
-    func loadData() {
-        let isSelfClient = userClient.isSelfClient()
-        Task {
-            if isSelfClient {
-                self.fingerprintData = await fingerprintUseCase.localFingerprint()
-            } else {
-                self.fingerprintData = await fingerprintUseCase.fetchRemoteFingerprint(for: userClient)
-            }
-
-            await MainActor.run { [fingerprintData] in
-                self.fingerprintDataClosure?(fingerprintData)
-            }
-        }
-    }
-}
-
 final class ProfileClientViewController: UIViewController, SpinnerCapable {
 
     // MARK: Properties
