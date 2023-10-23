@@ -233,6 +233,8 @@ public class ZMUserSession: NSObject {
         tornDown = true
     }
 
+    public var fingerprintUseCase: FingerprintUseCase!
+
     let lastEventIDRepository: LastEventIDRepositoryInterface
 
     public init(
@@ -273,6 +275,7 @@ public class ZMUserSession: NSObject {
         self.debugCommands = ZMUserSession.initDebugCommands()
         self.legacyHotFix = ZMHotFix(syncMOC: coreDataStack.syncContext)
         self.appLockController = AppLockController(userId: userId, selfUser: .selfUser(in: coreDataStack.viewContext), legacyConfig: configuration.appLockConfig)
+        self.fingerprintUseCase = FingerprintUseCase.create(for: coreDataStack.syncContext)
 
         self.earService = earService ?? EARService(
             accountID: coreDataStack.account.userIdentifier,
