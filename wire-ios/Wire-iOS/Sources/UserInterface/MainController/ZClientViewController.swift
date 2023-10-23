@@ -589,7 +589,10 @@ final class ZClientViewController: UIViewController {
     }
 
     private func createLegalHoldDisclosureController() {
-        legalHoldDisclosureController = LegalHoldDisclosureController(selfUser: ZMUser.selfUser(), userSession: ZMUserSession.shared(), presenter: { viewController, animated, completion in
+        legalHoldDisclosureController = LegalHoldDisclosureController(
+            selfUser: userSession.selfUser,
+            userSession: userSession,
+            presenter: { viewController, animated, completion in
             viewController.presentTopmost(animated: animated, completion: completion)
         })
     }
