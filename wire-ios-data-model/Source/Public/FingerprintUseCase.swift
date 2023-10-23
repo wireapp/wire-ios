@@ -18,34 +18,9 @@
 
 import Foundation
 
-class MessagingService {
-
-    let proteusProvider: ProteusProvider
-    let mlsService: MLSServiceInterface?
-    let managedObjectContext: NSManagedObjectContext
-
-    init(proteusProvider: ProteusProvider, mlsService: MLSServiceInterface?, managedObjectContext: NSManagedObjectContext) {
-        self.proteusProvider = proteusProvider
-        self.mlsService = mlsService
-        self.managedObjectContext = managedObjectContext
-    }
-
-    func proteusPerform<T>(
-        withProteusService proteusServiceBlock: ProteusServicePerformBlock<T>,
-        withKeyStore keyStoreBlock: KeyStorePerformBlock<T>
-    ) rethrows -> T {
-        return try managedObjectContext.performAndWait {
-            try proteusProvider.perform(withProteusService: proteusServiceBlock, withKeyStore: keyStoreBlock)
-        }
-    }
-}
-
 public class FingerprintUseCase {
 
     let messagingService: MessagingService
-
-    private let queue = OperationQueue()
-    private var token: NSObjectProtocol?
 
     // FIXME: CC - temp method for dep injection
     public static func create(for managedObjectContext: NSManagedObjectContext) -> FingerprintUseCase {
@@ -53,55 +28,42 @@ public class FingerprintUseCase {
 
         return FingerprintUseCase(messagingService: MessagingService(proteusProvider: proteusProvider,
                                                                      mlsService: nil, // on develop we should not have mlsService,
-                                                                     managedObjectContext: managedObjectContext))
+                                                            managedObjectContext: managedObjectContext))
     }
 
     init(messagingService: MessagingService) {
         self.messagingService = messagingService
     }
 
-    /*
+    public func localFingerprint() async -> Data? {
+        var canPerform: Bool = false
 
-     public override func awakeFromFetch() {
-         super.awakeFromFetch()
+        messagingService.managedObjectContext.performAndWait {
+            canPerform = messagingService.proteusProvider.canPerform
+        }
+        guard canPerform else {
+            return nil
+        }
+        var fingerprintData: Data?
 
-         // Fetch fingerprint if not there yet (could remain nil after fetch)
-         if let managedObjectContext = self.managedObjectContext,
-            self.remoteIdentifier != nil, managedObjectContext.zm_isSyncContext && self.fingerprint == .none {
-             self.fingerprint = self.remoteFingerprint()
-         }
-     }
-
-     func localFingerprint(_ proteusProvider: ProteusProviding? = nil) -> Data? {
-         guard
-             let proteusProvider = proteusProvider ?? managedObjectContext?.proteusProvider,
-             proteusProvider.canPerform
-         else {
-             return nil
-         }
-
-         var fingerprintData: Data?
-
-         proteusProvider.perform(
-             withProteusService: { proteusService in
-                 do {
-                     let fingerprint = try proteusService.localFingerprint()
-                     fingerprintData = fingerprint.utf8Data
-                 } catch {
-                     zmLog.error("Cannot fetch local fingerprint for \(self)")
-                 }
-             },
-             withKeyStore: { keyStore in
-                 keyStore.encryptionContext.perform { sessionsDirectory in
-                     fingerprintData = sessionsDirectory.localFingerprint
-                 }
-             }
-         )
-
-         return fingerprintData
-     }
-
-     */
+        messagingService.proteusPerform(
+            withProteusService: { proteusService in
+                do {
+                    let fingerprint = try proteusService.localFingerprint()
+                    fingerprintData = fingerprint.utf8Data
+                } catch {
+                    WireLogger.proteus.error("Cannot fetch local fingerprint")
+                }
+            },
+            withKeyStore: { keyStore in
+                keyStore.encryptionContext.perform { sessionsDirectory in
+                    fingerprintData = sessionsDirectory.localFingerprint
+                }
+            }
+        )
+        print("🕵🏽 fingerprint data: \(fingerprintData?.base64String())")
+        return fingerprintData
+    }
 
     public func fetchRemoteFingerprint(for userClient: UserClient) async -> Data? {
         let userClientObjectId = userClient.objectID
@@ -139,5 +101,27 @@ public class FingerprintUseCase {
         )
 
         return fingerprintData
+    }
+}
+
+class MessagingService {
+
+    let proteusProvider: ProteusProvider
+    let mlsService: MLSServiceInterface?
+    let managedObjectContext: NSManagedObjectContext
+
+    init(proteusProvider: ProteusProvider, mlsService: MLSServiceInterface?, managedObjectContext: NSManagedObjectContext) {
+        self.proteusProvider = proteusProvider
+        self.mlsService = mlsService
+        self.managedObjectContext = managedObjectContext
+    }
+
+    func proteusPerform<T>(
+        withProteusService proteusServiceBlock: ProteusServicePerformBlock<T>,
+        withKeyStore keyStoreBlock: KeyStorePerformBlock<T>
+    ) rethrows -> T {
+        return try managedObjectContext.performAndWait {
+            try proteusProvider.perform(withProteusService: proteusServiceBlock, withKeyStore: keyStoreBlock)
+        }
     }
 }

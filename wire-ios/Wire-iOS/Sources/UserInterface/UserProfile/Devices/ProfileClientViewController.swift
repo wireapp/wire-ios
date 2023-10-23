@@ -24,7 +24,7 @@ import WireCommonComponents
 final class ProfileClientViewModel {
     let userClient: UserClient
     private let fingerprintUseCase: FingerprintUseCase
-    var fingerprintData: Data?
+    private (set) var fingerprintData: Data?
 
     var fingerprintDataClosure: ((Data?) -> Void)?
 
@@ -37,10 +37,16 @@ final class ProfileClientViewModel {
     }
 
     func loadData() {
+        let isSelfClient = userClient.isSelfClient()
         Task {
-            let data = await fingerprintUseCase.fetchRemoteFingerprint(for: userClient)
-            DispatchQueue.main.async {
-                self.fingerprintDataClosure?(data)
+            if isSelfClient {
+                self.fingerprintData = await fingerprintUseCase.localFingerprint()
+            } else {
+                self.fingerprintData = await fingerprintUseCase.fetchRemoteFingerprint(for: userClient)
+            }
+
+            await MainActor.run { [fingerprintData] in
+                self.fingerprintDataClosure?(fingerprintData)
             }
         }
     }
