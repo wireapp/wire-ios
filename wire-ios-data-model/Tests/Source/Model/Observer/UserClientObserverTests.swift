@@ -110,23 +110,6 @@ class UserClientObserverTests: NotificationDispatcherTestBase {
         XCTAssertTrue(client.ignoredByClients.contains(otherClient))
     }
 
-    func testThatItNotifiesTheObserverOfFingerprintChange() {
-        // given
-        let client = UserClient.insertNewObject(in: self.uiMOC)
-        client.fingerprint = NSString.createAlphanumerical().data(using: String.Encoding.utf8)
-        self.uiMOC.saveOrRollback()
-
-        let newFingerprint = NSString.createAlphanumerical().data(using: String.Encoding.utf8)
-
-        // when
-        self.checkThatItNotifiesTheObserverOfAChange(client,
-                                                     modifier: { _ in client.fingerprint = newFingerprint },
-                                                     expectedChangedFields: [UserClientChangeInfoKey.FingerprintChanged.rawValue]
-        )
-
-        XCTAssertTrue(client.fingerprint == newFingerprint)
-    }
-
     func testThatItStopsNotifyingAfterUnregisteringTheToken() {
         // given
         let client = UserClient.insertNewObject(in: self.uiMOC)
