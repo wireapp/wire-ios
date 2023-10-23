@@ -64,6 +64,11 @@ public protocol UserSession: AnyObject {
     // TODO: rename to "isEncryptionAtRestEnabled"
     var encryptMessagesAtRest: Bool { get }
 
+    func addUserObserver(
+        _ observer: ZMUserObserver,
+        for: UserType
+    ) -> NSObjectProtocol?
+
 }
 
 extension ZMUserSession: UserSession {
@@ -86,6 +91,17 @@ extension ZMUserSession: UserSession {
 
     public var selfUser: ZMUser {
         return ZMUser.selfUser(inUserSession: self)
+    }
+
+    public func addUserObserver(
+        _ observer: ZMUserObserver,
+        for user: UserType
+    ) -> NSObjectProtocol? {
+        return UserChangeInfo.add(
+            observer: observer,
+            for: user,
+            in: self
+        )
     }
 
 }

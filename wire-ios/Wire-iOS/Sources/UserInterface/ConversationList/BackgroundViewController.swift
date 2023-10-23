@@ -30,26 +30,27 @@ final class BackgroundViewController: UIViewController {
     private var userObserverToken: NSObjectProtocol! = .none
     private let user: UserType
 
-    init(user: UserType,
-         userSession: ZMUserSession?) {
+    init(
+        user: UserType,
+        userSession: UserSession?
+    ) {
         self.user = user
         super.init(nibName: .none, bundle: .none)
 
         setupObservers(userSession: userSession)
     }
 
-    private func setupObservers(userSession: ZMUserSession?) {
+    private func setupObservers(userSession: UserSession?) {
         guard !ProcessInfo.processInfo.isRunningTests else { return }
 
-        if !ProcessInfo.processInfo.isRunningTests,
-            let userSession = userSession {
-            userObserverToken = UserChangeInfo.add(observer: self, for: user, in: userSession)
-        }
+        userObserverToken = userSession?.addUserObserver(self, for: user)
 
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(colorSchemeChanged),
-                                               name: .SettingsColorSchemeChanged,
-                                               object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(colorSchemeChanged),
+            name: .SettingsColorSchemeChanged,
+            object: nil
+        )
     }
 
     @available(*, unavailable)

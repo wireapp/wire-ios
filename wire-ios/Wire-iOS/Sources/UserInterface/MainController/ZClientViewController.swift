@@ -70,7 +70,7 @@ final class ZClientViewController: UIViewController {
             user: userSession.selfUser,
             userSession: userSession as? ZMUserSession
         )
-        
+
         conversationListViewController = ConversationListViewController(
             account: account,
             selfUser: userSession.selfUser
