@@ -21,27 +21,22 @@ import WireSyncEngine
 
 final class ProfileClientViewModel {
     let userClient: UserClient
-    private let fingerprintUseCase: GetUserClientFingerprintUseCase
+    private let getUserClientFingerprint: GetUserClientFingerprintUseCase
     private (set) var fingerprintData: Data?
 
     var fingerprintDataClosure: ((Data?) -> Void)?
 
-    init(userClient: UserClient, fingerprintUseCase: GetUserClientFingerprintUseCase? = nil) {
-        guard let useCase = fingerprintUseCase ?? ZMUserSession.shared()?.fingerprintUseCase else {
+    init(userClient: UserClient, getUserClientFingerprint: GetUserClientFingerprintUseCase? = nil) {
+        guard let useCase = getUserClientFingerprint ?? ZMUserSession.shared()?.getUserClientFingerprint else {
             fatalError("Missing fingerprintUseCase, check the setup")
         }
-        self.fingerprintUseCase = useCase
+        self.getUserClientFingerprint = useCase
         self.userClient = userClient
     }
 
     func loadData() {
-        let isSelfClient = userClient.isSelfClient()
         Task {
-            if isSelfClient {
-                self.fingerprintData = await fingerprintUseCase.localFingerprint()
-            } else {
-                self.fingerprintData = await fingerprintUseCase.fetchRemoteFingerprint(for: userClient)
-            }
+            self.fingerprintData = await getUserClientFingerprint.invoke(userClient: userClient)
 
             await MainActor.run { [fingerprintData] in
                 self.fingerprintDataClosure?(fingerprintData)

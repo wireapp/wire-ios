@@ -34,7 +34,24 @@ public class GetUserClientFingerprintUseCase {
         self.managedObjectContext = managedObjectContext
     }
 
-    public func localFingerprint() async -> Data? {
+    public func invoke(userClient: UserClient) async -> Data? {
+        let objectId = userClient.objectID
+
+        let isSelfClient: Bool = managedObjectContext.performAndWait {
+            guard let existingUserId = try? managedObjectContext.existingObject(with: objectId) as? UserClient else {
+                return false
+            }
+            return existingUserId.isSelfClient()
+        }
+
+        if isSelfClient {
+            return await localFingerprint()
+        } else {
+            return await fetchRemoteFingerprint(for: userClient)
+        }
+    }
+
+    func localFingerprint() async -> Data? {
         var canPerform: Bool = false
 
         managedObjectContext.performAndWait {
@@ -63,7 +80,7 @@ public class GetUserClientFingerprintUseCase {
         return fingerprintData
     }
 
-    public func fetchRemoteFingerprint(for userClient: UserClient) async -> Data? {
+    func fetchRemoteFingerprint(for userClient: UserClient) async -> Data? {
         let userClientObjectId = userClient.objectID
         var userClientToUpdate: UserClient?
         var sessionId: ProteusSessionID?
