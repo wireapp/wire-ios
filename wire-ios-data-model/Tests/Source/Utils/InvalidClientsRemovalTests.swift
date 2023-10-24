@@ -117,6 +117,7 @@ class InvalidClientsRemovalTests: DiskDatabaseTest {
             syncMOC.zm_cryptKeyStore.encryptionContext.perform {
                 XCTAssertTrue($0.hasSession(for: clientId))
             }
+            // TODO: Ask why we check these - how is it linked to fingerpint?
             XCTAssertTrue(otherClient.hasSessionWithSelfClient)
             XCTAssertFalse(otherClient.isZombieObject)
             XCTAssertTrue(duplicateClient.isZombieObject)
