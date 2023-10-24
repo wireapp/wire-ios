@@ -73,10 +73,10 @@ final class ZClientViewController: UIViewController {
 
         conversationListViewController = ConversationListViewController(
             account: account,
-            selfUser: userSession.selfUser,
+            selfUser: userSession.selfLegalHoldSubject,
             userSession: userSession
         )
-        
+
         colorSchemeController = ColorSchemeController(userSession: userSession)
 
         super.init(nibName: nil, bundle: nil)
@@ -88,10 +88,10 @@ final class ZClientViewController: UIViewController {
 
         AVSMediaManager.sharedInstance().register(mediaPlaybackManager, withOptions: [
             "media": "external "
-            ])
+        ])
 
         if let appGroupIdentifier = Bundle.main.appGroupIdentifier,
-            let remoteIdentifier = ZMUser.selfUser().remoteIdentifier {
+           let remoteIdentifier = ZMUser.selfUser().remoteIdentifier {
             let sharedContainerURL = FileManager.sharedContainerDirectory(for: appGroupIdentifier)
 
             _ = sharedContainerURL.appendingPathComponent("AccountData", isDirectory: true).appendingPathComponent(remoteIdentifier.uuidString, isDirectory: true)
@@ -160,7 +160,7 @@ final class ZClientViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         pendingInitialStateRestore = true
 
         view.backgroundColor = SemanticColors.View.backgroundDefault
@@ -368,7 +368,7 @@ final class ZClientViewController: UIViewController {
     func dismissAllModalControllers(callback: Completion?) {
         let dismissAction = {
             if let rightViewController = self.wireSplitViewController.rightViewController,
-                rightViewController.presentedViewController != nil {
+               rightViewController.presentedViewController != nil {
                 rightViewController.dismiss(animated: false, completion: callback)
             } else if let presentedViewController = self.conversationListViewController.presentedViewController {
                 // This is a workaround around the fact that the transitioningDelegate of the settings
@@ -527,11 +527,11 @@ final class ZClientViewController: UIViewController {
                            options: .transitionCrossDissolve,
                            animations: { viewController.view.fitIn(view: self.view) },
                            completion: { _ in
-                            viewController.didMove(toParent: self)
-                            previousViewController.removeFromParent()
-                            self.topOverlayViewController = viewController
-                            self.updateSplitViewTopConstraint()
-                            })
+                    viewController.didMove(toParent: self)
+                    previousViewController.removeFromParent()
+                    self.topOverlayViewController = viewController
+                    self.updateSplitViewTopConstraint()
+                })
             } else {
                 topOverlayContainer.addSubview(viewController.view)
                 viewController.view.fitIn(view: topOverlayContainer)
@@ -593,11 +593,11 @@ final class ZClientViewController: UIViewController {
 
     private func createLegalHoldDisclosureController() {
         legalHoldDisclosureController = LegalHoldDisclosureController(
-            selfUser: userSession.selfUser,
+            selfUser: userSession.selfLegalHoldSubject,
             userSession: userSession,
             presenter: { viewController, animated, completion in
-            viewController.presentTopmost(animated: animated, completion: completion)
-        })
+                viewController.presentTopmost(animated: animated, completion: completion)
+            })
     }
 
     private func createTopViewConstraints() {
@@ -615,7 +615,7 @@ final class ZClientViewController: UIViewController {
             wireSplitViewController.view.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             wireSplitViewController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             wireSplitViewController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor)
-            ])
+        ])
 
         let heightConstraint = topOverlayContainer.heightAnchor.constraint(equalToConstant: 0)
         heightConstraint.priority = UILayoutPriority.defaultLow
@@ -701,7 +701,7 @@ final class ZClientViewController: UIViewController {
 
     var isConversationListVisible: Bool {
         return (wireSplitViewController.layoutSize == .regularLandscape) ||
-            (wireSplitViewController.isLeftViewControllerRevealed && conversationListViewController.presentedViewController == nil)
+        (wireSplitViewController.isLeftViewControllerRevealed && conversationListViewController.presentedViewController == nil)
     }
 
     func minimizeCallOverlay(animated: Bool,

@@ -65,7 +65,9 @@ public protocol UserSession: AnyObject {
     ///
     /// This can only be used on the main thread.
 
-    var selfUser: ZMUser { get }
+    var selfUser: UserType { get }
+
+    var selfLegalHoldSubject: UserType & SelfLegalHoldSubject { get }
 
     func perform(_ changes: @escaping () -> Void)
 
@@ -136,7 +138,11 @@ extension ZMUserSession: UserSession {
         try appLockController.deletePasscode()
     }
 
-    public var selfUser: ZMUser {
+    public var selfUser: UserType {
+        return ZMUser.selfUser(inUserSession: self)
+    }
+
+    public var selfLegalHoldSubject: UserType & SelfLegalHoldSubject {
         return ZMUser.selfUser(inUserSession: self)
     }
 
