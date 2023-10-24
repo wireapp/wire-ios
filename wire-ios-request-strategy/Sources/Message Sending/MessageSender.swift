@@ -64,6 +64,7 @@ enum MessageTarget {
 
 enum MessageSendError: Error {
     case messageProtocolMissing
+    case unresolvedApiVersion
     case failedToGenerateRequest
     case failedToParseResponse
     case gaveUpRetrying
@@ -75,19 +76,16 @@ public class MessageSender {
 
     public init (
         httpClient: HttpClient,
-        apiVersion: APIVersion,
         clientRegistrationDelegate: ClientRegistrationDelegate,
         sessionEstablisher: SessionEstablisher,
         context: NSManagedObjectContext
     ) {
         self.httpClient = httpClient
-        self.apiVersion = apiVersion
         self.clientRegistrationDelegate = clientRegistrationDelegate
         self.sessionEstablisher = sessionEstablisher
         self.managedObjectContext = context
     }
 
-    private let apiVersion: APIVersion
     private let httpClient: HttpClient
     private let managedObjectContext: NSManagedObjectContext
     private let clientRegistrationDelegate: ClientRegistrationDelegate
@@ -102,6 +100,7 @@ public class MessageSender {
     }
 
     private func attemptToSend(message: any Message) async -> Swift.Result<Void, MessageSendError> {
+        guard let apiVersion = BackendInfo.apiVersion else { return .failure(MessageSendError.unresolvedApiVersion)}
         guard let messageProtocol = managedObjectContext.performAndWait({
             message.conversation?.messageProtocol
         }) else {
@@ -110,14 +109,14 @@ public class MessageSender {
 
         return switch messageProtocol {
         case .proteus:
-            await attemptToSendWithProteus(message: message)
+            await attemptToSendWithProteus(message: message, apiVersion: apiVersion)
 
         case .mls:
-            await attemptToSendWithMLS(message: message)
+            await attemptToSendWithMLS(message: message, apiVersion: apiVersion)
         }
     }
 
-    private func attemptToSendWithProteus(message: any ProteusMessage) async -> Swift.Result<Void, MessageSendError> {
+    private func attemptToSendWithProteus(message: any ProteusMessage, apiVersion: APIVersion) async -> Swift.Result<Void, MessageSendError> {
         guard let conversation = managedObjectContext.performAndWait({
             message.conversation
         }) else {
@@ -133,19 +132,19 @@ public class MessageSender {
 
         return if response.result == .success {
             managedObjectContext.performAndWait {
-                handleProteusSuccess(message: message, response: response)
+                handleProteusSuccess(message: message, response: response, apiVersion: apiVersion)
             }
         } else {
             await managedObjectContext.performAndWait({
-                handleProteusFailure(message: message, response: response)
+                handleProteusFailure(message: message, response: response, apiVersion: apiVersion)
             }).flatMapAsync { retry in
                 if retry {
-                    await sessionEstablisher.establishSession(with: missingClients())
+                    await sessionEstablisher.establishSession(with: missingClients(), apiVersion: apiVersion)
                         .mapError({ _ in
                             MessageSendError.failedToGenerateRequest
                         })
                         .flatMapAsync { _ in
-                            await attemptToSendWithProteus(message: message)
+                            await attemptToSendWithProteus(message: message, apiVersion: apiVersion)
                         }
                 } else {
                     Swift.Result.failure(MessageSendError.gaveUpRetrying)
@@ -160,7 +159,7 @@ public class MessageSender {
         }
     }
 
-    private func handleProteusSuccess(message: any ProteusMessage, response: ZMTransportResponse) -> Swift.Result<Void, MessageSendError> {
+    private func handleProteusSuccess(message: any ProteusMessage, response: ZMTransportResponse, apiVersion: APIVersion) -> Swift.Result<Void, MessageSendError> {
         message.delivered(with: response)
 
         switch apiVersion {
@@ -182,7 +181,7 @@ public class MessageSender {
     }
 
     // FIXME: [jacob] return missing clients and don't rely on missedClients relationship
-    private func handleProteusFailure(message: any ProteusMessage, response: ZMTransportResponse) -> Swift.Result<Bool, MessageSendError> {
+    private func handleProteusFailure(message: any ProteusMessage, response: ZMTransportResponse, apiVersion: APIVersion) -> Swift.Result<Bool, MessageSendError> {
         switch response.httpStatus {
         case 412:
             switch apiVersion {
@@ -234,7 +233,7 @@ public class MessageSender {
         }
     }
 
-    private func attemptToSendWithMLS(message: any MLSMessage) async -> Swift.Result<Void, MessageSendError> {
+    private func attemptToSendWithMLS(message: any MLSMessage, apiVersion: APIVersion) async -> Swift.Result<Void, MessageSendError> {
         return .failure(MessageSendError.messageProtocolMissing)
     }
 

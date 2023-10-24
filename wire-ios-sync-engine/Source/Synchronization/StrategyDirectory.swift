@@ -102,11 +102,9 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             queue: syncMOC)
         let sessionEstablisher = SessionEstablisher(
             httpClient: httpClient,
-            apiVersion: .v4, // FIXME: [jacob] don't hardcode api version
             context: syncMOC)
         let messageSender = MessageSender(
             httpClient: httpClient,
-            apiVersion: .v4, // FIXME: [jacob] don't hardcode api version
             clientRegistrationDelegate: applicationStatusDirectory.clientRegistrationStatus,
             sessionEstablisher: sessionEstablisher,
             context: syncMOC)

@@ -27,25 +27,22 @@ public class SessionEstablisher {
 
     public init(
         httpClient: HttpClient,
-        apiVersion: APIVersion,
         context: NSManagedObjectContext
     ) {
         self.httpClient = httpClient
-        self.apiVersion = apiVersion
         self.managedObjectContext = context
     }
 
     private let httpClient: HttpClient
-    private let apiVersion: APIVersion
     private let managedObjectContext: NSManagedObjectContext
     private let requestFactory = MissingClientsRequestFactory()
     private let processor = PrekeyPayloadProcessor()
 
-    func establishSession(with clients: Set<UserClient>) async -> Swift.Result<Void, SessionEstablisherError> {
+    func establishSession(with clients: Set<UserClient>, apiVersion: APIVersion) async -> Swift.Result<Void, SessionEstablisherError> {
 
         // Establish sessions in chunks and return on first error
         for chunk in Array(clients).chunked(into: 28) {
-            let result = await internalEstablishSessions(for: Set(chunk))
+            let result = await internalEstablishSessions(for: Set(chunk), apiVersion: apiVersion)
             if case Swift.Result.failure = result {
                 return result
             }
@@ -54,7 +51,7 @@ public class SessionEstablisher {
         return .success(Void())
     }
 
-    private func internalEstablishSessions(for clients: Set<UserClient>) async -> Swift.Result<Void, SessionEstablisherError> {
+    private func internalEstablishSessions(for clients: Set<UserClient>, apiVersion: APIVersion) async -> Swift.Result<Void, SessionEstablisherError> {
         let request = managedObjectContext.performAndWait {
             return switch apiVersion {
             case .v0:
@@ -71,11 +68,11 @@ public class SessionEstablisher {
         let response = await httpClient.send(request)
 
         return managedObjectContext.performAndWait {
-            establishSessionsFromPrekeyResponse(response: response)
+            establishSessionsFromPrekeyResponse(response: response, apiVersion: apiVersion)
         }
     }
 
-    private func establishSessionsFromPrekeyResponse(response: ZMTransportResponse) -> Swift.Result<Void, SessionEstablisherError> {
+    private func establishSessionsFromPrekeyResponse(response: ZMTransportResponse, apiVersion: APIVersion) -> Swift.Result<Void, SessionEstablisherError> {
         switch apiVersion {
         case .v0:
             guard
