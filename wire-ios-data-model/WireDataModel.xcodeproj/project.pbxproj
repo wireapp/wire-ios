@@ -7,12 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0118539A2AE6BD4A0071FA32 /* FingerprintUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 011853982AE6BCD40071FA32 /* FingerprintUseCaseTests.swift */; };
+		0118539A2AE6BD4A0071FA32 /* GetUserClientFingerprintUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 011853982AE6BCD40071FA32 /* GetUserClientFingerprintUseCaseTests.swift */; };
 		0118539E2AE7BBAC0071FA32 /* store2-110-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = 0118539D2AE7BBAC0071FA32 /* store2-110-0.wiredatabase */; };
 		0129E7F929A520870065E6DB /* SafeCoreCrypto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0129E7F829A520870065E6DB /* SafeCoreCrypto.swift */; };
 		0129E7FB29A520EB0065E6DB /* SafeFileContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0129E7FA29A520EB0065E6DB /* SafeFileContext.swift */; };
 		017CA4442A2742B800E8E778 /* WireCoreCrypto.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 017CA4432A2742B800E8E778 /* WireCoreCrypto.xcframework */; };
-		01885A4F2AE6815D002F4205 /* FingerprintUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01885A4E2AE6815D002F4205 /* FingerprintUseCase.swift */; };
+		01885A4F2AE6815D002F4205 /* GetUserClientFingerprintUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01885A4E2AE6815D002F4205 /* GetUserClientFingerprintUseCase.swift */; };
 		018964252A6FE72700BCEE0E /* EARStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 018964242A6FE72700BCEE0E /* EARStorage.swift */; };
 		0189815529A66B0800B52510 /* SafeCoreCryptoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0189815429A66B0800B52510 /* SafeCoreCryptoTests.swift */; };
 		0191513A29ACB3CA00920D04 /* SpyUserClientKeyStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0191513929ACB3CA00920D04 /* SpyUserClientKeyStore.swift */; };
@@ -848,12 +848,12 @@
 
 /* Begin PBXFileReference section */
 		011853942AE685BA0071FA32 /* zmessaging2.110.0.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = zmessaging2.110.0.xcdatamodel; sourceTree = "<group>"; };
-		011853982AE6BCD40071FA32 /* FingerprintUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FingerprintUseCaseTests.swift; sourceTree = "<group>"; };
+		011853982AE6BCD40071FA32 /* GetUserClientFingerprintUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetUserClientFingerprintUseCaseTests.swift; sourceTree = "<group>"; };
 		0118539D2AE7BBAC0071FA32 /* store2-110-0.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; path = "store2-110-0.wiredatabase"; sourceTree = "<group>"; };
 		0129E7F829A520870065E6DB /* SafeCoreCrypto.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SafeCoreCrypto.swift; sourceTree = "<group>"; };
 		0129E7FA29A520EB0065E6DB /* SafeFileContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafeFileContext.swift; sourceTree = "<group>"; };
 		017CA4432A2742B800E8E778 /* WireCoreCrypto.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = WireCoreCrypto.xcframework; path = ../Carthage/Build/WireCoreCrypto.xcframework; sourceTree = "<group>"; };
-		01885A4E2AE6815D002F4205 /* FingerprintUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FingerprintUseCase.swift; sourceTree = "<group>"; };
+		01885A4E2AE6815D002F4205 /* GetUserClientFingerprintUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetUserClientFingerprintUseCase.swift; sourceTree = "<group>"; };
 		018964242A6FE72700BCEE0E /* EARStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EARStorage.swift; sourceTree = "<group>"; };
 		0189815429A66B0800B52510 /* SafeCoreCryptoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafeCoreCryptoTests.swift; sourceTree = "<group>"; };
 		0191513929ACB3CA00920D04 /* SpyUserClientKeyStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SpyUserClientKeyStore.swift; path = Tests/Source/Helper/SpyUserClientKeyStore.swift; sourceTree = SOURCE_ROOT; };
@@ -1830,7 +1830,7 @@
 		011853972AE6BCBA0071FA32 /* UseCases */ = {
 			isa = PBXGroup;
 			children = (
-				011853982AE6BCD40071FA32 /* FingerprintUseCaseTests.swift */,
+				011853982AE6BCD40071FA32 /* GetUserClientFingerprintUseCaseTests.swift */,
 			);
 			path = UseCases;
 			sourceTree = "<group>";
@@ -3228,7 +3228,7 @@
 				F9C9A6A61CAD7C7F0039E10C /* ZMMessage.h */,
 				F9C9A6A71CAD7C7F0039E10C /* ZMUser.h */,
 				BF3494071EC5A90400B0C314 /* ZMUser+OneOnOne.h */,
-				01885A4E2AE6815D002F4205 /* FingerprintUseCase.swift */,
+				01885A4E2AE6815D002F4205 /* GetUserClientFingerprintUseCase.swift */,
 			);
 			name = Public;
 			path = Source/Public;
@@ -4008,7 +4008,7 @@
 				1672A6282344F10700380537 /* FolderList.swift in Sources */,
 				54E3EE3F1F6169A800A261E3 /* ZMAssetClientMessage+FileMessageData.swift in Sources */,
 				EF1F4F542301634500E4872C /* ZMSystemMessage+ChildMessages.swift in Sources */,
-				01885A4F2AE6815D002F4205 /* FingerprintUseCase.swift in Sources */,
+				01885A4F2AE6815D002F4205 /* GetUserClientFingerprintUseCase.swift in Sources */,
 				F943BC2D1E88FEC80048A768 /* ChangedIndexes.swift in Sources */,
 				7A2778C6285223D90044A73F /* KeychainManager.swift in Sources */,
 				63BEF5872A2636BC00F482E8 /* MLSConferenceInfo.swift in Sources */,
@@ -4111,7 +4111,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F920AE171E38C547001BC14F /* NotificationObservers.swift in Sources */,
-				0118539A2AE6BD4A0071FA32 /* FingerprintUseCaseTests.swift in Sources */,
+				0118539A2AE6BD4A0071FA32 /* GetUserClientFingerprintUseCaseTests.swift in Sources */,
 				F93265291D89648B0076AAD6 /* ZMAssetClientMessageTests.swift in Sources */,
 				63298D9C24374094006B6018 /* GenericMessageTests+External.swift in Sources */,
 				1689FD462194A63E00A656E2 /* ZMClientMessageTests+Editing.swift in Sources */,

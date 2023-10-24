@@ -18,15 +18,15 @@
 
 import Foundation
 
-public class FingerprintUseCase {
+public class GetUserClientFingerprintUseCase {
 
     let proteusProvider: ProteusProviding
     let managedObjectContext: NSManagedObjectContext
 
-    public static func create(for managedObjectContext: NSManagedObjectContext) -> FingerprintUseCase {
+    public static func create(for managedObjectContext: NSManagedObjectContext) -> GetUserClientFingerprintUseCase {
         let proteusProvider = ProteusProvider(context: managedObjectContext)
 
-        return FingerprintUseCase(proteusProvider: proteusProvider, managedObjectContext: managedObjectContext)
+        return GetUserClientFingerprintUseCase(proteusProvider: proteusProvider, managedObjectContext: managedObjectContext)
     }
 
     init(proteusProvider: ProteusProviding, managedObjectContext: NSManagedObjectContext) {

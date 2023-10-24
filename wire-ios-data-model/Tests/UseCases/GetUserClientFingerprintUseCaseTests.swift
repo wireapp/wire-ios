@@ -20,8 +20,8 @@ import Foundation
 import XCTest
 @testable import WireDataModel
 
-class FingerprintUseCaseTests: ZMBaseManagedObjectTest {
-    var sut: FingerprintUseCase!
+class GetUserClientFingerprintUseCaseTests: ZMBaseManagedObjectTest {
+    var sut: GetUserClientFingerprintUseCase!
     var mockProteusProvider: MockProteusProvider!
 
     override func setUp() {
@@ -110,9 +110,9 @@ class FingerprintUseCaseTests: ZMBaseManagedObjectTest {
 
     // MARK: - Helpers
 
-    private func createSut(proteusEnabled: Bool) -> FingerprintUseCase {
+    private func createSut(proteusEnabled: Bool) -> GetUserClientFingerprintUseCase {
         mockProteusProvider = MockProteusProvider(mockKeyStore: self.spyForTests(), useProteusService: proteusEnabled)
-        return FingerprintUseCase(proteusProvider: mockProteusProvider, managedObjectContext: syncMOC)
+        return GetUserClientFingerprintUseCase(proteusProvider: mockProteusProvider, managedObjectContext: syncMOC)
     }
 
 }

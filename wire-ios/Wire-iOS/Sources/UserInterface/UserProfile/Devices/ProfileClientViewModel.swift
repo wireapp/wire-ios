@@ -21,12 +21,12 @@ import WireSyncEngine
 
 final class ProfileClientViewModel {
     let userClient: UserClient
-    private let fingerprintUseCase: FingerprintUseCase
+    private let fingerprintUseCase: GetUserClientFingerprintUseCase
     private (set) var fingerprintData: Data?
 
     var fingerprintDataClosure: ((Data?) -> Void)?
 
-    init(userClient: UserClient, fingerprintUseCase: FingerprintUseCase? = nil) {
+    init(userClient: UserClient, fingerprintUseCase: GetUserClientFingerprintUseCase? = nil) {
         guard let useCase = fingerprintUseCase ?? ZMUserSession.shared()?.fingerprintUseCase else {
             fatalError("Missing fingerprintUseCase, check the setup")
         }

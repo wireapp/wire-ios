@@ -87,7 +87,6 @@ class InvalidClientsRemovalTests: DiskDatabaseTest {
             let selfClient = self.createSelfClient(in: syncMOC)
             var preKeys: [(id: UInt16, prekey: String)] = []
             syncMOC.zm_cryptKeyStore.encryptionContext.perform {
-            // TODO: [John] use flag here
                 preKeys = try! $0.generatePrekeys(0 ..< 2)
             }
 
