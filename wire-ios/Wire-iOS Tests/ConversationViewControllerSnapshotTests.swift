@@ -26,6 +26,7 @@ final class ConversationViewControllerSnapshotTests: ZMSnapshotTestCase, CoreDat
     var mockConversation: ZMConversation!
     var serviceUser: ZMUser!
     var mockZMUserSession: MockZMUserSession!
+    var userSession: UserSessionMock!
     var coreDataFixture: CoreDataFixture!
 
     override func setupCoreDataStack() {
@@ -39,11 +40,11 @@ final class ConversationViewControllerSnapshotTests: ZMSnapshotTestCase, CoreDat
 
         mockConversation = createTeamGroupConversation()
         mockZMUserSession = MockZMUserSession()
+        userSession = UserSessionMock(mockUser: .createSelfUser(name: "Bob"))
         serviceUser = coreDataFixture.createServiceUser()
 
         let mockAccount = Account(userName: "mock user", userIdentifier: UUID())
-        let selfUser = MockUserType.createSelfUser(name: "Bob")
-        let zClientViewController = ZClientViewController(account: mockAccount, selfUser: selfUser)
+        let zClientViewController = ZClientViewController(account: mockAccount, userSession: userSession)
 
         sut = ConversationViewController(session: mockZMUserSession,
                                          conversation: mockConversation,

@@ -73,7 +73,7 @@ final class ZClientViewController: UIViewController {
 
         conversationListViewController = ConversationListViewController(
             account: account,
-            selfUser: userSession.selfUser
+            selfUser: userSession.selfLegalHoldSubject
         )
 
         super.init(nibName: nil, bundle: nil)
@@ -590,7 +590,7 @@ final class ZClientViewController: UIViewController {
 
     private func createLegalHoldDisclosureController() {
         legalHoldDisclosureController = LegalHoldDisclosureController(
-            selfUser: userSession.selfUser,
+            selfUser: userSession.selfLegalHoldSubject,
             userSession: userSession,
             presenter: { viewController, animated, completion in
             viewController.presentTopmost(animated: animated, completion: completion)

@@ -20,8 +20,22 @@ import Foundation
 
 final class UserSessionMock: UserSession {
 
-    var selfUser: ZMUser {
-        fatalError("not implemented")
+    var selfUser: UserType
+    var selfLegalHoldSubject: SelfLegalHoldSubject & UserType
+
+    convenience init(mockUser: MockUserType = .createDefaultSelfUser()) {
+        self.init(
+            selfUser: mockUser,
+            selfLegalHoldSubject: mockUser
+        )
+    }
+
+    init(
+        selfUser: UserType,
+        selfLegalHoldSubject: SelfLegalHoldSubject & UserType
+    ) {
+        self.selfUser = selfUser
+        self.selfLegalHoldSubject = selfLegalHoldSubject
     }
 
     var isLocked = false
