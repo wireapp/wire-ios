@@ -99,7 +99,7 @@ class InvalidClientsRemovalTests: DiskDatabaseTest {
             syncMOC.saveOrRollback()
 
             let duplicateClient = UserClient.insertNewObject(in: syncMOC)
-            duplicateClient.remoteIdentifier = otherClient.remoteIdentifier
+            duplicateClient.remoteIdentifier = UUID().uuidString
             duplicateClient.user = nil
 
             guard let preKey = preKeys.first else { XCTFail("could not generate prekeys"); return }
