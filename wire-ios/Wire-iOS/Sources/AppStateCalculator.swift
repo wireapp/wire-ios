@@ -226,9 +226,7 @@ extension AppStateCalculator: SessionManagerDelegate {
 
 // MARK: - AuthenticationCoordinatorDelegate
 extension AppStateCalculator: AuthenticationCoordinatorDelegate {
-    func userAuthenticationDidComplete(addedAccount: Bool) {
-        let userSession = SessionManager.shared!.activeUserSession!
-
+    func userAuthenticationDidComplete(userSession: UserSession, addedAccount: Bool) {
         if userSession.isLocked {
             transition(to: .locked)
         } else {

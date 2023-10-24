@@ -130,14 +130,18 @@ final class AppStateCalculatorTests: XCTestCase {
 
     func testThatAppStateChanges_OnUserAuthenticationDidComplete() {
         // GIVEN
+        let userSession = UserSessionMock()
         let addedAccount = false
         sut.applicationDidBecomeActive()
 
         // WHEN
-        sut.userAuthenticationDidComplete(addedAccount: addedAccount)
+        sut.userAuthenticationDidComplete(
+            userSession: userSession,
+            addedAccount: addedAccount
+        )
 
         // THEN
-        XCTAssertEqual(sut.appState, .authenticated(completedRegistration: addedAccount))
+        XCTAssertEqual(sut.appState, .authenticated(userSession, completedRegistration: addedAccount))
         XCTAssertTrue(delegate.wasNotified)
     }
 
