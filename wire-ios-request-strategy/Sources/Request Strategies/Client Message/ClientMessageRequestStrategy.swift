@@ -131,7 +131,7 @@ extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
                         object.expire()
                         localNotificationDispatcher.didFailToSend(object)
 
-                    case .gaveUpRetrying, .failedToGenerateRequest, .failedToParseResponse:
+                    case .gaveUpRetrying, .failedToGenerateRequest, .failedToParseResponse, .unresolvedApiVersion:
                         WireLogger.messaging.error("failed to send message \(object.debugInfo): \(String(describing: error))")
                         object.expire()
                         localNotificationDispatcher.didFailToSend(object)
