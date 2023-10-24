@@ -102,7 +102,7 @@ class FingerprintUseCaseTests: ZMBaseManagedObjectTest {
         sut = createSut(proteusEnabled: false)
 
         // WHEN
-        let result = await sut.localFingerprint()
+        _ = await sut.localFingerprint()
 
         // THEN
         XCTAssertEqual(mockProteusProvider.mockKeyStore.accessEncryptionContextCount, 1)
@@ -112,11 +112,7 @@ class FingerprintUseCaseTests: ZMBaseManagedObjectTest {
 
     private func createSut(proteusEnabled: Bool) -> FingerprintUseCase {
         mockProteusProvider = MockProteusProvider(mockKeyStore: self.spyForTests(), useProteusService: proteusEnabled)
-        let messagingService = MessagingService(proteusProvider: mockProteusProvider,
-                                                mlsService: nil,
-                                                managedObjectContext: syncMOC)
-        return FingerprintUseCase(messagingService: messagingService)
-
+        return FingerprintUseCase(proteusProvider: mockProteusProvider, managedObjectContext: syncMOC)
     }
 
 }

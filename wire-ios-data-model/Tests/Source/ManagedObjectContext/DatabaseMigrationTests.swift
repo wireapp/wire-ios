@@ -309,7 +309,7 @@ final class DatabaseMigrationTests: DatabaseBaseTest {
 
     func testThatItPerformsMigrationFrom_Between_2_24_1_and_PreLast_ToCurrentModelVersion() {
         // NOTICE: When a new version of data model is created, please increase the last number of the array.
-        let allVersions = ["2-24-1"] + [(25...31), (39...57), (59...109)].joined().map {
+        let allVersions = ["2-24-1"] + [(25...31), (39...57), (59...110)].joined().map {
             "2-\($0)-0"
         }
 
@@ -428,7 +428,7 @@ final class DatabaseMigrationTests: DatabaseBaseTest {
 
             let store = NSManagedObjectModel(contentsOf: source.appendingPathComponent(modelFileName))!
             // then
-            XCTAssertTrue(store.versionIdentifiers.contains(version))
+            XCTAssertTrue(store.versionIdentifiers.contains(version), "\(version) should be contained")
             processedVersions.insert(version)
         }
     }
