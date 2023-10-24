@@ -33,25 +33,10 @@ final class TextFieldValidator {
         case custom(String)
     }
 
-    private func validatePasscode(text: String,
-                                  kind: ValidatedTextField.Kind,
-                                  isNew: Bool) -> TextFieldValidator.ValidationError? {
-        if isNew {
-            // If the user is registering, enforce the password rules
-            let result = PasswordRuleSet.shared.validatePassword(text)
-            switch result {
-            case .valid:
-                return nil
-            case .invalid(let violations):
-                return .invalidPassword(violations)
-            }
-        } else {
-            // If the user is signing in, we do not require any format
-            return text.isEmpty ? .tooShort(kind: kind) : nil
-        }
-    }
-
-    func validate(text: String?, kind: ValidatedTextField.Kind) -> TextFieldValidator.ValidationError? {
+    func validate(
+        text: String?,
+        kind: ValidatedTextField.Kind
+    ) -> TextFieldValidator.ValidationError? {
         guard let text = text else {
             return nil
         }
@@ -68,10 +53,24 @@ final class TextFieldValidator {
                 return .invalidEmail
             }
 
-        case .password(let isNew):
-            return validatePasscode(text: text, kind: kind, isNew: isNew)
-        case .passcode(let isNew):
-            return validatePasscode(text: text, kind: kind, isNew: isNew)
+        case .password(let rules, _):
+            switch rules.validatePassword(text) {
+            case .valid:
+                return nil
+
+            case .invalid(let violations):
+                return .invalidPassword(violations)
+            }
+
+        case .passcode(let rules, _):
+            switch rules.validatePassword(text) {
+            case .valid:
+                return nil
+
+            case .invalid(let violations):
+                return .invalidPassword(violations)
+            }
+
         case .name:
             // We should ignore leading/trailing whitespace when counting the number of characters in the string
             let stringToValidate = text.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -86,14 +85,14 @@ final class TextFieldValidator {
         }
 
         return .none
-
     }
+
 }
 
-extension TextFieldValidator {
+extension PasswordRuleSet {
 
-    var passwordRules: UITextInputPasswordRules {
-        return UITextInputPasswordRules(descriptor: PasswordRuleSet.shared.encodeInKeychainFormat())
+    var textInputPasswordRules: UITextInputPasswordRules {
+        return UITextInputPasswordRules(descriptor: encodeInKeychainFormat())
     }
 
 }
@@ -135,8 +134,8 @@ extension TextFieldValidator.ValidationError: LocalizedError {
             return description
         case .invalidPassword(let violations):
             return violations.contains(.tooLong)
-                ? "password.guidance.toolong".localized
-                : PasswordRuleSet.localizedErrorMessage
+            ? "password.guidance.toolong".localized
+            : PasswordRuleSet.localizedErrorMessage
         }
     }
 

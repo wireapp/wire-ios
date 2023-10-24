@@ -17,14 +17,17 @@
 //
 
 import XCTest
+import WireCommonComponents
 @testable import Wire
 
-class CreatePasswordSecuredLinkViewModelTests: XCTestCase {
+class CreateSecureGuestLinkViewModelTests: XCTestCase {
 
     // MARK: - Properties
 
     var viewModel: CreateSecureGuestLinkViewModel!
     var mockDelegate: MockCreatePasswordSecuredLinkViewModelDelegate!
+    var textField: ValidatedTextField!
+    var confirmPasswordField: ValidatedTextField!
 
     // MARK: - setUp
 
@@ -33,6 +36,8 @@ class CreatePasswordSecuredLinkViewModelTests: XCTestCase {
         viewModel = CreateSecureGuestLinkViewModel(delegate: mockDelegate)
         mockDelegate = MockCreatePasswordSecuredLinkViewModelDelegate()
         viewModel.delegate = mockDelegate
+        textField = ValidatedTextField(style: .default)
+        confirmPasswordField = ValidatedTextField(style: .default)
     }
 
     // MARK: - tearDown
@@ -40,10 +45,14 @@ class CreatePasswordSecuredLinkViewModelTests: XCTestCase {
     override func tearDown() {
         viewModel = nil
         mockDelegate = nil
+        textField = nil
+        confirmPasswordField = nil
         super.tearDown()
     }
 
     // MARK: - Unit Tests
+
+    // MARK: - Generation of Password
 
     func testGenerateRandomPassword() {
         // GIVEN && WHEN

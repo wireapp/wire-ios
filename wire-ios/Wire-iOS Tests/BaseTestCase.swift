@@ -16,9 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Foundation
 import XCTest
 import WireCommonComponents
 
-class BaseSnapshotTestCase: BaseTestCase {
+class BaseTestCase: XCTestCase {
+
+    override func setUp() {
+        super.setUp()
+
+        FontScheme.configure(with: .large)
+    }
 
 }

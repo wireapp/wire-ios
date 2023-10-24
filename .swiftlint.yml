@@ -36,6 +36,7 @@ excluded:
     - vendor
     - wire-ios/Templates
     - "wire-ios/Wire-iOS/Generated/Assets+Generated.swift"
+    - "wire-ios/Wire-iOS/Generated/AutoMockable.generated.swift"
     - "wire-ios/Wire-iOS/Generated/Strings+Generated.swift"
     - "wire-ios-protos/Protos/messages.pb.swift"
     - "wire-ios-protos/Protos/mls.pb.swift"

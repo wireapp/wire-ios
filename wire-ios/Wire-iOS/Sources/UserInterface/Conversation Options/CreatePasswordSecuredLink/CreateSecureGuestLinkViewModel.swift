@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import UIKit
 
 // MARK: - CreatePasswordSecuredLinkViewModelDelegate
 
@@ -25,7 +26,7 @@ protocol CreatePasswordSecuredLinkViewModelDelegate: AnyObject {
     func viewModel(_ viewModel: CreateSecureGuestLinkViewModel, didGeneratePassword password: String)
 }
 
-// MARK: - CreatePasswordSecuredLinkViewModel
+// MARK: - CreateSecureGuestLinkViewModel
 
 final class CreateSecureGuestLinkViewModel {
 
