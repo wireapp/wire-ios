@@ -327,15 +327,11 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
     // MARK: - Accessibility
 
     func announcePasswordValidationErrorForVoiceOver(for textField: ValidatedTextField) {
-        if textField == securedGuestLinkPasswordTextfield {
+       let argument =  textField == securedGuestLinkPasswordTextfield ? SecureGuestLinkAccessibilityLocale.SecuredGuestLinkPasswordTextfield.announcement : SecureGuestLinkAccessibilityLocale.SecuredGuestLinkPasswordValidatedTextField.announcement
+        
             UIAccessibility.post(
                 notification: .announcement,
-                argument: SecureGuestLinkAccessibilityLocale.SecuredGuestLinkPasswordTextfield.announcement
-            )
-        } else {
-            UIAccessibility.post(
-                notification: .announcement,
-                argument: SecureGuestLinkAccessibilityLocale.SecuredGuestLinkPasswordValidatedTextField.announcement
+                argument: argument
             )
         }
 
