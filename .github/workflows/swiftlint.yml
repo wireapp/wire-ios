@@ -21,8 +21,7 @@ jobs:
         - name: GitHub Action for SwiftLint
           uses: mayk-it/action-swiftlint@3.2.2
           with:
-            swiftlint-version: 0.53.0
-            swiftlint-args: --strict
+            args: --strict
           env:
             DIFF_BASE: ${{ github.base_ref }}
             DIFF_HEAD: HEAD
