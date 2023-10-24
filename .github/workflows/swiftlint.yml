@@ -19,7 +19,7 @@ jobs:
           run: |
             git fetch --prune --no-tags --depth=1 origin +refs/heads/${{ github.base_ref }}:refs/heads/${{ github.base_ref }}
         - name: GitHub Action for SwiftLint
-          uses: sinoru/actions-swiftlint@v6
+          uses: mayk-it/action-swiftlint@3.2.2
           with:
             swiftlint-version: 0.53.0
             swiftlint-args: --strict
