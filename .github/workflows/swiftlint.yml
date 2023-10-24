@@ -15,6 +15,9 @@ jobs:
       runs-on: ubuntu-latest
       steps:
         - uses: actions/checkout@v4
+        - name: Fetch base ref
+          run: |
+            git fetch --prune --no-tags --depth=1 origin +refs/heads/${{ github.base_ref }}:refs/heads/${{ github.base_ref }}
         - name: GitHub Action for SwiftLint
           uses: sinoru/actions-swiftlint@v6
           with:
@@ -22,3 +25,4 @@ jobs:
             swiftlint-args: --strict
           env:
             DIFF_BASE: ${{ github.base_ref }}
+            DIFF_HEAD: HEAD
