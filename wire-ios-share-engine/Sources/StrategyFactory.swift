@@ -86,7 +86,8 @@ class StrategyFactory {
         return ClientMessageRequestStrategy(
             withManagedObjectContext: syncContext,
             localNotificationDispatcher: PushMessageHandlerDummy(),
-            applicationStatus: applicationStatus
+            applicationStatus: applicationStatus,
+            messageSender: nil
         )
     }
 
