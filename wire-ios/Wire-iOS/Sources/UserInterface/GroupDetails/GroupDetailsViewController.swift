@@ -28,6 +28,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
     var actionController: ConversationActionController?
     private var renameGroupSectionController: RenameGroupSectionController?
     private var syncObserver: InitialSyncObserver!
+    let userSession: UserSession
 
     var didCompleteInitialSync = false {
         didSet {
@@ -39,10 +40,10 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
         return wr_supportedInterfaceOrientations
     }
 
-    init(conversation: GroupDetailsConversationType) {
+    init(conversation: GroupDetailsConversationType, userSession: UserSession) {
         self.conversation = conversation
         collectionViewController = SectionCollectionViewController()
-
+        self.userSession = userSession
         super.init(nibName: nil, bundle: nil)
 
         createSubviews()
@@ -253,7 +254,8 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
 
         let detailsViewController = GroupParticipantsDetailViewController(
             selectedParticipants: selectedUsers,
-            conversation: conversation
+            conversation: conversation, 
+            userSession: userSession
         )
 
         detailsViewController.delegate = self
@@ -274,7 +276,7 @@ extension GroupDetailsViewController {
     func presentLegalHoldDetails() {
         guard let conversation = conversation as? ZMConversation else { return }
 
-        LegalHoldDetailsViewController.present(in: self, conversation: conversation)
+        LegalHoldDetailsViewController.present(in: self, conversation: conversation, userSession: userSession)
     }
 
 }
@@ -302,7 +304,7 @@ extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, Gro
             user: user,
             conversation: conversation,
             profileViewControllerDelegate: self,
-            viewControllerDismisser: self
+            viewControllerDismisser: self, userSession: userSession
         )
 
         navigationController?.pushViewController(viewController, animated: true)

@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireSyncEngine
 import WireDataModel
 import UIKit
 
@@ -31,7 +32,8 @@ extension MessagePresenter {
     /// - Returns: if isPreviewing, return a ConversationImagesViewController otherwise return a the view wrapped in navigation controller
     func imagesViewController(for message: ZMConversationMessage,
                               actionResponder: MessageActionResponder,
-                              isPreviewing: Bool) -> UIViewController {
+                              isPreviewing: Bool,
+                              userSession: UserSession) -> UIViewController {
 
         guard let conversation = message.conversationLike else {
             fatal("Message has no conversation.")
@@ -46,7 +48,7 @@ extension MessagePresenter {
         let collection = AssetCollectionWrapper(conversation: conversation,
                                                 matchingCategories: [imagesCategoryMatch])
 
-        let imagesController = ConversationImagesViewController(collection: collection, initialMessage: message, inverse: true)
+        let imagesController = ConversationImagesViewController(collection: collection, initialMessage: message, inverse: true, userSession: userSession)
         imagesController.isPreviewing = isPreviewing
 
         // preferredContentSize should not excess view's size

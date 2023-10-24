@@ -76,9 +76,9 @@ final class ProfileViewController: UIViewController {
                      conversation: ZMConversation? = nil,
                      context: ProfileViewControllerContext? = nil,
                      classificationProvider: ClassificationProviding? = ZMUserSession.shared(),
-                     viewControllerDismisser: ViewControllerDismisser? = nil) {
+                     viewControllerDismisser: ViewControllerDismisser? = nil,
+                     userSession: UserSession) {
         let profileViewControllerContext: ProfileViewControllerContext
-
         if let context = context {
             profileViewControllerContext = context
         } else {
@@ -89,7 +89,8 @@ final class ProfileViewController: UIViewController {
                                                        conversation: conversation,
                                                        viewer: viewer,
                                                        context: profileViewControllerContext,
-                                                       classificationProvider: classificationProvider)
+                                                       classificationProvider: classificationProvider,
+                                                       userSession: userSession)
 
         self.init(viewModel: viewModel)
 
@@ -206,7 +207,8 @@ final class ProfileViewController: UIViewController {
         let profileDetailsViewController = ProfileDetailsViewController(user: viewModel.user,
                                                                         viewer: viewModel.viewer,
                                                                         conversation: viewModel.conversation,
-                                                                        context: viewModel.context)
+                                                                        context: viewModel.context, 
+                                                                        userSession: viewModel.userSession)
         profileDetailsViewController.title = "profile.details.title".localized
 
         return profileDetailsViewController
@@ -386,7 +388,7 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
     @objc
     private func presentLegalHoldDetails() {
         let user = viewModel.user
-        LegalHoldDetailsViewController.present(in: self, user: user)
+        LegalHoldDetailsViewController.present(in: self, user: user, userSession: viewModel.userSession)
     }
 
     // MARK: Block

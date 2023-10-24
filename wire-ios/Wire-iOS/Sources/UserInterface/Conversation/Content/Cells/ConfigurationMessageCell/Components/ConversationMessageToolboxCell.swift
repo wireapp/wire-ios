@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDataModel
+import WireSyncEngine
 
 final class ConversationMessageToolboxCell: UIView, ConversationMessageCell, MessageToolboxViewDelegate {
 
@@ -72,8 +73,9 @@ final class ConversationMessageToolboxCell: UIView, ConversationMessageCell, Mes
     }
 
     func messageToolboxDidRequestOpeningDetails(_ messageToolboxView: MessageToolboxView, preferredDisplayMode: MessageDetailsDisplayMode) {
-        let detailsViewController = MessageDetailsViewController(message: message!, preferredDisplayMode: preferredDisplayMode)
-        delegate?.conversationMessageWantsToOpenMessageDetails(self, messageDetailsViewController: detailsViewController)
+        guard let message, let delegate else { return }
+        delegate.conversationMessageWantsToOpenMessageDetails(self, for: message, preferredDisplayMode: preferredDisplayMode)
+
     }
 
     private func perform(action: MessageAction, sender: UIView? = nil) {

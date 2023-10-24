@@ -64,7 +64,7 @@ final class SelfProfileViewController: UIViewController {
 
     init(selfUser: SettingsSelfUser,
          userRightInterfaceType: UserRightInterface.Type = UserRight.self,
-         userSession: UserSessionInterface? = ZMUserSession.shared()) {
+         userSession: UserSession) {
 
         self.selfUser = selfUser
 
@@ -73,7 +73,7 @@ final class SelfProfileViewController: UIViewController {
 		let settingsCellDescriptorFactory = SettingsCellDescriptorFactory(settingsPropertyFactory: settingsPropertyFactory, userRightInterfaceType: userRightInterfaceType)
         let rootGroup = settingsCellDescriptorFactory.rootGroup(isTeamMember: selfUser.isTeamMember)
         settingsController = rootGroup.generateViewController()! as! SettingsTableViewController
-        profileHeaderViewController = ProfileHeaderViewController(user: selfUser, viewer: selfUser, options: selfUser.isTeamMember ? [.allowEditingAvailability] : [.hideAvailability])
+        profileHeaderViewController = ProfileHeaderViewController(user: selfUser, viewer: selfUser, options: selfUser.isTeamMember ? [.allowEditingAvailability] : [.hideAvailability], userSession: userSession)
 
 		self.userRightInterfaceType = userRightInterfaceType
 		self.settingsCellDescriptorFactory = settingsCellDescriptorFactory
@@ -83,7 +83,7 @@ final class SelfProfileViewController: UIViewController {
         settingsPropertyFactory.delegate = self
 
         if selfUser.isTeamMember {
-            userSession?.enqueue {
+            userSession.enqueue {
                 selfUser.refreshTeamData()
             }
         }
@@ -227,7 +227,7 @@ extension SelfProfileViewController: SettingsPropertyFactoryDelegate {
         }
 
         guard newValue else {
-            try? settingsPropertyFactory.userSession?.appLockController.deletePasscode()
+            try? settingsPropertyFactory.userSession?.deleteAppLockPasscode()
             callback(newValue)
             return
         }

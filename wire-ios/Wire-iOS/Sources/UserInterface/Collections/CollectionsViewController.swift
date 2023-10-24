@@ -53,6 +53,8 @@ final class CollectionsViewController: UIViewController {
     private var lastLayoutSize: CGSize = .zero
     private var deletionDialogPresenter: DeletionDialogPresenter?
 
+    let userSession: UserSession
+
     private var fetchingDone: Bool = false {
         didSet {
             if isViewLoaded {
@@ -70,7 +72,7 @@ final class CollectionsViewController: UIViewController {
 
     private lazy var textSearchController: TextSearchViewController =  TextSearchViewController(conversation: collection.conversation)
 
-    convenience init(conversation: ZMConversation) {
+    convenience init(conversation: ZMConversation, userSession: UserSession) {
         let matchImages = CategoryMatch(including: .image, excluding: .GIF)
         let matchFiles = CategoryMatch(including: .file, excluding: .video)
         let matchVideo = CategoryMatch(including: .video, excluding: .none)
@@ -78,13 +80,14 @@ final class CollectionsViewController: UIViewController {
 
         let holder = AssetCollectionWrapper(conversation: conversation, matchingCategories: [matchImages, matchFiles, matchVideo, matchLink])
 
-        self.init(collection: holder)
+        self.init(collection: holder, userSession: userSession)
     }
 
-    init(collection: AssetCollectionWrapper, sections: CollectionsSectionSet = .all, messages: [ZMConversationMessage] = [], fetchingDone: Bool = false) {
+    init(collection: AssetCollectionWrapper, sections: CollectionsSectionSet = .all, messages: [ZMConversationMessage] = [], fetchingDone: Bool = false, userSession: UserSession) {
         self.collection = collection
         self.sections = sections
-
+        self.userSession = userSession
+        
         switch sections {
         case CollectionsSectionSet.images:
             imageMessages = messages
@@ -562,7 +565,7 @@ extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewD
                 guard let `self` = self else {
                     return
                 }
-                let collectionController = CollectionsViewController(collection: self.collection, sections: section, messages: self.elements(for: section), fetchingDone: self.fetchingDone)
+                let collectionController = CollectionsViewController(collection: self.collection, sections: section, messages: self.elements(for: section), fetchingDone: self.fetchingDone, userSession: userSession)
                 collectionController.onDismiss = self.onDismiss
                 collectionController.delegate = self.delegate
                 self.navigationController?.pushViewController(collectionController, animated: true)
@@ -700,7 +703,7 @@ extension CollectionsViewController: CollectionCellDelegate {
             selectedMessage = message
 
             if message.isImage, message.canBeShared {
-                let imagesController = ConversationImagesViewController(collection: collection, initialMessage: message)
+                let imagesController = ConversationImagesViewController(collection: collection, initialMessage: message, userSession: userSession)
 
                 let backButton = CollectionsView.backButton()
                 backButton.addTarget(self, action: #selector(CollectionsViewController.backButtonPressed(_:)), for: .touchUpInside)
@@ -715,7 +718,7 @@ extension CollectionsViewController: CollectionCellDelegate {
                 imagesController.messageActionDelegate = self
                 navigationController?.pushViewController(imagesController, animated: true)
             } else {
-                messagePresenter.open(message, targetView: view, actionResponder: self)
+                messagePresenter.open(message, targetView: view, actionResponder: self, userSession: userSession)
             }
 
         case .save:
@@ -741,7 +744,7 @@ extension CollectionsViewController: CollectionCellDelegate {
             }
 
         case .openDetails:
-            let detailsViewController = MessageDetailsViewController(message: message)
+            let detailsViewController = MessageDetailsViewController(message: message, userSession: userSession)
             present(detailsViewController, animated: true)
 
         default:

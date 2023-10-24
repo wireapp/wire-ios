@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireSyncEngine
 import WireDataModel
 
 struct BurstTimestampSenderMessageCellConfiguration {
@@ -56,15 +57,17 @@ final class BurstTimestampSenderMessageCellDescription: ConversationMessageCellD
 }
 
 final class BurstTimestampSenderMessageCell: UIView, ConversationMessageCell {
-
-    private let timestampView = ConversationCellBurstTimestampView()
+    private let userSession: UserSession
+    private let timestampView: ConversationCellBurstTimestampView
     private var configuration: BurstTimestampSenderMessageCellConfiguration?
     private var timer: Timer?
 
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
 
-    override init(frame: CGRect) {
+    init(frame: CGRect, userSession: UserSession) {
+        self.userSession = userSession
+        self.timestampView = ConversationCellBurstTimestampView(userSession: userSession)
         super.init(frame: frame)
         configureSubviews()
         configureConstraints()

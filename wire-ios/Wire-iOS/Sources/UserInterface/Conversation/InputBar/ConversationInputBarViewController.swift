@@ -214,6 +214,7 @@ final class ConversationInputBarViewController: UIViewController,
     private var conversationObserverToken: Any?
     private var userObserverToken: Any?
     private var typingObserverToken: Any?
+    let userSession: UserSession
 
     private var inputBarButtons: [IconButton] {
         var buttonsArray: [IconButton] = []
@@ -288,7 +289,7 @@ final class ConversationInputBarViewController: UIViewController,
             case .audioRecord:
                 clearTextInputAssistentItemIfNeeded()
                 config(viewController: audioRecordKeyboardViewController) {
-                    let audioRecordKeyboardViewController = AudioRecordKeyboardViewController()
+                    let audioRecordKeyboardViewController = AudioRecordKeyboardViewController(userSession: userSession)
                     audioRecordKeyboardViewController.delegate = self
                     self.audioRecordKeyboardViewController = audioRecordKeyboardViewController
 
@@ -325,10 +326,13 @@ final class ConversationInputBarViewController: UIViewController,
     /// - Parameter conversation: provide nil only for tests
     init(
         conversation: InputBarConversationType,
+        userSession: UserSession,
         classificationProvider: ClassificationProviding? = ZMUserSession.shared()
     ) {
         self.conversation = conversation
         self.classificationProvider = classificationProvider
+
+        self.userSession = userSession
 
         super.init(nibName: nil, bundle: nil)
 

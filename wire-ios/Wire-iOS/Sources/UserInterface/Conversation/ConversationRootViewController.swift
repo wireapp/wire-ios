@@ -46,12 +46,13 @@ final class ConversationRootViewController: UIViewController {
 
     init(conversation: ZMConversation,
          message: ZMConversationMessage?,
-         clientViewController: ZClientViewController) {
+         clientViewController: ZClientViewController,
+         userSession: UserSession) {
 
-        let conversationController = ConversationViewController(session: ZMUserSession.shared()!,
-                                                                conversation: conversation,
+        let conversationController = ConversationViewController(conversation: conversation,
                                                                 visibleMessage: message as? ZMMessage,
-                                                                zClientViewController: clientViewController)
+                                                                zClientViewController: clientViewController, 
+                                                                userSession: userSession)
 
         conversationViewController = conversationController
 

@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireSyncEngine
 import WireCommonComponents
 
 final class ConversationCellBurstTimestampView: UIView {
@@ -57,12 +58,11 @@ final class ConversationCellBurstTimestampView: UIView {
         }
     }
 
-    init() {
+    init(userSession: UserSession) {
         super.init(frame: .zero)
         setupViews()
         createConstraints()
-
-        accentColorObserver = AccentColorChangeHandler.addObserver(self) { [weak self] (color, _) in
+        accentColorObserver = AccentColorChangeHandler.addObserver(self, userSession: userSession) { [weak self] (color, _) in
             self?.unreadDot.backgroundColor = color
         }
 

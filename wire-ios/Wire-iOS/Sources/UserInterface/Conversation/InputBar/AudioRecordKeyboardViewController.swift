@@ -79,17 +79,18 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
     }
     // MARK: - Life Cycle
 
-    convenience init() {
+    convenience init(userSession: UserSession) {
         self.init(audioRecorder: AudioRecorder(
             format: .wav,
-            maxRecordingDuration: ZMUserSession.shared()?.maxAudioLength,
-            maxFileSize: ZMUserSession.shared()?.maxUploadFileSize))
+            maxRecordingDuration: userSession.maxAudioLength,
+            maxFileSize: userSession.maxUploadFileSize),
+            userSession: userSession)
     }
 
-    init(audioRecorder: AudioRecorderType) {
+    init(audioRecorder: AudioRecorderType, userSession: UserSession) {
         self.recorder = audioRecorder
         super.init(nibName: nil, bundle: nil)
-        configureViews()
+        configureViews(userSession: userSession)
         configureAudioRecorder()
         createConstraints()
 
@@ -115,7 +116,7 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
 
     // MARK: - View Configuration
 
-    func configureViews() {
+    func configureViews(userSession: UserSession) {
         let backgroundColor = SemanticColors.View.backgroundDefault
         let textColor = SemanticColors.Label.textDefault
         let separatorColor = SemanticColors.View.backgroundSeparatorCell
@@ -128,7 +129,7 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
         self.audioPreviewView.gradientWidth = 20
         self.audioPreviewView.gradientColor = backgroundColor
 
-        self.accentColorChangeHandler = AccentColorChangeHandler.addObserver(self) { [unowned self] color, _ in
+        self.accentColorChangeHandler = AccentColorChangeHandler.addObserver(self, userSession: userSession) { [unowned self] color, _ in
             if let color = color {
                 self.audioPreviewView.color = color
             }

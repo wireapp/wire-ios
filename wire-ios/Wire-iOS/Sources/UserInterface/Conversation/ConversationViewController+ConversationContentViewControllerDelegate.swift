@@ -28,7 +28,8 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
         let profileViewController = ProfileViewController(user: user,
                                                           viewer: ZMUser.selfUser(),
                                                           conversation: conversation,
-                                                          viewControllerDismisser: self)
+                                                          viewControllerDismisser: self, 
+                                                          userSession: userSession)
         profileViewController.preferredContentSize = CGSize.IPadPopover.preferredContentSize
 
         profileViewController.delegate = self
@@ -134,7 +135,7 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
             return
         }
 
-        let groupDetailsViewController = GroupDetailsViewController(conversation: conversation)
+        let groupDetailsViewController = GroupDetailsViewController(conversation: conversation, userSession: userSession)
         let navigationController = groupDetailsViewController.wrapInNavigationController(setBackgroundColor: true)
         groupDetailsViewController.presentGuestOptions(animated: false)
         presentParticipantsViewController(navigationController, from: sourceView)
@@ -149,7 +150,7 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
             return
         }
 
-        let groupDetailsViewController = GroupDetailsViewController(conversation: conversation)
+        let groupDetailsViewController = GroupDetailsViewController(conversation: conversation, userSession: userSession)
         let navigationController = groupDetailsViewController.wrapInNavigationController(setBackgroundColor: true)
         groupDetailsViewController.presentServicesOptions(animated: false)
         presentParticipantsViewController(navigationController, from: sourceView)

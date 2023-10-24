@@ -31,7 +31,7 @@ final class ColorSchemeController: NSObject {
 
     var userObserverToken: Any?
 
-    override init() {
+    init(userSession: UserSession) {
         super.init()
 
         // When SelfUser.provider is nil, e.g. running tests, do not set up UserChangeInfo observer

@@ -29,6 +29,7 @@ final class ConversationListTopBarViewController: UIViewController {
     private var availabilityViewController: AvailabilityTitleViewController?
     private var account: Account
     private let selfUser: SelfUserType
+    private var userSession: UserSession
 
     var topBar: TopBar? {
         return view as? TopBar
@@ -40,15 +41,14 @@ final class ConversationListTopBarViewController: UIViewController {
     ///   - account: the Account of the user
     ///   - selfUser: the self user object. Allow to inject a mock self user for testing
     init(account: Account,
-         selfUser: SelfUserType = ZMUser.selfUser()) {
+         selfUser: SelfUserType = ZMUser.selfUser(),
+         userSession: UserSession) {
         self.account = account
         self.selfUser = selfUser
-
+        self.userSession = userSession
         super.init(nibName: nil, bundle: nil)
 
-        if let sharedSession = ZMUserSession.shared() {
-            observerToken = UserChangeInfo.add(observer: self, for: ZMUser.selfUser(), in: sharedSession)
-        }
+        observerToken = userSession.addUserObserver(self, for: userSession.selfUser)
 
         viewRespectsSystemMinimumLayoutMargins = false
     }
@@ -77,12 +77,12 @@ final class ConversationListTopBarViewController: UIViewController {
     // MARK: - Title View
 
     func updateTitleView() {
-        topBar?.middleView = createTitleView()
+        topBar?.middleView = createTitleView(userSession: userSession)
     }
 
-    private func createTitleView() -> UIView {
+    private func createTitleView(userSession: UserSession) -> UIView {
         if selfUser.isTeamMember {
-            let availabilityViewController = AvailabilityTitleViewController(user: selfUser, options: .header)
+            let availabilityViewController = AvailabilityTitleViewController(user: selfUser, options: .header, userSession: userSession)
             addChild(availabilityViewController)
             self.availabilityViewController = availabilityViewController
 
@@ -193,7 +193,7 @@ final class ConversationListTopBarViewController: UIViewController {
 
     @objc
     func presentLegalHoldInfo() {
-        LegalHoldDetailsViewController.present(in: self, user: ZMUser.selfUser())
+        LegalHoldDetailsViewController.present(in: self, user: ZMUser.selfUser(), userSession: userSession)
     }
 
     @objc
@@ -222,7 +222,7 @@ final class ConversationListTopBarViewController: UIViewController {
     }
 
     func createSettingsViewController() -> UIViewController {
-        let selfProfileViewController = SelfProfileViewController(selfUser: ZMUser.selfUser())
+        let selfProfileViewController = SelfProfileViewController(selfUser: ZMUser.selfUser(), userSession: userSession)
         return selfProfileViewController.wrapInNavigationController(navigationControllerClass: NavigationController.self)
     }
 

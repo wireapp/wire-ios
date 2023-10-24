@@ -73,7 +73,7 @@ extension ConversationInputBarViewController {
 
         switch sender.state {
         case .began:
-            createAudioViewController()
+            createAudioViewController(userSession: userSession)
             showAudioRecordViewControllerIfGrantedAccess()
         case .changed:
             audioRecordViewController?.updateWithChangedRecognizer(sender)
@@ -92,10 +92,10 @@ extension ConversationInputBarViewController {
         }
     }
 
-    func createAudioViewController(audioRecorder: AudioRecorderType? = nil) {
+    func createAudioViewController(audioRecorder: AudioRecorderType? = nil, userSession: UserSession) {
         removeAudioViewController()
 
-        let audioRecordViewController = AudioRecordViewController(audioRecorder: audioRecorder)
+        let audioRecordViewController = AudioRecordViewController(audioRecorder: audioRecorder, userSession: userSession)
         audioRecordViewController.view.translatesAutoresizingMaskIntoConstraints = false
         audioRecordViewController.delegate = self
 
