@@ -57,7 +57,7 @@ final class BurstTimestampSenderMessageCellDescription: ConversationMessageCellD
 }
 
 final class BurstTimestampSenderMessageCell: UIView, ConversationMessageCell {
-    private let userSession: UserSession
+
     private let timestampView: ConversationCellBurstTimestampView
     private var configuration: BurstTimestampSenderMessageCellConfiguration?
     private var timer: Timer?
@@ -65,9 +65,8 @@ final class BurstTimestampSenderMessageCell: UIView, ConversationMessageCell {
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
 
-    init(frame: CGRect, userSession: UserSession) {
-        self.userSession = userSession
-        self.timestampView = ConversationCellBurstTimestampView(userSession: userSession)
+    override init(frame: CGRect) {
+        self.timestampView = ConversationCellBurstTimestampView(userSession: ZMUserSession.shared()!)
         super.init(frame: frame)
         configureSubviews()
         configureConstraints()
