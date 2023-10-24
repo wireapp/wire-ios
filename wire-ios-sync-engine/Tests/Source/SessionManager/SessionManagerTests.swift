@@ -1729,7 +1729,7 @@ class SessionManagerTestDelegate: SessionManagerDelegate {
         self.userSession = userSession
     }
 
-    func sessionManagerDidReportLockChange(forSession session: UserSessionAppLockInterface) {
+    func sessionManagerDidReportLockChange(forSession session: UserSession) {
         // No op
     }
 
@@ -1738,11 +1738,11 @@ class SessionManagerTestDelegate: SessionManagerDelegate {
         startedMigrationCalled = true
     }
 
-    func sessionManagerDidPerformFederationMigration(authenticated: Bool) {
+    func sessionManagerDidPerformFederationMigration(activeSession: UserSession?) {
         // no op
     }
 
-    func sessionManagerDidPerformAPIMigrations() {
+    func sessionManagerDidPerformAPIMigrations(activeSession: UserSession?) {
         // no op
     }
 }
