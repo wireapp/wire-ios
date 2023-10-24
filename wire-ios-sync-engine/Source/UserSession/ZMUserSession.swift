@@ -375,7 +375,8 @@ public class ZMUserSession: NSObject {
             updateEventProcessor: updateEventProcessor!,
             localNotificationDispatcher: localNotificationDispatcher!,
             useLegacyPushNotifications: useLegacyPushNotifications,
-            lastEventIDRepository: lastEventIDRepository
+            lastEventIDRepository: lastEventIDRepository,
+            transportSession: transportSession
         )
     }
 
