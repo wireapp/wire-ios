@@ -163,7 +163,7 @@ final class ProfileViewControllerViewModel: NSObject {
     // MARK: - Notifications
 
     func updateMute(enableNotifications: Bool) {
-        ZMUserSession.shared()?.enqueue {
+        userSession.enqueue {
             self.conversation?.mutedMessageTypes = enableNotifications ? .none : .all
             // update the footer view to display the correct mute/unmute button
             self.viewModelDelegate?.updateFooterViews()
@@ -172,7 +172,7 @@ final class ProfileViewControllerViewModel: NSObject {
 
     func handleNotificationResult(_ result: NotificationResult) {
         if let mutedMessageTypes = result.mutedMessageTypes {
-            ZMUserSession.shared()?.perform {
+            userSession.perform {
                 self.conversation?.mutedMessageTypes = mutedMessageTypes
             }
         }
@@ -200,7 +200,7 @@ final class ProfileViewControllerViewModel: NSObject {
     }
 
     func enqueueChanges(_ block: @escaping () -> Void) {
-        ZMUserSession.shared()?.enqueue(block)
+        userSession.enqueue(block)
     }
 
     private func transition(to conversation: ZMConversation) {

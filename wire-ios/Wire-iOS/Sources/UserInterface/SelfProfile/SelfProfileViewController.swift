@@ -41,6 +41,8 @@ final class SelfProfileViewController: UIViewController {
     private let profileHeaderViewController: ProfileHeaderViewController
     private let profileImagePicker = ProfileImagePickerManager()
 
+    let userSession: UserSession
+
     // MARK: - AppLock
     private var callback: ResultHandler?
 
@@ -67,7 +69,7 @@ final class SelfProfileViewController: UIViewController {
          userSession: UserSession) {
 
         self.selfUser = selfUser
-
+        self.userSession = userSession
         // Create the settings hierarchy
         let settingsPropertyFactory = SettingsPropertyFactory(userSession: userSession, selfUser: selfUser)
 		let settingsCellDescriptorFactory = SettingsCellDescriptorFactory(settingsPropertyFactory: settingsPropertyFactory, userRightInterfaceType: userRightInterfaceType)

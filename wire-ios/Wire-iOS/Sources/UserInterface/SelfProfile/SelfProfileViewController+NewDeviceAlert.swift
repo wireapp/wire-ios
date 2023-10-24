@@ -51,7 +51,7 @@ extension SelfProfileViewController {
 
         present(newLoginAlertController, animated: true, completion: .none)
 
-        ZMUserSession.shared()?.enqueue {
+        userSession.enqueue {
             clients.forEach {
                 $0.needsToNotifyUser = false
             }
