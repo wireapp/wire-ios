@@ -20,33 +20,32 @@ import Foundation
 
 public class FingerprintUseCase {
 
-    let messagingService: MessagingService
+    let proteusProvider: ProteusProviding
+    let managedObjectContext: NSManagedObjectContext
 
-    // FIXME: CC - temp method for dep injection
     public static func create(for managedObjectContext: NSManagedObjectContext) -> FingerprintUseCase {
         let proteusProvider = ProteusProvider(context: managedObjectContext)
 
-        return FingerprintUseCase(messagingService: MessagingService(proteusProvider: proteusProvider,
-                                                                     mlsService: nil, // on develop we should not have mlsService,
-                                                            managedObjectContext: managedObjectContext))
+        return FingerprintUseCase(proteusProvider: proteusProvider, managedObjectContext: managedObjectContext)
     }
 
-    init(messagingService: MessagingService) {
-        self.messagingService = messagingService
+    init(proteusProvider: ProteusProviding, managedObjectContext: NSManagedObjectContext) {
+        self.proteusProvider = proteusProvider
+        self.managedObjectContext = managedObjectContext
     }
 
     public func localFingerprint() async -> Data? {
         var canPerform: Bool = false
 
-        messagingService.managedObjectContext.performAndWait {
-            canPerform = messagingService.proteusProvider.canPerform
+        managedObjectContext.performAndWait {
+            canPerform = proteusProvider.canPerform
         }
         guard canPerform else {
             return nil
         }
         var fingerprintData: Data?
 
-        messagingService.proteusPerform(
+        proteusPerform(
             withProteusService: { proteusService in
                 do {
                     let fingerprint = try proteusService.localFingerprint()
@@ -61,7 +60,6 @@ public class FingerprintUseCase {
                 }
             }
         )
-        print("🕵🏽 fingerprint data: \(fingerprintData?.base64String())")
         return fingerprintData
     }
 
@@ -70,9 +68,9 @@ public class FingerprintUseCase {
         var userClientToUpdate: UserClient?
         var sessionId: ProteusSessionID?
 
-        messagingService.managedObjectContext.performAndWait {
-            userClientToUpdate = messagingService.managedObjectContext.object(with: userClientObjectId) as? UserClient
-            if messagingService.proteusProvider.canPerform {
+        managedObjectContext.performAndWait {
+            userClientToUpdate = managedObjectContext.object(with: userClientObjectId) as? UserClient
+            if proteusProvider.canPerform {
                 sessionId = userClientToUpdate?.proteusSessionID
             }
         }
@@ -84,7 +82,7 @@ public class FingerprintUseCase {
 
         var fingerprintData: Data?
 
-        messagingService.proteusPerform(
+        proteusPerform(
             withProteusService: { proteusService in
                 do {
                     let fingerprint = try proteusService.remoteFingerprint(forSession: sessionID)
@@ -102,21 +100,8 @@ public class FingerprintUseCase {
 
         return fingerprintData
     }
-}
 
-class MessagingService {
-
-    let proteusProvider: ProteusProviding
-    let mlsService: MLSServiceInterface?
-    let managedObjectContext: NSManagedObjectContext
-
-    init(proteusProvider: ProteusProviding, mlsService: MLSServiceInterface?, managedObjectContext: NSManagedObjectContext) {
-        self.proteusProvider = proteusProvider
-        self.mlsService = mlsService
-        self.managedObjectContext = managedObjectContext
-    }
-
-    func proteusPerform<T>(
+    private func proteusPerform<T>(
         withProteusService proteusServiceBlock: ProteusServicePerformBlock<T>,
         withKeyStore keyStoreBlock: KeyStorePerformBlock<T>
     ) rethrows -> T {

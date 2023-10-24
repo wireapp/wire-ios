@@ -275,7 +275,6 @@ public class ZMUserSession: NSObject {
         self.debugCommands = ZMUserSession.initDebugCommands()
         self.legacyHotFix = ZMHotFix(syncMOC: coreDataStack.syncContext)
         self.appLockController = AppLockController(userId: userId, selfUser: .selfUser(in: coreDataStack.viewContext), legacyConfig: configuration.appLockConfig)
-        self.fingerprintUseCase = FingerprintUseCase.create(for: coreDataStack.syncContext)
 
         self.earService = earService ?? EARService(
             accountID: coreDataStack.account.userIdentifier,
@@ -304,6 +303,7 @@ public class ZMUserSession: NSObject {
 
         // Proteus needs to be setup before client registration starts
         setupCryptoStack(stage: .proteus(userID: userId))
+        self.fingerprintUseCase = FingerprintUseCase.create(for: coreDataStack.syncContext)
 
         syncManagedObjectContext.performGroupedBlockAndWait {
             self.localNotificationDispatcher = LocalNotificationDispatcher(in: coreDataStack.syncContext)
