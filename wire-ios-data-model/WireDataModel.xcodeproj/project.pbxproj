@@ -12,7 +12,6 @@
 		0129E7F929A520870065E6DB /* SafeCoreCrypto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0129E7F829A520870065E6DB /* SafeCoreCrypto.swift */; };
 		0129E7FB29A520EB0065E6DB /* SafeFileContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0129E7FA29A520EB0065E6DB /* SafeFileContext.swift */; };
 		017CA4442A2742B800E8E778 /* WireCoreCrypto.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 017CA4432A2742B800E8E778 /* WireCoreCrypto.xcframework */; };
-		01885A4F2AE6815D002F4205 /* GetUserClientFingerprintUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01885A4E2AE6815D002F4205 /* GetUserClientFingerprintUseCase.swift */; };
 		018964252A6FE72700BCEE0E /* EARStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 018964242A6FE72700BCEE0E /* EARStorage.swift */; };
 		0189815529A66B0800B52510 /* SafeCoreCryptoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0189815429A66B0800B52510 /* SafeCoreCryptoTests.swift */; };
 		0191513A29ACB3CA00920D04 /* SpyUserClientKeyStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0191513929ACB3CA00920D04 /* SpyUserClientKeyStore.swift */; };
@@ -4008,7 +4007,6 @@
 				1672A6282344F10700380537 /* FolderList.swift in Sources */,
 				54E3EE3F1F6169A800A261E3 /* ZMAssetClientMessage+FileMessageData.swift in Sources */,
 				EF1F4F542301634500E4872C /* ZMSystemMessage+ChildMessages.swift in Sources */,
-				01885A4F2AE6815D002F4205 /* GetUserClientFingerprintUseCase.swift in Sources */,
 				F943BC2D1E88FEC80048A768 /* ChangedIndexes.swift in Sources */,
 				7A2778C6285223D90044A73F /* KeychainManager.swift in Sources */,
 				63BEF5872A2636BC00F482E8 /* MLSConferenceInfo.swift in Sources */,

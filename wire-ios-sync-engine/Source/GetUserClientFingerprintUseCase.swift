@@ -17,21 +17,26 @@
 //
 
 import Foundation
+import WireRequestStrategy
 
 public class GetUserClientFingerprintUseCase {
 
     let proteusProvider: ProteusProviding
     let managedObjectContext: NSManagedObjectContext
+    let messageSender: MessageSender
 
     public static func create(for managedObjectContext: NSManagedObjectContext) -> GetUserClientFingerprintUseCase {
         let proteusProvider = ProteusProvider(context: managedObjectContext)
 
-        return GetUserClientFingerprintUseCase(proteusProvider: proteusProvider, managedObjectContext: managedObjectContext)
+        return GetUserClientFingerprintUseCase(proteusProvider: proteusProvider, messageSender: MessageSender(httpClient: <#T##HttpClient#>, clientRegistrationDelegate: <#T##ClientRegistrationDelegate#>, sessionEstablisher: <#T##SessionEstablisher#>, context: <#T##NSManagedObjectContext#>), managedObjectContext: managedObjectContext)
     }
 
-    init(proteusProvider: ProteusProviding, managedObjectContext: NSManagedObjectContext) {
+    init(proteusProvider: ProteusProviding,
+         messageSender: MessageSender,
+         managedObjectContext: NSManagedObjectContext) {
         self.proteusProvider = proteusProvider
         self.managedObjectContext = managedObjectContext
+        self.messageSender = messageSender
     }
 
     public func invoke(userClient: UserClient) async -> Data? {
@@ -43,6 +48,14 @@ public class GetUserClientFingerprintUseCase {
             }
             return existingUserId.isSelfClient()
         }
+
+//        if !userClient.hasSessionWithSelfClient {
+//            //
+//            .establishSessionWithClient(<#T##client: UserClient##UserClient#>, usingPreKey: <#T##String#>)
+//                           syncSelfClient.missesClient(syncClient)
+//                           syncSelfClient.setLocallyModifiedKeys(Set(arrayLiteral: ZMUserClientMissingKey))
+//                           syncMOC.saveOrRollback()
+//                       }
 
         if isSelfClient {
             return await localFingerprint()
