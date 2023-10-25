@@ -21,27 +21,29 @@ import Foundation
 public enum SessionEstablisherError: Error {
     case failedToGenerateRequest
     case failedToParseResponse
+    case missingSelfClient
 }
 
 public class SessionEstablisher {
 
     public init(
-        httpClient: HttpClient,
+        apiProvider: APIProvider,
         context: NSManagedObjectContext
     ) {
-        self.httpClient = httpClient
+        self.apiProvider = apiProvider
         self.managedObjectContext = context
     }
 
-    private let httpClient: HttpClient
+    private let apiProvider: APIProvider
     private let managedObjectContext: NSManagedObjectContext
     private let requestFactory = MissingClientsRequestFactory()
     private let processor = PrekeyPayloadProcessor()
+    private let BATCH_SIZE = 28
 
-    func establishSession(with clients: Set<UserClient>, apiVersion: APIVersion) async -> Swift.Result<Void, SessionEstablisherError> {
+    func establishSession(with clients: Set<QualifiedClientID>, apiVersion: APIVersion) async -> Swift.Result<Void, SessionEstablisherError> {
 
         // Establish sessions in chunks and return on first error
-        for chunk in Array(clients).chunked(into: 28) {
+        for chunk in Array(clients).chunked(into: BATCH_SIZE) {
             let result = await internalEstablishSessions(for: Set(chunk), apiVersion: apiVersion)
             if case Swift.Result.failure = result {
                 return result
@@ -51,77 +53,21 @@ public class SessionEstablisher {
         return .success(Void())
     }
 
-    private func internalEstablishSessions(for clients: Set<UserClient>, apiVersion: APIVersion) async -> Swift.Result<Void, SessionEstablisherError> {
-        let request = managedObjectContext.performAndWait {
-            return switch apiVersion {
-            case .v0:
-                requestFactory.fetchPrekeys(for: clients, apiVersion: apiVersion)?.transportRequest
-            case .v1, .v2, .v3, .v4, .v5:
-                requestFactory.fetchPrekeysFederated(for: clients, apiVersion: apiVersion)?.transportRequest
-            }
+    private func internalEstablishSessions(for clients: Set<QualifiedClientID>, apiVersion: APIVersion) async -> Swift.Result<Void, SessionEstablisherError> {
+        guard let selfClient = managedObjectContext.performAndWait({
+            ZMUser.selfUser(in: managedObjectContext).selfClient()
+        }) else {
+            return .failure(SessionEstablisherError.missingSelfClient)
         }
 
-        guard let request = request else {
-            return .failure(SessionEstablisherError.failedToGenerateRequest)
-        }
-
-        let response = await httpClient.send(request)
-
-        return managedObjectContext.performAndWait {
-            establishSessionsFromPrekeyResponse(response: response, apiVersion: apiVersion)
-        }
-    }
-
-    private func establishSessionsFromPrekeyResponse(response: ZMTransportResponse, apiVersion: APIVersion) -> Swift.Result<Void, SessionEstablisherError> {
-        switch apiVersion {
-        case .v0:
-            guard
-                let rawData = response.rawData,
-                let prekeys = Payload.PrekeyByUserID(rawData),
-                let selfClient = ZMUser.selfUser(in: managedObjectContext).selfClient()
-            else {
-                return .failure(SessionEstablisherError.failedToParseResponse)
+        return await apiProvider.prekeyAPI(apiVersion: apiVersion).fetchPrekeys(for: clients)
+            .mapError({ _ in SessionEstablisherError.failedToGenerateRequest })
+            .flatMap { prekeys in
+            managedObjectContext.performAndWait {
+                _ = processor.establishSessions(from: prekeys, with: selfClient, context: managedObjectContext)
+                return Swift.Result.success(Void())
             }
-
-            _ = processor.establishSessions(
-                from: prekeys,
-                with: selfClient,
-                context: managedObjectContext
-            )
-
-        case .v1, .v2, .v3:
-            guard
-                let rawData = response.rawData,
-                let prekeys = Payload.PrekeyByQualifiedUserID(rawData),
-                let selfClient = ZMUser.selfUser(in: managedObjectContext).selfClient()
-            else {
-                return .failure(SessionEstablisherError.failedToParseResponse)
-            }
-
-            _ = processor.establishSessions(
-                from: prekeys,
-                with: selfClient,
-                context: managedObjectContext
-            )
-
-        case .v4, .v5:
-            guard
-                let rawData = response.rawData,
-                let payload = Payload.PrekeyByQualifiedUserIDV4(rawData),
-                let selfClient = ZMUser.selfUser(in: managedObjectContext).selfClient()
-            else {
-                return .failure(SessionEstablisherError.failedToParseResponse)
-            }
-
-            let prekeys = payload.prekeyByQualifiedUserID
-            _ = processor.establishSessions(
-                from: prekeys,
-                with: selfClient,
-                context: managedObjectContext
-            )
         }
-
-        return .success(Void())
     }
 }
 
