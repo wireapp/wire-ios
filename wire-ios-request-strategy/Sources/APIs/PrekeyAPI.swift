@@ -20,7 +20,7 @@ import Foundation
 
 protocol PrekeyAPI {
 
-    func fetchPrekeys(for clients: Set<QualifiedClientID>) async -> Swift.Result<Payload.PrekeyByQualifiedUserID, Error>
+    func fetchPrekeys(for clients: Set<QualifiedClientID>) async -> Swift.Result<Payload.PrekeyByQualifiedUserID, NetworkError>
 
 }
 
@@ -37,7 +37,7 @@ class PrekeyAPIV0: PrekeyAPI {
     let httpClient: HttpClient
     let defaultEncoder = JSONEncoder.defaultEncoder
 
-    func fetchPrekeys(for clients: Set<QualifiedClientID>) async -> Swift.Result<Payload.PrekeyByQualifiedUserID, Error> {
+    func fetchPrekeys(for clients: Set<QualifiedClientID>) async -> Swift.Result<Payload.PrekeyByQualifiedUserID, NetworkError> {
         guard
             let payloadData = clients.clientListByDomain.payloadData(encoder: defaultEncoder),
             let payloadAsString = String(bytes: payloadData, encoding: .utf8)
@@ -51,15 +51,7 @@ class PrekeyAPIV0: PrekeyAPI {
                                          apiVersion: apiVersion.rawValue)
 
         let response = await httpClient.send(request)
-
-        guard
-            let rawData = response.rawData,
-            let prekeys = Payload.PrekeyByQualifiedUserID(rawData)
-        else {
-            return .failure(NetworkError.errorDecodingResponse)
-        }
-
-        return .success(prekeys)
+        return mapResponse(response)
     }
 }
 
@@ -86,7 +78,7 @@ class PrekeyAPIV4: PrekeyAPIV3 {
         return .v4
     }
 
-    override func fetchPrekeys(for clients: Set<QualifiedClientID>) async -> Swift.Result<Payload.PrekeyByQualifiedUserID, Error> {
+    override func fetchPrekeys(for clients: Set<QualifiedClientID>) async -> Swift.Result<Payload.PrekeyByQualifiedUserID, NetworkError> {
         guard
             let payloadData = clients.clientListByDomain.payloadData(encoder: defaultEncoder),
             let payloadAsString = String(bytes: payloadData, encoding: .utf8)
@@ -98,17 +90,10 @@ class PrekeyAPIV4: PrekeyAPIV3 {
                                          method: .methodPOST,
                                          payload: payloadAsString as ZMTransportData?,
                                          apiVersion: apiVersion.rawValue)
-
         let response = await httpClient.send(request)
 
-        guard
-            let rawData = response.rawData,
-            let prekeys = Payload.PrekeyByQualifiedUserIDV4(rawData)
-        else {
-            return .failure(NetworkError.errorDecodingResponse)
-        }
-
-        return .success(prekeys.prekeyByQualifiedUserID)
+        let result: Swift.Result<Payload.PrekeyByQualifiedUserIDV4, NetworkError> = mapResponse(response)
+        return result.map({ $0.prekeyByQualifiedUserID })
     }
 }
 

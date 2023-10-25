@@ -19,9 +19,8 @@
 import Foundation
 
 public enum SessionEstablisherError: Error {
-    case failedToGenerateRequest
-    case failedToParseResponse
     case missingSelfClient
+    case networkError(NetworkError)
 }
 
 public class SessionEstablisher {
@@ -61,7 +60,7 @@ public class SessionEstablisher {
         }
 
         return await apiProvider.prekeyAPI(apiVersion: apiVersion).fetchPrekeys(for: clients)
-            .mapError({ _ in SessionEstablisherError.failedToGenerateRequest })
+            .mapError({ error in SessionEstablisherError.networkError(error) })
             .flatMap { prekeys in
             managedObjectContext.performAndWait {
                 _ = processor.establishSessions(from: prekeys, with: selfClient, context: managedObjectContext)

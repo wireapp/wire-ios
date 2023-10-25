@@ -106,7 +106,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             apiProvider: apiProvider,
             context: syncMOC)
         let messageSender = MessageSender(
-            httpClient: httpClient,
+            apiProvider: apiProvider,
             clientRegistrationDelegate: applicationStatusDirectory.clientRegistrationStatus,
             sessionEstablisher: sessionEstablisher,
             context: syncMOC)
