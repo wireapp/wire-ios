@@ -89,6 +89,9 @@
 		16229488221EBB8100A98679 /* ZMImagePreprocessingTracker+Testing.h in Headers */ = {isa = PBXBuildFile; fileRef = 16229484221EBB8000A98679 /* ZMImagePreprocessingTracker+Testing.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1623F8D32AE66F28004F0319 /* MessageSender.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1623F8D22AE66F28004F0319 /* MessageSender.swift */; };
 		1623F8D52AE6729D004F0319 /* SessionEstablisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1623F8D42AE6729D004F0319 /* SessionEstablisher.swift */; };
+		1623F8D82AE7FB7E004F0319 /* PrekeyAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1623F8D72AE7FB7E004F0319 /* PrekeyAPI.swift */; };
+		1623F8DA2AE7FBD6004F0319 /* NetworkError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1623F8D92AE7FBD6004F0319 /* NetworkError.swift */; };
+		1623F8DC2AE7FD54004F0319 /* APIProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1623F8DB2AE7FD54004F0319 /* APIProvider.swift */; };
 		16367F1E26FDB0740028AF8B /* Payload+Connection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16367F1D26FDB0740028AF8B /* Payload+Connection.swift */; };
 		16367F2626FDB4720028AF8B /* ConnectionRequestStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16367F2526FDB4720028AF8B /* ConnectionRequestStrategy.swift */; };
 		164D00742225624E00A8F264 /* ZMImagePreprocessingTrackerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 16229485221EBB8000A98679 /* ZMImagePreprocessingTrackerTests.m */; };
@@ -512,6 +515,9 @@
 		16229485221EBB8000A98679 /* ZMImagePreprocessingTrackerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMImagePreprocessingTrackerTests.m; sourceTree = "<group>"; };
 		1623F8D22AE66F28004F0319 /* MessageSender.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageSender.swift; sourceTree = "<group>"; };
 		1623F8D42AE6729D004F0319 /* SessionEstablisher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionEstablisher.swift; sourceTree = "<group>"; };
+		1623F8D72AE7FB7E004F0319 /* PrekeyAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrekeyAPI.swift; sourceTree = "<group>"; };
+		1623F8D92AE7FBD6004F0319 /* NetworkError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkError.swift; sourceTree = "<group>"; };
+		1623F8DB2AE7FD54004F0319 /* APIProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIProvider.swift; sourceTree = "<group>"; };
 		16367F1D26FDB0740028AF8B /* Payload+Connection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Payload+Connection.swift"; sourceTree = "<group>"; };
 		16367F2526FDB4720028AF8B /* ConnectionRequestStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionRequestStrategy.swift; sourceTree = "<group>"; };
 		164D007522256C6E00A8F264 /* AssetV3UploadRequestStrategyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetV3UploadRequestStrategyTests.swift; sourceTree = "<group>"; };
@@ -1027,6 +1033,16 @@
 			path = "Message Sending";
 			sourceTree = "<group>";
 		};
+		1623F8D62AE7FB5F004F0319 /* APIs */ = {
+			isa = PBXGroup;
+			children = (
+				1623F8D72AE7FB7E004F0319 /* PrekeyAPI.swift */,
+				1623F8D92AE7FBD6004F0319 /* NetworkError.swift */,
+				1623F8DB2AE7FD54004F0319 /* APIProvider.swift */,
+			);
+			path = APIs;
+			sourceTree = "<group>";
+		};
 		16367F2926FDB5040028AF8B /* Connection */ = {
 			isa = PBXGroup;
 			children = (
@@ -1079,6 +1095,7 @@
 		1669016C1D707509000FE4AF /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				1623F8D62AE7FB5F004F0319 /* APIs */,
 				1623F8D12AE66F0A004F0319 /* Message Sending */,
 				060ED6D72499F42200412C4A /* Notifications */,
 				06474D4824AF6825002C695D /* Synchronization */,
@@ -1948,12 +1965,14 @@
 				EE402C0328996C2500CA0E40 /* MLSMessageSync.Transcoder.swift in Sources */,
 				16E5F6D626EF1BE100F35FBA /* PaginatedSync.swift in Sources */,
 				6397F6E228F447F800298DB1 /* SendCommitBundleActionHandler.swift in Sources */,
+				1623F8DC2AE7FD54004F0319 /* APIProvider.swift in Sources */,
 				161E055026655E4500DADC3D /* UserProfileRequestStrategy.swift in Sources */,
 				F18401D42073BE0800E9F4CC /* MessageExpirationTimer.swift in Sources */,
 				1622946B221C18BE00A98679 /* AssetV3UploadRequestStrategy.swift in Sources */,
 				1662ADB322B0E8B300D84071 /* VerifyLegalHoldRequestStrategy.swift in Sources */,
 				166901EC1D7081C7000FE4AF /* ZMTimedSingleRequestSync.m in Sources */,
 				F184019A2073BE0800E9F4CC /* ClientMessageRequestFactory.swift in Sources */,
+				1623F8DA2AE7FBD6004F0319 /* NetworkError.swift in Sources */,
 				EEE0EE0528591D3200BBEE29 /* OptionalString+NonEmptyValue.swift in Sources */,
 				168D7CB226FB0E3F00789960 /* EntityActionSync.swift in Sources */,
 				168D7CBB26FB21D900789960 /* RemoveParticipantActionHandler.swift in Sources */,
@@ -1977,6 +1996,7 @@
 				F18401C72073BE0800E9F4CC /* AssetV3PreviewDownloadStrategy.swift in Sources */,
 				F18401B52073BE0800E9F4CC /* OTREntityTranscoder.swift in Sources */,
 				16367F1E26FDB0740028AF8B /* Payload+Connection.swift in Sources */,
+				1623F8D82AE7FB7E004F0319 /* PrekeyAPI.swift in Sources */,
 				63DA339F286DF6ED00818C3C /* MLSEventProcessor.swift in Sources */,
 				06A1966E2A7BEAE300B43BA5 /* TerminateFederationRequestStrategy.swift in Sources */,
 				1682462F257A1FB7002AF17B /* KeyPathObjectSync.swift in Sources */,

@@ -18,6 +18,7 @@
 
 import Foundation
 
+// FIXME: [jacob] use existing packages
 extension Swift.Result {
     func flatMapAsync<NewSuccess>(_ transform: (Success) async -> Swift.Result<NewSuccess, Failure>) async -> Swift.Result<NewSuccess, Failure> {
         switch self {
@@ -153,9 +154,10 @@ public class MessageSender {
         }
     }
 
-    private func missingClients() -> Set<UserClient> {
+    private func missingClients() -> Set<QualifiedClientID> {
         return managedObjectContext.performAndWait {
-            ZMUser.selfUser(in: managedObjectContext).selfClient()?.missingClients ?? Set()
+            let clients = ZMUser.selfUser(in: managedObjectContext).selfClient()?.missingClients ?? Set()
+            return Set(clients.compactMap({ $0.qualifiedClientID })) // FIXME: [jacob] we can't do compact map
         }
     }
 
@@ -235,6 +237,19 @@ public class MessageSender {
 
     private func attemptToSendWithMLS(message: any MLSMessage, apiVersion: APIVersion) async -> Swift.Result<Void, MessageSendError> {
         return .failure(MessageSendError.messageProtocolMissing)
+    }
+}
+
+private extension UserClient {
+
+    var qualifiedClientID: QualifiedClientID? {
+        guard
+            let clientID = remoteIdentifier,
+            let qualifiedID = user?.qualifiedID
+        else {
+            return nil
+        }
+        return QualifiedClientID(userID: qualifiedID.uuid, domain: qualifiedID.domain, clientID: clientID)
     }
 
 }
