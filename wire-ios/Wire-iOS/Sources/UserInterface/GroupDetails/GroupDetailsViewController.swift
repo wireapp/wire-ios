@@ -124,7 +124,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
 
         var sections = [CollectionViewSectionController]()
 
-        let renameGroupSectionController = RenameGroupSectionController(conversation: conversation)
+        let renameGroupSectionController = RenameGroupSectionController(conversation: conversation, userSession: userSession)
         sections.append(renameGroupSectionController)
         self.renameGroupSectionController = renameGroupSectionController
 

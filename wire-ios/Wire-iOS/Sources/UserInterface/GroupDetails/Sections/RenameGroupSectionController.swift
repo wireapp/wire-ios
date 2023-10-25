@@ -28,13 +28,15 @@ final class RenameGroupSectionController: NSObject, CollectionViewSectionControl
     private var renameCell: GroupDetailsRenameCell?
     private var token: AnyObject?
     private var sizingFooter = SectionFooter(frame: .zero)
+    let userSession: UserSession
 
     var isHidden: Bool {
         return false
     }
 
-    init(conversation: GroupDetailsConversationType) {
+    init(conversation: GroupDetailsConversationType, userSession: UserSession) {
         self.conversation = conversation
+        self.userSession = userSession
         super.init()
 
         if let conversation = conversation as? ZMConversation {
@@ -125,7 +127,7 @@ extension RenameGroupSectionController: SimpleTextFieldDelegate {
 
     func textFieldDidEndEditing(_ textField: SimpleTextField) {
         if let newName = validName {
-            ZMUserSession.shared()?.enqueue {
+            userSession.enqueue {
                 self.conversation.userDefinedName = newName
             }
         } else {
