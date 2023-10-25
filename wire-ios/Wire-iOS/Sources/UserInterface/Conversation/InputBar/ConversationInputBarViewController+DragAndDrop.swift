@@ -47,7 +47,10 @@ extension ConversationInputBarViewController: UIDropInteractionDelegate {
                                                                          onConfirm: { [unowned self] _ in
                                                                             self.dismiss(animated: true) {
                                                                                 if let draggedImageData = draggedImage.pngData() {
-                                                                                    self.sendController.sendMessage(withImageData: draggedImageData)
+                                                                                    self.sendController.sendMessage(
+                                                                                        withImageData: draggedImageData,
+                                                                                        userSession: self.userSession
+                                                                                    )
                                                                                 }
                                                                             }
                                                                          },

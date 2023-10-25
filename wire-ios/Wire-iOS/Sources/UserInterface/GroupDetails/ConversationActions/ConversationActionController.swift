@@ -34,13 +34,16 @@ final class ConversationActionController {
     weak var sourceView: UIView?
     var currentContext: PresentationContext?
     weak var alertController: UIAlertController?
+    let userSession: UserSession
 
     init(conversation: GroupDetailsConversationType,
          target: UIViewController,
-         sourceView: UIView?) {
+         sourceView: UIView?,
+         userSession: UserSession) {
         self.conversation = conversation
         self.target = target
         self.sourceView = sourceView
+        self.userSession = userSession
     }
 
     func presentMenu(from sourceView: UIView?, context: Context) {

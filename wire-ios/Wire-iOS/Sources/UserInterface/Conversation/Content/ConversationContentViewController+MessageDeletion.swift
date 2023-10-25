@@ -66,13 +66,14 @@ final class DeletionDialogPresenter: NSObject {
 
     func deleteAlert(message: ZMConversationMessage,
                      sourceView: UIView?,
+                     userSession: UserSession,
                      completion: ResultHandler? = nil) -> UIAlertController {
         let alert = UIAlertController.forMessageDeletion(with: message.deletionConfiguration) { (action, alert) in
 
             // Tracking needs to be called before performing the action, since the content of the message is cleared
             if case .delete(let type) = action {
 
-                ZMUserSession.shared()?.enqueue({
+                userSession.enqueue({
                     switch type {
                     case .local:
                         ZMMessage.hideMessage(message)
@@ -117,11 +118,12 @@ final class DeletionDialogPresenter: NSObject {
      - parameter source: The source view used for a potential popover presentation of the dialog.
      - parameter completion: A completion closure which will be invoked with `true` if a deletion occured and `false` otherwise.
      */
-    func presentDeletionAlertController(forMessage message: ZMConversationMessage, source: UIView?, completion: ResultHandler?) {
+    func presentDeletionAlertController(forMessage message: ZMConversationMessage, source: UIView?, userSession: UserSession, completion: ResultHandler?) {
         guard !message.hasBeenDeleted else { return }
 
         let alert = deleteAlert(message: message,
-                                sourceView: source,
+                                sourceView: source, 
+                                userSession: userSession,
                                 completion: completion)
         sourceViewController?.present(alert, animated: true)
     }

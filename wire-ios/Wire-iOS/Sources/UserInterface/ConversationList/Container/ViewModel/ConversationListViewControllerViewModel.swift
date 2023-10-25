@@ -104,7 +104,7 @@ extension ConversationListViewController.ViewModel {
     }
 
     func savePendingLastRead() {
-        ZMUserSession.shared()?.enqueue({
+        userSession.enqueue({
             self.selectedConversation?.savePendingLastRead()
         })
     }

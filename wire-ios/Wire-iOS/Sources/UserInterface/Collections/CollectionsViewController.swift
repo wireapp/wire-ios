@@ -693,7 +693,7 @@ extension CollectionsViewController: CollectionCellDelegate {
             }
 
         case .delete:
-            deletionDialogPresenter?.presentDeletionAlertController(forMessage: message, source: source) { [weak self] deleted in
+            deletionDialogPresenter?.presentDeletionAlertController(forMessage: message, source: source, userSession: userSession) { [weak self] deleted in
                 guard deleted else { return }
                 _ = self?.navigationController?.popViewController(animated: true)
                 self?.refetchCollection()
@@ -734,12 +734,12 @@ extension CollectionsViewController: CollectionCellDelegate {
             }
 
         case .download:
-            ZMUserSession.shared()?.enqueue {
+            userSession.enqueue {
                 message.fileMessageData?.requestFileDownload()
             }
 
         case .cancel:
-            ZMUserSession.shared()?.enqueue {
+            userSession.enqueue {
                 message.fileMessageData?.cancelTransfer()
             }
 

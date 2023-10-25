@@ -153,10 +153,11 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
 
         let context = ConfirmAssetViewController.Context(asset: .image(mediaAsset: mediaAsset),
                                                          onConfirm: { [weak self] (editedImage: UIImage?) in
-                                                                self?.dismiss(animated: true) {
-                                                                    self?.writeToSavedPhotoAlbumIfNecessary(imageData: imageData,
+                                                                guard let `self` = self else { return }
+                                                                    self.dismiss(animated: true) {
+                                                                    self.writeToSavedPhotoAlbumIfNecessary(imageData: imageData,
                                                                                                       isFromCamera: isFromCamera)
-                                                                    self?.sendController.sendMessage(withImageData: editedImage?.pngData() ?? imageData)
+                        self.sendController.sendMessage(withImageData: editedImage?.pngData() ?? imageData, userSession: self.userSession)
                                                                 }
                                                             },
                                                          onCancel: { [weak self] in
@@ -253,7 +254,7 @@ extension ConversationInputBarViewController: CanvasViewControllerDelegate {
 
             self.dismiss(animated: true, completion: {
                 if let imageData = image.pngData() {
-                    self.sendController.sendMessage(withImageData: imageData)
+                    self.sendController.sendMessage(withImageData: imageData, userSession: self.userSession)
                 }
             })
         }

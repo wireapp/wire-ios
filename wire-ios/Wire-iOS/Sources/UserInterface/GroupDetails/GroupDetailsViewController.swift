@@ -141,14 +141,16 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
             if admins.count <= maxNumberWithoutTruncation || admins.isEmpty {
                 // Dispay the ShowAll button after the first section.
                 if admins.count >= maxNumberOfDisplayed && (participants.count > maxNumberWithoutTruncation) {
-                    let adminSection = ParticipantsSectionController(participants: admins,
-                                                                     conversationRole: .admin,
-                                                                     conversation: conversation,
-                                                                     delegate: self,
-                                                                     totalParticipantsCount: participants.count,
-                                                                     clipSection: true,
-                                                                     maxParticipants: admins.count - 1,
-                                                                     maxDisplayedParticipants: Int.ConversationParticipants.maxNumberOfDisplayed)
+                    let adminSection = ParticipantsSectionController(
+                        participants: admins,
+                        conversationRole: .admin,
+                        conversation: conversation,
+                        delegate: self,
+                        totalParticipantsCount: participants.count,
+                        clipSection: true,
+                        maxParticipants: admins.count - 1,
+                        maxDisplayedParticipants: Int.ConversationParticipants.maxNumberOfDisplayed
+                    )
                     sections.append(adminSection)
                 } else {
                     let adminSection = ParticipantsSectionController(participants: admins,
@@ -164,14 +166,16 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
                         }
                     } else { // Display the ShowAll button after the second section
                         let maxParticipants = Int.ConversationParticipants.maxNumberWithoutTruncation - admins.count
-                        let memberSection = ParticipantsSectionController(participants: members,
-                                                                          conversationRole: .member,
-                                                                          conversation: conversation,
-                                                                          delegate: self,
-                                                                          totalParticipantsCount: participants.count,
-                                                                          clipSection: true,
-                                                                          maxParticipants: maxParticipants,
-                                                                          maxDisplayedParticipants: maxParticipants - 2)
+                        let memberSection = ParticipantsSectionController(
+                            participants: members,
+                            conversationRole: .member,
+                            conversation: conversation,
+                            delegate: self,
+                            totalParticipantsCount: participants.count,
+                            clipSection: true,
+                            maxParticipants: maxParticipants,
+                            maxDisplayedParticipants: maxParticipants - 2
+                        )
                         sections.append(memberSection)
                     }
                 }
@@ -242,9 +246,12 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
 
             present(navigationController, animated: true)
         case .more:
-            actionController = ConversationActionController(conversation: conversation,
-                                                            target: self,
-                                                            sourceView: view)
+            actionController = ConversationActionController(
+                conversation: conversation,
+                target: self,
+                sourceView: view,
+                userSession: userSession
+            )
             actionController?.presentMenu(from: view, context: .details)
         }
     }

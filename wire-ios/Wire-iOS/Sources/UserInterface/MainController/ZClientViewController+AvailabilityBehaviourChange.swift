@@ -28,7 +28,7 @@ extension ZClientViewController {
 
         present(UIAlertController.availabilityExplanation(availability), animated: true)
 
-        ZMUserSession.shared()?.perform {
+        userSession.perform {
             notify.remove(.alert)
             ZMUser.selfUser()?.needsToNotifyAvailabilityBehaviourChange = notify
         }
