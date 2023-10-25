@@ -252,6 +252,29 @@ public class FeatureRepository: FeatureRepositoryInterface {
         }
     }
 
+    // MARK: - MLSMigration
+
+    public func fetchMLSMigration() -> Feature.MLSMigration {
+        guard
+            let feature = Feature.fetch(name: .mlsMigration, context: context),
+            let featureConfig = feature.config
+        else {
+            return .init()
+        }
+
+        let config = try! JSONDecoder().decode(Feature.MLSMigration.Config.self, from: featureConfig)
+        return .init(status: feature.status, config: config)
+    }
+
+    public func storeMLSMigration(_ mlsMigration: Feature.MLSMigration) {
+        let config = try! JSONEncoder().encode(mlsMigration.config)
+
+        Feature.updateOrCreate(havingName: .mlsMigration, in: context) {
+            $0.status = mlsMigration.status
+            $0.config = config
+        }
+    }
+
     // MARK: - Methods
 
     func createDefaultConfigsIfNeeded() {
@@ -280,6 +303,9 @@ public class FeatureRepository: FeatureRepositoryInterface {
 
             case .mls:
                 storeMLS(.init())
+
+            case .mlsMigration:
+                storeMLSMigration(.init())
             }
         }
     }
