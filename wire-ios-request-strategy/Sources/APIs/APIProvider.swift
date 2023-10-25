@@ -36,4 +36,15 @@ public struct APIProvider {
         case .v5: PrekeyAPIV5(httpClient: httpClient)
         }
     }
+
+    func messageAPI(apiVersion: APIVersion) -> MessageAPI {
+        return switch apiVersion {
+        case .v0: MessageAPIV0(httpClient: httpClient)
+        case .v1: MessageAPIV1(httpClient: httpClient)
+        case .v2: MessageAPIV2(httpClient: httpClient)
+        case .v3: MessageAPIV3(httpClient: httpClient)
+        case .v4: MessageAPIV4(httpClient: httpClient)
+        case .v5: MessageAPIV5(httpClient: httpClient)
+        }
+    }
 }
