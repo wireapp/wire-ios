@@ -330,6 +330,7 @@
 		63B1337329A798C800009D84 /* ProteusProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B1337229A798C800009D84 /* ProteusProvider.swift */; };
 		63B658DE243754E100EF463F /* GenericMessage+UpdateEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B658DD243754E100EF463F /* GenericMessage+UpdateEvent.swift */; };
 		63B658E0243789DE00EF463F /* GenericMessage+Assets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B658DF243789DE00EF463F /* GenericMessage+Assets.swift */; };
+		63B74CBD2AE1715000A73006 /* ProteusToMLSMigrationCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B74CBC2AE1715000A73006 /* ProteusToMLSMigrationCoordinator.swift */; };
 		63B74CBF2AE17D6600A73006 /* Feature.MLSMigration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B74CBE2AE17D6600A73006 /* Feature.MLSMigration.swift */; };
 		63BEF5872A2636BC00F482E8 /* MLSConferenceInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63BEF5862A2636BC00F482E8 /* MLSConferenceInfo.swift */; };
 		63C07015291144F70075D598 /* CoreCryptoConfigProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C07014291144F70075D598 /* CoreCryptoConfigProviderTests.swift */; };
@@ -1211,6 +1212,7 @@
 		63B1337229A798C800009D84 /* ProteusProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProteusProvider.swift; sourceTree = "<group>"; };
 		63B658DD243754E100EF463F /* GenericMessage+UpdateEvent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "GenericMessage+UpdateEvent.swift"; sourceTree = "<group>"; };
 		63B658DF243789DE00EF463F /* GenericMessage+Assets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GenericMessage+Assets.swift"; sourceTree = "<group>"; };
+		63B74CBC2AE1715000A73006 /* ProteusToMLSMigrationCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProteusToMLSMigrationCoordinator.swift; sourceTree = "<group>"; };
 		63B74CBE2AE17D6600A73006 /* Feature.MLSMigration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Feature.MLSMigration.swift; sourceTree = "<group>"; };
 		63BEF5862A2636BC00F482E8 /* MLSConferenceInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLSConferenceInfo.swift; sourceTree = "<group>"; };
 		63C07014291144F70075D598 /* CoreCryptoConfigProviderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreCryptoConfigProviderTests.swift; sourceTree = "<group>"; };
@@ -2091,6 +2093,7 @@
 				63B1335329A503D000009D84 /* StaleMLSKeyMaterialDetector.swift */,
 				63BEF5862A2636BC00F482E8 /* MLSConferenceInfo.swift */,
 				63F0781129F6C59D0031E19D /* MLSSubgroup.swift */,
+				63B74CBC2AE1715000A73006 /* ProteusToMLSMigrationCoordinator.swift */,
 			);
 			name = MLS;
 			path = Source/MLS;
@@ -3695,6 +3698,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				EE3EFE95253053B1009499E5 /* PotentialChangeDetector.swift in Sources */,
+				63B74CBD2AE1715000A73006 /* ProteusToMLSMigrationCoordinator.swift in Sources */,
 				BF1B98041EC313C600DE033B /* Team.swift in Sources */,
 				A90676E7238EAE8B006417AC /* ParticipantRole.swift in Sources */,
 				165124D82189AE90006A3C75 /* ZMAssetClientMessage+Quotes.swift in Sources */,
