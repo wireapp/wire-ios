@@ -57,18 +57,11 @@ public class HttpClientImpl: HttpClient {
     }
 }
 
-enum MessageTarget {
-    case Users(usersIds: [QualifiedID])
-    case Clients(recipients: [QualifiedClientID])
-    case Conversation(usersToIgnore: Set<QualifiedID>)
-}
-
 enum MessageSendError: Error {
     case messageProtocolMissing
     case unresolvedApiVersion
-    case failedToGenerateRequest
-    case failedToParseResponse
-    case gaveUpRetrying
+    case missingPrecondition
+    case networkError(NetworkError)
 }
 
 typealias Message = ProteusMessage & MLSMessage
@@ -76,26 +69,26 @@ typealias Message = ProteusMessage & MLSMessage
 public class MessageSender {
 
     public init (
-        httpClient: HttpClient,
+        apiProvider: APIProvider,
         clientRegistrationDelegate: ClientRegistrationDelegate,
         sessionEstablisher: SessionEstablisher,
         context: NSManagedObjectContext
     ) {
-        self.httpClient = httpClient
+        self.apiProvider = apiProvider
         self.clientRegistrationDelegate = clientRegistrationDelegate
         self.sessionEstablisher = sessionEstablisher
         self.managedObjectContext = context
     }
 
-    private let httpClient: HttpClient
+    private let apiProvider: APIProvider
     private let managedObjectContext: NSManagedObjectContext
     private let clientRegistrationDelegate: ClientRegistrationDelegate
     private let sessionEstablisher: SessionEstablisher
-    private let requestFactory = ClientMessageRequestFactory()
     private let processor = MessageSendingStatusPayloadProcessor()
 
     func sendMessage(message: any Message) async -> Swift.Result<Void, MessageSendError> {
         // FIXME: [jacob] wait for message dependencies to resolve
+        // FIXME: [jacob] check that message hasn't expired
 
         return await attemptToSend(message: message)
     }
@@ -118,38 +111,39 @@ public class MessageSender {
     }
 
     private func attemptToSendWithProteus(message: any ProteusMessage, apiVersion: APIVersion) async -> Swift.Result<Void, MessageSendError> {
-        guard let conversation = managedObjectContext.performAndWait({
-            message.conversation
+        guard let conversationID = managedObjectContext.performAndWait({
+            message.conversation?.qualifiedID
         }) else {
             return .failure(MessageSendError.messageProtocolMissing)
         }
-        guard let request = managedObjectContext.performAndWait({
-            requestFactory.upstreamRequestForMessage(message, in: conversation, apiVersion: apiVersion)
-        }) else {
-            return .failure(MessageSendError.failedToGenerateRequest)
-        }
 
-        let response = await httpClient.send(request)
+        let result = await apiProvider.messageAPI(apiVersion: apiVersion).sendProteusMessage(
+            payload: message,
+            conversationID: conversationID
+        )
 
-        return if response.result == .success {
+        return switch result {
+        case .success((let messageSendingStatus, let response)):
             managedObjectContext.performAndWait {
-                handleProteusSuccess(message: message, response: response, apiVersion: apiVersion)
+                handleProteusSuccess(
+                    message: message,
+                    messageSendingStatus: messageSendingStatus,
+                    response: response)
             }
-        } else {
-            await managedObjectContext.performAndWait({
-                handleProteusFailure(message: message, response: response, apiVersion: apiVersion)
-            }).flatMapAsync { retry in
-                if retry {
-                    await sessionEstablisher.establishSession(with: missingClients(), apiVersion: apiVersion)
-                        .mapError({ _ in
-                            MessageSendError.failedToGenerateRequest
-                        })
-                        .flatMapAsync { _ in
-                            await attemptToSendWithProteus(message: message, apiVersion: apiVersion)
+        case .failure(let networkError):
+            await managedObjectContext.performAndWait {
+                handleProteusFailure(message: message, networkError)
+            }.flatMapAsync { missingClients in
+                await sessionEstablisher.establishSession(with: missingClients, apiVersion: apiVersion)
+                    .mapError({ error in
+                        switch error {
+                        case .missingSelfClient: MessageSendError.missingPrecondition
+                        case .networkError(let networkError): MessageSendError.networkError(networkError)
                         }
-                } else {
-                    Swift.Result.failure(MessageSendError.gaveUpRetrying)
-                }
+                    })
+                    .flatMapAsync { _ in
+                        await attemptToSendWithProteus(message: message, apiVersion: apiVersion)
+                    }
             }
         }
     }
@@ -161,76 +155,57 @@ public class MessageSender {
         }
     }
 
-    private func handleProteusSuccess(message: any ProteusMessage, response: ZMTransportResponse, apiVersion: APIVersion) -> Swift.Result<Void, MessageSendError> {
-        message.delivered(with: response)
+    private func handleProteusSuccess(message: any ProteusMessage, messageSendingStatus: Payload.MessageSendingStatus, response: ZMTransportResponse) -> Swift.Result<Void, MessageSendError> {
+        message.delivered(with: response) // FIXME: jacob refactor to not use raw response
 
-        switch apiVersion {
-        case .v0:
-            _ = message.parseUploadResponse(response, clientRegistrationDelegate: clientRegistrationDelegate)
-        case .v1, .v2, .v3, .v4, .v5:
-            if let payload = Payload.MessageSendingStatus(response, decoder: .defaultDecoder) {
-                processor.updateClientsChanges(
-                    from: payload,
-                    for: message
-                )
-            } else {
-                WireLogger.messaging.warn("failed to get payload from response")
-                return .failure(MessageSendError.failedToParseResponse)
-            }
-        }
+        processor.updateClientsChanges(
+            from: messageSendingStatus,
+            for: message
+        )
 
         return .success(Void())
     }
 
-    // FIXME: [jacob] return missing clients and don't rely on missedClients relationship
-    private func handleProteusFailure(message: any ProteusMessage, response: ZMTransportResponse, apiVersion: APIVersion) -> Swift.Result<Bool, MessageSendError> {
-        switch response.httpStatus {
-        case 412:
-            switch apiVersion {
-            case .v0:
-                return .success(message.parseUploadResponse(response, clientRegistrationDelegate: clientRegistrationDelegate).contains(.missing))
-            case .v1, .v2, .v3, .v4, .v5:
-                var shouldRetry = false
+    private func handleProteusFailure(message: any ProteusMessage, _ failure: NetworkError) -> Swift.Result<Set<QualifiedClientID>, MessageSendError> {
+        switch failure {
+        case .missingClients(let messageSendingStatus, _):
+            let missingClients = processor.updateClientsChanges(
+                from: messageSendingStatus,
+                for: message
+            ).flatMap(\.value)
+            let qualifiedClientIDs = missingClients.compactMap({ $0.qualifiedClientID })
 
-                if let payload = Payload.MessageSendingStatus(response, decoder: .defaultDecoder) {
-                    shouldRetry = processor.updateClientsChanges(
-                        from: payload,
-                        for: message
-                    )
+            guard
+                missingClients.count == qualifiedClientIDs.count
+            else {
+                return .failure(MessageSendError.missingPrecondition)
+            }
+            return .success(Set(qualifiedClientIDs))
+        case .invalidRequestError(let responseFailure, _):
+            switch (responseFailure.code, responseFailure.label) {
+            case (533, _):
+                guard
+                    let data = responseFailure.data
+                else {
+                    return .failure(MessageSendError.networkError(failure))
                 }
 
-                WireLogger.messaging.debug("got 412, will retry: \(shouldRetry)")
-                return .success(shouldRetry)
-            }
+                switch data.type {
+                case .federation:
+                    responseFailure.updateExpirationReason(for: message, with: .federationRemoteError)
+                case .unknown:
+                    responseFailure.updateExpirationReason(for: message, with: .unknown)
+                }
 
-        case 533:
-            guard
-                let payload = Payload.ResponseFailure(response, decoder: .defaultDecoder),
-                let data = payload.data
-            else {
-                return .failure(MessageSendError.failedToParseResponse)
+                return .failure(MessageSendError.networkError(failure))
+            default:
+                return .failure(MessageSendError.networkError(failure))
             }
-
-            switch data.type {
-            case .federation:
-                payload.updateExpirationReason(for: message, with: .federationRemoteError)
-            case .unknown:
-                payload.updateExpirationReason(for: message, with: .unknown)
-            }
-
-            return .success(false)
         default:
-            let payload = Payload.ResponseFailure(response, decoder: .defaultDecoder)
-            if payload?.label == .unknownClient {
-                clientRegistrationDelegate.didDetectCurrentClientDeletion()
-            }
-
-            if case .permanentError = response.result {
-                WireLogger.messaging.warn("got \(response.httpStatus), not retrying")
-                return .success(false)
+            if case .permanentError = failure.response?.result {
+                return .success(Set()) // FIXME: [jacob] it's dangerous to retry indefinitely like this
             } else {
-                WireLogger.messaging.warn("got \(response.httpStatus), retrying")
-                return .success(true)
+                return .failure(MessageSendError.networkError(failure))
             }
         }
     }

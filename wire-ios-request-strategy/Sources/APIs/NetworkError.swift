@@ -18,7 +18,22 @@
 
 import Foundation
 
-enum NetworkError: Error {
+public enum NetworkError: Error {
     case errorEncodingRequest
-    case errorDecodingResponse
+    case errorDecodingResponse(ZMTransportResponse)
+    case missingClients(Payload.MessageSendingStatus, ZMTransportResponse)
+    case invalidRequestError(Payload.ResponseFailure, ZMTransportResponse)
+
+    var response: ZMTransportResponse? {
+        return switch self {
+        case .errorEncodingRequest:
+            nil
+        case .errorDecodingResponse(let response):
+            response
+        case .missingClients(_, let response):
+            response
+        case .invalidRequestError(_, let response):
+            response
+        }
+    }
 }

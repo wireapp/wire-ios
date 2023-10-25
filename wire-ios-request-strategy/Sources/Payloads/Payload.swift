@@ -18,7 +18,7 @@
 import Foundation
 import WireDataModel
 
-enum Payload {
+public enum Payload {
 
     typealias UserClients = [Payload.UserClient]
     typealias UserClientByUserID = [String: UserClients]
@@ -267,7 +267,7 @@ enum Payload {
         }
     }
 
-    struct ResponseFailure: Codable {
+    public struct ResponseFailure: Codable {
 
         /// Endpoints involving federated calls to other domains can return some extra failure responses.
         /// The error response contains the following extra fields:
@@ -315,7 +315,7 @@ enum Payload {
 
     }
 
-    struct MessageSendingStatus: Codable {
+    public struct MessageSendingStatus: Codable {
 
         enum CodingKeys: String, CodingKey {
             case time
