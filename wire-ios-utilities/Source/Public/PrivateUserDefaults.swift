@@ -61,6 +61,14 @@ extension PrivateUserDefaults {
         return storage.bool(forKey: scopeKey(key))
     }
 
+    public func set(_ value: Any?, forKey key: Key) {
+        storage.set(value, forKey: scopeKey(key))
+    }
+
+    public func object(forKey key: Key) -> Any? {
+        return storage.object(forKey: scopeKey(key))
+    }
+
 }
 
 public protocol DefaultsKey {
