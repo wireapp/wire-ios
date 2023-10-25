@@ -26,7 +26,6 @@ final class AccentColorChangeHandler: NSObject, ZMUserObserver {
     private var handlerBlock: AccentColorChangeHandlerBlock?
     private var observer: Any?
     private var userObserverToken: Any?
-    
 
     class func addObserver(_ observer: Any?, userSession: UserSession, handlerBlock changeHandler: @escaping AccentColorChangeHandlerBlock) -> Self {
         return self.init(observer: observer, handlerBlock: changeHandler, userSession: userSession)

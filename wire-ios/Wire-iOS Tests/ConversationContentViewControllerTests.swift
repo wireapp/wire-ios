@@ -24,7 +24,7 @@ final class ConversationContentViewControllerTests: XCTestCase, CoreDataFixtureT
 
     var sut: ConversationContentViewController!
     var mockConversation: ZMConversation!
-    var mockZMUserSession: MockZMUserSession!
+    var userSession: UserSessionMock!
     var mockMessage: MockMessage!
 
     override func setUp() {
@@ -40,9 +40,9 @@ final class ConversationContentViewControllerTests: XCTestCase, CoreDataFixtureT
         mockMessage.deliveryState = .read
         mockMessage.needsReadConfirmation = true
 
-        mockZMUserSession = MockZMUserSession()
+        userSession = UserSessionMock()
 
-        sut = ConversationContentViewController(conversation: mockConversation, mediaPlaybackManager: nil, session: mockZMUserSession)
+        sut = ConversationContentViewController(conversation: mockConversation, mediaPlaybackManager: nil, userSession: userSession)
 
         // Call the setup codes in viewDidLoad
         sut.loadViewIfNeeded()
@@ -51,9 +51,8 @@ final class ConversationContentViewControllerTests: XCTestCase, CoreDataFixtureT
     override func tearDown() {
         sut = nil
         mockConversation = nil
-        mockZMUserSession = nil
         mockMessage = nil
-
+        userSession = nil
         coreDataFixture = nil
 
         super.tearDown()

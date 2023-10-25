@@ -25,12 +25,14 @@ final class ConversationCellBurstTimestampViewSnapshotTests: BaseSnapshotTestCas
     // MARK: - Properties
 
     var sut: ConversationCellBurstTimestampView!
+    var userSession: UserSessionMock!
 
     // MARK: - setUp
 
     override func setUp() {
         super.setUp()
-        sut = ConversationCellBurstTimestampView()
+        userSession = UserSessionMock()
+        sut = ConversationCellBurstTimestampView(userSession: userSession)
         sut.frame = CGRect(origin: .zero, size: CGSize(width: 320, height: 40))
         sut.unreadDot.backgroundColor = .red
         sut.backgroundColor = SemanticColors.View.backgroundConversationView
@@ -40,6 +42,7 @@ final class ConversationCellBurstTimestampViewSnapshotTests: BaseSnapshotTestCas
 
     override func tearDown() {
         sut = nil
+        userSession = nil
 
         super.tearDown()
     }

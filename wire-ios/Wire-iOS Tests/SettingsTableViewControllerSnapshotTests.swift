@@ -23,13 +23,13 @@ final class SettingsTableViewControllerSnapshotTests: ZMSnapshotTestCase {
     var sut: SettingsTableViewController!
 	var settingsCellDescriptorFactory: SettingsCellDescriptorFactory!
     var settingsPropertyFactory: SettingsPropertyFactory!
-    var userSessionMock: MockZMUserSession!
+    var userSession: UserSessionMock!
     var selfUser: MockZMEditableUser!
 
 	override func setUp() {
 		super.setUp()
 
-        userSessionMock = MockZMUserSession()
+        userSession = UserSessionMock()
         selfUser = MockZMEditableUser()
         selfUser.teamName = "Wire"
         selfUser.handle = "johndoe"
@@ -40,7 +40,7 @@ final class SettingsTableViewControllerSnapshotTests: ZMSnapshotTestCase {
 
         SelfUser.provider = SelfProvider(providedSelfUser: selfUser)
 
-		settingsPropertyFactory = SettingsPropertyFactory(userSession: userSessionMock, selfUser: selfUser)
+		settingsPropertyFactory = SettingsPropertyFactory(userSession: userSession, selfUser: selfUser)
 		settingsCellDescriptorFactory = SettingsCellDescriptorFactory(settingsPropertyFactory: settingsPropertyFactory, userRightInterfaceType: MockUserRight.self)
 
 		MockUserRight.isPermitted = true
@@ -51,7 +51,7 @@ final class SettingsTableViewControllerSnapshotTests: ZMSnapshotTestCase {
 		settingsCellDescriptorFactory = nil
 		settingsPropertyFactory = nil
 
-        userSessionMock = nil
+        userSession = nil
         selfUser = nil
         SelfUser.provider = nil
         Settings.shared.reset()
@@ -120,11 +120,9 @@ final class SettingsTableViewControllerSnapshotTests: ZMSnapshotTestCase {
 
     func testThatApplockIsAvailableInOptionsGroup_WhenIsAvailable() {
         // given
-        let appLock = AppLockModule.MockAppLockController()
-        appLock.isAvailable = true
-        userSessionMock.appLockController = appLock
+        userSession.isAppLockAvailable = true
 
-        settingsPropertyFactory = .init(userSession: userSessionMock, selfUser: selfUser)
+        settingsPropertyFactory = .init(userSession: userSession, selfUser: selfUser)
         settingsCellDescriptorFactory = .init(settingsPropertyFactory: settingsPropertyFactory,
                                               userRightInterfaceType: MockUserRight.self)
 
@@ -134,11 +132,9 @@ final class SettingsTableViewControllerSnapshotTests: ZMSnapshotTestCase {
 
     func testThatApplockIsNotAvailableInOptionsGroup_WhenIsNotAvailable() {
         // given
-        let appLock = AppLockModule.MockAppLockController()
-        appLock.isAvailable = false
-        userSessionMock.appLockController = appLock
+        userSession.isAppLockAvailable = false
 
-        settingsPropertyFactory = .init(userSession: userSessionMock, selfUser: selfUser)
+        settingsPropertyFactory = .init(userSession: userSession, selfUser: selfUser)
         settingsCellDescriptorFactory = .init(settingsPropertyFactory: settingsPropertyFactory,
                                               userRightInterfaceType: MockUserRight.self)
 

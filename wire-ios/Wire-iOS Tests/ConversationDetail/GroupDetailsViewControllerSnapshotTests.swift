@@ -25,10 +25,10 @@ final class GroupDetailsViewControllerSnapshotTests: ZMSnapshotTestCase {
     var mockConversation: MockGroupDetailsConversation!
     var mockSelfUser: MockUserType!
     var otherUser: MockUserType!
+    var userSession: UserSessionMock!
 
     override func setUp() {
         super.setUp()
-
         mockConversation = MockGroupDetailsConversation()
         mockConversation.displayName = "iOS Team"
         mockConversation.securityLevel = .notSecure
@@ -42,6 +42,8 @@ final class GroupDetailsViewControllerSnapshotTests: ZMSnapshotTestCase {
         otherUser.isConnected = true
         otherUser.handle = "bruno"
         otherUser.accentColorValue = .brightOrange
+
+        userSession = UserSessionMock()
     }
 
     override func tearDown() {
@@ -49,7 +51,7 @@ final class GroupDetailsViewControllerSnapshotTests: ZMSnapshotTestCase {
         mockConversation = nil
         mockSelfUser = nil
         otherUser = nil
-
+        userSession = nil
         super.tearDown()
     }
 
@@ -79,7 +81,7 @@ final class GroupDetailsViewControllerSnapshotTests: ZMSnapshotTestCase {
 
         createGroupConversation()
 
-        sut = GroupDetailsViewController(conversation: mockConversation)
+        sut = GroupDetailsViewController(conversation: mockConversation, userSession: userSession)
 
         // THEN
         verify(matching: sut)
@@ -94,7 +96,7 @@ final class GroupDetailsViewControllerSnapshotTests: ZMSnapshotTestCase {
 
         createGroupConversation()
 
-        sut = GroupDetailsViewController(conversation: mockConversation)
+        sut = GroupDetailsViewController(conversation: mockConversation, userSession: userSession)
 
         // THEN
         verify(matching: sut)
@@ -116,7 +118,7 @@ final class GroupDetailsViewControllerSnapshotTests: ZMSnapshotTestCase {
         mockConversation.allowGuests = true
         mockConversation.allowServices = true
 
-        sut = GroupDetailsViewController(conversation: mockConversation)
+        sut = GroupDetailsViewController(conversation: mockConversation, userSession: userSession)
 
         // THEN
         verify(matching: sut)
@@ -131,7 +133,7 @@ final class GroupDetailsViewControllerSnapshotTests: ZMSnapshotTestCase {
         createGroupConversation()
         mockConversation.teamRemoteIdentifier = mockSelfUser.teamIdentifier
 
-        sut = GroupDetailsViewController(conversation: mockConversation)
+        sut = GroupDetailsViewController(conversation: mockConversation, userSession: userSession)
 
         // THEN
         verify(matching: sut)
@@ -145,7 +147,7 @@ final class GroupDetailsViewControllerSnapshotTests: ZMSnapshotTestCase {
 
         mockConversation.sortedOtherParticipants = [otherUser, mockSelfUser]
 
-        sut = GroupDetailsViewController(conversation: mockConversation)
+        sut = GroupDetailsViewController(conversation: mockConversation, userSession: userSession)
 
         // THEN
         verify(matching: sut)
@@ -153,7 +155,7 @@ final class GroupDetailsViewControllerSnapshotTests: ZMSnapshotTestCase {
 
     private func verifyConversationActionController(file: StaticString = #file,
                                                     line: UInt = #line) throws {
-        sut = GroupDetailsViewController(conversation: mockConversation)
+        sut = GroupDetailsViewController(conversation: mockConversation, userSession: userSession)
         sut.footerView(GroupDetailsFooterView(), shouldPerformAction: .more)
         try verify(matching: (sut?.actionController?.alertController)!, file: file, line: line)
     }
@@ -177,7 +179,7 @@ final class GroupDetailsViewControllerSnapshotTests: ZMSnapshotTestCase {
         mockConversation.sortedOtherParticipants = [mockSelfUser]
         mockConversation.displayName = "Empty group conversation"
 
-        sut = GroupDetailsViewController(conversation: mockConversation)
+        sut = GroupDetailsViewController(conversation: mockConversation, userSession: userSession)
 
         verify(matching: sut)
     }

@@ -40,6 +40,12 @@ final class UserSessionMock: UserSession {
 
     var isLocked = false
     var requiresScreenCurtain = false
+    var isAppLockAvailable: Bool = false
+    var isAppLockForced: Bool = false
+    var appLockTimeout: UInt = 60
+    var maxAudioLength: TimeInterval = 1500 // 25 minutes (25 * 60.0)
+    var maxUploadFileSize: UInt64 = 26214400 // 25 megabytes (25 * 1024 * 1024)
+
     var shouldNotifyUserOfDisabledAppLock = false
     var isNotificationContentHidden = false
     var encryptMessagesAtRest = false
@@ -55,15 +61,16 @@ final class UserSessionMock: UserSession {
     }
 
     func enqueue(_ changes: @escaping () -> Void) {
-        fatalError("not implemented")
+        changes()
     }
 
     func enqueue(_ changes: @escaping () -> Void, completionHandler: (() -> Void)?) {
         fatalError("not implemented")
     }
 
-    func addUserObserver(_ observer: ZMUserObserver, for: UserType) -> NSObjectProtocol? {
-        fatalError("not implemented")
+    func addUserObserver(_ observer: ZMUserObserver, for user: UserType) -> NSObjectProtocol? {
+        // temporary
+        return observer
     }
 
     func conversationList() -> ZMConversationList {

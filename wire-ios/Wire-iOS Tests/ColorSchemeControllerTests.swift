@@ -24,11 +24,12 @@ final class ColorSchemeControllerTests: XCTestCase {
     var sut: ColorSchemeController!
     var originalColorScheme: Any! = nil
     var originalVariant: ColorSchemeVariant!
+    var userSession: UserSessionMock!
 
     override func setUp() {
         super.setUp()
-
-        sut = ColorSchemeController()
+        userSession = UserSessionMock()
+        sut = ColorSchemeController(userSession: userSession)
         if originalColorScheme == nil {
             originalColorScheme = UserDefaults.standard.value(forKey: SettingKey.colorScheme.rawValue)
         }
@@ -40,6 +41,7 @@ final class ColorSchemeControllerTests: XCTestCase {
 
     override func tearDown() {
         sut = nil
+        userSession = nil
         UserDefaults.standard.set(originalColorScheme, forKey: SettingKey.colorScheme.rawValue)
         ColorScheme.default.variant = originalVariant
         NSAttributedString.invalidateMarkdownStyle()
