@@ -85,6 +85,8 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
 
     func repairOutOfSyncConversations()
 
+    func startProteusToMLSMigration()
+
 }
 
 public protocol MLSServiceDelegate: AnyObject {
@@ -1646,6 +1648,12 @@ public final class MLSService: MLSServiceInterface {
     public func generateNewEpoch(groupID: MLSGroupID) async throws {
         logger.info("generating new epoch in subconveration (\(groupID.safeForLoggingDescription))")
         try await updateKeyMaterial(for: groupID)
+    }
+
+    // MARK: - Proteus to MLS Migration
+
+    public func startProteusToMLSMigration() {
+        // Migrate proteus team group conversations to MLS
     }
 
 }
