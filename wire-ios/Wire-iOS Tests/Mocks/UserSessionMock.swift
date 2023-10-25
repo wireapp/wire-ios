@@ -40,6 +40,7 @@ final class UserSessionMock: UserSession {
 
     var isLocked = false
     var requiresScreenCurtain = false
+    var isAppLockActive: Bool = false
     var isAppLockAvailable: Bool = false
     var isAppLockForced: Bool = false
     var appLockTimeout: UInt = 60
