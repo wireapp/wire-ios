@@ -22,6 +22,7 @@ extension ZMUserSession {
 
     public func application(_ application: ZMApplication, didFinishLaunching launchOptions: [UIApplication.LaunchOptionsKey: Any?]) {
         startEphemeralTimers()
+        mlsMigrationCoordinator.startPeriodicMigrationStatusCheck()
     }
 
     public func application(_ application: ZMApplication, performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void ) {

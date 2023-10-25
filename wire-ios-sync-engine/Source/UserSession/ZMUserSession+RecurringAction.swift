@@ -20,6 +20,12 @@ import Foundation
 
 extension ZMUserSession {
 
+    func updateProteusToMLSMigrationStatus(interval: TimeInterval = .oneDay) -> RecurringAction {
+        return RecurringAction(id: "updateProteusToMLSMigrationStatus", interval: interval) { [weak self] in
+            self?.proteusToMLSMigrationCoordinator.updateMigrationStatus()
+        }
+    }
+
     func refreshUsersMissingMetadata(interval: TimeInterval = 3 * .oneHour) -> RecurringAction {
 
         return RecurringAction(id: "refreshUserMetadata", interval: interval) { [weak self] in
