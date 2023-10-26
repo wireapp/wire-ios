@@ -22,7 +22,7 @@ import SnapshotTesting
 
 // MARK: - Mentions
 
-final class TextMessageMentionsTests: BaseSnapshotTestCase {
+final class TextMessageMentionsTests: ConversationMessageSnapshotTestCase {
 
     // MARK: - Properties
 

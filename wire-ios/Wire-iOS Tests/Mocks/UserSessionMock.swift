@@ -24,6 +24,13 @@ final class UserSessionMock: UserSession {
     var selfUser: UserType
     var selfLegalHoldSubject: SelfLegalHoldSubject & UserType
 
+    convenience init(mockUser: MockZMEditableUser) {
+        self.init(
+            selfUser: mockUser,
+            selfLegalHoldSubject: mockUser
+        )
+    }
+
     convenience init(mockUser: MockUserType = .createDefaultSelfUser()) {
         self.init(
             selfUser: mockUser,
