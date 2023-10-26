@@ -45,7 +45,7 @@ final class AvailabilityTitleViewController: UIViewController {
     }
 
     override func loadView() {
-        view = AvailabilityTitleView(user: user, options: options)
+        view = AvailabilityTitleView(user: user, options: options, userSession: userSession)
     }
 
     override func viewDidLoad() {
