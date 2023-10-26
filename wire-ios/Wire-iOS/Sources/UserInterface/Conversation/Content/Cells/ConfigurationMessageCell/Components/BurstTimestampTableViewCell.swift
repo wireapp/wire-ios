@@ -46,8 +46,18 @@ final class BurstTimestampSenderMessageCellDescription: ConversationMessageCellD
     let accessibilityIdentifier: String? = nil
     let accessibilityLabel: String? = nil
 
-    init(message: ZMConversationMessage, context: ConversationMessageContext, accentColor: UIColor) {
-        self.configuration = View.Configuration(date: message.serverTimestamp ?? Date(), includeDayOfWeek: context.isFirstMessageOfTheDay, showUnreadDot: context.isFirstUnreadMessage, accentColor: accentColor)
+    init(
+        message: ZMConversationMessage,
+        context: ConversationMessageContext,
+        accentColor: UIColor
+    ) {
+
+        self.configuration = View.Configuration(
+            date: message.serverTimestamp ?? Date(),
+            includeDayOfWeek: context.isFirstMessageOfTheDay,
+            showUnreadDot: context.isFirstUnreadMessage,
+            accentColor: accentColor
+        )
         actionController = nil
     }
 
@@ -134,7 +144,13 @@ final class BurstTimestampSenderMessageCell: UIView, ConversationMessageCell {
 
     func configure(with object: BurstTimestampSenderMessageCellConfiguration, animated: Bool) {
         configuration = object
-        timestampView.configure(with: object.date, includeDayOfWeek: object.includeDayOfWeek, showUnreadDot: object.showUnreadDot, accentColor: object.accentColor)
+
+        timestampView.configure(
+            with: object.date,
+            includeDayOfWeek: object.includeDayOfWeek,
+            showUnreadDot: object.showUnreadDot,
+            accentColor: object.accentColor
+        )
     }
 
 }
