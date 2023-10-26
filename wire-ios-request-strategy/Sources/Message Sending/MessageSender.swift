@@ -78,17 +78,19 @@ public class MessageSender {
         self.clientRegistrationDelegate = clientRegistrationDelegate
         self.sessionEstablisher = sessionEstablisher
         self.managedObjectContext = context
+        self.messageDependencyResolver = MessageDependencyResolver(context: context)
     }
 
     private let apiProvider: APIProvider
     private let managedObjectContext: NSManagedObjectContext
     private let clientRegistrationDelegate: ClientRegistrationDelegate
     private let sessionEstablisher: SessionEstablisher
+    private let messageDependencyResolver: MessageDependencyResolver
     private let processor = MessageSendingStatusPayloadProcessor()
 
     func sendMessage(message: any Message) async -> Swift.Result<Void, MessageSendError> {
-        // FIXME: [jacob] wait for message dependencies to resolve
         // FIXME: [jacob] check that message hasn't expired
+        await messageDependencyResolver.waitForDependenciesToResolve(for: message)
 
         return await attemptToSend(message: message)
     }
@@ -145,13 +147,6 @@ public class MessageSender {
                         await attemptToSendWithProteus(message: message, apiVersion: apiVersion)
                     }
             }
-        }
-    }
-
-    private func missingClients() -> Set<QualifiedClientID> {
-        return managedObjectContext.performAndWait {
-            let clients = ZMUser.selfUser(in: managedObjectContext).selfClient()?.missingClients ?? Set()
-            return Set(clients.compactMap({ $0.qualifiedClientID })) // FIXME: [jacob] we can't do compact map
         }
     }
 
