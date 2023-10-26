@@ -127,10 +127,10 @@ static NSString * const LastUpdateEventIDStoreKey = @"LastUpdateEventID";
 {
     // given
     self.mockSyncStatus.mockPhase = SyncPhaseFetchingMissedEvents;
-    
+
     // when
     ZMTransportRequest *request = [self.sut nextRequestForAPIVersion:APIVersionV0];
-    
+
     // then
     XCTAssertEqualObjects(request.path, @"/notifications?size=500");
 }
@@ -139,12 +139,12 @@ static NSString * const LastUpdateEventIDStoreKey = @"LastUpdateEventID";
 {
     // given
     self.mockSyncStatus.mockPhase = SyncPhaseFetchingMissedEvents;
-    
+
     // when
     ZMTransportRequest *request = [self.sut nextRequestForAPIVersion:APIVersionV0];
     [request completeWithResponse:[self responseForSettingLastUpdateEventID:[NSUUID createUUID] hasMore:NO]];
     WaitForAllGroupsToBeEmpty(0.5);
-    
+
     // then
     XCTAssertTrue(self.mockSyncStatus.didCallFinishCurrentSyncPhase);
 }
@@ -154,7 +154,7 @@ static NSString * const LastUpdateEventIDStoreKey = @"LastUpdateEventID";
     // expect
     id missingUpdateEventsTranscoder = [OCMockObject partialMockForObject:self.sut.listPaginator];
     [[missingUpdateEventsTranscoder expect] resetFetching];
-    
+
     // when
     [self.sut startDownloadingMissingNotifications];
     [missingUpdateEventsTranscoder verify];
@@ -165,16 +165,16 @@ static NSString * const LastUpdateEventIDStoreKey = @"LastUpdateEventID";
     // given
     self.mockHasPushNotificationEventsToFetch = YES;
     [self.application setBackground];
-    
+
     id missingUpdateEventsTranscoder = [OCMockObject partialMockForObject:self.sut.listPaginator];
     ZMTransportRequest *expectedRequest = [ZMTransportRequest requestGetFromPath:@"555555" apiVersion:0];
-    
+
     // expect
     [[[missingUpdateEventsTranscoder expect] andReturn:expectedRequest] nextRequestForAPIVersion:APIVersionV0];
-    
+
     // when
     ZMTransportRequest *request = [self.sut nextRequestForAPIVersion:APIVersionV0];
-    
+
     // then
     XCTAssertEqual(request, expectedRequest);
     [missingUpdateEventsTranscoder verify];
@@ -185,7 +185,7 @@ static NSString * const LastUpdateEventIDStoreKey = @"LastUpdateEventID";
     // given
     id missingUpdateEventsTranscoder = [OCMockObject partialMockForObject:self.sut.listPaginator];
     (void)[ (ZMSimpleListRequestPaginator *) [[missingUpdateEventsTranscoder stub] andReturnValue:OCMOCK_VALUE(YES)] hasMoreToFetch];
-    
+
     // when
     XCTAssertTrue(self.sut.isDownloadingMissingNotifications);
 }
@@ -195,7 +195,7 @@ static NSString * const LastUpdateEventIDStoreKey = @"LastUpdateEventID";
     // given
     id missingUpdateEventsTranscoder = [OCMockObject partialMockForObject:self.sut.listPaginator];
     (void)[ (ZMSimpleListRequestPaginator *) [[missingUpdateEventsTranscoder stub] andReturnValue:OCMOCK_VALUE(NO)] hasMoreToFetch];
-    
+
     // when
     XCTAssertFalse(self.sut.isDownloadingMissingNotifications);
 }
@@ -205,7 +205,7 @@ static NSString * const LastUpdateEventIDStoreKey = @"LastUpdateEventID";
     // when
     [self.sut startDownloadingMissingNotifications];
     ZMTransportRequest *request = [self.sut.listPaginator nextRequestForAPIVersion:APIVersionV0];
-    
+
     // then
     XCTAssertNotNil(request);
     XCTAssertEqualObjects([NSURLComponents componentsWithString:request.path].path, @"/notifications");
@@ -216,70 +216,70 @@ static NSString * const LastUpdateEventIDStoreKey = @"LastUpdateEventID";
 {
     // when
     NSDictionary *payload1 = @{
-                               @"id" : [NSUUID createUUID].transportString,
-                               @"payload" : @[
-                                       @{
-                                           @"type" : @"conversation.message-add",
-                                           },
-                                       ]
-                              };
+        @"id" : [NSUUID createUUID].transportString,
+        @"payload" : @[
+            @{
+                @"type" : @"conversation.message-add",
+            },
+        ]
+    };
     NSDictionary *payload2 = @{
-                               @"id" : [NSUUID createUUID].transportString,
-                               @"payload" : @[
-                                       @{
-                                           @"type" : @"conversation.message-add",
-                                           },
-                                       ]
-                               };
-    
+        @"id" : [NSUUID createUUID].transportString,
+        @"payload" : @[
+            @{
+                @"type" : @"conversation.message-add",
+            },
+        ]
+    };
+
     NSDictionary *payload = @{@"notifications" : @[payload1, payload2]};
-    
+
     NSMutableArray *expectedEvents = [NSMutableArray array];
     [expectedEvents addObjectsFromArray:[ZMUpdateEvent eventsArrayFromPushChannelData:payload1]];
     [expectedEvents addObjectsFromArray:[ZMUpdateEvent eventsArrayFromPushChannelData:payload2]];
-    
+
     // when
     [(id)self.sut.listPaginator didReceiveResponse:[ZMTransportResponse responseWithPayload:payload HTTPStatus:200 transportSessionError:nil apiVersion:0] forSingleRequest:self.requestSync];
-    
+
     // then
     XCTAssertEqualObjects(self.mockUpdateEventProcessor.storedEvents, expectedEvents);
-    
+
 }
 
 - (void)testThatItPassesTheDownloadedEventsToTheEventProcessorOn404
 {
     // when
     NSDictionary *payload1 = @{
-                               @"id" : [NSUUID createUUID].transportString,
-                               @"payload" : @[
-                                       @{
-                                           @"type" : @"conversation.message-add",
-                                           @"time" : [NSDate date].transportString
-                                           },
-                                       ]
-                               };
+        @"id" : [NSUUID createUUID].transportString,
+        @"payload" : @[
+            @{
+                @"type" : @"conversation.message-add",
+                @"time" : [NSDate date].transportString
+            },
+        ]
+    };
     NSDictionary *payload2 = @{
-                               @"id" : [NSUUID createUUID].transportString,
-                               @"payload" : @[
-                                       @{
-                                           @"type" : @"conversation.message-add",
-                                           @"time" : [NSDate date].transportString
-                                           },
-                                       ]
-                               };
-    
+        @"id" : [NSUUID createUUID].transportString,
+        @"payload" : @[
+            @{
+                @"type" : @"conversation.message-add",
+                @"time" : [NSDate date].transportString
+            },
+        ]
+    };
+
     NSDictionary *payload = @{@"notifications" : @[payload1, payload2]};
-    
+
     NSMutableArray *expectedEvents = [NSMutableArray array];
     [expectedEvents addObjectsFromArray:[ZMUpdateEvent eventsArrayFromPushChannelData:payload1]];
     [expectedEvents addObjectsFromArray:[ZMUpdateEvent eventsArrayFromPushChannelData:payload2]];
-    
+
     // when
     [(id)self.sut.listPaginator didReceiveResponse:[ZMTransportResponse responseWithPayload:payload HTTPStatus:404 transportSessionError:nil apiVersion:0] forSingleRequest:self.requestSync];
-    
+
     // then
     XCTAssertEqualObjects(self.mockUpdateEventProcessor.storedEvents, expectedEvents);
-    
+
 }
 
 - (void)testThatHasNoLastUpdateEventIDOnStartup
@@ -291,7 +291,7 @@ static NSString * const LastUpdateEventIDStoreKey = @"LastUpdateEventID";
 {
     // given
     ZMTransportResponse *response = [self responseForSettingLastUpdateEventID:uuid hasMore:hasMore];
-    
+
     // when
     [(id)self.sut.listPaginator didReceiveResponse:response forSingleRequest:self.requestSync];
 }
@@ -301,28 +301,28 @@ static NSString * const LastUpdateEventIDStoreKey = @"LastUpdateEventID";
 {
     // given
     NSDictionary *innerPayload = @{
-                                   @"id" : uuid.transportString,
-                                   @"payload" : @[
-                                           @{
-                                               @"type" : @"conversation.message-add",
-                                               },
-                                           ]
-                                   };
-    
-    
+        @"id" : uuid.transportString,
+        @"payload" : @[
+            @{
+                @"type" : @"conversation.message-add",
+            },
+        ]
+    };
+
+
     NSDictionary *payload = @{@"notifications" : @[innerPayload],
                               @"has_more" : @(hasMore)
-                              };
-    
+    };
+
     return [ZMTransportResponse responseWithPayload:payload HTTPStatus:200 transportSessionError:nil apiVersion:0];
 }
 
 - (void)testThatItHasALastUpdateEventIDAfterFetchingNotifications
 {
-    
+
     // given
     [self setLastUpdateEventID:[NSUUID createUUID] hasMore:NO];
-    
+
     // then
     XCTAssertTrue(self.sut.hasLastUpdateEventID);
 }
@@ -332,24 +332,24 @@ static NSString * const LastUpdateEventIDStoreKey = @"LastUpdateEventID";
 {
     // given
     NSDictionary *innerPayload = @{
-                                   @"id" : [NSUUID createUUID].transportString,
-                                   @"payload" : @[
-                                           @{
-                                               @"type" : @"conversation.message-add",
-                                               },
-                                           ]
-                                   };
-    
-    
+        @"id" : [NSUUID createUUID].transportString,
+        @"payload" : @[
+            @{
+                @"type" : @"conversation.message-add",
+            },
+        ]
+    };
+
+
     NSDictionary *payload = @{@"notifications" : @[innerPayload]};
-    
+
     NSMutableArray *expectedEvents = [NSMutableArray array];
     [expectedEvents addObjectsFromArray:[ZMUpdateEvent eventsArrayFromPushChannelData:innerPayload]];
-    
+
     // when
     [(id)self.sut.listPaginator didReceiveResponse:[ZMTransportResponse responseWithPayload:payload HTTPStatus:400 transportSessionError:nil apiVersion:0] forSingleRequest:self.requestSync];
 
-    
+
     // then
     XCTAssertFalse(self.sut.hasLastUpdateEventID);
 }
@@ -360,16 +360,16 @@ static NSString * const LastUpdateEventIDStoreKey = @"LastUpdateEventID";
     // given
     NSUUID *lastUpdateEventID = [NSUUID createUUID];
     NSNumber *pageSize = @(ZMMissingUpdateEventsTranscoderListPageSize);
-    
+
     // when
     // the lastUpdateEventTranscoder might persist the lastUpdateEventID
     [self setLastUpdateEventID:lastUpdateEventID hasMore:NO];
     [self.sut startDownloadingMissingNotifications];
-    
+
     WaitForAllGroupsToBeEmpty(0.5);
-    
+
     ZMTransportRequest *request = [self.sut.listPaginator nextRequestForAPIVersion:APIVersionV0];
-    
+
     // then
     NSURLComponents *components = [NSURLComponents componentsWithString:request.path];
     XCTAssertTrue([components.queryItems containsObject:[NSURLQueryItem queryItemWithName:@"size" value:[pageSize stringValue]]], @"missing valid since parameter");
@@ -379,16 +379,16 @@ static NSString * const LastUpdateEventIDStoreKey = @"LastUpdateEventID";
 {
     // given
     NSUUID *lastUpdateEventID = [NSUUID createUUID];
-    
+
     // when
     // the lastUpdateEventTranscoder might persist the lastUpdateEventID
     [self setLastUpdateEventID:lastUpdateEventID hasMore:NO];
     [self.sut startDownloadingMissingNotifications];
 
     WaitForAllGroupsToBeEmpty(0.5);
-    
+
     ZMTransportRequest *request = [self.sut.listPaginator nextRequestForAPIVersion:APIVersionV0];
-    
+
     // then
     NSURLComponents *components = [NSURLComponents componentsWithString:request.path];
     XCTAssertTrue([components.queryItems containsObject:[NSURLQueryItem queryItemWithName:@"since" value:lastUpdateEventID.transportString]], @"missing valid since parameter");
@@ -414,11 +414,11 @@ static NSString * const LastUpdateEventIDStoreKey = @"LastUpdateEventID";
                                                                                                  operationStatus:self.mockOperationStatus
                                                                                       useLegacyPushNotifications:NO
                                                                                            lastEventIDRepository:self.lastEventIDRepository];
-    
+
     WaitForAllGroupsToBeEmpty(0.5);
     [sut.listPaginator resetFetching];
     ZMTransportRequest *request = [sut.listPaginator nextRequestForAPIVersion:APIVersionV0];
-    
+
     // then
     NSURLComponents *components = [NSURLComponents componentsWithString:request.path];
     XCTAssertTrue([components.queryItems containsObject:[NSURLQueryItem queryItemWithName:@"since" value:lastUpdateEventID.transportString]], @"missing valid since parameter");
@@ -429,10 +429,10 @@ static NSString * const LastUpdateEventIDStoreKey = @"LastUpdateEventID";
     // Given
     UserClient *userClient = [self setupSelfClientInMoc:self.uiMOC];
     [self.sut startDownloadingMissingNotifications];
-    
+
     // when
     ZMTransportRequest *request = [self.sut.listPaginator nextRequestForAPIVersion:APIVersionV0];
-    
+
     // then
     NSURLComponents *components = [NSURLComponents componentsWithString:request.path];
     XCTAssertTrue([components.queryItems containsObject:[NSURLQueryItem queryItemWithName:@"client" value:userClient.remoteIdentifier]], @"missing client parameter");
@@ -445,7 +445,7 @@ static NSString * const LastUpdateEventIDStoreKey = @"LastUpdateEventID";
     NSUUID *expectedLastUpdateEventID = [NSUUID createUUID];
     [self setLastUpdateEventID:expectedLastUpdateEventID hasMore:NO];
     WaitForAllGroupsToBeEmpty(0.5);
-    
+
     // then
     NSUUID *lastUpdateEventID = [[self.uiMOC persistentStoreMetadataForKey:LastUpdateEventIDStoreKey] UUID];
     XCTAssertEqualObjects(lastUpdateEventID, expectedLastUpdateEventID);
@@ -455,10 +455,10 @@ static NSString * const LastUpdateEventIDStoreKey = @"LastUpdateEventID";
 {
     // given
     [self setLastUpdateEventID:[self olderNotificationID] hasMore:NO];
-    
+
     // when
     [self setLastUpdateEventID:[self newNotificationID] hasMore:NO];
-    
+
     // then
     NSUUID *lastUpdateEventID = [[self.uiMOC persistentStoreMetadataForKey:LastUpdateEventIDStoreKey] UUID];
     XCTAssertEqualObjects(lastUpdateEventID, [self newNotificationID]);
@@ -468,10 +468,10 @@ static NSString * const LastUpdateEventIDStoreKey = @"LastUpdateEventID";
 {
     // given
     [self setLastUpdateEventID:[self newNotificationID] hasMore:NO];
-    
+
     // when
     [self setLastUpdateEventID:[self olderNotificationID] hasMore:NO];
-    
+
     // then
     NSUUID *lastUpdateEventID = [[self.uiMOC persistentStoreMetadataForKey:LastUpdateEventIDStoreKey] UUID];
     XCTAssertEqualObjects(lastUpdateEventID, [self newNotificationID]);
@@ -482,10 +482,10 @@ static NSString * const LastUpdateEventIDStoreKey = @"LastUpdateEventID";
     // given
     NSUUID *secondUUID = [NSUUID createUUID];
     [self setLastUpdateEventID:[self newNotificationID] hasMore:NO];
-    
+
     // when
     [self setLastUpdateEventID:secondUUID hasMore:NO];
-    
+
     // then
     NSUUID *lastUpdateEventID = [[self.uiMOC persistentStoreMetadataForKey:LastUpdateEventIDStoreKey] UUID];
     XCTAssertEqualObjects(lastUpdateEventID, secondUUID);
@@ -496,10 +496,10 @@ static NSString * const LastUpdateEventIDStoreKey = @"LastUpdateEventID";
     // given
     NSUUID *firstUUID = [NSUUID createUUID];
     [self setLastUpdateEventID:firstUUID hasMore:NO];
-    
+
     // when
     [self setLastUpdateEventID:[self newNotificationID] hasMore:NO];
-    
+
     // then
     NSUUID *lastUpdateEventID = [[self.uiMOC persistentStoreMetadataForKey:LastUpdateEventIDStoreKey] UUID];
     XCTAssertEqualObjects(lastUpdateEventID, [self newNotificationID]);
@@ -511,10 +511,10 @@ static NSString * const LastUpdateEventIDStoreKey = @"LastUpdateEventID";
     NSUUID *expectedLastUpdateEventID = [NSUUID createUUID];
     id <ZMTransportData> payload = [self updateEventTransportDataWithID:expectedLastUpdateEventID];
     ZMUpdateEvent *event = [ZMUpdateEvent eventsArrayFromPushChannelData:payload].firstObject;
-    
+
     // when
-    [self.sut processEvents:@[event] liveEvents:YES prefetchResult:nil];
-    
+    [self internalTestProcessEvents:@[event] liveEvents:YES];
+
     // then
     NSUUID *lastUpdateEventID = [[self.uiMOC persistentStoreMetadataForKey:LastUpdateEventIDStoreKey] UUID];
     XCTAssertEqualObjects(lastUpdateEventID, expectedLastUpdateEventID);
@@ -526,28 +526,28 @@ static NSString * const LastUpdateEventIDStoreKey = @"LastUpdateEventID";
     NSUUID *websocketUpdateEventID = NSUUID.createUUID;
     NSUUID *downstreamUpdateEventID = NSUUID.createUUID;
     NSUUID *notificationUpdateEventID = NSUUID.createUUID;
-    
+
     ZMUpdateEvent *websocketEvent = [self updateEventWithIdentifier:websocketUpdateEventID source:ZMUpdateEventSourceWebSocket];
     ZMUpdateEvent *downloadedEvent = [self updateEventWithIdentifier:downstreamUpdateEventID source:ZMUpdateEventSourceDownload];
     ZMUpdateEvent *pushNotificationEvent = [self updateEventWithIdentifier:notificationUpdateEventID source:ZMUpdateEventSourcePushNotification];
-    
+
     // when
-    [self.sut processEvents:@[websocketEvent] liveEvents:YES prefetchResult:nil];
-    
+    [self internalTestProcessEvents:@[websocketEvent] liveEvents:YES];
+
     // then
     NSUUID *lastUpdateEventID = [[self.uiMOC persistentStoreMetadataForKey:LastUpdateEventIDStoreKey] UUID];
     XCTAssertEqualObjects(lastUpdateEventID, websocketUpdateEventID);
-    
+
     // when
-    [self.sut processEvents:@[downloadedEvent] liveEvents:YES prefetchResult:nil];
-    
+    [self internalTestProcessEvents:@[downloadedEvent] liveEvents:YES];
+
     // then
     lastUpdateEventID = [[self.uiMOC persistentStoreMetadataForKey:LastUpdateEventIDStoreKey] UUID];
     XCTAssertEqualObjects(lastUpdateEventID, downstreamUpdateEventID);
-    
+
     // when
-    [self.sut processEvents:@[pushNotificationEvent] liveEvents:YES prefetchResult:nil];
-    
+    [self internalTestProcessEvents:@[pushNotificationEvent] liveEvents:YES];
+
     // then
     lastUpdateEventID = [[self.uiMOC persistentStoreMetadataForKey:LastUpdateEventIDStoreKey] UUID];
     XCTAssertNotEqualObjects(lastUpdateEventID, notificationUpdateEventID);
@@ -564,10 +564,10 @@ static NSString * const LastUpdateEventIDStoreKey = @"LastUpdateEventID";
     id <ZMTransportData> payload = [self updateEventTransportDataWithID:expectedLastUpdateEventID transient:YES];
     ZMUpdateEvent *event = [ZMUpdateEvent eventsArrayFromPushChannelData:payload].firstObject;
     XCTAssertTrue(event.isTransient);
+
     // when
-    
-    [self.sut processEvents:@[event] liveEvents:YES prefetchResult:nil];
-    
+    [self internalTestProcessEvents:@[event] liveEvents:YES];
+
     // then
     NSUUID *lastUpdateEventID = [[self.uiMOC persistentStoreMetadataForKey:LastUpdateEventIDStoreKey] UUID];
     XCTAssertEqualObjects(lastUpdateEventID, initialLastUpdateEventID);
@@ -647,6 +647,18 @@ static NSString * const LastUpdateEventIDStoreKey = @"LastUpdateEventID";
                          }
                      ]
              };
+}
+
+// MARK: - Helpers
+
+- (void)internalTestProcessEvents:(NSArray<ZMUpdateEvent *>*)events liveEvents:(BOOL)liveEvents {
+    XCTestExpectation * exp = [self expectationWithDescription:@"waiting for process events"];
+    [self.sut processEvents:events liveEvents:liveEvents prefetchResult:nil completion:^{
+        [exp fulfill];
+    }];
+
+    [self waitForExpectations:@[exp] timeout:0.5];
+
 }
 
 @end

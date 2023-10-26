@@ -59,10 +59,8 @@ extension ZMConversation {
         request.add(ZMCompletionHandler(on: managedObjectContext!) { response in
             if response.httpStatus.isOne(of: 200, 204), let event = response.updateEvent {
                 // Process `conversation.message-timer-update` event
-                userSession.syncManagedObjectContext.performGroupedBlock {
-                    // TODO jacob maybe skip the event decoder since we know these events will never be encrypted.
-                    userSession.updateEventProcessor?.storeAndProcessUpdateEvents([event], ignoreBuffer: true)
-                }
+                // TODO jacob maybe skip the event decoder since we know these events will never be encrypted.
+                userSession.updateEvents([event])
                 completion(.success)
             } else {
                 let error = WirelessLinkError(response: response) ?? .unknown

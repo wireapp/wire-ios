@@ -175,6 +175,14 @@ public class ZMUserSession: NSObject {
         }
     }
 
+    // temporary function to simplify call to EventProcessor
+    // might be replaced by something more elegant
+    public func updateEvents(_ events: [ZMUpdateEvent]) {
+        Task {
+            await self.updateEventProcessor?.storeAndProcessUpdateEvents(events, ignoreBuffer: true)
+        }
+    }
+
     public var isNotificationContentHidden: Bool {
         get {
             guard let value = managedObjectContext.persistentStoreMetadata(forKey: LocalNotificationDispatcher.ZMShouldHideNotificationContentKey) as? NSNumber else {
@@ -323,7 +331,6 @@ public class ZMUserSession: NSObject {
         // it needs to make network requests upon initialization.
         setupCryptoStack(stage: .mls)
 
-        updateEventProcessor!.eventConsumers = self.strategyDirectory!.eventConsumers
         registerForCalculateBadgeCountNotification()
         registerForRegisteringPushTokenNotification()
         registerForBackgroundNotifications()
@@ -334,6 +341,16 @@ public class ZMUserSession: NSObject {
         RequestAvailableNotification.notifyNewRequestsAvailable(self)
         restoreDebugCommandsState()
         configureRecurringActions()
+    }
+
+    func setupEventProcessor() {
+        // Should be setup once strategies are ready?
+        guard let strategyDirectory = strategyDirectory else {
+            return
+        }
+        Task {
+            await updateEventProcessor?.setIniatialEventConsumers(strategyDirectory.eventConsumers)
+        }
     }
 
     private func configureTransportSession() {
@@ -630,31 +647,35 @@ extension ZMUserSession: ZMSyncStateDelegate {
 
     public func didFinishQuickSync() {
         Self.logger.trace("did finish quick sync")
-        processEvents()
+        Task {
+            await processEvents()
 
-        syncContext.mlsService?.performPendingJoins()
+            NotificationInContext(
+                name: .quickSyncCompletedNotification,
+                context: syncContext.notificationContext
+            ).post()
 
-        managedObjectContext.performGroupedBlock { [weak self] in
-            self?.notifyThirdPartyServices()
+            syncContext.performAndWait {
+                syncContext.mlsService?.performPendingJoins()
+
+                managedObjectContext.performGroupedBlock { [weak self] in
+                    self?.notifyThirdPartyServices()
+                }
+
+                commitPendingProposalsIfNeeded()
+            }
+            fetchFeatureConfigs()
+            recurringActionService.performActionsIfNeeded()
         }
-
-        NotificationInContext(
-            name: .quickSyncCompletedNotification,
-            context: syncContext.notificationContext
-        ).post()
-
-        commitPendingProposalsIfNeeded()
-        fetchFeatureConfigs()
-        recurringActionService.performActionsIfNeeded()
     }
 
-    func processEvents() {
+    func processEvents() async {
         managedObjectContext.performGroupedBlock { [weak self] in
             self?.isPerformingSync = true
             self?.updateNetworkState()
         }
 
-        let hasMoreEventsToProcess = updateEventProcessor!.processEventsIfReady()
+        let hasMoreEventsToProcess = await updateEventProcessor!.processEventsIfReady()
         let isSyncing = applicationStatusDirectory?.syncStatus.isSyncing == true
 
         if !hasMoreEventsToProcess {
@@ -667,12 +688,13 @@ extension ZMUserSession: ZMSyncStateDelegate {
             self?.isPerformingSync = hasMoreEventsToProcess || isSyncing
             self?.updateNetworkState()
         }
-
     }
 
     func processPendingCallEvents() throws {
         WireLogger.updateEvent.info("process pending call events")
-        try updateEventProcessor!.processPendingCallEvents()
+        Task {
+            try await updateEventProcessor!.processPendingCallEvents()
+        }
     }
 
     private func commitPendingProposalsIfNeeded() {

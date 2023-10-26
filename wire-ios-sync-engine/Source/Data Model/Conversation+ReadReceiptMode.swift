@@ -49,8 +49,9 @@ extension ZMConversation {
 
         request.add(ZMCompletionHandler(on: managedObjectContext!) { response in
             if response.httpStatus == 200, let event = response.updateEvent {
-                userSession.syncManagedObjectContext.performGroupedBlock {
-                    userSession.updateEventProcessor?.storeAndProcessUpdateEvents([event], ignoreBuffer: true)
+                Task {
+                    // FIXME: [F] weird to have eventProcessor here
+                    await userSession.updateEventProcessor?.storeAndProcessUpdateEvents([event], ignoreBuffer: true)
                     userSession.managedObjectContext.performGroupedBlock {
                         completion(.success)
                     }

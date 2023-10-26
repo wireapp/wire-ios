@@ -312,7 +312,7 @@ public extension ZMConversation {
 
         let request = serviceUserData.requestToAddService(to: self, apiVersion: apiVersion)
 
-        request.add(ZMCompletionHandler(on: contextProvider.viewContext, block: { [weak contextProvider] (response) in
+        request.add(ZMCompletionHandler(on: contextProvider.viewContext, block: { (response) in
 
             guard response.httpStatus == 201,
                   let responseDictionary = response.payload?.asDictionary(),
@@ -324,8 +324,9 @@ public extension ZMConversation {
 
             completionHandler(.success)
 
-            contextProvider?.syncContext.performGroupedBlock {
-                eventProcessor.storeAndProcessUpdateEvents([event], ignoreBuffer: true)
+            // FIXME: we do as before don't wait for completionHandler to process event, but weird
+            Task {
+                await eventProcessor.storeAndProcessUpdateEvents([event], ignoreBuffer: true)
             }
         }))
 

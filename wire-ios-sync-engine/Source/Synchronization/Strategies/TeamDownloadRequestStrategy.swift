@@ -136,7 +136,7 @@ public final class TeamDownloadRequestStrategy: AbstractRequestStrategy, ZMConte
     }
 
     // MARK: - ZMEventConsumer
-    public func processEvents(_ events: [ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) {
+    public func processEvents(_ events: [ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) async {
         events.forEach(process)
     }
 

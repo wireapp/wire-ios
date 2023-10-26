@@ -39,7 +39,7 @@ public class UserClientEventConsumer: NSObject, ZMEventConsumer {
         super.init()
     }
 
-    public func processEvents(_ events: [ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) {
+    public func processEvents(_ events: [ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) async {
         events.forEach(processUpdateEvent)
     }
 

@@ -189,8 +189,12 @@ NSUInteger const ZMMissingUpdateEventsTranscoderListPageSize = 500;
     
     ZMLogWithLevelAndTag(ZMLogLevelInfo, ZMTAG_EVENT_PROCESSING, @"Downloaded %lu event(s)", (unsigned long)parsedEvents.count);
     
-    [self.eventProcessor storeUpdateEvents:parsedEvents ignoreBuffer:YES];
-    [self.pushNotificationStatus didFetchEventIds:eventIds lastEventId:latestEventId finished:!self.listPaginator.hasMoreToFetch];
+    __weak __typeof__(self) weakSelf = self;
+    [self.eventProcessor storeUpdateEvents:parsedEvents ignoreBuffer:YES completionHandler:^{
+        __typeof__(self) strongSelf = weakSelf;
+        // FIXME: [F] check that we don't need to call pushNotificationStatus instead
+        [strongSelf.pushNotificationStatus didFetchEventIds:eventIds lastEventId:latestEventId finished:!strongSelf.listPaginator.hasMoreToFetch];
+    }];
     
     [tp warnIfLongerThanInterval];
     return latestEventId;
@@ -231,12 +235,11 @@ NSUInteger const ZMMissingUpdateEventsTranscoderListPageSize = 500;
     return @[self.listPaginator];
 }
 
-- (void)processEvents:(NSArray<ZMUpdateEvent *> *)events
-           liveEvents:(BOOL)liveEvents
-       prefetchResult:(__unused ZMFetchRequestBatchResult *)prefetchResult;
+- (void)processEvents:(nonnull NSArray<ZMUpdateEvent *> *)events liveEvents:(BOOL)liveEvents prefetchResult:(ZMFetchRequestBatchResult * _Nullable)prefetchResult completion:(void (^ _Nonnull)(void))completionBlock
 {
     
     if (!liveEvents) {
+        completionBlock();
         return;
     }
     
@@ -245,6 +248,7 @@ NSUInteger const ZMMissingUpdateEventsTranscoderListPageSize = 500;
             self.lastUpdateEventID = event.uuid;
         }
     }
+    completionBlock();
 }
 
 - (ZMTransportRequest *)nextRequestIfAllowedForAPIVersion:(APIVersion)apiVersion

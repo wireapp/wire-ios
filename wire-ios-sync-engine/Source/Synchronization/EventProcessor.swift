@@ -24,14 +24,14 @@ extension NSNotification.Name {
     static let calculateBadgeCount = NSNotification.Name(rawValue: "calculateBadgeCountNotication")
 }
 
-class EventProcessor: UpdateEventProcessor {
+actor EventProcessor: UpdateEventProcessor {
 
     private static let logger = Logger(subsystem: "VoIP Push", category: "EventProcessor")
 
     let syncContext: NSManagedObjectContext
     let eventContext: NSManagedObjectContext
     let syncStatus: SyncStatus
-    var eventBuffer: ZMUpdateEventsBuffer?
+    private var bufferedEvents: [ZMUpdateEvent]
     let eventDecoder: EventDecoder
     let eventProcessingTracker: EventProcessingTrackerProtocol
     let earService: EARServiceInterface
@@ -66,7 +66,7 @@ class EventProcessor: UpdateEventProcessor {
         self.eventDecoder = EventDecoder(eventMOC: eventContext, syncMOC: syncContext)
         self.eventProcessingTracker = eventProcessingTracker
         self.earService = earService
-        self.eventBuffer = ZMUpdateEventsBuffer(updateEventProcessor: self)
+        self.bufferedEvents = []
     }
 
     // MARK: Methods
@@ -75,7 +75,7 @@ class EventProcessor: UpdateEventProcessor {
     ///
     /// - Returns: **True** if there are still more events to process
     @objc
-    public func processEventsIfReady() -> Bool { // TODO jacob shouldn't be public
+    public func processEventsIfReady() async -> Bool { // TODO jacob shouldn't be public
         WireLogger.updateEvent.info("process events if ready")
 
         guard isReadyToProcessEvents else {
@@ -83,11 +83,11 @@ class EventProcessor: UpdateEventProcessor {
             return true
         }
 
-        eventBuffer?.processAllEventsInBuffer()
+        await processAllEventsInBuffer()
 
         var hasMoreEventsToProcess = false
         do {
-            try processEvents(callEventsOnly: false)
+            try await processEvents(callEventsOnly: false)
         } catch {
             hasMoreEventsToProcess = true
         }
@@ -95,68 +95,77 @@ class EventProcessor: UpdateEventProcessor {
         return hasMoreEventsToProcess
     }
 
-    func processPendingCallEvents() throws {
-        try syncContext.performGroupedAndWait { _ in
-            self.eventBuffer?.processAllEventsInBuffer()
-            try self.processEvents(callEventsOnly: true)
-        }
+    func processPendingCallEvents() async throws {
+        await processAllEventsInBuffer()
+        try await self.processEvents(callEventsOnly: true)
     }
 
-    private func processEvents(callEventsOnly: Bool) throws {
+    private func processEvents(callEventsOnly: Bool) async throws {
         WireLogger.updateEvent.info("process pending events (callEventsOnly: \(callEventsOnly)")
         if syncContext.encryptMessagesAtRest {
             do {
                 WireLogger.updateEvent.info("trying to get EAR keys")
                 let privateKeys = try earService.fetchPrivateKeys(includingPrimary: !callEventsOnly)
-                processStoredUpdateEvents(with: privateKeys, callEventsOnly: callEventsOnly)
+                await processStoredUpdateEvents(with: privateKeys, callEventsOnly: callEventsOnly)
             } catch {
                 WireLogger.updateEvent.error("failed to fetch EAR keys: \(String(describing: error))")
                 throw error
             }
         } else {
-            processStoredUpdateEvents(callEventsOnly: callEventsOnly)
+            await processStoredUpdateEvents(callEventsOnly: callEventsOnly)
         }
     }
 
-    public func storeUpdateEvents(_ updateEvents: [ZMUpdateEvent], ignoreBuffer: Bool) {
+    public func setIniatialEventConsumers(_ eventConsumers: [ZMEventConsumer]) async {
+        self.eventConsumers = eventConsumers
+    }
+
+    public func eventConsumers() async -> [ZMEventConsumer] {
+         return eventConsumers
+    }
+
+    public func storeUpdateEvents(_ updateEvents: [ZMUpdateEvent], ignoreBuffer: Bool) async {
         if ignoreBuffer || isReadyToProcessEvents {
             let publicKeys = try? earService.fetchPublicKeys()
 
-            eventDecoder.decryptAndStoreEvents(
+            let decryptedEvents = await eventDecoder.decryptAndStoreEvents(
                 updateEvents,
                 publicKeys: publicKeys
-            ) { [weak self] (decryptedEvents) in
-                guard let `self` = self else { return }
+            )
 
-                Logging.eventProcessing.info("Consuming events while in background")
-                for eventConsumer in self.eventConsumers {
-                    eventConsumer.processEventsWhileInBackground?(decryptedEvents)
-                }
+            Logging.eventProcessing.info("Consuming events while in background")
+            for eventConsumer in self.eventConsumers {
+                eventConsumer.processEventsWhileInBackground?(decryptedEvents)
+            }
+            self.syncContext.performAndWait {
                 self.syncContext.saveOrRollback()
                 NotificationInContext(name: .calculateBadgeCount, context: self.syncContext.notificationContext).post()
             }
+
         } else if !DeveloperFlag.ignoreIncomingEvents.isOn {
             Logging.eventProcessing.info("Buffering \(updateEvents.count) event(s)")
-            updateEvents.forEach({ eventBuffer?.addUpdateEvent($0) })
+            self.bufferedEvents = updateEvents
         }
     }
 
-    public func storeAndProcessUpdateEvents(_ updateEvents: [ZMUpdateEvent], ignoreBuffer: Bool) {
-        storeUpdateEvents(updateEvents, ignoreBuffer: ignoreBuffer)
-        if syncContext.isLocked {
-            try? processPendingCallEvents()
+    public func storeAndProcessUpdateEvents(_ updateEvents: [ZMUpdateEvent], ignoreBuffer: Bool) async {
+        await storeUpdateEvents(updateEvents, ignoreBuffer: ignoreBuffer)
+        let isLocked = syncContext.performAndWait { syncContext.isLocked }
+
+        if isLocked {
+            try? await processPendingCallEvents()
         } else {
-            _ = processEventsIfReady()
+            _ = await processEventsIfReady()
         }
     }
 
     private func processStoredUpdateEvents(
         with privateKeys: EARPrivateKeys? = nil,
         callEventsOnly: Bool = false
-    ) {
+    ) async {
         WireLogger.updateEvent.info("process stored update events (callEventsOnly: \(callEventsOnly))")
 
-        eventDecoder.processStoredEvents(
+        await eventDecoder.processStoredEvents(
             with: privateKeys,
             callEventsOnly: callEventsOnly
         ) { [weak self] (decryptedUpdateEvents) in
@@ -165,7 +174,7 @@ class EventProcessor: UpdateEventProcessor {
             guard let `self` = self else { return }
 
             let date = Date()
-            let fetchRequest = prefetchRequest(updateEvents: decryptedUpdateEvents)
+            let fetchRequest = await prefetchRequest(updateEvents: decryptedUpdateEvents)
             let prefetchResult = syncContext.executeFetchRequestBatchOrAssert(fetchRequest)
 
             let eventDescriptions = decryptedUpdateEvents.map {
@@ -177,20 +186,22 @@ class EventProcessor: UpdateEventProcessor {
             Logging.eventProcessing.info("Consuming: [\n\(decryptedUpdateEvents.map({ "\tevent: \(ZMUpdateEvent.eventTypeString(for: $0.type) ?? "Unknown")" }).joined(separator: "\n"))\n]")
 
             for event in decryptedUpdateEvents {
-                for eventConsumer in self.eventConsumers {
-                    eventConsumer.processEvents([event], liveEvents: true, prefetchResult: prefetchResult)
+                for eventConsumer in await self.eventConsumers {
+                    await eventConsumer.processEvents([event], liveEvents: true, prefetchResult: prefetchResult)
                 }
                 self.eventProcessingTracker.registerEventProcessed()
             }
-            ZMConversation.calculateLastUnreadMessages(in: syncContext)
-            syncContext.saveOrRollback()
+            syncContext.performAndWait {
+                ZMConversation.calculateLastUnreadMessages(in: syncContext)
+                syncContext.saveOrRollback()
+            }
 
             WireLogger.updateEvent.debug("Events processed in \(-date.timeIntervalSinceNow): \(self.eventProcessingTracker.debugDescription)")
         }
     }
 
-    @objc(prefetchRequestForUpdateEvents:)
-    public func prefetchRequest(updateEvents: [ZMUpdateEvent]) -> ZMFetchRequestBatch {
+    @objc(prefetchRequestForUpdateEvents:completion:)
+    public func prefetchRequest(updateEvents: [ZMUpdateEvent]) async -> ZMFetchRequestBatch {
         var messageNounces: Set<UUID> = Set()
         var conversationNounces: Set<UUID> = Set()
 
@@ -211,4 +222,10 @@ class EventProcessor: UpdateEventProcessor {
         return fetchRequest
     }
 
+    // MARK: - Buffered Events
+
+    private func processAllEventsInBuffer() async {
+        await storeUpdateEvents(bufferedEvents, ignoreBuffer: true)
+        bufferedEvents = []
+    }
 }

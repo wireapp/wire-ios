@@ -304,10 +304,9 @@ extension ZMUserSession: UserSession {
 
         DatabaseEncryptionLockNotification(databaseIsEncrypted: false).post(in: managedObjectContext.notificationContext)
 
-        syncManagedObjectContext.performGroupedBlock {
-            self.processEvents()
+        Task {
+            await self.processEvents()
         }
-
     }
 
     public func deleteAppLockPasscode() throws {

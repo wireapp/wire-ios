@@ -481,7 +481,7 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
         return nil
     }
 
-    public func processEvents(_ events: [ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) {
+    public func processEvents(_ events: [ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) async {
         // Events are processed by the UserClientEventConsumer
     }
 

@@ -114,7 +114,7 @@ public class LabelDownstreamRequestStrategy: AbstractRequestStrategy, ZMEventCon
 
     // MARK: - ZMEventConsumer
 
-    public func processEvents(_ events: [ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) {
+    public func processEvents(_ events: [ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) async {
         for event in events {
             guard event.type == .userPropertiesSet, (event.payload["key"] as? String) == "labels" else { continue }
 

@@ -56,8 +56,8 @@ extension ZMUserSession {
     }
 
     func processPendingEvents() {
-        syncManagedObjectContext.performGroupedBlock {
-            self.processEvents()
+        Task {
+            await self.processEvents()
         }
     }
 

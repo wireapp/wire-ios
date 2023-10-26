@@ -30,9 +30,9 @@ class EventProcessorTests: MessagingTest {
     var mockEventsConsumers: [MockEventConsumer]!
     var earService: MockEARServiceInterface!
 
+
     override func setUp() {
         super.setUp()
-
         createSelfClient()
 
         // simulate a completed slow sync
@@ -59,8 +59,6 @@ class EventProcessorTests: MessagingTest {
             eventProcessingTracker: eventProcessingTracker,
             earService: earService
         )
-
-        sut.eventConsumers = mockEventsConsumers
     }
 
     override func tearDown() {
@@ -75,6 +73,11 @@ class EventProcessorTests: MessagingTest {
 
     // MARK: - Helpers
 
+    // call this on each test. It seems we can't use the async setup version since we inherit from Objc class.
+    private func postSetup() async {
+        await sut.setIniatialEventConsumers(mockEventsConsumers)
+    }
+
     func completeQuickSync() {
         syncStatus.currentSyncPhase = .done
         syncStatus.pushChannelDidOpen()
@@ -85,9 +88,9 @@ class EventProcessorTests: MessagingTest {
         let payload1: [String: Any] = ["type": "conversation.member-join",
                                        "conversation": conversationID]
         let payload2: [String: Any] = ["type": "conversation.message-add",
-                                        "data": ["content": "www.wire.com",
-                                                 "nonce": messageNonce],
-                                        "conversation": conversationID]
+                                       "data": ["content": "www.wire.com",
+                                                "nonce": messageNonce],
+                                       "conversation": conversationID]
 
         let event1 = ZMUpdateEvent(fromEventStreamPayload: payload1 as ZMTransportData, uuid: nil)!
         let event2 = ZMUpdateEvent(fromEventStreamPayload: payload2 as ZMTransportData, uuid: nil)!
@@ -97,13 +100,15 @@ class EventProcessorTests: MessagingTest {
 
     // MARK: - Tests
 
-    func testThatEventsAreForwardedToAllEventConsumers_WhenProcessed() {
+    func testThatEventsAreForwardedToAllEventConsumers_WhenProcessed() async {
+        await postSetup()
+
         // given
         let events = createSampleEvents()
         completeQuickSync()
 
         // when
-        sut.storeAndProcessUpdateEvents(events, ignoreBuffer: false)
+        await sut.storeAndProcessUpdateEvents(events, ignoreBuffer: false)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -114,12 +119,14 @@ class EventProcessorTests: MessagingTest {
         })
     }
 
-    func testThatEventsAreBuffered_WhenSyncIsInProgress() {
+    func testThatEventsAreBuffered_WhenSyncIsInProgress() async {
+        await postSetup()
+
         // given
         let events = createSampleEvents()
 
         // when
-        sut.storeAndProcessUpdateEvents(events, ignoreBuffer: false)
+        await sut.storeAndProcessUpdateEvents(events, ignoreBuffer: false)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -129,15 +136,17 @@ class EventProcessorTests: MessagingTest {
         })
     }
 
-    func testThatItProcessBufferedEvents_WhenSyncCompletes() {
+    func testThatItProcessBufferedEvents_WhenSyncCompletes() async {
+        await postSetup()
+
         // given
         let events = createSampleEvents()
-        sut.storeAndProcessUpdateEvents(events, ignoreBuffer: false)
+        await sut.storeAndProcessUpdateEvents(events, ignoreBuffer: false)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
         completeQuickSync()
-        _ = sut.processEventsIfReady()
+        _ = await sut.processEventsIfReady()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -148,12 +157,14 @@ class EventProcessorTests: MessagingTest {
         })
     }
 
-    func testThatEventsAreProcessedWhileInBackground_WhenSyncIsInProgress_And_IgnoreBufferIsTrue() {
+    func testThatEventsAreProcessedWhileInBackground_WhenSyncIsInProgress_And_IgnoreBufferIsTrue() async {
+        await postSetup()
+
         // given
         let events = createSampleEvents()
 
         // when
-        sut.storeAndProcessUpdateEvents(events, ignoreBuffer: true)
+        await sut.storeAndProcessUpdateEvents(events, ignoreBuffer: true)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -163,14 +174,16 @@ class EventProcessorTests: MessagingTest {
         })
     }
 
-    func testThatItCreatesAFetchBatchRequestWithTheNoncesAndRemoteIdentifiers_RequestedByEventsConsumers() {
+    func testThatItCreatesAFetchBatchRequestWithTheNoncesAndRemoteIdentifiers_RequestedByEventsConsumers() async {
+        await postSetup()
+
         // given
         let converationID = UUID()
         let messageNonce = UUID()
         let events = createSampleEvents(conversationID: converationID, messageNonce: messageNonce)
 
         // when
-        let batchFetchRequest = sut.prefetchRequest(updateEvents: events)
+        let batchFetchRequest = await sut.prefetchRequest(updateEvents: events)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -182,15 +195,19 @@ class EventProcessorTests: MessagingTest {
 
     // MARK: - Is ready to process events
 
-    func test_IsNotReadyToProcessEvents_IfSyncing() throws {
-        try assertIsReadyToProccessEvents(
+    func test_IsNotReadyToProcessEvents_IfSyncing() async throws {
+        await postSetup()
+
+        try await assertIsReadyToProccessEvents(
             expectation: false,
             isSyncing: true
         )
     }
 
-    func test_IsNotReadyToProcessEvents_IfDatabaseLocked() throws {
-        try assertIsReadyToProccessEvents(
+    func test_IsNotReadyToProcessEvents_IfDatabaseLocked() async throws {
+        await postSetup()
+        
+        try await assertIsReadyToProccessEvents(
             expectation: false,
             isDatabaseLocked: true
         )
@@ -200,7 +217,7 @@ class EventProcessorTests: MessagingTest {
         expectation: Bool,
         isSyncing: Bool = false,
         isDatabaseLocked: Bool = false
-    ) throws {
+    ) async throws {
         // Given
         if isSyncing {
             syncStatus.currentSyncPhase = .fetchingMissedEvents
@@ -235,7 +252,8 @@ class EventProcessorTests: MessagingTest {
         }
 
         // Then
-        XCTAssertEqual(sut.isReadyToProcessEvents, expectation)
+        let result = await sut.isReadyToProcessEvents
+        XCTAssertEqual(result, expectation)
     }
 
 }

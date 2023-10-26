@@ -94,7 +94,7 @@ public class LegalHoldRequestStrategy: AbstractRequestStrategy, ZMSingleRequestT
 
     // MARK: - ZMEventConsumer
 
-    public func processEvents(_ events: [ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) {
+    public func processEvents(_ events: [ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) async {
         events.forEach(processUpdateEvent)
     }
 
