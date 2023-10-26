@@ -89,6 +89,11 @@ public protocol UserSession: AnyObject {
         for: UserType
     ) -> NSObjectProtocol?
 
+    func addMessageObserver(
+        _ observer: ZMMessageObserver,
+        for message: ZMConversationMessage
+    ) -> NSObjectProtocol
+
     func addConferenceCallingUnavailableObserver(_ observer: ConferenceCallingUnavailableObserver) -> Any
 
     func conversationList() -> ZMConversationList
@@ -159,6 +164,17 @@ extension ZMUserSession: UserSession {
             observer: observer,
             for: user,
             in: self
+        )
+    }
+
+    public func addMessageObserver(
+        _ observer: ZMMessageObserver,
+        for message: ZMConversationMessage
+    ) -> NSObjectProtocol {
+        return MessageChangeInfo.add(
+            observer: observer,
+            for: message,
+            userSession: self
         )
     }
 
