@@ -69,6 +69,14 @@ extension PrivateUserDefaults {
         return storage.object(forKey: scopeKey(key))
     }
 
+    public func set(_ value: Int, forKey key: Key) {
+        storage.set(value, forKey: scopeKey(key))
+    }
+
+    public func integer(forKey key: Key) -> Int {
+        return storage.integer(forKey: scopeKey(key))
+    }
+
 }
 
 public protocol DefaultsKey {
