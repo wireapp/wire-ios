@@ -189,7 +189,7 @@ extension ZMUserSession: UserSession {
     private static let MaxTeamVideoLength: TimeInterval = 960 // 16 minutes (16.0 * 60.0)
 
     private var selfUserHasTeam: Bool {
-        return self.selfUser.hasTeam
+        return selfUser.hasTeam
     }
 
     public var maxUploadFileSize: UInt64 {
