@@ -99,6 +99,8 @@ public protocol UserSession: AnyObject {
 
     var maxUploadFileSize: UInt64 { get }
 
+    func acknowledgeFeatureChange(for feature: Feature.Name)
+
 }
 
 extension ZMUserSession: UserSession {
@@ -214,6 +216,10 @@ extension ZMUserSession: UserSession {
 
     public var maxVideoLength: TimeInterval {
         return selfUserHasTeam ? ZMUserSession.MaxTeamVideoLength : ZMUserSession.MaxVideoLength
+    }
+
+    public func acknowledgeFeatureChange(for feature: Feature.Name) {
+        featureRepository.setNeedsToNotifyUser(false, for: feature)
     }
 
 }
