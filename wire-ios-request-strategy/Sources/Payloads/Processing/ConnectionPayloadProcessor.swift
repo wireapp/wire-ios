@@ -61,8 +61,28 @@ final class ConnectionPayloadProcessor {
         conversation.addParticipantAndUpdateConversationState(user: connection.to, role: nil)
 
         connection.conversation = conversation
-        connection.status = payload.status.internalStatus
         connection.lastUpdateDateInGMT = payload.lastUpdate
+
+        let previousConnectionStatus = connection.status
+        connection.status = payload.status.internalStatus
+        let newConnectionStatus = connection.status
+
+        if 
+            previousConnectionStatus != .accepted && newConnectionStatus == .accepted,
+            let otherUser = connection.to
+        {
+            let selfUser = ZMUser.selfUser(in: context)
+            let commonProtocols = selfUser.supportedProtocols.intersection(otherUser.supportedProtocols)
+
+            if commonProtocols.contains(.mls) {
+                // establsh mls group
+                fatalError("not implemented")
+            } else if commonProtocols.contains(.proteus) {
+                // nothing more to do
+            } else {
+                conversation.isForcedReadOnly = true
+            }
+        }
     }
 
 }
