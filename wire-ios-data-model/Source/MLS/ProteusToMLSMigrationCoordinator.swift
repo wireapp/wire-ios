@@ -52,7 +52,7 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
     // MARK: - Properties
 
     private let context: NSManagedObjectContext
-    private let featureRepository: FeatureRepository
+    private let featureRepository: FeatureRepositoryInterface
     private let actionsProvider: MLSActionsProviderProtocol
     private let storage: ProteusToMLSMigrationStorage
     private let logger = WireLogger.mls
@@ -75,7 +75,7 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
         context: NSManagedObjectContext,
         userID: UUID,
         userDefaults: UserDefaults = .standard,
-        featureRepository: FeatureRepository? = nil,
+        featureRepository: FeatureRepositoryInterface? = nil,
         actionsProvider: MLSActionsProviderProtocol? = nil
     ) {
         self.context = context
