@@ -84,6 +84,8 @@ public protocol UserSession: AnyObject {
     // TODO: rename to "isEncryptionAtRestEnabled"
     var encryptMessagesAtRest: Bool { get }
 
+    func setEncryptionAtRest(enabled: Bool, skipMigration: Bool) throws
+
     func addUserObserver(
         _ observer: ZMUserObserver,
         for: UserType
@@ -105,6 +107,13 @@ public protocol UserSession: AnyObject {
     var maxUploadFileSize: UInt64 { get }
 
     func acknowledgeFeatureChange(for feature: Feature.Name)
+
+    func fetchMarketingConsent(completion: @escaping (Result<Bool>) -> Void)
+
+    func setMarketingConsent(
+        granted: Bool,
+        completion: @escaping (VoidResult) -> Void
+    )
 
 }
 
@@ -236,6 +245,29 @@ extension ZMUserSession: UserSession {
 
     public func acknowledgeFeatureChange(for feature: Feature.Name) {
         featureRepository.setNeedsToNotifyUser(false, for: feature)
+    }
+
+    public func fetchMarketingConsent(
+        completion: @escaping (
+            Result<Bool>
+        ) -> Void
+    ) {
+        ZMUser.selfUser(inUserSession: self).fetchConsent(
+            for: .marketing,
+            on: transportSession,
+            completion: completion
+        )
+    }
+
+    public func setMarketingConsent(
+        granted: Bool,
+        completion: @escaping (VoidResult) -> Void
+    ) {
+        ZMUser.selfUser(inUserSession: self).setMarketingConsent(
+            to: granted,
+            in: self,
+            completion: completion
+        )
     }
 
 }
