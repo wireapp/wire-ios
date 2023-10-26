@@ -28,7 +28,7 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
 
     // MARK: - Types
 
-    enum MigrationStatus {
+    enum MigrationStatus: Int {
         case notStarted
         case started
         case finalising
@@ -56,10 +56,6 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
     private let actionsProvider: MLSActionsProviderProtocol
     private let storage: ProteusToMLSMigrationStorage
     private let logger = WireLogger.mls
-
-    private var migrationStatus: MigrationStatus {
-        storage.migrationStatus ?? .notStarted
-    }
 
     // MARK: - Life cycle
 
@@ -89,16 +85,12 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
         )
         self.featureRepository = featureRepository ?? FeatureRepository(context: context)
         self.actionsProvider = actionsProvider ?? MLSActionsProvider()
-
-        if storage.migrationStatus == nil {
-            storage.migrationStatus = .notStarted
-        }
     }
 
     // MARK: - Interface
 
     public func updateMigrationStatus() {
-        switch migrationStatus {
+        switch storage.migrationStatus {
         case .notStarted:
             Task {
                 await startMigrationIfNeeded()
@@ -132,16 +124,13 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
     }
 
     private func resolveMigrationStartStatus() async -> MigrationStartStatus {
-
-        // TODO: Might need to perform this on the context
-        let mlsFeature = featureRepository.fetchMLS()
-        let mlsMigrationFeature = featureRepository.fetchMLSMigration()
+        let features = await fetchFeatures()
 
         if (BackendInfo.apiVersion ?? .v0) < .v5 {
             return .cannotStart(reason: .unsupportedAPIVersion)
         }
 
-        if !mlsFeature.config.supportedProtocols.contains(.mls) {
+        if !features.mls.config.supportedProtocols.contains(.mls) {
             return .cannotStart(reason: .mlsProtocolIsNotSupported)
         }
 
@@ -153,25 +142,35 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
             return .cannotStart(reason: .backendDoesntSupportMLS)
         }
 
-        if mlsMigrationFeature.status == .disabled {
+        if features.mlsMigration.status == .disabled {
             return .cannotStart(reason: .mlsMigrationIsNotEnabled)
         }
 
-        if mlsMigrationFeature.config.startTime > .now {
+        if features.mlsMigration.config.startTime > .now {
             return .cannotStart(reason: .startTimeHasNotBeenReached)
         }
 
         return .canStart
     }
 
+    private func fetchFeatures() async -> (mls: Feature.MLS, mlsMigration: Feature.MLSMigration) {
+        return await context.perform { [featureRepository] in
+            let mlsFeature = featureRepository.fetchMLS()
+            let mlsMigrationFeature = featureRepository.fetchMLSMigration()
+            return (mls: mlsFeature, mlsMigration: mlsMigrationFeature)
+        }
+    }
+
     // MARK: - Helpers
 
-    // TODO: add a catch for the `mls-not-enabled` error and log any other error
-    private func isMLSEnabledOnBackend() async -> Bool  {
+    private func isMLSEnabledOnBackend() async -> Bool {
         do {
             _ = try await actionsProvider.fetchBackendPublicKeys(in: context.notificationContext)
             return true
+        } catch FetchBackendMLSPublicKeysAction.Failure.mlsNotEnabled {
+            return false
         } catch {
+            logger.warn("unexpected error fetching public keys: \(String(describing: error))")
             return false
         }
     }
@@ -206,13 +205,14 @@ class ProteusToMLSMigrationStorage {
 
     // MARK: - Interface
 
-    var migrationStatus: MigrationStatus? {
+    var migrationStatus: MigrationStatus {
         get {
-            storage.object(forKey: Key.migrationStatus) as? MigrationStatus
+            let value = storage.integer(forKey: Key.migrationStatus)
+            return MigrationStatus(rawValue: value)!
         }
 
         set {
-            storage.set(newValue, forKey: Key.migrationStatus)
+            storage.set(newValue.rawValue, forKey: Key.migrationStatus)
         }
     }
 }
