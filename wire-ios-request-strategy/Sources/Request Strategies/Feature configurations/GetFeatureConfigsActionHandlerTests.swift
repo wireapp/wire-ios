@@ -59,13 +59,13 @@ class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
     // MARK: - Response handling
 
     func test_ItHandlesResponse_200() throws {
-        syncMOC.performGroupedBlock {
+        try syncMOC.performAndWait {
             // Given
             let sut = GetFeatureConfigsActionHandler(context: self.syncMOC)
             var action = GetFeatureConfigsAction()
 
             let mlsMigrationStartDate = Date()
-            let mlsMigrationFinaliseDate = Date.distantFuture
+            let mlsMigrationFinaliseDate = Date()
 
             // Expectation
             let gotResult = self.expectation(description: "gotResult")
@@ -100,7 +100,7 @@ class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
                 )
             )
 
-            guard let payloadData = try? JSONEncoder().encode(payload),
+            guard let payloadData = try? JSONEncoder.defaultEncoder.encode(payload),
                   let payloadString = String(data: payloadData, encoding: .utf8) else {
                 XCTFail("failed to encode payload")
                 return
@@ -144,8 +144,16 @@ class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
 
             let mlsMigration = featureRepository.fetchMLSMigration()
             XCTAssertEqual(mlsMigration.status, .enabled)
-            XCTAssertEqual(mlsMigration.config, .init(startTime: mlsMigrationStartDate, finaliseRegardlessAfter: mlsMigrationFinaliseDate))
-
+            XCTAssertTrue(Calendar.current.isDate(
+                try XCTUnwrap(mlsMigration.config.startTime),
+                equalTo: mlsMigrationStartDate,
+                toGranularity: .nanosecond
+            ))
+            XCTAssertTrue(Calendar.current.isDate(
+                try XCTUnwrap(mlsMigration.config.finaliseRegardlessAfter),
+                equalTo: mlsMigrationFinaliseDate,
+                toGranularity: .nanosecond
+            ))
         }
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))

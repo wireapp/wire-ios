@@ -55,8 +55,8 @@ public extension Feature {
             public let finaliseRegardlessAfter: Date?
 
             public init(
-                startTime: Date = .now,
-                finaliseRegardlessAfter: Date = .now
+                startTime: Date? = nil,
+                finaliseRegardlessAfter: Date? = nil
             ) {
                 self.startTime = startTime
                 self.finaliseRegardlessAfter = finaliseRegardlessAfter
