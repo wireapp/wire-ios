@@ -113,6 +113,7 @@ import WireCryptobox
         do {
             return try moc.encryptData(data: data)
         } catch let error as NSManagedObjectContext.EncryptionError {
+            WireLogger.ear.error("failed to encrypt message: \(String(describing: error))")
             throw ProcessingError.failedToEncrypt(reason: error)
         }
     }
@@ -123,6 +124,7 @@ import WireCryptobox
         do {
             return try moc.decryptData(data: data, nonce: nonce)
         } catch let error as NSManagedObjectContext.EncryptionError {
+            WireLogger.ear.error("failed to decrypt message: \(String(describing: error))")
             throw ProcessingError.failedToDecrypt(reason: error)
         }
     }

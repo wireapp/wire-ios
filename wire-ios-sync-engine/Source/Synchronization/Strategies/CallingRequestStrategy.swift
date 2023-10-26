@@ -20,6 +20,17 @@ import Foundation
 import WireRequestStrategy
 import WireDataModel
 
+// sourcery: AutoMockable
+public protocol GenericMessageSyncInterface {
+
+    var contextChangeTrackers: [ZMContextChangeTracker] { get }
+    func sync(_ message: GenericMessageEntity, completion: @escaping EntitySyncHandler)
+    func nextRequest(for apiVersion: APIVersion) -> ZMTransportRequest?
+    func expireMessages(withDependency dependency: NSObject)
+}
+
+extension MessageSync<GenericMessageEntity>: GenericMessageSyncInterface {}
+
 @objcMembers
 public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequestTranscoder, ZMContextChangeTracker, ZMContextChangeTrackerSource, ZMEventConsumer {
 
@@ -29,7 +40,7 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
 
     private let zmLog = ZMSLog(tag: "calling")
 
-    private let messageSync: MessageSync<GenericMessageEntity>
+    private let messageSync: GenericMessageSyncInterface
     private let flowManager: FlowManagerType
     private let decoder = JSONDecoder()
 
@@ -56,9 +67,10 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
         clientRegistrationDelegate: ClientRegistrationDelegate,
         flowManager: FlowManagerType,
         callEventStatus: CallEventStatus,
-        fetchUserClientsUseCase: FetchUserClientsUseCaseProtocol = FetchUserClientsUseCase()
+        fetchUserClientsUseCase: FetchUserClientsUseCaseProtocol = FetchUserClientsUseCase(),
+        messageSync: GenericMessageSyncInterface? = nil
     ) {
-        self.messageSync = MessageSync(context: managedObjectContext, appStatus: applicationStatus)
+        self.messageSync = messageSync ?? MessageSync(context: managedObjectContext, appStatus: applicationStatus)
         self.flowManager = flowManager
         self.callEventStatus = callEventStatus
         self.fetchUserClientsUseCase = fetchUserClientsUseCase
@@ -649,14 +661,13 @@ private extension GenericMessageEntity {
         return message.calling.isRejected
     }
 
-    func send(with messageSync: MessageSync<GenericMessageEntity>, completion: @escaping (Int) -> Void) {
+    func send(with messageSync: GenericMessageSyncInterface, completion: @escaping (Int) -> Void) {
         messageSync.sync(self) { result, response in
             if case .success = result {
                 completion(response.httpStatus)
             }
         }
     }
-
 }
 
 private extension Calling {

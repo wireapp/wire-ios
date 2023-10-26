@@ -306,6 +306,7 @@ enum Payload {
             case connectionLimit = "connection-limit"
             case federationDenied = "federation-denied"
             case federationRemoteError = "federation-remote-error"
+            case mlsStaleMessage = "mls-stale-message"
             case unknown
 
             init(from decoder: Decoder) throws {

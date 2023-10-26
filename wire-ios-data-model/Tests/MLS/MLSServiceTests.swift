@@ -339,6 +339,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         let expectation = XCTestExpectation(description: "repaired conversation")
 
         setMocksForConversationRepair(
+            parentGroupID: groupID,
             epoch: conversation.epoch + 1,
             onJoinGroup: { joinedGroupID in
                 XCTAssertEqual(groupID, joinedGroupID)
@@ -1223,6 +1224,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         let expectation = XCTestExpectation(description: "rejoined conversation")
 
         setMocksForConversationRepair(
+            parentGroupID: groupID,
             epoch: conversation.epoch + 1,
             onJoinGroup: { joinedGroupID in
                 XCTAssertEqual(groupID, joinedGroupID)
@@ -1231,10 +1233,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         )
 
         // WHEN
-        sut.fetchAndRepairConversation(
-            with: groupID,
-            subconversationType: nil
-        )
+        sut.fetchAndRepairGroupIfPossible(with: groupID)
 
         // THEN
         // Verify expectation that the conversation was rejoined
@@ -1252,6 +1251,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         expectation.isInverted = true
 
         setMocksForConversationRepair(
+            parentGroupID: groupID,
             epoch: conversation.epoch,
             onJoinGroup: { _ in
                 expectation.fulfill()
@@ -1259,10 +1259,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         )
 
         // WHEN
-        sut.fetchAndRepairConversation(
-            with: groupID,
-            subconversationType: nil
-        )
+        sut.fetchAndRepairGroupIfPossible(with: groupID)
 
         // THEN
         // Verify expectation that the conversation was NOT rejoined
@@ -1287,6 +1284,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         let expectation = XCTestExpectation(description: "rejoined subgroup")
 
         setMocksForConversationRepair(
+            parentGroupID: groupID,
             epoch: UInt64(subgroup.epoch + 1),
             subgroup: subgroup,
             onJoinGroup: { joinedGroupID in
@@ -1296,10 +1294,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         )
 
         // WHEN
-        sut.fetchAndRepairConversation(
-            with: groupID,
-            subconversationType: .conference
-        )
+        sut.fetchAndRepairGroupIfPossible(with: groupID)
 
         // THEN
         // Verify expectation that the subgroup was rejoined
@@ -1325,6 +1320,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         expectation.isInverted = true
 
         setMocksForConversationRepair(
+            parentGroupID: groupID,
             epoch: UInt64(subgroup.epoch),
             subgroup: subgroup,
             onJoinGroup: { _ in
@@ -1333,10 +1329,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         )
 
         // WHEN
-        sut.fetchAndRepairConversation(
-            with: groupID,
-            subconversationType: .conference
-        )
+        sut.fetchAndRepairGroupIfPossible(with: groupID)
 
         // THEN
         // Verify expectation that the subgroup was NOT rejoined
@@ -1344,6 +1337,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
     }
 
     private func setMocksForConversationRepair(
+        parentGroupID: MLSGroupID,
         epoch: UInt64,
         subgroup: MLSSubgroup? = nil,
         onJoinGroup: @escaping (MLSGroupID) -> Void
@@ -1356,11 +1350,15 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         if let subgroup = subgroup {
             // mock fetching subgroup
             mockActionsProvider.fetchSubgroupConversationIDDomainTypeContext_MockValue = subgroup
+            // mock finding parent of subgroup on subconversation repository
+            mockSubconversationGroupIDRepository.findSubgroupTypeAndParentIDFor_MockValue = (parentGroupID, .conference)
         } else {
             // mock conversation sync
             mockActionsProvider.syncConversationQualifiedIDContext_MockMethod = { _, _ in
                 // do nothing
             }
+            // mock finding parent of subgroup on subconversation repository
+            mockSubconversationGroupIDRepository.findSubgroupTypeAndParentIDFor_MockValue = .some(nil)
         }
 
         // mock fetching group info
