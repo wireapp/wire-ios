@@ -90,7 +90,7 @@ extension FeatureConfigRequestStrategy: ZMEventConsumer {
 
     private func processResponse(featureName: Feature.Name, data: Data) throws {
         let featureRepository = FeatureRepository(context: managedObjectContext)
-        let decoder = JSONDecoder()
+        let decoder = JSONDecoder.defaultDecoder
 
         switch featureName {
         case .conferenceCalling:

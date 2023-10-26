@@ -49,7 +49,7 @@ final class GetFeatureConfigsActionHandler: ActionHandler<GetFeatureConfigsActio
             }
 
             do {
-                let payload = try JSONDecoder().decode(ResponsePayload.self, from: data)
+                let payload = try JSONDecoder.defaultDecoder.decode(ResponsePayload.self, from: data)
                 processPayload(payload)
                 action.succeed()
             } catch {
