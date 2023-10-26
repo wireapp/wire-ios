@@ -89,6 +89,8 @@ public protocol UserSession: AnyObject {
         for: UserType
     ) -> NSObjectProtocol?
 
+    func addConferenceCallingUnavailableObserver(_ observer: ConferenceCallingUnavailableObserver) -> Any
+
     func conversationList() -> ZMConversationList
 
     var ringingCallConversation: ZMConversation? { get }
@@ -96,6 +98,7 @@ public protocol UserSession: AnyObject {
     var maxAudioLength: TimeInterval { get }
 
     var maxUploadFileSize: UInt64 { get }
+
 }
 
 extension ZMUserSession: UserSession {
@@ -157,6 +160,15 @@ extension ZMUserSession: UserSession {
         )
     }
 
+    public func addConferenceCallingUnavailableObserver(
+        _ observer: ConferenceCallingUnavailableObserver
+    ) -> Any {
+        return WireCallCenterV3.addConferenceCallingUnavailableObserver(
+            observer: observer,
+            userSession: self
+        )
+    }
+
     public func conversationList() -> ZMConversationList {
         return .conversations(inUserSession: self)
     }
@@ -203,6 +215,7 @@ extension ZMUserSession: UserSession {
     public var maxVideoLength: TimeInterval {
         return selfUserHasTeam ? ZMUserSession.MaxTeamVideoLength : ZMUserSession.MaxVideoLength
     }
+
 }
 
 extension UInt64 {

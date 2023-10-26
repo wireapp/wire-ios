@@ -79,9 +79,7 @@ extension ZClientViewController {
 extension ZClientViewController: ConferenceCallingUnavailableObserver {
 
     func setUpConferenceCallingUnavailableObserver() {
-        guard let session = ZMUserSession.shared() else { return }
-        let token = WireCallCenterV3.addConferenceCallingUnavailableObserver(observer: self, userSession: session)
-        conferenceCallingUnavailableObserverToken = token
+        conferenceCallingUnavailableObserverToken = userSession.addConferenceCallingUnavailableObserver(self)
     }
 
     func callCenterDidNotStartConferenceCall() {
