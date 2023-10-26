@@ -19,7 +19,7 @@
 import XCTest
 @testable import Wire
 
-final class ConversationImageMessageTests: ZMSnapshotTestCase {
+final class ConversationImageMessageTests: ConversationMessageSnapshotTestCase {
 
     var image: UIImage!
     var message: MockMessage!

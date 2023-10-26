@@ -20,8 +20,16 @@ import Foundation
 
 final class UserSessionMock: UserSession {
 
+
     var selfUser: UserType
     var selfLegalHoldSubject: SelfLegalHoldSubject & UserType
+
+    convenience init(mockUser: MockZMEditableUser) {
+        self.init(
+            selfUser: mockUser,
+            selfLegalHoldSubject: mockUser
+        )
+    }
 
     convenience init(mockUser: MockUserType = .createDefaultSelfUser()) {
         self.init(
@@ -44,7 +52,7 @@ final class UserSessionMock: UserSession {
     var isAppLockAvailable: Bool = false
     var isAppLockForced: Bool = false
     var appLockTimeout: UInt = 60
-    var maxAudioLength: TimeInterval = 1500 // 25 minutes (25 * 60.0)
+    var maxAudioMessageLength: TimeInterval = 1500 // 25 minutes (25 * 60.0)
     var maxUploadFileSize: UInt64 = 26214400 // 25 megabytes (25 * 1024 * 1024)
 
     var shouldNotifyUserOfDisabledAppLock = false
@@ -70,8 +78,11 @@ final class UserSessionMock: UserSession {
     }
 
     func addUserObserver(_ observer: ZMUserObserver, for user: UserType) -> NSObjectProtocol? {
-        // temporary
-        return observer
+        return nil
+    }
+
+    func addConversationListObserver(_ observer: WireDataModel.ZMConversationListObserver, for list: ZMConversationList) -> NSObjectProtocol {
+        return NSObject()
     }
 
     func conversationList() -> ZMConversationList {

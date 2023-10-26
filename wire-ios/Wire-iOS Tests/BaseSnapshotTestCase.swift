@@ -23,7 +23,6 @@ class BaseSnapshotTestCase: XCTestCase {
 
     override func setUp() {
         super.setUp()
-
         FontScheme.configure(with: .large)
     }
 

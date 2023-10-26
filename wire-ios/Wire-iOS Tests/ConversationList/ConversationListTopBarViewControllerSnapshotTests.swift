@@ -31,7 +31,7 @@ final class ConversationListTopBarViewControllerSnapshotTests: BaseSnapshotTestC
         super.setUp()
         mockAccount = Account.mockAccount(imageData: mockImageData)
         mockSelfUser = MockUserType.createSelfUser(name: "James Hetfield")
-        userSession = UserSessionMock()
+        userSession = UserSessionMock(mockUser: mockSelfUser)
     }
 
     override func tearDown() {
