@@ -44,7 +44,7 @@ final class UserSessionMock: UserSession {
     var isAppLockAvailable: Bool = false
     var isAppLockForced: Bool = false
     var appLockTimeout: UInt = 60
-    var maxAudioLength: TimeInterval = 1500 // 25 minutes (25 * 60.0)
+    var maxAudioMessageLength: TimeInterval = 1500 // 25 minutes (25 * 60.0)
     var maxUploadFileSize: UInt64 = 26214400 // 25 megabytes (25 * 1024 * 1024)
 
     var shouldNotifyUserOfDisabledAppLock = false

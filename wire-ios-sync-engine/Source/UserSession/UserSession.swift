@@ -93,7 +93,7 @@ public protocol UserSession: AnyObject {
 
     var ringingCallConversation: ZMConversation? { get }
 
-    var maxAudioLength: TimeInterval { get }
+    var maxAudioMessageLength: TimeInterval { get }
 
     var maxUploadFileSize: UInt64 { get }
 }
@@ -196,7 +196,7 @@ extension ZMUserSession: UserSession {
         return UInt64.uploadFileSizeLimit(hasTeam: selfUserHasTeam)
     }
 
-    public var maxAudioLength: TimeInterval {
+    public var maxAudioMessageLength: TimeInterval {
         return selfUserHasTeam ? ZMUserSession.MaxTeamAudioLength : ZMUserSession.MaxAudioLength
     }
 
