@@ -31,7 +31,7 @@ final class ConversationListViewControllerViewModelTests: XCTestCase {
 
         let account = Account.mockAccount(imageData: Data())
         selfUser = .createSelfUser(name: "Bob")
-        userSession = UserSessionMock()
+        userSession = UserSessionMock(mockUser: selfUser)
         sut = ConversationListViewController.ViewModel(account: account, selfUser: selfUser, userSession: userSession)
         mockViewController = MockConversationListContainer(viewModel: sut)
         sut.viewController = mockViewController
