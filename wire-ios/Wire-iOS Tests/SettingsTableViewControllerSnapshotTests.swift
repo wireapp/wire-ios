@@ -29,7 +29,7 @@ final class SettingsTableViewControllerSnapshotTests: ZMSnapshotTestCase {
 	override func setUp() {
 		super.setUp()
 
-        userSession = UserSessionMock()
+        userSession = UserSessionMock(mockUser: <#T##MockUserType#>)
         selfUser = MockZMEditableUser()
         selfUser.teamName = "Wire"
         selfUser.handle = "johndoe"

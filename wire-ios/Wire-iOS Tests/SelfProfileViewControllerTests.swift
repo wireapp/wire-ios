@@ -30,7 +30,7 @@ final class SelfProfileViewControllerTests: ZMSnapshotTestCase, CoreDataFixtureT
         super.setUp()
         coreDataFixture = CoreDataFixture()
         SelfUser.provider = coreDataFixture.selfUserProvider
-        userSession = UserSessionMock()
+        userSession = UserSessionMock(mockUser: selfUser)
     }
 
     override func tearDown() {
