@@ -188,4 +188,9 @@ class MockMLSService: MLSServiceInterface {
         fatalError("not implemented")
     }
 
+    // MARK: Proteus to MLS migration
+
+    func startProteusToMLSMigration() {
+        fatalError("not implemented")
+    }
 }
