@@ -60,7 +60,7 @@ public class PushTokenStrategy: AbstractRequestStrategy, ZMEventConsumer {
         _ events: [ZMUpdateEvent],
         liveEvents: Bool,
         prefetchResult: ZMFetchRequestBatchResult?
-    ) {
+    ) async {
         guard liveEvents else { return }
         events.forEach(process(updateEvent:))
     }

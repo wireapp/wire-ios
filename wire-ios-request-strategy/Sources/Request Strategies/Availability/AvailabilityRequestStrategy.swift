@@ -163,7 +163,7 @@ extension AvailabilityRequestStrategy: ZMContextChangeTrackerSource {
 
 extension AvailabilityRequestStrategy: ZMEventConsumer {
 
-    public func processEvents(_ events: [ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) {
+    public func processEvents(_ events: [ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) async {
         for event in events {
             guard
                 let senderUUID = event.senderUUID, event.isGenericMessageEvent,

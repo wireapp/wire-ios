@@ -45,7 +45,9 @@ NS_ASSUME_NONNULL_BEGIN
 /// @param prefetchResult prefetched conversations and messages that the events belong to, indexed by remote identifier and nonce
 - (void)processEvents:(NSArray<ZMUpdateEvent *> *)events
            liveEvents:(BOOL)liveEvents
-       prefetchResult:(ZMFetchRequestBatchResult * _Nullable)prefetchResult;
+       prefetchResult:(ZMFetchRequestBatchResult * _Nullable)prefetchResult
+           completion:( void (^ _Nonnull)(void))completionBlock;
+
 
 @optional
 

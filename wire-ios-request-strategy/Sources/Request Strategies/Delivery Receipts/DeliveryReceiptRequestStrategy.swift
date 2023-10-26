@@ -69,7 +69,7 @@ extension DeliveryReceiptRequestStrategy: ZMEventConsumer {
         let messageIDs: [UUID]
     }
 
-    public func processEvents(_ events: [ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) {
+    public func processEvents(_ events: [ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) async {
         deliveryReceipts(for: events).forEach(sendDeliveryReceipt)
     }
 

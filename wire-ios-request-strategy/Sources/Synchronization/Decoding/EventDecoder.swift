@@ -34,7 +34,7 @@ private let previouslyReceivedEventIDsKey = "zm_previouslyReceivedEventIDsKey"
 /// Decodes and stores events from various sources to be processed later
 @objcMembers public final class EventDecoder: NSObject {
 
-    public typealias ConsumeBlock = (([ZMUpdateEvent]) -> Void)
+    public typealias ConsumeBlock = (([ZMUpdateEvent]) async -> Void)
 
     static var BatchSize: Int {
         if let testingBatchSize = testingBatchSize {
@@ -70,13 +70,12 @@ extension EventDecoder {
     ///
     /// - Parameters:
     ///   - events: Encrypted events
-    ///   - block: A block that receives the decrypted events for processing.
+    /// - Returns: the decrypted events for processing.
 
     public func decryptAndStoreEvents(
         _ events: [ZMUpdateEvent],
-        publicKeys: EARPublicKeys? = nil,
-        block: ConsumeBlock? = nil
-    ) {
+        publicKeys: EARPublicKeys? = nil
+    ) async -> [ZMUpdateEvent] {
         var lastIndex: Int64?
         var decryptedEvents: [ZMUpdateEvent] = []
 
@@ -118,7 +117,7 @@ extension EventDecoder {
             Logging.eventProcessing.info("Decrypted/Stored \( events.count) event(s)")
         }
 
-        block?(decryptedEvents)
+        return decryptedEvents
     }
 
     /// Process previously stored and decrypted events by repeatedly calling the the consume block until
@@ -133,8 +132,8 @@ extension EventDecoder {
         with privateKeys: EARPrivateKeys? = nil,
         callEventsOnly: Bool = false,
         _ block: ConsumeBlock
-    ) {
-        process(
+    ) async {
+        await process(
             with: privateKeys,
             block,
             firstCall: true,
@@ -259,18 +258,18 @@ extension EventDecoder {
         _ consumeBlock: ConsumeBlock,
         firstCall: Bool,
         callEventsOnly: Bool
-    ) {
+    ) async {
         let events = fetchNextEventsBatch(with: privateKeys, callEventsOnly: callEventsOnly)
 
         guard events.storedEvents.count > 0 else {
             if firstCall {
-                consumeBlock([])
+                await consumeBlock([])
             }
             return
         }
 
-        processBatch(events.updateEvents, storedEvents: events.storedEvents, block: consumeBlock)
-        process(with: privateKeys, consumeBlock, firstCall: false, callEventsOnly: callEventsOnly)
+        await processBatch(events.updateEvents, storedEvents: events.storedEvents, block: consumeBlock)
+        await process(with: privateKeys, consumeBlock, firstCall: false, callEventsOnly: callEventsOnly)
     }
 
     /// Fetches and returns the next batch of size `EventDecoder.BatchSize`
@@ -300,12 +299,12 @@ extension EventDecoder {
         _ events: [ZMUpdateEvent],
         storedEvents: [NSManagedObject],
         block: ConsumeBlock
-    ) {
+    ) async {
         if !events.isEmpty {
             Logging.eventProcessing.info("Forwarding \(events.count) event(s) to consumers")
         }
 
-        block(filterInvalidEvents(from: events))
+        await block(filterInvalidEvents(from: events))
 
         eventMOC.performGroupedBlockAndWait {
             storedEvents.forEach(self.eventMOC.delete(_:))
