@@ -16,9 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 import Foundation
-
 
 public extension Feature {
 
@@ -50,11 +48,11 @@ public extension Feature {
 
             // The starting time of the migration
 
-            public let startTime: Date
+            public let startTime: Date?
 
             // The date until the migration has to finalise
 
-            public let finaliseRegardlessAfter: Date
+            public let finaliseRegardlessAfter: Date?
 
             public init(
                 startTime: Date = .now,
