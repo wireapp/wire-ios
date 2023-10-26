@@ -21,15 +21,14 @@ import Foundation
 @objc
 public protocol UpdateEventProcessor: AnyObject {
 
-    @objc(storeUpdateEvents:ignoreBuffer:)
-    func storeUpdateEvents(_ updateEvents: [ZMUpdateEvent], ignoreBuffer: Bool)
+    func setIniatialEventConsumers(_ eventConsumers: [ZMEventConsumer]) async
+    func storeUpdateEvents(_ updateEvents: [ZMUpdateEvent], ignoreBuffer: Bool) async
 
-    @objc(storeAndProcessUpdateEvents:ignoreBuffer:)
-    func storeAndProcessUpdateEvents(_ updateEvents: [ZMUpdateEvent], ignoreBuffer: Bool)
+    func storeAndProcessUpdateEvents(_ updateEvents: [ZMUpdateEvent], ignoreBuffer: Bool) async
 
-    func processEventsIfReady() -> Bool
+    func processEventsIfReady() async -> Bool
 
-    func processPendingCallEvents() throws
+    func processPendingCallEvents() async throws
 
-    var eventConsumers: [ZMEventConsumer] { get set }
+    func eventConsumers() async -> [ZMEventConsumer]
 }
