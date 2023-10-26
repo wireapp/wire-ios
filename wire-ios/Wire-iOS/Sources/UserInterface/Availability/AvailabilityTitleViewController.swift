@@ -65,7 +65,7 @@ final class AvailabilityTitleViewController: UIViewController {
     func presentAvailabilityPicker() {
         let alertViewController = UIAlertController.availabilityPicker { [weak self] (availability) in
             guard let `self` = self else { return }
-            self.didSelectAvailability(availability, userSession: self.userSession)
+            self.didSelectAvailability(availability)
         }
 
         alertViewController.configPopover(pointToView: view)
@@ -73,7 +73,7 @@ final class AvailabilityTitleViewController: UIViewController {
         present(alertViewController, animated: true)
     }
 
-    private func didSelectAvailability(_ availability: AvailabilityKind, userSession: UserSession) {
+    private func didSelectAvailability(_ availability: AvailabilityKind) {
         let changes = { [weak self] in
             self?.user.availability = availability
             self?.provideHapticFeedback()

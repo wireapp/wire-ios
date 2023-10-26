@@ -89,11 +89,16 @@ public protocol UserSession: AnyObject {
         for: UserType
     ) -> NSObjectProtocol?
 
+    func addConversationListObserver(
+        _ observer: ZMConversationListObserver,
+        for list: ZMConversationList
+    ) -> NSObjectProtocol
+
     func conversationList() -> ZMConversationList
 
     var ringingCallConversation: ZMConversation? { get }
 
-    var maxAudioLength: TimeInterval { get }
+    var maxAudioMessageLength: TimeInterval { get }
 
     var maxUploadFileSize: UInt64 { get }
 }
@@ -157,6 +162,17 @@ extension ZMUserSession: UserSession {
         )
     }
 
+    public func addConversationListObserver(
+        _ observer: ZMConversationListObserver,
+        for list: ZMConversationList
+    ) -> NSObjectProtocol {
+        return ConversationListChangeInfo.add(
+            observer: observer,
+            for: list,
+            userSession: self
+        )
+    }
+
     public func conversationList() -> ZMConversationList {
         return .conversations(inUserSession: self)
     }
@@ -189,14 +205,14 @@ extension ZMUserSession: UserSession {
     private static let MaxTeamVideoLength: TimeInterval = 960 // 16 minutes (16.0 * 60.0)
 
     private var selfUserHasTeam: Bool {
-        return self.selfUser.hasTeam
+        return selfUser.hasTeam
     }
 
     public var maxUploadFileSize: UInt64 {
         return UInt64.uploadFileSizeLimit(hasTeam: selfUserHasTeam)
     }
 
-    public var maxAudioLength: TimeInterval {
+    public var maxAudioMessageLength: TimeInterval {
         return selfUserHasTeam ? ZMUserSession.MaxTeamAudioLength : ZMUserSession.MaxAudioLength
     }
 

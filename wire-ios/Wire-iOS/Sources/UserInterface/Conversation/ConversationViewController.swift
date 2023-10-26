@@ -151,9 +151,10 @@ final class ConversationViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        if let session = userSession as? ZMUserSession {
-            conversationListObserverToken = ConversationListChangeInfo.add(observer: self, for: ZMConversationList.conversations(inUserSession: session), userSession: session)
-        }
+        conversationListObserverToken = userSession.addConversationListObserver(
+            self,
+            for: userSession.conversationList()
+        )
 
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardFrameWillChange(_:)), name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
 

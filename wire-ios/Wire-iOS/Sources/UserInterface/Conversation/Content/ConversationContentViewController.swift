@@ -52,7 +52,13 @@ final class ConversationContentViewController: UIViewController, PopoverPresente
     let mentionsSearchResultsViewController: UserSearchResultsViewController = UserSearchResultsViewController()
 
     lazy var dataSource: ConversationTableViewDataSource = {
-        return ConversationTableViewDataSource(conversation: conversation, tableView: tableView, actionResponder: self, cellDelegate: self)
+        return ConversationTableViewDataSource(
+            conversation: conversation,
+            tableView: tableView,
+            actionResponder: self,
+            cellDelegate: self,
+            userSession: userSession
+        )
     }()
 
     let messagePresenter: MessagePresenter

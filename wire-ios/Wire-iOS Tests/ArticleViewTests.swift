@@ -36,7 +36,7 @@ final class MockConversationMessageCellDelegate: ConversationMessageCellDelegate
         // no-op
     }
 
-    func conversationMessageWantsToOpenMessageDetails(_ cell: UIView, for message: WireDataModel.ZMConversationMessage, preferredDisplayMode: Wire.MessageDetailsDisplayMode) {
+    func conversationMessageWantsToOpenMessageDetails(_ cell: UIView, for message: ZMConversationMessage, preferredDisplayMode: MessageDetailsDisplayMode) {
         // no-op
     }
 
