@@ -32,7 +32,7 @@ final class ConversationCellBurstTimestampViewSnapshotTests: BaseSnapshotTestCas
     override func setUp() {
         super.setUp()
         userSession = UserSessionMock()
-        sut = ConversationCellBurstTimestampView(userSession: userSession)
+        sut = ConversationCellBurstTimestampView()
         sut.frame = CGRect(origin: .zero, size: CGSize(width: 320, height: 40))
         sut.unreadDot.backgroundColor = .red
         sut.backgroundColor = SemanticColors.View.backgroundConversationView
@@ -58,7 +58,8 @@ final class ConversationCellBurstTimestampViewSnapshotTests: BaseSnapshotTestCas
         sut.configure(
             with: Date(timeIntervalSinceReferenceDate: 0),
             includeDayOfWeek: true,
-            showUnreadDot: true
+            showUnreadDot: true, 
+            accentColor: userSession.selfUser.accentColor
         )
 
         // THEN
@@ -70,7 +71,8 @@ final class ConversationCellBurstTimestampViewSnapshotTests: BaseSnapshotTestCas
         sut.configure(
             with: Date(timeIntervalSinceReferenceDate: 0),
             includeDayOfWeek: false,
-            showUnreadDot: false
+            showUnreadDot: false, 
+            accentColor: userSession.selfUser.accentColor
         )
 
         // THEN

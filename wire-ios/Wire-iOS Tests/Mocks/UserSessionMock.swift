@@ -20,6 +20,7 @@ import Foundation
 
 final class UserSessionMock: UserSession {
 
+
     var selfUser: UserType
     var selfLegalHoldSubject: SelfLegalHoldSubject & UserType
 
@@ -70,8 +71,11 @@ final class UserSessionMock: UserSession {
     }
 
     func addUserObserver(_ observer: ZMUserObserver, for user: UserType) -> NSObjectProtocol? {
-        // temporary
-        return observer
+        return nil
+    }
+
+    func addConversationListObserver(_ observer: WireDataModel.ZMConversationListObserver, for list: ZMConversationList) -> NSObjectProtocol {
+        return NSObject()
     }
 
     func conversationList() -> ZMConversationList {

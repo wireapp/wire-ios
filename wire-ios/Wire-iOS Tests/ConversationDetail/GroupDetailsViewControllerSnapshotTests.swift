@@ -43,7 +43,7 @@ final class GroupDetailsViewControllerSnapshotTests: ZMSnapshotTestCase {
         otherUser.handle = "bruno"
         otherUser.accentColorValue = .brightOrange
 
-        userSession = UserSessionMock()
+        userSession = UserSessionMock(mockUser: mockSelfUser)
     }
 
     override func tearDown() {
