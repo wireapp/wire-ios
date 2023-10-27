@@ -120,6 +120,8 @@ public protocol UserSession: AnyObject {
         completion: @escaping (VoidResult) -> Void
     )
 
+    func classification(with users: [UserType], conversationDomain: String?) -> SecurityClassification
+
 }
 
 extension ZMUserSession: UserSession {
@@ -284,6 +286,24 @@ extension ZMUserSession: UserSession {
             in: self,
             completion: completion
         )
+    }
+
+    public func classification(
+        with users: [UserType],
+        conversationDomain: String?
+    ) -> SecurityClassification {
+        guard isSelfClassified else { return .none }
+
+        if let conversationDomain = conversationDomain,
+           classifiedDomainsFeature.config.domains.contains(conversationDomain) == false {
+            return .notClassified
+        }
+
+        let isClassified = users.allSatisfy {
+            classification(with: $0) == .classified
+        }
+
+        return isClassified ? .classified : .notClassified
     }
 
 }

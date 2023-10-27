@@ -20,9 +20,9 @@ import Foundation
 
 final class UserSessionMock: UserSession {
 
-
     var selfUser: UserType
     var selfLegalHoldSubject: SelfLegalHoldSubject & UserType
+    var mockConversationList: ZMConversationList?
 
     convenience init(mockUser: MockZMEditableUser) {
         self.init(
@@ -66,7 +66,7 @@ final class UserSessionMock: UserSession {
     }
 
     func perform(_ changes: @escaping () -> Void) {
-        fatalError("not implemented")
+        changes()
     }
 
     func enqueue(_ changes: @escaping () -> Void) {
@@ -81,12 +81,47 @@ final class UserSessionMock: UserSession {
         return nil
     }
 
-    func addConversationListObserver(_ observer: WireDataModel.ZMConversationListObserver, for list: ZMConversationList) -> NSObjectProtocol {
+    func addConversationListObserver(
+        _ observer: WireDataModel.ZMConversationListObserver,
+        for list: ZMConversationList
+    ) -> NSObjectProtocol {
         return NSObject()
     }
 
     func conversationList() -> ZMConversationList {
-        fatalError("not implemented")
+        guard let mockConversationList else { fatalError("mockConversationList is not set") }
+        return mockConversationList
+    }
+
+    func setEncryptionAtRest(enabled: Bool, skipMigration: Bool) throws {
+
+    }
+
+    func addMessageObserver(
+        _ observer: ZMMessageObserver,
+        for message: ZMConversationMessage
+    ) -> NSObjectProtocol {
+        return NSObject()
+    }
+
+    func addConferenceCallingUnavailableObserver(_ observer: ConferenceCallingUnavailableObserver) -> Any {
+        return NSObject()
+    }
+
+    func acknowledgeFeatureChange(for feature: Feature.Name) {
+
+    }
+
+    func fetchMarketingConsent(completion: @escaping (Result<Bool>) -> Void) {
+
+    }
+
+    func setMarketingConsent(granted: Bool, completion: @escaping (VoidResult) -> Void) {
+
+    }
+
+    func classification(with users: [UserType], conversationDomain: String?) -> SecurityClassification {
+        return .none
     }
 
 }

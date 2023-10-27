@@ -28,8 +28,12 @@ final class SelfProfileViewControllerTests: ZMSnapshotTestCase, CoreDataFixtureT
 
     override func setUp() {
         super.setUp()
+
         coreDataFixture = CoreDataFixture()
+
         SelfUser.provider = coreDataFixture.selfUserProvider
+        selfUser = MockUserType.createSelfUser(name: "", inTeam: UUID())
+
         userSession = UserSessionMock(mockUser: selfUser)
     }
 
