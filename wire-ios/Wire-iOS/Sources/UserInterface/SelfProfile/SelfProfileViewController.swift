@@ -70,15 +70,29 @@ final class SelfProfileViewController: UIViewController {
 
         self.selfUser = selfUser
         self.userSession = userSession
-        // Create the settings hierarchy
-        let settingsPropertyFactory = SettingsPropertyFactory(userSession: userSession, selfUser: selfUser)
-		let settingsCellDescriptorFactory = SettingsCellDescriptorFactory(settingsPropertyFactory: settingsPropertyFactory, userRightInterfaceType: userRightInterfaceType)
-        let rootGroup = settingsCellDescriptorFactory.rootGroup(isTeamMember: selfUser.isTeamMember)
-        settingsController = rootGroup.generateViewController()! as! SettingsTableViewController
-        profileHeaderViewController = ProfileHeaderViewController(user: selfUser, viewer: selfUser, options: selfUser.isTeamMember ? [.allowEditingAvailability] : [.hideAvailability], userSession: userSession)
 
-		self.userRightInterfaceType = userRightInterfaceType
-		self.settingsCellDescriptorFactory = settingsCellDescriptorFactory
+        // Create the settings hierarchy
+
+        let settingsPropertyFactory = SettingsPropertyFactory(userSession: userSession, selfUser: selfUser)
+
+        let settingsCellDescriptorFactory = SettingsCellDescriptorFactory(
+            settingsPropertyFactory: settingsPropertyFactory,
+            userRightInterfaceType: userRightInterfaceType
+        )
+
+        let rootGroup = settingsCellDescriptorFactory.rootGroup(isTeamMember: selfUser.isTeamMember, userSession: userSession)
+
+        settingsController = rootGroup.generateViewController()! as! SettingsTableViewController
+
+        profileHeaderViewController = ProfileHeaderViewController(
+            user: selfUser,
+            viewer: selfUser,
+            options: selfUser.isTeamMember ? [.allowEditingAvailability] : [.hideAvailability],
+            userSession: userSession
+        )
+
+        self.userRightInterfaceType = userRightInterfaceType
+        self.settingsCellDescriptorFactory = settingsCellDescriptorFactory
         self.rootGroup = rootGroup
 
         super.init(nibName: nil, bundle: nil)
