@@ -62,7 +62,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         AVSLoggingOperation(),
         MediaManagerOperation(),
         FileBackupExcluderOperation(),
-        BackendInfoOperation(),
         FontSchemeOperation(),
         VoIPPushHelperOperation(),
         CleanUpDebugStateOperation()
@@ -125,6 +124,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
         voIPPushManager.registerForVoIPPushes()
+        BackendInfoOperation().execute()
         AutomationHelperOperation().execute()
 
         ZMSLog.switchCurrentLogToPrevious()
