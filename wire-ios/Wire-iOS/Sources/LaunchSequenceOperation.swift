@@ -214,7 +214,7 @@ final class BackendInfoOperation: LaunchSequenceOperation {
     func execute() {
         BackendInfo.storage = .applicationGroup
 
-        if let preferredVersion = AutomationHelper.sharedHelper.preferredAPIversion {
+        if let preferredVersion = AutomationHelper.sharedHelper.preferredAPIVersion {
             BackendInfo.preferredAPIVersion = preferredVersion
         }
     }
