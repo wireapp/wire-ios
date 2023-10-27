@@ -76,6 +76,15 @@ final class ConnectionPayloadProcessor {
 
             if commonProtocols.contains(.mls) {
                 // establsh mls group
+                if conversation.mlsGroupID == nil {
+                    // fetch it via GET /conversations/one2one/{userdomain}/{userId} (persists other meta data too)
+                }
+
+                // check with cc if group already exists, if yes, done.
+                // in mls service...
+                // claim key packages for other user
+                // create group
+                // add client to group
                 fatalError("not implemented")
             } else if commonProtocols.contains(.proteus) {
                 // nothing more to do
