@@ -111,7 +111,7 @@ final class MessageActionsViewControllerTests: XCTestCase {
         // WHEN
         let actionsTitles = actionsTitlesForMessage(message: message)
         // THEN
-        XCTAssertArrayEqual(actionsTitles, ["Copy", "Reply", "Details", "Share", "Delete", "Cancel"])
+        XCTAssertArrayEqual(actionsTitles, ["Visit Link", "Copy", "Reply", "Details", "Share", "Delete", "Cancel"])
     }
 
     func testMenuActionsForPingMessage() {
