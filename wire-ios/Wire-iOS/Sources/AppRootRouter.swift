@@ -202,16 +202,18 @@ extension AppRootRouter: AppStateCalculatorDelegate {
         case .migrating:
             showLaunchScreen(isLoading: true, completion: completionBlock)
         case .unauthenticated(error: let error):
-            screenCurtain.delegate = nil
+            screenCurtain.userSession = nil
             configureUnauthenticatedAppearance()
             showUnauthenticatedFlow(error: error, completion: completionBlock)
-        case .authenticated(completedRegistration: let completedRegistration):
+        case let .authenticated(userSession, completedRegistration):
             configureAuthenticatedAppearance()
             executeAuthenticatedBlocks()
-            // TODO: [John] Avoid singleton.
-            screenCurtain.delegate = ZMUserSession.shared()
-            showAuthenticated(isComingFromRegistration: completedRegistration,
-                              completion: completionBlock)
+            screenCurtain.userSession = userSession
+            showAuthenticated(
+                userSession: userSession,
+                isComingFromRegistration: completedRegistration,
+                completion: completionBlock
+            )
         case .headless:
             showLaunchScreen(completion: completionBlock)
         case .loading(account: let toAccount, from: let fromAccount):
@@ -220,7 +222,7 @@ extension AppRootRouter: AppStateCalculatorDelegate {
                          completion: completionBlock)
         case .locked:
             // TODO: [John] Avoid singleton.
-            screenCurtain.delegate = ZMUserSession.shared()
+            screenCurtain.userSession = ZMUserSession.shared()
             showAppLock(completion: completionBlock)
         }
     }
@@ -339,11 +341,18 @@ extension AppRootRouter {
                                completion: completion)
     }
 
-    private func showAuthenticated(isComingFromRegistration: Bool, completion: @escaping () -> Void) {
+    private func showAuthenticated(
+        userSession: UserSession,
+        isComingFromRegistration: Bool,
+        completion: @escaping () -> Void
+    ) {
         guard
             let selectedAccount = SessionManager.shared?.accountManager.selectedAccount,
-            let authenticatedRouter = buildAuthenticatedRouter(account: selectedAccount,
-                                                               isComingFromRegistration: isComingFromRegistration)
+            let authenticatedRouter = buildAuthenticatedRouter(
+                account: selectedAccount,
+                userSession: userSession,
+                isComingFromRegistration: isComingFromRegistration
+            )
         else {
             completion()
             return
@@ -381,7 +390,7 @@ extension AppRootRouter {
     private func setupAnalyticsSharing() {
         guard
             appStateCalculator.wasUnauthenticated,
-            let selfUser = SelfUser.provider?.selfUser,
+            let selfUser = SelfUser.provider?.providedSelfUser,
             selfUser.isTeamMember
         else {
             return
@@ -392,16 +401,21 @@ extension AppRootRouter {
         Analytics.shared.provider?.selfUser = selfUser
     }
 
-    private func buildAuthenticatedRouter(account: Account, isComingFromRegistration: Bool) -> AuthenticatedRouter? {
-
+    private func buildAuthenticatedRouter(
+        account: Account,
+        userSession: UserSession,
+        isComingFromRegistration: Bool
+    ) -> AuthenticatedRouter? {
         let needToShowDataUsagePermissionDialog = appStateCalculator.wasUnauthenticated && !SelfUser.current.isTeamMember
 
-        return AuthenticatedRouter(rootViewController: rootViewController,
-                                   account: account,
-                                   selfUser: ZMUser.selfUser(),
-                                   isComingFromRegistration: isComingFromRegistration,
-                                   needToShowDataUsagePermissionDialog: needToShowDataUsagePermissionDialog,
-                                   featureRepositoryProvider: ZMUserSession.shared()!)
+        return AuthenticatedRouter(
+            rootViewController: rootViewController,
+            account: account,
+            userSession: userSession,
+            isComingFromRegistration: isComingFromRegistration,
+            needToShowDataUsagePermissionDialog: needToShowDataUsagePermissionDialog,
+            featureRepositoryProvider: ZMUserSession.shared()!
+        )
     }
 }
 

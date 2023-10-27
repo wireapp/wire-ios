@@ -159,7 +159,7 @@ final class CoreDataFixture {
         setupTestObjects()
 
         MockUser.setMockSelf(selfUser)
-        selfUserProvider = SelfProvider(selfUser: selfUser)
+        selfUserProvider = SelfProvider(providedSelfUser: selfUser)
 
         SelfUser.provider = selfUserProvider
     }

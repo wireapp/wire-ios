@@ -34,7 +34,7 @@ final class MessageDetailsViewControllerTests: ZMSnapshotTestCase {
 
         mockSelfUser = MockUserType.createSelfUser(name: "Alice")
         otherUser = MockUserType.createDefaultOtherUser()
-        SelfUser.provider = SelfProvider(selfUser: mockSelfUser)
+        SelfUser.provider = SelfProvider(providedSelfUser: mockSelfUser)
     }
 
     // MARK: - tearDown method

@@ -63,7 +63,7 @@ enum DebugActions {
     /// Shows the user ID of the self user
     static func showUserId(_ type: SettingsCellDescriptorType) {
         guard let userSession = ZMUserSession.shared(),
-            let selfUser = (userSession.selfUser as? ZMUser)
+            let selfUser = (userSession.providedSelfUser as? ZMUser)
         else { return }
 
         alert(

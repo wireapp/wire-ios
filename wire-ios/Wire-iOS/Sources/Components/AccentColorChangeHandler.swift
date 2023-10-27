@@ -36,7 +36,7 @@ final class AccentColorChangeHandler: NSObject, ZMUserObserver {
         handlerBlock = changeHandler
         self.observer = observer
 
-        if let selfUser = SelfUser.provider?.selfUser, let userSession = ZMUserSession.shared() {
+        if let selfUser = SelfUser.provider?.providedSelfUser, let userSession = ZMUserSession.shared() {
             userObserverToken = UserChangeInfo.add(observer: self, for: selfUser, in: userSession)
         }
     }

@@ -51,7 +51,7 @@ extension ZMUserSession {
     }
 
     private var isSelfClassified: Bool {
-        classifiedDomainsFeature.status == .enabled && selfUser.domain != nil
+        classifiedDomainsFeature.status == .enabled && providedSelfUser.domain != nil
     }
 
     // If other user does not have a domain the conversation will be marked as unclassified

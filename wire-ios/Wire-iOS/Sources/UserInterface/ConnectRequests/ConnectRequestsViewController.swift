@@ -47,7 +47,7 @@ final class ConnectRequestsViewController: UIViewController, UITableViewDataSour
                                                                                  for: pendingConnectionsList,
                                                                                  userSession: userSession)
 
-            userObserverToken = UserChangeInfo.add(observer: self, for: userSession.selfUser, in: userSession)
+            userObserverToken = UserChangeInfo.add(observer: self, for: userSession.providedSelfUser, in: userSession)
 
             connectionRequests = pendingConnectionsList as? [ConversationLike] ?? []
         }

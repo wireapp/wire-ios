@@ -35,6 +35,6 @@ final class SelfUser {
 
     class var current: UserType & ZMEditableUser {
         guard let provider = provider else { fatalError("Self user provider not set") }
-        return provider.selfUser
+        return provider.providedSelfUser
     }
 }

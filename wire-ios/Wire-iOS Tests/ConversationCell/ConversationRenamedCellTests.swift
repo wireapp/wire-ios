@@ -24,7 +24,7 @@ final class ConversationRenamedCellTests: XCTestCase {
     override func setUp() {
         super.setUp()
 
-        SelfUser.provider = SelfProvider(selfUser: MockUserType.createSelfUser(name: "Alice"))
+        SelfUser.provider = SelfProvider(providedSelfUser: MockUserType.createSelfUser(name: "Alice"))
     }
 
     func testThatItRendersRenamedCellCorrectlySelf() {
