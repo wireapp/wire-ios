@@ -126,8 +126,6 @@ public final class AutomationHelper: NSObject {
             let value = arguments.flagValueIfPresent(AutomationKey.preferredAPIVersion.rawValue),
             let apiVersion = Int32(value)
         {
-            WireLogger.environment.info("automation helper will set preferred api version to \(apiVersion)")
-            BackendInfo.preferredAPIVersion = APIVersion(rawValue: apiVersion)
             preferredAPIVersion = APIVersion(rawValue: apiVersion)
         }
 
