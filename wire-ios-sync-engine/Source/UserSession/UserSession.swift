@@ -36,6 +36,23 @@ public protocol UserSession: AnyObject {
 
     var requiresScreenCurtain: Bool { get }
 
+    /// Whether the app lock on.
+
+    var isAppLockActive: Bool { get set }
+
+    /// Whether the app lock feature is availble to the user.
+
+    var isAppLockAvailable: Bool { get }
+
+    /// Whether the app lock is mandatorily active.
+
+    var isAppLockForced: Bool { get }
+
+    /// The maximum number of seconds allowed in the background before the
+    /// authentication is required.
+
+    var appLockTimeout: UInt { get }
+
     /// Whether the user should be notified of the app lock being disabled.
 
     var shouldNotifyUserOfDisabledAppLock: Bool { get }
@@ -72,9 +89,19 @@ public protocol UserSession: AnyObject {
         for: UserType
     ) -> NSObjectProtocol?
 
+    func addConversationListObserver(
+        _ observer: ZMConversationListObserver,
+        for list: ZMConversationList
+    ) -> NSObjectProtocol
+
     func conversationList() -> ZMConversationList
 
     var ringingCallConversation: ZMConversation? { get }
+
+    var maxAudioMessageLength: TimeInterval { get }
+
+    var maxUploadFileSize: UInt64 { get }
+
 }
 
 extension ZMUserSession: UserSession {
@@ -85,6 +112,28 @@ extension ZMUserSession: UserSession {
 
     public var requiresScreenCurtain: Bool {
         return appLockController.isActive || encryptMessagesAtRest
+    }
+
+    public var isAppLockActive: Bool {
+        get {
+            appLockController.isActive
+        }
+
+        set {
+            appLockController.isActive = newValue
+        }
+    }
+
+    public var isAppLockAvailable: Bool {
+        return appLockController.isAvailable
+    }
+
+    public var isAppLockForced: Bool {
+        return appLockController.isForced
+    }
+
+    public var appLockTimeout: UInt {
+        return appLockController.timeout
     }
 
     public var shouldNotifyUserOfDisabledAppLock: Bool {
@@ -114,6 +163,17 @@ extension ZMUserSession: UserSession {
         )
     }
 
+    public func addConversationListObserver(
+        _ observer: ZMConversationListObserver,
+        for list: ZMConversationList
+    ) -> NSObjectProtocol {
+        return ConversationListChangeInfo.add(
+            observer: observer,
+            for: list,
+            userSession: self
+        )
+    }
+
     public func conversationList() -> ZMConversationList {
         return .conversations(inUserSession: self)
     }
@@ -137,4 +197,37 @@ extension ZMUserSession: UserSession {
             }
         }
     }
+
+    static let MaxVideoWidth: UInt64 = 1920 // FullHD
+
+    static let MaxAudioLength: TimeInterval = 1500 // 25 minutes (25 * 60.0)
+    private static let MaxTeamAudioLength: TimeInterval = 6000 // 100 minutes (100 * 60.0)
+    private static let MaxVideoLength: TimeInterval = 240 // 4 minutes (4.0 * 60.0)
+    private static let MaxTeamVideoLength: TimeInterval = 960 // 16 minutes (16.0 * 60.0)
+
+    private var selfUserHasTeam: Bool {
+        return selfUser.hasTeam
+    }
+
+    public var maxUploadFileSize: UInt64 {
+        return UInt64.uploadFileSizeLimit(hasTeam: selfUserHasTeam)
+    }
+
+    public var maxAudioMessageLength: TimeInterval {
+        return selfUserHasTeam ? ZMUserSession.MaxTeamAudioLength : ZMUserSession.MaxAudioLength
+    }
+
+    public var maxVideoLength: TimeInterval {
+        return selfUserHasTeam ? ZMUserSession.MaxTeamVideoLength : ZMUserSession.MaxVideoLength
+    }
+}
+
+extension UInt64 {
+    private static let MaxFileSize: UInt64 = 26214400 // 25 megabytes (25 * 1024 * 1024)
+    private static let MaxTeamFileSize: UInt64 = 104857600 // 100 megabytes (100 * 1024 * 1024)
+
+    public static func uploadFileSizeLimit(hasTeam: Bool) -> UInt64 {
+        return hasTeam ? MaxTeamFileSize : MaxFileSize
+    }
+
 }

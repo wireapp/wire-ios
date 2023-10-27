@@ -26,15 +26,16 @@ final class AvailabilityTitleViewController: UIViewController {
     private let feedbackGenerator = UIImpactFeedbackGenerator(style: .medium)
     private let options: AvailabilityTitleView.Options
     private let user: UserType
+    let userSession: UserSession
 
     var availabilityTitleView: AvailabilityTitleView? {
         return view as? AvailabilityTitleView
     }
 
-    init(user: UserType, options: AvailabilityTitleView.Options) {
+    init(user: UserType, options: AvailabilityTitleView.Options, userSession: UserSession) {
         self.user = user
         self.options = options
-
+        self.userSession = userSession
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -49,7 +50,8 @@ final class AvailabilityTitleViewController: UIViewController {
 
     override func viewDidLoad() {
         availabilityTitleView?.tapHandler = { [weak self] _ in
-            self?.presentAvailabilityPicker()
+            guard let `self` = self else { return }
+            self.presentAvailabilityPicker()
         }
     }
 
@@ -62,7 +64,8 @@ final class AvailabilityTitleViewController: UIViewController {
 
     func presentAvailabilityPicker() {
         let alertViewController = UIAlertController.availabilityPicker { [weak self] (availability) in
-            self?.didSelectAvailability(availability)
+            guard let `self` = self else { return }
+            self.didSelectAvailability(availability)
         }
 
         alertViewController.configPopover(pointToView: view)
@@ -76,11 +79,7 @@ final class AvailabilityTitleViewController: UIViewController {
             self?.provideHapticFeedback()
         }
 
-        if let session = ZMUserSession.shared() {
-            session.perform(changes)
-        } else {
-            changes()
-        }
+        userSession.perform(changes)
 
         if Settings.shared.shouldRemindUserWhenChanging(availability) {
             present(UIAlertController.availabilityExplanation(availability), animated: true)

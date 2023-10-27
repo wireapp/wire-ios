@@ -73,16 +73,17 @@ final class AudioRecordViewController: UIViewController, AudioRecordBaseViewCont
         fatalError("init(coder:) has not been implemented")
     }
 
-    init(audioRecorder: AudioRecorderType? = nil) {
-        let maxAudioLength = ZMUserSession.shared()?.maxAudioLength
-        let maxUploadSize = ZMUserSession.shared()?.maxUploadFileSize
+    init(audioRecorder: AudioRecorderType? = nil,
+         userSession: UserSession) {
+        let maxAudioLength = userSession.maxAudioMessageLength
+        let maxUploadSize = userSession.maxUploadFileSize
         self.recorder = audioRecorder ?? AudioRecorder(format: .wav,
                                                        maxRecordingDuration: maxAudioLength,
                                                        maxFileSize: maxUploadSize)
 
         super.init(nibName: nil, bundle: nil)
 
-        configureViews()
+        configureViews(userSession: userSession)
         configureAudioRecorder()
         createConstraints()
 
@@ -141,8 +142,8 @@ final class AudioRecordViewController: UIViewController, AudioRecordBaseViewCont
         setOverlayState(.expanded(offset.clamp(0, upper: 1)), animated: false)
     }
 
-    private func configureViews() {
-        accentColorChangeHandler = AccentColorChangeHandler.addObserver(self) { [unowned self] color, _ in
+    private func configureViews(userSession: UserSession) {
+        accentColorChangeHandler = AccentColorChangeHandler.addObserver(self, userSession: userSession) { [unowned self] color, _ in
             if let color = color {
                 self.audioPreviewView.color = color
             }

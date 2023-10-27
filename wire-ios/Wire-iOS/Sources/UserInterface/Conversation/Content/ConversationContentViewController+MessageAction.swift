@@ -38,7 +38,7 @@ extension ConversationContentViewController {
             return
         }
 
-        messagePresenter.open(message, targetView: tableView.targetView(for: message, dataSource: dataSource), actionResponder: self)
+        messagePresenter.open(message, targetView: tableView.targetView(for: message, dataSource: dataSource), actionResponder: self, userSession: userSession)
     }
 
     func openSketch(for message: ZMConversationMessage, in editMode: CanvasViewControllerEditMode) {
@@ -58,11 +58,11 @@ extension ConversationContentViewController {
                        view: UIView) {
         switch actionId {
         case .cancel:
-            session.enqueue({
+            userSession.enqueue({
                 message.fileMessageData?.cancelTransfer()
             })
         case .resend:
-            session.enqueue({
+            userSession.enqueue({
                 message.resend()
             })
         case .delete:
@@ -119,7 +119,7 @@ extension ConversationContentViewController {
         case .copy:
             message.copy(in: .general)
         case .download:
-            session.enqueue({
+            userSession.enqueue({
                 message.fileMessageData?.requestFileDownload()
             })
         case .reply:
@@ -131,7 +131,7 @@ extension ConversationContentViewController {
                 }
             }
         case .openDetails:
-            let detailsViewController = MessageDetailsViewController(message: message)
+            let detailsViewController = MessageDetailsViewController(message: message, userSession: userSession)
             parent?.present(detailsViewController, animated: true)
         case .resetSession:
             guard let client = message.systemMessageData?.clients.first as? UserClient else { return }
@@ -140,7 +140,7 @@ extension ConversationContentViewController {
             client.resetSession()
         case .react(let reaction):
             Analytics.shared.tagReacted(in: conversation)
-            session.perform {
+            userSession.perform {
                 message.react(reaction)
             }
         }

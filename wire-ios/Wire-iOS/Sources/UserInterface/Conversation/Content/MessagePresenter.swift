@@ -158,7 +158,7 @@ final class MessagePresenter: NSObject {
     ///   - message: message to open
     ///   - targetView: target view when opens the message
     ///   - delegate: the receiver of action callbacks for the message. Currently only forward and reveal in conversation actions are supported.
-    func open(_ message: ZMConversationMessage, targetView: UIView, actionResponder delegate: MessageActionResponder) {
+    func open(_ message: ZMConversationMessage, targetView: UIView, actionResponder delegate: MessageActionResponder, userSession: UserSession) {
         fileAvailabilityObserver = nil
         modalTargetController?.view.window?.endEditing(true)
 
@@ -169,7 +169,7 @@ final class MessagePresenter: NSObject {
         } else if Message.isFileTransfer(message), message.canBeDownloaded {
             openFileMessage(message, targetView: targetView)
         } else if Message.isImage(message), message.canBeShared {
-            openImageMessage(message, actionResponder: delegate)
+            openImageMessage(message, actionResponder: delegate, userSession: userSession)
         } else if let openableURL = message.textMessageData?.linkPreview?.openableURL {
             openableURL.open()
         }
@@ -182,8 +182,9 @@ final class MessagePresenter: NSObject {
     }
 
     func openImageMessage(_ message: ZMConversationMessage,
-                          actionResponder delegate: MessageActionResponder) {
-        let imageViewController = viewController(forImageMessage: message, actionResponder: delegate)
+                          actionResponder delegate: MessageActionResponder,
+                          userSession: UserSession) {
+        let imageViewController = viewController(forImageMessage: message, actionResponder: delegate, userSession: userSession)
         if let imageViewController = imageViewController {
             // to allow image rotation, present the image viewer in full screen style
             imageViewController.modalPresentationStyle = .fullScreen
@@ -191,7 +192,7 @@ final class MessagePresenter: NSObject {
         }
     }
 
-    func viewController(forImageMessage message: ZMConversationMessage, actionResponder delegate: MessageActionResponder) -> UIViewController? {
+    func viewController(forImageMessage message: ZMConversationMessage, actionResponder delegate: MessageActionResponder, userSession: UserSession) -> UIViewController? {
         guard Message.isImage(message),
             message.imageMessageData != nil else {
                 return nil
@@ -199,16 +200,17 @@ final class MessagePresenter: NSObject {
 
         return imagesViewController(for: message,
                                     actionResponder: delegate,
-                                    isPreviewing: false)
+                                    isPreviewing: false, 
+                                    userSession: userSession)
     }
 
-    func viewController(forImageMessagePreview message: ZMConversationMessage, actionResponder delegate: MessageActionResponder) -> UIViewController? {
+    func viewController(forImageMessagePreview message: ZMConversationMessage, actionResponder delegate: MessageActionResponder, userSession: UserSession) -> UIViewController? {
         guard Message.isImage(message),
             message.imageMessageData != nil else {
                 return nil
         }
 
-        return imagesViewController(for: message, actionResponder: delegate, isPreviewing: true)
+        return imagesViewController(for: message, actionResponder: delegate, isPreviewing: true, userSession: userSession)
     }
 
     // MARK: - Pass

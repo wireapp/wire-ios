@@ -31,15 +31,17 @@ final class SearchUserViewController: UIViewController, SpinnerCapable {
     private weak var profileViewControllerDelegate: ProfileViewControllerDelegate?
     private let userId: UUID
     private var pendingSearchTask: SearchTask?
+    private let userSession: UserSession
 
     /// flag for handleSearchResult. Only allow to display the result once
     private var resultHandled = false
 
     // MARK: - Init
 
-    public init(userId: UUID, profileViewControllerDelegate: ProfileViewControllerDelegate?) {
+    public init(userId: UUID, profileViewControllerDelegate: ProfileViewControllerDelegate?, userSession: UserSession) {
         self.userId = userId
         self.profileViewControllerDelegate = profileViewControllerDelegate
+        self.userSession = userSession
 
         super.init(nibName: nil, bundle: nil)
 
@@ -97,7 +99,12 @@ final class SearchUserViewController: UIViewController, SpinnerCapable {
         }
 
         if let profileUser = profileUser {
-            let profileViewController = ProfileViewController(user: profileUser, viewer: ZMUser.selfUser(), context: .profileViewer)
+            let profileViewController = ProfileViewController(
+                user: profileUser,
+                viewer: ZMUser.selfUser(),
+                context: .profileViewer,
+                userSession: userSession
+            )
             profileViewController.delegate = profileViewControllerDelegate
 
             navigationController?.setViewControllers([profileViewController], animated: true)

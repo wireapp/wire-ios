@@ -19,6 +19,7 @@
 import UIKit
 import WireDataModel
 import WireCommonComponents
+import WireSyncEngine
 
 // MARK: - MessageDetailsSectionDescription
 
@@ -73,6 +74,8 @@ final class MessageDetailsContentViewController: UIViewController {
 
     private let sectionHeaderIdentifier = "SectionHeader"
 
+    let userSession: UserSession
+
     /// The displayed sections.
     private(set) var sections = [MessageDetailsSectionDescription]()
 
@@ -89,9 +92,10 @@ final class MessageDetailsContentViewController: UIViewController {
      * Creates a view controller to display message details of a certain type.
      */
 
-    init(contentType: ContentType, conversation: ZMConversation) {
+    init(contentType: ContentType, conversation: ZMConversation, userSession: UserSession) {
         self.contentType = contentType
         self.conversation = conversation
+        self.userSession = userSession
         super.init(nibName: nil, bundle: nil)
         updateTitle()
     }
@@ -356,7 +360,7 @@ extension MessageDetailsContentViewController: UICollectionViewDataSource, UICol
 
         let cell = collectionView.cellForItem(at: indexPath) as! UserCell
 
-        let profileViewController = ProfileViewController(user: user, viewer: SelfUser.current, conversation: conversation)
+        let profileViewController = ProfileViewController(user: user, viewer: SelfUser.current, conversation: conversation, userSession: userSession)
         profileViewController.delegate = self
         profileViewController.viewControllerDismisser = self
 

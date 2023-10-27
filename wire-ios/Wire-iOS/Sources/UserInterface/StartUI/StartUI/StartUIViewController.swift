@@ -43,6 +43,8 @@ final class StartUIViewController: UIViewController, SpinnerCapable {
         return addressBookHelperType.sharedHelper
     }
 
+    let userSession: UserSession
+
     let isFederationEnabled: Bool
 
     let quickActionsBar: StartUIInviteActionBar = StartUIInviteActionBar()
@@ -61,14 +63,14 @@ final class StartUIViewController: UIViewController, SpinnerCapable {
     ///
     /// - Parameter addressBookHelperType: a class type conforms AddressBookHelperProtocol
     init(addressBookHelperType: AddressBookHelperProtocol.Type = AddressBookHelper.self,
-         isFederationEnabled: Bool = BackendInfo.isFederationEnabled) {
+         isFederationEnabled: Bool = BackendInfo.isFederationEnabled, userSession: UserSession) {
         self.isFederationEnabled = isFederationEnabled
         self.addressBookHelperType = addressBookHelperType
         self.searchResultsViewController = SearchResultsViewController(userSelection: UserSelection(),
                                                                        isAddingParticipants: false,
                                                                        shouldIncludeGuests: true,
                                                                        isFederationEnabled: isFederationEnabled)
-
+        self.userSession = userSession
         super.init(nibName: nil, bundle: nil)
 
         configGroupSelector()

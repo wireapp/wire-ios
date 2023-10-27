@@ -38,6 +38,7 @@ final class ConversationImagesViewControllerTests: CoreDataSnapshotTestCase {
 
     var sut: ConversationImagesViewController! = nil
     var navigatorController: UINavigationController! = nil
+    var userSession: UserSessionMock!
 
     override var needsCaches: Bool {
         return true
@@ -48,7 +49,7 @@ final class ConversationImagesViewControllerTests: CoreDataSnapshotTestCase {
     override func setUp() {
         super.setUp()
         SelfUser.setupMockSelfUser()
-
+        userSession = UserSessionMock()
         snapshotBackgroundColor = UIColor.white
 
         let image = self.image(inTestBundleNamed: "unsplash_matterhorn.jpg")
@@ -57,8 +58,19 @@ final class ConversationImagesViewControllerTests: CoreDataSnapshotTestCase {
         let collection = MockCollection(messages: [ imagesCategoryMatch: [initialMessage] ])
         let delegate = AssetCollectionMulticastDelegate()
 
-        let assetWrapper = AssetCollectionWrapper(conversation: otherUserConversation, assetCollection: collection, assetCollectionDelegate: delegate, matchingCategories: [imagesCategoryMatch])
-        sut = ConversationImagesViewController(collection: assetWrapper, initialMessage: initialMessage, inverse: true)
+        let assetWrapper = AssetCollectionWrapper(
+            conversation: otherUserConversation,
+            assetCollection: collection,
+            assetCollectionDelegate: delegate,
+            matchingCategories: [imagesCategoryMatch]
+        )
+        
+        sut = ConversationImagesViewController(
+            collection: assetWrapper,
+            initialMessage: initialMessage,
+            inverse: true,
+            userSession: userSession
+        )
 
         navigatorController = sut.wrapInNavigationController(navigationBarClass: UINavigationBar.self)
     }

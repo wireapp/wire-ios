@@ -19,7 +19,7 @@
 import XCTest
 @testable import Wire
 
-final class ConversationPingMessageTests: XCTestCase {
+final class ConversationPingMessageTests: ConversationMessageSnapshotTestCase {
 
     func testPing() {
         // GIVEN

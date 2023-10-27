@@ -125,13 +125,13 @@ final class ProfileHeaderViewController: UIViewController {
      * - note: You can change the options later through the `options` property.
      */
 
-    init(user: UserType, viewer: UserType = SelfUser.current, conversation: ZMConversation? = nil, options: Options) {
+    init(user: UserType, viewer: UserType = SelfUser.current, conversation: ZMConversation? = nil, options: Options, userSession: UserSession) {
         self.user = user
         isAdminRole = conversation.map(self.user.isGroupAdmin) ?? false
         self.viewer = viewer
         self.conversation = conversation
         self.options = options
-        self.availabilityTitleViewController = AvailabilityTitleViewController(user: user, options: options.contains(.allowEditingAvailability) ? [.allowSettingStatus] : [.hideActionHint])
+        self.availabilityTitleViewController = AvailabilityTitleViewController(user: user, options: options.contains(.allowEditingAvailability) ? [.allowSettingStatus] : [.hideActionHint], userSession: userSession)
 
         super.init(nibName: nil, bundle: nil)
     }

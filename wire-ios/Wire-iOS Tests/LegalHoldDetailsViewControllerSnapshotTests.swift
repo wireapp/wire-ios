@@ -24,10 +24,11 @@ final class LegalHoldDetailsViewControllerSnapshotTests: ZMSnapshotTestCase {
 
     var sut: LegalHoldDetailsViewController!
     var selfUser: MockUserType!
+    var userSession: UserSessionMock!
 
     override func setUp() {
         super.setUp()
-
+        userSession = UserSessionMock()
         SelfUser.setupMockSelfUser(inTeam: UUID())
         selfUser = (SelfUser.current as! MockUserType)
         selfUser.handle = nil
@@ -36,7 +37,7 @@ final class LegalHoldDetailsViewControllerSnapshotTests: ZMSnapshotTestCase {
     override func tearDown() {
         sut = nil
         SelfUser.provider = nil
-
+        userSession = nil
         super.tearDown()
     }
 
@@ -46,7 +47,7 @@ final class LegalHoldDetailsViewControllerSnapshotTests: ZMSnapshotTestCase {
         conversation.sortedActiveParticipantsUserTypes = [selfUser]
 
         let createSut: () -> UIViewController = {
-            self.sut = LegalHoldDetailsViewController(conversation: conversation)
+            self.sut = LegalHoldDetailsViewController(conversation: conversation, userSession: self.userSession)
             return self.sut.wrapInNavigationController()
         }
 
@@ -60,7 +61,7 @@ final class LegalHoldDetailsViewControllerSnapshotTests: ZMSnapshotTestCase {
         conversation.sortedActiveParticipantsUserTypes = [otherUser]
 
         let createSut: () -> UIViewController = {
-            self.sut = LegalHoldDetailsViewController(conversation: conversation)
+            self.sut = LegalHoldDetailsViewController(conversation: conversation, userSession: self.userSession)
             return self.sut.wrapInNavigationController()
         }
 

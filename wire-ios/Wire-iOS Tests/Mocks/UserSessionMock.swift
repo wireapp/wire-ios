@@ -23,6 +23,13 @@ final class UserSessionMock: UserSession {
     var selfUser: UserType
     var selfLegalHoldSubject: SelfLegalHoldSubject & UserType
 
+    convenience init(mockUser: MockZMEditableUser) {
+        self.init(
+            selfUser: mockUser,
+            selfLegalHoldSubject: mockUser
+        )
+    }
+
     convenience init(mockUser: MockUserType = .createDefaultSelfUser()) {
         self.init(
             selfUser: mockUser,
@@ -40,6 +47,12 @@ final class UserSessionMock: UserSession {
 
     var isLocked = false
     var requiresScreenCurtain = false
+    var isAppLockActive: Bool = false
+    var isAppLockAvailable: Bool = false
+    var isAppLockForced: Bool = false
+    var appLockTimeout: UInt = 60
+    var maxAudioMessageLength: TimeInterval = 1500 // 25 minutes (25 * 60.0)
+    var maxUploadFileSize: UInt64 = 26214400 // 25 megabytes (25 * 1024 * 1024)
     var shouldNotifyUserOfDisabledAppLock = false
     var isNotificationContentHidden = false
     var encryptMessagesAtRest = false
@@ -55,15 +68,19 @@ final class UserSessionMock: UserSession {
     }
 
     func enqueue(_ changes: @escaping () -> Void) {
-        fatalError("not implemented")
+        changes()
     }
 
     func enqueue(_ changes: @escaping () -> Void, completionHandler: (() -> Void)?) {
         fatalError("not implemented")
     }
 
-    func addUserObserver(_ observer: ZMUserObserver, for: UserType) -> NSObjectProtocol? {
-        fatalError("not implemented")
+    func addUserObserver(_ observer: ZMUserObserver, for user: UserType) -> NSObjectProtocol? {
+        return nil
+    }
+
+    func addConversationListObserver(_ observer: WireDataModel.ZMConversationListObserver, for list: ZMConversationList) -> NSObjectProtocol {
+        return NSObject()
     }
 
     func conversationList() -> ZMConversationList {

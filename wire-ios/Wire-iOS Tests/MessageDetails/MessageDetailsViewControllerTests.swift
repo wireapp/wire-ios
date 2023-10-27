@@ -26,6 +26,7 @@ final class MessageDetailsViewControllerTests: ZMSnapshotTestCase {
     var conversation: SwiftMockConversation!
     var mockSelfUser: MockUserType!
     var otherUser: MockUserType!
+    var userSession: UserSessionMock!
 
     // MARK: - setUp method
 
@@ -35,6 +36,7 @@ final class MessageDetailsViewControllerTests: ZMSnapshotTestCase {
         mockSelfUser = MockUserType.createSelfUser(name: "Alice")
         otherUser = MockUserType.createDefaultOtherUser()
         SelfUser.provider = SelfProvider(providedSelfUser: mockSelfUser)
+        userSession = UserSessionMock()
     }
 
     // MARK: - tearDown method
@@ -67,7 +69,7 @@ final class MessageDetailsViewControllerTests: ZMSnapshotTestCase {
         message.backingUsersReaction = [Emoji.ID.like: Array(users.prefix(upTo: 4))]
 
         // WHEN
-        let detailsViewController = MessageDetailsViewController(message: message)
+        let detailsViewController = MessageDetailsViewController(message: message, userSession: userSession)
         detailsViewController.container.selectIndex(0, animated: false)
 
         // THEN
@@ -94,7 +96,7 @@ final class MessageDetailsViewControllerTests: ZMSnapshotTestCase {
         message.backingUsersReaction = [Emoji.ID.like: Array(users.prefix(upTo: 4))]
 
         // WHEN
-        let detailsViewController = MessageDetailsViewController(message: message)
+        let detailsViewController = MessageDetailsViewController(message: message, userSession: userSession)
         detailsViewController.container.selectIndex(0, animated: false)
 
         // THEN
@@ -120,7 +122,7 @@ final class MessageDetailsViewControllerTests: ZMSnapshotTestCase {
         message.backingUsersReaction = [Emoji.ID.like: Array(users.prefix(upTo: 4))]
 
         // WHEN
-        let detailsViewController = MessageDetailsViewController(message: message)
+        let detailsViewController = MessageDetailsViewController(message: message, userSession: userSession)
         detailsViewController.container.selectIndex(0, animated: false)
 
         // THEN
@@ -147,7 +149,7 @@ final class MessageDetailsViewControllerTests: ZMSnapshotTestCase {
         message.backingUsersReaction = [Emoji.ID.like: Array(users.prefix(upTo: 4))]
 
         // WHEN
-        let detailsViewController = MessageDetailsViewController(message: message)
+        let detailsViewController = MessageDetailsViewController(message: message, userSession: userSession)
         detailsViewController.container.selectIndex(1, animated: false)
 
         // THEN
@@ -178,7 +180,7 @@ final class MessageDetailsViewControllerTests: ZMSnapshotTestCase {
         ]
 
         // WHEN
-        let detailsViewController = MessageDetailsViewController(message: message)
+        let detailsViewController = MessageDetailsViewController(message: message, userSession: userSession)
         detailsViewController.container.selectIndex(1, animated: false)
 
         // THEN
@@ -198,7 +200,7 @@ final class MessageDetailsViewControllerTests: ZMSnapshotTestCase {
         message.needsReadConfirmation = true
 
         // WHEN
-        let detailsViewController = MessageDetailsViewController(message: message)
+        let detailsViewController = MessageDetailsViewController(message: message, userSession: userSession)
         detailsViewController.container.selectIndex(1, animated: false)
 
         // THEN
@@ -217,7 +219,7 @@ final class MessageDetailsViewControllerTests: ZMSnapshotTestCase {
         message.needsReadConfirmation = false
 
         // WHEN
-        let detailsViewController = MessageDetailsViewController(message: message)
+        let detailsViewController = MessageDetailsViewController(message: message, userSession: userSession)
         detailsViewController.container.selectIndex(0, animated: false)
 
         // THEN
@@ -236,7 +238,7 @@ final class MessageDetailsViewControllerTests: ZMSnapshotTestCase {
         message.needsReadConfirmation = true
 
         // WHEN
-        let detailsViewController = MessageDetailsViewController(message: message)
+        let detailsViewController = MessageDetailsViewController(message: message, userSession: userSession)
         detailsViewController.container.selectIndex(0, animated: false)
 
         // THEN
@@ -257,7 +259,7 @@ final class MessageDetailsViewControllerTests: ZMSnapshotTestCase {
         message.needsReadConfirmation = true
 
         // WHEN: creating the controller
-        let detailsViewController = MessageDetailsViewController(message: message)
+        let detailsViewController = MessageDetailsViewController(message: message, userSession: userSession)
         detailsViewController.container.selectIndex(0, animated: false)
 
         // THEN
@@ -278,7 +280,7 @@ final class MessageDetailsViewControllerTests: ZMSnapshotTestCase {
         message.needsReadConfirmation = true
 
         // WHEN
-        let detailsViewController = MessageDetailsViewController(message: message)
+        let detailsViewController = MessageDetailsViewController(message: message, userSession: userSession)
 
         // THEN
         snapshot(detailsViewController)
@@ -294,7 +296,7 @@ final class MessageDetailsViewControllerTests: ZMSnapshotTestCase {
         message.needsReadConfirmation = false
 
         // WHEN
-        let detailsViewController = MessageDetailsViewController(message: message)
+        let detailsViewController = MessageDetailsViewController(message: message, userSession: userSession)
 
         // THEN
         snapshot(detailsViewController)
@@ -310,7 +312,7 @@ final class MessageDetailsViewControllerTests: ZMSnapshotTestCase {
         message.needsReadConfirmation = false
 
         // WHEN
-        let detailsViewController = MessageDetailsViewController(message: message)
+        let detailsViewController = MessageDetailsViewController(message: message, userSession: userSession)
 
         // THEN
         snapshot(detailsViewController)
@@ -326,7 +328,7 @@ final class MessageDetailsViewControllerTests: ZMSnapshotTestCase {
         message.needsReadConfirmation = true
 
         // WHEN
-        let detailsViewController = MessageDetailsViewController(message: message)
+        let detailsViewController = MessageDetailsViewController(message: message, userSession: userSession)
 
         // THEN
         snapshot(detailsViewController)
@@ -351,7 +353,7 @@ final class MessageDetailsViewControllerTests: ZMSnapshotTestCase {
             message.backingUsersReaction = [Emoji.ID.like: Array(users.prefix(upTo: 4))]
 
             // WHEN
-            let detailsViewController = MessageDetailsViewController(message: message)
+            let detailsViewController = MessageDetailsViewController(message: message, userSession: userSession)
             detailsViewController.container.selectIndex(0, animated: false)
             return detailsViewController
         }
