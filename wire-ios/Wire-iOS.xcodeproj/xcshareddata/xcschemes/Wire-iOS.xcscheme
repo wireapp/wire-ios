@@ -178,6 +178,10 @@
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
+            argument = "--preferred-api-version=5"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
             argument = "--disable-interactive-keyboard-dismissal"
             isEnabled = "NO">
          </CommandLineArgument>
