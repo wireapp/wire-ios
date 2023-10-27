@@ -35,7 +35,7 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
         case finalised
     }
 
-    enum MigrationStartStatus {
+    enum MigrationStartStatus: Equatable {
         case canStart
         case cannotStart(reason: CannotStartMigrationReason)
 
@@ -54,7 +54,7 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
     private let context: NSManagedObjectContext
     private let featureRepository: FeatureRepositoryInterface
     private let actionsProvider: MLSActionsProviderProtocol
-    private let storage: ProteusToMLSMigrationStorage
+    private var storage: ProteusToMLSMigrationStorageInterface
     private let logger = WireLogger.mls
 
     // MARK: - Life cycle
@@ -65,29 +65,26 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
     ) {
         self.init(
             context: context,
-            userID: userID,
-            featureRepository: nil,
-            actionsProvider: nil
+            storage: ProteusToMLSMigrationStorage(
+                userID: userID,
+                userDefaults: .standard
+            )
         )
     }
 
     init(
         context: NSManagedObjectContext,
-        userID: UUID,
-        userDefaults: UserDefaults = .standard,
+        storage: ProteusToMLSMigrationStorageInterface,
         featureRepository: FeatureRepositoryInterface? = nil,
         actionsProvider: MLSActionsProviderProtocol? = nil
     ) {
         self.context = context
-        self.storage = ProteusToMLSMigrationStorage(
-            userID: userID,
-            userDefaults: userDefaults
-        )
+        self.storage = storage
         self.featureRepository = featureRepository ?? FeatureRepository(context: context)
         self.actionsProvider = actionsProvider ?? MLSActionsProvider()
     }
 
-    // MARK: - Interface
+    // MARK: - Public Interface
 
     public func updateMigrationStatus() {
         switch storage.migrationStatus {
@@ -103,7 +100,7 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
         }
     }
 
-    // MARK: - Private Methods
+    // MARK: - Internal Methods
 
     func startMigrationIfNeeded() async {
         logger.info("checking if proteus-to-mls migration can start")
@@ -123,7 +120,7 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
         }
     }
 
-    private func resolveMigrationStartStatus() async -> MigrationStartStatus {
+    func resolveMigrationStartStatus() async -> MigrationStartStatus {
         let features = await fetchFeatures()
 
         if (BackendInfo.apiVersion ?? .v0) < .v5 {
@@ -153,6 +150,8 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
         return .canStart
     }
 
+    // MARK: - Helpers
+
     private func fetchFeatures() async -> (mls: Feature.MLS, mlsMigration: Feature.MLSMigration) {
         return await context.perform { [featureRepository] in
             let mlsFeature = featureRepository.fetchMLS()
@@ -160,8 +159,6 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
             return (mls: mlsFeature, mlsMigration: mlsMigrationFeature)
         }
     }
-
-    // MARK: - Helpers
 
     private func isMLSEnabledOnBackend() async -> Bool {
         do {
@@ -175,44 +172,4 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
         }
     }
 
-}
-
-class ProteusToMLSMigrationStorage {
-
-    // MARK: - Properties
-
-    private let storage: PrivateUserDefaults<Key>
-
-    // MARK: - Types
-
-    private enum Key: String, DefaultsKey {
-        case migrationStatus = "com.wire.mls.migration.status"
-    }
-
-    typealias MigrationStatus = ProteusToMLSMigrationCoordinator.MigrationStatus
-
-    // MARK: - Life cycle
-
-    public init(
-        userID: UUID,
-        userDefaults: UserDefaults
-    ) {
-        storage = PrivateUserDefaults(
-            userID: userID,
-            storage: userDefaults
-        )
-    }
-
-    // MARK: - Interface
-
-    var migrationStatus: MigrationStatus {
-        get {
-            let value = storage.integer(forKey: Key.migrationStatus)
-            return MigrationStatus(rawValue: value)!
-        }
-
-        set {
-            storage.set(newValue.rawValue, forKey: Key.migrationStatus)
-        }
-    }
 }
