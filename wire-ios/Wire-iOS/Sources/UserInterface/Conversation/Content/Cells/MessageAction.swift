@@ -21,7 +21,7 @@ import WireDataModel
 import UIKit
 
 enum MessageAction: CaseIterable, Equatable {
-    static var allCases: [MessageAction] = [.visitLink("https://google.com"),
+    static var allCases: [MessageAction] = [.visitLink("https://wire.com"),
                                             .digitallySign,
                                             .copy,
                                             .reply,
