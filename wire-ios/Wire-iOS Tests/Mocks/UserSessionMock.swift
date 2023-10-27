@@ -20,7 +20,6 @@ import Foundation
 
 final class UserSessionMock: UserSession {
 
-
     var selfUser: UserType
     var selfLegalHoldSubject: SelfLegalHoldSubject & UserType
 
@@ -54,7 +53,7 @@ final class UserSessionMock: UserSession {
     var appLockTimeout: UInt = 60
     var maxAudioMessageLength: TimeInterval = 1500 // 25 minutes (25 * 60.0)
     var maxUploadFileSize: UInt64 = 26214400 // 25 megabytes (25 * 1024 * 1024)
-
+  
     var shouldNotifyUserOfDisabledAppLock = false
     var isNotificationContentHidden = false
     var encryptMessagesAtRest = false

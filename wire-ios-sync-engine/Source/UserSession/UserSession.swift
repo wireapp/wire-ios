@@ -32,7 +32,7 @@ public protocol UserSession: AnyObject {
     /// Whether the screen curtain is required.
     ///
     /// The screen curtain hides the contents of the app while it is
-    /// not in actvie, such as when it is in the task switcher.
+    /// not active, such as when it is in the task switcher.
 
     var requiresScreenCurtain: Bool { get }
 
@@ -101,6 +101,7 @@ public protocol UserSession: AnyObject {
     var maxAudioMessageLength: TimeInterval { get }
 
     var maxUploadFileSize: UInt64 { get }
+
 }
 
 extension ZMUserSession: UserSession {
@@ -228,4 +229,5 @@ extension UInt64 {
     public static func uploadFileSizeLimit(hasTeam: Bool) -> UInt64 {
         return hasTeam ? MaxTeamFileSize : MaxFileSize
     }
+  
 }
