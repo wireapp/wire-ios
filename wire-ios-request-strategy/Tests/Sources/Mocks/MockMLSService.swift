@@ -188,9 +188,15 @@ class MockMLSService: MLSServiceInterface {
         fatalError("not implemented")
     }
 
-    // MARK: Proteus to MLS migration
+    // MARK: - Migration
+
+    typealias StartProteusToMLSMigrationMock = () -> Void
+    var startProteusToMLSMigrationMock: StartProteusToMLSMigrationMock?
 
     func startProteusToMLSMigration() {
-        fatalError("not implemented")
+        guard let mock = startProteusToMLSMigrationMock else {
+            return
+        }
+        mock()
     }
 }
