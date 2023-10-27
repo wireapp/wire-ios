@@ -181,7 +181,12 @@ class Settings {
         }
     }
     static var isClipboardEnabled: Bool {
-        return SecurityFlags.clipboard.isEnabled
+        get {
+            return SecurityFlags.clipboard.isEnabled ? true : ExtensionSettings.shared.isClipboardEnabled
+        }
+        set {
+            ExtensionSettings.shared.isClipboardEnabled = newValue
+        }
     }
 
     // MARK: - MediaManager

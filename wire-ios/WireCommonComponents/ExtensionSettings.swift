@@ -24,6 +24,7 @@ private enum ExtensionSettingsKey: String, CaseIterable {
     case disableCrashSharing
     case disableAnalyticsSharing
     case disableLinkPreviews
+    case isClipboardEnabled
     private var defaultValue: Any? {
         switch self {
         // Always disable analytics by default.
@@ -32,6 +33,8 @@ private enum ExtensionSettingsKey: String, CaseIterable {
         case .disableAnalyticsSharing:
             return false
         case .disableLinkPreviews:
+            return false
+        case .isClipboardEnabled:
             return false
         }
     }
@@ -86,6 +89,15 @@ public class ExtensionSettings: NSObject {
         }
         set {
             defaults.set(newValue, forKey: ExtensionSettingsKey.disableLinkPreviews.rawValue)
+        }
+    }
+
+    public var isClipboardEnabled: Bool {
+        get {
+            return defaults.bool(forKey: ExtensionSettingsKey.isClipboardEnabled.rawValue)
+        }
+        set {
+            defaults.set(newValue, forKey: ExtensionSettingsKey.isClipboardEnabled.rawValue)
         }
     }
 }
