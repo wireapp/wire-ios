@@ -44,8 +44,6 @@ public extension Feature {
         // WARNING: This config is encoded and stored in the database, so any changes
         // to it will require some migration code.
 
-        // TODO: check if/how we need to migrate the feature config
-
         public struct Config: Codable, Equatable {
 
             /// The ids of users who have the option to create new MLS groups.

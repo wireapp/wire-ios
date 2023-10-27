@@ -24,11 +24,11 @@ public extension Feature {
 
         // MARK: - Properties
 
-        /// Whether MLS is availble to the user.
+        /// Whether MLS Migration is enabled.
 
         public let status: Status
 
-        /// The configuration used to control how the MLS behaves.
+        /// The configuration used to control how the MLS Migration behaves.
 
         public let config: Config
 
@@ -46,11 +46,11 @@ public extension Feature {
 
         public struct Config: Codable, Equatable {
 
-            // The starting time of the migration
+            /// The starting time of the migration
 
             public let startTime: Date?
 
-            // The date until the migration has to finalise
+            /// The date until the migration has to finalise
 
             public let finaliseRegardlessAfter: Date?
 
