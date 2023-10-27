@@ -58,7 +58,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         TrackingOperation(),
         AppCenterOperation(),
         PerformanceDebuggerOperation(),
-        ZMSLogOperation(),
         AVSLoggingOperation(),
         AutomationHelperOperation(),
         MediaManagerOperation(),
@@ -110,6 +109,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication,
                      willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
+        ZMSLog.switchCurrentLogToPrevious()
         zmLog.info("application:willFinishLaunchingWithOptions \(String(describing: launchOptions)) (applicationState = \(application.applicationState.rawValue))")
         DatadogWrapper.shared?.startMonitoring()
         DatadogWrapper.shared?.log(level: .info, message: "start app")
@@ -126,7 +126,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
         voIPPushManager.registerForVoIPPushes()
-        ZMSLog.switchCurrentLogToPrevious()
+
 
         zmLog.info("application:didFinishLaunchingWithOptions START \(String(describing: launchOptions)) (applicationState = \(application.applicationState.rawValue))")
 

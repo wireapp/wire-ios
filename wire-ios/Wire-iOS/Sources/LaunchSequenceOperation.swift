@@ -57,13 +57,6 @@ final class PerformanceDebuggerOperation: LaunchSequenceOperation {
 }
 
 // MARK: - ZMSLogOperation
-final class ZMSLogOperation: LaunchSequenceOperation {
-    func execute() {
-        ZMSLog.switchCurrentLogToPrevious()
-    }
-}
-
-// MARK: - ZMSLogOperation
 final class AVSLoggingOperation: LaunchSequenceOperation {
     func execute() {
         SessionManager.startAVSLogging()
