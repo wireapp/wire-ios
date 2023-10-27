@@ -60,7 +60,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         PerformanceDebuggerOperation(),
         ZMSLogOperation(),
         AVSLoggingOperation(),
-        AutomationHelperOperation(),
         MediaManagerOperation(),
         FileBackupExcluderOperation(),
         BackendInfoOperation(),
@@ -126,6 +125,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
         voIPPushManager.registerForVoIPPushes()
+        AutomationHelperOperation().execute()
+
         ZMSLog.switchCurrentLogToPrevious()
 
         zmLog.info("application:didFinishLaunchingWithOptions START \(String(describing: launchOptions)) (applicationState = \(application.applicationState.rawValue))")
