@@ -53,6 +53,7 @@ class FetchClientRequestStrategyTests: MessagingTestBase {
         sut = nil
         NotificationCenter.default.removeObserver(self)
         apiVersion = nil
+        BackendInfo.storage = .standard
         super.tearDown()
     }
 
