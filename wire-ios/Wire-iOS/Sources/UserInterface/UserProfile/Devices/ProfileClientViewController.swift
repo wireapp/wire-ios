@@ -65,20 +65,23 @@ final class ProfileClientViewController: UIViewController, SpinnerCapable {
 
     // MARK: Initilization
 
-    convenience init(client: UserClient,
-                     fromConversation: Bool) {
-        self.init(client: client)
+    convenience init(
+        client: UserClient,
+        fromConversation: Bool,
+        userSession: UserSession
+    ) {
+        self.init(client: client, userSession: userSession)
         self.fromConversation = fromConversation
     }
 
-    required init(client: UserClient) {
+    required init(client: UserClient, userSession: UserSession) {
         userClient = client
 
         super.init(nibName: nil, bundle: nil)
 
         userClientToken = UserClientChangeInfo.add(observer: self, for: client)
         if userClient.fingerprint == .none {
-            ZMUserSession.shared()?.enqueue({ () -> Void in
+            userSession.enqueue({ () -> Void in
                 self.userClient.fetchFingerprintOrPrekeys()
             })
         }

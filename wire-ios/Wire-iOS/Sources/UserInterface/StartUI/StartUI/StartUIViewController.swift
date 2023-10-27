@@ -207,7 +207,7 @@ final class StartUIViewController: UIViewController, SpinnerCapable {
 
     func showKeyboardIfNeeded() {
         // TODO: unwrap
-        let conversationCount = ZMConversationList.conversations(inUserSession: ZMUserSession.shared()!).count
+        let conversationCount = userSession.conversationList().count
         if conversationCount > StartUIViewController.InitiallyShowsKeyboardConversationThreshold {
             _ = searchHeader.tokenField.becomeFirstResponder()
         }
