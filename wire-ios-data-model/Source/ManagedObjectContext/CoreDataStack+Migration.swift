@@ -48,7 +48,7 @@ extension CoreDataStack {
             guard Self.fileManager.fileExists(atPath: url.path) else { return }
             try Self.fileManager.removeItem(at: url)
         } catch {
-            Logging.localStorage.debug("error removing directory: \(error)")
+            WireLogger.localStorage.debug("error removing directory: \(error)")
         }
     }
 
@@ -72,7 +72,7 @@ extension CoreDataStack {
         ) {
 
         func fail(_ error: MigrationError) {
-            Logging.localStorage.error("Migrating local store failed: \(error)")
+            WireLogger.localStorage.error("Migrating local store failed: \(error)")
 
             // Clean up temporary migration store
             removeDirectory(at: Self.migrationDirectory)

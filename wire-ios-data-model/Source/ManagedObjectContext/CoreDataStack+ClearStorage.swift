@@ -106,12 +106,12 @@ extension CoreDataStack {
     func clearStorageIfNecessary() {
         guard !accountDataFolderExists() else { return }
 
-        Logging.localStorage.info("Clearing storage on upgrade from legacy installation")
+        WireLogger.localStorage.info("Clearing storage on upgrade from legacy installation")
 
         do {
             try clearStorage()
         } catch let error {
-            Logging.localStorage.error("Failed to clear storage: \(error)")
+            WireLogger.localStorage.error("Failed to clear storage: \(error)")
         }
     }
 
