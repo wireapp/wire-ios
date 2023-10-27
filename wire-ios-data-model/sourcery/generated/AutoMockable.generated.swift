@@ -1,5 +1,7 @@
-// Generated using Sourcery 2.1.1 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 2.0.1 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
+// swiftlint:disable line_length
+// swiftlint:disable variable_name
 
 import Foundation
 #if os(iOS) || os(tvOS) || os(watchOS)
@@ -763,6 +765,39 @@ public class MockFeatureRepositoryInterface: FeatureRepositoryInterface {
         mock(mls)            
     }
 
+    // MARK: - fetchMLSMigration
+
+    public var fetchMLSMigration_Invocations: [Void] = []
+    public var fetchMLSMigration_MockMethod: (() -> Feature.MLSMigration)?
+    public var fetchMLSMigration_MockValue: Feature.MLSMigration?
+
+    public func fetchMLSMigration() -> Feature.MLSMigration {
+        fetchMLSMigration_Invocations.append(())
+
+        if let mock = fetchMLSMigration_MockMethod {
+            return mock()
+        } else if let mock = fetchMLSMigration_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchMLSMigration`")
+        }
+    }
+
+    // MARK: - storeMLSMigration
+
+    public var storeMLSMigration_Invocations: [Feature.MLSMigration] = []
+    public var storeMLSMigration_MockMethod: ((Feature.MLSMigration) -> Void)?
+
+    public func storeMLSMigration(_ mlsMigration: Feature.MLSMigration) {
+        storeMLSMigration_Invocations.append(mlsMigration)
+
+        guard let mock = storeMLSMigration_MockMethod else {
+            fatalError("no mock for `storeMLSMigration`")
+        }
+
+        mock(mlsMigration)            
+    }
+
 }
 class MockFileManagerInterface: FileManagerInterface {
 
@@ -1475,6 +1510,22 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
 
         try mock(url)            
     }
+
+}
+class MockProteusToMLSMigrationStorageInterface: ProteusToMLSMigrationStorageInterface {
+
+    // MARK: - Life cycle
+
+
+    // MARK: - migrationStatus
+
+    var migrationStatus: ProteusToMLSMigrationCoordinator.MigrationStatus {
+        get { return underlyingMigrationStatus }
+        set(value) { underlyingMigrationStatus = value }
+    }
+
+    var underlyingMigrationStatus: ProteusToMLSMigrationCoordinator.MigrationStatus!
+
 
 }
 public class MockSubconversationGroupIDRepositoryInterface: SubconversationGroupIDRepositoryInterface {
