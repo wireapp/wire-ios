@@ -96,7 +96,17 @@ public protocol UserSession: AnyObject {
         for message: ZMConversationMessage
     ) -> NSObjectProtocol
 
-    func addConferenceCallingUnavailableObserver(_ observer: ConferenceCallingUnavailableObserver) -> Any
+    func addConferenceCallingUnavailableObserver(
+        _ observer: ConferenceCallingUnavailableObserver
+    ) -> Any
+
+    func addConferenceCallStateObserver(
+        _ observer: WireCallCenterCallStateObserver
+    ) -> Any
+
+    func addConferenceCallErrorObserver(
+        _ observer: WireCallCenterCallErrorObserver
+    ) -> Any
 
     func addConversationListObserver(
         _ observer: ZMConversationListObserver,
@@ -198,6 +208,24 @@ extension ZMUserSession: UserSession {
         _ observer: ConferenceCallingUnavailableObserver
     ) -> Any {
         return WireCallCenterV3.addConferenceCallingUnavailableObserver(
+            observer: observer,
+            userSession: self
+        )
+    }
+
+    public func addConferenceCallStateObserver(
+        _ observer: WireCallCenterCallStateObserver
+    ) -> Any {
+        return WireCallCenterV3.addCallStateObserver(
+            observer: observer,
+            userSession: self
+        )
+    }
+
+    public func addConferenceCallErrorObserver(
+        _ observer: WireCallCenterCallErrorObserver
+    ) -> Any {
+        return WireCallCenterV3.addCallErrorObserver(
             observer: observer,
             userSession: self
         )
