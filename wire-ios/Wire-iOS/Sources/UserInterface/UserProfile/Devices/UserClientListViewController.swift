@@ -20,28 +20,30 @@ import Foundation
 import UIKit
 import WireSyncEngine
 
-final class UserClientListViewController: UIViewController, UICollectionViewDelegateFlowLayout, UICollectionViewDataSource {
+final class UserClientListViewController: UIViewController, 
+                                          UICollectionViewDelegateFlowLayout,
+                                          UICollectionViewDataSource {
 
     private let headerView: ParticipantDeviceHeaderView
     private let collectionView = UICollectionView(forGroupedSections: ())
     private var clients: [UserClientType]
     private var tokens: [Any?] = []
     private var user: UserType
+    private let userSession: UserSession
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         return wr_supportedInterfaceOrientations
     }
 
-    init(user: UserType) {
+    init(user: UserType, userSession: UserSession) {
         self.user = user
         self.clients = UserClientListViewController.clientsSortedByRelevance(for: user)
         self.headerView = ParticipantDeviceHeaderView(userName: user.name ?? "")
+        self.userSession = userSession
 
         super.init(nibName: nil, bundle: nil)
 
-        if let userSession = ZMUserSession.shared() {
-            tokens.append(UserChangeInfo.add(observer: self, for: user, in: userSession))
-        }
+        tokens.append(userSession.addUserObserver(self, for: user))
 
         self.headerView.delegate = self
 
@@ -128,7 +130,11 @@ final class UserClientListViewController: UIViewController, UICollectionViewDele
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let client = clients[indexPath.row]
-        let profileClientViewController = ProfileClientViewController(client: client as! UserClient, fromConversation: true) // TODO jacob don't force unwrap
+        let profileClientViewController = ProfileClientViewController(
+            client: client as! UserClient,
+            fromConversation: true, 
+            userSession: userSession
+        ) // TODO jacob don't force unwrap
         profileClientViewController.showBackButton = false
 
         show(profileClientViewController, sender: nil)
