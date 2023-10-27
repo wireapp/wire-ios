@@ -229,7 +229,7 @@ extension SelfProfileViewController: SettingsPropertyFactoryDelegate {
         }
 
         guard newValue else {
-            try? settingsPropertyFactory.userSession?.deleteAppLockPasscode()
+            try? userSession.deleteAppLockPasscode()
             callback(newValue)
             return
         }
