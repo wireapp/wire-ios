@@ -846,15 +846,22 @@ public final class MLSService: MLSServiceInterface {
     public func repairOutOfSyncConversations() {
         guard let context = self.context else { return }
 
-        let outOfSync = outOfSyncConversations(in: context).compactMap(\.mlsGroupID)
+        let outOfSync = outOfSyncConversations(in: context)
 
         logger.info("found \(outOfSync.count) conversations out of sync")
 
-        outOfSync.forEach { groupID in
+        outOfSync.forEach { conversation in
+            guard let groupID = conversation.mlsGroupID else {
+                return
+            }
+
             launchGroupRepairTaskIfNotInProgress(for: groupID) {
                 do {
-                    try await self.joinGroup(with: groupID)
-                    self.logger.info("repaired out of sync conversation (\(groupID.safeForLoggingDescription))")
+                    try await self.joinGroupAndAppendGapSystemMessage(
+                        groupID: groupID,
+                        conversation: conversation,
+                        context: context
+                    )
                 } catch {
                     self.logger.warn("failed to repair out of sync conversation (\(groupID.safeForLoggingDescription)). error: \(String(describing: error))")
                 }
@@ -905,20 +912,32 @@ public final class MLSService: MLSServiceInterface {
                 return
             }
 
-            try await joinGroup(with: groupID)
-
-            logger.info("repaired out of sync conversation! (\(groupID.safeForLoggingDescription))")
-
-            appendGapSystemMessage(
-                in: conversationInfo.conversation,
+            try await joinGroupAndAppendGapSystemMessage(
+                groupID: groupID,
+                conversation: conversationInfo.conversation,
                 context: context
             )
-
-            logger.info("inserted gap system message in conversation (\(groupID.safeForLoggingDescription))")
         } catch {
             logger.warn("failed to repair conversation (\(groupID.safeForLoggingDescription)). error: \(String(describing: error))")
         }
 
+    }
+
+    private func joinGroupAndAppendGapSystemMessage(
+        groupID: MLSGroupID,
+        conversation: ZMConversation,
+        context: NSManagedObjectContext
+    ) async throws {
+        try await joinGroup(with: groupID)
+
+        logger.info("repaired out of sync conversation! (\(groupID.safeForLoggingDescription))")
+
+        appendGapSystemMessage(
+            in: conversation,
+            context: context
+        )
+
+        logger.info("inserted gap system message in conversation (\(groupID.safeForLoggingDescription))")
     }
 
     private func appendGapSystemMessage(
