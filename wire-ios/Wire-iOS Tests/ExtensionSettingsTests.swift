@@ -78,18 +78,4 @@ final class ExtensionSettingsTests: XCTestCase {
         settings.disableLinkPreviews = false
         XCTAssertFalse(settings.disableLinkPreviews)
     }
-
-    func testThatItDisablesClipboardDefault() {
-        XCTAssertFalse(settings.isClipboardEnabled)
-    }
-
-    func testThatItHandlesClipboardPreferenceChange() {
-        XCTAssertFalse(settings.isClipboardEnabled)
-
-        settings.disableLinkPreviews = true
-        XCTAssertTrue(settings.disableLinkPreviews)
-
-        settings.disableLinkPreviews = false
-        XCTAssertFalse(settings.disableLinkPreviews)
-    }
 }
