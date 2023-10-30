@@ -62,70 +62,58 @@ class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
 
     // MARK: - UpdateMigrationStatus
 
-    func test_UpdateMigrationStatus_StartsMigration_IfNotStartedAndReady() {
+    func test_UpdateMigrationStatus_StartsMigration_IfNotStartedAndReady() async {
         // Given
         setMigrationReadiness(to: true)
         mockStorage.underlyingMigrationStatus = .notStarted
 
-        let expectation = XCTestExpectation(description: "started migration")
+        var startedMigration = false
         mockMLSService.startProteusToMLSMigrationMock = {
-            expectation.fulfill()
+            startedMigration = true
         }
 
         // When
-        sut.updateMigrationStatus()
+        await sut.updateMigrationStatus()
 
         // Then
-        wait(for: [expectation], timeout: 0.5)
+        XCTAssertEqual(mockStorage.underlyingMigrationStatus, .started)
+        XCTAssertTrue(startedMigration)
     }
 
-    func test_UpdateMigrationStatus_DoesntStartMigration_IfAlreadyStarted() {
+    func test_UpdateMigrationStatus_DoesntStartMigration_IfAlreadyStarted() async {
         // Given
         setMigrationReadiness(to: true)
         mockStorage.underlyingMigrationStatus = .started
 
-        let expectation = XCTestExpectation(description: "started migration")
-        expectation.isInverted = true
+        var startedMigration = false
         mockMLSService.startProteusToMLSMigrationMock = {
-            expectation.fulfill()
+            startedMigration = true
         }
 
         // When
-        sut.updateMigrationStatus()
+        await sut.updateMigrationStatus()
 
         // Then
-        wait(for: [expectation], timeout: 0.5)
+        XCTAssertEqual(mockStorage.underlyingMigrationStatus, .started)
+        XCTAssertFalse(startedMigration)
     }
 
-    func test_UpdateMigrationStatus_DoesntStartMigration_IfNotReady() {
+    func test_UpdateMigrationStatus_DoesntStartMigration_IfNotReady() async {
         // Given
         setMigrationReadiness(to: false)
         mockStorage.underlyingMigrationStatus = .notStarted
 
-        let expectation = XCTestExpectation(description: "started migration")
-        expectation.isInverted = true
+        var startedMigration = false
         mockMLSService.startProteusToMLSMigrationMock = {
-            expectation.fulfill()
+            startedMigration = true
         }
 
         // When
-        sut.updateMigrationStatus()
+        await sut.updateMigrationStatus()
 
         // Then
-        wait(for: [expectation], timeout: 0.5)
-    }
-
-    // MARK: - StartMigrationIfNeeded
-
-    func test_StartMigrationIfNeeded_SetsMigrationStatus() async {
-        // Given
-        setMigrationReadiness(to: true)
-
-        // When
-        await sut.startMigrationIfNeeded()
-
-        // Then
-        mockStorage.underlyingMigrationStatus = .started
+        XCTAssertEqual(mockStorage.underlyingMigrationStatus, .notStarted)
+        XCTAssertFalse(startedMigration)
     }
 
     // MARK: - ResolveMigrationStartStatus

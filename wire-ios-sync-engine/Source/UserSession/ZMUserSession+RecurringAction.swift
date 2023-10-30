@@ -22,7 +22,9 @@ extension ZMUserSession {
 
     func updateProteusToMLSMigrationStatus(interval: TimeInterval = .oneDay) -> RecurringAction {
         return RecurringAction(id: "updateProteusToMLSMigrationStatus", interval: interval) { [weak self] in
-            self?.proteusToMLSMigrationCoordinator.updateMigrationStatus()
+            Task { [weak self] in
+                await self?.proteusToMLSMigrationCoordinator.updateMigrationStatus()
+            }
         }
     }
 

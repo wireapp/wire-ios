@@ -21,7 +21,7 @@ import WireUtilities
 import WireTransport
 
 public protocol ProteusToMLSMigrationCoordinating {
-    func updateMigrationStatus()
+    func updateMigrationStatus() async
 }
 
 public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating {
@@ -86,12 +86,10 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
 
     // MARK: - Public Interface
 
-    public func updateMigrationStatus() {
+    public func updateMigrationStatus() async {
         switch storage.migrationStatus {
         case .notStarted:
-            Task {
-                await startMigrationIfNeeded()
-            }
+            await startMigrationIfNeeded()
         case .started:
             // check if it should be finalised
             break
