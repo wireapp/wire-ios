@@ -113,10 +113,10 @@ class MLSMessageSync<Message: MLSMessage>: NSObject, ZMContextChangeTrackerSourc
         }
 
         do {
-            WireLogger.mls.info("preemptively commiting pending proposals before sending message in group (\(groupID))")
+            WireLogger.mls.info("preemptively commiting pending proposals before sending message in group (\(groupID.safeForLoggingDescription))")
             try await mlsService.commitPendingProposals(in: groupID)
         } catch {
-            WireLogger.mls.info("failed: preemptively commiting pending proposals before sending message in group (\(groupID)): \(String(describing: error))")
+            WireLogger.mls.info("failed: preemptively commiting pending proposals before sending message in group (\(groupID.safeForLoggingDescription)): \(String(describing: error))")
         }
     }
 
