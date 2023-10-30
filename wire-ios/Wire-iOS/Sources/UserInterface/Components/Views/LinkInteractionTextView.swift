@@ -115,7 +115,7 @@ extension LinkInteractionTextView: UITextViewDelegate {
         if  UIApplication.shared.canOpenURL(URL),
             interaction == .presentActions,
             !isMarkdownLink(in: characterRange),
-                Settings.isClipboardEnabled {
+            Settings.isClipboardEnabled {
             return true
         }
 
