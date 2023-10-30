@@ -104,10 +104,7 @@ final class MessageActionsViewControllerTests: XCTestCase {
 
     func testMenuActionsForLinkMessage() {
         // GIVEN
-        guard let message = MockMessageFactory.linkMessage() else {
-            XCTFail("link message shouldn't be nil")
-            return
-        }
+        let message = MockMessageFactory.linkMessage()
         // WHEN
         let actionsTitles = actionsTitlesForMessage(message: message)
         // THEN
