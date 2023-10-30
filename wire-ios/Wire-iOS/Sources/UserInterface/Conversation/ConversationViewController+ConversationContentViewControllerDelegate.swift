@@ -57,7 +57,7 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
         _ contentViewController: ConversationContentViewController,
         didTriggerResending message: ZMConversationMessage
     ) {
-        ZMUserSession.shared()?.enqueue({
+        userSession.enqueue({
             message.resend()
         })
     }

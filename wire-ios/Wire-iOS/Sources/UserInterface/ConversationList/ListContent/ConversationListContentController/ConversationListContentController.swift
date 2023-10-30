@@ -289,7 +289,7 @@ final class ConversationListContentController: UICollectionViewController, Popov
                 UIAction(title: action.title, image: nil) { _ in
                     let actionController = ConversationActionController(conversation: conversation,
                                                                         target: self,
-                                                                        sourceView: collectionView.cellForItem(at: indexPath))
+                                                                        sourceView: collectionView.cellForItem(at: indexPath), userSession: self.userSession)
 
                     actionController.handleAction(action)
                 }

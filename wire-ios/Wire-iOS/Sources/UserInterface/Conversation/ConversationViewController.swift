@@ -465,7 +465,7 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
                                                           mentions: [Mention],
                                                           replyingTo message: ZMConversationMessage?) {
         contentViewController.scrollToBottom()
-        inputBarController.sendController.sendTextMessage(text, mentions: mentions, replyingTo: message)
+        inputBarController.sendController.sendTextMessage(text, mentions: mentions, userSession: userSession, replyingTo: message)
     }
 
     func conversationInputBarViewControllerShouldBeginEditing(_ controller: ConversationInputBarViewController) -> Bool {
@@ -515,7 +515,7 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
     }
 
     func conversationInputBarViewControllerDidComposeDraft(message: DraftMessage) {
-        ZMUserSession.shared()?.enqueue {
+        userSession.enqueue {
             self.conversation.draftMessage = message
         }
     }

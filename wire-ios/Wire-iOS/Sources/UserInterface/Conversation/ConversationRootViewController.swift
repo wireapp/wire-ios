@@ -75,7 +75,7 @@ final class ConversationRootViewController: UIViewController {
         contentView.addSubview(conversationController.view)
         conversationController.didMove(toParent: self)
 
-        conversation.refreshDataIfNeeded()
+        conversation.refreshDataIfNeeded(userSession: userSession)
         configure()
     }
 
@@ -201,8 +201,8 @@ extension ZMConversation {
     /// Check if the conversation data is out of date, and in case update it. 
     /// This in an opportunistic update of the data, with an on-demand strategy.
     /// Whenever the conversation is opened by the user, we check if anything is missing.
-    fileprivate func refreshDataIfNeeded() {
-        ZMUserSession.shared()?.enqueue {
+    fileprivate func refreshDataIfNeeded(userSession: UserSession) {
+        userSession.enqueue {
             self.markToDownloadRolesIfNeeded()
         }
     }

@@ -69,7 +69,7 @@ extension ConversationContentViewController {
             assert(message.canBeDeleted)
 
             deletionDialogPresenter = DeletionDialogPresenter(sourceViewController: presentedViewController ?? self)
-            deletionDialogPresenter?.presentDeletionAlertController(forMessage: message, source: view) { deleted in
+            deletionDialogPresenter?.presentDeletionAlertController(forMessage: message, source: view, userSession: userSession) { deleted in
                 if deleted {
                     self.presentedViewController?.dismiss(animated: true)
                 }

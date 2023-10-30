@@ -229,5 +229,5 @@ extension UInt64 {
     public static func uploadFileSizeLimit(hasTeam: Bool) -> UInt64 {
         return hasTeam ? MaxTeamFileSize : MaxFileSize
     }
-
+  
 }

@@ -598,7 +598,7 @@ final class ConversationInputBarViewController: UIViewController,
 
     func postImage(_ image: MediaAsset) {
         guard let data = image.imageData else { return }
-        sendController.sendMessage(withImageData: data)
+        sendController.sendMessage(withImageData: data, userSession: userSession)
     }
 
     func deallocateUnusedInputControllers() {
@@ -624,7 +624,7 @@ final class ConversationInputBarViewController: UIViewController,
         guard let conversation = conversation as? ZMConversation else { return }
 
         notificationFeedbackGenerator.prepare()
-        ZMUserSession.shared()?.enqueue({
+        userSession.enqueue({
             do {
                 try conversation.appendKnock()
                 Analytics.shared.tagMediaActionCompleted(.ping, inConversation: conversation)
@@ -736,7 +736,12 @@ final class ConversationInputBarViewController: UIViewController,
 // MARK: - GiphySearchViewControllerDelegate
 
 extension ConversationInputBarViewController: GiphySearchViewControllerDelegate {
-    func giphySearchViewController(_ giphySearchViewController: GiphySearchViewController, didSelectImageData imageData: Data, searchTerm: String) {
+
+    func giphySearchViewController(
+        _ giphySearchViewController: GiphySearchViewController,
+        didSelectImageData imageData: Data,
+        searchTerm: String
+    ) {
         clearInputBar()
         dismiss(animated: true) {
             let messageText: String
@@ -747,7 +752,12 @@ extension ConversationInputBarViewController: GiphySearchViewControllerDelegate 
                 messageText = String(format: "giphy.conversation.message".localized, searchTerm)
             }
 
-            self.sendController.sendTextMessage(messageText, mentions: [], withImageData: imageData)
+            self.sendController.sendTextMessage(
+                messageText,
+                mentions: [],
+                userSession: self.userSession,
+                withImageData: imageData
+            )
         }
     }
 }
@@ -784,7 +794,7 @@ extension ConversationInputBarViewController: UIImagePickerControllerDelegate {
                     }
                     // In case of picking from the camera, the iOS controller is showing it's own confirmation screen.
                     parent?.dismiss(animated: true) {
-                        self.sendController.sendMessage(withImageData: jpegData, completion: nil)
+                        self.sendController.sendMessage(withImageData: jpegData, userSession: self.userSession, completion: nil)
                     }
                 } else {
                     parent?.dismiss(animated: true) {

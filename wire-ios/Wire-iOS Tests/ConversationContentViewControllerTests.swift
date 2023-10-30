@@ -66,6 +66,6 @@ final class ConversationContentViewControllerTests: XCTestCase, CoreDataFixtureT
         let message = MockMessageFactory.textMessage(withText: "test")
         sut.messageAction(actionId: .delete, for: message, view: view)
 
-        try verify(matching: sut.deletionDialogPresenter!.deleteAlert(message: mockMessage, sourceView: view))
+        try verify(matching: sut.deletionDialogPresenter!.deleteAlert(message: mockMessage, sourceView: view, userSession: userSession))
     }
 }

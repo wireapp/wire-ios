@@ -33,7 +33,7 @@ final class ConversationPreviewViewController: TintColorCorrectedViewController 
         self.conversation = conversation
         actionController = ConversationActionController(conversation: conversation,
                                                         target: presentingViewController,
-                                                        sourceView: sourceView)
+                                                        sourceView: sourceView, userSession: userSession)
 
         contentViewController = ConversationContentViewController(conversation: conversation, mediaPlaybackManager: nil, userSession: userSession)
         super.init(nibName: nil, bundle: nil)
