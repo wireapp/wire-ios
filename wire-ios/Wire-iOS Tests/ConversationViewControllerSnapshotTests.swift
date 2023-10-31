@@ -39,16 +39,19 @@ final class ConversationViewControllerSnapshotTests: ZMSnapshotTestCase, CoreDat
 
         mockConversation = createTeamGroupConversation()
         userSession = UserSessionMock(mockUser: .createSelfUser(name: "Bob"))
+      
         userSession.mockConversationList = ZMConversationList(
             allConversations: [mockConversation!],
             filteringPredicate: NSPredicate(value: true),
             moc: uiMOC,
             description: "all conversations"
         )
+
         serviceUser = coreDataFixture.createServiceUser()
 
         let mockAccount = Account(userName: "mock user", userIdentifier: UUID())
         let zClientViewController = ZClientViewController(account: mockAccount, userSession: userSession)
+
         sut = ConversationViewController(
             conversation: mockConversation,
             visibleMessage: nil,

@@ -81,10 +81,8 @@ final class UserSessionMock: UserSession {
         return nil
     }
 
-    func addConversationListObserver(
-        _ observer: WireDataModel.ZMConversationListObserver,
-        for list: ZMConversationList
-    ) -> NSObjectProtocol {
+
+    func addConversationListObserver(_ observer: WireDataModel.ZMConversationListObserver, for list: ZMConversationList) -> NSObjectProtocol {
         return NSObject()
     }
 
