@@ -38,6 +38,7 @@ final class ConversationCreationController: UIViewController {
     typealias CreateGroupName = L10n.Localizable.Conversation.Create.GroupName
 
     private let selfUser: UserType
+    let userSession: UserSession
     static let mainViewHeight: CGFloat = 56
 
     private let collectionViewController = SectionCollectionViewController()
@@ -130,12 +131,21 @@ final class ConversationCreationController: UIViewController {
 
     // MARK: - Life cycle
 
-    convenience init() {
-        self.init(preSelectedParticipants: nil, selfUser: ZMUser.selfUser())
+    convenience init(userSession: UserSession) {
+        self.init(
+            preSelectedParticipants: nil,
+            selfUser: ZMUser.selfUser(),
+            userSession: userSession
+        )
     }
 
-    init(preSelectedParticipants: UserSet?, selfUser: UserType) {
+    init(
+        preSelectedParticipants: UserSet?,
+        selfUser: UserType,
+        userSession: UserSession
+    ) {
         self.selfUser = selfUser
+        self.userSession = userSession
         self.values = ConversationCreationValues(selfUser: selfUser)
         self.preSelectedParticipants = preSelectedParticipants
         super.init(nibName: nil, bundle: nil)
@@ -248,7 +258,7 @@ final class ConversationCreationController: UIViewController {
                 values.participants = parts
             }
 
-            let participantsController = AddParticipantsViewController(context: .create(values))
+            let participantsController = AddParticipantsViewController(context: .create(values), userSession: userSession)
             participantsController.conversationCreationDelegate = self
             navigationController?.pushViewController(participantsController, animated: true)
         }
