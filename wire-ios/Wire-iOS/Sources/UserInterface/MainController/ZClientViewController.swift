@@ -347,7 +347,7 @@ final class ZClientViewController: UIViewController {
     func loadIncomingContactRequestsAndFocus(onView focus: Bool, animated: Bool) {
         currentConversation = nil
 
-        let inbox = ConnectRequestsViewController()
+        let inbox = ConnectRequestsViewController(userSession: userSession)
         pushContentViewController(inbox.wrapInNavigationController(setBackgroundColor: true), focusOnView: focus, animated: animated)
     }
 
