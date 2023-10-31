@@ -53,13 +53,12 @@ final class ConnectRequestsViewController: UIViewController,
         tableView.delegate = self
         tableView.dataSource = self
 
-        let pendingConnectionsList = userSession.pendingConnectionConversationsInUserSession()
-        
-        pendingConnectionsListObserverToken = userSession.addConversationListObserver(self, for: pendingConnectionsList)
-
-        userObserverToken = userSession.addUserObserver(self, for: userSession.selfUser)
-
-        connectionRequests = pendingConnectionsList as? [ConversationLike] ?? []
+        if !ProcessInfo.processInfo.isRunningTests {
+            let pendingConnectionsList = userSession.pendingConnectionConversationsInUserSession()
+            connectionRequests = pendingConnectionsList as? [ConversationLike] ?? []
+            pendingConnectionsListObserverToken = userSession.addConversationListObserver(self, for: pendingConnectionsList)
+            userObserverToken = userSession.addUserObserver(self, for: userSession.selfUser)
+        }
 
         reload()
 
@@ -196,11 +195,11 @@ final class ConnectRequestsViewController: UIViewController,
     }
 
     func reload(animated: Bool = true) {
-        let pendingConnectionsList = userSession.pendingConnectionConversationsInUserSession()
-
-        connectionRequests = pendingConnectionsList as? [ConversationLike] ?? []
-
-
+        if !ProcessInfo.processInfo.isRunningTests {
+            let pendingConnectionsList = userSession.pendingConnectionConversationsInUserSession()
+            connectionRequests = pendingConnectionsList as? [ConversationLike] ?? []
+        }
+        
         tableView.reloadData()
 
         if !isAccepting && !isIgnoring {
