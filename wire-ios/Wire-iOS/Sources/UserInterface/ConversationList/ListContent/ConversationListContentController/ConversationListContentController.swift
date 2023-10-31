@@ -30,7 +30,7 @@ final class ConversationListContentController: UICollectionViewController, Popov
     weak var popoverPointToView: UIView?
 
     weak var contentDelegate: ConversationListContentDelegate?
-    let listViewModel: ConversationListViewModel = ConversationListViewModel()
+    let listViewModel: ConversationListViewModel
     private var focusOnNextSelection = false
     private var animateNextSelection = false
     private weak var scrollToMessageOnNextSelection: ZMConversationMessage?
@@ -52,7 +52,7 @@ final class ConversationListContentController: UICollectionViewController, Popov
         flowLayout.minimumLineSpacing = 0
         flowLayout.minimumInteritemSpacing = 0
         flowLayout.sectionInset = .zero
-
+        self.listViewModel = ConversationListViewModel(userSession: userSession)
         super.init(collectionViewLayout: flowLayout)
 
         registerSectionHeader()

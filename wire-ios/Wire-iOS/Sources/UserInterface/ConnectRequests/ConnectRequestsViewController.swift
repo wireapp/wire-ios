@@ -20,7 +20,10 @@ import UIKit
 import WireSyncEngine
 import WireCommonComponents
 
-final class ConnectRequestsViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+final class ConnectRequestsViewController: UIViewController,
+                                           UITableViewDataSource,
+                                           UITableViewDelegate {
+
     var connectionRequests: [ConversationLike] = []
 
     private var userObserverToken: Any?
@@ -29,6 +32,16 @@ final class ConnectRequestsViewController: UIViewController, UITableViewDataSour
     private var lastLayoutBounds = CGRect.zero
     private var isAccepting = false
     private var isIgnoring = false
+    private let userSession: UserSession
+
+    init(userSession: UserSession) {
+        self.userSession = userSession
+        super.init()
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 
     override func loadView() {
         view = tableView
@@ -40,17 +53,13 @@ final class ConnectRequestsViewController: UIViewController, UITableViewDataSour
         tableView.delegate = self
         tableView.dataSource = self
 
-        if let userSession = ZMUserSession.shared() {
-            let pendingConnectionsList = ZMConversationList.pendingConnectionConversations(inUserSession: userSession)
+        let pendingConnectionsList = userSession.pendingConnectionConversationsInUserSession()
+        
+        pendingConnectionsListObserverToken = userSession.addConversationListObserver(self, for: pendingConnectionsList)
 
-            pendingConnectionsListObserverToken = ConversationListChangeInfo.add(observer: self,
-                                                                                 for: pendingConnectionsList,
-                                                                                 userSession: userSession)
+        userObserverToken = userSession.addUserObserver(self, for: userSession.selfUser)
 
-            userObserverToken = UserChangeInfo.add(observer: self, for: userSession.providedSelfUser, in: userSession)
-
-            connectionRequests = pendingConnectionsList as? [ConversationLike] ?? []
-        }
+        connectionRequests = pendingConnectionsList as? [ConversationLike] ?? []
 
         reload()
 
@@ -187,11 +196,10 @@ final class ConnectRequestsViewController: UIViewController, UITableViewDataSour
     }
 
     func reload(animated: Bool = true) {
-        if let userSession = ZMUserSession.shared() {
-            let pendingConnectionsList = ZMConversationList.pendingConnectionConversations(inUserSession: userSession)
+        let pendingConnectionsList = userSession.pendingConnectionConversationsInUserSession()
 
-            connectionRequests = pendingConnectionsList as? [ConversationLike] ?? []
-        }
+        connectionRequests = pendingConnectionsList as? [ConversationLike] ?? []
+
 
         tableView.reloadData()
 
