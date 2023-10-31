@@ -21,6 +21,9 @@ import LocalAuthentication
 @testable import Wire
 
 final class UserSessionMock: UserSession {
+
+    var networkState: ZMNetworkState
+    
     typealias Preference = AppLockPasscodePreference
     typealias Callback = (AppLockModule.AuthenticationResult, LAContext) -> Void
 
@@ -106,7 +109,8 @@ final class UserSessionMock: UserSession {
 
     var maxAudioMessageLength: TimeInterval = 1500 // 25 minutes (25 * 60.0)
     var maxUploadFileSize: UInt64 = 26214400 // 25 megabytes (25 * 1024 * 1024)
-
+    var maxVideoLength: TimeInterval = 240 // 4 minutes (4.0 * 60.0)
+    
     var shouldNotifyUserOfDisabledAppLock = false
     var isNotificationContentHidden = false
     var encryptMessagesAtRest = false
@@ -222,5 +226,19 @@ final class UserSessionMock: UserSession {
     ) -> SecurityClassification {
         return .none
     }
+
+    func proxiedRequest(
+        path: String,
+        method: ZMTransportRequestMethod,
+        type: WireSyncEngine.ProxiedRequestType,
+        callback: WireSyncEngine.ProxyRequestCallback?
+    ) -> WireSyncEngine.ProxyRequest {
+        return ProxyRequest(type: type, path: path, method: method, callback: callback)
+    }
+
+    func cancelProxiedRequest(_ request: WireSyncEngine.ProxyRequest) {
+
+    }
+
 
 }
