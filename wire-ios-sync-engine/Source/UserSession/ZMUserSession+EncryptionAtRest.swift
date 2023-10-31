@@ -124,17 +124,6 @@ extension ZMUserSession: UserSessionEncryptionAtRestInterface {
         }
     }
 
-    /// Unlock the database using the given authentication context.
-
-    public func unlockDatabase(with context: LAContext) throws {
-        try earService.unlockDatabase(context: context)
-
-        DatabaseEncryptionLockNotification(databaseIsEncrypted: false).post(in: managedObjectContext.notificationContext)
-
-        syncManagedObjectContext.performGroupedBlock {
-            self.processEvents()
-        }
-    }
 
 }
 
