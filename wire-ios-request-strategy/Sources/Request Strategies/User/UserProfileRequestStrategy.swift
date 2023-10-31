@@ -161,7 +161,7 @@ extension UserProfileRequestStrategy: ZMContextChangeTracker {
 
 extension UserProfileRequestStrategy: ZMEventConsumer {
 
-    public func processEvents(_ events: [ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) async {
+    public func processEvents(_ events: [ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) {
         for event in events {
             switch event.type {
             case .userUpdate:

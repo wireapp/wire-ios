@@ -234,7 +234,7 @@ extension UserPropertyRequestStrategy: ZMEventConsumer {
     static let UpdateEventKey = "key"
     static let UpdateEventValue = "value"
 
-    public func processEvents(_ events: [ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) async {
+    public func processEvents(_ events: [ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) {
         for event in events {
             guard event.type.isOne(of: [ZMUpdateEventType.userPropertiesSet, ZMUpdateEventType.userPropertiesDelete]),
                   let keyChanged = event.payload[UserPropertyRequestStrategy.UpdateEventKey] as? String,

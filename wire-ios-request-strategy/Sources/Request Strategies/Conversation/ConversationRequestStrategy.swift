@@ -242,7 +242,7 @@ extension ConversationRequestStrategy: ZMEventConsumer {
         _ events: [ZMUpdateEvent],
         liveEvents: Bool,
         prefetchResult: ZMFetchRequestBatchResult?
-    ) async {
+    ) {
         conversationEventProcessor.processConversationEvents(events)
     }
 }
@@ -382,10 +382,7 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
         }
 
         if let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil) {
-            // FIXME: [F] 
-            Task {
-                await processEvents([event], liveEvents: true, prefetchResult: nil)
-            }
+            processEvents([event], liveEvents: true, prefetchResult: nil)
         }
 
         return false

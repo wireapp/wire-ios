@@ -64,7 +64,7 @@ extension TerminateFederationRequestStrategy: ZMEventConsumer {
         _ events: [ZMUpdateEvent],
         liveEvents: Bool,
         prefetchResult: ZMFetchRequestBatchResult?
-    ) async {
+    ) {
         events.forEach(processEvent)
     }
 
