@@ -1238,7 +1238,6 @@
 		EE0768EE2A9FB99700BA47A3 /* EmojiRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0768ED2A9FB99700BA47A3 /* EmojiRepository.swift */; };
 		EE08ADED29C8862800B6C14D /* SwitchBackendView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE08ADEC29C8862800B6C14D /* SwitchBackendView.swift */; };
 		EE08ADEF29C8863000B6C14D /* SwitchBackendViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE08ADEE29C8863000B6C14D /* SwitchBackendViewModel.swift */; };
-		EE09DE6025B24B2000B515F0 /* AppLockModuleRouterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE09DE5E25B24B2000B515F0 /* AppLockModuleRouterTests.swift */; };
 		EE0CAEB42AB048BB00BD2DB7 /* Emoji.strings in Resources */ = {isa = PBXBuildFile; fileRef = EE0CAEB22AB048BB00BD2DB7 /* Emoji.strings */; };
 		EE0DE1CD21B172BF00CF3C4E /* ConversationCreateGuestsSectionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0DE1CC21B172BF00CF3C4E /* ConversationCreateGuestsSectionController.swift */; };
 		EE118C012031D1C300BC68D6 /* MarkdownTextViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE118BFF2031D17000BC68D6 /* MarkdownTextViewTests.swift */; };
@@ -3251,7 +3250,6 @@
 		EE0768ED2A9FB99700BA47A3 /* EmojiRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmojiRepository.swift; sourceTree = "<group>"; };
 		EE08ADEC29C8862800B6C14D /* SwitchBackendView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwitchBackendView.swift; sourceTree = "<group>"; };
 		EE08ADEE29C8863000B6C14D /* SwitchBackendViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwitchBackendViewModel.swift; sourceTree = "<group>"; };
-		EE09DE5E25B24B2000B515F0 /* AppLockModuleRouterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockModuleRouterTests.swift; sourceTree = "<group>"; };
 		EE0CAEB32AB048BB00BD2DB7 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/Emoji.strings; sourceTree = "<group>"; };
 		EE0DE1CC21B172BF00CF3C4E /* ConversationCreateGuestsSectionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationCreateGuestsSectionController.swift; sourceTree = "<group>"; };
 		EE118BFF2031D17000BC68D6 /* MarkdownTextViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownTextViewTests.swift; sourceTree = "<group>"; };
@@ -7397,7 +7395,6 @@
 				EE7F465525B0F6EB001B3EE4 /* AppLockModuleInteractorTests.swift */,
 				EEA2E56F25B2385D00E726C3 /* AppLockModulePresenterTests.swift */,
 				EEA2E57225B23A2B00E726C3 /* AppLockModuleViewTests.swift */,
-				EE09DE5E25B24B2000B515F0 /* AppLockModuleRouterTests.swift */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -9958,7 +9955,6 @@
 				EF2A8DEF214AAB13002C9058 /* ContactsCellSnapshotTests.swift in Sources */,
 				D32D8D2F2A1364CC00482788 /* MessageActionsViewControllerTests.swift in Sources */,
 				EF25F8871FC57F320040C3CC /* ValidatedTextFieldTests.swift in Sources */,
-				EE09DE6025B24B2000B515F0 /* AppLockModuleRouterTests.swift in Sources */,
 				5E2B13E820E67EA7002F27E2 /* VerticalColumnCollectionViewLayoutTests.swift in Sources */,
 				BF2A74751CEB595E002608BF /* AudioButtonOverlayTests.swift in Sources */,
 				5E769C5621AD8ABD00785EB7 /* DismissalTests.swift in Sources */,
