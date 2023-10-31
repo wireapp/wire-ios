@@ -235,11 +235,10 @@ NSUInteger const ZMMissingUpdateEventsTranscoderListPageSize = 500;
     return @[self.listPaginator];
 }
 
-- (void)processEvents:(nonnull NSArray<ZMUpdateEvent *> *)events liveEvents:(BOOL)liveEvents prefetchResult:(ZMFetchRequestBatchResult * _Nullable)prefetchResult completion:(void (^ _Nonnull)(void))completionBlock
+- (void)processEvents:(nonnull NSArray<ZMUpdateEvent *> *)events liveEvents:(BOOL)liveEvents prefetchResult:(ZMFetchRequestBatchResult * _Nullable)prefetchResult
 {
     
     if (!liveEvents) {
-        completionBlock();
         return;
     }
     
@@ -248,7 +247,6 @@ NSUInteger const ZMMissingUpdateEventsTranscoderListPageSize = 500;
             self.lastUpdateEventID = event.uuid;
         }
     }
-    completionBlock();
 }
 
 - (ZMTransportRequest *)nextRequestIfAllowedForAPIVersion:(APIVersion)apiVersion

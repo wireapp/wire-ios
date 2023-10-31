@@ -652,13 +652,7 @@ static NSString * const LastUpdateEventIDStoreKey = @"LastUpdateEventID";
 // MARK: - Helpers
 
 - (void)internalTestProcessEvents:(NSArray<ZMUpdateEvent *>*)events liveEvents:(BOOL)liveEvents {
-    XCTestExpectation * exp = [self expectationWithDescription:@"waiting for process events"];
-    [self.sut processEvents:events liveEvents:liveEvents prefetchResult:nil completion:^{
-        [exp fulfill];
-    }];
-
-    [self waitForExpectations:@[exp] timeout:0.5];
-
+    [self.sut processEvents:events liveEvents:liveEvents prefetchResult:nil];
 }
 
 @end

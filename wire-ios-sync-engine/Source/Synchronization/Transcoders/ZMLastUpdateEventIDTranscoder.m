@@ -103,7 +103,7 @@
     return @[];
 }
 
-- (void)processEvents:(nonnull NSArray<ZMUpdateEvent *> *)events liveEvents:(BOOL)liveEvents prefetchResult:(ZMFetchRequestBatchResult * _Nullable)prefetchResult completion:(void (^ _Nonnull)(void))completionBlock
+- (void)processEvents:(nonnull NSArray<ZMUpdateEvent *> *)events liveEvents:(BOOL)liveEvents prefetchResult:(ZMFetchRequestBatchResult * _Nullable)prefetchResult
 {
     // no op
 }
