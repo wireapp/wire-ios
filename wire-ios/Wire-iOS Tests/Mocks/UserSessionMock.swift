@@ -78,7 +78,7 @@ final class UserSessionMock: UserSession {
     var needsToNotifyUser: Bool = false
 
     func open() throws {
-         openApp.append(())
+        openApp.append(())
     }
 
     func evaluateAuthentication(
@@ -219,6 +219,21 @@ final class UserSessionMock: UserSession {
         conversationDomain: String?
     ) -> SecurityClassification {
         return .none
+    }
+
+    var networkState: ZMNetworkState = .offline
+
+    func proxiedRequest(
+        path: String,
+        method: ZMTransportRequestMethod,
+        type: WireSyncEngine.ProxiedRequestType,
+        callback: WireSyncEngine.ProxyRequestCallback?
+    ) -> ProxyRequest {
+        return ProxyRequest(type: type, path: path, method: method, callback: callback)
+    }
+
+    func cancelProxiedRequest(_ request: ProxyRequest) {
+
     }
 
 }

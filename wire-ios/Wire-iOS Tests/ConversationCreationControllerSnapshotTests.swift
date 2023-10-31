@@ -23,21 +23,30 @@ import XCTest
 final class ConversationCreationControllerSnapshotTests: ZMSnapshotTestCase {
 
     var sut: ConversationCreationController!
+    var userSession: UserSessionMock!
 
     override func setUp() {
         super.setUp()
         accentColor = .violet
+        userSession = UserSessionMock()
     }
 
     override func tearDown() {
         sut = nil
+        userSession = nil
         super.tearDown()
     }
 
     private func createSut(isTeamMember: Bool) {
-        let mockSelfUser = MockUserType.createSelfUser(name: "Alice", inTeam:
-            isTeamMember ? UUID() : nil)
-        sut = ConversationCreationController(preSelectedParticipants: nil, selfUser: mockSelfUser)
+        let mockSelfUser = MockUserType.createSelfUser(
+            name: "Alice",
+            inTeam: isTeamMember ? UUID() : nil
+        )
+        sut = ConversationCreationController(
+            preSelectedParticipants: nil,
+            selfUser: mockSelfUser,
+            userSession: userSession
+        )
     }
 
     func testForEditingTextField() {

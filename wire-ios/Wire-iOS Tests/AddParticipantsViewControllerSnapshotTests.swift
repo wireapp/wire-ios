@@ -45,15 +45,18 @@ final class AddParticipantsViewControllerSnapshotTests: ZMSnapshotTestCase, Core
     var coreDataFixture: CoreDataFixture!
 
     var sut: AddParticipantsViewController!
+    var userSession: UserSessionMock!
 
     override func setUp() {
         super.setUp()
+        userSession = UserSessionMock()
         coreDataFixture = CoreDataFixture()
     }
 
     override func tearDown() {
         sut = nil
         SelfUser.provider = nil
+        userSession = nil
 
         coreDataFixture = nil
 
@@ -61,15 +64,26 @@ final class AddParticipantsViewControllerSnapshotTests: ZMSnapshotTestCase, Core
     }
 
     func testForEveryOneIsHere() {
-        let newValues = ConversationCreationValues(name: "", participants: [], allowGuests: true, selfUser: selfUser)
+        let newValues = ConversationCreationValues(
+            name: "",
+            participants: [],
+            allowGuests: true,
+            selfUser: selfUser
+        )
 
-        sut = AddParticipantsViewController(context: .create(newValues))
+        sut = AddParticipantsViewController(
+            context: .create(newValues),
+            userSession: userSession
+        )
         verify(matching: sut)
     }
 
     func testForAddParticipantsButtonIsShown() {
         let conversation = createGroupConversation()
-        sut = AddParticipantsViewController(context: .add(conversation))
+        sut = AddParticipantsViewController(
+            context: .add(conversation),
+            userSession: userSession
+        )
         let user = createUser(name: "Bill")
         sut.userSelection.add(user)
         sut.userSelection(UserSelection(), didAddUser: user)
@@ -86,7 +100,10 @@ final class AddParticipantsViewControllerSnapshotTests: ZMSnapshotTestCase, Core
         mockConversation.teamType = MockTeam()
         mockConversation.allowServices = true
 
-        sut = AddParticipantsViewController(context: .add(mockConversation))
+        sut = AddParticipantsViewController(
+            context: .add(mockConversation),
+            userSession: userSession
+        )
 
         // THEN
         verify(matching: sut)
