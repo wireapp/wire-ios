@@ -32,11 +32,11 @@ final class ConnectRequestsViewController: UIViewController,
     private var lastLayoutBounds = CGRect.zero
     private var isAccepting = false
     private var isIgnoring = false
-    private let userSession: UserSession
+    let userSession: UserSession
 
     init(userSession: UserSession) {
         self.userSession = userSession
-        super.init()
+        super.init(nibName: nil, bundle: nil)
     }
 
     required init?(coder: NSCoder) {
