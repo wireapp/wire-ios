@@ -34,6 +34,7 @@ final class AppLockChangeWarningViewController: UIViewController {
     weak var delegate: AppLockChangeWarningViewControllerDelegate?
 
     private var isAppLockActive: Bool
+    private let userSession: UserSession
 
     private let contentView: UIView = UIView()
 
@@ -71,8 +72,9 @@ final class AppLockChangeWarningViewController: UIViewController {
 
     // MARK: - Life cycle
 
-    init(isAppLockActive: Bool) {
+    init(isAppLockActive: Bool, userSession: UserSession) {
         self.isAppLockActive = isAppLockActive
+        self.userSession = userSession
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -136,11 +138,9 @@ final class AppLockChangeWarningViewController: UIViewController {
 
     @objc
     func confirmButtonTapped(sender: AnyObject?) {
-        if let session = ZMUserSession.shared() {
-            session.perform {
-                session.appLockController.needsToNotifyUser = false
+            userSession.perform {
+                self.userSession.shouldNotifyUserOfDisabledAppLock = false
             }
-        }
 
         dismiss(animated: true, completion: delegate?.appLockChangeWarningViewControllerDidDismiss)
     }

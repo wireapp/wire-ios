@@ -49,7 +49,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
         createSubviews()
 
         if let conversation = conversation as? ZMConversation {
-            ZMUserSession.shared()?.perform {
+            userSession.perform {
                 conversation.refetchParticipantsIfNeeded()
             }
 
@@ -77,13 +77,13 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
 
         [collectionView, footerView].prepareForLayout()
         NSLayoutConstraint.activate([
-          collectionView.topAnchor.constraint(equalTo: view.topAnchor),
-          collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-          collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-          collectionView.bottomAnchor.constraint(equalTo: footerView.topAnchor),
-          footerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-          footerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-          footerView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            collectionView.topAnchor.constraint(equalTo: view.topAnchor),
+            collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            collectionView.bottomAnchor.constraint(equalTo: footerView.topAnchor),
+            footerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            footerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            footerView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
 
         collectionViewController.collectionView = collectionView
@@ -149,19 +149,32 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
                         totalParticipantsCount: participants.count,
                         clipSection: true,
                         maxParticipants: admins.count - 1,
-                        maxDisplayedParticipants: Int.ConversationParticipants.maxNumberOfDisplayed
+                        maxDisplayedParticipants: Int.ConversationParticipants.maxNumberOfDisplayed,
+                        userSession: userSession
                     )
                     sections.append(adminSection)
                 } else {
-                    let adminSection = ParticipantsSectionController(participants: admins,
-                                                                     conversationRole: .admin, conversation: conversation,
-                                                                     delegate: self, totalParticipantsCount: participants.count, clipSection: false)
+                    let adminSection = ParticipantsSectionController(
+                        participants: admins,
+                        conversationRole: .admin,
+                        conversation: conversation,
+                        delegate: self,
+                        totalParticipantsCount: participants.count,
+                        clipSection: false,
+                        userSession: userSession
+                    )
                     sections.append(adminSection)
                     if members.count <= (Int.ConversationParticipants.maxNumberWithoutTruncation - admins.count) { // Don't display the ShowAll button
                         if !members.isEmpty {
-                            let memberSection = ParticipantsSectionController(participants: members,
-                                                                              conversationRole: .member, conversation: conversation,
-                                                                              delegate: self, totalParticipantsCount: participants.count, clipSection: false)
+                            let memberSection = ParticipantsSectionController(
+                                participants: members,
+                                conversationRole: .member,
+                                conversation: conversation,
+                                delegate: self,
+                                totalParticipantsCount: participants.count,
+                                clipSection: false,
+                                userSession: userSession
+                            )
                             sections.append(memberSection)
                         }
                     } else { // Display the ShowAll button after the second section
@@ -174,16 +187,22 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
                             totalParticipantsCount: participants.count,
                             clipSection: true,
                             maxParticipants: maxParticipants,
-                            maxDisplayedParticipants: maxParticipants - 2
+                            maxDisplayedParticipants: maxParticipants - 2,
+                            userSession: userSession
                         )
                         sections.append(memberSection)
                     }
                 }
             } else { // Display only one section without the ShowAll button
-                let adminSection = ParticipantsSectionController(participants: admins,
-                                                                 conversationRole: .admin, conversation: conversation,
-
-                                                                 delegate: self, totalParticipantsCount: participants.count, clipSection: true)
+                let adminSection = ParticipantsSectionController(
+                    participants: admins,
+                    conversationRole: .admin,
+                    conversation: conversation,
+                    delegate: self,
+                    totalParticipantsCount: participants.count,
+                    clipSection: true,
+                    userSession: userSession
+                )
                 sections.append(adminSection)
             }
         }
@@ -218,21 +237,21 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
 
     func conversationDidChange(_ changeInfo: ConversationChangeInfo) {
         guard let conversation = conversation as? ZMConversation,
-            changeInfo.participantsChanged ||
-            changeInfo.nameChanged ||
-            changeInfo.allowGuestsChanged ||
-            changeInfo.allowServicesChanged ||
-            changeInfo.destructionTimeoutChanged ||
-            changeInfo.mutedMessageTypesChanged ||
-            changeInfo.legalHoldStatusChanged
-            else { return }
+              changeInfo.participantsChanged ||
+                changeInfo.nameChanged ||
+                changeInfo.allowGuestsChanged ||
+                changeInfo.allowServicesChanged ||
+                changeInfo.destructionTimeoutChanged ||
+                changeInfo.mutedMessageTypesChanged ||
+                changeInfo.legalHoldStatusChanged
+        else { return }
 
         updateLegalHoldIndicator()
         collectionViewController.sections = computeVisibleSections()
         footerView.update(for: conversation)
 
         if changeInfo.participantsChanged, !conversation.isSelfAnActiveMember {
-           navigationController?.popToRootViewController(animated: true)
+            navigationController?.popToRootViewController(animated: true)
         }
     }
 
@@ -261,7 +280,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
 
         let detailsViewController = GroupParticipantsDetailViewController(
             selectedParticipants: selectedUsers,
-            conversation: conversation, 
+            conversation: conversation,
             userSession: userSession
         )
 
