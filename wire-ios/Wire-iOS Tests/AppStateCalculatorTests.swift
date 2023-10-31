@@ -124,7 +124,7 @@ final class AppStateCalculatorTests: XCTestCase {
         sut.sessionManagerDidReportLockChange(forSession: userSession)
 
         // THEN
-        XCTAssertEqual(sut.appState, .locked)
+        XCTAssertEqual(sut.appState, .locked(userSession))
         XCTAssertTrue(delegate.wasNotified)
     }
 
@@ -200,7 +200,7 @@ final class AppStateCalculatorTests: XCTestCase {
         sut.sessionManagerDidReportLockChange(forSession: userSession)
 
         // THEN
-        XCTAssertEqual(sut.appState, .locked)
+        XCTAssertEqual(sut.appState, .locked(userSession))
         XCTAssertTrue(delegate.wasNotified)
     }
 

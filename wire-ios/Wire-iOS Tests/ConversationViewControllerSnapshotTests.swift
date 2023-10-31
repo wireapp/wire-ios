@@ -41,7 +41,9 @@ final class ConversationViewControllerSnapshotTests: ZMSnapshotTestCase, CoreDat
         userSession = UserSessionMock(mockUser: .createSelfUser(name: "Bob"))
         userSession.mockConversationList = ZMConversationList(
             allConversations: [mockConversation!],
-            filteringPredicate: NSPredicate(value: true),
+            filteringPredicate: NSPredicate(
+                value: true
+            ),
             moc: uiMOC,
             description: "all conversations"
         )
