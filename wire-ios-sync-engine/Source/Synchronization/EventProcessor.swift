@@ -26,6 +26,8 @@ extension NSNotification.Name {
 
 actor EventProcessor: UpdateEventProcessor {
 
+    
+
     private static let logger = Logger(subsystem: "VoIP Push", category: "EventProcessor")
 
     let syncContext: NSManagedObjectContext
