@@ -658,7 +658,7 @@ final class ConversationInputBarViewController: UIViewController,
                 let conversation = conversation as? ZMConversation else { return }
 
         inputBar.textView.resignFirstResponder()
-        let giphySearchViewController = GiphySearchViewController(searchTerm: "", conversation: conversation)
+        let giphySearchViewController = GiphySearchViewController(searchTerm: "", conversation: conversation, userSession: userSession)
         giphySearchViewController.delegate = self
         ZClientViewController.shared?.present(giphySearchViewController.wrapInsideNavigationController(), animated: true)
     }

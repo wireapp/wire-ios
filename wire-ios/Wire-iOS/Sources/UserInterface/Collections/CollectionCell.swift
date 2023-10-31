@@ -23,6 +23,7 @@ import WireCommonComponents
 
 protocol CollectionCellDelegate: AnyObject {
     func collectionCell(_ cell: CollectionCell, performAction: MessageAction)
+    func addMessageObserver(_ observer: ZMMessageObserver, for message: ZMConversationMessage) -> NSObjectProtocol
 }
 
 protocol CollectionCellMessageChangeDelegate: AnyObject {
@@ -40,8 +41,8 @@ class CollectionCell: UICollectionViewCell {
     var message: ZMConversationMessage? = .none {
         didSet {
             self.messageObserverToken = nil
-            if let userSession = ZMUserSession.shared(), let newMessage = message {
-                self.messageObserverToken = MessageChangeInfo.add(observer: self, for: newMessage, userSession: userSession)
+            if let newMessage = message {
+                self.messageObserverToken = delegate?.addMessageObserver(self, for: newMessage)
             }
 
             actionController = message.map {

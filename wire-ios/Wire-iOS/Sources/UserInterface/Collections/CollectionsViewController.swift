@@ -752,4 +752,11 @@ extension CollectionsViewController: CollectionCellDelegate {
         }
     }
 
+    func addMessageObserver(
+        _ observer: ZMMessageObserver,
+        for message: ZMConversationMessage
+    ) -> NSObjectProtocol {
+        return userSession.addMessageObserver(observer, for: message)
+    }
+
 }
