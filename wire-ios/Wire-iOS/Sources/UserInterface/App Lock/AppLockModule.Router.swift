@@ -27,6 +27,11 @@ extension AppLockModule {
         // MARK: - Properties
 
         weak var view: View!
+        let userSession: UserSession
+
+        init(userSession: UserSession) {
+            self.userSession = userSession
+        }
 
     }
 
@@ -63,7 +68,7 @@ extension AppLockModule.Router: AppLockRouterPresenterInterface {
     private func presentInputPasscodeModule() {
         // TODO: [John] Clean this up.
         // TODO: [John] Inject these arguments.
-        let unlockViewController = UnlockViewController(selfUser: ZMUser.selfUser(), userSession: ZMUserSession.shared())
+        let unlockViewController = UnlockViewController(selfUser: ZMUser.selfUser(), userSession: userSession)
         let keyboardAvoidingViewController = KeyboardAvoidingViewController(viewController: unlockViewController)
         let navigationController = keyboardAvoidingViewController.wrapInNavigationController(navigationBarClass: TransparentNavigationBar.self)
         navigationController.modalPresentationStyle = .fullScreen
@@ -72,7 +77,7 @@ extension AppLockModule.Router: AppLockRouterPresenterInterface {
     }
 
     private func presentWarningModule() {
-        let warningViewController = AppLockChangeWarningViewController(isAppLockActive: true)
+        let warningViewController = AppLockChangeWarningViewController(isAppLockActive: true, userSession: userSession)
         warningViewController.modalPresentationStyle = .fullScreen
         warningViewController.delegate = view
         view.present(warningViewController, animated: false)
