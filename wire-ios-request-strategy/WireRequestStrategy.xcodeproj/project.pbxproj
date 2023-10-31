@@ -94,6 +94,9 @@
 		1623F8DC2AE7FD54004F0319 /* APIProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1623F8DB2AE7FD54004F0319 /* APIProvider.swift */; };
 		1623F8DE2AE945E2004F0319 /* MessageAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1623F8DD2AE945E2004F0319 /* MessageAPI.swift */; };
 		1623F8E02AEAAF0E004F0319 /* MessageDependencyResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1623F8DF2AEAAF0E004F0319 /* MessageDependencyResolver.swift */; };
+		1623F8EC2AEBACDE004F0319 /* AutoMockable.stencil in Resources */ = {isa = PBXBuildFile; fileRef = 1623F8EA2AEBACDE004F0319 /* AutoMockable.stencil */; };
+		1623F8ED2AEBACDE004F0319 /* config.yml in Resources */ = {isa = PBXBuildFile; fileRef = 1623F8EB2AEBACDE004F0319 /* config.yml */; };
+		1623F8F12AEBAF7E004F0319 /* AutoMockable.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1623F8EF2AEBAEEB004F0319 /* AutoMockable.generated.swift */; };
 		16367F1E26FDB0740028AF8B /* Payload+Connection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16367F1D26FDB0740028AF8B /* Payload+Connection.swift */; };
 		16367F2626FDB4720028AF8B /* ConnectionRequestStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16367F2526FDB4720028AF8B /* ConnectionRequestStrategy.swift */; };
 		164D00742225624E00A8F264 /* ZMImagePreprocessingTrackerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 16229485221EBB8000A98679 /* ZMImagePreprocessingTrackerTests.m */; };
@@ -522,6 +525,9 @@
 		1623F8DB2AE7FD54004F0319 /* APIProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIProvider.swift; sourceTree = "<group>"; };
 		1623F8DD2AE945E2004F0319 /* MessageAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageAPI.swift; sourceTree = "<group>"; };
 		1623F8DF2AEAAF0E004F0319 /* MessageDependencyResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageDependencyResolver.swift; sourceTree = "<group>"; };
+		1623F8EA2AEBACDE004F0319 /* AutoMockable.stencil */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AutoMockable.stencil; sourceTree = "<group>"; };
+		1623F8EB2AEBACDE004F0319 /* config.yml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.yaml; path = config.yml; sourceTree = "<group>"; };
+		1623F8EF2AEBAEEB004F0319 /* AutoMockable.generated.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AutoMockable.generated.swift; sourceTree = "<group>"; };
 		16367F1D26FDB0740028AF8B /* Payload+Connection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Payload+Connection.swift"; sourceTree = "<group>"; };
 		16367F2526FDB4720028AF8B /* ConnectionRequestStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionRequestStrategy.swift; sourceTree = "<group>"; };
 		164D007522256C6E00A8F264 /* AssetV3UploadRequestStrategyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetV3UploadRequestStrategyTests.swift; sourceTree = "<group>"; };
@@ -1049,6 +1055,24 @@
 			path = APIs;
 			sourceTree = "<group>";
 		};
+		1623F8E92AEBACDE004F0319 /* sourcery */ = {
+			isa = PBXGroup;
+			children = (
+				1623F8EE2AEBAEEB004F0319 /* generated */,
+				1623F8EA2AEBACDE004F0319 /* AutoMockable.stencil */,
+				1623F8EB2AEBACDE004F0319 /* config.yml */,
+			);
+			path = sourcery;
+			sourceTree = "<group>";
+		};
+		1623F8EE2AEBAEEB004F0319 /* generated */ = {
+			isa = PBXGroup;
+			children = (
+				1623F8EF2AEBAEEB004F0319 /* AutoMockable.generated.swift */,
+			);
+			path = generated;
+			sourceTree = "<group>";
+		};
 		16367F2926FDB5040028AF8B /* Connection */ = {
 			isa = PBXGroup;
 			children = (
@@ -1078,6 +1102,7 @@
 		166901601D707509000FE4AF = {
 			isa = PBXGroup;
 			children = (
+				1623F8E92AEBACDE004F0319 /* sourcery */,
 				166901841D7075D7000FE4AF /* Resources */,
 				1669016C1D707509000FE4AF /* Sources */,
 				166901781D707509000FE4AF /* Tests */,
@@ -1885,8 +1910,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1623F8ED2AEBACDE004F0319 /* config.yml in Resources */,
 				0649D15524F64335001DDC78 /* Push.strings in Resources */,
 				0649D15424F64335001DDC78 /* Push.stringsdict in Resources */,
+				1623F8EC2AEBACDE004F0319 /* AutoMockable.stencil in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2198,6 +2225,7 @@
 				EE88079F2AC4288200278E3C /* MLSMessageSendingStatusPayloadProcessorTests.swift in Sources */,
 				0693114C24F79A0E00D14DF5 /* ZMLocalNotificationSetTests.swift in Sources */,
 				EEAC16D6281AEB0200B7A34D /* CallEventContentTests.swift in Sources */,
+				1623F8F12AEBAF7E004F0319 /* AutoMockable.generated.swift in Sources */,
 				EE82318927D22D79008CD77B /* String+Random.swift in Sources */,
 				1621D2651D75C750007108C2 /* ZMLocallyModifiedObjectSetTests.m in Sources */,
 				06474DA624B4B1EA002C695D /* EventDecoderTest.swift in Sources */,
