@@ -259,7 +259,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
                     shouldPerformAction action: GroupDetailsFooterView.Action) {
         switch action {
         case .invite:
-            let addParticipantsViewController = AddParticipantsViewController(conversation: conversation)
+            let addParticipantsViewController = AddParticipantsViewController(conversation: conversation, userSession: userSession)
             let navigationController = addParticipantsViewController.wrapInNavigationController(setBackgroundColor: true)
             navigationController.modalPresentationStyle = .currentContext
 

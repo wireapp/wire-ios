@@ -108,7 +108,7 @@ extension StartUIViewController: SearchResultsViewControllerDelegate {
     }
 
     func openCreateGroupController() {
-        let controller = ConversationCreationController()
+        let controller = ConversationCreationController(userSession: userSession)
         controller.delegate = self
 
         if self.traitCollection.horizontalSizeClass == .compact {

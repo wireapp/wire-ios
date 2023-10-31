@@ -19,6 +19,7 @@
 import Foundation
 import UIKit
 import WireDataModel
+import WireSyncEngine
 import WireCommonComponents
 
 extension ConversationLike where Self: SwiftConversationLike {
@@ -113,6 +114,8 @@ final class AddParticipantsViewController: UIViewController, SpinnerCapable {
     private let backButtonDescriptor = BackButtonDescription()
     private let bottomMargin: CGFloat = 24
 
+    let userSession: UserSession
+
     weak var conversationCreationDelegate: AddParticipantsConversationCreationDelegate?
 
     private var viewModel: AddParticipantsViewModel {
@@ -132,8 +135,8 @@ final class AddParticipantsViewController: UIViewController, SpinnerCapable {
         fatalError("init(coder:) has not been implemented")
     }
 
-    convenience init(conversation: GroupDetailsConversationType) {
-        self.init(context: .add(conversation))
+    convenience init(conversation: GroupDetailsConversationType, userSession: UserSession) {
+        self.init(context: .add(conversation), userSession: userSession)
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -145,9 +148,12 @@ final class AddParticipantsViewController: UIViewController, SpinnerCapable {
         return wr_supportedInterfaceOrientations
     }
 
-    init(context: Context,
-         isFederationEnabled: Bool = BackendInfo.isFederationEnabled) {
-
+    init(
+        context: Context,
+        isFederationEnabled: Bool = BackendInfo.isFederationEnabled,
+        userSession: UserSession
+    ) {
+        self.userSession = userSession
         viewModel = AddParticipantsViewModel(with: context)
 
         collectionViewLayout = UICollectionViewFlowLayout()
@@ -397,7 +403,7 @@ final class AddParticipantsViewController: UIViewController, SpinnerCapable {
     private func addSelectedParticipants(to conversation: GroupDetailsConversationType) {
         let selectedUsers = self.userSelection.users
 
-        (conversation as? ZMConversation)?.addOrShowError(participants: Array(selectedUsers))
+        (conversation as? ZMConversation)?.addOrShowError(participants: Array(selectedUsers), userSession: userSession)
     }
 }
 

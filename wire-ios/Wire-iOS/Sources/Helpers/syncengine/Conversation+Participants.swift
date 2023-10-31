@@ -37,9 +37,8 @@ extension ZMConversation {
         return maxParticipants - 1
     }
 
-    func addOrShowError(participants: [UserType]) {
-        guard let session = ZMUserSession.shared(),
-                session.networkState != .offline else {
+    func addOrShowError(participants: [UserType], userSession: UserSession) {
+        guard userSession.networkState != .offline else {
             self.showAlertForAdding(for: NetworkError.offline)
             return
         }
