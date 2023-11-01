@@ -26,7 +26,7 @@ class MessageDependencyResolver {
 
     let context: NSManagedObjectContext
 
-    func waitForDependenciesToResolve(for message: any Message) async {
+    func waitForDependenciesToResolve(for message: any SendableMessage) async {
 
         let hasDependencies = context.performAndWait {
             message.dependentObjectNeedingUpdateBeforeProcessing != nil
@@ -36,7 +36,7 @@ class MessageDependencyResolver {
             return
         }
 
-        Logging.messageProcessing.debug("Message has dependency, waiting")
+        WireLogger.messaging.debug("Message has dependency, waiting")
 
         await withCheckedContinuation { continuation in
             Task {
@@ -46,11 +46,11 @@ class MessageDependencyResolver {
                     }
 
                     if !hasDependencies {
-                        Logging.messageProcessing.debug("Message dependency resolved")
+                        WireLogger.messaging.debug("Message dependency resolved")
                         continuation.resume()
                         break
                     } else {
-                        Logging.messageProcessing.debug("Message has dependency, waiting")
+                        WireLogger.messaging.debug("Message has dependency, waiting")
                     }
                 }
             }
