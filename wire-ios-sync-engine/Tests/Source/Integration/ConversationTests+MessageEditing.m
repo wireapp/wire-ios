@@ -119,11 +119,12 @@
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
+    XCTestExpectation *expectation = [self expectationWithDescription:@"Send proteus message"];
     NSUUID *originalNonce = message.nonce;
-    
     [self.mockTransportSession resetReceivedRequests];
     self.mockTransportSession.responseGeneratorBlock = ^ZMTransportResponse *(ZMTransportRequest *request){
         if ([request.path isEqualToString:[NSString stringWithFormat:@"/conversations/%@/otr/messages", conversation.remoteIdentifier.transportString]]) {
+            [expectation fulfill];
             return ResponseGenerator.ResponseNotCompleted;
         }
         return nil;
@@ -133,7 +134,7 @@
     [self.userSession performChanges:^{
         [message.textMessageData editText:@"Bar" mentions:@[] fetchLinkPreview:NO];
     }];
-    WaitForAllGroupsToBeEmpty(0.5);
+    XCTAssertTrue([self waitForCustomExpectationsWithTimeout:0.5f]);
     
     [self.mockTransportSession expireAllBlockedRequests];
     WaitForAllGroupsToBeEmpty(0.5);
