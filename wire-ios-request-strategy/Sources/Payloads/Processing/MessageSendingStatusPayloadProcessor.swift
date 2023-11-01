@@ -67,10 +67,10 @@ final class MessageSendingStatusPayloadProcessor {
             WireLogger.messaging.debug("detected missing clients")
         }
 
-        for (user, userClients) in missingClients {
+        for (_, userClients) in missingClients {
             userClients.forEach({ $0.discoveredByMessage = message as? ZMOTRMessage })
             message.registersNewMissingClients(Set(userClients))
-            message.conversation?.addParticipantAndSystemMessageIfMissing(user, date: nil)
+            message.conversation?.decreaseSecurityLevelIfNeededAfterDiscovering(clients: Set(userClients), causedBy: nil)
         }
 
         let failedToConfirmUsers = payload.failedToConfirm.fetchUsers(in: message.context)
