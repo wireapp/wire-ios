@@ -170,6 +170,12 @@ class MockMLSService: MLSServiceInterface {
         fatalError("not implemented")
     }
 
+    // MARK: - Subconversation Members
+
+    func subconversationMembers(for subconversationGroupID: MLSGroupID) throws -> [MLSClientID] {
+        fatalError("not implemented")
+    }
+
     // MARK: - Out of sync
 
     typealias RepairOutOfSyncConversationsMock = () -> Void
@@ -182,10 +188,14 @@ class MockMLSService: MLSServiceInterface {
         mock()
     }
 
-    // MARK: - Subconversation members
+    typealias FetchAndRepairGroupMock = (MLSGroupID) -> Void
+    var fetchAndRepairGroupMock: FetchAndRepairGroupMock?
 
-    func subconversationMembers(for subconversationGroupID: MLSGroupID) throws -> [MLSClientID] {
-        fatalError("not implemented")
+    func fetchAndRepairGroup(with groupID: MLSGroupID) async {
+        guard let mock = fetchAndRepairGroupMock else {
+            return
+        }
+        mock(groupID)
     }
 
 }

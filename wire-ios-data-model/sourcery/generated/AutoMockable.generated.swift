@@ -1519,4 +1519,22 @@ public class MockSubconversationGroupIDRepositoryInterface: SubconversationGroup
         }
     }
 
+    // MARK: - findSubgroupTypeAndParentID
+
+    public var findSubgroupTypeAndParentIDFor_Invocations: [MLSGroupID] = []
+    public var findSubgroupTypeAndParentIDFor_MockMethod: ((MLSGroupID) -> (parentID: MLSGroupID, type: SubgroupType)?)?
+    public var findSubgroupTypeAndParentIDFor_MockValue: (parentID: MLSGroupID, type: SubgroupType)??
+
+    public func findSubgroupTypeAndParentID(for targetGroupID: MLSGroupID) -> (parentID: MLSGroupID, type: SubgroupType)? {
+        findSubgroupTypeAndParentIDFor_Invocations.append(targetGroupID)
+
+        if let mock = findSubgroupTypeAndParentIDFor_MockMethod {
+            return mock(targetGroupID)
+        } else if let mock = findSubgroupTypeAndParentIDFor_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `findSubgroupTypeAndParentIDFor`")
+        }
+    }
+
 }
