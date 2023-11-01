@@ -144,16 +144,14 @@ class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
 
             let mlsMigration = featureRepository.fetchMLSMigration()
             XCTAssertEqual(mlsMigration.status, .enabled)
-            XCTAssertTrue(Calendar.current.isDate(
-                try XCTUnwrap(mlsMigration.config.startTime),
-                equalTo: mlsMigrationStartDate,
-                toGranularity: .nanosecond
-            ))
-            XCTAssertTrue(Calendar.current.isDate(
-                try XCTUnwrap(mlsMigration.config.finaliseRegardlessAfter),
-                equalTo: mlsMigrationFinaliseDate,
-                toGranularity: .nanosecond
-            ))
+            XCTAssertEqual(
+                String(describing: try XCTUnwrap(mlsMigration.config.startTime)),
+                String(describing: mlsMigrationStartDate)
+            )
+            XCTAssertEqual(
+                String(describing: try XCTUnwrap(mlsMigration.config.finaliseRegardlessAfter)),
+                String(describing: mlsMigrationFinaliseDate)
+            )
         }
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
