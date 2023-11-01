@@ -366,6 +366,7 @@ extension OTREntity {
         let selfClient = ZMUser.selfUser(in: self.context).selfClient()!
         selfClient.missesClients(missingClients)
         self.missesRecipients(missingClients)
+        self.conversation?.decreaseSecurityLevelIfNeededAfterDiscovering(clients: missingClients, causedBy: nil)
 
         selfClient.addNewClientsToIgnored(missingClients)
 
