@@ -95,7 +95,7 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
         for groupID: MLSGroupID,
         subconversationType: SubgroupType?
     ) throws -> MLSDecryptResult? {
-        WireLogger.mls.debug("decrypting message for group (\(groupID)) and subconversation type (\(String(describing: subconversationType))")
+        WireLogger.mls.debug("decrypting message for group (\(groupID.safeForLoggingDescription)) and subconversation type (\(String(describing: subconversationType)))")
 
         guard let messageBytes = message.base64DecodedBytes else {
             throw MLSMessageDecryptionError.failedToConvertMessageToBytes
@@ -136,7 +136,7 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
 
             return nil
         } catch {
-            WireLogger.mls.error("failed to decrypt message for group (\(groupID)) and subconversation type (\(String(describing: subconversationType)): \(String(describing: error))")
+            WireLogger.mls.error("failed to decrypt message for group (\(groupID.safeForLoggingDescription)) and subconversation type (\(String(describing: subconversationType))): \(String(describing: error))")
 
             if case CryptoError.WrongEpoch(message: _) = error {
                 throw MLSMessageDecryptionError.wrongEpoch
