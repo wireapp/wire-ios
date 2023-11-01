@@ -30,7 +30,7 @@ public class ClientMessageRequestStrategy: AbstractRequestStrategy, ZMContextCha
     // MARK: - Properties
 
     let insertedObjectSync: InsertedObjectSync<ClientMessageRequestStrategy>
-    let messageSender: MessageSender? // FIXME: [jacob] make non-optional
+    let messageSender: MessageSenderInterface? // FIXME: [jacob] make non-optional
     let messageSync: MessageSync<ZMClientMessage>
     let messageExpirationTimer: MessageExpirationTimer
     let linkAttachmentsPreprocessor: LinkAttachmentsPreprocessor
@@ -42,7 +42,7 @@ public class ClientMessageRequestStrategy: AbstractRequestStrategy, ZMContextCha
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
         localNotificationDispatcher: PushMessageHandler,
         applicationStatus: ApplicationStatus,
-        messageSender: MessageSender?
+        messageSender: MessageSenderInterface?
     ) {
         insertedObjectSync = InsertedObjectSync(
             insertPredicate: Self.shouldBeSentPredicate(context: managedObjectContext)
@@ -114,7 +114,8 @@ extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
     func insert(object: ZMClientMessage, completion: @escaping () -> Void) {
         WireLogger.messaging.debug("inserting message \(object.debugInfo)")
 
-        // TODO: [jacob] do we need to prevent the message being sent multiple times?
+        // Enter groups to enable waiting for message sending to complete in tests
+        let groups = managedObjectContext.enterAllGroupsExceptSecondary()
         Task {
             let result = await messageSender?.sendMessage(message: object) ?? .success(Void())
 
@@ -144,9 +145,12 @@ extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
                         }
                     }
                 }
+                messageExpirationTimer.stop(for: object)
+                managedObjectContext.enqueueDelayedSave()
             }
 
             completion()
+            managedObjectContext.leaveAllGroups(groups)
         }
     }
 
@@ -154,12 +158,14 @@ extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
         guard let underlyingMessage = message.underlyingMessage else { return }
 
         if underlyingMessage.hasReaction {
+            WireLogger.messaging.debug("deleting message: \(message.debugInfo)")
             managedObjectContext.delete(message)
         }
 
         if underlyingMessage.hasConfirmation {
             // NOTE: this will only be read confirmations since delivery confirmations
             // are not sent using the ClientMessageTranscoder
+            WireLogger.messaging.debug("deleting message: \(message.debugInfo)")
             managedObjectContext.delete(message)
         }
     }
