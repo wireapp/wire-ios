@@ -316,6 +316,29 @@ public enum Payload {
 
     }
 
+    public struct MessageSendingStatusV0: Codable {
+
+        enum CodingKeys: String, CodingKey {
+            case time
+            case missing
+            case redundant
+            case deleted
+        }
+
+        /// Time of sending message.
+        let time: Date
+
+        /// Clients that the message should have been encrypted for, but wasn't.
+        let missing: ClientListByUserID
+
+        /// Clients that the message was encrypted for, but isn't necessary. For
+        /// example for a client who's user has been removed from the conversation.
+        let redundant: ClientListByUserID
+
+        /// Clients that the message was encrypted for, but has since been deleted.
+        let deleted: ClientListByUserID
+    }
+
     public struct MessageSendingStatus: Codable {
 
         enum CodingKeys: String, CodingKey {

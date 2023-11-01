@@ -20,8 +20,26 @@ import Foundation
 
 protocol MessageAPI {
 
-    func sendProteusMessage(payload: EncryptedPayloadGenerator, conversationID: QualifiedID) async -> Swift.Result<(Payload.MessageSendingStatus, ZMTransportResponse), NetworkError>
+    func sendProteusMessage(message: any ProteusMessage, conversationID: QualifiedID) async -> Swift.Result<(Payload.MessageSendingStatus, ZMTransportResponse), NetworkError>
 
+}
+
+extension Payload.ClientListByUserID {
+    func toClientListByQualifiedUserID(domain: String) -> Payload.ClientListByQualifiedUserID {
+        return [domain: self]
+    }
+}
+
+extension Payload.MessageSendingStatusV0 {
+    func toMessageSendingStatus(domain: String) -> Payload.MessageSendingStatus {
+        Payload.MessageSendingStatus(
+            time: time,
+            missing: missing.toClientListByQualifiedUserID(domain: domain),
+            redundant: redundant.toClientListByQualifiedUserID(domain: domain),
+            deleted: deleted.toClientListByQualifiedUserID(domain: domain),
+            failedToSend: [:],
+            failedToConfirm: [:])
+    }
 }
 
 class MessageAPIV0: MessageAPI {
@@ -30,7 +48,7 @@ class MessageAPIV0: MessageAPI {
         .v0
     }
 
-    private let httpClient: HttpClient
+    internal let httpClient: HttpClient
     private let protobufContentType = "application/x-protobuf"
 
     init(httpClient: HttpClient) {
@@ -38,12 +56,12 @@ class MessageAPIV0: MessageAPI {
     }
 
     func sendProteusMessage(
-        payload: WireDataModel.EncryptedPayloadGenerator,
+        message: any ProteusMessage,
         conversationID: QualifiedID
     ) async -> Swift.Result<(Payload.MessageSendingStatus, ZMTransportResponse), NetworkError> {
-        let path = "/" + ["conversations", conversationID.domain, conversationID.uuid.transportString(), "proteus", "messages"].joined(separator: "/")
+        let path = "/" + ["conversations", conversationID.uuid.transportString(), "otr", "messages"].joined(separator: "/")
 
-        guard let encryptedPayload = payload.encryptForTransportQualified() else {
+        guard let encryptedPayload = message.encryptForTransportQualified() else {
             WireLogger.messaging.error("failed to encrypt message for transport")
             return .failure(NetworkError.errorEncodingRequest)
         }
@@ -57,18 +75,24 @@ class MessageAPIV0: MessageAPI {
             apiVersion: apiVersion.rawValue
         )
 
+        if let expirationDate = message.expirationDate {
+            request.expire(at: expirationDate)
+        }
+
         let response = await httpClient.send(request)
 
         if response.httpStatus == 412 {
             guard
-                let messageSendingStatus = Payload.MessageSendingStatus(response, decoder: .defaultDecoder)
+                let messageSendingStatus = Payload.MessageSendingStatusV0(response, decoder: .defaultDecoder)
             else {
                 return .failure(NetworkError.errorDecodingResponse(response))
             }
-            return .failure(.missingClients(messageSendingStatus, response))
+            return .failure(.missingClients(messageSendingStatus.toMessageSendingStatus(domain: ""), response))
         } else {
-            return mapResponse(response).map { payload in
-                (payload, response)
+            let result: Swift.Result<Payload.MessageSendingStatusV0, NetworkError> = mapResponse(response)
+
+            return result.map { payload in
+                (payload.toMessageSendingStatus(domain: ""), response)
             }
         }
     }
@@ -93,8 +117,51 @@ func mapResponse<T: Decodable>(_ response: ZMTransportResponse) -> Swift.Result<
 }
 
 class MessageAPIV1: MessageAPIV0 {
+
+    private let protobufContentType = "application/x-protobuf"
+
     override var apiVersion: APIVersion {
         .v1
+    }
+
+    override func sendProteusMessage(
+        message: any ProteusMessage,
+        conversationID: QualifiedID
+    ) async -> Swift.Result<(Payload.MessageSendingStatus, ZMTransportResponse), NetworkError> {
+        let path = "/" + ["conversations", conversationID.domain, conversationID.uuid.transportString(), "proteus", "messages"].joined(separator: "/")
+
+        guard let encryptedPayload = message.encryptForTransportQualified() else {
+            WireLogger.messaging.error("failed to encrypt message for transport")
+            return .failure(NetworkError.errorEncodingRequest)
+        }
+
+        let request = ZMTransportRequest(
+            path: path,
+            method: .methodPOST,
+            binaryData: encryptedPayload.data,
+            type: protobufContentType,
+            contentDisposition: nil,
+            apiVersion: apiVersion.rawValue
+        )
+
+        if let expirationDate = message.expirationDate {
+            request.expire(at: expirationDate)
+        }
+
+        let response = await httpClient.send(request)
+
+        if response.httpStatus == 412 {
+            guard
+                let messageSendingStatus = Payload.MessageSendingStatus(response, decoder: .defaultDecoder)
+            else {
+                return .failure(NetworkError.errorDecodingResponse(response))
+            }
+            return .failure(.missingClients(messageSendingStatus, response))
+        } else {
+            return mapResponse(response).map { payload in
+                (payload, response)
+            }
+        }
     }
 }
 
