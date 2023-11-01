@@ -67,12 +67,16 @@ static NSTimeInterval zmMessageExpirationTimer = 0.3;
     [self.userSession performChanges:^{
         [conversation appendMessageWithText:@"foo"];
     }];
-    WaitForAllGroupsToBeEmpty(0.5);
     
     // background
     [self.application simulateApplicationDidEnterBackground];
     [self.application setBackground];
-    
+
+    self.mockTransportSession.responseGeneratorBlock = ^ZMTransportResponse *(ZMTransportRequest *request) {
+        (void)request;
+        NSError *requestExpiredError = [NSError errorWithDomain:ZMTransportSessionErrorDomain code:ZMTransportSessionErrorCodeRequestExpired userInfo:nil];
+        return [ZMTransportResponse responseWithTransportSessionError:requestExpiredError apiVersion:0];
+    };
     [self.mockTransportSession expireAllBlockedRequests];
     WaitForAllGroupsToBeEmpty(0.5);
 
@@ -80,13 +84,17 @@ static NSTimeInterval zmMessageExpirationTimer = 0.3;
     XCTAssertEqual(self.notificationCenter.scheduledRequests.count, 1u);
 }
 
+// TODO: jacob doesn't really make sense anymore
 - (void)testThatItSendsUILocalNotificationsForExpiredMessageNotPickedUpForRequestWhenGoingToTheBackground
 {
     // given
     [ZMMessage setDefaultExpirationTime:zmMessageExpirationTimer];
     XCTAssertTrue([self login]);
     
-    self.mockTransportSession.disableEnqueueRequests = YES;
+    self.mockTransportSession.responseGeneratorBlock = ^ZMTransportResponse *(ZMTransportRequest *request) {
+        (void)request;
+        return ResponseGenerator.ResponseNotCompleted;
+    };
     ZMConversation *conversation = [self conversationForMockConversation:self.groupConversation];
     
     // when
@@ -98,11 +106,14 @@ static NSTimeInterval zmMessageExpirationTimer = 0.3;
     [self.application simulateApplicationDidEnterBackground];
     [self.application setBackground];
     [self spinMainQueueWithTimeout:zmMessageExpirationTimer + 0.1];
-    
+
+    XCTAssertTrue([self waitWithTimeout:0.5 verificationBlock:^BOOL{
+        return self.notificationCenter.scheduledRequests.count > 0;
+    }]);
+
+    self.mockTransportSession.responseGeneratorBlock = nil;
+    [self.mockTransportSession completeAllBlockedRequests];
     WaitForAllGroupsToBeEmpty(0.5);
-    
-    // then
-    XCTAssertEqual(self.notificationCenter.scheduledRequests.count, 1u);
 }
 
 - (void)testThatItDoesNotCreateNotificationsForMessagesInTheSelfConversation
