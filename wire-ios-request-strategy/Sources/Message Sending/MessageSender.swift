@@ -57,16 +57,25 @@ public class HttpClientImpl: HttpClient {
     }
 }
 
-enum MessageSendError: Error {
+public enum MessageSendError: Error {
     case messageProtocolMissing
     case unresolvedApiVersion
-    case missingPrecondition
+    case missingSelfClient
+    case messageExpired
+    case securityLevelDegraded
     case networkError(NetworkError)
 }
 
-typealias Message = ProteusMessage & MLSMessage
+public typealias SendableMessage = ProteusMessage & MLSMessage
 
-public class MessageSender {
+// sourcery: AutoMockable
+public protocol MessageSenderInterface {
+
+    func sendMessage(message: any SendableMessage) async -> Swift.Result<Void, MessageSendError>
+
+}
+
+public class MessageSender: MessageSenderInterface {
 
     public init (
         apiProvider: APIProvider,
@@ -88,14 +97,32 @@ public class MessageSender {
     private let messageDependencyResolver: MessageDependencyResolver
     private let processor = MessageSendingStatusPayloadProcessor()
 
-    func sendMessage(message: any Message) async -> Swift.Result<Void, MessageSendError> {
+    public func sendMessage(message: any SendableMessage) async -> Swift.Result<Void, MessageSendError> {
+        WireLogger.messaging.debug("send message")
+
+        if (managedObjectContext.performAndWait {
+            message.conversation?.securityLevel == .secureWithIgnored
+        }) {
+            return .failure(MessageSendError.securityLevelDegraded)
+        }
+
         // FIXME: [jacob] check that message hasn't expired
         await messageDependencyResolver.waitForDependenciesToResolve(for: message)
 
         return await attemptToSend(message: message)
+            .map({ success in
+                // Triggering request loop to re-evalute dependencies, other messages
+                // might have been waiting for this message to be sent.
+                RequestAvailableNotification.notifyNewRequestsAvailable(nil)
+                return success
+            })
+            .mapError { error in
+                WireLogger.messaging.debug("send message failed: \(error)")
+                return error
+            }
     }
 
-    private func attemptToSend(message: any Message) async -> Swift.Result<Void, MessageSendError> {
+    private func attemptToSend(message: any SendableMessage) async -> Swift.Result<Void, MessageSendError> {
         guard let apiVersion = BackendInfo.apiVersion else { return .failure(MessageSendError.unresolvedApiVersion)}
         guard let messageProtocol = managedObjectContext.performAndWait({
             message.conversation?.messageProtocol
@@ -120,7 +147,7 @@ public class MessageSender {
         }
 
         let result = await apiProvider.messageAPI(apiVersion: apiVersion).sendProteusMessage(
-            payload: message,
+            message: message,
             conversationID: conversationID
         )
 
@@ -139,7 +166,7 @@ public class MessageSender {
                 await sessionEstablisher.establishSession(with: missingClients, apiVersion: apiVersion)
                     .mapError({ error in
                         switch error {
-                        case .missingSelfClient: MessageSendError.missingPrecondition
+                        case .missingSelfClient: MessageSendError.missingSelfClient
                         case .networkError(let networkError): MessageSendError.networkError(networkError)
                         }
                     })
@@ -164,18 +191,16 @@ public class MessageSender {
     private func handleProteusFailure(message: any ProteusMessage, _ failure: NetworkError) -> Swift.Result<Set<QualifiedClientID>, MessageSendError> {
         switch failure {
         case .missingClients(let messageSendingStatus, _):
-            let missingClients = processor.updateClientsChanges(
+            processor.updateClientsChanges(
                 from: messageSendingStatus,
                 for: message
-            ).flatMap(\.value)
-            let qualifiedClientIDs = missingClients.compactMap({ $0.qualifiedClientID })
+            )
 
-            guard
-                missingClients.count == qualifiedClientIDs.count
-            else {
-                return .failure(MessageSendError.missingPrecondition)
+            if message.isExpired {
+                return .failure(MessageSendError.messageExpired)
+            } else {
+                return .success(Set(messageSendingStatus.missing.qualifiedClientIDs))
             }
-            return .success(Set(qualifiedClientIDs))
         case .invalidRequestError(let responseFailure, _):
             switch (responseFailure.code, responseFailure.label) {
             case (533, _):
@@ -197,7 +222,7 @@ public class MessageSender {
                 return .failure(MessageSendError.networkError(failure))
             }
         default:
-            if case .permanentError = failure.response?.result {
+            if case .tryAgainLater = failure.response?.result {
                 return .success(Set()) // FIXME: [jacob] it's dangerous to retry indefinitely like this WPB-5454
             } else {
                 return .failure(MessageSendError.networkError(failure))
@@ -220,6 +245,29 @@ private extension UserClient {
             return nil
         }
         return QualifiedClientID(userID: qualifiedID.uuid, domain: qualifiedID.domain, clientID: clientID)
+    }
+
+}
+
+private extension Payload.ClientListByQualifiedUserID {
+
+    var qualifiedClientIDs: [QualifiedClientID] {
+        var qualifiedClientIDs: [QualifiedClientID] = []
+        for (domain, clientListByUserID) in self {
+            for (userID, clientIDs) in clientListByUserID {
+                if let userUuid = UUID(uuidString: userID) {
+                    qualifiedClientIDs.append(
+                        contentsOf: clientIDs.map { clientID in
+                            QualifiedClientID(
+                                userID: userUuid,
+                                domain: domain,
+                                clientID: clientID)
+                        }
+                    )
+                }
+            }
+        }
+        return qualifiedClientIDs
     }
 
 }
