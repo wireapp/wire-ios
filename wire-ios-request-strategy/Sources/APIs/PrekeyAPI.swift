@@ -24,6 +24,12 @@ protocol PrekeyAPI {
 
 }
 
+extension Payload.PrekeyByUserID {
+    func toPrekeyByQualifiedUserID(domain: String) -> Payload.PrekeyByQualifiedUserID {
+        [domain: self]
+    }
+}
+
 class PrekeyAPIV0: PrekeyAPI {
 
     init(httpClient: HttpClient) {
@@ -39,6 +45,33 @@ class PrekeyAPIV0: PrekeyAPI {
 
     func fetchPrekeys(for clients: Set<QualifiedClientID>) async -> Swift.Result<Payload.PrekeyByQualifiedUserID, NetworkError> {
         guard
+            let payloadData = clients.clientListByUserID.payloadData(encoder: defaultEncoder),
+            let payloadAsString = String(bytes: payloadData, encoding: .utf8)
+        else {
+            return .failure(NetworkError.errorEncodingRequest)
+        }
+
+        let request = ZMTransportRequest(path: "/users/prekeys",
+                                         method: .methodPOST,
+                                         payload: payloadAsString as ZMTransportData?,
+                                         apiVersion: apiVersion.rawValue)
+
+        let response = await httpClient.send(request)
+        let result: Swift.Result<Payload.PrekeyByUserID, NetworkError> = mapResponse(response)
+
+        return result.map { payload in
+            payload.toPrekeyByQualifiedUserID(domain: "")
+        }
+    }
+}
+
+class PrekeyAPIV1: PrekeyAPIV0 {
+    override var apiVersion: APIVersion {
+        return .v1
+    }
+
+    override func fetchPrekeys(for clients: Set<QualifiedClientID>) async -> Swift.Result<Payload.PrekeyByQualifiedUserID, NetworkError> {
+        guard
             let payloadData = clients.clientListByDomain.payloadData(encoder: defaultEncoder),
             let payloadAsString = String(bytes: payloadData, encoding: .utf8)
         else {
@@ -52,12 +85,6 @@ class PrekeyAPIV0: PrekeyAPI {
 
         let response = await httpClient.send(request)
         return mapResponse(response)
-    }
-}
-
-class PrekeyAPIV1: PrekeyAPIV0 {
-    override var apiVersion: APIVersion {
-        return .v1
     }
 }
 
