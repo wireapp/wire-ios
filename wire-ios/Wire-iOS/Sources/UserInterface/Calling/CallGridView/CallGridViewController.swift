@@ -63,6 +63,8 @@ final class CallGridViewController: SpinnerCapableViewController {
     private let mediaManager: AVSMediaManagerInterface
     private var viewCache = [AVSClient: OrientableView]()
 
+    let userSession: UserSession
+
     // MARK: - Public Properties
 
     // These two views are public for testing purposes
@@ -105,11 +107,15 @@ final class CallGridViewController: SpinnerCapableViewController {
 
     // MARK: - Initialization
 
-    init(configuration: CallGridViewControllerInput,
-         mediaManager: AVSMediaManagerInterface = AVSMediaManager.sharedInstance()) {
+    init(
+        configuration: CallGridViewControllerInput,
+        mediaManager: AVSMediaManagerInterface = AVSMediaManager.sharedInstance(),
+        userSession: UserSession
+    ) {
 
         self.configuration = configuration
         self.mediaManager = mediaManager
+        self.userSession = userSession
 
         super.init(nibName: nil, bundle: nil)
 
@@ -337,7 +343,8 @@ final class CallGridViewController: SpinnerCapableViewController {
                 isCovered: isCovered,
                 shouldShowActiveSpeakerFrame: configuration.shouldShowActiveSpeakerFrame,
                 shouldShowBorderWhenVideoIsStopped: shouldShowBorderWhenVideoIsStopped,
-                pinchToZoomRule: pinchToZoomRule
+                pinchToZoomRule: pinchToZoomRule, 
+                userSession: userSession
             )
         }
     }
@@ -525,7 +532,8 @@ extension CallGridViewController: UICollectionViewDataSource {
                 isCovered: isCovered,
                 shouldShowActiveSpeakerFrame: configuration.shouldShowActiveSpeakerFrame,
                 shouldShowBorderWhenVideoIsStopped: shouldShowBorderWhenVideoIsStopped,
-                pinchToZoomRule: pinchToZoomRule
+                pinchToZoomRule: pinchToZoomRule,
+                userSession: userSession
             )
             viewCache[streamId] = view
             return view
