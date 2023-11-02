@@ -61,6 +61,7 @@ class ActiveCallRouter: NSObject {
 
     private var isCallQualityShown = false
     private var isCallTopOverlayShown = false
+    let userSession: UserSession
     private(set) var scheduledPostCallAction: (() -> Void)?
 
     private var zClientViewController: ZClientViewController? {
@@ -69,6 +70,7 @@ class ActiveCallRouter: NSObject {
 
     init(rootviewController: RootViewController, userSession: UserSession) {
         self.rootViewController = rootviewController
+        self.userSession = userSession
         callController = CallController(userSession: userSession)
         callController.callConversationProvider = ZMUserSession.shared()
         callQualityController = CallQualityController()
@@ -136,7 +138,7 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
     // MARK: - CallTopOverlay
     func showCallTopOverlay(for conversation: ZMConversation) {
         guard !isCallTopOverlayShown else { return }
-        let callTopOverlayController = CallTopOverlayController(conversation: conversation)
+        let callTopOverlayController = CallTopOverlayController(conversation: conversation, userSession: userSession)
         callTopOverlayController.delegate = self
         zClientViewController?.setTopOverlay(to: callTopOverlayController)
         isCallTopOverlayShown = true
