@@ -26,7 +26,7 @@ import UserNotifications
 import WireDataModel
 import WireRequestStrategy
 
-private let log = ZMSLog(tag: "SessionManager")
+private let log = WireLogger(tag: "SessionManager")
 private let pushLog = ZMSLog(tag: "Push")
 
 public typealias LaunchOptions = [UIApplication.LaunchOptionsKey: Any]
@@ -1359,11 +1359,12 @@ extension SessionManager: UserSessionLogoutDelegate {
             return
         }
 
-        log.debug("Authentication invalidated for \(accountId): \(error.code)")
+        WireLogger.authentication.warn("authentication was invalidated for account \(accountId): \(userSessionErrorCode)")
 
         switch userSessionErrorCode {
         case .clientDeletedRemotely:
             delete(account: account, reason: .sessionExpired)
+
         case .accessTokenExpired:
             if configuration.wipeOnCookieInvalid {
                 delete(account: account, reason: .sessionExpired)
