@@ -163,10 +163,36 @@ public protocol UserSession: AnyObject {
         _ observer: WireCallCenterCallErrorObserver
     ) -> Any
 
+    func addConferenceCallMuteStateObserver(
+        _ observer: MuteStateObserver
+    ) -> Any
+
     func addConversationListObserver(
         _ observer: ZMConversationListObserver,
         for list: ZMConversationList
     ) -> NSObjectProtocol
+
+    /// Adds an observer that is notified when the selfUser clients were successfully fetched and deleted
+    ///
+    /// - Returns: Token that needs to be stored as long the observer should be active.
+
+    func addClientUpdateObserver(
+        _ observer: ClientUpdateObserver
+    ) -> Any
+
+    /// Deletes selfUser clients from the backend
+
+    func deleteClient(
+        _ client: UserClient,
+        credentials: ZMEmailCredentials?
+    )
+
+    /// Fetch all selfUser clients to manage them from the settings screen
+    /// The current client must be already registered
+    ///
+    /// Calling this method without a registered client will fail.
+
+    func fetchAllClients()
 
     func conversationList() -> ZMConversationList
 
@@ -384,6 +410,15 @@ extension ZMUserSession: UserSession {
         )
     }
 
+    public func addConferenceCallMuteStateObserver(
+        _ observer: MuteStateObserver
+    ) -> Any {
+        return WireCallCenterV3.addMuteStateObserver(
+            observer: observer,
+            userSession: self
+        )
+    }
+
     public func addConversationListObserver(
         _ observer: ZMConversationListObserver,
         for list: ZMConversationList
@@ -393,6 +428,58 @@ extension ZMUserSession: UserSession {
             for: list,
             userSession: self
         )
+    }
+
+    @objc(addClientUpdateObserver:)
+    public func addClientUpdateObserver(_ observer: ClientUpdateObserver) -> Any {
+
+        return ZMClientUpdateNotification.addObserver(context: managedObjectContext) { [weak self] (type, clientObjectIDs, error) in
+            self?.managedObjectContext.performGroupedBlock {
+                switch type {
+                case .fetchCompleted:
+                    let clients = clientObjectIDs.compactMap({
+                        self?.managedObjectContext.object(
+                            with: $0
+                        ) as? UserClient
+                    })
+                    observer.finishedFetching(clients)
+                case .fetchFailed:
+                    if let error = error {
+                        observer.failedToFetchClients(error)
+                    }
+                case .deletionCompleted:
+                    let remainingClients = clientObjectIDs.compactMap({
+                        self?.managedObjectContext.object(
+                            with: $0
+                        ) as? UserClient
+                    })
+                    observer.finishedDeleting(remainingClients)
+                case .deletionFailed:
+                    if let error = error {
+                        observer.failedToDeleteClients(error)
+                    }
+                }
+            }
+        }
+    }
+
+    @objc(deleteClient:withCredentials:)
+    public func deleteClient(_ client: UserClient, credentials: ZMEmailCredentials?) {
+        client.markForDeletion()
+        client.managedObjectContext?.saveOrRollback()
+
+        syncManagedObjectContext.performGroupedBlock {
+            self.applicationStatusDirectory?.clientUpdateStatus.deleteClients(withCredentials: credentials)
+            RequestAvailableNotification.notifyNewRequestsAvailable(self)
+        }
+    }
+
+    @objc
+    public func fetchAllClients() {
+        syncManagedObjectContext.performGroupedBlock {
+            self.applicationStatusDirectory?.clientUpdateStatus.needsToFetchClients(andVerifySelfClient: true)
+            RequestAvailableNotification.notifyNewRequestsAvailable(self)
+        }
     }
 
     public func conversationList() -> ZMConversationList {
@@ -494,6 +581,7 @@ extension ZMUserSession: UserSession {
 
         return isClassified ? .classified : .notClassified
     }
+
 
 }
 
