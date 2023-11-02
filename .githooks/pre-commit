@@ -59,6 +59,12 @@ def swiftlint_exists
 	$?.success?
 end
 
+# Add Homebrew bin directory to PATH if it exists
+if File.directory?("/opt/homebrew/bin/")
+  ENV['PATH'] = "/opt/homebrew/bin:" + ENV['PATH']
+end
+
+
 # Checking if current commit is not a merge commit. For merge commits we don't want to perform linting
 # since we would be linting changes not related to our work.
 commit_hash = `git rev-parse -q --verify MERGE_HEAD`
