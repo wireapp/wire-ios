@@ -72,7 +72,7 @@ class ActiveCallRouter: NSObject {
     init(rootviewController: RootViewController, userSession: UserSession) {
         self.rootViewController = rootviewController
         self.userSession = userSession
-        callController = CallController()
+        callController = CallController(userSession: userSession)
         callController.callConversationProvider = ZMUserSession.shared()
         callQualityController = CallQualityController()
         transitioningDelegate = CallQualityAnimator()
