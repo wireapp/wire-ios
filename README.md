@@ -46,7 +46,7 @@ In order to build Wire for iOS locally, it is necessary to install and setup the
 - macOS 13.5 (Ventura) or newer
 - [Xcode 15.0.0](https://xcodereleases.com)
 - Carthage 0.38 or newer (https://github.com/Carthage/Carthage)
-- `gem` must be setup to use ruby without admin permissions. One way to archive this is to use [rbenv](https://github.com/rbenv/rbenv), install the latest ruby version and set it as global version.
+- `gem` must be setup to use ruby without admin permissions. One way to achieve this is to use [rbenv](https://github.com/rbenv/rbenv), install the latest ruby version and set it as global version.
 - SSH key for git. [Generate a new key, add it locally](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent) and [add it to GitHub](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account).
 
 The setup script will automatically check for you that you satisfy these requirements.
