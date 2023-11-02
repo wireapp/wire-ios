@@ -34,6 +34,7 @@ jobs:
       wire-ios-link-preview : ${{ steps.filter.outputs.wire-ios-link-preview }}
       wire-ios-utilities: ${{ steps.filter.outputs.wire-ios-utilities }}
       wire-ios-testing: ${{ steps.filter.outputs.wire-ios-testing }}
+      any: ${{ steps.filter.outputs.carthage == 'true' || steps.filter.outputs.wire-ios == 'true' || steps.filter.outputs.wire-ios-sync-engine == 'true' || steps.filter.outputs.wire-ios-data-model == 'true' || steps.filter.outputs.wire-ios-system == 'true' || steps.filter.outputs.wire-ios-request-strategy == 'true' || steps.filter.outputs.wire-ios-transport == 'true' || steps.filter.outputs.wire-ios-share-engine == 'true' || steps.filter.outputs.wire-ios-cryptobox == 'true' || steps.filter.outputs.wire-ios-mocktransport == 'true' || steps.filter.outputs.wire-ios-notification-engine == 'true' || steps.filter.outputs.wire-ios-protos == 'true' || steps.filter.outputs.wire-ios-images == 'true' || steps.filter.outputs.wire-ios-link-preview == 'true' || steps.filter.outputs.wire-ios-utilities == 'true' || steps.filter.outputs.wire-ios-testing == 'true' }}
 
     steps:
       - uses: actions/checkout@v4
@@ -76,6 +77,7 @@ jobs:
 
   trigger_tests:
     needs: detect-changes
+    if: ${{ needs.detect-changes.outputs.any == 'true' }}
     uses: ./.github/workflows/_reusable_run_tests.yml
     with:
       wire-ios: ${{ needs.detect-changes.outputs.wire-ios == 'true' }}
