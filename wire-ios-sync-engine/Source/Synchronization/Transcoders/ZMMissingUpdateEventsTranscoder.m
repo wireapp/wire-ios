@@ -189,13 +189,11 @@ NSUInteger const ZMMissingUpdateEventsTranscoderListPageSize = 500;
     
     ZMLogWithLevelAndTag(ZMLogLevelInfo, ZMTAG_EVENT_PROCESSING, @"Downloaded %lu event(s)", (unsigned long)parsedEvents.count);
     
-    __weak __typeof__(self) weakSelf = self;
     [self.eventProcessor storeUpdateEvents:parsedEvents ignoreBuffer:YES completionHandler:^{
-        __typeof__(self) strongSelf = weakSelf;
         // FIXME: [F] check that we don't need to call pushNotificationStatus instead
-        [strongSelf.pushNotificationStatus didFetchEventIds:eventIds lastEventId:latestEventId finished:!strongSelf.listPaginator.hasMoreToFetch];
     }];
-    
+    [self.pushNotificationStatus didFetchEventIds:eventIds lastEventId:latestEventId finished:!self.listPaginator.hasMoreToFetch];
+
     [tp warnIfLongerThanInterval];
     return latestEventId;
 }
@@ -259,6 +257,7 @@ NSUInteger const ZMMissingUpdateEventsTranscoderListPageSize = 500;
 
     // We want to create a new request if we are either currently fetching the paginated stream
     // or if we have a new notification ID that requires a pingback.
+   
     if ((self.isFetchingStreamForAPNS && self.useLegacyPushNotifications) || self.isFetchingStreamInBackground || self.isSyncing) {
         
         // We only reset the paginator if it is neither in progress nor has more pages to fetch.
