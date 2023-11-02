@@ -70,12 +70,10 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
     private var currentEffect: AVSAudioEffectType = .none
     private var currentEffectFilePath: String?
 
-    private var appLock: AppLockType? {
-        return ZMUserSession.shared()?.appLockController
-    }
-
+    private let userSession: UserSession
+    
     private var isAppLockActive: Bool {
-        return appLock?.isActive ?? false
+        return userSession.isAppLockActive
     }
     // MARK: - Life Cycle
 
@@ -84,11 +82,13 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
             format: .wav,
             maxRecordingDuration: userSession.maxAudioMessageLength,
             maxFileSize: userSession.maxUploadFileSize),
-            userSession: userSession)
+            userSession: userSession
+        )
     }
 
     init(audioRecorder: AudioRecorderType, userSession: UserSession) {
         self.recorder = audioRecorder
+        self.userSession = userSession
         super.init(nibName: nil, bundle: nil)
         configureViews(userSession: userSession)
         configureAudioRecorder()

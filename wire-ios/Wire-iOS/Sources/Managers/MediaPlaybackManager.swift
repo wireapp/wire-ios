@@ -18,6 +18,7 @@
 import Foundation
 import WireSystem
 import avs
+import WireSyncEngine
 
 private let zmLog = ZMSLog(tag: "MediaPlaybackManager")
 
@@ -34,7 +35,9 @@ extension Notification.Name {
 
 /// This object is an interface for AVS to control conversation media playback
 final class MediaPlaybackManager: NSObject, AVSMedia {
-    var audioTrackPlayer: AudioTrackPlayer = AudioTrackPlayer()
+    
+    private let userSession: UserSession
+    var audioTrackPlayer: AudioTrackPlayer
 
     private(set) weak var activeMediaPlayer: MediaPlayer? {
         didSet {
@@ -71,7 +74,12 @@ final class MediaPlaybackManager: NSObject, AVSMedia {
 
     var recordingMuted: Bool = false
 
-    init(name: String?) {
+    init(
+        name: String?,
+        userSession: UserSession
+    ) {
+        self.userSession = userSession
+        self.audioTrackPlayer = AudioTrackPlayer(userSession: userSession)
         super.init()
 
         self.name = name
@@ -108,7 +116,7 @@ final class MediaPlaybackManager: NSObject, AVSMedia {
     func reset() {
         audioTrackPlayer.stop()
 
-        audioTrackPlayer = AudioTrackPlayer()
+        audioTrackPlayer = AudioTrackPlayer(userSession: userSession)
         audioTrackPlayer.mediaPlayerDelegate = self
     }
 }

@@ -61,7 +61,7 @@ class AuthenticatedRouter: NSObject {
         featureRepositoryProvider: FeatureRepositoryProvider
     ) {
         self.rootViewController = rootViewController
-        activeCallRouter = ActiveCallRouter(rootviewController: rootViewController)
+        activeCallRouter = ActiveCallRouter(rootviewController: rootViewController, userSession: userSession)
 
         builder = AuthenticatedWireFrame(
             account: account,

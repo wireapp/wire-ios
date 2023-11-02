@@ -84,10 +84,19 @@ public protocol UserSession: AnyObject {
     // TODO: rename to "isEncryptionAtRestEnabled"
     var encryptMessagesAtRest: Bool { get }
 
+    func setEncryptionAtRest(enabled: Bool, skipMigration: Bool) throws
+
     func addUserObserver(
         _ observer: ZMUserObserver,
         for: UserType
     ) -> NSObjectProtocol?
+
+    func addMessageObserver(
+        _ observer: ZMMessageObserver,
+        for message: ZMConversationMessage
+    ) -> NSObjectProtocol
+
+    func addConferenceCallingUnavailableObserver(_ observer: ConferenceCallingUnavailableObserver) -> Any
 
     func addConversationListObserver(
         _ observer: ZMConversationListObserver,
@@ -101,6 +110,17 @@ public protocol UserSession: AnyObject {
     var maxAudioMessageLength: TimeInterval { get }
 
     var maxUploadFileSize: UInt64 { get }
+
+    func acknowledgeFeatureChange(for feature: Feature.Name)
+
+    func fetchMarketingConsent(completion: @escaping (Result<Bool>) -> Void)
+
+    func setMarketingConsent(
+        granted: Bool,
+        completion: @escaping (VoidResult) -> Void
+    )
+
+    func classification(with users: [UserType], conversationDomain: String?) -> SecurityClassification
 
 }
 
@@ -163,6 +183,26 @@ extension ZMUserSession: UserSession {
         )
     }
 
+    public func addMessageObserver(
+        _ observer: ZMMessageObserver,
+        for message: ZMConversationMessage
+    ) -> NSObjectProtocol {
+        return MessageChangeInfo.add(
+            observer: observer,
+            for: message,
+            userSession: self
+        )
+    }
+
+    public func addConferenceCallingUnavailableObserver(
+        _ observer: ConferenceCallingUnavailableObserver
+    ) -> Any {
+        return WireCallCenterV3.addConferenceCallingUnavailableObserver(
+            observer: observer,
+            userSession: self
+        )
+    }
+
     public func addConversationListObserver(
         _ observer: ZMConversationListObserver,
         for list: ZMConversationList
@@ -220,6 +260,52 @@ extension ZMUserSession: UserSession {
     public var maxVideoLength: TimeInterval {
         return selfUserHasTeam ? ZMUserSession.MaxTeamVideoLength : ZMUserSession.MaxVideoLength
     }
+
+    public func acknowledgeFeatureChange(for feature: Feature.Name) {
+        featureRepository.setNeedsToNotifyUser(false, for: feature)
+    }
+
+    public func fetchMarketingConsent(
+        completion: @escaping (
+            Result<Bool>
+        ) -> Void
+    ) {
+        ZMUser.selfUser(inUserSession: self).fetchConsent(
+            for: .marketing,
+            on: transportSession,
+            completion: completion
+        )
+    }
+
+    public func setMarketingConsent(
+        granted: Bool,
+        completion: @escaping (VoidResult) -> Void
+    ) {
+        ZMUser.selfUser(inUserSession: self).setMarketingConsent(
+            to: granted,
+            in: self,
+            completion: completion
+        )
+    }
+
+    public func classification(
+        with users: [UserType],
+        conversationDomain: String?
+    ) -> SecurityClassification {
+        guard isSelfClassified else { return .none }
+
+        if let conversationDomain = conversationDomain,
+           classifiedDomainsFeature.config.domains.contains(conversationDomain) == false {
+            return .notClassified
+        }
+
+        let isClassified = users.allSatisfy {
+            classification(with: $0) == .classified
+        }
+
+        return isClassified ? .classified : .notClassified
+    }
+
 }
 
 extension UInt64 {
@@ -229,5 +315,4 @@ extension UInt64 {
     public static func uploadFileSizeLimit(hasTeam: Bool) -> UInt64 {
         return hasTeam ? MaxTeamFileSize : MaxFileSize
     }
-  
 }

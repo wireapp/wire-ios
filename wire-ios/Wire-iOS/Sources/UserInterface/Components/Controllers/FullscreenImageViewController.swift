@@ -241,10 +241,8 @@ final class FullscreenImageViewController: UIViewController {
 
     }
 
-    fileprivate func setupObservers() {
-        guard let userSession = ZMUserSession.shared() else { return }
-
-        messageObserverToken = MessageChangeInfo.add(observer: self, for: message, userSession: userSession)
+    private func setupObservers() {
+        messageObserverToken = userSession.addMessageObserver(self, for: message)
     }
 
     private func setupGestureRecognizers() {

@@ -82,7 +82,10 @@ final class ZClientViewController: UIViewController {
         super.init(nibName: nil, bundle: nil)
 
         proximityMonitorManager = ProximityMonitorManager()
-        mediaPlaybackManager = MediaPlaybackManager(name: "conversationMedia")
+        mediaPlaybackManager = MediaPlaybackManager(
+            name: "conversationMedia",
+            userSession: userSession
+        )
         dataUsagePermissionDialogDisplayed = false
         needToShowDataUsagePermissionDialog = false
 

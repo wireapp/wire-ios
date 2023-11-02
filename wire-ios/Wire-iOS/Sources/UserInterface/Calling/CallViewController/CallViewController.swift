@@ -55,6 +55,8 @@ final class CallViewController: UIViewController {
 
     private var isInteractiveDismissal = false
 
+    let userSession: UserSession
+
     var conversation: ZMConversation? {
         return voiceChannel.conversation
     }
@@ -75,17 +77,18 @@ final class CallViewController: UIViewController {
          proximityMonitorManager: ProximityMonitorManager? = ZClientViewController.shared?.proximityMonitorManager,
          mediaManager: AVSMediaManagerInterface = AVSMediaManager.sharedInstance(),
          permissionsConfiguration: CallPermissionsConfiguration = CallPermissions(),
-         isOverlayEnabled: Bool = true) {
+         isOverlayEnabled: Bool = true,
+         userSession: UserSession) {
 
         self.voiceChannel = voiceChannel
         self.mediaManager = mediaManager
         self.proximityMonitorManager = proximityMonitorManager
         callGridConfiguration = CallGridConfiguration(voiceChannel: voiceChannel)
         self.isOverlayEnabled = isOverlayEnabled
+        self.userSession = userSession
 
-        if let userSession = ZMUserSession.shared(),
-           let participants = voiceChannel.conversation?.participants {
-            classification = userSession.classification(with: participants)
+           if let participants = voiceChannel.conversation?.participants {
+               classification = userSession.classification(with: participants, conversationDomain: nil)
         }
 
         callInfoConfiguration = CallInfoConfiguration(voiceChannel: voiceChannel,
@@ -387,13 +390,12 @@ extension CallViewController: ZMConversationObserver {
     func conversationDidChange(_ changeInfo: ConversationChangeInfo) {
         guard
             changeInfo.participantsChanged,
-            let userSession = ZMUserSession.shared(),
             let participants = conversation?.participants
         else {
             return
         }
 
-        classification = userSession.classification(with: participants)
+        classification = userSession.classification(with: participants, conversationDomain: nil)
     }
 }
 
