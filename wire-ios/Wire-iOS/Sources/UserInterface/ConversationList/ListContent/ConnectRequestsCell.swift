@@ -1,17 +1,17 @@
-// 
+//
 // Wire
 // Copyright (C) 2019 Wire Swiss GmbH
-// 
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
@@ -40,11 +40,15 @@ final class ConnectRequestsCell: UICollectionViewCell, SectionListCellType {
 
     let itemView = ConversationListItemView()
 
+
     private var hasCreatedInitialConstraints = false
     private var currentConnectionRequestsCount: Int = 0
     private var conversationListObserverToken: Any?
 
-    override init(frame: CGRect) {
+    let userSession: UserSession
+
+    init(frame: CGRect, userSession: UserSession) {
+        self.userSession = userSession
         super.init(frame: frame)
         setupConnectRequestsCell()
     }
@@ -59,9 +63,10 @@ final class ConnectRequestsCell: UICollectionViewCell, SectionListCellType {
         addSubview(itemView)
         updateAppearance()
 
-        if let userSession = ZMUserSession.shared() {
-            conversationListObserverToken = ConversationListChangeInfo.add(observer: self, for: ZMConversationList.pendingConnectionConversations(inUserSession: userSession), userSession: userSession)
-        }
+        conversationListObserverToken = userSession.addConversationListObserver(
+            self,
+            for: userSession.pendingConnectionConversationsInUserSession()
+        )
 
         setNeedsUpdateConstraints()
     }
@@ -106,11 +111,8 @@ final class ConnectRequestsCell: UICollectionViewCell, SectionListCellType {
         }
     }
 
-    private
-    func updateAppearance() {
-        guard let userSession = ZMUserSession.shared() else { return }
-
-        let connectionRequests = ZMConversationList.pendingConnectionConversations(inUserSession: userSession)
+    private func updateAppearance() {
+        let connectionRequests = userSession.pendingConnectionConversationsInUserSession()
 
         let newCount: Int = connectionRequests.count
 
