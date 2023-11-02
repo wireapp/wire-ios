@@ -50,17 +50,21 @@ final class CallParticipantView: BaseCallParticipantView {
 
     // MARK: - Initialization
 
-    override init(stream: Stream,
-                  isCovered: Bool,
-                  shouldShowActiveSpeakerFrame: Bool,
-                  shouldShowBorderWhenVideoIsStopped: Bool,
-                  pinchToZoomRule: PinchToZoomRule) {
+    override init(
+        stream: Stream,
+        isCovered: Bool,
+        shouldShowActiveSpeakerFrame: Bool,
+        shouldShowBorderWhenVideoIsStopped: Bool,
+        pinchToZoomRule: PinchToZoomRule,
+        userSession: UserSession
+    ) {
         super.init(
             stream: stream,
             isCovered: isCovered,
             shouldShowActiveSpeakerFrame: shouldShowActiveSpeakerFrame,
             shouldShowBorderWhenVideoIsStopped: shouldShowBorderWhenVideoIsStopped,
-            pinchToZoomRule: pinchToZoomRule
+            pinchToZoomRule: pinchToZoomRule,
+            userSession: userSession
         )
 
         updateState()
