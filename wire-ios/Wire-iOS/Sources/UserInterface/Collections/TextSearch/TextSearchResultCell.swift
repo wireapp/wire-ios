@@ -37,9 +37,13 @@ final class TextSearchResultCell: UITableViewCell {
 
         return roundedTextBadge
     }()
+    
+    private var userSession: UserSession
 
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        init(style: UITableViewCell.CellStyle, reuseIdentifier: String?, userSession: UserSession) {
+            self.userSession = userSession
+            super.init(style: style, reuseIdentifier: reuseIdentifier)
+            userImageView.userSession = self.userSession
 
         userImageView.userSession = ZMUserSession.shared()
         userImageView.initialsFont = .systemFont(ofSize: 11, weight: .light)

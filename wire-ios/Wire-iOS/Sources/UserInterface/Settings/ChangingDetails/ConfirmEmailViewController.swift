@@ -66,13 +66,15 @@ final class ConfirmEmailViewController: SettingsBaseTableViewController {
     weak var delegate: ConfirmEmailDelegate?
     typealias SettingsAccountSectionEmailLocalizable = L10n.Localizable.Self.Settings.AccountSection.Email.Change
     let newEmail: String
+    let userSession: UserSession
     fileprivate var observer: NSObjectProtocol?
 
     // MARK: - Init
 
-    init(newEmail: String, delegate: ConfirmEmailDelegate?) {
+    init(newEmail: String, delegate: ConfirmEmailDelegate?, userSession: UserSession) {
         self.newEmail = newEmail
         self.delegate = delegate
+        self.userSession = userSession
         super.init(style: .grouped)
         setupViews()
     }
@@ -86,10 +88,7 @@ final class ConfirmEmailViewController: SettingsBaseTableViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-
-        if let userSession = ZMUserSession.shared() {
-            observer = UserChangeInfo.add(observer: self, for: ZMUser.selfUser(), in: userSession)
-        }
+        observer = userSession.addUserObserver(self, for: ZMUser.selfUser())
     }
 
     override func viewWillDisappear(_ animated: Bool) {

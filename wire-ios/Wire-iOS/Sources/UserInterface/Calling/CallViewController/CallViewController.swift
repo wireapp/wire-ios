@@ -72,14 +72,15 @@ final class CallViewController: UIViewController {
     }
     weak var configurationObserver: CallInfoConfigurationObserver?
 
-    init(voiceChannel: VoiceChannel,
-         selfUser: UserType,
-         proximityMonitorManager: ProximityMonitorManager? = ZClientViewController.shared?.proximityMonitorManager,
-         mediaManager: AVSMediaManagerInterface = AVSMediaManager.sharedInstance(),
-         permissionsConfiguration: CallPermissionsConfiguration = CallPermissions(),
-         isOverlayEnabled: Bool = true,
-         userSession: UserSession) {
-
+    init(
+        voiceChannel: VoiceChannel,
+        selfUser: UserType,
+        proximityMonitorManager: ProximityMonitorManager? = ZClientViewController.shared?.proximityMonitorManager,
+        mediaManager: AVSMediaManagerInterface = AVSMediaManager.sharedInstance(),
+        permissionsConfiguration: CallPermissionsConfiguration = CallPermissions(),
+        isOverlayEnabled: Bool = true,
+        userSession: UserSession
+    ) {
         self.voiceChannel = voiceChannel
         self.mediaManager = mediaManager
         self.proximityMonitorManager = proximityMonitorManager
@@ -87,8 +88,8 @@ final class CallViewController: UIViewController {
         self.isOverlayEnabled = isOverlayEnabled
         self.userSession = userSession
 
-           if let participants = voiceChannel.conversation?.participants {
-               classification = userSession.classification(with: participants, conversationDomain: nil)
+        if let participants = voiceChannel.conversation?.participants {
+            classification = userSession.classification(with: participants, conversationDomain: nil)
         }
 
         callInfoConfiguration = CallInfoConfiguration(voiceChannel: voiceChannel,
@@ -100,7 +101,12 @@ final class CallViewController: UIViewController {
                                                       classification: classification,
                                                       selfUser: selfUser)
 
-        callInfoRootViewController = CallInfoRootViewController(configuration: callInfoConfiguration, selfUser: ZMUser.selfUser())
+        callInfoRootViewController = CallInfoRootViewController(
+            configuration: callInfoConfiguration,
+            selfUser: ZMUser.selfUser(),
+            userSession: userSession
+        )
+
         callGridViewController = CallGridViewController(configuration: callGridConfiguration)
 
         super.init(nibName: nil, bundle: nil)
@@ -140,7 +146,7 @@ final class CallViewController: UIViewController {
         guard canHideOverlay else { return }
 
         if let overlay = callGridViewController.previewOverlay,
-            overlay.point(inside: sender.location(in: overlay), with: nil), !isOverlayVisible {
+           overlay.point(inside: sender.location(in: overlay), with: nil), !isOverlayVisible {
             return
         }
         toggleOverlayVisibility()
@@ -159,8 +165,23 @@ final class CallViewController: UIViewController {
     }
 
     private func setupApplicationStateObservers() {
-        NotificationCenter.default.addObserver(self, selector: #selector(resumeVideoIfNeeded), name: UIApplication.didBecomeActiveNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(pauseVideoIfNeeded), name: UIApplication.willResignActiveNotification, object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(
+                resumeVideoIfNeeded
+            ),
+            name: UIApplication.didBecomeActiveNotification,
+            object: nil
+        )
+
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(
+                pauseVideoIfNeeded
+            ),
+            name: UIApplication.willResignActiveNotification,
+            object: nil
+        )
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -219,12 +240,12 @@ final class CallViewController: UIViewController {
 
     private func setupViews() {
         if isOverlayEnabled {
-        [callGridViewController, callInfoRootViewController].forEach(addToSelf)
+            [callGridViewController, callInfoRootViewController].forEach(addToSelf)
         } else {
             addToSelf(callGridViewController)
         }
 
-            view.backgroundColor = .clear
+        view.backgroundColor = .clear
     }
 
     private func createConstraints() {
@@ -238,11 +259,11 @@ final class CallViewController: UIViewController {
 
     private func setupObservers() {
         voiceChannelObserverTokens += [voiceChannel.addCallStateObserver(self),
-                           voiceChannel.addParticipantObserver(self),
-                           voiceChannel.addConstantBitRateObserver(self),
-                           voiceChannel.addNetworkQualityObserver(self),
-                           voiceChannel.addMuteStateObserver(self),
-                           voiceChannel.addActiveSpeakersObserver(self)]
+                                       voiceChannel.addParticipantObserver(self),
+                                       voiceChannel.addConstantBitRateObserver(self),
+                                       voiceChannel.addNetworkQualityObserver(self),
+                                       voiceChannel.addMuteStateObserver(self),
+                                       voiceChannel.addActiveSpeakersObserver(self)]
 
         guard
             let conversation = conversation,
@@ -354,7 +375,7 @@ final class CallViewController: UIViewController {
         present(alert, animated: true)
     }
 
-     func toggleVideoState() {
+    func toggleVideoState() {
         if !permissions.canAcceptVideoCalls {
             permissions.requestOrWarnAboutVideoPermission { isVideoPermissionGranted in
                 self.disableVideoIfNeeded()

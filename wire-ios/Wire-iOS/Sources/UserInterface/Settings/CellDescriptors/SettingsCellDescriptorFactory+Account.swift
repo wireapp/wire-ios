@@ -34,8 +34,8 @@ extension ZMUser {
 
 extension SettingsCellDescriptorFactory {
 
-    func accountGroup(isTeamMember: Bool) -> SettingsCellDescriptorType {
-        var sections: [SettingsSectionDescriptorType] = [infoSection()]
+    func accountGroup(isTeamMember: Bool, userSession: UserSession) -> SettingsCellDescriptorType {
+        var sections: [SettingsSectionDescriptorType] = [infoSection(userSession: userSession)]
 
         if userRightInterfaceType.selfUserIsPermitted(to: .editAccentColor) &&
            userRightInterfaceType.selfUserIsPermitted(to: .editProfilePicture) {
@@ -70,7 +70,7 @@ extension SettingsCellDescriptorFactory {
 
     // MARK: - Sections
 
-    func infoSection() -> SettingsSectionDescriptorType {
+    func infoSection(userSession: UserSession) -> SettingsSectionDescriptorType {
         let federationEnabled = BackendInfo.isFederationEnabled
         var cellDescriptors: [SettingsCellDescriptorType] = []
         cellDescriptors = [nameElement(enabled: userRightInterfaceType.selfUserIsPermitted(to: .editName)),
@@ -87,7 +87,7 @@ extension SettingsCellDescriptorFactory {
                 cellDescriptors.append(phoneElement)
             }
 
-            cellDescriptors.append(emailElement(enabled: userRightInterfaceType.selfUserIsPermitted(to: .editEmail)))
+            cellDescriptors.append(emailElement(enabled: userRightInterfaceType.selfUserIsPermitted(to: .editEmail), userSession: userSession))
         }
 
         if user.hasTeam {
@@ -178,14 +178,14 @@ extension SettingsCellDescriptorFactory {
         return textValueCellDescriptor(propertyName: .profileName, enabled: enabled)
     }
 
-    func emailElement(enabled: Bool = true) -> SettingsCellDescriptorType {
+    func emailElement(enabled: Bool = true, userSession: UserSession) -> SettingsCellDescriptorType {
         if enabled {
             return SettingsExternalScreenCellDescriptor(
                 title: "self.settings.account_section.email.title".localized,
                 isDestructive: false,
                 presentationStyle: .navigation,
                 presentationAction: { () -> (UIViewController?) in
-                    return ChangeEmailViewController(user: ZMUser.selfUser())
+                    return ChangeEmailViewController(user: ZMUser.selfUser(), userSession: userSession)
                 },
                 previewGenerator: { _ in
                     if let email = ZMUser.selfUser().emailAddress, !email.isEmpty {

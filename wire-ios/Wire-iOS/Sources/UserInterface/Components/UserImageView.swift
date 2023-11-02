@@ -60,7 +60,7 @@ class UserImageView: AvatarImageView, ZMUserObserver {
     // MARK: - Remote User
 
     /// The user session to use to download images.
-    var userSession: ZMUserSessionInterface? {
+    var userSession: UserSession? {
         didSet {
             updateUser()
         }

@@ -91,7 +91,10 @@ final class UserSessionMock: UserSession {
         return mockConversationList
     }
 
-    func setEncryptionAtRest(enabled: Bool, skipMigration: Bool) throws {
+    func setEncryptionAtRest(
+        enabled: Bool,
+        skipMigration: Bool
+    ) throws {
 
     }
 
@@ -102,7 +105,21 @@ final class UserSessionMock: UserSession {
         return NSObject()
     }
 
-    func addConferenceCallingUnavailableObserver(_ observer: ConferenceCallingUnavailableObserver) -> Any {
+    func addConferenceCallingUnavailableObserver(
+        _ observer: ConferenceCallingUnavailableObserver
+    ) -> Any {
+        return NSObject()
+    }
+
+    func addConferenceCallStateObserver(
+        _ observer: WireCallCenterCallStateObserver
+    ) -> Any {
+        return NSObject()
+    }
+
+    func addConferenceCallErrorObserver(
+        _ observer: WireCallCenterCallErrorObserver
+    ) -> Any {
         return NSObject()
     }
 
@@ -110,15 +127,27 @@ final class UserSessionMock: UserSession {
 
     }
 
-    func fetchMarketingConsent(completion: @escaping (Result<Bool>) -> Void) {
+    func fetchMarketingConsent(
+        completion: @escaping (
+            Result<Bool>
+        ) -> Void
+    ) {
 
     }
 
-    func setMarketingConsent(granted: Bool, completion: @escaping (VoidResult) -> Void) {
+    func setMarketingConsent(
+        granted: Bool,
+        completion: @escaping (
+            VoidResult
+        ) -> Void
+    ) {
 
     }
 
-    func classification(with users: [UserType], conversationDomain: String?) -> SecurityClassification {
+    func classification(
+        with users: [UserType],
+        conversationDomain: String?
+    ) -> SecurityClassification {
         return .none
     }
 
