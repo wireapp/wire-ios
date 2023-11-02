@@ -27,6 +27,7 @@ public enum DeveloperFlag: String, CaseIterable {
     case proteusViaCoreCrypto
     case nseV2
     case forceDatabaseLoadingFailure
+    case ignoreIncomingEvents
 
     public var description: String {
         switch self {
@@ -41,8 +42,12 @@ public enum DeveloperFlag: String, CaseIterable {
 
         case .nseV2:
             return "Turn on to use the new implementation of the notification service extension."
+
         case .forceDatabaseLoadingFailure:
             return "Turn on to force database loading failure in the process of database migration"
+
+        case .ignoreIncomingEvents:
+            return "Turn on to ignore incoming update events"
         }
     }
 
@@ -81,6 +86,8 @@ public enum DeveloperFlag: String, CaseIterable {
             return "ForceDatabaseLoadingFailure"
         case .nseV2:
             return nil
+        case .ignoreIncomingEvents:
+            return "IgnoreIncomingEventsEnabled"
         }
     }
 }
