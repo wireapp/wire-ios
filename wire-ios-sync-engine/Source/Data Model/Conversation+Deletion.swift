@@ -17,6 +17,8 @@
 //
 
 import Foundation
+import WireDataModel
+import WireSystem
 
 public enum ConversationDeletionError: Error {
     case unknown, invalidOperation, conversationNotFound
@@ -40,11 +42,17 @@ extension ZMConversation {
         delete(in: userSession.coreDataStack, transportSession: userSession.transportSession, completion: completion)
     }
 
-    func delete(in contextProvider: ContextProvider, transportSession: TransportSessionType, completion: @escaping (VoidResult) -> Void) {
+    func delete(
+        in contextProvider: ContextProvider,
+        transportSession: TransportSessionType,
+        completion: @escaping (VoidResult) -> Void
+    ) {
+        let localConversationRemovalUseCase = LocalConversationRemovalUseCase()
 
-        guard ZMUser.selfUser(in: contextProvider.viewContext).canDeleteConversation(self),
-              let conversationId = remoteIdentifier,
-              let request = ConversationDeletionRequestFactory.requestForDeletingTeamConversation(self)
+        guard
+            ZMUser.selfUser(in: contextProvider.viewContext).canDeleteConversation(self),
+            let conversationId = remoteIdentifier,
+            let request = ConversationDeletionRequestFactory.requestForDeletingTeamConversation(self)
         else {
             return completion(.failure(ConversationDeletionError.invalidOperation))
         }
@@ -55,9 +63,19 @@ extension ZMConversation {
             if response.httpStatus == 200 {
 
                 contextProvider.syncContext.performGroupedBlock {
-                    guard let conversation = ZMConversation.fetch(with: conversationId, domain: nil, in: contextProvider.syncContext) else { return }
-                    conversation.isDeletedRemotely = true
-                    contextProvider.syncContext.saveOrRollback()
+
+                    guard let conversation = ZMConversation.fetch(
+                            with: conversationId,
+                            domain: nil,
+                            in: contextProvider.syncContext
+                    ) else {
+                        return
+                    }
+
+                    localConversationRemovalUseCase.removeConversation(
+                        conversation,
+                        syncContext: contextProvider.syncContext
+                    )
                 }
 
                 completion(.success)

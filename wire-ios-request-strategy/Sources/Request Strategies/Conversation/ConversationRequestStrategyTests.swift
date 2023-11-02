@@ -25,6 +25,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
     var sut: ConversationRequestStrategy!
     var mockApplicationStatus: MockApplicationStatus!
     var mockSyncProgress: MockSyncProgress!
+    var mocklocalConversationRemovalUseCase: MockLocalConversationRemovalUseCase!
 
     var apiVersion: APIVersion! {
         didSet {
@@ -38,10 +39,14 @@ class ConversationRequestStrategyTests: MessagingTestBase {
         mockApplicationStatus = MockApplicationStatus()
         mockApplicationStatus.mockSynchronizationState = .online
         mockSyncProgress = MockSyncProgress()
+        mocklocalConversationRemovalUseCase = MockLocalConversationRemovalUseCase()
 
-        sut = ConversationRequestStrategy(withManagedObjectContext: syncMOC,
-                                          applicationStatus: mockApplicationStatus,
-                                          syncProgress: mockSyncProgress)
+        sut = ConversationRequestStrategy(
+            withManagedObjectContext: syncMOC,
+            applicationStatus: mockApplicationStatus,
+            syncProgress: mockSyncProgress,
+            localConversationRemovalUseCase: mocklocalConversationRemovalUseCase
+        )
 
         apiVersion = .v0
     }
@@ -50,6 +55,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
         sut = nil
         mockSyncProgress = nil
         mockApplicationStatus = nil
+        mocklocalConversationRemovalUseCase = nil
         apiVersion = nil
 
         super.tearDown()
@@ -319,7 +325,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
         }
     }
 
-    func testThatConversationIsDeleted_WhenResponseIs_404() {
+    func testThatLocalConversationRemovalUseCaseIsExecuted_WhenResponseIs_404() {
         // given
         let response = responseFailure(code: 404, label: .notFound, apiVersion: apiVersion)
 
@@ -327,9 +333,10 @@ class ConversationRequestStrategyTests: MessagingTestBase {
         fetchConversation(groupConversation, with: response, apiVersion: apiVersion)
 
         // then
-        self.syncMOC.performGroupedBlockAndWait {
-            XCTAssertTrue(self.groupConversation.isZombieObject)
-        }
+        XCTAssertEqual(
+            mocklocalConversationRemovalUseCase.removeConversationCalls,
+            [groupConversation]
+        )
     }
 
     func testThatSelfUserIsRemovedFromParticipantsList_WhenResponseIs_403() {

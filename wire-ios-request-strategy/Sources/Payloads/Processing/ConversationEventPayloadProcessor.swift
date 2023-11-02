@@ -17,12 +17,19 @@
 //
 
 import Foundation
+import WireDataModel
 
 final class ConversationEventPayloadProcessor {
 
     enum Source {
         case slowSync
         case eventStream
+    }
+
+    private let localConversationRemovalUseCase: LocalConversationRemovalUseCaseProtocol
+
+    init(localConversationRemovalUseCase: LocalConversationRemovalUseCaseProtocol? = nil) {
+        self.localConversationRemovalUseCase = localConversationRemovalUseCase ?? LocalConversationRemovalUseCase()
     }
 
     // MARK: - Conversation creation
@@ -84,7 +91,10 @@ final class ConversationEventPayloadProcessor {
             return
         }
 
-        conversation.isDeletedRemotely = true
+        localConversationRemovalUseCase.removeConversation(
+            conversation,
+            syncContext: context
+        )
     }
 
     // MARK: - Member leave
@@ -609,10 +619,8 @@ final class ConversationEventPayloadProcessor {
         if let accessModes = payload.access {
             if let accessRoles = payload.accessRoles {
                 conversation.updateAccessStatus(accessModes: accessModes, accessRoles: accessRoles)
-            } else if 
-                let accessRole = payload.legacyAccessRole,
-                let legacyAccessRole = ConversationAccessRole(rawValue: accessRole) 
-            {
+            } else if let accessRole = payload.legacyAccessRole,
+                      let legacyAccessRole = ConversationAccessRole(rawValue: accessRole) {
                 let accessRoles = ConversationAccessRoleV2.fromLegacyAccessRole(legacyAccessRole)
                 conversation.updateAccessStatus(accessModes: accessModes, accessRoles: accessRoles.map(\.rawValue))
             }
