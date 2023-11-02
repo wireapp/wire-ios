@@ -41,13 +41,15 @@ These differences are:
 - the open source project links against the open source Wire audio-video-signaling (AVS) library. The binary App Store client links against an AVS version that contains proprietary improvements for the call quality.
 
 ### Prerequisites
-In order to build Wire for iOS locally, it is necessary to install the following tools on the local machine:
+In order to build Wire for iOS locally, it is necessary to install and setup the following tools on the local machine:
 
 - macOS 13.5 (Ventura) or newer
 - [Xcode 15.0.0](https://xcodereleases.com)
 - Carthage 0.38 or newer (https://github.com/Carthage/Carthage)
+- `gem` must be setup to use ruby without admin permissions. One way to achieve this is to use [rbenv](https://github.com/rbenv/rbenv), install the latest ruby version and set it as global version.
+- SSH key for git. [Generate a new key, add it locally](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent) and [add it to GitHub](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account).
 
-The setup script will automatically check for you that you satisfy these requirements
+The setup script will automatically check for you that you satisfy these requirements.
 
 ### How to build locally
 1. Check out the wire-ios-mono repository.
