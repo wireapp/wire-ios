@@ -65,7 +65,7 @@ class BaseCallParticipantView: OrientableView, AVSIdentifierProvider {
     let userDetailsView = CallParticipantDetailsView()
     var scalableView: ScalableView?
     var avatarView = UserImageView(size: .normal)
-    var userSession = ZMUserSession.shared()
+    let userSession: UserSession
     private(set) var videoView: AVSVideoViewProtocol?
     private var borderLayer = CALayer()
 
@@ -85,16 +85,20 @@ class BaseCallParticipantView: OrientableView, AVSIdentifierProvider {
 
     // MARK: - View Life Cycle
 
-    init(stream: Stream,
-         isCovered: Bool,
-         shouldShowActiveSpeakerFrame: Bool,
-         shouldShowBorderWhenVideoIsStopped: Bool,
-         pinchToZoomRule: PinchToZoomRule) {
+    init(
+        stream: Stream,
+        isCovered: Bool,
+        shouldShowActiveSpeakerFrame: Bool,
+        shouldShowBorderWhenVideoIsStopped: Bool,
+        pinchToZoomRule: PinchToZoomRule,
+        userSession: UserSession
+    ) {
         self.stream = stream
         self.isCovered = isCovered
         self.shouldShowActiveSpeakerFrame = shouldShowActiveSpeakerFrame
         self.shouldShowBorderWhenVideoIsStopped = shouldShowBorderWhenVideoIsStopped
         self.pinchToZoomRule = pinchToZoomRule
+        self.userSession = userSession
 
         super.init(frame: .zero)
 
