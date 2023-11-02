@@ -81,9 +81,11 @@ final class ContactsCell: UITableViewCell, SeparatorViewProtocol {
         }
     }
 
-    let actionButton: Button = Button(style: .accentColorTextButtonStyle,
-                                      cornerRadius: 4,
-                                      fontSpec: .mediumSemiboldFont)
+    let actionButton: Button = Button(
+        style: .accentColorTextButtonStyle,
+        cornerRadius: 4,
+        fontSpec: .mediumSemiboldFont
+    )
 
     var actionButtonHandler: ContactsCellActionButtonHandler?
 
@@ -198,7 +200,12 @@ final class ContactsCell: UITableViewCell, SeparatorViewProtocol {
         ])
     }
 
-    func actionButtonWidth(forTitles actionButtonTitles: [String], textTransform: TextTransform, contentInsets: UIEdgeInsets, textAttributes: [NSAttributedString.Key: Any]?) -> Float {
+    func actionButtonWidth(
+        forTitles actionButtonTitles: [String],
+        textTransform: TextTransform,
+        contentInsets: UIEdgeInsets,
+        textAttributes: [NSAttributedString.Key: Any]?
+    ) -> Float {
         var width: CGFloat = 0
         for title: String in actionButtonTitles {
             let transformedTitle = title.applying(transform: textTransform)
