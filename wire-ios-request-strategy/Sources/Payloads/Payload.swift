@@ -276,11 +276,17 @@ public enum Payload {
 
         /// Endpoints involving federated calls to other domains can return some extra failure responses.
         /// The error response contains the following extra fields:
-        struct FederationFailure: Codable, Equatable {
+        public struct FederationFailure: Codable, Equatable {
 
-            enum FailureType: String, Codable, Equatable {
+            public enum FailureType: String, Codable, Equatable {
                 case federation
                 case unknown
+            }
+
+            public init(domain: String, path: String, type: FailureType) {
+                self.domain = domain
+                self.path = path
+                self.type = type
             }
 
             let domain: String
@@ -289,7 +295,7 @@ public enum Payload {
 
         }
 
-        enum Label: String, Codable, Equatable {
+        public enum Label: String, Codable, Equatable {
             case notFound = "not-found"
             case noEndpoint = "no-endpoint"
             case noIdentity = "no-identity"
@@ -301,16 +307,23 @@ public enum Payload {
             case federationRemoteError = "federation-remote-error"
             case unknown
 
-            init(from decoder: Decoder) throws {
+            public init(from decoder: Decoder) throws {
                 let container = try decoder.singleValueContainer()
                 let label = try container.decode(String.self)
                 self = Label(rawValue: label) ?? .unknown
             }
 
-            func encode(to encoder: Encoder) throws {
+            public func encode(to encoder: Encoder) throws {
                 var container = encoder.singleValueContainer()
                 try container.encode(self.rawValue)
             }
+        }
+
+        public init(code: Int, label: Label, message: String, data: FederationFailure?) {
+            self.code = code
+            self.label = label
+            self.message = message
+            self.data = data
         }
 
         let code: Int
@@ -352,6 +365,15 @@ public enum Payload {
             case deleted
             case failedToSend = "failed_to_send"
             case failedToConfirm = "failed_to_confirm_clients"
+        }
+
+        public init(time: Date, missing: ClientListByQualifiedUserID, redundant: ClientListByQualifiedUserID, deleted: ClientListByQualifiedUserID, failedToSend: ClientListByQualifiedUserID, failedToConfirm: ClientListByQualifiedUserID) {
+            self.time = time
+            self.missing = missing
+            self.redundant = redundant
+            self.deleted = deleted
+            self.failedToSend = failedToSend
+            self.failedToConfirm = failedToConfirm
         }
 
         /// Time of sending message.

@@ -23,7 +23,12 @@ public enum SessionEstablisherError: Error, Equatable {
     case networkError(NetworkError)
 }
 
-public class SessionEstablisher {
+// sourcery: AutoMockable
+public protocol SessionEstablisherInterface {
+    func establishSession(with clients: Set<QualifiedClientID>, apiVersion: APIVersion) async -> Swift.Result<Void, SessionEstablisherError>
+}
+
+public class SessionEstablisher: SessionEstablisherInterface {
 
     public init(
         context: NSManagedObjectContext,
