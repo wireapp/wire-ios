@@ -85,6 +85,8 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
 
     func repairOutOfSyncConversations()
 
+    func fetchAndRepairGroup(with groupID: MLSGroupID) async
+
 }
 
 public protocol MLSServiceDelegate: AnyObject {
@@ -110,6 +112,7 @@ public final class MLSService: MLSServiceInterface {
     private let userDefaults: UserDefaults
     private let logger = WireLogger.mls
     private var groupsPendingJoin = Set<MLSGroupID>()
+    private let groupsBeingRepaired = GroupsBeingRepaired()
 
     private let syncStatus: SyncStatusProtocol
 
@@ -119,7 +122,7 @@ public final class MLSService: MLSServiceInterface {
     let targetUnclaimedKeyPackageCount = 100
     let actionsProvider: MLSActionsProviderProtocol
 
-    private let subconverationGroupIDRepository: SubconversationGroupIDRepositoryInterface
+    private let subconversationGroupIDRepository: SubconversationGroupIDRepositoryInterface
 
     var lastKeyMaterialUpdateCheck = Date.distantPast
     var keyMaterialUpdateCheckTimer: Timer?
@@ -192,7 +195,7 @@ public final class MLSService: MLSServiceInterface {
         self.userDefaults = userDefaults
         self.delegate = delegate
         self.syncStatus = syncStatus
-        self.subconverationGroupIDRepository = subconversationGroupIDRepository
+        self.subconversationGroupIDRepository = subconversationGroupIDRepository
 
         self.encryptionService = encryptionService ?? MLSEncryptionService(coreCrypto: coreCrypto)
         self.decryptionService = decryptionService ?? MLSDecryptionService(
@@ -843,15 +846,22 @@ public final class MLSService: MLSServiceInterface {
     public func repairOutOfSyncConversations() {
         guard let context = self.context else { return }
 
-        let outOfSync = outOfSyncConversations(in: context).compactMap(\.mlsGroupID)
+        let outOfSync = outOfSyncConversations(in: context)
 
         logger.info("found \(outOfSync.count) conversations out of sync")
 
-        outOfSync.forEach { groupID in
-            launchConversationRepairTaskIfNotInProgress(for: groupID) {
+        outOfSync.forEach { conversation in
+            guard let groupID = conversation.mlsGroupID else {
+                return
+            }
+
+            launchGroupRepairTaskIfNotInProgress(for: groupID) {
                 do {
-                    try await self.joinGroup(with: groupID)
-                    self.logger.info("repaired out of sync conversation (\(groupID.safeForLoggingDescription))")
+                    try await self.joinGroupAndAppendGapSystemMessage(
+                        groupID: groupID,
+                        conversation: conversation,
+                        context: context
+                    )
                 } catch {
                     self.logger.warn("failed to repair out of sync conversation (\(groupID.safeForLoggingDescription)). error: \(String(describing: error))")
                 }
@@ -859,21 +869,21 @@ public final class MLSService: MLSServiceInterface {
         }
     }
 
-    func fetchAndRepairConversation(
-        with groupID: MLSGroupID,
-        subconversationType: SubgroupType?
-    ) {
-        launchConversationRepairTaskIfNotInProgress(for: groupID) {
-            switch subconversationType {
-            case .none:
-                await self.fetchAndRepairConversation(with: groupID)
-            case .conference:
-                await self.fetchAndRepairSubgroup(parentGroupID: groupID)
-            }
+    func fetchAndRepairGroupIfPossible(with groupID: MLSGroupID) {
+        launchGroupRepairTaskIfNotInProgress(for: groupID) {
+            await self.fetchAndRepairGroup(with: groupID)
         }
     }
 
-    private func fetchAndRepairConversation(with groupID: MLSGroupID) async {
+    public func fetchAndRepairGroup(with groupID: MLSGroupID) async {
+        if let subgroupInfo = subconversationGroupIDRepository.findSubgroupTypeAndParentID(for: groupID) {
+            await fetchAndRepairSubgroup(parentGroupID: subgroupInfo.parentID)
+        } else {
+            await fetchAndRepairParentGroup(with: groupID)
+        }
+    }
+
+    private func fetchAndRepairParentGroup(with groupID: MLSGroupID) async {
         guard let context = context else {
             return
         }
@@ -902,20 +912,32 @@ public final class MLSService: MLSServiceInterface {
                 return
             }
 
-            try await joinGroup(with: groupID)
-
-            logger.info("repaired out of sync conversation! (\(groupID.safeForLoggingDescription))")
-
-            appendGapSystemMessage(
-                in: conversationInfo.conversation,
+            try await joinGroupAndAppendGapSystemMessage(
+                groupID: groupID,
+                conversation: conversationInfo.conversation,
                 context: context
             )
-
-            logger.info("inserted gap system message in conversation (\(groupID.safeForLoggingDescription))")
         } catch {
             logger.warn("failed to repair conversation (\(groupID.safeForLoggingDescription)). error: \(String(describing: error))")
         }
 
+    }
+
+    private func joinGroupAndAppendGapSystemMessage(
+        groupID: MLSGroupID,
+        conversation: ZMConversation,
+        context: NSManagedObjectContext
+    ) async throws {
+        try await joinGroup(with: groupID)
+
+        logger.info("repaired out of sync conversation! (\(groupID.safeForLoggingDescription))")
+
+        appendGapSystemMessage(
+            in: conversation,
+            context: context
+        )
+
+        logger.info("inserted gap system message in conversation (\(groupID.safeForLoggingDescription))")
     }
 
     private func appendGapSystemMessage(
@@ -969,20 +991,18 @@ public final class MLSService: MLSServiceInterface {
         }
     }
 
-    private var conversationsBeingRepaired = Set<MLSGroupID>()
-
-    private func launchConversationRepairTaskIfNotInProgress(
+    private func launchGroupRepairTaskIfNotInProgress(
         for groupID: MLSGroupID,
         repairOperation: @escaping () async -> Void
     ) {
-        guard !conversationsBeingRepaired.contains(groupID) else {
-            return
-        }
-
         Task {
-            conversationsBeingRepaired.insert(groupID)
+            guard await !groupsBeingRepaired.contains(group: groupID) else {
+                return
+            }
+
+            await groupsBeingRepaired.insert(group: groupID)
             await repairOperation()
-            conversationsBeingRepaired.remove(groupID)
+            await groupsBeingRepaired.remove(group: groupID)
         }
     }
 
@@ -1232,10 +1252,7 @@ public final class MLSService: MLSServiceInterface {
                 subconversationType: subconversationType
             )
         } catch DecryptionError.wrongEpoch {
-            fetchAndRepairConversation(
-                with: groupID,
-                subconversationType: subconversationType
-            )
+            fetchAndRepairGroupIfPossible(with: groupID)
             throw DecryptionError.wrongEpoch
         } catch {
             throw error
@@ -1300,7 +1317,7 @@ public final class MLSService: MLSServiceInterface {
 
                 // The pending proposal might be for the subconversation,
                 // so include it just in case.
-                if let subgroupID = subconverationGroupIDRepository.fetchSubconversationGroupID(
+                if let subgroupID = subconversationGroupIDRepository.fetchSubconversationGroupID(
                     forType: .conference,
                     parentGroupID: groupID
                 ) {
@@ -1377,31 +1394,39 @@ public final class MLSService: MLSServiceInterface {
         for groupID: MLSGroupID,
         operation: @escaping () async throws -> Void
     ) async throws {
+        typealias Error = MLSActionExecutor.Error
+
         do {
             try await operation()
 
-        } catch MLSActionExecutor.Error.failedToSendCommit(recovery: .commitPendingProposalsAfterQuickSync) {
+        } catch Error.failedToSendCommit(recovery: .commitPendingProposalsAfterQuickSync) {
             logger.warn("failed to send commit, syncing then committing pending proposals...")
             await syncStatus.performQuickSync()
             logger.info("sync finished, committing pending proposals...")
             try await commitPendingProposals(in: groupID)
 
-        } catch MLSActionExecutor.Error.failedToSendCommit(recovery: .retryAfterQuickSync) {
+        } catch Error.failedToSendCommit(recovery: .retryAfterQuickSync) {
             logger.warn("failed to send commit, syncing then retrying operation...")
             await syncStatus.performQuickSync()
             logger.info("sync finished, retying operation...")
             try await retryOnCommitFailure(for: groupID, operation: operation)
 
-        } catch MLSActionExecutor.Error.failedToSendCommit(recovery: .giveUp) {
+        } catch Error.failedToSendCommit(recovery: .retryAfterRepairingGroup) {
+            logger.warn("failed to send commit, repairing group then retrying operation...")
+            await fetchAndRepairGroup(with: groupID)
+            logger.info("repair finished, retrying operation...")
+            try await operation()
+
+        } catch Error.failedToSendCommit(recovery: .giveUp) {
             logger.warn("failed to send commit, giving up...")
             // TODO: [John] inform user
-            throw MLSActionExecutor.Error.failedToSendCommit(recovery: .giveUp)
+            throw Error.failedToSendCommit(recovery: .giveUp)
 
-        } catch MLSActionExecutor.Error.failedToSendExternalCommit(recovery: .retry) {
+        } catch Error.failedToSendExternalCommit(recovery: .retry) {
             logger.warn("failed to send external commit, retrying operation...")
             try await retryOnCommitFailure(for: groupID, operation: operation)
 
-        } catch MLSActionExecutor.Error.failedToSendExternalCommit(recovery: .giveUp) {
+        } catch Error.failedToSendExternalCommit(recovery: .giveUp) {
             logger.warn("failed to send external commit, giving up...")
             throw MLSActionExecutor.Error.failedToSendExternalCommit(recovery: .giveUp)
 
@@ -1453,7 +1478,7 @@ public final class MLSService: MLSServiceInterface {
                 )
             }
 
-            subconverationGroupIDRepository.storeSubconversationGroupID(
+            subconversationGroupIDRepository.storeSubconversationGroupID(
                 subgroup.groupID,
                 forType: .conference,
                 parentGroupID: parentID
@@ -1558,7 +1583,7 @@ public final class MLSService: MLSServiceInterface {
         }
 
         if
-            let subConversationGroupID = subconverationGroupIDRepository.fetchSubconversationGroupID(
+            let subConversationGroupID = subconversationGroupIDRepository.fetchSubconversationGroupID(
                 forType: subconversationType,
                 parentGroupID: parentGroupID
             ),
@@ -1583,7 +1608,7 @@ public final class MLSService: MLSServiceInterface {
         parentGroupID: MLSGroupID,
         subconversationType: SubgroupType
     ) async throws {
-        guard let subconversationGroupID = subconverationGroupIDRepository.fetchSubconversationGroupID(
+        guard let subconversationGroupID = subconversationGroupIDRepository.fetchSubconversationGroupID(
             forType: subconversationType,
             parentGroupID: parentGroupID
         ) else {
@@ -1618,7 +1643,7 @@ public final class MLSService: MLSServiceInterface {
                 context: context
             )
 
-            subconverationGroupIDRepository.storeSubconversationGroupID(
+            subconversationGroupIDRepository.storeSubconversationGroupID(
                 nil,
                 forType: subconversationType,
                 parentGroupID: parentGroupID
@@ -1805,4 +1830,20 @@ extension CiphersuiteName {
         }
     }
 
+}
+
+actor GroupsBeingRepaired {
+    var values = Set<MLSGroupID>()
+
+    func contains(group: MLSGroupID) -> Bool {
+        values.contains(group)
+    }
+
+    func insert(group: MLSGroupID) {
+        values.insert(group)
+    }
+
+    func remove(group: MLSGroupID) {
+        values.remove(group)
+    }
 }
