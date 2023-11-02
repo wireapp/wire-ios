@@ -205,15 +205,25 @@ class MockMLSService: MLSServiceInterface {
         mock()
     }
 
+    typealias FetchAndRepairGroupMock = (MLSGroupID) -> Void
+    var fetchAndRepairGroupMock: FetchAndRepairGroupMock?
+
+    func fetchAndRepairGroup(with groupID: MLSGroupID) async {
+        guard let mock = fetchAndRepairGroupMock else {
+            return
+        mock(groupID)
+        }
+    }
+
     // MARK: - Migration
-
     typealias StartProteusToMLSMigrationMock = () -> Void
-    var startProteusToMLSMigrationMock: StartProteusToMLSMigrationMock?
 
+    var startProteusToMLSMigrationMock: StartProteusToMLSMigrationMock?
     func startProteusToMLSMigration() {
+
         guard let mock = startProteusToMLSMigrationMock else {
             return
-        }
         mock()
+        }
     }
 }
