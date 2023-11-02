@@ -108,7 +108,10 @@ final class CallViewController: UIViewController {
             userSession: userSession
         )
 
-        callGridViewController = CallGridViewController(configuration: callGridConfiguration)
+        callGridViewController = CallGridViewController(
+            configuration: callGridConfiguration,
+            userSession: userSession
+        )
 
         super.init(nibName: nil, bundle: nil)
         callInfoRootViewController.delegate = self
