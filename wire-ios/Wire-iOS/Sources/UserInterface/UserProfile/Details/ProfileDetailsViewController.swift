@@ -84,8 +84,19 @@ final class ProfileDetailsViewController: UIViewController {
         self.viewer = viewer
         self.conversation = conversation
         self.context = context
-        profileHeaderViewController = ProfileHeaderViewController(user: user, viewer: viewer, conversation: conversation, options: profileHeaderOptions, userSession: userSession)
-        contentController = ProfileDetailsContentController(user: user, viewer: viewer, conversation: conversation)
+        profileHeaderViewController = ProfileHeaderViewController(
+            user: user,
+            viewer: viewer,
+            conversation: conversation,
+            options: profileHeaderOptions,
+            userSession: userSession
+        )
+        contentController = ProfileDetailsContentController(
+            user: user,
+            viewer: viewer,
+            conversation: conversation, 
+            userSession: userSession
+        )
 
         super.init(nibName: nil, bundle: nil)
 

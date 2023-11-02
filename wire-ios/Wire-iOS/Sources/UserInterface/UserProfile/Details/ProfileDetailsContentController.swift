@@ -85,6 +85,8 @@ final class ProfileDetailsContentController: NSObject,
     private var observerToken: Any?
     private let userPropertyCellID = "UserPropertyCell"
 
+    private let userSession: UserSession
+
     // MARK: - Initialization
 
     /**
@@ -93,21 +95,26 @@ final class ProfileDetailsContentController: NSObject,
      * - parameter user: The user to display the details of.
      * - parameter viewer: The user that will see the details. Most commonly, the self user.
      * - parameter conversation: The conversation where the profile details will be displayed.
+     * - parameter userSession: The user session.
      */
 
-    init(user: UserType,
-         viewer: UserType,
-         conversation: ZMConversation?) {
+    init(
+        user: UserType,
+        viewer: UserType,
+        conversation: ZMConversation?,
+        userSession: UserSession
+    ) {
         self.user = user
         self.viewer = viewer
         self.conversation = conversation
+        self.userSession = userSession
 
         isAdminState = conversation.map(user.isGroupAdmin) ?? false
 
         super.init()
         configureObservers()
         updateContent()
-        ZMUserSession.shared()?.perform {
+        userSession.perform {
             user.refreshRichProfile()
         }
     }
@@ -121,9 +128,7 @@ final class ProfileDetailsContentController: NSObject,
 
     /// Starts observing changes in the user profile.
     private func configureObservers() {
-        if let userSession = ZMUserSession.shared() {
-            observerToken = UserChangeInfo.add(observer: self, for: user, in: userSession)
-        }
+        observerToken = userSession.addUserObserver(self, for: user)
     }
 
     private var richProfileInfoWithEmailAndDomain: ProfileDetailsContentController.Content? {
@@ -144,7 +149,6 @@ final class ProfileDetailsContentController: NSObject,
 
         return richProfile.isEmpty ? nil : .richProfile(richProfile)
     }
-
 
     /// Updates the content for the current configuration.
     private func updateContent() {
