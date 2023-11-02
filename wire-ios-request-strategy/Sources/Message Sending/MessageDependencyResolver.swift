@@ -23,6 +23,7 @@ public protocol MessageDependencyResolverInterface {
     func waitForDependenciesToResolve(for message: any SendableMessage) async
 }
 
+// swiftlint:disable for_where
 public class MessageDependencyResolver: MessageDependencyResolverInterface {
 
     public init(context: NSManagedObjectContext) {
@@ -33,32 +34,39 @@ public class MessageDependencyResolver: MessageDependencyResolverInterface {
 
     public func waitForDependenciesToResolve(for message: any SendableMessage) async {
 
-        let hasDependencies = context.performAndWait {
-            message.dependentObjectNeedingUpdateBeforeProcessing != nil
+        @Sendable func dependenciesAreResolved() -> Bool {
+            let hasDependencies = self.context.performAndWait {
+                message.dependentObjectNeedingUpdateBeforeProcessing != nil
+            }
+
+            if !hasDependencies {
+                WireLogger.messaging.debug("Message dependency resolved")
+                return true
+            } else {
+                WireLogger.messaging.debug("Message has dependency, waiting")
+                return false
+            }
         }
 
-        if !hasDependencies {
+        if dependenciesAreResolved() {
             return
         }
 
-        WireLogger.messaging.debug("Message has dependency, waiting")
-
         await withCheckedContinuation { continuation in
             Task {
-                for await _  in NotificationCenter.default.notifications(named: .requestAvailableNotification) {
-                    let hasDependencies = self.context.performAndWait {
-                        message.dependentObjectNeedingUpdateBeforeProcessing != nil
-                    }
+                if dependenciesAreResolved() {
+                    continuation.resume()
+                    return
+                }
 
-                    if !hasDependencies {
-                        WireLogger.messaging.debug("Message dependency resolved")
+                for await _ in NotificationCenter.default.notifications(named: .requestAvailableNotification) {
+                    if dependenciesAreResolved() {
                         continuation.resume()
                         break
-                    } else {
-                        WireLogger.messaging.debug("Message has dependency, waiting")
                     }
                 }
             }
         }
     }
 }
+// swiftlint:enable for_where
