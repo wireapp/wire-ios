@@ -18,15 +18,20 @@
 
 import Foundation
 
-class MessageDependencyResolver {
+// sourcery: AutoMockable
+public protocol MessageDependencyResolverInterface {
+    func waitForDependenciesToResolve(for message: any SendableMessage) async
+}
 
-    init(context: NSManagedObjectContext) {
+public class MessageDependencyResolver: MessageDependencyResolverInterface {
+
+    public init(context: NSManagedObjectContext) {
         self.context = context
     }
 
     let context: NSManagedObjectContext
 
-    func waitForDependenciesToResolve(for message: any SendableMessage) async {
+    public func waitForDependenciesToResolve(for message: any SendableMessage) async {
 
         let hasDependencies = context.performAndWait {
             message.dependentObjectNeedingUpdateBeforeProcessing != nil

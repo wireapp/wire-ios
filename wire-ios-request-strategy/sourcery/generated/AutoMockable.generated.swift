@@ -103,6 +103,29 @@ public class MockMessageAPI: MessageAPI {
     }
 
 }
+public class MockMessageDependencyResolverInterface: MessageDependencyResolverInterface {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - waitForDependenciesToResolve
+
+    public var waitForDependenciesToResolveFor_Invocations: [any SendableMessage] = []
+    public var waitForDependenciesToResolveFor_MockMethod: ((any SendableMessage) async -> Void)?
+
+    public func waitForDependenciesToResolve(for message: any SendableMessage) async {
+        waitForDependenciesToResolveFor_Invocations.append(message)
+
+        guard let mock = waitForDependenciesToResolveFor_MockMethod else {
+            fatalError("no mock for `waitForDependenciesToResolveFor`")
+        }
+
+        await mock(message)            
+    }
+
+}
 public class MockMessageSenderInterface: MessageSenderInterface {
 
     // MARK: - Life cycle
@@ -177,6 +200,32 @@ public class MockPrekeyPayloadProcessorInterface: PrekeyPayloadProcessorInterfac
             return mock
         } else {
             fatalError("no mock for `establishSessionsFromWithContext`")
+        }
+    }
+
+}
+public class MockSessionEstablisherInterface: SessionEstablisherInterface {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - establishSession
+
+    public var establishSessionWithApiVersion_Invocations: [(clients: Set<QualifiedClientID>, apiVersion: APIVersion)] = []
+    public var establishSessionWithApiVersion_MockMethod: ((Set<QualifiedClientID>, APIVersion) async -> Swift.Result<Void, SessionEstablisherError>)?
+    public var establishSessionWithApiVersion_MockValue: Swift.Result<Void, SessionEstablisherError>?
+
+    public func establishSession(with clients: Set<QualifiedClientID>, apiVersion: APIVersion) async -> Swift.Result<Void, SessionEstablisherError> {
+        establishSessionWithApiVersion_Invocations.append((clients: clients, apiVersion: apiVersion))
+
+        if let mock = establishSessionWithApiVersion_MockMethod {
+            return await mock(clients, apiVersion)
+        } else if let mock = establishSessionWithApiVersion_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `establishSessionWithApiVersion`")
         }
     }
 

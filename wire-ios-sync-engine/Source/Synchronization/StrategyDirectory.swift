@@ -103,12 +103,14 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             queue: syncMOC)
         let apiProvider = APIProvider(httpClient: httpClient)
         let sessionEstablisher = SessionEstablisher(
-            apiProvider: apiProvider,
-            context: syncMOC)
+            context: syncMOC,
+            apiProvider: apiProvider)
+        let messageDependencyResolver = MessageDependencyResolver(context: syncMOC)
         let messageSender = MessageSender(
             apiProvider: apiProvider,
             clientRegistrationDelegate: applicationStatusDirectory.clientRegistrationStatus,
             sessionEstablisher: sessionEstablisher,
+            messageDependencyResolver: messageDependencyResolver,
             context: syncMOC)
         let strategies: [Any] = [
             // TODO: [John] use flag here

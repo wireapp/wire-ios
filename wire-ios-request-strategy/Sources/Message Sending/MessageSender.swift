@@ -57,7 +57,7 @@ public class HttpClientImpl: HttpClient {
     }
 }
 
-public enum MessageSendError: Error {
+public enum MessageSendError: Error, Equatable {
     case messageProtocolMissing
     case unresolvedApiVersion
     case missingSelfClient
@@ -78,23 +78,24 @@ public protocol MessageSenderInterface {
 public class MessageSender: MessageSenderInterface {
 
     public init (
-        apiProvider: APIProvider,
+        apiProvider: APIProviderInterface,
         clientRegistrationDelegate: ClientRegistrationDelegate,
-        sessionEstablisher: SessionEstablisher,
+        sessionEstablisher: SessionEstablisherInterface,
+        messageDependencyResolver: MessageDependencyResolverInterface,
         context: NSManagedObjectContext
     ) {
         self.apiProvider = apiProvider
         self.clientRegistrationDelegate = clientRegistrationDelegate
         self.sessionEstablisher = sessionEstablisher
         self.managedObjectContext = context
-        self.messageDependencyResolver = MessageDependencyResolver(context: context)
+        self.messageDependencyResolver = messageDependencyResolver
     }
 
-    private let apiProvider: APIProvider
+    private let apiProvider: APIProviderInterface
     private let managedObjectContext: NSManagedObjectContext
     private let clientRegistrationDelegate: ClientRegistrationDelegate
-    private let sessionEstablisher: SessionEstablisher
-    private let messageDependencyResolver: MessageDependencyResolver
+    private let sessionEstablisher: SessionEstablisherInterface
+    private let messageDependencyResolver: MessageDependencyResolverInterface
     private let processor = MessageSendingStatusPayloadProcessor()
 
     public func sendMessage(message: any SendableMessage) async -> Swift.Result<Void, MessageSendError> {
@@ -106,7 +107,6 @@ public class MessageSender: MessageSenderInterface {
             return .failure(MessageSendError.securityLevelDegraded)
         }
 
-        // FIXME: [jacob] check that message hasn't expired
         await messageDependencyResolver.waitForDependenciesToResolve(for: message)
 
         return await attemptToSend(message: message)
@@ -223,7 +223,11 @@ public class MessageSender: MessageSenderInterface {
             }
         default:
             if case .tryAgainLater = failure.response?.result {
-                return .success(Set()) // FIXME: [jacob] it's dangerous to retry indefinitely like this WPB-5454
+                if message.isExpired {
+                    return .failure(MessageSendError.messageExpired)
+                } else {
+                    return .success(Set()) // FIXME: [jacob] it's dangerous to retry indefinitely like this WPB-5454
+                }
             } else {
                 return .failure(MessageSendError.networkError(failure))
             }
