@@ -18,7 +18,8 @@
 
 import Foundation
 
-protocol PrekeyAPI {
+// sourcery: AutoMockable
+public protocol PrekeyAPI {
 
     func fetchPrekeys(for clients: Set<QualifiedClientID>) async -> Swift.Result<Payload.PrekeyByQualifiedUserID, NetworkError>
 

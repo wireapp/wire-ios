@@ -18,6 +18,12 @@
 
 import Foundation
 
+// sourcery: AutoMockable
+public protocol APIProviderInterface {
+    func prekeyAPI(apiVersion: APIVersion) -> PrekeyAPI
+    func messageAPI(apiVersion: APIVersion) -> MessageAPI
+}
+
 public struct APIProvider {
 
     let httpClient: HttpClient

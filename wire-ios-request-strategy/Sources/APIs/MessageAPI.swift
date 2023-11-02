@@ -18,7 +18,8 @@
 
 import Foundation
 
-protocol MessageAPI {
+// sourcery: AutoMockable
+public protocol MessageAPI {
 
     func sendProteusMessage(message: any ProteusMessage, conversationID: QualifiedID) async -> Swift.Result<(Payload.MessageSendingStatus, ZMTransportResponse), NetworkError>
 
