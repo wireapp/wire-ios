@@ -131,9 +131,11 @@ extension Notification.Name {
     }
 
     func notifyQuickSyncDidFinish() {
-        syncStateDelegate.didFinishQuickSync()
-        quickSyncContinuation?.resume()
-        quickSyncContinuation = nil
+        Task {
+            await syncStateDelegate.didFinishQuickSync()
+            quickSyncContinuation?.resume()
+            quickSyncContinuation = nil
+        }
     }
 
     public func forceQuickSync() {

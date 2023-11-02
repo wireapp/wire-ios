@@ -36,13 +36,13 @@ class ZMUserSessionTests_RecurringActions: ZMUserSessionTestsBase {
         super.tearDown()
     }
 
-    func testThatItCallsPerformActionsAfterQuickSync() {
+    func testThatItCallsPerformActionsAfterQuickSync() async {
         // given
         sut.recurringActionService = mockRecurringActionService
 
         // when
         XCTAssertFalse(mockRecurringActionService.performActionsIsCalled)
-        sut.didFinishQuickSync()
+        await sut.didFinishQuickSync()
 
         // then
         XCTAssertTrue(mockRecurringActionService.performActionsIsCalled)

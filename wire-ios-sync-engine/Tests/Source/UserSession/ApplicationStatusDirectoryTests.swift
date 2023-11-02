@@ -95,18 +95,18 @@ extension ApplicationStatusDirectoryTests: ZMSyncStateDelegate {
         // no-op
     }
 
-    func didFinishQuickSync() {
+    func didFinishQuickSync() async {
         // no-op
     }
 
-    func didRegisterSelfUserClient(_ userClient: UserClient!) {
+    func didRegisterSelfUserClient(_ userClient: UserClient) {
         // nop
     }
 
-    func didFailToRegisterSelfUserClient(error: Error!) {
+    func didFailToRegisterSelfUserClient(error: Error) {
         // nop
     }
 
-    func didDeleteSelfUserClient(error: Error!) {
+    func didDeleteSelfUserClient(error: Error) {
         // nop
     }}
