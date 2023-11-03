@@ -21,10 +21,6 @@ import XCTest
 
 class IncomingRequestFooterTests: ZMSnapshotTestCase {
 
-    override func setUp() {
-        super.setUp()
-    }
-
     func testIncomingRequestFooter_Light() {
         let footer = IncomingRequestFooterView()
         footer.overrideUserInterfaceStyle = .light

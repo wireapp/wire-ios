@@ -28,7 +28,7 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
         let profileViewController = ProfileViewController(user: user,
                                                           viewer: ZMUser.selfUser(),
                                                           conversation: conversation,
-                                                          viewControllerDismisser: self, 
+                                                          viewControllerDismisser: self,
                                                           userSession: userSession)
         profileViewController.preferredContentSize = CGSize.IPadPopover.preferredContentSize
 

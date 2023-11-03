@@ -199,7 +199,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
             if optionsSectionController.hasOptions {
                 sections.append(optionsSectionController)
             }
-            
+
             if conversation.teamRemoteIdentifier != nil &&
                 user.canModifyReadReceiptSettings(in: conversation) {
                 let receiptOptionsSectionController = ReceiptOptionsSectionController(
@@ -270,7 +270,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
 
         let detailsViewController = GroupParticipantsDetailViewController(
             selectedParticipants: selectedUsers,
-            conversation: conversation, 
+            conversation: conversation,
             userSession: userSession
         )
 

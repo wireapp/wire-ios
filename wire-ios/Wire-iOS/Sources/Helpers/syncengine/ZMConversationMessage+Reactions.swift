@@ -25,7 +25,7 @@ extension ZMConversationMessage {
         guard let conversation = conversationLike else {
             return false
         }
-        
+
         guard let user = SelfUser.provider?.providedSelfUser else {
             assertionFailure("expected available 'user'!")
             return false

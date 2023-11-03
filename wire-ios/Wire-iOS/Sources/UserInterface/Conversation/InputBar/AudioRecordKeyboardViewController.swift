@@ -71,7 +71,7 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
     private var currentEffectFilePath: String?
 
     private let userSession: UserSession
-    
+
     private var isAppLockActive: Bool {
         return userSession.isAppLockActive
     }

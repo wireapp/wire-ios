@@ -141,7 +141,7 @@ extension UserCell: ParticipantsCellConfigurable {
             assertionFailure("expected available 'user'!")
             return
         }
-        
+
         configure(with: user, selfUser: selfUser, conversation: conversation as? ZMConversation)
         accessoryIconView.isHidden = user.isSelfUser
         accessibilityIdentifier = identifier

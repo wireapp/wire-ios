@@ -414,7 +414,7 @@ extension AppRootRouter {
                 return false
             }
         }
-        
+
         // func is only executed when appStateCalculator.wasUnauthenticated is true.
         let needToShowDataUsagePermissionDialog = appStateCalculator.wasUnauthenticated && !isTeamMember()
 

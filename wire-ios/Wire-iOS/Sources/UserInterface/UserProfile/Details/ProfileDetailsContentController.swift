@@ -145,7 +145,6 @@ final class ProfileDetailsContentController: NSObject,
         return richProfile.isEmpty ? nil : .richProfile(richProfile)
     }
 
-
     /// Updates the content for the current configuration.
     private func updateContent() {
 

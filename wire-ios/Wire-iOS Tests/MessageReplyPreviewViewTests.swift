@@ -34,9 +34,6 @@ extension UIView {
 }
 
 final class MessageReplyPreviewViewTests: ZMSnapshotTestCase {
-    override func setUp() {
-        super.setUp()
-    }
 
     override func tearDown() {
         invalidateStyle()

@@ -23,10 +23,6 @@ final class DestructionCountdownViewTests: ZMSnapshotTestCase {
 
     var sut: DestructionCountdownView!
 
-    override func setUp() {
-        super.setUp()
-    }
-
     override func tearDown() {
         sut = nil
         super.tearDown()

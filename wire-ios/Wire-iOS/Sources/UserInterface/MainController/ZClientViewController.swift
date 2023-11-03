@@ -163,7 +163,7 @@ final class ZClientViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         pendingInitialStateRestore = true
 
         view.backgroundColor = SemanticColors.View.backgroundDefault

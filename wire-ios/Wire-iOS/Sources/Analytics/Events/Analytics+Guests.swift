@@ -25,7 +25,7 @@ extension Analytics {
         let numGuests = conversation.sortedActiveParticipants.filter({
             $0.isGuest(in: conversation)
             }).count
-        
+
         let userType: String
         if let user = SelfUser.provider?.providedSelfUser, !user.isGuest(in: conversation) {
             userType = "user"

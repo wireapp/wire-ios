@@ -21,10 +21,6 @@ import XCTest
 
 class ProfileFooterViewTests: ZMSnapshotTestCase {
 
-    override func setUp() {
-        super.setUp()
-    }
-
     func testThatItOnlyAllowsEligibleActionsAsKey() {
         let view = ProfileFooterView()
 

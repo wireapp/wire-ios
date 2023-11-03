@@ -87,7 +87,7 @@ final class CollectionsViewController: UIViewController {
         self.collection = collection
         self.sections = sections
         self.userSession = userSession
-        
+
         switch sections {
         case CollectionsSectionSet.images:
             imageMessages = messages
