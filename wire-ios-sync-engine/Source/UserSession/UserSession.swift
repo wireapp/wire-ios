@@ -107,8 +107,6 @@ public protocol UserSession: AnyObject {
     func addConferenceCallErrorObserver(
         _ observer: WireCallCenterCallErrorObserver
     ) -> Any
-  
-    func addConferenceCallingUnavailableObserver(_ observer: ConferenceCallingUnavailableObserver) -> Any
 
     func addConversationListObserver(
         _ observer: ZMConversationListObserver,
