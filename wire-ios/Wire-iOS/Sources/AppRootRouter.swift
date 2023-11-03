@@ -406,7 +406,17 @@ extension AppRootRouter {
         userSession: UserSession,
         isComingFromRegistration: Bool
     ) -> AuthenticatedRouter? {
-        let needToShowDataUsagePermissionDialog = appStateCalculator.wasUnauthenticated && !SelfUser.current.isTeamMember
+        func isTeamMember() -> Bool {
+            if let user = SelfUser.provider?.providedSelfUser {
+                return user.isTeamMember
+            } else {
+                assertionFailure("expected available 'user'!")
+                return false
+            }
+        }
+        
+        // func is only executed when appStateCalculator.wasUnauthenticated is true.
+        let needToShowDataUsagePermissionDialog = appStateCalculator.wasUnauthenticated && !isTeamMember()
 
         return AuthenticatedRouter(
             rootViewController: rootViewController,
