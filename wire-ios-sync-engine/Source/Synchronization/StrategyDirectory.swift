@@ -293,8 +293,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 clientUpdateStatus: applicationStatusDirectory.clientUpdateStatus),
             ResetSessionRequestStrategy(
                 managedObjectContext: syncMOC,
-                applicationStatus: applicationStatusDirectory,
-                clientRegistrationDelegate: applicationStatusDirectory.clientRegistrationDelegate),
+                messageSender: messageSender),
             UserImageAssetUpdateStrategy(
                 managedObjectContext: syncMOC,
                 applicationStatusDirectory: applicationStatusDirectory,
