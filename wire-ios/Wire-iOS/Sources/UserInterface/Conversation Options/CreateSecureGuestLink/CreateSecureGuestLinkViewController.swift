@@ -93,7 +93,7 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
             style: .default
         )
         textField.addRevealButton(delegate: self)
-
+      
         textField.accessibilityLabel = SecureGuestLinkAccessibilityLocale.SecuredGuestLinkPasswordTextfield.description
         textField.accessibilityHint = SecureGuestLinkAccessibilityLocale.SecuredGuestLinkPasswordTextfield.hint
 
@@ -255,6 +255,7 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
 
             generatePasswordButton.topAnchor.constraint(equalTo: warningLabel.bottomAnchor, constant: 40),
             generatePasswordButton.safeLeadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 20),
+
             generatePasswordButton.heightAnchor.constraint(equalToConstant: 32),
 
             setPasswordLabel.safeLeadingAnchor.constraint(equalTo: securedGuestLinkPasswordTextfield.safeLeadingAnchor),
@@ -280,6 +281,7 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
             createSecuredLinkButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -24),
             createSecuredLinkButton.safeLeadingAnchor.constraint(equalTo: contentView.safeLeadingAnchor, constant: 18),
             createSecuredLinkButton.safeTrailingAnchor.constraint(equalTo: contentView.safeTrailingAnchor, constant: -18),
+
             createSecuredLinkButton.heightAnchor.constraint(equalToConstant: 56)
         ])
 
@@ -323,7 +325,7 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
 
         return isValid
     }
-
+  
     // MARK: - Accessibility
 
     func announcePasswordValidationErrorForVoiceOver(for textField: ValidatedTextField) {

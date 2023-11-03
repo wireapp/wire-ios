@@ -51,4 +51,31 @@ final class SubconversationGroupIDRepositoryTests: XCTestCase {
         )
     }
 
+    func test_FindSubgroupTypeAndParentID() {
+        // GIVEN
+        let sut = SubconversationGroupIDRepository()
+        let parentGroupID = MLSGroupID.random()
+        let subgroupID = MLSGroupID.random()
+
+        let repositoryData: [MLSGroupID: [SubgroupType: MLSGroupID]] = [
+            .random(): [.conference: .random()],
+            .random(): [.conference: .random()],
+            .random(): [.conference: .random()],
+            parentGroupID: [.conference: subgroupID]
+        ]
+
+        repositoryData.forEach { parent in
+            parent.value.forEach { subgroup in
+                sut.storeSubconversationGroupID(subgroup.value, forType: .conference, parentGroupID: parent.key)
+            }
+        }
+
+        // WHEN
+        let subgroupInfo = sut.findSubgroupTypeAndParentID(for: subgroupID)
+
+        // THEN
+        XCTAssertNotNil(subgroupInfo)
+        XCTAssertEqual(subgroupInfo?.parentID, parentGroupID)
+    }
+
 }

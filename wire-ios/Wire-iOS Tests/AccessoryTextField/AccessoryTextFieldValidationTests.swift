@@ -17,6 +17,7 @@
 //
 
 import XCTest
+import WireCommonComponents
 @testable import Wire
 
 final class AccessoryTextFieldValidateionTests: XCTestCase {
@@ -43,7 +44,7 @@ final class AccessoryTextFieldValidateionTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-
+        FontScheme.configure(with: .large)
         sut = ValidatedTextField(style: .default)
         mockViewController = MockViewController()
         sut.textFieldValidationDelegate = mockViewController
@@ -170,7 +171,7 @@ final class AccessoryTextFieldValidateionTests: XCTestCase {
 
     func testThatSucceedAfterSendEditingChangedForPasswordTextField() {
         // GIVEN
-        let type: ValidatedTextField.Kind = .password(isNew: false)
+        let type: ValidatedTextField.Kind = .password(.nonEmpty, isNew: false)
         let text = "blahblah"
 
         // WHEN & THEN
@@ -243,7 +244,7 @@ final class AccessoryTextFieldValidateionTests: XCTestCase {
 
     func testThat7CharacterPasswordIsValid_Existing() {
         // GIVEN
-        let type: ValidatedTextField.Kind = .password(isNew: false)
+        let type: ValidatedTextField.Kind = .password(.nonEmpty, isNew: false)
         let text = String(repeating: "a", count: 7)
 
         // WHEN & THEN
@@ -252,7 +253,7 @@ final class AccessoryTextFieldValidateionTests: XCTestCase {
 
     func testThat129CharacterPasswordIsValid_Existing() {
         // GIVEN
-        let type: ValidatedTextField.Kind = .password(isNew: false)
+        let type: ValidatedTextField.Kind = .password(.nonEmpty, isNew: false)
         let text = String(repeating: "a", count: 129)
 
         // WHEN & THEN
@@ -261,7 +262,7 @@ final class AccessoryTextFieldValidateionTests: XCTestCase {
 
     func testThat7CharacterPasswordIsInvalid_New() {
         // GIVEN
-        let type: ValidatedTextField.Kind = .password(isNew: true)
+        let type: ValidatedTextField.Kind = .password(.shared, isNew: true)
         let text = String(repeating: "a", count: 7)
         let missingRequiredClassesSet: Set<PasswordCharacterClass> = [.uppercase, .special, .digits]
 
@@ -273,7 +274,7 @@ final class AccessoryTextFieldValidateionTests: XCTestCase {
 
     func testThat129CharacterPasswordIsInvalid_New() {
         // GIVEN
-        let type: ValidatedTextField.Kind = .password(isNew: true)
+        let type: ValidatedTextField.Kind = .password(.accountRegistration, isNew: true)
         let text = String(repeating: "Aa1!", count: 129)
 
         // WHEN & THEN
@@ -284,7 +285,7 @@ final class AccessoryTextFieldValidateionTests: XCTestCase {
 
     func testThatPasswordIsSecuredWhenSetToPasswordType() {
         // GIVEN
-        let kind: ValidatedTextField.Kind = .password(isNew: false)
+        let kind: ValidatedTextField.Kind = .password(.nonEmpty, isNew: false)
         let text = "This is a valid password"
 
         // WHEN
