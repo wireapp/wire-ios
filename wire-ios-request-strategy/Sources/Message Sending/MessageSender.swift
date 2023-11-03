@@ -101,6 +101,8 @@ public class MessageSender: MessageSenderInterface {
     public func sendMessage(message: any SendableMessage) async -> Swift.Result<Void, MessageSendError> {
         WireLogger.messaging.debug("send message")
 
+        // TODO: [jacob] we need to wait until we are "online"
+
         return await messageDependencyResolver.waitForDependenciesToResolve(for: message)
             .mapError { dependencyError in
                 switch dependencyError {
