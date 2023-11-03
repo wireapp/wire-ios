@@ -137,7 +137,7 @@ final class UserSessionMock: UserSession {
         return nil
     }
 
-    func addUserObservers(_ observer: ZMUserObserver) -> NSObjectProtocol {
+    func addUserObserver(_ observer: ZMUserObserver) -> NSObjectProtocol {
         return NSObject()
     }
 

@@ -142,7 +142,7 @@ public protocol UserSession: AnyObject {
         for: UserType
     ) -> NSObjectProtocol?
 
-    func addUserObservers(
+    func addUserObserver(
         _ observer: ZMUserObserver
     ) -> NSObjectProtocol
 
@@ -328,7 +328,7 @@ extension ZMUserSession: UserSession {
         )
     }
 
-    public func addUserObservers(
+    public func addUserObserver(
         _ observer: ZMUserObserver
     ) -> NSObjectProtocol {
         return UserChangeInfo.add(
