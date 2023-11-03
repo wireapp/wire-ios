@@ -60,7 +60,7 @@ extension AppLockModule {
             guard let lock = userSession.lock else { return nil }
 
             switch lock {
-            case .screen where userSession.requireCustomPasscode:
+            case .screen where userSession.requireCustomAppLockPasscode:
                 return .customOnly
             case .screen:
                 return .deviceThenCustom
@@ -70,13 +70,13 @@ extension AppLockModule {
         }
 
         private var needsToNotifyUser: Bool {
-            return userSession.needsToNotifyUser
+            return userSession.needsToNotifyUserOfAppLockConfiguration
         }
 
         private var needsToCreateCustomPasscode: Bool {
             guard passcodePreference != .deviceOnly else { return false }
-            guard !userSession.isCustomPasscodeSet else { return false }
-            return userSession.requireCustomPasscode || authenticationType.current == .unavailable
+            guard !userSession.isCustomAppLockPasscodeSet else { return false }
+            return userSession.requireCustomAppLockPasscode || authenticationType.current == .unavailable
         }
 
         private var isAuthenticationNeeded: Bool {

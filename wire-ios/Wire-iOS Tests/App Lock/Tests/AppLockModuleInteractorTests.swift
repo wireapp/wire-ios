@@ -60,8 +60,8 @@ final class AppLockModuleInteractorTests: XCTestCase {
 
     func test_InitiateAuthentication_NeedsToCreateCustomPasscode_Required() {
         // Given
-        session.isCustomPasscodeSet = false
-        session.requireCustomPasscode = true
+        session.isCustomAppLockPasscodeSet = false
+        session.requireCustomAppLockPasscode = true
 
         // When
         sut.executeRequest(.initiateAuthentication(requireActiveApp: false))
@@ -72,8 +72,8 @@ final class AppLockModuleInteractorTests: XCTestCase {
 
     func test_InitiaAuthentication_NeedsToCreateCustomPasscode_NotRequired() {
         // Given
-        session.isCustomPasscodeSet = false
-        session.requireCustomPasscode = false
+        session.isCustomAppLockPasscodeSet = false
+        session.requireCustomAppLockPasscode = false
         authenticationType.current = .unavailable
 
         // When
@@ -85,9 +85,9 @@ final class AppLockModuleInteractorTests: XCTestCase {
 
     func test_InitiaAuthentication_NeedsToCreatePasscode_InformingUserOfConfigChange() {
         // Given
-        session.isCustomPasscodeSet = false
-        session.requireCustomPasscode = true
-        session.needsToNotifyUser = true
+        session.isCustomAppLockPasscodeSet = false
+        session.requireCustomAppLockPasscode = true
+        session.needsToNotifyUserOfAppLockConfiguration = true
 
         // When
         sut.executeRequest(.initiateAuthentication(requireActiveApp: false))
@@ -98,7 +98,7 @@ final class AppLockModuleInteractorTests: XCTestCase {
 
     func test_InitiateAuthentication_DoesNotNeedToCreateCustomPasscode() {
         // Given
-        session.isCustomPasscodeSet = true
+        session.isCustomAppLockPasscodeSet = true
 
         // When
         sut.executeRequest(.initiateAuthentication(requireActiveApp: false))
@@ -109,8 +109,8 @@ final class AppLockModuleInteractorTests: XCTestCase {
 
     func test_InitiateAuthentication_DoesNotNeedToCreateCustomPasscode_InformingUserOfConfigChange() {
         // Given
-        session.isCustomPasscodeSet = true
-        session.needsToNotifyUser = true
+        session.isCustomAppLockPasscodeSet = true
+        session.needsToNotifyUserOfAppLockConfiguration = true
 
         // When
         sut.executeRequest(.initiateAuthentication(requireActiveApp: false))
@@ -122,7 +122,7 @@ final class AppLockModuleInteractorTests: XCTestCase {
     func test_InitiateAuthentication_DoesNotNeedToCreateCustomPasscode_WhenDatabaseIsLocked() {
         // Given
         session.lock = .database
-        session.isCustomPasscodeSet = false
+        session.isCustomAppLockPasscodeSet = false
         authenticationType.current = .unavailable
 
         // When
@@ -147,7 +147,7 @@ final class AppLockModuleInteractorTests: XCTestCase {
     func test_InitiateAuthentication_RequireActiveApp_ReturnsNothingIfAppIsInBackground() {
         // Given
         applicationStateProvider.applicationState = .background
-        session.isCustomPasscodeSet = true
+        session.isCustomAppLockPasscodeSet = true
 
         // When
         sut.executeRequest(.initiateAuthentication(requireActiveApp: true))
@@ -159,8 +159,8 @@ final class AppLockModuleInteractorTests: XCTestCase {
     func test_InitiateAuthentication_NeedsToCreateCustomPasscodeAndRequireActiveApp_ReturnsNothingIfAppIsInBackground() {
         // Given
         applicationStateProvider.applicationState = .background
-        session.isCustomPasscodeSet = false
-        session.requireCustomPasscode = true
+        session.isCustomAppLockPasscodeSet = false
+        session.requireCustomAppLockPasscode = true
 
         // When
         sut.executeRequest(.initiateAuthentication(requireActiveApp: true))
@@ -187,7 +187,7 @@ final class AppLockModuleInteractorTests: XCTestCase {
     func test_EvaluateAuthentication_ScreenLock() {
         // Given
         session.lock = .screen
-        session.requireCustomPasscode = false
+        session.requireCustomAppLockPasscode = false
 
         // When
         sut.executeRequest(.evaluateAuthentication)
@@ -203,7 +203,7 @@ final class AppLockModuleInteractorTests: XCTestCase {
     func test_EvaluateAuthentication_ScreenLock_RequireCustomPasscode() {
         // Given
         session.lock = .screen
-        session.requireCustomPasscode = true
+        session.requireCustomAppLockPasscode = true
 
         // When
         sut.executeRequest(.evaluateAuthentication)

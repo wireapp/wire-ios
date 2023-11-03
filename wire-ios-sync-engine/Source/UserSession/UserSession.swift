@@ -60,11 +60,11 @@ public protocol UserSession: AnyObject {
 
     /// Whether a custom passcode has been set.
 
-    var isCustomPasscodeSet: Bool { get }
+    var isCustomAppLockPasscodeSet: Bool { get }
 
     /// Whether a custom passcode (rather a device passcode) should be used.
 
-    var requireCustomPasscode: Bool { get }
+    var requireCustomAppLockPasscode: Bool { get }
 
     /// Whether the user should be notified of the app lock being disabled.
 
@@ -72,7 +72,7 @@ public protocol UserSession: AnyObject {
 
     /// Whether the user needs to be informed about configuration changes.
 
-    var needsToNotifyUser: Bool { get set }
+    var needsToNotifyUserOfAppLockConfiguration: Bool { get set }
 
     /// Unlock the database using the given authentication context.
 
@@ -242,11 +242,11 @@ extension ZMUserSession: UserSession {
         return appLockController.timeout
     }
 
-    public var requireCustomPasscode: Bool {
+    public var requireCustomAppLockPasscode: Bool {
         appLockController.requireCustomPasscode
     }
 
-    public var isCustomPasscodeSet: Bool {
+    public var isCustomAppLockPasscodeSet: Bool {
         appLockController.isCustomPasscodeSet
     }
 
@@ -261,7 +261,7 @@ extension ZMUserSession: UserSession {
         }
     }
 
-    public var needsToNotifyUser: Bool {
+    public var needsToNotifyUserOfAppLockConfiguration: Bool {
         get {
             appLockController.needsToNotifyUser
         }
