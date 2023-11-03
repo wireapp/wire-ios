@@ -153,7 +153,7 @@ extension AppLockModule.Interactor: AppLockInteractorPresenterInterface {
     }
 
     private func openAppLock() {
-        try? userSession.open()
+        try? userSession.openAppLock()
     }
 
 }

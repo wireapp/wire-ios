@@ -80,7 +80,7 @@ public protocol UserSession: AnyObject {
 
     /// Open the app lock.
 
-    func open() throws
+    func openAppLock() throws
 
     /// Authenticate with device owner credentials (biometrics or passcode).
     ///
@@ -270,7 +270,7 @@ extension ZMUserSession: UserSession {
         }
     }
 
-    public func open() throws {
+    public func openAppLock() throws {
         try appLockController.open()
     }
 

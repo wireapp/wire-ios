@@ -79,7 +79,7 @@ final class UserSessionMock: UserSession {
     var isCustomAppLockPasscodeSet: Bool = false
     var needsToNotifyUserOfAppLockConfiguration: Bool = false
 
-    func open() throws {
+    func openAppLock() throws {
          openApp.append(())
     }
 
