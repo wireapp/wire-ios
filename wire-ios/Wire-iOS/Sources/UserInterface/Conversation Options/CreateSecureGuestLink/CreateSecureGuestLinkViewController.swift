@@ -47,7 +47,7 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
             fontSpec: FontSpec.buttonSmallSemibold,
             insets: UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
         )
-
+        button.titleLabel?.adjustsFontForContentSizeCategory = true
         button.setTitle(SecuredGuestLinkWithPasswordLocale.GeneratePasswordButton.title, for: .normal)
         button.setImage(Asset.Images.shield.image, for: .normal)
         button.addTarget(self, action: #selector(generatePasswordButtonTapped), for: .touchUpInside)
@@ -75,10 +75,11 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
             style: .default
         )
         textField.addRevealButton(delegate: self)
+        textField.addTarget(self, action: #selector(handlePasswordValidation(for:)), for: .editingChanged)
+        textField.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
 
         textField.placeholder = SecuredGuestLinkWithPasswordLocale.Textfield.placeholder
         textField.addDoneButtonOnKeyboard()
-        textField.textFieldValidationDelegate = self
         return textField
     }()
 
@@ -112,25 +113,30 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
             setNewColors: true,
             style: .default
         )
-        textField.textFieldValidator.customValidator = { [weak self] in
-            guard $0 == self?.securedGuestLinkPasswordTextfield.text else {
-                return .custom("passwords don't match")
-            }
-
-            return nil
-        }
         textField.showConfirmButton = false
+        textField.addTarget(self, action: #selector(handlePasswordValidation(for:)), for: .editingChanged)
+        textField.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
         textField.addRevealButton(delegate: self)
         textField.placeholder = SecuredGuestLinkWithPasswordLocale.VerifyPasswordTextField.placeholder
         textField.addDoneButtonOnKeyboard()
         textField.returnKeyType = .done
-        textField.textFieldValidationDelegate = self
 
         return textField
     }()
 
-    private let validationErrorTextColor = LabelColors.textErrorDefault
-    private let defaultLabelColor = LabelColors.textFieldFloatingLabel
+    private lazy var createSecuredLinkButton: Button = {
+        let button = Button(
+            style: .primaryTextButtonStyle,
+            cornerRadius: 16,
+            fontSpec: .buttonBigSemibold
+        )
+        button.setTitle(SecuredGuestLinkWithPasswordLocale.CreateLinkButton.title, for: .normal)
+        button.addTarget(self, action: #selector(createSecuredLinkButtonTapped), for: .touchUpInside)
+        button.titleLabel?.numberOfLines = 0
+        return button
+    }()
+
+    private var createSecureGuestLinkPasswordValidatorHelper = CreateSecureGuestLinkPasswordValidatorHelper()
 
     // MARK: - Override methods
 
@@ -138,6 +144,7 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
         super.viewDidLoad()
         setUpViews()
         setupConstraints()
+        textFieldDidChange(securedGuestLinkPasswordTextfield)
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -155,6 +162,7 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
         view.addSubview(passwordRequirementsLabel)
         view.addSubview(confirmPasswordLabel)
         view.addSubview(securedGuestLinkPasswordValidatedTextField)
+        view.addSubview(createSecuredLinkButton)
     }
 
     private func setupNavigationBar() {
@@ -171,7 +179,8 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
          securedGuestLinkPasswordTextfield,
          passwordRequirementsLabel,
          confirmPasswordLabel,
-         securedGuestLinkPasswordValidatedTextField].prepareForLayout()
+         securedGuestLinkPasswordValidatedTextField,
+         createSecuredLinkButton].prepareForLayout()
 
         NSLayoutConstraint.activate([
             warningLabel.safeLeadingAnchor.constraint(equalTo: self.view.safeLeadingAnchor, constant: 20),
@@ -180,8 +189,6 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
 
             generatePasswordButton.topAnchor.constraint(equalTo: warningLabel.bottomAnchor, constant: 40),
             generatePasswordButton.safeLeadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 20),
-            // This is a temporary constraint for the height.
-            // It will change as soon as we add more elements to the View Controller
             generatePasswordButton.heightAnchor.constraint(equalToConstant: 32),
 
             setPasswordLabel.safeLeadingAnchor.constraint(equalTo: securedGuestLinkPasswordTextfield.safeLeadingAnchor),
@@ -202,7 +209,12 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
 
             securedGuestLinkPasswordValidatedTextField.topAnchor.constraint(equalTo: confirmPasswordLabel.bottomAnchor, constant: 6),
             securedGuestLinkPasswordValidatedTextField.safeLeadingAnchor.constraint(equalTo: self.view.safeLeadingAnchor, constant: 16),
-            securedGuestLinkPasswordValidatedTextField.safeTrailingAnchor.constraint(equalTo: self.view.safeTrailingAnchor, constant: -16)
+            securedGuestLinkPasswordValidatedTextField.safeTrailingAnchor.constraint(equalTo: self.view.safeTrailingAnchor, constant: -16),
+
+            createSecuredLinkButton.safeBottomAnchor.constraint(equalTo: view.safeBottomAnchor, constant: -24),
+            createSecuredLinkButton.safeLeadingAnchor.constraint(equalTo: view.safeLeadingAnchor, constant: 18),
+            createSecuredLinkButton.safeTrailingAnchor.constraint(equalTo: view.safeTrailingAnchor, constant: -18),
+            createSecuredLinkButton.heightAnchor.constraint(equalToConstant: 56)
         ])
 
     }
@@ -214,6 +226,36 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
         viewModel.requestRandomPassword()
     }
 
+    @objc
+    func createSecuredLinkButtonTapped(_ sender: UIButton) {
+        if handlePasswordValidation(for: securedGuestLinkPasswordTextfield) {
+            UIPasteboard.general.string = securedGuestLinkPasswordTextfield.text
+
+            UIAlertController.presentPasswordCopiedAlert(
+                on: self,
+                title: SecuredGuestLinkWithPasswordLocale.AlertController.title,
+                message: SecuredGuestLinkWithPasswordLocale.AlertController.message
+            )
+        } else {
+            // TODO: [AGIS] Sync with Wolfgang on the alert with the error
+        }
+
+    }
+
+    @objc
+    func handlePasswordValidation(for textField: ValidatedTextField) -> Bool {
+        let labels: [UILabel] = textField == securedGuestLinkPasswordTextfield ? [passwordRequirementsLabel, setPasswordLabel] : [confirmPasswordLabel]
+
+        let isValid = viewModel.validatePassword(for: textField, against: securedGuestLinkPasswordTextfield)
+
+        if isValid {
+            createSecureGuestLinkPasswordValidatorHelper.resetPasswordDefaultState(for: [textField], for: labels)
+        } else {
+            createSecureGuestLinkPasswordValidatorHelper.displayPasswordErrorState(for: [textField], for: labels)
+        }
+
+        return isValid
+    }
     // MARK: - CreatePasswordSecuredLinkViewModelDelegate
 
     func viewModel(
@@ -228,47 +270,6 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
 
 // MARK: - ValidatedTextFieldDelegate
 
-extension CreateSecureGuestLinkViewController: TextFieldValidationDelegate {
-
-    private func displayPasswordErrorState(to textField: UITextField, for labels: [UILabel]) {
-        textField.textColor = validationErrorTextColor
-        textField.layer.borderColor = validationErrorTextColor.cgColor
-        labels.forEach { $0.textColor = validationErrorTextColor }
-    }
-
-    private func resetPasswordDefaultState(to textField: UITextField, for labels: [UILabel]) {
-        textField.applyStyle(.default)
-        labels.forEach { $0.textColor = defaultLabelColor }
-    }
-
-    func validationUpdated(sender: UITextField, error: TextFieldValidator.ValidationError?) {
-        if let error = error {
-            switch sender {
-            case securedGuestLinkPasswordTextfield:
-                displayPasswordErrorState(to: sender, for: [passwordRequirementsLabel, setPasswordLabel])
-
-            case securedGuestLinkPasswordValidatedTextField:
-                displayPasswordErrorState(to: sender, for: [confirmPasswordLabel])
-
-            default:
-                break
-            }
-
-        } else {
-            switch sender {
-            case securedGuestLinkPasswordTextfield:
-                resetPasswordDefaultState(to: sender, for: [passwordRequirementsLabel, setPasswordLabel])
-
-            case securedGuestLinkPasswordValidatedTextField:
-                resetPasswordDefaultState(to: sender, for: [confirmPasswordLabel])
-
-            default:
-                break
-            }
-        }
-    }
-}
-
 extension CreateSecureGuestLinkViewController: ValidatedTextFieldDelegate {
 
     func buttonPressed(_ sender: UIButton) {
@@ -279,19 +280,22 @@ extension CreateSecureGuestLinkViewController: ValidatedTextFieldDelegate {
     }
 }
 
-// MARK: - DownStyle
+// MARK: - UITextFieldDelegate
 
-private extension DownStyle {
+extension CreateSecureGuestLinkViewController: UITextFieldDelegate {
 
-    static var warningLabelStyle: DownStyle {
-        let paragraphStyle = NSMutableParagraphStyle()
-        let style = DownStyle()
-        style.baseFont = .preferredFont(forTextStyle: .caption1)
-        style.baseFontColor = SemanticColors.Label.textDefault
-        paragraphStyle.lineBreakMode = .byWordWrapping
-        paragraphStyle.lineHeightMultiple = 0.98
-        style.baseParagraphStyle = paragraphStyle
-        return style
+    @objc
+    func textFieldDidChange(_ textField: UITextField) {
+        if let text1 = securedGuestLinkPasswordTextfield.text,
+           let text2 = securedGuestLinkPasswordValidatedTextField.text,
+           !text1.isEmpty,
+           !text2.isEmpty,
+           handlePasswordValidation(for: securedGuestLinkPasswordTextfield),
+           text1 == text2 {
+            createSecuredLinkButton.isEnabled = true
+        } else {
+            createSecuredLinkButton.isEnabled = false
+        }
     }
 
 }

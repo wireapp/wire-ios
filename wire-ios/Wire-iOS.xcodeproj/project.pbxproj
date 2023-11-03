@@ -1204,6 +1204,9 @@
 		E94784E9278EDDC200F9FE80 /* ConversationCreateServicesSectionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E94784E8278EDDC200F9FE80 /* ConversationCreateServicesSectionController.swift */; };
 		E94784EB278EE5EB00F9FE80 /* ConversationServicesOptionsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E94784EA278EE5EB00F9FE80 /* ConversationServicesOptionsViewModel.swift */; };
 		E94784ED278EF1E100F9FE80 /* ConversationServicesOptionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E94784EC278EF1E100F9FE80 /* ConversationServicesOptionsViewController.swift */; };
+		E94BF7852ADD5CD200DE9523 /* UIAlertController+CreateSecureGuestLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = E94BF7842ADD5CD200DE9523 /* UIAlertController+CreateSecureGuestLink.swift */; };
+		E94BF7872ADD68B900DE9523 /* CreateSecureGuestLinkPasswordValidatorHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = E94BF7862ADD68B900DE9523 /* CreateSecureGuestLinkPasswordValidatorHelper.swift */; };
+		E94BF7892ADD6D5C00DE9523 /* CreateSecureGuestLink+DownStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = E94BF7882ADD6D5C00DE9523 /* CreateSecureGuestLink+DownStyle.swift */; };
 		E9559B4927B3D3580020B431 /* UIAlertController+ConfirmRemovingServices.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9559B4827B3D3580020B431 /* UIAlertController+ConfirmRemovingServices.swift */; };
 		E961C0752A332E7400A36DE6 /* ConversationReactionMessageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E961C0742A332E7400A36DE6 /* ConversationReactionMessageTests.swift */; };
 		E964168628997173007F9756 /* ButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = E964168528997173007F9756 /* ButtonStyle.swift */; };
@@ -3215,6 +3218,9 @@
 		E94784E8278EDDC200F9FE80 /* ConversationCreateServicesSectionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationCreateServicesSectionController.swift; sourceTree = "<group>"; };
 		E94784EA278EE5EB00F9FE80 /* ConversationServicesOptionsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationServicesOptionsViewModel.swift; sourceTree = "<group>"; };
 		E94784EC278EF1E100F9FE80 /* ConversationServicesOptionsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationServicesOptionsViewController.swift; sourceTree = "<group>"; };
+		E94BF7842ADD5CD200DE9523 /* UIAlertController+CreateSecureGuestLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIAlertController+CreateSecureGuestLink.swift"; sourceTree = "<group>"; };
+		E94BF7862ADD68B900DE9523 /* CreateSecureGuestLinkPasswordValidatorHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateSecureGuestLinkPasswordValidatorHelper.swift; sourceTree = "<group>"; };
+		E94BF7882ADD6D5C00DE9523 /* CreateSecureGuestLink+DownStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CreateSecureGuestLink+DownStyle.swift"; sourceTree = "<group>"; };
 		E950F5EF2ABC67FC00B09C43 /* GermanLocaleTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = GermanLocaleTests.xctestplan; sourceTree = "<group>"; };
 		E9559B4827B3D3580020B431 /* UIAlertController+ConfirmRemovingServices.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIAlertController+ConfirmRemovingServices.swift"; sourceTree = "<group>"; };
 		E961C0742A332E7400A36DE6 /* ConversationReactionMessageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationReactionMessageTests.swift; sourceTree = "<group>"; };
@@ -7244,7 +7250,7 @@
 				D550F57820445AD7009E09DD /* UIAlertController+ConversationGuestOptions.swift */,
 				D5CA8E562045718900D2F16E /* UINavigationController+CloseButton.swift */,
 				E9559B4827B3D3580020B431 /* UIAlertController+ConfirmRemovingServices.swift */,
-				E9D141632AC704E9005EE75D /* CreatePasswordSecuredLink */,
+				E9D141632AC704E9005EE75D /* CreateSecureGuestLink */,
 			);
 			path = "Conversation Options";
 			sourceTree = "<group>";
@@ -7284,13 +7290,16 @@
 			path = Reactions;
 			sourceTree = "<group>";
 		};
-		E9D141632AC704E9005EE75D /* CreatePasswordSecuredLink */ = {
+		E9D141632AC704E9005EE75D /* CreateSecureGuestLink */ = {
 			isa = PBXGroup;
 			children = (
 				E9E20AE92AC42ED3005D7E00 /* CreateSecureGuestLinkViewController.swift */,
 				E9D141612AC704DF005EE75D /* CreateSecureGuestLinkViewModel.swift */,
+				E94BF7842ADD5CD200DE9523 /* UIAlertController+CreateSecureGuestLink.swift */,
+				E94BF7862ADD68B900DE9523 /* CreateSecureGuestLinkPasswordValidatorHelper.swift */,
+				E94BF7882ADD6D5C00DE9523 /* CreateSecureGuestLink+DownStyle.swift */,
 			);
-			path = CreatePasswordSecuredLink;
+			path = CreateSecureGuestLink;
 			sourceTree = "<group>";
 		};
 		E9DFF50B2AC3063000BDC25C /* sourcery */ = {
@@ -8632,6 +8641,7 @@
 				87CB36BA1D74782B007AB4E5 /* LikeButton.swift in Sources */,
 				A9A6506624D1C32300B6A68D /* PasswordValidationResult.swift in Sources */,
 				068F558524321891000DC813 /* DigitalSignatureVerificationViewController.swift in Sources */,
+				E94BF7872ADD68B900DE9523 /* CreateSecureGuestLinkPasswordValidatorHelper.swift in Sources */,
 				875E7D192188BCA500E571B7 /* MessagePreviewView.swift in Sources */,
 				D5168F592010F2F700F8222A /* TokenField.swift in Sources */,
 				E9DA4685286C547A00F47C14 /* UIWindow+Orientation.swift in Sources */,
@@ -8665,6 +8675,7 @@
 				BFE4186D209B6FFA00503C7C /* CallAction.swift in Sources */,
 				F195EB9D1E2F75BC00712118 /* FeedbackOverlayView.swift in Sources */,
 				7C3A82CB20B6E6B800313B4F /* CameraAccess.swift in Sources */,
+				E94BF7892ADD6D5C00DE9523 /* CreateSecureGuestLink+DownStyle.swift in Sources */,
 				87AAE4251E4347F000E1D13A /* ConversationContentViewController+PeekPop.swift in Sources */,
 				EF17B0D9223A8F7C006252A8 /* SketchColorCollectionViewCell.swift in Sources */,
 				D503538C207B5DB900CE34A5 /* UIAlertController+RestorePassword.swift in Sources */,
@@ -9625,6 +9636,7 @@
 				A9D19B16238441B500F6E14A /* ConversationViewController+ProfileViewControllerDelegate.swift in Sources */,
 				D39210A32A1CC1C100FA616A /* ReactionCategoryButton.swift in Sources */,
 				D525426B2093637D001C04C1 /* IconButton+Factory.swift in Sources */,
+				E94BF7852ADD5CD200DE9523 /* UIAlertController+CreateSecureGuestLink.swift in Sources */,
 				EF68E71B20BD5B5A003F3594 /* IPadPopoverConstants.swift in Sources */,
 				A9681D8123883877004FE917 /* IconToggleSubtitleCell.swift in Sources */,
 				D5F4387B206BBBB9003F1F14 /* Analytics+HistoryBackup.swift in Sources */,

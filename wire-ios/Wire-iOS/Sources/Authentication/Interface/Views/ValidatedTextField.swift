@@ -346,8 +346,17 @@ final class ValidatedTextField: AccessoryTextField, TextContainer, Themeable {
     }
 
     func validateInput() {
-        let error = textFieldValidator.validate(text: text, kind: kind)
-        textFieldValidationDelegate?.validationUpdated(sender: self, error: error)
+        let error = textFieldValidator.validate(
+            text: text,
+            kind: kind
+        )
+
+        if error != nil {
+            textFieldValidationDelegate?.validationUpdated(sender: self, error: error)
+            updateConfirmButton()
+        }
+
+        textFieldValidationDelegate?.validationUpdated(sender: self, error: nil)
         updateConfirmButton()
     }
 

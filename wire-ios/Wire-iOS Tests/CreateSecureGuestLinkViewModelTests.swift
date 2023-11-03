@@ -33,6 +33,7 @@ class CreateSecureGuestLinkViewModelTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
+        FontScheme.configure(with: .large)
         viewModel = CreateSecureGuestLinkViewModel(delegate: mockDelegate)
         mockDelegate = MockCreatePasswordSecuredLinkViewModelDelegate()
         viewModel.delegate = mockDelegate
