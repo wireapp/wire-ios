@@ -90,7 +90,7 @@ public protocol UserSession: AnyObject {
     ///     - context: The context in which authentication happens.
     ///     - callback: Invoked with the authentication result.
 
-    func evaluateAuthentication(
+    func evaluateAppLockAuthentication(
         passcodePreference: AppLockPasscodePreference,
         description: String,
         callback: @escaping (
@@ -274,7 +274,7 @@ extension ZMUserSession: UserSession {
         try appLockController.open()
     }
 
-    public func evaluateAuthentication(
+    public func evaluateAppLockAuthentication(
         passcodePreference: AppLockPasscodePreference,
         description: String,
         callback: @escaping (

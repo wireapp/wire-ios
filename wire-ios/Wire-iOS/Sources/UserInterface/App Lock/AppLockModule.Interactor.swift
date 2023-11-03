@@ -115,7 +115,7 @@ extension AppLockModule.Interactor: AppLockInteractorPresenterInterface {
                 return
             }
 
-            userSession.evaluateAuthentication(
+            userSession.evaluateAppLockAuthentication(
                 passcodePreference: preference,
                 description: deviceAuthenticationDescription,
                 callback: handleAuthenticationResult

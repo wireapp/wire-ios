@@ -83,7 +83,7 @@ final class UserSessionMock: UserSession {
          openApp.append(())
     }
 
-    func evaluateAuthentication(
+    func evaluateAppLockAuthentication(
         passcodePreference: AppLockPasscodePreference,
         description: String,
         callback: @escaping (
