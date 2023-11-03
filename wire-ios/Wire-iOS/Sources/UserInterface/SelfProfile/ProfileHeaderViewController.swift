@@ -121,11 +121,12 @@ final class ProfileHeaderViewController: UIViewController {
     /**
      * Creates a profile view for the specified user and options.
      * - parameter user: The user to display the profile of.
+     * - parameter conversation: The conversation.
      * - parameter options: The options for the appearance and behavior of the view.
+     * - parameter userSession: The user session.
      * - note: You can change the options later through the `options` property.
      */
-
-    init(user: UserType, viewer: UserType = SelfUser.current, conversation: ZMConversation? = nil, options: Options, userSession: UserSession) {
+    init(user: UserType, viewer: UserType, conversation: ZMConversation? = nil, options: Options, userSession: UserSession) {
         self.user = user
         isAdminRole = conversation.map(self.user.isGroupAdmin) ?? false
         self.viewer = viewer
