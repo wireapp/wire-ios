@@ -106,10 +106,6 @@ public protocol UserSession: AnyObject {
 
     func evaluateAuthentication(customPasscode: String) -> AppLockAuthenticationResult
 
-    /// Whether the user should be notified of the app lock being disabled.
-
-    var shouldNotifyUserOfDisabledAppLock: Bool { get }
-
     /// Delete the app lock passcode if it exists.
 
     func deleteAppLockPasscode() throws
@@ -206,7 +202,7 @@ public protocol UserSession: AnyObject {
 
 extension ZMUserSession: UserSession {
 
-   public var lock: SessionLock? {
+    public var lock: SessionLock? {
         if isDatabaseLocked {
             return .database
         } else if appLockController.isLocked {
@@ -305,10 +301,9 @@ extension ZMUserSession: UserSession {
         syncManagedObjectContext.performGroupedBlock {
             self.processEvents()
         }
-      
-    public var shouldNotifyUserOfDisabledAppLock: Bool {
-        return appLockController.needsToNotifyUser && !appLockController.isActive
+
     }
+
 
     public func deleteAppLockPasscode() throws {
         try appLockController.deletePasscode()
