@@ -20,10 +20,13 @@ import Foundation
 
 // sourcery: AutoMockable
 public protocol MessageDependencyResolverInterface {
-    func waitForDependenciesToResolve(for message: any SendableMessage) async
+    func waitForDependenciesToResolve(for message: any SendableMessage) async -> Swift.Result<Void, MessageDependencyResolverError>
 }
 
-// swiftlint:disable for_where
+public enum MessageDependencyResolverError: Error, Equatable {
+    case securityLevelDegraded
+}
+
 public class MessageDependencyResolver: MessageDependencyResolverInterface {
 
     public init(context: NSManagedObjectContext) {
@@ -32,36 +35,51 @@ public class MessageDependencyResolver: MessageDependencyResolverInterface {
 
     let context: NSManagedObjectContext
 
-    public func waitForDependenciesToResolve(for message: any SendableMessage) async {
+    public func waitForDependenciesToResolve(for message: any SendableMessage) async -> Swift.Result<Void, MessageDependencyResolverError> {
 
-        @Sendable func dependenciesAreResolved() -> Bool {
+        @Sendable func dependenciesAreResolved() -> Swift.Result<Bool, MessageDependencyResolverError> {
+            if (self.context.performAndWait {
+                message.conversation?.securityLevel == .secureWithIgnored
+            }) {
+                return .failure(MessageDependencyResolverError.securityLevelDegraded)
+            }
+
             let hasDependencies = self.context.performAndWait {
                 message.dependentObjectNeedingUpdateBeforeProcessing != nil
             }
 
             if !hasDependencies {
                 WireLogger.messaging.debug("Message dependency resolved")
-                return true
+                return .success(true)
             } else {
                 WireLogger.messaging.debug("Message has dependency, waiting")
-                return false
+                return .success(false)
             }
         }
 
-        if dependenciesAreResolved() {
-            return
+        let result = dependenciesAreResolved()
+        let continueWaiting = result.isOne(of: .success(false))
+
+        if !continueWaiting {
+            return result.map { _ in Void() }
         }
 
-        await withCheckedContinuation { continuation in
+        return await withCheckedContinuation { continuation in
             Task {
-                if dependenciesAreResolved() {
-                    continuation.resume()
+                let result = dependenciesAreResolved()
+                let continueWaiting = result.isOne(of: .success(false))
+
+                if !continueWaiting {
+                    continuation.resume(returning: result.map({ _ in Void() }))
                     return
                 }
 
                 for await _ in NotificationCenter.default.notifications(named: .requestAvailableNotification) {
-                    if dependenciesAreResolved() {
-                        continuation.resume()
+                    let result = dependenciesAreResolved()
+                    let continueWaiting = result.isOne(of: .success(false))
+
+                    if !continueWaiting {
+                        continuation.resume(returning: result.map({ _ in Void() }))
                         break
                     }
                 }
@@ -69,4 +87,3 @@ public class MessageDependencyResolver: MessageDependencyResolverInterface {
         }
     }
 }
-// swiftlint:enable for_where
