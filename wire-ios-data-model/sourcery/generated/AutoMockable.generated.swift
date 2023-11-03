@@ -1,5 +1,7 @@
 // Generated using Sourcery 2.1.1 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
+// swiftlint:disable line_length
+// swiftlint:disable variable_name
 
 import Foundation
 #if os(iOS) || os(tvOS) || os(watchOS)
@@ -1515,6 +1517,24 @@ public class MockSubconversationGroupIDRepositoryInterface: SubconversationGroup
             return mock
         } else {
             fatalError("no mock for `fetchSubconversationGroupIDForTypeParentGroupID`")
+        }
+    }
+
+    // MARK: - findSubgroupTypeAndParentID
+
+    public var findSubgroupTypeAndParentIDFor_Invocations: [MLSGroupID] = []
+    public var findSubgroupTypeAndParentIDFor_MockMethod: ((MLSGroupID) -> (parentID: MLSGroupID, type: SubgroupType)?)?
+    public var findSubgroupTypeAndParentIDFor_MockValue: (parentID: MLSGroupID, type: SubgroupType)??
+
+    public func findSubgroupTypeAndParentID(for targetGroupID: MLSGroupID) -> (parentID: MLSGroupID, type: SubgroupType)? {
+        findSubgroupTypeAndParentIDFor_Invocations.append(targetGroupID)
+
+        if let mock = findSubgroupTypeAndParentIDFor_MockMethod {
+            return mock(targetGroupID)
+        } else if let mock = findSubgroupTypeAndParentIDFor_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `findSubgroupTypeAndParentIDFor`")
         }
     }
 

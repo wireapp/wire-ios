@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2023 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,17 +16,17 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import MobileCoreServices
-import WireUtilities
-import UniformTypeIdentifiers
+import Foundation
 
-extension NSItemProvider {
+@objc
+public extension ZMAccessTokenHandler {
 
-    /// Extracts the URL from the item provider
-    func fetchURL(completion: @escaping (URL?) -> Void) {
-        loadItem(forTypeIdentifier: UTType.url.identifier, options: nil, completionHandler: { (url, error) in
-            error?.log(message: "Unable to fetch URL for type URL")
-            completion(url as? URL)
-        })
+    func logDebug(_ message: String) {
+        WireLogger.authentication.debug(message)
     }
+
+    func logError(_ message: String) {
+        WireLogger.authentication.error(message)
+    }
+
 }

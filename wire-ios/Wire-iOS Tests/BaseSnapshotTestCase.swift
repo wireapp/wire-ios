@@ -19,12 +19,6 @@
 import XCTest
 import WireCommonComponents
 
-class BaseSnapshotTestCase: XCTestCase {
-
-    override func setUp() {
-        super.setUp()
-
-        FontScheme.configure(with: .large)
-    }
+class BaseSnapshotTestCase: BaseTestCase {
 
 }
