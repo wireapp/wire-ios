@@ -309,13 +309,13 @@ final class ChangeHandleViewController: SettingsBaseTableViewController {
         cell.handleTextField.text = state.displayHandle
         cell.handleTextField.becomeFirstResponder()
         cell.domainLabel.isHidden = !federationEnabled
-
-        if let user = SelfUser.provider?.providedSelfUser {
+        
+        if let user = SelfUser.provider?.providedSelfUser  {
             cell.domainLabel.text = federationEnabled ? user.domainString : ""
         } else {
             assertionFailure("expected available 'user'!")
         }
-
+        
         return cell
     }
 

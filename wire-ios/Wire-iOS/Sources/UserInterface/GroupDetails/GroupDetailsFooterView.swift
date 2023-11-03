@@ -36,7 +36,7 @@ final class GroupDetailsFooterView: ConversationDetailFooterView {
             assertionFailure("expected available 'user'!")
             return
         }
-
+        
         leftButton.isHidden = !user.canAddUser(to: conversation)
         leftButton.isEnabled = conversation.freeParticipantSlots > 0
     }

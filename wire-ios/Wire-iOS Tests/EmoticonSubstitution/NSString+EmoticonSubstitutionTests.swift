@@ -42,6 +42,10 @@ final class NSString_EmoticonSubstitutionTests: XCTestCase {
 
     var sut: EmoticonSubstitutionConfiguration!
 
+    override func setUp() {
+        super.setUp()
+    }
+
     override func tearDown() {
         sut = nil
         super.tearDown()

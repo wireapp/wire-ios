@@ -40,7 +40,7 @@ final class UserDetailViewControllerFactory {
                 assertionFailure("expected available 'viewer'!")
                 return UIViewController()
             }
-
+            
             let profileViewController = ProfileViewController(
                 user: user,
                 viewer: viewer,
@@ -51,7 +51,7 @@ final class UserDetailViewControllerFactory {
             profileViewController.viewControllerDismisser = viewControllerDismisser
             return profileViewController
         }
-
+        
         let serviceDetailViewController = ServiceDetailViewController(
             serviceUser: serviceUser,
             actionType: .removeService(conversation),

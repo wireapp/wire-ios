@@ -70,7 +70,7 @@ protocol ConversationMessageCell: AnyObject {
 
     /// Called after the cell as been moved off screen.
     func didEndDisplaying()
-
+    
     func prepareForReuse()
 }
 
@@ -95,9 +95,9 @@ extension ConversationMessageCell {
     func didEndDisplaying() {
         // to be overriden
     }
-
+    
     func prepareForReuse() {
-
+        
     }
 
 }

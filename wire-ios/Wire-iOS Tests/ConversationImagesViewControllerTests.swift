@@ -64,7 +64,7 @@ final class ConversationImagesViewControllerTests: CoreDataSnapshotTestCase {
             assetCollectionDelegate: delegate,
             matchingCategories: [imagesCategoryMatch]
         )
-
+        
         sut = ConversationImagesViewController(
             collection: assetWrapper,
             initialMessage: initialMessage,

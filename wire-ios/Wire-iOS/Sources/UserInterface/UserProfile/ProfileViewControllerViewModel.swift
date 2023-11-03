@@ -186,7 +186,7 @@ final class ProfileViewControllerViewModel: NSObject {
             assertionFailure("expected available 'user'!")
             return
         }
-
+        
         transitionToListAndEnqueue {
             self.conversation?.clearMessageHistory()
             if leave {

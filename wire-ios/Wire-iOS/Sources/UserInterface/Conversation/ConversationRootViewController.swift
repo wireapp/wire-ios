@@ -51,7 +51,7 @@ final class ConversationRootViewController: UIViewController {
 
         let conversationController = ConversationViewController(conversation: conversation,
                                                                 visibleMessage: message as? ZMMessage,
-                                                                zClientViewController: clientViewController,
+                                                                zClientViewController: clientViewController, 
                                                                 userSession: userSession)
 
         conversationViewController = conversationController

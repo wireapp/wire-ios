@@ -23,6 +23,10 @@ import SnapshotTesting
 class RoundedSegmentedViewTests: XCTestCase {
     var sut: RoundedSegmentedView!
 
+    override func setUp() {
+        super.setUp()
+    }
+
     override func tearDown() {
         sut = nil
         super.tearDown()

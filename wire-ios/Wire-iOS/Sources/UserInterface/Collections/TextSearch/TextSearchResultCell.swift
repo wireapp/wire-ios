@@ -37,7 +37,7 @@ final class TextSearchResultCell: UITableViewCell {
 
         return roundedTextBadge
     }()
-
+    
     private var userSession: UserSession
 
         init(style: UITableViewCell.CellStyle, reuseIdentifier: String?, userSession: UserSession) {

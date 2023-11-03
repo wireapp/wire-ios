@@ -46,6 +46,10 @@ class AccountSelectionViewController: UITableViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
+    override func viewDidLoad() {
+        super.viewDidLoad()
+    }
+
     override func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }

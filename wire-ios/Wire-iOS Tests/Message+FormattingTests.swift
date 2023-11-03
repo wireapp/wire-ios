@@ -35,7 +35,7 @@ class Message_FormattingTests: XCTestCase {
         let textMessageData = MockTextMessageData()
         textMessageData.messageText = text
 
-        if messageTemplate.contains("{preview-url}") {
+        if (messageTemplate.contains("{preview-url}")) {
             let url = messageTemplate.contains("giphy") ? giphyURL : previewURL
             let range = textMessageData.messageText!.range(of: url)!
             let offset = textMessageData.messageText!.distance(from: textMessageData.messageText!.startIndex, to: range.lowerBound)

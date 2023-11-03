@@ -79,7 +79,7 @@ final class MessagePresenter: NSObject {
 
         documentInteractionController = UIDocumentInteractionController(url: URL(fileURLWithPath: tmpPath))
         documentInteractionController?.delegate = self
-        if !preview || false == documentInteractionController?.presentPreview(animated: true),
+        if (!preview || false == documentInteractionController?.presentPreview(animated: true)),
             let rect = targetViewController?.view.convert(targetView.bounds, from: targetView),
         let view = targetViewController?.view {
 
@@ -200,7 +200,7 @@ final class MessagePresenter: NSObject {
 
         return imagesViewController(for: message,
                                     actionResponder: delegate,
-                                    isPreviewing: false,
+                                    isPreviewing: false, 
                                     userSession: userSession)
     }
 

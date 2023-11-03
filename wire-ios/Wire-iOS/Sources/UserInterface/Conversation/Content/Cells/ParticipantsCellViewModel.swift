@@ -112,7 +112,7 @@ class ParticipantsCellViewModel {
         let users = sortedUsersWithoutSelf
         let boundary = users.count > maxShownUsers && action.allowsCollapsing ? maxShownUsersWhenCollapsed : users.count
         let result = users[..<boundary]
-
+        
         guard let selfUser = sortedUsers.first(where: \.isSelfUser) else {
             return users
         }

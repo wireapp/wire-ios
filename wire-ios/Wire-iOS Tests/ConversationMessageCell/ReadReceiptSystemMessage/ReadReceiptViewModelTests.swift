@@ -24,6 +24,10 @@ final class ReadReceiptViewModelTests: XCTestCase {
     var sut: ReadReceiptViewModel!
     var mockMessage: MockMessage!
 
+    override func setUp() {
+        super.setUp()
+    }
+
     override func tearDown() {
         sut = nil
         mockMessage = nil

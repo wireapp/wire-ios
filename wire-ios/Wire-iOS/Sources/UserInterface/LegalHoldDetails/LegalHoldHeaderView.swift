@@ -47,7 +47,7 @@ final class LegalHoldHeaderView: UIView {
 
     let descriptionLabel: UILabel = {
         let user = SelfUser.provider?.providedSelfUser
-
+        
         let label = UILabel(frame: .zero)
         let text = user?.isUnderLegalHold == true ? LegalHoldHeader.selfDescription : LegalHoldHeader.otherDescription
 
