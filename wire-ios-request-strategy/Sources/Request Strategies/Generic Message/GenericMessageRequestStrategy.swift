@@ -33,7 +33,7 @@ import Foundation
     public var expirationDate: Date?
     public var expirationReasonCode: NSNumber?
 
-    private let targetRecipients: Recipients
+    public let targetRecipients: Recipients
 
     public init(conversation: ZMConversation, message: GenericMessage, targetRecipients: Recipients = .conversationParticipants, completionHandler: ((_ response: ZMTransportResponse) -> Void)?) {
         self.conversation = conversation
