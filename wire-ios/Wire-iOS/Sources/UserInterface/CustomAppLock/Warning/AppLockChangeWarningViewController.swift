@@ -139,7 +139,7 @@ final class AppLockChangeWarningViewController: UIViewController {
     @objc
     func confirmButtonTapped(sender: AnyObject?) {
             userSession.perform {
-                self.userSession.shouldNotifyUserOfDisabledAppLock = false
+                self.userSession.needsToNotifyUserOfAppLockConfiguration = false
             }
 
         dismiss(animated: true, completion: delegate?.appLockChangeWarningViewControllerDidDismiss)

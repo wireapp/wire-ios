@@ -68,7 +68,7 @@ public protocol UserSession: AnyObject {
 
     /// Whether the user should be notified of the app lock being disabled.
 
-    var shouldNotifyUserOfDisabledAppLock: Bool { get set }
+    var shouldNotifyUserOfDisabledAppLock: Bool { get }
 
     /// Whether the user needs to be informed about configuration changes.
 
@@ -253,11 +253,6 @@ extension ZMUserSession: UserSession {
     public var shouldNotifyUserOfDisabledAppLock: Bool {
         get {
             appLockController.needsToNotifyUser && !appLockController.isActive
-        }
-
-        set {
-            appLockController.needsToNotifyUser = newValue
-            appLockController.isActive = newValue
         }
     }
 
