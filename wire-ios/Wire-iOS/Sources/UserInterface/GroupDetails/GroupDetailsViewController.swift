@@ -188,19 +188,28 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
             }
         }
 
-        // MARK: options sections
-        let optionsSectionController = GroupOptionsSectionController(conversation: conversation, delegate: self, syncCompleted: didCompleteInitialSync)
-        if optionsSectionController.hasOptions {
-            sections.append(optionsSectionController)
-        }
-
-        if conversation.teamRemoteIdentifier != nil &&
-            SelfUser.current.canModifyReadReceiptSettings(in: conversation) {
-            let receiptOptionsSectionController = ReceiptOptionsSectionController(conversation: conversation,
-                                                                                  syncCompleted: didCompleteInitialSync,
-                                                                                  collectionView: self.collectionViewController.collectionView!,
-                                                                                  presentingViewController: self)
-            sections.append(receiptOptionsSectionController)
+        if let user = SelfUser.provider?.providedSelfUser {
+            // MARK: options sections
+            let optionsSectionController = GroupOptionsSectionController(
+                conversation: conversation,
+                user: user,
+                delegate: self,
+                syncCompleted: didCompleteInitialSync
+            )
+            if optionsSectionController.hasOptions {
+                sections.append(optionsSectionController)
+            }
+            
+            if conversation.teamRemoteIdentifier != nil &&
+                user.canModifyReadReceiptSettings(in: conversation) {
+                let receiptOptionsSectionController = ReceiptOptionsSectionController(
+                    conversation: conversation,
+                    syncCompleted: didCompleteInitialSync,
+                    collectionView: self.collectionViewController.collectionView!,
+                    presentingViewController: self
+                )
+                sections.append(receiptOptionsSectionController)
+            }
         }
 
         // MARK: services sections
