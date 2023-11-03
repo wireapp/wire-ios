@@ -26,9 +26,7 @@ final class UserSessionMock: UserSession {
 
     var _authenticationResult: AppLockAuthenticationResult = .unavailable
     var _evaluationContext = LAContext()
-    var selfUser: UserType
-    var selfLegalHoldSubject: SelfLegalHoldSubject & UserType
-    var mockConversationList: ZMConversationList?
+
     var mockConversationDirectory = MockConversationDirectory()
 
     var setEncryptionAtRest: [(enabled: Bool, skipMigration: Bool)] = []
