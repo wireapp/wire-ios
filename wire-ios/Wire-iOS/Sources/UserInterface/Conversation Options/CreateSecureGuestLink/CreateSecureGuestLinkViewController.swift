@@ -27,11 +27,23 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
     typealias ViewColors = SemanticColors.View
     typealias LabelColors = SemanticColors.Label
     typealias SecuredGuestLinkWithPasswordLocale = L10n.Localizable.SecuredGuestLinkWithPassword
+    typealias SecureGuestLinkAccessibilityLocale = L10n.Accessibility.CreateSecureGuestLink
 
     weak var delegate: ValidatedTextFieldDelegate?
 
     private lazy var viewModel: CreateSecureGuestLinkViewModel = {
         CreateSecureGuestLinkViewModel(delegate: self)
+    }()
+
+    private let scrollView: UIScrollView = {
+        let scrollView = UIScrollView()
+        scrollView.alwaysBounceVertical = true
+        return scrollView
+    }()
+
+    private let contentView: UIView = {
+        let view = UIView()
+        return view
     }()
 
     private let warningLabel: UILabel = {
@@ -47,6 +59,11 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
             fontSpec: FontSpec.buttonSmallSemibold,
             insets: UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
         )
+
+        button.accessibilityLabel = SecureGuestLinkAccessibilityLocale.GeneratePasswordButton.description
+        button.accessibilityHint = SecureGuestLinkAccessibilityLocale.GeneratePasswordButton.hint
+        button.accessibilityTraits = [.button]
+
         button.titleLabel?.adjustsFontForContentSizeCategory = true
         button.setTitle(SecuredGuestLinkWithPasswordLocale.GeneratePasswordButton.title, for: .normal)
         button.setImage(Asset.Images.shield.image, for: .normal)
@@ -61,6 +78,7 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
             fontSpec: .subheadlineFont,
             color: SemanticColors.Label.textFieldFloatingLabel
         )
+        label.isAccessibilityElement = false
         label.textAlignment = .left
         return label
     }()
@@ -75,6 +93,10 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
             style: .default
         )
         textField.addRevealButton(delegate: self)
+      
+        textField.accessibilityLabel = SecureGuestLinkAccessibilityLocale.SecuredGuestLinkPasswordTextfield.description
+        textField.accessibilityHint = SecureGuestLinkAccessibilityLocale.SecuredGuestLinkPasswordTextfield.hint
+
         textField.addTarget(self, action: #selector(handlePasswordValidation(for:)), for: .editingChanged)
         textField.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
 
@@ -100,6 +122,7 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
             fontSpec: .subheadlineFont,
             color: SemanticColors.Label.textFieldFloatingLabel
         )
+        label.isAccessibilityElement = false
         label.textAlignment = .left
         return label
     }()
@@ -113,6 +136,9 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
             setNewColors: true,
             style: .default
         )
+        textField.accessibilityLabel = SecureGuestLinkAccessibilityLocale.SecuredGuestLinkPasswordValidatedTextField.description
+        textField.accessibilityHint = SecureGuestLinkAccessibilityLocale.SecuredGuestLinkPasswordValidatedTextField.hint
+
         textField.showConfirmButton = false
         textField.addTarget(self, action: #selector(handlePasswordValidation(for:)), for: .editingChanged)
         textField.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
@@ -130,6 +156,11 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
             cornerRadius: 16,
             fontSpec: .buttonBigSemibold
         )
+
+        button.accessibilityLabel = SecureGuestLinkAccessibilityLocale.CreateLinkButton.description
+        button.accessibilityHint = SecureGuestLinkAccessibilityLocale.CreateLinkButton.hint
+        button.accessibilityTraits = [.button]
+
         button.setTitle(SecuredGuestLinkWithPasswordLocale.CreateLinkButton.title, for: .normal)
         button.addTarget(self, action: #selector(createSecuredLinkButtonTapped), for: .touchUpInside)
         button.titleLabel?.numberOfLines = 0
@@ -145,6 +176,16 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
         setUpViews()
         setupConstraints()
         textFieldDidChange(securedGuestLinkPasswordTextfield)
+
+        contentView.accessibilityElements = [
+            warningLabel,
+            generatePasswordButton,
+            securedGuestLinkPasswordTextfield,
+            passwordRequirementsLabel,
+            securedGuestLinkPasswordValidatedTextField,
+            createSecuredLinkButton
+        ]
+
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -155,14 +196,21 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
     // MARK: - Setup UI
 
     private func setUpViews() {
-        view.addSubview(warningLabel)
-        view.addSubview(generatePasswordButton)
-        view.addSubview(setPasswordLabel)
-        view.addSubview(securedGuestLinkPasswordTextfield)
-        view.addSubview(passwordRequirementsLabel)
-        view.addSubview(confirmPasswordLabel)
-        view.addSubview(securedGuestLinkPasswordValidatedTextField)
-        view.addSubview(createSecuredLinkButton)
+        let contentSubviews: [UIView] = [
+            warningLabel,
+            generatePasswordButton,
+            setPasswordLabel,
+            securedGuestLinkPasswordTextfield,
+            passwordRequirementsLabel,
+            confirmPasswordLabel,
+            securedGuestLinkPasswordValidatedTextField,
+            createSecuredLinkButton
+        ]
+
+        contentSubviews.forEach { contentView.addSubview($0) }
+
+        scrollView.addSubview(contentView)
+        view.addSubview(scrollView)
     }
 
     private func setupNavigationBar() {
@@ -170,6 +218,7 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
         navigationController?.navigationBar.tintColor = LabelColors.textDefault
         navigationItem.setupNavigationBarTitle(title: SecuredGuestLinkWithPasswordLocale.Header.title)
         navigationItem.rightBarButtonItem = navigationController?.closeItem()
+        navigationItem.rightBarButtonItem?.accessibilityLabel = L10n.Accessibility.CreateSecureGuestLink.CloseButton.description
     }
 
     private func setupConstraints() {
@@ -180,15 +229,33 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
          passwordRequirementsLabel,
          confirmPasswordLabel,
          securedGuestLinkPasswordValidatedTextField,
-         createSecuredLinkButton].prepareForLayout()
+         createSecuredLinkButton,
+         contentView,
+         scrollView].prepareForLayout()
+
+        let heightConstraint = contentView.heightAnchor.constraint(greaterThanOrEqualTo: scrollView.heightAnchor)
+        heightConstraint.priority = UILayoutPriority.defaultLow
 
         NSLayoutConstraint.activate([
-            warningLabel.safeLeadingAnchor.constraint(equalTo: self.view.safeLeadingAnchor, constant: 20),
-            warningLabel.safeTrailingAnchor.constraint(equalTo: self.view.safeTrailingAnchor, constant: -20),
-            warningLabel.safeTopAnchor.constraint(equalTo: self.view.safeTopAnchor, constant: 30),
+            scrollView.topAnchor.constraint(equalTo: view.topAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            heightConstraint,
+
+            contentView.topAnchor.constraint(equalTo: scrollView.topAnchor),
+            contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
+            contentView.safeLeadingAnchor.constraint(equalTo: scrollView.safeLeadingAnchor),
+            contentView.safeTrailingAnchor.constraint(equalTo: scrollView.safeTrailingAnchor),
+            contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
+
+            warningLabel.safeLeadingAnchor.constraint(equalTo: self.contentView.safeLeadingAnchor, constant: 20),
+            warningLabel.safeTrailingAnchor.constraint(equalTo: self.contentView.safeTrailingAnchor, constant: -20),
+            warningLabel.safeTopAnchor.constraint(equalTo: self.contentView.safeTopAnchor, constant: 30),
 
             generatePasswordButton.topAnchor.constraint(equalTo: warningLabel.bottomAnchor, constant: 40),
-            generatePasswordButton.safeLeadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 20),
+            generatePasswordButton.safeLeadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 20),
+
             generatePasswordButton.heightAnchor.constraint(equalToConstant: 32),
 
             setPasswordLabel.safeLeadingAnchor.constraint(equalTo: securedGuestLinkPasswordTextfield.safeLeadingAnchor),
@@ -196,8 +263,8 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
             setPasswordLabel.bottomAnchor.constraint(equalTo: securedGuestLinkPasswordTextfield.topAnchor, constant: -6),
 
             securedGuestLinkPasswordTextfield.topAnchor.constraint(equalTo: generatePasswordButton.bottomAnchor, constant: 50),
-            securedGuestLinkPasswordTextfield.safeLeadingAnchor.constraint(equalTo: self.view.safeLeadingAnchor, constant: 16),
-            securedGuestLinkPasswordTextfield.safeTrailingAnchor.constraint(equalTo: self.view.safeTrailingAnchor, constant: -16),
+            securedGuestLinkPasswordTextfield.safeLeadingAnchor.constraint(equalTo: self.contentView.safeLeadingAnchor, constant: 16),
+            securedGuestLinkPasswordTextfield.safeTrailingAnchor.constraint(equalTo: self.contentView.safeTrailingAnchor, constant: -16),
 
             passwordRequirementsLabel.topAnchor.constraint(equalTo: securedGuestLinkPasswordTextfield.bottomAnchor, constant: 8),
             passwordRequirementsLabel.safeLeadingAnchor.constraint(equalTo: securedGuestLinkPasswordTextfield.safeLeadingAnchor),
@@ -208,12 +275,13 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
             confirmPasswordLabel.safeTrailingAnchor.constraint(equalTo: passwordRequirementsLabel.safeTrailingAnchor),
 
             securedGuestLinkPasswordValidatedTextField.topAnchor.constraint(equalTo: confirmPasswordLabel.bottomAnchor, constant: 6),
-            securedGuestLinkPasswordValidatedTextField.safeLeadingAnchor.constraint(equalTo: self.view.safeLeadingAnchor, constant: 16),
-            securedGuestLinkPasswordValidatedTextField.safeTrailingAnchor.constraint(equalTo: self.view.safeTrailingAnchor, constant: -16),
+            securedGuestLinkPasswordValidatedTextField.safeLeadingAnchor.constraint(equalTo: self.contentView.safeLeadingAnchor, constant: 16),
+            securedGuestLinkPasswordValidatedTextField.safeTrailingAnchor.constraint(equalTo: self.contentView.safeTrailingAnchor, constant: -16),
 
-            createSecuredLinkButton.safeBottomAnchor.constraint(equalTo: view.safeBottomAnchor, constant: -24),
-            createSecuredLinkButton.safeLeadingAnchor.constraint(equalTo: view.safeLeadingAnchor, constant: 18),
-            createSecuredLinkButton.safeTrailingAnchor.constraint(equalTo: view.safeTrailingAnchor, constant: -18),
+            createSecuredLinkButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -24),
+            createSecuredLinkButton.safeLeadingAnchor.constraint(equalTo: contentView.safeLeadingAnchor, constant: 18),
+            createSecuredLinkButton.safeTrailingAnchor.constraint(equalTo: contentView.safeTrailingAnchor, constant: -18),
+
             createSecuredLinkButton.heightAnchor.constraint(equalToConstant: 56)
         ])
 
@@ -252,10 +320,25 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
             createSecureGuestLinkPasswordValidatorHelper.resetPasswordDefaultState(for: [textField], for: labels)
         } else {
             createSecureGuestLinkPasswordValidatorHelper.displayPasswordErrorState(for: [textField], for: labels)
+            announcePasswordValidationErrorForVoiceOver(for: textField)
         }
 
         return isValid
     }
+  
+    // MARK: - Accessibility
+
+    func announcePasswordValidationErrorForVoiceOver(for textField: ValidatedTextField) {
+       let argument =  textField == securedGuestLinkPasswordTextfield ? SecureGuestLinkAccessibilityLocale.SecuredGuestLinkPasswordTextfield.announcement : SecureGuestLinkAccessibilityLocale.SecuredGuestLinkPasswordValidatedTextField.announcement
+        
+            UIAccessibility.post(
+                notification: .announcement,
+                argument: argument
+            )
+        }
+
+    }
+
     // MARK: - CreatePasswordSecuredLinkViewModelDelegate
 
     func viewModel(

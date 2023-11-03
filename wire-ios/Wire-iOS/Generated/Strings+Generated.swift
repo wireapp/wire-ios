@@ -703,6 +703,40 @@ internal enum L10n {
         internal static let hint = L10n.tr("Accessibility", "createConversation.unselectedUser.hint", fallback: "Double tap to select")
       }
     }
+    internal enum CreateSecureGuestLink {
+      internal enum CreateLinkButton {
+        /// Create guest link
+        internal static let description = L10n.tr("Accessibility", "createSecureGuestLink.CreateLinkButton.description", fallback: "Create guest link")
+        /// Tap to create a secure guest link
+        internal static let hint = L10n.tr("Accessibility", "createSecureGuestLink.CreateLinkButton.hint", fallback: "Tap to create a secure guest link")
+      }
+      internal enum GeneratePasswordButton {
+        /// Generate password
+        internal static let description = L10n.tr("Accessibility", "createSecureGuestLink.GeneratePasswordButton.description", fallback: "Generate password")
+        /// Tap to generate a random password
+        internal static let hint = L10n.tr("Accessibility", "createSecureGuestLink.GeneratePasswordButton.hint", fallback: "Tap to generate a random password")
+      }
+      internal enum CloseButton {
+        /// Close Secure guest link
+        internal static let description = L10n.tr("Accessibility", "createSecureGuestLink.closeButton.description", fallback: "Close Secure guest link")
+      }
+      internal enum SecuredGuestLinkPasswordTextfield {
+        /// Password validation error. Please make sure the password meets the requirements.
+        internal static let announcement = L10n.tr("Accessibility", "createSecureGuestLink.securedGuestLinkPasswordTextfield.announcement", fallback: "Password validation error. Please make sure the password meets the requirements.")
+        /// Guest link password
+        internal static let description = L10n.tr("Accessibility", "createSecureGuestLink.securedGuestLinkPasswordTextfield.description", fallback: "Guest link password")
+        /// Enter a new password for the secure guest link
+        internal static let hint = L10n.tr("Accessibility", "createSecureGuestLink.securedGuestLinkPasswordTextfield.hint", fallback: "Enter a new password for the secure guest link")
+      }
+      internal enum SecuredGuestLinkPasswordValidatedTextField {
+        /// Password validation error. Please make sure the password matches the one above
+        internal static let announcement = L10n.tr("Accessibility", "createSecureGuestLink.securedGuestLinkPasswordValidatedTextField.announcement", fallback: "Password validation error. Please make sure the password matches the one above")
+        /// Confirm Guest Link Password
+        internal static let description = L10n.tr("Accessibility", "createSecureGuestLink.securedGuestLinkPasswordValidatedTextField.description", fallback: "Confirm Guest Link Password")
+        /// Re-enter the password for verification
+        internal static let hint = L10n.tr("Accessibility", "createSecureGuestLink.securedGuestLinkPasswordValidatedTextField.hint", fallback: "Re-enter the password for verification")
+      }
+    }
     internal enum DeveloperOptionsSettings {
       internal enum BackButton {
         /// Go back to Developer options
