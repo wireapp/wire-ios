@@ -170,8 +170,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 messageSender: messageSender),
             DeliveryReceiptRequestStrategy(
                 managedObjectContext: syncMOC,
-                applicationStatus: applicationStatusDirectory,
-                clientRegistrationDelegate: applicationStatusDirectory.clientRegistrationDelegate),
+                messageSender: messageSender),
             AvailabilityRequestStrategy(
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory),
