@@ -132,7 +132,7 @@ final class UnsentImageSendable: UnsentSendableBase, UnsentSendable {
     private var imageData: Data?
 
     init?(conversation: WireShareEngine.Conversation, sharingSession: SharingSession, attachment: NSItemProvider) {
-        guard attachment.hasItemConformingToTypeIdentifier(kUTTypeImage as String) else { return nil }
+        guard attachment.hasItemConformingToTypeIdentifier(UTType.image.identifier) else { return nil }
         self.attachment = attachment
         super.init(conversation: conversation, sharingSession: sharingSession)
         needsPreparation = true
@@ -153,7 +153,7 @@ final class UnsentImageSendable: UnsentSendableBase, UnsentSendable {
         // for us ('free' of charge) by using the image URL & ImageIO library.
         //
 
-        attachment.loadItem(forTypeIdentifier: kUTTypeImage as String, options: options) { [weak self] (url, error) in
+        attachment.loadItem(forTypeIdentifier: UTType.image.identifier, options: options) { [weak self] (url, error) in
             error?.log(message: "Unable to load image from attachment")
 
             // Tries to load the content from local URL...
@@ -176,7 +176,7 @@ final class UnsentImageSendable: UnsentSendableBase, UnsentSendable {
 
                 // if it fails, it will attach the content directly
 
-                self?.attachment.loadItem(forTypeIdentifier: kUTTypeImage as String, options: options) { [weak self] (image, error) in
+                self?.attachment.loadItem(forTypeIdentifier: UTType.image.identifier, options: options) { [weak self] (image, error) in
 
                     error?.log(message: "Unable to load image from attachment")
 
@@ -213,8 +213,8 @@ class UnsentFileSendable: UnsentSendableBase, UnsentSendable {
     private let typePass: Bool
 
     init?(conversation: WireShareEngine.Conversation, sharingSession: SharingSession, attachment: NSItemProvider) {
-        self.typeURL = attachment.hasItemConformingToTypeIdentifier(kUTTypeURL as String)
-        self.typeData = attachment.hasItemConformingToTypeIdentifier(kUTTypeData as String)
+        self.typeURL = attachment.hasItemConformingToTypeIdentifier(UTType.url.identifier)
+        self.typeData = attachment.hasItemConformingToTypeIdentifier(UTType.data.identifier)
         self.typePass = attachment.hasItemConformingToTypeIdentifier(UnsentFileSendable.passkitUTI)
         self.attachment = attachment
         super.init(conversation: conversation, sharingSession: sharingSession)
@@ -251,7 +251,7 @@ class UnsentFileSendable: UnsentSendableBase, UnsentSendable {
     }
 
     private func prepareAsFileData(name: String?, completion: @escaping () -> Void) {
-        self.prepareAsFile(name: name, typeIdentifier: kUTTypeData as String, completion: completion)
+        self.prepareAsFile(name: name, typeIdentifier: UTType.data.identifier, completion: completion)
     }
 
     private func prepareAsWalletPass(name: String?, completion: @escaping () -> Void) {
@@ -273,7 +273,7 @@ class UnsentFileSendable: UnsentSendableBase, UnsentSendable {
 
                 // Generating PDF previews can be expensive. To avoid hitting the Share Extension's
                 // memory budget we should avoid to generate previews if the file is a PDF.
-                guard !UTTypeConformsTo(url.UTI() as CFString, kUTTypePDF) else {
+                guard let type = UTType(url.UTI()), type.conforms(to: UTType.pdf) else {
                     self?.metadata = ZMFileMetadata(fileURL: url)
                     completion()
                     return
@@ -318,7 +318,7 @@ class UnsentFileSendable: UnsentSendableBase, UnsentSendable {
     private func convertVideoIfNeeded(UTI: String,
                                       fileURL: URL,
                                       completion: @escaping SendingCompletion) {
-        if UTTypeConformsTo(UTI as CFString, kUTTypeMovie) {
+        if UTType(UTI)?.conforms(to: UTType.movie) ?? false {
             AVURLAsset.convertVideoToUploadFormat(at: fileURL) { (url, _, error) in
                 completion(url, error)
             }
@@ -384,7 +384,7 @@ class UnsentFileSendable: UnsentSendableBase, UnsentSendable {
     }
 
     private func nameForFile(withUTI UTI: String, name: String?) -> String? {
-        if let fileExtension = UTTypeCopyPreferredTagWithClass(UTI as CFString, kUTTagClassFilenameExtension)?.takeRetainedValue() as String? {
+        if let fileExtension = UTType(UTI)?.preferredFilenameExtension {
             return "\(UUID().uuidString).\(fileExtension)"
         }
         return name

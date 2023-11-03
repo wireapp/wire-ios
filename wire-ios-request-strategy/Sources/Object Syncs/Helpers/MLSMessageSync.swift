@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireDataModel
 
 class MLSMessageSync<Message: MLSMessage>: NSObject, ZMContextChangeTrackerSource, ZMRequestGenerator {
 
@@ -32,10 +33,13 @@ class MLSMessageSync<Message: MLSMessage>: NSObject, ZMContextChangeTrackerSourc
 
     // MARK: - Life cycle
 
-    init(context: NSManagedObjectContext) {
+    init(
+        context: NSManagedObjectContext,
+        dependencySync: DependencyEntitySync<Transcoder<Message>>? = nil
+    ) {
         self.context = context
-        transcoder = Transcoder(context: context)
-        dependencySync = DependencyEntitySync(
+        self.transcoder = Transcoder(context: context)
+        self.dependencySync = dependencySync ?? DependencyEntitySync(
             transcoder: transcoder,
             context: context
         )
@@ -62,28 +66,57 @@ class MLSMessageSync<Message: MLSMessage>: NSObject, ZMContextChangeTrackerSourc
     }
 
     func sync(_ message: Message, completion: @escaping EntitySyncHandler) {
-        guard let mlsService = context.mlsService else {
-            Logging.mls.info("not syncing message b/c no mls controller")
-            return
-        }
 
         guard let groupID = message.conversation?.mlsGroupID else {
-            Logging.mls.info("not syncing message b/c no mls group id")
+            WireLogger.mls.info("not syncing message b/c no mls group id")
             return
         }
 
-        Task {
-            do {
-                Logging.mls.info("preemptively commiting pending proposals before sending message in group (\(groupID.safeForLoggingDescription))")
-                try await mlsService.commitPendingProposals(in: groupID)
-            } catch {
-                Logging.mls.info("failed: preemptively commiting pending proposals before sending message in group (\(groupID)): \(String(describing: error))")
-            }
+        let mlsService = context.mlsService
 
-            context.performGroupedBlock { [dependencySync] in
-                dependencySync.synchronize(entity: message, completion: completion)
-                RequestAvailableNotification.notifyNewRequestsAvailable(nil)
+        Task {
+            await commitPendingProposals(in: groupID, mlsService: mlsService)
+
+            synchronize(entity: message, in: context) { result, response in
+
+                guard
+                    let mlsService = mlsService,
+                    let error = SendMLSMessageAction.Failure(from: response),
+                    error == .mlsStaleMessage
+                else {
+                    return completion(result, response)
+                }
+
+                Task {
+                    WireLogger.mls.info("got stale message error when sending message in group (\(groupID.safeForLoggingDescription)). rejoining group and trying again...")
+                    await mlsService.fetchAndRepairGroup(with: groupID)
+                    self.synchronize(entity: message, in: self.context, completion: completion)
+                }
             }
+        }
+    }
+
+    private func synchronize(entity: Message, in context: NSManagedObjectContext, completion: @escaping EntitySyncHandler) {
+        context.perform { [dependencySync] in
+            dependencySync.synchronize(entity: entity, completion: completion)
+        }
+
+        RequestAvailableNotification.notifyNewRequestsAvailable(nil)
+    }
+
+    private func commitPendingProposals(
+        in groupID: MLSGroupID,
+        mlsService: MLSServiceInterface?
+    ) async {
+        guard let mlsService = mlsService else {
+            return
+        }
+
+        do {
+            WireLogger.mls.info("preemptively commiting pending proposals before sending message in group (\(groupID.safeForLoggingDescription))")
+            try await mlsService.commitPendingProposals(in: groupID)
+        } catch {
+            WireLogger.mls.info("failed: preemptively commiting pending proposals before sending message in group (\(groupID.safeForLoggingDescription)): \(String(describing: error))")
         }
     }
 
