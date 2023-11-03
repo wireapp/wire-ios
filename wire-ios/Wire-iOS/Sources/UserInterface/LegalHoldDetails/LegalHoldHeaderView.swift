@@ -46,8 +46,10 @@ final class LegalHoldHeaderView: UIView {
     }()
 
     let descriptionLabel: UILabel = {
+        let user = SelfUser.provider?.providedSelfUser
+        
         let label = UILabel(frame: .zero)
-        let text = SelfUser.current.isUnderLegalHold ? LegalHoldHeader.selfDescription : LegalHoldHeader.otherDescription
+        let text = user?.isUnderLegalHold == true ? LegalHoldHeader.selfDescription : LegalHoldHeader.otherDescription
 
         label.attributedText = text && .paragraphSpacing(8)
         label.font = FontSpec.normalFont.font!
