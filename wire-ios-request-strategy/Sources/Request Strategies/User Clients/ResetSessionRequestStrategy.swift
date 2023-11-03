@@ -18,34 +18,26 @@
 
 import Foundation
 
-public class ResetSessionRequestStrategy: AbstractRequestStrategy, ZMContextChangeTrackerSource {
+public class ResetSessionRequestStrategy: NSObject, ZMContextChangeTrackerSource {
 
     fileprivate let keyPathSync: KeyPathObjectSync<ResetSessionRequestStrategy>
-    fileprivate let messageSync: MessageSync<GenericMessageEntity>
+    fileprivate let messageSender: MessageSenderInterface
+    fileprivate let managedObjectContext: NSManagedObjectContext
 
     public init(managedObjectContext: NSManagedObjectContext,
-                applicationStatus: ApplicationStatus,
-                clientRegistrationDelegate: ClientRegistrationDelegate) {
+                messageSender: MessageSenderInterface) {
 
+        self.managedObjectContext = managedObjectContext
         self.keyPathSync = KeyPathObjectSync(entityName: UserClient.entityName(), \.needsToNotifyOtherUserAboutSessionReset)
+        self.messageSender = messageSender
 
-        self.messageSync = MessageSync(
-            context: managedObjectContext,
-            appStatus: applicationStatus
-        )
-
-        super.init(withManagedObjectContext: managedObjectContext,
-                   applicationStatus: applicationStatus)
+        super.init()
 
         keyPathSync.transcoder = self
     }
 
-    public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        return messageSync.nextRequest(for: apiVersion)
-    }
-
     public var contextChangeTrackers: [ZMContextChangeTracker] {
-        return [keyPathSync] + messageSync.contextChangeTrackers
+        return [keyPathSync]
     }
 
 }
@@ -64,15 +56,24 @@ extension ResetSessionRequestStrategy: KeyPathObjectSyncTranscoder {
                                            message: GenericMessage(clientAction: .resetSession),
                                            completionHandler: nil)
 
-        messageSync.sync(message) { (result, _) in
+        // Enter groups to enable waiting for message sending to complete in tests
+        let groups = managedObjectContext.enterAllGroupsExceptSecondary()
+        Task {
+            let result = await messageSender.sendMessage(message: message)
+
             switch result {
             case .success:
-                userClient.resolveDecryptionFailedSystemMessages()
+                managedObjectContext.performAndWait {
+                    userClient.resolveDecryptionFailedSystemMessages()
+                }
             case .failure:
                 break
             }
 
-            completion()
+            managedObjectContext.performAndWait {
+                completion()
+            }
+            managedObjectContext.leaveAllGroups(groups)
         }
     }
 
