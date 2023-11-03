@@ -101,21 +101,22 @@ public class MessageSender: MessageSenderInterface {
     public func sendMessage(message: any SendableMessage) async -> Swift.Result<Void, MessageSendError> {
         WireLogger.messaging.debug("send message")
 
-        if (managedObjectContext.performAndWait {
-            message.conversation?.securityLevel == .secureWithIgnored
-        }) {
-            return .failure(MessageSendError.securityLevelDegraded)
-        }
-
-        await messageDependencyResolver.waitForDependenciesToResolve(for: message)
-
-        return await attemptToSend(message: message)
-            .map({ success in
-                // Triggering request loop to re-evalute dependencies, other messages
-                // might have been waiting for this message to be sent.
-                RequestAvailableNotification.notifyNewRequestsAvailable(nil)
-                return success
-            })
+        return await messageDependencyResolver.waitForDependenciesToResolve(for: message)
+            .mapError { dependencyError in
+                switch dependencyError {
+                case .securityLevelDegraded:
+                    MessageSendError.securityLevelDegraded
+                }
+            }
+            .flatMapAsync { _ in
+                await attemptToSend(message: message)
+                    .map({ success in
+                        // Triggering request loop to re-evalute dependencies, other messages
+                        // might have been waiting for this message to be sent.
+                        RequestAvailableNotification.notifyNewRequestsAvailable(nil)
+                        return success
+                    })
+            }
             .mapError { error in
                 WireLogger.messaging.debug("send message failed: \(error)")
                 return error
@@ -139,7 +140,7 @@ public class MessageSender: MessageSenderInterface {
         }
     }
 
-    private func attemptToSendWithProteus(message: any ProteusMessage, apiVersion: APIVersion) async -> Swift.Result<Void, MessageSendError> {
+    private func attemptToSendWithProteus(message: any SendableMessage, apiVersion: APIVersion) async -> Swift.Result<Void, MessageSendError> {
         guard let conversationID = managedObjectContext.performAndWait({
             message.conversation?.qualifiedID
         }) else {
@@ -171,7 +172,7 @@ public class MessageSender: MessageSenderInterface {
                         }
                     })
                     .flatMapAsync { _ in
-                        await attemptToSendWithProteus(message: message, apiVersion: apiVersion)
+                        await sendMessage(message: message)
                     }
             }
         }

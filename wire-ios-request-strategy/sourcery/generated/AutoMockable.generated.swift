@@ -113,16 +113,19 @@ public class MockMessageDependencyResolverInterface: MessageDependencyResolverIn
     // MARK: - waitForDependenciesToResolve
 
     public var waitForDependenciesToResolveFor_Invocations: [any SendableMessage] = []
-    public var waitForDependenciesToResolveFor_MockMethod: ((any SendableMessage) async -> Void)?
+    public var waitForDependenciesToResolveFor_MockMethod: ((any SendableMessage) async -> Swift.Result<Void, MessageDependencyResolverError>)?
+    public var waitForDependenciesToResolveFor_MockValue: Swift.Result<Void, MessageDependencyResolverError>?
 
-    public func waitForDependenciesToResolve(for message: any SendableMessage) async {
+    public func waitForDependenciesToResolve(for message: any SendableMessage) async -> Swift.Result<Void, MessageDependencyResolverError> {
         waitForDependenciesToResolveFor_Invocations.append(message)
 
-        guard let mock = waitForDependenciesToResolveFor_MockMethod else {
+        if let mock = waitForDependenciesToResolveFor_MockMethod {
+            return await mock(message)
+        } else if let mock = waitForDependenciesToResolveFor_MockValue {
+            return mock
+        } else {
             fatalError("no mock for `waitForDependenciesToResolveFor`")
         }
-
-        await mock(message)            
     }
 
 }
