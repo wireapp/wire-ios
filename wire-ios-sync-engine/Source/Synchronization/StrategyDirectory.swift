@@ -190,8 +190,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory),
             LinkPreviewUpdateRequestStrategy(
-                withManagedObjectContext: syncMOC,
-                applicationStatus: applicationStatusDirectory),
+                managedObjectContext: syncMOC,
+                messageSender: messageSender),
             ImageV2DownloadRequestStrategy(
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory),
