@@ -43,6 +43,10 @@ final class UserSessionMock: UserSession {
 
     var _passcode: String?
 
+    var selfUser: UserType
+    var selfLegalHoldSubject: SelfLegalHoldSubject & UserType
+    var mockConversationList: ZMConversationList?
+
     convenience init(mockUser: MockZMEditableUser) {
         self.init(
             selfUser: mockUser,

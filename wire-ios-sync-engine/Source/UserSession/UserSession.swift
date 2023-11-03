@@ -37,7 +37,7 @@ public protocol UserSession: AnyObject {
     /// Whether the screen curtain is required.
     ///
     /// The screen curtain hides the contents of the app while it is
-    /// not in actvie, such as when it is in the task switcher.
+    /// not active, such as when it is in the task switcher.
 
     var requiresScreenCurtain: Bool { get }
 
@@ -106,6 +106,10 @@ public protocol UserSession: AnyObject {
 
     func evaluateAuthentication(customPasscode: String) -> AppLockAuthenticationResult
 
+    /// Whether the user should be notified of the app lock being disabled.
+
+    var shouldNotifyUserOfDisabledAppLock: Bool { get }
+
     /// Delete the app lock passcode if it exists.
 
     func deleteAppLockPasscode() throws
@@ -163,6 +167,8 @@ public protocol UserSession: AnyObject {
         _ observer: WireCallCenterCallErrorObserver
     ) -> Any
 
+    func addConferenceCallingUnavailableObserver(_ observer: ConferenceCallingUnavailableObserver) -> Any
+
     func addConversationListObserver(
         _ observer: ZMConversationListObserver,
         for list: ZMConversationList
@@ -202,7 +208,7 @@ public protocol UserSession: AnyObject {
 
 extension ZMUserSession: UserSession {
 
-    public var lock: SessionLock? {
+   public var lock: SessionLock? {
         if isDatabaseLocked {
             return .database
         } else if appLockController.isLocked {
@@ -301,6 +307,9 @@ extension ZMUserSession: UserSession {
         syncManagedObjectContext.performGroupedBlock {
             self.processEvents()
         }
+      
+    public var shouldNotifyUserOfDisabledAppLock: Bool {
+        return appLockController.needsToNotifyUser && !appLockController.isActive
     }
 
     public func deleteAppLockPasscode() throws {
@@ -334,6 +343,7 @@ extension ZMUserSession: UserSession {
             in: self
         )
     }
+
 
     public func addMessageObserver(
         _ observer: ZMMessageObserver,

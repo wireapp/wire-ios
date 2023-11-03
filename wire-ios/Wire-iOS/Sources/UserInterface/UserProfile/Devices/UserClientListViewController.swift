@@ -21,6 +21,7 @@ import UIKit
 import WireSyncEngine
 
 final class UserClientListViewController: UIViewController, 
+final class UserClientListViewController: UIViewController,
                                           UICollectionViewDelegateFlowLayout,
                                           UICollectionViewDataSource {
 
@@ -129,12 +130,12 @@ final class UserClientListViewController: UIViewController,
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let client = clients[indexPath.row]
+        guard let client = clients[indexPath.row] as? UserClient else { return }
         let profileClientViewController = ProfileClientViewController(
-            client: client as! UserClient,
-            fromConversation: true, 
+            client: client,
+            fromConversation: true,
             userSession: userSession
-        ) // TODO jacob don't force unwrap
+        )
         profileClientViewController.showBackButton = false
 
         show(profileClientViewController, sender: nil)
