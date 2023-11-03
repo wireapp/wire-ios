@@ -211,8 +211,8 @@ class MockMLSService: MLSServiceInterface {
     func fetchAndRepairGroup(with groupID: MLSGroupID) async {
         guard let mock = fetchAndRepairGroupMock else {
             return
-        mock(groupID)
         }
+        mock(groupID)
     }
 
     // MARK: - Migration
@@ -220,10 +220,9 @@ class MockMLSService: MLSServiceInterface {
 
     var startProteusToMLSMigrationMock: StartProteusToMLSMigrationMock?
     func startProteusToMLSMigration() {
-
         guard let mock = startProteusToMLSMigrationMock else {
             return
-        mock()
         }
+        mock()
     }
 }
