@@ -32,7 +32,11 @@ extension SearchGroup {
         case .people:
             return true
         case .services:
-            return SelfUser.current.canCreateService
+            guard let user = SelfUser.provider?.providedSelfUser else {
+                assertionFailure("expected available 'user'!")
+                return false
+            }
+            return user.canCreateService
         }
     }
 
