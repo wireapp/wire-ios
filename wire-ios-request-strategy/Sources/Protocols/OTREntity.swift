@@ -84,6 +84,7 @@ extension OTREntity {
             return conversation.connection
         }
 
+        // FIXME: [jacob] we can remove this check since we fail the message sending in MessageDependencyResolver
         // If the conversation is degraded we shouldn't send the message until the conversation
         // is marked as not secure or it's verified again
         if conversation.securityLevel == .secureWithIgnored {
