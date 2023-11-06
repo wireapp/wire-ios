@@ -251,7 +251,7 @@ enum DebugActions {
     }
 
     static func appendMessagesToDatabase(count: Int) {
-        let userSession = ZMUserSession.shared()!
+        guard let userSession = ZMUserSession.shared() else { return }
         let conversation = ZMConversationList.conversations(inUserSession: userSession).firstObject! as! ZMConversation
         let conversationId = conversation.objectID
 
