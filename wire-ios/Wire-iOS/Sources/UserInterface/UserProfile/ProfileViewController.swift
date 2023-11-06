@@ -133,8 +133,8 @@ final class ProfileViewController: UIViewController {
 
     // MARK: - Actions
     private func bringUpConversationCreationFlow() {
-
-        let controller = ConversationCreationController(preSelectedParticipants: viewModel.userSet, selfUser: ZMUser.selfUser())
+        guard let selfUser = ZMUser.selfUser() else { return assertionFailure("ZMUser.selfUser() is nil") }
+        let controller = ConversationCreationController(preSelectedParticipants: viewModel.userSet, selfUser: selfUser)
         controller.delegate = self
 
         let wrappedController = controller.wrapInNavigationController(setBackgroundColor: true)

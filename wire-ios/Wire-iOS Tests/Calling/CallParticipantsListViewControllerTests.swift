@@ -65,7 +65,7 @@ final class CallParticipantsListViewControllerTests: ZMSnapshotTestCase {
         sut = CallParticipantsListViewController(
             participants: mockParticipants,
             showParticipants: true,
-            selfUser: ZMUser.selfUser()
+            selfUser: ZMUser.selfUser()!
         )
         sut.view.frame = CGRect(x: 0, y: 0, width: 325, height: 336)
         sut.view.setNeedsLayout()
@@ -81,7 +81,7 @@ final class CallParticipantsListViewControllerTests: ZMSnapshotTestCase {
         sut = CallParticipantsListViewController(
             participants: mockParticipants,
             showParticipants: true,
-            selfUser: ZMUser.selfUser()
+            selfUser: ZMUser.selfUser()!
         )
         sut.view.frame = CGRect(x: 0, y: 0, width: 325, height: 336)
         sut.view.setNeedsLayout()
@@ -98,7 +98,7 @@ final class CallParticipantsListViewControllerTests: ZMSnapshotTestCase {
         sut = CallParticipantsListViewController(
             participants: mockParticipants,
             showParticipants: false,
-            selfUser: ZMUser.selfUser()
+            selfUser: ZMUser.selfUser()!
         )
         sut.view.frame = CGRect(x: 0, y: 0, width: 325, height: 336)
         sut.view.backgroundColor = .white
@@ -112,7 +112,7 @@ final class CallParticipantsListViewControllerTests: ZMSnapshotTestCase {
         sut = CallParticipantsListViewController(
             participants: mockParticipants,
             showParticipants: false,
-            selfUser: ZMUser.selfUser()
+            selfUser: ZMUser.selfUser()!
         )
         sut.view.frame = CGRect(x: 0, y: 0, width: 325, height: 336)
         sut.view.backgroundColor = .black
@@ -128,7 +128,7 @@ final class CallParticipantsListViewControllerTests: ZMSnapshotTestCase {
         sut = CallParticipantsListViewController(
             participants: participants,
             showParticipants: true,
-            selfUser: ZMUser.selfUser()
+            selfUser: ZMUser.selfUser()!
         )
         sut.view.frame = CGRect(x: 0, y: 0, width: 325, height: 336)
         sut.view.backgroundColor = .white
@@ -143,7 +143,7 @@ final class CallParticipantsListViewControllerTests: ZMSnapshotTestCase {
         sut = CallParticipantsListViewController(
             participants: participants,
             showParticipants: true,
-            selfUser: ZMUser.selfUser()
+            selfUser: ZMUser.selfUser()!
         )
         sut.view.frame = CGRect(x: 0, y: 0, width: 325, height: 336)
         sut.view.backgroundColor = .black

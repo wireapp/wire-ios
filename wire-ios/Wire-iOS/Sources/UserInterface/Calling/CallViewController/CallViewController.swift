@@ -103,7 +103,7 @@ final class CallViewController: UIViewController {
 
         callInfoRootViewController = CallInfoRootViewController(
             configuration: callInfoConfiguration,
-            selfUser: ZMUser.selfUser(),
+            selfUser: userSession.selfUser,
             userSession: userSession
         )
 
@@ -303,7 +303,7 @@ final class CallViewController: UIViewController {
                                                       mediaManager: mediaManager,
                                                       userEnabledCBR: CallViewController.userEnabledCBR,
                                                       classification: classification,
-                                                      selfUser: ZMUser.selfUser())
+                                                      selfUser: userSession.selfUser)
 
         callInfoRootViewController.configuration = callInfoConfiguration
         callGridConfiguration = CallGridConfiguration(voiceChannel: voiceChannel)

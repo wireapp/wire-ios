@@ -22,15 +22,17 @@ import WireSyncEngine
 extension ZClientViewController {
 
     func showAvailabilityBehaviourChangeAlertIfNeeded() {
+        guard let selfUser = ZMUser.selfUser() else { return assertionFailure("ZMUser.selfUser() is nil") }
 
-        guard var notify = ZMUser.selfUser()?.needsToNotifyAvailabilityBehaviourChange, notify.contains(.alert),
-              let availability = ZMUser.selfUser()?.availability else { return }
+        var notify = selfUser.needsToNotifyAvailabilityBehaviourChange
+        guard notify.contains(.alert) else { return }
+        let availability = selfUser.availability
 
         present(UIAlertController.availabilityExplanation(availability), animated: true)
 
         userSession.perform {
             notify.remove(.alert)
-            ZMUser.selfUser()?.needsToNotifyAvailabilityBehaviourChange = notify
+            selfUser.needsToNotifyAvailabilityBehaviourChange = notify
         }
     }
 

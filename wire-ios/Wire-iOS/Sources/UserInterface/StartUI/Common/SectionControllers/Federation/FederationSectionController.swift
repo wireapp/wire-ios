@@ -54,7 +54,12 @@ class FederationSectionController: SearchSectionController {
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(ofType: UserCell.self, for: indexPath)
         let user = users[indexPath.row]
-        cell.configure(with: user, selfUser: ZMUser.selfUser())
+        let selfUser = ZMUser.selfUser()
+        if let selfUser {
+            cell.configure(with: user, selfUser: selfUser)
+        } else {
+            assertionFailure("ZMUser.selfUser() is nil")
+        }
         cell.accessoryIconView.isHidden = true
         return cell
     }

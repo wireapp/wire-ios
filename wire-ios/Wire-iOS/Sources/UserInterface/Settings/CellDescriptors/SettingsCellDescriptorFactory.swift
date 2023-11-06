@@ -35,7 +35,7 @@ class SettingsCellDescriptorFactory {
     func rootGroup(isTeamMember: Bool, userSession: UserSession) -> SettingsControllerGeneratorType & SettingsInternalGroupCellDescriptorType {
         var rootElements: [SettingsCellDescriptorType] = []
 
-        if ZMUser.selfUser().canManageTeam {
+        if ZMUser.selfUser()?.canManageTeam == true {
             rootElements.append(self.manageTeamCell())
         }
 
@@ -133,7 +133,7 @@ class SettingsCellDescriptorFactory {
                                                 detailedView: true)
             },
             previewGenerator: { _ -> SettingsCellPreview in
-                return SettingsCellPreview.badge(ZMUser.selfUser().clients.count)
+                return SettingsCellPreview.badge(ZMUser.selfUser()?.clients.count ?? 0)
             },
            icon: .devices)
     }

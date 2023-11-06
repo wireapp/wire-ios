@@ -61,10 +61,9 @@ class CallingBottomSheetViewController: BottomSheetContainerViewController {
     init(voiceChannel: VoiceChannel, userSession: UserSession) {
         self.voiceChannel = voiceChannel
         self.userSession = userSession
-        let selfUser: UserType = ZMUser.selfUser()
 
-        visibleVoiceChannelViewController = CallViewController(voiceChannel: voiceChannel, selfUser: selfUser, isOverlayEnabled: false, userSession: userSession)
-        callingActionsInfoViewController = CallingActionsInfoViewController(participants: voiceChannel.getParticipantsList(), selfUser: selfUser)
+        visibleVoiceChannelViewController = CallViewController(voiceChannel: voiceChannel, selfUser: userSession.selfUser, isOverlayEnabled: false, userSession: userSession)
+        callingActionsInfoViewController = CallingActionsInfoViewController(participants: voiceChannel.getParticipantsList(), selfUser: userSession.selfUser)
         super.init(contentViewController: visibleVoiceChannelViewController, bottomSheetViewController: callingActionsInfoViewController, bottomSheetConfiguration: .init(height: bottomSheetMaxHeight, initialOffset: 112.0))
 
         callingActionsInfoViewController.setCallingActionsViewDelegate(actionsDelegate: visibleVoiceChannelViewController)
@@ -186,7 +185,7 @@ class CallingBottomSheetViewController: BottomSheetContainerViewController {
         }
 
         self.voiceChannel = voiceChannel
-        visibleVoiceChannelViewController = CallViewController(voiceChannel: voiceChannel, selfUser: ZMUser.selfUser(), isOverlayEnabled: false, userSession: userSession)
+        visibleVoiceChannelViewController = CallViewController(voiceChannel: voiceChannel, selfUser: userSession.selfUser, isOverlayEnabled: false, userSession: userSession)
         visibleVoiceChannelViewController.configurationObserver = self
         visibleVoiceChannelViewController.delegate = self
         callingActionsInfoViewController.setCallingActionsViewDelegate(actionsDelegate: visibleVoiceChannelViewController)

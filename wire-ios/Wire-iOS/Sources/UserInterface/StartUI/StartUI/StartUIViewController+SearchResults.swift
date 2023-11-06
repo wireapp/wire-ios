@@ -77,9 +77,12 @@ extension StartUIViewController: SearchResultsViewControllerDelegate {
 
     func searchResultsViewController(_ searchResultsViewController: SearchResultsViewController,
                                      didTapOnSeviceUser user: ServiceUser) {
-
-        let detail = ServiceDetailViewController(serviceUser: user,
-                                                 actionType: .openConversation) { [weak self] result in
+        guard let selfUser = ZMUser.selfUser() else { return assertionFailure("ZMUser.selfUser() is nil") }
+        let detail = ServiceDetailViewController(
+            serviceUser: user,
+            actionType: .openConversation,
+            selfUser: selfUser
+        ) { [weak self] result in
             guard let weakSelf = self else { return }
 
             if let result = result {
@@ -108,7 +111,7 @@ extension StartUIViewController: SearchResultsViewControllerDelegate {
     }
 
     func openCreateGroupController() {
-        let controller = ConversationCreationController()
+        let controller = ConversationCreationController(preSelectedParticipants: nil, selfUser: userSession.selfUser)
         controller.delegate = self
 
         if self.traitCollection.horizontalSizeClass == .compact {

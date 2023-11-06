@@ -146,6 +146,7 @@ final class SearchResultsViewController: UIViewController {
     }()
 
     let userSelection: UserSelection
+    let selfUser: UserType
 
     let sectionController: SectionCollectionViewController = SectionCollectionViewController()
     let contactsSection: ContactsSectionController = ContactsSectionController()
@@ -187,16 +188,18 @@ final class SearchResultsViewController: UIViewController {
     }
 
     init(userSelection: UserSelection,
+         selfUser: UserType,
          isAddingParticipants: Bool = false,
          shouldIncludeGuests: Bool,
          isFederationEnabled: Bool) {
         self.userSelection = userSelection
+        self.selfUser = selfUser
         self.isAddingParticipants = isAddingParticipants
         self.mode = .list
         self.shouldIncludeGuests = shouldIncludeGuests
         self.isFederationEnabled = isFederationEnabled
 
-        let team = ZMUser.selfUser().team
+        let team = selfUser.membership?.team
         let teamName = team?.name
 
         contactsSection.selection = userSelection
@@ -205,7 +208,7 @@ final class SearchResultsViewController: UIViewController {
         teamMemberAndContactsSection.allowsSelection = isAddingParticipants
         teamMemberAndContactsSection.selection = userSelection
         teamMemberAndContactsSection.title = "peoplepicker.header.contacts".localized
-        servicesSection = SearchServicesSectionController(canSelfUserManageTeam: ZMUser.selfUser().canManageTeam)
+        servicesSection = SearchServicesSectionController(canSelfUserManageTeam: selfUser.canManageTeam)
         conversationsSection.title = team != nil ? "peoplepicker.header.team_conversations".localized(args: teamName ?? "") : "peoplepicker.header.conversations".localized
         inviteTeamMemberSection = InviteTeamMemberSection(team: team)
 
@@ -255,14 +258,13 @@ final class SearchResultsViewController: UIViewController {
     }
 
     private func performSearch(query: String, options: SearchOptions) {
-
         pendingSearchTask?.cancel()
         searchResultsView.emptyResultContainer.isHidden = true
 
         var options = options
-        options.updateForSelfUserTeamRole(selfUser: ZMUser.selfUser())
+        options.updateForSelfUserTeamRole(selfUser: selfUser)
 
-        let request = SearchRequest(query: query.trim(), searchOptions: options, team: ZMUser.selfUser().team)
+        let request = SearchRequest(query: query.trim(), searchOptions: options, team: selfUser.membership?.team)
         if let task = searchDirectory?.perform(request) {
             task.onResult({ [weak self] in self?.handleSearchResult(result: $0, isCompleted: $1)})
             task.start()
@@ -312,7 +314,7 @@ final class SearchResultsViewController: UIViewController {
 
     func updateVisibleSections() {
         var sections: [CollectionViewSectionController]
-        let team = ZMUser.selfUser().team
+        let team = selfUser.membership?.team
 
         switch(self.searchGroup, isAddingParticipants) {
         case (.services, _):

@@ -76,8 +76,12 @@ final class SearchServicesSectionController: SearchSectionController {
             let service = self.service(for: indexPath)
 
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: UserCell.zm_reuseIdentifier, for: indexPath) as! UserCell
-
-            cell.configure(with: service, selfUser: ZMUser.selfUser())
+            let selfUser = ZMUser.selfUser()
+            if let selfUser {
+                cell.configure(with: service, selfUser: selfUser)
+            } else {
+                assertionFailure("ZMUser.selfUser() is nil")
+            }
             cell.accessoryIconView.isHidden = false
             cell.showSeparator = (services.count - 1) != indexPath.row
 

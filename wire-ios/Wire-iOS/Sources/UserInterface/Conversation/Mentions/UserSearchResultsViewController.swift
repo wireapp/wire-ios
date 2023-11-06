@@ -268,7 +268,12 @@ extension UserSearchResultsViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let user = searchResults[indexPath.item]
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: UserCell.reuseIdentifier, for: indexPath) as! UserCell
-        cell.configure(with: user, selfUser: ZMUser.selfUser())
+        let selfUser = ZMUser.selfUser()
+        if let selfUser {
+            cell.configure(with: user, selfUser: selfUser)
+        } else {
+            assertionFailure("ZMUser.selfUser() is nil")
+        }
         cell.showSeparator = false
         cell.avatarSpacing = conversationHorizontalMargins.left
 

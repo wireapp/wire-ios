@@ -25,10 +25,11 @@ private let zmLog = ZMSLog(tag: "ConversationViewController+ConversationContentV
 
 extension ConversationViewController: ConversationContentViewControllerDelegate {
     func didTap(onUserAvatar user: UserType, view: UIView, frame: CGRect) {
+        guard let selfUser = ZMUser.selfUser() else { return assertionFailure("ZMUser.selfUser() is nil") }
         let profileViewController = ProfileViewController(user: user,
-                                                          viewer: ZMUser.selfUser(),
+                                                          viewer: selfUser,
                                                           conversation: conversation,
-                                                          viewControllerDismisser: self, 
+                                                          viewControllerDismisser: self,
                                                           userSession: userSession)
         profileViewController.preferredContentSize = CGSize.IPadPopover.preferredContentSize
 

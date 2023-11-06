@@ -41,7 +41,7 @@ final class ConversationListTopBarViewController: UIViewController {
     ///   - account: the Account of the user
     ///   - selfUser: the self user object. Allow to inject a mock self user for testing
     init(account: Account,
-         selfUser: SelfUserType = ZMUser.selfUser(),
+         selfUser: SelfUserType,
          userSession: UserSession) {
         self.account = account
         self.selfUser = selfUser
@@ -193,7 +193,8 @@ final class ConversationListTopBarViewController: UIViewController {
 
     @objc
     func presentLegalHoldInfo() {
-        LegalHoldDetailsViewController.present(in: self, user: ZMUser.selfUser(), userSession: userSession)
+        guard let selfUser = ZMUser.selfUser() else { return assertionFailure("ZMUser.selfUser() is nil") }
+        LegalHoldDetailsViewController.present(in: self, user: selfUser, userSession: userSession)
     }
 
     @objc
@@ -207,7 +208,8 @@ final class ConversationListTopBarViewController: UIViewController {
 
     @objc
     func presentSettings() {
-        let settingsViewController = createSettingsViewController()
+        guard let selfUser = ZMUser.selfUser() else { return assertionFailure("ZMUser.selfUser() is nil") }
+        let settingsViewController = createSettingsViewController(selfUser: selfUser)
         let keyboardAvoidingViewController = KeyboardAvoidingViewController(viewController: settingsViewController)
 
         if wr_splitViewController?.layoutSize == .compact {
@@ -221,8 +223,8 @@ final class ConversationListTopBarViewController: UIViewController {
         }
     }
 
-    func createSettingsViewController() -> UIViewController {
-        let selfProfileViewController = SelfProfileViewController(selfUser: ZMUser.selfUser(), userSession: userSession)
+    func createSettingsViewController(selfUser: ZMUser) -> UIViewController {
+        let selfProfileViewController = SelfProfileViewController(selfUser: selfUser, userSession: userSession)
         return selfProfileViewController.wrapInNavigationController(navigationControllerClass: NavigationController.self)
     }
 
