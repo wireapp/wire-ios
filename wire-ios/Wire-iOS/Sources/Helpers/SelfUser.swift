@@ -17,24 +17,11 @@
 //
 
 import Foundation
-import WireSyncEngine
+import protocol WireSyncEngine.SelfUserProvider
 
-/// A helper class that provides a reference to the current self user.
-
+/// Retains a shared self user provider object.
 final class SelfUser {
 
     /// The underlying provider of the self user.
-
     static var provider: SelfUserProvider?
-
-    /// The current self user.
-    ///
-    /// Calling this property will intentionally crash if the `provider` is not configured. This is a
-    /// tradeoff for the convenience of not needing to unwrap the self user, as it is available in the
-    /// majority of the codebase. For safe access, go through the provider instead.
-
-    class var current: UserType & ZMEditableUser {
-        guard let provider = provider else { fatalError("Self user provider not set") }
-        return provider.providedSelfUser
-    }
 }

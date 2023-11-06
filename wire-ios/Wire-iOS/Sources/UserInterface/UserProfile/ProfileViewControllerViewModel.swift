@@ -182,10 +182,15 @@ final class ProfileViewControllerViewModel: NSObject {
 
     func handleDeleteResult(_ result: ClearContentResult) {
         guard case .delete(leave: let leave) = result else { return }
+        guard let user = SelfUser.provider?.providedSelfUser else {
+            assertionFailure("expected available 'user'!")
+            return
+        }
+        
         transitionToListAndEnqueue {
             self.conversation?.clearMessageHistory()
             if leave {
-                self.conversation?.removeOrShowError(participant: SelfUser.current)
+                self.conversation?.removeOrShowError(participant: user)
             }
         }
     }

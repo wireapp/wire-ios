@@ -30,7 +30,7 @@ final class StartedConversationCellTests: ConversationMessageSnapshotTestCase {
         UIColor.setAccentOverride(.vividRed)
         SelfUser.setupMockSelfUser(inTeam: UUID())
 
-        mockSelfUser = SelfUser.current as? MockUserType
+        mockSelfUser = SelfUser.provider?.providedSelfUser as? MockUserType
         mockSelfUser.accentColorValue = .strongBlue
 
         mockOtherUser = MockUserType.createDefaultOtherUser()

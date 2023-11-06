@@ -35,8 +35,8 @@ final class ColorSchemeController: NSObject {
         super.init()
 
         // When SelfUser.provider is nil, e.g. running tests, do not set up UserChangeInfo observer
-        if SelfUser.provider != nil {
-            userObserverToken = userSession.addUserObserver(self, for: SelfUser.current)
+        if let user = SelfUser.provider?.providedSelfUser {
+            userObserverToken = userSession.addUserObserver(self, for: user)
         }
 
         NotificationCenter.default.addObserver(self, selector: #selector(settingsColorSchemeDidChange), name: .SettingsColorSchemeChanged, object: nil)

@@ -35,7 +35,11 @@ final class ReceiptOptionsSectionController: GroupDetailsSectionController {
     private weak var presentingViewController: UIViewController?
 
     override var isHidden: Bool {
-        return !SelfUser.current.canModifyReadReceiptSettings(in: conversation)
+        guard let user = SelfUser.provider?.providedSelfUser else {
+            assertionFailure("expected available 'user'!")
+            return true
+        }
+        return !user.canModifyReadReceiptSettings(in: conversation)
     }
 
     init(conversation: GroupDetailsConversationType,

@@ -332,12 +332,17 @@ extension MessageDetailsContentViewController: UICollectionViewDataSource, UICol
         let description = sections[indexPath.section].items[indexPath.row]
         let cell = collectionView.dequeueReusableCell(ofType: UserCell.self, for: indexPath)
 
-        cell.configure(
-            with: description.user,
-            selfUser: SelfUser.current,
-            subtitle: description.attributedSubtitle,
-            conversation: conversation
-        )
+        if let selfUser = SelfUser.provider?.providedSelfUser {
+            cell.configure(
+                with: description.user,
+                selfUser: selfUser,
+                subtitle: description.attributedSubtitle,
+                conversation: conversation
+            )
+        } else {
+            assertionFailure("expected available 'user'!")
+        }
+        
         cell.showSeparator = indexPath.item != (sections.endIndex - 1)
         cell.subtitleLabel.accessibilityLabel = description.accessibleSubtitleLabel
         cell.subtitleLabel.accessibilityValue = description.accessibleSubtitleValue
@@ -355,12 +360,16 @@ extension MessageDetailsContentViewController: UICollectionViewDataSource, UICol
 
     /// When the user selects a cell, show the details for this user.
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        guard let viewer = SelfUser.provider?.providedSelfUser else {
+            assertionFailure("expected available 'viewer'!")
+            return
+        }
 
         let user = sections[indexPath.section].items[indexPath.item].user
 
         let cell = collectionView.cellForItem(at: indexPath) as! UserCell
 
-        let profileViewController = ProfileViewController(user: user, viewer: SelfUser.current, conversation: conversation, userSession: userSession)
+        let profileViewController = ProfileViewController(user: user, viewer: viewer, conversation: conversation, userSession: userSession)
         profileViewController.delegate = self
         profileViewController.viewControllerDismisser = self
 

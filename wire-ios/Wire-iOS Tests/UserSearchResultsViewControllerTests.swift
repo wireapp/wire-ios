@@ -32,12 +32,12 @@ final class UserSearchResultsViewControllerTests: BaseSnapshotTestCase {
         super.setUp()
         // self user should be a team member and other participants should be guests, in order to show guest icon in the user cells
         SelfUser.setupMockSelfUser(inTeam: UUID())
-        selfUser = (SelfUser.current as! MockUserType)
+        selfUser = SelfUser.provider?.providedSelfUser as? MockUserType
         otherUser = MockUserType.createDefaultOtherUser()
 
         serviceUser = MockServiceUserType.createServiceUser(name: "ServiceUser")
 
-        XCTAssert(SelfUser.current.isTeamMember, "selfUser should be a team member to generate snapshots with guest icon")
+        XCTAssert(selfUser.isTeamMember, "selfUser should be a team member to generate snapshots with guest icon")
     }
 
     // MARK: - tearDown

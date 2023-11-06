@@ -61,7 +61,12 @@ final class RenameGroupSectionController: NSObject, CollectionViewSectionControl
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(ofType: GroupDetailsRenameCell.self, for: indexPath)
 
-        cell.configure(for: conversation, editable: SelfUser.current.canModifyTitle(in: conversation))
+        if let user = SelfUser.provider?.providedSelfUser {
+            cell.configure(for: conversation, editable: user.canModifyTitle(in: conversation))
+        } else {
+            assertionFailure("expected available 'user'!")
+        }
+        
         cell.titleTextField.textFieldDelegate = self
         renameCell = cell
         return cell
@@ -78,7 +83,11 @@ final class RenameGroupSectionController: NSObject, CollectionViewSectionControl
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {
-        guard SelfUser.current.hasTeam else { return .zero }
+        guard 
+            let user = SelfUser.provider?.providedSelfUser,
+            user.hasTeam
+        else { return .zero }
+        
         sizingFooter.titleLabel.text = "participants.section.name.footer".localized(args: ZMConversation.maxParticipants)
         sizingFooter.size(fittingWidth: collectionView.bounds.width)
         return sizingFooter.bounds.size

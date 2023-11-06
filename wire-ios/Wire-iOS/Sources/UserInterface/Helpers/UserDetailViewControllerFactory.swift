@@ -35,17 +35,29 @@ final class UserDetailViewControllerFactory {
                                                profileViewControllerDelegate: ProfileViewControllerDelegate,
                                                viewControllerDismisser: ViewControllerDismisser,
                                                userSession: UserSession) -> UIViewController {
-        if user.isServiceUser, let serviceUser = user as? ServiceUser {
-
-            let serviceDetailViewController = ServiceDetailViewController(serviceUser: serviceUser, actionType: .removeService(conversation), completion: nil)
-            serviceDetailViewController.viewControllerDismisser = viewControllerDismisser
-            return serviceDetailViewController
-        } else {
-            // TODO: Do not present the details if the user is not connected.
-            let profileViewController = ProfileViewController(user: user, viewer: SelfUser.current, conversation: conversation, userSession: userSession)
+        guard user.isServiceUser, let serviceUser = user as? ServiceUser else {
+            guard let viewer = SelfUser.provider?.providedSelfUser else {
+                assertionFailure("expected available 'viewer'!")
+                return UIViewController()
+            }
+            
+            let profileViewController = ProfileViewController(
+                user: user,
+                viewer: viewer,
+                conversation: conversation,
+                userSession: userSession
+            )
             profileViewController.delegate = profileViewControllerDelegate
             profileViewController.viewControllerDismisser = viewControllerDismisser
             return profileViewController
         }
+        
+        let serviceDetailViewController = ServiceDetailViewController(
+            serviceUser: serviceUser,
+            actionType: .removeService(conversation),
+            completion: nil
+        )
+        serviceDetailViewController.viewControllerDismisser = viewControllerDismisser
+        return serviceDetailViewController
     }
 }
