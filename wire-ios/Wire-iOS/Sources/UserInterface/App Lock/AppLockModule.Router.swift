@@ -66,8 +66,6 @@ extension AppLockModule.Router: AppLockRouterPresenterInterface {
     }
 
     private func presentInputPasscodeModule() {
-        // TODO: [John] Clean this up.
-        // TODO: [John] Inject these arguments.
         let unlockViewController = UnlockViewController(selfUser: ZMUser.selfUser(), userSession: userSession)
         let keyboardAvoidingViewController = KeyboardAvoidingViewController(viewController: unlockViewController)
         let navigationController = keyboardAvoidingViewController.wrapInNavigationController(navigationBarClass: TransparentNavigationBar.self)

@@ -181,7 +181,7 @@ final class ParticipantsSectionController: GroupDetailsSectionController {
         self.delegate = delegate
         super.init()
 
-        token = userSession.addUserObservers(self)
+        token = userSession.addUserObserver(self)
     }
 
     override func prepareForUse(in collectionView: UICollectionView?) {

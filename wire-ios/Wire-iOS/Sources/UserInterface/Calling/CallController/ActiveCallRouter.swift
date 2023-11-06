@@ -68,6 +68,8 @@ class ActiveCallRouter: NSObject {
         return rootViewController.firstChild(ofType: ZClientViewController.self)
     }
 
+    private let userSession: UserSession
+
     init(rootviewController: RootViewController, userSession: UserSession) {
         self.rootViewController = rootviewController
         self.userSession = userSession
@@ -102,9 +104,8 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
         // NOTE: We resign first reponder for the input bar since it will attempt to restore
         // first responder when the call overlay is interactively dismissed but canceled.
         UIResponder.currentFirst?.resignFirstResponder()
-        guard let zclient = zClientViewController else { return }
         var activeCallViewController: UIViewController!
-        let bottomSheetActiveCallViewController = CallingBottomSheetViewController(voiceChannel: voiceChannel, userSession: zclient.userSession)
+        let bottomSheetActiveCallViewController = CallingBottomSheetViewController(voiceChannel: voiceChannel, userSession: userSession)
         bottomSheetActiveCallViewController.delegate = callController
         activeCallViewController = bottomSheetActiveCallViewController
 

@@ -81,7 +81,6 @@ final class CallViewController: UIViewController {
         isOverlayEnabled: Bool = true,
         userSession: UserSession
     ) {
-
         self.voiceChannel = voiceChannel
         self.mediaManager = mediaManager
         self.proximityMonitorManager = proximityMonitorManager

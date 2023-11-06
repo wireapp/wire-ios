@@ -26,9 +26,7 @@ final class UserSessionMock: UserSession {
 
     var _authenticationResult: AppLockAuthenticationResult = .unavailable
     var _evaluationContext = LAContext()
-    var selfUser: UserType
-    var selfLegalHoldSubject: SelfLegalHoldSubject & UserType
-    var mockConversationList: ZMConversationList?
+
     var mockConversationDirectory = MockConversationDirectory()
 
     var setEncryptionAtRest: [(enabled: Bool, skipMigration: Bool)] = []
@@ -42,6 +40,10 @@ final class UserSessionMock: UserSession {
     var evaluateAuthenticationWithCustomPasscode: [String] = []
 
     var _passcode: String?
+
+    var selfUser: UserType
+    var selfLegalHoldSubject: SelfLegalHoldSubject & UserType
+    var mockConversationList: ZMConversationList?
 
     convenience init(mockUser: MockZMEditableUser) {
         self.init(
@@ -73,15 +75,15 @@ final class UserSessionMock: UserSession {
     var isAppLockAvailable: Bool = false
     var isAppLockForced: Bool = false
     var appLockTimeout: UInt = 60
-    var requireCustomPasscode: Bool  = false
-    var isCustomPasscodeSet: Bool = false
-    var needsToNotifyUser: Bool = false
+    var requireCustomAppLockPasscode: Bool  = false
+    var isCustomAppLockPasscodeSet: Bool = false
+    var needsToNotifyUserOfAppLockConfiguration: Bool = false
 
-    func open() throws {
-        openApp.append(())
+    func openAppLock() throws {
+         openApp.append(())
     }
 
-    func evaluateAuthentication(
+    func evaluateAppLockAuthentication(
         passcodePreference: AppLockPasscodePreference,
         description: String,
         callback: @escaping (
@@ -135,7 +137,7 @@ final class UserSessionMock: UserSession {
         return nil
     }
 
-    func addUserObservers(_ observer: ZMUserObserver) -> NSObjectProtocol {
+    func addUserObserver(_ observer: ZMUserObserver) -> NSObjectProtocol {
         return NSObject()
     }
 

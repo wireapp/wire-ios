@@ -90,7 +90,7 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
         self.recorder = audioRecorder
         self.userSession = userSession
         super.init(nibName: nil, bundle: nil)
-        configureViews()
+        configureViews(userSession: userSession)
         configureAudioRecorder()
         createConstraints()
 
@@ -116,7 +116,7 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
 
     // MARK: - View Configuration
 
-    func configureViews() {
+    func configureViews(userSession: UserSession) {
         let backgroundColor = SemanticColors.View.backgroundDefault
         let textColor = SemanticColors.Label.textDefault
         let separatorColor = SemanticColors.View.backgroundSeparatorCell

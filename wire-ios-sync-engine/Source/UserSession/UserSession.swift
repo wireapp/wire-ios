@@ -37,7 +37,7 @@ public protocol UserSession: AnyObject {
     /// Whether the screen curtain is required.
     ///
     /// The screen curtain hides the contents of the app while it is
-    /// not in actvie, such as when it is in the task switcher.
+    /// not active, such as when it is in the task switcher.
 
     var requiresScreenCurtain: Bool { get }
 
@@ -60,19 +60,19 @@ public protocol UserSession: AnyObject {
 
     /// Whether a custom passcode has been set.
 
-    var isCustomPasscodeSet: Bool { get }
+    var isCustomAppLockPasscodeSet: Bool { get }
 
     /// Whether a custom passcode (rather a device passcode) should be used.
 
-    var requireCustomPasscode: Bool { get }
+    var requireCustomAppLockPasscode: Bool { get }
 
     /// Whether the user should be notified of the app lock being disabled.
 
-    var shouldNotifyUserOfDisabledAppLock: Bool { get set }
+    var shouldNotifyUserOfDisabledAppLock: Bool { get }
 
     /// Whether the user needs to be informed about configuration changes.
 
-    var needsToNotifyUser: Bool { get set }
+    var needsToNotifyUserOfAppLockConfiguration: Bool { get set }
 
     /// Unlock the database using the given authentication context.
 
@@ -80,7 +80,7 @@ public protocol UserSession: AnyObject {
 
     /// Open the app lock.
 
-    func open() throws
+    func openAppLock() throws
 
     /// Authenticate with device owner credentials (biometrics or passcode).
     ///
@@ -90,7 +90,7 @@ public protocol UserSession: AnyObject {
     ///     - context: The context in which authentication happens.
     ///     - callback: Invoked with the authentication result.
 
-    func evaluateAuthentication(
+    func evaluateAppLockAuthentication(
         passcodePreference: AppLockPasscodePreference,
         description: String,
         callback: @escaping (
@@ -142,7 +142,7 @@ public protocol UserSession: AnyObject {
         for: UserType
     ) -> NSObjectProtocol?
 
-    func addUserObservers(
+    func addUserObserver(
         _ observer: ZMUserObserver
     ) -> NSObjectProtocol
 
@@ -279,11 +279,11 @@ extension ZMUserSession: UserSession {
         return appLockController.timeout
     }
 
-    public var requireCustomPasscode: Bool {
+    public var requireCustomAppLockPasscode: Bool {
         appLockController.requireCustomPasscode
     }
 
-    public var isCustomPasscodeSet: Bool {
+    public var isCustomAppLockPasscodeSet: Bool {
         appLockController.isCustomPasscodeSet
     }
 
@@ -291,14 +291,9 @@ extension ZMUserSession: UserSession {
         get {
             appLockController.needsToNotifyUser && !appLockController.isActive
         }
-
-        set {
-            appLockController.needsToNotifyUser = newValue
-            appLockController.isActive = newValue
-        }
     }
 
-    public var needsToNotifyUser: Bool {
+    public var needsToNotifyUserOfAppLockConfiguration: Bool {
         get {
             appLockController.needsToNotifyUser
         }
@@ -307,11 +302,11 @@ extension ZMUserSession: UserSession {
         }
     }
 
-    public func open() throws {
+    public func openAppLock() throws {
         try appLockController.open()
     }
 
-    public func evaluateAuthentication(
+    public func evaluateAppLockAuthentication(
         passcodePreference: AppLockPasscodePreference,
         description: String,
         callback: @escaping (
@@ -338,7 +333,9 @@ extension ZMUserSession: UserSession {
         syncManagedObjectContext.performGroupedBlock {
             self.processEvents()
         }
+
     }
+
 
     public func deleteAppLockPasscode() throws {
         try appLockController.deletePasscode()
@@ -363,7 +360,7 @@ extension ZMUserSession: UserSession {
         )
     }
 
-    public func addUserObservers(
+    public func addUserObserver(
         _ observer: ZMUserObserver
     ) -> NSObjectProtocol {
         return UserChangeInfo.add(
@@ -371,6 +368,7 @@ extension ZMUserSession: UserSession {
             in: self
         )
     }
+
 
     public func addMessageObserver(
         _ observer: ZMMessageObserver,
