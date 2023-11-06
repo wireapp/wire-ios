@@ -56,7 +56,7 @@ final class MessageDetailsViewControllerTests: ZMSnapshotTestCase {
         conversation = createGroupConversation()
 
         let message = MockMessageFactory.textMessage(withText: "Message")
-        message.senderUser = SelfUser.current
+        message.senderUser = SelfUser.provider?.providedSelfUser
         message.conversationLike = conversation
         message.deliveryState = .read
         message.needsReadConfirmation = true
@@ -81,7 +81,7 @@ final class MessageDetailsViewControllerTests: ZMSnapshotTestCase {
         conversation = createGroupConversation()
 
         let message = MockMessageFactory.textMessage(withText: "Message")
-        message.senderUser = SelfUser.current
+        message.senderUser = SelfUser.provider?.providedSelfUser
         message.conversationLike = conversation
         message.updatedAt = Date(timeIntervalSince1970: 69)
         message.deliveryState = .read
@@ -108,7 +108,7 @@ final class MessageDetailsViewControllerTests: ZMSnapshotTestCase {
         conversation = createGroupConversation()
 
         let message = MockMessageFactory.textMessage(withText: "Message")
-        message.senderUser = SelfUser.current
+        message.senderUser = SelfUser.provider?.providedSelfUser
         message.conversationLike = conversation
         message.updatedAt = Date(timeIntervalSince1970: 69)
         message.deliveryState = .read
@@ -134,7 +134,7 @@ final class MessageDetailsViewControllerTests: ZMSnapshotTestCase {
         conversation = createGroupConversation()
 
         let message = MockMessageFactory.textMessage(withText: "Message")
-        message.senderUser = SelfUser.current
+        message.senderUser = SelfUser.provider?.providedSelfUser
         message.conversationLike = conversation
         message.deliveryState = .read
         message.needsReadConfirmation = true
@@ -161,7 +161,7 @@ final class MessageDetailsViewControllerTests: ZMSnapshotTestCase {
         conversation = createGroupConversation()
 
         let message = MockMessageFactory.textMessage(withText: "Message")
-        message.senderUser = SelfUser.current
+        message.senderUser = SelfUser.provider?.providedSelfUser
         message.conversationLike = conversation
         message.deliveryState = .read
         message.needsReadConfirmation = true
@@ -194,7 +194,7 @@ final class MessageDetailsViewControllerTests: ZMSnapshotTestCase {
         conversation = createGroupConversation()
 
         let message = MockMessageFactory.textMessage(withText: "Message")
-        message.senderUser = SelfUser.current
+        message.senderUser = SelfUser.provider?.providedSelfUser
         message.conversationLike = conversation
         message.deliveryState = .sent
         message.needsReadConfirmation = true
@@ -212,7 +212,7 @@ final class MessageDetailsViewControllerTests: ZMSnapshotTestCase {
         conversation = createGroupConversation()
 
         let message = MockMessageFactory.textMessage(withText: "Message")
-        message.senderUser = SelfUser.current
+        message.senderUser = SelfUser.provider?.providedSelfUser
         message.conversationLike = conversation
         message.readReceipts = []
         message.deliveryState = .sent
@@ -231,7 +231,7 @@ final class MessageDetailsViewControllerTests: ZMSnapshotTestCase {
         conversation = createGroupConversation()
 
         let message = MockMessageFactory.textMessage(withText: "Message")
-        message.senderUser = SelfUser.current
+        message.senderUser = SelfUser.provider?.providedSelfUser
         message.conversationLike = conversation
         message.readReceipts = []
         message.deliveryState = .sent
@@ -250,7 +250,7 @@ final class MessageDetailsViewControllerTests: ZMSnapshotTestCase {
         conversation = createGroupConversation()
 
         let message = MockMessageFactory.textMessage(withText: "Message")
-        message.senderUser = SelfUser.current
+        message.senderUser = SelfUser.provider?.providedSelfUser
         message.conversationLike = conversation
         let mockReadReceipt = MockReadReceipt(user: ZMUser())
         mockReadReceipt.userType = otherUser
@@ -273,7 +273,7 @@ final class MessageDetailsViewControllerTests: ZMSnapshotTestCase {
         conversation = createGroupConversation()
 
         let message = MockMessageFactory.textMessage(withText: "Message")
-        message.senderUser = SelfUser.current
+        message.senderUser = SelfUser.provider?.providedSelfUser
         message.conversationLike = conversation
         message.isEphemeral = true
         message.backingUsersReaction = [Emoji.ID.like: [otherUser]]
@@ -323,7 +323,7 @@ final class MessageDetailsViewControllerTests: ZMSnapshotTestCase {
         conversation = createGroupConversation()
 
         let message = MockMessageFactory.pingMessage()
-        message.senderUser = SelfUser.current
+        message.senderUser = SelfUser.provider?.providedSelfUser
         message.conversationLike = conversation
         message.needsReadConfirmation = true
 
@@ -342,7 +342,7 @@ final class MessageDetailsViewControllerTests: ZMSnapshotTestCase {
             conversation = createGroupConversation()
 
             let message = MockMessageFactory.textMessage(withText: "Message")
-            message.senderUser = SelfUser.current
+            message.senderUser = SelfUser.provider?.providedSelfUser
             message.conversationLike = conversation
 
             let users = MockUserType.usernames.prefix(upTo: 5).map({

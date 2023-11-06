@@ -21,6 +21,25 @@ import LocalAuthentication
 @testable import Wire
 
 final class UserSessionMock: UserSession {
+    typealias Preference = AppLockPasscodePreference
+    typealias Callback = (AppLockModule.AuthenticationResult, LAContext) -> Void
+
+    var _authenticationResult: AppLockAuthenticationResult = .unavailable
+    var _evaluationContext = LAContext()
+
+    var mockConversationDirectory = MockConversationDirectory()
+
+    var setEncryptionAtRest: [(enabled: Bool, skipMigration: Bool)] = []
+
+    var unlockDatabase: [LAContext] = []
+
+    var openApp: [Void] = []
+
+    var evaluateAuthentication: [(preference: Preference, description: String, callback: Callback)] = []
+
+    var evaluateAuthenticationWithCustomPasscode: [String] = []
+
+    var _passcode: String?
 
     var networkState: ZMNetworkState = .offline
     

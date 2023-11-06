@@ -410,6 +410,17 @@ extension AppRootRouter {
     ) -> AuthenticatedRouter? {
         let needToShowDataUsagePermissionDialog = appStateCalculator.wasUnauthenticated && !SelfUser.current.isTeamMember
         guard let userSession = ZMUserSession.shared() else { return  nil }
+
+      let isTeamMember: Bool
+        if let user = SelfUser.provider?.providedSelfUser {
+            isTeamMember = user.isTeamMember
+        } else {
+            assertionFailure("expected available 'user'!")
+            isTeamMember = false
+        }
+
+        let needToShowDialog = appStateCalculator.wasUnauthenticated && !isTeamMember
+
         return AuthenticatedRouter(
             rootViewController: rootViewController,
             account: account,

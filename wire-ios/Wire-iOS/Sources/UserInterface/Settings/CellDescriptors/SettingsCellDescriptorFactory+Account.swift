@@ -79,19 +79,19 @@ extension SettingsCellDescriptorFactory {
                             federationEnabled: federationEnabled
                            )]
 
-        let user = SelfUser.current
+        if let user = SelfUser.provider?.providedSelfUser {
+            if !user.usesCompanyLogin {
+                if !user.hasTeam || user.phoneNumber?.isEmpty == false,
+                   let phoneElement = phoneElement() {
+                    cellDescriptors.append(phoneElement)
+                }
 
-        if !user.usesCompanyLogin {
-            if !user.hasTeam || user.phoneNumber?.isEmpty == false,
-               let phoneElement = phoneElement() {
-                cellDescriptors.append(phoneElement)
+                cellDescriptors.append(emailElement(enabled: userRightInterfaceType.selfUserIsPermitted(to: .editEmail), userSession: userSession))
             }
 
-            cellDescriptors.append(emailElement(enabled: userRightInterfaceType.selfUserIsPermitted(to: .editEmail), userSession: userSession))
-        }
-
-        if user.hasTeam {
-            cellDescriptors.append(teamElement())
+            if user.hasTeam {
+                cellDescriptors.append(teamElement())
+            }
         }
 
         if federationEnabled {

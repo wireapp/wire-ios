@@ -63,7 +63,11 @@ final class ProfilePresenter: NSObject, ViewControllerDismisser {
                                       from rect: CGRect,
                                       userSession: UserSession,
                                       onDismiss: @escaping () -> Void) {
-
+        guard let viewer = SelfUser.provider?.providedSelfUser else {
+            assertionFailure("expected available 'user'!")
+            return
+        }
+        
         profileOpenedFromPeoplePicker = true
         viewToPresentOn = controller?.view
         controllerToPresentOn = controller
@@ -71,7 +75,12 @@ final class ProfilePresenter: NSObject, ViewControllerDismisser {
 
         self.onDismiss = onDismiss
 
-        let profileViewController = ProfileViewController(user: user, viewer: SelfUser.current, context: .search, userSession: userSession)
+        let profileViewController = ProfileViewController(
+            user: user,
+            viewer: viewer,
+            context: .search,
+            userSession: userSession
+        )
         profileViewController.delegate = self
         profileViewController.viewControllerDismisser = self
 
