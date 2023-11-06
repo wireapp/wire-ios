@@ -19,7 +19,7 @@
 import Foundation
 
 public extension UserType {
-    private static var dateFormatter: DateFormatter {
+    private var dateFormatter: DateFormatter {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd-hh.mm.ss"
         return formatter
@@ -29,7 +29,7 @@ public extension UserType {
     ///
     /// - Returns: a string <= 214 characters
     func filename(suffix: String? = nil) -> String {
-        let dateString = "-" + Self.dateFormatter.string(from: Date())
+        let dateString = "-" + dateFormatter.string(from: Date())
         let normalizedFilename = name!.normalizedFilename
 
         var numReservedChar = dateString.count
