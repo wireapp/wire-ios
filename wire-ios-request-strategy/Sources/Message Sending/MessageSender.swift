@@ -127,7 +127,7 @@ public class MessageSender: MessageSenderInterface {
 
     private func attemptToSend(message: any SendableMessage) async -> Swift.Result<Void, MessageSendError> {
         guard let apiVersion = BackendInfo.apiVersion else { return .failure(MessageSendError.unresolvedApiVersion)}
-        guard let messageProtocol = managedObjectContext.performAndWait({
+        guard let messageProtocol = await managedObjectContext.perform({
             message.conversation?.messageProtocol
         }) else {
             return .failure(MessageSendError.messageProtocolMissing)
@@ -143,7 +143,7 @@ public class MessageSender: MessageSenderInterface {
     }
 
     private func attemptToSendWithProteus(message: any SendableMessage, apiVersion: APIVersion) async -> Swift.Result<Void, MessageSendError> {
-        guard let conversationID = managedObjectContext.performAndWait({
+        guard let conversationID = await managedObjectContext.perform({
             message.conversation?.qualifiedID
         }) else {
             return .failure(MessageSendError.messageProtocolMissing)
@@ -156,16 +156,16 @@ public class MessageSender: MessageSenderInterface {
 
         return switch result {
         case .success((let messageSendingStatus, let response)):
-            managedObjectContext.performAndWait {
-                handleProteusSuccess(
+            await managedObjectContext.perform {
+                self.handleProteusSuccess(
                     message: message,
                     messageSendingStatus: messageSendingStatus,
                     response: response)
             }
         case .failure(let networkError):
-            await managedObjectContext.performAndWait {
-                handleProteusFailure(message: message, networkError)
-            }.flatMapAsync { missingClients in
+            await (await managedObjectContext.perform {
+                self.handleProteusFailure(message: message, networkError)
+            }).flatMapAsync { missingClients in
                 await sessionEstablisher.establishSession(with: missingClients, apiVersion: apiVersion)
                     .mapError({ error in
                         switch error {
