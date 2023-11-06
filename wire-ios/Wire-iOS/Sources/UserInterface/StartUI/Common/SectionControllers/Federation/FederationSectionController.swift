@@ -54,8 +54,7 @@ class FederationSectionController: SearchSectionController {
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(ofType: UserCell.self, for: indexPath)
         let user = users[indexPath.row]
-        let selfUser = ZMUser.selfUser()
-        if let selfUser {
+        if let selfUser = ZMUser.selfUser() {
             cell.configure(with: user, selfUser: selfUser)
         } else {
             assertionFailure("ZMUser.selfUser() is nil")

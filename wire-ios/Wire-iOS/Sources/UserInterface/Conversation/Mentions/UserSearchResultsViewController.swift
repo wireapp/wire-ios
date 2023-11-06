@@ -268,8 +268,7 @@ extension UserSearchResultsViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let user = searchResults[indexPath.item]
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: UserCell.reuseIdentifier, for: indexPath) as! UserCell
-        let selfUser = ZMUser.selfUser()
-        if let selfUser {
+        if let selfUser = ZMUser.selfUser() {
             cell.configure(with: user, selfUser: selfUser)
         } else {
             assertionFailure("ZMUser.selfUser() is nil")

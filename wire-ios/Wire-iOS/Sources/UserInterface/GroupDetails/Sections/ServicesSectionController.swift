@@ -53,8 +53,7 @@ final class ServicesSectionController: GroupDetailsSectionController {
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let user = serviceUsers[indexPath.row]
         let cell = collectionView.dequeueReusableCell(ofType: UserCell.self, for: indexPath)
-        let selfUser = ZMUser.selfUser()
-        if let selfUser {
+        if let selfUser = ZMUser.selfUser() {
             cell.configure(with: user, selfUser: selfUser, conversation: conversation)
         } else {
             assertionFailure("ZMUser.selfUser() is nil")
