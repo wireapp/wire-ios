@@ -342,30 +342,30 @@ extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, Gro
 
     func presentGuestOptions(animated: Bool) {
         guard let conversation = conversation as? ZMConversation else { return }
-
-        let menu = ConversationGuestOptionsViewController(conversation: conversation, userSession: ZMUserSession.shared()!)
+        guard let userSession = ZMUserSession.shared() else { return }
+        let menu = ConversationGuestOptionsViewController(conversation: conversation, userSession: userSession)
         navigationController?.pushViewController(menu, animated: animated)
     }
 
     func presentServicesOptions(animated: Bool) {
         guard let conversation = conversation as? ZMConversation else { return }
-
-        let menu = ConversationServicesOptionsViewController(conversation: conversation, userSession: ZMUserSession.shared()!)
+        guard let userSession = ZMUserSession.shared() else { return }
+        let menu = ConversationServicesOptionsViewController(conversation: conversation, userSession: userSession)
         navigationController?.pushViewController(menu, animated: animated)
     }
 
     func presentTimeoutOptions(animated: Bool) {
         guard let conversation = conversation as? ZMConversation else { return }
-
-        let menu = ConversationTimeoutOptionsViewController(conversation: conversation, userSession: .shared()!)
+        guard let userSession = ZMUserSession.shared() else { return }
+        let menu = ConversationTimeoutOptionsViewController(conversation: conversation, userSession: userSession)
         menu.dismisser = self
         navigationController?.pushViewController(menu, animated: animated)
     }
 
     func presentNotificationsOptions(animated: Bool) {
         guard let conversation = conversation as? ZMConversation else { return }
-
-        let menu = ConversationNotificationOptionsViewController(conversation: conversation, userSession: .shared()!)
+        guard let userSession = ZMUserSession.shared() else { return }
+        let menu = ConversationNotificationOptionsViewController(conversation: conversation, userSession: userSession)
         menu.dismisser = self
         navigationController?.pushViewController(menu, animated: animated)
     }
