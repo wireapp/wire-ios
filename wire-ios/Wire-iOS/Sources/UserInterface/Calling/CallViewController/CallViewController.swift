@@ -479,7 +479,8 @@ extension CallViewController {
 
         permissions.requestOrWarnAboutAudioPermission { audioGranted in
             guard audioGranted else {
-                return self.voiceChannel.leave(userSession: ZMUserSession.shared()!, completion: nil)
+                guard let userSession = ZMUserSession.shared() else { return }
+                return self.voiceChannel.leave(userSession: userSession, completion: nil)
             }
 
             conversation.confirmJoiningCallIfNeeded(alertPresenter: self, forceAlertModal: true) {
