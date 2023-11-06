@@ -60,17 +60,17 @@ public class SessionEstablisher: SessionEstablisherInterface {
     }
 
     private func internalEstablishSessions(for clients: Set<QualifiedClientID>, apiVersion: APIVersion) async -> Swift.Result<Void, SessionEstablisherError> {
-        guard let selfClient = managedObjectContext.performAndWait({
-            ZMUser.selfUser(in: managedObjectContext).selfClient()
+        guard let selfClient = await managedObjectContext.perform({
+            ZMUser.selfUser(in: self.managedObjectContext).selfClient()
         }) else {
             return .failure(SessionEstablisherError.missingSelfClient)
         }
 
         return await apiProvider.prekeyAPI(apiVersion: apiVersion).fetchPrekeys(for: clients)
             .mapError({ error in SessionEstablisherError.networkError(error) })
-            .flatMap { prekeys in
-            managedObjectContext.performAndWait {
-                _ = processor.establishSessions(from: prekeys, with: selfClient, context: managedObjectContext)
+            .flatMapAsync { prekeys in
+            await managedObjectContext.perform {
+                _ = self.processor.establishSessions(from: prekeys, with: selfClient, context: self.managedObjectContext)
                 return Swift.Result.success(Void())
             }
         }
