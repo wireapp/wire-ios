@@ -220,10 +220,9 @@ extension AppRootRouter: AppStateCalculatorDelegate {
             showSkeleton(fromAccount: fromAccount,
                          toAccount: toAccount,
                          completion: completionBlock)
-        case .locked:
-            // TODO: [John] Avoid singleton.
-            screenCurtain.userSession = ZMUserSession.shared()
-            showAppLock(completion: completionBlock)
+        case let .locked(userSession):
+            screenCurtain.userSession = userSession
+            showAppLock(userSession: userSession, completion: completionBlock)
         }
     }
 
@@ -370,10 +369,13 @@ extension AppRootRouter {
                                completion: completion)
     }
 
-    private func showAppLock(completion: @escaping () -> Void) {
-        guard let session = ZMUserSession.shared() else { fatalError() }
-        rootViewController.set(childViewController: AppLockModule.build(session: session),
-                               completion: completion)
+    private func showAppLock(userSession: UserSession, completion: @escaping () -> Void) {
+        rootViewController.set(
+            childViewController: AppLockModule.build(
+                userSession: userSession
+            ),
+            completion: completion
+        )
     }
 
     // MARK: - Helpers

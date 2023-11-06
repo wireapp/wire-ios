@@ -17,8 +17,29 @@
 //
 
 import Foundation
+import LocalAuthentication
+@testable import Wire
 
 final class UserSessionMock: UserSession {
+    typealias Preference = AppLockPasscodePreference
+    typealias Callback = (AppLockModule.AuthenticationResult, LAContext) -> Void
+
+    var _authenticationResult: AppLockAuthenticationResult = .unavailable
+    var _evaluationContext = LAContext()
+
+    var mockConversationDirectory = MockConversationDirectory()
+
+    var setEncryptionAtRest: [(enabled: Bool, skipMigration: Bool)] = []
+
+    var unlockDatabase: [LAContext] = []
+
+    var openApp: [Void] = []
+
+    var evaluateAuthentication: [(preference: Preference, description: String, callback: Callback)] = []
+
+    var evaluateAuthenticationWithCustomPasscode: [String] = []
+
+    var _passcode: String?
 
     var selfUser: UserType
     var selfLegalHoldSubject: SelfLegalHoldSubject & UserType
@@ -46,12 +67,43 @@ final class UserSessionMock: UserSession {
         self.selfLegalHoldSubject = selfLegalHoldSubject
     }
 
+    var lock: SessionLock? = .screen
+
     var isLocked = false
     var requiresScreenCurtain = false
     var isAppLockActive: Bool = false
     var isAppLockAvailable: Bool = false
     var isAppLockForced: Bool = false
     var appLockTimeout: UInt = 60
+    var requireCustomAppLockPasscode: Bool  = false
+    var isCustomAppLockPasscodeSet: Bool = false
+    var needsToNotifyUserOfAppLockConfiguration: Bool = false
+
+    func openAppLock() throws {
+         openApp.append(())
+    }
+
+    func evaluateAppLockAuthentication(
+        passcodePreference: AppLockPasscodePreference,
+        description: String,
+        callback: @escaping (
+            AppLockAuthenticationResult,
+            LAContextProtocol
+        ) -> Void
+    ) {
+        evaluateAuthentication.append((passcodePreference, description, callback))
+        callback(_authenticationResult, _evaluationContext)
+    }
+
+    func evaluateAuthentication(customPasscode: String) -> AppLockAuthenticationResult {
+        evaluateAuthenticationWithCustomPasscode.append(customPasscode)
+        return _passcode == customPasscode ? .granted : .denied
+    }
+
+    func unlockDatabase(with context: LAContext) throws {
+        unlockDatabase.append(context)
+    }
+
     var maxAudioMessageLength: TimeInterval = 1500 // 25 minutes (25 * 60.0)
     var maxUploadFileSize: UInt64 = 26214400 // 25 megabytes (25 * 1024 * 1024)
 
@@ -63,6 +115,10 @@ final class UserSessionMock: UserSession {
     var deleteAppLockPasscodeCalls = 0
     func deleteAppLockPasscode() throws {
         deleteAppLockPasscodeCalls += 1
+    }
+
+    var conversationDirectory: ConversationDirectoryType {
+        return mockConversationDirectory
     }
 
     func perform(_ changes: @escaping () -> Void) {
@@ -81,8 +137,14 @@ final class UserSessionMock: UserSession {
         return nil
     }
 
+    func addUserObserver(_ observer: ZMUserObserver) -> NSObjectProtocol {
+        return NSObject()
+    }
 
-    func addConversationListObserver(_ observer: WireDataModel.ZMConversationListObserver, for list: ZMConversationList) -> NSObjectProtocol {
+    func addConversationListObserver(
+        _ observer: WireDataModel.ZMConversationListObserver,
+        for list: ZMConversationList
+    ) -> NSObjectProtocol {
         return NSObject()
     }
 
@@ -91,11 +153,21 @@ final class UserSessionMock: UserSession {
         return mockConversationList
     }
 
+    func pendingConnectionConversationsInUserSession() -> ZMConversationList {
+        guard let mockConversationList else { fatalError("mockConversationList is not set") }
+        return mockConversationList
+    }
+
+    func archivedConversationsInUserSession() -> ZMConversationList {
+        guard let mockConversationList else { fatalError("mockConversationList is not set") }
+        return mockConversationList
+    }
+
     func setEncryptionAtRest(
         enabled: Bool,
         skipMigration: Bool
     ) throws {
-
+        setEncryptionAtRest.append((enabled: enabled, skipMigration: skipMigration))
     }
 
     func addMessageObserver(

@@ -21,7 +21,7 @@ import WireSyncEngine
 
 enum AppState: Equatable {
     case headless
-    case locked
+    case locked(UserSession)
     case authenticated(UserSession, completedRegistration: Bool)
     case unauthenticated(error: NSError?)
     case blacklisted(reason: BlacklistReason)
@@ -199,7 +199,7 @@ extension AppStateCalculator: SessionManagerDelegate {
 
     func sessionManagerDidReportLockChange(forSession session: UserSession) {
         if session.isLocked {
-            transition(to: .locked)
+            transition(to: .locked(session))
         } else {
             transition(to: .authenticated(session, completedRegistration: false))
         }
@@ -228,7 +228,7 @@ extension AppStateCalculator: SessionManagerDelegate {
 extension AppStateCalculator: AuthenticationCoordinatorDelegate {
     func userAuthenticationDidComplete(userSession: UserSession, addedAccount: Bool) {
         if userSession.isLocked {
-            transition(to: .locked)
+            transition(to: .locked(userSession))
         } else {
             transition(to: .authenticated(userSession, completedRegistration: addedAccount))
         }

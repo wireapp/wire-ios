@@ -35,7 +35,7 @@ final class ArchivedListViewController: UIViewController {
     private let archivedNavigationBar = ArchivedNavigationBar(title: L10n.Localizable.ArchivedList.title.capitalized)
     private let cellReuseIdentifier = "ConversationListCellArchivedIdentifier"
     private let swipeIdentifier = "ArchivedList"
-    private let viewModel = ArchivedListViewModel()
+    private let viewModel: ArchivedListViewModel
     private let layoutCell = ConversationListCell()
     private var actionController: ConversationActionController?
     private var startCallController: ConversationCallController?
@@ -45,6 +45,7 @@ final class ArchivedListViewController: UIViewController {
 
     init(userSession: UserSession) {
         self.userSession = userSession
+        viewModel = ArchivedListViewModel(userSession: userSession)
         super.init(nibName: nil, bundle: nil)
         viewModel.delegate = self
         createViews()

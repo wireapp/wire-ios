@@ -18,11 +18,16 @@
 
 import Foundation
 import WireDataModel
+import LocalAuthentication
 
 /// An abstraction of the user session for use in the presentation
 /// layer.
 
 public protocol UserSession: AnyObject {
+
+    /// The current session lock, if any.
+
+    var lock: SessionLock? { get }
 
     /// Whether the session needs to be unlocked by the user
     /// via passcode or biometric authentication.
@@ -53,13 +58,59 @@ public protocol UserSession: AnyObject {
 
     var appLockTimeout: UInt { get }
 
+    /// Whether a custom passcode has been set.
+
+    var isCustomAppLockPasscodeSet: Bool { get }
+
+    /// Whether a custom passcode (rather a device passcode) should be used.
+
+    var requireCustomAppLockPasscode: Bool { get }
+
     /// Whether the user should be notified of the app lock being disabled.
 
     var shouldNotifyUserOfDisabledAppLock: Bool { get }
 
+    /// Whether the user needs to be informed about configuration changes.
+
+    var needsToNotifyUserOfAppLockConfiguration: Bool { get set }
+
+    /// Unlock the database using the given authentication context.
+
+    func unlockDatabase(with context: LAContext) throws
+
+    /// Open the app lock.
+
+    func openAppLock() throws
+
+    /// Authenticate with device owner credentials (biometrics or passcode).
+    ///
+    /// - Parameters:
+    ///     - passcodePreference: Used to determine which type of passcode is used.
+    ///     - description: The message to dispaly in the authentication UI.
+    ///     - context: The context in which authentication happens.
+    ///     - callback: Invoked with the authentication result.
+
+    func evaluateAppLockAuthentication(
+        passcodePreference: AppLockPasscodePreference,
+        description: String,
+        callback: @escaping (
+            AppLockAuthenticationResult,
+            LAContextProtocol
+        ) -> Void
+    )
+
+    /// Authenticate with a custom passcode.
+    ///
+    /// - Parameter customPasscode: The user inputted passcode.
+    /// - Returns: The authentication result, which should be either `granted` or `denied`.
+
+    func evaluateAuthentication(customPasscode: String) -> AppLockAuthenticationResult
+
     /// Delete the app lock passcode if it exists.
 
     func deleteAppLockPasscode() throws
+
+    var conversationDirectory: ConversationDirectoryType { get }
 
     /// The user who is logged into this session.
     ///
@@ -91,6 +142,10 @@ public protocol UserSession: AnyObject {
         for: UserType
     ) -> NSObjectProtocol?
 
+    func addUserObserver(
+        _ observer: ZMUserObserver
+    ) -> NSObjectProtocol
+
     func addMessageObserver(
         _ observer: ZMMessageObserver,
         for message: ZMConversationMessage
@@ -115,6 +170,10 @@ public protocol UserSession: AnyObject {
 
     func conversationList() -> ZMConversationList
 
+    func pendingConnectionConversationsInUserSession() -> ZMConversationList
+
+    func archivedConversationsInUserSession() -> ZMConversationList
+
     var ringingCallConversation: ZMConversation? { get }
 
     var maxAudioMessageLength: TimeInterval { get }
@@ -123,18 +182,35 @@ public protocol UserSession: AnyObject {
 
     func acknowledgeFeatureChange(for feature: Feature.Name)
 
-    func fetchMarketingConsent(completion: @escaping (Result<Bool>) -> Void)
+    func fetchMarketingConsent(
+        completion: @escaping (
+            Result<Bool>
+        ) -> Void
+    )
 
     func setMarketingConsent(
         granted: Bool,
         completion: @escaping (VoidResult) -> Void
     )
 
-    func classification(with users: [UserType], conversationDomain: String?) -> SecurityClassification
+    func classification(
+        with users: [UserType],
+        conversationDomain: String?
+    ) -> SecurityClassification
 
 }
 
 extension ZMUserSession: UserSession {
+
+    public var lock: SessionLock? {
+        if isDatabaseLocked {
+            return .database
+        } else if appLockController.isLocked {
+            return .screen
+        } else {
+            return nil
+        }
+    }
 
     public var isLocked: Bool {
         return isDatabaseLocked || appLockController.isLocked
@@ -166,9 +242,63 @@ extension ZMUserSession: UserSession {
         return appLockController.timeout
     }
 
-    public var shouldNotifyUserOfDisabledAppLock: Bool {
-        return appLockController.needsToNotifyUser && !appLockController.isActive
+    public var requireCustomAppLockPasscode: Bool {
+        appLockController.requireCustomPasscode
     }
+
+    public var isCustomAppLockPasscodeSet: Bool {
+        appLockController.isCustomPasscodeSet
+    }
+
+    public var shouldNotifyUserOfDisabledAppLock: Bool {
+        get {
+            appLockController.needsToNotifyUser && !appLockController.isActive
+        }
+    }
+
+    public var needsToNotifyUserOfAppLockConfiguration: Bool {
+        get {
+            appLockController.needsToNotifyUser
+        }
+        set {
+            appLockController.needsToNotifyUser = newValue
+        }
+    }
+
+    public func openAppLock() throws {
+        try appLockController.open()
+    }
+
+    public func evaluateAppLockAuthentication(
+        passcodePreference: AppLockPasscodePreference,
+        description: String,
+        callback: @escaping (
+            AppLockAuthenticationResult,
+            LAContextProtocol
+        ) -> Void
+    ) {
+        return appLockController.evaluateAuthentication(
+            passcodePreference: passcodePreference,
+            description: description,
+            callback: callback
+        )
+    }
+
+    public func evaluateAuthentication(customPasscode: String) -> AppLockAuthenticationResult {
+        appLockController.evaluateAuthentication(customPasscode: customPasscode)
+    }
+
+    public func unlockDatabase(with context: LAContext) throws {
+        try earService.unlockDatabase(context: context)
+
+        DatabaseEncryptionLockNotification(databaseIsEncrypted: false).post(in: managedObjectContext.notificationContext)
+
+        syncManagedObjectContext.performGroupedBlock {
+            self.processEvents()
+        }
+
+    }
+
 
     public func deleteAppLockPasscode() throws {
         try appLockController.deletePasscode()
@@ -192,6 +322,16 @@ extension ZMUserSession: UserSession {
             in: self
         )
     }
+
+    public func addUserObserver(
+        _ observer: ZMUserObserver
+    ) -> NSObjectProtocol {
+        return UserChangeInfo.add(
+            userObserver: observer,
+            in: self
+        )
+    }
+
 
     public func addMessageObserver(
         _ observer: ZMMessageObserver,
@@ -244,6 +384,14 @@ extension ZMUserSession: UserSession {
 
     public func conversationList() -> ZMConversationList {
         return .conversations(inUserSession: self)
+    }
+
+    public func pendingConnectionConversationsInUserSession() -> ZMConversationList {
+        return .pendingConnectionConversations(inUserSession: self)
+    }
+
+    public func archivedConversationsInUserSession() -> ZMConversationList {
+        return .archivedConversations(inUserSession: self)
     }
 
     public var ringingCallConversation: ZMConversation? {

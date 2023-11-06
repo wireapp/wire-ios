@@ -26,15 +26,6 @@ private var overridenAccentColor: ZMAccentColor = .undefined
 
 extension UIColor {
 
-    /// Set accent color on self user to this index.
-    ///
-    /// - Parameter accentColor: the accent color
-    class func setAccent(_ accentColor: ZMAccentColor) {
-        ZMUserSession.shared()?.enqueue {
-            SelfUser.provider?.providedSelfUser.accentColorValue = accentColor
-        }
-    }
-
     class func indexedAccentColor() -> ZMAccentColor {
         // priority 1: overriden color
         if overridenAccentColor != .undefined {
