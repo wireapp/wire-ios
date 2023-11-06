@@ -21,7 +21,8 @@ import WireDataModel
 import UIKit
 
 enum MessageAction: CaseIterable, Equatable {
-    static var allCases: [MessageAction] = [.digitallySign,
+    static var allCases: [MessageAction] = [.visitLink("https://wire.com"),
+                                            .digitallySign,
                                             .copy,
                                             .reply,
                                             .openDetails,
@@ -59,7 +60,8 @@ enum MessageAction: CaseIterable, Equatable {
     present,
     openQuote,
     resetSession,
-    react(Emoji.ID)
+    react(Emoji.ID),
+    visitLink(String)
 
     var title: String? {
         let key: String?
@@ -93,6 +95,8 @@ enum MessageAction: CaseIterable, Equatable {
             key = "image.add_sketch"
         case .sketchEmoji:
             key = "image.add_emoji"
+        case .visitLink:
+            key = "content.message.open_link_alert.title"
         case .present,
              .openQuote,
              .resetSession,
@@ -131,6 +135,8 @@ enum MessageAction: CaseIterable, Equatable {
             return .brush
         case .sketchEmoji:
             return .emoji
+        case .visitLink:
+            return .externalLink
         case .present,
              .openQuote,
              .digitallySign,
@@ -177,7 +183,8 @@ enum MessageAction: CaseIterable, Equatable {
              .openQuote,
              .digitallySign,
              .resetSession,
-             .react:
+             .react,
+             .visitLink:
             imageName = nil
         }
 
@@ -212,6 +219,8 @@ enum MessageAction: CaseIterable, Equatable {
             return #selector(ConversationMessageActionController.revealMessage)
         case .react:
             return #selector(ConversationMessageActionController.addReaction(reaction:) )
+        case .visitLink:
+            return #selector(ConversationMessageActionController.visitLink(path:))
         case .present,
              .sketchDraw,
              .sketchEmoji,

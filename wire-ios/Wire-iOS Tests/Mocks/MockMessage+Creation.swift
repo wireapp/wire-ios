@@ -192,7 +192,7 @@ final class MockMessageFactory {
         return message
     }
 
-    class func linkMessage() -> MockMessage? {
+    class func linkMessage() -> MockMessage {
         let message = MockMessageFactory.messageTemplate()
 
         let textData = MockTextMessageData()

@@ -111,11 +111,11 @@ extension LinkInteractionTextView: UITextViewDelegate {
                   shouldInteractWith URL: URL,
                   in characterRange: NSRange,
                   interaction: UITextItemInteraction) -> Bool {
-
         // present system context preview
         if  UIApplication.shared.canOpenURL(URL),
             interaction == .presentActions,
-            !isMarkdownLink(in: characterRange) {
+            !isMarkdownLink(in: characterRange),
+            Settings.isClipboardEnabled {
             return true
         }
 

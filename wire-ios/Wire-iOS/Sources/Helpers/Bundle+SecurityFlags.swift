@@ -28,6 +28,7 @@ public enum SecurityFlags {
     case maxNumberAccounts
     case fileSharing
     case forceCallKitDisabled
+    case clipboard
 
     /// Whether encryption at rest is enabled and can't be disabled.
 
@@ -59,6 +60,8 @@ public enum SecurityFlags {
             return "ForceCallKitDisabled"
         case .minTLSVersion:
             return "MinTLSVersion"
+        case .clipboard:
+            return "ClipboardEnabled"
         }
     }
 
