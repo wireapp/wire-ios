@@ -73,7 +73,7 @@ on:
 
 jobs:
   run-tests:
-    runs-on: ghcr.io/cirruslabs/macos-sonoma-xcode:15.0.1
+    runs-on: ghcr.io/cirruslabs/macos-sonoma-xcode:15
     env:
       GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       GITHUB_USERNAME: ${{ secrets.ZENKINS_USERNAME }}
