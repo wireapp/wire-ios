@@ -30,7 +30,7 @@ final class LegalHoldDetailsViewControllerSnapshotTests: ZMSnapshotTestCase {
         super.setUp()
         userSession = UserSessionMock()
         SelfUser.setupMockSelfUser(inTeam: UUID())
-        selfUser = (SelfUser.current as! MockUserType)
+        selfUser = SelfUser.provider?.providedSelfUser as? MockUserType
         selfUser.handle = nil
     }
 

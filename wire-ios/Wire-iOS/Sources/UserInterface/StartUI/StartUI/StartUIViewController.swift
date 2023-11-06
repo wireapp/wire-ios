@@ -85,8 +85,8 @@ final class StartUIViewController: UIViewController, SpinnerCapable {
         return self.searchResultsViewController
     }
 
-    var selfUser: UserType {
-        return SelfUser.current
+    var selfUser: UserType? {
+        SelfUser.provider?.providedSelfUser
     }
 
     // MARK: - Overloaded methods
@@ -111,7 +111,7 @@ final class StartUIViewController: UIViewController, SpinnerCapable {
 
     func setupViews() {
         configGroupSelector()
-        emptyResultView = EmptySearchResultsView(isSelfUserAdmin: selfUser.canManageTeam,
+        emptyResultView = EmptySearchResultsView(isSelfUserAdmin: selfUser?.canManageTeam == true,
                                                  isFederationEnabled: isFederationEnabled)
 
         emptyResultView.delegate = self
@@ -122,7 +122,7 @@ final class StartUIViewController: UIViewController, SpinnerCapable {
 
         if let title = (selfUser as? ZMUser)?.team?.name {
             navigationItem.setupNavigationBarTitle(title: title.capitalized)
-        } else if let title = selfUser.name {
+        } else if let title = selfUser?.name {
             navigationItem.setupNavigationBarTitle(title: title.capitalized)
         }
 

@@ -114,7 +114,17 @@ final class LegalHoldDetailsViewController: UIViewController {
 extension LegalHoldDetailsViewController: LegalHoldParticipantsSectionControllerDelegate {
 
     func legalHoldParticipantsSectionWantsToPresentUserProfile(for user: UserType) {
-        let profileViewController = ProfileViewController(user: user, viewer: SelfUser.current, context: .deviceList, userSession: userSession)
+        guard let viewer = SelfUser.provider?.providedSelfUser else {
+            assertionFailure("expected available 'user'!")
+            return
+        }
+        
+        let profileViewController = ProfileViewController(
+            user: user,
+            viewer: viewer,
+            context: .deviceList,
+            userSession: userSession
+        )
         show(profileViewController, sender: nil)
     }
 

@@ -179,7 +179,8 @@ final class AddParticipantsViewController: UIViewController, SpinnerCapable {
                                                                   shouldIncludeGuests: viewModel.context.includeGuests,
                                                                   isFederationEnabled: isFederationEnabled)
 
-        emptyResultView = EmptySearchResultsView(isSelfUserAdmin: SelfUser.current.canManageTeam,
+        let user = SelfUser.provider?.providedSelfUser
+        emptyResultView = EmptySearchResultsView(isSelfUserAdmin: user?.canManageTeam == true,
                                                  isFederationEnabled: isFederationEnabled)
         super.init(nibName: nil, bundle: nil)
 
