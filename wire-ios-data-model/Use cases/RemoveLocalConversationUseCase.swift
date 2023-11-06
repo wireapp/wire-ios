@@ -19,16 +19,16 @@
 import Foundation
 import WireSystem
 
-public protocol LocalConversationRemovalUseCaseProtocol {
-    func removeConversation(_ conversation: ZMConversation, syncContext: NSManagedObjectContext)
+public protocol RemoveLocalConversationUseCaseProtocol {
+    func invoke(with conversation: ZMConversation, syncContext: NSManagedObjectContext)
 }
 
-public class LocalConversationRemovalUseCase: LocalConversationRemovalUseCaseProtocol {
+public class RemoveLocalConversationUseCase: RemoveLocalConversationUseCaseProtocol {
 
     public init() {}
 
-    public func removeConversation(
-        _ conversation: ZMConversation,
+    public func invoke(
+        with conversation: ZMConversation,
         syncContext: NSManagedObjectContext
     ) {
         precondition(syncContext.zm_isSyncContext, "use case should only be accessed on the sync context")

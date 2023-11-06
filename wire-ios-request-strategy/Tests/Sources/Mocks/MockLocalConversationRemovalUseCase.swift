@@ -19,15 +19,15 @@
 import Foundation
 @testable import WireRequestStrategy
 
-class MockLocalConversationRemovalUseCase: LocalConversationRemovalUseCaseProtocol {
+class MockLocalConversationRemovalUseCase: RemoveLocalConversationUseCaseProtocol {
 
-    typealias MockRemoveConversation = (ZMConversation, NSManagedObjectContext) -> Void
-    var removeConversationMock: MockRemoveConversation?
-    var removeConversationCalls = [ZMConversation]()
+    typealias MockInvoke = (ZMConversation, NSManagedObjectContext) -> Void
+    var invokeMock: MockInvoke?
+    var invokeCalls = [ZMConversation]()
 
-    func removeConversation(_ conversation: ZMConversation, syncContext: NSManagedObjectContext) {
-        removeConversationCalls.append(conversation)
-        guard let mock = removeConversationMock else {
+    func invoke(with conversation: ZMConversation, syncContext: NSManagedObjectContext) {
+        invokeCalls.append(conversation)
+        guard let mock = invokeMock else {
             return
         }
         mock(conversation, syncContext)

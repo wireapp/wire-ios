@@ -25,7 +25,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
     var sut: ConversationRequestStrategy!
     var mockApplicationStatus: MockApplicationStatus!
     var mockSyncProgress: MockSyncProgress!
-    var mocklocalConversationRemovalUseCase: MockLocalConversationRemovalUseCase!
+    var mockRemoveLocalConversation: MockLocalConversationRemovalUseCase!
 
     var apiVersion: APIVersion! {
         didSet {
@@ -39,13 +39,13 @@ class ConversationRequestStrategyTests: MessagingTestBase {
         mockApplicationStatus = MockApplicationStatus()
         mockApplicationStatus.mockSynchronizationState = .online
         mockSyncProgress = MockSyncProgress()
-        mocklocalConversationRemovalUseCase = MockLocalConversationRemovalUseCase()
+        mockRemoveLocalConversation = MockLocalConversationRemovalUseCase()
 
         sut = ConversationRequestStrategy(
             withManagedObjectContext: syncMOC,
             applicationStatus: mockApplicationStatus,
             syncProgress: mockSyncProgress,
-            localConversationRemovalUseCase: mocklocalConversationRemovalUseCase
+            removeLocalConversation: mockRemoveLocalConversation
         )
 
         apiVersion = .v0
@@ -55,7 +55,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
         sut = nil
         mockSyncProgress = nil
         mockApplicationStatus = nil
-        mocklocalConversationRemovalUseCase = nil
+        mockRemoveLocalConversation = nil
         apiVersion = nil
 
         super.tearDown()
@@ -334,7 +334,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
 
         // then
         XCTAssertEqual(
-            mocklocalConversationRemovalUseCase.removeConversationCalls,
+            mockRemoveLocalConversation.invokeCalls,
             [groupConversation]
         )
     }

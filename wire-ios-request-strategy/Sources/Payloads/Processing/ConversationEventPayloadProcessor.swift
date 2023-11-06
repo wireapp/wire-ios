@@ -26,10 +26,10 @@ final class ConversationEventPayloadProcessor {
         case eventStream
     }
 
-    private let localConversationRemovalUseCase: LocalConversationRemovalUseCaseProtocol
+    private let removeLocalConversation: RemoveLocalConversationUseCaseProtocol
 
-    init(localConversationRemovalUseCase: LocalConversationRemovalUseCaseProtocol? = nil) {
-        self.localConversationRemovalUseCase = localConversationRemovalUseCase ?? LocalConversationRemovalUseCase()
+    init(removeLocalConversation: RemoveLocalConversationUseCaseProtocol? = nil) {
+        self.removeLocalConversation = removeLocalConversation ?? RemoveLocalConversationUseCase()
     }
 
     // MARK: - Conversation creation
@@ -91,8 +91,8 @@ final class ConversationEventPayloadProcessor {
             return
         }
 
-        localConversationRemovalUseCase.removeConversation(
-            conversation,
+        removeLocalConversation.invoke(
+            with: conversation,
             syncContext: context
         )
     }

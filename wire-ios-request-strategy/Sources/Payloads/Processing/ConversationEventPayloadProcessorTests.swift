@@ -23,16 +23,16 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
 
     var sut: ConversationEventPayloadProcessor!
     var mockMLSService: MockMLSService!
-    var mockLocalConversationRemovalUseCase: MockLocalConversationRemovalUseCase!
+    var mockRemoveLocalConversation: MockLocalConversationRemovalUseCase!
 
     override func setUp() {
         super.setUp()
 
         mockMLSService = MockMLSService()
-        mockLocalConversationRemovalUseCase = MockLocalConversationRemovalUseCase()
+        mockRemoveLocalConversation = MockLocalConversationRemovalUseCase()
 
         sut = ConversationEventPayloadProcessor(
-            localConversationRemovalUseCase: mockLocalConversationRemovalUseCase
+            removeLocalConversation: mockRemoveLocalConversation
         )
 
         syncMOC.performAndWait {
@@ -43,7 +43,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
     override func tearDown() {
         sut = nil
         mockMLSService = nil
-        mockLocalConversationRemovalUseCase = nil
+        mockRemoveLocalConversation = nil
         BackendInfo.isFederationEnabled = false
         super.tearDown()
     }
@@ -970,7 +970,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
 
             // Then
             XCTAssertEqual(
-                mockLocalConversationRemovalUseCase.removeConversationCalls,
+                mockRemoveLocalConversation.invokeCalls,
                 [groupConversation]
             )
         }

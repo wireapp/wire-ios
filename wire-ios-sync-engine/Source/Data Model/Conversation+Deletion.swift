@@ -47,7 +47,7 @@ extension ZMConversation {
         transportSession: TransportSessionType,
         completion: @escaping (VoidResult) -> Void
     ) {
-        let localConversationRemovalUseCase = LocalConversationRemovalUseCase()
+        let removeLocalConversation = RemoveLocalConversationUseCase()
 
         guard
             ZMUser.selfUser(in: contextProvider.viewContext).canDeleteConversation(self),
@@ -72,8 +72,8 @@ extension ZMConversation {
                         return
                     }
 
-                    localConversationRemovalUseCase.removeConversation(
-                        conversation,
+                    removeLocalConversation.invoke(
+                        with: conversation,
                         syncContext: contextProvider.syncContext
                     )
                 }
