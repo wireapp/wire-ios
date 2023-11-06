@@ -408,7 +408,6 @@ extension AppRootRouter {
         userSession: UserSession,
         isComingFromRegistration: Bool
     ) -> AuthenticatedRouter? {
-        let needToShowDataUsagePermissionDialog = appStateCalculator.wasUnauthenticated && !SelfUser.current.isTeamMember
         guard let userSession = ZMUserSession.shared() else { return  nil }
 
       let isTeamMember: Bool
@@ -426,7 +425,7 @@ extension AppRootRouter {
             account: account,
             userSession: userSession,
             isComingFromRegistration: isComingFromRegistration,
-            needToShowDataUsagePermissionDialog: needToShowDataUsagePermissionDialog,
+            needToShowDataUsagePermissionDialog: needToShowDialog,
             featureRepositoryProvider: userSession
         )
     }
