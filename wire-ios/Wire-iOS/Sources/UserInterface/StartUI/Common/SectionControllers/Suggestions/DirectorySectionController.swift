@@ -40,8 +40,8 @@ final class DirectorySectionController: SearchSectionController {
         super.prepareForUse(in: collectionView)
 
         collectionView?.register(UserCell.self, forCellWithReuseIdentifier: UserCell.zm_reuseIdentifier)
-
-        self.token = UserChangeInfo.add(searchUserObserver: self, in: ZMUserSession.shared()!)
+        guard let userSession = ZMUserSession.shared() else { return }
+        self.token = UserChangeInfo.add(searchUserObserver: self, in: userSession)
 
         self.collectionView = collectionView
     }
