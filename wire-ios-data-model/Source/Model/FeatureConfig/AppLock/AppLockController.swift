@@ -119,7 +119,7 @@ public final class AppLockController: AppLockType {
     public init(
         userId: UUID,
         selfUser: ZMUser,
-        legacyConfig: LegacyConfig? = nil
+        legacyConfig: LegacyConfig?
     ) {
         precondition(selfUser.isSelfUser, "AppLockController initialized with non-self user")
 
