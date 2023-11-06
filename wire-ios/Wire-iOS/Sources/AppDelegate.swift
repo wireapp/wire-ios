@@ -40,6 +40,8 @@ private let pushLog = ZMSLog(tag: "Push")
 
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
+    // TODO: remove for tests
+
     // MARK: - Private Property
 
     private lazy var voIPPushManager: VoIPPushManager = {
