@@ -22,7 +22,7 @@ import LocalAuthentication
 
 final class UserSessionMock: UserSession {
 
-    var networkState: ZMNetworkState
+    var networkState: ZMNetworkState = .offline
     
     typealias Preference = AppLockPasscodePreference
     typealias Callback = (AppLockModule.AuthenticationResult, LAContext) -> Void
