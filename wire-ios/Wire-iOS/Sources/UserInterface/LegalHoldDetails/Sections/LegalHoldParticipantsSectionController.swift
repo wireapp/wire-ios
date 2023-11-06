@@ -95,7 +95,16 @@ final class LegalHoldParticipantsSectionController: GroupDetailsSectionControlle
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: UserCell.reuseIdentifier, for: indexPath) as! UserCell
         let showSeparator = (viewModel.participants.count - 1) != indexPath.row
 
-        cell.configure(with: participant, selfUser: SelfUser.current, conversation: conversation)
+        if let user = SelfUser.provider?.providedSelfUser {
+            cell.configure(
+                with: participant,
+                selfUser: user,
+                conversation: conversation
+            )
+        } else {
+            assertionFailure("expected available 'user'!")
+        }
+        
         cell.accessoryIconView.isHidden = false
         cell.accessibilityIdentifier = "participants.section.participants.cell"
         cell.showSeparator = showSeparator

@@ -138,8 +138,15 @@ private struct ParticipantsSectionViewModel {
 
 extension UserCell: ParticipantsCellConfigurable {
     func configure(with rowType: ParticipantsRowType, conversation: GroupDetailsConversationType, showSeparator: Bool) {
-        guard case let .user(user) = rowType else { preconditionFailure() }
-        configure(with: user, selfUser: SelfUser.current, conversation: conversation as? ZMConversation)
+        guard case let .user(user) = rowType else {
+            preconditionFailure("expected different 'ParticipantsRowType'!")
+        }
+        guard let selfUser = SelfUser.provider?.providedSelfUser else {
+            assertionFailure("expected available 'user'!")
+            return
+        }
+        
+        configure(with: user, selfUser: selfUser, conversation: conversation as? ZMConversation)
         accessoryIconView.isHidden = user.isSelfUser
         accessibilityIdentifier = identifier
         accessibilityHint = L10n.Accessibility.ConversationDetails.ParticipantCell.hint
