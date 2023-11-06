@@ -37,14 +37,14 @@ public class MessageDependencyResolver: MessageDependencyResolverInterface {
 
     public func waitForDependenciesToResolve(for message: any SendableMessage) async -> Swift.Result<Void, MessageDependencyResolverError> {
 
-        @Sendable func dependenciesAreResolved() -> Swift.Result<Bool, MessageDependencyResolverError> {
-            if (self.context.performAndWait {
+        @Sendable func dependenciesAreResolved() async -> Swift.Result<Bool, MessageDependencyResolverError> {
+            if await self.context.perform {
                 message.conversation?.securityLevel == .secureWithIgnored
-            }) {
+            } {
                 return .failure(MessageDependencyResolverError.securityLevelDegraded)
             }
 
-            let hasDependencies = self.context.performAndWait {
+            let hasDependencies = await self.context.perform {
                 message.dependentObjectNeedingUpdateBeforeProcessing != nil
             }
 
@@ -57,7 +57,7 @@ public class MessageDependencyResolver: MessageDependencyResolverInterface {
             }
         }
 
-        let result = dependenciesAreResolved()
+        let result = await dependenciesAreResolved()
         let continueWaiting = result.isOne(of: .success(false))
 
         if !continueWaiting {
@@ -66,7 +66,7 @@ public class MessageDependencyResolver: MessageDependencyResolverInterface {
 
         return await withCheckedContinuation { continuation in
             Task {
-                let result = dependenciesAreResolved()
+                let result = await dependenciesAreResolved()
                 let continueWaiting = result.isOne(of: .success(false))
 
                 if !continueWaiting {
@@ -75,7 +75,7 @@ public class MessageDependencyResolver: MessageDependencyResolverInterface {
                 }
 
                 for await _ in NotificationCenter.default.notifications(named: .requestAvailableNotification) {
-                    let result = dependenciesAreResolved()
+                    let result = await dependenciesAreResolved()
                     let continueWaiting = result.isOne(of: .success(false))
 
                     if !continueWaiting {
