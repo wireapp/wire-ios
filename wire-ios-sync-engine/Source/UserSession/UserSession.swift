@@ -198,6 +198,7 @@ public protocol UserSession: AnyObject {
         conversationDomain: String?
     ) -> SecurityClassification
 
+    var maxVideoLength: TimeInterval { get }
 }
 
 extension ZMUserSession: UserSession {
