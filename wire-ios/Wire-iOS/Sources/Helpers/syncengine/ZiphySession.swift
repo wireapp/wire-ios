@@ -56,7 +56,7 @@ final class ZiphySession: ZiphyURLRequester {
         type: ProxiedRequestType,
         completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void
     ) -> ProxyRequest {
-        return userSession.proxiedRequest(
+        userSession.proxiedRequest(
             path: path,
             method: method,
             type: type,
