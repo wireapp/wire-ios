@@ -231,8 +231,9 @@
 		255D1EB62AFA2B1000378896 /* DeviceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 255D1EB12AFA2B1000378896 /* DeviceView.swift */; };
 		255D1EB72AFA2B1000378896 /* DeviceListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 255D1EB22AFA2B1000378896 /* DeviceListView.swift */; };
 		255D1EB82AFA2B1000378896 /* CertificateDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 255D1EB32AFA2B1000378896 /* CertificateDetailsView.swift */; };
-		255D1EB92AFA2B1000378896 /* DeviceInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 255D1EB42AFA2B1000378896 /* DeviceInfo.swift */; };
+		255D1EB92AFA2B1000378896 /* DeviceInfoViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 255D1EB42AFA2B1000378896 /* DeviceInfoViewModel.swift */; };
 		255D1EBA2AFA2B1000378896 /* DeviceDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 255D1EB52AFA2B1000378896 /* DeviceDetailsView.swift */; };
+		259393182AFAA05E006DC6DC /* CopyValueView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 259393172AFAA05E006DC6DC /* CopyValueView.swift */; };
 		4067991C29C88AB6001326B5 /* SecurityLevelViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4067991B29C88AB6001326B5 /* SecurityLevelViewTests.swift */; };
 		407831AD2AC4636F005C2978 /* DifferenceKit in Frameworks */ = {isa = PBXBuildFile; productRef = 407831AC2AC4636F005C2978 /* DifferenceKit */; };
 		40C69D702A8627C900376B1C /* TemporaryFileService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40C69D6F2A8627C900376B1C /* TemporaryFileService.swift */; };
@@ -2131,8 +2132,9 @@
 		255D1EB12AFA2B1000378896 /* DeviceView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeviceView.swift; sourceTree = "<group>"; };
 		255D1EB22AFA2B1000378896 /* DeviceListView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeviceListView.swift; sourceTree = "<group>"; };
 		255D1EB32AFA2B1000378896 /* CertificateDetailsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CertificateDetailsView.swift; sourceTree = "<group>"; };
-		255D1EB42AFA2B1000378896 /* DeviceInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeviceInfo.swift; sourceTree = "<group>"; };
+		255D1EB42AFA2B1000378896 /* DeviceInfoViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeviceInfoViewModel.swift; sourceTree = "<group>"; };
 		255D1EB52AFA2B1000378896 /* DeviceDetailsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeviceDetailsView.swift; sourceTree = "<group>"; };
+		259393172AFAA05E006DC6DC /* CopyValueView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CopyValueView.swift; sourceTree = "<group>"; };
 		2B56189E29A517E800D8CCCA /* SecurityTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = SecurityTests.xctestplan; sourceTree = "<group>"; };
 		2B6F6AB329ACC04A001BB36F /* AllTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = AllTests.xctestplan; sourceTree = "<group>"; };
 		4067991B29C88AB6001326B5 /* SecurityLevelViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecurityLevelViewTests.swift; sourceTree = "<group>"; };
@@ -4283,8 +4285,9 @@
 				255D1EB12AFA2B1000378896 /* DeviceView.swift */,
 				255D1EB22AFA2B1000378896 /* DeviceListView.swift */,
 				255D1EB32AFA2B1000378896 /* CertificateDetailsView.swift */,
-				255D1EB42AFA2B1000378896 /* DeviceInfo.swift */,
+				255D1EB42AFA2B1000378896 /* DeviceInfoViewModel.swift */,
 				255D1EB52AFA2B1000378896 /* DeviceDetailsView.swift */,
+				259393172AFAA05E006DC6DC /* CopyValueView.swift */,
 			);
 			path = DeviceView;
 			sourceTree = "<group>";
@@ -8565,7 +8568,7 @@
 				EF218AC520A9C123004977BF /* SettingsCellDescriptorFactory+DataUsagePermissions.swift in Sources */,
 				871BC35F1D34F94200DF0793 /* SettingsProperty.swift in Sources */,
 				87D56DF81E003D9300DFF722 /* CollectionsView.swift in Sources */,
-				255D1EB92AFA2B1000378896 /* DeviceInfo.swift in Sources */,
+				255D1EB92AFA2B1000378896 /* DeviceInfoViewModel.swift in Sources */,
 				543DF685252DD7F0001F6EA6 /* NotificationObserver.swift in Sources */,
 				BFAF4CB91CEDE82400780537 /* NumberHelper.swift in Sources */,
 				5EFE9BFF21246483007932A6 /* RegistrationFinalErrorHandler.swift in Sources */,
@@ -8933,6 +8936,7 @@
 				8751A6CB1FF6573D00804A58 /* QuickActionsManager.swift in Sources */,
 				BFE731E020A58EFD0088BA22 /* VideoState+Helper.swift in Sources */,
 				5E35F7482180A26900D3F4FE /* ConversationTextMessageCell.swift in Sources */,
+				259393182AFAA05E006DC6DC /* CopyValueView.swift in Sources */,
 				F15650D421DD0FAB00210504 /* VerticalColumnPositioning.swift in Sources */,
 				5EA73D7F20D900A10001D106 /* GroupDetailsGuestOptionsCell.swift in Sources */,
 				871BC26F1D34F8F800DF0793 /* ResizingTextView.swift in Sources */,

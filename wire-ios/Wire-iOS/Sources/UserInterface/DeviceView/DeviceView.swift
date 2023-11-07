@@ -19,25 +19,34 @@
 import SwiftUI
 
 struct DeviceView: View {
-    var device: DeviceInfo
+    var viewModel: DeviceInfoViewModel
     var body: some View {
         VStack {
         HStack {
-            Text(device.title)
-            if device.isVerified {
-                Image(systemName: "lock")
+            Text(viewModel.title)
+            switch viewModel.e2eIdentityCertificate.status {
+            case .notActivated:
+                Image(.certificateExpired)
+            case .revoked:
+                Image(.certificateRevoked)
+            case .expired:
+                Image(.certificateExpired)
+            case .valid:
+                Image(.certificateValid)
+            case .none:
+                Image(asset: .init(name: ""))
             }
-            if device.isSecured {
-                Image(systemName: "lock")
+            if viewModel.isProteusVerificationEnabled {
+                Image(.verified)
             }
             Spacer()
         }
             HStack {
-                Text("MLS Thumbprint: \(device.mlsThumbprint)").font(.subheadline).foregroundColor(.gray).padding(.top).lineLimit(1)
+                Text("MLS Thumbprint: \(viewModel.mlsThumbprint)").font(.subheadline).foregroundColor(.gray).padding(.top).lineLimit(1)
                 Spacer()
             }
             HStack {
-                Text("Proteus ID: \(device.proteusID)").multilineTextAlignment(.leading).font(.subheadline).foregroundColor(.gray)
+                Text("Proteus ID: \(viewModel.proteusID)").multilineTextAlignment(.leading).font(.subheadline).foregroundColor(.gray)
                 Spacer()
             }
         }
@@ -45,12 +54,25 @@ struct DeviceView: View {
 }
 
 #Preview {
-    DeviceView(device: DeviceInfo(udid: "123g4", title: "Device 4", mlsThumbprint: "skfjnskjdffnskjn", deviceKeyFingerprint: """
+    DeviceView(viewModel:
+                DeviceInfoViewModel(
+                    udid: "123g4",
+                    title: "Device 4",
+                    mlsThumbprint: "skfjnskjdffnskjn",
+                    deviceKeyFingerprint:
+"""
 b4 47 60 78 a3 1f 12 f9
 be 7c 98 3b 1f f1 f0 53
 ae 2a 01 6a 31 32 49 d0
 e9 fd da 5e 21 fd 06 ae
-""", proteusID: "skjdabfnkscjka", isSecured: true, isVerified: false, e2eIdentityCertificate: E2EIdentityCertificate(status: true, serialNumber: """
+""",
+                    proteusID: "skjdabfnkscjka",
+                    isProteusVerificationEnabled: false,
+                    e2eIdentityCertificate:
+                        E2EIdentityCertificate(
+                            status: .notActivated,
+                            serialNumber:
+"""
 b4 47 60 78 a3 1f 12 f9
 be 7c 98 3b 1f f1 f0 53
 ae 2a 01 6a 31 32 49 d0

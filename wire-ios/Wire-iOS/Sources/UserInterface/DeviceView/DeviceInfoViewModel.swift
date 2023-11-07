@@ -18,30 +18,51 @@
 
 import Foundation
 
-struct DeviceInfo {
-    let udid: String
-    let addedDate: String = Date().formatted()
-    var title: String
-    let mlsThumbprint: String
-    let deviceKeyFingerprint: String
-    let proteusID: String
-    var isSecured: Bool
-    var isVerified: Bool
-    var e2eIdentityCertificate: E2EIdentityCertificate
-}
-
 struct E2EIdentityCertificate {
-    var status: Bool
+    var status: E2EIdentityCertificateStatus
     var serialNumber: String
     var certificate: String = .randomString(length: 500)
 }
 
-extension DeviceInfo: Identifiable {
+enum E2EIdentityCertificateStatus: CaseIterable {
+    case notActivated, revoked, expired, valid, none
+}
+
+extension E2EIdentityCertificateStatus {
+    func titleForStatus() -> String {
+        switch self {
+        case .notActivated:
+            return "Not activated"
+        case .revoked:
+            return "Revoked"
+        case .expired:
+            return "Expired"
+        case .valid:
+            return "Valid"
+        case .none:
+            return ""
+        }
+    }
+}
+
+struct DeviceInfoViewModel {
+    let udid: String
+    let addedDate: String = Date().formattedDate
+    var title: String
+    let mlsThumbprint: String
+    let deviceKeyFingerprint: String
+    let proteusID: String
+    var isProteusVerificationEnabled: Bool
+    var e2eIdentityCertificate: E2EIdentityCertificate
+}
+
+extension DeviceInfoViewModel: Identifiable {
     var id: String {
         return udid
     }
 }
+
 struct DevicesViewModel {
-    var currentDevice: DeviceInfo
-    var otherDevices: [DeviceInfo]
+    var currentDevice: DeviceInfoViewModel
+    var otherDevices: [DeviceInfoViewModel]
 }

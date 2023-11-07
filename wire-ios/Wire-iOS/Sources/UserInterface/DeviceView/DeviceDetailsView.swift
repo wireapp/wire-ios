@@ -19,7 +19,7 @@
 import SwiftUI
 
 struct DeviceDetailsView: View {
-    var device: DeviceInfo
+    var viewModel: DeviceInfoViewModel
     @State var isVerified: Bool = false
     @State var isCertificatePresented: Bool = false
     var body: some View {
@@ -27,7 +27,7 @@ struct DeviceDetailsView: View {
             List {
                 Section("MLS with Ed25519 Signature") {
                     VStack(alignment: .leading) {
-                        CopyValueView(title: "MLS THUMBPRINT", value: device.mlsThumbprint)
+                        CopyValueView(title: "MLS THUMBPRINT", value: viewModel.mlsThumbprint)
                         Divider()
                         HStack {
                             Text("End-to-end Identity Certificate").font(.headline).multilineTextAlignment(.leading)
@@ -40,11 +40,23 @@ struct DeviceDetailsView: View {
 
                         HStack {
                             Text("Valid").foregroundColor(.green).font(.subheadline).bold()
-                            Image(systemName: "arrow.up").tint(.green)
+                            Text(viewModel.title)
+                            switch viewModel.e2eIdentityCertificate.status {
+                            case .notActivated:
+                                Image(.certificateExpired)
+                            case .revoked:
+                                Image(.certificateRevoked)
+                            case .expired:
+                                Image(.certificateExpired)
+                            case .valid:
+                                Image(.certificateValid)
+                            case .none:
+                                Image(asset: .init(name: ""))
+                            }
                             Spacer()
                         }
                         Text("SERIAL NUMBER").font(.subheadline).foregroundColor(.gray).padding(.init(top: 4, leading: 0, bottom: 8, trailing: 8))
-                        Text(device.e2eIdentityCertificate.serialNumber).lineLimit(2)
+                        Text(viewModel.e2eIdentityCertificate.serialNumber).lineLimit(2)
                         SwiftUI.Button(action: getCertificate) {
                             Text("Get Certificate").padding()
                                 .frame(maxWidth: .infinity, minHeight: 45)
@@ -82,18 +94,18 @@ struct DeviceDetailsView: View {
                 }
                 Section("Proteus Device Details") {
                     VStack(alignment: .leading) {
-                        CopyValueView(title: "PROTEUS ID", value: device.proteusID)
-                        Text(device.proteusID)
+                        CopyValueView(title: "PROTEUS ID", value: viewModel.proteusID)
+                        Text(viewModel.proteusID)
                         Divider()
                         Text("ADDED")
-                        Text(device.addedDate)
+                        Text(viewModel.addedDate)
                         Divider()
-                        CopyValueView(title: "DEVICE KEY FINGERPRINT", value: device.deviceKeyFingerprint)
+                        CopyValueView(title: "DEVICE KEY FINGERPRINT", value: viewModel.deviceKeyFingerprint)
                         Divider()
                         VStack {
                             Toggle("Verified", isOn: $isVerified).font(.headline)
                             Text("""
-                To verify your own device, compare this key  fingerprint with the same key fingerprint on another device. Learn more
+                To verify your own device, compare this key  fingerprint with the same key fingerprint on another viewModel. Learn more
                 Share this key fingerprint with other participants in a conversation, so that they can verify it and make sure the conversation is secure. Learn more
                 """).multilineTextAlignment(.leading)
                         }
@@ -133,7 +145,7 @@ struct DeviceDetailsView: View {
                         }.foregroundColor(.red)
                     }
                 }.listStyle(.plain)
-            }.navigationTitle(device.title)
+            }.navigationTitle(viewModel.title)
         }
     }
 
@@ -155,12 +167,12 @@ struct DeviceDetailsView: View {
 }
 
 #Preview {
-    DeviceDetailsView(device: DeviceInfo(udid: "123g4", title: "Device 4", mlsThumbprint: "skfjnskjdffnskjn", deviceKeyFingerprint: """
+    DeviceDetailsView(viewModel: DeviceInfoViewModel(udid: "123g4", title: "Device 4", mlsThumbprint: "skfjnskjdffnskjn", deviceKeyFingerprint: """
 b4 47 60 78 a3 1f 12 f9
 be 7c 98 3b 1f f1 f0 53
 ae 2a 01 6a 31 32 49 d0
 e9 fd da 5e 21 fd 06 ae
-""", proteusID: "skjdabfnkscjka", isSecured: true, isVerified: false, e2eIdentityCertificate: E2EIdentityCertificate(status: false, serialNumber: """
+""", proteusID: "skjdabfnkscjka", isProteusVerificationEnabled: true, e2eIdentityCertificate: E2EIdentityCertificate(status: .revoked, serialNumber: """
 b4 47 60 78 a3 1f 12 f9
 be 7c 98 3b 1f f1 f0 53
 ae 2a 01 6a 31 32 49 d0
@@ -170,27 +182,4 @@ be 7c 98 3b 1f f1 f0 53
 ae 2a 01 6a 31 32 49 d0
 e9 fd da 5e 21 fd 06 ae
 """)))
-}
-
-struct CopyValueView: View {
-
-    var title: String
-    var value: String
-    var body: some View {
-        VStack(alignment: .leading) {
-            HStack {
-                Text(title).foregroundColor(.gray).font(.subheadline)
-                Spacer()
-
-                SwiftUI.Button(action: copy, label: {
-                    Text("Copy")
-                }).buttonStyle(.bordered)
-            }
-            Text(value).multilineTextAlignment(.leading)
-        }
-    }
-
-    func copy() {
-
-    }
 }
