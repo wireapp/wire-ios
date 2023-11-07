@@ -228,6 +228,11 @@
 		1E8772281B0C8CAB005BDDC6 /* emo-test-03.json in Resources */ = {isa = PBXBuildFile; fileRef = 1E8772271B0C8CAB005BDDC6 /* emo-test-03.json */; };
 		1E98C81B1BD1719500C7A7A2 /* ContactsDataSourceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E98C81A1BD1719500C7A7A2 /* ContactsDataSourceTests.swift */; };
 		1EFB23DC1ACEDE5400244571 /* Localizable.stringsdict in Resources */ = {isa = PBXBuildFile; fileRef = 1EFB23DE1ACEDE5400244571 /* Localizable.stringsdict */; };
+		255D1EB62AFA2B1000378896 /* DeviceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 255D1EB12AFA2B1000378896 /* DeviceView.swift */; };
+		255D1EB72AFA2B1000378896 /* DeviceListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 255D1EB22AFA2B1000378896 /* DeviceListView.swift */; };
+		255D1EB82AFA2B1000378896 /* CertificateDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 255D1EB32AFA2B1000378896 /* CertificateDetailsView.swift */; };
+		255D1EB92AFA2B1000378896 /* DeviceInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 255D1EB42AFA2B1000378896 /* DeviceInfo.swift */; };
+		255D1EBA2AFA2B1000378896 /* DeviceDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 255D1EB52AFA2B1000378896 /* DeviceDetailsView.swift */; };
 		4067991C29C88AB6001326B5 /* SecurityLevelViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4067991B29C88AB6001326B5 /* SecurityLevelViewTests.swift */; };
 		407831AD2AC4636F005C2978 /* DifferenceKit in Frameworks */ = {isa = PBXBuildFile; productRef = 407831AC2AC4636F005C2978 /* DifferenceKit */; };
 		40C69D702A8627C900376B1C /* TemporaryFileService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40C69D6F2A8627C900376B1C /* TemporaryFileService.swift */; };
@@ -2123,6 +2128,11 @@
 		1EE9DCB01B5F9A6D00E347DF /* TokenTextAttachment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TokenTextAttachment.swift; sourceTree = "<group>"; };
 		1EE9DCB11B5F9A6D00E347DF /* TokenizedTextView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TokenizedTextView.swift; sourceTree = "<group>"; };
 		1EFB23DD1ACEDE5400244571 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = Base; path = Base.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		255D1EB12AFA2B1000378896 /* DeviceView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeviceView.swift; sourceTree = "<group>"; };
+		255D1EB22AFA2B1000378896 /* DeviceListView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeviceListView.swift; sourceTree = "<group>"; };
+		255D1EB32AFA2B1000378896 /* CertificateDetailsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CertificateDetailsView.swift; sourceTree = "<group>"; };
+		255D1EB42AFA2B1000378896 /* DeviceInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeviceInfo.swift; sourceTree = "<group>"; };
+		255D1EB52AFA2B1000378896 /* DeviceDetailsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeviceDetailsView.swift; sourceTree = "<group>"; };
 		2B56189E29A517E800D8CCCA /* SecurityTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = SecurityTests.xctestplan; sourceTree = "<group>"; };
 		2B6F6AB329ACC04A001BB36F /* AllTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = AllTests.xctestplan; sourceTree = "<group>"; };
 		4067991B29C88AB6001326B5 /* SecurityLevelViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecurityLevelViewTests.swift; sourceTree = "<group>"; };
@@ -4267,6 +4277,18 @@
 			path = TokenField;
 			sourceTree = "<group>";
 		};
+		255D1EB02AFA2B1000378896 /* DeviceView */ = {
+			isa = PBXGroup;
+			children = (
+				255D1EB12AFA2B1000378896 /* DeviceView.swift */,
+				255D1EB22AFA2B1000378896 /* DeviceListView.swift */,
+				255D1EB32AFA2B1000378896 /* CertificateDetailsView.swift */,
+				255D1EB42AFA2B1000378896 /* DeviceInfo.swift */,
+				255D1EB52AFA2B1000378896 /* DeviceDetailsView.swift */,
+			);
+			path = DeviceView;
+			sourceTree = "<group>";
+		};
 		2B56189C29A508E900D8CCCA /* TestPlans */ = {
 			isa = PBXGroup;
 			children = (
@@ -6163,6 +6185,7 @@
 				87DCF4951D34E9E600BB420F /* Location */,
 				87DCF4A01D34EA4500BB420F /* StartUI */,
 				87DCF47B1D34E9BA00BB420F /* ContactsUI */,
+				255D1EB02AFA2B1000378896 /* DeviceView */,
 			);
 			path = UserInterface;
 			sourceTree = "<group>";
@@ -8520,6 +8543,7 @@
 				551CD27822BA288B00EE9AE5 /* LegalHoldDisclosureController.swift in Sources */,
 				876B94821D7D8C870063AE89 /* UIView+SlideInState.swift in Sources */,
 				5E35F736217F417200D3F4FE /* BurstTimestampTableViewCell.swift in Sources */,
+				255D1EB82AFA2B1000378896 /* CertificateDetailsView.swift in Sources */,
 				D398BB202A14ED0900B6EEB8 /* ReactionsCollectionView.swift in Sources */,
 				E92D1B95285B773B00366AFC /* LabelStyle.swift in Sources */,
 				EE742AB8284DE66400A6B5F3 /* DeveloperToolsViewModel.swift in Sources */,
@@ -8541,6 +8565,7 @@
 				EF218AC520A9C123004977BF /* SettingsCellDescriptorFactory+DataUsagePermissions.swift in Sources */,
 				871BC35F1D34F94200DF0793 /* SettingsProperty.swift in Sources */,
 				87D56DF81E003D9300DFF722 /* CollectionsView.swift in Sources */,
+				255D1EB92AFA2B1000378896 /* DeviceInfo.swift in Sources */,
 				543DF685252DD7F0001F6EA6 /* NotificationObserver.swift in Sources */,
 				BFAF4CB91CEDE82400780537 /* NumberHelper.swift in Sources */,
 				5EFE9BFF21246483007932A6 /* RegistrationFinalErrorHandler.swift in Sources */,
@@ -9202,6 +9227,7 @@
 				A90E4ABF2381CD0200468F31 /* AccentColorChangeHandler.swift in Sources */,
 				EFDAC64722DE2AD100D63025 /* TeamImageView.swift in Sources */,
 				5E8FFC1021EE0CA60052DF03 /* AuthenticationButtonTapInputHandler.swift in Sources */,
+				255D1EBA2AFA2B1000378896 /* DeviceDetailsView.swift in Sources */,
 				A965F89C23DB29D8005209E1 /* ConversationInputBarSendController.swift in Sources */,
 				5E8DA74F211AEE3D00360979 /* AuthenticationCoordinatorAction.swift in Sources */,
 				E96C8831281706640003245E /* UIViewController+DynamicType.swift in Sources */,
@@ -9351,6 +9377,7 @@
 				8775BF212008CF3500A8AD93 /* ServiceView.swift in Sources */,
 				06C412B0239103910018866F /* ConversationInputBarViewController+DragAndDrop.swift in Sources */,
 				166390D61DC8AC0C00D7BF1C /* String+Image.swift in Sources */,
+				255D1EB62AFA2B1000378896 /* DeviceView.swift in Sources */,
 				A90E4AC42381EFCD00468F31 /* LegacyButton.swift in Sources */,
 				87DCF49B1D34E9E600BB420F /* LocationSelectionViewController.swift in Sources */,
 				871067431C0DC78F0035603B /* SettingsExternalScreenCellDescriptor.swift in Sources */,
@@ -9407,6 +9434,7 @@
 				BFAC71FE20A1CE0D002711C4 /* CallGridConfiguration.swift in Sources */,
 				D3A74DBD29432E8B00DD272F /* EstablishingCallStatusView.swift in Sources */,
 				EFDC36DC2257ACE800F916F3 /* StartUIInviteActionBar.swift in Sources */,
+				255D1EB72AFA2B1000378896 /* DeviceListView.swift in Sources */,
 				EFA145F6231EAEE50073BA5E /* ZClientViewController+SplitViewControllerDelegate.swift in Sources */,
 				637387CD26458EDB004FEF79 /* ScalableView.swift in Sources */,
 				87A540AA1E094BA3009028C5 /* CollectionCell.swift in Sources */,
