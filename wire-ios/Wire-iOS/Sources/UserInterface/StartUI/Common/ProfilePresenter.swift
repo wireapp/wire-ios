@@ -67,7 +67,7 @@ final class ProfilePresenter: NSObject, ViewControllerDismisser {
             assertionFailure("expected available 'user'!")
             return
         }
-        
+
         profileOpenedFromPeoplePicker = true
         viewToPresentOn = controller?.view
         controllerToPresentOn = controller

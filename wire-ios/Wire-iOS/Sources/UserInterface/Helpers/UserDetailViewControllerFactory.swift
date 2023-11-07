@@ -35,15 +35,14 @@ final class UserDetailViewControllerFactory {
                                                profileViewControllerDelegate: ProfileViewControllerDelegate,
                                                viewControllerDismisser: ViewControllerDismisser,
                                                userSession: UserSession) -> UIViewController {
+        guard let selfUser = SelfUser.provider?.providedSelfUser else {
+            assertionFailure("expected available 'viewer'!")
+            return UIViewController()
+        }
         guard user.isServiceUser, let serviceUser = user as? ServiceUser else {
-            guard let viewer = SelfUser.provider?.providedSelfUser else {
-                assertionFailure("expected available 'viewer'!")
-                return UIViewController()
-            }
-            
             let profileViewController = ProfileViewController(
                 user: user,
-                viewer: viewer,
+                viewer: selfUser,
                 conversation: conversation,
                 userSession: userSession
             )
@@ -51,10 +50,11 @@ final class UserDetailViewControllerFactory {
             profileViewController.viewControllerDismisser = viewControllerDismisser
             return profileViewController
         }
-        
+
         let serviceDetailViewController = ServiceDetailViewController(
             serviceUser: serviceUser,
             actionType: .removeService(conversation),
+            selfUser: selfUser,
             completion: nil
         )
         serviceDetailViewController.viewControllerDismisser = viewControllerDismisser

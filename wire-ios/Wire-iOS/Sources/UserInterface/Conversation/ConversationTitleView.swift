@@ -125,5 +125,5 @@ extension ConversationLike {
     var displayNameWithFallback: String {
         return displayName ?? L10n.Localizable.Profile.Details.Title.unavailable
     }
-    
+
 }

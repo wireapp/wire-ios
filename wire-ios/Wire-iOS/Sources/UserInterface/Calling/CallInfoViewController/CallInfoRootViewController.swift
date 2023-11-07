@@ -116,8 +116,13 @@ final class CallInfoRootViewController: UIViewController, UINavigationController
     }
 
     private func presentParticipantsList() {
+        guard let selfUser = ZMUser.selfUser() else {
+            assertionFailure("ZMUser.selfUser() is nil")
+            return
+        }
+
         context = .participants
-        let participantsList = CallParticipantsListViewController(scrollableWithConfiguration: configuration)
+        let participantsList = CallParticipantsListViewController(scrollableWithConfiguration: configuration, selfUser: selfUser)
         participantsViewController = participantsList
         contentNavigationController.pushViewController(participantsList, animated: true)
     }

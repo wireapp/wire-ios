@@ -218,7 +218,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
             if optionsSectionController.hasOptions {
                 sections.append(optionsSectionController)
             }
-            
+
             if conversation.teamRemoteIdentifier != nil &&
                 user.canModifyReadReceiptSettings(in: conversation) {
                 let receiptOptionsSectionController = ReceiptOptionsSectionController(
@@ -268,7 +268,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
                     shouldPerformAction action: GroupDetailsFooterView.Action) {
         switch action {
         case .invite:
-            let addParticipantsViewController = AddParticipantsViewController(conversation: conversation)
+            let addParticipantsViewController = AddParticipantsViewController(conversation: conversation, selfUser: userSession.selfUser)
             let navigationController = addParticipantsViewController.wrapInNavigationController(setBackgroundColor: true)
             navigationController.modalPresentationStyle = .currentContext
 

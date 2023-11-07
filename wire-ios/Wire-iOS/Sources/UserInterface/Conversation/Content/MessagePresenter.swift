@@ -200,7 +200,7 @@ final class MessagePresenter: NSObject {
 
         return imagesViewController(for: message,
                                     actionResponder: delegate,
-                                    isPreviewing: false, 
+                                    isPreviewing: false,
                                     userSession: userSession)
     }
 

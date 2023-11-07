@@ -60,7 +60,7 @@ extension ConversationActionController {
             assertionFailure("expected available 'user'!")
             return
         }
-        
+
         transitionToListAndEnqueue {
             if delete {
                 conversation.clearMessageHistory()

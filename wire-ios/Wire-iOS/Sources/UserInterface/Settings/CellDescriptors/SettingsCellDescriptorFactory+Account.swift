@@ -185,10 +185,14 @@ extension SettingsCellDescriptorFactory {
                 isDestructive: false,
                 presentationStyle: .navigation,
                 presentationAction: { () -> (UIViewController?) in
-                    return ChangeEmailViewController(user: ZMUser.selfUser(), userSession: userSession)
+                    guard let selfUser = ZMUser.selfUser() else {
+                        assertionFailure("ZMUser.selfUser() is nil")
+                        return .none
+                    }
+                    return ChangeEmailViewController(user: selfUser, userSession: userSession)
                 },
                 previewGenerator: { _ in
-                    if let email = ZMUser.selfUser().emailAddress, !email.isEmpty {
+                    if let email = ZMUser.selfUser()?.emailAddress, !email.isEmpty {
                         return SettingsCellPreview.text(email)
                     } else {
                         return SettingsCellPreview.text("self.add_email_password".localized)
@@ -202,7 +206,7 @@ extension SettingsCellDescriptorFactory {
     }
 
     func phoneElement() -> SettingsCellDescriptorType? {
-        if let phoneNumber = ZMUser.selfUser().phoneNumber, !phoneNumber.isEmpty {
+        if let phoneNumber = ZMUser.selfUser()?.phoneNumber, !phoneNumber.isEmpty {
             return textValueCellDescriptor(propertyName: .phone, enabled: false)
         } else {
             return nil
@@ -261,7 +265,7 @@ extension SettingsCellDescriptorFactory {
     func pictureElement() -> SettingsCellDescriptorType {
         let profileImagePicker = ProfileImagePickerManager()
         let previewGenerator: PreviewGeneratorType = { _ in
-            guard let image = ZMUser.selfUser().imageSmallProfileData.flatMap(UIImage.init) else { return .none }
+            guard let image = ZMUser.selfUser()?.imageSmallProfileData.flatMap(UIImage.init) else { return .none }
             return .image(image)
         }
 
@@ -279,7 +283,13 @@ extension SettingsCellDescriptorFactory {
     func colorElement() -> SettingsCellDescriptorType {
         return SettingsAppearanceCellDescriptor(
             text: L10n.Localizable.Self.Settings.AccountPictureGroup.color.capitalized,
-            previewGenerator: { _ in .color(ZMUser.selfUser().accentColor) },
+            previewGenerator: { _ in
+                guard let selfUser = ZMUser.selfUser() else {
+                    assertionFailure("ZMUser.selfUser() is nil")
+                    return .none
+                }
+                return .color(selfUser.accentColor)
+            },
             presentationStyle: .navigation,
             presentationAction: AccentColorPickerController.init)
     }
@@ -302,7 +312,11 @@ extension SettingsCellDescriptorFactory {
             isDestructive: false,
             presentationStyle: .navigation,
             presentationAction: {
-                if ZMUser.selfUser().hasValidEmail || ZMUser.selfUser()!.usesCompanyLogin {
+                guard let selfUser = ZMUser.selfUser() else {
+                    assertionFailure("ZMUser.selfUser() is nil")
+                    return .none
+                }
+                if selfUser.hasValidEmail || selfUser.usesCompanyLogin {
                     return BackupViewController.init(backupSource: SessionManager.shared!)
                 } else {
                     let alert = UIAlertController(
@@ -318,8 +332,7 @@ extension SettingsCellDescriptorFactory {
                     controller.present(alert, animated: true)
                     return nil
                 }
-        }
-        )
+        })
     }
 
     func dateUsagePermissionsElement(isTeamMember: Bool) -> SettingsCellDescriptorType {

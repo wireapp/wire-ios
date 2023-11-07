@@ -38,7 +38,7 @@ final class ConnectRequestsViewControllerSnapshotTests: BaseSnapshotTestCase {
         mockConnectionRequest.connectedUserType = mockUser
 
         userSession = UserSessionMock(mockUser: mockUser)
-        
+
         UIColor.setAccentOverride(.vividRed)
         sut = ConnectRequestsViewController(userSession: userSession)
 

@@ -40,7 +40,7 @@ extension Analytics {
                 }
             } else {
                 provider = AnalyticsProviderFactory.shared.analyticsProvider()
-                
+
                 if let user = SelfUser.provider?.providedSelfUser {
                     selfUser = user
                 } else {

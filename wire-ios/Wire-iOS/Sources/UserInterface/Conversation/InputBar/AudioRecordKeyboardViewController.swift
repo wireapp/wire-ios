@@ -71,7 +71,7 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
     private var currentEffectFilePath: String?
 
     private let userSession: UserSession
-    
+
     private var isAppLockActive: Bool {
         return userSession.isAppLockActive
     }
@@ -449,12 +449,16 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
             zmLog.error("No file to send")
             return
         }
+        guard let selfUser = ZMUser.selfUser() else {
+            assertionFailure("ZMUser.selfUser() is nil")
+            return
+        }
 
         button?.isEnabled = false
 
         let effectName = self.currentEffect == .none ? "Original" : self.currentEffect.description
 
-        let filename = String.filenameForSelfUser(suffix: "-" + effectName).appendingPathExtension("m4a")!
+        let filename = String.filename(for: selfUser, suffix: "-" + effectName).appendingPathExtension("m4a")!
         let convertedPath = (NSTemporaryDirectory() as NSString).appendingPathComponent(filename)
         convertedPath.deleteFileAtPath()
 

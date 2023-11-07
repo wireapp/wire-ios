@@ -131,8 +131,8 @@ final class UserCellTests: ZMSnapshotTestCase {
             assertionFailure("expected available 'user'!")
             return
         }
-        
-        var callParticipantState: CallParticipantState = .connected(videoState: .started, microphoneState: .unmuted)
+
+        let callParticipantState: CallParticipantState = .connected(videoState: .started, microphoneState: .unmuted)
         let config = CallParticipantsListCellConfiguration.callParticipant(user: HashBox(value: mockUser), callParticipantState: callParticipantState, activeSpeakerState: .inactive)
 
         sut = UserCell(frame: CGRect(x: 0, y: 0, width: 320, height: 56))
@@ -146,8 +146,8 @@ final class UserCellTests: ZMSnapshotTestCase {
             assertionFailure("expected available 'user'!")
             return
         }
-        
-        var callParticipantState: CallParticipantState = .connected(videoState: .screenSharing, microphoneState: .unmuted)
+
+        let callParticipantState: CallParticipantState = .connected(videoState: .screenSharing, microphoneState: .unmuted)
         let config = CallParticipantsListCellConfiguration.callParticipant(user: HashBox(value: mockUser), callParticipantState: callParticipantState, activeSpeakerState: .inactive)
         sut = UserCell(frame: CGRect(x: 0, y: 0, width: 320, height: 56))
         sut.configure(with: config, selfUser: user)

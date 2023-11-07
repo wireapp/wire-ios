@@ -99,6 +99,7 @@ final class AddParticipantsViewController: UIViewController, SpinnerCapable {
         case create(ConversationCreationValues)
     }
 
+    private let selfUser: UserType
     private let searchResultsViewController: SearchResultsViewController
     private let searchGroupSelector: SearchGroupSelector
     private let searchHeaderViewController: SearchHeaderViewController
@@ -132,8 +133,11 @@ final class AddParticipantsViewController: UIViewController, SpinnerCapable {
         fatalError("init(coder:) has not been implemented")
     }
 
-    convenience init(conversation: GroupDetailsConversationType) {
-        self.init(context: .add(conversation))
+    convenience init(
+        conversation: GroupDetailsConversationType,
+        selfUser: UserType
+    ) {
+        self.init(context: .add(conversation), selfUser: selfUser)
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -146,8 +150,10 @@ final class AddParticipantsViewController: UIViewController, SpinnerCapable {
     }
 
     init(context: Context,
+         selfUser: UserType,
          isFederationEnabled: Bool = BackendInfo.isFederationEnabled) {
 
+        self.selfUser = selfUser
         viewModel = AddParticipantsViewModel(with: context)
 
         collectionViewLayout = UICollectionViewFlowLayout()
@@ -175,6 +181,7 @@ final class AddParticipantsViewController: UIViewController, SpinnerCapable {
         searchGroupSelector = SearchGroupSelector()
 
         searchResultsViewController = SearchResultsViewController(userSelection: userSelection,
+                                                                  selfUser: selfUser,
                                                                   isAddingParticipants: true,
                                                                   shouldIncludeGuests: viewModel.context.includeGuests,
                                                                   isFederationEnabled: isFederationEnabled)
@@ -314,7 +321,7 @@ final class AddParticipantsViewController: UIViewController, SpinnerCapable {
                                                      participants: userSelection.users,
                                                      allowGuests: true,
                                                      allowServices: true,
-                                                     selfUser: ZMUser.selfUser())
+                                                     selfUser: selfUser)
             viewModel = AddParticipantsViewModel(with: .create(updated))
         }
 
@@ -465,10 +472,16 @@ extension AddParticipantsViewController: SearchResultsViewControllerDelegate {
     }
 
     func searchResultsViewController(_ searchResultsViewController: SearchResultsViewController, didTapOnSeviceUser user: ServiceUser) {
+        guard let selfUser = ZMUser.selfUser() else {
+            assertionFailure("ZMUser.selfUser() is nil")
+            return
+        }
+
         guard case let .add(conversation) = viewModel.context else { return }
         let detail = ServiceDetailViewController(
             serviceUser: user,
-            actionType: .addService(conversation as! ZMConversation)
+            actionType: .addService(conversation as! ZMConversation),
+            selfUser: selfUser
         ) { [weak self] result in
             guard let `self` = self, let result = result else { return }
             switch result {

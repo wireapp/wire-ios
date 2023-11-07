@@ -94,7 +94,7 @@ final class ZClientViewController: UIViewController {
         ])
 
         if let appGroupIdentifier = Bundle.main.appGroupIdentifier,
-           let remoteIdentifier = ZMUser.selfUser().remoteIdentifier {
+           let remoteIdentifier = userSession.selfUser.remoteIdentifier {
             let sharedContainerURL = FileManager.sharedContainerDirectory(for: appGroupIdentifier)
 
             _ = sharedContainerURL.appendingPathComponent("AccountData", isDirectory: true).appendingPathComponent(remoteIdentifier.uuidString, isDirectory: true)
@@ -163,7 +163,7 @@ final class ZClientViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         pendingInitialStateRestore = true
 
         view.backgroundColor = SemanticColors.View.backgroundDefault
@@ -651,7 +651,12 @@ final class ZClientViewController: UIViewController {
             clientListViewController.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(dismissClientListController(_:)))
             viewController = clientListViewController
         } else {
-            let profileViewController = ProfileViewController(user: user, viewer: ZMUser.selfUser(), context: .deviceList, userSession: userSession)
+            guard let selfUser = ZMUser.selfUser() else {
+                assertionFailure("ZMUser.selfUser() is nil")
+                return
+            }
+
+            let profileViewController = ProfileViewController(user: user, viewer: selfUser, context: .deviceList, userSession: userSession)
 
             if let conversationViewController = (conversationRootViewController as? ConversationRootViewController)?.conversationViewController {
                 profileViewController.delegate = conversationViewController

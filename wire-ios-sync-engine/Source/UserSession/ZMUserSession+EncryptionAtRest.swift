@@ -124,7 +124,6 @@ extension ZMUserSession: UserSessionEncryptionAtRestInterface {
         }
     }
 
-
 }
 
 extension ZMUserSession: EARServiceDelegate {

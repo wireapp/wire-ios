@@ -38,7 +38,12 @@ extension ZClientViewController {
     }
 
     public func showUserProfile(user: UserType) {
-        let profileViewController = ProfileViewController(user: user, viewer: ZMUser.selfUser(), context: .profileViewer, userSession: userSession)
+        guard let selfUser = ZMUser.selfUser() else {
+            assertionFailure("ZMUser.selfUser() is nil")
+            return
+        }
+
+        let profileViewController = ProfileViewController(user: user, viewer: selfUser, context: .profileViewer, userSession: userSession)
         profileViewController.delegate = self
 
         wrapInNavigationControllerAndPresent(viewController: profileViewController)

@@ -24,7 +24,11 @@ import WireSyncEngine
 extension SelfProfileViewController {
 
     func presentNewLoginAlertControllerIfNeeded() -> Bool {
-        let clientsRequiringUserAttention = ZMUser.selfUser().clientsRequiringUserAttention
+        guard let selfUser = ZMUser.selfUser() else {
+            assertionFailure("ZMUser.selfUser() is nil")
+            return false
+        }
+        let clientsRequiringUserAttention = selfUser.clientsRequiringUserAttention
 
         if clientsRequiringUserAttention.count > 0 {
             self.presentNewLoginAlertController(clientsRequiringUserAttention)

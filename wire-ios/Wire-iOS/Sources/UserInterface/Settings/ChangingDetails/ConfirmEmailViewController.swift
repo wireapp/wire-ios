@@ -88,7 +88,12 @@ final class ConfirmEmailViewController: SettingsBaseTableViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        observer = userSession.addUserObserver(self, for: ZMUser.selfUser())
+        guard let selfUser = ZMUser.selfUser() else {
+            assertionFailure("ZMUser.selfUser() is nil")
+            return
+        }
+
+        observer = userSession.addUserObserver(self, for: selfUser)
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -155,7 +160,12 @@ extension ConfirmEmailViewController: ZMUserObserver {
         if note.user.isSelfUser {
             // we need to check if the notification really happened because
             // the email got changed to what we expected
-            if let currentEmail = ZMUser.selfUser().emailAddress, currentEmail == newEmail {
+            guard let selfUser = ZMUser.selfUser() else {
+                assertionFailure("ZMUser.selfUser() is nil")
+                return
+            }
+
+            if let currentEmail = selfUser.emailAddress, currentEmail == newEmail {
                 delegate?.didConfirmEmail(inController: self)
             }
         }
