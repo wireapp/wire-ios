@@ -408,6 +408,8 @@ extension AppRootRouter {
         userSession: UserSession,
         isComingFromRegistration: Bool
     ) -> AuthenticatedRouter? {
+        guard let userSession = ZMUserSession.shared() else { return  nil }
+
         let isTeamMember: Bool
         if let user = SelfUser.provider?.providedSelfUser {
             isTeamMember = user.isTeamMember
@@ -424,7 +426,7 @@ extension AppRootRouter {
             userSession: userSession,
             isComingFromRegistration: isComingFromRegistration,
             needToShowDataUsagePermissionDialog: needToShowDialog,
-            featureRepositoryProvider: ZMUserSession.shared()!
+            featureRepositoryProvider: userSession
         )
     }
 }
