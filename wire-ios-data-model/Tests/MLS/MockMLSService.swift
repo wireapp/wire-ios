@@ -255,5 +255,17 @@ class MockMLSService: MLSServiceInterface {
             return
         }
         mock(groupID)
+	}
+
+    // MARK: - Migration
+
+    typealias StartProteusToMLSMigrationMock = () -> Void
+    var startProteusToMLSMigrationMock: StartProteusToMLSMigrationMock?
+
+    func startProteusToMLSMigration() {
+        guard let mock = startProteusToMLSMigrationMock else {
+            return
+        }
+        mock()
     }
 }

@@ -95,6 +95,7 @@ public class ZMUserSession: NSObject {
     // let hotFixApplicator = PatchApplicator<HotfixPatch>(lastRunVersionKey: "lastRunHotFixVersion")
     var accessTokenRenewalObserver: AccessTokenRenewalObserver?
     var recurringActionService: RecurringActionServiceInterface = RecurringActionService()
+    let proteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
 
     public var syncStatus: SyncStatusProtocol? {
         return applicationStatusDirectory?.syncStatus
@@ -250,7 +251,8 @@ public class ZMUserSession: NSObject {
         coreDataStack: CoreDataStack,
         configuration: Configuration,
         earService: EARServiceInterface? = nil,
-        sharedUserDefaults: UserDefaults
+        sharedUserDefaults: UserDefaults,
+        proteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating? = nil
     ) {
         coreDataStack.syncContext.performGroupedBlockAndWait {
             coreDataStack.syncContext.analytics = analytics
@@ -288,6 +290,11 @@ public class ZMUserSession: NSObject {
         self.lastEventIDRepository = LastEventIDRepository(
             userID: userId,
             sharedUserDefaults: sharedUserDefaults
+        )
+
+        self.proteusToMLSMigrationCoordinator = proteusToMLSMigrationCoordinator ?? ProteusToMLSMigrationCoordinator(
+            context: coreDataStack.syncContext,
+            userID: userId
         )
 
         super.init()
@@ -436,6 +443,7 @@ public class ZMUserSession: NSObject {
     private func configureRecurringActions() {
         recurringActionService.registerAction(refreshUsersMissingMetadata())
         recurringActionService.registerAction(refreshConversationsMissingMetadata())
+        recurringActionService.registerAction(updateProteusToMLSMigrationStatus())
     }
 
     func startRequestLoopTracker() {

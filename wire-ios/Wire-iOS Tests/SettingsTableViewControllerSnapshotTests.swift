@@ -55,6 +55,7 @@ final class SettingsTableViewControllerSnapshotTests: ZMSnapshotTestCase {
         selfUser = nil
         SelfUser.provider = nil
         Settings.shared.reset()
+        BackendInfo.storage = .standard
         BackendInfo.isFederationEnabled = false
         super.tearDown()
 	}
