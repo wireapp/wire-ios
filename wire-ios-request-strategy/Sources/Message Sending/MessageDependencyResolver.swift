@@ -27,7 +27,6 @@ public enum MessageDependencyResolverError: Error, Equatable {
     case securityLevelDegraded
 }
 
-// swiftlint:disable for_where
 public class MessageDependencyResolver: MessageDependencyResolverInterface {
 
     public init(context: NSManagedObjectContext) {
@@ -71,14 +70,15 @@ public class MessageDependencyResolver: MessageDependencyResolverInterface {
                     return
                 }
 
+                // swiftlint:disable for_where
                 for await _ in NotificationCenter.default.notifications(named: .requestAvailableNotification) {
                     if try await dependenciesAreResolved() {
                         continuation.resume()
                         break
                     }
                 }
+                // swiftlint:enable for_where
             }
         }
     }
 }
-// swiftlint:enable for_where
