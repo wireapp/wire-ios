@@ -6,24 +6,15 @@ import PackageDescription
 let package = Package(
     name: "Scripts",
     products: [
-        .plugin(
-            name: "RunSwiftLint",
-            targets: ["RunSwiftLint"]),
+        .library(name: "Dummy", targets: ["Dummy"])
     ],
     dependencies: [
         .package(url: "https://github.com/realm/SwiftLint.git", exact: "0.53.0"),
     ],
     targets: [
-        .plugin(
-            name: "RunSwiftLint",
-            capability: .command(
-                intent: .custom(
-                    verb: "run-swiftlint",
-                    description: "prints code style and conventions related warnings and errors"
-                )
-            ),
-            dependencies: [/*"SwiftLint"*/],
-            sources: ["RunSwiftLint.swift"]
-        ),
+        .target(
+            name: "Dummy",
+            plugins: [.plugin(name: "SwiftLintPlugin", package: "SwiftLint")]
+        )
     ]
 )
