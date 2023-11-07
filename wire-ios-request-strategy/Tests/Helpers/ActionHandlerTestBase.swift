@@ -43,7 +43,7 @@ class ActionHandlerTestBase<Action: EntityAction, Handler: ActionHandler<Action>
         expectedMethod: ZMTransportRequestMethod,
         expectedAcceptType: ZMTransportAccept? = nil,
         apiVersion: APIVersion = .v1
-    ) throws -> ZMTransportRequest{
+    ) throws -> ZMTransportRequest {
         // Given
         let sut = Handler(context: syncMOC)
 

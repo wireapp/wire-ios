@@ -53,10 +53,6 @@ class IdentifierObjectSyncTests: ZMTBaseTest {
         sut = IdentifierObjectSync(managedObjectContext: moc, transcoder: transcoder)
     }
 
-    override func tearDown() {
-        super.tearDown()
-    }
-
     func testThatItAsksTranscoderForRequestToSyncIdentifier() {
         // given
         let uuid = UUID()

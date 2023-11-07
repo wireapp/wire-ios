@@ -412,7 +412,7 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
     private func presentNotificationsOptions(from targetView: UIView) {
         guard let conversation = viewModel.conversation else { return }
 
-        let title = "\(conversation.displayName) • \(NotificationResult.title)"
+        let title = "\(conversation.displayNameWithFallback) • \(NotificationResult.title)"
         let controller = UIAlertController(title: title, message: nil, preferredStyle: .actionSheet)
         NotificationResult.allCases.map { $0.action(for: conversation, handler: viewModel.handleNotificationResult) }.forEach(controller.addAction)
         presentAlert(controller, targetView: targetView)

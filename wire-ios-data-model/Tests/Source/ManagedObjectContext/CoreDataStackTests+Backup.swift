@@ -187,8 +187,8 @@ class CoreDataStackTests_Backup: DatabaseBaseTest {
         switch error as? CoreDataStack.BackupError {
         case .failedToWrite(let failureError):
             switch failureError as? CoreDataStack.BackupError {
-            case .missingEAREncryptionKey: break
-            default: XCTFail("unexpected error type")
+        case .missingEAREncryptionKey: break
+        default: XCTFail("unexpected error type")
         }
         default: XCTFail("unexpected error type")
         }

@@ -78,7 +78,7 @@ enum NotificationResult: CaseIterable {
 extension ConversationActionController {
 
     func requestNotificationResult(for conversation: ZMConversation, handler: @escaping (NotificationResult) -> Void) {
-        let title = "\(conversation.displayName) • \(NotificationResult.title)"
+        let title = "\(conversation.displayNameWithFallback) • \(NotificationResult.title)"
         let controller = UIAlertController(title: title, message: nil, preferredStyle: .actionSheet)
         NotificationResult.allCases.map { $0.action(for: conversation, handler: handler) }.forEach(controller.addAction)
         present(controller)

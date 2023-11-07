@@ -61,10 +61,6 @@ final class FolderPickerViewController: UIViewController {
         configureConstraints()
     }
 
-    override public func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-    }
-
     private func configureNavbar() {
         let navigationTitleLabel = DynamicFontLabel(
             text: L10n.Localizable.Folder.Picker.title.capitalized,

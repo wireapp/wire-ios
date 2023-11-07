@@ -24,10 +24,6 @@ final class ConfirmAssetViewControllerTests: BaseSnapshotTestCase {
 
     var sut: ConfirmAssetViewController!
 
-    override func setUp() {
-        super.setUp()
-    }
-
     override func tearDown() {
         sut = nil
         super.tearDown()

@@ -48,7 +48,7 @@ public final class MissingClientsRequestStrategy: AbstractRequestStrategy, ZMUps
         let modifiedPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
             baseModifiedPredicate,
             missingClientsPredicate
-            ])
+        ])
         return modifiedPredicate
     }
 
@@ -72,7 +72,7 @@ public final class MissingClientsRequestStrategy: AbstractRequestStrategy, ZMUps
 
         var keysToSync = keys
         if keys.contains(ZMUserClientMissingKey),
-            let client = managedObject as? UserClient, (client.missingClients == nil || client.missingClients?.count == 0) {
+           let client = managedObject as? UserClient, client.missingClients == nil || client.missingClients?.count == 0 {
             let userClientMissingKeySet: Set<AnyHashable> = [ZMUserClientMissingKey]
             let clientSet: Set<NSManagedObject> = [client]
             keysToSync.remove(ZMUserClientMissingKey)
@@ -128,7 +128,7 @@ public final class MissingClientsRequestStrategy: AbstractRequestStrategy, ZMUps
         if keysToParse.contains(ZMUserClientMissingKey) {
             switch apiVersion {
             case .v0:
-                guard 
+                guard
                     let rawData = response.rawData,
                     let prekeys = Payload.PrekeyByUserID(rawData),
                     let selfClient = ZMUser.selfUser(in: managedObjectContext).selfClient()
@@ -143,7 +143,7 @@ public final class MissingClientsRequestStrategy: AbstractRequestStrategy, ZMUps
                 )
 
             case .v1, .v2, .v3:
-                guard 
+                guard
                     let rawData = response.rawData,
                     let prekeys = Payload.PrekeyByQualifiedUserID(rawData),
                     let selfClient = ZMUser.selfUser(in: managedObjectContext).selfClient()

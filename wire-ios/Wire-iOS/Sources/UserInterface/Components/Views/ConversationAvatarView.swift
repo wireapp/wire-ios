@@ -166,7 +166,7 @@ final class ConversationAvatarView: UIView {
                 return
             }
 
-            accessibilityLabel = "Avatar for \(conversation.displayName)"
+            accessibilityLabel = "Avatar for \(conversation.displayNameWithFallback)"
 
             let usersOnAvatar: [UserType]
             let stableRandomParticipants = conversation.stableRandomParticipants.filter { !$0.isSelfUser }

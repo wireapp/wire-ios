@@ -36,10 +36,6 @@ class MessageActionsViewController: UIAlertController {
 
     private var actionController: ConversationMessageActionController?
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
-    }
-
     private func addMessageActions(_ actions: [MessageAction],
                                    withActionController actionController: ConversationMessageActionController) {
         self.actionController = actionController
