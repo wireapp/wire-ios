@@ -410,7 +410,7 @@ extension AppRootRouter {
     ) -> AuthenticatedRouter? {
         guard let userSession = ZMUserSession.shared() else { return  nil }
 
-      let isTeamMember: Bool
+        let isTeamMember: Bool
         if let user = SelfUser.provider?.providedSelfUser {
             isTeamMember = user.isTeamMember
         } else {
