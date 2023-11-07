@@ -70,7 +70,7 @@ final class MessageSendingStatusPayloadProcessor {
         for (_, userClients) in missingClients {
             userClients.forEach({ $0.discoveredByMessage = message as? ZMOTRMessage })
             message.registersNewMissingClients(Set(userClients))
-            message.conversation?.decreaseSecurityLevelIfNeededAfterDiscovering(clients: Set(userClients), causedBy: nil)
+            message.conversation?.decreaseSecurityLevelIfNeededAfterDiscovering(clients: Set(userClients), causedBy: message as? ZMOTRMessage)
         }
 
         let failedToConfirmUsers = payload.failedToConfirm.fetchUsers(in: message.context)

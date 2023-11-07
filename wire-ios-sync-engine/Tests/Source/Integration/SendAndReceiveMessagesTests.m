@@ -338,6 +338,7 @@
     [self performIgnoringZMLogError:^{
         [self.mockTransportSession completeAllBlockedRequests];
     }];
+    WaitForAllGroupsToBeEmpty(0.5);
 }
 
 - (void)testThatSystemEventsAreAddedToAConversationWhenTheyAreGeneratedRemotely
