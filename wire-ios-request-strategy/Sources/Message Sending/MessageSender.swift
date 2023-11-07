@@ -198,6 +198,7 @@ public class MessageSender: MessageSenderInterface {
                 from: messageSendingStatus,
                 for: message
             )
+            managedObjectContext.enqueueDelayedSave()
 
             if message.isExpired {
                 return .failure(MessageSendError.messageExpired)
