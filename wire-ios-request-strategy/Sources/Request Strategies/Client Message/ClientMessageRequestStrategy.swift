@@ -117,27 +117,23 @@ extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
         // Enter groups to enable waiting for message sending to complete in tests
         let groups = managedObjectContext.enterAllGroupsExceptSecondary()
         Task {
-            let result = await messageSender?.sendMessage(message: object) ?? .success(Void())
-
-            managedObjectContext.performAndWait {
-                switch result {
-                case .success:
+            do {
+                try await messageSender?.sendMessage(message: object)
+                await managedObjectContext.perform {
                     WireLogger.messaging.debug("successfully sent message \(object.debugInfo)")
                     object.markAsSent()
-                    deleteMessageIfNecessary(object)
-
-                case .failure(let error):
+                    self.deleteMessageIfNecessary(object)
+                }
+            } catch {
+                await managedObjectContext.perform {
                     WireLogger.messaging.error("failed to send message \(object.debugInfo): \(error)")
 
                     object.expire()
-                    localNotificationDispatcher.didFailToSend(object)
+                    self.localNotificationDispatcher.didFailToSend(object)
 
-                    if
-                        case .networkError(let networkError) = error,
-                        case .invalidRequestError(let responseFailure, _) = networkError,
-                        responseFailure.label == .missingLegalholdConsent
-                    {
-                        managedObjectContext.zm_userInterface.performGroupedBlock {
+                    if case NetworkError.invalidRequestError(let responseFailure, _) = error,
+                       responseFailure.label == .missingLegalholdConsent {
+                        self.managedObjectContext.zm_userInterface.performGroupedBlock {
                             NotificationInContext(
                                 name: ZMConversation.failedToSendMessageNotificationName,
                                 context: self.managedObjectContext.notificationContext
@@ -145,8 +141,11 @@ extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
                         }
                     }
                 }
-                messageExpirationTimer.stop(for: object)
-                managedObjectContext.enqueueDelayedSave()
+            }
+
+            await managedObjectContext.perform {
+                self.messageExpirationTimer.stop(for: object)
+                self.managedObjectContext.enqueueDelayedSave()
             }
 
             completion()

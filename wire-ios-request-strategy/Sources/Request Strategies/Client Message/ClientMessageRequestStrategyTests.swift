@@ -103,7 +103,7 @@ extension ClientMessageRequestStrategyTests {
 
             // WHEN
             self.syncMOC.saveOrRollback()
-            self.mockMessageSender.sendMessageMessage_MockValue = .success(Void())
+            self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
             self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([message])) }
 
             // THEN
@@ -119,7 +119,7 @@ extension ClientMessageRequestStrategyTests {
 
             confirmationMessage = try! self.oneToOneConversation.appendClientMessage(with: GenericMessage(content: Confirmation(messageId: UUID(), type: .delivered)))
             self.syncMOC.saveOrRollback()
-            self.mockMessageSender.sendMessageMessage_MockValue = .success(Void())
+            self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
 
             // WHEN
             self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([confirmationMessage])) }
@@ -143,12 +143,12 @@ extension ClientMessageRequestStrategyTests {
             label: .missingLegalholdConsent,
             message: "",
             data: nil)
-        let failure = MessageSendError.networkError(NetworkError.invalidRequestError(missingLegalholdConsentFailure, response))
+        let failure = NetworkError.invalidRequestError(missingLegalholdConsentFailure, response)
         self.syncMOC.performGroupedBlockAndWait {
 
             confirmationMessage = try! self.oneToOneConversation.appendClientMessage(with: GenericMessage(content: Confirmation(messageId: UUID(), type: .delivered)))
             self.syncMOC.saveOrRollback()
-            self.mockMessageSender.sendMessageMessage_MockValue = .failure(failure)
+            self.mockMessageSender.sendMessageMessage_MockError = failure
 
             // WHEN
             self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([confirmationMessage])) }

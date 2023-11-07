@@ -29,11 +29,10 @@ final class SessionEstablisherTests: MessagingTestBase {
             .withFetchPrekeyAPI(returning: .failure(.errorDecodingResponse(response)))
             .arrange()
 
-        // when
-        let result = await sessionEstablisher.establishSession(with: Set(arrayLiteral: clientID), apiVersion: .v0)
-
         // then
-        assertFailure(result: result, expectedFailure: SessionEstablisherError.networkError(networkError))
+        await assertItThrows(error: networkError) {
+            try await sessionEstablisher.establishSession(with: Set(arrayLiteral: clientID), apiVersion: .v0)
+        }
     }
 
     func testThatErrorIsPropagated_whenSelfClientHasNotBeenCreated() async throws {
@@ -46,11 +45,10 @@ final class SessionEstablisherTests: MessagingTestBase {
         let (_, sessionEstablisher) = Arrangement(coreDataStack: coreDataStack)
             .arrange()
 
-        // when
-        let result = await sessionEstablisher.establishSession(with: Set(arrayLiteral: clientID), apiVersion: .v0)
-
         // then
-        assertFailure(result: result, expectedFailure: SessionEstablisherError.missingSelfClient)
+        await assertItThrows(error: SessionEstablisherError.missingSelfClient) {
+            try await sessionEstablisher.establishSession(with: Set(arrayLiteral: clientID), apiVersion: .v0)
+        }
     }
 
     func testThatPrekeysAreFetched_whenEstablishingSession() async throws {
@@ -62,10 +60,9 @@ final class SessionEstablisherTests: MessagingTestBase {
             .arrange()
 
         // when
-        let result = await sessionEstablisher.establishSession(with: Set(arrayLiteral: clientID), apiVersion: .v0)
+        try await sessionEstablisher.establishSession(with: Set(arrayLiteral: clientID), apiVersion: .v0)
 
         // then
-        assertSuccess(result: result)
         XCTAssertEqual([Set(arrayLiteral: clientID)], arrangement.prekeyApi.fetchPrekeysFor_Invocations)
     }
 
@@ -82,10 +79,9 @@ final class SessionEstablisherTests: MessagingTestBase {
             .arrange()
 
         // when
-        let result = await sessionEstablisher.establishSession(with: Set(clientIDs), apiVersion: .v0)
+        try await sessionEstablisher.establishSession(with: Set(clientIDs), apiVersion: .v0)
 
         // then
-        assertSuccess(result: result)
         XCTAssertEqual(2, arrangement.prekeyApi.fetchPrekeysFor_Invocations.count)
     }
 
@@ -97,7 +93,7 @@ final class SessionEstablisherTests: MessagingTestBase {
             .arrange()
 
         // when
-        _ = await sessionEstablisher.establishSession(with: Set(arrayLiteral: Arrangement.Scaffolding.clientID), apiVersion: .v0)
+        try await sessionEstablisher.establishSession(with: Set(arrayLiteral: Arrangement.Scaffolding.clientID), apiVersion: .v0)
 
         // then
         XCTAssertEqual(1, arrangement.processor.establishSessionsFromWithContext_Invocations.count)
@@ -124,7 +120,12 @@ final class SessionEstablisherTests: MessagingTestBase {
         }
 
         func withFetchPrekeyAPI(returning result: Swift.Result<Payload.PrekeyByQualifiedUserID, NetworkError>) -> Arrangement {
-            prekeyApi.fetchPrekeysFor_MockValue = result
+            switch result {
+            case.success(let payload):
+                prekeyApi.fetchPrekeysFor_MockValue = payload
+            case .failure(let error):
+                prekeyApi.fetchPrekeysFor_MockError = error
+            }
             return self
         }
 
