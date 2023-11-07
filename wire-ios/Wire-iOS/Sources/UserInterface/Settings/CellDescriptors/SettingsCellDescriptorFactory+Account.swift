@@ -306,7 +306,8 @@ extension SettingsCellDescriptorFactory {
             isDestructive: false,
             presentationStyle: .navigation,
             presentationAction: {
-                if ZMUser.selfUser()?.hasValidEmail == true || ZMUser.selfUser()!.usesCompanyLogin {
+                guard let selfUser = ZMUser.selfUser() else { assertionFailure("ZMUser.selfUser() is nil"); return .none }
+                if selfUser.hasValidEmail || selfUser.usesCompanyLogin {
                     return BackupViewController.init(backupSource: SessionManager.shared!)
                 } else {
                     let alert = UIAlertController(
@@ -322,8 +323,7 @@ extension SettingsCellDescriptorFactory {
                     controller.present(alert, animated: true)
                     return nil
                 }
-        }
-        )
+        })
     }
 
     func dateUsagePermissionsElement(isTeamMember: Bool) -> SettingsCellDescriptorType {
