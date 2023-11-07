@@ -143,6 +143,11 @@ extension ConversationContentViewController {
             userSession.perform {
                 message.react(reaction)
             }
+        case .visitLink(let path):
+            if let url = URL(string: path),
+                UIApplication.shared.canOpenURL(url) {
+                UIApplication.shared.open(url)
+            }
         }
     }
 
