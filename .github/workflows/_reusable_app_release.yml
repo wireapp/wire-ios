@@ -88,7 +88,7 @@ jobs:
           path: ./CHANGELOG.md
 
   build_and_release:
-    runs-on: ghcr.io/cirruslabs/macos-sonoma-xcode:15
+    runs-on: ghcr.io/cirruslabs/macos-sonoma-xcode:15.0.1
     needs: changelog
     env:
       KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
