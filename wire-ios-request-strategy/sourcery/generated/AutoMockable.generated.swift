@@ -87,14 +87,19 @@ public class MockMessageAPI: MessageAPI {
     // MARK: - sendProteusMessage
 
     public var sendProteusMessageMessageConversationID_Invocations: [(message: any ProteusMessage, conversationID: QualifiedID)] = []
-    public var sendProteusMessageMessageConversationID_MockMethod: ((any ProteusMessage, QualifiedID) async -> Swift.Result<(Payload.MessageSendingStatus, ZMTransportResponse), NetworkError>)?
-    public var sendProteusMessageMessageConversationID_MockValue: Swift.Result<(Payload.MessageSendingStatus, ZMTransportResponse), NetworkError>?
+    public var sendProteusMessageMessageConversationID_MockError: Error?
+    public var sendProteusMessageMessageConversationID_MockMethod: ((any ProteusMessage, QualifiedID) async throws -> (Payload.MessageSendingStatus, ZMTransportResponse))?
+    public var sendProteusMessageMessageConversationID_MockValue: (Payload.MessageSendingStatus, ZMTransportResponse)?
 
-    public func sendProteusMessage(message: any ProteusMessage, conversationID: QualifiedID) async -> Swift.Result<(Payload.MessageSendingStatus, ZMTransportResponse), NetworkError> {
+    public func sendProteusMessage(message: any ProteusMessage, conversationID: QualifiedID) async throws -> (Payload.MessageSendingStatus, ZMTransportResponse) {
         sendProteusMessageMessageConversationID_Invocations.append((message: message, conversationID: conversationID))
 
+        if let error = sendProteusMessageMessageConversationID_MockError {
+            throw error
+        }
+
         if let mock = sendProteusMessageMessageConversationID_MockMethod {
-            return await mock(message, conversationID)
+            return try await mock(message, conversationID)
         } else if let mock = sendProteusMessageMessageConversationID_MockValue {
             return mock
         } else {
@@ -113,19 +118,21 @@ public class MockMessageDependencyResolverInterface: MessageDependencyResolverIn
     // MARK: - waitForDependenciesToResolve
 
     public var waitForDependenciesToResolveFor_Invocations: [any SendableMessage] = []
-    public var waitForDependenciesToResolveFor_MockMethod: ((any SendableMessage) async -> Swift.Result<Void, MessageDependencyResolverError>)?
-    public var waitForDependenciesToResolveFor_MockValue: Swift.Result<Void, MessageDependencyResolverError>?
+    public var waitForDependenciesToResolveFor_MockError: Error?
+    public var waitForDependenciesToResolveFor_MockMethod: ((any SendableMessage) async throws -> Void)?
 
-    public func waitForDependenciesToResolve(for message: any SendableMessage) async -> Swift.Result<Void, MessageDependencyResolverError> {
+    public func waitForDependenciesToResolve(for message: any SendableMessage) async throws {
         waitForDependenciesToResolveFor_Invocations.append(message)
 
-        if let mock = waitForDependenciesToResolveFor_MockMethod {
-            return await mock(message)
-        } else if let mock = waitForDependenciesToResolveFor_MockValue {
-            return mock
-        } else {
+        if let error = waitForDependenciesToResolveFor_MockError {
+            throw error
+        }
+
+        guard let mock = waitForDependenciesToResolveFor_MockMethod else {
             fatalError("no mock for `waitForDependenciesToResolveFor`")
         }
+
+        try await mock(message)            
     }
 
 }
@@ -139,19 +146,21 @@ public class MockMessageSenderInterface: MessageSenderInterface {
     // MARK: - sendMessage
 
     public var sendMessageMessage_Invocations: [any SendableMessage] = []
-    public var sendMessageMessage_MockMethod: ((any SendableMessage) async -> Swift.Result<Void, MessageSendError>)?
-    public var sendMessageMessage_MockValue: Swift.Result<Void, MessageSendError>?
+    public var sendMessageMessage_MockError: Error?
+    public var sendMessageMessage_MockMethod: ((any SendableMessage) async throws -> Void)?
 
-    public func sendMessage(message: any SendableMessage) async -> Swift.Result<Void, MessageSendError> {
+    public func sendMessage(message: any SendableMessage) async throws {
         sendMessageMessage_Invocations.append(message)
 
-        if let mock = sendMessageMessage_MockMethod {
-            return await mock(message)
-        } else if let mock = sendMessageMessage_MockValue {
-            return mock
-        } else {
+        if let error = sendMessageMessage_MockError {
+            throw error
+        }
+
+        guard let mock = sendMessageMessage_MockMethod else {
             fatalError("no mock for `sendMessageMessage`")
         }
+
+        try await mock(message)            
     }
 
 }
@@ -165,14 +174,19 @@ public class MockPrekeyAPI: PrekeyAPI {
     // MARK: - fetchPrekeys
 
     public var fetchPrekeysFor_Invocations: [Set<QualifiedClientID>] = []
-    public var fetchPrekeysFor_MockMethod: ((Set<QualifiedClientID>) async -> Swift.Result<Payload.PrekeyByQualifiedUserID, NetworkError>)?
-    public var fetchPrekeysFor_MockValue: Swift.Result<Payload.PrekeyByQualifiedUserID, NetworkError>?
+    public var fetchPrekeysFor_MockError: Error?
+    public var fetchPrekeysFor_MockMethod: ((Set<QualifiedClientID>) async throws -> Payload.PrekeyByQualifiedUserID)?
+    public var fetchPrekeysFor_MockValue: Payload.PrekeyByQualifiedUserID?
 
-    public func fetchPrekeys(for clients: Set<QualifiedClientID>) async -> Swift.Result<Payload.PrekeyByQualifiedUserID, NetworkError> {
+    public func fetchPrekeys(for clients: Set<QualifiedClientID>) async throws -> Payload.PrekeyByQualifiedUserID {
         fetchPrekeysFor_Invocations.append(clients)
 
+        if let error = fetchPrekeysFor_MockError {
+            throw error
+        }
+
         if let mock = fetchPrekeysFor_MockMethod {
-            return await mock(clients)
+            return try await mock(clients)
         } else if let mock = fetchPrekeysFor_MockValue {
             return mock
         } else {
@@ -217,19 +231,21 @@ public class MockSessionEstablisherInterface: SessionEstablisherInterface {
     // MARK: - establishSession
 
     public var establishSessionWithApiVersion_Invocations: [(clients: Set<QualifiedClientID>, apiVersion: APIVersion)] = []
-    public var establishSessionWithApiVersion_MockMethod: ((Set<QualifiedClientID>, APIVersion) async -> Swift.Result<Void, SessionEstablisherError>)?
-    public var establishSessionWithApiVersion_MockValue: Swift.Result<Void, SessionEstablisherError>?
+    public var establishSessionWithApiVersion_MockError: Error?
+    public var establishSessionWithApiVersion_MockMethod: ((Set<QualifiedClientID>, APIVersion) async throws -> Void)?
 
-    public func establishSession(with clients: Set<QualifiedClientID>, apiVersion: APIVersion) async -> Swift.Result<Void, SessionEstablisherError> {
+    public func establishSession(with clients: Set<QualifiedClientID>, apiVersion: APIVersion) async throws {
         establishSessionWithApiVersion_Invocations.append((clients: clients, apiVersion: apiVersion))
 
-        if let mock = establishSessionWithApiVersion_MockMethod {
-            return await mock(clients, apiVersion)
-        } else if let mock = establishSessionWithApiVersion_MockValue {
-            return mock
-        } else {
+        if let error = establishSessionWithApiVersion_MockError {
+            throw error
+        }
+
+        guard let mock = establishSessionWithApiVersion_MockMethod else {
             fatalError("no mock for `establishSessionWithApiVersion`")
         }
+
+        try await mock(clients, apiVersion)            
     }
 
 }

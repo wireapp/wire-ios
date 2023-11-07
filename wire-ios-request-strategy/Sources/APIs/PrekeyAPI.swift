@@ -21,7 +21,7 @@ import Foundation
 // sourcery: AutoMockable
 public protocol PrekeyAPI {
 
-    func fetchPrekeys(for clients: Set<QualifiedClientID>) async -> Swift.Result<Payload.PrekeyByQualifiedUserID, NetworkError>
+    func fetchPrekeys(for clients: Set<QualifiedClientID>) async throws -> Payload.PrekeyByQualifiedUserID
 
 }
 
@@ -44,12 +44,12 @@ class PrekeyAPIV0: PrekeyAPI {
     let httpClient: HttpClient
     let defaultEncoder = JSONEncoder.defaultEncoder
 
-    func fetchPrekeys(for clients: Set<QualifiedClientID>) async -> Swift.Result<Payload.PrekeyByQualifiedUserID, NetworkError> {
+    func fetchPrekeys(for clients: Set<QualifiedClientID>) async throws -> Payload.PrekeyByQualifiedUserID {
         guard
             let payloadData = clients.clientListByUserID.payloadData(encoder: defaultEncoder),
             let payloadAsString = String(bytes: payloadData, encoding: .utf8)
         else {
-            return .failure(NetworkError.errorEncodingRequest)
+            throw NetworkError.errorEncodingRequest
         }
 
         let request = ZMTransportRequest(path: "/users/prekeys",
@@ -58,11 +58,8 @@ class PrekeyAPIV0: PrekeyAPI {
                                          apiVersion: apiVersion.rawValue)
 
         let response = await httpClient.send(request)
-        let result: Swift.Result<Payload.PrekeyByUserID, NetworkError> = mapResponse(response)
-
-        return result.map { payload in
-            payload.toPrekeyByQualifiedUserID(domain: "")
-        }
+        let result: Payload.PrekeyByUserID = try mapResponse(response)
+        return result.toPrekeyByQualifiedUserID(domain: "")
     }
 }
 
@@ -71,12 +68,12 @@ class PrekeyAPIV1: PrekeyAPIV0 {
         return .v1
     }
 
-    override func fetchPrekeys(for clients: Set<QualifiedClientID>) async -> Swift.Result<Payload.PrekeyByQualifiedUserID, NetworkError> {
+    override func fetchPrekeys(for clients: Set<QualifiedClientID>) async throws -> Payload.PrekeyByQualifiedUserID {
         guard
             let payloadData = clients.clientListByDomain.payloadData(encoder: defaultEncoder),
             let payloadAsString = String(bytes: payloadData, encoding: .utf8)
         else {
-            return .failure(NetworkError.errorEncodingRequest)
+            throw NetworkError.errorEncodingRequest
         }
 
         let request = ZMTransportRequest(path: "/users/list-prekeys",
@@ -85,7 +82,7 @@ class PrekeyAPIV1: PrekeyAPIV0 {
                                          apiVersion: apiVersion.rawValue)
 
         let response = await httpClient.send(request)
-        return mapResponse(response)
+        return try mapResponse(response)
     }
 }
 
@@ -106,12 +103,12 @@ class PrekeyAPIV4: PrekeyAPIV3 {
         return .v4
     }
 
-    override func fetchPrekeys(for clients: Set<QualifiedClientID>) async -> Swift.Result<Payload.PrekeyByQualifiedUserID, NetworkError> {
+    override func fetchPrekeys(for clients: Set<QualifiedClientID>) async throws -> Payload.PrekeyByQualifiedUserID {
         guard
             let payloadData = clients.clientListByDomain.payloadData(encoder: defaultEncoder),
             let payloadAsString = String(bytes: payloadData, encoding: .utf8)
         else {
-            return .failure(NetworkError.errorEncodingRequest)
+            throw NetworkError.errorEncodingRequest
         }
 
         let request = ZMTransportRequest(path: "/users/list-prekeys",
@@ -120,8 +117,8 @@ class PrekeyAPIV4: PrekeyAPIV3 {
                                          apiVersion: apiVersion.rawValue)
         let response = await httpClient.send(request)
 
-        let result: Swift.Result<Payload.PrekeyByQualifiedUserIDV4, NetworkError> = mapResponse(response)
-        return result.map({ $0.prekeyByQualifiedUserID })
+        let result: Payload.PrekeyByQualifiedUserIDV4 = try mapResponse(response)
+        return result.prekeyByQualifiedUserID
     }
 }
 

@@ -81,10 +81,10 @@ extension DeliveryReceiptRequestStrategy: ZMEventConsumer {
         // Enter groups to enable waiting for message sending to complete in tests
         let groups = managedObjectContext.enterAllGroupsExceptSecondary()
         Task {
-            _ = await messageSender.sendMessage(message: GenericMessageEntity(conversation: deliveryReceipt.conversation,
-                                                                    message: GenericMessage(content: confirmation),
-                                                                    targetRecipients: .users(senderUserSet),
-                                                                    completionHandler: nil))
+            try? await messageSender.sendMessage(message: GenericMessageEntity(conversation: deliveryReceipt.conversation,
+                                                                               message: GenericMessage(content: confirmation),
+                                                                               targetRecipients: .users(senderUserSet),
+                                                                               completionHandler: nil))
             managedObjectContext.leaveAllGroups(groups)
         }
     }

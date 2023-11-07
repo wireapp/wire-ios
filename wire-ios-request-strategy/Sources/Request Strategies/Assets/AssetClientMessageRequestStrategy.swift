@@ -63,19 +63,18 @@ extension AssetClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
         // Enter groups to enable waiting for message sending to complete in tests
         let groups = managedObjectContext.enterAllGroupsExceptSecondary()
         Task {
-            let result = await messageSender.sendMessage(message: object)
-
-            managedObjectContext.performAndWait {
-                switch result {
-                case .success:
+            do {
+                try await messageSender.sendMessage(message: object)
+                await managedObjectContext.perform {
                     object.markAsSent()
-                case .failure(let error):
+                }
+            } catch {
+                await managedObjectContext.perform {
                     object.expire()
 
-                    if case .networkError(let networkError) = error,
-                       case .invalidRequestError(let responseFailure, _) = networkError,
+                    if case NetworkError.invalidRequestError(let responseFailure, _) = error,
                        responseFailure.label == .missingLegalholdConsent {
-                        managedObjectContext.zm_userInterface.performGroupedBlock {
+                        self.managedObjectContext.zm_userInterface.performGroupedBlock {
                             NotificationInContext(
                                 name: ZMConversation.failedToSendMessageNotificationName,
                                 context: self.managedObjectContext.notificationContext

@@ -60,7 +60,7 @@ class DeliveryReceiptRequestStrategyTests: MessagingTestBase {
 
     func testThatDeliveryReceiptIsScheduled_WhenProcessingEventWhichNeedsDeliveryReceipt() throws {
         syncMOC.performGroupedAndWait { _ in
-            self.mockMessageSender.sendMessageMessage_MockValue = .success(Void())
+            self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
             let conversationID = self.oneToOneConversation.remoteIdentifier!.transportString()
             let conversationDomain = self.oneToOneConversation.domain!
             let event = self.createTextUpdateEvent(from: self.otherUser, in: self.oneToOneConversation)

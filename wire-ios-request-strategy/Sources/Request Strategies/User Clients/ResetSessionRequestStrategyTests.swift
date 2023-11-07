@@ -53,7 +53,7 @@ class ResetSessionRequestStrategyTests: MessagingTestBase {
             let conversationID = conversation.remoteIdentifier!.transportString()
             let conversationDomain = conversation.domain!
             otherClient.needsToNotifyOtherUserAboutSessionReset = true
-            self.mockMessageSender.sendMessageMessage_MockValue = .success(Void())
+            self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
 
             // WHEN
             self.sut.contextChangeTrackers.forEach {
@@ -77,7 +77,7 @@ class ResetSessionRequestStrategyTests: MessagingTestBase {
             _ = self.setupOneToOneConversation(with: otherUser)
             otherClient = self.createClient(user: otherUser)
             otherClient.needsToNotifyOtherUserAboutSessionReset = true
-            self.mockMessageSender.sendMessageMessage_MockValue = .success(Void())
+            self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
 
             // WHEN
             self.sut.contextChangeTrackers.forEach {
