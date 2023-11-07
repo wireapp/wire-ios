@@ -40,7 +40,7 @@ private let pushLog = ZMSLog(tag: "Push")
 
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
-    // TODO: remove, it just for tests
+    // TODO: remove this, it just for tests
 
     // MARK: - Private Property
 
