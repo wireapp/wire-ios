@@ -83,6 +83,7 @@ extension AssetClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
                         }
                     }
                 }
+                managedObjectContext.enqueueDelayedSave()
             }
 
             completion()
