@@ -31,22 +31,25 @@ public class MockMessageSenderInterface: MessageSenderInterface {
 
     public init() {}
 
+
     // MARK: - sendMessage
 
     public var sendMessageMessage_Invocations: [any SendableMessage] = []
-    public var sendMessageMessage_MockMethod: ((any SendableMessage) async -> Swift.Result<Void, MessageSendError>)?
-    public var sendMessageMessage_MockValue: Swift.Result<Void, MessageSendError>?
+    public var sendMessageMessage_MockError: Error?
+    public var sendMessageMessage_MockMethod: ((any SendableMessage) async throws -> Void)?
 
-    public func sendMessage(message: any SendableMessage) async -> Swift.Result<Void, MessageSendError> {
+    public func sendMessage(message: any SendableMessage) async throws {
         sendMessageMessage_Invocations.append(message)
 
-        if let mock = sendMessageMessage_MockMethod {
-            return await mock(message)
-        } else if let mock = sendMessageMessage_MockValue {
-            return mock
-        } else {
+        if let error = sendMessageMessage_MockError {
+            throw error
+        }
+
+        guard let mock = sendMessageMessage_MockMethod else {
             fatalError("no mock for `sendMessageMessage`")
         }
+
+        try await mock(message)
     }
 
 }

@@ -30,7 +30,7 @@ final class MessageDependencyResolverTests: MessagingTestBase {
             .arrange()
 
         // when
-        _ = await messageDependencyResolver.waitForDependenciesToResolve(for: message)
+        try await messageDependencyResolver.waitForDependenciesToResolve(for: message)
 
         // then test completes
     }
@@ -60,7 +60,7 @@ final class MessageDependencyResolverTests: MessagingTestBase {
         }
 
         // when
-        _ = await messageDependencyResolver.waitForDependenciesToResolve(for: message)
+        try await messageDependencyResolver.waitForDependenciesToResolve(for: message)
 
         // then test completes
     }

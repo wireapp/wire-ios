@@ -58,8 +58,8 @@ extension LinkPreviewUpdateRequestStrategy: ModifiedKeyObjectSyncTranscoder {
         // Enter groups to enable waiting for message sending to complete in tests
         let groups = managedObjectContext.enterAllGroupsExceptSecondary()
         Task {
-            let result = await messageSender.sendMessage(message: object)
-            managedObjectContext.performAndWait {
+            try? await messageSender.sendMessage(message: object)
+            await managedObjectContext.perform {
                 object.linkPreviewState = .done
                 completion()
             }

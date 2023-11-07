@@ -37,11 +37,10 @@ final class MessageSenderTests: MessagingTestBase {
             .withMessageDependencyResolverReturning(result: .failure(.securityLevelDegraded))
             .arrange()
 
-        // when
-        let result = await messageSender.sendMessage(message: message)
-
         // then
-        assertFailure(result: result, expectedFailure: MessageSendError.securityLevelDegraded)
+        await assertItThrows(error: MessageDependencyResolverError.securityLevelDegraded) {
+            try await messageSender.sendMessage(message: message)
+        }
     }
 
     func testThatBeforeSendingMessage_thenCallDependencyResolver() async throws {
@@ -57,7 +56,7 @@ final class MessageSenderTests: MessagingTestBase {
             .arrange()
 
         // when
-        _ = await messageSender.sendMessage(message: message)
+        try? await messageSender.sendMessage(message: message)
 
         // then
         XCTAssertEqual(1, arrangement.messageDependencyResolver.waitForDependenciesToResolveFor_Invocations.count)
@@ -75,11 +74,10 @@ final class MessageSenderTests: MessagingTestBase {
             .withApiVersionResolving(to: nil)
             .arrange()
 
-        // when
-        let result = await messageSender.sendMessage(message: message)
-
         // then
-        assertFailure(result: result, expectedFailure: MessageSendError.unresolvedApiVersion)
+        await assertItThrows(error: MessageSendError.unresolvedApiVersion) {
+            try await messageSender.sendMessage(message: message)
+        }
     }
 
     func testThatWhenSendingMessageSucceeds_thenReturnSuccessResult() async throws {
@@ -106,10 +104,9 @@ final class MessageSenderTests: MessagingTestBase {
             .arrange()
 
         // when
-        let result = await messageSender.sendMessage(message: message)
+        try await messageSender.sendMessage(message: message)
 
-        // then
-        assertSuccess(result: result)
+        // then test completes
     }
 
     func testThatWhenSendingMessageFailsDueToMissingClients_thenEstablishSessionsAndTryAgain() async throws {
@@ -131,10 +128,9 @@ final class MessageSenderTests: MessagingTestBase {
             .arrange()
 
         // when
-        let result = await messageSender.sendMessage(message: message)
+        try await messageSender.sendMessage(message: message)
 
         // then
-        assertSuccess(result: result)
         XCTAssertEqual(Set(arrayLiteral: Arrangement.Scaffolding.clientID), arrangement.sessionEstablisher.establishSessionWithApiVersion_Invocations[0].clients)
 
     }
@@ -155,10 +151,9 @@ final class MessageSenderTests: MessagingTestBase {
             .arrange()
 
         // when
-        let result = await messageSender.sendMessage(message: message)
+        try await messageSender.sendMessage(message: message)
 
         // then
-        assertSuccess(result: result)
         XCTAssertEqual(2, arrangement.messageApi.sendProteusMessageMessageConversationID_Invocations.count)
     }
 
@@ -177,11 +172,10 @@ final class MessageSenderTests: MessagingTestBase {
             .withSendProteusMessageFailing(with: NetworkError.errorDecodingResponse(response))
             .arrange()
 
-        // when
-        let result = await messageSender.sendMessage(message: message)
-
         // then
-        assertFailure(result: result, expectedFailure: MessageSendError.messageExpired)
+        await assertItThrows(error: MessageSendError.messageExpired) {
+            try await messageSender.sendMessage(message: message)
+        }
     }
 
     func testThatWhenSendingMessageFailsWithPermanentError_thenReturnFailure() async throws {
@@ -199,11 +193,10 @@ final class MessageSenderTests: MessagingTestBase {
             .withSendProteusMessageFailing(with: networkError)
             .arrange()
 
-        // when
-        let result = await messageSender.sendMessage(message: message)
-
         // then
-        assertFailure(result: result, expectedFailure: MessageSendError.networkError(networkError))
+        await assertItThrows(error: networkError) {
+            try await messageSender.sendMessage(message: message)
+        }
     }
 
     func testThatWhenSendingMessageFailsWithFederationRemoteError_thenUpdateExpirationReasonCode() async throws {
@@ -233,10 +226,11 @@ final class MessageSenderTests: MessagingTestBase {
             .arrange()
 
         // when
-        let result = await messageSender.sendMessage(message: message)
+        await assertItThrows(error: networkError) {
+            try await messageSender.sendMessage(message: message)
+        }
 
         // then
-        assertFailure(result: result, expectedFailure: MessageSendError.networkError(networkError))
         XCTAssertEqual(NSNumber(value: MessageSendFailure.federationRemoteError.rawValue), message.expirationReasonCode)
     }
 
@@ -267,10 +261,11 @@ final class MessageSenderTests: MessagingTestBase {
             .arrange()
 
         // when
-        let result = await messageSender.sendMessage(message: message)
+        await assertItThrows(error: networkError) {
+            try await messageSender.sendMessage(message: message)
+        }
 
         // then
-        assertFailure(result: result, expectedFailure: MessageSendError.networkError(networkError))
         XCTAssertEqual(NSNumber(value: MessageSendFailure.unknown.rawValue), message.expirationReasonCode)
     }
 
@@ -318,28 +313,43 @@ final class MessageSenderTests: MessagingTestBase {
         }
 
         func withMessageDependencyResolverReturning(result: Swift.Result<Void, MessageDependencyResolverError>) -> Arrangement {
-            messageDependencyResolver.waitForDependenciesToResolveFor_MockMethod = { _ in result }
+            messageDependencyResolver.waitForDependenciesToResolveFor_MockMethod = { _ in
+                if case .failure(let error) = result {
+                    throw error
+                }
+            }
             return self
         }
 
         func withSendProteusMessageFailing(with error: NetworkError) -> Arrangement {
             messageApi.sendProteusMessageMessageConversationID_MockMethod = { [weak messageApi] _, _ in
                 if messageApi?.sendProteusMessageMessageConversationID_Invocations.count > 1 {
-                    return .success((Scaffolding.messageSendingStatusSuccess, Scaffolding.responseSuccess))
+                    return (Scaffolding.messageSendingStatusSuccess, Scaffolding.responseSuccess)
                 } else {
-                    return .failure(error)
+                    throw error
                 }
             }
             return self
         }
 
         func withEstablishSessions(returning result: Swift.Result<Void, SessionEstablisherError>) -> Arrangement {
-            sessionEstablisher.establishSessionWithApiVersion_MockValue = result
+            switch result {
+            case .success:
+                sessionEstablisher.establishSessionWithApiVersion_MockMethod = { _, _ in }
+            case .failure(let error):
+                sessionEstablisher.establishSessionWithApiVersion_MockError = error
+            }
             return self
         }
 
         func withSendProteusMessage(returning result: Swift.Result<(Payload.MessageSendingStatus, ZMTransportResponse), NetworkError>) -> Arrangement {
-            messageApi.sendProteusMessageMessageConversationID_MockValue = result
+
+            switch result {
+            case .success(let value):
+                messageApi.sendProteusMessageMessageConversationID_MockValue = value
+            case .failure(let error):
+                messageApi.sendProteusMessageMessageConversationID_MockError = error
+            }
             return self
         }
 

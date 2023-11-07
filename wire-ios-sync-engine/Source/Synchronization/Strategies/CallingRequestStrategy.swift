@@ -368,12 +368,10 @@ extension CallingRequestStrategy: WireCallCenterTransport {
             }
 
             Task {
-                let result = await self.messageSender.sendMessage(message: message)
-
-                switch result {
-                case .success:
+                do {
+                    try await self.messageSender.sendMessage(message: message)
                     completionHandler(200)
-                case .failure:
+                } catch {
                     completionHandler(400)
                 }
             }
