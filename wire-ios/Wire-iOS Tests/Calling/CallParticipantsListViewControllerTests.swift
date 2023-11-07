@@ -68,12 +68,6 @@ final class CallParticipantsListViewControllerTests: ZMSnapshotTestCase {
     }
 
     func testCallParticipants_Overflowing_Light() {
-        // Given
-        guard let selfUser = ZMUser.selfUser() else {
-            XCTFail("ZMUser.selfUser() is nil")
-            return
-        }
-
         // When
         sut = CallParticipantsListViewController(
             participants: mockParticipants,
