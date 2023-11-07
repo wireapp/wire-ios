@@ -25,12 +25,6 @@ final class DestructionCountdownViewTests: BaseSnapshotTestCase {
 
     var sut: DestructionCountdownView!
 
-    // MARK: - setUp
-
-    override func setUp() {
-        super.setUp()
-    }
-
     // MARK: - tearDown
 
     override func tearDown() {

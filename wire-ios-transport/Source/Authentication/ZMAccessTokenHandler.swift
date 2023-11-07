@@ -1,5 +1,6 @@
+//
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2023 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,19 +17,16 @@
 //
 
 import Foundation
-import WireDataModel
 
-extension ConversationListCell: ZMConversationObserver {
-    func conversationDidChange(_ change: ConversationChangeInfo) {
-        guard change.conversation === conversation,
-            change.isArchivedChanged ||
-            change.conversationListIndicatorChanged ||
-            change.nameChanged ||
-            change.unreadCountChanged ||
-            change.connectionStateChanged ||
-            change.mutedMessageTypesChanged ||
-            change.messagesChanged else { return }
+@objc
+public extension ZMAccessTokenHandler {
 
-        updateAppearance()
+    func logDebug(_ message: String) {
+        WireLogger.authentication.debug(message)
     }
+
+    func logError(_ message: String) {
+        WireLogger.authentication.error(message)
+    }
+
 }
