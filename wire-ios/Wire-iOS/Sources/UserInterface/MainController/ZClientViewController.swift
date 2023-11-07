@@ -655,7 +655,7 @@ final class ZClientViewController: UIViewController {
                 assertionFailure("ZMUser.selfUser() is nil")
                 return
             }
-            
+
             let profileViewController = ProfileViewController(user: user, viewer: selfUser, context: .deviceList, userSession: userSession)
 
             if let conversationViewController = (conversationRootViewController as? ConversationRootViewController)?.conversationViewController {

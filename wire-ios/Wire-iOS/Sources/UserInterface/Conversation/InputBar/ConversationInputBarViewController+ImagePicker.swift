@@ -96,7 +96,6 @@ extension ConversationInputBarViewController {
             return
         }
 
-
         let videoTempURL = URL(fileURLWithPath: NSTemporaryDirectory(),
             isDirectory: true).appendingPathComponent(String.filename(for: selfUser)).appendingPathExtension(videoURL.pathExtension)
 

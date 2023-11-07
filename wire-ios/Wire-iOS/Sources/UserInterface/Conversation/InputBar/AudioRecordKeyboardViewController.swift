@@ -454,7 +454,6 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
             return
         }
 
-
         button?.isEnabled = false
 
         let effectName = self.currentEffect == .none ? "Original" : self.currentEffect.description

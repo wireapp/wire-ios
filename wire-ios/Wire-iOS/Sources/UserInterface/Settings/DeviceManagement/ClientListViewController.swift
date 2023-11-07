@@ -473,7 +473,10 @@ extension ClientListViewController: ZMUserObserver {
 
     func userDidChange(_ note: UserChangeInfo) {
         if note.clientsChanged || note.trustLevelChanged {
-            guard let selfUser = ZMUser.selfUser(), let selfClient = selfUser.selfClient() else { return }
+            guard let selfUser = ZMUser.selfUser(), let selfClient = selfUser.selfClient() else {
+                return
+            }
+
             var clients = selfUser.clients
             clients.remove(selfClient)
             self.clients = Array(clients)

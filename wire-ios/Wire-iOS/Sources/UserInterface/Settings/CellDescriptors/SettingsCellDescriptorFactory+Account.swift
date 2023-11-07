@@ -185,7 +185,10 @@ extension SettingsCellDescriptorFactory {
                 isDestructive: false,
                 presentationStyle: .navigation,
                 presentationAction: { () -> (UIViewController?) in
-                    guard let selfUser = ZMUser.selfUser() else { assertionFailure("ZMUser.selfUser() is nil"); return .none }
+                    guard let selfUser = ZMUser.selfUser() else {
+                        assertionFailure("ZMUser.selfUser() is nil")
+                        return .none
+                    }
                     return ChangeEmailViewController(user: selfUser, userSession: userSession)
                 },
                 previewGenerator: { _ in
@@ -281,7 +284,10 @@ extension SettingsCellDescriptorFactory {
         return SettingsAppearanceCellDescriptor(
             text: L10n.Localizable.Self.Settings.AccountPictureGroup.color.capitalized,
             previewGenerator: { _ in
-                guard let selfUser = ZMUser.selfUser() else { assertionFailure("ZMUser.selfUser() is nil"); return .none }
+                guard let selfUser = ZMUser.selfUser() else {
+                    assertionFailure("ZMUser.selfUser() is nil")
+                    return .none
+                }
                 return .color(selfUser.accentColor)
             },
             presentationStyle: .navigation,
@@ -306,7 +312,10 @@ extension SettingsCellDescriptorFactory {
             isDestructive: false,
             presentationStyle: .navigation,
             presentationAction: {
-                guard let selfUser = ZMUser.selfUser() else { assertionFailure("ZMUser.selfUser() is nil"); return .none }
+                guard let selfUser = ZMUser.selfUser() else {
+                    assertionFailure("ZMUser.selfUser() is nil")
+                    return .none
+                }
                 if selfUser.hasValidEmail || selfUser.usesCompanyLogin {
                     return BackupViewController.init(backupSource: SessionManager.shared!)
                 } else {

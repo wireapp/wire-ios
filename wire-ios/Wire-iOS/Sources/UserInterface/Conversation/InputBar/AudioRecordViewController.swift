@@ -396,7 +396,6 @@ final class AudioRecordViewController: UIViewController, AudioRecordBaseViewCont
             return
         }
 
-
         let effectPath = (NSTemporaryDirectory() as NSString).appendingPathComponent("effect.wav")
         effectPath.deleteFileAtPath()
         // To apply noize reduction filter

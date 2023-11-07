@@ -27,7 +27,6 @@ extension ZClientViewController {
             return
         }
 
-
         var notify = selfUser.needsToNotifyAvailabilityBehaviourChange
         guard notify.contains(.alert) else { return }
         let availability = selfUser.availability

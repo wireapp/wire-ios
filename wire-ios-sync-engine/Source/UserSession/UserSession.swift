@@ -299,7 +299,6 @@ extension ZMUserSession: UserSession {
 
     }
 
-
     public func deleteAppLockPasscode() throws {
         try appLockController.deletePasscode()
     }
@@ -331,7 +330,6 @@ extension ZMUserSession: UserSession {
             in: self
         )
     }
-
 
     public func addMessageObserver(
         _ observer: ZMMessageObserver,

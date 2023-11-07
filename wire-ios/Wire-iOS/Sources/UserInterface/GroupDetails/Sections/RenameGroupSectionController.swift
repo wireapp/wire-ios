@@ -87,7 +87,7 @@ final class RenameGroupSectionController: NSObject, CollectionViewSectionControl
             let user = SelfUser.provider?.providedSelfUser,
             user.hasTeam
         else { return .zero }
-        
+
         sizingFooter.titleLabel.text = "participants.section.name.footer".localized(args: ZMConversation.maxParticipants)
         sizingFooter.size(fittingWidth: collectionView.bounds.width)
         return sizingFooter.bounds.size

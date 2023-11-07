@@ -110,7 +110,9 @@ extension ConversationViewController {
     }
 
     private func presentVerificationScreen() {
-        guard let selfUser = ZMUser.selfUser() else { return }
+        guard let selfUser = ZMUser.selfUser() else {
+            return
+        }
 
         if selfUser.hasUntrustedClients {
             ZClientViewController.shared?.openClientListScreen(for: selfUser)
