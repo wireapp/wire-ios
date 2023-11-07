@@ -23,10 +23,6 @@ final class FullscreenImageViewControllerSnapshotTests: BaseSnapshotTestCase {
 
     var sut: FullscreenImageViewController!
 
-    override func setUp() {
-        super.setUp()
-    }
-
     override func tearDown() {
         sut = nil
         super.tearDown()
