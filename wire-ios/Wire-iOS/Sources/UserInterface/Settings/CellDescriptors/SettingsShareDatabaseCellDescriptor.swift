@@ -37,7 +37,8 @@ class SettingsShareDatabaseCellDescriptor: SettingsButtonCellDescriptor {
         self.documentDelegate = documentDelegate
 
         super.init(title: "Share Database", isDestructive: false) { _ in
-            let fileURL = ZMUserSession.shared()!.managedObjectContext.zm_storeURL!
+            guard let userSession = ZMUserSession.shared() else { return }
+            let fileURL = userSession.managedObjectContext.zm_storeURL!
             let archiveURL = fileURL.appendingPathExtension("zip")
 
             SSZipArchive.createZipFile(atPath: archiveURL.path, withFilesAtPaths: [fileURL.path])
@@ -60,7 +61,8 @@ class SettingsShareCryptoboxCellDescriptor: SettingsButtonCellDescriptor {
         self.documentDelegate = documentDelegate
 
         super.init(title: "Share Cryptobox", isDestructive: false) { _ in
-            let fileURL = ZMUserSession.shared()!.managedObjectContext.zm_storeURL!.deletingLastPathComponent().deletingLastPathComponent().appendingPathComponent("otr")
+            guard let userSession = ZMUserSession.shared() else { return }
+            let fileURL = userSession.managedObjectContext.zm_storeURL!.deletingLastPathComponent().deletingLastPathComponent().appendingPathComponent("otr")
             let archiveURL = fileURL.appendingPathExtension("zip")
 
             SSZipArchive.createZipFile(atPath: archiveURL.path, withContentsOfDirectory: fileURL.path)

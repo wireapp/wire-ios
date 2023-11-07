@@ -198,6 +198,19 @@ public protocol UserSession: AnyObject {
         conversationDomain: String?
     ) -> SecurityClassification
 
+    var maxVideoLength: TimeInterval { get }
+
+    func proxiedRequest(
+        path: String,
+        method: ZMTransportRequestMethod,
+        type: ProxiedRequestType,
+        callback: ProxyRequestCallback?
+    ) -> ProxyRequest
+
+    func cancelProxiedRequest(_ request: ProxyRequest)
+
+    var networkState: ZMNetworkState { get }
+
 }
 
 extension ZMUserSession: UserSession {
