@@ -102,17 +102,16 @@ public class MessageSender: MessageSenderInterface {
     }
 
     private func attemptToSend(message: any SendableMessage) async throws {
+        let messageProtocol = await managedObjectContext.perform {message.conversation?.messageProtocol }
+
         guard let apiVersion = BackendInfo.apiVersion else { throw MessageSendError.unresolvedApiVersion }
-        guard let messageProtocol = await managedObjectContext.perform({
-            message.conversation?.messageProtocol
-        }) else {
+        guard let messageProtocol else {
             throw MessageSendError.messageProtocolMissing
         }
 
         return switch messageProtocol {
         case .proteus:
             try await attemptToSendWithProteus(message: message, apiVersion: apiVersion)
-
         case .mls:
             try await attemptToSendWithMLS(message: message, apiVersion: apiVersion)
         }
