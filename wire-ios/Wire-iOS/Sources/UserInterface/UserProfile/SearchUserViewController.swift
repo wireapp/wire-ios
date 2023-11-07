@@ -88,7 +88,10 @@ final class SearchUserViewController: UIViewController, SpinnerCapable {
 
     private func handleSearchResult(searchResult: SearchResult, isCompleted: Bool) {
         guard !resultHandled, isCompleted else { return }
-        guard let selfUser = ZMUser.selfUser() else { return assertionFailure("ZMUser.selfUser() is nil") }
+        guard let selfUser = ZMUser.selfUser() else {
+            assertionFailure("ZMUser.selfUser() is nil")
+            return
+        }
 
         let profileUser: UserType?
         if let searchUser = searchResult.directory.first, !searchUser.isAccountDeleted {

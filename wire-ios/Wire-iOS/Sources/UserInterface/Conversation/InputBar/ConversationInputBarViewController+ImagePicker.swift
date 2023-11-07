@@ -91,7 +91,11 @@ extension ConversationInputBarViewController {
             zmLog.error("Video not provided form \(picker): info \(info)")
             return
         }
-        guard let selfUser = ZMUser.selfUser() else { return assertionFailure("ZMUser.selfUser() is nil") }
+        guard let selfUser = ZMUser.selfUser() else {
+            assertionFailure("ZMUser.selfUser() is nil")
+            return
+        }
+
 
         let videoTempURL = URL(fileURLWithPath: NSTemporaryDirectory(),
             isDirectory: true).appendingPathComponent(String.filename(for: selfUser)).appendingPathExtension(videoURL.pathExtension)

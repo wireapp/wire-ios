@@ -104,7 +104,7 @@ final class LegalHoldParticipantsSectionController: GroupDetailsSectionControlle
         } else {
             assertionFailure("expected available 'user'!")
         }
-        
+
         cell.accessoryIconView.isHidden = false
         cell.accessibilityIdentifier = "participants.section.participants.cell"
         cell.showSeparator = showSeparator

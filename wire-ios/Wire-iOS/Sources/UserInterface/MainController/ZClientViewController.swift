@@ -163,7 +163,7 @@ final class ZClientViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         pendingInitialStateRestore = true
 
         view.backgroundColor = SemanticColors.View.backgroundDefault
@@ -651,7 +651,11 @@ final class ZClientViewController: UIViewController {
             clientListViewController.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(dismissClientListController(_:)))
             viewController = clientListViewController
         } else {
-            guard let selfUser = ZMUser.selfUser() else { return assertionFailure("ZMUser.selfUser() is nil") }
+            guard let selfUser = ZMUser.selfUser() else {
+                assertionFailure("ZMUser.selfUser() is nil")
+                return
+            }
+            
             let profileViewController = ProfileViewController(user: user, viewer: selfUser, context: .deviceList, userSession: userSession)
 
             if let conversationViewController = (conversationRootViewController as? ConversationRootViewController)?.conversationViewController {

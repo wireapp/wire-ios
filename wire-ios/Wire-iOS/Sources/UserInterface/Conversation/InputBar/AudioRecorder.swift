@@ -132,7 +132,11 @@ public final class AudioRecorder: NSObject, AudioRecorderType {
         guard self.audioRecorder == nil else {
             return
         }
-        guard let selfUser = ZMUser.selfUser() else { return assertionFailure("ZMUser.selfUser() is nil") }
+        guard let selfUser = ZMUser.selfUser() else {
+            assertionFailure("ZMUser.selfUser() is nil")
+            return
+        }
+
         let fileName = String.filename(for: selfUser).appendingPathExtension(self.format.fileExtension())!
         let fileURL = NSURL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(fileName)
         self.fileURL = fileURL

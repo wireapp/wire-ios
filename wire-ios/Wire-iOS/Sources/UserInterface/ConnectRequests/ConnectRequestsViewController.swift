@@ -199,7 +199,7 @@ final class ConnectRequestsViewController: UIViewController,
             let pendingConnectionsList = userSession.pendingConnectionConversationsInUserSession()
             connectionRequests = pendingConnectionsList as? [ConversationLike] ?? []
         }
-        
+
         tableView.reloadData()
 
         if !isAccepting && !isIgnoring {

@@ -71,7 +71,7 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
     private var currentEffectFilePath: String?
 
     private let userSession: UserSession
-    
+
     private var isAppLockActive: Bool {
         return userSession.isAppLockActive
     }
@@ -449,7 +449,11 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
             zmLog.error("No file to send")
             return
         }
-        guard let selfUser = ZMUser.selfUser() else { return assertionFailure("ZMUser.selfUser() is nil") }
+        guard let selfUser = ZMUser.selfUser() else {
+            assertionFailure("ZMUser.selfUser() is nil")
+            return
+        }
+
 
         button?.isEnabled = false
 

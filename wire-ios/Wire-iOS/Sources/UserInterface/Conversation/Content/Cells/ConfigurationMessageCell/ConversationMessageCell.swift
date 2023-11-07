@@ -95,9 +95,9 @@ extension ConversationMessageCell {
     func didEndDisplaying() {
         // to be overriden
     }
-    
+
     func prepareForReuse() {
-        
+
     }
 
 }

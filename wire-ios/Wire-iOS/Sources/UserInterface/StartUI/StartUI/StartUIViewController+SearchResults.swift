@@ -77,7 +77,11 @@ extension StartUIViewController: SearchResultsViewControllerDelegate {
 
     func searchResultsViewController(_ searchResultsViewController: SearchResultsViewController,
                                      didTapOnSeviceUser user: ServiceUser) {
-        guard let selfUser = ZMUser.selfUser() else { return assertionFailure("ZMUser.selfUser() is nil") }
+        guard let selfUser = ZMUser.selfUser() else {
+            assertionFailure("ZMUser.selfUser() is nil")
+            return
+        }
+
         let detail = ServiceDetailViewController(
             serviceUser: user,
             actionType: .openConversation,

@@ -193,7 +193,11 @@ final class ConversationListTopBarViewController: UIViewController {
 
     @objc
     func presentLegalHoldInfo() {
-        guard let selfUser = ZMUser.selfUser() else { return assertionFailure("ZMUser.selfUser() is nil") }
+        guard let selfUser = ZMUser.selfUser() else {
+            assertionFailure("ZMUser.selfUser() is nil")
+            return
+        }
+
         LegalHoldDetailsViewController.present(in: self, user: selfUser, userSession: userSession)
     }
 
@@ -208,7 +212,11 @@ final class ConversationListTopBarViewController: UIViewController {
 
     @objc
     func presentSettings() {
-        guard let selfUser = ZMUser.selfUser() else { return assertionFailure("ZMUser.selfUser() is nil") }
+        guard let selfUser = ZMUser.selfUser() else {
+            assertionFailure("ZMUser.selfUser() is nil")
+            return
+        }
+
         let settingsViewController = createSettingsViewController(selfUser: selfUser)
         let keyboardAvoidingViewController = KeyboardAvoidingViewController(viewController: settingsViewController)
 

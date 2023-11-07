@@ -58,7 +58,7 @@ final class ConversationCellBurstTimestampViewSnapshotTests: BaseSnapshotTestCas
         sut.configure(
             with: Date(timeIntervalSinceReferenceDate: 0),
             includeDayOfWeek: true,
-            showUnreadDot: true, 
+            showUnreadDot: true,
             accentColor: userSession.selfUser.accentColor
         )
 

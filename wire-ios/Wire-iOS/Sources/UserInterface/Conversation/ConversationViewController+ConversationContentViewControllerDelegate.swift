@@ -25,7 +25,11 @@ private let zmLog = ZMSLog(tag: "ConversationViewController+ConversationContentV
 
 extension ConversationViewController: ConversationContentViewControllerDelegate {
     func didTap(onUserAvatar user: UserType, view: UIView, frame: CGRect) {
-        guard let selfUser = ZMUser.selfUser() else { return assertionFailure("ZMUser.selfUser() is nil") }
+        guard let selfUser = ZMUser.selfUser() else {
+            assertionFailure("ZMUser.selfUser() is nil")
+            return
+        }
+
         let profileViewController = ProfileViewController(user: user,
                                                           viewer: selfUser,
                                                           conversation: conversation,

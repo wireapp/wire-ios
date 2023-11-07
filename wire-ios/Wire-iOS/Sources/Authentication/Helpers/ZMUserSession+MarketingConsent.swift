@@ -21,7 +21,11 @@ import WireSyncEngine
 
 extension ZMUserSession {
     func submitMarketingConsent(with marketingConsent: Bool) {
-        guard let selfUser = ZMUser.selfUser() else { return assertionFailure("ZMUser.selfUser() is nil") }
+        guard let selfUser = ZMUser.selfUser() else {
+            assertionFailure("ZMUser.selfUser() is nil")
+            return
+        }
+
         selfUser.setMarketingConsent(to: marketingConsent, in: self, completion: { _ in })
     }
 }

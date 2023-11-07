@@ -66,7 +66,7 @@ final class RenameGroupSectionController: NSObject, CollectionViewSectionControl
         } else {
             assertionFailure("expected available 'user'!")
         }
-        
+
         cell.titleTextField.textFieldDelegate = self
         renameCell = cell
         return cell
@@ -83,7 +83,7 @@ final class RenameGroupSectionController: NSObject, CollectionViewSectionControl
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {
-        guard 
+        guard
             let user = SelfUser.provider?.providedSelfUser,
             user.hasTeam
         else { return .zero }

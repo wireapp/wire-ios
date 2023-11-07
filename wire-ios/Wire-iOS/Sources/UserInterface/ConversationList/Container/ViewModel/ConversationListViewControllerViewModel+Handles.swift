@@ -54,7 +54,11 @@ extension ConversationListViewController.ViewModel: UserProfileUpdateObserver {
 extension ConversationListViewController.ViewModel: ZMUserObserver {
 
     func userDidChange(_ note: UserChangeInfo) {
-        guard let selfUser = ZMUser.selfUser() else { return assertionFailure("ZMUser.selfUser() is nil") }
+        guard let selfUser = ZMUser.selfUser() else {
+            assertionFailure("ZMUser.selfUser() is nil")
+            return
+        }
+
         if selfUser.handle != nil && note.handleChanged {
             removeUsernameTakeover()
         } else if note.teamsChanged {
@@ -102,7 +106,11 @@ extension ConversationListViewController.ViewModel {
     }
 
     func showUsernameTakeover(with handle: String) {
-        guard let selfUser = ZMUser.selfUser() else { return assertionFailure("ZMUser.selfUser() is nil") }
+        guard let selfUser = ZMUser.selfUser() else {
+            assertionFailure("ZMUser.selfUser() is nil")
+            return
+        }
+
         guard let name = selfUser.name, nil == selfUser.handle || debugOverrideShowTakeover else { return }
 
         viewController?.showUsernameTakeover(suggestedHandle: handle, name: name)

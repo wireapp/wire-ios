@@ -25,7 +25,13 @@ final class SearchResultsViewControllerTests: XCTestCase {
         autoreleasepool {
             // GIVEN
             let selfUser = MockUserType.createSelfUser(name: "Bobby McFerrin")
-            var searchResultsViewController: SearchResultsViewController! = SearchResultsViewController(userSelection: UserSelection(), selfUser: selfUser, isAddingParticipants: false, shouldIncludeGuests: true, isFederationEnabled: false)
+            var searchResultsViewController: SearchResultsViewController! = .init(
+                userSelection: UserSelection(),
+                selfUser: selfUser,
+                isAddingParticipants: false,
+                shouldIncludeGuests: true,
+                isFederationEnabled: false
+            )
             sut = searchResultsViewController
 
             // WHEN

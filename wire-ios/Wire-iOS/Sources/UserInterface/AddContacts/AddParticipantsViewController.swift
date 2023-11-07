@@ -472,7 +472,11 @@ extension AddParticipantsViewController: SearchResultsViewControllerDelegate {
     }
 
     func searchResultsViewController(_ searchResultsViewController: SearchResultsViewController, didTapOnSeviceUser user: ServiceUser) {
-        guard let selfUser = ZMUser.selfUser() else { return assertionFailure("ZMUser.selfUser() is nil") }
+        guard let selfUser = ZMUser.selfUser() else {
+            assertionFailure("ZMUser.selfUser() is nil")
+            return
+        }
+
         guard case let .add(conversation) = viewModel.context else { return }
         let detail = ServiceDetailViewController(
             serviceUser: user,

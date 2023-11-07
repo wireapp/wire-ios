@@ -118,7 +118,7 @@ extension LegalHoldDetailsViewController: LegalHoldParticipantsSectionController
             assertionFailure("expected available 'user'!")
             return
         }
-        
+
         let profileViewController = ProfileViewController(
             user: user,
             viewer: viewer,

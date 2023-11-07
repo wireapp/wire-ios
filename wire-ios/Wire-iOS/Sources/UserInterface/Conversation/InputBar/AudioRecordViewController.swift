@@ -391,7 +391,11 @@ final class AudioRecordViewController: UIViewController, AudioRecordBaseViewCont
     func sendAudio() {
         recorder.stopPlaying()
         guard let url = recorder.fileURL else { return zmLog.warn("Nil url passed to send as audio file") }
-        guard let selfUser = ZMUser.selfUser() else { return assertionFailure("ZMUser.selfUser() is nil") }
+        guard let selfUser = ZMUser.selfUser() else {
+            assertionFailure("ZMUser.selfUser() is nil")
+            return
+        }
+
 
         let effectPath = (NSTemporaryDirectory() as NSString).appendingPathComponent("effect.wav")
         effectPath.deleteFileAtPath()
