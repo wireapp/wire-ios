@@ -38,14 +38,9 @@ final class TextSearchResultCell: UITableViewCell {
         return roundedTextBadge
     }()
 
-    private var userSession: UserSession
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
 
-        init(style: UITableViewCell.CellStyle, reuseIdentifier: String?, userSession: UserSession) {
-            self.userSession = userSession
-            super.init(style: style, reuseIdentifier: reuseIdentifier)
-            userImageView.userSession = self.userSession
-
-        userImageView.userSession = userSession
         userImageView.initialsFont = .systemFont(ofSize: 11, weight: .light)
 
         accessibilityIdentifier = "search result cell"
@@ -144,16 +139,15 @@ final class TextSearchResultCell: UITableViewCell {
         resultCountView.updateCollapseConstraints(isCollapsed: false)
     }
 
-    func configure(with newMessage: ZMConversationMessage, queries newQueries: [String]) {
+    func configure(with newMessage: ZMConversationMessage, queries newQueries: [String], userSession: UserSession) {
         message = newMessage
         queries = newQueries
-
+        userImageView.userSession = userSession
         userImageView.user = newMessage.senderUser
         footerView.message = newMessage
-        if let userSession = ZMUserSession.shared() {
-            observerToken = MessageChangeInfo.add(observer: self,
-                                                  for: newMessage,
-                                                  userSession: userSession)
+        if !ProcessInfo.processInfo.isRunningTests {
+            observerToken = userSession.addMessageObserver(self, for: newMessage)
+
         }
 
         updateTextView()
