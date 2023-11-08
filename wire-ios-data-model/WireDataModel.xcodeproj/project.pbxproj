@@ -512,7 +512,6 @@
 		EE3EFE95253053B1009499E5 /* PotentialChangeDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE3EFE94253053B1009499E5 /* PotentialChangeDetector.swift */; };
 		EE3EFE9725305A84009499E5 /* ModifiedObjects+Mergeable.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE3EFE9625305A84009499E5 /* ModifiedObjects+Mergeable.swift */; };
 		EE3EFEA1253090E0009499E5 /* PotentialChangeDetectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE3EFEA0253090E0009499E5 /* PotentialChangeDetectorTests.swift */; };
-		EE403ECA28D357AD00F78A36 /* ZMBaseTest+Async.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE403EC928D357AD00F78A36 /* ZMBaseTest+Async.swift */; };
 		EE428C4E29F01E4800ECB715 /* EARServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE428C4D29F01E4800ECB715 /* EARServiceTests.swift */; };
 		EE428C5029F1247400ECB715 /* EARKeyGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE428C4F29F1247400ECB715 /* EARKeyGenerator.swift */; };
 		EE428C5229F1533000ECB715 /* EARKeyEncryptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE428C5129F1533000ECB715 /* EARKeyEncryptor.swift */; };
@@ -1417,7 +1416,6 @@
 		EE3EFE94253053B1009499E5 /* PotentialChangeDetector.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PotentialChangeDetector.swift; sourceTree = "<group>"; };
 		EE3EFE9625305A84009499E5 /* ModifiedObjects+Mergeable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ModifiedObjects+Mergeable.swift"; sourceTree = "<group>"; };
 		EE3EFEA0253090E0009499E5 /* PotentialChangeDetectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PotentialChangeDetectorTests.swift; sourceTree = "<group>"; };
-		EE403EC928D357AD00F78A36 /* ZMBaseTest+Async.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMBaseTest+Async.swift"; sourceTree = "<group>"; };
 		EE428C4D29F01E4800ECB715 /* EARServiceTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = EARServiceTests.swift; path = Tests/Source/EAR/EARServiceTests.swift; sourceTree = SOURCE_ROOT; };
 		EE428C4F29F1247400ECB715 /* EARKeyGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EARKeyGenerator.swift; sourceTree = "<group>"; };
 		EE428C5129F1533000ECB715 /* EARKeyEncryptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EARKeyEncryptor.swift; sourceTree = "<group>"; };
@@ -2905,7 +2903,6 @@
 				16E70F97270F1F5700718E5D /* ZMConnection+Helper.h */,
 				16E70FA6270F212000718E5D /* ZMConnection+Helper.m */,
 				169FF3A427157B3800330C2E /* MockActionHandler.swift */,
-				EE403EC928D357AD00F78A36 /* ZMBaseTest+Async.swift */,
 			);
 			name = Helper;
 			path = Tests/Source/Helper;
@@ -4144,7 +4141,6 @@
 				EEC3BC742888403000BFDC35 /* MockCoreCrypto.swift in Sources */,
 				CEE525AA1CCA4C97001D06F9 /* NSString+RandomString.m in Sources */,
 				165E141825CC516B00F0B075 /* ZMClientMessageTests+Prefetching.swift in Sources */,
-				EE403ECA28D357AD00F78A36 /* ZMBaseTest+Async.swift in Sources */,
 				A9FA524A23A1598B003AD4C6 /* ActionTests.swift in Sources */,
 				0191513A29ACB3CA00920D04 /* SpyUserClientKeyStore.swift in Sources */,
 				16E7DA2A1FDABE440065B6A6 /* ZMOTRMessage+SelfConversationUpdateTests.swift in Sources */,

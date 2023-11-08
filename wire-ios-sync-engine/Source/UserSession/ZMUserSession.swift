@@ -638,6 +638,11 @@ extension ZMUserSession: ZMSyncStateDelegate {
             self?.notifyThirdPartyServices()
         }
 
+        NotificationInContext(
+            name: .quickSyncCompletedNotification,
+            context: syncContext.notificationContext
+        ).post()
+
         commitPendingProposalsIfNeeded()
         fetchFeatureConfigs()
         recurringActionService.performActionsIfNeeded()
