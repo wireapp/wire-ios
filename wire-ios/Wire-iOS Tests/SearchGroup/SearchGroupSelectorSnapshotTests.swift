@@ -21,15 +21,11 @@ import XCTest
 @testable import Wire
 
 final class SearchGroupSelectorSnapshotTests: XCTestCase {
-    var sut: SearchGroupSelector!
 
-    override func setUp() {
-        super.setUp()
-    }
+    var sut: SearchGroupSelector!
 
     override func tearDown() {
         sut = nil
-
         super.tearDown()
     }
 

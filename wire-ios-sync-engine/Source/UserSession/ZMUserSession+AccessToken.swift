@@ -18,8 +18,6 @@
 
 import Foundation
 
-private let logger = WireLogger(tag: "access-token")
-
 extension ZMUserSession: AccessTokenRenewing {
 
     func renewAccessToken(with clientID: String) {
@@ -31,7 +29,7 @@ extension ZMUserSession: AccessTokenRenewing {
     }
 
     func transportSessionAccessTokenDidFail(response: ZMTransportResponse) {
-        logger.error("access token renewal failed: response status: \(response.errorInfo)")
+        WireLogger.authentication.error("access token renewal failed: response status: \(response.errorInfo)")
 
         managedObjectContext.performGroupedBlock { [weak self] in
             guard let self = self else { return }
@@ -45,7 +43,7 @@ extension ZMUserSession: AccessTokenRenewing {
     }
 
     func transportSessionAccessTokenDidSucceed() {
-        logger.info("access token renewal did succeed")
+        WireLogger.authentication.info("access token renewal did succeed")
         accessTokenRenewalObserver?.accessTokenRenewalDidSucceed()
         accessTokenRenewalObserver = nil
     }

@@ -86,7 +86,7 @@ public final class AutomationHelper: NSObject {
     /// Whether the calling overlay should disappear automatically.
     public let keepCallingOverlayVisible: Bool
 
-    public var preferredAPIversion: APIVersion?
+    public var preferredAPIVersion: APIVersion?
     public var allowMLSGroupCreation: Bool?
     public var enableMLSSupport: Bool?
 
@@ -123,11 +123,10 @@ public final class AutomationHelper: NSObject {
         self.delayInAddressBookRemoteSearch = AutomationHelper.addressBookSearchDelay(arguments)
 
         if
-            let value = arguments.flagValueIfPresent(AutomationKey.preferredAPIversion.rawValue),
+            let value = arguments.flagValueIfPresent(AutomationKey.preferredAPIVersion.rawValue),
             let apiVersion = Int32(value)
         {
-            WireLogger.environment.info("automation helper will set preferred api version to \(apiVersion)")
-            BackendInfo.preferredAPIVersion = APIVersion(rawValue: apiVersion)
+            preferredAPIVersion = APIVersion(rawValue: apiVersion)
         }
 
         allowMLSGroupCreation = arguments.hasFlag(AutomationKey.allowMLSGroupCreation.rawValue)
@@ -152,7 +151,7 @@ public final class AutomationHelper: NSObject {
         case disableInteractiveKeyboardDismissal = "disable-interactive-keyboard-dismissal"
         case useAppCenter = "use-app-center"
         case keepCallingOverlayVisible = "keep-calling-overlay-visible"
-        case preferredAPIversion = "preferred-api-version"
+        case preferredAPIVersion = "preferred-api-version"
         case allowMLSGroupCreation = "allow-mls-group-creation"
         case deprecatedCallingUI = "deprecated-calling-ui"
         case enableMLSSupport = "enable-mls-support"
