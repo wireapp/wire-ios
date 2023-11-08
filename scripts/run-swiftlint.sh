@@ -1,5 +1,5 @@
 #!/bin/bash
-set -vEeuo pipefail
+set -Eeuo pipefail
 
 #
 # Wire
@@ -19,10 +19,8 @@ set -vEeuo pipefail
 # along with this program. If not, see http://www.gnu.org/licenses/.
 #
 
-# The absolute path of the directory which contains this script
-SCRIPTS_DIR="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
-ROOT_DIR="$SCRIPTS_DIR/.."
-
+REPO_ROOT=$(git rev-parse --show-toplevel)
+SCRIPTS_DIR="$REPO_ROOT/scripts"
 SWIFTLINT="$SCRIPTS_DIR/.build/artifacts/scripts/SwiftLintBinary/SwiftLintBinary.artifactbundle/swiftlint-0.53.0-macos/bin/swiftlint"
 
 if [ -z "${CI-}" ]; then
@@ -31,8 +29,8 @@ if [ -z "${CI-}" ]; then
         swift package resolve
     )
     (
-        cd "$ROOT_DIR"
-        "$SWIFTLINT" --config "$ROOT_DIR/.swiftlint.yml"
+        cd "$REPO_ROOT"
+        "$SWIFTLINT" --config "$REPO_ROOT/.swiftlint.yml"
     )
 else
     echo "Skipping SwiftLint in CI environment"
