@@ -24,14 +24,8 @@ SCRIPTS_DIR="$REPO_ROOT/scripts"
 SWIFTLINT="$SCRIPTS_DIR/.build/artifacts/scripts/SwiftLintBinary/SwiftLintBinary.artifactbundle/swiftlint-0.53.0-macos/bin/swiftlint"
 
 if [ -z "${CI-}" ]; then
-    (
-        cd "$SCRIPTS_DIR"
-        swift package resolve
-    )
-    (
-        cd "$REPO_ROOT"
-        "$SWIFTLINT" --config "$REPO_ROOT/.swiftlint.yml"
-    )
+    swift package --package-path "$SCRIPTS_DIR" resolve
+    "$SWIFTLINT" --config "$REPO_ROOT/.swiftlint.yml"
 else
     echo "Skipping SwiftLint in CI environment"
 fi
