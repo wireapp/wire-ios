@@ -25,7 +25,7 @@ SWIFTLINT="$SCRIPTS_DIR/.build/artifacts/scripts/SwiftLintBinary/SwiftLintBinary
 
 if [ -z "${CI-}" ]; then
     xcrun --sdk macosx swift package --sdk macos --package-path "$SCRIPTS_DIR" resolve
-    "$SWIFTLINT" --config "$REPO_ROOT/.swiftlint.yml"
+    "$SWIFTLINT" --config "$REPO_ROOT/.swiftlint.yml" "$@"
 else
     echo "Skipping SwiftLint in CI environment"
 fi
