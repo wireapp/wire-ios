@@ -13,11 +13,11 @@ concurrency:
 jobs:
   SwiftLint:
       runs-on: ubuntu-latest
+      container:
+        image: ghcr.io/realm/swiftlint:0.53.0
+
       steps:
         - uses: actions/checkout@v4
         - name: GitHub Action for SwiftLint
-          uses: norio-nomura/action-swiftlint@3.2.1
-          with:
-            args: --strict
-          env:
-            DIFF_BASE: ${{ github.base_ref }}   
+          run: |
+            swiftlint --reporter github-actions-logging --strict
