@@ -70,7 +70,7 @@ final class CollectionsViewController: UIViewController {
         return sections == .all
     }
 
-    private lazy var textSearchController: TextSearchViewController =  TextSearchViewController(conversation: collection.conversation)
+    private lazy var textSearchController =  TextSearchViewController(conversation: collection.conversation, userSession: userSession)
 
     convenience init(conversation: ZMConversation, userSession: UserSession) {
         let matchImages = CategoryMatch(including: .image, excluding: .GIF)
