@@ -12,7 +12,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  trigger_tests:
+  trigger_tests_develop:
     uses: ./.github/workflows/_reusable_run_tests.yml
     with:
       all: true
