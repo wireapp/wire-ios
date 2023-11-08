@@ -244,6 +244,28 @@ public class MockPrekeyPayloadProcessorInterface: PrekeyPayloadProcessorInterfac
     }
 
 }
+class MockQuickSyncObserverInterface: QuickSyncObserverInterface {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - waitForQuickSyncToFinish
+
+    var waitForQuickSyncToFinish_Invocations: [Void] = []
+    var waitForQuickSyncToFinish_MockMethod: (() async -> Void)?
+
+    func waitForQuickSyncToFinish() async {
+        waitForQuickSyncToFinish_Invocations.append(())
+
+        guard let mock = waitForQuickSyncToFinish_MockMethod else {
+            fatalError("no mock for `waitForQuickSyncToFinish`")
+        }
+
+        await mock()            
+    }
+
+}
 public class MockSessionEstablisherInterface: SessionEstablisherInterface {
 
     // MARK: - Life cycle
