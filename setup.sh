@@ -29,16 +29,26 @@ set -e
 function die { ( >&2 echo "$*"); exit 1; }
 
 # CHECK PREREQUISITES
-hash carthage 2>/dev/null || die "Can't find Carthage, please install from https://github.com/Carthage/Carthage"
-hash xcodebuild 2>/dev/null || die "Can't find Xcode, please install from the App Store"
 
-version=`carthage version | tail -n 1`
-CARTHAGE_VERSION=( ${version//./ } )
-version=`xcodebuild -version | head -n 1 | sed "s/Xcode //"`
-XCODE_VERSION=( ${version//./ } )
+## Carthage
+hash carthage 2>/dev/null || die "Can't find Carthage, please install from https://github.com/Carthage/Carthage"
+carthage_full_version=`carthage version | tail -n 1`
+CARTHAGE_VERSION=( ${carthage_full_version//./ } )
 
 [[ ${CARTHAGE_VERSION[0]} -gt 0 || ${CARTHAGE_VERSION[1]} -ge 38 ]] || die "Carthage should be at least version 0.38"
-[[ ${XCODE_VERSION[0]} -gt 14 || ( ${XCODE_VERSION[0]} -eq 14 && ${XCODE_VERSION[1]} -ge 2 ) ]] || die "Xcode version should be at least 14.2. The current version is ${XCODE_VERSION}. If you have multiple versions of Xcode installed, please run: sudo xcode-select --switch /Applications/Xcode_14.2.app/Contents/Developer"
+
+## Xcode
+hash xcodebuild 2>/dev/null || die "Can't find Xcode, please install from the App Store"
+local_xcode_version=`xcodebuild -version | head -n 1 | sed "s/Xcode //"`
+LOCAL_XCODE_VERSION=( ${local_xcode_version//./ } )
+
+repository_xcode_version=`cat .xcode-version`
+REPOSITORY_XCODE_VERSION=( ${repository_xcode_version//./ } )
+
+
+[[ ${LOCAL_XCODE_VERSION[0]} -gt ${REPOSITORY_XCODE_VERSION[0]} ||
+( ${LOCAL_XCODE_VERSION[0]} -eq ${REPOSITORY_XCODE_VERSION[0]} && ${LOCAL_XCODE_VERSION[1]} -ge ${REPOSITORY_XCODE_VERSION[1]} ) ]] ||
+die "Xcode version for the repository should be at least ${repository_xcode_version}. The current local version is ${local_xcode_version}. If you have multiple versions of Xcode installed, please run: sudo xcode-select --switch /Applications/Xcode_${repository_xcode_version}.app"
 
 # SETUP
 
