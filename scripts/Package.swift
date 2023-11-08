@@ -5,20 +5,7 @@ import PackageDescription
 
 let package = Package(
     name: "Scripts",
-    products: [
-        .plugin(name: "SwiftLintPlugin", targets: ["SwiftLintPlugin"])
-    ],
-    dependencies: [
-        //.package(url: "https://github.com/realm/SwiftLint.git", exact: "0.53.0"),
-    ],
     targets: [
-        .plugin(
-            name: "SwiftLintPlugin",
-            capability: .buildTool(),
-            dependencies: [
-                .target(name: "SwiftLintBinary", condition: .when(platforms: [.macOS]))
-            ]
-        ),
         .binaryTarget(
             name: "SwiftLintBinary",
             url: "https://github.com/realm/SwiftLint/releases/download/0.53.0/SwiftLintBinary-macos.artifactbundle.zip",

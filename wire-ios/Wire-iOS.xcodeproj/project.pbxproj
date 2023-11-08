@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 60;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -8031,7 +8031,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				597D8C8F2AFAAA50007F5076 /* PBXTargetDependency */,
 				F1FEA15021DCEB1700790A54 /* PBXTargetDependency */,
 				168A16B21D9597C2005CFA6C /* PBXTargetDependency */,
 				065A5AE4279B07AC002D4D1E /* PBXTargetDependency */,
@@ -8166,7 +8165,6 @@
 			packageReferences = (
 				01C1A7C52A54C45A0058D578 /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */,
 				407831AB2AC4636F005C2978 /* XCRemoteSwiftPackageReference "DifferenceKit" */,
-				597D8C8D2AFAAA17007F5076 /* XCLocalSwiftPackageReference "../scripts" */,
 			);
 			productRefGroup = 8F42C539199244A700288E4D /* Products */;
 			projectDirPath = "";
@@ -10068,10 +10066,6 @@
 			target = 168A16A81D9597C2005CFA6C /* Wire Share Extension */;
 			targetProxy = 168A16B11D9597C2005CFA6C /* PBXContainerItemProxy */;
 		};
-		597D8C8F2AFAAA50007F5076 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			productRef = 597D8C8E2AFAAA50007F5076 /* SwiftLintPlugin */;
-		};
 		BACB88581AF7C48900DDCDB0 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 8F42C537199244A700288E4D /* Wire-iOS */;
@@ -10660,13 +10654,6 @@
 		};
 /* End XCConfigurationList section */
 
-/* Begin XCLocalSwiftPackageReference section */
-		597D8C8D2AFAAA17007F5076 /* XCLocalSwiftPackageReference "../scripts" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = ../scripts;
-		};
-/* End XCLocalSwiftPackageReference section */
-
 /* Begin XCRemoteSwiftPackageReference section */
 		01C1A7C52A54C45A0058D578 /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */ = {
 			isa = XCRemoteSwiftPackageReference;
@@ -10696,11 +10683,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 407831AB2AC4636F005C2978 /* XCRemoteSwiftPackageReference "DifferenceKit" */;
 			productName = DifferenceKit;
-		};
-		597D8C8E2AFAAA50007F5076 /* SwiftLintPlugin */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 597D8C8D2AFAAA17007F5076 /* XCLocalSwiftPackageReference "../scripts" */;
-			productName = "plugin:SwiftLintPlugin";
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
