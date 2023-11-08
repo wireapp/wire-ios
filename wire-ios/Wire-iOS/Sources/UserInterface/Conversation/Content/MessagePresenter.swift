@@ -80,8 +80,8 @@ final class MessagePresenter: NSObject {
         documentInteractionController = UIDocumentInteractionController(url: URL(fileURLWithPath: tmpPath))
         documentInteractionController?.delegate = self
         if !preview || false == documentInteractionController?.presentPreview(animated: true),
-            let rect = targetViewController?.view.convert(targetView.bounds, from: targetView),
-        let view = targetViewController?.view {
+           let rect = targetViewController?.view.convert(targetView.bounds, from: targetView),
+           let view = targetViewController?.view {
 
             documentInteractionController?.presentOptionsMenu(from: rect, in: view, animated: true)
         }
@@ -96,7 +96,7 @@ final class MessagePresenter: NSObject {
         }
     }
 
-// MARK: - AVPlayerViewController dismissial
+    // MARK: - AVPlayerViewController dismissial
 
     fileprivate func observePlayerDismissial() {
         videoPlayerObserver = NotificationCenter.default.addObserver(forName: .dismissingAVPlayer, object: nil, queue: OperationQueue.main) { _ in
@@ -131,12 +131,14 @@ final class MessagePresenter: NSObject {
 
         _ = message.startSelfDestructionIfNeeded()
 
-        if let fileMessageData = message.fileMessageData, fileMessageData.isPass,
-            let addPassesViewController = createAddPassesViewController(fileMessageData: fileMessageData) {
-            targetViewController?.present(addPassesViewController, animated: true)
-
+        if let fileMessageData = message.fileMessageData, fileMessageData.isPass {
+            loadPassDataAndCreateAddPassesViewController(fileMessageData: fileMessageData) { addPassesViewController in
+                if let addPassesViewController = addPassesViewController, let targetViewController = self.targetViewController {
+                    targetViewController.present(addPassesViewController, animated: true)
+                }
+            }
         } else if let fileMessageData = message.fileMessageData, fileMessageData.isVideo,
-            let mediaPlaybackManager = mediaPlaybackManager {
+                  let mediaPlaybackManager = mediaPlaybackManager {
             let player = AVPlayer(url: fileURL)
             mediaPlayerController = MediaPlayerController(player: player, message: message, delegate: mediaPlaybackManager)
             let playerViewController = AVPlayerViewController()
@@ -193,8 +195,8 @@ final class MessagePresenter: NSObject {
 
     func viewController(forImageMessage message: ZMConversationMessage, actionResponder delegate: MessageActionResponder) -> UIViewController? {
         guard Message.isImage(message),
-            message.imageMessageData != nil else {
-                return nil
+              message.imageMessageData != nil else {
+            return nil
         }
 
         return imagesViewController(for: message,
@@ -204,8 +206,8 @@ final class MessagePresenter: NSObject {
 
     func viewController(forImageMessagePreview message: ZMConversationMessage, actionResponder delegate: MessageActionResponder) -> UIViewController? {
         guard Message.isImage(message),
-            message.imageMessageData != nil else {
-                return nil
+              message.imageMessageData != nil else {
+            return nil
         }
 
         return imagesViewController(for: message, actionResponder: delegate, isPreviewing: true)
@@ -213,18 +215,37 @@ final class MessagePresenter: NSObject {
 
     // MARK: - Pass
 
-    func createAddPassesViewController(fileMessageData: ZMFileMessageData) -> PKAddPassesViewController? {
-        guard let fileURL = fileMessageData.fileURL,
-            let passData = try? Data.init(contentsOf: fileURL) else {
-                return nil
-        }
+    func loadPassDataAndCreateAddPassesViewController(
+        fileMessageData: ZMFileMessageData,
+        completion: @escaping (
+            PKAddPassesViewController?
+        ) -> Void
+    ) {
+        DispatchQueue.global(qos: .userInitiated).async {
+            guard let fileURL = fileMessageData.fileURL, let passData = try? Data(contentsOf: fileURL) else {
+                DispatchQueue.main.async {
+                    completion(nil)
+                }
+                return
+            }
 
-        guard let pass = try? PKPass.init(data: passData) else { return nil }
+            guard let pass = try? PKPass(data: passData) else {
+                DispatchQueue.main.async {
+                    completion(nil)
+                }
+                return
+            }
 
-        if PKAddPassesViewController.canAddPasses() {
-            return PKAddPassesViewController(pass: pass)
-        } else {
-            return nil
+            let addPassesViewController: PKAddPassesViewController?
+            if PKAddPassesViewController.canAddPasses() {
+                addPassesViewController = PKAddPassesViewController(pass: pass)
+            } else {
+                addPassesViewController = nil
+            }
+
+            DispatchQueue.main.async {
+                completion(addPassesViewController)
+            }
         }
     }
 }
