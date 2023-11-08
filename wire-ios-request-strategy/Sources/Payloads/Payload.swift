@@ -398,12 +398,18 @@ public enum Payload {
         let failedToConfirm: ClientListByQualifiedUserID
     }
 
-    struct MLSMessageSendingStatus: Codable {
+    public struct MLSMessageSendingStatus: Codable {
 
         enum CodingKeys: String, CodingKey {
             case time
             case events
             case failedToSend = "failed_to_send"
+        }
+
+        public init(time: Date, events: [Data], failedToSend: [QualifiedID]?) {
+            self.time = time
+            self.events = events
+            self.failedToSend = failedToSend
         }
 
         /// Time of sending message.

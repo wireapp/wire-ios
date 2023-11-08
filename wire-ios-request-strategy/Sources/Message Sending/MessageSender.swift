@@ -46,7 +46,10 @@ public class HttpClientImpl: HttpClient {
 }
 
 public enum MessageSendError: Error, Equatable {
-    case messageProtocolMissing
+    case missingMessageProtocol
+    case missingGroupID
+    case missingQualifiedID
+    case missingMlsService
     case unresolvedApiVersion
     case messageExpired
 }
@@ -81,7 +84,8 @@ public class MessageSender: MessageSenderInterface {
     private let clientRegistrationDelegate: ClientRegistrationDelegate
     private let sessionEstablisher: SessionEstablisherInterface
     private let messageDependencyResolver: MessageDependencyResolverInterface
-    private let processor = MessageSendingStatusPayloadProcessor()
+    private let proteusPayloadProcessor = MessageSendingStatusPayloadProcessor()
+    private let mlsPayloadProcessor = MLSMessageSendingStatusPayloadProcessor()
 
     public func sendMessage(message: any SendableMessage) async throws {
         WireLogger.messaging.debug("send message")
@@ -91,6 +95,18 @@ public class MessageSender: MessageSenderInterface {
         do {
             try await messageDependencyResolver.waitForDependenciesToResolve(for: message)
             try await attemptToSend(message: message)
+        } catch let networkError as NetworkError {
+            if case .invalidRequestError(let responseFailure, _) = networkError, responseFailure.code == 533 {
+                switch responseFailure.data?.type {
+                case .federation:
+                    responseFailure.updateExpirationReason(for: message, with: .federationRemoteError)
+                case .unknown:
+                    responseFailure.updateExpirationReason(for: message, with: .unknown)
+                case .none:
+                    break
+                }
+            }
+            throw networkError
         } catch {
             WireLogger.messaging.debug("send message failed: \(error)")
             throw error
@@ -106,7 +122,7 @@ public class MessageSender: MessageSenderInterface {
 
         guard let apiVersion = BackendInfo.apiVersion else { throw MessageSendError.unresolvedApiVersion }
         guard let messageProtocol else {
-            throw MessageSendError.messageProtocolMissing
+            throw MessageSendError.missingMessageProtocol
         }
 
         return switch messageProtocol {
@@ -118,10 +134,12 @@ public class MessageSender: MessageSenderInterface {
     }
 
     private func attemptToSendWithProteus(message: any SendableMessage, apiVersion: APIVersion) async throws {
-        guard let conversationID = await managedObjectContext.perform({
+        let conversationID = await managedObjectContext.perform {
             message.conversation?.qualifiedID
-        }) else {
-            throw MessageSendError.messageProtocolMissing
+        }
+
+        guard let conversationID else {
+            throw MessageSendError.missingQualifiedID
         }
 
         do {
@@ -144,7 +162,7 @@ public class MessageSender: MessageSenderInterface {
     private func handleProteusSuccess(message: any ProteusMessage, messageSendingStatus: Payload.MessageSendingStatus, response: ZMTransportResponse) {
         message.delivered(with: response) // FIXME: jacob refactor to not use raw response
 
-        processor.updateClientsChanges(
+        proteusPayloadProcessor.updateClientsChanges(
             from: messageSendingStatus,
             for: message
         )
@@ -153,7 +171,7 @@ public class MessageSender: MessageSenderInterface {
     private func handleProteusFailure(message: any ProteusMessage, _ failure: NetworkError) throws -> Set<QualifiedClientID> {
         switch failure {
         case .missingClients(let messageSendingStatus, _):
-            processor.updateClientsChanges(
+            proteusPayloadProcessor.updateClientsChanges(
                 from: messageSendingStatus,
                 for: message
             )
@@ -163,26 +181,6 @@ public class MessageSender: MessageSenderInterface {
                 throw MessageSendError.messageExpired
             } else {
                 return Set(messageSendingStatus.missing.qualifiedClientIDs)
-            }
-        case .invalidRequestError(let responseFailure, _):
-            switch (responseFailure.code, responseFailure.label) {
-            case (533, _):
-                guard
-                    let data = responseFailure.data
-                else {
-                    throw failure
-                }
-
-                switch data.type {
-                case .federation:
-                    responseFailure.updateExpirationReason(for: message, with: .federationRemoteError)
-                case .unknown:
-                    responseFailure.updateExpirationReason(for: message, with: .unknown)
-                }
-
-                throw failure
-            default:
-                throw failure
             }
         default:
             if case .tryAgainLater = failure.response?.result {
@@ -198,7 +196,47 @@ public class MessageSender: MessageSenderInterface {
     }
 
     private func attemptToSendWithMLS(message: any MLSMessage, apiVersion: APIVersion) async throws {
-        throw MessageSendError.messageProtocolMissing
+        let conversationID = await managedObjectContext.perform { message.conversation?.qualifiedID }
+        let groupID = await managedObjectContext.perform { message.conversation?.mlsGroupID }
+        let mlsService = await managedObjectContext.perform { self.managedObjectContext.mlsService }
+
+        guard let conversationID else {
+            throw MessageSendError.missingQualifiedID
+        }
+        guard let groupID else {
+            throw MessageSendError.missingGroupID
+        }
+        guard let mlsService else {
+            throw MessageSendError.missingMlsService
+        }
+
+        try await mlsService.commitPendingProposals(in: groupID)
+        let encryptedData = try await encryptMlsMessage(message, groupID: groupID)
+        let (payload, response) = try await apiProvider.messageAPI(apiVersion: apiVersion)
+            .sendMLSMessage(message: encryptedData,
+                            conversationID: conversationID,
+                            expirationDate: await managedObjectContext.perform { message.expirationDate })
+
+        await managedObjectContext.perform {
+            self.mlsPayloadProcessor.updateFailedRecipients(from: payload, for: message)
+            message.delivered(with: response)
+        }
+    }
+
+    private func encryptMlsMessage(_ message: any MLSMessage, groupID: MLSGroupID) async throws -> Data {
+        return try await managedObjectContext.perform {
+            guard let mlsService = self.managedObjectContext.mlsService else {
+                throw MessageSendError.missingMlsService
+            }
+
+            return try message.encryptForTransport { messageData in
+                let encryptedBytes = try mlsService.encrypt(
+                    message: messageData.bytes,
+                    for: groupID
+                )
+                return encryptedBytes.data
+            }
+        }
     }
 }
 
