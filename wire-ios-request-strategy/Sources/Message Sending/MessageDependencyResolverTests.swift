@@ -20,7 +20,7 @@ import XCTest
 
 final class MessageDependencyResolverTests: MessagingTestBase {
 
-    func testThatGivenMessageWithoutDependencies_thenDontWait() async throws {
+    func testThatGivenMessageWithoutDependencies_thenDontWait() throws {
         // given
         let message = GenericMessageEntity(
             conversation: groupConversation,
@@ -29,13 +29,13 @@ final class MessageDependencyResolverTests: MessagingTestBase {
         let (_, messageDependencyResolver) = Arrangement(coreDataStack: coreDataStack)
             .arrange()
 
-        // when
-        try await messageDependencyResolver.waitForDependenciesToResolve(for: message)
-
         // then test completes
+        wait(timeout: 0.5) {
+            try await messageDependencyResolver.waitForDependenciesToResolve(for: message)
+        }
     }
 
-    func testThatGivenMessageWithDependencies_thenWaitUntilDependencyIsResolved() async throws {
+    func testThatGivenMessageWithDependencies_thenWaitUntilDependencyIsResolved() throws {
         // given
         syncMOC.performAndWait {
             // make conversatio sync a dependency
@@ -59,10 +59,10 @@ final class MessageDependencyResolverTests: MessagingTestBase {
             RequestAvailableNotification.notifyNewRequestsAvailable(nil)
         }
 
-        // when
-        try await messageDependencyResolver.waitForDependenciesToResolve(for: message)
-
         // then test completes
+        wait(timeout: 0.5) {
+            try await messageDependencyResolver.waitForDependenciesToResolve(for: message)
+        }
     }
 
     struct Arrangement {

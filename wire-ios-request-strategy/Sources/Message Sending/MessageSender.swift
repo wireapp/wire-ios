@@ -70,13 +70,15 @@ public class MessageSender: MessageSenderInterface {
         clientRegistrationDelegate: ClientRegistrationDelegate,
         sessionEstablisher: SessionEstablisherInterface,
         messageDependencyResolver: MessageDependencyResolverInterface,
+        quickSyncObserver: QuickSyncObserverInterface,
         context: NSManagedObjectContext
     ) {
         self.apiProvider = apiProvider
         self.clientRegistrationDelegate = clientRegistrationDelegate
         self.sessionEstablisher = sessionEstablisher
-        self.context = context
         self.messageDependencyResolver = messageDependencyResolver
+        self.quickSyncObserver = quickSyncObserver
+        self.context = context
     }
 
     private let apiProvider: APIProviderInterface
@@ -84,13 +86,14 @@ public class MessageSender: MessageSenderInterface {
     private let clientRegistrationDelegate: ClientRegistrationDelegate
     private let sessionEstablisher: SessionEstablisherInterface
     private let messageDependencyResolver: MessageDependencyResolverInterface
+    private let quickSyncObserver: QuickSyncObserverInterface
     private let proteusPayloadProcessor = MessageSendingStatusPayloadProcessor()
     private let mlsPayloadProcessor = MLSMessageSendingStatusPayloadProcessor()
 
     public func sendMessage(message: any SendableMessage) async throws {
         WireLogger.messaging.debug("send message")
 
-        // TODO: [jacob] we need to wait until we are "online"
+        await quickSyncObserver.waitForQuickSyncToFinish()
 
         do {
             try await messageDependencyResolver.waitForDependenciesToResolve(for: message)
