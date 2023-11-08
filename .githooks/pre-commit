@@ -39,7 +39,7 @@ def get_swift_files(files)
 end
 
 def compose_swiftlint_command(changed_files, autoformat)
-  command = "swiftlint"
+  command = "./scripts/run-swiftlint.sh"
   command << " lint"
   command << " --fix" if autoformat
   command << " --strict"
@@ -53,17 +53,6 @@ end
 def running_on_ci 
 	!ENV['CI'].nil?
 end
-
-def swiftlint_exists
-	`which swiftlint`
-	$?.success?
-end
-
-# Add Homebrew bin directory to PATH if it exists
-if File.directory?("/opt/homebrew/bin/")
-  ENV['PATH'] = "/opt/homebrew/bin:" + ENV['PATH']
-end
-
 
 # Checking if current commit is not a merge commit. For merge commits we don't want to perform linting
 # since we would be linting changes not related to our work.
@@ -79,12 +68,6 @@ staged_swift_files = get_swift_files(get_paths_to_staged_files)
 
 if running_on_ci || staged_swift_files.empty?
     exit 0
-end
-
-unless swiftlint_exists
-	puts "Error: SwiftLint is not installed."
-	puts "Please install SwiftLint by following the instructions at: https://github.com/realm/SwiftLint#installation"
-	exit 1
 end
 
 relative_staged_swift_files = map_to_relative_paths(staged_swift_files)
