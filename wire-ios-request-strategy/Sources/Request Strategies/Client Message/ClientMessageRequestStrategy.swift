@@ -18,7 +18,7 @@
 
 import Foundation
 
-public class ClientMessageRequestStrategy: AbstractRequestStrategy, ZMContextChangeTrackerSource {
+public class ClientMessageRequestStrategy: NSObject, ZMContextChangeTrackerSource {
 
     static func shouldBeSentPredicate(context: NSManagedObjectContext) -> NSPredicate {
         let notDelivered = NSPredicate(format: "%K == FALSE", DeliveredKey)
@@ -29,9 +29,9 @@ public class ClientMessageRequestStrategy: AbstractRequestStrategy, ZMContextCha
 
     // MARK: - Properties
 
+    let context: NSManagedObjectContext
     let insertedObjectSync: InsertedObjectSync<ClientMessageRequestStrategy>
-    let messageSender: MessageSenderInterface? // FIXME: [jacob] make non-optional
-    let messageSync: MessageSync<ZMClientMessage>
+    let messageSender: MessageSenderInterface
     let messageExpirationTimer: MessageExpirationTimer
     let linkAttachmentsPreprocessor: LinkAttachmentsPreprocessor
     let localNotificationDispatcher: PushMessageHandler
@@ -39,50 +39,33 @@ public class ClientMessageRequestStrategy: AbstractRequestStrategy, ZMContextCha
     // MARK: - Life cycle
 
     public init(
-        withManagedObjectContext managedObjectContext: NSManagedObjectContext,
+        context: NSManagedObjectContext,
         localNotificationDispatcher: PushMessageHandler,
         applicationStatus: ApplicationStatus,
-        messageSender: MessageSenderInterface?
+        messageSender: MessageSenderInterface
     ) {
         insertedObjectSync = InsertedObjectSync(
-            insertPredicate: Self.shouldBeSentPredicate(context: managedObjectContext)
+            insertPredicate: Self.shouldBeSentPredicate(context: context)
         )
 
+        self.context = context
         self.messageSender = messageSender
-        messageSync = MessageSync(
-            context: managedObjectContext,
-            appStatus: applicationStatus
-        )
-
         self.localNotificationDispatcher = localNotificationDispatcher
 
         messageExpirationTimer = MessageExpirationTimer(
-            moc: managedObjectContext,
+            moc: context,
             entityNames: [ZMClientMessage.entityName(), ZMAssetClientMessage.entityName()],
             localNotificationDispatcher: localNotificationDispatcher
         )
 
         linkAttachmentsPreprocessor = LinkAttachmentsPreprocessor(
             linkAttachmentDetector: LinkAttachmentDetectorHelper.defaultDetector(),
-            managedObjectContext: managedObjectContext
+            managedObjectContext: context
         )
 
-        super.init(
-            withManagedObjectContext: managedObjectContext,
-            applicationStatus: applicationStatus
-        )
-
-        configuration = [
-            .allowsRequestsWhileOnline,
-            .allowsRequestsWhileInBackground
-        ]
+        super.init()
 
         insertedObjectSync.transcoder = self
-
-        messageSync.onRequestScheduled { [weak self] message, _ in
-            WireLogger.messaging.debug("stopping expiration timer for message \(message.debugInfo)")
-            self?.messageExpirationTimer.stop(for: message)
-        }
     }
 
     deinit {
@@ -96,13 +79,8 @@ public class ClientMessageRequestStrategy: AbstractRequestStrategy, ZMContextCha
             insertedObjectSync,
             messageExpirationTimer,
             linkAttachmentsPreprocessor
-        ] + messageSync.contextChangeTrackers
+        ]
     }
-
-    public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        return messageSync.nextRequest(for: apiVersion)
-    }
-
 }
 
 // MARK: - Inserted object sync transcoder
@@ -115,17 +93,17 @@ extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
         WireLogger.messaging.debug("inserting message \(object.debugInfo)")
 
         // Enter groups to enable waiting for message sending to complete in tests
-        let groups = managedObjectContext.enterAllGroupsExceptSecondary()
+        let groups = context.enterAllGroupsExceptSecondary()
         Task {
             do {
-                try await messageSender?.sendMessage(message: object)
-                await managedObjectContext.perform {
+                try await messageSender.sendMessage(message: object)
+                await context.perform {
                     WireLogger.messaging.debug("successfully sent message \(object.debugInfo)")
                     object.markAsSent()
                     self.deleteMessageIfNecessary(object)
                 }
             } catch {
-                await managedObjectContext.perform {
+                await context.perform {
                     WireLogger.messaging.error("failed to send message \(object.debugInfo): \(error)")
 
                     object.expire()
@@ -133,23 +111,23 @@ extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
 
                     if case NetworkError.invalidRequestError(let responseFailure, _) = error,
                        responseFailure.label == .missingLegalholdConsent {
-                        self.managedObjectContext.zm_userInterface.performGroupedBlock {
+                        self.context.zm_userInterface.performGroupedBlock {
                             NotificationInContext(
                                 name: ZMConversation.failedToSendMessageNotificationName,
-                                context: self.managedObjectContext.notificationContext
+                                context: self.context.notificationContext
                             ).post()
                         }
                     }
                 }
             }
 
-            await managedObjectContext.perform {
+            await context.perform {
                 self.messageExpirationTimer.stop(for: object)
-                self.managedObjectContext.enqueueDelayedSave()
+                self.context.enqueueDelayedSave()
             }
 
             completion()
-            managedObjectContext.leaveAllGroups(groups)
+            context.leaveAllGroups(groups)
         }
     }
 
@@ -158,14 +136,14 @@ extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
 
         if underlyingMessage.hasReaction {
             WireLogger.messaging.debug("deleting message: \(message.debugInfo)")
-            managedObjectContext.delete(message)
+            context.delete(message)
         }
 
         if underlyingMessage.hasConfirmation {
             // NOTE: this will only be read confirmations since delivery confirmations
             // are not sent using the ClientMessageTranscoder
             WireLogger.messaging.debug("deleting message: \(message.debugInfo)")
-            managedObjectContext.delete(message)
+            context.delete(message)
         }
     }
 
@@ -203,14 +181,14 @@ extension ClientMessageRequestStrategy: ZMEventConsumer {
     func insertMessage(from event: ZMUpdateEvent, prefetchResult: ZMFetchRequestBatchResult?) {
         switch event.type {
         case .conversationClientMessageAdd, .conversationOtrMessageAdd, .conversationOtrAssetAdd, .conversationMLSMessageAdd:
-            guard let message = ZMOTRMessage.createOrUpdate(from: event, in: managedObjectContext, prefetchResult: prefetchResult) else { return }
+            guard let message = ZMOTRMessage.createOrUpdate(from: event, in: context, prefetchResult: prefetchResult) else { return }
             message.markAsSent()
 
         default:
             break
         }
 
-        managedObjectContext.processPendingChanges()
+        context.processPendingChanges()
     }
 }
 

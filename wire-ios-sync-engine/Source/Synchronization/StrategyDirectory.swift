@@ -168,7 +168,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory),
             ClientMessageRequestStrategy(
-                withManagedObjectContext: syncMOC,
+                context: syncMOC,
                 localNotificationDispatcher: pushMessageHandler,
                 applicationStatus: applicationStatusDirectory,
                 messageSender: messageSender),
