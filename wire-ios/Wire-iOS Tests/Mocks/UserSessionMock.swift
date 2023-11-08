@@ -42,26 +42,6 @@ final class UserSessionMock: UserSession {
     var _passcode: String?
 
     var networkState: ZMNetworkState = .offline
-    
-    typealias Preference = AppLockPasscodePreference
-    typealias Callback = (AppLockModule.AuthenticationResult, LAContext) -> Void
-
-    var _authenticationResult: AppLockAuthenticationResult = .unavailable
-    var _evaluationContext = LAContext()
-
-    var mockConversationDirectory = MockConversationDirectory()
-
-    var setEncryptionAtRest: [(enabled: Bool, skipMigration: Bool)] = []
-
-    var unlockDatabase: [LAContext] = []
-
-    var openApp: [Void] = []
-
-    var evaluateAuthentication: [(preference: Preference, description: String, callback: Callback)] = []
-
-    var evaluateAuthenticationWithCustomPasscode: [String] = []
-
-    var _passcode: String?
 
     var selfUser: UserType
     var selfLegalHoldSubject: SelfLegalHoldSubject & UserType
@@ -102,7 +82,7 @@ final class UserSessionMock: UserSession {
     var needsToNotifyUserOfAppLockConfiguration: Bool = false
 
     func openAppLock() throws {
-         openApp.append(())
+        openApp.append(())
     }
 
     func evaluateAppLockAuthentication(
@@ -129,7 +109,7 @@ final class UserSessionMock: UserSession {
     var maxAudioMessageLength: TimeInterval = 1500 // 25 minutes (25 * 60.0)
     var maxUploadFileSize: UInt64 = 26214400 // 25 megabytes (25 * 1024 * 1024)
     var maxVideoLength: TimeInterval = 240 // 4 minutes (4.0 * 60.0)
-    
+
     var shouldNotifyUserOfDisabledAppLock = false
     var isNotificationContentHidden = false
     var encryptMessagesAtRest = false
