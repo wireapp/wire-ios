@@ -36,11 +36,11 @@ public class SessionEstablisher: SessionEstablisherInterface {
     ) {
         self.processor = processor
         self.apiProvider = apiProvider
-        self.managedObjectContext = context
+        self.context = context
     }
 
     private let apiProvider: APIProviderInterface
-    private let managedObjectContext: NSManagedObjectContext
+    private let context: NSManagedObjectContext
     private let requestFactory = MissingClientsRequestFactory()
     private let processor: PrekeyPayloadProcessorInterface
     private let batchSize = 28
@@ -53,16 +53,16 @@ public class SessionEstablisher: SessionEstablisherInterface {
     }
 
     private func internalEstablishSessions(for clients: Set<QualifiedClientID>, apiVersion: APIVersion) async throws {
-        guard let selfClient = await managedObjectContext.perform({
-            ZMUser.selfUser(in: self.managedObjectContext).selfClient()
+        guard let selfClient = await context.perform({
+            ZMUser.selfUser(in: self.context).selfClient()
         }) else {
             throw SessionEstablisherError.missingSelfClient
         }
 
         let prekeys = try await apiProvider.prekeyAPI(apiVersion: apiVersion).fetchPrekeys(for: clients)
 
-        await managedObjectContext.perform {
-            _ = self.processor.establishSessions(from: prekeys, with: selfClient, context: self.managedObjectContext)
+        await context.perform {
+            _ = self.processor.establishSessions(from: prekeys, with: selfClient, context: self.context)
         }
     }
 }
