@@ -16,7 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import XCTest
+
 @testable import WireDataModel
 
 final class ZMConversationTests_MLS: ZMConversationTestsBase {
@@ -55,6 +56,14 @@ final class ZMConversationTests_MLS: ZMConversationTestsBase {
             XCTAssertEqual(fetchedConversation, conversation)
         }
     }
+
+    // MARK: - Migration releated fetch requests
+
+    func testFetchingAllTeamGroupProteusConversations() {
+        XCTFail("TODO")
+    }
+
+    // MARK: - Helpers
 
     private func createConversation(groupID: MLSGroupID) -> ZMConversation? {
         let conversation = ZMConversation.insertNewObject(in: syncMOC)
