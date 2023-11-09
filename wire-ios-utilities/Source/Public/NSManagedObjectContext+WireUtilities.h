@@ -48,7 +48,7 @@
 - (void)addGroup:(ZMSDispatchGroup *_Null_unspecified)dispatchGroup ZM_NON_NULL(1);
 
 /// List of all groups associated with this context
-- (NSArray *_Null_unspecified)allGroups;
+- (NSArray <ZMSDispatchGroup*>*_Null_unspecified)allGroups;
 
 /// Performs a block and wait for completion.
 /// @note: The block is not retained after its execution. This means that if the queue
@@ -62,7 +62,7 @@
 - (nonnull NSArray *)executeFetchRequestOrAssert:(nonnull NSFetchRequest *)request;
 
 - (NSArray *_Null_unspecified)enterAllGroups;
-- (void)leaveAllGroups:(NSArray *_Null_unspecified)groups;
+- (void)leaveAllGroups:(NSArray <ZMSDispatchGroup*>*_Null_unspecified)groups;
 
 @property (nonatomic) int pendingSaveCounter;
 

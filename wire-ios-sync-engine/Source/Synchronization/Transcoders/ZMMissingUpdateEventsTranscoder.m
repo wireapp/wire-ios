@@ -191,8 +191,8 @@ NSUInteger const ZMMissingUpdateEventsTranscoderListPageSize = 500;
     
     [self.eventProcessor storeUpdateEvents:parsedEvents ignoreBuffer:YES completionHandler:^{
         // FIXME: [F] check that we don't need to call pushNotificationStatus instead
+        [self.pushNotificationStatus didFetchEventIds:eventIds lastEventId:latestEventId finished:!self.listPaginator.hasMoreToFetch];
     }];
-    [self.pushNotificationStatus didFetchEventIds:eventIds lastEventId:latestEventId finished:!self.listPaginator.hasMoreToFetch];
 
     [tp warnIfLongerThanInterval];
     return latestEventId;

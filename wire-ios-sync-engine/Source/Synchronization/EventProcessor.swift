@@ -26,8 +26,6 @@ extension NSNotification.Name {
 
 actor EventProcessor: UpdateEventProcessor {
 
-    
-
     private static let logger = Logger(subsystem: "VoIP Push", category: "EventProcessor")
 
     let syncContext: NSManagedObjectContext
@@ -78,6 +76,11 @@ actor EventProcessor: UpdateEventProcessor {
     /// - Returns: **True** if there are still more events to process
     @objc
     public func processEventsIfReady() async -> Bool { // TODO jacob shouldn't be public
+        self.syncContext.enterAllGroupsExceptSecondaryOne()
+        defer {
+            self.syncContext.leaveAllGroupsExceptSecondaryOne()
+        }
+
         WireLogger.updateEvent.info("process events if ready")
 
         guard isReadyToProcessEvents else {
@@ -127,6 +130,11 @@ actor EventProcessor: UpdateEventProcessor {
     }
 
     public func storeUpdateEvents(_ updateEvents: [ZMUpdateEvent], ignoreBuffer: Bool) async {
+        self.syncContext.enterAllGroupsExceptSecondaryOne()
+        defer {
+            self.syncContext.leaveAllGroupsExceptSecondaryOne()
+        }
+
         if ignoreBuffer || isReadyToProcessEvents {
             let publicKeys = try? earService.fetchPublicKeys()
 
@@ -151,6 +159,11 @@ actor EventProcessor: UpdateEventProcessor {
     }
 
     public func storeAndProcessUpdateEvents(_ updateEvents: [ZMUpdateEvent], ignoreBuffer: Bool) async {
+        self.syncContext.enterAllGroupsExceptSecondaryOne()
+        defer {
+            self.syncContext.leaveAllGroupsExceptSecondaryOne()
+        }
+
         await storeUpdateEvents(updateEvents, ignoreBuffer: ignoreBuffer)
         let isLocked = syncContext.performAndWait { syncContext.isLocked }
 
@@ -193,9 +206,9 @@ actor EventProcessor: UpdateEventProcessor {
                 }
                 self.eventProcessingTracker.registerEventProcessed()
             }
-            syncContext.performAndWait {
-                ZMConversation.calculateLastUnreadMessages(in: syncContext)
-                syncContext.saveOrRollback()
+            syncContext.performGroupedAndWait { context in
+                ZMConversation.calculateLastUnreadMessages(in: context)
+                context.saveOrRollback()
             }
 
             WireLogger.updateEvent.debug("Events processed in \(-date.timeIntervalSinceNow): \(self.eventProcessingTracker.debugDescription)")

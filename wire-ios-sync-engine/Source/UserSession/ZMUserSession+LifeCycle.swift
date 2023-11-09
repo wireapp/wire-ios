@@ -56,8 +56,10 @@ extension ZMUserSession {
     }
 
     func processPendingEvents() {
+        self.syncContext.enterAllGroupsExceptSecondaryOne()
         Task {
             await self.processEvents()
+            self.syncContext.leaveAllGroupsExceptSecondaryOne()
         }
     }
 

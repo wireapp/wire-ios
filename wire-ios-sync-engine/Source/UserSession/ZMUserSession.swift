@@ -672,7 +672,9 @@ extension ZMUserSession: ZMSyncStateDelegate {
             self?.updateNetworkState()
         }
 
+        self.syncContext.enterAllGroupsExceptSecondaryOne()
         let hasMoreEventsToProcess = await updateEventProcessor!.processEventsIfReady()
+        self.syncContext.leaveAllGroupsExceptSecondaryOne()
         let isSyncing = applicationStatusDirectory?.syncStatus.isSyncing == true
 
         if !hasMoreEventsToProcess {
