@@ -2,7 +2,7 @@ name: Test Pull Request Changes
 
 on: 
   pull_request:
-    types: [opened, synchronize, edited]
+    types: [opened, synchronize, edited, ready_for_review]
   merge_group:
     types: [checks_requested]
 
@@ -75,7 +75,7 @@ jobs:
             carthage:
               - 'Cartfile.resolved'
 
-  trigger_tests:
+  trigger_tests_pr:
     needs: detect-changes
     if: ${{ needs.detect-changes.outputs.any == 'true' }}
     uses: ./.github/workflows/_reusable_run_tests.yml

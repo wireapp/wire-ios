@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2023 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,17 +18,15 @@
 
 import Foundation
 
-public extension NSManagedObjectContext {
+@objc
+public extension ZMAccessTokenHandler {
 
-    /// Executes a fetch request and asserts in case of error
-    func fetchOrAssert<T>(request: NSFetchRequest<T>) -> [T] {
-        do {
-            let result = try fetch(request)
-            return result
-        } catch let error {
-            WireLogger.localStorage.error("CoreData: Error in fetching request : \(request),  \(error.localizedDescription)")
-            assertionFailure("Error in fetching \(error.localizedDescription)")
-            return []
-        }
+    func logDebug(_ message: String) {
+        WireLogger.authentication.debug(message)
     }
+
+    func logError(_ message: String) {
+        WireLogger.authentication.error(message)
+    }
+
 }

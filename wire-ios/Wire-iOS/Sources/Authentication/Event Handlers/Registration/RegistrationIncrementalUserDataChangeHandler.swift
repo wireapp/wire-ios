@@ -82,7 +82,7 @@ class RegistrationIncrementalUserDataChangeHandler: AuthenticationEventHandler {
     }
 
     private func makeNewUnregisteredUser(from oldUser: UnregisteredUser) -> UnregisteredUser {
-        var user = UnregisteredUser()
+        let user = UnregisteredUser()
         user.accentColor = oldUser.accentColor
         return user
     }
