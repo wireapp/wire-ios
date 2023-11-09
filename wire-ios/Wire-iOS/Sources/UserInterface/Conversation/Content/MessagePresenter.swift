@@ -24,6 +24,9 @@ import WireSyncEngine
 private let zmLog = ZMSLog(tag: "MessagePresenter")
 
 final class MessagePresenter: NSObject {
+    enum MessagePresenterError: Error {
+        case missingFileURL
+    }
 
     /// Container of the view that hosts popover controller.
     weak var targetViewController: UIViewController?
@@ -132,10 +135,8 @@ final class MessagePresenter: NSObject {
         _ = message.startSelfDestructionIfNeeded()
 
         if let fileMessageData = message.fileMessageData, fileMessageData.isPass {
-            loadPassDataAndCreateAddPassesViewController(fileMessageData: fileMessageData) { addPassesViewController in
-                if let addPassesViewController = addPassesViewController, let targetViewController = self.targetViewController {
-                    targetViewController.present(addPassesViewController, animated: true)
-                }
+            Task {
+                await openPassesViewController(fileMessageData: fileMessageData)
             }
         } else if let fileMessageData = message.fileMessageData, fileMessageData.isVideo,
                   let mediaPlaybackManager = mediaPlaybackManager {
@@ -215,36 +216,34 @@ final class MessagePresenter: NSObject {
 
     // MARK: - Pass
 
-    func loadPassDataAndCreateAddPassesViewController(
-        fileMessageData: ZMFileMessageData,
-        completion: @escaping (
-            PKAddPassesViewController?
-        ) -> Void
-    ) {
-        DispatchQueue.global(qos: .userInitiated).async {
-            guard let fileURL = fileMessageData.fileURL, let passData = try? Data(contentsOf: fileURL) else {
-                DispatchQueue.main.async {
-                    completion(nil)
+    @MainActor
+    func openPassesViewController(fileMessageData: ZMFileMessageData) async {
+        guard PKAddPassesViewController.canAddPasses() else { return }
+
+        guard let viewController = try? await makePassesViewController(fileMessageData: fileMessageData) else {
+            return // ignore error
+        }
+
+        targetViewController?.present(viewController, animated: true)
+    }
+
+    @MainActor
+    func makePassesViewController(fileMessageData: ZMFileMessageData) async throws -> PKAddPassesViewController? {
+        let pass = try await loadPass(fileMessageData: fileMessageData)
+        return PKAddPassesViewController(pass: pass)
+    }
+
+    private func loadPass(fileMessageData: ZMFileMessageData) async throws -> PKPass {
+        try await withCheckedThrowingContinuation { continuation in
+            Task.detached(priority: .userInitiated) {
+                guard let fileURL = fileMessageData.fileURL else {
+                    continuation.resume(throwing: MessagePresenterError.missingFileURL)
+                    return
                 }
-                return
-            }
 
-            guard let pass = try? PKPass(data: passData) else {
-                DispatchQueue.main.async {
-                    completion(nil)
-                }
-                return
-            }
-
-            let addPassesViewController: PKAddPassesViewController?
-            if PKAddPassesViewController.canAddPasses() {
-                addPassesViewController = PKAddPassesViewController(pass: pass)
-            } else {
-                addPassesViewController = nil
-            }
-
-            DispatchQueue.main.async {
-                completion(addPassesViewController)
+                let passData = try Data(contentsOf: fileURL)
+                let pass = try PKPass(data: passData)
+                continuation.resume(returning: pass)
             }
         }
     }

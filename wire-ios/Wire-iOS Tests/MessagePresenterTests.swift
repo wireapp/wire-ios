@@ -76,43 +76,30 @@ final class MessagePresenterTests: XCTestCase {
 
     // MARK: - Pass
 
-    func testThatCreateAddPassesViewControllerReturnsNilForFileMessage() {
+    func testThatCreateAddPassesViewControllerReturnsNilForFileMessage() async throws {
         // GIVEN
         let message = MockMessageFactory.fileTransferMessage()
-        let expectation = self.expectation(description: "Load pass data and create addPassesViewController")
+        let fileMessageData = try XCTUnwrap(message.fileMessageData)
 
-        // WHEN
-        var addPassesViewControllerResult: PKAddPassesViewController?
-        sut.loadPassDataAndCreateAddPassesViewController(fileMessageData: message.fileMessageData!) { addPassesViewController in
-            addPassesViewControllerResult = addPassesViewController
-            expectation.fulfill()
+        // WHEN && THEN
+        do {
+            _ = try await sut.makePassesViewController(fileMessageData: fileMessageData)
+            XCTFail("expected to throw an error!")
+        } catch {
+            // success
         }
-
-        // THEN
-        waitForExpectations(timeout: 5, handler: nil)
-        XCTAssertNil(addPassesViewControllerResult)
     }
 
-    func testThatCreateAddPassesViewControllerReturnsAViewControllerForPassFileMessage() {
+    func testThatCreateAddPassesViewControllerReturnsAViewControllerForPassFileMessage() async throws {
         // GIVEN
         let message = MockMessageFactory.passFileTransferMessage()
-        let expectation = self.expectation(description: "Should receive a PKAddPassesViewController")
+        let fileMessageData = try XCTUnwrap(message.fileMessageData)
 
         // WHEN
-        var addPassesViewControllerResult: PKAddPassesViewController?
-        sut.loadPassDataAndCreateAddPassesViewController(fileMessageData: message.fileMessageData!) { addPassesViewController in
-            addPassesViewControllerResult = addPassesViewController
-            expectation.fulfill()
-        }
+        let viewController = try await sut.makePassesViewController(fileMessageData: fileMessageData)
 
         // THEN
-        waitForExpectations(timeout: 5) { error in
-            if let error = error {
-                XCTFail("waitForExpectationsWithError: \(error)")
-            }
-
-            XCTAssertNotNil(addPassesViewControllerResult)
-        }
+        XCTAssertNotNil(viewController)
     }
 
 }
