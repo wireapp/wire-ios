@@ -229,23 +229,24 @@ final class MessagePresenter: NSObject {
 
     @MainActor
     func makePassesViewController(fileMessageData: ZMFileMessageData) async throws -> PKAddPassesViewController? {
-        let pass = try await loadPass(fileMessageData: fileMessageData)
+        guard let fileURL = fileMessageData.fileURL else {
+            throw MessagePresenterError.missingFileURL
+        }
+
+        let pass = try await loadPass(fileURL: fileURL)
         return PKAddPassesViewController(pass: pass)
     }
 
-    private func loadPass(fileMessageData: ZMFileMessageData) async throws -> PKPass {
-        try await withCheckedThrowingContinuation { continuation in
-            Task.detached(priority: .userInitiated) {
-                guard let fileURL = fileMessageData.fileURL else {
-                    continuation.resume(throwing: MessagePresenterError.missingFileURL)
-                    return
-                }
-
+    private func loadPass(fileURL: URL) async throws -> PKPass {
+        // Without MainActor attribute, this runs on a background queue.
+        let task = Task.detached(
+            priority: .userInitiated,
+            operation: {
                 let passData = try Data(contentsOf: fileURL)
-                let pass = try PKPass(data: passData)
-                continuation.resume(returning: pass)
+                return try PKPass(data: passData)
             }
-        }
+        )
+        return try await task.value
     }
 }
 
