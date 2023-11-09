@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2021 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,13 +18,7 @@
 
 import Foundation
 
-public protocol EntityTranscoder: AnyObject {
-    associatedtype Entity: Hashable
+public protocol ProteusMessage: OTREntity, EncryptedPayloadGenerator, Hashable {}
 
-    func request(forEntity entity: Entity, apiVersion: APIVersion) -> ZMTransportRequest?
-
-    func request(forEntity entity: Entity, didCompleteWithResponse response: ZMTransportResponse)
-
-    func shouldTryToResend(entity: Entity, afterFailureWithResponse response: ZMTransportResponse) -> Bool
-
-}
+extension ZMClientMessage: ProteusMessage {}
+extension ZMAssetClientMessage: ProteusMessage {}

@@ -42,7 +42,7 @@ class ClientMessageRequestStrategyTests: MessagingTestBase {
             mockAttachmentsDetector = MockAttachmentDetector()
             mockMessageSender = MockMessageSenderInterface()
             LinkAttachmentDetectorHelper.setTest_debug_linkAttachmentDetector(mockAttachmentsDetector)
-            sut = ClientMessageRequestStrategy(withManagedObjectContext: syncMOC,
+            sut = ClientMessageRequestStrategy(context: syncMOC,
                                                localNotificationDispatcher: localNotificationDispatcher,
                                                applicationStatus: mockApplicationStatus,
                                                messageSender: mockMessageSender)
@@ -77,11 +77,12 @@ class ClientMessageRequestStrategyTests: MessagingTestBase {
 
 extension ClientMessageRequestStrategyTests {
 
-    func testThatItDoesNotGenerateARequestIfSenderIsNotSelfUser() {
+    func testThatItDoesNotSendMessageIfSenderIsNotSelfUser() {
 
         self.syncMOC.performGroupedBlockAndWait {
 
             // GIVEN
+            self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
             let text = "Lorem ipsum"
             let message = try! self.groupConversation.appendText(content: text) as! ZMClientMessage
             message.sender = self.otherUser
@@ -91,7 +92,7 @@ extension ClientMessageRequestStrategyTests {
             self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([message])) }
 
             // THEN
-            XCTAssertNil(self.sut.nextRequest(for: self.apiVersion))
+            XCTAssertEqual(0, self.mockMessageSender.sendMessageMessage_Invocations.count)
         }
     }
 
