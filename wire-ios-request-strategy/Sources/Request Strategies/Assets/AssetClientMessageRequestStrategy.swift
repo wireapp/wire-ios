@@ -67,10 +67,12 @@ extension AssetClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
                 try await messageSender.sendMessage(message: object)
                 await managedObjectContext.perform {
                     object.markAsSent()
+                    self.managedObjectContext.enqueueDelayedSave()
                 }
             } catch {
                 await managedObjectContext.perform {
                     object.expire()
+                    self.managedObjectContext.enqueueDelayedSave()
 
                     if case NetworkError.invalidRequestError(let responseFailure, _) = error,
                        responseFailure.label == .missingLegalholdConsent {
@@ -82,7 +84,6 @@ extension AssetClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
                         }
                     }
                 }
-                managedObjectContext.enqueueDelayedSave()
             }
 
             completion()
