@@ -206,10 +206,7 @@ public extension ZMConversation {
 
 public extension ZMConversation {
 
-    static func fetchAllTeamGroupProteusConversations(
-        from user: UserType,
-        in context: NSManagedObjectContext
-    ) -> [ZMConversation] {
+    static func fetchAllTeamGroupProteusConversations(in context: NSManagedObjectContext) throws -> [ZMConversation] {
         let selfUser = ZMUser.selfUser(in: context)
         guard let selfUserTeamIdentifier = selfUser.teamIdentifier else {
             assertionFailure("selfUser.teamIdentifier == nil")
@@ -224,7 +221,8 @@ public extension ZMConversation {
                 .teamRemoteIdentifier(matches: selfUserTeamIdentifier)
             ]
         )
-        return context.fetchOrAssert(request: request)
+
+        return try context.fetch(request)
     }
 }
 
@@ -276,7 +274,7 @@ private extension NSPredicate {
         .init(
             format: "%K == %@",
             argumentArray: [
-                ZMConversationRemoteIdentifierDataKey,
+                TeamRemoteIdentifierDataKey,
                 (teamRemoteIdentifier as NSUUID).data() as Data
             ]
         )

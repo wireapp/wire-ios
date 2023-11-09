@@ -59,8 +59,24 @@ final class ZMConversationTests_MLS: ZMConversationTestsBase {
 
     // MARK: - Migration releated fetch requests
 
-    func testFetchingAllTeamGroupProteusConversations() {
-        XCTFail("TODO")
+    func testFetchingAllTeamGroupProteusConversationsSuccessfully() throws {
+        // Given
+        let conversation = try syncMOC.performAndWait { [self] in
+            let groupID = MLSGroupID.random()
+            let conversation = createConversation(groupID: groupID)
+            conversation?.messageProtocol = .proteus
+            try syncMOC.save()
+            return conversation
+        }
+
+        // When
+        let fetchedConversation = try syncMOC.performAndWait {
+            try ZMConversation.fetchAllTeamGroupProteusConversations(in: self.syncMOC)
+        }
+
+        // Then
+        XCTAssertEqual(fetchedConversation, [conversation])
+    }
     }
 
     // MARK: - Helpers
