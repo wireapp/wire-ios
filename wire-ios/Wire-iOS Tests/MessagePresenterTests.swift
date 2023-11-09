@@ -93,7 +93,6 @@ final class MessagePresenterTests: XCTestCase {
         XCTAssertNil(addPassesViewControllerResult)
     }
 
-
     func testThatCreateAddPassesViewControllerReturnsAViewControllerForPassFileMessage() {
         // GIVEN
         let message = MockMessageFactory.passFileTransferMessage()
