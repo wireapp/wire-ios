@@ -27,22 +27,9 @@
    <FileRef
       location = "group:README.md">
    </FileRef>
-   <Group
-      location = "group:scripts"
-      name = "scripts">
-      <FileRef
-         location = "group:postprocess.sh">
-      </FileRef>
-      <FileRef
-         location = "group:githooks-install.sh">
-      </FileRef>
-      <FileRef
-         location = "group:run-swiftlint.sh">
-      </FileRef>
-      <FileRef
-         location = "group:override-configuration_if_needed.sh">
-      </FileRef>
-   </Group>
+   <FileRef
+      location = "group:scripts">
+   </FileRef>
    <FileRef
       location = "group:setup.sh">
    </FileRef>
