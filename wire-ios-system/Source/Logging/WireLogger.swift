@@ -20,7 +20,7 @@ import Foundation
 
 public struct WireLogger: LoggerProtocol {
 
-  public static var provider: LoggerProtocol?
+  public static var provider: LoggerProtocol? = SystemLogger()
 
   public let tag: String
 
