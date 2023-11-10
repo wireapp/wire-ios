@@ -174,5 +174,6 @@ public extension WireLogger {
     static let localStorage = WireLogger(tag: "local-storage")
     static let conversation = WireLogger(tag: "conversation")
     static let session = WireLogger(tag: "session")
+    static let e2ei = WireLogger(tag: "end-to-end-identity")
 
 }

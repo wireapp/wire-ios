@@ -132,6 +132,11 @@
 		<true/>
 		<key>NSExceptionDomains</key>
 		<dict>
+			<key>elna.wire.link</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+			</dict>
 			<key>*</key>
 			<dict>
 				<key>NSExceptionAllowsInsecureHTTPLoads</key>
