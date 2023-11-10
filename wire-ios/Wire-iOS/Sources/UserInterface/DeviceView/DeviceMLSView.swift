@@ -22,7 +22,13 @@ struct DeviceMLSView: View {
     @Binding var viewModel: DeviceInfoViewModel
     var body: some View {
         VStack {
-            CopyValueView(title: "MLS Thumbprint", value: viewModel.mlsThumbprint).frame(maxHeight: .infinity)
+            CopyValueView(
+                title: "MLS Thumbprint",
+                value: viewModel.mlsThumbprint,
+                performCopy: { value in
+                   viewModel.actionsHandler.copyToClipboard(value)
+               }
+            ).frame(maxHeight: .infinity)
         }
     }
 }

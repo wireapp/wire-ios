@@ -18,15 +18,11 @@
 
 import SwiftUI
 
-protocol CopyActionHandler {
-    func copy(_ value: String)
-}
-
 struct CopyValueView: View {
     var title: String
     var value: String
     var isCopyEnabled: Bool = true
-
+    var performCopy: ((String) -> Void)?
     var body: some View {
         VStack(alignment: .leading) {
             Text(title).font(UIFont.smallSemiboldFont.swiftUIfont)
@@ -46,7 +42,7 @@ struct CopyValueView: View {
     }
 
     func copy() {
-        UIPasteboard.general.string = value
+        performCopy?(value)
     }
 }
 

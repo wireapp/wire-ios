@@ -46,8 +46,7 @@ struct DeviceListView: View {
         .background(Color(red: 0.93, green: 0.94, blue: 0.94)
             .toolbar(content: {
                 EditButton()
-            })
-)
+            }))
     }
 
     func delete(_ indexSet: IndexSet) {
