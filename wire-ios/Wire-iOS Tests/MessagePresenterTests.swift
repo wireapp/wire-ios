@@ -78,7 +78,6 @@ final class MessagePresenterTests: XCTestCase {
 
     func testThatMakePassesViewControllerThrowsErrorForInvalidFileURL() async throws {
         // GIVEN
-        let message = MockMessageFactory.passFileTransferMessage()
         let fileURL = try XCTUnwrap(URL(string: "https://apple.com"))
 
         // WHEN && THEN
