@@ -244,7 +244,6 @@ final class DeveloperToolsViewModel: ObservableObject {
             let oauthManager = OAuthAuthentication()
             let idP = URL(string: "https://accounts.google.com")
             let token = try? await oauthManager.getIdToken(from: idP!)
-            print(token)
         }
     }
 
