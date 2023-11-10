@@ -52,14 +52,14 @@ extension ZMBaseManagedObjectTest {
             inMemoryStore: shouldUseInMemoryStore,
             dispatchGroup: dispatchGroup
         )
-        
+
         let expectation = XCTestExpectation()
         stack.loadStores { error in
             XCTAssertNil(error)
             expectation.fulfill()
         }
         wait(for: [expectation], timeout: 5)
-        
+
         return stack
     }
 
