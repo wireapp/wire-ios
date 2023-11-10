@@ -80,19 +80,19 @@ xcodebuild test \
   -workspace wire-ios-mono.xcworkspace \
   -scheme Wire-iOS \
   -testPlan SecurityTests \
-  -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2'
+  -destination 'platform=iOS Simulator,name=iPhone 14,OS=17.0.1'
 
   xcodebuild test \
   -workspace wire-ios-mono.xcworkspace \
   -scheme WireSyncEngine \
   -testPlan SecurityTests \
-  -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2'
+  -destination 'platform=iOS Simulator,name=iPhone 14,OS=17.0.1'
 
   xcodebuild test \
   -workspace wire-ios-mono.xcworkspace \
   -scheme WireDataModel \
   -testPlan SecurityTests \
-  -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2'
+  -destination 'platform=iOS Simulator,name=iPhone 14,OS=17.0.1'
 ```
 
 `xcodebuild` will print the test results to the console. It will also log the location of the test result (in `.xcresult` format), which you can open
