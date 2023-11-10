@@ -63,9 +63,9 @@ final class ZMConversationTests_MLS: ZMConversationTestsBase {
 
 final class ZMConversationTests_MLS_Migration: ModelObjectsTests {
 
-    func test_fetchAllTeamGroupProteusConversations() throws {
+    func test_fetchAllTeamGroupConversations_messageProtocolProteus() async throws {
         // Given
-        let conversations = try syncMOC.performGroupedAndWait { syncMOC in
+        let conversations = try await syncMOC.perform { [syncMOC] in
 
             // ensure selfUser has a teamIdentifier set
             let selfUser = ZMUser.selfUser(in: syncMOC)
@@ -88,8 +88,8 @@ final class ZMConversationTests_MLS_Migration: ModelObjectsTests {
         }
 
         // When
-        let fetchedConversations = try syncMOC.performGroupedAndWait { syncMOC in
-            try ZMConversation.fetchAllTeamGroupProteusConversations(in: syncMOC)
+        let fetchedConversations = try await syncMOC.perform { [syncMOC] in
+            try ZMConversation.fetchAllTeamGroupConversations(messageProtocol: .proteus, in: syncMOC)
         }
 
         // Then

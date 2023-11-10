@@ -181,7 +181,7 @@ public extension ZMConversation {
 
     func joinNewMLSGroup(id mlsGroupID: MLSGroupID, completion: ((Error?) -> Void)?) {
         guard let syncContext = self.managedObjectContext?.zm_sync else {
-            completion?(ZMConversationError.couldNotFindSyncContext)
+            completion?(JoinNewMLSGroupError.couldNotFindSyncContext)
             return
         }
 
@@ -200,13 +200,17 @@ public extension ZMConversation {
             }
         }
     }
+
+    enum JoinNewMLSGroupError: Error {
+        case couldNotFindSyncContext
+    }
 }
 
 // MARK: - Migration releated fetch requests
 
 public extension ZMConversation {
 
-    static func fetchAllTeamGroupProteusConversations(in context: NSManagedObjectContext) throws -> [ZMConversation] {
+    static func fetchAllTeamGroupConversations(messageProtocol: MessageProtocol, in context: NSManagedObjectContext) throws -> [ZMConversation] {
         let selfUser = ZMUser.selfUser(in: context)
         guard let selfUserTeamIdentifier = selfUser.teamIdentifier else {
             assertionFailure("this method is supposed to be called for users which are part of a team")
@@ -217,7 +221,7 @@ public extension ZMConversation {
         request.predicate = NSCompoundPredicate(
             andPredicateWithSubpredicates: [
                 .hasConversationType(.group),
-                .hasMessageProtocol(.proteus),
+                .hasMessageProtocol(messageProtocol),
                 .teamRemoteIdentifier(matches: selfUserTeamIdentifier)
             ]
         )
@@ -226,16 +230,7 @@ public extension ZMConversation {
     }
 }
 
-// MARK: -
-
-extension ZMConversation {
-
-    enum ZMConversationError: Error {
-        case couldNotFindSyncContext
-    }
-}
-
-// MARK: -
+// MARK: - NSPredicate Extensions
 
 private extension NSPredicate {
 
