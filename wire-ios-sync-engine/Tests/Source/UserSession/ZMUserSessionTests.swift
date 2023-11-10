@@ -41,7 +41,7 @@ class ZMUserSessionSwiftTests: ZMUserSessionTestsBase {
         XCTAssertEqual(conversations.filter { $0.firstUnreadMessage != nil }.count, 0)
     }
 
-    func test_itPerformsPendingJoins_AfterQuickSync() async {
+    func test_itPerformsPendingJoins_AfterQuickSync() {
         // given
         let mockMLSService = MockMLSService()
         sut.syncContext.performAndWait {
@@ -49,7 +49,7 @@ class ZMUserSessionSwiftTests: ZMUserSessionTestsBase {
         }
 
         // when
-        await sut.didFinishQuickSync()
+        sut.didFinishQuickSync()
 
         // then
         XCTAssertTrue(mockMLSService.didCallPerformPendingJoins)

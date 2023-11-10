@@ -645,47 +645,50 @@ extension ZMUserSession: ZMSyncStateDelegate {
         }
     }
 
-    public func didFinishQuickSync() async {
+    public func didFinishQuickSync() {
         Self.logger.trace("did finish quick sync")
-        await processEvents()
+        processEvents()
 
         NotificationInContext(
             name: .quickSyncCompletedNotification,
             context: syncContext.notificationContext
         ).post()
 
-        syncContext.performAndWait {
-            syncContext.mlsService?.performPendingJoins()
-
-            managedObjectContext.performGroupedBlock { [weak self] in
-                self?.notifyThirdPartyServices()
-            }
-        }
-        await commitPendingProposalsIfNeeded()
+        syncContext.mlsService?.performPendingJoins()
+        commitPendingProposalsIfNeeded()
         fetchFeatureConfigs()
         recurringActionService.performActionsIfNeeded()
+
+        managedObjectContext.performGroupedBlock { [weak self] in
+            self?.notifyThirdPartyServices()
+        }
     }
 
-    func processEvents() async {
+    func processEvents() {
         managedObjectContext.performGroupedBlock { [weak self] in
             self?.isPerformingSync = true
             self?.updateNetworkState()
         }
 
         self.syncContext.enterAllGroupsExceptSecondaryOne()
-        let hasMoreEventsToProcess = await updateEventProcessor!.processEventsIfReady()
-        self.syncContext.leaveAllGroupsExceptSecondaryOne()
-        let isSyncing = applicationStatusDirectory?.syncStatus.isSyncing == true
+        Task {
+            let hasMoreEventsToProcess = await updateEventProcessor!.processEventsIfReady()
+            let isSyncing = await syncContext.perform { self.applicationStatusDirectory?.syncStatus.isSyncing == true }
 
-        if !hasMoreEventsToProcess {
-            legacyHotFix.applyPatches()
-            // When we move to the monorepo, uncomment hotFixApplicator applyPatches
-            // hotFixApplicator.applyPatches(HotfixPatch.self, in: syncContext)
-        }
+            if !hasMoreEventsToProcess {
+                await syncContext.perform {
+                    self.legacyHotFix.applyPatches()
+                    // When we move to the monorepo, uncomment hotFixApplicator applyPatches
+                    // hotFixApplicator.applyPatches(HotfixPatch.self, in: syncContext)
+                }
+            }
 
-        managedObjectContext.performGroupedBlock { [weak self] in
-            self?.isPerformingSync = hasMoreEventsToProcess || isSyncing
-            self?.updateNetworkState()
+            await managedObjectContext.perform(schedule: .enqueued) { [weak self] in
+                self?.isPerformingSync = hasMoreEventsToProcess || isSyncing
+                self?.updateNetworkState()
+            }
+
+            self.syncContext.leaveAllGroupsExceptSecondaryOne()
         }
     }
 
@@ -696,16 +699,15 @@ extension ZMUserSession: ZMSyncStateDelegate {
         }
     }
 
-    private func commitPendingProposalsIfNeeded() async {
-        var mlsService: MLSServiceInterface?
-        syncContext.performAndWait {
-            mlsService = syncContext.mlsService
-        }
+    private func commitPendingProposalsIfNeeded() {
+        let mlsService = syncContext.mlsService
 
-        do {
-            try await mlsService?.commitPendingProposals()
-        } catch {
-            Logging.mls.error("Failed to commit pending proposals: \(String(describing: error))")
+        Task {
+            do {
+                try await mlsService?.commitPendingProposals()
+            } catch {
+                Logging.mls.error("Failed to commit pending proposals: \(String(describing: error))")
+            }
         }
     }
 

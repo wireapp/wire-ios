@@ -39,6 +39,6 @@
 /// The session did start the quick sync (fetching of the notification stream)
 - (void)didStartQuickSync;
 /// The session did finish the quick sync
-- (void)didFinishQuickSyncWithCompletion:( void (^ _Nonnull)(void))completionBlock;
+- (void)didFinishQuickSync;
 
 @end

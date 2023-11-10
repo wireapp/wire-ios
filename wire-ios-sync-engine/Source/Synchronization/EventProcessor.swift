@@ -202,7 +202,8 @@ actor EventProcessor: UpdateEventProcessor {
 
             for event in decryptedUpdateEvents {
                 for eventConsumer in await self.eventConsumers {
-                    await eventConsumer.processEvents([event], liveEvents: true, prefetchResult: prefetchResult)
+                    // TODO: [jacob] EventConsumer.processEvents should become async
+                    eventConsumer.processEvents([event], liveEvents: true, prefetchResult: prefetchResult)
                 }
                 self.eventProcessingTracker.registerEventProcessed()
             }

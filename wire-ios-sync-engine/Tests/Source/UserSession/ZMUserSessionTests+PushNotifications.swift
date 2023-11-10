@@ -25,22 +25,22 @@ class ZMUserSessionTests_PushNotifications: ZMUserSessionTestsBase {
     typealias ConversationAction = WireSyncEngine.ConversationNotificationAction
     typealias CallAction = WireSyncEngine.CallNotificationAction
 
-    func testThatItCallsShowConversationList_ForPushNotificationCategoryConversationWithoutConversation() async {
+    func testThatItCallsShowConversationList_ForPushNotificationCategoryConversationWithoutConversation() {
         // when
-        await handle(conversationAction: nil, category: .conversation, userInfo: NotificationUserInfo())
+        handle(conversationAction: nil, category: .conversation, userInfo: NotificationUserInfo())
 
         // then
         XCTAssertEqual(mockSessionManager.lastRequestToShowConversationsList, sut)
     }
 
-    func testThatItCallsShowConversationList_ForPushNotificationCategoryConnect() async {
+    func testThatItCallsShowConversationList_ForPushNotificationCategoryConnect() {
         // given
         let sender = ZMUser.insertNewObject(in: uiMOC)
         sender.remoteIdentifier = UUID()
         let userInfo = userInfoWithConnectionRequest(from: sender)
 
         // when
-        await handle(conversationAction: nil, category: .connect, userInfo: userInfo)
+        handle(conversationAction: nil, category: .connect, userInfo: userInfo)
 
         // then
         XCTAssertEqual(mockSessionManager.lastRequestToShowConversation?.0, sut)
@@ -64,14 +64,14 @@ class ZMUserSessionTests_PushNotifications: ZMUserSessionTestsBase {
 //        XCTAssertEqual(mockSessionManager.lastRequestToShowConversation?.1.remoteIdentifier, userInfo.conversationID!)
 //    }
 
-    func testThatItMutesAndDoesNotShowConversation_ForPushNotificationCategoryConversationWithMuteAction() async {
+    func testThatItMutesAndDoesNotShowConversation_ForPushNotificationCategoryConversationWithMuteAction() {
         // given
         let userInfo = userInfoWithConversation()
         let conversation = userInfo.conversation(in: uiMOC)!
         simulateLoggedInUser()
 
         // when
-        await handle(conversationAction: .mute, category: .conversation, userInfo: userInfo)
+        handle(conversationAction: .mute, category: .conversation, userInfo: userInfo)
 
         // then
         XCTAssertNil(mockSessionManager.lastRequestToShowConversation)
@@ -79,7 +79,7 @@ class ZMUserSessionTests_PushNotifications: ZMUserSessionTestsBase {
         XCTAssertEqual(conversation.mutedMessageTypes, .all)
     }
 
-    func testThatItAddsLike_ForPushNotificationCategoryConversationWithLikeAction() async {
+    func testThatItAddsLike_ForPushNotificationCategoryConversationWithLikeAction() {
         // given
         let userInfo = userInfoWithConversation(hasMessage: true)
         let conversation = userInfo.conversation(in: uiMOC)!
@@ -88,30 +88,30 @@ class ZMUserSessionTests_PushNotifications: ZMUserSessionTestsBase {
         sut.applicationStatusDirectory?.operationStatus.isInBackground = true
 
         // when
-        await handle(conversationAction: .like, category: .conversation, userInfo: userInfo)
+        handle(conversationAction: .like, category: .conversation, userInfo: userInfo)
 
         // then
         XCTAssertEqual((conversation.lastMessage as? ZMMessage)?.reactions.count, 1)
     }
 
-    func testThatItCallsShowConversation_ForPushNotificationCategoryConversation() async {
+    func testThatItCallsShowConversation_ForPushNotificationCategoryConversation() {
         // given
         let userInfo = userInfoWithConversation()
 
         // when
-        await handle(conversationAction: nil, category: .conversation, userInfo: userInfo)
+        handle(conversationAction: nil, category: .conversation, userInfo: userInfo)
 
         // then
         XCTAssertEqual(mockSessionManager.lastRequestToShowConversation?.0, sut)
         XCTAssertEqual(mockSessionManager.lastRequestToShowConversation?.1.remoteIdentifier, userInfo.conversationID!)
     }
 
-    func testThatItCallsShowConversationAtMessage_ForPushNotificationCategoryConversation() async {
+    func testThatItCallsShowConversationAtMessage_ForPushNotificationCategoryConversation() {
         // given
         let userInfo = userInfoWithConversation(hasMessage: true)
 
         // when
-        await handle(conversationAction: nil, category: .conversation, userInfo: userInfo)
+        handle(conversationAction: nil, category: .conversation, userInfo: userInfo)
 
         // then
         XCTAssertEqual(mockSessionManager.lastRequestToShowMessage?.0, sut)
@@ -119,7 +119,7 @@ class ZMUserSessionTests_PushNotifications: ZMUserSessionTestsBase {
         XCTAssertEqual(mockSessionManager.lastRequestToShowMessage?.2.nonce, userInfo.messageNonce!)
     }
 
-    func testThatItCallsShowConversationAndAcceptsCall_ForPushNotificationCategoryIncomingCallWithAcceptAction() async {
+    func testThatItCallsShowConversationAndAcceptsCall_ForPushNotificationCategoryIncomingCallWithAcceptAction() {
         // given
         simulateLoggedInUser()
         createSelfClient()
@@ -131,7 +131,7 @@ class ZMUserSessionTests_PushNotifications: ZMUserSessionTestsBase {
         simulateIncomingCall(fromUser: conversation.connectedUser!, conversation: conversation)
 
         // when
-        await handle(callAction: .accept, category: .incomingCall, userInfo: userInfo)
+        handle(callAction: .accept, category: .incomingCall, userInfo: userInfo)
 
         // then
         XCTAssertTrue(callCenter.didCallAnswerCall)
@@ -139,7 +139,7 @@ class ZMUserSessionTests_PushNotifications: ZMUserSessionTestsBase {
         XCTAssertEqual(mockSessionManager.lastRequestToShowConversation?.1.remoteIdentifier, userInfo.conversationID)
     }
 
-    func testThatItDoesNotCallsShowConversationAndRejectsCall_ForPushNotificationCategoryIncomingCallWithIgnoreAction() async {
+    func testThatItDoesNotCallsShowConversationAndRejectsCall_ForPushNotificationCategoryIncomingCallWithIgnoreAction() {
         // given
         simulateLoggedInUser()
         createSelfClient()
@@ -151,14 +151,14 @@ class ZMUserSessionTests_PushNotifications: ZMUserSessionTestsBase {
         simulateIncomingCall(fromUser: conversation.connectedUser!, conversation: conversation)
 
         // when
-        await handle(callAction: .ignore, category: .incomingCall, userInfo: userInfo)
+        handle(callAction: .ignore, category: .incomingCall, userInfo: userInfo)
 
         // then
         XCTAssertTrue(callCenter.didCallRejectCall)
         XCTAssertNil(mockSessionManager.lastRequestToShowConversation)
     }
 
-    func testThatItCallsShowConversationButDoesNotCallBack_ForPushNotificationCategoryMissedCallWithCallBackAction() async {
+    func testThatItCallsShowConversationButDoesNotCallBack_ForPushNotificationCategoryMissedCallWithCallBackAction() {
         // given
         simulateLoggedInUser()
         createSelfClient()
@@ -167,7 +167,7 @@ class ZMUserSessionTests_PushNotifications: ZMUserSessionTestsBase {
         let callCenter = createCallCenter()
 
         // when
-        await handle(callAction: .callBack, category: .missedCall, userInfo: userInfo)
+        handle(callAction: .callBack, category: .missedCall, userInfo: userInfo)
 
         // then
         XCTAssertFalse(callCenter.didCallStartCall)
@@ -175,7 +175,7 @@ class ZMUserSessionTests_PushNotifications: ZMUserSessionTestsBase {
         XCTAssertEqual(mockSessionManager.lastRequestToShowConversation?.1.remoteIdentifier, userInfo.conversationID!)
     }
 
-    func testThatItDoesNotCallShowConversationAndAppendsAMessage_ForPushNotificationCategoryConversationWithDirectReplyAction() async {
+    func testThatItDoesNotCallShowConversationAndAppendsAMessage_ForPushNotificationCategoryConversationWithDirectReplyAction() {
         // given
         simulateLoggedInUser()
         sut.applicationStatusDirectory?.operationStatus.isInBackground = true
@@ -183,7 +183,7 @@ class ZMUserSessionTests_PushNotifications: ZMUserSessionTestsBase {
         let conversation = userInfo.conversation(in: uiMOC)!
 
         // when
-        await handle(conversationAction: .reply, category: .conversation, userInfo: userInfo, userText: "Hello World")
+        handle(conversationAction: .reply, category: .conversation, userInfo: userInfo, userText: "Hello World")
 
         // then
         XCTAssertEqual(conversation.allMessages.count, 1)
@@ -211,28 +211,22 @@ class ZMUserSessionTests_PushNotifications: ZMUserSessionTestsBase {
         }
 
         // when
-        await handle(conversationAction: .reply, category: .conversation, userInfo: userInfo, userText: "Hello World")
+        handle(conversationAction: .reply, category: .conversation, userInfo: userInfo, userText: "Hello World")
 
         // then
         assertHasReadConfirmationForMessage(nonce: originaMessageNonce, conversation: conversation)
     }
 
-    func testThatItAppendsReadReceipt_ForPushNotificationCategoryConversationWithLikeAction() async throws {
+    func testThatItAppendsReadReceipt_ForPushNotificationCategoryConversationWithLikeAction() throws {
         // given
-        var conversation: ZMConversation!
-        var userInfo: NotificationUserInfo!
-        self.uiMOC.performAndWait {
-            self.simulateLoggedInUser()
-            self.sut.applicationStatusDirectory?.operationStatus.isInBackground = true
+        self.simulateLoggedInUser()
+        self.sut.applicationStatusDirectory?.operationStatus.isInBackground = true
 
-            userInfo = userInfoWithConversation(hasMessage: true)
-            conversation = userInfo.conversation(in: self.uiMOC)!
-        }
+        let userInfo = userInfoWithConversation(hasMessage: true)
+        let conversation = userInfo.conversation(in: self.uiMOC)!
 
         let originalMessage = try XCTUnwrap(conversation.lastMessages().last as? ZMClientMessage)
         let originaMessageNonce = try XCTUnwrap(originalMessage.nonce)
-
-        ZMUser.selfUser(in: uiMOC).readReceiptsEnabled = true
         var genericMessage = originalMessage.underlyingMessage!
         genericMessage.setExpectsReadConfirmation(true)
         do {
@@ -242,33 +236,31 @@ class ZMUserSessionTests_PushNotifications: ZMUserSessionTestsBase {
         }
 
         // when
-        await handle(conversationAction: .like, category: .conversation, userInfo: userInfo)
+        handle(conversationAction: .like, category: .conversation, userInfo: userInfo)
 
         // then
         assertHasReadConfirmationForMessage(nonce: originaMessageNonce, conversation: conversation)
     }
 
-    func testThatOnLaunchItCallsShowConversationList_ForPushNotificationCategoryConversationWithoutConversation() async {
+    func testThatOnLaunchItCallsShowConversationList_ForPushNotificationCategoryConversationWithoutConversation() {
         // given
         simulateLoggedInUser()
 
         // when
-        await handle(conversationAction: nil, category: .conversation, userInfo: NotificationUserInfo())
+        handle(conversationAction: nil, category: .conversation, userInfo: NotificationUserInfo())
 
         // then
         XCTAssertEqual(mockSessionManager.lastRequestToShowConversationsList, sut)
     }
 
-    func testThatOnLaunchItCallsShowConversationConversation_ForPushNotificationCategoryConversation() async {
+    func testThatOnLaunchItCallsShowConversationConversation_ForPushNotificationCategoryConversation() {
         // given
-        self.syncMOC.performAndWait {
-            simulateLoggedInUser()
-        }
+        simulateLoggedInUser()
 
         let userInfo = userInfoWithConversation()
 
         // when
-        await handle(conversationAction: nil, category: .conversation, userInfo: userInfo)
+        handle(conversationAction: nil, category: .conversation, userInfo: userInfo)
 
         // then
         XCTAssertEqual(mockSessionManager.lastRequestToShowConversation?.0, sut)
@@ -291,18 +283,18 @@ extension ZMUserSessionTests_PushNotifications {
         XCTAssertTrue(containsReadConfirmation, "expected read confirmation for message with nonce = \(nonce)", file: file, line: line)
     }
 
-    func handle(conversationAction: ConversationAction?, category: Category, userInfo: NotificationUserInfo, userText: String? = nil) async {
-        await handle(action: conversationAction?.rawValue ?? "", category: category.rawValue, userInfo: userInfo, userText: userText)
+    func handle(conversationAction: ConversationAction?, category: Category, userInfo: NotificationUserInfo, userText: String? = nil) {
+        handle(action: conversationAction?.rawValue ?? "", category: category.rawValue, userInfo: userInfo, userText: userText)
     }
 
-    func handle(callAction: CallAction, category: Category, userInfo: NotificationUserInfo) async {
-        await handle(action: callAction.rawValue, category: category.rawValue, userInfo: userInfo)
+    func handle(callAction: CallAction, category: Category, userInfo: NotificationUserInfo) {
+        handle(action: callAction.rawValue, category: category.rawValue, userInfo: userInfo)
     }
 
-    func handle(action: String, category: String, userInfo: NotificationUserInfo, userText: String? = nil) async {
+    func handle(action: String, category: String, userInfo: NotificationUserInfo, userText: String? = nil) {
         sut.handleNotificationResponse(actionIdentifier: action, categoryIdentifier: category, userInfo: userInfo, userText: userText) {}
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        await sut.didFinishQuickSync()
+        sut.didFinishQuickSync()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
 

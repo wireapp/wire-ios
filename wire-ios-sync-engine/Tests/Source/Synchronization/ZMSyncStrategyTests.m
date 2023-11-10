@@ -67,9 +67,7 @@
 
 - (void)didStartQuickSync { }
 
-- (void)didFinishQuickSyncWithCompletion:(void (^ _Nonnull)(void))completionBlock { 
-    completionBlock();
-}
+- (void)didFinishQuickSync { }
 
 - (void)didRegisterSelfUserClient:(UserClient *)userClient {
     NOT_USED(userClient);

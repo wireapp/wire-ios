@@ -152,7 +152,7 @@ class ZMUserSessionTests_Syncing: ZMUserSessionTestsBase {
 
     // MARK: Process events
 
-    func testThatPerformingSyncIsStillOngoingAfterProcessingEvents_IfQuickSyncIsNotCompleted() async {
+    func testThatPerformingSyncIsStillOngoingAfterProcessingEvents_IfQuickSyncIsNotCompleted() {
 
         // given
         startQuickSync()
@@ -160,14 +160,14 @@ class ZMUserSessionTests_Syncing: ZMUserSessionTestsBase {
         XCTAssertTrue(sut.isPerformingSync)
 
         // when
-        await sut.processEvents()
+        sut.processEvents()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
         XCTAssertTrue(sut.isPerformingSync)
     }
 
-    func testThatItNotifiesOnlineSynchronzingWhileProcessingEvents() async {
+    func testThatItNotifiesOnlineSynchronzingWhileProcessingEvents() {
 
         // given
         startQuickSync()
@@ -176,7 +176,7 @@ class ZMUserSessionTests_Syncing: ZMUserSessionTestsBase {
         let networkStateRecorder = NetworkStateRecorder(userSession: sut)
 
         // when
-        await sut.processEvents()
+        sut.processEvents()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then

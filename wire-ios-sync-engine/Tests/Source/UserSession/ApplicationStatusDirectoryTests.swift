@@ -95,7 +95,7 @@ extension ApplicationStatusDirectoryTests: ZMSyncStateDelegate {
         // no-op
     }
 
-    func didFinishQuickSync() async {
+    func didFinishQuickSync() {
         // no-op
     }
 

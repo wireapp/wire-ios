@@ -72,7 +72,8 @@ public extension NSManagedObjectContext {
     }
 
     func leaveAllGroupsExceptSecondaryOne() {
-        guard var groups = self.allGroups(), groups.count > 1 else { return }
+        var groups = self.allGroups()
+        guard groups.count > 1 else { return }
         groups.remove(at: 1)
         self.dispatchGroupContext.leave(groups)
     }

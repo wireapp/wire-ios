@@ -243,29 +243,26 @@ class ZMUserSessionTests_CryptoStack: MessagingTest {
         XCTAssertNotNil(syncMOC.mlsDecryptionService)
     }
 
-    func test_ItCommitsPendingProposals_AfterQuickSyncCompletes() async {
+    func test_ItCommitsPendingProposals_AfterQuickSyncCompletes() {
         // GIVEN
         configureMockMigrationManager(needsMigration: false)
+        let conversation = ZMConversation.insertNewObject(in: syncMOC)
+        conversation.mlsGroupID = MLSGroupID("123".data(using: .utf8)!)
+        conversation.commitPendingProposalDate = Date.distantPast
+
+        let selfUser = ZMUser.selfUser(in: syncMOC)
+        selfUser.remoteIdentifier =  UUID.create()
+        selfUser.domain = "example.domain.com"
+
+        createSut(with: selfUser)
+        let client = createSelfClient()
+        sut.didRegisterSelfUserClient(client)
+
         let controller = MockMLSService()
-        syncMOC.performAndWait {
-            let conversation = ZMConversation.insertNewObject(in: syncMOC)
-            conversation.mlsGroupID = MLSGroupID("123".data(using: .utf8)!)
-            conversation.commitPendingProposalDate = Date.distantPast
-
-            let selfUser = ZMUser.selfUser(in: syncMOC)
-            selfUser.remoteIdentifier =  UUID.create()
-            selfUser.domain = "example.domain.com"
-
-            createSut(with: selfUser)
-            let client = createSelfClient()
-            sut.didRegisterSelfUserClient(client)
-
-
-            sut.syncContext.mlsService = controller
-        }
+        sut.syncContext.mlsService = controller
 
         // WHEN
-        await sut.didFinishQuickSync()
+        sut.didFinishQuickSync()
 
         // THEN
         XCTAssertTrue(wait(withTimeout: 3.0) {

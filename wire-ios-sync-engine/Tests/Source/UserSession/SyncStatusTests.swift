@@ -227,13 +227,6 @@ final class SyncStatusTests: MessagingTest {
         // when
         sut.finishCurrentSyncPhase(phase: .fetchingMissedEvents)
 
-        let expectation = XCTestExpectation(description: "should call delegate method")
-        mockSyncDelegate.didCallFinishQuickSyncCompletion = {
-            expectation.fulfill()
-        }
-
-        self.wait(for: [expectation], timeout: 0.5)
-
         // then
         XCTAssertTrue(mockSyncDelegate.didCallFinishSlowSync)
         XCTAssertTrue(mockSyncDelegate.didCallFinishQuickSync)

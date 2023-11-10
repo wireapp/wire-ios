@@ -394,7 +394,7 @@
     XCTAssertEqual(self.thirdPartyServices.uploadCount, 0u);
     
     // when
-    [self didFinishQuickSync];
+    [self.sut didFinishQuickSync];
     WaitForAllGroupsToBeEmpty(0.5);
 
     // then
@@ -407,9 +407,9 @@
     XCTAssertEqual(self.thirdPartyServices.uploadCount, 0u);
     
     // when
-    [self didFinishQuickSync];
+    [self.sut didFinishQuickSync];
     [self.sut didStartQuickSync];
-    [self didFinishQuickSync];
+    [self.sut didFinishQuickSync];
     WaitForAllGroupsToBeEmpty(0.5);
     // then
     XCTAssertEqual(self.thirdPartyServices.uploadCount, 1u);
@@ -449,7 +449,7 @@
     XCTAssertEqual(self.thirdPartyServices.uploadCount, 0u);
     
     // when
-    [self didFinishQuickSync];
+    [self.sut didFinishQuickSync];
     [self.sut applicationDidEnterBackground:nil];
     WaitForAllGroupsToBeEmpty(0.5);
     
@@ -458,7 +458,7 @@
 
     [self.sut applicationWillEnterForeground:nil];
     [self.sut didStartQuickSync];
-    [self didFinishQuickSync];
+    [self.sut didFinishQuickSync];
     [self.sut applicationDidEnterBackground:nil];
     WaitForAllGroupsToBeEmpty(0.5);
     
@@ -472,7 +472,7 @@
 {
     // when
     [self.sut didGoOffline];
-    [self didFinishQuickSync];
+    [self.sut didFinishQuickSync];
 
     // then
     XCTAssertTrue([self waitForOfflineStatus]);
@@ -603,13 +603,6 @@
     
 }
 
-- (void)didFinishQuickSync {
-    XCTestExpectation* exp = [[XCTestExpectation alloc] initWithDescription:@"didFinishQuickSyncWithCompletion"];
-    [self.sut didFinishQuickSyncWithCompletion:^{
-        [exp fulfill];
-    }];
-    [self waitForExpectations:@[exp] timeout:0.5];
-}
 
 @end
 
