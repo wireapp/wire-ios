@@ -20,7 +20,7 @@ import Foundation
 
 // MARK: - Types
 
-public typealias E2EIEnrollmentResult = Swift.Result<String, Error>
+public typealias CertificateEnrollmentResult = Swift.Result<String, Error>
 
 enum Failure: Error, Equatable {
 
@@ -32,7 +32,7 @@ enum Failure: Error, Equatable {
 
 public protocol CertificateEnrollmentInterface {
 
-    func invoke(idToken: String) async -> E2EIEnrollmentResult
+    func invoke(idToken: String) async -> CertificateEnrollmentResult
 
 }
 
@@ -44,7 +44,7 @@ public final class CertificateEnrollment: CertificateEnrollmentInterface {
         self.e2eiManager = e2eiManager
     }
 
-    public func invoke(idToken: String) async -> E2EIEnrollmentResult {
+    public func invoke(idToken: String) async -> CertificateEnrollmentResult {
 
         guard let acmeDirectory = await e2eiManager.loadACMEDirectory() else {
             WireLogger.e2ei.warn("Fail to load acme directory")
