@@ -46,7 +46,6 @@ public final class EnrollE2EIdentity: EnrollE2EIdentityInterface {
 
     public func invoke(idToken: String) async -> E2EIEnrollmentResult {
 
-        print("test")
         guard let acmeDirectory = await e2eiManager.loadACMEDirectory() else {
             WireLogger.e2ei.warn("Fail to load acme directory")
 
