@@ -77,7 +77,7 @@ extension WireCallCenterV3 {
                 domain: domain,
                 in: context
             ),
-            conversation.messageProtocol == .mls,
+            conversation.supportsMLS(for: .conferencing),
             let qualifiedID = conversation.qualifiedID,
             let groupID = conversation.mlsGroupID
         else {

@@ -230,6 +230,39 @@ public extension ZMConversation {
     }
 }
 
+// MARK: - Protocol support utils
+
+public extension ZMConversation {
+
+    enum ConversationFeature: CaseIterable {
+        case encryption
+        case decryption
+        case groupMaintenance
+        case conferencing
+    }
+
+    /// Indicates which MLS actions are supported depending on the conversation's `messageProtocol`
+
+    var supportedMLSFeatures: [ConversationFeature] {
+        switch messageProtocol {
+        case .mls:
+            return ConversationFeature.allCases
+        case .mixed:
+            return [.decryption, .groupMaintenance]
+        case .proteus:
+            return []
+        }
+    }
+
+    /// - Parameter feature: a conversation feature
+    /// - Returns: `true` if the conversation supports the given `feature` for MLS
+
+    func supportsMLS(for feature: ConversationFeature) -> Bool {
+        supportedMLSFeatures.contains(feature)
+    }
+
+}
+
 // MARK: - NSPredicate Extensions
 
 private extension NSPredicate {

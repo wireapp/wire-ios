@@ -19,6 +19,7 @@
 import Foundation
 import avs
 import Combine
+import WireDataModel
 
 private let zmLog = ZMSLog(tag: "calling")
 
@@ -986,14 +987,14 @@ extension WireCallCenterV3 {
 private extension ZMConversation {
 
     var avsConversationType: AVSConversationType? {
-        switch (conversationType, messageProtocol) {
+        switch (conversationType, supportsMLS(for: .conferencing)) {
         case (.oneOnOne, _):
             return .oneToOne
 
-        case (.group, .proteus):
+        case (.group, false):
             return .conference
 
-        case (.group, .mls), (.`self`, .mls):
+        case (.group, true), (.`self`, true):
             return .mlsConference
 
         default:

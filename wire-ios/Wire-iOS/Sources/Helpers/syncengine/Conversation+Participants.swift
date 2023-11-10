@@ -38,13 +38,16 @@ extension ZMConversation {
     }
 
     func addOrShowError(participants: [UserType]) {
-        guard let session = ZMUserSession.shared(),
-                session.networkState != .offline else {
-            self.showAlertForAdding(for: NetworkError.offline)
-            return
+        guard
+            let session = ZMUserSession.shared(),
+            session.networkState != .offline
+        else {
+            return showAlertForAdding(for: NetworkError.offline)
         }
 
-        addParticipants(participants) { (result) in
+        let service = ConversationService(context: session.viewContext)
+
+        service.addParticipants(participants, to: self) { result in
             switch result {
             case .failure(let error):
                 self.showAlertForAdding(for: error)
@@ -61,7 +64,9 @@ extension ZMConversation {
             return
         }
 
-        removeParticipant(user) { (result) in
+        let service = ConversationService(context: session.viewContext)
+
+        service.removeParticipant(user, from: self) { result in
             switch result {
             case .success:
                 if let serviceUser = user as? ServiceUser, user.isServiceUser {

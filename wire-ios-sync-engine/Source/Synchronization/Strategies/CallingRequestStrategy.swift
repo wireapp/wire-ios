@@ -361,7 +361,7 @@ extension CallingRequestStrategy: WireCallCenterTransport {
 
             let message: GenericMessageEntity
 
-            if overMLSSelfConversation, conversation.messageProtocol == .mls {
+            if overMLSSelfConversation, conversation.supportsMLS(for: .conferencing) {
                 guard let selfConversation = ZMConversation.fetchSelfMLSConversation(in: self.managedObjectContext) else {
                     WireLogger.mls.error("missing self conversation for sending message to own clients")
                     completionHandler(500)
@@ -383,11 +383,10 @@ extension CallingRequestStrategy: WireCallCenterTransport {
                 )
             }
 
-            switch (conversation.messageProtocol, recipients) {
-            case (.proteus, _), (.mls, .conversationParticipants), (.mixed, _):
+            switch (conversation.supportsMLS(for: .conferencing), recipients) {
+            case (false, _), (true, .conversationParticipants):
                 message.send(with: self.messageSync, completion: completionHandler)
-
-            case (.mls, _):
+            case (true, _):
                 // TODO: review the `isConferenceKey` case once subconversations are available
                 // to target all conference members
                 if message.isConferenceKey || overMLSSelfConversation {
@@ -454,19 +453,8 @@ extension CallingRequestStrategy: WireCallCenterTransport {
                 return
             }
 
-            switch conversation.messageProtocol {
-            case .proteus, .mixed:
-                // With proteus, we discover clients by posting an otr message to no-one,
-                // then parse the error response that contains the list of all clients.
-                self.clientDiscoveryRequest = ClientDiscoveryRequest(
-                    conversationId: conversationId.identifier,
-                    domain: conversationId.domain,
-                    completion: completionHandler
-                )
-                self.clientDiscoverySync.readyForNextRequestIfNotBusy()
-                RequestAvailableNotification.notifyNewRequestsAvailable(nil)
+            if conversation.supportsMLS(for: .conferencing) {
 
-            case .mls:
                 // With MLS we will fetch all clients for each group participant at once
                 // directly from the backend.
                 let userIDs = conversation.localParticipants.map { user in
@@ -493,6 +481,19 @@ extension CallingRequestStrategy: WireCallCenterTransport {
                         Logging.mls.error("Failed to fetch client list for MLS conference: \(String(describing: error))")
                     }
                 }
+
+            } else {
+
+                // With proteus, we discover clients by posting an otr message to no-one,
+                // then parse the error response that contains the list of all clients.
+                self.clientDiscoveryRequest = ClientDiscoveryRequest(
+                    conversationId: conversationId.identifier,
+                    domain: conversationId.domain,
+                    completion: completionHandler
+                )
+                self.clientDiscoverySync.readyForNextRequestIfNotBusy()
+                RequestAvailableNotification.notifyNewRequestsAvailable(nil)
+
             }
         }
     }

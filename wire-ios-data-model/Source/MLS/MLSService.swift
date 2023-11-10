@@ -500,7 +500,7 @@ public final class MLSService: MLSServiceInterface {
         do {
             logger.info("adding members to group (\(groupID.safeForLoggingDescription)) with users: \(users)")
             guard !users.isEmpty else { throw MLSAddMembersError.noMembersToAdd }
-            let keyPackages = try await claimKeyPackages(for: users)
+            let keyPackages = await claimKeyPackages(for: users)
             let invitees = keyPackages.map(Invitee.init(from:))
 
             guard invitees.count > 0 else {
@@ -515,42 +515,29 @@ public final class MLSService: MLSServiceInterface {
         }
     }
 
-    private func claimKeyPackages(for users: [MLSUser]) async throws -> [KeyPackage] {
-        logger.info("claiming key packages for users: \(users)")
-        do {
-            guard let context = context else { return [] }
-
-            var result = [KeyPackage]()
-
-            for try await keyPackages in claimKeyPackages(for: users, in: context) {
-                result.append(contentsOf: keyPackages)
-            }
-
-            return result
-        } catch let error {
-            logger.warn("failed to claim key packages: \(String(describing: error))")
-            throw MLSAddMembersError.failedToClaimKeyPackages
-        }
-    }
-
     private func claimKeyPackages(
-        for users: [MLSUser],
-        in context: NSManagedObjectContext
-    ) -> AsyncThrowingStream<([KeyPackage]), Error> {
-        var index = 0
+        for users: [MLSUser]
+    ) async -> [KeyPackage] {
 
-        return AsyncThrowingStream { [actionsProvider] in
-            guard let user = users.element(atIndex: index) else { return nil }
+        guard let context = context else { return [] }
 
-            index += 1
+        var result = [KeyPackage]()
 
-            return try await actionsProvider.claimKeyPackages(
-                userID: user.id,
-                domain: user.domain,
-                excludedSelfClientID: user.selfClientID,
-                in: context.notificationContext
-            )
+        for user in users {
+            do {
+                let keyPackages = try await actionsProvider.claimKeyPackages(
+                    userID: user.id,
+                    domain: user.domain,
+                    excludedSelfClientID: user.selfClientID,
+                    in: context.notificationContext
+                )
+                result.append(contentsOf: keyPackages)
+            } catch {
+                logger.warn("failed to claim key packages for user (\(user.id)): \(String(describing: error))")
+            }
         }
+
+        return result
     }
 
     // MARK: - Remove participants from mls group

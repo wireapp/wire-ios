@@ -18,6 +18,7 @@
 
 import Foundation
 import WireTransport
+import WireDataModel
 
 extension MLSMessageSync {
 
@@ -79,7 +80,7 @@ extension MLSMessageSync {
         private func encryptMessage(_ message: Message) -> Data? {
             guard
                 let conversation = message.conversation,
-                conversation.messageProtocol == .mls
+                conversation.supportsMLS(for: .encryption)
             else {
                 WireLogger.mls.error("failed to encrypt message: it doesn't belong to an mls conversation.")
                 return nil
