@@ -2064,7 +2064,7 @@ to reset this device and log in again";
 "device.details.not.activated" = "Not activated";
 "device.details.serial.number" = "Serial Number";
 "device.details.e2e.identity.certificate.title" = "End-to-end Identity Certificate";
-"device.details.show.certificate.details" = "Show Dertificate Details";
+"device.details.show.certificate.details" = "Show Certificate Details";
 "device.details.get.certificate" = "Get Certificate";
 "device.details.update.certificate" = "Update Certificate";
 
