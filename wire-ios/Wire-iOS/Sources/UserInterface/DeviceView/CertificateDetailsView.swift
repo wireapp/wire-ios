@@ -19,30 +19,75 @@
 import SwiftUI
 
 struct CertificateDetailsView: View {
+    @Environment(\.dismiss) private var dismiss
     var certificateDetails: String
     @State var isMenuPresented = false
-
+    var isDownloadAndCopyEnabled: Bool = true
+    var performDownload: (() -> Void)?
+    var performCopy: ((String) -> Void)?
     var body: some View {
-        List {
-            SwiftUI.Text(certificateDetails)
-        }
-        .navigationTitle("Certificate Details")
-        .toolbar {
-            SwiftUI.Button("...") {
-                isMenuPresented.toggle()
-            }
-            .confirmationDialog("...", isPresented: $isMenuPresented) {
-                SwiftUI.Button("Copy to Clipboard") {
-
-                }
-                SwiftUI.Button("Download") {
-
-                }
-            } message: {
-                Text("Select a new color")
-            }
+        HStack {
+            Spacer()
+            Text("Certificate Details")
+            Spacer()
+            SwiftUI.Button(action: {
+                dismiss()
+            }, label: {
+                Image(.close)
+            }).padding()
+        }.background(Color.backgroundColor)
+        ScrollView {
+            Text(certificateDetails)
+                .font(Font.custom("SF Mono", size: 12))
+                .padding()
+                .frame(maxHeight: .infinity)
         }
 
+        .safeAreaInset(edge: .bottom, spacing: 0) {
+            VStack {
+                if isDownloadAndCopyEnabled {
+                    HStack {
+                        SwiftUI.Button(action: {
+                            performDownload?()
+                        },
+                                       label: {
+                            Image(.download)
+                        }).padding()
+                        SwiftUI.Button(action: {
+                            performDownload?()
+                        },
+                                       label: {
+                            Text("Download").font(UIFont.normalRegularFont.swiftUIfont.bold())
+                        }).padding()
+                            .foregroundColor(.black)
+                         .font(UIFont.mediumSemiboldFont.swiftUIfont)
+                        Spacer()
+                        SwiftUI.Button(action: {
+                            isMenuPresented.toggle()
+                        }, label: {
+                            Image(.more).padding(.trailing, 16)
+                        })
+                        .confirmationDialog("...", isPresented: $isMenuPresented) {
+                            SwiftUI.Button(action: {
+                                performCopy?(certificateDetails)
+                            }, label: {
+                                Text("Copy to Clipboard").foregroundColor(.black)
+                            })
+                            .foregroundColor(.black)
+                        } message: {
+                        }
+                    }
+                }
+            }
+            .padding()
+            .frame(maxWidth: .infinity)
+            // The background will extend automatically to the edge
+            .background(Color.white)
+            .border(isDownloadAndCopyEnabled ? Color.black : .white, width: 0.5)
+        }
+        .ignoresSafeArea()
+        .padding(.top, 8)
+        .background(Color.white)
     }
 }
 
@@ -56,7 +101,7 @@ struct CertificateDetailsView: View {
 
 extension String {
     static func randomString(length: Int) -> String {
-      let letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-      return String((0..<length).map { _ in letters.randomElement()! })
+        let letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+        return String((0..<length).map { _ in letters.randomElement()! })
     }
 }

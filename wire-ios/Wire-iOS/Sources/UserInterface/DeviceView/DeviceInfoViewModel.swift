@@ -70,6 +70,7 @@ protocol DeviceDetailsViewActions {
     func removeDevice()
     func resetSession()
     func setVerified(_ result: (Bool) -> Void)
+    func copyToClipboard(_ value: String)
 }
 
 final class DeviceDetailsActionsHandler: DeviceDetailsViewActions {
@@ -93,6 +94,10 @@ final class DeviceDetailsActionsHandler: DeviceDetailsViewActions {
 
     func setVerified(_ result: (Bool) -> Void) {
         result(isDeviceVerified)
+    }
+
+    func copyToClipboard(_ value: String) {
+        UIPasteboard.general.string = value
     }
 
 }

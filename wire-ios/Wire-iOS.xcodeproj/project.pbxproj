@@ -234,6 +234,11 @@
 		255D1EB92AFA2B1000378896 /* DeviceInfoViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 255D1EB42AFA2B1000378896 /* DeviceInfoViewModel.swift */; };
 		255D1EBA2AFA2B1000378896 /* DeviceDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 255D1EB52AFA2B1000378896 /* DeviceDetailsView.swift */; };
 		259393182AFAA05E006DC6DC /* CopyValueView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 259393172AFAA05E006DC6DC /* CopyValueView.swift */; };
+		2593931C2AFE8021006DC6DC /* DeviceDetailsButtonsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2593931B2AFE8021006DC6DC /* DeviceDetailsButtonsView.swift */; };
+		2593931E2AFE804E006DC6DC /* DeviceDetailsE2EIdentityCertificateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2593931D2AFE804E006DC6DC /* DeviceDetailsE2EIdentityCertificateView.swift */; };
+		259393202AFE80AD006DC6DC /* DeviceDetailsBottomView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2593931F2AFE80AD006DC6DC /* DeviceDetailsBottomView.swift */; };
+		259393222AFE80DB006DC6DC /* DeviceDetailsProteusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 259393212AFE80DB006DC6DC /* DeviceDetailsProteusView.swift */; };
+		259393242AFE80F8006DC6DC /* DeviceMLSView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 259393232AFE80F8006DC6DC /* DeviceMLSView.swift */; };
 		4067991C29C88AB6001326B5 /* SecurityLevelViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4067991B29C88AB6001326B5 /* SecurityLevelViewTests.swift */; };
 		407831AD2AC4636F005C2978 /* DifferenceKit in Frameworks */ = {isa = PBXBuildFile; productRef = 407831AC2AC4636F005C2978 /* DifferenceKit */; };
 		40C69D702A8627C900376B1C /* TemporaryFileService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40C69D6F2A8627C900376B1C /* TemporaryFileService.swift */; };
@@ -2135,6 +2140,11 @@
 		255D1EB42AFA2B1000378896 /* DeviceInfoViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeviceInfoViewModel.swift; sourceTree = "<group>"; };
 		255D1EB52AFA2B1000378896 /* DeviceDetailsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeviceDetailsView.swift; sourceTree = "<group>"; };
 		259393172AFAA05E006DC6DC /* CopyValueView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CopyValueView.swift; sourceTree = "<group>"; };
+		2593931B2AFE8021006DC6DC /* DeviceDetailsButtonsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceDetailsButtonsView.swift; sourceTree = "<group>"; };
+		2593931D2AFE804E006DC6DC /* DeviceDetailsE2EIdentityCertificateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceDetailsE2EIdentityCertificateView.swift; sourceTree = "<group>"; };
+		2593931F2AFE80AD006DC6DC /* DeviceDetailsBottomView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceDetailsBottomView.swift; sourceTree = "<group>"; };
+		259393212AFE80DB006DC6DC /* DeviceDetailsProteusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceDetailsProteusView.swift; sourceTree = "<group>"; };
+		259393232AFE80F8006DC6DC /* DeviceMLSView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceMLSView.swift; sourceTree = "<group>"; };
 		2B56189E29A517E800D8CCCA /* SecurityTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = SecurityTests.xctestplan; sourceTree = "<group>"; };
 		2B6F6AB329ACC04A001BB36F /* AllTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = AllTests.xctestplan; sourceTree = "<group>"; };
 		4067991B29C88AB6001326B5 /* SecurityLevelViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecurityLevelViewTests.swift; sourceTree = "<group>"; };
@@ -4288,6 +4298,11 @@
 				255D1EB42AFA2B1000378896 /* DeviceInfoViewModel.swift */,
 				255D1EB52AFA2B1000378896 /* DeviceDetailsView.swift */,
 				259393172AFAA05E006DC6DC /* CopyValueView.swift */,
+				2593931B2AFE8021006DC6DC /* DeviceDetailsButtonsView.swift */,
+				2593931D2AFE804E006DC6DC /* DeviceDetailsE2EIdentityCertificateView.swift */,
+				2593931F2AFE80AD006DC6DC /* DeviceDetailsBottomView.swift */,
+				259393212AFE80DB006DC6DC /* DeviceDetailsProteusView.swift */,
+				259393232AFE80F8006DC6DC /* DeviceMLSView.swift */,
 			);
 			path = DeviceView;
 			sourceTree = "<group>";
@@ -8609,6 +8624,7 @@
 				875E7D192188BCA500E571B7 /* MessagePreviewView.swift in Sources */,
 				D5168F592010F2F700F8222A /* TokenField.swift in Sources */,
 				E9DA4685286C547A00F47C14 /* UIWindow+Orientation.swift in Sources */,
+				259393202AFE80AD006DC6DC /* DeviceDetailsBottomView.swift in Sources */,
 				16325E651EE03CC4000E72EB /* SearchResultsView.swift in Sources */,
 				E5443393286192CF00F2E0ED /* SwitchStyle.swift in Sources */,
 				5EFD914421C918E400080599 /* AuthenticationCodeVerificationInputHandler.swift in Sources */,
@@ -8781,6 +8797,7 @@
 				16626502217DACBE00300F45 /* ConversationMessageCellTableViewAdapter.swift in Sources */,
 				161B75C820B6BCB50002B0F7 /* ZMUserSession+Calling.swift in Sources */,
 				EFF9404822414E03004F3115 /* ZClientViewController+ProfileViewControllerDelegate.swift in Sources */,
+				2593931C2AFE8021006DC6DC /* DeviceDetailsButtonsView.swift in Sources */,
 				EF0154B7225B922200A77FB6 /* ContactsViewController+Constraints.swift in Sources */,
 				871BC2811D34F8F800DF0793 /* String+Fingerprint.swift in Sources */,
 				D3DA6E7B292F67680045CC57 /* CallingActionsView.swift in Sources */,
@@ -8931,6 +8948,7 @@
 				EE01D08625ADA3D5001DB205 /* AppLockModule.Presenter.swift in Sources */,
 				D5168F282008ED0700F8222A /* KeyboardBlockObserver.swift in Sources */,
 				EF7E96EE214BB41800475C63 /* ContactsViewController+ContactsDataSourceDelegate.swift in Sources */,
+				259393222AFE80DB006DC6DC /* DeviceDetailsProteusView.swift in Sources */,
 				BF0BDF6D1DA6794E003C61DE /* ConversationInputBarViewController+Ephemeral.swift in Sources */,
 				5E21344421CCED3B00273D0D /* PhoneNumberInputView.swift in Sources */,
 				8751A6CB1FF6573D00804A58 /* QuickActionsManager.swift in Sources */,
@@ -9249,6 +9267,7 @@
 				F18993B62241356C00535A74 /* ConversationContentViewController+Scrolling.swift in Sources */,
 				BFBDDBC61DB0D51C00BEED02 /* ConversationInputBarButtonState.swift in Sources */,
 				EE6C2127284118D80031EFB9 /* ConversationCreateEncryptionProtocolCell.swift in Sources */,
+				2593931E2AFE804E006DC6DC /* DeviceDetailsE2EIdentityCertificateView.swift in Sources */,
 				5E39FC6B225F81FD00C682B8 /* ConversationViewController+GuestBar.swift in Sources */,
 				EE0DE1CD21B172BF00CF3C4E /* ConversationCreateGuestsSectionController.swift in Sources */,
 				E57917B128999A240063339D /* UIView+Borders.swift in Sources */,
@@ -9500,6 +9519,7 @@
 				EF2F6DA320ED11D2007B6D70 /* UIColor+Accent.swift in Sources */,
 				061275DE26F304CB006E8D4C /* DragInteractionRestrictionTextView.swift in Sources */,
 				5EBBE97121878D09008BC1B7 /* ConversationMessageToolboxCell.swift in Sources */,
+				259393242AFE80F8006DC6DC /* DeviceMLSView.swift in Sources */,
 				EE08ADED29C8862800B6C14D /* SwitchBackendView.swift in Sources */,
 				8775BF1E2007CFB200A8AD93 /* UIControlBlockAPI.swift in Sources */,
 				EF1A461E21ADACF50009B6B9 /* RightIconDetailsCell.swift in Sources */,

@@ -180,6 +180,10 @@ internal enum Asset {
     internal static let foldersOutline = ImageAsset(name: "Folders Outline")
     internal static let attention = ImageAsset(name: "Attention")
     internal static let check = ImageAsset(name: "Check")
+    internal static let backArrow = ImageAsset(name: "backArrow")
+    internal static let close = ImageAsset(name: "close")
+    internal static let download = ImageAsset(name: "download")
+    internal static let more = ImageAsset(name: "more")
     internal static let rightArrow = ImageAsset(name: "rightArrow")
     internal static let unavailableUser = ImageAsset(name: "Unavailable user")
   }

@@ -25,8 +25,10 @@ extension Color {
 }
 
 struct DeviceDetailsView: View {
+    @Environment(\.dismiss) private var dismiss
     @State var viewModel: DeviceInfoViewModel
     @State var isCertificateViewPresented: Bool
+
     var body: some View {
         NavigationView {
             ScrollView {
@@ -36,33 +38,33 @@ struct DeviceDetailsView: View {
                             Text("MLS with Ed25519 Signature")
                         }
                         .padding(.bottom, 8)
-                        .padding(.leading, 16)
+                        .padding([.top, .leading], 16)
                         .frame(maxWidth: .infinity, maxHeight: 42, alignment: .leading)
                         .background(Color(red: 0.93, green: 0.94, blue: 0.94))
-                        
+
                         DeviceMLSView(viewModel: $viewModel).padding(.leading, 16)
                             .padding(.top, 16)
                             .padding(.bottom, 16)
                             .padding(.trailing, 16)
                             .background(Color.white)
                     }
-                            
+
                             if viewModel.e2eIdentityCertificate.status != .none {
                                     VStack(alignment: .leading) {
                                         DeviceDetailsE2EIdentityCertificateView(viewModel: $viewModel, isCertificateViewPreseneted: $isCertificateViewPresented).padding(.leading, 16)
-                                
+
                                 DeviceDetailsButtonsView(viewModel: $viewModel, isCertificateViewPresented: $isCertificateViewPresented)
                             }.background(Color.white)
                                     .padding(.top, 8)
                         }
-                    
+
                 }
-                
+
                 VStack(alignment: .leading) {
                     Text("Proteus Device Details").frame(height: 45).padding(.leading, 16)
                     DeviceDetailsProteusView(viewModel: $viewModel)
                     DeviceDetailsBottomView(viewModel: $viewModel)
-                    
+
                 }
             }
             .background(Color.backgroundColor)
@@ -70,6 +72,13 @@ struct DeviceDetailsView: View {
             .listStyle(.plain)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar(content: {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    SwiftUI.Button(action: {
+                        dismiss()
+                    }, label: {
+                        Image(.backArrow)
+                    })
+                }
                 ToolbarItem(placement: .principal) {
                     DeviceView(viewModel: viewModel).titleView
                 }
@@ -78,154 +87,32 @@ struct DeviceDetailsView: View {
         .background(Color.backgroundColor)
         .sheet(isPresented: $isCertificateViewPresented,
                 onDismiss: didDismiss) {
-            CertificateDetailsView(certificateDetails: viewModel.e2eIdentityCertificate.certificate, isMenuPresented: isCertificateViewPresented)
+            CertificateDetailsView(
+                certificateDetails: viewModel.e2eIdentityCertificate.certificate,
+                isMenuPresented: isCertificateViewPresented,
+                performDownload: {
+                    Task {
+                        await viewModel.actionsHandler.fetchCertificate()
+                    }
+                }, performCopy: { value in
+                    viewModel.actionsHandler.copyToClipboard(value)
+                }
+
+            )
                 .toolbar {
                     SwiftUI.Image(.attention).onTapGesture {
                         isCertificateViewPresented.toggle()
                     }
                 }.navigationTitle("Certificate Details")
          }
+        .navigationBarBackButtonHidden(true)
     }
-    
+
     func didDismiss() {
-        
+
     }
 }
 
-struct DeviceMLSView: View {
-    @Binding var viewModel: DeviceInfoViewModel
-    var body: some View {
-        VStack {
-            CopyValueView(title: "MLS Thumbprint", value: viewModel.mlsThumbprint).frame(maxHeight: .infinity)
-        }
-    }
-}
-
-struct DeviceDetailsProteusView: View {
-    @Binding var viewModel: DeviceInfoViewModel
-    var body: some View {
-            VStack(alignment: .leading) {
-                CopyValueView(title: "PROTEUS ID", value: viewModel.proteusID).padding([.leading, .trailing], 16)
-                Text(viewModel.proteusID).frame(maxHeight: .infinity).padding(.leading, 16)
-                Divider()
-                Text("ADDED").padding(.leading, 16)
-                Text(viewModel.addedDate).padding(.leading, 16)
-                Divider()
-                CopyValueView(title: "DEVICE KEY FINGERPRINT", value: viewModel.deviceKeyFingerprint).padding([.leading, .trailing], 16)
-                Divider()
-                Toggle("Verified", isOn: $viewModel.isProteusVerificationEnabled).font(.headline).padding([.leading, .trailing, .bottom], 16)
-            }.background(Color.white)
-    }
-}
-
-struct DeviceDetailsBottomView: View {
-    @Binding var viewModel: DeviceInfoViewModel
-    var body: some View {
-        Text("Wire gives every device a unique fingerprint. Compare them and verify your devices and conversations.").font(.footnote).padding([.leading, .trailing], 16)
-            .padding([.top, .bottom], 8)
-        HStack {
-            SwiftUI.Button {
-                Task {
-                    viewModel.actionsHandler.resetSession()
-                }
-            } label: {
-                Text("Reset Session").padding(.all, 16)
-                    .foregroundColor(.black)
-                    .font(UIFont.normalRegularFont.swiftUIfont.bold())
-            }
-            Spacer()
-        }.background(Color.white)
-        Text("If fingerprints don’t match, reset the session to generate new encryption keys on both sides.").font(.footnote).padding([.leading, .trailing], 16)
-            .padding([.top, .bottom], 8)
-        HStack {
-            SwiftUI.Button {
-                Task {
-                    viewModel.actionsHandler.removeDevice()
-                }
-            } label: {
-                Text("Remove Device")
-                    .padding(.all, 16)
-                    .foregroundColor(.black).font(UIFont.normalRegularFont.swiftUIfont.bold())
-            }
-            Spacer()
-        }.background(Color.white)
-        Text("Remove this device if you have stopped using it. You will be logged out of this device immediately.")
-            .font(.footnote)
-            .padding([.leading, .trailing], 16)
-            .padding([.top, .bottom], 8)
-    }
-}
-
-
-struct DeviceDetailsE2EIdentityCertificateView: View {
-    @Binding var viewModel: DeviceInfoViewModel
-    @Binding var isCertificateViewPreseneted: Bool
-    var body: some View {
-        Text("End-to-end Identity Certificate").font(UIFont.normalSemiboldFont.swiftUIfont).multilineTextAlignment(.leading)
-            .padding([.top, .bottom], 16)
-        Text("Status").font(UIFont.mediumSemiboldFont.swiftUIfont).foregroundColor(.gray).multilineTextAlignment(.leading)
-        HStack {
-            switch viewModel.e2eIdentityCertificate.status {
-            case .notActivated:
-                Text(viewModel.e2eIdentityCertificate.status.titleForStatus()).foregroundColor(.customRed).font(.subheadline).font(UIFont.normalMediumFont.swiftUIfont)
-                Image(.certificateExpired)
-            case .revoked:
-                Text(viewModel.e2eIdentityCertificate.status.titleForStatus()).foregroundColor(.customRed).font(.subheadline).font(UIFont.normalMediumFont.swiftUIfont)
-                Image(.certificateRevoked)
-            case .expired:
-                Text(viewModel.e2eIdentityCertificate.status.titleForStatus()).foregroundColor(.customRed).font(.subheadline).font(UIFont.normalMediumFont.swiftUIfont)
-                Image(.certificateExpired)
-            case .valid:
-                Text(viewModel.e2eIdentityCertificate.status.titleForStatus()).foregroundColor(.customGreen).font(.subheadline).font(UIFont.normalMediumFont.swiftUIfont)
-                Image(.certificateValid)
-            case .none:
-                Text(viewModel.e2eIdentityCertificate.status.titleForStatus()).foregroundColor(.black).font(UIFont.normalMediumFont.swiftUIfont)
-                Image(asset: .init(name: ""))
-            }
-            Spacer()
-        }
-        if !viewModel.e2eIdentityCertificate.serialNumber.isEmpty {
-            Text("Serial Number").font(UIFont.smallSemiboldFont.swiftUIfont).foregroundColor(.gray).padding(.top, 8)
-            Text(viewModel.e2eIdentityCertificate.serialNumber)
-        }
-    }
-}
-
-struct DeviceDetailsButtonsView: View {
-    @Binding var viewModel: DeviceInfoViewModel
-    @Binding var isCertificateViewPresented: Bool
-    var body: some View {
-            if viewModel.e2eIdentityCertificate.certificate.isEmpty {
-                SwiftUI.Button("Get Certificate") {
-                    Task {
-                        await viewModel.actionsHandler.fetchCertificate()
-                    }
-                }
-                
-            } else {
-                if viewModel.e2eIdentityCertificate.isExpiringSoon {
-                    SwiftUI.Button("Update Certificate") {
-                        Task {
-                            await viewModel.actionsHandler.fetchCertificate()
-                        }
-                    }
-                }
-                Divider()
-                SwiftUI.Button(action:{
-                    isCertificateViewPresented.toggle()
-                } , label: {
-                    HStack {
-                        Text("Show Certificate Details").foregroundStyle(.black)
-                            .font(UIFont.normalRegularFont.swiftUIfont.bold())
-                        
-                        Spacer()
-                        Image(.rightArrow)
-                        
-                    }.padding()
-                })
-            }
-    }
-}
 #Preview {
     DeviceDetailsView(viewModel: DeviceInfoViewModel(udid: "123g4", title: "Device 4", mlsThumbprint: """
 3d c8 7f ff 07 c9 29 6e
