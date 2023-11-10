@@ -76,7 +76,7 @@ final class MessagePresenterTests: XCTestCase {
 
     // MARK: - Pass
 
-    func testThatCreateAddPassesViewControllerReturnsNilForFileMessage() async throws {
+    func testThatCreateAddPassesViewControllerThrowsAnErrorForFileMessage() async throws {
         // GIVEN
         let message = MockMessageFactory.fileTransferMessage()
         let fileMessageData = try XCTUnwrap(message.fileMessageData)
