@@ -48,7 +48,7 @@ for HOOK_FILE in "$HOOKS_SOURCE"/*; do
     fi
 
     # Create a symlink to the new hook
-    ln -s "$HOOK_FILE" "$HOOK_DESTINATION"
+    ln -svf "$HOOK_FILE" "$HOOK_DESTINATION"
     chmod +x "$HOOK_DESTINATION"
 
     echo "Installed $HOOK_NAME hook."

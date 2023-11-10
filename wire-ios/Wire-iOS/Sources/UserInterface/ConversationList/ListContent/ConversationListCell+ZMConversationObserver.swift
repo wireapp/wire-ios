@@ -21,13 +21,13 @@ import WireDataModel
 extension ConversationListCell: ZMConversationObserver {
     func conversationDidChange(_ change: ConversationChangeInfo) {
         guard change.conversation === conversation,
-            (change.isArchivedChanged ||
+            change.isArchivedChanged ||
             change.conversationListIndicatorChanged ||
             change.nameChanged ||
             change.unreadCountChanged ||
             change.connectionStateChanged ||
             change.mutedMessageTypesChanged ||
-            change.messagesChanged) else { return }
+            change.messagesChanged else { return }
 
         updateAppearance()
     }
