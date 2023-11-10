@@ -67,18 +67,6 @@ public class AcmeAPIV5: NSObject, AcmeAPI {
     }
 
     public func getACMENonce(url: String) async -> String? {
-
-//        let request = ZMTransportRequest(path: url,
-//                                         method: .methodHEAD,
-//                                         payload: nil,
-//                                         apiVersion: apiVersion.rawValue)
-//
-//        let response = await httpClient.send(request)
-//        guard response.result == .success else {
-//            return nil
-//        }
-//
-//        return response.rawResponse?.allHeaderFields[HeaderKey.replayNonce.rawValue] as? String
         return nil
     }
 
@@ -100,15 +88,18 @@ public class AcmeAPIV5: NSObject, AcmeAPI {
 
 }
 
+/// TODO: temp solution for `elna.wire.link`
 extension AcmeAPIV5: URLSessionDelegate {
 
-    public func urlSession(_ session: URLSession, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
-       // TODO: Temp - trust the certificate even if not valid
+    public func urlSession(_ session: URLSession,
+                           didReceive challenge: URLAuthenticationChallenge,
+                           completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
+        // TODO: Temp - trust the certificate even if not valid
         guard let serverTrust = challenge.protectionSpace.serverTrust else {
             completionHandler(.performDefaultHandling, nil)
             return
         }
-       let urlCredential = URLCredential(trust: serverTrust)
+        let urlCredential = URLCredential(trust: serverTrust)
 
         completionHandler(.useCredential, urlCredential)
     }

@@ -105,7 +105,7 @@ public class ZMUserSession: NSObject {
     let earService: EARServiceInterface
 
     public var appLockController: AppLockType
-    public var e2eIdentityEnrollment: EnrollE2EIdentityInterface?
+    public var certificateEnrollment: CertificateEnrollmentInterface?
 
     public var fileSharingFeature: Feature.FileSharing {
         let featureRepository = FeatureRepository(context: coreDataStack.viewContext)
@@ -460,7 +460,7 @@ public class ZMUserSession: NSObject {
         let httpClient = HttpClientImpl(transportSession: transportSession, queue: coreDataStack.syncContext)
         let apiProvider = APIProvider(httpClient: httpClient)
         let e2eiManager = E2EIManager(apiProvider: apiProvider, context: coreDataStack.syncContext)
-        self.e2eIdentityEnrollment = EnrollE2EIdentity(e2eiManager: e2eiManager)
+        self.certificateEnrollment = CertificateEnrollment(e2eiManager: e2eiManager)
     }
 
     private func registerForCalculateBadgeCountNotification() {

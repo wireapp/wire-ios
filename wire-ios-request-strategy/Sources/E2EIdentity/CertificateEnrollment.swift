@@ -30,13 +30,13 @@ enum Failure: Error, Equatable {
 
 }
 
-public protocol EnrollE2EIdentityInterface {
+public protocol CertificateEnrollmentInterface {
 
     func invoke(idToken: String) async -> E2EIEnrollmentResult
 
 }
 
-public final class EnrollE2EIdentity: EnrollE2EIdentityInterface {
+public final class CertificateEnrollment: CertificateEnrollmentInterface {
 
     var e2eiManager: E2EIManagerInterface
 
