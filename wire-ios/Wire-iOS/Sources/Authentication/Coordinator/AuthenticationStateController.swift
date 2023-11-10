@@ -125,7 +125,7 @@ class AuthenticationStateController {
         case .replace:
             stack[stack.endIndex - 1] = step
         case .rewindToOrReset(let milestone):
-            var rewindedStep = stack.first { milestone.shouldRewind(to: $0) }
+            let rewindedStep = stack.first { milestone.shouldRewind(to: $0) }
             if rewindedStep != nil {
                 stack = [Array(stack.prefix { !milestone.shouldRewind(to: $0) }), milestone.stepsToAdd, [step]].flatMap { $0 }
             } else {

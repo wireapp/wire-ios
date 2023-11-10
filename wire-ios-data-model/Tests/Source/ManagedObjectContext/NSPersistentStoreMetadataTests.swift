@@ -25,13 +25,6 @@ class NSPersistentStoreMetadataTests: ZMBaseManagedObjectTest {
         return false
     }
 
-    override func setUp() {
-        super.setUp()
-    }
-    override func tearDown() {
-        super.tearDown()
-    }
-
     func forceSave() {
         // I need to insert or modify an entity, or core data will not save
         self.uiMOC.forceSaveOrRollback()
