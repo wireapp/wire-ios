@@ -24,6 +24,10 @@ import WireSyncEngine
 private let zmLog = ZMSLog(tag: "MessagePresenter")
 
 final class MessagePresenter: NSObject {
+    enum MessagePresenterError: Error {
+        case missingFileURL
+        case failedInitializingViewController
+    }
 
     /// Container of the view that hosts popover controller.
     weak var targetViewController: UIViewController?
@@ -80,8 +84,8 @@ final class MessagePresenter: NSObject {
         documentInteractionController = UIDocumentInteractionController(url: URL(fileURLWithPath: tmpPath))
         documentInteractionController?.delegate = self
         if !preview || false == documentInteractionController?.presentPreview(animated: true),
-            let rect = targetViewController?.view.convert(targetView.bounds, from: targetView),
-        let view = targetViewController?.view {
+           let rect = targetViewController?.view.convert(targetView.bounds, from: targetView),
+           let view = targetViewController?.view {
 
             documentInteractionController?.presentOptionsMenu(from: rect, in: view, animated: true)
         }
@@ -96,7 +100,7 @@ final class MessagePresenter: NSObject {
         }
     }
 
-// MARK: - AVPlayerViewController dismissial
+    // MARK: - AVPlayerViewController dismissial
 
     fileprivate func observePlayerDismissial() {
         videoPlayerObserver = NotificationCenter.default.addObserver(forName: .dismissingAVPlayer, object: nil, queue: OperationQueue.main) { _ in
@@ -131,12 +135,12 @@ final class MessagePresenter: NSObject {
 
         _ = message.startSelfDestructionIfNeeded()
 
-        if let fileMessageData = message.fileMessageData, fileMessageData.isPass,
-            let addPassesViewController = createAddPassesViewController(fileMessageData: fileMessageData) {
-            targetViewController?.present(addPassesViewController, animated: true)
-
+        if let fileMessageData = message.fileMessageData, fileMessageData.isPass {
+            Task {
+                await openPassesViewController(fileMessageData: fileMessageData)
+            }
         } else if let fileMessageData = message.fileMessageData, fileMessageData.isVideo,
-            let mediaPlaybackManager = mediaPlaybackManager {
+                  let mediaPlaybackManager = mediaPlaybackManager {
             let player = AVPlayer(url: fileURL)
             mediaPlayerController = MediaPlayerController(player: player, message: message, delegate: mediaPlaybackManager)
             let playerViewController = AVPlayerViewController()
@@ -193,8 +197,8 @@ final class MessagePresenter: NSObject {
 
     func viewController(forImageMessage message: ZMConversationMessage, actionResponder delegate: MessageActionResponder) -> UIViewController? {
         guard Message.isImage(message),
-            message.imageMessageData != nil else {
-                return nil
+              message.imageMessageData != nil else {
+            return nil
         }
 
         return imagesViewController(for: message,
@@ -204,8 +208,8 @@ final class MessagePresenter: NSObject {
 
     func viewController(forImageMessagePreview message: ZMConversationMessage, actionResponder delegate: MessageActionResponder) -> UIViewController? {
         guard Message.isImage(message),
-            message.imageMessageData != nil else {
-                return nil
+              message.imageMessageData != nil else {
+            return nil
         }
 
         return imagesViewController(for: message, actionResponder: delegate, isPreviewing: true)
@@ -213,19 +217,31 @@ final class MessagePresenter: NSObject {
 
     // MARK: - Pass
 
-    func createAddPassesViewController(fileMessageData: ZMFileMessageData) -> PKAddPassesViewController? {
-        guard let fileURL = fileMessageData.fileURL,
-            let passData = try? Data.init(contentsOf: fileURL) else {
-                return nil
+    @MainActor
+    func openPassesViewController(fileMessageData: ZMFileMessageData) async {
+        guard PKAddPassesViewController.canAddPasses() else { return } // suggestion: implement error visible for the user
+
+        do {
+            guard let fileURL = fileMessageData.fileURL else {
+                throw MessagePresenterError.missingFileURL
+            }
+
+            let viewController = try await makePassesViewController(fileURL: fileURL)
+            targetViewController?.present(viewController, animated: true)
+        } catch {
+            assertionFailure("failed to present passes view controller!")
+        }
+    }
+
+    func makePassesViewController(fileURL: URL) async throws -> PKAddPassesViewController {
+        let passData = try Data(contentsOf: fileURL)
+        let pass = try PKPass(data: passData)
+
+        guard let viewController = await PKAddPassesViewController(pass: pass) else {
+            throw MessagePresenterError.failedInitializingViewController
         }
 
-        guard let pass = try? PKPass.init(data: passData) else { return nil }
-
-        if PKAddPassesViewController.canAddPasses() {
-            return PKAddPassesViewController(pass: pass)
-        } else {
-            return nil
-        }
+        return viewController
     }
 }
 
