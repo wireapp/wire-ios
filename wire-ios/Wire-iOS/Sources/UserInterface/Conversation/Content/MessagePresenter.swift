@@ -26,6 +26,7 @@ private let zmLog = ZMSLog(tag: "MessagePresenter")
 final class MessagePresenter: NSObject {
     enum MessagePresenterError: Error {
         case missingFileURL
+        case failedInitializingViewController
     }
 
     /// Container of the view that hosts popover controller.
@@ -218,35 +219,29 @@ final class MessagePresenter: NSObject {
 
     @MainActor
     func openPassesViewController(fileMessageData: ZMFileMessageData) async {
-        guard PKAddPassesViewController.canAddPasses() else { return }
+        guard PKAddPassesViewController.canAddPasses() else { return } // suggestion: implement error visible for the user
 
-        guard let viewController = try? await makePassesViewController(fileMessageData: fileMessageData) else {
-            return // ignore error
-        }
-
-        targetViewController?.present(viewController, animated: true)
-    }
-
-    @MainActor
-    func makePassesViewController(fileMessageData: ZMFileMessageData) async throws -> PKAddPassesViewController? {
-        guard let fileURL = fileMessageData.fileURL else {
-            throw MessagePresenterError.missingFileURL
-        }
-
-        let pass = try await loadPass(fileURL: fileURL)
-        return PKAddPassesViewController(pass: pass)
-    }
-
-    private func loadPass(fileURL: URL) async throws -> PKPass {
-        // Without MainActor attribute, this runs on a background queue.
-        let task = Task.detached(
-            priority: .userInitiated,
-            operation: {
-                let passData = try Data(contentsOf: fileURL)
-                return try PKPass(data: passData)
+        do {
+            guard let fileURL = fileMessageData.fileURL else {
+                throw MessagePresenterError.missingFileURL
             }
-        )
-        return try await task.value
+
+            let viewController = try await makePassesViewController(fileURL: fileURL)
+            targetViewController?.present(viewController, animated: true)
+        } catch {
+            assertionFailure("failed to present passes view controller!")
+        }
+    }
+
+    func makePassesViewController(fileURL: URL) async throws -> PKAddPassesViewController {
+        let passData = try Data(contentsOf: fileURL)
+        let pass = try PKPass(data: passData)
+
+        guard let viewController = await PKAddPassesViewController(pass: pass) else {
+            throw MessagePresenterError.failedInitializingViewController
+        }
+
+        return viewController
     }
 }
 

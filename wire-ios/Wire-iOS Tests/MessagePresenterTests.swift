@@ -76,14 +76,14 @@ final class MessagePresenterTests: XCTestCase {
 
     // MARK: - Pass
 
-    func testThatCreateAddPassesViewControllerThrowsAnErrorForFileMessage() async throws {
+    func testThatMakePassesViewControllerThrowsErrorForInvalidFileURL() async throws {
         // GIVEN
-        let message = MockMessageFactory.fileTransferMessage()
-        let fileMessageData = try XCTUnwrap(message.fileMessageData)
+        let message = MockMessageFactory.passFileTransferMessage()
+        let fileURL = try XCTUnwrap(URL(string: "https://apple.com"))
 
         // WHEN && THEN
         do {
-            _ = try await sut.makePassesViewController(fileMessageData: fileMessageData)
+            _ = try await sut.makePassesViewController(fileURL: fileURL)
             XCTFail("expected to throw an error!")
         } catch {
             // success
@@ -93,13 +93,13 @@ final class MessagePresenterTests: XCTestCase {
     func testThatCreateAddPassesViewControllerReturnsAViewControllerForPassFileMessage() async throws {
         // GIVEN
         let message = MockMessageFactory.passFileTransferMessage()
-        let fileMessageData = try XCTUnwrap(message.fileMessageData)
+        let fileURL = try XCTUnwrap(message.fileMessageData?.fileURL)
 
-        // WHEN
-        let viewController = try await sut.makePassesViewController(fileMessageData: fileMessageData)
-
-        // THEN
-        XCTAssertNotNil(viewController)
+        // WHEN && THEN
+        do {
+            _ = try await sut.makePassesViewController(fileURL: fileURL)
+        } catch {
+            XCTFail("expected not to throw an error!")
+        }
     }
-
 }
