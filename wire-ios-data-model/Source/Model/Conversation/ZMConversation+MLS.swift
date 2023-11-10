@@ -40,7 +40,11 @@ extension ZMConversation {
 
     // MARK: Properties
 
+    @NSManaged public var cipherSuite: NSNumber?
+
     @NSManaged public var epoch: UInt64
+
+    @NSManaged public var epochTimemstamp: String?
 
     @NSManaged private var primitiveMessageProtocol: NSNumber
 
