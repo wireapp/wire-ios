@@ -85,9 +85,8 @@ final class EmptySearchResultsView: UIView {
     /// Contains the `stackView`.
     private let scrollView = UIScrollView()
     private let stackView = UIStackView()
-    private let iconView     = UIImageView()
-    private let statusLabel  = DynamicFontLabel(fontSpec: .normalRegularFont,
-                                                color: LabelColors.textSettingsPasswordPlaceholder)
+    private let iconView = UIImageView()
+    private let statusLabel = DynamicFontLabel(fontSpec: .normalRegularFont, color: LabelColors.textSettingsPasswordPlaceholder)
     private let actionButton = LinkButton()
     private let iconColor = LabelColors.textSettingsPasswordPlaceholder
 
@@ -105,19 +104,23 @@ final class EmptySearchResultsView: UIView {
         [iconView, statusLabel, actionButton].forEach(stackView.addArrangedSubview)
 
         addSubview(scrollView)
-
-        scrollView.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
-        scrollView.topAnchor.constraint(equalTo: topAnchor).isActive = true
-        trailingAnchor.constraint(equalTo: scrollView.trailingAnchor).isActive = true
-        bottomAnchor.constraint(equalTo: scrollView.bottomAnchor).isActive = true
-
         scrollView.addSubview(stackView)
 
-        stackView.leadingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.leadingAnchor).isActive = true
-        stackView.topAnchor.constraint(equalTo: scrollView.contentLayoutGuide.topAnchor).isActive = true
-        scrollView.contentLayoutGuide.trailingAnchor.constraint(equalTo: stackView.trailingAnchor).isActive = true
-        scrollView.contentLayoutGuide.bottomAnchor.constraint(equalTo: stackView.bottomAnchor).isActive = true
-        stackView.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor).isActive = true
+        NSLayoutConstraint.activate([
+
+            // scroll view with empty search results view
+            scrollView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            scrollView.topAnchor.constraint(equalTo: topAnchor),
+            trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
+            bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
+
+            // stack view within scroll view
+            stackView.leadingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.leadingAnchor),
+            stackView.topAnchor.constraint(equalTo: scrollView.contentLayoutGuide.topAnchor),
+            scrollView.contentLayoutGuide.trailingAnchor.constraint(equalTo: stackView.trailingAnchor),
+            scrollView.contentLayoutGuide.bottomAnchor.constraint(equalTo: stackView.bottomAnchor),
+            stackView.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor)
+        ])
 
         stackView.alignment = .center
         stackView.spacing = 16
