@@ -209,7 +209,7 @@ public extension ZMConversation {
     static func fetchAllTeamGroupProteusConversations(in context: NSManagedObjectContext) throws -> [ZMConversation] {
         let selfUser = ZMUser.selfUser(in: context)
         guard let selfUserTeamIdentifier = selfUser.teamIdentifier else {
-            assertionFailure("selfUser.teamIdentifier == nil")
+            assertionFailure("this method is supposed to be called for users which are part of a team")
             return []
         }
 
