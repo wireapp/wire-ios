@@ -20,10 +20,17 @@ import Foundation
 import UIKit
 import WireUtilities
 import WireCommonComponents
+import SwiftUI
 
 @objc
 enum ColorSchemeVariant: UInt {
     case light, dark
+}
+
+extension Color {
+    static var backgroundColor = Color(red: 0.93, green: 0.94, blue: 0.94)
+    static var customRed = Color(red: 0.76, green: 0, blue: 0.07)
+    static var customGreen = Color(red: 0.11, green: 0.47, blue: 0.2)
 }
 
 extension UIColor {

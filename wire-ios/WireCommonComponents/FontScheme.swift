@@ -18,6 +18,7 @@
 
 import Foundation
 import UIKit
+import SwiftUI
 
 public enum FontTextStyle: String {
     case largeTitle
@@ -48,6 +49,11 @@ public enum FontWeight: String, CaseIterable {
     case bold
     case heavy
     case black
+}
+
+public extension Font {
+    static var sfMonoSmall = Font.custom("SF Mono", size: 12)
+    static var sfMonoMedium = Font.custom("SF Mono", size: 16)
 }
 
 extension FontWeight {

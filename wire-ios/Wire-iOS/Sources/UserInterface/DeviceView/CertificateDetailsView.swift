@@ -38,7 +38,7 @@ struct CertificateDetailsView: View {
         }.background(Color.backgroundColor)
         ScrollView {
             Text(certificateDetails)
-                .font(Font.custom("SF Mono", size: 12))
+                .font(Font.sfMonoSmall)
                 .padding()
                 .frame(maxHeight: .infinity)
         }

@@ -2718,6 +2718,8 @@ internal enum L10n {
       }
     }
     internal enum Device {
+      /// Edit
+      internal static let edit = L10n.tr("Localizable", "device.edit", fallback: "Edit")
       /// Not Verified
       internal static let notVerified = L10n.tr("Localizable", "device.not_verified", fallback: "Not Verified")
       /// Devices
@@ -2743,6 +2745,70 @@ internal enum L10n {
       internal enum Current {
         /// CURRENT DEVICE
         internal static let title = L10n.tr("Localizable", "device.current.title", fallback: "CURRENT DEVICE")
+      }
+      internal enum Details {
+        /// Copy to Clipboard
+        internal static let copytoclipboard = L10n.tr("Localizable", "device.details.copytoclipboard", fallback: "Copy to Clipboard")
+        /// Expired
+        internal static let expired = L10n.tr("Localizable", "device.details.expired", fallback: "Expired")
+        /// Revoked
+        internal static let revoked = L10n.tr("Localizable", "device.details.revoked", fallback: "Revoked")
+        /// Valid
+        internal static let valid = L10n.tr("Localizable", "device.details.valid", fallback: "Valid")
+        internal enum Activated {
+          /// Activated
+          internal static let title = L10n.tr("Localizable", "device.details.activated.title", fallback: "Activated")
+        }
+        internal enum Certificate {
+          /// Certificate Details
+          internal static let details = L10n.tr("Localizable", "device.details.certificate.details", fallback: "Certificate Details")
+        }
+        internal enum E2e {
+          internal enum Identity {
+            internal enum Certificate {
+              /// End-to-end Identity Certificate
+              internal static let title = L10n.tr("Localizable", "device.details.e2e.identity.certificate.title", fallback: "End-to-end Identity Certificate")
+            }
+          }
+        }
+        internal enum Get {
+          /// Get Certificate
+          internal static let certificate = L10n.tr("Localizable", "device.details.get.certificate", fallback: "Get Certificate")
+        }
+        internal enum Not {
+          /// Not activated
+          internal static let activated = L10n.tr("Localizable", "device.details.not.activated", fallback: "Not activated")
+        }
+        internal enum Proteus {
+          internal enum Key {
+            /// Proteus Key Fingerprint
+            internal static let fingerprint = L10n.tr("Localizable", "device.details.proteus.key.fingerprint", fallback: "Proteus Key Fingerprint")
+          }
+        }
+        internal enum Section {
+          internal enum Mls {
+            /// MLS WITH ED25519 SIGNATURE
+            internal static let title = L10n.tr("Localizable", "device.details.section.mls.title", fallback: "MLS WITH ED25519 SIGNATURE")
+          }
+          internal enum Proteus {
+            /// PROTEUS DEVICE DETAILS
+            internal static let title = L10n.tr("Localizable", "device.details.section.proteus.title", fallback: "PROTEUS DEVICE DETAILS")
+          }
+        }
+        internal enum Serial {
+          /// Serial Number
+          internal static let number = L10n.tr("Localizable", "device.details.serial.number", fallback: "Serial Number")
+        }
+        internal enum Show {
+          internal enum Certificate {
+            /// Show Dertificate Details
+            internal static let details = L10n.tr("Localizable", "device.details.show.certificate.details", fallback: "Show Dertificate Details")
+          }
+        }
+        internal enum Update {
+          /// Update Certificate
+          internal static let certificate = L10n.tr("Localizable", "device.details.update.certificate", fallback: "Update Certificate")
+        }
       }
       internal enum Mls {
         internal enum Thumbprint {

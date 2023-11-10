@@ -27,7 +27,7 @@ struct CopyValueView: View {
         VStack(alignment: .leading) {
             Text(title).font(UIFont.smallSemiboldFont.swiftUIfont)
             HStack {
-                Text(value).font(Font.custom("SF Mono", size: 16))
+                Text(value).font(Font.sfMonoMedium)
                 if isCopyEnabled {
                     Spacer()
                     VStack {
