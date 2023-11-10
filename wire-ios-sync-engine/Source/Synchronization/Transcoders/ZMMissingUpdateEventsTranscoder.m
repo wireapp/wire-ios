@@ -189,8 +189,8 @@ NSUInteger const ZMMissingUpdateEventsTranscoderListPageSize = 500;
     
     ZMLogWithLevelAndTag(ZMLogLevelInfo, ZMTAG_EVENT_PROCESSING, @"Downloaded %lu event(s)", (unsigned long)parsedEvents.count);
     
+    // FIXME: [jacob] this does not guranteee that we have decrypted & stored an event before we update lastEventId. We need to refactor this.
     [self.eventProcessor storeUpdateEvents:parsedEvents ignoreBuffer:YES completionHandler:^{
-        // FIXME: [F] check that we don't need to call pushNotificationStatus instead
         [self.pushNotificationStatus didFetchEventIds:eventIds lastEventId:latestEventId finished:!self.listPaginator.hasMoreToFetch];
     }];
 
