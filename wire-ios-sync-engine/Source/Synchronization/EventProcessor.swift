@@ -39,17 +39,21 @@ actor EventProcessor: UpdateEventProcessor {
     public var eventConsumers: [ZMEventConsumer] = []
 
     var isReadyToProcessEvents: Bool {
-        // Only process events once we've finished fetching events.
-        guard !syncStatus.isSyncing else { return false }
+        get async {
+            await syncContext.perform {
+                // Only process events once we've finished fetching events.
+                guard !self.syncStatus.isSyncing else { return false }
 
-        // If the database is locked, then we won't be able to process events
-        // that require writes to the database.
-        guard !syncContext.isLocked else { return false }
+                // If the database is locked, then we won't be able to process events
+                // that require writes to the database.
+                guard !self.syncContext.isLocked else { return false }
 
-        // Don't process events if this developer flag is on
-        guard !DeveloperFlag.ignoreIncomingEvents.isOn else { return false }
+                // Don't process events if this developer flag is on
+                guard !DeveloperFlag.ignoreIncomingEvents.isOn else { return false }
 
-        return true
+                return true
+            }
+        }
     }
 
     // MARK: Life Cycle
@@ -83,7 +87,7 @@ actor EventProcessor: UpdateEventProcessor {
 
         WireLogger.updateEvent.info("process events if ready")
 
-        guard isReadyToProcessEvents else {
+        guard await isReadyToProcessEvents else {
             WireLogger.updateEvent.info("not ready to process events")
             return true
         }
@@ -107,7 +111,11 @@ actor EventProcessor: UpdateEventProcessor {
 
     private func processEvents(callEventsOnly: Bool) async throws {
         WireLogger.updateEvent.info("process pending events (callEventsOnly: \(callEventsOnly)")
-        if syncContext.encryptMessagesAtRest {
+
+        let encryptMessagesAtRest = await syncContext.perform {
+            self.syncContext.encryptMessagesAtRest
+        }
+        if encryptMessagesAtRest {
             do {
                 WireLogger.updateEvent.info("trying to get EAR keys")
                 let privateKeys = try earService.fetchPrivateKeys(includingPrimary: !callEventsOnly)
@@ -134,8 +142,7 @@ actor EventProcessor: UpdateEventProcessor {
         defer {
             self.syncContext.leaveAllGroupsExceptSecondaryOne()
         }
-
-        if ignoreBuffer || isReadyToProcessEvents {
+        if await isReadyToProcessEvents || ignoreBuffer {
             let publicKeys = try? earService.fetchPublicKeys()
 
             let decryptedEvents = await eventDecoder.decryptAndStoreEvents(
@@ -147,7 +154,7 @@ actor EventProcessor: UpdateEventProcessor {
             for eventConsumer in self.eventConsumers {
                 eventConsumer.processEventsWhileInBackground?(decryptedEvents)
             }
-            self.syncContext.performAndWait {
+            await self.syncContext.perform {
                 self.syncContext.saveOrRollback()
                 NotificationInContext(name: .calculateBadgeCount, context: self.syncContext.notificationContext).post()
             }
@@ -165,7 +172,7 @@ actor EventProcessor: UpdateEventProcessor {
         }
 
         await storeUpdateEvents(updateEvents, ignoreBuffer: ignoreBuffer)
-        let isLocked = syncContext.performAndWait { syncContext.isLocked }
+        let isLocked = await syncContext.perform { self.syncContext.isLocked }
 
         if isLocked {
             try? await processPendingCallEvents()
@@ -207,9 +214,9 @@ actor EventProcessor: UpdateEventProcessor {
                 }
                 self.eventProcessingTracker.registerEventProcessed()
             }
-            syncContext.performGroupedAndWait { context in
-                ZMConversation.calculateLastUnreadMessages(in: context)
-                context.saveOrRollback()
+            await syncContext.perform {
+                ZMConversation.calculateLastUnreadMessages(in: self.syncContext)
+                self.syncContext.saveOrRollback()
             }
 
             WireLogger.updateEvent.debug("Events processed in \(-date.timeIntervalSinceNow): \(self.eventProcessingTracker.debugDescription)")
