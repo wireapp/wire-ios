@@ -17,11 +17,15 @@
 //
 
 import Foundation
+import SwiftUI
+import WireCommonComponents
 
 struct E2EIdentityCertificate {
     var status: E2EIdentityCertificateStatus
     var serialNumber: String
     var certificate: String = .randomString(length: 500)
+    var exipirationDate: Date = .now
+    var isExpiringSoon: Bool  = false
 }
 
 enum E2EIdentityCertificateStatus: CaseIterable {
@@ -43,6 +47,54 @@ extension E2EIdentityCertificateStatus {
             return ""
         }
     }
+
+    func imageForStatus() -> Image {
+        switch self {
+        case .notActivated:
+            return Image(.certificateExpired)
+        case .revoked:
+            return Image(.certificateRevoked)
+        case .expired:
+            return Image(.certificateExpired)
+        case .valid:
+            return Image(.certificateValid)
+        case .none:
+            return Image(asset: .init(name: ""))
+        }
+    }
+}
+
+protocol DeviceDetailsViewActions {
+    func fetchCertificate() async
+    func showCertificate(validate: () -> Bool, result: (Bool) -> Void)
+    func removeDevice()
+    func resetSession()
+    func setVerified(_ result: (Bool) -> Void)
+}
+
+final class DeviceDetailsActionsHandler: DeviceDetailsViewActions {
+    var isDeviceVerified: Bool = false
+
+    func fetchCertificate() async {
+
+    }
+
+    func showCertificate(validate: () -> Bool, result: (Bool) -> Void) {
+        result(validate())
+    }
+
+    func removeDevice() {
+
+    }
+
+    func resetSession() {
+
+    }
+
+    func setVerified(_ result: (Bool) -> Void) {
+        result(isDeviceVerified)
+    }
+
 }
 
 struct DeviceInfoViewModel {
@@ -54,6 +106,19 @@ struct DeviceInfoViewModel {
     let proteusID: String
     var isProteusVerificationEnabled: Bool
     var e2eIdentityCertificate: E2EIdentityCertificate
+    let actionsHandler: DeviceDetailsViewActions
+
+    init(udid: String, title: String, mlsThumbprint: String, deviceKeyFingerprint: String, proteusID: String, isProteusVerificationEnabled: Bool, e2eIdentityCertificate: E2EIdentityCertificate, actionsHandler: DeviceDetailsViewActions = DeviceDetailsActionsHandler()) {
+        self.udid = udid
+        self.title = title
+        self.mlsThumbprint = mlsThumbprint
+        self.deviceKeyFingerprint = deviceKeyFingerprint
+        self.proteusID = proteusID
+        self.isProteusVerificationEnabled = isProteusVerificationEnabled
+        self.e2eIdentityCertificate = e2eIdentityCertificate
+        self.actionsHandler = actionsHandler
+        FontScheme.configure(with: .large)
+    }
 }
 
 extension DeviceInfoViewModel: Identifiable {
@@ -63,6 +128,10 @@ extension DeviceInfoViewModel: Identifiable {
 }
 
 struct DevicesViewModel {
-    var currentDevice: DeviceInfoViewModel
-    var otherDevices: [DeviceInfoViewModel]
+    private(set)var currentDevice: DeviceInfoViewModel
+    private(set)var otherDevices: [DeviceInfoViewModel]
+
+    func onRemoveDevice(_ indexSet: IndexSet) {
+
+    }
 }

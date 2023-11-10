@@ -25,24 +25,28 @@ protocol CopyActionHandler {
 struct CopyValueView: View {
     var title: String
     var value: String
-    let copyActionHandler: CopyActionHandler
+    var isCopyEnabled: Bool = true
 
     var body: some View {
         VStack(alignment: .leading) {
+            Text(title).font(UIFont.smallSemiboldFont.swiftUIfont)
             HStack {
-                Text(title).foregroundColor(.gray).font(.subheadline)
-                Spacer()
-
-                SwiftUI.Button(action: copy, label: {
-                    Image(.copy)
-                }).buttonStyle(.bordered)
+                Text(value).font(Font.custom("SF Mono", size: 16))
+                if isCopyEnabled {
+                    Spacer()
+                    VStack {
+                        SwiftUI.Button(action: copy, label: {
+                            Image(.copy)
+                        })
+                        Spacer()
+                    }
+                }
             }
-            Text(value).multilineTextAlignment(.leading)
         }
     }
 
     func copy() {
-        copyActionHandler.copy(value)
+        UIPasteboard.general.string = value
     }
 }
 

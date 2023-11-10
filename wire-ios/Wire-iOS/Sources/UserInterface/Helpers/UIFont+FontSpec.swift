@@ -19,12 +19,17 @@
 import Foundation
 import UIKit
 import WireCommonComponents
+import SwiftUI
 
 // MARK: - Avatar
 
 extension UIFont {
     class var avatarInitial: UIFont {
         return UIFont.systemFont(ofSize: 11, weight: .light)
+    }
+
+    var swiftUIfont: Font {
+        return Font(self)
     }
 }
 
@@ -76,6 +81,9 @@ extension UIFont {
     }
 
     // MARK: - Medium
+    class var mediumRegular: UIFont {
+        return FontSpec(.medium, .regular).font!
+    }
 
     class var mediumFont: UIFont {
         return FontSpec(.medium, .none).font!
@@ -109,5 +117,10 @@ extension UIFont {
 
     class var largeSemiboldFont: UIFont {
         return FontSpec(.large, .semibold).font!
+    }
+
+    // MARK: Header
+    class var headerSemiBoldFont: UIFont {
+        return FontSpec(.header, .semibold).font!
     }
 }

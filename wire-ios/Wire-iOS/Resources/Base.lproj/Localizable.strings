@@ -2044,3 +2044,10 @@ to reset this device and log in again";
 // MARK: - Time
 
 "time.just_now" = "Just now";
+
+//MARK: - Device
+"device.mls.thumbprint.title" = "MLS Thumbprint";
+"device.proteus.id.title" = "Proteus ID";
+"device.current.title" = "CURRENT DEVICE";
+"device.active.title" = "ACTIVE";
+"device.title" = "Devices";

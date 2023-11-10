@@ -17,38 +17,35 @@
 //
 
 import SwiftUI
+import WireCommonComponents
 
 struct DeviceView: View {
     var viewModel: DeviceInfoViewModel
     var body: some View {
-        VStack {
-        HStack {
-            Text(viewModel.title)
-            switch viewModel.e2eIdentityCertificate.status {
-            case .notActivated:
-                Image(.certificateExpired)
-            case .revoked:
-                Image(.certificateRevoked)
-            case .expired:
-                Image(.certificateExpired)
-            case .valid:
-                Image(.certificateValid)
-            case .none:
-                Image(asset: .init(name: ""))
+        VStack(alignment: .leading) {
+            titleView
+            if !viewModel.mlsThumbprint.isEmpty {
+                let mlsThumbprintTitle = "device.mls.thumbprint.title".localized
+                Text("\(mlsThumbprintTitle): \(viewModel.mlsThumbprint)").font(UIFont.mediumRegular.swiftUIfont).foregroundColor(.gray).lineLimit(1)
             }
-            if viewModel.isProteusVerificationEnabled {
-                Image(.verified)
+            if !viewModel.proteusID.isEmpty {
+                let proteusIDTitle = "device.proteus.id.title".localized
+                Text("\(proteusIDTitle): \(viewModel.proteusID)").font(UIFont.mediumRegular.swiftUIfont).foregroundColor(.gray)
             }
-            Spacer()
         }
-            HStack {
-                Text("MLS Thumbprint: \(viewModel.mlsThumbprint)").font(.subheadline).foregroundColor(.gray).padding(.top).lineLimit(1)
-                Spacer()
-            }
-            HStack {
-                Text("Proteus ID: \(viewModel.proteusID)").multilineTextAlignment(.leading).font(.subheadline).foregroundColor(.gray)
-                Spacer()
-            }
+    }
+
+    var titleView: Text {
+        if viewModel.isProteusVerificationEnabled {
+            Text("\(viewModel.title) \( viewModel.e2eIdentityCertificate.status.imageForStatus()) \(Image(.verified))")
+                .font(UIFont.headerSemiBoldFont.swiftUIfont)
+                .foregroundColor(.black)
+
+        } else {
+            Text("\(viewModel.title) \( viewModel.e2eIdentityCertificate.status.imageForStatus())")
+                .font(UIFont.headerSemiBoldFont.swiftUIfont)
+            .foregroundColor(.black)
+
         }
     }
 }

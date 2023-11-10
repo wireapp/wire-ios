@@ -2720,8 +2720,14 @@ internal enum L10n {
     internal enum Device {
       /// Not Verified
       internal static let notVerified = L10n.tr("Localizable", "device.not_verified", fallback: "Not Verified")
+      /// Devices
+      internal static let title = L10n.tr("Localizable", "device.title", fallback: "Devices")
       /// Verified
       internal static let verified = L10n.tr("Localizable", "device.verified", fallback: "Verified")
+      internal enum Active {
+        /// ACTIVE
+        internal static let title = L10n.tr("Localizable", "device.active.title", fallback: "ACTIVE")
+      }
       internal enum Class {
         /// Desktop
         internal static let desktop = L10n.tr("Localizable", "device.class.desktop", fallback: "Desktop")
@@ -2733,6 +2739,22 @@ internal enum L10n {
         internal static let tablet = L10n.tr("Localizable", "device.class.tablet", fallback: "Tablet")
         /// Unknown
         internal static let unknown = L10n.tr("Localizable", "device.class.unknown", fallback: "Unknown")
+      }
+      internal enum Current {
+        /// CURRENT DEVICE
+        internal static let title = L10n.tr("Localizable", "device.current.title", fallback: "CURRENT DEVICE")
+      }
+      internal enum Mls {
+        internal enum Thumbprint {
+          /// MLS Thumbprint
+          internal static let title = L10n.tr("Localizable", "device.mls.thumbprint.title", fallback: "MLS Thumbprint")
+        }
+      }
+      internal enum Proteus {
+        internal enum Id {
+          /// Proteus ID
+          internal static let title = L10n.tr("Localizable", "device.proteus.id.title", fallback: "Proteus ID")
+        }
       }
       internal enum `Type` {
         /// Legal Hold

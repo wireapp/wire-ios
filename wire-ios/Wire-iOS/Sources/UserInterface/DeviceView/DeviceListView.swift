@@ -21,25 +21,37 @@ import SwiftUI
 struct DeviceListView: View {
     @State var viewModel: DevicesViewModel
     var body: some View {
-
         NavigationView {
-            List {
-                Section(header: Text("CURRENT DEVICE")) {
-                    NavigationLink(destination: DeviceDetailsView(viewModel: viewModel.currentDevice)) {
-                        DeviceView(viewModel: viewModel.currentDevice)
+            VStack(alignment: .leading) {
+                List {
+                    Section(header: Text("device.current.title".localized)) {
+                        NavigationLink(destination: DeviceDetailsView(viewModel: viewModel.currentDevice, isCertificateViewPresented: false)) {
+                            DeviceView(viewModel: viewModel.currentDevice)
+                        }
                     }
-                }
-                Section(header: Text("OTHER DEVICES")) {
-                    ForEach(viewModel.otherDevices) { deviceViewModel in
-                        NavigationLink(destination: DeviceDetailsView(viewModel: deviceViewModel)) {
-                            DeviceView(viewModel: deviceViewModel)
+                    if !viewModel.otherDevices.isEmpty {
+                        Section(header: Text("device.active.title".localized)) {
+                            ForEach(viewModel.otherDevices) { deviceViewModel in
+                                NavigationLink(destination: DeviceDetailsView(viewModel: deviceViewModel, isCertificateViewPresented: false)) {
+                                    DeviceView(viewModel: deviceViewModel)
+                                }
+                            }
+                            .onDelete(perform: delete)
                         }
                     }
                 }
+                .listStyle(GroupedListStyle())
             }
         }
-        .listStyle(.automatic)
-        .navigationTitle("Your Devices")
+        .background(Color(red: 0.93, green: 0.94, blue: 0.94)
+            .toolbar(content: {
+                EditButton()
+            })
+)
+    }
+
+    func delete(_ indexSet: IndexSet) {
+        viewModel.onRemoveDevice(indexSet)
     }
 }
 
