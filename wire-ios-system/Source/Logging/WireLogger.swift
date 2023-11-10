@@ -20,7 +20,7 @@ import Foundation
 
 public struct WireLogger: LoggerProtocol {
 
-  public static var provider: LoggerProtocol?
+  public static var provider: LoggerProtocol? = SystemLogger()
 
   public let tag: String
 
@@ -173,6 +173,7 @@ public extension WireLogger {
     static let userClient = WireLogger(tag: "user-client")
     static let localStorage = WireLogger(tag: "local-storage")
     static let conversation = WireLogger(tag: "conversation")
+    static let authentication = WireLogger(tag: "authentication")
     static let session = WireLogger(tag: "session")
     static let e2ei = WireLogger(tag: "end-to-end-identity")
 

@@ -88,16 +88,11 @@ import UIKit
         let emailScanner = Scanner(string: emailAddress! as String)
         emailScanner.charactersToBeSkipped = CharacterSet()
         emailScanner.locale = Locale(identifier: "en_US_POSIX")
+        let local: String? = emailScanner.scanUpToString("@")
+        _ = emailScanner.scanString("@")
+        let domain: String? = emailScanner.scanUpToString("@")
 
-        var local: NSString?
-        var domain: NSString?
-
-        let validParts = emailScanner.scanUpTo("@", into: &local)
-        && emailScanner.scanString("@", into: nil)
-        && emailScanner.scanUpTo("@", into: &domain)
-        && !emailScanner.scanString("@", into: nil)
-
-        if !validParts {
+        guard let local = local, let domain = domain, !local.isEmpty, !domain.isEmpty else {
             try setInvalid()
             return false
         }
@@ -108,13 +103,13 @@ import UIKit
             validSet.addCharacters(in: "-")
             let invalidSet = validSet.inverted
 
-            let components = domain?.components(separatedBy: ".")
-            if components?.count < 2 || components?.last?.hasSuffix("-") == true {
+            let components = domain.components(separatedBy: ".")
+            if components.count < 2 || components.last?.hasSuffix("-") == true {
                 try setInvalid()
                 return false
             }
 
-            for case let c as NSString in components ?? [] {
+            for case let c as NSString in components {
                 if c.length < 1 || c.rangeOfCharacter(from: invalidSet, options: .literal).location != NSNotFound {
                     try setInvalid()
                     return false
@@ -131,13 +126,13 @@ import UIKit
             validQuoted.insert(charactersIn: "(),:;<>@[]")
             let invalidQuotedSet = validQuoted.inverted
 
-            let components = local?.components(separatedBy: ".")
-            if components?.count < 1 {
+            let components = local.components(separatedBy: ".")
+            if components.count < 1 {
                 try setInvalid()
                 return false
             }
 
-            for case let c as NSString in components ?? [] {
+            for case let c as NSString in components {
                 if c.length < 1 || c.rangeOfCharacter(from: invalidSet, options: .literal).location != NSNotFound {
                     // Check if it's a quoted part:
                     if c.hasPrefix("\"") && c.hasSuffix("\"") {

@@ -205,4 +205,14 @@ class MockMLSService: MLSServiceInterface {
         mock()
     }
 
+    typealias FetchAndRepairGroupMock = (MLSGroupID) -> Void
+    var fetchAndRepairGroupMock: FetchAndRepairGroupMock?
+
+    func fetchAndRepairGroup(with groupID: MLSGroupID) async {
+        guard let mock = fetchAndRepairGroupMock else {
+            return
+        }
+        mock(groupID)
+    }
+
 }

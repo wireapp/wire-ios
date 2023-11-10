@@ -37,12 +37,12 @@ final class ConversationReplyContentView: UIView {
 
         var showDetails: Bool {
             guard let message = quotedMessage,
-                  (message.isText
+                  message.isText
                     || message.isLocation
                     || message.isAudio
                     || message.isImage
                     || message.isVideo
-                    || message.isFile) else {
+                    || message.isFile else {
                 return false
             }
             return true
