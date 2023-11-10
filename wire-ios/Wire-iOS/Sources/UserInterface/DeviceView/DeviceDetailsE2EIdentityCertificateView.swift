@@ -22,7 +22,7 @@ struct DeviceDetailsE2EIdentityCertificateView: View {
     @Binding var viewModel: DeviceInfoViewModel
     @Binding var isCertificateViewPreseneted: Bool
     var body: some View {
-        Text("End-to-end Identity Certificate").font(UIFont.normalSemiboldFont.swiftUIfont).multilineTextAlignment(.leading)
+        Text("device.details.e2e.identity.certificate.title".localized).font(UIFont.normalSemiboldFont.swiftUIfont).multilineTextAlignment(.leading)
             .padding([.top, .bottom], 16)
         Text("Status").font(UIFont.mediumSemiboldFont.swiftUIfont).foregroundColor(.gray).multilineTextAlignment(.leading)
         HStack {
@@ -46,7 +46,9 @@ struct DeviceDetailsE2EIdentityCertificateView: View {
             Spacer()
         }
         if !viewModel.e2eIdentityCertificate.serialNumber.isEmpty {
-            Text("Serial Number").font(UIFont.smallSemiboldFont.swiftUIfont).foregroundColor(.gray).padding(.top, 8)
+            Text("device.details.serial.number".localized)
+                .font(UIFont.smallSemiboldFont.swiftUIfont)
+                .foregroundColor(.gray).padding(.top, 8)
             Text(viewModel.e2eIdentityCertificate.serialNumber)
         }
     }

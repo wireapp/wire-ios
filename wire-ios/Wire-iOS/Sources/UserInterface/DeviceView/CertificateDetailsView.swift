@@ -57,7 +57,7 @@ struct CertificateDetailsView: View {
                             performDownload?()
                         },
                                        label: {
-                            Text("Download").font(UIFont.normalRegularFont.swiftUIfont.bold())
+                            Text("content.message.download".localized).font(UIFont.normalRegularFont.swiftUIfont.bold())
                         }).padding()
                             .foregroundColor(.black)
                          .font(UIFont.mediumSemiboldFont.swiftUIfont)
@@ -71,7 +71,7 @@ struct CertificateDetailsView: View {
                             SwiftUI.Button(action: {
                                 performCopy?(certificateDetails)
                             }, label: {
-                                Text("Copy to Clipboard").foregroundColor(.black)
+                                Text("device.details.copytoclipboard".localized).foregroundColor(.black)
                             })
                             .foregroundColor(.black)
                         } message: {
@@ -98,10 +98,11 @@ struct CertificateDetailsView: View {
 -------END CERTIFICATE-----
 """)
 }
-
+#if DEBUG
 extension String {
     static func randomString(length: Int) -> String {
         let letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
         return String((0..<length).map { _ in letters.randomElement()! })
     }
 }
+#endif

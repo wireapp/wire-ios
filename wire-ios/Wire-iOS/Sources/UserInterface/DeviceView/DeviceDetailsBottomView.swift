@@ -21,7 +21,9 @@ import SwiftUI
 struct DeviceDetailsBottomView: View {
     @Binding var viewModel: DeviceInfoViewModel
     var body: some View {
-        Text("Wire gives every device a unique fingerprint. Compare them and verify your devices and conversations.").font(.footnote).padding([.leading, .trailing], 16)
+        Text("self.settings.device_details.fingerprint.subtitle".localized)
+            .font(.footnote)
+            .padding([.leading, .trailing], 16)
             .padding([.top, .bottom], 8)
         HStack {
             SwiftUI.Button {
@@ -29,13 +31,14 @@ struct DeviceDetailsBottomView: View {
                     viewModel.actionsHandler.resetSession()
                 }
             } label: {
-                Text("Reset Session").padding(.all, 16)
+                Text("profile.devices.detail.reset_session.title".localized)
+                    .padding(.all, 16)
                     .foregroundColor(.black)
                     .font(UIFont.normalRegularFont.swiftUIfont.bold())
             }
             Spacer()
         }.background(Color.white)
-        Text("If fingerprints don’t match, reset the session to generate new encryption keys on both sides.").font(.footnote).padding([.leading, .trailing], 16)
+        Text("self.settings.device_details.reset_session.subtitle".localized).font(.footnote).padding([.leading, .trailing], 16)
             .padding([.top, .bottom], 8)
         HStack {
             SwiftUI.Button {
@@ -43,13 +46,13 @@ struct DeviceDetailsBottomView: View {
                     viewModel.actionsHandler.removeDevice()
                 }
             } label: {
-                Text("Remove Device")
+                Text("self.settings.account_details.remove_device.title".localized)
                     .padding(.all, 16)
                     .foregroundColor(.black).font(UIFont.normalRegularFont.swiftUIfont.bold())
             }
             Spacer()
         }.background(Color.white)
-        Text("Remove this device if you have stopped using it. You will be logged out of this device immediately.")
+        Text("self.settings.device_details.remove_device.subtitle".localized)
             .font(.footnote)
             .padding([.leading, .trailing], 16)
             .padding([.top, .bottom], 8)

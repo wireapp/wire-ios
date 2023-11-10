@@ -23,18 +23,25 @@ struct DeviceDetailsButtonsView: View {
     @Binding var isCertificateViewPresented: Bool
     var body: some View {
             if viewModel.e2eIdentityCertificate.certificate.isEmpty {
-                SwiftUI.Button("Get Certificate") {
+                SwiftUI.Button {
                     Task {
                         await viewModel.actionsHandler.fetchCertificate()
                     }
+                } label: {
+                    Text("device.details.get.certificate".localized)
+                        .foregroundStyle(.black)
+                        .font(UIFont.normalRegularFont.swiftUIfont.bold())
                 }
-
             } else {
                 if viewModel.e2eIdentityCertificate.isExpiringSoon {
-                    SwiftUI.Button("Update Certificate") {
+                    SwiftUI.Button {
                         Task {
                             await viewModel.actionsHandler.fetchCertificate()
                         }
+                    } label: {
+                        Text("device.details.update.certificate".localized)
+                            .foregroundStyle(.black)
+                            .font(UIFont.normalRegularFont.swiftUIfont.bold())
                     }
                 }
                 Divider()
@@ -42,7 +49,8 @@ struct DeviceDetailsButtonsView: View {
                     isCertificateViewPresented.toggle()
                 }, label: {
                     HStack {
-                        Text("Show Certificate Details").foregroundStyle(.black)
+                        Text("device.details.show.certificate.details".localized)
+                            .foregroundStyle(.black)
                             .font(UIFont.normalRegularFont.swiftUIfont.bold())
 
                         Spacer()

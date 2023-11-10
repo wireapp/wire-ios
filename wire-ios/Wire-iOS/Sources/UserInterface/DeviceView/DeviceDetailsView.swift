@@ -35,7 +35,7 @@ struct DeviceDetailsView: View {
                 if !viewModel.mlsThumbprint.isEmpty {
                     VStack(alignment: .leading) {
                         HStack(alignment: .center, spacing: 0) {
-                            Text("MLS with Ed25519 Signature")
+                            Text("device.details.section.mls.title".localized)
                         }
                         .padding(.bottom, 8)
                         .padding([.top, .leading], 16)
@@ -61,7 +61,9 @@ struct DeviceDetailsView: View {
                 }
 
                 VStack(alignment: .leading) {
-                    Text("Proteus Device Details").frame(height: 45).padding(.leading, 16)
+                    Text("device.details.section.proteus.title".localized)
+                        .frame(height: 45)
+                        .padding(.leading, 16)
                     DeviceDetailsProteusView(viewModel: $viewModel)
                     DeviceDetailsBottomView(viewModel: $viewModel)
 
@@ -103,7 +105,7 @@ struct DeviceDetailsView: View {
                     SwiftUI.Image(.attention).onTapGesture {
                         isCertificateViewPresented.toggle()
                     }
-                }.navigationTitle("Certificate Details")
+                }
          }
         .navigationBarBackButtonHidden(true)
     }

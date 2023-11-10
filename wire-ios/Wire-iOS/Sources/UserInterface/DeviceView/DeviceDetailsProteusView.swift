@@ -22,13 +22,13 @@ struct DeviceDetailsProteusView: View {
     @Binding var viewModel: DeviceInfoViewModel
     var body: some View {
             VStack(alignment: .leading) {
-                CopyValueView(title: "Proteus ID", value: viewModel.proteusID, performCopy: { value in
+                CopyValueView(title: "device.proteus.id.title".localized, value: viewModel.proteusID, performCopy: { value in
                     viewModel.actionsHandler.copyToClipboard(value)
                 })
                     .padding([.leading, .trailing], 16)
                     .padding(.top, 8.0)
                 Divider()
-                Text("Activated")
+                Text("device.details.activated.title".localized)
                     .font(UIFont.mediumSemiboldFont.swiftUIfont)
                     .padding(.leading, 16)
 
@@ -37,14 +37,14 @@ struct DeviceDetailsProteusView: View {
                     .font(UIFont.normalRegularFont.swiftUIfont)
                 Divider()
                 CopyValueView(
-                    title: "Proteus Key Fingerprint",
+                    title: "device.details.proteus.key.fingerprint".localized,
                     value: viewModel.deviceKeyFingerprint,
                     performCopy: { value in
                             viewModel.actionsHandler.copyToClipboard(value)
                         }
                 ).padding([.leading, .trailing], 16)
                 Divider()
-                Toggle("Verified", isOn: $viewModel.isProteusVerificationEnabled).font(.headline).padding([.leading, .trailing, .bottom], 16)
+                Toggle("device.verified".localized, isOn: $viewModel.isProteusVerificationEnabled).font(.headline).padding([.leading, .trailing, .bottom], 16)
             }.background(Color.white)
     }
 }
