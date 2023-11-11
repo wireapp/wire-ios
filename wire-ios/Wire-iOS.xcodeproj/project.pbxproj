@@ -3240,7 +3240,6 @@
 		D5F8BFF32007AC84008F8C3D /* UIView+TableViewHeaderFooterSizing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+TableViewHeaderFooterSizing.swift"; sourceTree = "<group>"; };
 		DB7FEC901B8729AD00BA72DE /* ConversationInputBarSendController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConversationInputBarSendController.swift; sourceTree = "<group>"; };
 		DBCBD19019F10A1F000510C1 /* ConnectRequestCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConnectRequestCell.swift; sourceTree = "<group>"; };
-		DBD990481B39927A000ACF94 /* InputBarRightMenuButtonPresenterTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InputBarRightMenuButtonPresenterTests.m; sourceTree = "<group>"; };
 		DBF7235E1B5566B80036F4C5 /* a_lot_of_people.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = a_lot_of_people.json; sourceTree = "<group>"; };
 		E5085E6E28CA26E1009A5971 /* SettingsAppearanceCellDescriptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsAppearanceCellDescriptor.swift; sourceTree = "<group>"; };
 		E5085E7228CA27D4009A5971 /* AccentColor+Name.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AccentColor+Name.swift"; sourceTree = "<group>"; };
@@ -7298,7 +7297,6 @@
 		DBD990471B39927A000ACF94 /* InputBar */ = {
 			isa = PBXGroup;
 			children = (
-				DBD990481B39927A000ACF94 /* InputBarRightMenuButtonPresenterTests.m */,
 				BF8EE5571D6351B100B0D6D7 /* InputBarEditViewTests.swift */,
 			);
 			path = InputBar;
