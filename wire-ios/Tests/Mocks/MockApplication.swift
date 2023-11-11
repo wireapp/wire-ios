@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2018 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,14 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import UIKit
 
 @testable import Wire
 
-final class MockClassificationProvider: ClassificationProviding {
-    var returnClassification: SecurityClassification = .none
-
-    func classification(with users: [UserType], conversationDomain: String? = nil) -> SecurityClassification {
-        returnClassification
+final class MockApplication: ApplicationProtocol {
+    static func wr_requestOrWarnAboutPhotoLibraryAccess(_ grantedHandler: ((Bool) -> Void)!) {
+        grantedHandler(true)
     }
+
+    var applicationState: UIApplication.State = .active
+
+    var statusBarOrientation: UIInterfaceOrientation = .unknown
 }

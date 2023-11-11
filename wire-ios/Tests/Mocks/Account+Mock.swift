@@ -17,6 +17,7 @@
 //
 
 import XCTest
+import WireDataModel
 @testable import Wire
 
 extension Account {
