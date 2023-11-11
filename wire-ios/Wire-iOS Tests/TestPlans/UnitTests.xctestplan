@@ -1,0 +1,24 @@
+{
+  "configurations" : [
+    {
+      "id" : "F8620569-DB08-4783-A3B9-17B0FBEBF254",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:Wire-iOS.xcodeproj",
+        "identifier" : "E6579E352AFF9B30004E7FD8",
+        "name" : "Wire-iOS UnitTests"
+      }
+    }
+  ],
+  "version" : 1
+}
