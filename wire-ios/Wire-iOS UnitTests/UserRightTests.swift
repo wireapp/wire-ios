@@ -19,10 +19,6 @@
 import XCTest
 @testable import Wire
 
-private struct SelfProvider: SelfUserProvider {
-    let selfUser: UserType & ZMEditableUser
-}
-
 class UserRightTests: XCTestCase {
 
     // MARK: - Properties

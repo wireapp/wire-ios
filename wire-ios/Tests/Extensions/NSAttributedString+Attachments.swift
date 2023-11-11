@@ -1,5 +1,6 @@
+//
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2023 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,34 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-@testable import Wire
+import Foundation
 
-private extension UIColor {
-    class var accentOverrideColor: ZMAccentColor? {
-        return ZMUser.selfUser()?.accentColorValue
-    }
-}
-
-extension XCTestCase {
-    /// If this is set the accent color will be overriden for the tests
-    static var accentColor: ZMAccentColor {
-        get {
-            return UIColor.accentOverrideColor!
+extension NSAttributedString {
+    var allAttachments: [NSTextAttachment] {
+        var attachments = [NSTextAttachment]()
+        enumerateAttributes(in: wholeRange, options: []) { attributes, _, _ in
+            if let attachment = attributes[NSAttributedString.Key.attachment] as? NSTextAttachment {
+                attachments.append(attachment)
+            }
         }
-
-        set {
-            UIColor.setAccentOverride(newValue)
-        }
-    }
-
-    var accentColor: ZMAccentColor {
-        get {
-            return XCTestCase.accentColor
-        }
-
-        set {
-            XCTestCase.accentColor = newValue
-        }
+        return attachments
     }
 }
