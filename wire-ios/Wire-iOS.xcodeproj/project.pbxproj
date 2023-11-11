@@ -5873,6 +5873,7 @@
 				EEA65C2525D27A8300AA7519 /* Generated */,
 				8FC850D8199245760008B66B /* Sources */,
 				8FC8564919924D4E0008B66B /* Supporting Files */,
+				E6579E442AFF9F4A004E7FD8 /* Tests */,
 				BACB88521AF7C48900DDCDB0 /* Wire-iOS Tests */,
 				E6579E372AFF9B30004E7FD8 /* Wire-iOS UnitTests */,
 				168A16AA1D9597C2005CFA6C /* Wire-iOS Share Extension */,
@@ -6692,7 +6693,6 @@
 			isa = PBXGroup;
 			children = (
 				4067991A29C88A71001326B5 /* SecurityLevel */,
-				2B56189C29A508E900D8CCCA /* TestPlans */,
 				068F07272829BC0F003E3249 /* Notification Service Extension */,
 				669105C227397E6900324115 /* NSAttributedString+DownTests.swift */,
 				A9712D5B2743C44E0008F380 /* Giphy */,
@@ -7274,6 +7274,14 @@
 				40C69D712A86288800376B1C /* TemporaryFileServiceTests.swift */,
 			);
 			path = "Wire-iOS UnitTests";
+			sourceTree = "<group>";
+		};
+		E6579E442AFF9F4A004E7FD8 /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				2B56189C29A508E900D8CCCA /* TestPlans */,
+			);
+			path = Tests;
 			sourceTree = "<group>";
 		};
 		E902B3B529ED3A2E0090DE32 /* SwiftUI Helpers */ = {
