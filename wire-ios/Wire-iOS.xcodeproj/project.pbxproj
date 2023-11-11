@@ -231,7 +231,6 @@
 		4067991C29C88AB6001326B5 /* SecurityLevelViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4067991B29C88AB6001326B5 /* SecurityLevelViewTests.swift */; };
 		407831AD2AC4636F005C2978 /* DifferenceKit in Frameworks */ = {isa = PBXBuildFile; productRef = 407831AC2AC4636F005C2978 /* DifferenceKit */; };
 		40C69D702A8627C900376B1C /* TemporaryFileService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40C69D6F2A8627C900376B1C /* TemporaryFileService.swift */; };
-		40C69D722A86288800376B1C /* TemporaryFileServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40C69D712A86288800376B1C /* TemporaryFileServiceTests.swift */; };
 		5405444F253842C200FAE77A /* LaunchSequenceOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5405444E253842C200FAE77A /* LaunchSequenceOperation.swift */; };
 		540C8AA8255ABD7600AA6992 /* SwitchingAccountRouterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 540C8AA5255ABD1A00AA6992 /* SwitchingAccountRouterTests.swift */; };
 		540C8AA9255ABD7600AA6992 /* URLActionRouterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 540C8AA4255ABD1A00AA6992 /* URLActionRouterTests.swift */; };
@@ -1192,6 +1191,7 @@
 		E591D01128C7220800C1469C /* SettingsAppearanceCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E591D01028C7220800C1469C /* SettingsAppearanceCell.swift */; };
 		E5CCE4E7287C31C000B36B52 /* SearchBarStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5CCE4E6287C31C000B36B52 /* SearchBarStyle.swift */; };
 		E6579E392AFF9B30004E7FD8 /* Wire_iOS_UnitTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6579E382AFF9B30004E7FD8 /* Wire_iOS_UnitTests.swift */; };
+		E6579E412AFF9CEE004E7FD8 /* TemporaryFileServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40C69D712A86288800376B1C /* TemporaryFileServiceTests.swift */; };
 		E902B3B429ED3A240090DE32 /* SwiftUIButton+HapticFeedback.swift in Sources */ = {isa = PBXBuildFile; fileRef = E902B3B329ED3A240090DE32 /* SwiftUIButton+HapticFeedback.swift */; };
 		E90553CB27D612370006EB47 /* AuthenticationEmailVerificationRequiredErrorHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = E90553CA27D612370006EB47 /* AuthenticationEmailVerificationRequiredErrorHandler.swift */; };
 		E90A2F0D28EEC674005AF571 /* TextFieldStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = E90A2F0C28EEC674005AF571 /* TextFieldStyle.swift */; };
@@ -6906,7 +6906,6 @@
 				EEEB8B56260B685300554C39 /* UserRightTests.swift */,
 				E9D25C8627D9FB07007CB532 /* AuthenticationEmailVerificationRequiredErrorHandlerTests.swift */,
 				E9EC273529D4462000599D0A /* StringCapitalizationTests.swift */,
-				40C69D712A86288800376B1C /* TemporaryFileServiceTests.swift */,
 				E9E335922A8A27EC00B304F3 /* BaseSnapshotTestCase.swift */,
 			);
 			path = "Wire-iOS Tests";
@@ -7274,6 +7273,7 @@
 		E6579E372AFF9B30004E7FD8 /* Wire-iOS UnitTests */ = {
 			isa = PBXGroup;
 			children = (
+				40C69D712A86288800376B1C /* TemporaryFileServiceTests.swift */,
 				E6579E382AFF9B30004E7FD8 /* Wire_iOS_UnitTests.swift */,
 			);
 			path = "Wire-iOS UnitTests";
@@ -10003,7 +10003,6 @@
 				D35EEDBB28C2004000949F02 /* NetworkPrimitives.swift in Sources */,
 				E961C0752A332E7400A36DE6 /* ConversationReactionMessageTests.swift in Sources */,
 				6370DA212577934C00B5C8F1 /* PulsingIconImageViewTests.swift in Sources */,
-				40C69D722A86288800376B1C /* TemporaryFileServiceTests.swift in Sources */,
 				BF78687F1D86B3710063762F /* LocationDataTests.swift in Sources */,
 				EF2A8DEF214AAB13002C9058 /* ContactsCellSnapshotTests.swift in Sources */,
 				D32D8D2F2A1364CC00482788 /* MessageActionsViewControllerTests.swift in Sources */,
@@ -10060,6 +10059,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E6579E392AFF9B30004E7FD8 /* Wire_iOS_UnitTests.swift in Sources */,
+				E6579E412AFF9CEE004E7FD8 /* TemporaryFileServiceTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
