@@ -107,16 +107,15 @@ final class ZMConversationTests_MLS_Migration: ModelObjectsTests {
             // create specific conversations
             let conversations = try (0..<4).map { _ in
                 let conversation = try MLSGroupID.random().createConversation(in: syncMOC)
-                conversation.messageProtocol = .proteus
+                conversation.messageProtocol = .mixed
                 conversation.conversationType = .group
                 conversation.teamRemoteIdentifier = selfUser.teamIdentifier
                 return conversation
             }
 
-            // only conversations[0] should be fetched successfully
-            conversations[1].messageProtocol = .mls
-            conversations[2].conversationType = .`self`
-            conversations[3].teamRemoteIdentifier = .init()
+            conversations[1].messageProtocol = .mixed
+            conversations[2].messageProtocol = .mixed
+            conversations[3].messageProtocol = .mixed
             try syncMOC.save()
             return conversations
 
@@ -128,7 +127,7 @@ final class ZMConversationTests_MLS_Migration: ModelObjectsTests {
         }
 
         // Then
-        XCTAssertEqual(fetchedConversations, [conversations[0], conversations[1]])
+        XCTAssertEqual(fetchedConversations, [conversations[0], conversations[1], conversations[2], conversations[3]])
     }
 
 }
