@@ -74,19 +74,14 @@ extension ZMUserSession {
 
         let uiMOC = managedObjectContext
         let syncMOC = syncManagedObjectContext
-        let eventMoc = eventContext
 
-        // wait for everything to be finished to tearDown
-        // All previous work submitted to the queue of these contexts needs to be done
         uiMOC.performGroupedBlockAndWait {}
         syncMOC.performGroupedBlockAndWait {}
-        eventMoc.performGroupedBlockAndWait {}
+
         tearDown()
 
-        // just because during the tearDown other operations could have been done
         uiMOC.performGroupedBlockAndWait {}
         syncMOC.performGroupedBlockAndWait {}
-        eventMoc.performGroupedBlockAndWait {}
     }
 
     public func logout(credentials: ZMEmailCredentials, _ completion: @escaping (VoidResult) -> Void) {
