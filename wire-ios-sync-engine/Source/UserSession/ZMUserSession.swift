@@ -218,7 +218,12 @@ public class ZMUserSession: NSObject {
         // Wait for all sync operations to finish
         syncManagedObjectContext.performGroupedBlockAndWait { }
 
+        // For sanity we do the same for other contexts
+        eventContext.performGroupedBlockAndWait {}
+        searchContext.performGroupedBlockAndWait {}
+
         let uiMOC = coreDataStack.viewContext
+
         coreDataStack = nil
 
         let shouldWaitOnUIMoc = !(OperationQueue.current == OperationQueue.main && uiMOC.concurrencyType == .mainQueueConcurrencyType)
