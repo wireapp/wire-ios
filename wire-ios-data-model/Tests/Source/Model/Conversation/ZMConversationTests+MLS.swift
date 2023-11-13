@@ -97,7 +97,7 @@ final class ZMConversationTests_MLS_Migration: ModelObjectsTests {
     }
 
     func test_fetchAllTeamGroupConversations_messageProtocolMixed() async throws {
-        // Given
+        // GIVEN
         let conversations = try await syncMOC.perform { [syncMOC] in
 
             // ensure selfUser has a teamIdentifier set
@@ -113,21 +113,23 @@ final class ZMConversationTests_MLS_Migration: ModelObjectsTests {
                 return conversation
             }
 
-            conversations[1].messageProtocol = .mixed
-            conversations[2].messageProtocol = .mixed
-            conversations[3].messageProtocol = .mixed
+            // only conversations[0] should be fetched successfully
+            conversations[1].conversationType = .`self`
+            conversations[2].conversationType = .`self`
+            conversations[3].teamRemoteIdentifier = .init()
+
             try syncMOC.save()
             return conversations
 
         }
 
-        // When
+        // WHEN
         let fetchedConversations = try await syncMOC.perform { [syncMOC] in
             try ZMConversation.fetchAllTeamGroupConversations(messageProtocol: .mixed, in: syncMOC)
         }
 
-        // Then
-        XCTAssertEqual(fetchedConversations, [conversations[0], conversations[1], conversations[2], conversations[3]])
+        // THEN
+        XCTAssertEqual(fetchedConversations, [conversations[0]])
     }
 
 }
