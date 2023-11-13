@@ -26,5 +26,6 @@ final class MessageProtocolTests: XCTestCase {
     func testRawValues() {
         XCTAssertEqual(MessageProtocol.proteus.rawValue, 0)
         XCTAssertEqual(MessageProtocol.mls.rawValue, 1)
+        XCTAssertEqual(MessageProtocol.mixed.rawValue, 2)
     }
 }
