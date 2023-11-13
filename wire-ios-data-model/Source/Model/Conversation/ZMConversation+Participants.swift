@@ -217,6 +217,9 @@ extension ZMConversation {
 
                 }
             }
+        case .mixed:
+            // break for now until this is implemented
+            break
         }
     }
 
@@ -291,6 +294,9 @@ extension ZMConversation {
                     }
                 }
             }
+        case (.mixed, _):
+            // break for now until this is implemented
+            break
         }
     }
 
