@@ -55,10 +55,11 @@ final class AudioMessageViewTests: XCTestCase {
 
     var sut: AudioMessageView!
     var mediaPlaybackManager: MediaPlaybackManager!
+    var userSession: UserSessionMock!
 
     override func setUp() {
         super.setUp()
-
+        userSession = UserSessionMock()
         let url = Bundle(for: type(of: self)).url(forResource: "audio_sample", withExtension: "m4a")!
 
         let audioMessage = MockMessageFactory.audioMessage(config: {
@@ -67,7 +68,7 @@ final class AudioMessageViewTests: XCTestCase {
             $0.backingFileMessageData.fileURL = url
         })
 
-        mediaPlaybackManager = MediaPlaybackManager(name: "conversationMedia")
+        mediaPlaybackManager = MediaPlaybackManager(name: "conversationMedia", userSession: userSession)
         sut = AudioMessageView(mediaPlaybackManager: mediaPlaybackManager)
 
         sut.audioTrackPlayer?.load(audioMessage, sourceMessage: audioMessage)
@@ -76,6 +77,7 @@ final class AudioMessageViewTests: XCTestCase {
 
     override func tearDown() {
         sut = nil
+        userSession = nil
         mediaPlaybackManager = nil
 
         super.tearDown()

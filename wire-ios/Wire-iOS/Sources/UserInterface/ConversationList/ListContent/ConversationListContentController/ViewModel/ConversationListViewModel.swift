@@ -266,9 +266,9 @@ final class ConversationListViewModel: NSObject {
 
     private var conversationDirectoryToken: Any?
 
-    private let userSession: UserSessionInterface?
+    private let userSession: UserSession?
 
-    init(userSession: UserSessionInterface? = ZMUserSession.shared()) {
+    init(userSession: UserSession) {
         self.userSession = userSession
 
         super.init()

@@ -49,22 +49,25 @@ final class StartUIViewControllerSnapshotTests: CoreDataSnapshotTestCase {
 
     var sut: StartUIViewController!
     var mockAddressBookHelper: MockAddressBookHelper!
+    var userSession: UserSessionMock!
 
     override func setUp() {
         super.setUp()
         mockAddressBookHelper = MockAddressBookHelper()
         SelfUser.provider = selfUserProvider
+        userSession = UserSessionMock()
     }
 
     override func tearDown() {
         sut = nil
         mockAddressBookHelper = nil
         SelfUser.provider = nil
+        userSession = nil
         super.tearDown()
     }
 
     func setupSut() {
-        sut = StartUIViewController(addressBookHelperType: MockAddressBookHelper.self)
+        sut = StartUIViewController(addressBookHelperType: MockAddressBookHelper.self, userSession: userSession)
         sut.view.backgroundColor = .black
         sut.overrideUserInterfaceStyle = .dark
     }

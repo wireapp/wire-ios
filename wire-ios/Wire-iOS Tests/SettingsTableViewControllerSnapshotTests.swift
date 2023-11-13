@@ -20,17 +20,21 @@ import XCTest
 @testable import Wire
 
 final class SettingsTableViewControllerSnapshotTests: ZMSnapshotTestCase {
+
+    // MARK: - Properties
+
     var sut: SettingsTableViewController!
-	var settingsCellDescriptorFactory: SettingsCellDescriptorFactory!
+    var settingsCellDescriptorFactory: SettingsCellDescriptorFactory!
     var settingsPropertyFactory: SettingsPropertyFactory!
-    var userSessionMock: MockZMUserSession!
+    var userSession: UserSessionMock!
     var selfUser: MockZMEditableUser!
 
-	override func setUp() {
-		super.setUp()
+    // MARK: - setUp
 
-        userSessionMock = MockZMUserSession()
+    override func setUp() {
+        super.setUp()
         selfUser = MockZMEditableUser()
+
         selfUser.teamName = "Wire"
         selfUser.handle = "johndoe"
         selfUser.name = "John Doe"
@@ -38,44 +42,56 @@ final class SettingsTableViewControllerSnapshotTests: ZMSnapshotTestCase {
         selfUser.emailAddress = "john.doe@wire.com"
         selfUser.remoteIdentifier = UUID(uuidString: "AFBDFB29-AA40-4444-94D2-F484D0A44600")
 
-        SelfUser.provider = SelfProvider(selfUser: selfUser)
+        userSession = UserSessionMock(mockUser: selfUser)
 
-		settingsPropertyFactory = SettingsPropertyFactory(userSession: userSessionMock, selfUser: selfUser)
-		settingsCellDescriptorFactory = SettingsCellDescriptorFactory(settingsPropertyFactory: settingsPropertyFactory, userRightInterfaceType: MockUserRight.self)
+        SelfUser.provider = SelfProvider(providedSelfUser: selfUser)
 
-		MockUserRight.isPermitted = true
-	}
+        settingsPropertyFactory = SettingsPropertyFactory(userSession: userSession, selfUser: selfUser)
+
+        settingsCellDescriptorFactory = SettingsCellDescriptorFactory(
+            settingsPropertyFactory: settingsPropertyFactory,
+            userRightInterfaceType: MockUserRight.self
+        )
+
+        MockUserRight.isPermitted = true
+    }
+
+    // MARK: - tearDown
 
     override func tearDown() {
         sut = nil
-		settingsCellDescriptorFactory = nil
-		settingsPropertyFactory = nil
+        settingsCellDescriptorFactory = nil
+        settingsPropertyFactory = nil
 
-        userSessionMock = nil
+        userSession = nil
         selfUser = nil
         SelfUser.provider = nil
         Settings.shared.reset()
         BackendInfo.isFederationEnabled = false
         super.tearDown()
-	}
+    }
+
+    // MARK: - Snapshot Tests
 
     func testForSettingGroup() {
         // prevent app crash when checking Analytics.shared.isOptout
         Analytics.shared = Analytics(optedOut: true)
-        let group = settingsCellDescriptorFactory.settingsGroup(isTeamMember: true)
+        let group = settingsCellDescriptorFactory.settingsGroup(isTeamMember: true, userSession: userSession)
         verify(group: group)
     }
 
-    private func testForAccountGroup(federated: Bool,
-                                     disabledEditing: Bool = false,
-                                     file: StaticString = #file,
-                                     testName: String = #function,
-                                     line: UInt = #line) {
+    private func testForAccountGroup(
+        federated: Bool,
+        disabledEditing: Bool = false,
+        file: StaticString = #file,
+        testName: String = #function,
+        line: UInt = #line
+    ) {
         BackendInfo.storage = UserDefaults(suiteName: UUID().uuidString)!
         BackendInfo.isFederationEnabled = federated
 
         MockUserRight.isPermitted = !disabledEditing
-        let group = settingsCellDescriptorFactory.accountGroup(isTeamMember: true)
+        let group = settingsCellDescriptorFactory.accountGroup(isTeamMember: true, userSession: userSession)
         verify(group: group, file: file, testName: testName, line: line)
     }
 
@@ -96,6 +112,7 @@ final class SettingsTableViewControllerSnapshotTests: ZMSnapshotTestCase {
     }
 
     // MARK: - options
+
     func testForOptionsGroup() {
         Settings.shared[.chatHeadsDisabled] = false
         let group = settingsCellDescriptorFactory.optionsGroup
@@ -120,11 +137,9 @@ final class SettingsTableViewControllerSnapshotTests: ZMSnapshotTestCase {
 
     func testThatApplockIsAvailableInOptionsGroup_WhenIsAvailable() {
         // given
-        let appLock = AppLockModule.MockAppLockController()
-        appLock.isAvailable = true
-        userSessionMock.appLockController = appLock
+        userSession.isAppLockAvailable = true
 
-        settingsPropertyFactory = .init(userSession: userSessionMock, selfUser: selfUser)
+        settingsPropertyFactory = .init(userSession: userSession, selfUser: selfUser)
         settingsCellDescriptorFactory = .init(settingsPropertyFactory: settingsPropertyFactory,
                                               userRightInterfaceType: MockUserRight.self)
 
@@ -134,11 +149,9 @@ final class SettingsTableViewControllerSnapshotTests: ZMSnapshotTestCase {
 
     func testThatApplockIsNotAvailableInOptionsGroup_WhenIsNotAvailable() {
         // given
-        let appLock = AppLockModule.MockAppLockController()
-        appLock.isAvailable = false
-        userSessionMock.appLockController = appLock
+        userSession.isAppLockAvailable = false
 
-        settingsPropertyFactory = .init(userSession: userSessionMock, selfUser: selfUser)
+        settingsPropertyFactory = .init(userSession: userSession, selfUser: selfUser)
         settingsCellDescriptorFactory = .init(settingsPropertyFactory: settingsPropertyFactory,
                                               userRightInterfaceType: MockUserRight.self)
 
@@ -147,6 +160,7 @@ final class SettingsTableViewControllerSnapshotTests: ZMSnapshotTestCase {
     }
 
     // MARK: - dark theme
+
     func testForDarkThemeOptionsGroup() {
         setToLightTheme()
 
@@ -167,12 +181,14 @@ final class SettingsTableViewControllerSnapshotTests: ZMSnapshotTestCase {
     }
 
     // MARK: - advanced
+
     func testForAdvancedGroup() {
         let group = settingsCellDescriptorFactory.advancedGroup
         verify(group: group)
     }
 
     // MARK: - data usage permissions
+
     func testForDataUsagePermissionsForTeamMember() {
         let group = settingsCellDescriptorFactory.dataUsagePermissionsGroup(isTeamMember: true)
         verify(group: group)

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2023 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,9 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Foundation
+import SnapshotTesting
 import XCTest
 @testable import Wire
-import SnapshotTesting
 
 extension ConversationMessageContext {
     fileprivate static let defaultContext = ConversationMessageContext(isSameSenderAsPrevious: false,
@@ -32,7 +33,26 @@ extension ConversationMessageContext {
                                                                        spacing: 0)
 }
 
-extension XCTestCase {
+func XCTAssertArrayEqual(_ descriptions: [Any], _ expectedDescriptions: [Any], file: StaticString = #file, line: UInt = #line) {
+    let classes = descriptions.map { String(describing: $0) }
+    let expectedClasses = expectedDescriptions.map { String(describing: $0) }
+    XCTAssertEqual(classes, expectedClasses, file: file, line: line)
+}
+
+class ConversationMessageSnapshotTestCase: ZMSnapshotTestCase {
+
+    var userSession: UserSessionMock!
+
+    override func setUp() {
+        super.setUp()
+        userSession = UserSessionMock()
+    }
+
+    override func tearDown() {
+        userSession = nil
+        super.tearDown()
+    }
+
     /**
      * Performs a snapshot test for a message
      */
@@ -124,7 +144,7 @@ extension XCTestCase {
     ) -> UIStackView {
         let context = (context ?? ConversationMessageContext.defaultContext)!
 
-        let section = ConversationMessageSectionController(message: message, context: context)
+        let section = ConversationMessageSectionController(message: message, context: context, userSession: userSession)
         let views = section.cellDescriptions.map({ $0.makeView() })
         let stackView = UIStackView(arrangedSubviews: views)
         stackView.axis = .vertical
@@ -145,10 +165,4 @@ extension XCTestCase {
 
     }
 
-}
-
-func XCTAssertArrayEqual(_ descriptions: [Any], _ expectedDescriptions: [Any], file: StaticString = #file, line: UInt = #line) {
-    let classes = descriptions.map { String(describing: $0) }
-    let expectedClasses = expectedDescriptions.map { String(describing: $0) }
-    XCTAssertEqual(classes, expectedClasses, file: file, line: line)
 }

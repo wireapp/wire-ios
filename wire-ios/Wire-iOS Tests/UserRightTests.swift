@@ -30,7 +30,7 @@ class UserRightTests: XCTestCase {
     override func setUp() {
         super.setUp()
         selfUser = MockUserType()
-        SelfUser.provider = SelfProvider(selfUser: selfUser)
+        SelfUser.provider = SelfProvider(providedSelfUser: selfUser)
     }
 
     override func tearDown() {

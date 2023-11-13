@@ -53,14 +53,18 @@ private final class MockConversation: MockStableRandomParticipantsConversation, 
 
 final class GroupParticipantsDetailViewControllerTests: ZMSnapshotTestCase {
 
+    var userSession: UserSessionMock!
+
     override func setUp() {
         super.setUp()
 
         SelfUser.setupMockSelfUser()
+        userSession = UserSessionMock()
     }
 
     override func tearDown() {
         SelfUser.provider = nil
+        userSession = nil
 
         super.tearDown()
     }
@@ -80,7 +84,11 @@ final class GroupParticipantsDetailViewControllerTests: ZMSnapshotTestCase {
 
         // when & then
 		let createSut: () -> UIViewController = {
-			let sut = GroupParticipantsDetailViewController(selectedParticipants: selected, conversation: conversation)
+            let sut = GroupParticipantsDetailViewController(
+                selectedParticipants: selected,
+                conversation: conversation,
+                userSession: self.userSession
+            )
 			return sut.wrapInNavigationController()
 		}
 
@@ -105,7 +113,11 @@ final class GroupParticipantsDetailViewControllerTests: ZMSnapshotTestCase {
 
         // when & then
         let createSut: () -> UIViewController = {
-            let sut = GroupParticipantsDetailViewController(selectedParticipants: selected, conversation: conversation)
+            let sut = GroupParticipantsDetailViewController(
+                selectedParticipants: selected,
+                conversation: conversation,
+                userSession: self.userSession
+            )
             return sut.wrapInNavigationController()
         }
 
@@ -117,7 +129,11 @@ final class GroupParticipantsDetailViewControllerTests: ZMSnapshotTestCase {
         let conversation = MockConversation()
 
         // when
-        let sut = GroupParticipantsDetailViewController(selectedParticipants: [], conversation: conversation)
+        let sut = GroupParticipantsDetailViewController(
+            selectedParticipants: [],
+            conversation: conversation,
+            userSession: self.userSession
+        )
         sut.viewModel.admins = []
         sut.viewModel.members = []
         sut.setupViews()

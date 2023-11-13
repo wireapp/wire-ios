@@ -66,7 +66,7 @@ extension ZMUserSession {
 
     fileprivate var debugStateUserDefaultsKey: String? {
         guard
-            let identifier = (self.selfUser as! ZMUser).remoteIdentifier
+            let identifier = (self.providedSelfUser as! ZMUser).remoteIdentifier
         else { return nil }
         return "Wire-debugCommandsState-\(identifier)"
     }
@@ -272,7 +272,7 @@ private class DebugCommandShowIdentifiers: DebugCommandMixin {
         onComplete: @escaping ((DebugCommandResult) -> Void)) {
         guard
             let client = userSession.selfUserClient,
-            let user = userSession.selfUser as? ZMUser
+            let user = userSession.providedSelfUser as? ZMUser
         else {
             onComplete(.failure(error: "No user"))
             return

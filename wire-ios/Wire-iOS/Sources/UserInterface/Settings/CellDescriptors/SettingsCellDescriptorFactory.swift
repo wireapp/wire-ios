@@ -32,14 +32,14 @@ class SettingsCellDescriptorFactory {
         self.userRightInterfaceType = userRightInterfaceType
     }
 
-    func rootGroup(isTeamMember: Bool) -> SettingsControllerGeneratorType & SettingsInternalGroupCellDescriptorType {
+    func rootGroup(isTeamMember: Bool, userSession: UserSession) -> SettingsControllerGeneratorType & SettingsInternalGroupCellDescriptorType {
         var rootElements: [SettingsCellDescriptorType] = []
 
-        if ZMUser.selfUser().canManageTeam {
+        if ZMUser.selfUser()?.canManageTeam == true {
             rootElements.append(self.manageTeamCell())
         }
 
-        rootElements.append(settingsGroup(isTeamMember: isTeamMember))
+        rootElements.append(settingsGroup(isTeamMember: isTeamMember, userSession: userSession))
         #if MULTIPLE_ACCOUNTS_DISABLED
             // We skip "add account" cell
         #else
@@ -95,13 +95,18 @@ class SettingsCellDescriptorFactory {
                                                     accessoryViewMode: .alwaysHide)
     }
 
-    func settingsGroup(isTeamMember: Bool) -> SettingsControllerGeneratorType & SettingsInternalGroupCellDescriptorType {
-        var topLevelElements = [accountGroup(isTeamMember: isTeamMember),
-                                devicesCell(),
-                                optionsGroup,
-                                advancedGroup,
-                                helpSection(),
-                                aboutSection()]
+    func settingsGroup(isTeamMember: Bool, userSession: UserSession) -> SettingsControllerGeneratorType & SettingsInternalGroupCellDescriptorType {
+        var topLevelElements = [
+            accountGroup(
+                isTeamMember: isTeamMember,
+                userSession: userSession
+            ),
+            devicesCell(),
+            optionsGroup,
+            advancedGroup,
+            helpSection(),
+            aboutSection()
+        ]
 
         if Bundle.developerModeEnabled {
             topLevelElements.append(developerGroup)
@@ -128,7 +133,7 @@ class SettingsCellDescriptorFactory {
                                                 detailedView: true)
             },
             previewGenerator: { _ -> SettingsCellPreview in
-                return SettingsCellPreview.badge(ZMUser.selfUser().clients.count)
+                return SettingsCellPreview.badge(ZMUser.selfUser()?.clients.count ?? 0)
             },
            icon: .devices)
     }
