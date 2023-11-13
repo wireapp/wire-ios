@@ -69,6 +69,13 @@ extension Payload {
                 creatorClient = nil
                 qualifiedUsers = action.qualifiedUserIDs
                 users = action.unqualifiedUserIDs
+            case .mixed:
+                // TODO: - [AGIS] fix that with the proper values
+                // this is temorary so we can make the project to build
+                messageProtocol = "mixed"
+                creatorClient = nil
+                qualifiedUsers = nil
+                users = nil
             }
 
             name = action.name
@@ -101,6 +108,13 @@ extension Payload {
                     qualifiedUsers = nil
                     users = conversation.localParticipantsExcludingSelf.map(\.remoteIdentifier)
                 }
+            case .mixed:
+                // TODO: - [AGIS] fix that
+                // this is temorary so we can make the project to build
+                messageProtocol = "mixed"
+                creatorClient = nil
+                qualifiedUsers = nil
+                users = nil
             }
 
             name = conversation.userDefinedName

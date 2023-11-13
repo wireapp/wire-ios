@@ -64,6 +64,9 @@ final class MessageProtocolSectionController: GroupDetailsSectionController {
 
         case .mls:
             return Bundle.developerModeEnabled ? 3 : 2
+        case .mixed:
+            // TODO: - [AGIS] To be checked and fixed
+            return 1
         }
     }
 
@@ -137,6 +140,8 @@ private extension MessageProtocol {
 
         case .mls:
             return "MLS"
+        case .mixed:
+            return "Mixed"
         }
     }
 

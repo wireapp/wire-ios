@@ -395,6 +395,9 @@ extension CallingRequestStrategy: WireCallCenterTransport {
                 } else {
                     Logging.mls.info("ignoring targeted outgoing calling message b/c it's not CONFKEY nor sent over self conversation")
                 }
+            case (.mixed, _):
+                // TODO: - [AGIS] Fix that when we need to take care of calling while in mixed protocol
+                break
             }
         }
     }
@@ -493,6 +496,9 @@ extension CallingRequestStrategy: WireCallCenterTransport {
                         Logging.mls.error("Failed to fetch client list for MLS conference: \(String(describing: error))")
                     }
                 }
+            case .mixed:
+                // TODO: - [AGIS] Fix that when we need to take care of calling while in mixed protocol
+                break
             }
         }
     }

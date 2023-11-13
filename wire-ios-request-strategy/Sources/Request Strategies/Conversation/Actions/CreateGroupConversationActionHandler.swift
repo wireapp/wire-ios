@@ -268,6 +268,9 @@ final class CreateGroupConversationActionHandler: ActionHandler<CreateGroupConve
                     return
                 }
             }
+        case .mixed:
+            // TODO: - [AGIS] Fix that when we're going to handle creating group conversation in mixed protocol
+            break
         }
     }
 

@@ -529,6 +529,9 @@ extension WireCallCenterV3 {
 
         case .mls:
             try setUpMLSConference(in: conversation)
+        case .mixed:
+            // TODO: - [AGIS] Fix that when we need to take care of calling while in mixed protocol
+            break
         }
     }
 
@@ -610,6 +613,9 @@ extension WireCallCenterV3 {
 
         case .mls:
             try setUpMLSConference(in: conversation)
+        case .mixed:
+            // TODO: - [AGIS] fix that when we need to work on testing
+            break
         }
     }
 
