@@ -39,32 +39,35 @@ extension ZMConversationTestsBase {
 }
 
 final class ZMConversationTests_Knock: ZMConversationTestsBase {
-    func testThatItCanInsertAKnock() {
-        syncMOC.performGroupedBlockAndWait({ [self] in
+    func testThatItCanInsertAKnock() throws {
+        try syncMOC.performGroupedAndWait { syncMOC in
 
             // given
-            let conversation = self.createConversationWithMessages()
-            let selfUser = ZMUser.selfUser(in: self.syncMOC)
+            let conversation = syncMOC.createConversationWithMessages()
+            let selfUser = ZMUser.selfUser(in: syncMOC)
 
             // when
-            let knock = try? conversation?.appendKnock()
-            let msg = conversation?.lastMessage as! ZMMessage
+            let knock = try XCTUnwrap(conversation.appendKnock() as? ZMMessage)
+            let msg = try XCTUnwrap(conversation.lastMessage as? ZMMessage)
 
             // then
-            XCTAssertEqual(knock as? ZMMessage, msg)
-            XCTAssertNotNil(knock?.knockMessageData)
-            XCTAssert(knock!.isUserSender(selfUser))
-        })
+            XCTAssertEqual(knock, msg)
+            XCTAssertNotNil(knock.knockMessageData)
+            XCTAssert(knock.isUserSender(selfUser))
+        }
 
     }
+}
 
-    private func createConversationWithMessages() -> ZMConversation? {
-        let conversation = ZMConversation.insertNewObject(in: syncMOC)
+extension NSManagedObjectContext {
+
+    fileprivate func createConversationWithMessages() -> ZMConversation {
+        let conversation = ZMConversation.insertNewObject(in: self)
         conversation.remoteIdentifier = NSUUID.create()
         for text in ["A", "B", "C", "D", "E"] {
             conversation._appendText(content: text)
         }
-        XCTAssert(syncMOC.saveOrRollback())
+        XCTAssert(saveOrRollback())
         return conversation
     }
 }

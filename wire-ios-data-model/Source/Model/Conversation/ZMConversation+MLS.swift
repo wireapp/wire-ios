@@ -17,10 +17,11 @@
 //
 
 import Foundation
+import WireUtilities
 
 extension ZMConversation {
 
-    // MARK: - Keys
+    // MARK: Keys
 
     @objc
     static let messageProtocolKey = "messageProtocol"
@@ -37,7 +38,7 @@ extension ZMConversation {
     @objc
     static let epochKey = #keyPath(epoch)
 
-    // MARK: - Properties
+    // MARK: Properties
 
     @NSManaged public var epoch: UInt64
 
@@ -93,7 +94,6 @@ extension ZMConversation {
     ///
     /// If this conversation is an mls group (which it should be if the
     /// `messageProtocol` is `mls`), then this status should exist.
-
     public var mlsStatus: MLSGroupStatus? {
         get {
             willAccessValue(forKey: Self.mlsStatusKey)
@@ -165,7 +165,7 @@ public extension ZMConversation {
         let request = Self.fetchRequest()
         request.fetchLimit = 2
         request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
-            .isSelfConversation, .isMLSConversation
+            .hasConversationType(.`self`), .isMLSConversation
         ])
 
         let result = context.executeFetchRequestOrAssert(request)
@@ -179,13 +179,9 @@ public extension ZMConversation {
         return context.fetchOrAssert(request: request)
     }
 
-    enum ZMConversationError: Error {
-        case couldNotFindSyncContext
-    }
-
     func joinNewMLSGroup(id mlsGroupID: MLSGroupID, completion: ((Error?) -> Void)?) {
         guard let syncContext = self.managedObjectContext?.zm_sync else {
-            completion?(ZMConversationError.couldNotFindSyncContext)
+            completion?(JoinNewMLSGroupError.couldNotFindSyncContext)
             return
         }
 
@@ -204,7 +200,37 @@ public extension ZMConversation {
             }
         }
     }
+
+    enum JoinNewMLSGroupError: Error {
+        case couldNotFindSyncContext
+    }
 }
+
+// MARK: - Migration releated fetch requests
+
+public extension ZMConversation {
+
+    static func fetchAllTeamGroupConversations(messageProtocol: MessageProtocol, in context: NSManagedObjectContext) throws -> [ZMConversation] {
+        let selfUser = ZMUser.selfUser(in: context)
+        guard let selfUserTeamIdentifier = selfUser.teamIdentifier else {
+            assertionFailure("this method is supposed to be called for users which are part of a team")
+            return []
+        }
+
+        let request = NSFetchRequest<Self>(entityName: Self.entityName())
+        request.predicate = NSCompoundPredicate(
+            andPredicateWithSubpredicates: [
+                .hasConversationType(.group),
+                .hasMessageProtocol(messageProtocol),
+                .teamRemoteIdentifier(matches: selfUserTeamIdentifier)
+            ]
+        )
+
+        return try context.fetch(request)
+    }
+}
+
+// MARK: - NSPredicate Extensions
 
 private extension NSPredicate {
 
@@ -219,14 +245,33 @@ private extension NSPredicate {
         )
     }
 
-    static var isSelfConversation: NSPredicate {
-        NSPredicate(
+    static func hasConversationType(_ conversationType: ZMConversationType) -> NSPredicate {
+        .init(
             format: "%K == %i",
             argumentArray: [
                 ZMConversationConversationTypeKey,
-                ZMConversationType.`self`.rawValue
+                conversationType.rawValue
             ]
         )
     }
 
+    static func hasMessageProtocol(_ messageProtocol: MessageProtocol) -> NSPredicate {
+        .init(
+            format: "%K == %i",
+            argumentArray: [
+                ZMConversation.messageProtocolKey,
+                messageProtocol.rawValue
+            ]
+        )
+    }
+
+    static func teamRemoteIdentifier(matches teamRemoteIdentifier: UUID) -> NSPredicate {
+        .init(
+            format: "%K == %@",
+            argumentArray: [
+                TeamRemoteIdentifierDataKey,
+                (teamRemoteIdentifier as NSUUID).data() as Data
+            ]
+        )
+    }
 }
