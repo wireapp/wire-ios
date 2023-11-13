@@ -1257,6 +1257,7 @@
 		E6C25FD82AFFAF4900406A1C /* ZMUser+Availability.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6C25FD62AFFAF4900406A1C /* ZMUser+Availability.swift */; };
 		E6C25FDA2AFFAFB100406A1C /* NSAttributedString+Attachments.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6C25FD92AFFAFB100406A1C /* NSAttributedString+Attachments.swift */; };
 		E6C25FDB2AFFAFB100406A1C /* NSAttributedString+Attachments.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6C25FD92AFFAFB100406A1C /* NSAttributedString+Attachments.swift */; };
+		E6C25FE62B0274F600406A1C /* CountryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFFE1D3A230D63EA00389290 /* CountryTests.swift */; };
 		E902B3B429ED3A240090DE32 /* SwiftUIButton+HapticFeedback.swift in Sources */ = {isa = PBXBuildFile; fileRef = E902B3B329ED3A240090DE32 /* SwiftUIButton+HapticFeedback.swift */; };
 		E90553CB27D612370006EB47 /* AuthenticationEmailVerificationRequiredErrorHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = E90553CA27D612370006EB47 /* AuthenticationEmailVerificationRequiredErrorHandler.swift */; };
 		E90A2F0D28EEC674005AF571 /* TextFieldStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = E90A2F0C28EEC674005AF571 /* TextFieldStyle.swift */; };
@@ -1741,7 +1742,6 @@
 		EFF92B6721A855050090DA66 /* String+PhoneNumberTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFF92B6521A854BA0090DA66 /* String+PhoneNumberTests.swift */; };
 		EFF9404822414E03004F3115 /* ZClientViewController+ProfileViewControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFF9404722414E03004F3115 /* ZClientViewController+ProfileViewControllerDelegate.swift */; };
 		EFF9A66022394E1B00CCEC85 /* ProgressSpinner.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFF9A65E22394E1900CCEC85 /* ProgressSpinner.swift */; };
-		EFFE1D3B230D63EA00389290 /* CountryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFFE1D3A230D63EA00389290 /* CountryTests.swift */; };
 		EFFE707222F2DB38007CEA38 /* session_manager.json in Resources */ = {isa = PBXBuildFile; fileRef = 161041B622D764C1001109D7 /* session_manager.json */; };
 		F10F46D420288CEB00261449 /* ConversationCreationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10F46D320288CEB00261449 /* ConversationCreationController.swift */; };
 		F112C58620497860007C1E8F /* Analytics+Guests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F112C58520497860007C1E8F /* Analytics+Guests.swift */; };
@@ -6948,7 +6948,6 @@
 				EFDBA24622942FBB00874A15 /* UIAlertViewController+CompanyLoginTests.swift */,
 				EECA835326F211210087ECB0 /* UIAlertControllerFeatureConfigSnapshotTests.swift */,
 				EF23740F230D49EC006F53F3 /* NetworkConditionHelperTests.swift */,
-				EFFE1D3A230D63EA00389290 /* CountryTests.swift */,
 				EF3243522317F0060043F147 /* ZClientViewControllerTests.swift */,
 				7C440E7E23473A0F00D91B5F /* FolderCreationControllerSnapshotTests.swift */,
 				7C440E84234B460100D91B5F /* FolderPickerControllerSnapshotTests.swift */,
@@ -7320,6 +7319,7 @@
 		E6579E372AFF9B30004E7FD8 /* Wire-iOS UnitTests */ = {
 			isa = PBXGroup;
 			children = (
+				EFFE1D3A230D63EA00389290 /* CountryTests.swift */,
 				EF17C52F2321417600245EBF /* UITraitEnvironmentTests.swift */,
 				061282622379C25500C1A53C /* UITextView+ReplaceTests.swift */,
 				636E57BC2386BFD9005B4FD8 /* AvailabilityStringBuilderTests.swift */,
@@ -9948,7 +9948,6 @@
 				87FC0AEB1FC71C020036E029 /* CharacterInputFieldTests.swift in Sources */,
 				7C23A26D20247500005FEB54 /* ShareViewControllerTests.swift in Sources */,
 				540C8AA8255ABD7600AA6992 /* SwitchingAccountRouterTests.swift in Sources */,
-				EFFE1D3B230D63EA00389290 /* CountryTests.swift in Sources */,
 				5EBBE96B21872060008BC1B7 /* MockCell.swift in Sources */,
 				EF2B74CA2141699100FD2574 /* LandingViewControllerSnapshotTests.swift in Sources */,
 				EF297DD82131FABE0002983A /* LocationPreviewControllerTests.swift in Sources */,
@@ -10138,6 +10137,7 @@
 				E6579E632AFFA024004E7FD8 /* SwiftMockLoader.swift in Sources */,
 				E6579E492AFFA003004E7FD8 /* MockUserType+ValidatorType.swift in Sources */,
 				E6579E7C2AFFA979004E7FD8 /* UserRightTests.swift in Sources */,
+				E6C25FE62B0274F600406A1C /* CountryTests.swift in Sources */,
 				E6579E6F2AFFA030004E7FD8 /* MockDataTask.swift in Sources */,
 				E6C25FCB2AFFABE000406A1C /* UITraitEnvironmentTests.swift in Sources */,
 				E6579E552AFFA024004E7FD8 /* MockCallPermissions.swift in Sources */,
