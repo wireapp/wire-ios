@@ -35,8 +35,10 @@ public enum MessageProtocol: Int16 {
 
     case mls
 
-    /// In this case, we have conversations using the MLS Protocol and conversations using
-    /// the Proteus Protocol
+    /// Conversations with the mixed message protocol are in the state of migrating from
+    /// proteus to mls. Message encryption is done using the proteus protocol,
+    /// while other operations (such as adding / removing participants) are reflected on the underlying mls group.
+    /// Calling is still done the proteus way until the migration is finalised
 
     case mixed
 

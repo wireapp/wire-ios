@@ -458,7 +458,7 @@ extension CallingRequestStrategy: WireCallCenterTransport {
             }
 
             switch conversation.messageProtocol {
-            case .proteus:
+            case .proteus, .mixed:
                 // With proteus, we discover clients by posting an otr message to no-one,
                 // then parse the error response that contains the list of all clients.
                 self.clientDiscoveryRequest = ClientDiscoveryRequest(
@@ -496,9 +496,6 @@ extension CallingRequestStrategy: WireCallCenterTransport {
                         Logging.mls.error("Failed to fetch client list for MLS conference: \(String(describing: error))")
                     }
                 }
-            case .mixed:
-                // TODO: - [AGIS] Fix that when we need to take care of calling while in mixed protocol
-                break
             }
         }
     }

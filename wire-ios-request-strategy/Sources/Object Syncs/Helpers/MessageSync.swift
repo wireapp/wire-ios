@@ -72,14 +72,10 @@ public class MessageSync<Message: ProteusMessage & MLSMessage>: NSObject, ZMCont
         }
 
         switch conversation.messageProtocol {
-        case .proteus:
+        case .proteus, .mixed:
             proteusMessageSync.sync(message, completion: completion)
-
         case .mls:
             mlsMessageSync.sync(message, completion: completion)
-        case .mixed:
-            // TODO: - [AGIS] To be fixed when we're going to handle syncing in the mixed protocol
-            break
         }
     }
 

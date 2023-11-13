@@ -62,11 +62,8 @@ final class MessageProtocolSectionController: GroupDetailsSectionController {
         case .proteus:
             return 1
 
-        case .mls:
+        case .mls, .mixed:
             return Bundle.developerModeEnabled ? 3 : 2
-        case .mixed:
-            // TODO: - [AGIS] To be checked and fixed
-            return 1
         }
     }
 

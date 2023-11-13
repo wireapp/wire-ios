@@ -58,7 +58,7 @@ extension Payload {
 
         init(_ action: CreateGroupConversationAction) {
             switch action.messageProtocol {
-            case .mls:
+            case .mls, .mixed:
                 messageProtocol = "mls"
                 creatorClient = action.creatorClientID
                 qualifiedUsers = nil
@@ -69,13 +69,6 @@ extension Payload {
                 creatorClient = nil
                 qualifiedUsers = action.qualifiedUserIDs
                 users = action.unqualifiedUserIDs
-            case .mixed:
-                // TODO: - [AGIS] fix that with the proper values
-                // this is temorary so we can make the project to build
-                messageProtocol = "mixed"
-                creatorClient = nil
-                qualifiedUsers = nil
-                users = nil
             }
 
             name = action.name
@@ -91,7 +84,7 @@ extension Payload {
         @available(*, deprecated, message: "Use a CreateConversationAction instead")
         init(_ conversation: ZMConversation, selfClientID: String) {
             switch conversation.messageProtocol {
-            case .mls:
+            case .mls, .mixed:
                 messageProtocol = "mls"
                 creatorClient = selfClientID
                 qualifiedUsers = nil
@@ -108,13 +101,6 @@ extension Payload {
                     qualifiedUsers = nil
                     users = conversation.localParticipantsExcludingSelf.map(\.remoteIdentifier)
                 }
-            case .mixed:
-                // TODO: - [AGIS] fix that
-                // this is temorary so we can make the project to build
-                messageProtocol = "mixed"
-                creatorClient = nil
-                qualifiedUsers = nil
-                users = nil
             }
 
             name = conversation.userDefinedName
