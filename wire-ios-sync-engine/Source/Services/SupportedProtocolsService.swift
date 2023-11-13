@@ -170,6 +170,10 @@ private extension UserClient {
     }
 
     var isRecentlyActive: Bool {
+        guard !isSelfClient() else {
+            return true
+        }
+
         guard let lastActiveDate = lastActiveDate else {
             return false
         }
