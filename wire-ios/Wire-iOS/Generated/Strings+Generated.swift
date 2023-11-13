@@ -2718,6 +2718,10 @@ internal enum L10n {
       }
     }
     internal enum Device {
+      /// ACTIVE
+      internal static let active = L10n.tr("Localizable", "device.active", fallback: "ACTIVE")
+      /// CURRENT DEVICE
+      internal static let current = L10n.tr("Localizable", "device.current", fallback: "CURRENT DEVICE")
       /// Edit
       internal static let edit = L10n.tr("Localizable", "device.edit", fallback: "Edit")
       /// Not Verified
@@ -2726,10 +2730,6 @@ internal enum L10n {
       internal static let title = L10n.tr("Localizable", "device.title", fallback: "Devices")
       /// Verified
       internal static let verified = L10n.tr("Localizable", "device.verified", fallback: "Verified")
-      internal enum Active {
-        /// ACTIVE
-        internal static let title = L10n.tr("Localizable", "device.active.title", fallback: "ACTIVE")
-      }
       internal enum Class {
         /// Desktop
         internal static let desktop = L10n.tr("Localizable", "device.class.desktop", fallback: "Desktop")
@@ -2742,10 +2742,6 @@ internal enum L10n {
         /// Unknown
         internal static let unknown = L10n.tr("Localizable", "device.class.unknown", fallback: "Unknown")
       }
-      internal enum Current {
-        /// CURRENT DEVICE
-        internal static let title = L10n.tr("Localizable", "device.current.title", fallback: "CURRENT DEVICE")
-      }
       internal enum Details {
         /// Copy to Clipboard
         internal static let copytoclipboard = L10n.tr("Localizable", "device.details.copytoclipboard", fallback: "Copy to Clipboard")
@@ -2753,6 +2749,8 @@ internal enum L10n {
         internal static let expired = L10n.tr("Localizable", "device.details.expired", fallback: "Expired")
         /// Revoked
         internal static let revoked = L10n.tr("Localizable", "device.details.revoked", fallback: "Revoked")
+        /// Status
+        internal static let status = L10n.tr("Localizable", "device.details.status", fallback: "Status")
         /// Valid
         internal static let valid = L10n.tr("Localizable", "device.details.valid", fallback: "Valid")
         internal enum Activated {
@@ -2765,10 +2763,8 @@ internal enum L10n {
         }
         internal enum E2e {
           internal enum Identity {
-            internal enum Certificate {
-              /// End-to-end Identity Certificate
-              internal static let title = L10n.tr("Localizable", "device.details.e2e.identity.certificate.title", fallback: "End-to-end Identity Certificate")
-            }
+            /// End-to-end Identity Certificate
+            internal static let certificate = L10n.tr("Localizable", "device.details.e2e.identity.certificate", fallback: "End-to-end Identity Certificate")
           }
         }
         internal enum Get {
@@ -2786,14 +2782,10 @@ internal enum L10n {
           }
         }
         internal enum Section {
-          internal enum Mls {
-            /// MLS WITH ED25519 SIGNATURE
-            internal static let title = L10n.tr("Localizable", "device.details.section.mls.title", fallback: "MLS WITH ED25519 SIGNATURE")
-          }
-          internal enum Proteus {
-            /// PROTEUS DEVICE DETAILS
-            internal static let title = L10n.tr("Localizable", "device.details.section.proteus.title", fallback: "PROTEUS DEVICE DETAILS")
-          }
+          /// MLS WITH ED25519 SIGNATURE
+          internal static let mls = L10n.tr("Localizable", "device.details.section.mls", fallback: "MLS WITH ED25519 SIGNATURE")
+          /// PROTEUS DEVICE DETAILS
+          internal static let proteus = L10n.tr("Localizable", "device.details.section.proteus", fallback: "PROTEUS DEVICE DETAILS")
         }
         internal enum Serial {
           /// Serial Number
@@ -2811,16 +2803,12 @@ internal enum L10n {
         }
       }
       internal enum Mls {
-        internal enum Thumbprint {
-          /// MLS Thumbprint
-          internal static let title = L10n.tr("Localizable", "device.mls.thumbprint.title", fallback: "MLS Thumbprint")
-        }
+        /// MLS Thumbprint
+        internal static let thumbprint = L10n.tr("Localizable", "device.mls.thumbprint", fallback: "MLS Thumbprint")
       }
       internal enum Proteus {
-        internal enum Id {
-          /// Proteus ID
-          internal static let title = L10n.tr("Localizable", "device.proteus.id.title", fallback: "Proteus ID")
-        }
+        /// Proteus ID
+        internal static let id = L10n.tr("Localizable", "device.proteus.id", fallback: "Proteus ID")
       }
       internal enum `Type` {
         /// Legal Hold

@@ -23,9 +23,17 @@ import WireCommonComponents
 struct E2EIdentityCertificate {
     var status: E2EIdentityCertificateStatus
     var serialNumber: String
-    var certificate: String = .randomString(length: 500)
-    var exipirationDate: Date = .now
-    var isExpiringSoon: Bool  = false
+    var certificate: String
+    var exipirationDate: Date
+    var isExpiringSoon: Bool {
+        Date.now.timeIntervalSince(exipirationDate) < .oneWeek // TODO: check this logic
+    }
+}
+
+extension E2EIdentityCertificate {
+    var isValidCertificate: Bool {
+        return !certificate.isEmpty && exipirationDate < Date.now
+    }
 }
 
 enum E2EIdentityCertificateStatus: CaseIterable {
@@ -59,7 +67,7 @@ extension E2EIdentityCertificateStatus {
         case .valid:
             return Image(.certificateValid)
         case .none:
-            return Image(asset: .init(name: ""))
+            return Image(.certificateRevoked)
         }
     }
 }

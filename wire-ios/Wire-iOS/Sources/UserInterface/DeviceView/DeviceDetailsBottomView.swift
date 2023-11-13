@@ -21,7 +21,7 @@ import SwiftUI
 struct DeviceDetailsBottomView: View {
     @Binding var viewModel: DeviceInfoViewModel
     var body: some View {
-        Text("self.settings.device_details.fingerprint.subtitle".localized)
+        Text(L10n.Localizable.Self.Settings.DeviceDetails.Fingerprint.subtitle)
             .font(.footnote)
             .padding([.leading, .trailing], 16)
             .padding([.top, .bottom], 8)
@@ -31,14 +31,14 @@ struct DeviceDetailsBottomView: View {
                     viewModel.actionsHandler.resetSession()
                 }
             } label: {
-                Text("profile.devices.detail.reset_session.title".localized)
+                Text(L10n.Localizable.Profile.Devices.Detail.ResetSession.title)
                     .padding(.all, 16)
                     .foregroundColor(.black)
                     .font(UIFont.normalRegularFont.swiftUIfont.bold())
             }
             Spacer()
         }.background(Color.white)
-        Text("self.settings.device_details.reset_session.subtitle".localized).font(.footnote).padding([.leading, .trailing], 16)
+        Text(L10n.Localizable.Self.Settings.DeviceDetails.ResetSession.subtitle).font(.footnote).padding([.leading, .trailing], 16)
             .padding([.top, .bottom], 8)
         HStack {
             SwiftUI.Button {
@@ -46,13 +46,13 @@ struct DeviceDetailsBottomView: View {
                     viewModel.actionsHandler.removeDevice()
                 }
             } label: {
-                Text("self.settings.account_details.remove_device.title".localized)
+                Text(L10n.Localizable.Self.Settings.AccountDetails.RemoveDevice.title)
                     .padding(.all, 16)
                     .foregroundColor(.black).font(UIFont.normalRegularFont.swiftUIfont.bold())
             }
             Spacer()
         }.background(Color.white)
-        Text("self.settings.device_details.remove_device.subtitle".localized)
+        Text(L10n.Localizable.Self.Settings.DeviceDetails.RemoveDevice.subtitle)
             .font(.footnote)
             .padding([.leading, .trailing], 16)
             .padding([.top, .bottom], 8)

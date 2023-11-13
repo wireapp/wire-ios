@@ -2046,14 +2046,14 @@ to reset this device and log in again";
 "time.just_now" = "Just now";
 
 //MARK: - Device
-"device.mls.thumbprint.title" = "MLS Thumbprint";
-"device.proteus.id.title" = "Proteus ID";
-"device.current.title" = "CURRENT DEVICE";
-"device.active.title" = "ACTIVE";
+"device.mls.thumbprint" = "MLS Thumbprint";
+"device.proteus.id" = "Proteus ID";
+"device.current" = "CURRENT DEVICE";
+"device.active" = "ACTIVE";
 "device.title" = "Devices";
 "device.edit" = "Edit";
-"device.details.section.mls.title" = "MLS WITH ED25519 SIGNATURE";
-"device.details.section.proteus.title" = "PROTEUS DEVICE DETAILS";
+"device.details.section.mls" = "MLS WITH ED25519 SIGNATURE";
+"device.details.section.proteus" = "PROTEUS DEVICE DETAILS";
 "device.details.activated.title" = "Activated";
 "device.details.proteus.key.fingerprint" = "Proteus Key Fingerprint";
 "device.details.copytoclipboard" = "Copy to Clipboard";
@@ -2063,8 +2063,9 @@ to reset this device and log in again";
 "device.details.revoked" = "Revoked";
 "device.details.not.activated" = "Not activated";
 "device.details.serial.number" = "Serial Number";
-"device.details.e2e.identity.certificate.title" = "End-to-end Identity Certificate";
+"device.details.e2e.identity.certificate" = "End-to-end Identity Certificate";
 "device.details.show.certificate.details" = "Show Certificate Details";
 "device.details.get.certificate" = "Get Certificate";
 "device.details.update.certificate" = "Update Certificate";
+"device.details.status" = "Status";
 

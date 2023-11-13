@@ -28,7 +28,7 @@ struct CertificateDetailsView: View {
     var body: some View {
         HStack {
             Spacer()
-            Text("Certificate Details")
+            Text(L10n.Localizable.Device.Details.Certificate.details)
             Spacer()
             SwiftUI.Button(action: {
                 dismiss()
@@ -57,7 +57,7 @@ struct CertificateDetailsView: View {
                             performDownload?()
                         },
                                        label: {
-                            Text("content.message.download".localized).font(UIFont.normalRegularFont.swiftUIfont.bold())
+                            Text(L10n.Localizable.Content.Message.download).font(UIFont.normalRegularFont.swiftUIfont.bold())
                         }).padding()
                             .foregroundColor(.black)
                          .font(UIFont.mediumSemiboldFont.swiftUIfont)
@@ -71,7 +71,7 @@ struct CertificateDetailsView: View {
                             SwiftUI.Button(action: {
                                 performCopy?(certificateDetails)
                             }, label: {
-                                Text("device.details.copytoclipboard".localized).foregroundColor(.black)
+                                Text( L10n.Localizable.Device.Details.copytoclipboard).foregroundColor(.black)
                             })
                             .foregroundColor(.black)
                         } message: {

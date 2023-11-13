@@ -20,24 +20,30 @@ import SwiftUI
 
 struct DeviceListView: View {
     @State var viewModel: DevicesViewModel
+    var currentDeviceView: some View {
+        Section(header: Text(L10n.Localizable.Device.current)) {
+            NavigationLink(destination: DeviceDetailsView(viewModel: viewModel.currentDevice, isCertificateViewPresented: false)) {
+                DeviceView(viewModel: viewModel.currentDevice)
+            }
+        }
+    }
+    var otherDevicesView: some View {
+        Section(header: Text(L10n.Localizable.Device.active)) {
+                ForEach(viewModel.otherDevices) { deviceViewModel in
+                    NavigationLink(destination: DeviceDetailsView(viewModel: deviceViewModel, isCertificateViewPresented: false)) {
+                        DeviceView(viewModel: deviceViewModel)
+                    }
+                }
+                .onDelete(perform: delete)
+        }
+    }
     var body: some View {
         NavigationView {
             VStack(alignment: .leading) {
                 List {
-                    Section(header: Text("device.current.title".localized)) {
-                        NavigationLink(destination: DeviceDetailsView(viewModel: viewModel.currentDevice, isCertificateViewPresented: false)) {
-                            DeviceView(viewModel: viewModel.currentDevice)
-                        }
-                    }
+                   currentDeviceView
                     if !viewModel.otherDevices.isEmpty {
-                        Section(header: Text("device.active.title".localized)) {
-                            ForEach(viewModel.otherDevices) { deviceViewModel in
-                                NavigationLink(destination: DeviceDetailsView(viewModel: deviceViewModel, isCertificateViewPresented: false)) {
-                                    DeviceView(viewModel: deviceViewModel)
-                                }
-                            }
-                            .onDelete(perform: delete)
-                        }
+                        otherDevicesView
                     }
                 }
                 .listStyle(GroupedListStyle())
@@ -48,24 +54,36 @@ struct DeviceListView: View {
                 EditButton()
             }))
     }
-
     func delete(_ indexSet: IndexSet) {
         viewModel.onRemoveDevice(indexSet)
     }
 }
 
 #Preview {
-    DeviceListView(viewModel: DevicesViewModel(currentDevice: .init(udid: "1234", title: "Device 1", mlsThumbprint: """
+    DeviceListView(
+        viewModel:
+            DevicesViewModel(
+                currentDevice: .init(
+                    udid: "1234",
+                    title: "Device 1",
+                    mlsThumbprint: """
 b4 47 60 78 a3 1f 12 f9
 be 7c 98 3b 1f f1 f0 53
 ae 2a 01 6a 31 32 49 d0
 e9 fd da 5e 21 fd 06 ae
-""", deviceKeyFingerprint: """
+""",
+                    deviceKeyFingerprint: """
 b4 47 60 78 a3 1f 12 f9
 be 7c 98 3b 1f f1 f0 53
 ae 2a 01 6a 31 32 49 d0
 e9 fd da 5e 21 fd 06 ae
-""", proteusID: "26 89 F2 1C 4A F3 9D 9D", isProteusVerificationEnabled: false, e2eIdentityCertificate: E2EIdentityCertificate(status: .valid, serialNumber: """
+""",
+                    proteusID: "26 89 F2 1C 4A F3 9D 9D",
+                    isProteusVerificationEnabled: false,
+                    e2eIdentityCertificate:
+                        E2EIdentityCertificate(
+                            status: .valid,
+                            serialNumber: """
 b4 47 60 78 a3 1f 12 f9
 be 7c 98 3b 1f f1 f0 53
 ae 2a 01 6a 31 32 49 d0
@@ -74,8 +92,11 @@ b4 47 60 78 a3 1f 12 f9
 be 7c 98 3b 1f f1 f0 53
 ae 2a 01 6a 31 32 49 d0
 e9 fd da 5e 21 fd 06 ae
-""")), otherDevices: [
-    DeviceInfoViewModel(udid: "123e4", title: "Device 2", mlsThumbprint: "skfjnskjdsfnskjn", deviceKeyFingerprint: """
+""", certificate: .random(length: 1000),
+                            exipirationDate: .now + .fourWeeks)
+                ),
+                otherDevices: [
+                    DeviceInfoViewModel(udid: "123e4", title: "Device 2", mlsThumbprint: "skfjnskjdsfnskjn", deviceKeyFingerprint: """
 b4 47 60 78 a3 1f 12 f9
 be 7c 98 3b 1f f1 f0 53
 ae 2a 01 6a 31 32 49 d0
@@ -89,8 +110,9 @@ b4 47 60 78 a3 1f 12 f9
 be 7c 98 3b 1f f1 f0 53
 ae 2a 01 6a 31 32 49 d0
 e9 fd da 5e 21 fd 06 ae
-""")),
-    DeviceInfoViewModel(udid: "123f4", title: "Device 3", mlsThumbprint: "skfjnskjddfnskjn", deviceKeyFingerprint: """
+""", certificate: .random(length: 1000),
+                                                                                                                     exipirationDate: .now + .fourWeeks)),
+                    DeviceInfoViewModel(udid: "123f4", title: "Device 3", mlsThumbprint: "skfjnskjddfnskjn", deviceKeyFingerprint: """
                b4 47 60 78 a3 1f 12 f9
                be 7c 98 3b 1f f1 f0 53
                ae 2a 01 6a 31 32 49 d0
@@ -104,13 +126,25 @@ b4 47 60 78 a3 1f 12 f9
 be 7c 98 3b 1f f1 f0 53
 ae 2a 01 6a 31 32 49 d0
 e9 fd da 5e 21 fd 06 ae
-""")),
-    DeviceInfoViewModel(udid: "123g4", title: "Device 4", mlsThumbprint: "skfjnskjdffnskjn", deviceKeyFingerprint: """
+""",
+                                                                                                                                     certificate: .random(length: 1000),
+                                                                                                                                     exipirationDate: .now + .fourWeeks)),
+                    DeviceInfoViewModel(
+                        udid: "123g4",
+                        title: "Device 4",
+                        mlsThumbprint: "skfjnskjdffnskjn",
+                        deviceKeyFingerprint: """
 b4 47 60 78 a3 1f 12 f9
 be 7c 98 3b 1f f1 f0 53
 ae 2a 01 6a 31 32 49 d0
 e9 fd da 5e 21 fd 06 ae
-""", proteusID: "skjdabfnkscjka", isProteusVerificationEnabled: true, e2eIdentityCertificate: E2EIdentityCertificate(status: .valid, serialNumber: """
+""",
+                        proteusID: "skjdabfnkscjka",
+                        isProteusVerificationEnabled: true,
+                        e2eIdentityCertificate:
+                            E2EIdentityCertificate(
+                                status: .valid,
+                                serialNumber: """
 b4 47 60 78 a3 1f 12 f9
 be 7c 98 3b 1f f1 f0 53
 ae 2a 01 6a 31 32 49 d0
@@ -119,6 +153,10 @@ b4 47 60 78 a3 1f 12 f9
 be 7c 98 3b 1f f1 f0 53
 ae 2a 01 6a 31 32 49 d0
 e9 fd da 5e 21 fd 06 ae
-"""))
-    ]))
+""",
+                                certificate: .random(length: 1000),
+                                exipirationDate: .now + .fourWeeks
+                            )
+                    )
+                ]))
 }

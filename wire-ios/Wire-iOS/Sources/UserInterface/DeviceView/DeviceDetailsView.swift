@@ -29,7 +29,7 @@ struct DeviceDetailsView: View {
                 if !viewModel.mlsThumbprint.isEmpty {
                     VStack(alignment: .leading) {
                         HStack(alignment: .center, spacing: 0) {
-                            Text("device.details.section.mls.title".localized)
+                            Text(L10n.Localizable.Device.Details.Section.mls)
                         }
                         .padding(.bottom, 8)
                         .padding([.top, .leading], 16)
@@ -55,7 +55,7 @@ struct DeviceDetailsView: View {
                 }
 
                 VStack(alignment: .leading) {
-                    Text("device.details.section.proteus.title".localized)
+                    Text(L10n.Localizable.Device.Details.Section.Proteus.title)
                         .frame(height: 45)
                         .padding(.leading, 16)
                     DeviceDetailsProteusView(viewModel: $viewModel)
@@ -123,5 +123,6 @@ e8 f9 8c 87 17 f6 9b e8
 """, proteusID: "3D C8 7F FF 07 C9 29 6E", isProteusVerificationEnabled: true, e2eIdentityCertificate: E2EIdentityCertificate(status: .revoked, serialNumber: """
 e5:d5:e6:75:7e:04:86:07:
 14:3c:a0:ed:9a:8d:e4:fd
-""")), isCertificateViewPresented: false)
+""", certificate: .random(length: 1000),
+                                                                                                                              exipirationDate: .now + .fourWeeks)), isCertificateViewPresented: false)
 }

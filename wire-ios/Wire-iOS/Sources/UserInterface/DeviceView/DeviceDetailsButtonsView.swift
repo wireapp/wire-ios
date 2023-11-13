@@ -28,7 +28,7 @@ struct DeviceDetailsButtonsView: View {
                         await viewModel.actionsHandler.fetchCertificate()
                     }
                 } label: {
-                    Text("device.details.get.certificate".localized)
+                    Text(L10n.Localizable.Device.Details.Get.certificate)
                         .foregroundStyle(.black)
                         .font(UIFont.normalRegularFont.swiftUIfont.bold())
                 }
@@ -39,17 +39,23 @@ struct DeviceDetailsButtonsView: View {
                             await viewModel.actionsHandler.fetchCertificate()
                         }
                     } label: {
-                        Text("device.details.update.certificate".localized)
+                        Text(L10n.Localizable.Device.Details.Update.certificate)
                             .foregroundStyle(.black)
                             .font(UIFont.normalRegularFont.swiftUIfont.bold())
                     }
                 }
                 Divider()
                 SwiftUI.Button(action: {
-                    isCertificateViewPresented.toggle()
+                    viewModel.actionsHandler.showCertificate {
+                        return viewModel.e2eIdentityCertificate.isValidCertificate
+                    } result: { isValid in
+                        if isValid {
+                            isCertificateViewPresented.toggle()
+                        }
+                    }
                 }, label: {
                     HStack {
-                        Text("device.details.show.certificate.details".localized)
+                        Text(L10n.Localizable.Device.Details.Show.Certificate.details)
                             .foregroundStyle(.black)
                             .font(UIFont.normalRegularFont.swiftUIfont.bold())
 

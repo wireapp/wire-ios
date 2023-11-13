@@ -21,31 +21,26 @@ import WireCommonComponents
 
 struct DeviceView: View {
     var viewModel: DeviceInfoViewModel
-    var body: some View {
-        VStack(alignment: .leading) {
-            titleView
-            if !viewModel.mlsThumbprint.isEmpty {
-                let mlsThumbprintTitle = "device.mls.thumbprint.title".localized
-                Text("\(mlsThumbprintTitle): \(viewModel.mlsThumbprint)").font(UIFont.mediumRegular.swiftUIfont).foregroundColor(.gray).lineLimit(1)
-            }
-            if !viewModel.proteusID.isEmpty {
-                let proteusIDTitle = "device.proteus.id.title".localized
-                Text("\(proteusIDTitle): \(viewModel.proteusID)").font(UIFont.mediumRegular.swiftUIfont).foregroundColor(.gray)
-            }
-        }
-    }
-
     var titleView: Text {
         if viewModel.isProteusVerificationEnabled {
             Text("\(viewModel.title) \( viewModel.e2eIdentityCertificate.status.imageForStatus()) \(Image(.verified))")
                 .font(UIFont.headerSemiBoldFont.swiftUIfont)
                 .foregroundColor(.black)
-
         } else {
             Text("\(viewModel.title) \( viewModel.e2eIdentityCertificate.status.imageForStatus())")
                 .font(UIFont.headerSemiBoldFont.swiftUIfont)
-            .foregroundColor(.black)
-
+                .foregroundColor(.black)
+        }
+    }
+    var body: some View {
+        VStack(alignment: .leading) {
+            titleView
+            if !viewModel.mlsThumbprint.isEmpty {
+                Text("\(L10n.Localizable.Device.Mls.thumbprint): \(viewModel.mlsThumbprint)").font(UIFont.mediumRegular.swiftUIfont).foregroundColor(.gray).lineLimit(1)
+            }
+            if !viewModel.proteusID.isEmpty {
+                Text("\(L10n.Localizable.Device.Proteus.id): \(viewModel.proteusID)").font(UIFont.mediumRegular.swiftUIfont).foregroundColor(.gray)
+            }
         }
     }
 }
@@ -82,5 +77,6 @@ b4 47 60 78 a3 1f 12 f9
 be 7c 98 3b 1f f1 f0 53
 ae 2a 01 6a 31 32 49 d0
 e9 fd da 5e 21 fd 06 ae
-""")))
+""", certificate: .random(length: 1000),
+                            exipirationDate: .now + .fourWeeks)))
 }

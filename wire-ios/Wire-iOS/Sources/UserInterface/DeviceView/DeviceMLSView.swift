@@ -23,7 +23,7 @@ struct DeviceMLSView: View {
     var body: some View {
         VStack {
             CopyValueView(
-                title: "device.mls.thumbprint.title".localized,
+                title: L10n.Localizable.Device.Mls.thumbprint,
                 value: viewModel.mlsThumbprint,
                 performCopy: { value in
                    viewModel.actionsHandler.copyToClipboard(value)
