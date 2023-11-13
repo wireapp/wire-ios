@@ -31,7 +31,6 @@ struct DeviceDetailsProteusView: View {
                 Text(L10n.Localizable.Device.Details.Activated.title)
                     .font(UIFont.mediumSemiboldFont.swiftUIfont)
                     .padding(.leading, 16)
-
                 Text(viewModel.addedDate)
                     .padding(.leading, 16)
                     .font(UIFont.normalRegularFont.swiftUIfont)

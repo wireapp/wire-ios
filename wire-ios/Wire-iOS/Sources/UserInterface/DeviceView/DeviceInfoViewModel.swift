@@ -92,7 +92,16 @@ struct DeviceInfoViewModel {
     var e2eIdentityCertificate: E2EIdentityCertificate
     let actionsHandler: DeviceDetailsViewActions
 
-    init(udid: String, title: String, mlsThumbprint: String, deviceKeyFingerprint: String, proteusID: String, isProteusVerificationEnabled: Bool, e2eIdentityCertificate: E2EIdentityCertificate, actionsHandler: DeviceDetailsViewActions = DeviceDetailsActionsHandler()) {
+    init(
+        udid: String,
+        title: String,
+        mlsThumbprint: String,
+        deviceKeyFingerprint: String,
+        proteusID: String,
+        isProteusVerificationEnabled: Bool,
+        e2eIdentityCertificate: E2EIdentityCertificate,
+        actionsHandler: DeviceDetailsViewActions = DeviceDetailsActionsHandler()
+    ) {
         self.udid = udid
         self.title = title
         self.mlsThumbprint = mlsThumbprint
