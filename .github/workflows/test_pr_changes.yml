@@ -70,7 +70,7 @@ jobs:
             carthage:
               - 'Cartfile.resolved'
 
-  trigger_tests:
+  trigger_tests_pr:
     needs: detect-changes
     if: ${{ needs.detect-changes.outputs.any == 'true' }}
     uses: ./.github/workflows/_reusable_run_tests.yml
