@@ -77,7 +77,7 @@ final class ServiceDetailViewController: UIViewController {
     ///   - completion: completion handler
     init(serviceUser: ServiceUser,
          actionType: ActionType,
-         selfUser: UserType = ZMUser.selfUser(),
+         selfUser: UserType,
          completion: Completion? = nil) {
         self.service = Service(serviceUser: serviceUser)
         self.completion = completion
@@ -193,7 +193,7 @@ final class ServiceDetailViewController: UIViewController {
             case let .removeService(conversation):
                 self.presentRemoveDialogue(for: serviceUser, from: conversation, dismisser: self.viewControllerDismisser)
             case .openConversation:
-                if let existingConversation = ZMConversation.existingConversation(in: userSession.managedObjectContext, service: serviceUser, team: ZMUser.selfUser().team) {
+                if let existingConversation = ZMConversation.existingConversation(in: userSession.managedObjectContext, service: serviceUser, team: userSession.selfUser.membership?.team) {
                     completion?(.success(conversation: existingConversation))
                 } else {
                     serviceUser.createConversation(in: userSession, completionHandler: { (result) in

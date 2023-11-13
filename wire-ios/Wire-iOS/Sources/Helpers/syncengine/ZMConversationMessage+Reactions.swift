@@ -26,7 +26,12 @@ extension ZMConversationMessage {
             return false
         }
 
-        let participatesInConversation = conversation.localParticipantsContain(user: SelfUser.current)
+        guard let user = SelfUser.provider?.providedSelfUser else {
+            assertionFailure("expected available 'user'!")
+            return false
+        }
+
+        let participatesInConversation = conversation.localParticipantsContain(user: user)
         let sentOrDelivered = deliveryState.isOne(of: .sent, .delivered, .read)
         let likableType = isNormal && !isKnock
         return participatesInConversation && sentOrDelivered && likableType && !isObfuscated && !isEphemeral

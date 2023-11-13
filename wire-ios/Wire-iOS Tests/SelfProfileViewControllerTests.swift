@@ -20,19 +20,27 @@ import XCTest
 @testable import Wire
 
 final class SelfProfileViewControllerTests: ZMSnapshotTestCase, CoreDataFixtureTestHelper {
+
     var coreDataFixture: CoreDataFixture!
     var sut: SelfProfileViewController!
     var selfUser: MockUserType!
+    var userSession: UserSessionMock!
 
     override func setUp() {
         super.setUp()
+
         coreDataFixture = CoreDataFixture()
+
         SelfUser.provider = coreDataFixture.selfUserProvider
+        selfUser = MockUserType.createSelfUser(name: "", inTeam: UUID())
+
+        userSession = UserSessionMock(mockUser: selfUser)
     }
 
     override func tearDown() {
         sut = nil
         selfUser = nil
+        userSession = nil
         super.tearDown()
     }
 
@@ -60,7 +68,7 @@ final class SelfProfileViewControllerTests: ZMSnapshotTestCase, CoreDataFixtureT
         // prevent app crash when checking Analytics.shared.isOptout
         Analytics.shared = Analytics(optedOut: true)
         selfUser = MockUserType.createSelfUser(name: userName, inTeam: teamMember ? UUID() : nil)
-        sut = SelfProfileViewController(selfUser: selfUser, userRightInterfaceType: MockUserRight.self, userSession: MockZMUserSession())
+        sut = SelfProfileViewController(selfUser: selfUser, userRightInterfaceType: MockUserRight.self, userSession: userSession)
         sut.view.backgroundColor = .black
     }
 }

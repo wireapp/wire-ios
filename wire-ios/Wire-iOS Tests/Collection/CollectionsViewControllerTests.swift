@@ -48,10 +48,14 @@ final class CollectionsViewControllerTests: ZMSnapshotTestCase {
     var deletedFileMessage: ZMConversationMessage!
     var deletedLinkMessage: ZMConversationMessage!
 
+    var userSession: UserSessionMock!
+
     override func setUp() {
         super.setUp()
 
         accentColor = .strongBlue
+
+        userSession = UserSessionMock()
 
         let conversation = MockConversation() as Any as! ZMConversation
         let assetCollection = MockCollection.empty
@@ -97,16 +101,17 @@ final class CollectionsViewControllerTests: ZMSnapshotTestCase {
         deletedFileMessage = nil
         deletedLinkMessage = nil
 
+        userSession = nil
         super.tearDown()
     }
 
     func testThatNoElementStateIsShownWhenCollectionIsEmpty() {
-        let controller = CollectionsViewController(collection: emptyCollection, fetchingDone: true)
+        let controller = CollectionsViewController(collection: emptyCollection, fetchingDone: true, userSession: userSession)
         verifyAllIPhoneSizes(matching: controller)
     }
 
     func testThatLoadingIsShownWhenFetching() {
-        let controller = CollectionsViewController(collection: emptyCollection, fetchingDone: false)
+        let controller = CollectionsViewController(collection: emptyCollection, fetchingDone: false, userSession: userSession)
         controller.view.layer.speed = 0 // Disable animations so that the spinner would always be in the same phase
         verifyAllIPhoneSizes(matching: controller)
     }
@@ -200,7 +205,7 @@ extension CollectionsViewControllerTests {
         let delegate = AssetCollectionMulticastDelegate()
         let collection = AssetCollectionWrapper(conversation: conversation, assetCollection: assetCollection, assetCollectionDelegate: delegate, matchingCategories: [])
 
-        let controller = CollectionsViewController(collection: collection)
+        let controller = CollectionsViewController(collection: collection, userSession: userSession)
         _ = controller.view
         delegate.assetCollectionDidFetch(collection: assetCollection, messages: assetCollection.messages, hasMore: false)
         delegate.assetCollectionDidFinishFetching(collection: assetCollection, result: .success)

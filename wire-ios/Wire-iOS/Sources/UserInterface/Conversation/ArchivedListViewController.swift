@@ -1,23 +1,24 @@
 //
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
-// 
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
-// 
+//
 
 import UIKit
 import WireDataModel
+import WireSyncEngine
 
 // MARK: ArchivedListViewControllerDelegate
 
@@ -34,14 +35,17 @@ final class ArchivedListViewController: UIViewController {
     private let archivedNavigationBar = ArchivedNavigationBar(title: L10n.Localizable.ArchivedList.title.capitalized)
     private let cellReuseIdentifier = "ConversationListCellArchivedIdentifier"
     private let swipeIdentifier = "ArchivedList"
-    private let viewModel = ArchivedListViewModel()
+    private let viewModel: ArchivedListViewModel
     private let layoutCell = ConversationListCell()
     private var actionController: ConversationActionController?
     private var startCallController: ConversationCallController?
+    let userSession: UserSession
 
     weak var delegate: ArchivedListViewControllerDelegate?
 
-    required init() {
+    init(userSession: UserSession) {
+        self.userSession = userSession
+        viewModel = ArchivedListViewModel(userSession: userSession)
         super.init(nibName: nil, bundle: nil)
         viewModel.delegate = self
         createViews()
@@ -94,9 +98,9 @@ final class ArchivedListViewController: UIViewController {
             archivedNavigationBar.leftAnchor.constraint(equalTo: view.leftAnchor),
             archivedNavigationBar.rightAnchor.constraint(equalTo: view.rightAnchor),
             archivedNavigationBar.bottomAnchor.constraint(equalTo: collectionView.topAnchor),
-          collectionView.leftAnchor.constraint(equalTo: view.leftAnchor),
-          collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-          collectionView.rightAnchor.constraint(equalTo: view.rightAnchor)
+            collectionView.leftAnchor.constraint(equalTo: view.leftAnchor),
+            collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            collectionView.rightAnchor.constraint(equalTo: view.rightAnchor)
         ])
     }
 
@@ -122,7 +126,10 @@ extension ArchivedListViewController: UICollectionViewDelegate {
 
 extension ArchivedListViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
 
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        cellForItemAt indexPath: IndexPath
+    ) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellReuseIdentifier, for: indexPath) as! ConversationListCell
         cell.conversation = viewModel[indexPath.row]
         cell.delegate = self
@@ -139,7 +146,11 @@ extension ArchivedListViewController: UICollectionViewDataSource, UICollectionVi
         return 1
     }
 
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        sizeForItemAt indexPath: IndexPath
+    ) -> CGSize {
         return layoutCell.size(inCollectionViewSize: collectionView.bounds.size)
     }
 
@@ -148,7 +159,12 @@ extension ArchivedListViewController: UICollectionViewDataSource, UICollectionVi
 // MARK: - ArchivedListViewModelDelegate
 
 extension ArchivedListViewController: ArchivedListViewModelDelegate {
-    func archivedListViewModel(_ model: ArchivedListViewModel, didUpdateArchivedConversationsWithChange change: ConversationListChangeInfo, applyChangesClosure: @escaping () -> Void) {
+
+    func archivedListViewModel(
+        _ model: ArchivedListViewModel,
+        didUpdateArchivedConversationsWithChange change: ConversationListChangeInfo,
+        applyChangesClosure: @escaping () -> Void
+    ) {
         applyChangesClosure()
         collectionView.reloadData()
         collectionView.collectionViewLayout.invalidateLayout()
@@ -156,7 +172,7 @@ extension ArchivedListViewController: ArchivedListViewModelDelegate {
 
     func archivedListViewModel(_ model: ArchivedListViewModel, didUpdateConversationWithChange change: ConversationChangeInfo) {
 
-        // no-op, ConversationListCell extended ZMConversationObserver 
+        // no-op, ConversationListCell extended ZMConversationObserver
     }
 
 }
@@ -178,7 +194,12 @@ extension ArchivedListViewController: ConversationListCellDelegate {
     func conversationListCellOverscrolled(_ cell: ConversationListCell) {
         guard let conversation = cell.conversation as? ZMConversation else { return }
 
-        actionController = ConversationActionController(conversation: conversation, target: self, sourceView: cell)
+        actionController = ConversationActionController(
+            conversation: conversation,
+            target: self,
+            sourceView: cell,
+            userSession: userSession
+        )
         actionController?.presentMenu(from: cell, context: .list)
     }
 

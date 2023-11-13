@@ -18,6 +18,7 @@
 import UIKit
 import WireDataModel
 import WireRequestStrategy
+import WireSyncEngine
 import WireCommonComponents
 
 private let zmLog = ZMSLog(tag: "ConversationContentViewController")
@@ -51,12 +52,18 @@ final class ConversationContentViewController: UIViewController, PopoverPresente
     let mentionsSearchResultsViewController: UserSearchResultsViewController = UserSearchResultsViewController()
 
     lazy var dataSource: ConversationTableViewDataSource = {
-        return ConversationTableViewDataSource(conversation: conversation, tableView: tableView, actionResponder: self, cellDelegate: self)
+        return ConversationTableViewDataSource(
+            conversation: conversation,
+            tableView: tableView,
+            actionResponder: self,
+            cellDelegate: self,
+            userSession: userSession
+        )
     }()
 
     let messagePresenter: MessagePresenter
     var deletionDialogPresenter: DeletionDialogPresenter?
-    let session: ZMUserSessionInterface
+    let userSession: UserSession
     var connectionViewController: UserConnectionViewController?
     var digitalSignatureToken: Any?
     var userClientToken: Any?
@@ -72,9 +79,9 @@ final class ConversationContentViewController: UIViewController, PopoverPresente
     init(conversation: ZMConversation,
          message: ZMConversationMessage? = nil,
          mediaPlaybackManager: MediaPlaybackManager?,
-         session: ZMUserSessionInterface) {
+         userSession: UserSession) {
         messagePresenter = MessagePresenter(mediaPlaybackManager: mediaPlaybackManager)
-        self.session = session
+        self.userSession = userSession
         self.conversation = conversation
         messageVisibleOnLoad = message ?? conversation.firstUnreadMessage
 

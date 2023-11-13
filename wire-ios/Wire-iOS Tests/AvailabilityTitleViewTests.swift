@@ -23,12 +23,16 @@ class AvailabilityTitleViewTests: ZMSnapshotTestCase {
 
     var selfUser: ZMUser!
     var otherUser: ZMUser?
+    var userSession: UserSessionMock!
 
     override func setUp() {
         super.setUp()
+
         otherUser = ZMUser.insertNewObject(in: self.uiMOC)
         otherUser?.name = "Giovanni"
         selfUser = ZMUser.selfUser()
+
+        userSession = UserSessionMock()
     }
 
     override func tearDown() {
@@ -95,7 +99,7 @@ class AvailabilityTitleViewTests: ZMSnapshotTestCase {
 
     private func createTest(for options: AvailabilityTitleView.Options, with availability: AvailabilityKind, on user: ZMUser, hasDarkMode: Bool = true, file: StaticString = #file, line: UInt = #line) {
         updateAvailability(for: user, newValue: availability)
-        let sut = AvailabilityTitleView(user: user, options: options)
+        let sut = AvailabilityTitleView(user: user, options: options, userSession: userSession)
 
         sut.overrideUserInterfaceStyle = hasDarkMode ? .dark : .light
         sut.backgroundColor = hasDarkMode ? .black : .white
