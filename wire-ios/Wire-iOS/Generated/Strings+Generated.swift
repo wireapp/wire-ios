@@ -2801,8 +2801,8 @@ internal enum L10n {
         }
         internal enum Show {
           internal enum Certificate {
-            /// Show Dertificate Details
-            internal static let details = L10n.tr("Localizable", "device.details.show.certificate.details", fallback: "Show Dertificate Details")
+            /// Show Certificate Details
+            internal static let details = L10n.tr("Localizable", "device.details.show.certificate.details", fallback: "Show Certificate Details")
           }
         }
         internal enum Update {
