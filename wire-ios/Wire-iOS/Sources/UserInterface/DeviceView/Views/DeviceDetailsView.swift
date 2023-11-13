@@ -55,7 +55,7 @@ struct DeviceDetailsView: View {
                 }
 
                 VStack(alignment: .leading) {
-                    Text(L10n.Localizable.Device.Details.Section.Proteus.title)
+                    Text(L10n.Localizable.Device.Details.Section.proteus)
                         .frame(height: 45)
                         .padding(.leading, 16)
                     DeviceDetailsProteusView(viewModel: $viewModel)

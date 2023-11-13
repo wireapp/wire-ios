@@ -81,35 +81,6 @@ protocol DeviceDetailsViewActions {
     func copyToClipboard(_ value: String)
 }
 
-final class DeviceDetailsActionsHandler: DeviceDetailsViewActions {
-    var isDeviceVerified: Bool = false
-
-    func fetchCertificate() async {
-
-    }
-
-    func showCertificate(validate: () -> Bool, result: (Bool) -> Void) {
-        result(validate())
-    }
-
-    func removeDevice() {
-
-    }
-
-    func resetSession() {
-
-    }
-
-    func setVerified(_ result: (Bool) -> Void) {
-        result(isDeviceVerified)
-    }
-
-    func copyToClipboard(_ value: String) {
-        UIPasteboard.general.string = value
-    }
-
-}
-
 struct DeviceInfoViewModel {
     let udid: String
     let addedDate: String = Date().formattedDate

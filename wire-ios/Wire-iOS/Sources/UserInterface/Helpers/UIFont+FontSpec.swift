@@ -21,15 +21,19 @@ import UIKit
 import WireCommonComponents
 import SwiftUI
 
+// MARK: - Extend UIFont to SwiftUIFont
+
+extension UIFont {
+    var swiftUIfont: Font {
+        return Font(self)
+    }
+}
+
 // MARK: - Avatar
 
 extension UIFont {
     class var avatarInitial: UIFont {
         return UIFont.systemFont(ofSize: 11, weight: .light)
-    }
-
-    var swiftUIfont: Font {
-        return Font(self)
     }
 }
 

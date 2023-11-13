@@ -239,6 +239,7 @@
 		259393202AFE80AD006DC6DC /* DeviceDetailsBottomView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2593931F2AFE80AD006DC6DC /* DeviceDetailsBottomView.swift */; };
 		259393222AFE80DB006DC6DC /* DeviceDetailsProteusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 259393212AFE80DB006DC6DC /* DeviceDetailsProteusView.swift */; };
 		259393242AFE80F8006DC6DC /* DeviceMLSView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 259393232AFE80F8006DC6DC /* DeviceMLSView.swift */; };
+		259393262B026ECA006DC6DC /* DeviceActionsHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 259393252B026ECA006DC6DC /* DeviceActionsHandler.swift */; };
 		4067991C29C88AB6001326B5 /* SecurityLevelViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4067991B29C88AB6001326B5 /* SecurityLevelViewTests.swift */; };
 		407831AD2AC4636F005C2978 /* DifferenceKit in Frameworks */ = {isa = PBXBuildFile; productRef = 407831AC2AC4636F005C2978 /* DifferenceKit */; };
 		40C69D702A8627C900376B1C /* TemporaryFileService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40C69D6F2A8627C900376B1C /* TemporaryFileService.swift */; };
@@ -2145,6 +2146,7 @@
 		2593931F2AFE80AD006DC6DC /* DeviceDetailsBottomView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceDetailsBottomView.swift; sourceTree = "<group>"; };
 		259393212AFE80DB006DC6DC /* DeviceDetailsProteusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceDetailsProteusView.swift; sourceTree = "<group>"; };
 		259393232AFE80F8006DC6DC /* DeviceMLSView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceMLSView.swift; sourceTree = "<group>"; };
+		259393252B026ECA006DC6DC /* DeviceActionsHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceActionsHandler.swift; sourceTree = "<group>"; };
 		2B56189E29A517E800D8CCCA /* SecurityTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = SecurityTests.xctestplan; sourceTree = "<group>"; };
 		2B6F6AB329ACC04A001BB36F /* AllTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = AllTests.xctestplan; sourceTree = "<group>"; };
 		4067991B29C88AB6001326B5 /* SecurityLevelViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecurityLevelViewTests.swift; sourceTree = "<group>"; };
@@ -4292,10 +4294,19 @@
 		255D1EB02AFA2B1000378896 /* DeviceView */ = {
 			isa = PBXGroup;
 			children = (
+				259393252B026ECA006DC6DC /* DeviceActionsHandler.swift */,
+				255D1EB42AFA2B1000378896 /* DeviceInfoViewModel.swift */,
+				259393272B027320006DC6DC /* Views */,
+			);
+			path = DeviceView;
+			sourceTree = "<group>";
+		};
+		259393272B027320006DC6DC /* Views */ = {
+			isa = PBXGroup;
+			children = (
 				255D1EB12AFA2B1000378896 /* DeviceView.swift */,
 				255D1EB22AFA2B1000378896 /* DeviceListView.swift */,
 				255D1EB32AFA2B1000378896 /* CertificateDetailsView.swift */,
-				255D1EB42AFA2B1000378896 /* DeviceInfoViewModel.swift */,
 				255D1EB52AFA2B1000378896 /* DeviceDetailsView.swift */,
 				259393172AFAA05E006DC6DC /* CopyValueView.swift */,
 				2593931B2AFE8021006DC6DC /* DeviceDetailsButtonsView.swift */,
@@ -4304,7 +4315,7 @@
 				259393212AFE80DB006DC6DC /* DeviceDetailsProteusView.swift */,
 				259393232AFE80F8006DC6DC /* DeviceMLSView.swift */,
 			);
-			path = DeviceView;
+			path = Views;
 			sourceTree = "<group>";
 		};
 		2B56189C29A508E900D8CCCA /* TestPlans */ = {
@@ -9567,6 +9578,7 @@
 				87372F5121E3678000405D12 /* ConversationTableViewDataSource.swift in Sources */,
 				EF24036A20A198CC002813BE /* UIImagePickerController+iPadPopover.swift in Sources */,
 				87F18BB01E01533F00C69D9B /* CollectionFileCell.swift in Sources */,
+				259393262B026ECA006DC6DC /* DeviceActionsHandler.swift in Sources */,
 				EF6E9FE423193439000B7785 /* ConversationListViewController+State.swift in Sources */,
 				16E0FBAA2331119F000E3235 /* SettingsSignOutCellDescriptor.swift in Sources */,
 				5EA73D8920D901000001D106 /* ImageContainer.swift in Sources */,
