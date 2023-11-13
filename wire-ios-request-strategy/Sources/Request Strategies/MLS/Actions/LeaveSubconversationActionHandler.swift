@@ -49,7 +49,7 @@ final class LeaveSubconversationActionHandler: ActionHandler<LeaveSubconversatio
 
         return ZMTransportRequest(
             path: "/conversations/\(domain)/\(conversationID)/subconversations/\(subconversationType)/self",
-            method: .methodDELETE,
+            method: .delete,
             payload: nil,
             apiVersion: apiVersion.rawValue
         )

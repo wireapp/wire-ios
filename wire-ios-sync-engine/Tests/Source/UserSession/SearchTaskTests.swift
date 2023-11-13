@@ -1119,7 +1119,7 @@ class SearchTaskTests: DatabaseTest {
 
         // then
         let request = try XCTUnwrap(mockTransportSession.receivedRequests().first)
-        XCTAssertEqual(request.method, .methodGET)
+        XCTAssertEqual(request.method, .get)
         XCTAssertEqual(request.path, "/v3/search/contacts?q=john&domain=example.com&size=10")
     }
 
