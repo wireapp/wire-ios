@@ -19,6 +19,7 @@
 
 @import XCTest;
 @import WireTesting;
+@import WireTransport.Testing;
 
 #import "ZMPersistentCookieStorage.h"
 
@@ -45,7 +46,7 @@
     [super setUp];
     [ZMPersistentCookieStorage deleteAllKeychainItems];
     _userIdentifier = NSUUID.createUUID;
-    self.sut = [ZMPersistentCookieStorage storageForServerName:@"1.example.com" userIdentifier:self.userIdentifier];
+    self.sut = [ZMPersistentCookieStorage storageForServerName:@"1.example.com" userIdentifier:self.userIdentifier useCache:YES];
 }
 
 - (void)tearDown
@@ -86,7 +87,7 @@
 - (void)testThatItIsUniqueForServerName;
 {
     ZMPersistentCookieStorage *sut1 = self.sut;
-    ZMPersistentCookieStorage *sut2 = [ZMPersistentCookieStorage storageForServerName:@"2.example.com" userIdentifier:self.userIdentifier];
+    ZMPersistentCookieStorage *sut2 = [ZMPersistentCookieStorage storageForServerName:@"2.example.com" userIdentifier:self.userIdentifier useCache:YES];
 
     XCTAssertNil([sut1 authenticationCookieData]);
     XCTAssertNil([sut2 authenticationCookieData]);
@@ -125,12 +126,40 @@
     }
 }
 
+- (void)testThatItCachesCookies;
+{
+    // given
+    NSData *data = [NSData dataWithBytes:(char []){'a'} length:1];
+    ZMPersistentCookieStorage *sut1 = [ZMPersistentCookieStorage storageForServerName:@"z1.example.com" userIdentifier:self.userIdentifier useCache:YES];
+    XCTAssertTrue([sut1 isCacheEmpty]);
+
+    // when
+    [sut1 setAuthenticationCookieData:data];
+
+    // then
+    XCTAssertFalse([sut1 isCacheEmpty]);
+}
+
+- (void)testThatItDoesNotCacheCookies;
+{
+    // given
+    NSData *data = [NSData dataWithBytes:(char []){'a'} length:1];
+    ZMPersistentCookieStorage *sut1 = [ZMPersistentCookieStorage storageForServerName:@"z1.example.com" userIdentifier:self.userIdentifier useCache:NO];
+    XCTAssertTrue([sut1 isCacheEmpty]);
+
+    // when
+    [sut1 setAuthenticationCookieData:data];
+
+    // then
+    XCTAssertTrue([sut1 isCacheEmpty]);
+}
+
 - (void)testThatItCanDeleteCookiesForASpecificCookieStorage
 {
     // given
     NSUUID *otherUserIdentifier = NSUUID.createUUID;
-    ZMPersistentCookieStorage *sut1 = [ZMPersistentCookieStorage storageForServerName:@"z1.example.com" userIdentifier:self.userIdentifier];
-    ZMPersistentCookieStorage *sut2 = [ZMPersistentCookieStorage storageForServerName:@"z1.example.com" userIdentifier:otherUserIdentifier];
+    ZMPersistentCookieStorage *sut1 = [ZMPersistentCookieStorage storageForServerName:@"z1.example.com" userIdentifier:self.userIdentifier useCache:YES];
+    ZMPersistentCookieStorage *sut2 = [ZMPersistentCookieStorage storageForServerName:@"z1.example.com" userIdentifier:otherUserIdentifier  useCache:YES];
 
     NSData *data1 = [@"This is the first cookie data" dataUsingEncoding:NSUTF8StringEncoding];
     NSData *data2 = [@"This is the second cookie data" dataUsingEncoding:NSUTF8StringEncoding];
@@ -156,8 +185,8 @@
 {
     // given
     NSUUID *otherUserIdentifier = NSUUID.createUUID;
-    ZMPersistentCookieStorage *sut1 = [ZMPersistentCookieStorage storageForServerName:@"z1.example.com" userIdentifier:self.userIdentifier];
-    ZMPersistentCookieStorage *sut2 = [ZMPersistentCookieStorage storageForServerName:@"z1.example.com" userIdentifier:otherUserIdentifier];
+    ZMPersistentCookieStorage *sut1 = [ZMPersistentCookieStorage storageForServerName:@"z1.example.com" userIdentifier:self.userIdentifier useCache:YES];
+    ZMPersistentCookieStorage *sut2 = [ZMPersistentCookieStorage storageForServerName:@"z1.example.com" userIdentifier:otherUserIdentifier useCache:YES];
 
     NSData *data1 = [@"This is the first cookie data" dataUsingEncoding:NSUTF8StringEncoding];
     NSData *data2 = [@"This is the second cookie data" dataUsingEncoding:NSUTF8StringEncoding];
@@ -180,8 +209,8 @@
     // given
     NSUUID *otherUserIdentifier = NSUUID.createUUID;
     NSString *serverName = @"z1.example.com";
-    ZMPersistentCookieStorage *legacySut = [ZMPersistentCookieStorage storageForServerName:serverName userIdentifier:(NSUUID *_Nonnull)nil];
-    ZMPersistentCookieStorage *sut2 = [ZMPersistentCookieStorage storageForServerName:serverName userIdentifier:otherUserIdentifier];
+    ZMPersistentCookieStorage *legacySut = [ZMPersistentCookieStorage storageForServerName:serverName userIdentifier:(NSUUID *_Nonnull)nil useCache:YES];
+    ZMPersistentCookieStorage *sut2 = [ZMPersistentCookieStorage storageForServerName:serverName userIdentifier:otherUserIdentifier useCache:YES];
 
     NSData *data1 = [@"This is the first cookie data" dataUsingEncoding:NSUTF8StringEncoding];
     NSData *data2 = [@"This is the second cookie data" dataUsingEncoding:NSUTF8StringEncoding];
@@ -205,13 +234,13 @@
     // given
     NSString *serverName = @"z1.example.com";
     NSUUID *otherUserIdentifier = NSUUID.createUUID;
-    ZMPersistentCookieStorage *sut2 = [ZMPersistentCookieStorage storageForServerName:serverName userIdentifier:otherUserIdentifier];
-    ZMPersistentCookieStorage *legacySut = [ZMPersistentCookieStorage storageForServerName:serverName userIdentifier:(NSUUID *_Nonnull)nil];
+    ZMPersistentCookieStorage *sut2 = [ZMPersistentCookieStorage storageForServerName:serverName userIdentifier:otherUserIdentifier useCache:YES];
+    ZMPersistentCookieStorage *legacySut = [ZMPersistentCookieStorage storageForServerName:serverName userIdentifier:(NSUUID *_Nonnull)nil useCache:YES];
     NSData *data1 = [@"This is the first cookie data" dataUsingEncoding:NSUTF8StringEncoding];
     NSData *data2 = [@"This is the second cookie data" dataUsingEncoding:NSUTF8StringEncoding];
 
     {
-        ZMPersistentCookieStorage *sut1 = [ZMPersistentCookieStorage storageForServerName:serverName userIdentifier:self.userIdentifier];
+        ZMPersistentCookieStorage *sut1 = [ZMPersistentCookieStorage storageForServerName:serverName userIdentifier:self.userIdentifier useCache:YES];
         [sut1 setAuthenticationCookieData:data1];
         [sut2 setAuthenticationCookieData:data2];
         XCTAssertNil(legacySut.authenticationCookieData);
@@ -234,7 +263,7 @@
 - (void)testThatItHasAccessibleAuthenticationCookieData_WhenAuthenticationCookieDataIsAvailable
 {
     // given
-    ZMPersistentCookieStorage *sut = [ZMPersistentCookieStorage storageForServerName:@"z1.example.com" userIdentifier:self.userIdentifier];
+    ZMPersistentCookieStorage *sut = [ZMPersistentCookieStorage storageForServerName:@"z1.example.com" userIdentifier:self.userIdentifier useCache:YES];
     [sut setAuthenticationCookieData:[@"This is a cookie" dataUsingEncoding:NSUTF8StringEncoding]];
     
     // then

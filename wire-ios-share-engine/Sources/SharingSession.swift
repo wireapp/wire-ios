@@ -71,7 +71,7 @@ class AuthenticationStatus: AuthenticationStatusProvider {
 extension BackendEnvironmentProvider {
     func cookieStorage(for account: Account) -> ZMPersistentCookieStorage {
         let backendURL = self.backendURL.host!
-        return ZMPersistentCookieStorage(forServerName: backendURL, userIdentifier: account.userIdentifier)
+        return ZMPersistentCookieStorage(forServerName: backendURL, userIdentifier: account.userIdentifier, useCache: false)
     }
 
     public func isAuthenticated(_ account: Account) -> Bool {
@@ -242,7 +242,9 @@ public class SharingSession {
 
         guard storeError == nil else { throw InitializationError.missingSharedContainer }
 
-        let cookieStorage = ZMPersistentCookieStorage(forServerName: environment.backendURL.host!, userIdentifier: accountIdentifier)
+        // Don't cache the cookie because if the user logs out and back in again in the main app
+        // process, then the cached cookie will be invalid.
+        let cookieStorage = ZMPersistentCookieStorage(forServerName: environment.backendURL.host!, userIdentifier: accountIdentifier, useCache: false)
         let reachabilityGroup = ZMSDispatchGroup(dispatchGroup: DispatchGroup(), label: "Sharing session reachability")!
         let serverNames = [environment.backendURL, environment.backendWSURL].compactMap { $0.host }
         let reachability = ZMReachability(serverNames: serverNames, group: reachabilityGroup)

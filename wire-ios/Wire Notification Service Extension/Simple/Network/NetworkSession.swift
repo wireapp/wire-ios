@@ -61,9 +61,12 @@ final class NetworkSession: NSObject, NetworkSessionProtocol, URLSessionTaskDele
             throw NotificationServiceError.invalidEnvironment
         }
 
+        // Don't cache the cookie because if the user logs out and back in again in the main app
+        // process, then the cached cookie will be invalid.
         self.cookieProvider = cookieProvider ?? ZMPersistentCookieStorage(
             forServerName: serverName,
-            userIdentifier: userID
+            userIdentifier: userID,
+            useCache: false
         )
 
         self.urlSession = urlRequestable ?? URLSession(configuration: .ephemeral)

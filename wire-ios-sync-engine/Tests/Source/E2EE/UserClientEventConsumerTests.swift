@@ -28,7 +28,8 @@ class UserClientEventConsumerTests: RequestStrategyTestBase {
         super.setUp()
         self.syncMOC.performGroupedBlockAndWait {
             self.cookieStorage = ZMPersistentCookieStorage(forServerName: "myServer",
-                                                           userIdentifier: self.userIdentifier)
+                                                           userIdentifier: self.userIdentifier,
+                                                           useCache: true)
 
             self.clientUpdateStatus = ZMMockClientUpdateStatus(syncManagedObjectContext: self.syncMOC)
 

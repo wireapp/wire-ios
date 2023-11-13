@@ -26,4 +26,9 @@
  */
 + (void)setDoNotPersistToKeychain:(BOOL)disabled;
 
+/**
+ This method should be called for testing only
+ */
+- (BOOL)isCacheEmpty;
+
 @end
