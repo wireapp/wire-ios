@@ -21,7 +21,7 @@ import Foundation
 
 public struct SyncMLSOneToOneConversationAction: EntityAction {
 
-    public typealias Result = Void
+    public typealias Result = MLSGroupID
     public typealias Failure = SyncMLSOneToOneConversationActionError
 
     public let userID: UUID
@@ -45,6 +45,7 @@ public enum SyncMLSOneToOneConversationActionError: Error, Equatable {
     case endpointUnavailable
     case invalidDomain
     case invalidResponse
+    case failedToProcessResponse
     case mlsNotEnabled
     case usersNotConnected
     case unknownn(status: Int, label: String, message: String)

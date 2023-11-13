@@ -498,42 +498,52 @@ final class ConversationEventPayloadProcessor {
             return nil
         }
 
+        print("DEBUG: updating one to one: \(conversationID)")
+
         let conversationType = BackendConversationType.clientConversationType(rawValue: rawConversationType)
 
-        guard
+        if
             let otherMember = payload.members?.others.first,
             let otherUserID = otherMember.id ?? otherMember.qualifiedID?.uuid
-        else {
-            let conversation = ZMConversation.fetch(with: conversationID, domain: payload.qualifiedID?.domain, in: context)
-            conversation?.conversationType = self.conversationType(for: conversation, from: conversationType)
-            conversation?.needsToBeUpdatedFromBackend = false
+        {
+            let otherUser = ZMUser.fetchOrCreate(with: otherUserID, domain: otherMember.qualifiedID?.domain, in: context)
+
+            var conversation: ZMConversation
+            if let existingConversation = otherUser.connection?.conversation {
+                existingConversation.mergeWithExistingConversation(withRemoteID: conversationID)
+                conversation = existingConversation
+            } else {
+                conversation = ZMConversation.fetchOrCreate(with: conversationID, domain: payload.qualifiedID?.domain, in: context)
+                otherUser.connection?.conversation = conversation
+            }
+
+            conversation.remoteIdentifier = conversationID
+            updateAttributes(from: payload, for: conversation, context: context)
+            conversation.conversationType = self.conversationType(for: conversation, from: conversationType)
+
+            updateMessageProtocol(from: payload, for: conversation)
+            updateMetadata(from: payload, for: conversation, context: context)
+            updateMembers(from: payload, for: conversation, context: context)
+            updateConversationTimestamps(for: conversation, serverTimestamp: serverTimestamp)
+            updateConversationStatus(from: payload, for: conversation)
+
+            conversation.needsToBeUpdatedFromBackend = false
+            conversation.isPendingMetadataRefresh = otherUser.isPendingMetadataRefresh
+
+            return conversation
+
+        } else {
+            let conversation = ZMConversation.fetchOrCreate(with: conversationID, domain: payload.qualifiedID?.domain, in: context)
+            conversation.conversationType = self.conversationType(for: conversation, from: conversationType)
+            updateAttributes(from: payload, for: conversation, context: context)
+            updateMessageProtocol(from: payload, for: conversation)
+            updateMetadata(from: payload, for: conversation, context: context)
+            updateMembers(from: payload, for: conversation, context: context)
+            updateConversationTimestamps(for: conversation, serverTimestamp: serverTimestamp)
+            updateConversationStatus(from: payload, for: conversation)
+            conversation.needsToBeUpdatedFromBackend = false
             return conversation
         }
-
-        let otherUser = ZMUser.fetchOrCreate(with: otherUserID, domain: otherMember.qualifiedID?.domain, in: context)
-
-        var conversation: ZMConversation
-        if let existingConversation = otherUser.connection?.conversation {
-            existingConversation.mergeWithExistingConversation(withRemoteID: conversationID)
-            conversation = existingConversation
-        } else {
-            conversation = ZMConversation.fetchOrCreate(with: conversationID, domain: payload.qualifiedID?.domain, in: context)
-            otherUser.connection?.conversation = conversation
-        }
-
-        conversation.remoteIdentifier = conversationID
-        conversation.domain = BackendInfo.isFederationEnabled ? payload.qualifiedID?.domain : nil
-        conversation.conversationType = self.conversationType(for: conversation, from: conversationType)
-
-        updateMetadata(from: payload, for: conversation, context: context)
-        updateMembers(from: payload, for: conversation, context: context)
-        updateConversationTimestamps(for: conversation, serverTimestamp: serverTimestamp)
-        updateConversationStatus(from: payload, for: conversation)
-
-        conversation.needsToBeUpdatedFromBackend = false
-        conversation.isPendingMetadataRefresh = otherUser.isPendingMetadataRefresh
-
-        return conversation
     }
 
     private func updateAttributes(
@@ -543,8 +553,14 @@ final class ConversationEventPayloadProcessor {
     ) {
         conversation.domain = BackendInfo.isFederationEnabled ? payload.qualifiedID?.domain : nil
         conversation.needsToBeUpdatedFromBackend = false
-        conversation.epoch = UInt64(payload.epoch ?? 0)
-        conversation.mlsGroupID = payload.mlsGroupID.flatMap { MLSGroupID(base64Encoded: $0) }
+
+        if let epoch = payload.epoch.flatMap(UInt64.init) {
+            conversation.epoch = epoch
+        }
+
+        if let mlsGroupID = payload.mlsGroupID.flatMap(MLSGroupID.init(base64Encoded:)) {
+            conversation.mlsGroupID = mlsGroupID
+        }
     }
 
     func updateMetadata(

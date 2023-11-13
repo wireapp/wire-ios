@@ -61,36 +61,108 @@ final class ConnectionPayloadProcessor {
         conversation.addParticipantAndUpdateConversationState(user: connection.to, role: nil)
 
         connection.conversation = conversation
+        connection.status = payload.status.internalStatus
         connection.lastUpdateDateInGMT = payload.lastUpdate
 
-        let previousConnectionStatus = connection.status
-        connection.status = payload.status.internalStatus
-        let newConnectionStatus = connection.status
+        if connection.status == .accepted {
+            processAcceptedConnection(
+                connection,
+                in: context
+            )
+        }
+    }
 
-        if 
-            previousConnectionStatus != .accepted && newConnectionStatus == .accepted,
-            let otherUser = connection.to
-        {
-            let selfUser = ZMUser.selfUser(in: context)
-            let commonProtocols = selfUser.supportedProtocols.intersection(otherUser.supportedProtocols)
+    // Actually... where do we update the conversation? Because we need to make
+    // sure that we don't use proteus.
+    // And we need to set the protocol to mls
 
-            if commonProtocols.contains(.mls) {
-                // establsh mls group
-                if conversation.mlsGroupID == nil {
-                    // fetch it via GET /conversations/one2one/{userdomain}/{userId} (persists other meta data too)
-                }
+    private func processAcceptedConnection(
+        _ connection: ZMConnection,
+        in context: NSManagedObjectContext
+    ) {
+        guard
+            let conversation = connection.conversation,
+            let otherUser = connection.to,
+            let otherUserID = otherUser.remoteIdentifier,
+            let otherUserDomain = otherUser.domain?.nilIfEmpty ?? BackendInfo.domain
+        else {
+            return
+        }
 
-                // check with cc if group already exists, if yes, done.
-                // in mls service...
-                // claim key packages for other user
-                // create group
-                // add client to group
-                fatalError("not implemented")
-            } else if commonProtocols.contains(.proteus) {
-                // nothing more to do
-            } else {
-                conversation.isForcedReadOnly = true
-            }
+        let selfUser = ZMUser.selfUser(in: context)
+        let selfProtocols = selfUser.supportedProtocols
+        let otherProtocols = otherUser.supportedProtocols
+        let commonProtocols = selfProtocols.intersection(otherProtocols)
+
+        if commonProtocols.contains(.mls) {
+            let otherUserQualifiedID = QualifiedID(
+                uuid: otherUserID,
+                domain: otherUserDomain
+            )
+
+            processMLSOneToOne(
+                with: otherUserQualifiedID,
+                in: context
+            )
+
+        } else if commonProtocols.contains(.proteus) {
+            // nothing more to do
+        } else {
+            conversation.isForcedReadOnly = true
+        }
+
+//        // todo: sync one to one handler
+//        // there's no handler instance for this yet. But maybe it's not needed actually...
+//        fetchSupportedProtocols(for: otherUser, in: context) { [weak self] result in
+//            guard let self else { return }
+//
+//            switch result {
+//            case .success(let supportedProtocols):
+//                otherUser.supportedProtocols = supportedProtocols
+//
+//
+//
+//            case .failure:
+//                // TODO: handle
+//                break
+//            }
+//        }
+    }
+
+    private func fetchSupportedProtocols(
+        for user: ZMUser,
+        in context: NSManagedObjectContext,
+        resultHandler: @escaping (Swift.Result<Set<MessageProtocol>, FetchSupportedProtocolsAction.Failure>) -> Void
+    ) {
+        guard
+            let userID = user.remoteIdentifier,
+            let domain = user.domain?.nilIfEmpty ?? BackendInfo.domain
+        else {
+            // TODO: error?
+            return
+        }
+
+        var action = FetchSupportedProtocolsAction(
+            userID: QualifiedID(
+                uuid: userID,
+                domain: domain
+            )
+        )
+
+        action.perform(
+            in: context.notificationContext,
+            resultHandler: resultHandler
+        )
+    }
+
+    private func processMLSOneToOne(
+        with userID: QualifiedID,
+        in context: NSManagedObjectContext
+    ) {
+        guard let mlsService = context.mlsService else { return }
+
+        Task {
+            try? await mlsService.establishOneToOneGroupIfNeeded(with: userID)
         }
     }
 
