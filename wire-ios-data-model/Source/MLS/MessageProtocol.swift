@@ -35,12 +35,19 @@ public enum MessageProtocol: Int16 {
 
     case mls
 
+    /// In this case, we have conversations using the MLS Protocol and conversations using
+    /// the Proteus Protocol
+
+    case mixed
+
     public init?(string: String) {
         switch string {
         case "mls":
             self = .mls
         case "proteus":
             self = .proteus
+        case "mixed":
+            self = .mixed
         default:
             return nil
         }
