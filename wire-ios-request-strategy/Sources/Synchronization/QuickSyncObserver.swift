@@ -36,31 +36,21 @@ public class QuickSyncObserver: QuickSyncObserverInterface {
     }
 
     public func waitForQuickSyncToFinish() async {
-        @Sendable func quickHasCompleted() async -> Bool {
+        func quickSyncHasCompleted() async -> Bool {
             await context.perform {
                 return self.applicationStatus.synchronizationState == .online
             }
         }
 
-        if await quickHasCompleted() {
+        if await quickSyncHasCompleted() {
             return
         }
 
-        return await withCheckedContinuation { continuation in
-            Task {
-                if await quickHasCompleted() {
-                    continuation.resume()
-                    return
-                }
-
-                for await _ in NotificationCenter.default.notifications(
-                    named: .quickSyncCompletedNotification,
-                    object: notificationContext
-                ) {
-                    continuation.resume()
-                    break
-                }
-            }
+        for await _ in NotificationCenter.default.notifications(
+            named: .quickSyncCompletedNotification,
+            object: notificationContext
+        ) {
+            break
         }
     }
 }
