@@ -47,11 +47,12 @@ struct DeviceView: View {
 
 private extension String {
     func clippedValue() -> String {
-        if self.count > 100 {
+        let offsetValue = 25
+        if self.count > offsetValue {
             return String(
                 self[...self.index(
                     self.startIndex,
-                    offsetBy: 100
+                    offsetBy: offsetValue
                 )]
             ) + "..."
         } else {
@@ -65,7 +66,7 @@ private extension String {
         viewModel:
             DeviceInfoViewModel(
                 udid: "123g4",
-                title: "Device 4",
+                title: "Devidfdfgdfgdfgdfgfddfdfgdfdgfdgdgdfgdfgdfgdfgdfgdfgdfdgfdfgdgdgdfgdce 4",
                 mlsThumbprint: "skfjnskjdffnskjn",
                 deviceKeyFingerprint:
 """
