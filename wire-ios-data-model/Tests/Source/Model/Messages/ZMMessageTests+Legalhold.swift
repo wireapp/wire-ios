@@ -21,9 +21,6 @@ import WireTesting
 @testable import WireDataModel
 
 class ZMMessageTests_Legalhold: BaseZMClientMessageTests {
-}
-
-extension ZMMessageTests_Legalhold {
 
     func testThatItUpdatesLegalHoldStatusFlag_WhenLegalHoldIsEnabled() throws {
         // given
