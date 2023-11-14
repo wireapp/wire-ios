@@ -37,12 +37,12 @@ public class SessionEstablisher {
     private let managedObjectContext: NSManagedObjectContext
     private let requestFactory = MissingClientsRequestFactory()
     private let processor = PrekeyPayloadProcessor()
-    private let BATCH_SIZE = 28
+    private let batchSize = 28
 
     func establishSession(with clients: Set<QualifiedClientID>, apiVersion: APIVersion) async -> Swift.Result<Void, SessionEstablisherError> {
 
         // Establish sessions in chunks and return on first error
-        for chunk in Array(clients).chunked(into: BATCH_SIZE) {
+        for chunk in Array(clients).chunked(into: batchSize) {
             let result = await internalEstablishSessions(for: Set(chunk), apiVersion: apiVersion)
             if case Swift.Result.failure = result {
                 return result
