@@ -84,7 +84,6 @@ static NSTimeInterval zmMessageExpirationTimer = 0.3;
     XCTAssertEqual(self.notificationCenter.scheduledRequests.count, 1u);
 }
 
-// TODO: jacob doesn't really make sense anymore
 - (void)testThatItSendsUILocalNotificationsForExpiredMessageNotPickedUpForRequestWhenGoingToTheBackground
 {
     // given
