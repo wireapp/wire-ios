@@ -20,11 +20,38 @@ import Foundation
 
 public struct UpdateConversationProtocolAction: EntityAction {
 
+    // MARK: - Properties
+
+    public var domain: String
+    public var conversationID: UUID
+    public var messageProtocol: MessageProtocol
+    public var resultHandler: ResultHandler?
+
+    // MARK: - Life cycle
+
+    public init(
+        domain: String,
+        conversationID: UUID,
+        messageProtocol: MessageProtocol,
+        resultHandler: ResultHandler?
+    ) {
+        self.domain = domain
+        self.conversationID = conversationID
+        self.messageProtocol = messageProtocol
+        self.resultHandler = resultHandler
+    }
+
+}
+
+extension UpdateConversationProtocolAction {
+
     // MARK: - Types
 
     public typealias Result = Void // [ZMUpdateEvent]
 
-    public enum Failure: String, LocalizedError, Equatable {
+    public enum Failure: String, Equatable {
+
+        case endpointUnavailable
 
         // 400
         case mlsMigrationCriteriaNotSatisfied = "mls-migration-criteria-not-satisfied"
@@ -41,54 +68,59 @@ public struct UpdateConversationProtocolAction: EntityAction {
         case noTeam = "no-team"
         case noConversation = "no-conversation"
 
-        public var errorDescription: String? {
+        // case unexpected(statusCode: Int, label: String, message: String)
+
+        public var statusCode: Int? {
             switch self {
-
-                // 400
-
+            case .endpointUnavailable:
+                return .none
             case .mlsMigrationCriteriaNotSatisfied:
-                return "The migration criteria for mixed to MLS protocol transition are not satisfied for this conversation"
-
-                // 403
-
-            case .operationDenied:
-                return "Insufficient permissions"
-            case .noTeamMember:
-                return "Requesting user is not a team member"
-            case .invalidOp:
-                return "Invalid operation"
-            case .actionDenied:
-                return "Insufficient authorization (missing leave_conversation)"
-            case .invalidProtocolTransition:
-                return "Protocol transition is invalid"
-
-                // 404
-
-            case .cnvDomainOrCNVNotFound:
-                return "cnv_domain or cnv not found"
-            case .noTeam:
-                return "Team not found"
-            case .noConversation:
-                return "Conversation not found"
+                return 400
+            case .operationDenied, .noTeamMember, .invalidOp, .actionDenied, .invalidProtocolTransition:
+                return 403
+            case .cnvDomainOrCNVNotFound, .noTeam, .noConversation:
+                return 404
             }
         }
     }
 
-    // MARK: - Properties
+}
 
-    public var domain: String
-    public var conversationID: UUID
-    public var resultHandler: ResultHandler?
+extension UpdateConversationProtocolAction.Failure: LocalizedError {
 
-    // MARK: - Life cycle
+    public var errorDescription: String? {
+        switch self {
 
-    public init(
-        domain: String,
-        conversationID: UUID,
-        resultHandler: ResultHandler?
-    ) {
-        self.domain = domain
-        self.conversationID = conversationID
-        self.resultHandler = resultHandler
+        case .endpointUnavailable:
+            return "This action requires API v5"
+
+            // 400
+
+        case .mlsMigrationCriteriaNotSatisfied:
+            return "The migration criteria for mixed to MLS protocol transition are not satisfied for this conversation"
+
+            // 403
+
+        case .operationDenied:
+            return "Insufficient permissions"
+        case .noTeamMember:
+            return "Requesting user is not a team member"
+        case .invalidOp:
+            return "Invalid operation"
+        case .actionDenied:
+            return "Insufficient authorization (missing leave_conversation)"
+        case .invalidProtocolTransition:
+            return "Protocol transition is invalid"
+
+            // 404
+
+        case .cnvDomainOrCNVNotFound:
+            return "cnv_domain or cnv not found"
+        case .noTeam:
+            return "Team not found"
+        case .noConversation:
+            return "Conversation not found"
+        }
     }
+
 }
