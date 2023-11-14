@@ -119,7 +119,7 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
             zmLog.debug("Scheduling request to '/calls/config/v2'")
 
             return ZMTransportRequest(path: "/calls/config/v2",
-                                      method: .methodGET,
+                                      method: .get,
                                       binaryData: nil,
                                       type: "application/json",
                                       contentDisposition: nil,

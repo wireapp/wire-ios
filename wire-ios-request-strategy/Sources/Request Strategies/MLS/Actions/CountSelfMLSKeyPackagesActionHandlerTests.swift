@@ -37,7 +37,7 @@ class CountSelfMLSKeyPackagesActionHandlerTests: ActionHandlerTestBase<CountSelf
         try test_itGeneratesARequest(
             for: action,
             expectedPath: requestPath,
-            expectedMethod: .methodGET,
+            expectedMethod: .get,
             apiVersion: .v5
         )
     }

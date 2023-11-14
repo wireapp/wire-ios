@@ -35,7 +35,7 @@ class FetchBackendMLSPublicKeysActionHandler: ActionHandler<FetchBackendMLSPubli
         case .v5:
             return ZMTransportRequest(
                 path: "/mls/public-keys",
-                method: .methodGET,
+                method: .get,
                 payload: nil,
                 apiVersion: apiVersion.rawValue
             )

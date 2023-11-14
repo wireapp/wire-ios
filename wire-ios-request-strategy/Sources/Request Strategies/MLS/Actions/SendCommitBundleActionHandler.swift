@@ -43,7 +43,7 @@ class SendCommitBundleActionHandler: ActionHandler<SendCommitBundleAction> {
 
         return ZMTransportRequest(
             path: "/mls/commit-bundles",
-            method: .methodPOST,
+            method: .post,
             binaryData: action.commitBundle,
             type: "message/mls",
             contentDisposition: nil,

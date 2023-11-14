@@ -89,7 +89,7 @@ private struct MessageDestructionTimeoutRequestFactory {
             let timeoutInMS: Int64 = Int64(timeout) * 1000
             payload = ["message_timer": timeoutInMS]
         }
-        return .init(path: "/conversations/\(identifier)/message-timer", method: .methodPUT, payload: payload as ZMTransportData, apiVersion: apiVersion.rawValue)
+        return .init(path: "/conversations/\(identifier)/message-timer", method: .put, payload: payload as ZMTransportData, apiVersion: apiVersion.rawValue)
     }
 
 }

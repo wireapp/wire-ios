@@ -86,7 +86,7 @@ class ConversationTests_Guests: IntegrationTest {
         XCTAssertEqual(mockTransportSession.receivedRequests().count, 1)
         guard let request = mockTransportSession.receivedRequests().first else { return }
         XCTAssertEqual(request.path, "/conversations/\(conversation.remoteIdentifier!.transportString())/code")
-        XCTAssertEqual(request.method, .methodPOST)
+        XCTAssertEqual(request.method, .post)
     }
 
     func testThatItSendsRequestToFetchTheGuestLinkStatus() {
@@ -117,7 +117,7 @@ class ConversationTests_Guests: IntegrationTest {
         XCTAssertEqual(mockTransportSession.receivedRequests().count, 1)
         guard let request = mockTransportSession.receivedRequests().first else { return }
         XCTAssertEqual(request.path, "/conversations/\(conversation.remoteIdentifier!.transportString())/features/conversationGuestLinks")
-        XCTAssertEqual(request.method, .methodGET)
+        XCTAssertEqual(request.method, .get)
 
     }
 
@@ -185,7 +185,7 @@ class ConversationTests_Guests: IntegrationTest {
         XCTAssertEqual(requestFirst.path, "/conversations/\(conversation.remoteIdentifier!.transportString())/access")
         guard let requestLast = mockTransportSession.receivedRequests().last else { return }
         XCTAssertEqual(requestLast.path, "/conversations/\(conversation.remoteIdentifier!.transportString())/code")
-        XCTAssertEqual(requestLast.method, .methodPOST)
+        XCTAssertEqual(requestLast.method, .post)
     }
 
     func testThatItSendsRequestToFetchTheLink_NoLink() {
@@ -218,7 +218,7 @@ class ConversationTests_Guests: IntegrationTest {
         XCTAssertEqual(mockTransportSession.receivedRequests().count, 1)
         guard let request = mockTransportSession.receivedRequests().first else { return }
         XCTAssertEqual(request.path, "/conversations/\(conversation.remoteIdentifier!.transportString())/code")
-        XCTAssertEqual(request.method, .methodGET)
+        XCTAssertEqual(request.method, .get)
     }
 
     func testThatItSendsRequestToFetchTheLink_LinkExists() {
@@ -254,7 +254,7 @@ class ConversationTests_Guests: IntegrationTest {
         XCTAssertEqual(mockTransportSession.receivedRequests().count, 1)
         guard let request = mockTransportSession.receivedRequests().first else { return }
         XCTAssertEqual(request.path, "/conversations/\(conversation.remoteIdentifier!.transportString())/code")
-        XCTAssertEqual(request.method, .methodGET)
+        XCTAssertEqual(request.method, .get)
     }
 
     func testThatItSendsRequestToDeleteTheLink() {
@@ -290,7 +290,7 @@ class ConversationTests_Guests: IntegrationTest {
         XCTAssertEqual(mockTransportSession.receivedRequests().count, 1)
         guard let request = mockTransportSession.receivedRequests().first else { return }
         XCTAssertEqual(request.path, "/conversations/\(conversation.remoteIdentifier!.transportString())/code")
-        XCTAssertEqual(request.method, .methodDELETE)
+        XCTAssertEqual(request.method, .delete)
     }
 
     func testThatItSendsRequestToDeleteTheLink_LinkDoesNotExist() {
@@ -324,7 +324,7 @@ class ConversationTests_Guests: IntegrationTest {
         XCTAssertEqual(mockTransportSession.receivedRequests().count, 1)
         guard let request = mockTransportSession.receivedRequests().first else { return }
         XCTAssertEqual(request.path, "/conversations/\(conversation.remoteIdentifier!.transportString())/code")
-        XCTAssertEqual(request.method, .methodDELETE)
+        XCTAssertEqual(request.method, .delete)
     }
 
     func testThatAccessModeChangeEventIsHandled() {
