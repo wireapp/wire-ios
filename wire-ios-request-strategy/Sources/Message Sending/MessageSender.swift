@@ -203,7 +203,7 @@ public class MessageSender {
             }
         default:
             if case .permanentError = failure.response?.result {
-                return .success(Set()) // FIXME: [jacob] it's dangerous to retry indefinitely like this
+                return .success(Set()) // FIXME: [jacob] it's dangerous to retry indefinitely like this WPB-5454
             } else {
                 return .failure(MessageSendError.networkError(failure))
             }
