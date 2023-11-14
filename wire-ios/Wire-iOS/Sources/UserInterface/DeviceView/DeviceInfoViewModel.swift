@@ -110,7 +110,9 @@ struct DeviceInfoViewModel {
         self.isProteusVerificationEnabled = isProteusVerificationEnabled
         self.e2eIdentityCertificate = e2eIdentityCertificate
         self.actionsHandler = actionsHandler
+        #if DEBUG
         FontScheme.configure(with: .large)
+        #endif
     }
 }
 
