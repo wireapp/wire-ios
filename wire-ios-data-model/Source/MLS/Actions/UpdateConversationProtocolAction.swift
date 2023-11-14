@@ -18,13 +18,14 @@
 
 import Foundation
 
-public struct UpdateConversationProtocolAction: EntityAction {
+public struct UpdateConversationProtocolAction<ConversationUpdatedEvent>: EntityAction { // ConversationEvent is declared in WireRequestStrategy
 
     // MARK: - Properties
 
     public var domain: String
     public var conversationID: UUID
     public var messageProtocol: MessageProtocol
+    #warning("TODO: this is not needed")
     public var resultHandler: ResultHandler?
 
     // MARK: - Life cycle
@@ -32,13 +33,11 @@ public struct UpdateConversationProtocolAction: EntityAction {
     public init(
         domain: String,
         conversationID: UUID,
-        messageProtocol: MessageProtocol,
-        resultHandler: ResultHandler?
+        messageProtocol: MessageProtocol
     ) {
         self.domain = domain
         self.conversationID = conversationID
         self.messageProtocol = messageProtocol
-        self.resultHandler = resultHandler
     }
 
 }
@@ -47,80 +46,15 @@ extension UpdateConversationProtocolAction {
 
     // MARK: - Types
 
-    public typealias Result = Void // [ZMUpdateEvent]
+    public typealias Result = Success
 
-    public enum Failure: String, Equatable {
-
-        case endpointUnavailable
-
-        // 400
-        case mlsMigrationCriteriaNotSatisfied = "mls-migration-criteria-not-satisfied"
-
-        // 403
-        case operationDenied = "operation-denied"
-        case noTeamMember = "no-team-member"
-        case invalidOp = "invalid-op"
-        case actionDenied = "action-denied"
-        case invalidProtocolTransition = "invalid-protocol-transition"
-
-        // 404
-        case cnvDomainOrCNVNotFound // TODO: how does response look like?
-        case noTeam = "no-team"
-        case noConversation = "no-conversation"
-
-        // case unexpected(statusCode: Int, label: String, message: String)
-
-        public var statusCode: Int? {
-            switch self {
-            case .endpointUnavailable:
-                return .none
-            case .mlsMigrationCriteriaNotSatisfied:
-                return 400
-            case .operationDenied, .noTeamMember, .invalidOp, .actionDenied, .invalidProtocolTransition:
-                return 403
-            case .cnvDomainOrCNVNotFound, .noTeam, .noConversation:
-                return 404
-            }
-        }
+    public enum Success {
+        case conversationUpdated(ConversationUpdatedEvent), conversationUnchanged
     }
 
-}
-
-extension UpdateConversationProtocolAction.Failure: LocalizedError {
-
-    public var errorDescription: String? {
-        switch self {
-
-        case .endpointUnavailable:
-            return "This action requires API v5"
-
-            // 400
-
-        case .mlsMigrationCriteriaNotSatisfied:
-            return "The migration criteria for mixed to MLS protocol transition are not satisfied for this conversation"
-
-            // 403
-
-        case .operationDenied:
-            return "Insufficient permissions"
-        case .noTeamMember:
-            return "Requesting user is not a team member"
-        case .invalidOp:
-            return "Invalid operation"
-        case .actionDenied:
-            return "Insufficient authorization (missing leave_conversation)"
-        case .invalidProtocolTransition:
-            return "Protocol transition is invalid"
-
-            // 404
-
-        case .cnvDomainOrCNVNotFound:
-            return "cnv_domain or cnv not found"
-        case .noTeam:
-            return "Team not found"
-        case .noConversation:
-            return "Conversation not found"
-        }
+    public enum Failure: Equatable, Error {
+        case endpointUnavailable
+        case api(statusCode: Int, label: String, message: String)
     }
 
 }

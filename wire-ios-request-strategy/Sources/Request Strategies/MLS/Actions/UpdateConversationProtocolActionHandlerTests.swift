@@ -19,7 +19,7 @@
 import XCTest
 @testable import WireRequestStrategy
 
-final class UpdateConversationProtocolActionHandlerTests: ActionHandlerTestBase<UpdateConversationProtocolAction, UpdateConversationProtocolActionHandler> {
+final class UpdateConversationProtocolActionHandlerTests: ActionHandlerTestBase<WireRequestStrategy.UpdateConversationProtocolAction, UpdateConversationProtocolActionHandler> {
 
     /*
     let mlsMessage = "mlsMessage".data(using: .utf8)!

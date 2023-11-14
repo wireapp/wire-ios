@@ -18,6 +18,9 @@
 
 import WireDataModel
 
+typealias UpdateConversationProtocolEvent = Payload.ConversationEvent<Payload.UpdateConversationProtocolResponseData>
+typealias UpdateConversationProtocolAction = WireDataModel.UpdateConversationProtocolAction<UpdateConversationProtocolEvent>
+
 final class UpdateConversationProtocolActionHandler: ActionHandler<UpdateConversationProtocolAction> {
 
     typealias EventPayload = [AnyHashable: Any]
@@ -40,7 +43,7 @@ final class UpdateConversationProtocolActionHandler: ActionHandler<UpdateConvers
         let payload = ["protocol": action.messageProtocol.stringValue] as ZMTransportData
 
         return .init(
-            path: "",
+            path: path,
             method: .put,
             payload: payload,
             apiVersion: apiVersion.rawValue
@@ -53,33 +56,23 @@ final class UpdateConversationProtocolActionHandler: ActionHandler<UpdateConvers
     ) {
         var action = action
 
-        /*
-        response.httpStatus, response.payloadLabel()
+        switch response.httpStatus {
 
-        if let error = Action.Failure(from: response) {
+        case 200:
+            guard let event = Payload.ConversationEvent<Payload.UpdateConversationProtocolResponseData>(response) else {
+                assertionFailure("failed to decode response")
+                return action.succeed(with: .conversationUnchanged)
+            }
+            action.succeed(with: .conversationUpdated(event))
+
+        case 204:
+            action.succeed(with: .conversationUnchanged)
+
+        default:
+            let label = response.payloadLabel()
+            let message = response.payload?.asDictionary()?["message"] as? String
+            let error = Action.Failure.api(statusCode: response.httpStatus, label: label ?? "", message: message ?? "")
             action.fail(with: error)
-        } else {
-            guard
-                let payload = response.payload?.asDictionary(),
-                let eventsData = payload["events"] as? [EventPayload]
-            else {
-                action.fail(with: .malformedResponse)
-                return
-            }
-
-            let updateEvents = eventsData.compactMap { eventData in
-                ZMUpdateEvent(
-                    uuid: nil,
-                    payload: eventData,
-                    transient: false,
-                    decrypted: false,
-                    source: .download
-                )
-            }
-
-            action.succeed(with: updateEvents)
         }
-         */
     }
-
 }
