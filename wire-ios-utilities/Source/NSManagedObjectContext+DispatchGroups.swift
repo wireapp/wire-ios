@@ -20,6 +20,10 @@ import Foundation
 
 public extension NSManagedObjectContext {
 
+    /// Enter all dispatch groups except the 2nd standard dispatch group.
+    ///
+    /// Should be used instead of `enterAllGroups` when it's desired to wait for Tasks to complete in tests since
+    /// otherwise  delayed saves could be blocked.
     func enterAllGroupsExceptSecondary() -> [ZMSDispatchGroup] {
         let secondaryGroup = dispatchGroupContext.groups[1]
         return dispatchGroupContext.enterAll(except: secondaryGroup)
