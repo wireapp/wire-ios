@@ -384,7 +384,7 @@ extension CallingRequestStrategy: WireCallCenterTransport {
             }
 
             switch (conversation.messageProtocol, recipients) {
-            case (.proteus, _), (.mls, .conversationParticipants):
+            case (.proteus, _), (.mls, .conversationParticipants), (.mixed, _):
                 message.send(with: self.messageSync, completion: completionHandler)
 
             case (.mls, _):
@@ -395,9 +395,6 @@ extension CallingRequestStrategy: WireCallCenterTransport {
                 } else {
                     Logging.mls.info("ignoring targeted outgoing calling message b/c it's not CONFKEY nor sent over self conversation")
                 }
-            case (.mixed, _):
-                // TODO: - [AGIS] Fix that when we need to take care of calling while in mixed protocol
-                break
             }
         }
     }
