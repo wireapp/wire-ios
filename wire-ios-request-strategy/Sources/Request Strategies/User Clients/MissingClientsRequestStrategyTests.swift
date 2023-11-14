@@ -65,7 +65,7 @@ class MissingClientsRequestStrategyTests: MessagingTestBase {
             let request = self.sut.requestsFactory.fetchPrekeys(for: self.selfClient.missingClients!, apiVersion: .v0)!
 
             // THEN
-            XCTAssertEqual(request.transportRequest.method, ZMTransportRequestMethod.methodPOST)
+            XCTAssertEqual(request.transportRequest.method, ZMTransportRequestMethod.post)
             XCTAssertEqual(request.transportRequest.path, "/users/prekeys")
 
             guard let payloadData = (request.transportRequest.payload as? String)?.data(using: .utf8) else {
@@ -100,7 +100,7 @@ class MissingClientsRequestStrategyTests: MessagingTestBase {
             let request = self.sut.requestsFactory.fetchPrekeysFederated(for: self.selfClient.missingClients!, apiVersion: .v1)!
 
             // THEN
-            XCTAssertEqual(request.transportRequest.method, ZMTransportRequestMethod.methodPOST)
+            XCTAssertEqual(request.transportRequest.method, ZMTransportRequestMethod.post)
             XCTAssertEqual(request.transportRequest.path, "/v1/users/list-prekeys")
 
             guard let payloadData = (request.transportRequest.payload as? String)?.data(using: .utf8) else {
@@ -235,7 +235,7 @@ class MissingClientsRequestStrategyTests: MessagingTestBase {
             }
 
             // THEN
-            XCTAssertEqual(firstRequest.method, .methodPOST)
+            XCTAssertEqual(firstRequest.method, .post)
             XCTAssertEqual(firstRequest.path, "/users/prekeys")
             XCTAssertEqual(firstPayload.count, 1)
             guard let first = firstPayload.first else {
@@ -263,7 +263,7 @@ class MissingClientsRequestStrategyTests: MessagingTestBase {
             }
 
             // THEN
-            XCTAssertEqual(secondRequest.method, .methodPOST)
+            XCTAssertEqual(secondRequest.method, .post)
             XCTAssertEqual(secondRequest.path, "/users/prekeys")
             XCTAssertEqual(secondPayload.count, 1)
             guard let second = secondPayload.first else {
@@ -324,7 +324,7 @@ class MissingClientsRequestStrategyTests: MessagingTestBase {
             }
 
             // THEN
-            XCTAssertEqual(firstRequest.method, .methodPOST)
+            XCTAssertEqual(firstRequest.method, .post)
             XCTAssertEqual(firstRequest.path, "/v1/users/list-prekeys")
             XCTAssertEqual(firstPayload.count, 1)
             guard let first = firstPayload.first?.value.first else {
@@ -351,7 +351,7 @@ class MissingClientsRequestStrategyTests: MessagingTestBase {
             }
 
             // THEN
-            XCTAssertEqual(secondRequest.method, .methodPOST)
+            XCTAssertEqual(secondRequest.method, .post)
             XCTAssertEqual(secondRequest.path, "/v1/users/list-prekeys")
             XCTAssertEqual(secondPayload.count, 1)
             guard let second = secondPayload.first?.value.first else {
@@ -667,7 +667,7 @@ class MissingClientsRequestStrategyTests: MessagingTestBase {
             }
 
             // THEN
-            XCTAssertEqual(request.method, ZMTransportRequestMethod.methodPOST)
+            XCTAssertEqual(request.method, ZMTransportRequestMethod.post)
             XCTAssertEqual(request.path, "/users/prekeys")
 
             let payloadData = (request.payload as? String)?.data(using: .utf8)
@@ -726,7 +726,7 @@ extension MissingClientsRequestStrategyTests {
             return XCTFail("Request should contain payload", file: file, line: line)
         }
 
-        XCTAssertEqual(request.method, .methodPOST, file: file, line: line)
+        XCTAssertEqual(request.method, .post, file: file, line: line)
         XCTAssertEqual(request.path, "/users/prekeys", file: file, line: line)
         expectedClients.forEach {
             guard let userKey = $0.user?.remoteIdentifier?.transportString() else {
@@ -757,7 +757,7 @@ extension MissingClientsRequestStrategyTests {
             return XCTFail("Request should contain payload", file: file, line: line)
         }
 
-        XCTAssertEqual(request.method, .methodPOST, file: file, line: line)
+        XCTAssertEqual(request.method, .post, file: file, line: line)
 
         switch apiVersion {
         case .v0:

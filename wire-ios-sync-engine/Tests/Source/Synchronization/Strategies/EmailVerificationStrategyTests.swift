@@ -53,7 +53,7 @@ class RegistrationCredentialVerificationStrategyTests: MessagingTest {
         let payload = ["email": email,
                        "locale": NSLocale.formattedLocaleIdentifier()!]
 
-        let transportRequest = ZMTransportRequest(path: path, method: .methodPOST, payload: payload as ZMTransportData, apiVersion: APIVersion.v0.rawValue)
+        let transportRequest = ZMTransportRequest(path: path, method: .post, payload: payload as ZMTransportData, apiVersion: APIVersion.v0.rawValue)
         registrationStatus.phase = .sendActivationCode(credentials: .email(email))
 
         // when
@@ -72,7 +72,7 @@ class RegistrationCredentialVerificationStrategyTests: MessagingTest {
         let payload = ["phone": phone,
                        "locale": NSLocale.formattedLocaleIdentifier()!]
 
-        let transportRequest = ZMTransportRequest(path: path, method: .methodPOST, payload: payload as ZMTransportData, apiVersion: APIVersion.v0.rawValue)
+        let transportRequest = ZMTransportRequest(path: path, method: .post, payload: payload as ZMTransportData, apiVersion: APIVersion.v0.rawValue)
         registrationStatus.phase = .sendActivationCode(credentials: .phone(phone))
 
         // when
@@ -123,7 +123,7 @@ class RegistrationCredentialVerificationStrategyTests: MessagingTest {
                        "code": code,
                        "dryrun": true] as [String: Any]
 
-        let transportRequest = ZMTransportRequest(path: path, method: .methodPOST, payload: payload as ZMTransportData, apiVersion: APIVersion.v0.rawValue)
+        let transportRequest = ZMTransportRequest(path: path, method: .post, payload: payload as ZMTransportData, apiVersion: APIVersion.v0.rawValue)
         registrationStatus.phase = .checkActivationCode(credentials: .email(email), code: code)
 
         // when
@@ -144,7 +144,7 @@ class RegistrationCredentialVerificationStrategyTests: MessagingTest {
                        "code": code,
                        "dryrun": true] as [String: Any]
 
-        let transportRequest = ZMTransportRequest(path: path, method: .methodPOST, payload: payload as ZMTransportData, apiVersion: APIVersion.v0.rawValue)
+        let transportRequest = ZMTransportRequest(path: path, method: .post, payload: payload as ZMTransportData, apiVersion: APIVersion.v0.rawValue)
         registrationStatus.phase = .checkActivationCode(credentials: .phone(phone), code: code)
 
         // when

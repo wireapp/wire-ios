@@ -61,7 +61,7 @@ extension AvailabilityRequestStrategy: ZMUpstreamTranscoder {
         let path = originalPath.pathWithMissingClientStrategy(strategy: dataAndMissingClientStrategy.strategy)
 
         let request = ZMTransportRequest(path: path,
-                                         method: .methodPOST,
+                                         method: .post,
                                          binaryData: dataAndMissingClientStrategy.data,
                                          type: protobufContentType,
                                          contentDisposition: nil,

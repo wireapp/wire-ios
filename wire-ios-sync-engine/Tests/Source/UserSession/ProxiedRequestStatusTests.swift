@@ -40,7 +40,7 @@ class ProxiedRequestsStatusTests: MessagingTest {
 
     func testThatRequestIsAddedToPendingRequest() {
         // given
-        let request = ProxyRequest(type: .giphy, path: "foo/bar", method: .methodGET, callback: nil)
+        let request = ProxyRequest(type: .giphy, path: "foo/bar", method: .get, callback: nil)
 
         // when
         self.sut.add(request: request)
@@ -52,7 +52,7 @@ class ProxiedRequestsStatusTests: MessagingTest {
 
     func testCancelRemovesRequestFromPendingRequests() {
         // given
-        let request = ProxyRequest(type: .giphy, path: "foo/bar", method: .methodGET, callback: nil)
+        let request = ProxyRequest(type: .giphy, path: "foo/bar", method: .get, callback: nil)
         sut.add(request: request)
 
         // when
@@ -64,7 +64,7 @@ class ProxiedRequestsStatusTests: MessagingTest {
 
     func testCancelCancelsAssociatedDataTask() {
         // given
-        let request = ProxyRequest(type: .giphy, path: "foo/bar", method: .methodGET, callback: nil)
+        let request = ProxyRequest(type: .giphy, path: "foo/bar", method: .get, callback: nil)
         let taskIdentifier = ZMTaskIdentifier(identifier: 0, sessionIdentifier: "123")!
         sut.executedRequests[request] = taskIdentifier
 
