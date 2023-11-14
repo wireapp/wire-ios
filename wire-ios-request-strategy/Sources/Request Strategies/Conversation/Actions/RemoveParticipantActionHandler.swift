@@ -59,7 +59,7 @@ class RemoveParticipantActionHandler: ActionHandler<RemoveParticipantAction> {
         }
 
         let path = "/conversations/\(conversationID)/members/\(userID)"
-        return ZMTransportRequest(path: path, method: .methodDELETE, payload: nil, apiVersion: apiVersion.rawValue)
+        return ZMTransportRequest(path: path, method: .delete, payload: nil, apiVersion: apiVersion.rawValue)
     }
 
     func federatedRequest(for action: RemoveParticipantAction, apiVersion: APIVersion) -> ZMTransportRequest? {
@@ -78,7 +78,7 @@ class RemoveParticipantActionHandler: ActionHandler<RemoveParticipantAction> {
         }
         let path = "/conversations/\(conversationID.domain)/\(conversationID.uuid)/members/\(qualifiedUserID.domain)/\(qualifiedUserID.uuid)"
 
-        return ZMTransportRequest(path: path, method: .methodDELETE, payload: nil, apiVersion: apiVersion.rawValue)
+        return ZMTransportRequest(path: path, method: .delete, payload: nil, apiVersion: apiVersion.rawValue)
     }
 
     override func handleResponse(_ response: ZMTransportResponse, action: RemoveParticipantAction) {

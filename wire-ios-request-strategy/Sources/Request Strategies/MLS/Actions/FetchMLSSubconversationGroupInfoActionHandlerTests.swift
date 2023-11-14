@@ -33,7 +33,7 @@ class FetchMLSSubconversationGroupInfoActionHandlerTests: BaseFetchMLSGroupInfoA
         try test_itGeneratesARequest(
             for: action,
             expectedPath: "/v5/conversations/\(domain)/\(conversationId.transportString())/subconversations/\(subgroupType.rawValue)/groupinfo",
-            expectedMethod: .methodGET,
+            expectedMethod: .get,
             expectedAcceptType: .messageMLS,
             apiVersion: .v5
         )

@@ -41,7 +41,7 @@ class FetchSubgroupActionHandler: ActionHandler<FetchSubgroupAction> {
 
         return ZMTransportRequest(
             path: "/conversations/\(action.domain)/\(action.conversationId.transportString())/subconversations/\(action.type.rawValue)",
-            method: .methodGET,
+            method: .get,
             payload: nil,
             apiVersion: apiVersion.rawValue
         )

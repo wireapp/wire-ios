@@ -29,7 +29,7 @@ class GetPushTokensActionHandler: ActionHandler<GetPushTokensAction> {
 
         return ZMTransportRequest(
             path: "/push/tokens",
-            method: .methodGET,
+            method: .get,
             payload: nil,
             apiVersion: apiVersion.rawValue
         )

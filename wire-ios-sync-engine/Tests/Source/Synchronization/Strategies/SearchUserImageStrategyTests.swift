@@ -116,7 +116,7 @@ extension SearchUserImageStrategyTests {
 
         // then
         XCTAssertNotNil(request)
-        XCTAssertEqual(request.method, .methodGET)
+        XCTAssertEqual(request.method, .get)
         XCTAssertTrue(request.needsAuthentication)
 
         XCTAssertTrue(request.path.hasPrefix(UserRequestURL))
@@ -150,7 +150,7 @@ extension SearchUserImageStrategyTests {
 
         // then
         XCTAssertNotNil(request2)
-        XCTAssertEqual(request2.method, .methodGET)
+        XCTAssertEqual(request2.method, .get)
         XCTAssertTrue(request2.needsAuthentication)
 
         let expectedUserIDs = userIDs(from: searchSet2)
@@ -260,7 +260,7 @@ extension SearchUserImageStrategyTests {
 
         // then
         XCTAssertNotNil(request)
-        XCTAssertEqual(request.method, .methodGET)
+        XCTAssertEqual(request.method, .get)
         XCTAssertTrue(request.needsAuthentication)
 
         let expectedPath: String
@@ -317,11 +317,11 @@ extension SearchUserImageStrategyTests {
 
         // then
         XCTAssertNotNil(request1)
-        XCTAssertEqual(request1.method, .methodGET)
+        XCTAssertEqual(request1.method, .get)
         XCTAssertTrue(request1.needsAuthentication)
 
         XCTAssertNotNil(request2)
-        XCTAssertEqual(request2.method, .methodGET)
+        XCTAssertEqual(request2.method, .get)
         XCTAssertTrue(request2.needsAuthentication)
 
         let expectedPath1 = "/assets/v3/\(assetID1)" // requestPath(for:assetID1, of:searchUser1.remoteIdentifier!)

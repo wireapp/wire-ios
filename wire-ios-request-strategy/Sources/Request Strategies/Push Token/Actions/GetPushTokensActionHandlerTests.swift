@@ -57,7 +57,7 @@ class GetPushTokensActionHandlerTests: MessagingTestBase {
 
         // Then
         XCTAssertEqual(request.path, "/push/tokens")
-        XCTAssertEqual(request.method, .methodGET)
+        XCTAssertEqual(request.method, .get)
     }
 
     // MARK: - Response handling

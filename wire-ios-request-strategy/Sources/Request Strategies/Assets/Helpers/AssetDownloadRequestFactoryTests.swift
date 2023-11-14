@@ -43,7 +43,7 @@ final class AssetDownloadRequestFactoryTests: XCTestCase {
 
         // Then
         XCTAssertEqual(request.path, "/assets/v3/key")
-        XCTAssertEqual(request.method, .methodGET)
+        XCTAssertEqual(request.method, .get)
         XCTAssertEqual(request.apiVersion, 0)
     }
 
@@ -63,7 +63,7 @@ final class AssetDownloadRequestFactoryTests: XCTestCase {
 
         // Then
         XCTAssertEqual(request.path, "/v1/assets/v4/domain/key")
-        XCTAssertEqual(request.method, .methodGET)
+        XCTAssertEqual(request.method, .get)
         XCTAssertEqual(request.apiVersion, 1)
     }
 
@@ -82,7 +82,7 @@ final class AssetDownloadRequestFactoryTests: XCTestCase {
 
         // Then
         XCTAssertEqual(request.path, "/v1/assets/v4/localDomain/key")
-        XCTAssertEqual(request.method, .methodGET)
+        XCTAssertEqual(request.method, .get)
         XCTAssertEqual(request.apiVersion, 1)
     }
 
@@ -101,7 +101,7 @@ final class AssetDownloadRequestFactoryTests: XCTestCase {
 
         // Then
         XCTAssertEqual(request.path, "/v1/assets/v4/localDomain/key")
-        XCTAssertEqual(request.method, .methodGET)
+        XCTAssertEqual(request.method, .get)
         XCTAssertEqual(request.apiVersion, 1)
     }
 
@@ -138,7 +138,7 @@ final class AssetDownloadRequestFactoryTests: XCTestCase {
 
         // Then
         XCTAssertEqual(request.path, "/v2/assets/domain/key")
-        XCTAssertEqual(request.method, .methodGET)
+        XCTAssertEqual(request.method, .get)
         XCTAssertEqual(request.apiVersion, 2)
     }
 
@@ -157,7 +157,7 @@ final class AssetDownloadRequestFactoryTests: XCTestCase {
 
         // Then
         XCTAssertEqual(request.path, "/v2/assets/localDomain/key")
-        XCTAssertEqual(request.method, .methodGET)
+        XCTAssertEqual(request.method, .get)
         XCTAssertEqual(request.apiVersion, 2)
     }
 
@@ -176,7 +176,7 @@ final class AssetDownloadRequestFactoryTests: XCTestCase {
 
         // Then
         XCTAssertEqual(request.path, "/v2/assets/localDomain/key")
-        XCTAssertEqual(request.method, .methodGET)
+        XCTAssertEqual(request.method, .get)
         XCTAssertEqual(request.apiVersion, 2)
     }
 

@@ -31,7 +31,7 @@ class MockTransportSessionAPIVersionTests: MockTransportSessionTests {
         // Then
         let response = self.response(forPayload: [:] as ZMTransportData,
                                      path: path,
-                                     method: .methodGET,
+                                     method: .get,
                                      apiVersion: .v0)
 
         // Then
@@ -55,7 +55,7 @@ class MockTransportSessionAPIVersionTests: MockTransportSessionTests {
         // Then
         let response = self.response(forPayload: [:] as ZMTransportData,
                                      path: path,
-                                     method: .methodGET,
+                                     method: .get,
                                      apiVersion: .v0)
 
         // Then
@@ -76,7 +76,7 @@ class MockTransportSessionAPIVersionTests: MockTransportSessionTests {
         // Then
         let response = self.response(forPayload: [:] as ZMTransportData,
                                      path: path,
-                                     method: .methodGET,
+                                     method: .get,
                                      apiVersion: .v0)
 
         // Then
@@ -90,7 +90,7 @@ class MockTransportSessionAPIVersionTests: MockTransportSessionTests {
         // Then
         let response = self.response(forPayload: [:] as ZMTransportData,
                                      path: path,
-                                     method: .methodGET,
+                                     method: .get,
                                      apiVersion: .v1)
 
         // Then

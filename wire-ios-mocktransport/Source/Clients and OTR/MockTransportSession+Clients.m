@@ -30,22 +30,22 @@
 // /clients
 - (ZMTransportResponse *)processClientsRequest:(ZMTransportRequest *)request;
 {
-    if ([request matchesWithPath:@"/clients" method:ZMMethodPOST]) {
+    if ([request matchesWithPath:@"/clients" method:ZMTransportRequestMethodPost]) {
         return [self processRegisterClientWithPayload:[request.payload asDictionary] apiVersion:request.apiVersion];
     }
-    else if ([request matchesWithPath:@"/clients" method:ZMMethodGET]) {
+    else if ([request matchesWithPath:@"/clients" method:ZMTransportRequestMethodGet]) {
         return [self processGetClientsListRequestWithApiVersion:request.apiVersion];
     }
-    else if ([request matchesWithPath:@"/clients/*" method:ZMMethodGET]) {
+    else if ([request matchesWithPath:@"/clients/*" method:ZMTransportRequestMethodGet]) {
         return [self processGetClientById:[request RESTComponentAtIndex:1] apiVersion:request.apiVersion];
     }
-    else if ([request matchesWithPath:@"/clients/*" method:ZMMethodPUT]) {
+    else if ([request matchesWithPath:@"/clients/*" method:ZMTransportRequestMethodPut]) {
         return [self processUpdateClient:[request RESTComponentAtIndex:1] payload:[request.payload asDictionary] apiVersion:request.apiVersion];
     }
-    else if ([request matchesWithPath:@"/clients/*" method:ZMMethodDELETE]) {
+    else if ([request matchesWithPath:@"/clients/*" method:ZMTransportRequestMethodDelete]) {
         return [self processDeleteClientRequest:[request RESTComponentAtIndex:1] apiVersion:request.apiVersion];
     }
-    else if ([request matchesWithPath:@"/clients/*/prekeys" method:ZMMethodGET]) {
+    else if ([request matchesWithPath:@"/clients/*/prekeys" method:ZMTransportRequestMethodGet]) {
         return [self processClientPreKeysForClient:[request RESTComponentAtIndex:1] apiVersion:request.apiVersion];
     }
     return [self errorResponseWithCode:404 reason:@"no-endpoint" apiVersion:request.apiVersion];

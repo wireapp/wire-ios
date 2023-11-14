@@ -69,7 +69,7 @@ public final class UserClientRequestFactory {
             payload["verification_code"] = verificationCode
         }
 
-        let request = ZMTransportRequest(path: "/clients", method: ZMTransportRequestMethod.methodPOST, payload: payload as ZMTransportData, apiVersion: apiVersion.rawValue)
+        let request = ZMTransportRequest(path: "/clients", method: ZMTransportRequestMethod.post, payload: payload as ZMTransportData, apiVersion: apiVersion.rawValue)
         request.add(storeMaxRangeID(client, maxRangeID: preKeysRangeMax))
         request.add(storeAPSSignalingKeys(client, signalingKeys: signalingKeys))
 
@@ -176,7 +176,7 @@ public final class UserClientRequestFactory {
             let payload: [String: Any] = [
                 "prekeys": preKeysPayloadData
             ]
-            let request = ZMTransportRequest(path: "/clients/\(remoteIdentifier)", method: ZMTransportRequestMethod.methodPUT, payload: payload as ZMTransportData, apiVersion: apiVersion.rawValue)
+            let request = ZMTransportRequest(path: "/clients/\(remoteIdentifier)", method: ZMTransportRequestMethod.put, payload: payload as ZMTransportData, apiVersion: apiVersion.rawValue)
             request.add(storeMaxRangeID(client, maxRangeID: preKeysRangeMax))
 
             let userClientNumberOfKeysRemainingKeySet: Set<String> = [ZMUserClientNumberOfKeysRemainingKey]
@@ -192,7 +192,7 @@ public final class UserClientRequestFactory {
                 "sigkeys": signalingKeysPayloadData,
                 "prekeys": [] // NOTE backend always expects 'prekeys' to be present atm
             ]
-            let request = ZMTransportRequest(path: "/clients/\(remoteIdentifier)", method: ZMTransportRequestMethod.methodPUT, payload: payload as ZMTransportData, apiVersion: apiVersion.rawValue)
+            let request = ZMTransportRequest(path: "/clients/\(remoteIdentifier)", method: ZMTransportRequestMethod.put, payload: payload as ZMTransportData, apiVersion: apiVersion.rawValue)
             request.add(storeAPSSignalingKeys(client, signalingKeys: signalingKeys))
 
             let userClientNeedsToUpdateSignalingKeysKeySet: Set<String> = [ZMUserClientNeedsToUpdateSignalingKeysKey]
@@ -215,7 +215,7 @@ public final class UserClientRequestFactory {
 
         let request = ZMTransportRequest(
             path: "/clients/\(clientID)",
-            method: .methodPUT,
+            method: .put,
             payload: payloadDataString as ZMTransportData,
             apiVersion: apiVersion.rawValue
         )
@@ -233,7 +233,7 @@ public final class UserClientRequestFactory {
         let payload: [String: Any] = [
             "capabilities": ["legalhold-implicit-consent"]
         ]
-        let request = ZMTransportRequest(path: "/clients/\(remoteIdentifier)", method: ZMTransportRequestMethod.methodPUT, payload: payload as ZMTransportData, apiVersion: apiVersion.rawValue)
+        let request = ZMTransportRequest(path: "/clients/\(remoteIdentifier)", method: ZMTransportRequestMethod.put, payload: payload as ZMTransportData, apiVersion: apiVersion.rawValue)
         request.add(storeCapabilitiesHandler(client))
 
         let userClientNeedsToUpdateCapabilitiesKeySet: Set<String> = [ZMUserClientNeedsToUpdateCapabilitiesKey]
@@ -255,7 +255,7 @@ public final class UserClientRequestFactory {
             payload = [:]
         }
 
-        let request =  ZMTransportRequest(path: "/clients/\(client.remoteIdentifier!)", method: ZMTransportRequestMethod.methodDELETE, payload: payload as ZMTransportData, apiVersion: apiVersion.rawValue)
+        let request =  ZMTransportRequest(path: "/clients/\(client.remoteIdentifier!)", method: ZMTransportRequestMethod.delete, payload: payload as ZMTransportData, apiVersion: apiVersion.rawValue)
         let userClientMarkedToDeleteKeySet: Set<String> = [ZMUserClientMarkedToDeleteKey]
         return ZMUpstreamRequest(keys: userClientMarkedToDeleteKeySet, transportRequest: request)
     }

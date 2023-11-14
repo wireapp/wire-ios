@@ -60,7 +60,7 @@ public final class UnauthenticatedSessionTests_SSO: ZMTBaseTest {
         // then
         XCTAssertNotNil(transportSession.lastEnqueuedRequest)
         XCTAssertEqual(transportSession.lastEnqueuedRequest?.path, "/sso/settings")
-        XCTAssertEqual(transportSession.lastEnqueuedRequest?.method, ZMTransportRequestMethod.methodGET)
+        XCTAssertEqual(transportSession.lastEnqueuedRequest?.method, ZMTransportRequestMethod.get)
     }
 
     // MARK: Response handling

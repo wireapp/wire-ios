@@ -79,7 +79,7 @@ extension UserProfileUpdateRequestStrategyTests {
         let request = self.sut.nextRequest(for: .v0)
 
         // THEN
-        let expected = ZMTransportRequest(path: "/self/phone", method: .methodPUT, payload: ["phone": phone] as NSDictionary, apiVersion: APIVersion.v0.rawValue)
+        let expected = ZMTransportRequest(path: "/self/phone", method: .put, payload: ["phone": phone] as NSDictionary, apiVersion: APIVersion.v0.rawValue)
         XCTAssertEqual(request, expected)
     }
 
@@ -95,7 +95,7 @@ extension UserProfileUpdateRequestStrategyTests {
         let request = self.sut.nextRequest(for: .v0)
 
         // THEN
-        let expected = ZMTransportRequest(path: "/activate", method: .methodPOST, payload: [
+        let expected = ZMTransportRequest(path: "/activate", method: .post, payload: [
             "phone": credentials.phoneNumber!,
             "code": credentials.phoneNumberVerificationCode!,
             "dryrun": false
@@ -115,7 +115,7 @@ extension UserProfileUpdateRequestStrategyTests {
         let request = self.sut.nextRequest(for: .v0)
 
         // THEN
-        let expected = ZMTransportRequest(path: "/activate", method: .methodPOST, payload: [
+        let expected = ZMTransportRequest(path: "/activate", method: .post, payload: [
             "phone": credentials.phoneNumber!,
             "code": credentials.phoneNumberVerificationCode!,
             "dryrun": false
@@ -134,7 +134,7 @@ extension UserProfileUpdateRequestStrategyTests {
         let request = self.sut.nextRequest(for: .v0)
 
         // THEN
-        let expected = ZMTransportRequest(path: "/self/password", method: .methodPUT, payload: [
+        let expected = ZMTransportRequest(path: "/self/password", method: .put, payload: [
             "new_password": credentials.password!
             ] as NSDictionary, apiVersion: APIVersion.v0.rawValue)
         XCTAssertEqual(request, expected)
@@ -155,7 +155,7 @@ extension UserProfileUpdateRequestStrategyTests {
 
         // THEN
         XCTAssertEqual(request?.path, "/access/self/email")
-        XCTAssertEqual(request?.method, .methodPUT)
+        XCTAssertEqual(request?.method, .put)
         XCTAssertEqual(request?.needsCookie, true)
         let emailInPayload = request?.payload?.asDictionary()?["email"] as? String
         XCTAssertEqual(emailInPayload, newEmail)
@@ -175,7 +175,7 @@ extension UserProfileUpdateRequestStrategyTests {
 
         // THEN
         XCTAssertEqual(request?.path, "/self/phone")
-        XCTAssertEqual(request?.method, .methodDELETE)
+        XCTAssertEqual(request?.method, .delete)
         XCTAssertNil(request?.payload)
     }
 
@@ -191,7 +191,7 @@ extension UserProfileUpdateRequestStrategyTests {
         let request = self.sut.nextRequest(for: .v0)
 
         // THEN
-        let expected = ZMTransportRequest(path: "/access/self/email", method: .methodPUT, payload: [
+        let expected = ZMTransportRequest(path: "/access/self/email", method: .put, payload: [
             "email": credentials.email!
             ] as NSDictionary, apiVersion: APIVersion.v0.rawValue)
         XCTAssertEqual(request, expected)
@@ -209,7 +209,7 @@ extension UserProfileUpdateRequestStrategyTests {
         let request = self.sut.nextRequest(for: .v0)
 
         // THEN
-        let expected = ZMTransportRequest(path: "/users/handles/\(handle)", method: .methodHEAD, payload: nil, apiVersion: APIVersion.v0.rawValue)
+        let expected = ZMTransportRequest(path: "/users/handles/\(handle)", method: .head, payload: nil, apiVersion: APIVersion.v0.rawValue)
         XCTAssertEqual(request, expected)
     }
 
@@ -225,7 +225,7 @@ extension UserProfileUpdateRequestStrategyTests {
 
         // THEN
         let payload: NSDictionary = ["handle": handle]
-        let expected = ZMTransportRequest(path: "/self/handle", method: .methodPUT, payload: payload, apiVersion: APIVersion.v0.rawValue)
+        let expected = ZMTransportRequest(path: "/self/handle", method: .put, payload: payload, apiVersion: APIVersion.v0.rawValue)
         XCTAssertEqual(request, expected)
     }
 
@@ -248,7 +248,7 @@ extension UserProfileUpdateRequestStrategyTests {
             return
         }
 
-        XCTAssertEqual(request.method, .methodPOST)
+        XCTAssertEqual(request.method, .post)
         XCTAssertEqual(request.path, "/users/handles")
         guard let payloadDictionary = request.payload?.asDictionary(),
             let payloadHandles = payloadDictionary["handles"] as? [String]

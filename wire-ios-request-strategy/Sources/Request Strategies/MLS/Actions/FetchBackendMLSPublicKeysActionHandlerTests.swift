@@ -37,7 +37,7 @@ class FetchBackendMLSPublicKeysActionHandlerTests: ActionHandlerTestBase<FetchBa
         try test_itGeneratesARequest(
             for: action,
                expectedPath: "/v5/mls/public-keys",
-               expectedMethod: .methodGET,
+               expectedMethod: .get,
                apiVersion: .v5
         )
     }

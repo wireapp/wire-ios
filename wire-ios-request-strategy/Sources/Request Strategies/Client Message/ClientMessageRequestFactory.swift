@@ -78,7 +78,7 @@ public final class ClientMessageRequestFactory: NSObject {
 
         return ZMTransportRequest(
             path: path,
-            method: .methodPOST,
+            method: .post,
             binaryData: data,
             type: protobufContentType,
             contentDisposition: nil,
@@ -106,7 +106,7 @@ public final class ClientMessageRequestFactory: NSObject {
         let originalPath = "/" + ["conversations", conversationID, "otr", "messages"].joined(separator: "/")
         guard let encryptedPayload = message.encryptForTransport() else { return nil }
         let path = originalPath.pathWithMissingClientStrategy(strategy: encryptedPayload.strategy)
-        let request = ZMTransportRequest(path: path, method: .methodPOST, binaryData: encryptedPayload.data, type: protobufContentType, contentDisposition: nil, apiVersion: apiVersion.rawValue)
+        let request = ZMTransportRequest(path: path, method: .post, binaryData: encryptedPayload.data, type: protobufContentType, contentDisposition: nil, apiVersion: apiVersion.rawValue)
         request.addContentDebugInformation(message.debugInfo)
         return request
     }
@@ -129,7 +129,7 @@ public final class ClientMessageRequestFactory: NSObject {
             return nil
         }
 
-        let request = ZMTransportRequest(path: path, method: .methodPOST, binaryData: encryptedPayload.data, type: protobufContentType, contentDisposition: nil, apiVersion: apiVersion.rawValue)
+        let request = ZMTransportRequest(path: path, method: .post, binaryData: encryptedPayload.data, type: protobufContentType, contentDisposition: nil, apiVersion: apiVersion.rawValue)
         request.addContentDebugInformation(message.debugInfo)
         return request
     }

@@ -98,7 +98,7 @@ final class CreateGroupConversationActionHandler: ActionHandler<CreateGroupConve
 
         return ZMTransportRequest(
             path: "/conversations",
-            method: .methodPOST,
+            method: .post,
             payload: payloadString as ZMTransportData?,
             apiVersion: apiVersion.rawValue
         )

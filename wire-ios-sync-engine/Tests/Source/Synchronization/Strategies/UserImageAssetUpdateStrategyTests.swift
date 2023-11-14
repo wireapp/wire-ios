@@ -131,7 +131,7 @@ extension UserImageAssetUpdateStrategyTests {
         let previewRequest = sut.nextRequest(for: .v0)
         XCTAssertNotNil(previewRequest)
         XCTAssertEqual(previewRequest?.path, "/assets/v3")
-        XCTAssertEqual(previewRequest?.method, .methodPOST)
+        XCTAssertEqual(previewRequest?.method, .post)
 
         // WHEN
         updateStatus.dataToConsume.removeAll()
@@ -141,7 +141,7 @@ extension UserImageAssetUpdateStrategyTests {
         let completeRequest = sut.nextRequest(for: .v0)
         XCTAssertNotNil(completeRequest)
         XCTAssertEqual(completeRequest?.path, "/assets/v3")
-        XCTAssertEqual(completeRequest?.method, .methodPOST)
+        XCTAssertEqual(completeRequest?.method, .post)
 
     }
 
@@ -171,7 +171,7 @@ extension UserImageAssetUpdateStrategyTests {
     func testThatItCreatesDeleteRequestIfThereAreAssetsToDelete() {
         // GIVEN
         let assetId = "12344"
-        let deleteRequest = ZMTransportRequest(path: "/assets/v3/\(assetId)", method: .methodDELETE, payload: nil, apiVersion: APIVersion.v0.rawValue)
+        let deleteRequest = ZMTransportRequest(path: "/assets/v3/\(assetId)", method: .delete, payload: nil, apiVersion: APIVersion.v0.rawValue)
 
         // WHEN
         updateStatus.assetIdsToDelete = [assetId]
@@ -310,7 +310,7 @@ extension UserImageAssetUpdateStrategyTests {
         let request = self.sut.downstreamRequestSyncs[size]?.nextRequest(for: apiVersion)
         XCTAssertNotNil(request)
         XCTAssertEqual(request?.path, expectedPath)
-        XCTAssertEqual(request?.method, .methodGET)
+        XCTAssertEqual(request?.method, .get)
     }
 
     func testThatItCreatesRequestForCorrectAssetIdentifierForPreviewImage() {
@@ -369,7 +369,7 @@ extension UserImageAssetUpdateStrategyTests {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         guard let request = sut.nextRequestIfAllowed(for: .v0) else { return XCTFail("nil request generated") }
         XCTAssertEqual(request.path, "/assets/v3/\(assetId)")
-        XCTAssertEqual(request.method, .methodGET)
+        XCTAssertEqual(request.method, .get)
 
         // Given
         let response = ZMTransportResponse(payload: nil, httpStatus: 404, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
@@ -396,7 +396,7 @@ extension UserImageAssetUpdateStrategyTests {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         guard let request = sut.nextRequestIfAllowed(for: .v0) else { return XCTFail("nil request generated") }
         XCTAssertEqual(request.path, "/assets/v3/\(assetId)")
-        XCTAssertEqual(request.method, .methodGET)
+        XCTAssertEqual(request.method, .get)
 
         // Given
         let response = ZMTransportResponse(payload: nil, httpStatus: 404, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)

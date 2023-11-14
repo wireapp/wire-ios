@@ -67,7 +67,7 @@ public class ZMConversationAccessModeTests: MessagingTest {
         let request = WireSyncEngine.WirelessRequestFactory.setAccessRoles(allowGuests: true, allowServices: false, for: conversation, apiVersion: .v3)
 
         // then
-        XCTAssertEqual(request.method, .methodPUT)
+        XCTAssertEqual(request.method, .put)
         XCTAssertEqual(request.path, "/v3/conversations/example.com/\(conversation.remoteIdentifier!.transportString())/access")
         guard let payload = request.payload as? [String: AnyHashable] else {
             XCTFail("missing payload")
@@ -94,7 +94,7 @@ public class ZMConversationAccessModeTests: MessagingTest {
         let request = WireSyncEngine.WirelessRequestFactory.setAccessRoles(allowGuests: true, allowServices: false, for: conversation, apiVersion: apiVersion)
 
         // then
-        XCTAssertEqual(request.method, .methodPUT)
+        XCTAssertEqual(request.method, .put)
         switch apiVersion {
         case .v0:
             XCTAssertEqual(request.path, "/conversations/\(conversation.remoteIdentifier!.transportString())/access")
@@ -119,7 +119,7 @@ public class ZMConversationAccessModeTests: MessagingTest {
         // when
         let request = WireSyncEngine.WirelessRequestFactory.fetchLinkRequest(for: conversation, apiVersion: .v0)
         // then
-        XCTAssertEqual(request.method, .methodGET)
+        XCTAssertEqual(request.method, .get)
         XCTAssertEqual(request.path, "/conversations/\(conversation.remoteIdentifier!.transportString())/code")
         XCTAssertNil(request.payload)
     }
@@ -133,7 +133,7 @@ public class ZMConversationAccessModeTests: MessagingTest {
         let request = WireSyncEngine.WirelessRequestFactory.guestLinkFeatureStatusRequest(for: conversation, apiVersion: .v0)
 
         // then
-        XCTAssertEqual(request.method, .methodGET)
+        XCTAssertEqual(request.method, .get)
         XCTAssertEqual(request.path, "/conversations/\(conversation.remoteIdentifier!.transportString())/features/conversationGuestLinks")
         XCTAssertNil(request.payload)
     }
@@ -145,7 +145,7 @@ public class ZMConversationAccessModeTests: MessagingTest {
         // when
         let request = WireSyncEngine.WirelessRequestFactory.createLinkRequest(for: conversation, apiVersion: .v0)
         // then
-        XCTAssertEqual(request.method, .methodPOST)
+        XCTAssertEqual(request.method, .post)
         XCTAssertEqual(request.path, "/conversations/\(conversation.remoteIdentifier!.transportString())/code")
         XCTAssertNil(request.payload)
     }
@@ -157,7 +157,7 @@ public class ZMConversationAccessModeTests: MessagingTest {
         // when
         let request = WireSyncEngine.WirelessRequestFactory.createLinkRequest(for: conversation, apiVersion: .v4)
         // then
-        XCTAssertEqual(request.method, .methodPOST)
+        XCTAssertEqual(request.method, .post)
         XCTAssertEqual(request.path, "/v4/conversations/\(conversation.remoteIdentifier!.transportString())/code")
         XCTAssertNotNil(request.payload)
     }
@@ -169,7 +169,7 @@ public class ZMConversationAccessModeTests: MessagingTest {
         // when
         let request = WireSyncEngine.WirelessRequestFactory.deleteLinkRequest(for: conversation, apiVersion: .v0)
         // then
-        XCTAssertEqual(request.method, .methodDELETE)
+        XCTAssertEqual(request.method, .delete)
         XCTAssertEqual(request.path, "/conversations/\(conversation.remoteIdentifier!.transportString())/code")
         XCTAssertNil(request.payload)
     }

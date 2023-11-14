@@ -45,7 +45,7 @@ final class SyncConversationActionHandler: ActionHandler<SyncConversationAction>
         case .v0, .v1:
             return ZMTransportRequest(
                 path: "/conversations/list/v2",
-                method: .methodPOST,
+                method: .post,
                 payload: payload as ZMTransportData,
                 apiVersion: apiVersion.rawValue
             )
@@ -53,7 +53,7 @@ final class SyncConversationActionHandler: ActionHandler<SyncConversationAction>
         case .v2, .v3, .v4, .v5:
             return ZMTransportRequest(
                 path: "/conversations/list",
-                method: .methodPOST,
+                method: .post,
                 payload: payload as ZMTransportData,
                 apiVersion: apiVersion.rawValue
             )

@@ -36,7 +36,7 @@ final class SyncConversationActionHandlerTests: MessagingTestBase {
 
         // Then
         XCTAssertEqual(result.path, "/conversations/list/v2")
-        XCTAssertEqual(result.method, .methodPOST)
+        XCTAssertEqual(result.method, .post)
         XCTAssertEqual(result.apiVersion, 0)
 
         let payload = try XCTUnwrap(RequestPayload(result))
@@ -54,7 +54,7 @@ final class SyncConversationActionHandlerTests: MessagingTestBase {
 
         // Then
         XCTAssertEqual(result.path, "/v1/conversations/list/v2")
-        XCTAssertEqual(result.method, .methodPOST)
+        XCTAssertEqual(result.method, .post)
         XCTAssertEqual(result.apiVersion, 1)
 
         let payload = try XCTUnwrap(RequestPayload(result))
@@ -72,7 +72,7 @@ final class SyncConversationActionHandlerTests: MessagingTestBase {
 
         // Then
         XCTAssertEqual(result.path, "/v2/conversations/list")
-        XCTAssertEqual(result.method, .methodPOST)
+        XCTAssertEqual(result.method, .post)
         XCTAssertEqual(result.apiVersion, 2)
 
         let payload = try XCTUnwrap(RequestPayload(result))

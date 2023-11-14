@@ -202,7 +202,7 @@ public class TypingStrategy: AbstractRequestStrategy, TearDownCapable, ZMEventCo
         }
 
         let payload = [StatusKey: typingEvent.isTyping ? StartedKey : StoppedKey]
-        let request = ZMTransportRequest(path: path, method: .methodPOST, payload: payload as ZMTransportData, apiVersion: apiVersion.rawValue)
+        let request = ZMTransportRequest(path: path, method: .post, payload: payload as ZMTransportData, apiVersion: apiVersion.rawValue)
         request.setDebugInformationTranscoder(self)
 
         return request

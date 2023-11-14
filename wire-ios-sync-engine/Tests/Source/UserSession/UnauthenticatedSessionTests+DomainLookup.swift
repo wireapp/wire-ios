@@ -63,7 +63,7 @@ public final class UnauthenticatedSessionTests_DomainLookup: ZMTBaseTest {
         // then
         XCTAssertNotNil(transportSession.lastEnqueuedRequest)
         XCTAssertEqual(transportSession.lastEnqueuedRequest?.path, "/custom-backend/by-domain/example.com")
-        XCTAssertEqual(transportSession.lastEnqueuedRequest?.method, ZMTransportRequestMethod.methodGET)
+        XCTAssertEqual(transportSession.lastEnqueuedRequest?.method, ZMTransportRequestMethod.get)
     }
 
     func testThatItURLEncodeRequest() {
@@ -76,7 +76,7 @@ public final class UnauthenticatedSessionTests_DomainLookup: ZMTBaseTest {
         // then
         XCTAssertNotNil(transportSession.lastEnqueuedRequest)
         XCTAssertEqual(transportSession.lastEnqueuedRequest?.path, "/custom-backend/by-domain/example%20com")
-        XCTAssertEqual(transportSession.lastEnqueuedRequest?.method, ZMTransportRequestMethod.methodGET)
+        XCTAssertEqual(transportSession.lastEnqueuedRequest?.method, ZMTransportRequestMethod.get)
     }
 
     func testThatItLookupReturnsNoAPiVersionError() {

@@ -167,7 +167,7 @@ struct ConversationJoinRequestFactory {
             URLQueryItem.Key.conversationCode: code
         ]
 
-        return ZMTransportRequest(path: path, method: .methodPOST, payload: payload as ZMTransportData, apiVersion: apiVersion.rawValue)
+        return ZMTransportRequest(path: path, method: .post, payload: payload as ZMTransportData, apiVersion: apiVersion.rawValue)
     }
 
     static func requestForGetConversation(key: String, code: String) -> ZMTransportRequest? {
@@ -181,7 +181,7 @@ struct ConversationJoinRequestFactory {
             return nil
         }
 
-        return ZMTransportRequest(path: urlString, method: .methodGET, payload: nil, apiVersion: apiVersion.rawValue)
+        return ZMTransportRequest(path: urlString, method: .get, payload: nil, apiVersion: apiVersion.rawValue)
     }
 
 }

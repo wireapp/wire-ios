@@ -490,12 +490,12 @@ static XCTestCase *currentTestCase;
 
 - (BOOL)requestMethodShouldHavePayload:(ZMTransportRequestMethod)method {
     switch(method) {
-        case ZMMethodDELETE:
-        case ZMMethodGET:
-        case ZMMethodHEAD:
+        case ZMTransportRequestMethodDelete:
+        case ZMTransportRequestMethodGet:
+        case ZMTransportRequestMethodHead:
             return NO;
-        case ZMMethodPOST:
-        case ZMMethodPUT:
+        case ZMTransportRequestMethodPost:
+        case ZMTransportRequestMethodPut:
             return YES;
     }
 }
@@ -510,11 +510,11 @@ static XCTestCase *currentTestCase;
     // given
     NSArray *expected = @[@"GET", @"POST", @"DELETE", @"PUT", @"HEAD"];
     NSArray *input = @[
-                       [NSNumber numberWithInt:ZMMethodGET],
-                       [NSNumber numberWithInt:ZMMethodPOST],
-                       [NSNumber numberWithInt:ZMMethodDELETE],
-                       [NSNumber numberWithInt:ZMMethodPUT],
-                       [NSNumber numberWithInt:ZMMethodHEAD],
+                       [NSNumber numberWithInt:ZMTransportRequestMethodGet],
+                       [NSNumber numberWithInt:ZMTransportRequestMethodPost],
+                       [NSNumber numberWithInt:ZMTransportRequestMethodDelete],
+                       [NSNumber numberWithInt:ZMTransportRequestMethodPut],
+                       [NSNumber numberWithInt:ZMTransportRequestMethodHead],
                        ];
     
     // when
@@ -532,11 +532,11 @@ static XCTestCase *currentTestCase;
     // given
     NSArray *input = @[@"GET", @"POST", @"DELETE", @"PUT", @"HEAD"];
     NSArray *expected = @[
-                       [NSNumber numberWithInt:ZMMethodGET],
-                       [NSNumber numberWithInt:ZMMethodPOST],
-                       [NSNumber numberWithInt:ZMMethodDELETE],
-                       [NSNumber numberWithInt:ZMMethodPUT],
-                       [NSNumber numberWithInt:ZMMethodHEAD],
+                       [NSNumber numberWithInt:ZMTransportRequestMethodGet],
+                       [NSNumber numberWithInt:ZMTransportRequestMethodPost],
+                       [NSNumber numberWithInt:ZMTransportRequestMethodDelete],
+                       [NSNumber numberWithInt:ZMTransportRequestMethodPut],
+                       [NSNumber numberWithInt:ZMTransportRequestMethodHead],
                        ];
     
     // when
@@ -584,7 +584,7 @@ static XCTestCase *currentTestCase;
         return [TestResponse testResponse];
     }];
     
-    ZMTransportRequest *request =[ZMTransportRequest requestWithPath:path method:ZMMethodGET payload:nil apiVersion:0];
+    ZMTransportRequest *request =[ZMTransportRequest requestWithPath:path method:ZMTransportRequestMethodGet payload:nil apiVersion:0];
     [request addCompletionHandler:
      [ZMCompletionHandler handlerOnGroupQueue:self.fakeSyncContext block:^(ZMTransportResponse *response ZM_UNUSED){
         [expectation fulfill];
@@ -601,7 +601,7 @@ static XCTestCase *currentTestCase;
 - (void)testThatItEnqueuesSearchRequests;
 {
     // given
-    ZMTransportRequest *request =[ZMTransportRequest requestWithPath:@"foo" method:ZMMethodGET payload:nil apiVersion:0];
+    ZMTransportRequest *request =[ZMTransportRequest requestWithPath:@"foo" method:ZMTransportRequestMethodGet payload:nil apiVersion:0];
     
     // when
     [self.sut enqueueOneTimeRequest:request];
@@ -615,7 +615,7 @@ static XCTestCase *currentTestCase;
 - (void)testThatItEnqueuesRequests;
 {
     // given
-    ZMTransportRequest *request =[ZMTransportRequest requestWithPath:@"foo" method:ZMMethodGET payload:nil apiVersion:0];
+    ZMTransportRequest *request =[ZMTransportRequest requestWithPath:@"foo" method:ZMTransportRequestMethodGet payload:nil apiVersion:0];
     
     // when
     [self.sut attemptToEnqueueSyncRequestWithGenerator:^(){
@@ -633,11 +633,11 @@ static XCTestCase *currentTestCase;
     // given
     self.sut.accessToken = self.validAccessToken;
     ZMTransportRequestMethod const methods[] = {
-        ZMMethodGET,
-        ZMMethodPOST,
-        ZMMethodDELETE,
-        ZMMethodPUT,
-        ZMMethodHEAD,
+        ZMTransportRequestMethodGet,
+        ZMTransportRequestMethodPost,
+        ZMTransportRequestMethodDelete,
+        ZMTransportRequestMethodPut,
+        ZMTransportRequestMethodHead,
     };
     
     for (size_t i = 0; i < sizeof(methods) / sizeof(*methods); ++i) {
@@ -673,7 +673,7 @@ static XCTestCase *currentTestCase;
     XCTestExpectation *expectation = [self expectationWithDescription:@"Completion handler called"];
     
     // when
-    ZMTransportRequest *request = [ZMTransportRequest requestWithPath:self.dummyPath method:ZMMethodPOST payload:@{} apiVersion:0];
+    ZMTransportRequest *request = [ZMTransportRequest requestWithPath:self.dummyPath method:ZMTransportRequestMethodPost payload:@{} apiVersion:0];
     [request addCompletionHandler:
      [ZMCompletionHandler handlerOnGroupQueue:self.fakeSyncContext block:^(ZMTransportResponse *response ZM_UNUSED) {
         [expectation fulfill];
@@ -698,7 +698,7 @@ static XCTestCase *currentTestCase;
     XCTestExpectation *expectation = [self expectationWithDescription:@"Completion handler called"];
     
     // when
-    ZMTransportRequest *request = [[ZMTransportRequest alloc] initWithPath:self.dummyPath method:ZMMethodGET payload:nil authentication:ZMTransportRequestAuthNone apiVersion:0];
+    ZMTransportRequest *request = [[ZMTransportRequest alloc] initWithPath:self.dummyPath method:ZMTransportRequestMethodGet payload:nil authentication:ZMTransportRequestAuthNone apiVersion:0];
     [request addCompletionHandler:
      [ZMCompletionHandler handlerOnGroupQueue:self.fakeSyncContext block:^(ZMTransportResponse *response ZM_UNUSED) {
         [expectation fulfill];
@@ -760,7 +760,7 @@ static XCTestCase *currentTestCase;
     }];
     
     // when
-    ZMTransportRequest *request = [ZMTransportRequest requestWithPath:self.dummyPath method:ZMMethodPOST payload:payload apiVersion:0];
+    ZMTransportRequest *request = [ZMTransportRequest requestWithPath:self.dummyPath method:ZMTransportRequestMethodPost payload:payload apiVersion:0];
     [request addCompletionHandler:
      [ZMCompletionHandler handlerOnGroupQueue:self.fakeSyncContext block:^(ZMTransportResponse *response ZM_UNUSED) {
         [expectation fulfill];
@@ -805,7 +805,7 @@ static XCTestCase *currentTestCase;
     [[[(id)foregroundSession reject] andReturn:nil] taskWithRequest:OCMOCK_ANY bodyData:OCMOCK_ANY transportRequest:OCMOCK_ANY];
     
     // when
-    ZMTransportRequest *request = [ZMTransportRequest requestWithPath:self.dummyPath method:ZMMethodPOST payload:payload apiVersion:0];
+    ZMTransportRequest *request = [ZMTransportRequest requestWithPath:self.dummyPath method:ZMTransportRequestMethodPost payload:payload apiVersion:0];
     [request forceToBackgroundSession];
     [sut sendSchedulerItem:request];
     
@@ -825,7 +825,7 @@ static XCTestCase *currentTestCase;
     XCTestExpectation *expectation = [self expectationWithDescription:@"Completion handler called"];
     
     // when
-    ZMTransportRequest *request = [[ZMTransportRequest alloc] initWithPath:self.dummyPath method:ZMMethodGET payload:nil authentication:ZMTransportRequestAuthNone apiVersion:0];
+    ZMTransportRequest *request = [[ZMTransportRequest alloc] initWithPath:self.dummyPath method:ZMTransportRequestMethodGet payload:nil authentication:ZMTransportRequestAuthNone apiVersion:0];
     [request addCompletionHandler:
      [ZMCompletionHandler handlerOnGroupQueue:self.fakeSyncContext block:^(ZMTransportResponse *response ZM_UNUSED) {
         [expectation fulfill];
@@ -852,7 +852,7 @@ static XCTestCase *currentTestCase;
     // when
     __block id<ZMTransportData> receivedPayload;
     
-    ZMTransportRequest *request = [[ZMTransportRequest alloc] initWithPath:self.dummyPath method:ZMMethodGET payload:nil authentication:ZMTransportRequestAuthNone apiVersion:0];
+    ZMTransportRequest *request = [[ZMTransportRequest alloc] initWithPath:self.dummyPath method:ZMTransportRequestMethodGet payload:nil authentication:ZMTransportRequestAuthNone apiVersion:0];
     [request addCompletionHandler:
      [ZMCompletionHandler handlerOnGroupQueue:self.fakeSyncContext block:^(ZMTransportResponse *response ZM_UNUSED) {
         receivedPayload = response.payload;
@@ -882,7 +882,7 @@ static XCTestCase *currentTestCase;
     }];
     NSData *binaryData = [@"foo" dataUsingEncoding:NSUTF8StringEncoding];
     NSDictionary *contentDisposition = @{@"conv_id": @"912c7fc66cfb", @"width": @2};
-    ZMTransportRequest *request = [[ZMTransportRequest alloc] initWithPath:self.dummyPath method:ZMMethodPOST binaryData:binaryData type:(NSString *) UTTypeJPEG.identifier contentDisposition:contentDisposition apiVersion:0];
+    ZMTransportRequest *request = [[ZMTransportRequest alloc] initWithPath:self.dummyPath method:ZMTransportRequestMethodPost binaryData:binaryData type:(NSString *) UTTypeJPEG.identifier contentDisposition:contentDisposition apiVersion:0];
     __block id<ZMTransportData> receivedPayload;
     [request addCompletionHandler:
      [ZMCompletionHandler handlerOnGroupQueue:self.fakeSyncContext block:^(ZMTransportResponse *response ZM_UNUSED) {
@@ -912,7 +912,7 @@ static XCTestCase *currentTestCase;
 
     // when
     __block NSInteger receivedStatusCode;
-    ZMTransportRequest *request = [[ZMTransportRequest alloc] initWithPath:self.dummyPath method:ZMMethodGET payload:nil authentication:ZMTransportRequestAuthNone apiVersion:0];
+    ZMTransportRequest *request = [[ZMTransportRequest alloc] initWithPath:self.dummyPath method:ZMTransportRequestMethodGet payload:nil authentication:ZMTransportRequestAuthNone apiVersion:0];
     [request addCompletionHandler:
      [ZMCompletionHandler handlerOnGroupQueue:self.fakeSyncContext block:^(ZMTransportResponse *response ZM_UNUSED) {
         receivedStatusCode = response.HTTPStatus;
@@ -952,7 +952,7 @@ static XCTestCase *currentTestCase;
     
     // when
     ZMTransportRequestGenerator generator = ^ZMTransportRequest*(void) {
-        ZMTransportRequest *request = [[ZMTransportRequest alloc] initWithPath:self.dummyPath method:ZMMethodGET payload:nil authentication:ZMTransportRequestAuthNone apiVersion:0];
+        ZMTransportRequest *request = [[ZMTransportRequest alloc] initWithPath:self.dummyPath method:ZMTransportRequestMethodGet payload:nil authentication:ZMTransportRequestAuthNone apiVersion:0];
         return request;
     };
     
@@ -989,7 +989,7 @@ static XCTestCase *currentTestCase;
     
     // when
     ZMTransportRequestGenerator generator = ^ZMTransportRequest*(void) {
-        ZMTransportRequest *request = [[ZMTransportRequest alloc] initWithPath:self.dummyPath method:ZMMethodGET payload:nil authentication:ZMTransportRequestAuthNone apiVersion:0];
+        ZMTransportRequest *request = [[ZMTransportRequest alloc] initWithPath:self.dummyPath method:ZMTransportRequestMethodGet payload:nil authentication:ZMTransportRequestAuthNone apiVersion:0];
         return request;
     };
     
@@ -1042,7 +1042,7 @@ static XCTestCase *currentTestCase;
     
     // when
     ZMTransportRequestGenerator generator = ^ZMTransportRequest*(void) {
-        ZMTransportRequest *request = [[ZMTransportRequest alloc] initWithPath:self.dummyPath method:ZMMethodGET payload:nil authentication:ZMTransportRequestAuthNone apiVersion:0];
+        ZMTransportRequest *request = [[ZMTransportRequest alloc] initWithPath:self.dummyPath method:ZMTransportRequestMethodGet payload:nil authentication:ZMTransportRequestAuthNone apiVersion:0];
         [request addCompletionHandler:
          [ZMCompletionHandler handlerOnGroupQueue:self.fakeSyncContext block:^(ZMTransportResponse *response ZM_UNUSED) {
         }]];
@@ -1066,7 +1066,7 @@ static XCTestCase *currentTestCase;
     // when
     for(int i = 0; i < maxRequests + 1; ++i) {
         ZMTransportRequestGenerator generator = ^ZMTransportRequest*(void) {
-            ZMTransportRequest *request = [[ZMTransportRequest alloc] initWithPath:self.dummyPath method:ZMMethodGET payload:nil authentication:ZMTransportRequestAuthNone apiVersion:0];
+            ZMTransportRequest *request = [[ZMTransportRequest alloc] initWithPath:self.dummyPath method:ZMTransportRequestMethodGet payload:nil authentication:ZMTransportRequestAuthNone apiVersion:0];
             [request addCompletionHandler:
              [ZMCompletionHandler handlerOnGroupQueue:self.fakeSyncContext block:^(ZMTransportResponse *response ZM_UNUSED) {
             }]];
@@ -1132,7 +1132,7 @@ static XCTestCase *currentTestCase;
     for (int i = 0; i < (maxRequests + 1); ++i) {
         NSString *path = [NSString stringWithFormat:@"/A/%d", i];
         ZMTransportEnqueueResult *result = [self.sut attemptToEnqueueSyncRequestWithGenerator:^(){
-            ZMTransportRequest *r = [[ZMTransportRequest alloc] initWithPath:path method:ZMMethodGET payload:nil authentication:ZMTransportRequestAuthNone apiVersion:0];
+            ZMTransportRequest *r = [[ZMTransportRequest alloc] initWithPath:path method:ZMTransportRequestMethodGet payload:nil authentication:ZMTransportRequestAuthNone apiVersion:0];
             [r addCompletionHandler:[ZMCompletionHandler handlerOnGroupQueue:self.fakeUIContext block:^(ZMTransportResponse * ZM_UNUSED response) {
             }]];
             return r;
@@ -1164,7 +1164,7 @@ static XCTestCase *currentTestCase;
     
     {
         ZMTransportEnqueueResult *result = [self.sut attemptToEnqueueSyncRequestWithGenerator:^(){
-            ZMTransportRequest *r = [[ZMTransportRequest alloc] initWithPath:@"/B" method:ZMMethodGET payload:nil authentication:ZMTransportRequestAuthNone apiVersion:0];
+            ZMTransportRequest *r = [[ZMTransportRequest alloc] initWithPath:@"/B" method:ZMTransportRequestMethodGet payload:nil authentication:ZMTransportRequestAuthNone apiVersion:0];
             return r;
         }];
         WaitForAllGroupsToBeEmpty(0.5);
@@ -1195,7 +1195,7 @@ static XCTestCase *currentTestCase;
 - (void)testThatARequestsThatNeedAuthenticationGeneratesAuthenticationHeaders
 {
     // given
-    ZMTransportRequest *transportRequest = [[ZMTransportRequest alloc] initWithPath:self.dummyPath method:ZMMethodGET payload:nil authentication:ZMTransportRequestAuthNeedsAccess apiVersion:0];
+    ZMTransportRequest *transportRequest = [[ZMTransportRequest alloc] initWithPath:self.dummyPath method:ZMTransportRequestMethodGet payload:nil authentication:ZMTransportRequestAuthNeedsAccess apiVersion:0];
     
     self.sut.accessToken = [[ZMAccessToken alloc] initWithToken:@"token-213" type:@"tokentype" expiresInSeconds:100000];
     
@@ -1219,7 +1219,7 @@ static XCTestCase *currentTestCase;
 - (void)testThatARequestsThatDoesNotNeedAuthenticationDoesNotGenerateAuthenticationHeaders
 {
     // given
-    ZMTransportRequest *transportRequest = [[ZMTransportRequest alloc] initWithPath:self.dummyPath method:ZMMethodGET payload:nil authentication:ZMTransportRequestAuthNone apiVersion:0];
+    ZMTransportRequest *transportRequest = [[ZMTransportRequest alloc] initWithPath:self.dummyPath method:ZMTransportRequestMethodGet payload:nil authentication:ZMTransportRequestAuthNone apiVersion:0];
     
     self.sut.accessToken = [[ZMAccessToken alloc] initWithToken:@"token-213" type:@"tokentype" expiresInSeconds:100000];
     
@@ -1241,7 +1241,7 @@ static XCTestCase *currentTestCase;
 - (void)testThatARequestThatCreatesAnAccessTokenDoesNotGenerateAuthenticationHeaders
 {
     // given
-    ZMTransportRequest *transportRequest = [[ZMTransportRequest alloc] initWithPath:self.dummyPath method:ZMMethodGET payload:nil authentication:ZMTransportRequestAuthCreatesCookieAndAccessToken apiVersion:0];
+    ZMTransportRequest *transportRequest = [[ZMTransportRequest alloc] initWithPath:self.dummyPath method:ZMTransportRequestMethodGet payload:nil authentication:ZMTransportRequestAuthCreatesCookieAndAccessToken apiVersion:0];
     
     self.sut.accessToken = [[ZMAccessToken alloc] initWithToken:@"token-213" type:@"tokentype" expiresInSeconds:100000];
     
@@ -1264,7 +1264,7 @@ static XCTestCase *currentTestCase;
 {
     // given
     ZMTransportRequestGenerator generator = ^ZMTransportRequest*(void) {
-        return [[ZMTransportRequest alloc] initWithPath:self.dummyPath method:ZMMethodPOST payload:nil authentication:ZMTransportRequestAuthNone apiVersion:0];
+        return [[ZMTransportRequest alloc] initWithPath:self.dummyPath method:ZMTransportRequestMethodPost payload:nil authentication:ZMTransportRequestAuthNone apiVersion:0];
     };
     
     // then
@@ -1276,7 +1276,7 @@ static XCTestCase *currentTestCase;
 {
     // given
     ZMTransportRequestGenerator generator = ^ZMTransportRequest*(void) {
-        return [[ZMTransportRequest alloc] initWithPath:self.dummyPath method:ZMMethodPUT payload:@[@34] authentication:ZMTransportRequestAuthNone apiVersion:0];
+        return [[ZMTransportRequest alloc] initWithPath:self.dummyPath method:ZMTransportRequestMethodPut payload:@[@34] authentication:ZMTransportRequestAuthNone apiVersion:0];
     };
     
     // then
@@ -1287,7 +1287,7 @@ static XCTestCase *currentTestCase;
 - (void)testThatItDoesNotAssertIfARequestTypeWithPayloadHasAPayload
 {
     // given
-    static const ZMTransportRequestMethod methodsWithPayload [] = {ZMMethodPOST, ZMMethodPUT};
+    static const ZMTransportRequestMethod methodsWithPayload [] = {ZMTransportRequestMethodPost, ZMTransportRequestMethodPut};
     static const size_t size = sizeof(methodsWithPayload)/sizeof(methodsWithPayload[0]);
     
     for(size_t i = 0; i < size; ++i)
@@ -1304,7 +1304,7 @@ static XCTestCase *currentTestCase;
 - (void)testThatItDoesNotAssertIfARequestTypeWithoutPayloadDoesNotHaveAPayload
 {
     // given
-    static const ZMTransportRequestMethod methodsWithoutPayload [] = {ZMMethodHEAD, ZMMethodGET, ZMMethodDELETE};
+    static const ZMTransportRequestMethod methodsWithoutPayload [] = {ZMTransportRequestMethodHead, ZMTransportRequestMethodGet, ZMTransportRequestMethodDelete};
     static const size_t size = sizeof(methodsWithoutPayload)/sizeof(methodsWithoutPayload[0]);
     
     for(size_t i = 0; i < size; ++i)
@@ -1552,7 +1552,7 @@ static XCTestCase *currentTestCase;
     
     __block ZMTransportResponse *response;
     XCTestExpectation *requestCompletedExpectation = [self expectationWithDescription:@"request completed"];
-    ZMTransportRequest *request = [ZMTransportRequest requestWithPath:self.dummyPath method:ZMMethodPUT payload:dummyPayload apiVersion:0];
+    ZMTransportRequest *request = [ZMTransportRequest requestWithPath:self.dummyPath method:ZMTransportRequestMethodPut payload:dummyPayload apiVersion:0];
     [request addCompletionHandler:[ZMCompletionHandler handlerOnGroupQueue:self.fakeSyncContext block:^(ZMTransportResponse *r) {
         response = r;
         [requestCompletedExpectation fulfill];
@@ -1582,7 +1582,7 @@ static XCTestCase *currentTestCase;
     }];
     
     // when
-    ZMTransportRequest *request =  [[ZMTransportRequest alloc] initWithPath:self.dummyPath method:ZMMethodGET payload:nil authentication:ZMTransportRequestAuthCreatesCookieAndAccessToken apiVersion:0];
+    ZMTransportRequest *request =  [[ZMTransportRequest alloc] initWithPath:self.dummyPath method:ZMTransportRequestMethodGet payload:nil authentication:ZMTransportRequestAuthCreatesCookieAndAccessToken apiVersion:0];
     
     [self.sut sendSchedulerItem:request];
     WaitForAllGroupsToBeEmpty(0.5);
@@ -1608,7 +1608,7 @@ static XCTestCase *currentTestCase;
     }];
     
     // when
-    ZMTransportRequest *request =  [[ZMTransportRequest alloc] initWithPath:self.dummyPath method:ZMMethodGET payload:nil authentication:ZMTransportRequestAuthNeedsAccess apiVersion:0];
+    ZMTransportRequest *request =  [[ZMTransportRequest alloc] initWithPath:self.dummyPath method:ZMTransportRequestMethodGet payload:nil authentication:ZMTransportRequestAuthNeedsAccess apiVersion:0];
     
     [self.sut sendSchedulerItem:request];
     WaitForAllGroupsToBeEmpty(0.5);
@@ -1635,7 +1635,7 @@ static XCTestCase *currentTestCase;
     
     // when
     XCTestExpectation *didRun = [self expectationWithDescription:@"completion handler"];
-    ZMTransportRequest *request =  [[ZMTransportRequest alloc] initWithPath:self.dummyPath method:ZMMethodGET payload:nil authentication:ZMTransportRequestAuthCreatesCookieAndAccessToken apiVersion:0];
+    ZMTransportRequest *request =  [[ZMTransportRequest alloc] initWithPath:self.dummyPath method:ZMTransportRequestMethodGet payload:nil authentication:ZMTransportRequestAuthCreatesCookieAndAccessToken apiVersion:0];
     ZMPersistentCookieStorage *cookieStorage = self.sut.cookieStorage;
     [request addCompletionHandler:[ZMCompletionHandler handlerOnGroupQueue:self.fakeUIContext block:^(ZMTransportResponse * ZM_UNUSED r) {
         XCTAssertNotNil(cookieStorage.authenticationCookieData);
@@ -1753,7 +1753,7 @@ static XCTestCase *currentTestCase;
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
-    [self.sut sendSchedulerItem:[[ZMTransportRequest alloc] initWithPath:path method:ZMMethodGET payload:nil authentication:ZMTransportRequestAuthCreatesCookieAndAccessToken apiVersion:0]];
+    [self.sut sendSchedulerItem:[[ZMTransportRequest alloc] initWithPath:path method:ZMTransportRequestMethodGet payload:nil authentication:ZMTransportRequestAuthCreatesCookieAndAccessToken apiVersion:0]];
     WaitForAllGroupsToBeEmpty(0.5);
     
     // after
@@ -1785,7 +1785,7 @@ static XCTestCase *currentTestCase;
     XCTestExpectation *expectation = [self expectationWithDescription:@"Completion handler called"];
     
     // when
-    ZMTransportRequest *request = [[ZMTransportRequest alloc] initWithPath:self.dummyPath method:ZMMethodGET payload:nil authentication:ZMTransportRequestAuthNone apiVersion:0];
+    ZMTransportRequest *request = [[ZMTransportRequest alloc] initWithPath:self.dummyPath method:ZMTransportRequestMethodGet payload:nil authentication:ZMTransportRequestAuthNone apiVersion:0];
     [request addCompletionHandler:
      [ZMCompletionHandler handlerOnGroupQueue:self.fakeSyncContext block:^(ZMTransportResponse *response ZM_UNUSED) {
         XCTAssertEqualObjects(response.imageData, jpegData);
@@ -2069,7 +2069,7 @@ static XCTestCase *currentTestCase;
     // given
     self.sut.accessToken = self.validAccessToken;
     self.reachability.mayBeReachable = YES;
-    ZMTransportRequest *request = [ZMTransportRequest requestWithPath:self.dummyPath method:ZMMethodGET payload:nil apiVersion:0];
+    ZMTransportRequest *request = [ZMTransportRequest requestWithPath:self.dummyPath method:ZMTransportRequestMethodGet payload:nil apiVersion:0];
     
     // expect
     XCTestExpectation *didComplete = [self expectationWithDescription:@"did complete response"];
@@ -2109,7 +2109,7 @@ static XCTestCase *currentTestCase;
     // given
     self.sut.accessToken = self.validAccessToken;
     self.reachability.mayBeReachable = YES;
-    ZMTransportRequest *request = [ZMTransportRequest requestWithPath:self.dummyPath method:ZMMethodGET payload:nil apiVersion:0];
+    ZMTransportRequest *request = [ZMTransportRequest requestWithPath:self.dummyPath method:ZMTransportRequestMethodGet payload:nil apiVersion:0];
     
     // expect
     XCTestExpectation *didComplete = [self expectationWithDescription:@"did complete response"];

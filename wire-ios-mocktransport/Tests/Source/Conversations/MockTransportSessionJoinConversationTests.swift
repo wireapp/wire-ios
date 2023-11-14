@@ -49,7 +49,7 @@ class MockTransportSessionJoinConversationTests: MockTransportSessionTests {
         ] as ZMTransportData
 
         // when
-        let response = self.response(forPayload: payload, path: "/conversations/join", method: .methodPOST, apiVersion: .v0)
+        let response = self.response(forPayload: payload, path: "/conversations/join", method: .post, apiVersion: .v0)
 
         // then
         XCTAssertEqual(response?.httpStatus, 200)
@@ -73,7 +73,7 @@ class MockTransportSessionJoinConversationTests: MockTransportSessionTests {
         ] as ZMTransportData
 
         // when
-        let response = self.response(forPayload: payload, path: "/conversations/join", method: .methodPOST, apiVersion: .v0)
+        let response = self.response(forPayload: payload, path: "/conversations/join", method: .post, apiVersion: .v0)
 
         // then
         XCTAssertEqual(response?.httpStatus, 204)
@@ -87,7 +87,7 @@ class MockTransportSessionJoinConversationTests: MockTransportSessionTests {
         ] as ZMTransportData
 
         // when
-        let response = self.response(forPayload: payload, path: "/conversations/join", method: .methodPOST, apiVersion: .v0)
+        let response = self.response(forPayload: payload, path: "/conversations/join", method: .post, apiVersion: .v0)
 
         // then
         XCTAssertEqual(response?.httpStatus, 404)
@@ -106,7 +106,7 @@ class MockTransportSessionJoinConversationTests: MockTransportSessionTests {
         let path = String(format: "/conversations/join?code=%@&key=%@", "test-code", "test-key")
 
         // when
-        let response = self.response(forPayload: nil, path: path, method: .methodGET, apiVersion: .v0)
+        let response = self.response(forPayload: nil, path: path, method: .get, apiVersion: .v0)
 
         // then
         XCTAssertEqual(response?.httpStatus, 200)
@@ -126,7 +126,7 @@ class MockTransportSessionJoinConversationTests: MockTransportSessionTests {
         let path = String(format: "/conversations/join?code=%@&key=%@", "existing-conversation-code", "test-key")
 
         // when
-        let response = self.response(forPayload: nil, path: path, method: .methodGET, apiVersion: .v0)
+        let response = self.response(forPayload: nil, path: path, method: .get, apiVersion: .v0)
 
         // then
         XCTAssertEqual(response?.httpStatus, 200)
@@ -146,7 +146,7 @@ class MockTransportSessionJoinConversationTests: MockTransportSessionTests {
         let path = String(format: "/conversations/join?code=%@&key=%@", "wrong-code", "test-key")
 
         // when
-        let response = self.response(forPayload: nil, path: path, method: .methodGET, apiVersion: .v0)
+        let response = self.response(forPayload: nil, path: path, method: .get, apiVersion: .v0)
 
         // then
         XCTAssertEqual(response?.httpStatus, 404)

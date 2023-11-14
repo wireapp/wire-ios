@@ -33,7 +33,7 @@ class UserSessionGiphyRequestStateTests: ZMUserSessionTestsBase {
         }
 
         // when
-        self.sut.proxiedRequest(path: url.absoluteString, method: .methodGET, type: .giphy, callback: callback)
+        self.sut.proxiedRequest(path: url.absoluteString, method: .get, type: .giphy, callback: callback)
 
         // then
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -57,7 +57,7 @@ class UserSessionGiphyRequestStateTests: ZMUserSessionTestsBase {
         let callback: (Data?, URLResponse?, Error?) -> Void = { (_, _, _) -> Void in }
 
         // when
-        self.sut.proxiedRequest(path: url.absoluteString, method: .methodGET, type: .giphy, callback: callback)
+        self.sut.proxiedRequest(path: url.absoluteString, method: .get, type: .giphy, callback: callback)
 
         // then
         XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 0.5))
@@ -79,7 +79,7 @@ class UserSessionGiphyRequestStateTests: ZMUserSessionTestsBase {
         }
 
         // when
-        self.sut.proxiedRequest(path: url.absoluteString, method: .methodGET, type: .giphy, callback: callback)
+        self.sut.proxiedRequest(path: url.absoluteString, method: .get, type: .giphy, callback: callback)
 
         // then
         var request = self.sut.applicationStatusDirectory?.proxiedRequestStatus.pendingRequests.first

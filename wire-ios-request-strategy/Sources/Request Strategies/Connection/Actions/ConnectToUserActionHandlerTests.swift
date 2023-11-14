@@ -48,7 +48,7 @@ class ConnectToUserActionHandlerTests: MessagingTestBase {
 
             // then
             XCTAssertEqual(request.path, "/connections")
-            XCTAssertEqual(request.method, .methodPOST)
+            XCTAssertEqual(request.method, .post)
             let payload = Payload.ConnectionRequest(request)
             XCTAssertEqual(payload?.userID, userID)
         }
@@ -66,7 +66,7 @@ class ConnectToUserActionHandlerTests: MessagingTestBase {
 
             // then
             XCTAssertEqual(request.path, "/v1/connections/\(domain)/\(userID.transportString())")
-            XCTAssertEqual(request.method, .methodPOST)
+            XCTAssertEqual(request.method, .post)
         }
     }
 

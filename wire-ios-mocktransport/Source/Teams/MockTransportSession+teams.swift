@@ -52,9 +52,9 @@ extension MockTransportSession {
             response = fetchAllTeams(query: request.queryParameters, apiVersion: apiVersion)
         case "/teams/*":
             response = fetchTeam(with: request.RESTComponents(index: 1), apiVersion: apiVersion)
-        case "/teams/*/conversations/*" where request.method == .methodDELETE:
+        case "/teams/*/conversations/*" where request.method == .delete:
             response = deleteTeamConversation(teamId: request.RESTComponents(index: 1), conversationId: request.RESTComponents(index: 3), apiVersion: apiVersion)
-        case "/teams/*/conversations/roles"/* where request.method == .methodGET*/:
+        case "/teams/*/conversations/roles"/* where request.method == .get*/:
             response = fetchRolesForTeam(with: request.RESTComponents(index: 1), apiVersion: apiVersion)
         case "/teams/*/services/whitelisted":
             response = fetchWhitelistedServicesForTeam(with: request.RESTComponents(index: 1), query: request.queryParameters, apiVersion: apiVersion)
@@ -64,7 +64,7 @@ extension MockTransportSession {
             response = fetchMembersForTeam(with: request.RESTComponents(index: 1), apiVersion: apiVersion)
         case "/teams/*/members/*":
             response = fetchMemberForTeam(withTeamId: request.RESTComponents(index: 1), userId: request.RESTComponents(index: 3), apiVersion: apiVersion)
-        case "/teams/*/get-members-by-ids-using-post" where request.method == .methodPOST:
+        case "/teams/*/get-members-by-ids-using-post" where request.method == .post:
             let payload = request.payload?.asDictionary()
             let userIDs = payload?["user_ids"] as? [String]
             response = fetchMembersForTeam(with: request.RESTComponents(index: 1), userIds: userIDs, apiVersion: apiVersion)
@@ -236,7 +236,7 @@ extension MockTransportSession {
     private func approveUserLegalHold(inTeam teamId: String?, forUser userId: String?, payload: ZMTransportData?, method: ZMTransportRequestMethod, apiVersion: APIVersion) -> ZMTransportResponse? {
         // 1) Assert request contents
         guard let teamId = teamId, let userId = userId else { return nil }
-        guard method == .methodPUT else { return nil }
+        guard method == .put else { return nil }
 
         // 2) Check the user in the team
         let predicate = MockTeam.predicateWithIdentifier(identifier: teamId)

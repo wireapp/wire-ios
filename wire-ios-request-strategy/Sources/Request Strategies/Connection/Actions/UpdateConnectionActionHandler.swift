@@ -46,7 +46,7 @@ class UpdateConnectionActionHandler: ActionHandler<UpdateConnectionAction> {
 
         return ZMTransportRequest(
             path: "/connections/\(userID)",
-            method: .methodPUT,
+            method: .put,
             payload: payload,
             apiVersion: 0
         )
@@ -64,7 +64,7 @@ class UpdateConnectionActionHandler: ActionHandler<UpdateConnectionAction> {
 
         return ZMTransportRequest(
             path: "/connections/\(qualifiedID.domain)/\(qualifiedID.uuid.transportString())",
-            method: .methodPUT,
+            method: .put,
             payload: payload,
             apiVersion: 1
         )

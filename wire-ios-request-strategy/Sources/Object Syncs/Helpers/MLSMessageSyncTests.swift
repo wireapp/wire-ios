@@ -167,7 +167,7 @@ final class MLSMessageSyncTests: MessagingTestBase {
             }
 
             XCTAssertEqual(request.path, "/v\(apiVersion.rawValue)/mls/messages")
-            XCTAssertEqual(request.method, .methodPOST)
+            XCTAssertEqual(request.method, .post)
             XCTAssertEqual(request.binaryDataType, "message/mls")
             XCTAssertEqual(request.apiVersion, apiVersion.rawValue)
 

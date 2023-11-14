@@ -156,7 +156,7 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
 
         // Then
         XCTAssertEqual(result.path, "/conversations")
-        XCTAssertEqual(result.method, .methodPOST)
+        XCTAssertEqual(result.method, .post)
         XCTAssertEqual(result.apiVersion, 0)
 
         let payload = try XCTUnwrap(RequestPayload(result))
@@ -177,7 +177,7 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
 
         // Then
         XCTAssertEqual(result.path, "/v1/conversations")
-        XCTAssertEqual(result.method, .methodPOST)
+        XCTAssertEqual(result.method, .post)
         XCTAssertEqual(result.apiVersion, 1)
 
         let payload = try XCTUnwrap(RequestPayload(result))
@@ -198,7 +198,7 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
 
         // Then
         XCTAssertEqual(result.path, "/v2/conversations")
-        XCTAssertEqual(result.method, .methodPOST)
+        XCTAssertEqual(result.method, .post)
         XCTAssertEqual(result.apiVersion, 2)
 
         let payload = try XCTUnwrap(RequestPayload(result))
@@ -219,7 +219,7 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
 
         // Then
         XCTAssertEqual(result.path, "/v3/conversations")
-        XCTAssertEqual(result.method, .methodPOST)
+        XCTAssertEqual(result.method, .post)
         XCTAssertEqual(result.apiVersion, 3)
 
         let payload = try XCTUnwrap(RequestPayload(result))
@@ -240,7 +240,7 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
 
         // Then
         XCTAssertEqual(result.path, "/v4/conversations")
-        XCTAssertEqual(result.method, .methodPOST)
+        XCTAssertEqual(result.method, .post)
         XCTAssertEqual(result.apiVersion, 4)
 
         let payload = try XCTUnwrap(RequestPayload(result))

@@ -33,13 +33,13 @@
 
 - (ZMTransportResponse *)processAssetRequest:(ZMTransportRequest *)request;
 {
-    if([request matchesWithPath:@"/conversations/*/assets/*" method:ZMMethodGET]) {
+    if([request matchesWithPath:@"/conversations/*/assets/*" method:ZMTransportRequestMethodGet]) {
         return [self processAssetGetRequestInConversation:[request RESTComponentAtIndex:1] asset:[request RESTComponentAtIndex:3] apiVersion:request.apiVersion];
     }
-    else if([request matchesWithPath:@"/assets/*" method:ZMMethodGET]) {
+    else if([request matchesWithPath:@"/assets/*" method:ZMTransportRequestMethodGet]) {
         return [self processAssetGetRequestInConversation:request.queryParameters[@"conv_id"] asset:[request RESTComponentAtIndex:1] apiVersion:request.apiVersion];
     }
-    else if ([request matchesWithPath:@"/conversations/*/otr/assets/*" method:ZMMethodGET]) {
+    else if ([request matchesWithPath:@"/conversations/*/otr/assets/*" method:ZMTransportRequestMethodGet]) {
         return [self processAssetGetRequestInConversation:[request RESTComponentAtIndex:1] asset:[request RESTComponentAtIndex:4] apiVersion:request.apiVersion];
     }
     return [ZMTransportResponse responseWithPayload:nil HTTPStatus:404 transportSessionError:nil apiVersion:request.apiVersion];
@@ -67,11 +67,11 @@
 
 - (ZMTransportResponse *)processAssetV3Request:(ZMTransportRequest *)request
 {
-    if ([request matchesWithPath:@"/assets/v3" method:ZMMethodPOST]) {
+    if ([request matchesWithPath:@"/assets/v3" method:ZMTransportRequestMethodPost]) {
         return [self processAssetV3PostWithMultipartData:[request multipartBodyItemsFromRequestOrFile] apiVersion:request.apiVersion];
-    } else if ([request matchesWithPath:@"/assets/v3/*" method:ZMMethodGET]) {
+    } else if ([request matchesWithPath:@"/assets/v3/*" method:ZMTransportRequestMethodGet]) {
         return [self processAssetV3GetWithKey:[request RESTComponentAtIndex:2] apiVersion:request.apiVersion];
-    } else if ([request matchesWithPath:@"/assets/v3/*" method:ZMMethodDELETE]) {
+    } else if ([request matchesWithPath:@"/assets/v3/*" method:ZMTransportRequestMethodDelete]) {
         return [self processAssetV3DeleteWithKey:[request RESTComponentAtIndex:2] apiVersion:request.apiVersion];
     }
     return nil;
@@ -123,11 +123,11 @@
 
 - (ZMTransportResponse *)processAssetV4Request:(ZMTransportRequest *)request
 {
-    if ([request matchesWithPath:@"/assets/v4/*" method:ZMMethodPOST]) {
+    if ([request matchesWithPath:@"/assets/v4/*" method:ZMTransportRequestMethodPost]) {
         return [self processAssetV4PostWithDomain:[request RESTComponentAtIndex:2] multipart:[request multipartBodyItemsFromRequestOrFile] apiVersion:request.apiVersion];
-    } else if ([request matchesWithPath:@"/assets/v4/*/*" method:ZMMethodGET]) {
+    } else if ([request matchesWithPath:@"/assets/v4/*/*" method:ZMTransportRequestMethodGet]) {
         return [self processAssetV4GetWithDomain:[request RESTComponentAtIndex:2] key:[request RESTComponentAtIndex:3] apiVersion:request.apiVersion];
-    } else if ([request matchesWithPath:@"/assets/v4/*/*" method:ZMMethodDELETE]) {
+    } else if ([request matchesWithPath:@"/assets/v4/*/*" method:ZMTransportRequestMethodDelete]) {
         return [self processAssetV4DeleteWithDomain:[request RESTComponentAtIndex:2] key:[request RESTComponentAtIndex:3] apiVersion:request.apiVersion];
     }
     return nil;

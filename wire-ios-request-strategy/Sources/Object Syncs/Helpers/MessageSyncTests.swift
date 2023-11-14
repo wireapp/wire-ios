@@ -65,7 +65,7 @@ final class MessageSyncTests: MessagingTestBase {
             }
 
             XCTAssertEqual(request.path, "/v1/conversations/example.com/\(self.conversationID.transportString())/proteus/messages")
-            XCTAssertEqual(request.method, .methodPOST)
+            XCTAssertEqual(request.method, .post)
             XCTAssertEqual(request.binaryDataType, "application/x-protobuf")
         }
     }
@@ -91,7 +91,7 @@ final class MessageSyncTests: MessagingTestBase {
                 }
 
                 XCTAssertEqual(request.path, "/v5/mls/messages")
-                XCTAssertEqual(request.method, .methodPOST)
+                XCTAssertEqual(request.method, .post)
                 XCTAssertEqual(request.binaryDataType, "message/mls")
             }
         }

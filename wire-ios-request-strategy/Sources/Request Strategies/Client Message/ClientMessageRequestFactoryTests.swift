@@ -59,7 +59,7 @@ extension ClientMessageRequestFactoryTests {
             }
 
             // THEN
-            XCTAssertEqual(request.method, ZMTransportRequestMethod.methodPOST)
+            XCTAssertEqual(request.method, ZMTransportRequestMethod.post)
             XCTAssertEqual(request.path, "/conversations/\(self.groupConversation.remoteIdentifier!.transportString())/otr/messages")
 
             guard let receivedMessage = self.outgoingEncryptedMessage(from: request, for: self.otherClient) else {
@@ -89,7 +89,7 @@ extension ClientMessageRequestFactoryTests {
             }
 
             // THEN
-            XCTAssertEqual(request.method, ZMTransportRequestMethod.methodPOST)
+            XCTAssertEqual(request.method, ZMTransportRequestMethod.post)
             XCTAssertEqual(request.path, "/conversations/\(self.oneToOneConversation.remoteIdentifier!.transportString())/otr/messages")
             guard let receivedMessage = self.outgoingEncryptedMessage(from: request, for: self.otherClient) else {
                 return XCTFail("Invalid message")
@@ -115,7 +115,7 @@ extension ClientMessageRequestFactoryTests {
             }
 
             // THEN
-            XCTAssertEqual(request.method, ZMTransportRequestMethod.methodPOST)
+            XCTAssertEqual(request.method, ZMTransportRequestMethod.post)
             XCTAssertEqual(request.path, "/conversations/\(self.groupConversation.remoteIdentifier!.transportString())/otr/messages")
             guard let receivedMessage = self.outgoingEncryptedMessage(from: request, for: self.otherClient) else {
                 return XCTFail("Invalid message")
@@ -147,7 +147,7 @@ extension ClientMessageRequestFactoryTests {
             }
 
             // THEN
-            XCTAssertEqual(request.method, ZMTransportRequestMethod.methodPOST)
+            XCTAssertEqual(request.method, ZMTransportRequestMethod.post)
             XCTAssertEqual(request.path, "/conversations/\(self.groupConversation.remoteIdentifier!.transportString())/otr/messages?ignore_missing=true")
 
             guard let receivedMessage = self.outgoingEncryptedMessage(from: request, for: self.otherClient) else {

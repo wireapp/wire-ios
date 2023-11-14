@@ -172,7 +172,7 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
             let converationID = conversation.remoteIdentifier!.transportString()
 
             XCTAssertEqual(request.path, "/conversations/\(converationID)/otr/messages", line: line)
-            XCTAssertEqual(request.method, .methodPOST, line: line)
+            XCTAssertEqual(request.method, .post, line: line)
             return request
 
         case .v1, .v2, .v3, .v4, .v5:
@@ -185,7 +185,7 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
             let conversationID = conversation.remoteIdentifier!.transportString()
 
             XCTAssertEqual(request.path, "/v\(apiVersion.rawValue)/conversations/\(domain)/\(conversationID)/proteus/messages", line: line)
-            XCTAssertEqual(request.method, .methodPOST, line: line)
+            XCTAssertEqual(request.method, .post, line: line)
             return request
         }
     }
@@ -271,7 +271,7 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
             // THEN
             let expected = "/conversations/\(self.groupConversation.remoteIdentifier!.transportString())/otr/messages"
             XCTAssertEqual(request.path, expected)
-            XCTAssertEqual(request.method, .methodPOST)
+            XCTAssertEqual(request.method, .post)
         }
     }
 

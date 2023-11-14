@@ -44,7 +44,7 @@ class ClaimMLSKeyPackageActionHandler: ActionHandler<ClaimMLSKeyPackageAction> {
 
         return ZMTransportRequest(
             path: path,
-            method: .methodPOST,
+            method: .post,
             payload: payload,
             apiVersion: apiVersion.rawValue
         )

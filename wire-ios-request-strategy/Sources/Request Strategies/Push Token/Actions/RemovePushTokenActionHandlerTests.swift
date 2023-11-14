@@ -46,7 +46,7 @@ class RemovePushTokenActionHandlerTests: MessagingTestBase {
 
         // Then
         XCTAssertEqual(request.path, "/push/tokens/\(deviceToken)")
-        XCTAssertEqual(request.method, .methodDELETE)
+        XCTAssertEqual(request.method, .delete)
     }
 
     // MARK: - Response handling

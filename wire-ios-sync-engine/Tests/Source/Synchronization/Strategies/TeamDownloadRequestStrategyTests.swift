@@ -128,7 +128,7 @@ class TeamDownloadRequestStrategyTests: MessagingTest {
 
             // then
             guard let request = self.sut.nextRequest(for: .v0) else { return XCTFail("No request generated") }
-            XCTAssertEqual(request.method, .methodGET)
+            XCTAssertEqual(request.method, .get)
             XCTAssertEqual(request.path, "/teams/\(team.remoteIdentifier!.transportString())")
         }
     }
@@ -355,7 +355,7 @@ class TeamDownloadRequestStrategyTests: MessagingTest {
         let request = try XCTUnwrap(sut.nextRequest(for: .v0))
 
         // Then
-        XCTAssertEqual(request.method, .methodGET)
+        XCTAssertEqual(request.method, .get)
         XCTAssertEqual(request.path, "/teams")
     }
 
@@ -367,7 +367,7 @@ class TeamDownloadRequestStrategyTests: MessagingTest {
         let request = try XCTUnwrap(sut.nextRequest(for: .v1))
 
         // Then
-        XCTAssertEqual(request.method, .methodGET)
+        XCTAssertEqual(request.method, .get)
         XCTAssertEqual(request.path, "/v1/teams")
     }
 
@@ -379,7 +379,7 @@ class TeamDownloadRequestStrategyTests: MessagingTest {
         let request = try XCTUnwrap(sut.nextRequest(for: .v2))
 
         // Then
-        XCTAssertEqual(request.method, .methodGET)
+        XCTAssertEqual(request.method, .get)
         XCTAssertEqual(request.path, "/v2/teams")
     }
 
@@ -391,7 +391,7 @@ class TeamDownloadRequestStrategyTests: MessagingTest {
         let request = try XCTUnwrap(sut.nextRequest(for: .v3))
 
         // Then
-        XCTAssertEqual(request.method, .methodGET)
+        XCTAssertEqual(request.method, .get)
         XCTAssertEqual(request.path, "/v3/teams")
     }
 
@@ -403,7 +403,7 @@ class TeamDownloadRequestStrategyTests: MessagingTest {
         let request = try XCTUnwrap(sut.nextRequest(for: .v4))
 
         // Then
-        XCTAssertEqual(request.method, .methodGET)
+        XCTAssertEqual(request.method, .get)
         XCTAssertEqual(request.path, "/v4/teams/\(teamID.transportString())")
     }
 
@@ -425,7 +425,7 @@ class TeamDownloadRequestStrategyTests: MessagingTest {
         let request = try XCTUnwrap(sut.nextRequest(for: .v5))
 
         // Then
-        XCTAssertEqual(request.method, .methodGET)
+        XCTAssertEqual(request.method, .get)
         XCTAssertEqual(request.path, "/v5/teams/\(teamID.transportString())")
     }
 

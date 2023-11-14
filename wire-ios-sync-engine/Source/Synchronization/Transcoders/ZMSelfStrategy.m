@@ -202,7 +202,7 @@ NSTimeInterval ZMSelfStrategyPendingValidationRequestInterval = 5;
         payload[@"assets"] = [self profilePictureAssetsPayloadForUser:user];
     }
     
-    ZMTransportRequest *request = [ZMTransportRequest requestWithPath:@"/self" method:ZMMethodPUT payload:payload apiVersion:apiVersion];
+    ZMTransportRequest *request = [ZMTransportRequest requestWithPath:@"/self" method:ZMTransportRequestMethodPut payload:payload apiVersion:apiVersion];
     return [[ZMUpstreamRequest alloc] initWithKeys:keys transportRequest:request];
 }
 

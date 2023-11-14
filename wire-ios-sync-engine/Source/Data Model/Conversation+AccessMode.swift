@@ -283,10 +283,10 @@ internal struct WirelessRequestFactory {
 
         switch apiVersion {
         case .v0, .v1, .v2, .v3:
-            return .init(path: "/conversations/\(identifier)/code", method: .methodPOST, payload: nil, apiVersion: apiVersion.rawValue)
+            return .init(path: "/conversations/\(identifier)/code", method: .post, payload: nil, apiVersion: apiVersion.rawValue)
         case .v4, .v5:
             let payload: [String: Any] = [:]
-            return .init(path: "/conversations/\(identifier)/code", method: .methodPOST, payload: payload as ZMTransportData, apiVersion: apiVersion.rawValue)
+            return .init(path: "/conversations/\(identifier)/code", method: .post, payload: payload as ZMTransportData, apiVersion: apiVersion.rawValue)
         }
     }
 
@@ -294,7 +294,7 @@ internal struct WirelessRequestFactory {
         guard let identifier = conversation.remoteIdentifier?.transportString() else {
             fatal("conversation is not yet inserted on the backend")
         }
-        return .init(path: "/conversations/\(identifier)/code", method: .methodDELETE, payload: nil, apiVersion: apiVersion.rawValue)
+        return .init(path: "/conversations/\(identifier)/code", method: .delete, payload: nil, apiVersion: apiVersion.rawValue)
     }
 
     static func setAccessRoles(allowGuests: Bool, allowServices: Bool, for conversation: ZMConversation, apiVersion: APIVersion) -> ZMTransportRequest {
@@ -336,7 +336,7 @@ internal struct WirelessRequestFactory {
             payload["access_role_v2"] = accessRoles.map(\.rawValue)
         }
 
-        return .init(path: path, method: .methodPUT, payload: payload as ZMTransportData, apiVersion: apiVersion.rawValue)
+        return .init(path: path, method: .put, payload: payload as ZMTransportData, apiVersion: apiVersion.rawValue)
     }
 
 }

@@ -140,7 +140,7 @@ struct ConsentRequestFactory {
             "source": sourceString
         ]
         return .init(path: consentPath,
-                     method: .methodPUT,
+                     method: .put,
                      payload: payload as ZMTransportData,
                      apiVersion: apiVersion.rawValue)
     }

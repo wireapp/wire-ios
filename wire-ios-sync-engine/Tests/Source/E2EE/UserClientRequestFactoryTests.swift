@@ -137,7 +137,7 @@ class UserClientRequestFactoryTests: MessagingTest {
 
         // then
         let transportRequest = try XCTUnwrap(request.transportRequest)
-        assertRequest(transportRequest, path: "/clients", method: .methodPOST)
+        assertRequest(transportRequest, path: "/clients", method: .post)
 
         let payload = try XCTUnwrap(payload(from: transportRequest))
         try assertLastPrekey(payload, usingProteusService: usingProteusService)
@@ -246,7 +246,7 @@ class UserClientRequestFactoryTests: MessagingTest {
         assertRequest(
             transportRequest,
             path: "/clients/\(client.remoteIdentifier!)",
-            method: .methodPUT
+            method: .put
         )
 
         let payload = try XCTUnwrap(payload(from: transportRequest))
@@ -306,7 +306,7 @@ class UserClientRequestFactoryTests: MessagingTest {
         assertRequest(
             transportRequest,
             path: "/clients/\(client.remoteIdentifier!)",
-            method: .methodDELETE
+            method: .delete
         )
 
         let payload = try XCTUnwrap(payload(from: transportRequest))
@@ -333,7 +333,7 @@ class UserClientRequestFactoryTests: MessagingTest {
         assertRequest(
             transportRequest,
             path: "/v1/clients/\(client.remoteIdentifier!)",
-            method: .methodPUT
+            method: .put
         )
 
         let payload = try XCTUnwrap(payload(from: transportRequest))

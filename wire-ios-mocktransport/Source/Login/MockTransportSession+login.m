@@ -31,7 +31,7 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
 /// handles /login
 - (ZMTransportResponse *)processLoginRequest:(ZMTransportRequest *)request;
 {
-    if([request matchesWithPath:@"/login" method:ZMMethodPOST]) {
+    if([request matchesWithPath:@"/login" method:ZMTransportRequestMethodPost]) {
         NSString *password = [request.payload.asDictionary optionalStringForKey:@"password"];
         NSString *email = [request.payload.asDictionary optionalStringForKey:@"email"];
         NSString *phone = [request.payload.asDictionary optionalStringForKey:@"phone"];
@@ -109,7 +109,7 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
 /// handles /login/send
 - (ZMTransportResponse *)processLoginCodeRequest:(ZMTransportRequest *)request;
 {
-    if ([request matchesWithPath:@"/login/send" method:ZMMethodPOST]) {
+    if ([request matchesWithPath:@"/login/send" method:ZMTransportRequestMethodPost]) {
         NSString *phone = [request.payload.asDictionary optionalStringForKey:@"phone"];
         
         if(phone == nil) {
@@ -135,7 +135,7 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
 /// handles /verification-code/send
 - (ZMTransportResponse *)processVerificationCodeSendRequest:(ZMTransportRequest *)request;
 {
-    if ([request matchesWithPath:@"/verification-code/send" method:ZMMethodPOST]) {
+    if ([request matchesWithPath:@"/verification-code/send" method:ZMTransportRequestMethodPost]) {
         NSString *email = [request.payload.asDictionary optionalStringForKey:@"email"];
         NSString *action = [request.payload.asDictionary optionalStringForKey:@"action"];
 

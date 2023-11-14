@@ -217,7 +217,7 @@ extern NSTimeInterval DefaultPendingValidationLoginAttemptInterval;
                               @"label": CookieLabel.current.value};
 
     ZMTransportRequest *expectedRequest = [[ZMTransportRequest alloc] initWithPath:ZMLoginURL
-                                                                            method:ZMMethodPOST
+                                                                            method:ZMTransportRequestMethodPost
                                                                            payload:payload
                                                                     authentication:ZMTransportRequestAuthCreatesCookieAndAccessToken
                                                                         apiVersion:0];
@@ -238,7 +238,7 @@ extern NSTimeInterval DefaultPendingValidationLoginAttemptInterval;
                               @"code": self.testPhoneNumberCredentials.phoneNumberVerificationCode,
                               @"label": CookieLabel.current.value};
     ZMTransportRequest *expectedRequest = [[ZMTransportRequest alloc] initWithPath:ZMLoginURL
-                                                                            method:ZMMethodPOST
+                                                                            method:ZMTransportRequestMethodPost
                                                                            payload:payload
                                                                     authentication:ZMTransportRequestAuthCreatesCookieAndAccessToken
                                                                         apiVersion:0];
@@ -261,7 +261,7 @@ extern NSTimeInterval DefaultPendingValidationLoginAttemptInterval;
                               @"label": CookieLabel.current.value};
 
     ZMTransportRequest *expectedRequest = [[ZMTransportRequest alloc] initWithPath:ZMLoginURL
-                                                                            method:ZMMethodPOST
+                                                                            method:ZMTransportRequestMethodPost
                                                                            payload:payload
                                                                     authentication:ZMTransportRequestAuthCreatesCookieAndAccessToken
                                                                         apiVersion:0];

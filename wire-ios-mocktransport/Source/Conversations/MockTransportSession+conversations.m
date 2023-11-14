@@ -38,26 +38,26 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransport";
 // handles /conversations
 - (ZMTransportResponse *)processConversationsRequest:(ZMTransportRequest *)request;
 {
-    if ([request matchesWithPath:@"/conversations" method:ZMMethodGET]) {
+    if ([request matchesWithPath:@"/conversations" method:ZMTransportRequestMethodGet]) {
         return [self processConversationsGetConversationsIDs:request.queryParameters[@"ids"] apiVersion:request.apiVersion];
     }
-    else if ([request matchesWithPath:@"/conversations/ids" method:ZMMethodGET])
+    else if ([request matchesWithPath:@"/conversations/ids" method:ZMTransportRequestMethodGet])
     {
         return [self processConversationIDsQuery:request.queryParameters apiVersion:request.apiVersion];
     }
-    else if ([request matchesWithPath:@"/conversations/join" method:ZMMethodGET])
+    else if ([request matchesWithPath:@"/conversations/join" method:ZMTransportRequestMethodGet])
     {
         return [self processFetchConversationIdAndNameWith:request.queryParameters apiVersion:request.apiVersion];
     }
-    else if ([request matchesWithPath:@"/conversations/*" method:ZMMethodGET])
+    else if ([request matchesWithPath:@"/conversations/*" method:ZMTransportRequestMethodGet])
     {
         return [self processConversationsGetConversation:[request RESTComponentAtIndex:1] apiVersion:request.apiVersion];
     }
-    else if ([request matchesWithPath:@"/conversations" method:ZMMethodPOST])
+    else if ([request matchesWithPath:@"/conversations" method:ZMTransportRequestMethodPost])
     {
         return [self processConversationsPostConversationsRequest:request];
     }
-    else if ([request matchesWithPath:@"/conversations/*/otr/messages" method:ZMMethodPOST])
+    else if ([request matchesWithPath:@"/conversations/*/otr/messages" method:ZMTransportRequestMethodPost])
     {
         if (request.binaryData != nil) {
             return [self processAddOTRMessageToConversation:[request RESTComponentAtIndex:1]
@@ -72,66 +72,66 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransport";
                                                  apiVersion:request.apiVersion];
         }
     }
-    else if ([request matchesWithPath:@"/conversations/*/members" method:ZMMethodPOST])
+    else if ([request matchesWithPath:@"/conversations/*/members" method:ZMTransportRequestMethodPost])
     {
         return [self processAddMembersToConversation:[request RESTComponentAtIndex:1] payload:[request.payload asDictionary] apiVersion:request.apiVersion];
     }
-    else if ([request matchesWithPath:@"/conversations/*" method:ZMMethodPUT])
+    else if ([request matchesWithPath:@"/conversations/*" method:ZMTransportRequestMethodPut])
     {
         return [self processPutConversation:[request RESTComponentAtIndex:1] payload:[request.payload asDictionary] apiVersion:request.apiVersion];
     }
-    else if ([request matchesWithPath:@"/conversations/*/members/*" method:ZMMethodPUT])
+    else if ([request matchesWithPath:@"/conversations/*/members/*" method:ZMTransportRequestMethodPut])
     {
         return [self processPutMembersInConversation:[request RESTComponentAtIndex:1] member:[request RESTComponentAtIndex:3] payload:[request.payload asDictionary] apiVersion:request.apiVersion];
     }
-    else if ([request matchesWithPath:@"/conversations/*/self" method:ZMMethodPUT])
+    else if ([request matchesWithPath:@"/conversations/*/self" method:ZMTransportRequestMethodPut])
     {
         return [self processPutConversationSelf:[request RESTComponentAtIndex:1] payload:[request.payload asDictionary] apiVersion:request.apiVersion];
     }
-    else if ([request matchesWithPath:@"/conversations/*/members/*" method:ZMMethodDELETE])
+    else if ([request matchesWithPath:@"/conversations/*/members/*" method:ZMTransportRequestMethodDelete])
     {
         return [self processDeleteConversation:[request RESTComponentAtIndex:1] member:[request RESTComponentAtIndex:3] apiVersion:request.apiVersion];
     }
-    else if ([request matchesWithPath:@"/conversations/*/typing" method:ZMMethodPOST])
+    else if ([request matchesWithPath:@"/conversations/*/typing" method:ZMTransportRequestMethodPost])
     {
         return [self processConversationTyping:[request RESTComponentAtIndex:1] payload:[request.payload asDictionary] apiVersion:request.apiVersion];
     }
-    else if ([request matchesWithPath:@"/conversations/*/assets/*" method:ZMMethodGET])
+    else if ([request matchesWithPath:@"/conversations/*/assets/*" method:ZMTransportRequestMethodGet])
     {
         return [self processAssetRequest:request];
     }
-    else if ([request matchesWithPath:@"/conversations/*/otr/assets/*" method:ZMMethodGET])
+    else if ([request matchesWithPath:@"/conversations/*/otr/assets/*" method:ZMTransportRequestMethodGet])
     {
         return [self processAssetRequest:request];
     }
-    else if ([request matchesWithPath:@"/conversations/*/bots" method:ZMMethodPOST]) {
+    else if ([request matchesWithPath:@"/conversations/*/bots" method:ZMTransportRequestMethodPost]) {
         return [self processServiceRequest:request];
     }
-    else if ([request matchesWithPath:@"/conversations/*/bots/*" method:ZMMethodDELETE]) {
+    else if ([request matchesWithPath:@"/conversations/*/bots/*" method:ZMTransportRequestMethodDelete]) {
         return [self processDeleteBotRequest:request];
     }
-    else if ([request matchesWithPath:@"/conversations/*/access" method:ZMMethodPUT]) {
+    else if ([request matchesWithPath:@"/conversations/*/access" method:ZMTransportRequestMethodPut]) {
         return [self processAccessModeUpdateForConversation:[request RESTComponentAtIndex:1] payload:[request.payload asDictionary] apiVersion:request.apiVersion];
     }
-    else if ([request matchesWithPath:@"/conversations/*/code" method:ZMMethodGET]) {
+    else if ([request matchesWithPath:@"/conversations/*/code" method:ZMTransportRequestMethodGet]) {
         return [self processFetchLinkForConversation:[request RESTComponentAtIndex:1] payload:[request.payload asDictionary] apiVersion:request.apiVersion];
     }
-    else if ([request matchesWithPath:@"/conversations/*/code" method:ZMMethodPOST]) {
+    else if ([request matchesWithPath:@"/conversations/*/code" method:ZMTransportRequestMethodPost]) {
         return [self processCreateLinkForConversation:[request RESTComponentAtIndex:1] payload:[request.payload asDictionary] apiVersion:request.apiVersion];
     }
-    else if ([request matchesWithPath:@"/conversations/*/code" method:ZMMethodDELETE]) {
+    else if ([request matchesWithPath:@"/conversations/*/code" method:ZMTransportRequestMethodDelete]) {
         return [self processDeleteLinkForConversation:[request RESTComponentAtIndex:1] payload:[request.payload asDictionary] apiVersion:request.apiVersion];
     }
-    else if ([request matchesWithPath:@"/conversations/*/features/conversationGuestLinks" method:ZMMethodGET]) {
+    else if ([request matchesWithPath:@"/conversations/*/features/conversationGuestLinks" method:ZMTransportRequestMethodGet]) {
         return [self processGuestLinkFeatureStatusForConversation:[request RESTComponentAtIndex:1] apiVersion:request.apiVersion];
     }
-    else if ([request matchesWithPath:@"/conversations/*/receipt-mode" method:ZMMethodPUT]) {
+    else if ([request matchesWithPath:@"/conversations/*/receipt-mode" method:ZMTransportRequestMethodPut]) {
         return [self processReceiptModeUpdateForConversation:[request RESTComponentAtIndex:1] payload:[request.payload asDictionary] apiVersion:request.apiVersion];
     }
-    else if ([request matchesWithPath:@"/conversations/*/roles" method:ZMMethodGET]) {
+    else if ([request matchesWithPath:@"/conversations/*/roles" method:ZMTransportRequestMethodGet]) {
         return [self processFetchRolesForConversation:[request RESTComponentAtIndex:1] payload:[request.payload asDictionary] apiVersion:request.apiVersion];
     }
-    else if ([request matchesWithPath:@"/conversations/join" method:ZMMethodPOST]) {
+    else if ([request matchesWithPath:@"/conversations/join" method:ZMTransportRequestMethodPost]) {
         return [self processJoinConversationWithPayload:[request.payload asDictionary] apiVersion:request.apiVersion];
     }
 

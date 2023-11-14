@@ -202,7 +202,7 @@ class LinkPreviewUpdateRequestStrategyTests: MessagingTestBase {
         let request = sut.nextRequest(for: apiVersion)
         let conversationID = conversation.remoteIdentifier!.transportString()
         XCTAssertNotNil(request, "No request generated", file: file, line: line)
-        XCTAssertEqual(request?.method, .methodPOST, file: file, line: line)
+        XCTAssertEqual(request?.method, .post, file: file, line: line)
 
         switch apiVersion! {
         case .v0:

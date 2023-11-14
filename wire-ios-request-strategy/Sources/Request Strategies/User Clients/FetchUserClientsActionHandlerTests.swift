@@ -58,7 +58,7 @@ class FetchUserClientsActionHandlerTests: ActionHandlerTestBase<FetchUserClients
         let request = try test_itGeneratesARequest(
             for: action,
             expectedPath: "/v3/users/list-clients",
-            expectedMethod: .methodPOST,
+            expectedMethod: .post,
             apiVersion: .v3
         )
 
@@ -72,7 +72,7 @@ class FetchUserClientsActionHandlerTests: ActionHandlerTestBase<FetchUserClients
         let request = try test_itGeneratesARequest(
             for: action,
             expectedPath: "/v2/users/list-clients",
-            expectedMethod: .methodPOST,
+            expectedMethod: .post,
             apiVersion: .v2
         )
 
@@ -86,7 +86,7 @@ class FetchUserClientsActionHandlerTests: ActionHandlerTestBase<FetchUserClients
         let request = try test_itGeneratesARequest(
             for: action,
             expectedPath: "/v1/users/list-clients",
-            expectedMethod: .methodPOST,
+            expectedMethod: .post,
             apiVersion: .v1
         )
 

@@ -256,7 +256,7 @@ extension ClientMessageRequestStrategyTests {
 
             // THEN
             XCTAssertEqual(request.path, "/conversations/\(self.groupConversation.remoteIdentifier!.transportString())/otr/messages")
-            XCTAssertEqual(request.method, .methodPOST)
+            XCTAssertEqual(request.method, .post)
             XCTAssertNotNil(request.binaryData)
             XCTAssertEqual(request.binaryDataType, "application/x-protobuf")
 
@@ -288,7 +288,7 @@ extension ClientMessageRequestStrategyTests {
 
             // THEN
             XCTAssertEqual(request.path, "/v1/conversations/\(conversationDomain)/\(conversationID)/proteus/messages")
-            XCTAssertEqual(request.method, .methodPOST)
+            XCTAssertEqual(request.method, .post)
             XCTAssertNotNil(request.binaryData)
             XCTAssertEqual(request.binaryDataType, "application/x-protobuf")
         }
@@ -311,7 +311,7 @@ extension ClientMessageRequestStrategyTests {
 
             // THEN
             XCTAssertEqual(request.path, "/conversations/\(self.groupConversation.remoteIdentifier!.transportString())/otr/messages")
-            XCTAssertEqual(request.method, .methodPOST)
+            XCTAssertEqual(request.method, .post)
             XCTAssertNotNil(request.binaryData)
             XCTAssertEqual(request.binaryDataType, "application/x-protobuf")
 

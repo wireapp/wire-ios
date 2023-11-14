@@ -33,16 +33,16 @@
 /// handles /connections
 - (ZMTransportResponse *)processSelfConnectionsRequest:(ZMTransportRequest *)sessionRequest;
 {
-    if ([sessionRequest matchesWithPath:@"/connections" method:ZMMethodGET]) {
+    if ([sessionRequest matchesWithPath:@"/connections" method:ZMTransportRequestMethodGet]) {
         return [self processGetConnections:sessionRequest.queryParameters apiVersion:sessionRequest.apiVersion];
     }
-    if ([sessionRequest matchesWithPath:@"/connections/*" method:ZMMethodGET]) {
+    if ([sessionRequest matchesWithPath:@"/connections/*" method:ZMTransportRequestMethodGet]) {
         return [self processGetSpecifiedConnection:sessionRequest];
     }
-    if ([sessionRequest matchesWithPath:@"/connections" method:ZMMethodPOST]) {
+    if ([sessionRequest matchesWithPath:@"/connections" method:ZMTransportRequestMethodPost]) {
         return [self processPostConnection:sessionRequest];
     }
-    if ([sessionRequest matchesWithPath:@"/connections/*" method:ZMMethodPUT]) {
+    if ([sessionRequest matchesWithPath:@"/connections/*" method:ZMTransportRequestMethodPut]) {
         return [self processPutConnection:sessionRequest];
     }
     

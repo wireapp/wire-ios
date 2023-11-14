@@ -68,7 +68,7 @@ extension UnauthenticatedSession {
         }
 
         let path = "/custom-backend/by-domain/\(domain.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)!)"
-        let request = ZMTransportRequest(path: path, method: .methodGET, payload: nil, apiVersion: apiVersion.rawValue)
+        let request = ZMTransportRequest(path: path, method: .get, payload: nil, apiVersion: apiVersion.rawValue)
 
         request.add(ZMCompletionHandler(on: operationLoop.operationQueue!, block: { (response) in
 

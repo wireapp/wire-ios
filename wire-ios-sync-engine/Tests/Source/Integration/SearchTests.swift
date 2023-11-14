@@ -397,7 +397,7 @@ class SearchTests: IntegrationTest {
         let requests = mockTransportSession.receivedRequests()
         XCTAssertEqual(requests.count, 1)
         XCTAssertEqual(requests.first?.path, "/assets/v3/\(user1.previewProfileAssetIdentifier!)")
-        XCTAssertEqual(requests.first?.method, .methodGET)
+        XCTAssertEqual(requests.first?.method, .get)
     }
 
     func testThatItDownloadsV3PreviewAssetWhenOnlyV3AssetsArePresentInSearchUserResponse_UnconnectedUser() {
@@ -427,7 +427,7 @@ class SearchTests: IntegrationTest {
         let requests = mockTransportSession.receivedRequests()
         XCTAssertEqual(requests.count, 3)
         XCTAssertEqual(requests[2].path, "/assets/v3/\(user4.previewProfileAssetIdentifier!)")
-        XCTAssertEqual(requests[2].method, .methodGET)
+        XCTAssertEqual(requests[2].method, .get)
     }
 
     func testThatItDownloadsMediumAssetForSearchUserWhenAssetAndLegacyIdArePresentUsingV3() {
@@ -473,7 +473,7 @@ class SearchTests: IntegrationTest {
         let requests = mockTransportSession.receivedRequests()
         XCTAssertEqual(requests.count, 1)
         XCTAssertEqual(requests[0].path, "/assets/v3/\(user4.completeProfileAssetIdentifier!)")
-        XCTAssertEqual(requests[0].method, .methodGET)
+        XCTAssertEqual(requests[0].method, .get)
     }
 
     func testThatItRefetchesTheSearchUserIfTheMediumAssetIDIsNotSet_V3Asset() {
@@ -508,9 +508,9 @@ class SearchTests: IntegrationTest {
         let requests = mockTransportSession.receivedRequests()
         XCTAssertEqual(requests.count, 2)
         XCTAssertEqual(requests[0].path, "/users?ids=\(user4.identifier)")
-        XCTAssertEqual(requests[0].method, .methodGET)
+        XCTAssertEqual(requests[0].method, .get)
         XCTAssertEqual(requests[1].path, "/assets/v3/\(user4.completeProfileAssetIdentifier!)")
-        XCTAssertEqual(requests[1].method, .methodGET)
+        XCTAssertEqual(requests[1].method, .get)
     }
 
 }

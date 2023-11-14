@@ -75,7 +75,7 @@ class RemoveParticipantActionHandlerTests: MessagingTestBase {
 
             // then
             XCTAssertEqual(request.path, "/conversations/\(conversationID)/members/\(userID)")
-            XCTAssertEqual(request.method, .methodDELETE)
+            XCTAssertEqual(request.method, .delete)
         }
     }
 
@@ -92,7 +92,7 @@ class RemoveParticipantActionHandlerTests: MessagingTestBase {
 
             // then
             XCTAssertEqual(request.path, "/v1/conversations/\(domain)/\(conversationID)/members/\(domain)/\(userID)")
-            XCTAssertEqual(request.method, .methodDELETE)
+            XCTAssertEqual(request.method, .delete)
         }
     }
 

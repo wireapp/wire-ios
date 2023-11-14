@@ -49,7 +49,7 @@ final class ZMUserConsentTests: DatabaseTest {
         let request = WireSyncEngine.ConsentRequestFactory.fetchConsentRequest(apiVersion: .v0)
 
         // then
-        XCTAssertEqual(request.method, .methodGET)
+        XCTAssertEqual(request.method, .get)
         XCTAssertEqual(request.path, "/self/consent")
         XCTAssertNil(request.payload)
     }
@@ -58,7 +58,7 @@ final class ZMUserConsentTests: DatabaseTest {
         // given
         let request = WireSyncEngine.ConsentRequestFactory.setConsentRequest(for: .marketing, value: true, apiVersion: .v0)
         // then
-        XCTAssertEqual(request.method, .methodPUT)
+        XCTAssertEqual(request.method, .put)
         XCTAssertEqual(request.path, "/self/consent")
         let expectedPayload: [AnyHashable: Any] = ["type": 2, "value": 1, "source": "iOS 1.0"]
         XCTAssertEqual(request.payload!.asDictionary()! as NSDictionary, expectedPayload as NSDictionary)
@@ -68,7 +68,7 @@ final class ZMUserConsentTests: DatabaseTest {
         // given
         let request = WireSyncEngine.ConsentRequestFactory.setConsentRequest(for: .marketing, value: false, apiVersion: .v0)
         // then
-        XCTAssertEqual(request.method, .methodPUT)
+        XCTAssertEqual(request.method, .put)
         XCTAssertEqual(request.path, "/self/consent")
         let expectedPayload: [AnyHashable: Any] = ["type": 2, "value": 0, "source": "iOS 1.0"]
         XCTAssertEqual(request.payload!.asDictionary()! as NSDictionary, expectedPayload as NSDictionary)
