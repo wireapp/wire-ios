@@ -123,8 +123,8 @@ extension DeviceInfoViewModel: Identifiable {
 }
 
 struct DevicesViewModel {
-    private(set)var currentDevice: DeviceInfoViewModel
-    private(set)var otherDevices: [DeviceInfoViewModel]
+    var currentDevice: DeviceInfoViewModel
+    var otherDevices: [DeviceInfoViewModel]
 
     func onRemoveDevice(_ indexSet: IndexSet) {
 

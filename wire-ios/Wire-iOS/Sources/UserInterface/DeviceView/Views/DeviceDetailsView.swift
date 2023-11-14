@@ -20,7 +20,7 @@ import SwiftUI
 
 struct DeviceDetailsView: View {
     @Environment(\.dismiss) private var dismiss
-    @State var viewModel: DeviceInfoViewModel
+    @Binding var viewModel: DeviceInfoViewModel
     @State var isCertificateViewPresented: Bool
 
     var body: some View {
@@ -110,7 +110,7 @@ struct DeviceDetailsView: View {
 
 #Preview {
     DeviceDetailsView(
-        viewModel: DeviceInfoViewModel(
+        viewModel: .constant( DeviceInfoViewModel(
             udid: "123g4",
             title: "Device 4",
             mlsThumbprint: """
@@ -138,7 +138,9 @@ e5:d5:e6:75:7e:04:86:07:
                 ),
                 exipirationDate: .now + .fourWeeks
             )
+            )
         ),
         isCertificateViewPresented: false
     )
+
 }

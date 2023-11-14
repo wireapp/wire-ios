@@ -22,16 +22,16 @@ struct DeviceListView: View {
     @State var viewModel: DevicesViewModel
     var currentDeviceView: some View {
         Section(header: Text(L10n.Localizable.Device.current)) {
-            NavigationLink(destination: DeviceDetailsView(viewModel: viewModel.currentDevice, isCertificateViewPresented: false)) {
+            NavigationLink(destination: DeviceDetailsView(viewModel: $viewModel.currentDevice, isCertificateViewPresented: false)) {
                 DeviceView(viewModel: viewModel.currentDevice)
             }
         }
     }
     var otherDevicesView: some View {
         Section(header: Text(L10n.Localizable.Device.active)) {
-                ForEach(viewModel.otherDevices) { deviceViewModel in
+                ForEach($viewModel.otherDevices) { deviceViewModel in
                     NavigationLink(destination: DeviceDetailsView(viewModel: deviceViewModel, isCertificateViewPresented: false)) {
-                        DeviceView(viewModel: deviceViewModel)
+                        DeviceView(viewModel: deviceViewModel.wrappedValue)
                     }
                 }
                 .onDelete(perform: delete)
