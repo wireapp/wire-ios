@@ -58,7 +58,7 @@ extension Payload {
 
         init(_ action: CreateGroupConversationAction) {
             switch action.messageProtocol {
-            case .mls:
+            case .mls, .mixed:
                 messageProtocol = "mls"
                 creatorClient = action.creatorClientID
                 qualifiedUsers = nil
@@ -84,7 +84,7 @@ extension Payload {
         @available(*, deprecated, message: "Use a CreateConversationAction instead")
         init(_ conversation: ZMConversation, selfClientID: String) {
             switch conversation.messageProtocol {
-            case .mls:
+            case .mls, .mixed:
                 messageProtocol = "mls"
                 creatorClient = selfClientID
                 qualifiedUsers = nil

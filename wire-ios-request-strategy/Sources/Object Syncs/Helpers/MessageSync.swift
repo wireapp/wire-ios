@@ -72,9 +72,8 @@ public class MessageSync<Message: ProteusMessage & MLSMessage>: NSObject, ZMCont
         }
 
         switch conversation.messageProtocol {
-        case .proteus:
+        case .proteus, .mixed:
             proteusMessageSync.sync(message, completion: completion)
-
         case .mls:
             mlsMessageSync.sync(message, completion: completion)
         }

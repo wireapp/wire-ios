@@ -96,6 +96,42 @@ final class ZMConversationTests_MLS_Migration: ModelObjectsTests {
         XCTAssertEqual(fetchedConversations, [conversations[0]])
     }
 
+    func test_fetchAllTeamGroupConversations_messageProtocolMixed() async throws {
+        // GIVEN
+        let conversations = try await syncMOC.perform { [syncMOC] in
+
+            // ensure selfUser has a teamIdentifier set
+            let selfUser = ZMUser.selfUser(in: syncMOC)
+            selfUser.teamIdentifier = .init()
+
+            // create specific conversations
+            let conversations = try (0..<4).map { _ in
+                let conversation = try MLSGroupID.random().createConversation(in: syncMOC)
+                conversation.messageProtocol = .mixed
+                conversation.conversationType = .group
+                conversation.teamRemoteIdentifier = selfUser.teamIdentifier
+                return conversation
+            }
+
+            // only conversations[0] should be fetched successfully
+            conversations[1].conversationType = .`self`
+            conversations[2].conversationType = .`self`
+            conversations[3].teamRemoteIdentifier = .init()
+
+            try syncMOC.save()
+            return conversations
+
+        }
+
+        // WHEN
+        let fetchedConversations = try await syncMOC.perform { [syncMOC] in
+            try ZMConversation.fetchAllTeamGroupConversations(messageProtocol: .mixed, in: syncMOC)
+        }
+
+        // THEN
+        XCTAssertEqual(fetchedConversations, [conversations[0]])
+    }
+
 }
 
 // MARK: - MLSGroupID Helper

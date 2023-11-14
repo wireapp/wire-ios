@@ -384,7 +384,7 @@ extension CallingRequestStrategy: WireCallCenterTransport {
             }
 
             switch (conversation.messageProtocol, recipients) {
-            case (.proteus, _), (.mls, .conversationParticipants):
+            case (.proteus, _), (.mls, .conversationParticipants), (.mixed, _):
                 message.send(with: self.messageSync, completion: completionHandler)
 
             case (.mls, _):
@@ -455,7 +455,7 @@ extension CallingRequestStrategy: WireCallCenterTransport {
             }
 
             switch conversation.messageProtocol {
-            case .proteus:
+            case .proteus, .mixed:
                 // With proteus, we discover clients by posting an otr message to no-one,
                 // then parse the error response that contains the list of all clients.
                 self.clientDiscoveryRequest = ClientDiscoveryRequest(

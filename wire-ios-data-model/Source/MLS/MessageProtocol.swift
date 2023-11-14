@@ -35,12 +35,21 @@ public enum MessageProtocol: Int16 {
 
     case mls
 
+    /// Conversations with the mixed message protocol are in the state of migrating from
+    /// proteus to mls. Message encryption is done using the proteus protocol,
+    /// while other operations (such as adding / removing participants) are reflected on the underlying mls group.
+    /// Calling is still done the proteus way until the migration is finalised
+
+    case mixed
+
     public init?(string: String) {
         switch string {
         case "mls":
             self = .mls
         case "proteus":
             self = .proteus
+        case "mixed":
+            self = .mixed
         default:
             return nil
         }
