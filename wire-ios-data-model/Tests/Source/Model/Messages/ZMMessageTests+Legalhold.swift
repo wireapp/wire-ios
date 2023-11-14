@@ -25,19 +25,15 @@ class ZMMessageTests_Legalhold: BaseZMClientMessageTests {
 
 extension ZMMessageTests_Legalhold {
 
-    func testThatItUpdatesLegalHoldStatusFlag_WhenLegalHoldIsEnabled() {
+    func testThatItUpdatesLegalHoldStatusFlag_WhenLegalHoldIsEnabled() throws {
         // given
         let conversation = createConversation(in: uiMOC)
         let message = createClientTextMessage()!
         conversation.append(message)
-        var genericMessage = message.underlyingMessage!
+        var genericMessage = try XCTUnwrap(message.underlyingMessage)
 
         genericMessage.setLegalHoldStatus(.disabled)
-        do {
-            try message.setUnderlyingMessage(genericMessage)
-        } catch {
-            XCTFail("Error in adding data: \(error)")
-        }
+        try message.setUnderlyingMessage(genericMessage)
         conversation.legalHoldStatus = .enabled
 
         // when
@@ -49,18 +45,14 @@ extension ZMMessageTests_Legalhold {
         XCTAssertEqual(message.underlyingMessage?.text.legalHoldStatus, .enabled)
     }
 
-    func testThatItUpdatesLegalHoldStatusFlag_WhenLegalHoldIsDisabled() {
+    func testThatItUpdatesLegalHoldStatusFlag_WhenLegalHoldIsDisabled() throws {
         // given
         let conversation = createConversation(in: uiMOC)
         let message = createClientTextMessage()!
         conversation.append(message)
-        var genericMessage = message.underlyingMessage!
+        var genericMessage = try XCTUnwrap(message.underlyingMessage)
         genericMessage.setLegalHoldStatus(.enabled)
-        do {
-            try message.setUnderlyingMessage(genericMessage)
-        } catch {
-            XCTFail("Error in adding data: \(error)")
-        }
+        try message.setUnderlyingMessage(genericMessage)
         conversation.legalHoldStatus = .disabled
 
         // when
