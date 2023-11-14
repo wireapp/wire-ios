@@ -22,22 +22,25 @@ final class DeviceDetailsActionsHandler: DeviceDetailsViewActions {
     var isDeviceVerified: Bool = false
 
     func fetchCertificate() async {
-
+        print("Fetch certificate is tapped")
     }
 
     func showCertificate(validate: () -> Bool, result: (Bool) -> Void) {
+        print("show certificate is called")
         result(validate())
     }
 
     func removeDevice() {
-
+        print("Remove Device is called")
     }
 
     func resetSession() {
-
+        print("Reset Session is called")
     }
 
     func setVerified(_ result: (Bool) -> Void) {
+        print("set Verified is called")
+        isDeviceVerified.toggle()
         result(isDeviceVerified)
     }
 

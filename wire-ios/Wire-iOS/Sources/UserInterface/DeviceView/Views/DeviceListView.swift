@@ -132,7 +132,7 @@ e9 fd da 5e 21 fd 06 ae
                     ),
                     DeviceInfoViewModel(
                         udid: "123f4",
-                        title: "Device 3",
+                        title: "Device sdkjfskdjfhskjdfkjsdfjkskdfsdsdfawsadfasdfasdfadfssasdfsdfsdfsdfsdf 3",
                         mlsThumbprint: "skfjnskjddfnskjn",
                         deviceKeyFingerprint: """
                b4 47 60 78 a3 1f 12 f9

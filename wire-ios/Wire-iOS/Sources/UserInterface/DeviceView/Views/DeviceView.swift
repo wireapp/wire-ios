@@ -23,11 +23,11 @@ struct DeviceView: View {
     var viewModel: DeviceInfoViewModel
     var titleView: Text {
         if viewModel.isProteusVerificationEnabled {
-            Text("\(viewModel.title) \( viewModel.e2eIdentityCertificate.status.imageForStatus()) \(Image(.verified))")
+            Text("\(viewModel.title.clippedValue()) \( viewModel.e2eIdentityCertificate.status.imageForStatus()) \(Image(.verified))")
                 .font(UIFont.headerSemiBoldFont.swiftUIfont)
                 .foregroundColor(.black)
         } else {
-            Text("\(viewModel.title) \( viewModel.e2eIdentityCertificate.status.imageForStatus())")
+            Text("\(viewModel.title.clippedValue()) \( viewModel.e2eIdentityCertificate.status.imageForStatus())")
                 .font(UIFont.headerSemiBoldFont.swiftUIfont)
                 .foregroundColor(.black)
         }
@@ -41,6 +41,21 @@ struct DeviceView: View {
             if !viewModel.proteusID.isEmpty {
                 Text("\(L10n.Localizable.Device.Proteus.id): \(viewModel.proteusID)").font(UIFont.mediumRegular.swiftUIfont).foregroundColor(.gray)
             }
+        }
+    }
+}
+
+private extension String {
+    func clippedValue() -> String {
+        if self.count > 100 {
+            return String(
+                self[...self.index(
+                    self.startIndex,
+                    offsetBy: 100
+                )]
+            ) + "..."
+        } else {
+            return self
         }
     }
 }

@@ -21,50 +21,80 @@ import SwiftUI
 struct DeviceDetailsButtonsView: View {
     @Binding var viewModel: DeviceInfoViewModel
     @Binding var isCertificateViewPresented: Bool
-    var body: some View {
-            if viewModel.e2eIdentityCertificate.certificate.isEmpty {
-                SwiftUI.Button {
-                    Task {
-                        await viewModel.actionsHandler.fetchCertificate()
-                    }
-                } label: {
-                    Text(L10n.Localizable.Device.Details.Get.certificate)
-                        .foregroundStyle(.black)
-                        .font(UIFont.normalRegularFont.swiftUIfont.bold())
-                }
-            } else {
-                if viewModel.e2eIdentityCertificate.isExpiringSoon {
-                    SwiftUI.Button {
-                        Task {
-                            await viewModel.actionsHandler.fetchCertificate()
-                        }
-                    } label: {
-                        Text(L10n.Localizable.Device.Details.Update.certificate)
-                            .foregroundStyle(.black)
-                            .font(UIFont.normalRegularFont.swiftUIfont.bold())
-                    }
-                }
-                Divider()
-                SwiftUI.Button(action: {
-                    viewModel.actionsHandler.showCertificate {
-                        return viewModel.e2eIdentityCertificate.isValidCertificate
-                    } result: { isValid in
-                        if isValid {
-                            isCertificateViewPresented.toggle()
-                        }
-                    }
-                }, label: {
-                    HStack {
-                        Text(L10n.Localizable.Device.Details.Show.Certificate.details)
-                            .foregroundStyle(.black)
-                            .font(UIFont.normalRegularFont.swiftUIfont.bold())
-
-                        Spacer()
-                        Image(.rightArrow)
-
-                    }.padding()
-                })
+    var getCertificateButton: some View {
+        SwiftUI.Button {
+            Task {
+                await viewModel.actionsHandler.fetchCertificate()
             }
+        } label: {
+            Text(L10n.Localizable.Device.Details.Get.certificate)
+                .foregroundStyle(.black)
+                .font(UIFont.normalRegularFont.swiftUIfont.bold())
+        }
+    }
+    var updateCertificateButton: some View {
+        SwiftUI.Button {
+            Task {
+                await viewModel.actionsHandler.fetchCertificate()
+            }
+        } label: {
+            VStack(alignment: .leading) {
+                Text(L10n.Localizable.Device.Details.Update.certificate)
+                    .foregroundStyle(.black)
+                    .font(UIFont.normalRegularFont.swiftUIfont.bold())
+            }        }
+    }
+    var showCertificateButton: some View {
+        SwiftUI.Button(action: {
+            viewModel.actionsHandler.showCertificate {
+                return viewModel.e2eIdentityCertificate.isValidCertificate
+            } result: { isValid in
+                if isValid {
+                    isCertificateViewPresented.toggle()
+                }
+            }
+        }, label: {
+            HStack {
+                Text(L10n.Localizable.Device.Details.Show.Certificate.details)
+                    .foregroundStyle(.black)
+                    .font(UIFont.normalRegularFont.swiftUIfont.bold())
+
+                Spacer()
+                Image(.rightArrow)
+
+            }
+        })
+    }
+    var body: some View {
+        switch viewModel.e2eIdentityCertificate.status {
+        case .valid:
+            if viewModel.e2eIdentityCertificate.isExpiringSoon {
+                Divider()
+                updateCertificateButton.padding()
+            }
+            Divider()
+            showCertificateButton.padding()
+            Divider()
+        case .notActivated:
+            Divider()
+            getCertificateButton.padding()
+            Divider()
+            showCertificateButton.padding()
+        case .revoked:
+            Divider()
+            showCertificateButton.padding()
+            Divider()
+        case .expired:
+            Divider()
+            updateCertificateButton.padding()
+            Divider()
+            showCertificateButton.padding()
+        default:
+            Divider()
+            getCertificateButton.padding()
+            Divider()
+            showCertificateButton.padding()
+        }
     }
 }
 
