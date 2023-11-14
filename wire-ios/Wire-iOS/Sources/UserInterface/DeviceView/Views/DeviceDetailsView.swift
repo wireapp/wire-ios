@@ -110,19 +110,36 @@ struct DeviceDetailsView: View {
 }
 
 #Preview {
-    DeviceDetailsView(viewModel: DeviceInfoViewModel(udid: "123g4", title: "Device 4", mlsThumbprint: """
+    DeviceDetailsView(
+        viewModel: DeviceInfoViewModel(
+            udid: "123g4",
+            title: "Device 4",
+            mlsThumbprint: """
 3d c8 7f ff 07 c9 29 6e
 3d c8 7f ff 07 c9 29 6e
 65 68 7f ff 07 c9 29 6e
 3d c8 7f ff 07 c9 65 6f
-""", deviceKeyFingerprint: """
+""",
+            deviceKeyFingerprint: """
 ff 25 d7 13 f3 18 84 7a
 a5 4c 44 32 47 7c a0 b2
 c2 b3 f9 8c 87 17 f6 9b
 e8 f9 8c 87 17 f6 9b e8
-""", proteusID: "3D C8 7F FF 07 C9 29 6E", isProteusVerificationEnabled: true, e2eIdentityCertificate: E2EIdentityCertificate(status: .revoked, serialNumber: """
+""",
+            proteusID: "3D C8 7F FF 07 C9 29 6E",
+            isProteusVerificationEnabled: true,
+            e2eIdentityCertificate: E2EIdentityCertificate(
+                status: .revoked,
+                serialNumber: """
 e5:d5:e6:75:7e:04:86:07:
 14:3c:a0:ed:9a:8d:e4:fd
-""", certificate: .random(length: 1000),
-                                                                                                                              exipirationDate: .now + .fourWeeks)), isCertificateViewPresented: false)
+""",
+                certificate: .random(
+                    length: 1000
+                ),
+                exipirationDate: .now + .fourWeeks
+            )
+        ),
+        isCertificateViewPresented: false
+    )
 }

@@ -92,17 +92,27 @@ struct CertificateDetailsView: View {
 }
 
 #Preview {
-    CertificateDetailsView(certificateDetails: """
+    CertificateDetailsView(
+        certificateDetails: """
 -----BEGIN CERTIFICATE---
-\(String.randomString(length: 1500))
+\(String.randomString(
+length: 1500
+))
 -------END CERTIFICATE-----
-""")
+"""
+    )
 }
 #if DEBUG
 extension String {
-    static func randomString(length: Int) -> String {
+    static func randomString(
+        length: Int
+    ) -> String {
         let letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-        return String((0..<length).map { _ in letters.randomElement()! })
+        return String((
+            0..<length
+        ).map {
+            _ in letters.randomElement()!
+        })
     }
 }
 #endif

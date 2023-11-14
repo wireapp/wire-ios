@@ -46,25 +46,25 @@ struct DeviceView: View {
 }
 
 #Preview {
-    DeviceView(viewModel:
-                DeviceInfoViewModel(
-                    udid: "123g4",
-                    title: "Device 4",
-                    mlsThumbprint: "skfjnskjdffnskjn",
-                    deviceKeyFingerprint:
+    DeviceView(
+        viewModel:
+            DeviceInfoViewModel(
+                udid: "123g4",
+                title: "Device 4",
+                mlsThumbprint: "skfjnskjdffnskjn",
+                deviceKeyFingerprint:
 """
 b4 47 60 78 a3 1f 12 f9
 be 7c 98 3b 1f f1 f0 53
 ae 2a 01 6a 31 32 49 d0
 e9 fd da 5e 21 fd 06 ae
 """,
-                    proteusID: "skjdabfnkscjka",
-                    isProteusVerificationEnabled: false,
-                    e2eIdentityCertificate:
-                        E2EIdentityCertificate(
-                            status: .notActivated,
-                            serialNumber:
-"""
+                proteusID: "skjdabfnkscjka",
+                isProteusVerificationEnabled: false,
+                e2eIdentityCertificate:
+                    E2EIdentityCertificate(
+                        status: .notActivated,
+                        serialNumber: """
 b4 47 60 78 a3 1f 12 f9
 be 7c 98 3b 1f f1 f0 53
 ae 2a 01 6a 31 32 49 d0
@@ -77,6 +77,13 @@ b4 47 60 78 a3 1f 12 f9
 be 7c 98 3b 1f f1 f0 53
 ae 2a 01 6a 31 32 49 d0
 e9 fd da 5e 21 fd 06 ae
-""", certificate: .random(length: 1000),
-                            exipirationDate: .now + .fourWeeks)))
+""",
+
+                        certificate: .random(
+                            length: 1000
+                        ),
+                            exipirationDate: .now + .fourWeeks
+                        )
+                )
+    )
 }
