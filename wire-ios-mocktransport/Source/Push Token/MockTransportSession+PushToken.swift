@@ -27,11 +27,11 @@ extension MockTransportSession {
         }
 
         switch (request, request.method) {
-        case ("/push/tokens", .methodGET):
+        case ("/push/tokens", .get):
             return processGetPushTokens(apiVersion: apiVersion)
-        case ("/push/tokens", .methodPOST):
+        case ("/push/tokens", .post):
             return processPostPushToken(request.payload, apiVersion: apiVersion)
-        case ("/push/tokens/*", .methodDELETE):
+        case ("/push/tokens/*", .delete):
             return processDeletePushToken(request.RESTComponents(index: 2), apiVersion: apiVersion)
         default:
             return ZMTransportResponse(payload: nil, httpStatus: 404, transportSessionError: nil, apiVersion: request.apiVersion)

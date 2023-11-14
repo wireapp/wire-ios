@@ -39,7 +39,7 @@ final class ZiphySession: ZiphyURLRequester {
 
         return doRequest(
             withPath: requestPath,
-            method: .methodGET,
+            method: .get,
             type: .giphy,
             completionHandler: completionHandler
         )
