@@ -264,9 +264,7 @@ extension ZMUserSession: UserSession {
     }
 
     public var shouldNotifyUserOfDisabledAppLock: Bool {
-        get {
-            appLockController.needsToNotifyUser && !appLockController.isActive
-        }
+        appLockController.needsToNotifyUser && !appLockController.isActive
     }
 
     public var needsToNotifyUserOfAppLockConfiguration: Bool {

@@ -239,5 +239,4 @@ final class UserSessionMock: UserSession {
 
     }
 
-
 }
