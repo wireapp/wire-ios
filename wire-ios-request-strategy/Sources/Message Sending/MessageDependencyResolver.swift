@@ -37,7 +37,7 @@ public class MessageDependencyResolver: MessageDependencyResolverInterface {
 
     public func waitForDependenciesToResolve(for message: any SendableMessage) async throws {
 
-        @Sendable func dependenciesAreResolved() async throws -> Bool {
+        func dependenciesAreResolved() async throws -> Bool {
             let isSecurityLevelDegraded = await self.context.perform {
                 message.conversation?.securityLevel == .secureWithIgnored
             }
@@ -63,22 +63,12 @@ public class MessageDependencyResolver: MessageDependencyResolverInterface {
             return
         }
 
-        return await withCheckedContinuation { continuation in
-            Task {
-                if try await dependenciesAreResolved() {
-                    continuation.resume()
-                    return
-                }
-
-                // swiftlint:disable for_where
-                for await _ in NotificationCenter.default.notifications(named: .requestAvailableNotification) {
-                    if try await dependenciesAreResolved() {
-                        continuation.resume()
-                        break
-                    }
-                }
-                // swiftlint:enable for_where
+        // swiftlint:disable for_where
+        for await _ in NotificationCenter.default.notifications(named: .requestAvailableNotification) {
+            if try await dependenciesAreResolved() {
+                break
             }
         }
+        // swiftlint:enable for_where
     }
 }
