@@ -72,7 +72,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
 
             // then
             XCTAssertEqual(request.path, "/v1/conversations/\(domain)/\(conversationID.transportString())")
-            XCTAssertEqual(request.method, .methodGET)
+            XCTAssertEqual(request.method, .get)
         }
     }
 
@@ -90,7 +90,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
 
             // then
             XCTAssertEqual(request.path, "/conversations/\(conversationID.transportString())")
-            XCTAssertEqual(request.method, .methodGET)
+            XCTAssertEqual(request.method, .get)
         }
     }
 
@@ -111,7 +111,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
 
             // then
             XCTAssertEqual(request.path, "/v1/conversations/\(domain)/\(conversationID.transportString())/name")
-            XCTAssertEqual(request.method, .methodPUT)
+            XCTAssertEqual(request.method, .put)
             XCTAssertEqual(payload?.name, self.groupConversation.userDefinedName)
         }
     }
@@ -133,7 +133,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
 
             // then
             XCTAssertEqual(request.path, "/v1/conversations/\(domain)/\(conversationID.transportString())/self")
-            XCTAssertEqual(request.method, .methodPUT)
+            XCTAssertEqual(request.method, .put)
             XCTAssertEqual(payload?.archived, true)
         }
     }
@@ -155,7 +155,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
 
             // then
             XCTAssertEqual(request.path, "/v1/conversations/\(domain)/\(conversationID.transportString())/self")
-            XCTAssertEqual(request.method, .methodPUT)
+            XCTAssertEqual(request.method, .put)
             XCTAssertEqual(payload?.mutedStatus, Int(MutedMessageTypes.all.rawValue))
         }
     }

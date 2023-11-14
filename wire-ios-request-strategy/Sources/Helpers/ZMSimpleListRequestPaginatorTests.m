@@ -204,7 +204,7 @@
     // after
     NSString *expectedURL = [NSString stringWithFormat:@"%@?size=%lu", self.basePath, (unsigned long) self.pageSize];
     XCTAssertNotNil(request);
-    XCTAssertEqual(request.method, ZMMethodGET);
+    XCTAssertEqual(request.method, ZMTransportRequestMethodGet);
     XCTAssertEqualObjects(request.path, expectedURL);
     XCTAssertTrue(request.needsAuthentication);
 }
@@ -229,7 +229,7 @@
     // after
     NSString *expectedURL = [NSString stringWithFormat:@"%@?size=%lu&%@=%@", self.basePath, (unsigned long) self.pageSize, startKey, startUUID.transportString];
     XCTAssertNotNil(request);
-    XCTAssertEqual(request.method, ZMMethodGET);
+    XCTAssertEqual(request.method, ZMTransportRequestMethodGet);
     XCTAssertEqualObjects(request.path, expectedURL);
     XCTAssertTrue(request.needsAuthentication);
 }
@@ -251,7 +251,7 @@
         // after
         NSString *expectedURL = [NSString stringWithFormat:@"%@?size=%lu&%@=%@", self.basePath, (unsigned long) self.pageSize, @"client", selfClientID];
         XCTAssertNotNil(request);
-        XCTAssertEqual(request.method, ZMMethodGET);
+        XCTAssertEqual(request.method, ZMTransportRequestMethodGet);
         XCTAssertEqualObjects(request.path, expectedURL);
         XCTAssertTrue(request.needsAuthentication);
     }];
@@ -584,7 +584,7 @@
     // then
     NSString *expectedURL = [NSString stringWithFormat:@"%@?size=%lu", self.basePath, (unsigned long) self.pageSize];
     XCTAssertNotNil(followingRequest);
-    XCTAssertEqual(followingRequest.method, ZMMethodGET);
+    XCTAssertEqual(followingRequest.method, ZMTransportRequestMethodGet);
     XCTAssertEqualObjects(followingRequest.path, expectedURL);
     XCTAssertTrue(followingRequest.needsAuthentication);
 }

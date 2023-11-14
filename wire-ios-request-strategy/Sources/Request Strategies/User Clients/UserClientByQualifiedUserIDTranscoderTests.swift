@@ -72,7 +72,7 @@ class UserClientByQualifiedUserIDTranscoderTests: MessagingTestBase {
 
         // Then
         XCTAssertEqual(request.path, "/v1/users/list-clients/v2")
-        XCTAssertEqual(request.method, .methodPOST)
+        XCTAssertEqual(request.method, .post)
         XCTAssertEqual(request.apiVersion, 1)
 
         let payload = try payload(from: request)
@@ -88,7 +88,7 @@ class UserClientByQualifiedUserIDTranscoderTests: MessagingTestBase {
 
         // Then
         XCTAssertEqual(request.path, "/v2/users/list-clients")
-        XCTAssertEqual(request.method, .methodPOST)
+        XCTAssertEqual(request.method, .post)
         XCTAssertEqual(request.apiVersion, 2)
 
         let payload = try payload(from: request)

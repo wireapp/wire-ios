@@ -102,7 +102,7 @@ class GenericMessageRequestStrategyTests: MessagingTestBase {
             let request = self.sut.nextRequest(for: .v0)
 
             // THEN
-            XCTAssertEqual(request!.method, .methodPOST)
+            XCTAssertEqual(request!.method, .post)
             XCTAssertEqual(request!.path, "/conversations/\(self.groupConversation.remoteIdentifier!.transportString())/otr/messages")
         }
     }
@@ -128,7 +128,7 @@ class GenericMessageRequestStrategyTests: MessagingTestBase {
             let request2 = self.sut.nextRequest(for: .v0)
 
             // THEN
-            XCTAssertEqual(request2!.method, .methodPOST)
+            XCTAssertEqual(request2!.method, .post)
             XCTAssertEqual(request2!.path, "/conversations/\(self.groupConversation.remoteIdentifier!.transportString())/otr/messages")
         }
     }

@@ -40,7 +40,7 @@ class UploadSelfMLSKeyPackagesActionHandlerTests: ActionHandlerTestBase<UploadSe
             ),
             expectedPath: "/v5/mls/key-packages/self/\(clientId)",
             expectedPayload: ["key_packages": keyPackages],
-            expectedMethod: .methodPOST,
+            expectedMethod: .post,
             apiVersion: .v5
         )
     }

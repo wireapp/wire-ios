@@ -33,7 +33,7 @@ class SendMLSMessageActionHandlerTests: ActionHandlerTestBase<SendMLSMessageActi
         try test_itGeneratesARequest(
             for: action,
             expectedPath: "/v5/mls/messages",
-            expectedMethod: .methodPOST,
+            expectedMethod: .post,
             expectedData: mlsMessage,
             expectedContentType: "message/mls",
             apiVersion: .v5
