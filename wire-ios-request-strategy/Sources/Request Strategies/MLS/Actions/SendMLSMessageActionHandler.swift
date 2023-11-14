@@ -44,7 +44,7 @@ class SendMLSMessageActionHandler: ActionHandler<SendMLSMessageAction> {
 
         return ZMTransportRequest(
             path: "/mls/messages",
-            method: .methodPOST,
+            method: .post,
             binaryData: action.message,
             type: "message/mls",
             contentDisposition: nil,

@@ -103,7 +103,7 @@ struct ConversationDeletionRequestFactory {
 
         let path = "/teams/\(teamRemoteIdentifier.transportString())/conversations/\(conversationId.transportString())"
 
-        return ZMTransportRequest(path: path, method: .methodDELETE, payload: nil, apiVersion: apiVersion.rawValue)
+        return ZMTransportRequest(path: path, method: .delete, payload: nil, apiVersion: apiVersion.rawValue)
     }
 
 }

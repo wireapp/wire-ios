@@ -234,7 +234,8 @@ class APIMigrationManagerTests: MessagingTest {
 
         let cookieStorage = ZMPersistentCookieStorage(
             forServerName: "test.example.com",
-            userIdentifier: .create()
+            userIdentifier: .create(),
+            useCache: true
         )
 
         let mockTransportSession = RecordingMockTransportSession(

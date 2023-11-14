@@ -29,7 +29,7 @@
 /// handles /search/contacts/
 - (ZMTransportResponse *)processSearchRequest:(ZMTransportRequest *)request;
 {
-    if (request.method == ZMMethodGET) {
+    if (request.method == ZMTransportRequestMethodGet) {
         NSString *query = request.queryParameters[@"q"];
         NSUInteger limit = (NSUInteger) [request.queryParameters[@"l"] integerValue];
         NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(name CONTAINS[cd] %@) AND (identifier != %@)", query, self.selfUser.identifier];
@@ -68,7 +68,7 @@
 // handles /onboarding
 - (ZMTransportResponse *)processOnboardingRequest:(ZMTransportRequest *)request
 {
-    if(request.method == ZMMethodPOST) {
+    if(request.method == ZMTransportRequestMethodPost) {
         NSArray *selfEmailArray = [[request.payload asDictionary] arrayForKey:@"self"];
         if(selfEmailArray.count == 0) {
             return [self errorResponseWithCode:400 reason:@"no self email" apiVersion:request.apiVersion];

@@ -42,7 +42,7 @@ class FetchSubroupActionHandlerTests: ActionHandlerTestBase<FetchSubgroupAction,
         try test_itGeneratesARequest(
             for: action,
             expectedPath: "/v4/conversations/\(domain)/\(conversationId.transportString())/subconversations/\(type)",
-            expectedMethod: .methodGET,
+            expectedMethod: .get,
             apiVersion: .v4
         )
     }

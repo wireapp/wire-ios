@@ -24,7 +24,7 @@
 // handles /push/fallback
 - (ZMTransportResponse *)processNotificationFallbackRequest:(ZMTransportRequest *)request
 {
-    if([request matchesWithPath:@"/push/fallback" method:ZMMethodPOST]) {
+    if([request matchesWithPath:@"/push/fallback" method:ZMTransportRequestMethodPost]) {
         return [ZMTransportResponse responseWithPayload:nil HTTPStatus:200 transportSessionError:nil apiVersion:request.apiVersion];
     }
     
@@ -36,7 +36,7 @@
 - (ZMTransportResponse *)processNotificationsRequest:(ZMTransportRequest *)request
 {
     // /notifications
-    if ([request matchesWithPath:@"/notifications" method:ZMMethodGET]) {
+    if ([request matchesWithPath:@"/notifications" method:ZMTransportRequestMethodGet]) {
         
         NSUUID *since = [request.queryParameters optionalUuidForKey:@"since"];
         if (self.overrideNextSinceParameter != nil) {
@@ -77,7 +77,7 @@
         return [ZMTransportResponse responseWithPayload:@{@"notifications":payload} HTTPStatus:statusCode transportSessionError:nil apiVersion:request.apiVersion];
     }
     // /notifications/last
-    else if([request matchesWithPath:@"/notifications/last" method:ZMMethodGET])
+    else if([request matchesWithPath:@"/notifications/last" method:ZMTransportRequestMethodGet])
     {
         MockPushEvent *last = self.generatedPushEvents.lastObject;
         if(last != nil) {

@@ -308,7 +308,7 @@ class UserProfileByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
 
         // POST /list-users
         let path = NSString.path(withComponents: ["/list-users"])
-        return ZMTransportRequest(path: path, method: .methodPOST, payload: payloadAsString as ZMTransportData?, apiVersion: apiVersion.rawValue)
+        return ZMTransportRequest(path: path, method: .post, payload: payloadAsString as ZMTransportData?, apiVersion: apiVersion.rawValue)
     }
 
     func didReceive(response: ZMTransportResponse, for identifiers: Set<QualifiedID>) {

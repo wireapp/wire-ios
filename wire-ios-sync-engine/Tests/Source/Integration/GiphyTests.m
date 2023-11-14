@@ -48,7 +48,7 @@
         ZM_STRONG(self);
         if([request.path hasPrefix:@"/proxy/giphy"]) {
             XCTAssertEqualObjects(request.path, @"/proxy/giphy/foo/bar/baz");
-            XCTAssertEqual(request.method, ZMMethodGET);
+            XCTAssertEqual(request.method, ZMTransportRequestMethodGet);
             XCTAssertTrue(request.needsAuthentication);
             
             return [ZMTransportResponse responseWithPayload:expectedPayload HTTPStatus:202 transportSessionError:nil apiVersion:0];
@@ -63,7 +63,7 @@
         XCTAssertNil(error);
         [expectation fulfill];
     };
-    [self.userSession proxiedRequestWithPath:path method:ZMMethodGET type:ProxiedRequestTypeGiphy callback:callback];
+    [self.userSession proxiedRequestWithPath:path method:ZMTransportRequestMethodGet type:ProxiedRequestTypeGiphy callback:callback];
     WaitForAllGroupsToBeEmpty(0.5);
     [self spinMainQueueWithTimeout:0.2];
     
