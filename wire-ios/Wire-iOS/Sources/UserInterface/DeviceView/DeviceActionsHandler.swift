@@ -19,15 +19,13 @@
 import UIKit
 
 final class DeviceDetailsActionsHandler: DeviceDetailsViewActions {
-    var isDeviceVerified: Bool = false
 
     func fetchCertificate() async {
         print("Fetch certificate is tapped")
     }
 
-    func showCertificate(validate: () -> Bool, result: (Bool) -> Void) {
-        print("show certificate is called")
-        result(validate())
+    func showCertificate(_ certificate: String) {
+        print("show certificate is called: \(certificate)")
     }
 
     func removeDevice() {
@@ -38,10 +36,8 @@ final class DeviceDetailsActionsHandler: DeviceDetailsViewActions {
         print("Reset Session is called")
     }
 
-    func setVerified(_ result: (Bool) -> Void) {
-        print("set Verified is called")
-        isDeviceVerified.toggle()
-        result(isDeviceVerified)
+    func setVerified(_ value: Bool) {
+        print("set Verified is called: \(value)")
     }
 
     func copyToClipboard(_ value: String) {

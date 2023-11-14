@@ -46,12 +46,9 @@ struct DeviceDetailsButtonsView: View {
     }
     var showCertificateButton: some View {
         SwiftUI.Button(action: {
-            viewModel.actionsHandler.showCertificate {
-                return viewModel.e2eIdentityCertificate.isValidCertificate
-            } result: { isValid in
-                if isValid {
-                    isCertificateViewPresented.toggle()
-                }
+            if viewModel.e2eIdentityCertificate.isValidCertificate {
+                isCertificateViewPresented.toggle()
+                viewModel.actionsHandler.showCertificate(viewModel.e2eIdentityCertificate.certificate)
             }
         }, label: {
             HStack {

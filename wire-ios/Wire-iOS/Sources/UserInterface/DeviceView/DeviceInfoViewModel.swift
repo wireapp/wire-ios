@@ -74,10 +74,10 @@ extension E2EIdentityCertificateStatus {
 
 protocol DeviceDetailsViewActions {
     func fetchCertificate() async
-    func showCertificate(validate: () -> Bool, result: (Bool) -> Void)
+    func showCertificate(_ certificate: String)
     func removeDevice()
     func resetSession()
-    func setVerified(_ result: (Bool) -> Void)
+    func setVerified(_ value: Bool)
     func copyToClipboard(_ value: String)
 }
 

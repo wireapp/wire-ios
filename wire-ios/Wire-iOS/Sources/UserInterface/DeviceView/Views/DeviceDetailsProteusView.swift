@@ -43,7 +43,9 @@ struct DeviceDetailsProteusView: View {
                         }
                 ).padding([.leading, .trailing], 16)
                 Divider()
-                Toggle(L10n.Localizable.Device.verified, isOn: $viewModel.isProteusVerificationEnabled).font(.headline).padding([.leading, .trailing, .bottom], 16)
+                Toggle(L10n.Localizable.Device.verified, isOn: $viewModel.isProteusVerificationEnabled).font(.headline).padding([.leading, .trailing, .bottom], 16).onChange(of: viewModel.isProteusVerificationEnabled) { value in
+                    viewModel.actionsHandler.setVerified(value)
+                }
             }.background(Color.white)
     }
 }

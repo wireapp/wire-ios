@@ -105,7 +105,6 @@ struct DeviceDetailsView: View {
     }
 
     func didDismiss() {
-
     }
 }
 
