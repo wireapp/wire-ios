@@ -19,6 +19,7 @@
 import SwiftUI
 
 struct DeviceListView: View {
+    @State var editMode = EditMode.inactive
     @State var viewModel: DevicesViewModel
     var currentDeviceView: some View {
         Section(
@@ -77,11 +78,15 @@ struct DeviceListView: View {
                 .listStyle(
                     GroupedListStyle()
                 )
-                .toolbar(content: {
+                .toolbar {
                     EditButton().foregroundColor(
-                        SemanticColors.DrawingColors.black.swiftUIColor
+                        SemanticColors.Label.textDefault.swiftUIColor
                     )
-                })
+                }
+                .environment(
+                    \.editMode,
+                     $editMode
+                )
             }
         }
         .background(
