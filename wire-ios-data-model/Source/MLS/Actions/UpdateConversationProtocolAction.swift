@@ -18,14 +18,13 @@
 
 import Foundation
 
-public struct UpdateConversationProtocolAction<ConversationUpdatedEvent>: EntityAction where ConversationUpdatedEvent: Equatable { // ConversationEvent is declared in WireRequestStrategy
+public struct UpdateConversationProtocolAction: EntityAction {
 
     // MARK: - Properties
 
     public var domain: String
     public var conversationID: UUID
     public var messageProtocol: MessageProtocol
-    #warning("TODO: this is not needed")
     public var resultHandler: ResultHandler?
 
     // MARK: - Life cycle
@@ -46,11 +45,7 @@ extension UpdateConversationProtocolAction {
 
     // MARK: - Types
 
-    public typealias Result = Success
-
-    public enum Success: Equatable {
-        case conversationUpdated(ConversationUpdatedEvent), conversationUnchanged
-    }
+    public typealias Result = Void
 
     public enum Failure: Equatable, Error {
         case endpointUnavailable

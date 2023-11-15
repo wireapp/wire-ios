@@ -18,9 +18,6 @@
 
 import WireDataModel
 
-typealias UpdateConversationProtocolEvent = Payload.ConversationEvent<Payload.UpdateConversationProtocolResponseData>
-typealias UpdateConversationProtocolAction = WireDataModel.UpdateConversationProtocolAction<UpdateConversationProtocolEvent>
-
 final class UpdateConversationProtocolActionHandler: ActionHandler<UpdateConversationProtocolAction> {
 
     typealias EventPayload = [AnyHashable: Any]
@@ -58,15 +55,8 @@ final class UpdateConversationProtocolActionHandler: ActionHandler<UpdateConvers
 
         switch response.httpStatus {
 
-        case 200:
-            guard let event = Payload.ConversationEvent<Payload.UpdateConversationProtocolResponseData>(response) else {
-                assertionFailure("failed to decode response")
-                return action.succeed(with: .conversationUnchanged)
-            }
-            action.succeed(with: .conversationUpdated(event))
-
-        case 204:
-            action.succeed(with: .conversationUnchanged)
+        case 200, 204:
+            action.succeed()
 
         default:
             let label = response.payloadLabel()

@@ -610,10 +610,6 @@ extension Payload {
         }
     }
 
-    struct UpdateConversationProtocolResponseData: CodableEventData, Equatable {
-        static var eventType: ZMUpdateEventType { .conversationProtocolUpdate }
-    }
-
     struct UpdateConversationMLSWelcome: Codable {
 
         enum CodingKeys: String, CodingKey {
