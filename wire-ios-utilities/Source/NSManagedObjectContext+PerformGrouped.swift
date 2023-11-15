@@ -65,3 +65,19 @@ public extension NSManagedObjectContext {
         }
     }
 }
+
+public struct ZMTask {
+    let context: NSManagedObjectContext
+
+    public init(context: NSManagedObjectContext) {
+        self.context = context
+    }
+
+    public func callAsFunction(_ block: @escaping () async -> Void) {
+        context.enterAllGroupsExceptSecondaryOne()
+        Task {
+            await block()
+            context.leaveAllGroupsExceptSecondaryOne()
+        }
+    }
+}
