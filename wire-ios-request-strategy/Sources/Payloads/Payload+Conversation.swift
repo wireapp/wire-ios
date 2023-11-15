@@ -610,7 +610,7 @@ extension Payload {
         }
     }
 
-    struct UpdateConversationProtocolResponseData: CodableEventData {
+    struct UpdateConversationProtocolResponseData: CodableEventData, Equatable {
         static var eventType: ZMUpdateEventType { .conversationProtocolUpdate }
     }
 
@@ -755,3 +755,5 @@ extension Payload.Conversation: EncodableAPIVersionAware {
     }
 
 }
+
+extension Payload.ConversationEvent: Equatable where T: Equatable {}

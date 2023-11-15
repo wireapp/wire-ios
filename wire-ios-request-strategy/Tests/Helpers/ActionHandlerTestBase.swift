@@ -124,6 +124,8 @@ class ActionHandlerTestBase<Action: EntityAction, Handler: ActionHandler<Action>
         payload: ZMTransportData? = nil,
         label: String? = nil,
         apiVersion: APIVersion = .v1,
+        file: StaticString = #filePath,
+        line: UInt = #line,
         validation: @escaping ValidationBlock
     ) {
         // Given
@@ -143,7 +145,7 @@ class ActionHandlerTestBase<Action: EntityAction, Handler: ActionHandler<Action>
         sut.handleResponse(response, action: action)
 
         // Then
-        XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
+        XCTAssert(waitForCustomExpectations(withTimeout: 0.5), file: file, line: line)
     }
 }
 
@@ -173,6 +175,8 @@ extension ActionHandlerTestBase {
         status: Int,
         payload: ZMTransportData? = nil,
         label: String? = nil,
+        file: StaticString = #filePath,
+        line: UInt = #line,
         validation: @escaping ValidationBlock
     ) {
         guard let action = self.action else {
@@ -184,12 +188,17 @@ extension ActionHandlerTestBase {
             status: status,
             payload: payload,
             label: label,
+            file: file,
+            line: line,
             validation: validation
         )
     }
 
     @discardableResult
-    func test_itHandlesSuccess(status: Int, payload: ZMTransportData? = nil) -> Result? {
+    func test_itHandlesSuccess(
+        status: Int,
+        payload: ZMTransportData? = nil
+    ) -> Result? {
         var result: Result?
 
         test_itHandlesResponse(status: status, payload: payload) {
@@ -220,11 +229,15 @@ extension ActionHandlerTestBase where Failure: Equatable {
     func test_itHandlesFailure(
         status: Int,
         payload: ZMTransportData? = nil,
-        expectedError: Failure
+        expectedError: Failure,
+        file: StaticString = #filePath,
+        line: UInt = #line
     ) {
         test_itHandlesResponse(
             status: status,
-            payload: payload
+            payload: payload,
+            file: file,
+            line: line
         ) {
             guard case .failure(let error) = $0 else { return false }
             return error == expectedError

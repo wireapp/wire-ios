@@ -18,7 +18,7 @@
 
 import Foundation
 
-public struct UpdateConversationProtocolAction<ConversationUpdatedEvent>: EntityAction { // ConversationEvent is declared in WireRequestStrategy
+public struct UpdateConversationProtocolAction<ConversationUpdatedEvent>: EntityAction where ConversationUpdatedEvent: Equatable { // ConversationEvent is declared in WireRequestStrategy
 
     // MARK: - Properties
 
@@ -48,7 +48,7 @@ extension UpdateConversationProtocolAction {
 
     public typealias Result = Success
 
-    public enum Success {
+    public enum Success: Equatable {
         case conversationUpdated(ConversationUpdatedEvent), conversationUnchanged
     }
 

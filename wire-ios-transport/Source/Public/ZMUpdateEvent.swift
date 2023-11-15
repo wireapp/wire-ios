@@ -31,7 +31,7 @@ import WireUtilities
     case download
 }
 
-@objc public enum ZMUpdateEventType: UInt, CaseIterable {
+@objc public enum ZMUpdateEventType: UInt, CaseIterable, Equatable {
     case unknown = 0
     case conversationAssetAdd = 1
     case conversationConnectRequest = 2

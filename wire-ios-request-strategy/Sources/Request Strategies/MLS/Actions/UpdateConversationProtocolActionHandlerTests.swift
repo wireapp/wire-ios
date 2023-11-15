@@ -52,7 +52,6 @@ final class UpdateConversationProtocolActionHandlerTests: ActionHandlerTestBase<
         )
     }
 
-    /*
     func test_itFailsToGenerateRequests_APIBelowV5() {
         [.v0, .v1, .v2, .v3, .v4].forEach {
             test_itDoesntGenerateARequest(
@@ -61,16 +60,12 @@ final class UpdateConversationProtocolActionHandlerTests: ActionHandlerTestBase<
                 expectedError: .endpointUnavailable
             )
         }
-
-        test_itDoesntGenerateARequest(
-            action: SendMLSMessageAction(message: Data()),
-            apiVersion: .v5,
-            expectedError: .malformedRequest
-        )
     }
 
     // MARK: - Response handling
-    func test_itHandlesSuccess() throws {
+
+    /*
+    func test_itHandlesConversationUpdated() throws {
         // Given
         let payload: [AnyHashable: Any] = [
             "events": [
@@ -93,36 +88,38 @@ final class UpdateConversationProtocolActionHandlerTests: ActionHandlerTestBase<
         ]
 
         // When
-        let updateEvents = try XCTUnwrap(test_itHandlesSuccess(
-            status: 201,
+        let event = test_itHandlesSuccess(
+            status: 200,
             payload: payload as ZMTransportData
-        ))
+        )
 
-        XCTAssertEqual(updateEvents.count, 1)
-        XCTAssertEqual(updateEvents.first?.type, .conversationMemberJoin)
+        XCTAssertEqual(event, .conversationUpdated)
+    }
+    */
+
+    func test_itHandlesConversationUnchanged() throws {
+        // When
+        let event = test_itHandlesSuccess(status: 204)
+
+        // Then
+        XCTAssertEqual(event, .conversationUnchanged)
     }
 
-    func test_itHandlesFailures() {
-        test_itHandlesFailures([
-            .failure(status: 400, error: .mlsGroupConversationMismatch, label: "mls-group-conversation-mismatch"),
-            .failure(status: 400, error: .mlsClientSenderUserMismatch, label: "mls-client-sender-user-mismatch"),
-            .failure(status: 400, error: .mlsSelfRemovalNotAllowed, label: "mls-self-removal-not-allowed"),
-            .failure(status: 400, error: .mlsCommitMissingReferences, label: "mls-commit-missing-references"),
-            .failure(status: 400, error: .mlsProtocolError, label: "mls-protocol-error"),
-            .failure(status: 400, error: .invalidRequestBody),
-            .failure(status: 403, error: .missingLegalHoldConsent, label: "missing-legalhold-consent"),
-            .failure(status: 403, error: .legalHoldNotEnabled, label: "legalhold-not-enabled"),
-            .failure(status: 403, error: .accessDenied, label: "access-denied"),
-            .failure(status: 404, error: .mlsProposalNotFound, label: "mls-proposal-not-found"),
-            .failure(status: 404, error: .mlsKeyPackageRefNotFound, label: "mls-key-package-ref-not-found"),
-            .failure(status: 404, error: .noConversation, label: "no-conversation"),
-            .failure(status: 404, error: .noConversationMember, label: "no-conversation-member"),
-            .failure(status: 409, error: .mlsStaleMessage, label: "mls-stale-message"),
-            .failure(status: 409, error: .mlsClientMismatch, label: "mls-client-mismatch"),
-            .failure(status: 422, error: .mlsUnsupportedProposal, label: "mls-unsupported-proposal"),
-            .failure(status: 422, error: .mlsUnsupportedMessage, label: "mls-unsupported-message"),
-            .failure(status: 999, error: .unknown(status: 999, label: "foo", message: "?"), label: "foo")
-        ])
+    func test_itHandlesUnexpectedResult() throws {
+        // When
+        test_itHandlesFailure(
+            status: 123,
+            payload: [
+                "code": 123,
+                "label": "unexpected-label",
+                "message": "Unexpected message"
+            ] as ZMTransportData,
+            expectedError: .api(
+                statusCode: 123,
+                label: "unexpected-label",
+                message: "Unexpected message"
+            )
+        )
     }
-     */
+
 }
