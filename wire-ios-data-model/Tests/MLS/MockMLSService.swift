@@ -53,8 +53,6 @@ class MockMLSService: MLSServiceInterface {
     // MARK: - Properties
 
     var calls = Calls()
-    var mockConversations: [ZMConversation] = []
-    var conversationExistsResponses: [MLSGroupID: Bool] = [:]
 
     // MARK: - Conference info
 
