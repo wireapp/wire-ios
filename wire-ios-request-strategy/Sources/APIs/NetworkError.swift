@@ -18,11 +18,27 @@
 
 import Foundation
 
-public enum NetworkError: Error {
+public enum NetworkError: Error, Equatable {
+
     case errorEncodingRequest
     case errorDecodingResponse(ZMTransportResponse)
     case missingClients(Payload.MessageSendingStatus, ZMTransportResponse)
     case invalidRequestError(Payload.ResponseFailure, ZMTransportResponse)
+
+    public static func == (lhs: NetworkError, rhs: NetworkError) -> Bool {
+        return switch (lhs, rhs) {
+        case (.errorEncodingRequest, .errorEncodingRequest):
+            true
+        case (.errorDecodingResponse(_), .errorDecodingResponse(_)):
+            true
+        case (.missingClients(let lhsStatus, _), .missingClients(let rhsStatus, _)):
+            lhsStatus == rhsStatus
+        case (.invalidRequestError(let lhsFailure, _), .invalidRequestError(let rhsFailure, _)):
+            lhsFailure == rhsFailure
+        default:
+            false
+        }
+    }
 
     var response: ZMTransportResponse? {
         return switch self {

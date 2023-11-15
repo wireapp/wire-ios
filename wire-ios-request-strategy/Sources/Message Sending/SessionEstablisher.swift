@@ -18,28 +18,35 @@
 
 import Foundation
 
-public enum SessionEstablisherError: Error {
+public enum SessionEstablisherError: Error, Equatable {
     case missingSelfClient
     case networkError(NetworkError)
 }
 
-public class SessionEstablisher {
+// sourcery: AutoMockable
+public protocol SessionEstablisherInterface {
+    func establishSession(with clients: Set<QualifiedClientID>, apiVersion: APIVersion) async -> Swift.Result<Void, SessionEstablisherError>
+}
+
+public class SessionEstablisher: SessionEstablisherInterface {
 
     public init(
-        apiProvider: APIProvider,
-        context: NSManagedObjectContext
+        context: NSManagedObjectContext,
+        apiProvider: APIProviderInterface,
+        processor: PrekeyPayloadProcessorInterface = PrekeyPayloadProcessor()
     ) {
+        self.processor = processor
         self.apiProvider = apiProvider
         self.managedObjectContext = context
     }
 
-    private let apiProvider: APIProvider
+    private let apiProvider: APIProviderInterface
     private let managedObjectContext: NSManagedObjectContext
     private let requestFactory = MissingClientsRequestFactory()
-    private let processor = PrekeyPayloadProcessor()
+    private let processor: PrekeyPayloadProcessorInterface
     private let batchSize = 28
 
-    func establishSession(with clients: Set<QualifiedClientID>, apiVersion: APIVersion) async -> Swift.Result<Void, SessionEstablisherError> {
+    public func establishSession(with clients: Set<QualifiedClientID>, apiVersion: APIVersion) async -> Swift.Result<Void, SessionEstablisherError> {
 
         // Establish sessions in chunks and return on first error
         for chunk in Array(clients).chunked(into: batchSize) {

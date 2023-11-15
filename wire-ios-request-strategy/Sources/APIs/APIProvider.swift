@@ -18,7 +18,13 @@
 
 import Foundation
 
-public struct APIProvider {
+// sourcery: AutoMockable
+public protocol APIProviderInterface {
+    func prekeyAPI(apiVersion: APIVersion) -> PrekeyAPI
+    func messageAPI(apiVersion: APIVersion) -> MessageAPI
+}
+
+public struct APIProvider: APIProviderInterface {
 
     let httpClient: HttpClient
 
@@ -26,7 +32,7 @@ public struct APIProvider {
         self.httpClient = httpClient
     }
 
-    func prekeyAPI(apiVersion: APIVersion) -> PrekeyAPI {
+    public func prekeyAPI(apiVersion: APIVersion) -> PrekeyAPI {
         return switch apiVersion {
         case .v0: PrekeyAPIV0(httpClient: httpClient)
         case .v1: PrekeyAPIV1(httpClient: httpClient)
@@ -37,7 +43,7 @@ public struct APIProvider {
         }
     }
 
-    func messageAPI(apiVersion: APIVersion) -> MessageAPI {
+    public func messageAPI(apiVersion: APIVersion) -> MessageAPI {
         return switch apiVersion {
         case .v0: MessageAPIV0(httpClient: httpClient)
         case .v1: MessageAPIV1(httpClient: httpClient)
