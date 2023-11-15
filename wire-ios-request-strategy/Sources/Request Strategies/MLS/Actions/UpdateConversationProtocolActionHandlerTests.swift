@@ -66,54 +66,18 @@ final class UpdateConversationProtocolActionHandlerTests: ActionHandlerTestBase<
 
     func test_itHandlesConversationUpdated() throws {
         // Given
-        let payload: [AnyHashable: Any] = [
-            "events": [
-                [
-                    "time": "2021-05-12T10:52:02.671Z",
-                    "type": "conversation.protocol-update",
-                    "from": "99db9768-04e3-4b5d-9268-831b6a25c4ab",
-                    "qualified_conversation": [
-                        "domain": "example.com",
-                        "id": "99db9768-04e3-4b5d-9268-831b6a25c4ab"
-                    ],
-                    "qualified_from": [
-                        "domain": "example.com",
-                        "id": "99db9768-04e3-4b5d-9268-831b6a25c4ab"
-                    ],
-                    "data": []
-                ]
-            ],
-            "time": "2021-05-12T10:52:02.671Z"
-        ]
+        let statusCode = 200
 
-        // When
-        let event = test_itHandlesSuccess(
-            status: 200,
-            payload: payload as ZMTransportData
-        )
-
-        XCTAssertEqual(
-            event,
-            .conversationUpdated(
-                .init(
-                    id: .init(),
-                    data: .init(),
-                    from: .init(),
-                    qualifiedID: .none,
-                    qualifiedFrom: .none,
-                    timestamp: .none,
-                    type: .none
-                )
-            )
-        )
+        // When, Then
+        test_itHandlesSuccess(status: statusCode)
     }
 
     func test_itHandlesConversationUnchanged() throws {
-        // When
-        let event = test_itHandlesSuccess(status: 204)
+        // Given
+        let statusCode = 204
 
-        // Then
-        XCTAssertEqual(event, .conversationUnchanged)
+        // When, Then
+        test_itHandlesSuccess(status: statusCode)
     }
 
     func test_itHandlesUnexpectedResult() throws {
