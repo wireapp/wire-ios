@@ -24,100 +24,105 @@ struct DeviceDetailsView: View {
     ) private var dismiss
     @Binding var viewModel: DeviceInfoViewModel
     @State var isCertificateViewPresented: Bool
+    var mlsView: some View {
+        VStack(
+            alignment: .leading
+        ) {
+            HStack(
+                alignment: .center,
+                spacing: 0
+            ) {
+                Text(
+                    L10n.Localizable.Device.Details.Section.mls
+                )
+            }
+            .padding(
+                .bottom,
+                8
+            )
+            .padding(
+                [
+                    .top,
+                    .leading
+                ],
+                16
+            )
+            .frame(
+                maxWidth: .infinity,
+                maxHeight: 42,
+                alignment: .leading
+            )
+            DeviceMLSView(
+                viewModel: $viewModel
+            ).padding(
+                .all,
+                16
+            )
+            .background(
+                SemanticColors.View.backgroundDefaultWhite.swiftUIColor
+            )
+        }
+    }
+    var e2eIdentityCertificateView: some View {
+        VStack(
+            alignment: .leading
+        ) {
+            DeviceDetailsE2EIdentityCertificateView(
+                viewModel: $viewModel,
+                isCertificateViewPreseneted: $isCertificateViewPresented
+            ).padding(
+                .leading,
+                16
+            )
 
+            DeviceDetailsButtonsView(
+                viewModel: $viewModel,
+                isCertificateViewPresented: $isCertificateViewPresented
+            )
+        }.background(
+            SemanticColors.View.backgroundDefaultWhite.swiftUIColor
+        )
+        .padding(
+            .top,
+            8
+        )
+    }
+    var proteusView: some View {
+        VStack(
+            alignment: .leading
+        ) {
+            Text(
+                L10n.Localizable.Device.Details.Section.proteus
+            )
+            .frame(
+                height: 45
+            )
+            .padding(
+                .leading,
+                16
+            )
+            DeviceDetailsProteusView(
+                viewModel: $viewModel
+            )
+            DeviceDetailsBottomView(
+                viewModel: $viewModel
+            )
+
+        }
+    }
     var body: some View {
         NavigationView {
             ScrollView {
                 if !viewModel.mlsThumbprint.isEmpty {
-                    VStack(
-                        alignment: .leading
-                    ) {
-                        HStack(
-                            alignment: .center,
-                            spacing: 0
-                        ) {
-                            Text(
-                                L10n.Localizable.Device.Details.Section.mls
-                            )
-                        }
-                        .padding(
-                            .bottom,
-                            8
-                        )
-                        .padding(
-                            [
-                                .top,
-                                .leading
-                            ],
-                            16
-                        )
-                        .frame(
-                            maxWidth: .infinity,
-                            maxHeight: 42,
-                            alignment: .leading
-                        )
-                        DeviceMLSView(
-                            viewModel: $viewModel
-                        ).padding(
-                            .all,
-                            16
-                        )
-                        .background(
-                            SemanticColors.View.backgroundDefaultWhite.swiftUIColor()
-                        )
-                    }
-
+                    mlsView
                     if viewModel.e2eIdentityCertificate.status != .none {
-                        VStack(
-                            alignment: .leading
-                        ) {
-                            DeviceDetailsE2EIdentityCertificateView(
-                                viewModel: $viewModel,
-                                isCertificateViewPreseneted: $isCertificateViewPresented
-                            ).padding(
-                                .leading,
-                                16
-                            )
-
-                            DeviceDetailsButtonsView(
-                                viewModel: $viewModel,
-                                isCertificateViewPresented: $isCertificateViewPresented
-                            )
-                        }.background(
-                            SemanticColors.View.backgroundDefaultWhite.swiftUIColor()
-                        )
-                        .padding(
-                            .top,
-                            8
-                        )
+                        e2eIdentityCertificateView
                     }
-
                 }
-
-                VStack(
-                    alignment: .leading
-                ) {
-                    Text(
-                        L10n.Localizable.Device.Details.Section.proteus
-                    )
-                    .frame(
-                        height: 45
-                    )
-                    .padding(
-                        .leading,
-                        16
-                    )
-                    DeviceDetailsProteusView(
-                        viewModel: $viewModel
-                    )
-                    DeviceDetailsBottomView(
-                        viewModel: $viewModel
-                    )
-
-                }
+                proteusView
             }
             .background(
-                SemanticColors.View.backgroundDefault.swiftUIColor()
+                SemanticColors.View.backgroundDefault.swiftUIColor
             )
             .environment(
                 \.defaultMinListHeaderHeight,
@@ -139,6 +144,11 @@ struct DeviceDetailsView: View {
                                    label: {
                         Image(
                             .backArrow
+                        ).renderingMode(
+                            .template
+                        )
+                        .foregroundColor(
+                            SemanticColors.Icon.foregroundDefaultBlack.swiftUIColor
                         )
                     })
                 }
@@ -152,7 +162,7 @@ struct DeviceDetailsView: View {
             })
         }
         .background(
-            SemanticColors.View.backgroundDefault.swiftUIColor()
+            SemanticColors.View.backgroundDefault.swiftUIColor
         )
         .sheet(
             isPresented: $isCertificateViewPresented,

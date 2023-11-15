@@ -35,6 +35,8 @@ struct CopyValueView: View {
                 title
             ).font(
                 UIFont.smallSemiboldFont.swiftUIfont
+            ).foregroundColor(
+                SemanticColors.Label.textDefault.swiftUIColor
             )
             HStack {
                 Text(
@@ -49,6 +51,12 @@ struct CopyValueView: View {
                                        label: {
                             Image(
                                 .copy
+                            )
+                            .renderingMode(
+                                .template
+                            )
+                            .foregroundColor(
+                                SemanticColors.Icon.foregroundDefaultBlack.swiftUIColor
                             )
                         })
                         Spacer()
@@ -66,5 +74,5 @@ struct CopyValueView: View {
 }
 
 #Preview {
-    CopyValueView(title: .random(length: 500), value: .random(length: 50), isCopyEnabled: false)
+    CopyValueView(title: .random(length: 500), value: .random(length: 50), isCopyEnabled: true)
 }

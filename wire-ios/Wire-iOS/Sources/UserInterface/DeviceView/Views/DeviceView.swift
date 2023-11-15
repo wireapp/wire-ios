@@ -31,7 +31,7 @@ struct DeviceView: View {
                 UIFont.headerSemiBoldFont.swiftUIfont
             )
             .foregroundColor(
-                SemanticColors.Label.textDefault.swiftUIColor()
+                SemanticColors.Label.textDefault.swiftUIColor
             )
             if let e2eIdentityCertificateStatusImage = viewModel.e2eIdentityCertificate.status.imageForStatus() {
                 e2eIdentityCertificateStatusImage
@@ -54,7 +54,7 @@ struct DeviceView: View {
                 ).font(
                     UIFont.mediumRegular.swiftUIfont
                 ).foregroundColor(
-                    SemanticColors.Label.textSectionHeader.swiftUIColor()
+                    SemanticColors.Label.textSectionHeader.swiftUIColor
                 ).lineLimit(
                     1
                 )
@@ -65,7 +65,7 @@ struct DeviceView: View {
                 ).font(
                     UIFont.mediumRegular.swiftUIfont
                 ).foregroundColor(
-                    SemanticColors.Label.textSectionHeader.swiftUIColor()
+                    SemanticColors.Label.textSectionHeader.swiftUIColor
                 )
             }
         }

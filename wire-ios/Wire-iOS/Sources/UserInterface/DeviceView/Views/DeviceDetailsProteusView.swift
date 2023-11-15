@@ -49,6 +49,7 @@ struct DeviceDetailsProteusView: View {
             Text(
                 L10n.Localizable.Device.Details.Activated.title
             )
+            .foregroundColor(SemanticColors.Label.textDefault.swiftUIColor)
             .font(
                 UIFont.mediumSemiboldFont.swiftUIfont
             )
@@ -59,6 +60,7 @@ struct DeviceDetailsProteusView: View {
             Text(
                 viewModel.addedDate
             )
+            .foregroundColor(SemanticColors.Label.textDefault.swiftUIColor)
             .padding(
                 .leading,
                 16
@@ -89,7 +91,7 @@ struct DeviceDetailsProteusView: View {
                 L10n.Localizable.Device.verified,
                 isOn: $viewModel.isProteusVerificationEnabled
             ).font(
-                .headline
+                UIFont.headerSemiBoldFont.swiftUIfont
             ).padding(
                 [
                     .leading,
@@ -105,7 +107,7 @@ struct DeviceDetailsProteusView: View {
                 )
             }
         }.background(
-            Color.white
+            SemanticColors.View.backgroundDefault.swiftUIColor
         )
     }
 }
