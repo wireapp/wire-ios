@@ -60,7 +60,7 @@
         <attribute name="draftMessageData" optional="YES" attributeType="Binary"/>
         <attribute name="draftMessageNonce" optional="YES" attributeType="Binary"/>
         <attribute name="epoch" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="NO"/>
-        <attribute name="epochTimestamp" optional="YES" attributeType="String"/>
+        <attribute name="epochTimestamp" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="hasReadReceiptsEnabled" optional="YES" attributeType="Boolean" usesScalarValueType="NO"/>
         <attribute name="hasUnreadUnsentMessage" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO"/>
         <attribute name="internalEstimatedUnreadCount" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="NO"/>

@@ -44,7 +44,7 @@ extension ZMConversation {
 
     @NSManaged public var epoch: UInt64
 
-    @NSManaged public var epochTimemstamp: String?
+    @NSManaged public var epochTimemstamp: Date?
 
     @NSManaged private var primitiveMessageProtocol: NSNumber
 
