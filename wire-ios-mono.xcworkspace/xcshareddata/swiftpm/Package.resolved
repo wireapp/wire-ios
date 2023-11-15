@@ -11,6 +11,15 @@
         }
       },
       {
+        "package": "Inject",
+        "repositoryURL": "https://github.com/krzysztofzablocki/Inject",
+        "state": {
+          "branch": null,
+          "revision": "2057eb9819813b89fd2107e99608d2d20890d9c5",
+          "version": "1.2.4"
+        }
+      },
+      {
         "package": "swift-snapshot-testing",
         "repositoryURL": "https://github.com/pointfreeco/swift-snapshot-testing",
         "state": {

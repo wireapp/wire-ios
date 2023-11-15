@@ -1207,6 +1207,7 @@
 		E9559B4927B3D3580020B431 /* UIAlertController+ConfirmRemovingServices.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9559B4827B3D3580020B431 /* UIAlertController+ConfirmRemovingServices.swift */; };
 		E961C0752A332E7400A36DE6 /* ConversationReactionMessageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E961C0742A332E7400A36DE6 /* ConversationReactionMessageTests.swift */; };
 		E964168628997173007F9756 /* ButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = E964168528997173007F9756 /* ButtonStyle.swift */; };
+		E96434BE2B0520C00041EB05 /* Inject in Frameworks */ = {isa = PBXBuildFile; productRef = E96434BD2B0520C00041EB05 /* Inject */; };
 		E96C8831281706640003245E /* UIViewController+DynamicType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E96C8830281706640003245E /* UIViewController+DynamicType.swift */; };
 		E986CAA8287D979300AF39E1 /* UIApplication+KeyWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = E986CAA7287D979300AF39E1 /* UIApplication+KeyWindow.swift */; };
 		E986CAA9287D979300AF39E1 /* UIApplication+KeyWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = E986CAA7287D979300AF39E1 /* UIApplication+KeyWindow.swift */; };
@@ -3799,6 +3800,7 @@
 				EEE25B5629719D840008B894 /* HTMLString.xcframework in Frameworks */,
 				EEE25B2A29719A730008B894 /* cryptobox.xcframework in Frameworks */,
 				EE67F6CF296F067F001D7C88 /* Countly.xcframework in Frameworks */,
+				E96434BE2B0520C00041EB05 /* Inject in Frameworks */,
 				A96867DC26A5E71900679D95 /* CallKit.framework in Frameworks */,
 				EE67F6D8296F06B3001D7C88 /* FLAnimatedImage.xcframework in Frameworks */,
 				EEE25B3E29719C580008B894 /* WireProtos.framework in Frameworks */,
@@ -8038,6 +8040,7 @@
 			name = "Wire-iOS";
 			packageProductDependencies = (
 				407831AC2AC4636F005C2978 /* DifferenceKit */,
+				E96434BD2B0520C00041EB05 /* Inject */,
 			);
 			productName = "ZClient iOS";
 			productReference = 8F42C538199244A700288E4D /* Wire.app */;
@@ -8165,6 +8168,7 @@
 			packageReferences = (
 				01C1A7C52A54C45A0058D578 /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */,
 				407831AB2AC4636F005C2978 /* XCRemoteSwiftPackageReference "DifferenceKit" */,
+				E96434BC2B0520C00041EB05 /* XCRemoteSwiftPackageReference "Inject" */,
 			);
 			productRefGroup = 8F42C539199244A700288E4D /* Products */;
 			projectDirPath = "";
@@ -10493,6 +10497,12 @@
 				);
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"-Xlinker",
+					"-interposable",
+				);
+				SWIFT_COMPILATION_MODE = singlefile;
 			};
 			name = Debug;
 		};
@@ -10512,6 +10522,11 @@
 				);
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				ONLY_ACTIVE_ARCH = NO;
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"-Xlinker",
+					"-interposable",
+				);
 			};
 			name = Release;
 		};
@@ -10671,6 +10686,14 @@
 				minimumVersion = 1.3.0;
 			};
 		};
+		E96434BC2B0520C00041EB05 /* XCRemoteSwiftPackageReference "Inject" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/krzysztofzablocki/Inject";
+			requirement = {
+				kind = exactVersion;
+				version = 1.2.4;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -10683,6 +10706,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 407831AB2AC4636F005C2978 /* XCRemoteSwiftPackageReference "DifferenceKit" */;
 			productName = DifferenceKit;
+		};
+		E96434BD2B0520C00041EB05 /* Inject */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E96434BC2B0520C00041EB05 /* XCRemoteSwiftPackageReference "Inject" */;
+			productName = Inject;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
