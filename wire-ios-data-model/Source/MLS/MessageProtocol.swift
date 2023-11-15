@@ -19,7 +19,7 @@
 /// Protocols for exchanging end-to-end-encrypted messages
 /// between clients.
 
-public enum MessageProtocol: Int16 {
+public enum MessageProtocol: Int16, CaseIterable {
 
     /// With proteus, inidividual encryption sessions are created between
     /// every pair of clients in a conversation. This imposes constraints on
@@ -42,7 +42,6 @@ public enum MessageProtocol: Int16 {
 
     case mixed
 
-    #warning("TODO: consider reversing rawValue and computed property")
     public init?(stringValue: String) {
         switch stringValue {
         case "mls":
