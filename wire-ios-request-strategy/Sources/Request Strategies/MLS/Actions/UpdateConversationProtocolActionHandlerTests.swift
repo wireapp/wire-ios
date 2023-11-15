@@ -64,14 +64,13 @@ final class UpdateConversationProtocolActionHandlerTests: ActionHandlerTestBase<
 
     // MARK: - Response handling
 
-    /*
     func test_itHandlesConversationUpdated() throws {
         // Given
         let payload: [AnyHashable: Any] = [
             "events": [
                 [
                     "time": "2021-05-12T10:52:02.671Z",
-                    "type": "conversation.member-join",
+                    "type": "conversation.protocol-update",
                     "from": "99db9768-04e3-4b5d-9268-831b6a25c4ab",
                     "qualified_conversation": [
                         "domain": "example.com",
@@ -93,9 +92,21 @@ final class UpdateConversationProtocolActionHandlerTests: ActionHandlerTestBase<
             payload: payload as ZMTransportData
         )
 
-        XCTAssertEqual(event, .conversationUpdated)
+        XCTAssertEqual(
+            event,
+            .conversationUpdated(
+                .init(
+                    id: .init(),
+                    data: .init(),
+                    from: .init(),
+                    qualifiedID: .none,
+                    qualifiedFrom: .none,
+                    timestamp: .none,
+                    type: .none
+                )
+            )
+        )
     }
-    */
 
     func test_itHandlesConversationUnchanged() throws {
         // When
