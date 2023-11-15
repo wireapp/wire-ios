@@ -55,7 +55,7 @@ struct DeviceDetailsBottomView: View {
                     16
                 )
                 .foregroundColor(
-                    .black
+                    SemanticColors.Label.textDefault.swiftUIColor()
                 )
                 .font(
                     UIFont.normalRegularFont.swiftUIfont.bold()
@@ -63,7 +63,7 @@ struct DeviceDetailsBottomView: View {
             }
             Spacer()
         }.background(
-            Color.white
+            SemanticColors.View.backgroundDefaultWhite.swiftUIColor()
         )
         Text(
             L10n.Localizable.Self.Settings.DeviceDetails.ResetSession.subtitle
@@ -97,14 +97,14 @@ struct DeviceDetailsBottomView: View {
                     16
                 )
                 .foregroundColor(
-                    .black
+                    SemanticColors.Label.textDefault.swiftUIColor()
                 ).font(
                     UIFont.normalRegularFont.swiftUIfont.bold()
                 )
             }
             Spacer()
         }.background(
-            Color.white
+            SemanticColors.View.backgroundDefaultWhite.swiftUIColor()
         )
         Text(
             L10n.Localizable.Self.Settings.DeviceDetails.RemoveDevice.subtitle

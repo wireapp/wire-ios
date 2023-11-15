@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import SwiftUI
 import UIKit
 import WireDataModel
 import WireCommonComponents
@@ -284,5 +285,8 @@ public extension UIColor {
     convenience init(fromZMAccentColor accentColor: ZMAccentColor) {
         let safeAccentColor = AccentColor(ZMAccentColor: accentColor) ?? .blue
         self.init(for: safeAccentColor)
+    }
+    func swiftUIColor() -> Color {
+        return Color(self)
     }
 }

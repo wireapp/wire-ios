@@ -20,6 +20,7 @@ import SwiftUI
 import WireCommonComponents
 
 struct DeviceView: View {
+    @Environment(\.colorScheme) private var colorScheme
     var viewModel: DeviceInfoViewModel
     var titleView: some View {
         HStack {
@@ -30,7 +31,7 @@ struct DeviceView: View {
                 UIFont.headerSemiBoldFont.swiftUIfont
             )
             .foregroundColor(
-                .black
+                SemanticColors.Label.textDefault.swiftUIColor()
             )
             if let e2eIdentityCertificateStatusImage = viewModel.e2eIdentityCertificate.status.imageForStatus() {
                 e2eIdentityCertificateStatusImage
@@ -53,7 +54,7 @@ struct DeviceView: View {
                 ).font(
                     UIFont.mediumRegular.swiftUIfont
                 ).foregroundColor(
-                    .gray
+                    SemanticColors.Label.textSectionHeader.swiftUIColor()
                 ).lineLimit(
                     1
                 )
@@ -64,7 +65,7 @@ struct DeviceView: View {
                 ).font(
                     UIFont.mediumRegular.swiftUIfont
                 ).foregroundColor(
-                    .gray
+                    SemanticColors.Label.textSectionHeader.swiftUIColor()
                 )
             }
         }

@@ -49,7 +49,7 @@ struct CertificateDetailsView: View {
                 )
             }).padding()
         }.background(
-            Color.backgroundColor
+            SemanticColors.View.backgroundDefault.swiftUIColor()
         )
         ScrollView {
             Text(
@@ -124,7 +124,7 @@ struct CertificateDetailsView: View {
                                 )
                             })
                             .foregroundColor(
-                                .black
+                                SemanticColors.Label.textDefault.swiftUIColor()
                             )
                         } message: {
                         }
@@ -137,10 +137,10 @@ struct CertificateDetailsView: View {
             )
             // The background will extend automatically to the edge
             .background(
-                Color.white
+                SemanticColors.View.backgroundDefaultWhite.swiftUIColor()
             )
             .border(
-                isDownloadAndCopyEnabled ? Color.black : .white,
+                isDownloadAndCopyEnabled ? SemanticColors.View.backgroundDefaultBlack.swiftUIColor() : SemanticColors.View.backgroundDefaultWhite.swiftUIColor(),
                 width: 0.5
             )
         }
@@ -150,7 +150,7 @@ struct CertificateDetailsView: View {
             8
         )
         .background(
-            Color.white
+            SemanticColors.View.backgroundDefaultWhite.swiftUIColor()
         )
     }
 }

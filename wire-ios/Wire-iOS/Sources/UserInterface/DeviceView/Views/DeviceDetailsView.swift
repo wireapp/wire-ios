@@ -56,34 +56,14 @@ struct DeviceDetailsView: View {
                             maxHeight: 42,
                             alignment: .leading
                         )
-                        .background(
-                            Color(
-                                red: 0.93,
-                                green: 0.94,
-                                blue: 0.94
-                            )
-                        )
-
                         DeviceMLSView(
                             viewModel: $viewModel
                         ).padding(
-                            .leading,
-                            16
-                        )
-                        .padding(
-                            .top,
-                            16
-                        )
-                        .padding(
-                            .bottom,
-                            16
-                        )
-                        .padding(
-                            .trailing,
+                            .all,
                             16
                         )
                         .background(
-                            Color.white
+                            SemanticColors.View.backgroundDefaultWhite.swiftUIColor()
                         )
                     }
 
@@ -104,7 +84,7 @@ struct DeviceDetailsView: View {
                                 isCertificateViewPresented: $isCertificateViewPresented
                             )
                         }.background(
-                            Color.white
+                            SemanticColors.View.backgroundDefaultWhite.swiftUIColor()
                         )
                         .padding(
                             .top,
@@ -137,7 +117,7 @@ struct DeviceDetailsView: View {
                 }
             }
             .background(
-                Color.backgroundColor
+                SemanticColors.View.backgroundDefault.swiftUIColor()
             )
             .environment(
                 \.defaultMinListHeaderHeight,
@@ -172,7 +152,7 @@ struct DeviceDetailsView: View {
             })
         }
         .background(
-            Color.backgroundColor
+            SemanticColors.View.backgroundDefault.swiftUIColor()
         )
         .sheet(
             isPresented: $isCertificateViewPresented,

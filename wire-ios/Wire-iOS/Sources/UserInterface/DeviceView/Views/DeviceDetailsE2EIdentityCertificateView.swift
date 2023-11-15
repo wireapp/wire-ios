@@ -51,9 +51,7 @@ struct DeviceDetailsE2EIdentityCertificateView: View {
                 Text(
                     viewModel.e2eIdentityCertificate.status.titleForStatus()
                 ).foregroundColor(
-                    .customRed
-                ).font(
-                    .subheadline
+                    SemanticColors.DrawingColors.red.swiftUIColor()
                 ).font(
                     UIFont.normalMediumFont.swiftUIfont
                 )
@@ -64,9 +62,7 @@ struct DeviceDetailsE2EIdentityCertificateView: View {
                 Text(
                     viewModel.e2eIdentityCertificate.status.titleForStatus()
                 ).foregroundColor(
-                    .customRed
-                ).font(
-                    .subheadline
+                    SemanticColors.DrawingColors.red.swiftUIColor()
                 ).font(
                     UIFont.normalMediumFont.swiftUIfont
                 )
@@ -77,7 +73,7 @@ struct DeviceDetailsE2EIdentityCertificateView: View {
                 Text(
                     viewModel.e2eIdentityCertificate.status.titleForStatus()
                 ).foregroundColor(
-                    .customRed
+                    SemanticColors.DrawingColors.red.swiftUIColor()
                 ).font(
                     .subheadline
                 ).font(
@@ -90,7 +86,7 @@ struct DeviceDetailsE2EIdentityCertificateView: View {
                 Text(
                     viewModel.e2eIdentityCertificate.status.titleForStatus()
                 ).foregroundColor(
-                    .customGreen
+                    SemanticColors.DrawingColors.green.swiftUIColor()
                 ).font(
                     .subheadline
                 ).font(
@@ -103,7 +99,7 @@ struct DeviceDetailsE2EIdentityCertificateView: View {
                 Text(
                     viewModel.e2eIdentityCertificate.status.titleForStatus()
                 ).foregroundColor(
-                    .black
+                    SemanticColors.Label.textDefault.swiftUIColor()
                 ).font(
                     UIFont.normalMediumFont.swiftUIfont
                 )

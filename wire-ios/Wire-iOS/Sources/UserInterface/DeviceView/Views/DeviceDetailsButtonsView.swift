@@ -31,7 +31,7 @@ struct DeviceDetailsButtonsView: View {
                 L10n.Localizable.Device.Details.Get.certificate
             )
             .foregroundStyle(
-                .black
+                SemanticColors.Label.textDefault.swiftUIColor()
             )
             .font(
                 UIFont.normalRegularFont.swiftUIfont.bold()
@@ -51,7 +51,7 @@ struct DeviceDetailsButtonsView: View {
                     L10n.Localizable.Device.Details.Update.certificate
                 )
                 .foregroundStyle(
-                    .black
+                    SemanticColors.Label.textDefault.swiftUIColor()
                 )
                 .font(
                     UIFont.normalRegularFont.swiftUIfont.bold()
@@ -73,17 +73,15 @@ struct DeviceDetailsButtonsView: View {
                     L10n.Localizable.Device.Details.Show.Certificate.details
                 )
                 .foregroundStyle(
-                    .black
+                    SemanticColors.Label.textDefault.swiftUIColor()
                 )
                 .font(
                     UIFont.normalRegularFont.swiftUIfont.bold()
                 )
-
                 Spacer()
                 Image(
                     .rightArrow
                 )
-
             }
         })
     }
