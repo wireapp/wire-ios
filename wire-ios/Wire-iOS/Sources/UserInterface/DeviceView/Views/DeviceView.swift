@@ -21,15 +21,17 @@ import WireCommonComponents
 
 struct DeviceView: View {
     var viewModel: DeviceInfoViewModel
-    var titleView: Text {
-        if viewModel.isProteusVerificationEnabled {
-            Text("\(viewModel.title.clippedValue()) \( viewModel.e2eIdentityCertificate.status.imageForStatus()) \(Image(.verified))")
-                .font(UIFont.headerSemiBoldFont.swiftUIfont)
-                .foregroundColor(.black)
-        } else {
-            Text("\(viewModel.title.clippedValue()) \( viewModel.e2eIdentityCertificate.status.imageForStatus())")
-                .font(UIFont.headerSemiBoldFont.swiftUIfont)
-                .foregroundColor(.black)
+    var titleView: some View {
+        HStack {
+            Text(viewModel.title.clippedValue())
+                 .font(UIFont.headerSemiBoldFont.swiftUIfont)
+                 .foregroundColor(.black)
+            if let e2eIdentityCertificateStatusImage = viewModel.e2eIdentityCertificate.status.imageForStatus() {
+                e2eIdentityCertificateStatusImage
+            }
+            if viewModel.isProteusVerificationEnabled {
+                Image(.verified)
+            }
         }
     }
     var body: some View {
@@ -80,7 +82,7 @@ e9 fd da 5e 21 fd 06 ae
                 isProteusVerificationEnabled: false,
                 e2eIdentityCertificate:
                     E2EIdentityCertificate(
-                        status: .notActivated,
+                        status: .none,
                         serialNumber: """
 b4 47 60 78 a3 1f 12 f9
 be 7c 98 3b 1f f1 f0 53

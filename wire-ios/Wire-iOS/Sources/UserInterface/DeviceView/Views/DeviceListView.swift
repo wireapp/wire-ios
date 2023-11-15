@@ -194,6 +194,30 @@ e9 fd da 5e 21 fd 06 ae
                                 ),
                                 exipirationDate: .now + .fourWeeks
                             )
+                    ),
+                    DeviceInfoViewModel(
+                        udid: .randomString(
+                            length: 10
+                        ),
+                        title: .random(
+                            length: 13
+                        ),
+                        addedDate: "10/10/2023",
+                        mlsThumbprint: "26 89 F2 1C 4A F3 9D 9D 26 89 F2 1C 4A F3 9D 9D",
+                        deviceKeyFingerprint: """
+b4 47 60 78 a3 1f 12 f9
+be 7c 98 3b 1f f1 f0 53
+ae 2a 01 6a 31 32 49 d0
+e9 fd da 5e 21 fd 06 ae
+""",
+                        proteusID: "26 89 F2 1C 4A F3 9D 9D 26 89 F2 1C 4A F3",
+                        isProteusVerificationEnabled: false,
+                        e2eIdentityCertificate: E2EIdentityCertificate(
+                            status: .none,
+                            serialNumber: "",
+                            certificate: "",
+                            exipirationDate: .now
+                        )
                     )
                 ]
             )

@@ -56,7 +56,7 @@ extension E2EIdentityCertificateStatus {
         }
     }
 
-    func imageForStatus() -> Image {
+    func imageForStatus() -> Image? {
         switch self {
         case .notActivated:
             return Image(.certificateExpired)
@@ -67,7 +67,7 @@ extension E2EIdentityCertificateStatus {
         case .valid:
             return Image(.certificateValid)
         case .none:
-            return Image(.certificateRevoked)
+            return nil
         }
     }
 }
