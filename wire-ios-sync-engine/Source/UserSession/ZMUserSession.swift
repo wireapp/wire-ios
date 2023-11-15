@@ -245,6 +245,7 @@ public class ZMUserSession: NSObject {
     }
 
     let lastEventIDRepository: LastEventIDRepositoryInterface
+    let conversationEventProcessor: ConversationEventProcessorProtocol
 
     public init(
         userId: UUID,
@@ -302,6 +303,7 @@ public class ZMUserSession: NSObject {
             userID: userId,
             sharedUserDefaults: sharedUserDefaults
         )
+        self.conversationEventProcessor = ConversationEventProcessor(context: coreDataStack.syncContext)
 
         super.init()
 
@@ -394,7 +396,8 @@ public class ZMUserSession: NSObject {
             storeProvider: self.coreDataStack,
             eventProcessingTracker: eventProcessingTracker,
             earService: earService,
-            eventConsumers: strategyDirectory?.eventConsumers ?? []
+            eventConsumers: strategyDirectory?.eventConsumers ?? [],
+            eventAsyncConsumers: strategyDirectory?.eventConsumers.compactMap({ $0 as? ZMEventAsyncConsumer}) ?? []
         )
     }
 
