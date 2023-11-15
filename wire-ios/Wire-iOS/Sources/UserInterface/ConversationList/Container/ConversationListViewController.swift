@@ -19,6 +19,7 @@ import Foundation
 import UIKit
 import WireDataModel
 import WireSyncEngine
+import LifetimeTracker
 
 enum ConversationListState {
     case conversationList
@@ -26,8 +27,11 @@ enum ConversationListState {
     case archived
 }
 
-final class ConversationListViewController: UIViewController {
+final class ConversationListViewController: UIViewController, LifetimeTrackable {
 
+    class var lifetimeConfiguration: LifetimeConfiguration {
+            return LifetimeConfiguration(maxCount: 1, groupName: "VC")
+        }
     weak var delegate: ConversationListTabBarControllerDelegate?
 
     let viewModel: ViewModel
@@ -102,7 +106,6 @@ final class ConversationListViewController: UIViewController {
     required init(viewModel: ViewModel) {
 
         self.viewModel = viewModel
-
         topBarViewController = ConversationListTopBarViewController(account: viewModel.account,
                                                                     selfUser: viewModel.selfUser)
 
@@ -122,6 +125,8 @@ final class ConversationListViewController: UIViewController {
         setupNetworkStatusBar()
 
         createViewConstraints()
+        trackLifetime()
+
     }
 
     @available(*, unavailable)
