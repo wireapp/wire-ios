@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Inject
 import SwiftUI
 
 struct DeveloperToolsView: View {
@@ -24,19 +25,20 @@ struct DeveloperToolsView: View {
 
     @StateObject
     var viewModel: DeveloperToolsViewModel
-
+    @ObservedObject
+    private var iO = Inject.observer
     // MARK: - Views
 
     var body: some View {
         List(viewModel.sections, rowContent: sectionView(for:))
-            .navigationTitle("Developer tools")
+            .navigationTitle("ksdfnmksl`")
             .navigationBarItems(trailing: dismissButton)
             .alert(isPresented: $viewModel.isPresentingAlert) {
                 Alert(
                     title: Text(viewModel.alertTitle ?? ""),
                     message: Text(viewModel.alertBody ?? "")
                 )
-            }
+            }.enableInjection()
     }
 
     private func sectionView(for section: DeveloperToolsViewModel.Section) -> some View {
@@ -66,7 +68,7 @@ struct DeveloperToolsView: View {
                             viewModel.handleEvent(.itemCopyRequested(item))
                         },
                         label: {
-                            Label("Copy", systemImage: "doc.on.doc")
+                            Label("Hello", systemImage: "doc.on.doc")
                         }
                     )
                 }
@@ -80,7 +82,7 @@ struct DeveloperToolsView: View {
     private var dismissButton: some View {
         SwiftUI.Button(
             action: { viewModel.handleEvent(.dismissButtonTapped) },
-            label: { Text("Close") }
+            label: { Text("It works on both SwiftUI and UIKit") }
         )
     }
 
