@@ -56,15 +56,15 @@ class ConversationEventProcessorTests: MessagingTestBase {
 
             let payload = ConversationEventProcessor.MemberJoinPayload(
                 id: groupConversation.remoteIdentifier,
-                qualifiedID: groupConversation.qualifiedID,
-                from: otherUser.remoteIdentifier,
-                qualifiedFrom: otherUser.qualifiedID,
-                timestamp: nil,
-                type: "conversation.member-join",
                 data: Payload.UpdateConverationMemberJoin(
                     userIDs: [],
                     users: [selfMember]
-                )
+                ),
+                from: otherUser.remoteIdentifier,
+                qualifiedID: groupConversation.qualifiedID,
+                qualifiedFrom: otherUser.qualifiedID,
+                timestamp: nil,
+                type: "conversation.member-join"
             )
 
             guard let transportPayload = try? payload.toTransportDictionary() else {

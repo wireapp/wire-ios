@@ -70,3 +70,22 @@ extension ZMTransportRequest: SafeForLoggingStringConvertible {
         return "<\(identifier)> \(ZMTransportRequest.string(for: self.method)) \(self.path.removingSensitiveInfo)"
     }
 }
+
+extension ZMTransportRequestMethod: CustomStringConvertible {
+    public var description: String {
+        switch self {
+        case .get:
+            return "GET"
+        case .delete:
+            return "DELETE"
+        case .put:
+            return "PUT"
+        case .post:
+            return "POST"
+        case .head:
+            return "HEAD"
+        @unknown default:
+            return "UNKNOWN"
+        }
+    }
+}

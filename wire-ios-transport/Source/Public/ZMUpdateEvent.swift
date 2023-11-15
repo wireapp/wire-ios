@@ -31,7 +31,7 @@ import WireUtilities
     case download
 }
 
-@objc public enum ZMUpdateEventType: UInt, CaseIterable {
+@objc public enum ZMUpdateEventType: UInt, CaseIterable, Equatable {
     case unknown = 0
     case conversationAssetAdd = 1
     case conversationConnectRequest = 2
@@ -46,6 +46,7 @@ import WireUtilities
     case conversationOtrMessageAdd = 10
     case conversationOtrAssetAdd = 11
     case conversationRename = 12
+    case conversationProtocolUpdate = 45
     case conversationTyping = 13
     case conversationCodeUpdate = 14
     case conversationAccessModeUpdate = 15
@@ -78,7 +79,7 @@ import WireUtilities
     case federationDelete = 43
     case federationConnectionRemoved = 44
 
-    // Current max value: conversationMLSMessageAdd = 44
+    // Current max value: conversationMLSMessageAdd = 45
 }
 
 extension ZMUpdateEventType {
@@ -113,6 +114,8 @@ extension ZMUpdateEventType {
             return "conversation.otr-asset-add"
         case .conversationRename:
             return "conversation.rename"
+        case .conversationProtocolUpdate:
+            return "conversation.protocol-update"
         case .conversationTyping:
             return "conversation.typing"
         case .conversationCodeUpdate:

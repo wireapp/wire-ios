@@ -42,8 +42,8 @@ public enum MessageProtocol: Int16 {
 
     case mixed
 
-    public init?(string: String) {
-        switch string {
+    public init?(stringValue: String) {
+        switch stringValue {
         case "mls":
             self = .mls
         case "proteus":
@@ -52,6 +52,17 @@ public enum MessageProtocol: Int16 {
             self = .mixed
         default:
             return nil
+        }
+    }
+
+    public var stringValue: String {
+        switch self {
+        case .proteus:
+            return "proteus"
+        case .mls:
+            return "mls"
+        case .mixed:
+            return "mixed"
         }
     }
 }
