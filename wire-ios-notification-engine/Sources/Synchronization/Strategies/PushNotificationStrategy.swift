@@ -21,7 +21,7 @@ import Foundation
 
 protocol PushNotificationStrategyDelegate: AnyObject {
 
-    func pushNotificationStrategy(_ strategy: PushNotificationStrategy, didFetchEvents events: [ZMUpdateEvent])
+    func pushNotificationStrategy(_ strategy: PushNotificationStrategy, didFetchEvents events: [ZMUpdateEvent]) async
     func pushNotificationStrategyDidFinishFetchingEvents(_ strategy: PushNotificationStrategy)
 
 }
@@ -87,25 +87,17 @@ extension PushNotificationStrategy: NotificationStreamSyncDelegate {
     public func fetchedEvents(_ events: [ZMUpdateEvent], hasMoreToFetch: Bool) {
         WireLogger.notifications.info("fetched \(events.count) events, \(hasMoreToFetch ? "" : "no ")more to fetch")
 
-        var eventIds: [UUID] = []
-        var parsedEvents: [ZMUpdateEvent] = []
-        var latestEventId: UUID?
+        let eventIds = events.compactMap(\.uuid)
+        let latestEventId = events.last(where: { !$0.isTransient })?.uuid
 
         for event in events {
             event.appendDebugInformation("From missing update events transcoder, processUpdateEventsAndReturnLastNotificationIDFromPayload")
-            parsedEvents.append(event)
-
-            if let uuid = event.uuid {
-                eventIds.append(uuid)
-            }
-
-            if !event.isTransient {
-                latestEventId = event.uuid
-            }
         }
 
-        delegate?.pushNotificationStrategy(self, didFetchEvents: parsedEvents)
-        pushNotificationStatus.didFetch(eventIds: eventIds, lastEventId: latestEventId, finished: !hasMoreToFetch)
+        Task {
+            await delegate?.pushNotificationStrategy(self, didFetchEvents: events)
+            pushNotificationStatus.didFetch(eventIds: eventIds, lastEventId: latestEventId, finished: !hasMoreToFetch)
+        }
 
         if !hasMoreToFetch {
             delegate?.pushNotificationStrategyDidFinishFetchingEvents(self)
