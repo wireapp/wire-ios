@@ -142,7 +142,7 @@ public class ProteusMessageSync<Message: ProteusMessage>: NSObject, EntityTransc
                     shouldRetry = processor.updateClientsChanges(
                         from: payload,
                         for: entity
-                    )
+                    ).isNonEmpty
                 }
 
                 WireLogger.messaging.debug("got 412, will retry: \(shouldRetry)")

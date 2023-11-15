@@ -97,14 +97,16 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
         transportSession: TransportSessionType
     ) -> [Any] {
         let syncMOC = contextProvider.syncContext
+
         let httpClient = HttpClientImpl(
             transportSession: transportSession,
             queue: syncMOC)
+        let apiProvider = APIProvider(httpClient: httpClient)
         let sessionEstablisher = SessionEstablisher(
-            httpClient: httpClient,
+            apiProvider: apiProvider,
             context: syncMOC)
         let messageSender = MessageSender(
-            httpClient: httpClient,
+            apiProvider: apiProvider,
             clientRegistrationDelegate: applicationStatusDirectory.clientRegistrationStatus,
             sessionEstablisher: sessionEstablisher,
             context: syncMOC)

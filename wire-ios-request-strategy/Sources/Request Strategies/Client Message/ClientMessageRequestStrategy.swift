@@ -114,6 +114,7 @@ extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
     func insert(object: ZMClientMessage, completion: @escaping () -> Void) {
         WireLogger.messaging.debug("inserting message \(object.debugInfo)")
 
+        // TODO: [jacob] do we need to prevent the message being sent multiple times?
         Task {
             let result = await messageSender?.sendMessage(message: object) ?? .success(Void())
 
@@ -125,25 +126,22 @@ extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
                     deleteMessageIfNecessary(object)
 
                 case .failure(let error):
-                    switch error {
-                    case .messageProtocolMissing:
-                        WireLogger.messaging.error("failed to send message \(object.debugInfo): missing messsage protocol")
-                        object.expire()
-                        localNotificationDispatcher.didFailToSend(object)
+                    WireLogger.messaging.error("failed to send message \(object.debugInfo): \(error)")
 
-                    case .gaveUpRetrying, .failedToGenerateRequest, .failedToParseResponse, .unresolvedApiVersion:
-                        WireLogger.messaging.error("failed to send message \(object.debugInfo): \(String(describing: error))")
-                        object.expire()
-                        localNotificationDispatcher.didFailToSend(object)
+                    object.expire()
+                    localNotificationDispatcher.didFailToSend(object)
 
-                        // FIXME: jacob handle this error inside MessageSender
-    //                    let payload = Payload.ResponseFailure(response, decoder: .defaultDecoder)
-    //                    if response.httpStatus == 403 && payload?.label == .missingLegalholdConsent {
-    //                        self?.managedObjectContext.zm_userInterface.performGroupedBlock {
-    //                            guard let context = self?.managedObjectContext.notificationContext else { return }
-    //                            NotificationInContext(name: ZMConversation.failedToSendMessageNotificationName, context: context).post()
-    //                        }
-    //                    }
+                    if
+                        case .networkError(let networkError) = error,
+                        case .invalidRequestError(let responseFailure, _) = networkError,
+                        responseFailure.label == .missingLegalholdConsent
+                    {
+                        managedObjectContext.zm_userInterface.performGroupedBlock {
+                            NotificationInContext(
+                                name: ZMConversation.failedToSendMessageNotificationName,
+                                context: self.managedObjectContext.notificationContext
+                            ).post()
+                        }
                     }
                 }
             }
