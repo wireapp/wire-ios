@@ -47,12 +47,14 @@ class MockMLSService: MLSServiceInterface {
         var performPendingJoins: [Void] = []
         var wipeGroup = [MLSGroupID]()
         var generateConferenceInfo = [(MLSGroupID, MLSGroupID)]()
-
+        var joinGroup = [MLSGroupID]()
     }
 
     // MARK: - Properties
 
     var calls = Calls()
+    var mockConversations: [ZMConversation] = []
+    var conversationExistsResponses: [MLSGroupID: Bool] = [:]
 
     // MARK: - Conference info
 
@@ -197,7 +199,7 @@ class MockMLSService: MLSServiceInterface {
     }
 
     func joinGroup(with groupID: MLSGroupID) async throws {
-        fatalError("not implemented")
+        calls.joinGroup.append(groupID)
     }
 
     func joinNewGroup(with groupID: MLSGroupID) async throws {
@@ -255,7 +257,7 @@ class MockMLSService: MLSServiceInterface {
             return
         }
         mock(groupID)
-	}
+    }
 
     // MARK: - Migration
 

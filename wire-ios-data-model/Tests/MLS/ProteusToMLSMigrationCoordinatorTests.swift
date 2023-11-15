@@ -22,11 +22,15 @@ import XCTest
 
 class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
 
+    // MARK: - Properties
+
     var sut: ProteusToMLSMigrationCoordinator!
     var mockStorage: MockProteusToMLSMigrationStorageInterface!
     var mockFeatureRepository: MockFeatureRepositoryInterface!
     var mockActionsProvider: MockMLSActionsProviderProtocol!
     var mockMLSService: MockMLSService!
+
+    // MARK: - setUp
 
     override func setUp() {
         super.setUp()
@@ -49,6 +53,8 @@ class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
         DeveloperFlag.storage = .random()!
     }
 
+    // MARK: - tearDown
+
     override func tearDown() {
         sut = nil
         mockStorage = nil
@@ -58,6 +64,52 @@ class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
         BackendInfo.storage = .standard
         DeveloperFlag.storage = .standard
         super.tearDown()
+    }
+
+    // MARK: - Tests
+
+    func testMigrateOrJoinGroupConversations_CallsJoinGroupForNewConversations() async throws {
+        // GIVEN
+        let selfUser = ZMUser.selfUser(in: syncMOC)
+        selfUser.teamIdentifier = .init()
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
+        conversation.mlsGroupID = .random()
+        let groupID = try XCTUnwrap(conversation.mlsGroupID)
+        let mockMLSService = MockMLSService()
+        mockMLSService.mockConversations = [conversation]
+        mockMLSService.conversationExistsResponses[groupID] = false
+
+        let expectation = XCTestExpectation(description: "joinGroup should be called")
+
+        // WHEN
+        sut.migrateOrJoinGroupConversations()
+
+        Task {
+            try? await mockMLSService.joinGroup(with: groupID)
+            expectation.fulfill()
+        }
+
+        // THEN
+        await fulfillment(of: [expectation])
+        XCTAssertTrue(mockMLSService.calls.joinGroup.contains(groupID), "joinGroup should be called for new conversations")
+    }
+
+    func testMigrateOrJoinGroupConversations_DoesNotCallJoinGroupForExistingConversations() async throws {
+        // GIVEN
+        let selfUser = ZMUser.selfUser(in: syncMOC)
+        selfUser.teamIdentifier = .init()
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
+        conversation.mlsGroupID = .random()
+        let groupID = try XCTUnwrap(conversation.mlsGroupID)
+        let mockMLSService = MockMLSService()
+        mockMLSService.mockConversations = [conversation]
+        mockMLSService.conversationExistsResponses[groupID] = true
+
+        // WHEN
+        sut.migrateOrJoinGroupConversations()
+
+        // THEN
+        XCTAssertFalse(mockMLSService.calls.joinGroup.contains(groupID), "joinGroup should not be called for existing conversations")
     }
 
     // MARK: - UpdateMigrationStatus
