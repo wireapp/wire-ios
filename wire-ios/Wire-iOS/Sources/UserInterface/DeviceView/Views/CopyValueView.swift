@@ -22,17 +22,34 @@ struct CopyValueView: View {
     var title: String
     var value: String
     var isCopyEnabled: Bool = true
-    var performCopy: ((String) -> Void)?
+    var performCopy: (
+        (
+            String
+        ) -> Void
+    )?
     var body: some View {
-        VStack(alignment: .leading) {
-            Text(title).font(UIFont.smallSemiboldFont.swiftUIfont)
+        VStack(
+            alignment: .leading
+        ) {
+            Text(
+                title
+            ).font(
+                UIFont.smallSemiboldFont.swiftUIfont
+            )
             HStack {
-                Text(value).font(Font.sfMonoMedium)
+                Text(
+                    value
+                ).font(
+                    Font.sfMonoMedium
+                )
                 if isCopyEnabled {
                     Spacer()
                     VStack {
-                        SwiftUI.Button(action: copy, label: {
-                            Image(.copy)
+                        SwiftUI.Button(action: copy,
+                                       label: {
+                            Image(
+                                .copy
+                            )
                         })
                         Spacer()
                     }
@@ -42,7 +59,9 @@ struct CopyValueView: View {
     }
 
     func copy() {
-        performCopy?(value)
+        performCopy?(
+            value
+        )
     }
 }
 

@@ -21,41 +21,81 @@ import SwiftUI
 struct DeviceListView: View {
     @State var viewModel: DevicesViewModel
     var currentDeviceView: some View {
-        Section(header: Text(L10n.Localizable.Device.current)) {
-            NavigationLink(destination: DeviceDetailsView(viewModel: $viewModel.currentDevice, isCertificateViewPresented: false)) {
-                DeviceView(viewModel: viewModel.currentDevice)
+        Section(
+            header: Text(
+                L10n.Localizable.Device.current
+            )
+        ) {
+            NavigationLink(
+                destination: DeviceDetailsView(
+                    viewModel: $viewModel.currentDevice,
+                    isCertificateViewPresented: false
+                )
+            ) {
+                DeviceView(
+                    viewModel: viewModel.currentDevice
+                )
             }
         }
     }
     var otherDevicesView: some View {
-        Section(header: Text(L10n.Localizable.Device.active)) {
-                ForEach($viewModel.otherDevices) { deviceViewModel in
-                    NavigationLink(destination: DeviceDetailsView(viewModel: deviceViewModel, isCertificateViewPresented: false)) {
-                        DeviceView(viewModel: deviceViewModel.wrappedValue)
-                    }
+        Section(
+            header: Text(
+                L10n.Localizable.Device.active
+            )
+        ) {
+            ForEach(
+                $viewModel.otherDevices
+            ) { deviceViewModel in
+                NavigationLink(
+                    destination: DeviceDetailsView(
+                        viewModel: deviceViewModel,
+                        isCertificateViewPresented: false
+                    )
+                ) {
+                    DeviceView(
+                        viewModel: deviceViewModel.wrappedValue
+                    )
                 }
-                .onDelete(perform: delete)
+            }
+            .onDelete(
+                perform: delete
+            )
         }
     }
     var body: some View {
         NavigationView {
-            VStack(alignment: .leading) {
+            VStack(
+                alignment: .leading
+            ) {
                 List {
-                   currentDeviceView
+                    currentDeviceView
                     if !viewModel.otherDevices.isEmpty {
                         otherDevicesView
                     }
                 }
-                .listStyle(GroupedListStyle())
+                .listStyle(
+                    GroupedListStyle()
+                )
             }
         }
-        .background(Color(red: 0.93, green: 0.94, blue: 0.94)
+        .background(
+            Color(
+                red: 0.93,
+                green: 0.94,
+                blue: 0.94
+            )
             .toolbar(content: {
                 EditButton()
-            }))
+            })
+        )
     }
-    func delete(_ indexSet: IndexSet) {
-        viewModel.onRemoveDevice(indexSet)
+    func delete(
+        _ indexSet: IndexSet
+    ) {
+        viewModel.onRemoveDevice(
+            indexSet
+        )
     }
 }
 

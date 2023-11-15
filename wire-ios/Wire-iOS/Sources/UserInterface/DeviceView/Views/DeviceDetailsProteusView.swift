@@ -21,32 +21,91 @@ import SwiftUI
 struct DeviceDetailsProteusView: View {
     @Binding var viewModel: DeviceInfoViewModel
     var body: some View {
-            VStack(alignment: .leading) {
-                CopyValueView(title: L10n.Localizable.Device.Proteus.id, value: viewModel.proteusID, performCopy: { value in
-                    viewModel.actionsHandler.copyToClipboard(value)
+        VStack(
+            alignment: .leading
+        ) {
+            CopyValueView(
+                title: L10n.Localizable.Device.Proteus.id,
+                value: viewModel.proteusID,
+                isCopyEnabled: viewModel.isCopyEnabled,
+                performCopy: {
+                    value in
+                    viewModel.actionsHandler.copyToClipboard(
+                        value
+                    )
                 })
-                    .padding([.leading, .trailing], 16)
-                    .padding(.top, 8.0)
-                Divider()
-                Text(L10n.Localizable.Device.Details.Activated.title)
-                    .font(UIFont.mediumSemiboldFont.swiftUIfont)
-                    .padding(.leading, 16)
-                Text(viewModel.addedDate)
-                    .padding(.leading, 16)
-                    .font(UIFont.normalRegularFont.swiftUIfont)
-                Divider()
-                CopyValueView(
-                    title: L10n.Localizable.Device.Details.Proteus.Key.fingerprint,
-                    value: viewModel.deviceKeyFingerprint,
-                    performCopy: { value in
-                            viewModel.actionsHandler.copyToClipboard(value)
-                        }
-                ).padding([.leading, .trailing], 16)
-                Divider()
-                Toggle(L10n.Localizable.Device.verified, isOn: $viewModel.isProteusVerificationEnabled).font(.headline).padding([.leading, .trailing, .bottom], 16).onChange(of: viewModel.isProteusVerificationEnabled) { value in
-                    viewModel.actionsHandler.setVerified(value)
+            .padding(
+                [
+                    .leading,
+                    .trailing
+                ],
+                16
+            )
+            .padding(
+                .top,
+                8.0
+            )
+            Divider()
+            Text(
+                L10n.Localizable.Device.Details.Activated.title
+            )
+            .font(
+                UIFont.mediumSemiboldFont.swiftUIfont
+            )
+            .padding(
+                .leading,
+                16
+            )
+            Text(
+                viewModel.addedDate
+            )
+            .padding(
+                .leading,
+                16
+            )
+            .font(
+                UIFont.normalRegularFont.swiftUIfont
+            )
+            Divider()
+            CopyValueView(
+                title: L10n.Localizable.Device.Details.Proteus.Key.fingerprint,
+                value: viewModel.deviceKeyFingerprint,
+                performCopy: {
+                    value in
+                    viewModel.actionsHandler.copyToClipboard(
+                        value
+                    )
                 }
-            }.background(Color.white)
+            ).padding(
+                [
+                    .leading,
+                    .trailing
+                ],
+                16
+            )
+            Divider()
+            Toggle(
+                L10n.Localizable.Device.verified,
+                isOn: $viewModel.isProteusVerificationEnabled
+            ).font(
+                .headline
+            ).padding(
+                [
+                    .leading,
+                    .trailing,
+                    .bottom
+                ],
+                16
+            ).onChange(
+                of: viewModel.isProteusVerificationEnabled
+            ) { value in
+                viewModel.actionsHandler.setVerified(
+                    value
+                )
+            }
+        }.background(
+            Color.white
+        )
     }
 }
 

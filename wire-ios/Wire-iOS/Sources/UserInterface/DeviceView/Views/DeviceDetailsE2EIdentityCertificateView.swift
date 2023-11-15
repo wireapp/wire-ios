@@ -22,34 +22,115 @@ struct DeviceDetailsE2EIdentityCertificateView: View {
     @Binding var viewModel: DeviceInfoViewModel
     @Binding var isCertificateViewPreseneted: Bool
     var body: some View {
-        Text(L10n.Localizable.Device.Details.E2e.Identity.certificate).font(UIFont.normalSemiboldFont.swiftUIfont).multilineTextAlignment(.leading)
-            .padding([.top, .bottom], 16)
-        Text(L10n.Localizable.Device.Details.status).font(UIFont.mediumSemiboldFont.swiftUIfont).foregroundColor(.gray).multilineTextAlignment(.leading)
+        Text(
+            L10n.Localizable.Device.Details.E2e.Identity.certificate
+        ).font(
+            UIFont.normalSemiboldFont.swiftUIfont
+        ).multilineTextAlignment(
+            .leading
+        )
+        .padding(
+            [
+                .top,
+                .bottom
+            ],
+            16
+        )
+        Text(
+            L10n.Localizable.Device.Details.status
+        ).font(
+            UIFont.mediumSemiboldFont.swiftUIfont
+        ).foregroundColor(
+            .gray
+        ).multilineTextAlignment(
+            .leading
+        )
         HStack {
             switch viewModel.e2eIdentityCertificate.status {
             case .notActivated:
-                Text(viewModel.e2eIdentityCertificate.status.titleForStatus()).foregroundColor(.customRed).font(.subheadline).font(UIFont.normalMediumFont.swiftUIfont)
-                Image(.certificateExpired)
+                Text(
+                    viewModel.e2eIdentityCertificate.status.titleForStatus()
+                ).foregroundColor(
+                    .customRed
+                ).font(
+                    .subheadline
+                ).font(
+                    UIFont.normalMediumFont.swiftUIfont
+                )
+                Image(
+                    .certificateExpired
+                )
             case .revoked:
-                Text(viewModel.e2eIdentityCertificate.status.titleForStatus()).foregroundColor(.customRed).font(.subheadline).font(UIFont.normalMediumFont.swiftUIfont)
-                Image(.certificateRevoked)
+                Text(
+                    viewModel.e2eIdentityCertificate.status.titleForStatus()
+                ).foregroundColor(
+                    .customRed
+                ).font(
+                    .subheadline
+                ).font(
+                    UIFont.normalMediumFont.swiftUIfont
+                )
+                Image(
+                    .certificateRevoked
+                )
             case .expired:
-                Text(viewModel.e2eIdentityCertificate.status.titleForStatus()).foregroundColor(.customRed).font(.subheadline).font(UIFont.normalMediumFont.swiftUIfont)
-                Image(.certificateExpired)
+                Text(
+                    viewModel.e2eIdentityCertificate.status.titleForStatus()
+                ).foregroundColor(
+                    .customRed
+                ).font(
+                    .subheadline
+                ).font(
+                    UIFont.normalMediumFont.swiftUIfont
+                )
+                Image(
+                    .certificateExpired
+                )
             case .valid:
-                Text(viewModel.e2eIdentityCertificate.status.titleForStatus()).foregroundColor(.customGreen).font(.subheadline).font(UIFont.normalMediumFont.swiftUIfont)
-                Image(.certificateValid)
+                Text(
+                    viewModel.e2eIdentityCertificate.status.titleForStatus()
+                ).foregroundColor(
+                    .customGreen
+                ).font(
+                    .subheadline
+                ).font(
+                    UIFont.normalMediumFont.swiftUIfont
+                )
+                Image(
+                    .certificateValid
+                )
             case .none:
-                Text(viewModel.e2eIdentityCertificate.status.titleForStatus()).foregroundColor(.black).font(UIFont.normalMediumFont.swiftUIfont)
-                Image(asset: .init(name: ""))
+                Text(
+                    viewModel.e2eIdentityCertificate.status.titleForStatus()
+                ).foregroundColor(
+                    .black
+                ).font(
+                    UIFont.normalMediumFont.swiftUIfont
+                )
+                Image(
+                    asset: .init(
+                        name: ""
+                    )
+                )
             }
             Spacer()
         }
         if !viewModel.e2eIdentityCertificate.serialNumber.isEmpty {
-            Text(L10n.Localizable.Device.Details.Serial.number)
-                .font(UIFont.smallSemiboldFont.swiftUIfont)
-                .foregroundColor(.gray).padding(.top, 8)
-            Text(viewModel.e2eIdentityCertificate.serialNumber)
+            Text(
+                L10n.Localizable.Device.Details.Serial.number
+            )
+            .font(
+                UIFont.smallSemiboldFont.swiftUIfont
+            )
+            .foregroundColor(
+                .gray
+            ).padding(
+                .top,
+                8
+            )
+            Text(
+                viewModel.e2eIdentityCertificate.serialNumber
+            )
         }
     }
 }

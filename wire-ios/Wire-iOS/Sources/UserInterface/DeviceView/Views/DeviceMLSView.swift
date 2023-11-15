@@ -25,10 +25,16 @@ struct DeviceMLSView: View {
             CopyValueView(
                 title: L10n.Localizable.Device.Mls.thumbprint,
                 value: viewModel.mlsThumbprint,
-                performCopy: { value in
-                   viewModel.actionsHandler.copyToClipboard(value)
-               }
-            ).frame(maxHeight: .infinity)
+                isCopyEnabled: viewModel.isCopyEnabled,
+                performCopy: {
+                    value in
+                    viewModel.actionsHandler.copyToClipboard(
+                        value
+                    )
+                }
+            ).frame(
+                maxHeight: .infinity
+            )
         }
     }
 }

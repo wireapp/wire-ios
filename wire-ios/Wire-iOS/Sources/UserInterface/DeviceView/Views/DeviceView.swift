@@ -23,25 +23,49 @@ struct DeviceView: View {
     var viewModel: DeviceInfoViewModel
     var titleView: some View {
         HStack {
-            Text(viewModel.title.clippedValue())
-                 .font(UIFont.headerSemiBoldFont.swiftUIfont)
-                 .foregroundColor(.black)
+            Text(
+                viewModel.title.clippedValue()
+            )
+            .font(
+                UIFont.headerSemiBoldFont.swiftUIfont
+            )
+            .foregroundColor(
+                .black
+            )
             if let e2eIdentityCertificateStatusImage = viewModel.e2eIdentityCertificate.status.imageForStatus() {
                 e2eIdentityCertificateStatusImage
             }
             if viewModel.isProteusVerificationEnabled {
-                Image(.verified)
+                Image(
+                    .verified
+                )
             }
         }
     }
     var body: some View {
-        VStack(alignment: .leading) {
+        VStack(
+            alignment: .leading
+        ) {
             titleView
             if !viewModel.mlsThumbprint.isEmpty {
-                Text("\(L10n.Localizable.Device.Mls.thumbprint): \(viewModel.mlsThumbprint)").font(UIFont.mediumRegular.swiftUIfont).foregroundColor(.gray).lineLimit(1)
+                Text(
+                    "\(L10n.Localizable.Device.Mls.thumbprint): \(viewModel.mlsThumbprint)"
+                ).font(
+                    UIFont.mediumRegular.swiftUIfont
+                ).foregroundColor(
+                    .gray
+                ).lineLimit(
+                    1
+                )
             }
             if !viewModel.proteusID.isEmpty {
-                Text("\(L10n.Localizable.Device.Proteus.id): \(viewModel.proteusID)").font(UIFont.mediumRegular.swiftUIfont).foregroundColor(.gray)
+                Text(
+                    "\(L10n.Localizable.Device.Proteus.id): \(viewModel.proteusID)"
+                ).font(
+                    UIFont.mediumRegular.swiftUIfont
+                ).foregroundColor(
+                    .gray
+                )
             }
         }
     }

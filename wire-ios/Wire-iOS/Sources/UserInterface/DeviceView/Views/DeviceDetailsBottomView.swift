@@ -21,41 +21,111 @@ import SwiftUI
 struct DeviceDetailsBottomView: View {
     @Binding var viewModel: DeviceInfoViewModel
     var body: some View {
-        Text(L10n.Localizable.Self.Settings.DeviceDetails.Fingerprint.subtitle)
-            .font(.footnote)
-            .padding([.leading, .trailing], 16)
-            .padding([.top, .bottom], 8)
+        Text(
+            L10n.Localizable.Self.Settings.DeviceDetails.Fingerprint.subtitle
+        )
+        .font(
+            .footnote
+        )
+        .padding(
+            [
+                .leading,
+                .trailing
+            ],
+            16
+        )
+        .padding(
+            [
+                .top,
+                .bottom
+            ],
+            8
+        )
         HStack {
             SwiftUI.Button {
                 Task {
                     viewModel.actionsHandler.resetSession()
                 }
             } label: {
-                Text(L10n.Localizable.Profile.Devices.Detail.ResetSession.title)
-                    .padding(.all, 16)
-                    .foregroundColor(.black)
-                    .font(UIFont.normalRegularFont.swiftUIfont.bold())
+                Text(
+                    L10n.Localizable.Profile.Devices.Detail.ResetSession.title
+                )
+                .padding(
+                    .all,
+                    16
+                )
+                .foregroundColor(
+                    .black
+                )
+                .font(
+                    UIFont.normalRegularFont.swiftUIfont.bold()
+                )
             }
             Spacer()
-        }.background(Color.white)
-        Text(L10n.Localizable.Self.Settings.DeviceDetails.ResetSession.subtitle).font(.footnote).padding([.leading, .trailing], 16)
-            .padding([.top, .bottom], 8)
+        }.background(
+            Color.white
+        )
+        Text(
+            L10n.Localizable.Self.Settings.DeviceDetails.ResetSession.subtitle
+        ).font(
+            .footnote
+        ).padding(
+            [
+                .leading,
+                .trailing
+            ],
+            16
+        )
+        .padding(
+            [
+                .top,
+                .bottom
+            ],
+            8
+        )
         HStack {
             SwiftUI.Button {
                 Task {
                     viewModel.actionsHandler.removeDevice()
                 }
             } label: {
-                Text(L10n.Localizable.Self.Settings.AccountDetails.RemoveDevice.title)
-                    .padding(.all, 16)
-                    .foregroundColor(.black).font(UIFont.normalRegularFont.swiftUIfont.bold())
+                Text(
+                    L10n.Localizable.Self.Settings.AccountDetails.RemoveDevice.title
+                )
+                .padding(
+                    .all,
+                    16
+                )
+                .foregroundColor(
+                    .black
+                ).font(
+                    UIFont.normalRegularFont.swiftUIfont.bold()
+                )
             }
             Spacer()
-        }.background(Color.white)
-        Text(L10n.Localizable.Self.Settings.DeviceDetails.RemoveDevice.subtitle)
-            .font(.footnote)
-            .padding([.leading, .trailing], 16)
-            .padding([.top, .bottom], 8)
+        }.background(
+            Color.white
+        )
+        Text(
+            L10n.Localizable.Self.Settings.DeviceDetails.RemoveDevice.subtitle
+        )
+        .font(
+            .footnote
+        )
+        .padding(
+            [
+                .leading,
+                .trailing
+            ],
+            16
+        )
+        .padding(
+            [
+                .top,
+                .bottom
+            ],
+            8
+        )
     }
 }
 

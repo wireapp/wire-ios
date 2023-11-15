@@ -19,31 +19,55 @@
 import SwiftUI
 
 struct CertificateDetailsView: View {
-    @Environment(\.dismiss) private var dismiss
+    @Environment(
+        \.dismiss
+    ) private var dismiss
     var certificateDetails: String
     @State var isMenuPresented = false
     var isDownloadAndCopyEnabled: Bool = true
-    var performDownload: (() -> Void)?
-    var performCopy: ((String) -> Void)?
+    var performDownload: (
+    () -> Void
+    )?
+    var performCopy: (
+        (
+            String
+        ) -> Void
+    )?
     var body: some View {
         HStack {
             Spacer()
-            Text(L10n.Localizable.Device.Details.Certificate.details)
+            Text(
+                L10n.Localizable.Device.Details.Certificate.details
+            )
             Spacer()
             SwiftUI.Button(action: {
                 dismiss()
-            }, label: {
-                Image(.close)
+            },
+                           label: {
+                Image(
+                    .close
+                )
             }).padding()
-        }.background(Color.backgroundColor)
+        }.background(
+            Color.backgroundColor
+        )
         ScrollView {
-            Text(certificateDetails)
-                .font(Font.sfMonoSmall)
-                .padding()
-                .frame(maxHeight: .infinity)
+            Text(
+                certificateDetails
+            )
+            .font(
+                Font.sfMonoSmall
+            )
+            .padding()
+            .frame(
+                maxHeight: .infinity
+            )
         }
 
-        .safeAreaInset(edge: .bottom, spacing: 0) {
+        .safeAreaInset(
+            edge: .bottom,
+            spacing: 0
+        ) {
             VStack {
                 if isDownloadAndCopyEnabled {
                     HStack {
@@ -51,43 +75,83 @@ struct CertificateDetailsView: View {
                             performDownload?()
                         },
                                        label: {
-                            Image(.download)
+                            Image(
+                                .download
+                            )
                         }).padding()
                         SwiftUI.Button(action: {
                             performDownload?()
                         },
                                        label: {
-                            Text(L10n.Localizable.Content.Message.download).font(UIFont.normalRegularFont.swiftUIfont.bold())
+                            Text(
+                                L10n.Localizable.Content.Message.download
+                            ).font(
+                                UIFont.normalRegularFont.swiftUIfont.bold()
+                            )
                         }).padding()
-                            .foregroundColor(.black)
-                         .font(UIFont.mediumSemiboldFont.swiftUIfont)
+                            .foregroundColor(
+                                .black
+                            )
+                            .font(
+                                UIFont.mediumSemiboldFont.swiftUIfont
+                            )
                         Spacer()
                         SwiftUI.Button(action: {
                             isMenuPresented.toggle()
-                        }, label: {
-                            Image(.more).padding(.trailing, 16)
+                        },
+                                       label: {
+                            Image(
+                                .more
+                            ).padding(
+                                .trailing,
+                                16
+                            )
                         })
-                        .confirmationDialog("...", isPresented: $isMenuPresented) {
+                        .confirmationDialog(
+                            "...",
+                            isPresented: $isMenuPresented
+                        ) {
                             SwiftUI.Button(action: {
-                                performCopy?(certificateDetails)
-                            }, label: {
-                                Text( L10n.Localizable.Device.Details.copytoclipboard).foregroundColor(.black)
+                                performCopy?(
+                                    certificateDetails
+                                )
+                            },
+                                           label: {
+                                Text(
+                                    L10n.Localizable.Device.Details.copytoclipboard
+                                ).foregroundColor(
+                                    .black
+                                )
                             })
-                            .foregroundColor(.black)
+                            .foregroundColor(
+                                .black
+                            )
                         } message: {
                         }
                     }
                 }
             }
             .padding()
-            .frame(maxWidth: .infinity)
+            .frame(
+                maxWidth: .infinity
+            )
             // The background will extend automatically to the edge
-            .background(Color.white)
-            .border(isDownloadAndCopyEnabled ? Color.black : .white, width: 0.5)
+            .background(
+                Color.white
+            )
+            .border(
+                isDownloadAndCopyEnabled ? Color.black : .white,
+                width: 0.5
+            )
         }
         .ignoresSafeArea()
-        .padding(.top, 8)
-        .background(Color.white)
+        .padding(
+            .top,
+            8
+        )
+        .background(
+            Color.white
+        )
     }
 }
 

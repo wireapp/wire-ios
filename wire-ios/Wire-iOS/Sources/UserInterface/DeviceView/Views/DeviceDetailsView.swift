@@ -19,7 +19,9 @@
 import SwiftUI
 
 struct DeviceDetailsView: View {
-    @Environment(\.dismiss) private var dismiss
+    @Environment(
+        \.dismiss
+    ) private var dismiss
     @Binding var viewModel: DeviceInfoViewModel
     @State var isCertificateViewPresented: Bool
 
@@ -27,62 +29,155 @@ struct DeviceDetailsView: View {
         NavigationView {
             ScrollView {
                 if !viewModel.mlsThumbprint.isEmpty {
-                    VStack(alignment: .leading) {
-                        HStack(alignment: .center, spacing: 0) {
-                            Text(L10n.Localizable.Device.Details.Section.mls)
+                    VStack(
+                        alignment: .leading
+                    ) {
+                        HStack(
+                            alignment: .center,
+                            spacing: 0
+                        ) {
+                            Text(
+                                L10n.Localizable.Device.Details.Section.mls
+                            )
                         }
-                        .padding(.bottom, 8)
-                        .padding([.top, .leading], 16)
-                        .frame(maxWidth: .infinity, maxHeight: 42, alignment: .leading)
-                        .background(Color(red: 0.93, green: 0.94, blue: 0.94))
+                        .padding(
+                            .bottom,
+                            8
+                        )
+                        .padding(
+                            [
+                                .top,
+                                .leading
+                            ],
+                            16
+                        )
+                        .frame(
+                            maxWidth: .infinity,
+                            maxHeight: 42,
+                            alignment: .leading
+                        )
+                        .background(
+                            Color(
+                                red: 0.93,
+                                green: 0.94,
+                                blue: 0.94
+                            )
+                        )
 
-                        DeviceMLSView(viewModel: $viewModel).padding(.leading, 16)
-                            .padding(.top, 16)
-                            .padding(.bottom, 16)
-                            .padding(.trailing, 16)
-                            .background(Color.white)
+                        DeviceMLSView(
+                            viewModel: $viewModel
+                        ).padding(
+                            .leading,
+                            16
+                        )
+                        .padding(
+                            .top,
+                            16
+                        )
+                        .padding(
+                            .bottom,
+                            16
+                        )
+                        .padding(
+                            .trailing,
+                            16
+                        )
+                        .background(
+                            Color.white
+                        )
                     }
 
-                            if viewModel.e2eIdentityCertificate.status != .none {
-                                    VStack(alignment: .leading) {
-                                        DeviceDetailsE2EIdentityCertificateView(viewModel: $viewModel, isCertificateViewPreseneted: $isCertificateViewPresented).padding(.leading, 16)
+                    if viewModel.e2eIdentityCertificate.status != .none {
+                        VStack(
+                            alignment: .leading
+                        ) {
+                            DeviceDetailsE2EIdentityCertificateView(
+                                viewModel: $viewModel,
+                                isCertificateViewPreseneted: $isCertificateViewPresented
+                            ).padding(
+                                .leading,
+                                16
+                            )
 
-                                DeviceDetailsButtonsView(viewModel: $viewModel, isCertificateViewPresented: $isCertificateViewPresented)
-                            }.background(Color.white)
-                                    .padding(.top, 8)
-                        }
+                            DeviceDetailsButtonsView(
+                                viewModel: $viewModel,
+                                isCertificateViewPresented: $isCertificateViewPresented
+                            )
+                        }.background(
+                            Color.white
+                        )
+                        .padding(
+                            .top,
+                            8
+                        )
+                    }
 
                 }
 
-                VStack(alignment: .leading) {
-                    Text(L10n.Localizable.Device.Details.Section.proteus)
-                        .frame(height: 45)
-                        .padding(.leading, 16)
-                    DeviceDetailsProteusView(viewModel: $viewModel)
-                    DeviceDetailsBottomView(viewModel: $viewModel)
+                VStack(
+                    alignment: .leading
+                ) {
+                    Text(
+                        L10n.Localizable.Device.Details.Section.proteus
+                    )
+                    .frame(
+                        height: 45
+                    )
+                    .padding(
+                        .leading,
+                        16
+                    )
+                    DeviceDetailsProteusView(
+                        viewModel: $viewModel
+                    )
+                    DeviceDetailsBottomView(
+                        viewModel: $viewModel
+                    )
 
                 }
             }
-            .background(Color.backgroundColor)
-            .environment(\.defaultMinListHeaderHeight, 10)
-            .listStyle(.plain)
-            .navigationBarTitleDisplayMode(.inline)
+            .background(
+                Color.backgroundColor
+            )
+            .environment(
+                \.defaultMinListHeaderHeight,
+                 10
+            )
+            .listStyle(
+                .plain
+            )
+            .navigationBarTitleDisplayMode(
+                .inline
+            )
             .toolbar(content: {
-                ToolbarItem(placement: .navigationBarLeading) {
+                ToolbarItem(
+                    placement: .navigationBarLeading
+                ) {
                     SwiftUI.Button(action: {
                         dismiss()
-                    }, label: {
-                        Image(.backArrow)
+                    },
+                                   label: {
+                        Image(
+                            .backArrow
+                        )
                     })
                 }
-                ToolbarItem(placement: .principal) {
-                    DeviceView(viewModel: viewModel).titleView
+                ToolbarItem(
+                    placement: .principal
+                ) {
+                    DeviceView(
+                        viewModel: viewModel
+                    ).titleView
                 }
             })
         }
-        .background(Color.backgroundColor)
-        .sheet(isPresented: $isCertificateViewPresented,
-                onDismiss: didDismiss) {
+        .background(
+            Color.backgroundColor
+        )
+        .sheet(
+            isPresented: $isCertificateViewPresented,
+            onDismiss: didDismiss
+        ) {
             CertificateDetailsView(
                 certificateDetails: viewModel.e2eIdentityCertificate.certificate,
                 isMenuPresented: isCertificateViewPresented,
@@ -90,18 +185,25 @@ struct DeviceDetailsView: View {
                     Task {
                         await viewModel.actionsHandler.fetchCertificate()
                     }
-                }, performCopy: { value in
-                    viewModel.actionsHandler.copyToClipboard(value)
+                },
+                performCopy: { value in
+                    viewModel.actionsHandler.copyToClipboard(
+                        value
+                    )
                 }
 
             )
-                .toolbar {
-                    SwiftUI.Image(.attention).onTapGesture {
-                        isCertificateViewPresented.toggle()
-                    }
+            .toolbar {
+                SwiftUI.Image(
+                    .attention
+                ).onTapGesture {
+                    isCertificateViewPresented.toggle()
                 }
-         }
-        .navigationBarBackButtonHidden(true)
+            }
+        }
+        .navigationBarBackButtonHidden(
+            true
+        )
     }
 
     func didDismiss() {

@@ -91,7 +91,9 @@ struct DeviceInfoViewModel {
     var isProteusVerificationEnabled: Bool
     var e2eIdentityCertificate: E2EIdentityCertificate
     let actionsHandler: DeviceDetailsViewActions
-
+    var isCopyEnabled: Bool {
+        return Settings.isClipboardEnabled
+    }
     init(
         udid: String,
         title: String,

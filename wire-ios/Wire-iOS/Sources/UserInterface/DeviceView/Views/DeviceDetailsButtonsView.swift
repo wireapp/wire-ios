@@ -27,9 +27,15 @@ struct DeviceDetailsButtonsView: View {
                 await viewModel.actionsHandler.fetchCertificate()
             }
         } label: {
-            Text(L10n.Localizable.Device.Details.Get.certificate)
-                .foregroundStyle(.black)
-                .font(UIFont.normalRegularFont.swiftUIfont.bold())
+            Text(
+                L10n.Localizable.Device.Details.Get.certificate
+            )
+            .foregroundStyle(
+                .black
+            )
+            .font(
+                UIFont.normalRegularFont.swiftUIfont.bold()
+            )
         }
     }
     var updateCertificateButton: some View {
@@ -38,26 +44,45 @@ struct DeviceDetailsButtonsView: View {
                 await viewModel.actionsHandler.fetchCertificate()
             }
         } label: {
-            VStack(alignment: .leading) {
-                Text(L10n.Localizable.Device.Details.Update.certificate)
-                    .foregroundStyle(.black)
-                    .font(UIFont.normalRegularFont.swiftUIfont.bold())
+            VStack(
+                alignment: .leading
+            ) {
+                Text(
+                    L10n.Localizable.Device.Details.Update.certificate
+                )
+                .foregroundStyle(
+                    .black
+                )
+                .font(
+                    UIFont.normalRegularFont.swiftUIfont.bold()
+                )
             }        }
     }
     var showCertificateButton: some View {
         SwiftUI.Button(action: {
             if viewModel.e2eIdentityCertificate.isValidCertificate {
                 isCertificateViewPresented.toggle()
-                viewModel.actionsHandler.showCertificate(viewModel.e2eIdentityCertificate.certificate)
+                viewModel.actionsHandler.showCertificate(
+                    viewModel.e2eIdentityCertificate.certificate
+                )
             }
-        }, label: {
+        },
+                       label: {
             HStack {
-                Text(L10n.Localizable.Device.Details.Show.Certificate.details)
-                    .foregroundStyle(.black)
-                    .font(UIFont.normalRegularFont.swiftUIfont.bold())
+                Text(
+                    L10n.Localizable.Device.Details.Show.Certificate.details
+                )
+                .foregroundStyle(
+                    .black
+                )
+                .font(
+                    UIFont.normalRegularFont.swiftUIfont.bold()
+                )
 
                 Spacer()
-                Image(.rightArrow)
+                Image(
+                    .rightArrow
+                )
 
             }
         })
