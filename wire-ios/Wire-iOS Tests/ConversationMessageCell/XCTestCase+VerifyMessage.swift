@@ -32,20 +32,7 @@ extension ConversationMessageContext {
                                                                        spacing: 0)
 }
 
-class ConversationMessageSnapshotTestCase: ZMSnapshotTestCase {
-
-    var userSession: UserSessionMock!
-
-    override func setUp() {
-        super.setUp()
-        userSession = UserSessionMock()
-    }
-
-    override func tearDown() {
-        userSession = nil
-        super.tearDown()
-    }
-
+extension XCTestCase {
     /**
      * Performs a snapshot test for a message
      */
