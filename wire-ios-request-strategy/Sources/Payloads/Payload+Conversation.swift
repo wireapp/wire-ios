@@ -483,7 +483,6 @@ extension Payload {
         let from: UUID?
         let qualifiedID: QualifiedID?
         let qualifiedFrom: QualifiedID?
-        // let subconversationType: SubgroupType?
         let timestamp: Date?
         let type: String?
 
@@ -493,7 +492,6 @@ extension Payload {
             case from
             case qualifiedID = "qualified_conversation"
             case qualifiedFrom = "qualified_from"
-            // case subconversationType = "subconv"
             case timestamp = "time"
             case type
         }
