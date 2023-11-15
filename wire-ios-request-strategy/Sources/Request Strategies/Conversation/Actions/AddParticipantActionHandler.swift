@@ -144,9 +144,13 @@ class AddParticipantActionHandler: ActionHandler<AddParticipantAction> {
                 action.fail(with: .unknown)
                 return
             }
-
-            eventProcessor.processConversationEvents([updateEvent])
-            action.succeed()
+            let success = {
+                action.succeed()
+            }
+            Task {
+                await eventProcessor.processConversationEvents([updateEvent])
+                success()
+            }
 
         case 204:
             action.succeed()

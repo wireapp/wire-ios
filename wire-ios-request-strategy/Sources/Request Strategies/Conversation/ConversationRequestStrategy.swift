@@ -243,7 +243,7 @@ extension ConversationRequestStrategy: ZMEventConsumer {
         liveEvents: Bool,
         prefetchResult: ZMFetchRequestBatchResult?
     ) {
-        conversationEventProcessor.processConversationEvents(events)
+        // do nothing we already have conversationEventProcessor as a ZMEventAsyncConsumer
     }
 }
 

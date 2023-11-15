@@ -18,7 +18,7 @@
 import Foundation
 import WireDataModel
 
-public class ConversationEventProcessor: NSObject, ConversationEventProcessorProtocol {
+public class ConversationEventProcessor: NSObject, ConversationEventProcessorProtocol, ZMEventAsyncConsumer {
 
     // MARK: - Properties
 
@@ -46,7 +46,11 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
 
     // MARK: - Methods
 
-    public func processConversationEvents(_ events: [ZMUpdateEvent]) {
+    public func processEvents(_ events: [ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) async {
+        await processConversationEvents(events)
+    }
+
+    public func processConversationEvents(_ events: [ZMUpdateEvent]) async {
         context.performAndWait {
             for event in events {
                 switch event.type {
