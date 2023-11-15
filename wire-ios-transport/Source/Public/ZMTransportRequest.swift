@@ -84,8 +84,6 @@ extension ZMTransportRequestMethod: CustomStringConvertible {
             return "POST"
         case .head:
             return "HEAD"
-        @unknown default:
-            return "UNKNOWN"
         }
     }
 }
