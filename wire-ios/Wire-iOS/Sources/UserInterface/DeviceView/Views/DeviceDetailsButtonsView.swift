@@ -82,6 +82,8 @@ struct DeviceDetailsButtonsView: View {
                 Image(
                     .rightArrow
                 )
+                .renderingMode(.template)
+                .foregroundColor(SemanticColors.Label.textDefault.swiftUIColor)
             }
         })
     }

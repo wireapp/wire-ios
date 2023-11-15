@@ -47,6 +47,12 @@ struct CertificateDetailsView: View {
                 Image(
                     .close
                 )
+                .renderingMode(
+                    .template
+                )
+                .foregroundColor(
+                    SemanticColors.Label.textDefault.swiftUIColor
+                )
             }).padding()
         }.background(
             SemanticColors.View.backgroundDefault.swiftUIColor
@@ -78,6 +84,12 @@ struct CertificateDetailsView: View {
                             Image(
                                 .download
                             )
+                            .renderingMode(
+                                .template
+                            )
+                            .foregroundColor(
+                                SemanticColors.Label.textDefault.swiftUIColor
+                            )
                         }).padding()
                         SwiftUI.Button(action: {
                             performDownload?()
@@ -90,7 +102,7 @@ struct CertificateDetailsView: View {
                             )
                         }).padding()
                             .foregroundColor(
-                                .black
+                                SemanticColors.Label.textDefault.swiftUIColor
                             )
                             .font(
                                 UIFont.mediumSemiboldFont.swiftUIfont
@@ -102,7 +114,14 @@ struct CertificateDetailsView: View {
                                        label: {
                             Image(
                                 .more
-                            ).padding(
+                            )
+                            .renderingMode(
+                                .template
+                            )
+                            .foregroundColor(
+                                SemanticColors.Label.textDefault.swiftUIColor
+                            )
+                            .padding(
                                 .trailing,
                                 16
                             )
@@ -120,7 +139,7 @@ struct CertificateDetailsView: View {
                                 Text(
                                     L10n.Localizable.Device.Details.copytoclipboard
                                 ).foregroundColor(
-                                    .black
+                                    SemanticColors.Label.textDefault.swiftUIColor
                                 )
                             })
                             .foregroundColor(

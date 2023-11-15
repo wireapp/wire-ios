@@ -187,7 +187,10 @@ struct DeviceDetailsView: View {
             .toolbar {
                 SwiftUI.Image(
                     .attention
-                ).onTapGesture {
+                )
+                .renderingMode(.template)
+                .foregroundColor(SemanticColors.Label.textDefault.swiftUIColor)
+                .onTapGesture {
                     isCertificateViewPresented.toggle()
                 }
             }
