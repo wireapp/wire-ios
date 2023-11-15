@@ -18,8 +18,13 @@
 
 import UIKit
 import WireSyncEngine
+import LifetimeTracker
 
-final class GroupDetailsViewController: UIViewController, ZMConversationObserver, GroupDetailsFooterViewDelegate {
+final class GroupDetailsViewController: UIViewController, ZMConversationObserver, GroupDetailsFooterViewDelegate, LifetimeTrackable {
+
+    class var lifetimeConfiguration: LifetimeConfiguration {
+            return LifetimeConfiguration(maxCount: 1, groupName: "VC")
+        }
 
     private let collectionViewController: SectionCollectionViewController
     private let conversation: GroupDetailsConversationType
@@ -46,7 +51,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
         super.init(nibName: nil, bundle: nil)
 
         createSubviews()
-
+        trackLifetime()
         if let conversation = conversation as? ZMConversation {
             ZMUserSession.shared()?.perform {
                 conversation.refetchParticipantsIfNeeded()
@@ -59,6 +64,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
                 }
             }
         }
+
     }
 
     @available(*, unavailable)
