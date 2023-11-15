@@ -62,7 +62,9 @@ class MessageAPIV0: MessageAPI {
     ) async -> Swift.Result<(Payload.MessageSendingStatus, ZMTransportResponse), NetworkError> {
         let path = "/" + ["conversations", conversationID.uuid.transportString(), "otr", "messages"].joined(separator: "/")
 
-        guard let encryptedPayload = message.encryptForTransportQualified() else {
+        guard let encryptedPayload = await message.context.perform({
+            message.encryptForTransportQualified()
+        }) else {
             WireLogger.messaging.error("failed to encrypt message for transport")
             return .failure(NetworkError.errorEncodingRequest)
         }
@@ -76,7 +78,9 @@ class MessageAPIV0: MessageAPI {
             apiVersion: apiVersion.rawValue
         )
 
-        if let expirationDate = message.expirationDate {
+        if let expirationDate = (await message.context.perform {
+            message.expirationDate
+        }) {
             request.expire(at: expirationDate)
         }
 
@@ -131,7 +135,9 @@ class MessageAPIV1: MessageAPIV0 {
     ) async -> Swift.Result<(Payload.MessageSendingStatus, ZMTransportResponse), NetworkError> {
         let path = "/" + ["conversations", conversationID.domain, conversationID.uuid.transportString(), "proteus", "messages"].joined(separator: "/")
 
-        guard let encryptedPayload = message.encryptForTransportQualified() else {
+        guard let encryptedPayload = await message.context.perform({
+            message.encryptForTransportQualified()
+        }) else {
             WireLogger.messaging.error("failed to encrypt message for transport")
             return .failure(NetworkError.errorEncodingRequest)
         }
@@ -145,7 +151,9 @@ class MessageAPIV1: MessageAPIV0 {
             apiVersion: apiVersion.rawValue
         )
 
-        if let expirationDate = message.expirationDate {
+        if let expirationDate = (await message.context.perform {
+            message.expirationDate
+        }) {
             request.expire(at: expirationDate)
         }
 

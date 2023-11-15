@@ -158,8 +158,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory),
             AssetClientMessageRequestStrategy(
-                withManagedObjectContext: syncMOC,
-                applicationStatus: applicationStatusDirectory),
+                managedObjectContext: syncMOC,
+                messageSender: messageSender),
             AssetV3PreviewDownloadRequestStrategy(
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory),
@@ -170,8 +170,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 messageSender: messageSender),
             DeliveryReceiptRequestStrategy(
                 managedObjectContext: syncMOC,
-                applicationStatus: applicationStatusDirectory,
-                clientRegistrationDelegate: applicationStatusDirectory.clientRegistrationDelegate),
+                messageSender: messageSender),
             AvailabilityRequestStrategy(
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory),
@@ -191,8 +190,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory),
             LinkPreviewUpdateRequestStrategy(
-                withManagedObjectContext: syncMOC,
-                applicationStatus: applicationStatusDirectory),
+                managedObjectContext: syncMOC,
+                messageSender: messageSender),
             ImageV2DownloadRequestStrategy(
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory),
@@ -232,7 +231,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 applicationStatus: applicationStatusDirectory,
                 clientRegistrationDelegate: applicationStatusDirectory.clientRegistrationStatus,
                 flowManager: flowManager,
-                callEventStatus: applicationStatusDirectory.callEventStatus),
+                callEventStatus: applicationStatusDirectory.callEventStatus,
+                messageSender: messageSender),
             LegalHoldRequestStrategy(
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory,
@@ -293,8 +293,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 clientUpdateStatus: applicationStatusDirectory.clientUpdateStatus),
             ResetSessionRequestStrategy(
                 managedObjectContext: syncMOC,
-                applicationStatus: applicationStatusDirectory,
-                clientRegistrationDelegate: applicationStatusDirectory.clientRegistrationDelegate),
+                messageSender: messageSender),
             UserImageAssetUpdateStrategy(
                 managedObjectContext: syncMOC,
                 applicationStatusDirectory: applicationStatusDirectory,

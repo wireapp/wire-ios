@@ -22,6 +22,7 @@ import XCTest
 class LinkPreviewUpdateRequestStrategyTests: MessagingTestBase {
 
     private var sut: LinkPreviewUpdateRequestStrategy!
+    private var mockMessageSender: MockMessageSenderInterface!
     private var applicationStatus: MockApplicationStatus!
 
     private var apiVersion: APIVersion! {
@@ -35,8 +36,12 @@ class LinkPreviewUpdateRequestStrategyTests: MessagingTestBase {
         self.syncMOC.performGroupedAndWait { syncMOC in
             self.groupConversation.domain = "example.com"
             self.applicationStatus = MockApplicationStatus()
+            self.mockMessageSender = MockMessageSenderInterface()
             self.applicationStatus.mockSynchronizationState = .online
-            self.sut = LinkPreviewUpdateRequestStrategy(withManagedObjectContext: syncMOC, applicationStatus: self.applicationStatus)
+            self.sut = LinkPreviewUpdateRequestStrategy(
+                managedObjectContext: syncMOC,
+                messageSender: self.mockMessageSender
+            )
         }
 
         apiVersion = .v0
@@ -50,35 +55,35 @@ class LinkPreviewUpdateRequestStrategyTests: MessagingTestBase {
     }
 
     func testThatItDoesNotCreateARequestInState_Done() {
-        self.verifyThatItDoesNotCreateARequest(for: .done)
+        self.verifyThatItDoesNotScheduleMessageUpdate(for: .done)
     }
 
     func testThatItDoesNotCreateARequestInState_WaitingToBeProcessed() {
-        self.verifyThatItDoesNotCreateARequest(for: .waitingToBeProcessed)
+        self.verifyThatItDoesNotScheduleMessageUpdate(for: .waitingToBeProcessed)
     }
 
     func testThatItDoesNotCreateARequestInState_Downloaded() {
-        self.verifyThatItDoesNotCreateARequest(for: .downloaded)
+        self.verifyThatItDoesNotScheduleMessageUpdate(for: .downloaded)
     }
 
     func testThatItDoesNotCreateARequestInState_Processed() {
-        self.verifyThatItDoesNotCreateARequest(for: .processed)
+        self.verifyThatItDoesNotScheduleMessageUpdate(for: .processed)
     }
 
-    func testThatItDoesNotCreateARequestInState_Uploaded_ForOtherUser() {
+    func testThatItDoesNotScheduleMessageInState_Uploaded_ForOtherUser() {
         self.syncMOC.performGroupedAndWait { _ in
             // Given
+            self.mockMessageSender.sendMessageMessage_MockValue = .success(Void())
             let message = self.insertMessage(with: .uploaded)
             message.sender = self.otherUser
 
             // When
             self.process(message)
         }
-        self.syncMOC.performGroupedAndWait { _ in
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-            // Then
-            XCTAssertNil(self.sut.nextRequest(for: self.apiVersion))
-        }
+        // Then
+        XCTAssertEqual(0, mockMessageSender.sendMessageMessage_Invocations.count)
     }
 
     func testThatItDoesCreateARequestInState_Uploaded() {
@@ -86,57 +91,15 @@ class LinkPreviewUpdateRequestStrategyTests: MessagingTestBase {
 
         self.syncMOC.performGroupedAndWait { _ in
             // Given
+            self.mockMessageSender.sendMessageMessage_MockValue = .success(Void())
             let message = self.insertMessage(with: .uploaded)
 
             // When
             self.process(message)
         }
-        self.syncMOC.performGroupedAndWait { _ in
-            // Then
-            self.verifyItCreatesARequest(in: self.groupConversation)
-        }
-    }
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-    func testThatItDoesCreateARequestInState_Uploaded_WhenFederationEndpointIsDisabled() {
-        self.syncMOC.performGroupedAndWait { _ in
-            // Given
-            let message = self.insertMessage(with: .uploaded)
-
-            // When
-            self.process(message)
-        }
-        self.syncMOC.performGroupedAndWait { _ in
-            // Then
-            self.verifyItCreatesARequest(in: self.groupConversation)
-        }
-    }
-
-    func testThatItDoesCreateARequestInState_Uploaded_WhenTheFirstRequestFailed() {
-        apiVersion = .v1
-        var message: ZMClientMessage!
-
-        self.syncMOC.performGroupedAndWait { _ in
-
-            // Given
-            message = self.insertMessage(with: .uploaded)
-
-            // When
-            self.process(message)
-        }
-        self.syncMOC.performGroupedAndWait { _ in
-            guard let request = self.verifyItCreatesARequest(in: self.groupConversation) else { return }
-
-            // When
-            let response = ZMTransportResponse(transportSessionError: NSError.tryAgainLaterError(), apiVersion: self.apiVersion.rawValue)
-            request.complete(with: response)
-        }
-        self.syncMOC.performGroupedAndWait { _ in
-
-            XCTAssertEqual(message.linkPreviewState, .uploaded)
-
-            // Then
-            self.verifyItCreatesARequest(in: self.groupConversation)
-        }
+        XCTAssertEqual(1, mockMessageSender.sendMessageMessage_Invocations.count)
     }
 
     func testThatItDoesNotCreateARequestAfterGettingsAResponseForIt() {
@@ -144,32 +107,19 @@ class LinkPreviewUpdateRequestStrategyTests: MessagingTestBase {
         var message: ZMClientMessage!
         self.syncMOC.performGroupedAndWait { _ in
             // Given
+            self.mockMessageSender.sendMessageMessage_MockValue = .success(Void())
             message = self.insertMessage(with: .uploaded)
             self.process(message)
         }
-        self.syncMOC.performGroupedAndWait { _ in
-            // Then
-            guard let request = self.verifyItCreatesARequest(in: self.groupConversation) else { return }
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-            // When
-            let payload = Payload.MessageSendingStatus(time: Date(),
-                                                       missing: [:],
-                                                       redundant: [:],
-                                                       deleted: [:],
-                                                       failedToSend: [:],
-                                                       failedToConfirm: [:])
-            let payloadAsString = String(bytes: payload.payloadData()!, encoding: .utf8)!
-            let response = ZMTransportResponse(payload: payloadAsString as ZMTransportData,
-                                               httpStatus: 201,
-                                               transportSessionError: nil,
-                                               apiVersion: self.apiVersion.rawValue)
-            request.complete(with: response)
-        }
         self.syncMOC.performGroupedAndWait { _ in
-            // Then
-            XCTAssertEqual(message.linkPreviewState, .done)
-            XCTAssertNil(self.sut.nextRequest(for: self.apiVersion))
+            // When
+            self.process(message)
         }
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        XCTAssertEqual(1, mockMessageSender.sendMessageMessage_Invocations.count)
     }
 
     // MARK: - Helper
@@ -182,38 +132,17 @@ class LinkPreviewUpdateRequestStrategyTests: MessagingTestBase {
         return message
     }
 
-    func verifyThatItDoesNotCreateARequest(for state: ZMLinkPreviewState, file: StaticString = #file, line: UInt = #line) {
+    func verifyThatItDoesNotScheduleMessageUpdate(for state: ZMLinkPreviewState, file: StaticString = #file, line: UInt = #line) {
         self.syncMOC.performGroupedAndWait { _ in
             // Given
+            self.mockMessageSender.sendMessageMessage_MockValue = .success(Void())
             let message = self.insertMessage(with: state)
 
             // When
             self.process(message)
         }
-        self.syncMOC.performGroupedAndWait { _ in
-
-            // Then
-            XCTAssertNil(self.sut.nextRequest(for: self.apiVersion))
-        }
-    }
-
-    @discardableResult
-    func verifyItCreatesARequest(in conversation: ZMConversation, file: StaticString = #file, line: UInt = #line) -> ZMTransportRequest? {
-        let request = sut.nextRequest(for: apiVersion)
-        let conversationID = conversation.remoteIdentifier!.transportString()
-        XCTAssertNotNil(request, "No request generated", file: file, line: line)
-        XCTAssertEqual(request?.method, .methodPOST, file: file, line: line)
-
-        switch apiVersion! {
-        case .v0:
-            XCTAssertEqual(request?.path, "/conversations/\(conversationID)/otr/messages", file: file, line: line)
-
-        case .v1, .v2, .v3, .v4, .v5:
-            let domain = conversation.domain!
-            XCTAssertEqual(request?.path, "/v\(apiVersion.rawValue)/conversations/\(domain)/\(conversationID)/proteus/messages", file: file, line: line)
-        }
-
-        return request
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertEqual(0, mockMessageSender.sendMessageMessage_Invocations.count)
     }
 
     func process(_ message: ZMClientMessage) {

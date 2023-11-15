@@ -34,6 +34,7 @@ final class MessageSenderTests: MessagingTestBase {
             completionHandler: nil)
 
         let (_, messageSender) = Arrangement(coreDataStack: coreDataStack)
+            .withMessageDependencyResolverReturning(result: .failure(.securityLevelDegraded))
             .arrange()
 
         // when
@@ -51,7 +52,7 @@ final class MessageSenderTests: MessagingTestBase {
             completionHandler: nil)
 
         let (arrangement, messageSender) = Arrangement(coreDataStack: coreDataStack)
-            .withMessageDependencyResolverCompleting()
+            .withMessageDependencyResolverReturning(result: .success(Void()))
             .withApiVersionResolving(to: nil)
             .arrange()
 
@@ -70,7 +71,7 @@ final class MessageSenderTests: MessagingTestBase {
             completionHandler: nil)
 
         let (_, messageSender) = Arrangement(coreDataStack: coreDataStack)
-            .withMessageDependencyResolverCompleting()
+            .withMessageDependencyResolverReturning(result: .success(Void()))
             .withApiVersionResolving(to: nil)
             .arrange()
 
@@ -99,7 +100,7 @@ final class MessageSenderTests: MessagingTestBase {
             completionHandler: nil)
 
         let (_, messageSender) = Arrangement(coreDataStack: coreDataStack)
-            .withMessageDependencyResolverCompleting()
+            .withMessageDependencyResolverReturning(result: .success(Void()))
             .withApiVersionResolving(to: .v0)
             .withSendProteusMessage(returning: .success((messageSendingStatus, response)))
             .arrange()
@@ -120,7 +121,7 @@ final class MessageSenderTests: MessagingTestBase {
             completionHandler: nil)
 
         let (arrangement, messageSender) = Arrangement(coreDataStack: coreDataStack)
-            .withMessageDependencyResolverCompleting()
+            .withMessageDependencyResolverReturning(result: .success(Void()))
             .withApiVersionResolving(to: .v0)
             .withSendProteusMessageFailing(with: NetworkError.missingClients(
                 Arrangement.Scaffolding.messageSendingStatusMissingClients,
@@ -147,7 +148,7 @@ final class MessageSenderTests: MessagingTestBase {
             completionHandler: nil)
 
         let (arrangement, messageSender) = Arrangement(coreDataStack: coreDataStack)
-            .withMessageDependencyResolverCompleting()
+            .withMessageDependencyResolverReturning(result: .success(Void()))
             .withApiVersionResolving(to: .v0)
             .withSendProteusMessageFailing(with: NetworkError.errorDecodingResponse(response))
             .withEstablishSessions(returning: .success(Void()))
@@ -171,7 +172,7 @@ final class MessageSenderTests: MessagingTestBase {
         message.isExpired = true
 
         let (_, messageSender) = Arrangement(coreDataStack: coreDataStack)
-            .withMessageDependencyResolverCompleting()
+            .withMessageDependencyResolverReturning(result: .success(Void()))
             .withApiVersionResolving(to: .v0)
             .withSendProteusMessageFailing(with: NetworkError.errorDecodingResponse(response))
             .arrange()
@@ -193,7 +194,7 @@ final class MessageSenderTests: MessagingTestBase {
             completionHandler: nil)
 
         let (_, messageSender) = Arrangement(coreDataStack: coreDataStack)
-            .withMessageDependencyResolverCompleting()
+            .withMessageDependencyResolverReturning(result: .success(Void()))
             .withApiVersionResolving(to: .v0)
             .withSendProteusMessageFailing(with: networkError)
             .arrange()
@@ -226,7 +227,7 @@ final class MessageSenderTests: MessagingTestBase {
             completionHandler: nil)
 
         let (_, messageSender) = Arrangement(coreDataStack: coreDataStack)
-            .withMessageDependencyResolverCompleting()
+            .withMessageDependencyResolverReturning(result: .success(Void()))
             .withApiVersionResolving(to: .v0)
             .withSendProteusMessageFailing(with: networkError)
             .arrange()
@@ -260,7 +261,7 @@ final class MessageSenderTests: MessagingTestBase {
             completionHandler: nil)
 
         let (_, messageSender) = Arrangement(coreDataStack: coreDataStack)
-            .withMessageDependencyResolverCompleting()
+            .withMessageDependencyResolverReturning(result: .success(Void()))
             .withApiVersionResolving(to: .v0)
             .withSendProteusMessageFailing(with: networkError)
             .arrange()
@@ -316,8 +317,8 @@ final class MessageSenderTests: MessagingTestBase {
             return self
         }
 
-        func withMessageDependencyResolverCompleting() -> Arrangement {
-            messageDependencyResolver.waitForDependenciesToResolveFor_MockMethod = { _ in }
+        func withMessageDependencyResolverReturning(result: Swift.Result<Void, MessageDependencyResolverError>) -> Arrangement {
+            messageDependencyResolver.waitForDependenciesToResolveFor_MockMethod = { _ in result }
             return self
         }
 

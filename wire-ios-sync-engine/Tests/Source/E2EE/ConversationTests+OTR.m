@@ -633,7 +633,7 @@
     WaitForAllGroupsToBeEmpty(0.5);
     
     ZMConversation *conversation = message.conversation;
-    ZMSystemMessage *lastMessage = (ZMSystemMessage *)[conversation lastMessagesWithLimit:10][0];
+    ZMSystemMessage *lastMessage = (ZMSystemMessage *)[conversation lastMessagesWithLimit:10][1]; // second to last
     XCTAssertTrue([lastMessage isKindOfClass:[ZMSystemMessage class]]);
     
     NSArray<ZMUser *> *expectedUsers = @[[self userForMockUser:self.user1]];
@@ -654,7 +654,7 @@
     WaitForAllGroupsToBeEmpty(0.5);
     
     ZMConversation *conversation = message.conversation;
-    ZMSystemMessage *lastMessage = (ZMSystemMessage *)[conversation lastMessagesWithLimit:10][4];
+    ZMSystemMessage *lastMessage = (ZMSystemMessage *)[conversation lastMessagesWithLimit:10][5];
     XCTAssertTrue([lastMessage isKindOfClass:[ZMSystemMessage class]]);
     
     NSArray<ZMUser *> *expectedUsers = @[[self userForMockUser:self.user1]];
@@ -755,7 +755,7 @@
     WaitForAllGroupsToBeEmpty(0.5);
     
     // THEN
-    ZMSystemMessage *lastMessage = (ZMSystemMessage *)[conversation lastMessagesWithLimit:10][0];
+    ZMSystemMessage *lastMessage = (ZMSystemMessage *)[conversation lastMessagesWithLimit:10][1]; // second to last
     XCTAssertEqual(conversation.securityLevel, ZMConversationSecurityLevelSecureWithIgnored);
     XCTAssertEqual(conversation.allMessages.count, 3lu); // 2x system message (secured & new client) + appended client message
     XCTAssertEqual(lastMessage.systemMessageData.systemMessageType, ZMSystemMessageTypeNewClient);
