@@ -11,6 +11,15 @@
         }
       },
       {
+        "package": "LifetimeTracker",
+        "repositoryURL": "https://github.com/krzysztofzablocki/LifetimeTracker.git",
+        "state": {
+          "branch": null,
+          "revision": "9dcdd75511e82c59977466960833a6478a2de278",
+          "version": "1.8.1"
+        }
+      },
+      {
         "package": "swift-snapshot-testing",
         "repositoryURL": "https://github.com/pointfreeco/swift-snapshot-testing",
         "state": {
