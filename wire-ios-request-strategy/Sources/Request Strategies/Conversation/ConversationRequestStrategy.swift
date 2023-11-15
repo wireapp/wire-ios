@@ -385,14 +385,14 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
             switch apiVersion {
             case .v0:
                 request = ZMTransportRequest(path: "/conversations/\(conversationID)",
-                                             method: .methodPUT,
+                                             method: .put,
                                              payload: payloadAsString as ZMTransportData?,
                                              apiVersion: apiVersion.rawValue)
 
             case .v1, .v2, .v3, .v4, .v5:
                 guard let domain = conversation.domain.nonEmptyValue ?? BackendInfo.domain else { return nil }
                 request = ZMTransportRequest(path: "/conversations/\(domain)/\(conversationID)/name",
-                                             method: .methodPUT,
+                                             method: .put,
                                              payload: payloadAsString as ZMTransportData?,
                                              apiVersion: apiVersion.rawValue)
             }
@@ -418,13 +418,13 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
             switch apiVersion {
             case .v0:
                 request = ZMTransportRequest(path: "/conversations/\(conversationID)/self",
-                                             method: .methodPUT,
+                                             method: .put,
                                              payload: payloadAsString as ZMTransportData?,
                                              apiVersion: apiVersion.rawValue)
             case .v1, .v2, .v3, .v4, .v5:
                 guard let domain = conversation.domain.nonEmptyValue ?? BackendInfo.domain else { return nil }
                 request = ZMTransportRequest(path: "/conversations/\(domain)/\(conversationID)/self",
-                                             method: .methodPUT,
+                                             method: .put,
                                              payload: payloadAsString as ZMTransportData?,
                                              apiVersion: apiVersion.rawValue)
             }
@@ -726,7 +726,7 @@ class ConversationByQualifiedIDListTranscoder: IdentifierObjectSyncTranscoder {
 
         let path = apiVersion >= .v2 ? "/conversations/list" : "/conversations/list/v2"
 
-        return ZMTransportRequest(path: path, method: .methodPOST, payload: payloadAsString as ZMTransportData, apiVersion: apiVersion.rawValue)
+        return ZMTransportRequest(path: path, method: .post, payload: payloadAsString as ZMTransportData, apiVersion: apiVersion.rawValue)
     }
 
     func didReceive(response: ZMTransportResponse, for identifiers: Set<QualifiedID>) {

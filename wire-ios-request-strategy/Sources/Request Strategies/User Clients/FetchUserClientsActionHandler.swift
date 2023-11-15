@@ -51,7 +51,7 @@ final class FetchUserClientsActionHandler: ActionHandler<FetchUserClientsAction>
 
             return ZMTransportRequest(
                 path: "/users/list-clients",
-                method: .methodPOST,
+                method: .post,
                 payload: payloadString as ZMTransportData,
                 apiVersion: apiVersion.rawValue
             )

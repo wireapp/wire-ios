@@ -175,7 +175,7 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransportTests";
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
-    [self responseForPayload:payload path:@"/login" method:ZMMethodPOST apiVersion:0]; // this will simulate the user logging in
+    [self responseForPayload:payload path:@"/login" method:ZMTransportRequestMethodPost apiVersion:0]; // this will simulate the user logging in
     WaitForAllGroupsToBeEmpty(0.5);
     
     [self.sut.mockedTransportSession configurePushChannelWithConsumer:self groupQueue:self.fakeSyncContext];
@@ -361,9 +361,9 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransportTests";
 - (ZMTransportRequestGenerator)createGeneratorForPayload:(id<ZMTransportData>)payload path:(NSString *)path method:(ZMTransportRequestMethod)method apiVersion:(APIVersion)apiVersion handler:(ZMCompletionHandler *)handler
 {
     switch (method) {
-        case ZMMethodGET:
-        case ZMMethodDELETE:
-        case ZMMethodHEAD:
+        case ZMTransportRequestMethodGet:
+        case ZMTransportRequestMethodDelete:
+        case ZMTransportRequestMethodHead:
             payload = nil;
             break;
         default:

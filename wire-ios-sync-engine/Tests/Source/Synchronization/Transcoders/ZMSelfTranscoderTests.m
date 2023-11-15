@@ -117,7 +117,7 @@
     // then
     XCTAssertNotNil(request);
     XCTAssertEqualObjects(@"/self", request.path);
-    XCTAssertEqual(ZMMethodGET, request.method);
+    XCTAssertEqual(ZMTransportRequestMethodGet, request.method);
 }
 
 - (void)testThatItDoesNotRequestSelfUserIfSlowSyncIsDone
@@ -209,7 +209,7 @@
     // then
     XCTAssertNotNil(request);
     XCTAssertEqualObjects(request.path, @"/self");
-    XCTAssertEqual(request.method, ZMMethodGET);
+    XCTAssertEqual(request.method, ZMTransportRequestMethodGet);
     XCTAssertNil(request.payload);
 }
 
@@ -395,7 +395,7 @@
         // then
         XCTAssertNotNil(request);
         XCTAssertEqualObjects(request.transportRequest.path, @"/self");
-        XCTAssertEqual(request.transportRequest.method, ZMMethodPUT);
+        XCTAssertEqual(request.transportRequest.method, ZMTransportRequestMethodPut);
         XCTAssertEqualObjects(request.transportRequest.payload, expectedPayload);
         XCTAssertEqualObjects(request.keys, updatedKeys);
         
@@ -460,7 +460,7 @@
     // given
     [(ZMClientRegistrationStatus* )[[self.mockClientRegistrationStatus stub] andReturnValue:@(ZMClientRegistrationPhaseRegistered)] currentPhase];
     
-    ZMTransportRequest *request = [ZMTransportRequest requestWithPath:@"/self" method:ZMMethodPUT payload:@{} apiVersion:0];
+    ZMTransportRequest *request = [ZMTransportRequest requestWithPath:@"/self" method:ZMTransportRequestMethodPut payload:@{} apiVersion:0];
     [[[(OCMockObject *)self.upstreamObjectSync expect] andReturn:request] nextRequestForAPIVersion:APIVersionV0];
     [[[(OCMockObject *)self.upstreamObjectSync expect] andReturn:nil] nextRequestForAPIVersion:APIVersionV0];
     

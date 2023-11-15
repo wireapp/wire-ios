@@ -52,13 +52,13 @@ final class UpdateAccessRolesActionHandler: ActionHandler<UpdateAccessRolesActio
         switch apiVersion {
         case .v0:
             return ZMTransportRequest(path: "/conversations/\(conversationID)/access",
-                                      method: .methodPUT,
+                                      method: .put,
                                       payload: payloadAsString as ZMTransportData?,
                                       apiVersion: apiVersion.rawValue)
         case .v1, .v2, .v3, .v4, .v5:
             guard let domain = conversation.domain.nonEmptyValue ?? BackendInfo.domain else { return nil }
             return ZMTransportRequest(path: "/conversations/\(domain)/\(conversationID)/access",
-                                      method: .methodPUT,
+                                      method: .put,
                                       payload: payloadAsString as ZMTransportData?,
                                       apiVersion: apiVersion.rawValue)
         }

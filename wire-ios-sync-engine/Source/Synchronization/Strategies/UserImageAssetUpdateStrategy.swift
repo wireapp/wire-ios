@@ -221,7 +221,7 @@ public final class UserImageAssetUpdateStrategy: AbstractRequestStrategy, ZMCont
         } else if sync === deleteRequestSync {
             if let assetId = imageUploadStatus?.consumeAssetToDelete() {
                 let path = "/assets/v3/\(assetId)"
-                return ZMTransportRequest(path: path, method: .methodDELETE, payload: nil, apiVersion: apiVersion.rawValue)
+                return ZMTransportRequest(path: path, method: .delete, payload: nil, apiVersion: apiVersion.rawValue)
             }
         }
         return nil

@@ -34,7 +34,7 @@ fileprivate extension AssetRequestFactory {
             path = "/assets/\(domain)/\(identifier)"
         }
 
-        let request = ZMTransportRequest(path: path, method: .methodDELETE, payload: nil, apiVersion: apiVersion.rawValue)
+        let request = ZMTransportRequest(path: path, method: .delete, payload: nil, apiVersion: apiVersion.rawValue)
         request.add(ZMCompletionHandler(on: queue, block: block))
         return request
     }

@@ -209,7 +209,7 @@ static NSString * const LastUpdateEventIDStoreKey = @"LastUpdateEventID";
     // then
     XCTAssertNotNil(request);
     XCTAssertEqualObjects([NSURLComponents componentsWithString:request.path].path, @"/notifications");
-    XCTAssertEqual(request.method, ZMMethodGET);
+    XCTAssertEqual(request.method, ZMTransportRequestMethodGet);
 }
 
 - (void)testThatItPassesTheDownloadedEventsToEventProcessorOnSuccess

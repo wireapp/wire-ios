@@ -34,7 +34,7 @@ final class ZMTransportRequestLoggingTests: ZMTBaseTest {
 
         // when
         let requestDescription = ZMTransportRequest(path: "/test",
-                                                    method: .methodGET,
+                                                    method: .get,
                                                     payload: payload as ZMTransportData,
                                                     apiVersion: 0).description
 

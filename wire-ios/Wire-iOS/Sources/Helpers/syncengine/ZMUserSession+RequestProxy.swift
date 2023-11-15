@@ -31,7 +31,7 @@ extension ZMUserSession: ZiphyURLRequester {
         }
 
         return doRequest(withPath: requestPath,
-                         method: .methodGET,
+                         method: .get,
                          type: .giphy,
                          completionHandler: completionHandler)
     }

@@ -62,11 +62,11 @@ extern const NSTimeInterval ZMTransportRequestDefaultExpirationInterval;
 
 
 typedef NS_ENUM(uint8_t, ZMTransportRequestMethod) {
-    ZMMethodGET,
-    ZMMethodDELETE,
-    ZMMethodPUT,
-    ZMMethodPOST,
-    ZMMethodHEAD
+    ZMTransportRequestMethodGet,
+    ZMTransportRequestMethodDelete,
+    ZMTransportRequestMethodPut,
+    ZMTransportRequestMethodPost,
+    ZMTransportRequestMethodHead
 };
 
 typedef NS_ENUM(uint8_t, ZMTransportRequestAuth) {
