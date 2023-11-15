@@ -91,8 +91,7 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
         case .notStarted:
             await startMigrationIfNeeded()
         case .started:
-            // check if it should be finalised
-            break
+           migrateOrJoinGroupConversations()
         default:
             break
         }
@@ -146,6 +145,28 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
         }
 
         return .canStart
+    }
+
+    /// The migrateOrJoinGroupConversations method is responsible for processing a collection of team group conversations within a given context.
+    /// It evaluates each conversation to determine if it needs to be migrated or if it should join a group.
+    /// This method is crucial for maintaining the synchronization of group conversations,
+    ///  in scenarios where conversations may need to be migrated or newly integrated into groups.
+    ///
+    func migrateOrJoinGroupConversations() {
+        let conversations = try? ZMConversation.fetchAllTeamGroupConversations(messageProtocol: .mixed, in: context)
+        conversations?.forEach { conversation in
+            guard let groupID = conversation.mlsGroupID else { return }
+            guard let mlsService = context.mlsService else { return }
+            if mlsService.conversationExists(groupID: groupID) {
+                // if conversation exists we finalize migration
+
+            } else {
+                Task {
+                    try? await mlsService.joinGroup(with: groupID)
+                }
+            }
+        }
+
     }
 
     // MARK: - Helpers
