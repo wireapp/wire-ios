@@ -52,7 +52,7 @@ final class EmojiRepositoryTests: XCTestCase {
         sut.registerRecentlyUsedEmojis(emojis)
 
         // Then
-        XCTAssertArrayEqual(sut.fetchRecentlyUsedEmojis().map(\.value), emojis)
+        XCTAssertEqual(sut.fetchRecentlyUsedEmojis().map(\.value), emojis)
     }
 
 }
