@@ -62,7 +62,7 @@ class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
 
     // MARK: - UpdateMigrationStatus
 
-    func test_UpdateMigrationStatus_StartsMigration_IfNotStartedAndReady() async {
+    func test_UpdateMigrationStatus_StartsMigration_IfNotStartedAndReady() async throws {
         // Given
         setMigrationReadiness(to: true)
         mockStorage.underlyingMigrationStatus = .notStarted
@@ -73,14 +73,14 @@ class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
         }
 
         // When
-        await sut.updateMigrationStatus()
+        try await sut.updateMigrationStatus()
 
         // Then
         XCTAssertEqual(mockStorage.underlyingMigrationStatus, .started)
         XCTAssertTrue(startedMigration)
     }
 
-    func test_UpdateMigrationStatus_DoesntStartMigration_IfAlreadyStarted() async {
+    func test_UpdateMigrationStatus_DoesntStartMigration_IfAlreadyStarted() async throws {
         // Given
         setMigrationReadiness(to: true)
         mockStorage.underlyingMigrationStatus = .started
@@ -91,14 +91,14 @@ class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
         }
 
         // When
-        await sut.updateMigrationStatus()
+        try await sut.updateMigrationStatus()
 
         // Then
         XCTAssertEqual(mockStorage.underlyingMigrationStatus, .started)
         XCTAssertFalse(startedMigration)
     }
 
-    func test_UpdateMigrationStatus_DoesntStartMigration_IfNotReady() async {
+    func test_UpdateMigrationStatus_DoesntStartMigration_IfNotReady() async throws {
         // Given
         setMigrationReadiness(to: false)
         mockStorage.underlyingMigrationStatus = .notStarted
@@ -109,7 +109,7 @@ class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
         }
 
         // When
-        await sut.updateMigrationStatus()
+        try await sut.updateMigrationStatus()
 
         // Then
         XCTAssertEqual(mockStorage.underlyingMigrationStatus, .notStarted)

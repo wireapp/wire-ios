@@ -161,9 +161,6 @@ public final class MLSService: MLSServiceInterface {
         self.init(
             context: context,
             coreCrypto: coreCrypto,
-            encryptionService: .none,
-            decryptionService: .none,
-            mlsActionExecutor: .none,
             conversationEventProcessor: conversationEventProcessor,
             staleKeyMaterialDetector: StaleMLSKeyDetector(
                 refreshIntervalInDays: Self.keyMaterialRefreshIntervalInDays,
@@ -171,25 +168,23 @@ public final class MLSService: MLSServiceInterface {
             ),
             userDefaults: userDefaults,
             actionsProvider: MLSActionsProvider(),
-            delegate: .none,
-            syncStatus: syncStatus,
-            subconversationGroupIDRepository: SubconversationGroupIDRepository()
+            syncStatus: syncStatus
         )
     }
 
     init(
         context: NSManagedObjectContext,
         coreCrypto: SafeCoreCryptoProtocol,
-        encryptionService: MLSEncryptionServiceInterface?,
-        decryptionService: MLSDecryptionServiceInterface?,
-        mlsActionExecutor: MLSActionExecutorProtocol?,
+        encryptionService: MLSEncryptionServiceInterface? = nil,
+        decryptionService: MLSDecryptionServiceInterface? = nil,
+        mlsActionExecutor: MLSActionExecutorProtocol? = nil,
         conversationEventProcessor: ConversationEventProcessorProtocol,
         staleKeyMaterialDetector: StaleMLSKeyDetectorProtocol,
         userDefaults: UserDefaults,
-        actionsProvider: MLSActionsProviderProtocol,
-        delegate: MLSServiceDelegate?,
+        actionsProvider: MLSActionsProviderProtocol = MLSActionsProvider(),
+        delegate: MLSServiceDelegate? = nil,
         syncStatus: SyncStatusProtocol,
-        subconversationGroupIDRepository: SubconversationGroupIDRepositoryInterface
+        subconversationGroupIDRepository: SubconversationGroupIDRepositoryInterface = SubconversationGroupIDRepository()
     ) {
         self.context = context
         self.coreCrypto = coreCrypto
