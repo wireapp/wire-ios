@@ -70,6 +70,7 @@ struct DeviceDetailsProteusView: View {
             CopyValueView(
                 title: L10n.Localizable.Device.Details.Proteus.Key.fingerprint,
                 value: viewModel.deviceKeyFingerprint,
+                isCopyEnabled: viewModel.isCopyEnabled,
                 performCopy: {
                     value in
                     viewModel.actionsHandler.copyToClipboard(

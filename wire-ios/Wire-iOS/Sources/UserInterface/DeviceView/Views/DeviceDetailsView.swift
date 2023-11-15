@@ -180,7 +180,8 @@ struct DeviceDetailsView: View {
         ) {
             CertificateDetailsView(
                 certificateDetails: viewModel.e2eIdentityCertificate.certificate,
-                isMenuPresented: isCertificateViewPresented,
+                isMenuPresented: false,
+                isDownloadAndCopyEnabled: viewModel.isCopyEnabled,
                 performDownload: {
                     Task {
                         await viewModel.actionsHandler.fetchCertificate()

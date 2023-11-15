@@ -21,7 +21,7 @@ import SwiftUI
 struct CopyValueView: View {
     var title: String
     var value: String
-    var isCopyEnabled: Bool = true
+    var isCopyEnabled: Bool
     var performCopy: (
         (
             String
@@ -66,5 +66,5 @@ struct CopyValueView: View {
 }
 
 #Preview {
-    CopyValueView(title: "Lorem ipsum dolem", value: "no data now")
+    CopyValueView(title: .random(length: 500), value: .random(length: 50), isCopyEnabled: false)
 }

@@ -23,8 +23,8 @@ struct CertificateDetailsView: View {
         \.dismiss
     ) private var dismiss
     var certificateDetails: String
-    @State var isMenuPresented = false
-    var isDownloadAndCopyEnabled: Bool = true
+    @State var isMenuPresented: Bool
+    var isDownloadAndCopyEnabled: Bool
     var performDownload: (
     () -> Void
     )?
@@ -159,24 +159,12 @@ struct CertificateDetailsView: View {
     CertificateDetailsView(
         certificateDetails: """
 -----BEGIN CERTIFICATE---
-\(String.randomString(
+\(String.random(
 length: 1500
 ))
 -------END CERTIFICATE-----
-"""
+""",
+        isMenuPresented: false,
+        isDownloadAndCopyEnabled: false
     )
 }
-#if DEBUG
-extension String {
-    static func randomString(
-        length: Int
-    ) -> String {
-        let letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-        return String((
-            0..<length
-        ).map {
-            _ in letters.randomElement()!
-        })
-    }
-}
-#endif

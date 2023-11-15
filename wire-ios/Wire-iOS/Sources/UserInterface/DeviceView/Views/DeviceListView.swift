@@ -236,7 +236,7 @@ e9 fd da 5e 21 fd 06 ae
                             )
                     ),
                     DeviceInfoViewModel(
-                        udid: .randomString(
+                        udid: .random(
                             length: 10
                         ),
                         title: .random(
