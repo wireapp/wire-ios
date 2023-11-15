@@ -182,7 +182,7 @@ extension Payload {
         var messageProtocol: String?
         var mlsGroupID: String?
         var epoch: UInt?
-        var epochTimestamp: String?
+        var epochTimestamp: Date?
 
         init(qualifiedID: QualifiedID? = nil,
              id: UUID?  = nil,
@@ -202,7 +202,7 @@ extension Payload {
              messageProtocol: String? = nil,
              mlsGroupID: String? = nil,
              epoch: UInt? = nil,
-             epochTimestamp: String? = nil
+             epochTimestamp: Date? = nil
         ) {
             self.qualifiedID = qualifiedID
             self.id = id
@@ -269,8 +269,8 @@ extension Payload {
                 cipherSuite = nil
                 epochTimestamp = nil
             case .v5:
-                cipherSuite = try container.decode(UInt16.self, forKey: .cipherSuite)
-                epochTimestamp = try container.decode(String.self, forKey: .epochTimestamp)
+                cipherSuite = try container.decodeIfPresent(UInt16.self, forKey: .cipherSuite)
+                epochTimestamp = try container.decodeIfPresent(Date.self, forKey: .epochTimestamp)
             }
         }
     }
