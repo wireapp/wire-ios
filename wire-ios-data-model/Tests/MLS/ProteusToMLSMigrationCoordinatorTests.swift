@@ -75,22 +75,14 @@ class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.mlsGroupID = .random()
         let groupID = try XCTUnwrap(conversation.mlsGroupID)
-        let mockMLSService = MockMLSService()
-        mockMLSService.mockConversations = [conversation]
-        mockMLSService.conversationExistsResponses[groupID] = false
-
-        let expectation = XCTestExpectation(description: "joinGroup should be called")
-
-        // WHEN
-        sut.migrateOrJoinGroupConversations()
-
-        Task {
-            try? await mockMLSService.joinGroup(with: groupID)
-            expectation.fulfill()
+        mockMLSService.conversationExistsMock = { _ in
+            return false
         }
 
+        // WHEN
+        await sut.migrateOrJoinGroupConversations()
+
         // THEN
-        await fulfillment(of: [expectation])
         XCTAssertTrue(mockMLSService.calls.joinGroup.contains(groupID), "joinGroup should be called for new conversations")
     }
 
@@ -101,12 +93,12 @@ class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.mlsGroupID = .random()
         let groupID = try XCTUnwrap(conversation.mlsGroupID)
-        let mockMLSService = MockMLSService()
-        mockMLSService.mockConversations = [conversation]
-        mockMLSService.conversationExistsResponses[groupID] = true
+        mockMLSService.conversationExistsMock = { _ in
+            return true
+        }
 
         // WHEN
-        sut.migrateOrJoinGroupConversations()
+        await sut.migrateOrJoinGroupConversations()
 
         // THEN
         XCTAssertFalse(mockMLSService.calls.joinGroup.contains(groupID), "joinGroup should not be called for existing conversations")
