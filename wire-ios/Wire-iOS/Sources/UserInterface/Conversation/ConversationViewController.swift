@@ -19,6 +19,7 @@
 import UIKit
 import WireSyncEngine
 import WireCommonComponents
+import Inject
 
 final class ConversationViewController: UIViewController {
     unowned let zClientViewController: ZClientViewController
@@ -87,7 +88,7 @@ final class ConversationViewController: UIViewController {
 
         switch conversation.conversationType {
         case .group:
-            let groupDetailsViewController = GroupDetailsViewController(conversation: conversation)
+            let groupDetailsViewController = Inject.ViewControllerHost(GroupDetailsViewController(conversation: self.conversation))
             viewController = groupDetailsViewController
         case .`self`, .oneOnOne, .connection:
             viewController = createUserDetailViewController()
