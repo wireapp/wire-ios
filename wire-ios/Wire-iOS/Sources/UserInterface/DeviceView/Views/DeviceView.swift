@@ -67,6 +67,7 @@ private extension String {
             DeviceInfoViewModel(
                 udid: "123g4",
                 title: "Devidfdfgdfgdfgdfgfddfdfgdfdgfdgdgdfgdfgdfgdfgdfgdfgdfdgfdfgdgdgdfgdce 4",
+                addedDate: "21/10/2023",
                 mlsThumbprint: "skfjnskjdffnskjn",
                 deviceKeyFingerprint:
 """

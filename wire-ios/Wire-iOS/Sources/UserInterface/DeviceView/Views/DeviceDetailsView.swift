@@ -110,9 +110,11 @@ struct DeviceDetailsView: View {
 
 #Preview {
     DeviceDetailsView(
-        viewModel: .constant( DeviceInfoViewModel(
+        viewModel: .constant(
+            DeviceInfoViewModel(
             udid: "123g4",
             title: "Device 4",
+            addedDate: "21/10/2023",
             mlsThumbprint: """
 3d c8 7f ff 07 c9 29 6e
 3d c8 7f ff 07 c9 29 6e
@@ -142,5 +144,4 @@ e5:d5:e6:75:7e:04:86:07:
         ),
         isCertificateViewPresented: false
     )
-
 }

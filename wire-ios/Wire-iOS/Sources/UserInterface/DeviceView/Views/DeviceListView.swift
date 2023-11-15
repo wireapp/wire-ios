@@ -66,6 +66,7 @@ struct DeviceListView: View {
                 currentDevice: .init(
                     udid: "1234",
                     title: "Device 1",
+                    addedDate: "21/10/2023",
                     mlsThumbprint: """
 b4 47 60 78 a3 1f 12 f9
 be 7c 98 3b 1f f1 f0 53
@@ -103,6 +104,7 @@ e9 fd da 5e 21 fd 06 ae
                     DeviceInfoViewModel(
                         udid: "123e4",
                         title: "Device 2",
+                        addedDate: "21/10/2023",
                         mlsThumbprint: "skfjnskjdsfnskjn",
                         deviceKeyFingerprint: """
 b4 47 60 78 a3 1f 12 f9
@@ -133,6 +135,7 @@ e9 fd da 5e 21 fd 06 ae
                     DeviceInfoViewModel(
                         udid: "123f4",
                         title: "Device sdkjfskdjfhskjdfkjsdfjkskdfsdsdfawsadfasdfasdfadfssasdfsdfsdfsdfsdf 3",
+                        addedDate: "21/10/2023",
                         mlsThumbprint: "skfjnskjddfnskjn",
                         deviceKeyFingerprint: """
                b4 47 60 78 a3 1f 12 f9
@@ -163,6 +166,7 @@ e9 fd da 5e 21 fd 06 ae
                     DeviceInfoViewModel(
                         udid: "123g4",
                         title: "Device 4",
+                        addedDate: "21/10/2023",
                         mlsThumbprint: "skfjnskjdffnskjn",
                         deviceKeyFingerprint: """
 b4 47 60 78 a3 1f 12 f9

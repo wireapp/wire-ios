@@ -83,7 +83,7 @@ protocol DeviceDetailsViewActions {
 
 struct DeviceInfoViewModel {
     let udid: String
-    let addedDate: String = Date().formattedDate
+    let addedDate: String
     var title: String
     let mlsThumbprint: String
     let deviceKeyFingerprint: String
@@ -95,6 +95,7 @@ struct DeviceInfoViewModel {
     init(
         udid: String,
         title: String,
+        addedDate: String,
         mlsThumbprint: String,
         deviceKeyFingerprint: String,
         proteusID: String,
@@ -104,6 +105,7 @@ struct DeviceInfoViewModel {
     ) {
         self.udid = udid
         self.title = title
+        self.addedDate = addedDate
         self.mlsThumbprint = mlsThumbprint
         self.deviceKeyFingerprint = deviceKeyFingerprint
         self.proteusID = proteusID

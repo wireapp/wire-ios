@@ -66,6 +66,7 @@ struct DeviceDetailsBottomView: View {
                     DeviceInfoViewModel(
                         udid: "123g4",
                         title: "Device 4",
+                        addedDate: "21/10/2023",
                         mlsThumbprint: """
 b4 47 60 78 a3 1f 12 f9
 be 7c 98 3b 1f f1 f0 53
