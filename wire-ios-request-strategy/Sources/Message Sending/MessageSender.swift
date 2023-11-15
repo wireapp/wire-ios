@@ -113,7 +113,7 @@ public class MessageSender: MessageSenderInterface {
             .flatMapAsync { _ in
                 await attemptToSend(message: message)
                     .map({ success in
-                        // Triggering request loop to re-evalute dependencies, other messages
+                        // Triggering request polling to re-evalute dependencies, other messages
                         // might have been waiting for this message to be sent.
                         RequestAvailableNotification.notifyNewRequestsAvailable(nil)
                         return success
