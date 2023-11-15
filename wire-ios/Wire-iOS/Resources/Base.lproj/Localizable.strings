@@ -2067,4 +2067,3 @@ to reset this device and log in again";
 "device.details.get.certificate" = "Get Certificate";
 "device.details.update.certificate" = "Update Certificate";
 "device.details.status" = "Status";
-

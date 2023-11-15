@@ -77,16 +77,16 @@ struct DeviceListView: View {
                 .listStyle(
                     GroupedListStyle()
                 )
+                .toolbar(content: {
+                    EditButton().foregroundColor(
+                        SemanticColors.DrawingColors.black.swiftUIColor
+                    )
+                })
             }
         }
         .background(
             SemanticColors.View.backgroundDefault.swiftUIColor
         )
-        .toolbar(content: {
-            EditButton().foregroundColor(
-                SemanticColors.DrawingColors.black.swiftUIColor
-            )
-        })
     }
     func delete(
         _ indexSet: IndexSet
