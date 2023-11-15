@@ -87,7 +87,9 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
 
     func fetchAndRepairGroup(with groupID: MLSGroupID) async
 
-    func startProteusToMLSMigration()
+    /// Migrate proteus team group conversations to MLS
+
+    func startProteusToMLSMigration() async throws
 
 }
 
@@ -159,6 +161,9 @@ public final class MLSService: MLSServiceInterface {
         self.init(
             context: context,
             coreCrypto: coreCrypto,
+            encryptionService: .none,
+            decryptionService: .none,
+            mlsActionExecutor: .none,
             conversationEventProcessor: conversationEventProcessor,
             staleKeyMaterialDetector: StaleMLSKeyDetector(
                 refreshIntervalInDays: Self.keyMaterialRefreshIntervalInDays,
@@ -166,23 +171,25 @@ public final class MLSService: MLSServiceInterface {
             ),
             userDefaults: userDefaults,
             actionsProvider: MLSActionsProvider(),
-            syncStatus: syncStatus
+            delegate: .none,
+            syncStatus: syncStatus,
+            subconversationGroupIDRepository: SubconversationGroupIDRepository()
         )
     }
 
     init(
         context: NSManagedObjectContext,
         coreCrypto: SafeCoreCryptoProtocol,
-        encryptionService: MLSEncryptionServiceInterface? = nil,
-        decryptionService: MLSDecryptionServiceInterface? = nil,
-        mlsActionExecutor: MLSActionExecutorProtocol? = nil,
+        encryptionService: MLSEncryptionServiceInterface?,
+        decryptionService: MLSDecryptionServiceInterface?,
+        mlsActionExecutor: MLSActionExecutorProtocol?,
         conversationEventProcessor: ConversationEventProcessorProtocol,
         staleKeyMaterialDetector: StaleMLSKeyDetectorProtocol,
         userDefaults: UserDefaults,
-        actionsProvider: MLSActionsProviderProtocol = MLSActionsProvider(),
-        delegate: MLSServiceDelegate? = nil,
+        actionsProvider: MLSActionsProviderProtocol,
+        delegate: MLSServiceDelegate?,
         syncStatus: SyncStatusProtocol,
-        subconversationGroupIDRepository: SubconversationGroupIDRepositoryInterface = SubconversationGroupIDRepository()
+        subconversationGroupIDRepository: SubconversationGroupIDRepositoryInterface
     ) {
         self.context = context
         self.coreCrypto = coreCrypto
@@ -222,17 +229,6 @@ public final class MLSService: MLSServiceInterface {
     deinit {
         keyMaterialUpdateCheckTimer?.invalidate()
     }
-
-    // func startMigrationOfGroupConversations
-    //      for group in  allProteusGroupConversaitons = ...
-    //          await startMigration(group)
-
-    // func startMigration(_ group: ZMConversation()) async
-    //      try await push protocol to mixed (if you process the payload, the conversation is synced)
-    //      try await SyncConversationAction(group.qualifiedID).perform()
-    //      try createGroup(group.mlsGroupID)
-    //          if staleMessage, call wipeGroup
-    //          if success, call addMembers
 
     // MARK: - Public keys
 
@@ -1688,8 +1684,35 @@ public final class MLSService: MLSServiceInterface {
 
     // MARK: - Proteus to MLS Migration
 
-    public func startProteusToMLSMigration() {
-        // Migrate proteus team group conversations to MLS
+    public func startProteusToMLSMigration() async throws {
+        guard let context = context else {
+            return
+        }
+
+        while let conversation = try ZMConversation.fetchAllTeamGroupConversations(
+            messageProtocol: .proteus,
+            in: context,
+            fetchLimit: 1
+        ).first, let domain = conversation.domain, let conversationID = conversation.remoteIdentifier {
+            let action = UpdateConversationProtocolAction(
+                domain: domain,
+                conversationID: conversationID,
+                messageProtocol: .mixed
+            )
+
+        }
+
+        // func startMigrationOfGroupConversations
+        //      for group in  allProteusGroupConversaitons = ...
+        //          await startMigration(group)
+
+        // func startMigration(_ group: ZMConversation()) async
+        //      try await push protocol to mixed (if you process the payload, the conversation is synced)
+        //      try await SyncConversationAction(group.qualifiedID).perform()
+        //      try createGroup(group.mlsGroupID)
+        //          if staleMessage, call wipeGroup
+        //          if success, call addMembers
+
     }
 
 }
