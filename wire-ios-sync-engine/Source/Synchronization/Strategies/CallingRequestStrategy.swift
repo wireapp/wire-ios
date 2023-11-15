@@ -20,13 +20,6 @@ import Foundation
 import WireRequestStrategy
 import WireDataModel
 
-// sourcery: AutoMockable
-public protocol MessageSenderInterface_ {
-    func sendMessage(message: any SendableMessage) async -> Swift.Result<Void, MessageSendError>
-}
-
-extension MessageSender: MessageSenderInterface_ {}
-
 @objcMembers
 public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequestTranscoder, ZMContextChangeTracker, ZMContextChangeTrackerSource, ZMEventConsumer {
 
@@ -36,7 +29,7 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
 
     private let zmLog = ZMSLog(tag: "calling")
 
-    private let messageSender: MessageSenderInterface_
+    private let messageSender: MessageSenderInterface
     private let flowManager: FlowManagerType
     private let decoder = JSONDecoder()
 
@@ -64,7 +57,7 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
         flowManager: FlowManagerType,
         callEventStatus: CallEventStatus,
         fetchUserClientsUseCase: FetchUserClientsUseCaseProtocol = FetchUserClientsUseCase(),
-        messageSender: MessageSenderInterface_
+        messageSender: MessageSenderInterface
     ) {
         self.messageSender = messageSender
         self.flowManager = flowManager
