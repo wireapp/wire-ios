@@ -22,8 +22,8 @@ import WireCoreCrypto
 public protocol E2EIServiceInterface {
 
     func directoryResponse(directoryData: Data) throws -> WireCoreCrypto.AcmeDirectory
-    func getNewAccountRequest(previousNonce: String) async throws -> Data
-    func setAccountResponse(accountData: Data) async throws
+    func getNewAccountRequest(previousNonce: String) throws -> Data
+    func setAccountResponse(accountData: Data) throws
 
 }
 
@@ -85,7 +85,7 @@ public final class E2EIService: E2EIServiceInterface {
         return try wireE2eIdentity.directoryResponse(directory: buffer)
     }
 
-    public func getNewAccountRequest(previousNonce: String) async throws -> Data {
+    public func getNewAccountRequest(previousNonce: String) throws -> Data {
         guard let accountRequest = try? wireE2eIdentity?.newAccountRequest(previousNonce: previousNonce) else {
             WireLogger.e2ei.warn("Failed to get new account request")
 
@@ -95,9 +95,13 @@ public final class E2EIService: E2EIServiceInterface {
         return accountRequest.data
     }
 
-    public func setAccountResponse(accountData: Data) async throws {
+    public func setAccountResponse(accountData: Data) throws {
         let buffer = [UInt8](accountData)
-        try? wireE2eIdentity?.newAccountResponse(account: buffer)
+        do {
+            try wireE2eIdentity?.newAccountResponse(account: buffer)
+        } catch {
+            throw Failure.failedToSetAccountResponse
+        }
     }
 
     enum Failure: Error, Equatable {

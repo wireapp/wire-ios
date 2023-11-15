@@ -78,30 +78,43 @@ public final class E2EIManager: E2EIManagerInterface {
     }
 
     public func getACMENonce(endpoint: String) async -> String? {
-        return await apiProvider.acmeAPI(apiVersion: .v5)?.getACMENonce(url: endpoint)
+        guard let acmeAPI = apiProvider.acmeAPI(apiVersion: .v5) else {
+            return nil
+        }
+        return await acmeAPI.getACMENonce(url: endpoint)
     }
 
     public func createNewAccount(prevNonce: String, createAccountEndpoint: String) async -> String? {
-        guard let e2eiService = context?.e2eiService else {
+        var response: ACMEResponse?
 
-            return nil
+        context?.performAndWait {
+            guard let e2eiService = context?.e2eiService else {
+                WireLogger.e2ei.warn("E2EIService is missing")
+
+                return
+            }
+
+            guard let accountRequest = try? e2eiService.getNewAccountRequest(previousNonce: prevNonce) else {
+                WireLogger.e2ei.warn("Failed to get new account request")
+
+                return
+            }
+
+            // TODO: convert accountRequest to ZMTransportData
+            guard let acmeAPI = apiProvider.acmeAPI(apiVersion: .v5),
+                  let apiResponse = await acmeAPI.sendACMERequest(url: createAccountEndpoint, body: accountRequest) else {
+
+                return nil
+            }
+
+            guard let resp = try? e2eiService.setAccountResponse(accountData: apiResponse.response) else {
+                return
+            }
+            response = apiResponse
+
         }
-        let accountRequest = try? await e2eiService.getNewAccountRequest(previousNonce: prevNonce)
 
-        // TODO: convert accountRequest to ZMTransportData
-        guard let acmeAPI = apiProvider.acmeAPI(apiVersion: .v5),
-              let apiResponse = await acmeAPI.sendACMERequest(url: createAccountEndpoint, body: accountRequest as! ZMTransportData) else {
-
-            return nil
-        }
-
-        do {
-            try await e2eiService.setAccountResponse(accountData: apiResponse.response)
-            return apiResponse.nonce
-        } catch {
-
-            return nil
-        }
+        return response?.nonce
     }
 
 }

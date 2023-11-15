@@ -23,7 +23,7 @@ public protocol AcmeAPI {
 
     func getACMEDirectory() async -> AcmeDirectoriesResponse?
     func getACMENonce(url: String) async -> String?
-    func sendACMERequest(url: String, body: ZMTransportData) async -> ACMEResponse?
+    func sendACMERequest(url: String, body: Data) async -> ACMEResponse?
     func sendChallengeRequest(url: String, body: Data?) async -> ChallengeResponse?
 
 }
@@ -55,9 +55,9 @@ public class AcmeAPIV5: NSObject, AcmeAPI {
             var request = URLRequest(url: url)
             request.httpMethod = HTTPMethod.get.rawValue
 
-            let responseData = try await executeAsync(request: request)
+            let (data, _) = try await executeAsync(request: request)
 
-            return try JSONDecoder().decode(AcmeDirectoriesResponse.self, from: responseData)
+            return try JSONDecoder().decode(AcmeDirectoriesResponse.self, from: data)
         } catch {
             WireLogger.e2ei.info("Get acme directory request failed with error: \(error)")
 
@@ -67,23 +67,61 @@ public class AcmeAPIV5: NSObject, AcmeAPI {
     }
 
     public func getACMENonce(url: String) async -> String? {
-        return nil
+        do {
+            guard
+                let url = URL(string: url) else {
+                WireLogger.e2ei.warn("Invalid get acme nonce url")
+
+                return nil
+            }
+
+            var request = URLRequest(url: url)
+            request.httpMethod = HTTPMethod.head.rawValue
+
+            let (_, response) = try await executeAsync(request: request)
+            guard let httpResponse = response as? HTTPURLResponse else {
+                return nil
+            }
+            let replayNonce = httpResponse.value(forHTTPHeaderField: HeaderKey.replayNonce.rawValue)
+
+            return replayNonce
+        } catch {
+            WireLogger.e2ei.info("Get acme nonce request failed with error: \(error)")
+
+            return nil
+        }
     }
 
-    public func sendACMERequest(url: String, body: ZMTransportData) async -> ACMEResponse? {
-        return nil
+    public func sendACMERequest(url: String, body: Data) async -> ACMEResponse? {
+        guard
+            let url = URL(string: url) else {
+            WireLogger.e2ei.warn("Invalid send acme request url")
 
+            return nil
+        }
+        var request = URLRequest(url: url)
+        request.httpMethod = HTTPMethod.post.rawValue
+        request.httpBody = body
+
+        do {
+            let (data, _) = try await executeAsync(request: request)
+
+            return try JSONDecoder().decode(ACMEResponse.self, from: data)
+        } catch {
+            WireLogger.e2ei.info("Send acme request failed with error: \(error)")
+
+            return nil
+        }
     }
 
     public func sendChallengeRequest(url: String, body: Data?) async -> ChallengeResponse? {
         return nil
     }
 
-    private func executeAsync(request: URLRequest) async throws -> Data {
+    private func executeAsync(request: URLRequest) async throws -> (Data, URLResponse) {
         let session = URLSession(configuration: URLSessionConfiguration.default, delegate: self, delegateQueue: nil)
-        let (data, _) = try await session.data(for: request)
 
-        return data
+        return try await session.data(for: request)
     }
 
 }
@@ -111,5 +149,11 @@ enum HTTPMethod: String {
     case get = "GET"
     case post = "POST"
     case head = "HEAD"
+
+}
+
+enum HeaderKey: String {
+
+    case replayNonce = "Replay-Nonce"
 
 }

@@ -28,7 +28,7 @@ public struct AcmeDirectoriesResponse: Codable {
 
 }
 
-public struct ACMEResponse {
+public struct ACMEResponse: Decodable {
 
     var nonce: String
     var location: String
@@ -44,8 +44,4 @@ public struct ChallengeResponse {
     var token: String
     var nonce: String
 
-}
-
-enum HeaderKey: String {
-    case replayNonce = "Replay-Nonce"
 }
