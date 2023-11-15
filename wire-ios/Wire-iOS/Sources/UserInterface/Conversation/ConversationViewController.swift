@@ -19,8 +19,14 @@
 import UIKit
 import WireSyncEngine
 import WireCommonComponents
+import LifetimeTracker
 
-final class ConversationViewController: UIViewController {
+final class ConversationViewController: UIViewController, LifetimeTrackable {
+
+    class var lifetimeConfiguration: LifetimeConfiguration {
+        return LifetimeConfiguration(maxCount: 1, groupName: "VC")
+    }
+
     unowned let zClientViewController: ZClientViewController
     private let visibleMessage: ZMConversationMessage?
 
@@ -123,7 +129,7 @@ final class ConversationViewController: UIViewController {
         super.init(nibName: nil, bundle: nil)
 
         definesPresentationContext = true
-
+        trackLifetime()
         update(conversation: conversation)
     }
 
