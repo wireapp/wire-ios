@@ -69,7 +69,7 @@ final class MessageActionsViewControllerTests: XCTestCase {
         // WHEN
         let actionsTitles = actionsTitlesForMessage(message: message)
         // THEN
-        XCTAssertArrayEqual(actionsTitles, ["Copy", "Reply", "Details", "Share", "Delete", "Cancel"])
+        XCTAssertEqual(actionsTitles, ["Copy", "Reply", "Details", "Share", "Delete", "Cancel"])
     }
 
     func testMenuActionsForImageMessage() {
@@ -78,7 +78,7 @@ final class MessageActionsViewControllerTests: XCTestCase {
         // WHEN
         let actionsTitles = actionsTitlesForMessage(message: message)
         // THEN
-        XCTAssertArrayEqual(actionsTitles, ["Copy", "Reply", "Details", "Save", "Share", "Delete", "Cancel"])
+        XCTAssertEqual(actionsTitles, ["Copy", "Reply", "Details", "Save", "Share", "Delete", "Cancel"])
     }
 
     func testMenuActionsForAudioMessage() {
@@ -90,7 +90,7 @@ final class MessageActionsViewControllerTests: XCTestCase {
         // WHEN
         let actionsTitles = actionsTitlesForMessage(message: message)
         // THEN
-        XCTAssertArrayEqual(actionsTitles, ["Reply", "Details", "Download", "Delete", "Cancel"])
+        XCTAssertEqual(actionsTitles, ["Reply", "Details", "Download", "Delete", "Cancel"])
     }
 
     func testMenuActionsForLocationMessage() {
@@ -99,7 +99,7 @@ final class MessageActionsViewControllerTests: XCTestCase {
         // WHEN
         let actionsTitles = actionsTitlesForMessage(message: message)
         // THEN
-        XCTAssertArrayEqual(actionsTitles, ["Copy", "Reply", "Details", "Share", "Delete", "Cancel"])
+        XCTAssertEqual(actionsTitles, ["Copy", "Reply", "Details", "Share", "Delete", "Cancel"])
     }
 
     func testMenuActionsForLinkMessage() {
@@ -108,7 +108,7 @@ final class MessageActionsViewControllerTests: XCTestCase {
         // WHEN
         let actionsTitles = actionsTitlesForMessage(message: message)
         // THEN
-        XCTAssertArrayEqual(actionsTitles, ["Visit Link", "Copy", "Reply", "Details", "Share", "Delete", "Cancel"])
+        XCTAssertEqual(actionsTitles, ["Visit Link", "Copy", "Reply", "Details", "Share", "Delete", "Cancel"])
     }
 
     func testMenuActionsForPingMessage() {
@@ -117,7 +117,7 @@ final class MessageActionsViewControllerTests: XCTestCase {
         // WHEN
         let actionsTitles = actionsTitlesForMessage(message: message)
         // THEN
-        XCTAssertArrayEqual(actionsTitles, ["Delete", "Cancel"])
+        XCTAssertEqual(actionsTitles, ["Delete", "Cancel"])
     }
 
     func actionsTitlesForMessage(message: MockMessage) -> [String] {
