@@ -21,26 +21,38 @@ import XCTest
 
 final class UpdateConversationProtocolActionHandlerTests: ActionHandlerTestBase<WireRequestStrategy.UpdateConversationProtocolAction, UpdateConversationProtocolActionHandler> {
 
-    /*
-    let mlsMessage = "mlsMessage".data(using: .utf8)!
+    var domain: String!
+    var conversationID: UUID!
 
     override func setUp() {
         super.setUp()
-        action = SendMLSMessageAction(message: mlsMessage)
+
+        domain = "example.com"
+        conversationID = .init(uuidString: "b906579d-60dd-4510-a3ca-14b2ec225f4a")
+        action = UpdateConversationProtocolAction(domain: domain, conversationID: conversationID, messageProtocol: .mls)
+    }
+
+    override func tearDown() {
+        action = nil
+        conversationID = nil
+        domain = nil
+
+        super.tearDown()
     }
 
     // MARK: - Request generation
     func test_itGenerateARequest_APIV5() throws {
         try test_itGeneratesARequest(
             for: action,
-            expectedPath: "/v5/mls/messages",
-            expectedMethod: .post,
-            expectedData: mlsMessage,
-            expectedContentType: "message/mls",
+            expectedPath: "/v5/conversations/example.com/b906579d-60dd-4510-a3ca-14b2ec225f4a/mls",
+            expectedMethod: .put,
+            expectedData: .none,
+            expectedContentType: .none,
             apiVersion: .v5
         )
     }
 
+    /*
     func test_itFailsToGenerateRequests_APIBelowV5() {
         [.v0, .v1, .v2, .v3, .v4].forEach {
             test_itDoesntGenerateARequest(
@@ -113,8 +125,4 @@ final class UpdateConversationProtocolActionHandlerTests: ActionHandlerTestBase<
         ])
     }
      */
-
-    func testToDo() {
-        XCTFail("TODO: implement tests")
-    }
 }

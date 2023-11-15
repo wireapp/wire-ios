@@ -69,9 +69,11 @@ class ActionHandlerTestBase<Action: EntityAction, Handler: ActionHandler<Action>
         for action: Action,
         expectedPath: String,
         expectedMethod: ZMTransportRequestMethod,
-        expectedData: Data,
-        expectedContentType: String,
-        apiVersion: APIVersion = .v1
+        expectedData: Data?,
+        expectedContentType: String?,
+        apiVersion: APIVersion = .v1,
+        file: StaticString = #filePath,
+        line: UInt = #line
     ) throws {
         // Given
         let sut = Handler(context: syncMOC)
@@ -80,10 +82,10 @@ class ActionHandlerTestBase<Action: EntityAction, Handler: ActionHandler<Action>
         let request = try XCTUnwrap(sut.request(for: action, apiVersion: apiVersion))
 
         // Then
-        XCTAssertEqual(request.path, expectedPath)
-        XCTAssertEqual(request.method, expectedMethod)
-        XCTAssertEqual(request.binaryData, expectedData)
-        XCTAssertEqual(request.binaryDataType, expectedContentType)
+        XCTAssertEqual(request.path, expectedPath, file: file, line: line)
+        XCTAssertEqual(request.method, expectedMethod, file: file, line: line)
+        XCTAssertEqual(request.binaryData, expectedData, file: file, line: line)
+        XCTAssertEqual(request.binaryDataType, expectedContentType, file: file, line: line)
     }
 
     func test_itDoesntGenerateARequest(
