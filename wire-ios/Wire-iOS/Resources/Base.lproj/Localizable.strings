@@ -454,6 +454,10 @@
 // Both placesholders contains a localized list of names, e.g "Alice, Bob, and Cate"
 "content.system.missing_messages.users_added_and_removed.plural" = "You haven’t used this device for a while. Some messages may not appear here.\n\nMeanwhile, %1$@ have been added. %2$@ have been removed.";
 
+// MLS Migration
+"content.system.mls_migration.started" = "Migration started.";
+"content.system.mls_migration.finalized" = "Migration finalized.";
+
 // Link attachment messages
 
 "content.message.link_attachment.accessibility_label.youtube" = "YouTube video preview";
