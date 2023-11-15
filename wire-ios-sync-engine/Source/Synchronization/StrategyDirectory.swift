@@ -46,7 +46,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
         updateEventProcessor: UpdateEventProcessor,
         localNotificationDispatcher: LocalNotificationDispatcher,
         useLegacyPushNotifications: Bool,
-        lastEventIDRepository: LastEventIDRepositoryInterface
+        lastEventIDRepository: LastEventIDRepositoryInterface,
+        transportSession: TransportSessionType
     ) {
 
         self.strategies = Self.buildStrategies(
@@ -58,7 +59,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             updateEventProcessor: updateEventProcessor,
             localNotificationDispatcher: localNotificationDispatcher,
             useLegacyPushNotifications: useLegacyPushNotifications,
-            lastEventIDRepository: lastEventIDRepository
+            lastEventIDRepository: lastEventIDRepository,
+            transportSession: transportSession
         )
 
         self.requestStrategies = strategies.compactMap({ $0 as? RequestStrategy})
@@ -91,9 +93,21 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
         updateEventProcessor: UpdateEventProcessor,
         localNotificationDispatcher: LocalNotificationDispatcher,
         useLegacyPushNotifications: Bool,
-        lastEventIDRepository: LastEventIDRepositoryInterface
+        lastEventIDRepository: LastEventIDRepositoryInterface,
+        transportSession: TransportSessionType
     ) -> [Any] {
         let syncMOC = contextProvider.syncContext
+        let httpClient = HttpClientImpl(
+            transportSession: transportSession,
+            queue: syncMOC)
+        let sessionEstablisher = SessionEstablisher(
+            httpClient: httpClient,
+            context: syncMOC)
+        let messageSender = MessageSender(
+            httpClient: httpClient,
+            clientRegistrationDelegate: applicationStatusDirectory.clientRegistrationStatus,
+            sessionEstablisher: sessionEstablisher,
+            context: syncMOC)
         let strategies: [Any] = [
             // TODO: [John] use flag here
             UserClientRequestStrategy(
@@ -148,7 +162,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             ClientMessageRequestStrategy(
                 withManagedObjectContext: syncMOC,
                 localNotificationDispatcher: pushMessageHandler,
-                applicationStatus: applicationStatusDirectory),
+                applicationStatus: applicationStatusDirectory,
+                messageSender: messageSender),
             DeliveryReceiptRequestStrategy(
                 managedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory,

@@ -30,6 +30,7 @@ public class ClientMessageRequestStrategy: AbstractRequestStrategy, ZMContextCha
     // MARK: - Properties
 
     let insertedObjectSync: InsertedObjectSync<ClientMessageRequestStrategy>
+    let messageSender: MessageSender? // FIXME: [jacob] make non-optional
     let messageSync: MessageSync<ZMClientMessage>
     let messageExpirationTimer: MessageExpirationTimer
     let linkAttachmentsPreprocessor: LinkAttachmentsPreprocessor
@@ -40,12 +41,14 @@ public class ClientMessageRequestStrategy: AbstractRequestStrategy, ZMContextCha
     public init(
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
         localNotificationDispatcher: PushMessageHandler,
-        applicationStatus: ApplicationStatus
+        applicationStatus: ApplicationStatus,
+        messageSender: MessageSender?
     ) {
         insertedObjectSync = InsertedObjectSync(
             insertPredicate: Self.shouldBeSentPredicate(context: managedObjectContext)
         )
 
+        self.messageSender = messageSender
         messageSync = MessageSync(
             context: managedObjectContext,
             appStatus: applicationStatus
@@ -110,31 +113,37 @@ extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
 
     func insert(object: ZMClientMessage, completion: @escaping () -> Void) {
         WireLogger.messaging.debug("inserting message \(object.debugInfo)")
-        messageSync.sync(object) { [weak self] result, response in
-            switch result {
-            case .success:
-                WireLogger.messaging.debug("successfully sent message \(object.debugInfo)")
-                object.markAsSent()
-                self?.deleteMessageIfNecessary(object)
 
-            case .failure(let error):
-                switch error {
-                case .messageProtocolMissing:
-                    WireLogger.messaging.error("failed to send message \(object.debugInfo): missing messsage protocol")
-                    object.expire()
-                    self?.localNotificationDispatcher.didFailToSend(object)
+        Task {
+            let result = await messageSender?.sendMessage(message: object) ?? .success(Void())
 
-                case .expired, .gaveUpRetrying:
-                    WireLogger.messaging.error("failed to send message \(object.debugInfo): \(String(describing: error))")
-                    object.expire()
-                    self?.localNotificationDispatcher.didFailToSend(object)
+            managedObjectContext.performAndWait {
+                switch result {
+                case .success:
+                    WireLogger.messaging.debug("successfully sent message \(object.debugInfo)")
+                    object.markAsSent()
+                    deleteMessageIfNecessary(object)
 
-                    let payload = Payload.ResponseFailure(response, decoder: .defaultDecoder)
-                    if response.httpStatus == 403 && payload?.label == .missingLegalholdConsent {
-                        self?.managedObjectContext.zm_userInterface.performGroupedBlock {
-                            guard let context = self?.managedObjectContext.notificationContext else { return }
-                            NotificationInContext(name: ZMConversation.failedToSendMessageNotificationName, context: context).post()
-                        }
+                case .failure(let error):
+                    switch error {
+                    case .messageProtocolMissing:
+                        WireLogger.messaging.error("failed to send message \(object.debugInfo): missing messsage protocol")
+                        object.expire()
+                        localNotificationDispatcher.didFailToSend(object)
+
+                    case .gaveUpRetrying, .failedToGenerateRequest, .failedToParseResponse, .unresolvedApiVersion:
+                        WireLogger.messaging.error("failed to send message \(object.debugInfo): \(String(describing: error))")
+                        object.expire()
+                        localNotificationDispatcher.didFailToSend(object)
+
+                        // FIXME: jacob handle this error inside MessageSender
+    //                    let payload = Payload.ResponseFailure(response, decoder: .defaultDecoder)
+    //                    if response.httpStatus == 403 && payload?.label == .missingLegalholdConsent {
+    //                        self?.managedObjectContext.zm_userInterface.performGroupedBlock {
+    //                            guard let context = self?.managedObjectContext.notificationContext else { return }
+    //                            NotificationInContext(name: ZMConversation.failedToSendMessageNotificationName, context: context).post()
+    //                        }
+    //                    }
                     }
                 }
             }
