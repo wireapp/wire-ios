@@ -2718,8 +2718,6 @@ internal enum L10n {
       }
     }
     internal enum Device {
-      /// ACTIVE
-      internal static let active = L10n.tr("Localizable", "device.active", fallback: "ACTIVE")
       /// CURRENT DEVICE
       internal static let current = L10n.tr("Localizable", "device.current", fallback: "CURRENT DEVICE")
       /// Edit

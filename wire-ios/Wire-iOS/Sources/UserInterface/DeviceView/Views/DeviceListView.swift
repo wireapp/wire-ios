@@ -41,7 +41,7 @@ struct DeviceListView: View {
     var otherDevicesView: some View {
         Section(
             header: Text(
-                L10n.Localizable.Device.active
+                L10n.Localizable.Registration.Devices.activeListHeader.capitalized
             )
         ) {
             ForEach(

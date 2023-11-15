@@ -2049,7 +2049,6 @@ to reset this device and log in again";
 "device.mls.thumbprint" = "MLS Thumbprint";
 "device.proteus.id" = "Proteus ID";
 "device.current" = "CURRENT DEVICE";
-"device.active" = "ACTIVE";
 "device.title" = "Devices";
 "device.edit" = "Edit";
 "device.details.section.mls" = "MLS WITH ED25519 SIGNATURE";
