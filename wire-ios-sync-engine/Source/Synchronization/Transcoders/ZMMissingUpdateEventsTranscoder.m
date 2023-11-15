@@ -117,11 +117,6 @@ NSUInteger const ZMMissingUpdateEventsTranscoderListPageSize = 500;
     return [self.lastEventIDRepository fetchLastEventID];
 }
 
-- (void)setLastUpdateEventID:(NSUUID *)lastUpdateEventID
-{
-    [self.lastEventIDRepository storeLastEventID:lastUpdateEventID];
-}
-
 - (void)appendPotentialGapSystemMessageIfNeededWithResponse:(ZMTransportResponse *)response
 {
     // A 404 by the BE means we can't get all notifications as they are not stored anymore
@@ -189,7 +184,6 @@ NSUInteger const ZMMissingUpdateEventsTranscoderListPageSize = 500;
     
     ZMLogWithLevelAndTag(ZMLogLevelInfo, ZMTAG_EVENT_PROCESSING, @"Downloaded %lu event(s)", (unsigned long)parsedEvents.count);
     
-    // FIXME: [jacob] this does not guranteee that we have decrypted & stored an event before we update lastEventId. We need to refactor this.
     [self.eventProcessor storeUpdateEvents:parsedEvents ignoreBuffer:YES completionHandler:^{
         [self.pushNotificationStatus didFetchEventIds:eventIds lastEventId:latestEventId finished:!self.listPaginator.hasMoreToFetch];
     }];
@@ -315,19 +309,7 @@ NSUInteger const ZMMissingUpdateEventsTranscoderListPageSize = 500;
         // the call to `processUpdateEventsAndReturnLastNotificationIDFromPayload:syncStrategy`.
         [self updateBackgroundFetchResultWithResponse:response];
     }
-    
-    if (latestEventId != nil) {
-        if (response.HTTPStatus == 404 && self.isSyncing) {
-            // If we fail during quick sync we need to re-enter slow sync and should not store the lastUpdateEventID until after the slowSync has been completed
-            // Otherwise, if the device crashes or is restarted during slow sync, we lose the information that we need to perform a slow sync
-            [syncStatus updateLastUpdateEventIDWithEventID:latestEventId];
-            // TODO Sabine: What happens when we receive a 404 when we are fetching the notification for a push notification? In theory we would have to enter slow sync as well or at least not store the lastUpdateEventID until the next proper sync in the foreground
-        }
-        else {
-            self.lastUpdateEventID = latestEventId;
-        }
-    }
-    
+
     if (!self.listPaginator.hasMoreToFetch) {
         [self.previouslyReceivedEventIDsCollection discardListOfAlreadyReceivedPushEventIDs];
     }
@@ -340,7 +322,7 @@ NSUInteger const ZMMissingUpdateEventsTranscoderListPageSize = 500;
         [syncStatus completedFetchingNotificationStreamFetchBeganAt:self.listPaginator.lastResetFetchDate];
     }
     
-    return self.lastUpdateEventID;
+    return latestEventId;
 }
 
 - (NSUUID *)startUUID
