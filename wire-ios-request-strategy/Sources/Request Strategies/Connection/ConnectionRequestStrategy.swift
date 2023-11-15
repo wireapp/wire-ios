@@ -195,10 +195,12 @@ extension ConnectionRequestStrategy: ZMEventConsumer {
             case .userConnection:
                 if let conversationEvent = Payload.UserConnectionEvent(payloadData) {
                     let processor = ConnectionPayloadProcessor()
-                    processor.processPayload(
-                        conversationEvent,
-                        in: managedObjectContext
-                    )
+                    managedObjectContext.performAndWait {
+                        processor.processPayload(
+                            conversationEvent,
+                            in: managedObjectContext
+                        )
+                    }
                 }
 
             default:
