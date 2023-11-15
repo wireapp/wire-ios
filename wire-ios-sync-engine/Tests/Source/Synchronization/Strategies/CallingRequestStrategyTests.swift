@@ -26,7 +26,7 @@ class CallingRequestStrategyTests: MessagingTest {
     var mockApplicationStatus: MockApplicationStatus!
     var mockRegistrationDelegate: ClientRegistrationDelegate!
     var mockFetchUserClientsUseCase: MockFetchUserClientsUseCase!
-    var mockMessageSender: MockMessageSenderInterface_!
+    var mockMessageSender: MockMessageSenderInterface!
 
     override class func setUp() {
         super.setUp()
@@ -40,7 +40,7 @@ class CallingRequestStrategyTests: MessagingTest {
         mockApplicationStatus.mockSynchronizationState = .online
         mockRegistrationDelegate = MockClientRegistrationDelegate()
         mockFetchUserClientsUseCase = MockFetchUserClientsUseCase()
-        mockMessageSender = MockMessageSenderInterface_()
+        mockMessageSender = MockMessageSenderInterface()
 
         sut = CallingRequestStrategy(
             managedObjectContext: syncMOC,
