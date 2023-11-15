@@ -21,6 +21,7 @@ import WireCommonComponents
 import WireSyncEngine
 import avs
 import WireCoreCrypto
+import LifetimeTracker
 
 enum ApplicationLaunchType {
     case unknown
@@ -137,6 +138,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         self.launchOptions = launchOptions ?? [:]
 
+    #if DEBUG
+        LifetimeTracker.setup(
+            onUpdate: LifetimeTrackerDashboardIntegration(
+                visibility: .alwaysVisible,
+                style: .circular
+            ).refreshUI
+        )
+    #endif
+
         if UIApplication.shared.isProtectedDataAvailable || ZMPersistentCookieStorage.hasAccessibleAuthenticationCookieData() {
             createAppRootRouterAndInitialiazeOperations(launchOptions: launchOptions ?? [:])
         }
@@ -155,7 +165,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         switch launchType {
         case .url,
-             .push:
+                .push:
             break
         default:
             launchType = .direct
