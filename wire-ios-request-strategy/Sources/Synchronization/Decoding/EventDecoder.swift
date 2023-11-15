@@ -76,28 +76,27 @@ extension EventDecoder {
         _ events: [ZMUpdateEvent],
         publicKeys: EARPublicKeys? = nil
     ) async -> [ZMUpdateEvent] {
-        var lastIndex: Int64?
-        var decryptedEvents: [ZMUpdateEvent] = []
-
-        eventMOC.performGroupedBlockAndWait {
-
+        let (filteredEvents, lastIndex) = await eventMOC.perform {
             self.storeReceivedPushEventIDs(from: events)
             let filteredEvents = self.filterAlreadyReceivedEvents(from: events)
 
             // Get the highest index of events in the DB
-            lastIndex = StoredUpdateEvent.highestIndex(self.eventMOC)
+            let lastIndex = StoredUpdateEvent.highestIndex(self.eventMOC)
+            return (filteredEvents, lastIndex)
+        }
 
-            guard let index = lastIndex else { return }
+        let decryptedEvents = await syncMOC.perform {
             guard self.syncMOC.proteusProvider.canPerform else {
                 WireLogger.proteus.warn("ignore decrypting events because it is not safe")
-                return
+                return [] as [ZMUpdateEvent]
             }
 
-            decryptedEvents = self.syncMOC.proteusProvider.perform(
+            return self.syncMOC.proteusProvider.perform(
                 withProteusService: { proteusService in
+                    // TODO: [jacob] decryptAndStoreEvents will become async
                     return self.decryptAndStoreEvents(
                         filteredEvents,
-                        startingAtIndex: index,
+                        startingAtIndex: lastIndex,
                         publicKeys: publicKeys,
                         proteusService: proteusService
                     )
@@ -105,7 +104,7 @@ extension EventDecoder {
                 withKeyStore: { keyStore in
                     return self.legacyDecryptAndStoreEvents(
                         filteredEvents,
-                        startingAtIndex: index,
+                        startingAtIndex: lastIndex,
                         publicKeys: publicKeys,
                         keyStore: keyStore
                     )
@@ -179,7 +178,9 @@ extension EventDecoder {
 
         // This call has to be synchronous to ensure that we close the
         // encryption context only if we stored all events in the database.
-        self.storeUpdateEvents(decryptedEvents, startingAtIndex: startIndex, publicKeys: publicKeys)
+        eventMOC.performAndWait {
+            self.storeUpdateEvents(decryptedEvents, startingAtIndex: startIndex, publicKeys: publicKeys)
+        }
 
         return decryptedEvents
     }
@@ -198,7 +199,7 @@ extension EventDecoder {
             decryptedEvents = events.compactMap { event -> ZMUpdateEvent? in
                 switch event.type {
                 case .conversationOtrMessageAdd, .conversationOtrAssetAdd:
-                    return decryptProteusEventAndAddClient(event, in: self.syncMOC) { sessionID, encryptedData in
+                    return self.decryptProteusEventAndAddClient(event, in: self.syncMOC) { sessionID, encryptedData in
                         try sessionsDirectory.decryptData(
                             encryptedData,
                             for: sessionID.mapToEncryptionSessionID()
@@ -215,7 +216,10 @@ extension EventDecoder {
 
             // This call has to be synchronous to ensure that we close the
             // encryption context only if we stored all events in the database.
-            storeUpdateEvents(decryptedEvents, startingAtIndex: startIndex, publicKeys: publicKeys)
+            eventMOC.performAndWait {
+                self.storeUpdateEvents(decryptedEvents, startingAtIndex: startIndex, publicKeys: publicKeys)
+            }
+
         }
 
         return decryptedEvents
@@ -259,7 +263,7 @@ extension EventDecoder {
         firstCall: Bool,
         callEventsOnly: Bool
     ) async {
-        let events = fetchNextEventsBatch(with: privateKeys, callEventsOnly: callEventsOnly)
+        let events = await fetchNextEventsBatch(with: privateKeys, callEventsOnly: callEventsOnly)
 
         guard events.storedEvents.count > 0 else {
             if firstCall {
@@ -275,10 +279,10 @@ extension EventDecoder {
     /// Fetches and returns the next batch of size `EventDecoder.BatchSize`
     /// of `StoredEvents` and `ZMUpdateEvent`'s in a `EventsWithStoredEvents` tuple.
 
-    private func fetchNextEventsBatch(with privateKeys: EARPrivateKeys?, callEventsOnly: Bool) -> EventsWithStoredEvents {
+    private func fetchNextEventsBatch(with privateKeys: EARPrivateKeys?, callEventsOnly: Bool) async -> EventsWithStoredEvents {
         var (storedEvents, updateEvents)  = ([StoredUpdateEvent](), [ZMUpdateEvent]())
 
-        eventMOC.performGroupedBlockAndWait {
+        await eventMOC.perform {
             let eventBatch = StoredUpdateEvent.nextEventBatch(
                 size: EventDecoder.BatchSize,
                 privateKeys: privateKeys,
@@ -359,13 +363,13 @@ extension EventDecoder {
     }
 
     /// Filters out events that shouldn't be processed
-    fileprivate func filterInvalidEvents(from events: [ZMUpdateEvent]) -> [ZMUpdateEvent] {
-        let selfConversation = ZMConversation.selfConversation(in: syncMOC)
-        let selfUser = ZMUser.selfUser(in: syncMOC)
+    fileprivate func filterInvalidEvents(from events: [ZMUpdateEvent]) async -> [ZMUpdateEvent] {
+        let selfConversationID = await syncMOC.perform { ZMConversation.selfConversation(in: self.syncMOC).remoteIdentifier }
+        let selfUserID = await syncMOC.perform { ZMUser.selfUser(in: self.syncMOC).remoteIdentifier }
 
         return events.filter { event in
             // The only message we process arriving in the self conversation from other users is availability updates
-            if event.conversationUUID == selfConversation.remoteIdentifier, event.senderUUID != selfUser.remoteIdentifier, let genericMessage = GenericMessage(from: event) {
+            if event.conversationUUID == selfConversationID, event.senderUUID != selfUserID, let genericMessage = GenericMessage(from: event) {
                 return genericMessage.hasAvailability
             }
 

@@ -34,8 +34,8 @@ public protocol ZMEventConsumer: NSObjectProtocol {
 
     @objc optional func processEventsWhileInBackground(_ events: [ZMUpdateEvent])
 
-    @objc optional func messageNoncesToPrefetchToProcessEvents(_ events: [ZMUpdateEvent]) -> Set<UUID>
+    @objc optional func messageNoncesToPrefetch(toProcessEvents events: [ZMUpdateEvent]) -> Set<UUID>
 
-    @objc optional func conversationRemoteIdentifiersToPrefetchToProcessEvents(_ events: [ZMUpdateEvent]) -> Set<UUID>
+    @objc optional func conversationRemoteIdentifiersToPrefetch(toProcessEvents events: [ZMUpdateEvent]) -> Set<UUID>
 
 }
