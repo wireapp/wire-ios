@@ -223,6 +223,17 @@ public final class MLSService: MLSServiceInterface {
         keyMaterialUpdateCheckTimer?.invalidate()
     }
 
+    // func startMigrationOfGroupConversations
+    //      for group in  allProteusGroupConversaitons = ...
+    //          await startMigration(group)
+
+    // func startMigration(_ group: ZMConversation()) async
+    //      try await push protocol to mixed (if you process the payload, the conversation is synced)
+    //      try await SyncConversationAction(group.qualifiedID).perform()
+    //      try createGroup(group.mlsGroupID)
+    //          if staleMessage, call wipeGroup
+    //          if success, call addMembers
+
     // MARK: - Public keys
 
     private func generateClientPublicKeysIfNeeded() {
