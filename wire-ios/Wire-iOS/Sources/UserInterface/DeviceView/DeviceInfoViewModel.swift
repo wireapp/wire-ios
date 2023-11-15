@@ -32,7 +32,7 @@ struct E2EIdentityCertificate {
 
 extension E2EIdentityCertificate {
     var isValidCertificate: Bool {
-        return !certificate.isEmpty && exipirationDate < Date.now
+        return !certificate.isEmpty && exipirationDate > Date.now // TODO: check this logic
     }
 }
 
