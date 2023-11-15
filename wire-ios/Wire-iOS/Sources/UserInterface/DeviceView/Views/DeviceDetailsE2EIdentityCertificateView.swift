@@ -103,11 +103,6 @@ struct DeviceDetailsE2EIdentityCertificateView: View {
                 ).font(
                     UIFont.normalMediumFont.swiftUIfont
                 )
-                Image(
-                    asset: .init(
-                        name: ""
-                    )
-                )
             }
             Spacer()
         }
