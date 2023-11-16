@@ -52,11 +52,18 @@ extension ConversationContentViewController {
         updateTableViewHeaderView()
     }
 
+    @objc
     func scrollToBottom() {
         guard !isScrolledToBottom else { return }
 
         dataSource.loadMessages()
-        tableView.scroll(toIndex: 0)
+
+        let lastRowIndexPath = IndexPath(row: 0, section: 0)
+        let shouldAnimate = !UIAccessibility.isReduceMotionEnabled && dataSource.messages.count <= 20
+
+        let scrollAnimation: UITableView.ScrollPosition = shouldAnimate ? .bottom : .top
+
+        tableView.scrollToRow(at: lastRowIndexPath, at: scrollAnimation, animated: shouldAnimate)
 
         updateTableViewHeaderView()
     }

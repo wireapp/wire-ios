@@ -27,6 +27,7 @@ extension ConversationContentViewController: UIScrollViewDelegate {
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         dataSource.didScroll(tableView: scrollView as! UITableView)
+        scrollToBottomButton.isHidden = isScrolledToBottom
     }
 
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
