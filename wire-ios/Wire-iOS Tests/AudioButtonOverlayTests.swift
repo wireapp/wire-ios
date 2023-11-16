@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
-import SnapshotTesting
+import XCTest
 @testable import Wire
 
 class AudioButtonOverlayTests: BaseSnapshotTestCase {
@@ -72,10 +72,10 @@ class AudioButtonOverlayTests: BaseSnapshotTestCase {
 
     func testThatItCallsTheButtonHandlerWithTheCorrectButtonType() {
         sut.playButton.sendActions(for: .touchUpInside)
-        XCTAssertArrayEqual(buttonTapHistory, [AudioButtonOverlay.AudioButtonOverlayButtonType.play])
+        XCTAssertEqual(buttonTapHistory, [AudioButtonOverlay.AudioButtonOverlayButtonType.play])
 
         sut.sendButton.sendActions(for: .touchUpInside)
-        XCTAssertArrayEqual(buttonTapHistory, [AudioButtonOverlay.AudioButtonOverlayButtonType.play, AudioButtonOverlay.AudioButtonOverlayButtonType.send])
+        XCTAssertEqual(buttonTapHistory, [AudioButtonOverlay.AudioButtonOverlayButtonType.play, AudioButtonOverlay.AudioButtonOverlayButtonType.send])
     }
 
 }
