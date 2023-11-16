@@ -95,20 +95,8 @@ public class MessageSender: MessageSenderInterface {
         do {
             try await messageDependencyResolver.waitForDependenciesToResolve(for: message)
             try await attemptToSend(message: message)
-        } catch let networkError as NetworkError {
-            if case .invalidRequestError(let responseFailure, _) = networkError, responseFailure.code == 533 {
-                switch responseFailure.data?.type {
-                case .federation:
-                    responseFailure.updateExpirationReason(for: message, with: .federationRemoteError)
-                case .unknown:
-                    responseFailure.updateExpirationReason(for: message, with: .unknown)
-                case .none:
-                    break
-                }
-            }
-            throw networkError
         } catch {
-            WireLogger.messaging.debug("send message failed: \(error)")
+            WireLogger.messaging.warn("send message failed: \(error)")
             throw error
         }
 
@@ -125,11 +113,17 @@ public class MessageSender: MessageSenderInterface {
             throw MessageSendError.missingMessageProtocol
         }
 
-        return switch messageProtocol {
-        case .proteus:
-            try await attemptToSendWithProteus(message: message, apiVersion: apiVersion)
-        case .mls:
-            try await attemptToSendWithMLS(message: message, apiVersion: apiVersion)
+        do {
+            return switch messageProtocol {
+            case .proteus:
+                try await attemptToSendWithProteus(message: message, apiVersion: apiVersion)
+            case .mls:
+                try await attemptToSendWithMLS(message: message, apiVersion: apiVersion)
+            }
+        } catch let networkError as NetworkError {
+            try await context.perform { [self] in
+                try handleFederationFailure(networkError: networkError, message: message)
+            }
         }
     }
 
@@ -193,6 +187,20 @@ public class MessageSender: MessageSenderInterface {
                 throw failure
             }
         }
+    }
+
+    private func handleFederationFailure(networkError: NetworkError, message: any SendableMessage) throws {
+        if case .invalidRequestError(let responseFailure, _) = networkError, responseFailure.code == 533 {
+            switch responseFailure.data?.type {
+            case .federation:
+                responseFailure.updateExpirationReason(for: message, with: .federationRemoteError)
+            case .unknown:
+                responseFailure.updateExpirationReason(for: message, with: .unknown)
+            case .none:
+                break
+            }
+        }
+        throw networkError
     }
 
     private func attemptToSendWithMLS(message: any MLSMessage, apiVersion: APIVersion) async throws {
