@@ -1681,25 +1681,32 @@ public final class MLSService: MLSServiceInterface {
 
     public func startProteusToMLSMigration() async throws {
         guard let context = context else {
+            assertionFailure("MLSService.context is nil")
             return
         }
 
-        while let conversation = try ZMConversation.fetchAllTeamGroupConversations(
-            messageProtocol: .proteus,
-            in: context,
-            fetchLimit: 1
-        ).first, let domain = conversation.domain, let conversationID = conversation.remoteIdentifier {
-            let action = UpdateConversationProtocolAction(
+        let groupConversations = try ZMConversation.fetchAllTeamGroupConversations(messageProtocol: .proteus, in: context)
+        for groupConversation in groupConversations {
+            guard let domain = groupConversation.domain else {
+                assertionFailure("the group conversation has no domain set")
+                continue
+            }
+            guard let conversationID = groupConversation.remoteIdentifier else {
+                assertionFailure("the group conversation has no remoteIdentifier set")
+                continue
+            }
+
+            // update message protocol to `mixed`
+            var updateConversationProtocolAction = UpdateConversationProtocolAction(
                 domain: domain,
                 conversationID: conversationID,
                 messageProtocol: .mixed
             )
+            try await updateConversationProtocolAction.perform(in: context.notificationContext)
 
+            // sync the group conversation
+            let syncConversationAction = SyncConversationAction(qualifiedID: groupConversation.qualifiedID)
         }
-
-        // func startMigrationOfGroupConversations
-        //      for group in  allProteusGroupConversaitons = ...
-        //          await startMigration(group)
 
         // func startMigration(_ group: ZMConversation()) async
         //      try await push protocol to mixed (if you process the payload, the conversation is synced)

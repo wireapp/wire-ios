@@ -212,8 +212,7 @@ public extension ZMConversation {
 
     static func fetchAllTeamGroupConversations(
         messageProtocol: MessageProtocol,
-        in context: NSManagedObjectContext,
-        fetchLimit: Int = 0
+        in context: NSManagedObjectContext
     ) throws -> [ZMConversation] {
         let selfUser = ZMUser.selfUser(in: context)
         guard let selfUserTeamIdentifier = selfUser.teamIdentifier else {
@@ -229,7 +228,6 @@ public extension ZMConversation {
                 .teamRemoteIdentifier(matches: selfUserTeamIdentifier)
             ]
         )
-        request.fetchLimit = fetchLimit
 
         return try context.fetch(request)
     }
