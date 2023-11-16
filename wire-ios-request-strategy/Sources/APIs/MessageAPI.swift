@@ -64,7 +64,7 @@ class MessageAPIV0: MessageAPI {
     ) async throws -> (Payload.MessageSendingStatus, ZMTransportResponse) {
         let path = "/" + ["conversations", conversationID.uuid.transportString(), "otr", "messages"].joined(separator: "/")
 
-        // FIXME: [jacob] move encryption out of the API
+        // FIXME: [jacob] move encryption out of the API WPB-5499
         guard let encryptedPayload = await message.context.perform({
             message.encryptForTransport()
         }) else {
