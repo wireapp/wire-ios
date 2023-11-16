@@ -135,7 +135,7 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
             // THEN
             guard let request = self.sut.nextRequest(for: self.apiVersion) else { XCTFail("No request generated"); return }
             XCTAssertEqual(request.path, "/assets/v3/\(assetID)")
-            XCTAssertEqual(request.method, ZMTransportRequestMethod.methodGET)
+            XCTAssertEqual(request.method, ZMTransportRequestMethod.get)
             XCTAssertNil(self.sut.nextRequest(for: self.apiVersion))
         }
     }
@@ -160,7 +160,7 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
             // THEN
             guard let request = self.sut.nextRequest(for: self.apiVersion) else { XCTFail("No request generated"); return }
             XCTAssertEqual(request.path, "/assets/v3/\(assetID)")
-            XCTAssertEqual(request.method, ZMTransportRequestMethod.methodGET)
+            XCTAssertEqual(request.method, ZMTransportRequestMethod.get)
             XCTAssertNil(self.sut.nextRequest(for: self.apiVersion))
         }
     }
@@ -187,7 +187,7 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
             // THEN
             guard let request = self.sut.nextRequest(for: self.apiVersion) else { XCTFail("No request generated"); return }
             XCTAssertEqual(request.path, "/v1/assets/v4/\(assetDomain)/\(assetID)")
-            XCTAssertEqual(request.method, ZMTransportRequestMethod.methodGET)
+            XCTAssertEqual(request.method, ZMTransportRequestMethod.get)
             XCTAssertNil(self.sut.nextRequest(for: self.apiVersion))
         }
     }
@@ -214,7 +214,7 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
             // THEN
             guard let request = self.sut.nextRequest(for: self.apiVersion) else { XCTFail("No request generated"); return }
             XCTAssertEqual(request.path, "/v1/assets/v4/\(assetDomain)/\(assetID)")
-            XCTAssertEqual(request.method, ZMTransportRequestMethod.methodGET)
+            XCTAssertEqual(request.method, ZMTransportRequestMethod.get)
             XCTAssertNil(self.sut.nextRequest(for: self.apiVersion))
         }
     }

@@ -258,7 +258,8 @@ class ZMUserSessionTests_CryptoStack: MessagingTest {
         let transportSession = RecordingMockTransportSession(
             cookieStorage: ZMPersistentCookieStorage(
                 forServerName: "usersessiontest.example.com",
-                userIdentifier: .create()
+                userIdentifier: .create(),
+                useCache: true
             ),
             pushChannel: MockPushChannel()
         )

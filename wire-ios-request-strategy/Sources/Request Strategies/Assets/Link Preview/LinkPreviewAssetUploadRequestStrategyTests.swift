@@ -140,7 +140,7 @@ extension LinkPreviewAssetUploadRequestStrategyTests {
             // THEN
             XCTAssertNotNil(request)
             XCTAssertEqual(request?.path, "/assets/v3")
-            XCTAssertEqual(request?.method, ZMTransportRequestMethod.methodPOST)
+            XCTAssertEqual(request?.method, ZMTransportRequestMethod.post)
         }
     }
 

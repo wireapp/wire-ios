@@ -18,6 +18,7 @@
 import Foundation
 import WireShareEngine
 import MobileCoreServices
+import UniformTypeIdentifiers
 
 /// `UnsentSendable` implementation to send GIF image messages
 final class UnsentGifImageSendable: UnsentSendableBase, UnsentSendable {
@@ -25,7 +26,7 @@ final class UnsentGifImageSendable: UnsentSendableBase, UnsentSendable {
     private let attachment: NSItemProvider
 
     init?(conversation: Conversation, sharingSession: SharingSession, attachment: NSItemProvider) {
-        guard attachment.hasItemConformingToTypeIdentifier(kUTTypeGIF as String) else { return nil }
+        guard attachment.hasItemConformingToTypeIdentifier(UTType.gif.identifier) else { return nil }
         self.attachment = attachment
         super.init(conversation: conversation, sharingSession: sharingSession)
         needsPreparation = true
@@ -35,7 +36,7 @@ final class UnsentGifImageSendable: UnsentSendableBase, UnsentSendable {
         precondition(needsPreparation, "Ensure this objects needs preparation, c.f. `needsPreparation`")
         needsPreparation = false
 
-        attachment.loadItem(forTypeIdentifier: kUTTypeGIF as String) { [weak self] (url, error) in
+        attachment.loadItem(forTypeIdentifier: UTType.gif.identifier) { [weak self] (url, error) in
 
             error?.log(message: "Unable to load image from attachment")
 

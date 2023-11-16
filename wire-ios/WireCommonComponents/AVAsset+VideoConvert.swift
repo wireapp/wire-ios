@@ -1,20 +1,20 @@
 //
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
-// 
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
-// 
+//
 
 import Foundation
 import AVFoundation
@@ -37,23 +37,23 @@ extension AVAsset {
                 completion?(false)
                 return
             }
-        let encodedEffectAudioURL = URL(fileURLWithPath: outPath)
-        exportSession.outputURL = encodedEffectAudioURL as URL
-        exportSession.outputFileType = AVFileType.m4a
-        exportSession.exportAsynchronously { [unowned exportSession] in
-            switch exportSession.status {
-            case .failed:
-                zmLog.error("Cannot transcode \(inPath) to \(outPath): \(String(describing: exportSession.error))")
-                DispatchQueue.main.async {
-                    completion?(false)
-                }
-            default:
-                DispatchQueue.main.async {
-                    completion?(true)
+            let encodedEffectAudioURL = URL(fileURLWithPath: outPath)
+            exportSession.outputURL = encodedEffectAudioURL as URL
+            exportSession.outputFileType = AVFileType.m4a
+            exportSession.exportAsynchronously { [unowned exportSession] in
+                switch exportSession.status {
+                case .failed:
+                    zmLog.error("Cannot transcode \(inPath) to \(outPath): \(String(describing: exportSession.error))")
+                    DispatchQueue.main.async {
+                        completion?(false)
+                    }
+                default:
+                    DispatchQueue.main.async {
+                        completion?(true)
+                    }
                 }
             }
         }
-    }
 }
 
 // MARK: - video convert
@@ -86,12 +86,12 @@ extension AVURLAsset {
     ) {
         let filename = url.deletingPathExtension().lastPathComponent + ".mp4"
         let asset: AVURLAsset = AVURLAsset(url: url, options: nil)
-        
+
         guard let track = AVAsset(url: url as URL).tracks(withMediaType: AVMediaType.video).first else {
             completion(nil, nil, ConversionFailure.missingVideoTrack)
             return
         }
-        
+
         let size = track.naturalSize
 
         let cappedQuality: String
@@ -168,7 +168,7 @@ extension AVAssetExportSession {
         weak var session: AVAssetExportSession? = self
         exportAsynchronously {
             if let session = session,
-                let error = session.error {
+               let error = session.error {
                 zmLog.error("Export session error: status=\(session.status.rawValue) error=\(error) output=\(exportURL)")
             }
             completion(exportURL, session?.error)

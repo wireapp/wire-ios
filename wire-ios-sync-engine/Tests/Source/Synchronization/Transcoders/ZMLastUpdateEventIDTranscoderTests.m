@@ -225,7 +225,7 @@
     
     // then
     XCTAssertNotNil(request);
-    XCTAssertEqual(request.method, ZMMethodGET);
+    XCTAssertEqual(request.method, ZMTransportRequestMethodGet);
     XCTAssertEqualObjects(request.path, @"/notifications/last");
 }
 
@@ -240,7 +240,7 @@
     
     // then
     XCTAssertNotNil(request);
-    XCTAssertEqual(request.method, ZMMethodGET);
+    XCTAssertEqual(request.method, ZMTransportRequestMethodGet);
     NSString *expectedPath = [NSString stringWithFormat:@"/notifications/last?client=%@", selfClient.remoteIdentifier];
     XCTAssertEqualObjects(request.path, expectedPath);
 }

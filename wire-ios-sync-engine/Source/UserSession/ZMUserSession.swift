@@ -729,6 +729,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
     }
 
     func notifyAuthenticationInvalidated(_ error: Error) {
+        WireLogger.authentication.debug("notifying authentication invalidated")
         managedObjectContext.performGroupedBlock {  [weak self] in
             guard let accountId = self?.managedObjectContext.selfUserId else {
                 return

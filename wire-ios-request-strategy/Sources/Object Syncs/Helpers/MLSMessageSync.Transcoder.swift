@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireTransport
 
 extension MLSMessageSync {
 
@@ -59,7 +60,7 @@ extension MLSMessageSync {
 
             let request = ZMTransportRequest(
                 path: "/mls/messages",
-                method: .methodPOST,
+                method: .post,
                 binaryData: encryptedMessage,
                 type: "message/mls",
                 contentDisposition: nil,

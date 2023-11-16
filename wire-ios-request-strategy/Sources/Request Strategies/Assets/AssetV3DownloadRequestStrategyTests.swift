@@ -174,7 +174,7 @@ class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
             guard let request = self.sut.nextRequest(for: self.apiVersion) else { return XCTFail("No request generated") }
 
             // Then
-            XCTAssertEqual(request.method, .methodGET)
+            XCTAssertEqual(request.method, .get)
             XCTAssertEqual(request.path, "/assets/v3/\(expectedAssetId)")
             XCTAssert(request.needsAuthentication)
         }
@@ -209,7 +209,7 @@ class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
             guard let request = self.sut.nextRequest(for: self.apiVersion) else { return XCTFail("No request generated") }
 
             // Then
-            XCTAssertEqual(request.method, .methodGET)
+            XCTAssertEqual(request.method, .get)
             XCTAssertEqual(request.path, "/assets/v3/\(expectedAssetId)")
             XCTAssert(request.needsAuthentication)
         }
@@ -242,7 +242,7 @@ class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
             guard let request = self.sut.nextRequest(for: self.apiVersion) else { return XCTFail("No request generated") }
 
             // Then
-            XCTAssertEqual(request.method, .methodGET)
+            XCTAssertEqual(request.method, .get)
             XCTAssertEqual(request.path, "/v1/assets/v4/\(expectedDomain!)/\(expectedAssetId)")
             XCTAssert(request.needsAuthentication)
         }
@@ -279,7 +279,7 @@ class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
             guard let request = self.sut.nextRequest(for: self.apiVersion) else { return XCTFail("No request generated") }
 
             // Then
-            XCTAssertEqual(request.method, .methodGET)
+            XCTAssertEqual(request.method, .get)
             XCTAssertEqual(request.path, "/v1/assets/v4/\(expectedDomain!)/\(expectedAssetId)")
             XCTAssert(request.needsAuthentication)
         }

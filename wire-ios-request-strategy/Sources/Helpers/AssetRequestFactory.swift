@@ -81,7 +81,7 @@ public final class AssetRequestFactory: NSObject {
             path = "/assets"
         }
 
-        return ZMTransportRequest(path: path, method: .methodPOST, binaryData: multipartData, type: Constant.ContentType.multipart, contentDisposition: nil, apiVersion: apiVersion.rawValue)
+        return ZMTransportRequest(path: path, method: .post, binaryData: multipartData, type: Constant.ContentType.multipart, contentDisposition: nil, apiVersion: apiVersion.rawValue)
     }
 
     func dataForMultipartAssetUploadRequest(_ data: Data, shareable: Bool, retention: Retention) throws -> Data {

@@ -122,7 +122,7 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
         self.hideCameraKeyboardViewController {
             self.shouldRefocusKeyboardAfterImagePickerDismiss = true
             self.presentImagePicker(with: .camera,
-                                    mediaTypes: [kUTTypeMovie as String, kUTTypeImage as String],
+                                    mediaTypes: [UTType.movie.identifier, UTType.image.identifier],
                                     allowsEditing: false,
                                     pointToView: self.photoButton.imageView)
         }
@@ -132,7 +132,7 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
         self.hideCameraKeyboardViewController {
             self.shouldRefocusKeyboardAfterImagePickerDismiss = true
             self.presentImagePicker(with: .photoLibrary,
-                                    mediaTypes: [kUTTypeMovie as String, kUTTypeImage as String],
+                                    mediaTypes: [UTType.movie.identifier, UTType.image.identifier],
                                     allowsEditing: false,
                                     pointToView: self.photoButton.imageView)
         }
@@ -143,7 +143,7 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
                                   uti: String?) {
         let mediaAsset: MediaAsset
 
-        if uti == kUTTypeGIF as String,
+        if uti == UTType.gif.identifier,
            let gifImage = FLAnimatedImage(animatedGIFData: imageData),
            gifImage.frameCount > 1 {
             mediaAsset = gifImage
