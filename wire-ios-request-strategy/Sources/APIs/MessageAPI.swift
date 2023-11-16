@@ -74,7 +74,7 @@ class MessageAPIV0: MessageAPI {
 
         let request = ZMTransportRequest(
             path: path,
-            method: .methodPOST,
+            method: .post,
             binaryData: encryptedPayload.data,
             type: protobufContentType,
             contentDisposition: nil,
@@ -148,7 +148,7 @@ class MessageAPIV1: MessageAPIV0 {
 
         let request = ZMTransportRequest(
             path: path,
-            method: .methodPOST,
+            method: .post,
             binaryData: encryptedPayload.data,
             type: protobufContentType,
             contentDisposition: nil,
@@ -204,7 +204,7 @@ class MessageAPIV5: MessageAPIV4 {
 
         let request = ZMTransportRequest(
             path: "/mls/messages",
-            method: .methodPOST,
+            method: .post,
             binaryData: encryptedMessage,
             type: "message/mls",
             contentDisposition: nil,

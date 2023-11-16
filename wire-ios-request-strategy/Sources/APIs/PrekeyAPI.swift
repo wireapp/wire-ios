@@ -53,7 +53,7 @@ class PrekeyAPIV0: PrekeyAPI {
         }
 
         let request = ZMTransportRequest(path: "/users/prekeys",
-                                         method: .methodPOST,
+                                         method: .post,
                                          payload: payloadAsString as ZMTransportData?,
                                          apiVersion: apiVersion.rawValue)
 
@@ -77,7 +77,7 @@ class PrekeyAPIV1: PrekeyAPIV0 {
         }
 
         let request = ZMTransportRequest(path: "/users/list-prekeys",
-                                         method: .methodPOST,
+                                         method: .post,
                                          payload: payloadAsString as ZMTransportData?,
                                          apiVersion: apiVersion.rawValue)
 
@@ -112,7 +112,7 @@ class PrekeyAPIV4: PrekeyAPIV3 {
         }
 
         let request = ZMTransportRequest(path: "/users/list-prekeys",
-                                         method: .methodPOST,
+                                         method: .post,
                                          payload: payloadAsString as ZMTransportData?,
                                          apiVersion: apiVersion.rawValue)
         let response = await httpClient.send(request)
