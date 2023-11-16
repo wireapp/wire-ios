@@ -56,6 +56,8 @@ final class ConversationContentViewController: UIViewController, PopoverPresente
 
         button.addTarget(self, action: #selector(handleScrollToBottomTapped), for: .touchUpInside)
 
+        button.imageView?.contentMode = .center
+
         return button
     }()
 
