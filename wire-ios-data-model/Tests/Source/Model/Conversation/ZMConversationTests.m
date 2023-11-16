@@ -278,9 +278,7 @@
         ZMConversationLastReadServerTimeStampKey,
         ZMConversationClearedTimeStampKey,
         ZMConversationSilencedChangedTimeStampKey,
-        ZMConversationArchivedChangedTimeStampKey,
-        ZMConversationCipherSuite,
-        ZMConversationEpochTimestamp
+        ZMConversationArchivedChangedTimeStampKey
     ]];
 
     // when

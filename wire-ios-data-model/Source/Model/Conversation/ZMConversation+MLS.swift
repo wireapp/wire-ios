@@ -36,7 +36,13 @@ extension ZMConversation {
     static let commitPendingProposalDateKey = "commitPendingProposalDate"
 
     @objc
+    static let cipherSuiteKey = #keyPath(cipherSuite)
+
+    @objc
     static let epochKey = #keyPath(epoch)
+
+    @objc
+    static let epochTimestampKey = #keyPath(epochTimestamp)
 
     // MARK: Properties
 
@@ -44,7 +50,7 @@ extension ZMConversation {
 
     @NSManaged public var epoch: UInt64
 
-    @NSManaged public var epochTimemstamp: Date?
+    @NSManaged public var epochTimestamp: Date?
 
     @NSManaged private var primitiveMessageProtocol: NSNumber
 
