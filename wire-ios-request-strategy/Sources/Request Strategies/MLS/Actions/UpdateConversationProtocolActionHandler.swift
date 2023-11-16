@@ -36,7 +36,10 @@ final class UpdateConversationProtocolActionHandler: ActionHandler<UpdateConvers
             return .none
         }
 
-        let path = "/conversations/\(action.domain)/\(action.conversationID.transportString())/\(action.messageProtocol.stringValue)"
+        let domain = action.qualifiedID.domain
+        let conversationID = action.qualifiedID.uuid.transportString()
+        let messageProtocol = action.messageProtocol.stringValue
+        let path = "/conversations/\(domain)/\(conversationID)/\(messageProtocol)"
         let payload = ["protocol": action.messageProtocol.stringValue] as ZMTransportData
 
         return .init(
@@ -53,16 +56,17 @@ final class UpdateConversationProtocolActionHandler: ActionHandler<UpdateConvers
     ) {
         var action = action
 
-        switch response.httpStatus {
+        if [200, 204].contains(response.httpStatus) {
+            return action.succeed()
+        }
 
-        case 200, 204:
-            action.succeed()
-
-        default:
-            let label = response.payloadLabel()
-            let message = response.payload?.asDictionary()?["message"] as? String
-            let error = Action.Failure.api(statusCode: response.httpStatus, label: label ?? "", message: message ?? "")
-            action.fail(with: error)
+        if
+            let label = response.payloadLabel(),
+            let apiFailure = Action.Failure.APIFailure(rawValue: label),
+            apiFailure.statusCode == response.httpStatus {
+            action.fail(with: .api(apiFailure))
+        } else {
+            action.fail(with: .unknown)
         }
     }
 }

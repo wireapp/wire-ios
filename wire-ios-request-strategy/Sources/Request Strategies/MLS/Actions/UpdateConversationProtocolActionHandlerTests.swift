@@ -19,28 +19,18 @@
 import XCTest
 @testable import WireRequestStrategy
 
-final class UpdateConversationProtocolActionHandlerTests: ActionHandlerTestBase<WireRequestStrategy.UpdateConversationProtocolAction, UpdateConversationProtocolActionHandler> {
-
-    var domain: String!
-    var conversationID: UUID!
+final class UpdateConversationProtocolActionHandlerTests: ActionHandlerTestBase<UpdateConversationProtocolAction, UpdateConversationProtocolActionHandler> {
 
     override func setUp() {
         super.setUp()
 
-        domain = "example.com"
-        conversationID = .init(uuidString: "b906579d-60dd-4510-a3ca-14b2ec225f4a")
-        action = UpdateConversationProtocolAction(domain: domain, conversationID: conversationID, messageProtocol: .mls)
-    }
-
-    override func tearDown() {
-        action = nil
-        conversationID = nil
-        domain = nil
-
-        super.tearDown()
+        let uuid = UUID(uuidString: "b906579d-60dd-4510-a3ca-14b2ec225f4a")!
+        let qualifiedID = QualifiedID(uuid: uuid, domain: "example.com")
+        action = UpdateConversationProtocolAction(qualifiedID: qualifiedID, messageProtocol: .mls)
     }
 
     // MARK: - Request generation
+
     func test_itGenerateARequest_APIV5() throws {
         try test_itGeneratesARequest(
             for: action,
@@ -64,7 +54,7 @@ final class UpdateConversationProtocolActionHandlerTests: ActionHandlerTestBase<
 
     // MARK: - Response handling
 
-    func test_itHandlesConversationUpdated() throws {
+    func test_itHandlesConversationUpdated() {
         // Given
         let statusCode = 200
 
@@ -72,7 +62,7 @@ final class UpdateConversationProtocolActionHandlerTests: ActionHandlerTestBase<
         test_itHandlesSuccess(status: statusCode)
     }
 
-    func test_itHandlesConversationUnchanged() throws {
+    func test_itHandlesConversationUnchanged() {
         // Given
         let statusCode = 204
 
@@ -80,20 +70,54 @@ final class UpdateConversationProtocolActionHandlerTests: ActionHandlerTestBase<
         test_itHandlesSuccess(status: statusCode)
     }
 
+    func test_itForwardsAPIFailuresBasedOnStatusCodeAndLabel() {
+        // Given
+        let apiFailures = Failure.APIFailure.allCases
+
+        // When, Then
+        apiFailures.forEach { apiFailure in
+            test_itHandlesFailure(
+                status: apiFailure.statusCode,
+                payload: [
+                    "code": apiFailure.statusCode,
+                    "label": apiFailure.rawValue,
+                    "message": "<ignored>"
+                ] as ZMTransportData,
+                expectedError: .api(apiFailure)
+            )
+        }
+    }
+
+    func test_itForwardsUnknownErrorIfStatusCodesDontMatch() throws {
+        // Given
+        let apiFailure = Failure.APIFailure.invalidOp
+        let wrongPayload = [
+            "code": apiFailure.statusCode,
+            "label": apiFailure.rawValue,
+            "message": "<ignored>"
+        ] as ZMTransportData
+
+        // When, Then
+        test_itHandlesFailure(
+            status: 12345,
+            payload: wrongPayload,
+            expectedError: .unknown
+        )
+    }
+
     func test_itHandlesUnexpectedResult() throws {
-        // When
+        // Given
+        let payload = [
+            "code": 123,
+            "label": "unexpected-label",
+            "message": "Unexpected message"
+        ] as ZMTransportData
+
+        // When, Then
         test_itHandlesFailure(
             status: 123,
-            payload: [
-                "code": 123,
-                "label": "unexpected-label",
-                "message": "Unexpected message"
-            ] as ZMTransportData,
-            expectedError: .api(
-                statusCode: 123,
-                label: "unexpected-label",
-                message: "Unexpected message"
-            )
+            payload: payload,
+            expectedError: .unknown
         )
     }
 

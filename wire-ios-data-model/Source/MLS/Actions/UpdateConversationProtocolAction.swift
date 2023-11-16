@@ -45,8 +45,38 @@ extension UpdateConversationProtocolAction {
     public typealias Result = Void
 
     public enum Failure: Equatable, Error {
-        case endpointUnavailable
-        case api(statusCode: Int, label: String, message: String)
-    }
 
+        case endpointUnavailable
+        case api(APIFailure)
+        case unknown
+
+        public enum APIFailure: String, CaseIterable, Equatable {
+
+            // 400
+            case mlsMigrationCriteriaNotSatisfied = "mls-migration-criteria-not-satisfied"
+
+            // 403
+            case operationDenied = "operation-denied"
+            case noTeamMember = "no-team-member"
+            case invalidOp = "invalid-op"
+            case actionDenied = "action-denied"
+            case invalidProtocolTransition = "invalid-protocol-transition"
+
+            // 404
+            case conversationIdOrDomainNotFound = "Conversation ID or domain not found."
+            case noTeam = "no-team"
+            case noConversation = "no-conversation"
+
+            public var statusCode: Int {
+                switch self {
+                case .mlsMigrationCriteriaNotSatisfied:
+                    return 400
+                case .operationDenied, .noTeamMember, .invalidOp, .actionDenied, .invalidProtocolTransition:
+                    return 403
+                case .conversationIdOrDomainNotFound, .noTeam, .noConversation:
+                    return 404
+                }
+            }
+        }
+    }
 }
