@@ -23,7 +23,7 @@ public protocol AcmeAPI {
 
     func getACMEDirectory() async -> AcmeDirectoriesResponse?
     func getACMENonce(url: String) async -> String?
-    func sendACMERequest(url: String, body: ZMTransportData) async -> ACMEResponse?
+    func sendACMERequest(url: String, body: Data?) async -> ACMEResponse?
     func sendChallengeRequest(url: String, body: Data?) async -> ChallengeResponse?
 
 }
@@ -70,7 +70,7 @@ public class AcmeAPIV5: NSObject, AcmeAPI {
         return nil
     }
 
-    public func sendACMERequest(url: String, body: ZMTransportData) async -> ACMEResponse? {
+    public func sendACMERequest(url: String, body: Data?) async -> ACMEResponse? {
         return nil
 
     }

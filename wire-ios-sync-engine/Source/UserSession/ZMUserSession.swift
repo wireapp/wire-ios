@@ -459,8 +459,12 @@ public class ZMUserSession: NSObject {
     private func configureE2EIStack() {
         let httpClient = HttpClientImpl(transportSession: transportSession, queue: coreDataStack.syncContext)
         let apiProvider = APIProvider(httpClient: httpClient)
-        let e2eiManager = E2EIManager(apiProvider: apiProvider, context: coreDataStack.syncContext)
-        self.certificateEnrollment = CertificateEnrollment(e2eiManager: e2eiManager)
+        coreDataStack.syncContext.performGroupedBlockAndWait { [weak self] in
+            if let e2eiService = self?.syncContext.e2eiService {
+                let e2eiManager = E2EIManager(apiProvider: apiProvider, e2eiService: e2eiService)
+                self?.certificateEnrollment = CertificateEnrollment(e2eiManager: e2eiManager)
+            }
+        }
     }
 
     private func registerForCalculateBadgeCountNotification() {

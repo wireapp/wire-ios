@@ -35,16 +35,14 @@ public protocol E2EIManagerInterface {
 public final class E2EIManager: E2EIManagerInterface {
 
     private var apiProvider: APIProvider
-    private var context: NSManagedObjectContext?
+    private var e2eiService: E2EIServiceInterface?
 
-    public init(apiProvider: APIProvider, context: NSManagedObjectContext) {
+    public init(apiProvider: APIProvider, e2eiService: E2EIServiceInterface) {
         self.apiProvider = apiProvider
-        self.context = context
+        self.e2eiService = e2eiService
     }
 
     public func loadACMEDirectory() async -> AcmeDirectory? {
-        var directory: WireCoreCrypto.AcmeDirectory?
-
         guard let acmeAPI = apiProvider.acmeAPI(apiVersion: .v5),
               let acmeDirectory = await acmeAPI.getACMEDirectory() else {
             WireLogger.e2ei.warn("Failed to get acme directory from acme server")
@@ -52,29 +50,16 @@ public final class E2EIManager: E2EIManagerInterface {
             return nil
         }
 
-        context?.performAndWait {
-            guard let e2eiService = context?.e2eiService else {
-                WireLogger.e2ei.warn("E2EIService is missing")
+        guard let acmeDirectoryData = try? JSONEncoder().encode(acmeDirectory),
+              let directoryResponse = try? e2eiService?.directoryResponse(directoryData: acmeDirectoryData) else {
+            WireLogger.e2ei.warn("Failed to get directory response")
 
-                return
-            }
-
-            guard let acmeDirectoryData = try? JSONEncoder().encode(acmeDirectory),
-                  let directoryResponse = try? e2eiService.directoryResponse(directoryData: acmeDirectoryData) else {
-                WireLogger.e2ei.warn("Failed to get directory response")
-
-                return
-            }
-            directory = directoryResponse
-
-        }
-
-        guard let directory = directory else {
             return nil
         }
-        return AcmeDirectory(newNonce: directory.newNonce,
-                             newAccount: directory.newAccount,
-                             newOrder: directory.newOrder)
+
+        return AcmeDirectory(newNonce: directoryResponse.newNonce,
+                             newAccount: directoryResponse.newAccount,
+                             newOrder: directoryResponse.newOrder)
     }
 
     public func getACMENonce(endpoint: String) async -> String? {
@@ -82,21 +67,16 @@ public final class E2EIManager: E2EIManagerInterface {
     }
 
     public func createNewAccount(prevNonce: String, createAccountEndpoint: String) async -> String? {
-        guard let e2eiService = context?.e2eiService else {
+        let accountRequest = try? await e2eiService?.getNewAccountRequest(previousNonce: prevNonce)
 
-            return nil
-        }
-        let accountRequest = try? await e2eiService.getNewAccountRequest(previousNonce: prevNonce)
-
-        // TODO: convert accountRequest to ZMTransportData
         guard let acmeAPI = apiProvider.acmeAPI(apiVersion: .v5),
-              let apiResponse = await acmeAPI.sendACMERequest(url: createAccountEndpoint, body: accountRequest as! ZMTransportData) else {
+              let apiResponse = await acmeAPI.sendACMERequest(url: createAccountEndpoint, body: accountRequest) else {
 
             return nil
         }
 
         do {
-            try await e2eiService.setAccountResponse(accountData: apiResponse.response)
+            try await e2eiService?.setAccountResponse(accountData: apiResponse.response)
             return apiResponse.nonce
         } catch {
 
