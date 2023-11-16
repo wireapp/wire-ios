@@ -16,23 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
+import UIKit
+
 @testable import Wire
 
-extension CoreDataFixture {
-    func mockUserClient(fingerprintString: String = "102030405060708090102030405060708090102030405060708090") -> UserClient! {
-        let client = UserClient.insertNewObject(in: uiMOC)
-        client.remoteIdentifier = "102030405060708090"
-
-        client.user = ZMUser.insertNewObject(in: uiMOC)
-        client.deviceClass = .tablet
-        client.model = "Simulator"
-        client.label = "Bill's MacBook Pro"
-
-        let fingerprint: Data? = fingerprintString.data(using: .utf8)
-
-        client.fingerprint = fingerprint
-        client.activationDate = Date(timeIntervalSince1970: 1664717723)
-        return client
+final class MockApplication: ApplicationProtocol {
+    static func wr_requestOrWarnAboutPhotoLibraryAccess(_ grantedHandler: ((Bool) -> Void)!) {
+        grantedHandler(true)
     }
+
+    var applicationState: UIApplication.State = .active
+
+    var statusBarOrientation: UIInterfaceOrientation = .unknown
 }

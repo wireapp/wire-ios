@@ -18,6 +18,7 @@
 
 import Foundation
 import XCTest
+import avs
 @testable import Wire
 
 final class MockAudioRecordKeyboardDelegate: AudioRecordViewControllerDelegate {

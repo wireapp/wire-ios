@@ -17,6 +17,7 @@
 //
 
 import XCTest
+import avs
 @testable import Wire
 
 final private class MockAudioRecordViewControllerDelegate: NSObject, AudioRecordViewControllerDelegate {

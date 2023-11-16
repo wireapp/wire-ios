@@ -16,5 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
-#import "Mocks.h"
-#import "ZMSnapshotTestCase+Internal.h"
+#import "MockConversation.h"
+#import "MockLoader.h"
+#import "MockUser.h"

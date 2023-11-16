@@ -137,6 +137,47 @@
         "identifier" : "BACB88501AF7C48900DDCDB0",
         "name" : "Wire-iOS-Tests"
       }
+    },
+    {
+      "selectedTests" : [
+        "AppLockModuleInteractorTests\/test_EvaluateAuthentication_DatabaseLock()",
+        "AppLockModuleInteractorTests\/test_EvaluateAuthentication_Denied()",
+        "AppLockModuleInteractorTests\/test_EvaluateAuthentication_Granted()",
+        "AppLockModuleInteractorTests\/test_EvaluateAuthentication_NeedCustomPasscode()",
+        "AppLockModuleInteractorTests\/test_EvaluateAuthentication_ScreenLock()",
+        "AppLockModuleInteractorTests\/test_EvaluateAuthentication_ScreenLock_RequireCustomPasscode()",
+        "AppLockModuleInteractorTests\/test_EvaluateAuthentication_SessionIsAlreadyUnlocked()",
+        "AppLockModuleInteractorTests\/test_EvaluateAuthentication_Unavailable()",
+        "AppLockModuleInteractorTests\/test_InitiaAuthentication_NeedsToCreateCustomPasscode_NotRequired()",
+        "AppLockModuleInteractorTests\/test_InitiaAuthentication_NeedsToCreatePasscode_InformingUserOfConfigChange()",
+        "AppLockModuleInteractorTests\/test_InitiateAuthentication_DoesNotNeedToCreateCustomPasscode()",
+        "AppLockModuleInteractorTests\/test_InitiateAuthentication_DoesNotNeedToCreateCustomPasscode_InformingUserOfConfigChange()",
+        "AppLockModuleInteractorTests\/test_InitiateAuthentication_DoesNotNeedToCreateCustomPasscode_WhenDatabaseIsLocked()",
+        "AppLockModuleInteractorTests\/test_InitiateAuthentication_NeedsToCreateCustomPasscodeAndRequireActiveApp_ReturnsNothingIfAppIsInBackground()",
+        "AppLockModuleInteractorTests\/test_InitiateAuthentication_NeedsToCreateCustomPasscode_Required()",
+        "AppLockModuleInteractorTests\/test_InitiateAuthentication_RequireActiveApp_ReturnsNothingIfAppIsInBackground()",
+        "AppLockModuleInteractorTests\/test_InitiateAuthentication_SessionIsAlreadyUnlocked()",
+        "AppLockModuleInteractorTests\/test_ItOpensAppLock()",
+        "AppLockModulePresenterTests\/test_ApplicationWillEnterForeground()",
+        "AppLockModulePresenterTests\/test_AuthenticationDenied()",
+        "AppLockModulePresenterTests\/test_AuthenticationUnavailable()",
+        "AppLockModulePresenterTests\/test_ConfigChangeAcknowledged()",
+        "AppLockModulePresenterTests\/test_CustomPasscodeCreationNeeded_InformingUserOfConfigChange()",
+        "AppLockModulePresenterTests\/test_CustomPasscodeCreationNeeded_WithoutInformingUserOfConfigChange()",
+        "AppLockModulePresenterTests\/test_CustomPasscodeNeeded()",
+        "AppLockModulePresenterTests\/test_CustomPasscodeVerified()",
+        "AppLockModulePresenterTests\/test_OpenDeviceSettingsButtonTapped()",
+        "AppLockModulePresenterTests\/test_PasscodeSetupCompleted()",
+        "AppLockModulePresenterTests\/test_ReadyForAuthentication_InformingUserOfConfigChange()",
+        "AppLockModulePresenterTests\/test_ReadyForAuthentication_WithoutInformingUserOfConfigChange()",
+        "AppLockModulePresenterTests\/test_UnlockButtonTapped()",
+        "AppLockModulePresenterTests\/test_ViewDidAppear()"
+      ],
+      "target" : {
+        "containerPath" : "container:Wire-iOS.xcodeproj",
+        "identifier" : "E6579E352AFF9B30004E7FD8",
+        "name" : "Wire-iOS UnitTests"
+      }
     }
   ],
   "version" : 1

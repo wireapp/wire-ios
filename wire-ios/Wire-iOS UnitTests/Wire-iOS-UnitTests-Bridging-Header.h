@@ -17,4 +17,3 @@
 // 
 
 #import "Mocks.h"
-#import "ZMSnapshotTestCase+Internal.h"

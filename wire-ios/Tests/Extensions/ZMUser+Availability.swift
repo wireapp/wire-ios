@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2023 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,15 +17,12 @@
 //
 
 import Foundation
+import WireDataModel
 
-@testable import Wire
-
-final class MockApplication: ApplicationProtocol {
-    static func wr_requestOrWarnAboutPhotoLibraryAccess(_ grantedHandler: ((Bool) -> Void)!) {
-        grantedHandler(true)
+extension ZMUser {
+    func updateAvailability(_ newValue: AvailabilityKind) {
+        self.willChangeValue(forKey: AvailabilityKey)
+        self.setPrimitiveValue(NSNumber(value: newValue.rawValue), forKey: AvailabilityKey)
+        self.didChangeValue(forKey: AvailabilityKey)
     }
-
-    var applicationState: UIApplication.State = .active
-
-    var statusBarOrientation: UIInterfaceOrientation = .unknown
 }

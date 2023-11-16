@@ -17,6 +17,7 @@
 //
 
 import XCTest
+import WireSyncEngine
 @testable import Wire
 
 class AuthenticationEmailVerificationRequiredErrorHandlerTests: XCTestCase {

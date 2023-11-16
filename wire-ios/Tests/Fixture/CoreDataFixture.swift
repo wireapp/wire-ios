@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2023 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,60 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireTesting
 import XCTest
 @testable import Wire
-
-// MARK: - factory methods
-
-extension ZMConversation {
-    static func createOtherUserConversation(moc: NSManagedObjectContext, otherUser: ZMUser) -> ZMConversation {
-
-        let otherUserConversation = ZMConversation.insertNewObject(in: moc)
-        otherUserConversation.add(participants: ZMUser.selfUser(in: moc))
-
-        otherUserConversation.conversationType = .oneOnOne
-        otherUserConversation.remoteIdentifier = UUID.create()
-        let connection = ZMConnection.insertNewObject(in: moc)
-        connection.to = otherUser
-        connection.status = .accepted
-        connection.conversation = otherUserConversation
-
-        connection.add(user: otherUser)
-
-        return otherUserConversation
-    }
-
-    static func createGroupConversationOnlyAdmin(moc: NSManagedObjectContext, selfUser: ZMUser) -> ZMConversation {
-        let conversation = ZMConversation.insertNewObject(in: moc)
-        conversation.remoteIdentifier = UUID.create()
-        conversation.conversationType = .group
-
-        let role = Role(context: moc)
-        role.name = ZMConversation.defaultAdminRoleName
-        conversation.addParticipantsAndUpdateConversationState(users: [selfUser], role: role)
-
-        return conversation
-    }
-
-    static func createGroupConversation(moc: NSManagedObjectContext,
-                                        otherUser: ZMUser,
-                                        selfUser: ZMUser) -> ZMConversation {
-        let conversation = createGroupConversationOnlyAdmin(moc: moc, selfUser: selfUser)
-        conversation.add(participants: otherUser)
-        return conversation
-    }
-
-    static func createTeamGroupConversation(moc: NSManagedObjectContext,
-                                            otherUser: ZMUser,
-                                            selfUser: ZMUser) -> ZMConversation {
-        let conversation = createGroupConversation(moc: moc, otherUser: otherUser, selfUser: selfUser)
-        conversation.teamRemoteIdentifier = UUID.create()
-        conversation.userDefinedName = "Group conversation"
-        return conversation
-    }
-
-}
 
 /// This class provides a `NSManagedObjectContext` in order to test views with real data instead
 /// of mock objects.
@@ -301,7 +249,7 @@ protocol CoreDataFixtureTestHelper {
 
     func mockUserClient() -> UserClient!
 
-  func createGroupConversationOnlyAdmin() -> ZMConversation
+    func createGroupConversationOnlyAdmin() -> ZMConversation
 }
 
 // MARK: - default implementation for migrating CoreDataSnapshotTestCase to XCTestCase
@@ -356,7 +304,31 @@ extension CoreDataFixtureTestHelper {
         return coreDataFixture.mockUserClient()
     }
 
-  func createGroupConversationOnlyAdmin() -> ZMConversation {
+    func createGroupConversationOnlyAdmin() -> ZMConversation {
         return ZMConversation.createGroupConversationOnlyAdmin(moc: uiMOC, selfUser: selfUser)
+    }
+}
+
+extension CoreDataFixture {
+    func mockUserClient(fingerprintString: String = "102030405060708090102030405060708090102030405060708090") -> UserClient! {
+        let client = UserClient.insertNewObject(in: uiMOC)
+        client.remoteIdentifier = "102030405060708090"
+
+        client.user = ZMUser.insertNewObject(in: uiMOC)
+        client.deviceClass = .tablet
+        client.model = "Simulator"
+        client.label = "Bill's MacBook Pro"
+
+        let fingerprint: Data? = fingerprintString.data(using: .utf8)
+
+        client.fingerprint = fingerprint
+        client.activationDate = Date(timeIntervalSince1970: 1664717723)
+        return client
+    }
+}
+
+private extension UIColor {
+    class var accentOverrideColor: ZMAccentColor? {
+        return ZMUser.selfUser()?.accentColorValue
     }
 }
