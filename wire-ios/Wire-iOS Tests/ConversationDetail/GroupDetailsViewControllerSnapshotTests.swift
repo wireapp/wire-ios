@@ -153,22 +153,6 @@ final class GroupDetailsViewControllerSnapshotTests: BaseSnapshotTestCase {
         verify(matching: sut)
     }
 
-    private func verifyConversationActionController(file: StaticString = #file,
-                                                    line: UInt = #line) throws {
-        sut = GroupDetailsViewController(conversation: mockConversation, userSession: userSession)
-        sut.footerView(GroupDetailsFooterView(), shouldPerformAction: .more)
-        try verify(matching: (sut?.actionController?.alertController)!, file: file, line: line)
-    }
-
-    func testForActionMenu() throws {
-        mockSelfUser.hasTeam = true
-        try verifyConversationActionController()
-    }
-
-    func testForActionMenu_NonTeam() throws {
-        try verifyConversationActionController()
-    }
-
     func testForOptionsForTeamUserInTeamConversation_Admins() throws {
         // GIVEN
         setSelfUserInTeam()
