@@ -79,7 +79,6 @@ public class UserClient: ZMManagedObject, UserClientType {
     @NSManaged public var activationLocationLatitude: NSNumber?
     @NSManaged public var activationLocationLongitude: NSNumber?
     @NSManaged public var needsToNotifyUser: Bool
-    @NSManaged public var fingerprint: Data?
     @NSManaged public var apsVerificationKey: Data?
     @NSManaged public var apsDecryptionKey: Data?
     @NSManaged public var needsToUploadSignalingKeys: Bool
@@ -152,16 +151,6 @@ public class UserClient: ZMManagedObject, UserClientType {
 
     public var isLegalHoldDevice: Bool {
         return deviceClass == .legalHold || type == .legalHold
-    }
-
-    public override func awakeFromFetch() {
-        super.awakeFromFetch()
-
-        // Fetch fingerprint if not there yet (could remain nil after fetch)
-        if let managedObjectContext = self.managedObjectContext,
-           self.remoteIdentifier != nil, managedObjectContext.zm_isSyncContext && self.fingerprint == .none {
-            self.fingerprint = self.remoteFingerprint()
-        }
     }
 
     public var verified: Bool {
@@ -364,7 +353,6 @@ public class UserClient: ZMManagedObject, UserClientType {
 
             // Delete session and fingerprint
             try? syncClient.deleteSession()
-            syncClient.fingerprint = .none
 
             // Mark clients as needing to be refetched
             selfClient.missesClient(syncClient)
@@ -468,18 +456,10 @@ public extension UserClient {
 
         if let selfClient = selfUser.selfClient() {
             if client.remoteIdentifier != selfClient.remoteIdentifier && isNewClient {
-                client.fetchFingerprintOrPrekeys()
 
                 if let selfClientActivationdate = selfClient.activationDate, client.activationDate?.compare(selfClientActivationdate) == .orderedDescending {
+                    // TODO: Check this flag
                     client.needsToNotifyUser = true
-                }
-            }
-
-            // We could already set local fingerprint if user is self
-            if client.remoteIdentifier == selfClient.remoteIdentifier {
-                client.fingerprint = client.localFingerprint()
-                if client.fingerprint == nil {
-                    zmLog.warn("Cannot fetch local fingerprint for \(client)")
                 }
             }
         }
@@ -527,125 +507,6 @@ public extension UserClient {
         self.markedToDelete = true
         self.setLocallyModifiedKeys(Set(arrayLiteral: ZMUserClientMarkedToDeleteKey))
     }
-
-    @available(*, deprecated)
-    func markForFetchingPreKeys() {
-        self.fetchFingerprintOrPrekeys()
-    }
-
-    @objc func fetchFingerprintOrPrekeys() {
-        guard
-            self.fingerprint == .none,
-            let syncMOC = self.managedObjectContext?.zm_sync
-        else {
-            return
-        }
-
-        if self.objectID.isTemporaryID {
-            do {
-                try syncMOC.obtainPermanentIDs(for: [self])
-            } catch {
-                fatal("Error obtaining permanent id for client")
-            }
-        }
-
-        let selfObjectID = self.objectID
-
-        syncMOC.performGroupedBlock({ [unowned syncMOC] () -> Void in
-            guard
-                let obj = try? syncMOC.existingObject(with: selfObjectID),
-                let syncClient = obj as? UserClient,
-                let syncSelfClient = ZMUser.selfUser(in: syncMOC).selfClient()
-            else {
-                return
-            }
-
-            if syncSelfClient == syncClient {
-                syncClient.fingerprint = syncClient.localFingerprint()
-                syncMOC.saveOrRollback()
-            } else {
-                if !syncClient.hasSessionWithSelfClient {
-                    syncSelfClient.missesClient(syncClient)
-                    syncSelfClient.setLocallyModifiedKeys(Set(arrayLiteral: ZMUserClientMissingKey))
-                    syncMOC.saveOrRollback()
-                }
-                else {
-                    syncClient.fingerprint = syncClient.remoteFingerprint()
-                    guard syncClient.fingerprint != nil else {
-                        zmLog.error("Cannot fetch fingerprint for client \(syncClient.sessionIdentifier!)")
-                        return
-                    }
-                    syncMOC.saveOrRollback()
-                }
-            }
-        })
-    }
-
-}
-
-// MARK: - Fetch fingerprint
-
-extension UserClient {
-
-    func remoteFingerprint(_ proteusProvider: ProteusProviding? = nil) -> Data? {
-        guard
-            let proteusProvider = proteusProvider ?? managedObjectContext?.proteusProvider,
-            proteusProvider.canPerform,
-            let sessionID = proteusSessionID
-        else {
-            return nil
-        }
-
-        var fingerprintData: Data?
-
-        proteusProvider.perform(
-            withProteusService: { proteusService in
-                do {
-                    let fingerprint = try proteusService.remoteFingerprint(forSession: sessionID)
-                    fingerprintData = fingerprint.utf8Data
-                } catch {
-                    zmLog.error("Cannot fetch remote fingerprint for \(self)")
-                }
-            },
-            withKeyStore: { keyStore in
-                keyStore.encryptionContext.perform { sessionsDirectory in
-                    fingerprintData = sessionsDirectory.fingerprint(for: sessionID.mapToEncryptionSessionID())
-                }
-            }
-        )
-
-        return fingerprintData
-    }
-
-    func localFingerprint(_ proteusProvider: ProteusProviding? = nil) -> Data? {
-        guard
-            let proteusProvider = proteusProvider ?? managedObjectContext?.proteusProvider,
-            proteusProvider.canPerform
-        else {
-            return nil
-        }
-
-        var fingerprintData: Data?
-
-        proteusProvider.perform(
-            withProteusService: { proteusService in
-                do {
-                    let fingerprint = try proteusService.localFingerprint()
-                    fingerprintData = fingerprint.utf8Data
-                } catch {
-                    zmLog.error("Cannot fetch local fingerprint for \(self)")
-                }
-            },
-            withKeyStore: { keyStore in
-                keyStore.encryptionContext.perform { sessionsDirectory in
-                    fingerprintData = sessionsDirectory.localFingerprint
-                }
-            }
-        )
-
-        return fingerprintData
-    }
-
 }
 
 // MARK: - Corrupted Session
@@ -777,8 +638,6 @@ public extension UserClient {
             let proteusSessionId = ProteusSessionID(domain: sessionId.domain, userID: sessionId.userId, clientID: sessionId.clientId)
 
             try proteusService.establishSession(id: proteusSessionId, fromPrekey: preKey)
-            let fingerprint = try proteusService.remoteFingerprint(forSession: proteusSessionId)
-            client.fingerprint = fingerprint.utf8Data
             return true
         } catch {
             zmLog.error("Cannot create session for prekey \(preKey): \(String(describing: error))")
@@ -811,7 +670,6 @@ public extension UserClient {
         keystore.encryptionContext.perform { (sessionsDirectory) in
             do {
                 try sessionsDirectory.createClientSession(sessionId, base64PreKeyString: preKey)
-                client.fingerprint = sessionsDirectory.fingerprint(for: sessionId)
                 didEstablishSession = true
             } catch {
                 zmLog.error("Cannot create session for prekey \(preKey)")
