@@ -161,7 +161,7 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
             for conversation in conversations {
                 do {
                     guard let groupID = conversation.mlsGroupID else {
-                        return logger.warn("missing `groupID`")
+                        return logger.warn("can't migrate conversation to mls: missing `groupID`")
                     }
 
                     guard let mlsService = context.mlsService else {
