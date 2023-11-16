@@ -197,24 +197,25 @@ actor EventProcessor: UpdateEventProcessor {
 
             let date = Date()
             let fetchRequest = await prefetchRequest(updateEvents: decryptedUpdateEvents)
-            let prefetchResult = syncContext.executeFetchRequestBatchOrAssert(fetchRequest)
+            let prefetchResult = await syncContext.perform { self.syncContext.executeFetchRequestBatchOrAssert(fetchRequest) }
 
             let eventDescriptions = decryptedUpdateEvents.map {
                 ZMUpdateEvent.eventTypeString(for: $0.type) ?? "unknown"
             }
+            let eventConsumers = await self.eventConsumers
 
             WireLogger.updateEvent.info("consuming events: \(eventDescriptions)")
 
             Logging.eventProcessing.info("Consuming: [\n\(decryptedUpdateEvents.map({ "\tevent: \(ZMUpdateEvent.eventTypeString(for: $0.type) ?? "Unknown")" }).joined(separator: "\n"))\n]")
 
-            for event in decryptedUpdateEvents {
-                for eventConsumer in await self.eventConsumers {
-                    // TODO: [jacob] EventConsumer.processEvents should become async
-                    eventConsumer.processEvents([event], liveEvents: true, prefetchResult: prefetchResult)
-                }
-                self.eventProcessingTracker.registerEventProcessed()
-            }
             await syncContext.perform {
+                for event in decryptedUpdateEvents {
+                    for eventConsumer in eventConsumers {
+                        // TODO: [jacob] EventConsumer.processEvents should become async
+                        eventConsumer.processEvents([event], liveEvents: true, prefetchResult: prefetchResult)
+                    }
+                    self.eventProcessingTracker.registerEventProcessed()
+                }
                 ZMConversation.calculateLastUnreadMessages(in: self.syncContext)
                 self.syncContext.saveOrRollback()
             }
