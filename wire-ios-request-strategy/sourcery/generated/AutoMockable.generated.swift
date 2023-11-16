@@ -107,6 +107,29 @@ public class MockMessageAPI: MessageAPI {
         }
     }
 
+    // MARK: - sendMLSMessage
+
+    public var sendMLSMessageMessageConversationIDExpirationDate_Invocations: [(encryptedMessage: Data, conversationID: QualifiedID, expirationDate: Date?)] = []
+    public var sendMLSMessageMessageConversationIDExpirationDate_MockError: Error?
+    public var sendMLSMessageMessageConversationIDExpirationDate_MockMethod: ((Data, QualifiedID, Date?) async throws -> (Payload.MLSMessageSendingStatus, ZMTransportResponse))?
+    public var sendMLSMessageMessageConversationIDExpirationDate_MockValue: (Payload.MLSMessageSendingStatus, ZMTransportResponse)?
+
+    public func sendMLSMessage(message encryptedMessage: Data, conversationID: QualifiedID, expirationDate: Date?) async throws -> (Payload.MLSMessageSendingStatus, ZMTransportResponse) {
+        sendMLSMessageMessageConversationIDExpirationDate_Invocations.append((encryptedMessage: encryptedMessage, conversationID: conversationID, expirationDate: expirationDate))
+
+        if let error = sendMLSMessageMessageConversationIDExpirationDate_MockError {
+            throw error
+        }
+
+        if let mock = sendMLSMessageMessageConversationIDExpirationDate_MockMethod {
+            return try await mock(encryptedMessage, conversationID, expirationDate)
+        } else if let mock = sendMLSMessageMessageConversationIDExpirationDate_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `sendMLSMessageMessageConversationIDExpirationDate`")
+        }
+    }
+
 }
 public class MockMessageDependencyResolverInterface: MessageDependencyResolverInterface {
 

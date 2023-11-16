@@ -23,6 +23,8 @@ public protocol MessageAPI {
 
     func sendProteusMessage(message: any ProteusMessage, conversationID: QualifiedID) async throws -> (Payload.MessageSendingStatus, ZMTransportResponse)
 
+    func sendMLSMessage(message encryptedMessage: Data, conversationID: QualifiedID, expirationDate: Date?) async throws -> (Payload.MLSMessageSendingStatus, ZMTransportResponse)
+
 }
 
 extension Payload.ClientListByUserID {
@@ -62,8 +64,9 @@ class MessageAPIV0: MessageAPI {
     ) async throws -> (Payload.MessageSendingStatus, ZMTransportResponse) {
         let path = "/" + ["conversations", conversationID.uuid.transportString(), "otr", "messages"].joined(separator: "/")
 
+        // FIXME: [jacob] move encryption out of the API WPB-5499
         guard let encryptedPayload = await message.context.perform({
-            message.encryptForTransportQualified()
+            message.encryptForTransport()
         }) else {
             WireLogger.messaging.error("failed to encrypt message for transport")
             throw NetworkError.errorEncodingRequest
@@ -97,6 +100,10 @@ class MessageAPIV0: MessageAPI {
             let payload: Payload.MessageSendingStatusV0 = try mapResponse(response)
             return (payload.toMessageSendingStatus(domain: ""), response)
         }
+    }
+
+    func sendMLSMessage(message encryptedMessage: Data, conversationID: QualifiedID, expirationDate: Date?) async throws -> (Payload.MLSMessageSendingStatus, ZMTransportResponse) {
+        throw NetworkError.endpointNotAvailable
     }
 }
 
@@ -191,5 +198,26 @@ class MessageAPIV4: MessageAPIV3 {
 class MessageAPIV5: MessageAPIV4 {
     override var apiVersion: APIVersion {
         .v5
+    }
+
+    override func sendMLSMessage(message encryptedMessage: Data, conversationID: QualifiedID, expirationDate: Date?) async throws -> (Payload.MLSMessageSendingStatus, ZMTransportResponse) {
+
+        let request = ZMTransportRequest(
+            path: "/mls/messages",
+            method: .methodPOST,
+            binaryData: encryptedMessage,
+            type: "message/mls",
+            contentDisposition: nil,
+            apiVersion: apiVersion.rawValue
+        )
+
+        if let expirationDate {
+            request.expire(at: expirationDate)
+        }
+
+        let response = await httpClient.send(request)
+        let payload: Payload.MLSMessageSendingStatus = try mapResponse(response)
+
+        return (payload, response)
     }
 }
