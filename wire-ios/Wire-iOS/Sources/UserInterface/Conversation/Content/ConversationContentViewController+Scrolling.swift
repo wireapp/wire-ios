@@ -67,7 +67,10 @@ extension ConversationContentViewController {
     ///   patterns, such as button taps.
     @objc
     func scrollToBottom() {
-        guard !isScrolledToBottom else { return }
+        guard !isScrolledToBottom else {
+            print("scrollToBottom was called, but we're already at the bottom. No action taken.")
+            return
+        }
 
         dataSource.loadMessages()
 
