@@ -87,7 +87,7 @@ final class LegalHoldDetailsViewControllerSnapshotTests: BaseSnapshotTestCase {
         }
 
         // THEN
-        verifyInAllColorSchemes(createSut: sut)
+        verifyInAllColorSchemes(createSut: createSut)
     }
 
 }

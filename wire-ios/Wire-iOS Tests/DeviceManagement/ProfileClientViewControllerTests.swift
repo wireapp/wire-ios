@@ -57,14 +57,12 @@ final class ProfileClientViewControllerTests: ZMSnapshotTestCase {
         verify(view: sut.view, tolerance: 0.1)
     }
 
-    func verifyInDarkMode() {
+    func setupProfileClientViewController(userInterfaceStyle: UIUserInterfaceStyle) {
         sut = ProfileClientViewController(client: client, userSession: userSession)
-        sut.overrideUserInterfaceStyle = .dark
+        sut.overrideUserInterfaceStyle = userInterfaceStyle
         sut.spinner.stopAnimating()
         sut.spinner.isHidden = true
         sut.showBackButton = false
-
-        verify(view: sut.view, tolerance: 0.1)
     }
 
     func testTestForLightTheme() {

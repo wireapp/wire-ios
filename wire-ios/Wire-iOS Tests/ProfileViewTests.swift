@@ -91,8 +91,6 @@ final class ProfileViewTests: BaseSnapshotTestCase {
         verify(matching: sut.view)
     }
 
-    // MARK: - Helpers
-
     func verifyProfile(
         options: ProfileHeaderViewController.Options,
         availability: AvailabilityKind = .available,
@@ -105,13 +103,22 @@ final class ProfileViewTests: BaseSnapshotTestCase {
         selfUser.handle = "browncow"
         selfUser.availability = availability
 
+        let sut = setupProfileHeaderViewController(user: selfUser, viewer: selfUser, options: options)
+
+        verify(matching: sut.view, file: file, testName: testName, line: line)
+    }
+
+    func setupProfileHeaderViewController(
+        user: UserType,
+        viewer: UserType,
+        options: ProfileHeaderViewController.Options = []
+    ) -> ProfileHeaderViewController {
         let sut = ProfileHeaderViewController(
-            user: selfUser,
-            viewer: selfUser,
+            user: user,
+            viewer: viewer,
             options: options,
             userSession: userSession
         )
-
         sut.view.frame.size = sut.view.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
         sut.view.backgroundColor = SemanticColors.View.backgroundDefault
         sut.overrideUserInterfaceStyle = .dark
