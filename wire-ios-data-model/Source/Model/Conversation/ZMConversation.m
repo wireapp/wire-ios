@@ -78,6 +78,8 @@ NSString *const ZMConversationDomainKey = @"domain";
 NSString *const ZMConversationIsPendingMetadataRefreshKey = @"isPendingMetadataRefresh";
 NSString *const ZMConversationIsDeletedRemotelyKey = @"isDeletedRemotely";
 NSString *const ZMConversationIsForcedReadOnlyKey = @"isForcedReadOnly";
+NSString *const ZMConversationCipherSuite = @"cipherSuite";
+NSString *const ZMConversationEpochTimestamp = @"epochTimestamp";
 
 static NSString *const ConnectedUserKey = @"connectedUser";
 static NSString *const CreatorKey = @"creator";
