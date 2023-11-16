@@ -17,12 +17,19 @@
 //
 
 import Foundation
+import WireDataModel
 
 final class ConversationEventPayloadProcessor {
 
     enum Source {
         case slowSync
         case eventStream
+    }
+
+    private let removeLocalConversation: RemoveLocalConversationUseCaseProtocol
+
+    init(removeLocalConversation: RemoveLocalConversationUseCaseProtocol? = nil) {
+        self.removeLocalConversation = removeLocalConversation ?? RemoveLocalConversationUseCase()
     }
 
     // MARK: - Conversation creation
@@ -84,7 +91,10 @@ final class ConversationEventPayloadProcessor {
             return
         }
 
-        conversation.isDeletedRemotely = true
+        removeLocalConversation.invoke(
+            with: conversation,
+            syncContext: context
+        )
     }
 
     // MARK: - Member leave

@@ -23,16 +23,27 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
 
     var sut: ConversationEventPayloadProcessor!
     var mockMLSService: MockMLSService!
+    var mockRemoveLocalConversation: MockLocalConversationRemovalUseCase!
 
     override func setUp() {
         super.setUp()
-        sut = ConversationEventPayloadProcessor()
+
         mockMLSService = MockMLSService()
+        mockRemoveLocalConversation = MockLocalConversationRemovalUseCase()
+
+        sut = ConversationEventPayloadProcessor(
+            removeLocalConversation: mockRemoveLocalConversation
+        )
+
+        syncMOC.performAndWait {
+            syncMOC.mlsService = mockMLSService
+        }
     }
 
     override func tearDown() {
         sut = nil
         mockMLSService = nil
+        mockRemoveLocalConversation = nil
         BackendInfo.isFederationEnabled = false
         super.tearDown()
     }
@@ -919,7 +930,6 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
 
     func internalTest_UpdateOrCreate_withMLSSelfGroupEpoch(epoch: UInt?) {
         syncMOC.performAndWait {
-            syncMOC.mlsService = mockMLSService
 
             MLSEventProcessor.setMock(MockMLSEventProcessor())
             let domain = "example.com"
@@ -936,6 +946,33 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
 
             // when
             self.sut.updateOrCreateConversation(from: conversation, in: syncMOC)
+        }
+    }
+
+    // MARK: - Conversation Delete
+
+    func testProcessingConversationDelete_CallsLocalConversationRemovalUseCase() {
+        syncMOC.performAndWait {
+            // Given
+            let conversationDeleted = Payload.UpdateConversationDeleted()
+            let payload = Payload.ConversationEvent(
+                id: nil,
+                qualifiedID: groupConversation.qualifiedID,
+                from: nil,
+                qualifiedFrom: nil,
+                timestamp: nil,
+                type: nil,
+                data: conversationDeleted
+            )
+
+            // When
+            sut.processPayload(payload, in: syncMOC)
+
+            // Then
+            XCTAssertEqual(
+                mockRemoveLocalConversation.invokeCalls,
+                [groupConversation]
+            )
         }
     }
 
