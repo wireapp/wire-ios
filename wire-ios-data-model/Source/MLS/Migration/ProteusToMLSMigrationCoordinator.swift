@@ -182,7 +182,6 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
 
         } catch {
             logger.warn("Can't fetch conversations in mixed protocol")
-
         }
     }
 
