@@ -41,12 +41,11 @@ final class ConversationContentViewController: UIViewController, PopoverPresente
     let scrollToBottomButtonBottomMargin: CGFloat = -10
     let scrollToBottomButtonWidth: CGFloat = 44
     let scrollToBottomButtonHeight: CGFloat = 44
-    let scrollToBottonButtonCornerRadius: CGFloat = 22
 
     /// A button that, when tapped, scrolls the conversation view to the latest messages.
     /// It appears when the user has scrolled up past a certain point in the conversation.
     lazy var scrollToBottomButton: Button = {
-        let button = Button(style: .scrollToBottomButtonStyle, cornerRadius: scrollToBottonButtonCornerRadius)
+        let button = Button(style: .scrollToBottomButtonStyle, cornerRadius: scrollToBottomButtonHeight / 2)
         let image = Asset.Images.downArrow.image.withTintColor(SemanticColors.Icon.foregroundDefaultWhite)
 
         button.setImage(image, for: .normal)
