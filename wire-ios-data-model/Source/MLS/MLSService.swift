@@ -1687,30 +1687,35 @@ public final class MLSService: MLSServiceInterface {
 
         let groupConversations = try ZMConversation.fetchAllTeamGroupConversations(messageProtocol: .proteus, in: context)
         for groupConversation in groupConversations {
-            guard let domain = groupConversation.domain else {
-                assertionFailure("the group conversation has no domain set")
+            guard let qualifiedID = groupConversation.qualifiedID else {
+                assertionFailure("the group conversation has no `qualifiedID` set")
                 continue
             }
-            guard let conversationID = groupConversation.remoteIdentifier else {
-                assertionFailure("the group conversation has no remoteIdentifier set")
+            guard let mlsGroupID = groupConversation.mlsGroupID else {
+                assertionFailure("the group conversation has no `mlsGroupID` set")
                 continue
             }
 
             // update message protocol to `mixed`
             var updateConversationProtocolAction = UpdateConversationProtocolAction(
-                domain: domain,
-                conversationID: conversationID,
+                qualifiedID: qualifiedID,
                 messageProtocol: .mixed
             )
             try await updateConversationProtocolAction.perform(in: context.notificationContext)
 
             // sync the group conversation
-            let syncConversationAction = SyncConversationAction(qualifiedID: groupConversation.qualifiedID)
+            var syncConversationAction = SyncConversationAction(qualifiedID: qualifiedID)
+            try await syncConversationAction.perform(in: context.notificationContext)
+
+            // create MLS group and update keying material
+            try createGroup(for: mlsGroupID)
+            try await updateKeyMaterial(for: mlsGroupID)
+
+            // send commit bundle
+            try await actionsProvider.sendCommitBundle(<#T##bundle: Data##Data#>, in: context.notificationContext)
         }
 
         // func startMigration(_ group: ZMConversation()) async
-        //      try await push protocol to mixed (if you process the payload, the conversation is synced)
-        //      try await SyncConversationAction(group.qualifiedID).perform()
         //      try createGroup(group.mlsGroupID)
         //          if staleMessage, call wipeGroup
         //          if success, call addMembers
