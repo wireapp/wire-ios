@@ -101,4 +101,13 @@ public struct ButtonStyle {
                                                          background: ButtonColors.backgroundInputBarItemHighlighted,
                                                          title: ButtonColors.textInputBarItemHighlighted,
                                                          border: ButtonColors.borderInputBarItemHighlighted))
+
+    static let scrollToBottomButtonStyle = ButtonStyle(normalStateColors: (
+                                                        background: ButtonColors.backgroundScrollToBottonEnabled,
+                                                        title: SemanticColors.Icon.foregroundDefaultWhite,
+                                                         border: nil),
+                                                        highlightedStateColors: (
+                                                        background: UIColor.accent(),
+                                                         title: SemanticColors.Icon.foregroundDefaultWhite,
+                                                         border: nil))
 }
