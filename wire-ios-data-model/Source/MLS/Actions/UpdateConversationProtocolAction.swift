@@ -22,20 +22,17 @@ public struct UpdateConversationProtocolAction: EntityAction {
 
     // MARK: - Properties
 
-    public var domain: String
-    public var conversationID: UUID
+    public var qualifiedID: QualifiedID
     public var messageProtocol: MessageProtocol
     public var resultHandler: ResultHandler?
 
     // MARK: - Life cycle
 
     public init(
-        domain: String,
-        conversationID: UUID,
+        qualifiedID: QualifiedID,
         messageProtocol: MessageProtocol
     ) {
-        self.domain = domain
-        self.conversationID = conversationID
+        self.qualifiedID = qualifiedID
         self.messageProtocol = messageProtocol
     }
 

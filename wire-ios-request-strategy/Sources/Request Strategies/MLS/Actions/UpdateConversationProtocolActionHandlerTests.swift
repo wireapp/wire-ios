@@ -24,9 +24,9 @@ final class UpdateConversationProtocolActionHandlerTests: ActionHandlerTestBase<
     override func setUp() {
         super.setUp()
 
-        let domain = "example.com"
-        let conversationID = UUID(uuidString: "b906579d-60dd-4510-a3ca-14b2ec225f4a")!
-        action = UpdateConversationProtocolAction(domain: domain, conversationID: conversationID, messageProtocol: .mls)
+        let uuid = UUID(uuidString: "b906579d-60dd-4510-a3ca-14b2ec225f4a")!
+        let qualifiedID = QualifiedID(uuid: uuid, domain: "example.com")
+        action = UpdateConversationProtocolAction(qualifiedID: qualifiedID, messageProtocol: .mls)
     }
 
     // MARK: - Request generation
