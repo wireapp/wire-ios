@@ -76,6 +76,72 @@ class Payload_ConversationTests: MessagingTestBase {
         XCTAssertEqual(conversation?.legacyAccessRole, nil)
     }
 
+    func test_Conversation_DecodesCipherSuite_APIVersionV4() throws {
+        // GIVEN
+        let payload = [
+            "cipherSuite": 0
+        ]
+
+        let data = try JSONSerialization.data(withJSONObject: payload, options: [])
+
+        // WHEN
+        let conversation = Payload.Conversation(data, apiVersion: .v4)
+
+        // THEN
+        XCTAssertNotNil(conversation)
+        XCTAssertNil(conversation?.cipherSuite)
+    }
+
+    func test_Conversation_DecodesCipherSuite_APIVersionV5() throws {
+        // GIVEN
+        let payload = [
+            "cipher_suite": 0
+        ]
+
+        let data = try JSONSerialization.data(withJSONObject: payload, options: [])
+
+        // WHEN
+        let conversation = Payload.Conversation(data, apiVersion: .v5)
+
+        // THEN
+        XCTAssertNotNil(conversation)
+        XCTAssertEqual(conversation?.cipherSuite, 0)
+    }
+
+    func test_Conversation_DecodesEpochTimestamp_APIVersionV4() throws {
+        // GIVEN
+        let payload = [
+            "epoch_timestamp": "2021-05-12T10:52:02.671Z"
+        ]
+
+        let data = try JSONSerialization.data(withJSONObject: payload, options: [])
+
+        // WHEN
+        let conversation = Payload.Conversation(data, apiVersion: .v4)
+
+        // THEN
+        XCTAssertNotNil(conversation)
+        XCTAssertNil(conversation?.epochTimestamp)
+    }
+
+    func test_Conversation_DecodesEpochTimestamp_APIVersionV5() throws {
+        // GIVEN
+        let payload = [
+            "epoch_timestamp": "2021-05-12T10:52:02.671Z"
+        ]
+
+        let data = try JSONSerialization.data(withJSONObject: payload, options: [])
+
+        // WHEN
+        let conversation = Payload.Conversation(data, apiVersion: .v5)
+
+        // THEN
+        XCTAssertNotNil(conversation)
+        XCTAssertEqual(conversation?.epochTimestamp, Date(timeIntervalSince1970: 1620816722.671))
+    }
+
+    // MARK: -
+
     func test_NewConversation_EncodesLegacyAccessRoles_APIVersionV2() throws {
         // GIVEN
         let accessRoles = [
@@ -120,5 +186,4 @@ class Payload_ConversationTests: MessagingTestBase {
         // THEN
         XCTAssertEqual(payloadAccessRoles, accessRoles)
     }
-
 }

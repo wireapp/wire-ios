@@ -143,6 +143,7 @@ extension Payload {
             case id
             case type
             case creator
+            case cipherSuite = "cipher_suite"
             case access
             case accessRole = "access_role"
             case accessRoleV2 = "access_role_v2"
@@ -156,7 +157,7 @@ extension Payload {
             case messageProtocol = "protocol"
             case mlsGroupID = "group_id"
             case epoch
-
+            case epochTimestamp = "epoch_timestamp"
         }
 
         static var eventType: ZMUpdateEventType {
@@ -167,6 +168,7 @@ extension Payload {
         var id: UUID?
         var type: Int?
         var creator: UUID?
+        var cipherSuite: UInt16?
         var access: [String]?
         var accessRoles: [String]?
         var legacyAccessRole: String?
@@ -180,11 +182,13 @@ extension Payload {
         var messageProtocol: String?
         var mlsGroupID: String?
         var epoch: UInt?
+        var epochTimestamp: Date?
 
         init(qualifiedID: QualifiedID? = nil,
              id: UUID?  = nil,
              type: Int? = nil,
              creator: UUID? = nil,
+             cipherSuite: UInt16? = nil,
              access: [String]? = nil,
              legacyAccessRole: String? = nil,
              accessRoles: [String]? = nil,
@@ -197,12 +201,14 @@ extension Payload {
              readReceiptMode: Int? = nil,
              messageProtocol: String? = nil,
              mlsGroupID: String? = nil,
-             epoch: UInt? = nil
+             epoch: UInt? = nil,
+             epochTimestamp: Date? = nil
         ) {
             self.qualifiedID = qualifiedID
             self.id = id
             self.type = type
             self.creator = creator
+            self.cipherSuite = cipherSuite
             self.access = access
             self.legacyAccessRole = legacyAccessRole
             self.accessRoles = accessRoles
@@ -216,6 +222,7 @@ extension Payload {
             self.messageProtocol = messageProtocol
             self.mlsGroupID = mlsGroupID
             self.epoch = epoch
+            self.epochTimestamp = epochTimestamp
         }
 
         init(from decoder: Decoder, apiVersion: APIVersion) throws {
@@ -256,8 +263,16 @@ extension Payload {
                     accessRoles = try container.decodeIfPresent([String].self, forKey: .accessRoleV2)
                 }
             }
-        }
 
+            switch apiVersion {
+            case .v0, .v1, .v2, .v3, .v4:
+                cipherSuite = nil
+                epochTimestamp = nil
+            case .v5:
+                cipherSuite = try container.decodeIfPresent(UInt16.self, forKey: .cipherSuite)
+                epochTimestamp = try container.decodeIfPresent(Date.self, forKey: .epochTimestamp)
+            }
+        }
     }
 
     struct ConversationList: Codable {
