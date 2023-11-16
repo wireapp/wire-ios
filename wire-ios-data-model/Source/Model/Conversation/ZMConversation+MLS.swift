@@ -239,7 +239,7 @@ private extension NSPredicate {
             format: "%K == %i && %K != nil",
             argumentArray: [
                 ZMConversation.messageProtocolKey,
-                MessageProtocol.mls.rawValue,
+                MessageProtocol.mls.int16Value,
                 ZMConversation.mlsGroupIdKey
             ]
         )
@@ -260,7 +260,7 @@ private extension NSPredicate {
             format: "%K == %i",
             argumentArray: [
                 ZMConversation.messageProtocolKey,
-                messageProtocol.rawValue
+                messageProtocol.int16Value
             ]
         )
     }
