@@ -106,11 +106,15 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             context: syncMOC,
             apiProvider: apiProvider)
         let messageDependencyResolver = MessageDependencyResolver(context: syncMOC)
+        let quickSyncObserver = QuickSyncObserver(context: syncMOC,
+                                                  applicationStatus: applicationStatusDirectory,
+                                                  notificationContext: syncMOC.notificationContext)
         let messageSender = MessageSender(
             apiProvider: apiProvider,
             clientRegistrationDelegate: applicationStatusDirectory.clientRegistrationStatus,
             sessionEstablisher: sessionEstablisher,
             messageDependencyResolver: messageDependencyResolver,
+            quickSyncObserver: quickSyncObserver,
             context: syncMOC)
         let strategies: [Any] = [
             // TODO: [John] use flag here
