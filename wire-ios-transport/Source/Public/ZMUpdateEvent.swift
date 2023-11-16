@@ -79,7 +79,7 @@ import WireUtilities
     case federationDelete = 43
     case federationConnectionRemoved = 44
 
-    // Current max value: conversationMLSMessageAdd = 45
+    // Current max value: conversationProtocolUpdate = 45
 }
 
 extension ZMUpdateEventType {
