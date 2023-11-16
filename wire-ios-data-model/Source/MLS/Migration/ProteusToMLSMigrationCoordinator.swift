@@ -147,10 +147,9 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
         return .canStart
     }
 
-    /// The migrateOrJoinGroupConversations method is responsible for processing a collection of team group conversations within a given context.
-    /// It evaluates each conversation to determine if it needs to be finalized or if it should join a group.
-    /// This method is crucial for maintaining the synchronization of group conversations,
-    ///  in scenarios where conversations may need to be migrated or newly integrated into groups.
+    /// This method is responsible for migrating all `mixed` group conversations to `mls`.
+    /// It evaluates each conversation to determine if the migration needs to be finalized (i.e: updating the protocol from `mixed` to `mls`) 
+    /// or if it should first join the corresponding MLS group.
 
     func migrateOrJoinGroupConversations() async {
         do {
