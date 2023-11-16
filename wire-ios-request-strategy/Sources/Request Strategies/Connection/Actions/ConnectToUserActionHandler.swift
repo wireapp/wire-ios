@@ -46,7 +46,7 @@ class ConnectToUserActionHandler: ActionHandler<ConnectToUserAction> {
         }
 
         return ZMTransportRequest(path: "/connections",
-                                  method: .methodPOST,
+                                  method: .post,
                                   payload: payloadAsString as ZMTransportData,
                                   apiVersion: apiVersion.rawValue)
 
@@ -62,7 +62,7 @@ class ConnectToUserActionHandler: ActionHandler<ConnectToUserAction> {
         }
 
         return ZMTransportRequest(path: "/connections/\(domain)/\(action.userID.transportString())",
-                                  method: .methodPOST,
+                                  method: .post,
                                   payload: nil,
                                   apiVersion: apiVersion.rawValue)
     }

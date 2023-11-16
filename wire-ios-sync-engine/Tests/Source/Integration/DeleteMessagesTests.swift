@@ -45,7 +45,7 @@ class DeleteMessagesTests: ConversationTestsBase {
         let requests = mockTransportSession.receivedRequests()
         XCTAssertEqual(requests.count, 1)
         guard let request = requests.first else { return XCTFail() }
-        XCTAssertEqual(request.method, ZMTransportRequestMethod.methodPOST)
+        XCTAssertEqual(request.method, ZMTransportRequestMethod.post)
         XCTAssertEqual(request.path, "/conversations/\(selfToUser1Conversation.identifier)/otr/messages")
         XCTAssertTrue(message.hasBeenDeleted)
     }
@@ -175,7 +175,7 @@ class DeleteMessagesTests: ConversationTestsBase {
         XCTAssertEqual(requests.count, 5)
         XCTAssertEqual(requestCount, 4)
         guard let request = requests.last else { return XCTFail() }
-        XCTAssertEqual(request.method, ZMTransportRequestMethod.methodPOST)
+        XCTAssertEqual(request.method, ZMTransportRequestMethod.post)
         XCTAssertEqual(request.path, "/conversations/\(selfToUser1Conversation.identifier)/otr/messages")
         XCTAssertTrue(message.hasBeenDeleted)
     }

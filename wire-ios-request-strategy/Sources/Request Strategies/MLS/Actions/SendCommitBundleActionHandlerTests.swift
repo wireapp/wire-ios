@@ -33,7 +33,7 @@ class SendCommitBundleActionHandlerTests: ActionHandlerTestBase<SendCommitBundle
         try test_itGeneratesARequest(
             for: action,
             expectedPath: "/v5/mls/commit-bundles",
-            expectedMethod: .methodPOST,
+            expectedMethod: .post,
             expectedData: commitBundle,
             expectedContentType: "message/mls",
             apiVersion: .v5

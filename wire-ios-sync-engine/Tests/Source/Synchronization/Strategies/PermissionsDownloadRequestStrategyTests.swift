@@ -73,7 +73,7 @@ class PermissionsDownloadRequestStrategyTests: MessagingTest {
 
             // then
             guard let request = self.sut.nextRequest(for: .v0) else { return XCTFail("No request generated") }
-            XCTAssertEqual(request.method, .methodGET)
+            XCTAssertEqual(request.method, .get)
             XCTAssertEqual(request.path, "/teams/\(teamId.transportString())/members/\(userId.transportString())")
         }
     }
