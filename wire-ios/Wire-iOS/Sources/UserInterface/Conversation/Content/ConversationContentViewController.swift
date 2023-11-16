@@ -37,6 +37,24 @@ final class ConversationContentViewController: UIViewController, PopoverPresente
         }
     }
 
+    let scrollToBottomButtonTrailingMargin: CGFloat = -10
+    let scrollToBottomButtonBottomMargin: CGFloat = -10
+    let scrollToBottomButtonWidth: CGFloat = 44
+    let scrollToBottomButtonHeight: CGFloat = 44
+    let scrollToBottonButtonCornerRadius: CGFloat = 22
+
+    lazy var scrollToBottomButton: Button = {
+        let button = Button(style: .scrollToBottomButtonStyle, cornerRadius: scrollToBottonButtonCornerRadius)
+        let image = Asset.Images.downArrow.image.withTintColor(SemanticColors.Icon.foregroundDefaultWhite)
+
+        button.setImage(image, for: .normal)
+        button.setImage(image, for: .highlighted)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.addTarget(self, action: #selector(handleScrollToBottomTapped), for: .touchUpInside)
+
+        return button
+    }()
+
     let tableView: UpsideDownTableView = UpsideDownTableView(frame: .zero, style: .plain)
     let bottomContainer: UIView = UIView(frame: .zero)
     var searchQueries: [String]? {
@@ -69,10 +87,12 @@ final class ConversationContentViewController: UIViewController, PopoverPresente
     private weak var messageVisibleOnLoad: ZMConversationMessage?
     private var token: NSObjectProtocol?
 
-    init(conversation: ZMConversation,
-         message: ZMConversationMessage? = nil,
-         mediaPlaybackManager: MediaPlaybackManager?,
-         session: ZMUserSessionInterface) {
+    init(
+        conversation: ZMConversation,
+        message: ZMConversationMessage? = nil,
+        mediaPlaybackManager: MediaPlaybackManager?,
+        session: ZMUserSessionInterface
+    ) {
         messagePresenter = MessagePresenter(mediaPlaybackManager: mediaPlaybackManager)
         self.session = session
         self.conversation = conversation
@@ -118,18 +138,32 @@ final class ConversationContentViewController: UIViewController, PopoverPresente
 
         view.addSubview(tableView)
 
+        view.addSubview(scrollToBottomButton)
+
         bottomContainer.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(bottomContainer)
 
-        NSLayoutConstraint.activate([
-            tableView.topAnchor.constraint(equalTo: view.topAnchor),
-            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            bottomContainer.topAnchor.constraint(equalTo: tableView.bottomAnchor),
-            bottomContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            bottomContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            bottomContainer.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-        ])
+        NSLayoutConstraint.activate(
+            [
+                tableView.topAnchor.constraint(equalTo: view.topAnchor),
+                tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+                tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+                bottomContainer.topAnchor.constraint(equalTo: tableView.bottomAnchor),
+                bottomContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+                bottomContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+                bottomContainer.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+                scrollToBottomButton.trailingAnchor.constraint(
+                    equalTo: view.safeAreaLayoutGuide.trailingAnchor,
+                    constant: scrollToBottomButtonTrailingMargin
+                ),
+                scrollToBottomButton.bottomAnchor.constraint(
+                    equalTo: view.safeAreaLayoutGuide.bottomAnchor,
+                    constant: scrollToBottomButtonBottomMargin
+                ),
+                scrollToBottomButton.widthAnchor.constraint(equalToConstant: scrollToBottomButtonWidth),
+                scrollToBottomButton.heightAnchor.constraint(equalToConstant: scrollToBottomButtonHeight)
+            ]
+        )
         let heightCollapsingConstraint = bottomContainer.heightAnchor.constraint(equalToConstant: 0)
         heightCollapsingConstraint.priority = .defaultHigh
         heightCollapsingConstraint.isActive = true
@@ -137,6 +171,7 @@ final class ConversationContentViewController: UIViewController, PopoverPresente
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        tableView.delegate = self
 
         tableView.rowHeight = UITableView.automaticDimension
         tableView.estimatedRowHeight = 80
@@ -162,6 +197,11 @@ final class ConversationContentViewController: UIViewController, PopoverPresente
     private func applicationDidBecomeActive(_ notification: Notification) {
         dataSource.resetSectionControllers()
         tableView.reloadData()
+    }
+
+    @objc
+    private func handleScrollToBottomTapped() {
+        scrollToBottom()
     }
 
     @objc
