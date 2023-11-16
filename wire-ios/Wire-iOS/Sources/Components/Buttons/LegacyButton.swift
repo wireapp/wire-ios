@@ -37,6 +37,14 @@ class Button: LegacyButton {
         applyStyle(style)
     }
 
+    convenience init(style: ButtonStyle, cornerRadius: CGFloat = 0) {
+        self.init()
+        self.style = style
+        layer.cornerRadius = cornerRadius
+
+        applyStyle(style)
+    }
+
     override var isHighlighted: Bool {
         didSet {
             guard let style = style else { return }
