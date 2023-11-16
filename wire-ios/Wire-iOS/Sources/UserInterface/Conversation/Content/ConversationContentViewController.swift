@@ -50,6 +50,10 @@ final class ConversationContentViewController: UIViewController, PopoverPresente
         button.setImage(image, for: .normal)
         button.setImage(image, for: .highlighted)
         button.translatesAutoresizingMaskIntoConstraints = false
+
+        button.accessibilityLabel = L10n.Accessibility.Conversation.ScrollToBottomButton.description
+        button.accessibilityHint = L10n.Accessibility.Conversation.ScrollToBottomButton.hint
+
         button.addTarget(self, action: #selector(handleScrollToBottomTapped), for: .touchUpInside)
 
         return button
