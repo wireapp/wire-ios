@@ -73,7 +73,7 @@ class LinkPreviewUpdateRequestStrategyTests: MessagingTestBase {
     func testThatItDoesNotScheduleMessageInState_Uploaded_ForOtherUser() {
         self.syncMOC.performGroupedAndWait { _ in
             // Given
-            self.mockMessageSender.sendMessageMessage_MockValue = .success(Void())
+            self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
             let message = self.insertMessage(with: .uploaded)
             message.sender = self.otherUser
 
@@ -91,7 +91,7 @@ class LinkPreviewUpdateRequestStrategyTests: MessagingTestBase {
 
         self.syncMOC.performGroupedAndWait { _ in
             // Given
-            self.mockMessageSender.sendMessageMessage_MockValue = .success(Void())
+            self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
             let message = self.insertMessage(with: .uploaded)
 
             // When
@@ -107,7 +107,7 @@ class LinkPreviewUpdateRequestStrategyTests: MessagingTestBase {
         var message: ZMClientMessage!
         self.syncMOC.performGroupedAndWait { _ in
             // Given
-            self.mockMessageSender.sendMessageMessage_MockValue = .success(Void())
+            self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
             message = self.insertMessage(with: .uploaded)
             self.process(message)
         }
@@ -135,7 +135,7 @@ class LinkPreviewUpdateRequestStrategyTests: MessagingTestBase {
     func verifyThatItDoesNotScheduleMessageUpdate(for state: ZMLinkPreviewState, file: StaticString = #file, line: UInt = #line) {
         self.syncMOC.performGroupedAndWait { _ in
             // Given
-            self.mockMessageSender.sendMessageMessage_MockValue = .success(Void())
+            self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
             let message = self.insertMessage(with: state)
 
             // When

@@ -21,7 +21,7 @@ import Foundation
 // sourcery: AutoMockable
 public protocol MessageAPI {
 
-    func sendProteusMessage(message: any ProteusMessage, conversationID: QualifiedID) async -> Swift.Result<(Payload.MessageSendingStatus, ZMTransportResponse), NetworkError>
+    func sendProteusMessage(message: any ProteusMessage, conversationID: QualifiedID) async throws -> (Payload.MessageSendingStatus, ZMTransportResponse)
 
 }
 
@@ -59,14 +59,14 @@ class MessageAPIV0: MessageAPI {
     func sendProteusMessage(
         message: any ProteusMessage,
         conversationID: QualifiedID
-    ) async -> Swift.Result<(Payload.MessageSendingStatus, ZMTransportResponse), NetworkError> {
+    ) async throws -> (Payload.MessageSendingStatus, ZMTransportResponse) {
         let path = "/" + ["conversations", conversationID.uuid.transportString(), "otr", "messages"].joined(separator: "/")
 
         guard let encryptedPayload = await message.context.perform({
             message.encryptForTransportQualified()
         }) else {
             WireLogger.messaging.error("failed to encrypt message for transport")
-            return .failure(NetworkError.errorEncodingRequest)
+            throw NetworkError.errorEncodingRequest
         }
 
         let request = ZMTransportRequest(
@@ -90,34 +90,31 @@ class MessageAPIV0: MessageAPI {
             guard
                 let messageSendingStatus = Payload.MessageSendingStatusV0(response, decoder: .defaultDecoder)
             else {
-                return .failure(NetworkError.errorDecodingResponse(response))
+                throw NetworkError.errorDecodingResponse(response)
             }
-            return .failure(.missingClients(messageSendingStatus.toMessageSendingStatus(domain: ""), response))
+            throw NetworkError.missingClients(messageSendingStatus.toMessageSendingStatus(domain: ""), response)
         } else {
-            let result: Swift.Result<Payload.MessageSendingStatusV0, NetworkError> = mapResponse(response)
-
-            return result.map { payload in
-                (payload.toMessageSendingStatus(domain: ""), response)
-            }
+            let payload: Payload.MessageSendingStatusV0 = try mapResponse(response)
+            return (payload.toMessageSendingStatus(domain: ""), response)
         }
     }
 }
 
-func mapResponse<T: Decodable>(_ response: ZMTransportResponse) -> Swift.Result<T, NetworkError> {
+func mapResponse<T: Decodable>(_ response: ZMTransportResponse) throws -> T {
     if response.result == .success {
         guard
             let value = T(response, decoder: .defaultDecoder)
         else {
-            return .failure(NetworkError.errorDecodingResponse(response))
+            throw NetworkError.errorDecodingResponse(response)
         }
-        return .success(value)
+        return value
     } else {
         guard
             let responseFailure = Payload.ResponseFailure(response, decoder: .defaultDecoder)
         else {
-            return .failure(NetworkError.errorDecodingResponse(response))
+            throw NetworkError.errorDecodingResponse(response)
         }
-        return .failure(.invalidRequestError(responseFailure, response))
+        throw NetworkError.invalidRequestError(responseFailure, response)
     }
 }
 
@@ -132,14 +129,14 @@ class MessageAPIV1: MessageAPIV0 {
     override func sendProteusMessage(
         message: any ProteusMessage,
         conversationID: QualifiedID
-    ) async -> Swift.Result<(Payload.MessageSendingStatus, ZMTransportResponse), NetworkError> {
+    ) async throws -> (Payload.MessageSendingStatus, ZMTransportResponse) {
         let path = "/" + ["conversations", conversationID.domain, conversationID.uuid.transportString(), "proteus", "messages"].joined(separator: "/")
 
         guard let encryptedPayload = await message.context.perform({
             message.encryptForTransportQualified()
         }) else {
             WireLogger.messaging.error("failed to encrypt message for transport")
-            return .failure(NetworkError.errorEncodingRequest)
+            throw NetworkError.errorEncodingRequest
         }
 
         let request = ZMTransportRequest(
@@ -163,13 +160,12 @@ class MessageAPIV1: MessageAPIV0 {
             guard
                 let messageSendingStatus = Payload.MessageSendingStatus(response, decoder: .defaultDecoder)
             else {
-                return .failure(NetworkError.errorDecodingResponse(response))
+                throw NetworkError.errorDecodingResponse(response)
             }
-            return .failure(.missingClients(messageSendingStatus, response))
+            throw NetworkError.missingClients(messageSendingStatus, response)
         } else {
-            return mapResponse(response).map { payload in
-                (payload, response)
-            }
+            let payload: Payload.MessageSendingStatus = try mapResponse(response)
+            return (payload, response)
         }
     }
 }

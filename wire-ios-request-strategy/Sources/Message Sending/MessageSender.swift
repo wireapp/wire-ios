@@ -18,18 +18,6 @@
 
 import Foundation
 
-// FIXME: [jacob] use existing packages
-extension Swift.Result {
-    func flatMapAsync<NewSuccess>(_ transform: (Success) async -> Swift.Result<NewSuccess, Failure>) async -> Swift.Result<NewSuccess, Failure> {
-        switch self {
-        case .success(let success):
-            return await transform(success)
-        case .failure(let failure):
-            return .failure(failure)
-        }
-    }
-}
-
 public protocol HttpClient {
 
     func send(_ request: ZMTransportRequest) async -> ZMTransportResponse
@@ -60,10 +48,7 @@ public class HttpClientImpl: HttpClient {
 public enum MessageSendError: Error, Equatable {
     case messageProtocolMissing
     case unresolvedApiVersion
-    case missingSelfClient
     case messageExpired
-    case securityLevelDegraded
-    case networkError(NetworkError)
 }
 
 public typealias SendableMessage = ProteusMessage & MLSMessage
@@ -71,7 +56,7 @@ public typealias SendableMessage = ProteusMessage & MLSMessage
 // sourcery: AutoMockable
 public protocol MessageSenderInterface {
 
-    func sendMessage(message: any SendableMessage) async -> Swift.Result<Void, MessageSendError>
+    func sendMessage(message: any SendableMessage) async throws
 
 }
 
@@ -98,100 +83,74 @@ public class MessageSender: MessageSenderInterface {
     private let messageDependencyResolver: MessageDependencyResolverInterface
     private let processor = MessageSendingStatusPayloadProcessor()
 
-    public func sendMessage(message: any SendableMessage) async -> Swift.Result<Void, MessageSendError> {
+    public func sendMessage(message: any SendableMessage) async throws {
         WireLogger.messaging.debug("send message")
 
         // TODO: [jacob] we need to wait until we are "online"
 
-        return await messageDependencyResolver.waitForDependenciesToResolve(for: message)
-            .mapError { dependencyError in
-                switch dependencyError {
-                case .securityLevelDegraded:
-                    MessageSendError.securityLevelDegraded
-                }
-            }
-            .flatMapAsync { _ in
-                await attemptToSend(message: message)
-                    .map({ success in
-                        // Triggering request polling to re-evalute dependencies, other messages
-                        // might have been waiting for this message to be sent.
-                        RequestAvailableNotification.notifyNewRequestsAvailable(nil)
-                        return success
-                    })
-            }
-            .mapError { error in
-                WireLogger.messaging.debug("send message failed: \(error)")
-                return error
-            }
+        do {
+            try await messageDependencyResolver.waitForDependenciesToResolve(for: message)
+            try await attemptToSend(message: message)
+        } catch {
+            WireLogger.messaging.debug("send message failed: \(error)")
+            throw error
+        }
+
+        // Triggering request polling to re-evalute dependencies, other messages
+        // might have been waiting for this message to be sent.
+        RequestAvailableNotification.notifyNewRequestsAvailable(nil)
     }
 
-    private func attemptToSend(message: any SendableMessage) async -> Swift.Result<Void, MessageSendError> {
-        guard let apiVersion = BackendInfo.apiVersion else { return .failure(MessageSendError.unresolvedApiVersion)}
-        guard let messageProtocol = managedObjectContext.performAndWait({
-            message.conversation?.messageProtocol
-        }) else {
-            return .failure(MessageSendError.messageProtocolMissing)
+    private func attemptToSend(message: any SendableMessage) async throws {
+        let messageProtocol = await managedObjectContext.perform {message.conversation?.messageProtocol }
+
+        guard let apiVersion = BackendInfo.apiVersion else { throw MessageSendError.unresolvedApiVersion }
+        guard let messageProtocol else {
+            throw MessageSendError.messageProtocolMissing
         }
 
         return switch messageProtocol {
         case .proteus:
-            await attemptToSendWithProteus(message: message, apiVersion: apiVersion)
-
+            try await attemptToSendWithProteus(message: message, apiVersion: apiVersion)
         case .mls:
-            await attemptToSendWithMLS(message: message, apiVersion: apiVersion)
+            try await attemptToSendWithMLS(message: message, apiVersion: apiVersion)
         }
     }
 
-    private func attemptToSendWithProteus(message: any SendableMessage, apiVersion: APIVersion) async -> Swift.Result<Void, MessageSendError> {
-        guard let conversationID = managedObjectContext.performAndWait({
+    private func attemptToSendWithProteus(message: any SendableMessage, apiVersion: APIVersion) async throws {
+        guard let conversationID = await managedObjectContext.perform({
             message.conversation?.qualifiedID
         }) else {
-            return .failure(MessageSendError.messageProtocolMissing)
+            throw MessageSendError.messageProtocolMissing
         }
 
-        let result = await apiProvider.messageAPI(apiVersion: apiVersion).sendProteusMessage(
-            message: message,
-            conversationID: conversationID
-        )
-
-        return switch result {
-        case .success((let messageSendingStatus, let response)):
-            managedObjectContext.performAndWait {
-                handleProteusSuccess(
-                    message: message,
-                    messageSendingStatus: messageSendingStatus,
-                    response: response)
+        do {
+            let (messageStatus, response) = try await apiProvider.messageAPI(apiVersion: apiVersion).sendProteusMessage(
+                message: message,
+                conversationID: conversationID
+            )
+            await managedObjectContext.perform { [self] in
+                handleProteusSuccess(message: message, messageSendingStatus: messageStatus, response: response)
             }
-        case .failure(let networkError):
-            await managedObjectContext.performAndWait {
-                handleProteusFailure(message: message, networkError)
-            }.flatMapAsync { missingClients in
-                await sessionEstablisher.establishSession(with: missingClients, apiVersion: apiVersion)
-                    .mapError({ error in
-                        switch error {
-                        case .missingSelfClient: MessageSendError.missingSelfClient
-                        case .networkError(let networkError): MessageSendError.networkError(networkError)
-                        }
-                    })
-                    .flatMapAsync { _ in
-                        await sendMessage(message: message)
-                    }
+        } catch let networkError as NetworkError {
+            let missingClients = try await managedObjectContext.perform { [self] in
+                try handleProteusFailure(message: message, networkError)
             }
+            try await sessionEstablisher.establishSession(with: missingClients, apiVersion: apiVersion)
+            try await sendMessage(message: message)
         }
     }
 
-    private func handleProteusSuccess(message: any ProteusMessage, messageSendingStatus: Payload.MessageSendingStatus, response: ZMTransportResponse) -> Swift.Result<Void, MessageSendError> {
+    private func handleProteusSuccess(message: any ProteusMessage, messageSendingStatus: Payload.MessageSendingStatus, response: ZMTransportResponse) {
         message.delivered(with: response) // FIXME: jacob refactor to not use raw response
 
         processor.updateClientsChanges(
             from: messageSendingStatus,
             for: message
         )
-
-        return .success(Void())
     }
 
-    private func handleProteusFailure(message: any ProteusMessage, _ failure: NetworkError) -> Swift.Result<Set<QualifiedClientID>, MessageSendError> {
+    private func handleProteusFailure(message: any ProteusMessage, _ failure: NetworkError) throws -> Set<QualifiedClientID> {
         switch failure {
         case .missingClients(let messageSendingStatus, _):
             processor.updateClientsChanges(
@@ -201,9 +160,9 @@ public class MessageSender: MessageSenderInterface {
             managedObjectContext.enqueueDelayedSave()
 
             if message.isExpired {
-                return .failure(MessageSendError.messageExpired)
+                throw MessageSendError.messageExpired
             } else {
-                return .success(Set(messageSendingStatus.missing.qualifiedClientIDs))
+                return Set(messageSendingStatus.missing.qualifiedClientIDs)
             }
         case .invalidRequestError(let responseFailure, _):
             switch (responseFailure.code, responseFailure.label) {
@@ -211,7 +170,7 @@ public class MessageSender: MessageSenderInterface {
                 guard
                     let data = responseFailure.data
                 else {
-                    return .failure(MessageSendError.networkError(failure))
+                    throw failure
                 }
 
                 switch data.type {
@@ -221,25 +180,25 @@ public class MessageSender: MessageSenderInterface {
                     responseFailure.updateExpirationReason(for: message, with: .unknown)
                 }
 
-                return .failure(MessageSendError.networkError(failure))
+                throw failure
             default:
-                return .failure(MessageSendError.networkError(failure))
+                throw failure
             }
         default:
             if case .tryAgainLater = failure.response?.result {
                 if message.isExpired {
-                    return .failure(MessageSendError.messageExpired)
+                    throw MessageSendError.messageExpired
                 } else {
-                    return .success(Set()) // FIXME: [jacob] it's dangerous to retry indefinitely like this WPB-5454
+                    return Set() // FIXME: [jacob] it's dangerous to retry indefinitely like this WPB-5454
                 }
             } else {
-                return .failure(MessageSendError.networkError(failure))
+                throw failure
             }
         }
     }
 
-    private func attemptToSendWithMLS(message: any MLSMessage, apiVersion: APIVersion) async -> Swift.Result<Void, MessageSendError> {
-        return .failure(MessageSendError.messageProtocolMissing)
+    private func attemptToSendWithMLS(message: any MLSMessage, apiVersion: APIVersion) async throws {
+        throw MessageSendError.messageProtocolMissing
     }
 }
 

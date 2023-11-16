@@ -20,12 +20,11 @@ import Foundation
 
 public enum SessionEstablisherError: Error, Equatable {
     case missingSelfClient
-    case networkError(NetworkError)
 }
 
 // sourcery: AutoMockable
 public protocol SessionEstablisherInterface {
-    func establishSession(with clients: Set<QualifiedClientID>, apiVersion: APIVersion) async -> Swift.Result<Void, SessionEstablisherError>
+    func establishSession(with clients: Set<QualifiedClientID>, apiVersion: APIVersion) async throws
 }
 
 public class SessionEstablisher: SessionEstablisherInterface {
@@ -46,33 +45,24 @@ public class SessionEstablisher: SessionEstablisherInterface {
     private let processor: PrekeyPayloadProcessorInterface
     private let batchSize = 28
 
-    public func establishSession(with clients: Set<QualifiedClientID>, apiVersion: APIVersion) async -> Swift.Result<Void, SessionEstablisherError> {
-
-        // Establish sessions in chunks and return on first error
+    public func establishSession(with clients: Set<QualifiedClientID>, apiVersion: APIVersion) async throws {
+        // Establish sessions in chunks
         for chunk in Array(clients).chunked(into: batchSize) {
-            let result = await internalEstablishSessions(for: Set(chunk), apiVersion: apiVersion)
-            if case Swift.Result.failure = result {
-                return result
-            }
+            try await internalEstablishSessions(for: Set(chunk), apiVersion: apiVersion)
         }
-
-        return .success(Void())
     }
 
-    private func internalEstablishSessions(for clients: Set<QualifiedClientID>, apiVersion: APIVersion) async -> Swift.Result<Void, SessionEstablisherError> {
-        guard let selfClient = managedObjectContext.performAndWait({
-            ZMUser.selfUser(in: managedObjectContext).selfClient()
+    private func internalEstablishSessions(for clients: Set<QualifiedClientID>, apiVersion: APIVersion) async throws {
+        guard let selfClient = await managedObjectContext.perform({
+            ZMUser.selfUser(in: self.managedObjectContext).selfClient()
         }) else {
-            return .failure(SessionEstablisherError.missingSelfClient)
+            throw SessionEstablisherError.missingSelfClient
         }
 
-        return await apiProvider.prekeyAPI(apiVersion: apiVersion).fetchPrekeys(for: clients)
-            .mapError({ error in SessionEstablisherError.networkError(error) })
-            .flatMap { prekeys in
-            managedObjectContext.performAndWait {
-                _ = processor.establishSessions(from: prekeys, with: selfClient, context: managedObjectContext)
-                return Swift.Result.success(Void())
-            }
+        let prekeys = try await apiProvider.prekeyAPI(apiVersion: apiVersion).fetchPrekeys(for: clients)
+
+        await managedObjectContext.perform {
+            _ = self.processor.establishSessions(from: prekeys, with: selfClient, context: self.managedObjectContext)
         }
     }
 }

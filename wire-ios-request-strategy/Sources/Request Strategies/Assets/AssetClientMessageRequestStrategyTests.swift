@@ -151,7 +151,7 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
     func testThatItDoesNotScheduleAMessageForAnImageMessageUploadedByOtherUser() {
         self.syncMOC.performGroupedBlockAndWait {
             // GIVEN
-            self.mockMessageSender.sendMessageMessage_MockValue = .success(Void())
+            self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
             let message = self.createMessage(uploaded: true, sender: self.otherUser)
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -164,7 +164,7 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
     func testThatItDoesNotCreateARequestForAnImageMessageWhichIsExpired() {
         self.syncMOC.performGroupedBlockAndWait {
             // GIVEN
-            self.mockMessageSender.sendMessageMessage_MockValue = .success(Void())
+            self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
             let message = self.createMessage(uploaded: true, expired: true)
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -176,7 +176,7 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
     func testThatItDoesNotCreateARequestForAnImageMessageWithoutUploaded() {
         self.syncMOC.performGroupedBlockAndWait {
             // GIVEN
-            self.mockMessageSender.sendMessageMessage_MockValue = .success(Void())
+            self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
             self.createMessage(uploaded: false)
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -188,7 +188,7 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
     func testThatItDoesNotCreateARequestForAnImageMessageWithUploadedAndAssetIdInTheWrongTransferState() {
         self.syncMOC.performGroupedBlockAndWait {
             // GIVEN
-            self.mockMessageSender.sendMessageMessage_MockValue = .success(Void())
+            self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
             let message = self.createMessage()
             message.updateTransferState(.uploaded, synchronize: true)
         }
@@ -201,7 +201,7 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
     func testThatItCreatesARequestForAnUploadedImageMessage() {
         self.syncMOC.performGroupedBlockAndWait {
             // GIVEN
-            self.mockMessageSender.sendMessageMessage_MockValue = .success(Void())
+            self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
             self.createMessage(uploaded: true, assetId: true)
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -214,7 +214,7 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
 
         self.syncMOC.performGroupedBlockAndWait {
             // GIVEN
-            self.mockMessageSender.sendMessageMessage_MockValue = .success(Void())
+            self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
             self.groupConversation.setMessageDestructionTimeoutValue(.custom(15), for: .selfUser)
             self.createMessage(uploaded: true, assetId: true)
         }
@@ -227,7 +227,7 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
 
     func testThatItExpiresAMessageWhenItReceivesAFailureResponse() {
         // GIVEN
-        mockMessageSender.sendMessageMessage_MockValue = .failure(MessageSendError.messageExpired)
+        mockMessageSender.sendMessageMessage_MockError = MessageSendError.messageExpired
         var message: ZMAssetClientMessage!
         self.syncMOC.performGroupedBlockAndWait {
             message = self.createMessage(uploaded: true, assetId: true)
@@ -249,8 +249,8 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
             label: .missingLegalholdConsent,
             message: "",
             data: nil)
-        let failure = MessageSendError.networkError(NetworkError.invalidRequestError(missingLegalholdConsentFailure, response))
-        mockMessageSender.sendMessageMessage_MockValue = .failure(failure)
+        let failure = NetworkError.invalidRequestError(missingLegalholdConsentFailure, response)
+        mockMessageSender.sendMessageMessage_MockError = failure
         var token: Any?
         self.syncMOC.performGroupedBlockAndWait {
             self.createMessage(uploaded: true, assetId: true)
@@ -269,10 +269,9 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
     }
 
     func testThatItMarksAnImageMessageAsSentWhenItReceivesASuccesfulResponse() {
-
         // GIVEN
         var message: ZMAssetClientMessage!
-        mockMessageSender.sendMessageMessage_MockValue = .success(Void())
+        self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
         self.syncMOC.performGroupedBlockAndWait {
             message = self.createMessage(uploaded: true, assetId: true)
         }

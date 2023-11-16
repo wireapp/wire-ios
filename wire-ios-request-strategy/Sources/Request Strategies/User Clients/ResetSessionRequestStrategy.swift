@@ -59,18 +59,16 @@ extension ResetSessionRequestStrategy: KeyPathObjectSyncTranscoder {
         // Enter groups to enable waiting for message sending to complete in tests
         let groups = managedObjectContext.enterAllGroupsExceptSecondary()
         Task {
-            let result = await messageSender.sendMessage(message: message)
-
-            switch result {
-            case .success:
-                managedObjectContext.performAndWait {
+            do {
+                try await messageSender.sendMessage(message: message)
+                await managedObjectContext.perform {
                     userClient.resolveDecryptionFailedSystemMessages()
                 }
-            case .failure:
-                break
+            } catch {
+                WireLogger.messaging.error("Failed to send reset session message: \(error)")
             }
 
-            managedObjectContext.performAndWait {
+            await managedObjectContext.perform {
                 completion()
             }
             managedObjectContext.leaveAllGroups(groups)

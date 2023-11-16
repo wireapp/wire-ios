@@ -470,7 +470,6 @@ class CallingRequestStrategyTests: MessagingTest {
         var sentMessage: GenericMessageEntity?
         mockMessageSender.sendMessageMessage_MockMethod = { message in
             sentMessage = message as? GenericMessageEntity
-            return .success(Void())
         }
 
         // When we schedule the targeted message
@@ -535,7 +534,6 @@ class CallingRequestStrategyTests: MessagingTest {
         var sentMessage: GenericMessageEntity?
         mockMessageSender.sendMessageMessage_MockMethod = { message in
             sentMessage = message as? GenericMessageEntity
-            return .success(Void())
         }
 
         // When we schedule the message with no targets
@@ -652,7 +650,6 @@ class CallingRequestStrategyTests: MessagingTest {
         var sentMessage: GenericMessageEntity?
         mockMessageSender.sendMessageMessage_MockMethod = { message in
             sentMessage = message as? GenericMessageEntity
-            return .success(Void())
         }
 
         let mockMLSService = MockMLSService()
@@ -684,7 +681,7 @@ class CallingRequestStrategyTests: MessagingTest {
     }
 
     private func setupMockMessageSyncForMLSSuccessfully() {
-        mockMessageSender.sendMessageMessage_MockValue = .success(Void())
+        mockMessageSender.sendMessageMessage_MockMethod = { _ in }
     }
 }
 
