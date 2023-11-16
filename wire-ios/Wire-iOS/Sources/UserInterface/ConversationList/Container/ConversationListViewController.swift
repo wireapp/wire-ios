@@ -24,6 +24,7 @@ enum ConversationListState {
     case conversationList
     case peoplePicker
     case archived
+
 }
 
 final class ConversationListViewController: UIViewController {
@@ -31,6 +32,8 @@ final class ConversationListViewController: UIViewController {
     weak var delegate: ConversationListTabBarControllerDelegate?
 
     let viewModel: ViewModel
+
+    let listViewModel: ConversationListViewModel = ConversationListViewModel()
     /// internal View Model
     var state: ConversationListState = .conversationList
 
@@ -95,7 +98,8 @@ final class ConversationListViewController: UIViewController {
         viewModel.viewController = self
 
         delegate = self
-
+        topBarViewController.filterDelegate = listViewModel
+        listContentController.delegate = listViewModel
         onboardingHint.arrowPointToView = tabBar
     }
 

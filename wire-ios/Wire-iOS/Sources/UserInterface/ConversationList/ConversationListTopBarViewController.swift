@@ -30,6 +30,8 @@ final class ConversationListTopBarViewController: UIViewController {
     private var account: Account
     private let selfUser: SelfUserType
 
+    weak var filterDelegate: ConversationListFilterDelegate?
+
     var topBar: TopBar? {
         return view as? TopBar
     }
@@ -51,6 +53,7 @@ final class ConversationListTopBarViewController: UIViewController {
         }
 
         viewRespectsSystemMinimumLayoutMargins = false
+
     }
 
     @available(*, unavailable)
@@ -62,13 +65,40 @@ final class ConversationListTopBarViewController: UIViewController {
         view = TopBar()
     }
 
+    // MARK: - Setup Filter Button
+
+        private func setupFilterButton() {
+            let filterButton = UIButton(type: .system)
+            filterButton.setTitle("Filter", for: .normal)
+            filterButton.addTarget(self, action: #selector(filterButtonTapped), for: .touchUpInside)
+
+            let filterButtonContainer = UIView()
+            filterButtonContainer.addSubview(filterButton)
+            filterButton.translatesAutoresizingMaskIntoConstraints = false
+            NSLayoutConstraint.activate([
+                filterButton.topAnchor.constraint(equalTo: filterButtonContainer.topAnchor),
+                filterButton.bottomAnchor.constraint(equalTo: filterButtonContainer.bottomAnchor),
+                filterButton.leadingAnchor.constraint(equalTo: filterButtonContainer.leadingAnchor),
+                filterButton.trailingAnchor.constraint(equalTo: filterButtonContainer.trailingAnchor)
+            ])
+
+            topBar?.rightView = filterButtonContainer // Add the button to the rightView of the top bar
+        }
+
+        // MARK: - Actions
+
+        @objc private func filterButtonTapped() {
+            print("Filter button tapped")
+            filterDelegate?.filterUnreadConversations()
+        }
+
     override func viewDidLoad() {
         topBar?.splitSeparator = false
         view.backgroundColor = SemanticColors.View.backgroundConversationList
         view.addBorder(for: .bottom)
 
         availabilityViewController?.didMove(toParent: self)
-
+        setupFilterButton()
         updateTitleView()
         updateAccountView()
         updateLegalHoldIndictor()
@@ -183,7 +213,7 @@ final class ConversationListTopBarViewController: UIViewController {
     func updateLegalHoldIndictor() {
         switch selfUser.legalHoldStatus {
         case .disabled:
-            topBar?.rightView = nil
+            break
         case .pending:
             topBar?.rightView = createPendingLegalHoldRequestView()
         case .enabled:

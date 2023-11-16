@@ -22,7 +22,11 @@ import WireDataModel
 import WireSyncEngine
 import WireRequestStrategy
 
-final class ConversationListViewModel: NSObject {
+protocol ConversationListFilterDelegate: AnyObject {
+    func filterUnreadConversations()
+}
+
+final class ConversationListViewModel: NSObject, ConversationListFilterDelegate {
 
     typealias SectionIdentifier = String
 
@@ -175,6 +179,33 @@ final class ConversationListViewModel: NSObject {
 
             setCollapsed(sectionIndex: indexPath.section, collapsed: false, batchUpdate: false)
         }
+    }
+
+    func filterUnreadConversations() {
+        // Existing filtering logic
+        sections = sections.map { section in
+            var filteredSection = section
+            filteredSection.items = section.items.filter { item in
+                if let conversation = item.item as? ZMConversation {
+                    return !conversation.unreadMessages.isEmpty
+                }
+                return false
+            }
+            return filteredSection
+        }
+
+        // Print the filtered sections for debugging
+        for section in sections {
+            print("Section: \(section.kind)")
+            for item in section.items {
+                if let conversation = item.item as? ZMConversation {
+                    print("Conversation: \(conversation.name ?? "Unnamed"), Unread Messages: \(conversation.unreadMessages.count)")
+                }
+            }
+        }
+
+        // Notify the delegate to reload the view
+        delegate?.listViewModelShouldBeReloaded()
     }
 
     weak var restorationDelegate: ConversationListViewModelRestorationDelegate? {
