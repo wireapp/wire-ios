@@ -61,8 +61,6 @@ extension ConversationContentViewController {
     /// exceeds 20, the scroll animation is set to `.top`; otherwise, it's set to `.bottom`.
     /// After scrolling, the tableView's header view is updated.
     ///
-    /// This method is typically called when the user taps the 'scroll to bottom' button.
-    ///
     /// - Attention: This function is marked with `@objc` to allow it to be used as a selector for target-action
     ///   patterns, such as button taps.
     @objc
