@@ -63,7 +63,7 @@ extension UpdateConversationProtocolAction {
             case invalidProtocolTransition = "invalid-protocol-transition"
 
             // 404
-            case conversationIdOrDomainNotFound = "Conversation ID or domain not found."
+            case conversationIdOrDomainNotFound
             case noTeam = "no-team"
             case noConversation = "no-conversation"
 
