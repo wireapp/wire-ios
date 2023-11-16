@@ -33,7 +33,9 @@ final class NetworkConditionHelperTests: XCTestCase {
         super.tearDown()
     }
 
-    func testThatSharedInstanceReturnQualityTypeWifi() {
+    func testThatSharedInstanceReturnQualityTypeWifi() throws {
+        // NOTE: this test can fail if your local network conditions are bad/offline?!
+
         SessionManager.shared?.markNetworkSessionsAsReady(true)
         XCTAssertEqual(NetworkConditionHelper.shared.qualityType(), .typeWifi)
     }

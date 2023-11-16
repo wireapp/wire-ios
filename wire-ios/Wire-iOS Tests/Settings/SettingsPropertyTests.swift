@@ -18,6 +18,7 @@
 
 import XCTest
 import WireCommonComponents
+import avs
 @testable import Wire
 
 final class MockZMEditableUser: MockUser, ZMEditableUser, ValidatorType {
