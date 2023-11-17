@@ -159,7 +159,7 @@ extension ZMConversation {
         at timestamp: Date
     ) {
         appendSystemMessage(
-            type: .mlsMigrationStarted,
+            type: .mlsMigrationFinalized,
             sender: sender,
             users: users,
             clients: nil,
