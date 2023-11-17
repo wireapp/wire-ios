@@ -25,10 +25,16 @@ private let zmLog = ZMSLog(tag: "ConversationViewController+ConversationContentV
 
 extension ConversationViewController: ConversationContentViewControllerDelegate {
     func didTap(onUserAvatar user: UserType, view: UIView, frame: CGRect) {
+        guard let selfUser = ZMUser.selfUser() else {
+            assertionFailure("ZMUser.selfUser() is nil")
+            return
+        }
+
         let profileViewController = ProfileViewController(user: user,
-                                                          viewer: ZMUser.selfUser(),
+                                                          viewer: selfUser,
                                                           conversation: conversation,
-                                                          viewControllerDismisser: self)
+                                                          viewControllerDismisser: self,
+                                                          userSession: userSession)
         profileViewController.preferredContentSize = CGSize.IPadPopover.preferredContentSize
 
         profileViewController.delegate = self
@@ -56,7 +62,7 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
         _ contentViewController: ConversationContentViewController,
         didTriggerResending message: ZMConversationMessage
     ) {
-        ZMUserSession.shared()?.enqueue({
+        userSession.enqueue({
             message.resend()
         })
     }
@@ -134,7 +140,7 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
             return
         }
 
-        let groupDetailsViewController = GroupDetailsViewController(conversation: conversation)
+        let groupDetailsViewController = GroupDetailsViewController(conversation: conversation, userSession: userSession)
         let navigationController = groupDetailsViewController.wrapInNavigationController(setBackgroundColor: true)
         groupDetailsViewController.presentGuestOptions(animated: false)
         presentParticipantsViewController(navigationController, from: sourceView)
@@ -149,7 +155,7 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
             return
         }
 
-        let groupDetailsViewController = GroupDetailsViewController(conversation: conversation)
+        let groupDetailsViewController = GroupDetailsViewController(conversation: conversation, userSession: userSession)
         let navigationController = groupDetailsViewController.wrapInNavigationController(setBackgroundColor: true)
         groupDetailsViewController.presentServicesOptions(animated: false)
         presentParticipantsViewController(navigationController, from: sourceView)

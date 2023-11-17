@@ -19,7 +19,7 @@
 import XCTest
 @testable import Wire
 
-final class StartedConversationCellTests: XCTestCase {
+final class StartedConversationCellTests: ConversationMessageSnapshotTestCase {
 
     var mockSelfUser: MockUserType!
     var mockOtherUser: MockUserType!
@@ -30,7 +30,7 @@ final class StartedConversationCellTests: XCTestCase {
         UIColor.setAccentOverride(.vividRed)
         SelfUser.setupMockSelfUser(inTeam: UUID())
 
-        mockSelfUser = SelfUser.current as? MockUserType
+        mockSelfUser = SelfUser.provider?.providedSelfUser as? MockUserType
         mockSelfUser.accentColorValue = .strongBlue
 
         mockOtherUser = MockUserType.createDefaultOtherUser()
@@ -165,7 +165,7 @@ final class StartedConversationCellTests: XCTestCase {
     func testThatItRendersNewConversationCell_SelfIsGuest_AllowGuests() {
         // self user is not in a team
         mockSelfUser = MockUserType.createSelfUser(name: "selfUser")
-        SelfUser.provider = SelfProvider(selfUser: mockSelfUser)
+        SelfUser.provider = SelfProvider(providedSelfUser: mockSelfUser)
         let message = cell(for: .newConversation, text: "Italy Trip", allowGuests: true, numberOfGuests: 1)
         verify(message: message)
     }
