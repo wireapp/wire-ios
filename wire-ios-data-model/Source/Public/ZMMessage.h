@@ -77,8 +77,6 @@ typedef NS_CLOSED_ENUM(int16_t, ZMSystemMessageType) {
     ZMSystemMessageTypeDecryptionFailed,
     ZMSystemMessageTypeDecryptionFailed_RemoteIdentityChanged,
     ZMSystemMessageTypeNewConversation,
-    ZMSystemMessageTypeReactivatedDevice __deprecated_enum_msg("Devices can't be reactivated any longer"),
-    ZMSystemMessageTypeUsingNewDevice __deprecated_enum_msg("We don't need inform users about new devices any longer"),
     ZMSystemMessageTypeMessageDeletedForEveryone,
     ZMSystemMessageTypePerformedCall,
     ZMSystemMessageTypeTeamMemberLeave,
