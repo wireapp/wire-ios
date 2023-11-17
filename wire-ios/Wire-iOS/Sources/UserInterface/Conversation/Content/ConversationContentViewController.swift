@@ -55,7 +55,11 @@ final class ConversationContentViewController: UIViewController, PopoverPresente
         button.accessibilityLabel = L10n.Accessibility.Conversation.ScrollToBottomButton.description
         button.accessibilityHint = L10n.Accessibility.Conversation.ScrollToBottomButton.hint
 
-        button.addTarget(self, action: #selector(handleScrollToBottomTapped), for: .touchUpInside)
+        let action = UIAction { [weak self] _ in
+            self?.handleScrollToBottomTapped()
+        }
+
+        button.addAction(action, for: .touchUpInside)
 
         button.imageView?.contentMode = .center
 
@@ -206,7 +210,6 @@ final class ConversationContentViewController: UIViewController, PopoverPresente
         tableView.reloadData()
     }
 
-    @objc
     private func handleScrollToBottomTapped() {
         scrollToBottom()
     }

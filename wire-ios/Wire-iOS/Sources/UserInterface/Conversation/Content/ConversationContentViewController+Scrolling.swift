@@ -60,10 +60,6 @@ extension ConversationContentViewController {
     /// and the number of messages. If reduce motion is enabled or the number of messages
     /// exceeds 20, the scroll animation is set to `.top`; otherwise, it's set to `.bottom`.
     /// After scrolling, the tableView's header view is updated.
-    ///
-    /// - Attention: This function is marked with `@objc` to allow it to be used as a selector for target-action
-    ///   patterns, such as button taps.
-    @objc
     func scrollToBottom() {
         guard !isScrolledToBottom else {
             print("scrollToBottom was called, but we're already at the bottom. No action taken.")
