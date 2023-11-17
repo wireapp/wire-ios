@@ -179,6 +179,7 @@
 		631216392881D10100FF9A56 /* ZMUpdateEvent+Payload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 631216382881D10100FF9A56 /* ZMUpdateEvent+Payload.swift */; };
 		633B396A2891890600208124 /* ZMUpdateEvent+Decryption.swift in Sources */ = {isa = PBXBuildFile; fileRef = 633B39692891890500208124 /* ZMUpdateEvent+Decryption.swift */; };
 		633B396C2892D53300208124 /* MockMLSService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 633B396B2892D53300208124 /* MockMLSService.swift */; };
+		638941F02AF50EB10051ABFD /* MockLocalConversationRemovalUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 638941EF2AF50EB10051ABFD /* MockLocalConversationRemovalUseCase.swift */; };
 		6397F6E228F447F800298DB1 /* SendCommitBundleActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6397F6E128F447F800298DB1 /* SendCommitBundleActionHandler.swift */; };
 		6397F6E628F6DD8B00298DB1 /* SendCommitBundleActionHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6397F6E528F6DD8B00298DB1 /* SendCommitBundleActionHandlerTests.swift */; };
 		63CC83B12859D488008549AD /* ClaimMLSKeyPackageActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63CC83B02859D488008549AD /* ClaimMLSKeyPackageActionHandler.swift */; };
@@ -274,9 +275,9 @@
 		EEE0EE0728591E9C00BBEE29 /* AssetDownloadRequestFactoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEE0EE0628591E9C00BBEE29 /* AssetDownloadRequestFactoryTests.swift */; };
 		EEE30BB02A0046E3001A0B38 /* UserDefaults+Reset.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEE30BAF2A0046E3001A0B38 /* UserDefaults+Reset.swift */; };
 		EEE46E5428C5EE48005F48D7 /* ZMTransportResponse+ErrorInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEE46E5328C5EE48005F48D7 /* ZMTransportResponse+ErrorInfo.swift */; };
-		EEFB2DFE2ACD530F0094F877 /* PrekeyPayloadProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEFB2DFD2ACD530F0094F877 /* PrekeyPayloadProcessor.swift */; };
 		EEE95CD72A4330D900E136CB /* LeaveSubconversationActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEE95CD62A4330D900E136CB /* LeaveSubconversationActionHandler.swift */; };
 		EEE95CD92A43324F00E136CB /* LeaveSubconversationActionHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEE95CD82A43324F00E136CB /* LeaveSubconversationActionHandlerTests.swift */; };
+		EEFB2DFE2ACD530F0094F877 /* PrekeyPayloadProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEFB2DFD2ACD530F0094F877 /* PrekeyPayloadProcessor.swift */; };
 		F14B7AEA222009BA00458624 /* UserRichProfileRequestStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = F14B7AE9222009BA00458624 /* UserRichProfileRequestStrategy.swift */; };
 		F14B7AEC222009C200458624 /* UserRichProfileRequestStrategyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F14B7AEB222009C200458624 /* UserRichProfileRequestStrategyTests.swift */; };
 		F154EDC71F447B6C00CB8184 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F154EDC61F447B6C00CB8184 /* AppDelegate.swift */; };
@@ -620,6 +621,7 @@
 		631216382881D10100FF9A56 /* ZMUpdateEvent+Payload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMUpdateEvent+Payload.swift"; sourceTree = "<group>"; };
 		633B39692891890500208124 /* ZMUpdateEvent+Decryption.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMUpdateEvent+Decryption.swift"; sourceTree = "<group>"; };
 		633B396B2892D53300208124 /* MockMLSService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockMLSService.swift; sourceTree = "<group>"; };
+		638941EF2AF50EB10051ABFD /* MockLocalConversationRemovalUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockLocalConversationRemovalUseCase.swift; sourceTree = "<group>"; };
 		6397F6E128F447F800298DB1 /* SendCommitBundleActionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendCommitBundleActionHandler.swift; sourceTree = "<group>"; };
 		6397F6E528F6DD8B00298DB1 /* SendCommitBundleActionHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendCommitBundleActionHandlerTests.swift; sourceTree = "<group>"; };
 		63CC83B02859D488008549AD /* ClaimMLSKeyPackageActionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaimMLSKeyPackageActionHandler.swift; sourceTree = "<group>"; };
@@ -973,6 +975,7 @@
 				633B396B2892D53300208124 /* MockMLSService.swift */,
 				EE30CAAF29ACAE1600A332B1 /* MockProteusServiceinterface.swift */,
 				EE7F022C2A8392EF00FE5695 /* MockActionHandler.swift */,
+				638941EF2AF50EB10051ABFD /* MockLocalConversationRemovalUseCase.swift */,
 			);
 			path = Mocks;
 			sourceTree = "<group>";
@@ -1930,7 +1933,6 @@
 				EE4C5FBE27D2C5CD000C0D45 /* BundledMessageNotificationBuilder.swift in Sources */,
 				EE90C29E282E785800474379 /* PushTokenStrategy.swift in Sources */,
 				166901D61D7081C7000FE4AF /* ZMDownstreamObjectSyncWithWhitelist.m in Sources */,
-				7AA8560C28FDAD0B00088D41 /* FetchPublicGroupStateActionHandler.swift in Sources */,
 				EE88079D2AC427D600278E3C /* MLSMessageSendingStatusPayloadProcessor.swift in Sources */,
 				EE402C0328996C2500CA0E40 /* MLSMessageSync.Transcoder.swift in Sources */,
 				16E5F6D626EF1BE100F35FBA /* PaginatedSync.swift in Sources */,
@@ -2099,6 +2101,7 @@
 				1621D2291D75AB2D007108C2 /* MockEntity2.m in Sources */,
 				F18401DB2073C25300E9F4CC /* EventDecoderDecryptionTestsTests.swift in Sources */,
 				D5D65A062073C8F800D7F3C3 /* AssetRequestFactoryTests.swift in Sources */,
+				638941F02AF50EB10051ABFD /* MockLocalConversationRemovalUseCase.swift in Sources */,
 				1621D2281D75AB2D007108C2 /* MockEntity.m in Sources */,
 				F18401EC2073C26700E9F4CC /* AssetV3PreviewDownloadRequestStrategyTests.swift in Sources */,
 				87F7288521AFF37D000ED371 /* UserPropertyRequestStrategyTests.swift in Sources */,
@@ -2185,7 +2188,6 @@
 				63DA33AA286F343A00818C3C /* MockMLSEventProcessor.swift in Sources */,
 				06FDC63128354DBD008300DB /* PushTokenStorageTests.swift in Sources */,
 				EE8807932AC40AB100278E3C /* ConnectionPayloadProcessorTests.swift in Sources */,
-				7AA8561028FDB0AC00088D41 /* FetchPublicGroupStateActionHandlerTests.swift in Sources */,
 				F18401EE2073C26C00E9F4CC /* LinkPreviewAssetUploadRequestStrategyTests.swift in Sources */,
 				EE30CAB029ACAE1600A332B1 /* MockProteusServiceinterface.swift in Sources */,
 				EE4345DF2865D0FB0090AC34 /* ConversationByQualifiedIDListTranscoderTests.swift in Sources */,
