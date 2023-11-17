@@ -90,7 +90,9 @@ typedef NS_ENUM(int16_t, ZMSystemMessageType) {
     ZMSystemMessageTypeLegalHoldDisabled,
     ZMSystemMessageTypeSessionReset,
     ZMSystemMessageTypeDecryptionFailedResolved,
-    ZMSystemMessageTypeDomainsStoppedFederating
+    ZMSystemMessageTypeDomainsStoppedFederating,
+    ZMSystemMessageTypeMLSMigrationStarted,
+    ZMSystemMessageTypeMLSMigrationFinalized
 };
 
 typedef NS_ENUM(int16_t, ZMParticipantsRemovedReason) {
