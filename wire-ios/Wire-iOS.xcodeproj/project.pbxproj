@@ -1241,6 +1241,8 @@
 		E6579E7D2AFFA97F004E7FD8 /* OrientationDeltaTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63CE88A32506A83300E457C7 /* OrientationDeltaTests.swift */; };
 		E6579E7E2AFFA98C004E7FD8 /* HandleChangeStateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 542CDF3F24B32E2100DF0B39 /* HandleChangeStateTests.swift */; };
 		E6579E7F2AFFA99E004E7FD8 /* AnimatedListMenuViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A990059A23F195A70089CDEB /* AnimatedListMenuViewTests.swift */; };
+		E6596CCC2B07A2E700537723 /* MLSMigrationStartedCellDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6596CCA2B07A2E700537723 /* MLSMigrationStartedCellDescription.swift */; };
+		E6596CCD2B07A2E700537723 /* MLSMigrationFinalizedCellDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6596CCB2B07A2E700537723 /* MLSMigrationFinalizedCellDescription.swift */; };
 		E6C25FC52AFFAAC300406A1C /* WireTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E6C25FC42AFFAAC300406A1C /* WireTesting.framework */; };
 		E6C25FC82AFFABBF00406A1C /* PhoneNumberTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A96E230923EAD43A00C2195E /* PhoneNumberTests.swift */; };
 		E6C25FC92AFFABD100406A1C /* AvailabilityStringBuilderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 636E57BC2386BFD9005B4FD8 /* AvailabilityStringBuilderTests.swift */; };
@@ -3267,6 +3269,8 @@
 		E6579E402AFF9BDB004E7FD8 /* UnitTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = UnitTests.xctestplan; sourceTree = "<group>"; };
 		E6579E712AFFA150004E7FD8 /* Wire-iOS-UnitTests-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Wire-iOS-UnitTests-Bridging-Header.h"; sourceTree = "<group>"; };
 		E6579E722AFFA232004E7FD8 /* Mocks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Mocks.h; sourceTree = "<group>"; };
+		E6596CCA2B07A2E700537723 /* MLSMigrationStartedCellDescription.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MLSMigrationStartedCellDescription.swift; sourceTree = "<group>"; };
+		E6596CCB2B07A2E700537723 /* MLSMigrationFinalizedCellDescription.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MLSMigrationFinalizedCellDescription.swift; sourceTree = "<group>"; };
 		E6C25FC42AFFAAC300406A1C /* WireTesting.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTesting.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E6C25FCD2AFFAC2E00406A1C /* CoreDataFixture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataFixture.swift; sourceTree = "<group>"; };
 		E6C25FD12AFFAD9300406A1C /* SelfProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelfProvider.swift; sourceTree = "<group>"; };
@@ -4493,7 +4497,7 @@
 		5E35F734217F415700D3F4FE /* Components */ = {
 			isa = PBXGroup;
 			children = (
-				E6CF5D7F2B079E8F00A36307 /* CellDescription */,
+				E6596CC92B07A2E700537723 /* CellDescription */,
 				5E35F7772181D51300D3F4FE /* ConversationIconBasedCell.swift */,
 				5E35F735217F417200D3F4FE /* BurstTimestampTableViewCell.swift */,
 				5E35F74021804A9E00D3F4FE /* ConversationSenderMessageDetailsCell.swift */,
@@ -7358,6 +7362,15 @@
 			path = Tests;
 			sourceTree = "<group>";
 		};
+		E6596CC92B07A2E700537723 /* CellDescription */ = {
+			isa = PBXGroup;
+			children = (
+				E6596CCA2B07A2E700537723 /* MLSMigrationStartedCellDescription.swift */,
+				E6596CCB2B07A2E700537723 /* MLSMigrationFinalizedCellDescription.swift */,
+			);
+			path = CellDescription;
+			sourceTree = "<group>";
+		};
 		E6C25FCC2AFFAC1C00406A1C /* Fixture */ = {
 			isa = PBXGroup;
 			children = (
@@ -9118,7 +9131,7 @@
 				0665DF7328F01D3B0094482B /* ProfileImagePickerManager.swift in Sources */,
 				5E8FFC0321ECC5CF0052DF03 /* AuthenticationFeatureProvider.swift in Sources */,
 				EF4C5D4E23391C7E0092CA38 /* ConversationListCell+ZMConversationObserver.swift in Sources */,
-				E6CF5D832B07A08800A36307 /* MLSMigrationFinalizedCellDescription.swift in Sources */,
+				E6596CCD2B07A2E700537723 /* MLSMigrationFinalizedCellDescription.swift in Sources */,
 				EF51C2BF211B2CAF0099A599 /* Data+HEIF.swift in Sources */,
 				BF2A74711CEB466A002608BF /* ConversationInputBarViewController+Audio.swift in Sources */,
 				BF5FAC0520B6C6E9004CEB45 /* ConversationCallController.swift in Sources */,
@@ -9550,7 +9563,7 @@
 				BFAC71FE20A1CE0D002711C4 /* CallGridConfiguration.swift in Sources */,
 				D3A74DBD29432E8B00DD272F /* EstablishingCallStatusView.swift in Sources */,
 				EFDC36DC2257ACE800F916F3 /* StartUIInviteActionBar.swift in Sources */,
-				E6CF5D812B079EA100A36307 /* MLSMigrationStartedCellDescription.swift in Sources */,
+				E6596CCC2B07A2E700537723 /* MLSMigrationStartedCellDescription.swift in Sources */,
 				EFA145F6231EAEE50073BA5E /* ZClientViewController+SplitViewControllerDelegate.swift in Sources */,
 				637387CD26458EDB004FEF79 /* ScalableView.swift in Sources */,
 				87A540AA1E094BA3009028C5 /* CollectionCell.swift in Sources */,
