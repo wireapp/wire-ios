@@ -17,7 +17,7 @@
 //
 
 import Foundation
-
+import WireSyncEngine
 @testable import Wire
 
 final class MockClassificationProvider: ClassificationProviding {

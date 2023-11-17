@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2023 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,11 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-@testable import Wire
+import Foundation
+import WireDataModel
 
-extension Account {
-    static func mockAccount(imageData: Data) -> Account {
-        return Account(userName: "", userIdentifier: UUID(), teamName: nil, imageData: imageData)
+extension ZMUser {
+    func updateAvailability(_ newValue: AvailabilityKind) {
+        self.willChangeValue(forKey: AvailabilityKey)
+        self.setPrimitiveValue(NSNumber(value: newValue.rawValue), forKey: AvailabilityKey)
+        self.didChangeValue(forKey: AvailabilityKey)
     }
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2023 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,14 +18,14 @@
 
 import Foundation
 
-@testable import Wire
-
-final class MockApplication: ApplicationProtocol {
-    static func wr_requestOrWarnAboutPhotoLibraryAccess(_ grantedHandler: ((Bool) -> Void)!) {
-        grantedHandler(true)
+extension NSAttributedString {
+    var allAttachments: [NSTextAttachment] {
+        var attachments = [NSTextAttachment]()
+        enumerateAttributes(in: wholeRange, options: []) { attributes, _, _ in
+            if let attachment = attributes[NSAttributedString.Key.attachment] as? NSTextAttachment {
+                attachments.append(attachment)
+            }
+        }
+        return attachments
     }
-
-    var applicationState: UIApplication.State = .active
-
-    var statusBarOrientation: UIInterfaceOrientation = .unknown
 }

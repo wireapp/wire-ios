@@ -20,22 +20,6 @@ import XCTest
 @testable import Wire
 import SnapshotTesting
 
-/// TODO: retire this extension
-extension ZMConversation {
-
-    func add(participants: Set<ZMUser>) {
-        addParticipantsAndUpdateConversationState(users: participants, role: nil)
-    }
-
-    func add(participants: [ZMUser]) {
-        add(participants: Set(participants))
-    }
-
-    func add(participants: ZMUser...) {
-        add(participants: Set(participants))
-    }
-}
-
 private final class MockConversation: MockStableRandomParticipantsConversation, GroupDetailsConversation {
 
     var userDefinedName: String?
