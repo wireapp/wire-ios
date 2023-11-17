@@ -176,6 +176,9 @@
 		6308F8AE2A273FBB0072A177 /* BaseFetchMLSGroupInfoActionHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6308F8AD2A273FBB0072A177 /* BaseFetchMLSGroupInfoActionHandlerTests.swift */; };
 		6308F8B02A27403B0072A177 /* FetchMLSConversationGroupInfoActionHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6308F8AF2A27403B0072A177 /* FetchMLSConversationGroupInfoActionHandlerTests.swift */; };
 		6308F8B22A2740C30072A177 /* FetchMLSSubconversationGroupInfoActionHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6308F8B12A2740C30072A177 /* FetchMLSSubconversationGroupInfoActionHandlerTests.swift */; };
+		630D41B22B0784FB00633867 /* AutoMockable.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = 630D41AF2B0784FB00633867 /* AutoMockable.generated.swift */; };
+		630D41B32B0784FB00633867 /* AutoMockable.stencil in Resources */ = {isa = PBXBuildFile; fileRef = 630D41B02B0784FB00633867 /* AutoMockable.stencil */; };
+		630D41B42B0784FB00633867 /* config.yml in Resources */ = {isa = PBXBuildFile; fileRef = 630D41B12B0784FB00633867 /* config.yml */; };
 		630D41AA2B07793D00633867 /* MLSConversationParticipantsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 630D41A82B07790900633867 /* MLSConversationParticipantsService.swift */; };
 		630D41AC2B077F3900633867 /* ProteusConversationParticipantsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 630D41AB2B077F3900633867 /* ProteusConversationParticipantsService.swift */; };
 		631216392881D10100FF9A56 /* ZMUpdateEvent+Payload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 631216382881D10100FF9A56 /* ZMUpdateEvent+Payload.swift */; };
@@ -620,6 +623,9 @@
 		6308F8AD2A273FBB0072A177 /* BaseFetchMLSGroupInfoActionHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseFetchMLSGroupInfoActionHandlerTests.swift; sourceTree = "<group>"; };
 		6308F8AF2A27403B0072A177 /* FetchMLSConversationGroupInfoActionHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchMLSConversationGroupInfoActionHandlerTests.swift; sourceTree = "<group>"; };
 		6308F8B12A2740C30072A177 /* FetchMLSSubconversationGroupInfoActionHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchMLSSubconversationGroupInfoActionHandlerTests.swift; sourceTree = "<group>"; };
+		630D41AF2B0784FB00633867 /* AutoMockable.generated.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AutoMockable.generated.swift; sourceTree = "<group>"; };
+		630D41B12B0784FB00633867 /* config.yml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.yaml; path = config.yml; sourceTree = "<group>"; };
+		630D41B02B0784FB00633867 /* AutoMockable.stencil */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AutoMockable.stencil; sourceTree = "<group>"; };
 		630D41A82B07790900633867 /* MLSConversationParticipantsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLSConversationParticipantsService.swift; sourceTree = "<group>"; };
 		630D41AB2B077F3900633867 /* ProteusConversationParticipantsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProteusConversationParticipantsService.swift; sourceTree = "<group>"; };
 		631216382881D10100FF9A56 /* ZMUpdateEvent+Payload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMUpdateEvent+Payload.swift"; sourceTree = "<group>"; };
@@ -1052,6 +1058,7 @@
 		166901601D707509000FE4AF = {
 			isa = PBXGroup;
 			children = (
+				630D41AD2B0784FB00633867 /* sourcery */,
 				166901841D7075D7000FE4AF /* Resources */,
 				1669016C1D707509000FE4AF /* Sources */,
 				166901781D707509000FE4AF /* Tests */,
@@ -1213,6 +1220,24 @@
 				63DA339D286DF6DA00818C3C /* Helpers */,
 			);
 			path = Processing;
+			sourceTree = "<group>";
+		};
+		630D41AD2B0784FB00633867 /* sourcery */ = {
+			isa = PBXGroup;
+			children = (
+				630D41AE2B0784FB00633867 /* generated */,
+				630D41B02B0784FB00633867 /* AutoMockable.stencil */,
+				630D41B12B0784FB00633867 /* config.yml */,
+			);
+			path = sourcery;
+			sourceTree = "<group>";
+		};
+		630D41AE2B0784FB00633867 /* generated */ = {
+			isa = PBXGroup;
+			children = (
+				630D41AF2B0784FB00633867 /* AutoMockable.generated.swift */,
+			);
+			path = generated;
 			sourceTree = "<group>";
 		};
 		63DA339D286DF6DA00818C3C /* Helpers */ = {
@@ -1735,6 +1760,7 @@
 				166901651D707509000FE4AF /* Sources */,
 				166901661D707509000FE4AF /* Frameworks */,
 				166901671D707509000FE4AF /* Headers */,
+				630D41B52B07851000633867 /* Run Sourcery */,
 				668E958827425E0A0028C1F8 /* Run Swiftlint */,
 				166901681D707509000FE4AF /* Resources */,
 			);
@@ -1857,8 +1883,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				630D41B42B0784FB00633867 /* config.yml in Resources */,
 				0649D15524F64335001DDC78 /* Push.strings in Resources */,
 				0649D15424F64335001DDC78 /* Push.stringsdict in Resources */,
+				630D41B32B0784FB00633867 /* AutoMockable.stencil in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1888,6 +1916,24 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		630D41B52B07851000633867 /* Run Sourcery */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Run Sourcery";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Adds support for Apple Silicon brew directory\nexport PATH=\"$PATH:/opt/homebrew/bin\"\n \nif which sourcery >/dev/null; then\n  sourcery --config ./sourcery/config.yml\nelse\n  echo \"warning: Sourcery not installed, download from https://github.com/krzysztofzablocki/Sourcery\"\nfi\n\n";
+		};
 		668E958827425E0A0028C1F8 /* Run Swiftlint */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -1991,6 +2037,7 @@
 				166901E21D7081C7000FE4AF /* ZMRequestGenerator.m in Sources */,
 				5E68F22722452CDC00298376 /* LinkPreprocessor.swift in Sources */,
 				06025662248E467B00E060E1 /* NotificationStreamSync.swift in Sources */,
+				630D41B22B0784FB00633867 /* AutoMockable.generated.swift in Sources */,
 				EE8807A12AC4669D00278E3C /* UserClientPayloadProcessor.swift in Sources */,
 				EE202DAB27F1F4CC00083AB3 /* VoIPPushPayload.swift in Sources */,
 				0649D14924F63C51001DDC78 /* NotificationSound.swift in Sources */,
