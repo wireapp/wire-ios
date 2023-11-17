@@ -76,9 +76,9 @@ final class ProfileViewController: UIViewController {
                      conversation: ZMConversation? = nil,
                      context: ProfileViewControllerContext? = nil,
                      classificationProvider: ClassificationProviding? = ZMUserSession.shared(),
-                     viewControllerDismisser: ViewControllerDismisser? = nil) {
+                     viewControllerDismisser: ViewControllerDismisser? = nil,
+                     userSession: UserSession) {
         let profileViewControllerContext: ProfileViewControllerContext
-
         if let context = context {
             profileViewControllerContext = context
         } else {
@@ -89,7 +89,8 @@ final class ProfileViewController: UIViewController {
                                                        conversation: conversation,
                                                        viewer: viewer,
                                                        context: profileViewControllerContext,
-                                                       classificationProvider: classificationProvider)
+                                                       classificationProvider: classificationProvider,
+                                                       userSession: userSession)
 
         self.init(viewModel: viewModel)
 
@@ -132,8 +133,12 @@ final class ProfileViewController: UIViewController {
 
     // MARK: - Actions
     private func bringUpConversationCreationFlow() {
+        guard let selfUser = ZMUser.selfUser() else {
+            assertionFailure("ZMUser.selfUser() is nil")
+            return
+        }
 
-        let controller = ConversationCreationController(preSelectedParticipants: viewModel.userSet, selfUser: ZMUser.selfUser())
+        let controller = ConversationCreationController(preSelectedParticipants: viewModel.userSet, selfUser: selfUser)
         controller.delegate = self
 
         let wrappedController = controller.wrapInNavigationController(setBackgroundColor: true)
@@ -206,7 +211,8 @@ final class ProfileViewController: UIViewController {
         let profileDetailsViewController = ProfileDetailsViewController(user: viewModel.user,
                                                                         viewer: viewModel.viewer,
                                                                         conversation: viewModel.conversation,
-                                                                        context: viewModel.context)
+                                                                        context: viewModel.context,
+                                                                        userSession: viewModel.userSession)
         profileDetailsViewController.title = "profile.details.title".localized
 
         return profileDetailsViewController
@@ -219,7 +225,10 @@ final class ProfileViewController: UIViewController {
         viewControllers.append(profileDetailsViewController)
 
         if viewModel.hasUserClientListTab {
-            let userClientListViewController = UserClientListViewController(user: viewModel.user)
+            let userClientListViewController = UserClientListViewController(
+                user: viewModel.user,
+                userSession: viewModel.userSession
+            )
             viewControllers.append(userClientListViewController)
         }
 
@@ -386,7 +395,7 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
     @objc
     private func presentLegalHoldDetails() {
         let user = viewModel.user
-        LegalHoldDetailsViewController.present(in: self, user: user)
+        LegalHoldDetailsViewController.present(in: self, user: user, userSession: viewModel.userSession)
     }
 
     // MARK: Block

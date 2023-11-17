@@ -65,20 +65,23 @@ final class ProfileClientViewController: UIViewController, SpinnerCapable {
 
     // MARK: Initilization
 
-    convenience init(client: UserClient,
-                     fromConversation: Bool) {
-        self.init(client: client)
+    convenience init(
+        client: UserClient,
+        fromConversation: Bool,
+        userSession: UserSession
+    ) {
+        self.init(client: client, userSession: userSession)
         self.fromConversation = fromConversation
     }
 
-    required init(client: UserClient) {
+    required init(client: UserClient, userSession: UserSession) {
         userClient = client
 
         super.init(nibName: nil, bundle: nil)
 
         userClientToken = UserClientChangeInfo.add(observer: self, for: client)
         if userClient.fingerprint == .none {
-            ZMUserSession.shared()?.enqueue({ () -> Void in
+            userSession.enqueue({ () -> Void in
                 self.userClient.fetchFingerprintOrPrekeys()
             })
         }
@@ -365,7 +368,8 @@ final class ProfileClientViewController: UIViewController, SpinnerCapable {
     }
 
     @objc private func onShowMyDeviceTapped(_ sender: AnyObject) {
-        let selfClientController = SettingsClientViewController(userClient: ZMUserSession.shared()!.selfUserClient!,
+        guard let selfUserClient = ZMUserSession.shared()?.selfUserClient else { return }
+        let selfClientController = SettingsClientViewController(userClient: selfUserClient,
                                                                 fromConversation: fromConversation)
 
         let navigationControllerWrapper = selfClientController.wrapInNavigationController(setBackgroundColor: true)
@@ -376,9 +380,10 @@ final class ProfileClientViewController: UIViewController, SpinnerCapable {
 
     @objc
     private func onTrustChanged(_ sender: AnyObject) {
-        ZMUserSession.shared()?.enqueue({ [weak self] in
+        guard let userSession = ZMUserSession.shared() else { return }
+        userSession.enqueue({ [weak self] in
             guard let weakSelf = self else { return }
-            let selfClient = ZMUserSession.shared()!.selfUserClient
+            let selfClient = userSession.selfUserClient
             if weakSelf.verifiedToggle.isOn {
                 selfClient?.trustClient(weakSelf.userClient)
             } else {
@@ -392,7 +397,8 @@ final class ProfileClientViewController: UIViewController, SpinnerCapable {
     }
 
     @objc private func onResetTapped(_ sender: AnyObject) {
-        ZMUserSession.shared()?.perform { [weak self] in
+        guard let userSession = ZMUserSession.shared() else { return }
+        userSession.perform { [weak self] in
             self?.userClient.resetSession()
         }
         isLoadingViewVisible = true

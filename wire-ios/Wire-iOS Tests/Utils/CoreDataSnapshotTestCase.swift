@@ -43,7 +43,7 @@ class CoreDataSnapshotTestCase: ZMSnapshotTestCase {
         setupTestObjects()
 
         MockUser.setMockSelf(selfUser)
-        selfUserProvider = SelfProvider(selfUser: selfUser)
+        selfUserProvider = SelfProvider(providedSelfUser: selfUser)
     }
 
     override open func tearDown() {
