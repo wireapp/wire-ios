@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2021 Wire Swiss GmbH
+// Copyright (C) 2022 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,22 +17,13 @@
 //
 
 import Foundation
-import XCTest
+import WireSyncEngine
 @testable import Wire
 
-final class AppLockModuleRouterTests: XCTestCase {
+final class MockClassificationProvider: ClassificationProviding {
+    var returnClassification: SecurityClassification = .none
 
-    private var sut: AppLockModule.Router!
-
-    override func setUp() {
-        super.setUp()
-        sut = .init()
+    func classification(with users: [UserType], conversationDomain: String? = nil) -> SecurityClassification {
+        returnClassification
     }
-
-    override func tearDown() {
-        sut = nil
-    }
-
-    // MARK: - Tests
-
 }

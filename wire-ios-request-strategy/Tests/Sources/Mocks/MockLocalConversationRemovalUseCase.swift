@@ -1,5 +1,6 @@
+////
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2023 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,34 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-@testable import Wire
+import Foundation
+@testable import WireRequestStrategy
 
-private extension UIColor {
-    class var accentOverrideColor: ZMAccentColor? {
-        return ZMUser.selfUser()?.accentColorValue
-    }
-}
+class MockLocalConversationRemovalUseCase: RemoveLocalConversationUseCaseProtocol {
 
-extension XCTestCase {
-    /// If this is set the accent color will be overriden for the tests
-    static var accentColor: ZMAccentColor {
-        get {
-            return UIColor.accentOverrideColor!
+    typealias MockInvoke = (ZMConversation, NSManagedObjectContext) -> Void
+    var invokeMock: MockInvoke?
+    var invokeCalls = [ZMConversation]()
+
+    func invoke(with conversation: ZMConversation, syncContext: NSManagedObjectContext) {
+        invokeCalls.append(conversation)
+        guard let mock = invokeMock else {
+            return
         }
-
-        set {
-            UIColor.setAccentOverride(newValue)
-        }
-    }
-
-    var accentColor: ZMAccentColor {
-        get {
-            return XCTestCase.accentColor
-        }
-
-        set {
-            XCTestCase.accentColor = newValue
-        }
+        mock(conversation, syncContext)
     }
 }
