@@ -79,6 +79,6 @@ final class SelfProfileViewControllerTests: ZMSnapshotTestCase, CoreDataFixtureT
         Analytics.shared = Analytics(optedOut: true)
         selfUser = MockUserType.createSelfUser(name: userName, inTeam: teamMember ? UUID() : nil)
         sut = SelfProfileViewController(selfUser: selfUser, userRightInterfaceType: MockUserRight.self, userSession: userSession)
-        sut.view.backgroundColor = .black
+        sut.view.backgroundColor = SemanticColors.View.backgroundDefault
     }
 }
