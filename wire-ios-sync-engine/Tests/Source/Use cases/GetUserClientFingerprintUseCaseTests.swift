@@ -46,30 +46,17 @@ class GetUserClientFingerprintUseCaseTests: MessagingTest {
         DeveloperFlag.storage = .standard
     }
 
-    func test_invokeShouldEstablishSessionIfNoSessionEstablished() async {
-        // GIVEN
-        var flag = DeveloperFlag.proteusViaCoreCrypto
-        flag.isOn = true
-        sut = createSut(proteusEnabled: true)
+    // MARK: - invoke() establishSession
 
-        var userClient: UserClient!
-        syncMOC.performAndWait {
-            userClient = self.createSelfClient()
-        }
-
-        let expectation = XCTestExpectation(description: "should call establishSession")
-        mockSessionEstablisher.establishSessionWithApiVersion_MockMethod = { _, _ in
-            expectation.fulfill()
-        }
-
-        // WHEN
-        let result = await sut.invoke(userClient: userClient)
-
-        await fulfillment(of: [expectation])
-        XCTAssertEqual(result, fingerprint.data(using: .utf8))
+    func test_invoke_ShouldEstablishSession_IfNoSessionEstablished() async {
+        await internalTestEstablishSession(sessionEstablished: false)
     }
 
-    func test_invokeShouldNotEstablishSessionIfSessionEstablished() async {
+    func test_invoke_ShouldNotEstablishSession_IfSessionEstablished() async {
+        await internalTestEstablishSession(sessionEstablished: true)
+    }
+
+    func internalTestEstablishSession(sessionEstablished: Bool) async {
         // GIVEN
         // we force the flag on here,
         // since ProteusProvider is created on the fly when accessed by managedObjectContext
@@ -78,14 +65,14 @@ class GetUserClientFingerprintUseCaseTests: MessagingTest {
         syncMOC.proteusService = mockProteusService
         sut = createSut(proteusEnabled: true)
 
-        mockProteusService.sessionExistsId_MockValue = true
+        mockProteusService.sessionExistsId_MockValue = sessionEstablished
         var userClient: UserClient!
         syncMOC.performAndWait {
             userClient = self.createSelfClient()
         }
 
         let expectation = XCTestExpectation(description: "should call establishSession")
-        expectation.isInverted = true
+        expectation.isInverted = sessionEstablished
         mockSessionEstablisher.establishSessionWithApiVersion_MockMethod = { _, _ in
             expectation.fulfill()
         }
