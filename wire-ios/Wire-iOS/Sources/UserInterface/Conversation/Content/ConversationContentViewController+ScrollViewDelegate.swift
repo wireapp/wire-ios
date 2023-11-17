@@ -48,8 +48,8 @@ extension ConversationContentViewController: UIScrollViewDelegate {
 
         if scrollToBottomButton.isHidden != shouldHideButton {
             if UIAccessibility.isReduceMotionEnabled {
-                self.scrollToBottomButton.alpha = shouldHideButton ? 0 : 1
-                self.scrollToBottomButton.isHidden = shouldHideButton
+                scrollToBottomButton.alpha = shouldHideButton ? 0 : 1
+                scrollToBottomButton.isHidden = shouldHideButton
             } else {
                 UIView.animate(withDuration: 0.25, animations: {
                     self.scrollToBottomButton.alpha = shouldHideButton ? 0 : 1
