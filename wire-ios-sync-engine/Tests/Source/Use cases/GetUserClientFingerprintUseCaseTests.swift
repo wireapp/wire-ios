@@ -1,0 +1,185 @@
+////
+// Wire
+// Copyright (C) 2023 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
+
+import Foundation
+import XCTest
+@testable import WireSyncEngine
+import WireTesting
+
+class GetUserClientFingerprintUseCaseTests: MessagingTest {
+    var sut: GetUserClientFingerprintUseCase!
+
+    var mockProteusService: MockProteusServiceInterface!
+    var mockProteusProvider: MockProteusProvider!
+    var mockSessionEstablisher: MockSessionEstablisherInterface!
+
+    let fingerprint = "1234"
+
+    override func setUp() {
+        DeveloperFlag.storage = .random()!
+        mockProteusService = MockProteusServiceInterface()
+        mockSessionEstablisher = MockSessionEstablisherInterface()
+        super.setUp()
+    }
+
+    override func tearDown() {
+        sut = nil
+        mockProteusService = nil
+        mockProteusProvider = nil
+        mockSessionEstablisher = nil
+        super.tearDown()
+        DeveloperFlag.storage = .standard
+    }
+
+    func test_invokeShouldEstablishSessionIfNoSessionEstablished() async {
+        // GIVEN
+        var flag = DeveloperFlag.proteusViaCoreCrypto
+        flag.isOn = true
+        sut = createSut(proteusEnabled: true)
+
+        var userClient: UserClient!
+        syncMOC.performAndWait {
+            userClient = self.createSelfClient()
+        }
+
+        let expectation = XCTestExpectation(description: "should call establishSession")
+        mockSessionEstablisher.establishSessionWithApiVersion_MockMethod = { _, _ in
+            expectation.fulfill()
+        }
+
+        // WHEN
+        let result = await sut.invoke(userClient: userClient)
+
+        await fulfillment(of: [expectation])
+        XCTAssertEqual(result, fingerprint.data(using: .utf8))
+    }
+
+    func test_invokeShouldNotEstablishSessionIfSessionEstablished() async {
+        // GIVEN
+        // we force the flag on here,
+        // since ProteusProvider is created on the fly when accessed by managedObjectContext
+        // when checking the hasSessionWithSelfClient
+        DeveloperFlag.proteusViaCoreCrypto.enable(true)
+        syncMOC.proteusService = mockProteusService
+        sut = createSut(proteusEnabled: true)
+
+        mockProteusService.sessionExistsId_MockValue = true
+        var userClient: UserClient!
+        syncMOC.performAndWait {
+            userClient = self.createSelfClient()
+        }
+
+        let expectation = XCTestExpectation(description: "should call establishSession")
+        expectation.isInverted = true
+        mockSessionEstablisher.establishSessionWithApiVersion_MockMethod = { _, _ in
+            expectation.fulfill()
+        }
+
+        // WHEN
+        let result = await sut.invoke(userClient: userClient)
+
+        await fulfillment(of: [expectation], timeout: 2)
+        XCTAssertEqual(result, fingerprint.data(using: .utf8))
+    }
+
+    // MARK: - fetchRemoteFingerprint
+
+    func test_fetchRemoteFingerprint_with_Cryptobox() async {
+        // GIVEN
+        sut = createSut(proteusEnabled: false)
+
+        var userClient: UserClient!
+        syncMOC.performAndWait {
+            userClient = self.createSelfClient()
+        }
+
+        // WHEN
+        _ = await sut.fetchRemoteFingerprint(for: userClient)
+
+        // THEN
+        XCTAssertEqual(mockProteusProvider.mockKeyStore.accessEncryptionContextCount, 1)
+    }
+
+    func test_fetchRemoteFingerprint_ProteusViaCoreCryptoFlagEnabled() async {
+        // GIVEN
+        sut = createSut(proteusEnabled: true)
+
+        var userClient: UserClient!
+        syncMOC.performAndWait {
+            userClient = self.createSelfClient()
+        }
+
+        // WHEN
+        let result = await sut.fetchRemoteFingerprint(for: userClient)
+
+        // THEN
+        XCTAssertEqual(mockProteusProvider.mockKeyStore.accessEncryptionContextCount, 0)
+        XCTAssertEqual(result, fingerprint.data(using: .utf8))
+    }
+
+    // MARK: - localFingerprint
+
+    func test_itLoadsLocalFingerprint_ProteusViaCoreCryptoFlagEnabled() async {
+
+        // GIVEN
+        sut = createSut(proteusEnabled: true)
+
+        syncMOC.performAndWait {
+            _ = self.createSelfClient()
+        }
+
+        // WHEN
+        guard let result = await sut.localFingerprint() else {
+            XCTFail("missing expected data")
+            return
+        }
+
+        // THEN
+        XCTAssertEqual(String(data: result, encoding: .utf8), fingerprint)
+    }
+
+    func test_itLoadsLocalFingerprint_ProteusViaCoreCryptoFlagDisabled() async {
+        // GIVEN
+        sut = createSut(proteusEnabled: false)
+
+        // WHEN
+        _ = await sut.localFingerprint()
+
+        // THEN
+        XCTAssertEqual(mockProteusProvider.mockKeyStore.accessEncryptionContextCount, 1)
+    }
+
+    // MARK: - Helpers
+
+    private func createSut(proteusEnabled: Bool) -> GetUserClientFingerprintUseCase {
+        mockProteusProvider = MockProteusProvider(mockProteusService: mockProteusService,
+                                                  mockKeyStore: self.spyForTests(),
+                                                  useProteusService: proteusEnabled)
+        mockProteusProvider.mockProteusService.localFingerprint_MockMethod = {
+            return self.fingerprint
+        }
+        mockProteusProvider.mockProteusService.remoteFingerprintForSession_MockMethod = { _ in
+            return self.fingerprint
+        }
+
+        return GetUserClientFingerprintUseCase(proteusProvider: mockProteusProvider,
+                                               sessionEstablisher: mockSessionEstablisher,
+                                               managedObjectContext: syncMOC)
+    }
+
+}

@@ -61,7 +61,9 @@ public class GetUserClientFingerprintUseCase {
         await self.context.perform {
             existingUser = try? self.context.existingObject(with: objectId) as? UserClient
             shouldEstablishSession = existingUser?.hasSessionWithSelfClient == false
-            _ = existingUser?.qualifiedClientID.flatMap { clientIds.insert($0) }
+            if let id = existingUser?.qualifiedClientID {
+                clientIds.insert(id)
+            }
         }
 
         if shouldEstablishSession {

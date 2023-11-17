@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0118539A2AE6BD4A0071FA32 /* GetUserClientFingerprintUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 011853982AE6BCD40071FA32 /* GetUserClientFingerprintUseCaseTests.swift */; };
 		0118539E2AE7BBAC0071FA32 /* store2-110-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = 0118539D2AE7BBAC0071FA32 /* store2-110-0.wiredatabase */; };
 		0129E7F929A520870065E6DB /* SafeCoreCrypto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0129E7F829A520870065E6DB /* SafeCoreCrypto.swift */; };
 		0129E7FB29A520EB0065E6DB /* SafeFileContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0129E7FA29A520EB0065E6DB /* SafeFileContext.swift */; };
@@ -847,7 +846,6 @@
 
 /* Begin PBXFileReference section */
 		011853942AE685BA0071FA32 /* zmessaging2.110.0.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = zmessaging2.110.0.xcdatamodel; sourceTree = "<group>"; };
-		011853982AE6BCD40071FA32 /* GetUserClientFingerprintUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetUserClientFingerprintUseCaseTests.swift; sourceTree = "<group>"; };
 		0118539D2AE7BBAC0071FA32 /* store2-110-0.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; path = "store2-110-0.wiredatabase"; sourceTree = "<group>"; };
 		0129E7F829A520870065E6DB /* SafeCoreCrypto.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SafeCoreCrypto.swift; sourceTree = "<group>"; };
 		0129E7FA29A520EB0065E6DB /* SafeFileContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafeFileContext.swift; sourceTree = "<group>"; };
@@ -1826,14 +1824,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		011853972AE6BCBA0071FA32 /* UseCases */ = {
-			isa = PBXGroup;
-			children = (
-				011853982AE6BCD40071FA32 /* GetUserClientFingerprintUseCaseTests.swift */,
-			);
-			path = UseCases;
-			sourceTree = "<group>";
-		};
 		06034B6B26A8D31F003624B4 /* FileSharing */ = {
 			isa = PBXGroup;
 			children = (
@@ -3250,7 +3240,6 @@
 		F9C9A79A1CAEA8FC0039E10C /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				011853972AE6BCBA0071FA32 /* UseCases */,
 				EE91911829F0196600514A2D /* EAR */,
 				54FB03AB1E41F6C2000E13DC /* Utils */,
 				F9A7085D1CAEEF4700C2F5FE /* Helper */,
@@ -4109,7 +4098,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				F920AE171E38C547001BC14F /* NotificationObservers.swift in Sources */,
-				0118539A2AE6BD4A0071FA32 /* GetUserClientFingerprintUseCaseTests.swift in Sources */,
 				F93265291D89648B0076AAD6 /* ZMAssetClientMessageTests.swift in Sources */,
 				63298D9C24374094006B6018 /* GenericMessageTests+External.swift in Sources */,
 				1689FD462194A63E00A656E2 /* ZMClientMessageTests+Editing.swift in Sources */,
