@@ -90,6 +90,16 @@ public enum DeveloperFlag: String, CaseIterable {
             return "IgnoreIncomingEventsEnabled"
         }
     }
+
+    // Convenience method tp set flag on or off
+    // Note: can be used in Tests to change storage if provided
+    public func enable(_ enabled: Bool, storage: UserDefaults? = nil) {
+        if let storage {
+            DeveloperFlag.storage = storage
+        }
+        var flag = self
+        flag.isOn = enabled
+    }
 }
 
 private class DeveloperFlagsDefault {
