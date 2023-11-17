@@ -38,9 +38,9 @@ final class UpdateConversationProtocolActionHandler: ActionHandler<UpdateConvers
 
         let domain = action.qualifiedID.domain
         let conversationID = action.qualifiedID.uuid.transportString()
-        let messageProtocol = action.messageProtocol.stringValue
+        let messageProtocol = action.messageProtocol.rawValue
         let path = "/conversations/\(domain)/\(conversationID)/\(messageProtocol)"
-        let payload = ["protocol": action.messageProtocol.stringValue] as ZMTransportData
+        let payload = ["protocol": messageProtocol] as ZMTransportData
 
         return .init(
             path: path,
@@ -56,17 +56,28 @@ final class UpdateConversationProtocolActionHandler: ActionHandler<UpdateConvers
     ) {
         var action = action
 
-        if [200, 204].contains(response.httpStatus) {
-            return action.succeed()
-        }
+        let statusCode = response.httpStatus
+        let label = response.payloadLabel()
+        let apiFailure = Action.Failure.APIFailure(statusCode, label)
 
-        if
-            let label = response.payloadLabel(),
-            let apiFailure = Action.Failure.APIFailure(rawValue: label),
-            apiFailure.statusCode == response.httpStatus {
+        switch (statusCode, label, apiFailure) {
+        case (200, _, _), (204, _, _):
+            action.succeed()
+        case (_, _, .some(let apiFailure)):
             action.fail(with: .api(apiFailure))
-        } else {
+        case (400, _, _): // edge case, where API doesn't return a label
+            action.fail(with: .api(.conversationIdOrDomainNotFound))
+        default:
             action.fail(with: .unknown)
         }
+    }
+}
+
+extension UpdateConversationProtocolAction.Failure.APIFailure {
+
+    fileprivate init?(_ statusCode: Int, _ label: String?) {
+        guard let label else { return nil }
+        self.init(rawValue: label)
+        guard self.statusCode == statusCode else { return nil }
     }
 }

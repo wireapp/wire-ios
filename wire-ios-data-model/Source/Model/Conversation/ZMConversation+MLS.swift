@@ -36,11 +36,21 @@ extension ZMConversation {
     static let commitPendingProposalDateKey = "commitPendingProposalDate"
 
     @objc
+    static let cipherSuiteKey = #keyPath(cipherSuite)
+
+    @objc
     static let epochKey = #keyPath(epoch)
+
+    @objc
+    static let epochTimestampKey = #keyPath(epochTimestamp)
 
     // MARK: Properties
 
+    @NSManaged public var cipherSuite: NSNumber?
+
     @NSManaged public var epoch: UInt64
+
+    @NSManaged public var epochTimestamp: Date?
 
     @NSManaged private var primitiveMessageProtocol: NSNumber
 
@@ -52,7 +62,7 @@ extension ZMConversation {
             let value = primitiveMessageProtocol.int16Value
             didAccessValue(forKey: Self.messageProtocolKey)
 
-            guard let result = MessageProtocol(rawValue: value) else {
+            guard let result = MessageProtocol(int16Value: value) else {
                 fatalError("failed to init MessageProtocol from rawValue: \(value)")
             }
 
@@ -61,7 +71,7 @@ extension ZMConversation {
 
         set {
             willChangeValue(forKey: Self.messageProtocolKey)
-            primitiveMessageProtocol = NSNumber(value: newValue.rawValue)
+            primitiveMessageProtocol = NSNumber(value: newValue.int16Value)
             didChangeValue(forKey: Self.messageProtocolKey)
         }
     }
@@ -242,7 +252,7 @@ private extension NSPredicate {
             format: "%K == %i && %K != nil",
             argumentArray: [
                 ZMConversation.messageProtocolKey,
-                MessageProtocol.mls.rawValue,
+                MessageProtocol.mls.int16Value,
                 ZMConversation.mlsGroupIdKey
             ]
         )
@@ -263,7 +273,7 @@ private extension NSPredicate {
             format: "%K == %i",
             argumentArray: [
                 ZMConversation.messageProtocolKey,
-                messageProtocol.rawValue
+                messageProtocol.int16Value
             ]
         )
     }
