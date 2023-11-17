@@ -77,10 +77,10 @@ final class ConversationListTopBarViewController: UIViewController {
     // MARK: - Title View
 
     func updateTitleView() {
-        topBar?.middleView = createTitleView(userSession: userSession)
+        topBar?.middleView = createTitleView()
     }
 
-    private func createTitleView(userSession: UserSession) -> UIView {
+    private func createTitleView() -> UIView {
         if selfUser.isTeamMember {
             let availabilityViewController = AvailabilityTitleViewController(user: selfUser, options: .header, userSession: userSession)
             addChild(availabilityViewController)
