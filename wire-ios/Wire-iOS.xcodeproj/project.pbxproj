@@ -1246,8 +1246,6 @@
 		E6C25FCB2AFFABE000406A1C /* UITraitEnvironmentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF17C52F2321417600245EBF /* UITraitEnvironmentTests.swift */; };
 		E6C25FCE2AFFAC2E00406A1C /* CoreDataFixture.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6C25FCD2AFFAC2E00406A1C /* CoreDataFixture.swift */; };
 		E6C25FCF2AFFAC2E00406A1C /* CoreDataFixture.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6C25FCD2AFFAC2E00406A1C /* CoreDataFixture.swift */; };
-		E6C25FD22AFFAD9300406A1C /* SelfProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6C25FD12AFFAD9300406A1C /* SelfProvider.swift */; };
-		E6C25FD32AFFAD9300406A1C /* SelfProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6C25FD12AFFAD9300406A1C /* SelfProvider.swift */; };
 		E6C25FD52AFFAE1200406A1C /* ZMConversation+Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF1CB6F422B39CBF004CB458 /* ZMConversation+Mock.swift */; };
 		E6C25FD72AFFAF4900406A1C /* ZMUser+Availability.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6C25FD62AFFAF4900406A1C /* ZMUser+Availability.swift */; };
 		E6C25FD82AFFAF4900406A1C /* ZMUser+Availability.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6C25FD62AFFAF4900406A1C /* ZMUser+Availability.swift */; };
@@ -1284,6 +1282,10 @@
 		E986CAA9287D979300AF39E1 /* UIApplication+KeyWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = E986CAA7287D979300AF39E1 /* UIApplication+KeyWindow.swift */; };
 		E989695728EC430B0088F0CE /* SecondaryButtonDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = E989695628EC430B0088F0CE /* SecondaryButtonDescription.swift */; };
 		E9A60C7329716A70001D0E14 /* UITextField+DoneBarButtonItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9A60C7229716A70001D0E14 /* UITextField+DoneBarButtonItem.swift */; };
+		E9B439312B0783BD0069DA63 /* SelfProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B439302B0783BD0069DA63 /* SelfProvider.swift */; };
+		E9B439322B0783BD0069DA63 /* SelfProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B439302B0783BD0069DA63 /* SelfProvider.swift */; };
+		E9B439332B07855C0069DA63 /* UserSessionMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE9B56A62AE7EA08001D7C2E /* UserSessionMock.swift */; };
+		E9B439342B0786100069DA63 /* SettingsPropertyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8787BDD61BF374420096B1B5 /* SettingsPropertyTests.swift */; };
 		E9B580CC27B3E71900A5814D /* ConversationOptionsServicesViewControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B580CB27B3E71900A5814D /* ConversationOptionsServicesViewControllerTests.swift */; };
 		E9B8EB792A0CEB690056E417 /* MessageReactionsCellDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B8EB782A0CEB690056E417 /* MessageReactionsCellDescription.swift */; };
 		E9B8EB7B2A0CEB980056E417 /* MessageReactionsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B8EB7A2A0CEB980056E417 /* MessageReactionsCell.swift */; };
@@ -3266,7 +3268,6 @@
 		E6579E722AFFA232004E7FD8 /* Mocks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Mocks.h; sourceTree = "<group>"; };
 		E6C25FC42AFFAAC300406A1C /* WireTesting.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTesting.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E6C25FCD2AFFAC2E00406A1C /* CoreDataFixture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataFixture.swift; sourceTree = "<group>"; };
-		E6C25FD12AFFAD9300406A1C /* SelfProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelfProvider.swift; sourceTree = "<group>"; };
 		E6C25FD62AFFAF4900406A1C /* ZMUser+Availability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMUser+Availability.swift"; sourceTree = "<group>"; };
 		E6C25FD92AFFAFB100406A1C /* NSAttributedString+Attachments.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSAttributedString+Attachments.swift"; sourceTree = "<group>"; };
 		E6C25FF12B03550A00406A1C /* AppLockModuleInteractorTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppLockModuleInteractorTests.swift; sourceTree = "<group>"; };
@@ -3294,6 +3295,7 @@
 		E986CAA7287D979300AF39E1 /* UIApplication+KeyWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIApplication+KeyWindow.swift"; sourceTree = "<group>"; };
 		E989695628EC430B0088F0CE /* SecondaryButtonDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecondaryButtonDescription.swift; sourceTree = "<group>"; };
 		E9A60C7229716A70001D0E14 /* UITextField+DoneBarButtonItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITextField+DoneBarButtonItem.swift"; sourceTree = "<group>"; };
+		E9B439302B0783BD0069DA63 /* SelfProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelfProvider.swift; sourceTree = "<group>"; };
 		E9B580CB27B3E71900A5814D /* ConversationOptionsServicesViewControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationOptionsServicesViewControllerTests.swift; sourceTree = "<group>"; };
 		E9B8EB782A0CEB690056E417 /* MessageReactionsCellDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageReactionsCellDescription.swift; sourceTree = "<group>"; };
 		E9B8EB7A2A0CEB980056E417 /* MessageReactionsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageReactionsCell.swift; sourceTree = "<group>"; };
@@ -5685,23 +5687,17 @@
 				87BEB0DF1C734DA60094BFE9 /* MockLoader.m */,
 				87BEB0DA1C734D710094BFE9 /* MockUser.h */,
 				87BEB0DB1C734D710094BFE9 /* MockUser.m */,
-				EFDBA241229414E100874A15 /* Account+Mock.swift */,
 				EF4018BF2059761D00CFBCB0 /* MockApplication.swift */,
 				1658C19B20A1F07800148F6D /* MockCallInfoViewControllerInput.swift */,
 				5E33F0D420ADA94B00414EA6 /* MockCallPermissions.swift */,
-				706B282B27B3049700A511BD /* MockClassificationProvider.swift */,
 				F127BD581E265FB40093B2F1 /* MockCollection.swift */,
-				160DF02E234DCE0400978FCF /* MockConverationDirectory.swift */,
-				A9184F0825C097EE00AE7842 /* MockConversation.swift */,
 				EF6E3C7D208A0355003F6752 /* MockConversation+factory.swift */,
 				EF8D7D4720D8FC7100F98666 /* MockConversation+TimedMessage.swift */,
 				BF16FC4D1DAFCE9300FF4325 /* MockConversationFactory.swift */,
 				EF106E84204D8B4200B9F0F6 /* MockDevice.swift */,
-				1659FCCC234E415200D06C1F /* MockLabel.swift */,
 				87BEB0E11C734DB60094BFE9 /* MockMessage.swift */,
 				EF8DD910211E02BE00E970F1 /* MockMessage+Creation.swift */,
 				6357B41526121D55008F1761 /* MockPanGestureRecognizer.swift */,
-				EF2D6D37228C1FB300D8DBF4 /* MockPhotoLibrary.swift */,
 				6357B419261226C4008F1761 /* MockPinchGestureRecognizer.swift */,
 				5501FFA922B28D210050D8FC /* MockSelfLegalHoldSubject.swift */,
 				EE52378E23F557A600D4FE79 /* MockServiceUserType.swift */,
@@ -5713,7 +5709,6 @@
 				EF3371C32216EEE2005ED048 /* MockUser+SelfUserFromSession.swift */,
 				EF2A8DE8214A8B38002C9058 /* MockUser+Service.swift */,
 				87D553661C86F0450026573C /* MockUserClient.swift */,
-				A97192B2221302DD00E72AD1 /* MockUserRight.swift */,
 				EEBFE0BF23F1A48D00292088 /* MockUserType.swift */,
 				EE52379223F5588000D4FE79 /* MockUserType+CodingKeys.swift */,
 				EE52378223F5566F00D4FE79 /* MockUserType+Creation.swift */,
@@ -7373,7 +7368,7 @@
 		E6C25FD02AFFAD8800406A1C /* Utility */ = {
 			isa = PBXGroup;
 			children = (
-				E6C25FD12AFFAD9300406A1C /* SelfProvider.swift */,
+				E9B439302B0783BD0069DA63 /* SelfProvider.swift */,
 			);
 			path = Utility;
 			sourceTree = "<group>";
@@ -9746,7 +9741,6 @@
 			files = (
 				16DF3B682289B92000D09365 /* LegalHoldDetailsViewControllerSnapshotTests.swift in Sources */,
 				EFAFCA8D213433D7002B31A6 /* ConversationListViewControllerTests.swift in Sources */,
-				E6C25FD22AFFAD9300406A1C /* SelfProvider.swift in Sources */,
 				EE52378B23F5574D00D4FE79 /* MockUserType+ValidatorType.swift in Sources */,
 				F1CB5D29215A3108001CCF5D /* MentionsHandlerTests.swift in Sources */,
 				EECA835426F211210087ECB0 /* UIAlertControllerFeatureConfigSnapshotTests.swift in Sources */,
@@ -9990,6 +9984,7 @@
 				A93E6104233B870300CEA65F /* ConversationListHeaderViewSnapshotTests.swift in Sources */,
 				A95C76C2240E915D0047CD29 /* CompositeMessageCellTests.swift in Sources */,
 				EF223F5D2327A1CF004480FA /* ConversationListViewControllerViewModelTests.swift in Sources */,
+				E9B439312B0783BD0069DA63 /* SelfProvider.swift in Sources */,
 				EF2FEDC8228E9E42000883C8 /* UserImageViewContainerSnapshotTests.swift in Sources */,
 				D34AFFF12A0B84EE00895C7A /* WarningLabelViewTests.swift in Sources */,
 				876AE7601C159A9C00E3E743 /* StringFingerprintTests.swift in Sources */,
@@ -10132,6 +10127,7 @@
 				E6579E7A2AFFA36D004E7FD8 /* AppLockModule.MockApplicationStateProvider.swift in Sources */,
 				E6579E652AFFA024004E7FD8 /* MockConversationFactory.swift in Sources */,
 				E6C25FEB2B02798E00406A1C /* String+WholeRangeTests.swift in Sources */,
+				E9B439342B0786100069DA63 /* SettingsPropertyTests.swift in Sources */,
 				E6579E4E2AFFA024004E7FD8 /* MockUser+Convenience.swift in Sources */,
 				E6C25FEE2B027BA000406A1C /* TransformTextViewTests.swift in Sources */,
 				E6579E622AFFA024004E7FD8 /* MockTapGestureRecognizer.swift in Sources */,
@@ -10157,7 +10153,6 @@
 				E6579E592AFFA024004E7FD8 /* MockConversation+factory.swift in Sources */,
 				E6579E5E2AFFA024004E7FD8 /* MockMessage.swift in Sources */,
 				E6579E772AFFA36D004E7FD8 /* AppLockModule.MockSession.swift in Sources */,
-				E6C25FD32AFFAD9300406A1C /* SelfProvider.swift in Sources */,
 				E6579E4C2AFFA024004E7FD8 /* MockServiceUserType+Creation.swift in Sources */,
 				E6C25FDB2AFFAFB100406A1C /* NSAttributedString+Attachments.swift in Sources */,
 				E6C25FCF2AFFAC2E00406A1C /* CoreDataFixture.swift in Sources */,
@@ -10195,10 +10190,12 @@
 				E6579E4D2AFFA024004E7FD8 /* MockCollection.swift in Sources */,
 				E6C25FD82AFFAF4900406A1C /* ZMUser+Availability.swift in Sources */,
 				E6579E4B2AFFA00A004E7FD8 /* MockServiceUserType.swift in Sources */,
+				E9B439322B0783BD0069DA63 /* SelfProvider.swift in Sources */,
 				E6579E5F2AFFA024004E7FD8 /* MockMessage+Creation.swift in Sources */,
 				E6579E412AFF9CEE004E7FD8 /* TemporaryFileServiceTests.swift in Sources */,
 				E6579E6E2AFFA029004E7FD8 /* MockLoader.m in Sources */,
 				E6C25FF42B03550A00406A1C /* AppLockModuleInteractorTests.swift in Sources */,
+				E9B439332B07855C0069DA63 /* UserSessionMock.swift in Sources */,
 				E6579E522AFFA024004E7FD8 /* MockSelfLegalHoldSubject.swift in Sources */,
 				E6579E562AFFA024004E7FD8 /* MockVoiceChannel.swift in Sources */,
 				E6579E7E2AFFA98C004E7FD8 /* HandleChangeStateTests.swift in Sources */,
