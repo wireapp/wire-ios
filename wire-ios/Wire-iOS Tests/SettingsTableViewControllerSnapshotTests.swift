@@ -121,6 +121,7 @@ final class SettingsTableViewControllerSnapshotTests: ZMSnapshotTestCase {
 
     func testForOptionsGroupFullTableView() {
         setToLightTheme()
+        userSession.isAppLockAvailable = true
 
         let group = settingsCellDescriptorFactory.optionsGroup
         sut = SettingsTableViewController(group: group as! SettingsInternalGroupCellDescriptorType)
