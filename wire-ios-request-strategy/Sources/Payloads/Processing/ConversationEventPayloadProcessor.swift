@@ -631,7 +631,7 @@ final class ConversationEventPayloadProcessor {
             return
         }
 
-        guard let messageProtocol = MessageProtocol(stringValue: messageProtocolString) else {
+        guard let messageProtocol = MessageProtocol(rawValue: messageProtocolString) else {
             Logging.eventProcessing.warn("message protocol is invalid, got: \(messageProtocolString)")
             return
         }
