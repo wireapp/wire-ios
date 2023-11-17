@@ -251,7 +251,7 @@ public class MessageSender: MessageSenderInterface {
     }
 }
 
-private extension UserClient {
+public extension UserClient {
 
     var qualifiedClientID: QualifiedClientID? {
         guard

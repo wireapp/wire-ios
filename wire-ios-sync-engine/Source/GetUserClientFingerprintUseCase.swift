@@ -22,57 +22,81 @@ import WireRequestStrategy
 public class GetUserClientFingerprintUseCase {
 
     let proteusProvider: ProteusProviding
-    let managedObjectContext: NSManagedObjectContext
-    let messageSender: MessageSender
+    let context: NSManagedObjectContext
+    let sessionEstablisher: SessionEstablisherInterface
 
-    public static func create(for managedObjectContext: NSManagedObjectContext) -> GetUserClientFingerprintUseCase {
-        let proteusProvider = ProteusProvider(context: managedObjectContext)
+    // MARK: - Initialization
 
-        return GetUserClientFingerprintUseCase(proteusProvider: proteusProvider, messageSender: MessageSender(httpClient: <#T##HttpClient#>, clientRegistrationDelegate: <#T##ClientRegistrationDelegate#>, sessionEstablisher: <#T##SessionEstablisher#>, context: <#T##NSManagedObjectContext#>), managedObjectContext: managedObjectContext)
+    convenience init(syncContext: NSManagedObjectContext,
+                     transportSession: TransportSessionType) {
+        let httpClient = HttpClientImpl(
+            transportSession: transportSession,
+            queue: syncContext)
+        let apiProvider = APIProvider(httpClient: httpClient)
+        let sessionEstablisher = SessionEstablisher(
+            context: syncContext,
+            apiProvider: apiProvider)
+        let proteusProvider = ProteusProvider(context: syncContext)
+
+        self.init(proteusProvider: proteusProvider, sessionEstablisher: sessionEstablisher, managedObjectContext: syncContext)
     }
 
     init(proteusProvider: ProteusProviding,
-         messageSender: MessageSender,
+         sessionEstablisher: SessionEstablisherInterface,
          managedObjectContext: NSManagedObjectContext) {
         self.proteusProvider = proteusProvider
-        self.managedObjectContext = managedObjectContext
-        self.messageSender = messageSender
+        self.context = managedObjectContext
+        self.sessionEstablisher = sessionEstablisher
     }
+
+    // MARK: - Methods
 
     public func invoke(userClient: UserClient) async -> Data? {
         let objectId = userClient.objectID
 
-        let isSelfClient: Bool = managedObjectContext.performAndWait {
-            guard let existingUserId = try? managedObjectContext.existingObject(with: objectId) as? UserClient else {
-                return false
-            }
-            return existingUserId.isSelfClient()
+        var existingUser: UserClient?
+        var shouldEstablishSession = false
+        var clientIds = Set<QualifiedClientID>()
+
+        await self.context.perform {
+            existingUser = try? self.context.existingObject(with: objectId) as? UserClient
+            shouldEstablishSession = existingUser?.hasSessionWithSelfClient == false
+            _ = existingUser?.qualifiedClientID.flatMap { clientIds.insert($0) }
         }
 
-//        if !userClient.hasSessionWithSelfClient {
-//            //
-//            .establishSessionWithClient(<#T##client: UserClient##UserClient#>, usingPreKey: <#T##String#>)
-//                           syncSelfClient.missesClient(syncClient)
-//                           syncSelfClient.setLocallyModifiedKeys(Set(arrayLiteral: ZMUserClientMissingKey))
-//                           syncMOC.saveOrRollback()
-//                       }
+        if shouldEstablishSession {
+            if let apiVersion = BackendInfo.apiVersion {
+                do {
+                    try await sessionEstablisher.establishSession(with: clientIds, apiVersion: apiVersion)
+                } catch {
+                    WireLogger.proteus.error("cannot establishSession while getting fingerprint: \(error)")
+                }
+            } else {
+                WireLogger.backend.warn("apiVersion not resolved, cannot establishSession")
+            }
+        }
+
+        guard let existingUser else { return nil }
+
+        let isSelfClient: Bool = await context.perform { existingUser.isSelfClient() }
+
+        let canPerform: Bool = await context.perform {
+            self.proteusProvider.canPerform
+        }
+
+        guard canPerform else {
+            WireLogger.proteus.error("cannot get localFingerprint, proteusProvider not ready")
+            return nil
+        }
 
         if isSelfClient {
             return await localFingerprint()
         } else {
-            return await fetchRemoteFingerprint(for: userClient)
+            return await fetchRemoteFingerprint(for: existingUser)
         }
     }
 
     func localFingerprint() async -> Data? {
-        var canPerform: Bool = false
-
-        managedObjectContext.performAndWait {
-            canPerform = proteusProvider.canPerform
-        }
-        guard canPerform else {
-            return nil
-        }
         var fingerprintData: Data?
 
         proteusPerform(
@@ -94,19 +118,7 @@ public class GetUserClientFingerprintUseCase {
     }
 
     func fetchRemoteFingerprint(for userClient: UserClient) async -> Data? {
-        let userClientObjectId = userClient.objectID
-        var userClientToUpdate: UserClient?
-        var sessionId: ProteusSessionID?
-
-        managedObjectContext.performAndWait {
-            userClientToUpdate = managedObjectContext.object(with: userClientObjectId) as? UserClient
-            if proteusProvider.canPerform {
-                sessionId = userClientToUpdate?.proteusSessionID
-            }
-        }
-
-        guard let sessionID = sessionId
-        else {
+        guard let sessionId = await context.perform({ userClient.proteusSessionID }) else {
             return nil
         }
 
@@ -115,7 +127,7 @@ public class GetUserClientFingerprintUseCase {
         proteusPerform(
             withProteusService: { proteusService in
                 do {
-                    let fingerprint = try proteusService.remoteFingerprint(forSession: sessionID)
+                    let fingerprint = try proteusService.remoteFingerprint(forSession: sessionId)
                     fingerprintData = fingerprint.utf8Data
                 } catch {
                     WireLogger.proteus.error("Cannot fetch remote fingerprint for \(userClient)")
@@ -123,7 +135,7 @@ public class GetUserClientFingerprintUseCase {
             },
             withKeyStore: { keyStore in
                 keyStore.encryptionContext.perform { sessionsDirectory in
-                    fingerprintData = sessionsDirectory.fingerprint(for: sessionID.mapToEncryptionSessionID())
+                    fingerprintData = sessionsDirectory.fingerprint(for: sessionId.mapToEncryptionSessionID())
                 }
             }
         )
@@ -131,11 +143,13 @@ public class GetUserClientFingerprintUseCase {
         return fingerprintData
     }
 
+    // MARK: - Helpers
+
     private func proteusPerform<T>(
         withProteusService proteusServiceBlock: ProteusServicePerformBlock<T>,
         withKeyStore keyStoreBlock: KeyStorePerformBlock<T>
     ) rethrows -> T {
-        return try managedObjectContext.performAndWait {
+        return try context.performAndWait {
             try proteusProvider.perform(withProteusService: proteusServiceBlock, withKeyStore: keyStoreBlock)
         }
     }

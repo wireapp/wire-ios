@@ -233,7 +233,11 @@ public class ZMUserSession: NSObject {
         tornDown = true
     }
 
-    public var getUserClientFingerprint: GetUserClientFingerprintUseCase!
+    public lazy var getUserClientFingerprint: GetUserClientFingerprintUseCase = {
+        // Note: this is safe if coredataStack and proteus are ready
+        GetUserClientFingerprintUseCase(syncContext: coreDataStack.syncContext,
+                                        transportSession: transportSession)
+    }()
 
     let lastEventIDRepository: LastEventIDRepositoryInterface
 
@@ -303,8 +307,6 @@ public class ZMUserSession: NSObject {
 
         // Proteus needs to be setup before client registration starts
         setupCryptoStack(stage: .proteus(userID: userId))
-
-        self.getUserClientFingerprint = GetUserClientFingerprintUseCase.create(for: coreDataStack.syncContext)
 
         syncManagedObjectContext.performGroupedBlockAndWait {
             self.localNotificationDispatcher = LocalNotificationDispatcher(in: coreDataStack.syncContext)
