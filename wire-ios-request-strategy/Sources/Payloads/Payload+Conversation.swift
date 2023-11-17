@@ -493,23 +493,24 @@ extension Payload {
 
     struct ConversationEvent<T: CodableEventData>: Codable {
 
-        enum CodingKeys: String, CodingKey {
-            case id = "conversation"
-            case qualifiedID = "qualified_conversation"
-            case from
-            case qualifiedFrom = "qualified_from"
-            case timestamp = "time"
-            case type
-            case data
-        }
-
         let id: UUID?
-        let qualifiedID: QualifiedID?
+        let data: T
         let from: UUID?
+        let qualifiedID: QualifiedID?
         let qualifiedFrom: QualifiedID?
         let timestamp: Date?
         let type: String?
-        let data: T
+
+        enum CodingKeys: String, CodingKey {
+            case id = "conversation"
+            case data
+            case from
+            case qualifiedID = "qualified_conversation"
+            case qualifiedFrom = "qualified_from"
+            case timestamp = "time"
+            case type
+        }
+
     }
 
     struct UpdateConverationMemberLeave: CodableEventData {
@@ -763,3 +764,5 @@ extension Payload.Conversation: EncodableAPIVersionAware {
     }
 
 }
+
+extension Payload.ConversationEvent: Equatable where T: Equatable {}

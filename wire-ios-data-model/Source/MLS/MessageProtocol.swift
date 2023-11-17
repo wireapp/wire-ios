@@ -19,7 +19,7 @@
 /// Protocols for exchanging end-to-end-encrypted messages
 /// between clients.
 
-public enum MessageProtocol: Int16 {
+public enum MessageProtocol: String, CaseIterable {
 
     /// With proteus, inidividual encryption sessions are created between
     /// every pair of clients in a conversation. This imposes constraints on
@@ -41,17 +41,19 @@ public enum MessageProtocol: Int16 {
     /// Calling is still done the proteus way until the migration is finalised
 
     case mixed
+}
 
-    public init?(string: String) {
-        switch string {
-        case "mls":
-            self = .mls
-        case "proteus":
-            self = .proteus
-        case "mixed":
-            self = .mixed
-        default:
-            return nil
-        }
+// MARK: MessageProtocol + int16Value
+
+extension MessageProtocol {
+
+    var int16Value: Int16 {
+        let index = Self.allCases.firstIndex(of: self)!
+        return .init(index)
+    }
+
+    init?(int16Value: Int16) {
+        guard Self.allCases.indices.contains(.init(int16Value)) else { return nil }
+        self = Self.allCases[.init(int16Value)]
     }
 }

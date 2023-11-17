@@ -173,7 +173,7 @@ extension ZMConversation {
         let notBlocked = NSPredicate(format: "\(ZMConversationConnectionKey).status != \(ZMConnectionStatus.blocked.rawValue) && \(ZMConversationConnectionKey).status != \(ZMConnectionStatus.blockedMissingLegalholdConsent.rawValue)")
         let predicate2 = NSCompoundPredicate(orPredicateWithSubpredicates: [noConnection, notBlocked]) // group conversations and not blocked connections
 
-        let proteusOrMlsAndReady = NSPredicate(format: "(\(ZMConversation.messageProtocolKey) == \(MessageProtocol.proteus.rawValue)) OR ((\(ZMConversation.messageProtocolKey) == \(MessageProtocol.mls.rawValue)) AND (\(ZMConversation.mlsStatusKey) == \(MLSGroupStatus.ready.rawValue)))")
+        let proteusOrMlsAndReady = NSPredicate(format: "(\(ZMConversation.messageProtocolKey) == \(MessageProtocol.proteus.int16Value)) OR ((\(ZMConversation.messageProtocolKey) == \(MessageProtocol.mls.int16Value)) AND (\(ZMConversation.mlsStatusKey) == \(MLSGroupStatus.ready.rawValue)))")
 
         return NSCompoundPredicate(andPredicateWithSubpredicates: [basePredicate, predicate1, predicate2, proteusOrMlsAndReady])
     }
