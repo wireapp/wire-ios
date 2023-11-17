@@ -71,10 +71,16 @@ class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
     func testMigrateOrJoinGroupConversations_CallsJoinGroupForNewConversations() async throws {
         // GIVEN
         let selfUser = ZMUser.selfUser(in: syncMOC)
-        selfUser.teamIdentifier = .init()
-        let conversation = ZMConversation.insertNewObject(in: uiMOC)
+        selfUser.teamIdentifier = UUID()
+
+        let conversation = ZMConversation.insertNewObject(in: syncMOC)
+        conversation.teamRemoteIdentifier = selfUser.teamIdentifier
+        conversation.conversationType = .group
+        conversation.messageProtocol = .mixed
         conversation.mlsGroupID = .random()
+
         let groupID = try XCTUnwrap(conversation.mlsGroupID)
+
         mockMLSService.conversationExistsMock = { _ in
             return false
         }
@@ -89,9 +95,14 @@ class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
     func testMigrateOrJoinGroupConversations_DoesNotCallJoinGroupForExistingConversations() async throws {
         // GIVEN
         let selfUser = ZMUser.selfUser(in: syncMOC)
-        selfUser.teamIdentifier = .init()
-        let conversation = ZMConversation.insertNewObject(in: uiMOC)
+        selfUser.teamIdentifier = UUID()
+
+        let conversation = ZMConversation.insertNewObject(in: syncMOC)
+        conversation.teamRemoteIdentifier = selfUser.teamIdentifier
+        conversation.conversationType = .group
+        conversation.messageProtocol = .mixed
         conversation.mlsGroupID = .random()
+
         let groupID = try XCTUnwrap(conversation.mlsGroupID)
         mockMLSService.conversationExistsMock = { _ in
             return true
