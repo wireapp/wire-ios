@@ -24,9 +24,11 @@ class Button: LegacyButton {
 
     var style: ButtonStyle?
 
-    convenience init(style: ButtonStyle,
-                     cornerRadius: CGFloat = 0,
-                     fontSpec: FontSpec = .smallLightFont) {
+    convenience init(
+        style: ButtonStyle,
+        cornerRadius: CGFloat,
+        fontSpec: FontSpec
+    ) {
         self.init(fontSpec: fontSpec)
 
         self.style = style
@@ -37,7 +39,10 @@ class Button: LegacyButton {
         applyStyle(style)
     }
 
-    convenience init(style: ButtonStyle, cornerRadius: CGFloat = 0) {
+    convenience init(
+        style: ButtonStyle,
+        cornerRadius: CGFloat
+    ) {
         self.init()
         self.style = style
         layer.cornerRadius = cornerRadius
