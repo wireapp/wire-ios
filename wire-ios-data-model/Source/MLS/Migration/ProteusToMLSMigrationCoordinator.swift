@@ -148,7 +148,7 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
     }
 
     /// This method is responsible for migrating all `mixed` group conversations to `mls`.
-    /// It evaluates each conversation to determine if the migration needs to be finalized (i.e: updating the protocol from `mixed` to `mls`) 
+    /// It evaluates each conversation to determine if the migration needs to be finalized (i.e: updating the protocol from `mixed` to `mls`)
     /// or if it should first join the corresponding MLS group.
 
     func migrateOrJoinGroupConversations() async {
@@ -158,14 +158,14 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
                 in: context
             )
 
+            guard let mlsService = context.mlsService else {
+                return logger.warn("can't migrate conversations to mls: missing `mlsService`")
+            }
+
             for conversation in conversations {
                 do {
                     guard let groupID = conversation.mlsGroupID else {
                         return logger.warn("can't migrate conversation to mls: missing `groupID`")
-                    }
-
-                    guard let mlsService = context.mlsService else {
-                        return logger.warn("can't migrate conversations to mls: missing `mlsService`")
                     }
 
                     if mlsService.conversationExists(groupID: groupID) {
