@@ -20,6 +20,13 @@ import Foundation
 import XCTest
 @testable import WireDataModel
 
+class MockConversationFetcher: ConversationFetching {
+    var mock: (MessageProtocol) -> [ZMConversation]
+    func fetchAllTeamGroupConversations(messageProtocol: WireDataModel.MessageProtocol) throws -> [ZMConversation] {
+        return mock(messageProtocol)
+    }
+}
+
 class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
 
     var sut: ProteusToMLSMigrationCoordinator!
@@ -27,6 +34,7 @@ class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
     var mockFeatureRepository: MockFeatureRepositoryInterface!
     var mockActionsProvider: MockMLSActionsProviderProtocol!
     var mockMLSService: MockMLSService!
+    var mockConversationFetcher: MockConversationFetcher!
 
     override func setUp() {
         super.setUp()
@@ -35,12 +43,14 @@ class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
         mockFeatureRepository = MockFeatureRepositoryInterface()
         mockActionsProvider = MockMLSActionsProviderProtocol()
         mockMLSService = MockMLSService()
+        mockConversationFetcher = MockConversationFetcher()
 
         sut = ProteusToMLSMigrationCoordinator(
             context: syncMOC,
             storage: mockStorage,
             featureRepository: mockFeatureRepository,
-            actionsProvider: mockActionsProvider
+            actionsProvider: mockActionsProvider,
+            conversationFetcher: mockConversationFetcher
         )
 
         syncMOC.mlsService = mockMLSService
