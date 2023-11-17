@@ -55,12 +55,7 @@ extension ConversationContentViewController {
     /// Scrolls the tableView to the bottom-most row.
     ///
     /// This method checks if the tableView is not already scrolled to the bottom.
-    /// If not, it loads new messages from the dataSource and scrolls to the bottom row.
-    /// The scroll to the bottom is animated based on the user's accessibility settings
-    /// and the number of messages. If reduce motion is enabled or the number of messages
-    /// exceeds 20, the scroll animation is set to `.top`; otherwise, it's set to `.bottom`.
-    /// After scrolling, the tableView's header view is updated.
-    func scrollToBottom() {
+    func scrollToBottomIfNeeded() {
         let maxMessageCountForAnimation = 20
 
         guard !isScrolledToBottom else {
