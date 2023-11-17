@@ -61,6 +61,8 @@ extension ConversationContentViewController {
     /// exceeds 20, the scroll animation is set to `.top`; otherwise, it's set to `.bottom`.
     /// After scrolling, the tableView's header view is updated.
     func scrollToBottom() {
+        let maxMessageCountForAnimation = 20
+
         guard !isScrolledToBottom else {
             return
         }
@@ -68,7 +70,7 @@ extension ConversationContentViewController {
         dataSource.loadMessages()
 
         let lastRowIndexPath = IndexPath(row: 0, section: 0)
-        let shouldAnimate = !UIAccessibility.isReduceMotionEnabled && dataSource.messages.count <= 20
+        let shouldAnimate = !UIAccessibility.isReduceMotionEnabled && dataSource.messages.count <= maxMessageCountForAnimation
 
         let scrollAnimation: UITableView.ScrollPosition = shouldAnimate ? .bottom : .top
 
