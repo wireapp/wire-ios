@@ -31,13 +31,12 @@ final class ColorSchemeController: NSObject {
 
     var userObserverToken: Any?
 
-    override init() {
+    init(userSession: UserSession) {
         super.init()
 
         // When SelfUser.provider is nil, e.g. running tests, do not set up UserChangeInfo observer
-        if let session = ZMUserSession.shared(),
-           SelfUser.provider != nil {
-            userObserverToken = UserChangeInfo.add(observer: self, for: SelfUser.current, in: session)
+        if let user = SelfUser.provider?.providedSelfUser {
+            userObserverToken = userSession.addUserObserver(self, for: user)
         }
 
         NotificationCenter.default.addObserver(self, selector: #selector(settingsColorSchemeDidChange), name: .SettingsColorSchemeChanged, object: nil)
