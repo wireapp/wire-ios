@@ -23,14 +23,17 @@ import SnapshotTesting
 final class ConfirmEmailViewControllerTests: XCTestCase {
 
     var sut: ConfirmEmailViewController!
+    var userSession: UserSessionMock!
 
     override func setUp() {
         super.setUp()
-        sut = ConfirmEmailViewController(newEmail: "bill@wire.com", delegate: nil)
+        userSession = UserSessionMock()
+        sut = ConfirmEmailViewController(newEmail: "bill@wire.com", delegate: nil, userSession: userSession)
         sut.overrideUserInterfaceStyle = .dark
     }
 
     override func tearDown() {
+        userSession = nil
         sut = nil
         super.tearDown()
     }

@@ -22,7 +22,7 @@ import LocalAuthentication
 
 extension AppLockModule {
 
-    final class MockSession: Session {
+    final class MockSession {
 
         var methodCalls = MethodCalls()
 

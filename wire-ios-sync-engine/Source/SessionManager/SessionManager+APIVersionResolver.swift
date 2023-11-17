@@ -68,7 +68,7 @@ extension SessionManager: APIVersionResolverDelegate {
                     sessions: sessions,
                     to: apiVersion
                 )
-                self.delegate?.sessionManagerDidPerformAPIMigrations()
+                self.delegate?.sessionManagerDidPerformAPIMigrations(activeSession: self.activeUserSession)
             }
         }
     }
@@ -118,14 +118,12 @@ extension SessionManager: APIVersionResolverDelegate {
             dispatchGroup?.wait(forInterval: 5)
 
             // 3. Reload sessions
-            var authenticated = false
             self.accountManager.accounts.forEach { account in
                 dispatchGroup?.enter()
 
                 if account == self.accountManager.selectedAccount {
                     // When completed, this should trigger an AppState change through the SessionManagerDelegate
                     self.loadSession(for: account) { _ in
-                        authenticated = true
                         dispatchGroup?.leave()
                     }
                 } else {
@@ -136,7 +134,7 @@ extension SessionManager: APIVersionResolverDelegate {
             }
 
             dispatchGroup?.wait(forInterval: 1)
-            self.delegate?.sessionManagerDidPerformFederationMigration(authenticated: authenticated)
+            self.delegate?.sessionManagerDidPerformFederationMigration(activeSession: activeUserSession)
         }
     }
 

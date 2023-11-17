@@ -77,6 +77,8 @@ final class ConversationImagesViewController: TintColorCorrectedViewController {
         }
     }
 
+    let userSession: UserSession
+
     var dismissAction: DismissAction? = .none {
         didSet {
             if let currentController = self.currentController {
@@ -85,12 +87,13 @@ final class ConversationImagesViewController: TintColorCorrectedViewController {
         }
     }
 
-    init(collection: AssetCollectionWrapper, initialMessage: ZMConversationMessage, inverse: Bool = false) {
+    init(collection: AssetCollectionWrapper, initialMessage: ZMConversationMessage, inverse: Bool = false, userSession: UserSession) {
         assert(initialMessage.isImage)
 
         self.inverse = inverse
         self.collection = collection
         self.currentMessage = initialMessage
+        self.userSession = userSession
 
         super.init(nibName: .none, bundle: .none)
         let imagesMatch = CategoryMatch(including: .image, excluding: .GIF)
@@ -337,7 +340,7 @@ final class ConversationImagesViewController: TintColorCorrectedViewController {
     }
 
     private func imageController(for message: ZMConversationMessage) -> FullscreenImageViewController {
-        let imageViewController = FullscreenImageViewController(message: message)
+        let imageViewController = FullscreenImageViewController(message: message, userSession: userSession)
         imageViewController.delegate = self
         imageViewController.swipeToDismiss = self.swipeToDismiss
         imageViewController.showCloseButton = false

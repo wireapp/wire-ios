@@ -18,6 +18,7 @@
 
 import Foundation
 import WireDataModel
+import WireSyncEngine
 
 final class UserDetailViewControllerFactory {
 
@@ -32,18 +33,31 @@ final class UserDetailViewControllerFactory {
     static func createUserDetailViewController(user: UserType,
                                                conversation: ZMConversation,
                                                profileViewControllerDelegate: ProfileViewControllerDelegate,
-                                               viewControllerDismisser: ViewControllerDismisser) -> UIViewController {
-        if user.isServiceUser, let serviceUser = user as? ServiceUser {
-
-            let serviceDetailViewController = ServiceDetailViewController(serviceUser: serviceUser, actionType: .removeService(conversation), completion: nil)
-            serviceDetailViewController.viewControllerDismisser = viewControllerDismisser
-            return serviceDetailViewController
-        } else {
-            // TODO: Do not present the details if the user is not connected.
-            let profileViewController = ProfileViewController(user: user, viewer: SelfUser.current, conversation: conversation)
+                                               viewControllerDismisser: ViewControllerDismisser,
+                                               userSession: UserSession) -> UIViewController {
+        guard let selfUser = SelfUser.provider?.providedSelfUser else {
+            assertionFailure("expected available 'viewer'!")
+            return UIViewController()
+        }
+        guard user.isServiceUser, let serviceUser = user as? ServiceUser else {
+            let profileViewController = ProfileViewController(
+                user: user,
+                viewer: selfUser,
+                conversation: conversation,
+                userSession: userSession
+            )
             profileViewController.delegate = profileViewControllerDelegate
             profileViewController.viewControllerDismisser = viewControllerDismisser
             return profileViewController
         }
+
+        let serviceDetailViewController = ServiceDetailViewController(
+            serviceUser: serviceUser,
+            actionType: .removeService(conversation),
+            selfUser: selfUser,
+            completion: nil
+        )
+        serviceDetailViewController.viewControllerDismisser = viewControllerDismisser
+        return serviceDetailViewController
     }
 }
