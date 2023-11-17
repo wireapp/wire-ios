@@ -30,21 +30,22 @@ public protocol E2EIManagerInterface {
     /// Create a new account.
     func createNewAccount(prevNonce: String, createAccountEndpoint: String) async -> String?
 
+    /// Create a new order.
+    func createNewOrder(prevNonce: String, createOrderEndpoint: String) async -> (acmeOrder: WireCoreCrypto.NewAcmeOrder?, nonce: String, location: String)?
+
 }
 
 public final class E2EIManager: E2EIManagerInterface {
 
     private var apiProvider: APIProvider
-    private var context: NSManagedObjectContext?
+    private var e2eiService: E2EIServiceInterface?
 
-    public init(apiProvider: APIProvider, context: NSManagedObjectContext) {
+    public init(apiProvider: APIProvider, e2eiService: E2EIServiceInterface) {
         self.apiProvider = apiProvider
-        self.context = context
+        self.e2eiService = e2eiService
     }
 
     public func loadACMEDirectory() async -> AcmeDirectory? {
-        var directory: WireCoreCrypto.AcmeDirectory?
-
         guard let acmeAPI = apiProvider.acmeAPI(apiVersion: .v5),
               let acmeDirectory = await acmeAPI.getACMEDirectory() else {
             WireLogger.e2ei.warn("Failed to get acme directory from acme server")
@@ -52,29 +53,16 @@ public final class E2EIManager: E2EIManagerInterface {
             return nil
         }
 
-        context?.performAndWait {
-            guard let e2eiService = context?.e2eiService else {
-                WireLogger.e2ei.warn("E2EIService is missing")
+        guard let acmeDirectoryData = try? JSONEncoder().encode(acmeDirectory),
+              let directoryResponse = try? await e2eiService?.directoryResponse(directoryData: acmeDirectoryData) else {
+            WireLogger.e2ei.warn("Failed to get directory response")
 
-                return
-            }
-
-            guard let acmeDirectoryData = try? JSONEncoder().encode(acmeDirectory),
-                  let directoryResponse = try? e2eiService.directoryResponse(directoryData: acmeDirectoryData) else {
-                WireLogger.e2ei.warn("Failed to get directory response")
-
-                return
-            }
-            directory = directoryResponse
-
-        }
-
-        guard let directory = directory else {
             return nil
         }
-        return AcmeDirectory(newNonce: directory.newNonce,
-                             newAccount: directory.newAccount,
-                             newOrder: directory.newOrder)
+
+        return AcmeDirectory(newNonce: directoryResponse.newNonce,
+                             newAccount: directoryResponse.newAccount,
+                             newOrder: directoryResponse.newOrder)
     }
 
     public func getACMENonce(endpoint: String) async -> String? {
@@ -85,36 +73,44 @@ public final class E2EIManager: E2EIManagerInterface {
     }
 
     public func createNewAccount(prevNonce: String, createAccountEndpoint: String) async -> String? {
-        var response: ACMEResponse?
+        guard let accountRequest = try? await e2eiService?.getNewAccountRequest(previousNonce: prevNonce) else {
+            WireLogger.e2ei.warn("Failed to get new account request")
 
-        context?.performAndWait {
-            guard let e2eiService = context?.e2eiService else {
-                WireLogger.e2ei.warn("E2EIService is missing")
-
-                return
-            }
-
-            guard let accountRequest = try? e2eiService.getNewAccountRequest(previousNonce: prevNonce) else {
-                WireLogger.e2ei.warn("Failed to get new account request")
-
-                return
-            }
-
-            // TODO: convert accountRequest to ZMTransportData
-            guard let acmeAPI = apiProvider.acmeAPI(apiVersion: .v5),
-                  let apiResponse = await acmeAPI.sendACMERequest(url: createAccountEndpoint, body: accountRequest) else {
-
-                return nil
-            }
-
-            guard let resp = try? e2eiService.setAccountResponse(accountData: apiResponse.response) else {
-                return
-            }
-            response = apiResponse
-
+            return nil
         }
 
-        return response?.nonce
+        guard let acmeAPI = apiProvider.acmeAPI(apiVersion: .v5),
+              let apiResponse = await acmeAPI.sendACMERequest(url: createAccountEndpoint, body: accountRequest) else {
+
+            return nil
+        }
+
+        do {
+            try await e2eiService?.setAccountResponse(accountData: apiResponse.response)
+            return apiResponse.nonce
+        } catch {
+            return nil
+        }
+    }
+
+    public func createNewOrder(prevNonce: String, createOrderEndpoint: String) async -> (acmeOrder: WireCoreCrypto.NewAcmeOrder?, nonce: String, location: String)? {
+        guard let newOrderRequest = try? await e2eiService?.getNewOrderRequest(nonce: prevNonce) else {
+            WireLogger.e2ei.warn("Failed to get new order request")
+
+            return nil
+        }
+        guard let acmeAPI = apiProvider.acmeAPI(apiVersion: .v5),
+              let apiResponse = await acmeAPI.sendACMERequest(url: createOrderEndpoint, body: newOrderRequest) else {
+
+            return nil
+        }
+
+        do {
+            let orderResponse = try await e2eiService?.setOrderResponse(order: apiResponse.response)
+            return (acmeOrder: orderResponse, nonce: apiResponse.nonce, location: apiResponse.location)
+        } catch {
+            return nil
+        }
     }
 
 }

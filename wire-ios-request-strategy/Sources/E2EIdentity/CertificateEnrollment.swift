@@ -27,6 +27,7 @@ enum Failure: Error, Equatable {
     case failedToLoadACMEDirectory
     case missingNonce
     case failedToCreateAcmeNewAccount
+    case failedToCreateAcmeNewOrder
 
 }
 
@@ -52,20 +53,30 @@ public final class CertificateEnrollment: CertificateEnrollmentInterface {
             return .failure(Failure.failedToLoadACMEDirectory)
         }
 
-        guard let prevNonce = await e2eiManager.getACMENonce(endpoint: acmeDirectory.newNonce) else {
+        guard let acmeNonce = await e2eiManager.getACMENonce(endpoint: acmeDirectory.newNonce) else {
             WireLogger.e2ei.warn("Fail to get acme nonce")
 
             return .failure(Failure.missingNonce)
         }
 
         /// update prevNonce?
-        guard let newNonce = await e2eiManager.createNewAccount(prevNonce: prevNonce,
+        guard let newAccountNonce = await e2eiManager.createNewAccount(prevNonce: acmeNonce,
                                                                 createAccountEndpoint: acmeDirectory.newAccount) else {
-            WireLogger.e2ei.warn("Fail to create acme new account")
+            WireLogger.e2ei.warn("Fail to create new account")
 
             return .failure(Failure.failedToCreateAcmeNewAccount)
         }
 
+        print(newAccountNonce)
+        guard let newOrder = await e2eiManager.createNewOrder(prevNonce: newAccountNonce,
+                                                              createOrderEndpoint: acmeDirectory.newOrder) else {
+
+            WireLogger.e2ei.warn("Fail to create new order")
+
+            return .failure(Failure.failedToCreateAcmeNewOrder)
+
+        }
+        print(newOrder)
         return .success("")
     }
 

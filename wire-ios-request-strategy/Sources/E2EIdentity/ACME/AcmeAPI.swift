@@ -80,6 +80,8 @@ public class AcmeAPIV5: NSObject, AcmeAPI {
 
             let (_, response) = try await executeAsync(request: request)
             guard let httpResponse = response as? HTTPURLResponse else {
+                WireLogger.e2ei.warn("Invalid response")
+
                 return nil
             }
             let replayNonce = httpResponse.value(forHTTPHeaderField: HeaderKey.replayNonce.rawValue)
@@ -101,12 +103,22 @@ public class AcmeAPIV5: NSObject, AcmeAPI {
         }
         var request = URLRequest(url: url)
         request.httpMethod = HTTPMethod.post.rawValue
+        request.setValue("application/jose+json", forHTTPHeaderField: "Content-Type")
         request.httpBody = body
 
         do {
-            let (data, _) = try await executeAsync(request: request)
+            let (data, response) = try await executeAsync(request: request)
+            guard let httpResponse = response as? HTTPURLResponse else {
+                WireLogger.e2ei.warn("Invalid response")
 
-            return try JSONDecoder().decode(ACMEResponse.self, from: data)
+                return nil
+            }
+            guard let replayNonce = httpResponse.value(forHTTPHeaderField: HeaderKey.replayNonce.rawValue),
+                  let location = httpResponse.value(forHTTPHeaderField: HeaderKey.location.rawValue) else {
+                return nil
+            }
+
+            return ACMEResponse(nonce: replayNonce, location: location, response: data)
         } catch {
             WireLogger.e2ei.info("Send acme request failed with error: \(error)")
 
@@ -114,13 +126,18 @@ public class AcmeAPIV5: NSObject, AcmeAPI {
         }
     }
 
+//    private func handleACMERequestResponse(response: Data) -> ACMEResponse? {
+//
+//        return ACMEResponse(nonce: <#T##String#>, location: <#T##String#>, response: <#T##Data#>)
+//    }
+
+
     public func sendChallengeRequest(url: String, body: Data?) async -> ChallengeResponse? {
         return nil
     }
 
     private func executeAsync(request: URLRequest) async throws -> (Data, URLResponse) {
         let session = URLSession(configuration: URLSessionConfiguration.default, delegate: self, delegateQueue: nil)
-
         return try await session.data(for: request)
     }
 
@@ -155,5 +172,6 @@ enum HTTPMethod: String {
 enum HeaderKey: String {
 
     case replayNonce = "Replay-Nonce"
+    case location = "location"
 
 }

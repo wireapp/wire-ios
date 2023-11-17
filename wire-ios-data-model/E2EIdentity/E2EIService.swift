@@ -21,9 +21,11 @@ import WireCoreCrypto
 
 public protocol E2EIServiceInterface {
 
-    func directoryResponse(directoryData: Data) throws -> WireCoreCrypto.AcmeDirectory
-    func getNewAccountRequest(previousNonce: String) throws -> Data
-    func setAccountResponse(accountData: Data) throws
+    func directoryResponse(directoryData: Data) async throws -> WireCoreCrypto.AcmeDirectory
+    func getNewAccountRequest(previousNonce: String) async throws -> Data
+    func setAccountResponse(accountData: Data) async throws
+    func getNewOrderRequest(nonce: String) async throws -> Data
+    func setOrderResponse(order: Data) async throws -> WireCoreCrypto.NewAcmeOrder
 
 }
 
@@ -56,7 +58,10 @@ public final class E2EIService: E2EIServiceInterface {
             return
         }
         // TODO: we should use the new CoreCrypto version: `e2eiNewRotateEnrollment` and `e2eiNewActivationEnrollment`
-        wireE2eIdentity = try? coreCrypto.perform { try $0.e2eiNewEnrollment(clientId: clientId.rawValue,
+        print(clientId.rawValue)
+        print(clientId)
+        wireE2eIdentity = try? coreCrypto.perform { try $0.e2eiNewEnrollment(clientId: "OWE0ZGVkNDYtYmE4Yi00MTI0LTk1MDktZTgzZjkwMmFiMWVk:871610f2e52b6480@elna.wire.link",
+//                                                                                clientId.rawValue,
                                                                              displayName: selfUserName,
                                                                              handle: selfUserHandle,
                                                                              expiryDays: UInt32(90),
@@ -74,7 +79,7 @@ public final class E2EIService: E2EIServiceInterface {
 
     // MARK: - WireE2EIdentity methods
 
-    public func directoryResponse(directoryData: Data) throws -> WireCoreCrypto.AcmeDirectory {
+    public func directoryResponse(directoryData: Data) async throws -> WireCoreCrypto.AcmeDirectory {
         let buffer = [UInt8](directoryData)
         guard let wireE2eIdentity = wireE2eIdentity else {
             WireLogger.e2ei.warn("wireE2eIdentity is missing")
@@ -82,26 +87,80 @@ public final class E2EIService: E2EIServiceInterface {
             throw Failure.failedToEncodeDirectoryResponse
         }
 
-        return try wireE2eIdentity.directoryResponse(directory: buffer)
+        do {
+            return try wireE2eIdentity.directoryResponse(directory: buffer)
+        } catch {
+            throw Failure.failedToEncodeDirectoryResponse
+        }
     }
 
-    public func getNewAccountRequest(previousNonce: String) throws -> Data {
-        guard let accountRequest = try? wireE2eIdentity?.newAccountRequest(previousNonce: previousNonce) else {
-            WireLogger.e2ei.warn("Failed to get new account request")
+    public func getNewAccountRequest(previousNonce: String) async throws -> Data {
+        guard let wireE2eIdentity = wireE2eIdentity else {
+            WireLogger.e2ei.warn("wireE2eIdentity is missing")
 
             throw Failure.failedToGetAccountRequest
         }
-
-        return accountRequest.data
+        do {
+            let accountRequest = try wireE2eIdentity.newAccountRequest(previousNonce: previousNonce)
+            return accountRequest.data
+        } catch {
+            throw Failure.failedToGetAccountRequest
+        }
     }
 
-    public func setAccountResponse(accountData: Data) throws {
+    public func setAccountResponse(accountData: Data) async throws {
+        let acc = try JSONDecoder().decode(NewAccResponse.self, from: accountData)
+        print(acc)
+        guard let wireE2eIdentity = wireE2eIdentity else {
+            WireLogger.e2ei.warn("wireE2eIdentity is missing")
+
+            throw Failure.failedToSetAccountResponse
+        }
+
         let buffer = [UInt8](accountData)
         do {
-            try wireE2eIdentity?.newAccountResponse(account: buffer)
+            try wireE2eIdentity.newAccountResponse(account: buffer)
         } catch {
             throw Failure.failedToSetAccountResponse
         }
+    }
+
+    public func getNewOrderRequest(nonce: String) async throws -> Data {
+        guard let wireE2eIdentity = wireE2eIdentity else {
+            WireLogger.e2ei.warn("wireE2eIdentity is missing")
+
+            throw Failure.failedToGetNewOrderRequest
+        }
+        do {
+            let bytes = try wireE2eIdentity.newOrderRequest(previousNonce: nonce)
+            print(bytes)
+            print(bytes.data)
+            return bytes.data
+        } catch {
+            print("Error:  \(error as! E2eIdentityError)")
+            throw Failure.failedToGetNewOrderRequest
+        }
+    }
+
+    public func setOrderResponse(order: Data) async throws -> WireCoreCrypto.NewAcmeOrder {
+        guard let wireE2eIdentity = wireE2eIdentity else {
+            WireLogger.e2ei.warn("wireE2eIdentity is missing")
+
+            throw Failure.failedToSetOrderResponse
+        }
+        let buffer = [UInt8](order)
+        do {
+            return try wireE2eIdentity.newOrderResponse(order: buffer)
+        } catch {
+            throw Failure.failedToSetOrderResponse
+        }
+
+    }
+    
+    struct NewAccResponse: Decodable {
+        let contact: [String]
+        let status: String
+        let orders: String
     }
 
     enum Failure: Error, Equatable {
@@ -109,6 +168,8 @@ public final class E2EIService: E2EIServiceInterface {
         case failedToEncodeDirectoryResponse
         case failedToGetAccountRequest
         case failedToSetAccountResponse
+        case failedToGetNewOrderRequest
+        case failedToSetOrderResponse
 
     }
 
