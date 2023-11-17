@@ -216,7 +216,7 @@ final class ConversationContentViewController: UIViewController, PopoverPresente
     }
 
     private func handleScrollToBottomTapped() {
-        scrollToBottom()
+        scrollToBottomIfNeeded()
     }
 
     @objc
