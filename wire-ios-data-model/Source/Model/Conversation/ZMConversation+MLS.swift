@@ -230,6 +230,22 @@ public extension ZMConversation {
     }
 }
 
+// sourcery: AutoMockable
+protocol ConversationFetching {
+    func fetchAllTeamGroupConversations(messageProtocol: MessageProtocol) throws -> [ZMConversation]
+}
+
+struct ConversationFetcher: ConversationFetching {
+
+    let selfUser: ZMUser
+
+    init(selfUser: ZMUser? = nil, context: NSManagedObjectContext) {
+        self.selfUser = selfUser ?? ZMUser.selfUser(in: context)
+    }
+
+    func fetchAllTeamGroupConversations(messageProtocol: MessageProtocol) throws -> [ZMConversation] {
+    }
+}
 // MARK: - NSPredicate Extensions
 
 private extension NSPredicate {
