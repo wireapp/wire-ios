@@ -109,7 +109,7 @@ class ConversationParticipantsService: ConversationParticipantsServiceInterface 
         _ user: ZMUser,
         from conversation: ZMConversation,
         completion: @escaping RemoveParticipantAction.ResultHandler
-    )  {
+    ) {
         guard conversation.conversationType == .group else {
             return completion(.failure(ConversationRemoveParticipantError.invalidOperation))
         }

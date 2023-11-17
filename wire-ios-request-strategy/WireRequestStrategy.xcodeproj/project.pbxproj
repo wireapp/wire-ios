@@ -176,11 +176,12 @@
 		6308F8AE2A273FBB0072A177 /* BaseFetchMLSGroupInfoActionHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6308F8AD2A273FBB0072A177 /* BaseFetchMLSGroupInfoActionHandlerTests.swift */; };
 		6308F8B02A27403B0072A177 /* FetchMLSConversationGroupInfoActionHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6308F8AF2A27403B0072A177 /* FetchMLSConversationGroupInfoActionHandlerTests.swift */; };
 		6308F8B22A2740C30072A177 /* FetchMLSSubconversationGroupInfoActionHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6308F8B12A2740C30072A177 /* FetchMLSSubconversationGroupInfoActionHandlerTests.swift */; };
+		630D41AA2B07793D00633867 /* MLSConversationParticipantsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 630D41A82B07790900633867 /* MLSConversationParticipantsService.swift */; };
+		630D41AC2B077F3900633867 /* ProteusConversationParticipantsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 630D41AB2B077F3900633867 /* ProteusConversationParticipantsService.swift */; };
 		630D41B22B0784FB00633867 /* AutoMockable.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = 630D41AF2B0784FB00633867 /* AutoMockable.generated.swift */; };
 		630D41B32B0784FB00633867 /* AutoMockable.stencil in Resources */ = {isa = PBXBuildFile; fileRef = 630D41B02B0784FB00633867 /* AutoMockable.stencil */; };
 		630D41B42B0784FB00633867 /* config.yml in Resources */ = {isa = PBXBuildFile; fileRef = 630D41B12B0784FB00633867 /* config.yml */; };
-		630D41AA2B07793D00633867 /* MLSConversationParticipantsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 630D41A82B07790900633867 /* MLSConversationParticipantsService.swift */; };
-		630D41AC2B077F3900633867 /* ProteusConversationParticipantsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 630D41AB2B077F3900633867 /* ProteusConversationParticipantsService.swift */; };
+		630D41B82B07BDB600633867 /* ConversationParticipantsServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 630D41B62B07BD8A00633867 /* ConversationParticipantsServiceTests.swift */; };
 		631216392881D10100FF9A56 /* ZMUpdateEvent+Payload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 631216382881D10100FF9A56 /* ZMUpdateEvent+Payload.swift */; };
 		633B396A2891890600208124 /* ZMUpdateEvent+Decryption.swift in Sources */ = {isa = PBXBuildFile; fileRef = 633B39692891890500208124 /* ZMUpdateEvent+Decryption.swift */; };
 		633B396C2892D53300208124 /* MockMLSService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 633B396B2892D53300208124 /* MockMLSService.swift */; };
@@ -274,7 +275,6 @@
 		EECBE8F028E71F57005DE5DD /* SyncConversationActionHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EECBE8EF28E71F57005DE5DD /* SyncConversationActionHandlerTests.swift */; };
 		EEDE7DAD28EAE538007DC6A3 /* ConversationEventProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEDE7DAC28EAE538007DC6A3 /* ConversationEventProcessorTests.swift */; };
 		EEDE7DB128EAEEC3007DC6A3 /* ConversationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEDE7DB028EAEEC3007DC6A3 /* ConversationService.swift */; };
-		EEDE7DB328EAEEFA007DC6A3 /* MockConversationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEDE7DB228EAEEFA007DC6A3 /* MockConversationService.swift */; };
 		EEE0EDB12858906500BBEE29 /* MLSRequestStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEE0EDB02858906500BBEE29 /* MLSRequestStrategy.swift */; };
 		EEE0EE0528591D3200BBEE29 /* OptionalString+NonEmptyValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEE0EE0328591D2C00BBEE29 /* OptionalString+NonEmptyValue.swift */; };
 		EEE0EE0728591E9C00BBEE29 /* AssetDownloadRequestFactoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEE0EE0628591E9C00BBEE29 /* AssetDownloadRequestFactoryTests.swift */; };
@@ -623,11 +623,12 @@
 		6308F8AD2A273FBB0072A177 /* BaseFetchMLSGroupInfoActionHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseFetchMLSGroupInfoActionHandlerTests.swift; sourceTree = "<group>"; };
 		6308F8AF2A27403B0072A177 /* FetchMLSConversationGroupInfoActionHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchMLSConversationGroupInfoActionHandlerTests.swift; sourceTree = "<group>"; };
 		6308F8B12A2740C30072A177 /* FetchMLSSubconversationGroupInfoActionHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchMLSSubconversationGroupInfoActionHandlerTests.swift; sourceTree = "<group>"; };
-		630D41AF2B0784FB00633867 /* AutoMockable.generated.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AutoMockable.generated.swift; sourceTree = "<group>"; };
-		630D41B12B0784FB00633867 /* config.yml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.yaml; path = config.yml; sourceTree = "<group>"; };
-		630D41B02B0784FB00633867 /* AutoMockable.stencil */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AutoMockable.stencil; sourceTree = "<group>"; };
 		630D41A82B07790900633867 /* MLSConversationParticipantsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLSConversationParticipantsService.swift; sourceTree = "<group>"; };
 		630D41AB2B077F3900633867 /* ProteusConversationParticipantsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProteusConversationParticipantsService.swift; sourceTree = "<group>"; };
+		630D41AF2B0784FB00633867 /* AutoMockable.generated.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AutoMockable.generated.swift; sourceTree = "<group>"; };
+		630D41B02B0784FB00633867 /* AutoMockable.stencil */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AutoMockable.stencil; sourceTree = "<group>"; };
+		630D41B12B0784FB00633867 /* config.yml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.yaml; path = config.yml; sourceTree = "<group>"; };
+		630D41B62B07BD8A00633867 /* ConversationParticipantsServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationParticipantsServiceTests.swift; sourceTree = "<group>"; };
 		631216382881D10100FF9A56 /* ZMUpdateEvent+Payload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMUpdateEvent+Payload.swift"; sourceTree = "<group>"; };
 		633B39692891890500208124 /* ZMUpdateEvent+Decryption.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMUpdateEvent+Decryption.swift"; sourceTree = "<group>"; };
 		633B396B2892D53300208124 /* MockMLSService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockMLSService.swift; sourceTree = "<group>"; };
@@ -719,7 +720,6 @@
 		EECBE8EF28E71F57005DE5DD /* SyncConversationActionHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncConversationActionHandlerTests.swift; sourceTree = "<group>"; };
 		EEDE7DAC28EAE538007DC6A3 /* ConversationEventProcessorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationEventProcessorTests.swift; sourceTree = "<group>"; };
 		EEDE7DB028EAEEC3007DC6A3 /* ConversationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationService.swift; sourceTree = "<group>"; };
-		EEDE7DB228EAEEFA007DC6A3 /* MockConversationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockConversationService.swift; sourceTree = "<group>"; };
 		EEE0EDB02858906500BBEE29 /* MLSRequestStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLSRequestStrategy.swift; sourceTree = "<group>"; };
 		EEE0EE0328591D2C00BBEE29 /* OptionalString+NonEmptyValue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "OptionalString+NonEmptyValue.swift"; sourceTree = "<group>"; };
 		EEE0EE0628591E9C00BBEE29 /* AssetDownloadRequestFactoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetDownloadRequestFactoryTests.swift; sourceTree = "<group>"; };
@@ -1047,9 +1047,9 @@
 				EEDE7DB028EAEEC3007DC6A3 /* ConversationService.swift */,
 				EE7F022A2A8391C500FE5695 /* ConversationServiceTests.swift */,
 				638941F92AFBED880051ABFD /* ConversationParticipantsService.swift */,
+				630D41B62B07BD8A00633867 /* ConversationParticipantsServiceTests.swift */,
 				630D41A82B07790900633867 /* MLSConversationParticipantsService.swift */,
 				630D41AB2B077F3900633867 /* ProteusConversationParticipantsService.swift */,
-				EEDE7DB228EAEEFA007DC6A3 /* MockConversationService.swift */,
 				EE4345DE2865D0FB0090AC34 /* ConversationByQualifiedIDListTranscoderTests.swift */,
 			);
 			path = Conversation;
@@ -2160,7 +2160,6 @@
 				1621D2281D75AB2D007108C2 /* MockEntity.m in Sources */,
 				F18401EC2073C26700E9F4CC /* AssetV3PreviewDownloadRequestStrategyTests.swift in Sources */,
 				87F7288521AFF37D000ED371 /* UserPropertyRequestStrategyTests.swift in Sources */,
-				EEDE7DB328EAEEFA007DC6A3 /* MockConversationService.swift in Sources */,
 				EECBE8F028E71F57005DE5DD /* SyncConversationActionHandlerTests.swift in Sources */,
 				1621D26B1D75C7FF007108C2 /* ZMUpstreamInsertedObjectSyncTests.m in Sources */,
 				7A111DEA285C90B70085BF91 /* SendMLSMessageActionHandlerTests.swift in Sources */,
@@ -2250,6 +2249,7 @@
 				0693114A24F799F400D14DF5 /* ZMLocalNotificationTests.swift in Sources */,
 				EEE30BB02A0046E3001A0B38 /* UserDefaults+Reset.swift in Sources */,
 				F18401EA2073C26700E9F4CC /* AbstractRequestStrategyTests.swift in Sources */,
+				630D41B82B07BDB600633867 /* ConversationParticipantsServiceTests.swift in Sources */,
 				06ADF694264B467E002E0C7A /* MockAnalytics.swift in Sources */,
 				16E70F5B270DCCB900718E5D /* UpdateConnectionActionHandlerTests.swift in Sources */,
 				16E5F71826EF4DBF00F35FBA /* ConversationRequestStrategyTests.swift in Sources */,

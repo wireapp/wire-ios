@@ -72,4 +72,32 @@ extension XCTestCase {
 
         XCTAssertEqual(error, expectedError)
     }
+
+    public func assertMethodCompletesWithError<Success, Error: EquatableError>(
+        _ expectedError: Error,
+        method: (@escaping (Result<Success, Error>) -> Void) -> Void,
+        file: StaticString = #file,
+        line: UInt = #line
+    ) {
+        let expectation = XCTestExpectation(description: "completion called")
+
+        // WHEN
+        method { result in
+            guard case .failure(let error) = result else {
+                return XCTFail("expected failure", file: file, line: line)
+            }
+
+            XCTAssertEqual(
+                error,
+                expectedError,
+                file: file,
+                line: line
+            )
+
+            expectation.fulfill()
+        }
+
+        // THEN
+        wait(for: [expectation], timeout: 0.5)
+    }
 }

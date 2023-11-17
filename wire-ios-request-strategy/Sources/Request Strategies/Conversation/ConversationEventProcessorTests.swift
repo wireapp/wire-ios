@@ -21,15 +21,26 @@ import XCTest
 class ConversationEventProcessorTests: MessagingTestBase {
 
     var sut: ConversationEventProcessor!
-    var conversationService: MockConversationService!
+    var conversationService: MockConversationServiceInterface!
 
     override func setUp() {
         super.setUp()
-        conversationService = MockConversationService()
+        conversationService = MockConversationServiceInterface()
+
+        conversationService.syncConversationQualifiedIDCompletion_MockMethod = { _, completion in
+            completion()
+        }
+
         sut = ConversationEventProcessor(
             context: syncMOC,
             conversationService: conversationService
         )
+    }
+
+    override func tearDown() {
+        conversationService = nil
+        sut = nil
+        super.tearDown()
     }
 
     // MARK: - Helpers

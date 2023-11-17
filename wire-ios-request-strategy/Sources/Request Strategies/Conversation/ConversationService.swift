@@ -18,6 +18,7 @@
 import Foundation
 import WireDataModel
 
+// sourcery: AutoMockable
 public protocol ConversationServiceInterface {
 
     func createGroupConversation(
@@ -403,4 +404,3 @@ public final class ConversationService: ConversationServiceInterface {
         )
     }
 }
-

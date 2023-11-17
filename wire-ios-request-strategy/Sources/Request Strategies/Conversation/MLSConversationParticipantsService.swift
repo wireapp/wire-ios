@@ -41,18 +41,15 @@ class MLSConversationParticipantsService: MLSConversationParticipantsServiceInte
 
     private let context: NSManagedObjectContext
     private let clientIDsProvider: MLSClientIDsProvider
-    private let mlsService: MLSServiceInterface?
 
     // MARK: - Life cycle
 
     init(
         context: NSManagedObjectContext,
-        clientIDsProvider: MLSClientIDsProvider? = nil,
-        mlsService: MLSServiceInterface? = nil
+        clientIDsProvider: MLSClientIDsProvider? = nil
     ) {
         self.context = context
         self.clientIDsProvider = clientIDsProvider ?? MLSClientIDsProvider()
-        self.mlsService = mlsService ?? Self.getMLSService(fromSyncContext: context.zm_sync)
     }
 
     // MARK: - Interface
@@ -65,7 +62,7 @@ class MLSConversationParticipantsService: MLSConversationParticipantsServiceInte
         Logging.mls.info("adding \(users.count) participants to conversation (\(String(describing: conversation.qualifiedID)))")
 
         guard
-            let mlsService = mlsService,
+            let mlsService = getMLSService(fromSyncContext: context.zm_sync),
             let groupID = conversation.mlsGroupID
         else {
             Logging.mls.warn("failed to add participants to conversation (\(String(describing: conversation.qualifiedID))): invalid operation")
@@ -104,7 +101,7 @@ class MLSConversationParticipantsService: MLSConversationParticipantsServiceInte
         Logging.mls.info("removing participant from conversation (\(String(describing: conversation.qualifiedID)))")
 
         guard
-            let mlsService = mlsService,
+            let mlsService = getMLSService(fromSyncContext: context.zm_sync),
             let groupID = conversation.mlsGroupID,
             let userID = user.qualifiedID
         else {
@@ -142,7 +139,7 @@ class MLSConversationParticipantsService: MLSConversationParticipantsServiceInte
 // MARK: - Helpers
 
 private extension MLSConversationParticipantsService {
-    static func getMLSService(
+    func getMLSService(
         fromSyncContext context: NSManagedObjectContext
     ) -> MLSServiceInterface? {
 
