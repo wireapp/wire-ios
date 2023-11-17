@@ -26,6 +26,7 @@ class ZMUserSessionTests_CryptoStack: MessagingTest {
     var sut: ZMUserSession!
     var proteusFlag = DeveloperFlag.proteusViaCoreCrypto
     var mlsFlag = DeveloperFlag.enableMLSSupport
+    let mockCryptoboxMigrationManager = MockCryptoboxMigrationManagerInterface()
 
     override func setUp() {
         super.setUp()
@@ -254,6 +255,42 @@ class ZMUserSessionTests_CryptoStack: MessagingTest {
         })
     }
 
+    func testItMigratesCryptoboxSessionWhenNeeded() {
+        // GIVEN
+        let selfUser = ZMUser.selfUser(in: syncMOC)
+        selfUser.remoteIdentifier =  UUID.create()
+        selfUser.domain = "example.domain.com"
+
+        mockCryptoboxMigrationManager.isMigrationNeededAccountDirectory_MockValue = true
+        mockCryptoboxMigrationManager.performMigrationAccountDirectorySyncContext_MockMethod = { _, _ in }
+        mockCryptoboxMigrationManager.completeMigrationSyncContext_MockMethod = { _ in }
+
+        // WHEN
+        createSut(with: selfUser)
+
+        // THEN
+        XCTAssertEqual(1, mockCryptoboxMigrationManager.performMigrationAccountDirectorySyncContext_Invocations.count)
+        XCTAssertEqual(1, mockCryptoboxMigrationManager.completeMigrationSyncContext_Invocations.count)
+    }
+
+    func testItDoesNotMigratesCryptoboxSessionWhenNotNeeded() {
+        // given
+        let selfUser = ZMUser.selfUser(in: syncMOC)
+        selfUser.remoteIdentifier =  UUID.create()
+        selfUser.domain = "example.domain.com"
+
+        mockCryptoboxMigrationManager.isMigrationNeededAccountDirectory_MockValue = false
+        mockCryptoboxMigrationManager.performMigrationAccountDirectorySyncContext_MockMethod = { _, _ in }
+        mockCryptoboxMigrationManager.completeMigrationSyncContext_MockMethod = { _ in }
+
+        // WHEN
+        createSut(with: selfUser)
+
+        // THEN
+        XCTAssertEqual(0, mockCryptoboxMigrationManager.performMigrationAccountDirectorySyncContext_Invocations.count)
+        XCTAssertEqual(1, mockCryptoboxMigrationManager.completeMigrationSyncContext_Invocations.count)
+    }
+
     func createSut(with user: ZMUser) {
         let transportSession = RecordingMockTransportSession(
             cookieStorage: ZMPersistentCookieStorage(
@@ -278,6 +315,7 @@ class ZMUserSessionTests_CryptoStack: MessagingTest {
             appVersion: "00000",
             coreDataStack: coreDataStack,
             configuration: .init(),
+            cryptoboxMigrationManager: mockCryptoboxMigrationManager,
             sharedUserDefaults: sharedUserDefaults
         )
     }
