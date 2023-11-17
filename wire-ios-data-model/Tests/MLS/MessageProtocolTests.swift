@@ -23,9 +23,9 @@ import XCTest
 final class MessageProtocolTests: XCTestCase {
 
     /// Ensures these raw values never change.
-    func testRawValues() {
-        XCTAssertEqual(MessageProtocol.proteus.rawValue, 0)
-        XCTAssertEqual(MessageProtocol.mls.rawValue, 1)
-        XCTAssertEqual(MessageProtocol.mixed.rawValue, 2)
+    func testInt16Values() {
+        XCTAssertEqual(MessageProtocol.proteus.int16Value, 0)
+        XCTAssertEqual(MessageProtocol.mls.int16Value, 1)
+        XCTAssertEqual(MessageProtocol.mixed.int16Value, 2)
     }
 }

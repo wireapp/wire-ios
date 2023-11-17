@@ -62,7 +62,7 @@ extension ZMConversation {
             let value = primitiveMessageProtocol.int16Value
             didAccessValue(forKey: Self.messageProtocolKey)
 
-            guard let result = MessageProtocol(rawValue: value) else {
+            guard let result = MessageProtocol(int16Value: value) else {
                 fatalError("failed to init MessageProtocol from rawValue: \(value)")
             }
 
@@ -71,7 +71,7 @@ extension ZMConversation {
 
         set {
             willChangeValue(forKey: Self.messageProtocolKey)
-            primitiveMessageProtocol = NSNumber(value: newValue.rawValue)
+            primitiveMessageProtocol = NSNumber(value: newValue.int16Value)
             didChangeValue(forKey: Self.messageProtocolKey)
         }
     }
@@ -249,7 +249,7 @@ private extension NSPredicate {
             format: "%K == %i && %K != nil",
             argumentArray: [
                 ZMConversation.messageProtocolKey,
-                MessageProtocol.mls.rawValue,
+                MessageProtocol.mls.int16Value,
                 ZMConversation.mlsGroupIdKey
             ]
         )
@@ -270,7 +270,7 @@ private extension NSPredicate {
             format: "%K == %i",
             argumentArray: [
                 ZMConversation.messageProtocolKey,
-                messageProtocol.rawValue
+                messageProtocol.int16Value
             ]
         )
     }
