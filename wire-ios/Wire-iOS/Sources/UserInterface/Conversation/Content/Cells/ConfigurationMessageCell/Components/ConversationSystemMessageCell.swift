@@ -437,7 +437,14 @@ final class ConversationSystemMessageCellDescription {
             let domainsStoppedFederatingCell = DomainsStoppedFederatingCellDescription(systemMessageData: systemMessageData)
             return [AnyConversationMessageCellDescription(domainsStoppedFederatingCell)]
 
-        default:
+        case .mlsMigrationStarted:
+            let description = MLSMigrationStartedCellDescription(systemMessageData: systemMessageData)
+            return [AnyConversationMessageCellDescription(description)]
+
+        case .mlsMigrationFinalized:
+            fatalError("not implemented")
+
+        case .invalid:
             let unknownMessage = UnknownMessageCellDescription()
             return [AnyConversationMessageCellDescription(unknownMessage)]
         }
