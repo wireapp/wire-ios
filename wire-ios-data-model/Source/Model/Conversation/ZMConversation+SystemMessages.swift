@@ -134,4 +134,37 @@ extension ZMConversation {
                             domains: domains)
     }
 
+    // MARK: - MLS Migration
+
+    public func appendMLSMigrationStartedSystemMessage(
+        users: Set<ZMUser>,
+        sender: ZMUser,
+        removedReason: ZMParticipantsRemovedReason,
+        at timestamp: Date
+    ) {
+        appendSystemMessage(
+            type: .mlsMigrationStarted,
+            sender: sender,
+            users: users,
+            clients: nil,
+            timestamp: timestamp,
+            removedReason: removedReason
+        )
+    }
+
+    public func appendMLSMigrationFinalizedSystemMessage(
+        users: Set<ZMUser>,
+        sender: ZMUser,
+        removedReason: ZMParticipantsRemovedReason,
+        at timestamp: Date
+    ) {
+        appendSystemMessage(
+            type: .mlsMigrationStarted,
+            sender: sender,
+            users: users,
+            clients: nil,
+            timestamp: timestamp,
+            removedReason: removedReason
+        )
+    }
 }
