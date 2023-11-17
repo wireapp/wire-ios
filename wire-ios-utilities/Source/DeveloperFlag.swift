@@ -91,8 +91,9 @@ public enum DeveloperFlag: String, CaseIterable {
         }
     }
 
-    // Convenience method tp set flag on or off
-    // Note: can be used in Tests to change storage if provided
+    /// Convenience method to set flag on or off
+    ///
+    /// - Note: it can be used in Tests to change storage if provided
     public func enable(_ enabled: Bool, storage: UserDefaults? = nil) {
         if let storage {
             DeveloperFlag.storage = storage
