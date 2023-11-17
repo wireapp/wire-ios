@@ -61,7 +61,7 @@
 #pragma mark - ZMSystemMessageData
 
 
-typedef NS_ENUM(int16_t, ZMSystemMessageType) {
+typedef NS_CLOSED_ENUM(int16_t, ZMSystemMessageType) {
     ZMSystemMessageTypeInvalid = 0,
     ZMSystemMessageTypeParticipantsAdded,
     ZMSystemMessageTypeFailedToAddParticipants,
