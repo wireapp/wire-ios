@@ -526,7 +526,6 @@
 "content.system.ephemeral_time_remaining" = "%@ left";
 
 "content.system.self_user_new_client" = "You started using [a new device](%@)";
-"content.system.self_user_new_self_client" = "You started using [this device](%@)";
 
 "content.system.you_started" = "You";
 
@@ -577,8 +576,6 @@
 "content.system.message_legal_hold.learn_more" = "Learn more";
 
 //
-
-"content.system.reactivated_device" = "You started using [this device](%@) again. Messages sent in the meantime will not appear here.";
 
 "content.system.is_verified" = "All fingerprints are verified";
 

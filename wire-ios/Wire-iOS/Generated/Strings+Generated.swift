@@ -1764,17 +1764,9 @@ internal enum L10n {
         internal static func peopleStartedUsing(_ p1: Any, _ p2: Int, _ p3: Int) -> String {
           return L10n.tr("Localizable", "content.system.people_started_using", String(describing: p1), p2, p3, fallback: "Plural format key: \"%@%#@d_number_of_others@ started using %#@d_new_devices@\"")
         }
-        /// You started using [this device](%@) again. Messages sent in the meantime will not appear here.
-        internal static func reactivatedDevice(_ p1: Any) -> String {
-          return L10n.tr("Localizable", "content.system.reactivated_device", String(describing: p1), fallback: "You started using [this device](%@) again. Messages sent in the meantime will not appear here.")
-        }
         /// You started using [a new device](%@)
         internal static func selfUserNewClient(_ p1: Any) -> String {
           return L10n.tr("Localizable", "content.system.self_user_new_client", String(describing: p1), fallback: "You started using [a new device](%@)")
-        }
-        /// You started using [this device](%@)
-        internal static func selfUserNewSelfClient(_ p1: Any) -> String {
-          return L10n.tr("Localizable", "content.system.self_user_new_self_client", String(describing: p1), fallback: "You started using [this device](%@)")
         }
         /// You unverified one of [%1$@’s devices](%2$@)
         internal static func unverifiedOtherDevices(_ p1: Any, _ p2: Any) -> String {
