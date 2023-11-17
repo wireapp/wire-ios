@@ -21,7 +21,7 @@ import WireCoreCrypto
 
 public protocol E2EIServiceInterface {
 
-    func directoryResponse(directoryData: Data) throws -> WireCoreCrypto.AcmeDirectory
+    func directoryResponse(directoryData: Data) throws -> AcmeDirectory
     func getNewAccountRequest(previousNonce: String) async throws -> Data
     func setAccountResponse(accountData: Data) async throws
 
