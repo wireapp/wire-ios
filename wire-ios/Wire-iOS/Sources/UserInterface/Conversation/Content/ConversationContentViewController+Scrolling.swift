@@ -62,7 +62,6 @@ extension ConversationContentViewController {
     /// After scrolling, the tableView's header view is updated.
     func scrollToBottom() {
         guard !isScrolledToBottom else {
-            print("scrollToBottom was called, but we're already at the bottom. No action taken.")
             return
         }
 
