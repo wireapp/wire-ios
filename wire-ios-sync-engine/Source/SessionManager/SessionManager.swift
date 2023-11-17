@@ -873,7 +873,10 @@ public final class SessionManager: NSObject, SessionManagerType {
                             in: coreDataStack.accountContainer,
                             syncContext: userSession.syncContext
                         ) {
-                            completion(userSession)
+                            DispatchQueue.main.async {
+                                completion(userSession)
+                            }
+
                         }
 
                     }
@@ -899,23 +902,23 @@ public final class SessionManager: NSObject, SessionManagerType {
         guard cryptoboxMigrationManager.isMigrationNeeded(accountDirectory: accountDirectory) else {
             WireLogger.proteus.info("cryptobox migration is not needed")
 
-            syncContext.performAndWait {
+            syncContext.perform { [self] in
                 do {
                     try cryptoboxMigrationManager.completeMigration(syncContext: syncContext)
                 } catch {
                     WireLogger.proteus.critical("failed to complete migration: \(error.localizedDescription)")
                     fatalError("failed to complete proteus initialization")
                 }
-            }
 
-            completion()
+                completion()
+            }
             return
         }
 
         WireLogger.proteus.info("preparing for cryptobox migration...")
 
         delegate?.sessionManagerWillMigrateAccount {
-            syncContext.performAndWait {
+            syncContext.perform {
                 do {
                     try self.cryptoboxMigrationManager.performMigration(
                         accountDirectory: accountDirectory,
