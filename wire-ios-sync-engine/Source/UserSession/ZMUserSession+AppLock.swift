@@ -38,20 +38,6 @@ public extension UserSessionAppLockInterface {
 
 }
 
-extension ZMUserSession: UserSessionAppLockInterface {
-
-    public var lock: SessionLock? {
-        if isDatabaseLocked {
-            return .database
-        } else if appLockController.isLocked {
-            return .screen
-        } else {
-            return nil
-        }
-    }
-
-}
-
 /// The various types of session locks, i.e reasons why the session is inaccessible.
 
 public enum SessionLock {

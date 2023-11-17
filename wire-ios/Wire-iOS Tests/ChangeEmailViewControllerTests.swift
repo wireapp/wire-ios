@@ -22,12 +22,19 @@ import SnapshotTesting
 
 final class ChangeEmailViewControllerTests: BaseSnapshotTestCase {
 
+    var userSession: UserSession!
+
+    override func tearDown() {
+        userSession = nil
+        super.tearDown()
+    }
+
     private func createSut(emailAddress: String?) -> UIViewController {
         let mockUser = MockUserType.createSelfUser(name: "User")
+        userSession = UserSessionMock(mockUser: mockUser)
         mockUser.emailAddress = emailAddress
 
-        let sut = ChangeEmailViewController(user: mockUser)
-
+        let sut = ChangeEmailViewController(user: mockUser, userSession: userSession)
         let viewController = sut.wrapInNavigationController(navigationControllerClass: NavigationController.self)
 
         return viewController

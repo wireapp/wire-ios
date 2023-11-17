@@ -23,13 +23,19 @@ import XCTest
 class ActiveCallRouterTests: XCTestCase {
 
     var sut: ActiveCallRouter!
+    var userSession: UserSessionMock!
 
     override func setUp() {
         super.setUp()
-        sut = ActiveCallRouter(rootviewController: RootViewController())
+        userSession = UserSessionMock()
+        sut = ActiveCallRouter(
+            rootviewController: RootViewController(),
+            userSession: userSession
+        )
     }
 
     override func tearDown() {
+        userSession = nil
         sut = nil
         super.tearDown()
     }

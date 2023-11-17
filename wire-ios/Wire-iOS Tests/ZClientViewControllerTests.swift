@@ -20,19 +20,18 @@ import XCTest
 
 final class ZClientViewControllerTests: XCTestCase {
     var sut: ZClientViewController!
-    var userSessionMock: MockZMUserSession!
+    var userSession: UserSessionMock!
 
     override func setUp() {
         super.setUp()
 
-        let mockSelfUser = MockUserType.createSelfUser(name: "Bob")
-        userSessionMock = MockZMUserSession()
-        sut = ZClientViewController(account: Account.mockAccount(imageData: mockImageData), selfUser: mockSelfUser, userSession: userSessionMock)
+        userSession = UserSessionMock(mockUser: .createSelfUser(name: "Bob"))
+        sut = ZClientViewController(account: Account.mockAccount(imageData: mockImageData), userSession: userSession)
     }
 
     override func tearDown() {
         sut = nil
-        userSessionMock = nil
+        userSession = nil
 
         super.tearDown()
     }
@@ -58,14 +57,10 @@ final class ZClientViewControllerTests: XCTestCase {
     }
 
     func testThatCustomPasscodeWillBeDeleted_AfterUserNotifiedOfDisabledApplock() {
-        // Given
-        let appLock = AppLockModule.MockAppLockController()
-        sut._userSession!.appLockController = appLock
-
         // When
         sut.appLockChangeWarningViewControllerDidDismiss()
 
         // Then
-        XCTAssertEqual(appLock.methodCalls.deletePasscode.count, 1)
+        XCTAssertEqual(userSession.deleteAppLockPasscodeCalls, 1)
     }
 }

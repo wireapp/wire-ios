@@ -26,14 +26,15 @@ final class LegalHoldDetailsViewControllerSnapshotTests: BaseSnapshotTestCase {
 
     var sut: LegalHoldDetailsViewController!
     var selfUser: MockUserType!
+    var userSession: UserSessionMock!
 
     // MARK: - setUp
 
     override func setUp() {
         super.setUp()
-
+        userSession = UserSessionMock()
         SelfUser.setupMockSelfUser(inTeam: UUID())
-        selfUser = (SelfUser.current as! MockUserType)
+        selfUser = SelfUser.provider?.providedSelfUser as? MockUserType
         selfUser.handle = nil
     }
 
@@ -42,7 +43,7 @@ final class LegalHoldDetailsViewControllerSnapshotTests: BaseSnapshotTestCase {
     override func tearDown() {
         sut = nil
         SelfUser.provider = nil
-
+        userSession = nil
         super.tearDown()
     }
 
@@ -51,7 +52,7 @@ final class LegalHoldDetailsViewControllerSnapshotTests: BaseSnapshotTestCase {
     func setUpLegalHoldDetailsViewController(conversation: MockGroupDetailsConversation) -> () -> UIViewController {
 
         let createSut: () -> UIViewController = {
-            self.sut = LegalHoldDetailsViewController(conversation: conversation)
+            self.sut = LegalHoldDetailsViewController(conversation: conversation, userSession: self.userSession)
             return self.sut.wrapInNavigationController()
         }
 
@@ -80,11 +81,13 @@ final class LegalHoldDetailsViewControllerSnapshotTests: BaseSnapshotTestCase {
         otherUser.isUnderLegalHold = true
         conversation.sortedActiveParticipantsUserTypes = [otherUser]
 
-        // WHEN
-        let sut =  setUpLegalHoldDetailsViewController(conversation: conversation)
+        let createSut: () -> UIViewController = {
+            self.sut = LegalHoldDetailsViewController(conversation: conversation, userSession: self.userSession)
+            return self.sut.wrapInNavigationController()
+        }
 
         // THEN
-        verifyInAllColorSchemes(createSut: sut)
+        verifyInAllColorSchemes(createSut: createSut)
     }
 
 }

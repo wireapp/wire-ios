@@ -116,7 +116,11 @@ public final class AppLockController: AppLockType {
 
     // MARK: - Life cycle
 
-    public init(userId: UUID, selfUser: ZMUser, legacyConfig: LegacyConfig? = nil) {
+    public init(
+        userId: UUID,
+        selfUser: ZMUser,
+        legacyConfig: LegacyConfig?
+    ) {
         precondition(selfUser.isSelfUser, "AppLockController initialized with non-self user")
 
         // It's safer use userId rather than selfUser.remoteIdentifier!

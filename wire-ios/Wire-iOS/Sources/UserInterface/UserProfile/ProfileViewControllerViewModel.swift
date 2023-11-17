@@ -38,6 +38,7 @@ final class ProfileViewControllerViewModel: NSObject {
     let viewer: UserType
     let context: ProfileViewControllerContext
     let classificationProvider: ClassificationProviding?
+    let userSession: UserSession
 
     weak var delegate: ProfileViewControllerDelegate? {
         didSet {
@@ -54,19 +55,18 @@ final class ProfileViewControllerViewModel: NSObject {
          conversation: ZMConversation?,
          viewer: UserType,
          context: ProfileViewControllerContext,
-         classificationProvider: ClassificationProviding? = ZMUserSession.shared()
+         classificationProvider: ClassificationProviding? = ZMUserSession.shared(),
+         userSession: UserSession
     ) {
         self.user = user
         self.conversation = conversation
         self.viewer = viewer
         self.context = context
         self.classificationProvider = classificationProvider
-
+        self.userSession = userSession
         super.init()
 
-        if let userSession = ZMUserSession.shared() {
-            observerToken = UserChangeInfo.add(observer: self, for: user, in: userSession)
-        }
+        observerToken = userSession.addUserObserver(self, for: user)
     }
 
     var classification: SecurityClassification {
@@ -163,7 +163,7 @@ final class ProfileViewControllerViewModel: NSObject {
     // MARK: - Notifications
 
     func updateMute(enableNotifications: Bool) {
-        ZMUserSession.shared()?.enqueue {
+        userSession.enqueue {
             self.conversation?.mutedMessageTypes = enableNotifications ? .none : .all
             // update the footer view to display the correct mute/unmute button
             self.viewModelDelegate?.updateFooterViews()
@@ -172,7 +172,7 @@ final class ProfileViewControllerViewModel: NSObject {
 
     func handleNotificationResult(_ result: NotificationResult) {
         if let mutedMessageTypes = result.mutedMessageTypes {
-            ZMUserSession.shared()?.perform {
+            userSession.perform {
                 self.conversation?.mutedMessageTypes = mutedMessageTypes
             }
         }
@@ -182,10 +182,15 @@ final class ProfileViewControllerViewModel: NSObject {
 
     func handleDeleteResult(_ result: ClearContentResult) {
         guard case .delete(leave: let leave) = result else { return }
+        guard let user = SelfUser.provider?.providedSelfUser else {
+            assertionFailure("expected available 'user'!")
+            return
+        }
+
         transitionToListAndEnqueue {
             self.conversation?.clearMessageHistory()
             if leave {
-                self.conversation?.removeOrShowError(participant: SelfUser.current)
+                self.conversation?.removeOrShowError(participant: user)
             }
         }
     }
@@ -200,7 +205,7 @@ final class ProfileViewControllerViewModel: NSObject {
     }
 
     func enqueueChanges(_ block: @escaping () -> Void) {
-        ZMUserSession.shared()?.enqueue(block)
+        userSession.enqueue(block)
     }
 
     private func transition(to conversation: ZMConversation) {

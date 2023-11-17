@@ -51,7 +51,7 @@ extension ConversationInputBarViewController {
             pickerController.delegate = self
             pickerController.allowsEditing = allowsEditing
             pickerController.mediaTypes = mediaTypes
-            pickerController.videoMaximumDuration = ZMUserSession.shared()!.maxVideoLength
+            pickerController.videoMaximumDuration = self.userSession.maxVideoLength
             pickerController.videoExportPreset = AVURLAsset.defaultVideoQuality
 
             if let popover = pickerController.popoverPresentationController,
@@ -91,9 +91,13 @@ extension ConversationInputBarViewController {
             zmLog.error("Video not provided form \(picker): info \(info)")
             return
         }
+        guard let selfUser = ZMUser.selfUser() else {
+            assertionFailure("ZMUser.selfUser() is nil")
+            return
+        }
 
         let videoTempURL = URL(fileURLWithPath: NSTemporaryDirectory(),
-            isDirectory: true).appendingPathComponent(String.filenameForSelfUser()).appendingPathExtension(videoURL.pathExtension)
+            isDirectory: true).appendingPathComponent(String.filename(for: selfUser)).appendingPathExtension(videoURL.pathExtension)
 
         do {
             try FileManager.default.removeTmpIfNeededAndCopy(fileURL: videoURL, tmpURL: videoTempURL)
@@ -107,7 +111,7 @@ extension ConversationInputBarViewController {
             UISaveVideoAtPathToSavedPhotosAlbum(videoTempURL.path, self, #selector(video(_:didFinishSavingWithError:contextInfo:)), nil)
         }
 
-        AVURLAsset.convertVideoToUploadFormat(at: videoTempURL, fileLengthLimit: Int64(ZMUserSession.shared()!.maxUploadFileSize)) { resultURL, _, error in
+        AVURLAsset.convertVideoToUploadFormat(at: videoTempURL, fileLengthLimit: Int64(userSession.maxUploadFileSize)) { resultURL, _, error in
             if error == nil,
                let resultURL = resultURL {
                 self.uploadFile(at: resultURL)

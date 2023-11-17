@@ -21,6 +21,7 @@ import Ziphy
 import FLAnimatedImage
 import WireCommonComponents
 import WireDataModel
+import WireSyncEngine
 
 protocol GiphySearchViewControllerDelegate: AnyObject {
     func giphySearchViewController(_ giphySearchViewController: GiphySearchViewController, didSelectImageData imageData: Data, searchTerm: String)
@@ -53,8 +54,16 @@ final class GiphySearchViewController: VerticalColumnCollectionViewController {
 
     // MARK: - Initialization
 
-    convenience init(searchTerm: String, conversation: ZMConversation) {
-        let searchResultsController = ZiphySearchResultsController(client: .default, pageSize: 50, maxImageSize: 3)
+    convenience init(searchTerm: String, conversation: ZMConversation, userSession: UserSession) {
+        let searchResultsController = ZiphySearchResultsController(
+            client: ZiphyClient(
+                host: "api.giphy.com",
+                requester: ZiphySession(userSession: userSession),
+                downloadSession: URLSession.shared
+            ),
+            pageSize: 50,
+            maxImageSize: 3
+        )
         self.init(searchTerm: searchTerm, conversation: conversation, searchResultsController: searchResultsController)
     }
 

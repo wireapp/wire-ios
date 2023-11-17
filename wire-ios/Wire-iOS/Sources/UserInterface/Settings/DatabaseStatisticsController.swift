@@ -80,8 +80,8 @@ final class DatabaseStatisticsController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-        let session = ZMUserSession.shared()
-        let syncMoc = session!.managedObjectContext.zm_sync!
+        guard let session = ZMUserSession.shared() else { return }
+        let syncMoc = session.managedObjectContext.zm_sync!
         syncMoc.performGroupedBlock {
             do {
                 defer {

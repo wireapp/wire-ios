@@ -51,6 +51,9 @@ public protocol UserType: NSObjectProtocol, UserConnections {
     /// The availability of the user
     var availability: AvailabilityKind { get set }
 
+    /// Team membership for this user.
+    var membership: Member? { get }
+
     /// The name of the team the user belongs to.
     var teamName: String? { get }
 

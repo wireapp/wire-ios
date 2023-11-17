@@ -70,26 +70,27 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
     private var currentEffect: AVSAudioEffectType = .none
     private var currentEffectFilePath: String?
 
-    private var appLock: AppLockType? {
-        return ZMUserSession.shared()?.appLockController
-    }
+    private let userSession: UserSession
 
     private var isAppLockActive: Bool {
-        return appLock?.isActive ?? false
+        return userSession.isAppLockActive
     }
     // MARK: - Life Cycle
 
-    convenience init() {
+    convenience init(userSession: UserSession) {
         self.init(audioRecorder: AudioRecorder(
             format: .wav,
-            maxRecordingDuration: ZMUserSession.shared()?.maxAudioLength,
-            maxFileSize: ZMUserSession.shared()?.maxUploadFileSize))
+            maxRecordingDuration: userSession.maxAudioMessageLength,
+            maxFileSize: userSession.maxUploadFileSize),
+            userSession: userSession
+        )
     }
 
-    init(audioRecorder: AudioRecorderType) {
+    init(audioRecorder: AudioRecorderType, userSession: UserSession) {
         self.recorder = audioRecorder
+        self.userSession = userSession
         super.init(nibName: nil, bundle: nil)
-        configureViews()
+        configureViews(userSession: userSession)
         configureAudioRecorder()
         createConstraints()
 
@@ -115,7 +116,7 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
 
     // MARK: - View Configuration
 
-    func configureViews() {
+    func configureViews(userSession: UserSession) {
         let backgroundColor = SemanticColors.View.backgroundDefault
         let textColor = SemanticColors.Label.textDefault
         let separatorColor = SemanticColors.View.backgroundSeparatorCell
@@ -128,7 +129,7 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
         self.audioPreviewView.gradientWidth = 20
         self.audioPreviewView.gradientColor = backgroundColor
 
-        self.accentColorChangeHandler = AccentColorChangeHandler.addObserver(self) { [unowned self] color, _ in
+        self.accentColorChangeHandler = AccentColorChangeHandler.addObserver(self, userSession: userSession) { [unowned self] color, _ in
             if let color = color {
                 self.audioPreviewView.color = color
             }
@@ -448,12 +449,16 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
             zmLog.error("No file to send")
             return
         }
+        guard let selfUser = ZMUser.selfUser() else {
+            assertionFailure("ZMUser.selfUser() is nil")
+            return
+        }
 
         button?.isEnabled = false
 
         let effectName = self.currentEffect == .none ? "Original" : self.currentEffect.description
 
-        let filename = String.filenameForSelfUser(suffix: "-" + effectName).appendingPathExtension("m4a")!
+        let filename = String.filename(for: selfUser, suffix: "-" + effectName).appendingPathExtension("m4a")!
         let convertedPath = (NSTemporaryDirectory() as NSString).appendingPathComponent(filename)
         convertedPath.deleteFileAtPath()
 

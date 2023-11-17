@@ -46,6 +46,8 @@ final class DummyServiceUser: NSObject, ServiceUser {
 
     var isIgnored: Bool = false
 
+    var membership: Member?
+
     var hasTeam: Bool = false
 
     var isTrusted: Bool = false

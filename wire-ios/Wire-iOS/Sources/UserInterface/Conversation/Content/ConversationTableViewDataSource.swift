@@ -18,6 +18,7 @@
 
 import WireDataModel
 import DifferenceKit
+import WireSyncEngine
 
 extension Int: Differentiable { }
 extension String: Differentiable { }
@@ -59,6 +60,8 @@ final class ConversationTableViewDataSource: NSObject {
 
     private(set) var hasOlderMessagesToLoad = false
     private(set) var hasNewerMessagesToLoad = false
+
+    let userSession: UserSession
 
     func resetSectionControllers() {
         sectionControllers = [:]
@@ -141,11 +144,18 @@ final class ConversationTableViewDataSource: NSObject {
         return updatedSections
     }
 
-    init(conversation: ZMConversation, tableView: UpsideDownTableView, actionResponder: MessageActionResponder, cellDelegate: ConversationMessageCellDelegate) {
+    init(
+        conversation: ZMConversation,
+        tableView: UpsideDownTableView,
+        actionResponder: MessageActionResponder,
+        cellDelegate: ConversationMessageCellDelegate,
+        userSession: UserSession
+    ) {
         self.messageActionResponder = actionResponder
         self.conversationCellDelegate = cellDelegate
         self.conversation = conversation
         self.tableView = tableView
+        self.userSession = userSession
 
         super.init()
 
@@ -177,9 +187,12 @@ final class ConversationTableViewDataSource: NSObject {
         }
 
         let context = self.context(for: message, at: index, firstUnreadMessage: firstUnreadMessage, searchQueries: self.searchQueries)
-        let sectionController = ConversationMessageSectionController(message: message,
-                                                                     context: context,
-                                                                     selected: message.isEqual(selectedMessage))
+        let sectionController = ConversationMessageSectionController(
+            message: message,
+            context: context,
+            selected: message.isEqual(selectedMessage),
+            userSession: userSession
+        )
         sectionController.useInvertedIndices = true
         sectionController.cellDelegate = conversationCellDelegate
         sectionController.sectionDelegate = self

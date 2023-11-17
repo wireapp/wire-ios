@@ -48,6 +48,8 @@ protocol AudioTrackPlayerDelegate: AnyObject {
 
 final class AudioTrackPlayer: NSObject, MediaPlayer {
 
+    private let userSession: UserSession
+
     private var avPlayer: AVPlayer?
     private var timeObserverToken: Any?
     private var messageObserverToken: NSObjectProtocol?
@@ -116,6 +118,11 @@ final class AudioTrackPlayer: NSObject, MediaPlayer {
         avPlayer?.pause()
     }
 
+    init(userSession: UserSession) {
+        self.userSession = userSession
+        super.init()
+    }
+
     deinit {
         setIsRemoteCommandCenterEnabled(false)
     }
@@ -176,10 +183,10 @@ final class AudioTrackPlayer: NSObject, MediaPlayer {
             weakSelf.progress = CMTimeGetSeconds(normalizedTime)
         })
 
-        if let userSession = ZMUserSession.shared() {
-            messageObserverToken = MessageChangeInfo.add(observer: self, for: sourceMessage, userSession: userSession)
-        }
-
+        messageObserverToken = userSession.addMessageObserver(
+            self,
+            for: sourceMessage
+        )
     }
 
     private func playRateChanged() {

@@ -99,7 +99,7 @@ extension ZMConversation {
             "conversation_guests": numGuests.logRound()
         ]
 
-        if let selfUser = SelfUser.provider?.selfUser {
+        if let selfUser = SelfUser.provider?.providedSelfUser {
             attributes["user_type"] = selfUser.isGuest(in: self) ? "guest" : "user"
         }
 

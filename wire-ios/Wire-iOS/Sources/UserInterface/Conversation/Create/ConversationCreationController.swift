@@ -130,10 +130,6 @@ final class ConversationCreationController: UIViewController {
 
     // MARK: - Life cycle
 
-    convenience init() {
-        self.init(preSelectedParticipants: nil, selfUser: ZMUser.selfUser())
-    }
-
     init(preSelectedParticipants: UserSet?, selfUser: UserType) {
         self.selfUser = selfUser
         self.values = ConversationCreationValues(selfUser: selfUser)
@@ -248,7 +244,7 @@ final class ConversationCreationController: UIViewController {
                 values.participants = parts
             }
 
-            let participantsController = AddParticipantsViewController(context: .create(values))
+            let participantsController = AddParticipantsViewController(context: .create(values), selfUser: selfUser)
             participantsController.conversationCreationDelegate = self
             navigationController?.pushViewController(participantsController, animated: true)
         }

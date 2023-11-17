@@ -66,11 +66,16 @@ final class GroupOptionsSectionController: GroupDetailsSectionController {
         return !options.isEmpty
     }
 
-    init(conversation: GroupDetailsConversationType, delegate: GroupOptionsSectionControllerDelegate, syncCompleted: Bool) {
+    init(
+        conversation: GroupDetailsConversationType,
+        user: UserType,
+        delegate: GroupOptionsSectionControllerDelegate,
+        syncCompleted: Bool
+    ) {
         self.delegate = delegate
         self.conversation = conversation
         self.syncCompleted = syncCompleted
-        self.options = Option.allCases.filter({ $0.accessible(in: conversation, by: SelfUser.current) })
+        self.options = Option.allCases.filter { $0.accessible(in: conversation, by: user) }
     }
 
     // MARK: - Collection View

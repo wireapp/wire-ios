@@ -43,10 +43,11 @@ final class CallViewControllerTests: XCTestCase {
     var mockVoiceChannel: MockVoiceChannel!
     var conversation: ZMConversation!
     var sut: CallViewController!
+    var userSession: UserSessionMock!
 
     override func setUp() {
         super.setUp()
-
+        userSession = UserSessionMock()
         conversation = ((MockConversation.oneOnOneConversation() as Any) as! ZMConversation)
         mockVoiceChannel = MockVoiceChannel(conversation: conversation)
         mockVoiceChannel.mockVideoState = VideoState.started
@@ -66,6 +67,7 @@ final class CallViewControllerTests: XCTestCase {
     }
 
     override func tearDown() {
+        userSession = nil
         sut = nil
         conversation = nil
         mockVoiceChannel = nil
@@ -76,7 +78,13 @@ final class CallViewControllerTests: XCTestCase {
                                           mediaManager: ZMMockAVSMediaManager) -> CallViewController {
 
         let proximityManager = ProximityMonitorManager()
-        let callController = CallViewController(voiceChannel: mockVoiceChannel, selfUser: selfUser, proximityMonitorManager: proximityManager, mediaManager: mediaManager)
+        let callController = CallViewController(
+            voiceChannel: mockVoiceChannel,
+            selfUser: selfUser,
+            proximityMonitorManager: proximityManager,
+            mediaManager: mediaManager,
+            userSession: userSession
+        )
 
         return callController
     }

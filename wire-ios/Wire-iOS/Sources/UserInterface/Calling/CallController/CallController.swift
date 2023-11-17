@@ -37,9 +37,9 @@ final class CallController: NSObject {
     private var alertDebounceInterval: TimeInterval { 15 * .oneMinute  }
 
     // MARK: - Init
-    override init() {
+     init(userSession: UserSession) {
         super.init()
-        addObservers()
+        addObservers(userSession: userSession)
     }
 
     deinit {
@@ -58,12 +58,10 @@ final class CallController: NSObject {
     }
 
     // MARK: - Private Implementation
-    private func addObservers() {
-        if let userSession = ZMUserSession.shared() {
-            observerTokens.append(WireCallCenterV3.addCallStateObserver(observer: self, userSession: userSession))
-            observerTokens.append(WireCallCenterV3.addCallErrorObserver(observer: self, userSession: userSession))
+    private func addObservers(userSession: UserSession) {
+        observerTokens.append(userSession.addConferenceCallStateObserver(self))
+        observerTokens.append(userSession.addConferenceCallErrorObserver(self))
         }
-    }
 
     private func presentOrMinimizeActiveCall(for conversation: ZMConversation) {
         if conversation == minimizedCall {

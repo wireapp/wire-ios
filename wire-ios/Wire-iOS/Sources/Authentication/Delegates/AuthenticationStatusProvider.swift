@@ -38,7 +38,7 @@ class AuthenticationStatusProvider {
     }
 
     var selfUser: UserType? {
-        return sharedUserSession?.selfUser
+        return sharedUserSession?.providedSelfUser
     }
 
     var numberOfAccounts: Int {

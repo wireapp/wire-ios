@@ -15,10 +15,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import DifferenceKit
+import Foundation
 import UIKit
 import WireDataModel
+import WireSyncEngine
 
 private let CellReuseIdConnectionRequests = "CellIdConnectionRequests"
 private let CellReuseIdConversation = "CellId"
@@ -29,7 +30,7 @@ final class ConversationListContentController: UICollectionViewController, Popov
     weak var popoverPointToView: UIView?
 
     weak var contentDelegate: ConversationListContentDelegate?
-    let listViewModel: ConversationListViewModel = ConversationListViewModel()
+    let listViewModel: ConversationListViewModel
     private var focusOnNextSelection = false
     private var animateNextSelection = false
     private weak var scrollToMessageOnNextSelection: ZMConversationMessage?
@@ -39,16 +40,19 @@ final class ConversationListContentController: UICollectionViewController, Popov
     private let selectionFeedbackGenerator = UISelectionFeedbackGenerator()
     private var token: NSObjectProtocol?
 
+    let userSession: UserSession
+
     deinit {
         NotificationCenter.default.removeObserver(self)
     }
 
-    init() {
+    init(userSession: UserSession) {
+        self.userSession = userSession
         let flowLayout = BoundsAwareFlowLayout()
         flowLayout.minimumLineSpacing = 0
         flowLayout.minimumInteritemSpacing = 0
         flowLayout.sectionInset = .zero
-
+        self.listViewModel = ConversationListViewModel(userSession: userSession)
         super.init(collectionViewLayout: flowLayout)
 
         registerSectionHeader()
@@ -272,7 +276,12 @@ final class ConversationListContentController: UICollectionViewController, Popov
         }
 
         let previewProvider: UIContextMenuContentPreviewProvider = {
-            return ConversationPreviewViewController(conversation: conversation, presentingViewController: self, sourceView: collectionView.cellForItem(at: indexPath))
+            return ConversationPreviewViewController(
+                conversation: conversation,
+                presentingViewController: self,
+                sourceView: collectionView.cellForItem(at: indexPath),
+                userSession: self.userSession
+            )
         }
 
         let actionProvider: UIContextMenuActionProvider = { _ in
@@ -280,7 +289,7 @@ final class ConversationListContentController: UICollectionViewController, Popov
                 UIAction(title: action.title, image: nil) { _ in
                     let actionController = ConversationActionController(conversation: conversation,
                                                                         target: self,
-                                                                        sourceView: collectionView.cellForItem(at: indexPath))
+                                                                        sourceView: collectionView.cellForItem(at: indexPath), userSession: self.userSession)
 
                     actionController.handleAction(action)
                 }
@@ -449,7 +458,7 @@ extension ConversationListContentController: UIViewControllerPreviewingDelegate 
 
         previewingContext.sourceRect = layoutAttributes.frame
 
-        return ConversationPreviewViewController(conversation: conversation, presentingViewController: self, sourceView: collectionView.cellForItem(at: indexPath))
+        return ConversationPreviewViewController(conversation: conversation, presentingViewController: self, sourceView: collectionView.cellForItem(at: indexPath), userSession: userSession)
     }
 }
 

@@ -19,7 +19,7 @@
 import XCTest
 @testable import Wire
 
-final class LocationMessageCellTests: XCTestCase {
+final class LocationMessageCellTests: ConversationMessageSnapshotTestCase {
 
     typealias CellConfiguration = (MockMessage) -> Void
 

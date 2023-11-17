@@ -127,7 +127,7 @@ final class DebugLogSender: NSObject, MFMailComposeViewControllerDelegate {
         }
 
         // Prepare subject & body
-        let user = SelfUser.provider?.selfUser as? ZMUser
+        let user = SelfUser.provider?.providedSelfUser as? ZMUser
         let userID = user?.remoteIdentifier?.transportString() ?? ""
         let device = UIDevice.current.name
         let userDescription = "\(user?.name ?? "") [user: \(userID)] [device: \(device)]"

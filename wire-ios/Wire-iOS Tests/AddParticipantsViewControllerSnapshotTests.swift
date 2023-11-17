@@ -63,13 +63,13 @@ final class AddParticipantsViewControllerSnapshotTests: BaseSnapshotTestCase, Co
     func testForEveryOneIsHere() {
         let newValues = ConversationCreationValues(name: "", participants: [], allowGuests: true, selfUser: selfUser)
 
-        sut = AddParticipantsViewController(context: .create(newValues))
+        sut = AddParticipantsViewController(context: .create(newValues), selfUser: selfUser)
         verify(matching: sut)
     }
 
     func testForAddParticipantsButtonIsShown() {
         let conversation = createGroupConversation()
-        sut = AddParticipantsViewController(context: .add(conversation))
+        sut = AddParticipantsViewController(context: .add(conversation), selfUser: selfUser)
         let user = createUser(name: "Bill")
         sut.userSelection.add(user)
         sut.userSelection(UserSelection(), didAddUser: user)
@@ -86,7 +86,7 @@ final class AddParticipantsViewControllerSnapshotTests: BaseSnapshotTestCase, Co
         mockConversation.teamType = MockTeam()
         mockConversation.allowServices = true
 
-        sut = AddParticipantsViewController(context: .add(mockConversation))
+        sut = AddParticipantsViewController(context: .add(mockConversation), selfUser: selfUser)
 
         // THEN
         verify(matching: sut)

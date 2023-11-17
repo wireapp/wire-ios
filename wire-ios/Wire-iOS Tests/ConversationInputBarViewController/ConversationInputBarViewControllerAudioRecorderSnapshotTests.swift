@@ -43,12 +43,15 @@ final class MockLongPressGestureRecognizer: UILongPressGestureRecognizer {
 }
 
 final class ConversationInputBarViewControllerAudioRecorderSnapshotTests: CoreDataSnapshotTestCase {
+
     var sut: ConversationInputBarViewController!
     var mockLongPressGestureRecognizer: MockLongPressGestureRecognizer!
+    var userSession: UserSessionMock!
 
     override func setUp() {
         super.setUp()
-        sut = ConversationInputBarViewController(conversation: otherUserConversation)
+        userSession = UserSessionMock()
+        sut = ConversationInputBarViewController(conversation: otherUserConversation, userSession: userSession)
         sut.overrideUserInterfaceStyle = .light
         sut.loadViewIfNeeded()
 
@@ -58,7 +61,7 @@ final class ConversationInputBarViewControllerAudioRecorderSnapshotTests: CoreDa
     override func tearDown() {
         sut = nil
         mockLongPressGestureRecognizer = nil
-
+        userSession = nil
         super.tearDown()
     }
 
@@ -76,10 +79,10 @@ final class ConversationInputBarViewControllerAudioRecorderSnapshotTests: CoreDa
         // GIVEN & THEN
         verifyInAllPhoneWidths(view: sut.view,
                                configuration: { _ in
-                                // WHEN
-                                self.sut.createAudioViewController(audioRecorder: MockAudioRecorder())
-                                self.sut.audioRecordViewController?.updateTimeLabel(1234)
-                                self.sut.showAudioRecordViewController(animated: false)
+            // WHEN
+            self.sut.createAudioViewController(audioRecorder: MockAudioRecorder(), userSession: self.userSession)
+            self.sut.audioRecordViewController?.updateTimeLabel(1234)
+            self.sut.showAudioRecordViewController(animated: false)
         })
     }
 
@@ -87,10 +90,10 @@ final class ConversationInputBarViewControllerAudioRecorderSnapshotTests: CoreDa
         // GIVEN & THEN
         verifyInAllPhoneWidths(view: sut.view,
                                configuration: { _ in
-                                // WHEN
-                                self.sut.createAudioViewController(audioRecorder: MockAudioRecorder())
-                                self.sut.showAudioRecordViewController(animated: false)
-                                self.longPressChanged()
+            // WHEN
+            self.sut.createAudioViewController(audioRecorder: MockAudioRecorder(), userSession: self.userSession)
+            self.sut.showAudioRecordViewController(animated: false)
+            self.longPressChanged()
         })
     }
 
@@ -98,12 +101,12 @@ final class ConversationInputBarViewControllerAudioRecorderSnapshotTests: CoreDa
         // GIVEN & THEN
         verifyInAllPhoneWidths(view: sut.view,
                                configuration: { _ in
-                                // WHEN
-                                let audioRecorder = MockAudioRecorder()
-                                self.sut.createAudioViewController(audioRecorder: audioRecorder)
-                                self.sut.showAudioRecordViewController(animated: false)
-                                audioRecorder.state = .recording(start: 0)
-                                self.longPressEnded()
+            // WHEN
+            let audioRecorder = MockAudioRecorder()
+            self.sut.createAudioViewController(audioRecorder: audioRecorder, userSession: self.userSession)
+            self.sut.showAudioRecordViewController(animated: false)
+            audioRecorder.state = .recording(start: 0)
+            self.longPressEnded()
         })
     }
 }

@@ -53,7 +53,7 @@ final class ZMUserSessionTests_SecurityClassification: ZMUserSessionTestsBase {
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
-        let classification = sut.classification(with: [otherUser])
+        let classification = sut.classification(with: [otherUser], conversationDomain: nil)
 
         // then
         XCTAssertEqual(classification, .none)
@@ -74,7 +74,7 @@ final class ZMUserSessionTests_SecurityClassification: ZMUserSessionTestsBase {
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
-        let classification = sut.classification(with: [otherUser])
+        let classification = sut.classification(with: [otherUser], conversationDomain: nil)
 
         // then
         XCTAssertEqual(classification, .none)
@@ -99,7 +99,7 @@ final class ZMUserSessionTests_SecurityClassification: ZMUserSessionTestsBase {
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
-        let classification = sut.classification(with: otherUsers)
+        let classification = sut.classification(with: otherUsers, conversationDomain: nil)
 
         // then
         XCTAssertEqual(classification, .classified)
@@ -126,7 +126,7 @@ final class ZMUserSessionTests_SecurityClassification: ZMUserSessionTestsBase {
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
-        let classification = sut.classification(with: otherUsers)
+        let classification = sut.classification(with: otherUsers, conversationDomain: nil)
 
         // then
         XCTAssertEqual(classification, .notClassified)
@@ -152,7 +152,7 @@ final class ZMUserSessionTests_SecurityClassification: ZMUserSessionTestsBase {
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
-        let classification = sut.classification(with: otherUsers)
+        let classification = sut.classification(with: otherUsers, conversationDomain: nil)
 
         // then
         XCTAssertEqual(classification, .notClassified)
@@ -188,7 +188,7 @@ final class ZMUserSessionTests_SecurityClassification: ZMUserSessionTestsBase {
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
-        let classification = sut.classification(with: otherUsers)
+        let classification = sut.classification(with: otherUsers, conversationDomain: nil)
 
         // then
         XCTAssertEqual(classification, .notClassified)
@@ -224,7 +224,7 @@ final class ZMUserSessionTests_SecurityClassification: ZMUserSessionTestsBase {
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
-        let classification = sut.classification(with: otherUsers)
+        let classification = sut.classification(with: otherUsers, conversationDomain: nil)
 
         // then
         XCTAssertEqual(classification, .classified)
@@ -255,7 +255,7 @@ final class ZMUserSessionTests_SecurityClassification: ZMUserSessionTestsBase {
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
-        let classification = sut.classification(with: otherUsers)
+        let classification = sut.classification(with: otherUsers, conversationDomain: nil)
 
         // then
         XCTAssertEqual(classification, .notClassified)

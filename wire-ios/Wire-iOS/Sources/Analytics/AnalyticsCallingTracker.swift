@@ -156,7 +156,7 @@ extension AnalyticsCallingTracker: WireCallCenterCallParticipantObserver {
                                    participants: [CallParticipant]) {
         // record the start/end screen share timing, and tag the event when the call ends
 
-        let selfUser = SelfUser.provider?.selfUser as? ZMUser
+        let selfUser = SelfUser.provider?.providedSelfUser as? ZMUser
 
         // When the screen sharing starts add a record to screenSharingInfos set if no exist item with same client id exists
         if let participant = participants.first(where: { $0.state.videoState == .screenSharing }),

@@ -27,13 +27,18 @@ final class CreateGroupSection: NSObject, CollectionViewSectionController {
     }
 
     private var data: [Row] {
-        return SelfUser.current.isTeamMember ? [Row.createGroup, Row.createGuestRoom] : [Row.createGroup]
+        let user = SelfUser.provider?.providedSelfUser
+        return user?.isTeamMember == true ? [Row.createGroup, Row.createGuestRoom] : [Row.createGroup]
     }
 
     weak var delegate: SearchSectionControllerDelegate?
 
     var isHidden: Bool {
-        return !SelfUser.current.canCreateConversation(type: .group)
+        guard let user = SelfUser.provider?.providedSelfUser else {
+            assertionFailure("expected available 'user'!")
+            return false
+        }
+        return !user.canCreateConversation(type: .group)
     }
 
     func prepareForUse(in collectionView: UICollectionView?) {

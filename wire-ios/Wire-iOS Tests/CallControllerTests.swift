@@ -27,15 +27,17 @@ final class CallControllerTests: XCTestCase, CoreDataFixtureTestHelper {
     var router: ActiveCallRouterProtocolMock!
     var conversation: ZMConversation!
     var callConversationProvider: MockCallConversationProvider!
+    var userSession: UserSessionMock!
 
     override func setUp() {
         super.setUp()
+        userSession = UserSessionMock()
         coreDataFixture = CoreDataFixture()
         router = ActiveCallRouterProtocolMock()
         conversation = ZMConversation.createOtherUserConversation(moc: coreDataFixture.uiMOC,
                                                                   otherUser: otherUser)
         callConversationProvider = MockCallConversationProvider()
-        sut = CallController()
+        sut = CallController(userSession: userSession)
         sut.callConversationProvider = callConversationProvider
         sut.router = router
     }

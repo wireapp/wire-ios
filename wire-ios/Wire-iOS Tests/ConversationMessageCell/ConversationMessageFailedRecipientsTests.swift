@@ -19,13 +19,25 @@
 import XCTest
 @testable import Wire
 
-final class ConversationMessageFailedRecipientsTests: CoreDataSnapshotTestCase {
+final class ConversationMessageFailedRecipientsTests: ConversationMessageSnapshotTestCase {
+
+    var coreDataFixture: CoreDataFixture!
+
+    override func setUp() {
+        super.setUp()
+        coreDataFixture = CoreDataFixture()
+    }
+
+    override func tearDown() {
+        coreDataFixture = nil
+        super.tearDown()
+    }
 
     func testFailedRecipientsCell_WithOneUser() {
         // GIVEN, WHEN
         let message = MockMessageFactory.textMessage(withText: "Hello")
-        message.conversationLike = otherUserConversation
-        message.failedToSendUsers = [otherUser]
+        message.conversationLike = coreDataFixture.otherUserConversation
+        message.failedToSendUsers = [coreDataFixture.otherUser]
         message.conversation?.domain = "anta.wire.link"
 
         // THEN
@@ -35,9 +47,9 @@ final class ConversationMessageFailedRecipientsTests: CoreDataSnapshotTestCase {
     func testFailedRecipientsCell_WithTwoUsers() {
         // GIVEN, WHEN
         let message = MockMessageFactory.textMessage(withText: "Hello")
-        message.conversationLike = otherUserConversation
-        let serviceUser = createServiceUser()
-        message.failedToSendUsers = [otherUser, serviceUser]
+        message.conversationLike = coreDataFixture.otherUserConversation
+        let serviceUser = coreDataFixture.createServiceUser()
+        message.failedToSendUsers = [coreDataFixture.otherUser, serviceUser]
         message.conversation?.domain = "anta.wire.link"
 
         // THEN

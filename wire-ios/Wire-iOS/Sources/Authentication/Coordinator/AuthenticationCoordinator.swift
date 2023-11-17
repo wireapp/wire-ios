@@ -32,7 +32,7 @@ protocol AuthenticationCoordinatorDelegate: AnyObject {
      * to this device.
      */
 
-    func userAuthenticationDidComplete(addedAccount: Bool)
+    func userAuthenticationDidComplete(userSession: UserSession, addedAccount: Bool)
 
 }
 
@@ -306,10 +306,16 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
                 presentErrorAlert(for: alertModel)
 
             case .completeLoginFlow:
-                delegate?.userAuthenticationDidComplete(addedAccount: addedAccount)
+                delegate?.userAuthenticationDidComplete(
+                    userSession: statusProvider.sharedUserSession!,
+                    addedAccount: addedAccount
+                )
 
             case .completeRegistrationFlow:
-                delegate?.userAuthenticationDidComplete(addedAccount: true)
+                delegate?.userAuthenticationDidComplete(
+                    userSession: statusProvider.sharedUserSession!,
+                    addedAccount: true
+                )
 
             case .startPostLoginFlow:
                 registerPostLoginObserversIfNeeded()

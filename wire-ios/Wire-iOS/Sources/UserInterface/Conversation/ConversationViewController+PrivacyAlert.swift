@@ -110,19 +110,25 @@ extension ConversationViewController {
     }
 
     private func presentVerificationScreen() {
-        guard let selfUser = ZMUser.selfUser() else { return }
+        guard let selfUser = ZMUser.selfUser() else {
+            return
+        }
 
         if selfUser.hasUntrustedClients {
             ZClientViewController.shared?.openClientListScreen(for: selfUser)
         } else if let connectedUser = conversation.connectedUser, conversation.conversationType == .oneOnOne {
-            let profileViewController = ProfileViewController(user: connectedUser, viewer: selfUser, conversation: conversation, context: .deviceList)
+            let profileViewController = ProfileViewController(user: connectedUser, viewer: selfUser, conversation: conversation, context: .deviceList, userSession: userSession)
             profileViewController.delegate = self
             profileViewController.viewControllerDismisser = self
             let navigationController = profileViewController.wrapInNavigationController(setBackgroundColor: true)
             navigationController.modalPresentationStyle = .formSheet
             present(navigationController, animated: true)
         } else if conversation.conversationType == .group {
-            let participantsViewController = GroupParticipantsDetailViewController(selectedParticipants: [], conversation: conversation)
+            let participantsViewController = GroupParticipantsDetailViewController(
+                selectedParticipants: [],
+                conversation: conversation,
+                userSession: userSession
+            )
             let navigationController = participantsViewController.wrapInNavigationController(setBackgroundColor: true)
             navigationController.modalPresentationStyle = .formSheet
             present(navigationController, animated: true)
@@ -130,7 +136,7 @@ extension ConversationViewController {
     }
 
     private func presentLegalHoldDetails() {
-        LegalHoldDetailsViewController.present(in: self, conversation: conversation)
+        LegalHoldDetailsViewController.present(in: self, conversation: conversation, userSession: userSession)
     }
 
 }

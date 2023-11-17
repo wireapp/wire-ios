@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDataModel
+import WireSyncEngine
 
 final class GroupParticipantsDetailViewController: UIViewController {
 
@@ -41,11 +42,12 @@ final class GroupParticipantsDetailViewController: UIViewController {
     }
 
     init(selectedParticipants: [UserType],
-         conversation: GroupParticipantsDetailConversation) {
+         conversation: GroupParticipantsDetailConversation,
+         userSession: UserSession) {
 
         viewModel = GroupParticipantsDetailViewModel(
             selectedParticipants: selectedParticipants,
-            conversation: conversation)
+            conversation: conversation, userSession: userSession)
 
         collectionViewController = SectionCollectionViewController()
 
@@ -135,23 +137,33 @@ final class GroupParticipantsDetailViewController: UIViewController {
     private func computeSections() -> [CollectionViewSectionController] {
         sections = []
         if !viewModel.admins.isEmpty {
-            sections.append(ParticipantsSectionController(participants: viewModel.admins,
-                                                          conversationRole: .admin,
-                                                          conversation: viewModel.conversation,
-                                                          delegate: self,
-                                                          totalParticipantsCount: viewModel.admins.count,
-                                                          clipSection: false,
-                                                          showSectionCount: false))
+            sections.append(
+                ParticipantsSectionController(
+                    participants: viewModel.admins,
+                    conversationRole: .admin,
+                    conversation: viewModel.conversation,
+                    delegate: self,
+                    totalParticipantsCount: viewModel.admins.count,
+                    clipSection: false,
+                    showSectionCount: false,
+                    userSession: viewModel.userSession
+                )
+            )
         }
 
         if !viewModel.members.isEmpty {
-            sections.append(ParticipantsSectionController(participants: viewModel.members,
-                                                          conversationRole: .member,
-                                                          conversation: viewModel.conversation,
-                                                          delegate: self,
-                                                          totalParticipantsCount: viewModel.members.count,
-                                                          clipSection: false,
-                                                          showSectionCount: false))
+            sections.append(
+                ParticipantsSectionController(
+                    participants: viewModel.members,
+                    conversationRole: .member,
+                    conversation: viewModel.conversation,
+                    delegate: self,
+                    totalParticipantsCount: viewModel.members.count,
+                    clipSection: false,
+                    showSectionCount: false,
+                    userSession: viewModel.userSession
+                )
+            )
         }
 
         return sections
@@ -171,7 +183,8 @@ extension GroupParticipantsDetailViewController: GroupDetailsSectionControllerDe
             user: user,
             conversation: conversation,
             profileViewControllerDelegate: self,
-            viewControllerDismisser: self
+            viewControllerDismisser: self,
+            userSession: viewModel.userSession
         )
         if !user.isSelfUser {
             navigationController?.pushViewController(viewController, animated: true)
@@ -185,7 +198,8 @@ extension GroupParticipantsDetailViewController: GroupDetailsSectionControllerDe
     func presentParticipantsDetails(with users: [UserType], selectedUsers: [UserType], animated: Bool) {
         let detailsViewController = GroupParticipantsDetailViewController(
             selectedParticipants: selectedUsers,
-            conversation: viewModel.conversation
+            conversation: viewModel.conversation,
+            userSession: viewModel.userSession
         )
 
         detailsViewController.delegate = self

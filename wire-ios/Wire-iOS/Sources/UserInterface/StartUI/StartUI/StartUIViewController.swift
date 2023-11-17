@@ -43,6 +43,8 @@ final class StartUIViewController: UIViewController, SpinnerCapable {
         return addressBookHelperType.sharedHelper
     }
 
+    let userSession: UserSession
+
     let isFederationEnabled: Bool
 
     let quickActionsBar: StartUIInviteActionBar = StartUIInviteActionBar()
@@ -60,15 +62,19 @@ final class StartUIViewController: UIViewController, SpinnerCapable {
     /// init method for injecting mock addressBookHelper
     ///
     /// - Parameter addressBookHelperType: a class type conforms AddressBookHelperProtocol
-    init(addressBookHelperType: AddressBookHelperProtocol.Type = AddressBookHelper.self,
-         isFederationEnabled: Bool = BackendInfo.isFederationEnabled) {
+    init(
+        addressBookHelperType: AddressBookHelperProtocol.Type = AddressBookHelper.self,
+        isFederationEnabled: Bool = BackendInfo.isFederationEnabled,
+        userSession: UserSession
+    ) {
         self.isFederationEnabled = isFederationEnabled
         self.addressBookHelperType = addressBookHelperType
         self.searchResultsViewController = SearchResultsViewController(userSelection: UserSelection(),
+                                                                       selfUser: userSession.selfUser,
                                                                        isAddingParticipants: false,
                                                                        shouldIncludeGuests: true,
                                                                        isFederationEnabled: isFederationEnabled)
-
+        self.userSession = userSession
         super.init(nibName: nil, bundle: nil)
 
         configGroupSelector()
@@ -81,10 +87,6 @@ final class StartUIViewController: UIViewController, SpinnerCapable {
 
     var searchResults: SearchResultsViewController {
         return self.searchResultsViewController
-    }
-
-    var selfUser: UserType {
-        return SelfUser.current
     }
 
     // MARK: - Overloaded methods
@@ -109,7 +111,7 @@ final class StartUIViewController: UIViewController, SpinnerCapable {
 
     func setupViews() {
         configGroupSelector()
-        emptyResultView = EmptySearchResultsView(isSelfUserAdmin: selfUser.canManageTeam,
+        emptyResultView = EmptySearchResultsView(isSelfUserAdmin: userSession.selfUser.canManageTeam,
                                                  isFederationEnabled: isFederationEnabled)
 
         emptyResultView.delegate = self
@@ -118,9 +120,9 @@ final class StartUIViewController: UIViewController, SpinnerCapable {
         searchResultsViewController.searchResultsView.emptyResultView = self.emptyResultView
         searchResultsViewController.searchResultsView.collectionView.accessibilityIdentifier = "search.list"
 
-        if let title = (selfUser as? ZMUser)?.team?.name {
+        if let title = userSession.selfUser.membership?.team?.name {
             navigationItem.setupNavigationBarTitle(title: title.capitalized)
-        } else if let title = selfUser.name {
+        } else if let title = userSession.selfUser.name {
             navigationItem.setupNavigationBarTitle(title: title.capitalized)
         }
 
@@ -200,12 +202,11 @@ final class StartUIViewController: UIViewController, SpinnerCapable {
     }
 
     var showsGroupSelector: Bool {
-        return SearchGroup.all.count > 1 && ZMUser.selfUser().canSeeServices
+        return SearchGroup.all.count > 1 && userSession.selfUser.canSeeServices
     }
 
     func showKeyboardIfNeeded() {
-        // TODO: unwrap
-        let conversationCount = ZMConversationList.conversations(inUserSession: ZMUserSession.shared()!).count
+        let conversationCount = userSession.conversationList().count
         if conversationCount > StartUIViewController.InitiallyShowsKeyboardConversationThreshold {
             _ = searchHeader.tokenField.becomeFirstResponder()
         }
@@ -213,7 +214,7 @@ final class StartUIViewController: UIViewController, SpinnerCapable {
     }
 
     func updateActionBar() {
-        if !searchHeader.query.isEmpty || (selfUser as? ZMUser)?.hasTeam == true {
+        if !searchHeader.query.isEmpty || userSession.selfUser.hasTeam {
             searchResults.searchResultsView.accessoryView = nil
         } else {
             searchResults.searchResultsView.accessoryView = quickActionsBar

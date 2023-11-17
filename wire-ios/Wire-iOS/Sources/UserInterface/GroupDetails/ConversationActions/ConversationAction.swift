@@ -79,11 +79,15 @@ extension ZMConversation {
         var actions = availableStandardActions()
         actions.append(.clearContent)
 
-        if localParticipants.contains(ZMUser.selfUser()) {
+        guard let selfUser = ZMUser.selfUser() else {
+            assertionFailure("ZMUser.selfUser() is nil")
+            return actions
+        }
+        if localParticipants.contains(selfUser) {
             actions.append(.leave)
         }
 
-        if ZMUser.selfUser()?.canDeleteConversation(self) == true {
+        if selfUser.canDeleteConversation(self) {
             actions.append(.deleteGroup)
         }
 

@@ -25,6 +25,7 @@ final class ProfileDetailsViewControllerTests: BaseSnapshotTestCase {
     var selfUserTeam: UUID!
     var selfUser: MockUserType!
     var defaultRichProfile: [UserRichProfileField]!
+    var userSession: UserSessionMock!
 
     override func setUp() {
         super.setUp()
@@ -36,12 +37,16 @@ final class ProfileDetailsViewControllerTests: BaseSnapshotTestCase {
             UserRichProfileField(type: "Title", value: "Chief Design Officer"),
             UserRichProfileField(type: "Entity", value: "ACME/OBS/EQUANT/CSO/IBO/OEC/SERVICE OP/CS MGT/CSM EEMEA")
         ]
+
+        userSession = UserSessionMock()
     }
 
     override func tearDown() {
         selfUser = nil
         selfUserTeam = nil
         defaultRichProfile = nil
+        userSession = nil
+
         super.tearDown()
     }
 
@@ -1133,7 +1138,7 @@ final class ProfileDetailsViewControllerTests: BaseSnapshotTestCase {
         let details = ProfileDetailsViewController(user: user,
                                                    viewer: viewer,
                                                    conversation: conversation?.convertToRegularConversation(),
-                                                   context: context)
+                                                   context: context, userSession: userSession)
 
         verify(matching: details,
                file: file,

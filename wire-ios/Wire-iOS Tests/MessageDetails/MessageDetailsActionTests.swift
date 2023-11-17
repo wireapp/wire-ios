@@ -105,7 +105,7 @@ final class MessageDetailsActionTests: XCTestCase {
 
     private func withGroupMessage(belongsToTeam: Bool, teamGroup: Bool, _ block: @escaping (MockMessage) -> Void) {
         let message = MockMessageFactory.textMessage(withText: "Message")
-        message.senderUser = SelfUser.current
+        message.senderUser = SelfUser.provider?.providedSelfUser
         let mockConversation = SwiftMockConversation()
         mockConversation.mockLocalParticipantsContain = true
 
@@ -120,7 +120,7 @@ final class MessageDetailsActionTests: XCTestCase {
     private func withOneToOneMessage(belongsToTeam: Bool, _ block: @escaping (MockMessage) -> Void) {
 
         let message = MockMessageFactory.textMessage(withText: "Message")
-        message.senderUser = SelfUser.current
+        message.senderUser = SelfUser.provider?.providedSelfUser
         message.conversationLike = SwiftMockConversation()
         block(message)
     }

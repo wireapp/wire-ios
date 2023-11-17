@@ -60,7 +60,7 @@ final class SettingsPropertyFactory {
     let userDefaults: UserDefaults
     var tracking: TrackingInterface?
     var mediaManager: AVSMediaManagerInterface?
-    weak var userSession: UserSessionInterface?
+    weak var userSession: UserSession?
     var selfUser: SettingsSelfUser?
     var marketingConsent: SettingsPropertyValue = .none
     weak var delegate: SettingsPropertyFactoryDelegate?
@@ -80,26 +80,24 @@ final class SettingsPropertyFactory {
         SettingsPropertyName.callingConstantBitRate: .callingConstantBitRate
     ]
 
-    convenience init(userSession: UserSessionInterface?, selfUser: SettingsSelfUser?) {
+    convenience init(userSession: UserSession?, selfUser: SettingsSelfUser?) {
         self.init(userDefaults: UserDefaults.standard, tracking: TrackingManager.shared, mediaManager: AVSMediaManager.sharedInstance(), userSession: userSession, selfUser: selfUser)
     }
 
-    init(userDefaults: UserDefaults, tracking: TrackingInterface?, mediaManager: AVSMediaManagerInterface?, userSession: UserSessionInterface?, selfUser: SettingsSelfUser?) {
+    init(userDefaults: UserDefaults, tracking: TrackingInterface?, mediaManager: AVSMediaManagerInterface?, userSession: UserSession?, selfUser: SettingsSelfUser?) {
         self.userDefaults = userDefaults
         self.tracking = tracking
         self.mediaManager = mediaManager
         self.userSession = userSession
         self.selfUser = selfUser
 
-        if let user = self.selfUser as? ZMUser, let userSession = ZMUserSession.shared() {
-            user.fetchMarketingConsent(in: userSession, completion: { [weak self] result in
-                switch result {
-                case .failure:
-                    self?.marketingConsent = .none
-                case .success(let result):
-                    self?.marketingConsent = SettingsPropertyValue.bool(value: result)
-                }
-            })
+        userSession?.fetchMarketingConsent { [weak self] result in
+            switch result {
+            case .failure:
+                self?.marketingConsent = .none
+            case .success(let result):
+                self?.marketingConsent = SettingsPropertyValue.bool(value: result)
+            }
         }
     }
 
@@ -269,15 +267,15 @@ final class SettingsPropertyFactory {
             let setAction: SetAction = { [unowned self] _, value in
                 switch value {
                 case .number(let number):
-                    self.userSession?.perform {
-                        if let userSession = self.userSession as? ZMUserSession {
-                            self.delegate?.asyncMethodDidStart(self)
-                            (self.selfUser as? ZMUser)?.setMarketingConsent(to: number.boolValue, in: userSession, completion: { [weak self] _ in
-                                if let weakSelf = self {
-                                    weakSelf.marketingConsent = SettingsPropertyValue.number(value: number)
-                                    weakSelf.delegate?.asyncMethodDidComplete(weakSelf)
-                                }
-                            })
+                    guard let userSession = self.userSession else { return }
+
+                    userSession.perform {
+                        self.delegate?.asyncMethodDidStart(self)
+                        userSession.setMarketingConsent(granted: number.boolValue) { [weak self] _ in
+                            if let weakSelf = self {
+                                weakSelf.marketingConsent = SettingsPropertyValue.number(value: number)
+                                weakSelf.delegate?.asyncMethodDidComplete(weakSelf)
+                            }
                         }
                     }
 
@@ -402,7 +400,7 @@ final class SettingsPropertyFactory {
             },
                 setAction: { _, value in
                     if case .number(let enabled) = value,
-                        let userSession = self.userSession as? ZMUserSession {
+                        let userSession = self.userSession {
                             userSession.perform {
                                 self.selfUser?.readReceiptsEnabled = enabled.boolValue
                             }
@@ -411,13 +409,13 @@ final class SettingsPropertyFactory {
         case .encryptMessagesAtRest:
             return SettingsBlockProperty(
                 propertyName: propertyName,
-                getAction: { _ in
-                    let value = ZMUserSession.shared()?.encryptMessagesAtRest ?? false
+                getAction: { [weak self] _ in
+                    let value = self?.userSession?.encryptMessagesAtRest ?? false
                     return SettingsPropertyValue(value)
             },
-                setAction: { (_, value) in
+                setAction: { [weak self] _, value in
                     guard case .number(let enabled) = value else { return }
-                    try? ZMUserSession.shared()?.setEncryptionAtRest(enabled: enabled.boolValue)
+                    try? self?.userSession?.setEncryptionAtRest(enabled: enabled.boolValue, skipMigration: false)
             })
         default:
             if let userDefaultsKey = type(of: self).userDefaultsPropertiesToKeys[propertyName] {

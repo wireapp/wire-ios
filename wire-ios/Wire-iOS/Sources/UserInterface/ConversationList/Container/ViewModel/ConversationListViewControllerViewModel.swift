@@ -68,6 +68,7 @@ extension ConversationListViewController {
         let account: Account
         let selfUser: SelfUserType
         let conversationListType: ConversationListHelperType.Type
+        let userSession: UserSession
 
         var selectedConversation: ZMConversation?
 
@@ -82,10 +83,12 @@ extension ConversationListViewController {
 
         init(account: Account,
              selfUser: SelfUserType,
-             conversationListType: ConversationListHelperType.Type = ZMConversationList.self) {
+             conversationListType: ConversationListHelperType.Type = ZMConversationList.self,
+             userSession: UserSession) {
             self.account = account
             self.selfUser = selfUser
             self.conversationListType = conversationListType
+            self.userSession = userSession
         }
     }
 }
@@ -93,7 +96,7 @@ extension ConversationListViewController {
 extension ConversationListViewController.ViewModel {
     func setupObservers() {
         if let userSession = ZMUserSession.shared() {
-            userObserverToken = UserChangeInfo.add(observer: self, for: userSession.selfUser, in: userSession) as Any
+            userObserverToken = UserChangeInfo.add(observer: self, for: userSession.providedSelfUser, in: userSession) as Any
             initialSyncObserverToken = ZMUserSession.addInitialSyncCompletionObserver(self, userSession: userSession)
         }
 
@@ -101,7 +104,7 @@ extension ConversationListViewController.ViewModel {
     }
 
     func savePendingLastRead() {
-        ZMUserSession.shared()?.enqueue({
+        userSession.enqueue({
             self.selectedConversation?.savePendingLastRead()
         })
     }
@@ -134,7 +137,7 @@ extension ConversationListViewController.ViewModel {
         guard let session = ZMUserSession.shared(),
             let userProfile = userProfile else { return }
 
-        if nil == session.selfUser.handle,
+        if nil == session.providedSelfUser.handle,
             session.hasCompletedInitialSync == true,
             session.isPendingHotFixChanges == false {
 

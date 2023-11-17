@@ -17,9 +17,10 @@
 //
 
 import Foundation
-import UIKit
 import SafariServices
+import UIKit
 import WireDataModel
+import WireSyncEngine
 
 protocol CallInfoRootViewControllerDelegate: CallingActionsViewDelegate {
     func infoRootViewController(_ viewController: CallInfoRootViewController, contextDidChange context: CallInfoRootViewController.Context)
@@ -51,10 +52,19 @@ final class CallInfoRootViewController: UIViewController, UINavigationController
         }
     }
 
-    init(configuration: CallInfoViewControllerInput,
-         selfUser: UserType) {
+    init(
+        configuration: CallInfoViewControllerInput,
+        selfUser: UserType,
+        userSession: UserSession
+    ) {
         self.configuration = configuration
-        contentController = CallInfoViewController(configuration: configuration, selfUser: selfUser)
+
+        contentController = CallInfoViewController(
+            configuration: configuration,
+            selfUser: selfUser,
+            userSession: userSession
+        )
+
         contentNavigationController = contentController.wrapInNavigationController()
         callDegradationController = CallDegradationController()
 
@@ -106,8 +116,13 @@ final class CallInfoRootViewController: UIViewController, UINavigationController
     }
 
     private func presentParticipantsList() {
+        guard let selfUser = ZMUser.selfUser() else {
+            assertionFailure("ZMUser.selfUser() is nil")
+            return
+        }
+
         context = .participants
-        let participantsList = CallParticipantsListViewController(scrollableWithConfiguration: configuration)
+        let participantsList = CallParticipantsListViewController(scrollableWithConfiguration: configuration, selfUser: selfUser)
         participantsViewController = participantsList
         contentNavigationController.pushViewController(participantsList, animated: true)
     }

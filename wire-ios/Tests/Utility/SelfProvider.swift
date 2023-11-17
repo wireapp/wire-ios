@@ -20,5 +20,5 @@ import Foundation
 import WireDataModel
 
 struct SelfProvider: SelfUserProvider {
-    let selfUser: UserType & ZMEditableUser
+    let providedSelfUser: UserType & ZMEditableUser
 }

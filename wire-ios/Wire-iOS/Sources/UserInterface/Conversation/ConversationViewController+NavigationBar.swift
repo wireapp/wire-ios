@@ -133,7 +133,7 @@ extension ConversationViewController {
     var shouldShowCollectionsButton: Bool {
         guard
             SecurityFlags.forceEncryptionAtRest.isEnabled == false,
-            session.encryptMessagesAtRest == false
+            userSession.encryptMessagesAtRest == false
         else {
             return false
         }

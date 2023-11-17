@@ -21,16 +21,20 @@ import XCTest
 @testable import Wire
 
 final class ConversationListAccessoryViewTests: BaseSnapshotTestCase {
+
     var sut: ConversationListAccessoryView!
+    var userSession: UserSessionMock!
 
     override func setUp() {
         super.setUp()
-        self.sut = ConversationListAccessoryView(mediaPlaybackManager: MediaPlaybackManager(name: "test"))
+        userSession  = UserSessionMock()
+        self.sut = ConversationListAccessoryView(mediaPlaybackManager: MediaPlaybackManager(name: "test", userSession: userSession))
         accentColor = .violet
     }
 
     override func tearDown() {
         sut = nil
+        userSession = nil
         super.tearDown()
     }
 

@@ -32,13 +32,12 @@ protocol UnlockViewControllerDelegate: AnyObject {
 /// This VC should be wrapped in KeyboardAvoidingViewController as the "unlock" button would be covered on 4 inch iPhone
 final class UnlockViewController: UIViewController {
 
-    typealias Session = ZMUserSessionInterface & UserSessionAppLockInterface
     typealias Unlock = L10n.Localizable.Unlock
 
     weak var delegate: UnlockViewControllerDelegate?
 
     private let selfUser: UserType
-    private var userSession: Session?
+    private var userSession: UserSession?
 
     private let stackView: UIStackView = UIStackView.verticalStackView()
     private let upperStackView = UIStackView.verticalStackView()
@@ -123,7 +122,7 @@ final class UnlockViewController: UIViewController {
         return button
     }()
 
-    init(selfUser: UserType, userSession: Session? = nil) {
+    init(selfUser: UserType, userSession: UserSession? = nil) {
         self.selfUser = selfUser
         self.userSession = userSession
 
@@ -213,8 +212,8 @@ final class UnlockViewController: UIViewController {
     private func unlock() -> Bool {
         guard
             let passcode = validatedTextField.text,
-            let session = userSession,
-            session.appLockController.evaluateAuthentication(customPasscode: passcode) == .granted
+            let userSession = userSession,
+            userSession.evaluateAuthentication(customPasscode: passcode) == .granted
         else {
             return false
         }

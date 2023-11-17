@@ -25,7 +25,7 @@ final class MessageActionsViewControllerTests: XCTestCase {
     override func setUp() {
         super.setUp()
         let mockSelfUser = MockUserType.createSelfUser(name: "selfUser")
-        SelfUser.provider = SelfProvider(selfUser: mockSelfUser)
+        SelfUser.provider = SelfProvider(providedSelfUser: mockSelfUser)
     }
 
     func testReactionPicker_ExistForStandardMessage() {

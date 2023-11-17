@@ -40,7 +40,13 @@ extension Analytics {
                 }
             } else {
                 provider = AnalyticsProviderFactory.shared.analyticsProvider()
-                selfUser = SelfUser.current
+
+                if let user = SelfUser.provider?.providedSelfUser {
+                    selfUser = user
+                } else {
+                    assertionFailure("expected available 'user'!")
+                    selfUser = nil
+                }
             }
         }
     }

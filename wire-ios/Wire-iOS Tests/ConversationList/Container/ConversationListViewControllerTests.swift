@@ -56,16 +56,19 @@ final class ConversationListViewControllerTests: BaseSnapshotTestCase {
 
     var sut: ConversationListViewController!
     var mockDelegate: MockConversationListDelegate!
+    var userSession: UserSessionMock!
 
     // MARK: - setUp
 
     override func setUp() {
         super.setUp()
         accentColor = .strongBlue
+
+        userSession = UserSessionMock()
         MockConversationList.hasArchivedConversations = false
         let selfUser = MockUserType.createSelfUser(name: "Johannes Chrysostomus Wolfgangus Theophilus Mozart", inTeam: UUID())
         let account = Account.mockAccount(imageData: mockImageData)
-        let viewModel = ConversationListViewController.ViewModel(account: account, selfUser: selfUser, conversationListType: MockConversationList.self)
+        let viewModel = ConversationListViewController.ViewModel(account: account, selfUser: selfUser, conversationListType: MockConversationList.self, userSession: userSession)
         sut = ConversationListViewController(viewModel: viewModel)
         viewModel.viewController = sut
         sut.onboardingHint.arrowPointToView = sut.tabBar
@@ -80,9 +83,9 @@ final class ConversationListViewControllerTests: BaseSnapshotTestCase {
     override func tearDown() {
         sut = nil
         mockDelegate = nil
+        userSession = nil
 
         super.tearDown()
-
     }
 
     // MARK: - View controller

@@ -31,6 +31,7 @@ final class ConversationInputBarViewControllerTests: BaseSnapshotTestCase {
 
     private var mockConversation: MockInputBarConversationType!
     private var mockClassificationProvider: MockClassificationProvider!
+    var userSession: UserSessionMock!
 
     // MARK: - setUp
 
@@ -39,6 +40,7 @@ final class ConversationInputBarViewControllerTests: BaseSnapshotTestCase {
         UIColor.setAccentOverride(.vividRed)
         mockConversation = MockInputBarConversationType()
         mockClassificationProvider = MockClassificationProvider()
+        userSession = UserSessionMock()
     }
 
     // MARK: - tearDown
@@ -46,16 +48,16 @@ final class ConversationInputBarViewControllerTests: BaseSnapshotTestCase {
     override func tearDown() {
         mockConversation = nil
         mockClassificationProvider = nil
-
+        userSession = nil
         super.tearDown()
     }
 
     func testNormalState() {
         verifyInAllPhoneWidths(createSut: {
-            return ConversationInputBarViewController(conversation: mockConversation)
+            return ConversationInputBarViewController(conversation: mockConversation, userSession: userSession)
         })
         verifyInWidths(createSut: {
-                return ConversationInputBarViewController(conversation: mockConversation)
+            return ConversationInputBarViewController(conversation: mockConversation, userSession: userSession)
             },
             widths: tabletWidths(),
                        snapshotBackgroundColor: .white)
@@ -68,7 +70,7 @@ final class ConversationInputBarViewControllerTests: BaseSnapshotTestCase {
         // THEN
         let createSut: () -> UIViewController = {
             // GIVEN & WHEN
-            let sut = ConversationInputBarViewController(conversation: self.mockConversation)
+            let sut = ConversationInputBarViewController(conversation: self.mockConversation, userSession: self.userSession)
 
             // Directly working with sut.typingIndicatorView to prevent triggering aniamtion
             sut.typingIndicatorView.typingUsers = [MockUserType.createUser(name: "Bruno")]
@@ -86,7 +88,7 @@ final class ConversationInputBarViewControllerTests: BaseSnapshotTestCase {
         // THEN
         let createSut: () -> UIViewController = {
             // GIVEN
-            let sut = ConversationInputBarViewController(conversation: self.mockConversation)
+            let sut = ConversationInputBarViewController(conversation: self.mockConversation, userSession: self.userSession)
 
             // WHEN
             sut.mode = .timeoutConfguration
@@ -100,7 +102,7 @@ final class ConversationInputBarViewControllerTests: BaseSnapshotTestCase {
         // THEN
         let createSut: () -> UIViewController = {
             // GIVEN
-            let sut = ConversationInputBarViewController(conversation: self.mockConversation)
+            let sut = ConversationInputBarViewController(conversation: self.mockConversation, userSession: self.userSession)
 
             // WHEN
             sut.mode = .timeoutConfguration
@@ -119,7 +121,7 @@ final class ConversationInputBarViewControllerTests: BaseSnapshotTestCase {
         // THEN
         verifyInAllPhoneWidths(createSut: {
             // GIVEN
-            let sut = ConversationInputBarViewController(conversation: self.mockConversation)
+            let sut = ConversationInputBarViewController(conversation: self.mockConversation, userSession: self.userSession)
 
             // WHEN
             sut.mode = .timeoutConfguration
@@ -134,7 +136,7 @@ final class ConversationInputBarViewControllerTests: BaseSnapshotTestCase {
         // THEN
         verifyInAllPhoneWidths(createSut: {
             // GIVEN
-            let sut = ConversationInputBarViewController(conversation: self.mockConversation)
+            let sut = ConversationInputBarViewController(conversation: self.mockConversation, userSession: self.userSession)
 
             // WHEN
             sut.mode = .timeoutConfguration
@@ -150,7 +152,7 @@ final class ConversationInputBarViewControllerTests: BaseSnapshotTestCase {
         // THEN
         verifyInAllPhoneWidths(createSut: {
             // GIVEN
-            let sut = ConversationInputBarViewController(conversation: self.mockConversation)
+            let sut = ConversationInputBarViewController(conversation: self.mockConversation, userSession: self.userSession)
 
             // WHEN
             sut.mode = .timeoutConfguration
@@ -166,7 +168,7 @@ final class ConversationInputBarViewControllerTests: BaseSnapshotTestCase {
         // THEN
         verifyInAllPhoneWidths(createSut: {
             // GIVEN
-            let sut = ConversationInputBarViewController(conversation: self.mockConversation)
+            let sut = ConversationInputBarViewController(conversation: self.mockConversation, userSession: self.userSession)
 
             // WHEN
             sut.mode = .timeoutConfguration
@@ -182,7 +184,7 @@ final class ConversationInputBarViewControllerTests: BaseSnapshotTestCase {
         // THEN
         verifyInAllPhoneWidths(createSut: {
             // GIVEN
-            let sut = ConversationInputBarViewController(conversation: self.mockConversation)
+            let sut = ConversationInputBarViewController(conversation: self.mockConversation, userSession: self.userSession)
 
             // WHEN
             sut.mode = .timeoutConfguration
@@ -198,7 +200,7 @@ final class ConversationInputBarViewControllerTests: BaseSnapshotTestCase {
         // THEN
         verifyInAllPhoneWidths(createSut: {
             // GIVEN
-            let sut = ConversationInputBarViewController(conversation: self.mockConversation)
+            let sut = ConversationInputBarViewController(conversation: self.mockConversation, userSession: self.userSession)
 
             // WHEN
             sut.mode = .timeoutConfguration
@@ -217,7 +219,7 @@ final class ConversationInputBarViewControllerTests: BaseSnapshotTestCase {
         verifyInAllPhoneWidths(createSut: {
             // GIVEN
             self.mockConversation.isSelfDeletingMessageSendingDisabled = true
-            let sut = ConversationInputBarViewController(conversation: self.mockConversation)
+            let sut = ConversationInputBarViewController(conversation: self.mockConversation, userSession: self.userSession)
 
             // WHEN
             sut.mode = .timeoutConfguration
@@ -231,7 +233,7 @@ final class ConversationInputBarViewControllerTests: BaseSnapshotTestCase {
         verifyInAllPhoneWidths(createSut: {
             // GIVEN
             self.mockConversation.isSelfDeletingMessageTimeoutForced = true
-            let sut = ConversationInputBarViewController(conversation: self.mockConversation)
+            let sut = ConversationInputBarViewController(conversation: self.mockConversation, userSession: self.userSession)
 
             // WHEN
             sut.mode = .timeoutConfguration
@@ -246,7 +248,7 @@ final class ConversationInputBarViewControllerTests: BaseSnapshotTestCase {
     // MARK: - file action sheet
 
     func testUploadFileActionSheet() throws {
-        let sut = ConversationInputBarViewController(conversation: mockConversation)
+        let sut = ConversationInputBarViewController(conversation: mockConversation, userSession: self.userSession)
 
         let alert: UIAlertController = sut.createDocUploadActionSheet()
 
@@ -259,7 +261,7 @@ final class ConversationInputBarViewControllerTests: BaseSnapshotTestCase {
         verifyInAllPhoneWidths(createSut: {
             self.mockClassificationProvider.returnClassification = .classified
 
-            return ConversationInputBarViewController(conversation: self.mockConversation, classificationProvider: self.mockClassificationProvider)
+            return ConversationInputBarViewController(conversation: self.mockConversation, userSession: self.userSession, classificationProvider: self.mockClassificationProvider)
         } as () -> UIViewController)
     }
 
@@ -267,7 +269,7 @@ final class ConversationInputBarViewControllerTests: BaseSnapshotTestCase {
         verifyInAllPhoneWidths(createSut: {
             self.mockClassificationProvider.returnClassification = .notClassified
 
-            return ConversationInputBarViewController(conversation: self.mockConversation, classificationProvider: self.mockClassificationProvider)
+            return ConversationInputBarViewController(conversation: self.mockConversation, userSession: self.userSession, classificationProvider: self.mockClassificationProvider)
         } as () -> UIViewController)
     }
 
@@ -276,7 +278,7 @@ final class ConversationInputBarViewControllerTests: BaseSnapshotTestCase {
             self.mockClassificationProvider.returnClassification = .classified
 
             let sut = ConversationInputBarViewController(
-                conversation: self.mockConversation,
+                conversation: self.mockConversation, userSession: self.userSession,
                 classificationProvider: self.mockClassificationProvider
             )
 
@@ -291,7 +293,7 @@ final class ConversationInputBarViewControllerTests: BaseSnapshotTestCase {
         verifyInAllPhoneWidths(createSut: {
             self.mockClassificationProvider.returnClassification = .none
 
-            return ConversationInputBarViewController(conversation: self.mockConversation, classificationProvider: self.mockClassificationProvider)
+            return ConversationInputBarViewController(conversation: self.mockConversation, userSession: self.userSession, classificationProvider: self.mockClassificationProvider)
         } as () -> UIViewController)
     }
 

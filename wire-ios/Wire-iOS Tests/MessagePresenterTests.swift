@@ -26,10 +26,12 @@ final class MessagePresenterTests: XCTestCase {
     var sut: MessagePresenter!
     var mediaPlaybackManager: MediaPlaybackManager!
     var originalRootViewConttoller: UIViewController!
+    var userSession: UserSessionMock!
 
     override func setUp() {
         super.setUp()
-        mediaPlaybackManager = MediaPlaybackManager(name: nil)
+        userSession = UserSessionMock()
+        mediaPlaybackManager = MediaPlaybackManager(name: nil, userSession: userSession)
         sut = MessagePresenter(mediaPlaybackManager: mediaPlaybackManager)
         UIView.setAnimationsEnabled(false)
 
@@ -41,6 +43,7 @@ final class MessagePresenterTests: XCTestCase {
     override func tearDown() {
         sut = nil
         mediaPlaybackManager = nil
+        sut = nil
         super.tearDown()
         UIView.setAnimationsEnabled(true)
         UIApplication.shared.firstKeyWindow?.rootViewController = originalRootViewConttoller

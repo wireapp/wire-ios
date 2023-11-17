@@ -62,12 +62,7 @@ final class ConversationListViewController: UIViewController {
         return view
     }()
 
-    let listContentController: ConversationListContentController = {
-        let conversationListContentController = ConversationListContentController()
-        conversationListContentController.collectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: ConversationListViewController.contentControllerBottomInset, right: 0)
-
-        return conversationListContentController
-    }()
+    let listContentController: ConversationListContentController
 
     let tabBar: ConversationListTabBar = {
         let conversationListTabBar = ConversationListTabBar()
@@ -87,8 +82,8 @@ final class ConversationListViewController: UIViewController {
         return conversationListOnboardingHint
     }()
 
-    convenience init(account: Account, selfUser: SelfUserType) {
-        let viewModel = ConversationListViewController.ViewModel(account: account, selfUser: selfUser)
+    convenience init(account: Account, selfUser: SelfUserType, userSession: UserSession) {
+        let viewModel = ConversationListViewController.ViewModel(account: account, selfUser: selfUser, userSession: userSession)
 
         self.init(viewModel: viewModel)
 
@@ -104,7 +99,16 @@ final class ConversationListViewController: UIViewController {
         self.viewModel = viewModel
 
         topBarViewController = ConversationListTopBarViewController(account: viewModel.account,
-                                                                    selfUser: viewModel.selfUser)
+                                                                    selfUser: viewModel.selfUser,
+                                                                    userSession: viewModel.userSession)
+
+        listContentController = ConversationListContentController(userSession: viewModel.userSession)
+        listContentController.collectionView.contentInset = UIEdgeInsets(
+            top: 0,
+            left: 0,
+            bottom: ConversationListViewController.contentControllerBottomInset,
+            right: 0
+        )
 
         super.init(nibName: nil, bundle: nil)
 
@@ -293,7 +297,7 @@ final class ConversationListViewController: UIViewController {
     }
 
     func createArchivedListViewController() -> ArchivedListViewController {
-        let archivedViewController = ArchivedListViewController()
+        let archivedViewController = ArchivedListViewController(userSession: viewModel.userSession)
         archivedViewController.delegate = viewModel
         return archivedViewController
     }
@@ -333,7 +337,7 @@ final class ConversationListViewController: UIViewController {
     }
 
     func createPeoplePickerController() -> StartUIViewController {
-        let startUIViewController = StartUIViewController()
+        let startUIViewController = StartUIViewController(userSession: viewModel.userSession)
         startUIViewController.delegate = viewModel
         return startUIViewController
     }

@@ -17,10 +17,10 @@
 //
 
 @testable import Wire
-
+import SnapshotTesting
 import XCTest
 
-final class ConversationAudioMessageCellTests: BaseSnapshotTestCase {
+final class ConversationAudioMessageCellTests: ConversationMessageSnapshotTestCase {
 
     var message: MockMessage!
     var mockSelfUser: MockUserType!

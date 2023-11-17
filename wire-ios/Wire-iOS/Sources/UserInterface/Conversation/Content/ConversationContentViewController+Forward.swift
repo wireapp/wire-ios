@@ -24,7 +24,11 @@ import UIKit
 extension ZMConversation: ShareDestination {
 
     var showsGuestIcon: Bool {
-        return ZMUser.selfUser().hasTeam &&
+        guard let selfUser = ZMUser.selfUser() else {
+            assertionFailure("ZMUser.selfUser() is nil")
+            return false
+        }
+        return selfUser.hasTeam &&
             self.conversationType == .oneOnOne &&
             self.localParticipants.first {
                 $0.isGuest(in: self) } != nil
