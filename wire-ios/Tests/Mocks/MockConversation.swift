@@ -16,6 +16,7 @@
 //
 
 import Foundation
+import WireRequestStrategy
 @testable import Wire
 
 /// TODO: rename to MockConversation after objc MockConversation is retired

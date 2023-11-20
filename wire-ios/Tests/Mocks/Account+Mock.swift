@@ -1,3 +1,4 @@
+//
 // Wire
 // Copyright (C) 2019 Wire Swiss GmbH
 //
@@ -16,33 +17,11 @@
 //
 
 import XCTest
+import WireDataModel
 @testable import Wire
 
-private extension UIColor {
-    class var accentOverrideColor: ZMAccentColor? {
-        return ZMUser.selfUser()?.accentColorValue
-    }
-}
-
-extension XCTestCase {
-    /// If this is set the accent color will be overriden for the tests
-    static var accentColor: ZMAccentColor {
-        get {
-            return UIColor.accentOverrideColor!
-        }
-
-        set {
-            UIColor.setAccentOverride(newValue)
-        }
-    }
-
-    var accentColor: ZMAccentColor {
-        get {
-            return XCTestCase.accentColor
-        }
-
-        set {
-            XCTestCase.accentColor = newValue
-        }
+extension Account {
+    static func mockAccount(imageData: Data) -> Account {
+        return Account(userName: "", userIdentifier: UUID(), teamName: nil, imageData: imageData)
     }
 }

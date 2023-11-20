@@ -181,6 +181,7 @@
 		631216392881D10100FF9A56 /* ZMUpdateEvent+Payload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 631216382881D10100FF9A56 /* ZMUpdateEvent+Payload.swift */; };
 		633B396A2891890600208124 /* ZMUpdateEvent+Decryption.swift in Sources */ = {isa = PBXBuildFile; fileRef = 633B39692891890500208124 /* ZMUpdateEvent+Decryption.swift */; };
 		633B396C2892D53300208124 /* MockMLSService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 633B396B2892D53300208124 /* MockMLSService.swift */; };
+		638941F02AF50EB10051ABFD /* MockLocalConversationRemovalUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 638941EF2AF50EB10051ABFD /* MockLocalConversationRemovalUseCase.swift */; };
 		6397F6E228F447F800298DB1 /* SendCommitBundleActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6397F6E128F447F800298DB1 /* SendCommitBundleActionHandler.swift */; };
 		6397F6E628F6DD8B00298DB1 /* SendCommitBundleActionHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6397F6E528F6DD8B00298DB1 /* SendCommitBundleActionHandlerTests.swift */; };
 		63CC83B12859D488008549AD /* ClaimMLSKeyPackageActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63CC83B02859D488008549AD /* ClaimMLSKeyPackageActionHandler.swift */; };
@@ -624,6 +625,7 @@
 		631216382881D10100FF9A56 /* ZMUpdateEvent+Payload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMUpdateEvent+Payload.swift"; sourceTree = "<group>"; };
 		633B39692891890500208124 /* ZMUpdateEvent+Decryption.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMUpdateEvent+Decryption.swift"; sourceTree = "<group>"; };
 		633B396B2892D53300208124 /* MockMLSService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockMLSService.swift; sourceTree = "<group>"; };
+		638941EF2AF50EB10051ABFD /* MockLocalConversationRemovalUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockLocalConversationRemovalUseCase.swift; sourceTree = "<group>"; };
 		6397F6E128F447F800298DB1 /* SendCommitBundleActionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendCommitBundleActionHandler.swift; sourceTree = "<group>"; };
 		6397F6E528F6DD8B00298DB1 /* SendCommitBundleActionHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendCommitBundleActionHandlerTests.swift; sourceTree = "<group>"; };
 		63CC83B02859D488008549AD /* ClaimMLSKeyPackageActionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaimMLSKeyPackageActionHandler.swift; sourceTree = "<group>"; };
@@ -977,6 +979,7 @@
 				633B396B2892D53300208124 /* MockMLSService.swift */,
 				EE30CAAF29ACAE1600A332B1 /* MockProteusServiceinterface.swift */,
 				EE7F022C2A8392EF00FE5695 /* MockActionHandler.swift */,
+				638941EF2AF50EB10051ABFD /* MockLocalConversationRemovalUseCase.swift */,
 			);
 			path = Mocks;
 			sourceTree = "<group>";
@@ -2106,6 +2109,7 @@
 				1621D2291D75AB2D007108C2 /* MockEntity2.m in Sources */,
 				F18401DB2073C25300E9F4CC /* EventDecoderDecryptionTestsTests.swift in Sources */,
 				D5D65A062073C8F800D7F3C3 /* AssetRequestFactoryTests.swift in Sources */,
+				638941F02AF50EB10051ABFD /* MockLocalConversationRemovalUseCase.swift in Sources */,
 				1621D2281D75AB2D007108C2 /* MockEntity.m in Sources */,
 				F18401EC2073C26700E9F4CC /* AssetV3PreviewDownloadRequestStrategyTests.swift in Sources */,
 				87F7288521AFF37D000ED371 /* UserPropertyRequestStrategyTests.swift in Sources */,
