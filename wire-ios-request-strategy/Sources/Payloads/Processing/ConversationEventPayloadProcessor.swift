@@ -370,13 +370,26 @@ final class ConversationEventPayloadProcessor {
                 source: source
             )
 
-        case .connection, .oneOnOne:
+        case .connection:
+            // Conversations are of type `connection` while the connection
+            // is pending.
+            return updateOrCreateConnectionConversation(
+                from: payload,
+                in: context,
+                serverTimestamp: serverTimestamp,
+                source: source
+            )
+
+        case .oneOnOne:
+            // Conversations are of type `oneOnOne` when the connection
+            // is accepted.
             return updateOrCreateOneToOneConversation(
                 from: payload,
                 in: context,
                 serverTimestamp: serverTimestamp,
                 source: source
             )
+
 
         default:
             return nil
@@ -484,65 +497,120 @@ final class ConversationEventPayloadProcessor {
     }
 
     @discardableResult
+    func updateOrCreateConnectionConversation(
+        from payload: Payload.Conversation,
+        in context: NSManagedObjectContext,
+        serverTimestamp: Date,
+        source: Source
+    ) -> ZMConversation? {
+        guard let conversationID = payload.id ?? payload.qualifiedID?.uuid else {
+            Logging.eventProcessing.error("Missing conversation or type in 1:1 conversation payload, aborting...")
+            return nil
+        }
+
+        let conversation = ZMConversation.fetchOrCreate(with: conversationID, domain: payload.qualifiedID?.domain, in: context)
+        conversation.conversationType = .connection
+        updateAttributes(from: payload, for: conversation, context: context)
+        updateMessageProtocol(from: payload, for: conversation)
+        updateMetadata(from: payload, for: conversation, context: context)
+        updateMembers(from: payload, for: conversation, context: context)
+        updateConversationTimestamps(for: conversation, serverTimestamp: serverTimestamp)
+        updateConversationStatus(from: payload, for: conversation)
+        conversation.needsToBeUpdatedFromBackend = false
+        return conversation
+    }
+
+    @discardableResult
     func updateOrCreateOneToOneConversation(
         from payload: Payload.Conversation,
         in context: NSManagedObjectContext,
         serverTimestamp: Date,
         source: Source
     ) -> ZMConversation? {
-        guard
+        guard 
             let conversationID = payload.id ?? payload.qualifiedID?.uuid,
-            let rawConversationType = payload.type
+            let conversationType = payload.type.map(BackendConversationType.clientConversationType)
         else {
             Logging.eventProcessing.error("Missing conversation or type in 1:1 conversation payload, aborting...")
             return nil
         }
 
-        print("DEBUG: updating one to one: \(conversationID)")
-
-        let conversationType = BackendConversationType.clientConversationType(rawValue: rawConversationType)
+        let conversation = ZMConversation.fetchOrCreate(
+            with: conversationID,
+            domain: payload.qualifiedID?.domain,
+            in: context
+        )
 
         if
             let otherMember = payload.members?.others.first,
             let otherUserID = otherMember.id ?? otherMember.qualifiedID?.uuid
         {
             let otherUser = ZMUser.fetchOrCreate(with: otherUserID, domain: otherMember.qualifiedID?.domain, in: context)
+            otherUser.connection?.conversation = conversation
+            conversation.isPendingMetadataRefresh = otherUser.isPendingMetadataRefresh
+        }
 
-            var conversation: ZMConversation
-            if let existingConversation = otherUser.connection?.conversation {
-                existingConversation.mergeWithExistingConversation(withRemoteID: conversationID)
-                conversation = existingConversation
-            } else {
-                conversation = ZMConversation.fetchOrCreate(with: conversationID, domain: payload.qualifiedID?.domain, in: context)
+        conversation.conversationType = self.conversationType(for: conversation, from: conversationType)
+        updateAttributes(from: payload, for: conversation, context: context)
+        updateMessageProtocol(from: payload, for: conversation)
+        updateMetadata(from: payload, for: conversation, context: context)
+        updateMembers(from: payload, for: conversation, context: context)
+        updateConversationTimestamps(for: conversation, serverTimestamp: serverTimestamp)
+        updateConversationStatus(from: payload, for: conversation)
+        conversation.needsToBeUpdatedFromBackend = false
+
+        establishMLSGroupIfNeeded(for: conversation, in: context)
+
+        return conversation
+    }
+
+    private func establishMLSGroupIfNeeded(
+        for conversation: ZMConversation,
+        in context: NSManagedObjectContext
+    ) {
+        guard 
+            conversation.messageProtocol != .mls,
+            let otherUser = conversation.connection?.to
+        else {
+            return
+        }
+
+        let selfUser = ZMUser.selfUser(in: context)
+        let commonProtocols = selfUser.supportedProtocols.intersection(otherUser.supportedProtocols)
+
+        guard !commonProtocols.isEmpty else {
+            conversation.isForcedReadOnly = true
+            return
+        }
+
+        guard commonProtocols.contains(.mls) else {
+            return
+        }
+
+        guard
+            let mlsService = context.mlsService,
+            let otherUserID = otherUser.remoteIdentifier,
+            let otherUserDomain = otherUser.domain ?? BackendInfo.domain
+        else {
+            return
+        }
+
+        Task {
+            let otherUserID = QualifiedID(
+                uuid: otherUserID,
+                domain: otherUserDomain
+            )
+
+            let mlsGroupID = try await mlsService.establishOneToOneGroupIfNeeded(
+                with: otherUserID,
+                in: context
+            )
+
+            await context.perform {
+                let conversation = ZMConversation.fetch(with: mlsGroupID, in: context)
+                otherUser.connection?.conversation.conversationType = .invalid
                 otherUser.connection?.conversation = conversation
             }
-
-            conversation.remoteIdentifier = conversationID
-            updateAttributes(from: payload, for: conversation, context: context)
-            conversation.conversationType = self.conversationType(for: conversation, from: conversationType)
-
-            updateMessageProtocol(from: payload, for: conversation)
-            updateMetadata(from: payload, for: conversation, context: context)
-            updateMembers(from: payload, for: conversation, context: context)
-            updateConversationTimestamps(for: conversation, serverTimestamp: serverTimestamp)
-            updateConversationStatus(from: payload, for: conversation)
-
-            conversation.needsToBeUpdatedFromBackend = false
-            conversation.isPendingMetadataRefresh = otherUser.isPendingMetadataRefresh
-
-            return conversation
-
-        } else {
-            let conversation = ZMConversation.fetchOrCreate(with: conversationID, domain: payload.qualifiedID?.domain, in: context)
-            conversation.conversationType = self.conversationType(for: conversation, from: conversationType)
-            updateAttributes(from: payload, for: conversation, context: context)
-            updateMessageProtocol(from: payload, for: conversation)
-            updateMetadata(from: payload, for: conversation, context: context)
-            updateMembers(from: payload, for: conversation, context: context)
-            updateConversationTimestamps(for: conversation, serverTimestamp: serverTimestamp)
-            updateConversationStatus(from: payload, for: conversation)
-            conversation.needsToBeUpdatedFromBackend = false
-            return conversation
         }
     }
 

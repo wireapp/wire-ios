@@ -24,7 +24,10 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
 
     func uploadKeyPackagesIfNeeded()
 
-    func establishOneToOneGroupIfNeeded(with userID: QualifiedID) async throws
+    func establishOneToOneGroupIfNeeded(
+        with userID: QualifiedID,
+        in context: NSManagedObjectContext
+    ) async throws -> MLSGroupID
 
     func createSelfGroup(for groupID: MLSGroupID)
 
@@ -410,40 +413,35 @@ public final class MLSService: MLSServiceInterface {
 
     // MARK: - 1:1 conversations
 
-    public func establishOneToOneGroupIfNeeded(with userID: QualifiedID) async throws {
+    public func establishOneToOneGroupIfNeeded(
+        with userID: QualifiedID,
+        in context: NSManagedObjectContext
+    ) async throws -> MLSGroupID {
         WireLogger.mls.debug("establishing one to one if needed")
 
-        guard let context else {
-            return
-        }
-
-        guard let mlsGroupID = try await fetchOneToOne(with: userID) else {
-            WireLogger.mls.warn("can't establish one to one: group id is missing")
-            return
-        }
+        let mlsGroupID = try await fetchOneToOne(
+            with: userID,
+            in: context
+        )
 
         let groupExists = coreCrypto.perform {
             $0.conversationExists(conversationId: mlsGroupID.bytes)
         }
 
         guard !groupExists else {
-            WireLogger.mls.debug("mls one to one already exists")
-            return
+            return mlsGroupID
         }
 
         try createGroup(for: mlsGroupID)
         try await addMembersToConversation(with: [MLSUser(userID)], for: mlsGroupID)
-        WireLogger.mls.debug("successfully established one to one")
+        return mlsGroupID
     }
 
-    // TODO: pass in only the qualified id
-
-    private func fetchOneToOne(with userID: QualifiedID) async throws -> MLSGroupID? {
+    private func fetchOneToOne(
+        with userID: QualifiedID,
+        in context: NSManagedObjectContext
+    ) async throws -> MLSGroupID {
         WireLogger.mls.debug("syncing mls one to one")
-
-        guard let context else {
-            return nil
-        }
 
         var action = SyncMLSOneToOneConversationAction(
             userID: userID.uuid,
