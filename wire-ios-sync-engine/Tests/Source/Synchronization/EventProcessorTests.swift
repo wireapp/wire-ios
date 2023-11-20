@@ -30,7 +30,6 @@ class EventProcessorTests: MessagingTest {
     var mockEventsConsumers: [MockEventConsumer]!
     var earService: MockEARServiceInterface!
 
-
     override func setUp() {
         super.setUp()
         createSelfClient()
@@ -57,7 +56,8 @@ class EventProcessorTests: MessagingTest {
             storeProvider: coreDataStack,
             syncStatus: syncStatus,
             eventProcessingTracker: eventProcessingTracker,
-            earService: earService
+            earService: earService,
+            eventConsumers: mockEventsConsumers
         )
     }
 
@@ -74,9 +74,9 @@ class EventProcessorTests: MessagingTest {
     // MARK: - Helpers
 
     // call this on each test. It seems we can't use the async setup version since we inherit from Objc class.
-    private func postSetup() async {
-        await sut.setIniatialEventConsumers(mockEventsConsumers)
-    }
+//    private func postSetup() async {
+//        await sut.setIniatialEventConsumers(mockEventsConsumers)
+//    }
 
     func completeQuickSync() {
         syncStatus.currentSyncPhase = .done
@@ -101,7 +101,7 @@ class EventProcessorTests: MessagingTest {
     // MARK: - Tests
 
     func testThatEventsAreForwardedToAllEventConsumers_WhenProcessed() async {
-        await postSetup()
+//        await postSetup()
 
         // given
         let events = createSampleEvents()
@@ -120,7 +120,7 @@ class EventProcessorTests: MessagingTest {
     }
 
     func testThatEventsAreBuffered_WhenSyncIsInProgress() async {
-        await postSetup()
+//        await postSetup()
 
         // given
         let events = createSampleEvents()
@@ -137,7 +137,7 @@ class EventProcessorTests: MessagingTest {
     }
 
     func testThatItProcessBufferedEvents_WhenSyncCompletes() async {
-        await postSetup()
+//        await postSetup()
 
         // given
         let events = createSampleEvents()
@@ -158,7 +158,7 @@ class EventProcessorTests: MessagingTest {
     }
 
     func testThatEventsAreProcessedWhileInBackground_WhenSyncIsInProgress_And_IgnoreBufferIsTrue() async {
-        await postSetup()
+//        await postSetup()
 
         // given
         let events = createSampleEvents()
@@ -175,7 +175,7 @@ class EventProcessorTests: MessagingTest {
     }
 
     func testThatItCreatesAFetchBatchRequestWithTheNoncesAndRemoteIdentifiers_RequestedByEventsConsumers() async {
-        await postSetup()
+//        await postSetup()
 
         // given
         let converationID = UUID()
@@ -196,7 +196,7 @@ class EventProcessorTests: MessagingTest {
     // MARK: - Is ready to process events
 
     func test_IsNotReadyToProcessEvents_IfSyncing() async throws {
-        await postSetup()
+//        await postSetup()
 
         try await assertIsReadyToProccessEvents(
             expectation: false,
@@ -205,8 +205,8 @@ class EventProcessorTests: MessagingTest {
     }
 
     func test_IsNotReadyToProcessEvents_IfDatabaseLocked() async throws {
-        await postSetup()
-        
+//        await postSetup()
+
         try await assertIsReadyToProccessEvents(
             expectation: false,
             isDatabaseLocked: true

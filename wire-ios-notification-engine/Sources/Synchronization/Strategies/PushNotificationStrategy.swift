@@ -67,7 +67,13 @@ final class PushNotificationStrategy: AbstractRequestStrategy, ZMRequestGenerato
 
     public override func nextRequest(for apiVersion: APIVersion) -> ZMTransportRequest? {
         guard isFetchingStreamForAPNS else { return nil }
-        return requestGenerators.nextRequest(for: apiVersion)
+        let request = requestGenerators.nextRequest(for: apiVersion)
+
+        if request != nil {
+            pushNotificationStatus.didStartFetching()
+        }
+
+        return request
     }
 
     public var requestGenerators: [ZMRequestGenerator] {
@@ -96,7 +102,9 @@ extension PushNotificationStrategy: NotificationStreamSyncDelegate {
 
         Task {
             await delegate?.pushNotificationStrategy(self, didFetchEvents: events)
-            pushNotificationStatus.didFetch(eventIds: eventIds, lastEventId: latestEventId, finished: !hasMoreToFetch)
+            await managedObjectContext.perform {
+                self.pushNotificationStatus.didFetch(eventIds: eventIds, lastEventId: latestEventId, finished: !hasMoreToFetch)
+            }
         }
 
         if !hasMoreToFetch {
@@ -104,7 +112,7 @@ extension PushNotificationStrategy: NotificationStreamSyncDelegate {
         }
     }
 
-    public func failedFetchingEvents() {
-        pushNotificationStatus.didFailToFetchEvents()
+    func failedFetchingEvents(recoverable: Bool) {
+        pushNotificationStatus.didFailToFetchEvents(recoverable: recoverable)
     }
 }

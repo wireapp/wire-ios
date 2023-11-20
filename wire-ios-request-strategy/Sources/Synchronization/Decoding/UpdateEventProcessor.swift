@@ -21,7 +21,7 @@ import Foundation
 @objc
 public protocol UpdateEventProcessor: AnyObject {
 
-    func setIniatialEventConsumers(_ eventConsumers: [ZMEventConsumer]) async
+//    func setIniatialEventConsumers(_ eventConsumers: [ZMEventConsumer]) async
     func storeUpdateEvents(_ updateEvents: [ZMUpdateEvent], ignoreBuffer: Bool) async
 
     func storeAndProcessUpdateEvents(_ updateEvents: [ZMUpdateEvent], ignoreBuffer: Bool) async
@@ -30,5 +30,5 @@ public protocol UpdateEventProcessor: AnyObject {
 
     func processPendingCallEvents() async throws
 
-    func eventConsumers() async -> [ZMEventConsumer]
+//    func eventConsumers() async -> [ZMEventConsumer]
 }

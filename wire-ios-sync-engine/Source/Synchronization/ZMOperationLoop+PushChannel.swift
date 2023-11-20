@@ -26,8 +26,10 @@ extension ZMOperationLoop: ZMPushChannelConsumer {
         if let events = ZMUpdateEvent.eventsArray(fromPushChannelData: data), !events.isEmpty {
             Logging.eventProcessing.info("Received \(events.count) events from push channel")
             events.forEach({ $0.appendDebugInformation("from push channel (web socket)")})
+            syncMOC.enterAllGroupsExceptSecondaryOne()
             Task {
                 await self.updateEventProcessor.storeAndProcessUpdateEvents(events, ignoreBuffer: false)
+                syncMOC.leaveAllGroupsExceptSecondaryOne()
             }
         }
     }

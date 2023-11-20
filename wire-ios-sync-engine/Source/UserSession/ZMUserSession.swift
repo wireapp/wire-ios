@@ -178,8 +178,10 @@ public class ZMUserSession: NSObject {
     // temporary function to simplify call to EventProcessor
     // might be replaced by something more elegant
     public func updateEvents(_ events: [ZMUpdateEvent]) {
+        syncContext.enterAllGroupsExceptSecondaryOne()
         Task {
             await self.updateEventProcessor?.storeAndProcessUpdateEvents(events, ignoreBuffer: true)
+            syncContext.leaveAllGroupsExceptSecondaryOne()
         }
     }
 
@@ -317,8 +319,8 @@ public class ZMUserSession: NSObject {
             self.localNotificationDispatcher = LocalNotificationDispatcher(in: coreDataStack.syncContext)
             self.configureTransportSession()
             self.applicationStatusDirectory = self.createApplicationStatusDirectory()
-            self.updateEventProcessor = eventProcessor ?? self.createUpdateEventProcessor()
             self.strategyDirectory = strategyDirectory ?? self.createStrategyDirectory(useLegacyPushNotifications: configuration.useLegacyPushNotifications)
+            self.updateEventProcessor = eventProcessor ?? self.createUpdateEventProcessor()
             self.syncStrategy = syncStrategy ?? self.createSyncStrategy()
             self.operationLoop = operationLoop ?? self.createOperationLoop()
             self.urlActionProcessors = self.createURLActionProcessors()
@@ -341,16 +343,6 @@ public class ZMUserSession: NSObject {
         RequestAvailableNotification.notifyNewRequestsAvailable(self)
         restoreDebugCommandsState()
         configureRecurringActions()
-    }
-
-    func setupEventProcessor() {
-        // Should be setup once strategies are ready?
-        guard let strategyDirectory = strategyDirectory else {
-            return
-        }
-        Task {
-            await updateEventProcessor?.setIniatialEventConsumers(strategyDirectory.eventConsumers)
-        }
     }
 
     private func configureTransportSession() {
@@ -389,7 +381,7 @@ public class ZMUserSession: NSObject {
             cookieStorage: transportSession.cookieStorage,
             pushMessageHandler: localNotificationDispatcher!,
             flowManager: flowManager,
-            updateEventProcessor: updateEventProcessor!,
+            updateEventProcessor: self,
             localNotificationDispatcher: localNotificationDispatcher!,
             useLegacyPushNotifications: useLegacyPushNotifications,
             lastEventIDRepository: lastEventIDRepository,
@@ -402,7 +394,8 @@ public class ZMUserSession: NSObject {
             storeProvider: self.coreDataStack,
             syncStatus: applicationStatusDirectory!.syncStatus,
             eventProcessingTracker: eventProcessingTracker,
-            earService: earService
+            earService: earService,
+            eventConsumers: strategyDirectory?.eventConsumers ?? []
         )
     }
 
@@ -610,6 +603,26 @@ extension ZMUserSession: ZMNetworkStateDelegate {
         }
 
         networkState = state
+    }
+
+}
+
+// TODO: [jacob] find another way of providing the event processor to ZMissingEventTranscoder
+extension ZMUserSession: UpdateEventProcessor {
+    public func storeUpdateEvents(_ updateEvents: [WireTransport.ZMUpdateEvent], ignoreBuffer: Bool) async {
+        await updateEventProcessor?.storeAndProcessUpdateEvents(updateEvents, ignoreBuffer: ignoreBuffer)
+    }
+
+    public func storeAndProcessUpdateEvents(_ updateEvents: [WireTransport.ZMUpdateEvent], ignoreBuffer: Bool) async {
+        await updateEventProcessor?.storeAndProcessUpdateEvents(updateEvents, ignoreBuffer: ignoreBuffer)
+    }
+
+    public func processEventsIfReady() async -> Bool {
+        return await updateEventProcessor?.processEventsIfReady() ?? false
+    }
+
+    public func processPendingCallEvents() async throws {
+        try await updateEventProcessor?.processPendingCallEvents()
     }
 
 }

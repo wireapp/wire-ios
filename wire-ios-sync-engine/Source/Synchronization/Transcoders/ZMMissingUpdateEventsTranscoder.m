@@ -183,9 +183,14 @@ NSUInteger const ZMMissingUpdateEventsTranscoderListPageSize = 500;
     }
     
     ZMLogWithLevelAndTag(ZMLogLevelInfo, ZMTAG_EVENT_PROCESSING, @"Downloaded %lu event(s)", (unsigned long)parsedEvents.count);
-    
+
+    BOOL finished = !self.listPaginator.hasMoreToFetch;
+    [self.managedObjectContext enterAllGroupsExceptSecondaryOne];
     [self.eventProcessor storeUpdateEvents:parsedEvents ignoreBuffer:YES completionHandler:^{
-        [self.pushNotificationStatus didFetchEventIds:eventIds lastEventId:latestEventId finished:!self.listPaginator.hasMoreToFetch];
+        [self.managedObjectContext performBlock:^{
+            [self.pushNotificationStatus didFetchEventIds:eventIds lastEventId:latestEventId finished:finished];
+            [self.managedObjectContext leaveAllGroupsExceptSecondaryOne];
+        }];
     }];
 
     [tp warnIfLongerThanInterval];
@@ -262,7 +267,7 @@ NSUInteger const ZMMissingUpdateEventsTranscoderListPageSize = 500;
         ZMTransportRequest *request = [self.listPaginator nextRequestForAPIVersion:apiVersion];
 
         if (self.isFetchingStreamForAPNS && nil != request) {
-            
+            [self.pushNotificationStatus didStartFetching];
             [self.notificationsTracker registerStartStreamFetching];
             [request addCompletionHandler:[ZMCompletionHandler handlerOnGroupQueue:self.managedObjectContext block:^(__unused ZMTransportResponse * _Nonnull response) {
                 [self.notificationsTracker registerFinishStreamFetching];
@@ -332,7 +337,7 @@ NSUInteger const ZMMissingUpdateEventsTranscoderListPageSize = 500;
 
 - (BOOL)shouldParseErrorForResponse:(ZMTransportResponse *)response
 {
-    [self.pushNotificationStatus didFailToFetchEvents];
+    [self.pushNotificationStatus didFailToFetchEventsWithRecoverable:NO];
 
     if (response.apiVersion >= APIVersionV3) {
         return NO;
@@ -342,6 +347,11 @@ NSUInteger const ZMMissingUpdateEventsTranscoderListPageSize = 500;
     }
     
     return NO;
+}
+
+- (void)parseTemporaryErrorForResponse:(ZMTransportResponse *)response
+{
+    [self.pushNotificationStatus didFailToFetchEventsWithRecoverable:YES];
 }
 
 - (BOOL)shouldStartSlowSync:(ZMTransportResponse *)response

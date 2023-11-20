@@ -888,7 +888,7 @@ static NSString * const LastUpdateEventIDStoreKey = @"LastUpdateEventID";
     // when
     ZMTransportRequest *request = [self.sut nextRequestForAPIVersion:APIVersionV0];
     ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:nil HTTPStatus:400 transportSessionError:nil apiVersion:request.apiVersion];
-    [(PushNotificationStatus *)[self.mockPushNotificationStatus expect] didFailToFetchEvents];
+    [(PushNotificationStatus *)[self.mockPushNotificationStatus expect] didFailToFetchEventsWithRecoverable:NO];
 
     [request completeWithResponse:response];
     WaitForAllGroupsToBeEmpty(0.5);
