@@ -30,19 +30,7 @@ extension ConversationContentViewController: UIScrollViewDelegate {
         updateScrollToBottomButtonVisibility()
     }
 
-    /// Updates the visibility of the `scrollToBottomButton`.
-    ///
-    /// This method checks the `isScrolledToBottom` property to determine whether the button should be hidden or shown.
-    /// If the button's current visibility state is different from what it should be, it either directly sets the visibility
-    /// or performs a fade in/out animation based on the user's accessibility settings for reduced motion.
-    ///
-    /// When "Reduce Motion" is enabled in accessibility settings, the button's visibility is changed without animation
-    /// to respect the user's preference for reduced motion. Otherwise, a 0.25 second fade animation is used for
-    /// a smoother transition between visible and hidden states.
-    ///
-    /// - Note: This method should be called whenever the scroll position changes, typically in response to a
-    ///   `scrollViewDidScroll` event, to ensure that the button's visibility accurately reflects whether the
-    ///   user is scrolled to the bottom of the content.
+    /// Show or hide the scroll to bottom button for the current scroll position.
     func updateScrollToBottomButtonVisibility() {
         let shouldHideButton = isScrolledToBottom
 
