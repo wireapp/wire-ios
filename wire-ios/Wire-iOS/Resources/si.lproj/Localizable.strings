@@ -20,7 +20,7 @@
 "general.ok" = "OK";
 "general.next" = "Next";
 "general.cancel" = "Cancel";
-"general.close" = "Close";
+"general.close" = "වසන්න";
 "general.back" = "Back";
 "general.open_settings" = "Open Wire Settings";
 "general.edit" = "Edit";
@@ -252,7 +252,7 @@
 
 "conversation.status.unsent" = "⚠️ Unsent message";
 "conversation.status.you" = "You";
-"conversation.status.someone" = "Нехта";
+"conversation.status.someone" = "Someone";
 "conversation.status.you_was_added" = "%@ added you";
 "conversation.status.you_were_removed" = "You were removed";
 "conversation.status.you_left" = "You left";
