@@ -19,23 +19,6 @@
 import Foundation
 @testable import WireDataModel
 
-class MLSClientIDsProviderMock: MLSClientIDsProvider {
-
-    enum MockError: Error {
-        case unmockedMethodCalled
-    }
-
-    typealias FetchUserClientsMock = (QualifiedID, NotificationContext) async throws -> [MLSClientID]
-    var fetchUserClientsMock: FetchUserClientsMock?
-
-    override func fetchUserClients(for userID: QualifiedID, in context: NotificationContext) async throws -> [MLSClientID] {
-        guard let mock = fetchUserClientsMock else {
-            throw MockError.unmockedMethodCalled
-        }
-        return try await mock(userID, context)
-    }
-}
-
 final class ConversationParticipantsTests: ZMConversationTestsBase {
 
 	func testThatSortedOtherParticipantsReutrnsUsersSortedByName() {
