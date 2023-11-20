@@ -156,39 +156,39 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
     /// It evaluates each conversation to determine if the migration needs to be finalized (i.e: updating the protocol from `mixed` to `mls`)
     /// or if it should first join the corresponding MLS group.
     func migrateOrJoinGroupConversations() async {
-        do {
-            let conversations = try ZMConversation.fetchAllTeamGroupConversations(
-                messageProtocol: .mixed,
-                in: context
-            )
 
-            // array [MLSGroupID]
-            // for
-            let mlsGroupIds = await context.perform { conversations.compactMap { $0.mlsGroupID } }
-
-            let mlsService = await context.perform { self.context.mlsService }
-
-            guard let mlsService else {
-                return logger.warn("can't migrate conversations to mls: missing `mlsService`")
+        let mlsGroupIds = await context.perform { [self] in
+            do {
+                let conversations = try ZMConversation.fetchAllTeamGroupConversations(
+                    messageProtocol: .mixed,
+                    in: context
+                )
+                return conversations.compactMap { $0.mlsGroupID }
+            } catch {
+                logger.warn("Can't fetch conversations with `mixed` protocol")
+                return [MLSGroupID]()
             }
-
-            for groupID in mlsGroupIds {
-                do {
-
-                    if mlsService.conversationExists(groupID: groupID) {
-                        // if conversation exists we finalize migration
-                    } else {
-                        try await mlsService.joinGroup(with: groupID)
-                    }
-
-                } catch {
-                    logger.warn("Can't migrate conversation to mls: \(String(describing: error))")
-                }
-            }
-
-        } catch {
-            logger.warn("Can't fetch conversations with `mixed` protocol")
         }
+
+        let mlsService = await context.perform { self.context.mlsService }
+
+        guard let mlsService else {
+            return logger.warn("can't migrate conversations to mls: missing `mlsService`")
+        }
+
+        for groupID in mlsGroupIds {
+            do {
+                if mlsService.conversationExists(groupID: groupID) {
+                    // if conversation exists we finalize migration
+                } else {
+                    try await mlsService.joinGroup(with: groupID)
+                }
+
+            } catch {
+                logger.warn("Can't migrate conversation to mls: \(String(describing: error))")
+            }
+        }
+
     }
 
     // MARK: - Helpers
