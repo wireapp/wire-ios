@@ -21,12 +21,19 @@ import XCTest
 
 final class UpdateConversationProtocolActionHandlerTests: ActionHandlerTestBase<UpdateConversationProtocolAction, UpdateConversationProtocolActionHandler> {
 
+    var uuidString: String!
+
     override func setUp() {
         super.setUp()
 
-        let uuid = UUID(uuidString: "b906579d-60dd-4510-a3ca-14b2ec225f4a")!
-        let qualifiedID = QualifiedID(uuid: uuid, domain: "example.com")
+        uuidString = "b906579d-60dd-4510-a3ca-14b2ec225f4a"
+        let qualifiedID = QualifiedID(uuid: .init(uuidString: uuidString)!, domain: "example.com")
         action = UpdateConversationProtocolAction(qualifiedID: qualifiedID, messageProtocol: .mls)
+    }
+
+    override func tearDown() {
+        uuidString = nil
+        super.tearDown()
     }
 
     // MARK: - Request generation
@@ -34,7 +41,7 @@ final class UpdateConversationProtocolActionHandlerTests: ActionHandlerTestBase<
     func test_itGenerateARequest_APIV5() throws {
         try test_itGeneratesARequest(
             for: action,
-            expectedPath: "/v5/conversations/example.com/b906579d-60dd-4510-a3ca-14b2ec225f4a/mls",
+            expectedPath: "/v5/conversations/example.com/\(uuidString!)/mls",
             expectedMethod: .put,
             expectedData: .none,
             expectedContentType: .none,
