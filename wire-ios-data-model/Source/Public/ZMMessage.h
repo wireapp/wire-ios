@@ -92,7 +92,10 @@ typedef NS_CLOSED_ENUM(int16_t, ZMSystemMessageType) {
     ZMSystemMessageTypeDecryptionFailedResolved,
     ZMSystemMessageTypeDomainsStoppedFederating,
     ZMSystemMessageTypeMLSMigrationStarted,
-    ZMSystemMessageTypeMLSMigrationFinalized
+    ZMSystemMessageTypeMLSMigrationFinalized,
+    ZMSystemMessageTypeMLSMigrationUpdateVersion,
+    ZMSystemMessageTypeMLSMigrationJoinAfterwards,
+    ZMSystemMessageTypeMLSMigrationOngoingCall,
 };
 
 typedef NS_ENUM(int16_t, ZMParticipantsRemovedReason) {
