@@ -74,7 +74,7 @@
     // then
     ZMTransportRequest *foundRequest = [self.mockTransportSession.receivedRequests firstObjectMatchingWithBlock:^BOOL(ZMTransportRequest *request) {
         return [request.path hasPrefix:@"/connections"] &&
-            (request.method == ZMMethodPOST)
+            (request.method == ZMTransportRequestMethodPost)
         && [[[request.payload asDictionary] uuidForKey:@"user"] isEqual:userID];
     }];
     XCTAssertNotNil(foundRequest);
@@ -141,7 +141,7 @@
     // then
     ZMTransportRequest *foundRequest = [self.mockTransportSession.receivedRequests firstObjectMatchingWithBlock:^BOOL(ZMTransportRequest *request) {
         return [request.path hasPrefix:@"/connections"] &&
-        (request.method == ZMMethodPOST)
+        (request.method == ZMTransportRequestMethodPost)
         && [[[request.payload asDictionary] uuidForKey:@"user"] isEqual:userID];
     }];
     XCTAssertNotNil(foundRequest);
@@ -869,7 +869,7 @@
 - (ZMCustomResponseGeneratorBlock)responseBlockForConnectionLimit;
 {
     return ^ZMTransportResponse *(ZMTransportRequest *request) {
-        if (![request.path hasPrefix:@"/connections"] || (request.method == ZMMethodGET)) {
+        if (![request.path hasPrefix:@"/connections"] || (request.method == ZMTransportRequestMethodGet)) {
             return nil;
         }
         NSInteger statusCode = 403;
@@ -906,7 +906,7 @@
 - (ZMCustomResponseGeneratorBlock)responseBlockForMissingLegalHoldConsent;
 {
     return ^ZMTransportResponse *(ZMTransportRequest *request) {
-        if (![request.path hasPrefix:@"/connections"] || (request.method == ZMMethodGET)) {
+        if (![request.path hasPrefix:@"/connections"] || (request.method == ZMTransportRequestMethodGet)) {
             return nil;
         }
         NSDictionary *payload = @{@"label": @"missing-legalhold-consent"};

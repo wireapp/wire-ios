@@ -66,7 +66,7 @@
     ZMTransportRequest *request = self.mockTransportSession.receivedRequests.lastObject;
     NSString *expectedPath = [NSString stringWithFormat:@"/conversations/%@/otr/messages", conversation.remoteIdentifier.transportString];
     XCTAssertEqualObjects(request.path, expectedPath);
-    XCTAssertEqual(request.method, ZMMethodPOST);
+    XCTAssertEqual(request.method, ZMTransportRequestMethodPost);
 }
 
 - (void)testThatItCanEditAnEditedMessage
@@ -104,7 +104,7 @@
     ZMTransportRequest *request = self.mockTransportSession.receivedRequests.lastObject;
     NSString *expectedPath = [NSString stringWithFormat:@"/conversations/%@/otr/messages", conversation.remoteIdentifier.transportString];
     XCTAssertEqualObjects(request.path, expectedPath);
-    XCTAssertEqual(request.method, ZMMethodPOST);
+    XCTAssertEqual(request.method, ZMTransportRequestMethodPost);
 }
 
 - (void)testThatItKeepsTheContentWhenMessageSendingFailsButOverwritesTheNonce

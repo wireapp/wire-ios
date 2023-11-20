@@ -118,7 +118,7 @@ extension IntegrationTest {
         application = ApplicationMock()
         notificationCenter = UserNotificationCenterMock()
         mockTransportSession = MockTransportSession(dispatchGroup: self.dispatchGroup)
-        mockTransportSession.cookieStorage = ZMPersistentCookieStorage(forServerName: mockEnvironment.backendURL.host!, userIdentifier: currentUserIdentifier)
+        mockTransportSession.cookieStorage = ZMPersistentCookieStorage(forServerName: mockEnvironment.backendURL.host!, userIdentifier: currentUserIdentifier, useCache: true)
         WireCallCenterV3Factory.wireCallCenterClass = WireCallCenterV3IntegrationMock.self
         mockTransportSession.cookieStorage.deleteKeychainItems()
         createSessionManager()
@@ -678,7 +678,7 @@ extension IntegrationTest: SessionManagerDelegate {
         setupTimers()
     }
 
-    public func sessionManagerDidReportLockChange(forSession session: UserSessionAppLockInterface) {
+    public func sessionManagerDidReportLockChange(forSession session: UserSession) {
         // No op
     }
 
@@ -711,11 +711,11 @@ extension IntegrationTest: SessionManagerDelegate {
         userSessionCanBeTornDown()
     }
 
-    public func sessionManagerDidPerformFederationMigration(authenticated: Bool) {
+    public func sessionManagerDidPerformFederationMigration(activeSession: UserSession?) {
         // no op
     }
 
-    public func sessionManagerDidPerformAPIMigrations() {
+    public func sessionManagerDidPerformAPIMigrations(activeSession: UserSession?) {
         // no op
     }
 

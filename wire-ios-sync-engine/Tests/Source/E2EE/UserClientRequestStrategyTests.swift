@@ -74,7 +74,7 @@ class UserClientRequestStrategyTests: RequestStrategyTestBase {
                 mockProteusService: self.proteusService,
                 mockKeyStore: self.spyKeyStore
             )
-            self.cookieStorage = ZMPersistentCookieStorage(forServerName: "myServer", userIdentifier: self.userIdentifier)
+            self.cookieStorage = ZMPersistentCookieStorage(forServerName: "myServer", userIdentifier: self.userIdentifier, useCache: true)
             self.mockClientRegistrationStatusDelegate = MockClientRegistrationStatusDelegate()
             self.clientRegistrationStatus = ZMMockClientRegistrationStatus(
                 managedObjectContext: self.syncMOC,
@@ -569,7 +569,7 @@ extension UserClientRequestStrategyTests {
                     "email": self.clientUpdateStatus.mockCredentials.email!,
                     "password": self.clientUpdateStatus.mockCredentials.password!
                     ])
-                XCTAssertEqual($0.method, ZMTransportRequestMethod.methodDELETE)
+                XCTAssertEqual($0.method, ZMTransportRequestMethod.delete)
             }
         }
     }

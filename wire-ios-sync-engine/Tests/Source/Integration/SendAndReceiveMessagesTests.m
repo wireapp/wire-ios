@@ -96,7 +96,7 @@
     NSString *otrConversationPath = [NSString stringWithFormat:@"/conversations/%@/otr/messages", self.groupConversation.identifier];
 
     for (ZMTransportRequest *request in self.mockTransportSession.receivedRequests) {
-        if (request.method == ZMMethodPOST && [request.path isEqualToString:otrConversationPath]) {
+        if (request.method == ZMTransportRequestMethodPost && [request.path isEqualToString:otrConversationPath]) {
             otrResponseCount++;
         }
     }

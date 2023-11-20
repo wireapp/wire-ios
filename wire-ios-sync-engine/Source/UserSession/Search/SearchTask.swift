@@ -436,7 +436,7 @@ extension SearchTask {
         let path = "/teams/\(teamID.transportString())/get-members-by-ids-using-post"
         let payload = ["user_ids": teamMemberIDs.map { $0.transportString() }]
 
-        return ZMTransportRequest(path: path, method: .methodPOST, payload: payload as ZMTransportData, apiVersion: apiVersion.rawValue)
+        return ZMTransportRequest(path: path, method: .post, payload: payload as ZMTransportData, apiVersion: apiVersion.rawValue)
     }
 
 }

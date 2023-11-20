@@ -82,36 +82,52 @@ final class EmptySearchResultsView: UIView {
     private let isSelfUserAdmin: Bool
     private let isFederationEnabled: Bool
 
-    private let stackView: UIStackView
-    private let iconView     = UIImageView()
-    private let statusLabel  = DynamicFontLabel(fontSpec: .normalRegularFont,
-                                                color: LabelColors.textSettingsPasswordPlaceholder)
-    private let actionButton: LinkButton
+    /// Contains the `stackView`.
+    private let scrollView = UIScrollView()
+    private let stackView = UIStackView()
+    private let iconView = UIImageView()
+    private let statusLabel = DynamicFontLabel(fontSpec: .normalRegularFont, color: LabelColors.textSettingsPasswordPlaceholder)
+    private let actionButton = LinkButton()
     private let iconColor = LabelColors.textSettingsPasswordPlaceholder
 
     weak var delegate: EmptySearchResultsViewDelegate?
 
-    init(isSelfUserAdmin: Bool,
-         isFederationEnabled: Bool) {
+    init(
+        isSelfUserAdmin: Bool,
+        isFederationEnabled: Bool
+    ) {
         self.isSelfUserAdmin = isSelfUserAdmin
         self.isFederationEnabled = isFederationEnabled
         stackView = UIStackView()
         actionButton = LinkButton(fontSpec: .normalRegularFont)
         super.init(frame: .zero)
 
+        [scrollView, stackView, iconView, statusLabel, actionButton].prepareForLayout()
+        [iconView, statusLabel, actionButton].forEach(stackView.addArrangedSubview)
+
+        addSubview(scrollView)
+        scrollView.addSubview(stackView)
+
+        NSLayoutConstraint.activate([
+
+            // scroll view with empty search results view
+            scrollView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            scrollView.topAnchor.constraint(equalTo: topAnchor),
+            trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
+            bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
+
+            // stack view within scroll view
+            stackView.leadingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.leadingAnchor),
+            stackView.topAnchor.constraint(equalTo: scrollView.contentLayoutGuide.topAnchor),
+            scrollView.contentLayoutGuide.trailingAnchor.constraint(equalTo: stackView.trailingAnchor),
+            scrollView.contentLayoutGuide.bottomAnchor.constraint(equalTo: stackView.bottomAnchor),
+            stackView.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor)
+        ])
+
         stackView.alignment = .center
         stackView.spacing = 16
         stackView.axis = .vertical
         stackView.alignment = .center
-
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        [iconView, statusLabel, actionButton].prepareForLayout()
-        [iconView, statusLabel, actionButton].forEach(stackView.addArrangedSubview)
-
-        addSubview(stackView)
-
-        stackView.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
-        stackView.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
 
         statusLabel.numberOfLines = 0
         statusLabel.preferredMaxLayoutWidth = 200

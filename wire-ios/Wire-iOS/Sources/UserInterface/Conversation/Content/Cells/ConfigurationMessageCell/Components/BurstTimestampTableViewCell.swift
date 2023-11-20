@@ -17,12 +17,14 @@
 //
 
 import UIKit
+import WireSyncEngine
 import WireDataModel
 
 struct BurstTimestampSenderMessageCellConfiguration {
     let date: Date
     let includeDayOfWeek: Bool
     let showUnreadDot: Bool
+    let accentColor: UIColor
 }
 
 final class BurstTimestampSenderMessageCellDescription: ConversationMessageCellDescription {
@@ -44,8 +46,18 @@ final class BurstTimestampSenderMessageCellDescription: ConversationMessageCellD
     let accessibilityIdentifier: String? = nil
     let accessibilityLabel: String? = nil
 
-    init(message: ZMConversationMessage, context: ConversationMessageContext) {
-        self.configuration = View.Configuration(date: message.serverTimestamp ?? Date(), includeDayOfWeek: context.isFirstMessageOfTheDay, showUnreadDot: context.isFirstUnreadMessage)
+    init(
+        message: ZMConversationMessage,
+        context: ConversationMessageContext,
+        accentColor: UIColor
+    ) {
+
+        self.configuration = View.Configuration(
+            date: message.serverTimestamp ?? Date(),
+            includeDayOfWeek: context.isFirstMessageOfTheDay,
+            showUnreadDot: context.isFirstUnreadMessage,
+            accentColor: accentColor
+        )
         actionController = nil
     }
 
@@ -57,7 +69,7 @@ final class BurstTimestampSenderMessageCellDescription: ConversationMessageCellD
 
 final class BurstTimestampSenderMessageCell: UIView, ConversationMessageCell {
 
-    private let timestampView = ConversationCellBurstTimestampView()
+    private let timestampView: ConversationCellBurstTimestampView
     private var configuration: BurstTimestampSenderMessageCellConfiguration?
     private var timer: Timer?
 
@@ -65,6 +77,7 @@ final class BurstTimestampSenderMessageCell: UIView, ConversationMessageCell {
     weak var message: ZMConversationMessage?
 
     override init(frame: CGRect) {
+        self.timestampView = ConversationCellBurstTimestampView()
         super.init(frame: frame)
         configureSubviews()
         configureConstraints()
@@ -131,7 +144,13 @@ final class BurstTimestampSenderMessageCell: UIView, ConversationMessageCell {
 
     func configure(with object: BurstTimestampSenderMessageCellConfiguration, animated: Bool) {
         configuration = object
-        timestampView.configure(with: object.date, includeDayOfWeek: object.includeDayOfWeek, showUnreadDot: object.showUnreadDot)
+
+        timestampView.configure(
+            with: object.date,
+            includeDayOfWeek: object.includeDayOfWeek,
+            showUnreadDot: object.showUnreadDot,
+            accentColor: object.accentColor
+        )
     }
 
 }
