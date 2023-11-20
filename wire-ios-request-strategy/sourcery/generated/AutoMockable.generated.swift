@@ -138,6 +138,36 @@ public class MockConversationServiceInterface: ConversationServiceInterface {
     }
 
 }
+class MockMLSClientIDsProviding: MLSClientIDsProviding {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - fetchUserClients
+
+    var fetchUserClientsForIn_Invocations: [(userID: QualifiedID, context: NotificationContext)] = []
+    var fetchUserClientsForIn_MockError: Error?
+    var fetchUserClientsForIn_MockMethod: ((QualifiedID, NotificationContext) async throws -> [MLSClientID])?
+    var fetchUserClientsForIn_MockValue: [MLSClientID]?
+
+    func fetchUserClients(for userID: QualifiedID, in context: NotificationContext) async throws -> [MLSClientID] {
+        fetchUserClientsForIn_Invocations.append((userID: userID, context: context))
+
+        if let error = fetchUserClientsForIn_MockError {
+            throw error
+        }
+
+        if let mock = fetchUserClientsForIn_MockMethod {
+            return try await mock(userID, context)
+        } else if let mock = fetchUserClientsForIn_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchUserClientsForIn`")
+        }
+    }
+
+}
 class MockMLSConversationParticipantsServiceInterface: MLSConversationParticipantsServiceInterface {
 
     // MARK: - Life cycle

@@ -19,19 +19,6 @@
 import Foundation
 import WireDataModel
 
-class MLSClientIDsProvider {
-
-    func fetchUserClients(
-        for userID: QualifiedID,
-        in context: NotificationContext
-    ) async throws -> [MLSClientID] {
-        var action = FetchUserClientsAction(userIDs: [userID])
-        let userClients = try await action.perform(in: context)
-        return userClients.compactMap(MLSClientID.init(qualifiedClientID:))
-    }
-
-}
-
 // sourcery: AutoMockable
 protocol MLSConversationParticipantsServiceInterface: ConversationParticipantsServiceInterface {}
 
@@ -40,13 +27,13 @@ class MLSConversationParticipantsService: MLSConversationParticipantsServiceInte
     // MARK: - Properties
 
     private let context: NSManagedObjectContext
-    private let clientIDsProvider: MLSClientIDsProvider
+    private let clientIDsProvider: MLSClientIDsProviding
 
     // MARK: - Life cycle
 
     init(
         context: NSManagedObjectContext,
-        clientIDsProvider: MLSClientIDsProvider? = nil
+        clientIDsProvider: MLSClientIDsProviding? = nil
     ) {
         self.context = context
         self.clientIDsProvider = clientIDsProvider ?? MLSClientIDsProvider()
@@ -84,7 +71,7 @@ class MLSConversationParticipantsService: MLSConversationParticipantsServiceInte
                 }
 
             } catch {
-                Logging.mls.error("failed to add members to conversation (\(String(describing: qualifiedID))): \(String(describing: error))")
+                Logging.mls.warn("failed to add members to conversation (\(String(describing: qualifiedID))): \(String(describing: error))")
 
                 await context.perform {
                     completion(.failure(.failedToAddMLSMembers))

@@ -79,6 +79,8 @@ class ConversationParticipantsServiceTests: MessagingTestBase {
         mockProteusParticipantsService = nil
         mockMLSParticipantsService = nil
         selfUser = nil
+        conversation = nil
+        user = nil
         sut = nil
         super.tearDown()
     }

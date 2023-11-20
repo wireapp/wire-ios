@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireDataModel
 
 // sourcery: AutoMockable
 protocol ProteusConversationParticipantsServiceInterface: ConversationParticipantsServiceInterface {}
@@ -49,4 +50,3 @@ class ProteusConversationParticipantsService: ProteusConversationParticipantsSer
         action.send(in: context.notificationContext)
     }
 }
-

@@ -79,10 +79,7 @@ extension XCTestCase {
         file: StaticString = #file,
         line: UInt = #line
     ) {
-        let expectation = XCTestExpectation(description: "completion called")
-
-        // WHEN
-        method { result in
+        assertMethodCompletesWithValidation(method: method) { result in
             guard case .failure(let error) = result else {
                 return XCTFail("expected failure", file: file, line: line)
             }
@@ -93,7 +90,30 @@ extension XCTestCase {
                 file: file,
                 line: line
             )
+        }
+    }
 
+    public func assertMethodCompletesWithSuccess<Success, Error: EquatableError>(
+        method: (@escaping (Result<Success, Error>) -> Void) -> Void,
+        file: StaticString = #file,
+        line: UInt = #line
+    ) {
+        assertMethodCompletesWithValidation(method: method, validation: { result in
+            guard case .success = result else {
+                return XCTFail("expected success", file: file, line: line)
+            }
+        })
+    }
+
+    public func assertMethodCompletesWithValidation<Success, Error: EquatableError>(
+        method: (@escaping (Result<Success, Error>) -> Void) -> Void,
+        validation: @escaping (Result<Success, Error>) -> Void
+    ) {
+        let expectation = XCTestExpectation(description: "completion called")
+
+        // WHEN
+        method { result in
+            validation(result)
             expectation.fulfill()
         }
 
