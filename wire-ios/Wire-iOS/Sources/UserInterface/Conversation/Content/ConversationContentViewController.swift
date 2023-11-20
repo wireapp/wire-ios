@@ -38,8 +38,8 @@ final class ConversationContentViewController: UIViewController, PopoverPresente
         }
     }
 
-    let scrollToBottomButtonTrailingMargin: CGFloat = -10
-    let scrollToBottomButtonBottomMargin: CGFloat = -10
+    let scrollToBottomButtonTrailingMargin: CGFloat = 10
+    let scrollToBottomButtonBottomMargin: CGFloat = 10
     let scrollToBottomButtonWidth: CGFloat = 44
     let scrollToBottomButtonHeight: CGFloat = 44
 
@@ -170,11 +170,11 @@ final class ConversationContentViewController: UIViewController, PopoverPresente
                 bottomContainer.bottomAnchor.constraint(equalTo: view.bottomAnchor),
                 scrollToBottomButton.trailingAnchor.constraint(
                     equalTo: view.safeAreaLayoutGuide.trailingAnchor,
-                    constant: scrollToBottomButtonTrailingMargin
+                    constant: -scrollToBottomButtonTrailingMargin
                 ),
                 scrollToBottomButton.bottomAnchor.constraint(
                     equalTo: view.safeAreaLayoutGuide.bottomAnchor,
-                    constant: scrollToBottomButtonBottomMargin
+                    constant: -scrollToBottomButtonBottomMargin
                 ),
                 scrollToBottomButton.widthAnchor.constraint(equalToConstant: scrollToBottomButtonWidth),
                 scrollToBottomButton.heightAnchor.constraint(equalToConstant: scrollToBottomButtonHeight)
