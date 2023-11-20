@@ -157,7 +157,7 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
                 in: context
             )
 
-            guard let mlsService = context.mlsService else {
+            guard let mlsService = await context.perform { self.contex.mlsService } else {
                 return logger.warn("can't migrate conversations to mls: missing `mlsService`")
             }
 
