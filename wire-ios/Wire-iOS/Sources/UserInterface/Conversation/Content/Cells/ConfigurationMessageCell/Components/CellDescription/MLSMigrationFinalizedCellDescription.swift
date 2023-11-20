@@ -43,7 +43,7 @@ final class MLSMigrationFinalizedCellDescription: ConversationMessageCellDescrip
         let icon = Asset.Images.attention.image.withTintColor(SemanticColors.Icon.backgroundDefault)
         let content = Self.makeAttributedString(for: systemMessageData)
 
-        configuration = View.Configuration(icon: icon, attributedText: content, showLine: true)
+        configuration = View.Configuration(icon: icon, attributedText: content, showLine: false)
         accessibilityLabel = content?.string
     }
 
