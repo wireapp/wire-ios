@@ -187,7 +187,6 @@ final class ConversationContentViewController: UIViewController, PopoverPresente
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        tableView.delegate = self
 
         tableView.rowHeight = UITableView.automaticDimension
         tableView.estimatedRowHeight = 80
