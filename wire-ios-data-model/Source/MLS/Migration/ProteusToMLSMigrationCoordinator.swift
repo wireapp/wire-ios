@@ -56,7 +56,6 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
     private let actionsProvider: MLSActionsProviderProtocol
     private var storage: ProteusToMLSMigrationStorageInterface
     private let logger = WireLogger.mls
-    private let conversationFetcher: ConversationFetching
 
     // MARK: - Life cycle
 
@@ -77,14 +76,12 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
         context: NSManagedObjectContext,
         storage: ProteusToMLSMigrationStorageInterface,
         featureRepository: FeatureRepositoryInterface? = nil,
-        actionsProvider: MLSActionsProviderProtocol? = nil,
-        conversationFetcher: ConversationFetching? = nil
+        actionsProvider: MLSActionsProviderProtocol? = nil
     ) {
         self.context = context
         self.storage = storage
         self.featureRepository = featureRepository ?? FeatureRepository(context: context)
         self.actionsProvider = actionsProvider ?? MLSActionsProvider()
-        self.conversationFetcher = conversationFetcher ?? ConversationFetcher(context: context)
     }
 
     // MARK: - Public Interface
@@ -94,9 +91,7 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
         case .notStarted:
             await startMigrationIfNeeded()
         case .started:
-
-            // check if it should be finalised
-            try? conversationFetcher.fetchAllTeamGroupConversations(messageProtocol: .mixed)
+            await migrateOrJoinGroupConversations()
         default:
             break
         }
