@@ -476,7 +476,6 @@ public final class MLSService: MLSServiceInterface {
 
         case noMembersToAdd
         case noInviteesToAdd
-        case failedToClaimKeyPackages
 
     }
 

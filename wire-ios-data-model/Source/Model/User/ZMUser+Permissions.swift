@@ -87,7 +87,6 @@ public extension ZMUser {
         guard conversation.conversationType == .group else { return false }
         let selfUser = ZMUser.selfUser(in: self.managedObjectContext!)
 
-
         return hasRoleWithAction(actionName: ConversationAction.deleteConvesation.name,
                                  conversation: conversation) && conversation.creator == self
             && selfUser.hasTeam && selfUser.teamIdentifier == self.teamIdentifier
