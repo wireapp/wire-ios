@@ -157,15 +157,18 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
                 in: context
             )
 
-            guard let mlsService = await context.perform { self.contex.mlsService } else {
+            // array [MLSGroupID]
+            // for
+            let mlsGroupIds = await context.perform { conversations.compactMap { $0.mlsGroupID } }
+
+            let mlsService = await context.perform { self.context.mlsService }
+
+            guard let mlsService else {
                 return logger.warn("can't migrate conversations to mls: missing `mlsService`")
             }
 
-            for conversation in conversations {
+            for groupID in mlsGroupIds {
                 do {
-                    guard let groupID = conversation.mlsGroupID else {
-                        return logger.warn("can't migrate conversation to mls: missing `groupID`")
-                    }
 
                     if mlsService.conversationExists(groupID: groupID) {
                         // if conversation exists we finalize migration
