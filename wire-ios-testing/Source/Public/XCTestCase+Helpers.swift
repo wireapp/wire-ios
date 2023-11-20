@@ -50,27 +50,65 @@ extension XCTestCase {
     public typealias ThrowingBlock = () throws -> Void
     public typealias EquatableError = Error & Equatable
 
-    public func assertItThrows<T: EquatableError>(error expectedError: T, block: AsyncThrowingBlock) async {
+    public func assertItThrows<T: EquatableError>(
+        error expectedError: T,
+        block: AsyncThrowingBlock,
+        file: StaticString = #file,
+        line: UInt = #line
+    ) async {
         do {
             try await block()
-            XCTFail("No error was thrown")
+            XCTFail(
+                "No error was thrown",
+                file: file,
+                line: line
+            )
         } catch {
-            assertError(error, equals: expectedError)
+            assertError(
+                error,
+                equals: expectedError,
+                file: file,
+                line: line
+            )
         }
     }
 
-    public func assertItThrows<T: EquatableError>(error expectedError: T, block: ThrowingBlock) {
-        XCTAssertThrowsError(try block()) { error in
-            assertError(error, equals: expectedError)
+    public func assertItThrows<T: EquatableError>(
+        error expectedError: T,
+        block: ThrowingBlock,
+        file: StaticString = #file,
+        line: UInt = #line
+    ) {
+        XCTAssertThrowsError(try block(), file: file, line: line) { error in
+            assertError(
+                error,
+                equals: expectedError,
+                file: file,
+                line: line
+            )
         }
     }
 
-    public func assertError<T: EquatableError>(_ error: Error, equals expectedError: T) {
+    public func assertError<T: EquatableError>(
+        _ error: Error,
+        equals expectedError: T,
+        file: StaticString = #file,
+        line: UInt = #line
+    ) {
         guard let error = error as? T else {
-            return XCTFail("Unexpected error: \(String(describing: error))")
+            return XCTFail(
+                "Unexpected error: \(String(describing: error))",
+                file: file,
+                line: line
+            )
         }
 
-        XCTAssertEqual(error, expectedError)
+        XCTAssertEqual(
+            error,
+            expectedError,
+            file: file,
+            line: line
+        )
     }
 
     public func assertMethodCompletesWithError<Success, Error: EquatableError>(
