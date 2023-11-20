@@ -135,7 +135,7 @@ final class ConversationEventPayloadProcessor {
         // checking that the participants are in the conversation before being removed
         conversation.removeParticipantsAndUpdateConversationState(users: Set(removedUsers), initiatingUser: sender)
 
-        if removedUsers.contains(where: \.isSelfUser), conversation.messageProtocol == .mls {
+        if removedUsers.contains(where: \.isSelfUser), conversation.supportsMLS(for: .groupMaintenance) {
             MLSEventProcessor.shared.wipeMLSGroup(forConversation: conversation, context: context)
         }
     }

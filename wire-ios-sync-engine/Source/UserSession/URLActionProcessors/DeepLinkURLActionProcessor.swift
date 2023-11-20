@@ -145,7 +145,10 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
                 return
             }
 
-            guard let groupId = upToDateConversation.mlsGroupID, upToDateConversation.messageProtocol == .mls else {
+            guard 
+                let groupId = upToDateConversation.mlsGroupID,
+                upToDateConversation.supportsMLS(for: .groupMaintenance)
+            else {
                 completion(.success(upToDateConversation))
                 return
             }
