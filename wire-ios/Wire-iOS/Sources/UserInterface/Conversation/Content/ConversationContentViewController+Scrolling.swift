@@ -56,7 +56,6 @@ extension ConversationContentViewController {
     ///
     /// This method checks if the tableView is not already scrolled to the bottom.
     func scrollToBottomIfNeeded() {
-        let maxMessageCountForAnimation = 20
 
         guard !isScrolledToBottom else {
             return
@@ -64,7 +63,7 @@ extension ConversationContentViewController {
 
         dataSource.loadMessages()
 
-        let shouldAnimate = !UIAccessibility.isReduceMotionEnabled && dataSource.messages.count <= maxMessageCountForAnimation
+        let shouldAnimate = !UIAccessibility.isReduceMotionEnabled
 
         tableView.scroll(toIndex: 0, animated: shouldAnimate)
         updateTableViewHeaderView()
