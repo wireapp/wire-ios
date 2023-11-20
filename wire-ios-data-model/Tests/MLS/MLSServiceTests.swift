@@ -468,6 +468,48 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         XCTAssertEqual(processConversationEventsCalls[0], [updateEvent])
     }
 
+    func test_AddingMembersToConversation_AddsUsersWithKeyPackages_AndIgnoresUsersWithout() async throws {
+        // Given
+        let userID1 = UUID.create()
+        let userID2 = UUID.create()
+        let domain = "example.com"
+        let user1 = MLSUser(id: userID1, domain: domain)
+        let user2 = MLSUser(id: userID2, domain: domain)
+        let keyPackage = createKeyPackage(userID: userID1, domain: domain)
+        let groupID = MLSGroupID.random()
+
+        // Mock no pending proposals.
+        mockMLSActionExecutor.mockCommitPendingProposals = { _ in
+            throw MLSActionExecutor.Error.noPendingProposals
+        }
+
+        // Mock claiming a key package. Works for user1, throws for user2
+        mockActionsProvider.claimKeyPackagesUserIDDomainExcludedSelfClientIDIn_MockMethod = { userID, _, _, _ in
+            if userID == userID1 {
+                return [keyPackage]
+            } else {
+                throw ClaimMLSKeyPackageAction.Failure.userOrDomainNotFound
+            }
+        }
+
+        // Mock adding members to the conversation
+        var addMembersArguments = [(keyPackages: [Invitee], groupID: MLSGroupID)]()
+        mockMLSActionExecutor.mockAddMembers = {
+            addMembersArguments.append(($0, $1))
+            return [self.dummyMemberJoinEvent()]
+        }
+
+        // When
+        try await sut.addMembersToConversation(with: [user1, user2], for: groupID)
+
+        // Then
+        // user 1 was added, but not user 2
+        XCTAssertEqual(addMembersArguments.count, 1)
+        let arguments = try XCTUnwrap(addMembersArguments.first, "expected arguments")
+        XCTAssertEqual(arguments.keyPackages, [Invitee(from: keyPackage)])
+        XCTAssertEqual(arguments.groupID, groupID)
+    }
+
     func test_CommitPendingProposals_BeforeAddingMembersToConversation_Successfully() async {
         // Given
         let groupID = MLSGroupID.random()
@@ -566,7 +608,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         mockActionsProvider.claimKeyPackagesUserIDDomainExcludedSelfClientIDIn_MockError = ClaimMLSKeyPackageAction.Failure.missingDomain
 
         // Then
-        await assertItThrows(error: MLSService.MLSAddMembersError.failedToClaimKeyPackages) {
+        await assertItThrows(error: MLSService.MLSAddMembersError.noInviteesToAdd) {
             // When
             try await sut.addMembersToConversation(with: mlsUser, for: mlsGroupID)
         }
