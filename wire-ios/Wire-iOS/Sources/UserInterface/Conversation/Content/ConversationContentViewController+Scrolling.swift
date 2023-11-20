@@ -64,11 +64,9 @@ extension ConversationContentViewController {
 
         dataSource.loadMessages()
 
-        let lastRowIndexPath = IndexPath(row: 0, section: 0)
         let shouldAnimate = !UIAccessibility.isReduceMotionEnabled && dataSource.messages.count <= maxMessageCountForAnimation
 
-        tableView.scrollToRow(at: lastRowIndexPath, at: .bottom, animated: shouldAnimate)
-
+        tableView.scroll(toIndex: 0, animated: shouldAnimate)
         updateTableViewHeaderView()
     }
 }
