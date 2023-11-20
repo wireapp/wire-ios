@@ -1,5 +1,6 @@
+////
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2023 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,25 +18,25 @@
 
 import Foundation
 
-final class MockConversationService: ConversationServiceInterface {
+// sourcery: AutoMockable
+protocol MLSClientIDsProviding {
 
-    func createGroupConversation(
-        name: String?,
-        users: Set<ZMUser>,
-        allowGuests: Bool,
-        allowServices: Bool,
-        enableReceipts: Bool,
-        messageProtocol: WireDataModel.MessageProtocol,
-        completion: @escaping (Swift.Result<ZMConversation, ConversationCreationFailure>) -> Void
-    ) {
-        fatalError("not implemented")
-    }
+    func fetchUserClients(
+        for userID: QualifiedID,
+        in context: NotificationContext
+    ) async throws -> [MLSClientID]
 
-    func syncConversation(
-        qualifiedID: QualifiedID,
-        completion: @escaping () -> Void
-    ) {
-        completion()
+}
+
+struct MLSClientIDsProvider: MLSClientIDsProviding {
+
+    func fetchUserClients(
+        for userID: QualifiedID,
+        in context: NotificationContext
+    ) async throws -> [MLSClientID] {
+        var action = FetchUserClientsAction(userIDs: [userID])
+        let userClients = try await action.perform(in: context)
+        return userClients.compactMap(MLSClientID.init(qualifiedClientID:))
     }
 
 }

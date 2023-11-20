@@ -22,17 +22,23 @@ import XCTest
 final class ConversationServiceTests: MessagingTestBase {
 
     var sut: ConversationService!
+    var mockParticipantsService: MockConversationParticipantsServiceInterface!
     var user1: ZMUser!
     var user2: ZMUser!
 
     override func setUp() {
         super.setUp()
-        sut = ConversationService(context: uiMOC)
+        mockParticipantsService = MockConversationParticipantsServiceInterface()
+        sut = ConversationService(
+            context: uiMOC,
+            participantsService: mockParticipantsService
+        )
         user1 = createUser(alsoCreateClient: true, in: uiMOC)
         user2 = createUser(alsoCreateClient: true, in: uiMOC)
     }
 
     override func tearDown() {
+        mockParticipantsService = nil
         sut = nil
         user1 = nil
         user2 = nil
@@ -393,7 +399,7 @@ final class ConversationServiceTests: MessagingTestBase {
         let didSync = expectation(description: "didSync")
 
         // Mock
-        let mockActionHandler = MockActionHandler<SyncConversationAction>(
+        _ = MockActionHandler<SyncConversationAction>(
             result: .success(()),
             context: uiMOC.notificationContext
         )
@@ -405,6 +411,149 @@ final class ConversationServiceTests: MessagingTestBase {
 
         // Then
         XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
+    }
+
+    // MARK: - Adding Participants
+
+    func test_AddParticipants_UnreachableUsers() {
+        // GIVEN
+        let domain = "domain.com"
+        let unreachableDomain = "unreachable.com"
+
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
+        conversation.remoteIdentifier = .create()
+        conversation.domain = domain
+
+        let user1 = ZMUser.insertNewObject(in: uiMOC)
+        user1.remoteIdentifier = .create()
+        user1.domain = domain
+
+        let user2 = ZMUser.insertNewObject(in: uiMOC)
+        user2.remoteIdentifier = .create()
+        user2.domain = unreachableDomain
+
+        mockAddParticipantsFailingOnce(with: .unreachableDomains([unreachableDomain]))
+
+        // WHEN / THEN
+        verifyAddParticipants_InsertsSystemMessage_AndRetriesWithReachableUsers(
+            users: [user1, user2],
+            unreachableUsers: [user2],
+            conversation: conversation
+        )
+    }
+
+    func test_AddParticipants_NonFederatingDomains() {
+        // GIVEN
+        let conversationID = UUID.create()
+
+        let applesDomain = "apples.com"
+        let bananasDomain = "bananas.com"
+        let carrotsDomain = "carrots.com"
+
+        let applesUserID = UUID.create()
+        let bananasUserID = UUID.create()
+        let carrotsUserID = UUID.create()
+
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
+        conversation.remoteIdentifier = conversationID
+        conversation.domain = applesDomain
+
+        let applesUser = ZMUser.insertNewObject(in: uiMOC)
+        applesUser.remoteIdentifier = applesUserID
+        applesUser.domain = applesDomain
+
+        let bananasUser = ZMUser.insertNewObject(in: uiMOC)
+        bananasUser.remoteIdentifier = bananasUserID
+        bananasUser.domain = bananasDomain
+
+        let carrotsUser = ZMUser.insertNewObject(in: uiMOC)
+        carrotsUser.remoteIdentifier = carrotsUserID
+        carrotsUser.domain = carrotsDomain
+
+        mockAddParticipantsFailingOnce(with: .nonFederatingDomains([bananasDomain, carrotsDomain]))
+
+        // WHEN / THEN
+        verifyAddParticipants_InsertsSystemMessage_AndRetriesWithReachableUsers(
+            users: [applesUser, bananasUser, carrotsUser],
+            unreachableUsers: [bananasUser, carrotsUser],
+            conversation: conversation
+        )
+    }
+}
+
+// MARK: - Helpers
+
+extension ConversationServiceTests {
+
+    private func verifyAddParticipants_InsertsSystemMessage_AndRetriesWithReachableUsers(
+        users: Set<ZMUser>,
+        unreachableUsers: Set<ZMUser>,
+        conversation: ZMConversation,
+        file: StaticString = #file,
+        line: UInt = #line
+    ) {
+        let expectation = XCTestExpectation(description: "Completion block is called")
+
+        // WHEN
+        sut.addParticipants(
+            Array(users),
+            to: conversation
+        ) { _ in
+            self.assertSystemMessage(
+                forUsers: unreachableUsers,
+                in: conversation,
+                file: file,
+                line: line
+            )
+            expectation.fulfill()
+        }
+
+        // THEN
+        wait(for: [expectation], timeout: 0.5)
+
+        XCTAssertEqual(
+            mockParticipantsService.addParticipantsToCompletion_Invocations.count,
+            2,
+            file: file,
+            line: line
+        )
+
+        guard let addedUsers = mockParticipantsService.addParticipantsToCompletion_Invocations.last?.users else {
+            return XCTFail("expecting users to be added", file: file, line: line)
+        }
+
+        XCTAssertEqual(
+            Set(addedUsers),
+            users.subtracting(unreachableUsers),
+            file: file,
+            line: line
+        )
+    }
+
+    private func assertSystemMessage(
+        forUsers users: Set<ZMUser>,
+        in conversation: ZMConversation,
+        file: StaticString = #file,
+        line: UInt = #line
+    ) {
+        guard let systemMessage = conversation.lastMessage?.systemMessageData else {
+            return XCTFail("expected system message", file: file, line: line)
+        }
+
+        XCTAssertEqual(systemMessage.systemMessageType, .failedToAddParticipants, file: file, line: line)
+        XCTAssertEqual(systemMessage.userTypes, users, file: file, line: line)
+    }
+
+    private func mockAddParticipantsFailingOnce(with error: ConversationAddParticipantsError) {
+        var addAttempts = 0
+        mockParticipantsService.addParticipantsToCompletion_MockMethod = { _, _, completion in
+            if addAttempts == 0 {
+                completion(.failure(error))
+            } else {
+                completion(.success(()))
+            }
+            addAttempts += 1
+        }
     }
 
 }

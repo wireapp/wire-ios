@@ -34,6 +34,8 @@ class MockMLSService: MLSServiceInterface {
         var createSelfGroup = [MLSGroupID]()
         var joinGroup = [MLSGroupID]()
         var joinNewGroup = [MLSGroupID]()
+        var removeMembers = [(clientIDs: [MLSClientID], groupID: MLSGroupID)]()
+        var addMembers = [(users: [MLSUser], groupID: MLSGroupID)]()
     }
 
     func decrypt(
@@ -75,12 +77,22 @@ class MockMLSService: MLSServiceInterface {
         createGroupCalls.append(groupID)
     }
 
-    func addMembersToConversation(with users: [MLSUser], for groupID: MLSGroupID) async throws {
+    typealias AddMembersToConversationMock = ([MLSUser], MLSGroupID) throws -> Void
+    var addMembersToConversationMock: AddMembersToConversationMock?
 
+    func addMembersToConversation(with users: [MLSUser], for groupID: MLSGroupID) async throws {
+        calls.addMembers.append((users, groupID))
+        guard let mock = addMembersToConversationMock else { return }
+        try mock(users, groupID)
     }
 
-    func removeMembersFromConversation(with clientIds: [MLSClientID], for groupID: MLSGroupID) async throws {
+    typealias RemoveMembersFromConversationMock = ([MLSClientID], MLSGroupID) throws -> Void
+    var removeMembersFromConversationMock: RemoveMembersFromConversationMock?
 
+    func removeMembersFromConversation(with clientIds: [MLSClientID], for groupID: MLSGroupID) async throws {
+        calls.removeMembers.append((clientIds, groupID))
+        guard let mock = removeMembersFromConversationMock else { return }
+        try mock(clientIds, groupID)
     }
 
     func encrypt(message: [Byte], for groupID: MLSGroupID) throws -> [Byte] {
