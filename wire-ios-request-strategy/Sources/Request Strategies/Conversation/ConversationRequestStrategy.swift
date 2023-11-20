@@ -548,7 +548,7 @@ class ConversationByIDTranscoder: IdentifierObjectSyncTranscoder {
             else {
                 continue
             }
-            removeLocalConversation.invoke(
+            try? removeLocalConversation.invoke(
                 with: conversation,
                 syncContext: context
             )
@@ -665,7 +665,7 @@ class ConversationByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
             else {
                 continue
             }
-            removeLocalConversation.invoke(
+            try? removeLocalConversation.invoke(
                 with: conversation,
                 syncContext: context
             )

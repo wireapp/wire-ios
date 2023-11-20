@@ -91,7 +91,7 @@ final class ConversationEventPayloadProcessor {
             return
         }
 
-        removeLocalConversation.invoke(
+        try? removeLocalConversation.invoke(
             with: conversation,
             syncContext: context
         )

@@ -45,7 +45,7 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
 
     func performPendingJoins()
 
-    func wipeGroup(_ groupID: MLSGroupID)
+    func wipeGroup(_ groupID: MLSGroupID) throws
 
     func commitPendingProposals() async throws
 
@@ -589,12 +589,13 @@ public final class MLSService: MLSServiceInterface {
 
     // MARK: - Remove group
 
-    public func wipeGroup(_ groupID: MLSGroupID) {
+    public func wipeGroup(_ groupID: MLSGroupID) throws {
         logger.info("wiping group (\(groupID.safeForLoggingDescription))")
         do {
             try coreCrypto.perform { try $0.wipeConversation(conversationId: groupID.bytes) }
         } catch {
             logger.warn("failed to wipe group (\(groupID.safeForLoggingDescription)): \(String(describing: error))")
+            throw error
         }
     }
 
@@ -1709,16 +1710,20 @@ public final class MLSService: MLSServiceInterface {
 
             // create MLS group and update keying material
             try createGroup(for: mlsGroupID)
-            try await updateKeyMaterial(for: mlsGroupID)
 
-            // send commit bundle
-            try await actionsProvider.sendCommitBundle(<#T##bundle: Data##Data#>, in: context.notificationContext)
+            do {
+                // update keying material and send commit bundle to the backend
+                try await internalUpdateKeyMaterial(for: mlsGroupID)
+            } catch SendMLSMessageAction.Failure.mlsStaleMessage {
+                // rollback: destroy/wipe group
+                try wipeGroup(mlsGroupID)
+            }
+
+            // add all participants (all clients) to the group
+            let members = groupConversation.localParticipants.map { user in MLSUser(from: user) }
+            try await addMembersToConversation(with: members, for: mlsGroupID)
+
         }
-
-        // func startMigration(_ group: ZMConversation()) async
-        //      try createGroup(group.mlsGroupID)
-        //          if staleMessage, call wipeGroup
-        //          if success, call addMembers
 
     }
 
