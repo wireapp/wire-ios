@@ -21,10 +21,22 @@ import XCTest
 
 final class ConversationInputBarViewControllerDropInteractionTests: XCTestCase {
 
+    var userSession: UserSessionMock!
+
+    override func setUp() {
+        super.setUp()
+        userSession = UserSessionMock()
+    }
+
+    override func tearDown() {
+        userSession = nil
+        super.tearDown()
+    }
+
     func testThatItHandlesDroppingFiles_FlagEnabled() {
         // GIVEN
         let mockConversation = MockInputBarConversationType()
-        let sut = ConversationInputBarViewController(conversation: mockConversation)
+        let sut = ConversationInputBarViewController(conversation: mockConversation, userSession: userSession)
         let shareRestrictionManager = MediaShareRestrictionManagerMock(canFilesBeShared: true)
 
         // WHEN
@@ -37,7 +49,7 @@ final class ConversationInputBarViewControllerDropInteractionTests: XCTestCase {
     func testThatItPreventsDroppingFiles_FlagDisabled() {
         // GIVEN
         let mockConversation = MockInputBarConversationType()
-        let sut = ConversationInputBarViewController(conversation: mockConversation)
+        let sut = ConversationInputBarViewController(conversation: mockConversation, userSession: userSession)
         let shareRestrictionManager = MediaShareRestrictionManagerMock(canFilesBeShared: false)
 
         // WHEN

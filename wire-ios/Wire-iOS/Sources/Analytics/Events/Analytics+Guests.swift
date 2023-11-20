@@ -26,9 +26,16 @@ extension Analytics {
             $0.isGuest(in: conversation)
             }).count
 
+        let userType: String
+        if let user = SelfUser.provider?.providedSelfUser, !user.isGuest(in: conversation) {
+            userType = "user"
+        } else {
+            userType = "guest"
+        }
+
         return [
             "conversation_guests": numGuests.logRound(),
-            "user_type": SelfUser.current.isGuest(in: conversation) ? "guest" : "user"
+            "user_type": userType
         ]
     }
 }

@@ -21,9 +21,7 @@ import XCTest
 import WireLinkPreview
 @testable import Wire
 
-final class ConversationTextMessageTests: BaseSnapshotTestCase {
-
-    // MARK: - Properties
+final class ConversationTextMessageTests: ConversationMessageSnapshotTestCase {
 
     var mockOtherUser: MockUserType!
     var message: MockMessage!

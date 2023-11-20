@@ -192,6 +192,10 @@ public class ZMSearchUser: NSObject, UserType {
         return user.isSelfUser
     }
 
+    public var membership: Member? {
+        user?.membership
+    }
+
     public var teamName: String? {
         return user?.teamName
     }

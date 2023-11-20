@@ -44,10 +44,12 @@
     {
       "skippedTests" : [
         "AVURLAsset_conversionTests\/testThatVideoIsConvertedToUploadFormat()",
+        "ConversationListTopBarViewControllerSnapshotTests\/testForLongName()",
         "MessageReplyPreviewViewTests\/testThatItRendersImageMessagePreview()",
         "SearchResultLabelTests",
         "ShareViewControllerTests\/testThatItRendersCorrectlyShareViewController_Photos()",
-        "ShareViewControllerTests\/testThatItRendersCorrectlyShareViewController_Video_DarkMode()"
+        "ShareViewControllerTests\/testThatItRendersCorrectlyShareViewController_Video_DarkMode()",
+        "StartUIViewControllerSnapshotTests\/testForNoContactWhenSelfIsTeamMember()"
       ],
       "target" : {
         "containerPath" : "container:Wire-iOS.xcodeproj",

@@ -21,6 +21,18 @@ import XCTest
 
 final class ProfileViewTests: BaseSnapshotTestCase {
 
+    var userSession: UserSessionMock!
+
+    override func setUp() {
+        super.setUp()
+        userSession = UserSessionMock()
+    }
+
+    override func tearDown() {
+        userSession = nil
+        super.tearDown()
+    }
+
     func test_DefaultOptions() {
         verifyProfile(options: [])
     }
@@ -63,14 +75,21 @@ final class ProfileViewTests: BaseSnapshotTestCase {
         let testUser = MockUserType.createUser(name: "Test")
         testUser.isConnected = false
 
-        // WHEN
-        let sut = setupProfileHeaderViewController(user: testUser, viewer: selfUser)
+        // when
+        let sut = ProfileHeaderViewController(
+            user: testUser,
+            viewer: selfUser,
+            options: [],
+            userSession: userSession
+        )
+
+        sut.view.frame.size = sut.view.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
+        sut.view.backgroundColor = SemanticColors.View.backgroundDefault
+        sut.overrideUserInterfaceStyle = .dark
 
         // THEN
         verify(matching: sut.view)
     }
-
-    // MARK: - Helpers
 
     func verifyProfile(
         options: ProfileHeaderViewController.Options,
@@ -94,7 +113,12 @@ final class ProfileViewTests: BaseSnapshotTestCase {
         viewer: UserType,
         options: ProfileHeaderViewController.Options = []
     ) -> ProfileHeaderViewController {
-        let sut = ProfileHeaderViewController(user: user, viewer: viewer, options: options)
+        let sut = ProfileHeaderViewController(
+            user: user,
+            viewer: viewer,
+            options: options,
+            userSession: userSession
+        )
         sut.view.frame.size = sut.view.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
         sut.view.backgroundColor = SemanticColors.View.backgroundDefault
         sut.overrideUserInterfaceStyle = .dark
