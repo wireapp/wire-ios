@@ -1688,6 +1688,7 @@ public final class MLSService: MLSServiceInterface {
 
         let groupConversations = try ZMConversation.fetchAllTeamGroupConversations(messageProtocol: .proteus, in: context)
         for groupConversation in groupConversations {
+
             guard let qualifiedID = groupConversation.qualifiedID else {
                 assertionFailure("the group conversation has no `qualifiedID` set")
                 continue
