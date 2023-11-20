@@ -52,7 +52,7 @@ final class TeamMetadataRefresher {
 
     func triggerRefreshIfNeeded() {
         guard
-            let selfUser = SelfUser.provider?.selfUser,
+            let selfUser = SelfUser.provider?.providedSelfUser,
             selfUser.isTeamMember,
             isTimeoutExpired
         else {

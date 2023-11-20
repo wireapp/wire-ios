@@ -114,7 +114,7 @@ extension BackendEnvironment {
     }
 
     fileprivate static var selfUserProfileLink: URL? {
-        guard let userID = SelfUser.provider?.selfUser.remoteIdentifier?.uuidString else {
+        guard let userID = SelfUser.provider?.providedSelfUser.remoteIdentifier?.uuidString else {
             return nil
         }
         return shared.accountsURL.appendingPathComponent("user-profile/?id=\(userID)")

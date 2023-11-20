@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireSyncEngine
 import LocalAuthentication
 import WireDataModel
 
@@ -28,7 +29,7 @@ extension AppLockModule {
 
         weak var presenter: AppLockPresenterInteractorInterface!
 
-        private let session: Session
+        private let userSession: UserSession
         private let authenticationType: AuthenticationTypeProvider
         private let applicationStateProvider: ApplicationStateProvider
 
@@ -42,26 +43,24 @@ extension AppLockModule {
 
         // MARK: - Life cycle
 
-        init(session: Session,
-             authenticationType: AuthenticationTypeProvider = AuthenticationTypeDetector(),
-             applicationStateProvider: ApplicationStateProvider = UIApplication.shared) {
+        init(
+            userSession: UserSession,
+            authenticationType: AuthenticationTypeProvider = AuthenticationTypeDetector(),
+            applicationStateProvider: ApplicationStateProvider = UIApplication.shared
+        ) {
 
-            self.session = session
+            self.userSession = userSession
             self.authenticationType = authenticationType
             self.applicationStateProvider = applicationStateProvider
         }
 
         // MARK: - Methods
 
-        private var appLock: AppLockType {
-            session.appLockController
-        }
-
         private var passcodePreference: PasscodePreference? {
-            guard let lock = session.lock else { return nil }
+            guard let lock = userSession.lock else { return nil }
 
             switch lock {
-            case .screen where appLock.requireCustomPasscode:
+            case .screen where userSession.requireCustomAppLockPasscode:
                 return .customOnly
             case .screen:
                 return .deviceThenCustom
@@ -71,13 +70,13 @@ extension AppLockModule {
         }
 
         private var needsToNotifyUser: Bool {
-            return appLock.needsToNotifyUser
+            return userSession.needsToNotifyUserOfAppLockConfiguration
         }
 
         private var needsToCreateCustomPasscode: Bool {
             guard passcodePreference != .deviceOnly else { return false }
-            guard !appLock.isCustomPasscodeSet else { return false }
-            return appLock.requireCustomPasscode || authenticationType.current == .unavailable
+            guard !userSession.isCustomAppLockPasscodeSet else { return false }
+            return userSession.requireCustomAppLockPasscode || authenticationType.current == .unavailable
         }
 
         private var isAuthenticationNeeded: Bool {
@@ -116,7 +115,7 @@ extension AppLockModule.Interactor: AppLockInteractorPresenterInterface {
                 return
             }
 
-            appLock.evaluateAuthentication(
+            userSession.evaluateAppLockAuthentication(
                 passcodePreference: preference,
                 description: deviceAuthenticationDescription,
                 callback: handleAuthenticationResult
@@ -150,11 +149,11 @@ extension AppLockModule.Interactor: AppLockInteractorPresenterInterface {
 
     private func unlockDatabase(with context: LAContextProtocol?) {
         guard let context = context as? LAContext else { return }
-        try? session.unlockDatabase(with: context)
+        try? userSession.unlockDatabase(with: context)
     }
 
     private func openAppLock() {
-        try? appLock.open()
+        try? userSession.openAppLock()
     }
 
 }

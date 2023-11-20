@@ -20,6 +20,7 @@ import WireSyncEngine
 
 typealias UserSessionInterface = UserSessionSwiftInterface & UserSessionAppLockInterface
 
+// TODO: delete
 protocol ZMUserSessionInterface: AnyObject {
 
     func perform(_ changes: @escaping () -> Void)

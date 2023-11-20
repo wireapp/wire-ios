@@ -71,8 +71,13 @@ final class ProfileTitleView: UIView {
     }
 
     func configure(with user: UserType) {
+        guard let selfUser = ZMUser.selfUser() else {
+            assertionFailure("ZMUser.selfUser() is nil")
+            return
+        }
+
         let attributedTitle = user.nameIncludingAvailability(color: LabelColors.textDefault,
-                                                             selfUser: ZMUser.selfUser())
+                                                             selfUser: selfUser)
         titleLabel.attributedText = attributedTitle
         setupAccessibility()
     }
