@@ -413,7 +413,8 @@ final class ConversationSystemMessageCellDescription {
             cells.append(AnyConversationMessageCellDescription(startedConversationCell))
 
             // Only display invite user cell for team members
-            if SelfUser.current.isTeamMember,
+            if let user = SelfUser.provider?.providedSelfUser,
+               user.isTeamMember,
                conversation.selfCanAddUsers,
                conversation.isOpenGroup {
                 cells.append(AnyConversationMessageCellDescription(GuestsAllowedCellDescription()))
@@ -463,7 +464,11 @@ private extension ConversationLike {
     }
 
     var selfCanAddUsers: Bool {
-        return SelfUser.current.canAddUser(to: self)
+        guard let user = SelfUser.provider?.providedSelfUser else {
+            assertionFailure("expected available 'user'!")
+            return false
+        }
+        return user.canAddUser(to: self)
     }
 }
 
@@ -1031,7 +1036,16 @@ final class ConversationNewDeviceSystemMessageCellDescription: ConversationMessa
         if !systemMessage.addedUserTypes.isEmpty {
             return configureForAddedUsers(in: conversation, attributes: textAttributes)
         } else if systemMessage.systemMessageType == .reactivatedDevice {
-            return configureForReactivatedSelfClient(SelfUser.current, link: View.userClientURL)
+            guard let user = SelfUser.provider?.providedSelfUser else {
+                assertionFailure("expected available 'user'!")
+                return configureForOtherUsers(
+                    users,
+                    conversation: conversation,
+                    clients: clients,
+                    attributes: textAttributes
+                )
+            }
+            return configureForReactivatedSelfClient(user, link: View.userClientURL)
         } else if let user = users.first, user.isSelfUser && systemMessage.systemMessageType == .usingNewDevice {
             return configureForNewCurrentDeviceOfSelfUser(user, link: View.userClientURL)
         } else if users.count == 1, let user = users.first, user.isSelfUser {
@@ -1224,8 +1238,8 @@ final class DomainsStoppedFederatingCellDescription: ConversationMessageCellDesc
         }
 
         var text: String
-        if domains.hasSelfDomain {
-            let withoutSelfDomain = domains.filter { $0 != SelfUser.current.domain }
+        if domains.hasSelfDomain, let user = SelfUser.provider?.providedSelfUser {
+            let withoutSelfDomain = domains.filter { $0 != user.domain }
             text = BackendsStopFederating.selfBackend(withoutSelfDomain.first ?? "", URL.wr_FederationLearnMore.absoluteString)
         } else {
             text = BackendsStopFederating.otherBackends(domains.first ?? "", domains.last ?? "", URL.wr_FederationLearnMore.absoluteString)
@@ -1241,7 +1255,7 @@ final class DomainsStoppedFederatingCellDescription: ConversationMessageCellDesc
 private extension Array where Element == String {
 
     var hasSelfDomain: Bool {
-        return self.contains(SelfUser.provider?.selfUser.domain ?? "")
+        return self.contains(SelfUser.provider?.providedSelfUser.domain ?? "")
     }
 
 }

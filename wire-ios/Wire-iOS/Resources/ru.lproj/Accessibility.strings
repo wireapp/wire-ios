@@ -215,7 +215,7 @@
 "conversationsList.itemCell.hint" = "Нажмите дважды, чтобы открыть беседу";
 "conversationsList.joinButton.description" = "Присоединиться";
 "conversationsList.joinButton.hint" = "Нажмите дважды, чтобы присоединиться к вызову";
-"conversationsList.connectionRequest.description" = "В ожидании подтверждения запроса";
+"conversationsList.connectionRequest.description" = "Ожидание подтверждения запроса";
 "conversationsList.connectionRequest.hint" = "Нажмите дважды для открытия профиля";
 
 "conversationAnnouncement.text.description" = "Текстовое сообщение получено от %@";
