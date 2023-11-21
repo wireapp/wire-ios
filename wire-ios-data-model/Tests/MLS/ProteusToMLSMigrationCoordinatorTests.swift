@@ -70,8 +70,8 @@ class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
 
     func testMigrateOrJoinGroupConversations_CallsJoinGroupForNewConversations() async throws {
         // GIVEN
-        let optionalGroupID = await createUserAndGroupConversation(shouldReturnGroupID: true)
-        let conversationGroupID = try XCTUnwrap(optionalGroupID)
+        let groupID = MLSGroupID.random()
+        await createUserAndGroupConversation(groupID: groupID)
 
         mockMLSService.conversationExistsMock = { _ in
             return false
@@ -81,13 +81,13 @@ class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
         await sut.migrateOrJoinGroupConversations()
 
         // THEN
-        XCTAssertTrue(mockMLSService.calls.joinGroup.contains(conversationGroupID), "joinGroup should be called for new conversations")
+        XCTAssertTrue(mockMLSService.calls.joinGroup.contains(groupID), "joinGroup should be called for new conversations")
     }
 
     func testMigrateOrJoinGroupConversations_DoesNotCallJoinGroupForExistingConversations() async throws {
         // GIVEN
-        let optionalGroupID = await createUserAndGroupConversation(shouldReturnGroupID: true)
-        let conversationGroupID = try XCTUnwrap(optionalGroupID)
+        let groupID = MLSGroupID.random()
+        await createUserAndGroupConversation(groupID: groupID)
 
         mockMLSService.conversationExistsMock = { _ in
             return true
@@ -97,14 +97,14 @@ class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
         await sut.migrateOrJoinGroupConversations()
 
         // THEN
-        XCTAssertFalse(mockMLSService.calls.joinGroup.contains(conversationGroupID), "joinGroup should not be called for existing conversations")
+        XCTAssertFalse(mockMLSService.calls.joinGroup.contains(groupID), "joinGroup should not be called for existing conversations")
     }
 
     // MARK: - UpdateMigrationStatus
 
     func test_UpdateMigrationStatus_StartsMigration_IfNotStartedAndReady() async {
         // Given
-        _ = await createUserAndGroupConversation()
+        await createUserAndGroupConversation()
 
         setMigrationReadiness(to: true)
         mockStorage.underlyingMigrationStatus = .notStarted
@@ -124,7 +124,7 @@ class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
 
     func test_UpdateMigrationStatus_DoesntStartMigration_IfAlreadyStarted() async {
         // Given
-        _ = await createUserAndGroupConversation()
+        await createUserAndGroupConversation()
 
         setMigrationReadiness(to: true)
         mockStorage.underlyingMigrationStatus = .started
@@ -144,7 +144,7 @@ class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
 
     func test_UpdateMigrationStatus_DoesntStartMigration_IfNotReady() async {
         // Given
-        _ = await createUserAndGroupConversation()
+        await createUserAndGroupConversation()
 
         setMigrationReadiness(to: false)
         mockStorage.underlyingMigrationStatus = .notStarted
@@ -189,8 +189,7 @@ class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
 
     private typealias MigrationStartStatus = ProteusToMLSMigrationCoordinator.MigrationStartStatus
 
-    private func createUserAndGroupConversation(shouldReturnGroupID: Bool = false) async -> MLSGroupID? {
-        var localGroupID: MLSGroupID?
+    private func createUserAndGroupConversation(groupID: MLSGroupID = .random()) async {
         await syncMOC.perform {
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
             selfUser.teamIdentifier = UUID()
@@ -199,10 +198,8 @@ class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
             conversation.teamRemoteIdentifier = selfUser.teamIdentifier
             conversation.conversationType = .group
             conversation.messageProtocol = .mixed
-            conversation.mlsGroupID = .random()
-            localGroupID = conversation.mlsGroupID
+            conversation.mlsGroupID = groupID
         }
-        return shouldReturnGroupID ? localGroupID : nil
     }
 
     private func setMigrationReadiness(to ready: Bool) {
