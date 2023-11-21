@@ -399,6 +399,10 @@ final class ConversationSystemMessageCellDescription {
         case .readReceiptsEnabled,
                 .readReceiptsDisabled,
                 .readReceiptsOn:
+
+            let description = MLSMigrationStartedCellDescription(systemMessageData: systemMessageData)
+            return [AnyConversationMessageCellDescription(description)]
+
             let cell = ConversationReadReceiptSettingChangedCellDescription(sender: sender,
                                                                             systemMessageType: systemMessageData.systemMessageType)
             return [AnyConversationMessageCellDescription(cell)]
@@ -438,16 +442,8 @@ final class ConversationSystemMessageCellDescription {
             let domainsStoppedFederatingCell = DomainsStoppedFederatingCellDescription(systemMessageData: systemMessageData)
             return [AnyConversationMessageCellDescription(domainsStoppedFederatingCell)]
 
-        case .mlsMigrationStarted:
-            let description = MLSMigrationStartedCellDescription(systemMessageData: systemMessageData)
-            return [AnyConversationMessageCellDescription(description)]
-
         case .mlsMigrationFinalized:
             let description = MLSMigrationFinalizedCellDescription(systemMessageData: systemMessageData)
-            return [AnyConversationMessageCellDescription(description)]
-
-        case .mlsMigrationUpdateVersion:
-            let description = MLSMigrationUpdateVersionCellDescription(systemMessageData: systemMessageData)
             return [AnyConversationMessageCellDescription(description)]
 
         case .mlsMigrationJoinAfterwards:
@@ -456,6 +452,14 @@ final class ConversationSystemMessageCellDescription {
 
         case .mlsMigrationOngoingCall:
             let description = MLSMigrationOngoingCallCellDescription(systemMessageData: systemMessageData)
+            return [AnyConversationMessageCellDescription(description)]
+
+        case .mlsMigrationStarted:
+            let description = MLSMigrationStartedCellDescription(systemMessageData: systemMessageData)
+            return [AnyConversationMessageCellDescription(description)]
+
+        case .mlsMigrationUpdateVersion:
+            let description = MLSMigrationUpdateVersionCellDescription(systemMessageData: systemMessageData)
             return [AnyConversationMessageCellDescription(description)]
 
         case .invalid:
