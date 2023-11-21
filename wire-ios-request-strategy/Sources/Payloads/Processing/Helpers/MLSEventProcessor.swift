@@ -40,7 +40,7 @@ class MLSEventProcessor: MLSEventProcessing {
     ) {
         Logging.mls.info("MLS event processor updating conversation if needed")
 
-        guard conversation.supportsMLS(for: .groupMaintenance) else {
+        guard conversation.messageProtocol.isOne(of: .mixed, .mls) else {
             return logWarn(aborting: .conversationUpdate, withReason: .notMLSConversation)
         }
 
@@ -73,7 +73,7 @@ class MLSEventProcessor: MLSEventProcessing {
     func joinMLSGroupWhenReady(forConversation conversation: ZMConversation, context: NSManagedObjectContext) {
         Logging.mls.info("MLS event processor is adding group to join")
 
-        guard conversation.supportsMLS(for: .groupMaintenance) else {
+        guard conversation.messageProtocol.isOne(of: .mixed, .mls) else {
             return logWarn(aborting: .joiningGroup, withReason: .notMLSConversation)
         }
 
@@ -125,7 +125,7 @@ class MLSEventProcessor: MLSEventProcessing {
     func wipeMLSGroup(forConversation conversation: ZMConversation, context: NSManagedObjectContext) {
         Logging.mls.info("MLS event processor is wiping conversation")
 
-        guard conversation.supportsMLS(for: .groupMaintenance) else {
+        guard conversation.messageProtocol.isOne(of: .mixed, .mls) else {
             return logWarn(aborting: .conversationWipe, withReason: .notMLSConversation)
         }
 

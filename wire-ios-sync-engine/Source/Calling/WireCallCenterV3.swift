@@ -987,14 +987,14 @@ extension WireCallCenterV3 {
 private extension ZMConversation {
 
     var avsConversationType: AVSConversationType? {
-        switch (conversationType, supportsMLS(for: .conferencing)) {
+        switch (conversationType, messageProtocol) {
         case (.oneOnOne, _):
             return .oneToOne
 
-        case (.group, false):
+        case (.group, .proteus), (.group, .mixed):
             return .conference
 
-        case (.group, true), (.`self`, true):
+        case (.group, .mls), (.`self`, .mls):
             return .mlsConference
 
         default:

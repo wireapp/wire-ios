@@ -80,7 +80,7 @@ extension MLSMessageSync {
         private func encryptMessage(_ message: Message) -> Data? {
             guard
                 let conversation = message.conversation,
-                conversation.supportsMLS(for: .encryption)
+                conversation.messageProtocol == .mls
             else {
                 WireLogger.mls.error("failed to encrypt message: it doesn't belong to an mls conversation.")
                 return nil

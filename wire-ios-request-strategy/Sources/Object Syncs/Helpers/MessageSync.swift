@@ -71,10 +71,11 @@ public class MessageSync<Message: ProteusMessage & MLSMessage>: NSObject, ZMCont
             return
         }
 
-        if conversation.supportsMLS(for: .encryption) {
-            mlsMessageSync.sync(message, completion: completion)
-        } else {
+        switch conversation.messageProtocol {
+        case .proteus, .mixed:
             proteusMessageSync.sync(message, completion: completion)
+        case .mls:
+            mlsMessageSync.sync(message, completion: completion)
         }
     }
 
