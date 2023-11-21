@@ -91,7 +91,8 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
         case .notStarted:
             await startMigrationIfNeeded()
         case .started:
-            // check if it should be finalised
+            // migrate mixed protocols
+            finaliseMigrationIfNeeded()
             break
         default:
             break
@@ -99,6 +100,52 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
     }
 
     // MARK: - Internal Methods
+
+    func finaliseMigrationIfNeeded() {
+        let mixedConversations = [ZMConversation]()
+
+        if migrationForceTimeHasArrived {
+            mixedConversations.forEach(finaliseConversationMigration(conversation:))
+        } else {
+            // 1. Sync users with the backend
+            syncUsers()
+            // 2. Loop through conversations
+            mixedConversations.forEach(finaliseConversationMigrationIfNeeded(conversation:))
+        }
+    }
+
+    func syncUsers() {
+        // Update local users from the backend
+    }
+
+    // Also call this from your placeholder
+    func finaliseConversationMigrationIfNeeded(conversation: ZMConversation) {
+        if canConversationBeFinalised(conversation: conversation) {
+            finaliseConversationMigration(conversation: conversation)
+        }
+    }
+
+    func finaliseConversationMigration(conversation: ZMConversation) {
+        // Finalise
+    }
+
+    func canConversationBeFinalised(conversation: ZMConversation) -> Bool {
+        let participants = conversation.localParticipants
+
+        var canBeFinalised = true
+
+        for participant in participants {
+            if !participant.supportedProtocols.contains(.mls) {
+                canBeFinalised = false
+            }
+        }
+
+        return canBeFinalised
+    }
+
+    var migrationForceTimeHasArrived: Bool {
+        return true
+    }
 
     func startMigrationIfNeeded() async {
         logger.info("checking if proteus-to-mls migration can start")
@@ -170,4 +217,10 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
         }
     }
 
+}
+
+extension ZMUser {
+    var supportedProtocols: [MessageProtocol] {
+        return [.mls, .proteus]
+    }
 }
