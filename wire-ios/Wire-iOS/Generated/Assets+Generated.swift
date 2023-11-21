@@ -184,6 +184,7 @@ internal enum Asset {
     internal static let downArrow = ImageAsset(name: "DownArrow")
     internal static let notifications = ImageAsset(name: "Notifications")
     internal static let readReceipts = ImageAsset(name: "ReadReceipts")
+    internal static let rightChevron = ImageAsset(name: "RightChevron")
     internal static let selfDeletingMessages = ImageAsset(name: "SelfDeletingMessages")
     internal static let services = ImageAsset(name: "Services")
     internal static let unavailableUser = ImageAsset(name: "Unavailable user")
