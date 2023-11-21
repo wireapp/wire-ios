@@ -399,10 +399,6 @@ final class ConversationSystemMessageCellDescription {
         case .readReceiptsEnabled,
                 .readReceiptsDisabled,
                 .readReceiptsOn:
-
-            let description = MLSMigrationStartedCellDescription(systemMessageData: systemMessageData)
-            return [AnyConversationMessageCellDescription(description)]
-
             let cell = ConversationReadReceiptSettingChangedCellDescription(sender: sender,
                                                                             systemMessageType: systemMessageData.systemMessageType)
             return [AnyConversationMessageCellDescription(cell)]
