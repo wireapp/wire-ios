@@ -2659,19 +2659,23 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     func test_startProteusToMLSMigration_succeeds() async throws {
         // Given
-        let user = ZMUser.selfUser(in: uiMOC)
-        user.teamIdentifier = .create()
-
         let mlsGroupID = MLSGroupID.random()
-        let conversation = createConversation(in: uiMOC)
-        conversation.mlsGroupID = mlsGroupID
-        conversation.messageProtocol = .proteus
-        conversation.domain = "example.com"
-        conversation.teamRemoteIdentifier = user.teamIdentifier
+        let conversation = await uiMOC.perform { [self] in
+            let selfUser = ZMUser.selfUser(in: uiMOC)
+            selfUser.teamIdentifier = .create()
+            selfUser.domain = "example.com"
+
+            let conversation = createConversation(in: uiMOC, with: [selfUser])
+            conversation.mlsGroupID = mlsGroupID
+            conversation.messageProtocol = .proteus
+            conversation.domain = selfUser.domain
+            conversation.teamRemoteIdentifier = selfUser.teamIdentifier
+            return conversation
+        }
 
         let updateConversationProtocolExpectation = XCTestExpectation(description: "updateConversationProtocol must be called")
         mockActionsProvider.updateConversationProtocolQualifiedIDMessageProtocolContext_MockMethod = { [uiMOC] qualifiedID, messageProtocol, notificationContext in
-            XCTAssertEqual(qualifiedID, conversation.qualifiedID)
+            XCTAssertEqual(qualifiedID, uiMOC.performAndWait { conversation.qualifiedID })
             XCTAssertEqual(messageProtocol, .mixed)
             XCTAssert(notificationContext === uiMOC.notificationContext)
             updateConversationProtocolExpectation.fulfill()
@@ -2679,9 +2683,11 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
         let syncConversationExpectation = XCTestExpectation(description: "syncConversation must be called")
         mockActionsProvider.syncConversationQualifiedIDContext_MockMethod = { [uiMOC] qualifiedID, notificationContext in
-            XCTAssertEqual(qualifiedID, conversation.qualifiedID)
-            XCTAssert(notificationContext === uiMOC.notificationContext)
-            conversation.messageProtocol = .mixed
+            uiMOC.performAndWait {
+                XCTAssertEqual(qualifiedID, conversation.qualifiedID)
+                XCTAssert(notificationContext === uiMOC.notificationContext)
+                conversation.messageProtocol = .mixed
+            }
             syncConversationExpectation.fulfill()
         }
 
@@ -2692,8 +2698,8 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
 
         let updateKeyMaterialExpectation = XCTestExpectation(description: "updateKeyMaterial must be called")
-        mockMLSActionExecutor.mockUpdateKeyMaterial = { mlsGroupID in
-            XCTAssertEqual(mlsGroupID, conversation.mlsGroupID)
+        mockMLSActionExecutor.mockUpdateKeyMaterial = { [self] mlsGroupID in
+            XCTAssertEqual(mlsGroupID, uiMOC.performAndWait { conversation.mlsGroupID })
             updateKeyMaterialExpectation.fulfill()
             return []
         }
@@ -2723,15 +2729,16 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     func test_startProteusToMLSMigration_staleMessageErrorWipesGroup() async throws {
         // Given
-        let user = ZMUser.selfUser(in: uiMOC)
-        user.teamIdentifier = .create()
+        let selfUser = ZMUser.selfUser(in: uiMOC)
+        selfUser.teamIdentifier = .create()
+        selfUser.domain = "example.com"
 
         let mlsGroupID = MLSGroupID.random()
-        let conversation = createConversation(in: uiMOC)
+        let conversation = createConversation(in: uiMOC, with: [selfUser])
         conversation.mlsGroupID = mlsGroupID
         conversation.messageProtocol = .proteus
-        conversation.domain = "example.com"
-        conversation.teamRemoteIdentifier = user.teamIdentifier
+        conversation.domain = selfUser.domain
+        conversation.teamRemoteIdentifier = selfUser.teamIdentifier
 
         mockActionsProvider.updateConversationProtocolQualifiedIDMessageProtocolContext_MockMethod = { _, _, _ in }
         mockActionsProvider.syncConversationQualifiedIDContext_MockMethod = { _, _ in

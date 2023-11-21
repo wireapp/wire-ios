@@ -1686,14 +1686,21 @@ public final class MLSService: MLSServiceInterface {
             return
         }
 
-        let groupConversations = try ZMConversation.fetchAllTeamGroupConversations(messageProtocol: .proteus, in: context)
-        for groupConversation in groupConversations {
+        let groupConversations = try await context.perform {
+            try ZMConversation.fetchAllTeamGroupConversations(messageProtocol: .proteus, in: context)
+                .map {(
+                    $0.qualifiedID,
+                    $0.mlsGroupID,
+                    $0.localParticipants.map { MLSUser(from: $0) }
+                )}
+        }
+        for (qualifiedID, mlsGroupID, members) in groupConversations {
 
-            guard let qualifiedID = groupConversation.qualifiedID else {
+            guard let qualifiedID else {
                 assertionFailure("the group conversation has no `qualifiedID` set")
                 continue
             }
-            guard let mlsGroupID = groupConversation.mlsGroupID else {
+            guard let mlsGroupID else {
                 assertionFailure("the group conversation has no `mlsGroupID` set")
                 continue
             }
@@ -1713,7 +1720,6 @@ public final class MLSService: MLSServiceInterface {
                 try await internalUpdateKeyMaterial(for: mlsGroupID)
 
                 // add all participants (all clients) to the group
-                let members = groupConversation.localParticipants.map { user in MLSUser(from: user) }
                 try await addMembersToConversation(with: members, for: mlsGroupID)
 
             } catch SendMLSMessageAction.Failure.mlsStaleMessage {
