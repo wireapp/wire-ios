@@ -239,6 +239,7 @@ final class DeveloperToolsViewModel: ObservableObject {
         }
     }
 
+    /// Test
     private func getIdToken() {
         Task {
             let oauthManager = OAuthAuthentication()
