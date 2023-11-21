@@ -1243,6 +1243,7 @@
 		E6596CCD2B07A2E700537723 /* MLSMigrationFinalizedCellDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6596CCB2B07A2E700537723 /* MLSMigrationFinalizedCellDescription.swift */; };
 		E6605CAD2B0C9ECA00A67C68 /* MLSMigrationUpdateVersionCellDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6605CAC2B0C9ECA00A67C68 /* MLSMigrationUpdateVersionCellDescription.swift */; };
 		E6605CAF2B0CA0A900A67C68 /* MLSMigrationJoinAfterwardsCellDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6605CAE2B0CA0A900A67C68 /* MLSMigrationJoinAfterwardsCellDescription.swift */; };
+		E6605CB12B0CA14D00A67C68 /* MLSMigrationOngoingCallCellDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6605CB02B0CA14D00A67C68 /* MLSMigrationOngoingCallCellDescription.swift */; };
 		E6C25FC52AFFAAC300406A1C /* WireTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E6C25FC42AFFAAC300406A1C /* WireTesting.framework */; };
 		E6C25FC82AFFABBF00406A1C /* PhoneNumberTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A96E230923EAD43A00C2195E /* PhoneNumberTests.swift */; };
 		E6C25FC92AFFABD100406A1C /* AvailabilityStringBuilderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 636E57BC2386BFD9005B4FD8 /* AvailabilityStringBuilderTests.swift */; };
@@ -3274,6 +3275,7 @@
 		E6596CCB2B07A2E700537723 /* MLSMigrationFinalizedCellDescription.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MLSMigrationFinalizedCellDescription.swift; sourceTree = "<group>"; };
 		E6605CAC2B0C9ECA00A67C68 /* MLSMigrationUpdateVersionCellDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLSMigrationUpdateVersionCellDescription.swift; sourceTree = "<group>"; };
 		E6605CAE2B0CA0A900A67C68 /* MLSMigrationJoinAfterwardsCellDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLSMigrationJoinAfterwardsCellDescription.swift; sourceTree = "<group>"; };
+		E6605CB02B0CA14D00A67C68 /* MLSMigrationOngoingCallCellDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLSMigrationOngoingCallCellDescription.swift; sourceTree = "<group>"; };
 		E6C25FC42AFFAAC300406A1C /* WireTesting.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTesting.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E6C25FCD2AFFAC2E00406A1C /* CoreDataFixture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataFixture.swift; sourceTree = "<group>"; };
 		E6C25FD62AFFAF4900406A1C /* ZMUser+Availability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMUser+Availability.swift"; sourceTree = "<group>"; };
@@ -7369,10 +7371,11 @@
 		E6596CC92B07A2E700537723 /* CellDescription */ = {
 			isa = PBXGroup;
 			children = (
-				E6596CCA2B07A2E700537723 /* MLSMigrationStartedCellDescription.swift */,
 				E6596CCB2B07A2E700537723 /* MLSMigrationFinalizedCellDescription.swift */,
-				E6605CAC2B0C9ECA00A67C68 /* MLSMigrationUpdateVersionCellDescription.swift */,
 				E6605CAE2B0CA0A900A67C68 /* MLSMigrationJoinAfterwardsCellDescription.swift */,
+				E6605CB02B0CA14D00A67C68 /* MLSMigrationOngoingCallCellDescription.swift */,
+				E6596CCA2B07A2E700537723 /* MLSMigrationStartedCellDescription.swift */,
+				E6605CAC2B0C9ECA00A67C68 /* MLSMigrationUpdateVersionCellDescription.swift */,
 			);
 			path = CellDescription;
 			sourceTree = "<group>";
@@ -9715,6 +9718,7 @@
 				F15650EC21DD1B4100210504 /* ImageCache.swift in Sources */,
 				D550F57020444924009E09DD /* ConversationActionController+ClearContent.swift in Sources */,
 				8784D4551E817D13007A6867 /* ConversationListTopBarViewController.swift in Sources */,
+				E6605CB12B0CA14D00A67C68 /* MLSMigrationOngoingCallCellDescription.swift in Sources */,
 				1682AEB920483CC5003A052A /* RenameGroupSectionController.swift in Sources */,
 				EF23740E230D37EE006F53F3 /* NetworkConditionHelper.swift in Sources */,
 				5E8FFC3121F098E00052DF03 /* ConfirmationCodeCell.swift in Sources */,

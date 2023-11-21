@@ -19,7 +19,7 @@
 import Foundation
 import WireDataModel
 
-final class MLSMigrationFinalizedCellDescription: ConversationMessageCellDescription {
+final class MLSMigrationOngoingCallCellDescription: ConversationMessageCellDescription {
 
     typealias View = ConversationSystemMessageCell
 
@@ -48,10 +48,9 @@ final class MLSMigrationFinalizedCellDescription: ConversationMessageCellDescrip
     }
 
     private static func makeAttributedString(for systemMessageData: ZMSystemMessageData) -> NSAttributedString? {
-        typealias Localizable = L10n.Localizable.Content.System.MlsMigration
-
-        let link = Localizable.learnMore.localized
-        let text = Localizable.Finalized.done(link)
-        return NSAttributedString.markdown(from: text, style: .systemMessage)
+        NSAttributedString.markdown(
+            from: L10n.Localizable.Content.System.MlsMigration.Finalized.ongoingCall,
+            style: .systemMessage
+        )
     }
 }
