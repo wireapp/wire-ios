@@ -28,11 +28,8 @@ final class GroupDetailsNotificationOptionsCell: GroupDetailsDisclosureOptionsCe
         title = L10n.Localizable.GroupDetails.NotificationOptionsCell.title
         accessibilityHint = L10n.Accessibility.ConversationDetails.OptionButton.hint
 
+        icon = Asset.Images.notifications.image
         iconColor = SemanticColors.Icon.foregroundDefault
-        guard let iconColor = iconColor else { return }
-
-        icon = StyleKitIcon.alerts.makeImage(size: .tiny,
-                                             color: iconColor).withRenderingMode(.alwaysTemplate)
     }
 
     func configure(with conversation: GroupDetailsConversationType) {
