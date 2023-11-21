@@ -24,15 +24,28 @@ class Button: LegacyButton {
 
     var style: ButtonStyle?
 
-    convenience init(style: ButtonStyle,
-                     cornerRadius: CGFloat = 0,
-                     fontSpec: FontSpec = .smallLightFont) {
+    convenience init(
+        style: ButtonStyle,
+        cornerRadius: CGFloat,
+        fontSpec: FontSpec
+    ) {
         self.init(fontSpec: fontSpec)
 
         self.style = style
         textTransform = .none
         layer.cornerRadius = cornerRadius
         contentEdgeInsets = UIEdgeInsets(top: 4, left: 16, bottom: 4, right: 16)
+
+        applyStyle(style)
+    }
+
+    convenience init(
+        style: ButtonStyle,
+        cornerRadius: CGFloat
+    ) {
+        self.init()
+        self.style = style
+        layer.cornerRadius = cornerRadius
 
         applyStyle(style)
     }

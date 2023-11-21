@@ -392,6 +392,12 @@ internal enum L10n {
         /// Double tap to open profile
         internal static let hint = L10n.tr("Accessibility", "conversation.profileImage.hint", fallback: "Double tap to open profile")
       }
+      internal enum ScrollToBottomButton {
+        /// Scroll to the bottom of the conversation
+        internal static let description = L10n.tr("Accessibility", "conversation.scrollToBottomButton.description", fallback: "Scroll to the bottom of the conversation")
+        /// Tap to scroll to the bottom of the conversation
+        internal static let hint = L10n.tr("Accessibility", "conversation.scrollToBottomButton.hint", fallback: "Tap to scroll to the bottom of the conversation")
+      }
       internal enum SearchButton {
         /// Open search
         internal static let description = L10n.tr("Accessibility", "conversation.searchButton.description", fallback: "Open search")

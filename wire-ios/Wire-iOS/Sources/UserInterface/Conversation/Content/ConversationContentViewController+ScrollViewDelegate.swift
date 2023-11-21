@@ -27,6 +27,24 @@ extension ConversationContentViewController: UIScrollViewDelegate {
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         dataSource.didScroll(tableView: scrollView as! UITableView)
+        updateScrollToBottomButtonVisibility()
+    }
+
+    /// Show or hide the scroll to bottom button for the current scroll position.
+    func updateScrollToBottomButtonVisibility() {
+        let shouldHideButton = isScrolledToBottom
+
+        if scrollToBottomButton.isHidden != shouldHideButton {
+            if UIAccessibility.isReduceMotionEnabled {
+                scrollToBottomButton.isHidden = shouldHideButton
+            } else {
+                UIView.animate(withDuration: 0.25, animations: {
+                    self.scrollToBottomButton.alpha = shouldHideButton ? 0 : 1
+                }) { _ in
+                    self.scrollToBottomButton.isHidden = shouldHideButton
+                }
+            }
+        }
     }
 
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
