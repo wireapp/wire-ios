@@ -45,15 +45,18 @@ extension ConversationInputBarViewController: UIDropInteractionDelegate {
                     DispatchQueue.main.async {
                         let context = ConfirmAssetViewController.Context(asset: .image(mediaAsset: draggedImage),
                                                                          onConfirm: { [unowned self] _ in
-                                                                            self.dismiss(animated: true) {
-                                                                                if let draggedImageData = draggedImage.pngData() {
-                                                                                    self.sendController.sendMessage(withImageData: draggedImageData)
-                                                                                }
-                                                                            }
-                                                                         },
+                            self.dismiss(animated: true) {
+                                if let draggedImageData = draggedImage.pngData() {
+                                    self.sendController.sendMessage(
+                                        withImageData: draggedImageData,
+                                        userSession: self.userSession
+                                    )
+                                }
+                            }
+                        },
                                                                          onCancel: { [unowned self] in
-                                                                            self.dismiss(animated: true)
-                                                                         }
+                            self.dismiss(animated: true)
+                        }
                         )
 
                         let confirmImageViewController = ConfirmAssetViewController(context: context)

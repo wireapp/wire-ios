@@ -22,6 +22,9 @@ import avs
 import WireCommonComponents
 
 final class ZClientViewController: UIViewController {
+
+    let userSession: UserSession
+
     private(set) var conversationRootViewController: UIViewController?
     private(set) var currentConversation: ZMConversation?
 
@@ -48,38 +51,50 @@ final class ZClientViewController: UIViewController {
     var dataUsagePermissionDialogDisplayed = false
     let backgroundViewController: BackgroundViewController
 
-    private let colorSchemeController: ColorSchemeController = ColorSchemeController()
+    private let colorSchemeController: ColorSchemeController
     private var incomingApnsObserver: Any?
     private var networkAvailabilityObserverToken: Any?
     private var pendingInitialStateRestore = false
-
-    var _userSession: UserSessionInterface?
 
     /// init method for testing allows injecting an Account object and self user
     ///
     /// - Parameters:
     ///   - account: an Account object
     ///   - selfUser: a SelfUserType object
-    required init(account: Account,
-                  selfUser: SelfUserType,
-                  userSession: UserSessionInterface? = ZMUserSession.shared()) {
-        _userSession = userSession
-        backgroundViewController = BackgroundViewController(user: selfUser, userSession: userSession as? ZMUserSession)
-        conversationListViewController = ConversationListViewController(account: account, selfUser: selfUser)
+    required init(
+        account: Account,
+        userSession: UserSession
+    ) {
+        self.userSession = userSession
+        backgroundViewController = BackgroundViewController(
+            user: userSession.selfUser,
+            userSession: userSession as? ZMUserSession
+        )
+
+        conversationListViewController = ConversationListViewController(
+            account: account,
+            selfUser: userSession.selfLegalHoldSubject,
+            userSession: userSession
+        )
+
+        colorSchemeController = ColorSchemeController(userSession: userSession)
 
         super.init(nibName: nil, bundle: nil)
 
         proximityMonitorManager = ProximityMonitorManager()
-        mediaPlaybackManager = MediaPlaybackManager(name: "conversationMedia")
+        mediaPlaybackManager = MediaPlaybackManager(
+            name: "conversationMedia",
+            userSession: userSession
+        )
         dataUsagePermissionDialogDisplayed = false
         needToShowDataUsagePermissionDialog = false
 
         AVSMediaManager.sharedInstance().register(mediaPlaybackManager, withOptions: [
             "media": "external "
-            ])
+        ])
 
         if let appGroupIdentifier = Bundle.main.appGroupIdentifier,
-            let remoteIdentifier = ZMUser.selfUser().remoteIdentifier {
+           let remoteIdentifier = userSession.selfUser.remoteIdentifier {
             let sharedContainerURL = FileManager.sharedContainerDirectory(for: appGroupIdentifier)
 
             _ = sharedContainerURL.appendingPathComponent("AccountData", isDirectory: true).appendingPathComponent(remoteIdentifier.uuidString, isDirectory: true)
@@ -264,9 +279,7 @@ final class ZClientViewController: UIViewController {
     ///
     /// - Parameter completion: completion handler
     func hideIncomingContactRequests(completion: Completion? = nil) {
-        guard let userSession = ZMUserSession.shared() else { return }
-
-        let conversationsList = ZMConversationList.conversations(inUserSession: userSession)
+        let conversationsList = userSession.conversationList()
         if let conversation = (conversationsList as? [ZMConversation])?.first {
             select(conversation: conversation)
         }
@@ -321,7 +334,7 @@ final class ZClientViewController: UIViewController {
                 conversationRootController?.scroll(to: message)
             }
         } else {
-            conversationRootController = ConversationRootViewController(conversation: conversation, message: message, clientViewController: self)
+            conversationRootController = ConversationRootViewController(conversation: conversation, message: message, clientViewController: self, userSession: userSession)
         }
 
         currentConversation = conversation
@@ -334,7 +347,7 @@ final class ZClientViewController: UIViewController {
     func loadIncomingContactRequestsAndFocus(onView focus: Bool, animated: Bool) {
         currentConversation = nil
 
-        let inbox = ConnectRequestsViewController()
+        let inbox = ConnectRequestsViewController(userSession: userSession)
         pushContentViewController(inbox.wrapInNavigationController(setBackgroundColor: true), focusOnView: focus, animated: animated)
     }
 
@@ -342,7 +355,7 @@ final class ZClientViewController: UIViewController {
     ///
     /// - Parameter conversation: conversation to open
     func openDetailScreen(for conversation: ZMConversation) {
-        let controller = GroupDetailsViewController(conversation: conversation)
+        let controller = GroupDetailsViewController(conversation: conversation, userSession: userSession)
         let navController = controller.wrapInNavigationController(setBackgroundColor: true)
         navController.modalPresentationStyle = .formSheet
 
@@ -358,7 +371,7 @@ final class ZClientViewController: UIViewController {
     func dismissAllModalControllers(callback: Completion?) {
         let dismissAction = {
             if let rightViewController = self.wireSplitViewController.rightViewController,
-                rightViewController.presentedViewController != nil {
+               rightViewController.presentedViewController != nil {
                 rightViewController.dismiss(animated: false, completion: callback)
             } else if let presentedViewController = self.conversationListViewController.presentedViewController {
                 // This is a workaround around the fact that the transitioningDelegate of the settings
@@ -382,9 +395,7 @@ final class ZClientViewController: UIViewController {
             }
         }
 
-        let ringingCallConversation = ZMUserSession.shared()?.ringingCallConversation
-
-        if ringingCallConversation != nil {
+        if userSession.ringingCallConversation != nil {
             dismissAction()
         } else {
             minimizeCallOverlay(animated: true, withCompletion: dismissAction)
@@ -393,15 +404,11 @@ final class ZClientViewController: UIViewController {
 
     // MARK: - Getters/Setters
 
-    var context: ZMUserSession? {
-        return ZMUserSession.shared()
-    }
-
     // MARK: - ColorSchemeControllerDidApplyChangesNotification
     private func reloadCurrentConversation() {
         guard let currentConversation = currentConversation else { return }
 
-        let currentConversationViewController = ConversationRootViewController(conversation: currentConversation, message: nil, clientViewController: self)
+        let currentConversationViewController = ConversationRootViewController(conversation: currentConversation, message: nil, clientViewController: self, userSession: userSession)
 
         // Need to reload conversation to apply color scheme changes
         pushContentViewController(currentConversationViewController)
@@ -460,11 +467,9 @@ final class ZClientViewController: UIViewController {
      * This handles the case where we have to select a list item on startup but there is no previous item saved
      */
     func selectListItemWhenNoPreviousItemSelected() {
-        guard let userSession = ZMUserSession.shared() else { return }
-
         // check for conversations and pick the first one.. this can be tricky if there are pending updates and
         // we haven't synced yet, but for now we just pick the current first item
-        let list = ZMConversationList.conversations(inUserSession: userSession) as? [ZMConversation]
+        let list = userSession.conversationList() as? [ZMConversation]
 
         if let conversation = list?.first {
             // select the first conversation and don't focus on it
@@ -525,11 +530,11 @@ final class ZClientViewController: UIViewController {
                            options: .transitionCrossDissolve,
                            animations: { viewController.view.fitIn(view: self.view) },
                            completion: { _ in
-                            viewController.didMove(toParent: self)
-                            previousViewController.removeFromParent()
-                            self.topOverlayViewController = viewController
-                            self.updateSplitViewTopConstraint()
-                            })
+                    viewController.didMove(toParent: self)
+                    previousViewController.removeFromParent()
+                    self.topOverlayViewController = viewController
+                    self.updateSplitViewTopConstraint()
+                })
             } else {
                 topOverlayContainer.addSubview(viewController.view)
                 viewController.view.fitIn(view: topOverlayContainer)
@@ -590,9 +595,12 @@ final class ZClientViewController: UIViewController {
     }
 
     private func createLegalHoldDisclosureController() {
-        legalHoldDisclosureController = LegalHoldDisclosureController(selfUser: ZMUser.selfUser(), userSession: ZMUserSession.shared(), presenter: { viewController, animated, completion in
-            viewController.presentTopmost(animated: animated, completion: completion)
-        })
+        legalHoldDisclosureController = LegalHoldDisclosureController(
+            selfUser: userSession.selfLegalHoldSubject,
+            userSession: userSession,
+            presenter: { viewController, animated, completion in
+                viewController.presentTopmost(animated: animated, completion: completion)
+            })
     }
 
     private func createTopViewConstraints() {
@@ -610,7 +618,7 @@ final class ZClientViewController: UIViewController {
             wireSplitViewController.view.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             wireSplitViewController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             wireSplitViewController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor)
-            ])
+        ])
 
         let heightConstraint = topOverlayContainer.heightAnchor.constraint(equalToConstant: 0)
         heightConstraint.priority = UILayoutPriority.defaultLow
@@ -643,7 +651,12 @@ final class ZClientViewController: UIViewController {
             clientListViewController.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(dismissClientListController(_:)))
             viewController = clientListViewController
         } else {
-            let profileViewController = ProfileViewController(user: user, viewer: ZMUser.selfUser(), context: .deviceList)
+            guard let selfUser = ZMUser.selfUser() else {
+                assertionFailure("ZMUser.selfUser() is nil")
+                return
+            }
+
+            let profileViewController = ProfileViewController(user: user, viewer: selfUser, context: .deviceList, userSession: userSession)
 
             if let conversationViewController = (conversationRootViewController as? ConversationRootViewController)?.conversationViewController {
                 profileViewController.delegate = conversationViewController
@@ -696,7 +709,7 @@ final class ZClientViewController: UIViewController {
 
     var isConversationListVisible: Bool {
         return (wireSplitViewController.layoutSize == .regularLandscape) ||
-            (wireSplitViewController.isLeftViewControllerRevealed && conversationListViewController.presentedViewController == nil)
+        (wireSplitViewController.isLeftViewControllerRevealed && conversationListViewController.presentedViewController == nil)
     }
 
     func minimizeCallOverlay(animated: Bool,

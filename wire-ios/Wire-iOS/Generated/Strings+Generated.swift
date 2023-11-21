@@ -2089,25 +2089,19 @@ internal enum L10n {
           }
         }
         internal enum MlsMigration {
+          /// You haven’t updated this device for a while. In the meantime, the standard messaging protocol changed from Proteus to Messaging Layer Security (MLS). Due to this change, some messages may not appear here.
+          internal static let joinAfterwards = L10n.tr("Localizable", "content.system.mls_migration.join_afterwards", fallback: "You haven’t updated this device for a while. In the meantime, the standard messaging protocol changed from Proteus to Messaging Layer Security (MLS). Due to this change, some messages may not appear here.")
           /// Learn more about MLS
           internal static let learnMore = L10n.tr("Localizable", "content.system.mls_migration.learn_more", fallback: "Learn more about MLS")
+          /// Due to migration to MLS, you might have issues with your current call. If that's the case, hang up and call again.
+          internal static let ongoingCall = L10n.tr("Localizable", "content.system.mls_migration.ongoing_call", fallback: "Due to migration to MLS, you might have issues with your current call. If that's the case, hang up and call again.")
           internal enum Finalized {
-            /// This conversation now uses the new Messaging Layer Security (MLS) protocol. To communicate seamlessly, always use the latest version of Wire on your devices. %@
-            internal static func done(_ p1: Any) -> String {
-              return L10n.tr("Localizable", "content.system.mls_migration.finalized.done", String(describing: p1), fallback: "This conversation now uses the new Messaging Layer Security (MLS) protocol. To communicate seamlessly, always use the latest version of Wire on your devices. %@")
-            }
-            /// You haven’t updated this device for a while. In the meantime, the standard messaging protocol changed from Proteus to Messaging Layer Security (MLS). Due to this change, some messages may not appear here. %@
-            internal static func joinAfterwards(_ p1: Any) -> String {
-              return L10n.tr("Localizable", "content.system.mls_migration.finalized.join_afterwards", String(describing: p1), fallback: "You haven’t updated this device for a while. In the meantime, the standard messaging protocol changed from Proteus to Messaging Layer Security (MLS). Due to this change, some messages may not appear here. %@")
-            }
-            /// Due to migration to MLS, you might have issues with your current call. If that's the case, hang up and call again.
-            internal static let ongoingCall = L10n.tr("Localizable", "content.system.mls_migration.finalized.ongoing_call", fallback: "Due to migration to MLS, you might have issues with your current call. If that's the case, hang up and call again.")
+            /// This conversation now uses the new Messaging Layer Security (MLS) protocol. To communicate seamlessly, always use the latest version of Wire on your devices.
+            internal static let done = L10n.tr("Localizable", "content.system.mls_migration.finalized.done", fallback: "This conversation now uses the new Messaging Layer Security (MLS) protocol. To communicate seamlessly, always use the latest version of Wire on your devices.")
           }
           internal enum Started {
-            /// The standard messaging protocol is changing from Proteus to the new Messaging Layer Security (MLS). %@
-            internal static func description(_ p1: Any) -> String {
-              return L10n.tr("Localizable", "content.system.mls_migration.started.description", String(describing: p1), fallback: "The standard messaging protocol is changing from Proteus to the new Messaging Layer Security (MLS). %@")
-            }
+            /// The standard messaging protocol is changing from Proteus to the new Messaging Layer Security (MLS).
+            internal static let description = L10n.tr("Localizable", "content.system.mls_migration.started.description", fallback: "The standard messaging protocol is changing from Proteus to the new Messaging Layer Security (MLS).")
             /// Ensure you use the latest version of Wire to be ready for MLS and continue communicating seamlessly.
             internal static let updateLatestVersion = L10n.tr("Localizable", "content.system.mls_migration.started.update_latest_version", fallback: "Ensure you use the latest version of Wire to be ready for MLS and continue communicating seamlessly.")
             /// Update Wire until %@ to be ready for MLS and continue communicating seamlessly.

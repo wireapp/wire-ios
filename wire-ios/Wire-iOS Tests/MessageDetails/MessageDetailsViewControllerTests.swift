@@ -26,6 +26,7 @@ final class MessageDetailsViewControllerTests: BaseSnapshotTestCase {
     var conversation: SwiftMockConversation!
     var mockSelfUser: MockUserType!
     var otherUser: MockUserType!
+    var userSession: UserSessionMock!
 
     // MARK: - setUp method
 
@@ -34,7 +35,8 @@ final class MessageDetailsViewControllerTests: BaseSnapshotTestCase {
 
         mockSelfUser = MockUserType.createSelfUser(name: "Alice")
         otherUser = MockUserType.createDefaultOtherUser()
-        SelfUser.provider = SelfProvider(selfUser: mockSelfUser)
+        SelfUser.provider = SelfProvider(providedSelfUser: mockSelfUser)
+        userSession = UserSessionMock()
     }
 
     // MARK: - tearDown method
@@ -54,7 +56,7 @@ final class MessageDetailsViewControllerTests: BaseSnapshotTestCase {
         conversation = createGroupConversation()
 
         let message = MockMessageFactory.textMessage(withText: "Message")
-        message.senderUser = SelfUser.current
+        message.senderUser = SelfUser.provider?.providedSelfUser
         message.conversationLike = conversation
         message.deliveryState = .read
         message.needsReadConfirmation = true
@@ -67,7 +69,7 @@ final class MessageDetailsViewControllerTests: BaseSnapshotTestCase {
         message.backingUsersReaction = [Emoji.ID.like: Array(users.prefix(upTo: 4))]
 
         // WHEN
-        let detailsViewController = MessageDetailsViewController(message: message)
+        let detailsViewController = MessageDetailsViewController(message: message, userSession: userSession)
         detailsViewController.container.selectIndex(0, animated: false)
 
         // THEN
@@ -79,7 +81,7 @@ final class MessageDetailsViewControllerTests: BaseSnapshotTestCase {
         conversation = createGroupConversation()
 
         let message = MockMessageFactory.textMessage(withText: "Message")
-        message.senderUser = SelfUser.current
+        message.senderUser = SelfUser.provider?.providedSelfUser
         message.conversationLike = conversation
         message.updatedAt = Date(timeIntervalSince1970: 69)
         message.deliveryState = .read
@@ -94,7 +96,7 @@ final class MessageDetailsViewControllerTests: BaseSnapshotTestCase {
         message.backingUsersReaction = [Emoji.ID.like: Array(users.prefix(upTo: 4))]
 
         // WHEN
-        let detailsViewController = MessageDetailsViewController(message: message)
+        let detailsViewController = MessageDetailsViewController(message: message, userSession: userSession)
         detailsViewController.container.selectIndex(0, animated: false)
 
         // THEN
@@ -106,7 +108,7 @@ final class MessageDetailsViewControllerTests: BaseSnapshotTestCase {
         conversation = createGroupConversation()
 
         let message = MockMessageFactory.textMessage(withText: "Message")
-        message.senderUser = SelfUser.current
+        message.senderUser = SelfUser.provider?.providedSelfUser
         message.conversationLike = conversation
         message.updatedAt = Date(timeIntervalSince1970: 69)
         message.deliveryState = .read
@@ -120,7 +122,7 @@ final class MessageDetailsViewControllerTests: BaseSnapshotTestCase {
         message.backingUsersReaction = [Emoji.ID.like: Array(users.prefix(upTo: 4))]
 
         // WHEN
-        let detailsViewController = MessageDetailsViewController(message: message)
+        let detailsViewController = MessageDetailsViewController(message: message, userSession: userSession)
         detailsViewController.container.selectIndex(0, animated: false)
 
         // THEN
@@ -132,7 +134,7 @@ final class MessageDetailsViewControllerTests: BaseSnapshotTestCase {
         conversation = createGroupConversation()
 
         let message = MockMessageFactory.textMessage(withText: "Message")
-        message.senderUser = SelfUser.current
+        message.senderUser = SelfUser.provider?.providedSelfUser
         message.conversationLike = conversation
         message.deliveryState = .read
         message.needsReadConfirmation = true
@@ -147,7 +149,7 @@ final class MessageDetailsViewControllerTests: BaseSnapshotTestCase {
         message.backingUsersReaction = [Emoji.ID.like: Array(users.prefix(upTo: 4))]
 
         // WHEN
-        let detailsViewController = MessageDetailsViewController(message: message)
+        let detailsViewController = MessageDetailsViewController(message: message, userSession: userSession)
         detailsViewController.container.selectIndex(1, animated: false)
 
         // THEN
@@ -159,7 +161,7 @@ final class MessageDetailsViewControllerTests: BaseSnapshotTestCase {
         conversation = createGroupConversation()
 
         let message = MockMessageFactory.textMessage(withText: "Message")
-        message.senderUser = SelfUser.current
+        message.senderUser = SelfUser.provider?.providedSelfUser
         message.conversationLike = conversation
         message.deliveryState = .read
         message.needsReadConfirmation = true
@@ -178,7 +180,7 @@ final class MessageDetailsViewControllerTests: BaseSnapshotTestCase {
         ]
 
         // WHEN
-        let detailsViewController = MessageDetailsViewController(message: message)
+        let detailsViewController = MessageDetailsViewController(message: message, userSession: userSession)
         detailsViewController.container.selectIndex(1, animated: false)
 
         // THEN
@@ -192,13 +194,13 @@ final class MessageDetailsViewControllerTests: BaseSnapshotTestCase {
         conversation = createGroupConversation()
 
         let message = MockMessageFactory.textMessage(withText: "Message")
-        message.senderUser = SelfUser.current
+        message.senderUser = SelfUser.provider?.providedSelfUser
         message.conversationLike = conversation
         message.deliveryState = .sent
         message.needsReadConfirmation = true
 
         // WHEN
-        let detailsViewController = MessageDetailsViewController(message: message)
+        let detailsViewController = MessageDetailsViewController(message: message, userSession: userSession)
         detailsViewController.container.selectIndex(1, animated: false)
 
         // THEN
@@ -210,14 +212,14 @@ final class MessageDetailsViewControllerTests: BaseSnapshotTestCase {
         conversation = createGroupConversation()
 
         let message = MockMessageFactory.textMessage(withText: "Message")
-        message.senderUser = SelfUser.current
+        message.senderUser = SelfUser.provider?.providedSelfUser
         message.conversationLike = conversation
         message.readReceipts = []
         message.deliveryState = .sent
         message.needsReadConfirmation = false
 
         // WHEN
-        let detailsViewController = MessageDetailsViewController(message: message)
+        let detailsViewController = MessageDetailsViewController(message: message, userSession: userSession)
         detailsViewController.container.selectIndex(0, animated: false)
 
         // THEN
@@ -229,14 +231,14 @@ final class MessageDetailsViewControllerTests: BaseSnapshotTestCase {
         conversation = createGroupConversation()
 
         let message = MockMessageFactory.textMessage(withText: "Message")
-        message.senderUser = SelfUser.current
+        message.senderUser = SelfUser.provider?.providedSelfUser
         message.conversationLike = conversation
         message.readReceipts = []
         message.deliveryState = .sent
         message.needsReadConfirmation = true
 
         // WHEN
-        let detailsViewController = MessageDetailsViewController(message: message)
+        let detailsViewController = MessageDetailsViewController(message: message, userSession: userSession)
         detailsViewController.container.selectIndex(0, animated: false)
 
         // THEN
@@ -248,7 +250,7 @@ final class MessageDetailsViewControllerTests: BaseSnapshotTestCase {
         conversation = createGroupConversation()
 
         let message = MockMessageFactory.textMessage(withText: "Message")
-        message.senderUser = SelfUser.current
+        message.senderUser = SelfUser.provider?.providedSelfUser
         message.conversationLike = conversation
         let mockReadReceipt = MockReadReceipt(user: ZMUser())
         mockReadReceipt.userType = otherUser
@@ -257,7 +259,7 @@ final class MessageDetailsViewControllerTests: BaseSnapshotTestCase {
         message.needsReadConfirmation = true
 
         // WHEN: creating the controller
-        let detailsViewController = MessageDetailsViewController(message: message)
+        let detailsViewController = MessageDetailsViewController(message: message, userSession: userSession)
         detailsViewController.container.selectIndex(0, animated: false)
 
         // THEN
@@ -271,14 +273,14 @@ final class MessageDetailsViewControllerTests: BaseSnapshotTestCase {
         conversation = createGroupConversation()
 
         let message = MockMessageFactory.textMessage(withText: "Message")
-        message.senderUser = SelfUser.current
+        message.senderUser = SelfUser.provider?.providedSelfUser
         message.conversationLike = conversation
         message.isEphemeral = true
         message.backingUsersReaction = [Emoji.ID.like: [otherUser]]
         message.needsReadConfirmation = true
 
         // WHEN
-        let detailsViewController = MessageDetailsViewController(message: message)
+        let detailsViewController = MessageDetailsViewController(message: message, userSession: userSession)
 
         // THEN
         verify(detailsViewController)
@@ -294,7 +296,7 @@ final class MessageDetailsViewControllerTests: BaseSnapshotTestCase {
         message.needsReadConfirmation = false
 
         // WHEN
-        let detailsViewController = MessageDetailsViewController(message: message)
+        let detailsViewController = MessageDetailsViewController(message: message, userSession: userSession)
 
         // THEN
         verify(detailsViewController)
@@ -310,7 +312,7 @@ final class MessageDetailsViewControllerTests: BaseSnapshotTestCase {
         message.needsReadConfirmation = false
 
         // WHEN
-        let detailsViewController = MessageDetailsViewController(message: message)
+        let detailsViewController = MessageDetailsViewController(message: message, userSession: userSession)
 
         // THEN
         verify(detailsViewController)
@@ -321,12 +323,12 @@ final class MessageDetailsViewControllerTests: BaseSnapshotTestCase {
         conversation = createGroupConversation()
 
         let message = MockMessageFactory.pingMessage()
-        message.senderUser = SelfUser.current
+        message.senderUser = SelfUser.provider?.providedSelfUser
         message.conversationLike = conversation
         message.needsReadConfirmation = true
 
         // WHEN
-        let detailsViewController = MessageDetailsViewController(message: message)
+        let detailsViewController = MessageDetailsViewController(message: message, userSession: userSession)
 
         // THEN
         verify(detailsViewController)
@@ -340,7 +342,7 @@ final class MessageDetailsViewControllerTests: BaseSnapshotTestCase {
             conversation = createGroupConversation()
 
             let message = MockMessageFactory.textMessage(withText: "Message")
-            message.senderUser = SelfUser.current
+            message.senderUser = SelfUser.provider?.providedSelfUser
             message.conversationLike = conversation
 
             let users = MockUserType.usernames.prefix(upTo: 5).map({
@@ -351,7 +353,7 @@ final class MessageDetailsViewControllerTests: BaseSnapshotTestCase {
             message.backingUsersReaction = [Emoji.ID.like: Array(users.prefix(upTo: 4))]
 
             // WHEN
-            let detailsViewController = MessageDetailsViewController(message: message)
+            let detailsViewController = MessageDetailsViewController(message: message, userSession: userSession)
             detailsViewController.container.selectIndex(0, animated: false)
             return detailsViewController
         }

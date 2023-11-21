@@ -136,26 +136,9 @@ extension ZMConversation {
 
     // MARK: - MLS Migration
 
-    public func appendMLSMigrationStartedSystemMessage(
-        users: Set<ZMUser>,
-        sender: ZMUser,
-        removedReason: ZMParticipantsRemovedReason,
-        at timestamp: Date
-    ) {
-        appendSystemMessage(
-            type: .mlsMigrationStarted,
-            sender: sender,
-            users: users,
-            clients: nil,
-            timestamp: timestamp,
-            removedReason: removedReason
-        )
-    }
-
     public func appendMLSMigrationFinalizedSystemMessage(
         users: Set<ZMUser>,
         sender: ZMUser,
-        removedReason: ZMParticipantsRemovedReason,
         at timestamp: Date
     ) {
         appendSystemMessage(
@@ -163,8 +146,63 @@ extension ZMConversation {
             sender: sender,
             users: users,
             clients: nil,
-            timestamp: timestamp,
-            removedReason: removedReason
+            timestamp: timestamp
+        )
+    }
+
+    public func appendMLSMigrationJoinAfterwardsSystemMessage(
+        users: Set<ZMUser>,
+        sender: ZMUser,
+        at timestamp: Date
+    ) {
+        appendSystemMessage(
+            type: .mlsMigrationJoinAfterwards,
+            sender: sender,
+            users: users,
+            clients: nil,
+            timestamp: timestamp
+        )
+    }
+
+    public func appendMLSMigrationOngoingCallSystemMessage(
+        users: Set<ZMUser>,
+        sender: ZMUser,
+        at timestamp: Date
+    ) {
+        appendSystemMessage(
+            type: .mlsMigrationOngoingCall,
+            sender: sender,
+            users: users,
+            clients: nil,
+            timestamp: timestamp
+        )
+    }
+
+    public func appendMLSMigrationStartedSystemMessage(
+        users: Set<ZMUser>,
+        sender: ZMUser,
+        at timestamp: Date
+    ) {
+        appendSystemMessage(
+            type: .mlsMigrationStarted,
+            sender: sender,
+            users: users,
+            clients: nil,
+            timestamp: timestamp
+        )
+    }
+
+    public func appendMLSMigrationUpdateVersionSystemMessage(
+        users: Set<ZMUser>,
+        sender: ZMUser,
+        at timestamp: Date
+    ) {
+        appendSystemMessage(
+            type: .mlsMigrationUpdateVersion,
+            sender: sender,
+            users: users,
+            clients: nil,
+            timestamp: timestamp
         )
     }
 }

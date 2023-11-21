@@ -413,7 +413,8 @@ final class ConversationSystemMessageCellDescription {
             cells.append(AnyConversationMessageCellDescription(startedConversationCell))
 
             // Only display invite user cell for team members
-            if SelfUser.current.isTeamMember,
+            if let user = SelfUser.provider?.providedSelfUser,
+               user.isTeamMember,
                conversation.selfCanAddUsers,
                conversation.isOpenGroup {
                 cells.append(AnyConversationMessageCellDescription(GuestsAllowedCellDescription()))
@@ -437,12 +438,24 @@ final class ConversationSystemMessageCellDescription {
             let domainsStoppedFederatingCell = DomainsStoppedFederatingCellDescription(systemMessageData: systemMessageData)
             return [AnyConversationMessageCellDescription(domainsStoppedFederatingCell)]
 
+        case .mlsMigrationFinalized:
+            let description = MLSMigrationFinalizedCellDescription(systemMessageData: systemMessageData)
+            return [AnyConversationMessageCellDescription(description)]
+
+        case .mlsMigrationJoinAfterwards:
+            let description = MLSMigrationJoinAfterwardsCellDescription(systemMessageData: systemMessageData)
+            return [AnyConversationMessageCellDescription(description)]
+
+        case .mlsMigrationOngoingCall:
+            let description = MLSMigrationOngoingCallCellDescription(systemMessageData: systemMessageData)
+            return [AnyConversationMessageCellDescription(description)]
+
         case .mlsMigrationStarted:
             let description = MLSMigrationStartedCellDescription(systemMessageData: systemMessageData)
             return [AnyConversationMessageCellDescription(description)]
 
-        case .mlsMigrationFinalized:
-            let description = MLSMigrationFinalizedCellDescription(systemMessageData: systemMessageData)
+        case .mlsMigrationUpdateVersion:
+            let description = MLSMigrationUpdateVersionCellDescription(systemMessageData: systemMessageData)
             return [AnyConversationMessageCellDescription(description)]
 
         case .invalid:
@@ -460,7 +473,11 @@ private extension ConversationLike {
     }
 
     var selfCanAddUsers: Bool {
-        return SelfUser.current.canAddUser(to: self)
+        guard let user = SelfUser.provider?.providedSelfUser else {
+            assertionFailure("expected available 'user'!")
+            return false
+        }
+        return user.canAddUser(to: self)
     }
 }
 
@@ -1205,8 +1222,8 @@ final class DomainsStoppedFederatingCellDescription: ConversationMessageCellDesc
         }
 
         var text: String
-        if domains.hasSelfDomain {
-            let withoutSelfDomain = domains.filter { $0 != SelfUser.current.domain }
+        if domains.hasSelfDomain, let user = SelfUser.provider?.providedSelfUser {
+            let withoutSelfDomain = domains.filter { $0 != user.domain }
             text = BackendsStopFederating.selfBackend(withoutSelfDomain.first ?? "", URL.wr_FederationLearnMore.absoluteString)
         } else {
             text = BackendsStopFederating.otherBackends(domains.first ?? "", domains.last ?? "", URL.wr_FederationLearnMore.absoluteString)
@@ -1222,7 +1239,7 @@ final class DomainsStoppedFederatingCellDescription: ConversationMessageCellDesc
 private extension Array where Element == String {
 
     var hasSelfDomain: Bool {
-        return self.contains(SelfUser.provider?.selfUser.domain ?? "")
+        return self.contains(SelfUser.provider?.providedSelfUser.domain ?? "")
     }
 
 }

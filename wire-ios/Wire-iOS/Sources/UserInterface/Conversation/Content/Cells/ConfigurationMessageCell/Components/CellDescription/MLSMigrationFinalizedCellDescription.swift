@@ -43,16 +43,25 @@ final class MLSMigrationFinalizedCellDescription: ConversationMessageCellDescrip
         let icon = Asset.Images.attention.image.withTintColor(SemanticColors.Icon.backgroundDefault)
         let content = Self.makeAttributedString(for: systemMessageData)
 
-        configuration = View.Configuration(icon: icon, attributedText: content, showLine: true)
+        configuration = View.Configuration(icon: icon, attributedText: content, showLine: false)
         accessibilityLabel = content?.string
     }
 
     private static func makeAttributedString(for systemMessageData: ZMSystemMessageData) -> NSAttributedString? {
         typealias Localizable = L10n.Localizable.Content.System.MlsMigration
 
-        let link = Localizable.learnMore.localized
-        let text = Localizable.Finalized.done(link)
-        return NSAttributedString.markdown(from: text, style: .systemMessage)
-    }
+        let text = NSMutableAttributedString.markdown(
+            from: Localizable.Finalized.done,
+            style: .systemMessage
+        )
+        let link = NSAttributedString(
+            string: Localizable.learnMore,
+            attributes: [
+                .font: UIFont.mediumSemiboldFont,
+                .underlineStyle: NSUnderlineStyle(.single).rawValue as NSNumber
+            ]
+        )
 
+        return [text, link].joined(separator: NSAttributedString(" "))
+    }
 }

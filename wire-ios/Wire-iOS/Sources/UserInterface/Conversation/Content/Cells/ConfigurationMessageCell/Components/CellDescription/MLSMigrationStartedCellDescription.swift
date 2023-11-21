@@ -50,9 +50,19 @@ final class MLSMigrationStartedCellDescription: ConversationMessageCellDescripti
     private static func makeAttributedString(for systemMessageData: ZMSystemMessageData) -> NSAttributedString? {
         typealias Localizable = L10n.Localizable.Content.System.MlsMigration
 
-        let link = Localizable.learnMore.localized
-        let text = Localizable.Started.description(link).localized
-        return NSAttributedString.markdown(from: text, style: .systemMessage)
+        let text = NSMutableAttributedString.markdown(
+            from: Localizable.Started.description,
+            style: .systemMessage
+        )
+        let link = NSAttributedString(
+            string: Localizable.learnMore,
+            attributes: [
+                .font: UIFont.mediumSemiboldFont,
+                .underlineStyle: NSUnderlineStyle(.single).rawValue as NSNumber
+            ]
+        )
+
+        return [text, link].joined(separator: NSAttributedString(" "))
     }
 
 }

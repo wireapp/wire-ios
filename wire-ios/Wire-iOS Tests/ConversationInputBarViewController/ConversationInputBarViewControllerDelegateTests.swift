@@ -24,16 +24,19 @@ final class ConversationInputBarViewControllerDelegateTests: XCTestCase {
     var coreDataFixture: CoreDataFixture!
     private var mockDelegate: MockDelegate!
     var sut: ConversationInputBarViewController!
+    var userSession: UserSessionMock!
 
     override func setUp() {
         super.setUp()
         coreDataFixture = CoreDataFixture()
+        userSession = UserSessionMock()
     }
 
     override func tearDown() {
         coreDataFixture = nil
         mockDelegate = nil
         sut = nil
+        userSession = nil
 
         super.tearDown()
     }
@@ -41,7 +44,7 @@ final class ConversationInputBarViewControllerDelegateTests: XCTestCase {
     func testThatDismissingQuoteUpdatesDraftAndNotifiesDelegate() {
         // Given
         let conversation = coreDataFixture.otherUserConversation!
-        sut = ConversationInputBarViewController(conversation: conversation)
+        sut = ConversationInputBarViewController(conversation: conversation, userSession: userSession)
 
         mockDelegate = MockDelegate()
 
