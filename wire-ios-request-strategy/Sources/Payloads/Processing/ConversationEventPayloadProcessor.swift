@@ -527,7 +527,7 @@ final class ConversationEventPayloadProcessor {
         serverTimestamp: Date,
         source: Source
     ) -> ZMConversation? {
-        guard 
+        guard
             let conversationID = payload.id ?? payload.qualifiedID?.uuid,
             let conversationType = payload.type.map(BackendConversationType.clientConversationType)
         else {
@@ -541,15 +541,6 @@ final class ConversationEventPayloadProcessor {
             in: context
         )
 
-        if
-            let otherMember = payload.members?.others.first,
-            let otherUserID = otherMember.id ?? otherMember.qualifiedID?.uuid
-        {
-            let otherUser = ZMUser.fetchOrCreate(with: otherUserID, domain: otherMember.qualifiedID?.domain, in: context)
-            otherUser.connection?.conversation = conversation
-            conversation.isPendingMetadataRefresh = otherUser.isPendingMetadataRefresh
-        }
-
         conversation.conversationType = self.conversationType(for: conversation, from: conversationType)
         updateAttributes(from: payload, for: conversation, context: context)
         updateMessageProtocol(from: payload, for: conversation)
@@ -559,59 +550,22 @@ final class ConversationEventPayloadProcessor {
         updateConversationStatus(from: payload, for: conversation)
         conversation.needsToBeUpdatedFromBackend = false
 
-        establishMLSGroupIfNeeded(for: conversation, in: context)
+        if let otherUser = conversation.localParticipantsExcludingSelf.first {
+            if
+                let connection = otherUser.connection,
+                let existingConversation = connection.conversation,
+                existingConversation.messageProtocol == .proteus,
+                conversation.messageProtocol == .mls
+            {
+                // Invalidate old proteus conversation, make mls conversation active.
+                existingConversation.conversationType = .invalid
+                connection.conversation = conversation
+            }
+
+            conversation.isPendingMetadataRefresh = otherUser.isPendingMetadataRefresh
+        }
 
         return conversation
-    }
-
-    private func establishMLSGroupIfNeeded(
-        for conversation: ZMConversation,
-        in context: NSManagedObjectContext
-    ) {
-        guard 
-            conversation.messageProtocol != .mls,
-            let otherUser = conversation.connection?.to
-        else {
-            return
-        }
-
-        let selfUser = ZMUser.selfUser(in: context)
-        let commonProtocols = selfUser.supportedProtocols.intersection(otherUser.supportedProtocols)
-
-        guard !commonProtocols.isEmpty else {
-            conversation.isForcedReadOnly = true
-            return
-        }
-
-        guard commonProtocols.contains(.mls) else {
-            return
-        }
-
-        guard
-            let mlsService = context.mlsService,
-            let otherUserID = otherUser.remoteIdentifier,
-            let otherUserDomain = otherUser.domain ?? BackendInfo.domain
-        else {
-            return
-        }
-
-        Task {
-            let otherUserID = QualifiedID(
-                uuid: otherUserID,
-                domain: otherUserDomain
-            )
-
-            let mlsGroupID = try await mlsService.establishOneToOneGroupIfNeeded(
-                with: otherUserID,
-                in: context
-            )
-
-            await context.perform {
-                let conversation = ZMConversation.fetch(with: mlsGroupID, in: context)
-                otherUser.connection?.conversation.conversationType = .invalid
-                otherUser.connection?.conversation = conversation
-            }
-        }
     }
 
     private func updateAttributes(
