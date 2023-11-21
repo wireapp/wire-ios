@@ -174,7 +174,7 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
         for groupID in mlsGroupIds {
             do {
                 if mlsService.conversationExists(groupID: groupID) {
-                    // if conversation exists we finalize migration
+                    // TODO: if conversation exists we finalize migration
                 } else {
                     try await mlsService.joinGroup(with: groupID)
                 }
