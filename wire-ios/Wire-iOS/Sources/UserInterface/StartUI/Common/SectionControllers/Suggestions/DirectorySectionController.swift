@@ -78,7 +78,7 @@ final class DirectorySectionController: SearchSectionController {
             user.accept { [weak self] error in
                 guard
                     let strongSelf = self,
-                    let error = error as? UpdateConnectionError
+                    let error = error as? LocalizedError
                 else {
                     return
                 }
