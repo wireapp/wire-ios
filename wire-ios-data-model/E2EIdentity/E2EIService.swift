@@ -55,7 +55,7 @@ public final class E2EIService: E2EIServiceInterface {
     // MARK: - Setup enrollment
 
     public func setupEnrollment() async throws {
-        // TODO: we should use the new CoreCrypto version: `e2eiNewRotateEnrollment` and `e2eiNewActivationEnrollment`
+        /// TODO: we should use the new CoreCrypto version: `e2eiNewRotateEnrollment` and `e2eiNewActivationEnrollment`
         do {
             e2eIdentity = try coreCrypto.perform {
                 try $0.e2eiNewEnrollment(clientId: mlsClientId.rawValue,
