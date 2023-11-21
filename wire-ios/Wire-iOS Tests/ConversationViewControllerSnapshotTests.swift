@@ -25,7 +25,7 @@ final class ConversationViewControllerSnapshotTests: ZMSnapshotTestCase, CoreDat
     var sut: ConversationViewController!
     var mockConversation: ZMConversation!
     var serviceUser: ZMUser!
-    var mockZMUserSession: MockZMUserSession!
+    var userSession: UserSessionMock!
     var coreDataFixture: CoreDataFixture!
 
     override func setupCoreDataStack() {
@@ -38,17 +38,28 @@ final class ConversationViewControllerSnapshotTests: ZMSnapshotTestCase, CoreDat
         super.setUp()
 
         mockConversation = createTeamGroupConversation()
-        mockZMUserSession = MockZMUserSession()
+        userSession = UserSessionMock(mockUser: .createSelfUser(name: "Bob"))
+        userSession.mockConversationList = ZMConversationList(
+            allConversations: [mockConversation!],
+            filteringPredicate: NSPredicate(
+                value: true
+            ),
+            moc: uiMOC,
+            description: "all conversations"
+        )
+
         serviceUser = coreDataFixture.createServiceUser()
 
         let mockAccount = Account(userName: "mock user", userIdentifier: UUID())
-        let selfUser = MockUserType.createSelfUser(name: "Bob")
-        let zClientViewController = ZClientViewController(account: mockAccount, selfUser: selfUser)
+        let zClientViewController = ZClientViewController(account: mockAccount, userSession: userSession)
 
-        sut = ConversationViewController(session: mockZMUserSession,
-                                         conversation: mockConversation,
-                                         visibleMessage: nil,
-                                         zClientViewController: zClientViewController)
+        sut = ConversationViewController(
+            conversation: mockConversation,
+            visibleMessage: nil,
+            zClientViewController: zClientViewController,
+            userSession: userSession
+        )
+
     }
 
     override func tearDown() {
@@ -72,7 +83,7 @@ extension ConversationViewControllerSnapshotTests {
         // given
 
         // when
-        mockZMUserSession.encryptMessagesAtRest = true
+        userSession.encryptMessagesAtRest = true
 
         // then
         XCTAssertFalse(sut.shouldShowCollectionsButton)
@@ -82,7 +93,7 @@ extension ConversationViewControllerSnapshotTests {
         // given
 
         // when
-        mockZMUserSession.encryptMessagesAtRest = false
+        userSession.encryptMessagesAtRest = false
 
         // then
         XCTAssertTrue(sut.shouldShowCollectionsButton)

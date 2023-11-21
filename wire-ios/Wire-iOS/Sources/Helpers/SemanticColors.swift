@@ -229,6 +229,9 @@ public enum SemanticColors {
         /// Audio Buttons
         static let backgroundAudioMessageOverlay = UIColor(light: Asset.Colors.green500Light, dark: Asset.Colors.green500Dark)
         static let backgroundconfirmSendingAudioMessage = UIColor(light: Asset.Colors.green500Light, dark: Asset.Colors.green500Dark)
+
+        // Scroll To Bottom Button
+        static let backgroundScrollToBottonEnabled = UIColor(light: Asset.Colors.gray70, dark: Asset.Colors.gray60)
     }
 
     public enum DrawingColors {

@@ -49,8 +49,10 @@ final class CallParticipantsListViewController: UIViewController, UICollectionVi
         super.init(nibName: nil, bundle: nil)
     }
 
-    convenience init(scrollableWithConfiguration configuration: CallInfoViewControllerInput,
-                     selfUser: UserType = ZMUser.selfUser()) {
+    convenience init(
+        scrollableWithConfiguration configuration: CallInfoViewControllerInput,
+        selfUser: UserType
+    ) {
         self.init(participants: configuration.accessoryType.participants,
                   showParticipants: true,
                   selfUser: selfUser)
