@@ -2669,13 +2669,82 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         conversation.domain = "example.com"
         conversation.teamRemoteIdentifier = user.teamIdentifier
 
+        let updateConversationProtocolExpectation = expectation(description: "updateConversationProtocol must be called")
+        mockActionsProvider.updateConversationProtocolQualifiedIDMessageProtocolContext_MockMethod = { [uiMOC] qualifiedID, messageProtocol, notificationContext in
+            XCTAssertEqual(qualifiedID, conversation.qualifiedID)
+            XCTAssertEqual(messageProtocol, .mixed)
+            XCTAssert(notificationContext === uiMOC.notificationContext)
+            updateConversationProtocolExpectation.fulfill()
+        }
+
+        let syncConversationExpectation = expectation(description: "syncConversation must be called")
+        mockActionsProvider.syncConversationQualifiedIDContext_MockMethod = { [uiMOC] qualifiedID, notificationContext in
+            XCTAssertEqual(qualifiedID, conversation.qualifiedID)
+            XCTAssert(notificationContext === uiMOC.notificationContext)
+            conversation.messageProtocol = .mixed
+            syncConversationExpectation.fulfill()
+        }
+
+        let createConversationExpectation = expectation(description: "createConversation must be called")
+        mockCoreCrypto.mockCreateConversation = { conversationID, _, _ in
+            XCTAssertEqual(conversationID, [UInt8](groupID.data))
+            createConversationExpectation.fulfill()
+        }
+
+        let updateKeyMaterialExpectation = expectation(description: "updateKeyMaterial must be called")
+        mockMLSActionExecutor.mockUpdateKeyMaterial = { mlsGroupID in
+            XCTAssertEqual(mlsGroupID, conversation.mlsGroupID)
+            updateKeyMaterialExpectation.fulfill()
+            return []
+        }
+
+        let commitPendingProposalsExpectation = expectation(description: "commitPendingProposals must be called")
+        mockMLSActionExecutor.mockCommitPendingProposals = { _ in
+            commitPendingProposalsExpectation.fulfill()
+            throw MLSActionExecutor.Error.noPendingProposals
+        }
+
         // When
         try await sut.startProteusToMLSMigration()
 
-        // test protcol is `mixed`
+        // Then
+        await fulfillment(
+            of: [
+                updateConversationProtocolExpectation,
+                syncConversationExpectation,
+                createConversationExpectation,
+                updateKeyMaterialExpectation,
+                commitPendingProposalsExpectation
+            ],
+            timeout: 5,
+            enforceOrder: true
+        )
     }
 
-    func test_startProteusToMLSMigration_staleMessageErrorWipesGroup() {
-        XCTFail("TODO")
+    func test_startProteusToMLSMigration_staleMessageErrorWipesGroup() async throws {
+        // Given
+        let user = ZMUser.selfUser(in: uiMOC)
+        user.teamIdentifier = .create()
+
+        let conversation = createConversation(in: uiMOC)
+        conversation.mlsGroupID = .random()
+        conversation.messageProtocol = .proteus
+        conversation.domain = "example.com"
+        conversation.teamRemoteIdentifier = user.teamIdentifier
+
+        mockActionsProvider.updateConversationProtocolQualifiedIDMessageProtocolContext_MockMethod = { _, _, _ in }
+        mockActionsProvider.syncConversationQualifiedIDContext_MockMethod = { _, _ in
+            conversation.messageProtocol = .mixed
+        }
+        mockCoreCrypto.mockCreateConversation = { _, _, _ in }
+        mockMLSActionExecutor.mockUpdateKeyMaterial = { _ in
+            throw SendMLSMessageAction.Failure.mlsStaleMessage
+        }
+
+        // When
+        try await sut.startProteusToMLSMigration()
+
+        // Then
+        // ?
     }
 }
