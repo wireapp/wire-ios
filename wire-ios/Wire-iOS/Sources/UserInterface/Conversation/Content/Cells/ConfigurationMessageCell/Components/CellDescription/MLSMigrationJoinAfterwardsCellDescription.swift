@@ -51,7 +51,7 @@ final class MLSMigrationJoinAfterwardsCellDescription: ConversationMessageCellDe
         typealias Localizable = L10n.Localizable.Content.System.MlsMigration
 
         let link = Localizable.learnMore
-        let text = Localizable.Finalized.joinAfterwards(link)
+        let text = Localizable.Finalized.joinAfterwards
 
         return NSAttributedString.markdown(from: text, style: .systemMessage)
     }

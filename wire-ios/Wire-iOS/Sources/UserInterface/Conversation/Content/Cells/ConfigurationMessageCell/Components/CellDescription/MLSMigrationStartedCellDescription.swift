@@ -51,7 +51,7 @@ final class MLSMigrationStartedCellDescription: ConversationMessageCellDescripti
         typealias Localizable = L10n.Localizable.Content.System.MlsMigration
 
         let link = Localizable.learnMore.localized
-        let text = Localizable.Started.description(link).localized
+        let text = Localizable.Started.description.localized
         return NSAttributedString.markdown(from: text, style: .systemMessage)
     }
 
