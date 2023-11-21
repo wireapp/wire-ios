@@ -63,7 +63,7 @@ final class UserClientCell: SeparatorCollectionViewCell {
 
         accessoryIconView.translatesAutoresizingMaskIntoConstraints = false
         accessoryIconView.contentMode = .center
-        accessoryIconView.setTemplateIcon(.disclosureIndicator, size: 12)
+        accessoryIconView.image = Asset.Images.rightChevron.image.withRenderingMode(.alwaysTemplate)
         accessoryIconView.tintColor = IconColors.foregroundDefault
 
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
