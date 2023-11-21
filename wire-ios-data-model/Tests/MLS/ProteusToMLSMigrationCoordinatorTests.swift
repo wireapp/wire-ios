@@ -70,16 +70,22 @@ class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
 
     func testMigrateOrJoinGroupConversations_CallsJoinGroupForNewConversations() async throws {
         // GIVEN
-        let selfUser = ZMUser.selfUser(in: syncMOC)
-        selfUser.teamIdentifier = UUID()
+        var groupID: MLSGroupID?
 
-        let conversation = ZMConversation.insertNewObject(in: syncMOC)
-        conversation.teamRemoteIdentifier = selfUser.teamIdentifier
-        conversation.conversationType = .group
-        conversation.messageProtocol = .mixed
-        conversation.mlsGroupID = .random()
+        await syncMOC.perform {
+            let selfUser = ZMUser.selfUser(in: self.syncMOC)
+            selfUser.teamIdentifier = UUID()
 
-        let groupID = try XCTUnwrap(conversation.mlsGroupID)
+            let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
+            conversation.teamRemoteIdentifier = selfUser.teamIdentifier
+            conversation.conversationType = .group
+            conversation.messageProtocol = .mixed
+            conversation.mlsGroupID = .random()
+
+            groupID = conversation.mlsGroupID
+        }
+
+        let conversationGroupID = try XCTUnwrap(groupID)
 
         mockMLSService.conversationExistsMock = { _ in
             return false
@@ -89,21 +95,28 @@ class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
         await sut.migrateOrJoinGroupConversations()
 
         // THEN
-        XCTAssertTrue(mockMLSService.calls.joinGroup.contains(groupID), "joinGroup should be called for new conversations")
+        XCTAssertTrue(mockMLSService.calls.joinGroup.contains(conversationGroupID), "joinGroup should be called for new conversations")
     }
 
     func testMigrateOrJoinGroupConversations_DoesNotCallJoinGroupForExistingConversations() async throws {
         // GIVEN
-        let selfUser = ZMUser.selfUser(in: syncMOC)
-        selfUser.teamIdentifier = UUID()
+        var groupID: MLSGroupID?
 
-        let conversation = ZMConversation.insertNewObject(in: syncMOC)
-        conversation.teamRemoteIdentifier = selfUser.teamIdentifier
-        conversation.conversationType = .group
-        conversation.messageProtocol = .mixed
-        conversation.mlsGroupID = .random()
+        await syncMOC.perform {
+            let selfUser = ZMUser.selfUser(in: self.syncMOC)
+            selfUser.teamIdentifier = UUID()
 
-        let groupID = try XCTUnwrap(conversation.mlsGroupID)
+            let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
+            conversation.teamRemoteIdentifier = selfUser.teamIdentifier
+            conversation.conversationType = .group
+            conversation.messageProtocol = .mixed
+            conversation.mlsGroupID = .random()
+
+            groupID = conversation.mlsGroupID
+        }
+
+        let conversationGroupID = try XCTUnwrap(groupID)
+
         mockMLSService.conversationExistsMock = { _ in
             return true
         }
@@ -112,13 +125,21 @@ class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
         await sut.migrateOrJoinGroupConversations()
 
         // THEN
-        XCTAssertFalse(mockMLSService.calls.joinGroup.contains(groupID), "joinGroup should not be called for existing conversations")
+        XCTAssertFalse(mockMLSService.calls.joinGroup.contains(conversationGroupID), "joinGroup should not be called for existing conversations")
     }
 
     // MARK: - UpdateMigrationStatus
 
     func test_UpdateMigrationStatus_StartsMigration_IfNotStartedAndReady() async {
         // Given
+        await syncMOC.perform {
+            let selfUser = ZMUser.selfUser(in: self.syncMOC)
+            selfUser.teamIdentifier = UUID()
+
+            let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
+            conversation.teamRemoteIdentifier = selfUser.teamIdentifier
+        }
+
         setMigrationReadiness(to: true)
         mockStorage.underlyingMigrationStatus = .notStarted
 
@@ -137,6 +158,14 @@ class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
 
     func test_UpdateMigrationStatus_DoesntStartMigration_IfAlreadyStarted() async {
         // Given
+        await syncMOC.perform {
+            let selfUser = ZMUser.selfUser(in: self.syncMOC)
+            selfUser.teamIdentifier = UUID()
+
+            let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
+            conversation.teamRemoteIdentifier = selfUser.teamIdentifier
+        }
+
         setMigrationReadiness(to: true)
         mockStorage.underlyingMigrationStatus = .started
 
@@ -155,6 +184,13 @@ class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
 
     func test_UpdateMigrationStatus_DoesntStartMigration_IfNotReady() async {
         // Given
+        await syncMOC.perform {
+            let selfUser = ZMUser.selfUser(in: self.syncMOC)
+            selfUser.teamIdentifier = UUID()
+
+            let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
+            conversation.teamRemoteIdentifier = selfUser.teamIdentifier
+        }
         setMigrationReadiness(to: false)
         mockStorage.underlyingMigrationStatus = .notStarted
 
