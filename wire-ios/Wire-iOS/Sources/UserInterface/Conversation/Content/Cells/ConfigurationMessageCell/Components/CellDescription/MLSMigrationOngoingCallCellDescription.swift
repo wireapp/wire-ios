@@ -49,7 +49,7 @@ final class MLSMigrationOngoingCallCellDescription: ConversationMessageCellDescr
 
     private static func makeAttributedString(for systemMessageData: ZMSystemMessageData) -> NSAttributedString? {
         NSAttributedString.markdown(
-            from: L10n.Localizable.Content.System.MlsMigration.Finalized.ongoingCall,
+            from: L10n.Localizable.Content.System.MlsMigration.ongoingCall,
             style: .systemMessage
         )
     }

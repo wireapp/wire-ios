@@ -51,11 +51,11 @@ final class MLSMigrationStartedCellDescription: ConversationMessageCellDescripti
         typealias Localizable = L10n.Localizable.Content.System.MlsMigration
 
         let text = NSMutableAttributedString.markdown(
-            from: Localizable.Started.description.localized,
+            from: Localizable.Started.description,
             style: .systemMessage
         )
         let link = NSAttributedString(
-            string: Localizable.learnMore.localized,
+            string: Localizable.learnMore,
             attributes: [
                 .font: UIFont.mediumSemiboldFont,
                 .underlineStyle: NSUnderlineStyle(.single).rawValue as NSNumber
