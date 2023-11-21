@@ -244,18 +244,19 @@ public class MockPrekeyPayloadProcessorInterface: PrekeyPayloadProcessorInterfac
     }
 
 }
-class MockQuickSyncObserverInterface: QuickSyncObserverInterface {
+public class MockQuickSyncObserverInterface: QuickSyncObserverInterface {
 
     // MARK: - Life cycle
 
+    public init() {}
 
 
     // MARK: - waitForQuickSyncToFinish
 
-    var waitForQuickSyncToFinish_Invocations: [Void] = []
-    var waitForQuickSyncToFinish_MockMethod: (() async -> Void)?
+    public var waitForQuickSyncToFinish_Invocations: [Void] = []
+    public var waitForQuickSyncToFinish_MockMethod: (() async -> Void)?
 
-    func waitForQuickSyncToFinish() async {
+    public func waitForQuickSyncToFinish() async {
         waitForQuickSyncToFinish_Invocations.append(())
 
         guard let mock = waitForQuickSyncToFinish_MockMethod else {
