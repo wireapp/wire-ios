@@ -99,7 +99,7 @@ extension ConversationInputBarViewController {
 
         let browseHandler: ((UIAlertAction) -> Void) = { _ in
 
-            let documentPickerViewController = UIDocumentPickerViewController(forOpeningContentTypes: [UTType.item])
+            let documentPickerViewController = UIDocumentPickerViewController(forOpeningContentTypes: [UTType.item], asCopy: true)
             documentPickerViewController.modalPresentationStyle = self.isIPadRegular() ? .popover : .fullScreen
             if self.isIPadRegular(),
                 let sourceView = self.parent?.view,
