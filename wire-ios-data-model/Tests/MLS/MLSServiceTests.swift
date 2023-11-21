@@ -2658,6 +2658,18 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
     // MARK: - Proteus to MLS migration
 
     func test_startProteusToMLSMigration_succeeds() async throws {
+        // Given
+        let user = ZMUser.selfUser(in: uiMOC)
+        user.teamIdentifier = .create()
+
+        let groupID = MLSGroupID.random()
+        let conversation = createConversation(in: uiMOC)
+        conversation.mlsGroupID = groupID
+        conversation.messageProtocol = .proteus
+        conversation.domain = "example.com"
+        conversation.teamRemoteIdentifier = user.teamIdentifier
+
+        // When
         try await sut.startProteusToMLSMigration()
 
         // test protcol is `mixed`

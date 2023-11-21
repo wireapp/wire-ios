@@ -1699,15 +1699,10 @@ public final class MLSService: MLSServiceInterface {
             }
 
             // update message protocol to `mixed`
-            var updateConversationProtocolAction = UpdateConversationProtocolAction(
-                qualifiedID: qualifiedID,
-                messageProtocol: .mixed
-            )
-            try await updateConversationProtocolAction.perform(in: context.notificationContext)
+            try await actionsProvider.updateConversationProtocol(qualifiedID: qualifiedID, messageProtocol: .mixed, context: context.notificationContext)
 
             // sync the group conversation
-            var syncConversationAction = SyncConversationAction(qualifiedID: qualifiedID)
-            try await syncConversationAction.perform(in: context.notificationContext)
+            try await actionsProvider.syncConversation(qualifiedID: qualifiedID, context: context.notificationContext)
 
             // create MLS group and update keying material
             try createGroup(for: mlsGroupID)
