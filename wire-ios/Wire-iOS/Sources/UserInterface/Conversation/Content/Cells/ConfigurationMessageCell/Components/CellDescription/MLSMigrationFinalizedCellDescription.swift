@@ -58,8 +58,7 @@ final class MLSMigrationFinalizedCellDescription: ConversationMessageCellDescrip
             string: Localizable.learnMore.localized,
             attributes: [
                 .font: UIFont.mediumSemiboldFont,
-                .underlineStyle: NSUnderlineStyle().rawValue as NSNumber,
-                .foregroundColor: SelfUser.provider?.providedSelfUser.accentColor ?? UIColor.accent()
+                .underlineStyle: NSUnderlineStyle(.single).rawValue as NSNumber
             ]
         )
 
