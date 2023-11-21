@@ -70,7 +70,7 @@ class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
 
     func testMigrateOrJoinGroupConversations_CallsJoinGroupForNewConversations() async throws {
         // GIVEN
-        var groupID: MLSGroupID?
+        let groupID: MLSGroupID = .random()
 
         await syncMOC.perform {
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
@@ -80,12 +80,8 @@ class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
             conversation.teamRemoteIdentifier = selfUser.teamIdentifier
             conversation.conversationType = .group
             conversation.messageProtocol = .mixed
-            conversation.mlsGroupID = .random()
-
-            groupID = conversation.mlsGroupID
+            conversation.mlsGroupID = groupID
         }
-
-        let conversationGroupID = try XCTUnwrap(groupID)
 
         mockMLSService.conversationExistsMock = { _ in
             return false

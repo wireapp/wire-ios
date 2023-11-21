@@ -180,7 +180,7 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
                 }
 
             } catch {
-                logger.warn("Can't migrate conversation to mls: \(String(describing: error))")
+                logger.warn("Can't migrate conversation with group id \(groupID.safeForLoggingDescription) to mls: \(String(describing: error))")
             }
         }
 
