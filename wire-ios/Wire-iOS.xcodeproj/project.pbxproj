@@ -1269,6 +1269,7 @@
 		E91F90202A851AE400B1A5B8 /* FontBook.swift in Sources */ = {isa = PBXBuildFile; fileRef = E91F901F2A851AE400B1A5B8 /* FontBook.swift */; };
 		E92A07A02817E553006BA73B /* DynamicFontButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E92A079F2817E553006BA73B /* DynamicFontButton.swift */; };
 		E92D1B95285B773B00366AFC /* LabelStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = E92D1B94285B773B00366AFC /* LabelStyle.swift */; };
+		E92D31752B0CBAD400F5AAD4 /* FontBookSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E92D31742B0CBAD400F5AAD4 /* FontBookSnapshotTests.swift */; };
 		E93DA61A2913F38A00A0F17C /* LinkButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E93DA6192913F38A00A0F17C /* LinkButton.swift */; };
 		E942A38D28A2AC3A00C3092F /* NavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E942A38C28A2AC3A00C3092F /* NavigationController.swift */; };
 		E94784E9278EDDC200F9FE80 /* ConversationCreateServicesSectionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E94784E8278EDDC200F9FE80 /* ConversationCreateServicesSectionController.swift */; };
@@ -1295,7 +1296,6 @@
 		E9C68C052A29DB0100CDCAFD /* WireCoreCrypto.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = E9C68C032A29DB0100CDCAFD /* WireCoreCrypto.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		E9CCCF9729101D8D006E0153 /* UINavigationItem+NavigationBarTitle.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9CCCF9629101D8D006E0153 /* UINavigationItem+NavigationBarTitle.swift */; };
 		E9D6C37D289A9DC100861E4C /* StylableButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9D6C37C289A9DC100861E4C /* StylableButton.swift */; };
-		E9D9B5A52A8A11590025FE8B /* FontBookSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9D9B5A42A8A11590025FE8B /* FontBookSnapshotTests.swift */; };
 		E9DA4685286C547A00F47C14 /* UIWindow+Orientation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9DA4684286C547A00F47C14 /* UIWindow+Orientation.swift */; };
 		E9E335932A8A27EC00B304F3 /* BaseSnapshotTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9E335922A8A27EC00B304F3 /* BaseSnapshotTestCase.swift */; };
 		E9EBE0D028194D7E0058C793 /* DynamicTypeCapable.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9EBE0CF28194D7E0058C793 /* DynamicTypeCapable.swift */; };
@@ -3284,6 +3284,7 @@
 		E91F901F2A851AE400B1A5B8 /* FontBook.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FontBook.swift; sourceTree = "<group>"; };
 		E92A079F2817E553006BA73B /* DynamicFontButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DynamicFontButton.swift; sourceTree = "<group>"; };
 		E92D1B94285B773B00366AFC /* LabelStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelStyle.swift; sourceTree = "<group>"; };
+		E92D31742B0CBAD400F5AAD4 /* FontBookSnapshotTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FontBookSnapshotTests.swift; sourceTree = "<group>"; };
 		E93DA6192913F38A00A0F17C /* LinkButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkButton.swift; sourceTree = "<group>"; };
 		E942A38C28A2AC3A00C3092F /* NavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationController.swift; sourceTree = "<group>"; };
 		E94784E8278EDDC200F9FE80 /* ConversationCreateServicesSectionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationCreateServicesSectionController.swift; sourceTree = "<group>"; };
@@ -3307,7 +3308,6 @@
 		E9CCCF9629101D8D006E0153 /* UINavigationItem+NavigationBarTitle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UINavigationItem+NavigationBarTitle.swift"; sourceTree = "<group>"; };
 		E9D25C8627D9FB07007CB532 /* AuthenticationEmailVerificationRequiredErrorHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationEmailVerificationRequiredErrorHandlerTests.swift; sourceTree = "<group>"; };
 		E9D6C37C289A9DC100861E4C /* StylableButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StylableButton.swift; sourceTree = "<group>"; };
-		E9D9B5A42A8A11590025FE8B /* FontBookSnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FontBookSnapshotTests.swift; sourceTree = "<group>"; };
 		E9DA4684286C547A00F47C14 /* UIWindow+Orientation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIWindow+Orientation.swift"; sourceTree = "<group>"; };
 		E9E335922A8A27EC00B304F3 /* BaseSnapshotTestCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseSnapshotTestCase.swift; sourceTree = "<group>"; };
 		E9EBE0CF28194D7E0058C793 /* DynamicTypeCapable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DynamicTypeCapable.swift; sourceTree = "<group>"; };
@@ -6833,6 +6833,7 @@
 				7C440E7E23473A0F00D91B5F /* FolderCreationControllerSnapshotTests.swift */,
 				7C440E84234B460100D91B5F /* FolderPickerControllerSnapshotTests.swift */,
 				87AAE4201E42441B00E1D13A /* FontSchemeTests.swift */,
+				E92D31742B0CBAD400F5AAD4 /* FontBookSnapshotTests.swift */,
 				EF6E3C7B208A02FE003F6752 /* GiphySearchViewControllerSnapshotTests.swift */,
 				EF91A0541FF3A04700FE2F53 /* GiphySearchViewControllerTests.swift */,
 				16C02A11204EE5EC00811912 /* GroupConversationCellTests.swift */,
@@ -9785,6 +9786,7 @@
 				A9CF740E24891498007A11DC /* Settings+Reset.swift in Sources */,
 				EF21219A2292EEF3006C4293 /* XCTestCase+SnapshotTesting.swift in Sources */,
 				5EDF03EF22455C4E00C04007 /* MockImageResource.swift in Sources */,
+				E92D31752B0CBAD400F5AAD4 /* FontBookSnapshotTests.swift in Sources */,
 				6375051B262477ED0083DC27 /* NotificationLabelTests.swift in Sources */,
 				5EA73D9120D903B90001D106 /* GroupDetailsTimeoutOptionsCellTests.swift in Sources */,
 				EF159F381FD59607006E0A9C /* TextFieldValidatorTests.swift in Sources */,
@@ -10072,7 +10074,6 @@
 				06C1074825B99D1400C099D3 /* PasswordRuleSetTests.swift in Sources */,
 				D35EEDBE28C2004000949F02 /* NetworkSession.swift in Sources */,
 				1651F9BC1D352C5700A9FAE8 /* ArticleViewTests.swift in Sources */,
-				E9D9B5A52A8A11590025FE8B /* FontBookSnapshotTests.swift in Sources */,
 				EE52379123F557B900D4FE79 /* MockServiceUserType+Creation.swift in Sources */,
 				5E628025221EEA3B0039A8AB /* ProfileActionsFactoryTests.swift in Sources */,
 				D35EEDBB28C2004000949F02 /* NetworkPrimitives.swift in Sources */,
