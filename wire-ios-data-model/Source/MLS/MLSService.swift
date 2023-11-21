@@ -1708,17 +1708,20 @@ public final class MLSService: MLSServiceInterface {
             try createGroup(for: mlsGroupID)
 
             do {
+
                 // update keying material and send commit bundle to the backend
                 try await internalUpdateKeyMaterial(for: mlsGroupID)
+
+                // add all participants (all clients) to the group
+                let members = groupConversation.localParticipants.map { user in MLSUser(from: user) }
+                try await addMembersToConversation(with: members, for: mlsGroupID)
+
             } catch SendMLSMessageAction.Failure.mlsStaleMessage {
+
                 // rollback: destroy/wipe group
                 try wipeGroup(mlsGroupID)
+
             }
-
-            // add all participants (all clients) to the group
-            let members = groupConversation.localParticipants.map { user in MLSUser(from: user) }
-            try await addMembersToConversation(with: members, for: mlsGroupID)
-
         }
 
     }

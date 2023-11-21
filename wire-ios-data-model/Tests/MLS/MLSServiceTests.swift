@@ -2662,9 +2662,9 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         let user = ZMUser.selfUser(in: uiMOC)
         user.teamIdentifier = .create()
 
-        let groupID = MLSGroupID.random()
+        let mlsGroupID = MLSGroupID.random()
         let conversation = createConversation(in: uiMOC)
-        conversation.mlsGroupID = groupID
+        conversation.mlsGroupID = mlsGroupID
         conversation.messageProtocol = .proteus
         conversation.domain = "example.com"
         conversation.teamRemoteIdentifier = user.teamIdentifier
@@ -2687,7 +2687,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
         let createConversationExpectation = expectation(description: "createConversation must be called")
         mockCoreCrypto.mockCreateConversation = { conversationID, _, _ in
-            XCTAssertEqual(conversationID, [UInt8](groupID.data))
+            XCTAssertEqual(conversationID, [UInt8](mlsGroupID.data))
             createConversationExpectation.fulfill()
         }
 
@@ -2726,8 +2726,9 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         let user = ZMUser.selfUser(in: uiMOC)
         user.teamIdentifier = .create()
 
+        let mlsGroupID = MLSGroupID.random()
         let conversation = createConversation(in: uiMOC)
-        conversation.mlsGroupID = .random()
+        conversation.mlsGroupID = mlsGroupID
         conversation.messageProtocol = .proteus
         conversation.domain = "example.com"
         conversation.teamRemoteIdentifier = user.teamIdentifier
@@ -2740,11 +2741,21 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         mockMLSActionExecutor.mockUpdateKeyMaterial = { _ in
             throw SendMLSMessageAction.Failure.mlsStaleMessage
         }
+        let wipeConversationExpectation = expectation(description: "commitPendingProposals must be called")
+        mockCoreCrypto.mockWipeConversation = { conversationID in
+            XCTAssertEqual(conversationID, [UInt8](mlsGroupID.data))
+            wipeConversationExpectation.fulfill()
+        }
 
         // When
         try await sut.startProteusToMLSMigration()
 
         // Then
-        // ?
+        await fulfillment(
+            of: [wipeConversationExpectation],
+            timeout: 5,
+            enforceOrder: true
+        )
+        // more?
     }
 }
