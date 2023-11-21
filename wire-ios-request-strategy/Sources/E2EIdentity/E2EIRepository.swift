@@ -58,7 +58,7 @@ public final class E2EIRepository: E2EIRepositoryInterface {
     public func getACMENonce(endpoint: String) async throws -> String {
         logger.info("get ACME nonce from \(endpoint)")
 
-        return "temp"
+        return "temp "
     }
 
 }
