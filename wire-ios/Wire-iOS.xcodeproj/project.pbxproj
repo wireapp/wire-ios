@@ -1241,6 +1241,7 @@
 		E6579E7F2AFFA99E004E7FD8 /* AnimatedListMenuViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A990059A23F195A70089CDEB /* AnimatedListMenuViewTests.swift */; };
 		E6596CCC2B07A2E700537723 /* MLSMigrationStartedCellDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6596CCA2B07A2E700537723 /* MLSMigrationStartedCellDescription.swift */; };
 		E6596CCD2B07A2E700537723 /* MLSMigrationFinalizedCellDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6596CCB2B07A2E700537723 /* MLSMigrationFinalizedCellDescription.swift */; };
+		E6605CAD2B0C9ECA00A67C68 /* MLSMigrationUpdateVersionCellDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6605CAC2B0C9ECA00A67C68 /* MLSMigrationUpdateVersionCellDescription.swift */; };
 		E6C25FC52AFFAAC300406A1C /* WireTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E6C25FC42AFFAAC300406A1C /* WireTesting.framework */; };
 		E6C25FC82AFFABBF00406A1C /* PhoneNumberTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A96E230923EAD43A00C2195E /* PhoneNumberTests.swift */; };
 		E6C25FC92AFFABD100406A1C /* AvailabilityStringBuilderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 636E57BC2386BFD9005B4FD8 /* AvailabilityStringBuilderTests.swift */; };
@@ -3270,6 +3271,7 @@
 		E6579E722AFFA232004E7FD8 /* Mocks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Mocks.h; sourceTree = "<group>"; };
 		E6596CCA2B07A2E700537723 /* MLSMigrationStartedCellDescription.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MLSMigrationStartedCellDescription.swift; sourceTree = "<group>"; };
 		E6596CCB2B07A2E700537723 /* MLSMigrationFinalizedCellDescription.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MLSMigrationFinalizedCellDescription.swift; sourceTree = "<group>"; };
+		E6605CAC2B0C9ECA00A67C68 /* MLSMigrationUpdateVersionCellDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLSMigrationUpdateVersionCellDescription.swift; sourceTree = "<group>"; };
 		E6C25FC42AFFAAC300406A1C /* WireTesting.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTesting.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E6C25FCD2AFFAC2E00406A1C /* CoreDataFixture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataFixture.swift; sourceTree = "<group>"; };
 		E6C25FD62AFFAF4900406A1C /* ZMUser+Availability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMUser+Availability.swift"; sourceTree = "<group>"; };
@@ -7367,6 +7369,7 @@
 			children = (
 				E6596CCA2B07A2E700537723 /* MLSMigrationStartedCellDescription.swift */,
 				E6596CCB2B07A2E700537723 /* MLSMigrationFinalizedCellDescription.swift */,
+				E6605CAC2B0C9ECA00A67C68 /* MLSMigrationUpdateVersionCellDescription.swift */,
 			);
 			path = CellDescription;
 			sourceTree = "<group>";
@@ -9675,6 +9678,7 @@
 				5E8DA768211B2D9A00360979 /* AuthenticationSuccessEventHandler.swift in Sources */,
 				EE01D08525ADA3D5001DB205 /* AppLockModule.swift in Sources */,
 				5E769C5A21AE97E600785EB7 /* MessageDetailsViewController.swift in Sources */,
+				E6605CAD2B0C9ECA00A67C68 /* MLSMigrationUpdateVersionCellDescription.swift in Sources */,
 				164C29AB1ED33A5F0026562A /* SearchResultsViewController.swift in Sources */,
 				D5168F522010F20700F8222A /* ShareDestinationCell.swift in Sources */,
 				BFB5972320E62EB6008720ED /* CancelableItem.swift in Sources */,

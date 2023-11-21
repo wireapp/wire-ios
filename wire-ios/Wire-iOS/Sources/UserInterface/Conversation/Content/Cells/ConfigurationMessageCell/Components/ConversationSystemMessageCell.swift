@@ -446,7 +446,11 @@ final class ConversationSystemMessageCellDescription {
             let description = MLSMigrationFinalizedCellDescription(systemMessageData: systemMessageData)
             return [AnyConversationMessageCellDescription(description)]
 
-        case .mlsMigrationUpdateVersion, .mlsMigrationJoinAfterwards, .mlsMigrationOngoingCall:
+        case .mlsMigrationUpdateVersion:
+            let description = MLSMigrationUpdateVersionCellDescription(systemMessageData: systemMessageData)
+            return [AnyConversationMessageCellDescription(description)]
+
+        case .mlsMigrationJoinAfterwards, .mlsMigrationOngoingCall:
             fatalError("not implemented")
 
         case .invalid:
