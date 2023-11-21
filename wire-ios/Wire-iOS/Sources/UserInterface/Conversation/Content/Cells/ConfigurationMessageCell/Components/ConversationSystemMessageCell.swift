@@ -336,7 +336,7 @@ final class ConversationSystemMessageCellDescription {
         }
 
         switch systemMessageData.systemMessageType {
-        case .connectionRequest, .connectionUpdate:
+        case .connectionRequest, .connectionUpdate, .usingNewDevice, .reactivatedDevice:
             break // Deprecated
 
         case .conversationNameChanged:
