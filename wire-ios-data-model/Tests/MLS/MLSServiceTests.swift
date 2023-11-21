@@ -2669,7 +2669,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         conversation.domain = "example.com"
         conversation.teamRemoteIdentifier = user.teamIdentifier
 
-        let updateConversationProtocolExpectation = expectation(description: "updateConversationProtocol must be called")
+        let updateConversationProtocolExpectation = XCTestExpectation(description: "updateConversationProtocol must be called")
         mockActionsProvider.updateConversationProtocolQualifiedIDMessageProtocolContext_MockMethod = { [uiMOC] qualifiedID, messageProtocol, notificationContext in
             XCTAssertEqual(qualifiedID, conversation.qualifiedID)
             XCTAssertEqual(messageProtocol, .mixed)
@@ -2677,7 +2677,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             updateConversationProtocolExpectation.fulfill()
         }
 
-        let syncConversationExpectation = expectation(description: "syncConversation must be called")
+        let syncConversationExpectation = XCTestExpectation(description: "syncConversation must be called")
         mockActionsProvider.syncConversationQualifiedIDContext_MockMethod = { [uiMOC] qualifiedID, notificationContext in
             XCTAssertEqual(qualifiedID, conversation.qualifiedID)
             XCTAssert(notificationContext === uiMOC.notificationContext)
@@ -2685,20 +2685,20 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             syncConversationExpectation.fulfill()
         }
 
-        let createConversationExpectation = expectation(description: "createConversation must be called")
+        let createConversationExpectation = XCTestExpectation(description: "createConversation must be called")
         mockCoreCrypto.mockCreateConversation = { conversationID, _, _ in
             XCTAssertEqual(conversationID, [UInt8](mlsGroupID.data))
             createConversationExpectation.fulfill()
         }
 
-        let updateKeyMaterialExpectation = expectation(description: "updateKeyMaterial must be called")
+        let updateKeyMaterialExpectation = XCTestExpectation(description: "updateKeyMaterial must be called")
         mockMLSActionExecutor.mockUpdateKeyMaterial = { mlsGroupID in
             XCTAssertEqual(mlsGroupID, conversation.mlsGroupID)
             updateKeyMaterialExpectation.fulfill()
             return []
         }
 
-        let commitPendingProposalsExpectation = expectation(description: "commitPendingProposals must be called")
+        let commitPendingProposalsExpectation = XCTestExpectation(description: "commitPendingProposals must be called")
         mockMLSActionExecutor.mockCommitPendingProposals = { _ in
             commitPendingProposalsExpectation.fulfill()
             throw MLSActionExecutor.Error.noPendingProposals
@@ -2741,7 +2741,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         mockMLSActionExecutor.mockUpdateKeyMaterial = { _ in
             throw SendMLSMessageAction.Failure.mlsStaleMessage
         }
-        let wipeConversationExpectation = expectation(description: "commitPendingProposals must be called")
+        let wipeConversationExpectation = XCTestExpectation(description: "commitPendingProposals must be called")
         mockCoreCrypto.mockWipeConversation = { conversationID in
             XCTAssertEqual(conversationID, [UInt8](mlsGroupID.data))
             wipeConversationExpectation.fulfill()
@@ -2756,6 +2756,5 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             timeout: 5,
             enforceOrder: true
         )
-        // more?
     }
 }
