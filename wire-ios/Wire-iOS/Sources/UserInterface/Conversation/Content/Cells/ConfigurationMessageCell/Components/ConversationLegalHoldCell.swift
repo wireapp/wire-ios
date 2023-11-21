@@ -87,7 +87,11 @@ final class ConversationLegalHoldCellDescription: ConversationMessageCellDescrip
             template += ".disabled"
         }
 
-        var attributedText = NSAttributedString(string: template.localized, attributes: ConversationSystemMessageCell.baseAttributes)
+        let baseAttributes: [NSAttributedString.Key: Any] = [
+            .font: UIFont.mediumFont,
+            .foregroundColor: SemanticColors.Label.textDefault
+        ]
+        var attributedText = NSAttributedString(string: template.localized, attributes: baseAttributes)
 
         if systemMessageType == .legalHoldEnabled {
             let learnMore = NSAttributedString(string: (baseTemplate + ".learn_more").localized.uppercased(),
