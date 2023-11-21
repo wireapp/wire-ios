@@ -105,7 +105,7 @@ public class ZMUserSession: NSObject {
     let earService: EARServiceInterface
 
     public var appLockController: AppLockType
-    public var certificateEnrollment: CertificateEnrollmentInterface?
+    public var enrollE2EICertificate: EnrollE2EICertificateUseCaseInterface?
 
     public var fileSharingFeature: Feature.FileSharing {
         let featureRepository = FeatureRepository(context: coreDataStack.viewContext)
@@ -320,7 +320,6 @@ public class ZMUserSession: NSObject {
         // This should happen after the request strategies are created b/c
         // it needs to make network requests upon initialization.
         setupCryptoStack(stage: .mls)
-        setupCryptoStack(stage: .e2ei)
 
         configureE2EIStack()
 
@@ -458,11 +457,13 @@ public class ZMUserSession: NSObject {
 
     private func configureE2EIStack() {
         let httpClient = HttpClientImpl(transportSession: transportSession, queue: coreDataStack.syncContext)
-        let apiProvider = APIProvider(httpClient: httpClient)
-        coreDataStack.syncContext.performGroupedBlockAndWait { [weak self] in
-            if let e2eiService = self?.syncContext.e2eiService {
-                let e2eiManager = E2EIManager(apiProvider: apiProvider, e2eiService: e2eiService)
-                self?.certificateEnrollment = CertificateEnrollment(e2eiManager: e2eiManager)
+        let acmeClient = AcmeClient(httpClient: httpClient)
+        syncContext.performAndWait {
+            if let coreCrypto = syncContext.coreCrypto {
+                let e2eiService = E2EIService(coreCrypto: coreCrypto, selfUser: ZMUser.selfUser(in: syncContext))
+                e2eiService.setupEnrollment()
+                let e2eiRepository = E2EIRepository(acmeClient: acmeClient, e2eiService: e2eiService)
+                enrollE2EICertificate = EnrollE2EICertificateUseCase(e2eiRepository: e2eiRepository)
             }
         }
     }

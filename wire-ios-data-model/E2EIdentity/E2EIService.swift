@@ -21,90 +21,79 @@ import WireCoreCrypto
 
 public protocol E2EIServiceInterface {
 
+    func setupEnrollment()
     func directoryResponse(directoryData: Data) throws -> AcmeDirectory
     func getNewAccountRequest(previousNonce: String) async throws -> Data
     func setAccountResponse(accountData: Data) async throws
 
 }
 
+/// This class provides an interface for CoreCrypto methods related to E2EI.
 public final class E2EIService: E2EIServiceInterface {
 
     // MARK: - Properties
 
-    private weak var context: NSManagedObjectContext?
-    public var wireE2eIdentity: WireE2eIdentity?
+    public var e2eIdentity: WireE2eIdentity?
+
     private let coreCrypto: SafeCoreCryptoProtocol
+    private let selfUser: ZMUser
 
     // MARK: - Life cycle
 
-    public init(context: NSManagedObjectContext,
-                coreCrypto: SafeCoreCryptoProtocol) {
-        self.context = context
+    public init(coreCrypto: SafeCoreCryptoProtocol,
+                selfUser: ZMUser) {
         self.coreCrypto = coreCrypto
+        self.selfUser = selfUser
     }
 
     // MARK: - Setup enrollment
 
-    public func setupNewEnrollment() {
+    public func setupEnrollment() {
         guard
-            let context = context,
-            let selfUserHandle = ZMUser.selfUser(in: context).handle,
-            let selfUserName = ZMUser.selfUser(in: context).name,
-            let selfClient = ZMUser.selfUser(in: context).selfClient(),
+            let handle = selfUser.handle,
+            let name = selfUser.name,
+            let selfClient = selfUser.selfClient(),
             let clientId = MLSClientID(userClient: selfClient)
         else {
             return
         }
         // TODO: we should use the new CoreCrypto version: `e2eiNewRotateEnrollment` and `e2eiNewActivationEnrollment`
-        wireE2eIdentity = try? coreCrypto.perform { try $0.e2eiNewEnrollment(clientId: clientId.rawValue,
-                                                                             displayName: selfUserName,
-                                                                             handle: selfUserHandle,
-                                                                             expiryDays: UInt32(90),
-                                                                             ciphersuite: defaultCipherSuite.rawValue)
+        e2eIdentity = try? coreCrypto.perform {
+            try $0.e2eiNewEnrollment(clientId: clientId.rawValue,
+                                     displayName: name,
+                                     handle: handle,
+                                     expiryDays: UInt32(90),
+                                     ciphersuite: defaultCipherSuite.rawValue)
 
         }
-
     }
 
-    public func isE2EIEnabled() -> Bool {
-        // TODO: we should use the new CoreCrypto version
-        // return coreCrypto.e2eiIsEnabled(defaultCipherSuite.rawValue)
-        return true
-    }
+    // MARK: - E2EIdentity methods
 
-    // MARK: - WireE2EIdentity methods
-
-    public func directoryResponse(directoryData: Data) throws -> WireCoreCrypto.AcmeDirectory {
-        let buffer = [UInt8](directoryData)
-        guard let wireE2eIdentity = wireE2eIdentity else {
-            WireLogger.e2ei.warn("wireE2eIdentity is missing")
-
-            throw Failure.failedToEncodeDirectoryResponse
-        }
-
-        return try wireE2eIdentity.directoryResponse(directory: buffer)
+    public func directoryResponse(directoryData: Data) throws -> AcmeDirectory {
+        return try wireE2eIdentity().directoryResponse(directory: directoryData.bytes)
     }
 
     public func getNewAccountRequest(previousNonce: String) async throws -> Data {
-        guard let accountRequest = try? wireE2eIdentity?.newAccountRequest(previousNonce: previousNonce) else {
-            WireLogger.e2ei.warn("Failed to get new account request")
-
-            throw Failure.failedToGetAccountRequest
-        }
-
-        return accountRequest.data
+        return try wireE2eIdentity().newAccountRequest(previousNonce: previousNonce).data
     }
 
     public func setAccountResponse(accountData: Data) async throws {
-        let buffer = [UInt8](accountData)
-        try? wireE2eIdentity?.newAccountResponse(account: buffer)
+        try wireE2eIdentity().newAccountResponse(account: accountData.bytes)
+    }
+
+    // MARK: - Private methods
+
+    private func wireE2eIdentity() throws -> WireE2eIdentity {
+        guard let e2eIdentity = e2eIdentity else {
+            throw Failure.missingE2eIdentity
+        }
+        return e2eIdentity
     }
 
     enum Failure: Error, Equatable {
 
-        case failedToEncodeDirectoryResponse
-        case failedToGetAccountRequest
-        case failedToSetAccountResponse
+        case missingE2eIdentity
 
     }
 

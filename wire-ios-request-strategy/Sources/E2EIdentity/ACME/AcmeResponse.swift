@@ -18,7 +18,7 @@
 
 import Foundation
 
-public struct AcmeDirectoriesResponse: Codable {
+struct AcmeDirectoriesResponse {
 
     var newNonce: String
     var newAccount: String
@@ -28,7 +28,7 @@ public struct AcmeDirectoriesResponse: Codable {
 
 }
 
-public struct ACMEResponse {
+struct ACMEResponse {
 
     var nonce: String
     var location: String
@@ -36,7 +36,7 @@ public struct ACMEResponse {
 
 }
 
-public struct ChallengeResponse {
+struct ChallengeResponse {
 
     var type: String
     var url: String
@@ -44,8 +44,4 @@ public struct ChallengeResponse {
     var token: String
     var nonce: String
 
-}
-
-enum HeaderKey: String {
-    case replayNonce = "Replay-Nonce"
 }

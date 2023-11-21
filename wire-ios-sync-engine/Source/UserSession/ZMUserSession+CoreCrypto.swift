@@ -26,7 +26,6 @@ extension ZMUserSession {
     enum CryptoStackSetupStage {
         case proteus(userID: UUID)
         case mls
-        case e2ei
     }
 
     func setupCryptoStack(stage: CryptoStackSetupStage) {
@@ -40,9 +39,6 @@ extension ZMUserSession {
             setupProteus(userID: userID)
         case .mls where shouldSetupMLSService:
             setupMLS()
-        case .e2ei:
-            // TODO: Should check if needed
-            setupE2EI()
         default:
             break
         }
@@ -191,22 +187,6 @@ extension ZMUserSession {
         return DeveloperFlag.proteusViaCoreCrypto.isOn
     }
 
-    private func setupE2EI() {
-        syncContext.performAndWait {
-            do {
-                guard let coreCrypto = syncContext.coreCrypto else {
-                    throw CryptoStackSetupError.missingCoreCrypto
-                }
-
-                try createE2EIServiceIfNeeded(coreCrypto: coreCrypto)
-
-                WireLogger.coreCrypto.info("success: setup crypto stack (e2ei)")
-            } catch {
-                WireLogger.coreCrypto.error("fail: setup crypto stack (e2ei): \(String(describing: error))")
-            }
-        }
-    }
-
     // MARK: - MLS
 
     private func createMLSServiceIfNeeded(
@@ -244,22 +224,6 @@ extension ZMUserSession {
     private enum MLSServiceSetupFailure: Error {
         case missingSyncStatus
         case invalidUserDefaults
-    }
-
-    // MARK: - E2EI
-
-    private func createE2EIServiceIfNeeded(
-        coreCrypto: SafeCoreCryptoProtocol
-    ) throws {
-        guard syncContext.e2eiService == nil else {
-            return
-        }
-        let e2eiService = E2EIService(
-            context: syncContext,
-            coreCrypto: coreCrypto)
-        e2eiService.setupNewEnrollment()
-
-        syncContext.e2eiService = e2eiService
     }
 
 }

@@ -251,7 +251,7 @@ final class DeveloperToolsViewModel: ObservableObject {
     private func startE2EI() {
         Task {
             guard let session = ZMUserSession.shared() else { return }
-            _ = await session.certificateEnrollment?.invoke(idToken: "")
+            _ = try await session.enrollE2EICertificate?.invoke(idToken: "")
         }
     }
 
