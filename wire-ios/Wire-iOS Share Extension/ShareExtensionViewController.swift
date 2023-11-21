@@ -25,6 +25,7 @@ import WireCommonComponents
 import WireCoreCrypto
 import WireLinkPreview
 import LocalAuthentication
+import UniformTypeIdentifiers
 
 typealias Completion = () -> Void
 private let zmLog = ZMSLog(tag: "UI")
@@ -243,7 +244,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
             return
         }
 
-        urlItems.first?.loadItem(forTypeIdentifier: kUTTypeFileURL as String, options: nil, completionHandler: { (url, error) in
+        urlItems.first?.loadItem(forTypeIdentifier: UTType.fileURL.identifier, options: nil, completionHandler: { (url, error) in
             error?.log(message: "Unable to fetch URL for type URL")
             guard let url = url as? URL, url.isFileURL else { return }
 
