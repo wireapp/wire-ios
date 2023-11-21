@@ -178,9 +178,14 @@ internal enum Asset {
     internal static let travelPlaces = ImageAsset(name: "Travel & Places")
     internal static let foldersFilled = ImageAsset(name: "Folders Filled")
     internal static let foldersOutline = ImageAsset(name: "Folders Outline")
+    internal static let guest = ImageAsset(name: "Guest")
     internal static let attention = ImageAsset(name: "Attention")
     internal static let check = ImageAsset(name: "Check")
     internal static let downArrow = ImageAsset(name: "DownArrow")
+    internal static let notifications = ImageAsset(name: "Notifications")
+    internal static let readReceipts = ImageAsset(name: "ReadReceipts")
+    internal static let selfDeletingMessages = ImageAsset(name: "SelfDeletingMessages")
+    internal static let services = ImageAsset(name: "Services")
     internal static let unavailableUser = ImageAsset(name: "Unavailable user")
   }
 }
