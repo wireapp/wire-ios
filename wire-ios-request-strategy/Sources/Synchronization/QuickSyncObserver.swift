@@ -46,6 +46,8 @@ public class QuickSyncObserver: QuickSyncObserverInterface {
             return
         }
 
+        WireLogger.messaging.debug("Waiting for app to be online before sending message")
+
         for await _ in NotificationCenter.default.notifications(
             named: .quickSyncCompletedNotification,
             object: notificationContext
