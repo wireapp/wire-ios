@@ -33,14 +33,6 @@ public protocol HttpClient {
 
 public class HttpClientImpl: NSObject, HttpClient {
 
-    let transportSession: TransportSessionType
-    let queue: ZMSGroupQueue
-
-    public init(transportSession: TransportSessionType, queue: ZMSGroupQueue) {
-        self.transportSession = transportSession
-        self.queue = queue
-    }
-
     public func send(_ request: ZMTransportRequest) async throws -> ZMTransportResponse {
         guard let url = URL(string: request.path) else {
             throw NetworkError.invalidRequestURL

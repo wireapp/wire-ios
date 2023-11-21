@@ -456,15 +456,28 @@ public class ZMUserSession: NSObject {
     }
 
     private func configureE2EIStack() {
-        let httpClient = HttpClientImpl(transportSession: transportSession, queue: coreDataStack.syncContext)
+        let httpClient = HttpClientImpl()
         let acmeClient = AcmeClient(httpClient: httpClient)
         syncContext.performAndWait {
-            if let coreCrypto = syncContext.coreCrypto {
-                let e2eiService = E2EIService(coreCrypto: coreCrypto, selfUser: ZMUser.selfUser(in: syncContext))
-                e2eiService.setupEnrollment()
-                let e2eiRepository = E2EIRepository(acmeClient: acmeClient, e2eiService: e2eiService)
-                enrollE2EICertificate = EnrollE2EICertificateUseCase(e2eiRepository: e2eiRepository)
+            guard let coreCrypto = syncContext.coreCrypto else {
+                return
             }
+            let selfUser = ZMUser.selfUser(in: syncContext)
+            guard
+                let handle = selfUser.handle,
+                let name = selfUser.name,
+                let selfClient = selfUser.selfClient(),
+                let clientId = MLSClientID(userClient: selfClient)
+            else {
+                return
+            }
+
+            let e2eiService = E2EIService(coreCrypto: coreCrypto,
+                                          mlsClientId: clientId,
+                                          userName: name,
+                                          handle: handle)
+            let e2eiRepository = E2EIRepository(acmeClient: acmeClient, e2eiService: e2eiService)
+            enrollE2EICertificate = EnrollE2EICertificateUseCase(e2eiRepository: e2eiRepository)
         }
     }
 

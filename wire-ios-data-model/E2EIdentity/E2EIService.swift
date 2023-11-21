@@ -21,8 +21,8 @@ import WireCoreCrypto
 
 public protocol E2EIServiceInterface {
 
-    func setupEnrollment()
-    func directoryResponse(directoryData: Data) throws -> AcmeDirectory
+    func setupEnrollment() async throws
+    func directoryResponse(directoryData: Data) async throws -> AcmeDirectory
     func getNewAccountRequest(previousNonce: String) async throws -> Data
     func setAccountResponse(accountData: Data) async throws
 
@@ -36,41 +36,43 @@ public final class E2EIService: E2EIServiceInterface {
     public var e2eIdentity: WireE2eIdentity?
 
     private let coreCrypto: SafeCoreCryptoProtocol
-    private let selfUser: ZMUser
+    private let mlsClientId: MLSClientID
+    private let userName: String
+    private let handle: String
 
     // MARK: - Life cycle
 
     public init(coreCrypto: SafeCoreCryptoProtocol,
-                selfUser: ZMUser) {
+                mlsClientId: MLSClientID,
+                userName: String,
+                handle: String) {
         self.coreCrypto = coreCrypto
-        self.selfUser = selfUser
+        self.mlsClientId = mlsClientId
+        self.userName = userName
+        self.handle = handle
     }
 
     // MARK: - Setup enrollment
 
-    public func setupEnrollment() {
-        guard
-            let handle = selfUser.handle,
-            let name = selfUser.name,
-            let selfClient = selfUser.selfClient(),
-            let clientId = MLSClientID(userClient: selfClient)
-        else {
-            return
-        }
+    public func setupEnrollment() async throws {
         // TODO: we should use the new CoreCrypto version: `e2eiNewRotateEnrollment` and `e2eiNewActivationEnrollment`
-        e2eIdentity = try? coreCrypto.perform {
-            try $0.e2eiNewEnrollment(clientId: clientId.rawValue,
-                                     displayName: name,
-                                     handle: handle,
-                                     expiryDays: UInt32(90),
-                                     ciphersuite: defaultCipherSuite.rawValue)
+        do {
+            e2eIdentity = try coreCrypto.perform {
+                try $0.e2eiNewEnrollment(clientId: mlsClientId.rawValue,
+                                         displayName: userName,
+                                         handle: handle,
+                                         expiryDays: UInt32(90),
+                                         ciphersuite: defaultCipherSuite.rawValue)
+            }
 
+        } catch {
+            throw Failure.failedToSetupE2eiEnrollment
         }
     }
 
     // MARK: - E2EIdentity methods
 
-    public func directoryResponse(directoryData: Data) throws -> AcmeDirectory {
+    public func directoryResponse(directoryData: Data) async throws -> AcmeDirectory {
         return try wireE2eIdentity().directoryResponse(directory: directoryData.bytes)
     }
 
@@ -93,6 +95,7 @@ public final class E2EIService: E2EIServiceInterface {
 
     enum Failure: Error, Equatable {
 
+        case failedToSetupE2eiEnrollment
         case missingE2eIdentity
 
     }

@@ -45,8 +45,9 @@ public final class E2EIRepository: E2EIRepositoryInterface {
         logger.info("load ACME directory")
 
         do {
+            try await e2eiService.setupEnrollment()
             let acmeDirectoryData = try await acmeClient.getACMEDirectory()
-            return try e2eiService.directoryResponse(directoryData: acmeDirectoryData)
+            return try await e2eiService.directoryResponse(directoryData: acmeDirectoryData)
         } catch {
             logger.error("failed to load ACME directory: \(error.localizedDescription)")
 
