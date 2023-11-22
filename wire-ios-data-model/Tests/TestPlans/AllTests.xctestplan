@@ -9,30 +9,6 @@
     }
   ],
   "defaultOptions" : {
-    "commandLineArgumentEntries" : [
-      {
-        "argument" : "-com.apple.CoreData.SQLDebug 1",
-        "enabled" : false
-      },
-      {
-        "argument" : "-com.apple.CoreData.ConcurrencyDebug 1"
-      }
-    ],
-    "environmentVariableEntries" : [
-      {
-        "key" : "SQLITE_ENABLE_THREAD_ASSERTIONS",
-        "value" : "1"
-      },
-      {
-        "enabled" : false,
-        "key" : "SQLITE_AUTO_TRACE",
-        "value" : "1"
-      },
-      {
-        "key" : "SQLITE_ENABLE_FILE_ASSERTIONS",
-        "value" : "1"
-      }
-    ],
     "testTimeoutsEnabled" : true
   },
   "testTargets" : [
