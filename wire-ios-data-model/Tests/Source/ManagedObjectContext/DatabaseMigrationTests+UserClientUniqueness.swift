@@ -29,33 +29,94 @@ final class DatabaseMigrationTests_UserClientUniqueness: DatabaseBaseTest {
     private let tmpStoreURL = URL(fileURLWithPath: "\(NSTemporaryDirectory())databasetest/")
     private let dataModelName = "zmessaging"
 
+    func testThatItPerformsMigrationFromOlderVersion_2_105_0_ToCurrentModelVersion() throws {
+        let initialVersion = "2.101.0"
+        // 2.101.0 -> Wire v3.109.1
+
+        /*
+         Failed stores aka incompatible: 2.108, 2.105
+         Stores compatible: 2.109, 2.107
+         */
+        try migrateStoreToCurrentVersion(
+            sourceVersion: initialVersion,
+            preMigrationAction: insertDuplicates,
+            postMigrationAction: assertDuplicatesResolved
+        )
+    }
+
     func testMigratingToMessagingStore_2_107_PreventsDuplicateUserClients() throws {
         try migrateStore(
             sourceVersion: "2.106.0",
             destinationVersion: "2.107.0",
-            preMigrationAction: { context in
-                // insert some duplicates
-                try insertDuplicateClients(with: clientID, in: context)
-                let clients = try fetchClients(with: clientID, in: context)
-                XCTAssertEqual(clients.count, 2)
-            },
-            postMigrationAction: { context in
-                var clients: [UserClient]
-
-                // verify it deleted duplicates
-                clients = try fetchClients(with: clientID, in: context)
-                XCTAssertEqual(clients.count, 1)
-
-                // verify we can't insert duplicates
-                context.mergePolicy = NSMergePolicy.mergeByPropertyObjectTrump
-                try insertDuplicateClients(with: clientID, in: context)
-                clients = try fetchClients(with: clientID, in: context)
-                XCTAssertEqual(clients.count, 1)
-            }
+            preMigrationAction: insertDuplicates,
+            postMigrationAction: assertDuplicatesResolved
         )
     }
 
+    private func insertDuplicates(in context: NSManagedObjectContext) throws {
+        // insert some duplicates
+        try insertDuplicateClients(with: clientID, in: context)
+        let clients = try fetchClients(with: clientID, in: context)
+        XCTAssertEqual(clients.count, 2)
+    }
+
+    private func assertDuplicatesResolved(in context: NSManagedObjectContext) throws {
+        var clients: [UserClient]
+
+        // verify it deleted duplicates
+        clients = try fetchClients(with: clientID, in: context)
+        XCTAssertEqual(clients.count, 1)
+
+        // verify we can't insert duplicates
+        context.mergePolicy = NSMergePolicy.mergeByPropertyObjectTrump
+        try insertDuplicateClients(with: clientID, in: context)
+        clients = try fetchClients(with: clientID, in: context)
+        XCTAssertEqual(clients.count, 1)
+    }
+
     // MARK: - Migration Helpers
+
+    private func migrateStoreToCurrentVersion(
+        sourceVersion: String,
+        preMigrationAction: MigrationAction,
+        postMigrationAction: MigrationAction
+    ) throws {
+        // GIVEN
+        let userId = DatabaseMigrationTests.testUUID
+        let fixedVersion = sourceVersion.replacingOccurrences(of: ".", with: "-")
+
+        // copy given database as source
+        createDatabaseWithOlderModelVersion(versionName: fixedVersion)
+        
+
+        let storeFile = CoreDataStack.accountDataFolder(accountIdentifier: userId,
+                                                        applicationContainer: self.applicationContainer).appendingPersistentStoreLocation()
+        let sourceModel = try createObjectModel(version: sourceVersion)
+        var sourceContainer: NSPersistentContainer? = try createStore(model: sourceModel, at: storeFile)
+
+        // perform pre-migration action
+        if let sourceContainer {
+            try preMigrationAction(sourceContainer.viewContext)
+        }
+
+        // release store before actual test
+        guard let store = sourceContainer?.persistentStoreCoordinator.persistentStores.first else {
+            XCTFail("missing expected store")
+            return
+        }
+        try sourceContainer?.persistentStoreCoordinator.remove(store)
+        sourceContainer = nil
+
+        // WHEN
+        let stack = createStorageStackAndWaitForCompletion(userID: userId)
+
+        // THEN
+        // perform post migration action
+        try postMigrationAction(stack.viewContext)
+
+        // cleanup
+        cleanupStoreDirectory()
+    }
 
     private func migrateStore(
         sourceVersion: String,
@@ -128,7 +189,7 @@ final class DatabaseMigrationTests_UserClientUniqueness: DatabaseBaseTest {
         let modelVersionURL = try XCTUnwrap(modelBundle.url(
             forResource: modelVersion,
             withExtension: "mom"
-        ))
+        ), "\(modelVersion).mom not found in Bundle \(modelBundle)")
 
         // Create the versioned model from the url
         return try XCTUnwrap(NSManagedObjectModel(contentsOf: modelVersionURL))
@@ -137,6 +198,10 @@ final class DatabaseMigrationTests_UserClientUniqueness: DatabaseBaseTest {
     private func createStore(version: String, model: NSManagedObjectModel) throws -> NSPersistentContainer {
         let storeURL = storeURL(version: version)
 
+       return try createStore(model: model, at: storeURL)
+    }
+
+    private func createStore(model: NSManagedObjectModel, at storeURL: URL) throws -> NSPersistentContainer {
         let container = NSPersistentContainer(
             name: dataModelName,
             managedObjectModel: model

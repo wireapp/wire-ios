@@ -441,16 +441,18 @@ extension DatabaseMigrationTests {
 
     var userPropertiesToFetch: [String] {
         return [
-                 "accentColorValue",
-                 "emailAddress",
-                 "modifiedKeys",
-                 "name",
-                 "normalizedEmailAddress",
-                 "normalizedName",
-                 "handle"
+            "accentColorValue",
+            "emailAddress",
+            "modifiedKeys",
+            "name",
+            "normalizedEmailAddress",
+            "normalizedName",
+            "handle"
         ]
     }
+}
 
+extension DatabaseBaseTest {
     func createDatabaseWithOlderModelVersion(versionName: String, file: StaticString = #file, line: UInt = #line) {
         let storeFile = CoreDataStack.accountDataFolder(accountIdentifier: DatabaseMigrationTests.testUUID, applicationContainer: self.applicationContainer).appendingPersistentStoreLocation()
         try! FileManager.default.createDirectory(at: storeFile.deletingLastPathComponent(), withIntermediateDirectories: true)

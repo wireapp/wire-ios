@@ -202,7 +202,6 @@ public class CoreDataStack: NSObject, ContextProvider {
         if needsMigration {
             onStartMigration()
         }
-
         Task(priority: .userInitiated) {
             if needsMessagingStoreMigration() {
                 do {
@@ -222,7 +221,6 @@ public class CoreDataStack: NSObject, ContextProvider {
             }
         }
     }
-
 
     public func loadStores(completionHandler: @escaping (Error?) -> Void) {
 

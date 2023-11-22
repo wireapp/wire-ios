@@ -60,7 +60,7 @@ import WireTesting
             exp.fulfill()
         }
 
-        XCTAssertTrue(waitForCustomExpectations(withTimeout: 5.0))
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 1.0))
 
         return stack
     }
