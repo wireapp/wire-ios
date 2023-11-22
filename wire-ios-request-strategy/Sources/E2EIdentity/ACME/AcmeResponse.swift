@@ -28,7 +28,7 @@ struct AcmeDirectoriesResponse: Codable, Equatable {
 
 }
 
-public struct ACMEResponse {
+public struct ACMEResponse: Equatable {
 
     var nonce: String
     var location: String

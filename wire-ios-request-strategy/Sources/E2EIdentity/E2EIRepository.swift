@@ -72,7 +72,7 @@ public final class E2EIRepository: E2EIRepositoryInterface {
         logger.info("get ACME nonce from \(endpoint)")
 
         do {
-            return try await acmeClient.getACMENonce(url: endpoint)
+            return try await acmeClient.getACMENonce(path: endpoint)
         } catch {
             logger.error("failed to get ACME nonce: \(error.localizedDescription)")
 
@@ -85,7 +85,7 @@ public final class E2EIRepository: E2EIRepositoryInterface {
 
         do {
             let accountRequest = try await e2eiService.getNewAccountRequest(previousNonce: prevNonce)
-            let apiResponse = try await acmeClient.sendACMERequest(url: createAccountEndpoint, requestBody: accountRequest)
+            let apiResponse = try await acmeClient.sendACMERequest(path: createAccountEndpoint, requestBody: accountRequest)
             try await e2eiService.setAccountResponse(accountData: apiResponse.response)
             return apiResponse.nonce
         } catch {
@@ -102,7 +102,7 @@ public final class E2EIRepository: E2EIRepositoryInterface {
 
         do {
             let newOrderRequest = try await e2eiService.getNewOrderRequest(nonce: prevNonce)
-            let apiResponse = try await acmeClient.sendACMERequest(url: createOrderEndpoint, requestBody: newOrderRequest)
+            let apiResponse = try await acmeClient.sendACMERequest(path: createOrderEndpoint, requestBody: newOrderRequest)
             let orderResponse = try await e2eiService.setOrderResponse(order: apiResponse.response)
 
             return (acmeOrder: orderResponse, nonce: apiResponse.nonce, location: apiResponse.location)
@@ -120,7 +120,7 @@ public final class E2EIRepository: E2EIRepositoryInterface {
 
         do {
             let authzRequest = try await e2eiService.getNewAuthzRequest(url: authzEndpoint, previousNonce: prevNonce)
-            let apiResponse = try await acmeClient.sendACMERequest(url: authzEndpoint, requestBody: authzRequest)
+            let apiResponse = try await acmeClient.sendACMERequest(path: authzEndpoint, requestBody: authzRequest)
             let authzResponse = try await e2eiService.setAuthzResponse(authz: apiResponse.response)
 
             return (authzResponse: authzResponse, nonce: apiResponse.nonce, location: apiResponse.location)

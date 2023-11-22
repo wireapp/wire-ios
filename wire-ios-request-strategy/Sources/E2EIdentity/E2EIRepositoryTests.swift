@@ -83,11 +83,11 @@ class MockAcmeClient: AcmeClientInterface {
         return try JSONSerialization.data(withJSONObject: payload, options: [])
     }
 
-    func getACMENonce(url: String) async throws -> String {
+    func getACMENonce(path: String) async throws -> String {
         return ""
     }
 
-    func sendACMERequest(url: String, requestBody: Data) async throws -> ACMEResponse {
+    func sendACMERequest(path: String, requestBody: Data) async throws -> ACMEResponse {
         return ACMEResponse(nonce: "", location: "", response: Data())
     }
 

@@ -21,8 +21,8 @@ import WireCoreCrypto
 
 public protocol AcmeClientInterface {
     func getACMEDirectory() async throws -> Data
-    func getACMENonce(url: String) async throws -> String
-    func sendACMERequest(url: String, requestBody: Data) async throws -> ACMEResponse
+    func getACMENonce(path: String) async throws -> String
+    func sendACMERequest(path: String, requestBody: Data) async throws -> ACMEResponse
 }
 
 /// This class provides ACME(Automatic Certificate Management Environment) server methods for enrolling an E2EI certificate.
@@ -57,14 +57,17 @@ public class AcmeClient: NSObject, AcmeClientInterface {
 
     }
 
-    public func getACMENonce(url: String) async throws -> String {
+    public func getACMENonce(path: String) async throws -> String {
 
-        let request = ZMTransportRequest(path: url,
-                                         method: .head,
-                                         payload: nil,
-                                         apiVersion: APIVersion.v0.rawValue)
-        let result = try await httpClient.send(request)
-        guard let httpResponse = result.rawResponse,
+        guard let url = URL(string: path) else {
+            throw NetworkError.invalidRequest
+        }
+        var request = URLRequest(url: url)
+        request.httpMethod = Constant.HTTPMethod.head
+
+        let (_, response) = try await httpClient.send(request)
+
+        guard let httpResponse = response as? HTTPURLResponse,
               let replayNonce = httpResponse.value(forHTTPHeaderField: Constant.Header.replayNonce) else {
             throw NetworkError.invalidResponse
         }
@@ -73,14 +76,15 @@ public class AcmeClient: NSObject, AcmeClientInterface {
 
     }
 
-    public func sendACMERequest(url: String, requestBody: Data) async throws -> ACMEResponse {
-        guard let url = URL(string: url) else {
+    public func sendACMERequest(path: String, requestBody: Data) async throws -> ACMEResponse {
+        guard let url = URL(string: path) else {
             throw NetworkError.invalidRequest
         }
         var request = URLRequest(url: url)
         request.httpMethod = Constant.HTTPMethod.post
         request.setValue(Constant.ContentType.joseJson, forHTTPHeaderField: "Content-Type")
         request.httpBody = requestBody
+
         let (data, response) = try await httpClient.send(request)
 
         guard
