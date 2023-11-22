@@ -1050,6 +1050,7 @@ extension ZMUserTests_Swift {
         // given
         let user = createUser(in: uiMOC)
         user.connection = ZMConnection.insertNewObject(in: uiMOC)
+        user.connection?.conversation = ZMConversation.insertConversation(moc: uiMOC, participants: [], type: .connection)
 
         // expect
         expectation(forNotification: UpdateConnectionAction.notificationName, object: nil) { (note) -> Bool in
@@ -1061,11 +1062,32 @@ extension ZMUserTests_Swift {
         }
 
         // when
+        // We should mock the update, and put the expectation here.
         user.accept { (_) in }
 
         // then
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
     }
+
+    // TODO: test mls
+    // given pending connection
+    // given both sides support mls
+    // when connection is accepted
+    // then mls one to one is established
+    // then proteus one to one is invalidated
+    // then mls one to one is active
+
+    // TODO: test proteus
+    // given pending connection
+    // given both sides only support proteus
+    // when connection is accepted
+    // then proteus conversation is the active one
+
+    // TODO: test no common protocols
+    // given pending connection
+    // given one side supports proteus, the other supports mls
+    // when connection is accepted
+    // then proteus one to one is marked read only
 
     func testThatBlockSendsAUpdateConnectionAction() {
         // given
