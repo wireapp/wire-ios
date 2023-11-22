@@ -1,6 +1,6 @@
-//
+////
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2023 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,25 +19,13 @@
 import XCTest
 @testable import WireDataModel
 
-extension XCTestCase {
+final class CoreDataMessagingMigrationVersionTests: XCTestCase {
 
-    private func generatePublicPrivateKey() -> (SecKey, SecKey) {
-        var publicKeySec, privateKeySec: SecKey?
-        let keyattribute = [
-            kSecAttrKeyType as String: kSecAttrKeyTypeECSECPrimeRandom,
-            kSecAttrKeySizeInBits as String: 256
-            ] as CFDictionary
-        SecKeyGeneratePair(keyattribute, &publicKeySec, &privateKeySec)
-
-        return (publicKeySec!, privateKeySec!)
+    func testCurrentVersionIsPartOfEnum() throws {
+        let currentModelVersion = CoreDataStack.loadMessagingModel().version
+        let migrationVersion = CoreDataMessagingMigrationVersion.allCases.first { version in
+            version.dataModelVersion == currentModelVersion
+        }
+        XCTAssertNotNil(migrationVersion, "if you added a new model, you MUST add the case in the enum. and update the nextVersion method")
     }
-
-    var validDatabaseKey: VolatileData {
-        return VolatileData(from: .zmRandomSHA256Key())
-    }
-
-    var malformedDatabaseKey: VolatileData {
-        return VolatileData(from: .zmRandomSHA256Key().dropFirst())
-    }
-
 }
