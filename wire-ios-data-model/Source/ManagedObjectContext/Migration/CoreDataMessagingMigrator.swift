@@ -21,17 +21,30 @@ import CoreData
 
 protocol CoreDataMessagingMigratorProtocol {
     func requiresMigration(at storeURL: URL, toVersion version: CoreDataMessagingMigrationVersion) -> Bool
-    func migrateStore(at storeURL: URL, toVersion version: CoreDataMessagingMigrationVersion)
+    func migrateStore(at storeURL: URL, toVersion version: CoreDataMessagingMigrationVersion) async
+}
+
+enum CoreDataMessagingMigratorError: Error {
+    case missingStoreURL
 }
 
 final class CoreDataMessagingMigrator: CoreDataMessagingMigratorProtocol {
+
+    let isInMemoryStore: Bool
+
+    init(isInMemoryStore: Bool) {
+        self.isInMemoryStore = isInMemoryStore
+    }
+
     func requiresMigration(at storeURL: URL, toVersion version: CoreDataMessagingMigrationVersion) -> Bool {
         let metadata: [String: Any]?
 
         if #available(iOSApplicationExtension 15.0, *) {
-            metadata = try? NSPersistentStoreCoordinator.metadataForPersistentStore(type: .sqlite, at: storeURL)
+            let type: NSPersistentStore.StoreType = isInMemoryStore ? .inMemory : .sqlite
+            metadata = try? NSPersistentStoreCoordinator.metadataForPersistentStore(type: type, at: storeURL)
         } else {
-            metadata = try? NSPersistentStoreCoordinator.metadataForPersistentStore(ofType: NSSQLiteStoreType, at: storeURL)
+            let type = isInMemoryStore ? NSInMemoryStoreType : NSSQLiteStoreType
+            metadata = try? NSPersistentStoreCoordinator.metadataForPersistentStore(ofType: type, at: storeURL)
         }
 
         guard let metadata else {
@@ -41,7 +54,7 @@ final class CoreDataMessagingMigrator: CoreDataMessagingMigratorProtocol {
         return compatibleVersionForStoreMetadata(metadata) != version
     }
     
-    func migrateStore(at storeURL: URL, toVersion version: CoreDataMessagingMigrationVersion) {
+    func migrateStore(at storeURL: URL, toVersion version: CoreDataMessagingMigrationVersion) async {
         fatalError("not implemented")
     }
 

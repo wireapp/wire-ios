@@ -110,6 +110,8 @@ public class CoreDataStack: NSObject, ContextProvider {
     let eventsContainer: PersistentContainer
     let dispatchGroup: ZMSDispatchGroup?
 
+    private let migrator: CoreDataMessagingMigrator
+
     public init(account: Account,
                 applicationContainer: URL,
                 inMemoryStore: Bool = false,
@@ -161,6 +163,7 @@ public class CoreDataStack: NSObject, ContextProvider {
 
         self.messagesContainer = messagesContainer
         self.eventsContainer = eventContainer
+        self.migrator = CoreDataMessagingMigrator(isInMemoryStore: inMemoryStore)
 
         super.init()
 
@@ -277,7 +280,7 @@ public class CoreDataStack: NSObject, ContextProvider {
     }
 
     public var needsMigration: Bool {
-        return messagesContainer.needsMigration || eventsContainer.needsMigration
+        needsMessagingStoreMigration() || eventsContainer.needsMigration
     }
 
     public var storesExists: Bool {
@@ -368,6 +371,22 @@ public class CoreDataStack: NSObject, ContextProvider {
         return result
     }
 
+    // MARK: - Migration
+
+    public func needsMessagingStoreMigration() -> Bool {
+        guard let storeURL = messagesContainer.storeURL else {
+            return false
+        }
+        return migrator.requiresMigration(at: storeURL, toVersion: .current)
+    }
+
+    public func migrateMessagingStore() async throws {
+        guard let storeURL = messagesContainer.storeURL else {
+            throw CoreDataMessagingMigratorError.missingStoreURL
+        }
+
+        await migrator.migrateStore(at: storeURL, toVersion: .current)
+    }
 }
 
 class PersistentContainer: NSPersistentContainer {

@@ -863,7 +863,7 @@ public final class SessionManager: NSObject, SessionManagerType {
             account: account,
             onStartMigration: { [weak self] in
                 self?.delegate?.sessionManagerWillMigrateAccount(userSessionCanBeTornDown: {})
-            }, onFailure: { [weak self] in
+            }, onFailure: { [weak self] _ in
                 self?.delegate?.sessionManagerDidFailToLoadDatabase()
                 onCompletion(nil)
             }, onCompletion: { [weak self] coreDataStack in
@@ -890,7 +890,7 @@ public final class SessionManager: NSObject, SessionManagerType {
     private func setupCoreDataStack(
         account: Account,
         onStartMigration: () -> Void,
-        onFailure: @escaping () -> Void,
+        onFailure: @escaping (Error) -> Void,
         onCompletion: @escaping (CoreDataStack) -> Void
     ) {
         let coreDataStack = CoreDataStack(
@@ -903,13 +903,23 @@ public final class SessionManager: NSObject, SessionManagerType {
             onStartMigration()
         }
 
-        coreDataStack.loadStores { error in
-            guard error == nil else {
-                onFailure()
-                return
+        Task(priority: .userInitiated) {
+            if coreDataStack.needsMessagingStoreMigration() {
+                do {
+                    try await coreDataStack.migrateMessagingStore()
+                } catch {
+                    onFailure(error)
+                    return
+                }
             }
 
-            onCompletion(coreDataStack)
+            coreDataStack.loadStores { error in
+                if let error {
+                    onFailure(error)
+                    return
+                }
+                onCompletion(coreDataStack)
+            }
         }
     }
 
