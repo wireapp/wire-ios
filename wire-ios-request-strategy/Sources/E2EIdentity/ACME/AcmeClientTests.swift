@@ -46,18 +46,23 @@ class AcmeClientTests: ZMTBaseTest {
         // expectation
         let expectedAcmeDirectory = MockAcmeResponse().acmeDirectory()
 
+        // given
+        BackendInfo.domain = "acme.elna.wire.link"
+
         // mock
         let transportData = MockAcmeResponse().acmeDirectory().transportData
         mockHttpClient?.mockResponse1 = ZMTransportResponse(payload: transportData,
-                                                            httpStatus: 200,
-                                                            transportSessionError: nil,
-                                                            apiVersion: 0)
-
-        // given / when
+                                                           httpStatus: 200,
+                                                           transportSessionError: nil,
+                                                           apiVersion: 0)
+        // when
         guard  let acmeDirectoryData = try await acmeClient?.getACMEDirectory() else {
             return XCTFail("Failed to get ACME directory.")
         }
-        let acmeDirectory = try! JSONDecoder.defaultDecoder.decode(AcmeDirectoriesResponse.self, from: acmeDirectoryData)
+
+        guard let acmeDirectory = try? JSONDecoder.defaultDecoder.decode(AcmeDirectoriesResponse.self, from: acmeDirectoryData) else {
+            return XCTFail("Failed to decode.")
+        }
 
         // then
         XCTAssertEqual(acmeDirectory, expectedAcmeDirectory)

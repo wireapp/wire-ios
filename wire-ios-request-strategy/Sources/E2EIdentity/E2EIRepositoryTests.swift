@@ -114,27 +114,6 @@ class MockHttpClient: HttpClient {
             throw NetworkError.invalidResponse
         }
         return mockResponse1
-//        switch context {
-//        case .getDirectory:
-//            let transportData = MockAcmeResponse().acmeDirectory().transportData
-//
-//            return ZMTransportResponse(payload: transportData,
-//                                       httpStatus: 200,
-//                                       transportSessionError: nil,
-//                                       apiVersion: 0)
-//        case .getACMENonce:
-//            return ZMTransportResponse(payload: nil,
-//                                       httpStatus: 200,
-//                                       transportSessionError: nil,
-//                                       apiVersion: 0)
-//        case .none:
-//
-//            return ZMTransportResponse(payload: nil,
-//                                       httpStatus: 200,
-//                                       transportSessionError: nil,
-//                                       apiVersion: 0)
-//        }
-
     }
 
     func send(_ request: URLRequest) async throws -> (Data, URLResponse) {
