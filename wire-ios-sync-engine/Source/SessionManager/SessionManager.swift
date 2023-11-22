@@ -244,6 +244,8 @@ public final class SessionManager: NSObject, SessionManagerType {
     let configuration: SessionManagerConfiguration
     var pendingURLAction: URLAction?
     let apiMigrationManager: APIMigrationManager
+    var cryptoboxMigrationManager: CryptoboxMigrationManagerInterface = CryptoboxMigrationManager()
+
     var notificationCenter: UserNotificationCenter = UNUserNotificationCenter.current()
 
     internal var authenticatedSessionFactory: AuthenticatedSessionFactory
@@ -842,30 +844,8 @@ public final class SessionManager: NSObject, SessionManagerType {
                 onWorkDone()
                 group?.leave()
             } else {
-                let coreDataStack = CoreDataStack(
-                    account: account,
-                    applicationContainer: self.sharedContainerURL,
-                    dispatchGroup: self.dispatchGroup
-                )
-
-                if coreDataStack.needsMigration {
-                    self.delegate?.sessionManagerWillMigrateAccount(userSessionCanBeTornDown: {})
-                }
-
-                coreDataStack.loadStores { error in
-                    if DeveloperFlag.forceDatabaseLoadingFailure.isOn {
-                        // flip off the flag in order not to be stuck in failure
-                        var flag = DeveloperFlag.forceDatabaseLoadingFailure
-                        flag.isOn = false
-                        self.delegate?.sessionManagerDidFailToLoadDatabase()
-                    }
-                    else if error != nil {
-                        self.delegate?.sessionManagerDidFailToLoadDatabase()
-                    } else {
-                        let userSession = self.startBackgroundSession(
-                            for: account,
-                            with: coreDataStack
-                        )
+                self.setupUserSession(account: account) { userSession in
+                    if let userSession {
                         completion(userSession)
                     }
 
@@ -878,6 +858,38 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     public func retryStart() {
         self.delegate?.sessionManagerAsksToRetryStart()
+    }
+
+    private func setupUserSession(
+        account: Account,
+        onCompletion: @escaping (ZMUserSession?) -> Void
+    ) {
+        let coreDataStack = CoreDataStack(
+            account: account,
+            applicationContainer: sharedContainerURL,
+            dispatchGroup: dispatchGroup
+        )
+        coreDataStack.setup(
+            onStartMigration: { [weak self] in
+                self?.delegate?.sessionManagerWillMigrateAccount(userSessionCanBeTornDown: {})
+
+            }, onFailure: { [weak self] _ in
+                self?.delegate?.sessionManagerDidFailToLoadDatabase()
+                onCompletion(nil)
+
+            }, onCompletion: { [weak self] coreDataStack in
+                guard let self else {
+                    assertionFailure("expected 'self' to continue!")
+                    return
+                }
+
+                let userSession = self.startBackgroundSession(
+                    for: account,
+                    with: coreDataStack
+                )
+                onCompletion(userSession)
+            }
+        )
     }
 
     private func clearCacheDirectory() {
