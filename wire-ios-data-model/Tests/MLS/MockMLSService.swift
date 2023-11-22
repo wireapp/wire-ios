@@ -256,4 +256,20 @@ class MockMLSService: MLSServiceInterface {
         }
         mock(groupID)
     }
+
+    // MARK: - MLS One to One
+
+    typealias EstablishOneToOneGroupMock = () throws -> MLSGroupID
+    var establishOneToOneGroupIfNeededMock: EstablishOneToOneGroupMock?
+
+    func establishOneToOneGroupIfNeeded(
+        with userID: QualifiedID,
+        in context: NSManagedObjectContext
+    ) async throws -> MLSGroupID {
+        guard let mock = establishOneToOneGroupIfNeededMock else {
+            fatalError("mock missing for `establishOneToOneGroupIfNeeded`")
+        }
+
+        return try mock()
+    }
 }
