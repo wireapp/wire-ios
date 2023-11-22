@@ -137,7 +137,11 @@ class MLSEventProcessor: MLSEventProcessing {
             return logWarn(aborting: .conversationWipe, withReason: .missingMLSService)
         }
 
-        try? mlsService.wipeGroup(mlsGroupID)
+        do {
+            try mlsService.wipeGroup(mlsGroupID)
+        } catch {
+            WireLogger.mls.error("mlsService.wipeGroup(\(mlsGroupID.safeForLoggingDescription)) threw error: \(String(reflecting: error))")
+        }
     }
 
     // MARK: Log Helpers

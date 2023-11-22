@@ -548,10 +548,12 @@ class ConversationByIDTranscoder: IdentifierObjectSyncTranscoder {
             else {
                 continue
             }
-            try? removeLocalConversation.invoke(
-                with: conversation,
-                syncContext: context
-            )
+
+            do {
+                try removeLocalConversation.invoke(with: conversation, syncContext: context)
+            } catch {
+                WireLogger.mls.error("removeLocalConversation threw error: \(String(reflecting: error))")
+            }
         }
     }
 
@@ -665,10 +667,12 @@ class ConversationByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
             else {
                 continue
             }
-            try? removeLocalConversation.invoke(
-                with: conversation,
-                syncContext: context
-            )
+
+            do {
+                try removeLocalConversation.invoke(with: conversation, syncContext: context)
+            } catch {
+                WireLogger.mls.error("removeLocalConversation threw error: \(String(reflecting: error))")
+            }
         }
     }
 
