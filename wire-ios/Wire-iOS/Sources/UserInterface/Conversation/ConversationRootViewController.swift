@@ -133,6 +133,7 @@ final class ConversationRootViewController: UIViewController {
         inputBarContainer.backgroundColor = conversationViewController.inputBarController.inputBar.backgroundColor
         inputBarContainer.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(inputBarContainer)
+        contentView.sendSubviewToBack(inputBarContainer)
 
         NSLayoutConstraint.activate([
             inputBarContainer.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
