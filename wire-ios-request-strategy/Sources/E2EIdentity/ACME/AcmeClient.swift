@@ -39,7 +39,7 @@ public class AcmeClient: NSObject, AcmeClientInterface {
     public func getACMEDirectory() async throws -> Data {
 
         guard let domain = BackendInfo.domain else {
-            throw NetworkError.invalidRequestURL
+            throw NetworkError.invalidRequest
         }
 
         let path = "https://acme.\(domain)/acme/defaultteams/directory"

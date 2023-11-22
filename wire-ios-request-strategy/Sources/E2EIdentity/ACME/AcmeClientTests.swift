@@ -70,7 +70,7 @@ class AcmeClientTests: ZMTBaseTest {
             guard  let acmeDirectoryData = try await acmeClient?.getACMEDirectory() else {
                 return XCTFail("Failed to get ACME directory.")
             }
-        } catch NetworkError.invalidRequestURL {
+        } catch NetworkError.invalidRequest {
             // then
             return
         } catch {

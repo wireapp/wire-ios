@@ -20,7 +20,7 @@ import Foundation
 
 public enum NetworkError: Error {
 
-    case invalidRequestURL
+    case invalidRequest
     case invalidResponse
 
 }
@@ -35,7 +35,7 @@ public class HttpClientImpl: NSObject, HttpClient {
 
     public func send(_ request: ZMTransportRequest) async throws -> ZMTransportResponse {
         guard let url = URL(string: request.path) else {
-            throw NetworkError.invalidRequestURL
+            throw NetworkError.invalidRequest
         }
 
         var urlRequest = URLRequest(url: url)
