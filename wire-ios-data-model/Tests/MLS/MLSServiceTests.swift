@@ -418,7 +418,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     // MARK: - Adding participants
 
-    func test_AddingMembersToConversation_Successfully() async {
+    func test_AddingMembersToConversation_Successfully() async throws {
         // Given
         let id = UUID.create()
         let domain = "example.com"
@@ -446,12 +446,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             return [updateEvent]
         }
 
-        do {
-            // When
-            try await sut.addMembersToConversation(with: mlsUser, for: mlsGroupID)
-        } catch let error {
-            XCTFail("Unexpected error: \(String(describing: error))")
-        }
+        try await sut.addMembersToConversation(with: mlsUser, for: mlsGroupID)
 
         // Then we added the members.
         XCTAssertEqual(mockAddMembersArguments.count, 1)
@@ -2659,16 +2654,17 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     func test_startProteusToMLSMigration_succeeds() async throws {
         // Given
+        BackendInfo.domain = "example.com"
         let mlsGroupID = MLSGroupID.random()
         let conversation = await uiMOC.perform { [self] in
             let selfUser = ZMUser.selfUser(in: uiMOC)
             selfUser.teamIdentifier = .create()
-            selfUser.domain = "example.com"
+            selfUser.domain = BackendInfo.domain
 
             let conversation = createConversation(in: uiMOC, with: [selfUser])
             conversation.mlsGroupID = mlsGroupID
             conversation.messageProtocol = .proteus
-            conversation.domain = selfUser.domain
+            conversation.domain = BackendInfo.domain
             conversation.teamRemoteIdentifier = selfUser.teamIdentifier
             return conversation
         }
@@ -2710,6 +2706,21 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             throw MLSActionExecutor.Error.noPendingProposals
         }
 
+        // Mock claiming a key package.
+        var keyPackage: KeyPackage!
+        mockActionsProvider.claimKeyPackagesUserIDDomainExcludedSelfClientIDIn_MockMethod = { [self] userID, domain, _, _ in
+            keyPackage = createKeyPackage(userID: userID, domain: domain ?? BackendInfo.domain!)
+            return [keyPackage]
+        }
+
+        // Mock adding memebers to the conversation.
+        var addedMembers = [(invitee: [Invitee], mlsGroupID: MLSGroupID)]()
+        let updateEvent = dummyMemberJoinEvent()
+        mockMLSActionExecutor.mockAddMembers = {
+            addedMembers.append(($0, $1))
+            return [updateEvent]
+        }
+
         // When
         try await sut.startProteusToMLSMigration()
 
@@ -2725,24 +2736,38 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             timeout: 5,
             enforceOrder: true
         )
+
+        // members are added
+        XCTAssertEqual(addedMembers.count, 1)
+        XCTAssertEqual(addedMembers.first?.invitee, [Invitee(from: keyPackage)])
+        XCTAssertEqual(addedMembers.first?.mlsGroupID, mlsGroupID)
+
+        // And processd the update event.
+        let processConversationEventsCalls = mockConversationEventProcessor.calls.processConversationEvents
+        XCTAssertEqual(processConversationEventsCalls.flatMap { $0 }.count, 1)
+        XCTAssertEqual(processConversationEventsCalls.flatMap { $0 }.first, updateEvent)
     }
 
     func test_startProteusToMLSMigration_staleMessageErrorWipesGroup() async throws {
         // Given
-        let selfUser = ZMUser.selfUser(in: uiMOC)
-        selfUser.teamIdentifier = .create()
-        selfUser.domain = "example.com"
-
+        BackendInfo.domain = "example.com"
         let mlsGroupID = MLSGroupID.random()
-        let conversation = createConversation(in: uiMOC, with: [selfUser])
-        conversation.mlsGroupID = mlsGroupID
-        conversation.messageProtocol = .proteus
-        conversation.domain = selfUser.domain
-        conversation.teamRemoteIdentifier = selfUser.teamIdentifier
+        let conversation = await uiMOC.perform { [self] in
+            let selfUser = ZMUser.selfUser(in: uiMOC)
+            selfUser.teamIdentifier = .create()
+            selfUser.domain = BackendInfo.domain
+
+            let conversation = createConversation(in: uiMOC, with: [selfUser])
+            conversation.mlsGroupID = mlsGroupID
+            conversation.messageProtocol = .proteus
+            conversation.domain = BackendInfo.domain
+            conversation.teamRemoteIdentifier = selfUser.teamIdentifier
+            return conversation
+        }
 
         mockActionsProvider.updateConversationProtocolQualifiedIDMessageProtocolContext_MockMethod = { _, _, _ in }
-        mockActionsProvider.syncConversationQualifiedIDContext_MockMethod = { _, _ in
-            conversation.messageProtocol = .mixed
+        mockActionsProvider.syncConversationQualifiedIDContext_MockMethod = { [uiMOC] _, _ in
+            uiMOC.performAndWait { conversation.messageProtocol = .mixed }
         }
         mockCoreCrypto.mockCreateConversation = { _, _, _ in }
         mockMLSActionExecutor.mockUpdateKeyMaterial = { _ in
