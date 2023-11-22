@@ -48,7 +48,7 @@ public class AcmeClient: NSObject, AcmeClientInterface {
         let result = try await httpClient.send(request)
 
         guard let data = result.rawData else {
-            throw NetworkError.invalidRequestURL
+            throw NetworkError.invalidResponse
         }
 
         return data
