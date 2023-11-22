@@ -137,7 +137,7 @@ class MLSEventProcessor: MLSEventProcessing {
             return logWarn(aborting: .conversationWipe, withReason: .missingMLSService)
         }
 
-        mlsService.wipeGroup(mlsGroupID)
+        try? mlsService.wipeGroup(mlsGroupID)
     }
 
     // MARK: Log Helpers
