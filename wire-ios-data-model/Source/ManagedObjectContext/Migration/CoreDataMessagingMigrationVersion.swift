@@ -19,14 +19,14 @@
 
 import Foundation
 
-enum CoreDataMigrationVersion: String, CaseIterable {
+enum CoreDataMessagingMigrationVersion: String, CaseIterable {
 
     // TODO: add more old versions!
-
+    
     case version2_108 = "zmessaging2.108.0"
     case version2_109 = "zmessaging2.109.0"
 
-    var nextVersion: CoreDataMigrationVersion? {
+    var nextVersion: Self? {
         switch self {
         case .version2_108:
             return .version2_109
@@ -37,7 +37,7 @@ enum CoreDataMigrationVersion: String, CaseIterable {
 
     // MARK: - Current
 
-    static let current: CoreDataMigrationVersion = {
+    static let current: Self = {
         guard let current = allCases.last else {
             fatalError("no model versions found")
         }
