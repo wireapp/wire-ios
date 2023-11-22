@@ -27,12 +27,14 @@ class E2EIServiceTests: ZMConversationTestsBase {
     var mockSafeCoreCrypto: MockSafeCoreCrypto!
     var e2eiClientId: E2EIClientID!
     var qualifiedClientID: QualifiedClientID!
+    var mockE2eIdentity: MockWireE2eIdentity!
 
     override func setUp() {
         super.setUp()
 
         mockCoreCrypto = MockCoreCrypto()
         mockSafeCoreCrypto = MockSafeCoreCrypto(coreCrypto: mockCoreCrypto)
+        mockE2eIdentity = MockWireE2eIdentity()
 
         // create self client and self user
         self.createSelfClient()
@@ -69,13 +71,14 @@ class E2EIServiceTests: ZMConversationTestsBase {
         mockSafeCoreCrypto = nil
         e2eiClientId = nil
         qualifiedClientID = nil
+        mockE2eIdentity = nil
 
         super.tearDown()
     }
 
     func testThatItContainsCorrectAcmeDirectoryInTheResponse() async throws {
         // Expectation
-        let expectedacmeDirectory = AcmeDirectory(newNonce: "https://acme.elna.wire.link/acme/defaultteams/new-nonce",
+        let expectedAcmeDirectory = AcmeDirectory(newNonce: "https://acme.elna.wire.link/acme/defaultteams/new-nonce",
                                                   newAccount: "https://acme.elna.wire.link/acme/defaultteams/new-account",
                                                   newOrder: "https://acme.elna.wire.link/acme/defaultteams/new-order")
 
@@ -94,10 +97,9 @@ class E2EIServiceTests: ZMConversationTestsBase {
         let acmeResponseData = acmeResponse.data(using: .utf8)!
 
         // Mock
-        let mockE2eIdentity = MockWireE2eIdentity()
         mockE2eIdentity.mockDirectoryResponse = { _ in
             mockDirectoryResponseCount += 1
-            return expectedacmeDirectory
+            return expectedAcmeDirectory
         }
         sut.e2eIdentity = mockE2eIdentity
 
@@ -106,67 +108,134 @@ class E2EIServiceTests: ZMConversationTestsBase {
 
         // Then
         XCTAssertEqual(mockDirectoryResponseCount, 1)
-        XCTAssertEqual(acmeDirectory, expectedacmeDirectory)
+        XCTAssertEqual(acmeDirectory, expectedAcmeDirectory)
     }
 
-    func test1() async throws {
+    func testThatItGetsNewAccountRequest() async throws {
+        // Expectation
+        let expectedAccountRequest = Data()
+
         // Given
+        var mockGetNewAccountCount = 0
+
+        // Mock
+        mockE2eIdentity.mockNewAccountRequest = { _ in
+            mockGetNewAccountCount += 1
+            return expectedAccountRequest.bytes
+        }
+        sut.e2eIdentity = mockE2eIdentity
 
         // When
-        let acmeDirectory = try await sut.getNewAccountRequest(previousNonce: "")
+        let accountRequest = try await sut.getNewAccountRequest(previousNonce: "")
 
         // Then
-
+        XCTAssertEqual(mockGetNewAccountCount, 1)
+        XCTAssertEqual(accountRequest, expectedAccountRequest)
     }
 
-    func test2() async throws {
+    func testThatItSetsAccountResponse() async throws {
         // Given
+        var mockSetAccountResponse = 0
+
+        // Mock
+        mockE2eIdentity.mockNewAccountResponse = { _ in
+            mockSetAccountResponse += 1
+        }
+        sut.e2eIdentity = mockE2eIdentity
 
         // When
-         try await sut.setAccountResponse(accountData: Data())
+        try await sut.setAccountResponse(accountData: Data())
 
         // Then
-
+        XCTAssertEqual(mockSetAccountResponse, 1)
     }
 
-    func test3() async throws {
+    func testThatItGetsNewOrderRequest() async throws {
+        // Expectation
+        let expectedOrderRequest = Data()
+
         // Given
+        var mockGetNewOrderCount = 0
+
+        // Mock
+        mockE2eIdentity.mockNewOrderRequest = { _ in
+            mockGetNewOrderCount += 1
+            return expectedOrderRequest.bytes
+        }
+        sut.e2eIdentity = mockE2eIdentity
 
         // When
-        let acmeDirectory = try await sut.getNewOrderRequest(nonce: "")
+        let orderRequest = try await sut.getNewOrderRequest(nonce: "nonce")
 
         // Then
-
+        XCTAssertEqual(mockGetNewOrderCount, 1)
+        XCTAssertEqual(orderRequest, expectedOrderRequest)
     }
 
-    func test4() async throws {
+    func testThatItSetsOrderResponse() async throws {
+        // Expectation
+        let expectedAcmeOrder = NewAcmeOrder(delegate: [], authorizations: ["example.com"])
+
         // Given
+        var mockSetOrderResponse = 0
+
+        // Mock
+        mockE2eIdentity.mockNewOrderResponse = { _ in
+            mockSetOrderResponse += 1
+            return expectedAcmeOrder
+        }
+        sut.e2eIdentity = mockE2eIdentity
 
         // When
-        try await sut.setOrderResponse(order: Data())
+        let acmeOrder = try await sut.setOrderResponse(order: Data())
 
         // Then
-
+        XCTAssertEqual(mockSetOrderResponse, 1)
+        XCTAssertEqual(acmeOrder, expectedAcmeOrder)
     }
 
-    func test5() async throws {
+    func testThatItGetsNewAuthzRequest() async throws {
+        // Expectation
+        let expectedAuthzRequest = Data()
+
         // Given
+        var mockGetNewAuthzCount = 0
+
+        // Mock
+        mockE2eIdentity.mockNewAuthzRequest = { _, _ in
+            mockGetNewAuthzCount += 1
+            return expectedAuthzRequest.bytes
+        }
+        sut.e2eIdentity = mockE2eIdentity
 
         // When
-        let acmeDirectory = try await sut.getNewAuthzRequest(url: "", previousNonce: "")
+        let authzRequest = try await sut.getNewAuthzRequest(url: "", previousNonce: "nonce")
 
         // Then
-
+        XCTAssertEqual(mockGetNewAuthzCount, 1)
+        XCTAssertEqual(authzRequest, expectedAuthzRequest)
     }
 
-    func test6() async throws {
+    func testThatItSetsAuthzResponse() async throws {
+        // Expectation
+        let expectedAcmeOrder = NewAcmeAuthz(identifier: "", wireDpopChallenge: nil, wireOidcChallenge: nil)
+
         // Given
+        var mockSetAuthzResponse = 0
+
+        // Mock
+        mockE2eIdentity.mockNewAuthzResponse = { _ in
+            mockSetAuthzResponse += 1
+            return expectedAcmeOrder
+        }
+        sut.e2eIdentity = mockE2eIdentity
 
         // When
-        try await sut.setAuthzResponse(authz: Data())
+        let acmeAuthz = try await sut.setAuthzResponse(authz: Data())
 
         // Then
-
+        XCTAssertEqual(mockSetAuthzResponse, 1)
+        XCTAssertEqual(acmeAuthz, expectedAcmeOrder)
     }
 
 }
