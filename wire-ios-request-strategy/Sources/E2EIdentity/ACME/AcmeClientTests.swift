@@ -22,7 +22,7 @@ import Foundation
 class AcmeClientTests: ZMTBaseTest {
 
     var acmeClient: AcmeClient?
-    var mockHttpClient: HttpClient?
+    var mockHttpClient: MockHttpClient?
     let backendDomainBackup = BackendInfo.domain
 
     override func setUp() {
@@ -47,16 +47,23 @@ class AcmeClientTests: ZMTBaseTest {
         let expectedAcmeDirectory = MockAcmeResponse().acmeDirectory()
 
         // given
-        guard let mockHttpClient = mockHttpClient as? MockHttpClient else {
-            return XCTFail("Failed to create mockHttpClient.")
-        }
-        mockHttpClient.context = .getDirectory
+        BackendInfo.domain = "acme.elna.wire.link"
+
+        // mock
+        let transportData = MockAcmeResponse().acmeDirectory().transportData
+        mockHttpClient?.mockResponse = ZMTransportResponse(payload: transportData,
+                                                           httpStatus: 200,
+                                                           transportSessionError: nil,
+                                                           apiVersion: 0)
 
         // when
         guard  let acmeDirectoryData = try await acmeClient?.getACMEDirectory() else {
             return XCTFail("Failed to get ACME directory.")
         }
-        let acmeDirectory = try! JSONDecoder.defaultDecoder.decode(AcmeDirectoriesResponse.self, from: acmeDirectoryData)
+
+        guard let acmeDirectory = try? JSONDecoder.defaultDecoder.decode(AcmeDirectoriesResponse.self, from: acmeDirectoryData) else {
+            return XCTFail("Failed to decode.")
+        }
 
         // then
         XCTAssertEqual(acmeDirectory, expectedAcmeDirectory)
@@ -82,29 +89,13 @@ class AcmeClientTests: ZMTBaseTest {
 
 class MockHttpClient: HttpClient {
 
-    enum Context {
-        case getDirectory
-    }
-
-    var context: Context?
+    var mockResponse: ZMTransportResponse?
 
     func send(_ request: ZMTransportRequest) async throws -> ZMTransportResponse {
-        switch context {
-        case .getDirectory:
-            let transportData = MockAcmeResponse().acmeDirectory().transportData
-
-            return ZMTransportResponse(payload: transportData,
-                                       httpStatus: 200,
-                                       transportSessionError: nil,
-                                       apiVersion: 0)
-        case .none:
-
-            return ZMTransportResponse(payload: nil,
-                                       httpStatus: 200,
-                                       transportSessionError: nil,
-                                       apiVersion: 0)
+        guard let mockResponse = mockResponse else {
+            throw NetworkError.invalidResponse
         }
-
+        return mockResponse
     }
 
 }
