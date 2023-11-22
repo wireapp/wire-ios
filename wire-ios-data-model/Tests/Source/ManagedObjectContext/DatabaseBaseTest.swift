@@ -51,10 +51,13 @@ import WireTesting
                                   dispatchGroup: dispatchGroup)
 
         let expectation = expectation(description: "should wait for loadStores to finish")
-        stack.loadStores { (error) in
+        stack.setup(onStartMigration: { }) { error in
             XCTAssertNil(error)
             expectation.fulfill()
+        } onCompletion: { _ in
+
         }
+
 
         waitForCustomExpectations(withTimeout: 1.0)
 
