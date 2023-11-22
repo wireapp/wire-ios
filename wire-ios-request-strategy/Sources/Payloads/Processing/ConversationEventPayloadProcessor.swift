@@ -91,10 +91,11 @@ final class ConversationEventPayloadProcessor {
             return
         }
 
-        try? removeLocalConversation.invoke(
-            with: conversation,
-            syncContext: context
-        )
+        do {
+            try removeLocalConversation.invoke(with: conversation, syncContext: context)
+        } catch {
+            WireLogger.mls.error("removeLocalConversation threw error: \(String(reflecting: error))")
+        }
     }
 
     // MARK: - Member leave
@@ -474,7 +475,11 @@ final class ConversationEventPayloadProcessor {
             mlsService.createSelfGroup(for: groupId)
         } else if !mlsService.conversationExists(groupID: groupId) {
             Task {
-                try await mlsService.joinGroup(with: groupId)
+                do {
+                    try await mlsService.joinGroup(with: groupId)
+                } catch {
+                    WireLogger.mls.error("mlsService.joinGroup(with: \(groupId.safeForLoggingDescription)) threw error: \(String(reflecting: error))")
+                }
             }
         }
     }
