@@ -63,10 +63,7 @@ final class CoreDataMessagingMigrator: CoreDataMessagingMigratorProtocol {
     private func compatibleVersionForStoreMetadata(_ metadata: [String : Any]) -> CoreDataMessagingMigrationVersion? {
         let allVersions = CoreDataMessagingMigrationVersion.allCases
         let compatibleVersion = allVersions.first {
-            let bundle = Bundle(for: CoreDataMessagingMigrator.self)
-            let subdirectory = "zmessaging.momd"
-
-            guard let url = bundle.url(forResource: $0.rawValue, withExtension: "omo", subdirectory: subdirectory) else {
+            guard let url = $0.managedObjectModelURL() else {
                 return false
             }
 

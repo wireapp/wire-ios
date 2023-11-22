@@ -21,8 +21,13 @@ import Foundation
 
 enum CoreDataMessagingMigrationVersion: String, CaseIterable {
 
+    private enum Constant {
+        static let modelDirectory = "zmessaging.momd"
+        static let resourceExtension = "omo"
+    }
+
     // TODO: add more old versions!
-    
+
     case version2_108 = "zmessaging2.108.0"
     case version2_109 = "zmessaging2.109.0"
 
@@ -44,4 +49,12 @@ enum CoreDataMessagingMigrationVersion: String, CaseIterable {
 
         return current
     }()
+
+    func managedObjectModelURL() -> URL? {
+        WireDataModelBundle.bundle.url(
+            forResource: rawValue,
+            withExtension: Constant.resourceExtension,
+            subdirectory: Constant.modelDirectory
+        )
+    }
 }
