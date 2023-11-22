@@ -6925,7 +6925,6 @@
 				EFC57A1121BABD4F0008DBE6 /* ConversationInputBarViewController */,
 				EFDBA2402294016400874A15 /* ConversationList */,
 				5E35F76F2180B8A500D3F4FE /* ConversationMessageCell */,
-				EF18140721B17F7A008F7DA8 /* ConversationOption */,
 				A9E5725524C640A100CBE0D7 /* CustomAppLock */,
 				EF27CD9A20C161500077FE55 /* DeviceManagement */,
 				1E18C2B71AFBB7E00043F3CF /* EmoticonSubstitution */,
@@ -7579,15 +7578,6 @@
 			path = Cells;
 			sourceTree = "<group>";
 		};
-		EF18140721B17F7A008F7DA8 /* ConversationOption */ = {
-			isa = PBXGroup;
-			children = (
-				5EA73D8E20D903900001D106 /* GroupDetailsTimeoutOptionsCellTests.swift */,
-				EF18140821B17F94008F7DA8 /* GroupDetailsReceiptOptionsCellTests.swift */,
-			);
-			path = ConversationOption;
-			sourceTree = "<group>";
-		};
 		EF1E291222AA4BA700DE6BAC /* ConfirmAssetViewController */ = {
 			isa = PBXGroup;
 			children = (
@@ -7771,6 +7761,8 @@
 		EF5C844B21F2386A002481DE /* ConversationDetail */ = {
 			isa = PBXGroup;
 			children = (
+				5EA73D8E20D903900001D106 /* GroupDetailsTimeoutOptionsCellTests.swift */,
+				EF18140821B17F94008F7DA8 /* GroupDetailsReceiptOptionsCellTests.swift */,
 				EF5871652166802B00E47E73 /* GroupDetailsViewControllerSnapshotTests.swift */,
 				EF2EA63221F8AFB2000E12CA /* ServiceDetailViewControllerSnapshotTests.swift */,
 			);
