@@ -91,8 +91,7 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
         case .notStarted:
             await startMigrationIfNeeded()
         case .started:
-            // check if it should be finalised
-            break
+            await migrateOrJoinGroupConversations()
         default:
             break
         }
@@ -146,6 +145,45 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
         }
 
         return .canStart
+    }
+
+    /// This method is responsible for migrating all `mixed` group conversations to `mls`.
+    /// It evaluates each conversation to determine if the migration needs to be finalized (i.e: updating the protocol from `mixed` to `mls`)
+    /// or if it should first join the corresponding MLS group.
+    func migrateOrJoinGroupConversations() async {
+
+        let mlsGroupIds = await context.perform { [self] in
+            do {
+                let conversations = try ZMConversation.fetchAllTeamGroupConversations(
+                    messageProtocol: .mixed,
+                    in: context
+                )
+                return conversations.compactMap { $0.mlsGroupID }
+            } catch {
+                logger.warn("Can't fetch conversations with `mixed` protocol")
+                return [MLSGroupID]()
+            }
+        }
+
+        let mlsService = await context.perform { self.context.mlsService }
+
+        guard let mlsService else {
+            return logger.warn("can't migrate conversations to mls: missing `mlsService`")
+        }
+
+        for groupID in mlsGroupIds {
+            do {
+                if mlsService.conversationExists(groupID: groupID) {
+                    // TODO: if conversation exists we finalize migration
+                } else {
+                    try await mlsService.joinGroup(with: groupID)
+                }
+
+            } catch {
+                logger.warn("Can't migrate conversation with group id \(groupID.safeForLoggingDescription) to mls: \(String(describing: error))")
+            }
+        }
+
     }
 
     // MARK: - Helpers

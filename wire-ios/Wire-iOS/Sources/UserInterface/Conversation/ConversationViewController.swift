@@ -464,7 +464,7 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
     func conversationInputBarViewControllerDidComposeText(text: String,
                                                           mentions: [Mention],
                                                           replyingTo message: ZMConversationMessage?) {
-        contentViewController.scrollToBottom()
+        contentViewController.scrollToBottomIfNeeded()
         inputBarController.sendController.sendTextMessage(text, mentions: mentions, userSession: userSession, replyingTo: message)
     }
 
@@ -473,7 +473,7 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
             !controller.isReplyingToMessage {
             collectionController = nil
             contentViewController.searchQueries = []
-            contentViewController.scrollToBottom()
+            contentViewController.scrollToBottomIfNeeded()
         }
 
         setGuestBarForceHidden(true)
