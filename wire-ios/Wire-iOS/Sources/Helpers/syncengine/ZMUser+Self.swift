@@ -32,7 +32,7 @@ extension ZMUser {
     /// Notice: This should be replaced with SelfUser.current
     ///
     /// - Returns: a ZMUser<ZMEditableUser> object for app target, or a MockUser object for test.
-    static func selfUser() -> EditableUser! {
+    static func selfUser() -> EditableUser? {
 
         if let mockUserClass = NSClassFromString("MockUser") as? SelfUserProviderUI.Type {
             return mockUserClass.selfUser
@@ -49,7 +49,7 @@ extension ZMUser {
     /// Return self's User object
     ///
     /// - Returns: a ZMUser object for app target
-    static func selfUser() -> ZMUser! {
+    static func selfUser() -> ZMUser? {
         guard let session = ZMUserSession.shared() else { return nil }
 
         return ZMUser.selfUser(inUserSession: session)

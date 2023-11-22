@@ -47,7 +47,9 @@ In order to build Wire for iOS locally, it is necessary to install and setup the
 - `gem` must be setup to use ruby without admin permissions. One way to achieve this is to use [rbenv](https://github.com/rbenv/rbenv), install the latest ruby version and set it as global version.
 - SSH key for git. [Generate a new key, add it locally](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent) and [add it to GitHub](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account).
 
-The setup script will automatically check for you that you satisfy these requirements.
+You can run `brew bundle` to install all development tools on your local machine, the list is given in `Brewfile`.
+
+The setup script will automatically check for you that you satisfy these requirements.  
 
 ### How to build locally
 1. Check out the wire-ios-mono repository.
@@ -78,19 +80,19 @@ xcodebuild test \
   -workspace wire-ios-mono.xcworkspace \
   -scheme Wire-iOS \
   -testPlan SecurityTests \
-  -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2'
+  -destination 'platform=iOS Simulator,name=iPhone 14,OS=17.0.1'
 
   xcodebuild test \
   -workspace wire-ios-mono.xcworkspace \
   -scheme WireSyncEngine \
   -testPlan SecurityTests \
-  -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2'
+  -destination 'platform=iOS Simulator,name=iPhone 14,OS=17.0.1'
 
   xcodebuild test \
   -workspace wire-ios-mono.xcworkspace \
   -scheme WireDataModel \
   -testPlan SecurityTests \
-  -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.2'
+  -destination 'platform=iOS Simulator,name=iPhone 14,OS=17.0.1'
 ```
 
 `xcodebuild` will print the test results to the console. It will also log the location of the test result (in `.xcresult` format), which you can open

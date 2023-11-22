@@ -18,6 +18,7 @@
 
 import Foundation
 import XCTest
+import avs
 @testable import Wire
 
 final class MockAudioRecordKeyboardDelegate: AudioRecordViewControllerDelegate {
@@ -94,16 +95,19 @@ final class MockAudioRecorder: AudioRecorderType {
 
 }
 
-final class AudioRecordKeyboardViewControllerTests: XCTestCase {
+final class AudioRecordKeyboardViewControllerTests: BaseSnapshotTestCase {
+
     var sut: AudioRecordKeyboardViewController!
     var audioRecorder: MockAudioRecorder!
     var mockDelegate: MockAudioRecordKeyboardDelegate!
+    var userSession: UserSessionMock!
 
     override func setUp() {
         super.setUp()
+        self.userSession = UserSessionMock()
         self.audioRecorder = MockAudioRecorder()
         self.mockDelegate = MockAudioRecordKeyboardDelegate()
-        self.sut = AudioRecordKeyboardViewController(audioRecorder: self.audioRecorder)
+        self.sut = AudioRecordKeyboardViewController(audioRecorder: self.audioRecorder, userSession: userSession)
         self.sut.delegate = self.mockDelegate
     }
 
@@ -111,6 +115,7 @@ final class AudioRecordKeyboardViewControllerTests: XCTestCase {
         self.sut = nil
         self.audioRecorder = nil
         self.mockDelegate = nil
+        self.userSession = nil
         super.tearDown()
     }
 

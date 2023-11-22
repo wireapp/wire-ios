@@ -62,9 +62,6 @@ final class LegalHoldDisclosureController: NSObject, ZMUserObserver {
     /// The self user, that can become under legal hold.
     let selfUser: SelfUserType
 
-    /// The user session related to the self user.
-    let userSession: ZMUserSession?
-
     /// The block that presents view controllers when requested.
     let presenter: ViewControllerPresenter
 
@@ -83,21 +80,17 @@ final class LegalHoldDisclosureController: NSObject, ZMUserObserver {
 
     // MARK: - Initialization
 
-    init(selfUser: SelfUserType, userSession: ZMUserSession?, presenter: @escaping ViewControllerPresenter) {
+    init(selfUser: SelfUserType, userSession: UserSession, presenter: @escaping ViewControllerPresenter) {
         self.selfUser = selfUser
-        self.userSession = userSession
         self.presenter = presenter
         super.init()
 
-        configureObservers()
+        configureObservers(userSession: userSession)
     }
 
-    private func configureObservers() {
+    private func configureObservers(userSession: UserSession) {
         NotificationCenter.default.addObserver(self, selector: #selector(applicationDidEnterForeground), name: UIApplication.didBecomeActiveNotification, object: nil)
-
-        if let session = self.userSession {
-            userObserverToken = UserChangeInfo.add(observer: self, for: selfUser, in: session)
-        }
+        userObserverToken = userSession.addUserObserver(self, for: selfUser)
     }
 
     // MARK: - Notifications

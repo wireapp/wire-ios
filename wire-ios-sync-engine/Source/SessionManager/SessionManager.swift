@@ -44,7 +44,7 @@ public extension Bundle {
 
 public protocol SessionActivationObserver: AnyObject {
     func sessionManagerDidChangeActiveUserSession(userSession: ZMUserSession)
-    func sessionManagerDidReportLockChange(forSession session: UserSessionAppLockInterface)
+    func sessionManagerDidReportLockChange(forSession session: UserSession)
 }
 
 public protocol SessionManagerDelegate: SessionActivationObserver {
@@ -57,8 +57,8 @@ public protocol SessionManagerDelegate: SessionActivationObserver {
     func sessionManagerDidFailToLoadDatabase()
     func sessionManagerDidBlacklistCurrentVersion(reason: BlacklistReason)
     func sessionManagerDidBlacklistJailbrokenDevice()
-    func sessionManagerDidPerformFederationMigration(authenticated: Bool)
-    func sessionManagerDidPerformAPIMigrations()
+    func sessionManagerDidPerformFederationMigration(activeSession: UserSession?)
+    func sessionManagerDidPerformAPIMigrations(activeSession: UserSession?)
     func sessionManagerAsksToRetryStart()
 
     var isInAuthenticatedAppState: Bool { get }

@@ -126,7 +126,7 @@ extension AssetDeletionRequestStrategyTests {
             expectedPath = "/v\(apiVersion.rawValue)/assets/\(domain)/\(identifier)"
         }
         XCTAssertNotNil(request)
-        XCTAssertEqual(request?.method, .methodDELETE)
+        XCTAssertEqual(request?.method, .delete)
         XCTAssertEqual(request?.path, expectedPath)
         XCTAssertNil(request?.payload)
     }
