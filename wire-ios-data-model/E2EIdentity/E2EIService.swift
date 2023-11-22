@@ -27,6 +27,8 @@ public protocol E2EIServiceInterface {
     func setAccountResponse(accountData: Data) async throws
     func getNewOrderRequest(nonce: String) async throws -> Data
     func setOrderResponse(order: Data) async throws -> NewAcmeOrder
+    func getNewAuthzRequest(url: String, previousNonce: String) async throws -> Data
+    func setAuthzResponse(authz: Data) async throws -> NewAcmeAuthz
 
 }
 
@@ -60,8 +62,8 @@ public final class E2EIService: E2EIServiceInterface {
         /// TODO: we should use the new CoreCrypto version: `e2eiNewRotateEnrollment` and `e2eiNewActivationEnrollment`
         do {
             e2eIdentity = try coreCrypto.perform {
-                try $0.e2eiNewEnrollment(clientId: 
-                                            //mlsClientId.rawValue,
+                try $0.e2eiNewEnrollment(clientId:
+                                           // mlsClientId.rawValue,
                                           "OWE0ZGVkNDYtYmE4Yi00MTI0LTk1MDktZTgzZjkwMmFiMWVk:871610f2e52b6480@elna.wire.link",
                                          displayName: userName,
                                          handle: handle,
@@ -76,89 +78,6 @@ public final class E2EIService: E2EIServiceInterface {
 
     // MARK: - E2EIdentity methods
 
-    //    public func directoryResponse(directoryData: Data) async throws -> WireCoreCrypto.AcmeDirectory {
-    //        let buffer = [UInt8](directoryData)
-    //        guard let wireE2eIdentity = wireE2eIdentity else {
-    //            WireLogger.e2ei.warn("wireE2eIdentity is missing")
-    //
-    //            throw Failure.failedToEncodeDirectoryResponse
-    //        }
-    //
-    //        do {
-    //            return try wireE2eIdentity.directoryResponse(directory: buffer)
-    //        } catch {
-    //            throw Failure.failedToEncodeDirectoryResponse
-    //        }
-    //    }
-    //
-    //    public func getNewAccountRequest(previousNonce: String) async throws -> Data {
-    //        guard let wireE2eIdentity = wireE2eIdentity else {
-    //            WireLogger.e2ei.warn("wireE2eIdentity is missing")
-    //
-    //            throw Failure.failedToGetAccountRequest
-    //        }
-    //        do {
-    //            let accountRequest = try wireE2eIdentity.newAccountRequest(previousNonce: previousNonce)
-    //            return accountRequest.data
-    //        } catch {
-    //            throw Failure.failedToGetAccountRequest
-    //        }
-    //    }
-    //
-    //    public func setAccountResponse(accountData: Data) async throws {
-    //        let acc = try JSONDecoder().decode(NewAccResponse.self, from: accountData)
-    //        print(acc)
-    //        guard let wireE2eIdentity = wireE2eIdentity else {
-    //            WireLogger.e2ei.warn("wireE2eIdentity is missing")
-    //
-    //            throw Failure.failedToSetAccountResponse
-    //        }
-    //
-    //        let buffer = [UInt8](accountData)
-    //        do {
-    //            try wireE2eIdentity.newAccountResponse(account: buffer)
-    //        } catch {
-    //            throw Failure.failedToSetAccountResponse
-    //        }
-    //    }
-    //
-    //    public func getNewOrderRequest(nonce: String) async throws -> Data {
-    //        guard let wireE2eIdentity = wireE2eIdentity else {
-    //            WireLogger.e2ei.warn("wireE2eIdentity is missing")
-    //
-    //            throw Failure.failedToGetNewOrderRequest
-    //        }
-    //        do {
-    //            let bytes = try wireE2eIdentity.newOrderRequest(previousNonce: nonce)
-    //            print(bytes)
-    //            print(bytes.data)
-    //            return bytes.data
-    //        } catch {
-    //            print("Error:  \(error as! E2eIdentityError)")
-    //            throw Failure.failedToGetNewOrderRequest
-    //        }
-    //    }
-    //
-    //    public func setOrderResponse(order: Data) async throws -> WireCoreCrypto.NewAcmeOrder {
-    //        guard let wireE2eIdentity = wireE2eIdentity else {
-    //            WireLogger.e2ei.warn("wireE2eIdentity is missing")
-    //
-    //            throw Failure.failedToSetOrderResponse
-    //        }
-    //        let buffer = [UInt8](order)
-    //        do {
-    //            return try wireE2eIdentity.newOrderResponse(order: buffer)
-    //        } catch {
-    //            throw Failure.failedToSetOrderResponse
-    //        }
-    //
-    //    }
-    //
-    //    struct NewAccResponse: Decodable {
-    //        let contact: [String]
-    //        let status: String
-    //        let orders: String
-//}
     public func directoryResponse(directoryData: Data) async throws -> AcmeDirectory {
         return try wireE2eIdentity().directoryResponse(directory: directoryData.bytes)
     }
@@ -168,7 +87,7 @@ public final class E2EIService: E2EIServiceInterface {
     }
 
     public func setAccountResponse(accountData: Data) async throws {
-        try wireE2eIdentity().newAccountResponse(account: accountData.bytes)
+        return try wireE2eIdentity().newAccountResponse(account: accountData.bytes)
     }
 
     public func getNewOrderRequest(nonce: String) async throws -> Data {
@@ -177,6 +96,14 @@ public final class E2EIService: E2EIServiceInterface {
 
     public func setOrderResponse(order: Data) async throws -> NewAcmeOrder {
         return try wireE2eIdentity().newOrderResponse(order: order.bytes)
+    }
+
+    public func getNewAuthzRequest(url: String, previousNonce: String) async throws -> Data {
+        return try wireE2eIdentity().newAuthzRequest(url: url, previousNonce: previousNonce).data
+    }
+
+    public func setAuthzResponse(authz: Data) async throws -> NewAcmeAuthz {
+        return try wireE2eIdentity().newAuthzResponse(authz: authz.bytes)
     }
 
     // MARK: - Private methods
@@ -193,12 +120,5 @@ public final class E2EIService: E2EIServiceInterface {
         case failedToSetupE2eiEnrollment
         case missingE2eIdentity
 
-//        case failedToEncodeDirectoryResponse
-//        case failedToGetAccountRequest
-//        case failedToSetAccountResponse
-//        case failedToGetNewOrderRequest
-//        case failedToSetOrderResponse
-
     }
-
 }

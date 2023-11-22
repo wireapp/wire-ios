@@ -31,9 +31,14 @@ public protocol E2EIRepositoryInterface {
     func createNewAccount(prevNonce: String, createAccountEndpoint: String) async throws -> String
 
     /// Create a new order.
-    func createNewOrder(prevNonce: String, createOrderEndpoint: String) async throws -> (acmeOrder: NewAcmeOrder?,
+    func createNewOrder(prevNonce: String, createOrderEndpoint: String) async throws -> (acmeOrder: NewAcmeOrder,
                                                                                          nonce: String,
                                                                                          location: String)
+
+    /// Fetch challenges.
+    func createAuthz(prevNonce: String, authzEndpoint: String) async throws -> (authzResponse: NewAcmeAuthz,
+                                                                                nonce: String,
+                                                                                location: String)
 
 }
 
@@ -90,7 +95,7 @@ public final class E2EIRepository: E2EIRepositoryInterface {
         }
     }
 
-    public func createNewOrder(prevNonce: String, createOrderEndpoint: String) async throws -> (acmeOrder: NewAcmeOrder?,
+    public func createNewOrder(prevNonce: String, createOrderEndpoint: String) async throws -> (acmeOrder: NewAcmeOrder,
                                                                                                 nonce: String,
                                                                                                 location: String) {
         logger.info("create new order at  \(createOrderEndpoint)")
@@ -99,12 +104,30 @@ public final class E2EIRepository: E2EIRepositoryInterface {
             let newOrderRequest = try await e2eiService.getNewOrderRequest(nonce: prevNonce)
             let apiResponse = try await acmeClient.sendACMERequest(url: createOrderEndpoint, requestBody: newOrderRequest)
             let orderResponse = try await e2eiService.setOrderResponse(order: apiResponse.response)
+
             return (acmeOrder: orderResponse, nonce: apiResponse.nonce, location: apiResponse.location)
         } catch {
             logger.error("failed to create new order: \(error.localizedDescription)")
 
             throw E2EIRepositoryFailure.failedToCreateNewOrder
         }
+    }
+
+    public func createAuthz(prevNonce: String, authzEndpoint: String) async throws -> (authzResponse: NewAcmeAuthz, nonce: String, location: String) {
+        logger.info("create Authz at  \(authzEndpoint)")
+
+        do {
+            let authzRequest = try await e2eiService.getNewAuthzRequest(url: authzEndpoint, previousNonce: prevNonce)
+            let apiResponse = try await acmeClient.sendACMERequest(url: authzEndpoint, requestBody: authzRequest)
+            let authzResponse = try await e2eiService.setAuthzResponse(authz: apiResponse.response)
+
+            return (authzResponse: authzResponse, nonce: apiResponse.nonce, location: apiResponse.location)
+        } catch {
+            logger.error("failed to create Authz: \(error.localizedDescription)")
+
+            throw E2EIRepositoryFailure.failedToCreateAuthz
+        }
+
     }
 
 }
@@ -115,5 +138,6 @@ enum E2EIRepositoryFailure: Error {
     case missingNonce
     case failedToCreateAcmeAccount
     case failedToCreateNewOrder
+    case failedToCreateAuthz
 
 }

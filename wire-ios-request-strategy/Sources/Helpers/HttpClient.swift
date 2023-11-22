@@ -28,6 +28,7 @@ public enum NetworkError: Error {
 public protocol HttpClient {
 
     func send(_ request: ZMTransportRequest) async throws -> ZMTransportResponse
+    func send(_ request: URLRequest) async throws -> (Data, URLResponse)
 
 }
 
@@ -49,4 +50,9 @@ public class HttpClientImpl: NSObject, HttpClient {
 
         return ZMTransportResponse(httpurlResponse: httpResponse, data: data, error: nil, apiVersion: 0)
     }
+
+    public func send(_ request: URLRequest) async throws -> (Data, URLResponse) {
+        return try await URLSession.shared.data(for: request)
+    }
+
 }

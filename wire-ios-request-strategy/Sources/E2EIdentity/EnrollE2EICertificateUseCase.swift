@@ -41,9 +41,12 @@ public final class EnrollE2EICertificateUseCase: EnrollE2EICertificateUseCaseInt
                                                                         createAccountEndpoint: acmeDirectory.newAccount)
         let newOrder = try await e2eiRepository.createNewOrder(prevNonce: newAccountNonce,
                                                                createOrderEndpoint: acmeDirectory.newOrder)
+        let authzResponse = try await e2eiRepository.createAuthz(prevNonce: newOrder.nonce,
+                                                                 authzEndpoint: newOrder.acmeOrder.authorizations[0])
 
         /// TODO: this method will be finished with the following PRs
-        return newOrder.nonce
+        return authzResponse.nonce
+
     }
 
 }
