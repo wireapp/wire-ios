@@ -17,31 +17,10 @@
 //
 
 import Foundation
+@testable import WireRequestStrategy
 
-struct AcmeDirectoriesResponse: Codable, Equatable {
+class E2EIRepositoryTests: ZMTBaseTest {
 
-    var newNonce: String
-    var newAccount: String
-    var newOrder: String
-    var revokeCert: String
-    var keyChange: String
-
-}
-
-struct ACMEResponse {
-
-    var nonce: String
-    var location: String
-    var response: Data
-
-}
-
-struct ChallengeResponse {
-
-    var type: String
-    var url: String
-    var status: String
-    var token: String
-    var nonce: String
+/// TODO: will be implemented in the next PRs
 
 }

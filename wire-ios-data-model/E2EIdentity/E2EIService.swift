@@ -33,7 +33,7 @@ public final class E2EIService: E2EIServiceInterface {
 
     // MARK: - Properties
 
-    public var e2eIdentity: WireE2eIdentity?
+    public var e2eIdentity: WireE2eIdentityProtocol?
 
     private let coreCrypto: SafeCoreCryptoProtocol
     private let mlsClientId: MLSClientID
@@ -86,7 +86,7 @@ public final class E2EIService: E2EIServiceInterface {
 
     // MARK: - Private methods
 
-    private func wireE2eIdentity() throws -> WireE2eIdentity {
+    private func wireE2eIdentity() throws -> WireE2eIdentityProtocol {
         guard let e2eIdentity = e2eIdentity else {
             throw Failure.missingE2eIdentity
         }

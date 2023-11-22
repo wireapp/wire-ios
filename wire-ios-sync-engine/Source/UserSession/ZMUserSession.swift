@@ -105,7 +105,6 @@ public class ZMUserSession: NSObject {
     let earService: EARServiceInterface
 
     public var appLockController: AppLockType
-    public var enrollE2EICertificate: EnrollE2EICertificateUseCaseInterface?
 
     public var fileSharingFeature: Feature.FileSharing {
         let featureRepository = FeatureRepository(context: coreDataStack.viewContext)
@@ -321,8 +320,6 @@ public class ZMUserSession: NSObject {
         // it needs to make network requests upon initialization.
         setupCryptoStack(stage: .mls)
 
-        configureE2EIStack()
-
         updateEventProcessor!.eventConsumers = self.strategyDirectory!.eventConsumers
         registerForCalculateBadgeCountNotification()
         registerForRegisteringPushTokenNotification()
@@ -452,32 +449,6 @@ public class ZMUserSession: NSObject {
                                                 object: nil,
                                                 userInfo: ["path": path])
             }
-        }
-    }
-
-    private func configureE2EIStack() {
-        let httpClient = HttpClientImpl()
-        let acmeClient = AcmeClient(httpClient: httpClient)
-        syncContext.performAndWait {
-            guard let coreCrypto = syncContext.coreCrypto else {
-                return
-            }
-            let selfUser = ZMUser.selfUser(in: syncContext)
-            guard
-                let handle = selfUser.handle,
-                let name = selfUser.name,
-                let selfClient = selfUser.selfClient(),
-                let clientId = MLSClientID(userClient: selfClient)
-            else {
-                return
-            }
-
-            let e2eiService = E2EIService(coreCrypto: coreCrypto,
-                                          mlsClientId: clientId,
-                                          userName: name,
-                                          handle: handle)
-            let e2eiRepository = E2EIRepository(acmeClient: acmeClient, e2eiService: e2eiService)
-            enrollE2EICertificate = EnrollE2EICertificateUseCase(e2eiRepository: e2eiRepository)
         }
     }
 
