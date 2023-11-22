@@ -22,8 +22,8 @@ import WireSyncEngine
 enum AppState: Equatable {
     case retryStart
     case headless
-    case locked
-    case authenticated(completedRegistration: Bool)
+    case locked(UserSession)
+    case authenticated(UserSession, completedRegistration: Bool)
     case unauthenticated(error: NSError?)
     case blacklisted(reason: BlacklistReason)
     case jailbroken
@@ -200,23 +200,30 @@ extension AppStateCalculator: SessionManagerDelegate {
         // No op
     }
 
-    func sessionManagerDidReportLockChange(forSession session: UserSessionAppLockInterface) {
+    func sessionManagerDidReportLockChange(forSession session: UserSession) {
         if session.isLocked {
-            transition(to: .locked)
+            transition(to: .locked(session))
         } else {
-            transition(to: .authenticated(completedRegistration: false))
+            transition(to: .authenticated(session, completedRegistration: false))
         }
     }
 
-    func sessionManagerDidPerformFederationMigration(authenticated: Bool) {
-        let state: AppState = authenticated ?
-            .authenticated(completedRegistration: false) :
-            .unauthenticated(error: NSError(code: .needsAuthenticationAfterMigration, userInfo: nil))
-        transition(to: state)
+    func sessionManagerDidPerformFederationMigration(activeSession: UserSession?) {
+        if let activeSession {
+            transition(to: .authenticated(activeSession, completedRegistration: false))
+        } else {
+            let error = NSError(code: .needsAuthenticationAfterMigration, userInfo: nil)
+            transition(to: .unauthenticated(error: error))
+        }
     }
 
-    func sessionManagerDidPerformAPIMigrations() {
-        transition(to: .authenticated(completedRegistration: false))
+    func sessionManagerDidPerformAPIMigrations(activeSession: UserSession?) {
+        if let activeSession {
+            transition(to: .authenticated(activeSession, completedRegistration: false))
+        } else {
+            let error = NSError(code: .needsAuthenticationAfterMigration, userInfo: nil)
+            transition(to: .unauthenticated(error: error))
+        }
     }
 
     func sessionManagerAsksToRetryStart() {
@@ -226,12 +233,11 @@ extension AppStateCalculator: SessionManagerDelegate {
 
 // MARK: - AuthenticationCoordinatorDelegate
 extension AppStateCalculator: AuthenticationCoordinatorDelegate {
-    func userAuthenticationDidComplete(addedAccount: Bool) {
-        // TODO: [John] Avoid singleton.
-        if ZMUserSession.shared()?.isLocked == true {
-            transition(to: .locked)
+    func userAuthenticationDidComplete(userSession: UserSession, addedAccount: Bool) {
+        if userSession.isLocked {
+            transition(to: .locked(userSession))
         } else {
-            transition(to: .authenticated(completedRegistration: addedAccount))
+            transition(to: .authenticated(userSession, completedRegistration: addedAccount))
         }
     }
 }

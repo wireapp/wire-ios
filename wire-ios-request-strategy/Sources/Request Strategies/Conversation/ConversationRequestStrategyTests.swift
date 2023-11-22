@@ -25,6 +25,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
     var sut: ConversationRequestStrategy!
     var mockApplicationStatus: MockApplicationStatus!
     var mockSyncProgress: MockSyncProgress!
+    var mockRemoveLocalConversation: MockLocalConversationRemovalUseCase!
 
     var apiVersion: APIVersion! {
         didSet {
@@ -38,10 +39,14 @@ class ConversationRequestStrategyTests: MessagingTestBase {
         mockApplicationStatus = MockApplicationStatus()
         mockApplicationStatus.mockSynchronizationState = .online
         mockSyncProgress = MockSyncProgress()
+        mockRemoveLocalConversation = MockLocalConversationRemovalUseCase()
 
-        sut = ConversationRequestStrategy(withManagedObjectContext: syncMOC,
-                                          applicationStatus: mockApplicationStatus,
-                                          syncProgress: mockSyncProgress)
+        sut = ConversationRequestStrategy(
+            withManagedObjectContext: syncMOC,
+            applicationStatus: mockApplicationStatus,
+            syncProgress: mockSyncProgress,
+            removeLocalConversation: mockRemoveLocalConversation
+        )
 
         apiVersion = .v0
     }
@@ -50,6 +55,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
         sut = nil
         mockSyncProgress = nil
         mockApplicationStatus = nil
+        mockRemoveLocalConversation = nil
         apiVersion = nil
 
         super.tearDown()
@@ -72,7 +78,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
 
             // then
             XCTAssertEqual(request.path, "/v1/conversations/\(domain)/\(conversationID.transportString())")
-            XCTAssertEqual(request.method, .methodGET)
+            XCTAssertEqual(request.method, .get)
         }
     }
 
@@ -90,7 +96,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
 
             // then
             XCTAssertEqual(request.path, "/conversations/\(conversationID.transportString())")
-            XCTAssertEqual(request.method, .methodGET)
+            XCTAssertEqual(request.method, .get)
         }
     }
 
@@ -111,7 +117,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
 
             // then
             XCTAssertEqual(request.path, "/v1/conversations/\(domain)/\(conversationID.transportString())/name")
-            XCTAssertEqual(request.method, .methodPUT)
+            XCTAssertEqual(request.method, .put)
             XCTAssertEqual(payload?.name, self.groupConversation.userDefinedName)
         }
     }
@@ -133,7 +139,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
 
             // then
             XCTAssertEqual(request.path, "/v1/conversations/\(domain)/\(conversationID.transportString())/self")
-            XCTAssertEqual(request.method, .methodPUT)
+            XCTAssertEqual(request.method, .put)
             XCTAssertEqual(payload?.archived, true)
         }
     }
@@ -155,7 +161,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
 
             // then
             XCTAssertEqual(request.path, "/v1/conversations/\(domain)/\(conversationID.transportString())/self")
-            XCTAssertEqual(request.method, .methodPUT)
+            XCTAssertEqual(request.method, .put)
             XCTAssertEqual(payload?.mutedStatus, Int(MutedMessageTypes.all.rawValue))
         }
     }
@@ -319,7 +325,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
         }
     }
 
-    func testThatConversationIsDeleted_WhenResponseIs_404() {
+    func testThatLocalConversationRemovalUseCaseIsExecuted_WhenResponseIs_404() {
         // given
         let response = responseFailure(code: 404, label: .notFound, apiVersion: apiVersion)
 
@@ -327,9 +333,10 @@ class ConversationRequestStrategyTests: MessagingTestBase {
         fetchConversation(groupConversation, with: response, apiVersion: apiVersion)
 
         // then
-        self.syncMOC.performGroupedBlockAndWait {
-            XCTAssertTrue(self.groupConversation.isZombieObject)
-        }
+        XCTAssertEqual(
+            mockRemoveLocalConversation.invokeCalls,
+            [groupConversation]
+        )
     }
 
     func testThatSelfUserIsRemovedFromParticipantsList_WhenResponseIs_403() {

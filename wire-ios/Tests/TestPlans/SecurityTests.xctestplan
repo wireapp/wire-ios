@@ -1,0 +1,184 @@
+{
+  "configurations" : [
+    {
+      "id" : "4BED722B-A785-4AAB-B03E-16EC08BBED2E",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "commandLineArgumentEntries" : [
+      {
+        "argument" : "-com.apple.CoreData.ConcurrencyDebug 1"
+      },
+      {
+        "argument" : "--disable-interactive-keyboard-dismissal",
+        "enabled" : false
+      },
+      {
+        "argument" : "-com.apple.CoreData.SQLDebug 1",
+        "enabled" : false
+      },
+      {
+        "argument" : "--disable-call-quality-survey",
+        "enabled" : false
+      },
+      {
+        "argument" : "--debug-data-to-install=\/Users\/xxxxxxx\/Database2.41",
+        "enabled" : false
+      },
+      {
+        "argument" : "--addressbook-on-simulator",
+        "enabled" : false
+      },
+      {
+        "argument" : "--addressbook-search-delay 20",
+        "enabled" : false
+      },
+      {
+        "argument" : "--debug-log-network",
+        "enabled" : false
+      },
+      {
+        "argument" : "OPTIN_STDERR YES"
+      },
+      {
+        "argument" : "-DisableAppCenterUpdates 1",
+        "enabled" : false
+      },
+      {
+        "argument" : "-SkipFirstTimeUseChecks 1",
+        "enabled" : false
+      },
+      {
+        "argument" : "--use-app-center=0",
+        "enabled" : false
+      },
+      {
+        "argument" : "-BackendEnvironmentTypeOverrideKey staging",
+        "enabled" : false
+      },
+      {
+        "argument" : "--persist-backend-type",
+        "enabled" : false
+      },
+      {
+        "argument" : "-UseAnalytics 1",
+        "enabled" : false
+      },
+      {
+        "argument" : "-ConsoleAnalytics",
+        "enabled" : false
+      },
+      {
+        "argument" : "--keep-calling-overlay-visible",
+        "enabled" : false
+      }
+    ],
+    "environmentVariableEntries" : [
+      {
+        "enabled" : false,
+        "key" : "DYLD_PRINT_RPATHS",
+        "value" : ""
+      },
+      {
+        "key" : "RECORDING_SNAPSHOTS",
+        "value" : "NO"
+      },
+      {
+        "key" : "IMAGE_DIFF_DIR",
+        "value" : "$(SOURCE_ROOT)\/SnapshotResults"
+      },
+      {
+        "key" : "FB_REFERENCE_IMAGE_DIR",
+        "value" : "$(SOURCE_ROOT)\/$(PROJECT_NAME) Tests\/ReferenceImages"
+      },
+      {
+        "key" : "SNAPSHOT_REFERENCE_DIR",
+        "value" : "$(SOURCE_ROOT)\/$(PROJECT_NAME) Tests\/ReferenceImages"
+      },
+      {
+        "key" : "SNAPSHOT_ARTIFACTS",
+        "value" : "$(SOURCE_ROOT)\/SnapshotResults"
+      },
+      {
+        "key" : "ZMLOG_TAGS",
+        "value" : "Network,Authentication,Performance,event-processing,Message Processing"
+      },
+      {
+        "enabled" : false,
+        "key" : "DYLD_PRINT_LIBRARIES",
+        "value" : ""
+      }
+    ],
+    "mainThreadCheckerEnabled" : false,
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:Wire-iOS.xcodeproj",
+      "identifier" : "8F42C537199244A700288E4D",
+      "name" : "Wire-iOS"
+    }
+  },
+  "testTargets" : [
+    {
+      "selectedTests" : [
+        "AppLockModuleInteractorTests\/test_EvaluateAuthentication_Denied()",
+        "AppLockModuleInteractorTests\/test_EvaluateAuthentication_Unavailable()",
+        "AppLockModulePresenterTests\/test_AuthenticationDenied()",
+        "AppLockModulePresenterTests\/test_AuthenticationUnavailable()",
+        "AppLockModuleViewTests\/test_ItSendsEvent_WhenApplicationWillEnterForeground()",
+        "AppLockModuleViewTests\/test_ItSendsEvent_WhenLockViewRequestReauthentication()",
+        "PasswordRuleSetTests\/testPasswordNotMatchingRuleSet()",
+        "PasswordRuleSetTests\/testThatItDetectsDisallowedCharacter()"
+      ],
+      "target" : {
+        "containerPath" : "container:Wire-iOS.xcodeproj",
+        "identifier" : "BACB88501AF7C48900DDCDB0",
+        "name" : "Wire-iOS-Tests"
+      }
+    },
+    {
+      "selectedTests" : [
+        "AppLockModuleInteractorTests\/test_EvaluateAuthentication_DatabaseLock()",
+        "AppLockModuleInteractorTests\/test_EvaluateAuthentication_Denied()",
+        "AppLockModuleInteractorTests\/test_EvaluateAuthentication_Granted()",
+        "AppLockModuleInteractorTests\/test_EvaluateAuthentication_NeedCustomPasscode()",
+        "AppLockModuleInteractorTests\/test_EvaluateAuthentication_ScreenLock()",
+        "AppLockModuleInteractorTests\/test_EvaluateAuthentication_ScreenLock_RequireCustomPasscode()",
+        "AppLockModuleInteractorTests\/test_EvaluateAuthentication_SessionIsAlreadyUnlocked()",
+        "AppLockModuleInteractorTests\/test_EvaluateAuthentication_Unavailable()",
+        "AppLockModuleInteractorTests\/test_InitiaAuthentication_NeedsToCreateCustomPasscode_NotRequired()",
+        "AppLockModuleInteractorTests\/test_InitiaAuthentication_NeedsToCreatePasscode_InformingUserOfConfigChange()",
+        "AppLockModuleInteractorTests\/test_InitiateAuthentication_DoesNotNeedToCreateCustomPasscode()",
+        "AppLockModuleInteractorTests\/test_InitiateAuthentication_DoesNotNeedToCreateCustomPasscode_InformingUserOfConfigChange()",
+        "AppLockModuleInteractorTests\/test_InitiateAuthentication_DoesNotNeedToCreateCustomPasscode_WhenDatabaseIsLocked()",
+        "AppLockModuleInteractorTests\/test_InitiateAuthentication_NeedsToCreateCustomPasscodeAndRequireActiveApp_ReturnsNothingIfAppIsInBackground()",
+        "AppLockModuleInteractorTests\/test_InitiateAuthentication_NeedsToCreateCustomPasscode_Required()",
+        "AppLockModuleInteractorTests\/test_InitiateAuthentication_RequireActiveApp_ReturnsNothingIfAppIsInBackground()",
+        "AppLockModuleInteractorTests\/test_InitiateAuthentication_SessionIsAlreadyUnlocked()",
+        "AppLockModuleInteractorTests\/test_ItOpensAppLock()",
+        "AppLockModulePresenterTests\/test_ApplicationWillEnterForeground()",
+        "AppLockModulePresenterTests\/test_AuthenticationDenied()",
+        "AppLockModulePresenterTests\/test_AuthenticationUnavailable()",
+        "AppLockModulePresenterTests\/test_ConfigChangeAcknowledged()",
+        "AppLockModulePresenterTests\/test_CustomPasscodeCreationNeeded_InformingUserOfConfigChange()",
+        "AppLockModulePresenterTests\/test_CustomPasscodeCreationNeeded_WithoutInformingUserOfConfigChange()",
+        "AppLockModulePresenterTests\/test_CustomPasscodeNeeded()",
+        "AppLockModulePresenterTests\/test_CustomPasscodeVerified()",
+        "AppLockModulePresenterTests\/test_OpenDeviceSettingsButtonTapped()",
+        "AppLockModulePresenterTests\/test_PasscodeSetupCompleted()",
+        "AppLockModulePresenterTests\/test_ReadyForAuthentication_InformingUserOfConfigChange()",
+        "AppLockModulePresenterTests\/test_ReadyForAuthentication_WithoutInformingUserOfConfigChange()",
+        "AppLockModulePresenterTests\/test_UnlockButtonTapped()",
+        "AppLockModulePresenterTests\/test_ViewDidAppear()"
+      ],
+      "target" : {
+        "containerPath" : "container:Wire-iOS.xcodeproj",
+        "identifier" : "E6579E352AFF9B30004E7FD8",
+        "name" : "Wire-iOS UnitTests"
+      }
+    }
+  ],
+  "version" : 1
+}

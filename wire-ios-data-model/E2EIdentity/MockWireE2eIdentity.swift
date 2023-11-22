@@ -18,7 +18,6 @@
 
 import Foundation
 import WireCoreCrypto
-@testable import WireRequestStrategy
 
 class MockWireE2eIdentity: WireE2eIdentityProtocol {
 

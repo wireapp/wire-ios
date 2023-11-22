@@ -140,7 +140,7 @@
 
     // given
     ZMTransportRequest *request = [[ZMTransportRequest alloc] initWithPath:@"/test"
-                                                                   method:ZMMethodPOST
+                                                                   method:ZMTransportRequestMethodPost
                                                                   payload:@{@"foo": @"bar"}
                                                                 apiVersion:0];
     self.mockRequestStrategy.mockRequest = request;
@@ -174,7 +174,7 @@
     XCTAssertNil(self.sut.currentAPIVersion);
 
     self.mockRequestStrategy.mockRequest = [[ZMTransportRequest alloc] initWithPath:@"/test"
-                                                                             method:ZMMethodPOST
+                                                                             method:ZMTransportRequestMethodPost
                                                                             payload:@{@"foo": @"bar"}
                                                                           apiVersion:0];
 
@@ -190,7 +190,7 @@
 - (void)testThatItSendsAsManyCallsAsTheTransportSessionCanHandle
 {
     // given
-    ZMTransportRequest *request = [[ZMTransportRequest alloc] initWithPath:@"/test" method:ZMMethodPOST payload:@{} apiVersion:0];
+    ZMTransportRequest *request = [[ZMTransportRequest alloc] initWithPath:@"/test" method:ZMTransportRequestMethodPost payload:@{} apiVersion:0];
     self.mockRequestStrategy.mockRequestQueue = @[request, request, request];
 
     // when
@@ -204,7 +204,7 @@
 - (void)testThatExecuteNextOperationIsCalledWhenThePreviousRequestIsCompleted
 {
     // given
-    ZMTransportRequest *request = [ZMTransportRequest requestWithPath:@"/boo" method:ZMMethodGET payload:nil apiVersion:0];
+    ZMTransportRequest *request = [ZMTransportRequest requestWithPath:@"/boo" method:ZMTransportRequestMethodGet payload:nil apiVersion:0];
     self.mockRequestStrategy.mockRequest = request;
     [ZMRequestAvailableNotification notifyNewRequestsAvailable:self]; // this will enqueue `request`
     WaitForAllGroupsToBeEmpty(0.5);

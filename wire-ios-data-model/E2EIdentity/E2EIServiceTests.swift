@@ -19,7 +19,6 @@
 import Foundation
 import WireCoreCrypto
 @testable import WireDataModel
-@testable import WireRequestStrategy
 
 class E2EIServiceTests: ZMConversationTestsBase {
 
@@ -83,12 +82,16 @@ class E2EIServiceTests: ZMConversationTestsBase {
         // Given
         var mockDirectoryResponseCount = 0
 
-        let acmeResponse = AcmeDirectoriesResponse(newNonce: "https://acme.elna.wire.link/acme/defaultteams/new-nonce",
-                                                   newAccount: "https://acme.elna.wire.link/acme/defaultteams/new-account",
-                                                   newOrder: "https://acme.elna.wire.link/acme/defaultteams/new-order",
-                                                   revokeCert: "https://acme.elna.wire.link/acme/defaultteams/revoke-cert",
-                                                   keyChange: "https://acme.elna.wire.link/acme/defaultteams/key-change")
-        let acmeResponseData = try JSONEncoder.defaultEncoder.encode(acmeResponse)
+        let acmeResponse = """
+        {
+            "newNonce": "https://acme.elna.wire.link/acme/defaultteams/new-nonce",
+            "newAccount": "https://acme.elna.wire.link/acme/defaultteams/new-account",
+            "newOrder": "https://acme.elna.wire.link/acme/defaultteams/new-order",
+            "revokeCert": "https://acme.elna.wire.link/acme/defaultteams/revoke-cert",
+            "keyChange": "https://acme.elna.wire.link/acme/defaultteams/key-change"
+        }
+        """
+        let acmeResponseData = acmeResponse.data(using: .utf8)!
 
         // Mock
         let mockE2eIdentity = MockWireE2eIdentity()

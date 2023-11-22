@@ -70,7 +70,7 @@ public final class E2EIService: E2EIServiceInterface {
             }
 
         } catch {
-            throw Failure.failedToSetupE2eiEnrollment
+            throw Failure.failedToSetupE2eiEnrollment(error)
         }
     }
 
@@ -113,9 +113,9 @@ public final class E2EIService: E2EIServiceInterface {
         return e2eIdentity
     }
 
-    enum Failure: Error, Equatable {
+    enum Failure: Error {
 
-        case failedToSetupE2eiEnrollment
+        case failedToSetupE2eiEnrollment(Error)
         case missingE2eIdentity
 
     }

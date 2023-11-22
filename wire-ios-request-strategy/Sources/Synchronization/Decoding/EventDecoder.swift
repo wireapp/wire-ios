@@ -89,6 +89,10 @@ extension EventDecoder {
             lastIndex = StoredUpdateEvent.highestIndex(self.eventMOC)
 
             guard let index = lastIndex else { return }
+            guard self.syncMOC.proteusProvider.canPerform else {
+                WireLogger.proteus.warn("ignore decrypting events because it is not safe")
+                return
+            }
 
             decryptedEvents = self.syncMOC.proteusProvider.perform(
                 withProteusService: { proteusService in

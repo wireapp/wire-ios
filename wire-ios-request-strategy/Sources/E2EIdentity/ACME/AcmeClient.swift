@@ -50,7 +50,7 @@ public class AcmeClient: NSObject, AcmeClientInterface {
         let result = try await httpClient.send(request)
 
         guard let data = result.rawData else {
-            throw NetworkError.invalidRequestURL
+            throw NetworkError.invalidResponse
         }
 
         return data
@@ -60,7 +60,7 @@ public class AcmeClient: NSObject, AcmeClientInterface {
     public func getACMENonce(url: String) async throws -> String {
 
         let request = ZMTransportRequest(path: url,
-                                         method: .methodHEAD,
+                                         method: .head,
                                          payload: nil,
                                          apiVersion: APIVersion.v0.rawValue)
         let result = try await httpClient.send(request)
