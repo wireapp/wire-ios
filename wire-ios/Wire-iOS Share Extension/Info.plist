@@ -24,12 +24,17 @@
 	<string>${WIRE_BUILD_NUMBER}</string>
 	<key>HostBundleIdentifier</key>
 	<string>$(WIRE_BUNDLE_ID)</string>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
 	<key>NSExtension</key>
 	<dict>
 		<key>NSExtensionAttributes</key>
 		<dict>
 			<key>NSExtensionActivationRule</key>
-            <string>
+			<string>
                 (SUBQUERY(extensionItems, $extensionItem, SUBQUERY($extensionItem.attachments, $attachment, ANY $attachment.registeredTypeIdentifiers UTI-CONFORMS-TO "public.plain-text").@count &gt;= 1).@count &gt;= 1
                 
                 OR SUBQUERY(extensionItems, $extensionItem, SUBQUERY($extensionItem.attachments, $attachment, SUBQUERY($attachment.registeredTypeIdentifiers, $uti, $uti UTI-CONFORMS-TO "public.url").@count &gt;= 1).@count &gt;= 1).@count &gt;= 1
@@ -50,10 +55,5 @@
 	</dict>
 	<key>WireGroupId</key>
 	<string>${WIRE_BUNDLE_ID}</string>
-    <key>NSAppTransportSecurity</key>
-    <dict>
-        <key>NSAllowsArbitraryLoads</key>
-        <true/>
-    </dict>
 </dict>
 </plist>
