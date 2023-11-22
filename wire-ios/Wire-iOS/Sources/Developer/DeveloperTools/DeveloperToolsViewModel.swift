@@ -268,14 +268,21 @@ final class DeveloperToolsViewModel: ObservableObject {
             guard
                 let handle = selfUser.handle,
                 let name = selfUser.name,
+                let domain = selfUser.domain,
                 let selfClient = selfUser.selfClient(),
-                let clientId = MLSClientID(userClient: selfClient)
+                let selfClientID = selfClient.remoteIdentifier,
+                let userId = selfUser.remoteIdentifier
             else {
                 return
             }
 
+            guard let clientId = E2EIClientID(userID: userId.uuidString,
+                                              clientID: selfClientID,
+                                              domain: domain) else {
+                return
+            }
             let e2eiService = E2EIService(coreCrypto: coreCrypto,
-                                          mlsClientId: clientId,
+                                          e2eiClientId: clientId,
                                           userName: name,
                                           handle: handle)
             let e2eiRepository = E2EIRepository(acmeClient: acmeClient, e2eiService: e2eiService)

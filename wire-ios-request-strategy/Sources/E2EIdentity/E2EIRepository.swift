@@ -64,7 +64,7 @@ public final class E2EIRepository: E2EIRepositoryInterface {
         } catch {
             logger.error("failed to load ACME directory: \(error.localizedDescription)")
 
-            throw E2EIRepositoryFailure.failedToLoadACMEDirectory
+            throw E2EIRepositoryFailure.failedToLoadACMEDirectory(error)
         }
     }
 
@@ -76,7 +76,7 @@ public final class E2EIRepository: E2EIRepositoryInterface {
         } catch {
             logger.error("failed to get ACME nonce: \(error.localizedDescription)")
 
-            throw E2EIRepositoryFailure.missingNonce
+            throw E2EIRepositoryFailure.missingNonce(error)
         }
     }
 
@@ -91,7 +91,7 @@ public final class E2EIRepository: E2EIRepositoryInterface {
         } catch {
             logger.error("failed to create new account: \(error.localizedDescription)")
 
-            throw E2EIRepositoryFailure.failedToCreateAcmeAccount
+            throw E2EIRepositoryFailure.failedToCreateAcmeAccount(error)
         }
     }
 
@@ -109,12 +109,14 @@ public final class E2EIRepository: E2EIRepositoryInterface {
         } catch {
             logger.error("failed to create new order: \(error.localizedDescription)")
 
-            throw E2EIRepositoryFailure.failedToCreateNewOrder
+            throw E2EIRepositoryFailure.failedToCreateNewOrder(error)
         }
     }
 
-    public func createAuthz(prevNonce: String, authzEndpoint: String) async throws -> (authzResponse: NewAcmeAuthz, nonce: String, location: String) {
-        logger.info("create Authz at  \(authzEndpoint)")
+    public func createAuthz(prevNonce: String, authzEndpoint: String) async throws -> (authzResponse: NewAcmeAuthz,
+                                                                                       nonce: String,
+                                                                                       location: String) {
+        logger.info("create authz at  \(authzEndpoint)")
 
         do {
             let authzRequest = try await e2eiService.getNewAuthzRequest(url: authzEndpoint, previousNonce: prevNonce)
@@ -123,9 +125,9 @@ public final class E2EIRepository: E2EIRepositoryInterface {
 
             return (authzResponse: authzResponse, nonce: apiResponse.nonce, location: apiResponse.location)
         } catch {
-            logger.error("failed to create Authz: \(error.localizedDescription)")
+            logger.error("failed to create authz: \(error.localizedDescription)")
 
-            throw E2EIRepositoryFailure.failedToCreateAuthz
+            throw E2EIRepositoryFailure.failedToCreateAuthz(error)
         }
 
     }
@@ -134,10 +136,10 @@ public final class E2EIRepository: E2EIRepositoryInterface {
 
 enum E2EIRepositoryFailure: Error {
 
-    case failedToLoadACMEDirectory
-    case missingNonce
-    case failedToCreateAcmeAccount
-    case failedToCreateNewOrder
-    case failedToCreateAuthz
+    case failedToLoadACMEDirectory(Error)
+    case missingNonce(Error)
+    case failedToCreateAcmeAccount(Error)
+    case failedToCreateNewOrder(Error)
+    case failedToCreateAuthz(Error)
 
 }

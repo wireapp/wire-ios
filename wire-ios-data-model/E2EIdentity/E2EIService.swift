@@ -40,18 +40,18 @@ public final class E2EIService: E2EIServiceInterface {
     public var e2eIdentity: WireE2eIdentityProtocol?
 
     private let coreCrypto: SafeCoreCryptoProtocol
-    private let mlsClientId: MLSClientID
+    private let e2eiClientId: E2EIClientID
     private let userName: String
     private let handle: String
 
     // MARK: - Life cycle
 
     public init(coreCrypto: SafeCoreCryptoProtocol,
-                mlsClientId: MLSClientID,
+                e2eiClientId: E2EIClientID,
                 userName: String,
                 handle: String) {
         self.coreCrypto = coreCrypto
-        self.mlsClientId = mlsClientId
+        self.e2eiClientId = e2eiClientId
         self.userName = userName
         self.handle = handle
     }
@@ -62,9 +62,7 @@ public final class E2EIService: E2EIServiceInterface {
         /// TODO: we should use the new CoreCrypto version: `e2eiNewRotateEnrollment` and `e2eiNewActivationEnrollment`
         do {
             e2eIdentity = try coreCrypto.perform {
-                try $0.e2eiNewEnrollment(clientId:
-                                           // mlsClientId.rawValue,
-                                          "OWE0ZGVkNDYtYmE4Yi00MTI0LTk1MDktZTgzZjkwMmFiMWVk:871610f2e52b6480@elna.wire.link",
+                try $0.e2eiNewEnrollment(clientId: e2eiClientId.rawValue,
                                          displayName: userName,
                                          handle: handle,
                                          expiryDays: UInt32(90),

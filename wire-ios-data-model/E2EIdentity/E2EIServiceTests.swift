@@ -26,7 +26,7 @@ class E2EIServiceTests: ZMConversationTestsBase {
     var sut: E2EIService!
     var mockCoreCrypto: MockCoreCrypto!
     var mockSafeCoreCrypto: MockSafeCoreCrypto!
-    var mlsClientId: MLSClientID!
+    var e2eiClientId: E2EIClientID!
     var qualifiedClientID: QualifiedClientID!
 
     override func setUp() {
@@ -55,10 +55,10 @@ class E2EIServiceTests: ZMConversationTestsBase {
         qualifiedClientID = QualifiedClientID(userID: selfUser.remoteIdentifier,
                                               domain: domain,
                                               clientID: selfClientId)
-        mlsClientId = MLSClientID(qualifiedClientID: qualifiedClientID)
+        e2eiClientId = E2EIClientID(qualifiedClientID: qualifiedClientID)
 
         sut = E2EIService(coreCrypto: mockSafeCoreCrypto,
-                          mlsClientId: mlsClientId,
+                          e2eiClientId: e2eiClientId,
                           userName: userName,
                           handle: handle)
 
@@ -68,7 +68,7 @@ class E2EIServiceTests: ZMConversationTestsBase {
         sut = nil
         mockCoreCrypto = nil
         mockSafeCoreCrypto = nil
-        mlsClientId = nil
+        e2eiClientId = nil
         qualifiedClientID = nil
 
         super.tearDown()
@@ -101,9 +101,69 @@ class E2EIServiceTests: ZMConversationTestsBase {
         // When
         let acmeDirectory = try await sut.directoryResponse(directoryData: acmeResponseData)
 
-        // then
+        // Then
         XCTAssertEqual(mockDirectoryResponseCount, 1)
         XCTAssertEqual(acmeDirectory, expectedacmeDirectory)
+    }
+
+    func test1() async throws {
+        // Given
+
+        // When
+        let acmeDirectory = try await sut.getNewAccountRequest(previousNonce: "")
+
+        // Then
+
+    }
+
+    func test2() async throws {
+        // Given
+
+        // When
+         try await sut.setAccountResponse(accountData: Data())
+
+        // Then
+
+    }
+
+    func test3() async throws {
+        // Given
+
+        // When
+        let acmeDirectory = try await sut.getNewOrderRequest(nonce: "")
+
+        // Then
+
+    }
+
+    func test4() async throws {
+        // Given
+
+        // When
+        try await sut.setOrderResponse(order: Data())
+
+        // Then
+
+    }
+
+    func test5() async throws {
+        // Given
+
+        // When
+        let acmeDirectory = try await sut.getNewAuthzRequest(url: "", previousNonce: "")
+
+        // Then
+
+    }
+
+    func test6() async throws {
+        // Given
+
+        // When
+        try await sut.setAuthzResponse(authz: Data())
+
+        // Then
+
     }
 
 }

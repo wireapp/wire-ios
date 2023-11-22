@@ -78,45 +78,61 @@ class AcmeClientTests: ZMTBaseTest {
         }
     }
 
-}
+    func test1() async throws {
+        // expectation
+        let expectedNonce = "ACMENonce"
 
-class MockHttpClient: HttpClient {
-
-    enum Context {
-        case getDirectory
-    }
-
-    var context: Context?
-
-    func send(_ request: ZMTransportRequest) async throws -> ZMTransportResponse {
-        switch context {
-        case .getDirectory:
-            let transportData = MockAcmeResponse().acmeDirectory().transportData
-
-            return ZMTransportResponse(payload: transportData,
-                                       httpStatus: 200,
-                                       transportSessionError: nil,
-                                       apiVersion: 0)
-        case .none:
-
-            return ZMTransportResponse(payload: nil,
-                                       httpStatus: 200,
-                                       transportSessionError: nil,
-                                       apiVersion: 0)
+        // given
+        let path = "https://acme.elna.wire.link/acme/defaultteams/new-nonce"
+        guard let mockHttpClient = mockHttpClient as? MockHttpClient else {
+            return XCTFail("Failed to create mockHttpClient.")
         }
+        mockHttpClient.context = .getACMENonce
+
+        // when
+        let nonce = try await acmeClient?.getACMENonce(url: path)
+
+        // then
+        XCTAssertEqual(nonce, expectedNonce)
+    }
+
+    func test11_No_header() async throws {
+        // given
+
+        // when
+        let acmeDirectoryData = try await acmeClient?.getACMENonce(url: "")
+
+        // then
 
     }
 
-}
+    func test2() async throws {
+        // given
 
-private class MockAcmeResponse {
+        // when
+        let acmeDirectoryData = try await acmeClient?.sendACMERequest(url: "", requestBody: Data())
 
-    func acmeDirectory() -> AcmeDirectoriesResponse {
-        return AcmeDirectoriesResponse(newNonce: "https://acme.elna.wire.link/acme/defaultteams/new-nonce",
-                                       newAccount: "https://acme.elna.wire.link/acme/defaultteams/new-account",
-                                       newOrder: "https://acme.elna.wire.link/acme/defaultteams/new-order",
-                                       revokeCert: "https://acme.elna.wire.link/acme/defaultteams/revoke-cert",
-                                       keyChange: "https://acme.elna.wire.link/acme/defaultteams/key-change")
+        // then
+
+    }
+
+    func test22_NoRelyNonce() async throws {
+        // given
+
+        // when
+        let acmeDirectoryData = try await acmeClient?.sendACMERequest(url: "", requestBody: Data())
+
+        // then
+
+    }
+
+    func test22_No_location() async throws {
+        // given
+
+        // when
+        let acmeDirectoryData = try await acmeClient?.sendACMERequest(url: "", requestBody: Data())
+
+        // then
 
     }
 

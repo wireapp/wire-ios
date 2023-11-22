@@ -21,6 +21,137 @@ import Foundation
 
 class E2EIRepositoryTests: ZMTBaseTest {
 
-/// TODO: will be implemented in the next PRs
+    /// TODO: will be implemented in the next PRs
+    func test1() async throws {
+        // given
+
+        // when
+
+        // then
+
+    }
+
+    func test2() async throws {
+        // given
+
+        // when
+
+        // then
+
+    }
+
+    func test3() async throws {
+        // given
+
+        // when
+
+        // then
+
+    }
+
+    func test4() async throws {
+        // given
+
+        // when
+
+        // then
+
+    }
+
+    func test5() async throws {
+        // given
+
+        // when
+
+        // then
+
+    }
+
+}
+
+class MockAcmeClient: AcmeClientInterface {
+
+    let domain: String
+
+    init(domain: String) {
+        self.domain = domain
+    }
+
+    func getACMEDirectory() async throws -> Data {
+        let payload = acmeDirectoriesResponse()
+
+        return try JSONSerialization.data(withJSONObject: payload, options: [])
+    }
+
+    func getACMENonce(url: String) async throws -> String {
+        return ""
+    }
+
+    func sendACMERequest(url: String, requestBody: Data) async throws -> ACMEResponse {
+        return ACMEResponse(nonce: "", location: "", response: Data())
+    }
+
+    private func acmeDirectoriesResponse() -> [String: String] {
+        return [
+            "newNonce": "https://\(domain)/acme/defaultteams/new-nonce",
+            "newAccount": "https://\(domain)/acme/defaultteams/new-account",
+            "newOrder": "https://\(domain)/acme/defaultteams/new-order",
+            "revokeCert": "https://\(domain)/acme/defaultteams/revoke-cert",
+            "keyChange": "https://\(domain)/acme/defaultteams/key-change"
+        ]
+
+    }
+
+}
+
+class MockHttpClient: HttpClient {
+
+    enum Context {
+        case getDirectory
+        case getACMENonce
+    }
+
+    var context: Context?
+
+    func send(_ request: ZMTransportRequest) async throws -> ZMTransportResponse {
+        switch context {
+        case .getDirectory:
+            let transportData = MockAcmeResponse().acmeDirectory().transportData
+
+            return ZMTransportResponse(payload: transportData,
+                                       httpStatus: 200,
+                                       transportSessionError: nil,
+                                       apiVersion: 0)
+        case .getACMENonce:
+            return ZMTransportResponse(payload: nil,
+                                       httpStatus: 200,
+                                       transportSessionError: nil,
+                                       apiVersion: 0)
+        case .none:
+
+            return ZMTransportResponse(payload: nil,
+                                       httpStatus: 200,
+                                       transportSessionError: nil,
+                                       apiVersion: 0)
+        }
+
+    }
+
+    func send(_ request: URLRequest) async throws -> (Data, URLResponse) {
+        return (Data(), URLResponse())
+    }
+
+}
+
+class MockAcmeResponse {
+
+    func acmeDirectory() -> AcmeDirectoriesResponse {
+        return AcmeDirectoriesResponse(newNonce: "https://acme.elna.wire.link/acme/defaultteams/new-nonce",
+                                       newAccount: "https://acme.elna.wire.link/acme/defaultteams/new-account",
+                                       newOrder: "https://acme.elna.wire.link/acme/defaultteams/new-order",
+                                       revokeCert: "https://acme.elna.wire.link/acme/defaultteams/revoke-cert",
+                                       keyChange: "https://acme.elna.wire.link/acme/defaultteams/key-change")
+
+    }
 
 }
