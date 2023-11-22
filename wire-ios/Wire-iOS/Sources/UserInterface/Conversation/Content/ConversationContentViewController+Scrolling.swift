@@ -52,12 +52,20 @@ extension ConversationContentViewController {
         updateTableViewHeaderView()
     }
 
-    func scrollToBottom() {
-        guard !isScrolledToBottom else { return }
+    /// Scrolls the tableView to the bottom-most row.
+    ///
+    /// This method checks if the tableView is not already scrolled to the bottom.
+    func scrollToBottomIfNeeded() {
+
+        guard !isScrolledToBottom else {
+            return
+        }
 
         dataSource.loadMessages()
-        tableView.scroll(toIndex: 0)
 
+        let shouldAnimate = !UIAccessibility.isReduceMotionEnabled
+
+        tableView.scroll(toIndex: 0, animated: shouldAnimate)
         updateTableViewHeaderView()
     }
 }
