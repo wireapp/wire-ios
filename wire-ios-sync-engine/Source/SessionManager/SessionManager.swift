@@ -859,13 +859,19 @@ public final class SessionManager: NSObject, SessionManagerType {
         account: Account,
         onCompletion: @escaping (ZMUserSession?) -> Void
     ) {
-        setupCoreDataStack(
+        let coreDataStack = CoreDataStack(
             account: account,
+            applicationContainer: sharedContainerURL,
+            dispatchGroup: dispatchGroup
+        )
+        coreDataStack.setup(
             onStartMigration: { [weak self] in
                 self?.delegate?.sessionManagerWillMigrateAccount(userSessionCanBeTornDown: {})
+
             }, onFailure: { [weak self] _ in
                 self?.delegate?.sessionManagerDidFailToLoadDatabase()
                 onCompletion(nil)
+
             }, onCompletion: { [weak self] coreDataStack in
                 guard let self else {
                     assertionFailure("expected 'self' to continue!")
@@ -885,42 +891,6 @@ public final class SessionManager: NSObject, SessionManagerType {
                 }
             }
         )
-    }
-
-    private func setupCoreDataStack(
-        account: Account,
-        onStartMigration: () -> Void,
-        onFailure: @escaping (Error) -> Void,
-        onCompletion: @escaping (CoreDataStack) -> Void
-    ) {
-        let coreDataStack = CoreDataStack(
-            account: account,
-            applicationContainer: sharedContainerURL,
-            dispatchGroup: dispatchGroup
-        )
-
-        if coreDataStack.needsMigration {
-            onStartMigration()
-        }
-
-        Task(priority: .userInitiated) {
-            if coreDataStack.needsMessagingStoreMigration() {
-                do {
-                    try await coreDataStack.migrateMessagingStore()
-                } catch {
-                    onFailure(error)
-                    return
-                }
-            }
-
-            coreDataStack.loadStores { error in
-                if let error {
-                    onFailure(error)
-                    return
-                }
-                onCompletion(coreDataStack)
-            }
-        }
     }
 
     /// Migrates all existing proteus data created by Cryptobox into Core Crypto, if needed.

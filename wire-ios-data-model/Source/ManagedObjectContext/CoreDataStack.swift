@@ -193,6 +193,37 @@ public class CoreDataStack: NSObject, ContextProvider {
         })
     }
 
+    public func setup(
+        onStartMigration: () -> Void,
+        onFailure: @escaping (Error) -> Void,
+        onCompletion: @escaping (CoreDataStack) -> Void
+    ) {
+
+        if needsMigration {
+            onStartMigration()
+        }
+
+        Task(priority: .userInitiated) {
+            if needsMessagingStoreMigration() {
+                do {
+                    try await migrateMessagingStore()
+                } catch {
+                    onFailure(error)
+                    return
+                }
+            }
+
+            loadStores { error in
+                if let error {
+                    onFailure(error)
+                    return
+                }
+                onCompletion(self)
+            }
+        }
+    }
+
+
     public func loadStores(completionHandler: @escaping (Error?) -> Void) {
 
         let dispatchGroup = DispatchGroup()
