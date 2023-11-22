@@ -106,39 +106,39 @@ class MockAcmeClient: AcmeClientInterface {
 
 class MockHttpClient: HttpClient {
 
-    enum Context {
-        case getDirectory
-        case getACMENonce
-    }
-
-    var context: Context?
+    var mockResponse1: ZMTransportResponse?
+    var mockResponse: (Data, URLResponse)?
 
     func send(_ request: ZMTransportRequest) async throws -> ZMTransportResponse {
-        switch context {
-        case .getDirectory:
-            let transportData = MockAcmeResponse().acmeDirectory().transportData
-
-            return ZMTransportResponse(payload: transportData,
-                                       httpStatus: 200,
-                                       transportSessionError: nil,
-                                       apiVersion: 0)
-        case .getACMENonce:
-            return ZMTransportResponse(payload: nil,
-                                       httpStatus: 200,
-                                       transportSessionError: nil,
-                                       apiVersion: 0)
-        case .none:
-
-            return ZMTransportResponse(payload: nil,
-                                       httpStatus: 200,
-                                       transportSessionError: nil,
-                                       apiVersion: 0)
+        guard let mockResponse1 = mockResponse1 else {
+            throw NetworkError.invalidResponse
         }
+        return mockResponse1
+//        switch context {
+//        case .getDirectory:
+//            let transportData = MockAcmeResponse().acmeDirectory().transportData
+//
+//            return ZMTransportResponse(payload: transportData,
+//                                       httpStatus: 200,
+//                                       transportSessionError: nil,
+//                                       apiVersion: 0)
+//        case .getACMENonce:
+//            return ZMTransportResponse(payload: nil,
+//                                       httpStatus: 200,
+//                                       transportSessionError: nil,
+//                                       apiVersion: 0)
+//        case .none:
+//
+//            return ZMTransportResponse(payload: nil,
+//                                       httpStatus: 200,
+//                                       transportSessionError: nil,
+//                                       apiVersion: 0)
+//        }
 
     }
 
     func send(_ request: URLRequest) async throws -> (Data, URLResponse) {
-        return (Data(), URLResponse())
+        return mockResponse ?? (Data(), URLResponse())
     }
 
 }

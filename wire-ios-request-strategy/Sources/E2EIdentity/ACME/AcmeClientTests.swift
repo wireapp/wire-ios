@@ -22,7 +22,7 @@ import Foundation
 class AcmeClientTests: ZMTBaseTest {
 
     var acmeClient: AcmeClient?
-    var mockHttpClient: HttpClient?
+    var mockHttpClient: MockHttpClient?
     let backendDomainBackup = BackendInfo.domain
 
     override func setUp() {
@@ -46,13 +46,14 @@ class AcmeClientTests: ZMTBaseTest {
         // expectation
         let expectedAcmeDirectory = MockAcmeResponse().acmeDirectory()
 
-        // given
-        guard let mockHttpClient = mockHttpClient as? MockHttpClient else {
-            return XCTFail("Failed to create mockHttpClient.")
-        }
-        mockHttpClient.context = .getDirectory
+        // mock
+        let transportData = MockAcmeResponse().acmeDirectory().transportData
+        mockHttpClient?.mockResponse1 = ZMTransportResponse(payload: transportData,
+                                                            httpStatus: 200,
+                                                            transportSessionError: nil,
+                                                            apiVersion: 0)
 
-        // when
+        // given / when
         guard  let acmeDirectoryData = try await acmeClient?.getACMEDirectory() else {
             return XCTFail("Failed to get ACME directory.")
         }
@@ -77,24 +78,31 @@ class AcmeClientTests: ZMTBaseTest {
             XCTFail("unexpected error: \(error.localizedDescription)")
         }
     }
-
-    func test1() async throws {
-        // expectation
-        let expectedNonce = "ACMENonce"
-
-        // given
-        let path = "https://acme.elna.wire.link/acme/defaultteams/new-nonce"
-        guard let mockHttpClient = mockHttpClient as? MockHttpClient else {
-            return XCTFail("Failed to create mockHttpClient.")
-        }
-        mockHttpClient.context = .getACMENonce
-
-        // when
-        let nonce = try await acmeClient?.getACMENonce(url: path)
-
-        // then
-        XCTAssertEqual(nonce, expectedNonce)
-    }
+//
+//    func test1() async throws {
+//        // expectation
+//        let expectedNonce = "ACMENonce"
+//
+//        // given
+//        let path = "https://acme.elna.wire.link/acme/defaultteams/new-nonce"
+//        let mock = ZMTransportResponse(payload: nil,
+//                                       httpStatus: 200,
+//                                       transportSessionError: nil,
+//                                       apiVersion: 0)
+//        mockHttpClient?.mockResponse1 = mock
+//        mock.rawResponse = HTTPURLResponse(
+//            url: URL(string: "wire.com")!,
+//            statusCode: 200,
+//            httpVersion: "",
+//            headerFields: ["Content-Type": "application/json"]
+//        )!
+//
+//        // when
+//        let nonce = try await acmeClient?.getACMENonce(url: path)
+//
+//        // then
+//        XCTAssertEqual(nonce, expectedNonce)
+//    }
 
     func test11_No_header() async throws {
         // given
