@@ -51,7 +51,7 @@ public final class E2EIRepository: E2EIRepositoryInterface {
         } catch {
             logger.error("failed to load ACME directory: \(error.localizedDescription)")
 
-            throw E2EIRepositoryFailure.failedToLoadACMEDirectory
+            throw E2EIRepositoryFailure.failedToLoadACMEDirectory(error)
         }
     }
 
@@ -65,7 +65,7 @@ public final class E2EIRepository: E2EIRepositoryInterface {
 
 enum E2EIRepositoryFailure: Error {
 
-    case failedToLoadACMEDirectory
+    case failedToLoadACMEDirectory(Error)
     case missingNonce
     case failedToCreateAcmeAccount
 
