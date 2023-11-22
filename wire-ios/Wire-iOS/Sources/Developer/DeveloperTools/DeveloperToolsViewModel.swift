@@ -117,7 +117,6 @@ final class DeveloperToolsViewModel: ObservableObject {
                 .button(ButtonItem(title: "Perform quick sync", action: performQuickSync)),
                 .button(ButtonItem(title: "Break next quick sync", action: breakNextQuickSync)),
                 .button(ButtonItem(title: "E2EI: Trigger flow", action: startE2EI)),
-                .button(ButtonItem(title: "E2EI: Get id token", action: getIdToken)),
                 .destination(DestinationItem(title: "Configure flags", makeView: {
                     AnyView(DeveloperFlagsView(viewModel: DeveloperFlagsViewModel()))
                 }))
@@ -237,14 +236,6 @@ final class DeveloperToolsViewModel: ObservableObject {
         Task {
             guard let session = ZMUserSession.shared() else { return }
             await session.syncStatus?.performQuickSync()
-        }
-    }
-
-    private func getIdToken() {
-        Task {
-            let oauthManager = OAuthAuthentication()
-            let idP = URL(string: "https://accounts.google.com")
-            let token = try? await oauthManager.getIdToken(from: idP!)
         }
     }
 

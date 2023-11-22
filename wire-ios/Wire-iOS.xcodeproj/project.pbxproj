@@ -47,10 +47,6 @@
 		06717E592865179000AF442C /* SemanticColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06717E582865178F00AF442C /* SemanticColors.swift */; };
 		06717E5C2865183600AF442C /* Stylable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06717E5B2865183600AF442C /* Stylable.swift */; };
 		06717E5E2865188000AF442C /* SemanticColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06717E582865178F00AF442C /* SemanticColors.swift */; };
-		067197532ADE9AB600D96598 /* AppAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 067197522ADE9AB600D96598 /* AppAuth */; };
-		067197552ADE9AB600D96598 /* AppAuthCore in Frameworks */ = {isa = PBXBuildFile; productRef = 067197542ADE9AB600D96598 /* AppAuthCore */; };
-		067197582ADE9C0300D96598 /* OAuthAuthentication.swift in Sources */ = {isa = PBXBuildFile; fileRef = 067197462AD8448E00D96598 /* OAuthAuthentication.swift */; };
-		0671975C2AE002C200D96598 /* OIDAuthorizationDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0671975B2AE002C200D96598 /* OIDAuthorizationDelegate.swift */; };
 		067EF352288FCAB700B2659A /* Accessibility.strings in Resources */ = {isa = PBXBuildFile; fileRef = 067EF350288FCAB600B2659A /* Accessibility.strings */; };
 		067F605D28B8EC8000FCC334 /* DebugCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 067F605C28B8EC8000FCC334 /* DebugCommand.swift */; };
 		0685008126B35E7A00721F80 /* AudioMessageRestrictionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0685008026B35E7A00721F80 /* AudioMessageRestrictionView.swift */; };
@@ -1993,8 +1989,6 @@
 		0667FE302384237E00F75F93 /* UICollectionView+SetMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UICollectionView+SetMessage.swift"; sourceTree = "<group>"; };
 		06717E582865178F00AF442C /* SemanticColors.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SemanticColors.swift; sourceTree = "<group>"; };
 		06717E5B2865183600AF442C /* Stylable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Stylable.swift; sourceTree = "<group>"; };
-		067197462AD8448E00D96598 /* OAuthAuthentication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OAuthAuthentication.swift; sourceTree = "<group>"; };
-		0671975B2AE002C200D96598 /* OIDAuthorizationDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OIDAuthorizationDelegate.swift; sourceTree = "<group>"; };
 		067EF351288FCAB600B2659A /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/Accessibility.strings; sourceTree = "<group>"; };
 		067EF353288FCABF00B2659A /* ar */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ar; path = ar.lproj/Accessibility.strings; sourceTree = "<group>"; };
 		067EF354288FCAC100B2659A /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Accessibility.strings"; sourceTree = "<group>"; };
@@ -3893,8 +3887,6 @@
 				EEE25B4429719C950008B894 /* WireSystem.framework in Frameworks */,
 				EEE25B4D29719D0B0008B894 /* ZipArchive.xcframework in Frameworks */,
 				87E0D6D51CD3978900C54196 /* AVKit.framework in Frameworks */,
-				067197532ADE9AB600D96598 /* AppAuth in Frameworks */,
-				067197552ADE9AB600D96598 /* AppAuthCore in Frameworks */,
 				169FF9331C57CB2100C5BF90 /* VideoToolbox.framework in Frameworks */,
 				EE67F6D5296F06A3001D7C88 /* Down.xcframework in Frameworks */,
 				EEE25B5929719DA80008B894 /* WireImages.framework in Frameworks */,
@@ -4013,23 +4005,6 @@
 				0665DF7228F01D3B0094482B /* ProfileImagePickerManager.swift */,
 			);
 			path = Image;
-			sourceTree = "<group>";
-		};
-		067197592ADFD7DF00D96598 /* E2E identity */ = {
-			isa = PBXGroup;
-			children = (
-				0671975A2ADFDAC100D96598 /* OAuth authentication */,
-			);
-			path = "E2E identity";
-			sourceTree = "<group>";
-		};
-		0671975A2ADFDAC100D96598 /* OAuth authentication */ = {
-			isa = PBXGroup;
-			children = (
-				067197462AD8448E00D96598 /* OAuthAuthentication.swift */,
-				0671975B2AE002C200D96598 /* OIDAuthorizationDelegate.swift */,
-			);
-			path = "OAuth authentication";
 			sourceTree = "<group>";
 		};
 		0685007F26B35DFC00721F80 /* Restrictions */ = {
@@ -6069,7 +6044,6 @@
 				871BC3181D34F94200DF0793 /* Components */,
 				8FC85126199245760008B66B /* Helpers */,
 				E902B3B529ED3A2E0090DE32 /* SwiftUI Helpers */,
-				067197592ADFD7DF00D96598 /* E2E identity */,
 				871BBFA11D34F56300DF0793 /* Analytics */,
 				8FC850F7199245760008B66B /* Developer */,
 				8FC85146199245760008B66B /* Managers */,
@@ -8174,8 +8148,6 @@
 			name = "Wire-iOS";
 			packageProductDependencies = (
 				407831AC2AC4636F005C2978 /* DifferenceKit */,
-				067197522ADE9AB600D96598 /* AppAuth */,
-				067197542ADE9AB600D96598 /* AppAuthCore */,
 			);
 			productName = "ZClient iOS";
 			productReference = 8F42C538199244A700288E4D /* Wire.app */;
@@ -8325,7 +8297,6 @@
 			packageReferences = (
 				01C1A7C52A54C45A0058D578 /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */,
 				407831AB2AC4636F005C2978 /* XCRemoteSwiftPackageReference "DifferenceKit" */,
-				067197512ADE9AB600D96598 /* XCRemoteSwiftPackageReference "AppAuth-iOS" */,
 			);
 			productRefGroup = 8F42C539199244A700288E4D /* Products */;
 			projectDirPath = "";
@@ -9557,7 +9528,6 @@
 				EE948F1923E17778000A663E /* ContactsDataSource.swift in Sources */,
 				16E2A0A61F6BF233005F4DB1 /* ZMConversation+Calling.swift in Sources */,
 				BFCF31DD1DA52ECE0039B3DC /* KeyboardHeight.swift in Sources */,
-				067197582ADE9C0300D96598 /* OAuthAuthentication.swift in Sources */,
 				87A752171E002F6C004317DB /* ConversationRootViewController.swift in Sources */,
 				16A5FDC52154F53F00AEEBBD /* NSAttributedString+MessageFormatting.swift in Sources */,
 				87CA886E1DDF0075004101B6 /* UserConnectionViewController.swift in Sources */,
@@ -9620,7 +9590,6 @@
 				5E8FFC2421F086240052DF03 /* AuthenticationReauthenticateInputHandler.swift in Sources */,
 				BFE277631D5B4FC50074DC6D /* ConversationContentViewController+MessageDeletion.swift in Sources */,
 				7C5836661FD5ABFE001CC843 /* TitleView.swift in Sources */,
-				0671975C2AE002C200D96598 /* OIDAuthorizationDelegate.swift in Sources */,
 				7C5DF2CC1FD7DEAD00B793B6 /* AvailabilityExtensions.swift in Sources */,
 				E9EC273429D4440C00599D0A /* String+Capitalization.swift in Sources */,
 				16595CFF20BEE5E000E1340E /* Analytics+CallEvents.swift in Sources */,
@@ -11071,14 +11040,6 @@
 				minimumVersion = 1.0.0;
 			};
 		};
-		067197512ADE9AB600D96598 /* XCRemoteSwiftPackageReference "AppAuth-iOS" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/openid/AppAuth-iOS.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.6.2;
-			};
-		};
 		407831AB2AC4636F005C2978 /* XCRemoteSwiftPackageReference "DifferenceKit" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/wireapp/DifferenceKit/";
@@ -11094,16 +11055,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 01C1A7C52A54C45A0058D578 /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */;
 			productName = SnapshotTesting;
-		};
-		067197522ADE9AB600D96598 /* AppAuth */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 067197512ADE9AB600D96598 /* XCRemoteSwiftPackageReference "AppAuth-iOS" */;
-			productName = AppAuth;
-		};
-		067197542ADE9AB600D96598 /* AppAuthCore */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 067197512ADE9AB600D96598 /* XCRemoteSwiftPackageReference "AppAuth-iOS" */;
-			productName = AppAuthCore;
 		};
 		407831AC2AC4636F005C2978 /* DifferenceKit */ = {
 			isa = XCSwiftPackageProductDependency;
