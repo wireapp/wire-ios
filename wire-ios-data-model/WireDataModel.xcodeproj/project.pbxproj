@@ -2180,6 +2180,14 @@
 			name = Reaction;
 			sourceTree = "<group>";
 		};
+		E6A5BBA22B0E329800ACC236 /* Migration */ = {
+			isa = PBXGroup;
+			children = (
+				6391A7F92A6FD6FC00832665 /* MappingModel_2.106-2.107.xcmappingmodel */,
+			);
+			path = Migration;
+			sourceTree = "<group>";
+		};
 		EE032B3429A62CD600E1DDF3 /* Proteus */ = {
 			isa = PBXGroup;
 			children = (
@@ -2356,6 +2364,7 @@
 		F9A705C91CAEE01D00C2F5FE /* ManagedObjectContext */ = {
 			isa = PBXGroup;
 			children = (
+				E6A5BBA22B0E329800ACC236 /* Migration */,
 				166A2A0C25FB991800B4A4F8 /* CoreDataStack.swift */,
 				167BCC95260DC3F100E9D7E3 /* CoreDataStack+ClearStorage.swift */,
 				F179B5D92062B77300C13DFD /* CoreDataStack+Backup.swift */,
@@ -2388,7 +2397,6 @@
 				63D9A19D282AA0050074C20C /* NSManagedObjectContext+Federation.swift */,
 				160B3BB024EFD64E0026D355 /* ExtendedSecureUnarchiveFromData.swift */,
 				6391A7F62A6FD66A00832665 /* DuplicateClientsMigrationPolicy.swift */,
-				6391A7F92A6FD6FC00832665 /* MappingModel_2.106-2.107.xcmappingmodel */,
 			);
 			name = ManagedObjectContext;
 			path = Source/ManagedObjectContext;
