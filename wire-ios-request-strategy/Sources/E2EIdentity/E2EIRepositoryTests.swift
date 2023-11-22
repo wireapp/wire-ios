@@ -17,22 +17,10 @@
 //
 
 import Foundation
-import WireCoreCrypto
+@testable import WireRequestStrategy
 
-extension NSManagedObjectContext {
+class E2EIRepositoryTests: ZMTBaseTest {
 
-    private static let e2eiServiceUserInfoKey = "E2EIServiceUserInfoKey"
-
-    public var e2eiService: E2EIServiceInterface? {
-        get {
-            precondition(zm_isSyncContext, "E2EIService should only be accessed on the sync context")
-            return userInfo[Self.e2eiServiceUserInfoKey] as? E2EIServiceInterface
-        }
-
-        set {
-            precondition(zm_isSyncContext, "E2EIService should only be accessed on the sync context")
-            userInfo[Self.e2eiServiceUserInfoKey] = newValue
-        }
-    }
+/// TODO: will be implemented in the next PRs
 
 }

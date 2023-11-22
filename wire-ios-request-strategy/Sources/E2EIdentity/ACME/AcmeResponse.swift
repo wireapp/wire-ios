@@ -18,7 +18,7 @@
 
 import Foundation
 
-public struct AcmeDirectoriesResponse: Codable {
+struct AcmeDirectoriesResponse: Codable, Equatable {
 
     var newNonce: String
     var newAccount: String
@@ -28,7 +28,7 @@ public struct AcmeDirectoriesResponse: Codable {
 
 }
 
-public struct ACMEResponse: Decodable {
+public struct ACMEResponse {
 
     var nonce: String
     var location: String
@@ -36,7 +36,7 @@ public struct ACMEResponse: Decodable {
 
 }
 
-public struct ChallengeResponse {
+struct ChallengeResponse {
 
     var type: String
     var url: String

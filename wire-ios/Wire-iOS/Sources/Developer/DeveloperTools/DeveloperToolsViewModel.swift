@@ -251,8 +251,38 @@ final class DeveloperToolsViewModel: ObservableObject {
     private func startE2EI() {
         Task {
             guard let session = ZMUserSession.shared() else { return }
-            _ = await session.certificateEnrollment?.invoke(idToken: "")
+            let enrollE2EICertificate = configureE2EIStack(syncContext: session.syncContext)
+            _ = try await enrollE2EICertificate?.invoke(idToken: "")
         }
+    }
+
+    private func configureE2EIStack(syncContext: NSManagedObjectContext) -> EnrollE2EICertificateUseCase? {
+        var enrollE2EICertificate: EnrollE2EICertificateUseCase?
+        let httpClient = HttpClientImpl()
+        let acmeClient = AcmeClient(httpClient: httpClient)
+        syncContext.performAndWait {
+            guard let coreCrypto = syncContext.coreCrypto else {
+                return
+            }
+            let selfUser = ZMUser.selfUser(in: syncContext)
+            guard
+                let handle = selfUser.handle,
+                let name = selfUser.name,
+                let selfClient = selfUser.selfClient(),
+                let clientId = MLSClientID(userClient: selfClient)
+            else {
+                return
+            }
+
+            let e2eiService = E2EIService(coreCrypto: coreCrypto,
+                                          mlsClientId: clientId,
+                                          userName: name,
+                                          handle: handle)
+            let e2eiRepository = E2EIRepository(acmeClient: acmeClient, e2eiService: e2eiService)
+
+            enrollE2EICertificate = EnrollE2EICertificateUseCase(e2eiRepository: e2eiRepository)
+        }
+        return enrollE2EICertificate
     }
 
     private func checkRegisteredTokens() {

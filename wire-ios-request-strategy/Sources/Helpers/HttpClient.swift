@@ -18,29 +18,35 @@
 
 import Foundation
 
-public protocol HttpClient {
+public enum NetworkError: Error {
 
-    func send(_ request: ZMTransportRequest) async -> ZMTransportResponse
+    case invalidRequestURL
+    case invalidResponse
 
 }
 
-public class HttpClientImpl: HttpClient {
+public protocol HttpClient {
 
-    let transportSession: TransportSessionType
-    let queue: ZMSGroupQueue
+    func send(_ request: ZMTransportRequest) async throws -> ZMTransportResponse
 
-    public init(transportSession: TransportSessionType, queue: ZMSGroupQueue) {
-        self.transportSession = transportSession
-        self.queue = queue
-    }
+}
 
-    public func send(_ request: ZMTransportRequest) async -> ZMTransportResponse {
-        await withCheckedContinuation { continuation in
-            request.add(ZMCompletionHandler(on: queue, block: { response in
-                continuation.resume(returning: response)
-            }))
+public class HttpClientImpl: NSObject, HttpClient {
 
-            transportSession.enqueueOneTime(request)
+    public func send(_ request: ZMTransportRequest) async throws -> ZMTransportResponse {
+        guard let url = URL(string: request.path) else {
+            throw NetworkError.invalidRequestURL
         }
+
+        var urlRequest = URLRequest(url: url)
+        urlRequest.httpMethod = request.methodAsString
+
+        let (data, response) = try await URLSession.shared.data(for: urlRequest)
+
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw NetworkError.invalidResponse
+        }
+
+        return ZMTransportResponse(httpurlResponse: httpResponse, data: data, error: nil, apiVersion: 0)
     }
 }

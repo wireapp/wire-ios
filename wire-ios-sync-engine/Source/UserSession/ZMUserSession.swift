@@ -105,7 +105,6 @@ public class ZMUserSession: NSObject {
     let earService: EARServiceInterface
 
     public var appLockController: AppLockType
-    public var certificateEnrollment: CertificateEnrollmentInterface?
 
     public var fileSharingFeature: Feature.FileSharing {
         let featureRepository = FeatureRepository(context: coreDataStack.viewContext)
@@ -320,9 +319,6 @@ public class ZMUserSession: NSObject {
         // This should happen after the request strategies are created b/c
         // it needs to make network requests upon initialization.
         setupCryptoStack(stage: .mls)
-        setupCryptoStack(stage: .e2ei)
-
-        configureE2EIStack()
 
         updateEventProcessor!.eventConsumers = self.strategyDirectory!.eventConsumers
         registerForCalculateBadgeCountNotification()
@@ -452,17 +448,6 @@ public class ZMUserSession: NSObject {
                 NotificationCenter.default.post(name: Notification.Name(rawValue: ZMLoggingRequestLoopNotificationName),
                                                 object: nil,
                                                 userInfo: ["path": path])
-            }
-        }
-    }
-
-    private func configureE2EIStack() {
-        let httpClient = HttpClientImpl(transportSession: transportSession, queue: coreDataStack.syncContext)
-        let apiProvider = APIProvider(httpClient: httpClient)
-        coreDataStack.syncContext.performGroupedBlockAndWait { [weak self] in
-            if let e2eiService = self?.syncContext.e2eiService {
-                let e2eiManager = E2EIManager(apiProvider: apiProvider, e2eiService: e2eiService)
-                self?.certificateEnrollment = CertificateEnrollment(e2eiManager: e2eiManager)
             }
         }
     }
