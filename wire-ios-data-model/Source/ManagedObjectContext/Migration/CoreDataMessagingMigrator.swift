@@ -30,35 +30,141 @@ enum CoreDataMessagingMigratorError: Error {
 
 final class CoreDataMessagingMigrator: CoreDataMessagingMigratorProtocol {
 
-    let isInMemoryStore: Bool
+    private let isInMemoryStore: Bool
+
+    @available(iOSApplicationExtension 15.0, *)
+    private var persistentStoreType: NSPersistentStore.StoreType {
+        isInMemoryStore ? .inMemory : .sqlite
+    }
+
+    private var storeType: String {
+        isInMemoryStore ? NSInMemoryStoreType : NSSQLiteStoreType
+    }
 
     init(isInMemoryStore: Bool) {
         self.isInMemoryStore = isInMemoryStore
     }
 
     func requiresMigration(at storeURL: URL, toVersion version: CoreDataMessagingMigrationVersion) -> Bool {
-        let metadata: [String: Any]?
-
-        if #available(iOSApplicationExtension 15.0, *) {
-            let type: NSPersistentStore.StoreType = isInMemoryStore ? .inMemory : .sqlite
-            metadata = try? NSPersistentStoreCoordinator.metadataForPersistentStore(type: type, at: storeURL)
-        } else {
-            let type = isInMemoryStore ? NSInMemoryStoreType : NSSQLiteStoreType
-            metadata = try? NSPersistentStoreCoordinator.metadataForPersistentStore(ofType: type, at: storeURL)
-        }
-
-        guard let metadata else {
+        guard let metadata = try? metadataForPersistentStore(at: storeURL) else {
             return false
         }
-
         return compatibleVersionForStoreMetadata(metadata) != version
     }
     
     func migrateStore(at storeURL: URL, toVersion version: CoreDataMessagingMigrationVersion) async {
-        fatalError("not implemented")
+        forceWALCheckpointingForStore(at: storeURL)
+
+        var currentURL = storeURL
+
+        for migrationStep in migrationStepsForStore(at: storeURL, to: version) {
+            let manager = NSMigrationManager(sourceModel: migrationStep.sourceModel, destinationModel: migrationStep.destinationModel)
+            let destinationURL = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true).appendingPathComponent(UUID().uuidString)
+
+            do {
+                try manager.migrateStore(
+                    from: currentURL,
+                    sourceType: storeType,
+                    options: nil,
+                    with: migrationStep.mappingModel,
+                    toDestinationURL: destinationURL,
+                    destinationType: storeType,
+                    destinationOptions: nil
+                )
+            } catch let error {
+                fatalError("failed attempting to migrate from \(migrationStep.sourceModel) to \(migrationStep.destinationModel), error: \(error)")
+            }
+
+            if currentURL != storeURL {
+                // Destroy intermediate step's store
+                destroyStore(at: currentURL)
+            }
+
+            currentURL = destinationURL
+        }
+
+        replaceStore(at: storeURL, withStoreAt: currentURL)
+
+        if currentURL != storeURL {
+            destroyStore(at: currentURL)
+        }
+    }
+
+    private func migrationStepsForStore(
+        at storeURL: URL,
+        to destinationVersion: CoreDataMessagingMigrationVersion
+    ) -> [CoreDataMessagingMigrationStep] {
+        guard
+            let metadata = try? metadataForPersistentStore(at: storeURL),
+            let sourceVersion = compatibleVersionForStoreMetadata(metadata)
+        else {
+            fatalError("unknown store version at URL \(storeURL)")
+        }
+
+        return migrationSteps(fromSourceVersion: sourceVersion, toDestinationVersion: destinationVersion)
+    }
+
+    private func migrationSteps(
+        fromSourceVersion sourceVersion: CoreDataMessagingMigrationVersion,
+        toDestinationVersion destinationVersion: CoreDataMessagingMigrationVersion
+    ) -> [CoreDataMessagingMigrationStep] {
+        var sourceVersion = sourceVersion
+        var migrationSteps: [CoreDataMessagingMigrationStep] = []
+
+        while sourceVersion != destinationVersion, let nextVersion = sourceVersion.nextVersion {
+            let step = CoreDataMessagingMigrationStep(sourceVersion: sourceVersion, destinationVersion: nextVersion)
+            migrationSteps.append(step)
+
+            sourceVersion = nextVersion
+        }
+
+        return migrationSteps
+    }
+
+    // MARK: - WAL
+
+    // Taken from https://williamboles.com/progressive-core-data-migration/
+    func forceWALCheckpointingForStore(at storeURL: URL) {
+        guard
+            let metadata = try? metadataForPersistentStore(at: storeURL),
+            let version = compatibleVersionForStoreMetadata(metadata),
+            let versionURL = version.managedObjectModelURL(),
+            let model = NSManagedObjectModel(contentsOf: versionURL)
+        else {
+            return
+        }
+
+        do {
+            let persistentStoreCoordinator = NSPersistentStoreCoordinator(managedObjectModel: model)
+
+            let options = [NSSQLitePragmasOption: ["journal_mode": "DELETE"]]
+            let store: NSPersistentStore
+
+            if #available(iOSApplicationExtension 15.0, *) {
+                store = try persistentStoreCoordinator.addPersistentStore(type: persistentStoreType, at: storeURL, options: options)
+            } else {
+                store = try persistentStoreCoordinator.addPersistentStore(
+                    ofType: storeType,
+                    configurationName: nil,
+                    at: storeURL,
+                    options: options
+                )
+            }
+            try persistentStoreCoordinator.remove(store)
+        } catch let error {
+            fatalError("failed to force WAL checkpointing, error: \(error)")
+        }
     }
 
     // MARK: - Helpers
+
+    private func metadataForPersistentStore(at storeURL: URL) throws -> [String: Any] {
+        if #available(iOS 15.0, *) {
+            return try NSPersistentStoreCoordinator.metadataForPersistentStore(type: persistentStoreType, at: storeURL)
+        } else {
+            return try NSPersistentStoreCoordinator.metadataForPersistentStore(ofType: storeType, at: storeURL)
+        }
+    }
 
     private func compatibleVersionForStoreMetadata(_ metadata: [String : Any]) -> CoreDataMessagingMigrationVersion? {
         let allVersions = CoreDataMessagingMigrationVersion.allCases
@@ -72,5 +178,33 @@ final class CoreDataMessagingMigrator: CoreDataMessagingMigratorProtocol {
         }
 
         return compatibleVersion
+    }
+
+    // MARK: - NSPersistentStoreCoordinator
+
+    private func destroyStore(at storeURL: URL) {
+        do {
+            let persistentStoreCoordinator = NSPersistentStoreCoordinator(managedObjectModel: NSManagedObjectModel())
+            try persistentStoreCoordinator.destroyPersistentStore(at: storeURL, ofType: storeType, options: nil)
+        } catch let error {
+            // TODO: better handle error
+            fatalError("failed to destroy persistent store at \(storeURL), error: \(error)")
+        }
+    }
+
+    private func replaceStore(at targetURL: URL, withStoreAt sourceURL: URL) {
+        do {
+            let persistentStoreCoordinator = NSPersistentStoreCoordinator(managedObjectModel: NSManagedObjectModel())
+            try persistentStoreCoordinator.replacePersistentStore(
+                at: targetURL,
+                destinationOptions: nil,
+                withPersistentStoreFrom: sourceURL,
+                sourceOptions: nil,
+                ofType: storeType
+            )
+        } catch let error {
+            // TODO: better handle error
+            fatalError("failed to replace persistent store at \(targetURL) with \(sourceURL), error: \(error)")
+        }
     }
 }
