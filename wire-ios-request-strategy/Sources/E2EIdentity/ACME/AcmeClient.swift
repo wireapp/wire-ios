@@ -75,7 +75,7 @@ public class AcmeClient: NSObject, AcmeClientInterface {
 
     public func sendACMERequest(url: String, requestBody: Data) async throws -> ACMEResponse {
         guard let url = URL(string: url) else {
-            throw NetworkError.invalidRequestURL
+            throw NetworkError.invalidRequest
         }
         var request = URLRequest(url: url)
         request.httpMethod = Constant.HTTPMethod.post
