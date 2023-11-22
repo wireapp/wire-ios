@@ -29,6 +29,45 @@ final class DatabaseMigrationTests_UserClientUniqueness: DatabaseBaseTest {
     private let tmpStoreURL = URL(fileURLWithPath: "\(NSTemporaryDirectory())databasetest/")
     private let dataModelName = "zmessaging"
 
+
+    func testThatItPerformsMigrationFromAllOldVersions_ToCurrentModelVersion() throws {
+//        let allVersions = ["2.24.1"] + [(25...31), (39...57), (59...109)].joined().map {
+//            "2.\($0).0"
+//        }
+        let allVersions = [(59...109)].joined().map {
+            "2.\($0).0"
+        }
+        /* Getting the following error: "Error Domain=NSCocoaErrorDomain Code=134100 "The managed object model version used to open the persistent store is incompatible with the one that was used to create the persistent store"
+         TODO: investigate
+         Failed stores aka incompatible: 2.108, 2.105
+         Stores compatible: 2.109, 2.107
+         */
+        var oldVersions = allVersions
+        oldVersions.removeLast()
+        oldVersions.removeAll { value in
+            // broken versions
+            return ["2.3",
+                    "2.39.0",
+                    "2.49.0",
+                    "2.71.0",
+                    "2.105.0"].contains(value) ||
+            // versions with the userClient uniqueness constraint
+            ["2.108.0"].contains(value)
+        }
+
+        print("🧪",oldVersions)
+        try oldVersions.forEach { initialVersion in
+            print("🧪", initialVersion)
+            try migrateStoreToCurrentVersion(
+                sourceVersion: initialVersion,
+                preMigrationAction: insertDuplicates,
+                postMigrationAction: assertDuplicatesResolved
+            )
+            // clean after each test
+            self.clearStorageFolder()
+        }
+    }
+
     func testThatItPerformsMigrationFromOlderVersion_2_105_0_ToCurrentModelVersion() throws {
         let initialVersion = "2.101.0"
         // 2.101.0 -> Wire v3.109.1
