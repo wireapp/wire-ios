@@ -20,6 +20,8 @@ import UIKit
 import WireUtilities
 import WireDataModel
 
+
+
 protocol ConversationMessageCellDelegate: MessageActionResponder {
 
     func conversationMessageShouldBecomeFirstResponderWhenShowingMenuForCell(_ cell: UIView) -> Bool
