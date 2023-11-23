@@ -46,6 +46,7 @@ extension CoreDataStack {
     public enum BackupImportError: Error {
            case incompatibleBackup(Error)
            case failedToCopy(Error)
+           case missingModelVersion(String)
        }
 
     public enum BackupError: Error {
@@ -185,13 +186,18 @@ extension CoreDataStack {
         workQueue.async(group: dispatchGroup) {
             do {
                 let metadata = try BackupMetadata(url: metadataURL)
+                let currentModel = CoreDataStack.loadMessagingModel()
 
-                let model = CoreDataStack.loadMessagingModel()
-                if let verificationError = metadata.verify(using: accountIdentifier, modelVersionProvider: model) {
+                let backupObjectModelUrl = CoreDataMessagingMigrationVersion.managedObjectModelURL(for: metadata.modelVersion)
+                guard let backupModel = backupObjectModelUrl.flatMap({ NSManagedObjectModel(contentsOf: $0) }) else {
+                    return fail(.missingModelVersion(metadata.modelVersion))
+                }
+
+                if let verificationError = metadata.verify(using: accountIdentifier, modelVersionProvider: currentModel) {
                     return fail(.incompatibleBackup(verificationError))
                 }
 
-                let coordinator = NSPersistentStoreCoordinator(managedObjectModel: model)
+                let coordinator = NSPersistentStoreCoordinator(managedObjectModel: backupModel)
 
                 // Create target directory
                 try fileManager.createDirectory(at: accountStoreFile.deletingLastPathComponent(), withIntermediateDirectories: true, attributes: nil)
@@ -199,6 +205,10 @@ extension CoreDataStack {
 
                 WireLogger.localStorage.debug("backup: import prepare")
                 try prepareStoreForBackupImport(coordinator: coordinator, location: backupStoreFile, options: options)
+
+                WireLogger.localStorage.debug("backup: migrate database \(metadata.modelVersion) to \(currentModel.version)")
+                let migrator = CoreDataMessagingMigrator(isInMemoryStore: false)
+                try migrator.migrateStore(at: backupStoreFile, toVersion: .current)
 
                 // Import the persistent store to the account data directory
                 WireLogger.localStorage.debug("backup: import the persistent store to the account data directory")

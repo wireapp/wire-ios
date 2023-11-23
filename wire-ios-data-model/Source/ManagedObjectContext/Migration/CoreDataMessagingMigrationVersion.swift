@@ -142,6 +142,10 @@ enum CoreDataMessagingMigrationVersion: String, CaseIterable {
         }
     }
 
+    var number: String {
+        self.rawValue.replacingOccurrences(of: "zmessaging", with: "")
+    }
+
     // MARK: - Current
 
     static let current: Self = {
@@ -158,5 +162,11 @@ enum CoreDataMessagingMigrationVersion: String, CaseIterable {
             withExtension: Constant.resourceExtension,
             subdirectory: Constant.modelDirectory
         )
+    }
+
+    static func managedObjectModelURL(for version: String) -> URL? {
+        return CoreDataMessagingMigrationVersion.allCases.first {
+            $0.number == version
+        }?.managedObjectModelURL()
     }
 }
