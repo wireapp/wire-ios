@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -601,7 +601,7 @@
 				63DFEAD029A3845600FCA830 /* DeveloperFlag.swift */,
 				06CDC6F92A2F2B4B00EB518D /* TimeInterval+Units.swift */,
 				636F70462A65AD7800E086B6 /* TimerManager.swift */,
-  			E9C337532ABC91DE0084ABCF /* Array+Cardinality.swift */,
+				E9C337532ABC91DE0084ABCF /* Array+Cardinality.swift */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -1027,6 +1027,7 @@
 /* Begin PBXShellScriptBuildPhase section */
 		AD4812AA2AB9905E00ED208C /* Run Swiftlint */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
@@ -1266,7 +1267,10 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = "WireUtilities-tests-host/WireUtilities-tests-host.entitlements";
 				INFOPLIST_FILE = "WireUtilities-tests-host/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WIRE_BUNDLE_ID = "com.wearezeta.zclient-alpha";
@@ -1280,7 +1284,10 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = "WireUtilities-tests-host/WireUtilities-tests-host.entitlements";
 				INFOPLIST_FILE = "WireUtilities-tests-host/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WIRE_BUNDLE_ID = "com.wearezeta.zclient-alpha";

@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -419,6 +419,7 @@
 /* Begin PBXShellScriptBuildPhase section */
 		663C9D9E275A2B8F00D5B0BC /* Run SwiftLint */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
@@ -577,7 +578,10 @@
 			baseConfigurationReference = 5470D40B1D76E2A400FDE440 /* ios-test-host.xcconfig */;
 			buildSettings = {
 				INFOPLIST_FILE = "$(SRCROOT)/WireShareEngineTests/WireShareEngineTestHost/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireShareEngineTestHost;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -588,7 +592,10 @@
 			baseConfigurationReference = 5470D40B1D76E2A400FDE440 /* ios-test-host.xcconfig */;
 			buildSettings = {
 				INFOPLIST_FILE = "$(SRCROOT)/WireShareEngineTests/WireShareEngineTestHost/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireShareEngineTestHost;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
