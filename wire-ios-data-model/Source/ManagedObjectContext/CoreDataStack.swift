@@ -198,15 +198,14 @@ public class CoreDataStack: NSObject, ContextProvider {
         onFailure: @escaping (Error) -> Void,
         onCompletion: @escaping (CoreDataStack) -> Void
     ) {
-
         if needsMigration {
             onStartMigration()
         }
 
         DispatchQueue.global(qos: .userInitiated).async {
-            WireLogger.localStorage.info("start migration of core data messaging store!")
-
             if self.needsMessagingStoreMigration() {
+                WireLogger.localStorage.info("start migration of core data messaging store!")
+
                 do {
                     try self.migrateMessagingStore()
                     WireLogger.localStorage.info("finished migration of core data messaging store!")
