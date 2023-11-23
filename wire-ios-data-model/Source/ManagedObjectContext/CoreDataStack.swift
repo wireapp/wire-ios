@@ -110,6 +110,8 @@ public class CoreDataStack: NSObject, ContextProvider {
     let eventsContainer: PersistentContainer
     let dispatchGroup: ZMSDispatchGroup?
 
+    private let migrator: CoreDataMessagingMigrator
+
     public init(account: Account,
                 applicationContainer: URL,
                 inMemoryStore: Bool = false,
@@ -161,6 +163,7 @@ public class CoreDataStack: NSObject, ContextProvider {
 
         self.messagesContainer = messagesContainer
         self.eventsContainer = eventContainer
+        self.migrator = CoreDataMessagingMigrator(isInMemoryStore: inMemoryStore)
 
         super.init()
 
@@ -188,6 +191,44 @@ public class CoreDataStack: NSObject, ContextProvider {
         try container.persistentStoreCoordinator.persistentStores.forEach({
             try container.persistentStoreCoordinator.remove($0)
         })
+    }
+
+    public func setup(
+        onStartMigration: () -> Void,
+        onFailure: @escaping (Error) -> Void,
+        onCompletion: @escaping (CoreDataStack) -> Void
+    ) {
+        if needsMigration {
+            onStartMigration()
+        }
+
+        DispatchQueue.global(qos: .userInitiated).async {
+            if self.needsMessagingStoreMigration() {
+                WireLogger.localStorage.info("start migration of core data messaging store!")
+
+                do {
+                    try self.migrateMessagingStore()
+                    WireLogger.localStorage.info("finished migration of core data messaging store!")
+                } catch {
+                    WireLogger.localStorage.error("failed migration of core data messaging store!")
+                    DispatchQueue.main.async {
+                        onFailure(error)
+                    }
+                    return
+                }
+            }
+
+            DispatchQueue.main.async {
+                WireLogger.localStorage.debug("load core data stores!")
+                self.loadStores { error in
+                    if let error {
+                        onFailure(error)
+                        return
+                    }
+                    onCompletion(self)
+                }
+            }
+        }
     }
 
     public func loadStores(completionHandler: @escaping (Error?) -> Void) {
@@ -277,7 +318,7 @@ public class CoreDataStack: NSObject, ContextProvider {
     }
 
     public var needsMigration: Bool {
-        return messagesContainer.needsMigration || eventsContainer.needsMigration
+        needsMessagingStoreMigration() || eventsContainer.needsMigration
     }
 
     public var storesExists: Bool {
@@ -368,6 +409,22 @@ public class CoreDataStack: NSObject, ContextProvider {
         return result
     }
 
+    // MARK: - Migration
+
+    public func needsMessagingStoreMigration() -> Bool {
+        guard let storeURL = messagesContainer.storeURL else {
+            return false
+        }
+        return migrator.requiresMigration(at: storeURL, toVersion: .current)
+    }
+
+    public func migrateMessagingStore() throws {
+        guard let storeURL = messagesContainer.storeURL else {
+            throw CoreDataMessagingMigratorError.missingStoreURL
+        }
+
+        try migrator.migrateStore(at: storeURL, toVersion: .current)
+    }
 }
 
 class PersistentContainer: NSPersistentContainer {
