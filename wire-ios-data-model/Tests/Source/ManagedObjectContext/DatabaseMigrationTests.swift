@@ -35,43 +35,6 @@ final class DatabaseMigrationTests: DatabaseBaseTest {
         XCTAssertEqual(users.count, 1) // only self user
     }
 
-    func testThatItPerformsMigrationFrom_1_25_ToCurrentModelVersion() {
-
-        // GIVEN
-        self.createDatabaseWithOlderModelVersion(versionName: "1-25")
-
-        // WHEN
-        let directory = self.createStorageStackAndWaitForCompletion(userID: DatabaseMigrationTests.testUUID)
-
-        // THEN
-        let conversationCount = try! directory.viewContext.count(for: ZMConversation.sortedFetchRequest())
-        let messageCount = try! directory.viewContext.count(for: ZMTextMessage.sortedFetchRequest())
-        let systemMessageCount = try! directory.viewContext.count(for: ZMSystemMessage.sortedFetchRequest())
-        let connectionCount = try! directory.viewContext.count(for: ZMConnection.sortedFetchRequest())
-        let userClientCount = try! directory.viewContext.count(for: UserClient.sortedFetchRequest())
-        let helloWorldMessageCount = try! directory.viewContext.count(for: ZMTextMessage.sortedFetchRequest(with: NSPredicate(format: "%K BEGINSWITH[c] %@", "text", "Hello World")))
-        let message = directory.viewContext.executeFetchRequestOrAssert(ZMTextMessage.sortedFetchRequest(with: NSPredicate(format: "%K == %@", "text", "You are the best Burno"))).first as? ZMMessage
-        let messageServerTimestampTransportString = message?.serverTimestamp?.transportString()
-        let userFetchRequest = ZMUser.sortedFetchRequest()
-        userFetchRequest.resultType = .dictionaryResultType
-        userFetchRequest.propertiesToFetch = self.userPropertiesToFetch
-        let userDictionaries = directory.viewContext.executeFetchRequestOrAssert(userFetchRequest)
-
-        XCTAssertEqual(conversationCount, 13)
-        XCTAssertEqual(messageCount, 1681)
-        XCTAssertEqual(systemMessageCount, 53)
-        XCTAssertEqual(connectionCount, 5)
-        XCTAssertEqual(userClientCount, 7)
-        XCTAssertEqual(helloWorldMessageCount, 1515)
-
-        XCTAssertNotNil(message)
-        XCTAssertEqual(messageServerTimestampTransportString, "2015-12-18T16:57:06.836Z")
-
-        XCTAssertNotNil(userDictionaries)
-        XCTAssertEqual(userDictionaries.count, 7)
-        XCTAssertEqual(userDictionaries as NSArray, DatabaseMigrationTests.userDictionaryFixture1_25 as NSArray)
-    }
-
     func testThatItPerformsMigrationFrom_1_27_ToCurrentModelVersion() {
 
         // GIVEN

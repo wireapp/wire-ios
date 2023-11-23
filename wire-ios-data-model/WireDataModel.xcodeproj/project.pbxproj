@@ -218,7 +218,6 @@
 		547E66491F7503A5008CB1FA /* ZMConversation+Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 547E66481F7503A5008CB1FA /* ZMConversation+Notifications.swift */; };
 		547E664B1F750E4A008CB1FA /* ZMConnection+Notification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 547E664A1F750E4A008CB1FA /* ZMConnection+Notification.swift */; };
 		54829DAD1DE6F7BA009100D3 /* store1-24.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = 54829D951DE6F782009100D3 /* store1-24.wiredatabase */; };
-		54829DAE1DE6F7BA009100D3 /* store1-25.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = 54829D961DE6F782009100D3 /* store1-25.wiredatabase */; };
 		54829DAF1DE6F7BA009100D3 /* store1-27.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = 54829D971DE6F782009100D3 /* store1-27.wiredatabase */; };
 		54829DB01DE6F7BA009100D3 /* store1-28.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = 54829D981DE6F782009100D3 /* store1-28.wiredatabase */; };
 		54829DB11DE6F7BA009100D3 /* store2-3.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = 54829D991DE6F782009100D3 /* store2-3.wiredatabase */; };
@@ -1082,7 +1081,6 @@
 		547E66481F7503A5008CB1FA /* ZMConversation+Notifications.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ZMConversation+Notifications.swift"; sourceTree = "<group>"; };
 		547E664A1F750E4A008CB1FA /* ZMConnection+Notification.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ZMConnection+Notification.swift"; sourceTree = "<group>"; };
 		54829D951DE6F782009100D3 /* store1-24.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; name = "store1-24.wiredatabase"; path = "Tests/Resources/store1-24.wiredatabase"; sourceTree = SOURCE_ROOT; };
-		54829D961DE6F782009100D3 /* store1-25.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; name = "store1-25.wiredatabase"; path = "Tests/Resources/store1-25.wiredatabase"; sourceTree = SOURCE_ROOT; };
 		54829D971DE6F782009100D3 /* store1-27.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; name = "store1-27.wiredatabase"; path = "Tests/Resources/store1-27.wiredatabase"; sourceTree = SOURCE_ROOT; };
 		54829D981DE6F782009100D3 /* store1-28.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; name = "store1-28.wiredatabase"; path = "Tests/Resources/store1-28.wiredatabase"; sourceTree = SOURCE_ROOT; };
 		54829D991DE6F782009100D3 /* store2-3.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; name = "store2-3.wiredatabase"; path = "Tests/Resources/store2-3.wiredatabase"; sourceTree = SOURCE_ROOT; };
@@ -3306,7 +3304,6 @@
 				873B88F82040430A00FBE254 /* store2-42-0.wiredatabase */,
 				54178A1A1E02E9FB00860ECE /* store2-24-1.wiredatabase */,
 				54829D951DE6F782009100D3 /* store1-24.wiredatabase */,
-				54829D961DE6F782009100D3 /* store1-25.wiredatabase */,
 				54829D971DE6F782009100D3 /* store1-27.wiredatabase */,
 				54829D981DE6F782009100D3 /* store1-28.wiredatabase */,
 				54829D991DE6F782009100D3 /* store2-3.wiredatabase */,
@@ -3529,7 +3526,6 @@
 				16B75F6B222EEE6E00DCAFF2 /* store2-66-0.wiredatabase in Resources */,
 				F188A89B2225698C00BA53A5 /* store2-64-0.wiredatabase in Resources */,
 				BF6ACFFB21060F7200FD762B /* store2-48-0.wiredatabase in Resources */,
-				54829DAE1DE6F7BA009100D3 /* store1-25.wiredatabase in Resources */,
 				4058AAA62AAA017F0013DE71 /* store2-109-0.wiredatabase in Resources */,
 				87FFC71A20DBF2820005076E /* store2-47-0.wiredatabase in Resources */,
 				87C1C267207F921A0083BF6B /* store2-46-0.wiredatabase in Resources */,
