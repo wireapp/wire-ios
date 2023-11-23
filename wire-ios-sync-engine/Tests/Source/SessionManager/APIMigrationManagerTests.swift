@@ -231,6 +231,7 @@ class APIMigrationManagerTests: MessagingTest {
     private func stubUserSession() -> ZMUserSession {
         let mockStrategyDirectory = MockStrategyDirectory()
         let mockUpdateEventProcessor = MockUpdateEventProcessor()
+        let mockCryptoboxMigrationManager = MockCryptoboxMigrationManagerInterface()
 
         let cookieStorage = ZMPersistentCookieStorage(
             forServerName: "test.example.com",
@@ -257,6 +258,7 @@ class APIMigrationManagerTests: MessagingTest {
             appVersion: "999",
             coreDataStack: createCoreDataStack(),
             configuration: .init(),
+            cryptoboxMigrationManager: mockCryptoboxMigrationManager,
             sharedUserDefaults: sharedUserDefaults
         )
     }
