@@ -204,16 +204,21 @@ public class CoreDataStack: NSObject, ContextProvider {
         }
 
         DispatchQueue.global(qos: .userInitiated).async {
+            WireLogger.localStorage.info("start migration of core data messaging store!")
+
             if self.needsMessagingStoreMigration() {
                 do {
                     try self.migrateMessagingStore()
+                    WireLogger.localStorage.info("finished migration of core data messaging store!")
                 } catch {
+                    WireLogger.localStorage.error("failed migration of core data messaging store!")
                     onFailure(error)
                     return
                 }
             }
 
             DispatchQueue.main.async {
+                WireLogger.localStorage.debug("load core data stores!")
                 self.loadStores { error in
                     if let error {
                         onFailure(error)

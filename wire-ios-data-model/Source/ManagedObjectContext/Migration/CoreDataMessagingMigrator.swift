@@ -64,6 +64,8 @@ final class CoreDataMessagingMigrator: CoreDataMessagingMigratorProtocol {
         var currentURL = storeURL
 
         for migrationStep in try migrationStepsForStore(at: storeURL, to: version) {
+            WireLogger.localStorage.info("messaging core data store migration step \(migrationStep.sourceVersion) to \(migrationStep.destinationVersion)")
+
             let manager = NSMigrationManager(sourceModel: migrationStep.sourceModel, destinationModel: migrationStep.destinationModel)
             let destinationURL = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true).appendingPathComponent(UUID().uuidString)
 

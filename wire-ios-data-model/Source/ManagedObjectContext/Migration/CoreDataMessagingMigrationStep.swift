@@ -20,6 +20,10 @@
 import CoreData
 
 struct CoreDataMessagingMigrationStep {
+
+    let sourceVersion: CoreDataMessagingMigrationVersion
+    let destinationVersion: CoreDataMessagingMigrationVersion
+
     let sourceModel: NSManagedObjectModel
     let destinationModel: NSManagedObjectModel
     let mappingModel: NSMappingModel
@@ -41,6 +45,8 @@ struct CoreDataMessagingMigrationStep {
             throw CoreDataMessagingMigratorError.missingFiles(message: message)
         }
 
+        self.sourceVersion = sourceVersion
+        self.destinationVersion = destinationVersion
         self.sourceModel = sourceModel
         self.destinationModel = destinationModel
         self.mappingModel = mappingModel
