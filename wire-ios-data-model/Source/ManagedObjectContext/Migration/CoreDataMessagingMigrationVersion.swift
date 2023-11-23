@@ -164,9 +164,11 @@ enum CoreDataMessagingMigrationVersion: String, CaseIterable {
         )
     }
 
-    static func managedObjectModelURL(for version: String) -> URL? {
-        return CoreDataMessagingMigrationVersion.allCases.first {
+    static func objectModel(for version: String) -> NSManagedObjectModel? {
+        let modelUrl = CoreDataMessagingMigrationVersion.allCases.first {
             $0.number == version
         }?.managedObjectModelURL()
+
+        return modelUrl.flatMap({ NSManagedObjectModel(contentsOf: $0) })
     }
 }

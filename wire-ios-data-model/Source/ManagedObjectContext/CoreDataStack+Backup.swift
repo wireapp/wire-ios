@@ -188,8 +188,7 @@ extension CoreDataStack {
                 let metadata = try BackupMetadata(url: metadataURL)
                 let currentModel = CoreDataStack.loadMessagingModel()
 
-                let backupObjectModelUrl = CoreDataMessagingMigrationVersion.managedObjectModelURL(for: metadata.modelVersion)
-                guard let backupModel = backupObjectModelUrl.flatMap({ NSManagedObjectModel(contentsOf: $0) }) else {
+                guard let backupModel = CoreDataMessagingMigrationVersion.objectModel(for: metadata.modelVersion) else {
                     return fail(.missingModelVersion(metadata.modelVersion))
                 }
 
