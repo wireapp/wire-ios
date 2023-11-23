@@ -63,6 +63,7 @@ extension ZMUserSession {
                 updateKeychainItemAccess()
                 syncContext.coreCrypto = coreCrypto
                 createProteusServiceIfNeeded(coreCrypto: coreCrypto)
+                migrateCryptoboxSessionsIfNeeded()
 
                 WireLogger.coreCrypto.info("success: setup crypto stack (proteus)")
             } catch {
@@ -181,6 +182,40 @@ extension ZMUserSession {
         }
 
         syncContext.proteusService = ProteusService(coreCrypto: coreCrypto)
+    }
+
+    private func migrateCryptoboxSessionsIfNeeded() {
+        guard cryptoboxMigrationManager.isMigrationNeeded(accountDirectory: coreDataStack.accountContainer) else {
+            WireLogger.proteus.info("cryptobox migration is not needed")
+
+            do {
+                try cryptoboxMigrationManager.completeMigration(syncContext: syncContext)
+            } catch {
+                WireLogger.proteus.critical("failed to complete migration: \(error.localizedDescription)")
+                fatalError("failed to complete proteus initialization")
+            }
+            return
+        }
+
+        WireLogger.proteus.info("preparing for cryptobox migration...")
+
+        do {
+            try self.cryptoboxMigrationManager.performMigration(
+                accountDirectory: coreDataStack.accountContainer,
+                syncContext: syncContext
+            )
+        } catch {
+            WireLogger.proteus.critical("cryptobox migration failed: \(error.localizedDescription)")
+            fatalError("Failed to migrate data from CryptoBox to CoreCrypto keystore, error : \(error.localizedDescription)")
+        }
+
+        do {
+            try self.cryptoboxMigrationManager.completeMigration(syncContext: syncContext)
+        } catch {
+            fatalError("failed to complete proteus initialization")
+        }
+
+        WireLogger.proteus.info("cryptobox migration success")
     }
 
     private var shouldSetupProteus: Bool {
