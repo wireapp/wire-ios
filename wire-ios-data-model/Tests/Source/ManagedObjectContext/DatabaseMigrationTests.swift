@@ -341,6 +341,11 @@ final class DatabaseMigrationTests: DatabaseBaseTest {
         }
 
         allVersions.forEach { storeFile in
+            func cleanup() {
+                directory = nil // need to release
+                clearStorageFolder()
+            }
+
             // GIVEN
             self.createDatabaseWithOlderModelVersion(versionName: storeFile)
 
@@ -382,6 +387,13 @@ final class DatabaseMigrationTests: DatabaseBaseTest {
 
             XCTAssertNotNil(userDictionaries)
             XCTAssertEqual(userDictionaries.count, 22)
+
+            if userDictionaries.isEmpty {
+                XCTFail("can not continue with empty 'userDictionaries' in store file \(storeFile)!")
+                cleanup()
+                return
+            }
+
             XCTAssertEqual(Array(userDictionaries[0..<3]) as NSArray, DatabaseMigrationTests.userDictionaryFixture2_25_1 as NSArray)
             users.forEach({
                 XCTAssertFalse($0.isAccountDeleted)
@@ -392,8 +404,7 @@ final class DatabaseMigrationTests: DatabaseBaseTest {
                 XCTAssertNil($0.normalizedText)
             }
 
-            directory = nil // need to release
-            self.clearStorageFolder()
+            cleanup()
         }
     }
 
