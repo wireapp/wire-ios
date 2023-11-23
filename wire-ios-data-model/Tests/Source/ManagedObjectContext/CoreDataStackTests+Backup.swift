@@ -22,7 +22,7 @@ import XCTest
 
 class CoreDataStackTests_Backup: DatabaseBaseTest {
 
-    var migrator: MockCoreDataMessagingMigratorProtocol!
+    private var migrator: MockCoreDataMessagingMigratorProtocol!
 
     override func setUp() {
         super.setUp()
