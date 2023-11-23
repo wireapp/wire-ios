@@ -26,6 +26,7 @@ class ZMUserSessionTests_CryptoStack: MessagingTest {
     var sut: ZMUserSession!
     var proteusFlag = DeveloperFlag.proteusViaCoreCrypto
     var mlsFlag = DeveloperFlag.enableMLSSupport
+    let mockCryptoboxMigrationManager = MockCryptoboxMigrationManagerInterface()
 
     override func setUp() {
         super.setUp()
@@ -56,8 +57,15 @@ class ZMUserSessionTests_CryptoStack: MessagingTest {
         return client
     }
 
+    func configureMockMigrationManager(needsMigration: Bool) {
+        mockCryptoboxMigrationManager.isMigrationNeededAccountDirectory_MockValue = needsMigration
+        mockCryptoboxMigrationManager.performMigrationAccountDirectorySyncContext_MockMethod = { _, _ in }
+        mockCryptoboxMigrationManager.completeMigrationSyncContext_MockMethod = { _ in }
+    }
+
     func test_CryptoStackSetup_OnInit() {
         // GIVEN
+        configureMockMigrationManager(needsMigration: false)
         createSelfClient()
 
         let selfUser = ZMUser.selfUser(in: syncMOC)
@@ -78,6 +86,7 @@ class ZMUserSessionTests_CryptoStack: MessagingTest {
 
     func test_CryptoStackSetup_OnInit_ProteusOnly() {
         // GIVEN
+        configureMockMigrationManager(needsMigration: false)
         mlsFlag.isOn = false
         createSelfClient()
 
@@ -99,6 +108,7 @@ class ZMUserSessionTests_CryptoStack: MessagingTest {
 
     func test_CryptoStackSetup_OnInit_MLSOnly() {
         // GIVEN
+        configureMockMigrationManager(needsMigration: false)
         proteusFlag.isOn = false
         createSelfClient()
 
@@ -120,6 +130,7 @@ class ZMUserSessionTests_CryptoStack: MessagingTest {
 
     func test_CryptoStackSetup_DontSetupMLSIfAPIV2IsNotAvailable() throws {
         // GIVEN
+        configureMockMigrationManager(needsMigration: false)
         proteusFlag.isOn = false
         BackendInfo.apiVersion = .v1
         createSelfClient()
@@ -142,6 +153,7 @@ class ZMUserSessionTests_CryptoStack: MessagingTest {
 
     func test_CryptoStackSetup_OnInit_AllFlagsOff() {
         // GIVEN
+        configureMockMigrationManager(needsMigration: false)
         proteusFlag.isOn = false
         mlsFlag.isOn = false
         createSelfClient()
@@ -164,6 +176,7 @@ class ZMUserSessionTests_CryptoStack: MessagingTest {
 
     func test_CryptoStackSetup_WhenThereIsNoSelfClient() {
         // GIVEN
+        configureMockMigrationManager(needsMigration: false)
         let selfUser = ZMUser.selfUser(in: syncMOC)
         selfUser.remoteIdentifier =  UUID.create()
         selfUser.domain = "example.domain.com"
@@ -183,6 +196,8 @@ class ZMUserSessionTests_CryptoStack: MessagingTest {
 
     func test_CryptoStackSetup_AfterRegisteringSelfClient() {
         // GIVEN
+        configureMockMigrationManager(needsMigration: false)
+
         let selfUser = ZMUser.selfUser(in: syncMOC)
         selfUser.remoteIdentifier =  UUID.create()
         selfUser.domain = "example.domain.com"
@@ -206,6 +221,7 @@ class ZMUserSessionTests_CryptoStack: MessagingTest {
 
     func test_ItCommitsPendingProposals_AfterQuickSyncCompletes() {
         // GIVEN
+        configureMockMigrationManager(needsMigration: false)
         let conversation = ZMConversation.insertNewObject(in: syncMOC)
         conversation.mlsGroupID = MLSGroupID("123".data(using: .utf8)!)
         conversation.commitPendingProposalDate = Date.distantPast
@@ -228,6 +244,36 @@ class ZMUserSessionTests_CryptoStack: MessagingTest {
         XCTAssertTrue(wait(withTimeout: 3.0) {
             controller.didCallCommitPendingProposals
         })
+    }
+
+    func testItMigratesCryptoboxSessionWhenNeeded() {
+        // GIVEN
+        configureMockMigrationManager(needsMigration: true)
+        let selfUser = ZMUser.selfUser(in: syncMOC)
+        selfUser.remoteIdentifier =  UUID.create()
+        selfUser.domain = "example.domain.com"
+
+        // WHEN
+        createSut(with: selfUser)
+
+        // THEN
+        XCTAssertEqual(1, mockCryptoboxMigrationManager.performMigrationAccountDirectorySyncContext_Invocations.count)
+        XCTAssertEqual(1, mockCryptoboxMigrationManager.completeMigrationSyncContext_Invocations.count)
+    }
+
+    func testItDoesNotMigratesCryptoboxSessionWhenNotNeeded() {
+        // given
+        configureMockMigrationManager(needsMigration: false)
+        let selfUser = ZMUser.selfUser(in: syncMOC)
+        selfUser.remoteIdentifier =  UUID.create()
+        selfUser.domain = "example.domain.com"
+
+        // WHEN
+        createSut(with: selfUser)
+
+        // THEN
+        XCTAssertEqual(0, mockCryptoboxMigrationManager.performMigrationAccountDirectorySyncContext_Invocations.count)
+        XCTAssertEqual(1, mockCryptoboxMigrationManager.completeMigrationSyncContext_Invocations.count)
     }
 
     func createSut(with user: ZMUser) {
@@ -254,6 +300,7 @@ class ZMUserSessionTests_CryptoStack: MessagingTest {
             appVersion: "00000",
             coreDataStack: coreDataStack,
             configuration: .init(),
+            cryptoboxMigrationManager: mockCryptoboxMigrationManager,
             sharedUserDefaults: sharedUserDefaults
         )
     }
