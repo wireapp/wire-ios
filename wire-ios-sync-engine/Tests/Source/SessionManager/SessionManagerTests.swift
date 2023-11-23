@@ -1745,6 +1745,10 @@ class SessionManagerTestDelegate: SessionManagerDelegate {
     func sessionManagerDidPerformAPIMigrations(activeSession: UserSession?) {
         // no op
     }
+
+    public func sessionManagerAsksToRetryStart() {
+        // no op
+    }
 }
 
 class SessionManagerObserverMock: SessionManagerCreatedSessionObserver, SessionManagerDestroyedSessionObserver {

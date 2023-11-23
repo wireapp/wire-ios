@@ -53,6 +53,8 @@ public class AppRootRouter: NSObject {
     // TO DO: This should be private
     private(set) var rootViewController: RootViewController
 
+    private var lastLaunchOptions: LaunchOptions?
+
     // MARK: - Initialization
 
     init(viewController: RootViewController,
@@ -95,6 +97,7 @@ public class AppRootRouter: NSObject {
     // MARK: - Public implementation
 
     public func start(launchOptions: LaunchOptions) {
+        self.lastLaunchOptions = launchOptions
         showInitial(launchOptions: launchOptions)
         sessionManager.resolveAPIVersion()
     }
@@ -193,6 +196,8 @@ extension AppRootRouter: AppStateCalculatorDelegate {
         }
 
         switch appState {
+        case .retryStart:
+            retryStart(completion: completionBlock)
         case .blacklisted(reason: let reason):
             showBlacklisted(reason: reason, completion: completionBlock)
         case .jailbroken:
@@ -376,6 +381,14 @@ extension AppRootRouter {
             ),
             completion: completion
         )
+    }
+
+    private func retryStart(completion: @escaping () -> Void) {
+        guard let launchOptions = lastLaunchOptions else { return }
+        completion()
+        enqueueTransition(to: .headless) { [weak self] in
+            self?.sessionManager.start(launchOptions: launchOptions)
+        }
     }
 
     // MARK: - Helpers

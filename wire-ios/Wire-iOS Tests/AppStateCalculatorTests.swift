@@ -72,6 +72,16 @@ final class AppStateCalculatorTests: XCTestCase {
         XCTAssertTrue(delegate.wasNotified)
     }
 
+    func testThatAppStateChanges_OnRetryStart() {
+        // WHEN
+        sut.applicationDidBecomeActive()
+        sut.sessionManagerAsksToRetryStart()
+
+        // THEN
+        XCTAssertEqual(sut.appState, .retryStart)
+        XCTAssertTrue(delegate.wasNotified)
+    }
+
     func testThatAppStateChanges_OnWillMigrateAccount() {
         // GIVEN
         let account = Account(userName: "dummy", userIdentifier: UUID())

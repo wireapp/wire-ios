@@ -134,6 +134,10 @@ private class MockSessionManagerDelegate: SessionManagerDelegate {
         // no op
     }
 
+    public func sessionManagerAsksToRetryStart() {
+        // no op
+    }
+
     var isInAuthenticatedAppState: Bool {
         return true
     }
