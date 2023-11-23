@@ -29,6 +29,7 @@ enum CoreDataMessagingMigrationVersion: String, CaseIterable {
 
     // MARK: -
 
+    // Note: add new versions here in first position!
     case version2_109 = "zmessaging2.109.0"
     case version2_108 = "zmessaging2.108.0"
     case version2_107 = "zmessaging2.107.0"
@@ -139,7 +140,7 @@ enum CoreDataMessagingMigrationVersion: String, CaseIterable {
         case .version2_106:
             return .version2_107
         default:
-            // old the oldest version can be inferred to 106
+            // all older versions can be inferred to version 106
             return .version2_106
         }
     }
