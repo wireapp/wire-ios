@@ -77,6 +77,7 @@ jobs:
     env:
       GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       GITHUB_USERNAME: ${{ secrets.ZENKINS_USERNAME }}
+      HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK: 1
       
     steps:
       - uses: actions/checkout@v3
