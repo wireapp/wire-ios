@@ -57,6 +57,14 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
     private var storage: ProteusToMLSMigrationStorageInterface
     private let logger = WireLogger.mls
 
+    lazy var migrationForceTimeHasArrived: Bool = {
+        guard let finaliseDate = featureRepository.fetchMLSMigration().config.finaliseRegardlessAfter else {
+            return false
+        }
+
+        return Date() >= finaliseDate
+    }()
+
     // MARK: - Life cycle
 
     public convenience init(
@@ -91,7 +99,7 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
         case .notStarted:
             try await startMigrationIfNeeded()
         case .started:
-            await migrateOrJoinGroupConversations()
+            await finalizeMigrationIfNeeded()
         default:
             break
         }
@@ -115,6 +123,39 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
         case .cannotStart(reason: let reason):
             logger.info("proteus-to-mls migration can't start (reason: \(reason))")
         }
+    }
+
+    func finalizeMigrationIfNeeded() async {
+        let mixedConversations = [ZMConversation]()
+        if migrationForceTimeHasArrived {
+            for conversation in mixedConversations {
+                await finalizeConversationMigration(conversation: conversation)
+            }
+        } else {
+            // 1. Sync users with the backend
+            syncUsersWithTheBackend()
+            // 2. Loop through conversations
+            for conversation in mixedConversations {
+                await finalizeConversationMigration(conversation: conversation)
+            }
+        }
+    }
+
+    func syncUsersWithTheBackend() {
+
+    }
+
+    func finalizeConversationMigration(conversation: ZMConversation) async {
+        await migrateOrJoinGroupConversations()
+    }
+
+    func canConversationBeFinalised (conversation: ZMConversation) -> Bool {
+        let participants = conversation.localParticipants
+
+        let canBeFinalised = participants.allSatisfy { participant in
+            participant.supportedProtocols.contains(.mls)
+        }
+        return canBeFinalised
     }
 
     func resolveMigrationStartStatus() async -> MigrationStartStatus {
@@ -208,4 +249,10 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
         }
     }
 
+}
+
+extension ZMUser {
+    var supportedProtocols: [MessageProtocol] {
+        return [.mls, .proteus]
+    }
 }
