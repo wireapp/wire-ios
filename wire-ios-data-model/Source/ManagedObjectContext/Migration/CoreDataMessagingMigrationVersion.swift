@@ -98,6 +98,7 @@ enum CoreDataMessagingMigrationVersion: String, CaseIterable {
     case version2_41 = "zmessaging2.41.0"
     case version2_40 = "zmessaging2.40.0"
     case version2_39 = "zmessaging2.39.0"
+    case version2_31 = "zmessaging2.31.0"
     case version2_30 = "zmessaging2.30.0"
     case version2_29 = "zmessaging2.29.0"
     case version2_28 = "zmessaging2.28.0"
