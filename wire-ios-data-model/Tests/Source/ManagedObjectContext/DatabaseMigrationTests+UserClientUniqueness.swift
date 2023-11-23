@@ -29,7 +29,6 @@ final class DatabaseMigrationTests_UserClientUniqueness: DatabaseBaseTest {
     private let tmpStoreURL = URL(fileURLWithPath: "\(NSTemporaryDirectory())databasetest/")
     private let dataModelName = "zmessaging"
 
-
     func testThatItPerformsMigrationFromOldVersionsBefore107_ToCurrentModelVersion() throws {
         // With version 107 and later we can not insert duplicated keys anymore!
 

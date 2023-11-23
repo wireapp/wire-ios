@@ -211,7 +211,9 @@ public class CoreDataStack: NSObject, ContextProvider {
                     WireLogger.localStorage.info("finished migration of core data messaging store!")
                 } catch {
                     WireLogger.localStorage.error("failed migration of core data messaging store!")
-                    onFailure(error)
+                    DispatchQueue.main.async {
+                        onFailure(error)
+                    }
                     return
                 }
             }

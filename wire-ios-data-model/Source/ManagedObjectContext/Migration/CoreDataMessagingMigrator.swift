@@ -129,7 +129,7 @@ final class CoreDataMessagingMigrator: CoreDataMessagingMigratorProtocol {
     ) throws -> [CoreDataMessagingMigrationStep] {
         var sourceVersion = sourceVersion
         var migrationSteps: [CoreDataMessagingMigrationStep] = []
-        // TODO: [F] check possible flaw in nextVersion
+
         while sourceVersion != destinationVersion, let nextVersion = sourceVersion.nextVersion {
             let step = try CoreDataMessagingMigrationStep(sourceVersion: sourceVersion, destinationVersion: nextVersion)
             migrationSteps.append(step)
