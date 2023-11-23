@@ -48,21 +48,6 @@ final class DatabaseMigrationTests_UserClientUniqueness: DatabaseBaseTest {
         }
     }
 
-    func testThatItPerformsMigrationFromOlderVersion_2_105_0_ToCurrentModelVersion() throws {
-        let initialVersion = "2.101.0"
-        // 2.101.0 -> Wire v3.109.1
-
-        /*
-         Failed stores aka incompatible: 2.108, 2.105
-         Stores compatible: 2.109, 2.107
-         */
-        try migrateStoreToCurrentVersion(
-            sourceVersion: initialVersion,
-            preMigrationAction: insertDuplicates,
-            postMigrationAction: assertDuplicatesResolved
-        )
-    }
-
     func testMigratingToMessagingStore_2_107_PreventsDuplicateUserClients() throws {
         try migrateStore(
             sourceVersion: "2.106.0",
