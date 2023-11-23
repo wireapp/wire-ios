@@ -129,6 +129,8 @@ final class ConversationRootViewController: UIViewController {
         self.addToSelf(navBarContainer)
         self.view.addSubview(self.contentView)
 
+        // This container view will have the same background color as the inputBar
+        // and extend to the bottom of the screen.
         let inputBarContainer = UIView()
         inputBarContainer.backgroundColor = conversationViewController.inputBarController.inputBar.backgroundColor
         inputBarContainer.translatesAutoresizingMaskIntoConstraints = false
