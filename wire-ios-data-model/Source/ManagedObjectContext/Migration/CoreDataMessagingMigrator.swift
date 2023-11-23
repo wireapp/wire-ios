@@ -140,7 +140,7 @@ final class CoreDataMessagingMigrator: CoreDataMessagingMigratorProtocol {
         return migrationSteps
     }
 
-    // MARK: - WAL
+    // MARK: - Write-Ahead Logging (WAL)
 
     // Taken from https://williamboles.com/progressive-core-data-migration/
     func forceWALCheckpointingForStore(at storeURL: URL) throws {
@@ -150,7 +150,6 @@ final class CoreDataMessagingMigrator: CoreDataMessagingMigratorProtocol {
             let versionURL = version.managedObjectModelURL(),
             let model = NSManagedObjectModel(contentsOf: versionURL)
         else {
-            // TODO: do we need to fail here early by throwing an error?
             return
         }
 
