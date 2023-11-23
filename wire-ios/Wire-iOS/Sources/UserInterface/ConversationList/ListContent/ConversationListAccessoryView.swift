@@ -180,7 +180,7 @@ final class ConversationListAccessoryView: UIView {
             iconView.setTemplateIcon(.bellWithStrikethrough, size: iconSize)
             iconView.tintColor = IconColors.foregroundDefaultBlack
             badgeView.backgroundColor = ViewColors.backgroundDefaultWhite
-            badgeView.layer.borderColor = ViewColors.borderConversationListTableViewCellBadgeReverted.cgColor
+            badgeView.layer.borderColor = IconColors.borderMutedNotifications.cgColor
             badgeView.layer.borderWidth = 1
             badgeView.layer.cornerRadius = 6
             accessibilityValue = ConversationsListAccessibility.SilencedStatus.value
