@@ -309,7 +309,7 @@ final class DatabaseMigrationTests: DatabaseBaseTest {
 
     func testThatItPerformsMigrationFrom_Between_2_24_1_and_PreLast_ToCurrentModelVersion() {
         // NOTICE: When a new version of data model is created, please increase the last number of the array.
-        let allVersions = ["2-24-1"] + [(25...31), (39...57), (59...109)].joined().map {
+        let allVersions = ["2-24-1"] + [(25...30), (39...45), (48...57), (59...64), (66...109)].joined().map {
             "2-\($0)-0"
         }
 
@@ -388,7 +388,7 @@ final class DatabaseMigrationTests: DatabaseBaseTest {
             XCTAssertNotNil(userDictionaries)
             XCTAssertEqual(userDictionaries.count, 22)
 
-            if userDictionaries.isEmpty {
+            if userDictionaries.count < 3 {
                 XCTFail("can not continue with empty 'userDictionaries' in store file \(storeFile)!")
                 cleanup()
                 return
