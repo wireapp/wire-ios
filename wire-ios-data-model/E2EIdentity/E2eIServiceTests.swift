@@ -20,90 +20,57 @@ import Foundation
 import WireCoreCrypto
 @testable import WireDataModel
 
-// class E2eIServiceTests: ZMConversationTestsBase {
-//
-//    var sut: E2eIService!
-//    var mockCoreCrypto: MockCoreCrypto!
-//    var mockSafeCoreCrypto: MockSafeCoreCrypto!
-//    var mlsClientId: MLSClientID!
-//    var qualifiedClientID: QualifiedClientID!
-//
-//    override func setUp() {
-//        super.setUp()
-//
-//        mockCoreCrypto = MockCoreCrypto()
-//        mockSafeCoreCrypto = MockSafeCoreCrypto(coreCrypto: mockCoreCrypto)
-//
-//        // create self client and self user
-//        self.createSelfClient()
-//        let selfUser = ZMUser.selfUser(in: syncMOC)
-//        selfUser.domain = "example.domain.com"
-//        selfUser.name = "Monica"
-//        selfUser.handle = "@monica"
-//
-//        self.createSelfClient()
-//
-//        guard let userName = selfUser.name,
-//              let handle = selfUser.handle,
-//              let domain = selfUser.domain,
-//              let selfClientId = selfUser.selfClient()?.remoteIdentifier
-//        else {
-//            return
-//        }
-//
-//        qualifiedClientID = QualifiedClientID(userID: selfUser.remoteIdentifier,
-//                                              domain: domain,
-//                                              clientID: selfClientId)
-//        mlsClientId = MLSClientID(qualifiedClientID: qualifiedClientID)
-//
-//        //sut = E2eIService(coreCrypto: mockSafeCoreCrypto)
-//
-//    }
-//
-//    override func tearDown() {
-//        sut = nil
-//        mockCoreCrypto = nil
-//        mockSafeCoreCrypto = nil
-//        mlsClientId = nil
-//        qualifiedClientID = nil
-//
-//        super.tearDown()
-//    }
-//
-//    func testThatItContainsCorrectAcmeDirectoryInTheResponse() async throws {
-//        // Expectation
-//        let expectedacmeDirectory = AcmeDirectory(newNonce: "https://acme.elna.wire.link/acme/defaultteams/new-nonce",
-//                                                  newAccount: "https://acme.elna.wire.link/acme/defaultteams/new-account",
-//                                                  newOrder: "https://acme.elna.wire.link/acme/defaultteams/new-order")
-//
-//        // Given
-//        var mockDirectoryResponseCount = 0
-//
-//        let acmeResponse = """
-//        {
-//            "newNonce": "https://acme.elna.wire.link/acme/defaultteams/new-nonce",
-//            "newAccount": "https://acme.elna.wire.link/acme/defaultteams/new-account",
-//            "newOrder": "https://acme.elna.wire.link/acme/defaultteams/new-order",
-//            "revokeCert": "https://acme.elna.wire.link/acme/defaultteams/revoke-cert",
-//            "keyChange": "https://acme.elna.wire.link/acme/defaultteams/key-change"
-//        }
-//        """
-//        let acmeResponseData = acmeResponse.data(using: .utf8)!
-//
-//        // Mock
-//        let mockE2eIdentity = MockWireE2eIdentity()
-//        mockE2eIdentity.mockDirectoryResponse = { _ in
-//            mockDirectoryResponseCount += 1
-//            return expectedacmeDirectory
-//        }
-//        sut.e2eIdentity = mockE2eIdentity
-//
-//        // When
-//        let acmeDirectory = try await sut.directoryResponse(directoryData: acmeResponseData)
-//
-//        // then
-//        XCTAssertEqual(mockDirectoryResponseCount, 1)
-//        XCTAssertEqual(acmeDirectory, expectedacmeDirectory)
-//    }
-//
-// }
+ class E2eIServiceTests: ZMConversationTestsBase {
+
+    var sut: E2eIService!
+    var mockE2eIdentity: MockWireE2eIdentity!
+
+    override func setUp() {
+        super.setUp()
+
+        mockE2eIdentity = MockWireE2eIdentity()
+        sut = E2eIService(e2eIdentity: mockE2eIdentity)
+    }
+
+    override func tearDown() {
+        mockE2eIdentity = nil
+        sut = nil
+
+        super.tearDown()
+    }
+
+    func testThatItContainsCorrectAcmeDirectoryInTheResponse() async throws {
+        // Expectation
+        let expectedacmeDirectory = AcmeDirectory(newNonce: "https://acme.elna.wire.link/acme/defaultteams/new-nonce",
+                                                  newAccount: "https://acme.elna.wire.link/acme/defaultteams/new-account",
+                                                  newOrder: "https://acme.elna.wire.link/acme/defaultteams/new-order")
+
+        // Given
+        var mockDirectoryResponseCount = 0
+
+        let acmeResponse = """
+        {
+            "newNonce": "https://acme.elna.wire.link/acme/defaultteams/new-nonce",
+            "newAccount": "https://acme.elna.wire.link/acme/defaultteams/new-account",
+            "newOrder": "https://acme.elna.wire.link/acme/defaultteams/new-order",
+            "revokeCert": "https://acme.elna.wire.link/acme/defaultteams/revoke-cert",
+            "keyChange": "https://acme.elna.wire.link/acme/defaultteams/key-change"
+        }
+        """
+        let acmeResponseData = acmeResponse.data(using: .utf8)!
+
+        // Mock
+        mockE2eIdentity.mockDirectoryResponse = { _ in
+            mockDirectoryResponseCount += 1
+            return expectedacmeDirectory
+        }
+
+        // When
+        let acmeDirectory = try await sut.getDirectoryResponse(directoryData: acmeResponseData)
+
+        // Then
+        XCTAssertEqual(mockDirectoryResponseCount, 1)
+        XCTAssertEqual(acmeDirectory, expectedacmeDirectory)
+    }
+
+ }

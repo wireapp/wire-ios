@@ -19,7 +19,7 @@
 import Foundation
 @testable import WireRequestStrategy
 
-class E2eIRepositoryTests: ZMTBaseTest {
+class E2eIEnrollmentTests: ZMTBaseTest {
 
 /// TODO: will be implemented in the next PRs
 
