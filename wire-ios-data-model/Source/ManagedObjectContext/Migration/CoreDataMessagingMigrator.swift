@@ -31,11 +31,12 @@ final class CoreDataMessagingMigrator: CoreDataMessagingMigratorProtocol {
 
     private let isInMemoryStore: Bool
 
-    @available(iOSApplicationExtension 15.0, *)
+    @available(iOS 15.0, *)
     private var persistentStoreType: NSPersistentStore.StoreType {
         isInMemoryStore ? .inMemory : .sqlite
     }
 
+    @available(iOS, obsoleted: 15.0, renamed: "persistentStoreType")
     private var storeType: String {
         isInMemoryStore ? NSInMemoryStoreType : NSSQLiteStoreType
     }
@@ -139,7 +140,7 @@ final class CoreDataMessagingMigrator: CoreDataMessagingMigratorProtocol {
             let options = [NSSQLitePragmasOption: ["journal_mode": "DELETE"]]
             let store: NSPersistentStore
 
-            if #available(iOSApplicationExtension 15.0, *) {
+            if #available(iOS 15.0, *) {
                 store = try persistentStoreCoordinator.addPersistentStore(type: persistentStoreType, at: storeURL, options: options)
             } else {
                 store = try persistentStoreCoordinator.addPersistentStore(
