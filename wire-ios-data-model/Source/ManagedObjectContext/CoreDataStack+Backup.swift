@@ -188,7 +188,7 @@ extension CoreDataStack {
                 let metadata = try BackupMetadata(url: metadataURL)
                 let currentModel = CoreDataStack.loadMessagingModel()
 
-                guard let backupModel = CoreDataMessagingMigrationVersion.objectModel(for: metadata.modelVersion) else {
+                guard let backupModel = managedObjectModel(for: metadata.modelVersion) else {
                     return fail(.missingModelVersion(metadata.modelVersion))
                 }
 
@@ -229,6 +229,20 @@ extension CoreDataStack {
             }
         }
     }
+
+    private static func managedObjectModel(for dataModelVersion: String) -> NSManagedObjectModel? {
+        let version = CoreDataMessagingMigrationVersion.allCases.first {
+            $0.dataModelVersion == dataModelVersion
+        }
+        
+        guard let modelURL = version?.managedObjectModelURL() else {
+            return nil
+        }
+
+        return NSManagedObjectModel(contentsOf: modelURL)
+    }
+
+    // MARK: Prepare
 
     private static func prepareStoreForBackupExport(
         coordinator: NSPersistentStoreCoordinator,

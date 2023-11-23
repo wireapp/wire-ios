@@ -22,9 +22,12 @@ import Foundation
 enum CoreDataMessagingMigrationVersion: String, CaseIterable {
 
     private enum Constant {
+        static let dataModelPrefix = "zmessaging"
         static let modelDirectory = "zmessaging.momd"
         static let resourceExtension = "mom"
     }
+
+    // MARK: -
 
     case version2_109 = "zmessaging2.109.0"
     case version2_108 = "zmessaging2.108.0"
@@ -141,19 +144,21 @@ enum CoreDataMessagingMigrationVersion: String, CaseIterable {
         }
     }
 
-    var number: String {
-        self.rawValue.replacingOccurrences(of: "zmessaging", with: "")
+    /// Returns the version used in `.xcdatamodel`, like "2.3" for data model "zmessaging2.3".
+    var dataModelVersion: String {
+        rawValue.replacingOccurrences(of: Constant.dataModelPrefix, with: "")
     }
 
-    // MARK: - Current
+    // MARK: Current
 
     static let current: Self = {
         guard let current = allCases.first else {
             fatalError("no model versions found")
         }
-
         return current
     }()
+
+    // MARK: Store URL
 
     func managedObjectModelURL() -> URL? {
         WireDataModelBundle.bundle.url(
@@ -161,13 +166,5 @@ enum CoreDataMessagingMigrationVersion: String, CaseIterable {
             withExtension: Constant.resourceExtension,
             subdirectory: Constant.modelDirectory
         )
-    }
-
-    static func objectModel(for version: String) -> NSManagedObjectModel? {
-        let modelUrl = CoreDataMessagingMigrationVersion.allCases.first {
-            $0.number == version
-        }?.managedObjectModelURL()
-
-        return modelUrl.flatMap({ NSManagedObjectModel(contentsOf: $0) })
     }
 }
