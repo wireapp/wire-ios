@@ -160,6 +160,7 @@ extension CoreDataStack {
     ///   - accountIdentifier: account for which to import the backup
     ///   - backupDirectory: root directory of the decrypted and uncompressed backup
     ///   - applicationContainer: shared application container
+    ///   - messagingMigrator: object that will update backup to latest current model version
     ///   - dispatchGroup: group for testing
     ///   - completion: called on main thread when done. Result will contain the folder where all data was written to.
     public static func importLocalStorage(
@@ -167,11 +168,12 @@ extension CoreDataStack {
         from backupDirectory: URL,
         applicationContainer: URL,
         dispatchGroup: ZMSDispatchGroup? = nil,
+        messagingMigrator: CoreDataMessagingMigratorProtocol? = nil,
         completion: @escaping ((Result<URL>) -> Void)
         ) {
 
         func fail(_ error: BackupImportError) {
-            WireLogger.localStorage.debug("backup: error backing up local store: \(error)")
+            WireLogger.localStorage.error("backup: error backing up local store: \(error)")
             log.debug("error backing up local store: \(error)")
             DispatchQueue.main.async(group: dispatchGroup) {
                 completion(.failure(error))
@@ -200,13 +202,13 @@ extension CoreDataStack {
 
                 // Create target directory
                 try fileManager.createDirectory(at: accountStoreFile.deletingLastPathComponent(), withIntermediateDirectories: true, attributes: nil)
-                let options = NSPersistentStoreCoordinator.persistentStoreOptions(supportsMigration: true)
+                let options = NSPersistentStoreCoordinator.persistentStoreOptions(supportsMigration: false)
 
                 WireLogger.localStorage.debug("backup: import prepare")
                 try prepareStoreForBackupImport(coordinator: coordinator, location: backupStoreFile, options: options)
 
                 WireLogger.localStorage.debug("backup: migrate database \(metadata.modelVersion) to \(currentModel.version)")
-                let migrator = CoreDataMessagingMigrator(isInMemoryStore: false)
+                let migrator: CoreDataMessagingMigratorProtocol = messagingMigrator ?? CoreDataMessagingMigrator(isInMemoryStore: false)
                 try migrator.migrateStore(at: backupStoreFile, toVersion: .current)
 
                 // Import the persistent store to the account data directory

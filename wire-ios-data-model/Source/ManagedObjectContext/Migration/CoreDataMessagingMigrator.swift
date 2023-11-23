@@ -18,9 +18,10 @@
 
 import CoreData
 
+// sourcery: AutoMockable
 protocol CoreDataMessagingMigratorProtocol {
     func requiresMigration(at storeURL: URL, toVersion version: CoreDataMessagingMigrationVersion) -> Bool
-    func migrateStore(at storeURL: URL, toVersion version: CoreDataMessagingMigrationVersion) async throws
+    func migrateStore(at storeURL: URL, toVersion version: CoreDataMessagingMigrationVersion) throws
 }
 
 enum CoreDataMessagingMigratorError: Error {

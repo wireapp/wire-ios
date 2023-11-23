@@ -22,7 +22,13 @@ import XCTest
 
 class CoreDataStackTests_Backup: DatabaseBaseTest {
 
+    var migrator: CoreDataMessagingMigratorProtocol!
+
     override func tearDown() {
+        migrator = MockCoreDataMessagingMigratorProtocol()
+        migrator.migrateStoreAtToVersion_MockMethod = { _, _ in
+
+        }
         CoreDataStack.clearBackupDirectory(dispatchGroup: dispatchGroup)
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.1))
         XCTAssertFalse(FileManager.default.fileExists(atPath: CoreDataStack.backupsDirectory.path))
@@ -304,5 +310,20 @@ class CoreDataStackTests_Backup: DatabaseBaseTest {
         case .failedToCopy?: break
         default: XCTFail()
         }
+    }
+
+    func testThatItCallsMigratorDuringImport() {
+        // given
+        let uuid = UUID()
+        guard let backup = createBackupAndDeleteOriginalAccount(accountIdentifier: uuid) else { return XCTFail() }
+
+        // when
+        guard let result = importBackup(accountIdentifier: uuid, backup: backup) else { return XCTFail() }
+
+        // then
+        guard case .success = result else { return XCTFail() }
+        let directory = createStorageStackAndWaitForCompletion(userID: uuid)
+        let fetchConversations = ZMConversation.sortedFetchRequest()
+        XCTAssertEqual(try directory.viewContext.count(for: fetchConversations), 1)
     }
 }
