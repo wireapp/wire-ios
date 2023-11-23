@@ -41,7 +41,7 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
 
         endEditing()
 
-        createAndPresentParticipantsPopoverController(with: frame, from: view, contentViewController: profileViewController.wrapInNavigationController(setBackgroundColor: true))
+        createAndPresentParticipantsPopoverController(with: frame, from: view, contentViewController: profileViewController.wrapInNavigationController())
     }
 
     func conversationContentViewController(
@@ -141,7 +141,7 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
         }
 
         let groupDetailsViewController = GroupDetailsViewController(conversation: conversation, userSession: userSession)
-        let navigationController = groupDetailsViewController.wrapInNavigationController(setBackgroundColor: true)
+        let navigationController = groupDetailsViewController.wrapInNavigationController()
         groupDetailsViewController.presentGuestOptions(animated: false)
         presentParticipantsViewController(navigationController, from: sourceView)
     }
@@ -156,7 +156,7 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
         }
 
         let groupDetailsViewController = GroupDetailsViewController(conversation: conversation, userSession: userSession)
-        let navigationController = groupDetailsViewController.wrapInNavigationController(setBackgroundColor: true)
+        let navigationController = groupDetailsViewController.wrapInNavigationController()
         groupDetailsViewController.presentServicesOptions(animated: false)
         presentParticipantsViewController(navigationController, from: sourceView)
     }

@@ -372,7 +372,7 @@ final class ProfileClientViewController: UIViewController, SpinnerCapable {
         let selfClientController = SettingsClientViewController(userClient: selfUserClient,
                                                                 fromConversation: fromConversation)
 
-        let navigationControllerWrapper = selfClientController.wrapInNavigationController(setBackgroundColor: true)
+        let navigationControllerWrapper = selfClientController.wrapInNavigationController()
 
         navigationControllerWrapper.modalPresentationStyle = .currentContext
         present(navigationControllerWrapper, animated: true, completion: .none)

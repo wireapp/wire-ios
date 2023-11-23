@@ -348,7 +348,7 @@ final class ZClientViewController: UIViewController {
         currentConversation = nil
 
         let inbox = ConnectRequestsViewController(userSession: userSession)
-        pushContentViewController(inbox.wrapInNavigationController(setBackgroundColor: true), focusOnView: focus, animated: animated)
+        pushContentViewController(inbox.wrapInNavigationController(), focusOnView: focus, animated: animated)
     }
 
     /// Open the user clients detail screen
@@ -356,7 +356,7 @@ final class ZClientViewController: UIViewController {
     /// - Parameter conversation: conversation to open
     func openDetailScreen(for conversation: ZMConversation) {
         let controller = GroupDetailsViewController(conversation: conversation, userSession: userSession)
-        let navController = controller.wrapInNavigationController(setBackgroundColor: true)
+        let navController = controller.wrapInNavigationController()
         navController.modalPresentationStyle = .formSheet
 
         present(navController, animated: true)
@@ -666,7 +666,7 @@ final class ZClientViewController: UIViewController {
             viewController = profileViewController
         }
 
-        let navWrapperController: UINavigationController? = viewController?.wrapInNavigationController(setBackgroundColor: true)
+        let navWrapperController: UINavigationController? = viewController?.wrapInNavigationController()
         navWrapperController?.modalPresentationStyle = .formSheet
         if let aController = navWrapperController {
             present(aController, animated: true)

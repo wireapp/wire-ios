@@ -23,7 +23,7 @@ import WireSyncEngine
 
 extension ZClientViewController {
     private func wrapInNavigationControllerAndPresent(viewController: UIViewController) {
-        let navWrapperController: UINavigationController = viewController.wrapInNavigationController(setBackgroundColor: true)
+        let navWrapperController: UINavigationController = viewController.wrapInNavigationController()
         navWrapperController.modalPresentationStyle = .formSheet
 
         dismissAllModalControllers(callback: { [weak self] in

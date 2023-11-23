@@ -98,7 +98,7 @@ final class ConversationViewController: UIViewController {
             break
         }
 
-        return viewController?.wrapInNavigationController(setBackgroundColor: true)
+        return viewController?.wrapInNavigationController()
     }
 
     required init(conversation: ZMConversation,
@@ -562,7 +562,7 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
 
         collectionController?.shouldTrackOnNextOpen = true
 
-        let navigationController = KeyboardAvoidingViewController(viewController: collectionController!).wrapInNavigationController(setBackgroundColor: true)
+        let navigationController = KeyboardAvoidingViewController(viewController: collectionController!).wrapInNavigationController()
 
         ZClientViewController.shared?.present(navigationController, animated: true)
     }

@@ -59,7 +59,7 @@ final class ConnectRequestsViewControllerSnapshotTests: BaseSnapshotTestCase {
     }
 
     func testForOneRequest() {
-        verify(matching: sut.wrapInNavigationController(setBackgroundColor: true))
+        verify(matching: sut.wrapInNavigationController())
     }
 
     func testForTwoRequests() {
@@ -73,6 +73,6 @@ final class ConnectRequestsViewControllerSnapshotTests: BaseSnapshotTestCase {
         sut.connectionRequests = [secondConnectionRequest, mockConnectionRequest]
         sut.reload(animated: false)
 
-        verify(matching: sut.wrapInNavigationController(setBackgroundColor: true))
+        verify(matching: sut.wrapInNavigationController())
     }
 }
