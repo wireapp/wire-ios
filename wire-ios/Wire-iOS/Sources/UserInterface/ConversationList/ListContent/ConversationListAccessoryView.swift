@@ -26,6 +26,7 @@ final class ConversationListAccessoryView: UIView {
     typealias ViewColors = SemanticColors.View
     typealias LabelColors = SemanticColors.Label
     typealias IconColors = SemanticColors.Icon
+    typealias ConversationsListAccessibility = L10n.Accessibility.ConversationsList
 
     let mediaPlaybackManager: MediaPlaybackManager?
 
@@ -40,6 +41,8 @@ final class ConversationListAccessoryView: UIView {
     let activeCallWidth: CGFloat = 20
 
     let textLabelColor = LabelColors.textDefaultWhite
+
+    let iconSize: StyleKitIcon.Size = 12
 
     var icon: ConversationStatusIcon? {
         didSet {
@@ -93,6 +96,15 @@ final class ConversationListAccessoryView: UIView {
         updateForIcon()
     }
 
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else { return }
+        // We need to call this method here because the background, the border color
+        // of the icon when switching from dark to light mode
+        // or vice versa can be updated only inside traitCollectionDidChange.
+        updateForIcon()
+    }
+
     // MARK: - Setup Constraints
 
     private func createConstraints() {
@@ -133,10 +145,7 @@ final class ConversationListAccessoryView: UIView {
     // MARK: - Set up the view based on the state
 
     private var viewForState: UIView? {
-        typealias ConversationsListAccessibility = L10n.Accessibility.ConversationsList
         typealias ConversationListVoiceOver = L10n.Localizable.ConversationList.Voiceover.Status
-
-        let iconSize: StyleKitIcon.Size = 12
 
         guard let icon = icon else { return nil }
         badgeView.backgroundColor = ViewColors.backgroundDefaultBlack
@@ -177,13 +186,7 @@ final class ConversationListAccessoryView: UIView {
             }
             return iconView
         case .silenced:
-            iconView.setTemplateIcon(.bellWithStrikethrough, size: iconSize)
-            iconView.tintColor = IconColors.foregroundDefaultBlack
-            badgeView.backgroundColor = ViewColors.backgroundDefaultWhite
-            badgeView.layer.borderColor = ViewColors.borderConversationListTableViewCellBadgeReverted.cgColor
-            badgeView.layer.borderWidth = 1
-            badgeView.layer.cornerRadius = 6
-            accessibilityValue = ConversationsListAccessibility.SilencedStatus.value
+            configureSilencedNotificationsIcon()
             return iconView
         case .typing:
             return .none
@@ -244,7 +247,8 @@ final class ConversationListAccessoryView: UIView {
         case .activeCall(false):
             self.badgeView.isHidden = true
             self.transparentIconView.isHidden = false
-            self.transparentIconView.setIcon(.phone, size: 18, color: .white)
+            self.transparentIconView.setTemplateIcon(.phone, size: iconSize)
+            self.transparentIconView.tintColor = IconColors.foregroundDefaultBlack
 
             self.expandTransparentIconViewWidthConstraint.constant = activeCallWidth
             self.expandWidthConstraint.constant = activeCallWidth
@@ -255,7 +259,8 @@ final class ConversationListAccessoryView: UIView {
         case .typing:
             self.badgeView.isHidden = true
             self.transparentIconView.isHidden = false
-            self.transparentIconView.setIcon(.pencil, size: 12, color: .white)
+            self.transparentIconView.setTemplateIcon(.pencil, size: iconSize)
+            self.transparentIconView.tintColor = IconColors.foregroundDefaultBlack
 
         case .unreadMessages, .mention:
             self.textLabel.textColor = textLabelColor
@@ -285,5 +290,15 @@ final class ConversationListAccessoryView: UIView {
             ])
 
         }
+    }
+
+    private func configureSilencedNotificationsIcon() {
+        iconView.setTemplateIcon(.bellWithStrikethrough, size: iconSize)
+        iconView.tintColor = IconColors.foregroundDefaultBlack
+        badgeView.backgroundColor = ViewColors.backgroundDefaultWhite
+        badgeView.layer.borderColor = IconColors.borderMutedNotifications.cgColor
+        badgeView.layer.borderWidth = 1
+        badgeView.layer.cornerRadius = 6
+        accessibilityValue = ConversationsListAccessibility.SilencedStatus.value
     }
 }
