@@ -414,7 +414,7 @@ public class CoreDataStack: NSObject, ContextProvider {
             throw CoreDataMessagingMigratorError.missingStoreURL
         }
 
-        await migrator.migrateStore(at: storeURL, toVersion: .current)
+        try await migrator.migrateStore(at: storeURL, toVersion: .current)
     }
 }
 
