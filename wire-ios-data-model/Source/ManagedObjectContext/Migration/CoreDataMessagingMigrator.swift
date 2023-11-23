@@ -58,7 +58,7 @@ final class CoreDataMessagingMigrator: CoreDataMessagingMigratorProtocol {
         return compatibleVersionForStoreMetadata(metadata) != version
     }
 
-    func migrateStore(at storeURL: URL, toVersion version: CoreDataMessagingMigrationVersion) async throws {
+    func migrateStore(at storeURL: URL, toVersion version: CoreDataMessagingMigrationVersion) throws {
         try forceWALCheckpointingForStore(at: storeURL)
 
         var currentURL = storeURL

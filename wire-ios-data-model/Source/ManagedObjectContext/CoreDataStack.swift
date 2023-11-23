@@ -202,22 +202,25 @@ public class CoreDataStack: NSObject, ContextProvider {
         if needsMigration {
             onStartMigration()
         }
-        Task(priority: .userInitiated) {
-            if needsMessagingStoreMigration() {
+
+        DispatchQueue.global(qos: .userInitiated).async {
+            if self.needsMessagingStoreMigration() {
                 do {
-                    try await migrateMessagingStore()
+                    try self.migrateMessagingStore()
                 } catch {
                     onFailure(error)
                     return
                 }
             }
 
-            loadStores { error in
-                if let error {
-                    onFailure(error)
-                    return
+            DispatchQueue.main.async {
+                self.loadStores { error in
+                    if let error {
+                        onFailure(error)
+                        return
+                    }
+                    onCompletion(self)
                 }
-                onCompletion(self)
             }
         }
     }
@@ -409,12 +412,12 @@ public class CoreDataStack: NSObject, ContextProvider {
         return migrator.requiresMigration(at: storeURL, toVersion: .current)
     }
 
-    public func migrateMessagingStore() async throws {
+    public func migrateMessagingStore() throws {
         guard let storeURL = messagesContainer.storeURL else {
             throw CoreDataMessagingMigratorError.missingStoreURL
         }
 
-        try await migrator.migrateStore(at: storeURL, toVersion: .current)
+        try migrator.migrateStore(at: storeURL, toVersion: .current)
     }
 }
 
