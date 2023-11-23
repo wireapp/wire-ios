@@ -99,12 +99,10 @@ final class ConversationListAccessoryView: UIView {
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
         guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else { return }
-        if icon == .silenced {
-            // We need to call this method here because the background, the border color
-            // of the icon when switching from dark to light mode
-            // or vice versa can be updated only inside traitCollectionDidChange.
-            configureSilencedNotificationsIcon()
-        }
+        // We need to call this method here because the background, the border color
+        // of the icon when switching from dark to light mode
+        // or vice versa can be updated only inside traitCollectionDidChange.
+        updateForIcon()
     }
 
     // MARK: - Setup Constraints
