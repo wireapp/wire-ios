@@ -26,7 +26,6 @@ enum CoreDataMessagingMigrationVersion: String, CaseIterable {
         static let resourceExtension = "mom"
     }
 
-    // TODO: add more old versions!
     case version2_109 = "zmessaging2.109.0"
     case version2_108 = "zmessaging2.108.0"
     case version2_107 = "zmessaging2.107.0"
