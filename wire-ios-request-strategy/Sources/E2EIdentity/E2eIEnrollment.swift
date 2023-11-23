@@ -19,24 +19,23 @@
 import Foundation
 import WireCoreCrypto
 
-public protocol E2EIRepositoryInterface {
+public protocol E2eIEnrollmentInterface {
 
     /// Fetch acme directory for hyperlinks.
     func loadACMEDirectory() async throws -> AcmeDirectory
 
     /// Get a nonce for creating an account.
     func getACMENonce(endpoint: String) async throws -> String
-
 }
 
 /// This class implements the steps of the E2EI certificate enrollment process.
-public final class E2EIRepository: E2EIRepositoryInterface {
+public final class E2eIEnrollment: E2eIEnrollmentInterface {
 
     private var acmeClient: AcmeClientInterface
-    private var e2eiService: E2EIServiceInterface
+    private var e2eiService: E2eIServiceInterface
     private let logger = WireLogger.e2ei
 
-    public init(acmeClient: AcmeClientInterface, e2eiService: E2EIServiceInterface) {
+    public init(acmeClient: AcmeClientInterface, e2eiService: E2eIServiceInterface) {
         self.acmeClient = acmeClient
         self.e2eiService = e2eiService
     }
@@ -45,9 +44,8 @@ public final class E2EIRepository: E2EIRepositoryInterface {
         logger.info("load ACME directory")
 
         do {
-            try await e2eiService.setupEnrollment()
             let acmeDirectoryData = try await acmeClient.getACMEDirectory()
-            return try await e2eiService.directoryResponse(directoryData: acmeDirectoryData)
+            return try await e2eiService.getDirectoryResponse(directoryData: acmeDirectoryData)
         } catch {
             logger.error("failed to load ACME directory: \(error.localizedDescription)")
 
@@ -65,8 +63,6 @@ public final class E2EIRepository: E2EIRepositoryInterface {
 
 enum E2EIRepositoryFailure: Error {
 
-    case failedToLoadACMEDirectory(Error)
-    case missingNonce
-    case failedToCreateAcmeAccount
+    case failedToLoadACMEDirectory(_ underlyingError: Error)
 
 }

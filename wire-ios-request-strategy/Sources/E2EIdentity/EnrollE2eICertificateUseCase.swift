@@ -18,25 +18,27 @@
 
 import Foundation
 
-public protocol EnrollE2EICertificateUseCaseInterface {
+public protocol EnrollE2eICertificateUseCaseInterface {
 
-    func invoke(idToken: String) async throws -> String
+    func invoke(idToken: String, mlsClientId: MLSClientID, userName: String, handle: String) async throws -> String
 
 }
 
 /// This class provides an interface to issue an E2EI certificate.
-public final class EnrollE2EICertificateUseCase: EnrollE2EICertificateUseCaseInterface {
+public final class EnrollE2eICertificateUseCase: EnrollE2eICertificateUseCaseInterface {
 
-    var e2eiRepository: E2EIRepositoryInterface
+    var e2eiRepository: E2eIRepositoryInterface
 
-    public init(e2eiRepository: E2EIRepositoryInterface) {
+    public init(e2eiRepository: E2eIRepositoryInterface) {
         self.e2eiRepository = e2eiRepository
     }
 
-    public func invoke(idToken: String) async throws -> String {
+    public func invoke(idToken: String, mlsClientId: MLSClientID, userName: String, handle: String) async throws -> String {
 
-        let acmeDirectory = try await e2eiRepository.loadACMEDirectory()
-        let prevNonce = try await e2eiRepository.getACMENonce(endpoint: acmeDirectory.newNonce)
+        let enrollment = try await e2eiRepository.createEnrollment(mlsClientId: mlsClientId, userName: userName, handle: handle)
+
+        let acmeDirectory = try await enrollment.loadACMEDirectory()
+        let prevNonce = try await enrollment.getACMENonce(endpoint: acmeDirectory.newNonce)
 
         /// TODO: this method will be finished with the following PRs
         return prevNonce
