@@ -160,7 +160,6 @@ extension CoreDataStack {
     ///   - accountIdentifier: account for which to import the backup
     ///   - backupDirectory: root directory of the decrypted and uncompressed backup
     ///   - applicationContainer: shared application container
-    ///   - messagingMigrator: object that will update backup to latest current model version
     ///   - dispatchGroup: group for testing
     ///   - completion: called on main thread when done. Result will contain the folder where all data was written to.
     public static func importLocalStorage(
