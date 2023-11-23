@@ -141,7 +141,7 @@ enum CoreDataMessagingMigrationVersion: String, CaseIterable {
     // MARK: - Current
 
     static let current: Self = {
-        guard let current = allCases.last else {
+        guard let current = allCases.first else {
             fatalError("no model versions found")
         }
 
