@@ -177,10 +177,10 @@ public class ZMUserSession: NSObject {
 
     // temporary function to simplify call to EventProcessor
     // might be replaced by something more elegant
-    public func updateEvents(_ events: [ZMUpdateEvent]) {
+    public func processUpdateEvents(_ events: [ZMUpdateEvent]) {
         syncContext.enterAllGroupsExceptSecondaryOne()
         Task {
-            await self.updateEventProcessor?.storeAndProcessUpdateEvents(events, ignoreBuffer: true)
+            try? await self.updateEventProcessor?.processEvents(events)
             syncContext.leaveAllGroupsExceptSecondaryOne()
         }
     }
@@ -392,7 +392,6 @@ public class ZMUserSession: NSObject {
     private func createUpdateEventProcessor() -> EventProcessor {
         return EventProcessor(
             storeProvider: self.coreDataStack,
-            syncStatus: applicationStatusDirectory!.syncStatus,
             eventProcessingTracker: eventProcessingTracker,
             earService: earService,
             eventConsumers: strategyDirectory?.eventConsumers ?? []
@@ -609,22 +608,17 @@ extension ZMUserSession: ZMNetworkStateDelegate {
 
 // TODO: [jacob] find another way of providing the event processor to ZMissingEventTranscoder
 extension ZMUserSession: UpdateEventProcessor {
-    public func storeUpdateEvents(_ updateEvents: [WireTransport.ZMUpdateEvent], ignoreBuffer: Bool) async {
-        await updateEventProcessor?.storeAndProcessUpdateEvents(updateEvents, ignoreBuffer: ignoreBuffer)
+    public func bufferEvents(_ events: [WireTransport.ZMUpdateEvent]) async {
+        await updateEventProcessor?.bufferEvents(events)
     }
 
-    public func storeAndProcessUpdateEvents(_ updateEvents: [WireTransport.ZMUpdateEvent], ignoreBuffer: Bool) async {
-        await updateEventProcessor?.storeAndProcessUpdateEvents(updateEvents, ignoreBuffer: ignoreBuffer)
+    public func processEvents(_ events: [WireTransport.ZMUpdateEvent]) async throws {
+        try await updateEventProcessor?.processEvents(events)
     }
 
-    public func processEventsIfReady() async -> Bool {
-        return await updateEventProcessor?.processEventsIfReady() ?? false
+    public func processBufferedEvents() async throws {
+        try await updateEventProcessor?.processBufferedEvents()
     }
-
-    public func processPendingCallEvents() async throws {
-        try await updateEventProcessor?.processPendingCallEvents()
-    }
-
 }
 
 extension ZMUserSession: ZMSyncStateDelegate {
@@ -685,10 +679,16 @@ extension ZMUserSession: ZMSyncStateDelegate {
 
         self.syncContext.enterAllGroupsExceptSecondaryOne()
         Task {
-            let hasMoreEventsToProcess = await updateEventProcessor!.processEventsIfReady()
+            var processingInterrupted = false
+            do {
+                try await updateEventProcessor?.processBufferedEvents()
+            } catch {
+                processingInterrupted = true
+            }
+
             let isSyncing = await syncContext.perform { self.applicationStatusDirectory?.syncStatus.isSyncing == true }
 
-            if !hasMoreEventsToProcess {
+            if !processingInterrupted {
                 await syncContext.perform {
                     self.legacyHotFix.applyPatches()
                     // When we move to the monorepo, uncomment hotFixApplicator applyPatches
@@ -697,18 +697,20 @@ extension ZMUserSession: ZMSyncStateDelegate {
             }
 
             await managedObjectContext.perform(schedule: .enqueued) { [weak self] in
-                self?.isPerformingSync = hasMoreEventsToProcess || isSyncing
+                self?.isPerformingSync = isSyncing || processingInterrupted
                 self?.updateNetworkState()
             }
-
             self.syncContext.leaveAllGroupsExceptSecondaryOne()
         }
     }
 
-    func processPendingCallEvents() throws {
+    func processPendingCallEvents(completionHandler: @escaping () -> Void) throws {
         WireLogger.updateEvent.info("process pending call events")
         Task {
-            try await updateEventProcessor!.processPendingCallEvents()
+            try await updateEventProcessor!.processBufferedEvents()
+            await managedObjectContext.perform {
+                completionHandler()
+            }
         }
     }
 

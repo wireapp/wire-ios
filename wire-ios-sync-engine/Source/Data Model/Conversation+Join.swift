@@ -80,7 +80,8 @@ extension ZMConversation {
                 }
 
                 Task {
-                    await eventProcessor.storeAndProcessUpdateEvents([event], ignoreBuffer: true)
+                    // FIXME: [jacob] replace with ConversationEventProcessor
+                    try? await eventProcessor.processEvents([event])
                     viewContext.performGroupedBlock {
                         guard let conversationId = UUID(uuidString: conversationString),
                               let conversation = ZMConversation.fetch(with: conversationId, in: viewContext)

@@ -21,15 +21,22 @@ import Foundation
 extension ZMOperationLoop: ZMPushChannelConsumer {
 
     public func pushChannelDidReceive(_ data: ZMTransportData) {
-        Logging.network.info("Push Channel:\n\(data)")
-
         if let events = ZMUpdateEvent.eventsArray(fromPushChannelData: data), !events.isEmpty {
             Logging.eventProcessing.info("Received \(events.count) events from push channel")
             events.forEach({ $0.appendDebugInformation("from push channel (web socket)")})
-            syncMOC.enterAllGroupsExceptSecondaryOne()
-            Task {
-                await self.updateEventProcessor.storeAndProcessUpdateEvents(events, ignoreBuffer: false)
-                syncMOC.leaveAllGroupsExceptSecondaryOne()
+
+            if syncStatus.isSyncing {
+                syncMOC.enterAllGroupsExceptSecondaryOne()
+                Task {
+                    await self.updateEventProcessor.bufferEvents(events)
+                    syncMOC.leaveAllGroupsExceptSecondaryOne()
+                }
+            } else {
+                syncMOC.enterAllGroupsExceptSecondaryOne()
+                Task {
+                    try? await self.updateEventProcessor.processEvents(events)
+                    syncMOC.leaveAllGroupsExceptSecondaryOne()
+                }
             }
         }
     }

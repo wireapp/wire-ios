@@ -242,7 +242,7 @@ static NSString * const LastUpdateEventIDStoreKey = @"LastUpdateEventID";
     [(id)self.sut.listPaginator didReceiveResponse:[ZMTransportResponse responseWithPayload:payload HTTPStatus:200 transportSessionError:nil apiVersion:0] forSingleRequest:self.requestSync];
 
     // then
-    XCTAssertEqualObjects(self.mockUpdateEventProcessor.storedEvents, expectedEvents);
+    XCTAssertEqualObjects(self.mockUpdateEventProcessor.processedEvents, expectedEvents);
 
 }
 
@@ -278,7 +278,7 @@ static NSString * const LastUpdateEventIDStoreKey = @"LastUpdateEventID";
     [(id)self.sut.listPaginator didReceiveResponse:[ZMTransportResponse responseWithPayload:payload HTTPStatus:404 transportSessionError:nil apiVersion:0] forSingleRequest:self.requestSync];
 
     // then
-    XCTAssertEqualObjects(self.mockUpdateEventProcessor.storedEvents, expectedEvents);
+    XCTAssertEqualObjects(self.mockUpdateEventProcessor.processedEvents, expectedEvents);
 
 }
 

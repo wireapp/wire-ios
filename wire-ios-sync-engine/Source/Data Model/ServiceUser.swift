@@ -322,11 +322,11 @@ public extension ZMConversation {
                       return
                   }
 
-            completionHandler(.success)
-
-            // FIXME: we do as before don't wait for completionHandler to process event, but weird
             Task {
-                await eventProcessor.storeAndProcessUpdateEvents([event], ignoreBuffer: true)
+                try? await eventProcessor.processEvents([event])
+                await contextProvider.viewContext.perform {
+                    completionHandler(.success)
+                }
             }
         }))
 

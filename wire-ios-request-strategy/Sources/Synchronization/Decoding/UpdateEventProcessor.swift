@@ -21,14 +21,22 @@ import Foundation
 @objc
 public protocol UpdateEventProcessor: AnyObject {
 
-//    func setIniatialEventConsumers(_ eventConsumers: [ZMEventConsumer]) async
-    func storeUpdateEvents(_ updateEvents: [ZMUpdateEvent], ignoreBuffer: Bool) async
+    /// Buffer events in-memory until the next call to `processBufferedEvents`
+    ///
+    /// - Parameters:
+    ///     - events: events to buffer
+    func bufferEvents(_ events: [ZMUpdateEvent]) async
 
-    func storeAndProcessUpdateEvents(_ updateEvents: [ZMUpdateEvent], ignoreBuffer: Bool) async
+    /// Decrypt, persist and process events
+    ///
+    /// - Parameters:
+    ///     - events: events to process
+    ///
+    /// If encryption at rest is enabled and the application is not authenticated only
+    /// calling events will be processed. The function returns when all events have
+    /// finished processing.
+    func processEvents(_ events: [ZMUpdateEvent]) async throws
 
-    func processEventsIfReady() async -> Bool
-
-    func processPendingCallEvents() async throws
-
-//    func eventConsumers() async -> [ZMEventConsumer]
+    /// Forward any buffered events to `processEvents`
+    func processBufferedEvents() async throws
 }

@@ -128,7 +128,8 @@ extension ZMConversation {
 
                 if let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil) {
                     // Process `conversation.code-update` event
-                    userSession.updateEvents([event])
+                    // FIXME: [jacob] replace with ConversationEventProcessor
+                    userSession.processUpdateEvents([event])
                 }
             } else if response.httpStatus == 200,
                       let payload = response.payload?.asDictionary(),
@@ -240,7 +241,7 @@ extension ZMConversation {
                 self.allowServices = allowServices
 
                 // Process `conversation.access-update` event
-                userSession.updateEvents([event])
+                userSession.processUpdateEvents([event])
                 completion(.success)
             } else {
                 zmLog.debug("Error setting access role:  \(response)")

@@ -51,8 +51,8 @@ extension ZMConversation {
             if response.httpStatus == 200, let event = response.updateEvent {
                 userSession.syncContext.enterAllGroupsExceptSecondaryOne()
                 Task {
-                    // FIXME: [F] weird to have eventProcessor here
-                    await userSession.updateEventProcessor?.storeAndProcessUpdateEvents([event], ignoreBuffer: true)
+                    // FIXME: [jacob] replace with ConversationEventProcessor
+                    try? await userSession.updateEventProcessor?.processEvents([event])
                     userSession.managedObjectContext.performGroupedBlock {
                         completion(.success)
                     }

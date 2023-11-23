@@ -11,6 +11,24 @@
         }
       },
       {
+        "package": "AsyncAlgorithms",
+        "repositoryURL": "https://github.com/apple/swift-async-algorithms.git",
+        "state": {
+          "branch": null,
+          "revision": "9cfed92b026c524674ed869a4ff2dcfdeedf8a2a",
+          "version": "0.1.0"
+        }
+      },
+      {
+        "package": "swift-collections",
+        "repositoryURL": "https://github.com/apple/swift-collections.git",
+        "state": {
+          "branch": null,
+          "revision": "a902f1823a7ff3c9ab2fba0f992396b948eda307",
+          "version": "1.0.5"
+        }
+      },
+      {
         "package": "swift-snapshot-testing",
         "repositoryURL": "https://github.com/pointfreeco/swift-snapshot-testing",
         "state": {

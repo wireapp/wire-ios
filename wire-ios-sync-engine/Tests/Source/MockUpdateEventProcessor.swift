@@ -23,34 +23,19 @@ import Foundation
 @objcMembers
 public class MockUpdateEventProcessor: NSObject, UpdateEventProcessor {
 
-    public func setIniatialEventConsumers(_ eventConsumers: [ZMEventConsumer]) async {
-        self.eventConsumers = eventConsumers
-    }
-
-    public func eventConsumers() async -> [ZMEventConsumer] {
-        return eventConsumers
-    }
-
-    public var eventConsumers: [ZMEventConsumer] = []
     public var processedEvents: [ZMUpdateEvent] = []
-    public var storedEvents: [ZMUpdateEvent] = []
+    public var bufferedEvents: [ZMUpdateEvent] = []
 
-    public func processEventsIfReady() async -> Bool {
-        processedEvents.append(contentsOf: storedEvents)
-        storedEvents = []
-        return false
+    public func bufferEvents(_ events: [WireTransport.ZMUpdateEvent]) async {
+        bufferedEvents.append(contentsOf: events)
     }
 
-    public func storeAndProcessUpdateEvents(_ updateEvents: [ZMUpdateEvent], ignoreBuffer: Bool) async {
-        processedEvents.append(contentsOf: updateEvents)
+    public func processEvents(_ events: [WireTransport.ZMUpdateEvent]) async {
+        processedEvents.append(contentsOf: events)
     }
 
-    public func storeUpdateEvents(_ updateEvents: [ZMUpdateEvent], ignoreBuffer: Bool) async {
-        storedEvents.append(contentsOf: updateEvents)
+    public func processBufferedEvents() async {
+        processedEvents.append(contentsOf: bufferedEvents)
+        bufferedEvents.removeAll()
     }
-
-    public func processPendingCallEvents() async throws {
-
-    }
-
 }

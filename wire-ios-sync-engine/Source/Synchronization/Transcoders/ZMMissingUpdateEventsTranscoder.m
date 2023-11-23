@@ -186,7 +186,9 @@ NSUInteger const ZMMissingUpdateEventsTranscoderListPageSize = 500;
 
     BOOL finished = !self.listPaginator.hasMoreToFetch;
     [self.managedObjectContext enterAllGroupsExceptSecondaryOne];
-    [self.eventProcessor storeUpdateEvents:parsedEvents ignoreBuffer:YES completionHandler:^{
+
+    [self.eventProcessor processEvents:parsedEvents completionHandler:^(NSError * _Nullable error) {
+        NOT_USED(error);
         [self.managedObjectContext performBlock:^{
             [self.pushNotificationStatus didFetchEventIds:eventIds lastEventId:latestEventId finished:finished];
             [self.managedObjectContext leaveAllGroupsExceptSecondaryOne];
@@ -241,7 +243,7 @@ NSUInteger const ZMMissingUpdateEventsTranscoderListPageSize = 500;
     
     for (ZMUpdateEvent *event in events) {
         if (event.uuid != nil && ! event.isTransient && event.source != ZMUpdateEventSourcePushNotification) {
-            self.lastUpdateEventID = event.uuid;
+            [self.lastEventIDRepository storeLastEventID:event.uuid];
         }
     }
 }
@@ -363,7 +365,6 @@ NSUInteger const ZMMissingUpdateEventsTranscoderListPageSize = 500;
 
 - (void)startSlowSync
 {
-    self.lastUpdateEventID = nil;
     SyncStatus* status = self.syncStatus;
     [status removeLastUpdateEventID];
     [status forceSlowSync];

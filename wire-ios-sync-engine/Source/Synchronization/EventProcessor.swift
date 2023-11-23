@@ -28,48 +28,25 @@ actor EventProcessor: UpdateEventProcessor {
 
     private static let logger = Logger(subsystem: "VoIP Push", category: "EventProcessor")
 
-    let syncContext: NSManagedObjectContext
-    let eventContext: NSManagedObjectContext
-    let syncStatus: SyncStatus
+    private let syncContext: NSManagedObjectContext
+    private let eventContext: NSManagedObjectContext
     private var bufferedEvents: [ZMUpdateEvent]
-    let eventDecoder: EventDecoder
-    let eventProcessingTracker: EventProcessingTrackerProtocol
-    let earService: EARServiceInterface
-    var decryptingTask: Task<Void, Error>?
-    var processingTask: Task<Void, Error>?
-
+    private let eventDecoder: EventDecoder
+    private let eventProcessingTracker: EventProcessingTrackerProtocol
+    private let earService: EARServiceInterface
+    private var processingTask: Task<Void, Error>?
     private let eventConsumers: [ZMEventConsumer]
-
-    var isReadyToProcessEvents: Bool {
-        get async {
-            await syncContext.perform {
-                // Only process events once we've finished fetching events.
-                guard !self.syncStatus.isSyncing else { return false }
-
-                // If the database is locked, then we won't be able to process events
-                // that require writes to the database.
-                guard !self.syncContext.isLocked else { return false }
-
-                // Don't process events if this developer flag is on
-                guard !DeveloperFlag.ignoreIncomingEvents.isOn else { return false }
-
-                return true
-            }
-        }
-    }
 
     // MARK: Life Cycle
 
     init(
         storeProvider: CoreDataStack,
-        syncStatus: SyncStatus,
         eventProcessingTracker: EventProcessingTrackerProtocol,
         earService: EARServiceInterface,
         eventConsumers: [ZMEventConsumer]
     ) {
         self.syncContext = storeProvider.syncContext
         self.eventContext = storeProvider.eventContext
-        self.syncStatus = syncStatus
         self.eventDecoder = EventDecoder(eventMOC: eventContext, syncMOC: syncContext)
         self.eventProcessingTracker = eventProcessingTracker
         self.earService = earService
@@ -79,56 +56,53 @@ actor EventProcessor: UpdateEventProcessor {
 
     // MARK: Methods
 
-    /// Process previously received events if we are ready to process events.
-    ///
-    /// - Returns: **True** if there are still more events to process
-    @objc
-    public func processEventsIfReady() async -> Bool { // TODO jacob shouldn't be public
-        WireLogger.updateEvent.info("process events if ready")
-
-        guard await isReadyToProcessEvents else {
-            WireLogger.updateEvent.info("not ready to process events")
-            return true
-        }
-
-        await self.processAllEventsInBuffer()
-
-        var hasMoreEventsToProcess = false
-        do {
-            try await self.processEvents(callEventsOnly: false)
-        } catch {
-            hasMoreEventsToProcess = true
-        }
-
-        return hasMoreEventsToProcess
+    func bufferEvents(_ events: [ZMUpdateEvent]) async {
+        guard !DeveloperFlag.ignoreIncomingEvents.isOn else { return }
+        bufferedEvents.append(contentsOf: events)
     }
 
-    private func processTask(_ block: @escaping @Sendable () async throws -> Void) async throws {
-        if let existingProcessingTask = processingTask {
-            return try await existingProcessingTask.value
+    func processEvents(_ events: [ZMUpdateEvent]) async throws {
+        try await enqueueTask {
+            guard !DeveloperFlag.ignoreIncomingEvents.isOn else { return }
+            let publicKeys = try? self.earService.fetchPublicKeys()
+            let decryptedEvents = await self.eventDecoder.decryptAndStoreEvents(events, publicKeys: publicKeys)
+            await self.processBackgroundEvents(decryptedEvents)
+            await self.requestToCalculateBadgeCount()
+            let isLocked = await self.syncContext.perform { self.syncContext.isLocked }
+            try? await self.processEvents(callEventsOnly: isLocked)
         }
-
-        let task: Task<Void, Error> = Task(operation: block)
-        processingTask = task
-        try await task.value
-        processingTask = nil
     }
 
-    private func decryptTask(_ block: @escaping @Sendable () async throws -> Void) async throws {
-        try await decryptingTask?.value
-        let task: Task<Void, Error> = Task(operation: block)
-        decryptingTask = task
-        try await task.value
-        decryptingTask = nil
+    func processBufferedEvents() async throws {
+        let events = bufferedEvents
+        bufferedEvents.removeAll()
+        try await processEvents(events)
     }
 
-    func processPendingCallEvents() async throws {
-        await self.processAllEventsInBuffer()
-        try await self.processEvents(callEventsOnly: true)
+    private func enqueueTask(_ block: @escaping @Sendable () async throws -> Void) async throws {
+        processingTask = Task { [processingTask] in
+            _ = await processingTask?.result
+            return try await block()
+        }
+        _ = await processingTask?.result
+    }
+
+    private func processBackgroundEvents(_ events: [ZMUpdateEvent]) async {
+        await syncContext.perform {
+            for eventConsumer in self.eventConsumers {
+                eventConsumer.processEventsWhileInBackground?(events)
+            }
+        }
+    }
+
+    private func requestToCalculateBadgeCount() async {
+        await self.syncContext.perform {
+            self.syncContext.saveOrRollback()
+            NotificationInContext(name: .calculateBadgeCount, context: self.syncContext.notificationContext).post()
+        }
     }
 
     private func processEvents(callEventsOnly: Bool) async throws {
-        try await processTask { [self] in
             WireLogger.updateEvent.info("process pending events (callEventsOnly: \(callEventsOnly)")
 
             let encryptMessagesAtRest = await syncContext.perform {
@@ -146,43 +120,6 @@ actor EventProcessor: UpdateEventProcessor {
             } else {
                 await processStoredUpdateEvents(callEventsOnly: callEventsOnly)
             }
-        }
-    }
-
-    public func storeUpdateEvents(_ updateEvents: [ZMUpdateEvent], ignoreBuffer: Bool) async {
-            if await isReadyToProcessEvents || ignoreBuffer {
-                try? await decryptTask { [self] in
-                    let publicKeys = try? earService.fetchPublicKeys()
-
-                    let decryptedEvents = await eventDecoder.decryptAndStoreEvents(
-                        updateEvents,
-                        publicKeys: publicKeys
-                    )
-
-                    Logging.eventProcessing.info("Consuming events while in background")
-                    for eventConsumer in self.eventConsumers {
-                        eventConsumer.processEventsWhileInBackground?(decryptedEvents)
-                    }
-                    await self.syncContext.perform {
-                        self.syncContext.saveOrRollback()
-                        NotificationInContext(name: .calculateBadgeCount, context: self.syncContext.notificationContext).post()
-                    }
-                }
-            } else if !DeveloperFlag.ignoreIncomingEvents.isOn {
-                Logging.eventProcessing.info("Buffering \(updateEvents.count) event(s)")
-                self.bufferedEvents = updateEvents
-            }
-    }
-
-    public func storeAndProcessUpdateEvents(_ updateEvents: [ZMUpdateEvent], ignoreBuffer: Bool) async {
-        await storeUpdateEvents(updateEvents, ignoreBuffer: ignoreBuffer)
-        let isLocked = await syncContext.perform { self.syncContext.isLocked }
-
-        if isLocked {
-            try? await processPendingCallEvents()
-        } else {
-            _ = await processEventsIfReady()
-        }
     }
 
     private func processStoredUpdateEvents(
@@ -247,12 +184,5 @@ actor EventProcessor: UpdateEventProcessor {
         fetchRequest.addConversationRemoteIdentifiers(toPrefetchConversations: conversationNounces)
 
         return fetchRequest
-    }
-
-    // MARK: - Buffered Events
-
-    private func processAllEventsInBuffer() async {
-        await storeUpdateEvents(bufferedEvents, ignoreBuffer: true)
-        bufferedEvents = []
     }
 }
