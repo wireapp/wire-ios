@@ -210,7 +210,8 @@ final class ChangeHandleViewController: SettingsBaseTableViewController {
     private var federationEnabled: Bool
 
     convenience init() {
-        self.init(state: HandleChangeState(currentHandle: SelfUser.current.handle ?? nil, newHandle: nil, availability: .unknown))
+        let user = SelfUser.provider?.providedSelfUser
+        self.init(state: HandleChangeState(currentHandle: user?.handle ?? nil, newHandle: nil, availability: .unknown))
     }
 
     convenience init(suggestedHandle handle: String) {
@@ -308,7 +309,13 @@ final class ChangeHandleViewController: SettingsBaseTableViewController {
         cell.handleTextField.text = state.displayHandle
         cell.handleTextField.becomeFirstResponder()
         cell.domainLabel.isHidden = !federationEnabled
-        cell.domainLabel.text = federationEnabled ? SelfUser.current.domainString : ""
+
+        if let user = SelfUser.provider?.providedSelfUser  {
+            cell.domainLabel.text = federationEnabled ? user.domainString : ""
+        } else {
+            assertionFailure("expected available 'user'!")
+        }
+
         return cell
     }
 

@@ -124,6 +124,8 @@ class MockUserType: NSObject, UserType, Decodable {
 
     // MARK: - Team
 
+    var membership: Member?
+
     var isTeamMember: Bool {
         return teamIdentifier != nil
     }

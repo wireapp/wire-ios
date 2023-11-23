@@ -82,10 +82,10 @@ final class NetworkStatusViewControllerTests: XCTestCase {
     }
 
     private func setUpSut(userInterfaceIdiom: UIUserInterfaceIdiom,
-                              horizontalSizeClass: UIUserInterfaceSizeClass,
-                              orientation: UIInterfaceOrientation,
-                              listState: NetworkStatusViewState = .offlineExpanded,
-                              rootState: NetworkStatusViewState = .offlineExpanded) {
+                          horizontalSizeClass: UIUserInterfaceSizeClass,
+                          orientation: UIInterfaceOrientation,
+                          listState: NetworkStatusViewState = .offlineExpanded,
+                          rootState: NetworkStatusViewState = .offlineExpanded) {
         sutList.update(state: listState)
         sutRoot.update(state: rootState)
 
@@ -99,8 +99,8 @@ final class NetworkStatusViewControllerTests: XCTestCase {
     }
 
     private func checkResult(listState: NetworkStatusViewState,
-                                 rootState: NetworkStatusViewState,
-                                 file: StaticString = #file, line: UInt = #line) {
+                             rootState: NetworkStatusViewState,
+                             file: StaticString = #file, line: UInt = #line) {
 
         XCTAssertEqual(sutList.networkStatusView.state, listState, "List's networkStatusView.state should be equal to \(listState)", file: file, line: line)
         XCTAssertEqual(sutRoot.networkStatusView.state, rootState, "Root's networkStatusView.state should be equal to \(rootState)", file: file, line: line)
@@ -115,11 +115,11 @@ final class NetworkStatusViewControllerTests: XCTestCase {
     ///   - listState: expected networkStatusView state in conversation list
     ///   - rootState: expected networkStatusView state in conversation root
     private func checkForNetworkStatusViewState(userInterfaceIdiom: UIUserInterfaceIdiom,
-                                                    horizontalSizeClass: UIUserInterfaceSizeClass,
-                                                    orientation: UIInterfaceOrientation,
-                                                    listState: NetworkStatusViewState,
-                                                    rootState: NetworkStatusViewState,
-                                                    file: StaticString = #file, line: UInt = #line) {
+                                                horizontalSizeClass: UIUserInterfaceSizeClass,
+                                                orientation: UIInterfaceOrientation,
+                                                listState: NetworkStatusViewState,
+                                                rootState: NetworkStatusViewState,
+                                                file: StaticString = #file, line: UInt = #line) {
         // GIVEN & WHEN
         setUpSut(userInterfaceIdiom: userInterfaceIdiom, horizontalSizeClass: horizontalSizeClass, orientation: orientation)
 
@@ -189,10 +189,6 @@ final class NetworkStatusViewControllerTests: XCTestCase {
 final class NetworkStatusViewControllerRetainTests: XCTestCase {
 
     weak var sut: NetworkStatusViewController! = nil
-
-    override func setUp() {
-        super.setUp()
-    }
 
     override func tearDown() {
         sut = nil

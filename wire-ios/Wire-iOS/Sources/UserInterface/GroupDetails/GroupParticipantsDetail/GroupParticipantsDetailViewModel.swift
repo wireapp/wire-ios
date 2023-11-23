@@ -18,6 +18,7 @@
 
 import Foundation
 import WireDataModel
+import WireSyncEngine
 
 fileprivate extension String {
     var isValidQuery: Bool {
@@ -35,6 +36,8 @@ final class GroupParticipantsDetailViewModel: NSObject, SearchHeaderViewControll
     let selectedParticipants: [UserType]
     let conversation: GroupParticipantsDetailConversation
     var participantsDidChange: (() -> Void)?
+
+    let userSession: UserSession
 
     fileprivate var token: NSObjectProtocol?
 
@@ -57,11 +60,12 @@ final class GroupParticipantsDetailViewModel: NSObject, SearchHeaderViewControll
     var members = [UserType]()
 
     init(selectedParticipants: [UserType],
-         conversation: GroupParticipantsDetailConversation) {
+         conversation: GroupParticipantsDetailConversation,
+         userSession: UserSession) {
         internalParticipants = conversation.sortedOtherParticipants
         self.conversation = conversation
         self.selectedParticipants = selectedParticipants.sorted { $0.name < $1.name }
-
+        self.userSession = userSession
         super.init()
 
         if let conversation = conversation as? ZMConversation {

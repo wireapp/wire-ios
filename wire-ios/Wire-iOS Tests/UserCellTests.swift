@@ -49,10 +49,14 @@ final class UserCellTests: ZMSnapshotTestCase {
                         file: StaticString = #file,
                         testName: String = #function,
                         line: UInt = #line) {
+        guard let user = SelfUser.provider?.providedSelfUser else {
+            assertionFailure("expected available 'user'!")
+            return
+        }
 
         sut = UserCell(frame: CGRect(x: 0, y: 0, width: 320, height: 56))
         sut.configure(with: mockUser,
-                      selfUser: SelfUser.current,
+                      selfUser: user,
                       conversation: conversation)
         sut.accessoryIconView.isHidden = false
 
@@ -123,20 +127,30 @@ final class UserCellTests: ZMSnapshotTestCase {
     }
 
     func testUserInsideOngoingVideoCall() {
-        var callParticipantState: CallParticipantState = .connected(videoState: .started, microphoneState: .unmuted)
+        guard let user = SelfUser.provider?.providedSelfUser else {
+            assertionFailure("expected available 'user'!")
+            return
+        }
+
+        let callParticipantState: CallParticipantState = .connected(videoState: .started, microphoneState: .unmuted)
         let config = CallParticipantsListCellConfiguration.callParticipant(user: HashBox(value: mockUser), callParticipantState: callParticipantState, activeSpeakerState: .inactive)
 
         sut = UserCell(frame: CGRect(x: 0, y: 0, width: 320, height: 56))
-        sut.configure(with: config, selfUser: SelfUser.current)
+        sut.configure(with: config, selfUser: user)
         sut.overrideUserInterfaceStyle = .dark
         verifyInAllColorSchemes(matching: sut)
     }
 
     func testUserScreenSharingInsideOngoingVideoCall() {
-        var callParticipantState: CallParticipantState = .connected(videoState: .screenSharing, microphoneState: .unmuted)
+        guard let user = SelfUser.provider?.providedSelfUser else {
+            assertionFailure("expected available 'user'!")
+            return
+        }
+
+        let callParticipantState: CallParticipantState = .connected(videoState: .screenSharing, microphoneState: .unmuted)
         let config = CallParticipantsListCellConfiguration.callParticipant(user: HashBox(value: mockUser), callParticipantState: callParticipantState, activeSpeakerState: .inactive)
         sut = UserCell(frame: CGRect(x: 0, y: 0, width: 320, height: 56))
-        sut.configure(with: config, selfUser: SelfUser.current)
+        sut.configure(with: config, selfUser: user)
         sut.overrideUserInterfaceStyle = .dark
         verifyInAllColorSchemes(matching: sut)
     }

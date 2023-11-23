@@ -352,7 +352,7 @@ private extension UserType {
             return .federated
 
         } else if !self.isTeamMember,
-                  let selfUser = provider?.selfUser,
+                  let selfUser = provider?.providedSelfUser,
                   selfUser.isTeamMember {
             return .guest
         } else {

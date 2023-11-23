@@ -22,6 +22,7 @@ import WireDataModel
 @testable import Wire
 
 final class MockConversationMessageCellDelegate: ConversationMessageCellDelegate {
+
     func conversationMessageWantsToShowActionsController(_ cell: UIView, actionsController: Wire.MessageActionsViewController) {
 
     }
@@ -35,7 +36,7 @@ final class MockConversationMessageCellDelegate: ConversationMessageCellDelegate
         // no-op
     }
 
-    func conversationMessageWantsToOpenMessageDetails(_ cell: UIView, messageDetailsViewController: MessageDetailsViewController) {
+    func conversationMessageWantsToOpenMessageDetails(_ cell: UIView, for message: ZMConversationMessage, preferredDisplayMode: MessageDetailsDisplayMode) {
         // no-op
     }
 

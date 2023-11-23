@@ -36,11 +36,13 @@ final class AudioRecordViewControllerTests: ZMSnapshotTestCase {
 
     var sut: AudioRecordViewController!
     fileprivate var delegate: MockAudioRecordViewControllerDelegate!
+    var userSession: UserSessionMock!
 
     override func setUp() {
         super.setUp()
         accentColor = .strongBlue
-        sut = AudioRecordViewController()
+        userSession = UserSessionMock()
+        sut = AudioRecordViewController(userSession: userSession)
         delegate = MockAudioRecordViewControllerDelegate()
         sut.delegate = delegate
         sut.updateTimeLabel(123)
@@ -50,6 +52,8 @@ final class AudioRecordViewControllerTests: ZMSnapshotTestCase {
     override func tearDown() {
         sut = nil
         delegate = nil
+        userSession = nil
+
         super.tearDown()
     }
 

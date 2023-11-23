@@ -263,12 +263,12 @@ class ConversationMessageCellTableViewAdapter<C: ConversationMessageCellDescript
         // other gesture recognizers the opportunity to fire.
         return cellDescription?.actionController?.singleTapAction != nil
     }
-    
+
     override func prepareForReuse() {
         super.prepareForReuse()
         cellView.prepareForReuse()
     }
-    
+
     override func systemLayoutSizeFitting(_ targetSize: CGSize, withHorizontalFittingPriority horizontalFittingPriority: UILayoutPriority, verticalFittingPriority: UILayoutPriority) -> CGSize {
         _ = cellView.systemLayoutSizeFitting(targetSize, withHorizontalFittingPriority: horizontalFittingPriority, verticalFittingPriority: verticalFittingPriority)
         return super.systemLayoutSizeFitting(targetSize, withHorizontalFittingPriority: horizontalFittingPriority, verticalFittingPriority: verticalFittingPriority)
