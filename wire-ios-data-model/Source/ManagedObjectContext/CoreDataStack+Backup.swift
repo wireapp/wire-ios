@@ -168,10 +168,26 @@ extension CoreDataStack {
         from backupDirectory: URL,
         applicationContainer: URL,
         dispatchGroup: ZMSDispatchGroup? = nil,
-        messagingMigrator: CoreDataMessagingMigratorProtocol? = nil,
         completion: @escaping ((Result<URL>) -> Void)
-        ) {
+    ) {
+        importLocalStorage(
+            accountIdentifier: accountIdentifier,
+            from: backupDirectory,
+            applicationContainer: applicationContainer,
+            dispatchGroup: dispatchGroup,
+            messagingMigrator: CoreDataMessagingMigrator(isInMemoryStore: false),
+            completion: completion
+        )
+    }
 
+    static func importLocalStorage(
+        accountIdentifier: UUID,
+        from backupDirectory: URL,
+        applicationContainer: URL,
+        dispatchGroup: ZMSDispatchGroup? = nil,
+        messagingMigrator: CoreDataMessagingMigratorProtocol,
+        completion: @escaping ((Result<URL>) -> Void)
+    ) {
         func fail(_ error: BackupImportError) {
             WireLogger.localStorage.error("backup: error backing up local store: \(error)")
             log.debug("error backing up local store: \(error)")
@@ -208,8 +224,7 @@ extension CoreDataStack {
                 try prepareStoreForBackupImport(coordinator: coordinator, location: backupStoreFile, options: options)
 
                 WireLogger.localStorage.debug("backup: migrate database \(metadata.modelVersion) to \(currentModel.version)")
-                let migrator: CoreDataMessagingMigratorProtocol = messagingMigrator ?? CoreDataMessagingMigrator(isInMemoryStore: false)
-                try migrator.migrateStore(at: backupStoreFile, toVersion: .current)
+                try messagingMigrator.migrateStore(at: backupStoreFile, toVersion: .current)
 
                 // Import the persistent store to the account data directory
                 WireLogger.localStorage.debug("backup: import the persistent store to the account data directory")
