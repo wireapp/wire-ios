@@ -21,7 +21,7 @@ import WireUtilities
 import WireTransport
 
 public protocol ProteusToMLSMigrationCoordinating {
-    func updateMigrationStatus() async
+    func updateMigrationStatus() async throws
 }
 
 public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating {
@@ -86,10 +86,10 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
 
     // MARK: - Public Interface
 
-    public func updateMigrationStatus() async {
+    public func updateMigrationStatus() async throws {
         switch storage.migrationStatus {
         case .notStarted:
-            await startMigrationIfNeeded()
+            try await startMigrationIfNeeded()
         case .started:
             await migrateOrJoinGroupConversations()
         default:
@@ -99,7 +99,7 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
 
     // MARK: - Internal Methods
 
-    func startMigrationIfNeeded() async {
+    func startMigrationIfNeeded() async throws {
         logger.info("checking if proteus-to-mls migration can start")
         let migrationStartStatus = await resolveMigrationStartStatus()
 
@@ -110,7 +110,7 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
             }
 
             logger.info("starting proteus-to-mls migration")
-            mlsService.startProteusToMLSMigration()
+            try await mlsService.startProteusToMLSMigration()
             storage.migrationStatus = .started
         case .cannotStart(reason: let reason):
             logger.info("proteus-to-mls migration can't start (reason: \(reason))")

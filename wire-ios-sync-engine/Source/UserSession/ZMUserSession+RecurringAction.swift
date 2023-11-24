@@ -23,7 +23,11 @@ extension ZMUserSession {
     func updateProteusToMLSMigrationStatus(interval: TimeInterval = .oneDay) -> RecurringAction {
         return RecurringAction(id: "updateProteusToMLSMigrationStatus", interval: interval) { [weak self] in
             Task { [weak self] in
-                await self?.proteusToMLSMigrationCoordinator.updateMigrationStatus()
+                do {
+                    try await self?.proteusToMLSMigrationCoordinator.updateMigrationStatus()
+                } catch {
+                    WireLogger.mls.error("proteusToMLSMigrationCoordinator.updateMigrationStatus() threw error: \(String(reflecting: error))")
+                }
             }
         }
     }

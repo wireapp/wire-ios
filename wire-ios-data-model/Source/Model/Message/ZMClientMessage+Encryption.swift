@@ -144,14 +144,21 @@ extension ZMClientMessage: EncryptedPayloadGenerator {
 
     public func encryptForTransportQualified() -> Payload? {
         guard
-            let conversation = conversation,
             let context = managedObjectContext
         else {
             return nil
         }
 
-        updateUnderlayingMessageBeforeSending(in: context)
-        return underlyingMessage?.encryptForTransport(for: conversation, useQualifiedIdentifiers: true)
+        return context.performAndWait {
+            guard
+                let conversation = conversation
+            else {
+                return nil
+            }
+
+            updateUnderlayingMessageBeforeSending(in: context)
+            return underlyingMessage?.encryptForTransport(for: conversation, useQualifiedIdentifiers: true)
+        }
     }
 
     public var debugInfo: String {
@@ -176,14 +183,22 @@ extension ZMAssetClientMessage: EncryptedPayloadGenerator {
 
     public func encryptForTransportQualified() -> Payload? {
         guard
-            let conversation = conversation,
             let context = managedObjectContext
         else {
             return nil
         }
 
-        updateUnderlayingMessageBeforeSending(in: context)
-        return underlyingMessage?.encryptForTransport(for: conversation, useQualifiedIdentifiers: true)
+        return context.performAndWait {
+            guard
+                let conversation = conversation
+            else {
+                return nil
+            }
+
+            updateUnderlayingMessageBeforeSending(in: context)
+            return underlyingMessage?.encryptForTransport(for: conversation, useQualifiedIdentifiers: true)
+        }
+
     }
 
     public var debugInfo: String {

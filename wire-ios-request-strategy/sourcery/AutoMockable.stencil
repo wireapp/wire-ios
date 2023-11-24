@@ -109,7 +109,7 @@ import {{ import }}
         }
     
 
-        {% if method.throws %}try {% endif %}{% if method.isAsync %}await {% endif %}mock({% call methodClosureCallParameters method %})            
+        {% if method.throws %}try {% endif %}{% if method.isAsync %}await {% endif %}mock({% call methodClosureCallParameters method %})
         
         {% else %}
         if let mock = {% call methodClosureName method %} {

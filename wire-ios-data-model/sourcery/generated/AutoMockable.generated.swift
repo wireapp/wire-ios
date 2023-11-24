@@ -1109,6 +1109,26 @@ class MockMLSActionsProviderProtocol: MLSActionsProviderProtocol {
         try await mock(qualifiedID, context)            
     }
 
+    // MARK: - updateConversationProtocol
+
+    var updateConversationProtocolQualifiedIDMessageProtocolContext_Invocations: [(qualifiedID: QualifiedID, messageProtocol: MessageProtocol, context: NotificationContext)] = []
+    var updateConversationProtocolQualifiedIDMessageProtocolContext_MockError: Error?
+    var updateConversationProtocolQualifiedIDMessageProtocolContext_MockMethod: ((QualifiedID, MessageProtocol, NotificationContext) async throws -> Void)?
+
+    func updateConversationProtocol(qualifiedID: QualifiedID, messageProtocol: MessageProtocol, context: NotificationContext) async throws {
+        updateConversationProtocolQualifiedIDMessageProtocolContext_Invocations.append((qualifiedID: qualifiedID, messageProtocol: messageProtocol, context: context))
+
+        if let error = updateConversationProtocolQualifiedIDMessageProtocolContext_MockError {
+            throw error
+        }
+
+        guard let mock = updateConversationProtocolQualifiedIDMessageProtocolContext_MockMethod else {
+            fatalError("no mock for `updateConversationProtocolQualifiedIDMessageProtocolContext`")
+        }
+
+        try await mock(qualifiedID, messageProtocol, context)            
+    }
+
 }
 public class MockMLSDecryptionServiceInterface: MLSDecryptionServiceInterface {
 
