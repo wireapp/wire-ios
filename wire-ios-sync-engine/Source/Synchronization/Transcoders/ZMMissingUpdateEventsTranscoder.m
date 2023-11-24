@@ -185,13 +185,13 @@ NSUInteger const ZMMissingUpdateEventsTranscoderListPageSize = 500;
     ZMLogWithLevelAndTag(ZMLogLevelInfo, ZMTAG_EVENT_PROCESSING, @"Downloaded %lu event(s)", (unsigned long)parsedEvents.count);
 
     BOOL finished = !self.listPaginator.hasMoreToFetch;
-    [self.managedObjectContext enterAllGroupsExceptSecondaryOne];
+    NSArray<ZMSDispatchGroup *> *groups = [self.managedObjectContext enterAllGroupsExceptSecondary];
 
     [self.eventProcessor processEvents:parsedEvents completionHandler:^(NSError * _Nullable error) {
         NOT_USED(error);
         [self.managedObjectContext performBlock:^{
             [self.pushNotificationStatus didFetchEventIds:eventIds lastEventId:latestEventId finished:finished];
-            [self.managedObjectContext leaveAllGroupsExceptSecondaryOne];
+            [self.managedObjectContext leaveAllGroups:groups];
         }];
     }];
 

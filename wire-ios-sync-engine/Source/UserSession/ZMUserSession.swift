@@ -178,10 +178,10 @@ public class ZMUserSession: NSObject {
     // temporary function to simplify call to EventProcessor
     // might be replaced by something more elegant
     public func processUpdateEvents(_ events: [ZMUpdateEvent]) {
-        syncContext.enterAllGroupsExceptSecondaryOne()
+        let groups = syncContext.enterAllGroupsExceptSecondary()
         Task {
             try? await self.updateEventProcessor?.processEvents(events)
-            syncContext.leaveAllGroupsExceptSecondaryOne()
+            syncContext.leaveAllGroups(groups)
         }
     }
 
@@ -677,7 +677,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
             self?.updateNetworkState()
         }
 
-        self.syncContext.enterAllGroupsExceptSecondaryOne()
+        let groups = self.syncContext.enterAllGroupsExceptSecondary()
         Task {
             var processingInterrupted = false
             do {
@@ -700,7 +700,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
                 self?.isPerformingSync = isSyncing || processingInterrupted
                 self?.updateNetworkState()
             }
-            self.syncContext.leaveAllGroupsExceptSecondaryOne()
+            self.syncContext.leaveAllGroups(groups)
         }
     }
 

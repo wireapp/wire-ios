@@ -64,19 +64,4 @@ public extension NSManagedObjectContext {
             return result
         }
     }
-
-    @objc
-    @discardableResult
-    func enterAllGroupsExceptSecondaryOne() -> [ZMSDispatchGroup] {
-        let secondaryGroup = self.allGroups()[1]
-        return self.dispatchGroupContext.enterAll(except: secondaryGroup)
-    }
-
-    @objc
-    func leaveAllGroupsExceptSecondaryOne() {
-        var groups = self.allGroups()
-        guard groups.count > 1 else { return }
-        groups.remove(at: 1)
-        self.dispatchGroupContext.leave(groups)
-    }
 }
