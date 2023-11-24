@@ -375,7 +375,8 @@ public class ZMUserSession: NSObject {
             updateEventProcessor: updateEventProcessor!,
             localNotificationDispatcher: localNotificationDispatcher!,
             useLegacyPushNotifications: useLegacyPushNotifications,
-            lastEventIDRepository: lastEventIDRepository
+            lastEventIDRepository: lastEventIDRepository,
+            transportSession: transportSession
         )
     }
 
@@ -636,6 +637,11 @@ extension ZMUserSession: ZMSyncStateDelegate {
         managedObjectContext.performGroupedBlock { [weak self] in
             self?.notifyThirdPartyServices()
         }
+
+        NotificationInContext(
+            name: .quickSyncCompletedNotification,
+            context: syncContext.notificationContext
+        ).post()
 
         commitPendingProposalsIfNeeded()
         fetchFeatureConfigs()
