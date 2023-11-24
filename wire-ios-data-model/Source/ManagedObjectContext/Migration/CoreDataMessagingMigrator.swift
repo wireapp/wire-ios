@@ -38,14 +38,8 @@ final class CoreDataMessagingMigrator: CoreDataMessagingMigratorProtocol {
 
     private let isInMemoryStore: Bool
 
-    @available(iOS 15.0, *)
     private var persistentStoreType: NSPersistentStore.StoreType {
         isInMemoryStore ? .inMemory : .sqlite
-    }
-
-    @available(iOS, obsoleted: 15.0, renamed: "persistentStoreType")
-    private var storeType: String {
-        isInMemoryStore ? NSInMemoryStoreType : NSSQLiteStoreType
     }
 
     init(isInMemoryStore: Bool) {
@@ -71,25 +65,13 @@ final class CoreDataMessagingMigrator: CoreDataMessagingMigratorProtocol {
             let destinationURL = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true).appendingPathComponent(UUID().uuidString)
 
             do {
-                if #available(iOS 15, *) {
-                    try manager.migrateStore(
-                        from: currentURL,
-                        type: persistentStoreType,
-                        mapping: migrationStep.mappingModel,
-                        to: destinationURL,
-                        type: persistentStoreType
-                    )
-                } else {
-                    try manager.migrateStore(
-                        from: currentURL,
-                        sourceType: storeType,
-                        options: nil,
-                        with: migrationStep.mappingModel,
-                        toDestinationURL: destinationURL,
-                        destinationType: storeType,
-                        destinationOptions: nil
-                    )
-                }
+                try manager.migrateStore(
+                    from: currentURL,
+                    type: persistentStoreType,
+                    mapping: migrationStep.mappingModel,
+                    to: destinationURL,
+                    type: persistentStoreType
+                )
             } catch let error {
                 throw CoreDataMessagingMigratorError.migrateStoreFailed(error: error)
             }
@@ -157,18 +139,8 @@ final class CoreDataMessagingMigrator: CoreDataMessagingMigratorProtocol {
             let persistentStoreCoordinator = NSPersistentStoreCoordinator(managedObjectModel: model)
 
             let options = [NSSQLitePragmasOption: ["journal_mode": "DELETE"]]
-            let store: NSPersistentStore
+            let store = try persistentStoreCoordinator.addPersistentStore(type: persistentStoreType, at: storeURL, options: options)
 
-            if #available(iOS 15.0, *) {
-                store = try persistentStoreCoordinator.addPersistentStore(type: persistentStoreType, at: storeURL, options: options)
-            } else {
-                store = try persistentStoreCoordinator.addPersistentStore(
-                    ofType: storeType,
-                    configurationName: nil,
-                    at: storeURL,
-                    options: options
-                )
-            }
             try persistentStoreCoordinator.remove(store)
         } catch {
             throw CoreDataMessagingMigratorError.failedToForceWALCheckpointing
@@ -178,11 +150,7 @@ final class CoreDataMessagingMigrator: CoreDataMessagingMigratorProtocol {
     // MARK: - Helpers
 
     private func metadataForPersistentStore(at storeURL: URL) throws -> [String: Any] {
-        if #available(iOS 15.0, *) {
-            return try NSPersistentStoreCoordinator.metadataForPersistentStore(type: persistentStoreType, at: storeURL)
-        } else {
-            return try NSPersistentStoreCoordinator.metadataForPersistentStore(ofType: storeType, at: storeURL)
-        }
+        return try NSPersistentStoreCoordinator.metadataForPersistentStore(type: persistentStoreType, at: storeURL)
     }
 
     private func compatibleVersionForStoreMetadata(_ metadata: [String: Any]) -> CoreDataMessagingMigrationVersion? {
@@ -209,7 +177,7 @@ final class CoreDataMessagingMigrator: CoreDataMessagingMigratorProtocol {
                 destinationOptions: nil,
                 withPersistentStoreFrom: sourceURL,
                 sourceOptions: nil,
-                ofType: storeType
+                type: persistentStoreType
             )
         } catch {
             throw CoreDataMessagingMigratorError.failedToReplacePersistentStore(sourceURL: sourceURL, targetURL: targetURL)
@@ -219,7 +187,7 @@ final class CoreDataMessagingMigrator: CoreDataMessagingMigratorProtocol {
     private func destroyStore(at storeURL: URL) throws {
         do {
             let persistentStoreCoordinator = NSPersistentStoreCoordinator(managedObjectModel: NSManagedObjectModel())
-            try persistentStoreCoordinator.destroyPersistentStore(at: storeURL, ofType: storeType, options: nil)
+            try persistentStoreCoordinator.destroyPersistentStore(at: storeURL, type: persistentStoreType, options: nil)
         } catch {
             throw CoreDataMessagingMigratorError.failedToDestroyPersistentStore(storeURL: storeURL)
         }
