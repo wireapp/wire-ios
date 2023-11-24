@@ -72,10 +72,11 @@ extension ZMConversation {
                         return
                     }
 
-                    removeLocalConversation.invoke(
-                        with: conversation,
-                        syncContext: contextProvider.syncContext
-                    )
+                    do {
+                        try removeLocalConversation.invoke(with: conversation, syncContext: contextProvider.syncContext)
+                    } catch {
+                        WireLogger.mls.error("removeLocalConversation threw error: \(String(reflecting: error))")
+                    }
                 }
 
                 completion(.success)

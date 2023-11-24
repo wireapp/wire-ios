@@ -21,7 +21,7 @@ import WireUtilities
 import WireTransport
 
 public protocol ProteusToMLSMigrationCoordinating {
-    func updateMigrationStatus() async
+    func updateMigrationStatus() async throws
 }
 
 public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating {
@@ -86,13 +86,12 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
 
     // MARK: - Public Interface
 
-    public func updateMigrationStatus() async {
+    public func updateMigrationStatus() async throws {
         switch storage.migrationStatus {
         case .notStarted:
-            await startMigrationIfNeeded()
+            try await startMigrationIfNeeded()
         case .started:
-            // check if it should be finalised
-            break
+            await migrateOrJoinGroupConversations()
         default:
             break
         }
@@ -100,7 +99,7 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
 
     // MARK: - Internal Methods
 
-    func startMigrationIfNeeded() async {
+    func startMigrationIfNeeded() async throws {
         logger.info("checking if proteus-to-mls migration can start")
         let migrationStartStatus = await resolveMigrationStartStatus()
 
@@ -111,7 +110,7 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
             }
 
             logger.info("starting proteus-to-mls migration")
-            mlsService.startProteusToMLSMigration()
+            try await mlsService.startProteusToMLSMigration()
             storage.migrationStatus = .started
         case .cannotStart(reason: let reason):
             logger.info("proteus-to-mls migration can't start (reason: \(reason))")
@@ -146,6 +145,45 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
         }
 
         return .canStart
+    }
+
+    /// This method is responsible for migrating all `mixed` group conversations to `mls`.
+    /// It evaluates each conversation to determine if the migration needs to be finalized (i.e: updating the protocol from `mixed` to `mls`)
+    /// or if it should first join the corresponding MLS group.
+    func migrateOrJoinGroupConversations() async {
+
+        let mlsGroupIds = await context.perform { [self] in
+            do {
+                let conversations = try ZMConversation.fetchAllTeamGroupConversations(
+                    messageProtocol: .mixed,
+                    in: context
+                )
+                return conversations.compactMap { $0.mlsGroupID }
+            } catch {
+                logger.warn("Can't fetch conversations with `mixed` protocol")
+                return [MLSGroupID]()
+            }
+        }
+
+        let mlsService = await context.perform { self.context.mlsService }
+
+        guard let mlsService else {
+            return logger.warn("can't migrate conversations to mls: missing `mlsService`")
+        }
+
+        for groupID in mlsGroupIds {
+            do {
+                if mlsService.conversationExists(groupID: groupID) {
+                    // TODO: if conversation exists we finalize migration
+                } else {
+                    try await mlsService.joinGroup(with: groupID)
+                }
+
+            } catch {
+                logger.warn("Can't migrate conversation with group id \(groupID.safeForLoggingDescription) to mls: \(String(describing: error))")
+            }
+        }
+
     }
 
     // MARK: - Helpers
