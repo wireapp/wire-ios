@@ -1705,14 +1705,20 @@ public final class MLSService: MLSServiceInterface {
                 continue
             }
 
-            // update message protocol to `mixed`
-            try await actionsProvider.updateConversationProtocol(qualifiedID: qualifiedID, messageProtocol: .mixed, context: context.notificationContext)
+            do {
 
-            // sync the group conversation
-            try await actionsProvider.syncConversation(qualifiedID: qualifiedID, context: context.notificationContext)
+                // update message protocol to `mixed`
+                try await actionsProvider.updateConversationProtocol(qualifiedID: qualifiedID, messageProtocol: .mixed, context: context.notificationContext)
 
-            // create MLS group and update keying material
-            try createGroup(for: mlsGroupID)
+                // sync the group conversation
+                try await actionsProvider.syncConversation(qualifiedID: qualifiedID, context: context.notificationContext)
+
+                // create MLS group and update keying material
+                try createGroup(for: mlsGroupID)
+
+            } catch {
+                logger.error("failed to migrate conversation (\(qualifiedID)): \(String(describing: error))")
+            }
 
             do {
 
