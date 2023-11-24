@@ -1,6 +1,6 @@
-////
+//
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2023 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -177,9 +177,10 @@ class ZMHotFixTests_Integration: MessagingTest {
     }
 
     func testThatItMarksClientsNeedsToUpdateCapabilities_381_0_0() {
-        let selfClient = self.createSelfClient(self.syncMOC)
+        var selfClient: UserClient!
         syncMOC.performGroupedBlock {
             // GIVEN
+            selfClient = self.createSelfClient(self.syncMOC)
             self.syncMOC.setPersistentStoreMetadata("380.0.0", key: "lastSavedVersion")
             self.syncMOC.setPersistentStoreMetadata(NSNumber(value: true), key: "HasHistory")
 
@@ -242,29 +243,33 @@ class ZMHotFixTests_Integration: MessagingTest {
 
     func testThatItUpdatesAccessRolesForConversations_432_1_0() {
         var g1: ZMConversation!
-        // GIVEN
-        self.syncMOC.setPersistentStoreMetadata("432.0.1", key: "lastSavedVersion")
-        self.syncMOC.setPersistentStoreMetadata(NSNumber(value: true), key: "HasHistory")
+        syncMOC.performAndWait {
+            // GIVEN
+            self.syncMOC.setPersistentStoreMetadata("432.0.1", key: "lastSavedVersion")
+            self.syncMOC.setPersistentStoreMetadata(NSNumber(value: true), key: "HasHistory")
 
-        g1 = ZMConversation.insertNewObject(in: self.syncMOC)
-        g1.conversationType = .group
-        g1.team = nil
-        g1.updateAccessStatus(accessModes: ConversationAccessMode.teamOnly.stringValue,
-                              accessRoles: [ConversationAccessRoleV2.teamMember.rawValue])
+            g1 = ZMConversation.insertNewObject(in: self.syncMOC)
+            g1.conversationType = .group
+            g1.team = nil
+            g1.updateAccessStatus(accessModes: ConversationAccessMode.teamOnly.stringValue,
+                                  accessRoles: [ConversationAccessRoleV2.teamMember.rawValue])
 
-        self.syncMOC.saveOrRollback()
-        XCTAssertEqual(g1.accessRoles, [ConversationAccessRoleV2.teamMember])
-        XCTAssertEqual(g1.accessMode, ConversationAccessMode.teamOnly)
-        XCTAssertNil(g1.team)
+            self.syncMOC.saveOrRollback()
+            XCTAssertEqual(g1.accessRoles, [ConversationAccessRoleV2.teamMember])
+            XCTAssertEqual(g1.accessMode, ConversationAccessMode.teamOnly)
+            XCTAssertNil(g1.team)
+        }
 
         // WHEN
         let sut = ZMHotFix(syncMOC: self.syncMOC)
         self.performIgnoringZMLogError {
-            sut!.applyPatches(forCurrentVersion: "432.1.0")
+            self.syncMOC.performAndWait {
+                sut!.applyPatches(forCurrentVersion: "432.1.0")
+            }
         }
 
         // expect
-        let expectation = self.expectation(description: "Notified")
+        let expectation = expectation(description: "Notified")
         let token = NotificationInContext.addObserver(name: UpdateAccessRolesAction.notificationName,
                                                       context: self.syncMOC.notificationContext,
                                                       using: { note in
