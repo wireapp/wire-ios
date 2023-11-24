@@ -227,6 +227,8 @@ class ZMUserSessionTests_PushNotifications: ZMUserSessionTestsBase {
 
         let originalMessage = try XCTUnwrap(conversation.lastMessages().last as? ZMClientMessage)
         let originaMessageNonce = try XCTUnwrap(originalMessage.nonce)
+
+        ZMUser.selfUser(in: uiMOC).readReceiptsEnabled = true
         var genericMessage = originalMessage.underlyingMessage!
         genericMessage.setExpectsReadConfirmation(true)
         do {
