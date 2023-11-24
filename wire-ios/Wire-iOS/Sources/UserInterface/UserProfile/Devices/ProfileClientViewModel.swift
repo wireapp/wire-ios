@@ -21,12 +21,12 @@ import WireSyncEngine
 
 final class ProfileClientViewModel {
     let userClient: UserClient
-    private let getUserClientFingerprint: GetUserClientFingerprintUseCase
+    private let getUserClientFingerprint: GetUserClientFingerprintUseCaseProtocol
     private (set) var fingerprintData: Data?
 
     var fingerprintDataClosure: ((Data?) -> Void)?
 
-    init(userClient: UserClient, getUserClientFingerprint: GetUserClientFingerprintUseCase) {
+    init(userClient: UserClient, getUserClientFingerprint: GetUserClientFingerprintUseCaseProtocol) {
         self.getUserClientFingerprint = getUserClientFingerprint
         self.userClient = userClient
     }

@@ -45,6 +45,7 @@ final class SettingsClientViewController: UIViewController,
     private static let resetCellReuseIdentifier: String = "ResetCellReuseIdentifier"
     private static let verifiedCellReuseIdentifier: String = "VerifiedCellReuseIdentifier"
 
+    let userSession: UserSession
     let viewModel: ProfileClientViewModel
     var userClient: UserClient {
         viewModel.userClient
@@ -61,16 +62,19 @@ final class SettingsClientViewController: UIViewController,
     var removalObserver: ClientRemovalObserver?
 
     convenience init(userClient: UserClient,
+                     userSession: UserSession,
                      fromConversation: Bool,
                      credentials: ZMEmailCredentials? = .none) {
-        self.init(userClient: userClient, credentials: credentials)
+        self.init(userClient: userClient, userSession: userSession, credentials: credentials)
         self.fromConversation = fromConversation
     }
 
     required init(userClient: UserClient,
+                  userSession: UserSession,
                   credentials: ZMEmailCredentials? = .none) {
-        // FIXME: [F] update when doing https://wearezeta.atlassian.net/browse/WPB-5455
-        self.viewModel = SettingsClientViewModel(userClient: userClient, getUserClientFingerprint: ZMUserSession.shared()!.getUserClientFingerprint)
+        self.userSession = userSession
+        self.viewModel = SettingsClientViewModel(userClient: userClient,
+                                                 getUserClientFingerprint: userSession.getUserClientFingerprint)
         super.init(nibName: nil, bundle: nil)
         self.edgesForExtendedLayout = []
         self.userClientToken = UserClientChangeInfo.add(observer: self, for: userClient)
@@ -168,7 +172,7 @@ final class SettingsClientViewController: UIViewController,
     }
 
     @objc func onVerifiedChanged(_ sender: UISwitch!) {
-        guard let userSession = ZMUserSession.shared() else { return }
+        guard let userSession = userSession as? ZMUserSession else { return }
         let selfClient = userSession.selfUserClient
 
         userSession.enqueue({
@@ -190,8 +194,7 @@ final class SettingsClientViewController: UIViewController,
 
     func numberOfSections(in tableView: UITableView) -> Int {
 
-        if let userSession = ZMUserSession.shared(),
-           let userClient = userSession.selfUserClient,
+        if let userClient = (userSession as? ZMUserSession)?.selfUserClient,
            self.userClient == userClient {
             return 2
         } else {
@@ -206,7 +209,7 @@ final class SettingsClientViewController: UIViewController,
         case .info:
             return 1
         case .fingerprintAndVerify:
-            guard let userSession = ZMUserSession.shared() else { return 2 }
+            guard let userSession = (userSession as? ZMUserSession) else { return 2 }
             if self.userClient == userSession.selfUserClient {
                 return 1
             } else {

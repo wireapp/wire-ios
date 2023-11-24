@@ -19,7 +19,12 @@
 import Foundation
 import WireRequestStrategy
 
-public class GetUserClientFingerprintUseCase {
+// sourcery: AutoMockable
+public protocol GetUserClientFingerprintUseCaseProtocol {
+    func invoke(userClient: UserClient) async -> Data?
+}
+
+public class GetUserClientFingerprintUseCase: GetUserClientFingerprintUseCaseProtocol {
 
     let proteusProvider: ProteusProviding
     let context: NSManagedObjectContext
@@ -80,8 +85,8 @@ public class GetUserClientFingerprintUseCase {
 
         guard let existingUser else { return nil }
 
-        let isSelfClient = await context.perform { 
-            existingUser.isSelfClient() 
+        let isSelfClient = await context.perform {
+            existingUser.isSelfClient()
         }
 
         let canPerform  = await context.perform {

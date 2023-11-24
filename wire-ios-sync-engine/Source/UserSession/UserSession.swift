@@ -211,7 +211,7 @@ public protocol UserSession: AnyObject {
 
     var networkState: ZMNetworkState { get }
 
-    var getUserClientFingerprint: GetUserClientFingerprintUseCase { get }
+    var getUserClientFingerprint: GetUserClientFingerprintUseCaseProtocol { get }
 }
 
 extension ZMUserSession: UserSession {

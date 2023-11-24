@@ -371,8 +371,11 @@ final class ProfileClientViewController: UIViewController, SpinnerCapable {
     }
 
     @objc private func onShowMyDeviceTapped(_ sender: AnyObject) {
-        guard let selfUserClient = ZMUserSession.shared()?.selfUserClient else { return }
+        guard let session = ZMUserSession.shared(),
+              let selfUserClient = session.selfUserClient else { return }
+
         let selfClientController = SettingsClientViewController(userClient: selfUserClient,
+                                                                userSession: session,
                                                                 fromConversation: fromConversation)
 
         let navigationControllerWrapper = selfClientController.wrapInNavigationController(setBackgroundColor: true)
