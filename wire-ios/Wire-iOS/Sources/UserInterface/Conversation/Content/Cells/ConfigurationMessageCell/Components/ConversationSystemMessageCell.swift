@@ -438,24 +438,8 @@ final class ConversationSystemMessageCellDescription {
             let domainsStoppedFederatingCell = DomainsStoppedFederatingCellDescription(systemMessageData: systemMessageData)
             return [AnyConversationMessageCellDescription(domainsStoppedFederatingCell)]
 
-        case .mlsMigrationFinalized:
-            let description = MLSMigrationFinalizedCellDescription(systemMessageData: systemMessageData)
-            return [AnyConversationMessageCellDescription(description)]
-
-        case .mlsMigrationJoinAfterwards:
-            let description = MLSMigrationJoinAfterwardsCellDescription(systemMessageData: systemMessageData)
-            return [AnyConversationMessageCellDescription(description)]
-
-        case .mlsMigrationOngoingCall:
-            let description = MLSMigrationOngoingCallCellDescription(systemMessageData: systemMessageData)
-            return [AnyConversationMessageCellDescription(description)]
-
-        case .mlsMigrationStarted:
-            let description = MLSMigrationStartedCellDescription(systemMessageData: systemMessageData)
-            return [AnyConversationMessageCellDescription(description)]
-
-        case .mlsMigrationUpdateVersion:
-            let description = MLSMigrationUpdateVersionCellDescription(systemMessageData: systemMessageData)
+        case .mlsMigrationFinalized, .mlsMigrationJoinAfterwards, .mlsMigrationOngoingCall, .mlsMigrationStarted, .mlsMigrationUpdateVersion:
+            let description = MLSMigrationCellDescription(messageType: systemMessageData.systemMessageType)
             return [AnyConversationMessageCellDescription(description)]
 
         case .invalid:
