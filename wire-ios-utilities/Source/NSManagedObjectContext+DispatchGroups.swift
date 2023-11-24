@@ -1,6 +1,6 @@
-//
+////
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2023 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,13 +18,15 @@
 
 import Foundation
 
-public protocol EntityTranscoder: AnyObject {
-    associatedtype Entity: Hashable
+public extension NSManagedObjectContext {
 
-    func request(forEntity entity: Entity, apiVersion: APIVersion) -> ZMTransportRequest?
-
-    func request(forEntity entity: Entity, didCompleteWithResponse response: ZMTransportResponse)
-
-    func shouldTryToResend(entity: Entity, afterFailureWithResponse response: ZMTransportResponse) -> Bool
+    /// Enter all dispatch groups except the 2nd standard dispatch group.
+    ///
+    /// Should be used instead of `enterAllGroups` when it's desired to wait for Tasks to complete in tests since
+    /// otherwise  delayed saves could be blocked.
+    func enterAllGroupsExceptSecondary() -> [ZMSDispatchGroup] {
+        let secondaryGroup = dispatchGroupContext.groups[1]
+        return dispatchGroupContext.enterAll(except: secondaryGroup)
+    }
 
 }

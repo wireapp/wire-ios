@@ -1,6 +1,6 @@
-//
+////
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2023 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,22 +18,6 @@
 
 import Foundation
 
-extension ZMTBaseTest {
-
-    func wait(timeout: TimeInterval = 0.5, forAsyncBlock block: @escaping () async throws -> Void) {
-        let expectation = self.expectation(description: "isDone")
-
-        Task {
-            do {
-                try await block()
-            } catch {
-                XCTFail("test failed: \(String(describing: error))")
-            }
-
-            expectation.fulfill()
-        }
-
-        XCTAssert(waitForCustomExpectations(withTimeout: timeout))
-    }
-
+public extension NSNotification.Name {
+    static let quickSyncCompletedNotification = NSNotification.Name(rawValue: "QuickSyncCompletedNotification")
 }

@@ -23,7 +23,7 @@ final class MessageSendingStatusPayloadProcessor {
     /// Updates the reported client changes after an attempt to send the message
     ///
     /// - Parameter message: message for which the message sending status was created
-    /// - Returns *True* if the message was missing clients in the original payload.
+    /// - Returns reported missing clients
     ///
     /// If a message was missing clients we should attempt to send the message again
     /// after establishing sessions with the missing clients.
@@ -32,7 +32,7 @@ final class MessageSendingStatusPayloadProcessor {
     func updateClientsChanges(
         from payload: Payload.MessageSendingStatus,
         for message: any ProteusMessage
-    ) -> Bool {
+    ) -> [ZMUser: [UserClient]] {
         WireLogger.messaging.debug("update client changes for message \(message.debugInfo)")
 
         let deletedClients = payload.deleted.fetchClients(in: message.context)
@@ -67,10 +67,10 @@ final class MessageSendingStatusPayloadProcessor {
             WireLogger.messaging.debug("detected missing clients")
         }
 
-        for (user, userClients) in missingClients {
+        for (_, userClients) in missingClients {
             userClients.forEach({ $0.discoveredByMessage = message as? ZMOTRMessage })
             message.registersNewMissingClients(Set(userClients))
-            message.conversation?.addParticipantAndSystemMessageIfMissing(user, date: nil)
+            message.conversation?.decreaseSecurityLevelIfNeededAfterDiscovering(clients: Set(userClients), causedBy: message as? ZMOTRMessage)
         }
 
         let failedToConfirmUsers = payload.failedToConfirm.fetchUsers(in: message.context)
@@ -78,7 +78,7 @@ final class MessageSendingStatusPayloadProcessor {
             message.addFailedToSendRecipients(failedToConfirmUsers)
         }
 
-        return !missingClients.isEmpty
+        return missingClients
     }
 
     func missingClientListByUser(

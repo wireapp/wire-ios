@@ -346,7 +346,8 @@ public class SharingSession {
         let strategyFactory = StrategyFactory(
             syncContext: coreDataStack.syncContext,
             applicationStatus: applicationStatusDirectory,
-            linkPreviewPreprocessor: linkPreviewPreprocessor
+            linkPreviewPreprocessor: linkPreviewPreprocessor,
+            transportSession: transportSession
         )
 
         let requestGeneratorStore = RequestGeneratorStore(strategies: strategyFactory.strategies)

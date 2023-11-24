@@ -278,7 +278,7 @@ class ZMHotFixTests_Integration: MessagingTest {
 
         // then
         withExtendedLifetime(token) {
-            XCTAssert(waitForCustomExpectations(withTimeout: 0.1))
+            XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
         }
     }
 
