@@ -19,7 +19,7 @@
 import Foundation
 import LocalAuthentication
 @testable import Wire
-import Support
+import WireSyncEngineSupport
 
 final class UserSessionMock: UserSession {
     typealias Preference = AppLockPasscodePreference
