@@ -267,7 +267,7 @@ extension CoreDataStack {
         databaseKey: VolatileData? = nil
     ) throws {
         // Add persistent store at the new location to allow creation of NSManagedObjectContext
-        let store = try coordinator.addPersistentStore(ofType: NSSQLiteStoreType, configurationName: nil, at: location, options: options)
+        let store = try coordinator.addPersistentStore(type: .sqlite, configuration: nil, at: location, options: options)
         let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         context.persistentStoreCoordinator = coordinator
 
@@ -287,7 +287,7 @@ extension CoreDataStack {
 
     private static func prepareStoreForBackupImport(coordinator: NSPersistentStoreCoordinator, location: URL, options: [String: Any]) throws {
         // Add persistent store at the new location to allow creation of NSManagedObjectContext
-        let store = try coordinator.addPersistentStore(ofType: NSSQLiteStoreType, configurationName: nil, at: location, options: options)
+        let store = try coordinator.addPersistentStore(type: .sqlite, configuration: nil, at: location, options: options)
         let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         context.persistentStoreCoordinator = coordinator
 

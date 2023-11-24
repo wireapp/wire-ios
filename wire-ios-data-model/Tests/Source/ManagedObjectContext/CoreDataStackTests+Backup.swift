@@ -179,7 +179,7 @@ class CoreDataStackTests_Backup: DatabaseBaseTest {
             let model = CoreDataStack.loadMessagingModel()
             let coordinator = NSPersistentStoreCoordinator(managedObjectModel: model)
             let storeFile = backup.appendingPathComponent("data").appendingStoreFile()
-            _ = try coordinator.addPersistentStore(ofType: NSSQLiteStoreType, configurationName: nil, at: storeFile, options: [:])
+            _ = try coordinator.addPersistentStore(type: .sqlite, configuration: nil, at: storeFile, options: [:])
             XCTAssert(FileManager.default.fileExists(atPath: storeFile.path))
             let context = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
             context.persistentStoreCoordinator = coordinator
