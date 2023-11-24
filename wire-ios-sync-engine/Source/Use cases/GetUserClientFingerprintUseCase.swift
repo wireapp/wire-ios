@@ -80,9 +80,11 @@ public class GetUserClientFingerprintUseCase {
 
         guard let existingUser else { return nil }
 
-        let isSelfClient: Bool = await context.perform { existingUser.isSelfClient() }
+        let isSelfClient = await context.perform { 
+            existingUser.isSelfClient() 
+        }
 
-        let canPerform: Bool = await context.perform {
+        let canPerform  = await context.perform {
             self.proteusProvider.canPerform
         }
 
