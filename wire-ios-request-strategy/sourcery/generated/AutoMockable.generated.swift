@@ -1,4 +1,4 @@
-// Generated using Sourcery 2.1.2 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 2.0.3 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 // swiftlint:disable line_length
 // swiftlint:disable variable_name
@@ -244,12 +244,15 @@ public class MockPrekeyPayloadProcessorInterface: PrekeyPayloadProcessorInterfac
     }
 
 }
-
 public class MockQuickSyncObserverInterface: QuickSyncObserverInterface {
 
     // MARK: - Life cycle
 
     public init() {}
+
+
+    // MARK: - waitForQuickSyncToFinish
+
     public var waitForQuickSyncToFinish_Invocations: [Void] = []
     public var waitForQuickSyncToFinish_MockMethod: (() async -> Void)?
 

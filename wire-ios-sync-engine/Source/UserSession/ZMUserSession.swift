@@ -234,8 +234,8 @@ public class ZMUserSession: NSObject {
         tornDown = true
     }
 
+    /// - Note: this is safe if coredataStack and proteus are ready
     public lazy var getUserClientFingerprint: GetUserClientFingerprintUseCase = {
-        // Note: this is safe if coredataStack and proteus are ready
         GetUserClientFingerprintUseCase(syncContext: coreDataStack.syncContext,
                                         transportSession: transportSession)
     }()

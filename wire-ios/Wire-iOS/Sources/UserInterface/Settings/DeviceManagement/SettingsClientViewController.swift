@@ -69,7 +69,8 @@ final class SettingsClientViewController: UIViewController,
 
     required init(userClient: UserClient,
                   credentials: ZMEmailCredentials? = .none) {
-        self.viewModel = SettingsClientViewModel(userClient: userClient)
+        // FIXME: [F] update when doing https://wearezeta.atlassian.net/browse/WPB-5455
+        self.viewModel = SettingsClientViewModel(userClient: userClient, getUserClientFingerprint: ZMUserSession.shared()!.getUserClientFingerprint)
         super.init(nibName: nil, bundle: nil)
         self.edgesForExtendedLayout = []
         self.userClientToken = UserClientChangeInfo.add(observer: self, for: userClient)

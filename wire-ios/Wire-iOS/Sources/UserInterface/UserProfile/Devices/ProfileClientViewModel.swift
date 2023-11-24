@@ -26,12 +26,8 @@ final class ProfileClientViewModel {
 
     var fingerprintDataClosure: ((Data?) -> Void)?
 
-    init(userClient: UserClient, getUserClientFingerprint: GetUserClientFingerprintUseCase? = nil) {
-        // TODO: [F] replace when https://github.com/wireapp/wire-ios/pull/674 merged
-        guard let useCase = getUserClientFingerprint ?? ZMUserSession.shared()?.getUserClientFingerprint else {
-            fatalError("Missing fingerprintUseCase, check the setup")
-        }
-        self.getUserClientFingerprint = useCase
+    init(userClient: UserClient, getUserClientFingerprint: GetUserClientFingerprintUseCase) {
+        self.getUserClientFingerprint = getUserClientFingerprint
         self.userClient = userClient
     }
 

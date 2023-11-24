@@ -75,8 +75,8 @@ final class ProfileClientViewController: UIViewController, SpinnerCapable {
     }
 
    required init(client: UserClient, userSession: UserSession) {
-       self.viewModel = ProfileClientViewModel(userClient: client)
- 
+       self.viewModel = ProfileClientViewModel(userClient: client, getUserClientFingerprint: userSession.getUserClientFingerprint)
+
         super.init(nibName: nil, bundle: nil)
 
         userClientToken = UserClientChangeInfo.add(observer: self, for: client)
