@@ -1609,9 +1609,9 @@ extension NSManagedObjectContext {
 
 extension SessionManagerTests {
 
-    // FIXME: [jacob] this test will hang,
+    // FIXME: [jacob] this test will hang WPB-5638
     //
-    // since markAllConversationsAsRead() will schedule read up update message
+    // Since markAllConversationsAsRead() will schedule read up update message
     // which are never sent because the user sessions are not logged in. Refactor
     // SessionManager so that these tests can become unit tests where the user
     // sessions are mocked.
