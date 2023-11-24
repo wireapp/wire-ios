@@ -61,7 +61,7 @@ struct ReadReceiptViewModel {
         case .readReceiptsEnabled:
             updateText = createSystemMessage(template: "content.system.message_read_receipt_on")
         case .readReceiptsOn:
-            updateText = NSAttributedString(string: "content.system.message_read_receipt_on_add_to_group".localized, attributes: baseAttributes)
+            updateText = NSAttributedString(string: L10n.Localizable.Content.System.messageReadReceiptOnAddToGroup, attributes: baseAttributes)
         default:
             assertionFailure("invalid systemMessageType for ReadReceiptViewModel")
         }
