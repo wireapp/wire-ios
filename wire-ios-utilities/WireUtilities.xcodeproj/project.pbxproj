@@ -21,6 +21,7 @@
 		09F028E11B78BE2700BADDB6 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 09F028DF1B78BE2700BADDB6 /* LaunchScreen.xib */; };
 		16030DC021AEA0FE00F8032E /* Array+PartitionByKeyPath.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16030DBF21AEA0FE00F8032E /* Array+PartitionByKeyPath.swift */; };
 		16030DC221AEA14100F8032E /* ArrayPartitionByKeyPathTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16030DC121AEA14100F8032E /* ArrayPartitionByKeyPathTests.swift */; };
+		1623F8F52AF1278A004F0319 /* NSManagedObjectContext+DispatchGroups.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1623F8F42AF1278A004F0319 /* NSManagedObjectContext+DispatchGroups.swift */; };
 		163FB9061F2229DF00802AF4 /* DispatchGroupContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 163FB9051F2229DF00802AF4 /* DispatchGroupContext.swift */; };
 		163FB9081F22302C00802AF4 /* DispatchGroupQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 163FB9071F22302C00802AF4 /* DispatchGroupQueue.swift */; };
 		163FB90C1F25EA0B00802AF4 /* DispatchGroupContextTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 163FB90B1F25EA0B00802AF4 /* DispatchGroupContextTests.swift */; };
@@ -263,6 +264,7 @@
 		09F028F61B78BEBB00BADDB6 /* WireUtilities-tests-host.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "WireUtilities-tests-host.entitlements"; sourceTree = "<group>"; };
 		16030DBF21AEA0FE00F8032E /* Array+PartitionByKeyPath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+PartitionByKeyPath.swift"; sourceTree = "<group>"; };
 		16030DC121AEA14100F8032E /* ArrayPartitionByKeyPathTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArrayPartitionByKeyPathTests.swift; sourceTree = "<group>"; };
+		1623F8F42AF1278A004F0319 /* NSManagedObjectContext+DispatchGroups.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSManagedObjectContext+DispatchGroups.swift"; sourceTree = "<group>"; };
 		163FB9051F2229DF00802AF4 /* DispatchGroupContext.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DispatchGroupContext.swift; sourceTree = "<group>"; };
 		163FB9071F22302C00802AF4 /* DispatchGroupQueue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DispatchGroupQueue.swift; sourceTree = "<group>"; };
 		163FB90B1F25EA0B00802AF4 /* DispatchGroupContextTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DispatchGroupContextTests.swift; sourceTree = "<group>"; };
@@ -560,6 +562,7 @@
 				54CA31141B74F2C400B820C0 /* Public */,
 				F9C9A79F1CAEACB10039E10C /* Validation */,
 				54CA31521B74F7D400B820C0 /* NSManagedObjectContext+WireUtilities.m */,
+				1623F8F42AF1278A004F0319 /* NSManagedObjectContext+DispatchGroups.swift */,
 				D5D65A12207631A100D7F3C3 /* NSManagedObjectContext+PerformGrouped.swift */,
 				163FB9051F2229DF00802AF4 /* DispatchGroupContext.swift */,
 				D53DB99E203ED59C00655CB4 /* Result.swift */,
@@ -1105,6 +1108,7 @@
 				F19E554D22AFDC8D005C792D /* String+ReadableHash.swift in Sources */,
 				F9C9A7941CAEA7200039E10C /* ZMEncodedNSUUIDWithTimestamp.m in Sources */,
 				EE5316442A13B61200A9E0B1 /* PrivateUserDefaults.swift in Sources */,
+				1623F8F52AF1278A004F0319 /* NSManagedObjectContext+DispatchGroups.swift in Sources */,
 				3E88BE231B1F478200232589 /* NSURL+QueryComponents.m in Sources */,
 				3E88BE431B1F478200232589 /* ZMFunctional+noARC.m in Sources */,
 				BF9D0B091F1CF3F8005D4C31 /* Optional+Apply.swift in Sources */,
@@ -1267,10 +1271,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = "WireUtilities-tests-host/WireUtilities-tests-host.entitlements";
 				INFOPLIST_FILE = "WireUtilities-tests-host/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WIRE_BUNDLE_ID = "com.wearezeta.zclient-alpha";
@@ -1284,10 +1285,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = "WireUtilities-tests-host/WireUtilities-tests-host.entitlements";
 				INFOPLIST_FILE = "WireUtilities-tests-host/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WIRE_BUNDLE_ID = "com.wearezeta.zclient-alpha";
