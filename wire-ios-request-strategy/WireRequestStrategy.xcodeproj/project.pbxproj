@@ -38,7 +38,6 @@
 		0649D1A124F671E6001DDC78 /* UserNotificationCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0649D1A024F671E6001DDC78 /* UserNotificationCenter.swift */; };
 		0649D1A624F673E7001DDC78 /* Logging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0649D1A524F673E7001DDC78 /* Logging.swift */; };
 		067197622AE9255800D96598 /* HttpClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 067197612AE9255800D96598 /* HttpClient.swift */; };
-		067197672AE9510500D96598 /* E2eIRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 067197662AE9506700D96598 /* E2eIRepository.swift */; };
 		0671976E2AE951F400D96598 /* AcmeClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0671976D2AE951F400D96598 /* AcmeClient.swift */; };
 		067197722AE9622500D96598 /* EnrollE2eICertificateUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 067197712AE9621D00D96598 /* EnrollE2eICertificateUseCase.swift */; };
 		0671979A2AFBE9FD00D96598 /* AcmeResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 067197992AFBE9FD00D96598 /* AcmeResponse.swift */; };
@@ -474,7 +473,6 @@
 		0649D1A024F671E6001DDC78 /* UserNotificationCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserNotificationCenter.swift; sourceTree = "<group>"; };
 		0649D1A524F673E7001DDC78 /* Logging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logging.swift; sourceTree = "<group>"; };
 		067197612AE9255800D96598 /* HttpClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpClient.swift; sourceTree = "<group>"; };
-		067197662AE9506700D96598 /* E2eIRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = E2eIRepository.swift; sourceTree = "<group>"; };
 		0671976D2AE951F400D96598 /* AcmeClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AcmeClient.swift; sourceTree = "<group>"; };
 		067197712AE9621D00D96598 /* EnrollE2eICertificateUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnrollE2eICertificateUseCase.swift; sourceTree = "<group>"; };
 		067197992AFBE9FD00D96598 /* AcmeResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AcmeResponse.swift; sourceTree = "<group>"; };
@@ -950,7 +948,6 @@
 			children = (
 				067197682AE9516100D96598 /* ACME */,
 				067197712AE9621D00D96598 /* EnrollE2eICertificateUseCase.swift */,
-				067197662AE9506700D96598 /* E2eIRepository.swift */,
 				0640BF6E2B0F6B78008866E4 /* E2eIEnrollment.swift */,
 				06D61FB72B0CBE3100C2699A /* E2eIEnrollmentTests.swift */,
 			);
@@ -2069,7 +2066,6 @@
 				633B396A2891890600208124 /* ZMUpdateEvent+Decryption.swift in Sources */,
 				06474D4B24AF6858002C695D /* EventDecoder.swift in Sources */,
 				EE402C0128996AA300CA0E40 /* MLSMessageSync.swift in Sources */,
-				067197672AE9510500D96598 /* E2eIRepository.swift in Sources */,
 				06025666248E616C00E060E1 /* ZMSimpleListRequestPaginator.m in Sources */,
 				F18401A42073BE0800E9F4CC /* GenericMessageRequestStrategy.swift in Sources */,
 				1621D2751D7715EA007108C2 /* ZMObjectSyncStrategy.m in Sources */,
