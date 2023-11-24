@@ -1,6 +1,6 @@
-////
+//
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2023 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -177,9 +177,10 @@ class ZMHotFixTests_Integration: MessagingTest {
     }
 
     func testThatItMarksClientsNeedsToUpdateCapabilities_381_0_0() {
-        let selfClient = self.createSelfClient(self.syncMOC)
+        var selfClient: UserClient!
         syncMOC.performGroupedBlock {
             // GIVEN
+            selfClient = self.createSelfClient(self.syncMOC)
             self.syncMOC.setPersistentStoreMetadata("380.0.0", key: "lastSavedVersion")
             self.syncMOC.setPersistentStoreMetadata(NSNumber(value: true), key: "HasHistory")
 
