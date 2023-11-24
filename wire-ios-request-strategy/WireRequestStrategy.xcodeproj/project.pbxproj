@@ -39,7 +39,6 @@
 		0649D1A624F673E7001DDC78 /* Logging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0649D1A524F673E7001DDC78 /* Logging.swift */; };
 		067197622AE9255800D96598 /* HttpClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 067197612AE9255800D96598 /* HttpClient.swift */; };
 		0671976E2AE951F400D96598 /* AcmeClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0671976D2AE951F400D96598 /* AcmeClient.swift */; };
-		067197722AE9622500D96598 /* EnrollE2eICertificateUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 067197712AE9621D00D96598 /* EnrollE2eICertificateUseCase.swift */; };
 		0671979A2AFBE9FD00D96598 /* AcmeResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 067197992AFBE9FD00D96598 /* AcmeResponse.swift */; };
 		067215AD2B10DCA300CF4AD4 /* E2eIRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 067215AC2B10DCA300CF4AD4 /* E2eIRepository.swift */; };
 		068084962563B6940047899C /* FeatureConfigRequestStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 068084952563B6940047899C /* FeatureConfigRequestStrategy.swift */; };
@@ -475,7 +474,6 @@
 		0649D1A524F673E7001DDC78 /* Logging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logging.swift; sourceTree = "<group>"; };
 		067197612AE9255800D96598 /* HttpClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpClient.swift; sourceTree = "<group>"; };
 		0671976D2AE951F400D96598 /* AcmeClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AcmeClient.swift; sourceTree = "<group>"; };
-		067197712AE9621D00D96598 /* EnrollE2eICertificateUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnrollE2eICertificateUseCase.swift; sourceTree = "<group>"; };
 		067197992AFBE9FD00D96598 /* AcmeResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AcmeResponse.swift; sourceTree = "<group>"; };
 		067215AC2B10DCA300CF4AD4 /* E2eIRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = E2eIRepository.swift; sourceTree = "<group>"; };
 		068084952563B6940047899C /* FeatureConfigRequestStrategy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeatureConfigRequestStrategy.swift; sourceTree = "<group>"; };
@@ -949,7 +947,6 @@
 			isa = PBXGroup;
 			children = (
 				067197682AE9516100D96598 /* ACME */,
-				067197712AE9621D00D96598 /* EnrollE2eICertificateUseCase.swift */,
 				0640BF6E2B0F6B78008866E4 /* E2eIEnrollment.swift */,
 				06D61FB72B0CBE3100C2699A /* E2eIEnrollmentTests.swift */,
 				067215AC2B10DCA300CF4AD4 /* E2eIRepository.swift */,
@@ -2052,7 +2049,6 @@
 				060ED6D62499F41000412C4A /* PushNotificationStatus.swift in Sources */,
 				EEFB2DFE2ACD530F0094F877 /* PrekeyPayloadProcessor.swift in Sources */,
 				F18401D82073BE0800E9F4CC /* ZMConversation+Notifications.swift in Sources */,
-				067197722AE9622500D96598 /* EnrollE2eICertificateUseCase.swift in Sources */,
 				F18401D92073BE0800E9F4CC /* EncryptionSessionDirectory+UpdateEvents.swift in Sources */,
 				F18401C72073BE0800E9F4CC /* AssetV3PreviewDownloadStrategy.swift in Sources */,
 				F18401B52073BE0800E9F4CC /* OTREntityTranscoder.swift in Sources */,
