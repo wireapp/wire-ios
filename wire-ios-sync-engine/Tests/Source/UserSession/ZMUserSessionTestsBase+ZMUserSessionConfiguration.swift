@@ -21,6 +21,7 @@ extension ZMUserSessionTestsBase {
     func createSut() {
         let mockStrategyDirectory = MockStrategyDirectory()
         let mockUpdateEventProcessor = MockUpdateEventProcessor()
+        let mockCryptoboxMigrationManager = MockCryptoboxMigrationManagerInterface()
         sut = ZMUserSession(
             userId: coreDataStack.account.userIdentifier,
             transportSession: transportSession,
@@ -35,6 +36,7 @@ extension ZMUserSessionTestsBase {
             appVersion: "00000",
             coreDataStack: coreDataStack,
             configuration: .init(),
+            cryptoboxMigrationManager: mockCryptoboxMigrationManager,
             sharedUserDefaults: sharedUserDefaults
         )
     }
