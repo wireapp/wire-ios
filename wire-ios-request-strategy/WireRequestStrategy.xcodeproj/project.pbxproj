@@ -21,6 +21,7 @@
 		06474D6624B3227E002C695D /* ZMSimpleListRequestPaginatorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 06474D6524B3227E002C695D /* ZMSimpleListRequestPaginatorTests.m */; };
 		06474DA624B4B1EA002C695D /* EventDecoderTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06474DA524B4B1EA002C695D /* EventDecoderTest.swift */; };
 		06474DA824B4BB01002C695D /* StoreUpdateEventTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06474DA724B4BB01002C695D /* StoreUpdateEventTests.swift */; };
+		064824982B10E32C00115329 /* EnrollE2eICertificateUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 064824972B10E32C00115329 /* EnrollE2eICertificateUseCase.swift */; };
 		0648FC1227851661006519D1 /* audio.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 0648FC1027851623006519D1 /* audio.m4a */; };
 		0649D12224F5C5EF001DDC78 /* ZMLocalNotification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0649D12124F5C5EF001DDC78 /* ZMLocalNotification.swift */; };
 		0649D14024F63AA0001DDC78 /* LocalNotificationContentType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0649D13F24F63AA0001DDC78 /* LocalNotificationContentType.swift */; };
@@ -418,6 +419,7 @@
 		06474D6524B3227E002C695D /* ZMSimpleListRequestPaginatorTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ZMSimpleListRequestPaginatorTests.m; sourceTree = "<group>"; };
 		06474DA524B4B1EA002C695D /* EventDecoderTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventDecoderTest.swift; sourceTree = "<group>"; };
 		06474DA724B4BB01002C695D /* StoreUpdateEventTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreUpdateEventTests.swift; sourceTree = "<group>"; };
+		064824972B10E32C00115329 /* EnrollE2eICertificateUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnrollE2eICertificateUseCase.swift; sourceTree = "<group>"; };
 		0648FC1027851623006519D1 /* audio.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = audio.m4a; sourceTree = "<group>"; };
 		0649D12124F5C5EF001DDC78 /* ZMLocalNotification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZMLocalNotification.swift; sourceTree = "<group>"; };
 		0649D13F24F63AA0001DDC78 /* LocalNotificationContentType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalNotificationContentType.swift; sourceTree = "<group>"; };
@@ -950,6 +952,7 @@
 				0640BF6E2B0F6B78008866E4 /* E2eIEnrollment.swift */,
 				06D61FB72B0CBE3100C2699A /* E2eIEnrollmentTests.swift */,
 				067215AC2B10DCA300CF4AD4 /* E2eIRepository.swift */,
+				064824972B10E32C00115329 /* EnrollE2eICertificateUseCase.swift */,
 			);
 			path = E2EIdentity;
 			sourceTree = "<group>";
@@ -2065,6 +2068,7 @@
 				166901E01D7081C7000FE4AF /* ZMRemoteIdentifierObjectSync.m in Sources */,
 				633B396A2891890600208124 /* ZMUpdateEvent+Decryption.swift in Sources */,
 				06474D4B24AF6858002C695D /* EventDecoder.swift in Sources */,
+				064824982B10E32C00115329 /* EnrollE2eICertificateUseCase.swift in Sources */,
 				EE402C0128996AA300CA0E40 /* MLSMessageSync.swift in Sources */,
 				06025666248E616C00E060E1 /* ZMSimpleListRequestPaginator.m in Sources */,
 				F18401A42073BE0800E9F4CC /* GenericMessageRequestStrategy.swift in Sources */,
