@@ -252,7 +252,7 @@
 
 "conversation.status.unsent" = "⚠️ Unsent message";
 "conversation.status.you" = "You";
-"conversation.status.someone" = "Someone";
+"conversation.status.someone" = "Нехта";
 "conversation.status.you_was_added" = "%@ added you";
 "conversation.status.you_were_removed" = "You were removed";
 "conversation.status.you_left" = "You left";

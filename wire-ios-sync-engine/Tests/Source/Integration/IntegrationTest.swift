@@ -60,6 +60,7 @@ final class MockAuthenticatedSessionFactory: AuthenticatedSessionFactory {
             appVersion: appVersion,
             coreDataStack: coreDataStack,
             configuration: configuration,
+            cryptoboxMigrationManager: CryptoboxMigrationManager(),
             sharedUserDefaults: sharedUserDefaults
         )
     }
@@ -678,7 +679,7 @@ extension IntegrationTest: SessionManagerDelegate {
         setupTimers()
     }
 
-    public func sessionManagerDidReportLockChange(forSession session: UserSessionAppLockInterface) {
+    public func sessionManagerDidReportLockChange(forSession session: UserSession) {
         // No op
     }
 
@@ -711,11 +712,11 @@ extension IntegrationTest: SessionManagerDelegate {
         userSessionCanBeTornDown()
     }
 
-    public func sessionManagerDidPerformFederationMigration(authenticated: Bool) {
+    public func sessionManagerDidPerformFederationMigration(activeSession: UserSession?) {
         // no op
     }
 
-    public func sessionManagerDidPerformAPIMigrations() {
+    public func sessionManagerDidPerformAPIMigrations(activeSession: UserSession?) {
         // no op
     }
 

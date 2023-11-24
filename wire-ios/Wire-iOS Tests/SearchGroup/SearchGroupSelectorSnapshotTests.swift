@@ -37,7 +37,7 @@ final class SearchGroupSelectorSnapshotTests: XCTestCase {
     func testForInitState_WhenSelfUserCanNotCreateService() {
         // GIVEN
         let mockSelfUser = MockUserType.createSelfUser(name: "selfUser")
-        SelfUser.provider = SelfProvider(selfUser: mockSelfUser)
+        SelfUser.provider = SelfProvider(providedSelfUser: mockSelfUser)
         createSut()
 
         // WHEN & THEN
@@ -48,7 +48,7 @@ final class SearchGroupSelectorSnapshotTests: XCTestCase {
         // GIVEN
         let mockSelfUser = MockUserType.createSelfUser(name: "selfUser")
         mockSelfUser.canCreateService = true
-        SelfUser.provider = SelfProvider(selfUser: mockSelfUser)
+        SelfUser.provider = SelfProvider(providedSelfUser: mockSelfUser)
 
         createSut()
 

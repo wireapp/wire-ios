@@ -1608,6 +1608,13 @@ extension NSManagedObjectContext {
 }
 
 extension SessionManagerTests {
+
+    // FIXME: [jacob] this test will hang WPB-5638
+    //
+    // Since markAllConversationsAsRead() will schedule read up update message
+    // which are never sent because the user sessions are not logged in. Refactor
+    // SessionManager so that these tests can become unit tests where the user
+    // sessions are mocked.
     func testThatItMarksConversationsAsRead() {
         // given
         let account1 = Account(userName: "Account 1", userIdentifier: UUID.create())
@@ -1729,7 +1736,7 @@ class SessionManagerTestDelegate: SessionManagerDelegate {
         self.userSession = userSession
     }
 
-    func sessionManagerDidReportLockChange(forSession session: UserSessionAppLockInterface) {
+    func sessionManagerDidReportLockChange(forSession session: UserSession) {
         // No op
     }
 
@@ -1738,11 +1745,11 @@ class SessionManagerTestDelegate: SessionManagerDelegate {
         startedMigrationCalled = true
     }
 
-    func sessionManagerDidPerformFederationMigration(authenticated: Bool) {
+    func sessionManagerDidPerformFederationMigration(activeSession: UserSession?) {
         // no op
     }
 
-    func sessionManagerDidPerformAPIMigrations() {
+    func sessionManagerDidPerformAPIMigrations(activeSession: UserSession?) {
         // no op
     }
 

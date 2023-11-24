@@ -1,4 +1,4 @@
-////
+//
 // Wire
 // Copyright (C) 2023 Wire Swiss GmbH
 //
@@ -252,7 +252,6 @@ public class MessageSender: MessageSenderInterface {
 }
 
 public extension UserClient {
-
     var qualifiedClientID: QualifiedClientID? {
         guard
             let clientID = remoteIdentifier,

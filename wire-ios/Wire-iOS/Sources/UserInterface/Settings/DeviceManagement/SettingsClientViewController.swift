@@ -167,9 +167,10 @@ final class SettingsClientViewController: UIViewController,
     }
 
     @objc func onVerifiedChanged(_ sender: UISwitch!) {
-        let selfClient = ZMUserSession.shared()!.selfUserClient
+        guard let userSession = ZMUserSession.shared() else { return }
+        let selfClient = userSession.selfUserClient
 
-        ZMUserSession.shared()?.enqueue({
+        userSession.enqueue({
             if sender.isOn {
                 selfClient?.trustClient(self.userClient)
             } else {
@@ -188,7 +189,9 @@ final class SettingsClientViewController: UIViewController,
 
     func numberOfSections(in tableView: UITableView) -> Int {
 
-        if let userClient = ZMUserSession.shared()?.selfUserClient, self.userClient == userClient {
+        if let userSession = ZMUserSession.shared(),
+           let userClient = userSession.selfUserClient,
+           self.userClient == userClient {
             return 2
         } else {
             return userClient.type == .legalHold ? 3 : 4
@@ -202,7 +205,8 @@ final class SettingsClientViewController: UIViewController,
         case .info:
             return 1
         case .fingerprintAndVerify:
-            if self.userClient == ZMUserSession.shared()?.selfUserClient {
+            guard let userSession = ZMUserSession.shared() else { return 2 }
+            if self.userClient == userSession.selfUserClient {
                 return 1
             } else {
                 return 2

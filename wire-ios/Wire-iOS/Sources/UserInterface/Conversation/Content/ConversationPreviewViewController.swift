@@ -28,13 +28,14 @@ final class ConversationPreviewViewController: TintColorCorrectedViewController 
 
     init(conversation: ZMConversation,
          presentingViewController: UIViewController,
-         sourceView: UIView?) {
+         sourceView: UIView?,
+         userSession: UserSession) {
         self.conversation = conversation
         actionController = ConversationActionController(conversation: conversation,
                                                         target: presentingViewController,
-                                                        sourceView: sourceView)
+                                                        sourceView: sourceView, userSession: userSession)
 
-        contentViewController = ConversationContentViewController(conversation: conversation, mediaPlaybackManager: nil, session: ZMUserSession.shared()!)
+        contentViewController = ConversationContentViewController(conversation: conversation, mediaPlaybackManager: nil, userSession: userSession)
         super.init(nibName: nil, bundle: nil)
     }
 

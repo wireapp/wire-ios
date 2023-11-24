@@ -44,7 +44,7 @@ public extension Bundle {
 
 public protocol SessionActivationObserver: AnyObject {
     func sessionManagerDidChangeActiveUserSession(userSession: ZMUserSession)
-    func sessionManagerDidReportLockChange(forSession session: UserSessionAppLockInterface)
+    func sessionManagerDidReportLockChange(forSession session: UserSession)
 }
 
 public protocol SessionManagerDelegate: SessionActivationObserver {
@@ -57,8 +57,8 @@ public protocol SessionManagerDelegate: SessionActivationObserver {
     func sessionManagerDidFailToLoadDatabase()
     func sessionManagerDidBlacklistCurrentVersion(reason: BlacklistReason)
     func sessionManagerDidBlacklistJailbrokenDevice()
-    func sessionManagerDidPerformFederationMigration(authenticated: Bool)
-    func sessionManagerDidPerformAPIMigrations()
+    func sessionManagerDidPerformFederationMigration(activeSession: UserSession?)
+    func sessionManagerDidPerformAPIMigrations(activeSession: UserSession?)
     func sessionManagerAsksToRetryStart()
 
     var isInAuthenticatedAppState: Bool { get }
@@ -244,8 +244,6 @@ public final class SessionManager: NSObject, SessionManagerType {
     let configuration: SessionManagerConfiguration
     var pendingURLAction: URLAction?
     let apiMigrationManager: APIMigrationManager
-    var cryptoboxMigrationManager: CryptoboxMigrationManagerInterface = CryptoboxMigrationManager()
-
     var notificationCenter: UserNotificationCenter = UNUserNotificationCenter.current()
 
     internal var authenticatedSessionFactory: AuthenticatedSessionFactory
@@ -868,14 +866,7 @@ public final class SessionManager: NSObject, SessionManagerType {
                             for: account,
                             with: coreDataStack
                         )
-
-                        self.migrateCryptoboxSessionsIfNeeded(
-                            in: coreDataStack.accountContainer,
-                            syncContext: userSession.syncContext
-                        ) {
-                            completion(userSession)
-                        }
-
+                        completion(userSession)
                     }
 
                     onWorkDone()
@@ -887,56 +878,6 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     public func retryStart() {
         self.delegate?.sessionManagerAsksToRetryStart()
-    }
-
-    /// Migrates all existing proteus data created by Cryptobox into Core Crypto, if needed.
-
-    private func migrateCryptoboxSessionsIfNeeded(
-        in accountDirectory: URL,
-        syncContext: NSManagedObjectContext,
-        completion: @escaping () -> Void
-    ) {
-        guard cryptoboxMigrationManager.isMigrationNeeded(accountDirectory: accountDirectory) else {
-            WireLogger.proteus.info("cryptobox migration is not needed")
-
-            syncContext.performAndWait {
-                do {
-                    try cryptoboxMigrationManager.completeMigration(syncContext: syncContext)
-                } catch {
-                    WireLogger.proteus.critical("failed to complete migration: \(error.localizedDescription)")
-                    fatalError("failed to complete proteus initialization")
-                }
-            }
-
-            completion()
-            return
-        }
-
-        WireLogger.proteus.info("preparing for cryptobox migration...")
-
-        delegate?.sessionManagerWillMigrateAccount {
-            syncContext.performAndWait {
-                do {
-                    try self.cryptoboxMigrationManager.performMigration(
-                        accountDirectory: accountDirectory,
-                        syncContext: syncContext
-                    )
-                } catch {
-                    WireLogger.proteus.critical("cryptobox migration failed: \(error.localizedDescription)")
-                    fatalError("Failed to migrate data from CryptoBox to CoreCrypto keystore, error : \(error.localizedDescription)")
-                }
-
-                do {
-                    try self.cryptoboxMigrationManager.completeMigration(syncContext: syncContext)
-                } catch {
-                    fatalError("failed to complete proteus initialization")
-                }
-
-                WireLogger.proteus.info("cryptobox migration success")
-
-                completion()
-            }
-        }
     }
 
     private func clearCacheDirectory() {

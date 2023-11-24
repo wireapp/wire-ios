@@ -1,4 +1,4 @@
-// Generated using Sourcery 2.1.1 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 2.1.2 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 // swiftlint:disable line_length
 // swiftlint:disable variable_name
@@ -244,18 +244,16 @@ public class MockPrekeyPayloadProcessorInterface: PrekeyPayloadProcessorInterfac
     }
 
 }
-class MockQuickSyncObserverInterface: QuickSyncObserverInterface {
+
+public class MockQuickSyncObserverInterface: QuickSyncObserverInterface {
 
     // MARK: - Life cycle
 
+    public init() {}
+    public var waitForQuickSyncToFinish_Invocations: [Void] = []
+    public var waitForQuickSyncToFinish_MockMethod: (() async -> Void)?
 
-
-    // MARK: - waitForQuickSyncToFinish
-
-    var waitForQuickSyncToFinish_Invocations: [Void] = []
-    var waitForQuickSyncToFinish_MockMethod: (() async -> Void)?
-
-    func waitForQuickSyncToFinish() async {
+    public func waitForQuickSyncToFinish() async {
         waitForQuickSyncToFinish_Invocations.append(())
 
         guard let mock = waitForQuickSyncToFinish_MockMethod else {
