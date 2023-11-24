@@ -150,8 +150,11 @@ class ZMMessageTests_ShouldGenerateUnreadCount: BaseZMClientMessageTests {
             .readReceiptsOn,
             .teamMemberLeave,
             .usingNewDevice,
+            .mlsMigrationFinalized,
+            .mlsMigrationOngoingCall,
+            .mlsMigrationJoinAfterwards,
             .mlsMigrationStarted,
-            .mlsMigrationFinalized
+            .mlsMigrationUpdateVersion
         ]
 
         for systemMessageType in nonUnreadCountGeneratingSystemMessages {
