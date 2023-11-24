@@ -116,6 +116,7 @@ final class DeveloperToolsViewModel: ObservableObject {
                 .button(ButtonItem(title: "Send debug logs", action: sendDebugLogs)),
                 .button(ButtonItem(title: "Perform quick sync", action: performQuickSync)),
                 .button(ButtonItem(title: "Break next quick sync", action: breakNextQuickSync)),
+                .button(ButtonItem(title: "E2EI: Trigger flow", action: startE2EI)),
                 .destination(DestinationItem(title: "Configure flags", makeView: {
                     AnyView(DeveloperFlagsView(viewModel: DeveloperFlagsViewModel()))
                 }))
@@ -236,6 +237,42 @@ final class DeveloperToolsViewModel: ObservableObject {
             guard let session = ZMUserSession.shared() else { return }
             await session.syncStatus?.performQuickSync()
         }
+    }
+
+    private func startE2EI() {
+        guard let session = ZMUserSession.shared() else { return }
+        let e2eiCertificateUseCase = createE2EICertificateUseCase(syncContext: session.syncContext)
+
+        guard
+            let selfUser = selfUser,
+            let name = selfUser.name,
+            let handle = selfUser.handle,
+            let mlsClientId = MLSClientID(user: selfUser)
+        else {
+            return
+        }
+        Task {
+            _ = try await e2eiCertificateUseCase?.invoke(idToken: "", mlsClientId: mlsClientId, userName: name, handle: handle)
+        }
+    }
+
+    private func createE2EICertificateUseCase(syncContext: NSManagedObjectContext) -> EnrollE2eICertificateUseCase? {
+        var enrollE2eICertificate: EnrollE2eICertificateUseCase?
+        let httpClient = HttpClientImpl()
+        let acmeClient = AcmeClient(httpClient: httpClient)
+
+        syncContext.performAndWait {
+            guard let coreCrypto = syncContext.coreCrypto else {
+                return
+            }
+
+            let e2eiClient = E2eIClient(coreCrypto: coreCrypto)
+            let e2eiRepository = E2eIRepository(acmeClient: acmeClient, e2eiClient: e2eiClient)
+
+            enrollE2eICertificate = EnrollE2eICertificateUseCase(e2eiRepository: e2eiRepository)
+        }
+
+        return enrollE2eICertificate
     }
 
     private func checkRegisteredTokens() {

@@ -723,7 +723,11 @@ class MockCoreCrypto: CoreCryptoProtocol {
 
     var mockE2eiNewEnrollment: ((String, String, String, UInt32, Ciphersuite) throws -> WireE2eIdentity)?
 
-    func e2eiNewEnrollment(clientId: String, displayName: String, handle: String, expiryDays: UInt32, ciphersuite: Ciphersuite) throws -> WireE2eIdentity {
+    func e2eiNewEnrollment(clientId: String,
+                           displayName: String,
+                           handle: String,
+                           expiryDays: UInt32,
+                           ciphersuite: Ciphersuite) throws -> WireE2eIdentity {
         guard let mock = mockE2eiNewEnrollment else {
             fatalError("no mock for `e2eiNewEnrollment")
         }
