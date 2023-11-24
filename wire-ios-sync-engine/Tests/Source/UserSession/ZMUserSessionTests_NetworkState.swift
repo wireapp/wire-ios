@@ -29,6 +29,7 @@ final class ZMUserSessionTests_NetworkState: ZMUserSessionTestsBase {
         mockPushChannel = MockPushChannel()
         cookieStorage = ZMPersistentCookieStorage(forServerName: "usersessiontest.example.com", userIdentifier: userId, useCache: true)
         let transportSession = RecordingMockTransportSession(cookieStorage: cookieStorage, pushChannel: mockPushChannel)
+        let mockCryptoboxMigrationManager = MockCryptoboxMigrationManagerInterface()
 
         // when
         let testSession = ZMUserSession(
@@ -45,6 +46,7 @@ final class ZMUserSessionTests_NetworkState: ZMUserSessionTestsBase {
             appVersion: "00000",
             coreDataStack: coreDataStack,
             configuration: .init(),
+            cryptoboxMigrationManager: mockCryptoboxMigrationManager,
             sharedUserDefaults: sharedUserDefaults
         )
         _ = waitForAllGroupsToBeEmpty(withTimeout: 0.5)
