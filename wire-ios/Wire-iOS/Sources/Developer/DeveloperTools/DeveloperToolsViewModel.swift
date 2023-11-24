@@ -240,47 +240,39 @@ final class DeveloperToolsViewModel: ObservableObject {
     }
 
     private func startE2EI() {
+        guard let session = ZMUserSession.shared() else { return }
+        let e2eiCertificateUseCase = createE2EICertificateUseCase(syncContext: session.syncContext)
+
+        guard
+            let selfUser = selfUser,
+            let name = selfUser.name,
+            let handle = selfUser.handle,
+            let e2eiClientId = E2eIClientID(user: selfUser)
+        else {
+            return
+        }
         Task {
-            guard let session = ZMUserSession.shared() else { return }
-            let enrollE2EICertificate = configureE2EIStack(syncContext: session.syncContext)
-            _ = try await enrollE2EICertificate?.invoke(idToken: "")
+            _ = try await e2eiCertificateUseCase?.invoke(idToken: "", e2eiClientId: e2eiClientId, userName: name, handle: handle)
         }
     }
 
-    private func configureE2EIStack(syncContext: NSManagedObjectContext) -> EnrollE2EICertificateUseCase? {
-        var enrollE2EICertificate: EnrollE2EICertificateUseCase?
+    private func createE2EICertificateUseCase(syncContext: NSManagedObjectContext) -> EnrollE2eICertificateUseCase? {
+        var enrollE2eICertificate: EnrollE2eICertificateUseCase?
         let httpClient = HttpClientImpl()
         let acmeClient = AcmeClient(httpClient: httpClient)
+
         syncContext.performAndWait {
             guard let coreCrypto = syncContext.coreCrypto else {
                 return
             }
-            let selfUser = ZMUser.selfUser(in: syncContext)
-            guard
-                let handle = selfUser.handle,
-                let name = selfUser.name,
-                let domain = selfUser.domain,
-                let selfClient = selfUser.selfClient(),
-                let selfClientID = selfClient.remoteIdentifier,
-                let userId = selfUser.remoteIdentifier
-            else {
-                return
-            }
 
-            guard let clientId = E2EIClientID(userID: userId.uuidString,
-                                              clientID: selfClientID,
-                                              domain: domain) else {
-                return
-            }
-            let e2eiService = E2EIService(coreCrypto: coreCrypto,
-                                          e2eiClientId: clientId,
-                                          userName: name,
-                                          handle: handle)
-            let e2eiRepository = E2EIRepository(acmeClient: acmeClient, e2eiService: e2eiService)
+            let e2eiClient = E2eIClient(coreCrypto: coreCrypto)
+            let e2eiRepository = E2eIRepository(acmeClient: acmeClient, e2eiClient: e2eiClient)
 
-            enrollE2EICertificate = EnrollE2EICertificateUseCase(e2eiRepository: e2eiRepository)
+            enrollE2eICertificate = EnrollE2eICertificateUseCase(e2eiRepository: e2eiRepository)
         }
-        return enrollE2EICertificate
+
+        return enrollE2eICertificate
     }
 
     private func checkRegisteredTokens() {

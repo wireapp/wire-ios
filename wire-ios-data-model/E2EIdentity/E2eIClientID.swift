@@ -18,7 +18,7 @@
 
 import Foundation
 
-public struct E2EIClientID: Equatable, Hashable {
+public struct E2eIClientID: Equatable, Hashable {
 
     // MARK: - Properties
 
@@ -45,11 +45,18 @@ public struct E2EIClientID: Equatable, Hashable {
         self.rawValue = "\(self.userID):\(self.clientID)@\(self.domain)"
     }
 
-    public init?(qualifiedClientID: QualifiedClientID) {
+    public init?(user: ZMUser) {
+        guard let selfClient = user.selfClient(),
+              let userID = selfClient.user?.remoteIdentifier.transportString(),
+              let clientID = selfClient.remoteIdentifier,
+              let domain = selfClient.user?.domain ?? BackendInfo.domain
+        else {
+            return nil
+        }
         self.init(
-            userID: qualifiedClientID.userID.transportString(),
-            clientID: qualifiedClientID.clientID,
-            domain: qualifiedClientID.domain
+            userID: userID,
+            clientID: clientID,
+            domain: domain
         )
     }
 

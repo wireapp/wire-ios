@@ -50,11 +50,10 @@ class AcmeClientTests: ZMTBaseTest {
         BackendInfo.domain = "acme.elna.wire.link"
 
         // mock
-        let transportData = MockAcmeResponse().acmeDirectory().transportData
-        mockHttpClient?.mockResponse1 = ZMTransportResponse(payload: transportData,
-                                                           httpStatus: 200,
-                                                           transportSessionError: nil,
-                                                           apiVersion: 0)
+        let acmeDirectory = MockAcmeResponse().acmeDirectory()
+        let acmeDirectoryData = try! JSONEncoder.defaultEncoder.encode(acmeDirectory)
+        mockHttpClient?.mockResponse = (acmeDirectoryData, URLResponse())
+
         // when
         guard  let acmeDirectoryData = try await acmeClient?.getACMEDirectory() else {
             return XCTFail("Failed to get ACME directory.")
@@ -227,11 +226,28 @@ class AcmeClientTests: ZMTBaseTest {
 
 }
 
-extension AcmeDirectoriesResponse {
+class MockHttpClient: HttpClient {
 
-    var transportData: ZMTransportData {
-        let encoded = try! JSONEncoder.defaultEncoder.encode(self)
-        return try! JSONSerialization.jsonObject(with: encoded, options: []) as! ZMTransportData
+    var mockResponse: (Data, URLResponse)?
+
+    func send(_ request: URLRequest) async throws -> (Data, URLResponse) {
+        guard let mockResponse = mockResponse else {
+            throw NetworkError.invalidResponse
+        }
+        return mockResponse
+    }
+
+}
+
+private class MockAcmeResponse {
+
+    func acmeDirectory() -> AcmeDirectoriesResponse {
+        return AcmeDirectoriesResponse(newNonce: "https://acme.elna.wire.link/acme/defaultteams/new-nonce",
+                                       newAccount: "https://acme.elna.wire.link/acme/defaultteams/new-account",
+                                       newOrder: "https://acme.elna.wire.link/acme/defaultteams/new-order",
+                                       revokeCert: "https://acme.elna.wire.link/acme/defaultteams/revoke-cert",
+                                       keyChange: "https://acme.elna.wire.link/acme/defaultteams/key-change")
+
     }
 
 }

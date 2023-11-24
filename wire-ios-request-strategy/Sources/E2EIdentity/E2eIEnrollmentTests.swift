@@ -17,24 +17,10 @@
 //
 
 import Foundation
+@testable import WireRequestStrategy
 
-public enum NetworkError: Error {
+class E2eIEnrollmentTests: ZMTBaseTest {
 
-    case invalidRequest
-    case invalidResponse
-
-}
-
-public protocol HttpClient {
-
-    func send(_ request: URLRequest) async throws -> (Data, URLResponse)
-
-}
-
-public class HttpClientImpl: NSObject, HttpClient {
-
-    public func send(_ request: URLRequest) async throws -> (Data, URLResponse) {
-        return try await URLSession.shared.data(for: request)
-    }
+/// TODO: will be implemented in the next PRs
 
 }

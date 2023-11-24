@@ -46,12 +46,12 @@ public class AcmeClient: NSObject, AcmeClientInterface {
 
         let path = "https://acme.\(domain)/acme/defaultteams/directory"
 
-        let request = ZMTransportRequest(getFromPath: path, apiVersion: 0)
-        let result = try await httpClient.send(request)
-
-        guard let data = result.rawData else {
-            throw NetworkError.invalidResponse
+        guard let url = URL(string: path) else {
+            throw NetworkError.invalidRequest
         }
+        var request = URLRequest(url: url)
+        request.httpMethod = Constant.HTTPMethod.get
+        let (data, _) = try await httpClient.send(request)
 
         return data
 
