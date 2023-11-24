@@ -243,29 +243,33 @@ class ZMHotFixTests_Integration: MessagingTest {
 
     func testThatItUpdatesAccessRolesForConversations_432_1_0() {
         var g1: ZMConversation!
-        // GIVEN
-        self.syncMOC.setPersistentStoreMetadata("432.0.1", key: "lastSavedVersion")
-        self.syncMOC.setPersistentStoreMetadata(NSNumber(value: true), key: "HasHistory")
+        syncMOC.performAndWait {
+            // GIVEN
+            self.syncMOC.setPersistentStoreMetadata("432.0.1", key: "lastSavedVersion")
+            self.syncMOC.setPersistentStoreMetadata(NSNumber(value: true), key: "HasHistory")
 
-        g1 = ZMConversation.insertNewObject(in: self.syncMOC)
-        g1.conversationType = .group
-        g1.team = nil
-        g1.updateAccessStatus(accessModes: ConversationAccessMode.teamOnly.stringValue,
-                              accessRoles: [ConversationAccessRoleV2.teamMember.rawValue])
+            g1 = ZMConversation.insertNewObject(in: self.syncMOC)
+            g1.conversationType = .group
+            g1.team = nil
+            g1.updateAccessStatus(accessModes: ConversationAccessMode.teamOnly.stringValue,
+                                  accessRoles: [ConversationAccessRoleV2.teamMember.rawValue])
 
-        self.syncMOC.saveOrRollback()
-        XCTAssertEqual(g1.accessRoles, [ConversationAccessRoleV2.teamMember])
-        XCTAssertEqual(g1.accessMode, ConversationAccessMode.teamOnly)
-        XCTAssertNil(g1.team)
+            self.syncMOC.saveOrRollback()
+            XCTAssertEqual(g1.accessRoles, [ConversationAccessRoleV2.teamMember])
+            XCTAssertEqual(g1.accessMode, ConversationAccessMode.teamOnly)
+            XCTAssertNil(g1.team)
+        }
 
         // WHEN
         let sut = ZMHotFix(syncMOC: self.syncMOC)
         self.performIgnoringZMLogError {
-            sut!.applyPatches(forCurrentVersion: "432.1.0")
+            self.syncMOC.performAndWait {
+                sut!.applyPatches(forCurrentVersion: "432.1.0")
+            }
         }
 
         // expect
-        let expectation = self.expectation(description: "Notified")
+        let expectation = expectation(description: "Notified")
         let token = NotificationInContext.addObserver(name: UpdateAccessRolesAction.notificationName,
                                                       context: self.syncMOC.notificationContext,
                                                       using: { note in
