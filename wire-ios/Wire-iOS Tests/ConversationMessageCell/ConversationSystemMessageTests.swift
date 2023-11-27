@@ -170,7 +170,25 @@ final class ConversationSystemMessageTests: ConversationMessageSnapshotTestCase 
 
     func testDecryptionFailedIdentifyChanged_Other() {
         let user = MockUserType.createUser(name: "Bruno")
-        let message = MockMessageFactory.systemMessage(with: .decryptionFailed_RemoteIdentityChanged, users: 0, clients: 0, sender: user)!
+        let message = MockMessageFactory.systemMessage(
+            with: .decryptionFailed_RemoteIdentityChanged,
+            users: 0,
+            clients: 0,
+            sender: user
+        )!
+
+        verify(message: message)
+    }
+
+    func testDecryptionFailedIdentifyChanged_ThereIsNoUser() {
+        let user = MockUserType.createUser(name: "Bruno")
+        user.name = nil
+        let message = MockMessageFactory.systemMessage(
+            with: .decryptionFailed_RemoteIdentityChanged,
+            users: 0,
+            clients: 0,
+            sender: user
+        )!
 
         verify(message: message)
     }
