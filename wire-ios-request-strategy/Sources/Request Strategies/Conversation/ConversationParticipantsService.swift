@@ -111,6 +111,7 @@ public class ConversationParticipantsService: ConversationParticipantsServiceInt
                 try await mlsParticipantsService.addParticipants(users, to: conversation)
             } catch MLSConversationParticipantsError.ignoredUsers(users: _) {
                 // TODO: Insert system message
+                // To be done in https://wearezeta.atlassian.net/browse/WPB-2228
             }
         case .mixed:
             guard let mlsParticipantsService else {
@@ -217,7 +218,7 @@ public class ConversationParticipantsService: ConversationParticipantsServiceInt
         guard await context.perform({ conversation.conversationType == .group }) else {
             throw ConversationParticipantsError.invalidOperation
         }
-        
+
         let (messageProtocol, isSelfUser) = await context.perform {
             (conversation.messageProtocol, user.isSelfUser)
         }

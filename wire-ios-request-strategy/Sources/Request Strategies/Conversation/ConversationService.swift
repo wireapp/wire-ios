@@ -36,12 +36,6 @@ public protocol ConversationServiceInterface {
         completion: @escaping () -> Void
     )
 
-    func removeParticipant(
-        _ participant: UserType,
-        from conversation: ZMConversation,
-        completion: @escaping RemoveParticipantAction.ResultHandler
-    )
-
 }
 
 public enum ConversationCreationFailure: Error {
@@ -296,21 +290,4 @@ public final class ConversationService: ConversationServiceInterface {
         }
     }
 
-    // MARK: - Remove Participant
-
-    public func removeParticipant(
-        _ participant: UserType,
-        from conversation: ZMConversation,
-        completion: @escaping RemoveParticipantAction.ResultHandler
-    ) {
-//        guard let user = participant as? ZMUser else {
-//            return completion(.failure(ConversationRemoveParticipantError.invalidOperation))
-//        }
-//
-//        participantsService.removeParticipant(
-//            user,
-//            from: conversation,
-//            completion: completion
-//        )
-    }
 }

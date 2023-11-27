@@ -80,7 +80,7 @@ extension ZMConversation {
 
         guard
             let session = ZMUserSession.shared(),
-            session.networkState != .offline 
+            session.networkState != .offline
         else {
             return fail(with: ConversationError.offline)
         }
