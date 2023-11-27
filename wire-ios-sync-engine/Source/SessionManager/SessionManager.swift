@@ -858,8 +858,7 @@ public final class SessionManager: NSObject, SessionManagerType {
                         var flag = DeveloperFlag.forceDatabaseLoadingFailure
                         flag.isOn = false
                         self.delegate?.sessionManagerDidFailToLoadDatabase()
-                    }
-                    else if error != nil {
+                    } else if error != nil {
                         self.delegate?.sessionManagerDidFailToLoadDatabase()
                     } else {
                         let userSession = self.startBackgroundSession(

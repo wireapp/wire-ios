@@ -568,8 +568,7 @@ public extension UserClient {
                     syncSelfClient.missesClient(syncClient)
                     syncSelfClient.setLocallyModifiedKeys(Set(arrayLiteral: ZMUserClientMissingKey))
                     syncMOC.saveOrRollback()
-                }
-                else {
+                } else {
                     syncClient.fingerprint = syncClient.remoteFingerprint()
                     guard syncClient.fingerprint != nil else {
                         zmLog.error("Cannot fetch fingerprint for client \(syncClient.sessionIdentifier!)")

@@ -69,8 +69,7 @@ private struct FileCache: Cache {
         coordinator.coordinate(readingItemAt: url, options: .withoutChanges, error: &error) { (url) in
             do {
                 data = try Data(contentsOf: url, options: .mappedIfSafe)
-            }
-            catch let error as NSError {
+            } catch let error as NSError {
                 if error.code != NSFileReadNoSuchFileError {
                     zmLog.error("\(error)")
                 }
@@ -131,8 +130,7 @@ private struct FileCache: Cache {
         coordinator.coordinate(writingItemAt: url, options: .forDeleting, error: &error) { (url) in
             do {
                 try FileManager.default.removeItem(at: url)
-            }
-            catch let error as NSError {
+            } catch let error as NSError {
                 if error.domain != NSCocoaErrorDomain || error.code != NSFileNoSuchFileError {
                     zmLog.error("Can't delete file \(url.pathComponents.last!): \(error)")
                 }
