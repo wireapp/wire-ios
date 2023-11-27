@@ -133,15 +133,13 @@
     
     [self.mockTransportSession resetReceivedRequests];
     NSDictionary *apnsPayload = noticePayload;
-    [self.userSession receivedPushNotificationWith:apnsPayload completion:^{
-        // then
-        XCTAssertEqual(requestCount, 2lu);
-        XCTAssertEqualObjects([self.lastEventIDRepository fetchLastEventID], notificationID);
-    }];
+    [self.userSession receivedPushNotificationWith:apnsPayload completion:^{}];
     XCTAssert([self waitForCustomExpectationsWithTimeout:0.5]);
     WaitForAllGroupsToBeEmpty(0.5);
     
-
+    // then
+    XCTAssertEqual(requestCount, 2lu);
+    XCTAssertEqualObjects([self.lastEventIDRepository fetchLastEventID], notificationID);
 }
 
 #pragma mark - Helper
