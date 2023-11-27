@@ -946,7 +946,7 @@ class ConversationCannotDecryptSystemMessageCellDescription: ConversationMessage
 
     private static func messageString(_ systemMessageType: ZMSystemMessageType, sender: UserType) -> NSAttributedString {
 
-        let name = sender.name ?? ""
+        let name = sender.name ?? L10n.Localizable.Profile.Details.Title.unavailable
         var localizationKey = self.localizationKey(systemMessageType)
 
         if sender.isSelfUser {
