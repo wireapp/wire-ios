@@ -481,64 +481,65 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
         }
     }
 
-    // MARK: 1:1 / Connection Conversations
+    // MARK: 1:1
 
     func testUpdateOrCreateConversation_OneToOne_CreatesConversation() throws {
-        syncMOC.performGroupedAndWait { _ in
+        try syncMOC.performAndWait {
             // given
             BackendInfo.isFederationEnabled = true
-            self.otherUser.connection?.conversation = nil
-
-            let conversationID = UUID()
-            let selfUser = ZMUser.selfUser(in: self.syncMOC)
+            let qualifiedID = QualifiedID(uuid: .create(), domain: owningDomain)
+            let selfUser = ZMUser.selfUser(in: syncMOC)
             let selfMember = Payload.ConversationMember(qualifiedID: selfUser.qualifiedID!)
-            let otherMember = Payload.ConversationMember(qualifiedID: self.otherUser.qualifiedID!)
+            let otherMember = Payload.ConversationMember(qualifiedID: otherUser.qualifiedID!)
             let members = Payload.ConversationMembers(selfMember: selfMember, others: [otherMember])
-            let qualifiedID = QualifiedID(uuid: conversationID, domain: self.owningDomain)
-            let payload = Payload.Conversation(qualifiedID: qualifiedID,
-                                                           type: BackendConversationType.oneOnOne.rawValue,
-                                                           members: members)
-            let otherUserSet: Set<ZMUser> = [selfUser, self.otherUser]
+            let payload = Payload.Conversation(
+                qualifiedID: qualifiedID,
+                type: BackendConversationType.oneOnOne.rawValue,
+                members: members
+            )
 
             // when
             self.sut.updateOrCreateConversation(
                 from: payload,
-                in: self.syncMOC
+                in: syncMOC
             )
 
             // then
-            XCTAssertEqual(self.otherUser.connection?.conversation?.remoteIdentifier, conversationID)
-            XCTAssertEqual(self.otherUser.connection?.conversation?.domain, self.owningDomain)
-            XCTAssertEqual(self.otherUser.connection?.conversation?.conversationType, .oneOnOne)
-            XCTAssertEqual(self.otherUser.connection?.conversation?.localParticipants, otherUserSet)
+            let conversation = try XCTUnwrap(ZMConversation.fetch(with: qualifiedID, in: syncMOC))
+            XCTAssertEqual(conversation.remoteIdentifier, qualifiedID.uuid)
+            XCTAssertEqual(conversation.domain, owningDomain)
+            XCTAssertEqual(conversation.conversationType, .oneOnOne)
+            XCTAssertEqual(conversation.localParticipants, [selfUser, otherUser])
         }
     }
 
     func testUpdateOrCreateConversation_OneToOne_DoesntAssignDomain_WhenFederationIsDisabled() throws {
-        syncMOC.performGroupedAndWait { _ in
+        try syncMOC.performAndWait {
             // given
             BackendInfo.isFederationEnabled = false
-            self.otherUser.connection?.conversation = nil
-
-            let conversationID = UUID()
-            let selfUser = ZMUser.selfUser(in: self.syncMOC)
+            let qualifiedID = QualifiedID(uuid: .create(), domain: owningDomain)
+            let selfUser = ZMUser.selfUser(in: syncMOC)
             let selfMember = Payload.ConversationMember(qualifiedID: selfUser.qualifiedID!)
-            let otherMember = Payload.ConversationMember(qualifiedID: self.otherUser.qualifiedID!)
+            let otherMember = Payload.ConversationMember(qualifiedID: otherUser.qualifiedID!)
             let members = Payload.ConversationMembers(selfMember: selfMember, others: [otherMember])
-            let qualifiedID = QualifiedID(uuid: conversationID, domain: self.owningDomain)
-            let payload = Payload.Conversation(qualifiedID: qualifiedID,
-                                                           type: BackendConversationType.oneOnOne.rawValue,
-                                                           members: members)
+            let payload = Payload.Conversation(
+                qualifiedID: qualifiedID,
+                type: BackendConversationType.oneOnOne.rawValue,
+                members: members
+            )
 
             // when
             self.sut.updateOrCreateConversation(
                 from: payload,
-                in: self.syncMOC
+                in: syncMOC
             )
 
             // then
-            XCTAssertEqual(self.otherUser.connection?.conversation?.remoteIdentifier, conversationID)
-            XCTAssertNil(self.otherUser.connection?.conversation?.domain)
+            let conversation = try XCTUnwrap(ZMConversation.fetch(with: qualifiedID, in: syncMOC))
+            XCTAssertEqual(conversation.remoteIdentifier, qualifiedID.uuid)
+            XCTAssertNil(conversation.domain)
+            XCTAssertEqual(conversation.conversationType, .oneOnOne)
+            XCTAssertEqual(conversation.localParticipants, [selfUser, otherUser])
         }
     }
 
@@ -611,41 +612,6 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
         }
     }
 
-    func testUpdateOrCreateConversation_OneToOne_MergesWithExistingConversation() throws {
-        try syncMOC.performGroupedAndWait { _ in
-            // given
-
-            // We already have a local 1:1 conversation
-            self.otherUser.connection?.conversation.remoteIdentifier = nil
-            self.otherUser.connection?.conversation.domain = nil
-
-            // The remote 1:1 conversation also exists but it's not linked to the connection
-            let existingTextMessage = "Hello World"
-            let existingConversation = ZMConversation.insertNewObject(in: self.syncMOC)
-            existingConversation.remoteIdentifier = UUID()
-            existingConversation.domain = self.owningDomain
-            try existingConversation.appendText(content: existingTextMessage)
-
-            let selfUser = ZMUser.selfUser(in: self.syncMOC)
-            let selfMember = Payload.ConversationMember(qualifiedID: selfUser.qualifiedID!)
-            let otherMember = Payload.ConversationMember(qualifiedID: self.otherUser.qualifiedID!)
-            let members = Payload.ConversationMembers(selfMember: selfMember, others: [otherMember])
-            let payload = Payload.Conversation(qualifiedID: existingConversation.qualifiedID!,
-                                                           type: BackendConversationType.connection.rawValue,
-                                                           members: members)
-
-            // when
-            self.sut.updateOrCreateConversation(
-                from: payload,
-                in: self.syncMOC
-            )
-
-            // then
-            XCTAssertTrue(existingConversation.isZombieObject)
-            XCTAssertEqual(self.otherUser.connection?.conversation?.lastMessage?.textMessageData?.messageText, existingTextMessage)
-        }
-    }
-
     func testUpdateOrCreateConversation_OneToOne_UpdatesMutedStatus() throws {
         syncMOC.performGroupedBlockAndWait {
             // given
@@ -692,6 +658,50 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
 
             // then
             XCTAssertTrue(self.oneToOneConversation.isArchived)
+        }
+    }
+
+    func testUpdateOrCreateConversation_OneToOne_SwitchesToMLS() throws {
+        try syncMOC.performAndWait {
+            // Given
+            let selfUser = ZMUser.selfUser(in: syncMOC)
+            let selfUserID = try XCTUnwrap(selfUser.qualifiedID)
+            let otherUserID = try XCTUnwrap(otherUser.qualifiedID)
+
+            // An existing connection via proteus
+            let connection = try XCTUnwrap(otherUser?.connection)
+            let proteusConversation = try XCTUnwrap(connection.conversation)
+            proteusConversation.remoteIdentifier = .create()
+            proteusConversation.domain = self.owningDomain
+            proteusConversation.messageProtocol = .proteus
+
+            // A payload for mls one to one.
+            let selfMember = Payload.ConversationMember(qualifiedID: selfUserID)
+            let otherMember = Payload.ConversationMember(qualifiedID: otherUserID)
+            let payload = Payload.Conversation(
+                qualifiedID: QualifiedID(uuid: .create(), domain: self.owningDomain),
+                type: BackendConversationType.oneOnOne.rawValue,
+                members: Payload.ConversationMembers(
+                    selfMember: selfMember,
+                    others: [otherMember]
+                ),
+                messageProtocol: "mls",
+                mlsGroupID: MLSGroupID.random().base64EncodedString,
+                epoch: 0
+            )
+
+            // When
+            self.sut.updateOrCreateConversation(
+                from: payload,
+                in: self.syncMOC
+            )
+
+            // Then
+            XCTAssertEqual(proteusConversation.conversationType, .invalid)
+
+            let activeConversation = try XCTUnwrap(connection.conversation)
+            XCTAssertEqual(activeConversation.messageProtocol, .mls)
+            XCTAssertEqual(activeConversation.conversationType, .oneOnOne)
         }
     }
 
