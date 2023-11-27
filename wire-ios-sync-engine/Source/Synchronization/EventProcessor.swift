@@ -154,11 +154,10 @@ actor EventProcessor: UpdateEventProcessor {
             for event in decryptedUpdateEvents {
                 await syncContext.perform {
                     for eventConsumer in self.eventConsumers {
-                        // TODO: [jacob] EventConsumer.processEvents should become async
                         eventConsumer.processEvents([event], liveEvents: true, prefetchResult: prefetchResult)
                     }
                 }
-                // TODO: [F] We split async consumers from eventConsumers
+                // TODO: [F] @Jacob should this be done on syncContext to keep every thing in sync?
                 for eventConsumer in self.eventAsyncConsumers {
                     await eventConsumer.processEvents([event], liveEvents: true, prefetchResult: prefetchResult)
                 }

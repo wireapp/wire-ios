@@ -310,25 +310,15 @@ public class MockEventConsumer: NSObject, ZMEventConsumer {
 
 }
 
-@objcMembers public class MockContextChangeTracker: NSObject, ZMContextChangeTracker {
+@objcMembers
+public class MockEventAsyncConsumer: NSObject, ZMEventAsyncConsumer {
 
-    public var objectsDidChangeCalled: Bool = false
-    public func objectsDidChange(_ object: Set<NSManagedObject>) {
-        objectsDidChangeCalled = true
+    public var eventsProcessed: [ZMUpdateEvent] = []
+    public var processEventsCalled: Bool = false
+    public func processEvents(_ events: [WireTransport.ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) async {
+        processEventsCalled = true
+        eventsProcessed.append(contentsOf: events)
     }
-
-    public var fetchRequest: NSFetchRequest<NSFetchRequestResult>?
-    public var fetchRequestForTrackedObjectsCalled: Bool = false
-    public func fetchRequestForTrackedObjects() -> NSFetchRequest<NSFetchRequestResult>? {
-        fetchRequestForTrackedObjectsCalled = true
-        return fetchRequest
-    }
-
-    public var addTrackedObjectsCalled = false
-    public func addTrackedObjects(_ objects: Set<NSManagedObject>) {
-        addTrackedObjectsCalled = true
-    }
-
 }
 
 @objcMembers
