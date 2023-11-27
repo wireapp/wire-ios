@@ -77,40 +77,51 @@ public class MockAPIProviderInterface: APIProviderInterface {
     }
 
 }
-class MockConversationParticipantsServiceInterface: ConversationParticipantsServiceInterface {
+public class MockConversationParticipantsServiceInterface: ConversationParticipantsServiceInterface {
 
     // MARK: - Life cycle
 
+    public init() {}
 
 
     // MARK: - addParticipants
 
-    var addParticipantsToCompletion_Invocations: [(users: [ZMUser], conversation: ZMConversation, completion: AddParticipantAction.ResultHandler)] = []
-    var addParticipantsToCompletion_MockMethod: (([ZMUser], ZMConversation, @escaping AddParticipantAction.ResultHandler) -> Void)?
+    public var addParticipantsTo_Invocations: [(users: [ZMUser], conversation: ZMConversation)] = []
+    public var addParticipantsTo_MockError: Error?
+    public var addParticipantsTo_MockMethod: (([ZMUser], ZMConversation) async throws -> Void)?
 
-    func addParticipants(_ users: [ZMUser], to conversation: ZMConversation, completion: @escaping AddParticipantAction.ResultHandler) {
-        addParticipantsToCompletion_Invocations.append((users: users, conversation: conversation, completion: completion))
+    public func addParticipants(_ users: [ZMUser], to conversation: ZMConversation) async throws {
+        addParticipantsTo_Invocations.append((users: users, conversation: conversation))
 
-        guard let mock = addParticipantsToCompletion_MockMethod else {
-            fatalError("no mock for `addParticipantsToCompletion`")
+        if let error = addParticipantsTo_MockError {
+            throw error
         }
 
-        mock(users, conversation, completion)
+        guard let mock = addParticipantsTo_MockMethod else {
+            fatalError("no mock for `addParticipantsTo`")
+        }
+
+        try await mock(users, conversation)
     }
 
     // MARK: - removeParticipant
 
-    var removeParticipantFromCompletion_Invocations: [(user: ZMUser, conversation: ZMConversation, completion: RemoveParticipantAction.ResultHandler)] = []
-    var removeParticipantFromCompletion_MockMethod: ((ZMUser, ZMConversation, @escaping RemoveParticipantAction.ResultHandler) -> Void)?
+    public var removeParticipantFrom_Invocations: [(user: ZMUser, conversation: ZMConversation)] = []
+    public var removeParticipantFrom_MockError: Error?
+    public var removeParticipantFrom_MockMethod: ((ZMUser, ZMConversation) async throws -> Void)?
 
-    func removeParticipant(_ user: ZMUser, from conversation: ZMConversation, completion: @escaping RemoveParticipantAction.ResultHandler) {
-        removeParticipantFromCompletion_Invocations.append((user: user, conversation: conversation, completion: completion))
+    public func removeParticipant(_ user: ZMUser, from conversation: ZMConversation) async throws {
+        removeParticipantFrom_Invocations.append((user: user, conversation: conversation))
 
-        guard let mock = removeParticipantFromCompletion_MockMethod else {
-            fatalError("no mock for `removeParticipantFromCompletion`")
+        if let error = removeParticipantFrom_MockError {
+            throw error
         }
 
-        mock(user, conversation, completion)
+        guard let mock = removeParticipantFrom_MockMethod else {
+            fatalError("no mock for `removeParticipantFrom`")
+        }
+
+        try await mock(user, conversation)
     }
 
 }
@@ -149,21 +160,6 @@ public class MockConversationServiceInterface: ConversationServiceInterface {
         }
 
         mock(qualifiedID, completion)
-    }
-
-    // MARK: - addParticipants
-
-    public var addParticipantsToCompletion_Invocations: [(participants: [UserType], conversation: ZMConversation, completion: AddParticipantAction.ResultHandler)] = []
-    public var addParticipantsToCompletion_MockMethod: (([UserType], ZMConversation, @escaping AddParticipantAction.ResultHandler) -> Void)?
-
-    public func addParticipants(_ participants: [UserType], to conversation: ZMConversation, completion: @escaping AddParticipantAction.ResultHandler) {
-        addParticipantsToCompletion_Invocations.append((participants: participants, conversation: conversation, completion: completion))
-
-        guard let mock = addParticipantsToCompletion_MockMethod else {
-            fatalError("no mock for `addParticipantsToCompletion`")
-        }
-
-        mock(participants, conversation, completion)
     }
 
     // MARK: - removeParticipant
@@ -220,32 +216,42 @@ class MockMLSConversationParticipantsServiceInterface: MLSConversationParticipan
 
     // MARK: - addParticipants
 
-    var addParticipantsToCompletion_Invocations: [(users: [ZMUser], conversation: ZMConversation, completion: AddParticipantAction.ResultHandler)] = []
-    var addParticipantsToCompletion_MockMethod: (([ZMUser], ZMConversation, @escaping AddParticipantAction.ResultHandler) -> Void)?
+    var addParticipantsTo_Invocations: [(users: [ZMUser], conversation: ZMConversation)] = []
+    var addParticipantsTo_MockError: Error?
+    var addParticipantsTo_MockMethod: (([ZMUser], ZMConversation) async throws -> Void)?
 
-    func addParticipants(_ users: [ZMUser], to conversation: ZMConversation, completion: @escaping AddParticipantAction.ResultHandler) {
-        addParticipantsToCompletion_Invocations.append((users: users, conversation: conversation, completion: completion))
+    func addParticipants(_ users: [ZMUser], to conversation: ZMConversation) async throws {
+        addParticipantsTo_Invocations.append((users: users, conversation: conversation))
 
-        guard let mock = addParticipantsToCompletion_MockMethod else {
-            fatalError("no mock for `addParticipantsToCompletion`")
+        if let error = addParticipantsTo_MockError {
+            throw error
         }
 
-        mock(users, conversation, completion)
+        guard let mock = addParticipantsTo_MockMethod else {
+            fatalError("no mock for `addParticipantsTo`")
+        }
+
+        try await mock(users, conversation)
     }
 
     // MARK: - removeParticipant
 
-    var removeParticipantFromCompletion_Invocations: [(user: ZMUser, conversation: ZMConversation, completion: RemoveParticipantAction.ResultHandler)] = []
-    var removeParticipantFromCompletion_MockMethod: ((ZMUser, ZMConversation, @escaping RemoveParticipantAction.ResultHandler) -> Void)?
+    var removeParticipantFrom_Invocations: [(user: ZMUser, conversation: ZMConversation)] = []
+    var removeParticipantFrom_MockError: Error?
+    var removeParticipantFrom_MockMethod: ((ZMUser, ZMConversation) async throws -> Void)?
 
-    func removeParticipant(_ user: ZMUser, from conversation: ZMConversation, completion: @escaping RemoveParticipantAction.ResultHandler) {
-        removeParticipantFromCompletion_Invocations.append((user: user, conversation: conversation, completion: completion))
+    func removeParticipant(_ user: ZMUser, from conversation: ZMConversation) async throws {
+        removeParticipantFrom_Invocations.append((user: user, conversation: conversation))
 
-        guard let mock = removeParticipantFromCompletion_MockMethod else {
-            fatalError("no mock for `removeParticipantFromCompletion`")
+        if let error = removeParticipantFrom_MockError {
+            throw error
         }
 
-        mock(user, conversation, completion)
+        guard let mock = removeParticipantFrom_MockMethod else {
+            fatalError("no mock for `removeParticipantFrom`")
+        }
+
+        try await mock(user, conversation)
     }
 
 }
@@ -424,32 +430,42 @@ class MockProteusConversationParticipantsServiceInterface: ProteusConversationPa
 
     // MARK: - addParticipants
 
-    var addParticipantsToCompletion_Invocations: [(users: [ZMUser], conversation: ZMConversation, completion: AddParticipantAction.ResultHandler)] = []
-    var addParticipantsToCompletion_MockMethod: (([ZMUser], ZMConversation, @escaping AddParticipantAction.ResultHandler) -> Void)?
+    var addParticipantsTo_Invocations: [(users: [ZMUser], conversation: ZMConversation)] = []
+    var addParticipantsTo_MockError: Error?
+    var addParticipantsTo_MockMethod: (([ZMUser], ZMConversation) async throws -> Void)?
 
-    func addParticipants(_ users: [ZMUser], to conversation: ZMConversation, completion: @escaping AddParticipantAction.ResultHandler) {
-        addParticipantsToCompletion_Invocations.append((users: users, conversation: conversation, completion: completion))
+    func addParticipants(_ users: [ZMUser], to conversation: ZMConversation) async throws {
+        addParticipantsTo_Invocations.append((users: users, conversation: conversation))
 
-        guard let mock = addParticipantsToCompletion_MockMethod else {
-            fatalError("no mock for `addParticipantsToCompletion`")
+        if let error = addParticipantsTo_MockError {
+            throw error
         }
 
-        mock(users, conversation, completion)
+        guard let mock = addParticipantsTo_MockMethod else {
+            fatalError("no mock for `addParticipantsTo`")
+        }
+
+        try await mock(users, conversation)
     }
 
     // MARK: - removeParticipant
 
-    var removeParticipantFromCompletion_Invocations: [(user: ZMUser, conversation: ZMConversation, completion: RemoveParticipantAction.ResultHandler)] = []
-    var removeParticipantFromCompletion_MockMethod: ((ZMUser, ZMConversation, @escaping RemoveParticipantAction.ResultHandler) -> Void)?
+    var removeParticipantFrom_Invocations: [(user: ZMUser, conversation: ZMConversation)] = []
+    var removeParticipantFrom_MockError: Error?
+    var removeParticipantFrom_MockMethod: ((ZMUser, ZMConversation) async throws -> Void)?
 
-    func removeParticipant(_ user: ZMUser, from conversation: ZMConversation, completion: @escaping RemoveParticipantAction.ResultHandler) {
-        removeParticipantFromCompletion_Invocations.append((user: user, conversation: conversation, completion: completion))
+    func removeParticipant(_ user: ZMUser, from conversation: ZMConversation) async throws {
+        removeParticipantFrom_Invocations.append((user: user, conversation: conversation))
 
-        guard let mock = removeParticipantFromCompletion_MockMethod else {
-            fatalError("no mock for `removeParticipantFromCompletion`")
+        if let error = removeParticipantFrom_MockError {
+            throw error
         }
 
-        mock(user, conversation, completion)
+        guard let mock = removeParticipantFrom_MockMethod else {
+            fatalError("no mock for `removeParticipantFrom`")
+        }
+
+        try await mock(user, conversation)
     }
 
 }
