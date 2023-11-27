@@ -390,7 +390,6 @@ final class ConversationEventPayloadProcessor {
                 source: source
             )
 
-
         default:
             return nil
         }

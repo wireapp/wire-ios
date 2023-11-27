@@ -94,17 +94,21 @@ final class SyncMLSOneToOneConversationActionHandlerTests: ActionHandlerTestBase
     // MARK: - Response
 
     func test_itHandlesSuccess_200() throws {
-        // Given
-        let payload = Payload.Conversation.stub()
-        let encoder = JSONEncoder.defaultEncoder
-        encoder.setAPIVersion(.v5)
-        let jsonString = try payload.encodeToJSONString(encoder: encoder)
+        try syncMOC.performAndWait {
+            // Given
+            var payload = Payload.Conversation.stub()
+            payload.qualifiedID = QualifiedID.random()
+            payload.type = BackendConversationType.oneOnOne.rawValue
+            let encoder = JSONEncoder.defaultEncoder
+            encoder.setAPIVersion(.v5)
+            let jsonString = try payload.encodeToJSONString(encoder: encoder)
 
-        // When
-        test_itHandlesSuccess(
-            status: 200,
-            payload: jsonString as ZMTransportData
-        )
+            // When
+            test_itHandlesSuccess(
+                status: 200,
+                payload: jsonString as ZMTransportData
+            )
+        }
     }
 
     func test_itHandlesSuccess_200_MissingPayload() {
