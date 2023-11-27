@@ -108,7 +108,7 @@ public class GetUserClientFingerprintUseCase: GetUserClientFingerprintUseCasePro
     func localFingerprint() async -> Data? {
         var fingerprintData: Data?
 
-        proteusPerform(
+        await proteusPerform(
             withProteusService: { proteusService in
                 do {
                     let fingerprint = try proteusService.localFingerprint()
@@ -133,7 +133,7 @@ public class GetUserClientFingerprintUseCase: GetUserClientFingerprintUseCasePro
 
         var fingerprintData: Data?
 
-        proteusPerform(
+        await proteusPerform(
             withProteusService: { proteusService in
                 do {
                     let fingerprint = try proteusService.remoteFingerprint(forSession: sessionId)
@@ -155,11 +155,11 @@ public class GetUserClientFingerprintUseCase: GetUserClientFingerprintUseCasePro
     // MARK: - Helpers
 
     private func proteusPerform<T>(
-        withProteusService proteusServiceBlock: ProteusServicePerformBlock<T>,
-        withKeyStore keyStoreBlock: KeyStorePerformBlock<T>
-    ) rethrows -> T {
-        return try context.performAndWait {
-            try proteusProvider.perform(withProteusService: proteusServiceBlock, withKeyStore: keyStoreBlock)
+        withProteusService proteusServiceBlock: @escaping ProteusServicePerformBlock<T>,
+        withKeyStore keyStoreBlock: @escaping KeyStorePerformBlock<T>
+    ) async rethrows -> T {
+        return try await context.perform {
+            try self.proteusProvider.perform(withProteusService: proteusServiceBlock, withKeyStore: keyStoreBlock)
         }
     }
 }
