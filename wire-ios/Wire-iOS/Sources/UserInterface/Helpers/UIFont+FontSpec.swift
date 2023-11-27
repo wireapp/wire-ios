@@ -19,7 +19,20 @@
 import Foundation
 import UIKit
 import WireCommonComponents
+import SwiftUI
 
+extension UIFont {
+    class var sfMonoMedium: UIFont {
+        return UIFont.monospacedSystemFont(ofSize: 16, weight: .regular)
+    }
+}
+
+// MARK: - SwiftUI Font
+extension UIFont {
+    var swiftUIFont: Font {
+        return Font(self as CTFont)
+    }
+}
 // MARK: - Avatar
 
 extension UIFont {
@@ -73,6 +86,14 @@ extension UIFont {
 
     class var normalSemiboldFont: UIFont {
         return FontSpec(.normal, .semibold).font!
+    }
+
+    class var headerSemiBoldFont: UIFont {
+        return FontSpec(.header, .semibold).font!
+    }
+
+    class var mediumRegular: UIFont {
+        return FontSpec(.medium, .regular).font!
     }
 
     // MARK: - Medium

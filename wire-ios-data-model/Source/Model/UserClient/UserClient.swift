@@ -87,7 +87,9 @@ public class UserClient: ZMManagedObject, UserClientType {
     @NSManaged public var needsToNotifyOtherUserAboutSessionReset: Bool
     @NSManaged public var needsSessionMigration: Bool
     @NSManaged public var discoveredByMessage: ZMOTRMessage?
-
+    private var provider: E2eIdentityProviding {
+        DeveloperFlag.enableNewClientDetailsFlow.isOn ? MockE2eIdentityProvider() : E2eIdentityProvider()
+    }
     private enum Keys {
         static let PushToken = "pushToken"
         static let DeviceClass = "deviceClass"
@@ -345,11 +347,17 @@ public class UserClient: ZMManagedObject, UserClientType {
 
     /// Resets the session between the client and the selfClient
     /// Can be called several times without issues
+
     public func resetSession() {
+        resetSession(completion: nil)
+    }
+
+    public func resetSession(completion: ((Bool) -> Void)? = nil) {
         guard
             let uiMOC = self.managedObjectContext?.zm_userInterface,
             let syncMOC = uiMOC.zm_sync
         else {
+            completion?(false)
             return
         }
 
@@ -359,20 +367,27 @@ public class UserClient: ZMManagedObject, UserClientType {
                 let selfClient = ZMUser.selfUser(in: syncMOC).selfClient(),
                 let syncClient = (try? syncMOC.existingObject(with: self.objectID)) as? UserClient
             else {
+                completion?(false)
                 return
             }
 
             // Delete session and fingerprint
-            try? syncClient.deleteSession()
-            syncClient.fingerprint = .none
+            do {
+                try syncClient.deleteSession()
+                syncClient.fingerprint = .none
 
-            // Mark clients as needing to be refetched
-            selfClient.missesClient(syncClient)
+                // Mark clients as needing to be refetched
+                selfClient.missesClient(syncClient)
 
-            // Mark that we need notify the other party about the session reset
-            syncClient.needsToNotifyOtherUserAboutSessionReset = true
+                // Mark that we need notify the other party about the session reset
+                syncClient.needsToNotifyOtherUserAboutSessionReset = true
 
-            syncMOC.saveOrRollback()
+                syncMOC.saveOrRollback()
+                completion?(true)
+            } catch {
+                // TODO: Add error logging
+                completion?(false)
+            }
         }
     }
 
@@ -1098,4 +1113,49 @@ extension UserClient {
         )
     }
 
+}
+
+// MARK: - E2eIdentity Certificate
+public struct E2eIdentityCertificate {
+    public var certificateDetails: String
+    public var expiryDate: Date
+    public var certificateStatus: String
+    public var serialNumber: String
+    public init(certificateDetails: String, expiryDate: Date, certificateStatus: String, serialNumber: String) {
+        self.certificateDetails = certificateDetails
+        self.expiryDate = expiryDate
+        self.certificateStatus = certificateStatus
+        self.serialNumber = serialNumber
+    }
+}
+
+public protocol E2eIdentityProviding {
+    func fetchCertificate() async throws -> E2eIdentityCertificate
+}
+
+enum E2eIdentityCertificateError: Error {
+    case badCertificate
+}
+
+public final class E2eIdentityProvider: E2eIdentityProviding {
+    public func fetchCertificate() async throws -> E2eIdentityCertificate {
+        throw E2eIdentityCertificateError.badCertificate
+    }
+}
+
+extension UserClient {
+    public func fetchE2eIdentityCertificate() async throws -> E2eIdentityCertificate {
+        return try await provider.fetchCertificate()
+    }
+}
+
+public final class MockE2eIdentityProvider: E2eIdentityProviding {
+    public func fetchCertificate() async throws -> E2eIdentityCertificate {
+        return E2eIdentityCertificate(
+            certificateDetails: .random(length: 450),
+            expiryDate: Date.now.addingTimeInterval(36000),
+            certificateStatus: "Valid",
+            serialNumber: .random(length: 60)
+        )
+    }
 }

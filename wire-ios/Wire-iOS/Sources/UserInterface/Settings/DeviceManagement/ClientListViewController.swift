@@ -19,6 +19,7 @@
 import UIKit
 import WireSyncEngine
 import WireCommonComponents
+import SwiftUI
 
 private let zmLog = ZMSLog(tag: "UI")
 
@@ -184,8 +185,18 @@ final class ClientListViewController: UIViewController,
     func openDetailsOfClient(_ client: UserClient) {
         if let navigationController = self.navigationController {
             let clientViewController = SettingsClientViewController(userClient: client, credentials: self.credentials)
-            clientViewController.view.backgroundColor = SemanticColors.View.backgroundDefault
-            navigationController.pushViewController(clientViewController, animated: true)
+            if DeveloperFlag.enableNewClientDetailsFlow.isOn {
+                let detailsView = DeviceDetailsView(
+                    viewModel: DeviceInfoViewModel.map(userClient: client, credentials: credentials)
+                )
+                let hostingViewController = UIHostingController(rootView: detailsView)
+                hostingViewController.view.backgroundColor = SemanticColors.View.backgroundDefault
+                navigationController.pushViewController(hostingViewController, animated: true)
+                navigationController.isNavigationBarHidden = true
+            } else {
+                clientViewController.view.backgroundColor = SemanticColors.View.backgroundDefault
+                navigationController.pushViewController(clientViewController, animated: true)
+            }
         }
     }
 

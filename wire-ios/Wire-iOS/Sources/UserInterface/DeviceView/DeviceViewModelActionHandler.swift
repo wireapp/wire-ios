@@ -17,19 +17,3 @@
 //
 
 import Foundation
-
-public extension String {
-
-    static func randomDomain(hostLength: UInt = 5) -> String {
-        return "\(String.random(length: hostLength)).com"
-    }
-
-    static func random(length: UInt) -> String {
-        let randomChars = (0..<length).compactMap { _ in
-            "a quick brown fox jumps over a lazy village dog".randomElement()
-        }
-
-        return String(randomChars)
-    }
-
-}
