@@ -104,6 +104,8 @@ final class ConversationEventPayloadProcessor {
         originalEvent: ZMUpdateEvent,
         in context: NSManagedObjectContext
     ) {
+        Logging.eventProcessing.error("payload.data.reason \(payload.data.reason as Any)")
+
         guard
             let conversation = fetchOrCreateConversation(
                 from: payload,
