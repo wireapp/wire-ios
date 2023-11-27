@@ -2775,7 +2775,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         mockMLSActionExecutor.mockUpdateKeyMaterial = { _ in
             throw SendMLSMessageAction.Failure.mlsStaleMessage
         }
-        let wipeConversationExpectation = XCTestExpectation(description: "commitPendingProposals must be called")
+        let wipeConversationExpectation = XCTestExpectation(description: "wipeConversation must be called")
         mockCoreCrypto.mockWipeConversation = { conversationID in
             XCTAssertEqual(conversationID, [UInt8](mlsGroupID.data))
             wipeConversationExpectation.fulfill()
