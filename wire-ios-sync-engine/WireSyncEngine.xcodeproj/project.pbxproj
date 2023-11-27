@@ -16,8 +16,6 @@
 		017ABBB62995278C0004C243 /* SlowSyncTests+NotificationsV3.swift in Sources */ = {isa = PBXBuildFile; fileRef = 017ABBB52995278C0004C243 /* SlowSyncTests+NotificationsV3.swift */; };
 		018A3DBC2B07998400EB3D6B /* GetUserClientFingerprintUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 018A3DBB2B07998400EB3D6B /* GetUserClientFingerprintUseCase.swift */; };
 		018A3DBF2B0799CA00EB3D6B /* GetUserClientFingerprintUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 018A3DBE2B0799CA00EB3D6B /* GetUserClientFingerprintUseCaseTests.swift */; };
-		01C334292B14833A003FB215 /* WireSyncEngineSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0145AE812B1154010097E3B8 /* WireSyncEngineSupport.framework */; };
-		01C3342A2B14833A003FB215 /* WireSyncEngineSupport.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0145AE812B1154010097E3B8 /* WireSyncEngineSupport.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		01D33D8129B8ED97009E94F3 /* SyncStatusLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D33D8029B8ED97009E94F3 /* SyncStatusLog.swift */; };
 		0601900B2678750D0043F8F8 /* DeepLinkURLActionProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 161ACB3E23F6E4C200ABFF33 /* DeepLinkURLActionProcessorTests.swift */; };
 		06025664248E5BC700E060E1 /* (null) in Sources */ = {isa = PBXBuildFile; };
@@ -675,13 +673,6 @@
 			remoteGlobalIDString = 0145AE802B1154010097E3B8;
 			remoteInfo = WireSyncEngineSupport;
 		};
-		01C3342B2B14833A003FB215 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 540029AB1918CA8500578793 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 0145AE802B1154010097E3B8;
-			remoteInfo = WireSyncEngineSupport;
-		};
 		169BA1D825ECDBA300374343 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 540029AB1918CA8500578793 /* Project object */;
@@ -720,17 +711,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		01C3342D2B14833A003FB215 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				01C3342A2B14833A003FB215 /* WireSyncEngineSupport.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		EE668BBC2954AA9300D939E7 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1480,7 +1460,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				01C334292B14833A003FB215 /* WireSyncEngineSupport.framework in Frameworks */,
 				169BA1D725ECDBA300374343 /* WireSyncEngine.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2843,14 +2822,12 @@
 				169BA1CE25ECDBA300374343 /* Sources */,
 				169BA1CF25ECDBA300374343 /* Frameworks */,
 				169BA1D025ECDBA300374343 /* Resources */,
-				01C3342D2B14833A003FB215 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 				169BA1D925ECDBA300374343 /* PBXTargetDependency */,
 				169BA1DE25ECDBC800374343 /* PBXTargetDependency */,
-				01C3342C2B14833A003FB215 /* PBXTargetDependency */,
 			);
 			name = IntegrationTests;
 			productName = IntegrationTests;
@@ -3733,11 +3710,6 @@
 			isa = PBXTargetDependency;
 			target = 0145AE802B1154010097E3B8 /* WireSyncEngineSupport */;
 			targetProxy = 0145AE922B1155760097E3B8 /* PBXContainerItemProxy */;
-		};
-		01C3342C2B14833A003FB215 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 0145AE802B1154010097E3B8 /* WireSyncEngineSupport */;
-			targetProxy = 01C3342B2B14833A003FB215 /* PBXContainerItemProxy */;
 		};
 		169BA1D925ECDBA300374343 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
