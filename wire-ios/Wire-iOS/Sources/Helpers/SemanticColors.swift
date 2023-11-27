@@ -19,6 +19,7 @@
 import UIKit
 import WireDataModel
 import WireCommonComponents
+import SwiftUI
 
 /// Naming convention:
 ///
@@ -265,7 +266,9 @@ extension UIColor {
 }
 
 public extension UIColor {
-
+    var swiftUIColor: Color {
+        return Color(uiColor: self)
+    }
     convenience init(for accentColor: AccentColor) {
         switch accentColor {
         case .blue:

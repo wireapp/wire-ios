@@ -2740,6 +2740,44 @@ internal enum L10n {
         /// Unknown
         internal static let unknown = L10n.tr("Localizable", "device.class.unknown", fallback: "Unknown")
       }
+      internal enum Details {
+        internal enum Section {
+          internal enum E2e {
+            /// Get Certificate
+            internal static let getcertificate = L10n.tr("Localizable", "device.details.section.e2e.getcertificate", fallback: "Get Certificate")
+            /// Serial Number
+            internal static let serialnumber = L10n.tr("Localizable", "device.details.section.e2e.serialnumber", fallback: "Serial Number")
+            /// Show Certificate Details
+            internal static let showcertificatedetails = L10n.tr("Localizable", "device.details.section.e2e.showcertificatedetails", fallback: "Show Certificate Details")
+            /// End-to-end Identity Certificate
+            internal static let title = L10n.tr("Localizable", "device.details.section.e2e.title", fallback: "End-to-end Identity Certificate")
+            /// Update Certificate
+            internal static let updatecertificate = L10n.tr("Localizable", "device.details.section.e2e.updatecertificate", fallback: "Update Certificate")
+            internal enum Status {
+              /// Expired
+              internal static let expired = L10n.tr("Localizable", "device.details.section.e2e.status.expired", fallback: "Expired")
+              /// Not activated
+              internal static let notactivated = L10n.tr("Localizable", "device.details.section.e2e.status.notactivated", fallback: "Not activated")
+              /// Revoked
+              internal static let revoked = L10n.tr("Localizable", "device.details.section.e2e.status.revoked", fallback: "Revoked")
+              /// Status
+              internal static let title = L10n.tr("Localizable", "device.details.section.e2e.status.title", fallback: "Status")
+              /// Valid
+              internal static let valid = L10n.tr("Localizable", "device.details.section.e2e.status.valid", fallback: "Valid")
+            }
+          }
+          internal enum Proteus {
+            /// Activated
+            internal static let activated = L10n.tr("Localizable", "device.details.section.proteus.activated", fallback: "Activated")
+            /// Proteus ID
+            internal static let id = L10n.tr("Localizable", "device.details.section.proteus.id", fallback: "Proteus ID")
+            /// Proteus Key Fingerprint
+            internal static let keyfingerprint = L10n.tr("Localizable", "device.details.section.proteus.keyfingerprint", fallback: "Proteus Key Fingerprint")
+            /// PROTEUS DEVICE DETAILS
+            internal static let title = L10n.tr("Localizable", "device.details.section.proteus.title", fallback: "PROTEUS DEVICE DETAILS")
+          }
+        }
+      }
       internal enum `Type` {
         /// Legal Hold
         internal static let legalhold = L10n.tr("Localizable", "device.type.legalhold", fallback: "Legal Hold")
