@@ -18,8 +18,9 @@
 
 import Foundation
 import XCTest
-@testable import WireSyncEngine
+import WireSyncEngineSupport
 import WireTesting
+@testable import WireSyncEngine
 
 class GetUserClientFingerprintUseCaseTests: MessagingTest {
     var sut: GetUserClientFingerprintUseCase!
