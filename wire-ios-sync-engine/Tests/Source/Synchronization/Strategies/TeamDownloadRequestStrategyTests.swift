@@ -343,7 +343,7 @@ class TeamDownloadRequestStrategyTests: MessagingTest {
 
         // when
         await self.sut.processEvents([event], liveEvents: true, prefetchResult: nil)
-         
+
         syncMOC.performGroupedAndWait { context in
              context.saveOrRollback()
 
