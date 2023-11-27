@@ -2654,6 +2654,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     func test_startProteusToMLSMigration_succeeds() async throws {
         // Given
+        BackendInfo.storage = .random()!
         BackendInfo.domain = "example.com"
         let mlsGroupID = MLSGroupID.random()
         let conversation = await uiMOC.perform { [self] in
@@ -2750,6 +2751,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     func test_startProteusToMLSMigration_staleMessageErrorWipesGroup() async throws {
         // Given
+        BackendInfo.storage = .random()!
         BackendInfo.domain = "example.com"
         let mlsGroupID = MLSGroupID.random()
         let conversation = await uiMOC.perform { [self] in
