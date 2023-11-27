@@ -501,6 +501,7 @@ extension Payload {
         enum CodingKeys: String, CodingKey {
             case userIDs = "user_ids"
             case qualifiedUserIDs = "qualified_user_ids"
+            case reason
         }
 
         static var eventType: ZMUpdateEventType {
@@ -509,6 +510,13 @@ extension Payload {
 
         let userIDs: [UUID]?
         let qualifiedUserIDs: [QualifiedID]?
+        let reason: Reason?
+
+        enum Reason: String, Codable {
+            case left
+            case userDeleted = "user-deleted"
+            case removed
+        }
     }
 
     struct UpdateConverationMemberJoin: CodableEventData {
