@@ -416,12 +416,12 @@ extension ZMUser: UserConnections {
 
     public func accept(completion: @escaping (Error?) -> Void) {
         guard
-            let syncContext = managedObjectContext?.zm_sync,
+            let context = managedObjectContext,
+            let syncContext = context.zm_sync,
             let connection,
             let conversation = connection.conversation,
-            let otherUser = connection.to,
-            let otherUserID = otherUser.remoteIdentifier,
-            let otherUserDomain = otherUser.domain ?? BackendInfo.domain
+            let userID = remoteIdentifier,
+            let domain = domain ?? BackendInfo.domain
         else {
             completion(AcceptConnectionError.invalidState)
             return
@@ -430,7 +430,8 @@ extension ZMUser: UserConnections {
         connection.updateStatus(.accepted) { result in
             switch result {
             case .success:
-                let commonProtocols = self.supportedProtocols.intersection(otherUser.supportedProtocols)
+                let selfUser = ZMUser.selfUser(in: context)
+                let commonProtocols = selfUser.supportedProtocols.intersection(self.supportedProtocols)
 
                 guard !commonProtocols.isEmpty else {
                     conversation.isForcedReadOnly = true
@@ -446,13 +447,13 @@ extension ZMUser: UserConnections {
                     return
                 }
 
-                let otherUserQualifiedID = QualifiedID(
-                    uuid: otherUserID,
-                    domain: otherUserDomain
+                let qualifiedID = QualifiedID(
+                    uuid: userID,
+                    domain: domain
                 )
 
                 self.establishMLSOneToOne(
-                    with: otherUserQualifiedID,
+                    with: qualifiedID,
                     in: syncContext,
                     completion: completion
                 )
@@ -509,7 +510,6 @@ extension ZMUser: UserConnections {
                     completion(nil)
                 }
             }
-
         }
     }
 

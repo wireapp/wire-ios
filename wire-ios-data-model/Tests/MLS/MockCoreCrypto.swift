@@ -153,9 +153,11 @@ class MockCoreCrypto: CoreCryptoProtocol {
 
     // MARK: - addClientsToConversation
 
+    var mockAddClientsToConversationCount = 0
     var mockAddClientsToConversation: ((ConversationId, [Invitee]) throws -> MemberAddedMessages)?
 
     func addClientsToConversation(conversationId: ConversationId, clients: [Invitee]) throws -> MemberAddedMessages {
+        mockAddClientsToConversationCount += 1
         guard let mock = mockAddClientsToConversation else {
             fatalError("no mock for `addClientsToConversation`")
         }

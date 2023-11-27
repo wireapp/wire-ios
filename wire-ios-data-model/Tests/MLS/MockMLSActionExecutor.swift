@@ -25,9 +25,11 @@ class MockMLSActionExecutor: MLSActionExecutorProtocol {
 
     // MARK: - Add members
 
+    var mockAddMembersCount = 0
     var mockAddMembers: (([Invitee], MLSGroupID) async throws -> [ZMUpdateEvent])?
 
     func addMembers(_ invitees: [Invitee], to groupID: MLSGroupID) async throws -> [ZMUpdateEvent] {
+        mockAddMembersCount += 1
         guard let mock = mockAddMembers else {
             fatalError("no mock for `addMembers`")
         }
