@@ -30,6 +30,7 @@ class ConversationParticipantsServiceTests: MessagingTestBase {
     var selfUser: ZMUser!
     var conversation: ZMConversation!
     var user: ZMUser!
+    var addAttempts: Int = 0
 
     // MARK: - Life cycle
 
@@ -40,17 +41,17 @@ class ConversationParticipantsServiceTests: MessagingTestBase {
         mockMLSParticipantsService = MockMLSConversationParticipantsServiceInterface()
 
         // Set users and conversation stubs
-        selfUser = ZMUser.selfUser(in: syncMOC)
+        selfUser = ZMUser.selfUser(in: uiMOC)
         selfUser.remoteIdentifier = .create()
 
-        conversation = ZMConversation.insertNewObject(in: syncMOC)
+        conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.conversationType = .group
 
-        user = ZMUser.insertNewObject(in: syncMOC)
+        user = ZMUser.insertNewObject(in: uiMOC)
 
         // Set up sut
         sut = ConversationParticipantsService(
-            context: syncMOC,
+            context: uiMOC,
             proteusParticipantsService: mockProteusParticipantsService,
             mlsParticipantsService: mockMLSParticipantsService
         )
@@ -70,10 +71,12 @@ class ConversationParticipantsServiceTests: MessagingTestBase {
 
     func test_AddParticipants_InsertsSysMessage_AndRetriesOperation_ForUnreachableDomains() async throws {
         // GIVEN
-        let (reachables, unreachables) = createFederationStubs()
+        let (reachables, unreachables) = await createFederationStubs()
 
-        conversation.messageProtocol = .proteus
-        conversation.domain = reachables.first?.domain
+        await uiMOC.perform { [self] in
+            conversation.messageProtocol = .proteus
+            conversation.domain = reachables.first?.domain
+        }
 
         mockProteusAddParticipantsFailingOnce(
             with: .unreachableDomains(Set(unreachables.map(\.domain)))
@@ -86,7 +89,7 @@ class ConversationParticipantsServiceTests: MessagingTestBase {
         )
 
         // THEN
-        assertSystemMessageWasInserted(
+        await assertSystemMessageWasInserted(
             forUsers: Set(unreachables.map(\.user)),
             in: conversation
         )
@@ -98,10 +101,12 @@ class ConversationParticipantsServiceTests: MessagingTestBase {
 
     func test_AddParticipants_InsertsSysMessage_AndRetriesOperation_ForNonFederatingDomains() async throws {
         // GIVEN
-        let (federating, nonFederating) = createFederationStubs()
+        let (federating, nonFederating) = await createFederationStubs()
 
-        conversation.messageProtocol = .proteus
-        conversation.domain = federating.first?.domain
+        await uiMOC.perform { [self] in
+            conversation.messageProtocol = .proteus
+            conversation.domain = federating.first?.domain
+        }
 
         mockProteusAddParticipantsFailingOnce(
             with: .nonFederatingDomains(Set(nonFederating.map(\.domain)))
@@ -114,7 +119,7 @@ class ConversationParticipantsServiceTests: MessagingTestBase {
         )
 
         // THEN
-        assertSystemMessageWasInserted(
+        await assertSystemMessageWasInserted(
             forUsers: Set(nonFederating.map(\.user)),
             in: conversation
         )
@@ -126,24 +131,26 @@ class ConversationParticipantsServiceTests: MessagingTestBase {
 
     func test_AddParticipants_InsertsSysMessage_AndDoesntRetryOperation_NoUsersFromUnreachableDomains() async throws {
         // GIVEN
-        let (federating, _) = createFederationStubs()
+        let (reachable, _) = await createFederationStubs()
 
-        conversation.messageProtocol = .proteus
-        conversation.domain = federating.first?.domain
+        await uiMOC.perform { [self] in
+            conversation.messageProtocol = .proteus
+            conversation.domain = reachable.first?.domain
+        }
 
         mockProteusAddParticipantsFailingOnce(
-            with: .nonFederatingDomains(Set())
+            with: .unreachableDomains(Set())
         )
 
         // WHEN
         try await sut.addParticipants(
-            federating.map(\.user),
+            reachable.map(\.user),
             to: conversation
         )
 
         // THEN
-        assertSystemMessageWasInserted(
-            forUsers: Set(federating.map(\.user)),
+        await assertSystemMessageWasInserted(
+            forUsers: Set(reachable.map(\.user)),
             in: conversation
         )
 
@@ -154,7 +161,9 @@ class ConversationParticipantsServiceTests: MessagingTestBase {
 
     func test_AddParticipants_Throws_InvalidOperation_ForWrongConversationType() async {
         // GIVEN
-        conversation.conversationType = .oneOnOne
+        await uiMOC.perform { [self] in
+            conversation.conversationType = .oneOnOne
+        }
 
         // THEN
         await assertItThrows(error: ConversationParticipantsError.invalidOperation) {
@@ -176,7 +185,9 @@ class ConversationParticipantsServiceTests: MessagingTestBase {
 
     func test_AddParticipants_UsesProteus_WhenMessageProtocol_IsProteus() async throws {
         // GIVEN
-        conversation.messageProtocol = .proteus
+        await uiMOC.perform { [self] in
+            conversation.messageProtocol = .proteus
+        }
 
         mockProteusParticipantsService.addParticipantsTo_MockMethod = { _, _ in }
 
@@ -190,7 +201,9 @@ class ConversationParticipantsServiceTests: MessagingTestBase {
 
     func test_AddParticipants_UsesMLS_WhenMessageProtocol_IsMLS() async throws {
         // GIVEN
-        conversation.messageProtocol = .mls
+        await uiMOC.perform { [self] in
+            conversation.messageProtocol = .mls
+        }
 
         mockMLSParticipantsService.addParticipantsTo_MockMethod = { _, _ in }
 
@@ -204,7 +217,9 @@ class ConversationParticipantsServiceTests: MessagingTestBase {
 
     func test_AddParticipants_UsesProteusAndMLS_WhenMessageProtocol_IsMixed() async throws {
         // GIVEN
-        conversation.messageProtocol = .mixed
+        await uiMOC.perform { [self] in
+            conversation.messageProtocol = .mixed
+        }
 
         mockProteusParticipantsService.addParticipantsTo_MockMethod = { _, _ in }
         mockMLSParticipantsService.addParticipantsTo_MockMethod = { _, _ in }
@@ -220,9 +235,14 @@ class ConversationParticipantsServiceTests: MessagingTestBase {
     // MARK: - Removing Participants - Invalid Operations
 
     func test_RemoveParticipants_InvalidOperation() async {
-        conversation.conversationType = .oneOnOne
+        // GIVEN
+        await uiMOC.perform { [self] in
+            conversation.conversationType = .oneOnOne
+        }
 
+        // THEN
         await assertItThrows(error: ConversationParticipantsError.invalidOperation) {
+            // WHEN
             try await sut.removeParticipant(user, from: conversation)
         }
     }
@@ -231,7 +251,9 @@ class ConversationParticipantsServiceTests: MessagingTestBase {
 
     func test_RemoveParticipants_UsesProteus_WhenMessageProtocol_IsProteus() async throws {
         // GIVEN
-        conversation.messageProtocol = .proteus
+        await uiMOC.perform { [self] in
+            conversation.messageProtocol = .proteus
+        }
 
         mockProteusParticipantsService.removeParticipantFrom_MockMethod = { _, _ in }
 
@@ -245,7 +267,9 @@ class ConversationParticipantsServiceTests: MessagingTestBase {
 
     func test_RemoveParticipants_UsesProteus_WhenMessageProtocol_IsMixed() async throws {
         // GIVEN
-        conversation.messageProtocol = .mixed
+        await uiMOC.perform { [self] in
+            conversation.messageProtocol = .mixed
+        }
 
         mockProteusParticipantsService.removeParticipantFrom_MockMethod = { _, _ in }
 
@@ -259,7 +283,9 @@ class ConversationParticipantsServiceTests: MessagingTestBase {
 
     func test_RemoveParticipants_UsesProteus_WhenMessageProtocol_IsMLS_forSelfUser() async throws {
         // GIVEN
-        conversation.messageProtocol = .mls
+        await uiMOC.perform { [self] in
+            conversation.messageProtocol = .mls
+        }
 
         mockProteusParticipantsService.removeParticipantFrom_MockMethod = { _, _ in }
 
@@ -273,7 +299,9 @@ class ConversationParticipantsServiceTests: MessagingTestBase {
 
     func test_RemoveParticipants_UsesMLS_WhenMessageProtocol_IsMLS_forOtherUsers() async throws {
         // GIVEN
-        conversation.messageProtocol = .mls
+        await uiMOC.perform { [self] in
+            conversation.messageProtocol = .mls
+        }
 
         mockMLSParticipantsService.removeParticipantFrom_MockMethod = { _, _ in }
 
@@ -291,32 +319,35 @@ class ConversationParticipantsServiceTests: MessagingTestBase {
 private extension ConversationParticipantsServiceTests {
     typealias DomainUserTuple = (domain: String, user: ZMUser)
 
-    func createFederationStubs() -> (reachables: [DomainUserTuple], unreachables: [DomainUserTuple]) {
-        let applesDomain = "apples.com"
-        let bananasDomain = "bananas.com"
-        let carrotsDomain = "carrots.com"
+    func createFederationStubs() async -> (reachables: [DomainUserTuple], unreachables: [DomainUserTuple]) {
+        return await uiMOC.perform { [self] in
 
-        let applesUser = ZMUser.insertNewObject(in: uiMOC)
-        applesUser.remoteIdentifier = .create()
-        applesUser.domain = applesDomain
+            let applesDomain = "apples.com"
+            let bananasDomain = "bananas.com"
+            let carrotsDomain = "carrots.com"
 
-        let bananasUser = ZMUser.insertNewObject(in: uiMOC)
-        bananasUser.remoteIdentifier = .create()
-        bananasUser.domain = bananasDomain
+            let applesUser = ZMUser.insertNewObject(in: uiMOC)
+            applesUser.remoteIdentifier = .create()
+            applesUser.domain = applesDomain
 
-        let carrotsUser = ZMUser.insertNewObject(in: uiMOC)
-        carrotsUser.remoteIdentifier = .create()
-        carrotsUser.domain = carrotsDomain
+            let bananasUser = ZMUser.insertNewObject(in: uiMOC)
+            bananasUser.remoteIdentifier = .create()
+            bananasUser.domain = bananasDomain
 
-        return (
-            reachables: [
-                (applesDomain, applesUser)
-            ],
-            unreachables: [
-                (bananasDomain, bananasUser),
-                (carrotsDomain, carrotsUser)
-            ]
-        )
+            let carrotsUser = ZMUser.insertNewObject(in: uiMOC)
+            carrotsUser.remoteIdentifier = .create()
+            carrotsUser.domain = carrotsDomain
+
+            return (
+                reachables: [
+                    (applesDomain, applesUser)
+                ],
+                unreachables: [
+                    (bananasDomain, bananasUser),
+                    (carrotsDomain, carrotsUser)
+                ]
+            )
+        }
     }
 
     func assertSystemMessageWasInserted(
@@ -324,15 +355,16 @@ private extension ConversationParticipantsServiceTests {
         in conversation: ZMConversation,
         file: StaticString = #file,
         line: UInt = #line
-    ) {
-        guard let systemMessage = conversation.lastMessage?.systemMessageData else {
-            return XCTFail("expected system message", file: file, line: line)
+    ) async {
+        await uiMOC.perform {
+            guard let systemMessage = conversation.lastMessage?.systemMessageData else {
+                return XCTFail("expected system message", file: file, line: line)
+            }
+
+            XCTAssertEqual(systemMessage.systemMessageType, .failedToAddParticipants, file: file, line: line)
+            XCTAssertEqual(systemMessage.userTypes, users, file: file, line: line)
         }
-
-        XCTAssertEqual(systemMessage.systemMessageType, .failedToAddParticipants, file: file, line: line)
-        XCTAssertEqual(systemMessage.userTypes, users, file: file, line: line)
     }
-
 
     func assertReachableUsersWereAddedOnRetry(
         expectedUsers: Set<ZMUser>,
@@ -363,12 +395,12 @@ private extension ConversationParticipantsServiceTests {
     }
 
     func mockProteusAddParticipantsFailingOnce(with error: FederationError) {
-        var addAttempts = 0
+        var firstAttempt = true
+
         mockProteusParticipantsService.addParticipantsTo_MockMethod = { _, _ in
-            if addAttempts == 0 {
-                throw error
-            }
-            addAttempts += 1
+            guard firstAttempt else { return }
+            firstAttempt = false
+            throw error
         }
     }
 }

@@ -38,15 +38,17 @@ class MLSConversationParticipantsServiceTests: MessagingTestBase {
 
         mockClientIDsProvider = MockMLSClientIDsProviding()
         mockMLSService = MockMLSService()
+        
+        syncMOC.performAndWait { [self] in
+            conversation = ZMConversation.insertNewObject(in: syncMOC)
+            conversation.mlsGroupID = groupID
+            conversation.domain = "domain.com"
+            conversation.remoteIdentifier = .create()
 
-        conversation = ZMConversation.insertNewObject(in: syncMOC)
-        conversation.mlsGroupID = groupID
-        conversation.domain = "domain.com"
-        conversation.remoteIdentifier = .create()
-
-        user = ZMUser.insertNewObject(in: syncMOC)
-        user.remoteIdentifier = .create()
-        user.domain = "domain.com"
+            user = ZMUser.insertNewObject(in: syncMOC)
+            user.remoteIdentifier = .create()
+            user.domain = "domain.com"
+        }
 
         sut = MLSConversationParticipantsService(
             context: syncMOC,
@@ -68,7 +70,9 @@ class MLSConversationParticipantsServiceTests: MessagingTestBase {
 
     func test_AddParticipants_Succeeds() async throws {
         // GIVEN
-        let expectedUsers = [MLSUser(from: user)]
+        let expectedUsers = await syncMOC.perform { [self] in
+            [MLSUser(from: user)]
+        }
 
         // WHEN
         try await sut.addParticipants([user], to: conversation)
@@ -81,12 +85,14 @@ class MLSConversationParticipantsServiceTests: MessagingTestBase {
         )
 
         XCTAssertEqual(addMembersInvocation.users, expectedUsers)
-        XCTAssertEqual(addMembersInvocation.groupID, conversation.mlsGroupID)
+        XCTAssertEqual(addMembersInvocation.groupID, groupID)
     }
 
     func test_AddParticipants_Throws_InvalidOperation() async {
         // GIVEN
-        conversation.mlsGroupID = nil
+        await syncMOC.perform { [self] in
+            conversation.mlsGroupID = nil
+        }
 
         // THEN
         await assertItThrows(error: MLSConversationParticipantsError.invalidOperation) {
@@ -122,13 +128,16 @@ class MLSConversationParticipantsServiceTests: MessagingTestBase {
         try await sut.removeParticipant(user, from: conversation)
        
         // THEN
+        // gather expected values
+        let userID = await syncMOC.perform { [self] in user.qualifiedID }
+
         // assert calls to fetchUserClients
         let fetchClientsInvocation = try XCTUnwrap(
             mockClientIDsProvider.fetchUserClientsForIn_Invocations.first,
             "expected invocation"
         )
 
-        XCTAssertEqual(fetchClientsInvocation.userID, user.qualifiedID)
+        XCTAssertEqual(fetchClientsInvocation.userID, userID)
 
         // assert calls to removeMembers
         let removeMembersInvocation = try XCTUnwrap(
@@ -137,12 +146,14 @@ class MLSConversationParticipantsServiceTests: MessagingTestBase {
         )
 
         XCTAssertEqual(removeMembersInvocation.clientIDs, clientIDs)
-        XCTAssertEqual(removeMembersInvocation.groupID, conversation.mlsGroupID)
+        XCTAssertEqual(removeMembersInvocation.groupID, groupID)
     }
 
     func test_RemoveParticipant_Throws_InvalidOperation() async {
         // GIVEN
-        conversation.mlsGroupID = nil
+        await syncMOC.perform { [self] in
+            conversation.mlsGroupID = nil
+        }
 
         // THEN
         await assertItThrows(error: MLSConversationParticipantsError.invalidOperation) {

@@ -61,7 +61,7 @@ class ProteusConversationParticipantsServiceTests: MessagingTestBase {
 
         // WHEN
         try await sut.addParticipants([user], to: conversation)
-        
+
         // THEN
         XCTAssertEqual(mockHandler.performedActions.count, 1)
     }

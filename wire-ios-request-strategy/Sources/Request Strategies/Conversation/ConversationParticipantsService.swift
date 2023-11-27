@@ -103,7 +103,7 @@ public class ConversationParticipantsService: ConversationParticipantsServiceInt
         case .proteus:
 
             try await proteusParticipantsService.addParticipants(users, to: conversation)
-        
+
         case .mls:
 
             guard let mlsParticipantsService else {
