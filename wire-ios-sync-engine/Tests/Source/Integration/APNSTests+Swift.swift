@@ -22,7 +22,7 @@ import XCTest
 
 class APNSTests_Swift: APNSTestsBase {
 
-    func diabled_testThatItUpdatesApplicationBadgeCount_WhenReceivingATextMessage() {
+    func disabled_testThatItUpdatesApplicationBadgeCount_WhenReceivingATextMessage() {
         // GIVEN
         XCTAssertTrue(login())
 

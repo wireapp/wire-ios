@@ -74,7 +74,6 @@
 		1639A8542264C52600868AB9 /* ZMLocalNotificationTests_Alerts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1639A8532264C52600868AB9 /* ZMLocalNotificationTests_Alerts.swift */; };
 		163FB9942052EA4C00E74F83 /* OperationLoopNewRequestObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 163FB9922052EA4600E74F83 /* OperationLoopNewRequestObserver.swift */; };
 		163FB9992057E3F200E74F83 /* AuthenticationStatusProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 163FB9982057E3F200E74F83 /* AuthenticationStatusProvider.swift */; };
-		164269812B0D57CE00C5B5E2 /* AsyncAlgorithms in Frameworks */ = {isa = PBXBuildFile; productRef = 164269802B0D57CE00C5B5E2 /* AsyncAlgorithms */; };
 		1645ECF82448A0A3007A82D6 /* Decodable+JSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1645ECF72448A0A3007A82D6 /* Decodable+JSON.swift */; };
 		1645ECFC2449CE75007A82D6 /* TeamMembersDownloadRequestStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1645ECFB2449CE75007A82D6 /* TeamMembersDownloadRequestStrategy.swift */; };
 		1645ED1B244DE345007A82D6 /* TeamMembersDownloadRequestStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1645ED1A244DE345007A82D6 /* TeamMembersDownloadRequestStrategy.swift */; };
@@ -1455,7 +1454,6 @@
 				EE668BB62954AA7F00D939E7 /* WireRequestStrategy.framework in Frameworks */,
 				EE67F6C8296F0622001D7C88 /* libPhoneNumberiOS.xcframework in Frameworks */,
 				EE67F6CA296F0622001D7C88 /* ZipArchive.xcframework in Frameworks */,
-				164269812B0D57CE00C5B5E2 /* AsyncAlgorithms in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2804,7 +2802,6 @@
 			);
 			name = "WireSyncEngine-ios";
 			packageProductDependencies = (
-				164269802B0D57CE00C5B5E2 /* AsyncAlgorithms */,
 			);
 			productName = "WireSyncEngine-ios";
 			productReference = 549815931A43232400A7CE2E /* WireSyncEngine.framework */;
@@ -2880,7 +2877,6 @@
 			);
 			mainGroup = 540029AA1918CA8500578793;
 			packageReferences = (
-				1642697F2B0D57CE00C5B5E2 /* XCRemoteSwiftPackageReference "swift-async-algorithms" */,
 			);
 			productRefGroup = 540029B51918CA8500578793 /* Products */;
 			projectDirPath = "";
@@ -3923,25 +3919,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCRemoteSwiftPackageReference section */
-		1642697F2B0D57CE00C5B5E2 /* XCRemoteSwiftPackageReference "swift-async-algorithms" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/apple/swift-async-algorithms.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 0.1.0;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		164269802B0D57CE00C5B5E2 /* AsyncAlgorithms */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 1642697F2B0D57CE00C5B5E2 /* XCRemoteSwiftPackageReference "swift-async-algorithms" */;
-			productName = AsyncAlgorithms;
-		};
-/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 540029AB1918CA8500578793 /* Project object */;
 }
