@@ -101,8 +101,11 @@ public class ConversationParticipantsService: ConversationParticipantsServiceInt
 
         switch messageProtocol {
         case .proteus:
+
             try await proteusParticipantsService.addParticipants(users, to: conversation)
+        
         case .mls:
+
             guard let mlsParticipantsService else {
                 throw ConversationParticipantsError.missingMLSParticipantsService
             }
@@ -113,13 +116,16 @@ public class ConversationParticipantsService: ConversationParticipantsServiceInt
                 // TODO: Insert system message
                 // To be done in https://wearezeta.atlassian.net/browse/WPB-2228
             }
+
         case .mixed:
+
             guard let mlsParticipantsService else {
                 throw ConversationParticipantsError.missingMLSParticipantsService
             }
 
             try await proteusParticipantsService.addParticipants(users, to: conversation)
-            // Only do best attempt
+
+            // For mixed protocol we only try once and don't handle errors
             try? await mlsParticipantsService.addParticipants(users, to: conversation)
         }
     }

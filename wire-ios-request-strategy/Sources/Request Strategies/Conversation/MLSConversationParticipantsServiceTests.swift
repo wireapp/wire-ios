@@ -39,21 +39,18 @@ class MLSConversationParticipantsServiceTests: MessagingTestBase {
         mockClientIDsProvider = MockMLSClientIDsProviding()
         mockMLSService = MockMLSService()
 
-        syncMOC.performAndWait {
-            syncMOC.mlsService = mockMLSService
-        }
-
-        conversation = ZMConversation.insertNewObject(in: uiMOC)
+        conversation = ZMConversation.insertNewObject(in: syncMOC)
         conversation.mlsGroupID = groupID
         conversation.domain = "domain.com"
         conversation.remoteIdentifier = .create()
 
-        user = ZMUser.insertNewObject(in: uiMOC)
+        user = ZMUser.insertNewObject(in: syncMOC)
         user.remoteIdentifier = .create()
         user.domain = "domain.com"
 
         sut = MLSConversationParticipantsService(
-            context: uiMOC,
+            context: syncMOC,
+            mlsService: mockMLSService,
             clientIDsProvider: mockClientIDsProvider
         )
     }
@@ -69,16 +66,14 @@ class MLSConversationParticipantsServiceTests: MessagingTestBase {
 
     // MARK: - Add Participants
 
-    func test_AddParticipants_Succeeds() throws {
+    func test_AddParticipants_Succeeds() async throws {
         // GIVEN
         let expectedUsers = [MLSUser(from: user)]
 
-        // THEN
-        assertMethodCompletesWithSuccess {
-            // WHEN
-            sut.addParticipants([user], to: conversation, completion: $0)
-        }
+        // WHEN
+        try await sut.addParticipants([user], to: conversation)
 
+        // THEN
         // assert call to addMembersToConversation
         let addMembersInvocation = try XCTUnwrap(
             mockMLSService.calls.addMembers.first,
@@ -89,41 +84,33 @@ class MLSConversationParticipantsServiceTests: MessagingTestBase {
         XCTAssertEqual(addMembersInvocation.groupID, conversation.mlsGroupID)
     }
 
-    func test_AddParticipants_CompletesWithFailure_InvalidOperation() {
+    func test_AddParticipants_Throws_InvalidOperation() async {
         // GIVEN
         conversation.mlsGroupID = nil
 
         // THEN
-        assertMethodCompletesWithError(.invalidOperation) {
+        await assertItThrows(error: MLSConversationParticipantsError.invalidOperation) {
             // WHEN
-            sut.addParticipants(
-                [user],
-                to: conversation,
-                completion: $0
-            )
+            try await sut.addParticipants([user], to: conversation)
         }
     }
 
-    func test_AddParticipants_CompletesWithFailure_FailedToAddMembers() {
+    func test_AddParticipants_RethrowsErrors() async {
         // GIVEN
         mockMLSService.addMembersToConversationMock = { _, _ in
             throw ParticipantsError.failedToAddParticipants
         }
 
         // THEN
-        assertMethodCompletesWithError(.failedToAddMLSMembers) {
+        await assertItThrows(error: ParticipantsError.failedToAddParticipants) {
             // WHEN
-            sut.addParticipants(
-                [user],
-                to: conversation,
-                completion: $0
-            )
+            try await sut.addParticipants([user], to: conversation)
         }
     }
 
     // MARK: - Remove Participants
 
-    func test_RemoveParticipant_Succeeds() throws {
+    func test_RemoveParticipant_Succeeds() async throws {
         // GIVEN
         let clientIDs = [MLSClientID.random()]
 
@@ -131,12 +118,10 @@ class MLSConversationParticipantsServiceTests: MessagingTestBase {
             return clientIDs
         }
 
+        // WHEN
+        try await sut.removeParticipant(user, from: conversation)
+       
         // THEN
-        assertMethodCompletesWithSuccess {
-            // WHEN
-            sut.removeParticipant(user, from: conversation, completion: $0)
-        }
-
         // assert calls to fetchUserClients
         let fetchClientsInvocation = try XCTUnwrap(
             mockClientIDsProvider.fetchUserClientsForIn_Invocations.first,
@@ -155,18 +140,18 @@ class MLSConversationParticipantsServiceTests: MessagingTestBase {
         XCTAssertEqual(removeMembersInvocation.groupID, conversation.mlsGroupID)
     }
 
-    func test_RemoveParticipant_CompletesWithFailure_InvalidOperation() {
+    func test_RemoveParticipant_Throws_InvalidOperation() async {
         // GIVEN
         conversation.mlsGroupID = nil
 
         // THEN
-        assertMethodCompletesWithError(.invalidOperation) {
+        await assertItThrows(error: MLSConversationParticipantsError.invalidOperation) {
             // WHEN
-            sut.removeParticipant(user, from: conversation, completion: $0)
+            try await sut.removeParticipant(user, from: conversation)
         }
     }
 
-    func test_RemoveParticipant_CompletesWithFailure_FailedToRemoveMembers() {
+    func test_RemoveParticipant_RethrowsErrors() async {
         // GIVEN
         mockClientIDsProvider.fetchUserClientsForIn_MockMethod = { _, _ in
             return [MLSClientID.random()]
@@ -177,9 +162,9 @@ class MLSConversationParticipantsServiceTests: MessagingTestBase {
         }
 
         // THEN
-        assertMethodCompletesWithError(.failedToRemoveMLSMembers) {
+        await assertItThrows(error: ParticipantsError.failedToRemoveParticipant) {
             // WHEN
-            sut.removeParticipant(user, from: conversation, completion: $0)
+            try await sut.removeParticipant(user, from: conversation)
         }
     }
 

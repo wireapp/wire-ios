@@ -162,21 +162,6 @@ public class MockConversationServiceInterface: ConversationServiceInterface {
         mock(qualifiedID, completion)
     }
 
-    // MARK: - removeParticipant
-
-    public var removeParticipantFromCompletion_Invocations: [(participant: UserType, conversation: ZMConversation, completion: RemoveParticipantAction.ResultHandler)] = []
-    public var removeParticipantFromCompletion_MockMethod: ((UserType, ZMConversation, @escaping RemoveParticipantAction.ResultHandler) -> Void)?
-
-    public func removeParticipant(_ participant: UserType, from conversation: ZMConversation, completion: @escaping RemoveParticipantAction.ResultHandler) {
-        removeParticipantFromCompletion_Invocations.append((participant: participant, conversation: conversation, completion: completion))
-
-        guard let mock = removeParticipantFromCompletion_MockMethod else {
-            fatalError("no mock for `removeParticipantFromCompletion`")
-        }
-
-        mock(participant, conversation, completion)
-    }
-
 }
 class MockMLSClientIDsProviding: MLSClientIDsProviding {
 

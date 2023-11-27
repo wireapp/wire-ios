@@ -52,21 +52,21 @@ class ProteusConversationParticipantsServiceTests: MessagingTestBase {
 
     // MARK: - Add Participants
 
-    func test_AddParticipants_Succeeds() {
+    func test_AddParticipants_Succeeds() async throws {
         // GIVEN
-        _ = MockActionHandler<AddParticipantAction>(
+        let mockHandler = MockActionHandler<AddParticipantAction>(
             result: .success(()),
             context: uiMOC.notificationContext
         )
 
+        // WHEN
+        try await sut.addParticipants([user], to: conversation)
+        
         // THEN
-        assertMethodCompletesWithSuccess {
-            // WHEN
-            sut.addParticipants([user], to: conversation, completion: $0)
-        }
+        XCTAssertEqual(mockHandler.performedActions.count, 1)
     }
 
-    func test_AddParticipants_Fails() {
+    func test_AddParticipants_Fails() async {
         // GIVEN
         _ = MockActionHandler<AddParticipantAction>(
             result: .failure(.unknown),
@@ -74,29 +74,61 @@ class ProteusConversationParticipantsServiceTests: MessagingTestBase {
         )
 
         // THEN
-        assertMethodCompletesWithError(.unknown) {
+        await assertItThrows(error: ConversationAddParticipantsError.unknown) {
             // WHEN
-            sut.addParticipants([user], to: conversation, completion: $0)
+            try await sut.addParticipants([user], to: conversation)
+        }
+    }
+
+    func test_AddParticipants_MapsFederationErrors_UnreachableDomains() async {
+        // GIVEN
+        let domains = Set(["domain.com"])
+
+        _ = MockActionHandler<AddParticipantAction>(
+            result: .failure(.unreachableDomains(domains)),
+            context: uiMOC.notificationContext
+        )
+
+        // THEN
+        await assertItThrows(error: FederationError.unreachableDomains(domains)) {
+            // WHEN
+            try await sut.addParticipants([user], to: conversation)
+        }
+    }
+
+    func test_AddParticipants_MapsFederationErrors_NonFederatingDomains() async {
+        // GIVEN
+        let domains = Set(["domain.com"])
+
+        _ = MockActionHandler<AddParticipantAction>(
+            result: .failure(.nonFederatingDomains(domains)),
+            context: uiMOC.notificationContext
+        )
+
+        // THEN
+        await assertItThrows(error: FederationError.nonFederatingDomains(domains)) {
+            // WHEN
+            try await sut.addParticipants([user], to: conversation)
         }
     }
 
     // MARK: - Remove Participant
 
-    func test_RemoveParticipant_Succeeds() {
+    func test_RemoveParticipant_Succeeds() async throws {
         // GIVEN
-        _ = MockActionHandler<RemoveParticipantAction>(
+        let mockHandler = MockActionHandler<RemoveParticipantAction>(
             result: .success(()),
             context: uiMOC.notificationContext
         )
 
+        // WHEN
+        try await sut.removeParticipant(user, from: conversation)
+
         // THEN
-        assertMethodCompletesWithSuccess {
-            // WHEN
-            sut.removeParticipant(user, from: conversation, completion: $0)
-        }
+        XCTAssertEqual(mockHandler.performedActions.count, 1)
     }
 
-    func test_RemoveParticipant_Fails() {
+    func test_RemoveParticipant_Fails() async {
         // GIVEN
         _ = MockActionHandler<RemoveParticipantAction>(
             result: .failure(.unknown),
@@ -104,9 +136,9 @@ class ProteusConversationParticipantsServiceTests: MessagingTestBase {
         )
 
         // THEN
-        assertMethodCompletesWithError(.unknown) {
+        await assertItThrows(error: ConversationRemoveParticipantError.unknown) {
             // WHEN
-            sut.removeParticipant(user, from: conversation, completion: $0)
+            try await sut.removeParticipant(user, from: conversation)
         }
     }
 

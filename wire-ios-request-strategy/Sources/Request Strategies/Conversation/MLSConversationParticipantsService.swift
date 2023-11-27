@@ -34,7 +34,7 @@ protocol MLSConversationParticipantsServiceInterface {
 
 }
 
-enum MLSConversationParticipantsError: Error {
+enum MLSConversationParticipantsError: Error, Equatable {
     case ignoredUsers(users: Set<ZMUser>)
     case invalidOperation
 }
