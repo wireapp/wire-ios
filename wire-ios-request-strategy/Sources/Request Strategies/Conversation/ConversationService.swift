@@ -36,12 +36,6 @@ public protocol ConversationServiceInterface {
         completion: @escaping () -> Void
     )
 
-    func addParticipants(
-        _ participants: [UserType],
-        to conversation: ZMConversation,
-        completion: @escaping AddParticipantAction.ResultHandler
-    )
-
     func removeParticipant(
         _ participant: UserType,
         from conversation: ZMConversation,
@@ -302,90 +296,6 @@ public final class ConversationService: ConversationServiceInterface {
         }
     }
 
-    // MARK: - Add participants
-
-    public func addParticipants(
-        _ participants: [UserType],
-        to conversation: ZMConversation,
-        completion: @escaping AddParticipantAction.ResultHandler
-    ) {
-        let users = participants.materialize(in: context)
-
-        participantsService.addParticipants(users, to: conversation) { [weak self] result in
-            guard let `self` = self else { return }
-
-            switch result {
-            case .failure(.unreachableDomains(let domains)):
-                if users.belongingTo(domains: domains).isEmpty {
-
-                    /// If there are no users from unreachable domains, this means that the backend tried and failed to check for non-fully connected graphs
-                    /// because some of the existing participants are currently unreachable.
-                    /// As a result, we should inform that users can't be added and not retry the request.
-                    /// https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/822149401/Non-fully+connected+federation+graphs
-
-                    self.appendFailedToAddUsersMessage(
-                        in: conversation,
-                        users: Set(users)
-                    )
-                    completion(.success(()))
-
-                } else {
-                    self.retryAddingParticipants(
-                        users,
-                        to: conversation,
-                        excludingDomains: domains,
-                        completion: completion
-                    )
-                }
-
-            case .failure(.nonFederatingDomains(let domains)):
-                self.retryAddingParticipants(
-                    users,
-                    to: conversation,
-                    excludingDomains: domains,
-                    completion: completion
-                )
-
-            default:
-                completion(result)
-            }
-        }
-    }
-
-    private func retryAddingParticipants(
-        _ users: [ZMUser],
-        to conversation: ZMConversation,
-        excludingDomains domains: Set<String>,
-        completion: @escaping AddParticipantAction.ResultHandler
-    ) {
-        let usersToExclude = users.belongingTo(domains: domains)
-        let usersToAdd = Set(users).subtracting(usersToExclude)
-
-        appendFailedToAddUsersMessage(
-            in: conversation,
-            users: usersToExclude
-        )
-
-        if !usersToAdd.isEmpty {
-            participantsService.addParticipants(
-                Array(usersToAdd),
-                to: conversation,
-                completion: completion
-            )
-        }
-    }
-
-    private func appendFailedToAddUsersMessage(
-        in conversation: ZMConversation,
-        users: Set<ZMUser>
-    ) {
-        conversation.appendFailedToAddUsersSystemMessage(
-            users: users,
-            sender: conversation.creator,
-            at: conversation.lastServerTimeStamp ?? Date()
-        )
-    }
-
     // MARK: - Remove Participant
 
     public func removeParticipant(
@@ -393,14 +303,14 @@ public final class ConversationService: ConversationServiceInterface {
         from conversation: ZMConversation,
         completion: @escaping RemoveParticipantAction.ResultHandler
     ) {
-        guard let user = participant as? ZMUser else {
-            return completion(.failure(ConversationRemoveParticipantError.invalidOperation))
-        }
-
-        participantsService.removeParticipant(
-            user,
-            from: conversation,
-            completion: completion
-        )
+//        guard let user = participant as? ZMUser else {
+//            return completion(.failure(ConversationRemoveParticipantError.invalidOperation))
+//        }
+//
+//        participantsService.removeParticipant(
+//            user,
+//            from: conversation,
+//            completion: completion
+//        )
     }
 }

@@ -20,9 +20,21 @@ import Foundation
 import WireDataModel
 
 // sourcery: AutoMockable
-protocol ProteusConversationParticipantsServiceInterface: ConversationParticipantsServiceInterface {}
+protocol ProteusConversationParticipantsServiceInterface {
 
-class ProteusConversationParticipantsService: ProteusConversationParticipantsServiceInterface {
+    func addParticipants(
+        _ users: [ZMUser],
+        to conversation: ZMConversation
+    ) async throws
+
+    func removeParticipant(
+        _ user: ZMUser,
+        from conversation: ZMConversation
+    ) async throws
+
+}
+
+struct ProteusConversationParticipantsService: ProteusConversationParticipantsServiceInterface {
 
     private let context: NSManagedObjectContext
 
@@ -32,21 +44,24 @@ class ProteusConversationParticipantsService: ProteusConversationParticipantsSer
 
     func addParticipants(
         _ users: [ZMUser],
-        to conversation: ZMConversation,
-        completion: @escaping AddParticipantAction.ResultHandler
-    ) {
+        to conversation: ZMConversation
+    ) async throws {
         var action = AddParticipantAction(users: users, conversation: conversation)
-        action.onResult(resultHandler: completion)
-        action.send(in: context.notificationContext)
+
+        do {
+            try await action.perform(in: context.notificationContext)
+        } catch AddParticipantAction.Failure.nonFederatingDomains(let domains) {
+            throw FederationError.nonFederatingDomains(domains)
+        } catch AddParticipantAction.Failure.unreachableDomains(let domains) {
+            throw FederationError.unreachableDomains(domains)
+        }
     }
 
     func removeParticipant(
         _ user: ZMUser,
-        from conversation: ZMConversation,
-        completion: @escaping RemoveParticipantAction.ResultHandler
-    ) {
+        from conversation: ZMConversation
+    ) async throws {
         var action = RemoveParticipantAction(user: user, conversation: conversation)
-        action.onResult(resultHandler: completion)
-        action.send(in: context.notificationContext)
+        try await action.perform(in: context.notificationContext)
     }
 }

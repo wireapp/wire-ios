@@ -20,31 +20,41 @@ import Foundation
 import WireDataModel
 
 // sourcery: AutoMockable
-protocol ConversationParticipantsServiceInterface {
+public protocol ConversationParticipantsServiceInterface {
+
     func addParticipants(
         _ users: [ZMUser],
-        to conversation: ZMConversation,
-        completion: @escaping AddParticipantAction.ResultHandler
-    )
+        to conversation: ZMConversation
+    ) async throws
 
     func removeParticipant(
         _ user: ZMUser,
-        from conversation: ZMConversation,
-        completion: @escaping RemoveParticipantAction.ResultHandler
-    )
+        from conversation: ZMConversation
+    ) async throws
+
 }
 
-class ConversationParticipantsService: ConversationParticipantsServiceInterface {
+enum FederationError: Error, Equatable {
+    case unreachableDomains(Set<String>)
+    case nonFederatingDomains(Set<String>)
+}
+
+enum ConversationParticipantsError: Error {
+    case invalidOperation
+    case missingMLSParticipantsService
+}
+
+public class ConversationParticipantsService: ConversationParticipantsServiceInterface {
 
     // MARK: - Properties
 
     private let context: NSManagedObjectContext
     private let proteusParticipantsService: ProteusConversationParticipantsServiceInterface
-    private let mlsParticipantsService: MLSConversationParticipantsServiceInterface
+    private let mlsParticipantsService: MLSConversationParticipantsServiceInterface?
 
     // MARK: - Life cycle
 
-    convenience init(context: NSManagedObjectContext) {
+    public convenience init(context: NSManagedObjectContext) {
         self.init(
             context: context,
             proteusParticipantsService: ProteusConversationParticipantsService(context: context),
@@ -55,79 +65,172 @@ class ConversationParticipantsService: ConversationParticipantsServiceInterface 
     init(
         context: NSManagedObjectContext,
         proteusParticipantsService: ProteusConversationParticipantsServiceInterface,
-        mlsParticipantsService: MLSConversationParticipantsServiceInterface
+        mlsParticipantsService: MLSConversationParticipantsServiceInterface?
     ) {
         self.context = context
         self.proteusParticipantsService = proteusParticipantsService
         self.mlsParticipantsService = mlsParticipantsService
     }
 
-    // MARK: - Interface
+    // MARK: - Adding Participants
 
-    func addParticipants(
+    public func addParticipants(
+        _ users: [ZMUser],
+        to conversation: ZMConversation
+    ) async throws {
+
+        try await validate(users: users, conversation: conversation)
+
+        do {
+            try await internalAddParticipants(users, to: conversation)
+        } catch let error as FederationError {
+            try await handleFederationError(
+                error,
+                users: users,
+                conversation: conversation
+            )
+        }
+    }
+
+    private func internalAddParticipants(
+        _ users: [ZMUser],
+        to conversation: ZMConversation
+    ) async throws {
+
+        let messageProtocol = await context.perform { conversation.messageProtocol }
+
+        switch messageProtocol {
+        case .proteus:
+            try await proteusParticipantsService.addParticipants(users, to: conversation)
+        case .mls:
+            guard let mlsParticipantsService else {
+                throw ConversationParticipantsError.missingMLSParticipantsService
+            }
+
+            do {
+                try await mlsParticipantsService.addParticipants(users, to: conversation)
+            } catch MLSConversationParticipantsError.ignoredUsers(users: _) {
+                // TODO: Insert system message
+            }
+        case .mixed:
+            guard let mlsParticipantsService else {
+                throw ConversationParticipantsError.missingMLSParticipantsService
+            }
+
+            try await proteusParticipantsService.addParticipants(users, to: conversation)
+            // Only do best attempt
+            try? await mlsParticipantsService.addParticipants(users, to: conversation)
+        }
+    }
+
+    private func validate(
+        users: [ZMUser],
+        conversation: ZMConversation
+    ) async throws {
+        try await context.perform { [self] in
+            guard
+                conversation.conversationType == .group,
+                !users.isEmpty,
+                !users.contains(ZMUser.selfUser(in: context))
+            else {
+                throw ConversationParticipantsError.invalidOperation
+            }
+        }
+    }
+
+    private func handleFederationError(
+        _ error: FederationError,
+        users: [ZMUser],
+        conversation: ZMConversation
+    ) async throws {
+        switch error {
+        case .nonFederatingDomains(let domains):
+            let unreachableUsers = await context.perform { users.belongingTo(domains: domains) }
+
+            if unreachableUsers.isEmpty {
+
+                /// If there are no users from unreachable domains, this means that the backend tried and failed to check for non-fully connected graphs
+                /// because some of the existing participants are currently unreachable.
+                /// As a result, we should inform that users can't be added and not retry the request.
+                /// https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/822149401/Non-fully+connected+federation+graphs
+
+                await appendFailedToAddUsersMessage(
+                    in: conversation,
+                    users: Set(users)
+                )
+            } else {
+                try await retryAddingParticipants(
+                    users,
+                    to: conversation,
+                    excludingDomains: domains
+                )
+            }
+        case .unreachableDomains(let domains):
+            try await retryAddingParticipants(
+                users,
+                to: conversation,
+                excludingDomains: domains
+            )
+        }
+    }
+
+    private func retryAddingParticipants(
         _ users: [ZMUser],
         to conversation: ZMConversation,
-        completion: @escaping AddParticipantAction.ResultHandler
-    ) {
-        guard
-            conversation.conversationType == .group,
-            !users.isEmpty,
-            !users.contains(ZMUser.selfUser(in: context))
-        else {
-            completion(.failure(.invalidOperation))
-            return
-        }
+        excludingDomains domains: Set<String>
+    ) async throws {
+        let usersToExclude = await context.perform { users.belongingTo(domains: domains) }
+        let usersToAdd = Set(users).subtracting(usersToExclude)
 
-        switch conversation.messageProtocol {
-        case .proteus:
-            proteusParticipantsService.addParticipants(
-                users,
-                to: conversation,
-                completion: completion
-            )
-        case .mls:
-            mlsParticipantsService.addParticipants(
-                users,
-                to: conversation,
-                completion: completion
-            )
-        case .mixed:
-            proteusParticipantsService.addParticipants(
-                users,
-                to: conversation,
-                completion: completion
-            )
-            mlsParticipantsService.addParticipants(
-                users,
-                to: conversation,
-                completion: { _ in }
+        await appendFailedToAddUsersMessage(
+            in: conversation,
+            users: usersToExclude
+        )
+
+        guard !usersToAdd.isEmpty else { return }
+
+        try await internalAddParticipants(
+            Array(usersToAdd),
+            to: conversation
+        )
+    }
+
+    private func appendFailedToAddUsersMessage(
+        in conversation: ZMConversation,
+        users: Set<ZMUser>
+    ) async {
+        await context.perform {
+            conversation.appendFailedToAddUsersSystemMessage(
+                users: users,
+                sender: conversation.creator,
+                at: conversation.lastServerTimeStamp ?? Date()
             )
         }
     }
 
-    func removeParticipant(
+    // MARK: - Removing Participant
+
+    public func removeParticipant(
         _ user: ZMUser,
-        from conversation: ZMConversation,
-        completion: @escaping RemoveParticipantAction.ResultHandler
-    ) {
-        guard conversation.conversationType == .group else {
-            return completion(.failure(ConversationRemoveParticipantError.invalidOperation))
+        from conversation: ZMConversation
+    ) async throws {
+        guard await context.perform({ conversation.conversationType == .group }) else {
+            throw ConversationParticipantsError.invalidOperation
+        }
+        
+        let (messageProtocol, isSelfUser) = await context.perform {
+            (conversation.messageProtocol, user.isSelfUser)
         }
 
-        switch (conversation.messageProtocol, user.isSelfUser) {
-
+        switch (messageProtocol, isSelfUser) {
         case (.proteus, _), (.mixed, _), (.mls, true):
-            proteusParticipantsService.removeParticipant(
-                user,
-                from: conversation,
-                completion: completion
-            )
+            try await proteusParticipantsService.removeParticipant(user, from: conversation)
         case (.mls, false):
-            mlsParticipantsService.removeParticipant(
-                user,
-                from: conversation,
-                completion: completion
-            )
+            guard let mlsParticipantsService else {
+                throw ConversationParticipantsError.missingMLSParticipantsService
+            }
+            try await mlsParticipantsService.removeParticipant(user, from: conversation)
         }
     }
+
 }

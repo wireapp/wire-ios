@@ -20,122 +20,123 @@ import Foundation
 import WireDataModel
 
 // sourcery: AutoMockable
-protocol MLSConversationParticipantsServiceInterface: ConversationParticipantsServiceInterface {}
+protocol MLSConversationParticipantsServiceInterface {
 
-class MLSConversationParticipantsService: MLSConversationParticipantsServiceInterface {
+    func addParticipants(
+        _ users: [ZMUser],
+        to conversation: ZMConversation
+    ) async throws
+
+    func removeParticipant(
+        _ user: ZMUser,
+        from conversation: ZMConversation
+    ) async throws
+
+}
+
+enum MLSConversationParticipantsError: Error {
+    case ignoredUsers(users: Set<ZMUser>)
+    case invalidOperation
+}
+
+struct MLSConversationParticipantsService: MLSConversationParticipantsServiceInterface {
 
     // MARK: - Properties
 
     private let context: NSManagedObjectContext
     private let clientIDsProvider: MLSClientIDsProviding
+    private let mlsService: MLSServiceInterface
 
     // MARK: - Life cycle
 
+    init?(context: NSManagedObjectContext) {
+
+        guard let syncContext = context.performAndWait({ context.zm_sync }) else {
+            return nil
+        }
+
+        guard let mlsService = syncContext.performAndWait({ syncContext.mlsService }) else {
+            return nil
+        }
+
+        self.init(
+            context: context,
+            mlsService: mlsService,
+            clientIDsProvider: MLSClientIDsProvider()
+        )
+    }
+
     init(
         context: NSManagedObjectContext,
-        clientIDsProvider: MLSClientIDsProviding? = nil
+        mlsService: MLSServiceInterface,
+        clientIDsProvider: MLSClientIDsProviding
     ) {
         self.context = context
-        self.clientIDsProvider = clientIDsProvider ?? MLSClientIDsProvider()
+        self.mlsService = mlsService
+        self.clientIDsProvider = clientIDsProvider
     }
 
     // MARK: - Interface
 
     func addParticipants(
         _ users: [ZMUser],
-        to conversation: ZMConversation,
-        completion: @escaping AddParticipantAction.ResultHandler
-    ) {
-        Logging.mls.info("adding \(users.count) participants to conversation (\(String(describing: conversation.qualifiedID)))")
+        to conversation: ZMConversation
+    ) async throws {
 
-        guard
-            let mlsService = getMLSService(fromSyncContext: context.zm_sync),
-            let groupID = conversation.mlsGroupID
-        else {
-            Logging.mls.warn("failed to add participants to conversation (\(String(describing: conversation.qualifiedID))): invalid operation")
-            completion(.failure(.invalidOperation))
-            return
+        let (qualifiedID, groupID) = await context.perform {
+            (conversation.qualifiedID, conversation.mlsGroupID)
         }
 
-        // If we don't copy the id here (contexts thread), then the app will
-        // crash if we try to use it in the task (not on the contexts thread).
-        let qualifiedID = conversation.qualifiedID
-        let mlsUsers = users.compactMap(MLSUser.init(from:))
+        Logging.mls.info("adding \(users.count) participants to conversation (\(String(describing: qualifiedID)))")
 
-        Task {
-            do {
-                try await mlsService.addMembersToConversation(with: mlsUsers, for: groupID)
+        guard let groupID else {
+            Logging.mls.warn("failed to add participants to conversation (\(String(describing: qualifiedID))): missing group ID")
+            throw MLSConversationParticipantsError.invalidOperation
+        }
 
-                await context.perform {
-                    completion(.success(()))
-                }
+        let mlsUsers = await context.perform { users.compactMap(MLSUser.init(from: )) }
 
-            } catch {
-                Logging.mls.warn("failed to add members to conversation (\(String(describing: qualifiedID))): \(String(describing: error))")
-
-                await context.perform {
-                    completion(.failure(.failedToAddMLSMembers))
-                }
-            }
+        do {
+            try await mlsService.addMembersToConversation(with: mlsUsers, for: groupID)
+        } catch MLSService.MLSAddMembersError.failedToClaimKeyPackages { 
+            // TODO: update error to get list of users who didn't have KP
+            // retry and throw users that didn't get added
+        } catch {
+            Logging.mls.warn("failed to add members to conversation (\(String(describing: qualifiedID))): \(String(describing: error))")
+            throw error
         }
     }
 
     func removeParticipant(
         _ user: ZMUser,
-        from conversation: ZMConversation,
-        completion: @escaping WireDataModel.RemoveParticipantAction.ResultHandler
-    ) {
-        Logging.mls.info("removing participant from conversation (\(String(describing: conversation.qualifiedID)))")
+        from conversation: ZMConversation
+    ) async throws {
 
-        guard
-            let mlsService = getMLSService(fromSyncContext: context.zm_sync),
-            let groupID = conversation.mlsGroupID,
-            let userID = user.qualifiedID
-        else {
-            Logging.mls.info("failed to remove participant from conversation (\(String(describing: conversation.qualifiedID))): invalid operation")
-            completion(.failure(.invalidOperation))
-            return
+        let (qualifiedID, groupID, userID) = await context.perform {
+            (conversation.qualifiedID, conversation.mlsGroupID, user.qualifiedID)
         }
 
-        Task {
-            do {
-                let clientIDs = try await clientIDsProvider.fetchUserClients(
-                    for: userID,
-                    in: context.notificationContext
-                )
+        Logging.mls.info("removing participant from conversation (\(String(describing: qualifiedID)))")
 
-                try await mlsService.removeMembersFromConversation(
-                    with: clientIDs,
-                    for: groupID
-                )
+        guard let groupID, let userID else {
+            Logging.mls.warn("failed to remove participant from conversation (\(String(describing: qualifiedID))): invalid operation")
+            throw MLSConversationParticipantsError.invalidOperation
+        }
 
-                await context.perform {
-                    completion(.success(()))
-                }
+        do {
+            let clientIDs = try await clientIDsProvider.fetchUserClients(
+                for: userID,
+                in: context.notificationContext
+            )
 
-            } catch {
-                await context.perform {
-                    Logging.mls.warn("failed to remove participant from conversation (\(String(describing: conversation.qualifiedID))): \(String(describing: error))")
-                    completion(.failure(.failedToRemoveMLSMembers))
-                }
-            }
+            try await mlsService.removeMembersFromConversation(
+                with: clientIDs,
+                for: groupID
+            )
+        } catch {
+            Logging.mls.warn("failed to remove participant from conversation (\(String(describing: qualifiedID))): \(String(describing: error))")
+            throw error
         }
     }
 }
 
-// MARK: - Helpers
-
-private extension MLSConversationParticipantsService {
-    func getMLSService(
-        fromSyncContext context: NSManagedObjectContext
-    ) -> MLSServiceInterface? {
-
-        var mlsService: MLSServiceInterface?
-
-        context.performAndWait {
-            mlsService = context.mlsService
-        }
-
-        return mlsService
-    }
-}
