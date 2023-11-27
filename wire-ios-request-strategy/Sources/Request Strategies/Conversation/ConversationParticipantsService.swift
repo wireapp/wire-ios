@@ -151,7 +151,7 @@ public class ConversationParticipantsService: ConversationParticipantsServiceInt
         conversation: ZMConversation
     ) async throws {
         switch error {
-        case .nonFederatingDomains(let domains):
+        case .unreachableDomains(let domains):
             let unreachableUsers = await context.perform { users.belongingTo(domains: domains) }
 
             if unreachableUsers.isEmpty {
@@ -172,7 +172,7 @@ public class ConversationParticipantsService: ConversationParticipantsServiceInt
                     excludingDomains: domains
                 )
             }
-        case .unreachableDomains(let domains):
+        case .nonFederatingDomains(let domains):
             try await retryAddingParticipants(
                 users,
                 to: conversation,
