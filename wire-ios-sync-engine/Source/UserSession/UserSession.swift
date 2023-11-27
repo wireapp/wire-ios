@@ -212,6 +212,8 @@ public protocol UserSession: AnyObject {
     var networkState: ZMNetworkState { get }
 
     var getUserClientFingerprint: GetUserClientFingerprintUseCaseProtocol { get }
+
+    var selfUserClient: UserClient? { get }
 }
 
 extension ZMUserSession: UserSession {
@@ -491,7 +493,6 @@ extension ZMUserSession: UserSession {
 
         return isClassified ? .classified : .notClassified
     }
-
 }
 
 extension UInt64 {

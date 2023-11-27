@@ -249,4 +249,8 @@ final class UserSessionMock: UserSession {
     var getUserClientFingerprint: GetUserClientFingerprintUseCaseProtocol {
         mockGetUserClientFingerprintUseCaseProtocol
     }
+
+    var selfUserClient: UserClient? {
+        return nil
+    }
 }
