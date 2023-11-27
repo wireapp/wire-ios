@@ -945,14 +945,16 @@ class ConversationCannotDecryptSystemMessageCellDescription: ConversationMessage
     }
 
     private static func messageString(_ systemMessageType: ZMSystemMessageType, sender: UserType) -> NSAttributedString {
-
         let name = sender.name ?? L10n.Localizable.Profile.Details.Title.unavailable
-        var localizationKey = self.localizationKey(systemMessageType)
 
-        if sender.isSelfUser {
-            localizationKey += ".self"
-        } else {
-            localizationKey += ".other"
+        var localizationKey = self.localizationKey(systemMessageType)
+        localizationKey += sender.isSelfUser ? ".self" : ".other"
+
+        if systemMessageType == .decryptionFailed_RemoteIdentityChanged && sender.name == nil {
+            return NSMutableAttributedString.markdown(
+                from: L10n.Localizable.Content.System.CannotDecryptIdentityChanged.unavailableUser(name),
+                style: .systemMessage
+            )
         }
 
         return NSMutableAttributedString.markdown(from: localizationKey.localized(args: name), style: .systemMessage)

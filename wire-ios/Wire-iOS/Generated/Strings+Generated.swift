@@ -1883,6 +1883,10 @@ internal enum L10n {
           }
           /// Your device identity changed. Undelivered message.
           internal static let `self` = L10n.tr("Localizable", "content.system.cannot_decrypt_identity_changed.self", fallback: "Your device identity changed. Undelivered message.")
+          /// %@ device identity changed. Undelivered message.
+          internal static func unavailableUser(_ p1: Any) -> String {
+            return L10n.tr("Localizable", "content.system.cannot_decrypt_identity_changed.unavailableUser", String(describing: p1), fallback: "%@ device identity changed. Undelivered message.")
+          }
         }
         internal enum CannotDecryptResolved {
           /// You can now decrypt messages from %1$@. To recover lost messages, ask %1$@ to resend them.
