@@ -65,3 +65,21 @@ public extension NSManagedObjectContext {
         }
     }
 }
+/**
+ Wrapper around Task to make sure tests are waiting for the task to be finished using dispatchGroups attached to NSManagedObjectContext. See `WaitForAllGroupsToBeEmpty()`
+ */
+public struct ZMTask {
+    let context: NSManagedObjectContext
+
+    public init(context: NSManagedObjectContext) {
+        self.context = context
+    }
+
+    public func callAsFunction(_ block: @escaping () async -> Void) {
+        let groups = context.enterAllGroupsExceptSecondary()
+        Task {
+            await block()
+            context.leaveAllGroups(groups)
+        }
+    }
+}

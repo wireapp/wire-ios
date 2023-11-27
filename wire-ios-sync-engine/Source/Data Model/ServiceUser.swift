@@ -322,7 +322,7 @@ public extension ZMConversation {
                       return
                   }
 
-            Task {
+            ZMTask(context: contextProvider.viewContext) {
                 try? await eventProcessor.processEvents([event])
                 await contextProvider.viewContext.perform {
                     completionHandler(.success)
