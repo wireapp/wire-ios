@@ -48,7 +48,7 @@ extension ShareViewController {
         self.tokenField.tokenTitleVerticalAdjustment = 1
         self.tokenField.textView.placeholderTextAlignment = .natural
         self.tokenField.textView.accessibilityIdentifier = "textViewSearch"
-        self.tokenField.textView.placeholder = "content.message.forward.to".localized
+        self.tokenField.textView.placeholder = L10n.Localizable.Content.Message.Forward.to
         self.tokenField.textView.keyboardAppearance = .default
         self.tokenField.textView.returnKeyType = .done
         self.tokenField.textView.autocorrectionType = .no
