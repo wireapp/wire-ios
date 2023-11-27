@@ -1688,22 +1688,16 @@ public final class MLSService: MLSServiceInterface {
 
         let groupConversations = try await context.perform {
             try ZMConversation.fetchAllTeamGroupConversations(messageProtocol: .proteus, in: context)
-                .map {(
-                    $0.qualifiedID,
-                    $0.mlsGroupID,
-                    $0.localParticipants.map { MLSUser(from: $0) }
-                )}
         }
-        for (qualifiedID, mlsGroupID, members) in groupConversations {
+        for conversation in groupConversations {
 
-            guard let qualifiedID else {
+            guard let qualifiedID = conversation.qualifiedID else {
+                logger.warn("skipping migration of conversation \(conversation), `qualifiedID` is `nil`")
                 assertionFailure("the group conversation has no `qualifiedID` set")
                 continue
             }
-            guard let mlsGroupID else {
-                assertionFailure("the group conversation has no `mlsGroupID` set")
-                continue
-            }
+            let members = conversation.localParticipants.map { MLSUser(from: $0) }
+            let mlsGroupID: MLSGroupID
 
             do {
 
@@ -1713,11 +1707,19 @@ public final class MLSService: MLSServiceInterface {
                 // sync the group conversation
                 try await actionsProvider.syncConversation(qualifiedID: qualifiedID, context: context.notificationContext)
 
+                guard conversation.mlsGroupID != nil else {
+                    logger.warn("failed to convert conversation \(conversation), `mlsGroupID` is `nil`")
+                    assertionFailure("the group conversation has no `mlsGroupID` set")
+                    continue
+                }
+                mlsGroupID = conversation.mlsGroupID!
+
                 // create MLS group and update keying material
                 try createGroup(for: mlsGroupID)
 
             } catch {
-                logger.error("failed to migrate conversation (\(qualifiedID)): \(String(describing: error))")
+                logger.error("failed to migrate conversation \(conversation): \(String(describing: error))")
+                continue
             }
 
             do {
@@ -1729,6 +1731,8 @@ public final class MLSService: MLSServiceInterface {
                 try await addMembersToConversation(with: members, for: mlsGroupID)
 
             } catch SendMLSMessageAction.Failure.mlsStaleMessage {
+
+                logger.error("failed to migrate conversation \(conversation): stale message")
 
                 // rollback: destroy/wipe group
                 try wipeGroup(mlsGroupID)
