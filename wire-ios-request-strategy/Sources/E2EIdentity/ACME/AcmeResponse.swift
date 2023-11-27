@@ -35,13 +35,3 @@ public struct ACMEResponse: Equatable {
     var response: Data
 
 }
-
-struct ChallengeResponse {
-
-    var type: String
-    var url: String
-    var status: String
-    var token: String
-    var nonce: String
-
-}

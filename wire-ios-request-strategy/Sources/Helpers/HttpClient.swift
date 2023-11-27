@@ -28,13 +28,31 @@ public enum NetworkError: Error {
 public protocol HttpClient {
 
     func send(_ request: URLRequest) async throws -> (Data, URLResponse)
+    func send(_ request: ZMTransportRequest) async throws -> ZMTransportResponse
 
 }
 
 public class HttpClientImpl: NSObject, HttpClient {
 
+    let transportSession: TransportSessionType
+    let queue: ZMSGroupQueue
+
+    public init(transportSession: TransportSessionType, queue: ZMSGroupQueue) {
+        self.transportSession = transportSession
+        self.queue = queue
+    }
+
     public func send(_ request: URLRequest) async throws -> (Data, URLResponse) {
         return try await URLSession.shared.data(for: request)
+    }
+
+    public func send(_ request: ZMTransportRequest) async throws -> ZMTransportResponse {
+        await withCheckedContinuation { continuation in
+            request.add(ZMCompletionHandler(on: queue, block: { response in
+                continuation.resume(returning: response)
+            }))
+            transportSession.enqueueOneTime(request)
+        }
     }
 
 }

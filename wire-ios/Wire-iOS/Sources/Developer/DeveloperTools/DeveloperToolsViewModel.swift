@@ -241,7 +241,10 @@ final class DeveloperToolsViewModel: ObservableObject {
 
     private func startE2EI() {
         guard let session = ZMUserSession.shared() else { return }
-        let e2eiCertificateUseCase = createE2EICertificateUseCase(syncContext: session.syncContext)
+        session.managedObjectContext.performAndWait {
+            print(session.managedObjectContext.accessToken)
+        }
+        let e2eiCertificateUseCase = createE2EICertificateUseCase(syncContext: session.syncContext, httpClient: session.httpClient)
 
         guard
             let selfUser = selfUser,
@@ -256,18 +259,20 @@ final class DeveloperToolsViewModel: ObservableObject {
         }
     }
 
-    private func createE2EICertificateUseCase(syncContext: NSManagedObjectContext) -> EnrollE2eICertificateUseCase? {
+    private func createE2EICertificateUseCase(syncContext: NSManagedObjectContext, httpClient: HttpClientImpl) -> EnrollE2eICertificateUseCase? {
         var enrollE2eICertificate: EnrollE2eICertificateUseCase?
-        let httpClient = HttpClientImpl()
-        let acmeClient = AcmeClient(httpClient: httpClient)
+        // let httpClient = HttpClientImpl()
+        let acmeApi = AcmeApi(httpClient: httpClient)
+        let e2eIApi = E2eIApi(httpClient: httpClient)
 
         syncContext.performAndWait {
+            print(syncContext.accessToken?.httpHeaders)
             guard let coreCrypto = syncContext.coreCrypto else {
                 return
             }
 
             let e2eiClient = E2eIClient(coreCrypto: coreCrypto)
-            let e2eiRepository = E2eIRepository(acmeClient: acmeClient, e2eiClient: e2eiClient)
+            let e2eiRepository = E2eIRepository(acmeApi: acmeApi, e2eIApi: e2eIApi, e2eiClient: e2eiClient)
 
             enrollE2eICertificate = EnrollE2eICertificateUseCase(e2eiRepository: e2eiRepository)
         }

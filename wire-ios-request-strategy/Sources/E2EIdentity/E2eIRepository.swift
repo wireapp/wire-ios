@@ -25,11 +25,13 @@ public protocol E2eIRepositoryInterface {
 
 public final class E2eIRepository: E2eIRepositoryInterface {
 
-    private var acmeClient: AcmeClientInterface
+    private var acmeApi: AcmeApiInterface
+    private var e2eIApi: E2eIApiInterface
     private var e2eiClient: E2eIClientInterface
 
-    public init(acmeClient: AcmeClientInterface, e2eiClient: E2eIClientInterface) {
-        self.acmeClient = acmeClient
+    public init(acmeApi: AcmeApiInterface, e2eIApi: E2eIApiInterface, e2eiClient: E2eIClientInterface) {
+        self.acmeApi = acmeApi
+        self.e2eIApi = e2eIApi
         self.e2eiClient = e2eiClient
     }
 
@@ -37,7 +39,7 @@ public final class E2eIRepository: E2eIRepositoryInterface {
         let e2eIdentity = try await e2eiClient.setupEnrollment(e2eiClientId: e2eiClientId, userName: userName, handle: handle)
         let e2eiService = E2eIService(e2eIdentity: e2eIdentity)
 
-        return E2eIEnrollment(acmeClient: acmeClient, e2eiService: e2eiService)
+        return E2eIEnrollment(acmeApi: acmeApi, e2eIApi: e2eIApi, e2eiService: e2eiService)
     }
 
 }

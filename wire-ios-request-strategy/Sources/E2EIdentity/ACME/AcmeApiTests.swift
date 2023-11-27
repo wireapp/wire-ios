@@ -19,9 +19,9 @@
 import Foundation
 @testable import WireRequestStrategy
 
-class AcmeClientTests: ZMTBaseTest {
+class AcmeApiTests: ZMTBaseTest {
 
-    var acmeClient: AcmeClient?
+    var acmeApi: AcmeApi?
     var mockHttpClient: MockHttpClient?
     let backendDomainBackup = BackendInfo.domain
 
@@ -30,12 +30,12 @@ class AcmeClientTests: ZMTBaseTest {
 
         mockHttpClient = MockHttpClient()
         if let mockHttpClient = mockHttpClient {
-            acmeClient = AcmeClient(httpClient: mockHttpClient)
+            acmeApi = AcmeApi(httpClient: mockHttpClient)
         }
     }
 
     override func tearDown() {
-        acmeClient = nil
+        acmeApi = nil
         mockHttpClient = nil
         BackendInfo.domain = backendDomainBackup
 
@@ -55,7 +55,7 @@ class AcmeClientTests: ZMTBaseTest {
         mockHttpClient?.mockResponse = (acmeDirectoryData, URLResponse())
 
         // when
-        guard  let acmeDirectoryData = try await acmeClient?.getACMEDirectory() else {
+        guard  let acmeDirectoryData = try await acmeApi?.getACMEDirectory() else {
             return XCTFail("Failed to get ACME directory.")
         }
 
@@ -72,7 +72,7 @@ class AcmeClientTests: ZMTBaseTest {
             // given
             BackendInfo.domain = nil
             // when
-            guard let acmeDirectoryData = try await acmeClient?.getACMEDirectory() else {
+            guard let acmeDirectoryData = try await acmeApi?.getACMEDirectory() else {
                 return XCTFail("Failed to get ACME directory.")
             }
         } catch NetworkError.invalidRequest {
@@ -100,7 +100,7 @@ class AcmeClientTests: ZMTBaseTest {
         mockHttpClient?.mockResponse = (Data(), response)
 
         // when
-        let nonce = try await acmeClient?.getACMENonce(path: path)
+        let nonce = try await acmeApi?.getACMENonce(path: path)
 
         // then
         XCTAssertEqual(nonce, expectedNonce)
@@ -124,7 +124,7 @@ class AcmeClientTests: ZMTBaseTest {
 
         do {
             // when
-            let nonce = try await acmeClient?.getACMENonce(path: path)
+            let nonce = try await acmeApi?.getACMENonce(path: path)
         } catch NetworkError.invalidResponse {
             // then
             return
@@ -156,7 +156,7 @@ class AcmeClientTests: ZMTBaseTest {
 
         do {
             // when
-            let acmeResponse = try await acmeClient?.sendACMERequest(path: path, requestBody: requestBody)
+            let acmeResponse = try await acmeApi?.sendACMERequest(path: path, requestBody: requestBody)
             // then
             XCTAssertEqual(acmeResponse, expectation)
         } catch {
@@ -185,7 +185,7 @@ class AcmeClientTests: ZMTBaseTest {
 
         do {
             // when
-            let acmeResponse = try await acmeClient?.sendACMERequest(path: path, requestBody: Data())
+            let acmeResponse = try await acmeApi?.sendACMERequest(path: path, requestBody: Data())
         } catch NetworkError.invalidResponse {
             // then
             return
@@ -215,7 +215,7 @@ class AcmeClientTests: ZMTBaseTest {
 
         do {
             // when
-            let acmeResponse = try await acmeClient?.sendACMERequest(path: path, requestBody: Data())
+            let acmeResponse = try await acmeApi?.sendACMERequest(path: path, requestBody: Data())
         } catch NetworkError.invalidResponse {
             // then
             return
@@ -229,12 +229,20 @@ class AcmeClientTests: ZMTBaseTest {
 class MockHttpClient: HttpClient {
 
     var mockResponse: (Data, URLResponse)?
+    var mockTransportResponse: ZMTransportResponse?
 
     func send(_ request: URLRequest) async throws -> (Data, URLResponse) {
         guard let mockResponse = mockResponse else {
             throw NetworkError.invalidResponse
         }
         return mockResponse
+    }
+
+    func send(_ request: ZMTransportRequest) async throws -> ZMTransportResponse {
+        guard let mockTransportResponse = mockTransportResponse else {
+            throw NetworkError.invalidResponse
+        }
+        return mockTransportResponse
     }
 
 }
