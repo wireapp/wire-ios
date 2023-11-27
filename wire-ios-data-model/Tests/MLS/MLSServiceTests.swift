@@ -437,7 +437,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             return [keyPackage]
         }
 
-        // Mock adding memebers to the conversation.
+        // Mock adding members to the conversation.
         var mockAddMembersArguments = [([Invitee], MLSGroupID)]()
         let updateEvent = dummyMemberJoinEvent()
 
@@ -492,7 +492,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             return [keyPackage]
         }
 
-        // Mock adding memebers to the conversation.
+        // Mock adding members to the conversation.
         var mockAddMembersArguments = [([Invitee], MLSGroupID)]()
         let updateEvent2 = dummyMemberJoinEvent()
 
@@ -2713,7 +2713,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             return [keyPackage]
         }
 
-        // Mock adding memebers to the conversation.
+        // Mock adding members to the conversation.
         var addedMembers = [(invitee: [Invitee], mlsGroupID: MLSGroupID)]()
         let updateEvent = dummyMemberJoinEvent()
         mockMLSActionExecutor.mockAddMembers = {
