@@ -44,6 +44,7 @@ public class AcmeClient: NSObject, AcmeClientInterface {
             throw NetworkError.invalidRequest
         }
 
+        /// TODO: it's temp, we should fetch it from the team settings
         let path = "https://acme.\(domain)/acme/defaultteams/directory"
 
         guard let url = URL(string: path) else {
@@ -82,7 +83,7 @@ public class AcmeClient: NSObject, AcmeClientInterface {
         }
         var request = URLRequest(url: url)
         request.httpMethod = Constant.HTTPMethod.post
-        request.setValue(Constant.ContentType.joseJson, forHTTPHeaderField: "Content-Type")
+        request.setValue(Constant.ContentType.joseAndJson, forHTTPHeaderField: "Content-Type")
         request.httpBody = requestBody
 
         let (data, response) = try await httpClient.send(request)
