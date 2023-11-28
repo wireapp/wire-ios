@@ -27,15 +27,9 @@ final class MockUserClient: NSObject, UserClientType {
 
     var remoteIdentifier: String?
 
-    var activationAddress: String?
-
     var activationDate: Date?
 
     var model: String?
-
-    var activationLatitude: Double = 0
-
-    var activationLongitude: Double = 0
 
     var fingerprint: Data?
 
