@@ -116,7 +116,7 @@ private enum Constant {
 
     enum ContentType {
         static let json = "application/json"
-        static let joseJson = "application/jose+json"
+        static let joseAndJson = "application/jose+json"
     }
 
 }
