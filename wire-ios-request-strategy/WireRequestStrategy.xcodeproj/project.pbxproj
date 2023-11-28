@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -95,6 +95,7 @@
 		1623F8E02AEAAF0E004F0319 /* MessageDependencyResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1623F8DF2AEAAF0E004F0319 /* MessageDependencyResolver.swift */; };
 		1623F8EC2AEBACDE004F0319 /* AutoMockable.stencil in Resources */ = {isa = PBXBuildFile; fileRef = 1623F8EA2AEBACDE004F0319 /* AutoMockable.stencil */; };
 		1623F8ED2AEBACDE004F0319 /* config.yml in Resources */ = {isa = PBXBuildFile; fileRef = 1623F8EB2AEBACDE004F0319 /* config.yml */; };
+		1623F8F12AEBAF7E004F0319 /* AutoMockable.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1623F8EF2AEBAEEB004F0319 /* AutoMockable.generated.swift */; };
 		16367F1E26FDB0740028AF8B /* Payload+Connection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16367F1D26FDB0740028AF8B /* Payload+Connection.swift */; };
 		16367F2626FDB4720028AF8B /* ConnectionRequestStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16367F2526FDB4720028AF8B /* ConnectionRequestStrategy.swift */; };
 		164D00742225624E00A8F264 /* ZMImagePreprocessingTrackerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 16229485221EBB8000A98679 /* ZMImagePreprocessingTrackerTests.m */; };
@@ -521,6 +522,7 @@
 		1623F8DF2AEAAF0E004F0319 /* MessageDependencyResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageDependencyResolver.swift; sourceTree = "<group>"; };
 		1623F8EA2AEBACDE004F0319 /* AutoMockable.stencil */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AutoMockable.stencil; sourceTree = "<group>"; };
 		1623F8EB2AEBACDE004F0319 /* config.yml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.yaml; path = config.yml; sourceTree = "<group>"; };
+		1623F8EF2AEBAEEB004F0319 /* AutoMockable.generated.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AutoMockable.generated.swift; sourceTree = "<group>"; };
 		16367F1D26FDB0740028AF8B /* Payload+Connection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Payload+Connection.swift"; sourceTree = "<group>"; };
 		16367F2526FDB4720028AF8B /* ConnectionRequestStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionRequestStrategy.swift; sourceTree = "<group>"; };
 		164D007522256C6E00A8F264 /* AssetV3UploadRequestStrategyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetV3UploadRequestStrategyTests.swift; sourceTree = "<group>"; };
@@ -1065,6 +1067,7 @@
 		1623F8EE2AEBAEEB004F0319 /* generated */ = {
 			isa = PBXGroup;
 			children = (
+				1623F8EF2AEBAEEB004F0319 /* AutoMockable.generated.swift */,
 				16D66D702B0B9C4E00CB237D /* AutoMockable.generated.swift */,
 			);
 			path = generated;
@@ -1931,6 +1934,7 @@
 /* Begin PBXShellScriptBuildPhase section */
 		630D41B52B07851000633867 /* Run Sourcery */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
@@ -1949,6 +1953,7 @@
 		};
 		668E958827425E0A0028C1F8 /* Run Swiftlint */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
@@ -2222,6 +2227,7 @@
 				EE88079F2AC4288200278E3C /* MLSMessageSendingStatusPayloadProcessorTests.swift in Sources */,
 				0693114C24F79A0E00D14DF5 /* ZMLocalNotificationSetTests.swift in Sources */,
 				EEAC16D6281AEB0200B7A34D /* CallEventContentTests.swift in Sources */,
+				1623F8F12AEBAF7E004F0319 /* AutoMockable.generated.swift in Sources */,
 				EE82318927D22D79008CD77B /* String+Random.swift in Sources */,
 				1621D2651D75C750007108C2 /* ZMLocallyModifiedObjectSetTests.m in Sources */,
 				06474DA624B4B1EA002C695D /* EventDecoderTest.swift in Sources */,
