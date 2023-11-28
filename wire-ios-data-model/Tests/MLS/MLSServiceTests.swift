@@ -2734,7 +2734,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
                 updateKeyMaterialExpectation,
                 commitPendingProposalsExpectation
             ],
-            timeout: 5,
+            timeout: 0.5,
             enforceOrder: true
         )
 
@@ -2787,7 +2787,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         // Then
         await fulfillment(
             of: [wipeConversationExpectation],
-            timeout: 5,
+            timeout: 0.5,
             enforceOrder: true
         )
     }
