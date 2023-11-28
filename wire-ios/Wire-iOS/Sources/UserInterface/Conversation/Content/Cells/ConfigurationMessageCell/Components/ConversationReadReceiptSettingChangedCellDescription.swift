@@ -26,6 +26,11 @@ struct ReadReceiptViewModel {
     let systemMessageType: ZMSystemMessageType
     let sender: UserType
 
+    private let baseAttributes: [NSAttributedString.Key: Any] = [
+        .font: UIFont.mediumFont,
+        .foregroundColor: SemanticColors.Label.textDefault
+    ]
+
     func image() -> UIImage? {
         return iconColor.map { icon.makeImage(size: .tiny, color: $0) }
     }
@@ -36,10 +41,10 @@ struct ReadReceiptViewModel {
         if sender.isSelfUser {
             let youLocalized = "content.system.you_started".localized
 
-            updateText = NSAttributedString(string: template.localized(pov: sender.pov, args: youLocalized), attributes: ConversationSystemMessageCell.baseAttributes).adding(font: .mediumSemiboldFont, to: youLocalized)
+            updateText = NSAttributedString(string: template.localized(pov: sender.pov, args: youLocalized), attributes: baseAttributes).adding(font: .mediumSemiboldFont, to: youLocalized)
         } else {
             let otherUserName = sender.name ?? L10n.Localizable.Conversation.Status.someone
-            updateText = NSAttributedString(string: template.localized(args: otherUserName), attributes: ConversationSystemMessageCell.baseAttributes)
+            updateText = NSAttributedString(string: template.localized(args: otherUserName), attributes: baseAttributes)
                 .adding(font: .mediumSemiboldFont, to: otherUserName)
         }
 
@@ -56,18 +61,12 @@ struct ReadReceiptViewModel {
         case .readReceiptsEnabled:
             updateText = createSystemMessage(template: "content.system.message_read_receipt_on")
         case .readReceiptsOn:
-            updateText = NSAttributedString(string: "content.system.message_read_receipt_on_add_to_group".localized, attributes: ConversationSystemMessageCell.baseAttributes)
+            updateText = NSAttributedString(string: L10n.Localizable.Content.System.messageReadReceiptOnAddToGroup, attributes: baseAttributes)
         default:
             assertionFailure("invalid systemMessageType for ReadReceiptViewModel")
         }
 
         return updateText
-    }
-}
-
-extension ConversationSystemMessageCell {
-    static var baseAttributes: [NSAttributedString.Key: AnyObject] {
-        return [.font: UIFont.mediumFont, .foregroundColor: SemanticColors.Label.textDefault]
     }
 }
 
