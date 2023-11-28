@@ -293,7 +293,7 @@ final class DatabaseMigrationTests: DatabaseBaseTest {
                     "- open the the folder in Finder by typing this command in your terminal. IT WILL NOT WORK IF THE TEST IS NOT PAUSED!!!.\n" +
                     "\t cp \"\(currentDatabaseURL.path)\" ~/Desktop/store\(fixtureVersion).wiredatabase\n\n" +
                     "- The command will copy a file on your desktop called `store\(fixtureVersion).wiredatabase`\n" +
-                    "- Copy it to test bundle if this project in `WireDataModel/Test/Resources` with the other stores\n\n")
+                    "- Copy it to test bundle if this project in `WireDataModel/Tests/Resources` with the other stores\n\n")
             assert(false)
         }
 
