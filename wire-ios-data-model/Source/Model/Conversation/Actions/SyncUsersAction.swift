@@ -26,8 +26,9 @@ public final class SyncUsersAction: EntityAction {
 
         case invalidBody
         case invalidResponsePayload
+        case endpointUnavailable
+        case failedToEncodeRequestPayload
         case unknownError(code: Int, label: String, message: String)
-
     }
 
     // MARK: - Properties

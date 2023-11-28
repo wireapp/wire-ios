@@ -34,6 +34,8 @@ public class UserProfileRequestStrategy: AbstractRequestStrategy, IdentifierObje
     let userProfileByIDTranscoder: UserProfileByIDTranscoder
     let userProfileByQualifiedIDTranscoder: UserProfileByQualifiedIDTranscoder
 
+    let actionSync: EntityActionSync
+
     public init(managedObjectContext: NSManagedObjectContext,
                 applicationStatus: ApplicationStatus,
                 syncProgress: SyncProgress) {
@@ -47,6 +49,8 @@ public class UserProfileRequestStrategy: AbstractRequestStrategy, IdentifierObje
         self.userProfileByQualifiedID = IdentifierObjectSync(managedObjectContext: managedObjectContext,
                                                              transcoder: userProfileByQualifiedIDTranscoder)
 
+        self.actionSync = EntityActionSync(actionHandlers: [SyncUsersActionHandler(context: managedObjectContext)])
+
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
         self.configuration = [.allowsRequestsWhileOnline,
@@ -58,12 +62,11 @@ public class UserProfileRequestStrategy: AbstractRequestStrategy, IdentifierObje
 
     public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
         fetchAllConnectedUsers(for: apiVersion)
-        switch apiVersion {
-        case .v0:
-            return userProfileByID.nextRequest(for: apiVersion)
-        case .v1, .v2, .v3, .v4, .v5:
-            return userProfileByQualifiedID.nextRequest(for: apiVersion)
-        }
+
+        return
+            userProfileByID.nextRequest(for: apiVersion) ??
+            userProfileByQualifiedID.nextRequest(for: apiVersion) ??
+            actionSync.nextRequest(for: apiVersion)
     }
 
     func fetchAllConnectedUsers(for apiVersion: APIVersion) {
