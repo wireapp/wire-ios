@@ -41,13 +41,13 @@ extension SelfProfileViewController {
     fileprivate func presentNewLoginAlertController(_ clients: Set<UserClient>) {
         let newLoginAlertController = UIAlertController(forNewSelfClients: clients)
 
-        let actionManageDevices = UIAlertAction(title: "self.new_device_alert.manage_devices".localized, style: .default) { _ in
+        let actionManageDevices = UIAlertAction(title: L10n.Localizable.Self.NewDeviceAlert.manageDevices, style: .default) { _ in
             self.openControllerForCellWithIdentifier(SettingsCellDescriptorFactory.settingsDevicesCellIdentifier)
         }
 
         newLoginAlertController.addAction(actionManageDevices)
 
-        let actionTrustDevices = UIAlertAction(title: "self.new_device_alert.trust_devices".localized, style: .default) { [weak self] _ in
+        let actionTrustDevices = UIAlertAction(title: L10n.Localizable.Self.NewDeviceAlert.trustDevices, style: .default) { [weak self] _ in
             self?.presentUserSettingChangeControllerIfNeeded()
         }
 
@@ -110,14 +110,15 @@ extension UIAlertController {
                 deviceName = userClient.type.rawValue
             }
 
-            let formatKey = "registration.devices.activated".localized
             let formattedDate = userClient.activationDate?.formattedDate
-            let deviceDate = String(format: formatKey, formattedDate ?? "")
+            let formatKey = L10n.Localizable.Registration.Devices.activated(formattedDate as Any)
+
+            let deviceDate = formatKey
 
             deviceNamesAndDates.append("\(deviceName)\n\(deviceDate)")
         }
 
-        let title = "self.new_device_alert.title".localized
+        let title = L10n.Localizable.Self.NewDeviceAlert.title
 
         let messageFormat = clients.count > 1 ? "self.new_device_alert.message_plural".localized : "self.new_device_alert.message".localized
 
