@@ -46,7 +46,8 @@ final class SettingsClientViewControllerTests: ZMSnapshotTestCase, CoreDataFixtu
     }
 
     func prepareSut(mode: UIUserInterfaceStyle = .light) {
-        sut = SettingsClientViewController(userClient: client)
+        sut = SettingsClientViewController(userClient: client,
+                                           userSession: UserSessionMock(mockUser: .createSelfUser(name: "Joe")))
         sut.overrideUserInterfaceStyle = mode
         sut.isLoadingViewVisible = false
     }
