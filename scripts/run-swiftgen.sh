@@ -21,11 +21,14 @@ set -Eeuo pipefail
 
 REPO_ROOT=$(git rev-parse --show-toplevel)
 SCRIPTS_DIR="$REPO_ROOT/scripts"
-SWIFTLINT="$SCRIPTS_DIR/.build/artifacts/scripts/SwiftLintBinary/SwiftLintBinary.artifactbundle/swiftlint-0.53.0-macos/bin/swiftlint"
+SWIFTGEN="$SCRIPTS_DIR/.build/artifacts/scripts/swiftgen/swiftgen.artifactbundle/swiftgen/bin/swiftgen"
 
 if [ -z "${CI-}" ]; then
     xcrun --sdk macosx swift package --package-path "$SCRIPTS_DIR" resolve
-    "$SWIFTLINT" --config "$REPO_ROOT/.swiftlint.yml" "$@"
+    (
+        cd "$REPO_ROOT/wire-ios"
+        "$SWIFTGEN"
+    )
 else
-    echo "Skipping SwiftLint in CI environment"
+    echo "Skipping SwiftGen in CI environment"
 fi
