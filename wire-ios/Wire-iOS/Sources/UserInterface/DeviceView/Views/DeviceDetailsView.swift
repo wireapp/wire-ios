@@ -60,7 +60,9 @@ struct DeviceDetailsView: View {
             .font(
                 UIFont.normalMediumFont.swiftUIFont
             )
-            .foregroundColor(SemanticColors.Label.textSectionHeader.swiftUIColor)
+            .foregroundColor(
+                SemanticColors.Label.textSectionHeader.swiftUIColor
+            )
             .frame(
                 height: 45
             )

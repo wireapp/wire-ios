@@ -27,7 +27,10 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
     var credentials: ZMEmailCredentials?
     var certificate: E2eIdentityCertificate?
 
-    init(userClient: UserClient, credentials: ZMEmailCredentials?) {
+    init(
+        userClient: UserClient,
+        credentials: ZMEmailCredentials?
+    ) {
         self.userClient = userClient
         self.credentials = credentials
     }
@@ -36,60 +39,98 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
         do {
             return try await userClient.fetchE2eIdentityCertificate()
         } catch {
-            print(error)
+            print(
+                error
+            )
         }
         return nil
     }
 
-    func showCertificate(_ certificate: String) {
-        print("show certificate is called: \(certificate)")
+    func showCertificate(
+        _ certificate: String
+    ) {
+        print(
+            "show certificate is called: \(certificate)"
+        )
     }
 
     func removeDevice() async -> Bool {
-       return await withCheckedContinuation { continuation in
-            clientRemovalObserver = ClientRemovalObserver(userClientToDelete: userClient, delegate: self, credentials: credentials, completion: { error in
-                let isRemoved = error == nil
-                continuation.resume(returning: isRemoved)
-            })
-           clientRemovalObserver?.startRemoval()
+        return await withCheckedContinuation { continuation in
+            clientRemovalObserver = ClientRemovalObserver(
+                userClientToDelete: userClient,
+                delegate: self,
+                credentials: credentials,
+                completion: {
+                    error in
+                    let isRemoved = error == nil
+                    continuation.resume(
+                        returning: isRemoved
+                    )
+                }
+            )
+            clientRemovalObserver?.startRemoval()
         }
     }
 
     func resetSession() async -> Bool {
         return await withCheckedContinuation { continuation in
             userClient.resetSession { value in
-                continuation.resume(returning: value)
+                continuation.resume(
+                    returning: value
+                )
             }
         }
     }
 
-    func updateVerified(_ value: Bool) async -> Bool {
+    func updateVerified(
+        _ value: Bool
+    ) async -> Bool {
         guard let userSession = ZMUserSession.shared(),
-              let selfClient = userSession.selfUserClient else { return false }
+              let selfClient = userSession.selfUserClient else {
+            return false
+        }
         return await withCheckedContinuation { continuation in
             userSession.enqueue({
                 if value {
-                    selfClient.trustClient(self.userClient)
+                    selfClient.trustClient(
+                        self.userClient
+                    )
                 } else {
-                    selfClient.ignoreClient(self.userClient)
+                    selfClient.ignoreClient(
+                        self.userClient
+                    )
                 }
-            }, completionHandler: {
-                continuation.resume(returning: value)
+            },
+                                completionHandler: {
+                continuation.resume(
+                    returning: value
+                )
             })
         }
     }
 
-    func copyToClipboard(_ value: String) {
+    func copyToClipboard(
+        _ value: String
+    ) {
         UIPasteboard.general.string = value
     }
 }
 
 extension DeviceDetailsViewActionsHandler: ClientRemovalObserverDelegate {
-    func present(_ clientRemovalObserver: ClientRemovalObserver, viewControllerToPresent: UIViewController) {
-        UIApplication.shared.windows.first?.rootViewController?.present(viewControllerToPresent, animated: true)
+    func present(
+        _ clientRemovalObserver: ClientRemovalObserver,
+        viewControllerToPresent: UIViewController
+    ) {
+        UIApplication.shared.windows.first?.rootViewController?.present(
+            viewControllerToPresent,
+            animated: true
+        )
     }
 
-    func setIsLoadingViewVisible(_ clientRemovalObserver: ClientRemovalObserver, isVisible: Bool) {
+    func setIsLoadingViewVisible(
+        _ clientRemovalObserver: ClientRemovalObserver,
+        isVisible: Bool
+    ) {
 
     }
 }
