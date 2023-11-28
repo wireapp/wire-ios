@@ -168,7 +168,6 @@ class AcmeApiTests: ZMTBaseTest {
         // expectation
         let headerNonce = "ACMENonce"
         let headerLocation = "Location"
-        let expectation = ACMEResponse(nonce: headerNonce, location: headerLocation, response: Data())
 
         // given
         let path = "https://acme.elna.wire.link/acme/defaultteams/new-account"
@@ -198,7 +197,6 @@ class AcmeApiTests: ZMTBaseTest {
         // expectation
         let headerNonce = "ACMENonce"
         let headerLocation = "Location"
-        let expectation = ACMEResponse(nonce: headerNonce, location: headerLocation, response: Data())
 
         // given
         let path = "https://acme.elna.wire.link/acme/defaultteams/new-account"
@@ -219,6 +217,38 @@ class AcmeApiTests: ZMTBaseTest {
         } catch NetworkError.invalidResponse {
             // then
             return
+        } catch {
+            XCTFail("unexpected error: \(error.localizedDescription)")
+        }
+    }
+
+    func testThatItSendsChallengeRequest() async throws {
+        // expectation
+        let headerNonce = "ACMENonce"
+        let expectation = ChallengeResponse(type: "JWT",
+                                            url: "https://acme.example.com/acme/provisioner1/challenge/foVMOvMcap/1pceubr",
+                                            status: "pending",
+                                            token: "NEi1HaRRYqM0R9cGZaHdv0dBWIkRbyCY",
+                                            nonce: headerNonce)
+
+        // given
+        let path = "https://acme.example.com/acme/provisioner1/challenge/foVMOvMcapXlWSrHqu4BrD1RFORZOGrC/1pceubrFUZAvVQI5XgtLDMfLefhOt4YI"
+
+        // mock
+        let mockResponse = HTTPURLResponse(
+            url: URL(string: path)!,
+            statusCode: 200,
+            httpVersion: "",
+            headerFields: ["Replay-Nonce": headerNonce]
+        )!
+        let challengeResponseData = try! JSONEncoder.defaultEncoder.encode(expectation)
+        mockHttpClient?.mockResponse = (challengeResponseData, mockResponse)
+
+        do {
+            // when
+            let challengeResponse = try await acmeApi?.sendChallengeRequest(path: path, requestBody: Data())
+            // then
+            XCTAssertEqual(challengeResponse, expectation)
         } catch {
             XCTFail("unexpected error: \(error.localizedDescription)")
         }

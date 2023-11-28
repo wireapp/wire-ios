@@ -323,7 +323,7 @@ enum E2EIRepositoryFailure: Error {
 
 }
 
-public struct ChallengeResponse: Codable {
+public struct ChallengeResponse: Codable, Equatable {
 
     var type: String
     var url: String

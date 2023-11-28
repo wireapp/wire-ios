@@ -53,7 +53,6 @@ public class E2eIApi: E2eIApiInterface {
     }
 
     public func getAccessToken(clientId: String, dpopToken: String) async throws -> AccessTokenResponse {
-        print(dpopToken)
         let request = ZMTransportRequest(path: "/\(Constant.pathClients)/\(clientId)/\(Constant.pathAccessToken)",
                                          method: .post,
                                          payload: nil,
