@@ -37,7 +37,9 @@ struct DeviceDetailsProteusView: View {
             Text(
                 L10n.Localizable.Device.Details.Section.Proteus.activated
             )
-            .foregroundColor(SemanticColors.Label.textSectionHeader.swiftUIColor)
+            .foregroundColor(
+                SemanticColors.Label.textSectionHeader.swiftUIColor
+            )
             .font(
                 UIFont.mediumSemiboldFont.swiftUIFont
             )
@@ -55,7 +57,9 @@ struct DeviceDetailsProteusView: View {
             Text(
                 viewModel.addedDate
             )
-            .foregroundColor(SemanticColors.Label.textDefault.swiftUIColor)
+            .foregroundColor(
+                SemanticColors.Label.textDefault.swiftUIColor
+            )
             .padding(
                 [
                 .leading,

@@ -45,13 +45,21 @@ extension E2EIdentityCertificateStatus {
     func imageForStatus() -> Image? {
         switch self {
         case .notActivated:
-            return Image(.certificateExpired)
+            return Image(
+                .certificateExpired
+            )
         case .revoked:
-            return Image(.certificateRevoked)
+            return Image(
+                .certificateRevoked
+            )
         case .expired:
-            return Image(.certificateExpired)
+            return Image(
+                .certificateExpired
+            )
         case .valid:
-            return Image(.certificateValid)
+            return Image(
+                .certificateValid
+            )
         case .none:
             return nil
         }
@@ -60,11 +68,17 @@ extension E2EIdentityCertificateStatus {
 
 protocol DeviceDetailsViewActions {
     func fetchCertificate() async -> E2eIdentityCertificate?
-    func showCertificate(_ certificate: String)
+    func showCertificate(
+        _ certificate: String
+    )
     func removeDevice() async -> Bool
     func resetSession() async -> Bool
-    func updateVerified(_ value: Bool) async -> Bool
-    func copyToClipboard(_ value: String)
+    func updateVerified(
+        _ value: Bool
+    ) async -> Bool
+    func copyToClipboard(
+        _ value: String
+    )
 }
 
 final class DeviceInfoViewModel: ObservableObject {
@@ -75,7 +89,9 @@ final class DeviceInfoViewModel: ObservableObject {
     let proteusID: String
     var isProteusVerificationEnabled: Bool
     var certificateStatus: E2EIdentityCertificateStatus {
-        guard let certificate = e2eIdentityCertificate, let status = E2EIdentityCertificateStatus.allCases.filter({ $0.titleForStatus() == certificate.certificateStatus}).first else {
+        guard let certificate = e2eIdentityCertificate, let status = E2EIdentityCertificateStatus.allCases.filter({
+            $0.titleForStatus() == certificate.certificateStatus
+        }).first else {
             return .none
         }
         return status
@@ -133,14 +149,22 @@ final class DeviceInfoViewModel: ObservableObject {
         isActionInProgress = false
     }
 
-    func updateVerifiedStatus(_ value: Bool) async {
+    func updateVerifiedStatus(
+        _ value: Bool
+    ) async {
         isActionInProgress = true
-        isVerified = await actionsHandler.updateVerified(value)
+        isVerified = await actionsHandler.updateVerified(
+            value
+        )
         isActionInProgress = false
     }
 
-    func copyToClipboard(_ value: String) {
-        actionsHandler.copyToClipboard(value)
+    func copyToClipboard(
+        _ value: String
+    ) {
+        actionsHandler.copyToClipboard(
+            value
+        )
     }
 }
 
@@ -151,15 +175,26 @@ extension DeviceInfoViewModel: Identifiable {
 }
 
 extension DeviceInfoViewModel {
-    static func map(userClient: UserClient, credentials: ZMEmailCredentials?) -> DeviceInfoViewModel {
+    static func map(
+        userClient: UserClient,
+        credentials: ZMEmailCredentials?
+    ) -> DeviceInfoViewModel {
         return DeviceInfoViewModel(
             uuid: UUID().uuidString,
             title: userClient.model ?? "",
             addedDate: userClient.activationDate?.formattedDate ?? "",
-            deviceKeyFingerprint: String(data: userClient.fingerprint ?? Data(), encoding: .utf8)?.splitStringIntoLines(charactersPerLine: 16).uppercased() ?? "",
+            deviceKeyFingerprint: String(
+                data: userClient.fingerprint ?? Data(),
+                encoding: .utf8
+            )?.splitStringIntoLines(
+                charactersPerLine: 16
+            ).uppercased() ?? "",
             proteusID: userClient.proteusSessionID?.clientID.fingerprintStringWithSpaces.uppercased() ?? "",
             isProteusVerificationEnabled: userClient.user?.isVerified ?? false,
-            actionsHandler: DeviceDetailsViewActionsHandler(userClient: userClient, credentials: credentials)
+            actionsHandler: DeviceDetailsViewActionsHandler(
+                userClient: userClient,
+                credentials: credentials
+            )
         )
     }
 }
@@ -168,7 +203,9 @@ struct DevicesViewModel {
     var currentDevice: DeviceInfoViewModel
     var otherDevices: [DeviceInfoViewModel]
 
-    func onRemoveDevice(_ indexSet: IndexSet) {
+    func onRemoveDevice(
+        _ indexSet: IndexSet
+    ) {
 
     }
 }
