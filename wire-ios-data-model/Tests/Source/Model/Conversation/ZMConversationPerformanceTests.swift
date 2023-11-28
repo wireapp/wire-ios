@@ -1,20 +1,20 @@
 //
-//  ZMConversationPerformanceTests.swift
-//  WireDataModelTests
+// Wire
+// Copyright (C) 2023 Wire Swiss GmbH
 //
-//  Created by John Nguyen on 28.09.20.
-//  Copyright © 2020 Wire Swiss GmbH. All rights reserved.
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
 //
-
-import XCTest
-@testable import WireDataModel
-
-class ZMConversationPerformanceTests: ZMConversationTestsBase {
-
-    /// There are no true 1:1 conversations in teams, so we check to see if it
-    /// should be considered a 1:1 depending on certain properties. This was
-    /// previously expensive because the conversation participants were iterated
-    /// over several times. The implementation has been optimized to avoid iterating
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
     /// over the conversation participants entirely.
 
     func testPerformanceWhenCalculatingConversationType() {
