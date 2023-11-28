@@ -490,6 +490,11 @@ extension ZMConversation {
                 systemMessage.sender == selfUser else {
                     return
             }
+
+            if systemMessage.clients.contains(selfClient) {
+                systemMessage.systemMessageType = .usingNewDevice
+                stop.initialize(to: true)
+            }
         }
     }
 }
