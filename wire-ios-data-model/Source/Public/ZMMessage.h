@@ -63,7 +63,7 @@
 /*
  * Unfortunatly we can not remove deprecated cases of `ZMSystemMessageType` easily.
  *
- * The reason is that the values are persisted and stored and loaded later when the opens a conversation.
+ * The reason is that the values are persisted and stored and loaded later when the user opens a conversation.
  * To remove the cases we could have different strategies:
  * 1. Assign the raw value of `int16_t` to each case, so that loading from store can map the correct values.
  *    a. Then the mapping must fail gracefully for those values that can not be mapped then anymore.
