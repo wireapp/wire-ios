@@ -18,6 +18,7 @@
 
 import Foundation
 import UIKit
+import WireSyncEngine
 import WireDataModel
 import WireCommonComponents
 
@@ -100,6 +101,8 @@ final class AddParticipantsViewController: UIViewController, SpinnerCapable {
     }
 
     private let selfUser: UserType
+    private let userSession: UserSession
+
     private let searchResultsViewController: SearchResultsViewController
     private let searchGroupSelector: SearchGroupSelector
     private let searchHeaderViewController: SearchHeaderViewController
@@ -135,9 +138,14 @@ final class AddParticipantsViewController: UIViewController, SpinnerCapable {
 
     convenience init(
         conversation: GroupDetailsConversationType,
-        selfUser: UserType
+        selfUser: UserType,
+        userSession: UserSession
     ) {
-        self.init(context: .add(conversation), selfUser: selfUser)
+        self.init(
+            context: .add(conversation),
+            selfUser: selfUser,
+            userSession: userSession
+        )
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -149,11 +157,16 @@ final class AddParticipantsViewController: UIViewController, SpinnerCapable {
         return wr_supportedInterfaceOrientations
     }
 
-    init(context: Context,
-         selfUser: UserType,
-         isFederationEnabled: Bool = BackendInfo.isFederationEnabled) {
+    init(
+        context: Context,
+        selfUser: UserType,
+        userSession: UserSession,
+        isFederationEnabled: Bool = BackendInfo.isFederationEnabled
+    ) {
 
         self.selfUser = selfUser
+        self.userSession = userSession
+
         viewModel = AddParticipantsViewModel(with: context)
 
         collectionViewLayout = UICollectionViewFlowLayout()
@@ -405,7 +418,12 @@ final class AddParticipantsViewController: UIViewController, SpinnerCapable {
     private func addSelectedParticipants(to conversation: GroupDetailsConversationType) {
         let selectedUsers = self.userSelection.users
 
-        (conversation as? ZMConversation)?.addOrShowError(participants: Array(selectedUsers))
+        let useCase = AddParticipantsUseCase()
+        useCase.invoke(
+            with: Array(selectedUsers),
+            conversation: conversation,
+            in: userSession
+        )
     }
 }
 

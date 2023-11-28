@@ -529,6 +529,7 @@
 		63D17D6B268E142100B0CC4F /* MockCallGridViewControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D17D6A268E142000B0CC4F /* MockCallGridViewControllerDelegate.swift */; };
 		63E128B726208BAD009D9AF2 /* CallGridHintNotificationLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63E128B626208BAD009D9AF2 /* CallGridHintNotificationLabel.swift */; };
 		63E128BB26208DDC009D9AF2 /* CallGridEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63E128BA26208DDC009D9AF2 /* CallGridEvent.swift */; };
+		63E56CCF2B16272B006EED69 /* AddParticipantsUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63E56CCE2B16272B006EED69 /* AddParticipantsUseCase.swift */; };
 		63F239352694A151000BFFC6 /* Array+Prefix.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D17D70268F52A300B0CC4F /* Array+Prefix.swift */; };
 		63F2398F269F242B000BFFC6 /* VideoGridPresentationMode+CallActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63F2398D269F242B000BFFC6 /* VideoGridPresentationMode+CallActions.swift */; };
 		63F23990269F242B000BFFC6 /* CallActionIconType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63F2398E269F242B000BFFC6 /* CallActionIconType.swift */; };
@@ -2512,6 +2513,7 @@
 		63D17D70268F52A300B0CC4F /* Array+Prefix.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+Prefix.swift"; sourceTree = "<group>"; };
 		63E128B626208BAD009D9AF2 /* CallGridHintNotificationLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallGridHintNotificationLabel.swift; sourceTree = "<group>"; };
 		63E128BA26208DDC009D9AF2 /* CallGridEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallGridEvent.swift; sourceTree = "<group>"; };
+		63E56CCE2B16272B006EED69 /* AddParticipantsUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddParticipantsUseCase.swift; sourceTree = "<group>"; };
 		63F2398D269F242B000BFFC6 /* VideoGridPresentationMode+CallActions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "VideoGridPresentationMode+CallActions.swift"; sourceTree = "<group>"; };
 		63F2398E269F242B000BFFC6 /* CallActionIconType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CallActionIconType.swift; sourceTree = "<group>"; };
 		63F65EED2462DB6B00534A69 /* PreBackendSwitchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreBackendSwitchViewController.swift; sourceTree = "<group>"; };
@@ -5062,6 +5064,14 @@
 			path = Mocks;
 			sourceTree = "<group>";
 		};
+		63E56CCD2B162713006EED69 /* Use cases */ = {
+			isa = PBXGroup;
+			children = (
+				63E56CCE2B16272B006EED69 /* AddParticipantsUseCase.swift */,
+			);
+			path = "Use cases";
+			sourceTree = "<group>";
+		};
 		7C25D7532149118D002E22BF /* Mentions */ = {
 			isa = PBXGroup;
 			children = (
@@ -6039,6 +6049,7 @@
 		8FC850D8199245760008B66B /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				63E56CCD2B162713006EED69 /* Use cases */,
 				EE5F54CF259B777B00F11F3C /* Viper */,
 				5EC16B6520EB782900955156 /* Vendor */,
 				871BC3181D34F94200DF0793 /* Components */,
@@ -8896,6 +8907,7 @@
 				871BC2811D34F8F800DF0793 /* String+Fingerprint.swift in Sources */,
 				D3DA6E7B292F67680045CC57 /* CallingActionsView.swift in Sources */,
 				EFEC285F233A6FF8007F47FF /* ConversationListHeaderView.swift in Sources */,
+				63E56CCF2B16272B006EED69 /* AddParticipantsUseCase.swift in Sources */,
 				5EBBE9782188B85B008BC1B7 /* ZMMessage+Actions.swift in Sources */,
 				EEC6A08F21B7BF7900133BC7 /* ConversationCreateGuestsCell.swift in Sources */,
 				A963643223E2F35200190992 /* MessagePresenter.swift in Sources */,

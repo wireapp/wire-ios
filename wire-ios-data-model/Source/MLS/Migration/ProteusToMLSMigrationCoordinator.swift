@@ -105,7 +105,10 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
 
         switch migrationStartStatus {
         case .canStart:
-            guard let mlsService = context.mlsService else {
+
+            let mlsService = await context.perform { self.context.mlsService }
+
+            guard let mlsService else {
                 return logger.warn("can't start migration: missing `mlsService`")
             }
 
