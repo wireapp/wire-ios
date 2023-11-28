@@ -21,7 +21,7 @@ import WireMockTransport
 import XCTest
 
 class APNSTests_Swift: APNSTestsBase {
-
+    // FIXME: see ticket https://wearezeta.atlassian.net/browse/WPB-5673
     func disabled_testThatItUpdatesApplicationBadgeCount_WhenReceivingATextMessage() {
         // GIVEN
         XCTAssertTrue(login())
@@ -56,11 +56,11 @@ class APNSTests_Swift: APNSTestsBase {
             return
         }
 
-        let exp = XCTestExpectation(description: "ds")
+//        let exp = XCTestExpectation(description: "ds")
         userSession.receivedPushNotification(with: noticePayloadForLastEvent(), completion: {
-            exp.fulfill()
+//            exp.fulfill()
         })
-        wait(for: [exp], timeout: 10)
+//        wait(for: [exp], timeout: 5)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // THEN

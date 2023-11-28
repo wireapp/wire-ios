@@ -327,7 +327,7 @@
     connection.conversation = conversation;
 }
 
-- (void)disable_testThatConnectionRequestsFromTwoUsersTriggerNotifications;
+- (void)testThatConnectionRequestsFromTwoUsersTriggerNotifications;
 {
     // given
     XCTAssertTrue([self login]);
