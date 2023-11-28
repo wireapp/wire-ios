@@ -189,7 +189,7 @@ final class ProfileDetailsContentController: NSObject,
                 contents = [.readReceiptsStatus(enabled: readReceiptsEnabled)]
             }
 
-            if let conversation, Bundle.developerModeEnabled {
+            if let conversation, Bundle.developerModeEnabled, !ProcessInfo.processInfo.isRunningTests {
                 contents.append(.messageProtocol(conversation.messageProtocol))
             }
 
