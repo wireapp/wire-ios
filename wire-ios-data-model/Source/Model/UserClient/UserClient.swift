@@ -42,23 +42,6 @@ private let zmLog = ZMSLog(tag: "UserClient")
 
 @objcMembers
 public class UserClient: ZMManagedObject, UserClientType {
-    public var activationLatitude: Double {
-        get {
-            return activationLocationLatitude?.doubleValue ?? 0.0
-        }
-        set {
-            activationLocationLatitude = NSNumber(value: newValue)
-        }
-    }
-
-    public var activationLongitude: Double {
-        get {
-            return activationLocationLongitude?.doubleValue ?? 0.0
-        }
-        set {
-            activationLocationLongitude = NSNumber(value: newValue)
-        }
-    }
 
     @NSManaged public var type: DeviceType
     @NSManaged public var label: String?
@@ -71,13 +54,10 @@ public class UserClient: ZMManagedObject, UserClientType {
     @NSManaged public var addedOrRemovedInSystemMessages: Set<ZMSystemMessage>
     @NSManaged public var messagesMissingRecipient: Set<ZMMessage>
     @NSManaged public var numberOfKeysRemaining: Int32
-    @NSManaged public var activationAddress: String?
     @NSManaged public var activationDate: Date?
     @NSManaged public var discoveryDate: Date?
     @NSManaged public var model: String?
     @NSManaged public var deviceClass: DeviceClass?
-    @NSManaged public var activationLocationLatitude: NSNumber?
-    @NSManaged public var activationLocationLongitude: NSNumber?
     @NSManaged public var needsToNotifyUser: Bool
     @NSManaged public var fingerprint: Data?
     @NSManaged public var apsVerificationKey: Data?
@@ -145,10 +125,6 @@ public class UserClient: ZMManagedObject, UserClientType {
 
     /// Clients that ignore this client trust (currently can contain only self client)
     @NSManaged public var ignoredByClients: Set<UserClient>
-
-    public var activationLocation: CLLocation {
-        return CLLocation(latitude: self.activationLocationLatitude as! CLLocationDegrees, longitude: self.activationLocationLongitude as! CLLocationDegrees)
-    }
 
     public var isLegalHoldDevice: Bool {
         return deviceClass == .legalHold || type == .legalHold
@@ -432,14 +408,9 @@ public extension UserClient {
         let payloadAsDictionary = payloadData as NSDictionary
 
         let label = payloadAsDictionary.optionalString(forKey: "label")?.removingExtremeCombiningCharacters
-        let activationAddress = payloadAsDictionary.optionalString(forKey: "address")?.removingExtremeCombiningCharacters
         let model = payloadAsDictionary.optionalString(forKey: "model")?.removingExtremeCombiningCharacters
         let deviceClass = payloadAsDictionary.optionalString(forKey: "class")
         let activationDate = payloadAsDictionary.date(for: "time")
-
-        let locationCoordinates = payloadData["location"] as? [String: Double]
-        let latitude = (locationCoordinates?["lat"] as NSNumber?) ?? 0
-        let longitude = (locationCoordinates?["lon"] as NSNumber?) ?? 0
 
         let result = fetchOrCreateUserClient(with: id, in: context)
         let client = result.client
@@ -447,12 +418,9 @@ public extension UserClient {
 
         client.label = label
         client.type = DeviceType(rawValue: type)
-        client.activationAddress = activationAddress
         client.model = model
         client.deviceClass = deviceClass.map { DeviceClass(rawValue: $0) }
         client.activationDate = activationDate
-        client.activationLocationLatitude = latitude
-        client.activationLocationLongitude = longitude
         client.remoteIdentifier = id
 
         let selfUser = ZMUser.selfUser(in: context)
