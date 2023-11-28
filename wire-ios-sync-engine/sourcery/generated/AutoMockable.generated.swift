@@ -1,4 +1,4 @@
-// Generated using Sourcery 2.1.1 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 2.0.3 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 // swiftlint:disable line_length
 // swiftlint:disable variable_name
@@ -10,9 +10,7 @@ import UIKit
 import AppKit
 #endif
 
-
-@testable import WireSyncEngine
-
+import WireSyncEngine
 
 
 
@@ -33,3 +31,31 @@ import AppKit
 
 
 
+
+
+public class MockGetUserClientFingerprintUseCaseProtocol: GetUserClientFingerprintUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - invoke
+
+    public var invokeUserClient_Invocations: [UserClient] = []
+    public var invokeUserClient_MockMethod: ((UserClient) async -> Data?)?
+    public var invokeUserClient_MockValue: Data??
+
+    public func invoke(userClient: UserClient) async -> Data? {
+        invokeUserClient_Invocations.append(userClient)
+
+        if let mock = invokeUserClient_MockMethod {
+            return await mock(userClient)
+        } else if let mock = invokeUserClient_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `invokeUserClient`")
+        }
+    }
+
+}

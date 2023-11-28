@@ -26,7 +26,7 @@ class MockProteusProvider: ProteusProviding {
     var useProteusService: Bool
 
     init(
-        mockProteusService: MockProteusServiceInterface,
+        mockProteusService: MockProteusServiceInterface = MockProteusServiceInterface(),
         mockKeyStore: SpyUserClientKeyStore,
         useProteusService: Bool = false
     ) {
@@ -49,5 +49,13 @@ class MockProteusProvider: ProteusProviding {
     var mockCanPerform = true
     var canPerform: Bool {
         return mockCanPerform
+    }
+}
+
+extension XCTestCase {
+
+    func spyForTests() -> SpyUserClientKeyStore {
+        let url = self.createTempFolder()
+        return SpyUserClientKeyStore(accountDirectory: url, applicationContainer: url)
     }
 }
