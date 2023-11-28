@@ -154,8 +154,9 @@ public class UserClient: ZMManagedObject, UserClientType {
     }
 
     public var verified: Bool {
-        let selfUser = ZMUser.selfUser(in: self.managedObjectContext!)
-        guard let selfClient = selfUser.selfClient()
+        guard
+            let managedObjectContext,
+            let selfClient = ZMUser.selfUser(in: managedObjectContext).selfClient()
         else { return false }
         return selfClient.remoteIdentifier == self.remoteIdentifier || selfClient.trustedClients.contains(self)
     }
