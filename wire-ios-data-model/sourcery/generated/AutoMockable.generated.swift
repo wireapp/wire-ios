@@ -35,6 +35,51 @@ import Combine
 
 
 
+class MockCoreDataMessagingMigratorProtocol: CoreDataMessagingMigratorProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - requiresMigration
+
+    var requiresMigrationAtToVersion_Invocations: [(storeURL: URL, version: CoreDataMessagingMigrationVersion)] = []
+    var requiresMigrationAtToVersion_MockMethod: ((URL, CoreDataMessagingMigrationVersion) -> Bool)?
+    var requiresMigrationAtToVersion_MockValue: Bool?
+
+    func requiresMigration(at storeURL: URL, toVersion version: CoreDataMessagingMigrationVersion) -> Bool {
+        requiresMigrationAtToVersion_Invocations.append((storeURL: storeURL, version: version))
+
+        if let mock = requiresMigrationAtToVersion_MockMethod {
+            return mock(storeURL, version)
+        } else if let mock = requiresMigrationAtToVersion_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `requiresMigrationAtToVersion`")
+        }
+    }
+
+    // MARK: - migrateStore
+
+    var migrateStoreAtToVersion_Invocations: [(storeURL: URL, version: CoreDataMessagingMigrationVersion)] = []
+    var migrateStoreAtToVersion_MockError: Error?
+    var migrateStoreAtToVersion_MockMethod: ((URL, CoreDataMessagingMigrationVersion) throws -> Void)?
+
+    func migrateStore(at storeURL: URL, toVersion version: CoreDataMessagingMigrationVersion) throws {
+        migrateStoreAtToVersion_Invocations.append((storeURL: storeURL, version: version))
+
+        if let error = migrateStoreAtToVersion_MockError {
+            throw error
+        }
+
+        guard let mock = migrateStoreAtToVersion_MockMethod else {
+            fatalError("no mock for `migrateStoreAtToVersion`")
+        }
+
+        try mock(storeURL, version)            
+    }
+
+}
 public class MockCryptoboxMigrationManagerInterface: CryptoboxMigrationManagerInterface {
 
     // MARK: - Life cycle
