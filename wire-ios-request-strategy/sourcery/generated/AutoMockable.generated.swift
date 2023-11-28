@@ -155,7 +155,7 @@ public class MockMessageDependencyResolverInterface: MessageDependencyResolverIn
             fatalError("no mock for `waitForDependenciesToResolveFor`")
         }
 
-        try await mock(message)            
+        try await mock(message)
     }
 
 }
@@ -183,7 +183,7 @@ public class MockMessageSenderInterface: MessageSenderInterface {
             fatalError("no mock for `sendMessageMessage`")
         }
 
-        try await mock(message)            
+        try await mock(message)
     }
 
 }
@@ -263,7 +263,7 @@ public class MockQuickSyncObserverInterface: QuickSyncObserverInterface {
             fatalError("no mock for `waitForQuickSyncToFinish`")
         }
 
-        await mock()            
+        await mock()
     }
 
 }
@@ -291,7 +291,7 @@ public class MockSessionEstablisherInterface: SessionEstablisherInterface {
             fatalError("no mock for `establishSessionWithApiVersion`")
         }
 
-        try await mock(clients, apiVersion)            
+        try await mock(clients, apiVersion)
     }
 
 }
