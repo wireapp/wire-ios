@@ -45,6 +45,6 @@ final class MLSMigrationCellDescriptionTests: XCTestCase {
         XCTAssertNil(cellDescription.actionController)
         XCTAssertNotNil(cellDescription.configuration)
         XCTAssertNil(cellDescription.accessibilityIdentifier)
-        XCTAssert(cellDescription.accessibilityLabel?.isEmpty == false)
+        XCTAssertEqual(cellDescription.accessibilityLabel?.isEmpty, false)
     }
 }
