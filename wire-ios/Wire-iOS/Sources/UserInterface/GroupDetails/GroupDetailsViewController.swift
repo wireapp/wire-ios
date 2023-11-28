@@ -273,7 +273,6 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
         case .invite:
             let addParticipantsViewController = AddParticipantsViewController(
                 conversation: conversation,
-                selfUser: userSession.selfUser,
                 userSession: userSession
             )
             let navigationController = addParticipantsViewController.wrapInNavigationController(setBackgroundColor: true)

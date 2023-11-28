@@ -77,15 +77,11 @@ extension StartUIViewController: SearchResultsViewControllerDelegate {
 
     func searchResultsViewController(_ searchResultsViewController: SearchResultsViewController,
                                      didTapOnSeviceUser user: ServiceUser) {
-        guard let selfUser = ZMUser.selfUser() else {
-            assertionFailure("ZMUser.selfUser() is nil")
-            return
-        }
 
         let detail = ServiceDetailViewController(
             serviceUser: user,
             actionType: .openConversation,
-            selfUser: selfUser
+            userSession: userSession
         ) { [weak self] result in
             guard let weakSelf = self else { return }
 
@@ -115,7 +111,7 @@ extension StartUIViewController: SearchResultsViewControllerDelegate {
     }
 
     func openCreateGroupController() {
-        let controller = ConversationCreationController(preSelectedParticipants: nil, selfUser: userSession.selfUser)
+        let controller = ConversationCreationController(preSelectedParticipants: nil, userSession: userSession)
         controller.delegate = self
 
         if self.traitCollection.horizontalSizeClass == .compact {
@@ -131,7 +127,7 @@ extension StartUIViewController: SearchResultsViewControllerDelegate {
     }
 
     func createGuestRoom() {
-        guard let userSession = ZMUserSession.shared() else {
+        guard let userSession = userSession as? ZMUserSession else {
             fatal("No user session present")
         }
 

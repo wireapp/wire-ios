@@ -37,7 +37,7 @@ final class ConversationCreationController: UIViewController {
 
     typealias CreateGroupName = L10n.Localizable.Conversation.Create.GroupName
 
-    private let selfUser: UserType
+    private let userSession: UserSession
     static let mainViewHeight: CGFloat = 56
 
     private let collectionViewController = SectionCollectionViewController()
@@ -51,7 +51,7 @@ final class ConversationCreationController: UIViewController {
 
     // MARK: - Sections
 
-    private lazy var nameSection = ConversationCreateNameSectionController(selfUser: selfUser, delegate: self)
+    private lazy var nameSection = ConversationCreateNameSectionController(selfUser: userSession.selfUser, delegate: self)
     private lazy var errorSection = ConversationCreateErrorSectionController()
 
     private lazy var optionsToggle: ConversationCreateOptionsSectionController = {
@@ -76,7 +76,7 @@ final class ConversationCreationController: UIViewController {
             return true
         }
 
-        return selfUser.canCreateMLSGroups
+        return userSession.selfUser.canCreateMLSGroups
     }
 
     private lazy var guestsSection: ConversationCreateGuestsSectionController = {
@@ -130,9 +130,12 @@ final class ConversationCreationController: UIViewController {
 
     // MARK: - Life cycle
 
-    init(preSelectedParticipants: UserSet?, selfUser: UserType) {
-        self.selfUser = selfUser
-        self.values = ConversationCreationValues(selfUser: selfUser)
+    init(
+        preSelectedParticipants: UserSet?,
+        userSession: UserSession
+    ) {
+        self.userSession = userSession
+        self.values = ConversationCreationValues(selfUser: userSession.selfUser)
         self.preSelectedParticipants = preSelectedParticipants
         super.init(nibName: nil, bundle: nil)
     }
@@ -192,7 +195,7 @@ final class ConversationCreationController: UIViewController {
         collectionViewController.collectionView = collectionView
         collectionViewController.sections = [nameSection, errorSection]
 
-        if selfUser.isTeamMember {
+        if userSession.selfUser.isTeamMember {
             collectionViewController.sections.append(contentsOf: [optionsToggle] + optionsSections)
         }
 
@@ -244,12 +247,9 @@ final class ConversationCreationController: UIViewController {
                 values.participants = parts
             }
 
-            guard let session = ZMUserSession.shared() else { return }
-
             let participantsController = AddParticipantsViewController(
                 context: .create(values),
-                selfUser: selfUser,
-                userSession: session
+                userSession: userSession
             )
 
             participantsController.conversationCreationDelegate = self
@@ -281,13 +281,13 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
             values.participants = users
 
         case .create:
-            guard let userSession = ZMUserSession.shared() else { return }
+            guard let userSession = userSession as? ZMUserSession else { return }
 
             addParticipantsViewController.setLoadingView(isVisible: true)
             let service = ConversationService(context: userSession.viewContext)
 
             let users = values.participants
-                .union([selfUser])
+                .union([userSession.selfUser])
                 .materialize(in: userSession.viewContext)
 
             service.createGroupConversation(
