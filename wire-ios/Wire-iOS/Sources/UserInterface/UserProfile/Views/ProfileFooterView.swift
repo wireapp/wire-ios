@@ -48,7 +48,7 @@ final class ProfileFooterView: ConversationDetailFooterView {
     override func setupButtons() {
         leftButton.accessibilityIdentifier = "left_button"
         rightButton.accessibilityIdentifier = "right_button"
-        rightButton.accessibilityLabel = L10n.Localizable.Meta.Menu.AccessibilityMoreOptionsButton
+        rightButton.accessibilityLabel = L10n.Localizable.Meta.Menu.accessibilityMoreOptionsButton
     }
 
     /**

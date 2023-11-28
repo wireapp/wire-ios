@@ -267,7 +267,7 @@ final class ClientListViewController: UIViewController,
 
         zmLog.error("Clients request failed: \(error.localizedDescription)")
 
-        presentAlertWithOKButton(message: L10n.Localizable.Error.User.UnkownError)
+        presentAlertWithOKButton(message: L10n.Localizable.Error.User.unkownError)
     }
 
     func finishedDeleting(_ remainingClients: [UserClient]) {
