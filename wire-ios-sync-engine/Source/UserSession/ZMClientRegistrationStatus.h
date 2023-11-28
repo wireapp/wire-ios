@@ -61,6 +61,7 @@ extern NSString *const ZMPersistedClientIdKey;
 + (BOOL)needsToRegisterClientInContext:(NSManagedObjectContext *)moc;
 
 - (void)didRegisterClient:(UserClient *)client;
+- (void)didRegisterMLSClient:(UserClient *)client;
 
 - (void)didDetectCurrentClientDeletion;
 - (BOOL)clientIsReadyForRequests;
@@ -75,6 +76,7 @@ extern NSString *const ZMPersistedClientIdKey;
 @property (nonatomic, weak) id <ZMClientRegistrationStatusDelegate> registrationStatusDelegate;
 @property (nonatomic) BOOL needsToCheckCredentials;
 @property (nonatomic) BOOL needsToVerifySelfClient;
+@property (nonatomic) BOOL needsToRegisterMLSCLient;
 @property (nonatomic) BOOL isWaitingForUserClients;
 @property (nonatomic) BOOL isWaitingForClientsToBeDeleted;
 

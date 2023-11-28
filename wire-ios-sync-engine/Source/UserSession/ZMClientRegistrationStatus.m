@@ -182,12 +182,24 @@ static NSString *ZMLogTag ZM_UNUSED = @"Authentication";
     return [[self class] needsToRegisterClientInContext:self.managedObjectContext];
 }
 
+- (BOOL)needsToRegisterMLSClient
+{
+    return [[self class] needsToRegisterMLSClientInContext:self.managedObjectContext];
+}
+
 + (BOOL)needsToRegisterClientInContext:(NSManagedObjectContext *)moc;
 {
     //replace with selfUser.client.remoteIdentifier == nil
     NSString *clientId = [moc persistentStoreMetadataForKey:ZMPersistedClientIdKey];
     return ![clientId isKindOfClass:[NSString class]] || clientId.length == 0;
 }
+
+//+ (BOOL)needsToRegisterMLSClientInContext:(NSManagedObjectContext *)moc;
+//{
+//    ![[ZMUser selfUserInContext:moc] selfClient] hasRegisteredMLSClient] && [Developer];
+//    NSString *clientId = [moc persistentStoreMetadataForKey:ZMPersistedClientIdKey];
+//    return ![clientId isKindOfClass:[NSString class]] || clientId.length == 0;
+//}
 
 - (BOOL)isWaitingForSelfUser
 {
@@ -221,6 +233,11 @@ static NSString *ZMLogTag ZM_UNUSED = @"Authentication";
     self.needsToCheckCredentials = NO;
     
     ZMLogDebug(@"current phase: %lu", (unsigned long)self.currentPhase);
+}
+
+- (void)didRegisterMLSClient:(UserClient *)client
+{
+    [self.registrationStatusDelegate didRegisterMLSClient:client];
 }
 
 - (void)fetchExistingSelfClientsAfterClientRegistered:(UserClient *)currentSelfClient
@@ -288,7 +305,7 @@ static NSString *ZMLogTag ZM_UNUSED = @"Authentication";
 
 - (BOOL)clientIsReadyForRequests
 {
-    return self.currentPhase == ZMClientRegistrationPhaseRegistered;
+    return self.currentPhase == ZMClientRegistrationPhaseRegistered && !self.needsToRegisterMLSCLient;
 }
 
 - (void)invalidateSelfClient

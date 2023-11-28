@@ -150,7 +150,7 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
 
     // MARK: - Properties
 
-    private let coreCrypto: SafeCoreCryptoProtocol
+    private let coreCryptoProvider: CoreCryptoProvider
     private let context: NSManagedObjectContext
     private let actionsProvider: MLSActionsProviderProtocol
     private let onEpochChangedSubject = PassthroughSubject<MLSGroupID, Never>()
@@ -158,11 +158,11 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
     // MARK: - Life cycle
 
     init(
-        coreCrypto: SafeCoreCryptoProtocol,
+        coreCryptoProvider: CoreCryptoProvider,
         context: NSManagedObjectContext,
         actionsProvider: MLSActionsProviderProtocol = MLSActionsProvider()
     ) {
-        self.coreCrypto = coreCrypto
+        self.coreCryptoProvider = coreCryptoProvider
         self.context = context
         self.actionsProvider = actionsProvider
     }
@@ -243,7 +243,7 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
             WireLogger.mls.info("generating commit for action (\(String(describing: action))) for group (\(groupID.safeForLoggingDescription))...")
             switch action {
             case .addMembers(let clients):
-                let memberAddMessages = try coreCrypto.perform { try $0.addClientsToConversation(
+                let memberAddMessages = try coreCryptoProvider.coreCrypto(requireMLS: true).perform { try $0.addClientsToConversation(
                     conversationId: groupID.bytes,
                     clients: clients
                 ) }
@@ -255,7 +255,7 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
                 )
 
             case .removeClients(let clients):
-                return try coreCrypto.perform {
+                return try coreCryptoProvider.coreCrypto(requireMLS: true).perform {
                     try $0.removeClientsFromConversation(
                         conversationId: groupID.bytes,
                         clients: clients
@@ -263,12 +263,12 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
                 }
 
             case .updateKeyMaterial:
-                return try coreCrypto.perform {
+                return try coreCryptoProvider.coreCrypto(requireMLS: true).perform {
                     try $0.updateKeyingMaterial(conversationId: groupID.bytes)
                 }
 
             case .proposal:
-                guard let bundle = try coreCrypto.perform({ try $0.commitPendingProposals(
+                guard let bundle = try coreCryptoProvider.coreCrypto(requireMLS: true).perform({ try $0.commitPendingProposals(
                     conversationId: groupID.bytes
                 ) }) else {
                     throw Error.noPendingProposals
@@ -277,7 +277,7 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
                 return bundle
 
             case .joinGroup(let groupInfo):
-                let conversationInitBundle = try coreCrypto.perform { try $0.joinByExternalCommit(groupInfo: groupInfo.bytes,
+                let conversationInitBundle = try coreCryptoProvider.coreCrypto(requireMLS: true).perform { try $0.joinByExternalCommit(groupInfo: groupInfo.bytes,
                                                                                                   customConfiguration: .init(keyRotationSpan: nil, wirePolicy: nil), credentialType: .basic) }
 
                 return CommitBundle(
@@ -349,7 +349,7 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
     private func mergeCommit(in groupID: MLSGroupID) throws {
         do {
             WireLogger.mls.info("merging commit for group (\(groupID.safeForLoggingDescription))")
-            try coreCrypto.perform { try $0.commitAccepted(conversationId: groupID.bytes) }
+            try coreCryptoProvider.coreCrypto(requireMLS: true).perform { try $0.commitAccepted(conversationId: groupID.bytes) }
             onEpochChangedSubject.send(groupID)
         } catch {
             WireLogger.mls.error("failed to merge commit for group (\(groupID.safeForLoggingDescription))")
@@ -360,7 +360,7 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
     private func discardPendingCommit(in groupID: MLSGroupID) throws {
         do {
             WireLogger.mls.info("discarding pending commit for group (\(groupID.safeForLoggingDescription))")
-            try coreCrypto.perform { try $0.clearPendingCommit(conversationId: groupID.bytes) }
+            try coreCryptoProvider.coreCrypto(requireMLS: true).perform { try $0.clearPendingCommit(conversationId: groupID.bytes) }
         } catch {
             WireLogger.mls.error("failed to discard pending commit for group (\(groupID.safeForLoggingDescription))")
             throw Error.failedToClearCommit
@@ -370,7 +370,7 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
     private func mergePendingGroup(in groupID: MLSGroupID) throws {
         do {
             WireLogger.mls.info("merging pending group (\(groupID.safeForLoggingDescription))")
-            try coreCrypto.perform {
+            try coreCryptoProvider.coreCrypto(requireMLS: true).perform {
                 try $0.mergePendingGroupFromExternalCommit(
                     conversationId: groupID.bytes
                 )
@@ -384,7 +384,7 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
     private func clearPendingGroup(in groupID: MLSGroupID) throws {
         do {
             WireLogger.mls.info("clearing pending group (\(groupID.safeForLoggingDescription))")
-            try coreCrypto.perform {
+            try coreCryptoProvider.coreCrypto(requireMLS: true).perform {
                 try $0.clearPendingGroupFromExternalCommit(conversationId: groupID.bytes)
             }
         } catch {
