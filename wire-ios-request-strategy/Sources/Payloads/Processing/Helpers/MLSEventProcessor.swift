@@ -20,10 +20,10 @@ import WireDataModel
 
 protocol MLSEventProcessing {
 
-    func updateConversationIfNeeded(conversation: ZMConversation, groupID: String?, context: NSManagedObjectContext)
-    func process(welcomeMessage: String, in context: NSManagedObjectContext)
+    func updateConversationIfNeeded(conversation: ZMConversation, groupID: String?, context: NSManagedObjectContext) async throws
+    func process(welcomeMessage: String, in context: NSManagedObjectContext) async
     func joinMLSGroupWhenReady(forConversation conversation: ZMConversation, context: NSManagedObjectContext)
-    func wipeMLSGroup(forConversation conversation: ZMConversation, context: NSManagedObjectContext)
+    func wipeMLSGroup(forConversation conversation: ZMConversation, context: NSManagedObjectContext) async
 
 }
 
@@ -37,35 +37,43 @@ class MLSEventProcessor: MLSEventProcessing {
         conversation: ZMConversation,
         groupID: String?,
         context: NSManagedObjectContext
-    ) {
+    ) async throws {
         Logging.mls.info("MLS event processor updating conversation if needed")
 
-        guard conversation.messageProtocol == .mls else {
+        let messageProtocol = await context.perform { conversation.messageProtocol }
+        let mlsGroupID = await context.perform { conversation.mlsGroupID }
+        let mlsService = await context.perform { context.mlsService }
+        let previousStatus = await context.perform { conversation.mlsStatus }
+
+        guard messageProtocol == .mls else {
             return logWarn(aborting: .conversationUpdate, withReason: .notMLSConversation)
         }
 
-        guard let mlsGroupID = conversation.mlsGroupID ?? MLSGroupID(from: groupID) else {
+        guard let mlsGroupID = mlsGroupID ?? MLSGroupID(from: groupID) else {
             return logWarn(aborting: .conversationUpdate, withReason: .missingGroupID)
         }
 
-        if conversation.mlsGroupID == nil {
-           conversation.mlsGroupID = mlsGroupID
-           Logging.mls.info("MLS event processor set the group ID to value: (\(mlsGroupID)) for conversation: (\(String(describing: conversation.qualifiedID))")
+        await context.perform {
+            if conversation.mlsGroupID == nil {
+               conversation.mlsGroupID = mlsGroupID
+               Logging.mls.info("MLS event processor set the group ID to value: (\(mlsGroupID)) for conversation: (\(String(describing: conversation.qualifiedID))")
+            }
         }
 
-        guard let mlsService = context.mlsService else {
+        guard let mlsService = mlsService else {
             return logWarn(aborting: .conversationUpdate, withReason: .missingMLSService)
         }
 
-        let previousStatus = conversation.mlsStatus
-        let conversationExists = mlsService.conversationExists(groupID: mlsGroupID)
-        conversation.mlsStatus = conversationExists ? .ready : .pendingJoin
+        let conversationExists = try await mlsService.conversationExists(groupID: mlsGroupID)
 
-        context.saveOrRollback()
+        await context.perform {
+            conversation.mlsStatus = conversationExists ? .ready : .pendingJoin
+            context.saveOrRollback()
 
-        Logging.mls.info(
-            "MLS event processor updated previous mlsStatus (\(String(describing: previousStatus))) with new value (\(String(describing: conversation.mlsStatus))) for conversation (\(String(describing: conversation.qualifiedID)))"
-        )
+            Logging.mls.info(
+                "MLS event processor updated previous mlsStatus (\(String(describing: previousStatus))) with new value (\(String(describing: conversation.mlsStatus))) for conversation (\(String(describing: conversation.qualifiedID)))"
+            )
+        }
     }
 
     // MARK: - Joining new conversations
@@ -95,26 +103,30 @@ class MLSEventProcessor: MLSEventProcessing {
 
     // MARK: - Process welcome message
 
-    func process(welcomeMessage: String, in context: NSManagedObjectContext) {
+    func process(welcomeMessage: String, in context: NSManagedObjectContext) async {
         Logging.mls.info("MLS event processor is processing welcome message")
 
-        guard let mlsService = context.mlsService else {
+        let mlsService = await context.perform { context.mlsService }
+
+        guard let mlsService = mlsService else {
             return logWarn(aborting: .processingWelcome, withReason: .missingMLSService)
         }
 
         do {
-            let groupID = try mlsService.processWelcomeMessage(welcomeMessage: welcomeMessage)
+            let groupID = try await mlsService.processWelcomeMessage(welcomeMessage: welcomeMessage)
 
-            guard let conversation = ZMConversation.fetch(with: groupID, in: context) else {
-                return logWarn(aborting: .processingWelcome, withReason: .other(reason: "conversation does not exist in db"))
+            await context.perform {
+                guard let conversation = ZMConversation.fetch(with: groupID, in: context) else {
+                    return self.logWarn(aborting: .processingWelcome, withReason: .other(reason: "conversation does not exist in db"))
+                }
+
+                conversation.mlsStatus = .ready
+                context.saveOrRollback()
+
+                Logging.mls.info(
+                    "MLS event processor set mlsStatus to (\(String(describing: conversation.mlsStatus)) for group (\(groupID.safeForLoggingDescription))"
+                )
             }
-
-            conversation.mlsStatus = .ready
-            context.saveOrRollback()
-
-            Logging.mls.info(
-                "MLS event processor set mlsStatus to (\(String(describing: conversation.mlsStatus)) for group (\(groupID.safeForLoggingDescription))"
-            )
         } catch {
             return Logging.mls.warn("MLS event processor aborting processing welcome message: \(String(describing: error))")
         }
@@ -122,22 +134,26 @@ class MLSEventProcessor: MLSEventProcessing {
 
     // MARK: - Wipe conversation
 
-    func wipeMLSGroup(forConversation conversation: ZMConversation, context: NSManagedObjectContext) {
+    func wipeMLSGroup(forConversation conversation: ZMConversation, context: NSManagedObjectContext) async {
         Logging.mls.info("MLS event processor is wiping conversation")
 
-        guard conversation.messageProtocol == .mls else {
+        let messageProtocol = await context.perform { conversation.messageProtocol }
+        let mlsGroupID = await context.perform { conversation.mlsGroupID }
+        let mlsService = await context.perform { context.mlsService }
+
+        guard messageProtocol == .mls else {
             return logWarn(aborting: .conversationWipe, withReason: .notMLSConversation)
         }
 
-        guard let mlsGroupID = conversation.mlsGroupID else {
+        guard let mlsGroupID = mlsGroupID else {
             return logWarn(aborting: .conversationWipe, withReason: .missingGroupID)
         }
 
-        guard let mlsService = context.mlsService else {
+        guard let mlsService = mlsService else {
             return logWarn(aborting: .conversationWipe, withReason: .missingMLSService)
         }
 
-        mlsService.wipeGroup(mlsGroupID)
+        await mlsService.wipeGroup(mlsGroupID)
     }
 
     // MARK: Log Helpers

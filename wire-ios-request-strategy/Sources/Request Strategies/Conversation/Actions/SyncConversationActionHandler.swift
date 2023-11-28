@@ -74,36 +74,38 @@ final class SyncConversationActionHandler: ActionHandler<SyncConversationAction>
         _ response: ZMTransportResponse,
         action: SyncConversationAction
     ) {
-        var action = action
+        Task {
+            var action = action
 
-        switch response.httpStatus {
-        case 200:
-            guard
-                let data = response.rawData,
-                let payload = ResponsePayload(data)
-            else {
-                action.fail(with: .invalidResponsePayload)
-                return
+            switch response.httpStatus {
+            case 200:
+                guard
+                    let data = response.rawData,
+                    let payload = ResponsePayload(data)
+                else {
+                    action.fail(with: .invalidResponsePayload)
+                    return
+                }
+
+                guard let conversationData = payload.found.first else {
+                    action.fail(with: .conversationNotFound)
+                    return
+                }
+
+                await processor.updateOrCreateConversation(
+                    from: conversationData,
+                    in: context
+                )
+
+                action.succeed()
+
+            case 400:
+                action.fail(with: .invalidBody)
+
+            default:
+                let error = response.errorInfo
+                action.fail(with: .unknownError(code: error.status, label: error.label, message: error.message))
             }
-
-            guard let conversationData = payload.found.first else {
-                action.fail(with: .conversationNotFound)
-                return
-            }
-
-            processor.updateOrCreateConversation(
-                from: conversationData,
-                in: context
-            )
-
-            action.succeed()
-
-        case 400:
-            action.fail(with: .invalidBody)
-
-        default:
-            let error = response.errorInfo
-            action.fail(with: .unknownError(code: error.status, label: error.label, message: error.message))
         }
     }
 

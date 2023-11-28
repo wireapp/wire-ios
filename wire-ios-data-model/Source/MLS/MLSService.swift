@@ -24,18 +24,20 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
 
     func uploadKeyPackagesIfNeeded()
 
-    func createSelfGroup(for groupID: MLSGroupID)
+    func updateKeyMaterialForAllStaleGroupsIfNeeded()
+
+    func createSelfGroup(for groupID: MLSGroupID) async
 
     func joinGroup(with groupID: MLSGroupID) async throws
 
     /// Join group after creating it if needed
     func joinNewGroup(with groupID: MLSGroupID) async throws
 
-    func createGroup(for groupID: MLSGroupID) throws
+    func createGroup(for groupID: MLSGroupID) async throws
 
-    func conversationExists(groupID: MLSGroupID) -> Bool
+    func conversationExists(groupID: MLSGroupID) async throws -> Bool
 
-    func processWelcomeMessage(welcomeMessage: String) throws -> MLSGroupID
+    func processWelcomeMessage(welcomeMessage: String) async throws -> MLSGroupID
 
     func addMembersToConversation(with users: [MLSUser], for groupID: MLSGroupID) async throws
 
@@ -45,7 +47,7 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
 
     func performPendingJoins()
 
-    func wipeGroup(_ groupID: MLSGroupID)
+    func wipeGroup(_ groupID: MLSGroupID) async
 
     func commitPendingProposals() async throws
 
@@ -59,12 +61,17 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
     func generateConferenceInfo(
         parentGroupID: MLSGroupID,
         subconversationGroupID: MLSGroupID
-    ) throws -> MLSConferenceInfo
+    ) async throws -> MLSConferenceInfo
+
+//    func onConferenceInfoChange(
+//        parentGroupID: MLSGroupID,
+//        subConversationGroupID: MLSGroupID
+//    ) -> AsyncPublisher<MLSConferenceInfo>
 
     func onConferenceInfoChange(
         parentGroupID: MLSGroupID,
         subConversationGroupID: MLSGroupID
-    ) -> AnyPublisher<MLSConferenceInfo, Never>
+    ) -> AsyncStream<MLSConferenceInfo>
 
     func leaveSubconversationIfNeeded(
         parentQualifiedID: QualifiedID,
@@ -81,9 +88,9 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
 
     func generateNewEpoch(groupID: MLSGroupID) async throws
 
-    func subconversationMembers(for subconversationGroupID: MLSGroupID) throws -> [MLSClientID]
+    func subconversationMembers(for subconversationGroupID: MLSGroupID) async throws -> [MLSClientID]
 
-    func repairOutOfSyncConversations()
+    func repairOutOfSyncConversations() async throws
 
     func fetchAndRepairGroup(with groupID: MLSGroupID) async
 
@@ -101,7 +108,7 @@ public final class MLSService: MLSServiceInterface {
     // MARK: - Properties
 
     private weak var context: NSManagedObjectContext?
-    private let coreCrypto: SafeCoreCryptoProtocol
+    private let coreCryptoProvider: CoreCryptoProvider
 
     private let encryptionService: MLSEncryptionServiceInterface
     private let decryptionService: MLSDecryptionServiceInterface
@@ -149,14 +156,14 @@ public final class MLSService: MLSServiceInterface {
 
     public convenience init(
         context: NSManagedObjectContext,
-        coreCrypto: SafeCoreCryptoProtocol,
+        coreCryptoProvider: CoreCryptoProvider,
         conversationEventProcessor: ConversationEventProcessorProtocol,
         userDefaults: UserDefaults,
         syncStatus: SyncStatusProtocol
     ) {
         self.init(
             context: context,
-            coreCrypto: coreCrypto,
+            coreCryptoProvider: coreCryptoProvider,
             conversationEventProcessor: conversationEventProcessor,
             staleKeyMaterialDetector: StaleMLSKeyDetector(
                 refreshIntervalInDays: Self.keyMaterialRefreshIntervalInDays,
@@ -170,7 +177,7 @@ public final class MLSService: MLSServiceInterface {
 
     init(
         context: NSManagedObjectContext,
-        coreCrypto: SafeCoreCryptoProtocol,
+        coreCryptoProvider: CoreCryptoProvider,
         encryptionService: MLSEncryptionServiceInterface? = nil,
         decryptionService: MLSDecryptionServiceInterface? = nil,
         mlsActionExecutor: MLSActionExecutorProtocol? = nil,
@@ -183,9 +190,9 @@ public final class MLSService: MLSServiceInterface {
         subconversationGroupIDRepository: SubconversationGroupIDRepositoryInterface = SubconversationGroupIDRepository()
     ) {
         self.context = context
-        self.coreCrypto = coreCrypto
+        self.coreCryptoProvider = coreCryptoProvider
         self.mlsActionExecutor = mlsActionExecutor ?? MLSActionExecutor(
-            coreCrypto: coreCrypto,
+            coreCryptoProvider: coreCryptoProvider,
             context: context,
             actionsProvider: actionsProvider
         )
@@ -197,23 +204,13 @@ public final class MLSService: MLSServiceInterface {
         self.syncStatus = syncStatus
         self.subconversationGroupIDRepository = subconversationGroupIDRepository
 
-        self.encryptionService = encryptionService ?? MLSEncryptionService(coreCrypto: coreCrypto)
+        self.encryptionService = encryptionService ?? MLSEncryptionService(coreCryptoProvider: coreCryptoProvider)
         self.decryptionService = decryptionService ?? MLSDecryptionService(
             context: context,
-            coreCrypto: coreCrypto,
+            coreCryptoProvider: coreCryptoProvider,
             subconversationGroupIDRepository: subconversationGroupIDRepository
         )
 
-        do {
-            try coreCrypto.perform { try $0.setCallbacks(callbacks: CoreCryptoCallbacksImpl()) }
-        } catch {
-            logger.error("failed to set callbacks: \(String(describing: error))")
-        }
-
-        generateClientPublicKeysIfNeeded()
-        uploadKeyPackagesIfNeeded()
-        fetchBackendPublicKeys()
-        updateKeyMaterialForAllStaleGroupsIfNeeded()
         schedulePeriodicKeyMaterialUpdateCheck()
     }
 
@@ -223,7 +220,7 @@ public final class MLSService: MLSServiceInterface {
 
     // MARK: - Public keys
 
-    private func generateClientPublicKeysIfNeeded() {
+    private func generateClientPublicKeysIfNeeded() async {
         guard
             let context = context,
             let selfClient = ZMUser.selfUser(in: context).selfClient()
@@ -236,6 +233,7 @@ public final class MLSService: MLSServiceInterface {
         do {
             if keys.ed25519 == nil {
                 logger.info("generating ed25519 public key")
+                let coreCrypto = try await coreCryptoProvider.coreCrypto()
                 let keyBytes = try coreCrypto.perform { try $0.clientPublicKey(ciphersuite: defaultCipherSuite.rawValue) }
                 let keyData = Data(keyBytes)
                 keys.ed25519 = keyData.base64EncodedString()
@@ -248,7 +246,15 @@ public final class MLSService: MLSServiceInterface {
         context.saveOrRollback()
     }
 
-    private func fetchBackendPublicKeys() {
+    private func fetchBackendPublicKeysIfNeeded() async throws {
+        guard backendPublicKeys.ed25519Keys.isEmpty else {
+            return
+        }
+
+        try await fetchBackendPublicKeys()
+    }
+
+    private func fetchBackendPublicKeys() async throws {
         logger.info("fetching backend public keys")
 
         guard let notificationContext = context?.notificationContext else {
@@ -256,13 +262,7 @@ public final class MLSService: MLSServiceInterface {
             return
         }
 
-        Task {
-            do {
-                backendPublicKeys = try await actionsProvider.fetchBackendPublicKeys(in: notificationContext)
-            } catch {
-                logger.warn("failed to fetch backend public keys: \(String(describing: error))")
-            }
-        }
+        backendPublicKeys = try await actionsProvider.fetchBackendPublicKeys(in: notificationContext)
     }
 
     // MARK: - Conference info for subconversations
@@ -279,12 +279,13 @@ public final class MLSService: MLSServiceInterface {
     public func generateConferenceInfo(
         parentGroupID: MLSGroupID,
         subconversationGroupID: MLSGroupID
-    ) throws -> MLSConferenceInfo {
+    ) async throws -> MLSConferenceInfo {
         do {
             logger.info("generating conference info")
 
             let keyLength: UInt32 = 32
 
+            let coreCrypto = try await coreCryptoProvider.coreCrypto()
             return try coreCrypto.perform {
                 let epoch = try $0.conversationEpoch(conversationId: subconversationGroupID.bytes)
 
@@ -318,8 +319,9 @@ public final class MLSService: MLSServiceInterface {
         }
     }
 
-    public func subconversationMembers(for subconversationGroupID: MLSGroupID) throws -> [MLSClientID] {
+    public func subconversationMembers(for subconversationGroupID: MLSGroupID) async throws -> [MLSClientID] {
         do {
+            let coreCrypto = try await coreCryptoProvider.coreCrypto()
             return try coreCrypto.perform {
                 return try $0.getClientIds(conversationId: subconversationGroupID.bytes).compactMap {
                     MLSClientID(data: $0.data)
@@ -339,18 +341,44 @@ public final class MLSService: MLSServiceInterface {
         case failedToGenerateConferenceInfo
     }
 
+//    // FIXME: [jacob] replace with AsyncSequence?
+//    public func onConferenceInfoChange(
+//        parentGroupID: MLSGroupID,
+//        subConversationGroupID: MLSGroupID
+//    ) -> AnyPublisher<MLSConferenceInfo, Never> {
+//        return onEpochChanged().filter {
+//            $0.isOne(of: parentGroupID, subConversationGroupID)
+//        }.compactMap { [weak self] _ in
+//            try? self?.generateConferenceInfo(
+//                parentGroupID: parentGroupID,
+//                subconversationGroupID: subConversationGroupID
+//            )
+//        }.eraseToAnyPublisher()
+//    }
+
     public func onConferenceInfoChange(
         parentGroupID: MLSGroupID,
         subConversationGroupID: MLSGroupID
-    ) -> AnyPublisher<MLSConferenceInfo, Never> {
-        return onEpochChanged().filter {
-            $0.isOne(of: parentGroupID, subConversationGroupID)
-        }.compactMap { [weak self] _ in
-            try? self?.generateConferenceInfo(
-                parentGroupID: parentGroupID,
-                subconversationGroupID: subConversationGroupID
-            )
-        }.eraseToAnyPublisher()
+    ) -> AsyncStream<MLSConferenceInfo> {
+        let sequence = onEpochChanged()
+            .filter {
+                $0.isOne(of: parentGroupID, subConversationGroupID)
+            }
+            .values.compactMap({ [weak self] _ in
+                try? await self?.generateConferenceInfo(
+                    parentGroupID: parentGroupID,
+                    subconversationGroupID: subConversationGroupID
+                )
+            })
+
+        return AsyncStream { continuation in
+            Task {
+                for await element in sequence {
+                    continuation.yield(element)
+                }
+                continuation.finish()
+            }
+        }
     }
 
     // MARK: - Update key material
@@ -365,7 +393,7 @@ public final class MLSService: MLSServiceInterface {
         }
     }
 
-    private func updateKeyMaterialForAllStaleGroupsIfNeeded() {
+    public func updateKeyMaterialForAllStaleGroupsIfNeeded() {
         guard lastKeyMaterialUpdateCheck.ageInDays >= 1 else { return }
 
         Task {
@@ -420,16 +448,18 @@ public final class MLSService: MLSServiceInterface {
     /// - Throws:
     ///   - MLSGroupCreationError if the group could not be created.
 
-    public func createGroup(for groupID: MLSGroupID) throws {
+    public func createGroup(for groupID: MLSGroupID) async throws {
         logger.info("creating group for id: \(groupID.safeForLoggingDescription)")
 
         do {
+            try await fetchBackendPublicKeysIfNeeded()
             let config = ConversationConfiguration(
                 ciphersuite: CiphersuiteName.mls128Dhkemx25519Aes128gcmSha256Ed25519.rawValue,
                 externalSenders: backendPublicKeys.ed25519Keys,
                 custom: .init(keyRotationSpan: nil, wirePolicy: nil)
             )
 
+            let coreCrypto = try await coreCryptoProvider.coreCrypto()
             try coreCrypto.perform {
                 try $0.createConversation(
                     conversationId: groupID.bytes,
@@ -445,23 +475,21 @@ public final class MLSService: MLSServiceInterface {
         staleKeyMaterialDetector.keyingMaterialUpdated(for: groupID)
     }
 
-    public func createSelfGroup(for groupID: MLSGroupID) {
+    public func createSelfGroup(for groupID: MLSGroupID) async {
         guard let context = context else {
             return
         }
 
         do {
-            try createGroup(for: groupID)
+            try await createGroup(for: groupID)
             let selfUser = ZMUser.selfUser(in: context)
             let mlsSelfUser = MLSUser(from: selfUser)
 
-            Task {
-                do {
-                    try await addMembersToConversation(with: [mlsSelfUser], for: groupID)
-                } catch MLSAddMembersError.noInviteesToAdd {
-                    logger.debug("createConversation noInviteesToAdd, updateKeyMaterial")
-                    try await updateKeyMaterial(for: groupID)
-                }
+            do {
+                try await addMembersToConversation(with: [mlsSelfUser], for: groupID)
+            } catch MLSAddMembersError.noInviteesToAdd {
+                logger.debug("createConversation noInviteesToAdd, updateKeyMaterial")
+                try await updateKeyMaterial(for: groupID)
             }
         } catch {
             logger.error("create group for self conversation failed: \(error.localizedDescription)")
@@ -585,9 +613,10 @@ public final class MLSService: MLSServiceInterface {
 
     // MARK: - Remove group
 
-    public func wipeGroup(_ groupID: MLSGroupID) {
+    public func wipeGroup(_ groupID: MLSGroupID) async {
         logger.info("wiping group (\(groupID.safeForLoggingDescription))")
         do {
+            let coreCrypto = try await coreCryptoProvider.coreCrypto()
             try coreCrypto.perform { try $0.wipeConversation(conversationId: groupID.bytes) }
         } catch {
             logger.warn("failed to wipe group (\(groupID.safeForLoggingDescription)): \(String(describing: error))")
@@ -616,8 +645,6 @@ public final class MLSService: MLSServiceInterface {
             logger.warn("aborting key packages upload: \(reason)")
         }
 
-        guard shouldQueryUnclaimedKeyPackagesCount() else { return }
-
         guard let context = context else {
             return logWarn(abortedWithReason: "missing context")
         }
@@ -628,6 +655,8 @@ public final class MLSService: MLSServiceInterface {
 
         Task {
             do {
+                guard await shouldQueryUnclaimedKeyPackagesCount() else { return }
+
                 let unclaimedKeyPackageCount = try await countUnclaimedKeyPackages(clientID: clientID, context: context.notificationContext)
                 logger.info("there are \(unclaimedKeyPackageCount) unclaimed key packages")
 
@@ -639,7 +668,7 @@ public final class MLSService: MLSServiceInterface {
                 }
 
                 let amount = UInt32(targetUnclaimedKeyPackageCount)
-                let keyPackages = try generateKeyPackages(amountRequested: amount)
+                let keyPackages = try await generateKeyPackages(amountRequested: amount)
                 try await uploadKeyPackages(clientID: clientID, keyPackages: keyPackages, context: context.notificationContext)
                 logger.info("success: uploaded key packages for client \(clientID)")
             } catch let error {
@@ -648,8 +677,9 @@ public final class MLSService: MLSServiceInterface {
         }
     }
 
-    private func shouldQueryUnclaimedKeyPackagesCount() -> Bool {
+    private func shouldQueryUnclaimedKeyPackagesCount() async -> Bool {
         do {
+            let coreCrypto = try await coreCryptoProvider.coreCrypto()
             let estimatedLocalKeyPackageCount = try coreCrypto.perform {
                 try $0.clientValidKeypackagesCount(ciphersuite: defaultCipherSuite.rawValue)
             }
@@ -689,12 +719,13 @@ public final class MLSService: MLSServiceInterface {
         }
     }
 
-    private func generateKeyPackages(amountRequested: UInt32) throws -> [String] {
+    private func generateKeyPackages(amountRequested: UInt32) async throws -> [String] {
         logger.info("generating \(amountRequested) key packages")
 
         var keyPackages = [[Byte]]()
 
         do {
+            let coreCrypto = try await coreCryptoProvider.coreCrypto()
             keyPackages = try coreCrypto.perform { try $0.clientKeypackages(ciphersuite: defaultCipherSuite.rawValue, amountRequested: amountRequested) }
 
         } catch let error {
@@ -732,19 +763,18 @@ public final class MLSService: MLSServiceInterface {
     // MARK: - Process welcome message
 
     public enum MLSWelcomeMessageProcessingError: Error {
-
         case failedToConvertMessageToBytes
         case failedToProcessMessage
-
     }
 
-    public func conversationExists(groupID: MLSGroupID) -> Bool {
+    public func conversationExists(groupID: MLSGroupID) async throws -> Bool {
+        let coreCrypto = try await coreCryptoProvider.coreCrypto()
         let result = coreCrypto.perform { $0.conversationExists(conversationId: groupID.bytes) }
         logger.info("checking if group (\(groupID)) exists... it does\(result ? "!" : " not!")")
         return result
     }
 
-    public func processWelcomeMessage(welcomeMessage: String) throws -> MLSGroupID {
+    public func processWelcomeMessage(welcomeMessage: String) async throws -> MLSGroupID {
         logger.info("processing welcome message")
 
         guard let messageBytes = welcomeMessage.base64DecodedBytes else {
@@ -753,6 +783,7 @@ public final class MLSService: MLSServiceInterface {
         }
 
         do {
+            let coreCrypto = try await coreCryptoProvider.coreCrypto()
             let groupIDBytes = try coreCrypto.perform {
                 try $0.processWelcomeMessage(
                     welcomeMessage: messageBytes,
@@ -778,8 +809,8 @@ public final class MLSService: MLSServiceInterface {
             return
         }
 
-        if !conversationExists(groupID: groupID) {
-            try createGroup(for: groupID)
+        if try await !conversationExists(groupID: groupID) {
+            try await createGroup(for: groupID)
         }
 
         let selfUser = ZMUser.selfUser(in: context)
@@ -843,10 +874,11 @@ public final class MLSService: MLSServiceInterface {
 
     /// Fetches and re-joins MLS conversations that are out of sync
     /// (where the conversation object's epoch differs from the corresponding MLS group epoch)
-    public func repairOutOfSyncConversations() {
+    public func repairOutOfSyncConversations() async throws {
         guard let context = self.context else { return }
 
-        let outOfSync = outOfSyncConversations(in: context)
+        // FIXME: [jacob] accessing entities on the wrong context
+        let outOfSync = try await outOfSyncConversations(in: context)
 
         logger.info("found \(outOfSync.count) conversations out of sync")
 
@@ -904,7 +936,7 @@ public final class MLSService: MLSServiceInterface {
                 context: context.notificationContext
             )
 
-            guard isConversationOutOfSync(
+            guard try await isConversationOutOfSync(
                 conversationInfo.conversation,
                 context: context
             ) else {
@@ -971,7 +1003,7 @@ public final class MLSService: MLSServiceInterface {
                 context: context.notificationContext
             )
 
-            guard isConversationOutOfSync(
+            guard try await isConversationOutOfSync(
                 conversationInfo.conversation,
                 subgroup: subgroup,
                 context: context
@@ -1006,7 +1038,8 @@ public final class MLSService: MLSServiceInterface {
         }
     }
 
-    private func outOfSyncConversations(in context: NSManagedObjectContext) -> [ZMConversation] {
+    private func outOfSyncConversations(in context: NSManagedObjectContext) async throws -> [ZMConversation] {
+        let coreCrypto = try await coreCryptoProvider.coreCrypto()
         return coreCrypto.perform { coreCrypto in
             return ZMConversation.fetchMLSConversations(in: context).filter {
                 isConversationOutOfSync(
@@ -1026,6 +1059,7 @@ public final class MLSService: MLSServiceInterface {
     ) -> Bool {
         var isOutOfSync: Bool = false
 
+        // FIXME: [jacob] replace with async perform
         context.performAndWait {
             var groupID: MLSGroupID?
             var epoch: UInt64
@@ -1057,7 +1091,8 @@ public final class MLSService: MLSServiceInterface {
         _ conversation: ZMConversation,
         subgroup: MLSSubgroup? = nil,
         context: NSManagedObjectContext
-    ) -> Bool {
+    ) async throws -> Bool {
+        let coreCrypto = try await coreCryptoProvider.coreCrypto()
         return coreCrypto.perform {
             return isConversationOutOfSync(
                 conversation,
@@ -1074,6 +1109,7 @@ public final class MLSService: MLSServiceInterface {
         logger.info("requesting to join group (\(groupID.safeForLoggingDescription)")
 
         do {
+            let coreCrypto = try await coreCryptoProvider.coreCrypto()
             let proposal = try coreCrypto.perform {
                 try $0.newExternalAddProposal(conversationId: groupID.bytes,
                                               epoch: epoch,
@@ -1229,8 +1265,8 @@ public final class MLSService: MLSServiceInterface {
     public func encrypt(
         message: [Byte],
         for groupID: MLSGroupID
-    ) throws -> [Byte] {
-        return try encryptionService.encrypt(
+    ) async throws -> [Byte] {
+        return try await encryptionService.encrypt(
             message: message,
             for: groupID
         )
@@ -1242,11 +1278,11 @@ public final class MLSService: MLSServiceInterface {
         message: String,
         for groupID: MLSGroupID,
         subconversationType: SubgroupType?
-    ) throws -> MLSDecryptResult? {
+    ) async throws -> MLSDecryptResult? {
         typealias DecryptionError = MLSDecryptionService.MLSMessageDecryptionError
 
         do {
-            return try decryptionService.decrypt(
+            return try await decryptionService.decrypt(
                 message: message,
                 for: groupID,
                 subconversationType: subconversationType
@@ -1512,7 +1548,7 @@ public final class MLSService: MLSServiceInterface {
     private func createSubgroup(with id: MLSGroupID) async throws {
         do {
             logger.info("creating subgroup with id (\(id.safeForLoggingDescription))")
-            try createGroup(for: id)
+            try await createGroup(for: id)
             try await updateKeyMaterial(for: id)
         } catch {
             logger.error("failed to create subgroup with id (\(id.safeForLoggingDescription)): \(String(describing: error))")
@@ -1555,9 +1591,10 @@ public final class MLSService: MLSServiceInterface {
         }
     }
 
-    private func getMembers(for groupID: MLSGroupID) throws -> [MLSClientID] {
+    private func getMembers(for groupID: MLSGroupID) async throws -> [MLSClientID] {
         do {
             logger.info("getting members for group (\(groupID.safeForLoggingDescription))")
+            let coreCrypto = try await coreCryptoProvider.coreCrypto()
             return try coreCrypto
                 .perform { try $0.getClientIds(conversationId: groupID.bytes) }
                 .compactMap { MLSClientID(data: Data($0)) }
@@ -1587,7 +1624,7 @@ public final class MLSService: MLSServiceInterface {
                 forType: subconversationType,
                 parentGroupID: parentGroupID
             ),
-            conversationExists(groupID: subConversationGroupID)
+            try await conversationExists(groupID: subConversationGroupID)
         {
             try await leaveSubconversation(id: subConversationGroupID)
         } else if let context = context?.notificationContext {
@@ -1635,6 +1672,8 @@ public final class MLSService: MLSServiceInterface {
             guard let context = context?.notificationContext else {
                 throw SubgroupFailure.missingNotificationContext
             }
+
+            let coreCrypto = try await coreCryptoProvider.coreCrypto()
 
             try await actionsProvider.leaveSubconversation(
                 conversationID: parentQualifiedID.uuid,

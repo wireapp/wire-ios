@@ -26,24 +26,13 @@ public final class ProteusService: ProteusServiceInterface {
 
     // MARK: - Properties
 
-    private let coreCrypto: SafeCoreCryptoProtocol
+    private let coreCryptoProvider: CoreCryptoProvider
     private let logger = WireLogger.proteus
 
     // MARK: - Life cycle
 
-    public init(coreCrypto: SafeCoreCryptoProtocol) {
-        self.coreCrypto = coreCrypto
-    }
-
-    public func completeInitialization() throws {
-        do {
-            logger.info("completing intialization of ProteusService...")
-            try coreCrypto.perform { try $0.proteusInit() }
-            logger.info("completing intialization of ProteusService... success")
-        } catch {
-            logger.error("completing intialization of ProteusService... failed: \(error.localizedDescription)")
-            throw error
-        }
+    public init(coreCryptoProvider: CoreCryptoProvider) {
+        self.coreCryptoProvider = coreCryptoProvider
     }
 
     // MARK: - proteusSessionFromPrekey
@@ -56,7 +45,7 @@ public final class ProteusService: ProteusServiceInterface {
     public func establishSession(
         id: ProteusSessionID,
         fromPrekey prekey: String
-    ) throws {
+    ) async throws {
         logger.info("establishing session from prekey")
 
         guard let prekeyBytes = prekey.base64DecodedBytes else {
@@ -64,7 +53,7 @@ public final class ProteusService: ProteusServiceInterface {
         }
 
         do {
-            try coreCrypto.perform { try $0.proteusSessionFromPrekey(
+            try await coreCryptoProvider.coreCrypto().perform { try $0.proteusSessionFromPrekey(
                 sessionId: id.rawValue,
                 prekey: prekeyBytes
             )}
@@ -80,11 +69,11 @@ public final class ProteusService: ProteusServiceInterface {
         case failedToDeleteSession
     }
 
-    public func deleteSession(id: ProteusSessionID) throws {
+    public func deleteSession(id: ProteusSessionID) async throws {
         logger.info("deleting session")
 
         do {
-            try coreCrypto.perform { try $0.proteusSessionDelete(sessionId: id.rawValue) }
+            try await coreCryptoProvider.coreCrypto().perform { try $0.proteusSessionDelete(sessionId: id.rawValue) }
         } catch {
             logger.error("failed to delete session: \(String(describing: error))")
             throw DeleteSessionError.failedToDeleteSession
@@ -100,9 +89,9 @@ public final class ProteusService: ProteusServiceInterface {
     // saving the session is managed internally by CC.
     // so there wouldn't be a need for this to be called.
 
-    func saveSession(id: ProteusSessionID) throws {
+    func saveSession(id: ProteusSessionID) async throws {
         do {
-            try coreCrypto.perform { try $0.proteusSessionSave(sessionId: id.rawValue) }
+            try await coreCryptoProvider.coreCrypto().perform { try $0.proteusSessionSave(sessionId: id.rawValue) }
         } catch {
             // TODO: Log error
             throw SaveSessionError.failedToSaveSession
@@ -111,11 +100,11 @@ public final class ProteusService: ProteusServiceInterface {
 
     // MARK: - proteusSessionExists
 
-    public func sessionExists(id: ProteusSessionID) -> Bool {
+    public func sessionExists(id: ProteusSessionID) async throws -> Bool {
         logger.info("checking if session exists")
 
         do {
-            return try coreCrypto.perform { try $0.proteusSessionExists(sessionId: id.rawValue) }
+            return try await coreCryptoProvider.coreCrypto().perform { try $0.proteusSessionExists(sessionId: id.rawValue) }
         } catch {
             logger.error("failed to check if session exists \(String(describing: error))")
             return false
@@ -132,11 +121,11 @@ public final class ProteusService: ProteusServiceInterface {
     public func encrypt(
         data: Data,
         forSession id: ProteusSessionID
-    ) throws -> Data {
+    ) async throws -> Data {
         logger.info("encrypting data")
 
         do {
-            let encryptedBytes = try coreCrypto.perform { try $0.proteusEncrypt(
+            let encryptedBytes = try await coreCryptoProvider.coreCrypto().perform { try $0.proteusEncrypt(
                 sessionId: id.rawValue,
                 plaintext: data.bytes
             )}
@@ -152,11 +141,11 @@ public final class ProteusService: ProteusServiceInterface {
     public func encryptBatched(
         data: Data,
         forSessions sessions: [ProteusSessionID]
-    ) throws -> [String: Data] {
+    ) async throws -> [String: Data] {
         logger.info("encrypting data batch")
 
         do {
-            let encryptedBatch = try coreCrypto.perform { try $0.proteusEncryptBatched(
+            let encryptedBatch = try await coreCryptoProvider.coreCrypto().perform { try $0.proteusEncryptBatched(
                 sessionId: sessions.map(\.rawValue),
                 plaintext: data.bytes
             )}
@@ -189,13 +178,13 @@ public final class ProteusService: ProteusServiceInterface {
     public func decrypt(
         data: Data,
         forSession id: ProteusSessionID
-    ) throws -> (didCreateNewSession: Bool, decryptedData: Data) {
+    ) async throws -> (didCreateNewSession: Bool, decryptedData: Data) {
         logger.info("decrypting data")
 
-        if sessionExists(id: id) {
+        if try await sessionExists(id: id) {
             logger.info("session exists, decrypting...")
 
-            let decryptedBytes: [Byte] = try coreCrypto.perform {
+            let decryptedBytes: [Byte] = try await coreCryptoProvider.coreCrypto().perform {
                 do {
                     return try $0.proteusDecrypt(
                         sessionId: id.rawValue,
@@ -212,7 +201,7 @@ public final class ProteusService: ProteusServiceInterface {
         } else {
             logger.info("session doesn't exist, creating one then decrypting message...")
 
-            let decryptedBytes: [Byte] = try coreCrypto.perform {
+            let decryptedBytes: [Byte] = try await coreCryptoProvider.coreCrypto().perform {
                 do {
                     return try $0.proteusSessionFromMessage(
                         sessionId: id.rawValue,
@@ -236,21 +225,21 @@ public final class ProteusService: ProteusServiceInterface {
         case failedToGetLastPrekey
     }
 
-    public func generatePrekey(id: UInt16) throws -> String {
+    public func generatePrekey(id: UInt16) async throws -> String {
         logger.info("generating prekey")
 
         do {
-            return try coreCrypto.perform { try $0.proteusNewPrekey(prekeyId: id).data.base64EncodedString() }
+            return try await coreCryptoProvider.coreCrypto().perform { try $0.proteusNewPrekey(prekeyId: id).data.base64EncodedString() }
         } catch {
             logger.error("failed to generate prekey: \(String(describing: error))")
             throw PrekeyError.failedToGeneratePrekey
         }
     }
 
-    public func lastPrekey() throws -> String {
+    public func lastPrekey() async throws -> String {
         logger.info("getting last resort prekey")
         do {
-            return try coreCrypto.perform { try $0.proteusLastResortPrekey().data.base64EncodedString() }
+            return try await coreCryptoProvider.coreCrypto().perform { try $0.proteusLastResortPrekey().data.base64EncodedString() }
         } catch {
             logger.error("failed to get last resort prekey: \(String(describing: error))")
             throw PrekeyError.failedToGetLastPrekey
@@ -258,17 +247,16 @@ public final class ProteusService: ProteusServiceInterface {
     }
 
     public var lastPrekeyID: UInt16 {
-        let lastPrekeyID = try? coreCrypto.perform { try $0.proteusLastResortPrekeyId() }
-        return lastPrekeyID ?? UInt16.max
+        return UInt16.max
     }
 
-    public func generatePrekeys(start: UInt16 = 0, count: UInt16 = 0) throws -> [IdPrekeyTuple] {
+    public func generatePrekeys(start: UInt16 = 0, count: UInt16 = 0) async throws -> [IdPrekeyTuple] {
         guard count > 0 else {
             throw PrekeyError.prekeyCountTooLow
         }
 
         let range = prekeysRange(count, start: start)
-        let prekeys = try generatePrekeys(range)
+        let prekeys = try await generatePrekeys(range)
 
         guard prekeys.count > 0 else {
             throw PrekeyError.failedToGeneratePrekey
@@ -277,11 +265,13 @@ public final class ProteusService: ProteusServiceInterface {
         return prekeys
     }
 
-    private func generatePrekeys(_ range: CountableRange<UInt16>) throws -> [IdPrekeyTuple] {
-        return try range.map {
-            let prekey = try generatePrekey(id: $0)
-            return (id: $0, prekey: prekey)
+    private func generatePrekeys(_ range: CountableRange<UInt16>) async throws -> [IdPrekeyTuple] {
+        var prekeys: [IdPrekeyTuple] = []
+        for prekeyId in range {
+            let prekey = try await generatePrekey(id: prekeyId)
+            prekeys.append((id: prekeyId, prekey: prekey))
         }
+        return prekeys
     }
 
     private func prekeysRange(_ count: UInt16, start: UInt16) -> CountableRange<UInt16> {
@@ -300,29 +290,29 @@ public final class ProteusService: ProteusServiceInterface {
         case prekeyNotBase64Encoded
     }
 
-    public func localFingerprint() throws -> String {
+    public func localFingerprint() async throws -> String {
         logger.info("fetching local fingerprint")
 
         do {
-            return try coreCrypto.perform { try $0.proteusFingerprint() }
+            return try await coreCryptoProvider.coreCrypto().perform { try $0.proteusFingerprint() }
         } catch {
             logger.error("failed to fetch local fingerprint: \(String(describing: error))")
             throw FingerprintError.failedToGetLocalFingerprint
         }
     }
 
-    public func remoteFingerprint(forSession id: ProteusSessionID) throws -> String {
+    public func remoteFingerprint(forSession id: ProteusSessionID) async throws -> String {
         logger.info("fetching remote fingerprint")
 
         do {
-            return try coreCrypto.perform { try $0.proteusFingerprintRemote(sessionId: id.rawValue) }
+            return try await coreCryptoProvider.coreCrypto().perform { try $0.proteusFingerprintRemote(sessionId: id.rawValue) }
         } catch {
             logger.error("failed to fetch remote fingerprint: \(String(describing: error))")
             throw FingerprintError.failedToGetRemoteFingerprint
         }
     }
 
-    public func fingerprint(fromPrekey prekey: String) throws -> String {
+    public func fingerprint(fromPrekey prekey: String) async throws -> String {
         logger.info("getting fingerprint from prekey")
 
         guard let prekeyBytes = prekey.base64DecodedBytes else {
@@ -330,29 +320,12 @@ public final class ProteusService: ProteusServiceInterface {
         }
 
         do {
-            return try coreCrypto.perform { try $0.proteusFingerprintPrekeybundle(prekey: prekeyBytes) }
+            return try await coreCryptoProvider.coreCrypto().perform { try $0.proteusFingerprintPrekeybundle(prekey: prekeyBytes) }
         } catch {
             logger.error("failed to get fingerprint from prekey: \(String(describing: error))")
             throw FingerprintError.failedToGetFingerprintFromPrekey
         }
     }
-
-    // MARK: - cryptoboxMigration
-
-        enum MigrationError: Error {
-            case failedToMigrateData
-        }
-
-        public func migrateCryptoboxSessions(at url: URL) throws {
-            logger.info("migrating data from Cryptobox into the CoreCrypto keystore")
-
-            do {
-                try coreCrypto.perform { try $0.proteusCryptoboxMigrate(path: url.path) }
-            } catch {
-                logger.error("failed to migrate data from Cryptobox: \(String(describing: error))")
-                throw MigrationError.failedToMigrateData
-            }
-        }
 }
 
 private extension CoreCryptoProtocol {

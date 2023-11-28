@@ -84,7 +84,9 @@ extension VerifyLegalHoldRequestStrategy: IdentifierObjectSyncTranscoder {
         return requestFactory.upstreamRequestForFetchingClients(conversationId: conversationID, domain: conversation.domain, selfClient: selfClient, apiVersion: apiVersion)
     }
 
-    public func didReceive(response: ZMTransportResponse, for identifiers: Set<ZMConversation>) {
+    public func didReceive(response: ZMTransportResponse, for identifiers: Set<ZMConversation>, completionHandler: @escaping () -> Void) {
+        defer { completionHandler() }
+
         guard let conversation = identifiers.first else { return }
 
         let verifyClientsParser = VerifyClientsParser(context: managedObjectContext, conversation: conversation)

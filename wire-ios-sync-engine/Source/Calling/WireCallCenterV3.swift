@@ -652,7 +652,7 @@ extension WireCallCenterV3 {
                         parentID: parentGroupID
                     )
 
-                    let initialConferenceInfo = try mlsService.generateConferenceInfo(
+                    let initialConferenceInfo = try await mlsService.generateConferenceInfo(
                         parentGroupID: parentGroupID,
                         subconversationGroupID: subgroupID
                     )
@@ -660,14 +660,32 @@ extension WireCallCenterV3 {
                     let onConferenceInfoChanged = mlsService.onConferenceInfoChange(
                         parentGroupID: parentGroupID,
                         subConversationGroupID: subgroupID
-                    ).prepend(initialConferenceInfo)
+                    )
 
-                    let token = onConferenceInfoChanged.sink { [weak self] newConferenceInfo in
-                        Self.logger.debug("passing MLS conference info to AVS")
-                        self?.avsWrapper.setMLSConferenceInfo(
-                            conversationId: conversationID,
-                            info: newConferenceInfo
-                        )
+//
+//                    let token = onConferenceInfoChanged.sink { [weak self] newConferenceInfo in
+//                        Self.logger.debug("passing MLS conference info to AVS")
+//                        self?.avsWrapper.setMLSConferenceInfo(
+//                            conversationId: conversationID,
+//                            info: newConferenceInfo
+//                        )
+//                    }
+
+                    self.avsWrapper.setMLSConferenceInfo(conversationId: conversationID,
+                                                    info: initialConferenceInfo)
+
+                    // FIXME: jacob store task cancel it when the call ends?
+                    let updateConferenceInfoTask = Task {
+                        let onConferenceInfoChange = mlsService.onConferenceInfoChange(
+                            parentGroupID: parentGroupID,
+                            subConversationGroupID: subgroupID)
+
+                        for await conferenceInfo in onConferenceInfoChange {
+                            self.avsWrapper.setMLSConferenceInfo(
+                                conversationId: conversationID,
+                                info: conferenceInfo
+                            )
+                        }
                     }
 
                     let staleParticipantsRemover = MLSConferenceStaleParticipantsRemover(
@@ -682,7 +700,7 @@ extension WireCallCenterV3 {
                     if var snapshot = self.callSnapshots[conversationID] {
                         snapshot.qualifiedID = parentQualifiedID
                         snapshot.groupIDs = (parentGroupID, subgroupID)
-                        snapshot.onConferenceInfoChangedToken = token
+//                        snapshot.onConferenceInfoChangedToken = token // FIXME: [jacob] store task instead
                         snapshot.mlsConferenceStaleParticipantsRemover = staleParticipantsRemover
                         self.callSnapshots[conversationID] = snapshot
                     }

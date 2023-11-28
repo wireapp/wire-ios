@@ -72,13 +72,17 @@ extension ZMConversation {
                         return
                     }
 
-                    removeLocalConversation.invoke(
-                        with: conversation,
-                        syncContext: contextProvider.syncContext
-                    )
-                }
+                    Task {
+                        await removeLocalConversation.invoke(
+                            with: conversation,
+                            syncContext: contextProvider.syncContext
+                        )
+                        await contextProvider.viewContext.perform {
+                            completion(.success)
+                        }
 
-                completion(.success)
+                    }
+                }
             } else {
                 let error = ConversationDeletionError(response: response) ?? .unknown
                 Logging.network.debug("Error deleting converation: \(error)")

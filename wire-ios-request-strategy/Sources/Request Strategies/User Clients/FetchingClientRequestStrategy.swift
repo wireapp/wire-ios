@@ -239,7 +239,8 @@ final class UserClientByUserClientIDTranscoder: IdentifierObjectSyncTranscoder {
         return ZMTransportRequest(path: path, method: .get, payload: nil, apiVersion: apiVersion.rawValue)
     }
 
-    public func didReceive(response: ZMTransportResponse, for identifiers: Set<UserClientID>) {
+    public func didReceive(response: ZMTransportResponse, for identifiers: Set<UserClientID>, completionHandler: @escaping () -> Void) {
+        defer { completionHandler() }
 
         guard
             let identifier = identifiers.first,
@@ -358,7 +359,8 @@ final class UserClientByQualifiedUserIDTranscoder: IdentifierObjectSyncTranscode
 
     }
 
-    public func didReceive(response: ZMTransportResponse, for identifiers: Set<QualifiedID>) {
+    public func didReceive(response: ZMTransportResponse, for identifiers: Set<QualifiedID>, completionHandler: @escaping () -> Void) {
+        defer { completionHandler() }
         guard let apiVersion = APIVersion(rawValue: response.apiVersion) else { return }
         switch apiVersion {
         case .v0:
@@ -446,7 +448,8 @@ final class UserClientByUserIDTranscoder: IdentifierObjectSyncTranscoder {
         return ZMTransportRequest(path: path, method: .get, payload: nil, apiVersion: apiVersion.rawValue)
     }
 
-    public func didReceive(response: ZMTransportResponse, for identifiers: Set<UUID>) {
+    public func didReceive(response: ZMTransportResponse, for identifiers: Set<UUID>, completionHandler: @escaping () -> Void) {
+        defer { completionHandler() }
 
         guard
             let rawData = response.rawData,

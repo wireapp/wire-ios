@@ -30,7 +30,7 @@ public protocol MLSDecryptionServiceInterface {
         message: String,
         for groupID: MLSGroupID,
         subconversationType: SubgroupType?
-    ) throws -> MLSDecryptResult?
+    ) async throws -> MLSDecryptResult?
 
 }
 
@@ -45,7 +45,7 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
 
     // MARK: - Properties
 
-    private let coreCrypto: SafeCoreCryptoProtocol
+    private let coreCryptoProvider: CoreCryptoProvider
     private weak var context: NSManagedObjectContext?
     private let subconverationGroupIDRepository: SubconversationGroupIDRepositoryInterface
 
@@ -59,10 +59,10 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
 
     public init(
         context: NSManagedObjectContext,
-        coreCrypto: SafeCoreCryptoProtocol,
+        coreCryptoProvider: CoreCryptoProvider,
         subconversationGroupIDRepository: SubconversationGroupIDRepositoryInterface = SubconversationGroupIDRepository()
     ) {
-        self.coreCrypto = coreCrypto
+        self.coreCryptoProvider = coreCryptoProvider
         self.context = context
         self.subconverationGroupIDRepository = subconversationGroupIDRepository
     }
@@ -94,7 +94,7 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
         message: String,
         for groupID: MLSGroupID,
         subconversationType: SubgroupType?
-    ) throws -> MLSDecryptResult? {
+    ) async throws -> MLSDecryptResult? {
         WireLogger.mls.debug("decrypting message for group (\(groupID.safeForLoggingDescription)) and subconversation type (\(String(describing: subconversationType)))")
 
         guard let messageBytes = message.base64DecodedBytes else {
@@ -114,6 +114,7 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
         }
 
         do {
+            let coreCrypto = try await coreCryptoProvider.coreCrypto()
             let decryptedMessage = try coreCrypto.perform { try $0.decryptMessage(
                 conversationId: groupID.bytes,
                 payload: messageBytes

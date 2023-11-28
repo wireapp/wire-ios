@@ -76,10 +76,10 @@ public struct ZMTask {
     }
 
     public func callAsFunction(_ block: @escaping () async -> Void) {
-        context.enterAllGroupsExceptSecondaryOne()
+        let groups = context.enterAllGroupsExceptSecondary()
         Task {
             await block()
-            context.leaveAllGroupsExceptSecondaryOne()
+            context.leaveAllGroups(groups)
         }
     }
 }

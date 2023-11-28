@@ -508,47 +508,57 @@ class ConversationByIDTranscoder: IdentifierObjectSyncTranscoder {
         return ZMTransportRequest(getFromPath: "/conversations/\(converationID)", apiVersion: apiVersion.rawValue)
     }
 
-    func didReceive(response: ZMTransportResponse, for identifiers: Set<UUID>) {
+    func didReceive(response: ZMTransportResponse, for identifiers: Set<UUID>, completionHandler: @escaping () -> Void) {
 
-        guard response.result != .permanentError else {
-            if response.httpStatus == 404 {
-                deleteConversations(identifiers)
+        Task {
+            defer { completionHandler() }
+
+            guard response.result != .permanentError else {
+                if response.httpStatus == 404 {
+                    await deleteConversations(identifiers)
+                    return
+                }
+
+                if response.httpStatus == 403 {
+                    removeSelfUser(identifiers)
+                    return
+                }
+
+                markConversationsAsFetched(identifiers)
                 return
             }
 
-            if response.httpStatus == 403 {
-                removeSelfUser(identifiers)
+            guard
+                let apiVersion = APIVersion(rawValue: response.apiVersion),
+                let rawData = response.rawData,
+                let payload = Payload.Conversation(rawData, apiVersion: apiVersion, decoder: decoder)
+            else {
+                Logging.network.warn("Can't process response, aborting.")
                 return
             }
 
-            markConversationsAsFetched(identifiers)
-            return
+            await processor.updateOrCreateConversation(
+                from: payload,
+                in: context
+            )
         }
-
-        guard
-            let apiVersion = APIVersion(rawValue: response.apiVersion),
-            let rawData = response.rawData,
-            let payload = Payload.Conversation(rawData, apiVersion: apiVersion, decoder: decoder)
-        else {
-            Logging.network.warn("Can't process response, aborting.")
-            return
-        }
-
-        processor.updateOrCreateConversation(
-            from: payload,
-            in: context
-        )
     }
 
-    private func deleteConversations(_ conversations: Set<UUID>) {
+    private func deleteConversations(_ conversations: Set<UUID>) async {
         for conversationID in conversations {
-            guard
-                let conversation = ZMConversation.fetch(with: conversationID, domain: nil, in: context),
-                conversation.conversationType == .group
-            else {
+            let conversation = await context.perform {
+                ZMConversation.fetch(
+                    with: conversationID,
+                    domain: nil,
+                    in: self.context)
+            }
+            let conversationType = await context.perform { conversation?.conversationType }
+
+            guard let conversation = conversation, conversationType == .group else {
                 continue
             }
-            removeLocalConversation.invoke(
+
+            await removeLocalConversation.invoke(
                 with: conversation,
                 syncContext: context
             )
@@ -618,54 +628,61 @@ class ConversationByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
         return ZMTransportRequest(getFromPath: "/conversations/\(domain)/\(conversationID)", apiVersion: apiVersion.rawValue)
     }
 
-    func didReceive(response: ZMTransportResponse, for identifiers: Set<QualifiedID>) {
+    func didReceive(response: ZMTransportResponse, for identifiers: Set<QualifiedID>, completionHandler: @escaping () -> Void) {
+        Task {
+            defer { completionHandler() }
 
-        guard response.result != .permanentError else {
-            markConversationsAsFetched(identifiers)
+            guard response.result != .permanentError else {
+                markConversationsAsFetched(identifiers)
 
-            if response.httpStatus == 404 {
-                deleteConversations(identifiers)
+                if response.httpStatus == 404 {
+                    await deleteConversations(identifiers)
+                    return
+                }
+
+                if response.httpStatus == 403 {
+                    await context.perform {
+                        self.removeSelfUser(identifiers)
+                    }
+                    return
+                }
                 return
             }
 
-            if response.httpStatus == 403 {
-                removeSelfUser(identifiers)
-                return
+            guard
+                let apiVersion = APIVersion(rawValue: response.apiVersion),
+                let rawData = response.rawData,
+                let payload = Payload.Conversation(
+                    rawData,
+                    apiVersion: apiVersion,
+                    decoder: decoder
+                )
+            else {
+                return Logging.network.warn("Can't process response, aborting.")
             }
-            return
-        }
 
-        guard
-            let apiVersion = APIVersion(rawValue: response.apiVersion),
-            let rawData = response.rawData,
-            let payload = Payload.Conversation(
-                rawData,
-                apiVersion: apiVersion,
-                decoder: decoder
+            await processor.updateOrCreateConversation(
+                from: payload,
+                in: context
             )
-        else {
-            return Logging.network.warn("Can't process response, aborting.")
         }
-
-        processor.updateOrCreateConversation(
-            from: payload,
-            in: context
-        )
     }
 
-    private func deleteConversations(_ conversations: Set<QualifiedID>) {
+    private func deleteConversations(_ conversations: Set<QualifiedID>) async {
         for qualifiedID in conversations {
-            guard
-                let conversation = ZMConversation.fetch(
+            let conversation = await context.perform {
+                ZMConversation.fetch(
                     with: qualifiedID.uuid,
                     domain: qualifiedID.domain,
-                    in: context
-                ),
-                conversation.conversationType == .group
-            else {
+                    in: self.context)
+            }
+            let conversationType = await context.perform { conversation?.conversationType }
+
+            guard let conversation = conversation, conversationType == .group else {
                 continue
             }
-            removeLocalConversation.invoke(
+
+            await removeLocalConversation.invoke(
                 with: conversation,
                 syncContext: context
             )
@@ -721,23 +738,27 @@ class ConversationByIDListTranscoder: IdentifierObjectSyncTranscoder {
         return ZMTransportRequest(getFromPath: "/conversations?ids=\(converationIDs)", apiVersion: apiVersion.rawValue)
     }
 
-    func didReceive(response: ZMTransportResponse, for identifiers: Set<UUID>) {
-        guard
-            let apiVersion = APIVersion(rawValue: response.apiVersion),
-            let rawData = response.rawData,
-            let payload = Payload.ConversationList(rawData, apiVersion: apiVersion, decoder: decoder)
-        else {
-            Logging.network.warn("Can't process response, aborting.")
-            return
+    func didReceive(response: ZMTransportResponse, for identifiers: Set<UUID>, completionHandler: @escaping () -> Void) {
+        Task {
+            defer { completionHandler() }
+
+            guard
+                let apiVersion = APIVersion(rawValue: response.apiVersion),
+                let rawData = response.rawData,
+                let payload = Payload.ConversationList(rawData, apiVersion: apiVersion, decoder: decoder)
+            else {
+                Logging.network.warn("Can't process response, aborting.")
+                return
+            }
+
+            await processor.updateOrCreateConversations(
+                from: payload,
+                in: context
+            )
+
+            let missingIdentifiers = identifiers.subtracting(payload.conversations.compactMap(\.id))
+            await context.perform { self.queryStatusForMissingConversations(missingIdentifiers) }
         }
-
-        processor.updateOrCreateConversations(
-            from: payload,
-            in: context
-        )
-
-        let missingIdentifiers = identifiers.subtracting(payload.conversations.compactMap(\.id))
-        queryStatusForMissingConversations(missingIdentifiers)
     }
 
     /// Query the backend if a converation is deleted or the self user has been removed
@@ -779,23 +800,29 @@ class ConversationByQualifiedIDListTranscoder: IdentifierObjectSyncTranscoder {
         return ZMTransportRequest(path: path, method: .post, payload: payloadAsString as ZMTransportData, apiVersion: apiVersion.rawValue)
     }
 
-    func didReceive(response: ZMTransportResponse, for identifiers: Set<QualifiedID>) {
-        guard
-            let apiVersion = APIVersion(rawValue: response.apiVersion),
-            let rawData = response.rawData,
-            let payload = Payload.QualifiedConversationList(rawData, apiVersion: apiVersion, decoder: decoder)
-        else {
-            Logging.network.warn("Can't process response, aborting.")
-            return
+    func didReceive(response: ZMTransportResponse, for identifiers: Set<QualifiedID>, completionHandler: @escaping () -> Void) {
+        Task {
+            defer { completionHandler() }
+
+            guard
+                let apiVersion = APIVersion(rawValue: response.apiVersion),
+                let rawData = response.rawData,
+                let payload = Payload.QualifiedConversationList(rawData, apiVersion: apiVersion, decoder: decoder)
+            else {
+                Logging.network.warn("Can't process response, aborting.")
+                return
+            }
+
+            await processor.updateOrCreateConverations(
+                from: payload,
+                in: context
+            )
+
+            await context.perform {
+                self.queryStatusForMissingConversations(payload.notFound)
+                self.queryStatusForFailedConversations(payload.failed)
+            }
         }
-
-        processor.updateOrCreateConverations(
-            from: payload,
-            in: context
-        )
-
-        queryStatusForMissingConversations(payload.notFound)
-        queryStatusForFailedConversations(payload.failed)
     }
 
     /// Query the backend if a converation is deleted or the self user has been removed

@@ -21,6 +21,8 @@ import WireUtilities
 
 public typealias KeyStorePerformBlock<T> = ((UserClientKeysStore) throws -> T)
 public typealias ProteusServicePerformBlock<T> = ((ProteusServiceInterface) throws -> T)
+public typealias KeyStorePerformAsyncBlock<T> = ((UserClientKeysStore) async throws -> T)
+public typealias ProteusServicePerformAsyncBlock<T> = ((ProteusServiceInterface) async throws -> T)
 
 public protocol ProteusProviding {
 
@@ -28,6 +30,11 @@ public protocol ProteusProviding {
         withProteusService proteusServiceBlock: ProteusServicePerformBlock<T>,
         withKeyStore keyStoreBlock: KeyStorePerformBlock<T>
     ) rethrows -> T
+
+    func performAsync<T>(
+        withProteusService proteusServiceBlock: ProteusServicePerformAsyncBlock<T>,
+        withKeyStore keyStoreBlock: KeyStorePerformAsyncBlock<T>
+    ) async rethrows -> T
 
     var canPerform: Bool { get }
 }
@@ -62,6 +69,27 @@ public class ProteusProvider: ProteusProviding {
             // remove comment once implementation of proteus via core crypto is done
             // precondition(!proteusViaCoreCrypto, "cryptobox should only be used when the flag is off")
             return try keyStoreBlock(keyStore)
+
+        } else {
+            WireLogger.coreCrypto.error("can't access any proteus cryptography service")
+            fatal("can't access any proteus cryptography service")
+        }
+    }
+
+    public func performAsync<T>(
+        withProteusService proteusServiceBlock: ProteusServicePerformAsyncBlock<T>,
+        withKeyStore keyStoreBlock: KeyStorePerformAsyncBlock<T>
+    ) async rethrows -> T {
+        if let proteusService = await context.perform({ self.context.proteusService }) {
+
+            precondition(proteusViaCoreCrypto, "core crypto should only be used when the flag is on")
+            return try await proteusServiceBlock(proteusService)
+
+        } else if let keyStore = await context.perform({ self.context.zm_cryptKeyStore }) {
+
+            // remove comment once implementation of proteus via core crypto is done
+            // precondition(!proteusViaCoreCrypto, "cryptobox should only be used when the flag is off")
+            return try await keyStoreBlock(keyStore)
 
         } else {
             WireLogger.coreCrypto.error("can't access any proteus cryptography service")

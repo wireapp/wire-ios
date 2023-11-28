@@ -27,7 +27,7 @@ public protocol IdentifierObjectSyncTranscoder: AnyObject {
 
     func request(for identifiers: Set<T>, apiVersion: APIVersion) -> ZMTransportRequest?
 
-    func didReceive(response: ZMTransportResponse, for identifiers: Set<T>)
+    func didReceive(response: ZMTransportResponse, for identifiers: Set<T>, completionHandler: @escaping () -> Void)
 
 }
 
@@ -106,20 +106,25 @@ public class IdentifierObjectSync<Transcoder: IdentifierObjectSyncTranscoder>: N
             switch response.result {
             case .permanentError, .success:
                 strongSelf.downloading.subtract(scheduled)
-                strongSelf.transcoder?.didReceive(response: response, for: scheduled)
+                strongSelf.transcoder?.didReceive(response: response, for: scheduled) {
+                    if case .permanentError = response.result {
+                        self?.delegate?.didFailToSyncAllObjects()
+                    }
 
-                if case .permanentError = response.result {
-                    self?.delegate?.didFailToSyncAllObjects()
+                    if !strongSelf.isSyncing {
+                        self?.delegate?.didFinishSyncingAllObjects()
+                    }
+                    strongSelf.managedObjectContext.enqueueDelayedSave()
                 }
             default:
                 strongSelf.downloading.subtract(scheduled)
                 strongSelf.pending.formUnion(scheduled)
-            }
 
-            strongSelf.managedObjectContext.enqueueDelayedSave()
+                if !strongSelf.isSyncing {
+                    self?.delegate?.didFinishSyncingAllObjects()
+                }
 
-            if !strongSelf.isSyncing {
-                self?.delegate?.didFinishSyncingAllObjects()
+                strongSelf.managedObjectContext.enqueueDelayedSave()
             }
         }))
 
