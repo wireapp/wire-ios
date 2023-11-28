@@ -223,6 +223,11 @@ static NSString *ZMLogTag ZM_UNUSED = @"Authentication";
     ZMLogDebug(@"current phase: %lu", (unsigned long)self.currentPhase);
 }
 
+- (void)didRegisterMLSClient:(UserClient *)client
+{
+    [self.registrationStatusDelegate didRegisterMLSClient:client];
+}
+
 - (void)fetchExistingSelfClientsAfterClientRegistered:(UserClient *)currentSelfClient
 {
     ZMUser *selfUser = [ZMUser selfUserInContext:self.managedObjectContext];

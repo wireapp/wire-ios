@@ -61,6 +61,7 @@ extern NSString *const ZMPersistedClientIdKey;
 + (BOOL)needsToRegisterClientInContext:(NSManagedObjectContext *)moc;
 
 - (void)didRegisterClient:(UserClient *)client;
+- (void)didRegisterMLSClient:(UserClient *)client;
 
 - (void)didDetectCurrentClientDeletion;
 - (BOOL)clientIsReadyForRequests;

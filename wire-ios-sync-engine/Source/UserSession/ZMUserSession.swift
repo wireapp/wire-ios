@@ -96,6 +96,14 @@ public class ZMUserSession: NSObject {
     var accessTokenRenewalObserver: AccessTokenRenewalObserver?
     var recurringActionService: RecurringActionServiceInterface = RecurringActionService()
     var cryptoboxMigrationManager: CryptoboxMigrationManagerInterface
+    var coreCryptoProvider: CoreCryptoProvider
+    lazy var proteusService: ProteusServiceInterface = ProteusService(coreCryptoProvider: coreCryptoProvider)
+    lazy var mlsService: MLSServiceInterface = MLSService(
+        context: syncContext,
+        coreCryptoProvider: coreCryptoProvider,
+        conversationEventProcessor: ConversationEventProcessor(context: syncContext),
+        userDefaults: .standard, // FIXME: [jacob] use PrivateUserDefaults
+        syncStatus: syncStatus!) // FIXME: [jaocb] Make applicationStatusDirectory non-optional
 
     public var syncStatus: SyncStatusProtocol? {
         return applicationStatusDirectory?.syncStatus
@@ -286,6 +294,12 @@ public class ZMUserSession: NSObject {
         self.debugCommands = ZMUserSession.initDebugCommands()
         self.legacyHotFix = ZMHotFix(syncMOC: coreDataStack.syncContext)
         self.appLockController = AppLockController(userId: userId, selfUser: .selfUser(in: coreDataStack.viewContext), legacyConfig: configuration.appLockConfig)
+        self.coreCryptoProvider = CoreCryptoProvider(
+            selfUserID: userId,
+            sharedContainerURL: coreDataStack.applicationContainer,
+            accountDirectory: coreDataStack.accountContainer,
+            syncContext: coreDataStack.syncContext,
+            cryptoboxMigrationManager: cryptoboxMigrationManager)
 
         self.earService = earService ?? EARService(
             accountID: coreDataStack.account.userIdentifier,
@@ -314,10 +328,7 @@ public class ZMUserSession: NSObject {
 
         configureCaches()
 
-        // Proteus needs to be setup before client registration starts
-        setupCryptoStack(stage: .proteus(userID: userId))
-
-        syncManagedObjectContext.performGroupedBlockAndWait {
+        syncManagedObjectContext.performGroupedBlockAndWait { [self] in
             self.localNotificationDispatcher = LocalNotificationDispatcher(in: coreDataStack.syncContext)
             self.configureTransportSession()
             self.applicationStatusDirectory = self.createApplicationStatusDirectory()
@@ -329,11 +340,11 @@ public class ZMUserSession: NSObject {
             self.callStateObserver = CallStateObserver(localNotificationDispatcher: self.localNotificationDispatcher!,
                                                        contextProvider: self,
                                                        callNotificationStyleProvider: self)
-        }
 
-        // This should happen after the request strategies are created b/c
-        // it needs to make network requests upon initialization.
-        setupCryptoStack(stage: .mls)
+            // FIXME: [jacob] inject instead of storing on context
+            self.syncManagedObjectContext.proteusService = self.proteusService
+            self.syncManagedObjectContext.mlsService = self.mlsService
+        }
 
         registerForCalculateBadgeCountNotification()
         registerForRegisteringPushTokenNotification()
@@ -644,7 +655,10 @@ extension ZMUserSession: ZMSyncStateDelegate {
             }
         }
 
-        syncContext.mlsService?.repairOutOfSyncConversations()
+        // FIXME: [jacob] move to a repairOutOfSyncConversationsIfNeeded on MLSService?
+        Task {
+            try await mlsService.repairOutOfSyncConversations()
+        }
     }
 
     public func didStartQuickSync() {
@@ -664,8 +678,14 @@ extension ZMUserSession: ZMSyncStateDelegate {
             context: syncContext.notificationContext
         ).post()
 
-        syncContext.mlsService?.performPendingJoins()
-        commitPendingProposalsIfNeeded()
+        let selfClient = ZMUser.selfUser(in: syncContext).selfClient()
+
+        if selfClient?.hasRegisteredMLSClient == true {
+            mlsService.performPendingJoins()
+            mlsService.uploadKeyPackagesIfNeeded()
+            mlsService.updateKeyMaterialForAllStaleGroupsIfNeeded()
+            commitPendingProposalsIfNeeded()
+        }
         fetchFeatureConfigs()
         recurringActionService.performActionsIfNeeded()
 
@@ -717,12 +737,11 @@ extension ZMUserSession: ZMSyncStateDelegate {
         }
     }
 
+    // // FIXME: [jacob] move commitPendingProposalsIfNeeded to MLSService?
     private func commitPendingProposalsIfNeeded() {
-        let mlsService = syncContext.mlsService
-
         Task {
             do {
-                try await mlsService?.commitPendingProposals()
+                try await mlsService.commitPendingProposals()
             } catch {
                 Logging.mls.error("Failed to commit pending proposals: \(String(describing: error))")
             }
@@ -739,7 +758,11 @@ extension ZMUserSession: ZMSyncStateDelegate {
         action.send(in: syncContext.notificationContext)
     }
 
-    public func didRegisterSelfUserClient(_ userClient: UserClient!) {
+    public func didRegisterMLSClient(_ userClient: UserClient) {
+        mlsService.uploadKeyPackagesIfNeeded()
+    }
+
+    public func didRegisterSelfUserClient(_ userClient: UserClient) {
         setupCryptoStack(stage: .mls)
 
         // If during registration user allowed notifications,
@@ -759,7 +782,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
         }
     }
 
-    public func didFailToRegisterSelfUserClient(error: Error!) {
+    public func didFailToRegisterSelfUserClient(error: Error) {
         managedObjectContext.performGroupedBlock {  [weak self] in
             guard let accountId = self?.managedObjectContext.selfUserId else {
                 return
@@ -769,7 +792,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
         }
     }
 
-    public func didDeleteSelfUserClient(error: Error!) {
+    public func didDeleteSelfUserClient(error: Error) {
         notifyAuthenticationInvalidated(error)
     }
 
