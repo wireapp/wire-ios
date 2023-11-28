@@ -187,7 +187,11 @@ final class ClientListViewController: UIViewController,
             let clientViewController = SettingsClientViewController(userClient: client, credentials: self.credentials)
             if DeveloperFlag.enableNewClientDetailsFlow.isOn {
                 let detailsView = DeviceDetailsView(
-                    viewModel: DeviceInfoViewModel.map(userClient: client, credentials: credentials)
+                    viewModel: DeviceInfoViewModel.map(
+                        userClient: client,
+                        userSession: ZMUserSession.shared()!,
+                        credentials: credentials
+                    )
                 )
                 let hostingViewController = UIHostingController(rootView: detailsView)
                 hostingViewController.view.backgroundColor = SemanticColors.View.backgroundDefault

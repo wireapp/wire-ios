@@ -26,13 +26,15 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
     var clientRemovalObserver: ClientRemovalObserver?
     var credentials: ZMEmailCredentials?
     var certificate: E2eIdentityCertificate?
-
+    let userSession: UserSession
     init(
         userClient: UserClient,
+        userSession: UserSession,
         credentials: ZMEmailCredentials?
     ) {
         self.userClient = userClient
         self.credentials = credentials
+        self.userSession = userSession
     }
 
     func fetchCertificate() async -> E2eIdentityCertificate? {
@@ -85,18 +87,14 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
     func updateVerified(
         _ value: Bool
     ) async -> Bool {
-        guard let userSession = ZMUserSession.shared(),
-              let selfClient = userSession.selfUserClient else {
-            return false
-        }
         return await withCheckedContinuation { continuation in
             userSession.enqueue({
                 if value {
-                    selfClient.trustClient(
+                    self.userClient.trustClient(
                         self.userClient
                     )
                 } else {
-                    selfClient.ignoreClient(
+                    self.userClient.ignoreClient(
                         self.userClient
                     )
                 }

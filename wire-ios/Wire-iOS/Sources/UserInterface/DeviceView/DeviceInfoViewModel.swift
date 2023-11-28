@@ -82,16 +82,23 @@ protocol DeviceDetailsViewActions {
 }
 
 final class DeviceInfoViewModel: ObservableObject {
+    let userSession: UserSession
     let uuid: String
     let addedDate: String
     var title: String
     let deviceKeyFingerprint: String
     let proteusID: String
     var isProteusVerificationEnabled: Bool
+    var isE2EIdentityEnabled: Bool
+    var isSelfClient: Bool
     var certificateStatus: E2EIdentityCertificateStatus {
-        guard let certificate = e2eIdentityCertificate, let status = E2EIdentityCertificateStatus.allCases.filter({
-            $0.titleForStatus() == certificate.certificateStatus
-        }).first else {
+        guard let certificate = e2eIdentityCertificate,
+                let status = E2EIdentityCertificateStatus.allCases.filter(
+                    {
+                        $0.titleForStatus() == certificate.certificateStatus
+                    }
+                ).first 
+        else {
             return .none
         }
         return status
@@ -120,7 +127,10 @@ final class DeviceInfoViewModel: ObservableObject {
         deviceKeyFingerprint: String,
         proteusID: String,
         isProteusVerificationEnabled: Bool,
-        actionsHandler: any DeviceDetailsViewActions
+        actionsHandler: any DeviceDetailsViewActions,
+        isE2EIdentityEnabled: Bool,
+        isSelfClient: Bool,
+        userSession: UserSession
     ) {
         self.uuid = uuid
         self.title = title
@@ -129,6 +139,9 @@ final class DeviceInfoViewModel: ObservableObject {
         self.proteusID = proteusID
         self.isProteusVerificationEnabled = isProteusVerificationEnabled
         self.actionsHandler = actionsHandler
+        self.isE2EIdentityEnabled = isE2EIdentityEnabled
+        self.userSession = userSession
+        self.isSelfClient = isSelfClient
     }
 
     func fetchE2eCertificate() async {
@@ -177,6 +190,7 @@ extension DeviceInfoViewModel: Identifiable {
 extension DeviceInfoViewModel {
     static func map(
         userClient: UserClient,
+        userSession: UserSession,
         credentials: ZMEmailCredentials?
     ) -> DeviceInfoViewModel {
         return DeviceInfoViewModel(
@@ -192,9 +206,13 @@ extension DeviceInfoViewModel {
             proteusID: userClient.proteusSessionID?.clientID.fingerprintStringWithSpaces.uppercased() ?? "",
             isProteusVerificationEnabled: userClient.user?.isVerified ?? false,
             actionsHandler: DeviceDetailsViewActionsHandler(
-                userClient: userClient,
+                userClient: userClient, 
+                userSession: userSession,
                 credentials: credentials
-            )
+            ),
+            isE2EIdentityEnabled: userClient.e2eIdentityProvider.isE2EIdentityEnabled,
+            isSelfClient: userClient.isSelfClient(), 
+            userSession: userSession
         )
     }
 }

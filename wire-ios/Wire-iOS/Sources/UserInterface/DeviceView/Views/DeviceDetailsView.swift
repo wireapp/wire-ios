@@ -82,15 +82,36 @@ struct DeviceDetailsView: View {
             ).background {
                 SemanticColors.View.backgroundDefaultWhite.swiftUIColor
             }
-            DeviceDetailsBottomView(
-                viewModel: viewModel
-            )
+            if viewModel.isSelfClient {
+                Text(
+                    L10n.Localizable.Self.Settings.DeviceDetails.Fingerprint.subtitle
+                ).font(
+                    .footnote
+                ).padding(
+                    [
+                        .leading,
+                        .trailing
+                    ],
+                    16
+                )
+                .padding(
+                    [
+                        .top,
+                        .bottom
+                    ],
+                    8
+                )
+            } else {
+                DeviceDetailsBottomView(
+                    viewModel: viewModel
+                )
+            }
         }
     }
     var body: some View {
         NavigationView {
             ScrollView {
-                if let e2eIdentityCertificate = viewModel.e2eIdentityCertificate {
+                if viewModel.isE2EIdentityEnabled {
                     e2eIdentityCertificateView
                 }
                 proteusView
