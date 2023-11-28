@@ -59,7 +59,8 @@ public class UserClient: ZMManagedObject, UserClientType {
             activationLocationLongitude = NSNumber(value: newValue)
         }
     }
-
+    public var e2eIdentityProvider: E2eIdentityProviding = DeveloperFlag.enableNewClientDetailsFlow.isOn ? MockE2eIdentityProvider() : E2eIdentityProvider()
+    
     @NSManaged public var type: DeviceType
     @NSManaged public var label: String?
     @NSManaged public var markedToDelete: Bool
@@ -87,9 +88,7 @@ public class UserClient: ZMManagedObject, UserClientType {
     @NSManaged public var needsToNotifyOtherUserAboutSessionReset: Bool
     @NSManaged public var needsSessionMigration: Bool
     @NSManaged public var discoveredByMessage: ZMOTRMessage?
-    private var provider: E2eIdentityProviding {
-        DeveloperFlag.enableNewClientDetailsFlow.isOn ? MockE2eIdentityProvider() : E2eIdentityProvider()
-    }
+    
     private enum Keys {
         static let PushToken = "pushToken"
         static let DeviceClass = "deviceClass"
@@ -1116,46 +1115,8 @@ extension UserClient {
 }
 
 // MARK: - E2eIdentity Certificate
-public struct E2eIdentityCertificate {
-    public var certificateDetails: String
-    public var expiryDate: Date
-    public var certificateStatus: String
-    public var serialNumber: String
-    public init(certificateDetails: String, expiryDate: Date, certificateStatus: String, serialNumber: String) {
-        self.certificateDetails = certificateDetails
-        self.expiryDate = expiryDate
-        self.certificateStatus = certificateStatus
-        self.serialNumber = serialNumber
-    }
-}
-
-public protocol E2eIdentityProviding {
-    func fetchCertificate() async throws -> E2eIdentityCertificate
-}
-
-enum E2eIdentityCertificateError: Error {
-    case badCertificate
-}
-
-public final class E2eIdentityProvider: E2eIdentityProviding {
-    public func fetchCertificate() async throws -> E2eIdentityCertificate {
-        throw E2eIdentityCertificateError.badCertificate
-    }
-}
-
 extension UserClient {
     public func fetchE2eIdentityCertificate() async throws -> E2eIdentityCertificate {
-        return try await provider.fetchCertificate()
-    }
-}
-
-public final class MockE2eIdentityProvider: E2eIdentityProviding {
-    public func fetchCertificate() async throws -> E2eIdentityCertificate {
-        return E2eIdentityCertificate(
-            certificateDetails: .random(length: 450),
-            expiryDate: Date.now.addingTimeInterval(36000),
-            certificateStatus: "Valid",
-            serialNumber: .random(length: 60)
-        )
+        return try await e2eIdentityProvider.fetchCertificate()
     }
 }

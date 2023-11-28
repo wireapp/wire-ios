@@ -20,6 +20,7 @@ import SwiftUI
 
 struct DeviceDetailsProteusView: View {
     @ObservedObject var viewModel: DeviceInfoViewModel
+
     var body: some View {
         VStack(
             alignment: .leading
