@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2023 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,39 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import WireSyncEngine
+import XCTest
 
-final class MockUserClient: NSObject, UserClientType {
+final class ZMUpdateEventTypeTests: XCTestCase {
 
-    var type: DeviceType = .permanent
+    typealias Sut = ZMUpdateEventType
 
-    var label: String?
+    func testRawValuesOfDeletedCasesArentReused() {
+        let deletedEvents: [String: UInt] = [
+            "teamMemberJoin": 26
+        ]
+        let forbiddenRawValues = Set(deletedEvents.values)
 
-    var remoteIdentifier: String?
-
-    var activationDate: Date?
-
-    var model: String?
-
-    var fingerprint: Data?
-
-    var verified: Bool = false
-
-    var user: ZMUser?
-
-    var deviceClass: DeviceClass? = .phone
-
-    func isSelfClient() -> Bool {
-        return false
+        Sut.allCases.forEach { eventType in
+            XCTAssertFalse(forbiddenRawValues.contains(eventType.rawValue))
+        }
     }
-
-    func resetSession() {
-        // No-op
-    }
-
-    func fetchFingerprintOrPrekeys() {
-        // No-op
-    }
-
 }
