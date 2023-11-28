@@ -1691,52 +1691,61 @@ public final class MLSService: MLSServiceInterface {
         }
         for conversation in groupConversations {
 
-            guard let qualifiedID = conversation.qualifiedID else {
+            let (qualifiedID, members) = await context.perform {
+                (conversation.qualifiedID, conversation.localParticipants.map { MLSUser(from: $0) })
+            }
+
+            guard let qualifiedID else {
                 logger.warn("skipping migration of conversation \(conversation), `qualifiedID` is `nil`")
                 assertionFailure("the group conversation has no `qualifiedID` set")
                 continue
             }
-            let members = conversation.localParticipants.map { MLSUser(from: $0) }
-            let mlsGroupID: MLSGroupID
 
             do {
 
                 // update message protocol to `mixed`
-                try await actionsProvider.updateConversationProtocol(qualifiedID: qualifiedID, messageProtocol: .mixed, context: context.notificationContext)
+                try await actionsProvider.updateConversationProtocol(
+                    qualifiedID: qualifiedID,
+                    messageProtocol: .mixed,
+                    context: context.notificationContext
+                )
 
                 // sync the group conversation
-                try await actionsProvider.syncConversation(qualifiedID: qualifiedID, context: context.notificationContext)
+                try await actionsProvider.syncConversation(
+                    qualifiedID: qualifiedID,
+                    context: context.notificationContext
+                )
 
-                guard conversation.mlsGroupID != nil else {
-                    logger.warn("failed to convert conversation \(conversation), `mlsGroupID` is `nil`")
+                let mlsGroupID = await context.perform { conversation.mlsGroupID }
+                guard let mlsGroupID else {
+                    logger.warn("failed to convert conversation \(qualifiedID), `mlsGroupID` is `nil`")
                     assertionFailure("the group conversation has no `mlsGroupID` set")
                     continue
                 }
-                mlsGroupID = conversation.mlsGroupID!
 
                 // create MLS group and update keying material
                 try createGroup(for: mlsGroupID)
 
+                do {
+
+                    // update keying material and send commit bundle to the backend
+                    try await internalUpdateKeyMaterial(for: mlsGroupID)
+
+                    // add all participants (all clients) to the group
+                    try await addMembersToConversation(with: members, for: mlsGroupID)
+
+                } catch SendMLSMessageAction.Failure.mlsStaleMessage {
+
+                    logger.error("failed to migrate conversation \(conversation): stale message")
+
+                    // rollback: destroy/wipe group
+                    try wipeGroup(mlsGroupID)
+
+                }
+
             } catch {
                 logger.error("failed to migrate conversation \(conversation): \(String(describing: error))")
                 continue
-            }
-
-            do {
-
-                // update keying material and send commit bundle to the backend
-                try await internalUpdateKeyMaterial(for: mlsGroupID)
-
-                // add all participants (all clients) to the group
-                try await addMembersToConversation(with: members, for: mlsGroupID)
-
-            } catch SendMLSMessageAction.Failure.mlsStaleMessage {
-
-                logger.error("failed to migrate conversation \(conversation): stale message")
-
-                // rollback: destroy/wipe group
-                try wipeGroup(mlsGroupID)
-
             }
         }
 
