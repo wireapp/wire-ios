@@ -32,7 +32,7 @@ extension SettingsCellDescriptorFactory {
     }
 
     private var title: String {
-        return L10n.Localizable.Self.Settings.SoundMenu.title
+        return "self.settings.sound_menu.title".localized
     }
 
     private var soundAlertProperty: SettingsProperty {
@@ -45,19 +45,19 @@ extension SettingsCellDescriptorFactory {
         let allAlerts = SettingsPropertySelectValueCellDescriptor(
             settingsProperty: property,
             value: SettingsPropertyValue(AVSIntensityLevel.full.rawValue),
-            title: L10n.Localizable.Self.Settings.SoundMenu.AllSounds.title
+            title: "self.settings.sound_menu.all_sounds.title".localized
         )
 
         let someAlerts = SettingsPropertySelectValueCellDescriptor(
             settingsProperty: property,
             value: SettingsPropertyValue(AVSIntensityLevel.some.rawValue),
-            title: L10n.Localizable.Self.Settings.SoundMenu.MuteWhileTalking.title
+            title: "self.settings.sound_menu.mute_while_talking.title".localized
         )
 
         let noneAlerts = SettingsPropertySelectValueCellDescriptor(
             settingsProperty: property,
             value: SettingsPropertyValue(AVSIntensityLevel.none.rawValue),
-            title: L10n.Localizable.Self.Settings.SoundMenu.NoSounds.title
+            title: "self.settings.sound_menu.no_sounds.title".localized
         )
 
         return SettingsSectionDescriptor(
@@ -78,11 +78,11 @@ extension SettingsCellDescriptorFactory {
 
             switch intensityLevel {
             case .full:
-                return .text(L10n.Localizable.Self.Settings.SoundMenu.AllSounds.title)
+                return .text("self.settings.sound_menu.all_sounds.title".localized)
             case .some:
-                return .text(L10n.Localizable.Self.Settings.SoundMenu.MuteWhileTalking.title)
+                return .text("self.settings.sound_menu.mute_while_talking.title".localized)
             case .none:
-                return .text(L10n.Localizable.Self.Settings.SoundMenu.NoSounds.title)
+                return .text("self.settings.sound_menu.no_sounds.title".localized)
             @unknown default:
                 // TODO: change AVSIntensityLevel to NS_CLOSED_ENUM
                 return .text("")

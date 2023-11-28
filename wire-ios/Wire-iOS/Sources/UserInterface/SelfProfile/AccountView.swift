@@ -145,7 +145,7 @@ class BaseAccountView: UIView {
         var result = "conversation_list.header.self_team.accessibility_value.\(selected ? "active" : "inactive")".localized
 
         if hasUnreadMessages {
-            result += "\(L10n.Localizable.ConversationList.Header.SelfTeam.AccessibilityValue.hasNewMessages)"
+            result += " \("conversation_list.header.self_team.accessibility_value.has_new_messages".localized)"
         }
 
         return result
@@ -310,7 +310,7 @@ final class PersonalAccountView: AccountView {
 
     override func update() {
         super.update()
-        self.accessibilityValue = L10n.Localizable.ConversationList.Header.SelfTeam.accessibilityValue(self.account.userName) + " " + accessibilityState
+        self.accessibilityValue = String(format: "conversation_list.header.self_team.accessibility_value".localized, self.account.userName) + " " + accessibilityState
         if let imageData = self.account.imageData {
             userImageView.avatar = UIImage(data: imageData).map(AvatarImageView.Avatar.image)
         } else {

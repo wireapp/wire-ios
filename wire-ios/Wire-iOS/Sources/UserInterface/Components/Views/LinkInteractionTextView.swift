@@ -65,12 +65,12 @@ final class LinkInteractionTextView: UITextView {
     /// Returns an alert controller configured to open the given URL.
     private func confirmationAlert(for url: URL) -> UIAlertController {
         let alert = UIAlertController(
-            title: L10n.Localizable.Content.Message.OpenLinkAlert.title,
-            message: L10n.Localizable.Content.Message.OpenLinkAlert.message(url.absoluteString),
+            title: "content.message.open_link_alert.title".localized,
+            message: "content.message.open_link_alert.message".localized(args: url.absoluteString),
             preferredStyle: .alert
         )
 
-        let okAction = UIAlertAction(title: L10n.Localizable.Content.Message.OpenLinkAlert.open, style: .default) { _ in
+        let okAction = UIAlertAction(title: "content.message.open_link_alert.open".localized, style: .default) { _ in
             _ = self.interactionDelegate?.textView(self, open: url)
         }
 

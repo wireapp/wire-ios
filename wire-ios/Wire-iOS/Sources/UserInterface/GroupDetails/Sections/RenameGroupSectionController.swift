@@ -74,7 +74,7 @@ final class RenameGroupSectionController: NSObject, CollectionViewSectionControl
 
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         let view = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: "SectionFooter", for: indexPath)
-        (view as? SectionFooter)?.titleLabel.text = L10n.Localizable.Participants.Section.Name.footer(ZMConversation.maxParticipants)
+        (view as? SectionFooter)?.titleLabel.text = "participants.section.name.footer".localized(args: ZMConversation.maxParticipants)
         return view
     }
 
@@ -88,7 +88,7 @@ final class RenameGroupSectionController: NSObject, CollectionViewSectionControl
             user.hasTeam
         else { return .zero }
 
-        sizingFooter.titleLabel.text = L10n.Localizable.Participants.Section.Name.footer(ZMConversation.maxParticipants)
+        sizingFooter.titleLabel.text = "participants.section.name.footer".localized(args: ZMConversation.maxParticipants)
         sizingFooter.size(fittingWidth: collectionView.bounds.width)
         return sizingFooter.bounds.size
     }

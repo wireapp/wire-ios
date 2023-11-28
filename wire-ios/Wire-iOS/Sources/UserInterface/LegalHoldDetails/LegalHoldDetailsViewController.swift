@@ -67,7 +67,7 @@ final class LegalHoldDetailsViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        title = L10n.Localizable.Legalhold.Header.title.localizedUppercase
+        title = "legalhold.header.title".localized.localizedUppercase
         view.backgroundColor = SemanticColors.View.backgroundDefault
     }
 

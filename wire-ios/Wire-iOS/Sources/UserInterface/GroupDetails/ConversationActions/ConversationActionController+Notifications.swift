@@ -24,7 +24,7 @@ enum NotificationResult: CaseIterable {
     case everything, mentionsAndReplies, nothing, cancel
 
     static var title: String {
-        return L10n.Localizable.Meta.Menu.ConfigureNotification.dialogMessage
+        return "meta.menu.configure_notification.dialog_message".localized
     }
 
     var mutedMessageTypes: MutedMessageTypes? {

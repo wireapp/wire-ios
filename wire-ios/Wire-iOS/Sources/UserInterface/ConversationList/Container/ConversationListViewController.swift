@@ -408,7 +408,7 @@ private extension NSAttributedString {
 
         paragraphStyle.paragraphSpacing = 4
 
-        let titleString = L10n.Localizable.ConversationList.Empty.AllArchived.message
+        let titleString = "conversation_list.empty.all_archived.message".localized
 
         let attributedString = NSAttributedString(string: titleString.uppercased(), attributes: titleAttributes)
 

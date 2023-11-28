@@ -41,14 +41,14 @@ final class AppLockChangeWarningViewController: UIViewController {
     private lazy var confirmButton: Button = {
         let button = Button(style: .primaryTextButtonStyle, cornerRadius: 16, fontSpec: .mediumSemiboldFont)
         button.accessibilityIdentifier = "warning_screen.button.confirm"
-        button.setTitle(L10n.Localizable.General.confirm, for: .normal)
+        button.setTitle("general.confirm".localized, for: .normal)
         button.addTarget(self, action: #selector(confirmButtonTapped), for: .touchUpInside)
         return button
     }()
 
     private lazy var titleLabel: UILabel = {
         let label = UILabel.createMultiLineCenterdLabel()
-        label.text = L10n.Localizable.WarningScreen.titleLabel
+        label.text = "warning_screen.title_label".localized
         label.accessibilityIdentifier = "warning_screen.label.title"
         return label
     }()
@@ -64,9 +64,9 @@ final class AppLockChangeWarningViewController: UIViewController {
 
     private var messageLabelText: String {
         if isAppLockActive {
-            return L10n.Localizable.WarningScreen.MainInfo.forcedApplock + "\n\n" + L10n.Localizable.WarningScreen.InfoLabel.forcedApplock
+            return "warning_screen.main_info.forced_applock".localized + "\n\n" + "warning_screen.info_label.forced_applock".localized
         } else {
-            return L10n.Localizable.WarningScreen.InfoLabel.nonForcedApplock
+            return "warning_screen.info_label.non_forced_applock".localized
         }
     }
 

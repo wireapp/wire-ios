@@ -24,6 +24,7 @@ private struct LegalHoldParticipantsSectionViewModel {
     let participants: [UserType]
 
     var sectionAccesibilityIdentifier = "label.groupdetails.participants"
+
     var sectionTitle: String {
         return "legalhold.participants.section.title".localized(uppercased: true, args: participants.count)
     }

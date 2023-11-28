@@ -368,8 +368,8 @@ final class CallViewController: UIViewController {
             return
         }
         let alert = UIAlertController.alertWithOKButton(
-            title: L10n.Localizable.Call.Video.TooMany.Alert.title,
-            message: L10n.Localizable.Call.Video.TooMany.Alert.message
+            title: "call.video.too_many.alert.title".localized,
+            message: "call.video.too_many.alert.message".localized
         )
 
         present(alert, animated: true)

@@ -31,13 +31,13 @@ extension UserType where Self: SelfLegalHoldSubject {
 
     func makeLegalHoldInputRequest(for request: LegalHoldRequest, cancellationHandler: @escaping () -> Void, inputHandler: @escaping (String?) -> Void) -> UserInputRequest {
         let fingerprintString = self.fingerprint?.fingerprintStringWithSpaces ?? "<fingerprint unavailable>"
-        var legalHoldMessage = L10n.Localizable.LegalholdRequest.Alert.detail(fingerprintString)
+        var legalHoldMessage = "legalhold_request.alert.detail".localized(args: fingerprintString)
 
         var inputConfiguration: UserInputRequest.InputConfiguration?
 
         if !usesCompanyLogin {
             inputConfiguration = UserInputRequest.InputConfiguration(
-                placeholder: L10n.Localizable.Password.placeholder,
+                placeholder: "password.placeholder".localized,
                 prefilledText: nil,
                 isSecure: true,
                 textContentType: .password,
@@ -46,14 +46,14 @@ extension UserType where Self: SelfLegalHoldSubject {
             )
 
             legalHoldMessage += "\n"
-            legalHoldMessage += L10n.Localizable.LegalholdRequest.Alert.Detail.enterPassword
+            legalHoldMessage += "legalhold_request.alert.detail.enter_password".localized
         }
 
         return UserInputRequest(
-            title: L10n.Localizable.LegalholdRequest.Alert.title,
+            title: "legalhold_request.alert.title".localized,
             message: legalHoldMessage,
-            continueActionTitle: L10n.Localizable.General.accept,
-            cancelActionTitle: L10n.Localizable.General.skip,
+            continueActionTitle: "general.accept".localized,
+            cancelActionTitle: "general.skip".localized,
             inputConfiguration: inputConfiguration,
             completionHandler: inputHandler,
             cancellationHandler: cancellationHandler

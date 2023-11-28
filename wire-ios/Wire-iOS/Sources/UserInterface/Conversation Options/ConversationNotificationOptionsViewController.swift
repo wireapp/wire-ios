@@ -124,7 +124,7 @@ extension ConversationNotificationOptionsViewController: UICollectionViewDelegat
                                                                                for: indexPath)
 
             guard let view = dequeuedView as? SectionFooter else { return UICollectionReusableView(frame: .zero) }
-            view.titleLabel.text = L10n.Localizable.GroupDetails.NotificationOptionsCell.description
+            view.titleLabel.text = "group_details.notification_options_cell.description".localized
             return view
         }
     }
@@ -136,7 +136,7 @@ extension ConversationNotificationOptionsViewController: UICollectionViewDelegat
 
         guard let view = dequeuedView as? SectionFooter else { return .zero }
 
-        view.titleLabel.text = L10n.Localizable.GroupDetails.NotificationOptionsCell.description
+        view.titleLabel.text = "group_details.notification_options_cell.description".localized
         view.size(fittingWidth: collectionView.bounds.width)
         return view.bounds.size
     }

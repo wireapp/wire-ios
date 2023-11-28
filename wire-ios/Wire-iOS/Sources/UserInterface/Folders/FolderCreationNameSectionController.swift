@@ -37,7 +37,7 @@ class FolderCreationNameSectionController: NSObject, CollectionViewSectionContro
     private var footer = SectionFooter(frame: .zero)
 
     private lazy var footerText: String = {
-        return L10n.Localizable.Folder.Creation.Name.footer
+        return "folder.creation.name.footer".localized
     }()
 
     private var header = SectionHeader(frame: .zero)

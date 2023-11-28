@@ -19,12 +19,12 @@ import Foundation
 import UIKit
 
 final class WipeCompletionViewController: UIViewController {
-    let wireLogoInfoView = WireLogoInfoView(title: L10n.Localizable.WipeDatabaseCompletion.title, subtitle: L10n.Localizable.WipeDatabaseCompletion.subtitle)
+    let wireLogoInfoView = WireLogoInfoView(title: "wipe_database_completion.title".localized, subtitle: "wipe_database_completion.subtitle".localized)
 
     private lazy var loginButton: Button = {
         let button = Button(style: .accentColorTextButtonStyle, cornerRadius: 16, fontSpec: .smallSemiboldFont)
 
-        button.setTitle(L10n.Localizable.Signin.confirm, for: .normal)
+        button.setTitle("signin.confirm".localized, for: .normal)
 
         button.addTarget(self, action: #selector(onLoginCodeButtonPressed(sender:)), for: .touchUpInside)
 

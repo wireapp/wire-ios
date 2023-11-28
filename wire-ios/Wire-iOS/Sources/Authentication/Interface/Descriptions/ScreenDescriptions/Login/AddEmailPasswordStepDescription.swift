@@ -36,8 +36,8 @@ class AddEmailPasswordStepDescription: DefaultValidatingStepDescription {
 
     init() {
         backButton = BackButtonDescription()
-        headline = L10n.Localizable.Registration.AddEmailPassword.Hero.title
-        subtext = L10n.Localizable.Registration.AddEmailPassword.Hero.paragraph
+        headline = "registration.add_email_password.hero.title".localized
+        subtext = "registration.add_email_password.hero.paragraph".localized
         initialValidation = .info(PasswordRuleSet.localizedErrorMessage)
         footerView = nil
 

@@ -26,7 +26,7 @@ extension ConversationContentViewController {
         if let message = message {
 
             if message.hasBeenDeleted {
-                presentAlertWithOKButton(message: L10n.Localizable.Conversation.Alert.messageDeleted)
+                presentAlertWithOKButton(message: "conversation.alert.message_deleted".localized)
             } else {
                 dataSource.loadMessages(near: message) { index in
 

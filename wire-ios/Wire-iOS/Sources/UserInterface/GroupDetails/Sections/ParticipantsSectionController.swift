@@ -83,9 +83,9 @@ private struct ParticipantsSectionViewModel {
     var footerTitle: String {
         switch conversationRole {
         case .admin:
-            return L10n.Localizable.Participants.Section.Admins.footer
+            return "participants.section.admins.footer".localized
         case .member:
-            return L10n.Localizable.Participants.Section.Members.footer
+            return "participants.section.members.footer".localized
         }
     }
 

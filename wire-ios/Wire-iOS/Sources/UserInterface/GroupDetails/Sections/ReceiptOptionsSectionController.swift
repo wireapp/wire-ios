@@ -120,7 +120,7 @@ final class ReceiptOptionsSectionController: GroupDetailsSectionController {
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {
 
-        footerView.titleLabel.text = L10n.Localizable.GroupDetails.ReceiptOptionsCell.description
+        footerView.titleLabel.text = "group_details.receipt_options_cell.description".localized
         footerView.size(fittingWidth: collectionView.bounds.width)
         return footerView.bounds.size
     }
@@ -129,7 +129,7 @@ final class ReceiptOptionsSectionController: GroupDetailsSectionController {
         guard kind == UICollectionView.elementKindSectionFooter else { return super.collectionView(collectionView, viewForSupplementaryElementOfKind: kind, at: indexPath)}
 
         let view = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: "SectionFooter", for: indexPath)
-        (view as? SectionFooter)?.titleLabel.text = L10n.Localizable.GroupDetails.ReceiptOptionsCell.description
+        (view as? SectionFooter)?.titleLabel.text = "group_details.receipt_options_cell.description".localized
         return view
     }
 

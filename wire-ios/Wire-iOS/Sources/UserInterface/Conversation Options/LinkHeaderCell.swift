@@ -39,10 +39,10 @@ final class LinkHeaderCell: UITableViewCell, CellConfigurationConfigurable {
     private func setupViews() {
         [topSeparator, titleLabel, subtitleLabel].forEach(contentView.addSubview)
         titleLabel.font = FontSpec(.small, .semibold).font
-        titleLabel.text = L10n.Localizable.GuestRoom.Link.Header.title.uppercased()
+        titleLabel.text = "guest_room.link.header.title".localized(uppercased: true)
         subtitleLabel.numberOfLines = 0
         subtitleLabel.font = FontSpec(.medium, .regular).font
-        subtitleLabel.text = L10n.Localizable.GuestRoom.Link.Header.subtitle
+        subtitleLabel.text = "guest_room.link.header.subtitle".localized
     }
 
     private func createConstraints() {

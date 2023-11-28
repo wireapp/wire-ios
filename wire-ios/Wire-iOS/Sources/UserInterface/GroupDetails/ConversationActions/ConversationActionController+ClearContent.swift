@@ -44,7 +44,7 @@ enum ClearContentResult {
     }
 
     static var title: String {
-        return L10n.Localizable.Meta.Menu.DeleteContent.dialogMessage
+        return "meta.menu.delete_content.dialog_message".localized
     }
 
     static func options(for conversation: ZMConversation) -> [ClearContentResult] {

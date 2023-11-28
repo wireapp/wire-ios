@@ -51,8 +51,8 @@ class AuthenticationNeedsReauthenticationErrorHandler: AuthenticationEventHandle
 
         let nextStep = AuthenticationFlowStep.reauthenticate(credentials: credentials, numberOfAccounts: numberOfAccounts, isSignedOut: isSignedOut)
 
-        let alert = AuthenticationCoordinatorAlert(title: L10n.Localizable.Registration.Signin.Alert.PasswordNeeded.title,
-                                                   message: L10n.Localizable.Registration.Signin.Alert.PasswordNeeded.message,
+        let alert = AuthenticationCoordinatorAlert(title: "registration.signin.alert.password_needed.title".localized,
+                                                   message: "registration.signin.alert.password_needed.message".localized,
                                                    actions: [.ok])
 
         return [.hideLoadingView, .transition(nextStep, mode: .reset), .presentAlert(alert)]

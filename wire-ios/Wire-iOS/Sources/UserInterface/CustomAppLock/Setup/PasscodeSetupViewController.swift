@@ -34,10 +34,10 @@ final class PasscodeSetupViewController: UIViewController {
         var infoLabelString: String {
             switch self {
             case .createPasscode:
-                return L10n.Localizable.CreatePasscode.infoLabel
+                return "create_passcode.info_label".localized
 
             case .forcedForTeam:
-                return L10n.Localizable.WarningScreen.MainInfo.forcedApplock + "\n\n" + L10n.Localizable.CreatePasscode.infoLabelForcedApplock
+                return "warning_screen.main_info.forced_applock".localized + "\n\n" + "create_passcode.info_label_forced_applock".localized
             }
         }
     }
@@ -56,7 +56,7 @@ final class PasscodeSetupViewController: UIViewController {
         let button = Button(style: .primaryTextButtonStyle, cornerRadius: 16, fontSpec: .mediumSemiboldFont)
         button.accessibilityIdentifier = "createPasscodeButton"
 
-        button.setTitle(L10n.Localizable.CreatePasscode.CreateButton.title, for: .normal)
+        button.setTitle("create_passcode.create_button.title".localized, for: .normal)
         button.isEnabled = false
 
         button.addTarget(self, action: #selector(onCreateCodeButtonPressed(sender:)), for: .touchUpInside)
@@ -66,7 +66,7 @@ final class PasscodeSetupViewController: UIViewController {
 
     lazy var passcodeTextField: ValidatedTextField = {
         let textField = ValidatedTextField.createPasscodeTextField(kind: .passcode(isNew: true), delegate: self, setNewColors: true)
-        textField.placeholder = L10n.Localizable.CreatePasscode.Textfield.placeholder
+        textField.placeholder = "create_passcode.textfield.placeholder".localized
         textField.delegate = self
 
         textField.addTarget(self, action: #selector(textFieldDidChange(textField:)), for: .editingChanged)
@@ -78,9 +78,9 @@ final class PasscodeSetupViewController: UIViewController {
         let label = UILabel.createMultiLineCenterdLabel()
         switch context {
         case .createPasscode:
-            label.text = L10n.Localizable.CreatePasscode.titleLabel
+            label.text = "create_passcode.title_label".localized
         case .forcedForTeam:
-            label.text = L10n.Localizable.WarningScreen.titleLabel
+            label.text = "warning_screen.title_label".localized
         }
 
         label.accessibilityIdentifier = "createPasscodeTitle"

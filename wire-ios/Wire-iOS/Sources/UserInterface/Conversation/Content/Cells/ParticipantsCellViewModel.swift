@@ -181,7 +181,7 @@ class ParticipantsCellViewModel {
         if user.isSelfUser {
             return "content.system.you_\(grammaticalCase(for: user))".localized
         } else {
-            return user.name ?? L10n.Localizable.Conversation.Status.someone
+            return user.name ?? "conversation.status.someone".localized
         }
     }
 
@@ -246,7 +246,7 @@ class ParticipantsCellViewModel {
 
     func warning() -> String? {
         guard showServiceUserWarning else { return nil }
-        return L10n.Localizable.Content.System.Services.warning
+        return "content.system.services.warning".localized
     }
 
     private func formatter(for message: ZMConversationMessage) -> ParticipantsStringFormatter? {

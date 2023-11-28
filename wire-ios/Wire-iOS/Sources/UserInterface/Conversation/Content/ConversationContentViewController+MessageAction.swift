@@ -161,11 +161,11 @@ extension ConversationContentViewController {
     }
 
     private func presentDownloadNecessaryAlert(for message: ZMConversationMessage) {
-        let alertMessage = L10n.Localizable.DigitalSignature.Alert.downloadNecessary
+        let alertMessage = "digital_signature.alert.download_necessary".localized
         let alertController = UIAlertController(title: "",
                                                 message: alertMessage,
                                                 preferredStyle: .alert)
-        let cancelAction = UIAlertAction(title: L10n.Localizable.General.close,
+        let cancelAction = UIAlertAction(title: "general.close".localized,
                                          style: .default)
         alertController.addAction(cancelAction)
         present(alertController, animated: true)
@@ -255,16 +255,16 @@ extension ConversationContentViewController: SignatureObserver {
         var message: String?
         switch errorType {
         case .noConsentURL:
-            message = L10n.Localizable.DigitalSignature.Alert.Error.noConsentUrl
+            message = "digital_signature.alert.error.no_consent_url".localized
         case .retrieveFailed:
-            message = L10n.Localizable.DigitalSignature.Alert.Error.noSignature
+            message = "digital_signature.alert.error.no_signature".localized
         }
 
         let alertController = UIAlertController(title: "",
                                                 message: message,
                                                 preferredStyle: .alert)
 
-        let closeAction = UIAlertAction(title: L10n.Localizable.General.close,
+        let closeAction = UIAlertAction(title: "general.close".localized,
                                         style: .default)
 
         alertController.addAction(closeAction)

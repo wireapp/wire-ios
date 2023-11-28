@@ -37,7 +37,7 @@ final class ConversationCreateNameSectionController: NSObject, CollectionViewSec
     private let selfUser: UserType
 
     private lazy var footerText: String = {
-        return L10n.Localizable.Participants.Section.Name.footer(ZMConversation.maxParticipants)
+        return "participants.section.name.footer".localized(args: ZMConversation.maxParticipants)
     }()
 
     init(selfUser: UserType,

@@ -84,7 +84,7 @@ extension ConversationInputBarViewController {
         }
 
         controller.addAction(UIAlertAction(icon: .movie,
-                                           title: L10n.Localizable.Content.File.uploadVideo,
+                                           title: "content.file.upload_video".localized,
                                            tintColor: view.tintColor,
                                            handler: uploadVideoHandler))
 
@@ -93,7 +93,7 @@ extension ConversationInputBarViewController {
         }
 
         controller.addAction(UIAlertAction(icon: .cameraShutter,
-                                           title: L10n.Localizable.Content.File.takeVideo,
+                                           title: "content.file.take_video".localized,
                                            tintColor: view.tintColor,
                                            handler: takeVideoHandler))
 
@@ -114,7 +114,7 @@ extension ConversationInputBarViewController {
         }
 
         controller.addAction(UIAlertAction(icon: .ellipsis,
-                                           title: L10n.Localizable.Content.File.browse, tintColor: view.tintColor,
+                                           title: "content.file.browse".localized, tintColor: view.tintColor,
                                            handler: browseHandler))
 
         controller.addAction(.cancel())

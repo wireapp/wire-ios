@@ -50,7 +50,7 @@ class LogInStepDescription: AuthenticationStepDescription {
     init() {
         backButton = BackButtonDescription()
         mainView = EmptyViewDescription()
-        headline = L10n.Localizable.Registration.Signin.title
+        headline = "registration.signin.title".localized
         subtext = nil
         secondaryView = nil
         footerView = nil

@@ -44,7 +44,7 @@ final class ConversationListOnboardingHint: UIView {
 
         messageLabel.numberOfLines = 0
         messageLabel.textAlignment = .left
-        messageLabel.text = L10n.Localizable.ConversationList.Empty.NoContacts.message
+        messageLabel.text = "conversation_list.empty.no_contacts.message".localized
 
         [arrowView, messageLabel].forEach(self.addSubview)
 

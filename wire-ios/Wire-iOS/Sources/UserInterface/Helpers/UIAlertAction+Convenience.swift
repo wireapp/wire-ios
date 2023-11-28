@@ -22,7 +22,7 @@ import WireCommonComponents
 extension UIAlertAction {
     static func cancel(_ completion: Completion? = nil) -> UIAlertAction {
         return UIAlertAction(
-            title: L10n.Localizable.General.cancel,
+            title: "general.cancel".localized,
             style: .cancel,
             handler: { _ in completion?() }
         )
@@ -30,7 +30,7 @@ extension UIAlertAction {
 
     static func confirm(style: Style = .cancel, handler: ((UIAlertAction) -> Void)? = nil) -> UIAlertAction {
         return UIAlertAction(
-            title: L10n.Localizable.General.confirm,
+            title: "general.confirm".localized,
             style: style,
             handler: handler
         )

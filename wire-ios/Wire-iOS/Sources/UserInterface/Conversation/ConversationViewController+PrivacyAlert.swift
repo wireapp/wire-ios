@@ -30,13 +30,13 @@ extension ConversationViewController {
         var localizedTitle: String {
             switch self {
             case .verifyDevices:
-                return L10n.Localizable.Meta.Degraded.verifyDevicesButton
+                return "meta.degraded.verify_devices_button".localized
             case .sendAnyway:
-                return L10n.Localizable.Meta.Degraded.sendAnywayButton
+                return "meta.degraded.send_anyway_button".localized
             case .legalHoldDetails:
-                return L10n.Localizable.Meta.Legalhold.infoButton
+                return "meta.legalhold.info_button".localized
             case .cancel:
-                return L10n.Localizable.General.cancel
+                return "general.cancel".localized
             }
         }
 
@@ -55,11 +55,11 @@ extension ConversationViewController {
     /// Presents an alert in response to a change in privacy (legal hold and/or client verification).
     func presentPrivacyWarningAlert(for changeInfo: ConversationChangeInfo) {
         let title: String
-        let message = L10n.Localizable.Meta.Degraded.dialogMessage
+        let message = "meta.degraded.dialog_message".localized
         var actions: [PrivacyAlertAction] = []
 
         if conversation.legalHoldStatus == .pendingApproval {
-            title = L10n.Localizable.Meta.Legalhold.sendAlertTitle
+            title = "meta.legalhold.send_alert_title".localized
             actions.append(.legalHoldDetails)
 
             if conversation.securityLevel == .secureWithIgnored {

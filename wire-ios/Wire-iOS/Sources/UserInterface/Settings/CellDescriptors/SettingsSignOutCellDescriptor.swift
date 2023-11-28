@@ -25,7 +25,7 @@ final class SettingsSignOutCellDescriptor: SettingsExternalScreenCellDescriptor 
     var requestPasswordController: RequestPasswordController?
 
     init() {
-        super.init(title: L10n.Localizable.Self.signOut,
+        super.init(title: "self.sign_out".localized,
                    isDestructive: true,
                    presentationStyle: .modal,
                    identifier: nil,
@@ -64,11 +64,11 @@ final class SettingsSignOutCellDescriptor: SettingsExternalScreenCellDescriptor 
         var viewController: UIViewController?
 
         if selfUser.emailAddress == nil || selfUser.usesCompanyLogin {
-            let alert = UIAlertController(title: L10n.Localizable.Self.Settings.AccountDetails.LogOut.Alert.title,
-                                          message: L10n.Localizable.Self.Settings.AccountDetails.LogOut.Alert.message,
+            let alert = UIAlertController(title: "self.settings.account_details.log_out.alert.title".localized,
+                                          message: "self.settings.account_details.log_out.alert.message".localized,
                                           preferredStyle: .alert)
-            let actionCancel = UIAlertAction(title: L10n.Localizable.General.cancel, style: .cancel, handler: nil)
-            let actionLogout = UIAlertAction(title: L10n.Localizable.General.ok, style: .destructive, handler: { [weak self] _ in
+            let actionCancel = UIAlertAction(title: "general.cancel".localized, style: .cancel, handler: nil)
+            let actionLogout = UIAlertAction(title: "general.ok".localized, style: .destructive, handler: { [weak self] _ in
                 self?.logout()
             })
             alert.addAction(actionCancel)

@@ -31,11 +31,11 @@ extension UIAlertController {
         }
 
         var action: String {
-            return L10n.Localizable.Login.Sso.Alert.action
+            return "login.sso.alert.action".localized
         }
 
         var title: String {
-            return L10n.Localizable.Login.Sso.Alert.title
+            return "login.sso.alert.title".localized
         }
 
         var message: String {
@@ -66,15 +66,15 @@ extension UIAlertController {
             case .invalidFormat:
                 return "login.sso.error.alert.invalid_format.message.\(copy.rawValue)".localized
             case .domainNotRegistered:
-                return L10n.Localizable.Login.Sso.Error.Alert.DomainNotRegistered.message
+                return "login.sso.error.alert.domain_not_registered.message".localized
             case .domainAssociatedWithWrongServer:
-                return L10n.Localizable.Login.Sso.Error.Alert.DomainAssociatedWithWrongServer.message
+                return "login.sso.error.alert.domain_associated_with_wrong_server.message".localized
             case .invalidCode:
-                return L10n.Localizable.Login.Sso.Error.Alert.InvalidCode.message
+                return "login.sso.error.alert.invalid_code.message".localized
             case .invalidStatus(let status):
-                return L10n.Localizable.Login.Sso.Error.Alert.InvalidStatus.message(String(status))
+                return "login.sso.error.alert.invalid_status.message".localized(args: String(status))
             case .unknown:
-                return L10n.Localizable.Login.Sso.Error.Alert.Unknown.message
+                return "login.sso.error.alert.unknown.message".localized
             }
         }
     }
@@ -124,8 +124,8 @@ extension UIAlertController {
     /// Creates an `UIAlertController` warning about no network connection.
     static func noInternetError() -> UIAlertController {
         let controller = UIAlertController(
-            title: L10n.Localizable.Team.Invite.Error.noInternet,
-            message: L10n.Localizable.Login.Sso.Error.Offline.Alert.message,
+            title: "team.invite.error.no_internet".localized,
+            message: "login.sso.error.offline.alert.message".localized,
             preferredStyle: .alert
         )
 

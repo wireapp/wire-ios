@@ -103,7 +103,7 @@ final class EphemeralTimeoutFormatter {
 
     func string(from interval: TimeInterval) -> String? {
         return timeString(from: interval).map {
-            L10n.Localizable.Content.System.ephemeralTimeRemaining($0)
+            "content.system.ephemeral_time_remaining".localized(args: $0)
         }
     }
 

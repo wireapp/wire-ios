@@ -105,7 +105,7 @@ extension SettingsCellDescriptorFactory {
 
         return SettingsSectionDescriptor(
             cellDescriptors: cellDescriptors,
-            header: L10n.Localizable.Self.Settings.AccountDetailsGroup.Info.title,
+            header: "self.settings.account_details_group.info.title".localized,
             footer: nil
         )
     }
@@ -113,7 +113,7 @@ extension SettingsCellDescriptorFactory {
     func appearanceSection() -> SettingsSectionDescriptorType {
         return SettingsSectionDescriptor(
             cellDescriptors: [pictureElement(), colorElement()],
-            header: L10n.Localizable.Self.Settings.AccountAppearanceGroup.title
+            header: "self.settings.account_appearance_group.title".localized
         )
     }
 
@@ -130,22 +130,22 @@ extension SettingsCellDescriptorFactory {
     func privacySection() -> SettingsSectionDescriptorType {
         return SettingsSectionDescriptor(
             cellDescriptors: [readReceiptsEnabledElement()],
-            header: L10n.Localizable.Self.Settings.PrivacySectionGroup.title,
-            footer: L10n.Localizable.Self.Settings.PrivacySectionGroup.subtitle
+            header: "self.settings.privacy_section_group.title".localized,
+            footer: "self.settings.privacy_section_group.subtitle".localized
         )
     }
 
     func personalInformationSection(isTeamMember: Bool) -> SettingsSectionDescriptorType {
         return SettingsSectionDescriptor(
             cellDescriptors: [dateUsagePermissionsElement(isTeamMember: isTeamMember)],
-            header: L10n.Localizable.Self.Settings.AccountPersonalInformationGroup.title
+            header: "self.settings.account_personal_information_group.title".localized
         )
     }
 
     func conversationsSection() -> SettingsSectionDescriptorType {
         return SettingsSectionDescriptor(
             cellDescriptors: [backUpElement()],
-            header: L10n.Localizable.Self.Settings.Conversations.title
+            header: "self.settings.conversations.title".localized
         )
     }
 
@@ -157,7 +157,7 @@ extension SettingsCellDescriptorFactory {
 
         return SettingsSectionDescriptor(
             cellDescriptors: cellDescriptors,
-            header: L10n.Localizable.Self.Settings.AccountDetails.Actions.title,
+            header: "self.settings.account_details.actions.title".localized,
             footer: .none
         )
     }
@@ -181,7 +181,7 @@ extension SettingsCellDescriptorFactory {
     func emailElement(enabled: Bool = true, userSession: UserSession) -> SettingsCellDescriptorType {
         if enabled {
             return SettingsExternalScreenCellDescriptor(
-                title: L10n.Localizable.Self.Settings.AccountSection.Email.title,
+                title: "self.settings.account_section.email.title".localized,
                 isDestructive: false,
                 presentationStyle: .navigation,
                 presentationAction: { () -> (UIViewController?) in
@@ -195,7 +195,7 @@ extension SettingsCellDescriptorFactory {
                     if let email = ZMUser.selfUser()?.emailAddress, !email.isEmpty {
                         return SettingsCellPreview.text(email)
                     } else {
-                        return SettingsCellPreview.text(L10n.Localizable.Self.addEmailPassword)
+                        return SettingsCellPreview.text("self.add_email_password".localized)
                     }
                 },
                 accessoryViewMode: .alwaysHide
@@ -308,7 +308,7 @@ extension SettingsCellDescriptorFactory {
 
     func backUpElement() -> SettingsCellDescriptorType {
         return SettingsExternalScreenCellDescriptor(
-            title: L10n.Localizable.Self.Settings.HistoryBackup.title,
+            title: "self.settings.history_backup.title".localized,
             isDestructive: false,
             presentationStyle: .navigation,
             presentationAction: {
@@ -320,11 +320,11 @@ extension SettingsCellDescriptorFactory {
                     return BackupViewController.init(backupSource: SessionManager.shared!)
                 } else {
                     let alert = UIAlertController(
-                        title: L10n.Localizable.Self.Settings.HistoryBackup.SetEmail.title,
-                        message: L10n.Localizable.Self.Settings.HistoryBackup.SetEmail.message,
+                        title: "self.settings.history_backup.set_email.title".localized,
+                        message: "self.settings.history_backup.set_email.message".localized,
                         preferredStyle: .alert
                     )
-                    let actionCancel = UIAlertAction(title: L10n.Localizable.General.ok, style: .cancel, handler: nil)
+                    let actionCancel = UIAlertAction(title: "general.ok".localized, style: .cancel, handler: nil)
                     alert.addAction(actionCancel)
 
                     guard let controller = UIApplication.shared.topmostViewController(onlyFullScreen: false) else { return nil }
@@ -340,7 +340,7 @@ extension SettingsCellDescriptorFactory {
     }
 
     func resetPasswordElement() -> SettingsCellDescriptorType {
-        let resetPasswordTitle = L10n.Localizable.Self.Settings.PasswordResetMenu.title
+        let resetPasswordTitle = "self.settings.password_reset_menu.title".localized
         return SettingsExternalScreenCellDescriptor(title: resetPasswordTitle, isDestructive: false, presentationStyle: .modal, presentationAction: {
             return BrowserViewController(url: URL.wr_passwordReset.appendingLocaleParameter)
         }, previewGenerator: .none)
@@ -349,13 +349,13 @@ extension SettingsCellDescriptorFactory {
     func deleteAccountButtonElement() -> SettingsCellDescriptorType {
         let presentationAction: () -> UIViewController = {
             let alert = UIAlertController(
-                title: L10n.Localizable.Self.Settings.AccountDetails.DeleteAccount.Alert.title,
-                message: L10n.Localizable.Self.Settings.AccountDetails.DeleteAccount.Alert.message,
+                title: "self.settings.account_details.delete_account.alert.title".localized,
+                message: "self.settings.account_details.delete_account.alert.message".localized,
                 preferredStyle: .alert
             )
-            let actionCancel = UIAlertAction(title: L10n.Localizable.General.cancel, style: .cancel, handler: nil)
+            let actionCancel = UIAlertAction(title: "general.cancel".localized, style: .cancel, handler: nil)
             alert.addAction(actionCancel)
-            let actionDelete = UIAlertAction(title: L10n.Localizable.General.ok, style: .destructive) { _ in
+            let actionDelete = UIAlertAction(title: "general.ok".localized, style: .destructive) { _ in
                 ZMUserSession.shared()?.enqueue {
                     ZMUserSession.shared()?.initiateUserDeletion()
                 }
@@ -365,7 +365,7 @@ extension SettingsCellDescriptorFactory {
         }
 
         return SettingsExternalScreenCellDescriptor(
-            title: L10n.Localizable.Self.Settings.AccountDetails.DeleteAccount.title,
+            title: "self.settings.account_details.delete_account.title".localized,
             isDestructive: true,
             presentationStyle: .modal,
             presentationAction: presentationAction

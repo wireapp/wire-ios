@@ -62,8 +62,8 @@ final class VerifyEmailStepDescription: AuthenticationStepDescription {
         self.email = email
         backButton = nil
         mainView = VerificationCodeFieldDescription()
-        headline = L10n.Localizable.Team.ActivationCode.headline
-        subtext = L10n.Localizable.Team.ActivationCode.subheadline(email)
+        headline = "team.activation_code.headline".localized
+        subtext = "team.activation_code.subheadline".localized(args: email)
         secondaryView = nil
         footerView = VerifyEmailStepSecondaryView(canChangeEmail: canChangeEmail)
     }

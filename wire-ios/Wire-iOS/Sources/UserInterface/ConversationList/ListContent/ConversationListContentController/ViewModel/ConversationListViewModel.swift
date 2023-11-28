@@ -93,13 +93,13 @@ final class ConversationListViewModel: NSObject {
                 case .conversations:
                     return nil
                 case .contactRequests:
-                    return L10n.Localizable.List.Section.requests
+                    return "list.section.requests".localized
                 case .contacts:
-                    return L10n.Localizable.List.Section.contacts
+                    return "list.section.contacts".localized
                 case .groups:
-                    return L10n.Localizable.List.Section.groups
+                    return "list.section.groups".localized
                 case .favorites:
-                    return L10n.Localizable.List.Section.favorites
+                    return "list.section.favorites".localized
                 case .folder(label: let label):
                     return label.name
                 }

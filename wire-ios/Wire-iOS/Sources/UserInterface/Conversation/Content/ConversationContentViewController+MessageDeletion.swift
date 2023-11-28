@@ -162,22 +162,22 @@ private enum DeletionConfiguration {
 private extension UIAlertController {
 
     static func forMessageDeletion(with configuration: DeletionConfiguration, selectedAction: @escaping (AlertAction, UIAlertController) -> Void) -> UIAlertController {
-        let alertTitle = L10n.Localizable.Message.DeleteDialog.message
+        let alertTitle = "message.delete_dialog.message".localized
         let alert = UIAlertController(title: alertTitle, message: nil, preferredStyle: .actionSheet)
 
         if configuration.showHide {
-            let hideTitle = L10n.Localizable.Message.DeleteDialog.Action.hide
+            let hideTitle = "message.delete_dialog.action.hide".localized
             let hideAction = UIAlertAction(title: hideTitle, style: .destructive) { [unowned alert] _ in selectedAction(.delete(.local), alert) }
             alert.addAction(hideAction)
         }
 
         if configuration.showDelete {
-            let deleteTitle = L10n.Localizable.Message.DeleteDialog.Action.delete
+            let deleteTitle = "message.delete_dialog.action.delete".localized
             let deleteForEveryoneAction = UIAlertAction(title: deleteTitle, style: .destructive) { [unowned alert] _ in selectedAction(.delete(.everywhere), alert) }
             alert.addAction(deleteForEveryoneAction)
         }
 
-        let cancelTitle = L10n.Localizable.Message.DeleteDialog.Action.cancel
+        let cancelTitle = "message.delete_dialog.action.cancel".localized
         let cancelAction = UIAlertAction(title: cancelTitle, style: .cancel) { [unowned alert] _ in selectedAction(.cancel, alert) }
         alert.addAction(cancelAction)
 

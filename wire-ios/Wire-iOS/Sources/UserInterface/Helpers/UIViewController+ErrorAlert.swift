@@ -24,7 +24,7 @@ extension UIViewController {
 
     func showAlert(for error: LocalizedError, handler: AlertActionHandler? = nil) {
         present(UIAlertController.alertWithOKButton(title: error.errorDescription,
-                                                    message: error.failureReason ?? L10n.Localizable.Error.User.unkownError,
+                                                    message: error.failureReason ?? "error.user.unkown_error".localized,
                                                     okActionHandler: handler), animated: true)
 
     }
@@ -37,13 +37,13 @@ extension UIViewController {
             let code: ZMManagedObjectValidationErrorCode = ZMManagedObjectValidationErrorCode(rawValue: nsError.code) {
             switch code {
             case .tooLong:
-                message = L10n.Localizable.Error.Input.tooLong
+                message = "error.input.too_long".localized
             case .tooShort:
-                message = L10n.Localizable.Error.Input.tooLong
+                message = "error.input.too_short".localized
             case .emailAddressIsInvalid:
-                message = L10n.Localizable.Error.Email.invalid
+                message = "error.email.invalid".localized
             case .phoneNumberContainsInvalidCharacters:
-                message = L10n.Localizable.Error.Phone.invalid
+                message = "error.phone.invalid".localized
             default:
                 break
             }
@@ -53,41 +53,41 @@ extension UIViewController {
             case .noError:
                 message = ""
             case .needsCredentials:
-                message = L10n.Localizable.Error.User.needsCredentials
+                message = "error.user.needs_credentials".localized
             case .domainBlocked:
-                message = L10n.Localizable.Error.User.domainBlocked
+                message = "error.user.domain_blocked".localized
             case .invalidCredentials:
-                message = L10n.Localizable.Error.User.invalidCredentials
+                message = "error.user.invalid_credentials".localized
             case .accountIsPendingActivation:
-                message = L10n.Localizable.Error.User.accountPendingActivation
+                message = "error.user.account_pending_activation".localized
             case .networkError:
-                message = L10n.Localizable.Error.User.networkError
+                message = "error.user.network_error".localized
             case .emailIsAlreadyRegistered:
-                message = L10n.Localizable.Error.User.emailIsTaken
+                message = "error.user.email_is_taken".localized
             case .phoneNumberIsAlreadyRegistered:
-                message = L10n.Localizable.Error.User.phoneIsTaken
+                message = "error.user.phone_is_taken".localized
             case .invalidPhoneNumberVerificationCode, .invalidEmailVerificationCode, .invalidActivationCode:
-                message = L10n.Localizable.Error.User.phoneCodeInvalid
+                message = "error.user.phone_code_invalid".localized
             case .registrationDidFailWithUnknownError:
-                message = L10n.Localizable.Error.User.registrationUnknownError
+                message = "error.user.registration_unknown_error".localized
             case .invalidPhoneNumber:
-                message = L10n.Localizable.Error.Phone.invalid
+                message = "error.phone.invalid".localized
             case .invalidEmail:
-                message = L10n.Localizable.Error.Email.invalid
+                message = "error.email.invalid".localized
             case .codeRequestIsAlreadyPending:
-                message = L10n.Localizable.Error.User.phoneCodeTooMany
+                message = "error.user.phone_code_too_many".localized
             case .clientDeletedRemotely:
-                message = L10n.Localizable.Error.User.deviceDeletedRemotely
+                message = "error.user.device_deleted_remotely".localized
             case .lastUserIdentityCantBeDeleted:
-                message = L10n.Localizable.Error.User.lastIdentityCantBeDeleted
+                message = "error.user.last_identity_cant_be_deleted".localized
             case .accountSuspended:
-                message = L10n.Localizable.Error.User.accountSuspended
+                message = "error.user.account_suspended".localized
             case .accountLimitReached:
-                message = L10n.Localizable.Error.User.accountLimitReached
+                message = "error.user.account_limit_reached".localized
             case .unknownError:
-                message = L10n.Localizable.Error.User.unkownError
+                message = "error.user.unkown_error".localized
             default:
-                message = L10n.Localizable.Error.User.unkownError
+                message = "error.user.unkown_error".localized
             }
         } else {
             message = error.localizedDescription

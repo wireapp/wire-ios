@@ -55,7 +55,7 @@ final class OutgoingConnectionViewController: UIViewController {
         cancelButton.setIcon(.undo, size: .tiny, for: .normal)
         cancelButton.setIconColor(SemanticColors.Icon.foregroundDefault, for: .normal)
         cancelButton.setIconColor(SemanticColors.Icon.foregroundDefault.withAlphaComponent(0.4), for: .highlighted)
-        cancelButton.setTitle(L10n.Localizable.Profile.cancelConnectionButtonTitle, for: .normal)
+        cancelButton.setTitle("profile.cancel_connection_button_title".localized, for: .normal)
         cancelButton.titleLabel?.font = FontSpec.normalSemiboldFont.font!
         cancelButton.setTitleColor(SemanticColors.Label.textDefault, for: .normal)
         cancelButton.setTitleImageSpacing(24)

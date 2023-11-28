@@ -194,7 +194,7 @@ final class ArticleView: UIView {
 
     private func configure(withTwitterStatus twitterStatus: TwitterStatusMetadata) {
         let author = twitterStatus.author ?? "-"
-        authorLabel.attributedText = L10n.Localizable.TwitterStatus.onTwitter(author).attributedString.addAttributes(authorHighlightAttributes, toSubstring: author)
+        authorLabel.attributedText = "twitter_status.on_twitter".localized(args: author).attributedString.addAttributes(authorHighlightAttributes, toSubstring: author)
 
         messageLabel.text = twitterStatus.message
     }

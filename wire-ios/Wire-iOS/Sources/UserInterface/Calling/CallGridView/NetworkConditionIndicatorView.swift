@@ -57,7 +57,7 @@ final class NetworkConditionIndicatorView: UIView, RoundedViewProtocol {
     var networkQuality: NetworkQuality = .normal {
         didSet {
             label.attributedText = networkQuality.attributedString(color: SemanticColors.Label.textWhite)
-            accessibilityLabel = L10n.Localizable.Conversation.Status.poorConnection
+            accessibilityLabel = "conversation.status.poor_connection".localized
             layoutIfNeeded()
         }
     }

@@ -130,7 +130,7 @@ final class SavableImage: NSObject {
         log.error("error saving image: \(error)")
 
         let alert = UIAlertController(
-            title: L10n.Localizable.Library.Alert.PermissionWarning.title,
+            title: "library.alert.permission_warning.title".localized,
             message: (error as NSError).localizedDescription,
             alertAction: .ok(style: .cancel))
 

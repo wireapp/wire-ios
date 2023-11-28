@@ -29,7 +29,7 @@ final class ConversationCreateReceiptsSectionController: ConversationCreateSecti
         super.prepareForUse(in: collectionView)
         collectionView.flatMap(Cell.register)
         headerHeight = 24
-        footerText = L10n.Localizable.Conversation.Create.Receipts.subtitle
+        footerText = "conversation.create.receipts.subtitle".localized
     }
 }
 

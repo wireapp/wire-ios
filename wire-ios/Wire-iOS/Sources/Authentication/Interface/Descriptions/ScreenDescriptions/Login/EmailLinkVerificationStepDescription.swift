@@ -31,8 +31,8 @@ final class EmailLinkVerificationStepDescription: AuthenticationStepDescription 
     init(emailAddress: String) {
         backButton = BackButtonDescription()
         mainView = EmailLinkVerificationMainView()
-        headline = L10n.Localizable.Team.ActivationCode.headline
-        subtext = L10n.Localizable.Registration.VerifyEmail.instructions(emailAddress)
+        headline = "team.activation_code.headline".localized
+        subtext = "registration.verify_email.instructions".localized(args: emailAddress)
         secondaryView = nil
         footerView = VerifyEmailStepSecondaryView(canResend: false)
     }
@@ -57,7 +57,7 @@ final class EmailLinkVerificationMainView: NSObject, ViewDescriptor, ValueSubmis
         stack.addArrangedSubview(labelContainer)
 
         label.textAlignment = .center
-        label.text = L10n.Localizable.Registration.VerifyEmail.Resend.instructions
+        label.text = "registration.verify_email.resend.instructions".localized
         label.font = AuthenticationStepController.subtextFont
         label.textColor = UIColor.Team.subtitleColor
         label.numberOfLines = 0

@@ -44,7 +44,7 @@ enum LeaveResult: AlertResultConfiguration {
     }
 
     static var title: String {
-        return L10n.Localizable.Meta.leaveConversationDialogMessage
+        return "meta.leave_conversation_dialog_message".localized
     }
 
     static var all: [LeaveResult] {

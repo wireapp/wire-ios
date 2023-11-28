@@ -340,7 +340,7 @@ class UserCell: SeparatorCollectionViewCell, SectionListCellType {
             selfUser: selfUser)
 
         if user.isSelfUser, let title = attributedTitle {
-            attributedTitle = title + L10n.Localizable.UserCell.Title.youSuffix
+            attributedTitle = title + "user_cell.title.you_suffix".localized
         }
 
         titleLabel.attributedText = attributedTitle

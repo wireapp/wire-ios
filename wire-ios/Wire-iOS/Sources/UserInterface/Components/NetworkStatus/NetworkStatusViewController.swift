@@ -120,8 +120,8 @@ final class NetworkStatusViewController: UIViewController {
     }
 
     func showOfflineAlert() {
-        let offlineAlert = UIAlertController(title: L10n.Localizable.SystemStatusBar.NoInternet.title,
-                                             message: L10n.Localizable.SystemStatusBar.NoInternet.explanation,
+        let offlineAlert = UIAlertController(title: "system_status_bar.no_internet.title".localized,
+                                             message: "system_status_bar.no_internet.explanation".localized,
                                              alertAction: .confirm())
         offlineAlert.presentTopmost()
     }

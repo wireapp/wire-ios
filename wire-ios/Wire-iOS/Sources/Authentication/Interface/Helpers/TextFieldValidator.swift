@@ -104,40 +104,38 @@ extension TextFieldValidator.ValidationError: LocalizedError {
         case .tooShort(kind: let kind):
             switch kind {
             case .name:
-                return L10n.Localizable.Name.Guidance.tooshort
+                return "name.guidance.tooshort".localized
             case .email:
-                return L10n.Localizable.Email.Guidance.tooshort
+                return "email.guidance.tooshort".localized
             case .password, .passcode:
                 return PasswordRuleSet.localizedErrorMessage
             case .unknown:
-                // TODO: - [AGIS] This string doesn't exist, replace it
                 return "unknown.guidance.tooshort".localized
             case .phoneNumber:
-                return L10n.Localizable.Phone.Guidance.tooshort
+                return "phone.guidance.tooshort".localized
             }
         case .tooLong(kind: let kind):
             switch kind {
             case .name:
-                return L10n.Localizable.Name.Guidance.toolong
+                return "name.guidance.toolong".localized
             case .email:
-                return L10n.Localizable.Email.Guidance.toolong
+                return "email.guidance.toolong".localized
             case .password, .passcode:
-                return L10n.Localizable.Password.Guidance.toolong
+                return "password.guidance.toolong".localized
             case .unknown:
-                // TODO: - [AGIS] This string doesn't exist, replace it
                 return "unknown.guidance.toolong".localized
             case .phoneNumber:
-                return L10n.Localizable.Phone.Guidance.toolong
+                return "phone.guidance.toolong".localized
             }
         case .invalidEmail:
-            return L10n.Localizable.Email.Guidance.invalid
+            return "email.guidance.invalid".localized
         case .invalidPhoneNumber:
-            return L10n.Localizable.Phone.Guidance.invalid
+            return "phone.guidance.invalid".localized
         case .custom(let description):
             return description
         case .invalidPassword(let violations):
             return violations.contains(.tooLong)
-                ? L10n.Localizable.Password.Guidance.toolong
+                ? "password.guidance.toolong".localized
                 : PasswordRuleSet.localizedErrorMessage
         }
     }

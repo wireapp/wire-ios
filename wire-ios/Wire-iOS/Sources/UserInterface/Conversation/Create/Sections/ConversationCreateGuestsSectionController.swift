@@ -29,7 +29,7 @@ class ConversationCreateGuestsSectionController: ConversationCreateSectionContro
         super.prepareForUse(in: collectionView)
         collectionView.flatMap(Cell.register)
         headerHeight = 40
-        footerText = L10n.Localizable.Conversation.Create.Guests.subtitle
+        footerText = "conversation.create.guests.subtitle".localized
     }
 }
 

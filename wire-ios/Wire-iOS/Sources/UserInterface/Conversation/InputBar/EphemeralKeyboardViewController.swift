@@ -110,7 +110,7 @@ final class EphemeralKeyboardViewController: UIViewController {
 
     fileprivate let timeouts: [MessageDestructionTimeoutValue?]
 
-    public let titleLabel = DynamicFontLabel(text: L10n.Localizable.Input.Ephemeral.title,
+    public let titleLabel = DynamicFontLabel(text: "input.ephemeral.title".localized,
                                              fontSpec: .mediumSemiboldFont,
                                              color: SemanticColors.Label.textDefault)
     public var pickerFont: UIFont? = .normalSemiboldFont

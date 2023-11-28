@@ -52,9 +52,9 @@ extension SearchGroup {
     var name: String {
         switch self {
         case .people:
-            return L10n.Localizable.Peoplepicker.Header.people
+            return "peoplepicker.header.people".localized
         case .services:
-            return L10n.Localizable.Peoplepicker.Header.services
+            return "peoplepicker.header.services".localized
         }
     }
 }
@@ -203,13 +203,13 @@ final class SearchResultsViewController: UIViewController {
         let teamName = team?.name
 
         contactsSection.selection = userSelection
-        contactsSection.title = L10n.Localizable.Peoplepicker.Header.contactsPersonal
+        contactsSection.title = "peoplepicker.header.contacts_personal".localized
         contactsSection.allowsSelection = isAddingParticipants
         teamMemberAndContactsSection.allowsSelection = isAddingParticipants
         teamMemberAndContactsSection.selection = userSelection
-        teamMemberAndContactsSection.title = L10n.Localizable.Peoplepicker.Header.contacts
+        teamMemberAndContactsSection.title = "peoplepicker.header.contacts".localized
         servicesSection = SearchServicesSectionController(canSelfUserManageTeam: selfUser.canManageTeam)
-        conversationsSection.title = team != nil ? L10n.Localizable.Peoplepicker.Header.teamConversations(teamName ?? "") : L10n.Localizable.Peoplepicker.Header.conversations
+        conversationsSection.title = team != nil ? "peoplepicker.header.team_conversations".localized(args: teamName ?? "") : "peoplepicker.header.conversations".localized
         inviteTeamMemberSection = InviteTeamMemberSection(team: team)
 
         super.init(nibName: nil, bundle: nil)
