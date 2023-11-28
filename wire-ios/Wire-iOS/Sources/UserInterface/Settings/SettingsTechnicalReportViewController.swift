@@ -117,7 +117,7 @@ final class SettingsTechnicalReportViewController: UITableViewController, MFMail
 
     override func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
         let label = UILabel()
-        label.text = L10n.Localizable.Self.Settings.TechnicalReport.PrivacyWarning
+        label.text = L10n.Localizable.Self.Settings.TechnicalReport.privacyWarning
         label.textColor = SemanticColors.Label.textSectionFooter
         label.backgroundColor = .clear
         label.font = FontSpec(.small, .light).font!
