@@ -134,10 +134,14 @@ final class ProfileViewControllerViewModel: NSObject {
         if let conversation = user.oneToOneConversation {
             transition(to: conversation)
         } else {
-            user.createTeamOneToOneConversation(in: userSession.viewContext) { conversation in
-                guard let conversation = conversation else { return }
+            userSession.createTeamOneOnOneConversationUseCase().invoke(user: user) {
+                switch $0 {
+                case .success(let conversation):
+                    self.transition(to: conversation)
 
-                self.transition(to: conversation)
+                case .failure(let error):
+                    WireLogger.conversation.error("failed to create team one on one conversation: \(error)")
+                }
             }
         }
     }

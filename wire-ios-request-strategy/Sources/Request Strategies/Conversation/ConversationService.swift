@@ -36,7 +36,7 @@ public protocol ConversationServiceInterface {
 
 }
 
-public enum ConversationCreationFailure: Error {
+public enum ConversationCreationFailure: Error, Equatable {
 
     case missingPermissions
     case missingSelfClientID

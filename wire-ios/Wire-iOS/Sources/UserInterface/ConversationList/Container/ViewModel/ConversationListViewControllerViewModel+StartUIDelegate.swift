@@ -39,10 +39,10 @@ extension ConversationListViewController.ViewModel: StartUIDelegate {
     ///
     /// - Parameters:
     ///   - user: the user which we want to have a 1-to-1 conversation with
-    ///   - onConversationCreated: a ConversationCreatedBlock which has the conversation created
+    ///   - onConversationCreated: a block that receives the created conversation
     private func oneToOneConversationWithUser(
         _ user: UserType,
-        callback onConversationCreated: @escaping ConversationCreatedBlock
+        callback onConversationCreated: @escaping (ZMConversation?) -> Void
     ) {
         guard let userSession = ZMUserSession.shared() else { return }
 
@@ -50,8 +50,14 @@ extension ConversationListViewController.ViewModel: StartUIDelegate {
             if let conversation = user.oneToOneConversation {
                 onConversationCreated(conversation)
             } else {
-                user.createTeamOneToOneConversation(in: userSession.viewContext) { conversation in
-                    onConversationCreated(conversation)
+                userSession.createTeamOneOnOneConversationUseCase().invoke(user: user) {
+                    switch $0 {
+                    case .success(let conversation):
+                        onConversationCreated(conversation)
+
+                    case .failure(let error):
+                        WireLogger.conversation.error("failed to create team one on one conversation: \(error)")
+                    }
                 }
             }
         }
