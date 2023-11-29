@@ -26,16 +26,12 @@ extension ZMOperationLoop: ZMPushChannelConsumer {
             events.forEach({ $0.appendDebugInformation("from push channel (web socket)")})
 
             if syncStatus.isSyncing {
-                let groups = syncMOC.enterAllGroupsExceptSecondary()
-                Task {
+                ZMTask(context: syncMOC) {
                     await self.updateEventProcessor.bufferEvents(events)
-                    syncMOC.leaveAllGroups(groups)
                 }
             } else {
-                let groups = syncMOC.enterAllGroupsExceptSecondary()
-                Task {
+                ZMTask(context: syncMOC) {
                     try? await self.updateEventProcessor.processEvents(events)
-                    syncMOC.leaveAllGroups(groups)
                 }
             }
         }

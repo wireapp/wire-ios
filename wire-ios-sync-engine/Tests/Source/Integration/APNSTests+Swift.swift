@@ -56,11 +56,11 @@ class APNSTests_Swift: APNSTestsBase {
             return
         }
 
-//        let exp = XCTestExpectation(description: "ds")
+        let exp = XCTestExpectation(description: "wait for receivedPushNotification to complete")
         userSession.receivedPushNotification(with: noticePayloadForLastEvent(), completion: {
-//            exp.fulfill()
+            exp.fulfill()
         })
-//        wait(for: [exp], timeout: 5)
+        wait(for: [exp], timeout: 5)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // THEN

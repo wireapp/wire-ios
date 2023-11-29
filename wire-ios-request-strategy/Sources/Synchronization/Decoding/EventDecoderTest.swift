@@ -468,7 +468,6 @@ extension EventDecoderTest {
         // When
         let decryptedEvents = await self.sut.decryptAndStoreEvents([event])
         XCTAssertEqual(decryptedEvents.count, 1)
-//        XCTAssert(self.waitForCustomExpectations(withTimeout: 0.5))
 
         // Then
         // We could decrypt, and the proteus service doesn't exist, so it used the keystore.
