@@ -61,8 +61,6 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
         ZMConversationSilencedChangedTimeStampKey
     ]
 
-    let conversationEventProcessor: ConversationEventProcessor
-
     let removeLocalConversation: RemoveLocalConversationUseCaseProtocol
 
     public init(
@@ -140,8 +138,6 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
             SyncConversationActionHandler(context: managedObjectContext),
             CreateGroupConversationActionHandler(context: managedObjectContext)
         ])
-
-        conversationEventProcessor = ConversationEventProcessor(context: managedObjectContext)
 
         super.init(
             withManagedObjectContext: managedObjectContext,
