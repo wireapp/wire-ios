@@ -976,6 +976,56 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
         }
     }
 
+    // MARK: - Handle User Removed
+
+    func testProcessingConverationMemberLeave_MarksUserAsDeleted() throws {
+        syncMOC.performGroupedBlockAndWait { [self] in
+            // Given
+            let members: [ZMUser] = [.selfUser(in: syncMOC), .insertNewObject(in: syncMOC)]
+            members.forEach { member in member.domain = owningDomain }
+            let conversation = ZMConversation.insertGroupConversation(moc: syncMOC, participants: members)
+            conversation?.domain = owningDomain
+
+            // When
+            let memberLeavePayload = Payload.UpdateConverationMemberLeave(
+                qualifiedUserIDs: [members[1].qualifiedID].compactMap { $0 },
+                reason: .userDeleted
+            )
+            let conversationEvent = Payload.ConversationEvent(
+                id: nil,
+                qualifiedID: groupConversation.qualifiedID,
+                from: nil,
+                qualifiedFrom: nil,
+                timestamp: nil,
+                type: nil,
+                data: memberLeavePayload
+            )
+            let originalEvent = ZMUpdateEvent(
+                uuid: .init(),
+                payload: [
+                    "id": "cf51e6b1-39a6-11ed-8005-520924331b82",
+                    "time": "2022-09-21T12:13:32.173Z",
+                    "type": "conversation.member-leave",
+                    "payload": [
+                        "conversation": conversation?.remoteIdentifier?.transportString() ?? UUID().uuidString,
+                        "reason": "user-delete"
+                    ]
+                ],
+                transient: false,
+                decrypted: true,
+                source: .webSocket
+            )!
+            sut.processPayload(
+                conversationEvent,
+                originalEvent: originalEvent,
+                in: syncMOC
+            )
+
+            // Then
+            // XCTAssertNotNil(ZMConversation.fetch(with: qualifiedID.uuid, domain: qualifiedID.domain, in: syncMOC))
+        }
+    }
+
 }
 
 extension Payload.Conversation {

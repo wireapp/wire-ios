@@ -215,7 +215,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             ConversationRequestStrategy(
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory,
-                syncProgress: applicationStatusDirectory.syncStatus),
+                syncProgress: applicationStatusDirectory.syncStatus,
+                removeLocalConversation: RemoveLocalConversationUseCase()),
             UserProfileRequestStrategy(
                 managedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory,

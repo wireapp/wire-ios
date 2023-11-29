@@ -168,24 +168,6 @@ public final class TeamDownloadRequestStrategy: AbstractRequestStrategy, ZMConte
         TeamUpdateEventPayload(data)?.updateTeam(existingTeam, in: managedObjectContext)
     }
 
-    #warning("TODO: delete method `processRemovedMember`")
-    private func processRemovedMember(with event: ZMUpdateEvent) {
-        guard let identifier = event.teamId, let data = event.dataPayload else { return }
-        guard let team = Team.fetchOrCreate(with: identifier, create: false, in: managedObjectContext, created: nil) else { return }
-        guard let removedUserId = (data[TeamEventPayloadKey.user.rawValue] as? String).flatMap(UUID.init) else { return }
-        guard let user = ZMUser.fetch(with: removedUserId, in: managedObjectContext) else { return }
-        if let member = user.membership {
-            if user.isSelfUser {
-                deleteAccount()
-            } else {
-                user.markAccountAsDeleted(at: event.timestamp ?? Date())
-            }
-            managedObjectContext.delete(member)
-        } else {
-            log.error("Trying to delete non existent membership of \(user) in \(team)")
-        }
-    }
-
     private func processUpdatedMember(with event: ZMUpdateEvent) {
         guard nil != event.teamId, let data = event.dataPayload else { return }
         guard let userId = (data[TeamEventPayloadKey.user.rawValue] as? String).flatMap(UUID.init) else { return }

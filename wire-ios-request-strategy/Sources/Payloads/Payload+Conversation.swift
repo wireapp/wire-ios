@@ -508,9 +508,9 @@ extension Payload {
             return .conversationMemberLeave
         }
 
-        let userIDs: [UUID]?
-        let qualifiedUserIDs: [QualifiedID]?
-        let reason: Reason?
+        var userIDs: [UUID]?
+        var qualifiedUserIDs: [QualifiedID]?
+        var reason: Reason?
 
         enum Reason: String, Codable {
             /// The user has been removed from the team.

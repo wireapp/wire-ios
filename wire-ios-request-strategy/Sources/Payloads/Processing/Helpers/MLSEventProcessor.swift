@@ -27,7 +27,7 @@ protocol MLSEventProcessing {
 
 }
 
-class MLSEventProcessor: MLSEventProcessing {
+struct MLSEventProcessor: MLSEventProcessing {
 
     private(set) static var shared: MLSEventProcessing = MLSEventProcessor()
 

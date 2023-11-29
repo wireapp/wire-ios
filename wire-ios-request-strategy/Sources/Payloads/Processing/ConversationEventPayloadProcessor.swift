@@ -104,6 +104,10 @@ struct ConversationEventPayloadProcessor {
         originalEvent: ZMUpdateEvent,
         in context: NSManagedObjectContext
     ) {
+        print(originalEvent)
+        print(originalEvent.debugInformation)
+        print(payload)
+
         guard
             let conversation = fetchOrCreateConversation(
                 from: payload,
@@ -151,6 +155,7 @@ struct ConversationEventPayloadProcessor {
 
                 context.delete(membership)
                 if user.isSelfUser {
+                    // should actually be handled by the "user.delete" event, this is just a fallback
                     AccountDeletedNotification(context: context)
                         .post(in: context.notificationContext)
                 } else {
