@@ -171,8 +171,7 @@ final class ProfileClientViewController: UIViewController, SpinnerCapable {
         let descriptionTextFont = FontSpec(.normal, .light).font!
 
         if let user = viewModel.userClient.user {
-
-            descriptionTextView.attributedText = (String(format: "profile.devices.detail.verify_message".localized, user.name ?? "") &&
+            descriptionTextView.attributedText = (L10n.Localizable.Profile.Devices.Detail.verifyMessage(user.name ?? "") &&
                                                   descriptionTextFont &&
                                                   defaultTextColor) +
             "\n" +
