@@ -39,7 +39,7 @@ extension UIViewController {
             case .tooLong:
                 message = L10n.Localizable.Error.Input.tooLong
             case .tooShort:
-                message = L10n.Localizable.Error.Input.tooLong
+                message = L10n.Localizable.Error.Input.tooShort
             case .emailAddressIsInvalid:
                 message = L10n.Localizable.Error.Email.invalid
             case .phoneNumberContainsInvalidCharacters:
