@@ -117,4 +117,37 @@ final class SyncUsersActionHandlerTests: MessagingTestBase {
 
     }
 
+    func test_HandleResponse_UnknownError() throws {
+        // Given
+        let sut = SyncUsersActionHandler(context: uiMOC)
+        let id = QualifiedID(uuid: .create(), domain: "example.com")
+
+        let didFail = expectation(description: "did fail")
+        let action = SyncUsersAction(qualifiedIDs: [id]) { result in
+            // Then
+            guard case .failure(.unknownError(code: 999, label: "foo", message: "bar")) = result else {
+                XCTFail("unexpected result: \(String(describing: result))")
+                return
+            }
+
+            didFail.fulfill()
+        }
+
+        let payload = [
+            "label": "foo",
+            "message": "bar"
+        ]
+
+        let response = ZMTransportResponse(
+            payload: payload as ZMTransportData,
+            httpStatus: 999,
+            transportSessionError: nil,
+            apiVersion: 4
+        )
+
+        // When
+        sut.handleResponse(response, action: action)
+        XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
+    }
+
 }
