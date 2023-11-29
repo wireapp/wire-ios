@@ -258,7 +258,7 @@ final class DeveloperToolsViewModel: ObservableObject {
 
     private func createE2EICertificateUseCase(syncContext: NSManagedObjectContext) -> EnrollE2eICertificateUseCase? {
         var enrollE2eICertificate: EnrollE2eICertificateUseCase?
-        let httpClient = HttpClientImpl1()
+        let httpClient = HttpClientE2EI()
         let acmeClient = AcmeClient(httpClient: httpClient)
 
         syncContext.performAndWait {
