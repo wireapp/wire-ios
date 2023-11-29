@@ -127,6 +127,7 @@ extension StartUIViewController: SearchResultsViewControllerDelegate {
     }
 
     func createGuestRoom() {
+        // TODO: avoid casting to `ZMUserSession` (expand `UserSession` API)
         guard let userSession = userSession as? ZMUserSession else {
             return WireLogger.conversation.error("failed to create guest room: no user session")
         }

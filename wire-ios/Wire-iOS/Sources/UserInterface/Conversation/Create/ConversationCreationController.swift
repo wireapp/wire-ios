@@ -281,6 +281,7 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
             values.participants = users
 
         case .create:
+            // TODO: avoid casting to `ZMUserSession` (expand `UserSession` API)
             guard let userSession = userSession as? ZMUserSession else { return }
 
             addParticipantsViewController.setLoadingView(isVisible: true)
