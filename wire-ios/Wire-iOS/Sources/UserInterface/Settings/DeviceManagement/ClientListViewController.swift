@@ -182,8 +182,11 @@ final class ClientListViewController: UIViewController,
     }
 
     func openDetailsOfClient(_ client: UserClient) {
+        guard let userSession = ZMUserSession.shared() else { return }
         if let navigationController = self.navigationController {
-            let clientViewController = SettingsClientViewController(userClient: client, credentials: self.credentials)
+            let clientViewController = SettingsClientViewController(userClient: client,
+                                                                    userSession: userSession,
+                                                                    credentials: self.credentials)
             clientViewController.view.backgroundColor = SemanticColors.View.backgroundDefault
             navigationController.pushViewController(clientViewController, animated: true)
         }
@@ -267,7 +270,7 @@ final class ClientListViewController: UIViewController,
 
         zmLog.error("Clients request failed: \(error.localizedDescription)")
 
-        presentAlertWithOKButton(message: "error.user.unkown_error".localized)
+        presentAlertWithOKButton(message: L10n.Localizable.Error.User.unkownError)
     }
 
     func finishedDeleting(_ remainingClients: [UserClient]) {

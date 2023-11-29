@@ -34,8 +34,6 @@ import Foundation
     var model: String? { get }
     /// The device class (phone, desktop, ...)
     var deviceClass: DeviceClass? { get }
-    /// Unique fingerprint which can be used to identify & verify the client
-    var fingerprint: Data? { get }
     /// True if the self user has verfied the client
     var verified: Bool { get }
 
@@ -44,7 +42,4 @@ import Foundation
 
     /// Returns true if this is the active client of the self user
     func isSelfClient() -> Bool
-
-    /// Fetches the fingerprint or the prekeys of the device.
-    func fetchFingerprintOrPrekeys()
 }
