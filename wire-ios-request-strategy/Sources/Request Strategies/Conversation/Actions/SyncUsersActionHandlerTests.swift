@@ -44,14 +44,14 @@ final class SyncUsersActionHandlerTests: MessagingTestBase {
         }
     }
 
-    func testRequestGenerationForAPIVersionV4() {
+    func testRequestGenerationForAPIVersionV4() throws {
         // GIVEN
         let sut = SyncUsersActionHandler(context: uiMOC)
         let id = QualifiedID(uuid: .create(), domain: "example.com")
         let action = SyncUsersAction(qualifiedIDs: [id])
 
         // WHEN
-        let result = try! XCTUnwrap(sut.request(for: action, apiVersion: .v4))
+        let result = try XCTUnwrap(sut.request(for: action, apiVersion: .v4))
 
         // Then
         XCTAssertNotNil(result, "Request should not be nil for API version .v4")
@@ -59,18 +59,18 @@ final class SyncUsersActionHandlerTests: MessagingTestBase {
         XCTAssertEqual(result.method, .post, "Incorrect HTTP method for API version .v4")
         XCTAssertEqual(result.apiVersion, APIVersion.v4.rawValue, "Incorrect API version set in the request for .v4")
 
-        let payload = try! XCTUnwrap(RequestPayload(result))
+        let payload = try XCTUnwrap(RequestPayload(result))
         XCTAssertEqual(payload, RequestPayload(qualified_users: [id]))
     }
 
-    func testRequestGenerationForAPIVersionV5() {
+    func testRequestGenerationForAPIVersionV5() throws {
         // GIVEN
         let sut = SyncUsersActionHandler(context: uiMOC)
         let id = QualifiedID(uuid: .create(), domain: "example.com")
         let action = SyncUsersAction(qualifiedIDs: [id])
 
         // WHEN
-        let result = try! XCTUnwrap(sut.request(for: action, apiVersion: .v5))
+        let result = try XCTUnwrap(sut.request(for: action, apiVersion: .v5))
 
         // THEN
         XCTAssertNotNil(result, "Request should not be nil for API version .v5")
@@ -78,7 +78,7 @@ final class SyncUsersActionHandlerTests: MessagingTestBase {
         XCTAssertEqual(result.method, .post, "Incorrect HTTP method for API version .v5")
         XCTAssertEqual(result.apiVersion, APIVersion.v5.rawValue, "Incorrect API version set in the request for .v5")
 
-        let payload = try! XCTUnwrap(RequestPayload(result))
+        let payload = try XCTUnwrap(RequestPayload(result))
         XCTAssertEqual(payload, RequestPayload(qualified_users: [id]))
     }
 
