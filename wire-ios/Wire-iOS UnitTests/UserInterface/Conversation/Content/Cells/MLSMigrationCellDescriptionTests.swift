@@ -19,7 +19,7 @@
 import Foundation
 
 import XCTest
-import WireCommonComponents
+import enum WireCommonComponents.FontScheme
 @testable import Wire
 
 final class MLSMigrationCellDescriptionTests: XCTestCase {
