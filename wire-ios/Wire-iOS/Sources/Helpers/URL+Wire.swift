@@ -17,9 +17,7 @@
 //
 
 import Foundation
-import WireSystem
 import WireTransport
-import WireDataModel
 
 private enum WebsitePages {
     case termsOfServices
