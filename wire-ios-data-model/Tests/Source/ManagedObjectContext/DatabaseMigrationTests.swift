@@ -26,12 +26,6 @@ final class DatabaseMigrationTests: DatabaseBaseTest {
         // given
         let dataModelVersion = CoreDataStack.loadMessagingModel().version
 
-//        guard CoreDataMessagingMigrationVersion.allCases.first?.dataModelVersion == modelVersion else {
-//            XCTFail("Current model version '\(modelVersion)' does not exist as core data migration version! " +
-//                    "Please add a new case for the version, so that the migration to that version is ensured!")
-//            return
-//        }
-
         // when
         let latestMigrationVersion = CoreDataMessagingMigrationVersion.allCases.first
 
