@@ -55,7 +55,7 @@ class SyncUsersActionHandler: ActionHandler<SyncUsersAction> {
 
         case .v4, .v5:
             guard
-                let payloadData = RequestPayload(qualified_users: action.qualifiedID).payloadString()
+                let payloadData = RequestPayload(qualified_users: action.qualifiedIDs).payloadString()
             else {
                 action.fail(with: .failedToEncodeRequestPayload)
                 return nil

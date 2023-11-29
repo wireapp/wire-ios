@@ -33,16 +33,16 @@ public final class SyncUsersAction: EntityAction {
 
     // MARK: - Properties
 
-    public let qualifiedID: [QualifiedID]
+    public let qualifiedIDs: [QualifiedID]
     public var resultHandler: ResultHandler?
 
     // MARK: - Life cycle
 
     public init(
-        qualifiedID: [QualifiedID],
+        qualifiedIDs: [QualifiedID],
         resultHandler: ResultHandler? = nil
     ) {
-        self.qualifiedID = qualifiedID
+        self.qualifiedIDs = qualifiedIDs
         self.resultHandler = resultHandler
     }
 
