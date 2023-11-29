@@ -156,10 +156,8 @@ public class ConversationParticipantsService: ConversationParticipantsServiceInt
 
             if unreachableUsers.isEmpty {
 
-                /// If there are no users from unreachable domains, this means that the backend tried and failed to check for non-fully connected graphs
-                /// because some of the existing participants are currently unreachable.
-                /// As a result, we should inform that users can't be added and not retry the request.
-                /// https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/822149401/Non-fully+connected+federation+graphs
+                /// Backend is not able to determine which users are unreachable.
+                /// We just insert a message and do not attempt to retry
 
                 await appendFailedToAddUsersMessage(
                     in: conversation,
