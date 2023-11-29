@@ -713,7 +713,7 @@ class ConversationTestsOTR_Swift: ConversationTestsBase {
 
         let expectation = XCTestExpectation(description: "It should call the observer")
 
-        var token: Any? = NotificationInContext.addObserver(
+        let token = NotificationInContext.addObserver(
             name: ZMConversation.failedToDecryptMessageNotificationName,
             context: try XCTUnwrap(userSession?.managedObjectContext.notificationContext),
             object: nil,
@@ -723,7 +723,10 @@ class ConversationTestsOTR_Swift: ConversationTestsBase {
                 let cause = note.userInfo["cause"] as? Int
 
                 // THEN
-                XCTAssertEqual(conversation?.remoteIdentifier, object?.remoteIdentifier)
+                XCTAssertEqual(
+                    conversation?.managedObjectContext?.performAndWait { conversation?.remoteIdentifier },
+                    object?.managedObjectContext?.performAndWait { object?.remoteIdentifier }
+                )
                 XCTAssertNotNil(cause)
 
                 if let cause = cause {
@@ -749,8 +752,7 @@ class ConversationTestsOTR_Swift: ConversationTestsBase {
 
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
 
-        // clean up
-        token = nil
+        withExtendedLifetime(token) {}
     }
 
     enum AssetMediumTestUseCase {

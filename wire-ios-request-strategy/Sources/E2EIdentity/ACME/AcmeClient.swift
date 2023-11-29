@@ -30,25 +30,25 @@ public class AcmeClient: NSObject, AcmeClientInterface {
 
     // MARK: - Properties
 
-    private let httpClient: HttpClient
+    private let httpClient: HttpClientCustom
 
     // MARK: - Life cycle
 
-    public init(httpClient: HttpClient) {
+    public init(httpClient: HttpClientCustom) {
         self.httpClient = httpClient
     }
 
     public func getACMEDirectory() async throws -> Data {
 
         guard let domain = BackendInfo.domain else {
-            throw NetworkError.invalidRequest
+            throw NetworkError.errorEncodingRequest
         }
 
         /// TODO: it's temp, we should fetch it from the team settings
         let path = "https://acme.\(domain)/acme/defaultteams/directory"
 
         guard let url = URL(string: path) else {
-            throw NetworkError.invalidRequest
+            throw NetworkError.errorEncodingRequest
         }
         var request = URLRequest(url: url)
         request.httpMethod = Constant.HTTPMethod.get
@@ -61,7 +61,7 @@ public class AcmeClient: NSObject, AcmeClientInterface {
     public func getACMENonce(path: String) async throws -> String {
 
         guard let url = URL(string: path) else {
-            throw NetworkError.invalidRequest
+            throw NetworkError.errorEncodingRequest
         }
         var request = URLRequest(url: url)
         request.httpMethod = Constant.HTTPMethod.head
@@ -70,16 +70,15 @@ public class AcmeClient: NSObject, AcmeClientInterface {
 
         guard let httpResponse = response as? HTTPURLResponse,
               let replayNonce = httpResponse.value(forHTTPHeaderField: Constant.Header.replayNonce) else {
-            throw NetworkError.invalidResponse
+            throw NetworkError.errorDecodingResponseNew(response)
         }
-
         return replayNonce
 
     }
 
     public func sendACMERequest(path: String, requestBody: Data) async throws -> ACMEResponse {
         guard let url = URL(string: path) else {
-            throw NetworkError.invalidRequest
+            throw NetworkError.errorEncodingRequest
         }
         var request = URLRequest(url: url)
         request.httpMethod = Constant.HTTPMethod.post
@@ -93,7 +92,7 @@ public class AcmeClient: NSObject, AcmeClientInterface {
             let replayNonce = httpResponse.value(forHTTPHeaderField: Constant.Header.replayNonce),
             let location = httpResponse.value(forHTTPHeaderField: Constant.Header.location)
         else {
-            throw NetworkError.invalidResponse
+            throw NetworkError.errorDecodingResponseNew(response)
         }
 
         return ACMEResponse(nonce: replayNonce, location: location, response: data)

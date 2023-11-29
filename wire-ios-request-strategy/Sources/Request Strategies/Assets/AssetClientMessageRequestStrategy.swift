@@ -23,33 +23,25 @@ import Foundation
 /// upload the asset, receive the asset ID in the response, manually add it to the genericMessage and
 /// send it using the `/messages` endpoint like any other message. This is an additional step required
 /// as the fan-out was previously done by the backend when uploading a v2 asset.
-public final class AssetClientMessageRequestStrategy: AbstractRequestStrategy, ZMContextChangeTrackerSource {
+public final class AssetClientMessageRequestStrategy: NSObject, ZMContextChangeTrackerSource {
 
+    let managedObjectContext: NSManagedObjectContext
     let insertedObjectSync: InsertedObjectSync<AssetClientMessageRequestStrategy>
-    let messageSync: MessageSync<ZMAssetClientMessage>
+    let messageSender: MessageSenderInterface
 
-    public override init(withManagedObjectContext managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus) {
+    public init(managedObjectContext: NSManagedObjectContext, messageSender: MessageSenderInterface) {
 
+        self.managedObjectContext = managedObjectContext
         self.insertedObjectSync = InsertedObjectSync(insertPredicate: Self.shouldBeSentPredicate(context: managedObjectContext))
+        self.messageSender = messageSender
 
-        self.messageSync = MessageSync(
-            context: managedObjectContext,
-            appStatus: applicationStatus
-        )
-
-        super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
+        super.init()
 
         insertedObjectSync.transcoder = self
-        configuration = [.allowsRequestsWhileOnline,
-                         .allowsRequestsWhileInBackground]
-    }
-
-    public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        return messageSync.nextRequest(for: apiVersion)
     }
 
     public var contextChangeTrackers: [ZMContextChangeTracker] {
-        return [insertedObjectSync] + messageSync.contextChangeTrackers
+        return [insertedObjectSync]
     }
 
     static func shouldBeSentPredicate(context: NSManagedObjectContext) -> NSPredicate {
@@ -68,27 +60,34 @@ extension AssetClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
     typealias Object = ZMAssetClientMessage
 
     func insert(object: ZMAssetClientMessage, completion: @escaping () -> Void) {
-        messageSync.sync(object) { [weak self] (result, response) in
-            switch result {
-            case .success:
-                object.markAsSent()
-            case .failure(let error):
-                switch error {
-                case .messageProtocolMissing:
+        // Enter groups to enable waiting for message sending to complete in tests
+        let groups = managedObjectContext.enterAllGroupsExceptSecondary()
+        Task {
+            do {
+                try await messageSender.sendMessage(message: object)
+                await managedObjectContext.perform {
+                    object.markAsSent()
+                    self.managedObjectContext.enqueueDelayedSave()
+                }
+            } catch {
+                await managedObjectContext.perform {
                     object.expire()
+                    self.managedObjectContext.enqueueDelayedSave()
 
-                case .expired, .gaveUpRetrying:
-                    object.expire()
-
-                    let payload = Payload.ResponseFailure(response, decoder: .defaultDecoder)
-                    if response.httpStatus == 403 && payload?.label == .missingLegalholdConsent {
-                        self?.managedObjectContext.zm_userInterface.performGroupedBlock {
-                            guard let context = self?.managedObjectContext.notificationContext else { return }
-                            NotificationInContext(name: ZMConversation.failedToSendMessageNotificationName, context: context).post()
+                    if case NetworkError.invalidRequestError(let responseFailure, _) = error,
+                       responseFailure.label == .missingLegalholdConsent {
+                        self.managedObjectContext.zm_userInterface.performGroupedBlock {
+                            NotificationInContext(
+                                name: ZMConversation.failedToSendMessageNotificationName,
+                                context: self.managedObjectContext.notificationContext
+                            ).post()
                         }
                     }
                 }
             }
+
+            completion()
+            managedObjectContext.leaveAllGroups(groups)
         }
     }
 

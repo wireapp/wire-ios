@@ -148,54 +148,13 @@
 {
     // given
     UserClient *userClient = [self createSelfClient];
-    
+
     // when
     [self.sut didRegisterSelfUserClient:userClient];
     WaitForAllGroupsToBeEmpty(0.5);
-    
+
     // then
     XCTAssertEqualObjects(self.mockPushChannel.clientID, userClient.remoteIdentifier);
-}
-
-- (void)testThatItReturnsTheFingerprintForSelfUserClient
-{
-    // given
-    UserClient *userClient = [self createSelfClient];
-    
-    // when & then
-    XCTAssertNotNil(userClient.fingerprint);
-}
-
-- (void)testThatItReturnsTheFingerprintForUserClient
-{
-    // given
-    UserClient *selfUser = [self createSelfClient];
-    
-    ZMUser *user1 = [ZMUser insertNewObjectInManagedObjectContext:self.syncMOC];
-    user1.remoteIdentifier = [NSUUID createUUID];
-    UserClient *user1Client1 = [UserClient insertNewObjectInManagedObjectContext:self.syncMOC];
-    user1Client1.user = user1;
-    user1Client1.remoteIdentifier = @"aabbccdd11";
-    [self.syncMOC saveOrRollback];
-    
-    // when
-    NOT_USED([selfUser establishSessionWithClient:user1Client1 usingPreKey:@"pQABAQICoQBYIGnflzMYd4OvMaHKfcIJzlb1fvEIhBx4qN545db7ZDBrA6EAoQBYIH7q8TQbCCuaMLYW6yW7NzLsU/OA7ea7Xs/hAyXK1jETBPY="]);
-    
-    // then
-    XCTAssertNotNil(user1Client1.fingerprint);
-}
-
-- (void)testThatFingerprintIsMissingForUnknownClient
-{
-    // given
-    [self createSelfClient];
-    ZMUser *user1 = [ZMUser insertNewObjectInManagedObjectContext:self.syncMOC];
-    UserClient *user1Client1 = [UserClient insertNewObjectInManagedObjectContext:self.syncMOC];
-    user1Client1.user = user1;
-    user1Client1.remoteIdentifier = @"aabbccdd11";
-    
-    // when & then
-    XCTAssertNil(user1Client1.fingerprint);
 }
 
 @end

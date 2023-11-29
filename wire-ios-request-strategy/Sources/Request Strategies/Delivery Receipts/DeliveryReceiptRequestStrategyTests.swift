@@ -23,6 +23,7 @@ class DeliveryReceiptRequestStrategyTests: MessagingTestBase {
 
     var mockApplicationStatus: MockApplicationStatus!
     var mockClientRegistrationStatus: MockClientRegistrationStatus!
+    var mockMessageSender: MockMessageSenderInterface!
     var secondOneToOneConveration: ZMConversation!
     var secondUser: ZMUser!
     var sut: DeliveryReceiptRequestStrategy!
@@ -32,10 +33,10 @@ class DeliveryReceiptRequestStrategyTests: MessagingTestBase {
         mockApplicationStatus = MockApplicationStatus()
         mockApplicationStatus.mockSynchronizationState = .online
         mockClientRegistrationStatus = MockClientRegistrationStatus()
+        mockMessageSender = MockMessageSenderInterface()
 
         sut = DeliveryReceiptRequestStrategy(managedObjectContext: syncMOC,
-                                             applicationStatus: mockApplicationStatus,
-                                             clientRegistrationDelegate: mockClientRegistrationStatus)
+                                             messageSender: mockMessageSender)
 
         syncMOC.performGroupedBlockAndWait {
             let user = ZMUser.insertNewObject(in: self.syncMOC)
@@ -57,33 +58,21 @@ class DeliveryReceiptRequestStrategyTests: MessagingTestBase {
 
     // MARK: Request generation
 
-    func testThatRequestIsGenerated_WhenProcessingEventWhichNeedsDeliveryReceipt() throws {
-        try syncMOC.performGroupedAndWait { _ in
+    func testThatDeliveryReceiptIsScheduled_WhenProcessingEventWhichNeedsDeliveryReceipt() throws {
+        syncMOC.performGroupedAndWait { _ in
+            self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
             let conversationID = self.oneToOneConversation.remoteIdentifier!.transportString()
             let conversationDomain = self.oneToOneConversation.domain!
             let event = self.createTextUpdateEvent(from: self.otherUser, in: self.oneToOneConversation)
 
             // when
             self.sut.processEvents([event], liveEvents: Bool.random(), prefetchResult: nil)
-
-            // then
-            let request = try XCTUnwrap(self.sut.nextRequest(for: .v1))
-            XCTAssertEqual(request.path, "/v1/conversations/\(conversationDomain)/\(conversationID)/proteus/messages")
         }
-    }
+        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-    func testThatRequestIsGenerated_WhenProcessingEventWhichNeedsDeliveryReceipt_With_FederationEndpointDisabled() throws {
-        try syncMOC.performGroupedAndWait { _ in
-            let conversationID = self.oneToOneConversation.remoteIdentifier!.transportString()
-            let event = self.createTextUpdateEvent(from: self.otherUser, in: self.oneToOneConversation)
+        // then
+        XCTAssertEqual(1, self.mockMessageSender.sendMessageMessage_Invocations.count)
 
-            // when
-            self.sut.processEvents([event], liveEvents: Bool.random(), prefetchResult: nil)
-
-            // then
-            let request = try XCTUnwrap(self.sut.nextRequest(for: .v0))
-            XCTAssertEqual(request.path, "/conversations/\(conversationID)/otr/messages")
-        }
     }
 
     // MARK: Delivery receipt creation

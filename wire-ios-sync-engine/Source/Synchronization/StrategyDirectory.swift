@@ -46,7 +46,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
         updateEventProcessor: UpdateEventProcessor,
         localNotificationDispatcher: LocalNotificationDispatcher,
         useLegacyPushNotifications: Bool,
-        lastEventIDRepository: LastEventIDRepositoryInterface
+        lastEventIDRepository: LastEventIDRepositoryInterface,
+        transportSession: TransportSessionType
     ) {
 
         self.strategies = Self.buildStrategies(
@@ -58,7 +59,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             updateEventProcessor: updateEventProcessor,
             localNotificationDispatcher: localNotificationDispatcher,
             useLegacyPushNotifications: useLegacyPushNotifications,
-            lastEventIDRepository: lastEventIDRepository
+            lastEventIDRepository: lastEventIDRepository,
+            transportSession: transportSession
         )
 
         self.requestStrategies = strategies.compactMap({ $0 as? RequestStrategy})
@@ -91,9 +93,29 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
         updateEventProcessor: UpdateEventProcessor,
         localNotificationDispatcher: LocalNotificationDispatcher,
         useLegacyPushNotifications: Bool,
-        lastEventIDRepository: LastEventIDRepositoryInterface
+        lastEventIDRepository: LastEventIDRepositoryInterface,
+        transportSession: TransportSessionType
     ) -> [Any] {
         let syncMOC = contextProvider.syncContext
+
+        let httpClient = HttpClientImpl(
+            transportSession: transportSession,
+            queue: syncMOC)
+        let apiProvider = APIProvider(httpClient: httpClient)
+        let sessionEstablisher = SessionEstablisher(
+            context: syncMOC,
+            apiProvider: apiProvider)
+        let messageDependencyResolver = MessageDependencyResolver(context: syncMOC)
+        let quickSyncObserver = QuickSyncObserver(context: syncMOC,
+                                                  applicationStatus: applicationStatusDirectory,
+                                                  notificationContext: syncMOC.notificationContext)
+        let messageSender = MessageSender(
+            apiProvider: apiProvider,
+            clientRegistrationDelegate: applicationStatusDirectory.clientRegistrationStatus,
+            sessionEstablisher: sessionEstablisher,
+            messageDependencyResolver: messageDependencyResolver,
+            quickSyncObserver: quickSyncObserver,
+            context: syncMOC)
         let strategies: [Any] = [
             // TODO: [John] use flag here
             UserClientRequestStrategy(
@@ -140,19 +162,19 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory),
             AssetClientMessageRequestStrategy(
-                withManagedObjectContext: syncMOC,
-                applicationStatus: applicationStatusDirectory),
+                managedObjectContext: syncMOC,
+                messageSender: messageSender),
             AssetV3PreviewDownloadRequestStrategy(
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory),
             ClientMessageRequestStrategy(
-                withManagedObjectContext: syncMOC,
+                context: syncMOC,
                 localNotificationDispatcher: pushMessageHandler,
-                applicationStatus: applicationStatusDirectory),
+                applicationStatus: applicationStatusDirectory,
+                messageSender: messageSender),
             DeliveryReceiptRequestStrategy(
                 managedObjectContext: syncMOC,
-                applicationStatus: applicationStatusDirectory,
-                clientRegistrationDelegate: applicationStatusDirectory.clientRegistrationDelegate),
+                messageSender: messageSender),
             AvailabilityRequestStrategy(
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory),
@@ -172,8 +194,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory),
             LinkPreviewUpdateRequestStrategy(
-                withManagedObjectContext: syncMOC,
-                applicationStatus: applicationStatusDirectory),
+                managedObjectContext: syncMOC,
+                messageSender: messageSender),
             ImageV2DownloadRequestStrategy(
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory),
@@ -213,7 +235,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 applicationStatus: applicationStatusDirectory,
                 clientRegistrationDelegate: applicationStatusDirectory.clientRegistrationStatus,
                 flowManager: flowManager,
-                callEventStatus: applicationStatusDirectory.callEventStatus),
+                callEventStatus: applicationStatusDirectory.callEventStatus,
+                messageSender: messageSender),
             LegalHoldRequestStrategy(
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory,
@@ -274,8 +297,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 clientUpdateStatus: applicationStatusDirectory.clientUpdateStatus),
             ResetSessionRequestStrategy(
                 managedObjectContext: syncMOC,
-                applicationStatus: applicationStatusDirectory,
-                clientRegistrationDelegate: applicationStatusDirectory.clientRegistrationDelegate),
+                messageSender: messageSender),
             UserImageAssetUpdateStrategy(
                 managedObjectContext: syncMOC,
                 applicationStatusDirectory: applicationStatusDirectory,

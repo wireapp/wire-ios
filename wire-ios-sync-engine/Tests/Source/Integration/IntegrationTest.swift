@@ -60,6 +60,7 @@ final class MockAuthenticatedSessionFactory: AuthenticatedSessionFactory {
             appVersion: appVersion,
             coreDataStack: coreDataStack,
             configuration: configuration,
+            cryptoboxMigrationManager: CryptoboxMigrationManager(),
             sharedUserDefaults: sharedUserDefaults
         )
     }

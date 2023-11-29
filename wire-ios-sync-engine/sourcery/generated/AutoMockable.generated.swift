@@ -10,62 +10,52 @@ import UIKit
 import AppKit
 #endif
 
-@testable import WireSyncEngine
+import WireSyncEngine
 
-class MockGenericMessageSyncInterface: GenericMessageSyncInterface {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+public class MockGetUserClientFingerprintUseCaseProtocol: GetUserClientFingerprintUseCaseProtocol {
 
     // MARK: - Life cycle
 
-    // MARK: - contextChangeTrackers
+    public init() {}
 
-    var contextChangeTrackers: [ZMContextChangeTracker] = []
 
-    // MARK: - sync
+    // MARK: - invoke
 
-    var syncCompletion_Invocations: [(message: GenericMessageEntity, completion: EntitySyncHandler)] = []
-    var syncCompletion_MockMethod: ((GenericMessageEntity, @escaping EntitySyncHandler) -> Void)?
+    public var invokeUserClient_Invocations: [UserClient] = []
+    public var invokeUserClient_MockMethod: ((UserClient) async -> Data?)?
+    public var invokeUserClient_MockValue: Data??
 
-    func sync(_ message: GenericMessageEntity, completion: @escaping EntitySyncHandler) {
-        syncCompletion_Invocations.append((message: message, completion: completion))
+    public func invoke(userClient: UserClient) async -> Data? {
+        invokeUserClient_Invocations.append(userClient)
 
-        guard let mock = syncCompletion_MockMethod else {
-            fatalError("no mock for `syncCompletion`")
-        }
-
-        mock(message, completion)
-    }
-
-    // MARK: - nextRequest
-
-    var nextRequestFor_Invocations: [APIVersion] = []
-    var nextRequestFor_MockMethod: ((APIVersion) -> ZMTransportRequest?)?
-    var nextRequestFor_MockValue: ZMTransportRequest??
-
-    func nextRequest(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        nextRequestFor_Invocations.append(apiVersion)
-
-        if let mock = nextRequestFor_MockMethod {
-            return mock(apiVersion)
-        } else if let mock = nextRequestFor_MockValue {
+        if let mock = invokeUserClient_MockMethod {
+            return await mock(userClient)
+        } else if let mock = invokeUserClient_MockValue {
             return mock
         } else {
-            fatalError("no mock for `nextRequestFor`")
+            fatalError("no mock for `invokeUserClient`")
         }
-    }
-
-    // MARK: - expireMessages
-
-    var expireMessagesWithDependency_Invocations: [NSObject] = []
-    var expireMessagesWithDependency_MockMethod: ((NSObject) -> Void)?
-
-    func expireMessages(withDependency dependency: NSObject) {
-        expireMessagesWithDependency_Invocations.append(dependency)
-
-        guard let mock = expireMessagesWithDependency_MockMethod else {
-            fatalError("no mock for `expireMessagesWithDependency`")
-        }
-
-        mock(dependency)
     }
 
 }

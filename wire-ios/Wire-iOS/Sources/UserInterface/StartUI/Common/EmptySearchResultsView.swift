@@ -87,7 +87,7 @@ final class EmptySearchResultsView: UIView {
     private let stackView = UIStackView()
     private let iconView = UIImageView()
     private let statusLabel = DynamicFontLabel(fontSpec: .normalRegularFont, color: LabelColors.textSettingsPasswordPlaceholder)
-    private let actionButton = LinkButton()
+    private let actionButton = LinkButton(fontSpec: .normalRegularFont)
     private let iconColor = LabelColors.textSettingsPasswordPlaceholder
 
     weak var delegate: EmptySearchResultsViewDelegate?
@@ -98,6 +98,7 @@ final class EmptySearchResultsView: UIView {
     ) {
         self.isSelfUserAdmin = isSelfUserAdmin
         self.isFederationEnabled = isFederationEnabled
+
         super.init(frame: .zero)
 
         [scrollView, stackView, iconView, statusLabel, actionButton].prepareForLayout()

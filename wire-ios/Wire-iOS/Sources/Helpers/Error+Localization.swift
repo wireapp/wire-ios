@@ -21,17 +21,19 @@ import WireSyncEngine
 
 extension SessionManager.AccountError: LocalizedError {
 
+    typealias SettingsAddAccountLocale = L10n.Localizable.Self.Settings.AddAccount.Error
+
     public var errorDescription: String? {
         switch self {
         case .accountLimitReached:
-            return "self.settings.add_account.error.title".localized
+            return SettingsAddAccountLocale.title
         }
     }
 
     public var failureReason: String? {
         switch self {
         case .accountLimitReached:
-            return "self.settings.add_account.error.message".localized
+            return SettingsAddAccountLocale.message
         }
     }
 
@@ -39,50 +41,60 @@ extension SessionManager.AccountError: LocalizedError {
 
 extension SessionManager.SwitchBackendError: LocalizedError {
 
+    typealias UrlActionSwitchBackendErrorLocale = L10n.Localizable.UrlAction.SwitchBackend.Error
+
     public var errorDescription: String? {
         switch self {
         case .invalidBackend:
-            return "url_action.switch_backend.error.invalid_backend.title".localized
+            return UrlActionSwitchBackendErrorLocale.InvalidBackend.title
         case .loggedInAccounts:
-            return "url_action.switch_backend.error.logged_in.title".localized
+            return UrlActionSwitchBackendErrorLocale.LoggedIn.title
         }
     }
 
     public var failureReason: String? {
+
+        typealias UrlActionSwitchBackendErrorLocale = L10n.Localizable.UrlAction.SwitchBackend.Error
+
         switch self {
         case .invalidBackend:
-            return "url_action.switch_backend.error.invalid_backend".localized
+            return UrlActionSwitchBackendErrorLocale.invalidBackend
         case .loggedInAccounts:
-            return "url_action.switch_backend.error.logged_in".localized
+            return UrlActionSwitchBackendErrorLocale.loggedIn
         }
     }
 }
 
 extension DeepLinkRequestError: LocalizedError {
 
+    typealias UrlActionLocale = L10n.Localizable.UrlAction
+
     public var errorDescription: String? {
         switch self {
         case .invalidUserLink:
-            return "url_action.invalid_user.title".localized
+            return UrlActionLocale.InvalidUser.title
         case .invalidConversationLink:
-            return "url_action.invalid_conversation.title".localized
+            return UrlActionLocale.InvalidConversation.title
         case .malformedLink:
-            return "url_action.invalid_link.title".localized
+            return UrlActionLocale.InvalidLink.title
         case .notLoggedIn:
-            return "url_action.authorization_required.title".localized
+            return UrlActionLocale.AuthorizationRequired.title
         }
     }
 
     public var failureReason: String? {
+
+        typealias UrlActionLocale = L10n.Localizable.UrlAction
+
         switch self {
         case .invalidUserLink:
-            return "url_action.invalid_user.message".localized
+            return UrlActionLocale.InvalidUser.message
         case .invalidConversationLink:
-            return "url_action.invalid_conversation.message".localized
+            return UrlActionLocale.InvalidConversation.message
         case .malformedLink:
-            return "url_action.invalid_link.message".localized
+            return UrlActionLocale.InvalidLink.message
         case .notLoggedIn:
-            return "url_action.authorization_required.message".localized
+            return UrlActionLocale.AuthorizationRequired.message
         }
     }
 
@@ -91,11 +103,11 @@ extension DeepLinkRequestError: LocalizedError {
 extension CompanyLoginError: LocalizedError {
 
     public var errorDescription: String? {
-        return "general.failure".localized
+        return L10n.Localizable.General.failure
     }
 
     public var failureReason: String? {
-        return "login.sso.error.alert.message".localized(args: displayCode)
+        return L10n.Localizable.Login.Sso.Error.Alert.message(displayCode)
     }
 
 }
@@ -105,14 +117,14 @@ extension ConmpanyLoginRequestError: LocalizedError {
     public var errorDescription: String? {
         switch self {
         case .invalidLink:
-            return "login.sso.start_error_title".localized
+            return L10n.Localizable.Login.Sso.startErrorTitle
         }
     }
 
     public var failureReason: String? {
         switch self {
         case .invalidLink:
-            return "login.sso.link_error_message".localized
+            return L10n.Localizable.Login.Sso.linkErrorMessage
         }
     }
 }

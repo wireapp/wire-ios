@@ -44,43 +44,19 @@ extension ZMUpdateEvent {
 }
 
 @objcMembers
-public final class DeliveryReceiptRequestStrategy: AbstractRequestStrategy {
+public final class DeliveryReceiptRequestStrategy: NSObject {
 
-    private let messageSync: MessageSync<GenericMessageEntity>
+    private let messageSender: MessageSenderInterface
+    private let managedObjectContext: NSManagedObjectContext
 
     // MARK: - Init
 
     public init(managedObjectContext: NSManagedObjectContext,
-                applicationStatus: ApplicationStatus,
-                clientRegistrationDelegate: ClientRegistrationDelegate) {
+                messageSender: MessageSenderInterface) {
 
-        self.messageSync = MessageSync(
-            context: managedObjectContext,
-            appStatus: applicationStatus
-        )
-
-        super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
-
-        self.configuration = [.allowsRequestsWhileInBackground,
-                              .allowsRequestsWhileOnline,
-                              .allowsRequestsWhileWaitingForWebsocket]
+        self.managedObjectContext = managedObjectContext
+        self.messageSender = messageSender
     }
-
-    // MARK: - Methods
-
-    public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        return messageSync.nextRequest(for: apiVersion)
-    }
-}
-
-// MARK: - Context Change Tracker
-
-extension DeliveryReceiptRequestStrategy: ZMContextChangeTrackerSource {
-
-    public var contextChangeTrackers: [ZMContextChangeTracker] {
-        return messageSync.contextChangeTrackers
-    }
-
 }
 
 // MARK: - Event Consumer
@@ -102,11 +78,15 @@ extension DeliveryReceiptRequestStrategy: ZMEventConsumer {
                                                    type: .delivered) else { return }
         let senderUserSet: Set<ZMUser> = [deliveryReceipt.sender]
 
-        messageSync.sync(GenericMessageEntity(conversation: deliveryReceipt.conversation,
-                                              message: GenericMessage(content: confirmation),
-                                              targetRecipients: .users(senderUserSet),
-                                              completionHandler: nil),
-                         completion: {_, _ in })
+        // Enter groups to enable waiting for message sending to complete in tests
+        let groups = managedObjectContext.enterAllGroupsExceptSecondary()
+        Task {
+            try? await messageSender.sendMessage(message: GenericMessageEntity(conversation: deliveryReceipt.conversation,
+                                                                               message: GenericMessage(content: confirmation),
+                                                                               targetRecipients: .users(senderUserSet),
+                                                                               completionHandler: nil))
+            managedObjectContext.leaveAllGroups(groups)
+        }
     }
 
     func deliveryReceipts(for events: [ZMUpdateEvent]) -> [DeliveryReceipt] {
