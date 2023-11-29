@@ -398,12 +398,13 @@ public class ZMUserSession: NSObject {
     }
 
     private func createUpdateEventProcessor() -> EventProcessor {
+
         return EventProcessor(
             storeProvider: self.coreDataStack,
             eventProcessingTracker: eventProcessingTracker,
             earService: earService,
             eventConsumers: strategyDirectory?.eventConsumers ?? [],
-            eventAsyncConsumers: strategyDirectory?.eventConsumers.compactMap({ $0 as? ZMEventAsyncConsumer}) ?? []
+            eventAsyncConsumers: (conversationEventProcessor as? ZMEventAsyncConsumer).flatMap {[$0]} ?? []
         )
     }
 
