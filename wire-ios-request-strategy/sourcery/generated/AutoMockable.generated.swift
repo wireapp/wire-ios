@@ -76,6 +76,22 @@ public class MockAPIProviderInterface: APIProviderInterface {
         }
     }
 
+    // MARK: - E2eIAPI
+
+    public var e2eIAPIApiVersion_Invocations: [APIVersion] = []
+    public var e2eIAPIApiVersion_MockMethod: ((APIVersion) -> E2eIAPI)?
+    public var e2eIAPIApiVersion_MockValue: E2eIAPI?
+
+    public func e2eIAPI(apiVersion: APIVersion) -> E2eIAPI? {
+        if let mock = e2eIAPIApiVersion_MockMethod {
+            return mock(apiVersion)
+        } else if let mock = e2eIAPIApiVersion_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `e2eIAPIApiVersion`")
+        }
+    }
+
 }
 public class MockMessageAPI: MessageAPI {
 

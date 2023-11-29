@@ -75,7 +75,7 @@ class AcmeApiTests: ZMTBaseTest {
             guard let acmeDirectoryData = try await acmeApi?.getACMEDirectory() else {
                 return XCTFail("Failed to get ACME directory.")
             }
-        } catch NetworkError.invalidRequest {
+        } catch NetworkError.errorEncodingRequest {
             // then
             return
         } catch {
@@ -125,7 +125,7 @@ class AcmeApiTests: ZMTBaseTest {
         do {
             // when
             let nonce = try await acmeApi?.getACMENonce(path: path)
-        } catch NetworkError.invalidResponse {
+        } catch NetworkError.errorDecodingResponseNew {
             // then
             return
         } catch {
@@ -185,7 +185,7 @@ class AcmeApiTests: ZMTBaseTest {
         do {
             // when
             let acmeResponse = try await acmeApi?.sendACMERequest(path: path, requestBody: Data())
-        } catch NetworkError.invalidResponse {
+        } catch NetworkError.errorDecodingResponseNew {
             // then
             return
         } catch {
@@ -214,7 +214,7 @@ class AcmeApiTests: ZMTBaseTest {
         do {
             // when
             let acmeResponse = try await acmeApi?.sendACMERequest(path: path, requestBody: Data())
-        } catch NetworkError.invalidResponse {
+        } catch NetworkError.errorDecodingResponseNew {
             // then
             return
         } catch {
@@ -256,23 +256,15 @@ class AcmeApiTests: ZMTBaseTest {
 
 }
 
-class MockHttpClient: HttpClient {
+class MockHttpClient: HttpClientCustom {
 
     var mockResponse: (Data, URLResponse)?
-    var mockTransportResponse: ZMTransportResponse?
 
     func send(_ request: URLRequest) async throws -> (Data, URLResponse) {
         guard let mockResponse = mockResponse else {
-            throw NetworkError.invalidResponse
+            throw NetworkError.errorDecodingResponseNew(mockResponse!.1)
         }
         return mockResponse
-    }
-
-    func send(_ request: ZMTransportRequest) async throws -> ZMTransportResponse {
-        guard let mockTransportResponse = mockTransportResponse else {
-            throw NetworkError.invalidResponse
-        }
-        return mockTransportResponse
     }
 
 }

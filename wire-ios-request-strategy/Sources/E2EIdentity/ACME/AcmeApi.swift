@@ -47,7 +47,7 @@ public class AcmeApi: NSObject, AcmeApiInterface {
             throw NetworkError.errorEncodingRequest
         }
 
-        /// TODO: fetch it from the team settings
+        /// TODO: it's temp, we should fetch it from the team settings
         let path = "https://acme.\(domain)/acme/defaultteams/directory"
 
         guard let url = URL(string: path) else {
