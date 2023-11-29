@@ -25,7 +25,7 @@ final class MLSMigrationCellDescription: ConversationMessageCellDescription {
 
     private static let linkAttributes: [NSAttributedString.Key: Any] = [
         .font: UIFont.mediumSemiboldFont,
-        .underlineStyle: NSUnderlineStyle(.single).rawValue as NSNumber
+        .link: URL.wr_mlsLearnMore
     ]
 
     let configuration: View.Configuration

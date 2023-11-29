@@ -224,6 +224,10 @@ extension URL {
         return wr_support.appendingPathComponent("hc/categories/4719917054365-Federation")
     }
 
+    static var wr_mlsLearnMore: URL {
+        wr_support.appendingPathComponent("hc/articles/12434725011485-Messaging-Layer-Security-MLS-")
+    }
+
     static var selfUserProfileLink: URL? {
         guard let link = BackendEnvironment.selfUserProfileLink else {
             return nil
