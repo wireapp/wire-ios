@@ -20,7 +20,7 @@ import Foundation
 
 public protocol EnrollE2eICertificateUseCaseInterface {
 
-    func invoke(idToken: String, mlsClientId: MLSClientID, userName: String, handle: String) async throws -> String
+    func invoke(idToken: String, e2eiClientId: E2eIClientID, userName: String, handle: String) async throws -> String
 
 }
 
@@ -33,15 +33,18 @@ public final class EnrollE2eICertificateUseCase: EnrollE2eICertificateUseCaseInt
         self.e2eiRepository = e2eiRepository
     }
 
-    public func invoke(idToken: String, mlsClientId: MLSClientID, userName: String, handle: String) async throws -> String {
+    public func invoke(idToken: String, e2eiClientId: E2eIClientID, userName: String, handle: String) async throws -> String {
 
-        let enrollment = try await e2eiRepository.createEnrollment(mlsClientId: mlsClientId, userName: userName, handle: handle)
+        let enrollment = try await e2eiRepository.createEnrollment(e2eiClientId: e2eiClientId, userName: userName, handle: handle)
 
-        let acmeDirectory = try await enrollment.loadACMEDirectory()
-        let prevNonce = try await enrollment.getACMENonce(endpoint: acmeDirectory.newNonce)
+        let acmeNonce = try await enrollment.getACMENonce()
+        let newAccountNonce = try await enrollment.createNewAccount(prevNonce: acmeNonce)
+        let newOrder = try await enrollment.createNewOrder(prevNonce: newAccountNonce)
+        let authzResponse = try await enrollment.createAuthz(prevNonce: newOrder.nonce,
+                                                             authzEndpoint: newOrder.acmeOrder.authorizations[0])
 
         /// TODO: this method will be finished with the following PRs
-        return prevNonce
+        return authzResponse.nonce
     }
 
 }

@@ -17,10 +17,11 @@
 //
 
 import Foundation
+import WireCoreCrypto
 
 public protocol E2eIRepositoryInterface {
 
-    func createEnrollment(mlsClientId: MLSClientID, userName: String, handle: String) async throws -> E2eIEnrollmentInterface
+    func createEnrollment(e2eiClientId: E2eIClientID, userName: String, handle: String) async throws -> E2eIEnrollmentInterface
 }
 
 public final class E2eIRepository: E2eIRepositoryInterface {
@@ -33,11 +34,17 @@ public final class E2eIRepository: E2eIRepositoryInterface {
         self.e2eiClient = e2eiClient
     }
 
-    public func createEnrollment(mlsClientId: MLSClientID, userName: String, handle: String) async throws -> E2eIEnrollmentInterface {
-        let e2eIdentity = try await e2eiClient.setupEnrollment(mlsClientId: mlsClientId, userName: userName, handle: handle)
+    public func createEnrollment(e2eiClientId: E2eIClientID, userName: String, handle: String) async throws -> E2eIEnrollmentInterface {
+        let e2eIdentity = try await e2eiClient.setupEnrollment(e2eiClientId: e2eiClientId, userName: userName, handle: handle)
         let e2eiService = E2eIService(e2eIdentity: e2eIdentity)
+        let acmeDirectory = try await loadACMEDirectory(e2eiService: e2eiService)
 
-        return E2eIEnrollment(acmeClient: acmeClient, e2eiService: e2eiService)
+        return E2eIEnrollment(acmeClient: acmeClient, e2eiService: e2eiService, acmeDirectory: acmeDirectory)
+    }
+
+    private func loadACMEDirectory(e2eiService: E2eIService) async throws -> AcmeDirectory {
+        let acmeDirectoryData = try await acmeClient.getACMEDirectory()
+        return try await e2eiService.getDirectoryResponse(directoryData: acmeDirectoryData)
     }
 
 }

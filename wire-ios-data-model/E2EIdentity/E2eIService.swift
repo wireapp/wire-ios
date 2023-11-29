@@ -24,6 +24,10 @@ public protocol E2eIServiceInterface {
     func getDirectoryResponse(directoryData: Data) async throws -> AcmeDirectory
     func getNewAccountRequest(nonce: String) async throws -> Data
     func setAccountResponse(accountData: Data) async throws
+    func getNewOrderRequest(nonce: String) async throws -> Data
+    func setOrderResponse(order: Data) async throws -> NewAcmeOrder
+    func getNewAuthzRequest(url: String, previousNonce: String) async throws -> Data
+    func setAuthzResponse(authz: Data) async throws -> NewAcmeAuthz
 
 }
 
@@ -47,6 +51,22 @@ public final class E2eIService: E2eIServiceInterface {
 
     public func setAccountResponse(accountData: Data) async throws {
         try e2eIdentity.newAccountResponse(account: accountData.bytes)
+    }
+
+    public func getNewOrderRequest(nonce: String) async throws -> Data {
+        return try e2eIdentity.newOrderRequest(previousNonce: nonce).data
+    }
+
+    public func setOrderResponse(order: Data) async throws -> NewAcmeOrder {
+        return try e2eIdentity.newOrderResponse(order: order.bytes)
+    }
+
+    public func getNewAuthzRequest(url: String, previousNonce: String) async throws -> Data {
+        return try e2eIdentity.newAuthzRequest(url: url, previousNonce: previousNonce).data
+    }
+
+    public func setAuthzResponse(authz: Data) async throws -> NewAcmeAuthz {
+        return try e2eIdentity.newAuthzResponse(authz: authz.bytes)
     }
 
 }

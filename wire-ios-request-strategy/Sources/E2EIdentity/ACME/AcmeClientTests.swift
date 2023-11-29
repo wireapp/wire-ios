@@ -50,11 +50,9 @@ class AcmeClientTests: ZMTBaseTest {
         BackendInfo.domain = "acme.elna.wire.link"
 
         // mock
-        let transportData = MockAcmeResponse().acmeDirectory().transportData
-        mockHttpClient?.mockResponse = ZMTransportResponse(payload: transportData,
-                                                           httpStatus: 200,
-                                                           transportSessionError: nil,
-                                                           apiVersion: 0)
+        let acmeDirectory = MockAcmeResponse().acmeDirectory()
+        let acmeDirectoryData = try! JSONEncoder.defaultEncoder.encode(acmeDirectory)
+        mockHttpClient?.mockResponse = (acmeDirectoryData, URLResponse())
 
         // when
         guard  let acmeDirectoryData = try await acmeClient?.getACMEDirectory() else {
@@ -74,10 +72,151 @@ class AcmeClientTests: ZMTBaseTest {
             // given
             BackendInfo.domain = nil
             // when
-            guard  let acmeDirectoryData = try await acmeClient?.getACMEDirectory() else {
+            guard let acmeDirectoryData = try await acmeClient?.getACMEDirectory() else {
                 return XCTFail("Failed to get ACME directory.")
             }
         } catch NetworkError.invalidRequest {
+            // then
+            return
+        } catch {
+            XCTFail("unexpected error: \(error.localizedDescription)")
+        }
+    }
+
+    func testThatResponseHeaderContainsNonce() async throws {
+        // expectation
+        let expectedNonce = "ACMENonce"
+
+        // given
+        let path = "https://acme.elna.wire.link/acme/defaultteams/new-nonce"
+
+        // mock
+        let response = HTTPURLResponse(
+            url: URL(string: path)!,
+            statusCode: 200,
+            httpVersion: "",
+            headerFields: ["Replay-Nonce": expectedNonce]
+        )!
+        mockHttpClient?.mockResponse = (Data(), response)
+
+        // when
+        let nonce = try await acmeClient?.getACMENonce(path: path)
+
+        // then
+        XCTAssertEqual(nonce, expectedNonce)
+    }
+
+    func testThatResponseHeaderDoesNotContainNonce_WhenNoHeaderFields() async throws {
+        // expectation
+        let expectedNonce = "ACMENonce"
+
+        // given
+        let path = "https://acme.elna.wire.link/acme/defaultteams/new-nonce"
+
+        // mock
+        let response = HTTPURLResponse(
+            url: URL(string: path)!,
+            statusCode: 200,
+            httpVersion: "",
+            headerFields: [:]
+        )!
+        mockHttpClient?.mockResponse = (Data(), response)
+
+        do {
+            // when
+            let nonce = try await acmeClient?.getACMENonce(path: path)
+        } catch NetworkError.invalidResponse {
+            // then
+            return
+        } catch {
+            XCTFail("unexpected error: \(error.localizedDescription)")
+        }
+    }
+
+    func testThatItSendsACMERequest() async throws {
+        // expectation
+        let headerNonce = "ACMENonce"
+        let headerLocation = "Location"
+        let response = Data()
+        let expectation = ACMEResponse(nonce: headerNonce, location: headerLocation, response: response)
+
+        // given
+        let path = "https://acme.elna.wire.link/acme/defaultteams/new-account"
+        let requestBody =  Data()
+
+        // mock
+        let mockResponse = HTTPURLResponse(
+            url: URL(string: path)!,
+            statusCode: 200,
+            httpVersion: "",
+            headerFields: ["Replay-Nonce": headerNonce, "location": headerLocation]
+        )!
+        let mockData = Data()
+        mockHttpClient?.mockResponse = (mockData, mockResponse)
+
+        do {
+            // when
+            let acmeResponse = try await acmeClient?.sendACMERequest(path: path, requestBody: requestBody)
+            // then
+            XCTAssertEqual(acmeResponse, expectation)
+        } catch {
+            XCTFail("unexpected error: \(error.localizedDescription)")
+        }
+    }
+
+    func testThatItDoesNotSendACMERequest_WhenNoNonceInTheHeader() async throws {
+        // expectation
+        let headerNonce = "ACMENonce"
+        let headerLocation = "Location"
+        let expectation = ACMEResponse(nonce: headerNonce, location: headerLocation, response: Data())
+
+        // given
+        let path = "https://acme.elna.wire.link/acme/defaultteams/new-account"
+
+        // mock
+        let mockResponse = HTTPURLResponse(
+            url: URL(string: path)!,
+            statusCode: 200,
+            httpVersion: "",
+            headerFields: ["location": headerLocation]
+        )!
+        let mockData = Data()
+        mockHttpClient?.mockResponse = (mockData, mockResponse)
+
+        do {
+            // when
+            let acmeResponse = try await acmeClient?.sendACMERequest(path: path, requestBody: Data())
+        } catch NetworkError.invalidResponse {
+            // then
+            return
+        } catch {
+            XCTFail("unexpected error: \(error.localizedDescription)")
+        }
+    }
+
+    func testThatItDoesNotSendACMERequest_WhenNoLocationInTheHeader() async throws {
+        // expectation
+        let headerNonce = "ACMENonce"
+        let headerLocation = "Location"
+        let expectation = ACMEResponse(nonce: headerNonce, location: headerLocation, response: Data())
+
+        // given
+        let path = "https://acme.elna.wire.link/acme/defaultteams/new-account"
+
+        // mock
+        let mockResponse = HTTPURLResponse(
+            url: URL(string: path)!,
+            statusCode: 200,
+            httpVersion: "",
+            headerFields: ["Replay-Nonce": headerNonce]
+        )!
+        let mockData = Data()
+        mockHttpClient?.mockResponse = (mockData, mockResponse)
+
+        do {
+            // when
+            let acmeResponse = try await acmeClient?.sendACMERequest(path: path, requestBody: Data())
+        } catch NetworkError.invalidResponse {
             // then
             return
         } catch {
@@ -89,9 +228,9 @@ class AcmeClientTests: ZMTBaseTest {
 
 class MockHttpClient: HttpClient {
 
-    var mockResponse: ZMTransportResponse?
+    var mockResponse: (Data, URLResponse)?
 
-    func send(_ request: ZMTransportRequest) async throws -> ZMTransportResponse {
+    func send(_ request: URLRequest) async throws -> (Data, URLResponse) {
         guard let mockResponse = mockResponse else {
             throw NetworkError.invalidResponse
         }
@@ -109,15 +248,6 @@ private class MockAcmeResponse {
                                        revokeCert: "https://acme.elna.wire.link/acme/defaultteams/revoke-cert",
                                        keyChange: "https://acme.elna.wire.link/acme/defaultteams/key-change")
 
-    }
-
-}
-
-extension AcmeDirectoriesResponse {
-
-    var transportData: ZMTransportData {
-        let encoded = try! JSONEncoder.defaultEncoder.encode(self)
-        return try! JSONSerialization.jsonObject(with: encoded, options: []) as! ZMTransportData
     }
 
 }
