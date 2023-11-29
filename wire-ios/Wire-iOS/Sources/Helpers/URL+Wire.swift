@@ -234,13 +234,4 @@ extension URL {
         }
         return link
     }
-
-}
-
-extension NSURL {
-
-    static var wr_fingerprintLearnMoreURL: NSURL {
-        return URL.wr_fingerprintLearnMore as NSURL
-    }
-
 }
