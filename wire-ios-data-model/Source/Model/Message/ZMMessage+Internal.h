@@ -71,7 +71,7 @@ extern NSString * _Nonnull const ZMMessageNeedsLinkAttachmentsUpdateKey;
 
 @interface ZMMessage : ZMManagedObject
 
-+(instancetype _Nonnull )insertNewObjectInManagedObjectContext:(NSManagedObjectContext *_Nonnull)moc NS_UNAVAILABLE;
++ (instancetype _Nonnull )insertNewObjectInManagedObjectContext:(NSManagedObjectContext *_Nonnull)moc NS_UNAVAILABLE;
 - (instancetype _Nonnull)initWithNonce:(NSUUID * _Nonnull)nonce managedObjectContext:(NSManagedObjectContext * _Nonnull)managedObjectContext;
 + (nonnull NSSet <ZMMessage *> *)messagesWithRemoteIDs:(nonnull NSSet <NSUUID *>*)UUIDs inContext:(nonnull NSManagedObjectContext *)moc;
 

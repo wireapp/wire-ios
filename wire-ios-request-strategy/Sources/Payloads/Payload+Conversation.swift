@@ -513,8 +513,9 @@ extension Payload {
         let reason: Reason?
 
         enum Reason: String, Codable {
-            case left
+            /// The user has been removed from the team.
             case userDeleted = "user-deleted"
+            case left
             case removed
         }
     }

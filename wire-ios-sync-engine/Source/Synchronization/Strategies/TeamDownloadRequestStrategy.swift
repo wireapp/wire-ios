@@ -145,7 +145,6 @@ public final class TeamDownloadRequestStrategy: AbstractRequestStrategy, ZMConte
         case .teamCreate: createTeam(with: event)
         case .teamDelete: deleteTeam(with: event)
         case .teamUpdate: updateTeam(with: event)
-        case .teamMemberLeave: processRemovedMember(with: event)
         case .teamMemberUpdate: processUpdatedMember(with: event)
         default: break
         }
@@ -169,6 +168,7 @@ public final class TeamDownloadRequestStrategy: AbstractRequestStrategy, ZMConte
         TeamUpdateEventPayload(data)?.updateTeam(existingTeam, in: managedObjectContext)
     }
 
+    #warning("TODO: delete method `processRemovedMember`")
     private func processRemovedMember(with event: ZMUpdateEvent) {
         guard let identifier = event.teamId, let data = event.dataPayload else { return }
         guard let team = Team.fetchOrCreate(with: identifier, create: false, in: managedObjectContext, created: nil) else { return }

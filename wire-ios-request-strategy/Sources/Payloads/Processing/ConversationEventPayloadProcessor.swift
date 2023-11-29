@@ -104,7 +104,7 @@ final class ConversationEventPayloadProcessor {
         originalEvent: ZMUpdateEvent,
         in context: NSManagedObjectContext
     ) {
-        Logging.eventProcessing.error("payload.data.reason \(payload.data.reason as Any)")
+        print("payload.data.reason \(payload.data.reason as Any)")
 
         guard
             let conversation = fetchOrCreateConversation(
@@ -128,17 +128,37 @@ final class ConversationEventPayloadProcessor {
             )
         }
 
-        let sender = fetchOrCreateSender(
+        let initiatingUser = fetchOrCreateSender(
             from: payload,
             in: context
         )
 
         // Idea for improvement, return removed users from this call to benefit from
         // checking that the participants are in the conversation before being removed
-        conversation.removeParticipantsAndUpdateConversationState(users: Set(removedUsers), initiatingUser: sender)
+        conversation.removeParticipantsAndUpdateConversationState(users: Set(removedUsers), initiatingUser: initiatingUser)
 
         if removedUsers.contains(where: \.isSelfUser), conversation.messageProtocol == .mls {
             MLSEventProcessor.shared.wipeMLSGroup(forConversation: conversation, context: context)
+        }
+
+        if payload.data.reason == .userDeleted {
+            // delete the users locally
+            let removedUsers = removedUsers.sorted { $0.isSelfUser && !$1.isSelfUser }
+            for user in removedUsers {
+                // only delete users that had been members
+                guard let membership = user.membership else {
+                    WireLogger.updateEvent.error("Trying to delete non existent membership of \(user)")
+                    continue
+                }
+
+                if user.isSelfUser {
+                    AccountDeletedNotification(context: context)
+                        .post(in: context.notificationContext)
+                } else {
+                    user.markAccountAsDeleted(at: originalEvent.timestamp ?? Date())
+                }
+                context.delete(membership)
+            }
         }
     }
 

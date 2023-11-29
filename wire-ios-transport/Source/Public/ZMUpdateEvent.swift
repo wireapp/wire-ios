@@ -70,7 +70,7 @@ import WireUtilities
     case teamDelete = 24
     case teamUpdate = 25
     // removed: teamMemberJoin = 26 [WPB-4538]: "team.member-join" should not be handled anymore
-    case teamMemberLeave = 27
+    // removed: teamMemberLeave = 27 [WPB-4538]: "team.member-leave" should not be handled anymore
     case teamConversationCreate = 28
     case teamConversationDelete = 29
     case teamMemberUpdate = 30
@@ -153,8 +153,6 @@ extension ZMUpdateEventType {
             return "team.delete"
         case .teamUpdate:
             return "team.update"
-        case .teamMemberLeave:
-            return "team.member-leave"
         case .teamConversationCreate:
             return "team.conversation-create"
         case .teamConversationDelete:

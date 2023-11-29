@@ -163,7 +163,7 @@ extension ZMMessageTests_SystemMessages {
         ZMUser.selfUser(in: uiMOC).domain = selfUserDomain
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.remoteIdentifier = UUID()
-       conversation.conversationType = updateEventType == .conversationConnectRequest ? .connection : .group
+        conversation.conversationType = updateEventType == .conversationConnectRequest ? .connection : .group
 
         conversation.remoteIdentifier = NSUUID.create()
         let userID1 = UUID()
