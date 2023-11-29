@@ -31,7 +31,6 @@ public class MockMessageSenderInterface: MessageSenderInterface {
 
     public init() {}
 
-
     // MARK: - sendMessage
 
     public var sendMessageMessage_Invocations: [any SendableMessage] = []
@@ -50,6 +49,34 @@ public class MockMessageSenderInterface: MessageSenderInterface {
         }
 
         try await mock(message)
+    }
+
+}
+
+public class MockSessionEstablisherInterface: SessionEstablisherInterface {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+    // MARK: - establishSession
+
+    public var establishSessionWithApiVersion_Invocations: [(clients: Set<QualifiedClientID>, apiVersion: APIVersion)] = []
+    public var establishSessionWithApiVersion_MockError: Error?
+    public var establishSessionWithApiVersion_MockMethod: ((Set<QualifiedClientID>, APIVersion) async throws -> Void)?
+
+    public func establishSession(with clients: Set<QualifiedClientID>, apiVersion: APIVersion) async throws {
+        establishSessionWithApiVersion_Invocations.append((clients: clients, apiVersion: apiVersion))
+
+        if let error = establishSessionWithApiVersion_MockError {
+            throw error
+        }
+
+        guard let mock = establishSessionWithApiVersion_MockMethod else {
+            fatalError("no mock for `establishSessionWithApiVersion`")
+        }
+
+        try await mock(clients, apiVersion)
     }
 
 }
