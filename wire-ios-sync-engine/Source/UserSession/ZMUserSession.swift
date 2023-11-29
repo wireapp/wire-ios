@@ -102,7 +102,6 @@ public class ZMUserSession: NSObject {
     }
 
     public lazy var featureRepository = FeatureRepository(context: syncContext)
-    public lazy var httpClient = HttpClientImpl(transportSession: transportSession, queue: syncContext)
 
     let earService: EARServiceInterface
 
@@ -239,6 +238,22 @@ public class ZMUserSession: NSObject {
     public lazy var getUserClientFingerprint: GetUserClientFingerprintUseCaseProtocol = {
         GetUserClientFingerprintUseCase(syncContext: coreDataStack.syncContext,
                                         transportSession: transportSession)
+    }()
+
+    public lazy var enrollE2eICertificate: EnrollE2eICertificateUseCaseInterface? = {
+        let acmeApi = AcmeApi()
+        let httpClient = HttpClientImpl(
+            transportSession: transportSession,
+            queue: syncContext)
+        let apiProvider = APIProvider(httpClient: httpClient)
+        guard let coreCrypto = syncContext.coreCrypto else {
+            return nil
+        }
+        let e2eiClient = E2eIClient(coreCrypto: coreCrypto)
+        let e2eiRepository = E2eIRepository(acmeApi: acmeApi,
+                                            apiProvider: apiProvider,
+                                            e2eiClient: e2eiClient)
+        return EnrollE2eICertificateUseCase(e2eiRepository: e2eiRepository)
     }()
 
     let lastEventIDRepository: LastEventIDRepositoryInterface

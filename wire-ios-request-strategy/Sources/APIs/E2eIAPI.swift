@@ -43,7 +43,7 @@ class E2eIAPIV5: E2eIAPI {
                                          method: .head,
                                          payload: nil,
                                          apiVersion: apiVersion.rawValue)
-        request.addValue(ContentType.joseJson, forAdditionalHeaderField: Constant.contentType)
+        request.addValue(ContentType.joseAndJson, forAdditionalHeaderField: Constant.contentType)
 
         let response = await httpClient.send(request)
         guard let httpResponse = response.rawResponse,

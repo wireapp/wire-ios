@@ -20,7 +20,7 @@ import Foundation
 
 public protocol EnrollE2eICertificateUseCaseInterface {
 
-    func invoke(idToken: String, e2eiClientId: E2eIClientID, userName: String, handle: String) async throws -> String
+    func invoke(idToken: String, selfUser: ZMUser) async throws -> String
 
 }
 
@@ -33,7 +33,14 @@ public final class EnrollE2eICertificateUseCase: EnrollE2eICertificateUseCaseInt
         self.e2eiRepository = e2eiRepository
     }
 
-    public func invoke(idToken: String, e2eiClientId: E2eIClientID, userName: String, handle: String) async throws -> String {
+    public func invoke(idToken: String, selfUser: ZMUser) async throws -> String {
+        guard
+            let userName = selfUser.name,
+            let handle = selfUser.handle,
+            let e2eiClientId = E2eIClientID(user: selfUser)
+        else {
+            throw EnrollE2EICertificateUseCaseFailure.failedToSetupEnrollment
+        }
 
         let enrollment = try await e2eiRepository.createEnrollment(e2eiClientId: e2eiClientId, userName: userName, handle: handle)
 
@@ -77,6 +84,7 @@ public final class EnrollE2eICertificateUseCase: EnrollE2eICertificateUseCaseInt
 
 enum EnrollE2EICertificateUseCaseFailure: Error {
 
+    case failedToSetupEnrollment
     case missingDpopChallenge
     case missingOIDCChallenge
     case failedToDecodeCertificate

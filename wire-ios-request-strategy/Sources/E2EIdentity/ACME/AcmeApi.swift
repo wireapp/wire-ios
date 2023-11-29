@@ -32,10 +32,12 @@ public class AcmeApi: NSObject, AcmeApiInterface {
     // MARK: - Properties
 
     private let httpClient: HttpClientCustom
+    private let contentType = "Content-Type"
 
     // MARK: - Life cycle
 
-    public init(httpClient: HttpClientCustom) {
+    /// TODO: it would be nice to use HttpClient
+    public init(httpClient: HttpClientCustom = HttpClientE2EI()) {
         self.httpClient = httpClient
     }
 
@@ -45,6 +47,7 @@ public class AcmeApi: NSObject, AcmeApiInterface {
             throw NetworkError.errorEncodingRequest
         }
 
+        /// TODO: fetch it from the team settings
         let path = "https://acme.\(domain)/acme/defaultteams/directory"
 
         guard let url = URL(string: path) else {
@@ -83,7 +86,7 @@ public class AcmeApi: NSObject, AcmeApiInterface {
         }
         var request = URLRequest(url: url)
         request.httpMethod = HTTPMethod.post
-        request.setValue(ContentType.joseJson, forHTTPHeaderField: "Content-Type")
+        request.setValue(ContentType.joseAndJson, forHTTPHeaderField: contentType)
         request.httpBody = requestBody
 
         let (data, response) = try await httpClient.send(request)
@@ -106,7 +109,7 @@ public class AcmeApi: NSObject, AcmeApiInterface {
         }
         var request = URLRequest(url: url)
         request.httpMethod = HTTPMethod.post
-        request.setValue(ContentType.joseJson, forHTTPHeaderField: "Content-Type")
+        request.setValue(ContentType.joseAndJson, forHTTPHeaderField: contentType)
         request.httpBody = requestBody
 
         let (data, response) = try await httpClient.send(request)
@@ -142,7 +145,7 @@ enum HeaderKey {
 
 enum ContentType {
     static let json = "application/json"
-    static let joseJson = "application/jose+json"
+    static let joseAndJson = "application/jose+json"
 }
 
 public protocol HttpClientCustom {

@@ -36,6 +36,7 @@ public final class E2eIClient: E2eIClientInterface {
     public func setupEnrollment(e2eiClientId: E2eIClientID, userName: String, handle: String) async throws -> WireE2eIdentityProtocol {
         do {
             return try coreCrypto.perform {
+                /// TODO: Use e2eiNewRotateEnrollment or e2eiNewActivationEnrollment from the new CC version
                 try $0.e2eiNewEnrollment(clientId: e2eiClientId.rawValue,
                                          displayName: userName,
                                          handle: handle,
