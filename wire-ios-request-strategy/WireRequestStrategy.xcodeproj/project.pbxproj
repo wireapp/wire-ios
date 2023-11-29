@@ -225,6 +225,7 @@
 		D3DA067C2A5D9EF700BA9CEB /* FederationTerminationManagerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3DA067B2A5D9EF700BA9CEB /* FederationTerminationManagerTest.swift */; };
 		D5D65A062073C8F800D7F3C3 /* AssetRequestFactoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5D65A052073C8F800D7F3C3 /* AssetRequestFactoryTests.swift */; };
 		D5D65A072074C23D00D7F3C3 /* AssetRequestFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = F963E8D91D955D4600098AD3 /* AssetRequestFactory.swift */; };
+		E99D18EB2B177F3500751183 /* SyncUsersActionHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E99D18EA2B177F3500751183 /* SyncUsersActionHandlerTests.swift */; };
 		E9E2AA5E2B163A56008CC2DF /* SyncUsersActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9E2AA5D2B163A56008CC2DF /* SyncUsersActionHandler.swift */; };
 		EE04084828C9E2FA009E4B8D /* FetchBackendMLSPublicKeysActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE04084728C9E2FA009E4B8D /* FetchBackendMLSPublicKeysActionHandler.swift */; };
 		EE04084A28C9E63E009E4B8D /* FetchBackendMLSPublicKeysActionHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE04084928C9E63E009E4B8D /* FetchBackendMLSPublicKeysActionHandlerTests.swift */; };
@@ -672,6 +673,7 @@
 		D33B57B02A56BDCA0078A4F9 /* FederationTerminationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FederationTerminationManager.swift; sourceTree = "<group>"; };
 		D3DA067B2A5D9EF700BA9CEB /* FederationTerminationManagerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FederationTerminationManagerTest.swift; sourceTree = "<group>"; };
 		D5D65A052073C8F800D7F3C3 /* AssetRequestFactoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetRequestFactoryTests.swift; sourceTree = "<group>"; };
+		E99D18EA2B177F3500751183 /* SyncUsersActionHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncUsersActionHandlerTests.swift; sourceTree = "<group>"; };
 		E9E2AA5D2B163A56008CC2DF /* SyncUsersActionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncUsersActionHandler.swift; sourceTree = "<group>"; };
 		EE04084728C9E2FA009E4B8D /* FetchBackendMLSPublicKeysActionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchBackendMLSPublicKeysActionHandler.swift; sourceTree = "<group>"; };
 		EE04084928C9E63E009E4B8D /* FetchBackendMLSPublicKeysActionHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchBackendMLSPublicKeysActionHandlerTests.swift; sourceTree = "<group>"; };
@@ -1223,6 +1225,7 @@
 				EE7F02262A80E5F400FE5695 /* CreateGroupConversationActionHandler.swift */,
 				EE7F02282A835FBA00FE5695 /* CreateGroupConversationActionHandlerTests.swift */,
 				E9E2AA5D2B163A56008CC2DF /* SyncUsersActionHandler.swift */,
+				E99D18EA2B177F3500751183 /* SyncUsersActionHandlerTests.swift */,
 			);
 			path = Actions;
 			sourceTree = "<group>";
@@ -2180,6 +2183,7 @@
 				597B70CC2B03CC83006C2121 /* UpdateConversationProtocolActionHandlerTests.swift in Sources */,
 				1621D2621D75C745007108C2 /* ZMDownstreamObjectSyncWithWhitelistTests.m in Sources */,
 				1621D2291D75AB2D007108C2 /* MockEntity2.m in Sources */,
+				E99D18EB2B177F3500751183 /* SyncUsersActionHandlerTests.swift in Sources */,
 				F18401DB2073C25300E9F4CC /* EventDecoderDecryptionTestsTests.swift in Sources */,
 				D5D65A062073C8F800D7F3C3 /* AssetRequestFactoryTests.swift in Sources */,
 				638941F02AF50EB10051ABFD /* MockLocalConversationRemovalUseCase.swift in Sources */,
@@ -2454,7 +2458,10 @@
 			baseConfigurationReference = F1E47FE5207E0B72008D4299 /* ios-test-host.xcconfig */;
 			buildSettings = {
 				INFOPLIST_FILE = "$(SRCROOT)/Tests/Test Host/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireRequestStrategyTestHost;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -2465,7 +2472,10 @@
 			baseConfigurationReference = F1E47FE5207E0B72008D4299 /* ios-test-host.xcconfig */;
 			buildSettings = {
 				INFOPLIST_FILE = "$(SRCROOT)/Tests/Test Host/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireRequestStrategyTestHost;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
