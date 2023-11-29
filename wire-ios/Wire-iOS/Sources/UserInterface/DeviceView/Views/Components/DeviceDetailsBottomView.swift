@@ -20,69 +20,67 @@ import SwiftUI
 
 struct DeviceDetailsBottomView: View {
     @ObservedObject var viewModel: DeviceInfoViewModel
-    var body: some View {
-        Text(
-            L10n.Localizable.Self.Settings.DeviceDetails.Fingerprint.subtitle
-        )
-        .font(
-            .footnote
-        )
-        .padding(
-            [
-                .leading,
-                .trailing
-            ],
-            16
-        )
-        .padding(
-            [
-                .top,
-                .bottom
-            ],
-            8
-        )
+    var fingerPrintInfoTextView: some View {
+        Text(L10n.Localizable.Self.Settings.DeviceDetails.Fingerprint.subtitle)
+            .font(.footnote)
+            .padding(
+                [
+                    .leading,
+                    .trailing
+                ],
+                16
+            )
+            .padding(
+                [
+                    .top,
+                    .bottom
+                ],
+                8
+            )
+    }
+    var resetSessionView: some View {
         HStack {
             SwiftUI.Button {
                 Task {
                     await viewModel.resetSession()
                 }
             } label: {
-                Text(
-                    L10n.Localizable.Profile.Devices.Detail.ResetSession.title
-                )
-                .padding(
-                    .all,
-                    16
-                )
-                .foregroundColor(
-                    SemanticColors.Label.textDefault.swiftUIColor
-                )
-                .font(
-                    UIFont.normalRegularFont.swiftUIFont.bold()
-                )
+                Text(L10n.Localizable.Profile.Devices.Detail.ResetSession.title)
+                    .padding(
+                        .all,
+                        16
+                    )
+                    .foregroundColor(
+                        SemanticColors.Label.textDefault.swiftUIColor
+                    )
+                    .font(
+                        UIFont.normalRegularFont.swiftUIFont.bold()
+                    )
             }
             Spacer()
         }.background(
             SemanticColors.View.backgroundDefaultWhite.swiftUIColor
         )
-        Text(
-            L10n.Localizable.Self.Settings.DeviceDetails.ResetSession.subtitle
-        ).font(
-            .footnote
-        ).padding(
+    }
+    var resetSessionInfoView: some View {
+        Text(L10n.Localizable.Self.Settings.DeviceDetails.ResetSession.subtitle)
+            .font(.footnote)
+            .padding(
             [
                 .leading,
                 .trailing
             ],
             16
-        )
-        .padding(
+            )
+            .padding(
             [
                 .top,
                 .bottom
             ],
             8
-        )
+            )
+    }
+    var removeDeviceView: some View {
         HStack {
             SwiftUI.Button {
                 Task {
@@ -106,6 +104,8 @@ struct DeviceDetailsBottomView: View {
         }.background(
             SemanticColors.View.backgroundDefaultWhite.swiftUIColor
         )
+    }
+    var removeDeviceInfoView: some View {
         Text(
             L10n.Localizable.Self.Settings.DeviceDetails.RemoveDevice.subtitle
         )
@@ -126,5 +126,12 @@ struct DeviceDetailsBottomView: View {
             ],
             8
         )
+    }
+    var body: some View {
+        fingerPrintInfoTextView
+        resetSessionView
+        resetSessionInfoView
+        removeDeviceView
+        removeDeviceInfoView
     }
 }
