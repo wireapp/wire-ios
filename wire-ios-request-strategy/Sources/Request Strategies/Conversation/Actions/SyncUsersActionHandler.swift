@@ -101,8 +101,6 @@ class SyncUsersActionHandler: ActionHandler<SyncUsersAction> {
                     return
                 }
 
-                var result: () = SyncUsersAction.Result()
-
                 userProfileProcessor.updateUserProfiles(
                     from: payload.found,
                     in: context
@@ -112,7 +110,7 @@ class SyncUsersActionHandler: ActionHandler<SyncUsersAction> {
                     markUserProfilesAsUnavailable(Set(failedIdentifiers))
                 }
 
-                action.succeed(with: result)
+                action.succeed()
 
             default:
                 let errorInfo = response.errorInfo
