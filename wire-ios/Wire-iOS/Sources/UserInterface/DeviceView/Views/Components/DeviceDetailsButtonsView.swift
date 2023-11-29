@@ -28,15 +28,9 @@ struct DeviceDetailsButtonsView: View {
                 await viewModel.fetchE2eCertificate()
             }
         } label: {
-            Text(
-                L10n.Localizable.Device.Details.Section.E2e.getcertificate
-            )
-            .foregroundStyle(
-                SemanticColors.Label.textDefault.swiftUIColor
-            )
-            .font(
-                UIFont.normalRegularFont.swiftUIFont.bold()
-            )
+            Text(L10n.Localizable.Device.Details.Section.E2e.getcertificate)
+            .foregroundStyle(SemanticColors.Label.textDefault.swiftUIColor)
+            .font(UIFont.normalRegularFont.swiftUIFont.bold())
         }
     }
     var updateCertificateButton: some View {
@@ -45,18 +39,10 @@ struct DeviceDetailsButtonsView: View {
                 await viewModel.fetchE2eCertificate()
             }
         } label: {
-            VStack(
-                alignment: .leading
-            ) {
-                Text(
-                    L10n.Localizable.Device.Details.Section.E2e.updatecertificate
-                )
-                .foregroundStyle(
-                    SemanticColors.Label.textDefault.swiftUIColor
-                )
-                .font(
-                    UIFont.normalRegularFont.swiftUIFont.bold()
-                )
+            VStack(alignment: .leading) {
+                Text(L10n.Localizable.Device.Details.Section.E2e.updatecertificate)
+                    .foregroundStyle(SemanticColors.Label.textDefault.swiftUIColor)
+                    .font(UIFont.normalRegularFont.swiftUIFont.bold())
             }
         }
     }
@@ -67,25 +53,13 @@ struct DeviceDetailsButtonsView: View {
             },
             label: {
                 HStack {
-                    Text(
-                        L10n.Localizable.Device.Details.Section.E2e.showcertificatedetails
-                    )
-                    .foregroundStyle(
-                        SemanticColors.Label.textDefault.swiftUIColor
-                    )
-                    .font(
-                        UIFont.normalRegularFont.swiftUIFont.bold()
-                    )
+                    Text(L10n.Localizable.Device.Details.Section.E2e.showcertificatedetails)
+                        .foregroundStyle(SemanticColors.Label.textDefault.swiftUIColor)
+                        .font(UIFont.normalRegularFont.swiftUIFont.bold())
                     Spacer()
-                    Image(
-                        .chevronRight
-                    )
-                    .renderingMode(
-                        .template
-                    )
-                    .foregroundColor(
-                        SemanticColors.Label.textDefault.swiftUIColor
-                    )
+                    Image(.chevronRight)
+                        .renderingMode(.template)
+                        .foregroundColor(SemanticColors.Label.textDefault.swiftUIColor)
                 }
             }
         )

@@ -24,17 +24,11 @@ struct DeviceDetailsBottomView: View {
         Text(L10n.Localizable.Self.Settings.DeviceDetails.Fingerprint.subtitle)
             .font(.footnote)
             .padding(
-                [
-                    .leading,
-                    .trailing
-                ],
+                [.leading, .trailing],
                 16
             )
             .padding(
-                [
-                    .top,
-                    .bottom
-                ],
+                [.top, .bottom],
                 8
             )
     }
@@ -46,16 +40,9 @@ struct DeviceDetailsBottomView: View {
                 }
             } label: {
                 Text(L10n.Localizable.Profile.Devices.Detail.ResetSession.title)
-                    .padding(
-                        .all,
-                        16
-                    )
-                    .foregroundColor(
-                        SemanticColors.Label.textDefault.swiftUIColor
-                    )
-                    .font(
-                        UIFont.normalRegularFont.swiftUIFont.bold()
-                    )
+                    .padding(.all, 16)
+                    .foregroundColor(SemanticColors.Label.textDefault.swiftUIColor)
+                    .font(UIFont.normalRegularFont.swiftUIFont.bold())
             }
             Spacer()
         }.background(
@@ -66,18 +53,12 @@ struct DeviceDetailsBottomView: View {
         Text(L10n.Localizable.Self.Settings.DeviceDetails.ResetSession.subtitle)
             .font(.footnote)
             .padding(
-            [
-                .leading,
-                .trailing
-            ],
-            16
+                [.leading, .trailing],
+                16
             )
             .padding(
-            [
-                .top,
-                .bottom
-            ],
-            8
+                [.top, .bottom],
+                8
             )
     }
     var removeDeviceView: some View {
@@ -87,45 +68,26 @@ struct DeviceDetailsBottomView: View {
                    await viewModel.removeDevice()
                 }
             } label: {
-                Text(
-                    L10n.Localizable.Self.Settings.AccountDetails.RemoveDevice.title
-                )
-                .padding(
-                    .all,
-                    16
-                )
-                .foregroundColor(
-                    SemanticColors.Label.textDefault.swiftUIColor
-                ).font(
-                    UIFont.normalRegularFont.swiftUIFont.bold()
-                )
+                Text(L10n.Localizable.Self.Settings.AccountDetails.RemoveDevice.title)
+                .padding(.all, 16)
+                .foregroundColor(SemanticColors.Label.textDefault.swiftUIColor)
+                .font(UIFont.normalRegularFont.swiftUIFont.bold())
             }
             Spacer()
-        }.background(
-            SemanticColors.View.backgroundDefaultWhite.swiftUIColor
-        )
+        }
+        .background(SemanticColors.View.backgroundDefaultWhite.swiftUIColor)
     }
     var removeDeviceInfoView: some View {
-        Text(
-            L10n.Localizable.Self.Settings.DeviceDetails.RemoveDevice.subtitle
-        )
-        .font(
-            .footnote
-        )
-        .padding(
-            [
-                .leading,
-                .trailing
-            ],
-            16
-        )
-        .padding(
-            [
-                .top,
-                .bottom
-            ],
-            8
-        )
+        Text(L10n.Localizable.Self.Settings.DeviceDetails.RemoveDevice.subtitle)
+            .font(.footnote)
+            .padding(
+                [.leading, .trailing],
+                16
+            )
+            .padding(
+                [.top, .bottom],
+                8
+            )
     }
     var body: some View {
         fingerPrintInfoTextView

@@ -28,39 +28,23 @@ struct CopyValueView: View {
         ) -> Void
     )?
     var body: some View {
-        VStack(
-            alignment: .leading
-        ) {
-            Text(
-                title
-            ).font(
-                UIFont.smallSemiboldFont.swiftUIFont
-            ).foregroundColor(
-                SemanticColors.Label.textSectionHeader.swiftUIColor
-            ).padding(
-                .bottom,
-                4
-            )
+        VStack(alignment: .leading) {
+            Text(title)
+                .font(UIFont.smallSemiboldFont.swiftUIFont)
+                .foregroundColor(SemanticColors.Label.textSectionHeader.swiftUIColor)
+                .padding(.bottom, 4)
             HStack {
-                Text(
-                    value
-                ).font(
-                    UIFont.sfMonoMedium.swiftUIFont
-                )
+                Text(value)
+                    .font(UIFont.sfMonoMedium.swiftUIFont)
                 if isCopyEnabled {
                     Spacer()
                     VStack {
-                        SwiftUI.Button(action: copy,
-                                       label: {
-                            Image(
-                                .copy
-                            )
-                            .renderingMode(
-                                .template
-                            )
-                            .foregroundColor(
-                                SemanticColors.Icon.foregroundDefaultBlack.swiftUIColor
-                            )
+                        SwiftUI.Button(
+                            action: copy,
+                            label: {
+                                Image(.copy)
+                                    .renderingMode(.template)
+                                    .foregroundColor(SemanticColors.Icon.foregroundDefaultBlack.swiftUIColor)
                         })
                         Spacer()
                     }

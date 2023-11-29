@@ -33,78 +33,45 @@ struct DeviceDetailsView: View {
             DeviceDetailsE2EIdentityCertificateView(
                 viewModel: viewModel,
                 isCertificateViewPreseneted: $isCertificateViewPresented
-            ).padding(
-                .leading,
-                16
             )
+            .padding(.leading, 16)
 
             DeviceDetailsButtonsView(
                 viewModel: viewModel,
                 isCertificateViewPresented: $isCertificateViewPresented
             )
-        }.background(
-            SemanticColors.View.backgroundDefaultWhite.swiftUIColor
-        )
-        .padding(
-            .top,
-            8
-        )
+        }
+        .background(SemanticColors.View.backgroundDefaultWhite.swiftUIColor)
+        .padding(.top, 8)
     }
     var proteusView: some View {
         VStack(
             alignment: .leading
         ) {
-            Text(
-                L10n.Localizable.Device.Details.Section.Proteus.title
-            )
-            .font(
-                UIFont.normalMediumFont.swiftUIFont
-            )
-            .foregroundColor(
-                SemanticColors.Label.textSectionHeader.swiftUIColor
-            )
-            .frame(
-                height: 45
-            )
-            .padding(
-                [
-                    .leading,
-                    .top
-                ],
-                16
-            )
-            .padding(
-                .bottom,
-                     4
-            )
-            DeviceDetailsProteusView(
-                viewModel: viewModel
-            ).background {
-                SemanticColors.View.backgroundDefaultWhite.swiftUIColor
-            }
-            if viewModel.isSelfClient {
-                Text(
-                    L10n.Localizable.Self.Settings.DeviceDetails.Fingerprint.subtitle
-                ).font(
-                    .footnote
-                ).padding(
-                    [
-                        .leading,
-                        .trailing
-                    ],
+            Text(L10n.Localizable.Device.Details.Section.Proteus.title)
+                .font(UIFont.normalMediumFont.swiftUIFont)
+                .foregroundColor(SemanticColors.Label.textSectionHeader.swiftUIColor)
+                .frame(height: 45)
+                .padding(
+                    [.leading, .top],
                     16
                 )
-                .padding(
-                    [
-                        .top,
-                        .bottom
-                    ],
-                    8
-                )
+                .padding(.bottom, 4)
+            DeviceDetailsProteusView(viewModel: viewModel)
+                .background(SemanticColors.View.backgroundDefaultWhite.swiftUIColor)
+            if viewModel.isSelfClient {
+                Text(L10n.Localizable.Self.Settings.DeviceDetails.Fingerprint.subtitle)
+                    .font(.footnote)
+                    .padding(
+                        [.leading, .trailing],
+                        16
+                    )
+                    .padding(
+                        [.top, .bottom],
+                        8
+                    )
             } else {
-                DeviceDetailsBottomView(
-                    viewModel: viewModel
-                )
+                DeviceDetailsBottomView(viewModel: viewModel)
             }
         }
     }
@@ -116,24 +83,18 @@ struct DeviceDetailsView: View {
                 }
                 proteusView
             }
-            .background(
-                SemanticColors.View.backgroundDefault.swiftUIColor
-            )
+            .background(SemanticColors.View.backgroundDefault.swiftUIColor)
             .environment(
                 \.defaultMinListHeaderHeight,
                  10
             )
-            .listStyle(
-                .plain
-            )
+            .listStyle(.plain)
             .overlay(content: {
                 if viewModel.isActionInProgress {
                     SwiftUI.ProgressView()
                 }
             })
-            .navigationBarTitleDisplayMode(
-                .inline
-            )
+            .navigationBarTitleDisplayMode(.inline)
             .toolbar(content: {
                 ToolbarItem(
                     placement: .navigationBarLeading
@@ -162,17 +123,11 @@ struct DeviceDetailsView: View {
             })
         }
 
-        .background(
-            SemanticColors.View.backgroundDefault.swiftUIColor
-        )
-        .sheet(
-            isPresented: $isCertificateViewPresented
-        ) {
+        .background(SemanticColors.View.backgroundDefault.swiftUIColor)
+        .sheet(isPresented: $isCertificateViewPresented) {
 
         }
-        .navigationBarBackButtonHidden(
-            true
-        )
+        .navigationBarBackButtonHidden(true)
         .onDisappear {
             dismissedView?()
         }

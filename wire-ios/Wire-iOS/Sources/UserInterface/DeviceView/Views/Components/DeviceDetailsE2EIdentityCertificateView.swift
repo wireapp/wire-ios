@@ -72,21 +72,14 @@ struct DeviceDetailsE2EIdentityCertificateView: View {
             Spacer()
         }
         if let certificate = viewModel.e2eIdentityCertificate {
-            Text(
-                L10n.Localizable.Device.Details.Section.E2e.serialnumber
-            )
-            .font(
-                UIFont.smallSemiboldFont.swiftUIFont
-            )
-            .foregroundColor(
-                .gray
-            ).padding(
-                .top,
-                8
-            )
-            Text(
-                certificate.serialNumber
-            )
+            Text(L10n.Localizable.Device.Details.Section.E2e.serialnumber)
+                .font(UIFont.smallSemiboldFont.swiftUIFont)
+                .foregroundColor(.gray)
+                .padding(
+                    .top,
+                    8
+                )
+            Text(certificate.serialNumber)
         }
     }
 
@@ -97,24 +90,13 @@ struct DeviceDetailsE2EIdentityCertificateView: View {
         textColor: Color,
         image: Image
     ) -> some View {
-        Text(
-            titleText
-        ).font(
-            UIFont.mediumSemiboldFont.swiftUIFont
-        ).foregroundColor(
-            .gray
-        ).multilineTextAlignment(
-            .leading
-        )
-        Text(
-            statusText
-        ).foregroundColor(
-            textColor
-        ).font(
-            .subheadline
-        ).font(
-            UIFont.normalMediumFont.swiftUIFont
-        )
+        Text(titleText)
+            .font(UIFont.mediumSemiboldFont.swiftUIFont)
+            .foregroundColor(.gray)
+            .multilineTextAlignment(.leading)
+        Text(statusText)
+            .foregroundColor(textColor)
+            .font(UIFont.normalMediumFont.swiftUIFont)
         image
     }
 }
