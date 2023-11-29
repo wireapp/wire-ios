@@ -190,7 +190,7 @@ final class ClientListViewController: UIViewController,
                     viewModel: DeviceInfoViewModel.map(
                         userClient: client,
                         userSession: ZMUserSession.shared()!,
-                        credentials: credentials
+                        credentials: self.credentials
                     )) {
                         self.navigationController?.setNavigationBarHidden(false, animated: false)
                     }

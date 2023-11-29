@@ -77,7 +77,6 @@ final class DeviceInfoViewModel: ObservableObject {
     var title: String
     let deviceKeyFingerprint: String
     let proteusID: String
-    var isProteusVerificationEnabled: Bool
     var isE2EIdentityEnabled: Bool
     var isSelfClient: Bool
     var certificateStatus: E2EIdentityCertificateStatus {
@@ -105,7 +104,7 @@ final class DeviceInfoViewModel: ObservableObject {
     }
     @Published var isRemoved: Bool = false
     @Published var isReset: Bool = false
-    @Published var isVerified: Bool = false
+    @Published var isProteusVerificationEnabled: Bool = false
     @Published var isActionInProgress: Bool = false
 
     init(
@@ -156,9 +155,8 @@ final class DeviceInfoViewModel: ObservableObject {
     }
 
     func updateVerifiedStatus(_ value: Bool) async {
-        isActionInProgress = true
-        isVerified = await actionsHandler.updateVerified(value)
-        isActionInProgress = false
+        let result = await actionsHandler.updateVerified(value)
+        self.isProteusVerificationEnabled = result
     }
 
     func copyToClipboard(_ value: String) {

@@ -23,7 +23,7 @@ struct DeviceDetailsView: View {
     @Environment(
         \.dismiss
     ) private var dismiss
-    @ObservedObject var viewModel: DeviceInfoViewModel
+    @StateObject var viewModel: DeviceInfoViewModel
     @State var isCertificateViewPresented: Bool = false
     var dismissedView: (() -> Void)?
     var e2eIdentityCertificateView: some View {
