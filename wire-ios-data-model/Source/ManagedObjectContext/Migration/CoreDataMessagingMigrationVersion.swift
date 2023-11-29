@@ -76,8 +76,32 @@ enum CoreDataMessagingMigrationVersion: String, CaseIterable {
             return .version2_108
         case .version2_106:
             return .version2_107
-        default:
-            // all older versions can be inferred to version 106
+        case .version2_80,
+                .version2_81,
+                .version2_82,
+                .version2_83,
+                .version2_84,
+                .version2_85,
+                .version2_86,
+                .version2_87,
+                .version2_88,
+                .version2_89,
+                .version2_90,
+                .version2_91,
+                .version2_92,
+                .version2_93,
+                .version2_94,
+                .version2_95,
+                .version2_96,
+                .version2_97,
+                .version2_98,
+                .version2_99,
+                .version2_100,
+                .version2_101,
+                .version2_102,
+                .version2_103,
+                .version2_104,
+                .version2_105:
             return .version2_106
         }
     }
