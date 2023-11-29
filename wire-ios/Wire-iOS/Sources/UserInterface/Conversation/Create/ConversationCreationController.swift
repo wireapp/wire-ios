@@ -244,14 +244,7 @@ final class ConversationCreationController: UIViewController {
                 values.participants = parts
             }
 
-            guard let session = ZMUserSession.shared() else { return }
-
-            let participantsController = AddParticipantsViewController(
-                context: .create(values),
-                selfUser: selfUser,
-                userSession: session
-            )
-
+            let participantsController = AddParticipantsViewController(context: .create(values), selfUser: selfUser)
             participantsController.conversationCreationDelegate = self
             navigationController?.pushViewController(participantsController, animated: true)
         }

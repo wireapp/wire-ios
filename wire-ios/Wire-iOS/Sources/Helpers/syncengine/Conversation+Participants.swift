@@ -25,6 +25,10 @@ extension GroupDetailsConversation where Self: ZMConversation {
 }
 
 extension ZMConversation {
+    private enum ConversationError: Error {
+        case offline
+        case invalidOperation
+    }
 
     static let legacyGroupVideoParticipantLimit: Int = 4
 
@@ -32,6 +36,39 @@ extension ZMConversation {
 
     static var maxParticipantsExcludingSelf: Int {
         return maxParticipants - 1
+    }
+
+    func addOrShowError(participants: [UserType]) {
+        guard
+            let session = ZMUserSession.shared(),
+            session.networkState != .offline
+        else {
+            return showAlertForAdding(for: ConversationError.offline)
+        }
+
+        let users = participants.materialize(in: session.viewContext)
+        let syncContext = session.syncContext
+        let service = ConversationParticipantsService(context: syncContext)
+
+        Task {
+            do {
+                let users = await syncContext.perform {
+                    users.compactMap {
+                        ZMUser.existingObject(for: $0.objectID, in: syncContext)
+                    }
+                }
+
+                let conversation = try await syncContext.perform { [self] in
+                    return try ZMConversation.existingObject(for: self.objectID, in: syncContext)
+                }
+
+                try await service.addParticipants(users, to: conversation)
+            } catch {
+                await MainActor.run {
+                    self.showAlertForAdding(for: error)
+                }
+            }
+        }
     }
 
     func removeOrShowError(participant user: UserType, completion: ((VoidResult) -> Void)? = nil) {
@@ -80,6 +117,21 @@ extension ZMConversation {
                     fail(with: error)
                 }
             }
+        }
+    }
+
+    private func showAlertForAdding(for error: Error) {
+        typealias ErrorString = L10n.Localizable.Error.Conversation
+
+        switch error {
+        case ConversationAddParticipantsError.tooManyMembers:
+            UIAlertController.showErrorAlert(title: ErrorString.title, message: ErrorString.tooManyMembers)
+        case ConversationError.offline:
+            UIAlertController.showErrorAlert(title: ErrorString.title, message: ErrorString.offline)
+        case ConversationAddParticipantsError.missingLegalHoldConsent:
+            UIAlertController.showErrorAlert(title: ErrorString.title, message: ErrorString.missingLegalholdConsent)
+        default:
+            UIAlertController.showErrorAlert(title: ErrorString.title, message: ErrorString.cannotAdd)
         }
     }
 
