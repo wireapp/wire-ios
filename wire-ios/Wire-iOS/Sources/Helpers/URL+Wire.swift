@@ -43,7 +43,7 @@ struct WireUrl: Codable {
     let randomProfilePictureSource: URL
 
     static var shared: WireUrl! = {
-        return WireUrl(filePath: Bundle.fileURL(for: "url", with: "json")!)
+        WireUrl(filePath: Bundle.fileURL(for: "url", with: "json")!)
     }()
 
     private init?(filePath: URL) {
@@ -85,40 +85,7 @@ extension URL {
     }
 }
 
-// MARK: - Standard URLS
-
-extension BackendEnvironment {
-    fileprivate static func websiteLink(path: String) -> URL {
-        return shared.websiteURL.appendingPathComponent(path)
-    }
-
-    fileprivate static func localizedWebsiteLink(forPage page: WebsitePages) -> URL {
-        switch page {
-        case .termsOfServices, .privacyPolicy:
-            if Locale.autoupdatingCurrent.languageCode == "de" {
-                return shared.websiteURL.appendingPathComponent("datenschutz")
-            } else {
-                return shared.websiteURL.appendingPathComponent("legal")
-            }
-        }
-    }
-
-    fileprivate static func accountsLink(path: String) -> URL {
-        return shared.accountsURL.appendingPathComponent(path)
-    }
-
-    fileprivate static func teamsLink(path: String) -> URL {
-        return shared.teamsURL.appendingPathComponent(path)
-    }
-
-    fileprivate static var selfUserProfileLink: URL? {
-        guard let userID = SelfUser.provider?.providedSelfUser.remoteIdentifier?.uuidString else {
-            return nil
-        }
-        return shared.accountsURL.appendingPathComponent("user-profile/?id=\(userID)")
-    }
-
-}
+// MARK: - Wire URLs
 
 extension URL {
 
@@ -231,5 +198,35 @@ extension URL {
             return nil
         }
         return link
+    }
+}
+
+// MARK: - BackendEnvironment Standard URLs
+
+private extension BackendEnvironment {
+    static func websiteLink(path: String) -> URL {
+        shared.websiteURL.appendingPathComponent(path)
+    }
+
+    static func localizedWebsiteLink(forPage page: WebsitePages) -> URL {
+        switch page {
+        case .termsOfServices, .privacyPolicy:
+            if Locale.autoupdatingCurrent.languageCode == "de" {
+                return shared.websiteURL.appendingPathComponent("datenschutz")
+            } else {
+                return shared.websiteURL.appendingPathComponent("legal")
+            }
+        }
+    }
+
+    static func accountsLink(path: String) -> URL {
+        return shared.accountsURL.appendingPathComponent(path)
+    }
+
+    static var selfUserProfileLink: URL? {
+        guard let userID = SelfUser.provider?.providedSelfUser.remoteIdentifier?.uuidString else {
+            return nil
+        }
+        return shared.accountsURL.appendingPathComponent("user-profile/?id=\(userID)")
     }
 }
