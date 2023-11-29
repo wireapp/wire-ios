@@ -25,7 +25,7 @@ struct DeviceDetailsView: View {
     ) private var dismiss
     @ObservedObject var viewModel: DeviceInfoViewModel
     @State var isCertificateViewPresented: Bool = false
-
+    var dismissedView: (() -> Void)?
     var e2eIdentityCertificateView: some View {
         VStack(
             alignment: .leading
@@ -166,17 +166,15 @@ struct DeviceDetailsView: View {
             SemanticColors.View.backgroundDefault.swiftUIColor
         )
         .sheet(
-            isPresented: $isCertificateViewPresented,
-            onDismiss: didDismiss
+            isPresented: $isCertificateViewPresented
         ) {
 
         }
         .navigationBarBackButtonHidden(
             true
         )
-
-    }
-
-    func didDismiss() {
+        .onDisappear {
+            dismissedView?()
+        }
     }
 }

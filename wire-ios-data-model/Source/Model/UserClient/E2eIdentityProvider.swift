@@ -49,7 +49,7 @@ public final class E2eIdentityProvider: E2eIdentityProviding {
 }
 // MARK: - Mock Provider for Development 
 public final class MockE2eIdentityProvider: E2eIdentityProviding {
-    public var isE2EIdentityEnabled: Bool = true
+    public var isE2EIdentityEnabled: Bool = DeveloperFlag.enableE2EIdentityDetails.isOn
 
     public func fetchCertificate() async throws -> E2eIdentityCertificate {
         return E2eIdentityCertificate(

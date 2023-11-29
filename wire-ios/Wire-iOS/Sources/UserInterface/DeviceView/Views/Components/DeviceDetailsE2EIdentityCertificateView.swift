@@ -91,9 +91,14 @@ struct DeviceDetailsE2EIdentityCertificateView: View {
     }
 
     @ViewBuilder
-    func viewForStatus(titleText: String, statusText: String, textColor: Color, image: Image) -> some View {
+    func viewForStatus(
+        titleText: String,
+        statusText: String,
+        textColor: Color,
+        image: Image
+    ) -> some View {
         Text(
-            L10n.Localizable.Device.Details.Section.E2e.Status.title
+            titleText
         ).font(
             UIFont.mediumSemiboldFont.swiftUIFont
         ).foregroundColor(
@@ -102,16 +107,14 @@ struct DeviceDetailsE2EIdentityCertificateView: View {
             .leading
         )
         Text(
-            viewModel.certificateStatus.titleForStatus()
+            statusText
         ).foregroundColor(
-            SemanticColors.DrawingColors.green.swiftUIColor
+            textColor
         ).font(
             .subheadline
         ).font(
             UIFont.normalMediumFont.swiftUIFont
         )
-        Image(
-            .certificateValid
-        )
+        image
     }
 }
