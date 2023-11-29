@@ -478,7 +478,7 @@ public final class MLSService: MLSServiceInterface {
 
         case noMembersToAdd
         case noInviteesToAdd
-
+        case failedToClaimKeyPackages(users: [MLSUser])
     }
 
     /// Add users to MLS group in the given conversation.
@@ -541,7 +541,7 @@ public final class MLSService: MLSServiceInterface {
         }
 
         if failedUsers.isNonEmpty {
-            throw MLSKeyPackagesError.failedToClaimKeyPackages(users: failedUsers)
+            throw MLSAddMembersError.failedToClaimKeyPackages(users: failedUsers)
         }
 
         return result
@@ -598,8 +598,6 @@ public final class MLSService: MLSServiceInterface {
         case failedToGenerateKeyPackages
         case failedToUploadKeyPackages
         case failedToCountUnclaimedKeyPackages
-        case failedToClaimKeyPackages(users: [MLSUser])
-
     }
 
     /// Uploads new key packages if needed.
