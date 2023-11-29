@@ -63,10 +63,7 @@ public class UserProfileRequestStrategy: AbstractRequestStrategy, IdentifierObje
     public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
         fetchAllConnectedUsers(for: apiVersion)
 
-        return
-        userProfileByID.nextRequest(for: apiVersion) ??
-        userProfileByQualifiedID.nextRequest(for: apiVersion) ??
-        actionSync.nextRequest(for: apiVersion)
+        return [userProfileByID, userProfileByQualifiedID, actionSync].nextRequest(for: apiVersion)
     }
 
     func fetchAllConnectedUsers(for apiVersion: APIVersion) {
