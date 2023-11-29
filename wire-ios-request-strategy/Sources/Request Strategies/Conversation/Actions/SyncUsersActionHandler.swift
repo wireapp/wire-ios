@@ -80,11 +80,12 @@ class SyncUsersActionHandler: ActionHandler<SyncUsersAction> {
         _ response: ZMTransportResponse,
         action: SyncUsersAction
     ) {
+        var action = action
+
         guard let apiVersion = APIVersion(rawValue: response.apiVersion) else {
+            action.fail(with: .endpointUnavailable)
             return
         }
-
-        var action = action
 
         switch apiVersion {
         case .v0, .v1, .v2, .v3:
