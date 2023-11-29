@@ -36,11 +36,11 @@ enum BrowserOpeningOption: Int, LinkOpeningOption {
 
     var displayString: String {
         switch self {
-        case .safari:   return "open_link.browser.option.safari".localized
-        case .chrome:   return "open_link.browser.option.chrome".localized
-        case .firefox:  return "open_link.browser.option.firefox".localized
-        case .snowhaze: return "open_link.browser.option.snowhaze".localized
-        case .brave:    return "open_link.browser.option.brave".localized
+        case .safari:   return L10n.Localizable.OpenLink.Browser.Option.safari
+        case .chrome:   return L10n.Localizable.OpenLink.Browser.Option.chrome
+        case .firefox:  return L10n.Localizable.OpenLink.Browser.Option.firefox
+        case .snowhaze: return L10n.Localizable.OpenLink.Browser.Option.snowhaze
+        case .brave:    return L10n.Localizable.OpenLink.Browser.Option.brave
         }
     }
 

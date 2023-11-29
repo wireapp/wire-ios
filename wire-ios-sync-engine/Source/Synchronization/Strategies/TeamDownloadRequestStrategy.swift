@@ -145,7 +145,6 @@ public final class TeamDownloadRequestStrategy: AbstractRequestStrategy, ZMConte
         case .teamCreate: createTeam(with: event)
         case .teamDelete: deleteTeam(with: event)
         case .teamUpdate: updateTeam(with: event)
-        case .teamMemberJoin: processAddedMember(with: event)
         case .teamMemberLeave: processRemovedMember(with: event)
         case .teamMemberUpdate: processUpdatedMember(with: event)
         default: break
@@ -168,15 +167,6 @@ public final class TeamDownloadRequestStrategy: AbstractRequestStrategy, ZMConte
         guard let existingTeam = Team.fetchOrCreate(with: identifier, create: false, in: managedObjectContext, created: nil) else { return }
 
         TeamUpdateEventPayload(data)?.updateTeam(existingTeam, in: managedObjectContext)
-    }
-
-    private func processAddedMember(with event: ZMUpdateEvent) {
-        guard let identifier = event.teamId, let data = event.dataPayload else { return }
-        guard let team = Team.fetchOrCreate(with: identifier, create: false, in: managedObjectContext, created: nil) else { return }
-        guard let addedUserId = (data[TeamEventPayloadKey.user.rawValue] as? String).flatMap(UUID.init) else { return }
-        let user = ZMUser.fetchOrCreate(with: addedUserId, domain: nil, in: managedObjectContext)
-        user.needsToBeUpdatedFromBackend = true
-        _ = Member.getOrCreateMember(for: user, in: team, context: managedObjectContext)
     }
 
     private func processRemovedMember(with event: ZMUpdateEvent) {

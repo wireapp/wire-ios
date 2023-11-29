@@ -18,20 +18,13 @@
 
 import Foundation
 
-public enum NetworkError: Error {
-
-    case invalidRequest
-    case invalidResponse
-
-}
-
-public protocol HttpClient {
+public protocol HttpClientCustom {
 
     func send(_ request: URLRequest) async throws -> (Data, URLResponse)
 
 }
 
-public class HttpClientImpl: NSObject, HttpClient {
+public class HttpClientE2EI: NSObject, HttpClientCustom {
 
     public func send(_ request: URLRequest) async throws -> (Data, URLResponse) {
         return try await URLSession.shared.data(for: request)
