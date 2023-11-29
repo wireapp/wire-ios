@@ -54,8 +54,6 @@ struct CopyValueView: View {
     }
 
     func copy() {
-        performCopy?(
-            value
-        )
+        performCopy?(value)
     }
 }

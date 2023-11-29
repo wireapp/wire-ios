@@ -22,41 +22,25 @@ struct DeviceDetailsProteusView: View {
     @ObservedObject var viewModel: DeviceInfoViewModel
 
     var body: some View {
-        VStack(
-            alignment: .leading
-        ) {
+        VStack(alignment: .leading) {
             CopyValueView(
                 title: L10n.Localizable.Device.Details.Section.Proteus.id,
                 value: viewModel.proteusID,
                 isCopyEnabled: false,
                 performCopy: nil
-            ).padding(
-                .all,
-                16
             )
+            .padding(.all,16)
             Divider()
             Text(L10n.Localizable.Device.Details.Section.Proteus.activated)
-                .foregroundColor(
-                    SemanticColors.Label.textSectionHeader.swiftUIColor
-                )
-                .font(
-                    UIFont.mediumSemiboldFont.swiftUIFont
-                )
+                .foregroundColor(SemanticColors.Label.textSectionHeader.swiftUIColor)
+                .font(UIFont.mediumSemiboldFont.swiftUIFont)
                 .padding(
-                    [
-                        .leading,
-                        .top
-                    ],
+                    [.leading, .top],
                     16
                 )
-                .padding(
-                    .bottom,
-                    4
-                )
+                .padding(.bottom, 4)
             Text(viewModel.addedDate)
-                .foregroundColor(
-                    SemanticColors.Label.textDefault.swiftUIColor
-                )
+                .foregroundColor(SemanticColors.Label.textDefault.swiftUIColor)
                 .padding(
                     [
                         .leading,
@@ -65,33 +49,22 @@ struct DeviceDetailsProteusView: View {
                     ],
                     16
                 )
-                .font(
-                    UIFont.normalRegularFont.swiftUIFont
-                )
+                .font(UIFont.normalRegularFont.swiftUIFont)
             Divider()
             CopyValueView(
                 title: L10n.Localizable.Device.Details.Section.Proteus.keyfingerprint,
                 value: viewModel.deviceKeyFingerprint,
                 isCopyEnabled: viewModel.isCopyEnabled,
                 performCopy: viewModel.copyToClipboard
-            ).padding(
-                .all,
-                16
-            )
+            ).padding(.all, 16)
             Divider()
             Toggle(
                 L10n.Localizable.Device.verified,
                 isOn: $viewModel.isProteusVerificationEnabled
             )
             .font(UIFont.headerSemiBoldFont.swiftUIFont)
-            .padding(
-                [
-                    .all
-                ],
-                16
-            ).onChange(
-                of: viewModel.isProteusVerificationEnabled
-            ) { value in
+            .padding(.all, 16)
+            .onChange(of: viewModel.isProteusVerificationEnabled) { value in
                 Task {
                     await viewModel.updateVerifiedStatus(
                         value
