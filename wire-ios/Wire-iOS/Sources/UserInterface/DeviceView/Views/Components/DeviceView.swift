@@ -26,38 +26,24 @@ struct DeviceView: View {
     var viewModel: DeviceInfoViewModel
     var titleView: some View {
         HStack {
-            Text(
-                viewModel.title.clippedValue()
-            )
-            .font(
-                UIFont.headerSemiBoldFont.swiftUIFont
-            )
-            .foregroundColor(
-                SemanticColors.Label.textDefault.swiftUIColor
-            )
+            Text(viewModel.title.clippedValue())
+                .font(UIFont.headerSemiBoldFont.swiftUIFont)
+                .foregroundColor(SemanticColors.Label.textDefault.swiftUIColor)
             if let e2eIdentityCertificateStatusImage = viewModel.certificateStatus.imageForStatus() {
                 e2eIdentityCertificateStatusImage
             }
             if viewModel.isProteusVerificationEnabled {
-                Image(
-                    .certificateVerified
-                )
+                Image(.certificateVerified)
             }
         }
     }
     var body: some View {
-        VStack(
-            alignment: .leading
-        ) {
+        VStack(alignment: .leading) {
             titleView
             if !viewModel.proteusID.isEmpty {
-                Text(
-                    "\(L10n.Localizable.Device.Details.Section.Proteus.id): \(viewModel.proteusID)"
-                ).font(
-                    UIFont.mediumRegular.swiftUIFont
-                ).foregroundColor(
-                    SemanticColors.Label.textSectionHeader.swiftUIColor
-                )
+                Text("\(L10n.Localizable.Device.Details.Section.Proteus.id): \(viewModel.proteusID)")
+                    .font(UIFont.mediumRegular.swiftUIFont)
+                    .foregroundColor(SemanticColors.Label.textSectionHeader.swiftUIColor)
             }
         }
     }
