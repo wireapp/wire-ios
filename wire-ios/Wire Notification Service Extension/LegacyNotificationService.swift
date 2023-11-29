@@ -34,7 +34,6 @@ public protocol CallEventHandlerProtocol {
 class CallEventHandler: CallEventHandlerProtocol {
 
     func reportIncomingVoIPCall(_ payload: [String: Any]) {
-        guard #available(iOS 14.5, *) else { return }
         WireLogger.calling.info("waking up main app to handle call event")
         CXProvider.reportNewIncomingVoIPPushPayload(payload) { error in
             if let error = error {
