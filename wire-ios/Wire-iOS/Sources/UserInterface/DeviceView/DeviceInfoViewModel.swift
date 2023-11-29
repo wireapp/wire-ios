@@ -66,6 +66,7 @@ protocol DeviceDetailsViewActions {
     func removeDevice() async -> Bool
     func resetSession() async -> Bool
     func updateVerified(_ value: Bool) async -> Bool
+    var isProcessing: ((Bool) -> Void)? { get set }
     func copyToClipboard(_ value: String)
 }
 
@@ -98,7 +99,7 @@ final class DeviceInfoViewModel: ObservableObject {
         return certificate.expiryDate < Date.now + .oneDay + .oneDay
     }
     @Published var e2eIdentityCertificate: E2eIdentityCertificate?
-    private let actionsHandler: any DeviceDetailsViewActions
+    private var actionsHandler: any DeviceDetailsViewActions
     var isCopyEnabled: Bool {
         return Settings.isClipboardEnabled
     }
@@ -129,6 +130,11 @@ final class DeviceInfoViewModel: ObservableObject {
         self.isE2EIdentityEnabled = isE2EIdentityEnabled
         self.userSession = userSession
         self.isSelfClient = isSelfClient
+        self.actionsHandler.isProcessing = {[weak self] isProcessing in
+            RunLoop.main.perform {
+                self?.isActionInProgress = isProcessing
+            }
+        }
     }
 
     func fetchE2eCertificate() async {
@@ -149,22 +155,14 @@ final class DeviceInfoViewModel: ObservableObject {
         isActionInProgress = false
     }
 
-    func updateVerifiedStatus(
-        _ value: Bool
-    ) async {
+    func updateVerifiedStatus(_ value: Bool) async {
         isActionInProgress = true
-        isVerified = await actionsHandler.updateVerified(
-            value
-        )
+        isVerified = await actionsHandler.updateVerified(value)
         isActionInProgress = false
     }
 
-    func copyToClipboard(
-        _ value: String
-    ) {
-        actionsHandler.copyToClipboard(
-            value
-        )
+    func copyToClipboard(_ value: String) {
+        actionsHandler.copyToClipboard(value)
     }
 }
 
@@ -201,16 +199,5 @@ extension DeviceInfoViewModel {
             isSelfClient: userClient.isSelfClient(),
             userSession: userSession
         )
-    }
-}
-
-struct DevicesViewModel {
-    var currentDevice: DeviceInfoViewModel
-    var otherDevices: [DeviceInfoViewModel]
-
-    func onRemoveDevice(
-        _ indexSet: IndexSet
-    ) {
-
     }
 }

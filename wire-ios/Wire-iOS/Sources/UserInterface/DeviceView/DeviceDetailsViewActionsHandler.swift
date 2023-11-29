@@ -26,6 +26,7 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
     var clientRemovalObserver: ClientRemovalObserver?
     var credentials: ZMEmailCredentials?
     var certificate: E2eIdentityCertificate?
+    var isProcessing: ((Bool) -> Void)?
     let userSession: UserSession
     init(
         userClient: UserClient,
@@ -57,7 +58,11 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
     }
 
     func removeDevice() async -> Bool {
-        return await withCheckedContinuation { continuation in
+        isProcessing?(true)
+        return await withCheckedContinuation {[weak self] continuation in
+            guard let self = self else {
+                return
+            }
             clientRemovalObserver = ClientRemovalObserver(
                 userClientToDelete: userClient,
                 delegate: self,
@@ -84,19 +89,13 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
         }
     }
 
-    func updateVerified(
-        _ value: Bool
-    ) async -> Bool {
+    func updateVerified(_ value: Bool) async -> Bool {
         return await withCheckedContinuation { continuation in
             userSession.enqueue({
                 if value {
-                    self.userClient.trustClient(
-                        self.userClient
-                    )
+                    self.userClient.trustClient(self.userClient)
                 } else {
-                    self.userClient.ignoreClient(
-                        self.userClient
-                    )
+                    self.userClient.ignoreClient(self.userClient)
                 }
             },
                                 completionHandler: {
@@ -107,9 +106,7 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
         }
     }
 
-    func copyToClipboard(
-        _ value: String
-    ) {
+    func copyToClipboard(_ value: String) {
         UIPasteboard.general.string = value
     }
 }
@@ -129,6 +126,6 @@ extension DeviceDetailsViewActionsHandler: ClientRemovalObserverDelegate {
         _ clientRemovalObserver: ClientRemovalObserver,
         isVisible: Bool
     ) {
-
+        isProcessing?(isVisible)
     }
 }

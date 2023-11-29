@@ -29,7 +29,7 @@ struct DeviceDetailsProteusView: View {
                 isCopyEnabled: false,
                 performCopy: nil
             )
-            .padding(.all,16)
+            .padding(.all, 16)
             Divider()
             Text(L10n.Localizable.Device.Details.Section.Proteus.activated)
                 .foregroundColor(SemanticColors.Label.textSectionHeader.swiftUIColor)
