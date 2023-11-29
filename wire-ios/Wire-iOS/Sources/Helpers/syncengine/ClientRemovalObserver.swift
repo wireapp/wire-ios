@@ -38,7 +38,7 @@ final class ClientRemovalObserver: NSObject, ClientUpdateObserver {
         return RequestPasswordController(context: .removeDevice,
                                          callback: {[weak self] password in
             guard let password = password,
-                !password.isEmpty else {
+                  !password.isEmpty else {
                 self?.endRemoval(result: ClientRemovalUIError.noPasswordProvided)
                 return
             }
@@ -94,8 +94,10 @@ final class ClientRemovalObserver: NSObject, ClientUpdateObserver {
         delegate?.setIsLoadingViewVisible(self, isVisible: false)
 
         if passwordIsNecessaryForDelete {
-            let alert = UIAlertController.alertWithOKButton(title: nil,
-                                                            message: "self.settings.account_details.remove_device.password.error".localized)
+            let alert = UIAlertController.alertWithOKButton(
+                title: nil,
+                message: L10n.Localizable.Self.Settings.AccountDetails.RemoveDevice.Password.error
+            )
 
             delegate?.present(self, viewControllerToPresent: alert)
             endRemoval(result: error)
