@@ -133,7 +133,8 @@ class ConversationEventProcessorTests: MessagingTestBase {
             // Create the event
             let payload = Payload.UpdateConverationMemberLeave(
                 userIDs: [selfUser.remoteIdentifier],
-                qualifiedUserIDs: [selfUser.qualifiedID!]
+                qualifiedUserIDs: [selfUser.qualifiedID!],
+                reason: .left
             )
             let updateEvent = self.updateEvent(from: payload)
 
@@ -164,7 +165,8 @@ class ConversationEventProcessorTests: MessagingTestBase {
             // create the event
             let payload = Payload.UpdateConverationMemberLeave(
                 userIDs: [user.remoteIdentifier],
-                qualifiedUserIDs: [user.qualifiedID!]
+                qualifiedUserIDs: [user.qualifiedID!],
+                reason: .left
             )
             let updateEvent = self.updateEvent(from: payload)
 
@@ -194,7 +196,8 @@ class ConversationEventProcessorTests: MessagingTestBase {
             // create the event
             let payload = Payload.UpdateConverationMemberLeave(
                 userIDs: [selfUser.remoteIdentifier],
-                qualifiedUserIDs: [selfUser.qualifiedID!]
+                qualifiedUserIDs: [selfUser.qualifiedID!],
+                reason: .left
             )
             let updateEvent = self.updateEvent(from: payload)
 

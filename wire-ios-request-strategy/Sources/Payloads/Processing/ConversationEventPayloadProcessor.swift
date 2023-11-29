@@ -104,8 +104,6 @@ final class ConversationEventPayloadProcessor {
         originalEvent: ZMUpdateEvent,
         in context: NSManagedObjectContext
     ) {
-        print("payload.data.reason \(payload.data.reason as Any)")
-
         guard
             let conversation = fetchOrCreateConversation(
                 from: payload,
@@ -142,7 +140,7 @@ final class ConversationEventPayloadProcessor {
         }
 
         if payload.data.reason == .userDeleted {
-            // delete the users locally
+            // delete the users locally and/or logout if the self user is affected
             let removedUsers = removedUsers.sorted { $0.isSelfUser && !$1.isSelfUser }
             for user in removedUsers {
                 // only delete users that had been members
@@ -151,13 +149,13 @@ final class ConversationEventPayloadProcessor {
                     continue
                 }
 
+                context.delete(membership)
                 if user.isSelfUser {
                     AccountDeletedNotification(context: context)
                         .post(in: context.notificationContext)
                 } else {
                     user.markAccountAsDeleted(at: originalEvent.timestamp ?? Date())
                 }
-                context.delete(membership)
             }
         }
     }
