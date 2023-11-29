@@ -21,8 +21,6 @@ import WireSystem
 import WireTransport
 import WireDataModel
 
-private let zmLog = ZMSLog(tag: "URL")
-
 private enum WebsitePages {
     case termsOfServices
     case privacyPolicy
