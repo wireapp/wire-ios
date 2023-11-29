@@ -37,18 +37,18 @@ enum TeamSource: Int {
     }
 }
 
-struct WireUrl: Codable {
+struct WireURL: Codable {
     let wireAppOnItunes: URL
     let support: URL
     let randomProfilePictureSource: URL
 
-    static var shared: WireUrl! = {
-        WireUrl(filePath: Bundle.fileURL(for: "url", with: "json")!)
+    static var shared: WireURL! = {
+        WireURL(filePath: Bundle.fileURL(for: "url", with: "json")!)
     }()
 
     private init?(filePath: URL) {
         do {
-            self = try filePath.decode(WireUrl.self)
+            self = try filePath.decode(WireURL.self)
         } catch {
             return nil
         }
@@ -90,11 +90,11 @@ extension URL {
 extension URL {
 
     static var wr_wireAppOnItunes: URL {
-        return WireUrl.shared.wireAppOnItunes
+        return WireURL.shared.wireAppOnItunes
     }
 
     static var wr_randomProfilePictureSource: URL {
-        return WireUrl.shared.randomProfilePictureSource
+        return WireURL.shared.randomProfilePictureSource
     }
 
     static var wr_emailAlreadyInUseLearnMore: URL {
@@ -102,7 +102,7 @@ extension URL {
     }
 
     static var wr_support: URL {
-        return WireUrl.shared.support
+        return WireURL.shared.support
     }
 
     static var wr_usernameLearnMore: URL {
