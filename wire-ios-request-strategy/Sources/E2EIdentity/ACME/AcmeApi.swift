@@ -144,3 +144,17 @@ enum ContentType {
     static let json = "application/json"
     static let joseJson = "application/jose+json"
 }
+
+public protocol HttpClientCustom {
+
+    func send(_ request: URLRequest) async throws -> (Data, URLResponse)
+
+}
+
+public class HttpClientE2EI: NSObject, HttpClientCustom {
+
+    public func send(_ request: URLRequest) async throws -> (Data, URLResponse) {
+        return try await URLSession.shared.data(for: request)
+    }
+
+}

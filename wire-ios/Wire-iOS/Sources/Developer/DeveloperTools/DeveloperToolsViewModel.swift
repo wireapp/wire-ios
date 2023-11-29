@@ -256,17 +256,18 @@ final class DeveloperToolsViewModel: ObservableObject {
         }
     }
 
-    private func createE2EICertificateUseCase(syncContext: NSManagedObjectContext, httpClient: HttpClientE2EI) -> EnrollE2eICertificateUseCase? {
+    private func createE2EICertificateUseCase(syncContext: NSManagedObjectContext, httpClient: HttpClient) -> EnrollE2eICertificateUseCase? {
         var enrollE2eICertificate: EnrollE2eICertificateUseCase?
-        let acmeApi = AcmeApi(httpClient: httpClient)
-        let e2eIApi = E2eIApi(httpClient: httpClient)
+        let httpClientE2EI = HttpClientE2EI()
+        let acmeApi = AcmeApi(httpClient: httpClientE2EI)
+        let apiProvider = APIProvider(httpClient: httpClient)
         syncContext.performAndWait {
             guard let coreCrypto = syncContext.coreCrypto else {
                 return
             }
 
             let e2eiClient = E2eIClient(coreCrypto: coreCrypto)
-            let e2eiRepository = E2eIRepository(acmeApi: acmeApi, e2eIApi: e2eIApi, e2eiClient: e2eiClient)
+            let e2eiRepository = E2eIRepository(acmeApi: acmeApi, apiProvider: apiProvider, e2eiClient: e2eiClient)
 
             enrollE2eICertificate = EnrollE2eICertificateUseCase(e2eiRepository: e2eiRepository)
         }

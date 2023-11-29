@@ -102,7 +102,7 @@ public class ZMUserSession: NSObject {
     }
 
     public lazy var featureRepository = FeatureRepository(context: syncContext)
-    public lazy var httpClient = HttpClientE2EI(transportSession: transportSession, queue: syncContext)
+    public lazy var httpClient = HttpClientImpl(transportSession: transportSession, queue: syncContext)
 
     let earService: EARServiceInterface
 

@@ -18,7 +18,7 @@
 
 import Foundation
 
-public protocol E2eIApiInterface {
+public protocol E2eIAPI {
 
     func getWireNonce(clientId: String) async throws -> String
 
@@ -26,24 +26,26 @@ public protocol E2eIApiInterface {
 
 }
 
-public class E2eIApi: E2eIApiInterface {
+class E2eIAPIV5: E2eIAPI {
 
-    // MARK: - Properties
-    private let httpClient: HttpClientCustom
+    let httpClient: HttpClient
 
-    // MARK: - Life cycle
-    public init(httpClient: HttpClientCustom) {
+    open var apiVersion: APIVersion {
+        return .v5
+    }
+
+    init(httpClient: HttpClient) {
         self.httpClient = httpClient
     }
 
-    public func getWireNonce(clientId: String) async throws -> String {
+    func getWireNonce(clientId: String) async throws -> String {
         let request = ZMTransportRequest(path: "/\(Constant.pathClients)/\(clientId)/\(Constant.pathNonce)",
                                          method: .head,
                                          payload: nil,
-                                         apiVersion: APIVersion.v5.rawValue)
-        request.addValue(ContentType.joseJson, forAdditionalHeaderField: "Content-Type")
+                                         apiVersion: apiVersion.rawValue)
+        request.addValue(ContentType.joseJson, forAdditionalHeaderField: Constant.contentType)
 
-        let response = try await httpClient.send(request)
+        let response = await httpClient.send(request)
         guard let httpResponse = response.rawResponse,
               let replayNonce = httpResponse.value(forHTTPHeaderField: HeaderKey.replayNonce) else {
             throw NetworkError.errorDecodingResponse(response)
@@ -52,13 +54,13 @@ public class E2eIApi: E2eIApiInterface {
         return replayNonce
     }
 
-    public func getAccessToken(clientId: String, dpopToken: String) async throws -> AccessTokenResponse {
+    func getAccessToken(clientId: String, dpopToken: String) async throws -> AccessTokenResponse {
         let request = ZMTransportRequest(path: "/\(Constant.pathClients)/\(clientId)/\(Constant.pathAccessToken)",
                                          method: .post,
                                          payload: nil,
-                                         apiVersion: APIVersion.v5.rawValue)
+                                         apiVersion: apiVersion.rawValue)
         request.addValue(dpopToken, forAdditionalHeaderField: Constant.dpopHeaderKey)
-        let response = try await httpClient.send(request)
+        let response = await httpClient.send(request)
 
         guard let accessToken = AccessTokenResponse(response) else {
             throw NetworkError.errorDecodingResponse(response)
@@ -73,6 +75,7 @@ private enum Constant {
     static let pathNonce = "nonce"
     static let pathAccessToken = "access-token"
 
+    static let contentType = "Content-Type"
     static let dpopHeaderKey = "Dpop"
     static let nonceHeaderKey = "Replay-Nonce"
 }

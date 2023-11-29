@@ -77,19 +77,23 @@ public protocol E2eIEnrollmentInterface {
 /// This class implements the steps of the E2EI certificate enrollment process.
 public final class E2eIEnrollment: E2eIEnrollmentInterface {
 
-    private var acmeApi: AcmeApiInterface
-    private var e2eIApi: E2eIApiInterface
-    private var e2eiService: E2eIServiceInterface
-    private let logger = WireLogger.e2ei
+    private let acmeApi: AcmeApiInterface
     private let acmeDirectory: AcmeDirectory
+    private let apiProvider: APIProviderInterface
+    private let e2eiService: E2eIServiceInterface
 
-    public init(acmeApi: AcmeApiInterface, e2eIApi: E2eIApiInterface, e2eiService: E2eIServiceInterface, acmeDirectory: AcmeDirectory) {
-        self.acmeApi = acmeApi
-        self.acmeApi = acmeApi
-        self.e2eIApi = e2eIApi
-        self.e2eiService = e2eiService
-        self.acmeDirectory = acmeDirectory
-    }
+    private let logger = WireLogger.e2ei
+
+    public init(
+        acmeApi: AcmeApiInterface,
+        apiProvider: APIProviderInterface,
+        e2eiService: E2eIServiceInterface,
+        acmeDirectory: AcmeDirectory) {
+            self.acmeApi = acmeApi
+            self.apiProvider = apiProvider
+            self.e2eiService = e2eiService
+            self.acmeDirectory = acmeDirectory
+        }
 
     public func getACMENonce() async throws -> String {
         logger.info("get ACME nonce from \(acmeDirectory.newNonce)")
@@ -157,8 +161,14 @@ public final class E2eIEnrollment: E2eIEnrollmentInterface {
     public func getWireNonce(clientId: String) async throws -> String {
         logger.info("get wire nonce")
 
+        guard let apiVersion = BackendInfo.apiVersion,
+              let e2eIAPI = apiProvider.e2eIAPI(apiVersion: apiVersion)
+        else {
+            throw MessageSendError.unresolvedApiVersion
+        }
+
         do {
-            return try await e2eIApi.getWireNonce(clientId: clientId)
+            return try await e2eIAPI.getWireNonce(clientId: clientId)
         } catch {
             logger.error("failed to get wire nonce: \(error.localizedDescription)")
 
@@ -180,8 +190,17 @@ public final class E2eIEnrollment: E2eIEnrollmentInterface {
 
     public func getWireAccessToken(clientId: String, dpopToken: String) async throws -> AccessTokenResponse {
         logger.info("get Wire access token")
+
+        guard let apiVersion = BackendInfo.apiVersion,
+              let e2eIAPI = apiProvider.e2eIAPI(apiVersion: apiVersion)
+        else {
+            throw MessageSendError.unresolvedApiVersion
+        }
+
         do {
-            return try await e2eIApi.getAccessToken(clientId: clientId, dpopToken: dpopToken)
+            return try await e2eIAPI.getAccessToken(
+                clientId: clientId,
+                dpopToken: dpopToken)
         } catch {
             logger.error("failed to get Wire access token: \(error.localizedDescription)")
 
