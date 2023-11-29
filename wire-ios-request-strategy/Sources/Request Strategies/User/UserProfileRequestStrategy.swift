@@ -64,9 +64,9 @@ public class UserProfileRequestStrategy: AbstractRequestStrategy, IdentifierObje
         fetchAllConnectedUsers(for: apiVersion)
 
         return
-            userProfileByID.nextRequest(for: apiVersion) ??
-            userProfileByQualifiedID.nextRequest(for: apiVersion) ??
-            actionSync.nextRequest(for: apiVersion)
+        userProfileByID.nextRequest(for: apiVersion) ??
+        userProfileByQualifiedID.nextRequest(for: apiVersion) ??
+        actionSync.nextRequest(for: apiVersion)
     }
 
     func fetchAllConnectedUsers(for apiVersion: APIVersion) {
@@ -243,6 +243,10 @@ class UserProfileByIDTranscoder: IdentifierObjectSyncTranscoder {
     }
 
     func request(for identifiers: Set<UUID>, apiVersion: APIVersion) -> ZMTransportRequest? {
+        if apiVersion.rawValue > 0 {
+            return nil
+        }
+
         // GET /users?ids=?
         let userIDs = identifiers.map({ $0.transportString() }).joined(separator: ",")
         return ZMTransportRequest(getFromPath: "/users?ids=\(userIDs)", apiVersion: apiVersion.rawValue)
