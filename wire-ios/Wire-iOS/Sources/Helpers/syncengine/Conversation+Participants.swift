@@ -95,9 +95,9 @@ extension ZMConversation {
 
         switch error {
         case NetworkError.offline:
-            UIAlertController.showErrorAlert(title: ConversationError.title, message: ConversationError.offline.localized)
+            UIAlertController.showErrorAlert(title: ConversationError.title, message: ConversationError.offline)
         default:
-            UIAlertController.showErrorAlert(title: ConversationError.title, message: ConversationError.cannotRemove.localized)
+            UIAlertController.showErrorAlert(title: ConversationError.title, message: ConversationError.cannotRemove)
         }
     }
 }
