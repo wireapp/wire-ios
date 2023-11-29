@@ -22,11 +22,15 @@ import XCTest
 
 class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
 
+    // MARK: - Properties
+
     var sut: ProteusToMLSMigrationCoordinator!
     var mockStorage: MockProteusToMLSMigrationStorageInterface!
     var mockFeatureRepository: MockFeatureRepositoryInterface!
     var mockActionsProvider: MockMLSActionsProviderProtocol!
     var mockMLSService: MockMLSService!
+
+    // MARK: - setUp
 
     override func setUp() {
         super.setUp()
@@ -49,6 +53,8 @@ class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
         DeveloperFlag.storage = .random()!
     }
 
+    // MARK: - tearDown
+
     override func tearDown() {
         sut = nil
         mockStorage = nil
@@ -60,10 +66,46 @@ class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
         super.tearDown()
     }
 
+    // MARK: - Tests
+
+    func testMigrateOrJoinGroupConversations_CallsJoinGroupForNewConversations() async throws {
+        // GIVEN
+        let groupID = MLSGroupID.random()
+        await createUserAndGroupConversation(groupID: groupID)
+
+        mockMLSService.conversationExistsMock = { _ in
+            return false
+        }
+
+        // WHEN
+        await sut.migrateOrJoinGroupConversations()
+
+        // THEN
+        XCTAssertTrue(mockMLSService.calls.joinGroup.contains(groupID), "joinGroup should be called for new conversations")
+    }
+
+    func testMigrateOrJoinGroupConversations_DoesNotCallJoinGroupForExistingConversations() async throws {
+        // GIVEN
+        let groupID = MLSGroupID.random()
+        await createUserAndGroupConversation(groupID: groupID)
+
+        mockMLSService.conversationExistsMock = { _ in
+            return true
+        }
+
+        // WHEN
+        await sut.migrateOrJoinGroupConversations()
+
+        // THEN
+        XCTAssertFalse(mockMLSService.calls.joinGroup.contains(groupID), "joinGroup should not be called for existing conversations")
+    }
+
     // MARK: - UpdateMigrationStatus
 
-    func test_UpdateMigrationStatus_StartsMigration_IfNotStartedAndReady() async {
+    func test_UpdateMigrationStatus_StartsMigration_IfNotStartedAndReady() async throws {
         // Given
+        await createUserAndGroupConversation()
+
         setMigrationReadiness(to: true)
         mockStorage.underlyingMigrationStatus = .notStarted
 
@@ -73,15 +115,17 @@ class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
         }
 
         // When
-        await sut.updateMigrationStatus()
+        try await sut.updateMigrationStatus()
 
         // Then
         XCTAssertEqual(mockStorage.underlyingMigrationStatus, .started)
         XCTAssertTrue(startedMigration)
     }
 
-    func test_UpdateMigrationStatus_DoesntStartMigration_IfAlreadyStarted() async {
+    func test_UpdateMigrationStatus_DoesntStartMigration_IfAlreadyStarted() async throws {
         // Given
+        await createUserAndGroupConversation()
+
         setMigrationReadiness(to: true)
         mockStorage.underlyingMigrationStatus = .started
 
@@ -91,15 +135,17 @@ class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
         }
 
         // When
-        await sut.updateMigrationStatus()
+        try await sut.updateMigrationStatus()
 
         // Then
         XCTAssertEqual(mockStorage.underlyingMigrationStatus, .started)
         XCTAssertFalse(startedMigration)
     }
 
-    func test_UpdateMigrationStatus_DoesntStartMigration_IfNotReady() async {
+    func test_UpdateMigrationStatus_DoesntStartMigration_IfNotReady() async throws {
         // Given
+        await createUserAndGroupConversation()
+
         setMigrationReadiness(to: false)
         mockStorage.underlyingMigrationStatus = .notStarted
 
@@ -109,7 +155,7 @@ class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
         }
 
         // When
-        await sut.updateMigrationStatus()
+        try await sut.updateMigrationStatus()
 
         // Then
         XCTAssertEqual(mockStorage.underlyingMigrationStatus, .notStarted)
@@ -142,6 +188,19 @@ class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
     // MARK: - Helpers
 
     private typealias MigrationStartStatus = ProteusToMLSMigrationCoordinator.MigrationStartStatus
+
+    private func createUserAndGroupConversation(groupID: MLSGroupID = .random()) async {
+        await syncMOC.perform {
+            let selfUser = ZMUser.selfUser(in: self.syncMOC)
+            selfUser.teamIdentifier = UUID()
+
+            let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
+            conversation.teamRemoteIdentifier = selfUser.teamIdentifier
+            conversation.conversationType = .group
+            conversation.messageProtocol = .mixed
+            conversation.mlsGroupID = groupID
+        }
+    }
 
     private func setMigrationReadiness(to ready: Bool) {
         setMockValues(

@@ -45,7 +45,7 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
 
     func performPendingJoins()
 
-    func wipeGroup(_ groupID: MLSGroupID)
+    func wipeGroup(_ groupID: MLSGroupID) throws
 
     func commitPendingProposals() async throws
 
@@ -87,7 +87,9 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
 
     func fetchAndRepairGroup(with groupID: MLSGroupID) async
 
-    func startProteusToMLSMigration()
+    /// Migrate proteus team group conversations to MLS
+
+    func startProteusToMLSMigration() async throws
 
 }
 
@@ -472,7 +474,7 @@ public final class MLSService: MLSServiceInterface {
 
     // MARK: - Add member
 
-    enum MLSAddMembersError: Error {
+    public enum MLSAddMembersError: Error {
 
         case noMembersToAdd
         case noInviteesToAdd
@@ -573,12 +575,13 @@ public final class MLSService: MLSServiceInterface {
 
     // MARK: - Remove group
 
-    public func wipeGroup(_ groupID: MLSGroupID) {
+    public func wipeGroup(_ groupID: MLSGroupID) throws {
         logger.info("wiping group (\(groupID.safeForLoggingDescription))")
         do {
             try coreCrypto.perform { try $0.wipeConversation(conversationId: groupID.bytes) }
         } catch {
             logger.warn("failed to wipe group (\(groupID.safeForLoggingDescription)): \(String(describing: error))")
+            throw error
         }
     }
 
@@ -1663,7 +1666,7 @@ public final class MLSService: MLSServiceInterface {
 
     // MARK: - Proteus to MLS Migration
 
-    public func startProteusToMLSMigration() {
+    public func startProteusToMLSMigration() async throws {
         // Migrate proteus team group conversations to MLS
     }
 

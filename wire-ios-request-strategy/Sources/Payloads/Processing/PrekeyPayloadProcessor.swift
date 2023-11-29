@@ -18,7 +18,20 @@
 
 import Foundation
 
-final class PrekeyPayloadProcessor {
+// sourcery: AutoMockable
+public protocol PrekeyPayloadProcessorInterface {
+    func establishSessions(
+        from payload: Payload.PrekeyByQualifiedUserID,
+        with selfClient: UserClient,
+        context: NSManagedObjectContext
+    ) -> Bool
+}
+
+public final class PrekeyPayloadProcessor: PrekeyPayloadProcessorInterface {
+
+    public init() {
+
+    }
 
     /// Establish new sessions using the prekeys retreived for each client.
     ///
@@ -29,7 +42,7 @@ final class PrekeyPayloadProcessor {
     ///
     /// - returns `True` if there's more sessions which needs to be established.
 
-    func establishSessions(
+    public func establishSessions(
         from payload: Payload.PrekeyByQualifiedUserID,
         with selfClient: UserClient,
         context: NSManagedObjectContext

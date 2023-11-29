@@ -1,5 +1,6 @@
+//
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2023 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,25 +18,7 @@
 
 import Foundation
 
-final class MockConversationService: ConversationServiceInterface {
+public protocol ProteusMessage: OTREntity, EncryptedPayloadGenerator, Hashable {}
 
-    func createGroupConversation(
-        name: String?,
-        users: Set<ZMUser>,
-        allowGuests: Bool,
-        allowServices: Bool,
-        enableReceipts: Bool,
-        messageProtocol: WireDataModel.MessageProtocol,
-        completion: @escaping (Swift.Result<ZMConversation, ConversationCreationFailure>) -> Void
-    ) {
-        fatalError("not implemented")
-    }
-
-    func syncConversation(
-        qualifiedID: QualifiedID,
-        completion: @escaping () -> Void
-    ) {
-        completion()
-    }
-
-}
+extension ZMClientMessage: ProteusMessage {}
+extension ZMAssetClientMessage: ProteusMessage {}

@@ -86,6 +86,12 @@ protocol MLSActionsProviderProtocol {
         context: NotificationContext
     ) async throws
 
+    func updateConversationProtocol(
+        qualifiedID: QualifiedID,
+        messageProtocol: MessageProtocol,
+        context: NotificationContext
+    ) async throws
+
 }
 
 final class MLSActionsProvider: MLSActionsProviderProtocol {
@@ -224,6 +230,18 @@ final class MLSActionsProvider: MLSActionsProviderProtocol {
         context: NotificationContext
     ) async throws {
         var action = SyncConversationAction(qualifiedID: qualifiedID)
+        try await action.perform(in: context)
+    }
+
+    func updateConversationProtocol(
+        qualifiedID: QualifiedID,
+        messageProtocol: MessageProtocol,
+        context: NotificationContext
+    ) async throws {
+        var action = UpdateConversationProtocolAction(
+            qualifiedID: qualifiedID,
+            messageProtocol: messageProtocol
+        )
         try await action.perform(in: context)
     }
 

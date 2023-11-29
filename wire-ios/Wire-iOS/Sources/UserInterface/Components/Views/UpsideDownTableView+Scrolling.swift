@@ -26,14 +26,14 @@ extension UpsideDownTableView {
         super.scrollToTop(animated: animated)
     }
 
-    func scroll(toIndex indexToShow: Int, completion: ((UIView) -> Void)? = .none) {
+    func scroll(toIndex indexToShow: Int, completion: ((UIView) -> Void)? = .none, animated: Bool = false) {
         guard numberOfSections > 0 else { return }
 
         let rowIndex = numberOfCells(inSection: indexToShow) - 1
         guard rowIndex >= 0 && indexToShow < numberOfSections else { return }
         let cellIndexPath = IndexPath(row: rowIndex, section: indexToShow)
 
-        scrollToRow(at: cellIndexPath, at: .top, animated: false)
+        scrollToRow(at: cellIndexPath, at: .top, animated: animated)
         if let cell = cellForRow(at: cellIndexPath) {
             completion?(cell)
         }
