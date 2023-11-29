@@ -195,7 +195,12 @@ final class ServiceDetailViewController: UIViewController {
                     }
                 }
             case let .removeService(conversation):
-                self.presentRemoveDialogue(for: serviceUser, from: conversation, dismisser: self.viewControllerDismisser)
+                self.presentRemoveDialogue(
+                    for: serviceUser,
+                    from: conversation,
+                    userSession: userSession,
+                    dismisser: self.viewControllerDismisser
+                )
             case .openConversation:
                 if let existingConversation = ZMConversation.existingConversation(in: userSession.managedObjectContext, service: serviceUser, team: userSession.selfUser.membership?.team) {
                     completion?(.success(conversation: existingConversation))

@@ -19,6 +19,7 @@
 import Foundation
 import UIKit
 import WireDataModel
+import WireSyncEngine
 import avs
 
 extension UIViewController {
@@ -33,13 +34,15 @@ extension UIViewController {
     func presentRemoveDialogue(
         for participant: UserType,
         from conversation: ZMConversation,
+        userSession: UserSession,
         dismisser: ViewControllerDismisser? = nil
-        ) {
+    ) {
 
         let controller = UIAlertController.remove(participant) { [weak self] remove in
-            guard let `self` = self, remove else { return }
+            guard let self, remove else { return }
 
-            conversation.removeOrShowError(participant: participant) { result in
+            let useCase = RemoveParticipantUseCase()
+            useCase.invoke(with: participant, conversation: conversation, in: userSession) { result in
                 switch result {
                 case .success:
                     dismisser?.dismiss(viewController: self, completion: nil)

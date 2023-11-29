@@ -526,6 +526,7 @@
 		63B2366F251B634C009EDB02 /* UIAlertController+OutdatedClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B2366E251B634C009EDB02 /* UIAlertController+OutdatedClient.swift */; };
 		63B7FB5227CFBAF50035087F /* BlacklistReason+BlockerViewControllerContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B7FB5127CFBAF50035087F /* BlacklistReason+BlockerViewControllerContext.swift */; };
 		63B9F5A525E528E70059020D /* ActiveSpeakerState+Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B9F5A425E528E70059020D /* ActiveSpeakerState+Helper.swift */; };
+		63CB46392B177FC5007240AF /* RemoveParticipantUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63CB46382B177FC5007240AF /* RemoveParticipantUseCase.swift */; };
 		63D17D6B268E142100B0CC4F /* MockCallGridViewControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63D17D6A268E142000B0CC4F /* MockCallGridViewControllerDelegate.swift */; };
 		63E128B726208BAD009D9AF2 /* CallGridHintNotificationLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63E128B626208BAD009D9AF2 /* CallGridHintNotificationLabel.swift */; };
 		63E128BB26208DDC009D9AF2 /* CallGridEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63E128BA26208DDC009D9AF2 /* CallGridEvent.swift */; };
@@ -2508,6 +2509,7 @@
 		63B2366E251B634C009EDB02 /* UIAlertController+OutdatedClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIAlertController+OutdatedClient.swift"; sourceTree = "<group>"; };
 		63B7FB5127CFBAF50035087F /* BlacklistReason+BlockerViewControllerContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BlacklistReason+BlockerViewControllerContext.swift"; sourceTree = "<group>"; };
 		63B9F5A425E528E70059020D /* ActiveSpeakerState+Helper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ActiveSpeakerState+Helper.swift"; sourceTree = "<group>"; };
+		63CB46382B177FC5007240AF /* RemoveParticipantUseCase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RemoveParticipantUseCase.swift; sourceTree = "<group>"; };
 		63CE88A32506A83300E457C7 /* OrientationDeltaTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrientationDeltaTests.swift; sourceTree = "<group>"; };
 		63D17D6A268E142000B0CC4F /* MockCallGridViewControllerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockCallGridViewControllerDelegate.swift; sourceTree = "<group>"; };
 		63D17D70268F52A300B0CC4F /* Array+Prefix.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+Prefix.swift"; sourceTree = "<group>"; };
@@ -5067,6 +5069,7 @@
 		63E56CCD2B162713006EED69 /* Use cases */ = {
 			isa = PBXGroup;
 			children = (
+				63CB46382B177FC5007240AF /* RemoveParticipantUseCase.swift */,
 				63E56CCE2B16272B006EED69 /* AddParticipantsUseCase.swift */,
 			);
 			path = "Use cases";
@@ -9736,6 +9739,7 @@
 				0658F5AC25D16EA700DD6859 /* ColorScheme.swift in Sources */,
 				A918330F2419272E00CBD0B7 /* TokenSeparatorAttachment.swift in Sources */,
 				EF13205321A6EBF900E7EF21 /* NSString+PastePhoneNumber.swift in Sources */,
+				63CB46392B177FC5007240AF /* RemoveParticipantUseCase.swift in Sources */,
 				163495871F010F91004E80DB /* UnauthenticatedSession+Shared.swift in Sources */,
 				F1199D401FC849450070FAC3 /* ButtonDescription.swift in Sources */,
 				16616752223AAA5F00779AE3 /* SoundPreviewPlayer.swift in Sources */,

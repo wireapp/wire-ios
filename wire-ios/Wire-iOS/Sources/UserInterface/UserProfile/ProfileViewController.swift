@@ -447,8 +447,16 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
             preferredStyle: .actionSheet
         )
 
-        let removeAction = UIAlertAction(title: "profile.remove_dialog_button_remove_confirm".localized, style: .destructive) { _ in
-            self.viewModel.conversation?.removeOrShowError(participant: otherUser) { result in
+        let removeAction = UIAlertAction(
+            title: "profile.remove_dialog_button_remove_confirm".localized,
+            style: .destructive
+        ) { [self] _ in
+            guard let conversation = viewModel.conversation else {
+                return
+            }
+
+            let useCase = RemoveParticipantUseCase()
+            useCase.invoke(with: otherUser, conversation: conversation, in: viewModel.userSession) { result in
                 switch result {
                 case .success:
                     self.returnToPreviousScreen()

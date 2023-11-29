@@ -74,7 +74,13 @@ extension ConversationActionController {
         transitionToListAndEnqueue {
             conversation.clearMessageHistory()
             if leave {
-                conversation.removeOrShowError(participant: user)
+                let useCase = RemoveParticipantUseCase()
+                useCase.invoke(
+                    with: user,
+                    conversation: conversation,
+                    in: self.userSession,
+                    completion: nil
+                )
             }
         }
     }

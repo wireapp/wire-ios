@@ -189,8 +189,14 @@ final class ProfileViewControllerViewModel: NSObject {
 
         transitionToListAndEnqueue {
             self.conversation?.clearMessageHistory()
-            if leave {
-                self.conversation?.removeOrShowError(participant: user)
+            if leave, let conversation = self.conversation {
+                let useCase = RemoveParticipantUseCase()
+                useCase.invoke(
+                    with: user,
+                    conversation: conversation,
+                    in: self.userSession,
+                    completion: nil
+                )
             }
         }
     }
