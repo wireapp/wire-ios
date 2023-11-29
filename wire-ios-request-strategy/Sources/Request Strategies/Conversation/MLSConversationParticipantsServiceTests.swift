@@ -38,7 +38,7 @@ class MLSConversationParticipantsServiceTests: MessagingTestBase {
 
         mockClientIDsProvider = MockMLSClientIDsProviding()
         mockMLSService = MockMLSService()
-        
+
         syncMOC.performAndWait { [self] in
             conversation = ZMConversation.insertNewObject(in: syncMOC)
             conversation.mlsGroupID = groupID
@@ -126,7 +126,7 @@ class MLSConversationParticipantsServiceTests: MessagingTestBase {
 
         // WHEN
         try await sut.removeParticipant(user, from: conversation)
-       
+
         // THEN
         // gather expected values
         let userID = await syncMOC.perform { [self] in user.qualifiedID }
