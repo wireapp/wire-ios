@@ -100,7 +100,25 @@ class MLSEventProcessorTests: MessagingTestBase {
         )
     }
 
-    func test_itDoesntUpdate_MlsStatus_WhenProtocolIsNotMLS() {
+    func test_itUpdates_MlsStatus_WhenProtocolIsMixed_AndWelcomeMessageWasProcessed() {
+        assert_mlsStatus(
+            originalValue: .pendingJoin,
+            expectedValue: .ready,
+            mockMessageProtocol: .mixed,
+            mockHasWelcomeMessageBeenProcessed: true
+        )
+    }
+
+    func test_itUpdates_MlsStatus_WhenProtocolIsMixed_AndWelcomeMessageWasNotProcessed() {
+        assert_mlsStatus(
+            originalValue: .ready,
+            expectedValue: .pendingJoin,
+            mockMessageProtocol: .mixed,
+            mockHasWelcomeMessageBeenProcessed: false
+        )
+    }
+
+    func test_itDoesntUpdate_MlsStatus_WhenProtocolIsProteus() {
         assert_mlsStatus(
             originalValue: .pendingJoin,
             expectedValue: .pendingJoin,
@@ -110,9 +128,18 @@ class MLSEventProcessorTests: MessagingTestBase {
 
     // MARK: - Joining new conversations
 
-    func test_itAddsPendingGroupToGroupsPendingJoin() {
+    func test_itAddsPendingGroupToGroupsPendingJoin_WhenProtocolIsMixed() {
+        internalTest_itAddsPendingGroupToGroupsPendingJoinWhenProtocol(.mixed)
+    }
+
+    func test_itAddsPendingGroupToGroupsPendingJoinWhenProtocolIsMLS() {
+        internalTest_itAddsPendingGroupToGroupsPendingJoinWhenProtocol(.mls)
+    }
+
+    func internalTest_itAddsPendingGroupToGroupsPendingJoinWhenProtocol(_ messagingProtocol: MessageProtocol) {
         syncMOC.performAndWait {
             // Given
+            self.conversation.messageProtocol = messagingProtocol
             self.conversation.mlsStatus = .pendingJoin
 
             // When
