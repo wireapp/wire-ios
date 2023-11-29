@@ -272,7 +272,7 @@ final class DatabaseMigrationTests: DatabaseBaseTest {
 
     func testThatItPerformsMigrationFrom_Between_2_24_1_and_PreLast_ToCurrentModelVersion() {
         // NOTICE: When a new version of data model is created, please increase the last number of the array.
-        let allVersions = ["2-24-1"] + [(25...31), (39...45), (48...57), (59...64), (66...109)].joined().map {
+        let allVersions = ["2-24-1"] + [(25...31), (39...45), (48...57), (59...64), (66...111)].joined().map {
             "2-\($0)-0"
         }
 
@@ -293,7 +293,7 @@ final class DatabaseMigrationTests: DatabaseBaseTest {
                     "- open the the folder in Finder by typing this command in your terminal. IT WILL NOT WORK IF THE TEST IS NOT PAUSED!!!.\n" +
                     "\t cp \"\(currentDatabaseURL.path)\" ~/Desktop/store\(fixtureVersion).wiredatabase\n\n" +
                     "- The command will copy a file on your desktop called `store\(fixtureVersion).wiredatabase`\n" +
-                    "- Copy it to test bundle if this project in `WireDataModel/Test/Resources` with the other stores\n\n")
+                    "- Copy it to test bundle if this project in `WireDataModel/Tests/Resources` with the other stores\n\n")
             assert(false)
         }
 
@@ -402,7 +402,7 @@ final class DatabaseMigrationTests: DatabaseBaseTest {
 
             let store = NSManagedObjectModel(contentsOf: source.appendingPathComponent(modelFileName))!
             // then
-            XCTAssertTrue(store.versionIdentifiers.contains(version))
+            XCTAssertTrue(store.versionIdentifiers.contains(version), "\(version) should be contained")
             processedVersions.insert(version)
         }
     }

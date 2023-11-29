@@ -191,6 +191,18 @@ class SpyUserClientKeyStore: UserClientKeysStore {
             return lastGeneratedLastPrekey!
         }
     }
+
+    var accessEncryptionContextCount = 0
+
+    override var encryptionContext: EncryptionContext {
+        get {
+            accessEncryptionContextCount += 1
+            return super.encryptionContext
+        }
+        set {
+            super.encryptionContext = newValue
+        }
+    }
 }
 
 public class MockSyncStatus: SyncStatus {
