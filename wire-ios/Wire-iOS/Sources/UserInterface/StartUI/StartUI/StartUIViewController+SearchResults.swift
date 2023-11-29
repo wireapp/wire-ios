@@ -128,7 +128,7 @@ extension StartUIViewController: SearchResultsViewControllerDelegate {
 
     func createGuestRoom() {
         guard let userSession = userSession as? ZMUserSession else {
-            fatal("No user session present")
+            return WireLogger.conversation.error("failed to create guest room: no user session")
         }
 
         isLoadingViewVisible = true
