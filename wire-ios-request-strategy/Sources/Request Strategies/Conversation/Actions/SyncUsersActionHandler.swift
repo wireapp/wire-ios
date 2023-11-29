@@ -91,6 +91,7 @@ class SyncUsersActionHandler: ActionHandler<SyncUsersAction> {
 
         switch apiVersion {
         case .v0, .v1, .v2, .v3:
+            action.fail(with: .endpointUnavailable)
             return
 
         case .v4, .v5:
