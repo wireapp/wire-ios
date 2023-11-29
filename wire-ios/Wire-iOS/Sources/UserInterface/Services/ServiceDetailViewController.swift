@@ -88,7 +88,7 @@ final class ServiceDetailViewController: UIViewController {
         detailView = ServiceDetailView(service: service)
 
         let selfUser = userSession.selfUser
-        
+
         switch actionType {
         case let .addService(conversation):
             actionButton = Button.createAddServiceButton()
