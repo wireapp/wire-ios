@@ -21,6 +21,8 @@ import WireCoreCrypto
 
 public protocol AcmeClientInterface {
     func getACMEDirectory() async throws -> Data
+    func getACMENonce(path: String) async throws -> String
+    func sendACMERequest(path: String, requestBody: Data) async throws -> ACMEResponse
 }
 
 /// This class provides ACME(Automatic Certificate Management Environment) server methods for enrolling an E2EI certificate.
@@ -42,17 +44,80 @@ public class AcmeClient: NSObject, AcmeClientInterface {
             throw NetworkError.invalidRequest
         }
 
+        /// TODO: it's temp, we should fetch it from the team settings
         let path = "https://acme.\(domain)/acme/defaultteams/directory"
 
-        let request = ZMTransportRequest(getFromPath: path, apiVersion: 0)
-        let result = try await httpClient.send(request)
-
-        guard let data = result.rawData else {
-            throw NetworkError.invalidResponse
+        guard let url = URL(string: path) else {
+            throw NetworkError.invalidRequest
         }
+        var request = URLRequest(url: url)
+        request.httpMethod = Constant.HTTPMethod.get
+        let (data, _) = try await httpClient.send(request)
 
         return data
 
+    }
+
+    public func getACMENonce(path: String) async throws -> String {
+
+        guard let url = URL(string: path) else {
+            throw NetworkError.invalidRequest
+        }
+        var request = URLRequest(url: url)
+        request.httpMethod = Constant.HTTPMethod.head
+
+        let (_, response) = try await httpClient.send(request)
+
+        guard let httpResponse = response as? HTTPURLResponse,
+              let replayNonce = httpResponse.value(forHTTPHeaderField: Constant.Header.replayNonce) else {
+            throw NetworkError.invalidResponse
+        }
+
+        return replayNonce
+
+    }
+
+    public func sendACMERequest(path: String, requestBody: Data) async throws -> ACMEResponse {
+        guard let url = URL(string: path) else {
+            throw NetworkError.invalidRequest
+        }
+        var request = URLRequest(url: url)
+        request.httpMethod = Constant.HTTPMethod.post
+        request.setValue(Constant.ContentType.joseAndJson, forHTTPHeaderField: "Content-Type")
+        request.httpBody = requestBody
+
+        let (data, response) = try await httpClient.send(request)
+
+        guard
+            let httpResponse = response as? HTTPURLResponse,
+            let replayNonce = httpResponse.value(forHTTPHeaderField: Constant.Header.replayNonce),
+            let location = httpResponse.value(forHTTPHeaderField: Constant.Header.location)
+        else {
+            throw NetworkError.invalidResponse
+        }
+
+        return ACMEResponse(nonce: replayNonce, location: location, response: data)
+
+    }
+
+}
+
+private enum Constant {
+
+    enum HTTPMethod {
+        static let get = "GET"
+        static let post = "POST"
+        static let head = "HEAD"
+    }
+
+    enum Header {
+        static let replayNonce = "Replay-Nonce"
+        static let location = "location"
+    }
+
+    enum ContentType {
+        static let json = "application/json"
+        static let joseAndJson = "application/jose+json"
     }
 
 }
