@@ -45,21 +45,13 @@ extension E2EIdentityCertificateStatus {
     func imageForStatus() -> Image? {
         switch self {
         case .notActivated:
-            return Image(
-                .certificateExpired
-            )
+            return Image(.certificateExpired)
         case .revoked:
-            return Image(
-                .certificateRevoked
-            )
+            return Image(.certificateRevoked)
         case .expired:
-            return Image(
-                .certificateExpired
-            )
+            return Image(.certificateExpired)
         case .valid:
-            return Image(
-                .certificateValid
-            )
+            return Image(.certificateValid)
         case .none:
             return nil
         }
@@ -73,12 +65,8 @@ protocol DeviceDetailsViewActions {
     )
     func removeDevice() async -> Bool
     func resetSession() async -> Bool
-    func updateVerified(
-        _ value: Bool
-    ) async -> Bool
-    func copyToClipboard(
-        _ value: String
-    )
+    func updateVerified(_ value: Bool) async -> Bool
+    func copyToClipboard(_ value: String)
 }
 
 final class DeviceInfoViewModel: ObservableObject {
@@ -93,11 +81,10 @@ final class DeviceInfoViewModel: ObservableObject {
     var isSelfClient: Bool
     var certificateStatus: E2EIdentityCertificateStatus {
         guard let certificate = e2eIdentityCertificate,
-                let status = E2EIdentityCertificateStatus.allCases.filter(
-                    {
+                let status = E2EIdentityCertificateStatus.allCases.filter({
                         $0.titleForStatus() == certificate.certificateStatus
                     }
-                ).first 
+                ).first
         else {
             return .none
         }
@@ -206,12 +193,12 @@ extension DeviceInfoViewModel {
             proteusID: userClient.proteusSessionID?.clientID.fingerprintStringWithSpaces.uppercased() ?? "",
             isProteusVerificationEnabled: userClient.user?.isVerified ?? false,
             actionsHandler: DeviceDetailsViewActionsHandler(
-                userClient: userClient, 
+                userClient: userClient,
                 userSession: userSession,
                 credentials: credentials
             ),
             isE2EIdentityEnabled: userClient.e2eIdentityProvider.isE2EIdentityEnabled,
-            isSelfClient: userClient.isSelfClient(), 
+            isSelfClient: userClient.isSelfClient(),
             userSession: userSession
         )
     }
