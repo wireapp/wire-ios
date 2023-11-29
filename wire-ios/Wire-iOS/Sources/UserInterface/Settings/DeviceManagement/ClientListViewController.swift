@@ -191,8 +191,9 @@ final class ClientListViewController: UIViewController,
                         userClient: client,
                         userSession: ZMUserSession.shared()!,
                         credentials: credentials
-                    )
-                )
+                    )) {
+                        self.navigationController?.setNavigationBarHidden(false, animated: false)
+                    }
                 let hostingViewController = UIHostingController(rootView: detailsView)
                 hostingViewController.view.backgroundColor = SemanticColors.View.backgroundDefault
                 navigationController.pushViewController(hostingViewController, animated: true)

@@ -86,7 +86,7 @@ final class DeviceInfoViewModel: ObservableObject {
                     }
                 ).first
         else {
-            return .none
+            return isE2EIdentityEnabled ? .notActivated : .none
         }
         return status
     }

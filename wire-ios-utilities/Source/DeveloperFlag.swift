@@ -29,6 +29,7 @@ public enum DeveloperFlag: String, CaseIterable {
     case forceDatabaseLoadingFailure
     case ignoreIncomingEvents
     case enableNewClientDetailsFlow
+    case enableE2EIdentityDetails
 
     public var description: String {
         switch self {
@@ -52,6 +53,8 @@ public enum DeveloperFlag: String, CaseIterable {
 
         case .enableNewClientDetailsFlow:
             return "Enable new client details flow"
+        case .enableE2EIdentityDetails:
+            return "Enable E2E Identity Details"
         }
     }
 
@@ -94,6 +97,8 @@ public enum DeveloperFlag: String, CaseIterable {
             return "IgnoreIncomingEventsEnabled"
         case .enableNewClientDetailsFlow:
             return "EnableNewClientDetailsFlow"
+        case .enableE2EIdentityDetails:
+            return "EnableE2EIdentityDetails"
         }
     }
 }
