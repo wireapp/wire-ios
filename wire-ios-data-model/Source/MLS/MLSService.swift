@@ -501,7 +501,7 @@ public final class MLSService: MLSServiceInterface {
         do {
             logger.info("adding members to group (\(groupID.safeForLoggingDescription)) with users: \(users)")
             guard !users.isEmpty else { throw MLSAddMembersError.noMembersToAdd }
-            let keyPackages = await claimKeyPackages(for: users)
+            let keyPackages = try await claimKeyPackages(for: users)
             let invitees = keyPackages.map(Invitee.init(from:))
 
             guard invitees.count > 0 else {
@@ -518,11 +518,12 @@ public final class MLSService: MLSServiceInterface {
 
     private func claimKeyPackages(
         for users: [MLSUser]
-    ) async -> [KeyPackage] {
+    ) async throws -> [KeyPackage] {
 
         guard let context = context else { return [] }
 
         var result = [KeyPackage]()
+        var failedUsers = [MLSUser]()
 
         for user in users {
             do {
@@ -534,8 +535,13 @@ public final class MLSService: MLSServiceInterface {
                 )
                 result.append(contentsOf: keyPackages)
             } catch {
+                failedUsers.append(user)
                 logger.warn("failed to claim key packages for user (\(user.id)): \(String(describing: error))")
             }
+        }
+
+        if failedUsers.isNonEmpty {
+            throw MLSKeyPackagesError.failedToClaimKeyPackages(users: failedUsers)
         }
 
         return result
@@ -592,6 +598,7 @@ public final class MLSService: MLSServiceInterface {
         case failedToGenerateKeyPackages
         case failedToUploadKeyPackages
         case failedToCountUnclaimedKeyPackages
+        case failedToClaimKeyPackages(users: [MLSUser])
 
     }
 
