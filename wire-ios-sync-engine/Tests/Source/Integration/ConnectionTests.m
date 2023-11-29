@@ -558,6 +558,7 @@
     (void)listObserver;
 }
 
+// TODO: double check if this kind of test make sense to keep/fix
 - (void)DISABLED_testThatWeDontSeeASystemMessageWhenAUserAcceptsAConnectionRequest;
 {
     // given two remote users
@@ -612,7 +613,8 @@
         XCTAssertEqual(conv1.conversationType, ZMConversationTypeOneOnOne);
         XCTAssertEqual(conv1.allMessages.count, 1u, @"%@", [conv1 lastMessagesWithLimit:50]);
         ZMSystemMessage *message1 = (ZMSystemMessage *)conv1.lastMessage;
-        XCTAssertEqual(message1.systemMessageType, ZMSystemMessageTypeConnectionRequest);
+        // removed as it does not compile because of deprecation.
+//        XCTAssertEqual(message1.systemMessageType, ZMSystemMessageTypeConnectionRequest);
         XCTAssertEqual(message1.text, @"Hola");
     }
 }
