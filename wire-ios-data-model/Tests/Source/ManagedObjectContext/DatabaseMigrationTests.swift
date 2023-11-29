@@ -22,12 +22,33 @@ import XCTest
 
 final class DatabaseMigrationTests: DatabaseBaseTest {
 
+    func testMessagingLatestModelHasMigrationVersion() throws {
+        // given
+        let dataModelVersion = CoreDataStack.loadMessagingModel().version
+
+//        guard CoreDataMessagingMigrationVersion.allCases.first?.dataModelVersion == modelVersion else {
+//            XCTFail("Current model version '\(modelVersion)' does not exist as core data migration version! " +
+//                    "Please add a new case for the version, so that the migration to that version is ensured!")
+//            return
+//        }
+
+        // when
+        let latestMigrationVersion = CoreDataMessagingMigrationVersion.allCases.first
+
+        // then
+        XCTAssertEqual(
+            latestMigrationVersion?.dataModelVersion,
+            dataModelVersion,
+            "Current model version '\(dataModelVersion)' does not exist as core data migration version! " +
+            "Please add a new case for the version, so that the migration to that version is ensured!"
+        )
+    }
+
     func testThatItPerformsMigrationFrom_Between_2_80_0_and_PreLast_ToCurrentModelVersion() throws {
         // NOTICE: When a new version of data model is created, please increase the last number of the array.
         let allVersions = [80...111]
             .joined()
             .map { "2-\($0)-0" }
-
         let modelVersion = CoreDataStack.loadMessagingModel().version
         let fixtureVersion = String(databaseFixtureFileName(for: modelVersion).dropFirst("store".count))
 
