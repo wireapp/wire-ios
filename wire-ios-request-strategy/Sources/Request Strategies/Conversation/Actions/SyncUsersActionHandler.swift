@@ -33,10 +33,12 @@ class SyncUsersActionHandler: ActionHandler<SyncUsersAction> {
     }
 
     private func markUserProfilesAsUnavailable(_ users: Set<QualifiedID>) {
-        for qualifiedID in users {
-            let user = ZMUser.fetch(with: qualifiedID.uuid, domain: qualifiedID.domain, in: context)
-            user?.isPendingMetadataRefresh = true
-            user?.needsToBeUpdatedFromBackend = false
+        context.performAndWait {
+            for qualifiedID in users {
+                let user = ZMUser.fetch(with: qualifiedID.uuid, domain: qualifiedID.domain, in: context)
+                user?.isPendingMetadataRefresh = true
+                user?.needsToBeUpdatedFromBackend = false
+            }
         }
     }
 
