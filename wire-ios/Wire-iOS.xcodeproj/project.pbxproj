@@ -10948,6 +10948,7 @@
 				CODE_SIGN_IDENTITY = "";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Manual;
+				DEFINES_MODULE = NO;
 				DEVELOPMENT_TEAM = "";
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -10967,6 +10968,7 @@
 				CODE_SIGN_IDENTITY = "";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Manual;
+				DEFINES_MODULE = NO;
 				DEVELOPMENT_TEAM = "";
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
