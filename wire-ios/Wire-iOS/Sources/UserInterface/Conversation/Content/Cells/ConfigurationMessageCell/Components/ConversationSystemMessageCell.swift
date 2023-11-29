@@ -336,7 +336,7 @@ final class ConversationSystemMessageCellDescription {
         }
 
         switch systemMessageData.systemMessageType {
-        case .connectionRequest, .connectionUpdate:
+        case .connectionRequest, .connectionUpdate, .usingNewDevice, .reactivatedDevice:
             break // Deprecated
 
         case .conversationNameChanged:
@@ -379,7 +379,7 @@ final class ConversationSystemMessageCellDescription {
             let decryptionCell = ConversationCannotDecryptSystemMessageCellDescription(message: message, data: systemMessageData, sender: sender)
             return [AnyConversationMessageCellDescription(decryptionCell)]
 
-        case .newClient, .usingNewDevice, .reactivatedDevice:
+        case .newClient:
             let newClientCell = ConversationNewDeviceSystemMessageCellDescription(message: message, systemMessageData: systemMessageData, conversation: conversation as! ZMConversation)
             return [AnyConversationMessageCellDescription(newClientCell)]
 
@@ -438,7 +438,11 @@ final class ConversationSystemMessageCellDescription {
             let domainsStoppedFederatingCell = DomainsStoppedFederatingCellDescription(systemMessageData: systemMessageData)
             return [AnyConversationMessageCellDescription(domainsStoppedFederatingCell)]
 
-        default:
+        case .mlsMigrationFinalized, .mlsMigrationJoinAfterwards, .mlsMigrationOngoingCall, .mlsMigrationStarted, .mlsMigrationUpdateVersion:
+            let description = MLSMigrationCellDescription(messageType: systemMessageData.systemMessageType)
+            return [AnyConversationMessageCellDescription(description)]
+
+        case .invalid:
             let unknownMessage = UnknownMessageCellDescription()
             return [AnyConversationMessageCellDescription(unknownMessage)]
         }
@@ -1024,19 +1028,6 @@ final class ConversationNewDeviceSystemMessageCellDescription: ConversationMessa
 
         if !systemMessage.addedUserTypes.isEmpty {
             return configureForAddedUsers(in: conversation, attributes: textAttributes)
-        } else if systemMessage.systemMessageType == .reactivatedDevice {
-            guard let user = SelfUser.provider?.providedSelfUser else {
-                assertionFailure("expected available 'user'!")
-                return configureForOtherUsers(
-                    users,
-                    conversation: conversation,
-                    clients: clients,
-                    attributes: textAttributes
-                )
-            }
-            return configureForReactivatedSelfClient(user, link: View.userClientURL)
-        } else if let user = users.first, user.isSelfUser && systemMessage.systemMessageType == .usingNewDevice {
-            return configureForNewCurrentDeviceOfSelfUser(user, link: View.userClientURL)
         } else if users.count == 1, let user = users.first, user.isSelfUser {
             return configureForNewClientOfSelfUser(user, clients: clients, link: View.userClientURL)
         } else {
@@ -1052,23 +1043,11 @@ final class ConversationNewDeviceSystemMessageCellDescription: ConversationMessa
         return StyleKitIcon.exclamationMark.makeImage(size: 16, color: IconColors.foregroundExclamationMarkInSystemMessage)
     }
 
-    private static func configureForReactivatedSelfClient(_ selfUser: UserType, link: URL) -> View.Configuration {
-        let string = L10n.Localizable.Content.System.reactivatedDevice(link.absoluteString)
-        let attributedText = NSAttributedString.markdown(from: string, style: .systemMessage)
-        return View.Configuration(attributedText: attributedText, icon: exclamationMarkIcon, linkTarget: .user(selfUser))
-    }
-
     private static func configureForNewClientOfSelfUser(_ selfUser: UserType, clients: [UserClientType], link: URL) -> View.Configuration {
         let string = L10n.Localizable.Content.System.selfUserNewClient(link.absoluteString)
         let attributedText = NSMutableAttributedString.markdown(from: string, style: .systemMessage)
         let isSelfClient = clients.first?.isEqual(ZMUserSession.shared()?.selfUserClient) ?? false
         return View.Configuration(attributedText: attributedText, icon: isSelfClient ? nil : verifiedIcon, linkTarget: .user(selfUser))
-    }
-
-    private static func configureForNewCurrentDeviceOfSelfUser(_ selfUser: UserType, link: URL) -> View.Configuration {
-        let string = L10n.Localizable.Content.System.selfUserNewSelfClient(link.absoluteString)
-        let attributedText = NSMutableAttributedString.markdown(from: string, style: .systemMessage)
-        return View.Configuration(attributedText: attributedText, icon: nil, linkTarget: .user(selfUser))
     }
 
     private static func configureForOtherUsers(_ users: [UserType], conversation: ZMConversation, clients: [UserClientType], attributes: TextAttributes) -> View.Configuration {

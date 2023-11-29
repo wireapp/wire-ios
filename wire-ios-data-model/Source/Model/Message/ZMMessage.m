@@ -866,49 +866,6 @@ NSString * const ZMMessageDecryptionErrorCodeKey = @"decryptionErrorCode";
     return [NSCompoundPredicate andPredicateWithSubpredicates:@[conversationPredicate, missingMessagesTypePredicate, needsUpdatingUsersPredicate]];
 }
 
-+ (NSPredicate *)predicateForSystemMessagesInsertedLocally
-{
-    return [NSPredicate predicateWithBlock:^BOOL(ZMSystemMessage *msg, id ZM_UNUSED bindings) {
-        if (![msg isKindOfClass:[ZMSystemMessage class]]){
-            return NO;
-        }
-        switch (msg.systemMessageType) {
-            case ZMSystemMessageTypeNewClient:
-            case ZMSystemMessageTypePotentialGap:
-            case ZMSystemMessageTypeIgnoredClient:
-            case ZMSystemMessageTypePerformedCall:
-            case ZMSystemMessageTypeUsingNewDevice:
-            case ZMSystemMessageTypeDecryptionFailed:
-            case ZMSystemMessageTypeDecryptionFailedResolved:
-            case ZMSystemMessageTypeReactivatedDevice:
-            case ZMSystemMessageTypeConversationIsSecure:
-            case ZMSystemMessageTypeMessageDeletedForEveryone:
-            case ZMSystemMessageTypeDecryptionFailed_RemoteIdentityChanged:
-            case ZMSystemMessageTypeTeamMemberLeave:
-            case ZMSystemMessageTypeMissedCall:
-            case ZMSystemMessageTypeReadReceiptsEnabled:
-            case ZMSystemMessageTypeReadReceiptsDisabled:
-            case ZMSystemMessageTypeReadReceiptsOn:
-            case ZMSystemMessageTypeLegalHoldEnabled:
-            case ZMSystemMessageTypeLegalHoldDisabled:
-            case ZMSystemMessageTypeSessionReset:
-                
-                return YES;
-            case ZMSystemMessageTypeInvalid:
-            case ZMSystemMessageTypeConversationNameChanged:
-            case ZMSystemMessageTypeConnectionRequest:
-            case ZMSystemMessageTypeConnectionUpdate:
-            case ZMSystemMessageTypeNewConversation:
-            case ZMSystemMessageTypeParticipantsAdded:
-            case ZMSystemMessageTypeParticipantsRemoved:
-            case ZMSystemMessageTypeFailedToAddParticipants:
-            case ZMSystemMessageTypeMessageTimerUpdate:
-            case ZMSystemMessageTypeDomainsStoppedFederating:
-                return NO;
-        }
-    }];
-}
-
 - (void)updateNeedsUpdatingUsersIfNeeded
 {
     if (self.systemMessageType == ZMSystemMessageTypePotentialGap && self.needsUpdatingUsers == YES) {

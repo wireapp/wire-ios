@@ -220,7 +220,10 @@ public extension ZMConversation {
 
 public extension ZMConversation {
 
-    static func fetchAllTeamGroupConversations(messageProtocol: MessageProtocol, in context: NSManagedObjectContext) throws -> [ZMConversation] {
+    static func fetchAllTeamGroupConversations(
+        messageProtocol: MessageProtocol,
+        in context: NSManagedObjectContext
+    ) throws -> [ZMConversation] {
         let selfUser = ZMUser.selfUser(in: context)
         guard let selfUserTeamIdentifier = selfUser.teamIdentifier else {
             assertionFailure("this method is supposed to be called for users which are part of a team")

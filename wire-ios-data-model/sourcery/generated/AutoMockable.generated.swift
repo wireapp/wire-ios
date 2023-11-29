@@ -1,4 +1,4 @@
-// Generated using Sourcery 2.1.2 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 2.0.3 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 // swiftlint:disable line_length
 // swiftlint:disable variable_name
@@ -35,6 +35,51 @@ import Combine
 
 
 
+class MockCoreDataMessagingMigratorProtocol: CoreDataMessagingMigratorProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - requiresMigration
+
+    var requiresMigrationAtToVersion_Invocations: [(storeURL: URL, version: CoreDataMessagingMigrationVersion)] = []
+    var requiresMigrationAtToVersion_MockMethod: ((URL, CoreDataMessagingMigrationVersion) -> Bool)?
+    var requiresMigrationAtToVersion_MockValue: Bool?
+
+    func requiresMigration(at storeURL: URL, toVersion version: CoreDataMessagingMigrationVersion) -> Bool {
+        requiresMigrationAtToVersion_Invocations.append((storeURL: storeURL, version: version))
+
+        if let mock = requiresMigrationAtToVersion_MockMethod {
+            return mock(storeURL, version)
+        } else if let mock = requiresMigrationAtToVersion_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `requiresMigrationAtToVersion`")
+        }
+    }
+
+    // MARK: - migrateStore
+
+    var migrateStoreAtToVersion_Invocations: [(storeURL: URL, version: CoreDataMessagingMigrationVersion)] = []
+    var migrateStoreAtToVersion_MockError: Error?
+    var migrateStoreAtToVersion_MockMethod: ((URL, CoreDataMessagingMigrationVersion) throws -> Void)?
+
+    func migrateStore(at storeURL: URL, toVersion version: CoreDataMessagingMigrationVersion) throws {
+        migrateStoreAtToVersion_Invocations.append((storeURL: storeURL, version: version))
+
+        if let error = migrateStoreAtToVersion_MockError {
+            throw error
+        }
+
+        guard let mock = migrateStoreAtToVersion_MockMethod else {
+            fatalError("no mock for `migrateStoreAtToVersion`")
+        }
+
+        try mock(storeURL, version)            
+    }
+
+}
 public class MockCryptoboxMigrationManagerInterface: CryptoboxMigrationManagerInterface {
 
     // MARK: - Life cycle
@@ -1107,6 +1152,26 @@ class MockMLSActionsProviderProtocol: MLSActionsProviderProtocol {
         }
 
         try await mock(qualifiedID, context)            
+    }
+
+    // MARK: - updateConversationProtocol
+
+    var updateConversationProtocolQualifiedIDMessageProtocolContext_Invocations: [(qualifiedID: QualifiedID, messageProtocol: MessageProtocol, context: NotificationContext)] = []
+    var updateConversationProtocolQualifiedIDMessageProtocolContext_MockError: Error?
+    var updateConversationProtocolQualifiedIDMessageProtocolContext_MockMethod: ((QualifiedID, MessageProtocol, NotificationContext) async throws -> Void)?
+
+    func updateConversationProtocol(qualifiedID: QualifiedID, messageProtocol: MessageProtocol, context: NotificationContext) async throws {
+        updateConversationProtocolQualifiedIDMessageProtocolContext_Invocations.append((qualifiedID: qualifiedID, messageProtocol: messageProtocol, context: context))
+
+        if let error = updateConversationProtocolQualifiedIDMessageProtocolContext_MockError {
+            throw error
+        }
+
+        guard let mock = updateConversationProtocolQualifiedIDMessageProtocolContext_MockMethod else {
+            fatalError("no mock for `updateConversationProtocolQualifiedIDMessageProtocolContext`")
+        }
+
+        try await mock(qualifiedID, messageProtocol, context)            
     }
 
 }
