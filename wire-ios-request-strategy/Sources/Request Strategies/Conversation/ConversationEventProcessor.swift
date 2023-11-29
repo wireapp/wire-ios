@@ -24,7 +24,9 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
 
     let context: NSManagedObjectContext
     let conversationService: ConversationServiceInterface
-    private let processor = ConversationEventPayloadProcessor()
+    private let processor = ConversationEventPayloadProcessor(
+        removeLocalConversation: RemoveLocalConversationUseCase()
+    )
 
     // MARK: - Life cycle
 

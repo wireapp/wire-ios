@@ -19,7 +19,7 @@
 import Foundation
 import WireDataModel
 
-final class ConversationEventPayloadProcessor {
+struct ConversationEventPayloadProcessor {
 
     enum Source {
         case slowSync
@@ -28,8 +28,8 @@ final class ConversationEventPayloadProcessor {
 
     private let removeLocalConversation: RemoveLocalConversationUseCaseProtocol
 
-    init(removeLocalConversation: RemoveLocalConversationUseCaseProtocol? = nil) {
-        self.removeLocalConversation = removeLocalConversation ?? RemoveLocalConversationUseCase()
+    init(removeLocalConversation: RemoveLocalConversationUseCaseProtocol) {
+        self.removeLocalConversation = removeLocalConversation
     }
 
     // MARK: - Conversation creation
@@ -141,7 +141,7 @@ final class ConversationEventPayloadProcessor {
 
         if payload.data.reason == .userDeleted {
             // delete the users locally and/or logout if the self user is affected
-            let removedUsers = removedUsers.sorted { $0.isSelfUser && !$1.isSelfUser }
+            let removedUsers = removedUsers.sorted { !$0.isSelfUser && $1.isSelfUser }
             for user in removedUsers {
                 // only delete users that had been members
                 guard let membership = user.membership else {

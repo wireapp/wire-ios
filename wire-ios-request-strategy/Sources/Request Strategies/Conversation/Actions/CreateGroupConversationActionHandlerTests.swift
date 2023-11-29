@@ -39,7 +39,10 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
 
     override func setUp() {
         super.setUp()
-        sut = CreateGroupConversationActionHandler(context: syncMOC)
+        sut = CreateGroupConversationActionHandler(
+            context: syncMOC,
+            removeLocalConversationUseCase: RemoveLocalConversationUseCase()
+        )
         conversationID = .randomID()
         mlsGroupID = MLSGroupID([1, 2, 3])
         teamID = .create()

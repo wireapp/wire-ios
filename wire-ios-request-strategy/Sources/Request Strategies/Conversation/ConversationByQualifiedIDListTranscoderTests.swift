@@ -25,7 +25,10 @@ class ConversationByQualifiedIDListTranscoderTests: MessagingTestBase {
 
     func testRequestGeneration_V1() throws {
         // Given
-        let sut = ConversationByQualifiedIDListTranscoder(context: uiMOC)
+        let sut = ConversationByQualifiedIDListTranscoder(
+            context: uiMOC,
+            removeLocalConversationUseCase: RemoveLocalConversationUseCase()
+        )
         let ids: [QualifiedID] = [QualifiedID(uuid: .create(), domain: "example.com")]
 
         // When
@@ -43,7 +46,10 @@ class ConversationByQualifiedIDListTranscoderTests: MessagingTestBase {
 
     func testRequestGeneration_V2() throws {
         // Given
-        let sut = ConversationByQualifiedIDListTranscoder(context: uiMOC)
+        let sut = ConversationByQualifiedIDListTranscoder(
+            context: uiMOC,
+            removeLocalConversationUseCase: RemoveLocalConversationUseCase()
+        )
         let ids: [QualifiedID] = [QualifiedID(uuid: .create(), domain: "example.com")]
 
         // When
