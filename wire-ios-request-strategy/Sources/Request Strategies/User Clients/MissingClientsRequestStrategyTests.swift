@@ -643,39 +643,6 @@ class MissingClientsRequestStrategyTests: MessagingTestBase {
         }
     }
 
-    func testThatItCreatesMissingClientsRequestAfterRemoteSelfClientIsFetched() {
-        // GIVEN
-        let identifier = UUID.create().transportString()
-
-        self.syncMOC.performGroupedAndWait { syncMOC in
-            let payload = [
-                "id": identifier as NSString,
-                "type": "permanent" as NSString,
-                "time": Date().transportString() as NSString
-                ] as [String: AnyObject]
-
-            _ = UserClient.createOrUpdateSelfUserClient(payload, context: syncMOC)!
-            syncMOC.saveOrRollback()
-        }
-
-        self.syncMOC.performGroupedAndWait { _ in
-            self.sut.notifyChangeTrackers(self.selfClient)
-
-            // WHEN
-            guard let request = self.sut.nextRequest(for: .v0) else {
-                XCTFail("Request is nil"); return
-            }
-
-            // THEN
-            XCTAssertEqual(request.method, ZMTransportRequestMethod.post)
-            XCTAssertEqual(request.path, "/users/prekeys")
-
-            let payloadData = (request.payload as? String)?.data(using: .utf8)
-            let payload = Payload.ClientListByUserID(payloadData!)!
-            XCTAssertTrue(payload.first!.value.contains(identifier))
-        }
-    }
-
     func testThatItResetsKeyForMissingClientIfThereIsNoMissingClient() {
         self.syncMOC.performGroupedAndWait { _ in
             // GIVEN

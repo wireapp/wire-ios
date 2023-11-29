@@ -95,13 +95,14 @@ public class ZMUserSession: NSObject {
     // let hotFixApplicator = PatchApplicator<HotfixPatch>(lastRunVersionKey: "lastRunHotFixVersion")
     var accessTokenRenewalObserver: AccessTokenRenewalObserver?
     var recurringActionService: RecurringActionServiceInterface = RecurringActionService()
+    var cryptoboxMigrationManager: CryptoboxMigrationManagerInterface
 
     public var syncStatus: SyncStatusProtocol? {
         return applicationStatusDirectory?.syncStatus
     }
 
     public lazy var featureRepository = FeatureRepository(context: syncContext)
-    public lazy var httpClient = HttpClientImpl(transportSession: transportSession, queue: syncContext)
+    public lazy var httpClient = HttpClientE2EI(transportSession: transportSession, queue: syncContext)
 
     let earService: EARServiceInterface
 
@@ -234,6 +235,12 @@ public class ZMUserSession: NSObject {
         tornDown = true
     }
 
+    /// - Note: this is safe if coredataStack and proteus are ready
+    public lazy var getUserClientFingerprint: GetUserClientFingerprintUseCaseProtocol = {
+        GetUserClientFingerprintUseCase(syncContext: coreDataStack.syncContext,
+                                        transportSession: transportSession)
+    }()
+
     let lastEventIDRepository: LastEventIDRepositoryInterface
 
     public init(
@@ -251,6 +258,7 @@ public class ZMUserSession: NSObject {
         coreDataStack: CoreDataStack,
         configuration: Configuration,
         earService: EARServiceInterface? = nil,
+        cryptoboxMigrationManager: CryptoboxMigrationManagerInterface,
         sharedUserDefaults: UserDefaults
     ) {
         coreDataStack.syncContext.performGroupedBlockAndWait {
@@ -285,6 +293,7 @@ public class ZMUserSession: NSObject {
             canPerformKeyMigration: true,
             sharedUserDefaults: sharedUserDefaults
         )
+        self.cryptoboxMigrationManager = cryptoboxMigrationManager
 
         self.lastEventIDRepository = LastEventIDRepository(
             userID: userId,
@@ -373,7 +382,8 @@ public class ZMUserSession: NSObject {
             updateEventProcessor: updateEventProcessor!,
             localNotificationDispatcher: localNotificationDispatcher!,
             useLegacyPushNotifications: useLegacyPushNotifications,
-            lastEventIDRepository: lastEventIDRepository
+            lastEventIDRepository: lastEventIDRepository,
+            transportSession: transportSession
         )
     }
 
@@ -634,6 +644,11 @@ extension ZMUserSession: ZMSyncStateDelegate {
         managedObjectContext.performGroupedBlock { [weak self] in
             self?.notifyThirdPartyServices()
         }
+
+        NotificationInContext(
+            name: .quickSyncCompletedNotification,
+            context: syncContext.notificationContext
+        ).post()
 
         commitPendingProposalsIfNeeded()
         fetchFeatureConfigs()

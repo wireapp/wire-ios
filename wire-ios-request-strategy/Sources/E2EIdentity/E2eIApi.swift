@@ -29,10 +29,10 @@ public protocol E2eIApiInterface {
 public class E2eIApi: E2eIApiInterface {
 
     // MARK: - Properties
-    private let httpClient: HttpClient
+    private let httpClient: HttpClientCustom
 
     // MARK: - Life cycle
-    public init(httpClient: HttpClient) {
+    public init(httpClient: HttpClientCustom) {
         self.httpClient = httpClient
     }
 
@@ -46,7 +46,7 @@ public class E2eIApi: E2eIApiInterface {
         let response = try await httpClient.send(request)
         guard let httpResponse = response.rawResponse,
               let replayNonce = httpResponse.value(forHTTPHeaderField: HeaderKey.replayNonce) else {
-            throw NetworkError.invalidResponse
+            throw NetworkError.errorDecodingResponse(response)
         }
 
         return replayNonce
@@ -61,7 +61,7 @@ public class E2eIApi: E2eIApiInterface {
         let response = try await httpClient.send(request)
 
         guard let accessToken = AccessTokenResponse(response) else {
-            throw NetworkError.invalidResponse
+            throw NetworkError.errorDecodingResponse(response)
         }
         return accessToken
     }

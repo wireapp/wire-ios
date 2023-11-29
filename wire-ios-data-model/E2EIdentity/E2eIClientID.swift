@@ -35,10 +35,7 @@ public struct E2eIClientID: Equatable, Hashable {
         clientID: String,
         domain: String
     ) {
-        guard let userIdBase64 = userID.base64EncodedString else {
-            return nil
-        }
-        self.userID = userIdBase64.toBase64url()
+        self.userID = userID.lowercased()
         self.clientID = clientID.lowercased()
         self.domain = domain.lowercased()
 
@@ -58,18 +55,6 @@ public struct E2eIClientID: Equatable, Hashable {
             clientID: clientID,
             domain: domain
         )
-    }
-
-}
-
-private extension String {
-
-    func toBase64url() -> String {
-        let base64url = self
-            .replacingOccurrences(of: "+", with: "-")
-            .replacingOccurrences(of: "/", with: "_")
-            .replacingOccurrences(of: "=", with: "")
-        return base64url
     }
 
 }

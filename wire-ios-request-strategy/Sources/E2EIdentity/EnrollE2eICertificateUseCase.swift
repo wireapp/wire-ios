@@ -37,13 +37,9 @@ public final class EnrollE2eICertificateUseCase: EnrollE2eICertificateUseCaseInt
 
         let enrollment = try await e2eiRepository.createEnrollment(e2eiClientId: e2eiClientId, userName: userName, handle: handle)
 
-        let acmeDirectory = try await enrollment.loadACMEDirectory()
-        let acmeNonce = try await enrollment.getACMENonce(endpoint: acmeDirectory.newNonce)
-
-        let newAccountNonce = try await enrollment.createNewAccount(prevNonce: acmeNonce,
-                                                                    createAccountEndpoint: acmeDirectory.newAccount)
-        let newOrder = try await enrollment.createNewOrder(prevNonce: newAccountNonce,
-                                                           createOrderEndpoint: acmeDirectory.newOrder)
+        let acmeNonce = try await enrollment.getACMENonce()
+        let newAccountNonce = try await enrollment.createNewAccount(prevNonce: acmeNonce)
+        let newOrder = try await enrollment.createNewOrder(prevNonce: newAccountNonce)
         let authzResponse = try await enrollment.createAuthz(prevNonce: newOrder.nonce,
                                                              authzEndpoint: newOrder.acmeOrder.authorizations[0])
         let wireNonce = try await enrollment.getWireNonce(clientId: e2eiClientId.clientID)

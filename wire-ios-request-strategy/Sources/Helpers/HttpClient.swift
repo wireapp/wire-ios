@@ -18,21 +18,14 @@
 
 import Foundation
 
-public enum NetworkError: Error {
-
-    case invalidRequest
-    case invalidResponse
-
-}
-
-public protocol HttpClient {
+public protocol HttpClientCustom {
 
     func send(_ request: URLRequest) async throws -> (Data, URLResponse)
     func send(_ request: ZMTransportRequest) async throws -> ZMTransportResponse
 
 }
 
-public class HttpClientImpl: NSObject, HttpClient {
+public class HttpClientE2EI: NSObject, HttpClientCustom {
 
     let transportSession: TransportSessionType
     let queue: ZMSGroupQueue
