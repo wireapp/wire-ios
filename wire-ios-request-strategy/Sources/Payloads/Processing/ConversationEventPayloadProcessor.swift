@@ -136,7 +136,7 @@ final class ConversationEventPayloadProcessor {
         // checking that the participants are in the conversation before being removed
         conversation.removeParticipantsAndUpdateConversationState(users: Set(removedUsers), initiatingUser: sender)
 
-        if 
+        if
             removedUsers.contains(where: \.isSelfUser),
             conversation.messageProtocol.isOne(of: .mixed, .mls)
         {
