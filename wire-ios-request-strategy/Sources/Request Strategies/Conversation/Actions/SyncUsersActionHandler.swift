@@ -19,7 +19,6 @@
 import Foundation
 import WireDataModel
 
-// rename to describe v4
 class SyncUsersActionHandler: ActionHandler<SyncUsersAction> {
 
     private let userProfileProcessor = UserProfilePayloadProcessor()
