@@ -20,7 +20,7 @@ import SwiftUI
 
 struct DeviceDetailsProteusView: View {
     @ObservedObject var viewModel: DeviceInfoViewModel
-
+    @State var isVerfied: Bool = false
     var body: some View {
         VStack(alignment: .leading) {
             CopyValueView(
@@ -57,19 +57,24 @@ struct DeviceDetailsProteusView: View {
                 isCopyEnabled: viewModel.isCopyEnabled,
                 performCopy: viewModel.copyToClipboard
             ).padding(.all, 16)
-            Divider()
-            Toggle(
-                L10n.Localizable.Device.verified,
-                isOn: $viewModel.isProteusVerificationEnabled
-            )
-            .font(UIFont.headerSemiBoldFont.swiftUIFont)
-            .padding(.all, 16)
-            .onChange(of: viewModel.isProteusVerificationEnabled) { value in
-                Task {
-                    await viewModel.updateVerifiedStatus(
-                        value
-                    )
+            if !viewModel.isSelfClient {
+                Divider()
+                Toggle(
+                    L10n.Localizable.Device.verified,
+                    isOn: $isVerfied
+                )
+                .font(UIFont.headerSemiBoldFont.swiftUIFont)
+                .padding(.all, 16)
+                .onChange(of: isVerfied) { value in
+                    Task {
+                        await self.viewModel.updateVerifiedStatus(value)
+                    }
                 }
+            }
+        }
+        .onAppear {
+            if !viewModel.isSelfClient {
+                isVerfied = viewModel.isProteusVerificationEnabled
             }
         }
     }
