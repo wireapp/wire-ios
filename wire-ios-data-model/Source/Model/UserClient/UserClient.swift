@@ -60,7 +60,7 @@ public class UserClient: ZMManagedObject, UserClientType {
         }
     }
     public var e2eIdentityProvider: E2eIdentityProviding = DeveloperFlag.enableNewClientDetailsFlow.isOn ? MockE2eIdentityProvider() : E2eIdentityProvider()
-    
+
     @NSManaged public var type: DeviceType
     @NSManaged public var label: String?
     @NSManaged public var markedToDelete: Bool
@@ -88,7 +88,7 @@ public class UserClient: ZMManagedObject, UserClientType {
     @NSManaged public var needsToNotifyOtherUserAboutSessionReset: Bool
     @NSManaged public var needsSessionMigration: Bool
     @NSManaged public var discoveredByMessage: ZMOTRMessage?
-    
+
     private enum Keys {
         static let PushToken = "pushToken"
         static let DeviceClass = "deviceClass"

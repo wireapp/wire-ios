@@ -99,7 +99,6 @@ struct DeviceDetailsButtonsView: View {
             }
             Divider()
             showCertificateButton.padding()
-            Divider()
         case .notActivated:
             Divider()
             getCertificateButton.padding()
@@ -110,13 +109,11 @@ struct DeviceDetailsButtonsView: View {
         case .expired:
             Divider()
             updateCertificateButton.padding()
-            Divider()
             showCertificateButton.padding()
         default:
             Divider()
             getCertificateButton.padding()
-            Divider()
-            showCertificateButton.padding()
         }
+        Divider()
     }
 }
