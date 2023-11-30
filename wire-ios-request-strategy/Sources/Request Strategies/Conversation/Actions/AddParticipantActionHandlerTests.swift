@@ -44,11 +44,16 @@ class AddParticipantActionHandlerTests: MessagingTestBase {
             self.conversation = conversation
         }
 
+        let mockConversationService = MockConversationServiceInterface()
+        mockConversationService.syncConversationQualifiedID_MockMethod = { _ in
+
+        }
+
         sut = AddParticipantActionHandler(
             context: syncMOC,
             eventProcessor: ConversationEventProcessor(
                 context: syncMOC,
-                conversationService: MockConversationService()
+                conversationService: mockConversationService
             )
         )
     }
