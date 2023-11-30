@@ -127,7 +127,7 @@ extension SettingsCellDescriptorFactory {
         )
 
         let action = UIAlertAction(
-            title: "general.ok".localized,
+            title: L10n.Localizable.General.ok,
             style: .default,
             handler: { [weak alert] _ in
                 alert?.dismiss(animated: true, completion: nil)

@@ -47,7 +47,7 @@ class ConfirmationCodeCell: UITableViewCell {
 
         textField.keyboardType = .decimalPad
         textField.accessibilityIdentifier = "VerificationCode"
-        textField.accessibilityLabel = "verification.code_label".localized
+        textField.accessibilityLabel = L10n.Localizable.Verification.codeLabel
         textField.isAccessibilityElement = true
     }
 
