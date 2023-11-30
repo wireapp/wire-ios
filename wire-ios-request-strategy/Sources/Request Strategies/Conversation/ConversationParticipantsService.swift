@@ -106,22 +106,7 @@ public class ConversationParticipantsService: ConversationParticipantsServiceInt
 
         case .mls:
 
-            guard let mlsParticipantsService else {
-                throw ConversationParticipantsError.missingMLSParticipantsService
-            }
-
-            do {
-                try await mlsParticipantsService.addParticipants(users, to: conversation)
-            } catch MLSConversationParticipantsError.ignoredUsers(let failedUsers) {
-
-                if failedUsers.isNonEmpty && failedUsers != Set(users) {
-                    // retry once
-                    try await internalAddParticipants(Array(failedUsers), to: conversation)
-                }
-
-                // TODO: Insert system message
-                // To be done in https://wearezeta.atlassian.net/browse/WPB-2228
-            }
+            try await addMLSParticipants(users, to: conversation, showErrors: true)
 
         case .mixed:
 
@@ -132,7 +117,30 @@ public class ConversationParticipantsService: ConversationParticipantsServiceInt
             try await proteusParticipantsService.addParticipants(users, to: conversation)
 
             // For mixed protocol we only try once and don't handle errors
-            try? await mlsParticipantsService.addParticipants(users, to: conversation)
+            try? await addMLSParticipants(users, to: conversation, showErrors: false)
+        }
+    }
+
+    private func addMLSParticipants(_ users: [ZMUser],
+                                    to conversation: ZMConversation,
+                                    showErrors: Bool) async throws {
+
+        guard let mlsParticipantsService else {
+            throw ConversationParticipantsError.missingMLSParticipantsService
+        }
+
+        do {
+            try await mlsParticipantsService.addParticipants(users, to: conversation)
+        } catch MLSConversationParticipantsError.ignoredUsers(let failedUsers) {
+
+            if failedUsers.isNonEmpty && failedUsers != Set(users) {
+                // retry once
+                try await internalAddParticipants(Array(failedUsers), to: conversation)
+            }
+            if showErrors {
+                // TODO: Insert system message
+                // To be done in https://wearezeta.atlassian.net/browse/WPB-2228
+            }
         }
     }
 
