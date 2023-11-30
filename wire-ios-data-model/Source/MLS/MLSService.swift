@@ -474,7 +474,7 @@ public final class MLSService: MLSServiceInterface {
 
     // MARK: - Add member
 
-    public enum MLSAddMembersError: Error {
+    public enum MLSAddMembersError: Error, Equatable {
 
         case noMembersToAdd
         case noInviteesToAdd
