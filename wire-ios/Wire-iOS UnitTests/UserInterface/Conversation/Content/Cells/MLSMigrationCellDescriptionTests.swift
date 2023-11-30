@@ -86,7 +86,7 @@ final class MLSMigrationCellDescriptionTests: XCTestCase {
         waitForExpectations(timeout: 0.1)
     }
 
-    func test_mlsMigrationOngoingCall_doesContainLinkInAttributedString() throws {
+    func test_mlsMigrationOngoingCall_doesNotContainLinkInAttributedString() throws {
         // given
         let cellDescription = MLSMigrationCellDescription(messageType: .mlsMigrationOngoingCall)
         let expectation = self.expectation(description: "")
@@ -103,7 +103,7 @@ final class MLSMigrationCellDescriptionTests: XCTestCase {
         waitForExpectations(timeout: 0.1)
     }
 
-    func test_mlsMigrationUpdateVersion_doesContainLinkInAttributedString() throws {
+    func test_mlsMigrationUpdateVersion_doesNotContainLinkInAttributedString() throws {
         // given
         let cellDescription = MLSMigrationCellDescription(messageType: .mlsMigrationUpdateVersion)
         let expectation = self.expectation(description: "")
