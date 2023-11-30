@@ -983,9 +983,6 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
         let (_, _, conversationEvent, originalEvent) = setupForProcessingConverationMemberLeaveTests(
             selfUserLeaves: true
         )
-//        let expectation = expectation(forNotification: AccountDeletedNotification.notificationName, object: nil) { notification in
-//            notification.userInfo?[AccountDeletedNotification.userInfoKey] as? AccountDeletedNotification != nil
-//        }
         let expectation = XCTNSNotificationExpectation(name: AccountDeletedNotification.notificationName, object: nil, notificationCenter: .default)
         expectation.handler = { $0.userInfo?[AccountDeletedNotification.userInfoKey] as? AccountDeletedNotification != nil }
 
@@ -1069,8 +1066,8 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
                     "id": "cf51e6b1-39a6-11ed-8005-520924331b82",
                     "time": "2022-09-21T12:13:32.173Z",
                     "type": "conversation.member-leave",
+                    "conversation": "ee8824c5-95d0-4e59-9862-e9bb0fc6e921",
                     "payload": [
-                        "conversation": "ee8824c5-95d0-4e59-9862-e9bb0fc6e921",
                         "qualified_user_ids": [
                             ["id": users[userIndex].remoteIdentifier.transportString(), "domain": owningDomain]
                         ],

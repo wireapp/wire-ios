@@ -104,10 +104,6 @@ struct ConversationEventPayloadProcessor {
         originalEvent: ZMUpdateEvent,
         in context: NSManagedObjectContext
     ) {
-        print(originalEvent)
-        print(originalEvent.debugInformation)
-        print(payload)
-
         guard
             let conversation = fetchOrCreateConversation(
                 from: payload,
