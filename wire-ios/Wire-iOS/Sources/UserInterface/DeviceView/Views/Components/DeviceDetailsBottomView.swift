@@ -20,7 +20,7 @@ import SwiftUI
 
 struct DeviceDetailsBottomView: View {
     @ObservedObject var viewModel: DeviceInfoViewModel
-    
+
     var fingerPrintInfoTextView: some View {
         Text(L10n.Localizable.Self.Settings.DeviceDetails.Fingerprint.subtitle)
             .font(.footnote)
@@ -33,7 +33,7 @@ struct DeviceDetailsBottomView: View {
                 8
             )
     }
-    
+
     var resetSessionView: some View {
         HStack {
             SwiftUI.Button {
@@ -51,7 +51,7 @@ struct DeviceDetailsBottomView: View {
             SemanticColors.View.backgroundDefaultWhite.swiftUIColor
         )
     }
-    
+
     var resetSessionInfoView: some View {
         Text(L10n.Localizable.Self.Settings.DeviceDetails.ResetSession.subtitle)
             .font(.footnote)
@@ -64,7 +64,7 @@ struct DeviceDetailsBottomView: View {
                 8
             )
     }
-    
+
     var removeDeviceView: some View {
         HStack {
             SwiftUI.Button {
@@ -81,7 +81,7 @@ struct DeviceDetailsBottomView: View {
         }
         .background(SemanticColors.View.backgroundDefaultWhite.swiftUIColor)
     }
-   
+
     var removeDeviceInfoView: some View {
         Text(L10n.Localizable.Self.Settings.DeviceDetails.RemoveDevice.subtitle)
             .font(.footnote)
@@ -94,7 +94,7 @@ struct DeviceDetailsBottomView: View {
                 8
             )
     }
-    
+
     var body: some View {
         fingerPrintInfoTextView
         resetSessionView
