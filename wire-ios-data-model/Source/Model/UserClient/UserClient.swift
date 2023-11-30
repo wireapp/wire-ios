@@ -42,7 +42,7 @@ private let zmLog = ZMSLog(tag: "UserClient")
 
 @objcMembers
 public class UserClient: ZMManagedObject, UserClientType {
-    public var e2eIdentityProvider: E2eIdentityProviding = DeveloperFlag.enableNewClientDetailsFlow.isOn ? MockE2eIdentityProvider() : E2eIdentityProvider()
+
     @NSManaged public var type: DeviceType
     @NSManaged public var label: String?
     @NSManaged public var markedToDelete: Bool
@@ -938,11 +938,4 @@ extension UserClient {
         )
     }
 
-}
-
-// MARK: - E2eIdentity Certificate
-extension UserClient {
-    public func fetchE2eIdentityCertificate() async throws -> E2eIdentityCertificate {
-        return try await e2eIdentityProvider.fetchCertificate()
-    }
 }

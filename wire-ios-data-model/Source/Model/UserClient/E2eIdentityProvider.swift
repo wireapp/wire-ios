@@ -1,4 +1,4 @@
-////
+//
 // Wire
 // Copyright (C) 2023 Wire Swiss GmbH
 //
@@ -23,7 +23,13 @@ public struct E2eIdentityCertificate {
     public var expiryDate: Date
     public var certificateStatus: String
     public var serialNumber: String
-    public init(certificateDetails: String, expiryDate: Date, certificateStatus: String, serialNumber: String) {
+
+    public init(
+        certificateDetails: String,
+        expiryDate: Date,
+        certificateStatus: String,
+        serialNumber: String
+    ) {
         self.certificateDetails = certificateDetails
         self.expiryDate = expiryDate
         self.certificateStatus = certificateStatus
@@ -41,22 +47,74 @@ enum E2eIdentityCertificateError: Error {
 }
 
 public final class E2eIdentityProvider: E2eIdentityProviding {
-    public var isE2EIdentityEnabled: Bool =  false
-
+    public var isE2EIdentityEnabled: Bool
+   
+    public init(isE2EIdentityEnabled: Bool = false) {
+        self.isE2EIdentityEnabled = isE2EIdentityEnabled
+    }
+    
     public func fetchCertificate() async throws -> E2eIdentityCertificate {
         throw E2eIdentityCertificateError.badCertificate
     }
 }
-// MARK: - Mock Provider for Development 
-public final class MockE2eIdentityProvider: E2eIdentityProviding {
-    public var isE2EIdentityEnabled: Bool = DeveloperFlag.enableE2EIdentityDetails.isOn
 
+// MARK: - Mock Provider for Development
+public final class MockValidE2eIdentityProvider: E2eIdentityProviding {
+    public var isE2EIdentityEnabled: Bool = UserDefaults.standard.bool(forKey: "isE2eIdentityViewEnabled")
+    
+    public init() {}
+    
     public func fetchCertificate() async throws -> E2eIdentityCertificate {
         return E2eIdentityCertificate(
             certificateDetails: .random(length: 450),
             expiryDate: Date.now.addingTimeInterval(36000),
             certificateStatus: "Valid",
             serialNumber: .random(length: 60)
+        )
+    }
+}
+
+public final class MockRevokedE2eIdentityProvider: E2eIdentityProviding {
+    public var isE2EIdentityEnabled: Bool = UserDefaults.standard.bool(forKey: "isE2eIdentityViewEnabled")
+    
+    public init() {}
+
+    public func fetchCertificate() async throws -> E2eIdentityCertificate {
+        return E2eIdentityCertificate(
+            certificateDetails: .random(length: 450),
+            expiryDate: Date.now.addingTimeInterval(36000),
+            certificateStatus: "Revoked",
+            serialNumber: .random(length: 60)
+        )
+    }
+}
+
+public final class MockExpiredE2eIdentityProvider: E2eIdentityProviding {
+    public var isE2EIdentityEnabled: Bool = UserDefaults.standard.bool(forKey: "isE2eIdentityViewEnabled")
+    
+    public init() {}
+
+    public func fetchCertificate() async throws -> E2eIdentityCertificate {
+        return E2eIdentityCertificate(
+            certificateDetails: .random(length: 450),
+            expiryDate: Date.now.addingTimeInterval(36000),
+            certificateStatus: "Expired",
+            serialNumber: .random(length: 60)
+        )
+    }
+}
+
+public final class MockNotActivatedE2eIdentityProvider: E2eIdentityProviding {
+    public var isE2EIdentityEnabled: Bool = UserDefaults.standard.bool(forKey: "isE2eIdentityViewEnabled")
+
+    public init() {}
+
+    public func fetchCertificate() async throws -> E2eIdentityCertificate {
+        return E2eIdentityCertificate(
+            certificateDetails: "",
+            expiryDate: Date.now.addingTimeInterval(36000),
+            certificateStatus: "Not activated",
+            serialNumber: ""
         )
     }
 }

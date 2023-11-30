@@ -192,7 +192,9 @@ final class DeveloperToolsViewModel: ObservableObject {
         items.append(.button(ButtonItem(title: "Stop federating with Foma", action: stopFederatingFoma)))
         items.append(.button(ButtonItem(title: "Stop federating with Bella", action: stopFederatingBella)))
         items.append(.button(ButtonItem(title: "Stop Bella Foma federating", action: stopBellaFomaFederating)))
-
+        items.append(.destination(DestinationItem(title: "Device details view settings", makeView: {
+            AnyView(DeveloperDeviceDetailsSettingsSelectionView(viewModel: DeveloperDeviceDetailsSettingsSelectionViewModel()))
+        })))
         return Section(
             header: header,
             items: items
