@@ -77,7 +77,7 @@ public protocol E2eIEnrollmentInterface {
 /// This class implements the steps of the E2EI certificate enrollment process.
 public final class E2eIEnrollment: E2eIEnrollmentInterface {
 
-    private let acmeApi: AcmeApiInterface
+    private let acmeApi: AcmeAPIInterface
     private let acmeDirectory: AcmeDirectory
     private let apiProvider: APIProviderInterface
     private let e2eiService: E2eIServiceInterface
@@ -85,7 +85,7 @@ public final class E2eIEnrollment: E2eIEnrollmentInterface {
     private let logger = WireLogger.e2ei
 
     public init(
-        acmeApi: AcmeApiInterface,
+        acmeApi: AcmeAPIInterface,
         apiProvider: APIProviderInterface,
         e2eiService: E2eIServiceInterface,
         acmeDirectory: AcmeDirectory) {
@@ -337,7 +337,7 @@ public struct ChallengeResponse: Codable, Equatable {
 
 }
 
-public struct AccessTokenResponse: Decodable {
+public struct AccessTokenResponse: Decodable, Equatable {
 
     var expiresIn: String
     var token: String

@@ -19,9 +19,9 @@
 import Foundation
 @testable import WireRequestStrategy
 
-class AcmeApiTests: ZMTBaseTest {
+class AcmeAPITests: ZMTBaseTest {
 
-    var acmeApi: AcmeApi?
+    var acmeApi: AcmeAPI?
     var mockHttpClient: MockHttpClient?
     let backendDomainBackup = BackendInfo.domain
 
@@ -30,7 +30,7 @@ class AcmeApiTests: ZMTBaseTest {
 
         mockHttpClient = MockHttpClient()
         if let mockHttpClient = mockHttpClient {
-            acmeApi = AcmeApi(httpClient: mockHttpClient)
+            acmeApi = AcmeAPI(httpClient: mockHttpClient)
         }
     }
 

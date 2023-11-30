@@ -26,11 +26,11 @@ public protocol E2eIRepositoryInterface {
 
 public final class E2eIRepository: E2eIRepositoryInterface {
 
-    private var acmeApi: AcmeApiInterface
+    private var acmeApi: AcmeAPIInterface
     private var apiProvider: APIProviderInterface
     private var e2eiClient: E2eIClientInterface
 
-    public init(acmeApi: AcmeApiInterface, apiProvider: APIProviderInterface, e2eiClient: E2eIClientInterface) {
+    public init(acmeApi: AcmeAPIInterface, apiProvider: APIProviderInterface, e2eiClient: E2eIClientInterface) {
         self.acmeApi = acmeApi
         self.apiProvider = apiProvider
         self.e2eiClient = e2eiClient

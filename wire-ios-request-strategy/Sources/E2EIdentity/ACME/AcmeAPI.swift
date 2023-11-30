@@ -19,7 +19,7 @@
 import Foundation
 import WireCoreCrypto
 
-public protocol AcmeApiInterface {
+public protocol AcmeAPIInterface {
     func getACMEDirectory() async throws -> Data
     func getACMENonce(path: String) async throws -> String
     func sendACMERequest(path: String, requestBody: Data) async throws -> ACMEResponse
@@ -27,7 +27,7 @@ public protocol AcmeApiInterface {
 }
 
 /// This class provides ACME(Automatic Certificate Management Environment) server methods for enrolling an E2EI certificate.
-public class AcmeApi: NSObject, AcmeApiInterface {
+public class AcmeAPI: NSObject, AcmeAPIInterface {
 
     // MARK: - Properties
 
