@@ -107,7 +107,7 @@ final class DeviceInfoViewModel: ObservableObject {
 
     func fetchFingerPrintForProteus() async {
         isActionInProgress = true
-        guard let data = await getUserClientFingerprintUseCase.invoke(userClient: userClient), 
+        guard let data = await getUserClientFingerprintUseCase.invoke(userClient: userClient),
                 let fingerPrint = String(data: data, encoding: .utf8) else {
             return
         }
