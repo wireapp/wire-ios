@@ -65,11 +65,18 @@ struct DeviceDetailsE2EIdentityCertificateView: View {
         if let certificate = viewModel.e2eIdentityCertificate,
            E2EIdentityCertificateStatus.status(for: certificate.certificateStatus) != .none,
            E2EIdentityCertificateStatus.status(for: certificate.certificateStatus) != .notActivated {
-            Text(L10n.Localizable.Device.Details.Section.E2e.serialnumber.splitStringIntoLines(charactersPerLine: 16).fingerprintStringWithSpaces.replacingOccurrences(of: " ", with: ":"))
+            Text(L10n.Localizable.Device.Details.Section.E2e.serialnumber)
                 .font(UIFont.smallSemiboldFont.swiftUIFont)
                 .foregroundColor(.gray)
                 .padding(.top, 8)
-            Text(certificate.serialNumber)
+                .padding(.bottom, 16)
+            Text(
+                certificate.serialNumber
+                    .uppercased()
+                    .splitStringIntoLines(charactersPerLine: 16, withFingerprintStringWithSpaces: false)
+                    .fingerprintStringWithSpaces.replacingOccurrences(of: " ", with: ":")
+            )
+            .font(UIFont.sfMonoMedium.swiftUIFont)
         }
     }
 

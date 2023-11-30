@@ -69,7 +69,7 @@ public final class MockValidE2eIdentityProvider: E2eIdentityProviding {
             certificateDetails: .random(length: 450),
             expiryDate: Date.now.addingTimeInterval(36000),
             certificateStatus: "Valid",
-            serialNumber: .random(length: 60)
+            serialNumber: .random(length: 32)
         )
     }
 }
@@ -84,7 +84,7 @@ public final class MockRevokedE2eIdentityProvider: E2eIdentityProviding {
             certificateDetails: .random(length: 450),
             expiryDate: Date.now.addingTimeInterval(36000),
             certificateStatus: "Revoked",
-            serialNumber: .random(length: 60)
+            serialNumber: .random(length: 32)
         )
     }
 }
@@ -99,7 +99,7 @@ public final class MockExpiredE2eIdentityProvider: E2eIdentityProviding {
             certificateDetails: .random(length: 450),
             expiryDate: Date.now.addingTimeInterval(36000),
             certificateStatus: "Expired",
-            serialNumber: .random(length: 60)
+            serialNumber: .random(length: 32)
         )
     }
 }
