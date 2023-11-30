@@ -53,6 +53,18 @@ public extension ZMManagedObject {
         return try? context.existingObject(with: id) as? Self
     }
 
+    static func existingObject(for id: NSManagedObjectID, in context: NSManagedObjectContext) throws -> Self {
+        guard let object = try context.existingObject(with: id) as? Self else {
+            throw ObjectError.nonMatchingType
+        }
+
+        return object
+    }
+
+    enum ObjectError: Error {
+        case nonMatchingType
+    }
+
 }
 
 public extension Collection where Element == NSManagedObjectID {
