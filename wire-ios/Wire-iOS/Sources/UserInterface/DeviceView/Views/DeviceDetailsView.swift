@@ -50,11 +50,10 @@ struct DeviceDetailsView: View {
             alignment: .leading
         ) {
             Text(L10n.Localizable.Device.Details.Section.Proteus.title)
-                .font(UIFont.normalMediumFont.swiftUIFont)
+                .font(UIFont.mediumRegular.swiftUIFont)
                 .foregroundColor(SemanticColors.Label.textSectionHeader.swiftUIColor)
-                .frame(height: 45)
+                .frame(height: 28)
                 .padding([.leading, .top], 16)
-                .padding(.bottom, 4)
             DeviceDetailsProteusView(viewModel: viewModel)
                 .background(SemanticColors.View.backgroundDefaultWhite.swiftUIColor)
             if viewModel.isSelfClient {

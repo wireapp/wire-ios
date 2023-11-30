@@ -67,7 +67,7 @@ struct DeviceDetailsE2EIdentityCertificateView: View {
            E2EIdentityCertificateStatus.status(for: certificate.certificateStatus) != .notActivated {
             Text(L10n.Localizable.Device.Details.Section.E2e.serialnumber)
                 .font(UIFont.smallSemiboldFont.swiftUIFont)
-                .foregroundColor(.gray)
+                .foregroundColor(SemanticColors.Label.textSectionHeader.swiftUIColor)
                 .padding(.top, 8)
                 .padding(.bottom, 4)
             Text(
@@ -89,7 +89,7 @@ struct DeviceDetailsE2EIdentityCertificateView: View {
     ) -> some View {
         Text(titleText)
             .font(UIFont.mediumSemiboldFont.swiftUIFont)
-            .foregroundColor(.gray)
+            .foregroundColor(SemanticColors.Label.textSectionHeader.swiftUIColor)
             .multilineTextAlignment(.leading)
         Text(statusText)
             .foregroundColor(textColor)
