@@ -26,7 +26,7 @@ public extension String {
 
     static func random(length: UInt) -> String {
         let randomChars = (0..<length).compactMap { _ in
-            "a quick brown fox jumps over a lazy village dog".randomElement()
+            "aquickbrownfoxjumpsoveralazyvillagedog".randomElement()
         }
 
         return String(randomChars)
