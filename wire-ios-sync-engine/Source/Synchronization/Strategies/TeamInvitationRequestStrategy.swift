@@ -78,8 +78,10 @@ public final class TeamInvitationRequestStrategy: AbstractRequestStrategy {
         switch response.result {
         case .success, .permanentError:
             teamInvitationStatus?.handle(result: InviteResult(response: response, email: email), email: email)
-        case .temporaryError, .tryAgainLater, .expired, .cancelled:
+        case .temporaryError, .tryAgainLater, .expired:
             teamInvitationStatus?.retry(email)
+        case .cancelled:
+            teamInvitationStatus?.handle(result: .failure(email: email, error: .cancelled), email: email)
         }
     }
 
