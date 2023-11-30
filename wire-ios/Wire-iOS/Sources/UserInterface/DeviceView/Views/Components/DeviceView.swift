@@ -20,9 +20,6 @@ import SwiftUI
 import WireCommonComponents
 
 struct DeviceView: View {
-    @Environment(
-        \.colorScheme
-    ) private var colorScheme
     var viewModel: DeviceInfoViewModel
     var titleView: some View {
         HStack {

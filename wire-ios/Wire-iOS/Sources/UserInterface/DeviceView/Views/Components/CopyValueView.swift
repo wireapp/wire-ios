@@ -22,11 +22,7 @@ struct CopyValueView: View {
     var title: String
     var value: String
     var isCopyEnabled: Bool
-    var performCopy: (
-        (
-            String
-        ) -> Void
-    )?
+    var performCopy: ((String) -> Void)?
     var body: some View {
         VStack(alignment: .leading) {
             Text(title)
