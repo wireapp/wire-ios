@@ -52,30 +52,33 @@ extension ZMUserSession {
     /// to save and is rolled back. The call is invoked on the context queue, so it might not be on the main thread
     public func registerForSaveFailure(handler: @escaping SaveFailureCallback) {
         self.managedObjectContext.errorOnSaveCallback = { (context, error) in
-            let metadata: [String: Any]
-            if let persistedMetadata = context.persistentStoreCoordinator!.persistentStores[0].metadata {
-                metadata = persistedMetadata
-            } else {
+            let type = context.type
+
+            guard
+                let metadata = context.persistentStoreCoordinator?.persistentStores.first?.metadata,
+                let userInfo = context.userInfo.asDictionary() as? [String: Any]
+            else {
                 assertionFailure("access persisted metadata failed!")
-                metadata = [:]
+                handler([:], type, error, [:])
+                return
             }
 
-            let type = context.type
-            let userInfo = context.userInfo.asDictionary() as! [String: Any]
             handler(metadata, type, error, userInfo)
         }
+
         self.syncManagedObjectContext.performGroupedBlock {
             self.syncManagedObjectContext.errorOnSaveCallback = { (context, error) in
-                let metadata: [String: Any]
-                if let persistedMetadata = context.persistentStoreCoordinator!.persistentStores[0].metadata {
-                    metadata = persistedMetadata
-                } else {
+                let type = context.type
+
+                guard
+                    let metadata = context.persistentStoreCoordinator?.persistentStores.first?.metadata,
+                    let userInfo = context.userInfo.asDictionary() as? [String: Any]
+                else {
                     assertionFailure("access persisted metadata failed!")
-                    metadata = [:]
+                    handler([:], type, error, [:])
+                    return
                 }
 
-                let type = context.type
-                let userInfo = context.userInfo.asDictionary() as! [String: Any]
                 handler(metadata, type, error, userInfo)
             }
         }
