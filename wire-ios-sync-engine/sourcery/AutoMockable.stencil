@@ -1,4 +1,5 @@
 // swiftlint:disable superfluous_disable_command
+// swiftlint:disable vertical_whitespace
 // swiftlint:disable line_length
 // swiftlint:disable variable_name
 
@@ -211,4 +212,5 @@ import {{ import }}
 
 // swiftlint:enable variable_name
 // swiftlint:enable line_length
+// swiftlint:enable vertical_whitespace
 // swiftlint:enable superfluous_disable_command
