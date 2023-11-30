@@ -73,7 +73,7 @@ class DeveloperDeviceDetailsSettingsSelectionViewModel: ObservableObject {
             Section(
                 header: "Select E2eIdentity Status",
                 items: E2EIdentityCertificateStatus.allCases.map({
-                    Item(title: $0.titleForStatus(), value: $0.titleForStatus())
+                    Item(title: $0.titleForStatus(), value: $0.titleForStatus().count == 0 ? "None" : $0.titleForStatus())
                 })
             )
         ]
