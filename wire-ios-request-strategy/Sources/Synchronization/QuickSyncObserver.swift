@@ -1,4 +1,4 @@
-////
+//
 // Wire
 // Copyright (C) 2023 Wire Swiss GmbH
 //
@@ -47,7 +47,6 @@ public class QuickSyncObserver: QuickSyncObserverInterface {
         }
 
         WireLogger.messaging.debug("Waiting for app to be online before sending message")
-
         for await _ in NotificationCenter.default.notifications(
             named: .quickSyncCompletedNotification,
             object: notificationContext

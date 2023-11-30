@@ -30,9 +30,9 @@ enum TweetOpeningOption: Int, LinkOpeningOption {
 
     var displayString: String {
         switch self {
-        case .none: return "open_link.twitter.option.default".localized
-        case .tweetbot: return "open_link.twitter.option.tweetbot".localized
-        case .twitterrific: return "open_link.twitter.option.twitterrific".localized
+        case .none: return L10n.Localizable.OpenLink.Twitter.Option.default
+        case .tweetbot: return L10n.Localizable.OpenLink.Twitter.Option.tweetbot
+        case .twitterrific: return L10n.Localizable.OpenLink.Twitter.Option.twitterrific
         }
     }
 
