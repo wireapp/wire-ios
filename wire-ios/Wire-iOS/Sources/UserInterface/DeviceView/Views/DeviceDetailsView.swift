@@ -20,18 +20,16 @@ import SwiftUI
 import Combine
 
 struct DeviceDetailsView: View {
-    @Environment(
-        \.dismiss
-    ) private var dismiss
+    @Environment(\.dismiss)
+    private var dismiss
+
     @StateObject var viewModel: DeviceInfoViewModel
     @State var isCertificateViewPresented: Bool = false
 
     var dismissedView: (() -> Void)?
 
     var e2eIdentityCertificateView: some View {
-        VStack(
-            alignment: .leading
-        ) {
+        VStack(alignment: .leading) {
             DeviceDetailsE2EIdentityCertificateView(
                 viewModel: viewModel,
                 isCertificateViewPreseneted: $isCertificateViewPresented
@@ -55,24 +53,15 @@ struct DeviceDetailsView: View {
                 .font(UIFont.normalMediumFont.swiftUIFont)
                 .foregroundColor(SemanticColors.Label.textSectionHeader.swiftUIColor)
                 .frame(height: 45)
-                .padding(
-                    [.leading, .top],
-                    16
-                )
+                .padding([.leading, .top], 16)
                 .padding(.bottom, 4)
             DeviceDetailsProteusView(viewModel: viewModel)
                 .background(SemanticColors.View.backgroundDefaultWhite.swiftUIColor)
             if viewModel.isSelfClient {
                 Text(L10n.Localizable.Self.Settings.DeviceDetails.Fingerprint.subtitle)
                     .font(.footnote)
-                    .padding(
-                        [.leading, .trailing],
-                        16
-                    )
-                    .padding(
-                        [.top, .bottom],
-                        8
-                    )
+                    .padding([.leading, .trailing], 16)
+                    .padding([.top, .bottom], 8)
             } else {
                 DeviceDetailsBottomView(viewModel: viewModel)
             }
@@ -99,32 +88,24 @@ struct DeviceDetailsView: View {
                 }
             })
             .navigationBarTitleDisplayMode(.inline)
-            .toolbar(content: {
-                ToolbarItem(
-                    placement: .navigationBarLeading
-                ) {
-                    SwiftUI.Button(action: {
-                        dismiss()
-                    },
-                                   label: {
-                        Image(
-                            .backArrow
-                        ).renderingMode(
-                            .template
-                        )
-                        .foregroundColor(
-                            SemanticColors.Icon.foregroundDefaultBlack.swiftUIColor
-                        )
-                    })
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    SwiftUI.Button(
+                        action: {
+                            dismiss()
+                        },
+                        label: {
+                            Image(.backArrow)
+                                .renderingMode(.template)
+                                .foregroundColor(SemanticColors.Icon.foregroundDefaultBlack.swiftUIColor)
+                        }
+                    )
                 }
-                ToolbarItem(
-                    placement: .principal
-                ) {
-                    DeviceView(
-                        viewModel: viewModel
-                    ).titleView
+                ToolbarItem(placement: .principal) {
+                    DeviceView(viewModel: viewModel).titleView
                 }
-            })
+
+            }
         }
 
         .background(SemanticColors.View.backgroundDefault.swiftUIColor)
@@ -132,6 +113,11 @@ struct DeviceDetailsView: View {
 
         }
         .navigationBarBackButtonHidden(true)
+        .onAppear {
+            Task {
+                await viewModel.fetchFingerPrintForProteus()
+            }
+        }
         .onDisappear {
             dismissedView?()
         }

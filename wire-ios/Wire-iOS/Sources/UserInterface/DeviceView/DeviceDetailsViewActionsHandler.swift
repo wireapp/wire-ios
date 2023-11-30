@@ -27,7 +27,9 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
     var credentials: ZMEmailCredentials?
     var certificate: E2eIdentityCertificate?
     var isProcessing: ((Bool) -> Void)?
+
     let userSession: UserSession
+
     init(
         userClient: UserClient,
         userSession: UserSession,
@@ -42,9 +44,6 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
         do {
             return try await userClient.fetchE2eIdentityCertificate()
         } catch {
-            print(
-                error
-            )
         }
         return nil
     }
@@ -52,9 +51,6 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
     func showCertificate(
         _ certificate: String
     ) {
-        print(
-            "show certificate is called: \(certificate)"
-        )
     }
 
     func removeDevice() async -> Bool {

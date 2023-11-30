@@ -38,11 +38,12 @@ final class DeviceInfoViewModel: ObservableObject {
     let userSession: UserSession
     let uuid: String
     let addedDate: String
-    var title: String
-    let deviceKeyFingerprint: String
     let proteusID: String
+    let getUserClientFingerprintUseCase: GetUserClientFingerprintUseCaseProtocol
+    let userClient: UserClient
     var isE2EIdentityEnabled: Bool
     var isSelfClient: Bool
+    var title: String
     var certificateStatus: E2EIdentityCertificateStatus {
         guard let certificate = e2eIdentityCertificate,
                 let status = E2EIdentityCertificateStatus.allCases.filter({
@@ -54,7 +55,6 @@ final class DeviceInfoViewModel: ObservableObject {
         }
         return status
     }
-
     var isCertificateExpiringSoon: Bool {
         guard let certificate = e2eIdentityCertificate else {
             return false
@@ -70,29 +70,34 @@ final class DeviceInfoViewModel: ObservableObject {
     @Published var isReset: Bool = false
     @Published var isProteusVerificationEnabled: Bool = false
     @Published var isActionInProgress: Bool = false
+    @Published var proteusKeyFingerprint: String
 
     init(
         uuid: String,
         title: String,
         addedDate: String,
-        deviceKeyFingerprint: String,
+        proteusKeyFingerprint: String,
         proteusID: String,
         isProteusVerificationEnabled: Bool,
         actionsHandler: any DeviceDetailsViewActions,
         isE2EIdentityEnabled: Bool,
         isSelfClient: Bool,
-        userSession: UserSession
+        userSession: UserSession,
+        getUserClientFingerprintUseCase: GetUserClientFingerprintUseCaseProtocol,
+        userClient: UserClient
     ) {
         self.uuid = uuid
         self.title = title
         self.addedDate = addedDate
-        self.deviceKeyFingerprint = deviceKeyFingerprint
+        self.proteusKeyFingerprint = proteusKeyFingerprint
         self.proteusID = proteusID
         self.isProteusVerificationEnabled = isProteusVerificationEnabled
         self.actionsHandler = actionsHandler
         self.isE2EIdentityEnabled = isE2EIdentityEnabled
         self.userSession = userSession
         self.isSelfClient = isSelfClient
+        self.getUserClientFingerprintUseCase = getUserClientFingerprintUseCase
+        self.userClient = userClient
         self.actionsHandler.isProcessing = {[weak self] isProcessing in
             RunLoop.main.perform {
                 self?.isActionInProgress = isProcessing
@@ -100,9 +105,19 @@ final class DeviceInfoViewModel: ObservableObject {
         }
     }
 
+    func fetchFingerPrintForProteus() async {
+        isActionInProgress = true
+        guard let data = await getUserClientFingerprintUseCase.invoke(userClient: userClient), let fingerPrint = String(data: data, encoding: .utf8) else {
+            return
+        }
+        self.proteusKeyFingerprint = fingerPrint.splitStringIntoLines(charactersPerLine: 16).uppercased()
+        isActionInProgress = false
+    }
     func fetchE2eCertificate() async {
         isActionInProgress = true
-        e2eIdentityCertificate = await actionsHandler.fetchCertificate()
+        _ = await actionsHandler.fetchCertificate().publisher.receive(on: DispatchQueue.main).sink { value in
+            self.e2eIdentityCertificate = value
+        }
         isActionInProgress = false
     }
 
@@ -138,15 +153,14 @@ extension DeviceInfoViewModel {
     static func map(
         userClient: UserClient,
         userSession: UserSession,
-        credentials: ZMEmailCredentials?
+        credentials: ZMEmailCredentials?,
+        getUserClientFingerprintUseCase: GetUserClientFingerprintUseCaseProtocol
     ) -> DeviceInfoViewModel {
         return DeviceInfoViewModel(
             uuid: UUID().uuidString,
             title: userClient.model ?? "",
             addedDate: userClient.activationDate?.formattedDate ?? "",
-            deviceKeyFingerprint: (userClient.user?.fingerprint ?? "")?.splitStringIntoLines(
-                charactersPerLine: 16
-            ).uppercased() ?? "",
+            proteusKeyFingerprint: "",
             proteusID: userClient.proteusSessionID?.clientID.fingerprintStringWithSpaces.uppercased() ?? "",
             isProteusVerificationEnabled: userClient.user?.isVerified ?? false,
             actionsHandler: DeviceDetailsViewActionsHandler(
@@ -156,7 +170,9 @@ extension DeviceInfoViewModel {
             ),
             isE2EIdentityEnabled: userClient.e2eIdentityProvider.isE2EIdentityEnabled,
             isSelfClient: userClient.isSelfClient(),
-            userSession: userSession
+            userSession: userSession,
+            getUserClientFingerprintUseCase: getUserClientFingerprintUseCase,
+            userClient: userClient
         )
     }
 }

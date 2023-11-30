@@ -47,19 +47,3 @@ struct DeviceView: View {
         }
     }
 }
-
-private extension String {
-    func clippedValue() -> String {
-        let offsetValue = 25
-        if self.count > offsetValue {
-            return String(
-                self[...self.index(
-                    self.startIndex,
-                    offsetBy: offsetValue
-                )]
-            ) + "..."
-        } else {
-            return self
-        }
-    }
-}
