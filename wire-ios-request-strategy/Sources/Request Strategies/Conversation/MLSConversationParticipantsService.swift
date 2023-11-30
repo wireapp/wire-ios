@@ -98,9 +98,12 @@ struct MLSConversationParticipantsService: MLSConversationParticipantsServiceInt
 
         do {
             try await mlsService.addMembersToConversation(with: mlsUsers, for: groupID)
-        } catch MLSService.MLSAddMembersError.failedToClaimKeyPackages {
-            // TODO: Refactor key package claim in `MLSService` to throw an error with the users that couldn't be added
-            // Then here retry once and throw the users that didn't get added
+
+        } catch MLSService.MLSAddMembersError.failedToClaimKeyPackages(let failedMLSUsers) {
+
+            let failedUsers = users.filter({ failedMLSUsers.contains(MLSUser(from: $0)) })
+            throw MLSConversationParticipantsError.ignoredUsers(users: Set(failedUsers))
+
         } catch {
             Logging.mls.warn("failed to add members to conversation (\(String(describing: qualifiedID))): \(String(describing: error))")
             throw error

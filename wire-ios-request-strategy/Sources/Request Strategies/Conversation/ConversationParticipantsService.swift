@@ -112,7 +112,13 @@ public class ConversationParticipantsService: ConversationParticipantsServiceInt
 
             do {
                 try await mlsParticipantsService.addParticipants(users, to: conversation)
-            } catch MLSConversationParticipantsError.ignoredUsers(users: _) {
+            } catch MLSConversationParticipantsError.ignoredUsers(let failedUsers) {
+
+                if failedUsers.isNonEmpty && failedUsers != Set(users) {
+                    // retry once
+                    try await internalAddParticipants(Array(failedUsers), to: conversation)
+                }
+
                 // TODO: Insert system message
                 // To be done in https://wearezeta.atlassian.net/browse/WPB-2228
             }
