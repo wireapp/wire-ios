@@ -275,6 +275,7 @@ public extension UIColor {
     var swiftUIColor: Color {
         return Color(uiColor: self)
     }
+
     convenience init(for accentColor: AccentColor) {
         switch accentColor {
         case .blue:
@@ -293,6 +294,7 @@ public extension UIColor {
             self.init(light: Asset.Colors.purple500Light, dark: Asset.Colors.purple500Dark)
         }
     }
+
     convenience init(fromZMAccentColor accentColor: ZMAccentColor) {
         let safeAccentColor = AccentColor(ZMAccentColor: accentColor) ?? .blue
         self.init(for: safeAccentColor)
