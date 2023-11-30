@@ -31,23 +31,23 @@ public enum CreateTeamOneOnOneConversationError: Error, Equatable {
 
     case userIsNotATeamMember
     case failedToMaterializeUser
+    case missingQualifiedID
     case failedToCreateConversation(ConversationCreationFailure)
+    case cannotFetchMLSConversation
+    case mlsConversationNotFound
+    case failedToSyncMLSConversation(SyncMLSOneToOneConversationActionError)
 
 }
 
 public struct CreateTeamOneOnOneConversationUseCase: CreateTeamOneOnOneConversationUseCaseInterface {
+
+    typealias Completion = (Swift.Result<ZMConversation, CreateTeamOneOnOneConversationError>) -> Void
 
     private let viewContext: NSManagedObjectContext
 
     init(viewContext: NSManagedObjectContext) {
         self.viewContext = viewContext
     }
-
-    // If default message protocol is mls, and both sides support mls, then fetch mls one to one.
-    // When sending a message... check if one to one mls, if it needs establishing
-    //
-    // else if proteus is supported, then proteus.
-    // then create a read only conversation
 
     public func invoke(
         user: UserType,
@@ -63,11 +63,131 @@ public struct CreateTeamOneOnOneConversationUseCase: CreateTeamOneOnOneConversat
             return
         }
 
+        guard
+            let userID = user.remoteIdentifier,
+            let userDomain = user.domain ?? BackendInfo.domain
+        else {
+            completion(.failure(.missingQualifiedID))
+            return
+        }
+
+        let qualifiedID = QualifiedID(
+            uuid: userID,
+            domain: userDomain
+        )
+
+        resolveMessageProtocol(with: qualifiedID) {
+            switch $0 {
+            case nil:
+                createReadOnlyProteusConversation(
+                    with: user,
+                    completion: completion
+                )
+
+            case .proteus?:
+                createProteusConversation(
+                    with: user,
+                    completion: completion
+                )
+
+            case .mls?:
+                createMLSConversation(
+                    with: user,
+                    completion: completion
+                )
+            }
+        }
+    }
+
+    // MARK: - Helpers
+
+    private func resolveMessageProtocol(
+        with userID: QualifiedID,
+        completion: @escaping (MessageProtocol?) -> Void
+    ) {
+        let selfUser = ZMUser.selfUser(in: viewContext)
+        let selfSupportedProtocols = selfUser.supportedProtocols
+
+        var action = FetchSupportedProtocolsAction(userID: userID)
+        action.perform(in: viewContext.notificationContext) {
+            switch $0 {
+            case .success(let supportedProtocols):
+                let commonProtocols = selfSupportedProtocols.intersection(supportedProtocols)
+                
+                if commonProtocols.contains(.mls) {
+                    completion(.mls)
+                } else if commonProtocols.contains(.proteus) {
+                    completion(.proteus)
+                } else {
+                    completion(nil)
+                }
+
+            case .failure:
+                completion(nil)
+            }
+        }
+    }
+
+    private func createReadOnlyProteusConversation(
+        with user: ZMUser,
+        completion: @escaping Completion
+    ) {
+        createProteusConversation(with: user) {
+            switch $0 {
+            case .success(let conversation):
+                conversation.isForcedReadOnly = true
+                completion(.success(conversation))
+
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
+    }
+
+    private func createProteusConversation(
+        with user: ZMUser,
+        completion: @escaping Completion
+    ) {
         let service = ConversationService(context: viewContext)
         service.createTeamOneToOneConversation(user: user) { result in
             completion(result.mapError {
                 .failedToCreateConversation($0)
             })
+        }
+    }
+
+    private func createMLSConversation(
+        with user: ZMUser,
+        completion: @escaping Completion
+    ) {
+        guard
+            let userID = user.remoteIdentifier,
+            let domain = user.domain ?? BackendInfo.domain
+        else {
+            completion(.failure(.cannotFetchMLSConversation))
+            return
+        }
+
+        var action = SyncMLSOneToOneConversationAction(
+            userID: userID,
+            domain: domain
+        )
+
+        action.perform(in: viewContext.notificationContext) {
+            switch $0 {
+            case .success(let mlsGroupID):
+                if let conversation = ZMConversation.fetch(
+                    with: mlsGroupID,
+                    in: viewContext
+                ) {
+                    completion(.success(conversation))
+                } else {
+                    completion(.failure(.mlsConversationNotFound))
+                }
+
+            case .failure(let error):
+                completion(.failure(.failedToSyncMLSConversation(error)))
+            }
         }
     }
 
