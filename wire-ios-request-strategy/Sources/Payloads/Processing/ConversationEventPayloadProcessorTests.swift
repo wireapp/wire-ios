@@ -839,8 +839,8 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
 
             let qualifiedID = groupConversation.qualifiedID!
             let payload = Payload.Conversation(qualifiedID: qualifiedID,
-                                                    type: BackendConversationType.group.rawValue,
-                                                    messageProtocol: "mls")
+                                               type: BackendConversationType.group.rawValue,
+                                               messageProtocol: "mls")
             // when
             sut.updateOrCreateConversation(
                 from: payload,
@@ -983,21 +983,11 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
         let (_, _, conversationEvent, originalEvent) = setupForProcessingConverationMemberLeaveTests(
             selfUserLeaves: true
         )
-        let expectation = XCTestExpectation(description: "notification is received")
-        let notificationCenter = NotificationCenter.default
-        var observer: NSObjectProtocol?
-        observer = notificationCenter.addObserver(
-            forName: AccountDeletedNotification.notificationName,
-            object: syncMOC.notificationContext,
-            queue: .none
-        ) { notification in
-            let notification = notification.userInfo?[AccountDeletedNotification.userInfoKey] as? AccountDeletedNotification
-            if notification != nil {
-                expectation.fulfill()
-                observer.map { notificationCenter.removeObserver($0) }
-                observer = nil
-            }
-        }
+//        let expectation = expectation(forNotification: AccountDeletedNotification.notificationName, object: nil) { notification in
+//            notification.userInfo?[AccountDeletedNotification.userInfoKey] as? AccountDeletedNotification != nil
+//        }
+        let expectation = XCTNSNotificationExpectation(name: AccountDeletedNotification.notificationName, object: nil, notificationCenter: .default)
+        expectation.handler = { $0.userInfo?[AccountDeletedNotification.userInfoKey] as? AccountDeletedNotification != nil }
 
         // When
         syncMOC.performAndWait {
@@ -1009,8 +999,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
         }
 
         // Then
-        wait(for: [expectation], timeout: 10)
-        observer.map { notificationCenter.removeObserver($0) }
+        wait(for: [expectation], timeout: 1)
     }
 
     func testProcessingConverationMemberLeave_MarksOtherUserAsDeleted() {

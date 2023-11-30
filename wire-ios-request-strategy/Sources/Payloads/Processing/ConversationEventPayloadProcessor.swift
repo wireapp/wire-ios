@@ -156,8 +156,10 @@ struct ConversationEventPayloadProcessor {
                 context.delete(membership)
                 if user.isSelfUser {
                     // should actually be handled by the "user.delete" event, this is just a fallback
-                    AccountDeletedNotification(context: context)
-                        .post(in: context.notificationContext)
+                    DispatchQueue.main.async {
+                        AccountDeletedNotification(context: context)
+                            .post(in: context.notificationContext)
+                    }
                 } else {
                     user.markAccountAsDeleted(at: originalEvent.timestamp ?? Date())
                 }
