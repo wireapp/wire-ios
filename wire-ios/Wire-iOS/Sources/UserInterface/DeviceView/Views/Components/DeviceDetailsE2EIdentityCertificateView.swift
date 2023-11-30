@@ -23,20 +23,10 @@ struct DeviceDetailsE2EIdentityCertificateView: View {
     @Binding var isCertificateViewPreseneted: Bool
 
     var body: some View {
-        Text(
-            L10n.Localizable.Device.Details.Section.E2e.title
-        ).font(
-            UIFont.normalSemiboldFont.swiftUIFont
-        ).multilineTextAlignment(
-            .leading
-        )
-        .padding(
-            [
-                .top,
-                .bottom
-            ],
-            16
-        )
+        Text(L10n.Localizable.Device.Details.Section.E2e.title)
+            .font(UIFont.normalSemiboldFont.swiftUIFont)
+            .multilineTextAlignment(.leading)
+            .padding([.top, .bottom], 16)
         HStack {
             switch viewModel.certificateStatus {
             case .notActivated:
@@ -76,10 +66,7 @@ struct DeviceDetailsE2EIdentityCertificateView: View {
             Text(L10n.Localizable.Device.Details.Section.E2e.serialnumber)
                 .font(UIFont.smallSemiboldFont.swiftUIFont)
                 .foregroundColor(.gray)
-                .padding(
-                    .top,
-                    8
-                )
+                .padding(.top, 8)
             Text(certificate.serialNumber)
         }
     }

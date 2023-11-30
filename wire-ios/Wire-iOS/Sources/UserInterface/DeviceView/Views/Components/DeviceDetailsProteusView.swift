@@ -35,35 +35,22 @@ struct DeviceDetailsProteusView: View {
             Text(L10n.Localizable.Device.Details.Section.Proteus.activated)
                 .foregroundColor(SemanticColors.Label.textSectionHeader.swiftUIColor)
                 .font(UIFont.mediumSemiboldFont.swiftUIFont)
-                .padding(
-                    [.leading, .top],
-                    16
-                )
+                .padding([.leading, .top], 16)
                 .padding(.bottom, 4)
             Text(viewModel.addedDate)
                 .foregroundColor(SemanticColors.Label.textDefault.swiftUIColor)
-                .padding(
-                    [
-                        .leading,
-                        .trailing,
-                        .bottom
-                    ],
-                    16
-                )
+                .padding([.leading, .trailing, .bottom], 16)
                 .font(UIFont.normalRegularFont.swiftUIFont)
             Divider()
             CopyValueView(
                 title: L10n.Localizable.Device.Details.Section.Proteus.keyfingerprint,
-                value: viewModel.deviceKeyFingerprint,
+                value: $viewModel.proteusKeyFingerprint.wrappedValue,
                 isCopyEnabled: viewModel.isCopyEnabled,
                 performCopy: viewModel.copyToClipboard
             ).padding(.all, 16)
             if !viewModel.isSelfClient {
                 Divider()
-                Toggle(
-                    L10n.Localizable.Device.verified,
-                    isOn: $isVerfied
-                )
+                Toggle(L10n.Localizable.Device.verified, isOn: $isVerfied)
                 .font(UIFont.headerSemiBoldFont.swiftUIFont)
                 .padding(.all, 16)
                 .onChange(of: isVerfied) { value in

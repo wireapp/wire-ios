@@ -24,14 +24,8 @@ struct DeviceDetailsBottomView: View {
     var fingerPrintInfoTextView: some View {
         Text(L10n.Localizable.Self.Settings.DeviceDetails.Fingerprint.subtitle)
             .font(.footnote)
-            .padding(
-                [.leading, .trailing],
-                16
-            )
-            .padding(
-                [.top, .bottom],
-                8
-            )
+            .padding([.leading, .trailing], 16)
+            .padding([.top, .bottom], 8)
     }
 
     var resetSessionView: some View {
@@ -55,14 +49,8 @@ struct DeviceDetailsBottomView: View {
     var resetSessionInfoView: some View {
         Text(L10n.Localizable.Self.Settings.DeviceDetails.ResetSession.subtitle)
             .font(.footnote)
-            .padding(
-                [.leading, .trailing],
-                16
-            )
-            .padding(
-                [.top, .bottom],
-                8
-            )
+            .padding([.leading, .trailing], 16)
+            .padding([.top, .bottom], 8)
     }
 
     var removeDeviceView: some View {
@@ -85,14 +73,8 @@ struct DeviceDetailsBottomView: View {
     var removeDeviceInfoView: some View {
         Text(L10n.Localizable.Self.Settings.DeviceDetails.RemoveDevice.subtitle)
             .font(.footnote)
-            .padding(
-                [.leading, .trailing],
-                16
-            )
-            .padding(
-                [.top, .bottom],
-                8
-            )
+            .padding([.leading, .trailing], 16)
+            .padding([.top, .bottom], 8)
     }
 
     var body: some View {
