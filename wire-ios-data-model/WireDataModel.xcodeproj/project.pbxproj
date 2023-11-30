@@ -3735,7 +3735,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "../scripts/run-sourcery.sh --config ./sourcery/config.yml\n";
+			shellScript = "../scripts/run-sourcery.sh --config ./sourcery/config.yml\n../scripts/run-swiftlint.sh --fix ./sourcery\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
