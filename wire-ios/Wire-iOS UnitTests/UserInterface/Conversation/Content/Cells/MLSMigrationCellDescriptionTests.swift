@@ -53,88 +53,80 @@ final class MLSMigrationCellDescriptionTests: XCTestCase {
     func test_mlsMigrationStarted_doesContainLinkInAttributedString() throws {
         // given
         let cellDescription = MLSMigrationCellDescription(messageType: .mlsMigrationStarted)
-        let expectation = self.expectation(description: "")
+        var expectedValue: Any?
 
         // when
         let attributedString = try XCTUnwrap(cellDescription.configuration.attributedText)
 
         // then
-        attributedString.enumerateAttribute(.link, in: attributedString.wholeRange, using: { value, _, processPtr in
-            guard value != nil else { return }
-            expectation.fulfill()
-            processPtr.pointee = false
+        attributedString.enumerateAttribute(.link, in: attributedString.wholeRange, using: { value, _, _ in
+            expectedValue = value
         })
 
-        waitForExpectations(timeout: 0.1)
+        XCTAssertNotNil(expectedValue)
     }
 
     func test_mlsMigrationFinalized_doesContainLinkInAttributedString() throws {
         // given
         let cellDescription = MLSMigrationCellDescription(messageType: .mlsMigrationFinalized)
-        let expectation = self.expectation(description: "")
+        var expectedValue: Any?
 
         // when
         let attributedString = try XCTUnwrap(cellDescription.configuration.attributedText)
 
         // then
-        attributedString.enumerateAttribute(.link, in: attributedString.wholeRange, using: { value, _, processPtr in
-            guard value != nil else { return }
-            expectation.fulfill()
-            processPtr.pointee = false
+        attributedString.enumerateAttribute(.link, in: attributedString.wholeRange, using: { value, _, _ in
+            expectedValue = value
         })
 
-        waitForExpectations(timeout: 0.1)
+        XCTAssertNotNil(expectedValue)
     }
 
     func test_mlsMigrationOngoingCall_doesNotContainLinkInAttributedString() throws {
         // given
         let cellDescription = MLSMigrationCellDescription(messageType: .mlsMigrationOngoingCall)
-        let expectation = self.expectation(description: "")
+        var expectedValue: Any?
 
         // when
         let attributedString = try XCTUnwrap(cellDescription.configuration.attributedText)
 
         // then
         attributedString.enumerateAttribute(.link, in: attributedString.wholeRange, using: { value, _, _ in
-            guard value == nil else { return }
-            expectation.fulfill()
+            expectedValue = value
         })
 
-        waitForExpectations(timeout: 0.1)
+        XCTAssertNil(expectedValue)
     }
 
     func test_mlsMigrationUpdateVersion_doesNotContainLinkInAttributedString() throws {
         // given
         let cellDescription = MLSMigrationCellDescription(messageType: .mlsMigrationUpdateVersion)
-        let expectation = self.expectation(description: "")
+        var expectedValue: Any?
 
         // when
         let attributedString = try XCTUnwrap(cellDescription.configuration.attributedText)
 
         // then
         attributedString.enumerateAttribute(.link, in: attributedString.wholeRange, using: { value, _, _ in
-            guard value == nil else { return }
-            expectation.fulfill()
+            expectedValue = value
         })
 
-        waitForExpectations(timeout: 0.1)
+        XCTAssertNil(expectedValue)
     }
 
     func test_mlsMigrationJoinAfterwards_doesContainLinkInAttributedString() throws {
         // given
         let cellDescription = MLSMigrationCellDescription(messageType: .mlsMigrationJoinAfterwards)
-        let expectation = self.expectation(description: "")
+        var expectedValue: Any?
 
         // when
         let attributedString = try XCTUnwrap(cellDescription.configuration.attributedText)
 
         // then
-        attributedString.enumerateAttribute(.link, in: attributedString.wholeRange, using: { value, _, processPtr in
-            guard value != nil else { return }
-            expectation.fulfill()
-            processPtr.pointee = false
+        attributedString.enumerateAttribute(.link, in: attributedString.wholeRange, using: { value, _, _ in
+            expectedValue = value
         })
 
-        waitForExpectations(timeout: 0.1)
+        XCTAssertNotNil(expectedValue)
     }
 }
