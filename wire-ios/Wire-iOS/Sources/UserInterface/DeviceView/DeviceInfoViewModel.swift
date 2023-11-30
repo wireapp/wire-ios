@@ -22,42 +22,6 @@ import WireCommonComponents
 import WireDataModel
 import WireSyncEngine
 
-enum E2EIdentityCertificateStatus: CaseIterable {
-    case notActivated, revoked, expired, valid, none
-}
-
-extension E2EIdentityCertificateStatus {
-    func titleForStatus() -> String {
-        switch self {
-        case .notActivated:
-            return L10n.Localizable.Device.Details.Section.E2e.Status.notactivated
-        case .revoked:
-            return L10n.Localizable.Device.Details.Section.E2e.Status.revoked
-        case .expired:
-            return L10n.Localizable.Device.Details.Section.E2e.Status.expired
-        case .valid:
-            return L10n.Localizable.Device.Details.Section.E2e.Status.valid
-        case .none:
-            return ""
-        }
-    }
-
-    func imageForStatus() -> Image? {
-        switch self {
-        case .notActivated:
-            return Image(.certificateExpired)
-        case .revoked:
-            return Image(.certificateRevoked)
-        case .expired:
-            return Image(.certificateExpired)
-        case .valid:
-            return Image(.certificateValid)
-        case .none:
-            return nil
-        }
-    }
-}
-
 protocol DeviceDetailsViewActions {
     func fetchCertificate() async -> E2eIdentityCertificate?
     func showCertificate(
