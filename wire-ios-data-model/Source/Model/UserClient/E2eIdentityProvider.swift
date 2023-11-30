@@ -48,11 +48,11 @@ enum E2eIdentityCertificateError: Error {
 
 public final class E2eIdentityProvider: E2eIdentityProviding {
     public var isE2EIdentityEnabled: Bool
-   
+
     public init(isE2EIdentityEnabled: Bool = false) {
         self.isE2EIdentityEnabled = isE2EIdentityEnabled
     }
-    
+
     public func fetchCertificate() async throws -> E2eIdentityCertificate {
         throw E2eIdentityCertificateError.badCertificate
     }
@@ -61,9 +61,9 @@ public final class E2eIdentityProvider: E2eIdentityProviding {
 // MARK: - Mock Provider for Development
 public final class MockValidE2eIdentityProvider: E2eIdentityProviding {
     public var isE2EIdentityEnabled: Bool = UserDefaults.standard.bool(forKey: "isE2eIdentityViewEnabled")
-    
+
     public init() {}
-    
+
     public func fetchCertificate() async throws -> E2eIdentityCertificate {
         return E2eIdentityCertificate(
             certificateDetails: .random(length: 450),
@@ -76,7 +76,7 @@ public final class MockValidE2eIdentityProvider: E2eIdentityProviding {
 
 public final class MockRevokedE2eIdentityProvider: E2eIdentityProviding {
     public var isE2EIdentityEnabled: Bool = UserDefaults.standard.bool(forKey: "isE2eIdentityViewEnabled")
-    
+
     public init() {}
 
     public func fetchCertificate() async throws -> E2eIdentityCertificate {
@@ -91,7 +91,7 @@ public final class MockRevokedE2eIdentityProvider: E2eIdentityProviding {
 
 public final class MockExpiredE2eIdentityProvider: E2eIdentityProviding {
     public var isE2EIdentityEnabled: Bool = UserDefaults.standard.bool(forKey: "isE2eIdentityViewEnabled")
-    
+
     public init() {}
 
     public func fetchCertificate() async throws -> E2eIdentityCertificate {
