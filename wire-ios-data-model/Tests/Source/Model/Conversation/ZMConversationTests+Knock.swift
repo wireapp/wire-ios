@@ -44,8 +44,9 @@ final class ZMConversationTests_Knock: ZMConversationTestsBase {
     private func createConversationWithMessages(context: NSManagedObjectContext) -> ZMConversation? {
         let conversation = ZMConversation.insertNewObject(in: context)
         conversation.remoteIdentifier = NSUUID.create()
-        for text in ["A", "B", "C", "D", "E"] {
-            conversation._appendText(content: text)
+        for (index, text) in ["A", "B", "C", "D", "E"].enumerated() {
+            let conversationMessage = try? conversation.appendText(content: text) as? ZMClientMessage
+            conversationMessage?.updateServerTimestamp(with: TimeInterval(index))
         }
         XCTAssert(context.saveOrRollback())
         return conversation
