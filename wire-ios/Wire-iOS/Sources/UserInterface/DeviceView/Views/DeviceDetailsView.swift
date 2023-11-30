@@ -25,7 +25,9 @@ struct DeviceDetailsView: View {
     ) private var dismiss
     @StateObject var viewModel: DeviceInfoViewModel
     @State var isCertificateViewPresented: Bool = false
+
     var dismissedView: (() -> Void)?
+
     var e2eIdentityCertificateView: some View {
         VStack(
             alignment: .leading
@@ -44,6 +46,7 @@ struct DeviceDetailsView: View {
         .background(SemanticColors.View.backgroundDefaultWhite.swiftUIColor)
         .padding(.top, 8)
     }
+
     var proteusView: some View {
         VStack(
             alignment: .leading
@@ -75,6 +78,7 @@ struct DeviceDetailsView: View {
             }
         }
     }
+
     var body: some View {
         NavigationView {
             ScrollView {

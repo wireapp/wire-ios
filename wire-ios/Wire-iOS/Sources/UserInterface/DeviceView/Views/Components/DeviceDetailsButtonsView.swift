@@ -20,8 +20,8 @@ import SwiftUI
 
 struct DeviceDetailsButtonsView: View {
     @ObservedObject var viewModel: DeviceInfoViewModel
-
     @Binding var isCertificateViewPresented: Bool
+
     var getCertificateButton: some View {
         SwiftUI.Button {
             Task {
@@ -33,6 +33,7 @@ struct DeviceDetailsButtonsView: View {
             .font(UIFont.normalRegularFont.swiftUIFont.bold())
         }
     }
+
     var updateCertificateButton: some View {
         SwiftUI.Button {
             Task {
@@ -46,6 +47,7 @@ struct DeviceDetailsButtonsView: View {
             }
         }
     }
+
     var showCertificateButton: some View {
         SwiftUI.Button(
             action: {
@@ -64,6 +66,7 @@ struct DeviceDetailsButtonsView: View {
             }
         )
     }
+
     var body: some View {
         switch viewModel.certificateStatus {
         case .valid:
