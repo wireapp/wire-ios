@@ -348,7 +348,7 @@ public class UserClient: ZMManagedObject, UserClientType {
                 syncMOC.saveOrRollback()
                 completion?(true)
             } catch {
-                // TODO: Add error logging
+                WireLogger.userClient.error("Failed to Delete Session with Error \(error.localizedDescription)")
                 completion?(false)
             }
         }
