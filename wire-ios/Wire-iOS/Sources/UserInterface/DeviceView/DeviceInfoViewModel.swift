@@ -46,7 +46,7 @@ final class DeviceInfoViewModel: ObservableObject {
     var title: String
     var certificateStatus: E2EIdentityCertificateStatus {
         guard let certificate = e2eIdentityCertificate,
-                let status = E2EIdentityCertificateStatus.allCases.filter({
+              let status = E2EIdentityCertificateStatus.allCases.filter({
                         $0.titleForStatus() == certificate.certificateStatus
                     }
                 ).first
@@ -107,7 +107,8 @@ final class DeviceInfoViewModel: ObservableObject {
 
     func fetchFingerPrintForProteus() async {
         isActionInProgress = true
-        guard let data = await getUserClientFingerprintUseCase.invoke(userClient: userClient), let fingerPrint = String(data: data, encoding: .utf8) else {
+        guard let data = await getUserClientFingerprintUseCase.invoke(userClient: userClient), 
+                let fingerPrint = String(data: data, encoding: .utf8) else {
             return
         }
         self.proteusKeyFingerprint = fingerPrint.splitStringIntoLines(charactersPerLine: 16).uppercased()
