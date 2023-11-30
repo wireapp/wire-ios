@@ -32,5 +32,5 @@ public extension String {
             return self
         }
     }
-    
+
 }
