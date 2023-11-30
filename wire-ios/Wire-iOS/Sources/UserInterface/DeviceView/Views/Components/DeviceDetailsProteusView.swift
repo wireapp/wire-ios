@@ -21,6 +21,7 @@ import SwiftUI
 struct DeviceDetailsProteusView: View {
     @ObservedObject var viewModel: DeviceInfoViewModel
     @State var isVerfied: Bool = false
+
     var body: some View {
         VStack(alignment: .leading) {
             CopyValueView(
