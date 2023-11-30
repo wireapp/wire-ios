@@ -978,10 +978,109 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
 
     // MARK: - Handle User Removed
 
-    func testProcessingConverationMemberLeave_MarksOtherUserAsDeleted() throws {
-        syncMOC.performGroupedBlockAndWait { [self] in
-            // Given
+    func testProcessingConverationMemberLeave_SelfUserTriggersAccountDeletedNotification() {
+        // Given
+        let (conversation, users, conversationEvent) = setupForProcessingConverationMemberLeaveTests()
+        let originalEvent = syncMOC.performAndWait {
+            ZMUpdateEvent(
+                uuid: .init(),
+                payload: [
+                    "id": "cf51e6b1-39a6-11ed-8005-520924331b82",
+                    "time": "2022-09-21T12:13:32.173Z",
+                    "type": "conversation.member-leave",
+                    "payload": [
+                        "conversation": "ee8824c5-95d0-4e59-9862-e9bb0fc6e921",
+                        "qualified_user_ids": [
+                            ["id": users[0].remoteIdentifier.transportString(), "domain": owningDomain]
+                        ],
+                        "reason": "user-delete"
+                    ]
+                ],
+                transient: false,
+                decrypted: true,
+                source: .webSocket
+            )!
+        }
+
+        let expectation = XCTestExpectation(description: "notification is received")
+        let notificationCenter = NotificationCenter.default
+        var observer: NSObjectProtocol?
+        observer = notificationCenter.addObserver(
+            forName: AccountDeletedNotification.notificationName,
+            object: syncMOC.notificationContext,
+            queue: .none
+        ) { notification in
+            let notification = notification.userInfo?[AccountDeletedNotification.userInfoKey] as? AccountDeletedNotification
+            guard let notification else { return }
+            expectation.fulfill()
+            observer.map { notificationCenter.removeObserver($0) }
+            observer = nil
+        }
+
+        // When
+        syncMOC.performAndWait {
+            sut.processPayload(
+                conversationEvent,
+                originalEvent: originalEvent,
+                in: syncMOC
+            )
+        }
+
+        // Then
+        waitForExpectations(timeout: 1)
+        XCTAssertTrue(users[0].isAccountDeleted)
+        XCTAssertFalse(conversation.localParticipants.contains(users[0]))
+        observer.map { notificationCenter.removeObserver($0) }
+    }
+
+    func testProcessingConverationMemberLeave_MarksOtherUserAsDeleted() {
+        // Given
+        let (conversation, users, conversationEvent) = setupForProcessingConverationMemberLeaveTests()
+        let originalEvent = syncMOC.performAndWait {
+            ZMUpdateEvent(
+                uuid: .init(),
+                payload: [
+                    "id": "cf51e6b1-39a6-11ed-8005-520924331b82",
+                    "time": "2022-09-21T12:13:32.173Z",
+                    "type": "conversation.member-leave",
+                    "payload": [
+                        "conversation": "ee8824c5-95d0-4e59-9862-e9bb0fc6e921",
+                        "qualified_user_ids": [
+                            ["id": users[1].remoteIdentifier.transportString(), "domain": owningDomain]
+                        ],
+                        "reason": "user-delete"
+                    ]
+                ],
+                transient: false,
+                decrypted: true,
+                source: .webSocket
+            )!
+        }
+
+        // When
+        syncMOC.performAndWait {
+            sut.processPayload(
+                conversationEvent,
+                originalEvent: originalEvent,
+                in: syncMOC
+            )
+        }
+
+        // Then
+        syncMOC.performAndWait {
+            XCTAssertTrue(users[1].isAccountDeleted)
+            XCTAssertFalse(conversation.localParticipants.contains(users[1]))
+        }
+    }
+
+    private func setupForProcessingConverationMemberLeaveTests() -> (
+        conversation: ZMConversation,
+        users: [ZMUser],
+        conversationEvent: Payload.ConversationEvent<Payload.UpdateConverationMemberLeave>
+    ) {
+        syncMOC.performAndWait {
             let team = Team.fetchOrCreate(with: .init(), create: true, in: syncMOC, created: .none)
+
             let users: [ZMUser] = [.selfUser(in: syncMOC), .insertNewObject(in: syncMOC)]
             users.forEach { user in
                 user.remoteIdentifier = .init()
@@ -990,6 +1089,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
                 membership.user = user
                 membership.team = team
             }
+
             let conversation = ZMConversation.insertGroupConversation(moc: syncMOC, participants: users)!
             conversation.remoteIdentifier = .init(uuidString: "ee8824c5-95d0-4e59-9862-e9bb0fc6e921")
             conversation.conversationType = .group
@@ -1008,35 +1108,8 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
                 type: nil,
                 data: memberLeavePayload
             )
-            let originalEvent = ZMUpdateEvent(
-                uuid: .init(),
-                payload: [
-                    "id": "cf51e6b1-39a6-11ed-8005-520924331b82",
-                    "time": "2022-09-21T12:13:32.173Z",
-                    "type": "conversation.member-leave",
-                    "payload": [
-                        "conversation": "ee8824c5-95d0-4e59-9862-e9bb0fc6e921",
-                        "qualified_user_ids": [
-                            ["id": users[1].remoteIdentifier.transportString(), "domain": owningDomain]
-                        ],
-                        "reason": "user-delete"
-                    ]
-                ],
-                transient: false,
-                decrypted: true,
-                source: .webSocket
-            )!
 
-            // When
-            sut.processPayload(
-                conversationEvent,
-                originalEvent: originalEvent,
-                in: syncMOC
-            )
-
-            // Then
-            XCTAssertTrue(users[1].isAccountDeleted)
-            XCTAssertFalse(conversation.localParticipants.contains(users[1]))
+            return (conversation, users, conversationEvent)
         }
     }
 
