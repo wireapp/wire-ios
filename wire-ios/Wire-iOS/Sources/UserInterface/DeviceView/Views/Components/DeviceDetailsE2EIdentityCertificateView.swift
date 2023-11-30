@@ -21,7 +21,7 @@ import SwiftUI
 struct DeviceDetailsE2EIdentityCertificateView: View {
     @ObservedObject var viewModel: DeviceInfoViewModel
     @Binding var isCertificateViewPreseneted: Bool
-    
+
     var body: some View {
         Text(
             L10n.Localizable.Device.Details.Section.E2e.title
