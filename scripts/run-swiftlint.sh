@@ -29,6 +29,4 @@ if [ ! -z "${CI-}" ]; then
 fi
 
 xcrun --sdk macosx swift package --package-path "$SCRIPTS_DIR" resolve
-echo running swiftlint in pwd: `pwd`
-echo "$SWIFTLINT" --config "$REPO_ROOT/.swiftlint.yml" "$@"
 "$SWIFTLINT" --config "$REPO_ROOT/.swiftlint.yml" "$@"
