@@ -20,7 +20,9 @@ import Foundation
 
 // MARK: - E2eIdentity Certificate
 extension UserClient {
-    public func fetchE2eIdentityCertificate(e2eIdentityProvider: E2eIdentityProviding = E2eIdentityProvider()) async throws -> E2eIdentityCertificate {
+    public func fetchE2eIdentityCertificate(
+        e2eIdentityProvider: E2eIdentityProviding = E2eIdentityProvider()
+    ) async throws -> E2eIdentityCertificate {
         return try await e2eIdentityProvider.fetchCertificate()
     }
 }
