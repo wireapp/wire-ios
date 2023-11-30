@@ -101,14 +101,31 @@ class MLSConversationParticipantsServiceTests: MessagingTestBase {
         }
     }
 
-    func test_AddParticipants_RethrowsErrors() async {
+    func test_AddParticipants_Throws_FailedToClaimKeyPackages() async {
         // GIVEN
+        let mlsUser = await syncMOC.perform { [self] in
+            MLSUser(from: user)
+        }
+
         mockMLSService.addMembersToConversationMock = { _, _ in
-            throw ParticipantsError.failedToAddParticipants
+            throw MLSService.MLSAddMembersError.failedToClaimKeyPackages(users: [mlsUser])
         }
 
         // THEN
-        await assertItThrows(error: ParticipantsError.failedToAddParticipants) {
+        await assertItThrows(error: MLSConversationParticipantsError.failedToClaimKeyPackages(users: Set([user]))) {
+            // WHEN
+            try await sut.addParticipants([user], to: conversation)
+        }
+    }
+
+    func test_AddParticipants_RethrowsErrors() async {
+        // GIVEN
+        mockMLSService.addMembersToConversationMock = { _, _ in
+            throw ParticipantsError.genericError
+        }
+
+        // THEN
+        await assertItThrows(error: ParticipantsError.genericError) {
             // WHEN
             try await sut.addParticipants([user], to: conversation)
         }
@@ -169,11 +186,11 @@ class MLSConversationParticipantsServiceTests: MessagingTestBase {
         }
 
         mockMLSService.removeMembersFromConversationMock = { _, _ in
-            throw ParticipantsError.failedToRemoveParticipant
+            throw ParticipantsError.genericError
         }
 
         // THEN
-        await assertItThrows(error: ParticipantsError.failedToRemoveParticipant) {
+        await assertItThrows(error: ParticipantsError.genericError) {
             // WHEN
             try await sut.removeParticipant(user, from: conversation)
         }
@@ -182,8 +199,7 @@ class MLSConversationParticipantsServiceTests: MessagingTestBase {
     // MARK: - Helpers
 
     enum ParticipantsError: Error {
-        case failedToAddParticipants
-        case failedToRemoveParticipant
+        case genericError
     }
 
 }

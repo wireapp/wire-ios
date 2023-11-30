@@ -35,7 +35,7 @@ protocol MLSConversationParticipantsServiceInterface {
 }
 
 enum MLSConversationParticipantsError: Error, Equatable {
-    case ignoredUsers(users: Set<ZMUser>)
+    case failedToClaimKeyPackages(users: Set<ZMUser>)
     case invalidOperation
 }
 
@@ -97,12 +97,16 @@ struct MLSConversationParticipantsService: MLSConversationParticipantsServiceInt
         let mlsUsers = await context.perform { users.compactMap(MLSUser.init(from: )) }
 
         do {
+
             try await mlsService.addMembersToConversation(with: mlsUsers, for: groupID)
 
         } catch MLSService.MLSAddMembersError.failedToClaimKeyPackages(let failedMLSUsers) {
 
-            let failedUsers = users.filter({ failedMLSUsers.contains(MLSUser(from: $0)) })
-            throw MLSConversationParticipantsError.ignoredUsers(users: Set(failedUsers))
+            let failedUsers = await context.perform {
+                users.filter { failedMLSUsers.contains(MLSUser(from: $0)) }
+            }
+
+            throw MLSConversationParticipantsError.failedToClaimKeyPackages(users: Set(failedUsers))
 
         } catch {
             Logging.mls.warn("failed to add members to conversation (\(String(describing: qualifiedID))): \(String(describing: error))")

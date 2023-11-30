@@ -121,9 +121,11 @@ public class ConversationParticipantsService: ConversationParticipantsServiceInt
         }
     }
 
-    private func addMLSParticipants(_ users: [ZMUser],
-                                    to conversation: ZMConversation,
-                                    showErrors: Bool) async throws {
+    private func addMLSParticipants(
+        _ users: [ZMUser],
+        to conversation: ZMConversation,
+        showErrors: Bool
+    ) async throws {
 
         guard let mlsParticipantsService else {
             throw ConversationParticipantsError.missingMLSParticipantsService
@@ -131,12 +133,25 @@ public class ConversationParticipantsService: ConversationParticipantsServiceInt
 
         do {
             try await mlsParticipantsService.addParticipants(users, to: conversation)
-        } catch MLSConversationParticipantsError.ignoredUsers(let failedUsers) {
+        } catch MLSConversationParticipantsError.failedToClaimKeyPackages(users: let failedUsers) {
 
-            if failedUsers.isNonEmpty && failedUsers != Set(users) {
-                // retry once
-                try await internalAddParticipants(Array(failedUsers), to: conversation)
+            guard failedUsers.isNonEmpty else {
+                return
             }
+
+            let users = Set(users)
+
+            if failedUsers != users {
+
+                // Operation was aborted because some users didn't have key packages
+                // We filter them out and retry once
+
+                try await internalAddParticipants(
+                    Array(users.subtracting(failedUsers)),
+                    to: conversation
+                )
+            }
+
             if showErrors {
                 // TODO: Insert system message
                 // To be done in https://wearezeta.atlassian.net/browse/WPB-2228

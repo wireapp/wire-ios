@@ -181,6 +181,45 @@ class ConversationParticipantsServiceTests: MessagingTestBase {
         }
     }
 
+    // MARK: - Adding Participants (MLS) - Failed to claim Key Packages
+
+    func test_AddParticipants_RetriesOperation_AfterFailingToClaimKeyPackages() async throws {
+        // GIVEN
+        let (failedUser1, failedUser2) = await uiMOC.perform { [self] in
+            conversation.messageProtocol = .mls
+
+            let failedUser1 = ZMUser.insertNewObject(in: uiMOC)
+            let failedUser2 = ZMUser.insertNewObject(in: uiMOC)
+
+            return (failedUser1, failedUser2)
+        }
+
+        mockMLSAddParticipantsFailingOnce(
+            with: MLSConversationParticipantsError.failedToClaimKeyPackages(
+                users: [failedUser1, failedUser2]
+            )
+        )
+
+        // WHEN
+        try await sut.addParticipants([user, failedUser1, failedUser2], to: conversation)
+
+        // THEN
+        XCTAssertEqual(
+            mockMLSParticipantsService.addParticipantsTo_Invocations.count,
+            2
+        )
+
+        let addedUsers = try XCTUnwrap(
+            mockMLSParticipantsService.addParticipantsTo_Invocations.last?.users,
+            "expected users to be added"
+        )
+
+        XCTAssertEqual(
+            Set(addedUsers),
+            Set([user])
+        )
+    }
+
     // MARK: - Adding Participants - Message Protocol
 
     func test_AddParticipants_UsesProteus_WhenMessageProtocol_IsProteus() async throws {
@@ -398,6 +437,16 @@ private extension ConversationParticipantsServiceTests {
         var firstAttempt = true
 
         mockProteusParticipantsService.addParticipantsTo_MockMethod = { _, _ in
+            guard firstAttempt else { return }
+            firstAttempt = false
+            throw error
+        }
+    }
+
+    func mockMLSAddParticipantsFailingOnce(with error: MLSConversationParticipantsError) {
+        var firstAttempt = true
+
+        mockMLSParticipantsService.addParticipantsTo_MockMethod = { _, _ in
             guard firstAttempt else { return }
             firstAttempt = false
             throw error
