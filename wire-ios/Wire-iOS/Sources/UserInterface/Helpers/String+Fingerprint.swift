@@ -44,7 +44,11 @@ extension String {
             return attributedElement
         }.joined(separator: NSAttributedString(string: " "))
     }
-    func splitStringIntoLines(charactersPerLine: Int, withFingerprintStringWithSpaces: Bool = true) -> String {
+
+    func splitStringIntoLines(
+        charactersPerLine: Int,
+        withFingerprintStringWithSpaces: Bool = true
+    ) -> String {
         if self.count < charactersPerLine {
             return self.count == 0 ? self : self.fingerprintStringWithSpaces
         }

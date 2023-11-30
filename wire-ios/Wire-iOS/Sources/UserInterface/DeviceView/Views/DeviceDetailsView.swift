@@ -116,6 +116,7 @@ struct DeviceDetailsView: View {
         .onAppear {
             Task {
                 await viewModel.fetchFingerPrintForProteus()
+                await viewModel.fetchE2eCertificate()
             }
         }
         .onDisappear {

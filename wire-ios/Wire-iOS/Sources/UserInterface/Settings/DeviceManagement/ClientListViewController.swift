@@ -185,7 +185,6 @@ final class ClientListViewController: UIViewController,
     func openDetailsOfClient(_ client: UserClient) {
         guard let userSession = ZMUserSession.shared() else { return }
         if let navigationController = self.navigationController {
-            if DeveloperFlag.enableNewClientDetailsFlow.isOn {
                 let detailsView = DeviceDetailsView(
                     viewModel: DeviceInfoViewModel.map(
                         userClient: client,
@@ -198,13 +197,6 @@ final class ClientListViewController: UIViewController,
                 hostingViewController.view.backgroundColor = SemanticColors.View.backgroundDefault
                 navigationController.pushViewController(hostingViewController, animated: true)
                 navigationController.isNavigationBarHidden = true
-            } else {
-                let clientViewController = SettingsClientViewController(userClient: client,
-                                                                    userSession: userSession,
-                                                                    credentials: self.credentials)
-                clientViewController.view.backgroundColor = SemanticColors.View.backgroundDefault
-                navigationController.pushViewController(clientViewController, animated: true)
-            }
         }
     }
 

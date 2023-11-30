@@ -28,8 +28,6 @@ public enum DeveloperFlag: String, CaseIterable {
     case nseV2
     case forceDatabaseLoadingFailure
     case ignoreIncomingEvents
-    case enableNewClientDetailsFlow
-    case enableE2EIdentityDetails
 
     public var description: String {
         switch self {
@@ -50,11 +48,6 @@ public enum DeveloperFlag: String, CaseIterable {
 
         case .ignoreIncomingEvents:
             return "Turn on to ignore incoming update events"
-
-        case .enableNewClientDetailsFlow:
-            return "Enable new client details flow"
-        case .enableE2EIdentityDetails:
-            return "Enable E2E Identity Details"
         }
     }
 
@@ -95,10 +88,6 @@ public enum DeveloperFlag: String, CaseIterable {
             return nil
         case .ignoreIncomingEvents:
             return "IgnoreIncomingEventsEnabled"
-        case .enableNewClientDetailsFlow:
-            return "EnableNewClientDetailsFlow"
-        case .enableE2EIdentityDetails:
-            return "EnableE2EIdentityDetails"
         }
     }
 

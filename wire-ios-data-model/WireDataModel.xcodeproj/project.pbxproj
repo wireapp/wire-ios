@@ -202,6 +202,7 @@
 		16F7341424F9573C00AB93B1 /* XCTestCase+EncryptionKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16F7341324F9573C00AB93B1 /* XCTestCase+EncryptionKeys.swift */; };
 		16F7341624F95F9D00AB93B1 /* store2-85-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = 16F7341524F95F9100AB93B1 /* store2-85-0.wiredatabase */; };
 		256C1B792B1654BB0015C89D /* E2eIdentityProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 256C1B782B1654BB0015C89D /* E2eIdentityProvider.swift */; };
+		2577CB6C2B18ECB0007D3443 /* UserClient+E2eIdentity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2577CB6B2B18ECB0007D3443 /* UserClient+E2eIdentity.swift */; };
 		2BB20770292B787000FB6468 /* PatchApplicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BB2076F292B787000FB6468 /* PatchApplicator.swift */; };
 		2BB20771292B791400FB6468 /* PatchApplicatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BB2076D292B781E00FB6468 /* PatchApplicatorTests.swift */; };
 		4058AAA22AA76BFA0013DE71 /* ReactionData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4058AAA12AA76BFA0013DE71 /* ReactionData.swift */; };
@@ -1082,6 +1083,7 @@
 		16F7341524F95F9100AB93B1 /* store2-85-0.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; path = "store2-85-0.wiredatabase"; sourceTree = "<group>"; };
 		16F9010226C50967002794B5 /* zmessaging2.94.0.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = zmessaging2.94.0.xcdatamodel; sourceTree = "<group>"; };
 		256C1B782B1654BB0015C89D /* E2eIdentityProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = E2eIdentityProvider.swift; sourceTree = "<group>"; };
+		2577CB6B2B18ECB0007D3443 /* UserClient+E2eIdentity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserClient+E2eIdentity.swift"; sourceTree = "<group>"; };
 		2B6F6AB429ACC162001BB36F /* AllTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = AllTests.xctestplan; sourceTree = "<group>"; };
 		2B7AB1B729A4EAC500D9A63A /* SecurityTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = SecurityTests.xctestplan; sourceTree = "<group>"; };
 		2BB2076D292B781E00FB6468 /* PatchApplicatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatchApplicatorTests.swift; sourceTree = "<group>"; };
@@ -2740,6 +2742,7 @@
 				F9A706171CAEE01D00C2F5FE /* UserClientTypes.h */,
 				F9A706181CAEE01D00C2F5FE /* UserClientTypes.m */,
 				256C1B782B1654BB0015C89D /* E2eIdentityProvider.swift */,
+				2577CB6B2B18ECB0007D3443 /* UserClient+E2eIdentity.swift */,
 			);
 			path = UserClient;
 			sourceTree = "<group>";
@@ -3992,6 +3995,7 @@
 				F9A706A91CAEE01D00C2F5FE /* StringKeyPath.swift in Sources */,
 				63298D9A2434D04D006B6018 /* GenericMessage+External.swift in Sources */,
 				A90676EA238EB05F006417AC /* Action.swift in Sources */,
+				2577CB6C2B18ECB0007D3443 /* UserClient+E2eIdentity.swift in Sources */,
 				EE6A57E025BB1C6800F848DD /* AppLockController.State.swift in Sources */,
 				EE032B3129A62CA600E1DDF3 /* ProteusSessionID.swift in Sources */,
 				63B1336E29A503D100009D84 /* StaleMLSKeyMaterialDetector.swift in Sources */,

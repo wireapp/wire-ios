@@ -113,11 +113,10 @@ final class DeviceInfoViewModel: ObservableObject {
         self.proteusKeyFingerprint = fingerPrint.splitStringIntoLines(charactersPerLine: 16).uppercased()
         isActionInProgress = false
     }
+
     func fetchE2eCertificate() async {
         isActionInProgress = true
-        _ = await actionsHandler.fetchCertificate().publisher.receive(on: DispatchQueue.main).sink { value in
-            self.e2eIdentityCertificate = value
-        }
+        e2eIdentityCertificate = await actionsHandler.fetchCertificate()
         isActionInProgress = false
     }
 
@@ -168,7 +167,7 @@ extension DeviceInfoViewModel {
                 userSession: userSession,
                 credentials: credentials
             ),
-            isE2EIdentityEnabled: userClient.e2eIdentityProvider.isE2EIdentityEnabled,
+            isE2EIdentityEnabled: DeveloperDeviceDetailsSettingsSelectionViewModel.isE2eIdentityViewEnabled,
             isSelfClient: userClient.isSelfClient(),
             userSession: userSession,
             getUserClientFingerprintUseCase: getUserClientFingerprintUseCase,
