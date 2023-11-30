@@ -1,5 +1,6 @@
 // Generated using Sourcery 2.1.2 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
+// swiftlint:disable superfluous_disable_command
 // swiftlint:disable line_length
 // swiftlint:disable variable_name
 
@@ -12,33 +13,11 @@ import AppKit
 
 import WireSyncEngine
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 public class MockGetUserClientFingerprintUseCaseProtocol: GetUserClientFingerprintUseCaseProtocol {
 
     // MARK: - Life cycle
 
     public init() {}
-
 
     // MARK: - invoke
 
@@ -59,3 +38,7 @@ public class MockGetUserClientFingerprintUseCaseProtocol: GetUserClientFingerpri
     }
 
 }
+
+// swiftlint:enable variable_name
+// swiftlint:enable line_length
+// swiftlint:enable superfluous_disable_command

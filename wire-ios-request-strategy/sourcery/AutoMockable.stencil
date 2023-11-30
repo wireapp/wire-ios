@@ -1,3 +1,4 @@
+// swiftlint:disable superfluous_disable_command
 // swiftlint:disable line_length
 // swiftlint:disable variable_name
 
@@ -109,7 +110,7 @@ import {{ import }}
         }
     
 
-        {% if method.throws %}try {% endif %}{% if method.isAsync %}await {% endif %}mock({% call methodClosureCallParameters method %})            
+        {% if method.throws %}try {% endif %}{% if method.isAsync %}await {% endif %}mock({% call methodClosureCallParameters method %})
         
         {% else %}
         if let mock = {% call methodClosureName method %} {
@@ -207,3 +208,7 @@ import {{ import }}
 {% endfor %}
 }
 {% endif %}{% endfor %}
+
+// swiftlint:enable variable_name
+// swiftlint:enable line_length
+// swiftlint:enable superfluous_disable_command

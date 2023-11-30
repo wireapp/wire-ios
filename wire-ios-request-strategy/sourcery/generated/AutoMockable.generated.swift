@@ -1,5 +1,6 @@
 // Generated using Sourcery 2.1.2 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
+// swiftlint:disable superfluous_disable_command
 // swiftlint:disable line_length
 // swiftlint:disable variable_name
 
@@ -10,35 +11,13 @@ import UIKit
 import AppKit
 #endif
 
-
 @testable import WireRequestStrategy
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 public class MockAPIProviderInterface: APIProviderInterface {
 
     // MARK: - Life cycle
 
     public init() {}
-
 
     // MARK: - prekeyAPI
 
@@ -82,7 +61,6 @@ public class MockMessageAPI: MessageAPI {
     // MARK: - Life cycle
 
     public init() {}
-
 
     // MARK: - sendProteusMessage
 
@@ -137,7 +115,6 @@ public class MockMessageDependencyResolverInterface: MessageDependencyResolverIn
 
     public init() {}
 
-
     // MARK: - waitForDependenciesToResolve
 
     public var waitForDependenciesToResolveFor_Invocations: [any SendableMessage] = []
@@ -155,7 +132,7 @@ public class MockMessageDependencyResolverInterface: MessageDependencyResolverIn
             fatalError("no mock for `waitForDependenciesToResolveFor`")
         }
 
-        try await mock(message)            
+        try await mock(message)
     }
 
 }
@@ -164,7 +141,6 @@ public class MockMessageSenderInterface: MessageSenderInterface {
     // MARK: - Life cycle
 
     public init() {}
-
 
     // MARK: - sendMessage
 
@@ -183,7 +159,7 @@ public class MockMessageSenderInterface: MessageSenderInterface {
             fatalError("no mock for `sendMessageMessage`")
         }
 
-        try await mock(message)            
+        try await mock(message)
     }
 
 }
@@ -192,7 +168,6 @@ public class MockPrekeyAPI: PrekeyAPI {
     // MARK: - Life cycle
 
     public init() {}
-
 
     // MARK: - fetchPrekeys
 
@@ -224,7 +199,6 @@ public class MockPrekeyPayloadProcessorInterface: PrekeyPayloadProcessorInterfac
 
     public init() {}
 
-
     // MARK: - establishSessions
 
     public var establishSessionsFromWithContext_Invocations: [(payload: Payload.PrekeyByQualifiedUserID, selfClient: UserClient, context: NSManagedObjectContext)] = []
@@ -250,7 +224,6 @@ public class MockQuickSyncObserverInterface: QuickSyncObserverInterface {
 
     public init() {}
 
-
     // MARK: - waitForQuickSyncToFinish
 
     public var waitForQuickSyncToFinish_Invocations: [Void] = []
@@ -263,7 +236,7 @@ public class MockQuickSyncObserverInterface: QuickSyncObserverInterface {
             fatalError("no mock for `waitForQuickSyncToFinish`")
         }
 
-        await mock()            
+        await mock()
     }
 
 }
@@ -272,7 +245,6 @@ public class MockSessionEstablisherInterface: SessionEstablisherInterface {
     // MARK: - Life cycle
 
     public init() {}
-
 
     // MARK: - establishSession
 
@@ -291,7 +263,11 @@ public class MockSessionEstablisherInterface: SessionEstablisherInterface {
             fatalError("no mock for `establishSessionWithApiVersion`")
         }
 
-        try await mock(clients, apiVersion)            
+        try await mock(clients, apiVersion)
     }
 
 }
+
+// swiftlint:enable variable_name
+// swiftlint:enable line_length
+// swiftlint:enable superfluous_disable_command
