@@ -66,9 +66,7 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
                 completion: {
                     error in
                     let isRemoved = error == nil
-                    continuation.resume(
-                        returning: isRemoved
-                    )
+                    continuation.resume(returning: isRemoved)
                 }
             )
             clientRemovalObserver?.startRemoval()
@@ -78,9 +76,7 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
     func resetSession() async -> Bool {
         return await withCheckedContinuation { continuation in
             userClient.resetSession { value in
-                continuation.resume(
-                    returning: value
-                )
+                continuation.resume(returning: value)
             }
         }
     }
@@ -88,17 +84,15 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
     func updateVerified(_ isVerified: Bool) async -> Bool {
         return await withCheckedContinuation { continuation in
             userSession.enqueue({
-                if isVerified {
-                    self.userClient.trustClient(self.userClient)
-                } else {
-                    self.userClient.ignoreClient(self.userClient)
+                    if isVerified {
+                        self.userClient.trustClient(self.userClient)
+                    } else {
+                        self.userClient.ignoreClient(self.userClient)
+                    }
+                }, completionHandler: {
+                    continuation.resume(returning: isVerified)
                 }
-            },
-                                completionHandler: {
-                continuation.resume(
-                    returning: isVerified
-                )
-            })
+            )
         }
     }
 
