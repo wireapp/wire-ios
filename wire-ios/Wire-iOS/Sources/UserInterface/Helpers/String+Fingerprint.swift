@@ -45,6 +45,9 @@ extension String {
         }.joined(separator: NSAttributedString(string: " "))
     }
     func splitStringIntoLines(charactersPerLine: Int, using fingerprintStringWithSpaces: Bool = true) -> String {
+        if self.count < charactersPerLine {
+            return self.count == 0 ? self : self.fingerprintStringWithSpaces
+        }
         var result = ""
         var temp = ""
         for char in self {

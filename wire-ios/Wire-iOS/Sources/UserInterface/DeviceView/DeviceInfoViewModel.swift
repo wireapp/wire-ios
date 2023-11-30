@@ -180,10 +180,7 @@ extension DeviceInfoViewModel {
             uuid: UUID().uuidString,
             title: userClient.model ?? "",
             addedDate: userClient.activationDate?.formattedDate ?? "",
-            deviceKeyFingerprint: String(
-                data: userClient.fingerprint ?? Data(),
-                encoding: .utf8
-            )?.splitStringIntoLines(
+            deviceKeyFingerprint: (userClient.user?.fingerprint ?? "")?.splitStringIntoLines(
                 charactersPerLine: 16
             ).uppercased() ?? "",
             proteusID: userClient.proteusSessionID?.clientID.fingerprintStringWithSpaces.uppercased() ?? "",
