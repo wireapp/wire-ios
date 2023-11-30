@@ -235,13 +235,13 @@ class AcmeAPITests: ZMTBaseTest {
         let path = "https://acme.example.com/acme/provisioner1/challenge/foVMOvMcapXlWSrHqu4BrD1RFORZOGrC/1pceubrFUZAvVQI5XgtLDMfLefhOt4YI"
 
         // mock
-        let mockResponse = HTTPURLResponse(
+        let mockResponse = try XCTUnwrap(HTTPURLResponse(
             url: URL(string: path)!,
             statusCode: 200,
             httpVersion: "",
             headerFields: ["Replay-Nonce": headerNonce]
-        )!
-        let challengeResponseData = try! JSONEncoder.defaultEncoder.encode(expectation)
+        ))
+        let challengeResponseData = try JSONEncoder.defaultEncoder.encode(expectation)
         mockHttpClient?.mockResponse = (challengeResponseData, mockResponse)
 
         do {
