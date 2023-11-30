@@ -28,5 +28,8 @@ if [ ! -z "${CI-}" ]; then
     exit 0
 fi
 
-xcrun --sdk macosx swift package --package-path "$SCRIPTS_DIR" resolve
+if [[ ! -f "$SOURCERY" ]]; then
+    xcrun --sdk macosx swift package --package-path "$SCRIPTS_DIR" resolve
+fi
+
 "$SOURCERY" "$@"
