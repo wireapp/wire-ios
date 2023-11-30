@@ -978,17 +978,25 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
 
     // MARK: - Handle User Removed
 
-    func testProcessingConverationMemberLeave_MarksUserAsDeleted() throws {
+    func testProcessingConverationMemberLeave_MarksOtherUserAsDeleted() throws {
         syncMOC.performGroupedBlockAndWait { [self] in
             // Given
-            let members: [ZMUser] = [.selfUser(in: syncMOC), .insertNewObject(in: syncMOC)]
-            members.forEach { member in member.domain = owningDomain }
-            let conversation = ZMConversation.insertGroupConversation(moc: syncMOC, participants: members)
-            conversation?.domain = owningDomain
+            let team = Team.fetchOrCreate(with: .init(), create: true, in: syncMOC, created: .none)
+            let users: [ZMUser] = [.selfUser(in: syncMOC), .insertNewObject(in: syncMOC)]
+            users.forEach { user in
+                user.remoteIdentifier = .init()
+                user.domain = owningDomain
+                let membership = Member.insertNewObject(in: syncMOC)
+                membership.user = user
+                membership.team = team
+            }
+            let conversation = ZMConversation.insertGroupConversation(moc: syncMOC, participants: users)!
+            conversation.remoteIdentifier = .init(uuidString: "ee8824c5-95d0-4e59-9862-e9bb0fc6e921")
+            conversation.conversationType = .group
+            conversation.domain = owningDomain
 
-            // When
             let memberLeavePayload = Payload.UpdateConverationMemberLeave(
-                qualifiedUserIDs: [members[1].qualifiedID].compactMap { $0 },
+                qualifiedUserIDs: [users[1].qualifiedID].compactMap { $0 },
                 reason: .userDeleted
             )
             let conversationEvent = Payload.ConversationEvent(
@@ -1007,7 +1015,10 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
                     "time": "2022-09-21T12:13:32.173Z",
                     "type": "conversation.member-leave",
                     "payload": [
-                        "conversation": conversation?.remoteIdentifier?.transportString() ?? UUID().uuidString,
+                        "conversation": "ee8824c5-95d0-4e59-9862-e9bb0fc6e921",
+                        "qualified_user_ids": [
+                            ["id": users[1].remoteIdentifier.transportString(), "domain": owningDomain]
+                        ],
                         "reason": "user-delete"
                     ]
                 ],
@@ -1015,6 +1026,8 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
                 decrypted: true,
                 source: .webSocket
             )!
+
+            // When
             sut.processPayload(
                 conversationEvent,
                 originalEvent: originalEvent,
@@ -1022,7 +1035,8 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
             )
 
             // Then
-            // XCTAssertNotNil(ZMConversation.fetch(with: qualifiedID.uuid, domain: qualifiedID.domain, in: syncMOC))
+            XCTAssertTrue(users[1].isAccountDeleted)
+            XCTAssertFalse(conversation.localParticipants.contains(users[1]))
         }
     }
 

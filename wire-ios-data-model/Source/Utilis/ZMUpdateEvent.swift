@@ -129,7 +129,5 @@ extension ZMUpdateEvent {
             return ZMParticipantsRemovedReason.none
         }
         return ZMParticipantsRemovedReason(reasonString)
-
-        // TODO?
     }
 }
