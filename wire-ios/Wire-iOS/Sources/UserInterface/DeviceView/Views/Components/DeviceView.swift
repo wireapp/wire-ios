@@ -21,7 +21,7 @@ import WireCommonComponents
 
 struct DeviceView: View {
     var viewModel: DeviceInfoViewModel
-    
+
     var titleView: some View {
         HStack {
             Text(viewModel.title.clippedValue())
@@ -35,7 +35,7 @@ struct DeviceView: View {
             }
         }
     }
-    
+
     var body: some View {
         VStack(alignment: .leading) {
             titleView
