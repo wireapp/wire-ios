@@ -247,18 +247,18 @@ final class DeveloperToolsViewModel: ObservableObject {
             let selfUser = selfUser,
             let name = selfUser.name,
             let handle = selfUser.handle,
-            let mlsClientId = MLSClientID(user: selfUser)
+            let e2eiClientId = E2eIClientID(user: selfUser)
         else {
             return
         }
         Task {
-            _ = try await e2eiCertificateUseCase?.invoke(idToken: "", mlsClientId: mlsClientId, userName: name, handle: handle)
+            _ = try await e2eiCertificateUseCase?.invoke(idToken: "", e2eiClientId: e2eiClientId, userName: name, handle: handle)
         }
     }
 
     private func createE2EICertificateUseCase(syncContext: NSManagedObjectContext) -> EnrollE2eICertificateUseCase? {
         var enrollE2eICertificate: EnrollE2eICertificateUseCase?
-        let httpClient = HttpClientImpl()
+        let httpClient = HttpClientE2EI()
         let acmeClient = AcmeClient(httpClient: httpClient)
 
         syncContext.performAndWait {

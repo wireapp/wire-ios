@@ -96,6 +96,13 @@ public enum SemanticColors {
         static let emojiCategoryDefault = UIColor(light: Asset.Colors.gray80, dark: Asset.Colors.gray60)
         static let emojiCategorySelected = UIColor(light: Asset.Colors.black, dark: Asset.Colors.white)
 
+        // The init here is different because in light mode we would like the color of the border
+        // to be clear. The initializer in all other cases in this file expects a type of ColorAsset
+        // in both light and dark mode.
+        static let borderMutedNotifications = UIColor { traits in
+            traits.userInterfaceStyle == .dark ? Asset.Colors.gray70.color : .clear
+        }
+
         static let foregroundElapsedTimeSelfDeletingMessage = UIColor(light: Asset.Colors.gray50, dark: Asset.Colors.gray80)
         static let foregroundRemainingTimeSelfDeletingMessage = UIColor(light: Asset.Colors.gray80, dark: Asset.Colors.gray50)
 
@@ -125,7 +132,6 @@ public enum SemanticColors {
         static let backgroundConversationList = UIColor(light: Asset.Colors.gray20, dark: Asset.Colors.gray100)
         static let backgroundConversationListTableViewCell = UIColor(light: Asset.Colors.white, dark: Asset.Colors.gray95)
         static let borderConversationListTableViewCell = UIColor(light: Asset.Colors.gray40, dark: Asset.Colors.gray90)
-        static let borderConversationListTableViewCellBadgeReverted = UIColor(light: Asset.Colors.gray40, dark: Asset.Colors.gray70)
         static let backgroundCollectionCell = UIColor(light: Asset.Colors.white, dark: Asset.Colors.gray90)
         static let borderCollectionCell = UIColor(light: Asset.Colors.gray30, dark: Asset.Colors.gray80)
         static let backgroundSecurityLevel = UIColor(light: Asset.Colors.gray20, dark: Asset.Colors.gray95)

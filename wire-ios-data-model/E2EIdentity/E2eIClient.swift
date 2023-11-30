@@ -21,7 +21,7 @@ import WireCoreCrypto
 
 public protocol E2eIClientInterface {
 
-    func setupEnrollment(mlsClientId: MLSClientID, userName: String, handle: String) async throws -> WireE2eIdentityProtocol
+    func setupEnrollment(e2eiClientId: E2eIClientID, userName: String, handle: String) async throws -> WireE2eIdentityProtocol
 
 }
 
@@ -33,10 +33,10 @@ public final class E2eIClient: E2eIClientInterface {
         self.coreCrypto = coreCrypto
     }
 
-    public func setupEnrollment(mlsClientId: MLSClientID, userName: String, handle: String) async throws -> WireE2eIdentityProtocol {
+    public func setupEnrollment(e2eiClientId: E2eIClientID, userName: String, handle: String) async throws -> WireE2eIdentityProtocol {
         do {
             return try coreCrypto.perform {
-                try $0.e2eiNewEnrollment(clientId: mlsClientId.rawValue,
+                try $0.e2eiNewEnrollment(clientId: e2eiClientId.rawValue,
                                          displayName: userName,
                                          handle: handle,
                                          expiryDays: UInt32(90),
