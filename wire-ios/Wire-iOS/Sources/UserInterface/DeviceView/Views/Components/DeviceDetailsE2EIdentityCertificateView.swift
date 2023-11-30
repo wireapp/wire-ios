@@ -69,12 +69,12 @@ struct DeviceDetailsE2EIdentityCertificateView: View {
                 .font(UIFont.smallSemiboldFont.swiftUIFont)
                 .foregroundColor(.gray)
                 .padding(.top, 8)
-                .padding(.bottom, 16)
+                .padding(.bottom, 4)
             Text(
                 certificate.serialNumber
                     .uppercased()
-                    .splitStringIntoLines(charactersPerLine: 16, withFingerprintStringWithSpaces: false)
-                    .fingerprintStringWithSpaces.replacingOccurrences(of: " ", with: ":")
+                    .splitStringIntoLines(charactersPerLine: 16)
+                    .replacingOccurrences(of: " ", with: ":")
             )
             .font(UIFont.sfMonoMedium.swiftUIFont)
         }
