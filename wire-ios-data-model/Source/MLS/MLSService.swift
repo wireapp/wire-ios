@@ -1672,7 +1672,74 @@ public final class MLSService: MLSServiceInterface {
     // MARK: - Proteus to MLS Migration
 
     public func startProteusToMLSMigration() async throws {
-        // Migrate proteus team group conversations to MLS
+        guard let context = context else {
+            assertionFailure("MLSService.context is nil")
+            return
+        }
+
+        let groupConversations = try await context.perform {
+            try ZMConversation.fetchAllTeamGroupConversations(messageProtocol: .proteus, in: context)
+        }
+        for conversation in groupConversations {
+
+            let (qualifiedID, members) = await context.perform {
+                (conversation.qualifiedID, conversation.localParticipants.map { MLSUser(from: $0) })
+            }
+
+            guard let qualifiedID else {
+                logger.warn("skipping migration of conversation \(conversation), `qualifiedID` is `nil`")
+                assertionFailure("the group conversation has no `qualifiedID` set")
+                continue
+            }
+
+            do {
+
+                // update message protocol to `mixed`
+                try await actionsProvider.updateConversationProtocol(
+                    qualifiedID: qualifiedID,
+                    messageProtocol: .mixed,
+                    context: context.notificationContext
+                )
+
+                // sync the group conversation
+                try await actionsProvider.syncConversation(
+                    qualifiedID: qualifiedID,
+                    context: context.notificationContext
+                )
+
+                let mlsGroupID = await context.perform { conversation.mlsGroupID }
+                guard let mlsGroupID else {
+                    logger.warn("failed to convert conversation \(qualifiedID), `mlsGroupID` is `nil`")
+                    assertionFailure("the group conversation has no `mlsGroupID` set")
+                    continue
+                }
+
+                // create MLS group and update keying material
+                try createGroup(for: mlsGroupID)
+
+                do {
+
+                    // update keying material and send commit bundle to the backend
+                    try await internalUpdateKeyMaterial(for: mlsGroupID)
+
+                    // add all participants (all clients) to the group
+                    try await addMembersToConversation(with: members, for: mlsGroupID)
+
+                } catch SendMLSMessageAction.Failure.mlsStaleMessage {
+
+                    logger.error("failed to migrate conversation \(conversation): stale message")
+
+                    // rollback: destroy/wipe group
+                    try wipeGroup(mlsGroupID)
+
+                }
+
+            } catch {
+                logger.error("failed to migrate conversation \(conversation): \(String(describing: error))")
+                continue
+            }
+        }
+
     }
 
 }
