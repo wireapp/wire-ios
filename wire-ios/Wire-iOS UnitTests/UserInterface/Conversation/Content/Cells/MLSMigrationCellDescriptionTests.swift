@@ -19,7 +19,7 @@
 import Foundation
 
 import XCTest
-import WireCommonComponents
+import enum WireCommonComponents.FontScheme
 @testable import Wire
 
 final class MLSMigrationCellDescriptionTests: XCTestCase {
@@ -29,7 +29,7 @@ final class MLSMigrationCellDescriptionTests: XCTestCase {
         FontScheme.configure(with: .large)
     }
 
-    func testProperties() throws {
+    func testProperties() {
         // given
         let cellDescription = MLSMigrationCellDescription(messageType: .mlsMigrationStarted)
 
@@ -46,5 +46,87 @@ final class MLSMigrationCellDescriptionTests: XCTestCase {
         XCTAssertNotNil(cellDescription.configuration)
         XCTAssertNil(cellDescription.accessibilityIdentifier)
         XCTAssertEqual(cellDescription.accessibilityLabel?.isEmpty, false)
+    }
+
+    // MARK: - Attributed Strings
+
+    func test_mlsMigrationStarted_doesContainLinkInAttributedString() throws {
+        // given
+        let cellDescription = MLSMigrationCellDescription(messageType: .mlsMigrationStarted)
+        var expectedValue: Any?
+
+        // when
+        let attributedString = try XCTUnwrap(cellDescription.configuration.attributedText)
+
+        // then
+        attributedString.enumerateAttribute(.link, in: attributedString.wholeRange, using: { value, _, _ in
+            expectedValue = value
+        })
+
+        XCTAssertNotNil(expectedValue)
+    }
+
+    func test_mlsMigrationFinalized_doesContainLinkInAttributedString() throws {
+        // given
+        let cellDescription = MLSMigrationCellDescription(messageType: .mlsMigrationFinalized)
+        var expectedValue: Any?
+
+        // when
+        let attributedString = try XCTUnwrap(cellDescription.configuration.attributedText)
+
+        // then
+        attributedString.enumerateAttribute(.link, in: attributedString.wholeRange, using: { value, _, _ in
+            expectedValue = value
+        })
+
+        XCTAssertNotNil(expectedValue)
+    }
+
+    func test_mlsMigrationOngoingCall_doesNotContainLinkInAttributedString() throws {
+        // given
+        let cellDescription = MLSMigrationCellDescription(messageType: .mlsMigrationOngoingCall)
+        var expectedValue: Any?
+
+        // when
+        let attributedString = try XCTUnwrap(cellDescription.configuration.attributedText)
+
+        // then
+        attributedString.enumerateAttribute(.link, in: attributedString.wholeRange, using: { value, _, _ in
+            expectedValue = value
+        })
+
+        XCTAssertNil(expectedValue)
+    }
+
+    func test_mlsMigrationUpdateVersion_doesNotContainLinkInAttributedString() throws {
+        // given
+        let cellDescription = MLSMigrationCellDescription(messageType: .mlsMigrationUpdateVersion)
+        var expectedValue: Any?
+
+        // when
+        let attributedString = try XCTUnwrap(cellDescription.configuration.attributedText)
+
+        // then
+        attributedString.enumerateAttribute(.link, in: attributedString.wholeRange, using: { value, _, _ in
+            expectedValue = value
+        })
+
+        XCTAssertNil(expectedValue)
+    }
+
+    func test_mlsMigrationJoinAfterwards_doesContainLinkInAttributedString() throws {
+        // given
+        let cellDescription = MLSMigrationCellDescription(messageType: .mlsMigrationJoinAfterwards)
+        var expectedValue: Any?
+
+        // when
+        let attributedString = try XCTUnwrap(cellDescription.configuration.attributedText)
+
+        // then
+        attributedString.enumerateAttribute(.link, in: attributedString.wholeRange, using: { value, _, _ in
+            expectedValue = value
+        })
+
+        XCTAssertNotNil(expectedValue)
     }
 }

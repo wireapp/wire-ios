@@ -1046,7 +1046,8 @@ final class ConversationNewDeviceSystemMessageCellDescription: ConversationMessa
     private static func configureForNewClientOfSelfUser(_ selfUser: UserType, clients: [UserClientType], link: URL) -> View.Configuration {
         let string = L10n.Localizable.Content.System.selfUserNewClient(link.absoluteString)
         let attributedText = NSMutableAttributedString.markdown(from: string, style: .systemMessage)
-        let isSelfClient = clients.first?.isEqual(ZMUserSession.shared()?.selfUserClient) ?? false
+        let selfUserClient = SessionManager.shared?.activeUserSession?.selfUserClient
+        let isSelfClient = clients.first?.isEqual(selfUserClient) ?? false
         return View.Configuration(attributedText: attributedText, icon: isSelfClient ? nil : verifiedIcon, linkTarget: .user(selfUser))
     }
 
