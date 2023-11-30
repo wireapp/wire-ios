@@ -1,11 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0">
-<dict>
-	<key>FILEHEADER</key>
-	<string>
+//
 // Wire
-// Copyright (C) ___YEAR___ Wire Swiss GmbH
+// Copyright (C) 2023 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,6 +14,22 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
-//</string>
-</dict>
-</plist>
+//
+
+import XCTest
+
+final class ZMUpdateEventTypeTests: XCTestCase {
+
+    typealias Sut = ZMUpdateEventType
+
+    func testRawValuesOfDeletedCasesArentReused() {
+        let deletedEvents: [String: UInt] = [
+            "teamMemberJoin": 26
+        ]
+        let forbiddenRawValues = Set(deletedEvents.values)
+
+        Sut.allCases.forEach { eventType in
+            XCTAssertFalse(forbiddenRawValues.contains(eventType.rawValue))
+        }
+    }
+}

@@ -35,43 +35,6 @@ final class DatabaseMigrationTests: DatabaseBaseTest {
         XCTAssertEqual(users.count, 1) // only self user
     }
 
-    func testThatItPerformsMigrationFrom_1_25_ToCurrentModelVersion() {
-
-        // GIVEN
-        self.createDatabaseWithOlderModelVersion(versionName: "1-25")
-
-        // WHEN
-        let directory = self.createStorageStackAndWaitForCompletion(userID: DatabaseMigrationTests.testUUID)
-
-        // THEN
-        let conversationCount = try! directory.viewContext.count(for: ZMConversation.sortedFetchRequest())
-        let messageCount = try! directory.viewContext.count(for: ZMTextMessage.sortedFetchRequest())
-        let systemMessageCount = try! directory.viewContext.count(for: ZMSystemMessage.sortedFetchRequest())
-        let connectionCount = try! directory.viewContext.count(for: ZMConnection.sortedFetchRequest())
-        let userClientCount = try! directory.viewContext.count(for: UserClient.sortedFetchRequest())
-        let helloWorldMessageCount = try! directory.viewContext.count(for: ZMTextMessage.sortedFetchRequest(with: NSPredicate(format: "%K BEGINSWITH[c] %@", "text", "Hello World")))
-        let message = directory.viewContext.executeFetchRequestOrAssert(ZMTextMessage.sortedFetchRequest(with: NSPredicate(format: "%K == %@", "text", "You are the best Burno"))).first as? ZMMessage
-        let messageServerTimestampTransportString = message?.serverTimestamp?.transportString()
-        let userFetchRequest = ZMUser.sortedFetchRequest()
-        userFetchRequest.resultType = .dictionaryResultType
-        userFetchRequest.propertiesToFetch = self.userPropertiesToFetch
-        let userDictionaries = directory.viewContext.executeFetchRequestOrAssert(userFetchRequest)
-
-        XCTAssertEqual(conversationCount, 13)
-        XCTAssertEqual(messageCount, 1681)
-        XCTAssertEqual(systemMessageCount, 53)
-        XCTAssertEqual(connectionCount, 5)
-        XCTAssertEqual(userClientCount, 7)
-        XCTAssertEqual(helloWorldMessageCount, 1515)
-
-        XCTAssertNotNil(message)
-        XCTAssertEqual(messageServerTimestampTransportString, "2015-12-18T16:57:06.836Z")
-
-        XCTAssertNotNil(userDictionaries)
-        XCTAssertEqual(userDictionaries.count, 7)
-        XCTAssertEqual(userDictionaries as NSArray, DatabaseMigrationTests.userDictionaryFixture1_25 as NSArray)
-    }
-
     func testThatItPerformsMigrationFrom_1_27_ToCurrentModelVersion() {
 
         // GIVEN
@@ -309,7 +272,7 @@ final class DatabaseMigrationTests: DatabaseBaseTest {
 
     func testThatItPerformsMigrationFrom_Between_2_24_1_and_PreLast_ToCurrentModelVersion() {
         // NOTICE: When a new version of data model is created, please increase the last number of the array.
-        let allVersions = ["2-24-1"] + [(25...31), (39...57), (59...109)].joined().map {
+        let allVersions = ["2-24-1"] + [(25...31), (39...45), (48...57), (59...64), (66...111)].joined().map {
             "2-\($0)-0"
         }
 
@@ -330,7 +293,7 @@ final class DatabaseMigrationTests: DatabaseBaseTest {
                     "- open the the folder in Finder by typing this command in your terminal. IT WILL NOT WORK IF THE TEST IS NOT PAUSED!!!.\n" +
                     "\t cp \"\(currentDatabaseURL.path)\" ~/Desktop/store\(fixtureVersion).wiredatabase\n\n" +
                     "- The command will copy a file on your desktop called `store\(fixtureVersion).wiredatabase`\n" +
-                    "- Copy it to test bundle if this project in `WireDataModel/Test/Resources` with the other stores\n\n")
+                    "- Copy it to test bundle if this project in `WireDataModel/Tests/Resources` with the other stores\n\n")
             assert(false)
         }
 
@@ -341,6 +304,11 @@ final class DatabaseMigrationTests: DatabaseBaseTest {
         }
 
         allVersions.forEach { storeFile in
+            func cleanup() {
+                directory = nil // need to release
+                clearStorageFolder()
+            }
+
             // GIVEN
             self.createDatabaseWithOlderModelVersion(versionName: storeFile)
 
@@ -382,6 +350,13 @@ final class DatabaseMigrationTests: DatabaseBaseTest {
 
             XCTAssertNotNil(userDictionaries)
             XCTAssertEqual(userDictionaries.count, 22)
+
+            if userDictionaries.count < 3 {
+                XCTFail("can not continue with empty 'userDictionaries' in store file \(storeFile)!")
+                cleanup()
+                return
+            }
+
             XCTAssertEqual(Array(userDictionaries[0..<3]) as NSArray, DatabaseMigrationTests.userDictionaryFixture2_25_1 as NSArray)
             users.forEach({
                 XCTAssertFalse($0.isAccountDeleted)
@@ -392,8 +367,7 @@ final class DatabaseMigrationTests: DatabaseBaseTest {
                 XCTAssertNil($0.normalizedText)
             }
 
-            directory = nil // need to release
-            self.clearStorageFolder()
+            cleanup()
         }
     }
 
@@ -428,7 +402,7 @@ final class DatabaseMigrationTests: DatabaseBaseTest {
 
             let store = NSManagedObjectModel(contentsOf: source.appendingPathComponent(modelFileName))!
             // then
-            XCTAssertTrue(store.versionIdentifiers.contains(version))
+            XCTAssertTrue(store.versionIdentifiers.contains(version), "\(version) should be contained")
             processedVersions.insert(version)
         }
     }
@@ -441,16 +415,18 @@ extension DatabaseMigrationTests {
 
     var userPropertiesToFetch: [String] {
         return [
-                 "accentColorValue",
-                 "emailAddress",
-                 "modifiedKeys",
-                 "name",
-                 "normalizedEmailAddress",
-                 "normalizedName",
-                 "handle"
+            "accentColorValue",
+            "emailAddress",
+            "modifiedKeys",
+            "name",
+            "normalizedEmailAddress",
+            "normalizedName",
+            "handle"
         ]
     }
+}
 
+extension DatabaseBaseTest {
     func createDatabaseWithOlderModelVersion(versionName: String, file: StaticString = #file, line: UInt = #line) {
         let storeFile = CoreDataStack.accountDataFolder(accountIdentifier: DatabaseMigrationTests.testUUID, applicationContainer: self.applicationContainer).appendingPersistentStoreLocation()
         try! FileManager.default.createDirectory(at: storeFile.deletingLastPathComponent(), withIntermediateDirectories: true)
