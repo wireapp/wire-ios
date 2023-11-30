@@ -62,8 +62,10 @@ struct DeviceDetailsE2EIdentityCertificateView: View {
             }
             Spacer()
         }
-        if let certificate = viewModel.e2eIdentityCertificate {
-            Text(L10n.Localizable.Device.Details.Section.E2e.serialnumber)
+        if let certificate = viewModel.e2eIdentityCertificate,
+           E2EIdentityCertificateStatus.status(for: certificate.certificateStatus) != .none,
+           E2EIdentityCertificateStatus.status(for: certificate.certificateStatus) != .notActivated {
+            Text(L10n.Localizable.Device.Details.Section.E2e.serialnumber.splitStringIntoLines(charactersPerLine: 16).fingerprintStringWithSpaces.replacingOccurrences(of: " ", with: ":"))
                 .font(UIFont.smallSemiboldFont.swiftUIFont)
                 .foregroundColor(.gray)
                 .padding(.top, 8)

@@ -27,11 +27,12 @@ struct DeveloperDeviceDetailsSettingsSelectionView: View {
     // MARK: - Views
 
     var body: some View {
-        Toggle("Enable E2eIdentity", isOn: $viewModel.isE2eIdentityViewEnabled)
-        Divider()
-        List(viewModel.sections, rowContent: sectionView(for:))
-            .navigationTitle("E2eIdentity Details Selection View")
-            .navigationBarTitleDisplayMode(.inline)
+        Toggle("Enable E2eIdentity", isOn: $viewModel.isE2eIdentityViewEnabled).padding()
+        if viewModel.isE2eIdentityViewEnabled {
+            List(viewModel.sections, rowContent: sectionView(for:))
+                .navigationTitle("E2eIdentity Details Selection View")
+                .navigationBarTitleDisplayMode(.inline)
+        }
     }
 
     private func sectionView(for section: DeveloperDeviceDetailsSettingsSelectionViewModel.Section) -> some View {

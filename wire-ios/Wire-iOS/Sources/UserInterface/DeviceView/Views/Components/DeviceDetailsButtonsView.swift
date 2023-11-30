@@ -87,9 +87,8 @@ struct DeviceDetailsButtonsView: View {
             Divider()
             updateCertificateButton.padding()
             showCertificateButton.padding()
-        default:
+        case .none:
             Divider()
-            getCertificateButton.padding()
         }
         Divider()
     }
