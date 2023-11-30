@@ -241,7 +241,7 @@ public class ZMUserSession: NSObject {
     }()
 
     public lazy var enrollE2eICertificate: EnrollE2eICertificateUseCaseInterface? = {
-        let acmeApi = AcmeApi()
+        let acmeApi = AcmeAPI()
         let httpClient = HttpClientImpl(
             transportSession: transportSession,
             queue: syncContext)
