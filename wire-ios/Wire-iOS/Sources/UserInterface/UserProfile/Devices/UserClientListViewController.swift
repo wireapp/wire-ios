@@ -47,7 +47,7 @@ final class UserClientListViewController: UIViewController,
 
         self.headerView.delegate = self
 
-        title = "profile.devices.title".localized
+        title = L10n.Localizable.Profile.Devices.title
     }
 
     @available(*, unavailable)

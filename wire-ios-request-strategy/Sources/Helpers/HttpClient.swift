@@ -18,35 +18,16 @@
 
 import Foundation
 
-public enum NetworkError: Error {
+public protocol HttpClientCustom {
 
-    case invalidRequest
-    case invalidResponse
-
-}
-
-public protocol HttpClient {
-
-    func send(_ request: ZMTransportRequest) async throws -> ZMTransportResponse
+    func send(_ request: URLRequest) async throws -> (Data, URLResponse)
 
 }
 
-public class HttpClientImpl: NSObject, HttpClient {
+public class HttpClientE2EI: NSObject, HttpClientCustom {
 
-    public func send(_ request: ZMTransportRequest) async throws -> ZMTransportResponse {
-        guard let url = URL(string: request.path) else {
-            throw NetworkError.invalidRequest
-        }
-
-        var urlRequest = URLRequest(url: url)
-        urlRequest.httpMethod = request.methodAsString
-
-        let (data, response) = try await URLSession.shared.data(for: urlRequest)
-
-        guard let httpResponse = response as? HTTPURLResponse else {
-            throw NetworkError.invalidResponse
-        }
-
-        return ZMTransportResponse(httpurlResponse: httpResponse, data: data, error: nil, apiVersion: 0)
+    public func send(_ request: URLRequest) async throws -> (Data, URLResponse) {
+        return try await URLSession.shared.data(for: request)
     }
+
 }

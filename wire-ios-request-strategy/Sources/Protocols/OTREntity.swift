@@ -21,7 +21,7 @@ import WireTransport
 
 private let zmLog = ZMSLog(tag: "Dependencies")
 
-@objc public protocol OTREntity: DependencyEntity {
+@objc public protocol OTREntity {
 
     /// NSManagedObjectContext which the OTR entity is associated with.
     var context: NSManagedObjectContext { get }
@@ -29,6 +29,19 @@ private let zmLog = ZMSLog(tag: "Dependencies")
     /// Conversation in which the OTR entity is sent. If the OTR entity is not associated with
     /// any conversation this property should return nil.
     var conversation: ZMConversation? { get }
+
+    /// Other entities which has to complete an update before this entity can be processed, i.e. another message
+    /// needs to be sent first because it was scheduled for sending before this message.
+    var dependentObjectNeedingUpdateBeforeProcessing: NSObject? { get }
+
+    /// This message entity has expired and no more attempt will be made to sent it
+    var isExpired: Bool { get }
+
+    /// Date when the message will expire unless it has been sent by then.
+    var expirationDate: Date? { get }
+
+    /// The reason why a message did expire
+    var expirationReasonCode: NSNumber? { get set }
 
     /// Add clients as missing recipients for this entity. If we want to resend
     /// the entity, we need to make sure those missing recipients are fetched
@@ -45,6 +58,8 @@ private let zmLog = ZMSLog(tag: "Dependencies")
     /// Add users who didn't receive the message to failedToSendRecipients
     func addFailedToSendRecipients(_ recipients: [ZMUser])
 
+    /// Mark the message as expired
+    func expire()
 }
 
 /// HTTP status of a request that has
@@ -84,6 +99,7 @@ extension OTREntity {
             return conversation.connection
         }
 
+        // FIXME: [jacob] we can remove this check since we fail the message sending in MessageDependencyResolver
         // If the conversation is degraded we shouldn't send the message until the conversation
         // is marked as not secure or it's verified again
         if conversation.securityLevel == .secureWithIgnored {

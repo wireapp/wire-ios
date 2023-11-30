@@ -151,7 +151,9 @@ final class BlockerViewController: LaunchImageViewController {
         let cancelAction = UIAlertAction(
             title: L10n.Localizable.General.cancel,
             style: .default,
-            handler: nil)
+            handler: { [weak self] _ in
+                self?.showDatabaseFailureMessage()
+            })
 
         deleteDatabaseConfirmationAlert.addAction(cancelAction)
         present(deleteDatabaseConfirmationAlert, animated: true)
