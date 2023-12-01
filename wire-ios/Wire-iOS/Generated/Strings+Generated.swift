@@ -2413,10 +2413,8 @@ internal enum L10n {
       }
       internal enum Ping {
         internal enum Action {
-          /// Are you sure you want to ping %d people?
-          internal static func title(_ p1: Int) -> String {
-            return L10n.tr("Localizable", "conversation.ping.action.title", p1, fallback: "Are you sure you want to ping %d people?")
-          }
+          /// Ping
+          internal static let title = L10n.tr("Localizable", "conversation.ping.action.title", fallback: "Ping")
         }
         internal enum ManyParticipantsConfirmation {
           /// Are you sure you want to ping %d people?
