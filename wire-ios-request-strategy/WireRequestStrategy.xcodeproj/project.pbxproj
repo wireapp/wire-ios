@@ -180,6 +180,7 @@
 		16E5F71826EF4DBF00F35FBA /* ConversationRequestStrategyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16E5F71726EF4DBF00F35FBA /* ConversationRequestStrategyTests.swift */; };
 		16E70F5B270DCCB900718E5D /* UpdateConnectionActionHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16E70F5A270DCCB900718E5D /* UpdateConnectionActionHandlerTests.swift */; };
 		547E664D1F7512FE008CB1FA /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 547E664C1F7512FE008CB1FA /* Default-568h@2x.png */; };
+		59E38D8D2B1A485F00E8998F /* CheckUserExistsUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E38D8C2B1A485F00E8998F /* CheckUserExistsUseCase.swift */; };
 		5E68F22722452CDC00298376 /* LinkPreprocessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E68F22622452CDC00298376 /* LinkPreprocessor.swift */; };
 		5E9EA4DE2243C10400D401B2 /* LinkAttachmentsPreprocessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E9EA4DD2243C10400D401B2 /* LinkAttachmentsPreprocessor.swift */; };
 		5E9EA4E02243C6B200D401B2 /* LinkAttachmentsPreprocessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E9EA4DF2243C6B200D401B2 /* LinkAttachmentsPreprocessorTests.swift */; };
@@ -626,6 +627,7 @@
 		16E5F71726EF4DBF00F35FBA /* ConversationRequestStrategyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationRequestStrategyTests.swift; sourceTree = "<group>"; };
 		16E70F5A270DCCB900718E5D /* UpdateConnectionActionHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateConnectionActionHandlerTests.swift; sourceTree = "<group>"; };
 		547E664C1F7512FE008CB1FA /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
+		59E38D8C2B1A485F00E8998F /* CheckUserExistsUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckUserExistsUseCase.swift; sourceTree = "<group>"; };
 		5E68F22622452CDC00298376 /* LinkPreprocessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkPreprocessor.swift; sourceTree = "<group>"; };
 		5E9EA4DD2243C10400D401B2 /* LinkAttachmentsPreprocessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkAttachmentsPreprocessor.swift; sourceTree = "<group>"; };
 		5E9EA4DF2243C6B200D401B2 /* LinkAttachmentsPreprocessorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkAttachmentsPreprocessorTests.swift; sourceTree = "<group>"; };
@@ -1126,6 +1128,7 @@
 		1669016C1D707509000FE4AF /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				59E38D8B2B1A484900E8998F /* UseCases */,
 				1623F8D62AE7FB5F004F0319 /* APIs */,
 				1623F8D12AE66F0A004F0319 /* Message Sending */,
 				060ED6D72499F42200412C4A /* Notifications */,
@@ -1266,6 +1269,14 @@
 				63DA339D286DF6DA00818C3C /* Helpers */,
 			);
 			path = Processing;
+			sourceTree = "<group>";
+		};
+		59E38D8B2B1A484900E8998F /* UseCases */ = {
+			isa = PBXGroup;
+			children = (
+				59E38D8C2B1A485F00E8998F /* CheckUserExistsUseCase.swift */,
+			);
+			path = UseCases;
 			sourceTree = "<group>";
 		};
 		63DA339D286DF6DA00818C3C /* Helpers */ = {
@@ -2078,6 +2089,7 @@
 				EEDE7DB128EAEEC3007DC6A3 /* ConversationService.swift in Sources */,
 				F18401D12073BE0800E9F4CC /* ApplicationStatus.swift in Sources */,
 				0649D14D24F63D3E001DDC78 /* LocalNotificationType+Localization.swift in Sources */,
+				59E38D8D2B1A485F00E8998F /* CheckUserExistsUseCase.swift in Sources */,
 				1623F8E02AEAAF0E004F0319 /* MessageDependencyResolver.swift in Sources */,
 				EEB5DE0728377635009B4741 /* GetFeatureConfigsActionHandler.swift in Sources */,
 				16E5F6DD26EF1E3200F35FBA /* Payload+Conversation.swift in Sources */,
@@ -2446,7 +2458,10 @@
 			baseConfigurationReference = F1E47FE5207E0B72008D4299 /* ios-test-host.xcconfig */;
 			buildSettings = {
 				INFOPLIST_FILE = "$(SRCROOT)/Tests/Test Host/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireRequestStrategyTestHost;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -2457,7 +2472,10 @@
 			baseConfigurationReference = F1E47FE5207E0B72008D4299 /* ios-test-host.xcconfig */;
 			buildSettings = {
 				INFOPLIST_FILE = "$(SRCROOT)/Tests/Test Host/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireRequestStrategyTestHost;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
