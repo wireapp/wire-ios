@@ -20,7 +20,7 @@ import SwiftUI
 import WireCommonComponents
 
 struct DeviceView: View {
-    var viewModel: DeviceInfoViewModel
+    @ObservedObject var viewModel: DeviceInfoViewModel
 
     var titleView: some View {
         HStack {

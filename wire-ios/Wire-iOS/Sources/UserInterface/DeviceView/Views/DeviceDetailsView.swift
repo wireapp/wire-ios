@@ -54,7 +54,7 @@ struct DeviceDetailsView: View {
                 .foregroundColor(SemanticColors.Label.textSectionHeader.swiftUIColor)
                 .frame(height: 28)
                 .padding([.leading, .top], 16)
-            DeviceDetailsProteusView(viewModel: viewModel)
+            DeviceDetailsProteusView(viewModel: viewModel, isVerfied: viewModel.isProteusVerificationEnabled)
                 .background(SemanticColors.View.backgroundDefaultWhite.swiftUIColor)
             if viewModel.isSelfClient {
                 Text(L10n.Localizable.Self.Settings.DeviceDetails.Fingerprint.subtitle)
