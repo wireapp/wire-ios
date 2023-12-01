@@ -134,8 +134,8 @@ final class ProfileViewControllerViewModel: NSObject {
         if let conversation = user.oneToOneConversation {
             transition(to: conversation)
         } else {
-            user.createTeamOneToOneConversation(in: userSession.viewContext) { conversation in
-                guard let conversation = conversation else { return }
+            user.createTeamOneToOneConversation(in: userSession.viewContext) { result in
+                guard case .success(let conversation) = result else { return }
 
                 self.transition(to: conversation)
             }

@@ -257,6 +257,9 @@ public final class ConversationService: ConversationServiceInterface {
                         completion(.failure(.conversationNotFound))
                     }
 
+                case .failure(CreateGroupConversationAction.Failure.notConnected):
+                    fatalError("TODO: check if user has been deleted")
+
                 case .failure(let failure):
                     completion(.failure(.networkError(failure)))
                 }

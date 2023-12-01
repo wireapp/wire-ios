@@ -28,16 +28,13 @@ public struct QualifiedID: Codable, Hashable, CustomDebugStringConvertible {
     public let uuid: UUID
     public let domain: String
 
-    public init(
-        uuid: UUID = .init(),
-        domain: String
-    ) {
+    public init(uuid: UUID, domain: String) {
         self.uuid = uuid
         self.domain = domain
     }
 
     public var debugDescription: String {
-        "\(uuid)@\(domain)"
+        return "\(uuid)@\(domain)"
     }
 
 }

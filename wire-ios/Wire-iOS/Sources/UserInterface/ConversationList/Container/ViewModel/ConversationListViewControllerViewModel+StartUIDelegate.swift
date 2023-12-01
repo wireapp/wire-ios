@@ -22,8 +22,8 @@ import WireSyncEngine
 
 extension ConversationListViewController.ViewModel: StartUIDelegate {
     func startUI(_ startUI: StartUIViewController, didSelect user: UserType) {
-        oneToOneConversationWithUser(user, callback: { conversation in
-            guard let conversation = conversation else { return }
+        oneToOneConversationWithUser(user, callback: { result in
+            guard case .success(let conversation) = result else { return }
 
             ZClientViewController.shared?.select(conversation: conversation, focusOnView: true, animated: true)
         })
@@ -48,7 +48,7 @@ extension ConversationListViewController.ViewModel: StartUIDelegate {
 
         viewController?.setState(.conversationList, animated: true) {
             if let conversation = user.oneToOneConversation {
-                onConversationCreated(conversation)
+                onConversationCreated(.success(conversation))
             } else {
                 user.createTeamOneToOneConversation(in: userSession.viewContext) { conversation in
                     onConversationCreated(conversation)
