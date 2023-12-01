@@ -170,7 +170,7 @@ private extension UserClient {
     }
 
     var isRecentlyActive: Bool {
-        guard !isSelfClient() else {
+        if isSelfClient() {
             return true
         }
 
