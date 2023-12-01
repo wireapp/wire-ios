@@ -276,13 +276,17 @@ final class AudioRecordViewController: UIViewController, AudioRecordBaseViewCont
         }
 
         recorder.recordEndedCallback = { [weak self] result in
-            guard let `self` = self else { return }
+            guard let self else { return }
             self.recordingState = .finishedRecording
 
-            guard let error = result.error as? RecordingError,
-                let alert = self.recorder.alertForRecording(error: error) else { return }
-
-            self.present(alert, animated: true, completion: .none)
+            switch result {
+            case .success:
+                break
+            case .failure(let error):
+                if let error = error as? RecordingError, let alert = self.recorder.alertForRecording(error: error) {
+                    present(alert, animated: true, completion: .none)
+                }
+            }
         }
 
         recorder.playingStateCallback = { [weak self] state in

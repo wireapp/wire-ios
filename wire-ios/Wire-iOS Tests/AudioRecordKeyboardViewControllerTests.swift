@@ -50,7 +50,7 @@ final class MockAudioRecorder: AudioRecorderType {
     var recordLevelCallBack: ((RecordingLevel) -> Void)?
     var playingStateCallback: ((PlayingState) -> Void)?
     var recordStartedCallback: (() -> Void)?
-    var recordEndedCallback: ((VoidResult) -> Void)?
+    var recordEndedCallback: ((Swift.Result<Void, Error>) -> Void)?
 
     var startRecordingHitCount = 0
     func startRecording(_ completion: @escaping (Bool) -> Void) {
@@ -163,7 +163,7 @@ final class AudioRecordKeyboardViewControllerTests: BaseSnapshotTestCase {
         self.sut.recordButton.sendActions(for: .touchUpInside)
 
         // and when
-        self.audioRecorder.recordEndedCallback!(.success)
+        self.audioRecorder.recordEndedCallback!(.success(()))
 
         // then
         XCTAssertEqual(self.sut.state, AudioRecordKeyboardViewController.State.effects)
@@ -174,7 +174,7 @@ final class AudioRecordKeyboardViewControllerTests: BaseSnapshotTestCase {
         self.sut.recordButton.sendActions(for: .touchUpInside)
 
         // and when
-        self.audioRecorder.recordEndedCallback!(.success)
+        self.audioRecorder.recordEndedCallback!(.success(()))
         XCTAssertEqual(self.sut.state, AudioRecordKeyboardViewController.State.effects)
 
         // and when
@@ -191,7 +191,7 @@ final class AudioRecordKeyboardViewControllerTests: BaseSnapshotTestCase {
         self.sut.recordButton.sendActions(for: .touchUpInside)
 
         // and when
-        self.audioRecorder.recordEndedCallback!(.success)
+        self.audioRecorder.recordEndedCallback!(.success(()))
         XCTAssertEqual(self.sut.state, AudioRecordKeyboardViewController.State.effects)
 
         // and when

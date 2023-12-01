@@ -19,21 +19,27 @@
 import Foundation
 
 public typealias Result<T> = ZMResult<T>
-@available(*, deprecated, renamed: "ZMVoidResult")
-public typealias VoidResult = ZMVoidResult
 
 public enum ZMResult<T> {
     case success(T)
     case failure(Error)
 }
 
-public enum ZMVoidResult {
-    case success
-    case failure(Error)
-}
-
 public extension ZMResult {
     func map<U>(_ transform: (T) throws -> U) -> ZMResult<U> {
+        switch self {
+        case .success(let value):
+            do {
+                return .success(try transform(value))
+            } catch {
+                return .failure(error)
+            }
+        case .failure(let error):
+            return .failure(error)
+        }
+    }
+
+    func map<U>(_ transform: (T) throws -> U) -> Swift.Result<U, Error> {
         switch self {
         case .success(let value):
             do {
@@ -51,28 +57,6 @@ public extension ZMResult {
     var value: T? {
         guard case let .success(value) = self else { return nil }
         return value
-    }
-
-    var error: Error? {
-        guard case let .failure(error) = self else { return nil }
-        return error
-    }
-}
-
-public extension ZMVoidResult {
-    init<T>(result: ZMResult<T>) {
-        switch result {
-        case .success: self = .success
-        case .failure(let error): self = .failure(error)
-        }
-    }
-
-    init(error: Error?) {
-        if let error = error {
-            self = .failure(error)
-        } else {
-            self = .success
-        }
     }
 
     var error: Error? {
