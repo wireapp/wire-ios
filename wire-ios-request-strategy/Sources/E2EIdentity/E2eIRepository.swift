@@ -42,9 +42,10 @@ public final class E2eIRepository: E2eIRepositoryInterface {
         let acmeDirectory = try await loadACMEDirectory(e2eiService: e2eiService)
 
         return E2eIEnrollment(acmeApi: acmeApi,
+                              acmeDirectory: acmeDirectory,
                               apiProvider: apiProvider,
                               e2eiService: e2eiService,
-                              acmeDirectory: acmeDirectory)
+                              e2eiClientId: e2eiClientId)
     }
 
     private func loadACMEDirectory(e2eiService: E2eIService) async throws -> AcmeDirectory {

@@ -31,6 +31,7 @@
 		0619FBBB258A1DF700A0F3E2 /* ZClientViewController+FeatureChange.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0619FBBA258A1DF700A0F3E2 /* ZClientViewController+FeatureChange.swift */; };
 		061EF88D27971EC000584C53 /* SettingsProfileLinkCellDescriptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 061EF88C27971EC000584C53 /* SettingsProfileLinkCellDescriptor.swift */; };
 		061EF88F2797F74900584C53 /* SettingsCopyButtonCellDescriptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 061EF88E2797F74800584C53 /* SettingsCopyButtonCellDescriptor.swift */; };
+		061F34162B1A4F360099CBAB /* OAuthUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 061F34152B1A4F360099CBAB /* OAuthUseCase.swift */; };
 		0622D6A2265B38DE00D759DB /* UserBlockingReasonCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0622D6A1265B38DD00D759DB /* UserBlockingReasonCell.swift */; };
 		0630E4C42580469300C75BFB /* AppLockChangeWarningViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0630E4C32580469300C75BFB /* AppLockChangeWarningViewController.swift */; };
 		063796852963A78A00674AAA /* ConversationListTabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 063796842963A78A00674AAA /* ConversationListTabBar.swift */; };
@@ -1973,6 +1974,7 @@
 		0619FBBA258A1DF700A0F3E2 /* ZClientViewController+FeatureChange.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZClientViewController+FeatureChange.swift"; sourceTree = "<group>"; };
 		061EF88C27971EC000584C53 /* SettingsProfileLinkCellDescriptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsProfileLinkCellDescriptor.swift; sourceTree = "<group>"; };
 		061EF88E2797F74800584C53 /* SettingsCopyButtonCellDescriptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsCopyButtonCellDescriptor.swift; sourceTree = "<group>"; };
+		061F34152B1A4F360099CBAB /* OAuthUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OAuthUseCase.swift; sourceTree = "<group>"; };
 		0622D6A1265B38DD00D759DB /* UserBlockingReasonCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserBlockingReasonCell.swift; sourceTree = "<group>"; };
 		0630E4C32580469300C75BFB /* AppLockChangeWarningViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockChangeWarningViewController.swift; sourceTree = "<group>"; };
 		063796842963A78A00674AAA /* ConversationListTabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationListTabBar.swift; sourceTree = "<group>"; };
@@ -3960,6 +3962,14 @@
 				06C1074525B99C4A00C099D3 /* PasswordRuleSet.swift */,
 			);
 			path = Password;
+			sourceTree = "<group>";
+		};
+		061F34142B1A4F190099CBAB /* E2EIdentity */ = {
+			isa = PBXGroup;
+			children = (
+				061F34152B1A4F360099CBAB /* OAuthUseCase.swift */,
+			);
+			path = E2EIdentity;
 			sourceTree = "<group>";
 		};
 		0630E4C22580467300C75BFB /* Warning */ = {
@@ -6225,6 +6235,7 @@
 		8FC8516F199245760008B66B /* UserInterface */ = {
 			isa = PBXGroup;
 			children = (
+				061F34142B1A4F190099CBAB /* E2EIdentity */,
 				EE01D07F25ADA3AD001DB205 /* App Lock */,
 				A9BB638024C1DD910072143A /* CustomAppLock */,
 				EE430EBA25C208A90056BDE3 /* Screen Curtain */,
@@ -8955,6 +8966,7 @@
 				162AE74A219D854100581D98 /* ConversationImageMessageCell.swift in Sources */,
 				BFE41865209B1C1F00503C7C /* CallStatusViewController.swift in Sources */,
 				EEE104052126F68A003C779B /* CameraController.swift in Sources */,
+				061F34162B1A4F360099CBAB /* OAuthUseCase.swift in Sources */,
 				EF066E1821EF997D00D56CAD /* ConversationContentViewController+ConversationMessageCellDelegate.swift in Sources */,
 				87F18BD21E03F13900C69D9B /* ZMLocationMessageData+Coordinates.swift in Sources */,
 				A949418D23E180FF001B0373 /* Bundle+config.swift in Sources */,
