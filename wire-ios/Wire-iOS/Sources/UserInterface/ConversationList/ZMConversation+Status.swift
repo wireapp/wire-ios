@@ -302,7 +302,7 @@ final class CallingMatcher: ConversationStatusMatcher {
             if let callerDisplayName = conversation.voiceChannel?.initiator?.name {
                 return L10n.Localizable.Conversation.Status.incomingCall(callerDisplayName) && type(of: self).regularStyle
             } else {
-                return L10n.Localizable.Conversation.Status.IncomingCall.unknown && type(of: self).regularStyle
+                return L10n.Localizable.Conversation.Status.someone && type(of: self).regularStyle
             }
         }
         return .none
