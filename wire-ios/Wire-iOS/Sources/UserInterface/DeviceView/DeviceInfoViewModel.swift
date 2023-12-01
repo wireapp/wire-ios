@@ -117,36 +117,58 @@ final class DeviceInfoViewModel: ObservableObject {
     }
 
     func fetchFingerPrintForProteus() async {
-        isActionInProgress = true
+        DispatchQueue.main.async {
+            self.isActionInProgress = true
+        }
         guard let data = await getUserClientFingerprint.invoke(userClient: userClient),
                 let fingerPrint = String(data: data, encoding: .utf8) else {
             return
         }
-        self.proteusKeyFingerprint = fingerPrint.splitStringIntoLines(charactersPerLine: 16).uppercased()
-        isActionInProgress = false
+        DispatchQueue.main.async {
+            self.proteusKeyFingerprint = fingerPrint.splitStringIntoLines(charactersPerLine: 16).uppercased()
+            self.isActionInProgress = false
+        }
     }
 
     func fetchE2eCertificate() async {
-        isActionInProgress = true
-        e2eIdentityCertificate = await actionsHandler.fetchCertificate()
-        isActionInProgress = false
+        DispatchQueue.main.async {
+            self.isActionInProgress = true
+        }
+        let certificate = await actionsHandler.fetchCertificate()
+        DispatchQueue.main.async {
+            self.e2eIdentityCertificate = certificate
+            self.isActionInProgress = false
+        }
     }
 
     func removeDevice() async {
-        isActionInProgress = true
-        isRemoved = await actionsHandler.removeDevice()
-        isActionInProgress = false
+        DispatchQueue.main.async {
+            self.isActionInProgress = true
+        }
+        let isRemoved = await actionsHandler.removeDevice()
+        DispatchQueue.main.async {
+            self.isRemoved = isRemoved
+            self.isActionInProgress = false
+        }
     }
 
     func resetSession() async {
-        isActionInProgress = true
-        isReset = await actionsHandler.resetSession()
-        isActionInProgress = false
+        DispatchQueue.main.async {
+            self.isActionInProgress = true
+        }
+        let isReset =  await actionsHandler.resetSession()
+        DispatchQueue.main.async {
+            self.isReset = isReset
+            self.isActionInProgress = false
+        }
     }
 
     func updateVerifiedStatus(_ value: Bool) async {
+        // TODO: Check why this is not working as expected
         let result = await actionsHandler.updateVerified(value)
-        self.isProteusVerificationEnabled = result
+        DispatchQueue.main.async {
+            self.isProteusVerificationEnabled = result
+        }
     }
 
     func copyToClipboard(_ value: String) {
