@@ -541,25 +541,34 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
     }
 
-    func test_AddingMembersToConversation_ClaimKeyPackagesFails() async {
+    func test_AddingMembersToConversation_ThrowsFailedToClaimKeyPackages() async {
         // Given
+        let userID1 = UUID.create()
         let domain = "example.com"
-        let id = UUID.create()
-        let mlsGroupID = MLSGroupID(Data([1, 2, 3]))
-        let mlsUser: [MLSUser] = [MLSUser(id: id, domain: domain)]
+        let user1 = MLSUser(id: userID1, domain: domain)
+        let user2 = MLSUser(id: .create(), domain: domain)
+        let user3 = MLSUser(id: .create(), domain: domain)
+        let keyPackage = createKeyPackage(userID: userID1, domain: domain)
+        let groupID = MLSGroupID.random()
 
         // Mock no pending proposals.
         mockMLSActionExecutor.mockCommitPendingProposals = { _ in
             throw MLSActionExecutor.Error.noPendingProposals
         }
 
-        // Mock failure for claiming key packages.
-        mockActionsProvider.claimKeyPackagesUserIDDomainExcludedSelfClientIDIn_MockError = ClaimMLSKeyPackageAction.Failure.missingDomain
+        // Mock claiming a key package. Works for user1, throws for user2 and user3
+        mockActionsProvider.claimKeyPackagesUserIDDomainExcludedSelfClientIDIn_MockMethod = { userID, _, _, _ in
+            if userID == userID1 {
+                return [keyPackage]
+            } else {
+                throw ClaimMLSKeyPackageAction.Failure.emptyKeyPackages
+            }
+        }
 
         // Then
-        await assertItThrows(error: MLSService.MLSAddMembersError.failedToClaimKeyPackages) {
+        await assertItThrows(error: MLSService.MLSAddMembersError.failedToClaimKeyPackages(users: [user2, user3])) {
             // When
-            try await sut.addMembersToConversation(with: mlsUser, for: mlsGroupID)
+            try await sut.addMembersToConversation(with: [user1, user2, user3], for: groupID)
         }
     }
 
