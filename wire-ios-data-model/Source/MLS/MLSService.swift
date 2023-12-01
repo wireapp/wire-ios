@@ -1765,6 +1765,7 @@ extension Invitee {
 
 }
 
+// sourcery: AutoMockable
 public protocol ConversationEventProcessorProtocol {
 
     func processConversationEvents(_ events: [ZMUpdateEvent]) async
