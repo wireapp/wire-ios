@@ -175,6 +175,14 @@ public class ZMUserSession: NSObject {
         }
     }
 
+    // temporary function to simplify call to EventProcessor
+    // might be replaced by something more elegant
+    public func processUpdateEvents(_ events: [ZMUpdateEvent]) {
+        WaitingGroupTask(context: self.syncContext) {
+            try? await self.updateEventProcessor?.processEvents(events)
+        }
+    }
+
     public var isNotificationContentHidden: Bool {
         get {
             guard let value = managedObjectContext.persistentStoreMetadata(forKey: LocalNotificationDispatcher.ZMShouldHideNotificationContentKey) as? NSNumber else {
@@ -315,8 +323,8 @@ public class ZMUserSession: NSObject {
             self.localNotificationDispatcher = LocalNotificationDispatcher(in: coreDataStack.syncContext)
             self.configureTransportSession()
             self.applicationStatusDirectory = self.createApplicationStatusDirectory()
-            self.updateEventProcessor = eventProcessor ?? self.createUpdateEventProcessor()
             self.strategyDirectory = strategyDirectory ?? self.createStrategyDirectory(useLegacyPushNotifications: configuration.useLegacyPushNotifications)
+            self.updateEventProcessor = eventProcessor ?? self.createUpdateEventProcessor()
             self.syncStrategy = syncStrategy ?? self.createSyncStrategy()
             self.operationLoop = operationLoop ?? self.createOperationLoop()
             self.urlActionProcessors = self.createURLActionProcessors()
@@ -329,7 +337,6 @@ public class ZMUserSession: NSObject {
         // it needs to make network requests upon initialization.
         setupCryptoStack(stage: .mls)
 
-        updateEventProcessor!.eventConsumers = self.strategyDirectory!.eventConsumers
         registerForCalculateBadgeCountNotification()
         registerForRegisteringPushTokenNotification()
         registerForBackgroundNotifications()
@@ -378,7 +385,7 @@ public class ZMUserSession: NSObject {
             cookieStorage: transportSession.cookieStorage,
             pushMessageHandler: localNotificationDispatcher!,
             flowManager: flowManager,
-            updateEventProcessor: updateEventProcessor!,
+            updateEventProcessor: self,
             localNotificationDispatcher: localNotificationDispatcher!,
             useLegacyPushNotifications: useLegacyPushNotifications,
             lastEventIDRepository: lastEventIDRepository,
@@ -389,9 +396,9 @@ public class ZMUserSession: NSObject {
     private func createUpdateEventProcessor() -> EventProcessor {
         return EventProcessor(
             storeProvider: self.coreDataStack,
-            syncStatus: applicationStatusDirectory!.syncStatus,
             eventProcessingTracker: eventProcessingTracker,
-            earService: earService
+            earService: earService,
+            eventConsumers: strategyDirectory?.eventConsumers ?? []
         )
     }
 
@@ -603,6 +610,21 @@ extension ZMUserSession: ZMNetworkStateDelegate {
 
 }
 
+// TODO: [jacob] find another way of providing the event processor to ZMissingEventTranscoder
+extension ZMUserSession: UpdateEventProcessor {
+    public func bufferEvents(_ events: [WireTransport.ZMUpdateEvent]) async {
+        await updateEventProcessor?.bufferEvents(events)
+    }
+
+    public func processEvents(_ events: [WireTransport.ZMUpdateEvent]) async throws {
+        try await updateEventProcessor?.processEvents(events)
+    }
+
+    public func processBufferedEvents() async throws {
+        try await updateEventProcessor?.processBufferedEvents()
+    }
+}
+
 extension ZMUserSession: ZMSyncStateDelegate {
 
     public func didStartSlowSync() {
@@ -638,20 +660,19 @@ extension ZMUserSession: ZMSyncStateDelegate {
         Self.logger.trace("did finish quick sync")
         processEvents()
 
-        syncContext.mlsService?.performPendingJoins()
-
-        managedObjectContext.performGroupedBlock { [weak self] in
-            self?.notifyThirdPartyServices()
-        }
-
         NotificationInContext(
             name: .quickSyncCompletedNotification,
             context: syncContext.notificationContext
         ).post()
 
+        syncContext.mlsService?.performPendingJoins()
         commitPendingProposalsIfNeeded()
         fetchFeatureConfigs()
         recurringActionService.performActionsIfNeeded()
+
+        managedObjectContext.performGroupedBlock { [weak self] in
+            self?.notifyThirdPartyServices()
+        }
     }
 
     func processEvents() {
@@ -660,29 +681,46 @@ extension ZMUserSession: ZMSyncStateDelegate {
             self?.updateNetworkState()
         }
 
-        let hasMoreEventsToProcess = updateEventProcessor!.processEventsIfReady()
-        let isSyncing = applicationStatusDirectory?.syncStatus.isSyncing == true
+        let groups = self.syncContext.enterAllGroupsExceptSecondary()
+        Task {
+            var processingInterrupted = false
+            do {
+                try await updateEventProcessor?.processBufferedEvents()
+            } catch {
+                processingInterrupted = true
+            }
 
-        if !hasMoreEventsToProcess {
-            legacyHotFix.applyPatches()
-            // When we move to the monorepo, uncomment hotFixApplicator applyPatches
-            // hotFixApplicator.applyPatches(HotfixPatch.self, in: syncContext)
+            let isSyncing = await syncContext.perform { self.applicationStatusDirectory?.syncStatus.isSyncing == true }
+
+            if !processingInterrupted {
+                await syncContext.perform {
+                    self.legacyHotFix.applyPatches()
+                    // When we move to the monorepo, uncomment hotFixApplicator applyPatches
+                    // hotFixApplicator.applyPatches(HotfixPatch.self, in: syncContext)
+                }
+            }
+
+            await managedObjectContext.perform(schedule: .enqueued) { [weak self] in
+                self?.isPerformingSync = isSyncing || processingInterrupted
+                self?.updateNetworkState()
+            }
+            self.syncContext.leaveAllGroups(groups)
         }
-
-        managedObjectContext.performGroupedBlock { [weak self] in
-            self?.isPerformingSync = hasMoreEventsToProcess || isSyncing
-            self?.updateNetworkState()
-        }
-
     }
 
-    func processPendingCallEvents() throws {
+    func processPendingCallEvents(completionHandler: @escaping () -> Void) throws {
         WireLogger.updateEvent.info("process pending call events")
-        try updateEventProcessor!.processPendingCallEvents()
+        Task {
+            try await updateEventProcessor!.processBufferedEvents()
+            await managedObjectContext.perform {
+                completionHandler()
+            }
+        }
     }
 
     private func commitPendingProposalsIfNeeded() {
         let mlsService = syncContext.mlsService
+
         Task {
             do {
                 try await mlsService?.commitPendingProposals()

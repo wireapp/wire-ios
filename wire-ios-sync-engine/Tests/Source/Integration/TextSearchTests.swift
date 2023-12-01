@@ -168,6 +168,7 @@ class TextSearchTests: ConversationTestsBase {
                 XCTFail()
             }
         }
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // Then
         verifyThatItCanSearch(for: "Hello", in: convo, andFinds: nil)
