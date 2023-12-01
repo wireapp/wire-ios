@@ -47,11 +47,13 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
         do {
             return try await userClient.fetchE2eIdentityCertificate(e2eIdentityProvider: e2eIdentityProvider)
         } catch {
+        // TODO: to handle in next PR
         }
         return nil
     }
 
     func showCertificate(_ certificate: String) {
+        // TODO: to handle in next PR
     }
 
     func removeDevice() async -> Bool {
