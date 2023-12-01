@@ -48,9 +48,7 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
         return nil
     }
 
-    func showCertificate(
-        _ certificate: String
-    ) {
+    func showCertificate(_ certificate: String) {
     }
 
     func removeDevice() async -> Bool {
