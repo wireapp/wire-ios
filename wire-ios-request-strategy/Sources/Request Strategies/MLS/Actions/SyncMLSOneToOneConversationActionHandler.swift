@@ -97,7 +97,7 @@ final class SyncMLSOneToOneConversationActionHandler: ActionHandler<SyncMLSOneTo
 
         default:
             let errorInfo = response.errorInfo
-            action.fail(with: .unknownn(status: errorInfo.status, label: errorInfo.label, message: errorInfo.message))
+            action.fail(with: .unknown(status: errorInfo.status, label: errorInfo.label, message: errorInfo.message))
         }
     }
 }

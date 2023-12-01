@@ -143,7 +143,7 @@ final class SyncMLSOneToOneConversationActionHandlerTests: ActionHandlerTestBase
         test_itHandlesFailure(
             status: 999,
             label: "some-label",
-            expectedError: .unknownn(status: 999, label: "some-label", message: "?")
+            expectedError: .unknown(status: 999, label: "some-label", message: "?")
         )
     }
 }
