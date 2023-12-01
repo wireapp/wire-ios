@@ -452,7 +452,7 @@ extension ZMUser: UserConnections {
                     domain: domain
                 )
 
-                Task  {
+                Task {
                     do {
                         try await self.establishMLSOneToOne(
                             with: qualifiedID,
