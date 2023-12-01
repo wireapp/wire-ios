@@ -175,6 +175,7 @@ extension ActionHandlerTestBase {
         status: Int,
         payload: ZMTransportData? = nil,
         label: String? = nil,
+        apiVersion: APIVersion = .v1,
         file: StaticString = #filePath,
         line: UInt = #line,
         validation: @escaping ValidationBlock
@@ -188,6 +189,7 @@ extension ActionHandlerTestBase {
             status: status,
             payload: payload,
             label: label,
+            apiVersion: apiVersion,
             file: file,
             line: line,
             validation: validation
@@ -197,11 +199,16 @@ extension ActionHandlerTestBase {
     @discardableResult
     func test_itHandlesSuccess(
         status: Int,
-        payload: ZMTransportData? = nil
+        payload: ZMTransportData? = nil,
+        apiVersion: APIVersion = .v1
     ) -> Result? {
         var result: Result?
 
-        test_itHandlesResponse(status: status, payload: payload) {
+        test_itHandlesResponse(
+            status: status,
+            payload: payload,
+            apiVersion: apiVersion
+        ) {
             guard case .success(let res) = $0 else { return false }
             result = res
             return true
