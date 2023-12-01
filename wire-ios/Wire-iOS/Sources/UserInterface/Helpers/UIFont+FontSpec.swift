@@ -88,14 +88,6 @@ extension UIFont {
         return FontSpec(.normal, .semibold).font!
     }
 
-    class var headerSemiBoldFont: UIFont {
-        return FontSpec(.header, .semibold).font!
-    }
-
-    class var mediumRegular: UIFont {
-        return FontSpec(.medium, .regular).font!
-    }
-
     // MARK: - Medium
 
     class var mediumFont: UIFont {
