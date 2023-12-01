@@ -39,9 +39,20 @@ final class DeviceInfoViewModel: ObservableObject {
     let proteusID: String
     let getUserClientFingerprint: GetUserClientFingerprintUseCaseProtocol
     let userClient: UserClient
+
     var isE2EIdentityEnabled: Bool
     var isSelfClient: Bool
     var title: String
+
+    var isValidCerificate: Bool {
+        guard let certificate = e2eIdentityCertificate,
+           E2EIdentityCertificateStatus.status(for: certificate.certificateStatus) != .none,
+              E2EIdentityCertificateStatus.status(for: certificate.certificateStatus) != .notActivated else {
+            return false
+        }
+        return true
+    }
+
     var certificateStatus: E2EIdentityCertificateStatus {
         guard let certificate = e2eIdentityCertificate,
               let status = E2EIdentityCertificateStatus.allCases.filter({
@@ -53,12 +64,14 @@ final class DeviceInfoViewModel: ObservableObject {
         }
         return status
     }
+
     var isCertificateExpiringSoon: Bool {
         guard let certificate = e2eIdentityCertificate else {
             return false
         }
         return certificate.expiryDate < Date.now + .oneDay + .oneDay
     }
+
     @Published var e2eIdentityCertificate: E2eIdentityCertificate?
     private var actionsHandler: any DeviceDetailsViewActions
     var isCopyEnabled: Bool {
