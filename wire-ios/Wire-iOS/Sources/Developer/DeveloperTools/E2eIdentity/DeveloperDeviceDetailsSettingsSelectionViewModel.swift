@@ -18,6 +18,8 @@
 
 import Foundation
 
+// TODO: Remove this
+
 class DeveloperDeviceDetailsSettingsSelectionViewModel: ObservableObject {
 
     static var isE2eIdentityViewEnabled: Bool {
