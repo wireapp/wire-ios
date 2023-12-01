@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 60;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -8274,7 +8274,7 @@
 				};
 			};
 			buildConfigurationList = 8F42C533199244A700288E4D /* Build configuration list for PBXProject "Wire-iOS" */;
-			compatibilityVersion = "Xcode 3.2";
+			compatibilityVersion = "Xcode 15.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -10948,6 +10948,7 @@
 				CODE_SIGN_IDENTITY = "";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Manual;
+				DEFINES_MODULE = NO;
 				DEVELOPMENT_TEAM = "";
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -10967,6 +10968,7 @@
 				CODE_SIGN_IDENTITY = "";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Manual;
+				DEFINES_MODULE = NO;
 				DEVELOPMENT_TEAM = "";
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				PROVISIONING_PROFILE_SPECIFIER = "";

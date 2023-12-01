@@ -415,7 +415,7 @@ extension EventDecoderTest {
             self.syncMOC.proteusService = mockProteusService
 
             mockProteusService.decryptDataForSession_MockMethod = { data, _ in
-                return (didCreateSession: false, decryptedData: data)
+                return (didCreateNewSession: false, decryptedData: data)
             }
 
             // When

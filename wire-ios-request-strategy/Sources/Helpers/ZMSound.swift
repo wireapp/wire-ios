@@ -73,11 +73,6 @@ public enum ZMSound: String, CustomStringConvertible {
                 return nil
             }
             return URL(fileURLWithPath: path)
-        default:
-            guard let path = Bundle.main.path(forResource: self.rawValue, ofType: type(of: self).fileExtension) else {
-                return nil
-            }
-            return URL(fileURLWithPath: path)
         }
     }
 
@@ -101,8 +96,6 @@ public enum ZMSound: String, CustomStringConvertible {
             return "self.settings.sound_menu.sounds.wire_message"
         case .WirePing:
             return "self.settings.sound_menu.sounds.wire_ping"
-        default:
-            return self.rawValue.capitalized
         }
     }
 

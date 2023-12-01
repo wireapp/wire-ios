@@ -54,7 +54,7 @@ public protocol ProteusServiceInterface {
     func decrypt(
         data: Data,
         forSession id: ProteusSessionID
-    ) throws -> (didCreateSession: Bool, decryptedData: Data)
+    ) throws -> (didCreateNewSession: Bool, decryptedData: Data)
 
     func generatePrekey(id: UInt16) throws -> String
     func lastPrekey() throws -> String

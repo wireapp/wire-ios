@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2023 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,24 +17,12 @@
 //
 
 import Foundation
-import WireSystem
-import WireCryptobox
+import WireDataModel
 
-private let zmLog = ZMSLog(tag: "cryptobox")
+extension ZMMessage {
 
-extension EncryptionSessionsDirectory {
-
-    func decryptData(
-        _ encryptedData: Data,
-        for sessionID: EncryptionSessionIdentifier
-    ) throws -> (didCreateNewSession: Bool, decryptedData: Data) {
-        if self.hasSession(for: sessionID) {
-            let decryptedData = try decrypt(encryptedData, from: sessionID)
-            return (false, decryptedData)
-        } else {
-            let decryptedData = try createClientSessionAndReturnPlaintext(for: sessionID, prekeyMessage: encryptedData)
-            return (true, decryptedData)
-        }
+    func updateServerTimestamp(with timeInterval: TimeInterval) {
+        serverTimestamp = Date(timeIntervalSince1970: timeInterval)
     }
 
 }

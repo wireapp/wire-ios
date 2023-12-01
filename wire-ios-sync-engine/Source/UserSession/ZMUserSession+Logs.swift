@@ -52,16 +52,33 @@ extension ZMUserSession {
     /// to save and is rolled back. The call is invoked on the context queue, so it might not be on the main thread
     public func registerForSaveFailure(handler: @escaping SaveFailureCallback) {
         self.managedObjectContext.errorOnSaveCallback = { (context, error) in
-            let metadata: [String: Any] = context.persistentStoreCoordinator!.persistentStores[0].metadata as [String: Any]
             let type = context.type
-            let userInfo: [String: Any] = context.userInfo.asDictionary() as! [String: Any]
+
+            guard
+                let metadata = context.persistentStoreCoordinator?.persistentStores.first?.metadata,
+                let userInfo = context.userInfo.asDictionary() as? [String: Any]
+            else {
+                assertionFailure("access persisted metadata failed!")
+                handler([:], type, error, [:])
+                return
+            }
+
             handler(metadata, type, error, userInfo)
         }
+
         self.syncManagedObjectContext.performGroupedBlock {
             self.syncManagedObjectContext.errorOnSaveCallback = { (context, error) in
-                let metadata: [String: Any] = context.persistentStoreCoordinator!.persistentStores[0].metadata as [String: Any]
                 let type = context.type
-                let userInfo: [String: Any] = context.userInfo.asDictionary() as! [String: Any]
+
+                guard
+                    let metadata = context.persistentStoreCoordinator?.persistentStores.first?.metadata,
+                    let userInfo = context.userInfo.asDictionary() as? [String: Any]
+                else {
+                    assertionFailure("access persisted metadata failed!")
+                    handler([:], type, error, [:])
+                    return
+                }
+
                 handler(metadata, type, error, userInfo)
             }
         }

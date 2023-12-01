@@ -204,7 +204,7 @@ private class MockSession: NSObject, URLSessionProtocol {
         super.init()
     }
 
-    func dataTask(with request: URLRequest, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> URLSessionDataTask {
+    func dataTask(with request: URLRequest, completionHandler: @escaping @Sendable (Data?, URLResponse?, Error?) -> Void) -> URLSessionDataTask {
         let (data, response, error) = handler(request)
         completionHandler(data, response, error)
         return MockURLSessionDataTask()

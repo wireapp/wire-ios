@@ -194,12 +194,12 @@ extension EventDecoder {
         var decryptedEvents: [ZMUpdateEvent] = []
 
         keyStore.encryptionContext.perform { [weak self] sessionsDirectory in
-            guard let `self` = self else { return }
+            guard let self else { return }
 
             decryptedEvents = events.compactMap { event -> ZMUpdateEvent? in
                 switch event.type {
                 case .conversationOtrMessageAdd, .conversationOtrAssetAdd:
-                    return decryptProteusEventAndAddClient(event, in: self.syncMOC) { sessionID, encryptedData in
+                    return self.decryptProteusEventAndAddClient(event, in: self.syncMOC) { sessionID, encryptedData in
                         try sessionsDirectory.decryptData(
                             encryptedData,
                             for: sessionID.mapToEncryptionSessionID()
@@ -216,7 +216,7 @@ extension EventDecoder {
 
             // This call has to be synchronous to ensure that we close the
             // encryption context only if we stored all events in the database.
-            storeUpdateEvents(decryptedEvents, startingAtIndex: startIndex, publicKeys: publicKeys)
+            self.storeUpdateEvents(decryptedEvents, startingAtIndex: startIndex, publicKeys: publicKeys)
         }
 
         return decryptedEvents

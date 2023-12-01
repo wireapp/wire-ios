@@ -162,10 +162,10 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
 
     public var decryptDataForSession_Invocations: [(data: Data, id: ProteusSessionID)] = []
     public var decryptDataForSession_MockError: Error?
-    public var decryptDataForSession_MockMethod: ((Data, ProteusSessionID) throws -> (didCreateSession: Bool, decryptedData: Data))?
-    public var decryptDataForSession_MockValue: (didCreateSession: Bool, decryptedData: Data)?
+    public var decryptDataForSession_MockMethod: ((Data, ProteusSessionID) throws -> (didCreateNewSession: Bool, decryptedData: Data))?
+    public var decryptDataForSession_MockValue: (didCreateNewSession: Bool, decryptedData: Data)?
 
-    public func decrypt(data: Data, forSession id: ProteusSessionID) throws -> (didCreateSession: Bool, decryptedData: Data) {
+    public func decrypt(data: Data, forSession id: ProteusSessionID) throws -> (didCreateNewSession: Bool, decryptedData: Data) {
         decryptDataForSession_Invocations.append((data: data, id: id))
 
         if let error = decryptDataForSession_MockError {
