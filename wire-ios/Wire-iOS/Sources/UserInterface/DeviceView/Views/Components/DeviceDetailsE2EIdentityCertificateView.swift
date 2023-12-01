@@ -62,9 +62,7 @@ struct DeviceDetailsE2EIdentityCertificateView: View {
             }
             Spacer()
         }
-        if let certificate = viewModel.e2eIdentityCertificate,
-           E2EIdentityCertificateStatus.status(for: certificate.certificateStatus) != .none,
-           E2EIdentityCertificateStatus.status(for: certificate.certificateStatus) != .notActivated {
+        if viewModel.isValidCerificate, let certificate = viewModel.e2eIdentityCertificate {
             Text(L10n.Localizable.Device.Details.Section.E2e.serialnumber)
                 .font(UIFont.smallSemiboldFont.swiftUIFont)
                 .foregroundColor(SemanticColors.Label.textSectionHeader.swiftUIColor)
