@@ -637,7 +637,6 @@ final class ConversationInputBarViewController: UIViewController,
                 }
             }
         } else {
-            // If participants are less than the limit, directly call appendKnock
             self.appendKnock()
         }
     }
