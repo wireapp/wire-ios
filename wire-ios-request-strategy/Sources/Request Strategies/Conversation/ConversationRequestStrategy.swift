@@ -236,17 +236,6 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
 
 }
 
-extension ConversationRequestStrategy: ZMEventConsumer {
-
-    public func processEvents(
-        _ events: [ZMUpdateEvent],
-        liveEvents: Bool,
-        prefetchResult: ZMFetchRequestBatchResult?
-    ) {
-        // do nothing we already have conversationEventProcessor as a ZMEventAsyncConsumer
-    }
-}
-
 extension ConversationRequestStrategy: KeyPathObjectSyncTranscoder {
 
     typealias T = ZMConversation
@@ -381,9 +370,7 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
             return false
         }
 
-        if let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil) {
-            processEvents([event], liveEvents: true, prefetchResult: nil)
-        }
+        conversationEventProcessor.processPayload(payload)
 
         return false
     }

@@ -46,6 +46,14 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
 
     // MARK: - Methods
 
+    public func processPayload(_ payload: ZMTransportData) {
+        if let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil) {
+            Task {
+                await processConversationEvents([event])
+            }
+        }
+    }
+
     public func processEvents(_ events: [ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) async {
         await processConversationEvents(events)
     }
