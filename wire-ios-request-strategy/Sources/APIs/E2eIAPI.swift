@@ -62,7 +62,7 @@ class E2eIAPIV5: E2eIAPI {
         request.addValue(dpopToken, forAdditionalHeaderField: Constant.dpopHeaderKey)
         let response = await httpClient.send(request)
 
-        mapResponse(response)
+        return try mapResponse(response)
     }
 
 }
