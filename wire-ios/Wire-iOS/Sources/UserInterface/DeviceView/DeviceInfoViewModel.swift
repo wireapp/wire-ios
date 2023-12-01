@@ -24,9 +24,7 @@ import WireSyncEngine
 
 protocol DeviceDetailsViewActions {
     func fetchCertificate() async -> E2eIdentityCertificate?
-    func showCertificate(
-        _ certificate: String
-    )
+    func showCertificate(_ certificate: String)
     func removeDevice() async -> Bool
     func resetSession() async -> Bool
     func updateVerified(_ value: Bool) async -> Bool
