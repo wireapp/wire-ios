@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2023 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,11 +18,13 @@
 
 import Foundation
 
+@available(*, deprecated, message: "Use Swift's native `Result` type")
 public enum ZMResult<T> {
     case success(T)
     case failure(Error)
 }
 
+@available(*, deprecated, message: "Use Swift's native `Result` type")
 public typealias ZMVoidResult = ZMResult<Void>
 
 extension ZMVoidResult {
