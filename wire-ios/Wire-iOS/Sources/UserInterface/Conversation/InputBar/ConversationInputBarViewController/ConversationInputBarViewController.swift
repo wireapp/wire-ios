@@ -864,10 +864,10 @@ extension ConversationInputBarViewController: InformalTextViewDelegate {
                                                          onConfirm: {[weak self] editedImage in
                                                             self?.dismiss(animated: false)
                                                             self?.postImage(editedImage ?? image)
-        },
+            },
                                                          onCancel: { [weak self] in
                                                             self?.dismiss(animated: false)
-        }
+            }
         )
 
         let confirmImageViewController = ConfirmAssetViewController(context: context)
