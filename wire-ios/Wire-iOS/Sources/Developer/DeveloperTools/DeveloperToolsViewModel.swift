@@ -241,38 +241,13 @@ final class DeveloperToolsViewModel: ObservableObject {
 
     private func startE2EI() {
         guard let session = ZMUserSession.shared() else { return }
-        let e2eiCertificateUseCase = createE2EICertificateUseCase(syncContext: session.syncContext)
+        let e2eiCertificateUseCase = session.enrollE2eICertificate
 
-        guard
-            let selfUser = selfUser,
-            let name = selfUser.name,
-            let handle = selfUser.handle,
-            let e2eiClientId = E2eIClientID(user: selfUser)
-        else {
-            return
-        }
+        guard let selfUser = selfUser else { return }
+
         Task {
-            _ = try await e2eiCertificateUseCase?.invoke(idToken: "", e2eiClientId: e2eiClientId, userName: name, handle: handle)
+            _ = try await e2eiCertificateUseCase?.invoke(idToken: "", selfUser: selfUser)
         }
-    }
-
-    private func createE2EICertificateUseCase(syncContext: NSManagedObjectContext) -> EnrollE2eICertificateUseCase? {
-        var enrollE2eICertificate: EnrollE2eICertificateUseCase?
-        let httpClient = HttpClientE2EI()
-        let acmeClient = AcmeClient(httpClient: httpClient)
-
-        syncContext.performAndWait {
-            guard let coreCrypto = syncContext.coreCrypto else {
-                return
-            }
-
-            let e2eiClient = E2eIClient(coreCrypto: coreCrypto)
-            let e2eiRepository = E2eIRepository(acmeClient: acmeClient, e2eiClient: e2eiClient)
-
-            enrollE2eICertificate = EnrollE2eICertificateUseCase(e2eiRepository: e2eiRepository)
-        }
-
-        return enrollE2eICertificate
     }
 
     private func checkRegisteredTokens() {

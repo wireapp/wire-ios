@@ -194,4 +194,188 @@ class E2eIServiceTests: ZMConversationTestsBase {
         XCTAssertEqual(acmeAuthz, expectedAcmeOrder)
     }
 
+    func testThatItCreatesDpopToken() async throws {
+        // Expectation
+        let expectedDpopToken = "DpopToken"
+
+        // Given
+        var mockCreatesDpopToken = 0
+
+        // Mock
+        mockE2eIdentity.mockCreateDpopToken = { _, _ in
+            mockCreatesDpopToken += 1
+            return expectedDpopToken
+        }
+
+        // When
+        let dpopToken = try await sut.createDpopToken(nonce: "nonce")
+
+        // Then
+        XCTAssertEqual(mockCreatesDpopToken, 1)
+        XCTAssertEqual(dpopToken, expectedDpopToken)
+    }
+
+    func testThatItGetsNewDpopChallengeRequest() async throws {
+        // Expectation
+        let expectedDpopChallenge = Data()
+
+        // Given
+        var mocNewDpopChallengeRequest = 0
+
+        // Mock
+        mockE2eIdentity.mockNewDpopChallengeRequest = { _, _ in
+            mocNewDpopChallengeRequest += 1
+            return expectedDpopChallenge.bytes
+        }
+
+        // When
+        let dpopChallenge = try await sut.getNewDpopChallengeRequest(accessToken: "accessToken", nonce: "nonce")
+
+        // Then
+        XCTAssertEqual(mocNewDpopChallengeRequest, 1)
+        XCTAssertEqual(dpopChallenge, expectedDpopChallenge)
+    }
+
+    func testThatItGetsNewOidcChallengeRequest() async throws {
+        // Expectation
+        let expectedOidcChallenge = Data()
+
+        // Given
+        var mockGetsNewOidcChallengeRequest = 0
+
+        // Mock
+        mockE2eIdentity.mockNewOidcChallengeRequest = { _, _ in
+            mockGetsNewOidcChallengeRequest += 1
+            return expectedOidcChallenge.bytes
+        }
+
+        // When
+        let oidcChallenge = try await sut.getNewOidcChallengeRequest(idToken: "idToken", nonce: "nonce")
+
+        // Then
+        XCTAssertEqual(mockGetsNewOidcChallengeRequest, 1)
+        XCTAssertEqual(oidcChallenge, expectedOidcChallenge)
+    }
+
+    func testThatItSetsChallengeResponse() async throws {
+        // Given
+        var mockSetsChallengeResponse = 0
+
+        // Mock
+        mockE2eIdentity.mockNewChallengeResponse = { _ in
+            mockSetsChallengeResponse += 1
+        }
+
+        // When
+        try await sut.setChallengeResponse(challenge: Data())
+
+        // Then
+        XCTAssertEqual(mockSetsChallengeResponse, 1)
+    }
+
+    func testThatItChecksOrderRequest() async throws {
+        // Expectation
+        let expectedOrderRequest = Data()
+
+        // Given
+        var mockChecksOrderRequest = 0
+
+        // Mock
+        mockE2eIdentity.mockCheckOrderRequest = { _, _ in
+            mockChecksOrderRequest += 1
+            return expectedOrderRequest.bytes
+        }
+
+        // When
+        let orderRequest = try await sut.checkOrderRequest(orderUrl: "orderUrl", nonce: "nonce")
+
+        // Then
+        XCTAssertEqual(mockChecksOrderRequest, 1)
+        XCTAssertEqual(orderRequest, expectedOrderRequest)
+    }
+
+    func testThatItChecksOrderResponse() async throws {
+        // Expectation
+        let expectedOrderResponse = "mock"
+
+        // Given
+        var mockChecksOrderResponse = 0
+
+        // Mock
+        mockE2eIdentity.mockCheckOrderResponse = { _ in
+            mockChecksOrderResponse += 1
+            return expectedOrderResponse
+        }
+
+        // When
+        let orderRequest = try await sut.checkOrderResponse(order: Data())
+
+        // Then
+        XCTAssertEqual(mockChecksOrderResponse, 1)
+        XCTAssertEqual(orderRequest, expectedOrderResponse)
+    }
+
+    func testThatItFinalizesRequest() async throws {
+        // Expectation
+        let expectedfinalizeRequest = Data()
+
+        // Given
+        var mockFinalizesRequest = 0
+
+        // Mock
+        mockE2eIdentity.mockFinalizeRequest = { _ in
+            mockFinalizesRequest += 1
+            return expectedfinalizeRequest.bytes
+        }
+
+        // When
+        let finalizeRequest = try await sut.finalizeRequest(nonce: "nonce")
+
+        // Then
+        XCTAssertEqual(mockFinalizesRequest, 1)
+        XCTAssertEqual(finalizeRequest, expectedfinalizeRequest)
+    }
+
+    func testThatItFinalizesResponse() async throws {
+        // Expectation
+        let expectedFinalizeResponse = "test"
+
+        // Given
+        var mockFinalizesResponse = 0
+
+        // Mock
+        mockE2eIdentity.mockFinalizeResponse = { _ in
+            mockFinalizesResponse += 1
+            return expectedFinalizeResponse
+        }
+
+        // When
+        let finalizeResponse = try await sut.finalizeResponse(finalize: Data())
+
+        // Then
+        XCTAssertEqual(mockFinalizesResponse, 1)
+        XCTAssertEqual(finalizeResponse, expectedFinalizeResponse)
+    }
+
+    func testThatItCreatesCertificateRequest() async throws {
+        // Expectation
+        let expectedCertificateRequest = Data()
+
+        // Given
+        var mockCreatesCertificateRequest = 0
+
+        // Mock
+        mockE2eIdentity.mockCertificateRequest = { _ in
+            mockCreatesCertificateRequest += 1
+            return expectedCertificateRequest.bytes
+        }
+
+        // When
+        let certificateRequest = try await sut.certificateRequest(nonce: "nonce")
+
+        // Then
+        XCTAssertEqual(mockCreatesCertificateRequest, 1)
+        XCTAssertEqual(certificateRequest, expectedCertificateRequest)
+    }
+
 }

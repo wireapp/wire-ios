@@ -19,22 +19,25 @@
 import Foundation
 import WireCoreCrypto
 
-public protocol AcmeClientInterface {
+public protocol AcmeAPIInterface {
     func getACMEDirectory() async throws -> Data
     func getACMENonce(path: String) async throws -> String
     func sendACMERequest(path: String, requestBody: Data) async throws -> ACMEResponse
+    func sendChallengeRequest(path: String, requestBody: Data) async throws -> ChallengeResponse
 }
 
 /// This class provides ACME(Automatic Certificate Management Environment) server methods for enrolling an E2EI certificate.
-public class AcmeClient: NSObject, AcmeClientInterface {
+public class AcmeAPI: NSObject, AcmeAPIInterface {
 
     // MARK: - Properties
 
     private let httpClient: HttpClientCustom
+    private let contentType = "Content-Type"
 
     // MARK: - Life cycle
 
-    public init(httpClient: HttpClientCustom) {
+    /// TODO: it would be nice to use HttpClient
+    public init(httpClient: HttpClientCustom = HttpClientE2EI()) {
         self.httpClient = httpClient
     }
 
@@ -51,7 +54,7 @@ public class AcmeClient: NSObject, AcmeClientInterface {
             throw NetworkError.errorEncodingRequest
         }
         var request = URLRequest(url: url)
-        request.httpMethod = Constant.HTTPMethod.get
+        request.httpMethod = HTTPMethod.get
         let (data, _) = try await httpClient.send(request)
 
         return data
@@ -64,14 +67,15 @@ public class AcmeClient: NSObject, AcmeClientInterface {
             throw NetworkError.errorEncodingRequest
         }
         var request = URLRequest(url: url)
-        request.httpMethod = Constant.HTTPMethod.head
+        request.httpMethod = HTTPMethod.head
 
         let (_, response) = try await httpClient.send(request)
 
         guard let httpResponse = response as? HTTPURLResponse,
-              let replayNonce = httpResponse.value(forHTTPHeaderField: Constant.Header.replayNonce) else {
+              let replayNonce = httpResponse.value(forHTTPHeaderField: HeaderKey.replayNonce) else {
             throw NetworkError.errorDecodingResponseNew(response)
         }
+
         return replayNonce
 
     }
@@ -81,16 +85,16 @@ public class AcmeClient: NSObject, AcmeClientInterface {
             throw NetworkError.errorEncodingRequest
         }
         var request = URLRequest(url: url)
-        request.httpMethod = Constant.HTTPMethod.post
-        request.setValue(Constant.ContentType.joseAndJson, forHTTPHeaderField: "Content-Type")
+        request.httpMethod = HTTPMethod.post
+        request.setValue(ContentType.joseAndJson, forHTTPHeaderField: contentType)
         request.httpBody = requestBody
 
         let (data, response) = try await httpClient.send(request)
 
         guard
             let httpResponse = response as? HTTPURLResponse,
-            let replayNonce = httpResponse.value(forHTTPHeaderField: Constant.Header.replayNonce),
-            let location = httpResponse.value(forHTTPHeaderField: Constant.Header.location)
+            let replayNonce = httpResponse.value(forHTTPHeaderField: HeaderKey.replayNonce),
+            let location = httpResponse.value(forHTTPHeaderField: HeaderKey.location)
         else {
             throw NetworkError.errorDecodingResponseNew(response)
         }
@@ -99,24 +103,61 @@ public class AcmeClient: NSObject, AcmeClientInterface {
 
     }
 
+    public func sendChallengeRequest(path: String, requestBody: Data) async throws -> ChallengeResponse {
+        guard let url = URL(string: path) else {
+            throw NetworkError.errorEncodingRequest
+        }
+        var request = URLRequest(url: url)
+        request.httpMethod = HTTPMethod.post
+        request.setValue(ContentType.joseAndJson, forHTTPHeaderField: contentType)
+        request.httpBody = requestBody
+
+        let (data, response) = try await httpClient.send(request)
+
+        guard
+            let httpResponse = response as? HTTPURLResponse,
+            let replayNonce = httpResponse.value(forHTTPHeaderField: HeaderKey.replayNonce),
+            let challengeResponse = ChallengeResponse(data)
+        else {
+            throw NetworkError.errorDecodingResponseNew(response)
+        }
+
+        return ChallengeResponse(type: challengeResponse.type,
+                                 url: challengeResponse.url,
+                                 status: challengeResponse.status,
+                                 token: challengeResponse.token,
+                                 nonce: replayNonce)
+
+    }
+
 }
 
-private enum Constant {
+enum HTTPMethod {
+    static let get = "GET"
+    static let post = "POST"
+    static let head = "HEAD"
+}
 
-    enum HTTPMethod {
-        static let get = "GET"
-        static let post = "POST"
-        static let head = "HEAD"
-    }
+enum HeaderKey {
+    static let replayNonce = "Replay-Nonce"
+    static let location = "location"
+}
 
-    enum Header {
-        static let replayNonce = "Replay-Nonce"
-        static let location = "location"
-    }
+enum ContentType {
+    static let json = "application/json"
+    static let joseAndJson = "application/jose+json"
+}
 
-    enum ContentType {
-        static let json = "application/json"
-        static let joseAndJson = "application/jose+json"
+public protocol HttpClientCustom {
+
+    func send(_ request: URLRequest) async throws -> (Data, URLResponse)
+
+}
+
+public class HttpClientE2EI: NSObject, HttpClientCustom {
+
+    public func send(_ request: URLRequest) async throws -> (Data, URLResponse) {
+        return try await URLSession.shared.data(for: request)
     }
 
 }
