@@ -150,7 +150,7 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
 
     // MARK: - Properties
 
-    private let coreCryptoProvider: CoreCryptoProvider
+    private let coreCryptoProvider: CoreCryptoProviderProtocol
     private let context: NSManagedObjectContext
     private let actionsProvider: MLSActionsProviderProtocol
     private let onEpochChangedSubject = PassthroughSubject<MLSGroupID, Never>()
@@ -158,7 +158,7 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
     // MARK: - Life cycle
 
     init(
-        coreCryptoProvider: CoreCryptoProvider,
+        coreCryptoProvider: CoreCryptoProviderProtocol,
         context: NSManagedObjectContext,
         actionsProvider: MLSActionsProviderProtocol = MLSActionsProvider()
     ) {

@@ -104,7 +104,7 @@ public final class MLSService: MLSServiceInterface {
     // MARK: - Properties
 
     private weak var context: NSManagedObjectContext?
-    private let coreCryptoProvider: CoreCryptoProvider
+    private let coreCryptoProvider: CoreCryptoProviderProtocol
 
     private let encryptionService: MLSEncryptionServiceInterface
     private let decryptionService: MLSDecryptionServiceInterface
@@ -158,7 +158,7 @@ public final class MLSService: MLSServiceInterface {
 
     public convenience init(
         context: NSManagedObjectContext,
-        coreCryptoProvider: CoreCryptoProvider,
+        coreCryptoProvider: CoreCryptoProviderProtocol,
         conversationEventProcessor: ConversationEventProcessorProtocol,
         userDefaults: UserDefaults,
         syncStatus: SyncStatusProtocol,
@@ -181,7 +181,7 @@ public final class MLSService: MLSServiceInterface {
 
     init(
         context: NSManagedObjectContext,
-        coreCryptoProvider: CoreCryptoProvider,
+        coreCryptoProvider: CoreCryptoProviderProtocol,
         encryptionService: MLSEncryptionServiceInterface? = nil,
         decryptionService: MLSDecryptionServiceInterface? = nil,
         mlsActionExecutor: MLSActionExecutorProtocol? = nil,

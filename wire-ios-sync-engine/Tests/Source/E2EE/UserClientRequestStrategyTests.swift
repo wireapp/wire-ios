@@ -26,21 +26,26 @@ import WireDataModelSupport
 @objcMembers
 public class MockClientRegistrationStatusDelegate: NSObject, ZMClientRegistrationStatusDelegate {
 
+    public var didCallRegisterMLSClient: Bool = false
+    public func didRegisterMLSClient(_ userClient: WireDataModel.UserClient) {
+        didCallRegisterMLSClient = true
+    }
+
     public var currentError: Error?
 
     public var didCallRegisterSelfUserClient: Bool = false
-    public func didRegisterSelfUserClient(_ userClient: UserClient!) {
+    public func didRegisterSelfUserClient(_ userClient: UserClient) {
         didCallRegisterSelfUserClient = true
     }
 
     public var didCallFailRegisterSelfUserClient: Bool = false
-    public func didFailToRegisterSelfUserClient(error: Error!) {
+    public func didFailToRegisterSelfUserClient(error: Error) {
         currentError = error
         didCallFailRegisterSelfUserClient = true
     }
 
     public var didCallDeleteSelfUserClient: Bool = false
-    public func didDeleteSelfUserClient(error: Error!) {
+    public func didDeleteSelfUserClient(error: Error) {
         currentError = error
         didCallDeleteSelfUserClient = true
     }

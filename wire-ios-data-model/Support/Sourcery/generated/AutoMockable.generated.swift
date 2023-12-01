@@ -62,7 +62,6 @@ public class MockConversationEventProcessorProtocol: ConversationEventProcessorP
 
     public init() {}
 
-
     // MARK: - processConversationEvents
 
     public var processConversationEvents_Invocations: [[ZMUpdateEvent]] = []
@@ -91,6 +90,34 @@ public class MockConversationEventProcessorProtocol: ConversationEventProcessorP
         }
 
         mock(payload)
+    }
+
+}
+
+
+public class MockCoreCryptoProviderProtocol: CoreCryptoProviderProtocol {
+
+    // MARK: - coreCrypto
+
+    public var coreCryptoRequireMLS_Invocations: [Bool] = []
+    public var coreCryptoRequireMLS_MockError: Error?
+    public var coreCryptoRequireMLS_MockMethod: ((Bool) throws -> SafeCoreCryptoProtocol)?
+    public var coreCryptoRequireMLS_MockValue: SafeCoreCryptoProtocol?
+
+    public func coreCrypto(requireMLS: Bool) throws -> SafeCoreCryptoProtocol {
+        coreCryptoRequireMLS_Invocations.append(requireMLS)
+
+        if let error = coreCryptoRequireMLS_MockError {
+            throw error
+        }
+
+        if let mock = coreCryptoRequireMLS_MockMethod {
+            return try mock(requireMLS)
+        } else if let mock = coreCryptoRequireMLS_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `coreCryptoRequireMLS`")
+        }
     }
 
 }
@@ -168,11 +195,11 @@ public class MockCryptoboxMigrationManagerInterface: CryptoboxMigrationManagerIn
 
     // MARK: - performMigration
 
-    public var performMigrationAccountDirectoryCoreCrypto_Invocations: [(accountDirectory: URL, coreCrypto: SafeCoreCrypto)] = []
+    public var performMigrationAccountDirectoryCoreCrypto_Invocations: [(accountDirectory: URL, coreCrypto: SafeCoreCryptoProtocol)] = []
     public var performMigrationAccountDirectoryCoreCrypto_MockError: Error?
-    public var performMigrationAccountDirectoryCoreCrypto_MockMethod: ((URL, SafeCoreCrypto) throws -> Void)?
+    public var performMigrationAccountDirectoryCoreCrypto_MockMethod: ((URL, SafeCoreCryptoProtocol) throws -> Void)?
 
-    public func performMigration(accountDirectory: URL, coreCrypto: SafeCoreCrypto) throws {
+    public func performMigration(accountDirectory: URL, coreCrypto: SafeCoreCryptoProtocol) throws {
         performMigrationAccountDirectoryCoreCrypto_Invocations.append((accountDirectory: accountDirectory, coreCrypto: coreCrypto))
 
         if let error = performMigrationAccountDirectoryCoreCrypto_MockError {
@@ -1772,6 +1799,7 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
     }
 
     public var underlyingLastPrekeyID: UInt16!
+
 
     // MARK: - establishSession
 

@@ -26,6 +26,7 @@ final class MLSEncryptionServiceTests: XCTestCase {
     var sut: MLSEncryptionService!
     var mockCoreCrypto: MockCoreCrypto!
     var mockSafeCoreCrypto: MockSafeCoreCrypto!
+    var mockCoreCryptoProvider: MockCoreCryptoProviderProtocol!
 
     // MARK: - Setup
 
@@ -33,7 +34,9 @@ final class MLSEncryptionServiceTests: XCTestCase {
         super.setUp()
         mockCoreCrypto = MockCoreCrypto()
         mockSafeCoreCrypto = MockSafeCoreCrypto(coreCrypto: mockCoreCrypto)
-        sut = MLSEncryptionService(coreCrypto: mockSafeCoreCrypto)
+        mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
+        mockCoreCryptoProvider.coreCryptoRequireMLS_MockValue = mockSafeCoreCrypto
+        sut = MLSEncryptionService(coreCryptoProvider: mockCoreCryptoProvider)
     }
 
     override func tearDown() {

@@ -69,6 +69,10 @@
 
 - (void)didFinishQuickSync { }
 
+- (void)didRegisterMLSClient:(UserClient *)userClient {
+    NOT_USED(userClient);
+}
+
 - (void)didRegisterSelfUserClient:(UserClient *)userClient {
     NOT_USED(userClient);
 }

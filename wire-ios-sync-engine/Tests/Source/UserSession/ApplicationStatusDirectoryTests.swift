@@ -84,6 +84,9 @@ extension ApplicationStatusDirectoryTests: ZMRequestCancellation {
 }
 
 extension ApplicationStatusDirectoryTests: ZMSyncStateDelegate {
+    func didRegisterMLSClient(_ userClient: WireDataModel.UserClient) {
+        // no-op
+    }
 
     func didStartSlowSync() {
         // no-op

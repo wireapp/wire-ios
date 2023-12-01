@@ -18,14 +18,21 @@
 
 import Foundation
 
-public class CoreCryptoProvider {
-    let selfUserID: UUID
-    let sharedContainerURL: URL
-    let accountDirectory: URL
-    let cryptoboxMigrationManager: CryptoboxMigrationManagerInterface
-    let syncContext: NSManagedObjectContext
-    let lock = NSLock()
-    var coreCrypto: SafeCoreCrypto?
+// sourcery: AutoMockable
+public protocol CoreCryptoProviderProtocol {
+
+    func coreCrypto(requireMLS: Bool) throws -> SafeCoreCryptoProtocol
+
+}
+
+public class CoreCryptoProvider: CoreCryptoProviderProtocol {
+    private let selfUserID: UUID
+    private let sharedContainerURL: URL
+    private let accountDirectory: URL
+    private let cryptoboxMigrationManager: CryptoboxMigrationManagerInterface
+    private let syncContext: NSManagedObjectContext
+    private let lock = NSLock()
+    private var coreCrypto: SafeCoreCrypto?
 
     public init(selfUserID: UUID,
                 sharedContainerURL: URL,
@@ -40,7 +47,7 @@ public class CoreCryptoProvider {
     }
 
     // NOTE: this will turn async when we upgrade CC
-    public func coreCrypto(requireMLS: Bool = false) throws -> SafeCoreCrypto {
+    public func coreCrypto(requireMLS: Bool = false) throws -> SafeCoreCryptoProtocol {
         // TODO: this lock should go away when this function turn async and the class can become an actor
         return try lock.withLock {
             let coreCrypto = if let coreCrypto = coreCrypto {

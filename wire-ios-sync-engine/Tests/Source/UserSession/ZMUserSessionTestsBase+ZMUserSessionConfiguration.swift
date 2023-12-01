@@ -22,6 +22,7 @@ extension ZMUserSessionTestsBase {
         let mockStrategyDirectory = MockStrategyDirectory()
         let mockUpdateEventProcessor = MockUpdateEventProcessor()
         let mockCryptoboxMigrationManager = MockCryptoboxMigrationManagerInterface()
+        mockCryptoboxMigrationManager.isMigrationNeededAccountDirectory_MockValue = false
         sut = ZMUserSession(
             userId: coreDataStack.account.userIdentifier,
             transportSession: transportSession,

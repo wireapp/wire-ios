@@ -33,11 +33,11 @@ public final class MLSEncryptionService: MLSEncryptionServiceInterface {
 
     // MARK: - Properties
 
-    private let coreCryptoProvider: CoreCryptoProvider
+    private let coreCryptoProvider: CoreCryptoProviderProtocol
 
     // MARK: - Life cycle
 
-    public init(coreCryptoProvider: CoreCryptoProvider) {
+    public init(coreCryptoProvider: CoreCryptoProviderProtocol) {
         self.coreCryptoProvider = coreCryptoProvider
     }
 
@@ -67,7 +67,7 @@ public final class MLSEncryptionService: MLSEncryptionServiceInterface {
     ) throws -> [Byte] {
         do {
             WireLogger.mls.debug("encrypting message (\(message.count) bytes) for group (\(groupID))")
-            return try coreCryptoProvider.coreCrypto().perform { try $0.encryptMessage(conversationId: groupID.bytes, message: message) }
+            return try coreCryptoProvider.coreCrypto(requireMLS: true).perform { try $0.encryptMessage(conversationId: groupID.bytes, message: message) }
         } catch let error {
             WireLogger.mls.error("failed to encrypt message for group (\(groupID)): \(String(describing: error))")
             throw MLSMessageEncryptionError.failedToEncryptMessage

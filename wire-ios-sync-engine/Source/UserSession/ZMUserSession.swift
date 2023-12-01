@@ -283,6 +283,7 @@ public class ZMUserSession: NSObject {
         coreDataStack: CoreDataStack,
         configuration: Configuration,
         earService: EARServiceInterface? = nil,
+        mlsService: MLSServiceInterface? = nil,
         cryptoboxMigrationManager: CryptoboxMigrationManagerInterface,
         sharedUserDefaults: UserDefaults
     ) {
@@ -682,9 +683,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
         }
 
         // FIXME: [jacob] move to a repairOutOfSyncConversationsIfNeeded on MLSService?
-        Task {
-            try await mlsService.repairOutOfSyncConversations()
-        }
+        mlsService.repairOutOfSyncConversations()
     }
 
     public func didStartQuickSync() {

@@ -188,6 +188,7 @@ public class MockSyncStatus: SyncStatus {
 @objc public class MockSyncStateDelegate: NSObject, ZMSyncStateDelegate {
 
     var registeredUserClient: UserClient?
+    var registeredMLSClient: UserClient?
     @objc public var didCallStartSlowSync = false
     @objc public var didCallFinishSlowSync = false
     @objc public var didCallStartQuickSync = false
@@ -209,6 +210,10 @@ public class MockSyncStatus: SyncStatus {
 
     public func didFinishQuickSync() {
         didCallFinishQuickSync = true
+    }
+
+    public func didRegisterMLSClient(_ userClient: UserClient) {
+        registeredMLSClient = userClient
     }
 
     public func didRegisterSelfUserClient(_ userClient: UserClient) {
