@@ -31,7 +31,11 @@ extension ZMOperationLoop: ZMPushChannelConsumer {
                 }
             } else {
                 WaitingGroupTask(context: syncMOC) {
-                    try? await self.updateEventProcessor.processEvents(events)
+                    do {
+                        try await self.updateEventProcessor.processEvents(events)
+                    } catch {
+                        WireLogger.updateEvent.error("Failed to process events: \(events.map { $0.debugInformation })")
+                    }
                 }
             }
         }

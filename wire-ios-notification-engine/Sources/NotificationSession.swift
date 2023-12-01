@@ -373,12 +373,6 @@ extension NotificationSession: PushNotificationStrategyDelegate {
     }
 
     private func callEventPayloadForCallKit(from event: ZMUpdateEvent) -> CallEventPayload? {
-        // The API to report VoIP pushes from the notification service extension
-        // is only available from iOS 14.5.
-        guard #available(iOSApplicationExtension 14.5, *) else {
-            return nil
-        }
-
         // Ensure this actually is a call event.
         guard let callContent = CallEventContent(from: event) else {
             return nil

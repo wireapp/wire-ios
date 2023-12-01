@@ -932,7 +932,7 @@ public final class MLSService: MLSServiceInterface {
 
         logger.info("repaired out of sync conversation! (\(groupID.safeForLoggingDescription))")
 
-        appendGapSystemMessage(
+        await appendGapSystemMessage(
             in: conversation,
             context: context
         )
@@ -943,8 +943,8 @@ public final class MLSService: MLSServiceInterface {
     private func appendGapSystemMessage(
         in conversation: ZMConversation,
         context: NSManagedObjectContext
-    ) {
-        context.perform {
+    ) async {
+        await context.perform {
             conversation.appendNewPotentialGapSystemMessage(
                 users: conversation.localParticipants,
                 timestamp: Date()
@@ -1827,6 +1827,9 @@ extension CiphersuiteName {
 
         case .mls256Dhkemp384Aes256gcmSha384P384:
             return 7
+
+        @unknown default:
+            fatalError("unsupported value of 'CiphersuiteName'!")
         }
     }
 

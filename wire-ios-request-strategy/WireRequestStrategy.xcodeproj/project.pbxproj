@@ -172,6 +172,9 @@
 		16BBA1FA2AFC3BAB00CDF38A /* QuickSyncObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16BBA1F92AFC3BAB00CDF38A /* QuickSyncObserver.swift */; };
 		16BBA1FC2AFC44B100CDF38A /* QuickSyncObserverTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16BBA1FB2AFC44B100CDF38A /* QuickSyncObserverTests.swift */; };
 		16BBA1FE2AFC5E1600CDF38A /* DependentObjects.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16BBA1FD2AFC5E1600CDF38A /* DependentObjects.swift */; };
+		16BA786B2AFE69FB006D8CCF /* EventConsumer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16BA786A2AFE69FB006D8CCF /* EventConsumer.swift */; };
+		16BA786C2AFE7119006D8CCF /* EventDecoderTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06474DA524B4B1EA002C695D /* EventDecoderTest.swift */; };
+		16BA786D2AFE712B006D8CCF /* StoreUpdateEventTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06474DA724B4BB01002C695D /* StoreUpdateEventTests.swift */; };
 		16CC0833268DC32D00C0613C /* LinkPreviewUpdateRequestStrategyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16CC0832268DC32D00C0613C /* LinkPreviewUpdateRequestStrategyTests.swift */; };
 		16CC083B268E075100C0613C /* ClientMessageRequestStrategyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16CC083A268E075100C0613C /* ClientMessageRequestStrategyTests.swift */; };
 		16D66D712B0B9C4E00CB237D /* AutoMockable.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16D66D702B0B9C4E00CB237D /* AutoMockable.generated.swift */; };
@@ -618,6 +621,7 @@
 		16BBA1F92AFC3BAB00CDF38A /* QuickSyncObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickSyncObserver.swift; sourceTree = "<group>"; };
 		16BBA1FB2AFC44B100CDF38A /* QuickSyncObserverTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickSyncObserverTests.swift; sourceTree = "<group>"; };
 		16BBA1FD2AFC5E1600CDF38A /* DependentObjects.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DependentObjects.swift; sourceTree = "<group>"; };
+		16BA786A2AFE69FB006D8CCF /* EventConsumer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventConsumer.swift; sourceTree = "<group>"; };
 		16CC0832268DC32D00C0613C /* LinkPreviewUpdateRequestStrategyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkPreviewUpdateRequestStrategyTests.swift; sourceTree = "<group>"; };
 		16CC083A268E075100C0613C /* ClientMessageRequestStrategyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientMessageRequestStrategyTests.swift; sourceTree = "<group>"; };
 		16D66D702B0B9C4E00CB237D /* AutoMockable.generated.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AutoMockable.generated.swift; sourceTree = "<group>"; };

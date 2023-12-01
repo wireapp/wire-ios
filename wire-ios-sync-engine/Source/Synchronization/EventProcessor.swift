@@ -72,7 +72,7 @@ actor EventProcessor: UpdateEventProcessor {
             await self.processBackgroundEvents(decryptedEvents)
             await self.requestToCalculateBadgeCount()
             let isLocked = await self.syncContext.perform { self.syncContext.isLocked }
-            try? await self.processEvents(callEventsOnly: isLocked)
+            try await self.processEvents(callEventsOnly: isLocked)
         }
     }
 
@@ -87,7 +87,16 @@ actor EventProcessor: UpdateEventProcessor {
             _ = await processingTask?.result
             return try await block()
         }
-        _ = await processingTask?.result
+        guard let taskResult = await processingTask?.result else {
+            return
+        }
+
+        switch taskResult {
+        case .success:
+            break
+        case .failure(let error):
+            throw error
+        }
     }
 
     private func processBackgroundEvents(_ events: [ZMUpdateEvent]) async {
