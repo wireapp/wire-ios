@@ -49,11 +49,14 @@ extension ZMConversation {
 
         request.add(ZMCompletionHandler(on: managedObjectContext!) { response in
             if response.httpStatus == 200, let event = response.updateEvent {
-                userSession.syncManagedObjectContext.performGroupedBlock {
-                    userSession.updateEventProcessor?.storeAndProcessUpdateEvents([event], ignoreBuffer: true)
+                let groups = userSession.syncContext.enterAllGroupsExceptSecondary()
+                Task {
+                    // FIXME: [jacob] replace with ConversationEventProcessor
+                    try? await userSession.updateEventProcessor?.processEvents([event])
                     userSession.managedObjectContext.performGroupedBlock {
                         completion(.success)
                     }
+                    userSession.syncContext.leaveAllGroups(groups)
                 }
             } else if response.httpStatus == 204 {
                 self.hasReadReceiptsEnabled = enabled

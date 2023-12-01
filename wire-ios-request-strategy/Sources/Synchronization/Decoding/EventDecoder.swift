@@ -34,7 +34,7 @@ private let previouslyReceivedEventIDsKey = "zm_previouslyReceivedEventIDsKey"
 /// Decodes and stores events from various sources to be processed later
 @objcMembers public final class EventDecoder: NSObject {
 
-    public typealias ConsumeBlock = (([ZMUpdateEvent]) -> Void)
+    public typealias ConsumeBlock = (([ZMUpdateEvent]) async -> Void)
 
     static var BatchSize: Int {
         if let testingBatchSize = testingBatchSize {
@@ -70,35 +70,33 @@ extension EventDecoder {
     ///
     /// - Parameters:
     ///   - events: Encrypted events
-    ///   - block: A block that receives the decrypted events for processing.
+    /// - Returns: the decrypted events for processing.
 
     public func decryptAndStoreEvents(
         _ events: [ZMUpdateEvent],
-        publicKeys: EARPublicKeys? = nil,
-        block: ConsumeBlock? = nil
-    ) {
-        var lastIndex: Int64?
-        var decryptedEvents: [ZMUpdateEvent] = []
-
-        eventMOC.performGroupedBlockAndWait {
-
+        publicKeys: EARPublicKeys? = nil
+    ) async -> [ZMUpdateEvent] {
+        let (filteredEvents, lastIndex) = await eventMOC.perform {
             self.storeReceivedPushEventIDs(from: events)
             let filteredEvents = self.filterAlreadyReceivedEvents(from: events)
 
             // Get the highest index of events in the DB
-            lastIndex = StoredUpdateEvent.highestIndex(self.eventMOC)
+            let lastIndex = StoredUpdateEvent.highestIndex(self.eventMOC)
+            return (filteredEvents, lastIndex)
+        }
 
-            guard let index = lastIndex else { return }
+        let decryptedEvents = await syncMOC.perform {
             guard self.syncMOC.proteusProvider.canPerform else {
                 WireLogger.proteus.warn("ignore decrypting events because it is not safe")
-                return
+                return [] as [ZMUpdateEvent]
             }
 
-            decryptedEvents = self.syncMOC.proteusProvider.perform(
+            return self.syncMOC.proteusProvider.perform(
                 withProteusService: { proteusService in
+                    // TODO: [jacob] decryptAndStoreEvents will become async
                     return self.decryptAndStoreEvents(
                         filteredEvents,
-                        startingAtIndex: index,
+                        startingAtIndex: lastIndex,
                         publicKeys: publicKeys,
                         proteusService: proteusService
                     )
@@ -106,7 +104,7 @@ extension EventDecoder {
                 withKeyStore: { keyStore in
                     return self.legacyDecryptAndStoreEvents(
                         filteredEvents,
-                        startingAtIndex: index,
+                        startingAtIndex: lastIndex,
                         publicKeys: publicKeys,
                         keyStore: keyStore
                     )
@@ -118,7 +116,7 @@ extension EventDecoder {
             Logging.eventProcessing.info("Decrypted/Stored \( events.count) event(s)")
         }
 
-        block?(decryptedEvents)
+        return decryptedEvents
     }
 
     /// Process previously stored and decrypted events by repeatedly calling the the consume block until
@@ -133,8 +131,8 @@ extension EventDecoder {
         with privateKeys: EARPrivateKeys? = nil,
         callEventsOnly: Bool = false,
         _ block: ConsumeBlock
-    ) {
-        process(
+    ) async {
+        await process(
             with: privateKeys,
             block,
             firstCall: true,
@@ -180,7 +178,9 @@ extension EventDecoder {
 
         // This call has to be synchronous to ensure that we close the
         // encryption context only if we stored all events in the database.
-        self.storeUpdateEvents(decryptedEvents, startingAtIndex: startIndex, publicKeys: publicKeys)
+        eventMOC.performAndWait {
+            self.storeUpdateEvents(decryptedEvents, startingAtIndex: startIndex, publicKeys: publicKeys)
+        }
 
         return decryptedEvents
     }
@@ -216,7 +216,10 @@ extension EventDecoder {
 
             // This call has to be synchronous to ensure that we close the
             // encryption context only if we stored all events in the database.
-            self.storeUpdateEvents(decryptedEvents, startingAtIndex: startIndex, publicKeys: publicKeys)
+            eventMOC.performAndWait {
+                self.storeUpdateEvents(decryptedEvents, startingAtIndex: startIndex, publicKeys: publicKeys)
+            }
+
         }
 
         return decryptedEvents
@@ -259,27 +262,27 @@ extension EventDecoder {
         _ consumeBlock: ConsumeBlock,
         firstCall: Bool,
         callEventsOnly: Bool
-    ) {
-        let events = fetchNextEventsBatch(with: privateKeys, callEventsOnly: callEventsOnly)
+    ) async {
+        let events = await fetchNextEventsBatch(with: privateKeys, callEventsOnly: callEventsOnly)
 
         guard events.storedEvents.count > 0 else {
             if firstCall {
-                consumeBlock([])
+                await consumeBlock([])
             }
             return
         }
 
-        processBatch(events.updateEvents, storedEvents: events.storedEvents, block: consumeBlock)
-        process(with: privateKeys, consumeBlock, firstCall: false, callEventsOnly: callEventsOnly)
+        await processBatch(events.updateEvents, storedEvents: events.storedEvents, block: consumeBlock)
+        await process(with: privateKeys, consumeBlock, firstCall: false, callEventsOnly: callEventsOnly)
     }
 
     /// Fetches and returns the next batch of size `EventDecoder.BatchSize`
     /// of `StoredEvents` and `ZMUpdateEvent`'s in a `EventsWithStoredEvents` tuple.
 
-    private func fetchNextEventsBatch(with privateKeys: EARPrivateKeys?, callEventsOnly: Bool) -> EventsWithStoredEvents {
+    private func fetchNextEventsBatch(with privateKeys: EARPrivateKeys?, callEventsOnly: Bool) async -> EventsWithStoredEvents {
         var (storedEvents, updateEvents)  = ([StoredUpdateEvent](), [ZMUpdateEvent]())
 
-        eventMOC.performGroupedBlockAndWait {
+        await eventMOC.perform {
             let eventBatch = StoredUpdateEvent.nextEventBatch(
                 size: EventDecoder.BatchSize,
                 privateKeys: privateKeys,
@@ -300,12 +303,12 @@ extension EventDecoder {
         _ events: [ZMUpdateEvent],
         storedEvents: [NSManagedObject],
         block: ConsumeBlock
-    ) {
+    ) async {
         if !events.isEmpty {
             Logging.eventProcessing.info("Forwarding \(events.count) event(s) to consumers")
         }
 
-        block(filterInvalidEvents(from: events))
+        await block(filterInvalidEvents(from: events))
 
         eventMOC.performGroupedBlockAndWait {
             storedEvents.forEach(self.eventMOC.delete(_:))
@@ -360,13 +363,13 @@ extension EventDecoder {
     }
 
     /// Filters out events that shouldn't be processed
-    fileprivate func filterInvalidEvents(from events: [ZMUpdateEvent]) -> [ZMUpdateEvent] {
-        let selfConversation = ZMConversation.selfConversation(in: syncMOC)
-        let selfUser = ZMUser.selfUser(in: syncMOC)
+    fileprivate func filterInvalidEvents(from events: [ZMUpdateEvent]) async -> [ZMUpdateEvent] {
+        let selfConversationID = await syncMOC.perform { ZMConversation.selfConversation(in: self.syncMOC).remoteIdentifier }
+        let selfUserID = await syncMOC.perform { ZMUser.selfUser(in: self.syncMOC).remoteIdentifier }
 
         return events.filter { event in
             // The only message we process arriving in the self conversation from other users is availability updates
-            if event.conversationUUID == selfConversation.remoteIdentifier, event.senderUUID != selfUser.remoteIdentifier, let genericMessage = GenericMessage(from: event) {
+            if event.conversationUUID == selfConversationID, event.senderUUID != selfUserID, let genericMessage = GenericMessage(from: event) {
                 return genericMessage.hasAvailability
             }
 

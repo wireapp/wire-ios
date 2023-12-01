@@ -20,7 +20,7 @@ import Foundation
 
 public protocol NotificationStreamSyncDelegate: AnyObject {
     func fetchedEvents(_ events: [ZMUpdateEvent], hasMoreToFetch: Bool)
-    func failedFetchingEvents()
+    func failedFetchingEvents(recoverable: Bool)
 }
 
 public class NotificationStreamSync: NSObject, ZMRequestGenerator, ZMSimpleListRequestPaginatorSync {
@@ -125,11 +125,15 @@ public class NotificationStreamSync: NSObject, ZMRequestGenerator, ZMSimpleListR
 
     @objc(shouldParseErrorForResponse:)
     public func shouldParseError(for response: ZMTransportResponse) -> Bool {
-        notificationStreamSyncDelegate?.failedFetchingEvents()
+        notificationStreamSyncDelegate?.failedFetchingEvents(recoverable: false)
         guard response.apiVersion < APIVersion.v3.rawValue else {
             return false
         }
         return response.httpStatus == 404 ? true : false
+    }
+
+    public func parseTemporaryError(for response: ZMTransportResponse!) {
+        notificationStreamSyncDelegate?.failedFetchingEvents(recoverable: true)
     }
 
     @objc(appendPotentialGapSystemMessageIfNeededWithResponse:)

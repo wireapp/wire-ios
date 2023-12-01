@@ -312,7 +312,7 @@ public extension ZMConversation {
 
         let request = serviceUserData.requestToAddService(to: self, apiVersion: apiVersion)
 
-        request.add(ZMCompletionHandler(on: contextProvider.viewContext, block: { [weak contextProvider] (response) in
+        request.add(ZMCompletionHandler(on: contextProvider.viewContext, block: { (response) in
 
             guard response.httpStatus == 201,
                   let responseDictionary = response.payload?.asDictionary(),
@@ -322,10 +322,11 @@ public extension ZMConversation {
                       return
                   }
 
-            completionHandler(.success)
-
-            contextProvider?.syncContext.performGroupedBlock {
-                eventProcessor.storeAndProcessUpdateEvents([event], ignoreBuffer: true)
+            WaitingGroupTask(context: contextProvider.viewContext) {
+                try? await eventProcessor.processEvents([event])
+                await contextProvider.viewContext.perform {
+                    completionHandler(.success)
+                }
             }
         }))
 

@@ -355,7 +355,7 @@
     // when
     [self.sut didFinishQuickSync];
     WaitForAllGroupsToBeEmpty(0.5);
-    
+
     // then
     XCTAssertEqual(self.thirdPartyServices.uploadCount, 1u);
 }
@@ -370,7 +370,6 @@
     [self.sut didStartQuickSync];
     [self.sut didFinishQuickSync];
     WaitForAllGroupsToBeEmpty(0.5);
-    
     // then
     XCTAssertEqual(self.thirdPartyServices.uploadCount, 1u);
 }
@@ -433,7 +432,7 @@
     // when
     [self.sut didGoOffline];
     [self.sut didFinishQuickSync];
-    
+
     // then
     XCTAssertTrue([self waitForOfflineStatus]);
 }
@@ -562,6 +561,7 @@
     token = nil;
     
 }
+
 
 @end
 

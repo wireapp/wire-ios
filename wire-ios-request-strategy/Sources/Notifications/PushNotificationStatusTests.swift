@@ -146,7 +146,7 @@ class PushNotificationStatusTests: MessagingTestBase {
         }
 
         // when
-        sut.didFailToFetchEvents()
+        sut.didFailToFetchEvents(recoverable: false)
 
         // then
         XCTAssertFalse(sut.hasEventsToFetch)
