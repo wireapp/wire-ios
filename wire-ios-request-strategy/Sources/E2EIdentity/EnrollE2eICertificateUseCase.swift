@@ -20,7 +20,7 @@ import Foundation
 
 public protocol EnrollE2eICertificateUseCaseInterface {
 
-    func invoke(idToken: String, e2eiClientId: E2eIClientID, userName: String, handle: String) async throws -> String
+    func invoke(idToken: String, selfUser: ZMUser) async throws -> String
 
 }
 
@@ -33,7 +33,14 @@ public final class EnrollE2eICertificateUseCase: EnrollE2eICertificateUseCaseInt
         self.e2eiRepository = e2eiRepository
     }
 
-    public func invoke(idToken: String, e2eiClientId: E2eIClientID, userName: String, handle: String) async throws -> String {
+    public func invoke(idToken: String, selfUser: ZMUser) async throws -> String {
+        guard
+            let userName = selfUser.name,
+            let handle = selfUser.handle,
+            let e2eiClientId = E2eIClientID(user: selfUser)
+        else {
+            throw EnrollE2EICertificateUseCaseFailure.failedToSetupEnrollment
+        }
 
         let enrollment = try await e2eiRepository.createEnrollment(e2eiClientId: e2eiClientId, userName: userName, handle: handle)
 
@@ -42,9 +49,43 @@ public final class EnrollE2eICertificateUseCase: EnrollE2eICertificateUseCaseInt
         let newOrder = try await enrollment.createNewOrder(prevNonce: newAccountNonce)
         let authzResponse = try await enrollment.createAuthz(prevNonce: newOrder.nonce,
                                                              authzEndpoint: newOrder.acmeOrder.authorizations[0])
+        let wireNonce = try await enrollment.getWireNonce(clientId: e2eiClientId.clientID)
+        let dpopToken = try await enrollment.getDPoPToken(wireNonce)
+        let wireAccessToken = try await enrollment.getWireAccessToken(clientId: e2eiClientId.clientID, dpopToken: dpopToken)
 
-        /// TODO: this method will be finished with the following PRs
-        return authzResponse.nonce
+        guard let wireDpopChallenge = authzResponse.challenges.wireDpopChallenge else {
+            throw EnrollE2EICertificateUseCaseFailure.missingDpopChallenge
+        }
+
+        let dpopChallengeResponse = try await enrollment.validateDPoPChallenge(accessToken: wireAccessToken.token,
+                                                                               prevNonce: authzResponse.nonce,
+                                                                               acmeChallenge: wireDpopChallenge)
+
+        guard let oidcChallenge = authzResponse.challenges.wireOidcChallenge else {
+            throw EnrollE2EICertificateUseCaseFailure.missingOIDCChallenge
+        }
+        let oidcChallengeResponse = try await enrollment.validateOIDCChallenge(idToken: idToken,
+                                                                               prevNonce: dpopChallengeResponse.nonce,
+                                                                               acmeChallenge: oidcChallenge)
+
+        let orderResponse = try await enrollment.checkOrderRequest(location: newOrder.location, prevNonce: oidcChallengeResponse.nonce)
+        let finalizeResponse = try await enrollment.finalize(location: orderResponse.location, prevNonce: orderResponse.acmeResponse.nonce)
+        let certificateRequest = try await enrollment.certificateRequest(location: finalizeResponse.location, prevNonce: finalizeResponse.acmeResponse.nonce)
+
+        do {
+            return try JSONDecoder().decode(String.self, from: certificateRequest.response)
+        } catch {
+            throw EnrollE2EICertificateUseCaseFailure.failedToDecodeCertificate
+        }
     }
+
+}
+
+enum EnrollE2EICertificateUseCaseFailure: Error {
+
+    case failedToSetupEnrollment
+    case missingDpopChallenge
+    case missingOIDCChallenge
+    case failedToDecodeCertificate
 
 }

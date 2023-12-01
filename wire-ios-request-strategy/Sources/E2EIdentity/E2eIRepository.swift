@@ -26,11 +26,13 @@ public protocol E2eIRepositoryInterface {
 
 public final class E2eIRepository: E2eIRepositoryInterface {
 
-    private var acmeClient: AcmeClientInterface
+    private var acmeApi: AcmeAPIInterface
+    private var apiProvider: APIProviderInterface
     private var e2eiClient: E2eIClientInterface
 
-    public init(acmeClient: AcmeClientInterface, e2eiClient: E2eIClientInterface) {
-        self.acmeClient = acmeClient
+    public init(acmeApi: AcmeAPIInterface, apiProvider: APIProviderInterface, e2eiClient: E2eIClientInterface) {
+        self.acmeApi = acmeApi
+        self.apiProvider = apiProvider
         self.e2eiClient = e2eiClient
     }
 
@@ -39,11 +41,14 @@ public final class E2eIRepository: E2eIRepositoryInterface {
         let e2eiService = E2eIService(e2eIdentity: e2eIdentity)
         let acmeDirectory = try await loadACMEDirectory(e2eiService: e2eiService)
 
-        return E2eIEnrollment(acmeClient: acmeClient, e2eiService: e2eiService, acmeDirectory: acmeDirectory)
+        return E2eIEnrollment(acmeApi: acmeApi,
+                              apiProvider: apiProvider,
+                              e2eiService: e2eiService,
+                              acmeDirectory: acmeDirectory)
     }
 
     private func loadACMEDirectory(e2eiService: E2eIService) async throws -> AcmeDirectory {
-        let acmeDirectoryData = try await acmeClient.getACMEDirectory()
+        let acmeDirectoryData = try await acmeApi.getACMEDirectory()
         return try await e2eiService.getDirectoryResponse(directoryData: acmeDirectoryData)
     }
 

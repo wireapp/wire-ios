@@ -19,9 +19,9 @@
 import Foundation
 @testable import WireRequestStrategy
 
-class AcmeClientTests: ZMTBaseTest {
+class AcmeAPITests: ZMTBaseTest {
 
-    var acmeClient: AcmeClient?
+    var acmeApi: AcmeAPI?
     var mockHttpClient: MockHttpClient?
     let backendDomainBackup = BackendInfo.domain
 
@@ -30,12 +30,12 @@ class AcmeClientTests: ZMTBaseTest {
 
         mockHttpClient = MockHttpClient()
         if let mockHttpClient = mockHttpClient {
-            acmeClient = AcmeClient(httpClient: mockHttpClient)
+            acmeApi = AcmeAPI(httpClient: mockHttpClient)
         }
     }
 
     override func tearDown() {
-        acmeClient = nil
+        acmeApi = nil
         mockHttpClient = nil
         BackendInfo.domain = backendDomainBackup
 
@@ -55,7 +55,7 @@ class AcmeClientTests: ZMTBaseTest {
         mockHttpClient?.mockResponse = (acmeDirectoryData, URLResponse())
 
         // when
-        guard  let acmeDirectoryData = try await acmeClient?.getACMEDirectory() else {
+        guard  let acmeDirectoryData = try await acmeApi?.getACMEDirectory() else {
             return XCTFail("Failed to get ACME directory.")
         }
 
@@ -72,7 +72,7 @@ class AcmeClientTests: ZMTBaseTest {
             // given
             BackendInfo.domain = nil
             // when
-            guard let acmeDirectoryData = try await acmeClient?.getACMEDirectory() else {
+            guard let acmeDirectoryData = try await acmeApi?.getACMEDirectory() else {
                 return XCTFail("Failed to get ACME directory.")
             }
         } catch NetworkError.errorEncodingRequest {
@@ -100,7 +100,7 @@ class AcmeClientTests: ZMTBaseTest {
         mockHttpClient?.mockResponse = (Data(), response)
 
         // when
-        let nonce = try await acmeClient?.getACMENonce(path: path)
+        let nonce = try await acmeApi?.getACMENonce(path: path)
 
         // then
         XCTAssertEqual(nonce, expectedNonce)
@@ -124,7 +124,7 @@ class AcmeClientTests: ZMTBaseTest {
 
         do {
             // when
-            let nonce = try await acmeClient?.getACMENonce(path: path)
+            let nonce = try await acmeApi?.getACMENonce(path: path)
         } catch NetworkError.errorDecodingResponseNew {
             // then
             return
@@ -156,7 +156,7 @@ class AcmeClientTests: ZMTBaseTest {
 
         do {
             // when
-            let acmeResponse = try await acmeClient?.sendACMERequest(path: path, requestBody: requestBody)
+            let acmeResponse = try await acmeApi?.sendACMERequest(path: path, requestBody: requestBody)
             // then
             XCTAssertEqual(acmeResponse, expectation)
         } catch {
@@ -168,7 +168,6 @@ class AcmeClientTests: ZMTBaseTest {
         // expectation
         let headerNonce = "ACMENonce"
         let headerLocation = "Location"
-        let expectation = ACMEResponse(nonce: headerNonce, location: headerLocation, response: Data())
 
         // given
         let path = "https://acme.elna.wire.link/acme/defaultteams/new-account"
@@ -185,7 +184,7 @@ class AcmeClientTests: ZMTBaseTest {
 
         do {
             // when
-            let acmeResponse = try await acmeClient?.sendACMERequest(path: path, requestBody: Data())
+            let acmeResponse = try await acmeApi?.sendACMERequest(path: path, requestBody: Data())
         } catch NetworkError.errorDecodingResponseNew {
             // then
             return
@@ -198,7 +197,6 @@ class AcmeClientTests: ZMTBaseTest {
         // expectation
         let headerNonce = "ACMENonce"
         let headerLocation = "Location"
-        let expectation = ACMEResponse(nonce: headerNonce, location: headerLocation, response: Data())
 
         // given
         let path = "https://acme.elna.wire.link/acme/defaultteams/new-account"
@@ -215,10 +213,42 @@ class AcmeClientTests: ZMTBaseTest {
 
         do {
             // when
-            let acmeResponse = try await acmeClient?.sendACMERequest(path: path, requestBody: Data())
+            let acmeResponse = try await acmeApi?.sendACMERequest(path: path, requestBody: Data())
         } catch NetworkError.errorDecodingResponseNew {
             // then
             return
+        } catch {
+            XCTFail("unexpected error: \(error.localizedDescription)")
+        }
+    }
+
+    func testThatItSendsChallengeRequest() async throws {
+        // expectation
+        let headerNonce = "ACMENonce"
+        let expectation = ChallengeResponse(type: "JWT",
+                                            url: "https://acme.example.com/acme/provisioner1/challenge/foVMOvMcap/1pceubr",
+                                            status: "pending",
+                                            token: "NEi1HaRRYqM0R9cGZaHdv0dBWIkRbyCY",
+                                            nonce: headerNonce)
+
+        // given
+        let path = "https://acme.example.com/acme/provisioner1/challenge/foVMOvMcapXlWSrHqu4BrD1RFORZOGrC/1pceubrFUZAvVQI5XgtLDMfLefhOt4YI"
+
+        // mock
+        let mockResponse = try XCTUnwrap(HTTPURLResponse(
+            url: URL(string: path)!,
+            statusCode: 200,
+            httpVersion: "",
+            headerFields: ["Replay-Nonce": headerNonce]
+        ))
+        let challengeResponseData = try JSONEncoder.defaultEncoder.encode(expectation)
+        mockHttpClient?.mockResponse = (challengeResponseData, mockResponse)
+
+        do {
+            // when
+            let challengeResponse = try await acmeApi?.sendChallengeRequest(path: path, requestBody: Data())
+            // then
+            XCTAssertEqual(challengeResponse, expectation)
         } catch {
             XCTFail("unexpected error: \(error.localizedDescription)")
         }

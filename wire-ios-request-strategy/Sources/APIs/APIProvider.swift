@@ -22,6 +22,7 @@ import Foundation
 public protocol APIProviderInterface {
     func prekeyAPI(apiVersion: APIVersion) -> PrekeyAPI
     func messageAPI(apiVersion: APIVersion) -> MessageAPI
+    func e2eIAPI(apiVersion: APIVersion) -> E2eIAPI?
 }
 
 public struct APIProvider: APIProviderInterface {
@@ -51,6 +52,13 @@ public struct APIProvider: APIProviderInterface {
         case .v3: MessageAPIV3(httpClient: httpClient)
         case .v4: MessageAPIV4(httpClient: httpClient)
         case .v5: MessageAPIV5(httpClient: httpClient)
+        }
+    }
+
+    public func e2eIAPI(apiVersion: APIVersion) -> E2eIAPI? {
+        return switch apiVersion {
+        case .v0, .v1, .v2, .v3, .v4: nil
+        case .v5: E2eIAPIV5(httpClient: httpClient)
         }
     }
 }
