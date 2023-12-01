@@ -21,6 +21,7 @@ import Foundation
 public struct E2eIdentityCertificate {
     public var certificateDetails: String
     public var expiryDate: Date
+    // TODO: Change this to Type Safety
     public var certificateStatus: String
     public var serialNumber: String
 
