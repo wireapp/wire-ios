@@ -125,10 +125,7 @@ extension DeviceDetailsViewActionsHandler: ClientRemovalObserverDelegate {
         _ clientRemovalObserver: ClientRemovalObserver,
         viewControllerToPresent: UIViewController
     ) {
-        UIApplication.shared.windows.first?.rootViewController?.present(
-            viewControllerToPresent,
-            animated: true
-        )
+        UIViewController.presentTopmost(viewController: viewControllerToPresent)
     }
 
     func setIsLoadingViewVisible(
