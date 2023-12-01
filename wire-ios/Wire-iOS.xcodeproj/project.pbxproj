@@ -1292,6 +1292,7 @@
 		E9B439332B07855C0069DA63 /* UserSessionMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE9B56A62AE7EA08001D7C2E /* UserSessionMock.swift */; };
 		E9B439342B0786100069DA63 /* SettingsPropertyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8787BDD61BF374420096B1B5 /* SettingsPropertyTests.swift */; };
 		E9B580CC27B3E71900A5814D /* ConversationOptionsServicesViewControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B580CB27B3E71900A5814D /* ConversationOptionsServicesViewControllerTests.swift */; };
+		E9B5C85B2B1A21CF00B78E64 /* ConversationInputBarViewController+UIAlertController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B5C85A2B1A21CF00B78E64 /* ConversationInputBarViewController+UIAlertController.swift */; };
 		E9B8EB792A0CEB690056E417 /* MessageReactionsCellDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B8EB782A0CEB690056E417 /* MessageReactionsCellDescription.swift */; };
 		E9B8EB7B2A0CEB980056E417 /* MessageReactionsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B8EB7A2A0CEB980056E417 /* MessageReactionsCell.swift */; };
 		E9B8EB802A0CEE160056E417 /* ReactionToggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B8EB7F2A0CEE160056E417 /* ReactionToggle.swift */; };
@@ -3298,6 +3299,7 @@
 		E9A60C7229716A70001D0E14 /* UITextField+DoneBarButtonItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITextField+DoneBarButtonItem.swift"; sourceTree = "<group>"; };
 		E9B439302B0783BD0069DA63 /* SelfProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelfProvider.swift; sourceTree = "<group>"; };
 		E9B580CB27B3E71900A5814D /* ConversationOptionsServicesViewControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationOptionsServicesViewControllerTests.swift; sourceTree = "<group>"; };
+		E9B5C85A2B1A21CF00B78E64 /* ConversationInputBarViewController+UIAlertController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConversationInputBarViewController+UIAlertController.swift"; sourceTree = "<group>"; };
 		E9B8EB782A0CEB690056E417 /* MessageReactionsCellDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageReactionsCellDescription.swift; sourceTree = "<group>"; };
 		E9B8EB7A2A0CEB980056E417 /* MessageReactionsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageReactionsCell.swift; sourceTree = "<group>"; };
 		E9B8EB7F2A0CEE160056E417 /* ReactionToggle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionToggle.swift; sourceTree = "<group>"; };
@@ -6360,7 +6362,7 @@
 			isa = PBXGroup;
 			children = (
 				A937A5C223D5F0400080A507 /* ConversationInputBarViewControllerDelegate.swift */,
-				A965F89D23DB3359005209E1 /* ConversationInputBarViewController.swift */,
+				E9B5C8592B1A218E00B78E64 /* ConversationInputBarViewController */,
 				EF95B053227C782D005A060A /* ConversationInputBarViewController+TypingIndicator.swift */,
 				06C412AF239103910018866F /* ConversationInputBarViewController+DragAndDrop.swift */,
 				EF58B556218B463F00750A2B /* ConversationInputBarViewController+KeyCommand.swift */,
@@ -7396,6 +7398,15 @@
 				E902B3B329ED3A240090DE32 /* SwiftUIButton+HapticFeedback.swift */,
 			);
 			path = "SwiftUI Helpers";
+			sourceTree = "<group>";
+		};
+		E9B5C8592B1A218E00B78E64 /* ConversationInputBarViewController */ = {
+			isa = PBXGroup;
+			children = (
+				A965F89D23DB3359005209E1 /* ConversationInputBarViewController.swift */,
+				E9B5C85A2B1A21CF00B78E64 /* ConversationInputBarViewController+UIAlertController.swift */,
+			);
+			path = ConversationInputBarViewController;
 			sourceTree = "<group>";
 		};
 		E9B8EB7E2A0CEC370056E417 /* Reactions */ = {
@@ -8708,6 +8719,7 @@
 				EE571C032175ED7B0011B59C /* GroupDetailsNotificationOptionsCell.swift in Sources */,
 				7C3083AC1FE15FBF0036AFCC /* CustomSpacingStackView.swift in Sources */,
 				EF20B59221E3C3A800BE86F8 /* WebLinkTextView.swift in Sources */,
+				E9B5C85B2B1A21CF00B78E64 /* ConversationInputBarViewController+UIAlertController.swift in Sources */,
 				BFFA182820FDE22B00F64377 /* UIAlertController+CompanyLogin.swift in Sources */,
 				5EFD914621C926A900080599 /* PersonalRegistrationStepDescription.swift in Sources */,
 				63421E3726149D7500ADA723 /* PinchToZoomRule.swift in Sources */,

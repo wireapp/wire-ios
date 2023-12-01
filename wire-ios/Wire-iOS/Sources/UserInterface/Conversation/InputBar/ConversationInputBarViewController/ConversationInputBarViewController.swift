@@ -615,9 +615,31 @@ final class ConversationInputBarViewController: UIViewController,
 
     // MARK: - PingButton
 
+    private func confirmPing(completion: @escaping (_ completion: Bool) -> Void) {
+        let controller = UIAlertController.confirmPing(
+            participants: conversation.localParticipantsCount - 1,
+            completion: completion
+        )
+
+        self.present(controller, animated: true)
+    }
+
     @objc
     private func pingButtonPressed(_ button: UIButton?) {
-        appendKnock()
+        let participantCount = conversation.localParticipantsCount - 1
+        // This is the same limit as we have on audio and video calls
+        let confirmPingParticipantsLimit = 4
+
+        if participantCount >= confirmPingParticipantsLimit {
+            confirmPing { [weak self] shouldPing in
+                if shouldPing {
+                    self?.appendKnock()
+                }
+            }
+        } else {
+            // If participants are less than the limit, directly call appendKnock
+            self.appendKnock()
+        }
     }
 
     private func appendKnock() {
@@ -655,7 +677,7 @@ final class ConversationInputBarViewController: UIViewController,
     @objc
     private func giphyButtonPressed(_ sender: Any?) {
         guard !AppDelegate.isOffline,
-                let conversation = conversation as? ZMConversation else { return }
+              let conversation = conversation as? ZMConversation else { return }
 
         inputBar.textView.resignFirstResponder()
         let giphySearchViewController = GiphySearchViewController(searchTerm: "", conversation: conversation, userSession: userSession)
@@ -841,12 +863,12 @@ extension ConversationInputBarViewController: InformalTextViewDelegate {
     func textView(_ textView: UITextView, hasImageToPaste image: MediaAsset) {
         let context = ConfirmAssetViewController.Context(asset: .image(mediaAsset: image),
                                                          onConfirm: {[weak self] editedImage in
-                                                            self?.dismiss(animated: false)
-                                                            self?.postImage(editedImage ?? image)
-            },
+            self?.dismiss(animated: false)
+            self?.postImage(editedImage ?? image)
+        },
                                                          onCancel: { [weak self] in
-                                                            self?.dismiss(animated: false)
-            }
+            self?.dismiss(animated: false)
+        }
         )
 
         let confirmImageViewController = ConfirmAssetViewController(context: context)
