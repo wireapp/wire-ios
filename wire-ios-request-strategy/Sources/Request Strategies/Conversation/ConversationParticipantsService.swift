@@ -42,6 +42,7 @@ enum FederationError: Error, Equatable {
 enum ConversationParticipantsError: Error {
     case invalidOperation
     case missingMLSParticipantsService
+    case failedToAddSomeUsers(users: Set<ZMUser>)
 }
 
 public class ConversationParticipantsService: ConversationParticipantsServiceInterface {
@@ -89,6 +90,11 @@ public class ConversationParticipantsService: ConversationParticipantsServiceInt
                 users: users,
                 conversation: conversation
             )
+        } catch ConversationParticipantsError.failedToAddSomeUsers(users: let failedUsers) {
+            appendFailedToAddUsersMessage(
+                in: conversation,
+                users: failedUsers
+            )
         }
     }
 
@@ -117,14 +123,13 @@ public class ConversationParticipantsService: ConversationParticipantsServiceInt
             try await proteusParticipantsService.addParticipants(users, to: conversation)
 
             // For mixed protocol we only try once and don't handle errors
-            try? await addMLSParticipants(users, to: conversation, showErrors: false)
+            try? await addMLSParticipants(users, to: conversation)
         }
     }
 
     private func addMLSParticipants(
         _ users: [ZMUser],
-        to conversation: ZMConversation,
-        showErrors: Bool
+        to conversation: ZMConversation
     ) async throws {
 
         guard let mlsParticipantsService else {
@@ -152,10 +157,7 @@ public class ConversationParticipantsService: ConversationParticipantsServiceInt
                 )
             }
 
-            if showErrors {
-                // TODO: Insert system message
-                // To be done in https://wearezeta.atlassian.net/browse/WPB-2228
-            }
+            throw ConversationParticipantsError.failedToAddSomeUsers(users: failedUsers)
         }
     }
 
