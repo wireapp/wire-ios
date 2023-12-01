@@ -194,7 +194,7 @@ extension EventDecoder {
         var decryptedEvents: [ZMUpdateEvent] = []
 
         keyStore.encryptionContext.perform { [weak self] sessionsDirectory in
-            guard let `self` = self else { return }
+            guard let self else { return }
 
             decryptedEvents = events.compactMap { event -> ZMUpdateEvent? in
                 switch event.type {

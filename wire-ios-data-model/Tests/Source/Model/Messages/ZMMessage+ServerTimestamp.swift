@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2023 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,13 +17,12 @@
 //
 
 import Foundation
-import UIKit
+import WireDataModel
 
-extension UIAccessibilityIdentification where Self: NSObject {
+extension ZMMessage {
 
-    /// set accessibility identifier and accessibility label to an interaction enabled UI widget.
-    func setLegalHoldAccessibility() {
-        accessibilityIdentifier = "legalhold"
-        accessibilityLabel = L10n.Localizable.Legalhold.accessibility
+    func updateServerTimestamp(with timeInterval: TimeInterval) {
+        serverTimestamp = Date(timeIntervalSince1970: timeInterval)
     }
+
 }
