@@ -216,8 +216,7 @@ extension MessagingTestBase {
                 guard let result = try self.syncMOC.proteusService?.decrypt(data: encryptedData, forSession: sessionID) else {
                     return nil
                 }
-
-                return (didCreateNewSession: result.didCreateSession, decryptedData: result.decryptedData)
+                return (result.didCreateNewSession, result.decryptedData)
             }
         } else {
             syncMOC.zm_cryptKeyStore.encryptionContext.perform { session in
