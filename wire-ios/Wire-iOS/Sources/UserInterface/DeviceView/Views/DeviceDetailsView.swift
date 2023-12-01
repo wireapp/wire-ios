@@ -18,6 +18,7 @@
 
 import SwiftUI
 import Combine
+import WireCommonComponents
 
 struct DeviceDetailsView: View {
     @Environment(\.dismiss)
@@ -50,7 +51,7 @@ struct DeviceDetailsView: View {
             alignment: .leading
         ) {
             Text(L10n.Localizable.Device.Details.Section.Proteus.title)
-                .font(UIFont.mediumRegular.swiftUIFont)
+                .font(FontSpec.mediumRegularFont.swiftUIFont)
                 .foregroundColor(SemanticColors.Label.textSectionHeader.swiftUIColor)
                 .frame(height: 28)
                 .padding([.leading, .top], 16)

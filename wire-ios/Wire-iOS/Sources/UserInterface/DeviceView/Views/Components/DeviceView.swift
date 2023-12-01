@@ -25,7 +25,7 @@ struct DeviceView: View {
     var titleView: some View {
         HStack {
             Text(viewModel.title.clippedValue())
-                .font(UIFont.headerSemiBoldFont.swiftUIFont)
+                .font(FontSpec.headerSemiboldFont.swiftUIFont)
                 .foregroundColor(SemanticColors.Label.textDefault.swiftUIColor)
             if let e2eIdentityCertificateStatusImage = viewModel.certificateStatus.imageForStatus() {
                 e2eIdentityCertificateStatusImage
@@ -41,7 +41,7 @@ struct DeviceView: View {
             titleView
             if !viewModel.proteusID.isEmpty {
                 Text("\(L10n.Localizable.Device.Details.Section.Proteus.id): \(viewModel.proteusID)")
-                    .font(UIFont.mediumRegular.swiftUIFont)
+                    .font(FontSpec.mediumRegularFont.swiftUIFont)
                     .foregroundColor(SemanticColors.Label.textSectionHeader.swiftUIColor)
             }
         }

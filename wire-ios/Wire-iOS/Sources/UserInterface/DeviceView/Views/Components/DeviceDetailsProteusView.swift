@@ -17,6 +17,7 @@
 //
 
 import SwiftUI
+import WireCommonComponents
 
 struct DeviceDetailsProteusView: View {
     @ObservedObject var viewModel: DeviceInfoViewModel
@@ -51,7 +52,7 @@ struct DeviceDetailsProteusView: View {
             if !viewModel.isSelfClient {
                 Divider()
                 Toggle(L10n.Localizable.Device.verified, isOn: $isVerfied)
-                .font(UIFont.headerSemiBoldFont.swiftUIFont)
+                    .font(FontSpec.headerSemiboldFont.swiftUIFont)
                 .padding(.all, 16)
                 .onChange(of: isVerfied) { value in
                     Task {
