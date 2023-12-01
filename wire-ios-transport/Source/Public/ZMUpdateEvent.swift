@@ -115,7 +115,7 @@ extension ZMUpdateEventType {
         case .conversationRename:
             return "conversation.rename"
         case .conversationProtocolUpdate:
-            return "conversation.protocol-update"
+            return "conversation.protocol-update" // TODO: this is the event to be used
         case .conversationTyping:
             return "conversation.typing"
         case .conversationCodeUpdate:
