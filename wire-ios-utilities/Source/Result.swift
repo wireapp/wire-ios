@@ -18,17 +18,18 @@
 
 import Foundation
 
-@available(*, deprecated, message: "Use Swift's native `Result` type")
+public typealias Result<T> = ZMResult<T>
+@available(*, deprecated, renamed: "ZMVoidResult")
+public typealias VoidResult = ZMVoidResult
+
 public enum ZMResult<T> {
     case success(T)
     case failure(Error)
 }
 
-@available(*, deprecated, message: "Use Swift's native `Result` type")
-public typealias ZMVoidResult = ZMResult<Void>
-
-extension ZMVoidResult {
-    static var success: Self { .success(()) }
+public enum ZMVoidResult {
+    case success
+    case failure(Error)
 }
 
 public extension ZMResult {
@@ -50,6 +51,28 @@ public extension ZMResult {
     var value: T? {
         guard case let .success(value) = self else { return nil }
         return value
+    }
+
+    var error: Error? {
+        guard case let .failure(error) = self else { return nil }
+        return error
+    }
+}
+
+public extension ZMVoidResult {
+    init<T>(result: ZMResult<T>) {
+        switch result {
+        case .success: self = .success
+        case .failure(let error): self = .failure(error)
+        }
+    }
+
+    init(error: Error?) {
+        if let error = error {
+            self = .failure(error)
+        } else {
+            self = .success
+        }
     }
 
     var error: Error? {

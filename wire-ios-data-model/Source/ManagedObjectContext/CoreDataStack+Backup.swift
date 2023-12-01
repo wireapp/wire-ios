@@ -93,7 +93,7 @@ extension CoreDataStack {
         applicationContainer: URL,
         dispatchGroup: ZMSDispatchGroup? = nil,
         databaseKey: VolatileData? = nil,
-        completion: @escaping (Result<BackupInfo, Error>) -> Void
+        completion: @escaping (Result<BackupInfo>) -> Void
     ) {
         func fail(_ error: BackupError) {
             log.debug("error backing up local store: \(error)")
@@ -167,7 +167,7 @@ extension CoreDataStack {
         from backupDirectory: URL,
         applicationContainer: URL,
         dispatchGroup: ZMSDispatchGroup? = nil,
-        completion: @escaping ((Result<URL, Error>) -> Void)
+        completion: @escaping ((Result<URL>) -> Void)
     ) {
         importLocalStorage(
             accountIdentifier: accountIdentifier,
@@ -185,7 +185,7 @@ extension CoreDataStack {
         applicationContainer: URL,
         dispatchGroup: ZMSDispatchGroup? = nil,
         messagingMigrator: CoreDataMessagingMigratorProtocol,
-        completion: @escaping ((Result<URL, Error>) -> Void)
+        completion: @escaping ((Result<URL>) -> Void)
     ) {
         func fail(_ error: BackupImportError) {
             WireLogger.localStorage.error("backup: error backing up local store: \(error)")
