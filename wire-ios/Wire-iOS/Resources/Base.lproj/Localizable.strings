@@ -283,6 +283,7 @@
 "conversation.input_bar.audio_message.too_long.title" = "Recording Stopped";
 "conversation.input_bar.audio_message.too_long.message" = "Audio messages are limited to %@.";
 "conversation.ping.many_participants_confirmation.title" = "Are you sure you want to ping %d people?";
+"conversation.ping.action.title" = "Are you sure you want to ping %d people?";
 
 "conversation.input_bar.audio_message.too_long_size.message" = "File size for audio messages is limited to %@.";
 
