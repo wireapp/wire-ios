@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 60;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -8285,7 +8285,7 @@
 				};
 			};
 			buildConfigurationList = 8F42C533199244A700288E4D /* Build configuration list for PBXProject "Wire-iOS" */;
-			compatibilityVersion = "Xcode 3.2";
+			compatibilityVersion = "Xcode 15.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -10671,10 +10671,6 @@
 					x86_64,
 					arm64,
 				);
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build/iOS",
-				);
 			};
 			name = Debug;
 		};
@@ -10685,10 +10681,6 @@
 				"ARCHS[sdk=iphonesimulator*]" = (
 					x86_64,
 					arm64,
-				);
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
 			};
 			name = Release;
@@ -10719,10 +10711,6 @@
 					x86_64,
 					arm64,
 				);
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build/iOS",
-				);
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -10741,7 +10729,6 @@
 					x86_64,
 					arm64,
 				);
-				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -10759,14 +10746,6 @@
 					x86_64,
 					arm64,
 				);
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build",
-					"\"$(SRCROOT)/Carthage/Build/OCMock.xcframework/ios-arm64_i386_x86_64-simulator\"",
-					"\"$(SRCROOT)/Carthage/Build/FBSnapshotTestCase.xcframework/ios-arm64_i386_x86_64-simulator\"",
-					"\"$(SRCROOT)/Carthage/Build/SnapshotTesting.xcframework/ios-arm64_x86_64-simulator\"",
-					"\"$(SRCROOT)/Carthage/Build/WireTesting.xcframework/ios-arm64_x86_64-simulator\"",
-				);
 				ONLY_ACTIVE_ARCH = YES;
 				VALIDATE_WORKSPACE = YES;
 			};
@@ -10779,14 +10758,6 @@
 				"ARCHS[sdk=iphonesimulator*]" = (
 					x86_64,
 					arm64,
-				);
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build",
-					"\"$(SRCROOT)/Carthage/Build/OCMock.xcframework/ios-arm64_i386_x86_64-simulator\"",
-					"\"$(SRCROOT)/Carthage/Build/FBSnapshotTestCase.xcframework/ios-arm64_i386_x86_64-simulator\"",
-					"\"$(SRCROOT)/Carthage/Build/SnapshotTesting.xcframework/ios-arm64_x86_64-simulator\"",
-					"\"$(SRCROOT)/Carthage/Build/WireTesting.xcframework/ios-arm64_x86_64-simulator\"",
 				);
 				ONLY_ACTIVE_ARCH = NO;
 				VALIDATE_WORKSPACE = NO;
@@ -10837,7 +10808,6 @@
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build",
 					"\"$(SRCROOT)/Carthage/Build/OCMock.xcframework/ios-arm64_i386_x86_64-simulator\"",
 					"\"$(SRCROOT)/Carthage/Build/WireTesting.xcframework/ios-arm64_x86_64-simulator\"",
 				);
@@ -10918,7 +10888,6 @@
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build",
 					"\"$(SRCROOT)/Carthage/Build/OCMock.xcframework/ios-arm64_i386_x86_64-simulator\"",
 					"\"$(SRCROOT)/Carthage/Build/WireTesting.xcframework/ios-arm64_x86_64-simulator\"",
 				);
@@ -10960,6 +10929,7 @@
 				CODE_SIGN_IDENTITY = "";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Manual;
+				DEFINES_MODULE = NO;
 				DEVELOPMENT_TEAM = "";
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -10979,6 +10949,7 @@
 				CODE_SIGN_IDENTITY = "";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Manual;
+				DEFINES_MODULE = NO;
 				DEVELOPMENT_TEAM = "";
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
