@@ -74,7 +74,6 @@ public final class EnrollE2eICertificateUseCase: EnrollE2eICertificateUseCaseInt
 
         do {
             return try JSONDecoder().decode(String.self, from: certificateRequest.response)
-            // certificateRequest.response.payloadString()
         } catch {
             throw EnrollE2EICertificateUseCaseFailure.failedToDecodeCertificate
         }
