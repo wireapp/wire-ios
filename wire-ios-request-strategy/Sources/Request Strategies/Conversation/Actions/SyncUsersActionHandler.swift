@@ -71,12 +71,6 @@ class SyncUsersActionHandler: ActionHandler<SyncUsersAction> {
 
     // MARK: - Response
 
-    struct ResponsePayload: Codable {
-
-        let qualified_user_map: Payload.UserProfiles
-
-    }
-
     override func handleResponse(
         _ response: ZMTransportResponse,
         action: SyncUsersAction

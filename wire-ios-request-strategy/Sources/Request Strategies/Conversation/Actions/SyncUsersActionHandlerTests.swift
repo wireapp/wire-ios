@@ -19,135 +19,123 @@
 import XCTest
 @testable import WireRequestStrategy
 
-final class SyncUsersActionHandlerTests: MessagingTestBase {
+final class SyncUsersActionHandlerTests: ActionHandlerTestBase<SyncUsersAction, SyncUsersActionHandler> {
 
     // MARK: - Properties
 
-    typealias RequestPayload = SyncUsersActionHandler.RequestPayload
-    typealias ResponsePayload = SyncUsersActionHandler.ResponsePayload
+    let qualifiedIDs = QualifiedID(uuid: .create(), domain: "example.com")
 
-    // MARK: - Request Generation
+    // MARK: - setUp
 
-    func testRequestGenerationForUnsupportedAPIVersions() {
-        // GIVEN
-        let sut = SyncUsersActionHandler(context: uiMOC)
-        let id = QualifiedID(uuid: .create(), domain: "example.com")
-        let action = SyncUsersAction(qualifiedIDs: [id])
+    override func setUp() {
+        super.setUp()
+        action = SyncUsersAction(qualifiedIDs: [qualifiedIDs])
+    }
 
-        // Test for each unsupported version
-        for version in [APIVersion.v0, .v1, .v2, .v3] {
-            // WHEN
-            let request = sut.request(for: action, apiVersion: version)
+    // MARK: - tearDown
 
-            // THEN
-            XCTAssertNil(request, "Request should be nil for API version \(version)")
+    override func tearDown() {
+        action = nil
+        super.tearDown()
+    }
+
+    // MARK: - Unit Tests
+
+    // MARK: - Request generation
+
+    func test_ItGenerateRequest_APIV5() throws {
+        try test_itGeneratesARequest(
+            for: action,
+            expectedPath: "/v5/list-users",
+            expectedMethod: .post,
+            apiVersion: .v5
+        )
+    }
+
+    func test_ItGenerateRequest_APIV4() throws {
+        try test_itGeneratesARequest(
+            for: action,
+            expectedPath: "/v4/list-users",
+            expectedMethod: .post,
+            apiVersion: .v4
+        )
+    }
+
+    func test_itFailsToGenerateRequests_APIBelowV4() throws {
+        [.v0, .v1, .v2, .v3].forEach {
+            test_itDoesntGenerateARequest(
+                action: action,
+                apiVersion: $0,
+                expectedError: .endpointUnavailable
+            )
         }
-    }
-
-    func testRequestGenerationForAPIVersionV4() throws {
-        // GIVEN
-        let sut = SyncUsersActionHandler(context: uiMOC)
-        let id = QualifiedID(uuid: .create(), domain: "example.com")
-        let action = SyncUsersAction(qualifiedIDs: [id])
-
-        // WHEN
-        let result = try XCTUnwrap(sut.request(for: action, apiVersion: .v4))
-
-        // Then
-        XCTAssertNotNil(result, "Request should not be nil for API version .v4")
-        XCTAssertEqual(result.path, "/v4/list-users", "Incorrect path for API version .v4")
-        XCTAssertEqual(result.method, .post, "Incorrect HTTP method for API version .v4")
-        XCTAssertEqual(result.apiVersion, APIVersion.v4.rawValue, "Incorrect API version set in the request for .v4")
-
-        let payload = try XCTUnwrap(RequestPayload(result))
-        XCTAssertEqual(payload, RequestPayload(qualified_users: [id]))
-    }
-
-    func testRequestGenerationForAPIVersionV5() throws {
-        // GIVEN
-        let sut = SyncUsersActionHandler(context: uiMOC)
-        let id = QualifiedID(uuid: .create(), domain: "example.com")
-        let action = SyncUsersAction(qualifiedIDs: [id])
-
-        // WHEN
-        let result = try XCTUnwrap(sut.request(for: action, apiVersion: .v5))
-
-        // THEN
-        XCTAssertNotNil(result, "Request should not be nil for API version .v5")
-        XCTAssertEqual(result.path, "/v5/list-users", "Incorrect path for API version .v5")
-        XCTAssertEqual(result.method, .post, "Incorrect HTTP method for API version .v5")
-        XCTAssertEqual(result.apiVersion, APIVersion.v5.rawValue, "Incorrect API version set in the request for .v5")
-
-        let payload = try XCTUnwrap(RequestPayload(result))
-        XCTAssertEqual(payload, RequestPayload(qualified_users: [id]))
     }
 
     // MARK: - Response Handling
 
-    func testHandleResponse_UnsupportedAPIVersion() throws {
+    func test_ItHandlesSuccess() throws {
         // GIVEN
-        let sut = SyncUsersActionHandler(context: uiMOC)
-        let id = QualifiedID(uuid: .create(), domain: "example.com")
-        let didFail = expectation(description: "did fail")
 
-        let action = SyncUsersAction(qualifiedIDs: [id]) { result in
-            guard case .failure(.endpointUnavailable) = result else {
-                XCTFail("unexpected result: \(String(describing: result))")
-                return
-            }
-        }
+        let user = ZMUser.insertNewObject(in: uiMOC)
+        user.remoteIdentifier = UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")
+        user.domain = "example.com"
+        user.isPendingMetadataRefresh = false
+        user.needsToBeUpdatedFromBackend = true
 
-        didFail.fulfill()
-
-        let payload = [
-            "label": "foo",
-            "message": "bar"
+        let payload: [AnyHashable: Any] = [
+            "failed": [
+                [
+                    "domain": "example.com",
+                    "id": "99db9768-04e3-4b5d-9268-831b6a25c4ab"
+                ]
+            ],
+            "found": [
+                [
+                    "accent_id": 2147483647,
+                    "assets": [
+                        [
+                            "key": "3-1-47de4580-ae51-4650-acbb-d10c028cb0ac",
+                            "size": "preview",
+                            "type": "image"
+                        ]
+                    ],
+                    "deleted": true,
+                    "email": "string",
+                    "expires_at": "2021-05-12T10:52:02.671Z",
+                    "handle": "string",
+                    "id": "99db9768-04e3-4b5d-9268-831b6a25c4ab",
+                    "legalhold_status": "enabled",
+                    "name": "string",
+                    "picture": [
+                        "string"
+                    ],
+                    "qualified_id": [
+                        "domain": "example.com",
+                        "id": "99db9768-04e3-4b5d-9268-831b6a25c4ab"
+                    ],
+                    "service": [
+                        "id": "99db9768-04e3-4b5d-9268-831b6a25c4ab",
+                        "provider": "99db9768-04e3-4b5d-9268-831b6a25c4ab"
+                    ],
+                    "supported_protocols": [
+                        "proteus"
+                    ],
+                    "team": "99db9768-04e3-4b5d-9268-831b6a25c4ab"
+                ]
+            ]
         ]
 
-        let response = ZMTransportResponse(
-            payload: payload as ZMTransportData,
-            httpStatus: 999,
-            transportSessionError: nil,
-            apiVersion: 1
-        )
-
-        // When
-        sut.handleResponse(response, action: action)
-        XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
+        let _: SyncUsersAction.Result = try XCTUnwrap(test_itHandlesSuccess(
+            status: 200,
+            payload: payload as ZMTransportData
+        ))
 
     }
 
-    func test_HandleResponse_UnknownError() throws {
-        // Given
-        let sut = SyncUsersActionHandler(context: uiMOC)
-        let id = QualifiedID(uuid: .create(), domain: "example.com")
-
-        let didFail = expectation(description: "did fail")
-        let action = SyncUsersAction(qualifiedIDs: [id]) { result in
-            // Then
-            guard case .failure(.unknownError(code: 999, label: "foo", message: "bar")) = result else {
-                XCTFail("unexpected result: \(String(describing: result))")
-                return
-            }
-
-            didFail.fulfill()
-        }
-
-        let payload = [
-            "label": "foo",
-            "message": "bar"
-        ]
-
-        let response = ZMTransportResponse(
-            payload: payload as ZMTransportData,
-            httpStatus: 999,
-            transportSessionError: nil,
-            apiVersion: 4
-        )
-
-        // When
-        sut.handleResponse(response, action: action)
-        XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
+    func test_itHandlesFailures() {
+        test_itHandlesFailures([
+            .failure(status: 999, error: .unknownError(code: 999, label: "foo", message: ""))
+        ])
     }
 
 }
