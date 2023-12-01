@@ -498,7 +498,7 @@ extension ClientListViewController: ZMUserObserver {
 
 }
 
-//MARK: - E2eIdentityProvider
+// MARK: - E2eIdentityProvider
 extension ClientListViewController {
 
      func e2eIdentityProvider() -> E2eIdentityProviding {
