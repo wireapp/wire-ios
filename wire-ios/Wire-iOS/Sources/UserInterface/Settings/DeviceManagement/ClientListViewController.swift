@@ -189,7 +189,8 @@ final class ClientListViewController: UIViewController,
                     viewModel: DeviceInfoViewModel.map(
                         userClient: client,
                         userSession: userSession,
-                        credentials: self.credentials, getUserClientFingerprintUseCase: userSession.getUserClientFingerprint
+                        credentials: self.credentials,
+                        getUserClientFingerprintUseCase: userSession.getUserClientFingerprint
                     )) {
                         self.navigationController?.setNavigationBarHidden(false, animated: false)
                     }
