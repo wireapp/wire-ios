@@ -39,7 +39,7 @@ enum FederationError: Error, Equatable {
     case nonFederatingDomains(Set<String>)
 }
 
-enum ConversationParticipantsError: Error {
+enum ConversationParticipantsError: Error, Equatable {
     case invalidOperation
     case missingMLSParticipantsService
     case failedToAddSomeUsers(users: Set<ZMUser>)
@@ -91,7 +91,7 @@ public class ConversationParticipantsService: ConversationParticipantsServiceInt
                 conversation: conversation
             )
         } catch ConversationParticipantsError.failedToAddSomeUsers(users: let failedUsers) {
-            appendFailedToAddUsersMessage(
+            await appendFailedToAddUsersMessage(
                 in: conversation,
                 users: failedUsers
             )
@@ -112,7 +112,7 @@ public class ConversationParticipantsService: ConversationParticipantsServiceInt
 
         case .mls:
 
-            try await addMLSParticipants(users, to: conversation, showErrors: true)
+            try await addMLSParticipants(users, to: conversation)
 
         case .mixed:
 

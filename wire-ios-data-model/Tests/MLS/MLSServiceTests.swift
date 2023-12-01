@@ -541,7 +541,6 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
     }
 
-
     func test_AddingMembersToConversation_ThrowsFailedToClaimKeyPackages() async {
         // Given
         let userID1 = UUID.create()
@@ -570,28 +569,6 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         await assertItThrows(error: MLSService.MLSAddMembersError.failedToClaimKeyPackages(users: [user2, user3])) {
             // When
             try await sut.addMembersToConversation(with: [user1, user2, user3], for: groupID)
-        }
-    }
-
-    func test_AddingMembersToConversation_ClaimKeyPackagesFails() async {
-        // Given
-        let domain = "example.com"
-        let id = UUID.create()
-        let mlsGroupID = MLSGroupID(Data([1, 2, 3]))
-        let mlsUser: [MLSUser] = [MLSUser(id: id, domain: domain)]
-
-        // Mock no pending proposals.
-        mockMLSActionExecutor.mockCommitPendingProposals = { _ in
-            throw MLSActionExecutor.Error.noPendingProposals
-        }
-
-        // Mock failure for claiming key packages.
-        mockActionsProvider.claimKeyPackagesUserIDDomainExcludedSelfClientIDIn_MockError = ClaimMLSKeyPackageAction.Failure.missingDomain
-
-        // Then
-        await assertItThrows(error: MLSService.MLSAddMembersError.noInviteesToAdd) {
-            // When
-            try await sut.addMembersToConversation(with: mlsUser, for: mlsGroupID)
         }
     }
 

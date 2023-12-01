@@ -183,7 +183,7 @@ class ConversationParticipantsServiceTests: MessagingTestBase {
 
     // MARK: - Adding Participants (MLS) - Failed to claim Key Packages
 
-    func test_AddParticipants_RetriesOperation_AfterFailingToClaimKeyPackages() async throws {
+    func test_AddParticipants_RetriesOperation_AndInsertsSystemMessageForFailedUsers_AfterFailingToClaimKeyPackages() async throws {
         // GIVEN
         let (failedUser1, failedUser2) = await uiMOC.perform { [self] in
             conversation.messageProtocol = .mls
@@ -204,6 +204,8 @@ class ConversationParticipantsServiceTests: MessagingTestBase {
         try await sut.addParticipants([user, failedUser1, failedUser2], to: conversation)
 
         // THEN
+
+        // It adds the user that didn't fail key package claim
         XCTAssertEqual(
             mockMLSParticipantsService.addParticipantsTo_Invocations.count,
             2
@@ -217,6 +219,12 @@ class ConversationParticipantsServiceTests: MessagingTestBase {
         XCTAssertEqual(
             Set(addedUsers),
             Set([user])
+        )
+
+        // It inserts a system message for the users that failed key package claim
+        await assertSystemMessageWasInserted(
+            forUsers: Set([failedUser1, failedUser2]),
+            in: conversation
         )
     }
 
