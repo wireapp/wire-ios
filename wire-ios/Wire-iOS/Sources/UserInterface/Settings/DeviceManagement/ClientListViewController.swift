@@ -190,7 +190,8 @@ final class ClientListViewController: UIViewController,
                         userClient: client,
                         userSession: userSession,
                         credentials: self.credentials,
-                        getUserClientFingerprintUseCase: userSession.getUserClientFingerprint
+                        getUserClientFingerprintUseCase: userSession.getUserClientFingerprint,
+                        e2eIdentityProvider: self.e2eIdentityProvider()
                     )) {
                         self.navigationController?.setNavigationBarHidden(false, animated: false)
                     }
@@ -493,6 +494,32 @@ extension ClientListViewController: ZMUserObserver {
             clients.remove(selfClient)
             self.clients = Array(clients)
         }
+    }
+
+}
+
+//MARK: - E2eIdentityProvider
+extension ClientListViewController {
+
+     func e2eIdentityProvider() -> E2eIdentityProviding {
+        if DeveloperDeviceDetailsSettingsSelectionViewModel.isE2eIdentityViewEnabled {
+            let status = E2EIdentityCertificateStatus.status(
+                for: DeveloperDeviceDetailsSettingsSelectionViewModel.selectedE2eIdentiyStatus ?? ""
+            )
+            switch status {
+            case .notActivated:
+                return MockNotActivatedE2eIdentityProvider()
+            case .revoked:
+                return MockRevokedE2eIdentityProvider()
+            case .expired:
+                return MockExpiredE2eIdentityProvider()
+            case .valid:
+                return MockValidE2eIdentityProvider()
+            case .none:
+                return E2eIdentityProvider()
+            }
+        }
+        return E2eIdentityProvider()
     }
 
 }

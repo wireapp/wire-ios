@@ -165,7 +165,8 @@ extension DeviceInfoViewModel {
         userClient: UserClient,
         userSession: UserSession,
         credentials: ZMEmailCredentials?,
-        getUserClientFingerprintUseCase: GetUserClientFingerprintUseCaseProtocol
+        getUserClientFingerprintUseCase: GetUserClientFingerprintUseCaseProtocol,
+        e2eIdentityProvider: E2eIdentityProviding
     ) -> DeviceInfoViewModel {
         return DeviceInfoViewModel(
             uuid: UUID().uuidString,
@@ -177,7 +178,8 @@ extension DeviceInfoViewModel {
             actionsHandler: DeviceDetailsViewActionsHandler(
                 userClient: userClient,
                 userSession: userSession,
-                credentials: credentials
+                credentials: credentials,
+                e2eIdentityProvider: e2eIdentityProvider
             ),
             isE2EIdentityEnabled: DeveloperDeviceDetailsSettingsSelectionViewModel.isE2eIdentityViewEnabled,
             isSelfClient: userClient.isSelfClient(),

@@ -28,21 +28,24 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
     var certificate: E2eIdentityCertificate?
     var isProcessing: ((Bool) -> Void)?
 
+    let e2eIdentityProvider: E2eIdentityProviding
     let userSession: UserSession
 
     init(
         userClient: UserClient,
         userSession: UserSession,
-        credentials: ZMEmailCredentials?
+        credentials: ZMEmailCredentials?,
+        e2eIdentityProvider: E2eIdentityProviding
     ) {
         self.userClient = userClient
         self.credentials = credentials
         self.userSession = userSession
+        self.e2eIdentityProvider = e2eIdentityProvider
     }
 
     func fetchCertificate() async -> E2eIdentityCertificate? {
         do {
-            return try await userClient.fetchE2eIdentityCertificate(e2eIdentityProvider: e2eIdentityProvider())
+            return try await userClient.fetchE2eIdentityCertificate(e2eIdentityProvider: e2eIdentityProvider)
         } catch {
         }
         return nil
@@ -96,27 +99,6 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
 
     func copyToClipboard(_ value: String) {
         UIPasteboard.general.string = value
-    }
-
-    private func e2eIdentityProvider() -> E2eIdentityProviding {
-        if DeveloperDeviceDetailsSettingsSelectionViewModel.isE2eIdentityViewEnabled {
-            let status = E2EIdentityCertificateStatus.status(
-                for: DeveloperDeviceDetailsSettingsSelectionViewModel.selectedE2eIdentiyStatus ?? ""
-            )
-            switch status {
-            case .notActivated:
-                return MockNotActivatedE2eIdentityProvider()
-            case .revoked:
-                return MockRevokedE2eIdentityProvider()
-            case .expired:
-                return MockExpiredE2eIdentityProvider()
-            case .valid:
-                return MockValidE2eIdentityProvider()
-            case .none:
-                return E2eIdentityProvider()
-            }
-        }
-        return E2eIdentityProvider()
     }
 }
 
