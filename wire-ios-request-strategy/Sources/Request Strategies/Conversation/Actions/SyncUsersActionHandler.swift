@@ -21,7 +21,19 @@ import WireDataModel
 
 class SyncUsersActionHandler: ActionHandler<SyncUsersAction> {
 
-    private let userProfileProcessor = UserProfilePayloadProcessor()
+    private let payloadProcessor: UserProfilePayloadProcessing
+
+    required convenience init(context: NSManagedObjectContext) {
+        self.init(context: context, payloadProcessor: nil)
+    }
+
+    init(
+        context: NSManagedObjectContext,
+        payloadProcessor: UserProfilePayloadProcessing? = nil
+    ) {
+        self.payloadProcessor = payloadProcessor ?? UserProfilePayloadProcessor()
+        super.init(context: context)
+    }
 
     // MARK: - Request
 
@@ -97,7 +109,7 @@ class SyncUsersActionHandler: ActionHandler<SyncUsersAction> {
                     return
                 }
 
-                userProfileProcessor.updateUserProfiles(
+                payloadProcessor.updateUserProfiles(
                     from: payload.found,
                     in: context
                 )

@@ -73,20 +73,32 @@ final class SyncUsersActionHandlerTests: ActionHandlerTestBase<SyncUsersAction, 
 
     // MARK: - Response Handling
 
-    func test_ItHandlesSuccess() throws {
+    func test_ItHandlesSuccess() async throws {
         // GIVEN
+        let mockProcessor = MockUserProfilePayloadProcessing()
+        let sut = SyncUsersActionHandler(context: syncMOC, payloadProcessor: mockProcessor)
 
-        let user = ZMUser.insertNewObject(in: uiMOC)
-        user.remoteIdentifier = UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")
-        user.domain = "example.com"
-        user.isPendingMetadataRefresh = false
-        user.needsToBeUpdatedFromBackend = true
+        // mock the payload processor method
+        mockProcessor.updateUserProfilesFromIn_MockMethod = { _, _ in }
 
-        let payload: [AnyHashable: Any] = [
+        // set up a failed user
+        let uuidString = "99db9768-04e3-4b5d-9268-831b6a25c4ab"
+        let domain = "example.com"
+        let failedUser = await syncMOC.perform { [self] in
+            let failedUser = ZMUser.insertNewObject(in: syncMOC)
+            failedUser.remoteIdentifier = UUID(uuidString: uuidString)
+            failedUser.domain = domain
+            failedUser.isPendingMetadataRefresh = false
+            failedUser.needsToBeUpdatedFromBackend = true
+            return failedUser
+        }
+
+        // set up payload with failed and found users
+        let payloadData: [AnyHashable: Any] = [
             "failed": [
                 [
-                    "domain": "example.com",
-                    "id": "99db9768-04e3-4b5d-9268-831b6a25c4ab"
+                    "domain": domain,
+                    "id": uuidString
                 ]
             ],
             "found": [
@@ -125,11 +137,24 @@ final class SyncUsersActionHandlerTests: ActionHandlerTestBase<SyncUsersAction, 
             ]
         ]
 
-        let _: SyncUsersAction.Result = try XCTUnwrap(test_itHandlesSuccess(
+        // THEN
+        test_itHandlesSuccess(
+            sut: sut,
             status: 200,
-            payload: payload as ZMTransportData
-        ))
+            payload: payloadData as ZMTransportData,
+            apiVersion: .v5
+        )
 
+        // assert it marks failed users as unavailable
+        await syncMOC.perform {
+            XCTAssertTrue(failedUser.isPendingMetadataRefresh)
+            XCTAssertFalse(failedUser.needsToBeUpdatedFromBackend)
+        }
+
+        // assert the payload processor is called
+        XCTAssertEqual(mockProcessor.updateUserProfilesFromIn_Invocations.count, 1)
+
+        // TODO: nice to have -> assert that the paylod processor has received the right argument
     }
 
     func test_itHandlesFailures() {

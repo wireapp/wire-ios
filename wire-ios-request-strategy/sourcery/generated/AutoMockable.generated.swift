@@ -295,3 +295,25 @@ public class MockSessionEstablisherInterface: SessionEstablisherInterface {
     }
 
 }
+class MockUserProfilePayloadProcessing: UserProfilePayloadProcessing {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - updateUserProfiles
+
+    var updateUserProfilesFromIn_Invocations: [(userProfiles: Payload.UserProfiles, context: NSManagedObjectContext)] = []
+    var updateUserProfilesFromIn_MockMethod: ((Payload.UserProfiles, NSManagedObjectContext) -> Void)?
+
+    func updateUserProfiles(from userProfiles: Payload.UserProfiles, in context: NSManagedObjectContext) {
+        updateUserProfilesFromIn_Invocations.append((userProfiles: userProfiles, context: context))
+
+        guard let mock = updateUserProfilesFromIn_MockMethod else {
+            fatalError("no mock for `updateUserProfilesFromIn`")
+        }
+
+        mock(userProfiles, context)
+    }
+
+}
