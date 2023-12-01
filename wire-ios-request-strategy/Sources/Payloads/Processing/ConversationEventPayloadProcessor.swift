@@ -575,11 +575,14 @@ final class ConversationEventPayloadProcessor {
         conversation.domain = BackendInfo.isFederationEnabled ? payload.qualifiedID?.domain : nil
         conversation.needsToBeUpdatedFromBackend = false
 
-        if let epoch = payload.epoch.flatMap(UInt64.init) {
-            conversation.epoch = epoch
+        if let epoch = payload.epoch {
+            conversation.epoch = UInt64(epoch)
         }
 
-        if let mlsGroupID = payload.mlsGroupID.flatMap(MLSGroupID.init(base64Encoded:)) {
+        if
+            let base64String = payload.mlsGroupID,
+            let mlsGroupID = MLSGroupID(base64Encoded: base64String)
+        {
             conversation.mlsGroupID = mlsGroupID
         }
     }
