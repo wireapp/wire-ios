@@ -10659,10 +10659,7 @@
 					x86_64,
 					arm64,
 				);
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build/iOS",
-				);
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 			};
 			name = Debug;
 		};
@@ -10674,10 +10671,7 @@
 					x86_64,
 					arm64,
 				);
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build/iOS",
-				);
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 			};
 			name = Release;
 		};
@@ -10707,10 +10701,7 @@
 					x86_64,
 					arm64,
 				);
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build/iOS",
-				);
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -10749,7 +10740,6 @@
 				);
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build",
 					"\"$(SRCROOT)/Carthage/Build/OCMock.xcframework/ios-arm64_i386_x86_64-simulator\"",
 					"\"$(SRCROOT)/Carthage/Build/FBSnapshotTestCase.xcframework/ios-arm64_i386_x86_64-simulator\"",
 					"\"$(SRCROOT)/Carthage/Build/SnapshotTesting.xcframework/ios-arm64_x86_64-simulator\"",
@@ -10770,7 +10760,6 @@
 				);
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build",
 					"\"$(SRCROOT)/Carthage/Build/OCMock.xcframework/ios-arm64_i386_x86_64-simulator\"",
 					"\"$(SRCROOT)/Carthage/Build/FBSnapshotTestCase.xcframework/ios-arm64_i386_x86_64-simulator\"",
 					"\"$(SRCROOT)/Carthage/Build/SnapshotTesting.xcframework/ios-arm64_x86_64-simulator\"",
@@ -10825,7 +10814,6 @@
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build",
 					"\"$(SRCROOT)/Carthage/Build/OCMock.xcframework/ios-arm64_i386_x86_64-simulator\"",
 					"\"$(SRCROOT)/Carthage/Build/WireTesting.xcframework/ios-arm64_x86_64-simulator\"",
 				);
@@ -10906,7 +10894,6 @@
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build",
 					"\"$(SRCROOT)/Carthage/Build/OCMock.xcframework/ios-arm64_i386_x86_64-simulator\"",
 					"\"$(SRCROOT)/Carthage/Build/WireTesting.xcframework/ios-arm64_x86_64-simulator\"",
 				);

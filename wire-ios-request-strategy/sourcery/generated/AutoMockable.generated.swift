@@ -1,6 +1,26 @@
 // Generated using Sourcery 2.1.2 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
+
+//
+// Wire
+// Copyright (C) 2023 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
+
 // swiftlint:disable superfluous_disable_command
+// swiftlint:disable vertical_whitespace
 // swiftlint:disable line_length
 // swiftlint:disable variable_name
 
@@ -11,13 +31,35 @@ import UIKit
 import AppKit
 #endif
 
+
 @testable import WireRequestStrategy
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 public class MockAPIProviderInterface: APIProviderInterface {
 
     // MARK: - Life cycle
 
     public init() {}
+
 
     // MARK: - prekeyAPI
 
@@ -61,6 +103,7 @@ public class MockMessageAPI: MessageAPI {
     // MARK: - Life cycle
 
     public init() {}
+
 
     // MARK: - sendProteusMessage
 
@@ -115,6 +158,7 @@ public class MockMessageDependencyResolverInterface: MessageDependencyResolverIn
 
     public init() {}
 
+
     // MARK: - waitForDependenciesToResolve
 
     public var waitForDependenciesToResolveFor_Invocations: [any SendableMessage] = []
@@ -142,6 +186,7 @@ public class MockMessageSenderInterface: MessageSenderInterface {
 
     public init() {}
 
+
     // MARK: - sendMessage
 
     public var sendMessageMessage_Invocations: [any SendableMessage] = []
@@ -168,6 +213,7 @@ public class MockPrekeyAPI: PrekeyAPI {
     // MARK: - Life cycle
 
     public init() {}
+
 
     // MARK: - fetchPrekeys
 
@@ -199,6 +245,7 @@ public class MockPrekeyPayloadProcessorInterface: PrekeyPayloadProcessorInterfac
 
     public init() {}
 
+
     // MARK: - establishSessions
 
     public var establishSessionsFromWithContext_Invocations: [(payload: Payload.PrekeyByQualifiedUserID, selfClient: UserClient, context: NSManagedObjectContext)] = []
@@ -224,6 +271,7 @@ public class MockQuickSyncObserverInterface: QuickSyncObserverInterface {
 
     public init() {}
 
+
     // MARK: - waitForQuickSyncToFinish
 
     public var waitForQuickSyncToFinish_Invocations: [Void] = []
@@ -245,6 +293,7 @@ public class MockSessionEstablisherInterface: SessionEstablisherInterface {
     // MARK: - Life cycle
 
     public init() {}
+
 
     // MARK: - establishSession
 
@@ -270,4 +319,5 @@ public class MockSessionEstablisherInterface: SessionEstablisherInterface {
 
 // swiftlint:enable variable_name
 // swiftlint:enable line_length
+// swiftlint:enable vertical_whitespace
 // swiftlint:enable superfluous_disable_command

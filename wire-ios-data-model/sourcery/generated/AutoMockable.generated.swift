@@ -1,6 +1,26 @@
 // Generated using Sourcery 2.1.2 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
+
+//
+// Wire
+// Copyright (C) 2023 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
+
 // swiftlint:disable superfluous_disable_command
+// swiftlint:disable vertical_whitespace
 // swiftlint:disable line_length
 // swiftlint:disable variable_name
 
@@ -16,9 +36,31 @@ import Combine
 
 @testable import WireDataModel
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 class MockCoreDataMessagingMigratorProtocol: CoreDataMessagingMigratorProtocol {
 
     // MARK: - Life cycle
+
+
 
     // MARK: - requiresMigration
 
@@ -64,6 +106,7 @@ public class MockCryptoboxMigrationManagerInterface: CryptoboxMigrationManagerIn
     // MARK: - Life cycle
 
     public init() {}
+
 
     // MARK: - isMigrationNeeded
 
@@ -128,6 +171,8 @@ class MockEARKeyEncryptorInterface: EARKeyEncryptorInterface {
 
     // MARK: - Life cycle
 
+
+
     // MARK: - encryptDatabaseKey
 
     var encryptDatabaseKeyPublicKey_Invocations: [(databaseKey: Data, publicKey: SecKey)] = []
@@ -180,6 +225,7 @@ public class MockEARKeyRepositoryInterface: EARKeyRepositoryInterface {
     // MARK: - Life cycle
 
     public init() {}
+
 
     // MARK: - storePublicKey
 
@@ -376,6 +422,7 @@ public class MockEARServiceInterface: EARServiceInterface {
 
     public var delegate: EARServiceDelegate?
 
+
     // MARK: - enableEncryptionAtRest
 
     public var enableEncryptionAtRestContextSkipMigration_Invocations: [(context: NSManagedObjectContext, skipMigration: Bool)] = []
@@ -518,6 +565,7 @@ public class MockFeatureRepositoryInterface: FeatureRepositoryInterface {
     // MARK: - Life cycle
 
     public init() {}
+
 
     // MARK: - fetchAppLock
 
@@ -788,6 +836,8 @@ class MockFileManagerInterface: FileManagerInterface {
 
     // MARK: - Life cycle
 
+
+
     // MARK: - fileExists
 
     var fileExistsAtPath_Invocations: [String] = []
@@ -848,6 +898,8 @@ class MockFileManagerInterface: FileManagerInterface {
 class MockMLSActionsProviderProtocol: MLSActionsProviderProtocol {
 
     // MARK: - Life cycle
+
+
 
     // MARK: - fetchBackendPublicKeys
 
@@ -1097,6 +1149,7 @@ public class MockMLSDecryptionServiceInterface: MLSDecryptionServiceInterface {
 
     public init() {}
 
+
     // MARK: - onEpochChanged
 
     public var onEpochChanged_Invocations: [Void] = []
@@ -1145,6 +1198,7 @@ public class MockMLSEncryptionServiceInterface: MLSEncryptionServiceInterface {
 
     public init() {}
 
+
     // MARK: - encrypt
 
     public var encryptMessageFor_Invocations: [(message: [Byte], groupID: MLSGroupID)] = []
@@ -1183,6 +1237,7 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
     }
 
     public var underlyingLastPrekeyID: UInt16!
+
 
     // MARK: - completeInitialization
 
@@ -1496,6 +1551,7 @@ public class MockSubconversationGroupIDRepositoryInterface: SubconversationGroup
 
     public init() {}
 
+
     // MARK: - storeSubconversationGroupID
 
     public var storeSubconversationGroupIDForTypeParentGroupID_Invocations: [(groupID: MLSGroupID?, type: SubgroupType, parentGroupID: MLSGroupID)] = []
@@ -1551,4 +1607,5 @@ public class MockSubconversationGroupIDRepositoryInterface: SubconversationGroup
 
 // swiftlint:enable variable_name
 // swiftlint:enable line_length
+// swiftlint:enable vertical_whitespace
 // swiftlint:enable superfluous_disable_command
