@@ -49,6 +49,7 @@ enum E2eIdentityCertificateError: Error {
 public final class E2eIdentityProvider: E2eIdentityProviding {
     public var isE2EIdentityEnabled: Bool
 
+    // TODO: Change this upon implementing business logic
     public init(isE2EIdentityEnabled: Bool = false) {
         self.isE2EIdentityEnabled = isE2EIdentityEnabled
     }
