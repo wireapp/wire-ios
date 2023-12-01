@@ -20,7 +20,7 @@ import SwiftUI
 
 struct DeviceDetailsProteusView: View {
     @ObservedObject var viewModel: DeviceInfoViewModel
-    @State var isVerfied: Bool = false
+    @State var isVerfied: Bool
 
     var body: some View {
         VStack(alignment: .leading) {
@@ -58,11 +58,6 @@ struct DeviceDetailsProteusView: View {
                         await self.viewModel.updateVerifiedStatus(value)
                     }
                 }
-            }
-        }
-        .onAppear {
-            if !viewModel.isSelfClient {
-                isVerfied = viewModel.isProteusVerificationEnabled
             }
         }
     }
