@@ -37,7 +37,7 @@ final class DeviceInfoViewModel: ObservableObject {
     let uuid: String
     let addedDate: String
     let proteusID: String
-    let getUserClientFingerprintUseCase: GetUserClientFingerprintUseCaseProtocol
+    let getUserClientFingerprint: GetUserClientFingerprintUseCaseProtocol
     let userClient: UserClient
     var isE2EIdentityEnabled: Bool
     var isSelfClient: Bool
@@ -81,7 +81,7 @@ final class DeviceInfoViewModel: ObservableObject {
         isE2EIdentityEnabled: Bool,
         isSelfClient: Bool,
         userSession: UserSession,
-        getUserClientFingerprintUseCase: GetUserClientFingerprintUseCaseProtocol,
+        getUserClientFingerprint: GetUserClientFingerprintUseCaseProtocol,
         userClient: UserClient
     ) {
         self.uuid = uuid
@@ -94,7 +94,7 @@ final class DeviceInfoViewModel: ObservableObject {
         self.isE2EIdentityEnabled = isE2EIdentityEnabled
         self.userSession = userSession
         self.isSelfClient = isSelfClient
-        self.getUserClientFingerprintUseCase = getUserClientFingerprintUseCase
+        self.getUserClientFingerprint = getUserClientFingerprint
         self.userClient = userClient
         self.actionsHandler.isProcessing = {[weak self] isProcessing in
             RunLoop.main.perform {
@@ -105,7 +105,7 @@ final class DeviceInfoViewModel: ObservableObject {
 
     func fetchFingerPrintForProteus() async {
         isActionInProgress = true
-        guard let data = await getUserClientFingerprintUseCase.invoke(userClient: userClient),
+        guard let data = await getUserClientFingerprint.invoke(userClient: userClient),
                 let fingerPrint = String(data: data, encoding: .utf8) else {
             return
         }
@@ -169,7 +169,7 @@ extension DeviceInfoViewModel {
             isE2EIdentityEnabled: DeveloperDeviceDetailsSettingsSelectionViewModel.isE2eIdentityViewEnabled,
             isSelfClient: userClient.isSelfClient(),
             userSession: userSession,
-            getUserClientFingerprintUseCase: getUserClientFingerprintUseCase,
+            getUserClientFingerprint: getUserClientFingerprintUseCase,
             userClient: userClient
         )
     }
