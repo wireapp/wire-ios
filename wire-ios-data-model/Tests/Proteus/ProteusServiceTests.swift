@@ -66,13 +66,13 @@ class ProteusServiceTests: XCTestCase {
         }
 
         // When
-        let (didCreateSession, decryptedData) = try sut.decrypt(
+        let (didCreateNewSession, decryptedData) = try sut.decrypt(
             data: encryptedData,
             forSession: sessionID
         )
 
         // Then
-        XCTAssertFalse(didCreateSession)
+        XCTAssertFalse(didCreateNewSession)
         XCTAssertEqual(decryptedData, Data([0, 1, 2, 3, 4, 5]))
     }
 
@@ -123,13 +123,13 @@ class ProteusServiceTests: XCTestCase {
         }
 
         // When
-        let (didCreateSession, decryptedData) = try sut.decrypt(
+        let (didCreateNewSession, decryptedData) = try sut.decrypt(
             data: encryptedData,
             forSession: sessionID
         )
 
         // Then
-        XCTAssertTrue(didCreateSession)
+        XCTAssertTrue(didCreateNewSession)
         XCTAssertEqual(decryptedData, Data([0, 1, 2, 3, 4, 5]))
     }
 

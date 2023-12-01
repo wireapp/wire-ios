@@ -259,10 +259,11 @@ extension ZMConversation {
 
     /// Creates a system message that inform that there are pontential lost messages, and that some users were added to the conversation
     @objc public func appendNewPotentialGapSystemMessage(users: Set<ZMUser>?, timestamp: Date) {
+        guard let context = managedObjectContext else { return }
 
         let previousLastMessage = lastMessage
         let systemMessage = self.appendSystemMessage(type: .potentialGap,
-                                                     sender: ZMUser.selfUser(in: self.managedObjectContext!),
+                                                     sender: ZMUser.selfUser(in: context),
                                                      users: users,
                                                      clients: nil,
                                                      timestamp: timestamp)
@@ -275,7 +276,7 @@ extension ZMConversation {
             // users property of the new one to use old users and calculate the added / removed users
             // from the time the previous one was added
             systemMessage.users = previousLastMessage.users
-            self.managedObjectContext?.delete(previousLastMessage)
+            context.delete(previousLastMessage)
         }
     }
 

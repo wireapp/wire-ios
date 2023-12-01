@@ -65,7 +65,7 @@ final class ServiceDetailViewController: UIViewController {
     private let detailView: ServiceDetailView
     private let actionButton: Button
     private let actionType: ActionType
-    private let selfUser: UserType
+    private let userSession: UserSession
 
     /// init method with ServiceUser, destination conversation and customized UI.
     ///
@@ -75,15 +75,19 @@ final class ServiceDetailViewController: UIViewController {
     ///   - actionType: Enum ActionType to choose the actiion add or remove the service user
     ///   - selfUser: self user, for inject mock user for testing
     ///   - completion: completion handler
-    init(serviceUser: ServiceUser,
-         actionType: ActionType,
-         selfUser: UserType,
-         completion: Completion? = nil) {
+    init(
+        serviceUser: ServiceUser,
+        actionType: ActionType,
+        userSession: UserSession,
+        completion: Completion? = nil
+    ) {
         self.service = Service(serviceUser: serviceUser)
         self.completion = completion
-        self.selfUser = selfUser
+        self.userSession = userSession
 
         detailView = ServiceDetailView(service: service)
+
+        let selfUser = userSession.selfUser
 
         switch actionType {
         case let .addService(conversation):
@@ -132,7 +136,7 @@ final class ServiceDetailViewController: UIViewController {
 
         createConstraints()
 
-        guard let userSession = ZMUserSession.shared() else {
+        guard let userSession = userSession as? ZMUserSession else {
             return
         }
 
@@ -174,7 +178,7 @@ final class ServiceDetailViewController: UIViewController {
 
     func callback(for type: ActionType, completion: Completion?) -> Callback<LegacyButton> {
         return { [weak self] _ in
-            guard let `self` = self, let userSession = ZMUserSession.shared() else {
+            guard let `self`, let userSession = userSession as? ZMUserSession else {
                 return
             }
             let serviceUser = self.service.serviceUser

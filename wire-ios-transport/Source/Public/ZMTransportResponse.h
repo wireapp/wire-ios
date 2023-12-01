@@ -22,7 +22,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-typedef NS_ENUM(uint8_t, ZMTransportResponseContentType) {
+typedef NS_CLOSED_ENUM(uint8_t, ZMTransportResponseContentType) {
     ZMTransportResponseContentTypeInvalid,
     ZMTransportResponseContentTypeEmpty,
     ZMTransportResponseContentTypeImage,
@@ -30,7 +30,7 @@ typedef NS_ENUM(uint8_t, ZMTransportResponseContentType) {
 };
 
 
-typedef NS_ENUM(uint8_t, ZMTransportResponseStatus) {
+typedef NS_CLOSED_ENUM(uint8_t, ZMTransportResponseStatus) {
     ZMTransportResponseStatusSuccess,
     ZMTransportResponseStatusTemporaryError,
     ZMTransportResponseStatusPermanentError,
