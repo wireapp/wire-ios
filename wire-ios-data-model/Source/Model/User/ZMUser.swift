@@ -452,11 +452,17 @@ extension ZMUser: UserConnections {
                     domain: domain
                 )
 
-                self.establishMLSOneToOne(
-                    with: qualifiedID,
-                    in: syncContext,
-                    completion: completion
-                )
+                Task  {
+                    do {
+                        try await self.establishMLSOneToOne(
+                            with: qualifiedID,
+                            in: syncContext
+                        )
+                        completion(nil)
+                    } catch {
+                        completion(error)
+                    }
+                }
 
             case .failure(let error):
                 completion(error)
@@ -466,50 +472,43 @@ extension ZMUser: UserConnections {
 
     private func establishMLSOneToOne(
         with otherUserID: QualifiedID,
-        in context: NSManagedObjectContext,
-        completion: @escaping (Error?) -> Void
-    ) {
-        context.perform {
-            guard let mlsService = context.mlsService else {
-                completion(AcceptConnectionError.missingMLSService)
-                return
+        in context: NSManagedObjectContext
+    ) async throws {
+        let mlsService = try await context.perform {
+            if let mlsService = context.mlsService {
+                return mlsService
+            } else {
+                throw AcceptConnectionError.missingMLSService
             }
+        }
 
-            Task {
-                let mlsGroupID = try await mlsService.establishOneToOneGroupIfNeeded(
+        let mlsGroupID = try await mlsService.establishOneToOneGroupIfNeeded(
+            with: otherUserID,
+            in: context
+        )
+
+        try await context.perform {
+            guard
+                let otherUser = ZMUser.fetch(
                     with: otherUserID,
                     in: context
+                ),
+                let connection = otherUser.connection,
+                let conversation = ZMConversation.fetch(
+                    with: mlsGroupID,
+                    in: context
                 )
-
-                await context.perform {
-                    guard
-                        let otherUser = ZMUser.fetch(
-                            with: otherUserID,
-                            in: context
-                        ),
-                        let connection = otherUser.connection,
-                        let conversation = ZMConversation.fetch(
-                            with: mlsGroupID,
-                            in: context
-                        )
-                    else {
-                        completion(AcceptConnectionError.unableToSwitchToMLS)
-                        return
-                    }
-
-                    // The existing proteus 1-1 is no longer valid.
-                    if connection.conversation.messageProtocol == .proteus {
-                        connection.conversation.conversationType = .invalid
-                    }
-
-                    // The connection now uses the mls 1-1.
-                    connection.conversation = conversation
-                }
-
-                await MainActor.run {
-                    completion(nil)
-                }
+            else {
+                throw AcceptConnectionError.unableToSwitchToMLS
             }
+
+            // The existing proteus 1-1 is no longer valid.
+            if connection.conversation.messageProtocol == .proteus {
+                connection.conversation.conversationType = .invalid
+            }
+
+            // The connection now uses the mls 1-1.
+            connection.conversation = conversation
         }
     }
 
