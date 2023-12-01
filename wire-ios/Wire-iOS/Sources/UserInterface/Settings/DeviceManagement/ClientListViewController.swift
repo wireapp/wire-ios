@@ -167,6 +167,7 @@ final class ClientListViewController: UIViewController,
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.clientsTableView?.reloadData()
+        self.navigationController?.setNavigationBarHidden(false, animated: false)
     }
 
     override func viewDidDisappear(_ animated: Bool) {
@@ -193,6 +194,7 @@ final class ClientListViewController: UIViewController,
                         getUserClientFingerprintUseCase: userSession.getUserClientFingerprint,
                         e2eIdentityProvider: self.e2eIdentityProvider()
                     )) {
+                        // TODO: Check the navigation UI glitch
                         self.navigationController?.setNavigationBarHidden(false, animated: false)
                     }
                 let hostingViewController = UIHostingController(rootView: detailsView)
