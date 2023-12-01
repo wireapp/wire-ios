@@ -181,7 +181,7 @@ extension DeviceInfoViewModel {
                 credentials: credentials,
                 e2eIdentityProvider: e2eIdentityProvider
             ),
-            isE2EIdentityEnabled: DeveloperDeviceDetailsSettingsSelectionViewModel.isE2eIdentityViewEnabled,
+            isE2EIdentityEnabled: e2eIdentityProvider.isE2EIdentityEnabled,
             isSelfClient: userClient.isSelfClient(),
             userSession: userSession,
             getUserClientFingerprint: getUserClientFingerprintUseCase,

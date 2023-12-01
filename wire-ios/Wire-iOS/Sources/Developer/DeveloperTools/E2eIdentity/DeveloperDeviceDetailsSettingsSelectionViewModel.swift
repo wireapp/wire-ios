@@ -61,7 +61,8 @@ class DeveloperDeviceDetailsSettingsSelectionViewModel: ObservableObject {
     @Published
     var selectedItemID: Item.ID
 
-    @Published var isE2eIdentityViewEnabled: Bool = DeveloperDeviceDetailsSettingsSelectionViewModel.isE2eIdentityViewEnabled {
+    @Published
+    var isE2eIdentityViewEnabled: Bool = DeveloperDeviceDetailsSettingsSelectionViewModel.isE2eIdentityViewEnabled {
         didSet {
             Self.isE2eIdentityViewEnabled = isE2eIdentityViewEnabled
         }
