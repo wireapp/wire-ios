@@ -178,10 +178,8 @@ public class ZMUserSession: NSObject {
     // temporary function to simplify call to EventProcessor
     // might be replaced by something more elegant
     public func processUpdateEvents(_ events: [ZMUpdateEvent]) {
-        let groups = syncContext.enterAllGroupsExceptSecondary()
-        Task {
+        WaitingGroupTask(context: self.syncContext) {
             try? await self.updateEventProcessor?.processEvents(events)
-            syncContext.leaveAllGroups(groups)
         }
     }
 
