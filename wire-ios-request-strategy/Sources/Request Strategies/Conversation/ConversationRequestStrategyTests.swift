@@ -471,21 +471,4 @@ class ConversationRequestStrategyTests: MessagingTestBase {
             type: type
         )
     }
-
-    func updateEvent(type: String,
-                     senderID: UUID,
-                     conversationID: UUID,
-                     timestamp: Date,
-                     dataPayload: [String: Any]) -> ZMUpdateEvent {
-        let payload: [String: Any] = [
-            "from": senderID.transportString(),
-            "conversation": conversationID.transportString(),
-            "time": timestamp.transportString(),
-            "data": dataPayload,
-            "type": type
-        ]
-
-        return ZMUpdateEvent(fromEventStreamPayload: payload as ZMTransportData, uuid: nil)!
-    }
-
 }
