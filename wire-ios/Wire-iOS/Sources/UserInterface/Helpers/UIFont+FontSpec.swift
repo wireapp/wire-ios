@@ -19,14 +19,7 @@
 import Foundation
 import UIKit
 import WireCommonComponents
-import SwiftUI
 
-// MARK: - SwiftUI Font
-extension UIFont {
-    var swiftUIFont: Font {
-        return Font(self as CTFont)
-    }
-}
 // MARK: - Avatar
 
 extension UIFont {
