@@ -184,7 +184,7 @@ static NSString *ZMLogTag ZM_UNUSED = @"Authentication";
     return [[self class] needsToRegisterClientInContext:self.managedObjectContext];
 }
 
-- (BOOL)needsToRegisterMLSClient
+- (BOOL)needsToRegisterMLSCLient
 {
     return [[self class] needsToRegisterMLSClientInContext:self.managedObjectContext];
 }
@@ -195,13 +195,6 @@ static NSString *ZMLogTag ZM_UNUSED = @"Authentication";
     NSString *clientId = [moc persistentStoreMetadataForKey:ZMPersistedClientIdKey];
     return ![clientId isKindOfClass:[NSString class]] || clientId.length == 0;
 }
-
-//+ (BOOL)needsToRegisterMLSClientInContext:(NSManagedObjectContext *)moc;
-//{
-//    ![[ZMUser selfUserInContext:moc] selfClient] hasRegisteredMLSClient] && [Developer];
-//    NSString *clientId = [moc persistentStoreMetadataForKey:ZMPersistedClientIdKey];
-//    return ![clientId isKindOfClass:[NSString class]] || clientId.length == 0;
-//}
 
 - (BOOL)isWaitingForSelfUser
 {

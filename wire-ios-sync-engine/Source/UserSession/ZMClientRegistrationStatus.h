@@ -77,7 +77,7 @@ extern NSString *const ZMPersistedClientIdKey;
 @property (nonatomic, weak) id <ZMClientRegistrationStatusDelegate> registrationStatusDelegate;
 @property (nonatomic) BOOL needsToCheckCredentials;
 @property (nonatomic) BOOL needsToVerifySelfClient;
-@property (nonatomic) BOOL needsToRegisterMLSCLient;
+@property (nonatomic, readonly) BOOL needsToRegisterMLSCLient;
 @property (nonatomic) BOOL isWaitingForUserClients;
 @property (nonatomic) BOOL isWaitingForClientsToBeDeleted;
 
