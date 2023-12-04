@@ -1,2 +1,1 @@
 brew "carthage"
-brew "sourcery"
