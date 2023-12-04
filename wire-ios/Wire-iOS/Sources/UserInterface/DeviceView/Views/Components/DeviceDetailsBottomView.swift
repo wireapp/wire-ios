@@ -39,7 +39,7 @@ struct DeviceDetailsBottomView: View {
                 Text(L10n.Localizable.Profile.Devices.Detail.ResetSession.title)
                     .padding(.all, ViewConstants.Padding.standard)
                     .foregroundColor(SemanticColors.Label.textDefault.swiftUIColor)
-                    .font(UIFont.normalRegularFont.swiftUIFont.bold())
+                    .font(FontSpec.normalRegularFont.swiftUIFont.bold())
             }
             Spacer()
         }.background(

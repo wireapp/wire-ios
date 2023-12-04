@@ -19,16 +19,19 @@
 import Foundation
 
 public final class MockValidE2eIdentityProvider: E2eIdentityProviding {
-    public var isE2EIdentityEnabled: Bool = UserDefaults.standard.bool(forKey: "isE2eIdentityViewEnabled")
-
-    public init() {}
-
-    public func fetchCertificate() async throws -> E2eIdentityCertificate {
-        return E2eIdentityCertificate(
+    public var certificate: E2eIdentityCertificate {
+        E2eIdentityCertificate(
             certificateDetails: .random(length: 450),
             expiryDate: Date.now.addingTimeInterval(36000),
             certificateStatus: "Valid",
             serialNumber: .random(length: 32)
         )
+    }
+    public var isE2EIdentityEnabled: Bool = UserDefaults.standard.bool(forKey: "isE2eIdentityViewEnabled")
+
+    public init() {}
+
+    public func fetchCertificate() async throws -> E2eIdentityCertificate {
+        certificate
     }
 }

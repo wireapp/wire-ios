@@ -58,7 +58,7 @@ struct DeviceDetailsButtonsView: View {
                 HStack {
                     Text(L10n.Localizable.Device.Details.Section.E2ei.showCertificateDetails)
                         .foregroundStyle(SemanticColors.Label.textDefault.swiftUIColor)
-                        .font(UIFont.normalRegularFont.swiftUIFont.bold())
+                        .font(FontSpec.normalRegularFont.swiftUIFont.bold())
                     Spacer()
                     Image(.chevronRight)
                         .renderingMode(.template)
