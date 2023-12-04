@@ -31,7 +31,7 @@ struct DeviceMLSView: View {
                 performCopy: viewModel.copyToClipboard
             )
             .frame(maxHeight: .infinity)
-            .padding(.all, 16)
+            .padding(.all, ViewConstants.Padding.standard)
         }.onAppear {
             Task {
                 await viewModel.fetchMLSFingerPrint()

@@ -21,11 +21,15 @@ import Foundation
 public final class MockMLSProvider: MLSProviding {
     public var isMLSEnbaled: Bool
 
+    public var mlsThumbPrint: String {
+        return "abcdefghijklmnopqrstuvwxabcdefghijklmnopqrstuvwxabcdefghijklmnop"
+    }
+
     public init(isMLSEnbaled: Bool) {
         self.isMLSEnbaled = isMLSEnbaled
     }
 
     public func fetchMLSThumbprint() async throws -> String {
-        return .random(length: 64)
+        return mlsThumbPrint
     }
 }

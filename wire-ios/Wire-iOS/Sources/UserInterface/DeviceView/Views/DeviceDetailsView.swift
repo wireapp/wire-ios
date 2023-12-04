@@ -84,7 +84,7 @@ struct DeviceDetailsView: View {
             .background(SemanticColors.View.backgroundDefault.swiftUIColor)
             .environment(
                 \.defaultMinListHeaderHeight,
-                 10
+                 ViewConstants.Header.Height.minimum
             )
             .listStyle(.plain)
             .overlay(content: {
@@ -134,7 +134,7 @@ struct DeviceDetailsView: View {
         Text(title)
             .font(FontSpec.mediumRegularFont.swiftUIFont)
             .foregroundColor(SemanticColors.Label.textSectionHeader.swiftUIColor)
-            .frame(height: 28)
-            .padding([.leading, .top], 16)
+            .frame(height: ViewConstants.View.Height.small)
+            .padding([.leading, .top], ViewConstants.Padding.standard)
     }
 }

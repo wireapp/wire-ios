@@ -207,7 +207,7 @@
 		2577CB712B19DA7B007D3443 /* MockRevokedE2eIdentityProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2577CB702B19DA7B007D3443 /* MockRevokedE2eIdentityProvider.swift */; };
 		2577CB732B19DAB9007D3443 /* MockExpiredE2eIdentityProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2577CB722B19DAB9007D3443 /* MockExpiredE2eIdentityProvider.swift */; };
 		2577CB752B19DAD6007D3443 /* MockNotActivatedE2eIdentityProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2577CB742B19DAD6007D3443 /* MockNotActivatedE2eIdentityProvider.swift */; };
-		2577CB7D2B1DC9F8007D3443 /* MLSProviding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2577CB7C2B1DC9F8007D3443 /* MLSProviding.swift */; };
+		2577CB7D2B1DC9F8007D3443 /* MLSProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2577CB7C2B1DC9F8007D3443 /* MLSProvider.swift */; };
 		2577CB802B1DD080007D3443 /* MockMLSProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2577CB7F2B1DD080007D3443 /* MockMLSProvider.swift */; };
 		2BB20770292B787000FB6468 /* PatchApplicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BB2076F292B787000FB6468 /* PatchApplicator.swift */; };
 		2BB20771292B791400FB6468 /* PatchApplicatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BB2076D292B781E00FB6468 /* PatchApplicatorTests.swift */; };
@@ -1095,7 +1095,7 @@
 		2577CB702B19DA7B007D3443 /* MockRevokedE2eIdentityProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockRevokedE2eIdentityProvider.swift; sourceTree = "<group>"; };
 		2577CB722B19DAB9007D3443 /* MockExpiredE2eIdentityProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockExpiredE2eIdentityProvider.swift; sourceTree = "<group>"; };
 		2577CB742B19DAD6007D3443 /* MockNotActivatedE2eIdentityProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockNotActivatedE2eIdentityProvider.swift; sourceTree = "<group>"; };
-		2577CB7C2B1DC9F8007D3443 /* MLSProviding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLSProviding.swift; sourceTree = "<group>"; };
+		2577CB7C2B1DC9F8007D3443 /* MLSProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLSProvider.swift; sourceTree = "<group>"; };
 		2577CB7F2B1DD080007D3443 /* MockMLSProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockMLSProvider.swift; sourceTree = "<group>"; };
 		2B6F6AB429ACC162001BB36F /* AllTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = AllTests.xctestplan; sourceTree = "<group>"; };
 		2B7AB1B729A4EAC500D9A63A /* SecurityTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = SecurityTests.xctestplan; sourceTree = "<group>"; };
@@ -2778,7 +2778,7 @@
 				F9A706181CAEE01D00C2F5FE /* UserClientTypes.m */,
 				256C1B782B1654BB0015C89D /* E2eIdentityProvider.swift */,
 				2577CB6B2B18ECB0007D3443 /* UserClient+E2eIdentity.swift */,
-				2577CB7C2B1DC9F8007D3443 /* MLSProviding.swift */,
+				2577CB7C2B1DC9F8007D3443 /* MLSProvider.swift */,
 			);
 			path = UserClient;
 			sourceTree = "<group>";
@@ -4134,7 +4134,7 @@
 				63495E1B23FED9A9002A7C59 /* ZMUser+Protobuf.swift in Sources */,
 				EEF4010723A9213B007B1A97 /* UserType+Team.swift in Sources */,
 				EE4CCA95256C558400848212 /* Feature.AppLock.swift in Sources */,
-				2577CB7D2B1DC9F8007D3443 /* MLSProviding.swift in Sources */,
+				2577CB7D2B1DC9F8007D3443 /* MLSProvider.swift in Sources */,
 				63DA3373286CA43300818C3C /* ZMConversation+MLS.swift in Sources */,
 				54E3EE411F616BA600A261E3 /* ZMAssetClientMessage.swift in Sources */,
 				EE429390252C466500E70670 /* ChangeInfoConsumer.swift in Sources */,
