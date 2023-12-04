@@ -258,7 +258,9 @@ public final class ConversationService: ConversationServiceInterface {
                     }
 
                 case .failure(CreateGroupConversationAction.Failure.notConnected):
-                    fatalError("TODO: check if user has been deleted")
+                    users.forEach { $0.needsToBeUpdatedFromBackend = true }
+                    self.context.enqueueDelayedSave()
+                    completion(.failure(.networkError(.notConnected)))
 
                 case .failure(let failure):
                     completion(.failure(.networkError(failure)))
