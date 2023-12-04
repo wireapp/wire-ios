@@ -654,7 +654,7 @@ class CallingRequestStrategyTests: MessagingTest {
             sentMessage = message as? GenericMessageEntity
         }
 
-        let mockMLSService = MockMLSService()
+        let mockMLSService = MockMLSServiceInterface()
 
         syncMOC.performGroupedBlock {
             self.syncMOC.mlsService = mockMLSService
