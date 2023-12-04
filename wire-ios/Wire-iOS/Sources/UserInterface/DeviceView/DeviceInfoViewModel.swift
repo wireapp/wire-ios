@@ -34,7 +34,6 @@ protocol DeviceDetailsViewActions {
 
 final class DeviceInfoViewModel: ObservableObject {
     let userSession: UserSession
-    let uuid: String
     let addedDate: String
     let proteusID: String
     let getUserClientFingerprint: GetUserClientFingerprintUseCaseProtocol
@@ -81,13 +80,11 @@ final class DeviceInfoViewModel: ObservableObject {
     @Published var isReset: Bool = false
     @Published var isProteusVerificationEnabled: Bool = false
     @Published var isActionInProgress: Bool = false
-    @Published var proteusKeyFingerprint: String
+    @Published var proteusKeyFingerprint: String = ""
 
     init(
-        uuid: String,
         title: String,
         addedDate: String,
-        proteusKeyFingerprint: String,
         proteusID: String,
         isProteusVerificationEnabled: Bool,
         actionsHandler: any DeviceDetailsViewActions,
@@ -97,10 +94,8 @@ final class DeviceInfoViewModel: ObservableObject {
         getUserClientFingerprint: GetUserClientFingerprintUseCaseProtocol,
         userClient: UserClient
     ) {
-        self.uuid = uuid
         self.title = title
         self.addedDate = addedDate
-        self.proteusKeyFingerprint = proteusKeyFingerprint
         self.proteusID = proteusID
         self.isProteusVerificationEnabled = isProteusVerificationEnabled
         self.actionsHandler = actionsHandler
@@ -176,12 +171,6 @@ final class DeviceInfoViewModel: ObservableObject {
     }
 }
 
-extension DeviceInfoViewModel: Identifiable {
-    var id: String {
-        return uuid
-    }
-}
-
 extension DeviceInfoViewModel {
     static func map(
         userClient: UserClient,
@@ -191,12 +180,10 @@ extension DeviceInfoViewModel {
         e2eIdentityProvider: E2eIdentityProviding
     ) -> DeviceInfoViewModel {
         return DeviceInfoViewModel(
-            uuid: UUID().uuidString,
             title: userClient.model ?? "",
             addedDate: userClient.activationDate?.formattedDate ?? "",
-            proteusKeyFingerprint: "",
             proteusID: userClient.proteusSessionID?.clientID.fingerprintStringWithSpaces.uppercased() ?? "",
-            isProteusVerificationEnabled: userClient.user?.isVerified ?? false,
+            isProteusVerificationEnabled: userClient.verified,
             actionsHandler: DeviceDetailsViewActionsHandler(
                 userClient: userClient,
                 userSession: userSession,

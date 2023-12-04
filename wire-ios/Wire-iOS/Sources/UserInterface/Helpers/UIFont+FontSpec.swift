@@ -21,12 +21,6 @@ import UIKit
 import WireCommonComponents
 import SwiftUI
 
-extension UIFont {
-    class var sfMonoMedium: UIFont {
-        return UIFont.monospacedSystemFont(ofSize: 16, weight: .regular)
-    }
-}
-
 // MARK: - SwiftUI Font
 extension UIFont {
     var swiftUIFont: Font {

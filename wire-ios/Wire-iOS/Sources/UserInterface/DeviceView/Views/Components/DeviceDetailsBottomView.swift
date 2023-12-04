@@ -24,8 +24,8 @@ struct DeviceDetailsBottomView: View {
     var fingerPrintInfoTextView: some View {
         Text(L10n.Localizable.Self.Settings.DeviceDetails.Fingerprint.subtitle)
             .font(.footnote)
-            .padding([.leading, .trailing], 16)
-            .padding([.top, .bottom], 8)
+            .padding([.leading, .trailing], ViewConstants.Padding.standard)
+            .padding([.top, .bottom], ViewConstants.Padding.medium)
     }
 
     var resetSessionView: some View {
@@ -36,7 +36,7 @@ struct DeviceDetailsBottomView: View {
                 }
             } label: {
                 Text(L10n.Localizable.Profile.Devices.Detail.ResetSession.title)
-                    .padding(.all, 16)
+                    .padding(.all, ViewConstants.Padding.standard)
                     .foregroundColor(SemanticColors.Label.textDefault.swiftUIColor)
                     .font(UIFont.normalRegularFont.swiftUIFont.bold())
             }
@@ -49,8 +49,8 @@ struct DeviceDetailsBottomView: View {
     var resetSessionInfoView: some View {
         Text(L10n.Localizable.Self.Settings.DeviceDetails.ResetSession.subtitle)
             .font(.footnote)
-            .padding([.leading, .trailing], 16)
-            .padding([.top, .bottom], 8)
+            .padding([.leading, .trailing], ViewConstants.Padding.standard)
+            .padding([.top, .bottom], ViewConstants.Padding.medium)
     }
 
     var removeDeviceView: some View {
@@ -61,7 +61,7 @@ struct DeviceDetailsBottomView: View {
                 }
             } label: {
                 Text(L10n.Localizable.Self.Settings.AccountDetails.RemoveDevice.title)
-                .padding(.all, 16)
+                .padding(.all, ViewConstants.Padding.standard)
                 .foregroundColor(SemanticColors.Label.textDefault.swiftUIColor)
                 .font(UIFont.normalRegularFont.swiftUIFont.bold())
             }
@@ -73,8 +73,8 @@ struct DeviceDetailsBottomView: View {
     var removeDeviceInfoView: some View {
         Text(L10n.Localizable.Self.Settings.DeviceDetails.RemoveDevice.subtitle)
             .font(.footnote)
-            .padding([.leading, .trailing], 16)
-            .padding([.top, .bottom], 8)
+            .padding([.leading, .trailing], ViewConstants.Padding.standard)
+            .padding([.top, .bottom], ViewConstants.Padding.medium)
     }
 
     var body: some View {
