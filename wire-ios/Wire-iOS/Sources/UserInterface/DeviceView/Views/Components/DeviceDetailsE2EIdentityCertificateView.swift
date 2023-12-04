@@ -17,6 +17,7 @@
 //
 
 import SwiftUI
+import WireCommonComponents
 
 struct DeviceDetailsE2EIdentityCertificateView: View {
     @ObservedObject var viewModel: DeviceInfoViewModel
@@ -24,9 +25,9 @@ struct DeviceDetailsE2EIdentityCertificateView: View {
 
     var body: some View {
         Text(L10n.Localizable.Device.Details.Section.E2e.title)
-            .font(UIFont.normalSemiboldFont.swiftUIFont)
+            .font(FontSpec.normalSemiboldFont.swiftUIFont)
             .multilineTextAlignment(.leading)
-            .padding([.top, .bottom], 16)
+            .padding([.top, .bottom], ViewConstants.Padding.standard)
         HStack {
             switch viewModel.certificateStatus {
             case .notActivated:
@@ -64,17 +65,17 @@ struct DeviceDetailsE2EIdentityCertificateView: View {
         }
         if viewModel.isValidCerificate, let certificate = viewModel.e2eIdentityCertificate {
             Text(L10n.Localizable.Device.Details.Section.E2e.serialnumber)
-                .font(UIFont.smallSemiboldFont.swiftUIFont)
+                .font(FontSpec.smallSemiboldFont.swiftUIFont)
                 .foregroundColor(SemanticColors.Label.textSectionHeader.swiftUIColor)
-                .padding(.top, 8)
-                .padding(.bottom, 4)
+                .padding(.top, ViewConstants.Padding.medium)
+                .padding(.bottom, ViewConstants.Padding.small)
             Text(
                 certificate.serialNumber
                     .uppercased()
                     .splitStringIntoLines(charactersPerLine: 16)
                     .replacingOccurrences(of: "  ", with: ":")
             )
-            .font(UIFont.normalRegularFont.monospaced().swiftUIFont)
+            .font(FontSpec.normalRegularFont.swiftUIFont.monospaced())
         }
     }
 
@@ -86,12 +87,12 @@ struct DeviceDetailsE2EIdentityCertificateView: View {
         image: Image
     ) -> some View {
         Text(titleText)
-            .font(UIFont.mediumSemiboldFont.swiftUIFont)
+            .font(FontSpec.mediumSemiboldFont.swiftUIFont)
             .foregroundColor(SemanticColors.Label.textSectionHeader.swiftUIColor)
             .multilineTextAlignment(.leading)
         Text(statusText)
             .foregroundColor(textColor)
-            .font(UIFont.normalMediumFont.swiftUIFont)
+            .font(FontSpec.normalMediumFont.swiftUIFont)
         image
     }
 }

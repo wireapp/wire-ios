@@ -35,25 +35,25 @@ struct DeviceDetailsProteusView: View {
             Divider()
             Text(L10n.Localizable.Device.Details.Section.Proteus.activated)
                 .foregroundColor(SemanticColors.Label.textSectionHeader.swiftUIColor)
-                .font(UIFont.mediumSemiboldFont.swiftUIFont)
+                .font(FontSpec.mediumSemiboldFont.swiftUIFont)
                 .padding([.leading, .top], ViewConstants.Padding.standard)
                 .padding(.bottom, ViewConstants.Padding.small)
             Text(viewModel.addedDate)
                 .foregroundColor(SemanticColors.Label.textDefault.swiftUIColor)
                 .padding([.leading, .trailing, .bottom], ViewConstants.Padding.standard)
-                .font(UIFont.normalRegularFont.swiftUIFont)
+                .font(FontSpec.normalRegularFont.swiftUIFont)
             Divider()
             CopyValueView(
                 title: L10n.Localizable.Device.Details.Section.Proteus.keyfingerprint,
                 value: $viewModel.proteusKeyFingerprint.wrappedValue,
                 isCopyEnabled: viewModel.isCopyEnabled,
                 performCopy: viewModel.copyToClipboard
-            ).padding(.all, 16)
+            ).padding(.all, ViewConstants.Padding.standard)
             if !viewModel.isSelfClient {
                 Divider()
                 Toggle(L10n.Localizable.Device.verified, isOn: $isVerfied)
                     .font(FontSpec.headerSemiboldFont.swiftUIFont)
-                .padding(.all, 16)
+                    .padding(.all, ViewConstants.Padding.standard)
                 .onChange(of: isVerfied) { value in
                     Task {
                         await self.viewModel.updateVerifiedStatus(value)

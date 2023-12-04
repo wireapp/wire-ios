@@ -17,13 +17,14 @@
 //
 
 import SwiftUI
+import WireCommonComponents
 
 struct DeviceDetailsBottomView: View {
     @ObservedObject var viewModel: DeviceInfoViewModel
 
     var fingerPrintInfoTextView: some View {
         Text(L10n.Localizable.Self.Settings.DeviceDetails.Fingerprint.subtitle)
-            .font(.footnote)
+            .font(FontSpec.mediumRegularFont.swiftUIFont)
             .padding([.leading, .trailing], ViewConstants.Padding.standard)
             .padding([.top, .bottom], ViewConstants.Padding.medium)
     }
@@ -48,7 +49,7 @@ struct DeviceDetailsBottomView: View {
 
     var resetSessionInfoView: some View {
         Text(L10n.Localizable.Self.Settings.DeviceDetails.ResetSession.subtitle)
-            .font(.footnote)
+            .font(FontSpec.mediumRegularFont.swiftUIFont)
             .padding([.leading, .trailing], ViewConstants.Padding.standard)
             .padding([.top, .bottom], ViewConstants.Padding.medium)
     }
@@ -63,7 +64,7 @@ struct DeviceDetailsBottomView: View {
                 Text(L10n.Localizable.Self.Settings.AccountDetails.RemoveDevice.title)
                 .padding(.all, ViewConstants.Padding.standard)
                 .foregroundColor(SemanticColors.Label.textDefault.swiftUIColor)
-                .font(UIFont.normalRegularFont.swiftUIFont.bold())
+                .font(FontSpec.normalRegularFont.swiftUIFont.bold())
             }
             Spacer()
         }
