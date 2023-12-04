@@ -44,6 +44,7 @@ public final class MockMLSService: MLSServiceInterface {
         public var performPendingJoins: [Void] = []
         public var wipeGroup = [MLSGroupID]()
         public var generateConferenceInfo = [(MLSGroupID, MLSGroupID)]()
+        public var subconversationMembersForSubconversationGroupID = [MLSGroupID]()
 
     }
 
@@ -57,9 +58,9 @@ public final class MockMLSService: MLSServiceInterface {
 
     // MARK: - Conference info
 
-    typealias GenerateConferenceInfoMock = (MLSGroupID, MLSGroupID) throws -> MLSConferenceInfo
+    public typealias GenerateConferenceInfoMock = (MLSGroupID, MLSGroupID) throws -> MLSConferenceInfo
 
-    var generateConferenceInfoMock: GenerateConferenceInfoMock?
+    public var generateConferenceInfoMock: GenerateConferenceInfoMock?
 
     public func generateConferenceInfo(
         parentGroupID: MLSGroupID,
@@ -176,15 +177,27 @@ public final class MockMLSService: MLSServiceInterface {
         calls.scheduleCommitPendingProposals.append((groupID, commitDate))
     }
 
+    public var mockCreateOrJoinSubgroup: ((QualifiedID, MLSGroupID) -> MLSGroupID)?
+
     public func createOrJoinSubgroup(
         parentQualifiedID: QualifiedID,
         parentID: MLSGroupID
     ) async throws -> MLSGroupID {
-        fatalError("not implemented")
+        guard let mock = mockCreateOrJoinSubgroup else {
+            throw MockError.unmockedMethodCalled
+        }
+
+        return mock(parentQualifiedID, parentID)
     }
 
+    public var mockOnConferenceInfoChange: ((MLSGroupID, MLSGroupID) -> AnyPublisher<MLSConferenceInfo, Never>)?
+
     public func onConferenceInfoChange(parentGroupID: MLSGroupID, subConversationGroupID: MLSGroupID) -> AnyPublisher<MLSConferenceInfo, Never> {
-        fatalError("not implemented")
+        guard let mock = mockOnConferenceInfoChange else {
+            fatalError("missing mock for `onConferenceInfoChange`")
+        }
+
+        return mock(parentGroupID, subConversationGroupID)
     }
 
     public func onEpochChanged() -> AnyPublisher<MLSGroupID, Never> {
@@ -207,13 +220,21 @@ public final class MockMLSService: MLSServiceInterface {
 
     // MARK: - Subconversation
 
+    public var mockLeaveSubconversation: ((QualifiedID, MLSGroupID, SubgroupType) throws -> Void)?
+
     public func leaveSubconversation(
         parentQualifiedID: QualifiedID,
         parentGroupID: MLSGroupID,
         subconversationType: SubgroupType
     ) async throws {
-        fatalError("not implemented")
+        guard let mock = mockLeaveSubconversation else {
+            throw MockError.unmockedMethodCalled
+        }
+
+        try mock(parentQualifiedID, parentGroupID, subconversationType)
     }
+
+    public var mockLeaveSubconversationIfNeeded: ((QualifiedID, MLSGroupID, SubgroupType, MLSClientID) throws -> Void)?
 
     public func leaveSubconversationIfNeeded(
         parentQualifiedID: QualifiedID,
@@ -221,19 +242,32 @@ public final class MockMLSService: MLSServiceInterface {
         subconversationType: SubgroupType,
         selfClientID: MLSClientID
     ) async throws {
-        fatalError("not implemented")
+        guard let mock = mockLeaveSubconversationIfNeeded else {
+            throw MockError.unmockedMethodCalled
+        }
+
+        try mock(parentQualifiedID, parentGroupID, subconversationType, selfClientID)
     }
 
     // MARK: - New epoch
 
+    public var mockGenerateNewEpoch: ((MLSGroupID) -> Void)?
+
     public func generateNewEpoch(groupID: MLSGroupID) async throws {
-        fatalError("not implemented")
+        guard let mock = mockGenerateNewEpoch else { throw MockError.unmockedMethodCalled }
+
+        return mock(groupID)
     }
 
     // MARK: - Subconversation Members
 
+    public var mockSubconversationMembers: ((MLSGroupID) -> [MLSClientID])?
+
     public func subconversationMembers(for subconversationGroupID: MLSGroupID) throws -> [MLSClientID] {
-        fatalError("not implemented")
+        calls.subconversationMembersForSubconversationGroupID.append(subconversationGroupID)
+        guard let mock = mockSubconversationMembers else { throw MockError.unmockedMethodCalled }
+
+        return mock(subconversationGroupID)
     }
 
     // MARK: - Out of sync
