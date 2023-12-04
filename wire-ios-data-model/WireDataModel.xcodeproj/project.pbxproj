@@ -265,7 +265,6 @@
 		59D1C3032B1DE6FF0016F6B2 /* WireDataModelSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = 59D1C3022B1DE6FF0016F6B2 /* WireDataModelSupport.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		59D1C3062B1DE6FF0016F6B2 /* WireDataModelSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59D1C3002B1DE6FF0016F6B2 /* WireDataModelSupport.framework */; };
 		59D1C3072B1DE6FF0016F6B2 /* WireDataModelSupport.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 59D1C3002B1DE6FF0016F6B2 /* WireDataModelSupport.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		59D1C30C2B1DE80E0016F6B2 /* MockMLSService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59D1C30B2B1DE80E0016F6B2 /* MockMLSService.swift */; };
 		59D1C30D2B1DE8750016F6B2 /* WireDataModel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F9C9A4FC1CAD5DF10039E10C /* WireDataModel.framework */; };
 		59D1C30E2B1DEC300016F6B2 /* WireDataModelSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59D1C3002B1DE6FF0016F6B2 /* WireDataModelSupport.framework */; };
 		5E0FB215205176B400FD9867 /* Set+ServiceUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E0FB214205176B400FD9867 /* Set+ServiceUser.swift */; };
@@ -1161,7 +1160,6 @@
 		59AF8F432B19CCCC000A09BF /* AutoMockable.generated.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AutoMockable.generated.swift; sourceTree = "<group>"; };
 		59D1C3002B1DE6FF0016F6B2 /* WireDataModelSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireDataModelSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		59D1C3022B1DE6FF0016F6B2 /* WireDataModelSupport.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WireDataModelSupport.h; sourceTree = "<group>"; };
-		59D1C30B2B1DE80E0016F6B2 /* MockMLSService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockMLSService.swift; sourceTree = "<group>"; };
 		5E055B29228C46DA00E91314 /* zmessaging2.70.0.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = zmessaging2.70.0.xcdatamodel; sourceTree = "<group>"; };
 		5E0FB214205176B400FD9867 /* Set+ServiceUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Set+ServiceUser.swift"; sourceTree = "<group>"; };
 		5E36B45D21CA5BBA00B7063B /* UnverifiedCredentials.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnverifiedCredentials.swift; sourceTree = "<group>"; };
@@ -2070,7 +2068,6 @@
 			isa = PBXGroup;
 			children = (
 				59D1C3022B1DE6FF0016F6B2 /* WireDataModelSupport.h */,
-				59D1C30B2B1DE80E0016F6B2 /* MockMLSService.swift */,
 			);
 			path = Support;
 			sourceTree = "<group>";
@@ -3837,7 +3834,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				59D1C30C2B1DE80E0016F6B2 /* MockMLSService.swift in Sources */,
 				594EB2E72B1E1A130022A5CD /* AutoMockable.generated.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
