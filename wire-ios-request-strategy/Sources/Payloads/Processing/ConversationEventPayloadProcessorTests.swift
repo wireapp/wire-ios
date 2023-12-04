@@ -922,6 +922,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
         mockMLSService.joinGroupWith_MockMethod = { _ in
             didJoinGroup.fulfill()
         }
+        mockMLSService.conversationExistsGroupID_MockValue = false
 
         internalTest_UpdateOrCreate_withMLSSelfGroupEpoch(epoch: 1)
         wait(for: [didJoinGroup], timeout: 0.5)
