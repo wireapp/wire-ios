@@ -154,9 +154,12 @@ extension Settings {
             "background-activity"
         ]
 
-        if let savedTags = UserDefaults.shared().object(forKey: enabledLogsKey) as? [String] {
+        // NOTE: WPB-5754: force enable logs for now
+        /*
+         if let savedTags = UserDefaults.shared().object(forKey: enabledLogsKey) as? [String] {
             tagsToEnable = Set(savedTags)
         }
+         */
 
         enableLogs(tagsToEnable)
     }
