@@ -58,7 +58,7 @@ extension Settings {
             "backend-environment",
             "Backup",
             "mls",
-            // added
+            // added to defaults
             "TokenField",
             "FileManager",
             "AVSMediaManager CustomSounds",
