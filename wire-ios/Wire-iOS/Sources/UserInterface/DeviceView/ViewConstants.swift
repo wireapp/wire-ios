@@ -32,4 +32,10 @@ enum ViewConstants {
             static let small = 28.0
         }
     }
+
+    enum Header {
+        enum Height {
+            static let minimum = 10.0
+        }
+    }
 }
