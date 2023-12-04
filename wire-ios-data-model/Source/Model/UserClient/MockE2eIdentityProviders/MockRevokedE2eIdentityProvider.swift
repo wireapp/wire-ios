@@ -19,15 +19,20 @@
 import Foundation
 
 public final class MockRevokedE2eIdentityProvider: E2eIdentityProviding {
+
+    lazy var dateFormatter = DateFormatter()
+
     public var isE2EIdentityEnabled: Bool = UserDefaults.standard.bool(forKey: "isE2eIdentityViewEnabled")
+
     public var certificate: E2eIdentityCertificate {
         E2eIdentityCertificate(
-            certificateDetails: .random(length: 450),
-            expiryDate: Date.now.addingTimeInterval(36000),
+            certificateDetails: String(repeating: "abcdefghijklmno", count: 10),
+            expiryDate: dateFormatter.date(from: "15.10.2023") ?? Date.now,
             certificateStatus: "Revoked",
-            serialNumber: .random(length: 32)
+            serialNumber: String(repeating: "abcdefghijklmno", count: 2)
         )
     }
+
     public init() {}
 
     public func fetchCertificate() async throws -> E2eIdentityCertificate {
