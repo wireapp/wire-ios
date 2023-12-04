@@ -46,19 +46,21 @@ static NSString *ZMLogTag ZM_UNUSED = @"Authentication";
 @implementation ZMClientRegistrationStatus
 
 - (instancetype)initWithManagedObjectContext:(NSManagedObjectContext *)moc
-                                      cookieStorage:(ZMPersistentCookieStorage *)cookieStorage
-                  registrationStatusDelegate:(id<ZMClientRegistrationStatusDelegate>) registrationStatusDelegate;
+                               cookieStorage:(ZMPersistentCookieStorage *)cookieStorage
 {
     self = [super init];
     if (self != nil) {
         self.managedObjectContext = moc;
-        self.registrationStatusDelegate = registrationStatusDelegate;
-        self.needsToVerifySelfClient = !self.needsToRegisterClient;
         self.cookieStorage = cookieStorage;
         
         [self observeClientUpdates];
     }
     return self;
+}
+
+- (void)determineInitialRegistrationStatus
+{
+    self.needsToVerifySelfClient = !self.needsToRegisterClient;
 }
 
 - (void)observeClientUpdates

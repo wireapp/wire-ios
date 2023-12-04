@@ -55,8 +55,9 @@ extern NSString *const ZMPersistedClientIdKey;
 @interface ZMClientRegistrationStatus : NSObject <ClientRegistrationDelegate, TearDownCapable>
 
 - (instancetype)initWithManagedObjectContext:(NSManagedObjectContext *)moc
-                                      cookieStorage:(ZMPersistentCookieStorage *)cookieStorage
-                  registrationStatusDelegate:(id<ZMClientRegistrationStatusDelegate>) registrationStatusDelegate;
+                               cookieStorage:(ZMPersistentCookieStorage *)cookieStorage;
+
+- (void)determineInitialRegistrationStatus;
 - (BOOL)needsToRegisterClient;
 + (BOOL)needsToRegisterClientInContext:(NSManagedObjectContext *)moc;
 

@@ -40,6 +40,7 @@
 @class RecordingMockTransportSession;
 @class MockSyncStateDelegate;
 @class MockCoreCryptoSetup;
+@class MockMLSServiceInterface;
 
 @interface ThirdPartyServices : NSObject <ZMThirdPartyServicesDelegate>
 
@@ -51,6 +52,7 @@
 
 @property (nonatomic) MockSessionManager *mockSessionManager;
 @property (nonatomic) MockPushChannel *mockPushChannel;
+@property (nonatomic) MockMLSServiceInterface *mockMLSService;
 @property (nonatomic) RecordingMockTransportSession *transportSession;
 @property (nonatomic) ZMPersistentCookieStorage *cookieStorage;
 @property (nonatomic) NSData *validCookie;

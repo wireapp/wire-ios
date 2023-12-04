@@ -42,13 +42,17 @@ class ZMUserSessionSwiftTests: ZMUserSessionTestsBase {
         XCTAssertEqual(conversations.filter { $0.firstUnreadMessage != nil }.count, 0)
     }
 
-    func test_itPerformsPendingJoins_AfterQuickSync() {
+    func test_itPerformsPeriodicMLSUpdates_AfterQuickSync() {
         // given
-        let mockMLSService = MockMLSServiceInterface()
         mockMLSService.performPendingJoins_MockMethod = {}
         mockMLSService.commitPendingProposals_MockMethod = {}
-        sut.syncContext.performAndWait {
-            sut.syncContext.mlsService = mockMLSService
+
+        // MLS client has been registered
+        self.syncMOC.performAndWait {
+            let selfUserClient = createSelfClient()
+            selfUserClient.mlsPublicKeys = UserClient.MLSPublicKeys(ed25519: "somekey")
+            selfUserClient.needsToUploadMLSPublicKeys = false
+            syncMOC.saveOrRollback()
         }
 
         // when
@@ -56,5 +60,6 @@ class ZMUserSessionSwiftTests: ZMUserSessionTestsBase {
 
         // then
         XCTAssertFalse(mockMLSService.performPendingJoins_Invocations.isEmpty)
+        XCTAssertFalse(mockMLSService.uploadKeyPackagesIfNeeded_Invocations.isEmpty)
     }
 }

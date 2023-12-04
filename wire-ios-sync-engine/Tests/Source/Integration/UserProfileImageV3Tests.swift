@@ -61,7 +61,7 @@ class UserProfileImageV3Tests: IntegrationTest {
 
         // WHEN
         userSession?.perform {
-            self.userSession?.userProfileImage?.updateImage(imageData: self.mediumJPEGData())
+            self.userSession?.userProfileImage.updateImage(imageData: self.mediumJPEGData())
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -82,7 +82,7 @@ class UserProfileImageV3Tests: IntegrationTest {
 
         // WHEN
         userSession?.perform {
-            self.userSession?.userProfileImage?.updateImage(imageData: self.mediumJPEGData())
+            self.userSession?.userProfileImage.updateImage(imageData: self.mediumJPEGData())
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -101,7 +101,7 @@ class UserProfileImageV3Tests: IntegrationTest {
 
         // WHEN
         userSession?.perform {
-            self.userSession?.userProfileImage?.updateImage(imageData: self.mediumJPEGData())
+            self.userSession?.userProfileImage.updateImage(imageData: self.mediumJPEGData())
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 

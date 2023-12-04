@@ -83,7 +83,7 @@ public class ZMUserSession: NSObject {
     var operationLoop: ZMOperationLoop?
     var notificationDispatcher: NotificationDispatcher
     var localNotificationDispatcher: LocalNotificationDispatcher?
-    var applicationStatusDirectory: ApplicationStatusDirectory?
+    let applicationStatusDirectory: ApplicationStatusDirectory
     var callStateObserver: CallStateObserver?
     var messageReplyObserver: ManagedObjectContextChangeObserver?
     var likeMesssageObserver: ManagedObjectContextChangeObserver?
@@ -98,16 +98,10 @@ public class ZMUserSession: NSObject {
     var cryptoboxMigrationManager: CryptoboxMigrationManagerInterface
     var coreCryptoProvider: CoreCryptoProvider
     lazy var proteusService: ProteusServiceInterface = ProteusService(coreCryptoProvider: coreCryptoProvider)
-    lazy var mlsService: MLSServiceInterface = MLSService(
-        context: syncContext,
-        coreCryptoProvider: coreCryptoProvider,
-        conversationEventProcessor: ConversationEventProcessor(context: syncContext),
-        userDefaults: .standard,
-        syncStatus: syncStatus!, // FIXME: [jaocb] Make applicationStatusDirectory non-optional
-        userID: account.userIdentifier)
+    var mlsService: MLSServiceInterface
 
-    public var syncStatus: SyncStatusProtocol? {
-        return applicationStatusDirectory?.syncStatus
+    public var syncStatus: SyncStatusProtocol {
+        return applicationStatusDirectory.syncStatus
     }
 
     public lazy var featureRepository = FeatureRepository(context: syncContext)
@@ -160,20 +154,20 @@ public class ZMUserSession: NSObject {
         return ZMUser.selfUser(in: managedObjectContext).selfClient()
     }
 
-    public var userProfile: UserProfile? {
-        return applicationStatusDirectory?.userProfileUpdateStatus
+    public var userProfile: UserProfile {
+        return applicationStatusDirectory.userProfileUpdateStatus
     }
 
-    public var userProfileImage: UserProfileImageUpdateProtocol? {
-        return applicationStatusDirectory?.userProfileImageUpdateStatus
+    public var userProfileImage: UserProfileImageUpdateProtocol {
+        return applicationStatusDirectory.userProfileImageUpdateStatus
     }
 
     public var conversationDirectory: ConversationDirectoryType {
         return managedObjectContext.conversationListDirectory()
     }
 
-    public var operationStatus: OperationStatus? { // TODO jacob we don't want this to be public
-        return applicationStatusDirectory?.operationStatus
+    public var operationStatus: OperationStatus { // TODO jacob we don't want this to be public
+        return applicationStatusDirectory.operationStatus
     }
 
     public private(set) var networkState: ZMNetworkState = .online {
@@ -237,7 +231,6 @@ public class ZMUserSession: NSObject {
         operationLoop?.tearDown()
         operationLoop = nil
         transportSession.tearDown()
-        applicationStatusDirectory = nil
         notificationDispatcher.tearDown()
         callCenter?.tearDown()
 
@@ -314,7 +307,18 @@ public class ZMUserSession: NSObject {
             accountDirectory: coreDataStack.accountContainer,
             syncContext: coreDataStack.syncContext,
             cryptoboxMigrationManager: cryptoboxMigrationManager)
-
+        self.lastEventIDRepository = LastEventIDRepository(
+            userID: userId,
+            sharedUserDefaults: sharedUserDefaults
+        )
+        self.applicationStatusDirectory = ApplicationStatusDirectory(
+            withManagedObjectContext: self.coreDataStack.syncContext,
+            cookieStorage: transportSession.cookieStorage,
+            requestCancellation: transportSession,
+            application: application,
+            lastEventIDRepository: lastEventIDRepository,
+            analytics: analytics
+        )
         self.earService = earService ?? EARService(
             accountID: coreDataStack.account.userIdentifier,
             databaseContexts: [
@@ -325,12 +329,14 @@ public class ZMUserSession: NSObject {
             canPerformKeyMigration: true,
             sharedUserDefaults: sharedUserDefaults
         )
+        self.mlsService = mlsService ?? MLSService(
+            context: coreDataStack.syncContext,
+            coreCryptoProvider: coreCryptoProvider,
+            conversationEventProcessor: ConversationEventProcessor(context: coreDataStack.syncContext),
+            userDefaults: .standard,
+            syncStatus: applicationStatusDirectory.syncStatus,
+            userID: coreDataStack.account.userIdentifier)
         self.cryptoboxMigrationManager = cryptoboxMigrationManager
-
-        self.lastEventIDRepository = LastEventIDRepository(
-            userID: userId,
-            sharedUserDefaults: sharedUserDefaults
-        )
         self.conversationEventProcessor = ConversationEventProcessor(context: coreDataStack.syncContext)
 
         super.init()
@@ -339,13 +345,15 @@ public class ZMUserSession: NSObject {
         self.earService.setInitialEARFlagValue(viewContext.encryptMessagesAtRest)
         self.earService.delegate = self
         appLockController.delegate = self
+        applicationStatusDirectory.syncStatus.syncStateDelegate = self
+        applicationStatusDirectory.clientRegistrationStatus.registrationStatusDelegate = self
 
         configureCaches()
 
         syncManagedObjectContext.performGroupedBlockAndWait { [self] in
             self.localNotificationDispatcher = LocalNotificationDispatcher(in: coreDataStack.syncContext)
             self.configureTransportSession()
-            self.applicationStatusDirectory = self.createApplicationStatusDirectory()
+
             self.strategyDirectory = strategyDirectory ?? self.createStrategyDirectory(useLegacyPushNotifications: configuration.useLegacyPushNotifications)
             self.updateEventProcessor = eventProcessor ?? self.createUpdateEventProcessor()
             self.syncStrategy = syncStrategy ?? self.createSyncStrategy()
@@ -358,9 +366,16 @@ public class ZMUserSession: NSObject {
             // FIXME: [jacob] inject instead of storing on context
             self.syncManagedObjectContext.proteusService = self.proteusService
             self.syncManagedObjectContext.mlsService = self.mlsService
+
+            applicationStatusDirectory.clientRegistrationStatus.prepareForClientRegistration()
+            self.applicationStatusDirectory.syncStatus.determineInitialSyncPhase()
+            self.applicationStatusDirectory.clientUpdateStatus.determineInitialClientStatus()
+            self.applicationStatusDirectory.clientRegistrationStatus.determineInitialRegistrationStatus()
+            self.hasCompletedInitialSync = self.applicationStatusDirectory.syncStatus.isSlowSyncing == false
+
+            createMLSClientIfNeeded()
         }
 
-        createMLSClientIfNeeded()
         registerForCalculateBadgeCountNotification()
         registerForRegisteringPushTokenNotification()
         registerForBackgroundNotifications()
@@ -405,7 +420,7 @@ public class ZMUserSession: NSObject {
     private func createStrategyDirectory(useLegacyPushNotifications: Bool) -> StrategyDirectoryProtocol {
         return StrategyDirectory(
             contextProvider: coreDataStack,
-            applicationStatusDirectory: applicationStatusDirectory!,
+            applicationStatusDirectory: applicationStatusDirectory,
             cookieStorage: transportSession.cookieStorage,
             pushMessageHandler: localNotificationDispatcher!,
             flowManager: flowManager,
@@ -428,25 +443,6 @@ public class ZMUserSession: NSObject {
         )
     }
 
-    private func createApplicationStatusDirectory() -> ApplicationStatusDirectory {
-        WireLogger.userClient.info("creating application status directory")
-
-        let applicationStatusDirectory = ApplicationStatusDirectory(
-            withManagedObjectContext: self.syncManagedObjectContext,
-            cookieStorage: transportSession.cookieStorage,
-            requestCancellation: transportSession,
-            application: application,
-            syncStateDelegate: self,
-            lastEventIDRepository: lastEventIDRepository,
-            analytics: analytics
-        )
-
-        applicationStatusDirectory.clientRegistrationStatus.prepareForClientRegistration()
-        self.hasCompletedInitialSync = !applicationStatusDirectory.syncStatus.isSlowSyncing
-
-        return applicationStatusDirectory
-    }
-
     private func createURLActionProcessors() -> [URLActionProcessor] {
         return [
             DeepLinkURLActionProcessor(contextProvider: coreDataStack,
@@ -461,7 +457,7 @@ public class ZMUserSession: NSObject {
     private func createSyncStrategy() -> ZMSyncStrategy {
         return ZMSyncStrategy(contextProvider: coreDataStack,
                               notificationsDispatcher: notificationDispatcher,
-                              applicationStatusDirectory: applicationStatusDirectory!,
+                              applicationStatusDirectory: applicationStatusDirectory,
                               application: application,
                               strategyDirectory: strategyDirectory!,
                               eventProcessingTracker: eventProcessingTracker)
@@ -471,7 +467,7 @@ public class ZMUserSession: NSObject {
         return ZMOperationLoop(transportSession: transportSession,
                                requestStrategy: syncStrategy,
                                updateEventProcessor: updateEventProcessor!,
-                               applicationStatusDirectory: applicationStatusDirectory!,
+                               applicationStatusDirectory: applicationStatusDirectory,
                                uiMOC: managedObjectContext,
                                syncMOC: syncManagedObjectContext)
     }
@@ -528,7 +524,7 @@ public class ZMUserSession: NSObject {
 
     func createMLSClientIfNeeded() {
         do {
-            if applicationStatusDirectory?.clientRegistrationStatus.needsToRegisterMLSCLient == true {
+            if applicationStatusDirectory.clientRegistrationStatus.needsToRegisterMLSCLient {
                 // Make sure MLS client exists, mls public keys will be generated upon creation
                 _ = try coreCryptoProvider.coreCrypto(requireMLS: true)
             }
@@ -540,7 +536,7 @@ public class ZMUserSession: NSObject {
     // MARK: - Network
 
     public func requestSlowSync() {
-        applicationStatusDirectory?.requestSlowSync()
+        applicationStatusDirectory.requestSlowSync()
     }
 
     // MARK: - Access Token
@@ -734,7 +730,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
                 processingInterrupted = true
             }
 
-            let isSyncing = await syncContext.perform { self.applicationStatusDirectory?.syncStatus.isSyncing == true }
+            let isSyncing = await syncContext.perform { self.applicationStatusDirectory.syncStatus.isSyncing }
 
             if !processingInterrupted {
                 await syncContext.perform {

@@ -61,30 +61,6 @@
     NOT_USED(taskIdentifier);
 }
 
-- (void)didStartSlowSync { }
-
-- (void)didFinishSlowSync { }
-
-- (void)didStartQuickSync { }
-
-- (void)didFinishQuickSync { }
-
-- (void)didRegisterMLSClient:(UserClient *)userClient {
-    NOT_USED(userClient);
-}
-
-- (void)didRegisterSelfUserClient:(UserClient *)userClient {
-    NOT_USED(userClient);
-}
-
-- (void)didFailToRegisterSelfUserClient:(NSError *)error {
-    NOT_USED(error);
-}
-
-- (void)didDeleteSelfUserClient:(NSError *)error {
-    NOT_USED(error);
-}
-
 - (void)setUp
 {
     [super setUp];
@@ -118,7 +94,6 @@
                                                                                          cookieStorage:[[FakeCookieStorage alloc] init]
                                                                                    requestCancellation:self
                                                                                            application:self.application
-                                                                                     syncStateDelegate:self
                                                                                  lastEventIDRepository:self.lastEventIDRepository
                                                                                              analytics:nil];
     

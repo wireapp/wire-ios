@@ -36,7 +36,6 @@ class ApplicationStatusDirectoryTests: MessagingTest {
                 cookieStorage: cookieStorage,
                 requestCancellation: self,
                 application: mockApplication,
-                syncStateDelegate: self,
                 lastEventIDRepository: lastEventIDRepository
             )
         }
@@ -82,36 +81,3 @@ extension ApplicationStatusDirectoryTests: ZMRequestCancellation {
     }
 
 }
-
-extension ApplicationStatusDirectoryTests: ZMSyncStateDelegate {
-    func didRegisterMLSClient(_ userClient: WireDataModel.UserClient) {
-        // no-op
-    }
-
-    func didStartSlowSync() {
-        // no-op
-    }
-
-    func didFinishSlowSync() {
-        // no-op
-    }
-
-    func didStartQuickSync() {
-        // no-op
-    }
-
-    func didFinishQuickSync() {
-        // no-op
-    }
-
-    func didRegisterSelfUserClient(_ userClient: UserClient) {
-        // nop
-    }
-
-    func didFailToRegisterSelfUserClient(error: Error) {
-        // nop
-    }
-
-    func didDeleteSelfUserClient(error: Error) {
-        // nop
-    }}

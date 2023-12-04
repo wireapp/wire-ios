@@ -39,21 +39,21 @@ class ZMUserSessionTests_Syncing: ZMUserSessionTestsBase {
     }
 
     func startQuickSync() {
-        sut.applicationStatusDirectory?.syncStatus.currentSyncPhase = .done
-        sut.applicationStatusDirectory?.syncStatus.pushChannelDidOpen()
+        sut.applicationStatusDirectory.syncStatus.currentSyncPhase = .done
+        sut.applicationStatusDirectory.syncStatus.pushChannelDidOpen()
     }
 
     func finishQuickSync() {
-        sut.applicationStatusDirectory?.syncStatus.finishCurrentSyncPhase(phase: .fetchingMissedEvents)
+        sut.applicationStatusDirectory.syncStatus.finishCurrentSyncPhase(phase: .fetchingMissedEvents)
     }
 
     func startSlowSync() {
-        sut.applicationStatusDirectory?.syncStatus.forceSlowSync()
+        sut.applicationStatusDirectory.syncStatus.forceSlowSync()
     }
 
     func finishSlowSync() {
-        sut.applicationStatusDirectory?.syncStatus.currentSyncPhase = .lastSlowSyncPhase
-        sut.applicationStatusDirectory?.syncStatus.finishCurrentSyncPhase(phase: .lastSlowSyncPhase)
+        sut.applicationStatusDirectory.syncStatus.currentSyncPhase = .lastSlowSyncPhase
+        sut.applicationStatusDirectory.syncStatus.finishCurrentSyncPhase(phase: .lastSlowSyncPhase)
     }
 
     // MARK: Slow Sync

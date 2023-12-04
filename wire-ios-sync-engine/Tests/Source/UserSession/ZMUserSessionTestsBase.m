@@ -62,6 +62,7 @@
 
 - (void)tearDown
 {
+
     NSURL *cachesURL = [[NSFileManager defaultManager] cachesURLForAccountWith:self.userIdentifier in:self.sut.sharedContainerURL];
     NSArray *items = [[NSFileManager defaultManager] contentsOfDirectoryAtURL:cachesURL includingPropertiesForKeys:nil options:0 error:nil];
     for (NSURL *item in items) {
@@ -74,6 +75,7 @@
     self.thirdPartyServices = nil;
     self.sut.thirdPartyServicesDelegate = nil;
     self.mockSessionManager = nil;
+    self.mockMLSService = nil;
     self.transportSession = nil;
     self.mediaManager = nil;
     self.flowManagerMock = nil;
