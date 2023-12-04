@@ -32,6 +32,8 @@ class ConversationEventProcessorTests: MessagingTestBase {
             context: syncMOC,
             conversationService: conversationService
         )
+        BackendInfo.storage = .random()!
+        BackendInfo.apiVersion = .v0
     }
 
     // MARK: - Helpers
