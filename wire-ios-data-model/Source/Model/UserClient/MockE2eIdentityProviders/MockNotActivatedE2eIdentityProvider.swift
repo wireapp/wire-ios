@@ -19,13 +19,17 @@
 import Foundation
 
 public final class MockNotActivatedE2eIdentityProvider: E2eIdentityProviding {
+
+    lazy var dateFormatter = DateFormatter()
+
     public var isE2EIdentityEnabled: Bool = UserDefaults.standard.bool(forKey: "isE2eIdentityViewEnabled")
+
     public var certificate: E2eIdentityCertificate {
         E2eIdentityCertificate(
-            certificateDetails: "",
-            expiryDate: Date.now.addingTimeInterval(36000),
+            certificateDetails: String(repeating: "abcdefghijklmno", count: 10),
+            expiryDate: dateFormatter.date(from: "15.10.2023") ?? Date.now,
             certificateStatus: "Not activated",
-            serialNumber: ""
+            serialNumber: String(repeating: "abcdefghijklmno", count: 2)
         )
     }
 
