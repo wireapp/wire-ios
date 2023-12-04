@@ -44,7 +44,9 @@ class ZMUserSessionSwiftTests: ZMUserSessionTestsBase {
     func test_itPerformsPendingJoins_AfterQuickSync() {
         // given
         let mockMLSService = MockMLSService()
-        sut.syncContext.mlsService = mockMLSService
+        sut.syncContext.performAndWait {
+            sut.syncContext.mlsService = mockMLSService
+        }
 
         // when
         sut.didFinishQuickSync()

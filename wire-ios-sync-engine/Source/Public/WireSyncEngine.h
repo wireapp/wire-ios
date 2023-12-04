@@ -41,5 +41,4 @@
 #import <WireSyncEngine/ZMSelfStrategy.h>
 #import <WireSyncEngine/ZMHotFix.h>
 #import <WireSyncEngine/ZMSyncStrategy.h>
-#import <WireSyncEngine/ZMUpdateEventsBuffer.h>
 #import <WireSyncEngine/ZMMissingUpdateEventsTranscoder.h>

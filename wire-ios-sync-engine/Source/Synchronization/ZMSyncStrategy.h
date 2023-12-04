@@ -21,8 +21,6 @@
 @import Foundation;
 @import WireRequestStrategy;
 
-#import "ZMUpdateEventsBuffer.h"
-
 @class ZMTransportRequest;
 @class LocalNotificationDispatcher;
 @class ApplicationStatusDirectory;
