@@ -62,13 +62,13 @@ final class DeviceDetailsViewTests: ZMSnapshotTestCase, CoreDataFixtureTestHelpe
         super.tearDown()
     }
 
-    func prepareSut(
+    func prepareViewModel(
         mode: UIUserInterfaceStyle,
         e2eIdentityProvider: E2eIdentityProviding,
         isProteusVerificationEnabled: Bool,
         isE2EIdentityEnabled: Bool,
         isSelfClient: Bool
-    ) {
+    ) -> DeviceInfoViewModel {
         let mockSession = UserSessionMock(mockUser: .createSelfUser(name: "Joe"))
         let emailCredentials = ZMEmailCredentials(email: "test@rad.com", password: "smalsdldl231S#")
         let viewModel = DeviceInfoViewModel(
@@ -89,11 +89,7 @@ final class DeviceDetailsViewTests: ZMSnapshotTestCase, CoreDataFixtureTestHelpe
             userClient: client
         )
         viewModel.proteusKeyFingerprint = kFingerPrint
-        Task {
-            await viewModel.fetchE2eCertificate()
-        }
-        sut = UIHostingController(rootView: DeviceDetailsView(viewModel: viewModel))
-        sut.overrideUserInterfaceStyle = mode
+        return viewModel
     }
 
     func setupWrappedInNavigationController(
@@ -101,15 +97,19 @@ final class DeviceDetailsViewTests: ZMSnapshotTestCase, CoreDataFixtureTestHelpe
         e2eIdentityProvider: E2eIdentityProviding,
         isProteusVerificationEnabled: Bool = true,
         isE2EIdentityEnabled: Bool = true,
-        isSelfClient: Bool = false
+        isSelfClient: Bool = false,
+        e2eIdentityCertificate: E2eIdentityCertificate? = nil
     ) -> UINavigationController {
-        prepareSut(
+        let viewModel = prepareViewModel(
             mode: mode,
             e2eIdentityProvider: e2eIdentityProvider,
             isProteusVerificationEnabled: isProteusVerificationEnabled,
             isE2EIdentityEnabled: isE2EIdentityEnabled,
             isSelfClient: isSelfClient
         )
+        viewModel.e2eIdentityCertificate = e2eIdentityCertificate
+        sut = UIHostingController(rootView: DeviceDetailsView(viewModel: viewModel))
+        sut.overrideUserInterfaceStyle = mode
         return  sut.wrapInNavigationController()
     }
 
@@ -139,7 +139,8 @@ final class DeviceDetailsViewTests: ZMSnapshotTestCase, CoreDataFixtureTestHelpe
         let e2eIdentityProvider = MockValidE2eIdentityProvider()
         verify(
             matching: setupWrappedInNavigationController(
-                e2eIdentityProvider: e2eIdentityProvider
+                e2eIdentityProvider: e2eIdentityProvider,
+                e2eIdentityCertificate: e2eIdentityProvider.certificate
             )
         )
     }
@@ -149,7 +150,8 @@ final class DeviceDetailsViewTests: ZMSnapshotTestCase, CoreDataFixtureTestHelpe
         verify(
             matching: setupWrappedInNavigationController(
                 e2eIdentityProvider: e2eIdentityProvider,
-                isProteusVerificationEnabled: false
+                isProteusVerificationEnabled: false,
+                e2eIdentityCertificate: e2eIdentityProvider.certificate
             )
         )
     }
@@ -158,7 +160,8 @@ final class DeviceDetailsViewTests: ZMSnapshotTestCase, CoreDataFixtureTestHelpe
         let e2eIdentityProvider = MockRevokedE2eIdentityProvider()
         verify(
             matching: setupWrappedInNavigationController(
-                e2eIdentityProvider: e2eIdentityProvider
+                e2eIdentityProvider: e2eIdentityProvider,
+                e2eIdentityCertificate: e2eIdentityProvider.certificate
             )
         )
     }
@@ -167,7 +170,8 @@ final class DeviceDetailsViewTests: ZMSnapshotTestCase, CoreDataFixtureTestHelpe
         let e2eIdentityProvider = MockExpiredE2eIdentityProvider()
         verify(
             matching: setupWrappedInNavigationController(
-                    e2eIdentityProvider: e2eIdentityProvider
+                    e2eIdentityProvider: e2eIdentityProvider,
+                    e2eIdentityCertificate: e2eIdentityProvider.certificate
                 )
             )
     }
@@ -176,7 +180,8 @@ final class DeviceDetailsViewTests: ZMSnapshotTestCase, CoreDataFixtureTestHelpe
         let e2eIdentityProvider = MockNotActivatedE2eIdentityProvider()
         verify(
             matching: setupWrappedInNavigationController(
-                e2eIdentityProvider: e2eIdentityProvider
+                e2eIdentityProvider: e2eIdentityProvider,
+                e2eIdentityCertificate: e2eIdentityProvider.certificate
             )
         )
     }
@@ -190,7 +195,8 @@ final class DeviceDetailsViewTests: ZMSnapshotTestCase, CoreDataFixtureTestHelpe
                 mode: .dark,
                 e2eIdentityProvider: e2eIdentityProvider,
                 isE2EIdentityEnabled: false,
-                isSelfClient: true
+                isSelfClient: true,
+                e2eIdentityCertificate: e2eIdentityProvider.certificate
             )
         )
     }
@@ -200,7 +206,8 @@ final class DeviceDetailsViewTests: ZMSnapshotTestCase, CoreDataFixtureTestHelpe
         verify(matching:
                 setupWrappedInNavigationController(
                     mode: .dark,
-                    e2eIdentityProvider: e2eIdentityProvider
+                    e2eIdentityProvider: e2eIdentityProvider,
+                    e2eIdentityCertificate: e2eIdentityProvider.certificate
                 )
         )
     }
@@ -210,7 +217,8 @@ final class DeviceDetailsViewTests: ZMSnapshotTestCase, CoreDataFixtureTestHelpe
         verify(matching:
                 setupWrappedInNavigationController(
                     mode: .dark,
-                    e2eIdentityProvider: e2eIdentityProvider
+                    e2eIdentityProvider: e2eIdentityProvider,
+                    e2eIdentityCertificate: e2eIdentityProvider.certificate
                 )
         )
     }
@@ -220,7 +228,8 @@ final class DeviceDetailsViewTests: ZMSnapshotTestCase, CoreDataFixtureTestHelpe
         verify(
             matching: setupWrappedInNavigationController(
                 mode: .dark,
-                e2eIdentityProvider: e2eIdentityProvider
+                e2eIdentityProvider: e2eIdentityProvider,
+                e2eIdentityCertificate: e2eIdentityProvider.certificate
             )
         )
     }
@@ -230,7 +239,8 @@ final class DeviceDetailsViewTests: ZMSnapshotTestCase, CoreDataFixtureTestHelpe
         verify(
             matching: setupWrappedInNavigationController(
                 mode: .dark,
-                e2eIdentityProvider: e2eIdentityProvider
+                e2eIdentityProvider: e2eIdentityProvider,
+                e2eIdentityCertificate: e2eIdentityProvider.certificate
             )
         )
     }
@@ -240,7 +250,8 @@ final class DeviceDetailsViewTests: ZMSnapshotTestCase, CoreDataFixtureTestHelpe
         verify(
             matching: setupWrappedInNavigationController(
                 mode: .dark,
-                e2eIdentityProvider: e2eIdentityProvider
+                e2eIdentityProvider: e2eIdentityProvider,
+                e2eIdentityCertificate: e2eIdentityProvider.certificate
             )
         )
     }

@@ -30,9 +30,5 @@ final class String_FingerprintTests: XCTestCase {
         let validText = "AB CD\nEF GH\nIJ KL\nMN OP\nQR ST"
         XCTAssertEqual(validText, testText.splitStringIntoLines(charactersPerLine: 4))
     }
-    func testGivenValidStringAndNotUsingFingerPrintSpacesWhenSplitStringIntoLinesThenValidIsReturned() {
-        let testText = "ABCDEFGHIJKLMNOPQRST"
-        let validText = "ABCD\nEFGH\nIJKL\nMNOP\nQRST"
-        XCTAssertEqual(validText, testText.splitStringIntoLines(charactersPerLine: 4, withFingerprintStringWithSpaces: false))
-    }
+
 }

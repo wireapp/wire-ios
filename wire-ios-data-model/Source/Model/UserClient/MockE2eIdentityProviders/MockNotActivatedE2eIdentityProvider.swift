@@ -20,15 +20,18 @@ import Foundation
 
 public final class MockNotActivatedE2eIdentityProvider: E2eIdentityProviding {
     public var isE2EIdentityEnabled: Bool = UserDefaults.standard.bool(forKey: "isE2eIdentityViewEnabled")
-
-    public init() {}
-
-    public func fetchCertificate() async throws -> E2eIdentityCertificate {
-        return E2eIdentityCertificate(
+    public var certificate: E2eIdentityCertificate {
+        E2eIdentityCertificate(
             certificateDetails: "",
             expiryDate: Date.now.addingTimeInterval(36000),
             certificateStatus: "Not activated",
             serialNumber: ""
         )
+    }
+
+    public init() {}
+
+    public func fetchCertificate() async throws -> E2eIdentityCertificate {
+        certificate
     }
 }
