@@ -194,7 +194,6 @@ final class ClientListViewController: UIViewController,
                         getUserClientFingerprintUseCase: userSession.getUserClientFingerprint,
                         e2eIdentityProvider: self.e2eIdentityProvider()
                     )) {
-                        // TODO: Check the navigation UI glitch
                         self.navigationController?.setNavigationBarHidden(false, animated: false)
                     }
                 let hostingViewController = UIHostingController(rootView: detailsView)
