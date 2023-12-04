@@ -347,6 +347,13 @@ public final class MLSService: MLSServiceInterface {
             withTimeInterval: .oneDay,
             repeats: true
         ) { [weak self] _ in
+            guard
+                let context = self?.context,
+                ZMUser.selfUser(in: context).selfClient()?.hasRegisteredMLSClient == true else {
+                self?.logger.info("Skip periodic key material check since MLS is not enabled")
+                return
+            }
+
             self?.updateKeyMaterialForAllStaleGroupsIfNeeded()
         }
     }
