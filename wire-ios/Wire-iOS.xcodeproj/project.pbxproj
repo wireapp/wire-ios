@@ -10659,7 +10659,6 @@
 					x86_64,
 					arm64,
 				);
-				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 			};
 			name = Debug;
 		};
@@ -10671,7 +10670,6 @@
 					x86_64,
 					arm64,
 				);
-				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 			};
 			name = Release;
 		};
@@ -10701,7 +10699,6 @@
 					x86_64,
 					arm64,
 				);
-				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -10720,7 +10717,6 @@
 					x86_64,
 					arm64,
 				);
-				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

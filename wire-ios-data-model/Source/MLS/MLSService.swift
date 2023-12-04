@@ -1827,6 +1827,9 @@ extension CiphersuiteName {
 
         case .mls256Dhkemp384Aes256gcmSha384P384:
             return 7
+
+        @unknown default:
+            fatalError("unsupported value of 'CiphersuiteName'!")
         }
     }
 
