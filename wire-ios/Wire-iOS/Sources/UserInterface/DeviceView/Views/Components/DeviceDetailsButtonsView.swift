@@ -29,7 +29,7 @@ struct DeviceDetailsButtonsView: View {
                 await viewModel.fetchE2eCertificate()
             }
         } label: {
-            Text(L10n.Localizable.Device.Details.Section.E2e.getcertificate)
+            Text(L10n.Localizable.Device.Details.Section.E2ei.getCertificate)
             .foregroundStyle(SemanticColors.Label.textDefault.swiftUIColor)
             .font(FontSpec.normalRegularFont.swiftUIFont.bold())
         }
@@ -42,7 +42,7 @@ struct DeviceDetailsButtonsView: View {
             }
         } label: {
             VStack(alignment: .leading) {
-                Text(L10n.Localizable.Device.Details.Section.E2e.updatecertificate)
+                Text(L10n.Localizable.Device.Details.Section.E2ei.updateCertificate)
                     .foregroundStyle(SemanticColors.Label.textDefault.swiftUIColor)
                     .font(FontSpec.normalRegularFont.swiftUIFont.bold())
             }
@@ -56,7 +56,7 @@ struct DeviceDetailsButtonsView: View {
             },
             label: {
                 HStack {
-                    Text(L10n.Localizable.Device.Details.Section.E2e.showcertificatedetails)
+                    Text(L10n.Localizable.Device.Details.Section.E2ei.showCertificateDetails)
                         .foregroundStyle(SemanticColors.Label.textDefault.swiftUIColor)
                         .font(UIFont.normalRegularFont.swiftUIFont.bold())
                     Spacer()

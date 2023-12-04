@@ -27,13 +27,13 @@ extension E2EIdentityCertificateStatus {
     func titleForStatus() -> String {
         switch self {
         case .notActivated:
-            return L10n.Localizable.Device.Details.Section.E2e.Status.notactivated
+            return L10n.Localizable.Device.Details.Section.E2ei.Status.notActivated
         case .revoked:
-            return L10n.Localizable.Device.Details.Section.E2e.Status.revoked
+            return L10n.Localizable.Device.Details.Section.E2ei.Status.revoked
         case .expired:
-            return L10n.Localizable.Device.Details.Section.E2e.Status.expired
+            return L10n.Localizable.Device.Details.Section.E2ei.Status.expired
         case .valid:
-            return L10n.Localizable.Device.Details.Section.E2e.Status.valid
+            return L10n.Localizable.Device.Details.Section.E2ei.Status.valid
         case .none:
             return ""
         }

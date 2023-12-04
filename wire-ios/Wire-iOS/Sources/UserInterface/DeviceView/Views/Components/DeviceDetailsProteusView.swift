@@ -44,7 +44,7 @@ struct DeviceDetailsProteusView: View {
                 .font(FontSpec.normalRegularFont.swiftUIFont)
             Divider()
             CopyValueView(
-                title: L10n.Localizable.Device.Details.Section.Proteus.keyfingerprint,
+                title: L10n.Localizable.Device.Details.Section.Proteus.keyFingerprint,
                 value: $viewModel.proteusKeyFingerprint.wrappedValue,
                 isCopyEnabled: viewModel.isCopyEnabled,
                 performCopy: viewModel.copyToClipboard
