@@ -309,7 +309,7 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
             // Given
             BackendInfo.apiVersion = .v2
             action = createAction()
-            let mlsService = MockMLSService()
+            let mlsService = MockMLSServiceInterface()
             self.syncMOC.mlsService = mlsService
             let payload = try XCTUnwrap(successResponsePayloadMLS.encodeToJSONString())
 
@@ -326,9 +326,9 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
             XCTAssertEqual(conversation.mlsGroupID, mlsGroupID)
             XCTAssertEqual(conversation.mlsStatus, .ready)
 
-            XCTAssertEqual(mlsService.calls.createGroup.count, 1)
+            XCTAssertEqual(mlsService.createGroupFor_Invocations.count, 1)
 
-            let createGroupCall = mlsService.calls.createGroup.element(atIndex: 0)
+            let createGroupCall = mlsService.createGroupFor_Invocations.element(atIndex: 0)
             XCTAssertEqual(createGroupCall, mlsGroupID)
         }
     }

@@ -325,7 +325,7 @@ final class MessageSenderTests: MessagingTestBase {
             .withMLServiceConfigured()
             .withSendMlsMessage(returning: .success((messageSendingStatus, response)))
             .arrange()
-        arrangement.mlsService.encryptMock = { message, _ in
+        arrangement.mlsService.encryptMessageFor_MockMethod = { message, _ in
             message + [000]
         }
 
@@ -360,7 +360,7 @@ final class MessageSenderTests: MessagingTestBase {
             .withMLServiceConfigured()
             .withSendMlsMessage(returning: .success((messageSendingStatus, response)))
             .arrange()
-        arrangement.mlsService.encryptMock = { message, _ in
+        arrangement.mlsService.encryptMessageFor_MockMethod = { message, _ in
             message + [000]
         }
 
@@ -368,7 +368,7 @@ final class MessageSenderTests: MessagingTestBase {
         try await messageSender.sendMessage(message: message)
 
         // then
-        XCTAssertEqual([Arrangement.Scaffolding.groupID], arrangement.mlsService.calls.commitPendingProposalsInGroup)
+        XCTAssertEqual([Arrangement.Scaffolding.groupID], arrangement.mlsService.commitPendingProposalsIn_Invocations)
     }
 
     func testThatWhenSendingMlsMessageFailsWithPermanentError_thenThrowError() async throws {
@@ -391,7 +391,7 @@ final class MessageSenderTests: MessagingTestBase {
             .withMLServiceConfigured()
             .withSendMlsMessage(returning: .failure(networkError))
             .arrange()
-        arrangement.mlsService.encryptMock = { message, _ in
+        arrangement.mlsService.encryptMessageFor_MockMethod = { message, _ in
             message + [000]
         }
 
@@ -479,7 +479,7 @@ final class MessageSenderTests: MessagingTestBase {
         let sessionEstablisher = MockSessionEstablisherInterface()
         let messageDependencyResolver = MockMessageDependencyResolverInterface()
         let quickSyncObserver = MockQuickSyncObserverInterface()
-        let mlsService = MockMLSService()
+        let mlsService = MockMLSServiceInterface()
         let coreDataStack: CoreDataStack
 
         init(coreDataStack: CoreDataStack) {

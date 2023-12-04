@@ -44,7 +44,7 @@ class ZMUserSessionSwiftTests: ZMUserSessionTestsBase {
 
     func test_itPerformsPendingJoins_AfterQuickSync() {
         // given
-        let mockMLSService = MockMLSService()
+        let mockMLSService = MockMLSServiceInterface()
         sut.syncContext.performAndWait {
             sut.syncContext.mlsService = mockMLSService
         }
@@ -53,6 +53,6 @@ class ZMUserSessionSwiftTests: ZMUserSessionTestsBase {
         sut.didFinishQuickSync()
 
         // then
-        XCTAssertFalse(mockMLSService.calls.performPendingJoins.isEmpty)
+        XCTAssertFalse(mockMLSService.performPendingJoins_Invocations.isEmpty)
     }
 }
