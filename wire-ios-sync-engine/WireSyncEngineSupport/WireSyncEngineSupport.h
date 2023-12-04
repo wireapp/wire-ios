@@ -26,5 +26,3 @@ FOUNDATION_EXPORT double WireSyncEngineSupportVersionNumber;
 FOUNDATION_EXPORT const unsigned char WireSyncEngineSupportVersionString[];
 
 // In this header, you should import all the public headers of your framework using statements like #import <WireSyncEngineSupport/PublicHeader.h>
-
-
