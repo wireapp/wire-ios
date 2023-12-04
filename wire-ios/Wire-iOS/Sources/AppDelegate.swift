@@ -58,7 +58,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         TrackingOperation(),
         AppCenterOperation(),
         PerformanceDebuggerOperation(),
-        ZMSLogOperation(),
         AVSLoggingOperation(),
         AutomationHelperOperation(),
         MediaManagerOperation(),
