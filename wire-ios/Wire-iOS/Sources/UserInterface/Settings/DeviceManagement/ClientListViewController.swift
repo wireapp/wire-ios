@@ -97,12 +97,14 @@ final class ClientListViewController: UIViewController,
         return nil
     }
 
-    required init(clientsList: [UserClient]?,
-                  selfClient: UserClient? = ZMUserSession.shared()?.selfUserClient,
-                  credentials: ZMEmailCredentials? = .none,
-                  detailedView: Bool = false,
-                  showTemporary: Bool = true,
-                  showLegalHold: Bool = true) {
+    required init(
+        clientsList: [UserClient]?,
+        selfClient: UserClient? = ZMUserSession.shared()?.selfUserClient,
+        credentials: ZMEmailCredentials? = .none,
+        detailedView: Bool = false,
+        showTemporary: Bool = true,
+        showLegalHold: Bool = true
+    ) {
         self.selfClient = selfClient
         self.detailedView = detailedView
         self.credentials = credentials
@@ -192,7 +194,8 @@ final class ClientListViewController: UIViewController,
                         userSession: userSession,
                         credentials: self.credentials,
                         getUserClientFingerprintUseCase: userSession.getUserClientFingerprint,
-                        e2eIdentityProvider: self.e2eIdentityProvider()
+                        e2eIdentityProvider: self.e2eIdentityProvider(),
+                        mlsProvider: self.mlsProvider()
                     )) {
                         self.navigationController?.setNavigationBarHidden(false, animated: false)
                     }
@@ -523,4 +526,17 @@ extension ClientListViewController {
         return E2eIdentityProvider()
     }
 
+}
+
+// MARK: MLSProvider
+
+extension ClientListViewController {
+
+    func mlsProvider() -> MLSProviding {
+        if DeveloperFlag.enableMLSSupport.isOn {
+            MockMLSProvider(isMLSEnbaled: DeveloperFlag.enableMLSSupport.isOn)
+        } else {
+            MLSProvider()
+        }
+    }
 }

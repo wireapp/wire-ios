@@ -25,6 +25,7 @@ import WireSyncEngine
 protocol DeviceDetailsViewActions {
     func fetchCertificate() async -> E2eIdentityCertificate?
     func showCertificate(_ certificate: String)
+    func fetchMLSThumbprint() async -> String?
     func removeDevice() async -> Bool
     func resetSession() async -> Bool
     func updateVerified(_ value: Bool) async -> Bool
@@ -38,8 +39,8 @@ final class DeviceInfoViewModel: ObservableObject {
     let proteusID: String
     let getUserClientFingerprint: GetUserClientFingerprintUseCaseProtocol
     let userClient: UserClient
-
     var isE2EIdentityEnabled: Bool
+    var isMLSEnablled: Bool
     var isSelfClient: Bool
     var title: String
 
@@ -71,7 +72,10 @@ final class DeviceInfoViewModel: ObservableObject {
         return certificate.expiryDate < Date.now + .oneDay + .oneDay
     }
 
-    @Published var e2eIdentityCertificate: E2eIdentityCertificate?
+    @Published
+    var e2eIdentityCertificate: E2eIdentityCertificate?
+    @Published
+    var mlsThumbprint: String?
     private var actionsHandler: any DeviceDetailsViewActions
     var isCopyEnabled: Bool {
         return Settings.isClipboardEnabled
@@ -92,7 +96,8 @@ final class DeviceInfoViewModel: ObservableObject {
         isSelfClient: Bool,
         userSession: UserSession,
         getUserClientFingerprint: GetUserClientFingerprintUseCaseProtocol,
-        userClient: UserClient
+        userClient: UserClient,
+        isMLSEnabled: Bool
     ) {
         self.title = title
         self.addedDate = addedDate
@@ -104,8 +109,9 @@ final class DeviceInfoViewModel: ObservableObject {
         self.isSelfClient = isSelfClient
         self.getUserClientFingerprint = getUserClientFingerprint
         self.userClient = userClient
+        self.isMLSEnablled = isMLSEnabled
         self.actionsHandler.isProcessing = {[weak self] isProcessing in
-            RunLoop.main.perform {
+            DispatchQueue.main.async {
                 self?.isActionInProgress = isProcessing
             }
         }
@@ -169,6 +175,17 @@ final class DeviceInfoViewModel: ObservableObject {
     func copyToClipboard(_ value: String) {
         actionsHandler.copyToClipboard(value)
     }
+
+    func fetchMLSFingerPrint() async {
+        DispatchQueue.main.async {
+            self.isActionInProgress = true
+        }
+        let result = await actionsHandler.fetchMLSThumbprint()?.uppercased().splitStringIntoLines(charactersPerLine: 16)
+        DispatchQueue.main.async {
+            self.mlsThumbprint = result
+            self.isActionInProgress = false
+        }
+    }
 }
 
 extension DeviceInfoViewModel {
@@ -177,7 +194,8 @@ extension DeviceInfoViewModel {
         userSession: UserSession,
         credentials: ZMEmailCredentials?,
         getUserClientFingerprintUseCase: GetUserClientFingerprintUseCaseProtocol,
-        e2eIdentityProvider: E2eIdentityProviding
+        e2eIdentityProvider: E2eIdentityProviding,
+        mlsProvider: MLSProviding
     ) -> DeviceInfoViewModel {
         return DeviceInfoViewModel(
             title: userClient.model ?? "",
@@ -188,13 +206,15 @@ extension DeviceInfoViewModel {
                 userClient: userClient,
                 userSession: userSession,
                 credentials: credentials,
-                e2eIdentityProvider: e2eIdentityProvider
+                e2eIdentityProvider: e2eIdentityProvider,
+                mlsProvider: mlsProvider
             ),
             isE2EIdentityEnabled: e2eIdentityProvider.isE2EIdentityEnabled,
             isSelfClient: userClient.isSelfClient(),
             userSession: userSession,
             getUserClientFingerprint: getUserClientFingerprintUseCase,
-            userClient: userClient
+            userClient: userClient,
+            isMLSEnabled: mlsProvider.isMLSEnbaled
         )
     }
 }
