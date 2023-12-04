@@ -30,17 +30,20 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
 
     let e2eIdentityProvider: E2eIdentityProviding
     let userSession: UserSession
+    let mlsProvider: MLSProviding
 
     init(
         userClient: UserClient,
         userSession: UserSession,
         credentials: ZMEmailCredentials?,
-        e2eIdentityProvider: E2eIdentityProviding
+        e2eIdentityProvider: E2eIdentityProviding,
+        mlsProvider: MLSProviding
     ) {
         self.userClient = userClient
         self.credentials = credentials
         self.userSession = userSession
         self.e2eIdentityProvider = e2eIdentityProvider
+        self.mlsProvider = mlsProvider
     }
 
     func fetchCertificate() async -> E2eIdentityCertificate? {
@@ -54,6 +57,15 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
 
     func showCertificate(_ certificate: String) {
         // TODO: to handle in next PR
+    }
+
+    func fetchMLSThumbprint() async -> String? {
+        do {
+            return try await mlsProvider.fetchMLSThumbprint()
+        } catch {
+        // TODO: to handle in next PR
+        }
+        return nil
     }
 
     func removeDevice() async -> Bool {
