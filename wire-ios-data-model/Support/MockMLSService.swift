@@ -30,6 +30,8 @@ public final class MockMLSService: MLSServiceInterface {
     public struct Calls {
 
         public var uploadKeyPackagesIfNeeded: [Void] = []
+        public var createSelfGroup = [MLSGroupID]()
+        public var joinGroup = [MLSGroupID]()
         public var createGroup = [MLSGroupID]()
         public var conversationExists = [MLSGroupID]()
         public var processWelcomeMessage = [String]()
@@ -85,9 +87,9 @@ public final class MockMLSService: MLSServiceInterface {
 
     // MARK: - Conversation exists
 
-    typealias ConversationExistsMock = (MLSGroupID) -> Bool
+    public typealias ConversationExistsMock = (MLSGroupID) -> Bool
 
-    var conversationExistsMock: ConversationExistsMock?
+    public var conversationExistsMock: ConversationExistsMock?
 
     public func conversationExists(groupID: MLSGroupID) -> Bool {
         calls.conversationExists.append(groupID)
@@ -96,9 +98,9 @@ public final class MockMLSService: MLSServiceInterface {
 
     // MARK: - Process welcome message
 
-    typealias ProcessWelcomeMessageMock = (String) throws -> MLSGroupID
+    public typealias ProcessWelcomeMessageMock = (String) throws -> MLSGroupID
 
-    var processWelcomeMessageMock: ProcessWelcomeMessageMock?
+    public var processWelcomeMessageMock: ProcessWelcomeMessageMock?
 
     public func processWelcomeMessage(welcomeMessage: String) throws -> MLSGroupID {
         calls.processWelcomeMessage.append(welcomeMessage)
@@ -119,9 +121,9 @@ public final class MockMLSService: MLSServiceInterface {
 
     // MARK: - Decrypt
 
-    typealias DecryptMock = (String, MLSGroupID, SubgroupType?) throws -> MLSDecryptResult?
+    public typealias DecryptMock = (String, MLSGroupID, SubgroupType?) throws -> MLSDecryptResult?
 
-    var decryptMock: DecryptMock?
+    public var decryptMock: DecryptMock?
 
     public func decrypt(message: String, for groupID: MLSGroupID, subconversationType: SubgroupType?) throws -> MLSDecryptResult? {
         calls.decrypt.append((message, groupID, subconversationType))
@@ -206,12 +208,16 @@ public final class MockMLSService: MLSServiceInterface {
 
     // MARK: - Self Group
 
+    public var mockCreateSelfGroup: ((MLSGroupID) -> Void)?
     public func createSelfGroup(for groupID: MLSGroupID) {
-        fatalError("not implemented")
+        calls.createSelfGroup.append(groupID)
+        mockCreateSelfGroup?(groupID)
     }
 
+    public var mockJoinGroup: ((MLSGroupID) throws -> Void)?
     public func joinGroup(with groupID: MLSGroupID) async throws {
-        fatalError("not implemented")
+        calls.joinGroup.append(groupID)
+        try mockJoinGroup?(groupID)
     }
 
     public func joinNewGroup(with groupID: MLSGroupID) async throws {
