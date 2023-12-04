@@ -61,6 +61,9 @@ public enum SemanticColors {
         static let textReactionCounterSelected = UIColor(light: Asset.Colors.blue500Light, dark: Asset.Colors.blue500Dark)
         static let textInactive = UIColor(light: Asset.Colors.gray60, dark: Asset.Colors.gray70)
         static let textParticipantDisconnected = UIColor(light: Asset.Colors.red300Light, dark: Asset.Colors.red300Dark)
+
+        static let textCertificateValid = UIColor(light: Asset.Colors.green500Light, dark: Asset.Colors.green500Dark)
+        static let textCertificateInvalid = UIColor(light: Asset.Colors.red500Light, dark: Asset.Colors.red500Dark)
     }
 
     public enum SearchBar {

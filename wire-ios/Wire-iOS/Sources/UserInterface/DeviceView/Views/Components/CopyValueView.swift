@@ -29,10 +29,10 @@ struct CopyValueView: View {
             Text(title)
                 .font(UIFont.smallSemiboldFont.swiftUIFont)
                 .foregroundColor(SemanticColors.Label.textSectionHeader.swiftUIColor)
-                .padding(.bottom, 4)
+                .padding(.bottom, ViewConstants.Padding.small)
             HStack {
                 Text(value)
-                    .font(UIFont.sfMonoMedium.swiftUIFont)
+                    .font(UIFont.normalRegularFont.monospaced().swiftUIFont)
                 if isCopyEnabled {
                     Spacer()
                     VStack {

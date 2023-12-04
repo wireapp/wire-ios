@@ -35,7 +35,7 @@ struct DeviceDetailsView: View {
                 viewModel: viewModel,
                 isCertificateViewPreseneted: $isCertificateViewPresented
             )
-            .padding(.leading, 16)
+            .padding(.leading, ViewConstants.Padding.standard)
 
             DeviceDetailsButtonsView(
                 viewModel: viewModel,
@@ -43,7 +43,7 @@ struct DeviceDetailsView: View {
             )
         }
         .background(SemanticColors.View.backgroundDefaultWhite.swiftUIColor)
-        .padding(.top, 8)
+        .padding(.top, ViewConstants.Padding.medium)
     }
 
     var proteusView: some View {
@@ -53,15 +53,15 @@ struct DeviceDetailsView: View {
             Text(L10n.Localizable.Device.Details.Section.Proteus.title)
                 .font(FontSpec.mediumRegularFont.swiftUIFont)
                 .foregroundColor(SemanticColors.Label.textSectionHeader.swiftUIColor)
-                .frame(height: 28)
-                .padding([.leading, .top], 16)
+                .frame(height: ViewConstants.View.Height.small)
+                .padding([.leading, .top], ViewConstants.Padding.standard)
             DeviceDetailsProteusView(viewModel: viewModel, isVerfied: viewModel.isProteusVerificationEnabled)
                 .background(SemanticColors.View.backgroundDefaultWhite.swiftUIColor)
             if viewModel.isSelfClient {
                 Text(L10n.Localizable.Self.Settings.DeviceDetails.Fingerprint.subtitle)
                     .font(.footnote)
-                    .padding([.leading, .trailing], 16)
-                    .padding([.top, .bottom], 8)
+                    .padding([.leading, .trailing], ViewConstants.Padding.standard)
+                    .padding([.top, .bottom], ViewConstants.Padding.medium)
             } else {
                 DeviceDetailsBottomView(viewModel: viewModel)
             }

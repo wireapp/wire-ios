@@ -31,16 +31,16 @@ struct DeviceDetailsProteusView: View {
                 isCopyEnabled: false,
                 performCopy: nil
             )
-            .padding(.all, 16)
+            .padding(.all, ViewConstants.Padding.standard)
             Divider()
             Text(L10n.Localizable.Device.Details.Section.Proteus.activated)
                 .foregroundColor(SemanticColors.Label.textSectionHeader.swiftUIColor)
                 .font(UIFont.mediumSemiboldFont.swiftUIFont)
-                .padding([.leading, .top], 16)
-                .padding(.bottom, 4)
+                .padding([.leading, .top], ViewConstants.Padding.standard)
+                .padding(.bottom, ViewConstants.Padding.small)
             Text(viewModel.addedDate)
                 .foregroundColor(SemanticColors.Label.textDefault.swiftUIColor)
-                .padding([.leading, .trailing, .bottom], 16)
+                .padding([.leading, .trailing, .bottom], ViewConstants.Padding.standard)
                 .font(UIFont.normalRegularFont.swiftUIFont)
             Divider()
             CopyValueView(

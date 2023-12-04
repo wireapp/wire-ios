@@ -33,28 +33,28 @@ struct DeviceDetailsE2EIdentityCertificateView: View {
                 viewForStatus(
                     titleText: L10n.Localizable.Device.Details.Section.E2e.Status.title,
                     statusText: viewModel.certificateStatus.titleForStatus(),
-                    textColor: SemanticColors.DrawingColors.red.swiftUIColor,
+                    textColor: SemanticColors.Label.textCertificateInvalid.swiftUIColor,
                     image: Image(.certificateExpired)
                 )
             case .revoked:
                 viewForStatus(
                     titleText: L10n.Localizable.Device.Details.Section.E2e.Status.title,
                     statusText: viewModel.certificateStatus.titleForStatus(),
-                    textColor: SemanticColors.DrawingColors.red.swiftUIColor,
+                    textColor: SemanticColors.Label.textCertificateInvalid.swiftUIColor,
                     image: Image(.certificateRevoked)
                 )
             case .expired:
                 viewForStatus(
                     titleText: L10n.Localizable.Device.Details.Section.E2e.Status.title,
                     statusText: viewModel.certificateStatus.titleForStatus(),
-                    textColor: SemanticColors.DrawingColors.red.swiftUIColor,
+                    textColor: SemanticColors.Label.textCertificateInvalid.swiftUIColor,
                     image: Image(.certificateExpired)
                 )
             case .valid:
                 viewForStatus(
                     titleText: L10n.Localizable.Device.Details.Section.E2e.Status.title,
                     statusText: viewModel.certificateStatus.titleForStatus(),
-                    textColor: SemanticColors.DrawingColors.green.swiftUIColor,
+                    textColor: SemanticColors.Label.textCertificateValid.swiftUIColor,
                     image: Image(.certificateValid)
                 )
             case .none:
@@ -72,9 +72,9 @@ struct DeviceDetailsE2EIdentityCertificateView: View {
                 certificate.serialNumber
                     .uppercased()
                     .splitStringIntoLines(charactersPerLine: 16)
-                    .replacingOccurrences(of: " ", with: ":")
+                    .replacingOccurrences(of: "  ", with: ":")
             )
-            .font(UIFont.sfMonoMedium.swiftUIFont)
+            .font(UIFont.normalRegularFont.monospaced().swiftUIFont)
         }
     }
 
