@@ -385,7 +385,7 @@ class ConversationEventProcessorTests: MessagingTestBase {
         }
     }
 
-    func check_testThatItDoesntInsertsSystemMessage_WhenReceivingReceiptModeUpdateEventWhichHasAlreadybeenApplied() async {
+    func disabled_testThatItDoesntInsertsSystemMessage_WhenReceivingReceiptModeUpdateEventWhichHasAlreadybeenApplied() async {
         var event: ZMUpdateEvent!
 
         await self.syncMOC.perform { [self] in
@@ -394,9 +394,9 @@ class ConversationEventProcessorTests: MessagingTestBase {
             groupConversation.lastServerTimeStamp = event.timestamp
         }
         // WHEN
-//        performIgnoringZMLogError {
-            await self.sut.processConversationEvents([event])
-//        }
+        self.disableZMLogError(true)
+        await self.sut.processConversationEvents([event])
+        self.disableZMLogError(false)
 
         await self.syncMOC.perform {
             // THEN
