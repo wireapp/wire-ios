@@ -47,102 +47,117 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
     // MARK: - Methods
 
     public func processConversationEvents(_ events: [ZMUpdateEvent]) {
-        context.performAndWait {
-            for event in events {
-                switch event.type {
-                case .conversationCreate:
-                    if let payload = event.eventPayload(type: Payload.ConversationEvent<Payload.Conversation>.self) {
-                        processor.processPayload(payload, in: context)
-                    }
+        for event in events {
+            processConversationEvent(event)
+        }
+    }
 
-                case .conversationDelete:
-                    if let payload = event.eventPayload(type: Payload.ConversationEvent<Payload.UpdateConversationDeleted>.self) {
-                        processor.processPayload(payload, in: context)
-                    }
+    private func processConversationEvent(_ event: ZMUpdateEvent) {
+        guard let payloadData = try? JSONSerialization.data(withJSONObject: event.payload, options: []) else {
+            assertionFailure("payload from event '\(event.type)' can not be read!")
+            return
+        }
 
-                case .conversationMemberLeave:
-                    if let payload = event.eventPayload(type: Payload.ConversationEvent<Payload.UpdateConverationMemberLeave>.self) {
-                        processor.processPayload(payload, originalEvent: event, in: context)
-                    }
+        switch event.type {
+        case .conversationCreate:
+            guard let payload = Payload.ConversationEvent<Payload.Conversation>(payloadData) else { break }
 
-                case .conversationMemberJoin:
-                    if let payload = event.eventPayload(type: Payload.ConversationEvent<Payload.UpdateConverationMemberJoin>.self) {
-                        processor.processPayload(
-                            payload,
-                            originalEvent: event,
-                            in: context
-                        )
-
-                        syncConversationForMLSStatus(payload: payload)
-                    }
-
-                case .conversationRename:
-                    if let payload = event.eventPayload(type: Payload.ConversationEvent<Payload.UpdateConversationName>.self) {
-                        processor.processPayload(
-                            payload,
-                            originalEvent: event,
-                            in: context
-                        )
-                    }
-
-                case .conversationMemberUpdate:
-                    if let payload = event.eventPayload(type: Payload.ConversationEvent<Payload.ConversationMember>.self) {
-                        processor.processPayload(
-                            payload,
-                            in: context
-                        )
-                    }
-
-                case .conversationAccessModeUpdate:
-                    if let payload = event.eventPayload(type: Payload.ConversationEvent<Payload.UpdateConversationAccess>.self) {
-                        processor.processPayload(
-                            payload,
-                            in: context
-                        )
-                    }
-
-                case .conversationMessageTimerUpdate:
-                    if let payload = event.eventPayload(type: Payload.ConversationEvent<Payload.UpdateConversationMessageTimer>.self) {
-                        processor.processPayload(
-                            payload,
-                            in: context
-                        )
-                    }
-
-                case .conversationReceiptModeUpdate:
-                    if let payload = event.eventPayload(type: Payload.ConversationEvent<Payload.UpdateConversationReceiptMode>.self) {
-                        processor.processPayload(
-                            payload,
-                            in: context
-                        )
-                    }
-
-                case .conversationConnectRequest:
-                    if let payload = event.eventPayload(type: Payload.ConversationEvent<Payload.UpdateConversationConnectionRequest>.self) {
-                        processor.processPayload(
-                            payload,
-                            originalEvent: event,
-                            in: context
-                        )
-                    }
-
-                case .conversationMLSWelcome:
-                    guard
-                        let data = event.payloadData,
-                        let payload = Payload.UpdateConversationMLSWelcome(data)
-                    else {
-                        break
-                    }
-
-                    MLSEventProcessor.shared.process(
-                        welcomeMessage: payload.data,
-                        in: context
-                    )
-
-                default:
-                    break
-                }
+            context.performAndWait {
+                processor.processPayload(payload, in: context)
             }
+
+        case .conversationDelete:
+            guard let payload = Payload.ConversationEvent<Payload.UpdateConversationDeleted>(payloadData) else { break }
+
+            context.performAndWait {
+                processor.processPayload(payload, in: context)
+            }
+
+        case .conversationMemberLeave:
+            guard let payload = Payload.ConversationEvent<Payload.UpdateConverationMemberLeave>(payloadData) else { break }
+
+            context.performAndWait {
+                processor.processPayload(
+                    payload,
+                    originalEvent: event,
+                    in: context
+                )
+            }
+
+        case .conversationMemberJoin:
+            guard let payload = Payload.ConversationEvent<Payload.UpdateConverationMemberJoin>(payloadData) else { break }
+
+            context.performAndWait {
+                processor.processPayload(
+                    payload,
+                    originalEvent: event,
+                    in: context
+                )
+                syncConversationForMLSStatus(payload: payload)
+            }
+
+        case .conversationRename:
+            guard let payload = Payload.ConversationEvent<Payload.UpdateConversationName>(payloadData) else { break }
+
+            context.performAndWait {
+                processor.processPayload(
+                    payload,
+                    originalEvent: event,
+                    in: context
+                )
+            }
+
+        case .conversationMemberUpdate:
+            guard let payload = Payload.ConversationEvent<Payload.ConversationMember>(payloadData) else { break }
+
+            context.performAndWait {
+                processor.processPayload(payload, in: context)
+            }
+
+        case .conversationAccessModeUpdate:
+            guard let payload = Payload.ConversationEvent<Payload.UpdateConversationAccess>(payloadData) else { break }
+
+            context.performAndWait {
+                processor.processPayload(payload, in: context)
+            }
+
+        case .conversationMessageTimerUpdate:
+            guard let payload = Payload.ConversationEvent<Payload.UpdateConversationMessageTimer>(payloadData) else { break }
+
+            context.performAndWait {
+                processor.processPayload(payload, in: context )
+            }
+
+        case .conversationReceiptModeUpdate:
+            guard let payload = Payload.ConversationEvent<Payload.UpdateConversationReceiptMode>(payloadData) else { break }
+
+            context.performAndWait {
+                processor.processPayload(payload, in: context)
+            }
+
+        case .conversationConnectRequest:
+            guard let payload = Payload.ConversationEvent<Payload.UpdateConversationConnectionRequest>(payloadData) else { break }
+
+            context.performAndWait {
+                processor.processPayload(
+                    payload,
+                    originalEvent: event,
+                    in: context
+                )
+            }
+
+        case .conversationMLSWelcome:
+            guard let payload = Payload.UpdateConversationMLSWelcome(payloadData) else { break }
+
+            context.performAndWait {
+                MLSEventProcessor.shared.process(
+                    welcomeMessage: payload.data,
+                    in: context
+                )
+            }
+
+        default:
+            break
         }
     }
 
