@@ -24,7 +24,7 @@ public final class MockMLSService: MLSServiceInterface {
     // MARK: - Types
 
     enum MockError: Error {
-        case unmockedMethodCalled
+        case unmockedMethodCalled(String = #function)
     }
 
     public struct Calls {
@@ -69,7 +69,7 @@ public final class MockMLSService: MLSServiceInterface {
         subconversationGroupID: MLSGroupID
     ) throws -> MLSConferenceInfo {
         calls.generateConferenceInfo.append((parentGroupID, subconversationGroupID))
-        guard let mock = generateConferenceInfoMock else { throw MockError.unmockedMethodCalled }
+        guard let mock = generateConferenceInfoMock else { throw MockError.unmockedMethodCalled() }
         return try mock(parentGroupID, subconversationGroupID)
     }
 
@@ -104,18 +104,20 @@ public final class MockMLSService: MLSServiceInterface {
 
     public func processWelcomeMessage(welcomeMessage: String) throws -> MLSGroupID {
         calls.processWelcomeMessage.append(welcomeMessage)
-        guard let mock = processWelcomeMessageMock else { throw MockError.unmockedMethodCalled }
+        guard let mock = processWelcomeMessageMock else {
+            throw MockError.unmockedMethodCalled()
+        }
         return try mock(welcomeMessage)
     }
 
     // MARK: - Encrypt
 
-    typealias EncryptMock = ([Byte], MLSGroupID) throws -> [Byte]
-    var encryptMock: EncryptMock?
+    public typealias EncryptMock = ([Byte], MLSGroupID) throws -> [Byte]
+    public var encryptMock: EncryptMock?
 
     public func encrypt(message: [Byte], for groupID: MLSGroupID) throws -> [Byte] {
         calls.enccrypt.append((message, groupID))
-        guard let mock = encryptMock else { throw MockError.unmockedMethodCalled }
+        guard let mock = encryptMock else { throw MockError.unmockedMethodCalled() }
         return try mock(message, groupID)
     }
 
@@ -127,7 +129,7 @@ public final class MockMLSService: MLSServiceInterface {
 
     public func decrypt(message: String, for groupID: MLSGroupID, subconversationType: SubgroupType?) throws -> MLSDecryptResult? {
         calls.decrypt.append((message, groupID, subconversationType))
-        guard let mock = decryptMock else { throw MockError.unmockedMethodCalled }
+        guard let mock = decryptMock else { throw MockError.unmockedMethodCalled() }
         return try mock(message, groupID, subconversationType)
     }
 
@@ -145,7 +147,7 @@ public final class MockMLSService: MLSServiceInterface {
 
     public func removeMembersFromConversation(with clientIds: [MLSClientID], for groupID: MLSGroupID) throws {
         calls.removeMembersFromConversation.append((clientIds, groupID))
-        guard let mock = removeMembersMock else { throw MockError.unmockedMethodCalled }
+        guard let mock = removeMembersMock else { throw MockError.unmockedMethodCalled() }
         try mock(clientIds, groupID)
     }
 
@@ -185,9 +187,7 @@ public final class MockMLSService: MLSServiceInterface {
         parentQualifiedID: QualifiedID,
         parentID: MLSGroupID
     ) async throws -> MLSGroupID {
-        guard let mock = mockCreateOrJoinSubgroup else {
-            throw MockError.unmockedMethodCalled
-        }
+        guard let mock = mockCreateOrJoinSubgroup else { throw MockError.unmockedMethodCalled() }
 
         return mock(parentQualifiedID, parentID)
     }
@@ -233,9 +233,7 @@ public final class MockMLSService: MLSServiceInterface {
         parentGroupID: MLSGroupID,
         subconversationType: SubgroupType
     ) async throws {
-        guard let mock = mockLeaveSubconversation else {
-            throw MockError.unmockedMethodCalled
-        }
+        guard let mock = mockLeaveSubconversation else { throw MockError.unmockedMethodCalled() }
 
         try mock(parentQualifiedID, parentGroupID, subconversationType)
     }
@@ -248,9 +246,7 @@ public final class MockMLSService: MLSServiceInterface {
         subconversationType: SubgroupType,
         selfClientID: MLSClientID
     ) async throws {
-        guard let mock = mockLeaveSubconversationIfNeeded else {
-            throw MockError.unmockedMethodCalled
-        }
+        guard let mock = mockLeaveSubconversationIfNeeded else { throw MockError.unmockedMethodCalled() }
 
         try mock(parentQualifiedID, parentGroupID, subconversationType, selfClientID)
     }
@@ -260,7 +256,7 @@ public final class MockMLSService: MLSServiceInterface {
     public var mockGenerateNewEpoch: ((MLSGroupID) -> Void)?
 
     public func generateNewEpoch(groupID: MLSGroupID) async throws {
-        guard let mock = mockGenerateNewEpoch else { throw MockError.unmockedMethodCalled }
+        guard let mock = mockGenerateNewEpoch else { throw MockError.unmockedMethodCalled() }
 
         return mock(groupID)
     }
@@ -271,7 +267,7 @@ public final class MockMLSService: MLSServiceInterface {
 
     public func subconversationMembers(for subconversationGroupID: MLSGroupID) throws -> [MLSClientID] {
         calls.subconversationMembersForSubconversationGroupID.append(subconversationGroupID)
-        guard let mock = mockSubconversationMembers else { throw MockError.unmockedMethodCalled }
+        guard let mock = mockSubconversationMembers else { throw MockError.unmockedMethodCalled() }
 
         return mock(subconversationGroupID)
     }
