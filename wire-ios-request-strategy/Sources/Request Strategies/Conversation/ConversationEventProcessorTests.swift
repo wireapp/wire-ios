@@ -229,7 +229,7 @@ class ConversationEventProcessorTests: MessagingTestBase {
 
     // MARK: Conversation Creation
 
-    func tocheck_testThatItProcessesConversationCreateEvents() async {
+    func testThatItProcessesConversationCreateEvents() async {
         // given
         var event: ZMUpdateEvent!
         let qualifiedID = QualifiedID(uuid: UUID(), domain: self.owningDomain)
