@@ -24,7 +24,7 @@ struct DeviceDetailsE2EIdentityCertificateView: View {
     @Binding var isCertificateViewPreseneted: Bool
 
     var body: some View {
-        Text(L10n.Localizable.Device.Details.Section.E2e.title)
+        Text(L10n.Localizable.Device.Details.Section.E2ei.title)
             .font(FontSpec.normalSemiboldFont.swiftUIFont)
             .multilineTextAlignment(.leading)
             .padding([.top, .bottom], ViewConstants.Padding.standard)
@@ -32,28 +32,28 @@ struct DeviceDetailsE2EIdentityCertificateView: View {
             switch viewModel.certificateStatus {
             case .notActivated:
                 viewForStatus(
-                    titleText: L10n.Localizable.Device.Details.Section.E2e.Status.title,
+                    titleText: L10n.Localizable.Device.Details.Section.E2ei.Status.title,
                     statusText: viewModel.certificateStatus.titleForStatus(),
                     textColor: SemanticColors.Label.textCertificateInvalid.swiftUIColor,
                     image: Image(.certificateExpired)
                 )
             case .revoked:
                 viewForStatus(
-                    titleText: L10n.Localizable.Device.Details.Section.E2e.Status.title,
+                    titleText: L10n.Localizable.Device.Details.Section.E2ei.Status.title,
                     statusText: viewModel.certificateStatus.titleForStatus(),
                     textColor: SemanticColors.Label.textCertificateInvalid.swiftUIColor,
                     image: Image(.certificateRevoked)
                 )
             case .expired:
                 viewForStatus(
-                    titleText: L10n.Localizable.Device.Details.Section.E2e.Status.title,
+                    titleText: L10n.Localizable.Device.Details.Section.E2ei.Status.title,
                     statusText: viewModel.certificateStatus.titleForStatus(),
                     textColor: SemanticColors.Label.textCertificateInvalid.swiftUIColor,
                     image: Image(.certificateExpired)
                 )
             case .valid:
                 viewForStatus(
-                    titleText: L10n.Localizable.Device.Details.Section.E2e.Status.title,
+                    titleText: L10n.Localizable.Device.Details.Section.E2ei.Status.title,
                     statusText: viewModel.certificateStatus.titleForStatus(),
                     textColor: SemanticColors.Label.textCertificateValid.swiftUIColor,
                     image: Image(.certificateValid)
@@ -64,7 +64,7 @@ struct DeviceDetailsE2EIdentityCertificateView: View {
             Spacer()
         }
         if viewModel.isValidCerificate, let certificate = viewModel.e2eIdentityCertificate {
-            Text(L10n.Localizable.Device.Details.Section.E2e.serialnumber)
+            Text(L10n.Localizable.Device.Details.Section.E2ei.serialNumber)
                 .font(FontSpec.smallSemiboldFont.swiftUIFont)
                 .foregroundColor(SemanticColors.Label.textSectionHeader.swiftUIColor)
                 .padding(.top, ViewConstants.Padding.medium)
