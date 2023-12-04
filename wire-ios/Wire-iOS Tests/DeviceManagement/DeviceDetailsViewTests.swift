@@ -34,10 +34,14 @@ final class DeviceDetailsViewTests: ZMSnapshotTestCase, CoreDataFixtureTestHelpe
     }()
 
     lazy var kSerialNumber: String = {
-        return "abcdefghijklmnopqrstuvwxyz".splitStringIntoLines(charactersPerLine: 16)
+        return "abcdefghijklmnopqrstuvwxyz"
+            .uppercased()
+            .splitStringIntoLines(charactersPerLine: 16)
     }()
 
-    lazy var kFingerPrint: String = { return "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnop".splitStringIntoLines(charactersPerLine: 16)
+    lazy var kFingerPrint: String = { return "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnop"
+            .uppercased()
+            .splitStringIntoLines(charactersPerLine: 16)
     }()
 
     override func setUp() {
@@ -68,10 +72,8 @@ final class DeviceDetailsViewTests: ZMSnapshotTestCase, CoreDataFixtureTestHelpe
         let mockSession = UserSessionMock(mockUser: .createSelfUser(name: "Joe"))
         let emailCredentials = ZMEmailCredentials(email: "test@rad.com", password: "smalsdldl231S#")
         let viewModel = DeviceInfoViewModel(
-            uuid: "sdsfs",
             title: "some title",
             addedDate: "Monday 15 Oct, 2023",
-            proteusKeyFingerprint: kFingerPrint,
             proteusID: kSerialNumber,
             isProteusVerificationEnabled: isProteusVerificationEnabled,
             actionsHandler: DeviceDetailsViewActionsHandler(
@@ -86,6 +88,7 @@ final class DeviceDetailsViewTests: ZMSnapshotTestCase, CoreDataFixtureTestHelpe
             getUserClientFingerprint: mockGetUserClientFingerprintUseCaseProtocol,
             userClient: client
         )
+        viewModel.proteusKeyFingerprint = kFingerPrint
         Task {
             await viewModel.fetchE2eCertificate()
         }
@@ -125,6 +128,7 @@ final class DeviceDetailsViewTests: ZMSnapshotTestCase, CoreDataFixtureTestHelpe
         verify(
             matching: setupWrappedInNavigationController(
                 e2eIdentityProvider: e2eIdentityProvider,
+                isProteusVerificationEnabled: false,
                 isE2EIdentityEnabled: false,
                 isSelfClient: true
             )
@@ -136,6 +140,16 @@ final class DeviceDetailsViewTests: ZMSnapshotTestCase, CoreDataFixtureTestHelpe
         verify(
             matching: setupWrappedInNavigationController(
                 e2eIdentityProvider: e2eIdentityProvider
+            )
+        )
+    }
+
+    func testWhenE2eidentityViewIsEnabledAndCertificateIsValidWhenProteusIsNotVerifiedThenBlueShieldIsNotShown() {
+        let e2eIdentityProvider = MockValidE2eIdentityProvider()
+        verify(
+            matching: setupWrappedInNavigationController(
+                e2eIdentityProvider: e2eIdentityProvider,
+                isProteusVerificationEnabled: false
             )
         )
     }
