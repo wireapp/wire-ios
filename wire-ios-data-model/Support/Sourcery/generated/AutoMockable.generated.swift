@@ -1444,16 +1444,16 @@ public class MockMLSServiceInterface: MLSServiceInterface {
     // MARK: - wipeGroup
 
     public var wipeGroup_Invocations: [MLSGroupID] = []
-    public var wipeGroup_MockMethod: ((MLSGroupID) -> Void)?
+    public var wipeGroup_MockMethod: ((MLSGroupID) async -> Void)?
 
-    public func wipeGroup(_ groupID: MLSGroupID) {
+    public func wipeGroup(_ groupID: MLSGroupID) async {
         wipeGroup_Invocations.append(groupID)
 
         guard let mock = wipeGroup_MockMethod else {
             fatalError("no mock for `wipeGroup`")
         }
 
-        mock(groupID)
+        await mock(groupID)
     }
 
     // MARK: - commitPendingProposals

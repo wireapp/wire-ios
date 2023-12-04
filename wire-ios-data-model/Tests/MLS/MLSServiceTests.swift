@@ -1400,7 +1400,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     // MARK: - Wipe Groups
 
-    func test_WipeGroup_IsSuccessfull() {
+    func test_WipeGroup_IsSuccessfull() async {
         // Given
         let groupID = MLSGroupID.random()
 
@@ -1411,7 +1411,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
 
         // When
-        sut.wipeGroup(groupID)
+        await sut.wipeGroup(groupID)
 
         // Then
         XCTAssertEqual(count, 1)

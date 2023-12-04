@@ -20,7 +20,7 @@ import Foundation
 import WireSystem
 
 public protocol RemoveLocalConversationUseCaseProtocol {
-    func invoke(with conversation: ZMConversation, syncContext: NSManagedObjectContext)
+    func invoke(with conversation: ZMConversation, syncContext: NSManagedObjectContext) async
 }
 
 public class RemoveLocalConversationUseCase: RemoveLocalConversationUseCaseProtocol {
@@ -30,18 +30,18 @@ public class RemoveLocalConversationUseCase: RemoveLocalConversationUseCaseProto
     public func invoke(
         with conversation: ZMConversation,
         syncContext: NSManagedObjectContext
-    ) {
+    ) async {
         precondition(syncContext.zm_isSyncContext, "use case should only be accessed on the sync context")
 
         conversation.isDeletedRemotely = true
-        wipeMLSGroupIfNeeded(for: conversation, in: syncContext)
+        await wipeMLSGroupIfNeeded(for: conversation, in: syncContext)
         syncContext.saveOrRollback()
     }
 
     func wipeMLSGroupIfNeeded(
         for conversation: ZMConversation,
         in context: NSManagedObjectContext
-    ) {
+    ) async {
         guard conversation.messageProtocol == .mls else {
             return
         }
@@ -54,6 +54,6 @@ public class RemoveLocalConversationUseCase: RemoveLocalConversationUseCaseProto
             return WireLogger.mls.warn("failed to wipe conversation: missing `mlsService`")
         }
 
-        mlsService.wipeGroup(groupID)
+        await mlsService.wipeGroup(groupID)
     }
 }

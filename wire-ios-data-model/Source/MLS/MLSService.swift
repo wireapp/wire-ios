@@ -46,7 +46,7 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
 
     func performPendingJoins()
 
-    func wipeGroup(_ groupID: MLSGroupID)
+    func wipeGroup(_ groupID: MLSGroupID) async
 
     func commitPendingProposals() async throws
 
@@ -586,7 +586,7 @@ public final class MLSService: MLSServiceInterface {
 
     // MARK: - Remove group
 
-    public func wipeGroup(_ groupID: MLSGroupID) {
+    public func wipeGroup(_ groupID: MLSGroupID) async {
         logger.info("wiping group (\(groupID.safeForLoggingDescription))")
         do {
             try coreCrypto.perform { try $0.wipeConversation(conversationId: groupID.bytes) }
