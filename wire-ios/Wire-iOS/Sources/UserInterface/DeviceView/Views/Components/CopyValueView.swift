@@ -17,6 +17,7 @@
 //
 
 import SwiftUI
+import WireCommonComponents
 
 struct CopyValueView: View {
     var title: String
@@ -27,12 +28,12 @@ struct CopyValueView: View {
     var body: some View {
         VStack(alignment: .leading) {
             Text(title)
-                .font(UIFont.smallSemiboldFont.swiftUIFont)
+                .font(FontSpec.smallSemiboldFont.swiftUIFont)
                 .foregroundColor(SemanticColors.Label.textSectionHeader.swiftUIColor)
                 .padding(.bottom, ViewConstants.Padding.small)
             HStack {
                 Text(value)
-                    .font(UIFont.normalRegularFont.monospaced().swiftUIFont)
+                    .font(FontSpec.normalRegularFont.swiftUIFont.monospaced())
                 if isCopyEnabled {
                     Spacer()
                     VStack {

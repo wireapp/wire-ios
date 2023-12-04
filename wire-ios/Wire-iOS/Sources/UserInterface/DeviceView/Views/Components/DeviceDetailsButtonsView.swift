@@ -17,6 +17,7 @@
 //
 
 import SwiftUI
+import WireCommonComponents
 
 struct DeviceDetailsButtonsView: View {
     @ObservedObject var viewModel: DeviceInfoViewModel
@@ -30,7 +31,7 @@ struct DeviceDetailsButtonsView: View {
         } label: {
             Text(L10n.Localizable.Device.Details.Section.E2e.getcertificate)
             .foregroundStyle(SemanticColors.Label.textDefault.swiftUIColor)
-            .font(UIFont.normalRegularFont.swiftUIFont.bold())
+            .font(FontSpec.normalRegularFont.swiftUIFont.bold())
         }
     }
 
@@ -43,7 +44,7 @@ struct DeviceDetailsButtonsView: View {
             VStack(alignment: .leading) {
                 Text(L10n.Localizable.Device.Details.Section.E2e.updatecertificate)
                     .foregroundStyle(SemanticColors.Label.textDefault.swiftUIColor)
-                    .font(UIFont.normalRegularFont.swiftUIFont.bold())
+                    .font(FontSpec.normalRegularFont.swiftUIFont.bold())
             }
         }
     }
