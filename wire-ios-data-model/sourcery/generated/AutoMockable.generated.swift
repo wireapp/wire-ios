@@ -101,6 +101,7 @@ class MockCoreDataMessagingMigratorProtocol: CoreDataMessagingMigratorProtocol {
     }
 
 }
+
 public class MockCryptoboxMigrationManagerInterface: CryptoboxMigrationManagerInterface {
 
     // MARK: - Life cycle
@@ -167,6 +168,7 @@ public class MockCryptoboxMigrationManagerInterface: CryptoboxMigrationManagerIn
     }
 
 }
+
 class MockEARKeyEncryptorInterface: EARKeyEncryptorInterface {
 
     // MARK: - Life cycle
@@ -220,6 +222,7 @@ class MockEARKeyEncryptorInterface: EARKeyEncryptorInterface {
     }
 
 }
+
 public class MockEARKeyRepositoryInterface: EARKeyRepositoryInterface {
 
     // MARK: - Life cycle
@@ -412,6 +415,7 @@ public class MockEARKeyRepositoryInterface: EARKeyRepositoryInterface {
     }
 
 }
+
 public class MockEARServiceInterface: EARServiceInterface {
 
     // MARK: - Life cycle
@@ -560,6 +564,7 @@ public class MockEARServiceInterface: EARServiceInterface {
     }
 
 }
+
 public class MockFeatureRepositoryInterface: FeatureRepositoryInterface {
 
     // MARK: - Life cycle
@@ -832,6 +837,7 @@ public class MockFeatureRepositoryInterface: FeatureRepositoryInterface {
     }
 
 }
+
 class MockFileManagerInterface: FileManagerInterface {
 
     // MARK: - Life cycle
@@ -895,6 +901,7 @@ class MockFileManagerInterface: FileManagerInterface {
     }
 
 }
+
 class MockMLSActionsProviderProtocol: MLSActionsProviderProtocol {
 
     // MARK: - Life cycle
@@ -1143,6 +1150,7 @@ class MockMLSActionsProviderProtocol: MLSActionsProviderProtocol {
     }
 
 }
+
 public class MockMLSDecryptionServiceInterface: MLSDecryptionServiceInterface {
 
     // MARK: - Life cycle
@@ -1192,6 +1200,7 @@ public class MockMLSDecryptionServiceInterface: MLSDecryptionServiceInterface {
     }
 
 }
+
 public class MockMLSEncryptionServiceInterface: MLSEncryptionServiceInterface {
 
     // MARK: - Life cycle
@@ -1223,6 +1232,513 @@ public class MockMLSEncryptionServiceInterface: MLSEncryptionServiceInterface {
     }
 
 }
+
+public class MockMLSServiceInterface: MLSServiceInterface {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - uploadKeyPackagesIfNeeded
+
+    public var uploadKeyPackagesIfNeeded_Invocations: [Void] = []
+    public var uploadKeyPackagesIfNeeded_MockMethod: (() -> Void)?
+
+    public func uploadKeyPackagesIfNeeded() {
+        uploadKeyPackagesIfNeeded_Invocations.append(())
+
+        guard let mock = uploadKeyPackagesIfNeeded_MockMethod else {
+            fatalError("no mock for `uploadKeyPackagesIfNeeded`")
+        }
+
+        mock()
+    }
+
+    // MARK: - createSelfGroup
+
+    public var createSelfGroupFor_Invocations: [MLSGroupID] = []
+    public var createSelfGroupFor_MockMethod: ((MLSGroupID) -> Void)?
+
+    public func createSelfGroup(for groupID: MLSGroupID) {
+        createSelfGroupFor_Invocations.append(groupID)
+
+        guard let mock = createSelfGroupFor_MockMethod else {
+            fatalError("no mock for `createSelfGroupFor`")
+        }
+
+        mock(groupID)
+    }
+
+    // MARK: - joinGroup
+
+    public var joinGroupWith_Invocations: [MLSGroupID] = []
+    public var joinGroupWith_MockError: Error?
+    public var joinGroupWith_MockMethod: ((MLSGroupID) async throws -> Void)?
+
+    public func joinGroup(with groupID: MLSGroupID) async throws {
+        joinGroupWith_Invocations.append(groupID)
+
+        if let error = joinGroupWith_MockError {
+            throw error
+        }
+
+        guard let mock = joinGroupWith_MockMethod else {
+            fatalError("no mock for `joinGroupWith`")
+        }
+
+        try await mock(groupID)
+    }
+
+    // MARK: - joinNewGroup
+
+    public var joinNewGroupWith_Invocations: [MLSGroupID] = []
+    public var joinNewGroupWith_MockError: Error?
+    public var joinNewGroupWith_MockMethod: ((MLSGroupID) async throws -> Void)?
+
+    public func joinNewGroup(with groupID: MLSGroupID) async throws {
+        joinNewGroupWith_Invocations.append(groupID)
+
+        if let error = joinNewGroupWith_MockError {
+            throw error
+        }
+
+        guard let mock = joinNewGroupWith_MockMethod else {
+            fatalError("no mock for `joinNewGroupWith`")
+        }
+
+        try await mock(groupID)
+    }
+
+    // MARK: - createGroup
+
+    public var createGroupFor_Invocations: [MLSGroupID] = []
+    public var createGroupFor_MockError: Error?
+    public var createGroupFor_MockMethod: ((MLSGroupID) throws -> Void)?
+
+    public func createGroup(for groupID: MLSGroupID) throws {
+        createGroupFor_Invocations.append(groupID)
+
+        if let error = createGroupFor_MockError {
+            throw error
+        }
+
+        guard let mock = createGroupFor_MockMethod else {
+            fatalError("no mock for `createGroupFor`")
+        }
+
+        try mock(groupID)
+    }
+
+    // MARK: - conversationExists
+
+    public var conversationExistsGroupID_Invocations: [MLSGroupID] = []
+    public var conversationExistsGroupID_MockMethod: ((MLSGroupID) -> Bool)?
+    public var conversationExistsGroupID_MockValue: Bool?
+
+    public func conversationExists(groupID: MLSGroupID) -> Bool {
+        conversationExistsGroupID_Invocations.append(groupID)
+
+        if let mock = conversationExistsGroupID_MockMethod {
+            return mock(groupID)
+        } else if let mock = conversationExistsGroupID_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `conversationExistsGroupID`")
+        }
+    }
+
+    // MARK: - processWelcomeMessage
+
+    public var processWelcomeMessageWelcomeMessage_Invocations: [String] = []
+    public var processWelcomeMessageWelcomeMessage_MockError: Error?
+    public var processWelcomeMessageWelcomeMessage_MockMethod: ((String) throws -> MLSGroupID)?
+    public var processWelcomeMessageWelcomeMessage_MockValue: MLSGroupID?
+
+    public func processWelcomeMessage(welcomeMessage: String) throws -> MLSGroupID {
+        processWelcomeMessageWelcomeMessage_Invocations.append(welcomeMessage)
+
+        if let error = processWelcomeMessageWelcomeMessage_MockError {
+            throw error
+        }
+
+        if let mock = processWelcomeMessageWelcomeMessage_MockMethod {
+            return try mock(welcomeMessage)
+        } else if let mock = processWelcomeMessageWelcomeMessage_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `processWelcomeMessageWelcomeMessage`")
+        }
+    }
+
+    // MARK: - addMembersToConversation
+
+    public var addMembersToConversationWithFor_Invocations: [(users: [MLSUser], groupID: MLSGroupID)] = []
+    public var addMembersToConversationWithFor_MockError: Error?
+    public var addMembersToConversationWithFor_MockMethod: (([MLSUser], MLSGroupID) async throws -> Void)?
+
+    public func addMembersToConversation(with users: [MLSUser], for groupID: MLSGroupID) async throws {
+        addMembersToConversationWithFor_Invocations.append((users: users, groupID: groupID))
+
+        if let error = addMembersToConversationWithFor_MockError {
+            throw error
+        }
+
+        guard let mock = addMembersToConversationWithFor_MockMethod else {
+            fatalError("no mock for `addMembersToConversationWithFor`")
+        }
+
+        try await mock(users, groupID)
+    }
+
+    // MARK: - removeMembersFromConversation
+
+    public var removeMembersFromConversationWithFor_Invocations: [(clientIds: [MLSClientID], groupID: MLSGroupID)] = []
+    public var removeMembersFromConversationWithFor_MockError: Error?
+    public var removeMembersFromConversationWithFor_MockMethod: (([MLSClientID], MLSGroupID) async throws -> Void)?
+
+    public func removeMembersFromConversation(with clientIds: [MLSClientID], for groupID: MLSGroupID) async throws {
+        removeMembersFromConversationWithFor_Invocations.append((clientIds: clientIds, groupID: groupID))
+
+        if let error = removeMembersFromConversationWithFor_MockError {
+            throw error
+        }
+
+        guard let mock = removeMembersFromConversationWithFor_MockMethod else {
+            fatalError("no mock for `removeMembersFromConversationWithFor`")
+        }
+
+        try await mock(clientIds, groupID)
+    }
+
+    // MARK: - registerPendingJoin
+
+    public var registerPendingJoin_Invocations: [MLSGroupID] = []
+    public var registerPendingJoin_MockMethod: ((MLSGroupID) -> Void)?
+
+    public func registerPendingJoin(_ group: MLSGroupID) {
+        registerPendingJoin_Invocations.append(group)
+
+        guard let mock = registerPendingJoin_MockMethod else {
+            fatalError("no mock for `registerPendingJoin`")
+        }
+
+        mock(group)
+    }
+
+    // MARK: - performPendingJoins
+
+    public var performPendingJoins_Invocations: [Void] = []
+    public var performPendingJoins_MockMethod: (() -> Void)?
+
+    public func performPendingJoins() {
+        performPendingJoins_Invocations.append(())
+
+        guard let mock = performPendingJoins_MockMethod else {
+            fatalError("no mock for `performPendingJoins`")
+        }
+
+        mock()
+    }
+
+    // MARK: - wipeGroup
+
+    public var wipeGroup_Invocations: [MLSGroupID] = []
+    public var wipeGroup_MockMethod: ((MLSGroupID) -> Void)?
+
+    public func wipeGroup(_ groupID: MLSGroupID) {
+        wipeGroup_Invocations.append(groupID)
+
+        guard let mock = wipeGroup_MockMethod else {
+            fatalError("no mock for `wipeGroup`")
+        }
+
+        mock(groupID)
+    }
+
+    // MARK: - commitPendingProposals
+
+    public var commitPendingProposals_Invocations: [Void] = []
+    public var commitPendingProposals_MockError: Error?
+    public var commitPendingProposals_MockMethod: (() async throws -> Void)?
+
+    public func commitPendingProposals() async throws {
+        commitPendingProposals_Invocations.append(())
+
+        if let error = commitPendingProposals_MockError {
+            throw error
+        }
+
+        guard let mock = commitPendingProposals_MockMethod else {
+            fatalError("no mock for `commitPendingProposals`")
+        }
+
+        try await mock()
+    }
+
+    // MARK: - commitPendingProposals
+
+    public var commitPendingProposalsIn_Invocations: [MLSGroupID] = []
+    public var commitPendingProposalsIn_MockError: Error?
+    public var commitPendingProposalsIn_MockMethod: ((MLSGroupID) async throws -> Void)?
+
+    public func commitPendingProposals(in groupID: MLSGroupID) async throws {
+        commitPendingProposalsIn_Invocations.append(groupID)
+
+        if let error = commitPendingProposalsIn_MockError {
+            throw error
+        }
+
+        guard let mock = commitPendingProposalsIn_MockMethod else {
+            fatalError("no mock for `commitPendingProposalsIn`")
+        }
+
+        try await mock(groupID)
+    }
+
+    // MARK: - createOrJoinSubgroup
+
+    public var createOrJoinSubgroupParentQualifiedIDParentID_Invocations: [(parentQualifiedID: QualifiedID, parentID: MLSGroupID)] = []
+    public var createOrJoinSubgroupParentQualifiedIDParentID_MockError: Error?
+    public var createOrJoinSubgroupParentQualifiedIDParentID_MockMethod: ((QualifiedID, MLSGroupID) async throws -> MLSGroupID)?
+    public var createOrJoinSubgroupParentQualifiedIDParentID_MockValue: MLSGroupID?
+
+    public func createOrJoinSubgroup(parentQualifiedID: QualifiedID, parentID: MLSGroupID) async throws -> MLSGroupID {
+        createOrJoinSubgroupParentQualifiedIDParentID_Invocations.append((parentQualifiedID: parentQualifiedID, parentID: parentID))
+
+        if let error = createOrJoinSubgroupParentQualifiedIDParentID_MockError {
+            throw error
+        }
+
+        if let mock = createOrJoinSubgroupParentQualifiedIDParentID_MockMethod {
+            return try await mock(parentQualifiedID, parentID)
+        } else if let mock = createOrJoinSubgroupParentQualifiedIDParentID_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `createOrJoinSubgroupParentQualifiedIDParentID`")
+        }
+    }
+
+    // MARK: - generateConferenceInfo
+
+    public var generateConferenceInfoParentGroupIDSubconversationGroupID_Invocations: [(parentGroupID: MLSGroupID, subconversationGroupID: MLSGroupID)] = []
+    public var generateConferenceInfoParentGroupIDSubconversationGroupID_MockError: Error?
+    public var generateConferenceInfoParentGroupIDSubconversationGroupID_MockMethod: ((MLSGroupID, MLSGroupID) throws -> MLSConferenceInfo)?
+    public var generateConferenceInfoParentGroupIDSubconversationGroupID_MockValue: MLSConferenceInfo?
+
+    public func generateConferenceInfo(parentGroupID: MLSGroupID, subconversationGroupID: MLSGroupID) throws -> MLSConferenceInfo {
+        generateConferenceInfoParentGroupIDSubconversationGroupID_Invocations.append((parentGroupID: parentGroupID, subconversationGroupID: subconversationGroupID))
+
+        if let error = generateConferenceInfoParentGroupIDSubconversationGroupID_MockError {
+            throw error
+        }
+
+        if let mock = generateConferenceInfoParentGroupIDSubconversationGroupID_MockMethod {
+            return try mock(parentGroupID, subconversationGroupID)
+        } else if let mock = generateConferenceInfoParentGroupIDSubconversationGroupID_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `generateConferenceInfoParentGroupIDSubconversationGroupID`")
+        }
+    }
+
+    // MARK: - onConferenceInfoChange
+
+    public var onConferenceInfoChangeParentGroupIDSubConversationGroupID_Invocations: [(parentGroupID: MLSGroupID, subConversationGroupID: MLSGroupID)] = []
+    public var onConferenceInfoChangeParentGroupIDSubConversationGroupID_MockMethod: ((MLSGroupID, MLSGroupID) -> AnyPublisher<MLSConferenceInfo, Never>)?
+    public var onConferenceInfoChangeParentGroupIDSubConversationGroupID_MockValue: AnyPublisher<MLSConferenceInfo, Never>?
+
+    public func onConferenceInfoChange(parentGroupID: MLSGroupID, subConversationGroupID: MLSGroupID) -> AnyPublisher<MLSConferenceInfo, Never> {
+        onConferenceInfoChangeParentGroupIDSubConversationGroupID_Invocations.append((parentGroupID: parentGroupID, subConversationGroupID: subConversationGroupID))
+
+        if let mock = onConferenceInfoChangeParentGroupIDSubConversationGroupID_MockMethod {
+            return mock(parentGroupID, subConversationGroupID)
+        } else if let mock = onConferenceInfoChangeParentGroupIDSubConversationGroupID_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `onConferenceInfoChangeParentGroupIDSubConversationGroupID`")
+        }
+    }
+
+    // MARK: - leaveSubconversationIfNeeded
+
+    public var leaveSubconversationIfNeededParentQualifiedIDParentGroupIDSubconversationTypeSelfClientID_Invocations: [(parentQualifiedID: QualifiedID, parentGroupID: MLSGroupID, subconversationType: SubgroupType, selfClientID: MLSClientID)] = []
+    public var leaveSubconversationIfNeededParentQualifiedIDParentGroupIDSubconversationTypeSelfClientID_MockError: Error?
+    public var leaveSubconversationIfNeededParentQualifiedIDParentGroupIDSubconversationTypeSelfClientID_MockMethod: ((QualifiedID, MLSGroupID, SubgroupType, MLSClientID) async throws -> Void)?
+
+    public func leaveSubconversationIfNeeded(parentQualifiedID: QualifiedID, parentGroupID: MLSGroupID, subconversationType: SubgroupType, selfClientID: MLSClientID) async throws {
+        leaveSubconversationIfNeededParentQualifiedIDParentGroupIDSubconversationTypeSelfClientID_Invocations.append((parentQualifiedID: parentQualifiedID, parentGroupID: parentGroupID, subconversationType: subconversationType, selfClientID: selfClientID))
+
+        if let error = leaveSubconversationIfNeededParentQualifiedIDParentGroupIDSubconversationTypeSelfClientID_MockError {
+            throw error
+        }
+
+        guard let mock = leaveSubconversationIfNeededParentQualifiedIDParentGroupIDSubconversationTypeSelfClientID_MockMethod else {
+            fatalError("no mock for `leaveSubconversationIfNeededParentQualifiedIDParentGroupIDSubconversationTypeSelfClientID`")
+        }
+
+        try await mock(parentQualifiedID, parentGroupID, subconversationType, selfClientID)
+    }
+
+    // MARK: - leaveSubconversation
+
+    public var leaveSubconversationParentQualifiedIDParentGroupIDSubconversationType_Invocations: [(parentQualifiedID: QualifiedID, parentGroupID: MLSGroupID, subconversationType: SubgroupType)] = []
+    public var leaveSubconversationParentQualifiedIDParentGroupIDSubconversationType_MockError: Error?
+    public var leaveSubconversationParentQualifiedIDParentGroupIDSubconversationType_MockMethod: ((QualifiedID, MLSGroupID, SubgroupType) async throws -> Void)?
+
+    public func leaveSubconversation(parentQualifiedID: QualifiedID, parentGroupID: MLSGroupID, subconversationType: SubgroupType) async throws {
+        leaveSubconversationParentQualifiedIDParentGroupIDSubconversationType_Invocations.append((parentQualifiedID: parentQualifiedID, parentGroupID: parentGroupID, subconversationType: subconversationType))
+
+        if let error = leaveSubconversationParentQualifiedIDParentGroupIDSubconversationType_MockError {
+            throw error
+        }
+
+        guard let mock = leaveSubconversationParentQualifiedIDParentGroupIDSubconversationType_MockMethod else {
+            fatalError("no mock for `leaveSubconversationParentQualifiedIDParentGroupIDSubconversationType`")
+        }
+
+        try await mock(parentQualifiedID, parentGroupID, subconversationType)
+    }
+
+    // MARK: - generateNewEpoch
+
+    public var generateNewEpochGroupID_Invocations: [MLSGroupID] = []
+    public var generateNewEpochGroupID_MockError: Error?
+    public var generateNewEpochGroupID_MockMethod: ((MLSGroupID) async throws -> Void)?
+
+    public func generateNewEpoch(groupID: MLSGroupID) async throws {
+        generateNewEpochGroupID_Invocations.append(groupID)
+
+        if let error = generateNewEpochGroupID_MockError {
+            throw error
+        }
+
+        guard let mock = generateNewEpochGroupID_MockMethod else {
+            fatalError("no mock for `generateNewEpochGroupID`")
+        }
+
+        try await mock(groupID)
+    }
+
+    // MARK: - subconversationMembers
+
+    public var subconversationMembersFor_Invocations: [MLSGroupID] = []
+    public var subconversationMembersFor_MockError: Error?
+    public var subconversationMembersFor_MockMethod: ((MLSGroupID) throws -> [MLSClientID])?
+    public var subconversationMembersFor_MockValue: [MLSClientID]?
+
+    public func subconversationMembers(for subconversationGroupID: MLSGroupID) throws -> [MLSClientID] {
+        subconversationMembersFor_Invocations.append(subconversationGroupID)
+
+        if let error = subconversationMembersFor_MockError {
+            throw error
+        }
+
+        if let mock = subconversationMembersFor_MockMethod {
+            return try mock(subconversationGroupID)
+        } else if let mock = subconversationMembersFor_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `subconversationMembersFor`")
+        }
+    }
+
+    // MARK: - repairOutOfSyncConversations
+
+    public var repairOutOfSyncConversations_Invocations: [Void] = []
+    public var repairOutOfSyncConversations_MockMethod: (() -> Void)?
+
+    public func repairOutOfSyncConversations() {
+        repairOutOfSyncConversations_Invocations.append(())
+
+        guard let mock = repairOutOfSyncConversations_MockMethod else {
+            fatalError("no mock for `repairOutOfSyncConversations`")
+        }
+
+        mock()
+    }
+
+    // MARK: - fetchAndRepairGroup
+
+    public var fetchAndRepairGroupWith_Invocations: [MLSGroupID] = []
+    public var fetchAndRepairGroupWith_MockMethod: ((MLSGroupID) async -> Void)?
+
+    public func fetchAndRepairGroup(with groupID: MLSGroupID) async {
+        fetchAndRepairGroupWith_Invocations.append(groupID)
+
+        guard let mock = fetchAndRepairGroupWith_MockMethod else {
+            fatalError("no mock for `fetchAndRepairGroupWith`")
+        }
+
+        await mock(groupID)
+    }
+
+    // MARK: - onEpochChanged
+
+    public var onEpochChanged_Invocations: [Void] = []
+    public var onEpochChanged_MockMethod: (() -> AnyPublisher<MLSGroupID, Never>)?
+    public var onEpochChanged_MockValue: AnyPublisher<MLSGroupID, Never>?
+
+    public func onEpochChanged() -> AnyPublisher<MLSGroupID, Never> {
+        onEpochChanged_Invocations.append(())
+
+        if let mock = onEpochChanged_MockMethod {
+            return mock()
+        } else if let mock = onEpochChanged_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `onEpochChanged`")
+        }
+    }
+
+    // MARK: - decrypt
+
+    public var decryptMessageForSubconversationType_Invocations: [(message: String, groupID: MLSGroupID, subconversationType: SubgroupType?)] = []
+    public var decryptMessageForSubconversationType_MockError: Error?
+    public var decryptMessageForSubconversationType_MockMethod: ((String, MLSGroupID, SubgroupType?) throws -> MLSDecryptResult?)?
+    public var decryptMessageForSubconversationType_MockValue: MLSDecryptResult??
+
+    public func decrypt(message: String, for groupID: MLSGroupID, subconversationType: SubgroupType?) throws -> MLSDecryptResult? {
+        decryptMessageForSubconversationType_Invocations.append((message: message, groupID: groupID, subconversationType: subconversationType))
+
+        if let error = decryptMessageForSubconversationType_MockError {
+            throw error
+        }
+
+        if let mock = decryptMessageForSubconversationType_MockMethod {
+            return try mock(message, groupID, subconversationType)
+        } else if let mock = decryptMessageForSubconversationType_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `decryptMessageForSubconversationType`")
+        }
+    }
+
+    // MARK: - encrypt
+
+    public var encryptMessageFor_Invocations: [(message: [Byte], groupID: MLSGroupID)] = []
+    public var encryptMessageFor_MockError: Error?
+    public var encryptMessageFor_MockMethod: (([Byte], MLSGroupID) throws -> [Byte])?
+    public var encryptMessageFor_MockValue: [Byte]?
+
+    public func encrypt(message: [Byte], for groupID: MLSGroupID) throws -> [Byte] {
+        encryptMessageFor_Invocations.append((message: message, groupID: groupID))
+
+        if let error = encryptMessageFor_MockError {
+            throw error
+        }
+
+        if let mock = encryptMessageFor_MockMethod {
+            return try mock(message, groupID)
+        } else if let mock = encryptMessageFor_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `encryptMessageFor`")
+        }
+    }
+
+}
+
 public class MockProteusServiceInterface: ProteusServiceInterface {
 
     // MARK: - Life cycle
@@ -1545,6 +2061,7 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
     }
 
 }
+
 public class MockSubconversationGroupIDRepositoryInterface: SubconversationGroupIDRepositoryInterface {
 
     // MARK: - Life cycle

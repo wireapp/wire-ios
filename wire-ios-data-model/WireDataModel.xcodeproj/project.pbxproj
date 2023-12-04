@@ -261,7 +261,7 @@
 		55C40BCE22B0316800EFD8BD /* ZMUser+LegalHoldRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55C40BCD22B0316800EFD8BD /* ZMUser+LegalHoldRequest.swift */; };
 		55C40BD722B0F78500EFD8BD /* ZMUserLegalHoldTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55C40BD422B0F75C00EFD8BD /* ZMUserLegalHoldTests.swift */; };
 		55C40BDD22B24AA600EFD8BD /* store2-73-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = 55C40BDC22B24AA600EFD8BD /* store2-73-0.wiredatabase */; };
-		59AF8F512B19CD5B000A09BF /* AutoMockable.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59AF8F432B19CCCC000A09BF /* AutoMockable.generated.swift */; };
+		594EB2E72B1E1A130022A5CD /* AutoMockable.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59AF8F432B19CCCC000A09BF /* AutoMockable.generated.swift */; };
 		59D1C3032B1DE6FF0016F6B2 /* WireDataModelSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = 59D1C3022B1DE6FF0016F6B2 /* WireDataModelSupport.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		59D1C3062B1DE6FF0016F6B2 /* WireDataModelSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59D1C3002B1DE6FF0016F6B2 /* WireDataModelSupport.framework */; };
 		59D1C3072B1DE6FF0016F6B2 /* WireDataModelSupport.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 59D1C3002B1DE6FF0016F6B2 /* WireDataModelSupport.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -3838,6 +3838,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				59D1C30C2B1DE80E0016F6B2 /* MockMLSService.swift in Sources */,
+				594EB2E72B1E1A130022A5CD /* AutoMockable.generated.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4323,7 +4324,6 @@
 				631A0586240439470062B387 /* UserClientTests+SafeLogging.swift in Sources */,
 				F9A7083B1CAEEB7500C2F5FE /* MockEntity2.m in Sources */,
 				1672A62A2345102400380537 /* ZMConversationListTests+Labels.swift in Sources */,
-				59AF8F512B19CD5B000A09BF /* AutoMockable.generated.swift in Sources */,
 				169315F125AC501300709F15 /* MigrateSenderClientTests.swift in Sources */,
 				169FF3AF2715820400330C2E /* ZMConnectionFetchingTests.swift in Sources */,
 				F9331C5A1CB3BECB00139ECC /* ZMClientMessageTests+OTR_Legacy.swift in Sources */,
