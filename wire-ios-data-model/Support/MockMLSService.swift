@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2023 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,43 +16,44 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import WireDataModel
 import Combine
 
-class MockMLSService: MLSServiceInterface {
+public final class MockMLSService: MLSServiceInterface {
 
     // MARK: - Types
 
     enum MockError: Error {
-
         case unmockedMethodCalled
-
     }
 
-    struct Calls {
+    public struct Calls {
 
-        var uploadKeyPackagesIfNeeded: [Void] = []
-        var createGroup = [MLSGroupID]()
-        var conversationExists = [MLSGroupID]()
-        var processWelcomeMessage = [String]()
-        var enccrypt = [([Byte], MLSGroupID)]()
-        var decrypt = [(String, MLSGroupID, SubgroupType?)]()
-        var addMembersToConversation = [([MLSUser], MLSGroupID)]()
-        var removeMembersFromConversation = [([MLSClientID], MLSGroupID)]()
-        var commitPendingProposals: [Void] = []
-        var commitPendingProposalsInGroup = [MLSGroupID]()
-        var scheduleCommitPendingProposals: [(MLSGroupID, Date)] = []
-        var registerPendingJoin = [MLSGroupID]()
-        var performPendingJoins: [Void] = []
-        var wipeGroup = [MLSGroupID]()
-        var generateConferenceInfo = [(MLSGroupID, MLSGroupID)]()
+        public var uploadKeyPackagesIfNeeded: [Void] = []
+        public var createGroup = [MLSGroupID]()
+        public var conversationExists = [MLSGroupID]()
+        public var processWelcomeMessage = [String]()
+        public var enccrypt = [([Byte], MLSGroupID)]()
+        public var decrypt = [(String, MLSGroupID, SubgroupType?)]()
+        public var addMembersToConversation = [([MLSUser], MLSGroupID)]()
+        public var removeMembersFromConversation = [([MLSClientID], MLSGroupID)]()
+        public var commitPendingProposals: [Void] = []
+        public var commitPendingProposalsInGroup = [MLSGroupID]()
+        public var scheduleCommitPendingProposals: [(MLSGroupID, Date)] = []
+        public var registerPendingJoin = [MLSGroupID]()
+        public var performPendingJoins: [Void] = []
+        public var wipeGroup = [MLSGroupID]()
+        public var generateConferenceInfo = [(MLSGroupID, MLSGroupID)]()
 
     }
 
     // MARK: - Properties
 
-    var calls = Calls()
+    public var calls = Calls()
+
+    // MARK: - Life Cycle
+
+    public init() {}
 
     // MARK: - Conference info
 
@@ -60,7 +61,7 @@ class MockMLSService: MLSServiceInterface {
 
     var generateConferenceInfoMock: GenerateConferenceInfoMock?
 
-    func generateConferenceInfo(
+    public func generateConferenceInfo(
         parentGroupID: MLSGroupID,
         subconversationGroupID: MLSGroupID
     ) throws -> MLSConferenceInfo {
@@ -71,13 +72,13 @@ class MockMLSService: MLSServiceInterface {
 
     // MARK: - Key packages
 
-    func uploadKeyPackagesIfNeeded() {
+    public func uploadKeyPackagesIfNeeded() {
         calls.uploadKeyPackagesIfNeeded.append(())
     }
 
     // MARK: - Create group
 
-    func createGroup(for groupID: MLSGroupID) throws {
+    public func createGroup(for groupID: MLSGroupID) throws {
         calls.createGroup.append(groupID)
     }
 
@@ -87,7 +88,7 @@ class MockMLSService: MLSServiceInterface {
 
     var conversationExistsMock: ConversationExistsMock?
 
-    func conversationExists(groupID: MLSGroupID) -> Bool {
+    public func conversationExists(groupID: MLSGroupID) -> Bool {
         calls.conversationExists.append(groupID)
         return conversationExistsMock?(groupID) ?? false
     }
@@ -98,7 +99,7 @@ class MockMLSService: MLSServiceInterface {
 
     var processWelcomeMessageMock: ProcessWelcomeMessageMock?
 
-    func processWelcomeMessage(welcomeMessage: String) throws -> MLSGroupID {
+    public func processWelcomeMessage(welcomeMessage: String) throws -> MLSGroupID {
         calls.processWelcomeMessage.append(welcomeMessage)
         guard let mock = processWelcomeMessageMock else { throw MockError.unmockedMethodCalled }
         return try mock(welcomeMessage)
@@ -109,7 +110,7 @@ class MockMLSService: MLSServiceInterface {
     typealias EncryptMock = ([Byte], MLSGroupID) throws -> [Byte]
     var encryptMock: EncryptMock?
 
-    func encrypt(message: [Byte], for groupID: MLSGroupID) throws -> [Byte] {
+    public func encrypt(message: [Byte], for groupID: MLSGroupID) throws -> [Byte] {
         calls.enccrypt.append((message, groupID))
         guard let mock = encryptMock else { throw MockError.unmockedMethodCalled }
         return try mock(message, groupID)
@@ -121,7 +122,7 @@ class MockMLSService: MLSServiceInterface {
 
     var decryptMock: DecryptMock?
 
-    func decrypt(message: String, for groupID: MLSGroupID, subconversationType: SubgroupType?) throws -> MLSDecryptResult? {
+    public func decrypt(message: String, for groupID: MLSGroupID, subconversationType: SubgroupType?) throws -> MLSDecryptResult? {
         calls.decrypt.append((message, groupID, subconversationType))
         guard let mock = decryptMock else { throw MockError.unmockedMethodCalled }
         return try mock(message, groupID, subconversationType)
@@ -129,17 +130,17 @@ class MockMLSService: MLSServiceInterface {
 
     // MARK: - Add members
 
-    func addMembersToConversation(with users: [MLSUser], for groupID: MLSGroupID) throws {
+    public func addMembersToConversation(with users: [MLSUser], for groupID: MLSGroupID) throws {
         calls.addMembersToConversation.append((users, groupID))
     }
 
     // MARK: - Remove members
 
-    typealias RemoveMembersMock = ([MLSClientID], MLSGroupID) throws -> Void
+    public typealias RemoveMembersMock = ([MLSClientID], MLSGroupID) throws -> Void
 
-    var removeMembersMock: RemoveMembersMock?
+    public var removeMembersMock: RemoveMembersMock?
 
-    func removeMembersFromConversation(with clientIds: [MLSClientID], for groupID: MLSGroupID) throws {
+    public func removeMembersFromConversation(with clientIds: [MLSClientID], for groupID: MLSGroupID) throws {
         calls.removeMembersFromConversation.append((clientIds, groupID))
         guard let mock = removeMembersMock else { throw MockError.unmockedMethodCalled }
         try mock(clientIds, groupID)
@@ -147,27 +148,27 @@ class MockMLSService: MLSServiceInterface {
 
     // MARK: - Joining groups
 
-    func registerPendingJoin(_ groupID: MLSGroupID) {
+    public func registerPendingJoin(_ groupID: MLSGroupID) {
         calls.registerPendingJoin.append(groupID)
     }
 
-    func performPendingJoins() {
+    public func performPendingJoins() {
         calls.performPendingJoins.append(())
     }
 
     // MARK: - Wiping group
 
-    func wipeGroup(_ groupID: MLSGroupID) {
+    public func wipeGroup(_ groupID: MLSGroupID) {
         calls.wipeGroup.append(groupID)
     }
 
     // MARK: - Pending Proposals
 
-    func commitPendingProposals() {
+    public func commitPendingProposals() {
         calls.commitPendingProposals.append(())
     }
 
-    func commitPendingProposals(in groupID: MLSGroupID) async throws {
+    public func commitPendingProposals(in groupID: MLSGroupID) async throws {
         calls.commitPendingProposalsInGroup.append(groupID)
     }
 
@@ -175,38 +176,38 @@ class MockMLSService: MLSServiceInterface {
         calls.scheduleCommitPendingProposals.append((groupID, commitDate))
     }
 
-    func createOrJoinSubgroup(
+    public func createOrJoinSubgroup(
         parentQualifiedID: QualifiedID,
         parentID: MLSGroupID
     ) async throws -> MLSGroupID {
         fatalError("not implemented")
     }
 
-    func onConferenceInfoChange(parentGroupID: MLSGroupID, subConversationGroupID: MLSGroupID) -> AnyPublisher<MLSConferenceInfo, Never> {
+    public func onConferenceInfoChange(parentGroupID: MLSGroupID, subConversationGroupID: MLSGroupID) -> AnyPublisher<MLSConferenceInfo, Never> {
         fatalError("not implemented")
     }
 
-    func onEpochChanged() -> AnyPublisher<MLSGroupID, Never> {
+    public func onEpochChanged() -> AnyPublisher<MLSGroupID, Never> {
         fatalError("not implemented")
     }
 
     // MARK: - Self Group
 
-    func createSelfGroup(for groupID: MLSGroupID) {
+    public func createSelfGroup(for groupID: MLSGroupID) {
         fatalError("not implemented")
     }
 
-    func joinGroup(with groupID: MLSGroupID) async throws {
+    public func joinGroup(with groupID: MLSGroupID) async throws {
         fatalError("not implemented")
     }
 
-    func joinNewGroup(with groupID: MLSGroupID) async throws {
+    public func joinNewGroup(with groupID: MLSGroupID) async throws {
         fatalError("not implemented")
     }
 
     // MARK: - Subconversation
 
-    func leaveSubconversation(
+    public func leaveSubconversation(
         parentQualifiedID: QualifiedID,
         parentGroupID: MLSGroupID,
         subconversationType: SubgroupType
@@ -214,7 +215,7 @@ class MockMLSService: MLSServiceInterface {
         fatalError("not implemented")
     }
 
-    func leaveSubconversationIfNeeded(
+    public func leaveSubconversationIfNeeded(
         parentQualifiedID: QualifiedID,
         parentGroupID: MLSGroupID,
         subconversationType: SubgroupType,
@@ -225,13 +226,13 @@ class MockMLSService: MLSServiceInterface {
 
     // MARK: - New epoch
 
-    func generateNewEpoch(groupID: MLSGroupID) async throws {
+    public func generateNewEpoch(groupID: MLSGroupID) async throws {
         fatalError("not implemented")
     }
 
     // MARK: - Subconversation Members
 
-    func subconversationMembers(for subconversationGroupID: MLSGroupID) throws -> [MLSClientID] {
+    public func subconversationMembers(for subconversationGroupID: MLSGroupID) throws -> [MLSClientID] {
         fatalError("not implemented")
     }
 
@@ -240,7 +241,7 @@ class MockMLSService: MLSServiceInterface {
     typealias RepairOutOfSyncConversationsMock = () -> Void
     var repairOutOfSyncConversationsMock: RepairOutOfSyncConversationsMock?
 
-    func repairOutOfSyncConversations() {
+    public func repairOutOfSyncConversations() {
         guard let mock = repairOutOfSyncConversationsMock else {
             return
         }
@@ -250,7 +251,7 @@ class MockMLSService: MLSServiceInterface {
     typealias FetchAndRepairGroupMock = (MLSGroupID) -> Void
     var fetchAndRepairGroupMock: FetchAndRepairGroupMock?
 
-    func fetchAndRepairGroup(with groupID: MLSGroupID) async {
+    public func fetchAndRepairGroup(with groupID: MLSGroupID) async {
         guard let mock = fetchAndRepairGroupMock else {
             return
         }

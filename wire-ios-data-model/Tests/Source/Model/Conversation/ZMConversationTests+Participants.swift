@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireDataModelSupport
 @testable import WireDataModel
 
 class MLSClientIDsProviderMock: MLSClientIDsProvider {
