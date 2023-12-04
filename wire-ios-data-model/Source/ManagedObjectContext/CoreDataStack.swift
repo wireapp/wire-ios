@@ -86,6 +86,7 @@ public extension NSURL {
     }
 
 }
+private let log = ZMSLog(tag: "Core Data")
 
 @objcMembers
 public class CoreDataStack: NSObject, ContextProvider {
@@ -215,6 +216,7 @@ public class CoreDataStack: NSObject, ContextProvider {
                     try self.migrateMessagingStore()
                     WireLogger.localStorage.info("finished migration of core data messaging store!")
                 } catch {
+                    log.error("failed migration of core data messaging store: \( error.localizedDescription)")
                     WireLogger.localStorage.error("failed migration of core data messaging store!")
                     DispatchQueue.main.async {
                         onFailure(error)
@@ -253,6 +255,7 @@ public class CoreDataStack: NSObject, ContextProvider {
         loadMessagesStore { (error) in
             if let error = error {
                 WireLogger.localStorage.error("failed to load message store: \(error)")
+                log.error("failed to load message store: \(error)")
             }
             loadingStoreError = loadingStoreError ?? error
             dispatchGroup.leave()
@@ -262,6 +265,7 @@ public class CoreDataStack: NSObject, ContextProvider {
         loadEventStore { (error) in
             if let error = error {
                 WireLogger.localStorage.error("failed to load event store: \(error)")
+                log.error("failed to load event store: \(error)")
             }
             loadingStoreError = loadingStoreError ?? error
             dispatchGroup.leave()
