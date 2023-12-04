@@ -73,7 +73,7 @@ struct DeviceDetailsE2EIdentityCertificateView: View {
                 certificate.serialNumber
                     .uppercased()
                     .splitStringIntoLines(charactersPerLine: 16)
-                    .replacingOccurrences(of: "  ", with: ":")
+                    .replacingOccurrences(of: " ", with: ":")
             )
             .font(FontSpec.normalRegularFont.swiftUIFont.monospaced())
         }
