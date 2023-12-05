@@ -3,11 +3,29 @@
     "pins": [
       {
         "package": "DifferenceKit",
-        "repositoryURL": "https://github.com/wireapp/DifferenceKit",
+        "repositoryURL": "https://github.com/wireapp/DifferenceKit/",
         "state": {
           "branch": null,
           "revision": "eaf29c583df322d1d7c4c72c46a59eeb33bb54bf",
           "version": "1.3.0"
+        }
+      },
+      {
+        "package": "PINCache",
+        "repositoryURL": "https://github.com/pinterest/PINCache",
+        "state": {
+          "branch": null,
+          "revision": "875c654984fb52b47ca65ae70d24852b0003ccd9",
+          "version": "3.0.3"
+        }
+      },
+      {
+        "package": "PINOperation",
+        "repositoryURL": "https://github.com/pinterest/PINOperation.git",
+        "state": {
+          "branch": null,
+          "revision": "40504c156a68b20f98f7ddc73a115cbb7893be25",
+          "version": "1.2.2"
         }
       },
       {
