@@ -21,18 +21,15 @@ set -Eeuo pipefail
 
 REPO_ROOT=$(git rev-parse --show-toplevel)
 SCRIPTS_DIR="$REPO_ROOT/scripts"
-SWIFTGEN="$SCRIPTS_DIR/.build/artifacts/scripts/swiftgen/swiftgen.artifactbundle/swiftgen/bin/swiftgen"
+SOURCERY="$SCRIPTS_DIR/.build/artifacts/scripts/sourcery/sourcery.artifactbundle/sourcery/bin/sourcery/bin/sourcery"
 
 if [ ! -z "${CI-}" ]; then
-    echo "Skipping SwiftGen in CI environment"
+    echo "Skipping Sourcery in CI environment"
     exit 0
 fi
 
-if [[ ! -f "$SWIFTGEN" ]]; then
+if [[ ! -f "$SOURCERY" ]]; then
     xcrun --sdk macosx swift package --package-path "$SCRIPTS_DIR" resolve
 fi
 
-(
-    cd "$REPO_ROOT/wire-ios"
-    "$SWIFTGEN"
-)
+"$SOURCERY" "$@"
