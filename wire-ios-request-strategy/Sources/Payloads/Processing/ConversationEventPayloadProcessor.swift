@@ -91,10 +91,12 @@ final class ConversationEventPayloadProcessor {
             return
         }
 
-        removeLocalConversation.invoke(
-            with: conversation,
-            syncContext: context
-        )
+        Task {
+            await removeLocalConversation.invoke(
+                with: conversation,
+                syncContext: context
+            )
+        }
     }
 
     // MARK: - Member leave
@@ -136,7 +138,9 @@ final class ConversationEventPayloadProcessor {
         conversation.removeParticipantsAndUpdateConversationState(users: Set(removedUsers), initiatingUser: sender)
 
         if removedUsers.contains(where: \.isSelfUser), conversation.messageProtocol == .mls {
-            MLSEventProcessor.shared.wipeMLSGroup(forConversation: conversation, context: context)
+            Task {
+                await MLSEventProcessor.shared.wipeMLSGroup(forConversation: conversation, context: context)
+            }
         }
     }
 

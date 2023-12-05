@@ -23,7 +23,7 @@ protocol MLSEventProcessing {
     func updateConversationIfNeeded(conversation: ZMConversation, groupID: String?, context: NSManagedObjectContext)
     func process(welcomeMessage: String, in context: NSManagedObjectContext)
     func joinMLSGroupWhenReady(forConversation conversation: ZMConversation, context: NSManagedObjectContext)
-    func wipeMLSGroup(forConversation conversation: ZMConversation, context: NSManagedObjectContext)
+    func wipeMLSGroup(forConversation conversation: ZMConversation, context: NSManagedObjectContext) async
 
 }
 
@@ -122,7 +122,7 @@ class MLSEventProcessor: MLSEventProcessing {
 
     // MARK: - Wipe conversation
 
-    func wipeMLSGroup(forConversation conversation: ZMConversation, context: NSManagedObjectContext) {
+    func wipeMLSGroup(forConversation conversation: ZMConversation, context: NSManagedObjectContext) async {
         Logging.mls.info("MLS event processor is wiping conversation")
 
         guard conversation.messageProtocol == .mls else {
@@ -137,7 +137,7 @@ class MLSEventProcessor: MLSEventProcessing {
             return logWarn(aborting: .conversationWipe, withReason: .missingMLSService)
         }
 
-        mlsService.wipeGroup(mlsGroupID)
+        await mlsService.wipeGroup(mlsGroupID)
     }
 
     // MARK: Log Helpers

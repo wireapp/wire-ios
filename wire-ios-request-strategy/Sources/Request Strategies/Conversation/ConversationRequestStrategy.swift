@@ -512,7 +512,9 @@ class ConversationByIDTranscoder: IdentifierObjectSyncTranscoder {
 
         guard response.result != .permanentError else {
             if response.httpStatus == 404 {
-                deleteConversations(identifiers)
+                Task {
+                    await deleteConversations(identifiers)
+                }
                 return
             }
 
@@ -540,7 +542,7 @@ class ConversationByIDTranscoder: IdentifierObjectSyncTranscoder {
         )
     }
 
-    private func deleteConversations(_ conversations: Set<UUID>) {
+    private func deleteConversations(_ conversations: Set<UUID>) async {
         for conversationID in conversations {
             guard
                 let conversation = ZMConversation.fetch(with: conversationID, domain: nil, in: context),
@@ -548,7 +550,7 @@ class ConversationByIDTranscoder: IdentifierObjectSyncTranscoder {
             else {
                 continue
             }
-            removeLocalConversation.invoke(
+            await removeLocalConversation.invoke(
                 with: conversation,
                 syncContext: context
             )
@@ -624,7 +626,9 @@ class ConversationByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
             markConversationsAsFetched(identifiers)
 
             if response.httpStatus == 404 {
-                deleteConversations(identifiers)
+                Task {
+                    await deleteConversations(identifiers)
+                }
                 return
             }
 
@@ -653,7 +657,7 @@ class ConversationByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
         )
     }
 
-    private func deleteConversations(_ conversations: Set<QualifiedID>) {
+    private func deleteConversations(_ conversations: Set<QualifiedID>) async {
         for qualifiedID in conversations {
             guard
                 let conversation = ZMConversation.fetch(
@@ -665,7 +669,7 @@ class ConversationByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
             else {
                 continue
             }
-            removeLocalConversation.invoke(
+            await removeLocalConversation.invoke(
                 with: conversation,
                 syncContext: context
             )
