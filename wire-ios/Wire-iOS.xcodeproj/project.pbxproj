@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 60;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -8285,7 +8285,7 @@
 				};
 			};
 			buildConfigurationList = 8F42C533199244A700288E4D /* Build configuration list for PBXProject "Wire-iOS" */;
-			compatibilityVersion = "Xcode 15.0";
+			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -10746,6 +10746,13 @@
 					x86_64,
 					arm64,
 				);
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/Carthage/Build/OCMock.xcframework/ios-arm64_i386_x86_64-simulator\"",
+					"\"$(SRCROOT)/Carthage/Build/FBSnapshotTestCase.xcframework/ios-arm64_i386_x86_64-simulator\"",
+					"\"$(SRCROOT)/Carthage/Build/SnapshotTesting.xcframework/ios-arm64_x86_64-simulator\"",
+					"\"$(SRCROOT)/Carthage/Build/WireTesting.xcframework/ios-arm64_x86_64-simulator\"",
+				);
 				ONLY_ACTIVE_ARCH = YES;
 				VALIDATE_WORKSPACE = YES;
 			};
@@ -10758,6 +10765,13 @@
 				"ARCHS[sdk=iphonesimulator*]" = (
 					x86_64,
 					arm64,
+				);
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/Carthage/Build/OCMock.xcframework/ios-arm64_i386_x86_64-simulator\"",
+					"\"$(SRCROOT)/Carthage/Build/FBSnapshotTestCase.xcframework/ios-arm64_i386_x86_64-simulator\"",
+					"\"$(SRCROOT)/Carthage/Build/SnapshotTesting.xcframework/ios-arm64_x86_64-simulator\"",
+					"\"$(SRCROOT)/Carthage/Build/WireTesting.xcframework/ios-arm64_x86_64-simulator\"",
 				);
 				ONLY_ACTIVE_ARCH = NO;
 				VALIDATE_WORKSPACE = NO;
@@ -10929,7 +10943,6 @@
 				CODE_SIGN_IDENTITY = "";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Manual;
-				DEFINES_MODULE = NO;
 				DEVELOPMENT_TEAM = "";
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -10949,7 +10962,6 @@
 				CODE_SIGN_IDENTITY = "";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Manual;
-				DEFINES_MODULE = NO;
 				DEVELOPMENT_TEAM = "";
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				PROVISIONING_PROFILE_SPECIFIER = "";

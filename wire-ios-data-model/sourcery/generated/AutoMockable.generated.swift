@@ -1,5 +1,26 @@
 // Generated using Sourcery 2.1.2 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
+
+//
+// Wire
+// Copyright (C) 2023 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
+
+// swiftlint:disable superfluous_disable_command
+// swiftlint:disable vertical_whitespace
 // swiftlint:disable line_length
 // swiftlint:disable variable_name
 
@@ -76,7 +97,7 @@ class MockCoreDataMessagingMigratorProtocol: CoreDataMessagingMigratorProtocol {
             fatalError("no mock for `migrateStoreAtToVersion`")
         }
 
-        try mock(storeURL, version)            
+        try mock(storeURL, version)
     }
 
 }
@@ -122,7 +143,7 @@ public class MockCryptoboxMigrationManagerInterface: CryptoboxMigrationManagerIn
             fatalError("no mock for `performMigrationAccountDirectorySyncContext`")
         }
 
-        try mock(accountDirectory, syncContext)            
+        try mock(accountDirectory, syncContext)
     }
 
     // MARK: - completeMigration
@@ -142,7 +163,7 @@ public class MockCryptoboxMigrationManagerInterface: CryptoboxMigrationManagerIn
             fatalError("no mock for `completeMigrationSyncContext`")
         }
 
-        try mock(syncContext)            
+        try mock(syncContext)
     }
 
 }
@@ -223,7 +244,7 @@ public class MockEARKeyRepositoryInterface: EARKeyRepositoryInterface {
             fatalError("no mock for `storePublicKeyDescriptionKey`")
         }
 
-        try mock(description, key)            
+        try mock(description, key)
     }
 
     // MARK: - fetchPublicKey
@@ -266,7 +287,7 @@ public class MockEARKeyRepositoryInterface: EARKeyRepositoryInterface {
             fatalError("no mock for `deletePublicKeyDescription`")
         }
 
-        try mock(description)            
+        try mock(description)
     }
 
     // MARK: - fetchPrivateKey
@@ -309,7 +330,7 @@ public class MockEARKeyRepositoryInterface: EARKeyRepositoryInterface {
             fatalError("no mock for `deletePrivateKeyDescription`")
         }
 
-        try mock(description)            
+        try mock(description)
     }
 
     // MARK: - storeDatabaseKey
@@ -329,7 +350,7 @@ public class MockEARKeyRepositoryInterface: EARKeyRepositoryInterface {
             fatalError("no mock for `storeDatabaseKeyDescriptionKey`")
         }
 
-        try mock(description, key)            
+        try mock(description, key)
     }
 
     // MARK: - fetchDatabaseKey
@@ -372,7 +393,7 @@ public class MockEARKeyRepositoryInterface: EARKeyRepositoryInterface {
             fatalError("no mock for `deleteDatabaseKeyDescription`")
         }
 
-        try mock(description)            
+        try mock(description)
     }
 
     // MARK: - clearCache
@@ -387,7 +408,7 @@ public class MockEARKeyRepositoryInterface: EARKeyRepositoryInterface {
             fatalError("no mock for `clearCache`")
         }
 
-        mock()            
+        mock()
     }
 
 }
@@ -419,7 +440,7 @@ public class MockEARServiceInterface: EARServiceInterface {
             fatalError("no mock for `enableEncryptionAtRestContextSkipMigration`")
         }
 
-        try mock(context, skipMigration)            
+        try mock(context, skipMigration)
     }
 
     // MARK: - disableEncryptionAtRest
@@ -439,7 +460,7 @@ public class MockEARServiceInterface: EARServiceInterface {
             fatalError("no mock for `disableEncryptionAtRestContextSkipMigration`")
         }
 
-        try mock(context, skipMigration)            
+        try mock(context, skipMigration)
     }
 
     // MARK: - lockDatabase
@@ -454,7 +475,7 @@ public class MockEARServiceInterface: EARServiceInterface {
             fatalError("no mock for `lockDatabase`")
         }
 
-        mock()            
+        mock()
     }
 
     // MARK: - unlockDatabase
@@ -474,7 +495,7 @@ public class MockEARServiceInterface: EARServiceInterface {
             fatalError("no mock for `unlockDatabaseContext`")
         }
 
-        try mock(context)            
+        try mock(context)
     }
 
     // MARK: - fetchPublicKeys
@@ -535,7 +556,7 @@ public class MockEARServiceInterface: EARServiceInterface {
             fatalError("no mock for `setInitialEARFlagValue`")
         }
 
-        mock(enabled)            
+        mock(enabled)
     }
 
 }
@@ -576,7 +597,7 @@ public class MockFeatureRepositoryInterface: FeatureRepositoryInterface {
             fatalError("no mock for `storeAppLock`")
         }
 
-        mock(appLock)            
+        mock(appLock)
     }
 
     // MARK: - fetchConferenceCalling
@@ -609,7 +630,7 @@ public class MockFeatureRepositoryInterface: FeatureRepositoryInterface {
             fatalError("no mock for `storeConferenceCalling`")
         }
 
-        mock(conferenceCalling)            
+        mock(conferenceCalling)
     }
 
     // MARK: - fetchFileSharing
@@ -642,7 +663,7 @@ public class MockFeatureRepositoryInterface: FeatureRepositoryInterface {
             fatalError("no mock for `storeFileSharing`")
         }
 
-        mock(fileSharing)            
+        mock(fileSharing)
     }
 
     // MARK: - fetchSelfDeletingMesssages
@@ -675,7 +696,7 @@ public class MockFeatureRepositoryInterface: FeatureRepositoryInterface {
             fatalError("no mock for `storeSelfDeletingMessages`")
         }
 
-        mock(selfDeletingMessages)            
+        mock(selfDeletingMessages)
     }
 
     // MARK: - fetchConversationGuestLinks
@@ -708,7 +729,7 @@ public class MockFeatureRepositoryInterface: FeatureRepositoryInterface {
             fatalError("no mock for `storeConversationGuestLinks`")
         }
 
-        mock(conversationGuestLinks)            
+        mock(conversationGuestLinks)
     }
 
     // MARK: - fetchClassifiedDomains
@@ -741,7 +762,7 @@ public class MockFeatureRepositoryInterface: FeatureRepositoryInterface {
             fatalError("no mock for `storeClassifiedDomains`")
         }
 
-        mock(classifiedDomains)            
+        mock(classifiedDomains)
     }
 
     // MARK: - fetchDigitalSignature
@@ -774,7 +795,7 @@ public class MockFeatureRepositoryInterface: FeatureRepositoryInterface {
             fatalError("no mock for `storeDigitalSignature`")
         }
 
-        mock(digitalSignature)            
+        mock(digitalSignature)
     }
 
     // MARK: - fetchMLS
@@ -807,7 +828,7 @@ public class MockFeatureRepositoryInterface: FeatureRepositoryInterface {
             fatalError("no mock for `storeMLS`")
         }
 
-        mock(mls)            
+        mock(mls)
     }
 
 }
@@ -852,7 +873,7 @@ class MockFileManagerInterface: FileManagerInterface {
             fatalError("no mock for `removeItemAt`")
         }
 
-        try mock(url)            
+        try mock(url)
     }
 
     // MARK: - cryptoboxDirectory
@@ -943,7 +964,7 @@ class MockMLSActionsProviderProtocol: MLSActionsProviderProtocol {
             fatalError("no mock for `uploadKeyPackagesClientIDKeyPackagesContext`")
         }
 
-        try await mock(clientID, keyPackages, context)            
+        try await mock(clientID, keyPackages, context)
     }
 
     // MARK: - claimKeyPackages
@@ -1078,7 +1099,7 @@ class MockMLSActionsProviderProtocol: MLSActionsProviderProtocol {
             fatalError("no mock for `deleteSubgroupConversationIDDomainSubgroupTypeContext`")
         }
 
-        try await mock(conversationID, domain, subgroupType, context)            
+        try await mock(conversationID, domain, subgroupType, context)
     }
 
     // MARK: - leaveSubconversation
@@ -1098,7 +1119,7 @@ class MockMLSActionsProviderProtocol: MLSActionsProviderProtocol {
             fatalError("no mock for `leaveSubconversationConversationIDDomainSubconversationTypeContext`")
         }
 
-        try await mock(conversationID, domain, subconversationType, context)            
+        try await mock(conversationID, domain, subconversationType, context)
     }
 
     // MARK: - syncConversation
@@ -1118,7 +1139,7 @@ class MockMLSActionsProviderProtocol: MLSActionsProviderProtocol {
             fatalError("no mock for `syncConversationQualifiedIDContext`")
         }
 
-        try await mock(qualifiedID, context)            
+        try await mock(qualifiedID, context)
     }
 
 }
@@ -1235,7 +1256,7 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
             fatalError("no mock for `completeInitialization`")
         }
 
-        try mock()            
+        try mock()
     }
 
     // MARK: - establishSession
@@ -1255,7 +1276,7 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
             fatalError("no mock for `establishSessionIdFromPrekey`")
         }
 
-        try mock(id, fromPrekey)            
+        try mock(id, fromPrekey)
     }
 
     // MARK: - deleteSession
@@ -1275,7 +1296,7 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
             fatalError("no mock for `deleteSessionId`")
         }
 
-        try mock(id)            
+        try mock(id)
     }
 
     // MARK: - sessionExists
@@ -1520,7 +1541,7 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
             fatalError("no mock for `migrateCryptoboxSessionsAt`")
         }
 
-        try mock(url)            
+        try mock(url)
     }
 
 }
@@ -1543,7 +1564,7 @@ public class MockSubconversationGroupIDRepositoryInterface: SubconversationGroup
             fatalError("no mock for `storeSubconversationGroupIDForTypeParentGroupID`")
         }
 
-        mock(groupID, type, parentGroupID)            
+        mock(groupID, type, parentGroupID)
     }
 
     // MARK: - fetchSubconversationGroupID
@@ -1583,3 +1604,8 @@ public class MockSubconversationGroupIDRepositoryInterface: SubconversationGroup
     }
 
 }
+
+// swiftlint:enable variable_name
+// swiftlint:enable line_length
+// swiftlint:enable vertical_whitespace
+// swiftlint:enable superfluous_disable_command
