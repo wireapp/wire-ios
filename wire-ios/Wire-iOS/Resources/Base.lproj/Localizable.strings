@@ -2044,3 +2044,19 @@ to reset this device and log in again";
 // MARK: - Time
 
 "time.just_now" = "Just now";
+
+// MARK: - Device Details
+"device.details.section.proteus.title" = "PROTEUS DEVICE DETAILS";
+"device.details.section.proteus.id" = "Proteus ID";
+"device.details.section.proteus.activated" = "Activated";
+"device.details.section.proteus.key_fingerprint" = "Proteus Key Fingerprint";
+"device.details.section.e2ei.title" = "End-to-end Identity Certificate";
+"device.details.section.e2ei.show_certificate_details" = "Show Certificate Details";
+"device.details.section.e2ei.get_certificate" = "Get Certificate";
+"device.details.section.e2ei.update_certificate" = "Update Certificate";
+"device.details.section.e2ei.status.title" = "Status";
+"device.details.section.e2ei.status.not_activated" = "Not activated";
+"device.details.section.e2ei.status.valid" = "Valid";
+"device.details.section.e2ei.status.revoked" = "Revoked";
+"device.details.section.e2ei.status.expired" = "Expired";
+"device.details.section.e2ei.serial_number" = "Serial Number";
