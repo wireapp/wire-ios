@@ -316,23 +316,22 @@ extension ZMSLog {
 
         logQueue.async {
             closeHandle()
-            let manager = FileManager.default
-            let paths = previousLogPaths
-            assert(!paths.isEmpty)
 
-            let lastIndex = paths.count - 1
+            assert(!previousLogPaths.isEmpty)
+            let lastIndex = previousLogPaths.count - 1
 
             // remove last item
-            try? manager.removeItem(at: paths[lastIndex])
+            let manager = FileManager.default
+            try? manager.removeItem(at: previousLogPaths[lastIndex])
 
             // move last-1 to 0 items
             for index in (0..<lastIndex).reversed() {
-                try? manager.moveItem(at: paths[index], to: paths[index+1])
+                try? manager.moveItem(at: previousLogPaths[index], to: previousLogPaths[index+1])
             }
 
             // move current item to 0
             // TODO: zip current file to previous log
-            try? manager.moveItem(at: currentLogPath, to: paths[0])
+            try? manager.moveItem(at: currentLogPath, to: previousLogPaths[0])
         }
     }
 
