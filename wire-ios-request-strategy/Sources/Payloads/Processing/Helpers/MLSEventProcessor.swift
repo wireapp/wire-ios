@@ -21,7 +21,7 @@ import WireDataModel
 protocol MLSEventProcessing {
 
     func updateConversationIfNeeded(conversation: ZMConversation, groupID: String?, context: NSManagedObjectContext)
-    func process(welcomeMessage: String, in context: NSManagedObjectContext)
+    func process(welcomeMessage: String, in context: NSManagedObjectContext) async
     func joinMLSGroupWhenReady(forConversation conversation: ZMConversation, context: NSManagedObjectContext)
     func wipeMLSGroup(forConversation conversation: ZMConversation, context: NSManagedObjectContext) async
 
@@ -95,26 +95,29 @@ class MLSEventProcessor: MLSEventProcessing {
 
     // MARK: - Process welcome message
 
-    func process(welcomeMessage: String, in context: NSManagedObjectContext) {
+    func process(welcomeMessage: String, in context: NSManagedObjectContext) async {
         Logging.mls.info("MLS event processor is processing welcome message")
 
-        guard let mlsService = context.mlsService else {
+        let mlsService = await context.perform { context.mlsService }
+        guard let mlsService else {
             return logWarn(aborting: .processingWelcome, withReason: .missingMLSService)
         }
 
         do {
-            let groupID = try mlsService.processWelcomeMessage(welcomeMessage: welcomeMessage)
+            let groupID = try await mlsService.processWelcomeMessage(welcomeMessage: welcomeMessage)
 
-            guard let conversation = ZMConversation.fetch(with: groupID, in: context) else {
-                return logWarn(aborting: .processingWelcome, withReason: .other(reason: "conversation does not exist in db"))
+            await context.perform {
+
+                guard let conversation = ZMConversation.fetch(with: groupID, in: context) else {
+                    return self.logWarn(aborting: .processingWelcome, withReason: .other(reason: "conversation does not exist in db"))
+                }
+                conversation.mlsStatus = .ready
+                context.saveOrRollback()
+
+                Logging.mls.info(
+                    "MLS event processor set mlsStatus to (\(String(describing: conversation.mlsStatus)) for group (\(groupID.safeForLoggingDescription))"
+                )
             }
-
-            conversation.mlsStatus = .ready
-            context.saveOrRollback()
-
-            Logging.mls.info(
-                "MLS event processor set mlsStatus to (\(String(describing: conversation.mlsStatus)) for group (\(groupID.safeForLoggingDescription))"
-            )
         } catch {
             return Logging.mls.warn("MLS event processor aborting processing welcome message: \(String(describing: error))")
         }

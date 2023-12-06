@@ -49,21 +49,22 @@ class MLSEventProcessorTests: MessagingTestBase {
 
     // MARK: - Process Welcome Message
 
-    func test_itProcessesMessageAndUpdatesConversation() {
+    func test_itProcessesMessageAndUpdatesConversation() async {
+        // Given
+        let message = "welcome message"
         syncMOC.performGroupedBlockAndWait {
-            // Given
-            let message = "welcome message"
             self.mlsServiceMock.processWelcomeMessageWelcomeMessage_MockValue = self.conversation.mlsGroupID ?? MLSGroupID(Data())
             self.conversation.mlsStatus = .pendingJoin
             XCTAssertEqual(self.conversation.mlsStatus, .pendingJoin)
-
-            // When
-            MLSEventProcessor.shared.process(welcomeMessage: message, in: self.syncMOC)
-
-            // Then
-            XCTAssertEqual(message, self.mlsServiceMock.processWelcomeMessageWelcomeMessage_Invocations.last)
-            XCTAssertEqual(self.conversation.mlsStatus, .ready)
         }
+
+        // When
+        await MLSEventProcessor.shared.process(welcomeMessage: message, in: self.syncMOC)
+
+        // Then
+        let mlsStatus = await syncMOC.perform { self.conversation.mlsStatus }
+        XCTAssertEqual(message, self.mlsServiceMock.processWelcomeMessageWelcomeMessage_Invocations.last)
+        XCTAssertEqual(mlsStatus, .ready)
     }
 
     // MARK: - Update Conversation
@@ -139,40 +140,40 @@ class MLSEventProcessorTests: MessagingTestBase {
 
     // MARK: - Wiping group
 
-    func test_itWipesGroup() {
+    func test_itWipesGroup() async {
+        // Given
+        let groupID = MLSGroupID(Data.random())
         syncMOC.performAndWait {
-            // Given
-            let groupID = MLSGroupID(Data.random())
             conversation.messageProtocol = .mls
             conversation.mlsGroupID = groupID
-
-            // When
-            MLSEventProcessor.shared.wipeMLSGroup(
-                forConversation: conversation,
-                context: syncMOC
-            )
-
-            // Then
-            XCTAssertEqual(mlsServiceMock.wipeGroup_Invocations.count, 1)
-            XCTAssertEqual(mlsServiceMock.wipeGroup_Invocations.first, groupID)
         }
+
+        // When
+        await MLSEventProcessor.shared.wipeMLSGroup(
+            forConversation: conversation,
+            context: syncMOC
+        )
+
+        // Then
+        XCTAssertEqual(mlsServiceMock.wipeGroup_Invocations.count, 1)
+        XCTAssertEqual(mlsServiceMock.wipeGroup_Invocations.first, groupID)
     }
 
-    func test_itDoesntWipeGroup_WhenProtocolIsNotMLS() {
+    func test_itDoesntWipeGroup_WhenProtocolIsNotMLS() async {
         syncMOC.performAndWait {
             // Given
             conversation.messageProtocol = .proteus
             conversation.mlsGroupID = MLSGroupID(Data.random())
-
-            // When
-            MLSEventProcessor.shared.wipeMLSGroup(
-                forConversation: conversation,
-                context: syncMOC
-            )
-
-            // Then
-            XCTAssertTrue(mlsServiceMock.wipeGroup_Invocations.isEmpty)
         }
+
+        // When
+        await MLSEventProcessor.shared.wipeMLSGroup(
+            forConversation: conversation,
+            context: syncMOC
+        )
+
+        // Then
+        XCTAssertTrue(mlsServiceMock.wipeGroup_Invocations.isEmpty)
     }
 
     // MARK: - Helpers

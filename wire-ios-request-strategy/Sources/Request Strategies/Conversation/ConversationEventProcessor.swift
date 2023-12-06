@@ -134,10 +134,12 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
                         break
                     }
 
-                    MLSEventProcessor.shared.process(
-                        welcomeMessage: payload.data,
-                        in: context
-                    )
+                    Task {
+                        await MLSEventProcessor.shared.process(
+                            welcomeMessage: payload.data,
+                            in: context
+                        )
+                    }
 
                 default:
                     break

@@ -1352,10 +1352,10 @@ public class MockMLSServiceInterface: MLSServiceInterface {
 
     public var processWelcomeMessageWelcomeMessage_Invocations: [String] = []
     public var processWelcomeMessageWelcomeMessage_MockError: Error?
-    public var processWelcomeMessageWelcomeMessage_MockMethod: ((String) throws -> MLSGroupID)?
+    public var processWelcomeMessageWelcomeMessage_MockMethod: ((String) async throws -> MLSGroupID)?
     public var processWelcomeMessageWelcomeMessage_MockValue: MLSGroupID?
 
-    public func processWelcomeMessage(welcomeMessage: String) throws -> MLSGroupID {
+    public func processWelcomeMessage(welcomeMessage: String) async throws -> MLSGroupID {
         processWelcomeMessageWelcomeMessage_Invocations.append(welcomeMessage)
 
         if let error = processWelcomeMessageWelcomeMessage_MockError {
@@ -1363,7 +1363,7 @@ public class MockMLSServiceInterface: MLSServiceInterface {
         }
 
         if let mock = processWelcomeMessageWelcomeMessage_MockMethod {
-            return try mock(welcomeMessage)
+            return try await mock(welcomeMessage)
         } else if let mock = processWelcomeMessageWelcomeMessage_MockValue {
             return mock
         } else {
