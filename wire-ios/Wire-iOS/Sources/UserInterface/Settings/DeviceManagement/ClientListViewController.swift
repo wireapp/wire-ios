@@ -191,6 +191,7 @@ final class ClientListViewController: UIViewController,
             let detailsView = DeviceDetailsView(
                 viewModel: DeviceInfoViewModel.map(
                     userClient: client,
+                    isSelfClient: client.isSelfClient(),
                     userSession: userSession,
                     credentials: self.credentials,
                     getUserClientFingerprintUseCase: userSession.getUserClientFingerprint,
