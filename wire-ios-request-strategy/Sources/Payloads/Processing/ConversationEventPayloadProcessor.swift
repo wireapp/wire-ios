@@ -661,17 +661,19 @@ final class ConversationEventPayloadProcessor {
     ) {
         let mlsEventProcessor = MLSEventProcessor.shared
 
-        mlsEventProcessor.updateConversationIfNeeded(
-            conversation: conversation,
-            groupID: payload.mlsGroupID,
-            context: context
-        )
-
-        if source == .slowSync {
-            mlsEventProcessor.joinMLSGroupWhenReady(
-                forConversation: conversation,
+        Task {
+            await mlsEventProcessor.updateConversationIfNeeded(
+                conversation: conversation,
+                groupID: payload.mlsGroupID,
                 context: context
             )
+
+            if source == .slowSync {
+                mlsEventProcessor.joinMLSGroupWhenReady(
+                    forConversation: conversation,
+                    context: context
+                )
+            }
         }
     }
 

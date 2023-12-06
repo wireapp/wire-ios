@@ -69,26 +69,28 @@ class MLSEventProcessorTests: MessagingTestBase {
 
     // MARK: - Update Conversation
 
-    func test_itUpdates_GroupID() {
-        syncMOC.performGroupedBlockAndWait {
+    func test_itUpdates_GroupID() async {
+        await syncMOC.perform {
             // Given
             self.conversation.mlsGroupID = nil
             self.mlsServiceMock.conversationExistsGroupID_MockMethod = { _ in false }
+        }
 
-            // When
-            MLSEventProcessor.shared.updateConversationIfNeeded(
-                conversation: self.conversation,
-                groupID: self.groupIdString,
-                context: self.syncMOC
-            )
+        // When
+        await MLSEventProcessor.shared.updateConversationIfNeeded(
+            conversation: self.conversation,
+            groupID: self.groupIdString,
+            context: self.syncMOC
+        )
 
+        await syncMOC.perform {
             // Then
             XCTAssertEqual(self.conversation.mlsGroupID?.bytes, self.groupIdString.base64DecodedBytes)
         }
     }
 
-    func test_itUpdates_MlsStatus_WhenProtocolIsMLS_AndWelcomeMessageWasProcessed() {
-        assert_mlsStatus(
+    func test_itUpdates_MlsStatus_WhenProtocolIsMLS_AndWelcomeMessageWasProcessed() async {
+        await assert_mlsStatus(
             originalValue: .pendingJoin,
             expectedValue: .ready,
             mockMessageProtocol: .mls,
@@ -96,8 +98,8 @@ class MLSEventProcessorTests: MessagingTestBase {
         )
     }
 
-    func test_itUpdates_MlsStatus_WhenProtocolIsMLS_AndWelcomeMessageWasNotProcessed() {
-        assert_mlsStatus(
+    func test_itUpdates_MlsStatus_WhenProtocolIsMLS_AndWelcomeMessageWasNotProcessed() async {
+        await assert_mlsStatus(
             originalValue: .ready,
             expectedValue: .pendingJoin,
             mockMessageProtocol: .mls,
@@ -105,8 +107,8 @@ class MLSEventProcessorTests: MessagingTestBase {
         )
     }
 
-    func test_itDoesntUpdate_MlsStatus_WhenProtocolIsNotMLS() {
-        assert_mlsStatus(
+    func test_itDoesntUpdate_MlsStatus_WhenProtocolIsNotMLS() async {
+        await assert_mlsStatus(
             originalValue: .pendingJoin,
             expectedValue: .pendingJoin,
             mockMessageProtocol: .proteus
@@ -201,20 +203,22 @@ class MLSEventProcessorTests: MessagingTestBase {
         mockHasWelcomeMessageBeenProcessed: Bool = true,
         file: StaticString = #filePath,
         line: UInt = #line
-    ) {
-        syncMOC.performGroupedBlockAndWait {
+    ) async {
+        await syncMOC.perform {
             // Given
             self.conversation.mlsStatus = originalValue
             self.conversation.messageProtocol = mockMessageProtocol
             self.mlsServiceMock.conversationExistsGroupID_MockValue = mockHasWelcomeMessageBeenProcessed
+        }
 
-            // When
-            MLSEventProcessor.shared.updateConversationIfNeeded(
-                conversation: self.conversation,
-                groupID: self.groupIdString,
-                context: self.syncMOC
-            )
+        // When
+        await MLSEventProcessor.shared.updateConversationIfNeeded(
+            conversation: self.conversation,
+            groupID: self.groupIdString,
+            context: self.syncMOC
+        )
 
+        await syncMOC.perform {
             // Then
             XCTAssertEqual(self.conversation.mlsStatus, expectedValue, file: file, line: line)
         }

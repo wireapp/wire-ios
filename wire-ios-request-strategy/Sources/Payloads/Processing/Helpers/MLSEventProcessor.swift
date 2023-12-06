@@ -20,14 +20,14 @@ import WireDataModel
 
 protocol MLSEventProcessing {
 
-    func updateConversationIfNeeded(conversation: ZMConversation, groupID: String?, context: NSManagedObjectContext)
+    func updateConversationIfNeeded(conversation: ZMConversation, groupID: String?, context: NSManagedObjectContext) async
     func process(welcomeMessage: String, in context: NSManagedObjectContext) async
     func joinMLSGroupWhenReady(forConversation conversation: ZMConversation, context: NSManagedObjectContext)
     func wipeMLSGroup(forConversation conversation: ZMConversation, context: NSManagedObjectContext) async
 
 }
 
-class MLSEventProcessor: MLSEventProcessing {
+final class MLSEventProcessor: MLSEventProcessing {
 
     private(set) static var shared: MLSEventProcessing = MLSEventProcessor()
 
@@ -37,31 +37,35 @@ class MLSEventProcessor: MLSEventProcessing {
         conversation: ZMConversation,
         groupID: String?,
         context: NSManagedObjectContext
-    ) {
+    ) async {
         Logging.mls.info("MLS event processor updating conversation if needed")
 
-        guard conversation.messageProtocol == .mls else {
+        guard await context.perform({ conversation.messageProtocol }) == .mls else {
             return logWarn(aborting: .conversationUpdate, withReason: .notMLSConversation)
         }
 
-        guard let mlsGroupID = conversation.mlsGroupID ?? MLSGroupID(from: groupID) else {
+        guard let mlsGroupID = await context.perform({ conversation.mlsGroupID }) ?? MLSGroupID(from: groupID) else {
             return logWarn(aborting: .conversationUpdate, withReason: .missingGroupID)
         }
 
-        if conversation.mlsGroupID == nil {
-           conversation.mlsGroupID = mlsGroupID
-           Logging.mls.info("MLS event processor set the group ID to value: (\(mlsGroupID)) for conversation: (\(String(describing: conversation.qualifiedID))")
+        await context.perform {
+            if conversation.mlsGroupID == nil {
+                conversation.mlsGroupID = mlsGroupID
+                Logging.mls.info("MLS event processor set the group ID to value: (\(mlsGroupID)) for conversation: (\(String(describing: conversation.qualifiedID))")
+            }
         }
 
-        guard let mlsService = context.mlsService else {
+        guard let mlsService = await context.perform({ context.mlsService }) else {
             return logWarn(aborting: .conversationUpdate, withReason: .missingMLSService)
         }
 
-        let previousStatus = conversation.mlsStatus
-        let conversationExists = mlsService.conversationExists(groupID: mlsGroupID)
-        conversation.mlsStatus = conversationExists ? .ready : .pendingJoin
+        let previousStatus = await context.perform { conversation.mlsStatus }
+        let conversationExists = await mlsService.conversationExists(groupID: mlsGroupID)
 
-        context.saveOrRollback()
+        await context.perform {
+            conversation.mlsStatus = conversationExists ? .ready : .pendingJoin
+            context.saveOrRollback()
+        }
 
         Logging.mls.info(
             "MLS event processor updated previous mlsStatus (\(String(describing: previousStatus))) with new value (\(String(describing: conversation.mlsStatus))) for conversation (\(String(describing: conversation.qualifiedID)))"

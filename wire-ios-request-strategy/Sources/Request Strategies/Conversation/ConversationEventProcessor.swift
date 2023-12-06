@@ -181,7 +181,9 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
                 let users = Set(usersAndRoles.map { $0.0 })
 
                 if users.contains(selfUser) {
-                    self.updateMLSStatus(for: conversation, context: self.context)
+                    Task {
+                        await self.updateMLSStatus(for: conversation, context: self.context)
+                    }
                 }
             }
         }
@@ -199,8 +201,8 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
         }
     }
 
-    private func updateMLSStatus(for conversation: ZMConversation, context: NSManagedObjectContext) {
-        MLSEventProcessor.shared.updateConversationIfNeeded(
+    private func updateMLSStatus(for conversation: ZMConversation, context: NSManagedObjectContext) async {
+        await MLSEventProcessor.shared.updateConversationIfNeeded(
             conversation: conversation,
             groupID: nil,
             context: context
