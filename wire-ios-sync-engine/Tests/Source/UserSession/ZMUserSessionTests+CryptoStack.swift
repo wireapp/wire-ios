@@ -18,6 +18,7 @@
 
 import XCTest
 import WireDataModel
+import WireDataModelSupport
 import WireUtilities
 @testable import WireSyncEngine
 
@@ -266,7 +267,7 @@ class ZMUserSessionTests_CryptoStack: MessagingTest {
 
         // THEN
         XCTAssertTrue(wait(withTimeout: 3.0) {
-            controller.didCallCommitPendingProposals
+            !controller.calls.commitPendingProposals.isEmpty
         })
     }
 

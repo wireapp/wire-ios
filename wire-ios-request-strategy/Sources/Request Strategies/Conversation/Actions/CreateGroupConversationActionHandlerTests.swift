@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireDataModelSupport
 import XCTest
 @testable import WireRequestStrategy
 
@@ -325,9 +326,9 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
             XCTAssertEqual(conversation.mlsGroupID, mlsGroupID)
             XCTAssertEqual(conversation.mlsStatus, .ready)
 
-            XCTAssertEqual(mlsService.createGroupCalls.count, 1)
+            XCTAssertEqual(mlsService.calls.createGroup.count, 1)
 
-            let createGroupCall = mlsService.createGroupCalls.element(atIndex: 0)
+            let createGroupCall = mlsService.calls.createGroup.element(atIndex: 0)
             XCTAssertEqual(createGroupCall, mlsGroupID)
         }
     }

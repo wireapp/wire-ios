@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireDataModelSupport
 import XCTest
 @testable import WireSyncEngine
 
@@ -69,7 +70,7 @@ class MLSConferenceStaleParticipantsRemoverTests: MessagingTest {
 
         // set expectations
         let expectations = expectations(from: participants)
-        mlsService.mockRemoveMembersFromConversation = { clientIDs, _ in
+        mlsService.removeMembersMock = { clientIDs, _ in
             guard let id = clientIDs.first else { return }
             expectations[id]?.fulfill()
         }
@@ -115,7 +116,7 @@ class MLSConferenceStaleParticipantsRemoverTests: MessagingTest {
         participants[1].updateState(connectedState)
 
         let expectations = expectations(from: participants)
-        mlsService.mockRemoveMembersFromConversation = { clientIDs, _ in
+        mlsService.removeMembersMock = { clientIDs, _ in
             guard let id = clientIDs.first else { return }
             expectations[id]?.fulfill()
         }
@@ -151,7 +152,7 @@ class MLSConferenceStaleParticipantsRemoverTests: MessagingTest {
         expectation.isInverted = true
 
         // fulfill expectation
-        mlsService.mockRemoveMembersFromConversation = { _, _ in
+        mlsService.removeMembersMock = { _, _ in
             expectation.fulfill()
         }
 
@@ -186,7 +187,7 @@ class MLSConferenceStaleParticipantsRemoverTests: MessagingTest {
         expectation.isInverted = true
 
         // fulfill expectation
-        mlsService.mockRemoveMembersFromConversation = { _, _ in
+        mlsService.removeMembersMock = { _, _ in
             expectation.fulfill()
         }
 

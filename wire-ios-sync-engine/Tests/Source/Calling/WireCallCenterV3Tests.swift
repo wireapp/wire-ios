@@ -19,6 +19,7 @@
 import Foundation
 import avs
 import Combine
+import WireDataModelSupport
 @testable import WireSyncEngine
 
 class WireCallCenterTransportMock: WireCallCenterTransport {
@@ -846,7 +847,7 @@ class WireCallCenterV3Tests: MessagingTest {
         }
 
         let didGenerateConferenceInfo1 = expectation(description: "didGenerateConferenceInfo1")
-        mlsService.mockGenerateConferenceInfo = {
+        mlsService.generateConferenceInfoMock = {
             XCTAssertEqual($0, parentGroupID)
             XCTAssertEqual($1, subconversationGroupID)
             defer { didGenerateConferenceInfo1.fulfill() }

@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireDataModelSupport
 import WireTesting
 @testable import WireRequestStrategy
 
@@ -487,7 +488,9 @@ extension EventDecoderTest {
             // Given
             let messageData = randomData
             let senderClientID = "clientID"
-            mockMLSService.mockDecryptResult = MLSDecryptResult.message(messageData, senderClientID)
+            mockMLSService.decryptMock = { _, _, _ in
+                .message(messageData, senderClientID)
+            }
 
             let event = mlsMessageAddEvent(
                 data: randomData.base64EncodedString(),
@@ -518,7 +521,9 @@ extension EventDecoderTest {
                 groupID: mlsGroupID
             )
             let expectedCommitDate = event.timestamp! + TimeInterval(commitDelay)
-            mockMLSService.mockDecryptResult = MLSDecryptResult.proposal(commitDelay)
+            mockMLSService.decryptMock = { _, _, _ in
+                .proposal(commitDelay)
+            }
 
             // When
             let decryptedEvent = sut.decryptMlsMessage(from: event, context: syncMOC)
@@ -545,7 +550,9 @@ extension EventDecoderTest {
                 groupID: mlsGroupID
             )
             event.source = .webSocket
-            mockMLSService.mockDecryptResult = MLSDecryptResult.proposal(commitDelay)
+            mockMLSService.decryptMock = { _, _, _ in
+                .proposal(commitDelay)
+            }
 
             // When
             let decryptedEvent = sut.decryptMlsMessage(from: event, context: syncMOC)
@@ -571,7 +578,9 @@ extension EventDecoderTest {
                 groupID: mlsGroupID
             )
             event.source = .download
-            mockMLSService.mockDecryptResult = MLSDecryptResult.proposal(commitDelay)
+            mockMLSService.decryptMock = { _, _, _ in
+                .proposal(commitDelay)
+            }
 
             // When
             let decryptedEvent = sut.decryptMlsMessage(from: event, context: syncMOC)
@@ -617,7 +626,9 @@ extension EventDecoderTest {
     func test_DecryptMLSMessage_ReturnsNil_WhenDecryptedDataIsNil() {
         syncMOC.performAndWait {
             // Given
-            mockMLSService.mockDecryptResult = nil
+            mockMLSService.decryptMock = { _, _, _ in
+                .none
+            }
 
             let event = mlsMessageAddEvent(
                 data: randomData.base64EncodedString(),
@@ -635,7 +646,9 @@ extension EventDecoderTest {
     func test_DecryptMLSMessage_ReturnsNil_WhenmlsServiceThrows() {
         syncMOC.performAndWait {
             // Given
-            mockMLSService.mockDecryptionError = .failedToDecryptMessage
+            mockMLSService.decryptMock = { _, _, _ in
+                throw MLSDecryptionService.MLSMessageDecryptionError.failedToDecryptMessage
+            }
 
             let event = mlsMessageAddEvent(
                 data: randomData.base64EncodedString(),
