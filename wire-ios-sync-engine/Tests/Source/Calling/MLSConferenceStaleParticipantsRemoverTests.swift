@@ -30,13 +30,14 @@ class MLSConferenceStaleParticipantsRemoverTests: MessagingTest {
         microphoneState: .muted
     )
 
-    private var mlsService: MockMLSService!
+    private var mlsService: MockMLSServiceInterface!
     private var sut: MLSConferenceStaleParticipantsRemover!
     private var selfUserID: AVSIdentifier!
 
     override func setUp() {
         super.setUp()
-        mlsService = MockMLSService()
+
+        mlsService = .init()
         sut = MLSConferenceStaleParticipantsRemover(
             mlsService: mlsService,
             syncContext: uiMOC,
@@ -64,13 +65,13 @@ class MLSConferenceStaleParticipantsRemoverTests: MessagingTest {
         ]
 
         // mock subconversation members
-        mlsService.mockSubconversationMembers = { _ in
-            return participants.map(\.mlsClientID)
+        mlsService.subconversationMembersFor_MockMethod = { _ in
+            participants.map(\.mlsClientID)
         }
 
         // set expectations
         let expectations = expectations(from: participants)
-        mlsService.removeMembersMock = { clientIDs, _ in
+        mlsService.removeMembersFromConversationWithFor_MockMethod = { clientIDs, _ in
             guard let id = clientIDs.first else { return }
             expectations[id]?.fulfill()
         }
@@ -99,8 +100,8 @@ class MLSConferenceStaleParticipantsRemoverTests: MessagingTest {
         ]
 
         // mock subconversation members
-        mlsService.mockSubconversationMembers = { _ in
-            return participants.map(\.mlsClientID)
+        mlsService.subconversationMembersFor_MockMethod = { _ in
+            participants.map(\.mlsClientID)
         }
 
         // WHEN
@@ -116,7 +117,7 @@ class MLSConferenceStaleParticipantsRemoverTests: MessagingTest {
         participants[1].updateState(connectedState)
 
         let expectations = expectations(from: participants)
-        mlsService.removeMembersMock = { clientIDs, _ in
+        mlsService.removeMembersFromConversationWithFor_MockMethod = { clientIDs, _ in
             guard let id = clientIDs.first else { return }
             expectations[id]?.fulfill()
         }
@@ -143,8 +144,8 @@ class MLSConferenceStaleParticipantsRemoverTests: MessagingTest {
         ]
 
         // mock subconversation members
-        mlsService.mockSubconversationMembers = { _ in
-            return []
+        mlsService.subconversationMembersFor_MockMethod = { _ in
+            []
         }
 
         // set expectations
@@ -152,7 +153,7 @@ class MLSConferenceStaleParticipantsRemoverTests: MessagingTest {
         expectation.isInverted = true
 
         // fulfill expectation
-        mlsService.removeMembersMock = { _, _ in
+        mlsService.removeMembersFromConversationWithFor_MockMethod = { _, _ in
             expectation.fulfill()
         }
 
@@ -178,8 +179,8 @@ class MLSConferenceStaleParticipantsRemoverTests: MessagingTest {
         ]
 
         // mock subconversation members
-        mlsService.mockSubconversationMembers = { _ in
-            return participants.map(\.mlsClientID)
+        mlsService.subconversationMembersFor_MockMethod = { _ in
+            participants.map(\.mlsClientID)
         }
 
         // set expectation
@@ -187,7 +188,7 @@ class MLSConferenceStaleParticipantsRemoverTests: MessagingTest {
         expectation.isInverted = true
 
         // fulfill expectation
-        mlsService.removeMembersMock = { _, _ in
+        mlsService.removeMembersFromConversationWithFor_MockMethod = { _, _ in
             expectation.fulfill()
         }
 

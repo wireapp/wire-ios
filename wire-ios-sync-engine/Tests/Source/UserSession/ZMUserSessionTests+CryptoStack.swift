@@ -259,7 +259,9 @@ class ZMUserSessionTests_CryptoStack: MessagingTest {
         let client = createSelfClient()
         sut.didRegisterSelfUserClient(client)
 
-        let controller = MockMLSService()
+        let controller = MockMLSServiceInterface()
+        controller.performPendingJoins_MockMethod = {}
+        controller.commitPendingProposals_MockMethod = {}
         sut.syncContext.mlsService = controller
 
         // WHEN
@@ -267,7 +269,7 @@ class ZMUserSessionTests_CryptoStack: MessagingTest {
 
         // THEN
         XCTAssertTrue(wait(withTimeout: 3.0) {
-            !controller.calls.commitPendingProposals.isEmpty
+            !controller.commitPendingProposals_Invocations.isEmpty
         })
     }
 
