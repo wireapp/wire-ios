@@ -45,9 +45,7 @@ final class DeviceInfoViewModel: ObservableObject {
     let userClient: UserClient
     var title: String
 
-    var isSelfClient: Bool {
-        actionsHandler.isSelfClient
-    }
+    var isSelfClient: Bool
 
     var isE2EIdentityEnabled: Bool {
         actionsHandler.isE2eIdentityEnabled
@@ -107,7 +105,8 @@ final class DeviceInfoViewModel: ObservableObject {
         actionsHandler: any DeviceDetailsViewActions,
         userSession: UserSession,
         getUserClientFingerprint: GetUserClientFingerprintUseCaseProtocol,
-        userClient: UserClient
+        userClient: UserClient,
+        isSelfClient: Bool
     ) {
         self.title = title
         self.addedDate = addedDate
@@ -117,6 +116,7 @@ final class DeviceInfoViewModel: ObservableObject {
         self.userSession = userSession
         self.getUserClientFingerprint = getUserClientFingerprint
         self.userClient = userClient
+        self.isSelfClient = isSelfClient
         self.actionsHandler.isProcessing = {[weak self] isProcessing in
             DispatchQueue.main.async {
                 self?.isActionInProgress = isProcessing
@@ -198,6 +198,7 @@ final class DeviceInfoViewModel: ObservableObject {
 extension DeviceInfoViewModel {
     static func map(
         userClient: UserClient,
+        isSelfClient: Bool,
         userSession: UserSession,
         credentials: ZMEmailCredentials?,
         getUserClientFingerprintUseCase: GetUserClientFingerprintUseCaseProtocol,
@@ -218,7 +219,8 @@ extension DeviceInfoViewModel {
             ),
             userSession: userSession,
             getUserClientFingerprint: getUserClientFingerprintUseCase,
-            userClient: userClient
+            userClient: userClient,
+            isSelfClient: isSelfClient
         )
     }
 }
