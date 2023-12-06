@@ -522,7 +522,7 @@ extension EventDecoderTest {
             )
             let expectedCommitDate = event.timestamp! + TimeInterval(commitDelay)
             mockMLSService.decryptMock = { _, _, _ in
-                    .proposal(commitDelay)
+                .proposal(commitDelay)
             }
 
             // When
@@ -551,7 +551,7 @@ extension EventDecoderTest {
             )
             event.source = .webSocket
             mockMLSService.decryptMock = { _, _, _ in
-                    .proposal(commitDelay)
+                .proposal(commitDelay)
             }
 
             // When
@@ -579,7 +579,7 @@ extension EventDecoderTest {
             )
             event.source = .download
             mockMLSService.decryptMock = { _, _, _ in
-                    .proposal(commitDelay)
+                .proposal(commitDelay)
             }
 
             // When
