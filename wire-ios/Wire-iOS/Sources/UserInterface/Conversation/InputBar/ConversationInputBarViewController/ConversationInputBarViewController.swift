@@ -615,31 +615,47 @@ final class ConversationInputBarViewController: UIViewController,
 
     // MARK: - PingButton
 
-    private func confirmPing(completion: @escaping (_ completion: Bool) -> Void) {
-        let controller = UIAlertController.confirmPing(
-            participants: conversation.localParticipantsCount - 1,
-            completion: completion
-        )
+        private func confirmPing(completion: @escaping (_ completion: Bool) -> Void) {
+            let participantCount = conversation.localParticipantsCount - 1
+            let title = L10n.Localizable.Conversation.Ping.ManyParticipantsConfirmation.title(participantCount)
 
-        self.present(controller, animated: true)
-    }
+            let controller = UIAlertController(
+                title: title,
+                message: nil,
+                preferredStyle: .alert
+            )
 
-    @objc
-    private func pingButtonPressed(_ button: UIButton?) {
-        let participantCount = conversation.localParticipantsCount - 1
-        // This is the same limit as we have on audio and video calls
-        let confirmPingParticipantsLimit = 4
+            controller.addAction(UIAlertAction(
+                title: "Cancel",
+                style: .cancel,
+                handler: { _ in completion(false) }
+            ))
 
-        if participantCount >= confirmPingParticipantsLimit {
-            confirmPing { [weak self] shouldPing in
-                if shouldPing {
-                    self?.appendKnock()
-                }
-            }
-        } else {
-            self.appendKnock()
+            let sendAction = UIAlertAction(
+                title: L10n.Localizable.Conversation.Ping.Action.title,
+                style: .default,
+                handler: { _ in completion(true) }
+            )
+
+            controller.addAction(sendAction)
+            self.present(controller, animated: true)
         }
-    }
+
+        @objc
+        private func pingButtonPressed(_ button: UIButton?) {
+            let participantCount = conversation.localParticipantsCount - 1
+            let confirmPingParticipantsLimit = 4
+
+            if participantCount >= confirmPingParticipantsLimit {
+                confirmPing { [weak self] shouldPing in
+                    if shouldPing {
+                        self?.appendKnock()
+                    }
+                }
+            } else {
+                self.appendKnock()
+            }
+        }
 
     private func appendKnock() {
         guard let conversation = conversation as? ZMConversation else { return }
