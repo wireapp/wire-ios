@@ -310,6 +310,9 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
             BackendInfo.apiVersion = .v2
             action = createAction()
             let mlsService = MockMLSServiceInterface()
+            mlsService.conversationExistsGroupID_MockMethod = { _ in false }
+            mlsService.createGroupFor_MockMethod = { _ in }
+            mlsService.addMembersToConversationWithFor_MockMethod = { _, _ in }
             self.syncMOC.mlsService = mlsService
             let payload = try XCTUnwrap(successResponsePayloadMLS.encodeToJSONString())
 

@@ -45,6 +45,7 @@ class RemoveLocalConversationUseCaseTests: ZMBaseManagedObjectTest {
         let conversation = ZMConversation.insertNewObject(in: syncMOC)
         conversation.messageProtocol = .mls
         conversation.mlsGroupID = groupID
+        mockMLSService.wipeGroup_MockMethod = { _ in }
 
         // When
         sut.invoke(with: conversation, syncContext: syncMOC)
