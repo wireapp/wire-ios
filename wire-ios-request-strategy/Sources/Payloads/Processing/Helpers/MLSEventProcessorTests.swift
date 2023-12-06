@@ -31,6 +31,8 @@ class MLSEventProcessorTests: MessagingTestBase {
         super.setUp()
         syncMOC.performGroupedBlockAndWait {
             self.mlsServiceMock = .init()
+            self.mlsServiceMock.registerPendingJoin_MockMethod = { _ in }
+            self.mlsServiceMock.wipeGroup_MockMethod = { _ in }
             self.syncMOC.mlsService = self.mlsServiceMock
             self.conversation = ZMConversation.insertNewObject(in: self.syncMOC)
             self.conversation.mlsGroupID = MLSGroupID(self.groupIdString.base64DecodedBytes!)
@@ -70,6 +72,7 @@ class MLSEventProcessorTests: MessagingTestBase {
         syncMOC.performGroupedBlockAndWait {
             // Given
             self.conversation.mlsGroupID = nil
+            self.mlsServiceMock.conversationExistsGroupID_MockMethod = { _ in false }
 
             // When
             MLSEventProcessor.shared.updateConversationIfNeeded(
@@ -194,7 +197,9 @@ class MLSEventProcessorTests: MessagingTestBase {
         originalValue: MLSGroupStatus,
         expectedValue: MLSGroupStatus,
         mockMessageProtocol: MessageProtocol,
-        mockHasWelcomeMessageBeenProcessed: Bool = true
+        mockHasWelcomeMessageBeenProcessed: Bool = true,
+        file: StaticString = #filePath,
+        line: UInt = #line
     ) {
         syncMOC.performGroupedBlockAndWait {
             // Given
@@ -210,7 +215,7 @@ class MLSEventProcessorTests: MessagingTestBase {
             )
 
             // Then
-            XCTAssertEqual(self.conversation.mlsStatus, expectedValue)
+            XCTAssertEqual(self.conversation.mlsStatus, expectedValue, file: file, line: line)
         }
     }
 }

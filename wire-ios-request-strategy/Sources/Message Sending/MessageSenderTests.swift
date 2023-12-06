@@ -325,6 +325,7 @@ final class MessageSenderTests: MessagingTestBase {
             .withMLServiceConfigured()
             .withSendMlsMessage(returning: .success((messageSendingStatus, response)))
             .arrange()
+        arrangement.mlsService.commitPendingProposalsIn_MockMethod = { _ in }
         arrangement.mlsService.encryptMessageFor_MockMethod = { message, _ in
             message + [000]
         }
@@ -360,6 +361,7 @@ final class MessageSenderTests: MessagingTestBase {
             .withMLServiceConfigured()
             .withSendMlsMessage(returning: .success((messageSendingStatus, response)))
             .arrange()
+        arrangement.mlsService.commitPendingProposalsIn_MockMethod = { _ in }
         arrangement.mlsService.encryptMessageFor_MockMethod = { message, _ in
             message + [000]
         }
@@ -391,6 +393,7 @@ final class MessageSenderTests: MessagingTestBase {
             .withMLServiceConfigured()
             .withSendMlsMessage(returning: .failure(networkError))
             .arrange()
+        arrangement.mlsService.commitPendingProposalsIn_MockMethod = { _ in }
         arrangement.mlsService.encryptMessageFor_MockMethod = { message, _ in
             message + [000]
         }

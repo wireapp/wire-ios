@@ -38,6 +38,7 @@ class EventDecoderTest: MessagingTestBase {
         sut = EventDecoder(eventMOC: eventMOC, syncMOC: syncMOC)
 
         syncMOC.performGroupedBlockAndWait {
+            self.mockMLSService.commitPendingProposals_MockMethod = {}
             self.syncMOC.mlsService = self.mockMLSService
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
             selfUser.remoteIdentifier = self.accountIdentifier
