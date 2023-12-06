@@ -23,13 +23,17 @@ import WireDataModel
 import WireSyncEngine
 
 protocol DeviceDetailsViewActions {
+    var isMLSEnabled: Bool { get }
+    var isE2eIdentityEnabled: Bool { get }
+    var isSelfClient: Bool { get }
+    var isProcessing: ((Bool) -> Void)? { get set }
+
     func fetchCertificate() async -> E2eIdentityCertificate?
     func showCertificate(_ certificate: String)
     func fetchMLSThumbprint() async -> String?
     func removeDevice() async -> Bool
     func resetSession() async -> Bool
     func updateVerified(_ value: Bool) async -> Bool
-    var isProcessing: ((Bool) -> Void)? { get set }
     func copyToClipboard(_ value: String)
 }
 
@@ -39,10 +43,19 @@ final class DeviceInfoViewModel: ObservableObject {
     let proteusID: String
     let getUserClientFingerprint: GetUserClientFingerprintUseCaseProtocol
     let userClient: UserClient
-    var isE2EIdentityEnabled: Bool
-    var isMLSEnablled: Bool
-    var isSelfClient: Bool
     var title: String
+
+    var isSelfClient: Bool {
+        actionsHandler.isSelfClient
+    }
+
+    var isE2EIdentityEnabled: Bool {
+        actionsHandler.isE2eIdentityEnabled
+    }
+
+    var isMLSEnablled: Bool {
+        actionsHandler.isMLSEnabled
+    }
 
     var isValidCerificate: Bool {
         guard let certificate = e2eIdentityCertificate,
@@ -92,24 +105,18 @@ final class DeviceInfoViewModel: ObservableObject {
         proteusID: String,
         isProteusVerificationEnabled: Bool,
         actionsHandler: any DeviceDetailsViewActions,
-        isE2EIdentityEnabled: Bool,
-        isSelfClient: Bool,
         userSession: UserSession,
         getUserClientFingerprint: GetUserClientFingerprintUseCaseProtocol,
-        userClient: UserClient,
-        isMLSEnabled: Bool
+        userClient: UserClient
     ) {
         self.title = title
         self.addedDate = addedDate
         self.proteusID = proteusID
         self.isProteusVerificationEnabled = isProteusVerificationEnabled
         self.actionsHandler = actionsHandler
-        self.isE2EIdentityEnabled = isE2EIdentityEnabled
         self.userSession = userSession
-        self.isSelfClient = isSelfClient
         self.getUserClientFingerprint = getUserClientFingerprint
         self.userClient = userClient
-        self.isMLSEnablled = isMLSEnabled
         self.actionsHandler.isProcessing = {[weak self] isProcessing in
             DispatchQueue.main.async {
                 self?.isActionInProgress = isProcessing
@@ -209,12 +216,9 @@ extension DeviceInfoViewModel {
                 e2eIdentityProvider: e2eIdentityProvider,
                 mlsProvider: mlsProvider
             ),
-            isE2EIdentityEnabled: e2eIdentityProvider.isE2EIdentityEnabled,
-            isSelfClient: userClient.isSelfClient(),
             userSession: userSession,
             getUserClientFingerprint: getUserClientFingerprintUseCase,
-            userClient: userClient,
-            isMLSEnabled: mlsProvider.isMLSEnbaled
+            userClient: userClient
         )
     }
 }
