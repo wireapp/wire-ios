@@ -1719,6 +1719,21 @@ public class MockMLSServiceInterface: MLSServiceInterface {
         await mock(groupID)
     }
 
+    // MARK: - updateKeyMaterialForAllStaleGroupsIfNeeded
+
+    public var updateKeyMaterialForAllStaleGroupsIfNeeded_Invocations: [Void] = []
+    public var updateKeyMaterialForAllStaleGroupsIfNeeded_MockMethod: (() -> Void)?
+
+    public func updateKeyMaterialForAllStaleGroupsIfNeeded() {
+        updateKeyMaterialForAllStaleGroupsIfNeeded_Invocations.append(())
+
+        guard let mock = updateKeyMaterialForAllStaleGroupsIfNeeded_MockMethod else {
+            fatalError("no mock for `updateKeyMaterialForAllStaleGroupsIfNeeded`")
+        }
+
+        mock()
+    }
+
     // MARK: - onEpochChanged
 
     public var onEpochChanged_Invocations: [Void] = []

@@ -21,6 +21,12 @@ import XCTest
 
 class ZMUserSessionTests_Syncing: ZMUserSessionTestsBase {
 
+    override func setUp() {
+        super.setUp()
+
+        mockMLSService.repairOutOfSyncConversations_MockMethod = { }
+    }
+
     // MARK: Helpers
 
     class InitialSyncObserver: NSObject, ZMInitialSyncCompletionObserver {

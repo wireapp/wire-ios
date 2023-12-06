@@ -26,6 +26,9 @@
 @class MockRequestStrategy;
 @class MockUpdateEventProcessor;
 @class MockRequestCancellation;
+@class MockPushChannel;
+@class ZMPersistentCookieStorage;
+@class RecordingMockTransportSession;
 
 @interface ZMOperationLoopTests : MessagingTest
 
