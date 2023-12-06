@@ -299,19 +299,15 @@ extension ZMSLog {
             closeHandle()
             let manager = FileManager.default
 
-            do {
-                if let deprecatedPreviousLogPath {
-                    try? manager.removeItem(at: deprecatedPreviousLogPath)
-                }
-
-                try previousLogPaths.forEach {
-                    try manager.removeItem(at: $0)
-                }
-
-                try manager.removeItem(at: currentLogPath)
-            } catch {
-                assertionFailure("failed to remove log files!")
+            if let deprecatedPreviousLogPath {
+                try? manager.removeItem(at: deprecatedPreviousLogPath)
             }
+
+            previousLogPaths.forEach {
+                try? manager.removeItem(at: $0)
+            }
+
+            try? manager.removeItem(at: currentLogPath)
         }
     }
 
@@ -324,23 +320,19 @@ extension ZMSLog {
             let paths = previousLogPaths
             assert(!paths.isEmpty)
 
-            do {
-                let lastIndex = paths.count - 1
+            let lastIndex = paths.count - 1
 
-                // remove last item
-                try manager.removeItem(at: paths[lastIndex])
+            // remove last item
+            try? manager.removeItem(at: paths[lastIndex])
 
-                // move last-1 to 0 items
-                for index in (0..<lastIndex).reversed() {
-                    try manager.moveItem(at: paths[index], to: paths[index+1])
-                }
-
-                // move current item to 0
-                // TODO: zip current file to previous log
-                try manager.moveItem(at: currentLogPath, to: paths[0])
-            }  catch {
-                assertionFailure("failed to remove log files!")
+            // move last-1 to 0 items
+            for index in (0..<lastIndex).reversed() {
+                try? manager.moveItem(at: paths[index], to: paths[index+1])
             }
+
+            // move current item to 0
+            // TODO: zip current file to previous log
+            try? manager.moveItem(at: currentLogPath, to: paths[0])
         }
     }
 
