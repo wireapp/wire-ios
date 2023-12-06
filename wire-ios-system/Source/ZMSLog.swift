@@ -246,6 +246,18 @@ extension ZMSLog {
 // MARK: - Save on disk & file management
 extension ZMSLog {
 
+    private enum Constant {
+        static let maxNumberOfLogFiles = 5
+    }
+
+    @objc static public var previousLogs: [Data] {
+        previousLogPaths.compactMap {
+            // TODO: does this work with zipping?
+            try? Data(contentsOf: $0)
+        }
+    }
+
+    @available(*, deprecated)
     @objc static public var previousLog: Data? {
         guard let previousLogPath = self.previousLogPath else { return nil }
         return readFile(at: previousLogPath)
@@ -264,27 +276,71 @@ extension ZMSLog {
         return handle.readDataToEndOfFile()
     }
 
+    @objc static public let previousLogPaths: [URL] = {
+        [0..<Constant.maxNumberOfLogFiles]
+            .joined()
+            .compactMap { index in
+                cachesDirectory?.appendingPathComponent("previous_\(index).log")
+            }
+    }()
+
+    @available(*, deprecated)
     @objc static public let previousLogPath: URL? = cachesDirectory?.appendingPathComponent("previous.log")
 
     @objc static public let currentLogPath: URL? = cachesDirectory?.appendingPathComponent("current.log")
 
     @objc public static func clearLogs() {
-        guard let previousLogPath = previousLogPath, let currentLogPath = currentLogPath else { return }
+        guard let currentLogPath = currentLogPath else { return }
+
+        // 2023-12-06: old deprecateed previous log can be removed after some time.
+        let deprecatedPreviousLogPath = cachesDirectory?.appendingPathComponent("previous.log")
+
         logQueue.async {
             closeHandle()
             let manager = FileManager.default
-            try? manager.removeItem(at: previousLogPath)
-            try? manager.removeItem(at: currentLogPath)
+
+            do {
+                if let deprecatedPreviousLogPath {
+                    try? manager.removeItem(at: deprecatedPreviousLogPath)
+                }
+
+                try previousLogPaths.forEach {
+                    try manager.removeItem(at: $0)
+                }
+
+                try manager.removeItem(at: currentLogPath)
+            } catch {
+                assertionFailure("failed to remove log files!")
+            }
         }
     }
 
     @objc public static func switchCurrentLogToPrevious() {
-        guard let previousLogPath = previousLogPath, let currentLogPath = currentLogPath else { return }
+        guard let currentLogPath = currentLogPath else { return }
+
         logQueue.async {
             closeHandle()
             let manager = FileManager.default
-            try? manager.removeItem(at: previousLogPath)
-            try? manager.moveItem(at: currentLogPath, to: previousLogPath)
+            let paths = previousLogPaths
+            assert(!paths.isEmpty)
+
+            do {
+                let lastIndex = paths.count - 1
+
+                // remove last item
+                try manager.removeItem(at: paths[lastIndex])
+
+                // move last-1 to 0 items
+                for index in (0..<lastIndex).reversed() {
+                    try manager.moveItem(at: paths[index], to: paths[index+1])
+                }
+
+                // move current item to 0
+                // TODO: zip current file to previous log
+                try manager.moveItem(at: currentLogPath, to: paths[0])
+            }  catch {
+                assertionFailure("failed to remove log files!")
+            }
         }
     }
 
@@ -294,12 +350,9 @@ extension ZMSLog {
     }
 
     static public var pathsForExistingLogs: [URL] {
-        var paths: [URL] =  []
+        var paths: [URL] = previousLogPaths
         if let currentPath = currentLogPath, currentLog != nil {
             paths.append(currentPath)
-        }
-        if let previousPath = previousLogPath, previousLog != nil {
-            paths.append(previousPath)
         }
         return paths
     }
@@ -311,7 +364,7 @@ extension ZMSLog {
 
     static func appendToCurrentLog(_ string: String) {
 
-        guard let currentLogURL = self.currentLogPath else { return }
+        guard let currentLogURL = currentLogPath else { return }
         let currentLogPath = currentLogURL.path
         let manager = FileManager.default
 
@@ -324,9 +377,8 @@ extension ZMSLog {
             updatingHandle?.seekToEndOfFile()
         }
 
-        let data = Data(string.utf8)
-
         do {
+            let data = Data(string.utf8)
             try updatingHandle?.wr_write(data)
         } catch {
             updatingHandle = nil
