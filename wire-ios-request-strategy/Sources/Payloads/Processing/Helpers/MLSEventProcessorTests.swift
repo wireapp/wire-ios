@@ -16,6 +16,7 @@
 //
 
 import Foundation
+import WireDataModelSupport
 import XCTest
 @testable import WireRequestStrategy
 
@@ -50,7 +51,7 @@ class MLSEventProcessorTests: MessagingTestBase {
         syncMOC.performGroupedBlockAndWait {
             // Given
             let message = "welcome message"
-            self.mlsServiceMock.groupID = self.conversation.mlsGroupID
+            self.mlsServiceMock.processWelcomeMessageMock = { _ in self.conversation.mlsGroupID ?? MLSGroupID(Data()) }
             self.conversation.mlsStatus = .pendingJoin
             XCTAssertEqual(self.conversation.mlsStatus, .pendingJoin)
 
@@ -58,7 +59,7 @@ class MLSEventProcessorTests: MessagingTestBase {
             MLSEventProcessor.shared.process(welcomeMessage: message, in: self.syncMOC)
 
             // Then
-            XCTAssertEqual(message, self.mlsServiceMock.processedWelcomeMessage)
+            XCTAssertEqual(message, self.mlsServiceMock.calls.processWelcomeMessage.last)
             XCTAssertEqual(self.conversation.mlsStatus, .ready)
         }
     }
@@ -122,8 +123,8 @@ class MLSEventProcessorTests: MessagingTestBase {
             )
 
             // Then
-            XCTAssertEqual(self.mlsServiceMock.groupsPendingJoin.count, 1)
-            XCTAssertEqual(self.mlsServiceMock.groupsPendingJoin.first, self.conversation.mlsGroupID)
+            XCTAssertEqual(self.mlsServiceMock.calls.registerPendingJoin.count, 1)
+            XCTAssertEqual(self.mlsServiceMock.calls.registerPendingJoin.first, self.conversation.mlsGroupID)
         }
     }
 
@@ -185,7 +186,7 @@ class MLSEventProcessorTests: MessagingTestBase {
             )
 
             // Then
-            XCTAssertTrue(self.mlsServiceMock.groupsPendingJoin.isEmpty)
+            XCTAssertTrue(self.mlsServiceMock.calls.registerPendingJoin.isEmpty)
         }
     }
 
@@ -199,7 +200,7 @@ class MLSEventProcessorTests: MessagingTestBase {
             // Given
             self.conversation.mlsStatus = originalValue
             self.conversation.messageProtocol = mockMessageProtocol
-            self.mlsServiceMock.hasWelcomeMessageBeenProcessed = mockHasWelcomeMessageBeenProcessed
+            self.mlsServiceMock.conversationExistsMock = { _ in mockHasWelcomeMessageBeenProcessed }
 
             // When
             MLSEventProcessor.shared.updateConversationIfNeeded(
