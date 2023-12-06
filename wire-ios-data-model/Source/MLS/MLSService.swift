@@ -20,6 +20,7 @@ import Foundation
 import WireCoreCrypto
 import Combine
 
+// sourcery: AutoMockable
 public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptionServiceInterface {
 
     func uploadKeyPackagesIfNeeded()

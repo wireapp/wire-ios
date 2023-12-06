@@ -1,5 +1,5 @@
 sources:
-  - ../Source
+  - ../../Source
 templates:
   - ./AutoMockable.stencil
 output:
@@ -7,4 +7,3 @@ output:
 args:
   autoMockableTestableImports: ["WireDataModel"]
   autoMockableImports: ["LocalAuthentication", "Combine"]
- 

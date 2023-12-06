@@ -19,6 +19,8 @@
 import Foundation
 import WireDataModel
 
+@testable import WireDataModelSupport
+
 class MockProteusProvider: ProteusProviding {
 
     let mockProteusService: MockProteusServiceInterface
