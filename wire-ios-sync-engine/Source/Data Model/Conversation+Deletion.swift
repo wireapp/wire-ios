@@ -62,17 +62,19 @@ extension ZMConversation {
 
             if response.httpStatus == 200 {
 
+                var conversation: ZMConversation?
                 contextProvider.syncContext.performGroupedBlock {
+                    conversation = ZMConversation.fetch(
+                        with: conversationId,
+                        domain: nil,
+                        in: contextProvider.syncContext
+                    )
+                }
 
-                    guard let conversation = ZMConversation.fetch(
-                            with: conversationId,
-                            domain: nil,
-                            in: contextProvider.syncContext
-                    ) else {
-                        return
-                    }
+                guard let conversation else { return }
 
-                    removeLocalConversation.invoke(
+                Task {
+                    await removeLocalConversation.invoke(
                         with: conversation,
                         syncContext: contextProvider.syncContext
                     )

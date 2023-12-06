@@ -82,7 +82,7 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
 
     func generateNewEpoch(groupID: MLSGroupID) async throws
 
-    func subconversationMembers(for subconversationGroupID: MLSGroupID) throws -> [MLSClientID]
+    func subconversationMembers(for subconversationGroupID: MLSGroupID) async throws -> [MLSClientID]
 
     func repairOutOfSyncConversations()
 
@@ -319,10 +319,10 @@ public final class MLSService: MLSServiceInterface {
         }
     }
 
-    public func subconversationMembers(for subconversationGroupID: MLSGroupID) throws -> [MLSClientID] {
+    public func subconversationMembers(for subconversationGroupID: MLSGroupID) async throws -> [MLSClientID] {
         do {
             return try coreCrypto.perform {
-                return try $0.getClientIds(conversationId: subconversationGroupID.bytes).compactMap {
+                try $0.getClientIds(conversationId: subconversationGroupID.bytes).compactMap {
                     MLSClientID(data: $0.data)
                 }
             }

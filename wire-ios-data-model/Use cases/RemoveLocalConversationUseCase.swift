@@ -42,15 +42,18 @@ public class RemoveLocalConversationUseCase: RemoveLocalConversationUseCaseProto
         for conversation: ZMConversation,
         in context: NSManagedObjectContext
     ) async {
-        guard conversation.messageProtocol == .mls else {
-            return
+        let (mlsService, groupID) = await context.perform {
+            guard conversation.messageProtocol == .mls else {
+                return (MLSServiceInterface?.none, MLSGroupID?.none)
+            }
+            return (context.mlsService, conversation.mlsGroupID)
         }
 
-        guard let groupID = conversation.mlsGroupID else {
+        guard let groupID else {
             return WireLogger.mls.warn("failed to wipe conversation: missing group ID")
         }
 
-        guard let mlsService = context.mlsService else {
+        guard let mlsService else {
             return WireLogger.mls.warn("failed to wipe conversation: missing `mlsService`")
         }
 

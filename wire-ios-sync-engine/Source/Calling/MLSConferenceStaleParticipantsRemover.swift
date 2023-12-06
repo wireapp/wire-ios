@@ -55,7 +55,9 @@ class MLSConferenceStaleParticipantsRemover: Subscriber {
     }
 
     func receive(_ input: MLSConferenceParticipantsInfo) -> Subscribers.Demand {
-        process(input: input)
+        Task {
+            await process(input: input)
+        }
         return .unlimited
     }
 
@@ -71,9 +73,9 @@ class MLSConferenceStaleParticipantsRemover: Subscriber {
 
     // MARK: - Participants change handling
 
-    private func process(input: MLSConferenceParticipantsInfo) {
+    private func process(input: MLSConferenceParticipantsInfo) async {
 
-        guard let subconversationMembers = subconversationMembers(for: input.subconversationID) else {
+        guard let subconversationMembers = await subconversationMembers(for: input.subconversationID) else {
             return
         }
 
@@ -122,9 +124,9 @@ class MLSConferenceStaleParticipantsRemover: Subscriber {
 
     // MARK: - Helpers
 
-    private func subconversationMembers(for groupID: MLSGroupID) -> [MLSClientID]? {
+    private func subconversationMembers(for groupID: MLSGroupID) async -> [MLSClientID]? {
         do {
-            return try mlsService.subconversationMembers(for: groupID)
+            return try await mlsService.subconversationMembers(for: groupID)
         } catch {
             logger.warn("failed to fetch subconversation members: \(String(describing: error))")
             return nil
@@ -167,7 +169,7 @@ class MLSConferenceStaleParticipantsRemover: Subscriber {
 
             Task {
                 do {
-                    let subconversationMembers = try self.mlsService.subconversationMembers(for: groupID)
+                    let subconversationMembers = try await self.mlsService.subconversationMembers(for: groupID)
 
                     guard subconversationMembers.contains(clientID) else {
                         self.logger.info("didn't remove participant because they're not a part of the subconversation \(groupID.safeForLoggingDescription)")

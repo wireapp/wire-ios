@@ -1624,10 +1624,10 @@ public class MockMLSServiceInterface: MLSServiceInterface {
 
     public var subconversationMembersFor_Invocations: [MLSGroupID] = []
     public var subconversationMembersFor_MockError: Error?
-    public var subconversationMembersFor_MockMethod: ((MLSGroupID) throws -> [MLSClientID])?
+    public var subconversationMembersFor_MockMethod: ((MLSGroupID) async throws -> [MLSClientID])?
     public var subconversationMembersFor_MockValue: [MLSClientID]?
 
-    public func subconversationMembers(for subconversationGroupID: MLSGroupID) throws -> [MLSClientID] {
+    public func subconversationMembers(for subconversationGroupID: MLSGroupID) async throws -> [MLSClientID] {
         subconversationMembersFor_Invocations.append(subconversationGroupID)
 
         if let error = subconversationMembersFor_MockError {
@@ -1635,7 +1635,7 @@ public class MockMLSServiceInterface: MLSServiceInterface {
         }
 
         if let mock = subconversationMembersFor_MockMethod {
-            return try mock(subconversationGroupID)
+            return try await mock(subconversationGroupID)
         } else if let mock = subconversationMembersFor_MockValue {
             return mock
         } else {
