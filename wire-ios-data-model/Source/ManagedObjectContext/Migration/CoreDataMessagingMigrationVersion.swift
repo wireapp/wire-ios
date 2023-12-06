@@ -61,74 +61,6 @@ enum CoreDataMessagingMigrationVersion: String, CaseIterable {
     case version2_82 = "zmessaging2.82.0"
     case version2_81 = "zmessaging2.81.0"
     case version2_80 = "zmessaging2.80.0"
-    case version2_79 = "zmessaging2.79.0"
-    case version2_78 = "zmessaging2.78.0"
-    case version2_77 = "zmessaging2.77.0"
-    case version2_76 = "zmessaging2.76.0"
-    case version2_75 = "zmessaging2.75.0"
-    case version2_74 = "zmessaging2.74.0"
-    case version2_73 = "zmessaging2.73.0"
-    case version2_72 = "zmessaging2.72.0"
-    case version2_71 = "zmessaging2.71.0"
-    case version2_70 = "zmessaging2.70.0"
-    case version2_69 = "zmessaging2.69.0"
-    case version2_68 = "zmessaging2.68.0"
-    case version2_67 = "zmessaging2.67.0"
-    case version2_66 = "zmessaging2.66.0"
-    case version2_65 = "zmessaging2.65.0"
-    case version2_64 = "zmessaging2.64.0"
-    case version2_63 = "zmessaging2.63.0"
-    case version2_62 = "zmessaging2.62.0"
-    case version2_61 = "zmessaging2.61.0"
-    case version2_60 = "zmessaging2.60.0"
-    case version2_59 = "zmessaging2.59.0"
-    case version2_58 = "zmessaging2.58.0"
-    case version2_57 = "zmessaging2.57.0"
-    case version2_56 = "zmessaging2.56.0"
-    case version2_55 = "zmessaging2.55.0"
-    case version2_54 = "zmessaging2.54.0"
-    case version2_53 = "zmessaging2.53.0"
-    case version2_52 = "zmessaging2.52.0"
-    case version2_51 = "zmessaging2.51.0"
-    case version2_50 = "zmessaging2.50.0"
-    case version2_49 = "zmessaging2.49.0"
-    case version2_48 = "zmessaging2.48.0"
-    case version2_47 = "zmessaging2.47.0"
-    case version2_46 = "zmessaging2.46.0"
-    case version2_45 = "zmessaging2.45.0"
-    case version2_44 = "zmessaging2.44.0"
-    case version2_43 = "zmessaging2.43.0"
-    case version2_42 = "zmessaging2.42.0"
-    case version2_41 = "zmessaging2.41.0"
-    case version2_40 = "zmessaging2.40.0"
-    case version2_39 = "zmessaging2.39.0"
-    case version2_31 = "zmessaging2.31.0"
-    case version2_30 = "zmessaging2.30.0"
-    case version2_29 = "zmessaging2.29.0"
-    case version2_28 = "zmessaging2.28.0"
-    case version2_27 = "zmessaging2.27.0"
-    case version2_26 = "zmessaging2.26.0"
-    case version2_25 = "zmessaging2.25.0"
-    case version2_24_1 = "zmessaging2.24.1"
-    case version2_24 = "zmessaging2.24"
-    case version2_21_2 = "zmessaging2.21.2"
-    case version2_21_1 = "zmessaging2.21.1"
-    case version2_21 = "zmessaging2.21.0"
-    case version2_18 = "zmessaging2.18.0"
-    case version2_17 = "zmessaging2.17.0"
-    case version2_15 = "zmessaging2.15.0"
-    case version2_11 = "zmessaging2.11"
-    case version2_10 = "zmessaging2.10"
-    case version2_9 = "zmessaging2.9"
-    case version2_8 = "zmessaging2.8"
-    case version2_7 = "zmessaging2.7"
-    case version2_6 = "zmessaging2.6"
-    case version2_5 = "zmessaging2.5"
-    case version2_4 = "zmessaging2.4"
-    case version2_3 = "zmessaging2.3"
-    case version1_28 = "zmessaging1.28"
-    case version1_27 = "zmessaging1.27"
-    case version1 = "zmessaging"
 
     var nextVersion: Self? {
         switch self {
@@ -142,8 +74,32 @@ enum CoreDataMessagingMigrationVersion: String, CaseIterable {
             return .version2_108
         case .version2_106:
             return .version2_107
-        default:
-            // all older versions can be inferred to version 106
+        case .version2_80,
+                .version2_81,
+                .version2_82,
+                .version2_83,
+                .version2_84,
+                .version2_85,
+                .version2_86,
+                .version2_87,
+                .version2_88,
+                .version2_89,
+                .version2_90,
+                .version2_91,
+                .version2_92,
+                .version2_93,
+                .version2_94,
+                .version2_95,
+                .version2_96,
+                .version2_97,
+                .version2_98,
+                .version2_99,
+                .version2_100,
+                .version2_101,
+                .version2_102,
+                .version2_103,
+                .version2_104,
+                .version2_105:
             return .version2_106
         }
     }
