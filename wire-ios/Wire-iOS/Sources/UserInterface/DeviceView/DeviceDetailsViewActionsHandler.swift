@@ -21,6 +21,9 @@ import WireDataModel
 import WireSyncEngine
 
 final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, ObservableObject {
+    let e2eIdentityProvider: E2eIdentityProviding
+    let userSession: UserSession
+    let mlsProvider: MLSProviding
 
     var userClient: UserClient
     var clientRemovalObserver: ClientRemovalObserver?
@@ -28,9 +31,17 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
     var certificate: E2eIdentityCertificate?
     var isProcessing: ((Bool) -> Void)?
 
-    let e2eIdentityProvider: E2eIdentityProviding
-    let userSession: UserSession
-    let mlsProvider: MLSProviding
+    var isMLSEnabled: Bool {
+        mlsProvider.isMLSEnbaled
+    }
+
+    var isE2eIdentityEnabled: Bool {
+        e2eIdentityProvider.isE2EIdentityEnabled
+    }
+
+    var isSelfClient: Bool {
+        userClient.isSelfClient()
+    }
 
     init(
         userClient: UserClient,

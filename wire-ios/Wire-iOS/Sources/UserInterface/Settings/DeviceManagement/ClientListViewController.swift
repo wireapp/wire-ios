@@ -188,21 +188,23 @@ final class ClientListViewController: UIViewController,
     func openDetailsOfClient(_ client: UserClient) {
         guard let userSession = ZMUserSession.shared() else { return }
         if let navigationController = self.navigationController {
-                let detailsView = DeviceDetailsView(
-                    viewModel: DeviceInfoViewModel.map(
-                        userClient: client,
-                        userSession: userSession,
-                        credentials: self.credentials,
-                        getUserClientFingerprintUseCase: userSession.getUserClientFingerprint,
-                        e2eIdentityProvider: self.e2eIdentityProvider(),
-                        mlsProvider: self.mlsProvider()
-                    )) {
-                        self.navigationController?.setNavigationBarHidden(false, animated: false)
-                    }
-                let hostingViewController = UIHostingController(rootView: detailsView)
-                hostingViewController.view.backgroundColor = SemanticColors.View.backgroundDefault
-                navigationController.pushViewController(hostingViewController, animated: true)
-                navigationController.isNavigationBarHidden = true
+            let detailsView = DeviceDetailsView(
+                viewModel: DeviceInfoViewModel.map(
+                    userClient: client,
+                    userSession: userSession,
+                    credentials: self.credentials,
+                    getUserClientFingerprintUseCase: userSession.getUserClientFingerprint,
+                    // TODO: Replace these once we have actual implementations
+                    e2eIdentityProvider: DeveloperDeviceDetailsSettingsSelectionViewModel.e2eIdentityProvider(),
+                    mlsProvider: DeveloperDeviceDetailsSettingsSelectionViewModel.mlsProvider()
+                )
+            ) {
+                self.navigationController?.setNavigationBarHidden(false, animated: false)
+            }
+            let hostingViewController = UIHostingController(rootView: detailsView)
+            hostingViewController.view.backgroundColor = SemanticColors.View.backgroundDefault
+            navigationController.pushViewController(hostingViewController, animated: true)
+            navigationController.isNavigationBarHidden = true
         }
     }
 
@@ -500,43 +502,4 @@ extension ClientListViewController: ZMUserObserver {
         }
     }
 
-}
-
-// MARK: - E2eIdentityProvider
-extension ClientListViewController {
-
-     func e2eIdentityProvider() -> E2eIdentityProviding {
-        if DeveloperDeviceDetailsSettingsSelectionViewModel.isE2eIdentityViewEnabled {
-            let status = E2EIdentityCertificateStatus.status(
-                for: DeveloperDeviceDetailsSettingsSelectionViewModel.selectedE2eIdentiyStatus ?? ""
-            )
-            switch status {
-            case .notActivated:
-                return MockNotActivatedE2eIdentityProvider()
-            case .revoked:
-                return MockRevokedE2eIdentityProvider()
-            case .expired:
-                return MockExpiredE2eIdentityProvider()
-            case .valid:
-                return MockValidE2eIdentityProvider()
-            case .none:
-                return E2eIdentityProvider()
-            }
-        }
-        return E2eIdentityProvider()
-    }
-
-}
-
-// MARK: MLSProvider
-
-extension ClientListViewController {
-
-    func mlsProvider() -> MLSProviding {
-        if DeveloperFlag.enableMLSSupport.isOn {
-            MockMLSProvider(isMLSEnbaled: DeveloperFlag.enableMLSSupport.isOn)
-        } else {
-            MLSProvider()
-        }
-    }
 }
