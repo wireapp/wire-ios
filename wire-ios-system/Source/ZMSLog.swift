@@ -253,27 +253,19 @@ extension ZMSLog {
     @objc static public var previousLogs: [Data] {
         previousLogPaths.compactMap {
             // TODO: does this work with zipping?
-            try? Data(contentsOf: $0)
+            try? Data(contentsOf: $0, options: [.uncached])
         }
     }
 
     @available(*, deprecated)
     @objc static public var previousLog: Data? {
-        guard let previousLogPath = self.previousLogPath else { return nil }
-        return readFile(at: previousLogPath)
+        guard let previousLogPath else { return nil }
+        return try? Data(contentsOf: previousLogPath, options: [.uncached])
     }
 
     @objc static public var currentLog: Data? {
-        guard let currentLogPath = self.currentLogPath else { return nil }
-        return readFile(at: currentLogPath)
-    }
-
-    static private func readFile(at url: URL) -> Data? {
-        guard let handle = try? FileHandle(forReadingFrom: url) else { return nil }
-
-        try? handle.wr_synchronizeFile()
-
-        return handle.readDataToEndOfFile()
+        guard let currentLogPath else { return nil }
+        return try? Data(contentsOf: currentLogPath, options: [.uncached])
     }
 
     @objc static public let previousLogPaths: [URL] = {
