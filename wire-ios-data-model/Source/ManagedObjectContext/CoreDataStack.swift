@@ -86,7 +86,7 @@ public extension NSURL {
     }
 
 }
-private let log = ZMSLog(tag: "Core Data")
+private let log = ZMSLog(tag: "core-data")
 
 @objcMembers
 public class CoreDataStack: NSObject, ContextProvider {

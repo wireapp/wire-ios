@@ -103,7 +103,7 @@ extension Settings {
             "UserProfileImageUpdateStatus",
             "APIVersion",
             "UnauthenticatedSession",
-            "Core Data",
+            "core-data",
             "Services",
             "ConversationMessageDestructionTimeout",
             "ConversationLink",
