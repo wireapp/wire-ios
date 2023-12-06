@@ -30,11 +30,13 @@ enum BlockerViewControllerContext {
 
 final class BlockerViewController: LaunchImageViewController {
     private var context: BlockerViewControllerContext = .blacklist
+    private var error: Error?
     private var sessionManager: SessionManager?
 
     private var observerTokens = [Any]()
 
-    init(context: BlockerViewControllerContext, sessionManager: SessionManager? = nil) {
+    init(context: BlockerViewControllerContext, sessionManager: SessionManager? = nil, error: Error? = nil) {
+        self.error = error
         self.context = context
         self.sessionManager = sessionManager
         super.init(nibName: nil, bundle: nil)
@@ -91,10 +93,14 @@ final class BlockerViewController: LaunchImageViewController {
     }
 
     func showDatabaseFailureMessage() {
+        var message = L10n.Localizable.Databaseloadingfailure.Alert.message
+        if let messageError = error?.localizedDescription {
+            message.append("\n(\(messageError)")
+        }
 
         let databaseFailureAlert = UIAlertController(
             title: L10n.Localizable.Databaseloadingfailure.Alert.title,
-            message: L10n.Localizable.Databaseloadingfailure.Alert.message,
+            message:  message,
             preferredStyle: .alert
         )
 
