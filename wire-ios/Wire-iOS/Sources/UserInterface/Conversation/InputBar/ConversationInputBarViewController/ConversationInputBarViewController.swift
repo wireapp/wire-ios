@@ -625,11 +625,7 @@ final class ConversationInputBarViewController: UIViewController,
                 preferredStyle: .alert
             )
 
-            controller.addAction(UIAlertAction(
-                title: "Cancel",
-                style: .cancel,
-                handler: { _ in completion(false) }
-            ))
+            controller.addAction(.cancel { completion(false) })
 
             let sendAction = UIAlertAction(
                 title: L10n.Localizable.Conversation.Ping.Action.title,
