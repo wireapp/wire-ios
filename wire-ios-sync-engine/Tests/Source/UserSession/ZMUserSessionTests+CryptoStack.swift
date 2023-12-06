@@ -260,6 +260,8 @@ class ZMUserSessionTests_CryptoStack: MessagingTest {
         sut.didRegisterSelfUserClient(client)
 
         let controller = MockMLSServiceInterface()
+        controller.performPendingJoins_MockMethod = {}
+        controller.commitPendingProposals_MockMethod = {}
         sut.syncContext.mlsService = controller
 
         // WHEN
