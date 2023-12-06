@@ -40,7 +40,11 @@ final class DatabaseMigrationTests: DatabaseBaseTest {
 
     func testThatItPerformsMigrationFrom_Between_2_80_0_and_PreLast_ToCurrentModelVersion() throws {
         // NOTICE: When a new version of data model is created, please increase the last number of the array.
+<<<<<<< HEAD
         let allVersions = [80...111]
+=======
+        let allVersions = [80...110]
+>>>>>>> e9e32be27 (chore: remove core data models until 2.80 [WPB-5683] (#756))
             .joined()
             .map { "2-\($0)-0" }
         let modelVersion = CoreDataStack.loadMessagingModel().version
