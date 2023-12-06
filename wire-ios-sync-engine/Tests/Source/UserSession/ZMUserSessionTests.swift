@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireDataModelSupport
 import WireSyncEngine
 
 class ZMUserSessionSwiftTests: ZMUserSessionTestsBase {
@@ -52,6 +53,6 @@ class ZMUserSessionSwiftTests: ZMUserSessionTestsBase {
         sut.didFinishQuickSync()
 
         // then
-        XCTAssertTrue(mockMLSService.didCallPerformPendingJoins)
+        XCTAssertFalse(mockMLSService.calls.performPendingJoins.isEmpty)
     }
 }
