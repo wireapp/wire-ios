@@ -23,9 +23,13 @@ REPO_ROOT=$(git rev-parse --show-toplevel)
 SCRIPTS_DIR="$REPO_ROOT/scripts"
 SWIFTLINT="$SCRIPTS_DIR/.build/artifacts/scripts/SwiftLintBinary/SwiftLintBinary.artifactbundle/swiftlint-0.53.0-macos/bin/swiftlint"
 
-if [ -z "${CI-}" ]; then
-    xcrun --sdk macosx swift package --package-path "$SCRIPTS_DIR" resolve
-    "$SWIFTLINT" --config "$REPO_ROOT/.swiftlint.yml" "$@"
-else
+if [ ! -z "${CI-}" ]; then
     echo "Skipping SwiftLint in CI environment"
+    exit 0
 fi
+
+if [[ ! -f "$SWIFTLINT" ]]; then
+    xcrun --sdk macosx swift package --package-path "$SCRIPTS_DIR" resolve
+fi
+
+"$SWIFTLINT" --config "$REPO_ROOT/.swiftlint.yml" "$@"

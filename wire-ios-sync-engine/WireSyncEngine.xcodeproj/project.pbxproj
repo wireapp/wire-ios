@@ -344,7 +344,6 @@
 		549816351A432BC800A7CE2E /* ZMLoginTranscoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 54C11B9F19D1E4A100576A96 /* ZMLoginTranscoder.m */; };
 		549816451A432BC800A7CE2E /* ZMOperationLoop.m in Sources */ = {isa = PBXBuildFile; fileRef = 85D8502FFC4412F91D0CC1A4 /* ZMOperationLoop.m */; };
 		549816471A432BC800A7CE2E /* ZMSyncStrategy.m in Sources */ = {isa = PBXBuildFile; fileRef = 85D859D47B6EBF09E4137658 /* ZMSyncStrategy.m */; };
-		5498165A1A432BC800A7CE2E /* ZMUpdateEventsBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = 54F7217919A611DE009A8AF5 /* ZMUpdateEventsBuffer.m */; };
 		54991D581DEDCF2B007E282F /* AddressBook.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54991D571DEDCF2B007E282F /* AddressBook.swift */; };
 		54991D5A1DEDD07E007E282F /* ContactAddressBook.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54991D591DEDD07E007E282F /* ContactAddressBook.swift */; };
 		54A0A6311BCE9864001A3A4C /* ZMHotFix.m in Sources */ = {isa = PBXBuildFile; fileRef = F95ECF4D1B94A553009F91BA /* ZMHotFix.m */; };
@@ -455,7 +454,6 @@
 		872A2EE61FFFBC2A00900B22 /* ServiceUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 872A2EE51FFFBC2900900B22 /* ServiceUser.swift */; };
 		872A2EFD2004B85F00900B22 /* ZMOperationLoop+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = F962A8EF19FFD4DC00FD0F80 /* ZMOperationLoop+Private.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		872A2EFE2004B86D00900B22 /* ZMSyncStrategy.h in Headers */ = {isa = PBXBuildFile; fileRef = 85D853338EC38D9B021D71BF /* ZMSyncStrategy.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		872A2F002004B9EF00900B22 /* ZMUpdateEventsBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 54F7217619A60E88009A8AF5 /* ZMUpdateEventsBuffer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		872C99531DB525A1006A3BDE /* CallKitManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 872C99511DB5256E006A3BDE /* CallKitManagerTests.swift */; };
 		872C99591DB659E6006A3BDE /* ringing_from_them_long.caf in Resources */ = {isa = PBXBuildFile; fileRef = 872C99571DB659E6006A3BDE /* ringing_from_them_long.caf */; };
 		872C995B1DB65D0D006A3BDE /* harp.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 872C995A1DB65D0D006A3BDE /* harp.m4a */; };
@@ -728,8 +726,6 @@
 		01300E61296838CE00D18B2E /* SessionManagerTests+Proxy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SessionManagerTests+Proxy.swift"; sourceTree = "<group>"; };
 		0145AE812B1154010097E3B8 /* WireSyncEngineSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireSyncEngineSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		0145AE832B1154010097E3B8 /* WireSyncEngineSupport.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WireSyncEngineSupport.h; sourceTree = "<group>"; };
-		014C7AA22ADD4DC300CDEC45 /* AutoMockable.stencil */ = {isa = PBXFileReference; lastKnownFileType = text; path = AutoMockable.stencil; sourceTree = "<group>"; };
-		014C7AA32ADD4DC300CDEC45 /* config.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = config.yml; sourceTree = "<group>"; };
 		014C7AA42ADD4DEA00CDEC45 /* AutoMockable.generated.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AutoMockable.generated.swift; sourceTree = "<group>"; };
 		017ABBB52995278C0004C243 /* SlowSyncTests+NotificationsV3.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SlowSyncTests+NotificationsV3.swift"; sourceTree = "<group>"; };
 		018A3DBB2B07998400EB3D6B /* GetUserClientFingerprintUseCase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GetUserClientFingerprintUseCase.swift; sourceTree = "<group>"; };
@@ -1040,8 +1036,6 @@
 		54E2C1DF1E682DC400536569 /* LocalNotificationDispatcher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocalNotificationDispatcher.swift; sourceTree = "<group>"; };
 		54E4DD0D1DE4A9A200FEF192 /* UserHandleTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserHandleTests.swift; sourceTree = "<group>"; };
 		54F0A0931B3018D7003386BC /* ProxiedRequestsStatus.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProxiedRequestsStatus.swift; sourceTree = "<group>"; };
-		54F7217619A60E88009A8AF5 /* ZMUpdateEventsBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMUpdateEventsBuffer.h; sourceTree = "<group>"; };
-		54F7217919A611DE009A8AF5 /* ZMUpdateEventsBuffer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMUpdateEventsBuffer.m; sourceTree = "<group>"; };
 		54F8D6E419AB535700146664 /* ZMMissingUpdateEventsTranscoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMMissingUpdateEventsTranscoder.h; sourceTree = "<group>"; };
 		54F8D6E519AB535700146664 /* ZMMissingUpdateEventsTranscoder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ZMMissingUpdateEventsTranscoder.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		54F8D6E819AB535700146664 /* ZMSelfStrategy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMSelfStrategy.h; sourceTree = "<group>"; };
@@ -1508,8 +1502,6 @@
 			isa = PBXGroup;
 			children = (
 				014C7AA12ADD4DC300CDEC45 /* generated */,
-				014C7AA22ADD4DC300CDEC45 /* AutoMockable.stencil */,
-				014C7AA32ADD4DC300CDEC45 /* config.yml */,
 			);
 			path = sourcery;
 			sourceTree = "<group>";
@@ -2444,8 +2436,6 @@
 				1693151025836E5800709F15 /* EventProcessor.swift */,
 				160C31431E8049320012E4BC /* ApplicationStatusDirectory.swift */,
 				1621D2701D770FB1007108C2 /* ZMSyncStateDelegate.h */,
-				54F7217619A60E88009A8AF5 /* ZMUpdateEventsBuffer.h */,
-				54F7217919A611DE009A8AF5 /* ZMUpdateEventsBuffer.m */,
 				F95ECF4C1B94A553009F91BA /* ZMHotFix.h */,
 				F95ECF4D1B94A553009F91BA /* ZMHotFix.m */,
 				54DE26B11BC56E62002B5FBC /* ZMHotFixDirectory.h */,
@@ -2776,7 +2766,6 @@
 				16DCAD671B0F9447008C1DD9 /* NSURL+LaunchOptions.h in Headers */,
 				09531F161AE960E300B8556A /* ZMLoginCodeRequestTranscoder.h in Headers */,
 				EE0CAEB12AAF306000BD2DB7 /* ZMBlacklistDownloader.h in Headers */,
-				872A2F002004B9EF00900B22 /* ZMUpdateEventsBuffer.h in Headers */,
 				F992985B1BE143570058D42F /* ZMClientRegistrationStatus+Internal.h in Headers */,
 				544BA1271A433DE400D3B852 /* NSError+ZMUserSession.h in Headers */,
 				16ED865B23E2EE3C00CB1766 /* ZMMissingUpdateEventsTranscoder.h in Headers */,
@@ -2877,10 +2866,10 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 549815A61A43232500A7CE2E /* Build configuration list for PBXNativeTarget "WireSyncEngine-ios" */;
 			buildPhases = (
+				0145AE9C2B11580B0097E3B8 /* Run Sourcery */,
 				5498158E1A43232400A7CE2E /* Sources */,
 				5498158F1A43232400A7CE2E /* Frameworks */,
 				549815901A43232400A7CE2E /* Headers */,
-				0145AE9C2B11580B0097E3B8 /* Run Sourcery */,
 				667FC69E27356C3F00E82FEF /* Run SwiftLint */,
 				549815911A43232400A7CE2E /* Resources */,
 			);
@@ -2889,6 +2878,8 @@
 			dependencies = (
 			);
 			name = "WireSyncEngine-ios";
+			packageProductDependencies = (
+			);
 			productName = "WireSyncEngine-ios";
 			productReference = 549815931A43232400A7CE2E /* WireSyncEngine.framework */;
 			productType = "com.apple.product-type.framework";
@@ -2965,6 +2956,8 @@
 				lt,
 			);
 			mainGroup = 540029AA1918CA8500578793;
+			packageReferences = (
+			);
 			productRefGroup = 540029B51918CA8500578793 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -3067,7 +3060,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Adds support for Apple Silicon brew directory\nexport PATH=\"$PATH:/opt/homebrew/bin\"\n \nif which sourcery >/dev/null; then\n  sourcery --config ./sourcery/config.yml\nelse\n  echo \"warning: Sourcery not installed, download from https://github.com/krzysztofzablocki/Sourcery\"\nfi\n\n";
+			shellScript = "../scripts/run-sourcery.sh --config ./sourcery/config.yml\n";
 		};
 		667FC69E27356C3F00E82FEF /* Run SwiftLint */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -3670,7 +3663,6 @@
 				168CF42B20079A02009FCB89 /* TeamInvitationRequestStrategy.swift in Sources */,
 				06239126274DB73A0065A72D /* StartLoginURLActionProcessor.swift in Sources */,
 				EEEED9AA23F6BD75008C94CA /* ZMUserSession+SelfUserProvider.swift in Sources */,
-				5498165A1A432BC800A7CE2E /* ZMUpdateEventsBuffer.m in Sources */,
 				63F1DF1F294B68380061565E /* APIMigrationManager.swift in Sources */,
 				F19E55A022B3A2C5005C792D /* UNNotification+SafeLogging.swift in Sources */,
 				161ACB3223F5BBA100ABFF33 /* CompanyLoginURLActionProcessor.swift in Sources */,
