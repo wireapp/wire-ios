@@ -522,7 +522,7 @@ extension EventDecoderTest {
             )
             let expectedCommitDate = event.timestamp! + TimeInterval(commitDelay)
             mockMLSService.decryptMessageForSubconversationType_MockMethod = { _, _, _ in
-                    .proposal(commitDelay)
+                .proposal(commitDelay)
             }
 
             // When
@@ -551,7 +551,7 @@ extension EventDecoderTest {
             )
             event.source = .webSocket
             mockMLSService.decryptMessageForSubconversationType_MockMethod = { _, _, _ in
-                    .proposal(commitDelay)
+                .proposal(commitDelay)
             }
 
             // When
@@ -578,7 +578,7 @@ extension EventDecoderTest {
             )
             event.source = .download
             mockMLSService.decryptMessageForSubconversationType_MockMethod = { _, _, _ in
-                    .proposal(commitDelay)
+                .proposal(commitDelay)
             }
 
             // When
