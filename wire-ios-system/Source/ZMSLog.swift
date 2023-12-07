@@ -229,8 +229,6 @@ extension ZMSLog {
                     return .info
                 case .debug:
                     return .debug
-                @unknown default:
-                    return .error
                 }
             }
 
