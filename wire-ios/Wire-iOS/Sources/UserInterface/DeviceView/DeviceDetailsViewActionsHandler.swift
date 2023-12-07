@@ -21,6 +21,10 @@ import WireDataModel
 import WireSyncEngine
 
 final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, ObservableObject {
+    private static let logger = Logger(
+        subsystem: "DeviceDetailsView Actions",
+        category: "DeviceDetailsView"
+    )
     let e2eIdentityProvider: E2eIdentityProviding
     let userSession: UserSession
     let mlsProvider: MLSProviding
@@ -61,20 +65,16 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
         do {
             return try await userClient.fetchE2eIdentityCertificate(e2eIdentityProvider: e2eIdentityProvider)
         } catch {
-        // TODO: to handle in next PR
+            Self.logger.error(error.localizedDescription)
         }
         return nil
-    }
-
-    func showCertificate(_ certificate: String) {
-        // TODO: to handle in next PR
     }
 
     func fetchMLSThumbprint() async -> String? {
         do {
             return try await mlsProvider.fetchMLSThumbprint()
         } catch {
-        // TODO: to handle in next PR
+            Self.logger.error(error.localizedDescription)
         }
         return nil
     }
@@ -124,6 +124,25 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
 
     func copyToClipboard(_ value: String) {
         UIPasteboard.general.string = value
+    }
+
+    func downloadE2EIdentityCertificate() {
+        guard let certificate = certificate else {
+            return
+        }
+        let fileName = "e2eiCertifcate.txt"
+        let path = getDocumentsDirectory().appendingPathComponent(fileName)
+        do {
+            try certificate.certificateDetails.write(to: path, atomically: true, encoding: String.Encoding.utf8)
+
+        } catch {
+            Self.logger.error(error.localizedDescription)
+        }
+    }
+
+    private func getDocumentsDirectory() -> URL {
+        let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+        return paths[0]
     }
 }
 

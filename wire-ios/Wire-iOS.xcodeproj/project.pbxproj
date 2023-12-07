@@ -4416,8 +4416,9 @@
 		2572EC482B148EE50075A7BE /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				2572EC612B14D3210075A7BE /* Components */,
 				2572EC522B148EE50075A7BE /* DeviceDetailsView.swift */,
+				25644D8A2B21D1CD007DA01F /* E2EIdentityCertificateDetailsView.swift */,
+				2572EC612B14D3210075A7BE /* Components */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -4432,7 +4433,6 @@
 				2572EC4C2B148EE50075A7BE /* DeviceDetailsE2EIdentityCertificateView.swift */,
 				2572EC492B148EE50075A7BE /* DeviceDetailsProteusView.swift */,
 				2577CB7A2B1DC787007D3443 /* DeviceMLSView.swift */,
-				25644D8A2B21D1CD007DA01F /* E2EIdentityCertificateDetailsView.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";

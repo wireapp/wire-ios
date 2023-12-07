@@ -26,7 +26,9 @@ public final class MockNotActivatedE2eIdentityProvider: E2eIdentityProviding {
 
     public var certificate: E2eIdentityCertificate {
         E2eIdentityCertificate(
-            certificateDetails: String(repeating: "abcdefghijklmno", count: 10),
+            certificateDetails: "BEGIN CERTIFICATE\n-----------\n"
+            + String(repeating: "abcdefghijklmno", count: 100)
+            +  "\n-----------\nEND CERTIFICATE",
             expiryDate: dateFormatter.date(from: "15.10.2023") ?? Date.now,
             certificateStatus: "Not activated",
             serialNumber: String(repeating: "abcdefghijklmno", count: 2)

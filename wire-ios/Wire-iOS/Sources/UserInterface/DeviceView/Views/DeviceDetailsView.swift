@@ -82,16 +82,13 @@ struct DeviceDetailsView: View {
                 proteusView
             }
             .background(SemanticColors.View.backgroundDefault.swiftUIColor)
-            .environment(
-                \.defaultMinListHeaderHeight,
-                 ViewConstants.Header.Height.minimum
-            )
+            .environment(\.defaultMinListHeaderHeight, ViewConstants.Header.Height.minimum)
             .listStyle(.plain)
-            .overlay(content: {
+            .overlay {
                 if viewModel.isActionInProgress {
                     SwiftUI.ProgressView()
                 }
-            })
+            }
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
@@ -114,9 +111,6 @@ struct DeviceDetailsView: View {
         }
 
         .background(SemanticColors.View.backgroundDefault.swiftUIColor)
-        .sheet(isPresented: $isCertificateViewPresented) {
-
-        }
         .navigationBarBackButtonHidden(true)
         .onAppear {
             Task {
@@ -126,6 +120,18 @@ struct DeviceDetailsView: View {
         }
         .onDisappear {
             dismissedView?()
+        }
+        .sheet(isPresented: $isCertificateViewPresented) {
+            if let certificate = viewModel.e2eIdentityCertificate {
+                E2EIdentityCertificateDetailsView(
+                    certificateDetails: certificate.certificateDetails.uppercased(),
+                    isDownloadAndCopyEnabled: viewModel.isCopyEnabled, isMenuPresented: false
+                ) {
+                    viewModel.downloadE2EIdentityCertificate()
+                } performCopy: { value in
+                    viewModel.copyToClipboard(value)
+                }
+            }
         }
     }
 

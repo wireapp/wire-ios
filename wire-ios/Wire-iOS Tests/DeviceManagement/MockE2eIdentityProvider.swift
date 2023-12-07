@@ -25,7 +25,7 @@ public final class MockE2eIdentityProvider: E2eIdentityProviding {
 
     public var certificate: E2eIdentityCertificate {
         E2eIdentityCertificate(
-            certificateDetails: String(repeating: "abcdefghijklmno", count: 10),
+            certificateDetails: String(repeating: "abcdefghijklmno", count: 100),
             expiryDate: dateFormatter.date(from: "15.10.2023") ?? Date.now,
             certificateStatus: "",
             serialNumber: String(repeating: "abcdefghijklmno", count: 2)
