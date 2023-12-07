@@ -270,13 +270,12 @@ extension ZMSLog {
     @objc public static func clearLogs() {
         guard let currentLogPath = currentLogPath else { return }
 
-        // 2023-12-06: old deprecateed previous log can be removed after some time.
-        let deprecatedPreviousLogPath = cachesDirectory?.appendingPathComponent("previous.log")
-
         logQueue.async {
             closeHandle()
             let manager = FileManager.default
 
+            // 2023-12-06: old deprecated previous log can be removed after some time.
+            let deprecatedPreviousLogPath = cachesDirectory?.appendingPathComponent("previous.log")
             if let deprecatedPreviousLogPath {
                 try? manager.removeItem(at: deprecatedPreviousLogPath)
             }
