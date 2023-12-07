@@ -48,7 +48,7 @@
 		8701221920F641BE001E6342 /* CacheTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8701221720F641A4001E6342 /* CacheTests.swift */; };
 		D59F3A1B206A448F0023474F /* DispatchQueue+ZMSDispatchGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = D59F3A1A206A448F0023474F /* DispatchQueue+ZMSDispatchGroup.swift */; };
 		D59F3A1D206A47E80023474F /* DispatchQueueHelperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D59F3A1C206A47E80023474F /* DispatchQueueHelperTests.swift */; };
-		E66EC68C2B21D179003052F7 /* ZipArchive.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = E66EC68B2B21D179003052F7 /* ZipArchive.xcframework */; };
+		E6B58E412B21D8920046B6E1 /* ZipArchive.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = E6B58E402B21D8920046B6E1 /* ZipArchive.xcframework */; };
 		EEDC67192A1778D600201436 /* UserDefaults+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEDC67182A1778D600201436 /* UserDefaults+Helpers.swift */; };
 		F1670FAE22A7C5F500BC6811 /* SanitizedString.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1670FAD22A7C5F500BC6811 /* SanitizedString.swift */; };
 		F1670FB022A7C7D800BC6811 /* SanitizedStringTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1670FAF22A7C7D800BC6811 /* SanitizedStringTests.swift */; };
@@ -118,7 +118,7 @@
 		8701221720F641A4001E6342 /* CacheTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CacheTests.swift; sourceTree = "<group>"; };
 		D59F3A1A206A448F0023474F /* DispatchQueue+ZMSDispatchGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DispatchQueue+ZMSDispatchGroup.swift"; sourceTree = "<group>"; };
 		D59F3A1C206A47E80023474F /* DispatchQueueHelperTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DispatchQueueHelperTests.swift; sourceTree = "<group>"; };
-		E66EC68B2B21D179003052F7 /* ZipArchive.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = ZipArchive.xcframework; path = "/Users/markus.fassbender/Developer/wire-ios/wire-ios/../Carthage/Build/ZipArchive.xcframework"; sourceTree = "<absolute>"; };
+		E6B58E402B21D8920046B6E1 /* ZipArchive.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = ZipArchive.xcframework; path = ../Carthage/Build/ZipArchive.xcframework; sourceTree = "<group>"; };
 		EEDC67182A1778D600201436 /* UserDefaults+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserDefaults+Helpers.swift"; sourceTree = "<group>"; };
 		F1670FAD22A7C5F500BC6811 /* SanitizedString.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SanitizedString.swift; sourceTree = "<group>"; };
 		F1670FAF22A7C7D800BC6811 /* SanitizedStringTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SanitizedStringTests.swift; sourceTree = "<group>"; };
@@ -130,7 +130,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E66EC68C2B21D179003052F7 /* ZipArchive.xcframework in Frameworks */,
+				E6B58E412B21D8920046B6E1 /* ZipArchive.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -268,7 +268,7 @@
 		E66EC68A2B21D179003052F7 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				E66EC68B2B21D179003052F7 /* ZipArchive.xcframework */,
+				E6B58E402B21D8920046B6E1 /* ZipArchive.xcframework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
