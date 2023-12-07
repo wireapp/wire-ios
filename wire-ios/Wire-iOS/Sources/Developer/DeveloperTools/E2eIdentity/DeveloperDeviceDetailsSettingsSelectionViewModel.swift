@@ -104,31 +104,30 @@ class DeveloperDeviceDetailsSettingsSelectionViewModel: ObservableObject {
     }
 
     static func e2eIdentityProvider() -> E2eIdentityProviding {
-       if DeveloperDeviceDetailsSettingsSelectionViewModel.isE2eIdentityViewEnabled {
-           let status = E2EIdentityCertificateStatus.status(
-               for: DeveloperDeviceDetailsSettingsSelectionViewModel.selectedE2eIdentiyStatus ?? ""
-           )
-           switch status {
-           case .notActivated:
-               return MockNotActivatedE2eIdentityProvider()
-           case .revoked:
-               return MockRevokedE2eIdentityProvider()
-           case .expired:
-               return MockExpiredE2eIdentityProvider()
-           case .valid:
-               return MockValidE2eIdentityProvider()
-           case .none:
-               return E2eIdentityProvider()
-           }
-       }
-       return E2eIdentityProvider()
-   }
+        guard  DeveloperDeviceDetailsSettingsSelectionViewModel.isE2eIdentityViewEnabled else {
+            return E2eIdentityProvider()
+        }
+        let status = E2EIdentityCertificateStatus.status(
+            for: DeveloperDeviceDetailsSettingsSelectionViewModel.selectedE2eIdentiyStatus ?? ""
+        )
+        switch status {
+        case .notActivated:
+            return MockNotActivatedE2eIdentityProvider()
+        case .revoked:
+            return MockRevokedE2eIdentityProvider()
+        case .expired:
+            return MockExpiredE2eIdentityProvider()
+        case .valid:
+            return MockValidE2eIdentityProvider()
+        case .none:
+            return E2eIdentityProvider()
+        }
+    }
 
     static func mlsProvider() -> MLSProviding {
-        if DeveloperFlag.enableMLSSupport.isOn {
-            MockMLSProvider(isMLSEnbaled: DeveloperFlag.enableMLSSupport.isOn)
-        } else {
-            MLSProvider()
+        guard DeveloperFlag.enableMLSSupport.isOn else {
+            return MLSProvider()
         }
+        return MockMLSProvider(isMLSEnbaled: true)
     }
 }
