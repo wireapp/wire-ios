@@ -600,16 +600,14 @@ extension ZMLogTests {
 
         Thread.sleep(forTimeInterval: 0.2)
 
-        let zip = ZMSLog.currentZipLog
-
         // then
-        XCTAssertNotNil(zip)
+        XCTAssertNotNil(ZMSLog.currentZipLog)
     }
 }
 
 extension ZMLogTests {
 
-    func testThatItSavesDebugTagsInProduction() {
+    func testThatItSavesDebugTagsInProduction() throws {
 
         // given
         let tag = "tag"
@@ -632,13 +630,15 @@ extension ZMLogTests {
         ZMSLog.set(level: .debug, tag: tag)
         sut.debug("DEBUG")
 
-        Thread.sleep(forTimeInterval: 0.5)
+        Thread.sleep(forTimeInterval: 0.2)
 
         let lines = getLinesFromCurrentLog()
 
         // then
         XCTAssertEqual(lines.count, 1)
-        XCTAssertFalse(lines.first!.hasSuffix("[0] [tag] ERROR"))
+
+        let firstsLine = try XCTUnwrap(lines.first)
+        XCTAssertFalse(firstsLine.hasSuffix("[0] [tag] ERROR"))
     }
 
     func testThatItSavesAllLevelsOnInternals() {
@@ -665,7 +665,7 @@ extension ZMLogTests {
         ZMSLog.set(level: .debug, tag: tag)
         sut.debug("DEBUG")
 
-        Thread.sleep(forTimeInterval: 0.5)
+        Thread.sleep(forTimeInterval: 0.2)
 
         let lines = getLinesFromCurrentLog()
 
