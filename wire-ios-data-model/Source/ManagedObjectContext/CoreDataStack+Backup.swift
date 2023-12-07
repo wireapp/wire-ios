@@ -113,8 +113,20 @@ extension CoreDataStack {
 
         workQueue.async(group: dispatchGroup) {
             do {
-                let model = CoreDataStack.loadMessagingModel()
-                let coordinator = NSPersistentStoreCoordinator(managedObjectModel: model)
+
+                let migrator = CoreDataMessagingMigrator(isInMemoryStore: false)
+                
+                let coordinator: NSPersistentStoreCoordinator
+
+                if let modelName = migrator.dataModelVersionForStore(at: storeFile) {
+                    let specificModel = CoreDataStack.loadMessagingModel(modelName: modelName)
+                    coordinator = NSPersistentStoreCoordinator(managedObjectModel: specificModel)
+                    WireLogger.localStorage.debug("use specific model: \(modelName)")
+                } else {
+                    let model = CoreDataStack.loadMessagingModel()
+                    coordinator = NSPersistentStoreCoordinator(managedObjectModel: model)
+                    WireLogger.localStorage.debug("use current model: \(String(describing: model.versionIdentifiers.first))")
+                }
 
                 // Create target directory
                 try fileManager.createDirectory(at: databaseDirectory, withIntermediateDirectories: true, attributes: nil)

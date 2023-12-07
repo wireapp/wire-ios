@@ -52,6 +52,13 @@ final class CoreDataMessagingMigrator: CoreDataMessagingMigratorProtocol {
         self.isInMemoryStore = isInMemoryStore
     }
 
+    func dataModelVersionForStore(at storeURL: URL) -> String? {
+        guard let metadata = try? metadataForPersistentStore(at: storeURL) else {
+            return nil
+        }
+        return compatibleVersionForStoreMetadata(metadata)?.dataModelVersion
+    }
+
     func requiresMigration(at storeURL: URL, toVersion version: CoreDataMessagingMigrationVersion) -> Bool {
         guard let metadata = try? metadataForPersistentStore(at: storeURL) else {
             return false

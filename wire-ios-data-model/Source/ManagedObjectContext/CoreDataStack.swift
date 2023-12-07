@@ -420,10 +420,10 @@ public class CoreDataStack: NSObject, ContextProvider {
             .appendingPathComponent(accountIdentifier.uuidString)
     }
 
-    public static func loadMessagingModel() -> NSManagedObjectModel {
+    public static func loadMessagingModel(modelName: String = "zmessaging.momd") -> NSManagedObjectModel {
         let modelBundle = Bundle(for: ZMManagedObject.self)
 
-        guard let result = NSManagedObjectModel(contentsOf: modelBundle.bundleURL.appendingPathComponent("zmessaging.momd")) else {
+        guard let result = NSManagedObjectModel(contentsOf: modelBundle.bundleURL.appendingPathComponent(modelName)) else {
             fatal("Can't load data model bundle")
         }
 
