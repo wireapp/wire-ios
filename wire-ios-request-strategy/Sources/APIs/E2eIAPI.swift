@@ -18,6 +18,7 @@
 
 import Foundation
 
+// sourcery: AutoMockable
 public protocol E2eIAPI {
 
     func getWireNonce(clientId: String) async throws -> String
