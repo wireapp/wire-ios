@@ -84,6 +84,16 @@ public final class CreateGroupConversationAction: EntityAction {
 final class CreateGroupConversationActionHandler: ActionHandler<CreateGroupConversationAction> {
 
     private let processor = ConversationEventPayloadProcessor()
+    private let mlsService: MLSServiceInterface
+
+    required init(
+        context: NSManagedObjectContext,
+        mlsService: MLSServiceInterface
+    ) {
+        self.mlsService = mlsService
+
+        super.init(context: context)
+    }
 
     // MARK: - Request generation
 
@@ -211,12 +221,6 @@ final class CreateGroupConversationActionHandler: ActionHandler<CreateGroupConve
 
             // Self user is creator, so we don't need to process a welcome message
             newConversation.mlsStatus = .ready
-
-            guard let mlsService = context.zm_sync.mlsService else {
-                Logging.mls.warn("failed to create mls group: mlsService doesn't exist")
-                action.fail(with: .proccessingError)
-                return
-            }
 
             guard let groupID = newConversation.mlsGroupID else {
                 Logging.mls.warn("failed to create mls group: conversation is missing group id.")
