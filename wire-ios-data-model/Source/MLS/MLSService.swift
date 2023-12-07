@@ -23,7 +23,7 @@ import Combine
 // sourcery: AutoMockable
 public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptionServiceInterface {
 
-    func uploadKeyPackagesIfNeeded()
+    func uploadKeyPackagesIfNeeded() async
 
     func createSelfGroup(for groupID: MLSGroupID) async
 
@@ -154,8 +154,8 @@ public final class MLSService: MLSServiceInterface {
         conversationEventProcessor: ConversationEventProcessorProtocol,
         userDefaults: UserDefaults,
         syncStatus: SyncStatusProtocol
-    ) {
-        self.init(
+    ) async {
+        await self.init(
             context: context,
             coreCrypto: coreCrypto,
             conversationEventProcessor: conversationEventProcessor,
@@ -182,7 +182,7 @@ public final class MLSService: MLSServiceInterface {
         delegate: MLSServiceDelegate? = nil,
         syncStatus: SyncStatusProtocol,
         subconversationGroupIDRepository: SubconversationGroupIDRepositoryInterface = SubconversationGroupIDRepository()
-    ) {
+    ) async {
         self.context = context
         self.coreCrypto = coreCrypto
         self.mlsActionExecutor = mlsActionExecutor ?? MLSActionExecutor(
@@ -212,7 +212,7 @@ public final class MLSService: MLSServiceInterface {
         }
 
         generateClientPublicKeysIfNeeded()
-        uploadKeyPackagesIfNeeded()
+        await uploadKeyPackagesIfNeeded()
         fetchBackendPublicKeys()
         updateKeyMaterialForAllStaleGroupsIfNeeded()
         schedulePeriodicKeyMaterialUpdateCheck()
@@ -610,7 +610,7 @@ public final class MLSService: MLSServiceInterface {
     /// Checks how many key packages are available on the backend and
     /// generates new ones if there are less than 50% of the target unclaimed key package count..
 
-    public func uploadKeyPackagesIfNeeded() {
+    public func uploadKeyPackagesIfNeeded() async {
         logger.info("uploading key packages if needed")
 
         func logWarn(abortedWithReason reason: String) {
@@ -761,7 +761,7 @@ public final class MLSService: MLSServiceInterface {
                 )
             }
             let groupID = MLSGroupID(groupIDBytes)
-            uploadKeyPackagesIfNeeded()
+            await uploadKeyPackagesIfNeeded()
             staleKeyMaterialDetector.keyingMaterialUpdated(for: groupID)
             return groupID
 

@@ -1243,16 +1243,16 @@ public class MockMLSServiceInterface: MLSServiceInterface {
     // MARK: - uploadKeyPackagesIfNeeded
 
     public var uploadKeyPackagesIfNeeded_Invocations: [Void] = []
-    public var uploadKeyPackagesIfNeeded_MockMethod: (() -> Void)?
+    public var uploadKeyPackagesIfNeeded_MockMethod: (() async -> Void)?
 
-    public func uploadKeyPackagesIfNeeded() {
+    public func uploadKeyPackagesIfNeeded() async {
         uploadKeyPackagesIfNeeded_Invocations.append(())
 
         guard let mock = uploadKeyPackagesIfNeeded_MockMethod else {
             fatalError("no mock for `uploadKeyPackagesIfNeeded`")
         }
 
-        mock()
+        await mock()
     }
 
     // MARK: - createSelfGroup
