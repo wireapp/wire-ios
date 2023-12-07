@@ -64,7 +64,6 @@ public final class EnrollE2eICertificateUseCase: EnrollE2eICertificateUseCaseInt
         }
 
         let idToken = try await invokeAuthentication(identityProvider)
-
         let wireNonce = try await enrollment.getWireNonce(clientId: e2eiClientId.clientID)
         let dpopToken = try await enrollment.getDPoPToken(wireNonce)
         let wireAccessToken = try await enrollment.getWireAccessToken(clientId: e2eiClientId.clientID,
@@ -93,7 +92,6 @@ public final class EnrollE2eICertificateUseCase: EnrollE2eICertificateUseCaseInt
 
 enum EnrollE2EICertificateUseCaseFailure: Error {
 
-    case failedInitialEnrollment
     case failedToSetupEnrollment
     case missingDpopChallenge
     case missingOIDCChallenge

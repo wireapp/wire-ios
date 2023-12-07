@@ -86,13 +86,13 @@ public final class E2eIEnrollment: E2eIEnrollmentInterface {
 
     public init(
         acmeApi: AcmeAPIInterface,
-        acmeDirectory: AcmeDirectory,
         apiProvider: APIProviderInterface,
-        e2eiService: E2eIServiceInterface) {
+        e2eiService: E2eIServiceInterface,
+        acmeDirectory: AcmeDirectory) {
             self.acmeApi = acmeApi
-            self.acmeDirectory = acmeDirectory
             self.apiProvider = apiProvider
             self.e2eiService = e2eiService
+            self.acmeDirectory = acmeDirectory
         }
 
     public func getACMENonce() async throws -> String {
