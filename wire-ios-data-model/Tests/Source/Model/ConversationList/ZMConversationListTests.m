@@ -65,6 +65,22 @@
     AssertArraysContainsSameObjects(list, expected);
 }
 
+- (void)testThatItDoesNotReturnInvalidOneOnOne;
+{
+    // given
+    ZMConversation *c1 = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+    c1.conversationType = ZMConversationTypeOneOnOne;
+    c1.connection = nil;
+    ZMConversation *c2 = [self insertValidOneOnOneConversationInContext:self.uiMOC];
+    XCTAssert([self.uiMOC saveOrRollback]);
+
+    // then
+    NSArray *list = [ZMConversation conversationsIncludingArchivedInContext:self.uiMOC];
+    XCTAssertEqual(list.count, 1u);
+    NSArray *expected = @[c2];
+    AssertArraysContainsSameObjects(list, expected);
+}
+
 - (void)testThatItReturnsAllConversations
 {
     // given
