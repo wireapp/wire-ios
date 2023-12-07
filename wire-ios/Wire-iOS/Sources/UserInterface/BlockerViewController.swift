@@ -19,6 +19,7 @@
 import Foundation
 import UIKit
 import WireSyncEngine
+import MessageUI
 
 enum BlockerViewControllerContext {
     case blacklist
@@ -115,6 +116,15 @@ final class BlockerViewController: LaunchImageViewController {
             }
         )
 
+        let reportError = UIAlertAction(
+            title: L10n.Localizable.Self.Settings.TechnicalReport.sendReport,
+            style: .default,
+            handler: { [weak self] _ in
+                self?.presentMailComposer(withLogs: true)
+            }
+        )
+
+        databaseFailureAlert.addAction(reportError)
         databaseFailureAlert.addAction(retryAction)
 
         let deleteDatabaseAction = UIAlertAction(
@@ -158,6 +168,14 @@ final class BlockerViewController: LaunchImageViewController {
         deleteDatabaseConfirmationAlert.addAction(cancelAction)
         present(deleteDatabaseConfirmationAlert, animated: true)
     }
+
+    func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {
+        // shown after sending report logs, we should show other choices again
+        // in order not to be stuck on black screen
+        controller.presentingViewController?.dismiss(animated: true) {
+            self.showDatabaseFailureMessage()
+        }
+    }
 }
 
 // MARK: - Application state observing
@@ -169,4 +187,9 @@ extension BlockerViewController: ApplicationStateObserving {
     func applicationDidBecomeActive() {
         showAlert()
     }
+}
+
+extension BlockerViewController: SendTechnicalReportPresenter {
+
+
 }
