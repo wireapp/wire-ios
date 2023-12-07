@@ -24,6 +24,7 @@ class MLSEventProcessorTests: MessagingTestBase {
     var sut: MLSEventProcessor!
     var mlsServiceMock: MockMLSService!
     var conversationServiceMock: MockConversationService!
+    var oneOnOneResolver: MockOneOnOneResolverInterface!
 
     var conversation: ZMConversation!
     var qualifiedID: QualifiedID!
@@ -45,6 +46,8 @@ class MLSEventProcessorTests: MessagingTestBase {
         }
 
         conversationServiceMock = MockConversationService()
+        oneOnOneResolver = MockOneOnOneResolverInterface()
+
         sut = MLSEventProcessor(conversationService: conversationServiceMock)
     }
 
@@ -59,50 +62,97 @@ class MLSEventProcessorTests: MessagingTestBase {
 
     // MARK: - Process Welcome Message
 
-    func test_itProcessesMessageAndUpdatesConversation() {
-        syncMOC.performGroupedBlockAndWait {
-            // Given
-            let message = "welcome message"
+    func test_itProcessesMessageAndUpdatesConversation_GroupConversation() async {
+        // Given
+        let message = "welcome message"
+        let isDone = XCTestExpectation(description: "isDone")
+
+        await syncMOC.perform {
             self.mlsServiceMock.groupID = self.conversation.mlsGroupID
             self.conversation.mlsStatus = .pendingJoin
+            self.conversation.conversationType = .group
             XCTAssertEqual(self.conversation.mlsStatus, .pendingJoin)
 
             // When
             self.sut.process(
                 welcomeMessage: message,
                 conversationID: self.qualifiedID,
-                in: self.syncMOC
-            )
+                in: self.syncMOC,
+                mlsService: self.mlsServiceMock,
+                oneOnOneResolver: self.oneOnOneResolver
+            ) {
+                isDone.fulfill()
+            }
+        }
 
-            // Then
+        await fulfillment(of: [isDone])
+
+        // Then
+        await syncMOC.perform {
             XCTAssertEqual(message, self.mlsServiceMock.processedWelcomeMessage)
-            XCTAssertEqual(self.conversation.mlsStatus, .ready)
             XCTAssertTrue(self.mlsServiceMock.uploadKeyPackesIfNeededCalled)
+            XCTAssertEqual(self.conversationServiceMock.syncConversationInvocations, [self.qualifiedID])
+            XCTAssertEqual(self.conversation.mlsStatus, .ready)
+            XCTAssertTrue(self.oneOnOneResolver.resolveOneOnOneConversationWithInCompletion_Invocations.isEmpty)
         }
     }
 
-    func test_itProcessesMessage_ConversationDoesNotExist() {
-        syncMOC.performGroupedBlockAndWait {
-            // Given
-            let message = "welcome message"
-            let mlsGroupID = MLSGroupID.random()
-            let qualifiedID = QualifiedID.random()
-            self.mlsServiceMock.groupID = mlsGroupID
+    func test_itProcessesMessageAndUpdatesConversation_OneOnOneConversation() async throws {
+        // Given
+        let message = "welcome message"
+        let isDone = XCTestExpectation(description: "isDone")
+
+        let otherUserID = QualifiedID(
+            uuid: .create(),
+            domain: qualifiedID.domain
+        )
+
+        await syncMOC.perform {
+            self.mlsServiceMock.groupID = self.conversation.mlsGroupID
+            self.conversation.mlsStatus = .pendingJoin
+            self.conversation.conversationType = .oneOnOne
+            XCTAssertEqual(self.conversation.mlsStatus, .pendingJoin)
+
+            let otherUser = self.createUser()
+            otherUser.remoteIdentifier = otherUserID.uuid
+            otherUser.domain = otherUserID.domain
+
+            self.conversation.addParticipantAndUpdateConversationState(
+                user: otherUser,
+                role: nil
+            )
+
+            // Mock
+            self.oneOnOneResolver.resolveOneOnOneConversationWithInCompletion_MockMethod = { _, _, completion in
+                completion(.success(()))
+            }
 
             // When
             self.sut.process(
                 welcomeMessage: message,
-                conversationID: qualifiedID,
-                in: self.syncMOC
-            )
+                conversationID: self.qualifiedID,
+                in: self.syncMOC,
+                mlsService: self.mlsServiceMock,
+                oneOnOneResolver: self.oneOnOneResolver
+            ) {
+                isDone.fulfill()
+            }
+        }
 
-            // Then
+        await fulfillment(of: [isDone])
+
+        // Then
+        try await syncMOC.perform {
             XCTAssertEqual(message, self.mlsServiceMock.processedWelcomeMessage)
-            XCTAssertEqual(self.conversationServiceMock.syncConversationInvocations, [qualifiedID])
             XCTAssertTrue(self.mlsServiceMock.uploadKeyPackesIfNeededCalled)
+            XCTAssertEqual(self.conversationServiceMock.syncConversationInvocations, [self.qualifiedID])
+            XCTAssertEqual(self.conversation.mlsStatus, .ready)
+
+            XCTAssertEqual(self.oneOnOneResolver.resolveOneOnOneConversationWithInCompletion_Invocations.count, 1)
+            let invocation = try XCTUnwrap(self.oneOnOneResolver.resolveOneOnOneConversationWithInCompletion_Invocations.first)
+            XCTAssertEqual(invocation.userID, otherUserID)
         }
     }
-
     // MARK: - Update Conversation
 
     func test_itUpdates_GroupID() {
@@ -252,4 +302,28 @@ class MLSEventProcessorTests: MessagingTestBase {
             XCTAssertEqual(self.conversation.mlsStatus, expectedValue)
         }
     }
+}
+
+class MockOneOnOneResolverInterface: OneOnOneResolverInterface {
+
+    // MARK: - Life cycle
+
+    init() {}
+
+
+    // MARK: - resolveOneOnOneConversation
+
+    var resolveOneOnOneConversationWithInCompletion_Invocations: [(userID: QualifiedID, context: NSManagedObjectContext, completion: (Swift.Result<Void, Error>) -> Void)] = []
+    var resolveOneOnOneConversationWithInCompletion_MockMethod: ((QualifiedID, NSManagedObjectContext, @escaping (Swift.Result<Void, Error>) -> Void) -> Void)?
+
+    func resolveOneOnOneConversation(with userID: QualifiedID, in context: NSManagedObjectContext, completion: @escaping (Swift.Result<Void, Error>) -> Void) {
+        resolveOneOnOneConversationWithInCompletion_Invocations.append((userID: userID, context: context, completion: completion))
+
+        guard let mock = resolveOneOnOneConversationWithInCompletion_MockMethod else {
+            fatalError("no mock for `resolveOneOnOneConversationWithInCompletion`")
+        }
+
+        mock(userID, context, completion)
+    }
+
 }

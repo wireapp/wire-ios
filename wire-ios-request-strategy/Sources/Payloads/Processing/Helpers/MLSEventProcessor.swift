@@ -138,23 +138,54 @@ public class MLSEventProcessor: MLSEventProcessing {
             return logWarn(aborting: .processingWelcome, withReason: .missingMLSService)
         }
 
+        let oneOnOneResolver = OneOnOneResolver(
+            protocolSelector: OneOnOneProtocolSelector(),
+            migrator: OneOnOneMigrator(mlsService: mlsService)
+        )
+
+        process(
+            welcomeMessage: welcomeMessage,
+            conversationID: conversationID,
+            in: context,
+            mlsService: mlsService,
+            oneOnOneResolver: oneOnOneResolver,
+            completion: {}
+        )
+    }
+
+    func process(
+        welcomeMessage: String,
+        conversationID: QualifiedID,
+        in context: NSManagedObjectContext,
+        mlsService: MLSServiceInterface,
+        oneOnOneResolver: OneOnOneResolverInterface,
+        completion: @escaping () -> Void
+    ) {
         do {
             let groupID = try mlsService.processWelcomeMessage(welcomeMessage: welcomeMessage)
             mlsService.uploadKeyPackagesIfNeeded()
 
             fetchConversation(conversationID: conversationID, in: context) {
-                guard let conversation = $0 else { return }
+                guard let conversation = $0 else {
+                    completion()
+                    return
+                }
+
                 conversation.mlsGroupID = groupID
                 conversation.mlsStatus = .ready
+
                 self.resolveOneOnOneConversationIfNeeded(
                     conversation: conversation,
                     mlsService: mlsService,
-                    in: context
+                    oneOneOneResolver: oneOnOneResolver,
+                    in: context,
+                    completion: completion
                 )
             }
-
         } catch {
-            return WireLogger.mls.warn("MLS event processor aborting processing welcome message: \(String(describing: error))")
+            WireLogger.mls.warn("MLS event processor aborting processing welcome message: \(String(describing: error))")
+            completion()
+            return
         }
     }
 
@@ -174,11 +205,14 @@ public class MLSEventProcessor: MLSEventProcessing {
     private func resolveOneOnOneConversationIfNeeded(
         conversation: ZMConversation,
         mlsService: MLSServiceInterface,
-        in context: NSManagedObjectContext
+        oneOneOneResolver: OneOnOneResolverInterface,
+        in context: NSManagedObjectContext,
+        completion: @escaping () -> Void
     ) {
         WireLogger.mls.debug("resolving one on one conversation")
 
         guard conversation.conversationType == .oneOnOne else {
+            completion()
             return
         }
 
@@ -188,26 +222,24 @@ public class MLSEventProcessor: MLSEventProcessing {
             let otherUserDomain = otherUser.domain ?? BackendInfo.domain
         else {
             WireLogger.mls.error("failed to resolve one on one conversation: can not get other user id")
+            completion()
             return
         }
-
-        let resolver = OneOnOneResolver(
-            protocolSelector: OneOnOneProtocolSelector(),
-            migrator: OneOnOneMigrator(mlsService: mlsService)
-        )
 
         let userID = QualifiedID(
             uuid: otherUserID,
             domain: otherUserDomain
         )
 
-        resolver.resolveOneOnOneConversation(with: userID, in: context) {
+        oneOneOneResolver.resolveOneOnOneConversation(with: userID, in: context) {
             switch $0 {
             case .success:
                 WireLogger.mls.debug("succeffully resolved one on one conversation")
+                completion()
 
             case .failure(let error):
                 WireLogger.mls.error("failed to resolve one on one conversation: \(error)")
+                completion()
             }
         }
     }
