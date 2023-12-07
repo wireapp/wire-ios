@@ -89,8 +89,7 @@ final class DatabaseMigrationTests_UserClientUniqueness: DatabaseBaseTest {
         let fixedVersion = sourceVersion.replacingOccurrences(of: ".", with: "-")
 
         // copy given database as source
-        createDatabaseWithOlderModelVersion(versionName: fixedVersion)
-        
+        try createDatabaseWithOlderModelVersion(versionName: fixedVersion)
 
         let storeFile = CoreDataStack.accountDataFolder(accountIdentifier: userId,
                                                         applicationContainer: self.applicationContainer).appendingPersistentStoreLocation()
