@@ -19,7 +19,6 @@
 import Foundation
 
 public enum MLSError: Error {
-    case decodingError
     case unknownError
 }
 
