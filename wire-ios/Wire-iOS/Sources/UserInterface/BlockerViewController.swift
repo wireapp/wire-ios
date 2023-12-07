@@ -93,34 +93,23 @@ final class BlockerViewController: LaunchImageViewController {
     }
 
     func showDatabaseFailureMessage() {
-        var message = L10n.Localizable.Databaseloadingfailure.Alert.message
-        if let messageError = error?.localizedDescription {
-            message.append("\n(\(messageError)")
-        }
+        let message = L10n.Localizable.Databaseloadingfailure.Alert.message(error?.localizedDescription ?? "-")
 
         let databaseFailureAlert = UIAlertController(
             title: L10n.Localizable.Databaseloadingfailure.Alert.title,
-            message:  message,
+            message: message,
             preferredStyle: .alert
         )
 
-        let settingsAction = UIAlertAction(
-            title: L10n.Localizable.Databaseloadingfailure.Alert.settings,
-            style: .default,
-            handler: { _ in
-                UIApplication.shared.openSettings()
-            }
-        )
-
-        databaseFailureAlert.addAction(settingsAction)
-
-        let retryAction = UIAlertAction(
-            title: L10n.Localizable.Databaseloadingfailure.Alert.retry,
+        let backupAction = UIAlertAction(
+            title: L10n.Localizable.Databaseloadingfailure.Alert.saveBackup,
             style: .default,
             handler: { [weak self] _ in
-                self?.sessionManager?.retryStart()
+                self?.present(BackupViewController.init(backupSource: SessionManager.shared!), animated: true)
             }
         )
+
+        databaseFailureAlert.addAction(backupAction)
 
         let reportError = UIAlertAction(
             title: L10n.Localizable.Self.Settings.TechnicalReport.sendReport,
@@ -131,6 +120,15 @@ final class BlockerViewController: LaunchImageViewController {
         )
 
         databaseFailureAlert.addAction(reportError)
+
+        let retryAction = UIAlertAction(
+            title: L10n.Localizable.Databaseloadingfailure.Alert.retry,
+            style: .default,
+            handler: { [weak self] _ in
+                self?.sessionManager?.retryStart()
+            }
+        )
+
         databaseFailureAlert.addAction(retryAction)
 
         let deleteDatabaseAction = UIAlertAction(
