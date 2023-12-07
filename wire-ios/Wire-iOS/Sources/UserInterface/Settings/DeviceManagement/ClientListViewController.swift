@@ -19,6 +19,7 @@
 import UIKit
 import WireSyncEngine
 import WireCommonComponents
+import SwiftUI
 
 private let zmLog = ZMSLog(tag: "UI")
 
@@ -166,6 +167,7 @@ final class ClientListViewController: UIViewController,
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.clientsTableView?.reloadData()
+        self.navigationController?.setNavigationBarHidden(false, animated: false)
     }
 
     override func viewDidDisappear(_ animated: Bool) {
@@ -184,11 +186,20 @@ final class ClientListViewController: UIViewController,
     func openDetailsOfClient(_ client: UserClient) {
         guard let userSession = ZMUserSession.shared() else { return }
         if let navigationController = self.navigationController {
-            let clientViewController = SettingsClientViewController(userClient: client,
-                                                                    userSession: userSession,
-                                                                    credentials: self.credentials)
-            clientViewController.view.backgroundColor = SemanticColors.View.backgroundDefault
-            navigationController.pushViewController(clientViewController, animated: true)
+                let detailsView = DeviceDetailsView(
+                    viewModel: DeviceInfoViewModel.map(
+                        userClient: client,
+                        userSession: userSession,
+                        credentials: self.credentials,
+                        getUserClientFingerprintUseCase: userSession.getUserClientFingerprint,
+                        e2eIdentityProvider: self.e2eIdentityProvider()
+                    )) {
+                        self.navigationController?.setNavigationBarHidden(false, animated: false)
+                    }
+                let hostingViewController = UIHostingController(rootView: detailsView)
+                hostingViewController.view.backgroundColor = SemanticColors.View.backgroundDefault
+                navigationController.pushViewController(hostingViewController, animated: true)
+                navigationController.isNavigationBarHidden = true
         }
     }
 
@@ -484,6 +495,32 @@ extension ClientListViewController: ZMUserObserver {
             clients.remove(selfClient)
             self.clients = Array(clients)
         }
+    }
+
+}
+
+// MARK: - E2eIdentityProvider
+extension ClientListViewController {
+
+     func e2eIdentityProvider() -> E2eIdentityProviding {
+        if DeveloperDeviceDetailsSettingsSelectionViewModel.isE2eIdentityViewEnabled {
+            let status = E2EIdentityCertificateStatus.status(
+                for: DeveloperDeviceDetailsSettingsSelectionViewModel.selectedE2eIdentiyStatus ?? ""
+            )
+            switch status {
+            case .notActivated:
+                return MockNotActivatedE2eIdentityProvider()
+            case .revoked:
+                return MockRevokedE2eIdentityProvider()
+            case .expired:
+                return MockExpiredE2eIdentityProvider()
+            case .valid:
+                return MockValidE2eIdentityProvider()
+            case .none:
+                return E2eIdentityProvider()
+            }
+        }
+        return E2eIdentityProvider()
     }
 
 }

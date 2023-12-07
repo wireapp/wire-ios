@@ -311,11 +311,17 @@ public class UserClient: ZMManagedObject, UserClientType {
 
     /// Resets the session between the client and the selfClient
     /// Can be called several times without issues
+
     public func resetSession() {
+        resetSession(completion: nil)
+    }
+
+    public func resetSession(completion: ((Bool) -> Void)? = nil) {
         guard
             let uiMOC = self.managedObjectContext?.zm_userInterface,
             let syncMOC = uiMOC.zm_sync
         else {
+            completion?(false)
             return
         }
 
@@ -325,19 +331,26 @@ public class UserClient: ZMManagedObject, UserClientType {
                 let selfClient = ZMUser.selfUser(in: syncMOC).selfClient(),
                 let syncClient = (try? syncMOC.existingObject(with: self.objectID)) as? UserClient
             else {
+                completion?(false)
                 return
             }
 
             // Delete session and fingerprint
-            try? syncClient.deleteSession()
+            do {
+                try syncClient.deleteSession()
 
-            // Mark clients as needing to be refetched
-            selfClient.missesClient(syncClient)
+                // Mark clients as needing to be refetched
+                selfClient.missesClient(syncClient)
 
-            // Mark that we need notify the other party about the session reset
-            syncClient.needsToNotifyOtherUserAboutSessionReset = true
+                // Mark that we need notify the other party about the session reset
+                syncClient.needsToNotifyOtherUserAboutSessionReset = true
 
-            syncMOC.saveOrRollback()
+                syncMOC.saveOrRollback()
+                completion?(true)
+            } catch {
+                WireLogger.userClient.error("Failed to Delete Session with Error \(error.localizedDescription)")
+                completion?(false)
+            }
         }
     }
 

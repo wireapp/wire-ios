@@ -65,9 +65,10 @@ extension SessionManager: CallKitManagerDelegate {
             }
 
             do {
-                try userSession.processPendingCallEvents()
-                WireLogger.calling.info("did process call events, returning conversation...")
-                completionHandler(.success(conversation))
+                try userSession.processPendingCallEvents {
+                    WireLogger.calling.info("did process call events, returning conversation...")
+                    completionHandler(.success(conversation))
+                }
             } catch {
                 WireLogger.calling.error("failed to process call events: \(error)")
                 completionHandler(.failure(ConversationLookupError.failedToProcessCallEvents))
