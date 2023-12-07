@@ -253,11 +253,11 @@ extension ZMSLog {
     }
 
     @objc static public var currentLog: Data? {
-        guard let currentLogPath else { return nil }
-        return try? Data(contentsOf: currentLogPath, options: [.uncached])
+        guard let currentLogURL else { return nil }
+        return try? Data(contentsOf: currentLogURL, options: [.uncached])
     }
 
-    @objc static public let previousZipLogPaths: [URL] = {
+    @objc static public let previousZipLogURLs: [URL] = {
         [0..<Constant.maxNumberOfLogFiles]
             .joined()
             .compactMap { index in
@@ -265,64 +265,63 @@ extension ZMSLog {
             }
     }()
 
-    @objc static public let currentLogPath: URL? = cachesDirectory?.appendingPathComponent("current.log")
+    @objc static public let currentLogURL: URL? = cachesDirectory?.appendingPathComponent("current.log")
 
     @objc public static func clearLogs() {
-        guard let currentLogPath else { return }
+        guard let currentLogURL else { return }
 
         logQueue.async {
             closeHandle()
             let manager = FileManager.default
 
             // 2023-12-06: old deprecated previous log can be removed after some time.
-            let deprecatedPreviousLogPath = cachesDirectory?.appendingPathComponent("previous.log")
-            if let deprecatedPreviousLogPath {
-                try? manager.removeItem(at: deprecatedPreviousLogPath)
+            if let deprecatedPreviousLogURL = cachesDirectory?.appendingPathComponent("previous.log") {
+                try? manager.removeItem(at: deprecatedPreviousLogURL)
             }
 
-            previousZipLogPaths.forEach {
+            previousZipLogURLs.forEach {
                 try? manager.removeItem(at: $0)
             }
 
-            try? manager.removeItem(at: currentLogPath)
+            try? manager.removeItem(at: currentLogURL)
         }
     }
 
     @objc public static func switchCurrentLogToPrevious() {
-        guard let currentLogPath else { return }
+        guard let currentLogURL else { return }
 
         logQueue.async {
             closeHandle()
 
-            if previousZipLogPaths.isEmpty {
+            if previousZipLogURLs.isEmpty {
                 assertionFailure("expects 'previousLogPaths' not to be empty!")
                 return
             }
 
-            let lastIndex = previousZipLogPaths.count - 1
+            let lastIndex = previousZipLogURLs.count - 1
 
             // remove last item
             let manager = FileManager.default
-            try? manager.removeItem(at: previousZipLogPaths[lastIndex])
+            try? manager.removeItem(at: previousZipLogURLs[lastIndex])
 
             // move last-1 to 0 items
             for index in (0..<lastIndex).reversed() {
-                try? manager.moveItem(at: previousZipLogPaths[index], to: previousZipLogPaths[index+1])
+                try? manager.moveItem(at: previousZipLogURLs[index], to: previousZipLogURLs[index+1])
             }
 
             // move current log to 0 item
-            if manager.fileExists(atPath: currentLogPath.path) {
+            if manager.fileExists(atPath: currentLogURL.path) {
                 // create a tmp different name from `current.log` to `previous.log`
-                var tmpPath = currentLogPath.deletingLastPathComponent()
-                tmpPath.appendPathComponent("previous.log")
+                var tmpURL = currentLogURL.deletingLastPathComponent()
+                tmpURL.appendPathComponent("previous.log")
 
-                try? manager.moveItem(at: currentLogPath, to: tmpPath)
+                try? manager.moveItem(at: currentLogURL, to: tmpURL)
 
                 // zip to position 0 logs
-                SSZipArchive.createZipFile(atPath: previousZipLogPaths[0].path, withFilesAtPaths: [tmpPath.path])
+                SSZipArchive.createZipFile(atPath: previousZipLogURLs[0].path, withFilesAtPaths: [tmpURL.path])
 
                 // remove tmp file
-                try? manager.removeItem(at: tmpPath)
+                try? manager.removeItem(at: tmpURL)
             }
         }
     }
@@ -332,8 +331,8 @@ extension ZMSLog {
     }
 
     static public var pathsForExistingLogs: [URL] {
-        var paths: [URL] = previousZipLogPaths
-        if let currentPath = currentLogPath, currentLog != nil {
+        var paths: [URL] = previousZipLogURLs
+        if let currentPath = currentLogURL, currentLog != nil {
             paths.append(currentPath)
         }
         return paths
@@ -345,7 +344,7 @@ extension ZMSLog {
     }
 
     static func appendToCurrentLog(_ string: String) {
-        guard let currentLogPath = currentLogPath?.path else { return }
+        guard let currentLogPath = currentLogURL?.path else { return }
         let manager = FileManager.default
 
         if !manager.fileExists(atPath: currentLogPath) {
