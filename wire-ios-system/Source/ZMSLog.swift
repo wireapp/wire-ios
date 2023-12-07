@@ -329,8 +329,7 @@ extension ZMSLog {
     }
 
     static var cachesDirectory: URL? {
-        let manager = FileManager.default
-        return manager.urls(for: .cachesDirectory, in: .userDomainMask).first
+        FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first
     }
 
     static public var pathsForExistingLogs: [URL] {
