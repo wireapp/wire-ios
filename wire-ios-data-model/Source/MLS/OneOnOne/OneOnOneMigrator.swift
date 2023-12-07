@@ -130,8 +130,6 @@ public final class OneOnOneMigrator: OneOnOneMigratorInterface {
         }
 
         connection.conversation = conversation
-        print("DEBUG: connection status is: \(conversation.connection?.status)")
-        return
     }
 
 }
