@@ -69,7 +69,7 @@ public final class OneOnOneMigrator: OneOnOneMigratorInterface {
                 with: mlsGroupID,
                 in: context
             ) else {
-                return
+                throw MigrateMLSOneOnOneConversationError.failedToActivateConversation
             }
 
             try self.switchActiveOneOnOneConversation(
