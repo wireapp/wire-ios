@@ -248,9 +248,38 @@ extension ZMSLog {
         static let maxNumberOfLogFiles = 5
     }
 
+    static var cachesDirectory: URL? {
+        FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first
+    }
+
+    @objc static public let currentLogURL: URL? = cachesDirectory?.appendingPathComponent("current.log")
+
     @objc static public var currentLog: Data? {
         guard let currentLogURL else { return nil }
         return try? Data(contentsOf: currentLogURL, options: [.uncached])
+    }
+
+    @objc static public var currentZipLog: Data? {
+        let manager = FileManager.default
+
+        guard 
+            let currentLogURL,
+            manager.fileExists(atPath: currentLogURL.path)
+        else {
+            return nil
+        }
+
+        var tmpURL = currentLogURL.deletingLastPathComponent()
+        tmpURL.appendPathComponent("current.log.zip")
+
+        SSZipArchive.createZipFile(atPath: tmpURL.path, withFilesAtPaths: [currentLogURL.path])
+
+        defer {
+            // clean up
+            try? manager.removeItem(at: tmpURL)
+        }
+
+        return try? Data(contentsOf: tmpURL, options: [.uncached])
     }
 
     @objc static public let previousZipLogURLs: [URL] = {
@@ -260,8 +289,6 @@ extension ZMSLog {
                 cachesDirectory?.appendingPathComponent("previous_\(index).log.zip")
             }
     }()
-
-    @objc static public let currentLogURL: URL? = cachesDirectory?.appendingPathComponent("current.log")
 
     @objc public static func clearLogs() {
         guard let currentLogURL else { return }
@@ -320,10 +347,6 @@ extension ZMSLog {
                 try? manager.removeItem(at: tmpURL)
             }
         }
-    }
-
-    static var cachesDirectory: URL? {
-        FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first
     }
 
     static public var pathsForExistingLogs: [URL] {

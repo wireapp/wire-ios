@@ -546,7 +546,6 @@ extension ZMLogTests {
 
         Thread.sleep(forTimeInterval: 0.2)
 
-        let currentLog = ZMSLog.currentLog
         ZMSLog.switchCurrentLogToPrevious()
 
         Thread.sleep(forTimeInterval: 0.2)
@@ -555,6 +554,22 @@ extension ZMLogTests {
         XCTAssertNil(ZMSLog.currentLog)
     }
 
+    func test_currentZipLogIsNotEmpty() {
+        // given
+        let sut = ZMSLog(tag: "foo")
+        ZMSLog.startRecording()
+
+        // when
+        sut.warn("DON'T")
+        sut.error("PANIC")
+
+        Thread.sleep(forTimeInterval: 0.2)
+
+        let zip = ZMSLog.currentZipLog
+
+        // then
+        XCTAssertNotNil(zip)
+    }
 }
 
 extension ZMLogTests {

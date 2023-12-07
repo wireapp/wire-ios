@@ -78,8 +78,8 @@ final class SettingsTechnicalReportViewController: UITableViewController, MFMail
         mailComposeViewController.setSubject(NSLocalizedString("self.settings.technical_report.mail.subject", comment: ""))
 
         if includedVoiceLogCell.accessoryType == .checkmark {
-            if let currentLog = ZMSLog.currentLog, let currentPath = ZMSLog.currentLogURL {
-                mailComposeViewController.addAttachmentData(currentLog, mimeType: "text/plain", fileName: currentPath.lastPathComponent)
+            if let currentLog = ZMSLog.currentZipLog {
+                mailComposeViewController.addAttachmentData(currentLog, mimeType: "application/zip", fileName: "current.log.zip")
             }
 
             ZMSLog.previousZipLogURLs.forEach { url in
