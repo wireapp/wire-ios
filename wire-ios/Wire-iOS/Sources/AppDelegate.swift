@@ -117,7 +117,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         DatadogWrapper.shared?.startMonitoring()
         DatadogWrapper.shared?.log(level: .info, message: "start app")
         // Initial log line to indicate the client version and build
-        zmLog.info("Wire-ios version \(String(describing: Bundle.main.shortVersionString)) (\(String(describing: Bundle.main.infoDictionary?[kCFBundleVersionKey as String])))")
+        zmLog.safePublic(SanitizedString(stringLiteral: Bundle.main.appInfo.safeForLoggingDescription))
 
         return true
     }
