@@ -268,7 +268,7 @@ extension ZMSLog {
     @objc static public let currentLogPath: URL? = cachesDirectory?.appendingPathComponent("current.log")
 
     @objc public static func clearLogs() {
-        guard let currentLogPath = currentLogPath else { return }
+        guard let currentLogPath else { return }
 
         logQueue.async {
             closeHandle()
@@ -289,7 +289,7 @@ extension ZMSLog {
     }
 
     @objc public static func switchCurrentLogToPrevious() {
-        guard let currentLogPath = currentLogPath else { return }
+        guard let currentLogPath else { return }
 
         logQueue.async {
             closeHandle()
