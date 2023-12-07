@@ -40,9 +40,9 @@ class E2eIEnrollmentTests: ZMTBaseTest {
         mockApiProvider = MockAPIProviderInterface()
         mockE2eiService = MockE2eIService()
         sut = E2eIEnrollment(acmeApi: mockAcmeApi,
+                             acmeDirectory: acmeDirectore,
                              apiProvider: mockApiProvider,
-                             e2eiService: mockE2eiService,
-                             acmeDirectory: acmeDirectore)
+                             e2eiService: mockE2eiService)
     }
 
     override func tearDown() {

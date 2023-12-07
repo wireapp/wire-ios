@@ -44,8 +44,7 @@ public final class E2eIRepository: E2eIRepositoryInterface {
         return E2eIEnrollment(acmeApi: acmeApi,
                               acmeDirectory: acmeDirectory,
                               apiProvider: apiProvider,
-                              e2eiService: e2eiService,
-                              e2eiClientId: e2eiClientId)
+                              e2eiService: e2eiService)
     }
 
     private func loadACMEDirectory(e2eiService: E2eIService) async throws -> AcmeDirectory {

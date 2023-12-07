@@ -37,13 +37,13 @@ public protocol E2eIEnrollmentInterface {
                                                                                 nonce: String,
                                                                                 location: String)
     /// Fetch a nonce from the Wire server.
-    func getWireNonce() async throws -> String
+    func getWireNonce(clientId: String) async throws -> String
 
     /// Create client DPoP token.
     func getDPoPToken(_ nonce: String) async throws -> String
 
     /// Fetch a DPoP access token from the Wire server.
-    func getWireAccessToken(dpopToken: String) async throws -> AccessTokenResponse
+    func getWireAccessToken(clientId: String, dpopToken: String) async throws -> AccessTokenResponse
 
     /// Validate DPoP challenge.
     func validateDPoPChallenge(accessToken: String,
@@ -81,7 +81,6 @@ public final class E2eIEnrollment: E2eIEnrollmentInterface {
     private let acmeDirectory: AcmeDirectory
     private let apiProvider: APIProviderInterface
     private let e2eiService: E2eIServiceInterface
-    private let e2eiClientId: E2eIClientID
 
     private let logger = WireLogger.e2ei
 
@@ -89,13 +88,11 @@ public final class E2eIEnrollment: E2eIEnrollmentInterface {
         acmeApi: AcmeAPIInterface,
         acmeDirectory: AcmeDirectory,
         apiProvider: APIProviderInterface,
-        e2eiService: E2eIServiceInterface,
-        e2eiClientId: E2eIClientID) {
+        e2eiService: E2eIServiceInterface) {
             self.acmeApi = acmeApi
             self.acmeDirectory = acmeDirectory
             self.apiProvider = apiProvider
             self.e2eiService = e2eiService
-            self.e2eiClientId = e2eiClientId
         }
 
     public func getACMENonce() async throws -> String {
@@ -161,7 +158,7 @@ public final class E2eIEnrollment: E2eIEnrollmentInterface {
         }
     }
 
-    public func getWireNonce() async throws -> String {
+    public func getWireNonce(clientId: String) async throws -> String {
         logger.info("get wire nonce")
 
         guard let apiVersion = BackendInfo.apiVersion,
@@ -171,7 +168,7 @@ public final class E2eIEnrollment: E2eIEnrollmentInterface {
         }
 
         do {
-            return try await e2eIAPI.getWireNonce(clientId: e2eiClientId.clientID)
+            return try await e2eIAPI.getWireNonce(clientId: clientId)
         } catch {
             logger.error("failed to get wire nonce: \(error.localizedDescription)")
 
@@ -191,7 +188,7 @@ public final class E2eIEnrollment: E2eIEnrollmentInterface {
         }
     }
 
-    public func getWireAccessToken(dpopToken: String) async throws -> AccessTokenResponse {
+    public func getWireAccessToken(clientId: String, dpopToken: String) async throws -> AccessTokenResponse {
         logger.info("get Wire access token")
 
         guard let apiVersion = BackendInfo.apiVersion,
@@ -202,7 +199,7 @@ public final class E2eIEnrollment: E2eIEnrollmentInterface {
 
         do {
             return try await e2eIAPI.getAccessToken(
-                clientId: e2eiClientId.clientID,
+                clientId: clientId,
                 dpopToken: dpopToken)
         } catch {
             logger.error("failed to get Wire access token: \(error.localizedDescription)")

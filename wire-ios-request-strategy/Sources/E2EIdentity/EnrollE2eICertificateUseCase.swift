@@ -65,9 +65,10 @@ public final class EnrollE2eICertificateUseCase: EnrollE2eICertificateUseCaseInt
 
         let idToken = try await invokeAuthentication(identityProvider)
 
-        let wireNonce = try await enrollment.getWireNonce()
+        let wireNonce = try await enrollment.getWireNonce(clientId: e2eiClientId.clientID)
         let dpopToken = try await enrollment.getDPoPToken(wireNonce)
-        let wireAccessToken = try await enrollment.getWireAccessToken(dpopToken: dpopToken)
+        let wireAccessToken = try await enrollment.getWireAccessToken(clientId: e2eiClientId.clientID,
+                                                                      dpopToken: dpopToken)
 
         let dpopChallengeResponse = try await enrollment.validateDPoPChallenge(accessToken: wireAccessToken.token,
                                                                                prevNonce: authzResponse.nonce,
