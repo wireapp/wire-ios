@@ -33,7 +33,7 @@ extension EncryptionSessionsDirectory {
             return (false, decryptedData)
         } else {
             let decryptedData = try createClientSessionAndReturnPlaintext(for: sessionID, prekeyMessage: encryptedData)
-            return (true, decryptedData)
+            return (didCreateNewSession: true, decryptedData: decryptedData)
         }
     }
 

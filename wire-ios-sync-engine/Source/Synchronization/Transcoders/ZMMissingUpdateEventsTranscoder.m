@@ -117,11 +117,6 @@ NSUInteger const ZMMissingUpdateEventsTranscoderListPageSize = 500;
     return [self.lastEventIDRepository fetchLastEventID];
 }
 
-- (void)setLastUpdateEventID:(NSUUID *)lastUpdateEventID
-{
-    [self.lastEventIDRepository storeLastEventID:lastUpdateEventID];
-}
-
 - (void)appendPotentialGapSystemMessageIfNeededWithResponse:(ZMTransportResponse *)response
 {
     // A 404 by the BE means we can't get all notifications as they are not stored anymore
@@ -188,10 +183,18 @@ NSUInteger const ZMMissingUpdateEventsTranscoderListPageSize = 500;
     }
     
     ZMLogWithLevelAndTag(ZMLogLevelInfo, ZMTAG_EVENT_PROCESSING, @"Downloaded %lu event(s)", (unsigned long)parsedEvents.count);
-    
-    [self.eventProcessor storeUpdateEvents:parsedEvents ignoreBuffer:YES];
-    [self.pushNotificationStatus didFetchEventIds:eventIds lastEventId:latestEventId finished:!self.listPaginator.hasMoreToFetch];
-    
+
+    BOOL finished = !self.listPaginator.hasMoreToFetch;
+    NSArray<ZMSDispatchGroup *> *groups = [self.managedObjectContext enterAllGroupsExceptSecondary];
+
+    [self.eventProcessor processEvents:parsedEvents completionHandler:^(NSError * _Nullable error) {
+        NOT_USED(error);
+        [self.managedObjectContext performBlock:^{
+            [self.pushNotificationStatus didFetchEventIds:eventIds lastEventId:latestEventId finished:finished];
+            [self.managedObjectContext leaveAllGroups:groups];
+        }];
+    }];
+
     [tp warnIfLongerThanInterval];
     return latestEventId;
 }
@@ -231,9 +234,7 @@ NSUInteger const ZMMissingUpdateEventsTranscoderListPageSize = 500;
     return @[self.listPaginator];
 }
 
-- (void)processEvents:(NSArray<ZMUpdateEvent *> *)events
-           liveEvents:(BOOL)liveEvents
-       prefetchResult:(__unused ZMFetchRequestBatchResult *)prefetchResult;
+- (void)processEvents:(nonnull NSArray<ZMUpdateEvent *> *)events liveEvents:(BOOL)liveEvents prefetchResult:(ZMFetchRequestBatchResult * _Nullable)prefetchResult
 {
     
     if (!liveEvents) {
@@ -242,7 +243,7 @@ NSUInteger const ZMMissingUpdateEventsTranscoderListPageSize = 500;
     
     for (ZMUpdateEvent *event in events) {
         if (event.uuid != nil && ! event.isTransient && event.source != ZMUpdateEventSourcePushNotification) {
-            self.lastUpdateEventID = event.uuid;
+            [self.lastEventIDRepository storeLastEventID:event.uuid];
         }
     }
 }
@@ -257,6 +258,7 @@ NSUInteger const ZMMissingUpdateEventsTranscoderListPageSize = 500;
 
     // We want to create a new request if we are either currently fetching the paginated stream
     // or if we have a new notification ID that requires a pingback.
+   
     if ((self.isFetchingStreamForAPNS && self.useLegacyPushNotifications) || self.isFetchingStreamInBackground || self.isSyncing) {
         
         // We only reset the paginator if it is neither in progress nor has more pages to fetch.
@@ -267,7 +269,7 @@ NSUInteger const ZMMissingUpdateEventsTranscoderListPageSize = 500;
         ZMTransportRequest *request = [self.listPaginator nextRequestForAPIVersion:apiVersion];
 
         if (self.isFetchingStreamForAPNS && nil != request) {
-            
+            [self.pushNotificationStatus didStartFetching];
             [self.notificationsTracker registerStartStreamFetching];
             [request addCompletionHandler:[ZMCompletionHandler handlerOnGroupQueue:self.managedObjectContext block:^(__unused ZMTransportResponse * _Nonnull response) {
                 [self.notificationsTracker registerFinishStreamFetching];
@@ -314,19 +316,7 @@ NSUInteger const ZMMissingUpdateEventsTranscoderListPageSize = 500;
         // the call to `processUpdateEventsAndReturnLastNotificationIDFromPayload:syncStrategy`.
         [self updateBackgroundFetchResultWithResponse:response];
     }
-    
-    if (latestEventId != nil) {
-        if (response.HTTPStatus == 404 && self.isSyncing) {
-            // If we fail during quick sync we need to re-enter slow sync and should not store the lastUpdateEventID until after the slowSync has been completed
-            // Otherwise, if the device crashes or is restarted during slow sync, we lose the information that we need to perform a slow sync
-            [syncStatus updateLastUpdateEventIDWithEventID:latestEventId];
-            // TODO Sabine: What happens when we receive a 404 when we are fetching the notification for a push notification? In theory we would have to enter slow sync as well or at least not store the lastUpdateEventID until the next proper sync in the foreground
-        }
-        else {
-            self.lastUpdateEventID = latestEventId;
-        }
-    }
-    
+
     if (!self.listPaginator.hasMoreToFetch) {
         [self.previouslyReceivedEventIDsCollection discardListOfAlreadyReceivedPushEventIDs];
     }
@@ -339,7 +329,7 @@ NSUInteger const ZMMissingUpdateEventsTranscoderListPageSize = 500;
         [syncStatus completedFetchingNotificationStreamFetchBeganAt:self.listPaginator.lastResetFetchDate];
     }
     
-    return self.lastUpdateEventID;
+    return latestEventId;
 }
 
 - (NSUUID *)startUUID
@@ -349,7 +339,7 @@ NSUInteger const ZMMissingUpdateEventsTranscoderListPageSize = 500;
 
 - (BOOL)shouldParseErrorForResponse:(ZMTransportResponse *)response
 {
-    [self.pushNotificationStatus didFailToFetchEvents];
+    [self.pushNotificationStatus didFailToFetchEventsWithRecoverable:NO];
 
     if (response.apiVersion >= APIVersionV3) {
         return NO;
@@ -361,6 +351,11 @@ NSUInteger const ZMMissingUpdateEventsTranscoderListPageSize = 500;
     return NO;
 }
 
+- (void)parseTemporaryErrorForResponse:(ZMTransportResponse *)response
+{
+    [self.pushNotificationStatus didFailToFetchEventsWithRecoverable:YES];
+}
+
 - (BOOL)shouldStartSlowSync:(ZMTransportResponse *)response
 {
     return self.operationStatus.operationState == SyncEngineOperationStateForeground &&
@@ -370,7 +365,6 @@ NSUInteger const ZMMissingUpdateEventsTranscoderListPageSize = 500;
 
 - (void)startSlowSync
 {
-    self.lastUpdateEventID = nil;
     SyncStatus* status = self.syncStatus;
     [status removeLastUpdateEventID];
     [status forceSlowSync];

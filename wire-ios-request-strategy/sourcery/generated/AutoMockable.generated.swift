@@ -1,5 +1,26 @@
 // Generated using Sourcery 2.1.2 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
+
+//
+// Wire
+// Copyright (C) 2023 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
+
+// swiftlint:disable superfluous_disable_command
+// swiftlint:disable vertical_whitespace
 // swiftlint:disable line_length
 // swiftlint:disable variable_name
 
@@ -76,19 +97,75 @@ public class MockAPIProviderInterface: APIProviderInterface {
         }
     }
 
-    // MARK: - E2eIAPI
+    // MARK: - e2eIAPI
 
     public var e2eIAPIApiVersion_Invocations: [APIVersion] = []
-    public var e2eIAPIApiVersion_MockMethod: ((APIVersion) -> E2eIAPI)?
-    public var e2eIAPIApiVersion_MockValue: E2eIAPI?
+    public var e2eIAPIApiVersion_MockMethod: ((APIVersion) -> E2eIAPI?)?
+    public var e2eIAPIApiVersion_MockValue: E2eIAPI??
 
     public func e2eIAPI(apiVersion: APIVersion) -> E2eIAPI? {
+        e2eIAPIApiVersion_Invocations.append(apiVersion)
+
         if let mock = e2eIAPIApiVersion_MockMethod {
             return mock(apiVersion)
         } else if let mock = e2eIAPIApiVersion_MockValue {
             return mock
         } else {
             fatalError("no mock for `e2eIAPIApiVersion`")
+        }
+    }
+
+}
+public class MockE2eIAPI: E2eIAPI {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - getWireNonce
+
+    public var getWireNonceClientId_Invocations: [String] = []
+    public var getWireNonceClientId_MockError: Error?
+    public var getWireNonceClientId_MockMethod: ((String) async throws -> String)?
+    public var getWireNonceClientId_MockValue: String?
+
+    public func getWireNonce(clientId: String) async throws -> String {
+        getWireNonceClientId_Invocations.append(clientId)
+
+        if let error = getWireNonceClientId_MockError {
+            throw error
+        }
+
+        if let mock = getWireNonceClientId_MockMethod {
+            return try await mock(clientId)
+        } else if let mock = getWireNonceClientId_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `getWireNonceClientId`")
+        }
+    }
+
+    // MARK: - getAccessToken
+
+    public var getAccessTokenClientIdDpopToken_Invocations: [(clientId: String, dpopToken: String)] = []
+    public var getAccessTokenClientIdDpopToken_MockError: Error?
+    public var getAccessTokenClientIdDpopToken_MockMethod: ((String, String) async throws -> AccessTokenResponse)?
+    public var getAccessTokenClientIdDpopToken_MockValue: AccessTokenResponse?
+
+    public func getAccessToken(clientId: String, dpopToken: String) async throws -> AccessTokenResponse {
+        getAccessTokenClientIdDpopToken_Invocations.append((clientId: clientId, dpopToken: dpopToken))
+
+        if let error = getAccessTokenClientIdDpopToken_MockError {
+            throw error
+        }
+
+        if let mock = getAccessTokenClientIdDpopToken_MockMethod {
+            return try await mock(clientId, dpopToken)
+        } else if let mock = getAccessTokenClientIdDpopToken_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `getAccessTokenClientIdDpopToken`")
         }
     }
 
@@ -171,7 +248,7 @@ public class MockMessageDependencyResolverInterface: MessageDependencyResolverIn
             fatalError("no mock for `waitForDependenciesToResolveFor`")
         }
 
-        try await mock(message)            
+        try await mock(message)
     }
 
 }
@@ -199,7 +276,7 @@ public class MockMessageSenderInterface: MessageSenderInterface {
             fatalError("no mock for `sendMessageMessage`")
         }
 
-        try await mock(message)            
+        try await mock(message)
     }
 
 }
@@ -279,7 +356,7 @@ public class MockQuickSyncObserverInterface: QuickSyncObserverInterface {
             fatalError("no mock for `waitForQuickSyncToFinish`")
         }
 
-        await mock()            
+        await mock()
     }
 
 }
@@ -307,61 +384,12 @@ public class MockSessionEstablisherInterface: SessionEstablisherInterface {
             fatalError("no mock for `establishSessionWithApiVersion`")
         }
 
-        try await mock(clients, apiVersion)            
+        try await mock(clients, apiVersion)
     }
 
 }
-public class MockE2eIAPI: E2eIAPI {
 
-    // MARK: - Life cycle
-
-    public init() {}
-
-
-    // MARK: - getWireNonce
-
-    public var getWireNonce_Invocations: [String] = []
-    public var getWireNonce_MockError: Error?
-    public var getWireNonce_MockMethod: ((String) async throws -> String)?
-    public var getWireNonce_MockValue: String?
-
-    public func getWireNonce(clientId: String) async throws -> String {
-        getWireNonce_Invocations.append(clientId)
-
-        if let error = getWireNonce_MockError {
-            throw error
-        }
-
-        if let mock = getWireNonce_MockMethod {
-            return try await mock(clientId)
-        } else if let mock = getWireNonce_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `getWireNonce`")
-        }
-    }
-
-    // MARK: - getAccessToken
-
-    public var getAccessToken_Invocations: [(clientId: String, dpopToken: String)] = []
-    public var getAccessToken_MockError: Error?
-    public var getAccessToken_MockMethod: ((String, String) async throws -> AccessTokenResponse)?
-    public var getAccessToken_MockValue: AccessTokenResponse?
-
-    public func getAccessToken(clientId: String, dpopToken: String) async throws -> AccessTokenResponse {
-        getAccessToken_Invocations.append((clientId, dpopToken))
-
-        if let error = getAccessToken_MockError {
-            throw error
-        }
-
-        if let mock = getAccessToken_MockMethod {
-            return try await mock(clientId, dpopToken)
-        } else if let mock = getAccessToken_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `getAccessToken`")
-        }
-    }
-
-}
+// swiftlint:enable variable_name
+// swiftlint:enable line_length
+// swiftlint:enable vertical_whitespace
+// swiftlint:enable superfluous_disable_command

@@ -19,7 +19,9 @@
 import Foundation
 import XCTest
 import LocalAuthentication
+
 @testable import WireDataModel
+@testable import WireDataModelSupport
 
 final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
 

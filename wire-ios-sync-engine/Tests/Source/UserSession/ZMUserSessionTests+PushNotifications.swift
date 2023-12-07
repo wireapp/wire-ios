@@ -179,7 +179,6 @@ class ZMUserSessionTests_PushNotifications: ZMUserSessionTestsBase {
         // given
         simulateLoggedInUser()
         sut.applicationStatusDirectory?.operationStatus.isInBackground = true
-
         let userInfo = userInfoWithConversation()
         let conversation = userInfo.conversation(in: uiMOC)!
 
@@ -191,7 +190,7 @@ class ZMUserSessionTests_PushNotifications: ZMUserSessionTestsBase {
         XCTAssertNil(mockSessionManager.lastRequestToShowConversation)
     }
 
-    func testThatItAppendsReadReceipt_ForPushNotificationCategoryConversationWithDirectReplyAction() throws {
+    func testThatItAppendsReadReceipt_ForPushNotificationCategoryConversationWithDirectReplyAction() async throws {
         // given
         self.simulateLoggedInUser()
         self.sut.applicationStatusDirectory?.operationStatus.isInBackground = true
@@ -212,7 +211,7 @@ class ZMUserSessionTests_PushNotifications: ZMUserSessionTestsBase {
         }
 
         // when
-        self.handle(conversationAction: .reply, category: .conversation, userInfo: userInfo, userText: "Hello World")
+        handle(conversationAction: .reply, category: .conversation, userInfo: userInfo, userText: "Hello World")
 
         // then
         assertHasReadConfirmationForMessage(nonce: originaMessageNonce, conversation: conversation)

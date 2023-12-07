@@ -26,7 +26,6 @@
 @interface ZMMissingUpdateEventsTranscoder ()
 
 @property (nonatomic) ZMSimpleListRequestPaginator *listPaginator;
-@property (nonatomic) NSUUID *lastUpdateEventID;
 
 @property (nonatomic, readonly) BOOL isFetchingStreamForAPNS;
 @property (nonatomic, readonly) BOOL isFetchingStreamInBackground;

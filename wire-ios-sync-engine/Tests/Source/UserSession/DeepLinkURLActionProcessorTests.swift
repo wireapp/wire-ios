@@ -109,9 +109,15 @@ class DeepLinkURLActionProcessorTests: DatabaseTest {
         // given
         let action: URLAction = .joinConversation(key: "test-key", code: "test-code")
 
+        let expectation = XCTestExpectation(description: "wait for completedURLAction")
+        presentationDelegate.completedURLActionCallsCompletion = {
+            expectation.fulfill()
+        }
+
         // when
         sut.process(urlAction: action, delegate: presentationDelegate)
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        self.wait(for: [expectation], timeout: 5)
 
         // then
         XCTAssertEqual(mockUpdateEventProcessor.processedEvents.count, 1)

@@ -43,7 +43,6 @@
     self.mockUpdateEventProcessor = [[MockUpdateEventProcessor alloc] init];
     self.mockRequestCancellation = [[MockRequestCancellation alloc] init];
 
-
     self.applicationStatusDirectory = [[ApplicationStatusDirectory alloc] initWithManagedObjectContext:self.syncMOC
                                                                                          cookieStorage:self.cookieStorage
                                                                                    requestCancellation:self.mockRequestCancellation
@@ -230,7 +229,7 @@
 }
 
 
-- (void)testThatPushChannelDataIsSplitAndForwardedToAllIndividualObjects
+- (void)testThatPushChannelDataBuffered_WhenSyncing
 {
     // given
     NSString *eventType = @"user.update";
@@ -261,6 +260,49 @@
     [(id<ZMPushChannelConsumer>)self.sut pushChannelDidReceiveTransportData:eventData];
     WaitForAllGroupsToBeEmpty(0.5);
     
+    // then
+    XCTAssertEqualObjects(self.mockUpdateEventProcessor.bufferedEvents, expectedEvents);
+}
+
+- (void)testThatPushChannelDataProcessed_WhenOnline
+{
+    // given
+
+    // FIXME: [jacob] use a mock sync status
+    // simulate being online
+    [self.syncStatus pushChannelDidOpen];
+    while (self.syncStatus.isSyncing) {
+        [self.syncStatus finishCurrentSyncPhaseWithPhase:self.syncStatus.currentSyncPhase];
+    }
+
+    NSString *eventType = @"user.update";
+
+    NSDictionary *payload1 = @{
+                               @"type" : eventType,
+                               @"foo" : @"bar"
+                               };
+    NSDictionary *payload2 = @{
+                               @"type" : eventType,
+                               @"bar" : @"xxxxxxx"
+                               };
+    NSDictionary *payload3 = @{
+                               @"type" : eventType,
+                               @"baz" : @"barbar"
+                               };
+
+    NSDictionary *eventData = @{
+                                @"id" : @"5cc1ab91-45f4-49ec-bb7a-a5517b7a4173",
+                                @"payload" : @[payload1, payload2, payload3],
+                                };
+
+    NSMutableArray *expectedEvents = [NSMutableArray array];
+    [expectedEvents addObjectsFromArray:[ZMUpdateEvent eventsArrayFromPushChannelData:eventData]];
+    XCTAssertGreaterThan(expectedEvents.count, 0u);
+
+    // when
+    [(id<ZMPushChannelConsumer>)self.sut pushChannelDidReceiveTransportData:eventData];
+    WaitForAllGroupsToBeEmpty(0.5);
+
     // then
     XCTAssertEqualObjects(self.mockUpdateEventProcessor.processedEvents, expectedEvents);
 }

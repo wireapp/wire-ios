@@ -20,7 +20,9 @@ import Foundation
 import XCTest
 import Combine
 import WireCoreCrypto
+
 @testable import WireDataModel
+@testable import WireDataModelSupport
 
 final class MLSDecryptionServiceTests: ZMConversationTestsBase {
 

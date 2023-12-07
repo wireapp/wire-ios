@@ -151,9 +151,9 @@ class ZMMessageTests_Removal: BaseZMClientMessageTests {
         XCTAssertTrue(textMessage?.hasBeenDeleted ?? false)
     }
 
-    func testThatAClientMessageIsRemovedWhenAskForDeletion() {
+    func testThatAClientMessageIsRemovedWhenAskForDeletion() throws {
         // when
-        let removed = checkThatAMessageIsRemoved { () -> ZMMessage in
+        let removed = try checkThatAMessageIsRemoved { () -> ZMMessage in
             return ZMClientMessage.init(nonce: UUID.create(), managedObjectContext: self.uiMOC)
         }
         // then
@@ -161,7 +161,7 @@ class ZMMessageTests_Removal: BaseZMClientMessageTests {
     }
 
     // Returns whether the message was deleted
-    private func checkThatAMessageIsRemoved(messageCreationBlock: (() -> ZMMessage)) -> Bool {
+    private func checkThatAMessageIsRemoved(messageCreationBlock: (() -> ZMMessage)) throws -> Bool {
         // given
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.remoteIdentifier = UUID.create()
@@ -181,7 +181,7 @@ class ZMMessageTests_Removal: BaseZMClientMessageTests {
         self.uiMOC.saveOrRollback()
 
         // then
-        let fetchedMessage = ZMMessage.fetch(withNonce: testMessage.nonce, for: conversation, in: self.uiMOC) as! ZMMessage
+        let fetchedMessage = try XCTUnwrap(ZMMessage.fetch(withNonce: testMessage.nonce, for: conversation, in: self.uiMOC))
         var removed = fetchedMessage.visibleInConversation == nil && fetchedMessage.hiddenInConversation == conversation && fetchedMessage.sender == nil
 
         if fetchedMessage.isKind(of: ZMClientMessage.self) {
@@ -192,18 +192,18 @@ class ZMMessageTests_Removal: BaseZMClientMessageTests {
         return removed
     }
 
-    func testThatATextMessageIsRemovedWhenAskForDeletion() {
+    func testThatATextMessageIsRemovedWhenAskForDeletion() throws {
         // when
-        let removed = checkThatAMessageIsRemoved { () -> ZMMessage in
+        let removed = try checkThatAMessageIsRemoved { () -> ZMMessage in
             return ZMTextMessage(nonce: UUID.create(), managedObjectContext: uiMOC)
         }
         // then
         XCTAssertTrue(removed)
     }
 
-    func testThatAnAssetClientMessageIsRemovedWhenAskForDeletion() {
+    func testThatAnAssetClientMessageIsRemovedWhenAskForDeletion() throws {
         // when
-        let removed = checkThatAMessageIsRemoved { () -> ZMMessage in
+        let removed = try checkThatAMessageIsRemoved { () -> ZMMessage in
             return ZMAssetClientMessage(nonce: UUID.create(), managedObjectContext: uiMOC)
         }
 
@@ -211,18 +211,18 @@ class ZMMessageTests_Removal: BaseZMClientMessageTests {
         XCTAssertTrue(removed)
     }
 
-    func testThatAnPreE2EETextMessageIsRemovedWhenAskedForDeletion() {
+    func testThatAnPreE2EETextMessageIsRemovedWhenAskedForDeletion() throws {
         // when
-        let removed = checkThatAMessageIsRemoved { () -> ZMMessage in
+        let removed = try checkThatAMessageIsRemoved { () -> ZMMessage in
             return ZMTextMessage(nonce: UUID.create(), managedObjectContext: uiMOC)
         }
         // then
         XCTAssertTrue(removed)
     }
 
-    func testThatAnPreE2EEImageMessageIsRemovedWhenAskedForDeletion() {
+    func testThatAnPreE2EEImageMessageIsRemovedWhenAskedForDeletion() throws {
         // when
-        let removed = checkThatAMessageIsRemoved { () -> ZMMessage in
+        let removed = try checkThatAMessageIsRemoved { () -> ZMMessage in
             return ZMImageMessage(nonce: UUID.create(), managedObjectContext: uiMOC)
         }
 
@@ -230,9 +230,9 @@ class ZMMessageTests_Removal: BaseZMClientMessageTests {
         XCTAssertTrue(removed)
     }
 
-    func testThatAnPreE2EEKnockMessageIsRemovedWhenAskedForDeletion() {
+    func testThatAnPreE2EEKnockMessageIsRemovedWhenAskedForDeletion() throws {
         // when
-        let removed = checkThatAMessageIsRemoved { () -> ZMMessage in
+        let removed = try checkThatAMessageIsRemoved { () -> ZMMessage in
             return ZMKnockMessage(nonce: UUID.create(), managedObjectContext: uiMOC)
         }
 

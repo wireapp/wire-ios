@@ -255,15 +255,15 @@ public class MockSyncStatus: SyncStatus {
         didCallFinishQuickSync = true
     }
 
-    public func didRegisterSelfUserClient(_ userClient: UserClient!) {
+    public func didRegisterSelfUserClient(_ userClient: UserClient) {
         registeredUserClient = userClient
     }
 
-    public func didFailToRegisterSelfUserClient(error: Error!) {
+    public func didFailToRegisterSelfUserClient(error: Error) {
         didCallFailRegisterUserClient = true
     }
 
-    public func didDeleteSelfUserClient(error: Error!) {
+    public func didDeleteSelfUserClient(error: Error) {
         didCallDeleteUserClient = true
     }
 }

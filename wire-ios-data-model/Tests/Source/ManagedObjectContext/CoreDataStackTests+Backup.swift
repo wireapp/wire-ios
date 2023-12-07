@@ -18,7 +18,9 @@
 
 import Foundation
 import XCTest
+
 @testable import WireDataModel
+@testable import WireDataModelSupport
 
 class CoreDataStackTests_Backup: DatabaseBaseTest {
 
