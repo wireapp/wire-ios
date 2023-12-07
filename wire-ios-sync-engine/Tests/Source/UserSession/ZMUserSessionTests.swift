@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireDataModelSupport
 import WireSyncEngine
 
 class ZMUserSessionSwiftTests: ZMUserSessionTestsBase {
@@ -43,7 +44,9 @@ class ZMUserSessionSwiftTests: ZMUserSessionTestsBase {
 
     func test_itPerformsPendingJoins_AfterQuickSync() {
         // given
-        let mockMLSService = MockMLSService()
+        let mockMLSService = MockMLSServiceInterface()
+        mockMLSService.performPendingJoins_MockMethod = {}
+        mockMLSService.commitPendingProposals_MockMethod = {}
         sut.syncContext.performAndWait {
             sut.syncContext.mlsService = mockMLSService
         }
@@ -52,6 +55,6 @@ class ZMUserSessionSwiftTests: ZMUserSessionTestsBase {
         sut.didFinishQuickSync()
 
         // then
-        XCTAssertTrue(mockMLSService.didCallPerformPendingJoins)
+        XCTAssertFalse(mockMLSService.performPendingJoins_Invocations.isEmpty)
     }
 }
