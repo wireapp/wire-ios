@@ -47,13 +47,13 @@
     self.dispatcher = nil;
     [super tearDown];
 }
+
 - (void)testThatItDoesNotReturnTheSelfConversation;
 {
     // given
     ZMConversation *c1 = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     c1.conversationType = ZMConversationTypeSelf;
-    ZMConversation *c2 = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    c2.conversationType = ZMConversationTypeOneOnOne;
+    ZMConversation *c2 = [self insertValidOneOnOneConversationInContext:self.uiMOC];
     ZMConversation *c3 = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     c3.conversationType = ZMConversationTypeGroup;
     XCTAssert([self.uiMOC saveOrRollback]);
@@ -70,8 +70,7 @@
     // given
     ZMConversation *c1 = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     c1.conversationType = ZMConversationTypeGroup;
-    ZMConversation *c2 = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    c2.conversationType = ZMConversationTypeOneOnOne;
+    ZMConversation *c2 = [self insertValidOneOnOneConversationInContext:self.uiMOC];
     ZMConversation *c3 = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     c3.conversationType = ZMConversationTypeGroup;
     XCTAssert([self.uiMOC saveOrRollback]);
@@ -88,8 +87,9 @@
     // given
     ZMConversation *c1 = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     c1.conversationType = ZMConversationTypeGroup;
-    ZMConversation *c2 = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    c2.conversationType = ZMConversationTypeOneOnOne;
+    c1.isArchived = NO;
+    ZMConversation *c2 = [self insertValidOneOnOneConversationInContext:self.uiMOC];
+    c2.isArchived = NO;
     ZMConversation *c3 = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     c3.conversationType = ZMConversationTypeGroup;
     c3.isArchived = YES;
@@ -123,8 +123,7 @@
     // given
     ZMConversation *c1 = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     c1.conversationType = ZMConversationTypeGroup;
-    ZMConversation *c2 = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    c2.conversationType = ZMConversationTypeOneOnOne;
+    ZMConversation *c2 = [self insertValidOneOnOneConversationInContext:self.uiMOC];
     ZMConversation *c3 = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     c3.conversationType = ZMConversationTypeGroup;
     c3.isArchived = YES;
@@ -147,8 +146,7 @@
     ZMConversation *c1 = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     c1.conversationType = ZMConversationTypeGroup;
     c1.lastModifiedDate = [NSDate dateWithTimeIntervalSinceReferenceDate:417000000];
-    ZMConversation *c2 = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    c2.conversationType = ZMConversationTypeOneOnOne;
+    ZMConversation *c2 = [self insertValidOneOnOneConversationInContext:self.uiMOC];
     c2.lastModifiedDate = [c1.lastModifiedDate dateByAddingTimeInterval:10];
     ZMConversation *c3 = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     c3.conversationType = ZMConversationTypeGroup;
@@ -219,8 +217,7 @@
     ZMConversation *c1 = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     c1.conversationType = ZMConversationTypeGroup;
     c1.userDefinedName = @"c1";
-    ZMConversation *c2 = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    c2.conversationType = ZMConversationTypeOneOnOne;
+    ZMConversation *c2 = [self insertValidOneOnOneConversationInContext:self.uiMOC];
     c2.userDefinedName = @"c2";
     ZMConversation *c3 = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     c3.conversationType = ZMConversationTypeGroup;
@@ -253,8 +250,7 @@
     ZMConversation *c1 = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     c1.conversationType = ZMConversationTypeGroup;
     c1.lastModifiedDate = [NSDate dateWithTimeIntervalSinceReferenceDate:417000000];
-    ZMConversation *c2 = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    c2.conversationType = ZMConversationTypeOneOnOne;
+    ZMConversation *c2 = [self insertValidOneOnOneConversationInContext:self.uiMOC];
     c2.lastModifiedDate = [c1.lastModifiedDate dateByAddingTimeInterval:10];
     ZMConversation *c3 = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     c3.conversationType = ZMConversationTypeGroup;
@@ -500,8 +496,7 @@
 - (void)testThatClearingConversationMovesItToClearedList
 {
     // given
-    ZMConversation *c1 = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    c1.conversationType = ZMConversationTypeOneOnOne;
+    ZMConversation *c1 = [self insertValidOneOnOneConversationInContext:self.uiMOC];
     c1.lastModifiedDate = [NSDate date];
     ZMMessage *message = (id)[c1 appendMessageWithText:@"message"];
     message.serverTimestamp = [NSDate date];
@@ -534,15 +529,13 @@
 - (void)testThatClearingConversationDoesNotClearOtherConversations
 {
     // GIVEN
-    ZMConversation *c1 = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    c1.conversationType = ZMConversationTypeOneOnOne;
+    ZMConversation *c1 = [self insertValidOneOnOneConversationInContext:self.uiMOC];
     c1.lastModifiedDate = [NSDate date];
     ZMMessage *message1 = (id)[c1 appendMessageWithText:@"message 1"];
     message1.serverTimestamp = [NSDate date];
     c1.lastServerTimeStamp = message1.serverTimestamp;
 
-    ZMConversation *c2 = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    c2.conversationType = ZMConversationTypeOneOnOne;
+    ZMConversation *c2 = [self insertValidOneOnOneConversationInContext:self.uiMOC];
     c2.lastModifiedDate = [NSDate date];
     ZMMessage *message2 = (id)[c2 appendMessageWithText:@"message 2"];
     message2.serverTimestamp = [NSDate date];
@@ -585,8 +578,7 @@
 - (void)testThatAddingMessageToClearedConversationMovesItToActiveConversationsList
 {
     // given
-    ZMConversation *c1 = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    c1.conversationType = ZMConversationTypeOneOnOne;
+    ZMConversation *c1 = [self insertValidOneOnOneConversationInContext:self.uiMOC];
     c1.lastModifiedDate = [NSDate date];
     ZMMessage *message = (id)[c1 appendMessageWithText:@"message"];
     message.serverTimestamp = [NSDate date];
