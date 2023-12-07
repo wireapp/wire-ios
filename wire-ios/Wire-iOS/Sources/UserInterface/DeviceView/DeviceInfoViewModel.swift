@@ -29,12 +29,12 @@ protocol DeviceDetailsViewActions {
     var isProcessing: ((Bool) -> Void)? { get set }
 
     func fetchCertificate() async -> E2eIdentityCertificate?
-    func showCertificate(_ certificate: String)
     func fetchMLSThumbprint() async -> String?
     func removeDevice() async -> Bool
     func resetSession() async -> Bool
     func updateVerified(_ value: Bool) async -> Bool
     func copyToClipboard(_ value: String)
+    func downloadE2EIdentityCertificate()
 }
 
 final class DeviceInfoViewModel: ObservableObject {
@@ -192,6 +192,10 @@ final class DeviceInfoViewModel: ObservableObject {
             self.mlsThumbprint = result
             self.isActionInProgress = false
         }
+    }
+
+    func downloadE2EIdentityCertificate() {
+        actionsHandler.downloadE2EIdentityCertificate()
     }
 }
 

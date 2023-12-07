@@ -45,6 +45,7 @@ struct E2EIdentityCertificateDetailsView: View {
         HStack {
             Spacer()
             Text(L10n.Localizable.Device.Details.CertificateDetails.title)
+                .font(FontSpec.headerSemiboldFont.swiftUIFont)
             Spacer()
             SwiftUI.Button(
                 action: {
@@ -90,7 +91,6 @@ struct E2EIdentityCertificateDetailsView: View {
             }
         )
         .foregroundColor(SemanticColors.Label.textDefault.swiftUIColor)
-        .font(FontSpec.mediumSemiboldFont.swiftUIFont)
     }
 
     private var moreButton: some View {
