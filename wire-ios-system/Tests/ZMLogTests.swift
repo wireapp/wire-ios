@@ -554,6 +554,41 @@ extension ZMLogTests {
         XCTAssertNil(ZMSLog.currentLog)
     }
 
+    func testThatSwitchesCurrentLogToPrevious_multipleFiles() throws {
+
+        // given
+        let sut = ZMSLog(tag: "foo")
+        ZMSLog.startRecording()
+
+        // when
+        sut.warn("DON'T")
+        sut.error("PANIC")
+
+        ZMSLog.switchCurrentLogToPrevious()
+
+        sut.warn("DON'T")
+        ZMSLog.switchCurrentLogToPrevious()
+
+        sut.warn("DON'T")
+        ZMSLog.switchCurrentLogToPrevious()
+
+        sut.warn("DON'T")
+        ZMSLog.switchCurrentLogToPrevious()
+
+        sut.warn("DON'T")
+        ZMSLog.switchCurrentLogToPrevious()
+
+        Thread.sleep(forTimeInterval: 0.2)
+
+        // then
+        XCTAssertNil(ZMSLog.currentLog)
+
+        try ZMSLog.previousZipLogURLs.forEach {
+            let data = try Data(contentsOf: $0, options: [.uncached])
+            XCTAssertNotNil(data)
+        }
+    }
+
     func test_currentZipLogIsNotEmpty() {
         // given
         let sut = ZMSLog(tag: "foo")
