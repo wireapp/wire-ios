@@ -22,6 +22,7 @@ import WireMockTransport
 import WireTesting
 import WireRequestStrategy
 import WireLinkPreview
+import WireDataModelSupport
 @testable import WireShareEngine
 
 class FakeAuthenticationStatus: AuthenticationStatusProvider {
@@ -59,6 +60,9 @@ class BaseTest: ZMTBaseTest {
     var operationLoop: RequestGeneratingOperationLoop!
     var strategyFactory: StrategyFactory!
     var mockCryptoboxMigrationManager: MockCryptoboxMigrationManagerInterface!
+    var mockEARService: MockEARServiceInterface!
+    var mockProteusService: MockProteusServiceInterface!
+    var mockMLSDecryptionService: MLSDecryptionServiceInterface!
 
     override func setUp() {
         super.setUp()
@@ -134,6 +138,10 @@ class BaseTest: ZMTBaseTest {
         mockCryptoboxMigrationManager.isMigrationNeededAccountDirectory_MockValue = false
         mockCryptoboxMigrationManager.completeMigrationSyncContext_MockMethod = { _ in }
 
+        mockEARService = MockEARServiceInterface()
+        mockProteusService = MockProteusServiceInterface()
+        mockMLSDecryptionService = MockMLSDecryptionServiceInterface()
+
         context.setPersistentStoreMetadata(selfClient.remoteIdentifier!, key: ZMPersistedClientIdKey)
         context.saveOrRollback()
 
@@ -151,6 +159,9 @@ class BaseTest: ZMTBaseTest {
         operationLoop = nil
         strategyFactory = nil
         mockCryptoboxMigrationManager = nil
+        mockEARService = nil
+        mockProteusService = nil
+        mockMLSDecryptionService = nil
         super.tearDown()
     }
 
@@ -167,6 +178,9 @@ class BaseTest: ZMTBaseTest {
             strategyFactory: strategyFactory,
             appLockConfig: AppLockController.LegacyConfig(),
             cryptoboxMigrationManager: mockCryptoboxMigrationManager,
+            earService: mockEARService,
+            proteusService: mockProteusService,
+            mlsDecryptionService: mockMLSDecryptionService,
             sharedUserDefaults: .random()!
         )
     }

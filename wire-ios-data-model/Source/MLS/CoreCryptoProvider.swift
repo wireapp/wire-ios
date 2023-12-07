@@ -31,6 +31,7 @@ public class CoreCryptoProvider: CoreCryptoProviderProtocol {
     private let accountDirectory: URL
     private let cryptoboxMigrationManager: CryptoboxMigrationManagerInterface
     private let syncContext: NSManagedObjectContext
+    private let allowCreation: Bool
     private let lock = NSLock()
     private var coreCrypto: SafeCoreCrypto?
 
@@ -38,11 +39,13 @@ public class CoreCryptoProvider: CoreCryptoProviderProtocol {
                 sharedContainerURL: URL,
                 accountDirectory: URL,
                 syncContext: NSManagedObjectContext,
-                cryptoboxMigrationManager: CryptoboxMigrationManagerInterface) {
+                cryptoboxMigrationManager: CryptoboxMigrationManagerInterface,
+                allowCreation: Bool = true) {
         self.selfUserID = selfUserID
         self.sharedContainerURL = sharedContainerURL
         self.accountDirectory = accountDirectory
         self.syncContext = syncContext
+        self.allowCreation = allowCreation
         self.cryptoboxMigrationManager = cryptoboxMigrationManager
     }
 
@@ -75,7 +78,7 @@ public class CoreCryptoProvider: CoreCryptoProviderProtocol {
         let configuration = try provider.createInitialConfiguration(
             sharedContainerURL: sharedContainerURL,
             userID: selfUserID,
-            createKeyIfNeeded: true
+            createKeyIfNeeded: allowCreation
         )
 
         let coreCrypto = try SafeCoreCrypto(

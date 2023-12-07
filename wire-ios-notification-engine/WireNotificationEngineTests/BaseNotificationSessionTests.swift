@@ -23,6 +23,7 @@ import WireTesting
 import WireDataModel
 import WireMockTransport
 import WireRequestStrategy
+import WireDataModelSupport
 
 class FakeAuthenticationStatus: AuthenticationStatusProvider {
     var state: AuthenticationState = .authenticated
@@ -41,6 +42,9 @@ class BaseTest: ZMTBaseTest {
     var pushNotificationStatus: PushNotificationStatus!
     var pushNotificationStrategy: PushNotificationStrategy!
     var mockCryptoboxMigrationManager: MockCryptoboxMigrationManagerInterface!
+    var mockEARService: MockEARServiceInterface!
+    var mockProteusService: MockProteusServiceInterface!
+    var mockMLSDecryptionService: MLSDecryptionServiceInterface!
     var lastEventIDRepository: LastEventIDRepository!
 
     override func setUp() {
@@ -120,6 +124,10 @@ class BaseTest: ZMTBaseTest {
         mockCryptoboxMigrationManager = MockCryptoboxMigrationManagerInterface()
         mockCryptoboxMigrationManager.isMigrationNeededAccountDirectory_MockValue = false
         mockCryptoboxMigrationManager.completeMigrationSyncContext_MockMethod = { _ in }
+
+        mockEARService = MockEARServiceInterface()
+        mockProteusService = MockProteusServiceInterface()
+        mockMLSDecryptionService = MockMLSDecryptionServiceInterface()
     }
 
     func createSelfUserAndClient() {
@@ -167,7 +175,9 @@ class BaseTest: ZMTBaseTest {
             accountIdentifier: accountIdentifier,
             pushNotificationStrategy: pushNotificationStrategy,
             cryptoboxMigrationManager: mockCryptoboxMigrationManager,
-            earService: MockEARServiceInterface()
+            earService: mockEARService,
+            proteusService: mockProteusService,
+            mlsDecryptionService: mockMLSDecryptionService
         )
     }
 }
