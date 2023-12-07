@@ -2064,3 +2064,5 @@ to reset this device and log in again";
 "device.details.section.e2ei.serial_number" = "Serial Number";
 "device.details.secion.mls.signature" = "MLS with Ed25519 Signature";
 "device.details.secion.mls.title" = "MLS Thumbprint";
+"device.details.certificate_details.title" = "Certificate Details";
+"device.details.certificate_details.copy_to_clipboard" = "Copy to Clipboard";

@@ -2756,6 +2756,12 @@ internal enum L10n {
         internal static let unknown = L10n.tr("Localizable", "device.class.unknown", fallback: "Unknown")
       }
       internal enum Details {
+        internal enum CertificateDetails {
+          /// Copy to Clipboard
+          internal static let copyToClipboard = L10n.tr("Localizable", "device.details.certificate_details.copy_to_clipboard", fallback: "Copy to Clipboard")
+          /// Certificate Details
+          internal static let title = L10n.tr("Localizable", "device.details.certificate_details.title", fallback: "Certificate Details")
+        }
         internal enum Secion {
           internal enum Mls {
             /// MLS with Ed25519 Signature
