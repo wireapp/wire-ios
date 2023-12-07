@@ -543,6 +543,9 @@
 		EE770DAF25344B4F00163C4A /* NotificationDispatcher.OperationMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE770DAE25344B4F00163C4A /* NotificationDispatcher.OperationMode.swift */; };
 		EE79699629D4684C00075E38 /* CryptoboxMigrationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE79699529D4684C00075E38 /* CryptoboxMigrationManager.swift */; };
 		EE79699829D469A800075E38 /* CryptoboxMigrationManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE79699729D469A700075E38 /* CryptoboxMigrationManagerTests.swift */; };
+		EE7A90EC2B21CADD00B58E84 /* OneOnOneResolverTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE7A90EB2B21CADD00B58E84 /* OneOnOneResolverTests.swift */; };
+		EE7A90EE2B21DE3B00B58E84 /* OneOnOneProtocolSelectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE7A90ED2B21DE3B00B58E84 /* OneOnOneProtocolSelectorTests.swift */; };
+		EE7A90F02B21E29E00B58E84 /* OneOnOneMigratorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE7A90EF2B21E29E00B58E84 /* OneOnOneMigratorTests.swift */; };
 		EE7F02222A80D74100FE5695 /* UserRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE7F02212A80D74100FE5695 /* UserRepository.swift */; };
 		EE82625129A8D6BD0023B13A /* ZMClientMessageTests+OTR.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE82625029A8D6BD0023B13A /* ZMClientMessageTests+OTR.swift */; };
 		EE84227028EC353900B80FE5 /* MLSActionExecutorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE84226F28EC353900B80FE5 /* MLSActionExecutorTests.swift */; };
@@ -1453,6 +1456,9 @@
 		EE770DAE25344B4F00163C4A /* NotificationDispatcher.OperationMode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotificationDispatcher.OperationMode.swift; sourceTree = "<group>"; };
 		EE79699529D4684C00075E38 /* CryptoboxMigrationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CryptoboxMigrationManager.swift; sourceTree = "<group>"; };
 		EE79699729D469A700075E38 /* CryptoboxMigrationManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CryptoboxMigrationManagerTests.swift; sourceTree = "<group>"; };
+		EE7A90EB2B21CADD00B58E84 /* OneOnOneResolverTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OneOnOneResolverTests.swift; sourceTree = "<group>"; };
+		EE7A90ED2B21DE3B00B58E84 /* OneOnOneProtocolSelectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OneOnOneProtocolSelectorTests.swift; sourceTree = "<group>"; };
+		EE7A90EF2B21E29E00B58E84 /* OneOnOneMigratorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OneOnOneMigratorTests.swift; sourceTree = "<group>"; };
 		EE7F02212A80D74100FE5695 /* UserRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserRepository.swift; sourceTree = "<group>"; };
 		EE82625029A8D6BD0023B13A /* ZMClientMessageTests+OTR.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMClientMessageTests+OTR.swift"; sourceTree = "<group>"; };
 		EE84226F28EC353900B80FE5 /* MLSActionExecutorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLSActionExecutorTests.swift; sourceTree = "<group>"; };
@@ -2285,6 +2291,16 @@
 				EEAAD759252C6D2700E6A44E /* UnreadMessages.swift */,
 			);
 			path = "Change detection";
+			sourceTree = "<group>";
+		};
+		EE7A90EA2B21CAB000B58E84 /* OneOnOne */ = {
+			isa = PBXGroup;
+			children = (
+				EE7A90EB2B21CADD00B58E84 /* OneOnOneResolverTests.swift */,
+				EE7A90ED2B21DE3B00B58E84 /* OneOnOneProtocolSelectorTests.swift */,
+				EE7A90EF2B21E29E00B58E84 /* OneOnOneMigratorTests.swift */,
+			);
+			path = OneOnOne;
 			sourceTree = "<group>";
 		};
 		EE7F02202A80D5A700FE5695 /* Repositories */ = {
@@ -3286,6 +3302,7 @@
 				F9A7080A1CAEEB7400C2F5FE /* Model */,
 				EE98879028882C6D002340D2 /* MLS */,
 				EE032B3429A62CD600E1DDF3 /* Proteus */,
+				EE7A90EA2B21CAB000B58E84 /* OneOnOne */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -4146,6 +4163,7 @@
 			files = (
 				F920AE171E38C547001BC14F /* NotificationObservers.swift in Sources */,
 				F93265291D89648B0076AAD6 /* ZMAssetClientMessageTests.swift in Sources */,
+				EE7A90F02B21E29E00B58E84 /* OneOnOneMigratorTests.swift in Sources */,
 				63298D9C24374094006B6018 /* GenericMessageTests+External.swift in Sources */,
 				1689FD462194A63E00A656E2 /* ZMClientMessageTests+Editing.swift in Sources */,
 				F9B71F9C1CB2BF18001DB03F /* ZMCallStateTests.swift in Sources */,
@@ -4267,6 +4285,7 @@
 				BFB3BA731E28D38F0032A84F /* SharedObjectStoreTests.swift in Sources */,
 				BF7D9C491D90286700949267 /* MessagingTest+UUID.swift in Sources */,
 				1645ECC4243B69A1007A82D6 /* UserTypeTests+Materialize.swift in Sources */,
+				EE7A90EC2B21CADD00B58E84 /* OneOnOneResolverTests.swift in Sources */,
 				EEC794FA2A38963F008E1A3B /* MLSEncryptionServiceTests.swift in Sources */,
 				2BB20771292B791400FB6468 /* PatchApplicatorTests.swift in Sources */,
 				16F7341224F9567000AB93B1 /* ZMConversationTests+DraftMessage.swift in Sources */,
@@ -4326,6 +4345,7 @@
 				EEF6E3CA28D89251001C1799 /* StaleMLSKeyDetectorTests.swift in Sources */,
 				F9A7083A1CAEEB7500C2F5FE /* MockEntity.m in Sources */,
 				F963E9741D9BF9ED00098AD3 /* ProtosTests.swift in Sources */,
+				EE7A90EE2B21DE3B00B58E84 /* OneOnOneProtocolSelectorTests.swift in Sources */,
 				16746B081D2EAF8E00831771 /* ZMClientMessageTests+ZMImageOwner.swift in Sources */,
 				873B88FE2040470900FBE254 /* ConversationCreationOptionsTests.swift in Sources */,
 				16827AF22732AB2E0079405D /* InvalidDomainRemovalTests.swift in Sources */,

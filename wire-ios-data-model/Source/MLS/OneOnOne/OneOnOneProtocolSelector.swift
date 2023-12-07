@@ -18,6 +18,7 @@
 
 import Foundation
 
+// sourcery: AutoMockable
 public protocol OneOnOneProtocolSelectorInterface {
 
     func getProtocolForUser(
@@ -29,9 +30,7 @@ public protocol OneOnOneProtocolSelectorInterface {
 
 public final class OneOnOneProtocolSelector: OneOnOneProtocolSelectorInterface {
 
-    public init() {
-        
-    }
+    public init() {}
 
     public func getProtocolForUser(
         with id: QualifiedID,
