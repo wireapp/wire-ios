@@ -76,6 +76,32 @@ final class DatabaseMigrationTests_UserClientUniqueness: XCTestCase {
         }
     }
 
+    func testMigratingToMessagingStore_2_107_DoNotPreventDuplicateNilUserClients() throws {
+        try migrateStore(
+            sourceVersion: "2.106.0",
+            destinationVersion: "2.107.0",
+            preMigrationAction: { context in
+                // given
+                let duplicate1 = UserClient.insertNewObject(in: context)
+                duplicate1.remoteIdentifier = nil
+
+                let duplicate2 = UserClient.insertNewObject(in: context)
+                duplicate2.remoteIdentifier = nil
+
+                try context.save()
+            },
+            postMigrationAction: { context in
+                // when
+                let fetchRequest = NSFetchRequest<UserClient>(entityName: UserClient.entityName())
+                fetchRequest.predicate = NSPredicate(format: "%K == nil", ZMUserClientRemoteIdentifierKey)
+                let clients = try context.fetch(fetchRequest)
+
+                // then
+                XCTAssertEqual(clients.count, 2)
+            }
+        )
+    }
+
     func testMigratingToMessagingStore_2_107_PreventsDuplicateUserClients() throws {
         let mappingModelURL = bundle.url(forResource: "MappingModel_2.106-2.107", withExtension: "cdm")
         let mappingModel = try XCTUnwrap(NSMappingModel(contentsOf: mappingModelURL))
