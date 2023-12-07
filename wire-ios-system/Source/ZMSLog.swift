@@ -19,6 +19,8 @@
 import Foundation
 import os.log
 
+import ZipArchive
+
 /// Represents an entry to be logged.
 @objcMembers
 public class ZMSLogEntry: NSObject {
@@ -244,23 +246,10 @@ extension ZMSLog {
 }
 
 // MARK: - Save on disk & file management
-extension ZMSLog {
 
+extension ZMSLog {
     private enum Constant {
         static let maxNumberOfLogFiles = 5
-    }
-
-    @objc static public var previousLogs: [Data] {
-        previousLogPaths.compactMap {
-            // TODO: does this work with zipping?
-            try? Data(contentsOf: $0, options: [.uncached])
-        }
-    }
-
-    @available(*, deprecated)
-    @objc static public var previousLog: Data? {
-        guard let previousLogPath else { return nil }
-        return try? Data(contentsOf: previousLogPath, options: [.uncached])
     }
 
     @objc static public var currentLog: Data? {
@@ -268,16 +257,13 @@ extension ZMSLog {
         return try? Data(contentsOf: currentLogPath, options: [.uncached])
     }
 
-    @objc static public let previousLogPaths: [URL] = {
+    @objc static public let previousZipLogPaths: [URL] = {
         [0..<Constant.maxNumberOfLogFiles]
             .joined()
             .compactMap { index in
-                cachesDirectory?.appendingPathComponent("previous_\(index).log")
+                cachesDirectory?.appendingPathComponent("previous_\(index).log.zip")
             }
     }()
-
-    @available(*, deprecated)
-    @objc static public let previousLogPath: URL? = cachesDirectory?.appendingPathComponent("previous.log")
 
     @objc static public let currentLogPath: URL? = cachesDirectory?.appendingPathComponent("current.log")
 
@@ -295,7 +281,7 @@ extension ZMSLog {
                 try? manager.removeItem(at: deprecatedPreviousLogPath)
             }
 
-            previousLogPaths.forEach {
+            previousZipLogPaths.forEach {
                 try? manager.removeItem(at: $0)
             }
 
@@ -309,21 +295,36 @@ extension ZMSLog {
         logQueue.async {
             closeHandle()
 
-            assert(!previousLogPaths.isEmpty)
-            let lastIndex = previousLogPaths.count - 1
+            if previousZipLogPaths.isEmpty {
+                assertionFailure("expects 'previousLogPaths' not to be empty!")
+                return
+            }
+
+            let lastIndex = previousZipLogPaths.count - 1
 
             // remove last item
             let manager = FileManager.default
-            try? manager.removeItem(at: previousLogPaths[lastIndex])
+            try? manager.removeItem(at: previousZipLogPaths[lastIndex])
 
             // move last-1 to 0 items
             for index in (0..<lastIndex).reversed() {
-                try? manager.moveItem(at: previousLogPaths[index], to: previousLogPaths[index+1])
+                try? manager.moveItem(at: previousZipLogPaths[index], to: previousZipLogPaths[index+1])
             }
 
-            // move current item to 0
-            // TODO: zip current file to previous log
-            try? manager.moveItem(at: currentLogPath, to: previousLogPaths[0])
+            // move current log to 0 item
+            if manager.fileExists(atPath: currentLogPath.path) {
+                // create a tmp different name from `current.log` to `previous.log`
+                var tmpPath = currentLogPath.deletingLastPathComponent()
+                tmpPath.appendPathComponent("previous.log")
+
+                try? manager.moveItem(at: currentLogPath, to: tmpPath)
+
+                // zip to position 0 logs
+                SSZipArchive.createZipFile(atPath: previousZipLogPaths[0].path, withFilesAtPaths: [tmpPath.path])
+
+                // remove tmp file
+                try? manager.removeItem(at: tmpPath)
+            }
         }
     }
 
@@ -333,7 +334,7 @@ extension ZMSLog {
     }
 
     static public var pathsForExistingLogs: [URL] {
-        var paths: [URL] = previousLogPaths
+        var paths: [URL] = previousZipLogPaths
         if let currentPath = currentLogPath, currentLog != nil {
             paths.append(currentPath)
         }
@@ -346,9 +347,7 @@ extension ZMSLog {
     }
 
     static func appendToCurrentLog(_ string: String) {
-
-        guard let currentLogURL = currentLogPath else { return }
-        let currentLogPath = currentLogURL.path
+        guard let currentLogPath = currentLogPath?.path else { return }
         let manager = FileManager.default
 
         if !manager.fileExists(atPath: currentLogPath) {
