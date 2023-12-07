@@ -34,6 +34,15 @@ class ZMLogTests: XCTestCase {
         super.tearDown()
     }
 
+    func testNumberOfPreviousZipLogURLs() {
+        // given
+        let count = ZMSLog.previousZipLogURLs.count
+
+        // when
+        // then
+        XCTAssertEqual(count, 5)
+    }
+
     func testThatTheLoggerRegistersATag() {
 
         // given
@@ -486,7 +495,7 @@ extension ZMLogTests {
         XCTAssertTrue(lines.first!.hasSuffix("[3] [foo] Item: hidden"))
     }
 
-    func testThatItDiscardsLogsWhenStopped() {
+    func testThatItDiscardsLogsWhenStopped() throws {
 
         // GIVEN
         let sut = ZMSLog(tag: "foo")
@@ -499,7 +508,10 @@ extension ZMLogTests {
 
         // THEN
         XCTAssertNil(ZMSLog.currentLog)
-        XCTAssertNil(ZMSLog.previousLog)
+
+        try ZMSLog.previousZipLogURLs.forEach { url in
+            XCTAssertThrowsError(try Data(contentsOf: url))
+        }
     }
 }
 
@@ -540,10 +552,7 @@ extension ZMLogTests {
         Thread.sleep(forTimeInterval: 0.2)
 
         // then
-        XCTAssertNotNil(ZMSLog.previousLog)
-        XCTAssertEqual(ZMSLog.previousLog, currentLog)
         XCTAssertNil(ZMSLog.currentLog)
-
     }
 
 }
