@@ -142,20 +142,73 @@ public class MLSEventProcessor: MLSEventProcessing {
             let groupID = try mlsService.processWelcomeMessage(welcomeMessage: welcomeMessage)
             mlsService.uploadKeyPackagesIfNeeded()
 
-            if let conversation = ZMConversation.fetch(with: conversationID, in: context) {
+            fetchConversation(conversationID: conversationID, in: context) {
+                guard let conversation = $0 else { return }
                 conversation.mlsGroupID = groupID
                 conversation.mlsStatus = .ready
-                WireLogger.mls.info("MLS event processor set mlsStatus to ready for group \(groupID.safeForLoggingDescription)")
-                context.saveOrRollback()
-            } else {
-                // Conversation doesn't exist locally yet, so fetch it from the backend.
-                // It'll be marked as ready when it's synced locally.
-                conversationService.syncConversation(qualifiedID: conversationID) {
-                    // no op
-                }
+                self.resolveOneOnOneConversationIfNeeded(
+                    conversation: conversation,
+                    mlsService: mlsService,
+                    in: context
+                )
             }
+
         } catch {
             return WireLogger.mls.warn("MLS event processor aborting processing welcome message: \(String(describing: error))")
+        }
+    }
+
+    private func fetchConversation(
+        conversationID: QualifiedID,
+        in context: NSManagedObjectContext,
+        completion: @escaping (ZMConversation?) -> Void
+    ) {
+        conversationService.syncConversation(qualifiedID: conversationID) {
+            context.perform {
+                let conversation = ZMConversation.fetch(with: conversationID, in: context)
+                completion(conversation)
+            }
+        }
+    }
+
+    private func resolveOneOnOneConversationIfNeeded(
+        conversation: ZMConversation,
+        mlsService: MLSServiceInterface,
+        in context: NSManagedObjectContext
+    ) {
+        WireLogger.mls.debug("resolving one on one conversation")
+
+        guard conversation.conversationType == .oneOnOne else {
+            return
+        }
+
+        guard
+            let otherUser = conversation.localParticipantsExcludingSelf.first,
+            let otherUserID = otherUser.remoteIdentifier,
+            let otherUserDomain = otherUser.domain ?? BackendInfo.domain
+        else {
+            WireLogger.mls.error("failed to resolve one on one conversation: can not get other user id")
+            return
+        }
+
+        let resolver = OneOnOneResolver(
+            protocolSelector: OneOnOneProtocolSelector(),
+            migrator: OneOnOneMigrator(mlsService: mlsService)
+        )
+
+        let userID = QualifiedID(
+            uuid: otherUserID,
+            domain: otherUserDomain
+        )
+
+        resolver.resolveOneOnOneConversation(with: userID, in: context) {
+            switch $0 {
+            case .success:
+                WireLogger.mls.debug("succeffully resolved one on one conversation")
+
+            case .failure(let error):
+                WireLogger.mls.error("failed to resolve one on one conversation: \(error)")
+            }
         }
     }
 

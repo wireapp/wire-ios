@@ -419,7 +419,6 @@ extension ZMUser: UserConnections {
             let context = managedObjectContext,
             let syncContext = context.zm_sync,
             let connection,
-            let conversation = connection.conversation,
             let userID = remoteIdentifier,
             let domain = domain ?? BackendInfo.domain
         else {
@@ -430,85 +429,38 @@ extension ZMUser: UserConnections {
         connection.updateStatus(.accepted) { result in
             switch result {
             case .success:
-                let selfUser = ZMUser.selfUser(in: context)
-                let commonProtocols = selfUser.supportedProtocols.intersection(self.supportedProtocols)
+                let mlsService = syncContext.performAndWait {
+                    syncContext.mlsService
+                }
 
-                guard !commonProtocols.isEmpty else {
-                    conversation.isForcedReadOnly = true
+                guard let mlsService else {
                     completion(nil)
                     return
                 }
 
-                guard
-                    commonProtocols.contains(.mls),
-                    conversation.messageProtocol != .mls
-                else {
-                    completion(nil)
-                    return
-                }
-
-                let qualifiedID = QualifiedID(
-                    uuid: userID,
-                    domain: domain
+                let resolver = OneOnOneResolver(
+                    protocolSelector: OneOnOneProtocolSelector(),
+                    migrator: OneOnOneMigrator(mlsService: mlsService)
                 )
 
-                Task {
-                    do {
-                        try await self.establishMLSOneToOne(
-                            with: qualifiedID,
-                            in: syncContext
-                        )
-                        completion(nil)
-                    } catch {
-                        completion(error)
+                resolver.resolveOneOnOneConversation(
+                    with: QualifiedID(uuid: userID, domain: domain),
+                    in: context
+                ) { result in
+                    context.perform {
+                        switch result {
+                        case .success:
+                            completion(nil)
+
+                        case .failure(let error):
+                            completion(error)
+                        }
                     }
                 }
 
             case .failure(let error):
                 completion(error)
             }
-        }
-    }
-
-    private func establishMLSOneToOne(
-        with otherUserID: QualifiedID,
-        in context: NSManagedObjectContext
-    ) async throws {
-        let mlsService = try await context.perform {
-            if let mlsService = context.mlsService {
-                return mlsService
-            } else {
-                throw AcceptConnectionError.missingMLSService
-            }
-        }
-
-        let mlsGroupID = try await mlsService.establishOneToOneGroupIfNeeded(
-            with: otherUserID,
-            in: context
-        )
-
-        try await context.perform {
-            guard
-                let otherUser = ZMUser.fetch(
-                    with: otherUserID,
-                    in: context
-                ),
-                let connection = otherUser.connection,
-                let conversation = ZMConversation.fetch(
-                    with: mlsGroupID,
-                    in: context
-                )
-            else {
-                throw AcceptConnectionError.unableToSwitchToMLS
-            }
-
-            // The existing proteus 1-1 is no longer valid.
-            if connection.conversation.messageProtocol == .proteus {
-                connection.conversation.conversationType = .invalid
-            }
-
-            // The connection now uses the mls 1-1.
-            connection.conversation = conversation
         }
     }
 

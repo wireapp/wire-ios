@@ -550,17 +550,6 @@ final class ConversationEventPayloadProcessor {
         conversation.needsToBeUpdatedFromBackend = false
 
         if let otherUser = conversation.localParticipantsExcludingSelf.first {
-            if
-                let connection = otherUser.connection,
-                let existingConversation = connection.conversation,
-                existingConversation.messageProtocol == .proteus,
-                conversation.messageProtocol == .mls
-            {
-                // Invalidate old proteus conversation, make mls conversation active.
-                existingConversation.conversationType = .invalid
-                connection.conversation = conversation
-            }
-
             conversation.isPendingMetadataRefresh = otherUser.isPendingMetadataRefresh
         }
 
