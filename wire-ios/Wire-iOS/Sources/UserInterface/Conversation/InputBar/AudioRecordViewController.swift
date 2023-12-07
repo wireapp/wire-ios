@@ -271,21 +271,14 @@ final class AudioRecordViewController: UIViewController, AudioRecordBaseViewCont
 
     private func configureAudioRecorder() {
         recorder.recordTimerCallback = { [weak self] time in
-            guard let `self` = self else { return }
-            self.updateTimeLabel(time)
+            self?.updateTimeLabel(time)
         }
 
         recorder.recordEndedCallback = { [weak self] result in
-            guard let self else { return }
-            self.recordingState = .finishedRecording
+            self?.recordingState = .finishedRecording
 
-            switch result {
-            case .success:
-                break
-            case .failure(let error):
-                if let error = error as? RecordingError, let alert = self.recorder.alertForRecording(error: error) {
-                    present(alert, animated: true, completion: .none)
-                }
+            if case .failure(let error) = result, let error = error as? RecordingError, let alert = self?.recorder.alertForRecording(error: error) {
+                self?.present(alert, animated: true, completion: .none)
             }
         }
 

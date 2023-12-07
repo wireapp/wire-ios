@@ -334,18 +334,13 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
         }
 
         recorder.recordEndedCallback = { [weak self] result in
-            guard let self else { return }
-            state = .effects
+            guard let self, case .failure(let error) = result else { return }
 
-            switch result {
-            case .success:
-                break
-            case .failure(let error):
-                if let error = error as? RecordingError, let alert = recorder.alertForRecording(error: error) {
-                    present(alert, animated: true, completion: .none)
-                } else {
-                    zmLog.warn("Unexpected error in recordEndedCallback: \(String(reflecting: error))")
-                }
+            state = .effects
+            if let error = error as? RecordingError, let alert = recorder.alertForRecording(error: error) {
+                present(alert, animated: true, completion: .none)
+            } else {
+                zmLog.warn("Unexpected error in recordEndedCallback: \(String(reflecting: error))")
             }
         }
 
