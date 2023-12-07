@@ -242,6 +242,10 @@ final class DeveloperToolsViewModel: ObservableObject {
     private func enrollE2EICertificate() {
         guard let session = ZMUserSession.shared() else { return }
         let e2eiCertificateUseCase = session.enrollE2eICertificate
+        guard let rootViewController = AppDelegate.shared.window?.rootViewController else {
+            return
+        }
+        let oauthUseCase = OAuthUseCase(rootViewController: rootViewController)
 
         guard
             let selfUser = selfUser,
@@ -253,8 +257,10 @@ final class DeveloperToolsViewModel: ObservableObject {
         }
 
         Task {
-            _ = try await e2eiCertificateUseCase?.initialEnrollment(e2eiClientId: e2eiClientId, userName: userName, handle: handle)
-
+            _ = try await e2eiCertificateUseCase?.invoke(e2eiClientId: e2eiClientId,
+                                                         userName: userName,
+                                                         userHandle: handle,
+                                                         invokeAuthentication: oauthUseCase.invoke)
         }
     }
 

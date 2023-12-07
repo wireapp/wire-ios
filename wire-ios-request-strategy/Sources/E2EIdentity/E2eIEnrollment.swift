@@ -19,14 +19,7 @@
 import Foundation
 import WireCoreCrypto
 
-public typealias InitialEnrollmentResult = (target: String,
-                                            authz: NewAcmeAuthz,
-                                            lastNonce: String,
-                                            orderLocation: String)
-
 public protocol E2eIEnrollmentInterface {
-
-    var initialResult: InitialEnrollmentResult? { get set }
 
     /// Get a nonce for creating an account.
     func getACMENonce() async throws -> String
@@ -91,8 +84,6 @@ public final class E2eIEnrollment: E2eIEnrollmentInterface {
     private let e2eiClientId: E2eIClientID
 
     private let logger = WireLogger.e2ei
-
-    public var initialResult: InitialEnrollmentResult?
 
     public init(
         acmeApi: AcmeAPIInterface,
