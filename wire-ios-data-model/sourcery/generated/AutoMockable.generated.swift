@@ -1190,6 +1190,29 @@ public class MockMLSEncryptionServiceInterface: MLSEncryptionServiceInterface {
     }
 
 }
+public class MockOneOnOneResolverInterface: OneOnOneResolverInterface {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - resolveOneOnOneConversation
+
+    public var resolveOneOnOneConversationWithInCompletion_Invocations: [(userID: QualifiedID, context: NSManagedObjectContext, completion: (Swift.Result<Void, Error>) -> Void)] = []
+    public var resolveOneOnOneConversationWithInCompletion_MockMethod: ((QualifiedID, NSManagedObjectContext, @escaping (Swift.Result<Void, Error>) -> Void) -> Void)?
+
+    public func resolveOneOnOneConversation(with userID: QualifiedID, in context: NSManagedObjectContext, completion: @escaping (Swift.Result<Void, Error>) -> Void) {
+        resolveOneOnOneConversationWithInCompletion_Invocations.append((userID: userID, context: context, completion: completion))
+
+        guard let mock = resolveOneOnOneConversationWithInCompletion_MockMethod else {
+            fatalError("no mock for `resolveOneOnOneConversationWithInCompletion`")
+        }
+
+        mock(userID, context, completion)            
+    }
+
+}
 public class MockProteusServiceInterface: ProteusServiceInterface {
 
     // MARK: - Life cycle

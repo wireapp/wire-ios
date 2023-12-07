@@ -409,12 +409,22 @@ extension ZMUser: UserConnections {
     public enum AcceptConnectionError: Error {
 
         case invalidState
-        case missingMLSService
+        case unableToResolveConversation
         case unableToSwitchToMLS
 
     }
 
     public func accept(completion: @escaping (Error?) -> Void) {
+        accept(
+            oneOnOneResolver: nil,
+            completion: completion
+        )
+    }
+
+    func accept(
+        oneOnOneResolver: OneOnOneResolverInterface?,
+        completion: @escaping (Error?) -> Void
+    ) {
         guard
             let context = managedObjectContext,
             let syncContext = context.zm_sync,
@@ -429,19 +439,10 @@ extension ZMUser: UserConnections {
         connection.updateStatus(.accepted) { result in
             switch result {
             case .success:
-                let mlsService = syncContext.performAndWait {
-                    syncContext.mlsService
-                }
-
-                guard let mlsService else {
-                    completion(nil)
+                guard let resolver = oneOnOneResolver ?? OneOnOneResolver(syncContext: syncContext) else {
+                    completion(AcceptConnectionError.unableToResolveConversation)
                     return
                 }
-
-                let resolver = OneOnOneResolver(
-                    protocolSelector: OneOnOneProtocolSelector(),
-                    migrator: OneOnOneMigrator(mlsService: mlsService)
-                )
 
                 resolver.resolveOneOnOneConversation(
                     with: QualifiedID(uuid: userID, domain: domain),

@@ -18,6 +18,7 @@
 
 import Foundation
 
+// sourcery: AutoMockable
 public protocol OneOnOneResolverInterface {
 
     func resolveOneOnOneConversation(
@@ -36,6 +37,21 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
     private let migrator: OneOnOneMigratorInterface
 
     // MARK: - Life cycle
+
+    public convenience init?(syncContext: NSManagedObjectContext) {
+        let mlsService = syncContext.performAndWait {
+            syncContext.mlsService
+        }
+
+        guard let mlsService else {
+            return nil
+        }
+
+        self.init(
+            protocolSelector: OneOnOneProtocolSelector(),
+            migrator: OneOnOneMigrator(mlsService: mlsService)
+        )
+    }
 
     public init(
         protocolSelector: OneOnOneProtocolSelectorInterface,

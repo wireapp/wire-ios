@@ -1046,50 +1046,17 @@ extension ZMUserTests_Swift {
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
     }
 
-    func testThatAcceptSendsAUpdateConnectionAction() {
-        // given
-        let user = createUser(in: uiMOC)
-        user.domain = "local@domain.com"
-        user.connection = ZMConnection.insertNewObject(in: uiMOC)
-        user.connection?.conversation = ZMConversation.insertConversation(moc: uiMOC, participants: [], type: .connection)
-
-        _ = MockActionHandler<UpdateConnectionAction>(
-            result: .success(()),
-            context: uiMOC.notificationContext
-        )
-
-        // expect
-        let didSucceed = XCTestExpectation(description: "didSucceed")
-
-        // when
-        user.accept { error in
-            if let error {
-                XCTFail("unexpected error: \(error)")
-            } else {
-                didSucceed.fulfill()
-            }
-        }
-
-        // then
-        wait(for: [didSucceed], timeout: 0.5)
-    }
-
-    func test_AcceptConnection_MLS() throws {
+    func testAcceptConnectionRequest() throws {
         let userID = QualifiedID(uuid: UUID(), domain: "local@domain.com")
         let proteusConversationID = QualifiedID(uuid: UUID(), domain: "local@domain.com")
 
         try syncMOC.performAndWait {
-            // Given I support mls.
-            self.selfUser.supportedProtocols = [.proteus, .mls]
-
-            // Other supports mls.
             let user = createUser(in: syncMOC)
             user.remoteIdentifier = userID.uuid
             user.domain = userID.domain
             user.supportedProtocols = [.proteus, .mls]
             user.connection = ZMConnection.insertNewObject(in: syncMOC)
 
-            // We have a connection via a proteus conversation.
             let proteusConversation = ZMConversation.insertConversation(moc: syncMOC, participants: [], type: .connection)
             proteusConversation?.remoteIdentifier = proteusConversationID.uuid
             proteusConversation?.domain = proteusConversation?.domain
@@ -1109,23 +1076,16 @@ extension ZMUserTests_Swift {
             context: uiMOC.notificationContext
         )
 
-        let mlsService = MockMLSService()
-        syncMOC.mlsService = mlsService
-
-        // Mock establish the mls group and create new mls one to one.
-        let mlsGroupID = MLSGroupID.random()
-        mlsService.establishOneToOneGroupIfNeededMock = { _, _ in
-            let mlsConversation = ZMConversation.insertConversation(moc: self.syncMOC, participants: [], type: .connection)
-            mlsConversation?.mlsGroupID = mlsGroupID
-            mlsConversation?.messageProtocol = .mls
-            return mlsGroupID
+        let oneOneOneResolver = MockOneOnOneResolverInterface()
+        oneOneOneResolver.resolveOneOnOneConversationWithInCompletion_MockMethod = { _, _, completion in
+            completion(.success(()))
         }
 
         // Expect
         let didSucceed = XCTestExpectation(description: "didSucceed")
 
         // When I accept the connection request from the other user.
-        user.accept { error in
+        user.accept(oneOnOneResolver: oneOneOneResolver) { error in
             if let error {
                 XCTFail("unexpected error: \(error)")
             } else {
@@ -1135,156 +1095,9 @@ extension ZMUserTests_Swift {
 
         // Then
         wait(for: [didSucceed], timeout: 0.5)
-
-        // Get changes from sync context into view context.
-        try syncMOC.save()
-        uiMOC.refreshAllObjects()
-
-        // MLS group was established.
-        XCTAssertEqual(mlsService.establishOneToOneGroupIfNeededInvocations.count, 1)
-        let (receivedUserID, _) = try XCTUnwrap(mlsService.establishOneToOneGroupIfNeededInvocations.first)
-        XCTAssertEqual(receivedUserID, user.qualifiedID)
-
-        // Proteus one to one is invalidated.
-        XCTAssertEqual(proteusConversation.messageProtocol, .proteus)
-        XCTAssertEqual(proteusConversation.conversationType, .invalid)
-
-        // Connection is now via mls one to one.
-        guard let conversation = user.connection?.conversation else {
-            XCTFail("expected conversation")
-            return
-        }
-
-        XCTAssertEqual(conversation.messageProtocol, .mls)
-        XCTAssertEqual(conversation.conversationType, .connection)
-        XCTAssertEqual(conversation.mlsGroupID, mlsGroupID)
-    }
-
-    func test_AcceptConnection_Proteus() throws {
-        let userID = QualifiedID(uuid: UUID(), domain: "local@domain.com")
-        let proteusConversationID = QualifiedID(uuid: UUID(), domain: "local@domain.com")
-
-        try syncMOC.performAndWait {
-            // Given I support proteus and mls.
-            self.selfUser.supportedProtocols = [.proteus, .mls]
-
-            // Other supports proteus.
-            let user = createUser(in: syncMOC)
-            user.remoteIdentifier = userID.uuid
-            user.domain = userID.domain
-            user.supportedProtocols = [.proteus]
-            user.connection = ZMConnection.insertNewObject(in: syncMOC)
-
-            // We have a connection via a proteus conversation.
-            let proteusConversation = ZMConversation.insertConversation(moc: syncMOC, participants: [], type: .connection)
-            proteusConversation?.remoteIdentifier = proteusConversationID.uuid
-            proteusConversation?.domain = proteusConversation?.domain
-            proteusConversation?.messageProtocol = .proteus
-
-            user.connection?.conversation = proteusConversation
-
-            try syncMOC.save()
-        }
-
-        let user = try XCTUnwrap(ZMUser.fetch(with: userID, in: uiMOC))
-
-        // Mock successful connection updates.
-        _ = MockActionHandler<UpdateConnectionAction>(
-            result: .success(()),
-            context: uiMOC.notificationContext
-        )
-
-        // Expect
-        let didSucceed = XCTestExpectation(description: "didSucceed")
-
-        // When I accept the connection request from the other user.
-        user.accept { error in
-            if let error {
-                XCTFail("unexpected error: \(error)")
-            } else {
-                didSucceed.fulfill()
-            }
-        }
-
-        // Then
-        wait(for: [didSucceed], timeout: 0.5)
-
-        // Get changes from sync context into view context.
-        try syncMOC.save()
-        uiMOC.refreshAllObjects()
-
-        // Connection is still via proteus one to one.
-        guard let conversation = user.connection?.conversation else {
-            XCTFail("expected conversation")
-            return
-        }
-
-        XCTAssertEqual(conversation.messageProtocol, .proteus)
-        XCTAssertEqual(conversation.conversationType, .connection)
-    }
-
-    func test_AcceptConnection_NoCommonProtocols() throws {
-        let userID = QualifiedID(uuid: UUID(), domain: "local@domain.com")
-        let proteusConversationID = QualifiedID(uuid: UUID(), domain: "local@domain.com")
-
-        try syncMOC.performAndWait {
-            // Given I support only mls.
-            self.selfUser.supportedProtocols = [.mls]
-
-            // Other supports only proteus.
-            let user = createUser(in: syncMOC)
-            user.remoteIdentifier = userID.uuid
-            user.domain = userID.domain
-            user.supportedProtocols = [.proteus]
-            user.connection = ZMConnection.insertNewObject(in: syncMOC)
-
-            // We have a connection via a proteus conversation.
-            let proteusConversation = ZMConversation.insertConversation(moc: syncMOC, participants: [], type: .connection)
-            proteusConversation?.remoteIdentifier = proteusConversationID.uuid
-            proteusConversation?.domain = proteusConversation?.domain
-            proteusConversation?.messageProtocol = .proteus
-
-            user.connection?.conversation = proteusConversation
-
-            try syncMOC.save()
-        }
-
-        let user = try XCTUnwrap(ZMUser.fetch(with: userID, in: uiMOC))
-
-        // Mock successful connection updates.
-        _ = MockActionHandler<UpdateConnectionAction>(
-            result: .success(()),
-            context: uiMOC.notificationContext
-        )
-
-        // Expect
-        let didSucceed = XCTestExpectation(description: "didSucceed")
-
-        // When I accept the connection request from the other user.
-        user.accept { error in
-            if let error {
-                XCTFail("unexpected error: \(error)")
-            } else {
-                didSucceed.fulfill()
-            }
-        }
-
-        // Then
-        wait(for: [didSucceed], timeout: 0.5)
-
-        // Get changes from sync context into view context.
-        try syncMOC.save()
-        uiMOC.refreshAllObjects()
-
-        // Connection is still via proteus one to one, but it's read only.
-        guard let conversation = user.connection?.conversation else {
-            XCTFail("expected conversation")
-            return
-        }
-
-        XCTAssertEqual(conversation.messageProtocol, .proteus)
-        XCTAssertEqual(conversation.conversationType, .connection)
-        XCTAssertTrue(conversation.isReadOnly)
+        XCTAssertEqual(oneOneOneResolver.resolveOneOnOneConversationWithInCompletion_Invocations.count, 1)
+        let invocation = try XCTUnwrap(oneOneOneResolver.resolveOneOnOneConversationWithInCompletion_Invocations.first)
+        XCTAssertEqual(invocation.userID, userID)
     }
 
     func testThatBlockSendsAUpdateConnectionAction() {
