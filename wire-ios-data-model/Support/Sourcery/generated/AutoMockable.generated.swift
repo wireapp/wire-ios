@@ -1258,16 +1258,16 @@ public class MockMLSServiceInterface: MLSServiceInterface {
     // MARK: - createSelfGroup
 
     public var createSelfGroupFor_Invocations: [MLSGroupID] = []
-    public var createSelfGroupFor_MockMethod: ((MLSGroupID) -> Void)?
+    public var createSelfGroupFor_MockMethod: ((MLSGroupID) async -> Void)?
 
-    public func createSelfGroup(for groupID: MLSGroupID) {
+    public func createSelfGroup(for groupID: MLSGroupID) async {
         createSelfGroupFor_Invocations.append(groupID)
 
         guard let mock = createSelfGroupFor_MockMethod else {
             fatalError("no mock for `createSelfGroupFor`")
         }
 
-        mock(groupID)
+        await mock(groupID)
     }
 
     // MARK: - joinGroup

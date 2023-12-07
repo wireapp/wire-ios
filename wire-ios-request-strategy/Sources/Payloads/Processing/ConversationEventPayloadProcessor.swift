@@ -475,7 +475,9 @@ final class ConversationEventPayloadProcessor {
         WireLogger.mls.debug("createOrJoinSelfConversation for \(groupId.safeForLoggingDescription); conv payload: \(String(describing: self))")
 
         if conversation.epoch <= 0 {
-            mlsService.createSelfGroup(for: groupId)
+            Task {
+                await mlsService.createSelfGroup(for: groupId)
+            }
         } else if !mlsService.conversationExists(groupID: groupId) {
             Task {
                 try await mlsService.joinGroup(with: groupId)

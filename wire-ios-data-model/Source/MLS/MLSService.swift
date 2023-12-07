@@ -25,7 +25,7 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
 
     func uploadKeyPackagesIfNeeded()
 
-    func createSelfGroup(for groupID: MLSGroupID)
+    func createSelfGroup(for groupID: MLSGroupID) async
 
     func joinGroup(with groupID: MLSGroupID) async throws
 
@@ -446,7 +446,7 @@ public final class MLSService: MLSServiceInterface {
         staleKeyMaterialDetector.keyingMaterialUpdated(for: groupID)
     }
 
-    public func createSelfGroup(for groupID: MLSGroupID) {
+    public func createSelfGroup(for groupID: MLSGroupID) async {
         guard let context = context else {
             return
         }
