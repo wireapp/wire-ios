@@ -201,22 +201,6 @@ extension ZMSLog {
     }
 }
 
-extension ZMLogLevel_t {
-    @available(iOS 10.0, *)
-    var logLevel: OSLogType {
-        switch self {
-        case .public, .error, .warn:
-            return .error
-        case .info:
-            return .info
-        case .debug:
-            return .debug
-        @unknown default:
-            return .error
-        }
-    }
-}
-
 // MARK: - Internal stuff
 extension ZMSLog {
 
@@ -233,14 +217,26 @@ extension ZMSLog {
         file: String = #file,
         line: UInt = #line) {
         logQueue.async {
-            if let tag = tag {
-                self.register(tag: tag)
+            guard let tag, level.rawValue <= ZMSLog.getLevelNoLock(tag: tag).rawValue else {
+                return
             }
 
-            if tag == nil || level.rawValue <= ZMSLog.getLevelNoLock(tag: tag!).rawValue {
-                os_log("%{public}@", log: self.logger(tag: tag), type: level.logLevel, entry.text)
-                self.notifyHooks(level: level, tag: tag, entry: entry, isSafe: isSafe)
+            var logLevel: OSLogType {
+                switch level {
+                case .public, .error, .warn:
+                    return .error
+                case .info:
+                    return .info
+                case .debug:
+                    return .debug
+                @unknown default:
+                    return .error
+                }
             }
+
+            register(tag: tag)
+            os_log("%{public}@", log: self.logger(tag: tag), type: logLevel, entry.text)
+            notifyHooks(level: level, tag: tag, entry: entry, isSafe: isSafe)
         }
     }
 }
