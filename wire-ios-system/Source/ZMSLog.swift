@@ -201,25 +201,8 @@ extension ZMSLog {
     }
 }
 
-<<<<<<< HEAD
-extension ZMLogLevel_t {
-    var logLevel: OSLogType {
-        switch self {
-        case .public, .error, .warn:
-            return .error
-        case .info:
-            return .info
-        case .debug:
-            return .debug
-        @unknown default:
-            return .error
-        }
-    }
-}
-
-=======
->>>>>>> 6ca84825b (chore: log more files [WPB-5772] (#758))
 // MARK: - Internal stuff
+
 extension ZMSLog {
 
     @objc static public func logWithLevel(_ level: ZMLogLevel_t, message: @autoclosure () -> String, tag: String?, file: String = #file, line: UInt = #line) {
@@ -278,7 +261,7 @@ extension ZMSLog {
     @objc static public var currentZipLog: Data? {
         let manager = FileManager.default
 
-        guard 
+        guard
             let currentLogURL,
             manager.fileExists(atPath: currentLogURL.path)
         else {
