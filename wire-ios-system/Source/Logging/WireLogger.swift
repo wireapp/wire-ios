@@ -177,3 +177,4 @@ public extension WireLogger {
     static let session = WireLogger(tag: "session")
 
 }
+
