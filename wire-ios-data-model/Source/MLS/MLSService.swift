@@ -60,12 +60,12 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
     func generateConferenceInfo(
         parentGroupID: MLSGroupID,
         subconversationGroupID: MLSGroupID
-    ) throws -> MLSConferenceInfo
+    ) async throws -> MLSConferenceInfo
 
     func onConferenceInfoChange(
         parentGroupID: MLSGroupID,
         subConversationGroupID: MLSGroupID
-    ) -> AnyPublisher<MLSConferenceInfo, Never>
+    ) -> AsyncStream<MLSConferenceInfo>
 
     func leaveSubconversationIfNeeded(
         parentQualifiedID: QualifiedID,
@@ -280,7 +280,7 @@ public final class MLSService: MLSServiceInterface {
     public func generateConferenceInfo(
         parentGroupID: MLSGroupID,
         subconversationGroupID: MLSGroupID
-    ) throws -> MLSConferenceInfo {
+    ) async throws -> MLSConferenceInfo {
         do {
             logger.info("generating conference info")
 
@@ -343,15 +343,21 @@ public final class MLSService: MLSServiceInterface {
     public func onConferenceInfoChange(
         parentGroupID: MLSGroupID,
         subConversationGroupID: MLSGroupID
-    ) -> AnyPublisher<MLSConferenceInfo, Never> {
-        return onEpochChanged().filter {
-            $0.isOne(of: parentGroupID, subConversationGroupID)
-        }.compactMap { [weak self] _ in
-            try? self?.generateConferenceInfo(
-                parentGroupID: parentGroupID,
-                subconversationGroupID: subConversationGroupID
-            )
-        }.eraseToAnyPublisher()
+    ) -> AsyncStream<MLSConferenceInfo> {
+        var sequence = onEpochChanged()
+            .buffer(size: 1000, prefetch: .keepFull, whenFull: .dropOldest)
+            .filter({ $0.isOne(of: parentGroupID, subConversationGroupID) })
+            .values
+            .compactMap({ [weak self] _ in
+                try? await self?.generateConferenceInfo(
+                    parentGroupID: parentGroupID,
+                    subconversationGroupID: subConversationGroupID
+                )
+            }).makeAsyncIterator()
+
+        return AsyncStream {
+            await sequence.next()
+        }
     }
 
     // MARK: - Update key material

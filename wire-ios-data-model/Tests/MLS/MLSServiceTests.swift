@@ -179,7 +179,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     // MARK: - Conference info
 
-    func test_GenerateConferenceInfo_IsSuccessful() {
+    func test_GenerateConferenceInfo_IsSuccessful() async {
         do {
             // Given
             let parentGroupID = MLSGroupID.random()
@@ -224,7 +224,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             }
 
             // When
-            let conferenceInfo = try sut.generateConferenceInfo(
+            let conferenceInfo = try await sut.generateConferenceInfo(
                 parentGroupID: parentGroupID,
                 subconversationGroupID: subconversationGroupID
             )
@@ -252,7 +252,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     typealias ConferenceInfoError = MLSService.MLSConferenceInfoError
 
-    func test_GenerateConferenceInfo_Fails() {
+    func test_GenerateConferenceInfo_Fails() async {
         // Given
         let parentGroupID = MLSGroupID.random()
         let subconversationGroupID = MLSGroupID.random()
@@ -268,8 +268,8 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
 
         // When / Then
-        assertItThrows(error: ConferenceInfoError.failedToGenerateConferenceInfo) {
-            _ = try sut.generateConferenceInfo(
+        await assertItThrows(error: ConferenceInfoError.failedToGenerateConferenceInfo) {
+            _ = try await sut.generateConferenceInfo(
                 parentGroupID: parentGroupID,
                 subconversationGroupID: subconversationGroupID
             )
@@ -2386,26 +2386,26 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         XCTAssertEqual(receivedGroupIDs, [groupID1, groupID2, groupID3])
     }
 
-    func test_OnConferenceInfoChanged_WhenEpochChangesForParentConversation() throws {
+    func test_OnConferenceInfoChanged_WhenEpochChangesForParentConversation() async throws {
         // Given
         let parentGroupID = MLSGroupID.random()
         let subconversationGroupID = MLSGroupID.random()
 
         // When then
-        try assertConferenceInfoIsReceivedWhenEpochChanges(
+        try await assertConferenceInfoIsReceivedWhenEpochChanges(
             parentGroupID: parentGroupID,
             subconversationGroupID: subconversationGroupID,
             epochChangeSequence: .random(), .random(), parentGroupID
         )
     }
 
-    func test_OnConferenceInfoChanged_WhenEpochChangesForSubconversation() throws {
+    func test_OnConferenceInfoChanged_WhenEpochChangesForSubconversation() async throws {
         // Given
         let parentGroupID = MLSGroupID.random()
         let subconversationGroupID = MLSGroupID.random()
 
         // When then
-        try assertConferenceInfoIsReceivedWhenEpochChanges(
+        try await assertConferenceInfoIsReceivedWhenEpochChanges(
             parentGroupID: parentGroupID,
             subconversationGroupID: subconversationGroupID,
             epochChangeSequence: .random(), .random(), subconversationGroupID
@@ -2416,7 +2416,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         parentGroupID: MLSGroupID,
         subconversationGroupID: MLSGroupID,
         epochChangeSequence: MLSGroupID...
-    ) throws {
+    ) async throws {
         // Mock epoch changes
         let epochChangedFromDecryptionSerivce = PassthroughSubject<MLSGroupID, Never>()
         mockDecryptionService.onEpochChanged_MockValue = epochChangedFromDecryptionSerivce.eraseToAnyPublisher()
@@ -2446,15 +2446,10 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
 
         // Collect the received conference infos
-        var receivedConferenceInfos = [MLSConferenceInfo]()
-        let didReceiveConferenceInfos = expectation(description: "didReceiveConferenceInfos")
-        let cancellable = sut.onConferenceInfoChange(
+        let conferenceInfoChanges = sut.onConferenceInfoChange(
             parentGroupID: parentGroupID,
             subConversationGroupID: subconversationGroupID
-        ).collect(1).sink {
-            receivedConferenceInfos = $0
-            didReceiveConferenceInfos.fulfill()
-        }
+        )
 
         // When
         for groupID in epochChangeSequence {
@@ -2462,16 +2457,14 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
 
         // Then
-        XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
-        cancellable.cancel()
-
+        let receivedConferenceInfo = await conferenceInfoChanges.first(where: { _ in true })
         let expectedConferenceInfo = MLSConferenceInfo(
             epoch: epoch,
             keyData: key,
             members: [.init(id: clientID, isInSubconversation: true)]
         )
 
-        XCTAssertEqual(receivedConferenceInfos, [expectedConferenceInfo])
+        XCTAssertEqual(receivedConferenceInfo, expectedConferenceInfo)
     }
 
     // MARK: - Self group
