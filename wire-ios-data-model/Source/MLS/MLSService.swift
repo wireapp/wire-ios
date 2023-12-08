@@ -154,8 +154,8 @@ public final class MLSService: MLSServiceInterface {
         conversationEventProcessor: ConversationEventProcessorProtocol,
         userDefaults: UserDefaults,
         syncStatus: SyncStatusProtocol
-    ) async {
-        await self.init(
+    ) {
+        self.init(
             context: context,
             coreCrypto: coreCrypto,
             conversationEventProcessor: conversationEventProcessor,
@@ -182,7 +182,7 @@ public final class MLSService: MLSServiceInterface {
         delegate: MLSServiceDelegate? = nil,
         syncStatus: SyncStatusProtocol,
         subconversationGroupIDRepository: SubconversationGroupIDRepositoryInterface = SubconversationGroupIDRepository()
-    ) async {
+    ) {
         self.context = context
         self.coreCrypto = coreCrypto
         self.mlsActionExecutor = mlsActionExecutor ?? MLSActionExecutor(
@@ -212,10 +212,12 @@ public final class MLSService: MLSServiceInterface {
         }
 
         generateClientPublicKeysIfNeeded()
-        await uploadKeyPackagesIfNeeded()
-        fetchBackendPublicKeys()
-        updateKeyMaterialForAllStaleGroupsIfNeeded()
-        schedulePeriodicKeyMaterialUpdateCheck()
+        Task {
+            await uploadKeyPackagesIfNeeded()
+            await fetchBackendPublicKeys()
+            await updateKeyMaterialForAllStaleGroupsIfNeeded()
+            schedulePeriodicKeyMaterialUpdateCheck()
+        }
     }
 
     deinit {
@@ -249,20 +251,18 @@ public final class MLSService: MLSServiceInterface {
         context.saveOrRollback()
     }
 
-    private func fetchBackendPublicKeys() {
+    private func fetchBackendPublicKeys() async {
         logger.info("fetching backend public keys")
 
-        guard let notificationContext = context?.notificationContext else {
+        guard let notificationContext = await context?.perform({ self.context?.notificationContext}) else {
             logger.warn("can't fetch backend public keys: notification context is missing")
             return
         }
 
-        Task {
-            do {
-                backendPublicKeys = try await actionsProvider.fetchBackendPublicKeys(in: notificationContext)
-            } catch {
-                logger.warn("failed to fetch backend public keys: \(String(describing: error))")
-            }
+        do {
+            backendPublicKeys = try await actionsProvider.fetchBackendPublicKeys(in: notificationContext)
+        } catch {
+            logger.warn("failed to fetch backend public keys: \(String(describing: error))")
         }
     }
 
@@ -362,18 +362,19 @@ public final class MLSService: MLSServiceInterface {
             withTimeInterval: .oneDay,
             repeats: true
         ) { [weak self] _ in
-            self?.updateKeyMaterialForAllStaleGroupsIfNeeded()
+            guard let self else { return }
+            Task {
+                await self.updateKeyMaterialForAllStaleGroupsIfNeeded()
+            }
         }
     }
 
-    private func updateKeyMaterialForAllStaleGroupsIfNeeded() {
+    private func updateKeyMaterialForAllStaleGroupsIfNeeded() async {
         guard lastKeyMaterialUpdateCheck.ageInDays >= 1 else { return }
 
-        Task {
-            await updateKeyMaterialForAllStaleGroups()
-            lastKeyMaterialUpdateCheck = Date()
-            delegate?.mlsServiceDidUpdateKeyMaterialForAllGroups()
-        }
+        await updateKeyMaterialForAllStaleGroups()
+        lastKeyMaterialUpdateCheck = Date()
+        delegate?.mlsServiceDidUpdateKeyMaterialForAllGroups()
     }
 
     private func updateKeyMaterialForAllStaleGroups() async {

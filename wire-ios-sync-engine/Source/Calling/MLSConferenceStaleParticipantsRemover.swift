@@ -165,25 +165,18 @@ class MLSConferenceStaleParticipantsRemover: Subscriber {
     private func remove(
         client clientID: MLSClientID,
         from groupID: MLSGroupID
-    ) {
-        syncContext.perform { [weak self] in
-            guard let `self` = self else { return }
+    ) async {
+        do {
+            let subconversationMembers = try await mlsService.subconversationMembers(for: groupID)
 
-            Task {
-                do {
-                    let subconversationMembers = try await self.mlsService.subconversationMembers(for: groupID)
-
-                    guard subconversationMembers.contains(clientID) else {
-                        self.logger.info("didn't remove participant because they're not a part of the subconversation \(groupID.safeForLoggingDescription)")
-                        return
-                    }
-
-                    try await self.mlsService.removeMembersFromConversation(with: [clientID], for: groupID)
-                    self.logger.info("removed stale participant from subconversation (clientID: \(clientID), groupID: \(groupID.safeForLoggingDescription))")
-                } catch {
-                    self.logger.error("failed to remove stale participant from subconversation: \(String(describing: error))")
-                }
+            guard subconversationMembers.contains(clientID) else {
+                return logger.info("didn't remove participant because they're not a part of the subconversation \(groupID.safeForLoggingDescription)")
             }
+
+            try await mlsService.removeMembersFromConversation(with: [clientID], for: groupID)
+            logger.info("removed stale participant from subconversation (clientID: \(clientID), groupID: \(groupID.safeForLoggingDescription))")
+        } catch {
+            logger.error("failed to remove stale participant from subconversation: \(String(reflecting: error))")
         }
     }
 

@@ -457,7 +457,9 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
             didRetryUpdatingCapabilities = false
         } else if keysToParse.contains(UserClient.needsToUploadMLSPublicKeysKey), response.result == .success {
             userClient.needsToUploadMLSPublicKeys = false
-            userClient.managedObjectContext?.mlsService?.uploadKeyPackagesIfNeeded()
+            Task {
+                await userClient.managedObjectContext?.mlsService?.uploadKeyPackagesIfNeeded()
+            }
         }
 
         return false
