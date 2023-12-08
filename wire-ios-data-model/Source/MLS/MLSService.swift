@@ -144,6 +144,8 @@ public final class MLSService: MLSServiceInterface {
 
     private static let backendMessageHoldTimeInDays: UInt = 28
 
+    private static let epochChangeBufferSize: Int = 1000
+
     weak var delegate: MLSServiceDelegate?
 
     // MARK: - Life cycle
@@ -345,7 +347,7 @@ public final class MLSService: MLSServiceInterface {
         subConversationGroupID: MLSGroupID
     ) -> AsyncStream<MLSConferenceInfo> {
         var sequence = onEpochChanged()
-            .buffer(size: 1000, prefetch: .keepFull, whenFull: .dropOldest)
+            .buffer(size: Self.epochChangeBufferSize, prefetch: .keepFull, whenFull: .dropOldest)
             .filter({ $0.isOne(of: parentGroupID, subConversationGroupID) })
             .values
             .compactMap({ [weak self] _ in
