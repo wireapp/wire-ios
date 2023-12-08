@@ -71,6 +71,8 @@ class ZMUserSessionTestsBase: MessagingTest {
     override func tearDown() {
         clearCache()
 
+        WireCallCenterV3Factory.wireCallCenterClass = WireCallCenterV3.self
+
         self.baseURL = nil
         self.cookieStorage = nil
         self.validCookie = nil
