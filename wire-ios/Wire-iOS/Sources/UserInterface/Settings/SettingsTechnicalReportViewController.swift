@@ -165,18 +165,7 @@ extension SendTechnicalReportPresenter where Self: UIViewController {
         mailComposeViewController.setSubject(NSLocalizedString("self.settings.technical_report.mail.subject", comment: ""))
 
         if logsIncluded {
-            if let currentLog = ZMSLog.currentZipLog {
-                mailComposeViewController.addAttachmentData(currentLog, mimeType: "application/zip", fileName: "current.log.zip")
-            }
-
-            ZMSLog.previousZipLogURLs.forEach { url in
-                do {
-                    let data = try Data(contentsOf: url)
-                    mailComposeViewController.addAttachmentData(data, mimeType: "application/zip", fileName: url.lastPathComponent)
-                } catch {
-                    // ignore error for now, it's possible a file does not exist.
-                }
-            }
+            mailComposeViewController.attachLogs()
         }
         mailComposeViewController.setMessageBody("Debug report", isHTML: false)
         self.present(mailComposeViewController, animated: true, completion: nil)

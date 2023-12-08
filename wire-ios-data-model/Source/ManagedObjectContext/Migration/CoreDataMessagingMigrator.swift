@@ -54,8 +54,8 @@ extension CoreDataMessagingMigratorError: LocalizedError {
             return "failedToDestroyPersistentStore: \(storeURL)"
         }
     }
-
 }
+
 
 final class CoreDataMessagingMigrator: CoreDataMessagingMigratorProtocol {
 
