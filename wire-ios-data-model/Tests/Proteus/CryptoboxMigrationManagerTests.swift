@@ -19,7 +19,9 @@
 import Foundation
 import XCTest
 import WireTransport
+
 @testable import WireDataModel
+@testable import WireDataModelSupport
 
 class CryptoboxMigrationManagerTests: ZMBaseManagedObjectTest {
 

@@ -23,7 +23,7 @@ protocol ConversationServicesOptionsViewModelConfiguration: AnyObject {
     var allowServices: Bool { get }
     var areServicePresent: Bool { get }
     var allowServicesChangedHandler: ((Bool) -> Void)? { get set }
-    func setAllowServices(_ allowServices: Bool, completion: @escaping (VoidResult) -> Void)
+    func setAllowServices(_ allowServices: Bool, completion: @escaping (Swift.Result<Void, Error>) -> Void)
 }
 
 protocol ConversationServicesOptionsViewModelDelegate: AnyObject {

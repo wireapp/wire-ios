@@ -268,7 +268,7 @@ final class SelfUserLeftMatcher: ConversationStatusMatcher {
     }
 
     func description(with status: ConversationStatus, conversation: MatcherConversation) -> NSAttributedString? {
-        return "conversation.status.you_left".localized && type(of: self).regularStyle
+        return L10n.Localizable.Conversation.Status.youLeft && type(of: self).regularStyle
     }
 
     func icon(with status: ConversationStatus, conversation: MatcherConversation) -> ConversationStatusIcon? {
@@ -285,7 +285,7 @@ final class BlockedMatcher: ConversationStatusMatcher {
     }
 
     func description(with status: ConversationStatus, conversation: MatcherConversation) -> NSAttributedString? {
-        return "conversation.status.blocked".localized && type(of: self).regularStyle
+        return L10n.Localizable.Conversation.Status.blocked && type(of: self).regularStyle
     }
 
     var combinesWith: [ConversationStatusMatcher] = []
@@ -300,9 +300,9 @@ final class CallingMatcher: ConversationStatusMatcher {
     func description(with status: ConversationStatus, conversation: MatcherConversation) -> NSAttributedString? {
         if conversation.voiceChannel?.state.canJoinCall == true {
             if let callerDisplayName = conversation.voiceChannel?.initiator?.name {
-                return "conversation.status.incoming_call".localized(args: callerDisplayName) && type(of: self).regularStyle
+                return L10n.Localizable.Conversation.Status.incomingCall(callerDisplayName) && type(of: self).regularStyle
             } else {
-                return "conversation.status.incoming_call.someone".localized && type(of: self).regularStyle
+                return L10n.Localizable.Conversation.Status.someone && type(of: self).regularStyle
             }
         }
         return .none
@@ -356,7 +356,7 @@ final class SecurityAlertMatcher: ConversationStatusMatcher {
            let messageText = data.messageText {
             text = messageText
         } else {
-            text = "conversation.status.poll.default".localized
+            text = ""
         }
 
         return text && Swift.type(of: self).regularStyle
@@ -380,11 +380,11 @@ final class TypingMatcher: ConversationStatusMatcher {
         let statusString: NSAttributedString
         if status.isGroup {
             let typingUsersString = conversation.typingUsers.compactMap(\.name).joined(separator: ", ")
-            let resultString = String(format: "conversation.status.typing.group".localized, typingUsersString)
+            let resultString = L10n.Localizable.Conversation.Status.Typing.group(typingUsersString)
             let intermediateString = NSAttributedString(string: resultString, attributes: type(of: self).regularStyle)
             statusString = self.addEmphasis(to: intermediateString, for: typingUsersString)
         } else {
-            statusString = "conversation.status.typing".localized && type(of: self).regularStyle
+            statusString = L10n.Localizable.Conversation.Status.typing && type(of: self).regularStyle
         }
         return statusString
     }
@@ -607,7 +607,7 @@ final class FailedSendMatcher: ConversationStatusMatcher {
     }
 
     func description(with status: ConversationStatus, conversation: MatcherConversation) -> NSAttributedString? {
-        return "conversation.status.unsent".localized && type(of: self).regularStyle
+        return L10n.Localizable.Conversation.Status.unsent && type(of: self).regularStyle
     }
 
     var combinesWith: [ConversationStatusMatcher] = []
@@ -625,7 +625,7 @@ final class GroupActivityMatcher: TypedConversationStatusMatcher {
 
             if systemMessage.userTypes.contains(where: { ($0 as? UserType)?.isSelfUser == true }) {
                 let fullName = sender.name ?? ""
-                let result = String(format: "conversation.status.you_was_added".localized, fullName) && type(of: self).regularStyle
+                let result =  L10n.Localizable.Conversation.Status.youWasAdded(fullName) && type(of: self).regularStyle
                 return self.addEmphasis(to: result, for: fullName)
             }
         }
@@ -641,7 +641,7 @@ final class GroupActivityMatcher: TypedConversationStatusMatcher {
            !sender.isSelfUser {
 
             if systemMessage.userTypes.contains(where: { ($0 as? UserType)?.isSelfUser == true }) {
-                return "conversation.status.you_were_removed".localized && type(of: self).regularStyle
+                return L10n.Localizable.Conversation.Status.youWereRemoved && type(of: self).regularStyle
             }
         }
         return .none
@@ -684,7 +684,8 @@ final class StartConversationMatcher: TypedConversationStatusMatcher {
         }
 
         let senderString = sender.name ?? ""
-        let resultString = String(format: "conversation.status.started_conversation".localized, senderString)
+        let resultString = L10n.Localizable.Conversation.Status.startedConversation(senderString)
+
         return (resultString && type(of: self).regularStyle).addAttributes(type(of: self).emphasisStyle, toSubstring: senderString)
     }
 

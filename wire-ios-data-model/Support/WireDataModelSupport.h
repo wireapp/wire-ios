@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2023 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,21 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import UIKit
-import WireDataModel
+#import <Foundation/Foundation.h>
 
-extension UIAlertController {
+//! Project version number for WireDataModelSupport.
+FOUNDATION_EXPORT double WireDataModelSupportVersionNumber;
 
-    static func remove(_ user: UserType, completion: @escaping (Bool) -> Void) -> UIAlertController {
-        let controller = UIAlertController(
-            title: L10n.Localizable.Profile.removeDialogMessage(user.name ?? ""),
-            message: nil,
-            preferredStyle: .actionSheet
-        )
+//! Project version string for WireDataModelSupport.
+FOUNDATION_EXPORT const unsigned char WireDataModelSupportVersionString[];
 
-        controller.addAction(ZMConversation.Action.remove.alertAction { completion(true) })
-        controller.addAction(.cancel { completion(false) })
-        return controller
-    }
-}
+// In this header, you should import all the public headers of your framework using statements like #import <WireDataModelSupport/PublicHeader.h>
+
+
