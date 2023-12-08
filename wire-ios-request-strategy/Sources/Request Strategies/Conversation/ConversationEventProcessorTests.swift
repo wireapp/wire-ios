@@ -394,9 +394,7 @@ class ConversationEventProcessorTests: MessagingTestBase {
             groupConversation.lastServerTimeStamp = event.timestamp
         }
         // WHEN
-        self.disableZMLogError(true)
         await self.sut.processConversationEvents([event])
-        self.disableZMLogError(false)
 
         await self.syncMOC.perform {
             // THEN
