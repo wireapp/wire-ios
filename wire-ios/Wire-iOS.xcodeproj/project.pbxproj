@@ -236,6 +236,7 @@
 		1EFB23DC1ACEDE5400244571 /* Localizable.stringsdict in Resources */ = {isa = PBXBuildFile; fileRef = 1EFB23DE1ACEDE5400244571 /* Localizable.stringsdict */; };
 		252A83892B1E4CD100AB98C0 /* MockE2eIdentityProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 252A83882B1E4CD100AB98C0 /* MockE2eIdentityProvider.swift */; };
 		25644D8B2B21D1CD007DA01F /* E2EIdentityCertificateDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25644D8A2B21D1CD007DA01F /* E2EIdentityCertificateDetailsView.swift */; };
+		25644D8E2B2228BC007DA01F /* E2eIdentityCertificateViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25644D8C2B222892007DA01F /* E2eIdentityCertificateViewTests.swift */; };
 		2572EC552B148EE50075A7BE /* DeviceInfoViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2572EC472B148EE50075A7BE /* DeviceInfoViewModel.swift */; };
 		2572EC562B148EE50075A7BE /* DeviceDetailsProteusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2572EC492B148EE50075A7BE /* DeviceDetailsProteusView.swift */; };
 		2572EC572B148EE50075A7BE /* DeviceDetailsButtonsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2572EC4A2B148EE50075A7BE /* DeviceDetailsButtonsView.swift */; };
@@ -2215,6 +2216,7 @@
 		1EFB23DD1ACEDE5400244571 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = Base; path = Base.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
 		252A83882B1E4CD100AB98C0 /* MockE2eIdentityProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockE2eIdentityProvider.swift; sourceTree = "<group>"; };
 		25644D8A2B21D1CD007DA01F /* E2EIdentityCertificateDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = E2EIdentityCertificateDetailsView.swift; sourceTree = "<group>"; };
+		25644D8C2B222892007DA01F /* E2eIdentityCertificateViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = E2eIdentityCertificateViewTests.swift; sourceTree = "<group>"; };
 		2572EC472B148EE50075A7BE /* DeviceInfoViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeviceInfoViewModel.swift; sourceTree = "<group>"; };
 		2572EC492B148EE50075A7BE /* DeviceDetailsProteusView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeviceDetailsProteusView.swift; sourceTree = "<group>"; };
 		2572EC4A2B148EE50075A7BE /* DeviceDetailsButtonsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeviceDetailsButtonsView.swift; sourceTree = "<group>"; };
@@ -7815,6 +7817,7 @@
 				EF27CD9D20C161500077FE55 /* ClientListViewControllerTests.swift */,
 				EF98987120C5A47A005680C5 /* DeviceDetailsViewTests.swift */,
 				252A83882B1E4CD100AB98C0 /* MockE2eIdentityProvider.swift */,
+				25644D8C2B222892007DA01F /* E2eIdentityCertificateViewTests.swift */,
 			);
 			path = DeviceManagement;
 			sourceTree = "<group>";
@@ -9994,6 +9997,7 @@
 				639A8F3A26DE42AF0080B8FE /* CallStatusViewInputTypeTests.swift in Sources */,
 				EF1FCE5021B69381003E0BE2 /* ReadReceiptViewModelTests.swift in Sources */,
 				EF4478522090BF8700BD9827 /* FullscreenImageViewControllerTests.swift in Sources */,
+				25644D8E2B2228BC007DA01F /* E2eIdentityCertificateViewTests.swift in Sources */,
 				F127BD571E262E9F0093B2F1 /* CollectionsViewControllerTests.swift in Sources */,
 				EF4172AF210F5E9F00FF85C7 /* FullscreenImageViewControllerSnapshotTests.swift in Sources */,
 				1651F9C01D36789C00A9FAE8 /* Message+FormattingTests.swift in Sources */,
