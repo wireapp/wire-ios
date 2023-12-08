@@ -136,9 +136,13 @@ class BaseTest: ZMTBaseTest {
 
         mockCryptoboxMigrationManager = MockCryptoboxMigrationManagerInterface()
         mockCryptoboxMigrationManager.isMigrationNeededAccountDirectory_MockValue = false
-        mockCryptoboxMigrationManager.completeMigrationSyncContext_MockMethod = { _ in }
 
         mockEARService = MockEARServiceInterface()
+        mockEARService.enableEncryptionAtRestContextSkipMigration_MockMethod = { _, _ in }
+        mockEARService.disableEncryptionAtRestContextSkipMigration_MockMethod = { _, _ in }
+        mockEARService.unlockDatabaseContext_MockMethod = { _ in }
+        mockEARService.lockDatabase_MockMethod = { }
+
         mockProteusService = MockProteusServiceInterface()
         mockMLSDecryptionService = MockMLSDecryptionServiceInterface()
 
@@ -166,6 +170,11 @@ class BaseTest: ZMTBaseTest {
     }
 
     func createSharingSession() throws -> SharingSession {
+        let earService = EARService(
+            accountID: accountIdentifier,
+            databaseContexts: [coreDataStack.viewContext, coreDataStack.syncContext],
+            sharedUserDefaults: sharedUserDefaults
+        )
         return try SharingSession(
             accountIdentifier: accountIdentifier,
             coreDataStack: coreDataStack,
@@ -178,7 +187,7 @@ class BaseTest: ZMTBaseTest {
             strategyFactory: strategyFactory,
             appLockConfig: AppLockController.LegacyConfig(),
             cryptoboxMigrationManager: mockCryptoboxMigrationManager,
-            earService: mockEARService,
+            earService: earService,
             proteusService: mockProteusService,
             mlsDecryptionService: mockMLSDecryptionService,
             sharedUserDefaults: .random()!

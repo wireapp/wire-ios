@@ -123,7 +123,6 @@ class BaseTest: ZMTBaseTest {
 
         mockCryptoboxMigrationManager = MockCryptoboxMigrationManagerInterface()
         mockCryptoboxMigrationManager.isMigrationNeededAccountDirectory_MockValue = false
-        mockCryptoboxMigrationManager.completeMigrationSyncContext_MockMethod = { _ in }
 
         mockEARService = MockEARServiceInterface()
         mockProteusService = MockProteusServiceInterface()
