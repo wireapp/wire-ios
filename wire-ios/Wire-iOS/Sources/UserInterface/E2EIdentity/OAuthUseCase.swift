@@ -74,7 +74,7 @@ public class OAuthUseCase: OAuthUseCaseInterface {
     }
 
     private func execute(authorizationRequest: OIDAuthorizationRequest) async throws -> IdToken {
-        guard let userAgen = OIDExternalUserAgentIOS(presenting: rootViewController) else {
+        guard let userAgent = OIDExternalUserAgentIOS(presenting: rootViewController) else {
             throw OAuthError.missingOIDExternalUserAgen
         }
 
