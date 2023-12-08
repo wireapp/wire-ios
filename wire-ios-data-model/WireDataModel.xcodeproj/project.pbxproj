@@ -28,6 +28,7 @@
 		0612D241243DC134008811A7 /* store2-81-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = 0612D240243DC12E008811A7 /* store2-81-0.wiredatabase */; };
 		0614E96D2A863EED007BB1F6 /* NSPredicate+BaseCompounds.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0614E96C2A863EED007BB1F6 /* NSPredicate+BaseCompounds.swift */; };
 		0617001323E2FC14005C262D /* GenericMessageTests+LinkMetaData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0617001123E2FBC0005C262D /* GenericMessageTests+LinkMetaData.swift */; };
+		062C0D332B2280AA00848A48 /* Feature.E2EId.swift in Sources */ = {isa = PBXBuildFile; fileRef = 062C0D322B2280AA00848A48 /* Feature.E2EId.swift */; };
 		062FD8852756053800B9DE39 /* Feature.ConversationGuestLinks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 062FD8842756053800B9DE39 /* Feature.ConversationGuestLinks.swift */; };
 		0630E17726E0F3570012E2F9 /* store2-95-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = 0630E17626E0F3570012E2F9 /* store2-95-0.wiredatabase */; };
 		0630E4B6257F888600C75BFB /* NSManagedObjectContext+AppLock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0630E4B5257F888600C75BFB /* NSManagedObjectContext+AppLock.swift */; };
@@ -838,6 +839,7 @@
 		0612D240243DC12E008811A7 /* store2-81-0.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; path = "store2-81-0.wiredatabase"; sourceTree = "<group>"; };
 		0614E96C2A863EED007BB1F6 /* NSPredicate+BaseCompounds.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSPredicate+BaseCompounds.swift"; sourceTree = "<group>"; };
 		0617001123E2FBC0005C262D /* GenericMessageTests+LinkMetaData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GenericMessageTests+LinkMetaData.swift"; sourceTree = "<group>"; };
+		062C0D322B2280AA00848A48 /* Feature.E2EId.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Feature.E2EId.swift; sourceTree = "<group>"; };
 		062FD8842756053800B9DE39 /* Feature.ConversationGuestLinks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Feature.ConversationGuestLinks.swift; sourceTree = "<group>"; };
 		0630E17626E0F3570012E2F9 /* store2-95-0.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; path = "store2-95-0.wiredatabase"; sourceTree = "<group>"; };
 		0630E4B5257F888600C75BFB /* NSManagedObjectContext+AppLock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSManagedObjectContext+AppLock.swift"; sourceTree = "<group>"; };
@@ -1710,6 +1712,14 @@
 			path = FileSharing;
 			sourceTree = "<group>";
 		};
+		062C0D312B22809000848A48 /* E2EId */ = {
+			isa = PBXGroup;
+			children = (
+				062C0D322B2280AA00848A48 /* Feature.E2EId.swift */,
+			);
+			path = E2EId;
+			sourceTree = "<group>";
+		};
 		062FD8832756051000B9DE39 /* ConversationGuestLinks */ = {
 			isa = PBXGroup;
 			children = (
@@ -1871,6 +1881,7 @@
 				EEB5DE08283784DF009B4741 /* DigitalSignature */,
 				06034B6B26A8D31F003624B4 /* FileSharing */,
 				EEB803A9283F61CE00412F62 /* MLS */,
+				062C0D312B22809000848A48 /* E2EId */,
 				EECA830126EF34FB0087ECB0 /* SelfDeletingMessages */,
 				EE9AD9152696F01700DD5F51 /* FeatureRepository.swift */,
 				064F8E07255E04800040371D /* Feature.swift */,
@@ -3881,6 +3892,7 @@
 				F9B71F2D1CB264EF001DB03F /* ZMConversation+UnreadCount.m in Sources */,
 				54D7B83F1E12774600C1B347 /* NSPersistentStore+Metadata.swift in Sources */,
 				BFCD8A2D1DCB4E8A00C6FCCF /* V2Asset.swift in Sources */,
+				062C0D332B2280AA00848A48 /* Feature.E2EId.swift in Sources */,
 				F9A706B41CAEE01D00C2F5FE /* ObjectChangeInfo.swift in Sources */,
 				63B1335E29A503D100009D84 /* BackendMLSPublicKeys.swift in Sources */,
 				F9A706AA1CAEE01D00C2F5FE /* KeySet.swift in Sources */,

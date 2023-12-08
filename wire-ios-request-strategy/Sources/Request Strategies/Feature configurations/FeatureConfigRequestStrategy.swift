@@ -124,6 +124,10 @@ extension FeatureConfigRequestStrategy: ZMEventConsumer {
         case .mls:
             let response = try decoder.decode(FeatureStatusWithConfig<Feature.MLS.Config>.self, from: data)
             featureRepository.storeMLS(.init(status: response.status, config: response.config))
+
+        case .e2ei:
+            let response = try decoder.decode(FeatureStatusWithConfig<Feature.E2EId.Config>.self, from: data)
+            featureRepository.storeE2EId(.init(status: response.status, config: response.config))
         }
     }
 

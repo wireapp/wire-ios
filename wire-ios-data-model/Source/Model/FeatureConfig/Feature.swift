@@ -40,6 +40,7 @@ public class Feature: ZMManagedObject {
         case classifiedDomains
         case digitalSignature
         case mls
+        case e2ei
 
     }
 
@@ -217,6 +218,9 @@ public class Feature: ZMManagedObject {
             needsToNotifyUser = oldConfig.enforcedTimeoutSeconds != newConfig.enforcedTimeoutSeconds
 
         case .conferenceCalling, .fileSharing, .conversationGuestLinks, .classifiedDomains, .digitalSignature, .mls:
+            break
+        case .e2ei:
+            /// TODO: in the next PR
             break
         }
     }

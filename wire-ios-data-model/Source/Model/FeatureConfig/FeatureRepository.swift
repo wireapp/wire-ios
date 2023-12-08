@@ -21,24 +21,26 @@ import Foundation
 // sourcery: AutoMockable
 public protocol FeatureRepositoryInterface {
 
-     func fetchAppLock() -> Feature.AppLock
-     func storeAppLock(_ appLock: Feature.AppLock)
-     func fetchConferenceCalling() -> Feature.ConferenceCalling
-     func storeConferenceCalling(_ conferenceCalling: Feature.ConferenceCalling)
-     func fetchFileSharing() -> Feature.FileSharing
-     func storeFileSharing(_ fileSharing: Feature.FileSharing)
-     func fetchSelfDeletingMesssages() -> Feature.SelfDeletingMessages
-     func storeSelfDeletingMessages(_ selfDeletingMessages: Feature.SelfDeletingMessages)
-     func fetchConversationGuestLinks() -> Feature.ConversationGuestLinks
-     func storeConversationGuestLinks(_ conversationGuestLinks: Feature.ConversationGuestLinks)
-     func fetchClassifiedDomains() -> Feature.ClassifiedDomains
-     func storeClassifiedDomains(_ classifiedDomains: Feature.ClassifiedDomains)
-     func fetchDigitalSignature() -> Feature.DigitalSignature
-     func storeDigitalSignature(_ digitalSignature: Feature.DigitalSignature)
-     func fetchMLS() -> Feature.MLS
-     func storeMLS(_ mls: Feature.MLS)
+    func fetchAppLock() -> Feature.AppLock
+    func storeAppLock(_ appLock: Feature.AppLock)
+    func fetchConferenceCalling() -> Feature.ConferenceCalling
+    func storeConferenceCalling(_ conferenceCalling: Feature.ConferenceCalling)
+    func fetchFileSharing() -> Feature.FileSharing
+    func storeFileSharing(_ fileSharing: Feature.FileSharing)
+    func fetchSelfDeletingMesssages() -> Feature.SelfDeletingMessages
+    func storeSelfDeletingMessages(_ selfDeletingMessages: Feature.SelfDeletingMessages)
+    func fetchConversationGuestLinks() -> Feature.ConversationGuestLinks
+    func storeConversationGuestLinks(_ conversationGuestLinks: Feature.ConversationGuestLinks)
+    func fetchClassifiedDomains() -> Feature.ClassifiedDomains
+    func storeClassifiedDomains(_ classifiedDomains: Feature.ClassifiedDomains)
+    func fetchDigitalSignature() -> Feature.DigitalSignature
+    func storeDigitalSignature(_ digitalSignature: Feature.DigitalSignature)
+    func fetchMLS() -> Feature.MLS
+    func storeMLS(_ mls: Feature.MLS)
+    func fetchE2EId() -> Feature.E2EId
+    func storeE2EId(_ e2eid: Feature.E2EId)
 
- }
+}
 
 /// This class facilitates storage and retrieval of feature configs to and from
 /// the database.
@@ -252,6 +254,29 @@ public class FeatureRepository: FeatureRepositoryInterface {
         }
     }
 
+    // MARK: - E2EId
+
+    public func fetchE2EId() -> Feature.E2EId {
+        guard
+            let feature = Feature.fetch(name: .e2ei, context: context),
+            let featureConfig = feature.config
+        else {
+            return .init()
+        }
+
+        let config = try! JSONDecoder().decode(Feature.E2EId.Config.self, from: featureConfig)
+        return .init(status: feature.status, config: config)
+    }
+
+    public func storeE2EId(_ e2eid: Feature.E2EId) {
+        let config = try! JSONEncoder().encode(e2eid.config)
+
+        Feature.updateOrCreate(havingName: .e2ei, in: context) {
+            $0.status = e2eid.status
+            $0.config = config
+        }
+    }
+
     // MARK: - Methods
 
     func createDefaultConfigsIfNeeded() {
@@ -280,6 +305,9 @@ public class FeatureRepository: FeatureRepositoryInterface {
 
             case .mls:
                 storeMLS(.init())
+
+            case .e2ei:
+                storeE2EId(.init())
             }
         }
     }

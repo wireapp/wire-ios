@@ -127,6 +127,11 @@ public class ZMUserSession: NSObject {
         return featureRepository.fetchClassifiedDomains()
     }
 
+    public var e2eiFeature: Feature.E2EId {
+        let featureRepository = FeatureRepository(context: coreDataStack.viewContext)
+        return featureRepository.fetchE2EId()
+    }
+
     public var hasCompletedInitialSync: Bool = false
 
     public var topConversationsDirectory: TopConversationsDirectory
@@ -249,7 +254,11 @@ public class ZMUserSession: NSObject {
     }()
 
     public lazy var enrollE2eICertificate: EnrollE2eICertificateUseCaseInterface? = {
-        let acmeApi = AcmeAPI()
+        let acmeDiscoveryPath = e2eiFeature.config.acmeDiscoveryUrl
+        guard let acmeDirectory = URL(string: acmeDiscoveryPath) else {
+            return nil
+        }
+        let acmeApi = AcmeAPI(acmeDirectory: acmeDirectory)
         let httpClient = HttpClientImpl(
             transportSession: transportSession,
             queue: syncContext)
