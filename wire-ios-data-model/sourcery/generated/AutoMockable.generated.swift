@@ -1190,6 +1190,83 @@ public class MockMLSEncryptionServiceInterface: MLSEncryptionServiceInterface {
     }
 
 }
+public class MockOneOnOneMigratorInterface: OneOnOneMigratorInterface {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - migrateToMLS
+
+    public var migrateToMLSUserIDIn_Invocations: [(userID: QualifiedID, context: NSManagedObjectContext)] = []
+    public var migrateToMLSUserIDIn_MockError: Error?
+    public var migrateToMLSUserIDIn_MockMethod: ((QualifiedID, NSManagedObjectContext) async throws -> Void)?
+
+    public func migrateToMLS(userID: QualifiedID, in context: NSManagedObjectContext) async throws {
+        migrateToMLSUserIDIn_Invocations.append((userID: userID, context: context))
+
+        if let error = migrateToMLSUserIDIn_MockError {
+            throw error
+        }
+
+        guard let mock = migrateToMLSUserIDIn_MockMethod else {
+            fatalError("no mock for `migrateToMLSUserIDIn`")
+        }
+
+        try await mock(userID, context)            
+    }
+
+}
+public class MockOneOnOneProtocolSelectorInterface: OneOnOneProtocolSelectorInterface {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - getProtocolForUser
+
+    public var getProtocolForUserWithIn_Invocations: [(id: QualifiedID, context: NSManagedObjectContext)] = []
+    public var getProtocolForUserWithIn_MockMethod: ((QualifiedID, NSManagedObjectContext) -> MessageProtocol?)?
+    public var getProtocolForUserWithIn_MockValue: MessageProtocol??
+
+    public func getProtocolForUser(with id: QualifiedID, in context: NSManagedObjectContext) -> MessageProtocol? {
+        getProtocolForUserWithIn_Invocations.append((id: id, context: context))
+
+        if let mock = getProtocolForUserWithIn_MockMethod {
+            return mock(id, context)
+        } else if let mock = getProtocolForUserWithIn_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `getProtocolForUserWithIn`")
+        }
+    }
+
+}
+public class MockOneOnOneResolverInterface: OneOnOneResolverInterface {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - resolveOneOnOneConversation
+
+    public var resolveOneOnOneConversationWithInCompletion_Invocations: [(userID: QualifiedID, context: NSManagedObjectContext, completion: (Swift.Result<Void, Error>) -> Void)] = []
+    public var resolveOneOnOneConversationWithInCompletion_MockMethod: ((QualifiedID, NSManagedObjectContext, @escaping (Swift.Result<Void, Error>) -> Void) -> Void)?
+
+    public func resolveOneOnOneConversation(with userID: QualifiedID, in context: NSManagedObjectContext, completion: @escaping (Swift.Result<Void, Error>) -> Void) {
+        resolveOneOnOneConversationWithInCompletion_Invocations.append((userID: userID, context: context, completion: completion))
+
+        guard let mock = resolveOneOnOneConversationWithInCompletion_MockMethod else {
+            fatalError("no mock for `resolveOneOnOneConversationWithInCompletion`")
+        }
+
+        mock(userID, context, completion)            
+    }
+
+}
 public class MockProteusServiceInterface: ProteusServiceInterface {
 
     // MARK: - Life cycle

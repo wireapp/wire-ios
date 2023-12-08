@@ -661,50 +661,6 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
         }
     }
 
-    func testUpdateOrCreateConversation_OneToOne_SwitchesToMLS() throws {
-        try syncMOC.performAndWait {
-            // Given
-            let selfUser = ZMUser.selfUser(in: syncMOC)
-            let selfUserID = try XCTUnwrap(selfUser.qualifiedID)
-            let otherUserID = try XCTUnwrap(otherUser.qualifiedID)
-
-            // An existing connection via proteus
-            let connection = try XCTUnwrap(otherUser?.connection)
-            let proteusConversation = try XCTUnwrap(connection.conversation)
-            proteusConversation.remoteIdentifier = .create()
-            proteusConversation.domain = self.owningDomain
-            proteusConversation.messageProtocol = .proteus
-
-            // A payload for mls one to one.
-            let selfMember = Payload.ConversationMember(qualifiedID: selfUserID)
-            let otherMember = Payload.ConversationMember(qualifiedID: otherUserID)
-            let payload = Payload.Conversation(
-                qualifiedID: QualifiedID(uuid: .create(), domain: self.owningDomain),
-                type: BackendConversationType.oneOnOne.rawValue,
-                members: Payload.ConversationMembers(
-                    selfMember: selfMember,
-                    others: [otherMember]
-                ),
-                messageProtocol: "mls",
-                mlsGroupID: MLSGroupID.random().base64EncodedString,
-                epoch: 0
-            )
-
-            // When
-            self.sut.updateOrCreateConversation(
-                from: payload,
-                in: self.syncMOC
-            )
-
-            // Then
-            XCTAssertEqual(proteusConversation.conversationType, .invalid)
-
-            let activeConversation = try XCTUnwrap(connection.conversation)
-            XCTAssertEqual(activeConversation.messageProtocol, .mls)
-            XCTAssertEqual(activeConversation.conversationType, .oneOnOne)
-        }
-    }
-
     // MARK: Self conversation
 
     func testUpdateOrCreateConversation_Self_CreatesConversation() throws {

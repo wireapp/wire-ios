@@ -24,11 +24,6 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
 
     func uploadKeyPackagesIfNeeded()
 
-    func establishOneToOneGroupIfNeeded(
-        with userID: QualifiedID,
-        in context: NSManagedObjectContext
-    ) async throws -> MLSGroupID
-
     func createSelfGroup(for groupID: MLSGroupID)
 
     func joinGroup(with groupID: MLSGroupID) async throws
@@ -409,46 +404,6 @@ public final class MLSService: MLSServiceInterface {
             Logging.mls.warn("failed to update key material for group (\(groupID.safeForLoggingDescription)): \(String(describing: error))")
             throw error
         }
-    }
-
-    // MARK: - 1:1 conversations
-
-    public func establishOneToOneGroupIfNeeded(
-        with userID: QualifiedID,
-        in context: NSManagedObjectContext
-    ) async throws -> MLSGroupID {
-        WireLogger.mls.debug("establishing one to one if needed")
-
-        let mlsGroupID = try await fetchOneToOne(
-            with: userID,
-            in: context
-        )
-
-        let groupExists = coreCrypto.perform {
-            $0.conversationExists(conversationId: mlsGroupID.bytes)
-        }
-
-        guard !groupExists else {
-            return mlsGroupID
-        }
-
-        try createGroup(for: mlsGroupID)
-        try await addMembersToConversation(with: [MLSUser(userID)], for: mlsGroupID)
-        return mlsGroupID
-    }
-
-    private func fetchOneToOne(
-        with userID: QualifiedID,
-        in context: NSManagedObjectContext
-    ) async throws -> MLSGroupID {
-        WireLogger.mls.debug("syncing mls one to one")
-
-        var action = SyncMLSOneToOneConversationAction(
-            userID: userID.uuid,
-            domain: userID.domain
-        )
-
-        return try await action.perform(in: context.notificationContext)
     }
 
     // MARK: - Group creation

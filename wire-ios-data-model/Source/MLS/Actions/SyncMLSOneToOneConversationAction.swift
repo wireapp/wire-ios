@@ -48,6 +48,6 @@ public enum SyncMLSOneToOneConversationActionError: Error, Equatable {
     case failedToProcessResponse
     case mlsNotEnabled
     case usersNotConnected
-    case unknownn(status: Int, label: String, message: String)
+    case unknown(status: Int, label: String, message: String)
 
 }
