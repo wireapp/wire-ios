@@ -84,6 +84,10 @@ public class NotificationSession {
 
     }
 
+    private enum Constant {
+        static let maxCoreDataSetupWaitingSeconds: Int = 5
+    }
+
     // MARK: - Properties
 
     /// Directory of all application statuses.
@@ -145,6 +149,9 @@ public class NotificationSession {
             throw InitializationError.coreDataMigrationRequired
         }
 
+        let dispatchGroup = DispatchGroup()
+        dispatchGroup.enter()
+
         var coreDataStackError: Error?
         coreDataStack.loadStores { error in
             coreDataStackError = error
@@ -152,7 +159,11 @@ public class NotificationSession {
             if let error = error {
                 WireLogger.notifications.error("Loading coreDataStack with error: \(error.localizedDescription)")
             }
+
+            dispatchGroup.leave()
         }
+        _ = dispatchGroup.wait(timeout: .now() + .seconds(Constant.maxCoreDataSetupWaitingSeconds))
+        
         guard coreDataStackError == nil else {
             throw InitializationError.coreDataMissingSharedContainer
         }
