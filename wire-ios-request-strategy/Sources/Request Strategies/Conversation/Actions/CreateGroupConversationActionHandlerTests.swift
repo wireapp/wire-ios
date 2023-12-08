@@ -33,6 +33,7 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
     var teamID: UUID!
     var user1ID: QualifiedID!
     var user2ID: QualifiedID!
+    var mlsService: MockMLSServiceInterface!
 
     var expectedRequestPayload: RequestPayload!
     var successResponsePayloadProteus: ResponsePayload!
@@ -40,7 +41,8 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
 
     override func setUp() {
         super.setUp()
-        sut = CreateGroupConversationActionHandler(context: syncMOC)
+        mlsService = MockMLSServiceInterface()
+        sut = CreateGroupConversationActionHandler(context: syncMOC, mlsService: mlsService)
         conversationID = .randomID()
         mlsGroupID = MLSGroupID([1, 2, 3])
         teamID = .create()
@@ -103,6 +105,7 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
     }
 
     override func tearDown() {
+        mlsService = nil
         sut = nil
         conversationID = nil
         mlsGroupID = nil
@@ -309,7 +312,7 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
             // Given
             BackendInfo.apiVersion = .v2
             action = createAction()
-            let mlsService = MockMLSServiceInterface()
+            handler = sut
             mlsService.conversationExistsGroupID_MockMethod = { _ in false }
             mlsService.createGroupFor_MockMethod = { _ in }
             mlsService.addMembersToConversationWithFor_MockMethod = { _, _ in }
@@ -339,6 +342,7 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
     func test_HandleResponse_Failures() throws {
         // Given
         action = createAction()
+        handler = sut
 
         // Then
         test_itHandlesFailures([
@@ -374,6 +378,7 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
                 teamID: teamID,
                 isReadReceiptsEnabled: true
             )
+            handler = sut
 
             let isDone = self.expectation(description: "isDone")
 
@@ -428,6 +433,7 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
                 teamID: teamID,
                 isReadReceiptsEnabled: true
             )
+            handler = sut
 
             let isDone = self.expectation(description: "isDone")
 
