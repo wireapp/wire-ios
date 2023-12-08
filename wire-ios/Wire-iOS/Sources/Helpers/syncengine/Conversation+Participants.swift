@@ -54,7 +54,7 @@ extension ZMConversation {
         }
     }
 
-    func removeOrShowError(participant user: UserType, completion: ((VoidResult) -> Void)? = nil) {
+    func removeOrShowError(participant user: UserType, completion: ((Swift.Result<Void, Error>) -> Void)? = nil) {
         guard let session = ZMUserSession.shared(),
             session.networkState != .offline else {
             self.showAlertForRemoval(for: NetworkError.offline)
@@ -67,7 +67,7 @@ extension ZMConversation {
                 if let serviceUser = user as? ServiceUser, user.isServiceUser {
                     Analytics.shared.tagDidRemoveService(serviceUser)
                 }
-                completion?(.success)
+                completion?(.success(()))
             case .failure(let error):
                 self.showAlertForRemoval(for: error)
                 completion?(.failure(error))
