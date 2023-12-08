@@ -44,9 +44,14 @@ public struct CreateTeamOneOnOneConversationUseCase: CreateTeamOneOnOneConversat
     typealias Completion = (Swift.Result<ZMConversation, CreateTeamOneOnOneConversationError>) -> Void
 
     private let viewContext: NSManagedObjectContext
+    private let oneOnOneResolver: OneOnOneResolverInterface
 
-    init(viewContext: NSManagedObjectContext) {
+    init(
+        viewContext: NSManagedObjectContext,
+        oneOnOneResolver: OneOnOneResolverInterface
+    ) {
         self.viewContext = viewContext
+        self.oneOnOneResolver = oneOnOneResolver
     }
 
     public func invoke(
@@ -76,27 +81,64 @@ public struct CreateTeamOneOnOneConversationUseCase: CreateTeamOneOnOneConversat
             domain: userDomain
         )
 
-        resolveMessageProtocol(with: qualifiedID) {
+        // 1. We should probably check if we need to do this on the
+        // sync context rather than the view context.
+
+        // 2. We can use this resolver now, but we may need to make some
+        // slight changes. For instance, we probably need to fetch the
+        // other users supported protocols before resolving, we could
+        // do it inside the resolver as the first step.
+
+        // 3. The specs say we should fetch the mls one on one and create
+        // it locally, but delay establishing the group via core crypto and
+        // adding the other user until we send the first message (so the other
+        // user only sees the 1-1 with a new message). Android didn't do this yet
+        // and it's a nice to have. For now we can ignore that and just create
+        // and establish the group in one step here via the resolver.
+
+        oneOnOneResolver.resolveOneOnOneConversation(
+            with: qualifiedID,
+            in: viewContext
+        ) {
             switch $0 {
-            case nil:
-                createReadOnlyProteusConversation(
-                    with: user,
-                    completion: completion
-                )
+            case .success:
+                // 4. The completion expects a ZMConversation, so we may
+                // need to return a conversation id or object id in the
+                // success case and fetch it from the view context.
+                break
 
-            case .proteus?:
-                createProteusConversation(
-                    with: user,
-                    completion: completion
-                )
-
-            case .mls?:
-                createMLSConversation(
-                    with: user,
-                    completion: completion
-                )
+            case .failure(let error):
+                // 5. The completion expects an `CreateTeamOneOnOneConversationError`
+                // so we need to map or wrap `error`.
+                break
             }
         }
+
+        // 6. This is what I did before creating the resolver. I
+        // leave it here just for reference but we should try
+        // to replace it with the resolver.
+
+//        resolveMessageProtocol(with: qualifiedID) {
+//            switch $0 {
+//            case nil:
+//                createReadOnlyProteusConversation(
+//                    with: user,
+//                    completion: completion
+//                )
+//
+//            case .proteus?:
+//                createProteusConversation(
+//                    with: user,
+//                    completion: completion
+//                )
+//
+//            case .mls?:
+//                createMLSConversation(
+//                    with: user,
+//                    completion: completion
+//                )
+//            }
+//        }
     }
 
     // MARK: - Helpers

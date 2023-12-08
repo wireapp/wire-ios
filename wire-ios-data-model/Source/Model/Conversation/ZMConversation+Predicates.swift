@@ -194,6 +194,11 @@ extension ZMConversation {
     }
 
     private class func isValidOneOnOne() -> NSPredicate {
+        // TODO: we need to update these conditions to consider team one on ones, which don't
+        // have any connection. If we replace `ZMConnection.conversation` with
+        // `ZMUser.oneOnOneConversation` (with inverse `ZMConversation.oneOnOneUser`) then
+        // we can define a valid one on one as any conversation of type `oneOnOne` and
+        // `oneOnOneUser != nil`. See the comment in `OneOnOneMigrator` for more context.
         let isOneOneOne = NSPredicate(format: "\(ZMConversationConversationTypeKey) == \(ZMConversationType.oneOnOne.rawValue)")
         let isConnectionAccepted = NSPredicate(format: "\(ZMConversationConnectionKey).status == \(ZMConnectionStatus.accepted.rawValue)")
         return .all(of: [isOneOneOne, isConnectionAccepted])

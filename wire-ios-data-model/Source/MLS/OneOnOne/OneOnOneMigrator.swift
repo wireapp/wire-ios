@@ -129,6 +129,21 @@ public final class OneOnOneMigrator: OneOnOneMigratorInterface {
             throw MigrateMLSOneOnOneConversationError.failedToActivateConversation
         }
 
+        // TODO: This only works for one on ones with people outside your team.
+        // MLS one on ones with people from your team are now real one on ones
+        // (as opposed to fake one on ones with proteus), but there is no connection
+        // between you and your team member. So how do we make the new mls one on one
+        // the active conversation?
+
+        // Android solves this by having an `activeOneOnOne` field on the their
+        // user object. We could do the same, adding a one to one opitonal relationship
+        // between ZMUser and ZMConversation, which could be used either for just team
+        // one on ones, or all one on ones. 
+
+        // If we do that, we would need to migrate all ZMConnection.conversation values
+        // to ZMUser.oneOnOneConversation. Then we could remove `ZMConnection.conversation`
+        // completely (I think) and use ZMUser.OneOnOneConversation instead.
+
         connection.conversation = conversation
     }
 
