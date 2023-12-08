@@ -26,7 +26,7 @@ public protocol EnrollE2eICertificateUseCaseInterface {
     func invoke(e2eiClientId: E2eIClientID,
                 userName: String,
                 userHandle: String,
-                invokeAuthentication: OAuthBlock) async throws -> String
+                authenticate: OAuthBlock) async throws -> String
 
 }
 
@@ -63,7 +63,7 @@ public final class EnrollE2eICertificateUseCase: EnrollE2eICertificateUseCaseInt
             throw EnrollE2EICertificateUseCaseFailure.missingIdentityProvider
         }
 
-        let idToken = try await invokeAuthentication(identityProvider)
+        let idToken = try await authenticate(identityProvider)
         let wireNonce = try await enrollment.getWireNonce(clientId: e2eiClientId.clientID)
         let dpopToken = try await enrollment.getDPoPToken(wireNonce)
         let wireAccessToken = try await enrollment.getWireAccessToken(clientId: e2eiClientId.clientID,

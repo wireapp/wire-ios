@@ -46,16 +46,17 @@ public class OAuthUseCase: OAuthUseCaseInterface {
               let clientID = Bundle.idPClientID,
               let clientSecret = Bundle.idPClientSecret
         else {
-            throw OAuthError.failedToRetrieveConfiguration
+            throw OAuthError.missingRequestParameters
         }
 
         let request: OIDAuthorizationRequest = try await withCheckedThrowingContinuation { continuation in
             OIDAuthorizationService.discoverConfiguration(forIssuer: identityProvider) { configuration, error in
-                guard
-                    let config = configuration,
-                    error == nil
-                else {
-                    return continuation.resume(throwing: OAuthError.failedToRetrieveConfiguration)
+                if let error = error {
+                    return continuation.resume(throwing: OAuthError.failedToRetrieveConfiguration(error))
+                }
+
+                guard let config = configuration else {
+                    return continuation.resume(throwing: OAuthError.missingServiceConfiguration)
                 }
 
                 let request = OIDAuthorizationRequest(configuration: config,
@@ -80,15 +81,15 @@ public class OAuthUseCase: OAuthUseCaseInterface {
 
         return try await withCheckedThrowingContinuation { [weak self] continuation in
             self?.currentAuthorizationFlow = OIDAuthState.authState(byPresenting: authorizationRequest,
-                                                                   externalUserAgent: userAgen,
-                                                                   callback: { authState, error in
-                guard error == nil else {
-                    return continuation.resume(throwing: OAuthError.failedToSendAuthorizationRequest)
+                                                                    externalUserAgent: userAgent,
+                                                                    callback: { authState, error in
+                if let error = error {
+                    return continuation.resume(throwing: OAuthError.failedToSendAuthorizationRequest(error))
                 }
 
                 authState?.performAction { (_, idToken, error) in
-                    guard error == nil else {
-                        return continuation.resume(throwing: OAuthError.failedToSendAuthorizationRequest)
+                    if let error = error {
+                        return continuation.resume(throwing: OAuthError.failedToSendAuthorizationRequest(error))
                     }
 
                     guard let idToken = idToken else {
@@ -105,9 +106,11 @@ public class OAuthUseCase: OAuthUseCaseInterface {
 
 enum OAuthError: Error {
 
-    case failedToSendAuthorizationRequest
-    case failedToRetrieveConfiguration
-    case missingOIDExternalUserAgen
+    case failedToSendAuthorizationRequest(_ underlyingError: Error)
+    case failedToRetrieveConfiguration(_ underlyingError: Error)
+    case missingRequestParameters
+    case missingServiceConfiguration
+    case missingOIDExternalUserAgent
     case missingIdToken
 
 }

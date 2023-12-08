@@ -262,7 +262,7 @@ final class DeveloperToolsViewModel: ObservableObject {
             _ = try await e2eiCertificateUseCase?.invoke(e2eiClientId: e2eiClientId,
                                                          userName: userName,
                                                          userHandle: handle,
-                                                         invokeAuthentication: oauthUseCase.invoke)
+                                                         authenticate: oauthUseCase.invoke)
         }
     }
 
