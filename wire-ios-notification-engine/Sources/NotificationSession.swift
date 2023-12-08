@@ -84,10 +84,6 @@ public class NotificationSession {
 
     }
 
-    private enum Constant {
-        static let maxCoreDataSetupWaitingSeconds: Int = 5
-    }
-
     // MARK: - Properties
 
     /// Directory of all application statuses.
@@ -149,23 +145,14 @@ public class NotificationSession {
             throw InitializationError.coreDataMigrationRequired
         }
 
-        let dispatchGroup = DispatchGroup()
-        dispatchGroup.enter()
-
-        var coreDataStackError: Error?
         coreDataStack.loadStores { error in
-            coreDataStackError = error
+            // ⚠️ errors are not handled and `NotificationSession` will be created.
+            // Currently it is the given behavior, but should be refactored
+            // into a "setup" or "load" func that can be async and handle errors.
 
             if let error = error {
                 WireLogger.notifications.error("Loading coreDataStack with error: \(error.localizedDescription)")
             }
-
-            dispatchGroup.leave()
-        }
-        _ = dispatchGroup.wait(timeout: .now() + .seconds(Constant.maxCoreDataSetupWaitingSeconds))
-        
-        guard coreDataStackError == nil else {
-            throw InitializationError.coreDataMissingSharedContainer
         }
 
         // Don't cache the cookie because if the user logs out and back in again in the main app
