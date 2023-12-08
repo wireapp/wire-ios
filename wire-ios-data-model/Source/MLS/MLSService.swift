@@ -254,7 +254,7 @@ public final class MLSService: MLSServiceInterface {
     private func fetchBackendPublicKeys() async {
         logger.info("fetching backend public keys")
 
-        guard let notificationContext = await context?.perform({ self.context?.notificationContext}) else {
+        guard let notificationContext = context?.notificationContext else {
             logger.warn("can't fetch backend public keys: notification context is missing")
             return
         }
@@ -457,13 +457,11 @@ public final class MLSService: MLSServiceInterface {
             let selfUser = ZMUser.selfUser(in: context)
             let mlsSelfUser = MLSUser(from: selfUser)
 
-            Task {
-                do {
-                    try await addMembersToConversation(with: [mlsSelfUser], for: groupID)
-                } catch MLSAddMembersError.noInviteesToAdd {
-                    logger.debug("createConversation noInviteesToAdd, updateKeyMaterial")
-                    try await updateKeyMaterial(for: groupID)
-                }
+            do {
+                try await addMembersToConversation(with: [mlsSelfUser], for: groupID)
+            } catch MLSAddMembersError.noInviteesToAdd {
+                logger.debug("createConversation noInviteesToAdd, updateKeyMaterial")
+                try await updateKeyMaterial(for: groupID)
             }
         } catch {
             logger.error("create group for self conversation failed: \(error.localizedDescription)")
@@ -628,25 +626,23 @@ public final class MLSService: MLSServiceInterface {
             return logWarn(abortedWithReason: "failed to get client ID")
         }
 
-        Task {
-            do {
-                let unclaimedKeyPackageCount = try await countUnclaimedKeyPackages(clientID: clientID, context: context.notificationContext)
-                logger.info("there are \(unclaimedKeyPackageCount) unclaimed key packages")
+        do {
+            let unclaimedKeyPackageCount = try await countUnclaimedKeyPackages(clientID: clientID, context: context.notificationContext)
+            logger.info("there are \(unclaimedKeyPackageCount) unclaimed key packages")
 
-                userDefaults.lastKeyPackageCountDate = Date()
+            userDefaults.lastKeyPackageCountDate = Date()
 
-                guard unclaimedKeyPackageCount <= halfOfTargetUnclaimedKeyPackageCount else {
-                    logger.info("no need to upload new key packages yet")
-                    return
-                }
-
-                let amount = UInt32(targetUnclaimedKeyPackageCount)
-                let keyPackages = try generateKeyPackages(amountRequested: amount)
-                try await uploadKeyPackages(clientID: clientID, keyPackages: keyPackages, context: context.notificationContext)
-                logger.info("success: uploaded key packages for client \(clientID)")
-            } catch let error {
-                logger.warn("failed to upload key packages for client \(clientID). \(String(describing: error))")
+            guard unclaimedKeyPackageCount <= halfOfTargetUnclaimedKeyPackageCount else {
+                logger.info("no need to upload new key packages yet")
+                return
             }
+
+            let amount = UInt32(targetUnclaimedKeyPackageCount)
+            let keyPackages = try generateKeyPackages(amountRequested: amount)
+            try await uploadKeyPackages(clientID: clientID, keyPackages: keyPackages, context: context.notificationContext)
+            logger.info("success: uploaded key packages for client \(clientID)")
+        } catch let error {
+            logger.warn("failed to upload key packages for client \(clientID). \(String(describing: error))")
         }
     }
 

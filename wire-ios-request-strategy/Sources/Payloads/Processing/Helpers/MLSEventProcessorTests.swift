@@ -72,7 +72,7 @@ class MLSEventProcessorTests: MessagingTestBase {
         }
 
         // When
-        await MLSEventProcessor.shared.updateConversationIfNeeded(
+        await sut.updateConversationIfNeeded(
             conversation: self.conversation,
             groupID: self.groupIdString,
             context: self.syncMOC
@@ -146,7 +146,7 @@ class MLSEventProcessorTests: MessagingTestBase {
         }
 
         // When
-        await MLSEventProcessor.shared.wipeMLSGroup(
+        await sut.wipeMLSGroup(
             forConversation: conversation,
             context: syncMOC
         )
@@ -164,7 +164,7 @@ class MLSEventProcessorTests: MessagingTestBase {
         }
 
         // When
-        await MLSEventProcessor.shared.wipeMLSGroup(
+        await sut.wipeMLSGroup(
             forConversation: conversation,
             context: syncMOC
         )
@@ -207,7 +207,7 @@ class MLSEventProcessorTests: MessagingTestBase {
         }
 
         // When
-        await MLSEventProcessor.shared.updateConversationIfNeeded(
+        await sut.updateConversationIfNeeded(
             conversation: self.conversation,
             groupID: self.groupIdString,
             context: self.syncMOC
