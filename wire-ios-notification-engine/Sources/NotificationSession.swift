@@ -79,6 +79,8 @@ public class NotificationSession {
 
         case noAccount
         case pendingCryptoboxMigration
+        case coreDataMissingSharedContainer
+        case coreDataMigrationRequired
 
     }
 
@@ -104,9 +106,7 @@ public class NotificationSession {
     private var callEvent: CallEventPayload?
     private var localNotifications = [ZMLocalNotification]()
 
-    private var context: NSManagedObjectContext {
-        return coreDataStack.syncContext
-    }
+    private var context: NSManagedObjectContext { coreDataStack.syncContext }
 
     public weak var delegate: NotificationSessionDelegate?
 
@@ -137,7 +137,19 @@ public class NotificationSession {
             applicationContainer: sharedContainerURL
         )
 
+        guard coreDataStack.storesExists else {
+            throw InitializationError.coreDataMissingSharedContainer
+        }
+
+        guard !coreDataStack.needsMigration  else {
+            throw InitializationError.coreDataMigrationRequired
+        }
+
         coreDataStack.loadStores { error in
+            // ⚠️ errors are not handled and `NotificationSession` will be created.
+            // Currently it is the given behavior, but should be refactored
+            // into a "setup" or "load" func that can be async and handle errors.
+
             if let error = error {
                 WireLogger.notifications.error("Loading coreDataStack with error: \(error.localizedDescription)")
             }
@@ -152,7 +164,7 @@ public class NotificationSession {
 
         let credentials = environment.proxy.flatMap { ProxyCredentials.retrieve(for: $0) }
 
-        let transportSession =  ZMTransportSession(
+        let transportSession = ZMTransportSession(
             environment: environment,
             proxyUsername: credentials?.username,
             proxyPassword: credentials?.password,
