@@ -101,16 +101,6 @@ final class BlockerViewController: LaunchImageViewController {
             preferredStyle: .alert
         )
 
-        let backupAction = UIAlertAction(
-            title: L10n.Localizable.Databaseloadingfailure.Alert.saveBackup,
-            style: .default,
-            handler: { [weak self] _ in
-                self?.present(BackupViewController.init(backupSource: SessionManager.shared!), animated: true)
-            }
-        )
-
-        databaseFailureAlert.addAction(backupAction)
-
         let reportError = UIAlertAction(
             title: L10n.Localizable.Self.Settings.TechnicalReport.sendReport,
             style: .default,
