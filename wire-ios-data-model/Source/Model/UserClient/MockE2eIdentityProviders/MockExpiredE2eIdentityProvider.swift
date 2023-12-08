@@ -21,7 +21,7 @@ import Foundation
 public final class MockExpiredE2eIdentityProvider: E2eIdentityProviding {
     lazy var dateFormatter = DateFormatter()
 
-    public var isE2EIdentityEnabled: Bool = UserDefaults.standard.bool(forKey: "isE2eIdentityViewEnabled")
+    public var isE2EIdentityEnabled: Bool = true
 
     public var certificate: E2eIdentityCertificate {
         E2eIdentityCertificate(

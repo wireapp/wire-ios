@@ -2060,3 +2060,5 @@ to reset this device and log in again";
 "device.details.section.e2ei.status.revoked" = "Revoked";
 "device.details.section.e2ei.status.expired" = "Expired";
 "device.details.section.e2ei.serial_number" = "Serial Number";
+"device.details.secion.mls.signature" = "MLS with Ed25519 Signature";
+"device.details.secion.mls.title" = "MLS Thumbprint";

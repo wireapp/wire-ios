@@ -16,26 +16,27 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import SwiftUI
 
-enum ViewConstants {
+struct DeviceMLSView: View {
 
-    enum Padding {
-        static let small = 4.0
-        static let medium = 8.0
-        static let standard = 16.0
-    }
+    @ObservedObject var viewModel: DeviceInfoViewModel
 
-    enum View {
-        enum Height {
-            static let standard = 45.0
-            static let small = 28.0
+    var body: some View {
+        VStack {
+            CopyValueView(
+                title: L10n.Localizable.Device.Details.Secion.Mls.title,
+                value: viewModel.mlsThumbprint ?? "",
+                isCopyEnabled: viewModel.isCopyEnabled,
+                performCopy: viewModel.copyToClipboard
+            )
+            .frame(maxHeight: .infinity)
+            .padding(.all, ViewConstants.Padding.standard)
+        }.onAppear {
+            Task {
+                await viewModel.fetchMLSFingerPrint()
+            }
         }
     }
 
-    enum Header {
-        enum Height {
-            static let minimum = 10.0
-        }
-    }
 }
