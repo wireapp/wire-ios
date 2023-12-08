@@ -43,32 +43,6 @@ class ZMUserSessionTestsBase: MessagingTest {
     var thirdPartyServices: ThirdPartyServices!
     var mockSyncStateDelegate: MockSyncStateDelegate!
 
-//    - (void)setUp
-//    {
-//        [super setUp];
-//
-//        WireCallCenterV3Factory.wireCallCenterClass = WireCallCenterV3Mock.self;
-//
-//        self.thirdPartyServices = [[ThirdPartyServices alloc] init];
-//        self.dataChangeNotificationsCount = 0;
-//        self.baseURL = [NSURL URLWithString:@"http://bar.example.com"];
-//        self.cookieStorage = [ZMPersistentCookieStorage storageForServerName:@"usersessiontest.example.com" userIdentifier:NSUUID.createUUID useCache:YES];
-//        self.mockPushChannel = [[MockPushChannel alloc] init];
-//        self.transportSession = [[RecordingMockTransportSession alloc] initWithCookieStorage:self.cookieStorage pushChannel:self.mockPushChannel];
-//        self.mockSessionManager = [[MockSessionManager alloc] init];
-//        self.mediaManager = [[MockMediaManager alloc] init];
-//        self.flowManagerMock = [[FlowManagerMock alloc] init];
-//
-//        [self createSut];
-//
-//        self.sut.thirdPartyServicesDelegate = self.thirdPartyServices;
-//        self.sut.sessionManager = (id<SessionManagerType>)self.mockSessionManager;
-//
-//        WaitForAllGroupsToBeEmpty(0.5);
-//
-//        self.validCookie = [@"valid-cookie" dataUsingEncoding:NSUTF8StringEncoding];
-//    }
-
     override func setUp() {
         super.setUp()
 
