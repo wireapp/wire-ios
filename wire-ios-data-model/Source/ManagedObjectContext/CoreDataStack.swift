@@ -20,7 +20,6 @@ import Foundation
 import CoreData
 import WireSystem
 
-
 enum CoreDataStackError: Error {
     case simulateDatabaseLoadingFailure
 }
@@ -220,7 +219,7 @@ public class CoreDataStack: NSObject, ContextProvider {
                     WireLogger.localStorage.info("finished migration of core data messaging store!")
                 } catch {
                     log.safePublic("[setup] failed migration of core data messaging store: \(SanitizedString(stringLiteral: error.localizedDescription))")
-                    WireLogger.localStorage.error("failed migration of core data messaging store!")
+                    WireLogger.localStorage.error("failed migration of core data messaging store! \(error.localizedDescription)")
                     DispatchQueue.main.async {
                         onFailure(error)
                     }
