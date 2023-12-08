@@ -25,7 +25,7 @@ import WireCryptobox
 extension SessionManager {
 
     public typealias BackupResultClosure = (Result<URL>) -> Void
-    public typealias RestoreResultClosure = (VoidResult) -> Void
+    public typealias RestoreResultClosure = (Swift.Result<Void, Error>) -> Void
 
     static private let workerQueue = DispatchQueue(label: "history-backup")
 
@@ -99,7 +99,7 @@ extension SessionManager {
     /// @param completion called when the restoration is ended. If success, Result.success with the new restored account
     /// is called.
     public func restoreFromBackup(at location: URL, password: String, completion: @escaping RestoreResultClosure) {
-        func complete(_ result: VoidResult) {
+        func complete(_ result: Swift.Result<Void, Error>) {
             DispatchQueue.main.async(group: dispatchGroup) {
                 completion(result)
             }
@@ -131,9 +131,10 @@ extension SessionManager {
                 accountIdentifier: userId,
                 from: url,
                 applicationContainer: self.sharedContainerURL,
-                dispatchGroup: self.dispatchGroup,
-                completion: completion >>> VoidResult.init
-            )
+                dispatchGroup: self.dispatchGroup
+            ) { result in
+                completion(result.map { _ in })
+            }
         }
     }
 

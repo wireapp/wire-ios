@@ -143,12 +143,14 @@ class MLSConferenceStaleParticipantsRemover: Subscriber {
                 for: clientID,
                 duration: duration,
                 completion: { [weak self] in
-                    guard let self = self else { return }
+                    guard let self else { return }
 
-                    self.remove(
-                        client: clientID,
-                        from: groupID
-                    )
+                    Task {
+                        await self.remove(
+                            client: clientID,
+                            from: groupID
+                        )
+                    }
                 }
             )
 
@@ -201,7 +203,7 @@ class MLSConferenceStaleParticipantsRemover: Subscriber {
 private extension Array where Element == CallParticipant {
 
     func excludingParticipant(withID userID: AVSIdentifier) -> Self {
-        return self.filter {
+        filter {
             $0.userId != userID
         }
     }
