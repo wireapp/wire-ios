@@ -92,10 +92,13 @@ class SessionManagerTests_Backup: IntegrationTest {
         XCTAssert(FileManager.default.fileExists(atPath: dataURL.path))
     }
 
-    func testThatItReturnsAnErrorWhenUserIsNotAuthenticated() {
+    func testThatItReturnsAnErrorWhenUserIsNotAuthenticated() throws {
         sessionManager?.logoutCurrentSession()
-        let result = restoreAcount(password: name, from: createTemporaryURL())
-        XCTAssertEqual(result.error as? SessionManager.BackupError, .notAuthenticated)
+        do {
+            try restoreAcount(password: name, from: createTemporaryURL()).get()
+        } catch SessionManager.BackupError.notAuthenticated {
+            // expected
+        }
     }
 
     func testThatItImportsAZippedBackup() throws {
@@ -118,7 +121,7 @@ class SessionManagerTests_Backup: IntegrationTest {
         let result = restoreAcount(password: name, from: url)
 
         // Then
-        XCTAssertNil(result.error, "\(result.error!)")
+        try result.get()
         XCTAssert(fm.fileExists(atPath: storePath))
     }
 
@@ -134,11 +137,12 @@ class SessionManagerTests_Backup: IntegrationTest {
         let moc = sessionManager!.activeUserSession!.managedObjectContext
         try SessionManager.encrypt(from: dataURL, to: encryptedURL, password: "notsorandom", accountId: ZMUser.selfUser(in: moc).remoteIdentifier!)
 
-        // When
-        let result = restoreAcount(password: "notsorandom", from: encryptedURL)
-
-        // Then
-        XCTAssertEqual(result.error as? SessionManager.BackupError, .invalidFileExtension)
+        do {
+            // When
+            try restoreAcount(password: "notsorandom", from: encryptedURL).get()
+        } catch SessionManager.BackupError.invalidFileExtension {
+            // Then
+        }
     }
 
     func testThatItCanRestoreFileWithAHyphenInTheFileExtension() throws {
@@ -162,7 +166,7 @@ class SessionManagerTests_Backup: IntegrationTest {
         let result = restoreAcount(password: name, from: dataURL)
 
         // Then
-        XCTAssertNil(result.error, "\(result.error!)")
+        try result.get()
     }
 
     func testThatItReturnsAnErrorWhenImportingFileWithWrongPassword() throws {
@@ -171,20 +175,21 @@ class SessionManagerTests_Backup: IntegrationTest {
         let backupResult = backupActiveAcount(password: "correctpassword")
         guard let url = backupResult.value else { return XCTFail("\(backupResult.error!)") }
 
-        // When
-        guard let error = restoreAcount(password: "wrongpassword!!11!", from: url).error else { return XCTFail("no error thrown") }
-
-        // Then
-        guard case SessionManager.BackupError.decryptionError = error else { return XCTFail("wrong error: \(error)") }
+        do {
+            // When
+            try restoreAcount(password: "wrongpassword!!11!", from: url).get()
+        } catch SessionManager.BackupError.decryptionError {
+            // Then
+        }
     }
 
-    func testThatItDeletesABackup() {
+    func testThatItDeletesABackup() throws {
         // Given
         XCTAssert(login())
 
         let result = backupActiveAcount(password: "idontneednopassword")
         guard let url = result.value else { return XCTFail("\(result.error!)") }
-        XCTAssertNil(restoreAcount(password: "idontneednopassword", from: url).error)
+        try restoreAcount(password: "idontneednopassword", from: url).get()
         XCTAssert(FileManager.default.fileExists(atPath: CoreDataStack.backupsDirectory.path))
         XCTAssert(FileManager.default.fileExists(atPath: CoreDataStack.importsDirectory.path))
 
@@ -197,7 +202,7 @@ class SessionManagerTests_Backup: IntegrationTest {
         XCTAssertFalse(FileManager.default.fileExists(atPath: CoreDataStack.importsDirectory.path))
     }
 
-    func DISABLED_testThatItDeletesOldEphemeralMessagesWhenRestoringFromABackup() {
+    func DISABLED_testThatItDeletesOldEphemeralMessagesWhenRestoringFromABackup() throws {
         // Given
         XCTAssert(login())
 
@@ -228,8 +233,7 @@ class SessionManagerTests_Backup: IntegrationTest {
         XCTAssert(login())
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        let restoreResult = restoreAcount(password: "12345678", from: url)
-        guard nil == restoreResult.error else { return XCTFail("\(result.error!)") }
+        try restoreAcount(password: "12345678", from: url).get()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         XCTAssert(login())
@@ -265,9 +269,9 @@ class SessionManagerTests_Backup: IntegrationTest {
         from url: URL,
         file: StaticString = #file,
         line: UInt = #line
-        ) -> VoidResult {
+        ) -> Swift.Result<Void, Error> {
 
-        var result: VoidResult = .failure(TestError.uninitialized)
+        var result: Swift.Result<Void, Error> = .failure(TestError.uninitialized)
         sessionManager?.restoreFromBackup(at: url, password: password) { result = $0 }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         return result

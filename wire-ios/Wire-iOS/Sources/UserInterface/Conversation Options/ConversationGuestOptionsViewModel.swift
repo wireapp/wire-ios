@@ -27,10 +27,10 @@ protocol ConversationGuestOptionsViewModelConfiguration: AnyObject {
     var isConversationFromSelfTeam: Bool { get }
     var allowGuestsChangedHandler: ((Bool) -> Void)? { get set }
     var guestLinkFeatureStatusChangedHandler: ((GuestLinkFeatureStatus) -> Void)? { get set }
-    func setAllowGuests(_ allowGuests: Bool, completion: @escaping (VoidResult) -> Void)
+    func setAllowGuests(_ allowGuests: Bool, completion: @escaping (Swift.Result<Void, Error>) -> Void)
     func createConversationLink(completion: @escaping (Result<String>) -> Void)
     func fetchConversationLink(completion: @escaping (Result<String?>) -> Void)
-    func deleteLink(completion: @escaping (VoidResult) -> Void)
+    func deleteLink(completion: @escaping (Swift.Result<Void, Error>) -> Void)
 }
 
 protocol ConversationGuestOptionsViewModelDelegate: AnyObject {

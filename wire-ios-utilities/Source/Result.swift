@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2023 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,18 +18,28 @@
 
 import Foundation
 
-public enum Result<T> {
+public typealias Result<T> = ZMResult<T>
+
+public enum ZMResult<T> {
     case success(T)
     case failure(Error)
 }
 
-public enum VoidResult {
-    case success
-    case failure(Error)
-}
+public extension ZMResult {
+    func map<U>(_ transform: (T) throws -> U) -> ZMResult<U> {
+        switch self {
+        case .success(let value):
+            do {
+                return .success(try transform(value))
+            } catch {
+                return .failure(error)
+            }
+        case .failure(let error):
+            return .failure(error)
+        }
+    }
 
-public extension Result {
-    func map<U>(_ transform: (T) throws -> U) -> Result<U> {
+    func map<U>(_ transform: (T) throws -> U) -> Swift.Result<U, Error> {
         switch self {
         case .success(let value):
             do {
@@ -43,32 +53,10 @@ public extension Result {
     }
 }
 
-public extension Result {
+public extension ZMResult {
     var value: T? {
         guard case let .success(value) = self else { return nil }
         return value
-    }
-
-    var error: Error? {
-        guard case let .failure(error) = self else { return nil }
-        return error
-    }
-}
-
-public extension VoidResult {
-    init<T>(result: Result<T>) {
-        switch result {
-        case .success: self = .success
-        case .failure(let error): self = .failure(error)
-        }
-    }
-
-    init(error: Error?) {
-        if let error = error {
-            self = .failure(error)
-        } else {
-            self = .success
-        }
     }
 
     var error: Error? {
