@@ -22,7 +22,7 @@ import SnapshotTesting
 
 final class MockServicesOptionsViewModelConfiguration: ConversationServicesOptionsViewModelConfiguration {
     // MARK: Properties
-    typealias SetHandler = (Bool, (VoidResult) -> Void) -> Void
+    typealias SetHandler = (Bool, (Swift.Result<Void, Error>) -> Void) -> Void
     var allowServices: Bool
     var allowServicesChangedHandler: ((Bool) -> Void)?
     var areServicePresent = true
@@ -34,7 +34,7 @@ final class MockServicesOptionsViewModelConfiguration: ConversationServicesOptio
         self.setAllowServices = setAllowServices
     }
 
-    func setAllowServices(_ allowServices: Bool, completion: @escaping (VoidResult) -> Void) {
+    func setAllowServices(_ allowServices: Bool, completion: @escaping (Swift.Result<Void, Error>) -> Void) {
         setAllowServices?(allowServices, completion)
     }
 }

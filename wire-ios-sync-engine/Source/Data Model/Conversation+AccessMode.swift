@@ -179,7 +179,7 @@ extension ZMConversation {
     }
 
     /// Deletes the existing wireless link.
-    public func deleteWirelessLink(in userSession: ZMUserSession, _ completion: @escaping (VoidResult) -> Void) {
+    public func deleteWirelessLink(in userSession: ZMUserSession, _ completion: @escaping (Swift.Result<Void, Error>) -> Void) {
         guard canManageAccess else {
             return completion(.failure(WirelessLinkError.invalidOperation))
         }
@@ -192,7 +192,7 @@ extension ZMConversation {
 
         request.add(ZMCompletionHandler(on: managedObjectContext!) { response in
             if response.httpStatus == 200 {
-                completion(.success)
+                completion(.success(()))
             } else {
                 let error = WirelessLinkError(response: response) ?? .unknown
                 zmLog.debug("Error creating wireless link: \(error)")
@@ -204,7 +204,7 @@ extension ZMConversation {
     }
 
     /// Changes the conversation access mode to allow guests.
-    public func setAllowGuests(_ allowGuests: Bool, in userSession: ZMUserSession, _ completion: @escaping (VoidResult) -> Void) {
+    public func setAllowGuests(_ allowGuests: Bool, in userSession: ZMUserSession, _ completion: @escaping (Swift.Result<Void, Error>) -> Void) {
         guard canManageAccess else {
             return completion(.failure(WirelessLinkError.invalidOperation))
         }
@@ -217,7 +217,7 @@ extension ZMConversation {
     }
 
     /// Changes the conversation access mode to allow services.
-    public func setAllowServices(_ allowServices: Bool, in userSession: ZMUserSession, _ completion: @escaping (VoidResult) -> Void) {
+    public func setAllowServices(_ allowServices: Bool, in userSession: ZMUserSession, _ completion: @escaping (Swift.Result<Void, Error>) -> Void) {
         guard canManageAccess else {
             return completion(.failure(SetAllowServicesError.invalidOperation))
         }
@@ -231,7 +231,7 @@ extension ZMConversation {
     }
 
     /// Changes the conversation access mode to allow services.
-    private func setAllowGuestsAndServices(allowGuests: Bool, allowServices: Bool, in userSession: ZMUserSession, apiVersion: APIVersion, _ completion: @escaping (VoidResult) -> Void) {
+    private func setAllowGuestsAndServices(allowGuests: Bool, allowServices: Bool, in userSession: ZMUserSession, apiVersion: APIVersion, _ completion: @escaping (Swift.Result<Void, Error>) -> Void) {
         let request = WirelessRequestFactory.setAccessRoles(allowGuests: allowGuests, allowServices: allowServices, for: self, apiVersion: apiVersion)
 
         request.add(ZMCompletionHandler(on: managedObjectContext!) { response in
@@ -242,7 +242,7 @@ extension ZMConversation {
 
                 // Process `conversation.access-update` event
                 userSession.processUpdateEvents([event])
-                completion(.success)
+                completion(.success(()))
             } else {
                 zmLog.debug("Error setting access role:  \(response)")
                 completion(.failure(SetAllowServicesError.unknown))

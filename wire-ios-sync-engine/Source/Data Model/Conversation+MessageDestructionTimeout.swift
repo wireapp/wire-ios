@@ -49,7 +49,7 @@ extension ZMConversation {
     public func setMessageDestructionTimeout(
         _ timeout: MessageDestructionTimeoutValue,
         in userSession: ZMUserSession, _
-        completion: @escaping (VoidResult) -> Void) {
+        completion: @escaping (Swift.Result<Void, Error>) -> Void) {
 
         guard let apiVersion = BackendInfo.apiVersion else {
             return completion(.failure(WirelessLinkError.unknown))
@@ -61,7 +61,7 @@ extension ZMConversation {
                 // Process `conversation.message-timer-update` event
                 // FIXME: [jacob] replace with ConversationEventProcessor
                 userSession.processUpdateEvents([event])
-                completion(.success)
+                completion(.success(()))
             } else {
                 let error = WirelessLinkError(response: response) ?? .unknown
                 log.debug("Error updating message destruction timeout \(error): \(response)")
