@@ -1,5 +1,26 @@
-// Generated using Sourcery 2.0.3 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 2.1.2 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
+
+//
+// Wire
+// Copyright (C) 2023 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
+
+// swiftlint:disable superfluous_disable_command
+// swiftlint:disable vertical_whitespace
 // swiftlint:disable line_length
 // swiftlint:disable variable_name
 
@@ -208,7 +229,7 @@ public class MockMessageDependencyResolverInterface: MessageDependencyResolverIn
             fatalError("no mock for `waitForDependenciesToResolveFor`")
         }
 
-        try await mock(message)            
+        try await mock(message)
     }
 
 }
@@ -236,7 +257,7 @@ public class MockMessageSenderInterface: MessageSenderInterface {
             fatalError("no mock for `sendMessageMessage`")
         }
 
-        try await mock(message)            
+        try await mock(message)
     }
 
 }
@@ -316,7 +337,7 @@ public class MockQuickSyncObserverInterface: QuickSyncObserverInterface {
             fatalError("no mock for `waitForQuickSyncToFinish`")
         }
 
-        await mock()            
+        await mock()
     }
 
 }
@@ -344,7 +365,12 @@ public class MockSessionEstablisherInterface: SessionEstablisherInterface {
             fatalError("no mock for `establishSessionWithApiVersion`")
         }
 
-        try await mock(clients, apiVersion)            
+        try await mock(clients, apiVersion)
     }
 
 }
+
+// swiftlint:enable variable_name
+// swiftlint:enable line_length
+// swiftlint:enable vertical_whitespace
+// swiftlint:enable superfluous_disable_command

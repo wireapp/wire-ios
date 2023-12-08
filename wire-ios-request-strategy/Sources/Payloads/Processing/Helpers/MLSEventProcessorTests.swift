@@ -16,12 +16,13 @@
 //
 
 import Foundation
+import WireDataModelSupport
 import XCTest
 @testable import WireRequestStrategy
 
 class MLSEventProcessorTests: MessagingTestBase {
 
-    var mlsServiceMock: MockMLSService!
+    var mlsServiceMock: MockMLSServiceInterface!
     var sut: MLSEventProcessor!
     var conversation: ZMConversation!
     var domain = "example.com"
@@ -31,7 +32,9 @@ class MLSEventProcessorTests: MessagingTestBase {
         super.setUp()
         sut = MLSEventProcessor()
         syncMOC.performGroupedBlockAndWait {
-            self.mlsServiceMock = MockMLSService()
+            self.mlsServiceMock = .init()
+            self.mlsServiceMock.registerPendingJoin_MockMethod = { _ in }
+            self.mlsServiceMock.wipeGroup_MockMethod = { _ in }
             self.syncMOC.mlsService = self.mlsServiceMock
             self.conversation = ZMConversation.insertNewObject(in: self.syncMOC)
             self.conversation.mlsGroupID = MLSGroupID(self.groupIdString.base64DecodedBytes!)
@@ -53,7 +56,7 @@ class MLSEventProcessorTests: MessagingTestBase {
         syncMOC.performGroupedBlockAndWait {
             // Given
             let message = "welcome message"
-            self.mlsServiceMock.groupID = self.conversation.mlsGroupID
+            self.mlsServiceMock.processWelcomeMessageWelcomeMessage_MockValue = self.conversation.mlsGroupID ?? MLSGroupID(Data())
             self.conversation.mlsStatus = .pendingJoin
             XCTAssertEqual(self.conversation.mlsStatus, .pendingJoin)
 
@@ -61,7 +64,7 @@ class MLSEventProcessorTests: MessagingTestBase {
             self.sut.process(welcomeMessage: message, in: self.syncMOC)
 
             // Then
-            XCTAssertEqual(message, self.mlsServiceMock.processedWelcomeMessage)
+            XCTAssertEqual(message, self.mlsServiceMock.processWelcomeMessageWelcomeMessage_Invocations.last)
             XCTAssertEqual(self.conversation.mlsStatus, .ready)
         }
     }
@@ -72,6 +75,7 @@ class MLSEventProcessorTests: MessagingTestBase {
         syncMOC.performGroupedBlockAndWait {
             // Given
             self.conversation.mlsGroupID = nil
+            self.mlsServiceMock.conversationExistsGroupID_MockMethod = { _ in false }
 
             // When
             self.sut.updateConversationIfNeeded(
@@ -125,8 +129,8 @@ class MLSEventProcessorTests: MessagingTestBase {
             )
 
             // Then
-            XCTAssertEqual(self.mlsServiceMock.groupsPendingJoin.count, 1)
-            XCTAssertEqual(self.mlsServiceMock.groupsPendingJoin.first, self.conversation.mlsGroupID)
+            XCTAssertEqual(self.mlsServiceMock.registerPendingJoin_Invocations.count, 1)
+            XCTAssertEqual(self.mlsServiceMock.registerPendingJoin_Invocations.first, self.conversation.mlsGroupID)
         }
     }
 
@@ -152,8 +156,8 @@ class MLSEventProcessorTests: MessagingTestBase {
             )
 
             // Then
-            XCTAssertEqual(mlsServiceMock.calls.wipeGroup.count, 1)
-            XCTAssertEqual(mlsServiceMock.calls.wipeGroup.first, groupID)
+            XCTAssertEqual(mlsServiceMock.wipeGroup_Invocations.count, 1)
+            XCTAssertEqual(mlsServiceMock.wipeGroup_Invocations.first, groupID)
         }
     }
 
@@ -170,7 +174,7 @@ class MLSEventProcessorTests: MessagingTestBase {
             )
 
             // Then
-            XCTAssertEqual(mlsServiceMock.calls.wipeGroup.count, 0)
+            XCTAssertTrue(mlsServiceMock.wipeGroup_Invocations.isEmpty)
         }
     }
 
@@ -188,7 +192,7 @@ class MLSEventProcessorTests: MessagingTestBase {
             )
 
             // Then
-            XCTAssertTrue(self.mlsServiceMock.groupsPendingJoin.isEmpty)
+            XCTAssertTrue(self.mlsServiceMock.registerPendingJoin_Invocations.isEmpty)
         }
     }
 
@@ -196,13 +200,15 @@ class MLSEventProcessorTests: MessagingTestBase {
         originalValue: MLSGroupStatus,
         expectedValue: MLSGroupStatus,
         mockMessageProtocol: MessageProtocol,
-        mockHasWelcomeMessageBeenProcessed: Bool = true
+        mockHasWelcomeMessageBeenProcessed: Bool = true,
+        file: StaticString = #filePath,
+        line: UInt = #line
     ) {
         syncMOC.performGroupedBlockAndWait {
             // Given
             self.conversation.mlsStatus = originalValue
             self.conversation.messageProtocol = mockMessageProtocol
-            self.mlsServiceMock.hasWelcomeMessageBeenProcessed = mockHasWelcomeMessageBeenProcessed
+            self.mlsServiceMock.conversationExistsGroupID_MockValue = mockHasWelcomeMessageBeenProcessed
 
             // When
             self.sut.updateConversationIfNeeded(
@@ -212,7 +218,7 @@ class MLSEventProcessorTests: MessagingTestBase {
             )
 
             // Then
-            XCTAssertEqual(self.conversation.mlsStatus, expectedValue)
+            XCTAssertEqual(self.conversation.mlsStatus, expectedValue, file: file, line: line)
         }
     }
 }

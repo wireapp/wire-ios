@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2023 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,13 +24,15 @@ import XCTest
 class ZMUserSessionTests_AccessToken: ZMUserSessionTestsBase {
 
     func test_itRenewsAccessTokenAfterClientRegistration_StartingFromApiV3() {
-        createSelfClient()
+        syncMOC.performAndWait {
+            _ = createSelfClient()
 
-        APIVersion.allCases.forEach {
-            test_accessTokenRenewalAfterClientRegistration(
-                apiVersion: $0,
-                shouldRenew: $0 > .v2
-            )
+            APIVersion.allCases.forEach {
+                test_accessTokenRenewalAfterClientRegistration(
+                    apiVersion: $0,
+                    shouldRenew: $0 > .v2
+                )
+            }
         }
     }
 
@@ -39,14 +41,14 @@ class ZMUserSessionTests_AccessToken: ZMUserSessionTestsBase {
         shouldRenew: Bool
     ) {
         // given
-        var previousApiVersion = BackendInfo.apiVersion
+        let previousApiVersion = BackendInfo.apiVersion
         defer {
             BackendInfo.apiVersion = previousApiVersion
             transportSession.renewAccessTokenCalls = []
         }
         BackendInfo.apiVersion = apiVersion
 
-        let userClient = UserClient.insertNewObject(in: uiMOC)
+        let userClient = UserClient.insertNewObject(in: syncMOC)
         userClient.remoteIdentifier = "1234abcd"
 
         // when
