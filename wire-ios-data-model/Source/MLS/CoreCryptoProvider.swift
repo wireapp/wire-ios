@@ -63,7 +63,7 @@ public class CoreCryptoProvider: CoreCryptoProviderProtocol {
 
             if requireMLS {
                 let provider = CoreCryptoConfigProvider()
-                let clientID = try provider.clientID(of: .selfUser(in: syncContext))
+                let clientID = try syncContext.performAndWait { try provider.clientID(of: .selfUser(in: syncContext)) }
                 try coreCrypto.mlsInit(clientID: clientID)
                 try generateClientPublicKeysIfNeeded(with: coreCrypto)
             }
