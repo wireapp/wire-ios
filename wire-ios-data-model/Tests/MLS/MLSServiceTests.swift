@@ -1419,9 +1419,9 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     // MARK: - Key Packages
 
-    func test_UploadKeyPackages_IsSuccessfull() {
+    func test_UploadKeyPackages_IsSuccessfull() async {
         // Given
-        guard let clientID = self.createSelfClient(onMOC: uiMOC).remoteIdentifier else {
+        guard let clientID = await uiMOC.perform({ self.createSelfClient(onMOC: self.uiMOC).remoteIdentifier }) else {
             XCTFail("failed to get client id")
             return
         }
@@ -1465,7 +1465,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
 
         // When
-        sut.uploadKeyPackagesIfNeeded()
+        await sut.uploadKeyPackagesIfNeeded()
 
         // Then
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
@@ -1481,9 +1481,9 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         XCTAssertEqual(uploadKeypackagesInvocations.first?.keyPackages, keyPackages.map { $0.data.base64EncodedString() })
     }
 
-    func test_UploadKeyPackages_DoesntCountUnclaimedKeyPackages_WhenNotNeeded() {
+    func test_UploadKeyPackages_DoesntCountUnclaimedKeyPackages_WhenNotNeeded() async {
         // Given
-        createSelfClient(onMOC: uiMOC)
+        await uiMOC.perform { _ = self.createSelfClient(onMOC: self.uiMOC) }
 
         // expectation
         let countUnclaimedKeyPackages = XCTestExpectation(description: "Count unclaimed key packages")
@@ -1503,15 +1503,15 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
 
         // When
-        sut.uploadKeyPackagesIfNeeded()
+        await sut.uploadKeyPackagesIfNeeded()
 
         // Then
-        wait(for: [countUnclaimedKeyPackages], timeout: 0.5)
+        await fulfillment(of: [countUnclaimedKeyPackages], timeout: 0.5)
     }
 
-    func test_UploadKeyPackages_DoesntUploadKeyPackages_WhenNotNeeded() {
+    func test_UploadKeyPackages_DoesntUploadKeyPackages_WhenNotNeeded() async {
         // Given
-        createSelfClient(onMOC: uiMOC)
+        await uiMOC.perform { _ = self.createSelfClient(onMOC: self.uiMOC) }
 
         // we need more than half the target number to have a sufficient amount
         let unsufficientKeyPackagesAmount = sut.targetUnclaimedKeyPackageCount / 3
@@ -1545,15 +1545,15 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
 
         // When
-        sut.uploadKeyPackagesIfNeeded()
+        await sut.uploadKeyPackagesIfNeeded()
 
         // Then
-        wait(for: [countUnclaimedKeyPackages, uploadKeyPackages], timeout: 0.5)
+        await fulfillment(of: [countUnclaimedKeyPackages, uploadKeyPackages], timeout: 0.5)
     }
 
     // MARK: - Welcome message
 
-    func test_ProcessWelcomeMessage_Sucess() throws {
+    func test_ProcessWelcomeMessage_Sucess() async throws {
         // Given
         let groupID = MLSGroupID.random()
         let message = Data.random().base64EncodedString()
@@ -1570,7 +1570,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
 
         // When
-        _ = try sut.processWelcomeMessage(welcomeMessage: message)
+        _ = try await sut.processWelcomeMessage(welcomeMessage: message)
 
         // Then
         XCTAssertEqual(mockClientValidKeypackagesCountCount, 1)
@@ -2475,7 +2475,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     // MARK: - Self group
 
-    func test_itCreatesSelfGroup_WithNoKeyPackages_Successfully() throws {
+    func test_itCreatesSelfGroup_WithNoKeyPackages_Successfully() async throws {
         BackendInfo.domain = "example.com"
 
         // Given a group.
@@ -2501,14 +2501,14 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
 
         // WHEN
-        sut.createSelfGroup(for: groupID)
+        await sut.createSelfGroup(for: groupID)
 
         // THEN
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
         XCTAssertEqual(mockUpdateKeyingMaterialArguments, [groupID])
     }
 
-    func test_itCreatesSelfGroup_WithKeyPackages_Successfully() throws {
+    func test_itCreatesSelfGroup_WithKeyPackages_Successfully() async throws {
         BackendInfo.domain = "example.com"
 
         // Given a group.
@@ -2534,7 +2534,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         let groupID = MLSGroupID.random()
 
         // WHEN
-        sut.createSelfGroup(for: groupID)
+        await sut.createSelfGroup(for: groupID)
 
         // THEN
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 2.0))
