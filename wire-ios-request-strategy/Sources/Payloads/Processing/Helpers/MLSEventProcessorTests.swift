@@ -23,12 +23,14 @@ import XCTest
 class MLSEventProcessorTests: MessagingTestBase {
 
     var mlsServiceMock: MockMLSServiceInterface!
+    var sut: MLSEventProcessor!
     var conversation: ZMConversation!
     var domain = "example.com"
     let groupIdString = "identifier".data(using: .utf8)!.base64EncodedString()
 
     override func setUp() {
         super.setUp()
+        sut = MLSEventProcessor()
         syncMOC.performGroupedBlockAndWait {
             self.mlsServiceMock = .init()
             self.mlsServiceMock.registerPendingJoin_MockMethod = { _ in }
@@ -42,6 +44,7 @@ class MLSEventProcessorTests: MessagingTestBase {
     }
 
     override func tearDown() {
+        sut = nil
         mlsServiceMock = nil
         conversation = nil
         super.tearDown()
@@ -58,7 +61,7 @@ class MLSEventProcessorTests: MessagingTestBase {
             XCTAssertEqual(self.conversation.mlsStatus, .pendingJoin)
 
             // When
-            MLSEventProcessor.shared.process(welcomeMessage: message, in: self.syncMOC)
+            self.sut.process(welcomeMessage: message, in: self.syncMOC)
 
             // Then
             XCTAssertEqual(message, self.mlsServiceMock.processWelcomeMessageWelcomeMessage_Invocations.last)
@@ -75,7 +78,7 @@ class MLSEventProcessorTests: MessagingTestBase {
             self.mlsServiceMock.conversationExistsGroupID_MockMethod = { _ in false }
 
             // When
-            MLSEventProcessor.shared.updateConversationIfNeeded(
+            self.sut.updateConversationIfNeeded(
                 conversation: self.conversation,
                 groupID: self.groupIdString,
                 context: self.syncMOC
@@ -120,7 +123,7 @@ class MLSEventProcessorTests: MessagingTestBase {
             self.conversation.mlsStatus = .pendingJoin
 
             // When
-            MLSEventProcessor.shared.joinMLSGroupWhenReady(
+            self.sut.joinMLSGroupWhenReady(
                 forConversation: self.conversation,
                 context: self.syncMOC
             )
@@ -147,7 +150,7 @@ class MLSEventProcessorTests: MessagingTestBase {
             conversation.mlsGroupID = groupID
 
             // When
-            MLSEventProcessor.shared.wipeMLSGroup(
+            self.sut.wipeMLSGroup(
                 forConversation: conversation,
                 context: syncMOC
             )
@@ -165,7 +168,7 @@ class MLSEventProcessorTests: MessagingTestBase {
             conversation.mlsGroupID = MLSGroupID(Data.random())
 
             // When
-            MLSEventProcessor.shared.wipeMLSGroup(
+            self.sut.wipeMLSGroup(
                 forConversation: conversation,
                 context: syncMOC
             )
@@ -183,7 +186,7 @@ class MLSEventProcessorTests: MessagingTestBase {
             self.conversation.mlsStatus = status
 
             // When
-            MLSEventProcessor.shared.joinMLSGroupWhenReady(
+            self.sut.joinMLSGroupWhenReady(
                 forConversation: self.conversation,
                 context: self.syncMOC
             )
@@ -208,7 +211,7 @@ class MLSEventProcessorTests: MessagingTestBase {
             self.mlsServiceMock.conversationExistsGroupID_MockValue = mockHasWelcomeMessageBeenProcessed
 
             // When
-            MLSEventProcessor.shared.updateConversationIfNeeded(
+            self.sut.updateConversationIfNeeded(
                 conversation: self.conversation,
                 groupID: self.groupIdString,
                 context: self.syncMOC
