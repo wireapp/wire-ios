@@ -79,6 +79,8 @@ public class NotificationSession {
 
         case noAccount
         case pendingCryptoboxMigration
+        case coreDataMissingSharedContainer
+        case coreDataMigrationRequired
 
     }
 
@@ -104,9 +106,7 @@ public class NotificationSession {
     private var callEvent: CallEventPayload?
     private var localNotifications = [ZMLocalNotification]()
 
-    private var context: NSManagedObjectContext {
-        return coreDataStack.syncContext
-    }
+    private var context: NSManagedObjectContext { coreDataStack.syncContext }
 
     public weak var delegate: NotificationSessionDelegate?
 
@@ -137,10 +137,24 @@ public class NotificationSession {
             applicationContainer: sharedContainerURL
         )
 
+        guard coreDataStack.storesExists else {
+            throw InitializationError.coreDataMissingSharedContainer
+        }
+
+        guard !coreDataStack.needsMigration  else {
+            throw InitializationError.coreDataMigrationRequired
+        }
+
+        var coreDataStackError: Error?
         coreDataStack.loadStores { error in
+            coreDataStackError = error
+
             if let error = error {
                 WireLogger.notifications.error("Loading coreDataStack with error: \(error.localizedDescription)")
             }
+        }
+        guard coreDataStackError == nil else {
+            throw InitializationError.coreDataMissingSharedContainer
         }
 
         // Don't cache the cookie because if the user logs out and back in again in the main app
@@ -152,7 +166,7 @@ public class NotificationSession {
 
         let credentials = environment.proxy.flatMap { ProxyCredentials.retrieve(for: $0) }
 
-        let transportSession =  ZMTransportSession(
+        let transportSession = ZMTransportSession(
             environment: environment,
             proxyUsername: credentials?.username,
             proxyPassword: credentials?.password,
