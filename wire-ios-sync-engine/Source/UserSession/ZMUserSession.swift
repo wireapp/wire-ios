@@ -674,7 +674,6 @@ extension ZMUserSession: ZMSyncStateDelegate {
             }
         }
 
-        // FIXME: [jacob] move to a repairOutOfSyncConversationsIfNeeded on MLSService?
         mlsService.repairOutOfSyncConversations()
     }
 
