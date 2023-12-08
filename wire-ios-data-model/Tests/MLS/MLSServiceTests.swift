@@ -2457,7 +2457,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
 
         // Then
-        let receivedConferenceInfo = await conferenceInfoChanges.first(where: { _ in true })
+        let receivedConferenceInfo = try await conferenceInfoChanges.first(where: { _ in true })
         let expectedConferenceInfo = MLSConferenceInfo(
             epoch: epoch,
             keyData: key,

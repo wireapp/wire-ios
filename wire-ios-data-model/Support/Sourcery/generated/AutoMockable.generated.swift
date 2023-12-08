@@ -1584,10 +1584,10 @@ public class MockMLSServiceInterface: MLSServiceInterface {
     // MARK: - onConferenceInfoChange
 
     public var onConferenceInfoChangeParentGroupIDSubConversationGroupID_Invocations: [(parentGroupID: MLSGroupID, subConversationGroupID: MLSGroupID)] = []
-    public var onConferenceInfoChangeParentGroupIDSubConversationGroupID_MockMethod: ((MLSGroupID, MLSGroupID) -> AsyncStream<MLSConferenceInfo>)?
-    public var onConferenceInfoChangeParentGroupIDSubConversationGroupID_MockValue: AsyncStream<MLSConferenceInfo>?
+    public var onConferenceInfoChangeParentGroupIDSubConversationGroupID_MockMethod: ((MLSGroupID, MLSGroupID) -> AsyncThrowingStream<MLSConferenceInfo, Error>)?
+    public var onConferenceInfoChangeParentGroupIDSubConversationGroupID_MockValue: AsyncThrowingStream<MLSConferenceInfo, Error>?
 
-    public func onConferenceInfoChange(parentGroupID: MLSGroupID, subConversationGroupID: MLSGroupID) -> AsyncStream<MLSConferenceInfo> {
+    public func onConferenceInfoChange(parentGroupID: MLSGroupID, subConversationGroupID: MLSGroupID) -> AsyncThrowingStream<MLSConferenceInfo, Error> {
         onConferenceInfoChangeParentGroupIDSubConversationGroupID_Invocations.append((parentGroupID: parentGroupID, subConversationGroupID: subConversationGroupID))
 
         if let mock = onConferenceInfoChangeParentGroupIDSubConversationGroupID_MockMethod {

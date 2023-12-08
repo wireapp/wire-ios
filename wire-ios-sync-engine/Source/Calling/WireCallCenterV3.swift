@@ -668,11 +668,15 @@ extension WireCallCenterV3 {
                             subConversationGroupID: subgroupID
                         )
 
-                        for await conferenceInfo in onConferenceInfoChange {
-                            self.avsWrapper.setMLSConferenceInfo(
-                                conversationId: conversationID,
-                                info: conferenceInfo
-                            )
+                        do {
+                            for try await conferenceInfo in onConferenceInfoChange {
+                                self.avsWrapper.setMLSConferenceInfo(
+                                    conversationId: conversationID,
+                                    info: conferenceInfo
+                                )
+                            }
+                        } catch {
+                            WireLogger.calling.error("Error updating conference info: \(error)")
                         }
                     }
 

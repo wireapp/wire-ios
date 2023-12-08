@@ -869,7 +869,7 @@ class WireCallCenterV3Tests: MessagingTest {
         let conferenceInfoChangeSubject = PassthroughSubject<MLSConferenceInfo, Never>()
         mlsService.onConferenceInfoChangeParentGroupIDSubConversationGroupID_MockMethod = { _, _ in
             var iterator = conferenceInfoChangeSubject.values.makeAsyncIterator()
-            return AsyncStream {
+            return AsyncThrowingStream {
                 await iterator.next()
             }
         }

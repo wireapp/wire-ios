@@ -65,7 +65,7 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
     func onConferenceInfoChange(
         parentGroupID: MLSGroupID,
         subConversationGroupID: MLSGroupID
-    ) -> AsyncStream<MLSConferenceInfo>
+    ) -> AsyncThrowingStream<MLSConferenceInfo, Error>
 
     func leaveSubconversationIfNeeded(
         parentQualifiedID: QualifiedID,
@@ -345,20 +345,20 @@ public final class MLSService: MLSServiceInterface {
     public func onConferenceInfoChange(
         parentGroupID: MLSGroupID,
         subConversationGroupID: MLSGroupID
-    ) -> AsyncStream<MLSConferenceInfo> {
+    ) -> AsyncThrowingStream<MLSConferenceInfo, Error> {
         var sequence = onEpochChanged()
             .buffer(size: Self.epochChangeBufferSize, prefetch: .keepFull, whenFull: .dropOldest)
             .filter({ $0.isOne(of: parentGroupID, subConversationGroupID) })
             .values
             .compactMap({ [weak self] _ in
-                try? await self?.generateConferenceInfo(
+                try await self?.generateConferenceInfo(
                     parentGroupID: parentGroupID,
                     subconversationGroupID: subConversationGroupID
                 )
             }).makeAsyncIterator()
 
-        return AsyncStream {
-            await sequence.next()
+        return AsyncThrowingStream {
+            try await sequence.next()
         }
     }
 
