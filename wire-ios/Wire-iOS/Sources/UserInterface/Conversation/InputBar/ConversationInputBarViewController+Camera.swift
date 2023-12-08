@@ -187,7 +187,7 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
         }
     }
 
-    private func writeToSavedPhotoAlbumIfNecessary(imageData: Data, isFromCamera: Bool) {
+    func writeToSavedPhotoAlbumIfNecessary(imageData: Data, isFromCamera: Bool) {
         guard isFromCamera,
               MediaShareRestrictionManager(sessionRestriction: ZMUserSession.shared()).hasAccessToCameraRoll,
               SecurityFlags.cameraRoll.isEnabled,
