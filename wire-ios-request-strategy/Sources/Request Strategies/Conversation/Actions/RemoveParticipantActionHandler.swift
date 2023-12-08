@@ -102,10 +102,13 @@ class RemoveParticipantActionHandler: ActionHandler<RemoveParticipantAction> {
             if let clearedTimestamp = conversation.clearedTimeStamp, clearedTimestamp == conversation.lastServerTimeStamp, user.isSelfUser {
                 conversation.updateCleared(fromPostPayloadEvent: updateEvent)
             }
-
-            eventProcessor.processConversationEvents([updateEvent])
-
-            action.notifyResult(.success(Void()))
+            let success = {
+                action.notifyResult(.success(Void()))
+            }
+            Task {
+                await eventProcessor.processConversationEvents([updateEvent])
+                success()
+            }
 
         case 204:
             action.notifyResult(.success(Void()))
