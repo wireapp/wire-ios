@@ -542,10 +542,7 @@ public class ZMUserSession: NSObject {
             let apiVersion = BackendInfo.apiVersion,
             apiVersion > .v2,
             let clientID = userClient.remoteIdentifier
-        else {
-            print("not renewing: api version = \(BackendInfo.apiVersion?.rawValue), clientID = \(userClient.remoteIdentifier), userClient = \(userClient.isDeleted)")
-            return
-        }
+        else { return }
 
         renewAccessToken(with: clientID)
     }
