@@ -42,7 +42,7 @@ public final class EnrollE2eICertificateUseCase: EnrollE2eICertificateUseCaseInt
     public func invoke(e2eiClientId: E2eIClientID,
                        userName: String,
                        userHandle: String,
-                       invokeAuthentication: OAuthBlock) async throws -> String {
+                       authenticate: OAuthBlock) async throws -> String {
         let enrollment = try await e2eiRepository.createEnrollment(e2eiClientId: e2eiClientId, userName: userName, handle: userHandle)
 
         let acmeNonce = try await enrollment.getACMENonce()
