@@ -116,8 +116,13 @@ public final class MLSService: MLSServiceInterface {
     private let logger = WireLogger.mls
     private var groupsPendingJoin = Set<MLSGroupID>()
     private let groupsBeingRepaired = GroupsBeingRepaired()
-
     private let syncStatus: SyncStatusProtocol
+
+    private var coreCrypto: SafeCoreCryptoProtocol {
+        get throws {
+            try coreCryptoProvider.coreCrypto(requireMLS: true)
+        }
+    }
 
     enum Keys: String, DefaultsKey {
         case keyPackageQueriedTime
@@ -265,7 +270,7 @@ public final class MLSService: MLSServiceInterface {
 
             let keyLength: UInt32 = 32
 
-            return try coreCryptoProvider.coreCrypto(requireMLS: true).perform {
+            return try coreCrypto.perform {
                 let epoch = try $0.conversationEpoch(conversationId: subconversationGroupID.bytes)
 
                 let keyData = try $0.exportSecretKey(
@@ -300,7 +305,7 @@ public final class MLSService: MLSServiceInterface {
 
     public func subconversationMembers(for subconversationGroupID: MLSGroupID) throws -> [MLSClientID] {
         do {
-            return try coreCryptoProvider.coreCrypto(requireMLS: true).perform {
+            return try coreCrypto.perform {
                 return try $0.getClientIds(conversationId: subconversationGroupID.bytes).compactMap {
                     MLSClientID(data: $0.data)
                 }
@@ -423,7 +428,7 @@ public final class MLSService: MLSServiceInterface {
                 custom: .init(keyRotationSpan: nil, wirePolicy: nil)
             )
 
-            try coreCryptoProvider.coreCrypto(requireMLS: true).perform {
+            try coreCrypto.perform {
                 try $0.createConversation(
                     conversationId: groupID.bytes,
                     creatorCredentialType: .basic,
@@ -581,7 +586,7 @@ public final class MLSService: MLSServiceInterface {
     public func wipeGroup(_ groupID: MLSGroupID) {
         logger.info("wiping group (\(groupID.safeForLoggingDescription))")
         do {
-            try coreCryptoProvider.coreCrypto(requireMLS: true).perform { try $0.wipeConversation(conversationId: groupID.bytes) }
+            try coreCrypto.perform { try $0.wipeConversation(conversationId: groupID.bytes) }
         } catch {
             logger.warn("failed to wipe group (\(groupID.safeForLoggingDescription)): \(String(describing: error))")
         }
@@ -643,7 +648,7 @@ public final class MLSService: MLSServiceInterface {
 
     private func shouldQueryUnclaimedKeyPackagesCount() -> Bool {
         do {
-            let estimatedLocalKeyPackageCount = try coreCryptoProvider.coreCrypto(requireMLS: true).perform {
+            let estimatedLocalKeyPackageCount = try coreCrypto.perform {
                 try $0.clientValidKeypackagesCount(ciphersuite: defaultCipherSuite.rawValue)
             }
             let shouldCountRemainingKeyPackages = estimatedLocalKeyPackageCount < halfOfTargetUnclaimedKeyPackageCount
@@ -697,7 +702,7 @@ public final class MLSService: MLSServiceInterface {
         var keyPackages = [[Byte]]()
 
         do {
-            keyPackages = try coreCryptoProvider.coreCrypto(requireMLS: true).perform { try $0.clientKeypackages(ciphersuite: defaultCipherSuite.rawValue, amountRequested: amountRequested) }
+            keyPackages = try coreCrypto.perform { try $0.clientKeypackages(ciphersuite: defaultCipherSuite.rawValue, amountRequested: amountRequested) }
 
         } catch let error {
             logger.warn("failed to generate new key packages: \(String(describing: error))")
@@ -741,7 +746,7 @@ public final class MLSService: MLSServiceInterface {
     }
 
     public func conversationExists(groupID: MLSGroupID) -> Bool {
-        let result = (try? coreCryptoProvider.coreCrypto(requireMLS: true).perform { $0.conversationExists(conversationId: groupID.bytes) }) ?? false
+        let result = (try? coreCrypto.perform { $0.conversationExists(conversationId: groupID.bytes) }) ?? false
         logger.info("checking if group (\(groupID)) exists... it does\(result ? "!" : " not!")")
         return result
     }
@@ -755,7 +760,7 @@ public final class MLSService: MLSServiceInterface {
         }
 
         do {
-            let groupIDBytes = try coreCryptoProvider.coreCrypto(requireMLS: true).perform {
+            let groupIDBytes = try coreCrypto.perform {
                 try $0.processWelcomeMessage(
                     welcomeMessage: messageBytes,
                     customConfiguration: .init(keyRotationSpan: nil, wirePolicy: nil)
@@ -1009,7 +1014,7 @@ public final class MLSService: MLSServiceInterface {
     }
 
     private func outOfSyncConversations(in context: NSManagedObjectContext) -> [ZMConversation] {
-        return (try? coreCryptoProvider.coreCrypto(requireMLS: true).perform { coreCrypto in
+        return (try? coreCrypto.perform { coreCrypto in
             return ZMConversation.fetchMLSConversations(in: context).filter {
                 isConversationOutOfSync(
                     $0,
@@ -1060,7 +1065,7 @@ public final class MLSService: MLSServiceInterface {
         subgroup: MLSSubgroup? = nil,
         context: NSManagedObjectContext
     ) -> Bool {
-        return (try? coreCryptoProvider.coreCrypto(requireMLS: true).perform {
+        return (try? coreCrypto.perform {
             return isConversationOutOfSync(
                 conversation,
                 subgroup: subgroup,
@@ -1076,7 +1081,7 @@ public final class MLSService: MLSServiceInterface {
         logger.info("requesting to join group (\(groupID.safeForLoggingDescription)")
 
         do {
-            let proposal = try coreCryptoProvider.coreCrypto(requireMLS: true).perform {
+            let proposal = try coreCrypto.perform {
                 try $0.newExternalAddProposal(conversationId: groupID.bytes,
                                               epoch: epoch,
                                               ciphersuite: defaultCipherSuite.rawValue,
@@ -1560,7 +1565,7 @@ public final class MLSService: MLSServiceInterface {
     private func getMembers(for groupID: MLSGroupID) throws -> [MLSClientID] {
         do {
             logger.info("getting members for group (\(groupID.safeForLoggingDescription))")
-            return try coreCryptoProvider.coreCrypto(requireMLS: true)
+            return try coreCrypto
                 .perform { try $0.getClientIds(conversationId: groupID.bytes) }
                 .compactMap { MLSClientID(data: Data($0)) }
         } catch {
@@ -1651,7 +1656,7 @@ public final class MLSService: MLSServiceInterface {
                 parentGroupID: parentGroupID
             )
 
-            try coreCryptoProvider.coreCrypto(requireMLS: true).perform {
+            try coreCrypto.perform {
                 try $0.wipeConversation(conversationId: subconversationGroupID.bytes)
             }
         } catch {
