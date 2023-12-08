@@ -18,24 +18,23 @@
 
 import Foundation
 
-enum ViewConstants {
+public enum MLSError: Error {
+    case unknownError
+}
 
-    enum Padding {
-        static let small = 4.0
-        static let medium = 8.0
-        static let standard = 16.0
+public protocol MLSProviding {
+    var isMLSEnbaled: Bool { get }
+    func fetchMLSThumbprint() async throws -> String
+}
+
+public final class MLSProvider: MLSProviding {
+    public var isMLSEnbaled: Bool
+
+    public init(isMLSEnbaled: Bool = false) {
+        self.isMLSEnbaled = isMLSEnbaled
     }
 
-    enum View {
-        enum Height {
-            static let standard = 45.0
-            static let small = 28.0
-        }
-    }
-
-    enum Header {
-        enum Height {
-            static let minimum = 10.0
-        }
+    public func fetchMLSThumbprint() async throws -> String {
+        throw MLSError.unknownError
     }
 }

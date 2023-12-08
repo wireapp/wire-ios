@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireDataModel
 
 // TODO: Remove this
 
@@ -100,5 +101,33 @@ class DeveloperDeviceDetailsSettingsSelectionViewModel: ObservableObject {
             selectedItemID = item.id
             Self.selectedE2eIdentiyStatus = item.value
         }
+    }
+
+    static func e2eIdentityProvider() -> E2eIdentityProviding {
+        guard  DeveloperDeviceDetailsSettingsSelectionViewModel.isE2eIdentityViewEnabled else {
+            return E2eIdentityProvider()
+        }
+        let status = E2EIdentityCertificateStatus.status(
+            for: DeveloperDeviceDetailsSettingsSelectionViewModel.selectedE2eIdentiyStatus ?? ""
+        )
+        switch status {
+        case .notActivated:
+            return MockNotActivatedE2eIdentityProvider()
+        case .revoked:
+            return MockRevokedE2eIdentityProvider()
+        case .expired:
+            return MockExpiredE2eIdentityProvider()
+        case .valid:
+            return MockValidE2eIdentityProvider()
+        case .none:
+            return E2eIdentityProvider()
+        }
+    }
+
+    static func mlsProvider() -> MLSProviding {
+        guard DeveloperFlag.enableMLSSupport.isOn else {
+            return MLSProvider()
+        }
+        return MockMLSProvider(isMLSEnbaled: true)
     }
 }

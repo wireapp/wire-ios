@@ -97,12 +97,14 @@ final class ClientListViewController: UIViewController,
         return nil
     }
 
-    required init(clientsList: [UserClient]?,
-                  selfClient: UserClient? = ZMUserSession.shared()?.selfUserClient,
-                  credentials: ZMEmailCredentials? = .none,
-                  detailedView: Bool = false,
-                  showTemporary: Bool = true,
-                  showLegalHold: Bool = true) {
+    required init(
+        clientsList: [UserClient]?,
+        selfClient: UserClient? = ZMUserSession.shared()?.selfUserClient,
+        credentials: ZMEmailCredentials? = .none,
+        detailedView: Bool = false,
+        showTemporary: Bool = true,
+        showLegalHold: Bool = true
+    ) {
         self.selfClient = selfClient
         self.detailedView = detailedView
         self.credentials = credentials
@@ -186,20 +188,24 @@ final class ClientListViewController: UIViewController,
     func openDetailsOfClient(_ client: UserClient) {
         guard let userSession = ZMUserSession.shared() else { return }
         if let navigationController = self.navigationController {
-                let detailsView = DeviceDetailsView(
-                    viewModel: DeviceInfoViewModel.map(
-                        userClient: client,
-                        userSession: userSession,
-                        credentials: self.credentials,
-                        getUserClientFingerprintUseCase: userSession.getUserClientFingerprint,
-                        e2eIdentityProvider: self.e2eIdentityProvider()
-                    )) {
-                        self.navigationController?.setNavigationBarHidden(false, animated: false)
-                    }
-                let hostingViewController = UIHostingController(rootView: detailsView)
-                hostingViewController.view.backgroundColor = SemanticColors.View.backgroundDefault
-                navigationController.pushViewController(hostingViewController, animated: true)
-                navigationController.isNavigationBarHidden = true
+            let detailsView = DeviceDetailsView(
+                viewModel: DeviceInfoViewModel.map(
+                    userClient: client,
+                    isSelfClient: client.isSelfClient(),
+                    userSession: userSession,
+                    credentials: self.credentials,
+                    getUserClientFingerprintUseCase: userSession.getUserClientFingerprint,
+                    // TODO: Replace these once we have actual implementations
+                    e2eIdentityProvider: DeveloperDeviceDetailsSettingsSelectionViewModel.e2eIdentityProvider(),
+                    mlsProvider: DeveloperDeviceDetailsSettingsSelectionViewModel.mlsProvider()
+                )
+            ) {
+                self.navigationController?.setNavigationBarHidden(false, animated: false)
+            }
+            let hostingViewController = UIHostingController(rootView: detailsView)
+            hostingViewController.view.backgroundColor = SemanticColors.View.backgroundDefault
+            navigationController.pushViewController(hostingViewController, animated: true)
+            navigationController.isNavigationBarHidden = true
         }
     }
 
@@ -495,32 +501,6 @@ extension ClientListViewController: ZMUserObserver {
             clients.remove(selfClient)
             self.clients = Array(clients)
         }
-    }
-
-}
-
-// MARK: - E2eIdentityProvider
-extension ClientListViewController {
-
-     func e2eIdentityProvider() -> E2eIdentityProviding {
-        if DeveloperDeviceDetailsSettingsSelectionViewModel.isE2eIdentityViewEnabled {
-            let status = E2EIdentityCertificateStatus.status(
-                for: DeveloperDeviceDetailsSettingsSelectionViewModel.selectedE2eIdentiyStatus ?? ""
-            )
-            switch status {
-            case .notActivated:
-                return MockNotActivatedE2eIdentityProvider()
-            case .revoked:
-                return MockRevokedE2eIdentityProvider()
-            case .expired:
-                return MockExpiredE2eIdentityProvider()
-            case .valid:
-                return MockValidE2eIdentityProvider()
-            case .none:
-                return E2eIdentityProvider()
-            }
-        }
-        return E2eIdentityProvider()
     }
 
 }

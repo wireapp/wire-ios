@@ -18,24 +18,18 @@
 
 import Foundation
 
-enum ViewConstants {
+public final class MockMLSProvider: MLSProviding {
+    public var isMLSEnbaled: Bool
 
-    enum Padding {
-        static let small = 4.0
-        static let medium = 8.0
-        static let standard = 16.0
+    public var mlsThumbPrint: String {
+        return "abcdefghijklmnopqrstuvwxabcdefghijklmnopqrstuvwxabcdefghijklmnop"
     }
 
-    enum View {
-        enum Height {
-            static let standard = 45.0
-            static let small = 28.0
-        }
+    public init(isMLSEnbaled: Bool) {
+        self.isMLSEnbaled = isMLSEnbaled
     }
 
-    enum Header {
-        enum Height {
-            static let minimum = 10.0
-        }
+    public func fetchMLSThumbprint() async throws -> String {
+        return mlsThumbPrint
     }
 }

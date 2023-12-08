@@ -2741,6 +2741,14 @@ internal enum L10n {
         internal static let unknown = L10n.tr("Localizable", "device.class.unknown", fallback: "Unknown")
       }
       internal enum Details {
+        internal enum Secion {
+          internal enum Mls {
+            /// MLS with Ed25519 Signature
+            internal static let signature = L10n.tr("Localizable", "device.details.secion.mls.signature", fallback: "MLS with Ed25519 Signature")
+            /// MLS Thumbprint
+            internal static let title = L10n.tr("Localizable", "device.details.secion.mls.title", fallback: "MLS Thumbprint")
+          }
+        }
         internal enum Section {
           internal enum E2ei {
             /// Get Certificate
