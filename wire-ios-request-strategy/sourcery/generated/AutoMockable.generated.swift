@@ -117,7 +117,7 @@ public class MockConversationServiceInterface: ConversationServiceInterface {
             fatalError("no mock for `createGroupConversationNameUsersAllowGuestsAllowServicesEnableReceiptsMessageProtocolCompletion`")
         }
 
-        mock(name, users, allowGuests, allowServices, enableReceipts, messageProtocol, completion)            
+        mock(name, users, allowGuests, allowServices, enableReceipts, messageProtocol, completion)
     }
 
     // MARK: - syncConversation
@@ -132,7 +132,7 @@ public class MockConversationServiceInterface: ConversationServiceInterface {
             fatalError("no mock for `syncConversationQualifiedIDCompletion`")
         }
 
-        mock(qualifiedID, completion)            
+        mock(qualifiedID, completion)
     }
 
     // MARK: - syncConversation
@@ -147,7 +147,7 @@ public class MockConversationServiceInterface: ConversationServiceInterface {
             fatalError("no mock for `syncConversationQualifiedID`")
         }
 
-        await mock(qualifiedID)            
+        await mock(qualifiedID)
     }
 
 }

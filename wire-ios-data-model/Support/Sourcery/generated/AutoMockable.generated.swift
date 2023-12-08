@@ -75,7 +75,7 @@ public class MockConversationEventProcessorProtocol: ConversationEventProcessorP
             fatalError("no mock for `processConversationEvents`")
         }
 
-        await mock(events)            
+        await mock(events)
     }
 
     // MARK: - processPayload
@@ -90,10 +90,11 @@ public class MockConversationEventProcessorProtocol: ConversationEventProcessorP
             fatalError("no mock for `processPayload`")
         }
 
-        mock(payload)            
+        mock(payload)
     }
 
 }
+
 class MockCoreDataMessagingMigratorProtocol: CoreDataMessagingMigratorProtocol {
 
     // MARK: - Life cycle
