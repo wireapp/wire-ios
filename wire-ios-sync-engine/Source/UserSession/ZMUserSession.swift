@@ -166,10 +166,6 @@ public class ZMUserSession: NSObject {
         return managedObjectContext.conversationListDirectory()
     }
 
-    public var operationStatus: OperationStatus { // TODO jacob we don't want this to be public
-        return applicationStatusDirectory.operationStatus
-    }
-
     public private(set) var networkState: ZMNetworkState = .online {
         didSet {
             if oldValue != networkState {
