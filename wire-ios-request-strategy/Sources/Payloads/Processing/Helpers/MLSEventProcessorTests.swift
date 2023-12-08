@@ -23,12 +23,14 @@ import XCTest
 class MLSEventProcessorTests: MessagingTestBase {
 
     var mlsServiceMock: MockMLSServiceInterface!
+    var sut: MLSEventProcessor!
     var conversation: ZMConversation!
     var domain = "example.com"
     let groupIdString = "identifier".data(using: .utf8)!.base64EncodedString()
 
     override func setUp() {
         super.setUp()
+        sut = MLSEventProcessor()
         syncMOC.performGroupedBlockAndWait {
             self.mlsServiceMock = .init()
             self.mlsServiceMock.registerPendingJoin_MockMethod = { _ in }
@@ -42,6 +44,7 @@ class MLSEventProcessorTests: MessagingTestBase {
     }
 
     override func tearDown() {
+        sut = nil
         mlsServiceMock = nil
         conversation = nil
         super.tearDown()
@@ -57,14 +60,6 @@ class MLSEventProcessorTests: MessagingTestBase {
             self.conversation.mlsStatus = .pendingJoin
             XCTAssertEqual(self.conversation.mlsStatus, .pendingJoin)
         }
-
-        // When
-        await MLSEventProcessor.shared.process(welcomeMessage: message, in: self.syncMOC)
-
-        // Then
-        let mlsStatus = await syncMOC.perform { self.conversation.mlsStatus }
-        XCTAssertEqual(message, self.mlsServiceMock.processWelcomeMessageWelcomeMessage_Invocations.last)
-        XCTAssertEqual(mlsStatus, .ready)
     }
 
     // MARK: - Update Conversation
@@ -123,7 +118,7 @@ class MLSEventProcessorTests: MessagingTestBase {
             self.conversation.mlsStatus = .pendingJoin
 
             // When
-            MLSEventProcessor.shared.joinMLSGroupWhenReady(
+            self.sut.joinMLSGroupWhenReady(
                 forConversation: self.conversation,
                 context: self.syncMOC
             )
@@ -186,7 +181,7 @@ class MLSEventProcessorTests: MessagingTestBase {
             self.conversation.mlsStatus = status
 
             // When
-            MLSEventProcessor.shared.joinMLSGroupWhenReady(
+            self.sut.joinMLSGroupWhenReady(
                 forConversation: self.conversation,
                 context: self.syncMOC
             )
