@@ -299,6 +299,7 @@ jobs:
         with:
           files: |
             build/reports/*.junit
+          compare_to_earlier_commit: false
             
             
       - name: Archiving DerivedData Logs
