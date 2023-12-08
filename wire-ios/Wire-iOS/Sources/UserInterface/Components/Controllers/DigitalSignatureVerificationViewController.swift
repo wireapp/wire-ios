@@ -30,7 +30,7 @@ public enum DigitalSignatureVerificationError: Error {
 
 class DigitalSignatureVerificationViewController: UIViewController {
 
-    typealias DigitalSignatureCompletion = ((_ result: VoidResult) -> Void)
+    typealias DigitalSignatureCompletion = ((_ result: Swift.Result<Void, Error>) -> Void)
 
     // MARK: - Private Property
     private var completion: DigitalSignatureCompletion?
@@ -103,7 +103,7 @@ extension DigitalSignatureVerificationViewController: WKNavigationDelegate {
 
         switch response {
         case .success:
-            completion?(.success)
+            completion?(.success(()))
             decisionHandler(.cancel)
         case .failure(let error):
             completion?(.failure(error))
@@ -111,7 +111,7 @@ extension DigitalSignatureVerificationViewController: WKNavigationDelegate {
         }
     }
 
-    func parseVerificationURL(_ url: URL) -> VoidResult? {
+    func parseVerificationURL(_ url: URL) -> Swift.Result<Void, Error>? {
         let urlComponents = URLComponents(string: url.absoluteString)
         let postCode = urlComponents?.queryItems?
             .first(where: { $0.name == "postCode" })
@@ -120,7 +120,7 @@ extension DigitalSignatureVerificationViewController: WKNavigationDelegate {
         }
         switch postCodeValue {
         case "sas-success":
-            return .success
+            return .success(())
         case "sas-error-authentication-failed":
              return .failure(DigitalSignatureVerificationError.authenticationFailed)
         default:

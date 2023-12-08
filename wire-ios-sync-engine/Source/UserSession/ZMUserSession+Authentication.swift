@@ -84,7 +84,7 @@ extension ZMUserSession {
         syncMOC.performGroupedBlockAndWait {}
     }
 
-    public func logout(credentials: ZMEmailCredentials, _ completion: @escaping (VoidResult) -> Void) {
+    public func logout(credentials: ZMEmailCredentials, _ completion: @escaping (Swift.Result<Void, Error>) -> Void) {
         guard
             let accountID = ZMUser.selfUser(inUserSession: self).remoteIdentifier,
             let selfClientIdentifier = ZMUser.selfUser(inUserSession: self).selfClient()?.remoteIdentifier,
@@ -107,7 +107,7 @@ extension ZMUserSession {
 
             if response.httpStatus == 200 {
                 self?.delegate?.userDidLogout(accountId: accountID)
-                completion(.success)
+                completion(.success(()))
             } else {
                 completion(.failure(strongSelf.errorFromFailedDeleteResponse(response)))
             }
