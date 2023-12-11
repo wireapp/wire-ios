@@ -119,6 +119,7 @@ class ActionHandlerTestBase<Action: EntityAction, Handler: ActionHandler<Action>
     ///   - apiVersion: The api version of the response
     ///   - validation: The validation block to perform on the action result
     func test_itHandlesResponse(
+        sut: Handler? = nil,
         action: Action,
         status: Int,
         payload: ZMTransportData? = nil,
@@ -129,7 +130,7 @@ class ActionHandlerTestBase<Action: EntityAction, Handler: ActionHandler<Action>
         validation: @escaping ValidationBlock
     ) {
         // Given
-        let sut = Handler(context: syncMOC)
+        let sut = sut ?? Handler(context: syncMOC)
         var action = action
 
         // Expectation
@@ -172,9 +173,11 @@ extension ActionHandlerTestBase {
     }
 
     func test_itHandlesResponse(
+        sut: Handler? = nil,
         status: Int,
         payload: ZMTransportData? = nil,
         label: String? = nil,
+        apiVersion: APIVersion = .v1,
         file: StaticString = #filePath,
         line: UInt = #line,
         validation: @escaping ValidationBlock
@@ -184,10 +187,12 @@ extension ActionHandlerTestBase {
         }
 
         test_itHandlesResponse(
+            sut: sut,
             action: action,
             status: status,
             payload: payload,
             label: label,
+            apiVersion: apiVersion,
             file: file,
             line: line,
             validation: validation
@@ -196,12 +201,19 @@ extension ActionHandlerTestBase {
 
     @discardableResult
     func test_itHandlesSuccess(
+        sut: Handler? = nil,
         status: Int,
-        payload: ZMTransportData? = nil
+        payload: ZMTransportData? = nil,
+        apiVersion: APIVersion = .v1
     ) -> Result? {
         var result: Result?
 
-        test_itHandlesResponse(status: status, payload: payload) {
+        test_itHandlesResponse(
+            sut: sut,
+            status: status,
+            payload: payload,
+            apiVersion: apiVersion
+        ) {
             guard case .success(let res) = $0 else { return false }
             result = res
             return true
@@ -247,9 +259,10 @@ extension ActionHandlerTestBase where Failure: Equatable {
     func test_itHandlesFailure(
         status: Int,
         label: String? = nil,
+        apiVersion: APIVersion = .v1,
         expectedError: Failure
     ) {
-        test_itHandlesResponse(status: status, label: label) {
+        test_itHandlesResponse(status: status, label: label, apiVersion: apiVersion) {
             guard case .failure(let error) = $0 else { return false }
             return error == expectedError
         }
