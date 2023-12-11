@@ -189,7 +189,7 @@ public final class ProteusService: ProteusServiceInterface {
     public func decrypt(
         data: Data,
         forSession id: ProteusSessionID
-    ) throws -> (didCreateNewSession: Bool, decryptedData: Data) {
+    ) async throws -> (didCreateNewSession: Bool, decryptedData: Data) {
         logger.info("decrypting data")
 
         if sessionExists(id: id) {

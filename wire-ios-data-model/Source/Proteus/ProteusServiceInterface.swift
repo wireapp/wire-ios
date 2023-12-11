@@ -35,7 +35,7 @@ public protocol ProteusServiceInterface {
 
     func establishSession(id: ProteusSessionID, fromPrekey: String) throws
     func deleteSession(id: ProteusSessionID) throws
-    func sessionExists(id: ProteusSessionID) -> Bool
+    func sessionExists(id: ProteusSessionID) async -> Bool
     func encrypt(data: Data, forSession id: ProteusSessionID) throws -> Data
     func encryptBatched(data: Data, forSessions sessions: [ProteusSessionID]) throws -> [String: Data]
 
@@ -54,7 +54,7 @@ public protocol ProteusServiceInterface {
     func decrypt(
         data: Data,
         forSession id: ProteusSessionID
-    ) throws -> (didCreateNewSession: Bool, decryptedData: Data)
+    ) async throws -> (didCreateNewSession: Bool, decryptedData: Data)
 
     func generatePrekey(id: UInt16) throws -> String
     func lastPrekey() throws -> String

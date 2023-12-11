@@ -31,7 +31,7 @@ extension EventDecoder {
         _ event: ZMUpdateEvent,
         in context: NSManagedObjectContext,
         using decryptFunction: ProteusDecryptionFunction
-    ) -> ZMUpdateEvent? {
+    ) async -> ZMUpdateEvent? {
         WireLogger.updateEvent.info("decrypting proteus event...")
 
         guard !event.wasDecrypted else {
