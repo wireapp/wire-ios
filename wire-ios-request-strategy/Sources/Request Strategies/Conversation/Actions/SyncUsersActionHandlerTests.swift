@@ -158,9 +158,13 @@ final class SyncUsersActionHandlerTests: ActionHandlerTestBase<SyncUsersAction, 
     }
 
     func test_itHandlesFailures() {
-        test_itHandlesFailures([
-            .failure(status: 999, error: .unknownError(code: 999, label: "foo", message: ""), label: "bar")
-        ])
+            test_itHandlesFailure(
+                status: 999,
+                label: "foo",
+                apiVersion: .v5,
+                expectedError: .unknownError(code: 999, label: "foo", message: "?")
+            )
+
     }
 
 }

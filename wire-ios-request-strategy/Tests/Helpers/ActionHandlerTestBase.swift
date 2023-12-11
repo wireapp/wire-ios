@@ -259,9 +259,10 @@ extension ActionHandlerTestBase where Failure: Equatable {
     func test_itHandlesFailure(
         status: Int,
         label: String? = nil,
+        apiVersion: APIVersion = .v1,
         expectedError: Failure
     ) {
-        test_itHandlesResponse(status: status, label: label) {
+        test_itHandlesResponse(status: status, label: label, apiVersion: apiVersion) {
             guard case .failure(let error) = $0 else { return false }
             return error == expectedError
         }
