@@ -78,11 +78,17 @@ final class SettingsTechnicalReportViewController: UITableViewController, MFMail
         mailComposeViewController.setSubject(NSLocalizedString("self.settings.technical_report.mail.subject", comment: ""))
 
         if includedVoiceLogCell.accessoryType == .checkmark {
-            if let currentLog = ZMSLog.currentLog, let currentPath = ZMSLog.currentLogPath {
-                mailComposeViewController.addAttachmentData(currentLog, mimeType: "text/plain", fileName: currentPath.lastPathComponent)
+            if let currentLog = ZMSLog.currentZipLog {
+                mailComposeViewController.addAttachmentData(currentLog, mimeType: "application/zip", fileName: "current.log.zip")
             }
-            if let previousLog = ZMSLog.previousLog, let previousPath = ZMSLog.previousLogPath {
-                mailComposeViewController.addAttachmentData(previousLog, mimeType: "text/plain", fileName: previousPath.lastPathComponent)
+
+            ZMSLog.previousZipLogURLs.forEach { url in
+                do {
+                    let data = try Data(contentsOf: url)
+                    mailComposeViewController.addAttachmentData(data, mimeType: "application/zip", fileName: url.lastPathComponent)
+                } catch {
+                    // ignore error for now, it's possible a file does not exist.
+                }
             }
         }
         mailComposeViewController.setMessageBody("Debug report", isHTML: false)
