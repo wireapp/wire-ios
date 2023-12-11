@@ -356,14 +356,12 @@ final class ConversationEventPayloadProcessor {
 
         switch conversationType {
         case .group:
-            return await context.perform {
-                self.updateOrCreateGroupConversation(
-                    from: payload,
-                    in: context,
-                    serverTimestamp: serverTimestamp,
-                    source: source
-                )
-            }
+            return await updateOrCreateGroupConversation(
+                from: payload,
+                in: context,
+                serverTimestamp: serverTimestamp,
+                source: source
+            )
 
         case .`self`:
             return await updateOrCreateSelfConversation(
@@ -394,41 +392,47 @@ final class ConversationEventPayloadProcessor {
         in context: NSManagedObjectContext,
         serverTimestamp: Date,
         source: Source
-    ) -> ZMConversation? {
+    ) async -> ZMConversation? {
         guard let conversationID = payload.id ?? payload.qualifiedID?.uuid else {
             Logging.eventProcessing.error("Missing conversationID in group conversation payload, aborting...")
             return nil
         }
 
         var created = false
-        let conversation = ZMConversation.fetchOrCreate(
-            with: conversationID,
-            domain: payload.qualifiedID?.domain,
-            in: context,
-            created: &created
-        )
+        let conversation = await context.perform {
 
-        conversation.conversationType = .group
-        conversation.remoteIdentifier = conversationID
-        conversation.isPendingMetadataRefresh = false
-        updateAttributes(from: payload, for: conversation, context: context)
-        updateMetadata(from: payload, for: conversation, context: context)
-        updateMembers(from: payload, for: conversation, context: context)
-        updateConversationTimestamps(for: conversation, serverTimestamp: serverTimestamp)
-        updateConversationStatus(from: payload, for: conversation)
-        updateMessageProtocol(from: payload, for: conversation)
-        Task {
-            await updateMLSStatus(from: payload, for: conversation, context: context, source: source)
+            let conversation = ZMConversation.fetchOrCreate(
+                with: conversationID,
+                domain: payload.qualifiedID?.domain,
+                in: context,
+                created: &created
+            )
+            conversation.conversationType = .group
+            conversation.remoteIdentifier = conversationID
+            conversation.isPendingMetadataRefresh = false
+            self.updateAttributes(from: payload, for: conversation, context: context)
+            self.updateMetadata(from: payload, for: conversation, context: context)
+            self.updateMembers(from: payload, for: conversation, context: context)
+            self.updateConversationTimestamps(for: conversation, serverTimestamp: serverTimestamp)
+            self.updateConversationStatus(from: payload, for: conversation)
+            self.updateMessageProtocol(from: payload, for: conversation)
+
+            return conversation
         }
+        await updateMLSStatus(from: payload, for: conversation, context: context, source: source)
+        await context.perform {
 
-        if created {
-            // we just got a new conversation, we display new conversation header
-            conversation.appendNewConversationSystemMessage(at: serverTimestamp,
-                                                            users: conversation.localParticipants)
+            if created {
+                // we just got a new conversation, we display new conversation header
+                conversation.appendNewConversationSystemMessage(
+                    at: serverTimestamp,
+                    users: conversation.localParticipants
+                )
 
-            if source == .slowSync {
-                // Slow synced conversations should be considered read from the start
-                conversation.lastReadServerTimeStamp = conversation.lastModifiedDate
+                if source == .slowSync {
+                    // Slow synced conversations should be considered read from the start
+                    conversation.lastReadServerTimeStamp = conversation.lastModifiedDate
+                }
             }
         }
 

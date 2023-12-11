@@ -60,16 +60,15 @@ final class MLSEventProcessor: MLSEventProcessing {
         }
 
         let previousStatus = await context.perform { conversation.mlsStatus }
-        let conversationExists = await mlsService.conversationExists(groupID: mlsGroupID)
+        let conversationExists = mlsService.conversationExists(groupID: mlsGroupID)
 
         await context.perform {
             conversation.mlsStatus = conversationExists ? .ready : .pendingJoin
             context.saveOrRollback()
+            Logging.mls.info(
+                "MLS event processor updated previous mlsStatus (\(String(describing: previousStatus))) with new value (\(String(describing: conversation.mlsStatus))) for conversation (\(String(describing: conversation.qualifiedID)))"
+            )
         }
-
-        Logging.mls.info(
-            "MLS event processor updated previous mlsStatus (\(String(describing: previousStatus))) with new value (\(String(describing: conversation.mlsStatus))) for conversation (\(String(describing: conversation.qualifiedID)))"
-        )
     }
 
     // MARK: - Joining new conversations
