@@ -791,8 +791,10 @@ public final class MLSService: MLSServiceInterface {
             try createGroup(for: groupID)
         }
 
-        let selfUser = ZMUser.selfUser(in: context)
-        let mlsUser = MLSUser(from: selfUser)
+        let mlsUser = await context.perform {
+            let selfUser = ZMUser.selfUser(in: context)
+            return MLSUser(from: selfUser)
+        }
 
         try await joinGroup(with: groupID)
         try await addMembersToConversation(with: [mlsUser], for: groupID)

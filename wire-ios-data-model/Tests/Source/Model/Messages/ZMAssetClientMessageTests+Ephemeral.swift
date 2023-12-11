@@ -221,23 +221,26 @@ extension ZMAssetClientMessageTests_Ephemeral {
     }
 
     func testThatItStartsAObuscationTimerForImageAssetMessagesIfTheMessageIsAMessageOfTheCurrentUser() throws {
-        // given
-        syncConversation.setMessageDestructionTimeoutValue(.tenSeconds, for: .selfUser)
-        syncConversation.lastReadServerTimeStamp = Date()
-        let sender = ZMUser.selfUser(in: syncMOC)
 
-        let fileMetadata = self.createFileMetadata()
-        let message = appendImageMessage(to: syncConversation)
-        message.sender = sender
-        try message.setUnderlyingMessage(GenericMessage(content: WireProtos.Asset(withUploadedOTRKey: Data(), sha256: Data()), nonce: message.nonce!))
-        XCTAssertTrue(message.underlyingMessage!.assetData!.hasUploaded)
+        try syncMOC.performAndWait {
+            // given
+            syncConversation.setMessageDestructionTimeoutValue(.tenSeconds, for: .selfUser)
+            syncConversation.lastReadServerTimeStamp = Date()
+            let sender = ZMUser.selfUser(in: syncMOC)
 
-        // when
-        XCTAssertTrue(message.startDestructionIfNeeded())
+            let fileMetadata = self.createFileMetadata()
+            let message = appendImageMessage(to: syncConversation)
+            message.sender = sender
+            try message.setUnderlyingMessage(GenericMessage(content: WireProtos.Asset(withUploadedOTRKey: Data(), sha256: Data()), nonce: message.nonce!))
+            XCTAssertTrue(message.underlyingMessage!.assetData!.hasUploaded)
 
-        // then
-        XCTAssertEqual(self.obfuscationTimer?.runningTimersCount, 1)
-        XCTAssertEqual(self.obfuscationTimer?.isTimerRunning(for: message), true)
+            // when
+            XCTAssertTrue(message.startDestructionIfNeeded())
+
+            // then
+            XCTAssertEqual(self.obfuscationTimer?.runningTimersCount, 1)
+            XCTAssertEqual(self.obfuscationTimer?.isTimerRunning(for: message), true)
+        }
     }
 
     func testThatItStartsATimerIfTheMessageIsAMessageOfTheOtherUser() throws {

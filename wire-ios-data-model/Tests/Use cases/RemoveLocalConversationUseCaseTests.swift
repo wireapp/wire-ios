@@ -30,7 +30,9 @@ class RemoveLocalConversationUseCaseTests: ZMBaseManagedObjectTest {
         super.setUp()
         sut = RemoveLocalConversationUseCase()
         mockMLSService = .init()
-        syncMOC.mlsService = mockMLSService
+        syncMOC.performAndWait {
+            syncMOC.mlsService = mockMLSService
+        }
     }
 
     override func tearDown() {
@@ -42,16 +44,25 @@ class RemoveLocalConversationUseCaseTests: ZMBaseManagedObjectTest {
     func test_itMarksConversationAsDeleted_AndWipesMLSGroup() {
         // Given
         let groupID = MLSGroupID.random()
-        let conversation = ZMConversation.insertNewObject(in: syncMOC)
-        conversation.messageProtocol = .mls
-        conversation.mlsGroupID = groupID
+        var conversation: ZMConversation?
+        syncMOC.performAndWait {
+            conversation = ZMConversation.insertNewObject(in: syncMOC)
+            conversation?.messageProtocol = .mls
+            conversation?.mlsGroupID = groupID
+        }
+
+        guard let conversation else {
+            XCTFail("missing conversation")
+            return
+        }
         mockMLSService.wipeGroup_MockMethod = { _ in }
+        syncMOC.performAndWait {
+            // When
+            sut.invoke(with: conversation, syncContext: syncMOC)
 
-        // When
-        sut.invoke(with: conversation, syncContext: syncMOC)
-
-        // Then
-        XCTAssertTrue(conversation.isDeletedRemotely)
+            // Then
+            XCTAssertTrue(conversation.isDeletedRemotely)
+        }
         XCTAssertEqual(mockMLSService.wipeGroup_Invocations, [groupID])
     }
 }

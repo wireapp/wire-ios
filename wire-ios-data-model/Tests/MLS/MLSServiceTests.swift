@@ -2125,20 +2125,22 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         let epochTimestamp = Date()
         let publicGroupState = Data.random()
 
-        let conversation = ZMConversation.insertNewObject(in: uiMOC)
-        conversation.remoteIdentifier = parentQualifiedID.uuid
-        conversation.domain = parentQualifiedID.domain
-        conversation.mlsGroupID = parentID
+        await uiMOC.perform { [self] in
+            let conversation = ZMConversation.insertNewObject(in: uiMOC)
+            conversation.remoteIdentifier = parentQualifiedID.uuid
+            conversation.domain = parentQualifiedID.domain
+            conversation.mlsGroupID = parentID
 
-        mockActionsProvider.fetchSubgroupConversationIDDomainTypeContext_MockMethod = { _, _, _, _ in
-            return MLSSubgroup(
-                cipherSuite: 0,
-                epoch: epoch,
-                epochTimestamp: epochTimestamp,
-                groupID: subgroupID,
-                members: [],
-                parentQualifiedID: parentQualifiedID
-            )
+            mockActionsProvider.fetchSubgroupConversationIDDomainTypeContext_MockMethod = { _, _, _, _ in
+                return MLSSubgroup(
+                    cipherSuite: 0,
+                    epoch: epoch,
+                    epochTimestamp: epochTimestamp,
+                    groupID: subgroupID,
+                    members: [],
+                    parentQualifiedID: parentQualifiedID
+                )
+            }
         }
 
         mockActionsProvider.fetchConversationGroupInfoConversationIdDomainSubgroupTypeContext_MockValue = publicGroupState
