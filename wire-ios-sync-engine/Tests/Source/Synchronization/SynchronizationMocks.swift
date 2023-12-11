@@ -332,6 +332,17 @@ public class MockEventConsumer: NSObject, ZMEventConsumer {
 }
 
 @objcMembers
+public class MockEventAsyncConsumer: NSObject, ZMEventAsyncConsumer {
+
+    public var eventsProcessed: [ZMUpdateEvent] = []
+    public var processEventsCalled: Bool = false
+    public func processEvents(_ events: [WireTransport.ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) async {
+        processEventsCalled = true
+        eventsProcessed.append(contentsOf: events)
+    }
+}
+
+@objcMembers
 public class MockRequestStrategy: NSObject, RequestStrategy {
 
     public var mockRequestQueue: [ZMTransportRequest] = []

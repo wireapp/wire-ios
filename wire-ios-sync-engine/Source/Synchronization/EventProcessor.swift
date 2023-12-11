@@ -36,6 +36,7 @@ actor EventProcessor: UpdateEventProcessor {
     private let earService: EARServiceInterface
     private var processingTask: Task<Void, Error>?
     private let eventConsumers: [ZMEventConsumer]
+    private let eventAsyncConsumers: [ZMEventAsyncConsumer]
 
     // MARK: Life Cycle
 
@@ -43,7 +44,8 @@ actor EventProcessor: UpdateEventProcessor {
         storeProvider: CoreDataStack,
         eventProcessingTracker: EventProcessingTrackerProtocol,
         earService: EARServiceInterface,
-        eventConsumers: [ZMEventConsumer]
+        eventConsumers: [ZMEventConsumer],
+        eventAsyncConsumers: [ZMEventAsyncConsumer]
     ) {
         self.syncContext = storeProvider.syncContext
         self.eventContext = storeProvider.eventContext
@@ -52,6 +54,7 @@ actor EventProcessor: UpdateEventProcessor {
         self.earService = earService
         self.bufferedEvents = []
         self.eventConsumers = eventConsumers
+        self.eventAsyncConsumers = eventAsyncConsumers
     }
 
     // MARK: Methods
@@ -157,14 +160,20 @@ actor EventProcessor: UpdateEventProcessor {
 
             Logging.eventProcessing.info("Consuming: [\n\(decryptedUpdateEvents.map({ "\tevent: \(ZMUpdateEvent.eventTypeString(for: $0.type) ?? "Unknown")" }).joined(separator: "\n"))\n]")
 
-            await syncContext.perform {
-                for event in decryptedUpdateEvents {
+            for event in decryptedUpdateEvents {
+                await syncContext.perform {
                     for eventConsumer in self.eventConsumers {
-                        // TODO: [jacob] EventConsumer.processEvents should become async
                         eventConsumer.processEvents([event], liveEvents: true, prefetchResult: prefetchResult)
                     }
-                    self.eventProcessingTracker.registerEventProcessed()
                 }
+                // TODO: [F] @Jacob should this be done on syncContext to keep every thing in sync?
+                for eventConsumer in self.eventAsyncConsumers {
+                    await eventConsumer.processEvents([event], liveEvents: true, prefetchResult: prefetchResult)
+                }
+            }
+
+            await syncContext.perform {
+                self.eventProcessingTracker.registerEventProcessed()
                 ZMConversation.calculateLastUnreadMessages(in: self.syncContext)
                 self.syncContext.saveOrRollback()
             }

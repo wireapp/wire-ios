@@ -56,6 +56,45 @@ import Combine
 
 
 
+public class MockConversationEventProcessorProtocol: ConversationEventProcessorProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - processConversationEvents
+
+    public var processConversationEvents_Invocations: [[ZMUpdateEvent]] = []
+    public var processConversationEvents_MockMethod: (([ZMUpdateEvent]) async -> Void)?
+
+    public func processConversationEvents(_ events: [ZMUpdateEvent]) async {
+        processConversationEvents_Invocations.append(events)
+
+        guard let mock = processConversationEvents_MockMethod else {
+            fatalError("no mock for `processConversationEvents`")
+        }
+
+        await mock(events)
+    }
+
+    // MARK: - processPayload
+
+    public var processPayload_Invocations: [ZMTransportData] = []
+    public var processPayload_MockMethod: ((ZMTransportData) -> Void)?
+
+    public func processPayload(_ payload: ZMTransportData) {
+        processPayload_Invocations.append(payload)
+
+        guard let mock = processPayload_MockMethod else {
+            fatalError("no mock for `processPayload`")
+        }
+
+        mock(payload)
+    }
+
+}
+
 class MockCoreDataMessagingMigratorProtocol: CoreDataMessagingMigratorProtocol {
 
     // MARK: - Life cycle

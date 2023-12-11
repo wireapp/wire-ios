@@ -101,16 +101,14 @@ final class UpdateAccessRolesActionHandlerTests: MessagingTestBase {
         ]
 
         for (expectedError, response) in errorResponses {
-            for (expectedError, response) in errorResponses {
-                guard let error = UpdateAccessRolesError(response: response) else {
-                    return XCTFail("Error is invalid")
-                }
+            guard let error = UpdateAccessRolesError(response: response) else {
+                return XCTFail("Error is invalid")
+            }
 
-                if case error = expectedError {
-                    // success
-                } else {
-                    XCTFail("Unexpected error")
-                }
+            if case error = expectedError {
+                // success
+            } else {
+                XCTFail("Unexpected error")
             }
         }
     }
@@ -121,6 +119,10 @@ final class UpdateAccessRolesActionHandlerTests: MessagingTestBase {
             let action = UpdateAccessRolesAction(conversation: self.conversation,
                                                  accessMode: accessMode,
                                                  accessRoles: accessRoles)
+            let expectation = self.expectation(description: "wait for handler to be called")
+            action.resultHandler = { _ in
+                expectation.fulfill()
+            }
             let payload = Payload.UpdateConversationAccess(accessMode: accessMode,
                                                            accessRoles: accessRoles)
 
@@ -138,9 +140,13 @@ final class UpdateAccessRolesActionHandlerTests: MessagingTestBase {
                                                       ConversationAccessRoleV2.nonTeamMember,
                                                       ConversationAccessRoleV2.guest,
                                                       ConversationAccessRoleV2.service])
-            self.sut.handleResponse(response, action: action)
 
-            // then
+            self.sut.handleResponse(response, action: action)
+        }
+
+        // then
+        XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 0.5))
+        syncMOC.performAndWait {
             XCTAssertEqual(conversation.accessRoles, [ConversationAccessRoleV2.teamMember,
                                                       ConversationAccessRoleV2.nonTeamMember,
                                                       ConversationAccessRoleV2.guest])
@@ -174,10 +180,10 @@ final class UpdateAccessRolesActionHandlerTests: MessagingTestBase {
 
             // when
             self.sut.handleResponse(response, action: action)
-
-            // then
-            XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
         }
+
+        // then
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
     }
 
     func testThatItCallsResultHandler_OnError() {
