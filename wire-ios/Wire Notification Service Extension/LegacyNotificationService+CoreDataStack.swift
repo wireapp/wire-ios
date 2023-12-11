@@ -16,26 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import CoreData
 import WireDataModel
 
 extension LegacyNotificationService {
-
-    // MARK: Properties
-
-    private var shouldSetupCryptoStack: Bool {
-        shouldSetupProteusService || shouldSetupMLSService
-    }
-
-    private var shouldSetupProteusService: Bool {
-        DeveloperFlag.proteusViaCoreCrypto.isOn
-    }
-
-    private var shouldSetupMLSService: Bool {
-        DeveloperFlag.enableMLSSupport.isOn && (BackendInfo.apiVersion ?? .v0) >= .v5
-    }
-
-    // MARK: - Functions
 
     func createCoreDataStack(applicationGroupIdentifier: String, accountIdentifier: UUID) throws -> CoreDataStack {
         let sharedContainerURL = FileManager.sharedContainerDirectory(for: applicationGroupIdentifier)
@@ -78,54 +62,5 @@ extension LegacyNotificationService {
         }
 
         return coreDataStack
-    }
-
-    func setUpCoreCryptoStack(
-        using coreDataStack: CoreDataStack,
-        cryptoboxMigrationManager: CryptoboxMigrationManagerInterface = CryptoboxMigrationManager()
-    ) throws {
-        guard !cryptoboxMigrationManager.isMigrationNeeded(accountDirectory: coreDataStack.accountContainer) else {
-            throw LegacyNotificationServiceError.cryptoboxHasPendingMigration
-        }
-
-        guard shouldSetupCryptoStack else {
-            WireLogger.coreCrypto.info("not setting up core crypto stack because it is not needed")
-            return
-        }
-
-        coreDataStack.syncContext.performAndWait {
-            let provider = CoreCryptoConfigProvider()
-
-            do {
-                let configuration = try provider.createFullConfiguration(
-                    sharedContainerURL: coreDataStack.applicationContainer,
-                    selfUser: .selfUser(in: coreDataStack.syncContext),
-                    createKeyIfNeeded: false
-                )
-
-                let safeCoreCrypto = try SafeCoreCrypto(coreCryptoConfiguration: configuration)
-
-                coreDataStack.syncContext.coreCrypto = safeCoreCrypto
-
-                if DeveloperFlag.proteusViaCoreCrypto.isOn, coreDataStack.syncContext.proteusService == nil {
-                    coreDataStack.syncContext.proteusService = ProteusService(coreCrypto: safeCoreCrypto)
-                }
-
-                if DeveloperFlag.enableMLSSupport.isOn, coreDataStack.syncContext.mlsDecryptionService == nil {
-                    coreDataStack.syncContext.mlsDecryptionService = MLSDecryptionService(
-                        context: coreDataStack.syncContext,
-                        coreCrypto: safeCoreCrypto
-                    )
-                }
-
-                WireLogger.coreCrypto.info("success: setup crypto stack")
-            } catch {
-                WireLogger.coreCrypto.error("fail: setup crypto stack: \(String(describing: error))")
-            }
-        }
-
-        coreDataStack.syncContext.performAndWait {
-            try? cryptoboxMigrationManager.completeMigration(syncContext: coreDataStack.syncContext)
-        }
     }
 }

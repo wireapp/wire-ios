@@ -1269,6 +1269,7 @@
 		E6DA829B2B27431600DEF393 /* LegacyNotificationServiceError.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6DA82992B27431300DEF393 /* LegacyNotificationServiceError.swift */; };
 		E6DA829D2B27433900DEF393 /* CallEventHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6DA829C2B27433900DEF393 /* CallEventHandler.swift */; };
 		E6DA829F2B2743E100DEF393 /* UNNotificationContent+Empty.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6DA829E2B2743E100DEF393 /* UNNotificationContent+Empty.swift */; };
+		E6DA82A12B274A2800DEF393 /* LegacyNotificationService+CryptoBox.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6DA82A02B274A2800DEF393 /* LegacyNotificationService+CryptoBox.swift */; };
 		E902B3B429ED3A240090DE32 /* SwiftUIButton+HapticFeedback.swift in Sources */ = {isa = PBXBuildFile; fileRef = E902B3B329ED3A240090DE32 /* SwiftUIButton+HapticFeedback.swift */; };
 		E90553CB27D612370006EB47 /* AuthenticationEmailVerificationRequiredErrorHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = E90553CA27D612370006EB47 /* AuthenticationEmailVerificationRequiredErrorHandler.swift */; };
 		E90A2F0D28EEC674005AF571 /* TextFieldStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = E90A2F0C28EEC674005AF571 /* TextFieldStyle.swift */; };
@@ -3283,6 +3284,7 @@
 		E6DA82992B27431300DEF393 /* LegacyNotificationServiceError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegacyNotificationServiceError.swift; sourceTree = "<group>"; };
 		E6DA829C2B27433900DEF393 /* CallEventHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallEventHandler.swift; sourceTree = "<group>"; };
 		E6DA829E2B2743E100DEF393 /* UNNotificationContent+Empty.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UNNotificationContent+Empty.swift"; sourceTree = "<group>"; };
+		E6DA82A02B274A2800DEF393 /* LegacyNotificationService+CryptoBox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LegacyNotificationService+CryptoBox.swift"; sourceTree = "<group>"; };
 		E902B3B329ED3A240090DE32 /* SwiftUIButton+HapticFeedback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SwiftUIButton+HapticFeedback.swift"; sourceTree = "<group>"; };
 		E90553CA27D612370006EB47 /* AuthenticationEmailVerificationRequiredErrorHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationEmailVerificationRequiredErrorHandler.swift; sourceTree = "<group>"; };
 		E90A2F0C28EEC674005AF571 /* TextFieldStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldStyle.swift; sourceTree = "<group>"; };
@@ -4009,6 +4011,7 @@
 				E6DA82992B27431300DEF393 /* LegacyNotificationServiceError.swift */,
 				EE3D7AE328AD4FB500D0A37E /* LegacyNotificationService.swift */,
 				E6DA82972B2742B200DEF393 /* LegacyNotificationService+CoreDataStack.swift */,
+				E6DA82A02B274A2800DEF393 /* LegacyNotificationService+CryptoBox.swift */,
 				EE7C422628B47CFC00CE018B /* Logger.swift */,
 				E6DA829E2B2743E100DEF393 /* UNNotificationContent+Empty.swift */,
 				065A5AE2279B07AC002D4D1E /* Info.plist */,
@@ -8595,6 +8598,7 @@
 				E6DA829F2B2743E100DEF393 /* UNNotificationContent+Empty.swift in Sources */,
 				EEE455E028AFC443005ACD74 /* NotificationServiceError.swift in Sources */,
 				EEE455EE28B2E4CE005ACD74 /* NotificationsAPIClient.swift in Sources */,
+				E6DA82A12B274A2800DEF393 /* LegacyNotificationService+CryptoBox.swift in Sources */,
 				E6DA82982B2742B200DEF393 /* LegacyNotificationService+CoreDataStack.swift in Sources */,
 				E6DA829A2B27431300DEF393 /* LegacyNotificationServiceError.swift in Sources */,
 				065A5AE1279B07AC002D4D1E /* NotificationService.swift in Sources */,
