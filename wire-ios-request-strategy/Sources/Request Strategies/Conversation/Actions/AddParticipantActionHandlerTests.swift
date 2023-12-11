@@ -25,6 +25,7 @@ class AddParticipantActionHandlerTests: MessagingTestBase {
     var sut: AddParticipantActionHandler!
     var user: ZMUser!
     var conversation: ZMConversation!
+    var mockConversationService: MockConversationServiceInterface!
 
     override func setUp() {
         super.setUp()
@@ -44,18 +45,24 @@ class AddParticipantActionHandlerTests: MessagingTestBase {
             self.conversation = conversation
         }
 
+        mockConversationService = MockConversationServiceInterface()
+
+        mockConversationService.syncConversationQualifiedIDCompletion_MockMethod = { _, completion in
+            completion()
+        }
+
         sut = AddParticipantActionHandler(
             context: syncMOC,
             eventProcessor: ConversationEventProcessor(
                 context: syncMOC,
-                conversationService: MockConversationService()
+                conversationService: mockConversationService
             )
         )
     }
 
     override func tearDown() {
         sut = nil
-
+        mockConversationService = nil
         super.tearDown()
     }
 

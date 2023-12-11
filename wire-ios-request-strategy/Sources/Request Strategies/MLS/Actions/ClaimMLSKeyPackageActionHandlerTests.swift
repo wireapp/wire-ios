@@ -95,6 +95,14 @@ class ClaimMLSKeyPackageActionHandlerTests: ActionHandlerTestBase<ClaimMLSKeyPac
         XCTAssertEqual(receivedKeyPackages?.first, keyPackage)
     }
 
+    func test_itHandlesEmptyKeyPackagesAsFailure() {
+        test_itHandlesFailure(
+            status: 200,
+            payload: transportData(for: Payload(keyPackages: [])),
+            expectedError: .emptyKeyPackages
+        )
+    }
+
     func test_itHandlesFailures() {
         test_itHandlesFailures([
             .failure(status: 200, error: .malformedResponse),

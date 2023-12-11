@@ -138,7 +138,7 @@ extension CoreDataStack {
     private static func performMigration(coordinator: NSPersistentStoreCoordinator, location: URL, options: [String: Any], migration: @escaping (NSManagedObjectContext) throws -> Void) throws {
 
         // Add persistent store at the new location to allow creation of NSManagedObjectContext
-        _ = try coordinator.addPersistentStore(ofType: NSSQLiteStoreType, configurationName: nil, at: location, options: options)
+        _ = try coordinator.addPersistentStore(type: .sqlite, configuration: nil, at: location, options: options)
         let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         context.persistentStoreCoordinator = coordinator
 

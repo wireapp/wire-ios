@@ -16,7 +16,9 @@
 //
 
 import Foundation
+import WireDataModel
 
+// sourcery: AutoMockable
 public protocol ConversationServiceInterface {
 
     func createGroupConversation(
@@ -49,12 +51,24 @@ public final class ConversationService: ConversationServiceInterface {
 
     // MARK: - Properties
 
-    let context: NSManagedObjectContext
+    private let context: NSManagedObjectContext
+    private let participantsService: ConversationParticipantsServiceInterface
 
     // MARK: - Life cycle
 
-    public init(context: NSManagedObjectContext) {
+    public convenience init(context: NSManagedObjectContext) {
+        self.init(
+            context: context,
+            participantsService: ConversationParticipantsService(context: context)
+        )
+    }
+
+    init(
+        context: NSManagedObjectContext,
+        participantsService: ConversationParticipantsServiceInterface
+    ) {
         self.context = context
+        self.participantsService = participantsService
     }
 
     // MARK: - Create conversation

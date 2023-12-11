@@ -244,7 +244,6 @@ public final class SessionManager: NSObject, SessionManagerType {
     let configuration: SessionManagerConfiguration
     var pendingURLAction: URLAction?
     let apiMigrationManager: APIMigrationManager
-    var cryptoboxMigrationManager: CryptoboxMigrationManagerInterface = CryptoboxMigrationManager()
 
     var notificationCenter: UserNotificationCenter = UNUserNotificationCenter.current()
 
@@ -844,38 +843,9 @@ public final class SessionManager: NSObject, SessionManagerType {
                 onWorkDone()
                 group?.leave()
             } else {
-                let coreDataStack = CoreDataStack(
-                    account: account,
-                    applicationContainer: self.sharedContainerURL,
-                    dispatchGroup: self.dispatchGroup
-                )
-
-                if coreDataStack.needsMigration {
-                    self.delegate?.sessionManagerWillMigrateAccount(userSessionCanBeTornDown: {})
-                }
-
-                coreDataStack.loadStores { error in
-                    if DeveloperFlag.forceDatabaseLoadingFailure.isOn {
-                        // flip off the flag in order not to be stuck in failure
-                        var flag = DeveloperFlag.forceDatabaseLoadingFailure
-                        flag.isOn = false
-                        self.delegate?.sessionManagerDidFailToLoadDatabase()
-                    }
-                    else if error != nil {
-                        self.delegate?.sessionManagerDidFailToLoadDatabase()
-                    } else {
-                        let userSession = self.startBackgroundSession(
-                            for: account,
-                            with: coreDataStack
-                        )
-
-                        self.migrateCryptoboxSessionsIfNeeded(
-                            in: coreDataStack.accountContainer,
-                            syncContext: userSession.syncContext
-                        ) {
-                            completion(userSession)
-                        }
-
+                self.setupUserSession(account: account) { userSession in
+                    if let userSession {
+                        completion(userSession)
                     }
 
                     onWorkDone()
@@ -889,54 +859,36 @@ public final class SessionManager: NSObject, SessionManagerType {
         self.delegate?.sessionManagerAsksToRetryStart()
     }
 
-    /// Migrates all existing proteus data created by Cryptobox into Core Crypto, if needed.
-
-    private func migrateCryptoboxSessionsIfNeeded(
-        in accountDirectory: URL,
-        syncContext: NSManagedObjectContext,
-        completion: @escaping () -> Void
+    private func setupUserSession(
+        account: Account,
+        onCompletion: @escaping (ZMUserSession?) -> Void
     ) {
-        guard cryptoboxMigrationManager.isMigrationNeeded(accountDirectory: accountDirectory) else {
-            WireLogger.proteus.info("cryptobox migration is not needed")
+        let coreDataStack = CoreDataStack(
+            account: account,
+            applicationContainer: sharedContainerURL,
+            dispatchGroup: dispatchGroup
+        )
+        coreDataStack.setup(
+            onStartMigration: { [weak self] in
+                self?.delegate?.sessionManagerWillMigrateAccount(userSessionCanBeTornDown: {})
 
-            syncContext.performAndWait {
-                do {
-                    try cryptoboxMigrationManager.completeMigration(syncContext: syncContext)
-                } catch {
-                    WireLogger.proteus.critical("failed to complete migration: \(error.localizedDescription)")
-                    fatalError("failed to complete proteus initialization")
+            }, onFailure: { [weak self] _ in
+                self?.delegate?.sessionManagerDidFailToLoadDatabase()
+                onCompletion(nil)
+
+            }, onCompletion: { [weak self] coreDataStack in
+                guard let self else {
+                    assertionFailure("expected 'self' to continue!")
+                    return
                 }
+
+                let userSession = self.startBackgroundSession(
+                    for: account,
+                    with: coreDataStack
+                )
+                onCompletion(userSession)
             }
-
-            completion()
-            return
-        }
-
-        WireLogger.proteus.info("preparing for cryptobox migration...")
-
-        delegate?.sessionManagerWillMigrateAccount {
-            syncContext.performAndWait {
-                do {
-                    try self.cryptoboxMigrationManager.performMigration(
-                        accountDirectory: accountDirectory,
-                        syncContext: syncContext
-                    )
-                } catch {
-                    WireLogger.proteus.critical("cryptobox migration failed: \(error.localizedDescription)")
-                    fatalError("Failed to migrate data from CryptoBox to CoreCrypto keystore, error : \(error.localizedDescription)")
-                }
-
-                do {
-                    try self.cryptoboxMigrationManager.completeMigration(syncContext: syncContext)
-                } catch {
-                    fatalError("failed to complete proteus initialization")
-                }
-
-                WireLogger.proteus.info("cryptobox migration success")
-
-                completion()
-            }
-        }
+        )
     }
 
     private func clearCacheDirectory() {
