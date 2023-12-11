@@ -64,13 +64,13 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
             switch event.type {
             case .conversationCreate:
                 if let payload = event.eventPayload(type: Payload.ConversationEvent<Payload.Conversation>.self) {
-                    await context.perform { self.processor.processPayload(payload, in: self.context) }
+                    await processor.processPayload(payload, in: self.context)
                 }
 
             case .conversationDelete:
 
                 if let payload = event.eventPayload(type: Payload.ConversationEvent<Payload.UpdateConversationDeleted>.self) {
-                    await context.perform { self.processor.processPayload(payload, in: self.context) }
+                    await processor.processPayload(payload, in: self.context)
                 }
 
             case .conversationMemberLeave:

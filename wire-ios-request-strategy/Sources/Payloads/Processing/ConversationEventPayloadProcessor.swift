@@ -37,9 +37,9 @@ final class ConversationEventPayloadProcessor {
     func updateOrCreateConversations(
         from payload: Payload.ConversationList,
         in context: NSManagedObjectContext
-    ) {
+    ) async {
         for payload in payload.conversations {
-            updateOrCreateConversation(
+            await updateOrCreateConversation(
                 from: payload,
                 source: .slowSync,
                 in: context
@@ -50,9 +50,9 @@ final class ConversationEventPayloadProcessor {
     func updateOrCreateConverations(
         from payload: Payload.QualifiedConversationList,
         in context: NSManagedObjectContext
-    ) {
+    ) async {
         for payload in payload.found {
-            updateOrCreateConversation(
+            await updateOrCreateConversation(
                 from: payload,
                 source: .slowSync,
                 in: context
@@ -63,13 +63,13 @@ final class ConversationEventPayloadProcessor {
     func processPayload(
         _ payload: Payload.ConversationEvent<Payload.Conversation>,
         in context: NSManagedObjectContext
-    ) {
+    ) async {
         guard let timestamp = payload.timestamp else {
             Logging.eventProcessing.error("Conversation creation missing timestamp in event, aborting...")
             return
         }
 
-        updateOrCreateConversation(
+        await updateOrCreateConversation(
             from: payload.data,
             serverTimestamp: timestamp,
             source: .eventStream,
@@ -82,7 +82,7 @@ final class ConversationEventPayloadProcessor {
     func processPayload(
         _ payload: Payload.ConversationEvent<Payload.UpdateConversationDeleted>,
         in context: NSManagedObjectContext
-    ) {
+    ) async {
         guard let conversation = fetchOrCreateConversation(
             from: payload,
             in: context
@@ -91,12 +91,10 @@ final class ConversationEventPayloadProcessor {
             return
         }
 
-        Task {
-            await removeLocalConversation.invoke(
-                with: conversation,
-                syncContext: context
-            )
-        }
+        await removeLocalConversation.invoke(
+            with: conversation,
+            syncContext: context
+        )
     }
 
     // MARK: - Member leave
@@ -348,7 +346,7 @@ final class ConversationEventPayloadProcessor {
         serverTimestamp: Date = Date(),
         source: Source = .eventStream,
         in context: NSManagedObjectContext
-    ) -> ZMConversation? {
+    ) async -> ZMConversation? {
         guard let conversationType = payload.type.map(BackendConversationType.clientConversationType) else {
             return nil
         }
@@ -363,7 +361,7 @@ final class ConversationEventPayloadProcessor {
             )
 
         case .`self`:
-            return updateOrCreateSelfConversation(
+            return await updateOrCreateSelfConversation(
                 from: payload,
                 in: context,
                 serverTimestamp: serverTimestamp,
@@ -436,35 +434,37 @@ final class ConversationEventPayloadProcessor {
         in context: NSManagedObjectContext,
         serverTimestamp: Date,
         source: Source
-    ) -> ZMConversation? {
+    ) async -> ZMConversation? {
         guard let conversationID = payload.id ?? payload.qualifiedID?.uuid else {
             Logging.eventProcessing.error("Missing conversationID in self conversation payload, aborting...")
             return nil
         }
 
         var created = false
-        let conversation = ZMConversation.fetchOrCreate(
-            with: conversationID,
-            domain: payload.qualifiedID?.domain,
-            in: context,
-            created: &created
-        )
+        let (conversation, mlsGroupID) = await context.perform { [self] in
+            let conversation = ZMConversation.fetchOrCreate(
+                with: conversationID,
+                domain: payload.qualifiedID?.domain,
+                in: context,
+                created: &created
+            )
 
-        conversation.conversationType = .`self`
-        conversation.isPendingMetadataRefresh = false
-        updateAttributes(from: payload, for: conversation, context: context)
-        updateMetadata(from: payload, for: conversation, context: context)
-        updateMembers(from: payload, for: conversation, context: context)
-        updateConversationTimestamps(for: conversation, serverTimestamp: serverTimestamp)
-        updateMessageProtocol(from: payload, for: conversation)
+            conversation.conversationType = .`self`
+            conversation.isPendingMetadataRefresh = false
+            updateAttributes(from: payload, for: conversation, context: context)
+            updateMetadata(from: payload, for: conversation, context: context)
+            updateMembers(from: payload, for: conversation, context: context)
+            updateConversationTimestamps(for: conversation, serverTimestamp: serverTimestamp)
+            updateMessageProtocol(from: payload, for: conversation)
 
-        if conversation.mlsGroupID != nil {
-            Task {
-                do {
-                    try await createOrJoinSelfConversation(from: conversation)
-                } catch {
-                    WireLogger.mls.error("createOrJoinSelfConversation threw error: \(String(reflecting: error))")
-                }
+            return (conversation, conversation.mlsGroupID)
+        }
+
+        if mlsGroupID != nil {
+            do {
+                try await createOrJoinSelfConversation(from: conversation)
+            } catch {
+                WireLogger.mls.error("createOrJoinSelfConversation threw error: \(String(reflecting: error))")
             }
         }
 
