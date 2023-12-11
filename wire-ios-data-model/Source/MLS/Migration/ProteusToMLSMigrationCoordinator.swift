@@ -220,7 +220,7 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
         for groupID in mlsGroupIds {
             do {
                 if mlsService.conversationExists(groupID: groupID) {
-                    try await finalizeMigrationIfNeeded()
+                   // TODO: - finalize migration
                 } else {
                     try await mlsService.joinGroup(with: groupID)
                 }
