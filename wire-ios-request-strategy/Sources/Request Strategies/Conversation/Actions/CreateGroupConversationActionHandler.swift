@@ -202,10 +202,12 @@ final class CreateGroupConversationActionHandler: ActionHandler<CreateGroupConve
                 let apiVersion = APIVersion(rawValue: response.apiVersion),
                 let rawData = response.rawData,
                 let payload = Payload.Conversation(rawData, apiVersion: apiVersion),
-                let newConversation = processor.updateOrCreateConversation(
-                    from: payload,
-                    in: context
-                )
+                let newConversation = await context.perform( {
+                    self.processor.updateOrCreateConversation(
+                        from: payload,
+                        in: self.context
+                    )
+                })
             else {
                 Logging.network.warn("Can't process response, aborting.")
                 await context.perform {
