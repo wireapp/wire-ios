@@ -105,7 +105,7 @@ public class NotificationSession {
     /// - throws: `InitializationError.noAccount` in case the account does not exist
     /// - returns: The initialized session object if no error is thrown
 
-    public convenience init(
+    public init(
         applicationGroupIdentifier: String,
         accountIdentifier: UUID,
         coreDataStack: CoreDataStack,
@@ -114,15 +114,9 @@ public class NotificationSession {
         sharedUserDefaults: UserDefaults,
         minTLSVersion: String?
     ) throws {
-        let sharedContainerURL = FileManager.sharedContainerDirectory(for: applicationGroupIdentifier)
-
         // Don't cache the cookie because if the user logs out and back in again in the main app
         // process, then the cached cookie will be invalid.
         let cookieStorage = ZMPersistentCookieStorage(forServerName: environment.backendURL.host!, userIdentifier: accountIdentifier, useCache: false)
-        let reachabilityGroup = ZMSDispatchGroup(dispatchGroup: DispatchGroup(), label: "Sharing session reachability")!
-        let serverNames = [environment.backendURL, environment.backendWSURL].compactMap { $0.host }
-        let reachability = ZMReachability(serverNames: serverNames, group: reachabilityGroup)
-
         let credentials = environment.proxy.flatMap { ProxyCredentials.retrieve(for: $0) }
 
         let transportSession = ZMTransportSession(
@@ -130,46 +124,26 @@ public class NotificationSession {
             proxyUsername: credentials?.username,
             proxyPassword: credentials?.password,
             cookieStorage: cookieStorage,
-            reachability: reachability,
+            reachability: ZMReachability(
+                serverNames: [environment.backendURL, environment.backendWSURL].compactMap { $0.host },
+                group: ZMSDispatchGroup(dispatchGroup: DispatchGroup(), label: "Sharing session reachability")!
+            ),
             initialAccessToken: nil,
             applicationGroupIdentifier: applicationGroupIdentifier,
             applicationVersion: "1.0.0",
             minTLSVersion: minTLSVersion
         )
 
-        try self.init(
-            coreDataStack: coreDataStack,
-            transportSession: transportSession,
-            cachesDirectory: FileManager.default.cachesURLForAccount(with: accountIdentifier, in: sharedContainerURL),
-            accountContainer: CoreDataStack.accountDataFolder(accountIdentifier: accountIdentifier, applicationContainer: sharedContainerURL),
-            analytics: analytics,
-            accountIdentifier: accountIdentifier,
-            sharedUserDefaults: sharedUserDefaults
-        )
-    }
-
-    convenience init(
-        coreDataStack: CoreDataStack,
-        transportSession: ZMTransportSession,
-        cachesDirectory: URL,
-        accountContainer: URL,
-        analytics: AnalyticsType?,
-        accountIdentifier: UUID,
-        sharedUserDefaults: UserDefaults
-    ) throws {
         let lastEventIDRepository = LastEventIDRepository(
             userID: accountIdentifier,
             sharedUserDefaults: sharedUserDefaults
         )
-
         let applicationStatusDirectory = ApplicationStatusDirectory(
             syncContext: coreDataStack.syncContext,
             transportSession: transportSession,
             lastEventIDRepository: lastEventIDRepository
         )
-
         let notificationsTracker = (analytics != nil) ? NotificationsTracker(analytics: analytics!) : nil
-
         let pushNotificationStrategy = PushNotificationStrategy(
             syncContext: coreDataStack.syncContext,
             applicationStatus: applicationStatusDirectory,
@@ -178,67 +152,31 @@ public class NotificationSession {
             lastEventIDRepository: lastEventIDRepository
         )
 
-        let requestGeneratorStore = RequestGeneratorStore(strategies: [pushNotificationStrategy])
+        self.coreDataStack = coreDataStack
+        self.transportSession = transportSession
+        self.applicationStatusDirectory = applicationStatusDirectory
+        self.accountIdentifier = accountIdentifier
 
-        let operationLoop = RequestGeneratingOperationLoop(
+        let sharedContainerURL = FileManager.sharedContainerDirectory(for: applicationGroupIdentifier)
+        let accountContainer = CoreDataStack.accountDataFolder(accountIdentifier: accountIdentifier, applicationContainer: sharedContainerURL)
+        self.saveNotificationPersistence = ContextDidSaveNotificationPersistence(accountContainer: accountContainer)
+
+        self.operationLoop = RequestGeneratingOperationLoop(
             userContext: coreDataStack.viewContext,
             syncContext: coreDataStack.syncContext,
             callBackQueue: .main,
-            requestGeneratorStore: requestGeneratorStore,
+            requestGeneratorStore: RequestGeneratorStore(strategies: [pushNotificationStrategy]),
             transportSession: transportSession
         )
 
-        let cryptoboxMigrationManager = CryptoboxMigrationManager()
-        let coreCryptoProvider = CoreCryptoProvider(
-            selfUserID: accountIdentifier,
-            sharedContainerURL: coreDataStack.applicationContainer,
-            accountDirectory: coreDataStack.accountContainer,
-            syncContext: coreDataStack.syncContext,
-            cryptoboxMigrationManager: cryptoboxMigrationManager,
-            allowCreation: false
-        )
+        self.earService = EARService(accountID: accountIdentifier, sharedUserDefaults: sharedUserDefaults)
 
-        let saveNotificationPersistence = ContextDidSaveNotificationPersistence(accountContainer: accountContainer)
-
-        try self.init(
-            coreDataStack: coreDataStack,
-            transportSession: transportSession,
-            cachesDirectory: cachesDirectory,
-            saveNotificationPersistence: saveNotificationPersistence,
-            applicationStatusDirectory: applicationStatusDirectory,
-            operationLoop: operationLoop,
-            accountIdentifier: accountIdentifier,
-            pushNotificationStrategy: pushNotificationStrategy,
-            cryptoboxMigrationManager: cryptoboxMigrationManager,
-            earService: EARService(accountID: accountIdentifier, sharedUserDefaults: sharedUserDefaults),
-            proteusService: ProteusService(coreCryptoProvider: coreCryptoProvider),
-            mlsDecryptionService: MLSDecryptionService(context: coreDataStack.syncContext, coreCryptoProvider: coreCryptoProvider)
-        )
-    }
-
-    init(
-        coreDataStack: CoreDataStack,
-        transportSession: ZMTransportSession,
-        cachesDirectory: URL,
-        saveNotificationPersistence: ContextDidSaveNotificationPersistence,
-        applicationStatusDirectory: ApplicationStatusDirectory,
-        operationLoop: RequestGeneratingOperationLoop,
-        accountIdentifier: UUID,
-        pushNotificationStrategy: PushNotificationStrategy,
-        earService: EARServiceInterface
-    ) throws {
-        self.coreDataStack = coreDataStack
-        self.transportSession = transportSession
-        self.saveNotificationPersistence = saveNotificationPersistence
-        self.applicationStatusDirectory = applicationStatusDirectory
-        self.operationLoop = operationLoop
-        self.accountIdentifier = accountIdentifier
-        self.earService = earService
-
-        eventDecoder = EventDecoder(
+        self.eventDecoder = EventDecoder(
             eventMOC: coreDataStack.eventContext,
             syncMOC: coreDataStack.syncContext
         )
+
+        // from here `self` is initialized
 
         pushNotificationStrategy.delegate = self
     }
