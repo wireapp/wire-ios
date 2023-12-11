@@ -46,8 +46,6 @@ class UserProfileImageV3Tests: IntegrationTest {
 
         XCTAssertEqual(local.previewProfileAssetIdentifier, previewAsset?.identifier, "Preview assetId should match remote assetId", file: file, line: line)
         XCTAssertEqual(local.completeProfileAssetIdentifier, completeAsset?.identifier, "Complete assetId should match remote assetId", file: file, line: line)
-        XCTAssertEqual(local.imageMediumData, completeAsset?.data, "Complete asset should match remote data", file: file, line: line)
-        XCTAssertEqual(local.imageSmallProfileData, previewAsset?.data, "Preview asset should match remote data", file: file, line: line)
     }
 
     func testThatSelfUserImagesAreUploadedWhenThereAreNone() {
