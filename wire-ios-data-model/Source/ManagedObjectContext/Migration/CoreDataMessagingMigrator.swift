@@ -56,7 +56,6 @@ extension CoreDataMessagingMigratorError: LocalizedError {
     }
 }
 
-
 final class CoreDataMessagingMigrator: CoreDataMessagingMigratorProtocol {
 
     private let isInMemoryStore: Bool
