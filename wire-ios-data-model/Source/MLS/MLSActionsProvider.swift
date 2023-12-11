@@ -92,6 +92,11 @@ protocol MLSActionsProviderProtocol {
         context: NotificationContext
     ) async throws
 
+    func syncUsers(
+        qualifiedIDs: [QualifiedID],
+        context: NotificationContext
+    ) async throws
+
 }
 
 final class MLSActionsProvider: MLSActionsProviderProtocol {
@@ -243,6 +248,14 @@ final class MLSActionsProvider: MLSActionsProviderProtocol {
             messageProtocol: messageProtocol
         )
         try await action.perform(in: context)
+    }
+
+    func syncUsers(
+        qualifiedIDs: [QualifiedID],
+        context: NotificationContext
+    ) async throws {
+        var action = SyncUsersAction(qualifiedIDs: qualifiedIDs)
+        return try await action.perform(in: context)
     }
 
 }
