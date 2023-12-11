@@ -639,10 +639,10 @@ final class ConversationInputBarViewController: UIViewController,
 
         @objc
         private func pingButtonPressed(_ button: UIButton?) {
-            let participantCount = conversation.localParticipantsCount - 1
+            let participantIndex = conversation.localParticipantsCount - 1
             let minimumPingParticipants = 4
 
-            if participantCount >= minimumPingParticipants {
+            if participantIndex >= minimumPingParticipants {
                 confirmPing { [weak self] shouldPing in
                     if shouldPing {
                         self?.appendKnock()
