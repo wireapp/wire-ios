@@ -86,6 +86,8 @@ public extension NSURL {
 
 }
 
+private let log = ZMSLog(tag: "core-data")
+
 @objcMembers
 public class CoreDataStack: NSObject, ContextProvider {
 
@@ -186,6 +188,7 @@ public class CoreDataStack: NSObject, ContextProvider {
             try closeStores(in: eventsContainer)
         } catch let error {
             Logging.localStorage.error("Error while closing persistent store: \(error)")
+            log.safePublic("Error while closing persistent store: \(SanitizedString(stringLiteral: error.localizedDescription))", level: .error)
         }
     }
 
@@ -206,12 +209,15 @@ public class CoreDataStack: NSObject, ContextProvider {
 
         DispatchQueue.global(qos: .userInitiated).async {
             if self.needsMessagingStoreMigration() {
+                log.safePublic("[setup] start migration of core data messaging store!")
                 WireLogger.localStorage.info("start migration of core data messaging store!")
 
                 do {
                     try self.migrateMessagingStore()
+                    log.safePublic("[setup] finished migration of core data messaging store!")
                     WireLogger.localStorage.info("finished migration of core data messaging store!")
                 } catch {
+                    log.safePublic("[setup] failed migration of core data messaging store: \(SanitizedString(stringLiteral: error.localizedDescription))")
                     WireLogger.localStorage.error("failed migration of core data messaging store!")
                     DispatchQueue.main.async {
                         onFailure(error)
@@ -222,6 +228,7 @@ public class CoreDataStack: NSObject, ContextProvider {
 
             DispatchQueue.main.async {
                 WireLogger.localStorage.debug("load core data stores!")
+                log.safePublic("[setup] load core data stores!", level: .debug)
                 self.loadStores { error in
                     if DeveloperFlag.forceDatabaseLoadingFailure.isOn {
                         // flip off the flag in order not to be stuck in failure
@@ -250,6 +257,7 @@ public class CoreDataStack: NSObject, ContextProvider {
         loadMessagesStore { (error) in
             if let error = error {
                 WireLogger.localStorage.error("failed to load message store: \(error)")
+                log.safePublic("failed to load message store: \(SanitizedString(stringLiteral: error.localizedDescription))", level: .error)
             }
             loadingStoreError = loadingStoreError ?? error
             dispatchGroup.leave()
@@ -259,6 +267,7 @@ public class CoreDataStack: NSObject, ContextProvider {
         loadEventStore { (error) in
             if let error = error {
                 WireLogger.localStorage.error("failed to load event store: \(error)")
+                log.safePublic("failed to load event store: \(SanitizedString(stringLiteral: error.localizedDescription))", level: .error)
             }
             loadingStoreError = loadingStoreError ?? error
             dispatchGroup.leave()

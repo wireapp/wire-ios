@@ -26,7 +26,7 @@ public enum Logging {
     /// work related to `GenericMessage` profotobuf data or the `ZMClientMessage`
     /// and `ZMAssetClientMessage` container types.
 
-    public static let messageProcessing = ZMSLog(tag: "Message Processing")
+    public static let messageProcessing = ZMSLog(tag: "message-processing")
 
     /// For logs related to processing update events.
 

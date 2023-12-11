@@ -2411,6 +2411,18 @@ internal enum L10n {
         /// Spread the word!
         internal static let title = L10n.tr("Localizable", "conversation.invite_more_people.title", fallback: "Spread the word!")
       }
+      internal enum Ping {
+        internal enum Action {
+          /// Ping
+          internal static let title = L10n.tr("Localizable", "conversation.ping.action.title", fallback: "Ping")
+        }
+        internal enum ManyParticipantsConfirmation {
+          /// Are you sure you want to ping %d people?
+          internal static func title(_ p1: Int) -> String {
+            return L10n.tr("Localizable", "conversation.ping.many_participants_confirmation.title", p1, fallback: "Are you sure you want to ping %d people?")
+          }
+        }
+      }
       internal enum Silenced {
         internal enum Status {
           internal enum Message {
