@@ -183,6 +183,14 @@ public class ZMUserSession: NSObject {
         }
     }
 
+    // temporary function to simplify call to ConversationEventProcessor
+    // might be replaced by something more elegant
+    public func processConversationEvents(_ events: [ZMUpdateEvent]) {
+        WaitingGroupTask(context: self.syncContext) {
+            await self.conversationEventProcessor.processConversationEvents(events)
+        }
+    }
+
     public var isNotificationContentHidden: Bool {
         get {
             guard let value = managedObjectContext.persistentStoreMetadata(forKey: LocalNotificationDispatcher.ZMShouldHideNotificationContentKey) as? NSNumber else {
@@ -249,6 +257,7 @@ public class ZMUserSession: NSObject {
     }()
 
     let lastEventIDRepository: LastEventIDRepositoryInterface
+    let conversationEventProcessor: ConversationEventProcessorProtocol
 
     public init(
         userId: UUID,
@@ -306,6 +315,7 @@ public class ZMUserSession: NSObject {
             userID: userId,
             sharedUserDefaults: sharedUserDefaults
         )
+        self.conversationEventProcessor = ConversationEventProcessor(context: coreDataStack.syncContext)
 
         super.init()
 
@@ -394,11 +404,13 @@ public class ZMUserSession: NSObject {
     }
 
     private func createUpdateEventProcessor() -> EventProcessor {
+
         return EventProcessor(
             storeProvider: self.coreDataStack,
             eventProcessingTracker: eventProcessingTracker,
             earService: earService,
-            eventConsumers: strategyDirectory?.eventConsumers ?? []
+            eventConsumers: strategyDirectory?.eventConsumers ?? [],
+            eventAsyncConsumers: (conversationEventProcessor as? ZMEventAsyncConsumer).flatMap {[$0]} ?? []
         )
     }
 
