@@ -46,9 +46,9 @@ class UserClientRequestFactoryTests: MessagingTest {
         )
         proteusService = mockProteusService()
         proteusProvider = MockProteusProvider(
-            mockProteusService: proteusService,
-            mockKeyStore: spyKeyStore
+            mockProteusService: proteusService
         )
+        spyKeyStore = proteusProvider.mockKeyStore
 
         sut = UserClientRequestFactory(proteusProvider: proteusProvider)
     }

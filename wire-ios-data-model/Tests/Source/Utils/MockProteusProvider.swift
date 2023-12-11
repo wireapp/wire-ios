@@ -18,17 +18,16 @@
 
 import Foundation
 import WireDataModel
-import WireTesting
 
-class MockProteusProvider: ProteusProviding {
+public class MockProteusProvider: ProteusProviding {
 
-    let mockProteusService: MockProteusServiceInterface
-    let mockKeyStore: SpyUserClientKeyStore
-    var useProteusService: Bool
+    public let mockProteusService: MockProteusServiceInterface
+    public let mockKeyStore: SpyUserClientKeyStore
+    public var useProteusService: Bool
 
-    init(
+    public init(
         mockProteusService: MockProteusServiceInterface = MockProteusServiceInterface(),
-        mockKeyStore: SpyUserClientKeyStore,
+        mockKeyStore: SpyUserClientKeyStore = MockProteusProvider.spyForTests(),
         useProteusService: Bool = false
     ) {
         self.mockProteusService = mockProteusService
@@ -36,7 +35,7 @@ class MockProteusProvider: ProteusProviding {
         self.useProteusService = useProteusService
     }
 
-    func perform<T>(
+    public func perform<T>(
         withProteusService proteusServiceBlock: (ProteusServiceInterface) throws -> T,
         withKeyStore keyStoreBlock: (UserClientKeysStore) throws -> T)
     rethrows -> T {
@@ -47,16 +46,21 @@ class MockProteusProvider: ProteusProviding {
         }
     }
 
-    var mockCanPerform = true
-    var canPerform: Bool {
+    public var mockCanPerform = true
+    public var canPerform: Bool {
         return mockCanPerform
     }
-}
 
-extension XCTestCase {
-
-    func spyForTests() -> SpyUserClientKeyStore {
-        let url = self.createTempFolder()
+    public static func spyForTests() -> SpyUserClientKeyStore {
+        let url = Self.createTempFolder()
         return SpyUserClientKeyStore(accountDirectory: url, applicationContainer: url)
     }
+
+    // FIXME: [F] this is defined in WireTesting, somehow it is not possible to import here for now
+    public static func createTempFolder() -> URL {
+        let url = URL(fileURLWithPath: [NSTemporaryDirectory(), UUID().uuidString].joined(separator: "/"))
+        try! FileManager.default.createDirectory(at: url, withIntermediateDirectories: true, attributes: [:])
+        return url
+    }
+
 }
