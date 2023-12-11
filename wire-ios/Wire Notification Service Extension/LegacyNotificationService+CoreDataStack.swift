@@ -21,6 +21,10 @@ import WireDataModel
 
 extension LegacyNotificationService {
 
+    private enum Constant {
+        static let loadStoreMaxWaitingTimeInSeconds: Int = 5
+    }
+
     func createCoreDataStack(applicationGroupIdentifier: String, accountIdentifier: UUID) throws -> CoreDataStack {
         let sharedContainerURL = FileManager.sharedContainerDirectory(for: applicationGroupIdentifier)
         let accountManager = AccountManager(sharedDirectory: sharedContainerURL)
@@ -38,7 +42,7 @@ extension LegacyNotificationService {
             throw LegacyNotificationServiceError.coreDataMissingSharedContainer
         }
 
-        guard !coreDataStack.needsMigration  else {
+        guard !coreDataStack.needsMigration else {
             throw LegacyNotificationServiceError.coreDataMigrationRequired
         }
 
@@ -55,7 +59,7 @@ extension LegacyNotificationService {
 
             dispatchGroup.leave()
         }
-        let timeoutResult = dispatchGroup.wait(timeout: .now() + .seconds(5))
+        let timeoutResult = dispatchGroup.wait(timeout: .now() + .seconds(Constant.loadStoreMaxWaitingTimeInSeconds))
 
         if loadStoresError != nil || timeoutResult == .timedOut {
             throw LegacyNotificationServiceError.coreDataLoadStoresFailed
