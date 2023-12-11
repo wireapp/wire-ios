@@ -1652,7 +1652,6 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         )
     }
 
-
     // Note: these tests are asserting the behavior of the retry mechanism only, which
     // is used in various operations, such as adding members or removing clients. For
     // these tests, we will just pick one operation.
