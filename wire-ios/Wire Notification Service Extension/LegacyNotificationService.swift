@@ -152,6 +152,7 @@ final class LegacyNotificationService: UNNotificationServiceExtension, Notificat
 
     private func createSession(accountIdentifier: UUID) throws -> NotificationSession {
         let coreDataStack = try createCoreDataStack(applicationGroupIdentifier: appGroupID, accountIdentifier: accountIdentifier)
+        try setUpCoreCryptoStack(using: coreDataStack)
 
         let session = try NotificationSession(
             applicationGroupIdentifier: appGroupID,

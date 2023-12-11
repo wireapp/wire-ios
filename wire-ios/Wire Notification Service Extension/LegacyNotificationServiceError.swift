@@ -23,4 +23,5 @@ public enum LegacyNotificationServiceError: Error {
     case coreDataMissingSharedContainer
     case coreDataMigrationRequired
     case coreDataLoadStoresFailed
+    case cryptoboxHasPendingMigration
 }

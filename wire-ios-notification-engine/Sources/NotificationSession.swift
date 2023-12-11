@@ -72,15 +72,6 @@ public protocol NotificationSessionDelegate: AnyObject {
 ///
 public class NotificationSession {
 
-    /// The failure reason of a `NotificationSession` initialization
-    /// - noAccount: Account doesn't exist
-
-    public enum InitializationError: Error {
-
-        case pendingCryptoboxMigration
-
-    }
-
     // MARK: - Properties
 
     /// Directory of all application statuses.
@@ -234,11 +225,7 @@ public class NotificationSession {
         operationLoop: RequestGeneratingOperationLoop,
         accountIdentifier: UUID,
         pushNotificationStrategy: PushNotificationStrategy,
-        cryptoboxMigrationManager: CryptoboxMigrationManagerInterface,
-        earService: EARServiceInterface,
-        proteusService: ProteusServiceInterface,
-        mlsDecryptionService: MLSDecryptionServiceInterface
-
+        earService: EARServiceInterface
     ) throws {
         self.coreDataStack = coreDataStack
         self.transportSession = transportSession
@@ -254,21 +241,6 @@ public class NotificationSession {
         )
 
         pushNotificationStrategy.delegate = self
-
-        let accountDirectory = coreDataStack.accountContainer
-        guard !cryptoboxMigrationManager.isMigrationNeeded(accountDirectory: accountDirectory) else {
-            throw InitializationError.pendingCryptoboxMigration
-        }
-        coreDataStack.syncContext.performAndWait {
-            if DeveloperFlag.proteusViaCoreCrypto.isOn, coreDataStack.syncContext.proteusService == nil {
-                coreDataStack.syncContext.proteusService = proteusService
-            }
-
-            if DeveloperFlag.enableMLSSupport.isOn, coreDataStack.syncContext.mlsDecryptionService == nil {
-                coreDataStack.syncContext.mlsDecryptionService = mlsDecryptionService
-            }
-        }
-
     }
 
     deinit {
