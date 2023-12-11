@@ -140,7 +140,7 @@ final class GetFeatureConfigsActionHandler: ActionHandler<GetFeatureConfigsActio
             )
         }
 
-        if let e2ei = payload.e2ei {
+        if let e2ei = payload.mlsE2EId {
             featureRepository.storeE2EId(
                 Feature.E2EId(
                     status: e2ei.status,
@@ -167,7 +167,7 @@ extension GetFeatureConfigsActionHandler {
         let fileSharing: FeatureStatus?
         let mls: FeatureStatusWithConfig<Feature.MLS.Config>?
         let selfDeletingMessages: FeatureStatusWithConfig<Feature.SelfDeletingMessages.Config>?
-        let e2ei: FeatureStatusWithConfig<Feature.E2EId.Config>?
+        let mlsE2EId: FeatureStatusWithConfig<Feature.E2EId.Config>?
 
     }
 

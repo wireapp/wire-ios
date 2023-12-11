@@ -87,7 +87,9 @@ class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
                 digitalSignatures: .init(status: .enabled),
                 fileSharing: .init(status: .enabled),
                 mls: .init(status: .enabled, config: .init(defaultProtocol: .mls)),
-                selfDeletingMessages: .init(status: .enabled, config: .init(enforcedTimeoutSeconds: 22))
+                selfDeletingMessages: .init(status: .enabled, config: .init(enforcedTimeoutSeconds: 22)),
+                mlsE2EId: .init(status: .enabled, config: .init(acmeDiscoveryUrl: "https://acme/defaultteams/directory",
+                                                                verificationExpiration: 60))
             )
 
             guard let payloadData = try? JSONEncoder().encode(payload),
@@ -131,6 +133,11 @@ class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
             let selfDeletingMessage = featureRepository.fetchSelfDeletingMesssages()
             XCTAssertEqual(selfDeletingMessage.status, .enabled)
             XCTAssertEqual(selfDeletingMessage.config.enforcedTimeoutSeconds, 22)
+
+            let e2ei = featureRepository.fetchE2EId()
+            XCTAssertEqual(e2ei.status, .enabled)
+            XCTAssertEqual(e2ei.config.acmeDiscoveryUrl, "https://acme/defaultteams/directory")
+            XCTAssertEqual(e2ei.config.verificationExpiration, 60)
         }
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -165,7 +172,8 @@ class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
                 digitalSignatures: nil,
                 fileSharing: nil,
                 mls: nil,
-                selfDeletingMessages: nil
+                selfDeletingMessages: nil,
+                mlsE2EId: nil
             )
 
             guard let payloadData = try? JSONEncoder().encode(payload),
@@ -208,6 +216,10 @@ class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
             let selfDeletingMessage = featureRepository.fetchSelfDeletingMesssages()
             XCTAssertEqual(selfDeletingMessage.status, .enabled)
             XCTAssertEqual(selfDeletingMessage.config, .init())
+
+            let e2ei = featureRepository.fetchE2EId()
+            XCTAssertEqual(e2ei.status, .disabled)
+            XCTAssertEqual(e2ei.config, .init())
         }
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))

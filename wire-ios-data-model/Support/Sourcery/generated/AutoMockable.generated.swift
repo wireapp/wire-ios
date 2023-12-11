@@ -875,6 +875,39 @@ public class MockFeatureRepositoryInterface: FeatureRepositoryInterface {
         mock(mls)
     }
 
+    // MARK: - fetchE2EId
+
+    public var fetchE2EId_Invocations: [Void] = []
+    public var fetchE2EId_MockMethod: (() -> Feature.E2EId)?
+    public var fetchE2EId_MockValue: Feature.E2EId?
+
+    public func fetchE2EId() -> Feature.E2EId {
+        fetchE2EId_Invocations.append(())
+
+        if let mock = fetchE2EId_MockMethod {
+            return mock()
+        } else if let mock = fetchE2EId_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchE2EId`")
+        }
+    }
+
+    // MARK: - storeE2EId
+
+    public var storeE2EId_Invocations: [Feature.E2EId] = []
+    public var storeE2EId_MockMethod: ((Feature.E2EId) -> Void)?
+
+    public func storeE2EId(_ e2eid: Feature.E2EId) {
+        storeE2EId_Invocations.append(e2eid)
+
+        guard let mock = storeE2EId_MockMethod else {
+            fatalError("no mock for `storeE2EId`")
+        }
+
+        mock(e2eid)
+    }
+
 }
 
 class MockFileManagerInterface: FileManagerInterface {

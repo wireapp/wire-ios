@@ -34,7 +34,7 @@ public extension Feature {
 
         // MARK: - Life cycle
 
-        public init(status: Feature.Status = .enabled, config: Config = .init()) {
+        public init(status: Feature.Status = .disabled, config: Config = .init()) {
             self.status = status
             self.config = config
         }
