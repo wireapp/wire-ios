@@ -189,7 +189,7 @@ extension EventDecoder {
     ) async -> [ZMUpdateEvent] {
         var decryptedEvents: [ZMUpdateEvent] = []
 
-        keyStore.encryptionContext.perform { [weak self] sessionsDirectory in
+        await keyStore.encryptionContext.performAsync { [weak self] sessionsDirectory in
             guard let self else { return }
 
             decryptedEvents = await events.asyncCompactMap { event -> ZMUpdateEvent? in
@@ -203,7 +203,7 @@ extension EventDecoder {
                     }
 
                 case .conversationMLSMessageAdd:
-                    return self.decryptMlsMessage(from: event, context: self.syncMOC)
+                    return await self.decryptMlsMessage(from: event, context: self.syncMOC)
 
                 default:
                     return event
