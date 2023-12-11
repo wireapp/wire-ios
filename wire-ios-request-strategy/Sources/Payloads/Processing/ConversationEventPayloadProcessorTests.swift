@@ -808,15 +808,15 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
     }
 
     func testUpdateOrCreateConversation_Self_ResetsNeedsToBeUpdatedFromBackend() async throws {
-        let conversation = await syncMOC.perform {
+        let (conversation, qualifiedID) = await syncMOC.perform {
             // given
             let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
             conversation.needsToBeUpdatedFromBackend = true
             conversation.remoteIdentifier = UUID()
             conversation.domain = self.owningDomain
-            return conversation
+            let qualifiedID = conversation.qualifiedID!
+            return (conversation, qualifiedID)
         }
-        let qualifiedID = conversation.qualifiedID!
         let payload = Payload.Conversation(qualifiedID: qualifiedID, type: BackendConversationType.`self`.rawValue)
 
         // when
@@ -961,10 +961,9 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
     func testUpdateOrCreateConversation_Group_UpdatesEpoch() async {
         // given
         MLSEventProcessor.setMock(MockMLSEventProcessor())
-        groupConversation.epoch = 0
-
         let payload = await syncMOC.perform {
-            Payload.Conversation(
+            self.groupConversation.epoch = 0
+            return Payload.Conversation(
                 qualifiedID: self.groupConversation.qualifiedID!,
                 type: BackendConversationType.group.rawValue,
                 epoch: 1
@@ -1035,18 +1034,18 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
 
     func testProcessingConversationDelete_CallsLocalConversationRemovalUseCase() async {
         // Given
-        let conversationDeleted = await syncMOC.perform {
-            Payload.UpdateConversationDeleted()
+        let payload = await syncMOC.perform {
+            let conversationDeleted = Payload.UpdateConversationDeleted()
+            return Payload.ConversationEvent(
+                id: nil,
+                qualifiedID: self.groupConversation.qualifiedID,
+                from: nil,
+                qualifiedFrom: nil,
+                timestamp: nil,
+                type: nil,
+                data: conversationDeleted
+            )
         }
-        let payload = Payload.ConversationEvent(
-            id: nil,
-            qualifiedID: groupConversation.qualifiedID,
-            from: nil,
-            qualifiedFrom: nil,
-            timestamp: nil,
-            type: nil,
-            data: conversationDeleted
-        )
 
         // When
         await sut.processPayload(payload, in: syncMOC)

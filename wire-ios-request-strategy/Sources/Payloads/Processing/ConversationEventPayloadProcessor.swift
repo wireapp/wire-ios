@@ -83,10 +83,13 @@ final class ConversationEventPayloadProcessor {
         _ payload: Payload.ConversationEvent<Payload.UpdateConversationDeleted>,
         in context: NSManagedObjectContext
     ) async {
-        guard let conversation = fetchOrCreateConversation(
-            from: payload,
-            in: context
-        ) else {
+        let conversation = await context.perform {
+            self.fetchOrCreateConversation(
+                from: payload,
+                in: context
+            )
+        }
+        guard let conversation else {
             Logging.eventProcessing.error("Conversation deletion missing conversation in event, aborting...")
             return
         }
@@ -353,12 +356,14 @@ final class ConversationEventPayloadProcessor {
 
         switch conversationType {
         case .group:
-            return updateOrCreateGroupConversation(
-                from: payload,
-                in: context,
-                serverTimestamp: serverTimestamp,
-                source: source
-            )
+            return await context.perform {
+                self.updateOrCreateGroupConversation(
+                    from: payload,
+                    in: context,
+                    serverTimestamp: serverTimestamp,
+                    source: source
+                )
+            }
 
         case .`self`:
             return await updateOrCreateSelfConversation(
@@ -369,12 +374,14 @@ final class ConversationEventPayloadProcessor {
             )
 
         case .connection, .oneOnOne:
-            return updateOrCreateOneToOneConversation(
-                from: payload,
-                in: context,
-                serverTimestamp: serverTimestamp,
-                source: source
-            )
+            return await context.perform {
+                self.updateOrCreateOneToOneConversation(
+                    from: payload,
+                    in: context,
+                    serverTimestamp: serverTimestamp,
+                    source: source
+                )
+            }
 
         default:
             return nil
@@ -472,20 +479,24 @@ final class ConversationEventPayloadProcessor {
     }
 
     func createOrJoinSelfConversation(from conversation: ZMConversation) async throws {
-        guard
-            let groupId = conversation.mlsGroupID,
-            let mlsService = conversation.managedObjectContext?.mlsService
-        else {
+        guard let context = conversation.managedObjectContext else {
+            return WireLogger.mls.warn("conversation.managedObjectContext is nil")
+        }
+        let (groupID, mlsService) = await context.perform {
+            (conversation.mlsGroupID, conversation.managedObjectContext?.mlsService)
+        }
+
+        guard let groupID, let mlsService else {
             WireLogger.mls.warn("no mlsService to createOrJoinSelfConversation")
             return
         }
 
-        WireLogger.mls.debug("createOrJoinSelfConversation for \(groupId.safeForLoggingDescription); conv payload: \(String(describing: self))")
+        WireLogger.mls.debug("createOrJoinSelfConversation for \(groupID.safeForLoggingDescription); conv payload: \(String(describing: self))")
 
-        if conversation.epoch <= 0 {
-            await mlsService.createSelfGroup(for: groupId)
-        } else if !mlsService.conversationExists(groupID: groupId) {
-            try await mlsService.joinGroup(with: groupId)
+        if await context.perform({ conversation.epoch <= 0 }) {
+            await mlsService.createSelfGroup(for: groupID)
+        } else if !mlsService.conversationExists(groupID: groupID) {
+            try await mlsService.joinGroup(with: groupID)
         }
     }
 
