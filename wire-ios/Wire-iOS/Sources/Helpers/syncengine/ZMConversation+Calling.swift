@@ -88,14 +88,21 @@ extension ZMConversation {
     }
 
     func warnAboutSlowConnection(handler: @escaping (_ abortCall: Bool) -> Void) {
-        if NetworkConditionHelper.shared.qualityType() == .type2G {
-            let badConnectionController = UIAlertController(title: "error.call.slow_connection.title".localized, message: "error.call.slow_connection".localized, preferredStyle: .alert)
 
-            badConnectionController.addAction(UIAlertAction(title: "error.call.slow_connection.call_anyway".localized, style: .default, handler: { (_) in
+        typealias ErrorCallSlowCallLocale = L10n.Localizable.Error.Call
+
+        if NetworkConditionHelper.shared.qualityType() == .type2G {
+            let badConnectionController = UIAlertController(
+                title: ErrorCallSlowCallLocale.SlowConnection.title,
+                message: ErrorCallSlowCallLocale.slowConnection,
+                preferredStyle: .alert
+            )
+
+            badConnectionController.addAction(UIAlertAction(title: ErrorCallSlowCallLocale.SlowConnection.callAnyway, style: .default, handler: { (_) in
                 handler(false)
             }))
 
-            badConnectionController.addAction(UIAlertAction(title: "general.cancel".localized, style: .cancel, handler: { (_) in
+            badConnectionController.addAction(UIAlertAction(title: L10n.Localizable.General.ok, style: .cancel, handler: { (_) in
                 handler(true)
             }))
 
@@ -106,12 +113,13 @@ extension ZMConversation {
     }
 
     func warnAboutNoInternetConnection() -> Bool {
+        typealias VoiceNetworkErrorLocale = L10n.Localizable.Voice.NetworkError
         guard AppDelegate.isOffline else {
             return false
         }
 
-        let internetConnectionAlert = UIAlertController.alertWithOKButton(title: "voice.network_error.title".localized,
-                                                                          message: "voice.network_error.body".localized)
+        let internetConnectionAlert = UIAlertController.alertWithOKButton(title: VoiceNetworkErrorLocale.title,
+                                                                          message: VoiceNetworkErrorLocale.body)
 
         AppDelegate.shared.window?.rootViewController?.present(internetConnectionAlert, animated: true)
 

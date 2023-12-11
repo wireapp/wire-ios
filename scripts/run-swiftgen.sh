@@ -23,12 +23,16 @@ REPO_ROOT=$(git rev-parse --show-toplevel)
 SCRIPTS_DIR="$REPO_ROOT/scripts"
 SWIFTGEN="$SCRIPTS_DIR/.build/artifacts/scripts/swiftgen/swiftgen.artifactbundle/swiftgen/bin/swiftgen"
 
-if [ -z "${CI-}" ]; then
-    xcrun --sdk macosx swift package --package-path "$SCRIPTS_DIR" resolve
-    (
-        cd "$REPO_ROOT/wire-ios"
-        "$SWIFTGEN"
-    )
-else
+if [ ! -z "${CI-}" ]; then
     echo "Skipping SwiftGen in CI environment"
+    exit 0
 fi
+
+if [[ ! -f "$SWIFTGEN" ]]; then
+    xcrun --sdk macosx swift package --package-path "$SCRIPTS_DIR" resolve
+fi
+
+(
+    cd "$REPO_ROOT/wire-ios"
+    "$SWIFTGEN"
+)

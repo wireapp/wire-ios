@@ -27,13 +27,13 @@ extension EncryptionSessionsDirectory {
     func decryptData(
         _ encryptedData: Data,
         for sessionID: EncryptionSessionIdentifier
-    ) throws -> (createdNewSession: Bool, decryptedData: Data) {
+    ) throws -> (didCreateNewSession: Bool, decryptedData: Data) {
         if self.hasSession(for: sessionID) {
             let decryptedData = try decrypt(encryptedData, from: sessionID)
-            return (createdNewSession: false, decryptedData: decryptedData)
+            return (didCreateNewSession: false, decryptedData: decryptedData)
         } else {
             let decryptedData = try createClientSessionAndReturnPlaintext(for: sessionID, prekeyMessage: encryptedData)
-            return (createdNewSession: true, decryptedData: decryptedData)
+            return (didCreateNewSession: true, decryptedData: decryptedData)
         }
     }
 

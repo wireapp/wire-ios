@@ -20,7 +20,9 @@ import Foundation
 import XCTest
 import WireCoreCrypto
 import Combine
+
 @testable import WireDataModel
+@testable import WireDataModelSupport
 
 class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
@@ -32,7 +34,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
     var mockMLSActionExecutor: MockMLSActionExecutor!
     var mockSyncStatus: MockSyncStatus!
     var mockActionsProvider: MockMLSActionsProviderProtocol!
-    var mockConversationEventProcessor: MockConversationEventProcessor!
+    var mockConversationEventProcessor: MockConversationEventProcessorProtocol!
     var mockStaleMLSKeyDetector: MockStaleMLSKeyDetector!
     var userDefaultsTestSuite: UserDefaults!
     var mockSubconversationGroupIDRepository: MockSubconversationGroupIDRepositoryInterface!
@@ -48,7 +50,8 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         mockMLSActionExecutor = MockMLSActionExecutor()
         mockSyncStatus = MockSyncStatus()
         mockActionsProvider = MockMLSActionsProviderProtocol()
-        mockConversationEventProcessor = MockConversationEventProcessor()
+        mockConversationEventProcessor = MockConversationEventProcessorProtocol()
+        mockConversationEventProcessor.processConversationEvents_MockMethod = { _ in }
         mockStaleMLSKeyDetector = MockStaleMLSKeyDetector()
         userDefaultsTestSuite = UserDefaults(suiteName: "com.wire.mls-test-suite")!
         mockSubconversationGroupIDRepository = MockSubconversationGroupIDRepositoryInterface()
@@ -176,7 +179,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     // MARK: - Conference info
 
-    func test_GenerateConferenceInfo_IsSuccessful() {
+    func test_GenerateConferenceInfo_IsSuccessful() async {
         do {
             // Given
             let parentGroupID = MLSGroupID.random()
@@ -221,7 +224,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             }
 
             // When
-            let conferenceInfo = try sut.generateConferenceInfo(
+            let conferenceInfo = try await sut.generateConferenceInfo(
                 parentGroupID: parentGroupID,
                 subconversationGroupID: subconversationGroupID
             )
@@ -249,7 +252,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     typealias ConferenceInfoError = MLSService.MLSConferenceInfoError
 
-    func test_GenerateConferenceInfo_Fails() {
+    func test_GenerateConferenceInfo_Fails() async {
         // Given
         let parentGroupID = MLSGroupID.random()
         let subconversationGroupID = MLSGroupID.random()
@@ -265,8 +268,8 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
 
         // When / Then
-        assertItThrows(error: ConferenceInfoError.failedToGenerateConferenceInfo) {
-            _ = try sut.generateConferenceInfo(
+        await assertItThrows(error: ConferenceInfoError.failedToGenerateConferenceInfo) {
+            _ = try await sut.generateConferenceInfo(
                 parentGroupID: parentGroupID,
                 subconversationGroupID: subconversationGroupID
             )
@@ -463,7 +466,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         XCTAssertEqual(mockAddMembersArguments.first?.1, mlsGroupID)
 
         // And processd the update event.
-        let processConversationEventsCalls = self.mockConversationEventProcessor.calls.processConversationEvents
+        let processConversationEventsCalls = self.mockConversationEventProcessor.processConversationEvents_Invocations
         XCTAssertEqual(processConversationEventsCalls.count, 1)
         XCTAssertEqual(processConversationEventsCalls[0], [updateEvent])
     }
@@ -531,7 +534,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         XCTAssertEqual(mockAddMembersArguments.first?.1, groupID)
 
         // We processed the conversation events.
-        let processConversationEventsCalls = self.mockConversationEventProcessor.calls.processConversationEvents
+        let processConversationEventsCalls = self.mockConversationEventProcessor.processConversationEvents_Invocations
         XCTAssertEqual(processConversationEventsCalls, [[updateEvent1], [updateEvent2]])
     }
 
@@ -640,7 +643,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         XCTAssertEqual(mockRemoveClientsArguments.first?.1, mlsGroupID)
 
         // Then we process the update event.
-        let processConversationEventsCalls = self.mockConversationEventProcessor.calls.processConversationEvents
+        let processConversationEventsCalls = self.mockConversationEventProcessor.processConversationEvents_Invocations
         XCTAssertEqual(processConversationEventsCalls, [[updateEvent]])
     }
 
@@ -702,7 +705,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         XCTAssertEqual(mockRemoveClientsArguments.first?.1, groupID)
 
         // Then we process the update events.
-        let processConversationEventsCalls = self.mockConversationEventProcessor.calls.processConversationEvents
+        let processConversationEventsCalls = self.mockConversationEventProcessor.processConversationEvents_Invocations
         XCTAssertEqual(processConversationEventsCalls, [[updateEvent1], [updateEvent2]])
     }
 
@@ -816,7 +819,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
 
         // Then we processed the update event.
-        XCTAssertEqual(mockConversationEventProcessor.calls.processConversationEvents, [[updateEvent]])
+        XCTAssertEqual(mockConversationEventProcessor.processConversationEvents_Invocations, [[updateEvent]])
     }
 
     func test_CommitPendingProposals_OneFutureCommit() async throws {
@@ -858,7 +861,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
 
         // Then we processed the update event.
-        XCTAssertEqual(mockConversationEventProcessor.calls.processConversationEvents, [[updateEvent]])
+        XCTAssertEqual(mockConversationEventProcessor.processConversationEvents_Invocations, [[updateEvent]])
     }
 
     func test_CommitPendingProposals_MultipleCommits() async throws {
@@ -954,7 +957,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
         // Then we processed the update event.
         XCTAssertEqual(
-            mockConversationEventProcessor.calls.processConversationEvents,
+            mockConversationEventProcessor.processConversationEvents_Invocations,
             [[updateEvent1], [updateEvent2], [updateEvent3]]
         )
     }
@@ -1043,7 +1046,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
         // mock processing conversation events
         var processConversationEventsArguments = [[ZMUpdateEvent]]()
-        mockConversationEventProcessor.mockProcessConversationEvents = {
+        mockConversationEventProcessor.processConversationEvents_MockMethod = {
             processConversationEventsArguments.append($0)
             expectation.fulfill()
         }
@@ -1118,7 +1121,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
         // mock processing conversation events
         var processConversationEventsCount = 0
-        mockConversationEventProcessor.mockProcessConversationEvents = { _ in
+        mockConversationEventProcessor.processConversationEvents_MockMethod = { _ in
             processConversationEventsCount += 1
             expectation.fulfill()
         }
@@ -1630,7 +1633,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
         // Then we didn't process any events.
         XCTAssertEqual(
-            mockConversationEventProcessor.calls.processConversationEvents.flatMap(\.self),
+            mockConversationEventProcessor.processConversationEvents_Invocations.flatMap(\.self),
             []
         )
 
@@ -1725,7 +1728,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
         // Then we processed the update event from the proposal.
         XCTAssertEqual(
-            mockConversationEventProcessor.calls.processConversationEvents,
+            mockConversationEventProcessor.processConversationEvents_Invocations,
             [[updateEvent], []]
         )
 
@@ -1790,7 +1793,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         XCTAssertEqual(mockPerformQuickSyncCount, 1)
 
         // Then processed the result once.
-        XCTAssertEqual(mockConversationEventProcessor.calls.processConversationEvents, [[]])
+        XCTAssertEqual(mockConversationEventProcessor.processConversationEvents_Invocations, [[]])
     }
 
     func test_RetryOnCommitFailure_MultipleRetries() async throws {
@@ -1830,7 +1833,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         XCTAssertEqual(mockPerformQuickSyncCount, 3)
 
         // Then processed the result once.
-        XCTAssertEqual(mockConversationEventProcessor.calls.processConversationEvents, [[]])
+        XCTAssertEqual(mockConversationEventProcessor.processConversationEvents_Invocations, [[]])
     }
 
     func test_RetryOnCommitFailure_ChainMultipleRecoverableOperations() async throws {
@@ -1880,7 +1883,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         XCTAssertEqual(mockPerformQuickSyncCount, 5)
 
         // Then processed the results twice (1 for each success).
-        XCTAssertEqual(mockConversationEventProcessor.calls.processConversationEvents, [[], []])
+        XCTAssertEqual(mockConversationEventProcessor.processConversationEvents_Invocations, [[], []])
     }
 
     func test_RetryOnCommitFailure_CommitPendingProposalsAfterRetry() async throws {
@@ -1928,7 +1931,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         XCTAssertEqual(mockPerformQuickSyncCount, 1)
 
         // Then processed the result once.
-        XCTAssertEqual(mockConversationEventProcessor.calls.processConversationEvents, [[]])
+        XCTAssertEqual(mockConversationEventProcessor.processConversationEvents_Invocations, [[]])
     }
 
     func test_RetryOnCommitFailure_ItGivesUp() async throws {
@@ -1966,7 +1969,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         XCTAssertEqual(mockPerformQuickSyncCount, 0)
 
         // Then it didn't process any result.
-        XCTAssertEqual(mockConversationEventProcessor.calls.processConversationEvents, [])
+        XCTAssertEqual(mockConversationEventProcessor.processConversationEvents_Invocations, [])
     }
 
     // MARK: - Subgroups
@@ -2383,26 +2386,26 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         XCTAssertEqual(receivedGroupIDs, [groupID1, groupID2, groupID3])
     }
 
-    func test_OnConferenceInfoChanged_WhenEpochChangesForParentConversation() throws {
+    func test_OnConferenceInfoChanged_WhenEpochChangesForParentConversation() async throws {
         // Given
         let parentGroupID = MLSGroupID.random()
         let subconversationGroupID = MLSGroupID.random()
 
         // When then
-        try assertConferenceInfoIsReceivedWhenEpochChanges(
+        try await assertConferenceInfoIsReceivedWhenEpochChanges(
             parentGroupID: parentGroupID,
             subconversationGroupID: subconversationGroupID,
             epochChangeSequence: .random(), .random(), parentGroupID
         )
     }
 
-    func test_OnConferenceInfoChanged_WhenEpochChangesForSubconversation() throws {
+    func test_OnConferenceInfoChanged_WhenEpochChangesForSubconversation() async throws {
         // Given
         let parentGroupID = MLSGroupID.random()
         let subconversationGroupID = MLSGroupID.random()
 
         // When then
-        try assertConferenceInfoIsReceivedWhenEpochChanges(
+        try await assertConferenceInfoIsReceivedWhenEpochChanges(
             parentGroupID: parentGroupID,
             subconversationGroupID: subconversationGroupID,
             epochChangeSequence: .random(), .random(), subconversationGroupID
@@ -2413,7 +2416,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         parentGroupID: MLSGroupID,
         subconversationGroupID: MLSGroupID,
         epochChangeSequence: MLSGroupID...
-    ) throws {
+    ) async throws {
         // Mock epoch changes
         let epochChangedFromDecryptionSerivce = PassthroughSubject<MLSGroupID, Never>()
         mockDecryptionService.onEpochChanged_MockValue = epochChangedFromDecryptionSerivce.eraseToAnyPublisher()
@@ -2443,15 +2446,10 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
 
         // Collect the received conference infos
-        var receivedConferenceInfos = [MLSConferenceInfo]()
-        let didReceiveConferenceInfos = expectation(description: "didReceiveConferenceInfos")
-        let cancellable = sut.onConferenceInfoChange(
+        let conferenceInfoChanges = sut.onConferenceInfoChange(
             parentGroupID: parentGroupID,
             subConversationGroupID: subconversationGroupID
-        ).collect(1).sink {
-            receivedConferenceInfos = $0
-            didReceiveConferenceInfos.fulfill()
-        }
+        )
 
         // When
         for groupID in epochChangeSequence {
@@ -2459,16 +2457,14 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
 
         // Then
-        XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
-        cancellable.cancel()
-
+        let receivedConferenceInfo = try await conferenceInfoChanges.first(where: { _ in true })
         let expectedConferenceInfo = MLSConferenceInfo(
             epoch: epoch,
             keyData: key,
             members: [.init(id: clientID, isInSubconversation: true)]
         )
 
-        XCTAssertEqual(receivedConferenceInfos, [expectedConferenceInfo])
+        XCTAssertEqual(receivedConferenceInfo, expectedConferenceInfo)
     }
 
     // MARK: - Self group
