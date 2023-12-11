@@ -31,11 +31,12 @@ public class RemoveLocalConversationUseCase: RemoveLocalConversationUseCaseProto
         with conversation: ZMConversation,
         syncContext: NSManagedObjectContext
     ) async {
-        precondition(syncContext.zm_isSyncContext, "use case should only be accessed on the sync context")
+        let isSyncContext = await syncContext.perform { syncContext.zm_isSyncContext }
+        precondition(isSyncContext, "use case should only be accessed on the sync context")
 
-        conversation.isDeletedRemotely = true
+        await syncContext.perform { conversation.isDeletedRemotely = true }
         await wipeMLSGroupIfNeeded(for: conversation, in: syncContext)
-        syncContext.saveOrRollback()
+        await syncContext.perform { _ = syncContext.saveOrRollback() }
     }
 
     func wipeMLSGroupIfNeeded(

@@ -207,7 +207,7 @@ final class CreateGroupConversationActionHandler: ActionHandler<CreateGroupConve
             return
         }
 
-        switch newConversation.messageProtocol {
+        switch await context.perform({ newConversation.messageProtocol }) {
         case .proteus:
             await context.perform { [context] in
                 context.saveOrRollback()
@@ -223,7 +223,7 @@ final class CreateGroupConversationActionHandler: ActionHandler<CreateGroupConve
                 return newConversation.objectID
             }
 
-            guard let mlsService = context.zm_sync.mlsService else {
+            guard let mlsService = await context.perform({ [context] in context.zm_sync.mlsService }) else {
                 Logging.mls.warn("failed to create mls group: mlsService doesn't exist")
                 action.fail(with: .proccessingError)
                 return

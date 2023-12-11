@@ -132,15 +132,15 @@ final class MLSEventProcessor: MLSEventProcessing {
     func wipeMLSGroup(forConversation conversation: ZMConversation, context: NSManagedObjectContext) async {
         Logging.mls.info("MLS event processor is wiping conversation")
 
-        guard conversation.messageProtocol == .mls else {
+        guard await context.perform({ conversation.messageProtocol }) == .mls else {
             return logWarn(aborting: .conversationWipe, withReason: .notMLSConversation)
         }
 
-        guard let mlsGroupID = conversation.mlsGroupID else {
+        guard let mlsGroupID = await context.perform({ conversation.mlsGroupID }) else {
             return logWarn(aborting: .conversationWipe, withReason: .missingGroupID)
         }
 
-        guard let mlsService = context.mlsService else {
+        guard let mlsService = await context.perform({ context.mlsService }) else {
             return logWarn(aborting: .conversationWipe, withReason: .missingMLSService)
         }
 

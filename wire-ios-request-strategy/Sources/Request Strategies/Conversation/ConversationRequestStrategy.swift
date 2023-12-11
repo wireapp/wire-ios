@@ -533,12 +533,12 @@ class ConversationByIDTranscoder: IdentifierObjectSyncTranscoder {
 
     private func deleteConversations(_ conversations: Set<UUID>) async {
         for conversationID in conversations {
-            guard
-                let conversation = ZMConversation.fetch(with: conversationID, domain: nil, in: context),
-                conversation.conversationType == .group
-            else {
-                continue
+            let (conversation, conversationType) = await context.perform { [context] in
+                let conversation = ZMConversation.fetch(with: conversationID, domain: nil, in: context)
+                return (conversation, conversation?.conversationType)
             }
+            guard let conversation, conversationType == .group else { continue }
+
             await removeLocalConversation.invoke(
                 with: conversation,
                 syncContext: context
