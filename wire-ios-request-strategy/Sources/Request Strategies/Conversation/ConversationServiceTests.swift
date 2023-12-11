@@ -22,17 +22,23 @@ import XCTest
 final class ConversationServiceTests: MessagingTestBase {
 
     var sut: ConversationService!
+    var mockParticipantsService: MockConversationParticipantsServiceInterface!
     var user1: ZMUser!
     var user2: ZMUser!
 
     override func setUp() {
         super.setUp()
-        sut = ConversationService(context: uiMOC)
+        mockParticipantsService = MockConversationParticipantsServiceInterface()
+        sut = ConversationService(
+            context: uiMOC,
+            participantsService: mockParticipantsService
+        )
         user1 = createUser(alsoCreateClient: true, in: uiMOC)
         user2 = createUser(alsoCreateClient: true, in: uiMOC)
     }
 
     override func tearDown() {
+        mockParticipantsService = nil
         sut = nil
         user1 = nil
         user2 = nil
@@ -393,7 +399,7 @@ final class ConversationServiceTests: MessagingTestBase {
         let didSync = expectation(description: "didSync")
 
         // Mock
-        let mockActionHandler = MockActionHandler<SyncConversationAction>(
+        _ = MockActionHandler<SyncConversationAction>(
             result: .success(()),
             context: uiMOC.notificationContext
         )
