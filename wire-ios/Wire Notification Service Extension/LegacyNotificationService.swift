@@ -49,6 +49,7 @@ public enum LegacyNotificationServiceError: Error {
     case noAccount
     case coreDataMissingSharedContainer
     case coreDataMigrationRequired
+    case coreDataLoadStoresFailed
 
 }
 
@@ -215,14 +216,23 @@ public class LegacyNotificationService: UNNotificationServiceExtension, Notifica
             throw LegacyNotificationServiceError.coreDataMigrationRequired
         }
 
+        let dispatchGroup = DispatchGroup()
+        var loadStoresError: Error?
+
+        dispatchGroup.enter()
         coreDataStack.loadStores { error in
-            // ⚠️ errors are not handled and `NotificationSession` will be created.
-            // Currently it is the given behavior, but should be refactored
-            // into a "setup" or "load" func that can be async and handle errors.
+            loadStoresError = error
 
             if let error = error {
                 WireLogger.notifications.error("Loading coreDataStack with error: \(error.localizedDescription)")
             }
+
+            dispatchGroup.leave()
+        }
+        let timeoutResult = dispatchGroup.wait(timeout: .now() + .seconds(5))
+
+        if loadStoresError != nil || timeoutResult == .timedOut {
+            throw LegacyNotificationServiceError.coreDataLoadStoresFailed
         }
 
         return coreDataStack
