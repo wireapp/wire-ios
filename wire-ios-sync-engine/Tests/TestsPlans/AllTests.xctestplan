@@ -32,6 +32,10 @@
         "value" : "1"
       },
       {
+        "key" : "LIBDISPATCH_COOPERATIVE_POOL_STRICT",
+        "value" : "1"
+      },
+      {
         "enabled" : false,
         "key" : "SQLITE_AUTO_TRACE",
         "value" : "1"
