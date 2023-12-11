@@ -1857,14 +1857,14 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
     // MARK: - sessionExists
 
     public var sessionExistsId_Invocations: [ProteusSessionID] = []
-    public var sessionExistsId_MockMethod: ((ProteusSessionID) -> Bool)?
+    public var sessionExistsId_MockMethod: ((ProteusSessionID) async -> Bool)?
     public var sessionExistsId_MockValue: Bool?
 
-    public func sessionExists(id: ProteusSessionID) -> Bool {
+    public func sessionExists(id: ProteusSessionID) async -> Bool {
         sessionExistsId_Invocations.append(id)
 
         if let mock = sessionExistsId_MockMethod {
-            return mock(id)
+            return await mock(id)
         } else if let mock = sessionExistsId_MockValue {
             return mock
         } else {
@@ -1922,10 +1922,10 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
 
     public var decryptDataForSession_Invocations: [(data: Data, id: ProteusSessionID)] = []
     public var decryptDataForSession_MockError: Error?
-    public var decryptDataForSession_MockMethod: ((Data, ProteusSessionID) throws -> (didCreateNewSession: Bool, decryptedData: Data))?
+    public var decryptDataForSession_MockMethod: ((Data, ProteusSessionID) async throws -> (didCreateNewSession: Bool, decryptedData: Data))?
     public var decryptDataForSession_MockValue: (didCreateNewSession: Bool, decryptedData: Data)?
 
-    public func decrypt(data: Data, forSession id: ProteusSessionID) throws -> (didCreateNewSession: Bool, decryptedData: Data) {
+    public func decrypt(data: Data, forSession id: ProteusSessionID) async throws -> (didCreateNewSession: Bool, decryptedData: Data) {
         decryptDataForSession_Invocations.append((data: data, id: id))
 
         if let error = decryptDataForSession_MockError {
@@ -1933,7 +1933,7 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
         }
 
         if let mock = decryptDataForSession_MockMethod {
-            return try mock(data, id)
+            return try await mock(data, id)
         } else if let mock = decryptDataForSession_MockValue {
             return mock
         } else {

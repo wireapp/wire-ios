@@ -286,27 +286,29 @@ public class UserClient: ZMManagedObject, UserClientType {
     /// Note: only access this property only from the sync context.
 
     public var hasSessionWithSelfClient: Bool {
-        guard
-            let sessionID = proteusSessionID,
-            let proteusProvider = managedObjectContext?.proteusProvider
-        else {
-            return false
-        }
-
-        var hasSession = false
-
-        proteusProvider.perform(
-            withProteusService: { proteusService in
-                hasSession = proteusService.sessionExists(id: sessionID)
-            },
-            withKeyStore: { keyStore in
-                keyStore.encryptionContext.perform { sessionsDirectory in
-                    hasSession = sessionsDirectory.hasSession(for: sessionID.mapToEncryptionSessionID())
-                }
+        get async {
+            guard
+                let sessionID = proteusSessionID,
+                let proteusProvider = managedObjectContext?.proteusProvider
+            else {
+                return false
             }
-        )
 
-        return hasSession
+            var hasSession = false
+
+            await proteusProvider.performAsync(
+                withProteusService: { proteusService in
+                    hasSession = await proteusService.sessionExists(id: sessionID)
+                },
+                withKeyStore: { keyStore in
+                    keyStore.encryptionContext.perform { sessionsDirectory in
+                        hasSession = sessionsDirectory.hasSession(for: sessionID.mapToEncryptionSessionID())
+                    }
+                }
+            )
+
+            return hasSession
+        }
     }
 
     /// Resets the session between the client and the selfClient
