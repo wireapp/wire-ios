@@ -116,7 +116,7 @@ final class DeveloperToolsViewModel: ObservableObject {
                 .button(ButtonItem(title: "Send debug logs", action: sendDebugLogs)),
                 .button(ButtonItem(title: "Perform quick sync", action: performQuickSync)),
                 .button(ButtonItem(title: "Break next quick sync", action: breakNextQuickSync)),
-                .button(ButtonItem(title: "E2EI: Trigger flow", action: startE2EI)),
+                .button(ButtonItem(title: "Enroll e2ei certificate", action: enrollE2EICertificate)),
                 .destination(DestinationItem(title: "Configure flags", makeView: {
                     AnyView(DeveloperFlagsView(viewModel: DeveloperFlagsViewModel()))
                 }))
@@ -241,14 +241,28 @@ final class DeveloperToolsViewModel: ObservableObject {
         }
     }
 
-    private func startE2EI() {
+    private func enrollE2EICertificate() {
         guard let session = ZMUserSession.shared() else { return }
         let e2eiCertificateUseCase = session.enrollE2eICertificate
+        guard let rootViewController = AppDelegate.shared.window?.rootViewController else {
+            return
+        }
+        let oauthUseCase = OAuthUseCase(rootViewController: rootViewController)
 
-        guard let selfUser = selfUser else { return }
+        guard
+            let selfUser = selfUser,
+            let userName = selfUser.name,
+            let handle = selfUser.handle,
+            let e2eiClientId = E2eIClientID(user: selfUser)
+        else {
+            return
+        }
 
         Task {
-            _ = try await e2eiCertificateUseCase?.invoke(idToken: "", selfUser: selfUser)
+            _ = try await e2eiCertificateUseCase?.invoke(e2eiClientId: e2eiClientId,
+                                                         userName: userName,
+                                                         userHandle: handle,
+                                                         authenticate: oauthUseCase.invoke)
         }
     }
 

@@ -249,18 +249,24 @@ public class ZMUserSession: NSObject {
     }()
 
     public lazy var enrollE2eICertificate: EnrollE2eICertificateUseCaseInterface? = {
+        var e2eiRepository: E2eIRepository?
         let acmeApi = AcmeAPI()
         let httpClient = HttpClientImpl(
             transportSession: transportSession,
             queue: syncContext)
         let apiProvider = APIProvider(httpClient: httpClient)
-        guard let coreCrypto = syncContext.coreCrypto else {
-            return nil
-        }
-        let e2eiClient = E2eIClient(coreCrypto: coreCrypto)
-        let e2eiRepository = E2eIRepository(acmeApi: acmeApi,
+        syncContext.performAndWait {
+            guard let coreCrypto = syncContext.coreCrypto else {
+                return
+            }
+            let e2eiClient = E2eIClient(coreCrypto: coreCrypto)
+            e2eiRepository = E2eIRepository(acmeApi: acmeApi,
                                             apiProvider: apiProvider,
                                             e2eiClient: e2eiClient)
+        }
+        guard let e2eiRepository = e2eiRepository else {
+            return nil
+        }
         return EnrollE2eICertificateUseCase(e2eiRepository: e2eiRepository)
     }()
 

@@ -33,7 +33,7 @@ class E2eIEnrollmentTests: ZMTBaseTest {
         super.setUp()
 
         previousApiVersion = BackendInfo.apiVersion
-        let acmeDirectore = AcmeDirectory(newNonce: "https://acme.elna.wire.link/acme/defaultteams/new-nonce",
+        let acmeDirectory = AcmeDirectory(newNonce: "https://acme.elna.wire.link/acme/defaultteams/new-nonce",
                                           newAccount: "https://acme.elna.wire.link/acme/defaultteams/new-account",
                                           newOrder: "https://acme.elna.wire.link/acme/defaultteams/new-order")
         mockAcmeApi = MockAcmeApi()
@@ -42,7 +42,7 @@ class E2eIEnrollmentTests: ZMTBaseTest {
         sut = E2eIEnrollment(acmeApi: mockAcmeApi,
                              apiProvider: mockApiProvider,
                              e2eiService: mockE2eiService,
-                             acmeDirectory: acmeDirectore)
+                             acmeDirectory: acmeDirectory)
     }
 
     override func tearDown() {
