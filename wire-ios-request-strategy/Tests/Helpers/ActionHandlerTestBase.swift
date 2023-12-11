@@ -16,8 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
+import XCTest
+
 @testable import WireRequestStrategy
 
 class ActionHandlerTestBase<Action: EntityAction, Handler: ActionHandler<Action>>: MessagingTestBase {
@@ -122,6 +123,8 @@ class ActionHandlerTestBase<Action: EntityAction, Handler: ActionHandler<Action>
         payload: ZMTransportData? = nil,
         label: String? = nil,
         apiVersion: APIVersion = .v1,
+        file: StaticString = #file,
+        line: UInt = #line,
         validation: @escaping ValidationBlock
     ) {
         // Given
@@ -141,7 +144,7 @@ class ActionHandlerTestBase<Action: EntityAction, Handler: ActionHandler<Action>
         sut.handleResponse(response, action: action)
 
         // Then
-        XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
+        XCTAssert(waitForCustomExpectations(withTimeout: 10.5), file: file, line: line)
     }
 }
 

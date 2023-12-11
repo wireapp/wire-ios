@@ -55,9 +55,9 @@ public class DiskDatabaseTest: ZMTBaseTest {
         }
 
         coreDataStack = nil
-        sharedContainerURL = nil
         accountId = nil
         cleanUp()
+        sharedContainerURL = nil
         super.tearDown()
     }
 
