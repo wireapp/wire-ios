@@ -124,7 +124,7 @@ extension ConversationViewController {
 
         if hasUnreadInOtherConversations {
             button.tintColor = UIColor.accent()
-            button.accessibilityValue = "conversation_list.voiceover.unread_messages.hint".localized
+            button.accessibilityValue = L10n.Localizable.ConversationList.Voiceover.UnreadMessages.hint
         }
 
         return button
