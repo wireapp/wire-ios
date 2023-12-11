@@ -6362,7 +6362,7 @@
 			isa = PBXGroup;
 			children = (
 				A937A5C223D5F0400080A507 /* ConversationInputBarViewControllerDelegate.swift */,
-				A965F89D23DB3359005209E1 /* ConversationInputBarViewController.swift */,
+				E9B5C8592B1A218E00B78E64 /* ConversationInputBarViewController */,
 				EF95B053227C782D005A060A /* ConversationInputBarViewController+TypingIndicator.swift */,
 				06C412AF239103910018866F /* ConversationInputBarViewController+DragAndDrop.swift */,
 				EF58B556218B463F00750A2B /* ConversationInputBarViewController+KeyCommand.swift */,
@@ -7399,6 +7399,14 @@
 				E902B3B329ED3A240090DE32 /* SwiftUIButton+HapticFeedback.swift */,
 			);
 			path = "SwiftUI Helpers";
+			sourceTree = "<group>";
+		};
+		E9B5C8592B1A218E00B78E64 /* ConversationInputBarViewController */ = {
+			isa = PBXGroup;
+			children = (
+				A965F89D23DB3359005209E1 /* ConversationInputBarViewController.swift */,
+			);
+			path = ConversationInputBarViewController;
 			sourceTree = "<group>";
 		};
 		E9B8EB7E2A0CEC370056E417 /* Reactions */ = {
