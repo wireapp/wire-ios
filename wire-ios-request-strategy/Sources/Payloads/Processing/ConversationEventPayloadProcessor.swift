@@ -412,7 +412,9 @@ final class ConversationEventPayloadProcessor {
         updateConversationTimestamps(for: conversation, serverTimestamp: serverTimestamp)
         updateConversationStatus(from: payload, for: conversation)
         updateMessageProtocol(from: payload, for: conversation)
-        updateMLSStatus(from: payload, for: conversation, context: context, source: source)
+        Task {
+            await updateMLSStatus(from: payload, for: conversation, context: context, source: source)
+        }
 
         if created {
             // we just got a new conversation, we display new conversation header
@@ -457,13 +459,19 @@ final class ConversationEventPayloadProcessor {
         updateMessageProtocol(from: payload, for: conversation)
 
         if conversation.mlsGroupID != nil {
-            createOrJoinSelfConversation(from: conversation)
+            Task {
+                do {
+                    try await createOrJoinSelfConversation(from: conversation)
+                } catch {
+                    WireLogger.mls.error("createOrJoinSelfConversation threw error: \(String(reflecting: error))")
+                }
+            }
         }
 
         return conversation
     }
 
-    func createOrJoinSelfConversation(from conversation: ZMConversation) {
+    func createOrJoinSelfConversation(from conversation: ZMConversation) async throws {
         guard
             let groupId = conversation.mlsGroupID,
             let mlsService = conversation.managedObjectContext?.mlsService
@@ -475,13 +483,9 @@ final class ConversationEventPayloadProcessor {
         WireLogger.mls.debug("createOrJoinSelfConversation for \(groupId.safeForLoggingDescription); conv payload: \(String(describing: self))")
 
         if conversation.epoch <= 0 {
-            Task {
-                await mlsService.createSelfGroup(for: groupId)
-            }
+            await mlsService.createSelfGroup(for: groupId)
         } else if !mlsService.conversationExists(groupID: groupId) {
-            Task {
-                try await mlsService.joinGroup(with: groupId)
-            }
+            try await mlsService.joinGroup(with: groupId)
         }
     }
 
@@ -660,22 +664,20 @@ final class ConversationEventPayloadProcessor {
         for conversation: ZMConversation,
         context: NSManagedObjectContext,
         source: Source
-    ) {
+    ) async {
         let mlsEventProcessor = MLSEventProcessor.shared
 
-        Task {
-            await mlsEventProcessor.updateConversationIfNeeded(
-                conversation: conversation,
-                groupID: payload.mlsGroupID,
+        await mlsEventProcessor.updateConversationIfNeeded(
+            conversation: conversation,
+            groupID: payload.mlsGroupID,
+            context: context
+        )
+
+        if source == .slowSync {
+            mlsEventProcessor.joinMLSGroupWhenReady(
+                forConversation: conversation,
                 context: context
             )
-
-            if source == .slowSync {
-                mlsEventProcessor.joinMLSGroupWhenReady(
-                    forConversation: conversation,
-                    context: context
-                )
-            }
         }
     }
 

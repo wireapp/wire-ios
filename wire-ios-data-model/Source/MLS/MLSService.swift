@@ -90,6 +90,7 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
 
 }
 
+// This is only used in tests, so it should be removed.
 public protocol MLSServiceDelegate: AnyObject {
 
     func mlsServiceDidCommitPendingProposal(for groupID: MLSGroupID)
@@ -1775,6 +1776,7 @@ extension Invitee {
 public protocol ConversationEventProcessorProtocol {
 
     func processConversationEvents(_ events: [ZMUpdateEvent]) async
+    // TODO: make async
     func processPayload(_ payload: ZMTransportData)
 }
 
