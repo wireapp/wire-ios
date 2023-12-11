@@ -1264,6 +1264,11 @@
 		E6C25FF42B03550A00406A1C /* AppLockModuleInteractorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6C25FF12B03550A00406A1C /* AppLockModuleInteractorTests.swift */; };
 		E6C25FF62B03550A00406A1C /* AppLockModulePresenterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6C25FF32B03550A00406A1C /* AppLockModulePresenterTests.swift */; };
 		E6C25FF72B0355AD00406A1C /* AppLockModuleViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6C25FF22B03550A00406A1C /* AppLockModuleViewTests.swift */; };
+		E6DA82982B2742B200DEF393 /* LegacyNotificationService+CoreDataStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6DA82972B2742B200DEF393 /* LegacyNotificationService+CoreDataStack.swift */; };
+		E6DA829A2B27431300DEF393 /* LegacyNotificationServiceError.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6DA82992B27431300DEF393 /* LegacyNotificationServiceError.swift */; };
+		E6DA829B2B27431600DEF393 /* LegacyNotificationServiceError.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6DA82992B27431300DEF393 /* LegacyNotificationServiceError.swift */; };
+		E6DA829D2B27433900DEF393 /* CallEventHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6DA829C2B27433900DEF393 /* CallEventHandler.swift */; };
+		E6DA829F2B2743E100DEF393 /* UNNotificationContent+Empty.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6DA829E2B2743E100DEF393 /* UNNotificationContent+Empty.swift */; };
 		E902B3B429ED3A240090DE32 /* SwiftUIButton+HapticFeedback.swift in Sources */ = {isa = PBXBuildFile; fileRef = E902B3B329ED3A240090DE32 /* SwiftUIButton+HapticFeedback.swift */; };
 		E90553CB27D612370006EB47 /* AuthenticationEmailVerificationRequiredErrorHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = E90553CA27D612370006EB47 /* AuthenticationEmailVerificationRequiredErrorHandler.swift */; };
 		E90A2F0D28EEC674005AF571 /* TextFieldStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = E90A2F0C28EEC674005AF571 /* TextFieldStyle.swift */; };
@@ -3274,6 +3279,10 @@
 		E6C25FF12B03550A00406A1C /* AppLockModuleInteractorTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppLockModuleInteractorTests.swift; sourceTree = "<group>"; };
 		E6C25FF22B03550A00406A1C /* AppLockModuleViewTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppLockModuleViewTests.swift; sourceTree = "<group>"; };
 		E6C25FF32B03550A00406A1C /* AppLockModulePresenterTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppLockModulePresenterTests.swift; sourceTree = "<group>"; };
+		E6DA82972B2742B200DEF393 /* LegacyNotificationService+CoreDataStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LegacyNotificationService+CoreDataStack.swift"; sourceTree = "<group>"; };
+		E6DA82992B27431300DEF393 /* LegacyNotificationServiceError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegacyNotificationServiceError.swift; sourceTree = "<group>"; };
+		E6DA829C2B27433900DEF393 /* CallEventHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallEventHandler.swift; sourceTree = "<group>"; };
+		E6DA829E2B2743E100DEF393 /* UNNotificationContent+Empty.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UNNotificationContent+Empty.swift"; sourceTree = "<group>"; };
 		E902B3B329ED3A240090DE32 /* SwiftUIButton+HapticFeedback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SwiftUIButton+HapticFeedback.swift"; sourceTree = "<group>"; };
 		E90553CA27D612370006EB47 /* AuthenticationEmailVerificationRequiredErrorHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationEmailVerificationRequiredErrorHandler.swift; sourceTree = "<group>"; };
 		E90A2F0C28EEC674005AF571 /* TextFieldStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldStyle.swift; sourceTree = "<group>"; };
@@ -3996,8 +4005,12 @@
 				EE7C919727B40EBD00595977 /* Wire Notification Extension.entitlements */,
 				065A5AE0279B07AC002D4D1E /* NotificationService.swift */,
 				EE3D7B0328AEF22A00D0A37E /* Simple */,
+				E6DA829C2B27433900DEF393 /* CallEventHandler.swift */,
+				E6DA82992B27431300DEF393 /* LegacyNotificationServiceError.swift */,
 				EE3D7AE328AD4FB500D0A37E /* LegacyNotificationService.swift */,
+				E6DA82972B2742B200DEF393 /* LegacyNotificationService+CoreDataStack.swift */,
 				EE7C422628B47CFC00CE018B /* Logger.swift */,
+				E6DA829E2B2743E100DEF393 /* UNNotificationContent+Empty.swift */,
 				065A5AE2279B07AC002D4D1E /* Info.plist */,
 			);
 			path = "Wire Notification Service Extension";
@@ -8579,14 +8592,18 @@
 				D35EEDCC28C7E95F00949F02 /* CookieProvider.swift in Sources */,
 				EE3D7AE628AD4FC400D0A37E /* SimpleNotificationService.swift in Sources */,
 				EE7C422728B47CFC00CE018B /* Logger.swift in Sources */,
+				E6DA829F2B2743E100DEF393 /* UNNotificationContent+Empty.swift in Sources */,
 				EEE455E028AFC443005ACD74 /* NotificationServiceError.swift in Sources */,
 				EEE455EE28B2E4CE005ACD74 /* NotificationsAPIClient.swift in Sources */,
+				E6DA82982B2742B200DEF393 /* LegacyNotificationService+CoreDataStack.swift in Sources */,
+				E6DA829A2B27431300DEF393 /* LegacyNotificationServiceError.swift in Sources */,
 				065A5AE1279B07AC002D4D1E /* NotificationService.swift in Sources */,
 				EEE455E828B2E210005ACD74 /* AccessAPIClient.swift in Sources */,
 				EEE455E428B2E157005ACD74 /* NetworkSession.swift in Sources */,
 				D35EEDC928C7E68100949F02 /* URLRequestable.swift in Sources */,
 				EE3D7AE428AD4FB500D0A37E /* LegacyNotificationService.swift in Sources */,
 				EEE455E228B2E11D005ACD74 /* Job.swift in Sources */,
+				E6DA829D2B27433900DEF393 /* CallEventHandler.swift in Sources */,
 				EEE455E628B2E1D9005ACD74 /* API.swift in Sources */,
 				EEE455EB28B2E470005ACD74 /* NetworkPrimitives.swift in Sources */,
 			);
@@ -10069,6 +10086,7 @@
 				A99E3E912519F3A300E4FD3E /* AnalyticsCountlyProviderTests.swift in Sources */,
 				8742C2F11E533AC400329FB6 /* NSAttributedStringHighlightTests.swift in Sources */,
 				D35EEDC328C2004000949F02 /* Job.swift in Sources */,
+				E6DA829B2B27431600DEF393 /* LegacyNotificationServiceError.swift in Sources */,
 				EE2FC1D81F56F89800A9A418 /* ConversationImagesViewControllerTests.swift in Sources */,
 				EFC7146F20DD476000FAA4B4 /* CountryCodeTableViewControllerTests.swift in Sources */,
 				EF21A06B21305C4000B9120C /* ConversationTitleViewTests.swift in Sources */,

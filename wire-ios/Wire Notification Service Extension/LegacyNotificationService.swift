@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import UIKit
 import UserNotifications
 import WireRequestStrategy
 import WireNotificationEngine
@@ -24,40 +24,12 @@ import WireCommonComponents
 import WireDataModel
 import WireSyncEngine
 import WireUtilities
-import UIKit
-import CallKit
 
-public protocol CallEventHandlerProtocol {
-    func reportIncomingVoIPCall(_ payload: [String: Any])
-}
-
-class CallEventHandler: CallEventHandlerProtocol {
-
-    func reportIncomingVoIPCall(_ payload: [String: Any]) {
-        WireLogger.calling.info("waking up main app to handle call event")
-        CXProvider.reportNewIncomingVoIPPushPayload(payload) { error in
-            if let error = error {
-                WireLogger.calling.error("failed to wake up main app: \(error.localizedDescription)")
-            }
-        }
-    }
-
-}
-
-public enum LegacyNotificationServiceError: Error {
-
-    case noAccount
-    case coreDataMissingSharedContainer
-    case coreDataMigrationRequired
-    case coreDataLoadStoresFailed
-
-}
-
-public class LegacyNotificationService: UNNotificationServiceExtension, NotificationSessionDelegate {
+final class LegacyNotificationService: UNNotificationServiceExtension, NotificationSessionDelegate {
 
     // MARK: - Properties
 
-    public var callEventHandler: CallEventHandlerProtocol = CallEventHandler()
+    var callEventHandler: CallEventHandlerProtocol = CallEventHandler()
 
     private var session: NotificationSession?
     private var contentHandler: ((UNNotificationContent) -> Void)?
@@ -179,7 +151,7 @@ public class LegacyNotificationService: UNNotificationServiceExtension, Notifica
     }
 
     private func createSession(accountIdentifier: UUID) throws -> NotificationSession {
-        let coreDataStack = try createCoreDataStack(accountIdentifier: accountIdentifier)
+        let coreDataStack = try createCoreDataStack(applicationGroupIdentifier: appGroupID, accountIdentifier: accountIdentifier)
 
         let session = try NotificationSession(
             applicationGroupIdentifier: appGroupID,
@@ -193,49 +165,6 @@ public class LegacyNotificationService: UNNotificationServiceExtension, Notifica
 
         session.delegate = self
         return session
-    }
-
-    private func createCoreDataStack(accountIdentifier: UUID) throws -> CoreDataStack {
-        let sharedContainerURL = FileManager.sharedContainerDirectory(for: appGroupID)
-        let accountManager = AccountManager(sharedDirectory: sharedContainerURL)
-
-        guard let account = accountManager.account(with: accountIdentifier) else {
-            throw LegacyNotificationServiceError.noAccount
-        }
-
-        let coreDataStack = CoreDataStack(
-            account: account,
-            applicationContainer: sharedContainerURL
-        )
-
-        guard coreDataStack.storesExists else {
-            throw LegacyNotificationServiceError.coreDataMissingSharedContainer
-        }
-
-        guard !coreDataStack.needsMigration  else {
-            throw LegacyNotificationServiceError.coreDataMigrationRequired
-        }
-
-        let dispatchGroup = DispatchGroup()
-        var loadStoresError: Error?
-
-        dispatchGroup.enter()
-        coreDataStack.loadStores { error in
-            loadStoresError = error
-
-            if let error = error {
-                WireLogger.notifications.error("Loading coreDataStack with error: \(error.localizedDescription)")
-            }
-
-            dispatchGroup.leave()
-        }
-        let timeoutResult = dispatchGroup.wait(timeout: .now() + .seconds(5))
-
-        if loadStoresError != nil || timeoutResult == .timedOut {
-            throw LegacyNotificationServiceError.coreDataLoadStoresFailed
-        }
-
-        return coreDataStack
     }
 
     private func totalUnreadCount(_ unreadConversationCount: Int) -> NSNumber? {
@@ -253,16 +182,7 @@ public class LegacyNotificationService: UNNotificationServiceExtension, Notifica
 
 // MARK: - Extensions
 
-extension UNNotificationContent {
-
-    // With the "filtering" entitlement, we can tell iOS to not display a user notification by
-    // passing empty content to the content handler.
-    // See https://developer.apple.com/documentation/bundleresources/entitlements/com_apple_developer_usernotifications_filtering
-
-    static var empty: Self {
-        return Self()
-    }
-
+private extension UNNotificationContent {
     var accountID: UUID? {
         guard
             let data = userInfo["data"] as? [String: Any],
@@ -274,5 +194,4 @@ extension UNNotificationContent {
 
         return userID
     }
-
 }
