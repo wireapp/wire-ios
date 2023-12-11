@@ -142,9 +142,7 @@ protocol SendTechnicalReportPresenter: MFMailComposeViewControllerDelegate {
     func presentMailComposer(withLogs logsIncluded: Bool)
 }
 
-
 extension SettingsTechnicalReportViewController: SendTechnicalReportPresenter {}
-
 
 extension SendTechnicalReportPresenter where Self: UIViewController {
     func presentMailComposer(withLogs logsIncluded: Bool) {

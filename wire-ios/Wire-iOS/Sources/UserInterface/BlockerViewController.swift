@@ -183,7 +183,4 @@ extension BlockerViewController: ApplicationStateObserving {
     }
 }
 
-extension BlockerViewController: SendTechnicalReportPresenter {
-
-
-}
+extension BlockerViewController: SendTechnicalReportPresenter {}
