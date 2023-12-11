@@ -746,6 +746,7 @@ public final class MLSService: MLSServiceInterface {
     }
 
     public func conversationExists(groupID: MLSGroupID) -> Bool {
+        // TODO: [jacob] let it throw
         let result = (try? coreCrypto.perform { $0.conversationExists(conversationId: groupID.bytes) }) ?? false
         logger.info("checking if group (\(groupID)) exists... it does\(result ? "!" : " not!")")
         return result
