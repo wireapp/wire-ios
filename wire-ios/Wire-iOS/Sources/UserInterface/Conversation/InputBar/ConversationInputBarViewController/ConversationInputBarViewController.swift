@@ -639,6 +639,8 @@ final class ConversationInputBarViewController: UIViewController,
 
         @objc
         private func pingButtonPressed(_ button: UIButton?) {
+            /// Don't take into account the selfUser when we check against the minimumPingParticipants
+            /// That's why participantsIndex is **conversation.localParticipantsCount - 1**
             let participantIndex = conversation.localParticipantsCount - 1
             let minimumPingParticipants = 4
 
