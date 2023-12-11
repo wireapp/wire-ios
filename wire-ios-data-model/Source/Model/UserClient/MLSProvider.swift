@@ -1,5 +1,6 @@
+//
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2023 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,25 +18,23 @@
 
 import Foundation
 
-final class MockConversationService: ConversationServiceInterface {
+public enum MLSError: Error {
+    case unknownError
+}
 
-    func createGroupConversation(
-        name: String?,
-        users: Set<ZMUser>,
-        allowGuests: Bool,
-        allowServices: Bool,
-        enableReceipts: Bool,
-        messageProtocol: WireDataModel.MessageProtocol,
-        completion: @escaping (Swift.Result<ZMConversation, ConversationCreationFailure>) -> Void
-    ) {
-        fatalError("not implemented")
+public protocol MLSProviding {
+    var isMLSEnbaled: Bool { get }
+    func fetchMLSThumbprint() async throws -> String
+}
+
+public final class MLSProvider: MLSProviding {
+    public var isMLSEnbaled: Bool
+
+    public init(isMLSEnbaled: Bool = false) {
+        self.isMLSEnbaled = isMLSEnbaled
     }
 
-    func syncConversation(
-        qualifiedID: QualifiedID,
-        completion: @escaping () -> Void
-    ) {
-        completion()
+    public func fetchMLSThumbprint() async throws -> String {
+        throw MLSError.unknownError
     }
-
 }

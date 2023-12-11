@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2023 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,8 +18,18 @@
 
 import Foundation
 
-/// Function composition operator: (f1 ∘ f2)(x) = f1(f2(x))
-infix operator >>> : AdditionPrecedence
-public func >>> <A, B, C>(f: @escaping (B) -> C, g: @escaping (A) -> B) -> (A) -> C {
-    return { x in f(g(x)) }
+public final class MockMLSProvider: MLSProviding {
+    public var isMLSEnbaled: Bool
+
+    public var mlsThumbPrint: String {
+        return "abcdefghijklmnopqrstuvwxabcdefghijklmnopqrstuvwxabcdefghijklmnop"
+    }
+
+    public init(isMLSEnbaled: Bool) {
+        self.isMLSEnbaled = isMLSEnbaled
+    }
+
+    public func fetchMLSThumbprint() async throws -> String {
+        return mlsThumbPrint
+    }
 }

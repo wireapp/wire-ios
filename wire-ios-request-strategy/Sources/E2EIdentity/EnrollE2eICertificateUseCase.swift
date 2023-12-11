@@ -18,9 +18,15 @@
 
 import Foundation
 
+public typealias IdToken = String
+public typealias OAuthBlock = (_ idP: URL) async throws -> IdToken
+
 public protocol EnrollE2eICertificateUseCaseInterface {
 
-    func invoke(idToken: String, selfUser: ZMUser) async throws -> String
+    func invoke(e2eiClientId: E2eIClientID,
+                userName: String,
+                userHandle: String,
+                authenticate: OAuthBlock) async throws -> String
 
 }
 
@@ -33,37 +39,40 @@ public final class EnrollE2eICertificateUseCase: EnrollE2eICertificateUseCaseInt
         self.e2eiRepository = e2eiRepository
     }
 
-    public func invoke(idToken: String, selfUser: ZMUser) async throws -> String {
-        guard
-            let userName = selfUser.name,
-            let handle = selfUser.handle,
-            let e2eiClientId = E2eIClientID(user: selfUser)
-        else {
-            throw EnrollE2EICertificateUseCaseFailure.failedToSetupEnrollment
-        }
-
-        let enrollment = try await e2eiRepository.createEnrollment(e2eiClientId: e2eiClientId, userName: userName, handle: handle)
+    public func invoke(e2eiClientId: E2eIClientID,
+                       userName: String,
+                       userHandle: String,
+                       authenticate: OAuthBlock) async throws -> String {
+        let enrollment = try await e2eiRepository.createEnrollment(e2eiClientId: e2eiClientId, userName: userName, handle: userHandle)
 
         let acmeNonce = try await enrollment.getACMENonce()
         let newAccountNonce = try await enrollment.createNewAccount(prevNonce: acmeNonce)
         let newOrder = try await enrollment.createNewOrder(prevNonce: newAccountNonce)
         let authzResponse = try await enrollment.createAuthz(prevNonce: newOrder.nonce,
                                                              authzEndpoint: newOrder.acmeOrder.authorizations[0])
-        let wireNonce = try await enrollment.getWireNonce(clientId: e2eiClientId.clientID)
-        let dpopToken = try await enrollment.getDPoPToken(wireNonce)
-        let wireAccessToken = try await enrollment.getWireAccessToken(clientId: e2eiClientId.clientID, dpopToken: dpopToken)
+
+        guard let oidcChallenge = authzResponse.challenges.wireOidcChallenge else {
+            throw EnrollE2EICertificateUseCaseFailure.missingOIDCChallenge
+        }
 
         guard let wireDpopChallenge = authzResponse.challenges.wireDpopChallenge else {
             throw EnrollE2EICertificateUseCaseFailure.missingDpopChallenge
         }
 
+        guard let identityProvider = URL(string: oidcChallenge.target) else {
+            throw EnrollE2EICertificateUseCaseFailure.missingIdentityProvider
+        }
+
+        let idToken = try await authenticate(identityProvider)
+        let wireNonce = try await enrollment.getWireNonce(clientId: e2eiClientId.clientID)
+        let dpopToken = try await enrollment.getDPoPToken(wireNonce)
+        let wireAccessToken = try await enrollment.getWireAccessToken(clientId: e2eiClientId.clientID,
+                                                                      dpopToken: dpopToken)
+
         let dpopChallengeResponse = try await enrollment.validateDPoPChallenge(accessToken: wireAccessToken.token,
                                                                                prevNonce: authzResponse.nonce,
                                                                                acmeChallenge: wireDpopChallenge)
 
-        guard let oidcChallenge = authzResponse.challenges.wireOidcChallenge else {
-            throw EnrollE2EICertificateUseCaseFailure.missingOIDCChallenge
-        }
         let oidcChallengeResponse = try await enrollment.validateOIDCChallenge(idToken: idToken,
                                                                                prevNonce: dpopChallengeResponse.nonce,
                                                                                acmeChallenge: oidcChallenge)
@@ -86,6 +95,7 @@ enum EnrollE2EICertificateUseCaseFailure: Error {
     case failedToSetupEnrollment
     case missingDpopChallenge
     case missingOIDCChallenge
+    case missingIdentityProvider
     case failedToDecodeCertificate
 
 }

@@ -23,12 +23,17 @@ import WireDataModel
 import WireSyncEngine
 
 protocol DeviceDetailsViewActions {
+    var isMLSEnabled: Bool { get }
+    var isE2eIdentityEnabled: Bool { get }
+    var isSelfClient: Bool { get }
+    var isProcessing: ((Bool) -> Void)? { get set }
+
     func fetchCertificate() async -> E2eIdentityCertificate?
     func showCertificate(_ certificate: String)
+    func fetchMLSThumbprint() async -> String?
     func removeDevice() async -> Bool
     func resetSession() async -> Bool
     func updateVerified(_ value: Bool) async -> Bool
-    var isProcessing: ((Bool) -> Void)? { get set }
     func copyToClipboard(_ value: String)
 }
 
@@ -38,10 +43,17 @@ final class DeviceInfoViewModel: ObservableObject {
     let proteusID: String
     let getUserClientFingerprint: GetUserClientFingerprintUseCaseProtocol
     let userClient: UserClient
-
-    var isE2EIdentityEnabled: Bool
-    var isSelfClient: Bool
     var title: String
+
+    var isSelfClient: Bool
+
+    var isE2EIdentityEnabled: Bool {
+        actionsHandler.isE2eIdentityEnabled
+    }
+
+    var isMLSEnablled: Bool {
+        actionsHandler.isMLSEnabled
+    }
 
     var isValidCerificate: Bool {
         guard let certificate = e2eIdentityCertificate,
@@ -71,7 +83,10 @@ final class DeviceInfoViewModel: ObservableObject {
         return certificate.expiryDate < Date.now + .oneDay + .oneDay
     }
 
-    @Published var e2eIdentityCertificate: E2eIdentityCertificate?
+    @Published
+    var e2eIdentityCertificate: E2eIdentityCertificate?
+    @Published
+    var mlsThumbprint: String?
     private var actionsHandler: any DeviceDetailsViewActions
     var isCopyEnabled: Bool {
         return Settings.isClipboardEnabled
@@ -88,24 +103,22 @@ final class DeviceInfoViewModel: ObservableObject {
         proteusID: String,
         isProteusVerificationEnabled: Bool,
         actionsHandler: any DeviceDetailsViewActions,
-        isE2EIdentityEnabled: Bool,
-        isSelfClient: Bool,
         userSession: UserSession,
         getUserClientFingerprint: GetUserClientFingerprintUseCaseProtocol,
-        userClient: UserClient
+        userClient: UserClient,
+        isSelfClient: Bool
     ) {
         self.title = title
         self.addedDate = addedDate
         self.proteusID = proteusID
         self.isProteusVerificationEnabled = isProteusVerificationEnabled
         self.actionsHandler = actionsHandler
-        self.isE2EIdentityEnabled = isE2EIdentityEnabled
         self.userSession = userSession
-        self.isSelfClient = isSelfClient
         self.getUserClientFingerprint = getUserClientFingerprint
         self.userClient = userClient
+        self.isSelfClient = isSelfClient
         self.actionsHandler.isProcessing = {[weak self] isProcessing in
-            RunLoop.main.perform {
+            DispatchQueue.main.async {
                 self?.isActionInProgress = isProcessing
             }
         }
@@ -169,15 +182,28 @@ final class DeviceInfoViewModel: ObservableObject {
     func copyToClipboard(_ value: String) {
         actionsHandler.copyToClipboard(value)
     }
+
+    func fetchMLSFingerPrint() async {
+        DispatchQueue.main.async {
+            self.isActionInProgress = true
+        }
+        let result = await actionsHandler.fetchMLSThumbprint()?.uppercased().splitStringIntoLines(charactersPerLine: 16)
+        DispatchQueue.main.async {
+            self.mlsThumbprint = result
+            self.isActionInProgress = false
+        }
+    }
 }
 
 extension DeviceInfoViewModel {
     static func map(
         userClient: UserClient,
+        isSelfClient: Bool,
         userSession: UserSession,
         credentials: ZMEmailCredentials?,
         getUserClientFingerprintUseCase: GetUserClientFingerprintUseCaseProtocol,
-        e2eIdentityProvider: E2eIdentityProviding
+        e2eIdentityProvider: E2eIdentityProviding,
+        mlsProvider: MLSProviding
     ) -> DeviceInfoViewModel {
         return DeviceInfoViewModel(
             title: userClient.model ?? "",
@@ -188,13 +214,13 @@ extension DeviceInfoViewModel {
                 userClient: userClient,
                 userSession: userSession,
                 credentials: credentials,
-                e2eIdentityProvider: e2eIdentityProvider
+                e2eIdentityProvider: e2eIdentityProvider,
+                mlsProvider: mlsProvider
             ),
-            isE2EIdentityEnabled: e2eIdentityProvider.isE2EIdentityEnabled,
-            isSelfClient: userClient.isSelfClient(),
             userSession: userSession,
             getUserClientFingerprint: getUserClientFingerprintUseCase,
-            userClient: userClient
+            userClient: userClient,
+            isSelfClient: isSelfClient
         )
     }
 }

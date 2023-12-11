@@ -47,14 +47,8 @@ struct DeviceDetailsView: View {
     }
 
     var proteusView: some View {
-        VStack(
-            alignment: .leading
-        ) {
-            Text(L10n.Localizable.Device.Details.Section.Proteus.title)
-                .font(FontSpec.mediumRegularFont.swiftUIFont)
-                .foregroundColor(SemanticColors.Label.textSectionHeader.swiftUIColor)
-                .frame(height: ViewConstants.View.Height.small)
-                .padding([.leading, .top], ViewConstants.Padding.standard)
+        VStack(alignment: .leading) {
+            sectionTitleView(title: L10n.Localizable.Device.Details.Section.Proteus.title)
             DeviceDetailsProteusView(viewModel: viewModel, isVerfied: viewModel.isProteusVerificationEnabled)
                 .background(SemanticColors.View.backgroundDefaultWhite.swiftUIColor)
             if viewModel.isSelfClient {
@@ -68,9 +62,20 @@ struct DeviceDetailsView: View {
         }
     }
 
+    var mlsView: some View {
+        VStack(alignment: .leading) {
+            sectionTitleView(title: L10n.Localizable.Device.Details.Secion.Mls.signature.uppercased())
+            DeviceMLSView(viewModel: viewModel)
+                .background(SemanticColors.View.backgroundDefaultWhite.swiftUIColor)
+        }
+    }
+
     var body: some View {
         NavigationView {
             ScrollView {
+                if viewModel.isMLSEnablled {
+                    mlsView
+                }
                 if viewModel.isE2EIdentityEnabled {
                     e2eIdentityCertificateView
                 }
@@ -79,7 +84,7 @@ struct DeviceDetailsView: View {
             .background(SemanticColors.View.backgroundDefault.swiftUIColor)
             .environment(
                 \.defaultMinListHeaderHeight,
-                 10
+                 ViewConstants.Header.Height.minimum
             )
             .listStyle(.plain)
             .overlay(content: {
@@ -122,5 +127,14 @@ struct DeviceDetailsView: View {
         .onDisappear {
             dismissedView?()
         }
+    }
+
+    @ViewBuilder
+    func sectionTitleView(title: String) -> some View {
+        Text(title)
+            .font(FontSpec.mediumRegularFont.swiftUIFont)
+            .foregroundColor(SemanticColors.Label.textSectionHeader.swiftUIColor)
+            .frame(height: ViewConstants.View.Height.small)
+            .padding([.leading, .top], ViewConstants.Padding.standard)
     }
 }

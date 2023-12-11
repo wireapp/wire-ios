@@ -188,6 +188,14 @@ public class ZMUserSession: NSObject {
         }
     }
 
+    // temporary function to simplify call to ConversationEventProcessor
+    // might be replaced by something more elegant
+    public func processConversationEvents(_ events: [ZMUpdateEvent]) {
+        WaitingGroupTask(context: self.syncContext) {
+            await self.conversationEventProcessor.processConversationEvents(events)
+        }
+    }
+
     public var isNotificationContentHidden: Bool {
         get {
             guard let value = managedObjectContext.persistentStoreMetadata(forKey: LocalNotificationDispatcher.ZMShouldHideNotificationContentKey) as? NSNumber else {
@@ -254,6 +262,7 @@ public class ZMUserSession: NSObject {
     }()
 
     public lazy var enrollE2eICertificate: EnrollE2eICertificateUseCaseInterface? = {
+        var e2eiRepository: E2eIRepository?
         let acmeDiscoveryPath = e2eiFeature.config.acmeDiscoveryUrl
         guard let acmeDirectory = URL(string: acmeDiscoveryPath) else {
             return nil
@@ -263,17 +272,23 @@ public class ZMUserSession: NSObject {
             transportSession: transportSession,
             queue: syncContext)
         let apiProvider = APIProvider(httpClient: httpClient)
-        guard let coreCrypto = syncContext.coreCrypto else {
-            return nil
-        }
-        let e2eiClient = E2eIClient(coreCrypto: coreCrypto)
-        let e2eiRepository = E2eIRepository(acmeApi: acmeApi,
+        syncContext.performAndWait {
+            guard let coreCrypto = syncContext.coreCrypto else {
+                return
+            }
+            let e2eiClient = E2eIClient(coreCrypto: coreCrypto)
+            e2eiRepository = E2eIRepository(acmeApi: acmeApi,
                                             apiProvider: apiProvider,
                                             e2eiClient: e2eiClient)
+        }
+        guard let e2eiRepository = e2eiRepository else {
+            return nil
+        }
         return EnrollE2eICertificateUseCase(e2eiRepository: e2eiRepository)
     }()
 
     let lastEventIDRepository: LastEventIDRepositoryInterface
+    let conversationEventProcessor: ConversationEventProcessorProtocol
 
     public init(
         userId: UUID,
@@ -331,6 +346,7 @@ public class ZMUserSession: NSObject {
             userID: userId,
             sharedUserDefaults: sharedUserDefaults
         )
+        self.conversationEventProcessor = ConversationEventProcessor(context: coreDataStack.syncContext)
 
         super.init()
 
@@ -419,11 +435,13 @@ public class ZMUserSession: NSObject {
     }
 
     private func createUpdateEventProcessor() -> EventProcessor {
+
         return EventProcessor(
             storeProvider: self.coreDataStack,
             eventProcessingTracker: eventProcessingTracker,
             earService: earService,
-            eventConsumers: strategyDirectory?.eventConsumers ?? []
+            eventConsumers: strategyDirectory?.eventConsumers ?? [],
+            eventAsyncConsumers: (conversationEventProcessor as? ZMEventAsyncConsumer).flatMap {[$0]} ?? []
         )
     }
 
