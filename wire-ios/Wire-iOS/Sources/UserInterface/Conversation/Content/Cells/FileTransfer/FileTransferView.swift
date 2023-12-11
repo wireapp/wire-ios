@@ -163,7 +163,7 @@ final class FileTransferView: UIView, TransferView {
 
         case .uploading:
             if fileMessageData.size == 0 { fallthrough }
-            let statusText = L10n.Localizable.Content.File.uploading.uppercased() && labelFont && labelTextBlendedColor
+            let statusText = L10n.Localizable.Content.File.uploading.localizedUppercase && labelFont && labelTextBlendedColor
             let firstLine = fileNameAttributed
             let secondLine = fileSizeAttributed + dot + statusText
             topLabel.attributedText = firstLine
@@ -176,7 +176,7 @@ final class FileTransferView: UIView, TransferView {
                 topLabel.attributedText = firstLine
                 bottomLabel.attributedText = secondLine
             case .downloading:
-                let statusText = L10n.Localizable.Content.File.downloading.uppercased() && labelFont && labelTextBlendedColor
+                let statusText = L10n.Localizable.Content.File.downloading.localizedUppercase && labelFont && labelTextBlendedColor
                 let firstLine = fileNameAttributed
                 let secondLine = fileSizeAttributed + dot + statusText
                 topLabel.attributedText = firstLine
