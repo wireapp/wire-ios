@@ -212,7 +212,12 @@ public class CoreDataStack: NSObject, ContextProvider {
                     try self.migrateMessagingStore()
                     WireLogger.localStorage.info("finished migration of core data messaging store!")
                 } catch {
+<<<<<<< HEAD
                     WireLogger.localStorage.error("failed migration of core data messaging store!")
+=======
+                    log.safePublic("[setup] failed migration of core data messaging store: \(SanitizedString(stringLiteral: error.localizedDescription))")
+                    WireLogger.localStorage.error("failed migration of core data messaging store! \(error.localizedDescription)")
+>>>>>>> 175ca44c0 (feat: rework wording for database failure popop - WPB-5809 (#767))
                     DispatchQueue.main.async {
                         onFailure(error)
                     }

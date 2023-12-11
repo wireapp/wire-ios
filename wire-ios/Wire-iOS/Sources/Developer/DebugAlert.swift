@@ -144,20 +144,7 @@ final class DebugLogSender: NSObject, MFMailComposeViewControllerDelegate {
         mailVC.setToRecipients([mail])
         mailVC.setSubject("iOS logs from \(userDescription)")
         mailVC.setMessageBody(message, isHTML: false)
-
-        if let currentLog = ZMSLog.currentZipLog {
-            mailVC.addAttachmentData(currentLog, mimeType: "application/zip", fileName: "current.log.zip")
-        }
-
-        ZMSLog.previousZipLogURLs.forEach { url in
-            do {
-                let data = try Data(contentsOf: url)
-                mailVC.addAttachmentData(data, mimeType: "application/zip", fileName: url.lastPathComponent)
-            } catch {
-                // ignore error: previous log files can be empty or can not exist.
-            }
-        }
-
+        mailVC.attachLogs()
         mailVC.mailComposeDelegate = alert
         alert.mailViewController = mailVC
 
