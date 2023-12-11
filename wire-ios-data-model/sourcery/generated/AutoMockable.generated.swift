@@ -1174,6 +1174,26 @@ class MockMLSActionsProviderProtocol: MLSActionsProviderProtocol {
         try await mock(qualifiedID, messageProtocol, context)            
     }
 
+    // MARK: - syncUsers
+
+    var syncUsersQualifiedIDsContext_Invocations: [(qualifiedIDs: [QualifiedID], context: NotificationContext)] = []
+    var syncUsersQualifiedIDsContext_MockError: Error?
+    var syncUsersQualifiedIDsContext_MockMethod: (([QualifiedID], NotificationContext) async throws -> Void)?
+
+    func syncUsers(qualifiedIDs: [QualifiedID], context: NotificationContext) async throws {
+        syncUsersQualifiedIDsContext_Invocations.append((qualifiedIDs: qualifiedIDs, context: context))
+
+        if let error = syncUsersQualifiedIDsContext_MockError {
+            throw error
+        }
+
+        guard let mock = syncUsersQualifiedIDsContext_MockMethod else {
+            fatalError("no mock for `syncUsersQualifiedIDsContext`")
+        }
+
+        try await mock(qualifiedIDs, context)            
+    }
+
 }
 public class MockMLSDecryptionServiceInterface: MLSDecryptionServiceInterface {
 

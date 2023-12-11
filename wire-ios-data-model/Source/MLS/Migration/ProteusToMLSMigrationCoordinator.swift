@@ -99,7 +99,7 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
         case .notStarted:
             try await startMigrationIfNeeded()
         case .started:
-            await finalizeMigrationIfNeeded()
+            try await finalizeMigrationIfNeeded()
         default:
             break
         }
@@ -125,7 +125,7 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
         }
     }
 
-    func finalizeMigrationIfNeeded() async {
+    func finalizeMigrationIfNeeded() async throws {
         let mixedConversations = [ZMConversation]()
         if migrationForceTimeHasArrived {
             for conversation in mixedConversations {
@@ -133,7 +133,7 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
             }
         } else {
             // 1. Sync users with the backend
-            syncUsersWithTheBackend()
+            try await syncUsersWithTheBackend()
             // 2. Loop through conversations
             for conversation in mixedConversations {
                 await finalizeConversationMigration(conversation: conversation)
@@ -141,7 +141,12 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
         }
     }
 
-    func syncUsersWithTheBackend() {
+    func syncUsersWithTheBackend() async throws {
+        let users = [ZMUser]()
+        for user in users {
+            guard let qualifiedID = user.qualifiedID else { return }
+            try await actionsProvider.syncUsers(qualifiedIDs: [qualifiedID], context: context.notificationContext)
+        }
 
     }
 
