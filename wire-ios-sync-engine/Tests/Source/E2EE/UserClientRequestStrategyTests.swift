@@ -21,6 +21,7 @@ import WireUtilities
 import WireTesting
 import WireMockTransport
 import WireDataModel
+import WireDataModelSupport
 
 @objcMembers
 public class MockClientRegistrationStatusDelegate: NSObject, ZMClientRegistrationStatusDelegate {

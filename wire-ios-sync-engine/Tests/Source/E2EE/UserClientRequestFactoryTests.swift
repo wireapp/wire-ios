@@ -22,6 +22,7 @@ import WireTesting
 import WireCryptobox
 import WireMockTransport
 import WireDataModel
+import WireDataModelSupport
 import Foundation
 
 class UserClientRequestFactoryTests: MessagingTest {

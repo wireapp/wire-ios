@@ -19,6 +19,7 @@
 import Foundation
 import WireDataModel
 @testable import WireSyncEngine
+import WireDataModelSupport
 
 class MockProteusProvider: ProteusProviding {
 
