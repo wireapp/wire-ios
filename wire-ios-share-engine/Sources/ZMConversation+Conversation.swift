@@ -23,7 +23,7 @@ import WireUtilities
 
 extension ZMConversation: Conversation {
 
-    private static let logger = ZMSLog(tag: "Message Processing")
+    private static let logger = ZMSLog(tag: "message-processing")
 
     public var name: String? { return displayName }
 

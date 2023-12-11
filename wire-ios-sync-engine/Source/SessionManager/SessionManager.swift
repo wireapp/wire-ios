@@ -27,7 +27,6 @@ import WireDataModel
 import WireRequestStrategy
 
 private let log = WireLogger(tag: "SessionManager")
-private let pushLog = ZMSLog(tag: "Push")
 
 public typealias LaunchOptions = [UIApplication.LaunchOptionsKey: Any]
 
