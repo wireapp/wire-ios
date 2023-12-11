@@ -197,10 +197,8 @@ final class UserClientTests: ZMBaseManagedObjectTest {
         flag.isOn = false
     }
 
-    func testThatItDeletesASession_Legacy() async {
-        var otherClient: UserClient!
-
-        await self.syncMOC.perform {
+    func testThatItDeletesASession_Legacy() {
+        self.syncMOC.performGroupedBlockAndWait {
             // Given
             let selfClient = self.createSelfClient(onMOC: self.syncMOC)
 
@@ -210,7 +208,7 @@ final class UserClientTests: ZMBaseManagedObjectTest {
                 preKeys = try! sessionsDirectory.generatePrekeys(0 ..< 2)
             })
 
-            otherClient = UserClient.insertNewObject(in: self.syncMOC)
+            let otherClient = UserClient.insertNewObject(in: self.syncMOC)
             otherClient.remoteIdentifier = UUID.create().transportString()
             otherClient.user = ZMUser.insertNewObject(in: self.syncMOC)
             otherClient.user?.remoteIdentifier = UUID.create()
@@ -221,12 +219,8 @@ final class UserClientTests: ZMBaseManagedObjectTest {
             }
 
             XCTAssertTrue(selfClient.establishSessionWithClient(otherClient, usingPreKey: preKey.prekey))
-        }
+            XCTAssertTrue(otherClient.hasSessionWithSelfClient)
 
-        var hasSessionWithSelfClient = await otherClient.hasSessionWithSelfClient
-        XCTAssertTrue(hasSessionWithSelfClient)
-
-        await syncMOC.perform {
             // when
             do {
                 // When
@@ -235,11 +229,9 @@ final class UserClientTests: ZMBaseManagedObjectTest {
                 XCTFail("Unexpected error: \(error)")
             }
 
+            // Then
+            XCTAssertFalse(otherClient.hasSessionWithSelfClient)
         }
-        // Then
-        hasSessionWithSelfClient = await otherClient.hasSessionWithSelfClient
-        XCTAssertTrue(hasSessionWithSelfClient)
-
         XCTAssert(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
 
@@ -276,8 +268,8 @@ final class UserClientTests: ZMBaseManagedObjectTest {
         flag.isOn = false
     }
 
-    func testThatItDeletesASessionWhenDeletingAClient_Legacy() async {
-        await self.syncMOC.perform {
+    func testThatItDeletesASessionWhenDeletingAClient_Legacy() {
+        self.syncMOC.performGroupedBlockAndWait {
             // given
             let selfClient = self.createSelfClient(onMOC: self.syncMOC)
             var preKeys: [(id: UInt16, prekey: String)] = []
@@ -296,7 +288,7 @@ final class UserClientTests: ZMBaseManagedObjectTest {
                 XCTFail("could not generate prekeys")
                 return
             }
-        }
+
             XCTAssertTrue(selfClient.establishSessionWithClient(otherClient, usingPreKey: preKey.prekey))
             XCTAssertTrue(otherClient.hasSessionWithSelfClient)
             let clientId = otherClient.sessionIdentifier!
