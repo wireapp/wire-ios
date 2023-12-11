@@ -155,18 +155,17 @@ extension EventDecoder {
     ) async -> [ZMUpdateEvent] {
         var decryptedEvents = [ZMUpdateEvent]()
 
-        decryptedEvents = events.compactMap { event -> ZMUpdateEvent? in
+        decryptedEvents = await events.asyncCompactMap { event -> ZMUpdateEvent? in
             switch event.type {
             case .conversationOtrMessageAdd, .conversationOtrAssetAdd:
-                return self.decryptProteusEventAndAddClient(event, in: self.syncMOC) { sessionID, encryptedData in
+                return await self.decryptProteusEventAndAddClient(event, in: self.syncMOC) { sessionID, encryptedData in
                     try await proteusService.decrypt(
                         data: encryptedData,
                         forSession: sessionID
                     )
                 }
-
             case .conversationMLSMessageAdd:
-                return self.decryptMlsMessage(from: event, context: self.syncMOC)
+                return await self.decryptMlsMessage(from: event, context: self.syncMOC)
 
             default:
                 return event
@@ -193,10 +192,10 @@ extension EventDecoder {
         keyStore.encryptionContext.perform { [weak self] sessionsDirectory in
             guard let self else { return }
 
-            decryptedEvents = events.compactMap { event -> ZMUpdateEvent? in
+            decryptedEvents = await events.asyncCompactMap { event -> ZMUpdateEvent? in
                 switch event.type {
                 case .conversationOtrMessageAdd, .conversationOtrAssetAdd:
-                    return self.decryptProteusEventAndAddClient(event, in: self.syncMOC) { sessionID, encryptedData in
+                    return await self.decryptProteusEventAndAddClient(event, in: self.syncMOC) { sessionID, encryptedData in
                         try sessionsDirectory.decryptData(
                             encryptedData,
                             for: sessionID.mapToEncryptionSessionID()

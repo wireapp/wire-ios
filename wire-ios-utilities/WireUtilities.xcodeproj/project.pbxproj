@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		014C36B62B2754FC00D7E8EA /* Sequence+Async.swift in Sources */ = {isa = PBXBuildFile; fileRef = 014C36B52B2754FC00D7E8EA /* Sequence+Async.swift */; };
 		067BB07125068D6500946EC8 /* String+HexDecodedData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 067BB07025068D6500946EC8 /* String+HexDecodedData.swift */; };
 		06CDC6FA2A2F2B4B00EB518D /* TimeInterval+Units.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06CDC6F92A2F2B4B00EB518D /* TimeInterval+Units.swift */; };
 		097E36C31B7B62150039CC4C /* NSLocale+Internal.m in Sources */ = {isa = PBXBuildFile; fileRef = 097E36C21B7B62150039CC4C /* NSLocale+Internal.m */; };
@@ -244,6 +245,7 @@
 
 /* Begin PBXFileReference section */
 		01461A3F2A60422B00C3C85E /* Developer-Flags.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = "Developer-Flags.xcconfig"; path = "../../../wire-ios/Configuration/Developer-Flags.xcconfig"; sourceTree = "<group>"; };
+		014C36B52B2754FC00D7E8EA /* Sequence+Async.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sequence+Async.swift"; sourceTree = "<group>"; };
 		067BB07025068D6500946EC8 /* String+HexDecodedData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+HexDecodedData.swift"; sourceTree = "<group>"; };
 		06CDC6F92A2F2B4B00EB518D /* TimeInterval+Units.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TimeInterval+Units.swift"; sourceTree = "<group>"; };
 		097E36C21B7B62150039CC4C /* NSLocale+Internal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSLocale+Internal.m"; sourceTree = "<group>"; };
@@ -602,6 +604,7 @@
 				06CDC6F92A2F2B4B00EB518D /* TimeInterval+Units.swift */,
 				636F70462A65AD7800E086B6 /* TimerManager.swift */,
 				E9C337532ABC91DE0084ABCF /* Array+Cardinality.swift */,
+				014C36B52B2754FC00D7E8EA /* Sequence+Async.swift */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -1112,6 +1115,7 @@
 				16A5FDF7215A746B00AEEBBD /* IndexSet+Helpers.swift in Sources */,
 				BF3C1B0D20DA7270001CE126 /* Equatable+OneOf.swift in Sources */,
 				067BB07125068D6500946EC8 /* String+HexDecodedData.swift in Sources */,
+				014C36B62B2754FC00D7E8EA /* Sequence+Async.swift in Sources */,
 				A94DA30826BC239400CC626C /* Data+Image.swift in Sources */,
 				F9FCE0A31C7DBBD00092BA68 /* ZMSwiftExceptionHandler.m in Sources */,
 				3E88BF631B1F68DC00232589 /* NSOperationQueue+Helpers.m in Sources */,

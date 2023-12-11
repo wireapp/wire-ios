@@ -21,7 +21,7 @@ import WireCryptobox
 
 private let zmLog = ZMSLog(tag: "EventDecoder")
 
-typealias ProteusDecryptionFunction = (ProteusSessionID, Data) throws -> (didCreateNewSession: Bool, decryptedData: Data)?
+typealias ProteusDecryptionFunction = (ProteusSessionID, Data) async throws -> (didCreateNewSession: Bool, decryptedData: Data)?
 
 extension EventDecoder {
 
@@ -42,28 +42,35 @@ extension EventDecoder {
             fatal("Can't decrypt event of type \(event.type) as it's not supposed to be encrypted")
         }
 
-        // Is it for the current client?
-        let selfUser = ZMUser.selfUser(in: context)
+        var selfUser: ZMUser?
+        var selfClient: UserClient?
 
-        guard
-            let recipientID = event.recipientID,
-            selfUser.selfClient()?.remoteIdentifier == recipientID
-        else {
-            WireLogger.updateEvent.info("decrypting proteus event... failed: is not for self client, dropping...")
-            return nil
+        let senderClient: UserClient? = await context.perform {
+            // Is it for the current client?
+            selfUser = ZMUser.selfUser(in: context)
+            selfClient = selfUser?.selfClient()
+
+            guard
+                let recipientID = event.recipientID,
+                selfClient?.remoteIdentifier == recipientID
+            else {
+                WireLogger.updateEvent.info("decrypting proteus event... failed: is not for self client, dropping...")
+                return nil
+            }
+
+            return self.createClientIfNeeded(from: event, in: context)
         }
 
-        guard let senderClient = createClientIfNeeded(
-            from: event,
-            in: context
-        ) else {
+        guard let senderClient else {
             WireLogger.updateEvent.error("decrypting proteus event... failed: couldn't fetch sender client, dropping...")
             return nil
         }
 
         func fail(error: ProteusError? = nil) {
-            if senderClient.isInserted {
-                selfUser.selfClient()?.addNewClientToIgnored(senderClient)
+            context.performAndWait {
+                if senderClient.isInserted {
+                    selfClient?.addNewClientToIgnored(senderClient)
+                }
             }
 
             appendFailedToDecryptMessage(after: error, for: event, sender: senderClient, in: context)
@@ -74,7 +81,7 @@ extension EventDecoder {
         let decryptedEvent: ZMUpdateEvent
 
         do {
-            guard let result = try decryptedUpdateEvent(
+            guard let result = try await decryptedUpdateEvent(
                 for: event,
                 sender: senderClient,
                 using: decryptFunction
@@ -106,10 +113,12 @@ extension EventDecoder {
 
         // New client discovered?
         if createdNewSession {
-            let senderClientSet: Set<UserClient> = [senderClient]
-            selfUser.selfClient()?.decrementNumberOfRemainingKeys()
-            selfUser.selfClient()?.addNewClientToIgnored(senderClient)
-            selfUser.selfClient()?.updateSecurityLevelAfterDiscovering(senderClientSet)
+            await context.perform {
+                let senderClientSet: Set<UserClient> = [senderClient]
+                selfClient?.decrementNumberOfRemainingKeys()
+                selfClient?.addNewClientToIgnored(senderClient)
+                selfClient?.updateSecurityLevelAfterDiscovering(senderClientSet)
+            }
         }
 
         return decryptedEvent
@@ -195,9 +204,9 @@ extension EventDecoder {
         for event: ZMUpdateEvent,
         sender: UserClient,
         using decryptFunction: ProteusDecryptionFunction
-    ) throws -> (didCreateNewSession: Bool, event: ZMUpdateEvent)? {
+    ) async throws -> (didCreateNewSession: Bool, event: ZMUpdateEvent)? {
         guard
-            let result = try self.decryptedData(
+            let result = try await self.decryptedData(
                 event,
                 client: sender,
                 using: decryptFunction
@@ -213,7 +222,7 @@ extension EventDecoder {
         _ event: ZMUpdateEvent,
         client: UserClient,
         using decryptFunction: ProteusDecryptionFunction
-    ) throws -> (didCreateNewSession: Bool, decryptedData: Data)? {
+    ) async throws -> (didCreateNewSession: Bool, decryptedData: Data)? {
         guard
             let encryptedData = try event.encryptedMessageData(),
             let sessionID = client.proteusSessionID
@@ -227,7 +236,7 @@ extension EventDecoder {
             return nil
         }
 
-        return try decryptFunction(sessionID, encryptedData)
+        return try await decryptFunction(sessionID, encryptedData)
     }
 
 }
