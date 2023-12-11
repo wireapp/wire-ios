@@ -62,6 +62,7 @@ public class MockConversationEventProcessorProtocol: ConversationEventProcessorP
 
     public init() {}
 
+
     // MARK: - processConversationEvents
 
     public var processConversationEvents_Invocations: [[ZMUpdateEvent]] = []
@@ -94,8 +95,12 @@ public class MockConversationEventProcessorProtocol: ConversationEventProcessorP
 
 }
 
-
 public class MockCoreCryptoProviderProtocol: CoreCryptoProviderProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
 
     // MARK: - coreCrypto
 
