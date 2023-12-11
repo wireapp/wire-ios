@@ -159,7 +159,7 @@ final class LegacyNotificationService: UNNotificationServiceExtension, Notificat
             cryptoboxMigrationManager: CryptoboxMigrationManager()
         )
 
-        let session = try NotificationSession(
+        let session = NotificationSession(
             applicationGroupIdentifier: appGroupID,
             accountIdentifier: accountIdentifier,
             coreDataStack: coreDataStack,

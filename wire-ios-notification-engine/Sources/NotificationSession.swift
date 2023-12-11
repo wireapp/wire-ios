@@ -105,7 +105,7 @@ public class NotificationSession {
     /// - throws: `InitializationError.noAccount` in case the account does not exist
     /// - returns: The initialized session object if no error is thrown
 
-    public init(
+    public convenience init(
         applicationGroupIdentifier: String,
         accountIdentifier: UUID,
         coreDataStack: CoreDataStack,
@@ -113,7 +113,7 @@ public class NotificationSession {
         analytics: AnalyticsType?,
         sharedUserDefaults: UserDefaults,
         minTLSVersion: String?
-    ) throws {
+    ) {
         // Don't cache the cookie because if the user logs out and back in again in the main app
         // process, then the cached cookie will be invalid.
         let cookieStorage = ZMPersistentCookieStorage(forServerName: environment.backendURL.host!, userIdentifier: accountIdentifier, useCache: false)
@@ -152,16 +152,10 @@ public class NotificationSession {
             lastEventIDRepository: lastEventIDRepository
         )
 
-        self.coreDataStack = coreDataStack
-        self.transportSession = transportSession
-        self.applicationStatusDirectory = applicationStatusDirectory
-        self.accountIdentifier = accountIdentifier
-
         let sharedContainerURL = FileManager.sharedContainerDirectory(for: applicationGroupIdentifier)
         let accountContainer = CoreDataStack.accountDataFolder(accountIdentifier: accountIdentifier, applicationContainer: sharedContainerURL)
-        self.saveNotificationPersistence = ContextDidSaveNotificationPersistence(accountContainer: accountContainer)
 
-        self.operationLoop = RequestGeneratingOperationLoop(
+        let operationLoop = RequestGeneratingOperationLoop(
             userContext: coreDataStack.viewContext,
             syncContext: coreDataStack.syncContext,
             callBackQueue: .main,
@@ -169,12 +163,41 @@ public class NotificationSession {
             transportSession: transportSession
         )
 
-        self.earService = EARService(accountID: accountIdentifier, sharedUserDefaults: sharedUserDefaults)
-
-        self.eventDecoder = EventDecoder(
-            eventMOC: coreDataStack.eventContext,
-            syncMOC: coreDataStack.syncContext
+        self.init(
+            applicationStatusDirectory: applicationStatusDirectory,
+            accountIdentifier: accountIdentifier,
+            coreDataStack: coreDataStack,
+            earService: EARService(accountID: accountIdentifier, sharedUserDefaults: sharedUserDefaults),
+            eventDecoder: EventDecoder(
+                eventMOC: coreDataStack.eventContext,
+                syncMOC: coreDataStack.syncContext
+            ),
+            pushNotificationStrategy: pushNotificationStrategy,
+            saveNotificationPersistence: ContextDidSaveNotificationPersistence(accountContainer: accountContainer),
+            transportSession: transportSession,
+            operationLoop: operationLoop
         )
+    }
+
+    init(
+        applicationStatusDirectory: ApplicationStatusDirectory,
+        accountIdentifier: UUID,
+        coreDataStack: CoreDataStack,
+        earService: EARServiceInterface,
+        eventDecoder: EventDecoder,
+        pushNotificationStrategy: PushNotificationStrategy,
+        saveNotificationPersistence: ContextDidSaveNotificationPersistence,
+        transportSession: ZMTransportSession,
+        operationLoop: RequestGeneratingOperationLoop
+    ) {
+        self.applicationStatusDirectory = applicationStatusDirectory
+        self.accountIdentifier = accountIdentifier
+        self.coreDataStack = coreDataStack
+        self.earService = earService
+        self.eventDecoder = eventDecoder
+        self.saveNotificationPersistence = saveNotificationPersistence
+        self.transportSession = transportSession
+        self.operationLoop = operationLoop
 
         // from here `self` is initialized
 

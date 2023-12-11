@@ -18,16 +18,11 @@
 
 @testable import WireNotificationEngine
 import XCTest
-import Foundation
 import WireTesting
 import WireDataModel
 import WireMockTransport
 import WireRequestStrategy
 import WireDataModelSupport
-
-class FakeAuthenticationStatus: AuthenticationStatusProvider {
-    var state: AuthenticationState = .authenticated
-}
 
 class BaseTest: ZMTBaseTest {
 
@@ -35,24 +30,17 @@ class BaseTest: ZMTBaseTest {
     var accountIdentifier: UUID!
     var coreDataStack: CoreDataStack!
     var transportSession: ZMTransportSession!
-    var cachesDirectory: URL!
     var saveNotificationPersistence: ContextDidSaveNotificationPersistence!
     var applicationStatusDirectory: ApplicationStatusDirectory!
     var operationLoop: RequestGeneratingOperationLoop!
-    var pushNotificationStatus: PushNotificationStatus!
     var pushNotificationStrategy: PushNotificationStrategy!
-    var mockCryptoboxMigrationManager: MockCryptoboxMigrationManagerInterface!
-    var mockEARService: MockEARServiceInterface!
-    var mockProteusService: MockProteusServiceInterface!
-    var mockMLSDecryptionService: MLSDecryptionServiceInterface!
-    var lastEventIDRepository: LastEventIDRepository!
 
     override func setUp() {
         super.setUp()
 
         accountIdentifier = UUID.create()
         authenticationStatus = FakeAuthenticationStatus()
-        cachesDirectory = try! FileManager.default.url(
+        let cachesDirectory = try! FileManager.default.url(
             for: .cachesDirectory,
                in: .userDomainMask,
                appropriateFor: nil,
@@ -64,7 +52,7 @@ class BaseTest: ZMTBaseTest {
             userIdentifier: accountIdentifier
         )
 
-        lastEventIDRepository = LastEventIDRepository(
+        let lastEventIDRepository = LastEventIDRepository(
             userID: accountIdentifier,
             sharedUserDefaults: sharedUserDefaults
         )
@@ -76,9 +64,14 @@ class BaseTest: ZMTBaseTest {
             dispatchGroup: dispatchGroup
         )
 
+        var coreDataError: Error?
+        let expectation = self.expectation(description: "BaseTest.setUp.coreDataStack")
         coreDataStack.loadStores { error in
-            XCTAssertNil(error)
+            coreDataError = error
+            expectation.fulfill()
         }
+        _ = waitForCustomExpectations(withTimeout: 0.5) // why do we need to use this ugly selfmade expectations?
+        XCTAssertNil(coreDataError)
 
         let mockTransport = MockTransportSession(dispatchGroup: dispatchGroup)
         transportSession = mockTransport.mockedTransportSession()
@@ -106,11 +99,10 @@ class BaseTest: ZMTBaseTest {
             lastEventIDRepository: lastEventIDRepository
         )
 
-        pushNotificationStatus = PushNotificationStatus(
+        let pushNotificationStatus = PushNotificationStatus(
             managedObjectContext: coreDataStack.syncContext,
             lastEventIDRepository: lastEventIDRepository
         )
-
         pushNotificationStrategy = PushNotificationStrategy(
             syncContext: coreDataStack.syncContext,
             applicationStatus: applicationStatusDirectory,
@@ -120,13 +112,6 @@ class BaseTest: ZMTBaseTest {
         )
 
         createSelfUserAndClient()
-
-        mockCryptoboxMigrationManager = MockCryptoboxMigrationManagerInterface()
-        mockCryptoboxMigrationManager.isMigrationNeededAccountDirectory_MockValue = false
-
-        mockEARService = MockEARServiceInterface()
-        mockProteusService = MockProteusServiceInterface()
-        mockMLSDecryptionService = MockMLSDecryptionServiceInterface()
     }
 
     func createSelfUserAndClient() {
@@ -150,33 +135,32 @@ class BaseTest: ZMTBaseTest {
         authenticationStatus = nil
         accountIdentifier = nil
         coreDataStack = nil
-        cachesDirectory = nil
         saveNotificationPersistence = nil
         applicationStatusDirectory = nil
         operationLoop = nil
         transportSession = nil
-        pushNotificationStatus = nil
         pushNotificationStrategy = nil
-        mockCryptoboxMigrationManager = nil
-        lastEventIDRepository = nil
+
         super.tearDown()
     }
 
-    func createNotificationSession() throws -> NotificationSession {
-
-        try NotificationSession(
-            coreDataStack: coreDataStack,
-            transportSession: transportSession,
-            cachesDirectory: cachesDirectory,
-            saveNotificationPersistence: saveNotificationPersistence,
+    func createNotificationSession() -> NotificationSession {
+        NotificationSession(
             applicationStatusDirectory: applicationStatusDirectory,
-            operationLoop: operationLoop,
             accountIdentifier: accountIdentifier,
+            coreDataStack: coreDataStack,
+            earService: MockEARServiceInterface(),
+            eventDecoder: EventDecoder(eventMOC: coreDataStack.eventContext, syncMOC: coreDataStack.syncContext),
             pushNotificationStrategy: pushNotificationStrategy,
-            cryptoboxMigrationManager: mockCryptoboxMigrationManager,
-            earService: mockEARService,
-            proteusService: mockProteusService,
-            mlsDecryptionService: mockMLSDecryptionService
+            saveNotificationPersistence: saveNotificationPersistence,
+            transportSession: transportSession,
+            operationLoop: operationLoop
         )
     }
+}
+
+// MARK: - Fake Mocks
+
+class FakeAuthenticationStatus: AuthenticationStatusProvider {
+    var state: AuthenticationState = .authenticated
 }

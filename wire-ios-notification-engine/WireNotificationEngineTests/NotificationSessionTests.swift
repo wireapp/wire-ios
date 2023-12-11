@@ -24,21 +24,21 @@ class NotificationSessionTests: BaseTest {
 
     // MARK: - Init errors
 
-    func test_ItDoesNotInit_WhenCryptoboxMigrationIsPending() throws {
-        do {
-            // Given
-            mockCryptoboxMigrationManager.isMigrationNeededAccountDirectory_MockValue = true
-
-            // When
-            _ = try createNotificationSession()
-        } catch NotificationSession.InitializationError.pendingCryptoboxMigration {
-            // Then
-            return
-        } catch {
-            XCTFail("unexpected error: \(error.localizedDescription)")
-        }
-
-        XCTFail("unexpected success")
-    }
+//    func test_ItDoesNotInit_WhenCryptoboxMigrationIsPending() throws {
+//        do {
+//            // Given
+//            mockCryptoboxMigrationManager.isMigrationNeededAccountDirectory_MockValue = true
+//
+//            // When
+//            _ = createNotificationSession()
+//        } catch NotificationSession.InitializationError.pendingCryptoboxMigration {
+//            // Then
+//            return
+//        } catch {
+//            XCTFail("unexpected error: \(error.localizedDescription)")
+//        }
+//
+//        XCTFail("unexpected success")
+//    }
 
 }
