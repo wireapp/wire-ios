@@ -77,10 +77,7 @@ public class NotificationSession {
 
     public enum InitializationError: Error {
 
-        case noAccount
         case pendingCryptoboxMigration
-        case coreDataMissingSharedContainer
-        case coreDataMigrationRequired
 
     }
 
@@ -120,40 +117,13 @@ public class NotificationSession {
     public convenience init(
         applicationGroupIdentifier: String,
         accountIdentifier: UUID,
+        coreDataStack: CoreDataStack,
         environment: BackendEnvironmentProvider,
         analytics: AnalyticsType?,
         sharedUserDefaults: UserDefaults,
         minTLSVersion: String?
     ) throws {
         let sharedContainerURL = FileManager.sharedContainerDirectory(for: applicationGroupIdentifier)
-        let accountManager = AccountManager(sharedDirectory: sharedContainerURL)
-
-        guard let account = accountManager.account(with: accountIdentifier) else {
-            throw InitializationError.noAccount
-        }
-
-        let coreDataStack = CoreDataStack(
-            account: account,
-            applicationContainer: sharedContainerURL
-        )
-
-        guard coreDataStack.storesExists else {
-            throw InitializationError.coreDataMissingSharedContainer
-        }
-
-        guard !coreDataStack.needsMigration  else {
-            throw InitializationError.coreDataMigrationRequired
-        }
-
-        coreDataStack.loadStores { error in
-            // ⚠️ errors are not handled and `NotificationSession` will be created.
-            // Currently it is the given behavior, but should be refactored
-            // into a "setup" or "load" func that can be async and handle errors.
-
-            if let error = error {
-                WireLogger.notifications.error("Loading coreDataStack with error: \(error.localizedDescription)")
-            }
-        }
 
         // Don't cache the cookie because if the user logs out and back in again in the main app
         // process, then the cached cookie will be invalid.

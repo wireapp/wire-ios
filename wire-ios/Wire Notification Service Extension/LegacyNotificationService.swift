@@ -44,6 +44,14 @@ class CallEventHandler: CallEventHandlerProtocol {
 
 }
 
+public enum LegacyNotificationServiceError: Error {
+
+    case noAccount
+    case coreDataMissingSharedContainer
+    case coreDataMigrationRequired
+
+}
+
 public class LegacyNotificationService: UNNotificationServiceExtension, NotificationSessionDelegate {
 
     // MARK: - Properties
@@ -90,7 +98,7 @@ public class LegacyNotificationService: UNNotificationServiceExtension, Notifica
         }
 
         do {
-            session = try createSession(accountID: accountID)
+            session = try createSession(accountIdentifier: accountID)
         } catch {
             WireLogger.notifications.error("failed to process process request: could not create session: \(error.localizedDescription)")
             return finishWithoutShowingNotification()
@@ -169,19 +177,56 @@ public class LegacyNotificationService: UNNotificationServiceExtension, Notifica
         session = nil
     }
 
-   private func createSession(accountID: UUID) throws -> NotificationSession {
-      let session = try NotificationSession(
-          applicationGroupIdentifier: appGroupID,
-          accountIdentifier: accountID,
-          environment: BackendEnvironment.shared,
-          analytics: nil,
-          sharedUserDefaults: .applicationGroup,
-          minTLSVersion: SecurityFlags.minTLSVersion.stringValue
-      )
+    private func createSession(accountIdentifier: UUID) throws -> NotificationSession {
+        let coreDataStack = try createCoreDataStack(accountIdentifier: accountIdentifier)
 
-      session.delegate = self
-      return session
-  }
+        let session = try NotificationSession(
+            applicationGroupIdentifier: appGroupID,
+            accountIdentifier: accountIdentifier,
+            coreDataStack: coreDataStack,
+            environment: BackendEnvironment.shared,
+            analytics: nil,
+            sharedUserDefaults: .applicationGroup,
+            minTLSVersion: SecurityFlags.minTLSVersion.stringValue
+        )
+
+        session.delegate = self
+        return session
+    }
+
+    private func createCoreDataStack(accountIdentifier: UUID) throws -> CoreDataStack {
+        let sharedContainerURL = FileManager.sharedContainerDirectory(for: appGroupID)
+        let accountManager = AccountManager(sharedDirectory: sharedContainerURL)
+
+        guard let account = accountManager.account(with: accountIdentifier) else {
+            throw LegacyNotificationServiceError.noAccount
+        }
+
+        let coreDataStack = CoreDataStack(
+            account: account,
+            applicationContainer: sharedContainerURL
+        )
+
+        guard coreDataStack.storesExists else {
+            throw LegacyNotificationServiceError.coreDataMissingSharedContainer
+        }
+
+        guard !coreDataStack.needsMigration  else {
+            throw LegacyNotificationServiceError.coreDataMigrationRequired
+        }
+
+        coreDataStack.loadStores { error in
+            // ⚠️ errors are not handled and `NotificationSession` will be created.
+            // Currently it is the given behavior, but should be refactored
+            // into a "setup" or "load" func that can be async and handle errors.
+
+            if let error = error {
+                WireLogger.notifications.error("Loading coreDataStack with error: \(error.localizedDescription)")
+            }
+        }
+
+        return coreDataStack
+    }
 
     private func totalUnreadCount(_ unreadConversationCount: Int) -> NSNumber? {
         guard let session = session else {
