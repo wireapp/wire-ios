@@ -20,6 +20,11 @@ import UIKit
 import WireUtilities
 
 public extension Bundle {
+
+    var appInfo: Bundle.Info {
+        return Info(version: shortVersionString ?? "-", build: Bundle.main.infoDictionary?[kCFBundleVersionKey as String] as? String ?? "-")
+    }
+
     var shortVersionString: String? {
         return Bundle.main.infoForKey("CFBundleShortVersionString")
     }
@@ -36,4 +41,14 @@ public extension Bundle {
         }
         return mainBundle
     }
+
+    struct Info: SafeForLoggingStringConvertible {
+        var version: String
+        var build: String
+
+        public var safeForLoggingDescription: String {
+            "Wire-ios version \(version) (\(build)))"
+        }
+    }
+
 }
