@@ -58,7 +58,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         TrackingOperation(),
         AppCenterOperation(),
         PerformanceDebuggerOperation(),
-        ZMSLogOperation(),
         AVSLoggingOperation(),
         AutomationHelperOperation(),
         MediaManagerOperation(),
@@ -109,11 +108,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication,
                      willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
+        // enable logs
+        _ = Settings.shared
+        // switch logs
+        ZMSLog.switchCurrentLogToPrevious()
         zmLog.info("application:willFinishLaunchingWithOptions \(String(describing: launchOptions)) (applicationState = \(application.applicationState.rawValue))")
         DatadogWrapper.shared?.startMonitoring()
         DatadogWrapper.shared?.log(level: .info, message: "start app")
         // Initial log line to indicate the client version and build
-        zmLog.info("Wire-ios version \(String(describing: Bundle.main.shortVersionString)) (\(String(describing: Bundle.main.infoDictionary?[kCFBundleVersionKey as String])))")
+        zmLog.safePublic(SanitizedString(stringLiteral: Bundle.main.appInfo.safeForLoggingDescription))
 
         return true
     }
@@ -125,7 +128,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
         voIPPushManager.registerForVoIPPushes()
-        ZMSLog.switchCurrentLogToPrevious()
 
         zmLog.info("application:didFinishLaunchingWithOptions START \(String(describing: launchOptions)) (applicationState = \(application.applicationState.rawValue))")
 
