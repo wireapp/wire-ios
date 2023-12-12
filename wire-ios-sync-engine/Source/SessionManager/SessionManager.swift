@@ -53,7 +53,7 @@ public protocol SessionManagerDelegate: SessionActivationObserver {
                                        from selectedAccount: Account?,
                                        userSessionCanBeTornDown: @escaping () -> Void)
     func sessionManagerWillMigrateAccount(userSessionCanBeTornDown: @escaping () -> Void)
-    func sessionManagerDidFailToLoadDatabase()
+    func sessionManagerDidFailToLoadDatabase(error: Error)
     func sessionManagerDidBlacklistCurrentVersion(reason: BlacklistReason)
     func sessionManagerDidBlacklistJailbrokenDevice()
     func sessionManagerDidPerformFederationMigration(activeSession: UserSession?)
@@ -871,8 +871,8 @@ public final class SessionManager: NSObject, SessionManagerType {
             onStartMigration: { [weak self] in
                 self?.delegate?.sessionManagerWillMigrateAccount(userSessionCanBeTornDown: {})
 
-            }, onFailure: { [weak self] _ in
-                self?.delegate?.sessionManagerDidFailToLoadDatabase()
+            }, onFailure: { [weak self] error in
+                self?.delegate?.sessionManagerDidFailToLoadDatabase(error: error)
                 onCompletion(nil)
 
             }, onCompletion: { [weak self] coreDataStack in
