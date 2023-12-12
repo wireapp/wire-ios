@@ -21,6 +21,7 @@ import WireUtilities
 import WireTesting
 import WireMockTransport
 import WireDataModel
+import WireDataModelSupport
 
 @objcMembers
 public class MockClientRegistrationStatusDelegate: NSObject, ZMClientRegistrationStatusDelegate {
@@ -65,14 +66,15 @@ class UserClientRequestStrategyTests: RequestStrategyTestBase {
     override func setUp() {
         super.setUp()
         self.syncMOC.performGroupedBlockAndWait {
-            self.spyKeyStore = SpyUserClientKeyStore(
+            let spyKeyStore = SpyUserClientKeyStore(
                 accountDirectory: self.accountDirectory,
                 applicationContainer: self.sharedContainerURL
             )
+            self.spyKeyStore = spyKeyStore
             self.proteusService = MockProteusServiceInterface()
             self.proteusProvider = MockProteusProvider(
                 mockProteusService: self.proteusService,
-                mockKeyStore: self.spyKeyStore
+                mockKeyStore: spyKeyStore
             )
             self.cookieStorage = ZMPersistentCookieStorage(forServerName: "myServer", userIdentifier: self.userIdentifier, useCache: true)
             self.mockClientRegistrationStatusDelegate = MockClientRegistrationStatusDelegate()

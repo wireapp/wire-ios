@@ -1042,7 +1042,7 @@ extension UserClientTests {
             return "test"
         }
 
-        let mock = MockProteusProvider(mockProteusService: mockProteusService, mockKeyStore: self.spyForTests())
+        let mock = MockProteusProvider(mockProteusService: mockProteusService)
         mock.useProteusService = true
 
         var sut: UserClient!
