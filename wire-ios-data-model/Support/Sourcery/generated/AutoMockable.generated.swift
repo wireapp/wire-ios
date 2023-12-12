@@ -905,7 +905,7 @@ public class MockFeatureRepositoryInterface: FeatureRepositoryInterface {
             fatalError("no mock for `storeMLSMigration`")
         }
 
-        mock(mlsMigration)            
+        mock(mlsMigration)
     }
 
 }
@@ -1238,7 +1238,7 @@ class MockMLSActionsProviderProtocol: MLSActionsProviderProtocol {
             fatalError("no mock for `updateConversationProtocolQualifiedIDMessageProtocolContext`")
         }
 
-        try await mock(qualifiedID, messageProtocol, context)            
+        try await mock(qualifiedID, messageProtocol, context)
     }
 
 }
@@ -1536,16 +1536,21 @@ public class MockMLSServiceInterface: MLSServiceInterface {
     // MARK: - wipeGroup
 
     public var wipeGroup_Invocations: [MLSGroupID] = []
-    public var wipeGroup_MockMethod: ((MLSGroupID) -> Void)?
+    public var wipeGroup_MockError: Error?
+    public var wipeGroup_MockMethod: ((MLSGroupID) throws -> Void)?
 
-    public func wipeGroup(_ groupID: MLSGroupID) {
+    public func wipeGroup(_ groupID: MLSGroupID) throws {
         wipeGroup_Invocations.append(groupID)
+
+        if let error = wipeGroup_MockError {
+            throw error
+        }
 
         guard let mock = wipeGroup_MockMethod else {
             fatalError("no mock for `wipeGroup`")
         }
 
-        mock(groupID)
+        try mock(groupID)
     }
 
     // MARK: - commitPendingProposals
@@ -1763,6 +1768,26 @@ public class MockMLSServiceInterface: MLSServiceInterface {
         }
 
         await mock(groupID)
+    }
+
+    // MARK: - startProteusToMLSMigration
+
+    public var startProteusToMLSMigration_Invocations: [Void] = []
+    public var startProteusToMLSMigration_MockError: Error?
+    public var startProteusToMLSMigration_MockMethod: (() async throws -> Void)?
+
+    public func startProteusToMLSMigration() async throws {
+        startProteusToMLSMigration_Invocations.append(())
+
+        if let error = startProteusToMLSMigration_MockError {
+            throw error
+        }
+
+        guard let mock = startProteusToMLSMigration_MockMethod else {
+            fatalError("no mock for `startProteusToMLSMigration`")
+        }
+
+        try await mock()
     }
 
     // MARK: - onEpochChanged
@@ -2153,6 +2178,7 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
     }
 
 }
+
 class MockProteusToMLSMigrationStorageInterface: ProteusToMLSMigrationStorageInterface {
 
     // MARK: - Life cycle
@@ -2169,6 +2195,7 @@ class MockProteusToMLSMigrationStorageInterface: ProteusToMLSMigrationStorageInt
 
 
 }
+
 public class MockSubconversationGroupIDRepositoryInterface: SubconversationGroupIDRepositoryInterface {
 
     // MARK: - Life cycle

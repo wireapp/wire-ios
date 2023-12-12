@@ -28,8 +28,8 @@ final class ZMConversationTests_Knock: ZMConversationTestsBase {
             let selfUser = ZMUser.selfUser(in: context)
 
             // when
-            let knock = try XCTUnwrap(conversation.appendKnock() as? ZMMessage)
-            let msg = try XCTUnwrap(conversation.lastMessage as? ZMMessage)
+            let knock = try XCTUnwrap(conversation?.appendKnock() as? ZMMessage)
+            let msg = try XCTUnwrap(conversation?.lastMessage as? ZMMessage)
 
             // then
             XCTAssertEqual(knock, msg)

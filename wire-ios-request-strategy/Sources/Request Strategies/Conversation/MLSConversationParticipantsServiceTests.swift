@@ -19,6 +19,7 @@
 import XCTest
 import WireTesting
 @testable import WireRequestStrategy
+import WireDataModelSupport
 
 class MLSConversationParticipantsServiceTests: MessagingTestBase {
 
@@ -26,7 +27,7 @@ class MLSConversationParticipantsServiceTests: MessagingTestBase {
 
     var sut: MLSConversationParticipantsService!
     var mockClientIDsProvider: MockMLSClientIDsProviding!
-    var mockMLSService: MockMLSService!
+    var mockMLSService: MockMLSServiceInterface!
     var groupID: MLSGroupID = .random()
     var conversation: ZMConversation!
     var user: ZMUser!
@@ -37,7 +38,7 @@ class MLSConversationParticipantsServiceTests: MessagingTestBase {
         super.setUp()
 
         mockClientIDsProvider = MockMLSClientIDsProviding()
-        mockMLSService = MockMLSService()
+        mockMLSService = MockMLSServiceInterface()
 
         syncMOC.performAndWait { [self] in
             conversation = ZMConversation.insertNewObject(in: syncMOC)

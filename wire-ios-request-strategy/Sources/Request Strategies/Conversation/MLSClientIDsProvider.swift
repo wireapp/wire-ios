@@ -1,8 +1,4 @@
-<<<<<<<< HEAD:wire-ios-request-strategy/Sources/Request Strategies/Conversation/MLSClientIDsProvider.swift
-////
-========
 //
->>>>>>>> 860c0004f6da0a333a3e379e4cfb5385f34e3d15:wire-ios-data-model/Tests/Source/Model/Messages/ZMMessage+ServerTimestamp.swift
 // Wire
 // Copyright (C) 2023 Wire Swiss GmbH
 //
@@ -23,7 +19,6 @@
 import Foundation
 import WireDataModel
 
-<<<<<<<< HEAD:wire-ios-request-strategy/Sources/Request Strategies/Conversation/MLSClientIDsProvider.swift
 // sourcery: AutoMockable
 protocol MLSClientIDsProviding {
 
@@ -43,12 +38,5 @@ struct MLSClientIDsProvider: MLSClientIDsProviding {
         var action = FetchUserClientsAction(userIDs: [userID])
         let userClients = try await action.perform(in: context)
         return userClients.compactMap(MLSClientID.init(qualifiedClientID:))
-========
-extension ZMMessage {
-
-    func updateServerTimestamp(with timeInterval: TimeInterval) {
-        serverTimestamp = Date(timeIntervalSince1970: timeInterval)
->>>>>>>> 860c0004f6da0a333a3e379e4cfb5385f34e3d15:wire-ios-data-model/Tests/Source/Model/Messages/ZMMessage+ServerTimestamp.swift
     }
-
 }

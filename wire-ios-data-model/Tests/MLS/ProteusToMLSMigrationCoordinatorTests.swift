@@ -19,6 +19,7 @@
 import Foundation
 import XCTest
 @testable import WireDataModel
+@testable import WireDataModelSupport
 
 class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
 
@@ -28,7 +29,7 @@ class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
     var mockStorage: MockProteusToMLSMigrationStorageInterface!
     var mockFeatureRepository: MockFeatureRepositoryInterface!
     var mockActionsProvider: MockMLSActionsProviderProtocol!
-    var mockMLSService: MockMLSService!
+    var mockMLSService: MockMLSServiceInterface!
 
     // MARK: - setUp
 
@@ -38,7 +39,7 @@ class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
         mockStorage = MockProteusToMLSMigrationStorageInterface()
         mockFeatureRepository = MockFeatureRepositoryInterface()
         mockActionsProvider = MockMLSActionsProviderProtocol()
-        mockMLSService = MockMLSService()
+        mockMLSService = MockMLSServiceInterface()
 
         sut = ProteusToMLSMigrationCoordinator(
             context: syncMOC,
@@ -72,8 +73,8 @@ class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
         // GIVEN
         let groupID = MLSGroupID.random()
         await createUserAndGroupConversation(groupID: groupID)
-
-        mockMLSService.conversationExistsMock = { _ in
+        mockMLSService.joinGroupWith_MockMethod = { _ in }
+        mockMLSService.conversationExistsGroupID_MockMethod = { _ in
             return false
         }
 
@@ -81,7 +82,7 @@ class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
         await sut.migrateOrJoinGroupConversations()
 
         // THEN
-        XCTAssertTrue(mockMLSService.calls.joinGroup.contains(groupID), "joinGroup should be called for new conversations")
+        XCTAssertTrue(mockMLSService.joinGroupWith_Invocations.contains(groupID), "joinGroup should be called for new conversations")
     }
 
     func testMigrateOrJoinGroupConversations_DoesNotCallJoinGroupForExistingConversations() async throws {
@@ -89,7 +90,8 @@ class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
         let groupID = MLSGroupID.random()
         await createUserAndGroupConversation(groupID: groupID)
 
-        mockMLSService.conversationExistsMock = { _ in
+        mockMLSService.joinGroupWith_MockMethod = { _ in }
+        mockMLSService.conversationExistsGroupID_MockMethod = { _ in
             return true
         }
 
@@ -97,7 +99,7 @@ class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
         await sut.migrateOrJoinGroupConversations()
 
         // THEN
-        XCTAssertFalse(mockMLSService.calls.joinGroup.contains(groupID), "joinGroup should not be called for existing conversations")
+        XCTAssertFalse(mockMLSService.joinGroupWith_Invocations.contains(groupID), "joinGroup should not be called for existing conversations")
     }
 
     // MARK: - UpdateMigrationStatus
@@ -110,7 +112,7 @@ class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
         mockStorage.underlyingMigrationStatus = .notStarted
 
         var startedMigration = false
-        mockMLSService.startProteusToMLSMigrationMock = {
+        mockMLSService.startProteusToMLSMigration_MockMethod = {
             startedMigration = true
         }
 
@@ -128,9 +130,10 @@ class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
 
         setMigrationReadiness(to: true)
         mockStorage.underlyingMigrationStatus = .started
+        mockMLSService.conversationExistsGroupID_MockMethod = { _ in return true }
 
         var startedMigration = false
-        mockMLSService.startProteusToMLSMigrationMock = {
+        mockMLSService.startProteusToMLSMigration_MockMethod = {
             startedMigration = true
         }
 
@@ -150,7 +153,7 @@ class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
         mockStorage.underlyingMigrationStatus = .notStarted
 
         var startedMigration = false
-        mockMLSService.startProteusToMLSMigrationMock = {
+        mockMLSService.startProteusToMLSMigration_MockMethod = {
             startedMigration = true
         }
 

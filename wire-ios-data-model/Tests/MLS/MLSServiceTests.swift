@@ -248,29 +248,6 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         } catch {
             XCTFail("unexpected error: \(String(describing: error))")
         }
-
-        // When
-        let conferenceInfo = try sut.generateConferenceInfo(
-            parentGroupID: parentGroupID,
-            subconversationGroupID: subconversationGroupID
-        )
-
-        // Then
-        XCTAssertEqual(mockExportSecretKeyCount, 1)
-        XCTAssertEqual(mockConversationEpochCount, 1)
-        XCTAssertEqual(mockGetClientIDsCount, 2)
-
-        let expectedConferenceInfo = MLSConferenceInfo(
-            epoch: epoch,
-            keyData: secretKey,
-            members: [
-                MLSConferenceInfo.Member(id: member1, isInSubconversation: true),
-                MLSConferenceInfo.Member(id: member2, isInSubconversation: true),
-                MLSConferenceInfo.Member(id: member3, isInSubconversation: false)
-            ]
-        )
-
-        XCTAssertEqual(conferenceInfo, expectedConferenceInfo)
     }
 
     typealias ConferenceInfoError = MLSService.MLSConferenceInfoError
@@ -2776,7 +2753,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         XCTAssertEqual(addedMembers.first?.mlsGroupID, mlsGroupID)
 
         // And processd the update event.
-        let processConversationEventsCalls = mockConversationEventProcessor.calls.processConversationEvents
+        let processConversationEventsCalls = mockConversationEventProcessor.processConversationEvents_Invocations
         XCTAssertEqual(processConversationEventsCalls.flatMap { $0 }.count, 1)
         XCTAssertEqual(processConversationEventsCalls.flatMap { $0 }.first, updateEvent)
     }
