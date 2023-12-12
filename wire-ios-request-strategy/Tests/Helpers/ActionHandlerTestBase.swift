@@ -174,6 +174,8 @@ extension ActionHandlerTestBase {
         status: Int,
         payload: ZMTransportData? = nil,
         label: String? = nil,
+        file: StaticString = #file,
+        line: UInt = #line,
         validation: @escaping ValidationBlock
     ) {
         guard let action = self.action else {
@@ -185,15 +187,27 @@ extension ActionHandlerTestBase {
             status: status,
             payload: payload,
             label: label,
+            file: file,
+            line: line,
             validation: validation
         )
     }
 
     @discardableResult
-    func test_itHandlesSuccess(status: Int, payload: ZMTransportData? = nil) -> Result? {
+    func test_itHandlesSuccess(
+        status: Int,
+        payload: ZMTransportData? = nil,
+        file: StaticString = #file,
+        line: UInt = #line
+    ) -> Result? {
         var result: Result?
 
-        test_itHandlesResponse(status: status, payload: payload) {
+        test_itHandlesResponse(
+            status: status,
+            payload: payload,
+            file: file,
+            line: line
+        ) {
             guard case .success(let res) = $0 else { return false }
             result = res
             return true
