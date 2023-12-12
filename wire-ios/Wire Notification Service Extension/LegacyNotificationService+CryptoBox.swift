@@ -21,18 +21,24 @@ import WireDataModel
 
 extension LegacyNotificationService {
 
+    // MARK: Configuration
+
+    struct CryptoSetupConfiguration {
+        let shouldSetupProteusService: Bool
+        let shouldSetupMLSService: Bool
+
+        var shouldSetupCryptoStack: Bool {
+            shouldSetupProteusService || shouldSetupMLSService
+        }
+    }
+
     // MARK: Properties
 
-    private var shouldSetupCryptoStack: Bool {
-        shouldSetupProteusService || shouldSetupMLSService
-    }
-
-    private var shouldSetupProteusService: Bool {
-        DeveloperFlag.proteusViaCoreCrypto.isOn
-    }
-
-    private var shouldSetupMLSService: Bool {
-        DeveloperFlag.enableMLSSupport.isOn && (BackendInfo.apiVersion ?? .v0) >= .v5
+    var cryptoSetupConfiguration: CryptoSetupConfiguration {
+        .init(
+            shouldSetupProteusService: DeveloperFlag.proteusViaCoreCrypto.isOn,
+            shouldSetupMLSService: DeveloperFlag.enableMLSSupport.isOn && (BackendInfo.apiVersion ?? .v0) >= .v5
+        )
     }
 
     // MARK: Methods
@@ -43,11 +49,27 @@ extension LegacyNotificationService {
         syncContext: NSManagedObjectContext,
         cryptoboxMigrationManager: CryptoboxMigrationManagerInterface
     ) throws {
+        try setUpCoreCryptoStack(
+            accountContainer: accountContainer,
+            applicationContainer: applicationContainer,
+            syncContext: syncContext,
+            cryptoboxMigrationManager: cryptoboxMigrationManager,
+            setupConfiguration: cryptoSetupConfiguration
+        )
+    }
+
+    func setUpCoreCryptoStack(
+        accountContainer: URL,
+        applicationContainer: URL,
+        syncContext: NSManagedObjectContext,
+        cryptoboxMigrationManager: CryptoboxMigrationManagerInterface,
+        setupConfiguration: CryptoSetupConfiguration
+    ) throws {
         guard !cryptoboxMigrationManager.isMigrationNeeded(accountDirectory: accountContainer) else {
             throw LegacyNotificationServiceError.cryptoboxHasPendingMigration
         }
 
-        guard shouldSetupCryptoStack else {
+        guard setupConfiguration.shouldSetupCryptoStack else {
             WireLogger.coreCrypto.info("not setting up core crypto stack because it is not needed")
             return
         }
@@ -66,11 +88,11 @@ extension LegacyNotificationService {
 
                 syncContext.coreCrypto = safeCoreCrypto
 
-                if DeveloperFlag.proteusViaCoreCrypto.isOn, syncContext.proteusService == nil {
+                if setupConfiguration.shouldSetupProteusService, syncContext.proteusService == nil {
                     syncContext.proteusService = ProteusService(coreCrypto: safeCoreCrypto)
                 }
 
-                if DeveloperFlag.enableMLSSupport.isOn, syncContext.mlsDecryptionService == nil {
+                if setupConfiguration.shouldSetupMLSService, syncContext.mlsDecryptionService == nil {
                     syncContext.mlsDecryptionService = MLSDecryptionService(
                         context: syncContext,
                         coreCrypto: safeCoreCrypto

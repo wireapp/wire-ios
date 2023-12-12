@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import XCTest
 import WireNotificationEngine
 import Wire_Notification_Service_Extension
+import WireDataModelSupport
 
 final class LegacyNotificationServiceTests: XCTestCase {
 
@@ -32,26 +32,30 @@ final class LegacyNotificationServiceTests: XCTestCase {
     var mockConversation: ZMConversation!
     var currentUserIdentifier: UUID!
 
-    var callEventHandlerMock: CallEventHandlerMock!
+    private var callEventHandlerMock: CallEventHandlerMock!
 
-    var otherUser: ZMUser! {
-        return coreDataFixture.otherUser
-    }
+    var otherUser: ZMUser! { coreDataFixture.otherUser }
 
-    var selfUser: ZMUser! {
-        return coreDataFixture.selfUser
-    }
+    var selfUser: ZMUser! { coreDataFixture.selfUser }
 
-    var client: UserClient! {
-        coreDataFixture.mockUserClient()
-    }
+    var client: UserClient! { coreDataFixture.mockUserClient() }
+
+    private let appGroupID: String = {
+        guard let groupID = Bundle.main.applicationGroupIdentifier else {
+            fatalError("cannot get app group identifier")
+        }
+
+        return groupID
+    }()
+
+    // MARK: - SetUp & TearDown
 
     override func setUp() {
         super.setUp()
 
         sut = LegacyNotificationService()
         callEventHandlerMock = CallEventHandlerMock()
-        currentUserIdentifier = UUID.create()
+        currentUserIdentifier = UUID()
         notificationContent = createNotificationContent()
         request = UNNotificationRequest(identifier: currentUserIdentifier.uuidString,
                                         content: notificationContent,
@@ -79,6 +83,8 @@ final class LegacyNotificationServiceTests: XCTestCase {
 
         super.tearDown()
     }
+
+    // MARK: - Tests
 
     func disable_testThatItHandlesGeneratedNotification() {
         // GIVEN
@@ -111,6 +117,65 @@ final class LegacyNotificationServiceTests: XCTestCase {
 
         // THEN
         XCTAssertTrue(callEventHandlerMock.reportIncomingVoIPCallCalled)
+    }
+
+    // MARK: Core Data
+
+    func test_createCoreDataStack_withoutAccount() throws {
+        // GIVEN
+        let accountIdentifier = UUID()
+
+        XCTAssertThrowsError(try sut.createCoreDataStack(
+            applicationGroupIdentifier: appGroupID,
+            accountIdentifier: accountIdentifier
+        )) { error in
+            guard case LegacyNotificationServiceError.noAccount = error else {
+                XCTFail("expected error 'LegacyNotificationServiceError.noAccount'")
+                return
+            }
+        }
+    }
+
+    func test_createCoreDataStack_withAccountMissingSharedContainer() throws {
+        // GIVEN
+        let account = Account(userName: "", userIdentifier: currentUserIdentifier)
+
+        // WHEN
+        // THEN
+        XCTAssertThrowsError(try sut.createCoreDataStack(
+            applicationGroupIdentifier: appGroupID,
+            accountIdentifier: currentUserIdentifier
+        )) { error in
+            guard case LegacyNotificationServiceError.coreDataMissingSharedContainer = error else {
+                XCTFail("expected error 'LegacyNotificationServiceError.coreDataMissingSharedContainer'")
+                return
+            }
+        }
+    }
+
+    func test_createCoreDataStack_succeeds() throws {
+        // GIVEN
+        let sharedContainerURL = FileManager.sharedContainerDirectory(for: appGroupID)
+        let account = Account(userName: "", userIdentifier: currentUserIdentifier)
+
+        // setup core data stack to create stores
+        let expectation = self.expectation(description: "")
+        let mockCoreDataStack = CoreDataStack(
+            account: account,
+            applicationContainer: sharedContainerURL
+        )
+        mockCoreDataStack.loadStores { error in
+            XCTAssertNil(error)
+            expectation.fulfill()
+        }
+        waitForExpectations(timeout: 1)
+
+        // WHEN
+        // THEN
+        XCTAssertNoThrow(try sut.createCoreDataStack(
+            applicationGroupIdentifier: appGroupID,
+            accountIdentifier: currentUserIdentifier
+        ))
     }
 }
 
@@ -170,10 +235,9 @@ extension LegacyNotificationServiceTests {
     private func contentHandlerMock(_ content: UNNotificationContent) {
         contentResult = content
     }
-
 }
 
-class CallEventHandlerMock: CallEventHandlerProtocol {
+private final class CallEventHandlerMock: CallEventHandlerProtocol {
 
     var reportIncomingVoIPCallCalled: Bool = false
 
