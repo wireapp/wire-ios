@@ -21,7 +21,7 @@ import Foundation
 
 class ZMConversationTests_SelfConversation: ZMConversationTestsBase {
 
-    private func createMLSSelfConversation(in context: NSManagedObjectContext) -> ZMConversation {
+    private func createMLSSelfConversation() -> ZMConversation {
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.remoteIdentifier = UUID.create()
         conversation.mlsGroupID = .random()
@@ -36,7 +36,7 @@ class ZMConversationTests_SelfConversation: ZMConversationTestsBase {
     func test_UpdateSelfConversationWithLastRead() throws {
         // Given self conversations
         let proteusSelfConversation = try XCTUnwrap(ZMConversation.selfConversation(in: uiMOC))
-        let mlsSelfConversation = createMLSSelfConversation(in: uiMOC)
+        let mlsSelfConversation = createMLSSelfConversation()
 
         // A conversation with a last read time stamp
         let conversationID = UUID.create()
@@ -83,7 +83,7 @@ class ZMConversationTests_SelfConversation: ZMConversationTestsBase {
     func test_UpdateSelfConversationWithCleared() throws {
         // Given self conversations
         let proteusSelfConversation = try XCTUnwrap(ZMConversation.selfConversation(in: uiMOC))
-        let mlsSelfConversation = createMLSSelfConversation(in: uiMOC)
+        let mlsSelfConversation = createMLSSelfConversation()
 
         // A conversation with a cleared time stamp
         let conversationID = UUID.create()
