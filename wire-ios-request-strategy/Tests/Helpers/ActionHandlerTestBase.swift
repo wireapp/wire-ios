@@ -144,7 +144,7 @@ class ActionHandlerTestBase<Action: EntityAction, Handler: ActionHandler<Action>
         sut.handleResponse(response, action: action)
 
         // Then
-        XCTAssert(waitForCustomExpectations(withTimeout: 10.5), file: file, line: line)
+        XCTAssert(waitForCustomExpectations(withTimeout: 0.5), file: file, line: line)
     }
 }
 
