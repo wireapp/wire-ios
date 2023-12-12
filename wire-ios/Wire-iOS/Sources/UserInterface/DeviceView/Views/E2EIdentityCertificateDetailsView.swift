@@ -31,15 +31,9 @@ struct E2EIdentityCertificateDetailsView: View {
 
     @State var isMenuPresented: Bool
 
-    var performDownload: (
-        () -> Void
-    )?
+    var performDownload: (() -> Void)?
 
-    var performCopy: (
-        (
-            String
-        ) -> Void
-    )?
+    var performCopy: ((String) -> Void)?
 
     private var titleView: some View {
         HStack {
@@ -87,7 +81,7 @@ struct E2EIdentityCertificateDetailsView: View {
             },
             label: {
                 Text(L10n.Localizable.Content.Message.download)
-                    .font(FontSpec.normalRegularFont.swiftUIFont.bold())
+                    .font(FontSpec.normalBoldFont.swiftUIFont)
             }
         )
         .foregroundColor(SemanticColors.Label.textDefault.swiftUIColor)
@@ -109,9 +103,7 @@ struct E2EIdentityCertificateDetailsView: View {
     private var copyToClipboardButton: some View {
         SwiftUI.Button(
             action: {
-                performCopy?(
-                    certificateDetails
-                )
+                performCopy?(certificateDetails)
             },
             label: {
                 Text(L10n.Localizable.Device.Details.CertificateDetails.copyToClipboard)
@@ -134,7 +126,6 @@ struct E2EIdentityCertificateDetailsView: View {
                         moreButton
                         .confirmationDialog("...", isPresented: $isMenuPresented) {
                             copyToClipboardButton
-                        } message: {
                         }
                     }
                 }
