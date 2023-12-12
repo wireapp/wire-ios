@@ -56,18 +56,20 @@ final class ConversationRoleDownstreamRequestStrategyTests: MessagingTest {
 
     func testThatPredicateIsCorrect() {
         // given
-        let convoToDownload = self.createConversationToDownload()
+        syncMOC.performAndWait {
+            let convoToDownload = self.createConversationToDownload()
 
-        let convoNoNeed = self.createConversationToDownload()
-        convoNoNeed.needsToDownloadRoles = false
+            let convoNoNeed = self.createConversationToDownload()
+            convoNoNeed.needsToDownloadRoles = false
 
-        let convoNoIdentifier = self.createConversationToDownload()
-        convoNoIdentifier.remoteIdentifier = nil
+            let convoNoIdentifier = self.createConversationToDownload()
+            convoNoIdentifier.remoteIdentifier = nil
 
-        // then
-        XCTAssert(sut.downstreamSync.predicateForObjectsToDownload.evaluate(with: convoToDownload))
-        XCTAssertFalse(sut.downstreamSync.predicateForObjectsToDownload.evaluate(with: convoNoNeed))
-        XCTAssertFalse(sut.downstreamSync.predicateForObjectsToDownload.evaluate(with: convoNoIdentifier))
+            // then
+            XCTAssert(sut.downstreamSync.predicateForObjectsToDownload.evaluate(with: convoToDownload))
+            XCTAssertFalse(sut.downstreamSync.predicateForObjectsToDownload.evaluate(with: convoNoNeed))
+            XCTAssertFalse(sut.downstreamSync.predicateForObjectsToDownload.evaluate(with: convoNoIdentifier))
+        }
     }
 
     func testThatItCreatesARequestForConversation() {

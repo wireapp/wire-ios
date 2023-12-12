@@ -82,17 +82,19 @@ class TeamDownloadRequestStrategyTests: MessagingTest {
 
     func testThatPredicateIsCorrect() {
         // given
-        let team1 = Team.insertNewObject(in: self.syncMOC)
-        team1.remoteIdentifier = .create()
-        team1.needsToBeUpdatedFromBackend = true
+        syncMOC.performAndWait {
+            let team1 = Team.insertNewObject(in: self.syncMOC)
+            team1.remoteIdentifier = .create()
+            team1.needsToBeUpdatedFromBackend = true
 
-        let team2 = Team.insertNewObject(in: self.syncMOC)
-        team2.remoteIdentifier = .create()
-        team2.needsToBeUpdatedFromBackend = false
+            let team2 = Team.insertNewObject(in: self.syncMOC)
+            team2.remoteIdentifier = .create()
+            team2.needsToBeUpdatedFromBackend = false
 
-        // then
-        XCTAssertTrue(sut.downstreamSync.predicateForObjectsToDownload.evaluate(with: team1))
-        XCTAssertFalse(sut.downstreamSync.predicateForObjectsToDownload.evaluate(with: team2))
+            // then
+            XCTAssertTrue(sut.downstreamSync.predicateForObjectsToDownload.evaluate(with: team1))
+            XCTAssertFalse(sut.downstreamSync.predicateForObjectsToDownload.evaluate(with: team2))
+        }
     }
 
     func testThatItDoesNotGenerateARequestInitially() {
@@ -342,10 +344,10 @@ class TeamDownloadRequestStrategyTests: MessagingTest {
         }
 
         // when
-        await self.sut.processEvents([event], liveEvents: true, prefetchResult: nil)
-
         syncMOC.performGroupedAndWait { context in
-             context.saveOrRollback()
+            self.sut.processEvents([event], liveEvents: true, prefetchResult: nil)
+
+            context.saveOrRollback()
 
             // then
             let result = team.members.contains(where: { (member) -> Bool in
@@ -363,7 +365,7 @@ class TeamDownloadRequestStrategyTests: MessagingTest {
         mockFetchingTeamsSyncPhase()
 
         // When
-        let request = try XCTUnwrap(sut.nextRequest(for: .v0))
+        let request = try XCTUnwrap(sutNextRequest(for: .v0))
 
         // Then
         XCTAssertEqual(request.method, .get)
@@ -375,7 +377,7 @@ class TeamDownloadRequestStrategyTests: MessagingTest {
         mockFetchingTeamsSyncPhase()
 
         // When
-        let request = try XCTUnwrap(sut.nextRequest(for: .v1))
+        let request = try XCTUnwrap(sutNextRequest(for: .v1))
 
         // Then
         XCTAssertEqual(request.method, .get)
@@ -387,7 +389,7 @@ class TeamDownloadRequestStrategyTests: MessagingTest {
         mockFetchingTeamsSyncPhase()
 
         // When
-        let request = try XCTUnwrap(sut.nextRequest(for: .v2))
+        let request = try XCTUnwrap(sutNextRequest(for: .v2))
 
         // Then
         XCTAssertEqual(request.method, .get)
@@ -399,7 +401,7 @@ class TeamDownloadRequestStrategyTests: MessagingTest {
         mockFetchingTeamsSyncPhase()
 
         // When
-        let request = try XCTUnwrap(sut.nextRequest(for: .v3))
+        let request = try XCTUnwrap(sutNextRequest(for: .v3))
 
         // Then
         XCTAssertEqual(request.method, .get)
@@ -411,7 +413,7 @@ class TeamDownloadRequestStrategyTests: MessagingTest {
         mockFetchingTeamsSyncPhase()
 
         // When
-        let request = try XCTUnwrap(sut.nextRequest(for: .v4))
+        let request = try XCTUnwrap(sutNextRequest(for: .v4))
 
         // Then
         XCTAssertEqual(request.method, .get)
@@ -424,7 +426,7 @@ class TeamDownloadRequestStrategyTests: MessagingTest {
         try mockNonTeamUser()
 
         // When
-        XCTAssertNil(sut.nextRequest(for: .v4))
+        XCTAssertNil(sutNextRequest(for: .v4))
         XCTAssertTrue(mockSyncStatus.didCallFinishCurrentSyncPhase)
     }
 
@@ -433,7 +435,7 @@ class TeamDownloadRequestStrategyTests: MessagingTest {
         mockFetchingTeamsSyncPhase()
 
         // When
-        let request = try XCTUnwrap(sut.nextRequest(for: .v5))
+        let request = try XCTUnwrap(sutNextRequest(for: .v5))
 
         // Then
         XCTAssertEqual(request.method, .get)
@@ -446,7 +448,7 @@ class TeamDownloadRequestStrategyTests: MessagingTest {
         try mockNonTeamUser()
 
         // When
-        XCTAssertNil(sut.nextRequest(for: .v5))
+        XCTAssertNil(sutNextRequest(for: .v5))
         XCTAssertTrue(mockSyncStatus.didCallFinishCurrentSyncPhase)
     }
 
@@ -460,15 +462,16 @@ class TeamDownloadRequestStrategyTests: MessagingTest {
             let user = ZMUser.selfUser(in: self.syncMOC)
             user.teamIdentifier = nil
         }
-
-        try syncMOC.save()
+        try syncMOC.performAndWait {
+            try syncMOC.save()
+        }
     }
 
     func testThatItCreatesLocalTeam_DuringSlowSync() {
         // given
         mockSyncStatus.mockPhase = .fetchingTeams
         mockApplicationStatus.mockSynchronizationState = .slowSyncing
-        guard let request = sut.nextRequest(for: .v0) else { return XCTFail("No request generated") }
+        guard let request = sutNextRequest(for: .v0) else { return XCTFail("No request generated") }
         let teamCreatorID = UUID.create()
         let teamID = UUID.create()
 
@@ -484,19 +487,21 @@ class TeamDownloadRequestStrategyTests: MessagingTest {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        let team = Team.fetch(with: teamID, in: syncMOC)
-        XCTAssertNotNil(team)
-        XCTAssertEqual(team?.name, "Wire GmbH")
-        let creator = ZMUser.fetch(with: teamCreatorID, in: syncMOC)
-        XCTAssertNotNil(creator)
-        XCTAssertEqual(team!.creator, creator)
+        syncMOC.performAndWait {
+            let team = Team.fetch(with: teamID, in: syncMOC)
+            XCTAssertNotNil(team)
+            XCTAssertEqual(team?.name, "Wire GmbH")
+            let creator = ZMUser.fetch(with: teamCreatorID, in: syncMOC)
+            XCTAssertNotNil(creator)
+            XCTAssertEqual(team!.creator, creator)
+        }
     }
 
     func testThatItFailsTheSyncState_WhenThereIsAPermanentError() {
         // given
         mockSyncStatus.mockPhase = .fetchingTeams
         mockApplicationStatus.mockSynchronizationState = .slowSyncing
-        guard let request = sut.nextRequest(for: .v0) else { return XCTFail("No request generated") }
+        guard let request = sutNextRequest(for: .v0) else { return XCTFail("No request generated") }
 
         // when
         let response = ZMTransportResponse(payload: nil, httpStatus: 400, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
@@ -514,7 +519,7 @@ class TeamDownloadRequestStrategyTests: MessagingTest {
 
         // when
         do {
-            guard let request = sut.nextRequest(for: .v0) else { return XCTFail("No request generated") }
+            guard let request = sutNextRequest(for: .v0) else { return XCTFail("No request generated") }
             let payload: [String: Any] = [
                 "has_more": false,
                 "teams": [sampleResponse(teamID: UUID(), creatorId: UUID())]
@@ -534,7 +539,7 @@ class TeamDownloadRequestStrategyTests: MessagingTest {
 
         // when
         do {
-            guard let request = sut.nextRequest(for: .v0) else { return XCTFail("No request generated") }
+            guard let request = sutNextRequest(for: .v0) else { return XCTFail("No request generated") }
             let payload: [String: Any] = [
                 "has_more": false,
                 "teams": []
@@ -545,5 +550,9 @@ class TeamDownloadRequestStrategyTests: MessagingTest {
 
         // then
         XCTAssertTrue(mockSyncStatus.didCallFinishCurrentSyncPhase)
+    }
+
+    private func sutNextRequest(for apiVersion: APIVersion) -> ZMTransportRequest? {
+       return syncMOC.performAndWait({ sut.nextRequest(for: apiVersion) })
     }
 }

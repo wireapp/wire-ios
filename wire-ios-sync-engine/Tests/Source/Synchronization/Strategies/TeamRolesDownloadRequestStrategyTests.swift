@@ -79,17 +79,19 @@ class TeamRolesDownloadRequestStrategyTests: MessagingTest {
 
     func testThatPredicateIsCorrect() {
         // given
-        let team1 = Team.insertNewObject(in: self.syncMOC)
-        team1.remoteIdentifier = .create()
-        team1.needsToDownloadRoles = true
+        syncMOC.performAndWait {
+            let team1 = Team.insertNewObject(in: self.syncMOC)
+            team1.remoteIdentifier = .create()
+            team1.needsToDownloadRoles = true
 
-        let team2 = Team.insertNewObject(in: self.syncMOC)
-        team2.remoteIdentifier = .create()
-        team2.needsToDownloadRoles = false
+            let team2 = Team.insertNewObject(in: self.syncMOC)
+            team2.remoteIdentifier = .create()
+            team2.needsToDownloadRoles = false
 
-        // then
-        XCTAssertTrue(sut.downstreamSync.predicateForObjectsToDownload.evaluate(with: team1))
-        XCTAssertFalse(sut.downstreamSync.predicateForObjectsToDownload.evaluate(with: team2))
+            // then
+            XCTAssertTrue(sut.downstreamSync.predicateForObjectsToDownload.evaluate(with: team1))
+            XCTAssertFalse(sut.downstreamSync.predicateForObjectsToDownload.evaluate(with: team2))
+        }
     }
 
     func testThatItDoesNotGenerateARequestInitially() {

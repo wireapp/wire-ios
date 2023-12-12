@@ -47,60 +47,64 @@ class TeamInvitationRequestStrategyTests: MessagingTest {
     }
 
     func addSelfUserToTeam() {
-        let selfUser = ZMUser.selfUser(in: syncMOC)
-        selfUser.name = "Self User"
-        let team = Team.insertNewObject(in: syncMOC)
-        team.remoteIdentifier = UUID.create()
+        syncMOC.performAndWait {
+            let selfUser = ZMUser.selfUser(in: syncMOC)
+            selfUser.name = "Self User"
+            let team = Team.insertNewObject(in: syncMOC)
+            team.remoteIdentifier = UUID.create()
 
-        let member = Member.insertNewObject(in: syncMOC)
-        member.remoteIdentifier = UUID.create()
-        member.user = selfUser
-        team.members.insert(member)
-
-        self.team = team
+            let member = Member.insertNewObject(in: syncMOC)
+            member.remoteIdentifier = UUID.create()
+            member.user = selfUser
+            team.members.insert(member)
+            self.team = team
+        }
     }
 
-    func testThatRequestIsGeneratedWhenInvitationIsPending() {
+    func testThatRequestIsGeneratedWhenInvitationIsPending() throws {
         // given
         addSelfUserToTeam()
         teamInvitationStatus.invite("example1@test.com", completionHandler: { _ in })
 
         // when
-        let request = sut.nextRequest(for: .v0)
+        let request = sutNextRequest(for: .v0)
 
         // then
-        XCTAssertEqual(request?.path, "/teams/\(team.remoteIdentifier!.transportString())/invitations")
+        let id = try XCTUnwrap(syncMOC.performAndWait({ team.remoteIdentifier }))
+        XCTAssertEqual(request?.path, "/teams/\(id.transportString())/invitations")
         XCTAssertEqual(request?.payload?.asDictionary()?["email"] as? String, "example1@test.com")
         XCTAssertEqual(request?.payload?.asDictionary()?["inviter_name"] as? String, "Self User")
     }
 
-    func testThatRequestIsGeneratedOnlyOncePerInvitation() {
+    func testThatRequestIsGeneratedOnlyOncePerInvitation() throws {
         // given
         addSelfUserToTeam()
         teamInvitationStatus.invite("example1@test.com", completionHandler: { _ in })
 
         // when
-        let request1 = sut.nextRequest(for: .v0)
-        let request2 = sut.nextRequest(for: .v0)
+        let request1 = sutNextRequest(for: .v0)
+        let request2 = sutNextRequest(for: .v0)
 
         // then
-        XCTAssertEqual(request1?.path, "/teams/\(team.remoteIdentifier!.transportString())/invitations")
+        let id = try XCTUnwrap(syncMOC.performAndWait({ team.remoteIdentifier }))
+        XCTAssertEqual(request1?.path, "/teams/\(id.transportString())/invitations")
         XCTAssertNil(request2)
     }
 
-    func testThatRequestIsRetriedOnTemporaryErrors() {
+    func testThatRequestIsRetriedOnTemporaryErrors() throws {
         // given
         addSelfUserToTeam()
         teamInvitationStatus.invite("example1@test.com", completionHandler: { _ in })
 
         // when
-        let request = sut.nextRequest(for: .v0)
+        let request = sutNextRequest(for: .v0)
         request?.complete(with: ZMTransportResponse(payload: nil, httpStatus: 408, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue))
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        let retryRequest = sut.nextRequest(for: .v0)
-        XCTAssertEqual(retryRequest?.path, "/teams/\(team.remoteIdentifier!.transportString())/invitations")
+        let retryRequest = sutNextRequest(for: .v0)
+        let id = try XCTUnwrap(syncMOC.performAndWait({ team.remoteIdentifier }))
+        XCTAssertEqual(retryRequest?.path, "/teams/\(id.transportString())/invitations")
         XCTAssertEqual(retryRequest?.payload?.asDictionary()?["email"] as? String, "example1@test.com")
         XCTAssertEqual(retryRequest?.payload?.asDictionary()?["inviter_name"] as? String, "Self User")
     }
@@ -140,6 +144,10 @@ class TeamInvitationRequestStrategyTests: MessagingTest {
             let (result, expectedResult) = tuple
             XCTAssertTrue(result == expectedResult)
         }
+    }
+
+    private func sutNextRequest(for apiVersion: APIVersion) -> ZMTransportRequest? {
+       return syncMOC.performAndWait { sut.nextRequest(for: apiVersion) }
     }
 
 }

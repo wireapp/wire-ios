@@ -31,7 +31,9 @@ class EventProcessorTests: MessagingTest {
 
     override func setUp() {
         super.setUp()
-        createSelfClient()
+        syncMOC.performAndWait {
+            createSelfClient()
+        }
 
         mockEventsConsumers = [MockEventConsumer(), MockEventConsumer()]
         mockEventAsyncConsumers = [MockEventAsyncConsumer(), MockEventAsyncConsumer()]
@@ -127,10 +129,12 @@ class EventProcessorTests: MessagingTest {
             sharedUserDefaults: UserDefaults.random()!
         )
         earService.setInitialEARFlagValue(true)
-        try earService.enableEncryptionAtRest(
-            context: syncMOC,
-            skipMigration: true
-        )
+        try syncMOC.performAndWait {
+            try earService.enableEncryptionAtRest(
+                context: syncMOC,
+                skipMigration: true
+            )
+        }
         earService.lockDatabase()
 
         let events = createSampleEvents()

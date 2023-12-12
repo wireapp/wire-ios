@@ -220,20 +220,20 @@ class LegalHoldRequestStrategyTests: MessagingTest {
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        let legalHoldRequest = type(of: self).legalHoldRequest(for: selfUser)
-        let payload = type(of: self).payloadForReceivingLegalHoldRequestEvent(request: legalHoldRequest)
-        let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: UUID())!
+        self.syncMOC.performAndWait {
+            let legalHoldRequest = type(of: self).legalHoldRequest(for: selfUser)
+            let payload = type(of: self).payloadForReceivingLegalHoldRequestEvent(request: legalHoldRequest)
+            let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: UUID())!
 
-        // WHEN
-        await self.sut.processEvents([event], liveEvents: true, prefetchResult: .none)
+            // WHEN
+            self.sut.processEvents([event], liveEvents: true, prefetchResult: .none)
 
-        syncMOC.performGroupedBlockAndWait {
             // THEN
             XCTAssertEqual(selfUser.legalHoldStatus, .pending(legalHoldRequest))
         }
     }
 
-    func testThatItProcessesLegalHoldDisabledEvent() async {
+    func testThatItProcessesLegalHoldDisabledEvent() {
         // GIVEN
         syncMOC.performGroupedBlockAndWait {
             self.mockSyncStatus.mockPhase = .fetchingLegalHoldStatus
@@ -255,7 +255,9 @@ class LegalHoldRequestStrategyTests: MessagingTest {
             "type": "user.legalhold-disable"
         ]
         let event = ZMUpdateEvent(fromEventStreamPayload: payload as ZMTransportData, uuid: UUID())!
-        await self.sut.processEvents([event], liveEvents: true, prefetchResult: .none)
+        syncMOC.performAndWait {
+            self.sut.processEvents([event], liveEvents: true, prefetchResult: .none)
+        }
 
         // THEN
         syncMOC.performGroupedBlockAndWait {
