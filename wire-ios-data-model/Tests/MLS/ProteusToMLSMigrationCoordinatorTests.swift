@@ -78,7 +78,7 @@ class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
         }
 
         // WHEN
-        await sut.migrateOrJoinGroupConversations()
+        try await sut.migrateOrJoinGroupConversations()
 
         // THEN
         XCTAssertTrue(mockMLSService.calls.joinGroup.contains(groupID), "joinGroup should be called for new conversations")
@@ -94,7 +94,7 @@ class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
         }
 
         // WHEN
-        await sut.migrateOrJoinGroupConversations()
+        try await sut.migrateOrJoinGroupConversations()
 
         // THEN
         XCTAssertFalse(mockMLSService.calls.joinGroup.contains(groupID), "joinGroup should not be called for existing conversations")
