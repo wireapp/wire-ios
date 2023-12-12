@@ -510,7 +510,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         var conversation: ZMConversation!
         let futureCommitDate = Date().addingTimeInterval(2)
 
-        uiMOC.performAndWait {
+        await uiMOC.perform { [self] in
             // A group with pending proposal in the future
             conversation = createConversation(in: uiMOC)
             conversation.mlsGroupID = groupID
@@ -555,7 +555,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         // Then we committed pending proposals.
         XCTAssertEqual(mockCommitPendingProposalsArgument, [groupID])
 
-        uiMOC.performAndWait {
+        await uiMOC.perform {
             XCTAssertNil(conversation.commitPendingProposalDate)
         }
 
@@ -691,7 +691,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         var conversation: ZMConversation!
         let futureCommitDate = Date().addingTimeInterval(2)
 
-        uiMOC.performAndWait {
+        await uiMOC.perform { [self] in
             // A group with pending proposal in the future
             conversation = createConversation(in: uiMOC)
             conversation.mlsGroupID = groupID
@@ -730,7 +730,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         // Then we committed pending proposals.
         XCTAssertEqual(mockCommitPendingProposalsArgument, [groupID])
 
-        uiMOC.performAndWait {
+        await uiMOC.perform {
             XCTAssertNil(conversation.commitPendingProposalDate)
         }
 
@@ -798,7 +798,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         let groupID = MLSGroupID.random()
         var conversation: ZMConversation!
 
-        uiMOC.performAndWait {
+        await uiMOC.perform { [self] in
             // A group with pending proposal in the past.
             conversation = createConversation(in: uiMOC)
             conversation.mlsGroupID = groupID
@@ -820,7 +820,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         try await self.sut.commitPendingProposals()
 
         // Then we cleared the pending proposal date.
-        uiMOC.performAndWait {
+        await uiMOC.perform {
             XCTAssertNil(conversation.commitPendingProposalDate)
         }
     }
@@ -831,7 +831,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         let groupID = MLSGroupID.random()
         var conversation: ZMConversation!
 
-        uiMOC.performAndWait {
+        await uiMOC.perform { [self] in
             // A group with pending proposal in the past.
             conversation = createConversation(in: uiMOC)
             conversation.mlsGroupID = groupID
@@ -862,7 +862,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         XCTAssertEqual(id, groupID)
         XCTAssertEqual(commitTime.timeIntervalSinceNow, Date().timeIntervalSinceNow, accuracy: 0.1)
 
-        uiMOC.performAndWait {
+        await uiMOC.perform {
             XCTAssertNil(conversation.commitPendingProposalDate)
         }
 
@@ -876,7 +876,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         let groupID = MLSGroupID([1, 2, 3])
         var conversation: ZMConversation!
 
-        uiMOC.performAndWait {
+        await uiMOC.perform { [self] in
             // A group with pending proposal in the future
             conversation = createConversation(in: uiMOC)
             conversation.mlsGroupID = groupID
@@ -907,7 +907,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         XCTAssertEqual(id, groupID)
         XCTAssertEqual(commitTime.timeIntervalSinceNow, futureCommitDate.timeIntervalSinceNow, accuracy: 0.1)
 
-        uiMOC.performAndWait {
+        await uiMOC.perform {
             XCTAssertNil(conversation.commitPendingProposalDate)
         }
 
@@ -929,7 +929,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         var conversation2: ZMConversation!
         var conversation3: ZMConversation!
 
-        uiMOC.performAndWait {
+        await uiMOC.perform { [self] in
             // A group with pending proposal in the past
             conversation1 = createConversation(in: uiMOC)
             conversation1.mlsGroupID = conversation1MLSGroupID
@@ -1003,7 +1003,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         )
 
         // Then all conversations have no more commit dates.
-        uiMOC.performAndWait {
+        await uiMOC.perform {
             XCTAssertNil(conversation1.commitPendingProposalDate)
             XCTAssertNil(conversation2.commitPendingProposalDate)
             XCTAssertNil(conversation3.commitPendingProposalDate)
@@ -1023,7 +1023,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         let subgroupID = MLSGroupID.random()
         var conversation: ZMConversation!
 
-        uiMOC.performAndWait {
+        await uiMOC.perform { [self] in
             // A group with pending proposal in the past.
             conversation = createConversation(in: uiMOC)
             conversation.mlsGroupID = parentGroupdID
@@ -1063,7 +1063,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         XCTAssertEqual(id2, parentGroupdID)
         XCTAssertEqual(commitTime2.timeIntervalSinceNow, Date().timeIntervalSinceNow, accuracy: 0.1)
 
-        uiMOC.performAndWait {
+        await uiMOC.perform {
             XCTAssertNil(conversation.commitPendingProposalDate)
         }
     }
@@ -2756,7 +2756,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         let groupID = MLSGroupID.random()
         var conversation: ZMConversation!
 
-        uiMOC.performAndWait {
+        await uiMOC.perform { [self] in
             // A group with pending proposal in the future
             conversation = createConversation(in: uiMOC)
             conversation.mlsGroupID = groupID
