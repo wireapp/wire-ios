@@ -76,6 +76,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
     }
 
     private func createSut() {
+        didFinishInitializationExpectation = expectation(description: "did finish initialization")
         sut = MLSService(
             context: uiMOC,
             coreCrypto: mockSafeCoreCrypto,
@@ -86,15 +87,15 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             staleKeyMaterialDetector: mockStaleMLSKeyDetector,
             userDefaults: userDefaultsTestSuite,
             actionsProvider: mockActionsProvider,
+            delegate: self,
             syncStatus: mockSyncStatus,
             subconversationGroupIDRepository: mockSubconversationGroupIDRepository
         )
-
-        sut.delegate = self
     }
 
     override func tearDown() {
         sut = nil
+        didFinishInitializationExpectation = nil
         keyMaterialUpdatedExpectation = nil
         mockCoreCrypto = nil
         mockSafeCoreCrypto = nil
@@ -142,6 +143,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     var pendingProposalCommitExpectations = [MLSGroupID: XCTestExpectation]()
     var keyMaterialUpdatedExpectation: XCTestExpectation?
+    var didFinishInitializationExpectation: XCTestExpectation!
 
     // Since SUT may schedule timers to commit pending proposals, we create expectations
     // and fulfill them when SUT informs us the commit was made.
@@ -154,6 +156,10 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         keyMaterialUpdatedExpectation?.fulfill()
     }
 
+    func MLSServiceDidFinishInitialization() {
+        didFinishInitializationExpectation.fulfill()
+    }
+
     // MARK: - Public keys
 
     func test_BackendPublicKeysAreFetched_WhenInitializing() throws {
@@ -162,8 +168,9 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             removal: .init(ed25519: Data([1, 2, 3]))
         )
 
-        // expectation
+        // expectations
         let expectation = XCTestExpectation(description: "Fetch backend public keys")
+        didFinishInitializationExpectation = self.expectation(description: "did finish initialization")
 
         mockActionsProvider.fetchBackendPublicKeysIn_MockMethod = { _ in
             expectation.fulfill()
@@ -180,6 +187,9 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             actionsProvider: mockActionsProvider,
             syncStatus: mockSyncStatus
         )
+
+        // wait for `MLSService.init`'s async operations
+        _ = waitForCustomExpectations(withTimeout: 5)
 
         // Then
         wait(for: [expectation], timeout: 0.5)
@@ -232,6 +242,9 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
                 }
             }
 
+            // wait for `MLSService.init`'s async operations
+            _ = waitForCustomExpectations(withTimeout: 5)
+
             // When
             let conferenceInfo = try await sut.generateConferenceInfo(
                 parentGroupID: parentGroupID,
@@ -276,6 +289,9 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             throw CryptoError.ConversationNotFound(message: "foo")
         }
 
+        // wait for `MLSService.init`'s async operations
+        _ = waitForCustomExpectations(withTimeout: 5)
+
         // When / Then
         await assertItThrows(error: ConferenceInfoError.failedToGenerateConferenceInfo) {
             _ = try await sut.generateConferenceInfo(
@@ -296,6 +312,9 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         let mockResult = MLSDecryptResult.message(.random(), .random(length: 3))
 
         mockDecryptionService.decryptMessageForSubconversationType_MockValue = mockResult
+
+        // wait for `MLSService.init`'s async operations
+        _ = waitForCustomExpectations(withTimeout: 5)
 
         // When
         let result = try sut.decrypt(
@@ -323,6 +342,9 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
         let mockResult = MLSDecryptResult.message(.random(), .random(length: 3))
         mockDecryptionService.decryptMessageForSubconversationType_MockValue = mockResult
+
+        // wait for `MLSService.init`'s async operations
+        _ = waitForCustomExpectations(withTimeout: 5)
 
         // When
         let result = try sut.decrypt(
@@ -358,6 +380,9 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
                 expectation.fulfill()
             }
         )
+
+        // wait for `MLSService.init`'s async operations
+        _ = waitForCustomExpectations(withTimeout: 5)
 
         // When
         _ = try? sut.decrypt(
@@ -395,6 +420,9 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             ))
         }
 
+        // wait for `MLSService.init`'s async operations
+        _ = waitForCustomExpectations(withTimeout: 5)
+
         // When
         XCTAssertNoThrow(try sut.createGroup(for: groupID))
 
@@ -423,6 +451,9 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             throw CryptoError.MalformedIdentifier(message: "bad id")
         }
 
+        // wait for `MLSService.init`'s async operations
+        _ = waitForCustomExpectations(withTimeout: 5)
+
         // when / then
         assertItThrows(error: MLSService.MLSGroupCreationError.failedToCreateGroup) {
             try sut.createGroup(for: groupID)
@@ -434,7 +465,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     // MARK: - Adding participants
 
-    func test_AddingMembersToConversation_Successfully() async {
+    func test_AddingMembersToConversation_Successfully() async throws {
         // Given
         let id = UUID.create()
         let domain = "example.com"
@@ -462,12 +493,11 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             return [updateEvent]
         }
 
-        do {
-            // When
-            try await sut.addMembersToConversation(with: mlsUser, for: mlsGroupID)
-        } catch let error {
-            XCTFail("Unexpected error: \(String(describing: error))")
-        }
+        // wait for `MLSService.init`'s async operations
+        _ = waitForCustomExpectations(withTimeout: 5)
+
+        // When
+        try await sut.addMembersToConversation(with: mlsUser, for: mlsGroupID)
 
         // Then we added the members.
         XCTAssertEqual(mockAddMembersArguments.count, 1)
@@ -522,13 +552,11 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             return [updateEvent2]
         }
 
-        do {
-            // When
-            try await sut.addMembersToConversation(with: mlsUser, for: groupID)
+        // wait for `MLSService.init`'s async operations
+        _ = waitForCustomExpectations(withTimeout: 5)
 
-        } catch let error {
-            XCTFail("Unexpected error: \(String(describing: error))")
-        }
+        // When
+        try await sut.addMembersToConversation(with: mlsUser, for: groupID)
 
         // Then we committed pending proposals.
         XCTAssertEqual(mockCommitPendingProposalsArgument, [groupID])
@@ -556,6 +584,9 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             throw MLSActionExecutor.Error.noPendingProposals
         }
 
+        // wait for `MLSService.init`'s async operations
+        _ = waitForCustomExpectations(withTimeout: 5)
+
         // when / then
         await assertItThrows(error: MLSService.MLSAddMembersError.noMembersToAdd) {
             try await sut.addMembersToConversation(with: [], for: mlsGroupID)
@@ -576,6 +607,9 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
         // Mock failure for claiming key packages.
         mockActionsProvider.claimKeyPackagesUserIDDomainExcludedSelfClientIDIn_MockError = ClaimMLSKeyPackageAction.Failure.missingDomain
+
+        // wait for `MLSService.init`'s async operations
+        _ = waitForCustomExpectations(withTimeout: 5)
 
         // Then
         await assertItThrows(error: MLSService.MLSAddMembersError.failedToClaimKeyPackages) {
@@ -607,6 +641,9 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             throw MLSActionExecutor.Error.failedToGenerateCommit
         }
 
+        // wait for `MLSService.init`'s async operations
+        _ = waitForCustomExpectations(withTimeout: 5)
+
         // when / then
         await assertItThrows(error: MLSActionExecutor.Error.failedToGenerateCommit) {
             try await sut.addMembersToConversation(with: mlsUser, for: mlsGroupID)
@@ -637,13 +674,11 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             return [updateEvent]
         }
 
-        do {
-            // When
-            try await sut.removeMembersFromConversation(with: [mlsClientID], for: mlsGroupID)
+        // wait for `MLSService.init`'s async operations
+        _ = waitForCustomExpectations(withTimeout: 5)
 
-        } catch let error {
-            XCTFail("Unexpected error: \(String(describing: error))")
-        }
+        // When
+        try await sut.removeMembersFromConversation(with: [mlsClientID], for: mlsGroupID)
 
         // Then we removed the clients.
         let clientIDBytes = try XCTUnwrap(mlsClientID.rawValue.data(using: .utf8)?.bytes)
@@ -692,13 +727,11 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             return [updateEvent2]
         }
 
-        do {
-            // When
-            try await sut.removeMembersFromConversation(with: [mlsClientID], for: groupID)
+        // wait for `MLSService.init`'s async operations
+        _ = waitForCustomExpectations(withTimeout: 5)
 
-        } catch let error {
-            XCTFail("Unexpected error: \(String(describing: error))")
-        }
+        // When
+        try await sut.removeMembersFromConversation(with: [mlsClientID], for: groupID)
 
         // Then we committed pending proposals.
         XCTAssertEqual(mockCommitPendingProposalsArgument, [groupID])
@@ -727,6 +760,9 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             throw MLSActionExecutor.Error.noPendingProposals
         }
 
+        // wait for `MLSService.init`'s async operations
+        _ = waitForCustomExpectations(withTimeout: 5)
+
         // When / Then
         await assertItThrows(error: MLSService.MLSRemoveParticipantsError.noClientsToRemove) {
             try await sut.removeMembersFromConversation(with: [], for: mlsGroupID)
@@ -750,6 +786,9 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         mockMLSActionExecutor.mockRemoveClients = { _, _ in
             throw MLSActionExecutor.Error.failedToGenerateCommit
         }
+
+        // wait for `MLSService.init`'s async operations
+        _ = waitForCustomExpectations(withTimeout: 5)
 
         // When / Then
         await assertItThrows(error: MLSActionExecutor.Error.failedToGenerateCommit) {
@@ -779,6 +818,9 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         mockMLSActionExecutor.mockCommitPendingProposals = { _ in
             throw MLSActionExecutor.Error.noPendingProposals
         }
+
+        // wait for `MLSService.init`'s async operations
+        _ = waitForCustomExpectations(withTimeout: 5)
 
         // When
         try await self.sut.commitPendingProposals()
@@ -813,6 +855,9 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             mockCommitPendingProposalArguments.append(($0, Date()))
             return [updateEvent]
         }
+
+        // wait for `MLSService.init`'s async operations
+        _ = waitForCustomExpectations(withTimeout: 5)
 
         // When
         try await self.sut.commitPendingProposals()
@@ -855,6 +900,9 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             mockCommitPendingProposalArguments.append(($0, Date()))
             return [updateEvent]
         }
+
+        // wait for `MLSService.init`'s async operations
+        _ = waitForCustomExpectations(withTimeout: 5)
 
         // When
         try await self.sut.commitPendingProposals()
@@ -923,6 +971,9 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             default: return []
             }
         }
+
+        // wait for `MLSService.init`'s async operations
+        _ = waitForCustomExpectations(withTimeout: 5)
 
         // When
         try await sut.commitPendingProposals()
@@ -996,6 +1047,9 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             return []
         }
 
+        // wait for `MLSService.init`'s async operations
+        _ = waitForCustomExpectations(withTimeout: 5)
+
         // When
         try await self.sut.commitPendingProposals()
 
@@ -1059,6 +1113,9 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             processConversationEventsArguments.append($0)
             expectation.fulfill()
         }
+
+        // wait for `MLSService.init`'s async operations
+        _ = waitForCustomExpectations(withTimeout: 5)
 
         // When
         sut.performPendingJoins()
@@ -1135,6 +1192,9 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             expectation.fulfill()
         }
 
+        // wait for `MLSService.init`'s async operations
+        _ = waitForCustomExpectations(withTimeout: 5)
+
         // When
         sut.performPendingJoins()
 
@@ -1180,6 +1240,9 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             return []
         }
 
+        // wait for `MLSService.init`'s async operations
+        _ = waitForCustomExpectations(withTimeout: 5)
+
         // When
         sut.performPendingJoins()
 
@@ -1222,6 +1285,9 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             return []
         }
 
+        // wait for `MLSService.init`'s async operations
+        _ = waitForCustomExpectations(withTimeout: 5)
+
         // WHEN
         sut.repairOutOfSyncConversations()
 
@@ -1243,6 +1309,9 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
                 expectation.fulfill()
             }
         )
+
+        // wait for `MLSService.init`'s async operations
+        _ = waitForCustomExpectations(withTimeout: 5)
 
         // WHEN
         sut.fetchAndRepairGroupIfPossible(with: groupID)
@@ -1269,6 +1338,9 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
                 expectation.fulfill()
             }
         )
+
+        // wait for `MLSService.init`'s async operations
+        _ = waitForCustomExpectations(withTimeout: 5)
 
         // WHEN
         sut.fetchAndRepairGroupIfPossible(with: groupID)
@@ -1305,6 +1377,9 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             }
         )
 
+        // wait for `MLSService.init`'s async operations
+        _ = waitForCustomExpectations(withTimeout: 5)
+
         // WHEN
         sut.fetchAndRepairGroupIfPossible(with: groupID)
 
@@ -1339,6 +1414,9 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
                 expectation.fulfill()
             }
         )
+
+        // wait for `MLSService.init`'s async operations
+        _ = waitForCustomExpectations(withTimeout: 5)
 
         // WHEN
         sut.fetchAndRepairGroupIfPossible(with: groupID)
@@ -1420,6 +1498,9 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             XCTAssertEqual(id, groupID.bytes)
         }
 
+        // wait for `MLSService.init`'s async operations
+        _ = waitForCustomExpectations(withTimeout: 5)
+
         // When
         await sut.wipeGroup(groupID)
 
@@ -1474,6 +1555,9 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             uploadKeyPackages.fulfill()
         }
 
+        // wait for `MLSService.init`'s async operations
+        _ = waitForCustomExpectations(withTimeout: 5)
+
         // When
         await sut.uploadKeyPackagesIfNeeded()
 
@@ -1511,6 +1595,9 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             countUnclaimedKeyPackages.fulfill()
             return 0
         }
+
+        // wait for `MLSService.init`'s async operations
+        _ = waitForCustomExpectations(withTimeout: 5)
 
         // When
         await sut.uploadKeyPackagesIfNeeded()
@@ -1554,6 +1641,9 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             return []
         }
 
+        // wait for `MLSService.init`'s async operations
+        _ = waitForCustomExpectations(withTimeout: 5)
+
         // When
         await sut.uploadKeyPackagesIfNeeded()
 
@@ -1578,6 +1668,9 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             mockClientValidKeypackagesCountCount += 1
             return UInt64(self.sut.targetUnclaimedKeyPackageCount)
         }
+
+        // wait for `MLSService.init`'s async operations
+        _ = waitForCustomExpectations(withTimeout: 5)
 
         // When
         _ = try await sut.processWelcomeMessage(welcomeMessage: message)
@@ -1609,8 +1702,9 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             return []
         }
 
-        // Expectation
+        // Expectations
         keyMaterialUpdatedExpectation = self.expectation(description: "did update key material")
+        didFinishInitializationExpectation = expectation(description: "did finish initialization")
 
         // When
         let sut = MLSService(
@@ -1679,6 +1773,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
         // Expectation
         keyMaterialUpdatedExpectation = expectation(description: "did update key material")
+        didFinishInitializationExpectation = expectation(description: "did finish initialization")
 
         // Mock committing pending proposal.
         var mockCommitPendingProposalsArguments = [MLSGroupID]()
@@ -1792,6 +1887,9 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             mockPerformQuickSyncCount += 1
         }
 
+        // wait for `MLSService.init`'s async operations
+        _ = waitForCustomExpectations(withTimeout: 5)
+
         // When
         try await sut.updateKeyMaterial(for: groupID)
 
@@ -1831,6 +1929,9 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         mockSyncStatus.mockPerformQuickSync = {
             mockPerformQuickSyncCount += 1
         }
+
+        // wait for `MLSService.init`'s async operations
+        _ = waitForCustomExpectations(withTimeout: 5)
 
         // When
         try await sut.updateKeyMaterial(for: groupID)
@@ -1878,6 +1979,9 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         mockSyncStatus.mockPerformQuickSync = {
             mockPerformQuickSyncCount += 1
         }
+
+        // wait for `MLSService.init`'s async operations
+        _ = waitForCustomExpectations(withTimeout: 5)
 
         // When
         try await sut.updateKeyMaterial(for: groupID)
@@ -1927,6 +2031,9 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             mockPerformQuickSyncCount += 1
         }
 
+        // wait for `MLSService.init`'s async operations
+        _ = waitForCustomExpectations(withTimeout: 5)
+
         // When
         try await sut.updateKeyMaterial(for: groupID)
 
@@ -1964,6 +2071,9 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         mockSyncStatus.mockPerformQuickSync = {
             mockPerformQuickSyncCount += 1
         }
+
+        // wait for `MLSService.init`'s async operations
+        _ = waitForCustomExpectations(withTimeout: 5)
 
         // Then
         await assertItThrows(error: MLSActionExecutor.Error.failedToSendCommit(recovery: .giveUp)) {
@@ -2019,6 +2129,9 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         mockSubconversationGroupIDRepository.storeSubconversationGroupIDForTypeParentGroupID_MockMethod = { _, _, _ in
             // no op
         }
+
+        // wait for `MLSService.init`'s async operations
+        _ = waitForCustomExpectations(withTimeout: 5)
 
         // When
         let result = try await sut.createOrJoinSubgroup(
@@ -2089,6 +2202,9 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         mockSubconversationGroupIDRepository.storeSubconversationGroupIDForTypeParentGroupID_MockMethod = { _, _, _ in
             // no op
         }
+
+        // wait for `MLSService.init`'s async operations
+        _ = waitForCustomExpectations(withTimeout: 5)
 
         // When
         let result = try await sut.createOrJoinSubgroup(
@@ -2162,6 +2278,9 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             // no op
         }
 
+        // wait for `MLSService.init`'s async operations
+        _ = waitForCustomExpectations(withTimeout: 5)
+
         // When
         let result = try await sut.createOrJoinSubgroup(
             parentQualifiedID: parentQualifiedID,
@@ -2217,6 +2336,9 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             // no op
         }
 
+        // wait for `MLSService.init`'s async operations
+        _ = waitForCustomExpectations(withTimeout: 5)
+
         // When
         try await sut.leaveSubconversation(
             parentQualifiedID: parentID,
@@ -2270,6 +2392,9 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         mockSubconversationGroupIDRepository.storeSubconversationGroupIDForTypeParentGroupID_MockMethod = { _, _, _ in
             // no op
         }
+
+        // wait for `MLSService.init`'s async operations
+        _ = waitForCustomExpectations(withTimeout: 5)
 
         // When
         try await sut.leaveSubconversationIfNeeded(
@@ -2335,6 +2460,9 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             // no op
         }
 
+        // wait for `MLSService.init`'s async operations
+        _ = waitForCustomExpectations(withTimeout: 5)
+
         // When
         try await sut.leaveSubconversationIfNeeded(
             parentQualifiedID: parentID,
@@ -2383,6 +2511,9 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             receivedGroupIDs = $0
             didReceiveGroupIDs.fulfill()
         }
+
+        // wait for `MLSService.init`'s async operations
+        _ = waitForCustomExpectations(withTimeout: 5)
 
         // When
         epochChangedFromDecryptionSerivce.send(groupID1)
@@ -2460,6 +2591,9 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             subConversationGroupID: subconversationGroupID
         )
 
+        // wait for `MLSService.init`'s async operations
+        _ = waitForCustomExpectations(withTimeout: 5)
+
         // When
         for groupID in epochChangeSequence {
             epochChangedFromDecryptionSerivce.send(groupID)
@@ -2503,6 +2637,9 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             return []
         }
 
+        // wait for `MLSService.init`'s async operations
+        _ = waitForCustomExpectations(withTimeout: 5)
+
         // WHEN
         await sut.createSelfGroup(for: groupID)
 
@@ -2536,6 +2673,9 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
         let groupID = MLSGroupID.random()
 
+        // wait for `MLSService.init`'s async operations
+        _ = waitForCustomExpectations(withTimeout: 5)
+
         // WHEN
         await sut.createSelfGroup(for: groupID)
 
@@ -2558,6 +2698,9 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             updateKeyMaterialInvocations.append($0)
             return []
         }
+
+        // wait for `MLSService.init`'s async operations
+        _ = waitForCustomExpectations(withTimeout: 5)
 
         // When
         try await sut.generateNewEpoch(groupID: groupID)
@@ -2607,13 +2750,11 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             return []
         }
 
+        // wait for `MLSService.init`'s async operations
+        _ = waitForCustomExpectations(withTimeout: 5)
+
         // WHEN
-        do {
-            _ = try await sut.joinNewGroup(with: groupID)
-        } catch {
-            XCTFail("should not fail with error: \(error)")
-            return
-        }
+        try await sut.joinNewGroup(with: groupID)
 
         // THEN
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
@@ -2652,13 +2793,11 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             return []
         }
 
+        // wait for `MLSService.init`'s async operations
+        _ = waitForCustomExpectations(withTimeout: 5)
+
         // WHEN
-        do {
-            _ = try await sut.joinNewGroup(with: groupID)
-        } catch {
-            XCTFail("should not fail with error: \(error)")
-            return
-        }
+        _ = try await sut.joinNewGroup(with: groupID)
 
         // THEN
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))

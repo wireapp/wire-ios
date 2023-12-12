@@ -95,6 +95,7 @@ public protocol MLSServiceDelegate: AnyObject {
 
     func mlsServiceDidCommitPendingProposal(for groupID: MLSGroupID)
     func mlsServiceDidUpdateKeyMaterialForAllGroups()
+    func MLSServiceDidFinishInitialization()
 
 }
 
@@ -220,6 +221,7 @@ public final class MLSService: MLSServiceInterface {
             await fetchBackendPublicKeys()
             await updateKeyMaterialForAllStaleGroupsIfNeeded()
             schedulePeriodicKeyMaterialUpdateCheck()
+            delegate?.MLSServiceDidFinishInitialization()
         }
     }
 
