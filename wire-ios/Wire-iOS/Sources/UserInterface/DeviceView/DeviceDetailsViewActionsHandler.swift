@@ -21,10 +21,7 @@ import WireDataModel
 import WireSyncEngine
 
 final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, ObservableObject {
-    private static let logger = Logger(
-        subsystem: "DeviceDetailsView Actions",
-        category: "DeviceDetailsView"
-    )
+    let logger = WireLogger.e2ei
     let e2eIdentityProvider: E2eIdentityProviding
     let userSession: UserSession
     let mlsProvider: MLSProviding
@@ -65,7 +62,7 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
         do {
             return try await userClient.fetchE2eIdentityCertificate(e2eIdentityProvider: e2eIdentityProvider)
         } catch {
-            Self.logger.error(error.localizedDescription)
+            logger.error(error.localizedDescription)
         }
         return nil
     }
@@ -74,7 +71,7 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
         do {
             return try await mlsProvider.fetchMLSThumbprint()
         } catch {
-            Self.logger.error(error.localizedDescription)
+            logger.error(error.localizedDescription)
         }
         return nil
     }
@@ -133,15 +130,21 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
         let fileName = "e2eiCertifcate.txt"
         let path = getDocumentsDirectory().appendingPathComponent(fileName)
         do {
-            try certificate.certificateDetails.write(to: path, atomically: true, encoding: String.Encoding.utf8)
-
+            try certificate.certificateDetails.write(
+                to: path,
+                atomically: true,
+                encoding: String.Encoding.utf8
+            )
         } catch {
-            Self.logger.error(error.localizedDescription)
+            logger.error(error.localizedDescription)
         }
     }
 
     private func getDocumentsDirectory() -> URL {
-        let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+        let paths = FileManager.default.urls(
+            for: .documentDirectory,
+            in: .userDomainMask
+        )
         return paths[0]
     }
 }

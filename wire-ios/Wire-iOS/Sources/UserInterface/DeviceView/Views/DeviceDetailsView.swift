@@ -125,12 +125,11 @@ struct DeviceDetailsView: View {
             if let certificate = viewModel.e2eIdentityCertificate {
                 E2EIdentityCertificateDetailsView(
                     certificateDetails: certificate.certificateDetails.uppercased(),
-                    isDownloadAndCopyEnabled: viewModel.isCopyEnabled, isMenuPresented: false
-                ) {
-                    viewModel.downloadE2EIdentityCertificate()
-                } performCopy: { value in
-                    viewModel.copyToClipboard(value)
-                }
+                    isDownloadAndCopyEnabled: viewModel.isCopyEnabled,
+                    isMenuPresented: false,
+                    performDownload: viewModel.downloadE2EIdentityCertificate,
+                    performCopy: viewModel.copyToClipboard
+                )
             }
         }
     }
