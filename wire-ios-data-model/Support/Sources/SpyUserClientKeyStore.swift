@@ -18,15 +18,16 @@
 
 import Foundation
 import WireDataModel
-// TODO: move to a common support files framework? this is a duplicate Fake from SyncEngyne
+import WireCryptobox
+
 // used by tests to fake errors on genrating pre keys
-class SpyUserClientKeyStore: UserClientKeysStore {
+public class SpyUserClientKeyStore: UserClientKeysStore {
 
-    var failToGeneratePreKeys: Bool = false
-    var failToGenerateLastPreKey: Bool = false
+    public var failToGeneratePreKeys: Bool = false
+    public var failToGenerateLastPreKey: Bool = false
 
-    var lastGeneratedKeys: [(id: UInt16, prekey: String)] = []
-    var lastGeneratedLastPrekey: String?
+    public var lastGeneratedKeys: [(id: UInt16, prekey: String)] = []
+    public var lastGeneratedLastPrekey: String?
 
     override public func generateMoreKeys(_ count: UInt16, start: UInt16) throws -> [(id: UInt16, prekey: String)] {
 
@@ -50,9 +51,9 @@ class SpyUserClientKeyStore: UserClientKeysStore {
         }
     }
 
-    var accessEncryptionContextCount = 0
+    public var accessEncryptionContextCount = 0
 
-    override var encryptionContext: EncryptionContext {
+    override public var encryptionContext: EncryptionContext {
         get {
             accessEncryptionContextCount += 1
             return super.encryptionContext
