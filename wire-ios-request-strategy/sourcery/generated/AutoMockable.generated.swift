@@ -1,5 +1,26 @@
 // Generated using Sourcery 2.1.2 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
+
+//
+// Wire
+// Copyright (C) 2023 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
+
+// swiftlint:disable superfluous_disable_command
+// swiftlint:disable vertical_whitespace
 // swiftlint:disable line_length
 // swiftlint:disable variable_name
 
@@ -95,6 +116,113 @@ public class MockAPIProviderInterface: APIProviderInterface {
     }
 
 }
+public class MockConversationServiceInterface: ConversationServiceInterface {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - createGroupConversation
+
+    public var createGroupConversationNameUsersAllowGuestsAllowServicesEnableReceiptsMessageProtocolCompletion_Invocations: [(name: String?, users: Set<ZMUser>, allowGuests: Bool, allowServices: Bool, enableReceipts: Bool, messageProtocol: MessageProtocol, completion: (Swift.Result<ZMConversation, ConversationCreationFailure>) -> Void)] = []
+    public var createGroupConversationNameUsersAllowGuestsAllowServicesEnableReceiptsMessageProtocolCompletion_MockMethod: ((String?, Set<ZMUser>, Bool, Bool, Bool, MessageProtocol, @escaping (Swift.Result<ZMConversation, ConversationCreationFailure>) -> Void) -> Void)?
+
+    public func createGroupConversation(name: String?, users: Set<ZMUser>, allowGuests: Bool, allowServices: Bool, enableReceipts: Bool, messageProtocol: MessageProtocol, completion: @escaping (Swift.Result<ZMConversation, ConversationCreationFailure>) -> Void) {
+        createGroupConversationNameUsersAllowGuestsAllowServicesEnableReceiptsMessageProtocolCompletion_Invocations.append((name: name, users: users, allowGuests: allowGuests, allowServices: allowServices, enableReceipts: enableReceipts, messageProtocol: messageProtocol, completion: completion))
+
+        guard let mock = createGroupConversationNameUsersAllowGuestsAllowServicesEnableReceiptsMessageProtocolCompletion_MockMethod else {
+            fatalError("no mock for `createGroupConversationNameUsersAllowGuestsAllowServicesEnableReceiptsMessageProtocolCompletion`")
+        }
+
+        mock(name, users, allowGuests, allowServices, enableReceipts, messageProtocol, completion)
+    }
+
+    // MARK: - syncConversation
+
+    public var syncConversationQualifiedIDCompletion_Invocations: [(qualifiedID: QualifiedID, completion: () -> Void)] = []
+    public var syncConversationQualifiedIDCompletion_MockMethod: ((QualifiedID, @escaping () -> Void) -> Void)?
+
+    public func syncConversation(qualifiedID: QualifiedID, completion: @escaping () -> Void) {
+        syncConversationQualifiedIDCompletion_Invocations.append((qualifiedID: qualifiedID, completion: completion))
+
+        guard let mock = syncConversationQualifiedIDCompletion_MockMethod else {
+            fatalError("no mock for `syncConversationQualifiedIDCompletion`")
+        }
+
+        mock(qualifiedID, completion)
+    }
+
+    // MARK: - syncConversation
+
+    public var syncConversationQualifiedID_Invocations: [QualifiedID] = []
+    public var syncConversationQualifiedID_MockMethod: ((QualifiedID) async -> Void)?
+
+    public func syncConversation(qualifiedID: QualifiedID) async {
+        syncConversationQualifiedID_Invocations.append(qualifiedID)
+
+        guard let mock = syncConversationQualifiedID_MockMethod else {
+            fatalError("no mock for `syncConversationQualifiedID`")
+        }
+
+        await mock(qualifiedID)
+    }
+
+}
+public class MockE2eIAPI: E2eIAPI {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - getWireNonce
+
+    public var getWireNonceClientId_Invocations: [String] = []
+    public var getWireNonceClientId_MockError: Error?
+    public var getWireNonceClientId_MockMethod: ((String) async throws -> String)?
+    public var getWireNonceClientId_MockValue: String?
+
+    public func getWireNonce(clientId: String) async throws -> String {
+        getWireNonceClientId_Invocations.append(clientId)
+
+        if let error = getWireNonceClientId_MockError {
+            throw error
+        }
+
+        if let mock = getWireNonceClientId_MockMethod {
+            return try await mock(clientId)
+        } else if let mock = getWireNonceClientId_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `getWireNonceClientId`")
+        }
+    }
+
+    // MARK: - getAccessToken
+
+    public var getAccessTokenClientIdDpopToken_Invocations: [(clientId: String, dpopToken: String)] = []
+    public var getAccessTokenClientIdDpopToken_MockError: Error?
+    public var getAccessTokenClientIdDpopToken_MockMethod: ((String, String) async throws -> AccessTokenResponse)?
+    public var getAccessTokenClientIdDpopToken_MockValue: AccessTokenResponse?
+
+    public func getAccessToken(clientId: String, dpopToken: String) async throws -> AccessTokenResponse {
+        getAccessTokenClientIdDpopToken_Invocations.append((clientId: clientId, dpopToken: dpopToken))
+
+        if let error = getAccessTokenClientIdDpopToken_MockError {
+            throw error
+        }
+
+        if let mock = getAccessTokenClientIdDpopToken_MockMethod {
+            return try await mock(clientId, dpopToken)
+        } else if let mock = getAccessTokenClientIdDpopToken_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `getAccessTokenClientIdDpopToken`")
+        }
+    }
+
+}
 public class MockMessageAPI: MessageAPI {
 
     // MARK: - Life cycle
@@ -173,7 +301,7 @@ public class MockMessageDependencyResolverInterface: MessageDependencyResolverIn
             fatalError("no mock for `waitForDependenciesToResolveFor`")
         }
 
-        try await mock(message)            
+        try await mock(message)
     }
 
 }
@@ -201,7 +329,7 @@ public class MockMessageSenderInterface: MessageSenderInterface {
             fatalError("no mock for `sendMessageMessage`")
         }
 
-        try await mock(message)            
+        try await mock(message)
     }
 
 }
@@ -281,7 +409,7 @@ public class MockQuickSyncObserverInterface: QuickSyncObserverInterface {
             fatalError("no mock for `waitForQuickSyncToFinish`")
         }
 
-        await mock()            
+        await mock()
     }
 
 }
@@ -309,7 +437,12 @@ public class MockSessionEstablisherInterface: SessionEstablisherInterface {
             fatalError("no mock for `establishSessionWithApiVersion`")
         }
 
-        try await mock(clients, apiVersion)            
+        try await mock(clients, apiVersion)
     }
 
 }
+
+// swiftlint:enable variable_name
+// swiftlint:enable line_length
+// swiftlint:enable vertical_whitespace
+// swiftlint:enable superfluous_disable_command
