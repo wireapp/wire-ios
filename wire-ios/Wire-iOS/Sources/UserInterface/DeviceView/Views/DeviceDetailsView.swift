@@ -84,11 +84,13 @@ struct DeviceDetailsView: View {
             .background(SemanticColors.View.backgroundDefault.swiftUIColor)
             .environment(\.defaultMinListHeaderHeight, ViewConstants.Header.Height.minimum)
             .listStyle(.plain)
-            .overlay {
-                if viewModel.isActionInProgress {
-                    SwiftUI.ProgressView()
-                }
-            }
+            .overlay(
+                content: {
+                        if viewModel.isActionInProgress {
+                            SwiftUI.ProgressView()
+                        }
+                    }
+            )
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
