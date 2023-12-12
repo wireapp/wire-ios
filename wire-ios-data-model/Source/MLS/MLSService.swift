@@ -20,6 +20,7 @@ import Foundation
 import WireCoreCrypto
 import Combine
 
+// sourcery: AutoMockable
 public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptionServiceInterface {
 
     func uploadKeyPackagesIfNeeded()
@@ -59,12 +60,12 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
     func generateConferenceInfo(
         parentGroupID: MLSGroupID,
         subconversationGroupID: MLSGroupID
-    ) throws -> MLSConferenceInfo
+    ) async throws -> MLSConferenceInfo
 
     func onConferenceInfoChange(
         parentGroupID: MLSGroupID,
         subConversationGroupID: MLSGroupID
-    ) -> AnyPublisher<MLSConferenceInfo, Never>
+    ) -> AsyncThrowingStream<MLSConferenceInfo, Error>
 
     func leaveSubconversationIfNeeded(
         parentQualifiedID: QualifiedID,
@@ -146,6 +147,8 @@ public final class MLSService: MLSServiceInterface {
     // The number of days the backend will hold a message.
 
     private static let backendMessageHoldTimeInDays: UInt = 28
+
+    private static let epochChangeBufferSize: Int = 1000
 
     weak var delegate: MLSServiceDelegate?
 
@@ -283,7 +286,7 @@ public final class MLSService: MLSServiceInterface {
     public func generateConferenceInfo(
         parentGroupID: MLSGroupID,
         subconversationGroupID: MLSGroupID
-    ) throws -> MLSConferenceInfo {
+    ) async throws -> MLSConferenceInfo {
         do {
             logger.info("generating conference info")
 
@@ -346,15 +349,21 @@ public final class MLSService: MLSServiceInterface {
     public func onConferenceInfoChange(
         parentGroupID: MLSGroupID,
         subConversationGroupID: MLSGroupID
-    ) -> AnyPublisher<MLSConferenceInfo, Never> {
-        return onEpochChanged().filter {
-            $0.isOne(of: parentGroupID, subConversationGroupID)
-        }.compactMap { [weak self] _ in
-            try? self?.generateConferenceInfo(
-                parentGroupID: parentGroupID,
-                subconversationGroupID: subConversationGroupID
-            )
-        }.eraseToAnyPublisher()
+    ) -> AsyncThrowingStream<MLSConferenceInfo, Error> {
+        var sequence = onEpochChanged()
+            .buffer(size: Self.epochChangeBufferSize, prefetch: .keepFull, whenFull: .dropOldest)
+            .filter({ $0.isOne(of: parentGroupID, subConversationGroupID) })
+            .values
+            .compactMap({ [weak self] _ in
+                try await self?.generateConferenceInfo(
+                    parentGroupID: parentGroupID,
+                    subconversationGroupID: subConversationGroupID
+                )
+            }).makeAsyncIterator()
+
+        return AsyncThrowingStream {
+            try await sequence.next()
+        }
     }
 
     // MARK: - Update key material
@@ -403,7 +412,7 @@ public final class MLSService: MLSServiceInterface {
             Logging.mls.info("updating key material for group (\(groupID.safeForLoggingDescription))")
             let events = try await mlsActionExecutor.updateKeyMaterial(for: groupID)
             staleKeyMaterialDetector.keyingMaterialUpdated(for: groupID)
-            conversationEventProcessor.processConversationEvents(events)
+            await conversationEventProcessor.processConversationEvents(events)
         } catch {
             Logging.mls.warn("failed to update key material for group (\(groupID.safeForLoggingDescription)): \(String(describing: error))")
             throw error
@@ -509,7 +518,7 @@ public final class MLSService: MLSServiceInterface {
             }
 
             let events = try await mlsActionExecutor.addMembers(invitees, to: groupID)
-            conversationEventProcessor.processConversationEvents(events)
+            await conversationEventProcessor.processConversationEvents(events)
         } catch {
             logger.warn("failed to add members to group (\(groupID.safeForLoggingDescription)): \(String(describing: error))")
             throw error
@@ -572,7 +581,7 @@ public final class MLSService: MLSServiceInterface {
             guard !clientIds.isEmpty else { throw MLSRemoveParticipantsError.noClientsToRemove }
             let clientIds = clientIds.compactMap { $0.rawValue.utf8Data?.bytes }
             let events = try await mlsActionExecutor.removeClients(clientIds, from: groupID)
-            conversationEventProcessor.processConversationEvents(events)
+            await conversationEventProcessor.processConversationEvents(events)
         } catch {
             logger.warn("failed to remove members from group (\(groupID.safeForLoggingDescription)): \(String(describing: error))")
             throw error
@@ -1101,7 +1110,7 @@ public final class MLSService: MLSServiceInterface {
                 in: context.notificationContext
             )
 
-            conversationEventProcessor.processConversationEvents(updateEvents)
+            await conversationEventProcessor.processConversationEvents(updateEvents)
 
         } catch let error {
             logger.warn("failed to send proposal in group (\(groupID.safeForLoggingDescription)): \(String(describing: error))")
@@ -1188,7 +1197,7 @@ public final class MLSService: MLSServiceInterface {
                 }
             }
 
-            conversationEventProcessor.processConversationEvents(updateEvents)
+            await conversationEventProcessor.processConversationEvents(updateEvents)
             logger.info("success: joined group with external commit (\(logInfo))")
 
         } catch {
@@ -1361,7 +1370,7 @@ public final class MLSService: MLSServiceInterface {
         do {
             logger.info("committing pending proposals in: \(groupID.safeForLoggingDescription)")
             let events = try await mlsActionExecutor.commitPendingProposals(in: groupID)
-            conversationEventProcessor.processConversationEvents(events)
+            await conversationEventProcessor.processConversationEvents(events)
             clearPendingProposalCommitDate(for: groupID)
             delegate?.mlsServiceDidCommitPendingProposal(for: groupID)
         } catch MLSActionExecutor.Error.noPendingProposals {
@@ -1834,10 +1843,11 @@ extension Invitee {
 
 }
 
+// sourcery: AutoMockable
 public protocol ConversationEventProcessorProtocol {
 
-    func processConversationEvents(_ events: [ZMUpdateEvent])
-
+    func processConversationEvents(_ events: [ZMUpdateEvent]) async
+    func processPayload(_ payload: ZMTransportData)
 }
 
 private extension UserDefaults {
@@ -1896,6 +1906,9 @@ extension CiphersuiteName {
 
         case .mls256Dhkemp384Aes256gcmSha384P384:
             return 7
+
+        @unknown default:
+            fatalError("unsupported value of 'CiphersuiteName'!")
         }
     }
 

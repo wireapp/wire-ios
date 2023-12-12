@@ -17,18 +17,19 @@
 //
 
 import Foundation
+import WireDataModelSupport
 import XCTest
 @testable import WireDataModel
 
 class RemoveLocalConversationUseCaseTests: ZMBaseManagedObjectTest {
 
     private var sut: RemoveLocalConversationUseCase!
-    private var mockMLSService: MockMLSService!
+    private var mockMLSService: MockMLSServiceInterface!
 
     override func setUp() {
         super.setUp()
         sut = RemoveLocalConversationUseCase()
-        mockMLSService = MockMLSService()
+        mockMLSService = .init()
         syncMOC.mlsService = mockMLSService
     }
 
@@ -44,12 +45,13 @@ class RemoveLocalConversationUseCaseTests: ZMBaseManagedObjectTest {
         let conversation = ZMConversation.insertNewObject(in: syncMOC)
         conversation.messageProtocol = .mls
         conversation.mlsGroupID = groupID
+        mockMLSService.wipeGroup_MockMethod = { _ in }
 
         // When
         try sut.invoke(with: conversation, syncContext: syncMOC)
 
         // Then
         XCTAssertTrue(conversation.isDeletedRemotely)
-        XCTAssertEqual(mockMLSService.calls.wipeGroup, [groupID])
+        XCTAssertEqual(mockMLSService.wipeGroup_Invocations, [groupID])
     }
 }

@@ -27,10 +27,10 @@ protocol ConversationGuestOptionsViewModelConfiguration: AnyObject {
     var isConversationFromSelfTeam: Bool { get }
     var allowGuestsChangedHandler: ((Bool) -> Void)? { get set }
     var guestLinkFeatureStatusChangedHandler: ((GuestLinkFeatureStatus) -> Void)? { get set }
-    func setAllowGuests(_ allowGuests: Bool, completion: @escaping (VoidResult) -> Void)
+    func setAllowGuests(_ allowGuests: Bool, completion: @escaping (Swift.Result<Void, Error>) -> Void)
     func createConversationLink(completion: @escaping (Result<String>) -> Void)
     func fetchConversationLink(completion: @escaping (Result<String?>) -> Void)
-    func deleteLink(completion: @escaping (VoidResult) -> Void)
+    func deleteLink(completion: @escaping (Swift.Result<Void, Error>) -> Void)
 }
 
 protocol ConversationGuestOptionsViewModelDelegate: AnyObject {
@@ -186,7 +186,7 @@ final class ConversationGuestOptionsViewModel {
     /// - Parameter view: the source view which triggers shareLink action
     private func shareLink(view: UIView? = nil) {
         guard let link = link else { return }
-        let message = "guest_room.share.message".localized(args: link)
+        let message = L10n.Localizable.GuestRoom.Share.message(link)
         delegate?.viewModel(self, wantsToShareMessage: message, sourceView: view)
     }
 

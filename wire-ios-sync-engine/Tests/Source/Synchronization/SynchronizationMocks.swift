@@ -255,15 +255,15 @@ public class MockSyncStatus: SyncStatus {
         didCallFinishQuickSync = true
     }
 
-    public func didRegisterSelfUserClient(_ userClient: UserClient!) {
+    public func didRegisterSelfUserClient(_ userClient: UserClient) {
         registeredUserClient = userClient
     }
 
-    public func didFailToRegisterSelfUserClient(error: Error!) {
+    public func didFailToRegisterSelfUserClient(error: Error) {
         didCallFailRegisterUserClient = true
     }
 
-    public func didDeleteSelfUserClient(error: Error!) {
+    public func didDeleteSelfUserClient(error: Error) {
         didCallDeleteUserClient = true
     }
 }
@@ -329,6 +329,17 @@ public class MockEventConsumer: NSObject, ZMEventConsumer {
         addTrackedObjectsCalled = true
     }
 
+}
+
+@objcMembers
+public class MockEventAsyncConsumer: NSObject, ZMEventAsyncConsumer {
+
+    public var eventsProcessed: [ZMUpdateEvent] = []
+    public var processEventsCalled: Bool = false
+    public func processEvents(_ events: [WireTransport.ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) async {
+        processEventsCalled = true
+        eventsProcessed.append(contentsOf: events)
+    }
 }
 
 @objcMembers

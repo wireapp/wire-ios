@@ -1,5 +1,26 @@
 // Generated using Sourcery 2.1.2 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
+
+//
+// Wire
+// Copyright (C) 2023 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
+
+// swiftlint:disable superfluous_disable_command
+// swiftlint:disable vertical_whitespace
 // swiftlint:disable line_length
 // swiftlint:disable variable_name
 
@@ -77,54 +98,6 @@ public class MockAPIProviderInterface: APIProviderInterface {
     }
 
 }
-public class MockConversationParticipantsServiceInterface: ConversationParticipantsServiceInterface {
-
-    // MARK: - Life cycle
-
-    public init() {}
-
-
-    // MARK: - addParticipants
-
-    public var addParticipantsTo_Invocations: [(users: [ZMUser], conversation: ZMConversation)] = []
-    public var addParticipantsTo_MockError: Error?
-    public var addParticipantsTo_MockMethod: (([ZMUser], ZMConversation) async throws -> Void)?
-
-    public func addParticipants(_ users: [ZMUser], to conversation: ZMConversation) async throws {
-        addParticipantsTo_Invocations.append((users: users, conversation: conversation))
-
-        if let error = addParticipantsTo_MockError {
-            throw error
-        }
-
-        guard let mock = addParticipantsTo_MockMethod else {
-            fatalError("no mock for `addParticipantsTo`")
-        }
-
-        try await mock(users, conversation)
-    }
-
-    // MARK: - removeParticipant
-
-    public var removeParticipantFrom_Invocations: [(user: ZMUser, conversation: ZMConversation)] = []
-    public var removeParticipantFrom_MockError: Error?
-    public var removeParticipantFrom_MockMethod: ((ZMUser, ZMConversation) async throws -> Void)?
-
-    public func removeParticipant(_ user: ZMUser, from conversation: ZMConversation) async throws {
-        removeParticipantFrom_Invocations.append((user: user, conversation: conversation))
-
-        if let error = removeParticipantFrom_MockError {
-            throw error
-        }
-
-        guard let mock = removeParticipantFrom_MockMethod else {
-            fatalError("no mock for `removeParticipantFrom`")
-        }
-
-        try await mock(user, conversation)
-    }
-
-}
 public class MockConversationServiceInterface: ConversationServiceInterface {
 
     // MARK: - Life cycle
@@ -162,81 +135,19 @@ public class MockConversationServiceInterface: ConversationServiceInterface {
         mock(qualifiedID, completion)
     }
 
-}
-class MockMLSClientIDsProviding: MLSClientIDsProviding {
+    // MARK: - syncConversation
 
-    // MARK: - Life cycle
+    public var syncConversationQualifiedID_Invocations: [QualifiedID] = []
+    public var syncConversationQualifiedID_MockMethod: ((QualifiedID) async -> Void)?
 
+    public func syncConversation(qualifiedID: QualifiedID) async {
+        syncConversationQualifiedID_Invocations.append(qualifiedID)
 
-
-    // MARK: - fetchUserClients
-
-    var fetchUserClientsForIn_Invocations: [(userID: QualifiedID, context: NotificationContext)] = []
-    var fetchUserClientsForIn_MockError: Error?
-    var fetchUserClientsForIn_MockMethod: ((QualifiedID, NotificationContext) async throws -> [MLSClientID])?
-    var fetchUserClientsForIn_MockValue: [MLSClientID]?
-
-    func fetchUserClients(for userID: QualifiedID, in context: NotificationContext) async throws -> [MLSClientID] {
-        fetchUserClientsForIn_Invocations.append((userID: userID, context: context))
-
-        if let error = fetchUserClientsForIn_MockError {
-            throw error
+        guard let mock = syncConversationQualifiedID_MockMethod else {
+            fatalError("no mock for `syncConversationQualifiedID`")
         }
 
-        if let mock = fetchUserClientsForIn_MockMethod {
-            return try await mock(userID, context)
-        } else if let mock = fetchUserClientsForIn_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `fetchUserClientsForIn`")
-        }
-    }
-
-}
-class MockMLSConversationParticipantsServiceInterface: MLSConversationParticipantsServiceInterface {
-
-    // MARK: - Life cycle
-
-
-
-    // MARK: - addParticipants
-
-    var addParticipantsTo_Invocations: [(users: [ZMUser], conversation: ZMConversation)] = []
-    var addParticipantsTo_MockError: Error?
-    var addParticipantsTo_MockMethod: (([ZMUser], ZMConversation) async throws -> Void)?
-
-    func addParticipants(_ users: [ZMUser], to conversation: ZMConversation) async throws {
-        addParticipantsTo_Invocations.append((users: users, conversation: conversation))
-
-        if let error = addParticipantsTo_MockError {
-            throw error
-        }
-
-        guard let mock = addParticipantsTo_MockMethod else {
-            fatalError("no mock for `addParticipantsTo`")
-        }
-
-        try await mock(users, conversation)
-    }
-
-    // MARK: - removeParticipant
-
-    var removeParticipantFrom_Invocations: [(user: ZMUser, conversation: ZMConversation)] = []
-    var removeParticipantFrom_MockError: Error?
-    var removeParticipantFrom_MockMethod: ((ZMUser, ZMConversation) async throws -> Void)?
-
-    func removeParticipant(_ user: ZMUser, from conversation: ZMConversation) async throws {
-        removeParticipantFrom_Invocations.append((user: user, conversation: conversation))
-
-        if let error = removeParticipantFrom_MockError {
-            throw error
-        }
-
-        guard let mock = removeParticipantFrom_MockMethod else {
-            fatalError("no mock for `removeParticipantFrom`")
-        }
-
-        try await mock(user, conversation)
+        await mock(qualifiedID)
     }
 
 }
@@ -407,53 +318,6 @@ public class MockPrekeyPayloadProcessorInterface: PrekeyPayloadProcessorInterfac
     }
 
 }
-class MockProteusConversationParticipantsServiceInterface: ProteusConversationParticipantsServiceInterface {
-
-    // MARK: - Life cycle
-
-
-
-    // MARK: - addParticipants
-
-    var addParticipantsTo_Invocations: [(users: [ZMUser], conversation: ZMConversation)] = []
-    var addParticipantsTo_MockError: Error?
-    var addParticipantsTo_MockMethod: (([ZMUser], ZMConversation) async throws -> Void)?
-
-    func addParticipants(_ users: [ZMUser], to conversation: ZMConversation) async throws {
-        addParticipantsTo_Invocations.append((users: users, conversation: conversation))
-
-        if let error = addParticipantsTo_MockError {
-            throw error
-        }
-
-        guard let mock = addParticipantsTo_MockMethod else {
-            fatalError("no mock for `addParticipantsTo`")
-        }
-
-        try await mock(users, conversation)
-    }
-
-    // MARK: - removeParticipant
-
-    var removeParticipantFrom_Invocations: [(user: ZMUser, conversation: ZMConversation)] = []
-    var removeParticipantFrom_MockError: Error?
-    var removeParticipantFrom_MockMethod: ((ZMUser, ZMConversation) async throws -> Void)?
-
-    func removeParticipant(_ user: ZMUser, from conversation: ZMConversation) async throws {
-        removeParticipantFrom_Invocations.append((user: user, conversation: conversation))
-
-        if let error = removeParticipantFrom_MockError {
-            throw error
-        }
-
-        guard let mock = removeParticipantFrom_MockMethod else {
-            fatalError("no mock for `removeParticipantFrom`")
-        }
-
-        try await mock(user, conversation)
-    }
-
-}
 public class MockQuickSyncObserverInterface: QuickSyncObserverInterface {
 
     // MARK: - Life cycle
@@ -505,25 +369,8 @@ public class MockSessionEstablisherInterface: SessionEstablisherInterface {
     }
 
 }
-class MockUserProfilePayloadProcessing: UserProfilePayloadProcessing {
 
-    // MARK: - Life cycle
-
-
-
-    // MARK: - updateUserProfiles
-
-    var updateUserProfilesFromIn_Invocations: [(userProfiles: Payload.UserProfiles, context: NSManagedObjectContext)] = []
-    var updateUserProfilesFromIn_MockMethod: ((Payload.UserProfiles, NSManagedObjectContext) -> Void)?
-
-    func updateUserProfiles(from userProfiles: Payload.UserProfiles, in context: NSManagedObjectContext) {
-        updateUserProfilesFromIn_Invocations.append((userProfiles: userProfiles, context: context))
-
-        guard let mock = updateUserProfilesFromIn_MockMethod else {
-            fatalError("no mock for `updateUserProfilesFromIn`")
-        }
-
-        mock(userProfiles, context)
-    }
-
-}
+// swiftlint:enable variable_name
+// swiftlint:enable line_length
+// swiftlint:enable vertical_whitespace
+// swiftlint:enable superfluous_disable_command

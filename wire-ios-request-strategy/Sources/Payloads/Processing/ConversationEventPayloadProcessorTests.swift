@@ -16,19 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireDataModelSupport
 import XCTest
+
 @testable import WireRequestStrategy
 
 final class ConversationEventPayloadProcessorTests: MessagingTestBase {
 
     var sut: ConversationEventPayloadProcessor!
-    var mockMLSService: MockMLSService!
+    var mockMLSService: MockMLSServiceInterface!
     var mockRemoveLocalConversation: MockLocalConversationRemovalUseCase!
 
     override func setUp() {
         super.setUp()
 
-        mockMLSService = MockMLSService()
+        mockMLSService = .init()
         mockRemoveLocalConversation = MockLocalConversationRemovalUseCase()
 
         sut = ConversationEventPayloadProcessor(
@@ -904,7 +906,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
 
     func testUpdateOrCreate_withMLSSelfGroupEpoch0_callsMLSServiceCreateGroup() {
         let didCallCreateGroup = XCTestExpectation(description: "didCallCreateGroup")
-        mockMLSService.mockCreateSelfGroup = { _ in
+        mockMLSService.createSelfGroupFor_MockMethod = { _ in
             didCallCreateGroup.fulfill()
         }
 
@@ -912,20 +914,21 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
         wait(for: [didCallCreateGroup], timeout: 0.5)
 
         // then
-        XCTAssertFalse(mockMLSService.calls.createSelfGroup.isEmpty)
+        XCTAssertFalse(mockMLSService.createSelfGroupFor_Invocations.isEmpty)
     }
 
     func testUpdateOrCreate_withMLSSelfGroupEpoch1_callsMLSServiceJoinGroup() {
         let didJoinGroup = XCTestExpectation(description: "didJoinGroup")
-        mockMLSService.mockJoinGroup = { _ in
+        mockMLSService.joinGroupWith_MockMethod = { _ in
             didJoinGroup.fulfill()
         }
+        mockMLSService.conversationExistsGroupID_MockValue = false
 
         internalTest_UpdateOrCreate_withMLSSelfGroupEpoch(epoch: 1)
         wait(for: [didJoinGroup], timeout: 0.5)
 
         // then
-        XCTAssertFalse(mockMLSService.calls.joinGroup.isEmpty)
+        XCTAssertFalse(mockMLSService.joinGroupWith_Invocations.isEmpty)
     }
 
     func internalTest_UpdateOrCreate_withMLSSelfGroupEpoch(epoch: UInt?) {

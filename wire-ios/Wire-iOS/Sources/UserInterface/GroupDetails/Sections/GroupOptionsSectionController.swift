@@ -81,7 +81,7 @@ final class GroupOptionsSectionController: GroupDetailsSectionController {
     // MARK: - Collection View
 
     override var sectionTitle: String {
-        return "participants.section.settings".localized(uppercased: true)
+        return L10n.Localizable.Participants.Section.settings.localizedUppercase
     }
 
     override func prepareForUse(in collectionView: UICollectionView?) {

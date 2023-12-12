@@ -36,6 +36,9 @@ public protocol ConversationServiceInterface {
         completion: @escaping () -> Void
     )
 
+    func syncConversation(
+        qualifiedID: QualifiedID) async
+
 }
 
 public enum ConversationCreationFailure: Error {
@@ -290,4 +293,13 @@ public final class ConversationService: ConversationServiceInterface {
         }
     }
 
+    public func syncConversation(
+        qualifiedID: QualifiedID
+    ) async {
+        await withCheckedContinuation { continuation in
+            syncConversation(qualifiedID: qualifiedID) {
+                continuation.resume()
+            }
+        }
+    }
 }

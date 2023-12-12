@@ -19,32 +19,13 @@
 import Foundation
 @testable import WireDataModel
 
-extension ZMConversationTestsBase {
-    @discardableResult
-    @objc(insertConversationWithUnread:)
-    func insertConversation(withUnread hasUnread: Bool) -> ZMConversation {
-        let messageDate = Date(timeIntervalSince1970: 230000000)
-        let conversation = ZMConversation.insertNewObject(in: syncMOC)
-        conversation.conversationType = .oneOnOne
-        conversation.lastServerTimeStamp = messageDate
-        if hasUnread {
-            let message = ZMClientMessage(nonce: NSUUID.create(), managedObjectContext: syncMOC)
-            message.serverTimestamp = messageDate
-            conversation.lastReadServerTimeStamp = messageDate.addingTimeInterval(-1000)
-            conversation.append(message)
-        }
-        syncMOC.saveOrRollback()
-        return conversation
-    }
-}
-
 final class ZMConversationTests_Knock: ZMConversationTestsBase {
     func testThatItCanInsertAKnock() throws {
-        try syncMOC.performGroupedAndWait { syncMOC in
+        try syncMOC.performGroupedAndWait { context in
 
             // given
-            let conversation = syncMOC.createConversationWithMessages()
-            let selfUser = ZMUser.selfUser(in: syncMOC)
+            let conversation = self.createConversationWithMessages(context: context)
+            let selfUser = ZMUser.selfUser(in: context)
 
             // when
             let knock = try XCTUnwrap(conversation.appendKnock() as? ZMMessage)
@@ -57,17 +38,15 @@ final class ZMConversationTests_Knock: ZMConversationTestsBase {
         }
 
     }
-}
 
-extension NSManagedObjectContext {
-
-    fileprivate func createConversationWithMessages() -> ZMConversation {
-        let conversation = ZMConversation.insertNewObject(in: self)
+    private func createConversationWithMessages(context: NSManagedObjectContext) -> ZMConversation? {
+        let conversation = ZMConversation.insertNewObject(in: context)
         conversation.remoteIdentifier = NSUUID.create()
-        for text in ["A", "B", "C", "D", "E"] {
-            conversation._appendText(content: text)
+        for (index, text) in ["A", "B", "C", "D", "E"].enumerated() {
+            let conversationMessage = try? conversation.appendText(content: text) as? ZMClientMessage
+            conversationMessage?.updateServerTimestamp(with: TimeInterval(index))
         }
-        XCTAssert(saveOrRollback())
+        XCTAssert(context.saveOrRollback())
         return conversation
     }
 }
