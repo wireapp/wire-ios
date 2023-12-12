@@ -81,7 +81,7 @@ class MLSConversationParticipantsServiceTests: MessagingTestBase {
         // THEN
         // assert call to addMembersToConversation
         let addMembersInvocation = try XCTUnwrap(
-            mockMLSService.calls.addMembers.first,
+            mockMLSService.addMembersToConversationWithFor_Invocations.first,
             "expected invocation"
         )
 
@@ -108,7 +108,7 @@ class MLSConversationParticipantsServiceTests: MessagingTestBase {
             MLSUser(from: user)
         }
 
-        mockMLSService.addMembersToConversationMock = { _, _ in
+        mockMLSService.addMembersToConversationWithFor_MockMethod = { _, _ in
             throw MLSService.MLSAddMembersError.failedToClaimKeyPackages(users: [mlsUser])
         }
 
@@ -121,7 +121,7 @@ class MLSConversationParticipantsServiceTests: MessagingTestBase {
 
     func test_AddParticipants_RethrowsErrors() async {
         // GIVEN
-        mockMLSService.addMembersToConversationMock = { _, _ in
+        mockMLSService.addMembersToConversationWithFor_MockMethod = { _, _ in
             throw ParticipantsError.genericError
         }
 
@@ -159,11 +159,11 @@ class MLSConversationParticipantsServiceTests: MessagingTestBase {
 
         // assert calls to removeMembers
         let removeMembersInvocation = try XCTUnwrap(
-            mockMLSService.calls.removeMembers.first,
+            mockMLSService.removeMembersFromConversationWithFor_Invocations.first,
             "expected invocation"
         )
 
-        XCTAssertEqual(removeMembersInvocation.clientIDs, clientIDs)
+        XCTAssertEqual(removeMembersInvocation.clientIds, clientIDs)
         XCTAssertEqual(removeMembersInvocation.groupID, groupID)
     }
 
@@ -186,7 +186,7 @@ class MLSConversationParticipantsServiceTests: MessagingTestBase {
             return [MLSClientID.random()]
         }
 
-        mockMLSService.removeMembersFromConversationMock = { _, _ in
+        mockMLSService.removeMembersFromConversationWithFor_MockMethod = { _, _ in
             throw ParticipantsError.genericError
         }
 
