@@ -169,11 +169,11 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         )
 
         // expectations
-        let expectation = XCTestExpectation(description: "Fetch backend public keys")
-        didFinishInitializationExpectation = self.expectation(description: "did finish initialization")
+        let fetchBackendPublicKeysExpectation = XCTestExpectation(description: "Fetch backend public keys")
+        didFinishInitializationExpectation = XCTestExpectation(description: "did finish initialization")
 
         mockActionsProvider.fetchBackendPublicKeysIn_MockMethod = { _ in
-            expectation.fulfill()
+            fetchBackendPublicKeysExpectation.fulfill()
             return keys
         }
 
@@ -185,91 +185,85 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             staleKeyMaterialDetector: mockStaleMLSKeyDetector,
             userDefaults: userDefaultsTestSuite,
             actionsProvider: mockActionsProvider,
+            delegate: self,
             syncStatus: mockSyncStatus
         )
 
-        // wait for `MLSService.init`'s async operations
-        _ = waitForCustomExpectations(withTimeout: 5)
-
         // Then
-        wait(for: [expectation], timeout: 0.5)
+        wait(for: [fetchBackendPublicKeysExpectation, didFinishInitializationExpectation], timeout: 0.5)
         XCTAssertEqual(sut.backendPublicKeys, keys)
     }
 
     // MARK: - Conference info
 
-    func test_GenerateConferenceInfo_IsSuccessful() async {
-        do {
-            // Given
-            let parentGroupID = MLSGroupID.random()
-            let subconversationGroupID = MLSGroupID.random()
-            let secretKey = Data.random()
-            let epoch: UInt64 = 1
+    func test_GenerateConferenceInfo_IsSuccessful() async throws {
+        // Given
+        let parentGroupID = MLSGroupID.random()
+        let subconversationGroupID = MLSGroupID.random()
+        let secretKey = Data.random()
+        let epoch: UInt64 = 1
 
-            let member1 = MLSClientID.random()
-            let member2 = MLSClientID.random()
-            let member3 = MLSClientID.random()
+        let member1 = MLSClientID.random()
+        let member2 = MLSClientID.random()
+        let member3 = MLSClientID.random()
 
-            var mockExportSecretKeyCount = 0
-            mockCoreCrypto.mockExportSecretKey = { _, _ in
-                mockExportSecretKeyCount += 1
-                return secretKey.bytes
-            }
-
-            var mockConversationEpochCount = 0
-            mockCoreCrypto.mockConversationEpoch = { _ in
-                mockConversationEpochCount += 1
-                return epoch
-            }
-
-            var mockGetClientIDsCount = 0
-            mockCoreCrypto.mockGetClientIds = { groupID in
-                mockGetClientIDsCount += 1
-
-                switch groupID {
-                case parentGroupID.bytes:
-                    return [member1, member2, member3].compactMap {
-                        $0.rawValue.utf8Data?.bytes
-                    }
-
-                case subconversationGroupID.bytes:
-                    return [member1, member2].compactMap {
-                        $0.rawValue.utf8Data?.bytes
-                    }
-
-                default:
-                    return []
-                }
-            }
-
-            // wait for `MLSService.init`'s async operations
-            _ = waitForCustomExpectations(withTimeout: 5)
-
-            // When
-            let conferenceInfo = try await sut.generateConferenceInfo(
-                parentGroupID: parentGroupID,
-                subconversationGroupID: subconversationGroupID
-            )
-
-            // Then
-            XCTAssertEqual(mockExportSecretKeyCount, 1)
-            XCTAssertEqual(mockConversationEpochCount, 1)
-            XCTAssertEqual(mockGetClientIDsCount, 2)
-
-            let expectedConferenceInfo = MLSConferenceInfo(
-                epoch: epoch,
-                keyData: secretKey,
-                members: [
-                    MLSConferenceInfo.Member(id: member1, isInSubconversation: true),
-                    MLSConferenceInfo.Member(id: member2, isInSubconversation: true),
-                    MLSConferenceInfo.Member(id: member3, isInSubconversation: false)
-                ]
-            )
-
-            XCTAssertEqual(conferenceInfo, expectedConferenceInfo)
-        } catch {
-            XCTFail("unexpected error: \(String(describing: error))")
+        var mockExportSecretKeyCount = 0
+        mockCoreCrypto.mockExportSecretKey = { _, _ in
+            mockExportSecretKeyCount += 1
+            return secretKey.bytes
         }
+
+        var mockConversationEpochCount = 0
+        mockCoreCrypto.mockConversationEpoch = { _ in
+            mockConversationEpochCount += 1
+            return epoch
+        }
+
+        var mockGetClientIDsCount = 0
+        mockCoreCrypto.mockGetClientIds = { groupID in
+            mockGetClientIDsCount += 1
+
+            switch groupID {
+            case parentGroupID.bytes:
+                return [member1, member2, member3].compactMap {
+                    $0.rawValue.utf8Data?.bytes
+                }
+
+            case subconversationGroupID.bytes:
+                return [member1, member2].compactMap {
+                    $0.rawValue.utf8Data?.bytes
+                }
+
+            default:
+                return []
+            }
+        }
+
+        // wait for `MLSService.init`'s async operations
+        _ = waitForCustomExpectations(withTimeout: 5)
+
+        // When
+        let conferenceInfo = try await sut.generateConferenceInfo(
+            parentGroupID: parentGroupID,
+            subconversationGroupID: subconversationGroupID
+        )
+
+        // Then
+        XCTAssertEqual(mockExportSecretKeyCount, 1)
+        XCTAssertEqual(mockConversationEpochCount, 1)
+        XCTAssertEqual(mockGetClientIDsCount, 2)
+
+        let expectedConferenceInfo = MLSConferenceInfo(
+            epoch: epoch,
+            keyData: secretKey,
+            members: [
+                MLSConferenceInfo.Member(id: member1, isInSubconversation: true),
+                MLSConferenceInfo.Member(id: member2, isInSubconversation: true),
+                MLSConferenceInfo.Member(id: member3, isInSubconversation: false)
+            ]
+        )
+
+        XCTAssertEqual(conferenceInfo, expectedConferenceInfo)
     }
 
     typealias ConferenceInfoError = MLSService.MLSConferenceInfoError
@@ -510,7 +504,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         XCTAssertEqual(processConversationEventsCalls[0], [updateEvent])
     }
 
-    func test_CommitPendingProposals_BeforeAddingMembersToConversation_Successfully() async {
+    func test_CommitPendingProposals_BeforeAddingMembersToConversation_Successfully() async throws {
         // Given
         let groupID = MLSGroupID.random()
         var conversation: ZMConversation!
@@ -2717,7 +2711,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         let groupID = MLSGroupID.random()
         var conversation: ZMConversation!
 
-        uiMOC.performAndWait {
+        await uiMOC.perform { [self] in
             // A group with pending proposal in the future
             conversation = createConversation(in: uiMOC)
             conversation.mlsGroupID = groupID
@@ -2749,9 +2743,6 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             XCTAssertEqual(id, groupID)
             return []
         }
-
-        // wait for `MLSService.init`'s async operations
-        _ = waitForCustomExpectations(withTimeout: 5)
 
         // WHEN
         try await sut.joinNewGroup(with: groupID)
@@ -2792,9 +2783,6 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             XCTAssertEqual(id, groupID)
             return []
         }
-
-        // wait for `MLSService.init`'s async operations
-        _ = waitForCustomExpectations(withTimeout: 5)
 
         // WHEN
         _ = try await sut.joinNewGroup(with: groupID)
