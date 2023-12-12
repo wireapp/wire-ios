@@ -63,12 +63,15 @@ final class AppStateCalculatorTests: XCTestCase {
     }
 
     func testThatAppStateChanges_OnDidFailToLoadDatabase() {
+        enum DBError: Error {
+            case migrationError
+        }
         // WHEN
         sut.applicationDidBecomeActive()
-        sut.sessionManagerDidFailToLoadDatabase()
+        sut.sessionManagerDidFailToLoadDatabase(error: DBError.migrationError)
 
         // THEN
-        XCTAssertEqual(sut.appState, .databaseFailure)
+        XCTAssertEqual(sut.appState, .databaseFailure(reason: DBError.migrationError))
         XCTAssertTrue(delegate.wasNotified)
     }
 

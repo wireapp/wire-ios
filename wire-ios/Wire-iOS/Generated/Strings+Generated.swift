@@ -2717,16 +2717,19 @@ internal enum L10n {
     }
     internal enum Databaseloadingfailure {
       internal enum Alert {
-        /// Delete Database
-        internal static let deleteDatabase = L10n.tr("Localizable", "databaseloadingfailure.alert.delete_database", fallback: "Delete Database")
-        /// The database could not be loaded due to insufficient storage. Review your device storage usage and try again.
-        internal static let message = L10n.tr("Localizable", "databaseloadingfailure.alert.message", fallback: "The database could not be loaded due to insufficient storage. Review your device storage usage and try again.")
+        /// Clear my data and continue
+        internal static let deleteDatabase = L10n.tr("Localizable", "databaseloadingfailure.alert.delete_database", fallback: "Clear my data and continue")
+        /// The database could not be loaded.
+        ///  Error: %@
+        internal static func message(_ p1: Any) -> String {
+          return L10n.tr("Localizable", "databaseloadingfailure.alert.message", String(describing: p1), fallback: "The database could not be loaded.\n Error: %@")
+        }
         /// Retry
         internal static let retry = L10n.tr("Localizable", "databaseloadingfailure.alert.retry", fallback: "Retry")
-        /// Go to Settings
-        internal static let settings = L10n.tr("Localizable", "databaseloadingfailure.alert.settings", fallback: "Go to Settings")
-        /// Not Enough Storage
-        internal static let title = L10n.tr("Localizable", "databaseloadingfailure.alert.title", fallback: "Not Enough Storage")
+        /// Save my data
+        internal static let saveBackup = L10n.tr("Localizable", "databaseloadingfailure.alert.save-backup", fallback: "Save my data")
+        /// Update Data storage
+        internal static let title = L10n.tr("Localizable", "databaseloadingfailure.alert.title", fallback: "Update Data storage")
         internal enum DeleteDatabase {
           /// Continue
           internal static let `continue` = L10n.tr("Localizable", "databaseloadingfailure.alert.delete_database.continue", fallback: "Continue")
