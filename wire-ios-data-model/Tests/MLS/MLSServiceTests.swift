@@ -1617,7 +1617,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         )
 
         // Then
-        waitForCustomExpectations(withTimeout: 5)
+        _ = waitForCustomExpectations(withTimeout: 5)
 
         // Then we updated the key material.
         XCTAssertEqual(
@@ -1669,7 +1669,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
 
         // Expectation
-        keyMaterialUpdatedExpectation = self.expectation(description: "did update key material")
+        keyMaterialUpdatedExpectation = expectation(description: "did update key material")
 
         // Mock committing pending proposal.
         var mockCommitPendingProposalsArguments = [MLSGroupID]()

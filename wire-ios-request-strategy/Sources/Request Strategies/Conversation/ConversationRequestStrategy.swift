@@ -739,7 +739,7 @@ class ConversationByIDListTranscoder: IdentifierObjectSyncTranscoder {
         }
     }
 
-    /// Query the backend if a converation is deleted or the self user has been removed
+    /// Query the backend if a conversation is deleted or the self user has been removed
     private func queryStatusForMissingConversations(_ conversations: Set<UUID>) {
         for conversationID in conversations {
             let conversation = ZMConversation.fetch(with: conversationID, in: context)
@@ -801,7 +801,7 @@ class ConversationByQualifiedIDListTranscoder: IdentifierObjectSyncTranscoder {
         }
     }
 
-    /// Query the backend if a converation is deleted or the self user has been removed
+    /// Query the backend if a conversation is deleted or the self user has been removed
     private func queryStatusForMissingConversations(_ conversations: [QualifiedID]) {
         for qualifiedID in conversations {
             let conversation = ZMConversation.fetch(with: qualifiedID.uuid, domain: qualifiedID.domain, in: context)

@@ -17,11 +17,12 @@
 //
 
 import Foundation
-@testable import WireDataModel
 import WireCoreCrypto
 import Combine
 
-class MockMLSActionExecutor: MLSActionExecutorProtocol {
+@testable import WireDataModel
+
+final class MockMLSActionExecutor: MLSActionExecutorProtocol {
 
     // MARK: - Add members
 

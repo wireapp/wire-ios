@@ -159,7 +159,7 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
                 else {
                     break
                 }
-                // TODO: this will become async as MLSService conversationExists will become async
+
                 await MLSEventProcessor.shared.process(
                     welcomeMessage: payload.data,
                     in: self.context
