@@ -17,7 +17,6 @@
 //
 
 import Foundation
-
 import XCTest
 import SwiftUI
 @testable import Wire
@@ -25,11 +24,9 @@ import SwiftUI
 final class E2eIdentityCertificateViewTests: ZMSnapshotTestCase {
 
     var sut: UIHostingController<E2EIdentityCertificateDetailsView>!
-    var kCertificate: String {
-        return "BEGIN CERTIFICATE\n---------\n"
-        + String(repeating: "abcedefghijklmnop", count: 100)
-        + "\n-------------\nEND Certificate"
-    }
+    lazy var kCertificate: String  = {
+        return .mockCertificate()
+    }()
 
     func setupSut(
         certificateDetails: String,

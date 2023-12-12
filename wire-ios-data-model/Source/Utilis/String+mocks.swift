@@ -18,7 +18,7 @@
 
 import Foundation
 
-extension String {
+public extension String {
 
     static func mockCertificate() -> String {
         "BEGIN CERTIFICATE\n-----------\n"
