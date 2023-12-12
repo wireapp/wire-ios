@@ -30,8 +30,30 @@ enum CoreDataMessagingMigratorError: Error {
     case unknownVersion
     case migrateStoreFailed(error: Error)
     case failedToForceWALCheckpointing
-    case failedToReplacePersistentStore(sourceURL: URL, targetURL: URL)
+    case failedToReplacePersistentStore(sourceURL: URL, targetURL: URL, underlyingError: Error)
     case failedToDestroyPersistentStore(storeURL: URL)
+}
+
+extension CoreDataMessagingMigratorError: LocalizedError {
+
+    var errorDescription: String? {
+        switch self {
+        case .missingStoreURL:
+            return "missingStoreURL"
+        case .missingFiles(let message):
+            return "missingFiles: \(message)"
+        case .unknownVersion:
+            return "unknownVersion"
+        case .migrateStoreFailed(let error):
+            return "migrateStoreFailed: \(error.localizedDescription)"
+        case .failedToForceWALCheckpointing:
+            return "failedToForceWALCheckpointing"
+        case .failedToReplacePersistentStore(let sourceURL, let targetURL, let underlyingError):
+            return "failedToReplacePersistentStore: \(underlyingError.localizedDescription). sourceURL: \(sourceURL). targetURL: \(targetURL)"
+        case .failedToDestroyPersistentStore(let storeURL):
+            return "failedToDestroyPersistentStore: \(storeURL)"
+        }
+    }
 }
 
 final class CoreDataMessagingMigrator: CoreDataMessagingMigratorProtocol {
@@ -180,7 +202,7 @@ final class CoreDataMessagingMigrator: CoreDataMessagingMigratorProtocol {
                 type: persistentStoreType
             )
         } catch {
-            throw CoreDataMessagingMigratorError.failedToReplacePersistentStore(sourceURL: sourceURL, targetURL: targetURL)
+            throw CoreDataMessagingMigratorError.failedToReplacePersistentStore(sourceURL: sourceURL, targetURL: targetURL, underlyingError: error)
         }
     }
 

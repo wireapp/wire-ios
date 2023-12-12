@@ -49,9 +49,6 @@
         "value" : "MockTransportRequests"
       }
     ],
-    "mallocStackLoggingOptions" : {
-      "loggingType" : "liveAllocations"
-    },
     "targetForVariableExpansion" : {
       "containerPath" : "container:WireSyncEngine.xcodeproj",
       "identifier" : "549815921A43232400A7CE2E",
