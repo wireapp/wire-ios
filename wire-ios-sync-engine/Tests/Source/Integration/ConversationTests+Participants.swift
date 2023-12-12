@@ -17,10 +17,11 @@
 //
 
 import XCTest
+@testable import WireRequestStrategy
 
 class ConversationTests_Participants: ConversationTestsBase {
 
-    func testThatAddingAndRemovingAParticipantToAConversationSendsOutChangeNotifications() {
+    func testThatAddingAndRemovingAParticipantToAConversationSendsOutChangeNotifications() async throws {
 
         // given
         XCTAssert(login())
@@ -32,7 +33,8 @@ class ConversationTests_Participants: ConversationTestsBase {
         observer?.clearNotifications()
 
         // when
-        conversation.addParticipants([connectedUser], completion: { (_) in })
+        let conversationParticipantsService = ConversationParticipantsService(context: userSession!.managedObjectContext)
+        try await conversationParticipantsService.addParticipants([connectedUser], to: conversation)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then - Participants changes and messages changes (System message for the added user)
@@ -47,7 +49,7 @@ class ConversationTests_Participants: ConversationTestsBase {
         observer?.notifications.removeAllObjects()
 
         // when
-        conversation.removeParticipant(connectedUser, completion: { (_) in })
+        try await conversationParticipantsService.removeParticipant(connectedUser, from: conversation)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then - Participants changes and messages changes (System message for the removed user)
@@ -60,7 +62,7 @@ class ConversationTests_Participants: ConversationTestsBase {
         observer?.notifications.removeAllObjects()
     }
 
-    func testThatAddingParticipantsToAConversationIsSynchronizedWithBackend() {
+    func testThatAddingParticipantsToAConversationIsSynchronizedWithBackend() async throws {
         // given
         XCTAssert(login())
 
@@ -70,7 +72,8 @@ class ConversationTests_Participants: ConversationTestsBase {
         XCTAssertFalse(conversation.localParticipants.contains(connectedUser))
 
         // when
-        conversation.addParticipants([connectedUser], completion: { (_) in })
+        let conversationParticipantsService = ConversationParticipantsService(context: userSession!.managedObjectContext)
+        try await conversationParticipantsService.addParticipants([connectedUser], to: conversation)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -84,7 +87,7 @@ class ConversationTests_Participants: ConversationTestsBase {
         XCTAssertTrue(self.conversation(for: emptyGroupConversation)!.localParticipants.contains(user(for: self.user2)!))
     }
 
-    func testThatRemovingParticipantsFromAConversationIsSynchronizedWithBackend() {
+    func testThatRemovingParticipantsFromAConversationIsSynchronizedWithBackend() async throws {
         // given
         XCTAssert(login())
 
@@ -94,7 +97,8 @@ class ConversationTests_Participants: ConversationTestsBase {
         XCTAssertTrue(conversation.localParticipants.contains(connectedUser))
 
         // when
-        conversation.removeParticipant(connectedUser, completion: { (_) in })
+        let conversationParticipantsService = ConversationParticipantsService(context: userSession!.managedObjectContext)
+        try await conversationParticipantsService.removeParticipant(connectedUser, from: conversation)
         XCTAssertTrue( waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
