@@ -70,14 +70,15 @@ final class LegacyNotificationService: UNNotificationServiceExtension, Notificat
             return finishWithoutShowingNotification()
         }
 
-        do {
-            session = try createSession(accountIdentifier: accountID)
-        } catch {
-            WireLogger.notifications.error("failed to process process request: could not create session: \(error.localizedDescription)")
-            return finishWithoutShowingNotification()
+        createSession(accountIdentifier: accountID) { [weak self] result in
+            switch result {
+            case .success(let session):
+                session.processPushNotification(with: request.content.userInfo)
+            case .failure(let error):
+                WireLogger.notifications.error("failed to process process request: could not create session: \(error.localizedDescription)")
+                self?.finishWithoutShowingNotification()
+            }
         }
-
-        session?.processPushNotification(with: request.content.userInfo)
     }
 
     public override func serviceExtensionTimeWillExpire() {
@@ -150,27 +151,42 @@ final class LegacyNotificationService: UNNotificationServiceExtension, Notificat
         session = nil
     }
 
-    private func createSession(accountIdentifier: UUID) throws -> NotificationSession {
-        let coreDataStack = try createCoreDataStack(applicationGroupIdentifier: appGroupID, accountIdentifier: accountIdentifier)
-        try setUpCoreCryptoStack(
-            accountContainer: coreDataStack.accountContainer,
-            applicationContainer: coreDataStack.applicationContainer,
-            syncContext: coreDataStack.syncContext,
-            cryptoboxMigrationManager: CryptoboxMigrationManager()
-        )
+    private func createSession(
+        accountIdentifier: UUID,
+        completion: @escaping (Swift.Result<NotificationSession, Error>) -> Void
+    ) {
+        createCoreDataStack(applicationGroupIdentifier: appGroupID, accountIdentifier: accountIdentifier) { [weak self] result in
+            guard let self else {
+                completion(.failure(LegacyNotificationServiceError.coreDataLoadStoresFailed))
+                return
+            }
 
-        let session = NotificationSession(
-            applicationGroupIdentifier: appGroupID,
-            accountIdentifier: accountIdentifier,
-            coreDataStack: coreDataStack,
-            environment: BackendEnvironment.shared,
-            analytics: nil,
-            sharedUserDefaults: .applicationGroup,
-            minTLSVersion: SecurityFlags.minTLSVersion.stringValue
-        )
+            do {
+                let coreDataStack = try result.get()
 
-        session.delegate = self
-        return session
+                try self.setUpCoreCryptoStack(
+                    accountContainer: coreDataStack.accountContainer,
+                    applicationContainer: coreDataStack.applicationContainer,
+                    syncContext: coreDataStack.syncContext,
+                    cryptoboxMigrationManager: CryptoboxMigrationManager()
+                )
+
+                let session = NotificationSession(
+                    applicationGroupIdentifier: self.appGroupID,
+                    accountIdentifier: accountIdentifier,
+                    coreDataStack: coreDataStack,
+                    environment: BackendEnvironment.shared,
+                    analytics: nil,
+                    sharedUserDefaults: .applicationGroup,
+                    minTLSVersion: SecurityFlags.minTLSVersion.stringValue
+                )
+                session.delegate = self
+
+                completion(.success(session))
+            } catch {
+                completion(.failure(error))
+            }
+        }
     }
 
     private func totalUnreadCount(_ unreadConversationCount: Int) -> NSNumber? {

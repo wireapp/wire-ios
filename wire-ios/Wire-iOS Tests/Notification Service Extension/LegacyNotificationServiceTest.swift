@@ -122,60 +122,61 @@ final class LegacyNotificationServiceTests: XCTestCase {
     // MARK: Core Data
 
     func test_createCoreDataStack_withoutAccount() throws {
-        // GIVEN
+        // given
         let accountIdentifier = UUID()
+        var expectedResult: Swift.Result<CoreDataStack, LegacyNotificationServiceError>?
 
-        XCTAssertThrowsError(try sut.createCoreDataStack(
-            applicationGroupIdentifier: appGroupID,
-            accountIdentifier: accountIdentifier
-        )) { error in
-            guard case LegacyNotificationServiceError.noAccount = error else {
-                XCTFail("expected error 'LegacyNotificationServiceError.noAccount'")
-                return
-            }
+        // when
+        sut.createCoreDataStack(applicationGroupIdentifier: appGroupID, accountIdentifier: accountIdentifier) {
+            expectedResult = $0
         }
+
+        // then
+        XCTAssertEqual(expectedResult, .failure(LegacyNotificationServiceError.noAccount))
     }
 
     func test_createCoreDataStack_withAccountMissingSharedContainer() throws {
         // GIVEN
         let account = Account(userName: "", userIdentifier: currentUserIdentifier)
+        var expectedResult: Swift.Result<CoreDataStack, LegacyNotificationServiceError>?
 
         // WHEN
-        // THEN
-        XCTAssertThrowsError(try sut.createCoreDataStack(
-            applicationGroupIdentifier: appGroupID,
-            accountIdentifier: currentUserIdentifier
-        )) { error in
-            guard case LegacyNotificationServiceError.coreDataMissingSharedContainer = error else {
-                XCTFail("expected error 'LegacyNotificationServiceError.coreDataMissingSharedContainer'")
-                return
-            }
+        sut.createCoreDataStack(applicationGroupIdentifier: appGroupID, accountIdentifier: currentUserIdentifier) {
+            expectedResult = $0
         }
+
+        // THEN
+        XCTAssertEqual(expectedResult, .failure(LegacyNotificationServiceError.coreDataMissingSharedContainer))
     }
 
     func test_createCoreDataStack_succeeds() throws {
         // GIVEN
         let sharedContainerURL = FileManager.sharedContainerDirectory(for: appGroupID)
         let account = Account(userName: "", userIdentifier: currentUserIdentifier)
+        var expectedResult: Swift.Result<CoreDataStack, LegacyNotificationServiceError>?
 
         // setup core data stack to create stores
-        let expectation = self.expectation(description: "")
+        let expectationLoadStore = self.expectation(description: "loadStores")
         let mockCoreDataStack = CoreDataStack(
             account: account,
             applicationContainer: sharedContainerURL
         )
         mockCoreDataStack.loadStores { error in
             XCTAssertNil(error)
-            expectation.fulfill()
+            expectationLoadStore.fulfill()
         }
-        waitForExpectations(timeout: 1)
+        wait(for: [expectationLoadStore], timeout: 1)
 
         // WHEN
+        let expectationCreateCoreDataStack = self.expectation(description: "createCoreDataStack")
+        sut.createCoreDataStack(applicationGroupIdentifier: appGroupID, accountIdentifier: currentUserIdentifier) {
+            expectedResult = $0
+            expectationCreateCoreDataStack.fulfill()
+        }
+        wait(for: [expectationCreateCoreDataStack], timeout: 1)
+
         // THEN
-        XCTAssertNoThrow(try sut.createCoreDataStack(
-            applicationGroupIdentifier: appGroupID,
-            accountIdentifier: currentUserIdentifier
-        ))
+        XCTAssertNotNil(try expectedResult?.get())
     }
 }
 

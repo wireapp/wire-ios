@@ -25,12 +25,17 @@ extension LegacyNotificationService {
         static let loadStoreMaxWaitingTimeInSeconds: Int = 5
     }
 
-    func createCoreDataStack(applicationGroupIdentifier: String, accountIdentifier: UUID) throws -> CoreDataStack {
+    func createCoreDataStack(
+        applicationGroupIdentifier: String,
+        accountIdentifier: UUID,
+        completion: @escaping (Swift.Result<CoreDataStack, LegacyNotificationServiceError>) -> Void
+    ) {
         let sharedContainerURL = FileManager.sharedContainerDirectory(for: applicationGroupIdentifier)
         let accountManager = AccountManager(sharedDirectory: sharedContainerURL)
 
         guard let account = accountManager.account(with: accountIdentifier) else {
-            throw LegacyNotificationServiceError.noAccount
+            completion(.failure(.noAccount))
+            return
         }
 
         let coreDataStack = CoreDataStack(
@@ -39,32 +44,22 @@ extension LegacyNotificationService {
         )
 
         guard coreDataStack.storesExists else {
-            throw LegacyNotificationServiceError.coreDataMissingSharedContainer
+            completion(.failure(.coreDataMissingSharedContainer))
+            return
         }
 
         guard !coreDataStack.needsMigration else {
-            throw LegacyNotificationServiceError.coreDataMigrationRequired
+            completion(.failure(.coreDataMigrationRequired))
+            return
         }
 
-        let dispatchGroup = DispatchGroup()
-        var loadStoresError: Error?
-
-        dispatchGroup.enter()
         coreDataStack.loadStores { error in
-            loadStoresError = error
-
             if let error = error {
                 WireLogger.notifications.error("Loading coreDataStack with error: \(error.localizedDescription)")
+                completion(.failure(.coreDataLoadStoresFailed))
+            } else {
+                completion(.success(coreDataStack))
             }
-
-            dispatchGroup.leave()
         }
-        let timeoutResult = dispatchGroup.wait(timeout: .now() + .seconds(Constant.loadStoreMaxWaitingTimeInSeconds))
-
-        if loadStoresError != nil || timeoutResult == .timedOut {
-            throw LegacyNotificationServiceError.coreDataLoadStoresFailed
-        }
-
-        return coreDataStack
     }
 }
