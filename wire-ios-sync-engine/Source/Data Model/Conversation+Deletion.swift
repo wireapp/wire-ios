@@ -80,7 +80,9 @@ extension ZMConversation {
                         with: conversation,
                         syncContext: contextProvider.syncContext
                     )
-                    completion(.success(()))
+                    await MainActor.run {
+                        completion(.success())
+                    }
                 }
             } else {
                 let error = ConversationDeletionError(response: response) ?? .unknown
