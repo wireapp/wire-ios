@@ -41,6 +41,13 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     let groupID = MLSGroupID([1, 2, 3])
 
+    // `MLSService.init` performs actions which make it hard to assert state on mocks
+    let skipSetupSUTTestNames: Set<String> = [
+        "-[MLSServiceTests test_BackendPublicKeysAreFetched_WhenInitializing]",
+        "-[MLSServiceTests test_UpdateKeyMaterial_WhenInitializing]",
+        "-[MLSServiceTests test_SendPendingProposal_BeforeUpdatingKeyMaterial_WhenInitializing]"
+    ]
+
     override func setUp() {
         super.setUp()
         mockCoreCrypto = MockCoreCrypto()
@@ -63,7 +70,9 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         mockActionsProvider.fetchBackendPublicKeysIn_MockValue = BackendMLSPublicKeys()
         mockActionsProvider.claimKeyPackagesUserIDDomainExcludedSelfClientIDIn_MockValue = []
 
-        createSut()
+        if !skipSetupSUTTestNames.contains(name) {
+            createSut()
+        }
     }
 
     private func createSut() {
