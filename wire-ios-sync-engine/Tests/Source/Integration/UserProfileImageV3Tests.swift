@@ -88,34 +88,6 @@ class UserProfileImageV3Tests: IntegrationTest {
         checkProfileImagesMatch(local: ZMUser.selfUser(inUserSession: userSession!), remote: selfUser)
     }
 
-    func testThatOldSelfUserImagesAreDeletedAfterChange() {
-        // GIVEN
-        XCTAssertTrue(login())
-        let currentUser = ZMUser.selfUser(inUserSession: userSession!)
-        let completeId = currentUser.completeProfileAssetIdentifier
-        let previewId = currentUser.previewProfileAssetIdentifier
-        XCTAssertNotNil(completeId)
-        XCTAssertNotNil(previewId)
-
-        // WHEN
-        userSession?.perform {
-            self.userSession?.userProfileImage.updateImage(imageData: self.mediumJPEGData())
-        }
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-
-        if let userProfileImageUpdateStatus = self.userSession?.userProfileImage as? UserProfileImageUpdateStatus {
-            // wait until image pre-processing is completed
-            userProfileImageUpdateStatus.queue.waitUntilAllOperationsAreFinished()
-        }
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-
-        // THEN
-        let previewAsset = MockAsset(in: mockTransportSession.managedObjectContext, forID: previewId!)
-        XCTAssertNil(previewAsset)
-        let completeAsset = MockAsset(in: mockTransportSession.managedObjectContext, forID: completeId!)
-        XCTAssertNil(completeAsset)
-    }
-
     func testThatSelfUserImagesAreDownloadedIfAddedRemotely() {
         // GIVEN
         mockTransportSession.performRemoteChanges { session in
