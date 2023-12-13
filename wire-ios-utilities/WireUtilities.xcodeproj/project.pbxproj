@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0125F73F2B29E7E200D989AB /* Sequence_AsyncTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0125F73E2B29E7E200D989AB /* Sequence_AsyncTests.swift */; };
 		014C36B62B2754FC00D7E8EA /* Sequence+Async.swift in Sources */ = {isa = PBXBuildFile; fileRef = 014C36B52B2754FC00D7E8EA /* Sequence+Async.swift */; };
 		067BB07125068D6500946EC8 /* String+HexDecodedData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 067BB07025068D6500946EC8 /* String+HexDecodedData.swift */; };
 		06CDC6FA2A2F2B4B00EB518D /* TimeInterval+Units.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06CDC6F92A2F2B4B00EB518D /* TimeInterval+Units.swift */; };
@@ -244,6 +245,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		0125F73E2B29E7E200D989AB /* Sequence_AsyncTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Sequence_AsyncTests.swift; path = Source/Sequence_AsyncTests.swift; sourceTree = "<group>"; };
 		01461A3F2A60422B00C3C85E /* Developer-Flags.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = "Developer-Flags.xcconfig"; path = "../../../wire-ios/Configuration/Developer-Flags.xcconfig"; sourceTree = "<group>"; };
 		014C36B52B2754FC00D7E8EA /* Sequence+Async.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sequence+Async.swift"; sourceTree = "<group>"; };
 		067BB07025068D6500946EC8 /* String+HexDecodedData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+HexDecodedData.swift"; sourceTree = "<group>"; };
@@ -791,6 +793,7 @@
 				EECE48C61FFBE45D0015BAE8 /* FixedWidthInteger_RandomTests.swift */,
 				D53DB9A0203ED6DC00655CB4 /* ResultTests.swift */,
 				871939C621D4D99C00738968 /* ZMMobileProvisionParserTests.m */,
+				0125F73E2B29E7E200D989AB /* Sequence_AsyncTests.swift */,
 				F9C9A7971CAEA83B0039E10C /* ZMEncodedNSUUIDWithTimestampTests.m */,
 				F9C9A78C1CAEA00D0039E10C /* NSString_NormalizationTests.m */,
 				546E8A4B1B74FF8F009EBA02 /* NSData+ZMAdditionsTests.m */,
@@ -1187,6 +1190,7 @@
 				F9FCE0A51C7DBD180092BA68 /* ZMSwiftExceptionHandlerTests.m in Sources */,
 				5E0A1FFC2105DE2700949B3E /* MapKeyPathTests.swift in Sources */,
 				EFC0C7B021772E6200380C4B /* EmojiOnlyStringTests.swift in Sources */,
+				0125F73F2B29E7E200D989AB /* Sequence_AsyncTests.swift in Sources */,
 				F9D381AC1B70B92F00E6E4EB /* NSDate+ZMUTests.m in Sources */,
 				16030DC221AEA14100F8032E /* ArrayPartitionByKeyPathTests.swift in Sources */,
 				F9C9A78E1CAEA0110039E10C /* NSString_NormalizationTests.m in Sources */,
