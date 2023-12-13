@@ -158,4 +158,35 @@ extension ZMClientRegistrationStatus {
         let isAllowedToRegisterMLSCLient = DeveloperFlag.enableMLSSupport.isOn && (BackendInfo.apiVersion ?? .v0) >= .v5
         return !hasRegisteredMLSClient && isAllowedToRegisterMLSCLient
     }
+
+    var _prekeys: [IdPrekeyTuple]? {
+        prekeys.compactMap {
+            guard
+                let id = $0.keys.first?.uint16Value,
+                let prekey = $0.values.first
+            else {
+                return nil
+            }
+
+            return IdPrekeyTuple(id: id, prekey: prekey)
+        }
+    }
+
+    var _lastResortPrekey: IdPrekeyTuple? {
+        guard let lastResortPrekey = lastResortPrekey else {
+            return nil
+        }
+        return IdPrekeyTuple(id: UInt16.max, prekey: lastResortPrekey)
+    }
+
+    public func willGeneratePrekeys() {
+        isGeneratingPrekeys = true
+    }
+
+    public func didGeneratePrekeys(_ prekeys: [IdPrekeyTuple], lastResortPrekey: IdPrekeyTuple) {
+        self.prekeys = prekeys.map { [NSNumber(integerLiteral: Int($0.id)): $0.prekey]}
+        self.lastResortPrekey = lastResortPrekey.prekey
+        self.isGeneratingPrekeys = false
+        RequestAvailableNotification.notifyNewRequestsAvailable(self)
+    }
 }
