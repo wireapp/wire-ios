@@ -19,13 +19,23 @@
 import UIKit
 import WireCommonComponents
 
+// MARK: - LocationSendViewControllerDelegate
+
 protocol LocationSendViewControllerDelegate: AnyObject {
     func locationSendViewControllerSendButtonTapped(_ viewController: LocationSendViewController)
 }
 
+// MARK: - LocationSendViewController
+
 final class LocationSendViewController: UIViewController {
 
-    private let sendButton = Button(style: .accentColorTextButtonStyle, cornerRadius: 12, fontSpec: .normalSemiboldFont)
+    // MARK: - Properties
+
+    private let sendButton = Button(
+        style: .accentColorTextButtonStyle,
+        cornerRadius: 12,
+        fontSpec: .normalSemiboldFont
+    )
 
     private let addressLabel: UILabel = {
         let label = DynamicFontLabel(style: .body, color: SemanticColors.Label.textDefault)
@@ -44,6 +54,8 @@ final class LocationSendViewController: UIViewController {
         }
     }
 
+    // MARK: - viewDidLoad
+
     override func viewDidLoad() {
         super.viewDidLoad()
         setupSendLocationButton()
@@ -52,6 +64,8 @@ final class LocationSendViewController: UIViewController {
         setupConstraints()
         view.backgroundColor = SemanticColors.View.backgroundDefault
     }
+
+    // MARK: - Setup UI and constraints
 
     private func setupSendLocationButton() {
         sendButton.setTitle(L10n.Localizable.Location.SendButton.title, for: [])
@@ -69,14 +83,14 @@ final class LocationSendViewController: UIViewController {
         updateAddressLabelAccessibility()
     }
 
-    private func setupContainerView() {
-        view.addSubview(containerView)
-        [addressLabel, sendButton].forEach(containerView.addSubview)
-    }
-
     private func updateAddressLabelAccessibility() {
         addressLabel.accessibilityLabel = L10n.Accessibility.SendLocation.Address.description(addressLabel)
         addressLabel.accessibilityHint = L10n.Accessibility.SendLocation.Address.hint
+    }
+
+    private func setupContainerView() {
+        view.addSubview(containerView)
+        [addressLabel, sendButton].forEach(containerView.addSubview)
     }
 
     private func setupConstraints() {
@@ -104,8 +118,11 @@ final class LocationSendViewController: UIViewController {
         addressLabel.setContentHuggingPriority(.defaultLow, for: .horizontal)
     }
 
+    // MARK: - Action
+
     private func sendButtonTapped() {
         guard let delegate else { return }
         delegate.locationSendViewControllerSendButtonTapped(self)
     }
+
 }
