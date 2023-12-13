@@ -52,7 +52,7 @@ class ProteusServiceTests: XCTestCase {
 
     // MARK: - Decrypting messages
 
-    func test_DecryptDataForSession_SessionExists() throws {
+    func test_DecryptDataForSession_SessionExists() async throws {
         // Given
         let sessionID = ProteusSessionID.random()
         let encryptedData = Data.secureRandomData(length: 8)
@@ -70,7 +70,7 @@ class ProteusServiceTests: XCTestCase {
         }
 
         // When
-        let (didCreateNewSession, decryptedData) = try sut.decrypt(
+        let (didCreateNewSession, decryptedData) = try await sut.decrypt(
             data: encryptedData,
             forSession: sessionID
         )
@@ -80,7 +80,7 @@ class ProteusServiceTests: XCTestCase {
         XCTAssertEqual(decryptedData, Data([0, 1, 2, 3, 4, 5]))
     }
 
-    func test_DecryptDataForSession_SessionExists_Failure() throws {
+    func test_DecryptDataForSession_SessionExists_Failure() async throws {
         // Given
         let sessionID = ProteusSessionID.random()
         let encryptedData = Data.secureRandomData(length: 8)
@@ -100,16 +100,16 @@ class ProteusServiceTests: XCTestCase {
         }
 
         // Then
-        assertItThrows(error: ProteusService.DecryptionError.failedToDecryptData(.duplicateMessage)) {
+        await assertItThrows(error: ProteusService.DecryptionError.failedToDecryptData(.duplicateMessage)) {
             // When
-            _ = try sut.decrypt(
+            _ = try await sut.decrypt(
                 data: encryptedData,
                 forSession: sessionID
             )
         }
     }
 
-    func test_DecryptDataForSession_SessionDoesNotExist() throws {
+    func test_DecryptDataForSession_SessionDoesNotExist() async throws {
         // Given
         let sessionID = ProteusSessionID.random()
         let encryptedData = Data.secureRandomData(length: 8)
@@ -127,7 +127,7 @@ class ProteusServiceTests: XCTestCase {
         }
 
         // When
-        let (didCreateNewSession, decryptedData) = try sut.decrypt(
+        let (didCreateNewSession, decryptedData) = try await sut.decrypt(
             data: encryptedData,
             forSession: sessionID
         )
@@ -137,7 +137,7 @@ class ProteusServiceTests: XCTestCase {
         XCTAssertEqual(decryptedData, Data([0, 1, 2, 3, 4, 5]))
     }
 
-    func test_DecryptDataForSession_SessionDoesNotExist_Failure() throws {
+    func test_DecryptDataForSession_SessionDoesNotExist_Failure() async throws {
         // Given
         let sessionID = ProteusSessionID.random()
         let encryptedData = Data.secureRandomData(length: 8)
@@ -157,9 +157,9 @@ class ProteusServiceTests: XCTestCase {
         }
 
         // Then
-        assertItThrows(error: ProteusService.DecryptionError.failedToEstablishSessionFromMessage(.duplicateMessage)) {
+        await assertItThrows(error: ProteusService.DecryptionError.failedToEstablishSessionFromMessage(.duplicateMessage)) {
             // When
-            _ = try sut.decrypt(
+            _ = try await sut.decrypt(
                 data: encryptedData,
                 forSession: sessionID
             )
