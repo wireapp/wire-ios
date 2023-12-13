@@ -22,10 +22,6 @@ import WireCommonComponents
 struct E2EIdentityCertificateDetailsView: View {
     @Environment(\.dismiss)
     private var dismiss
-    private var borderColor: Color {
-        isDownloadAndCopyEnabled ?
-        SemanticColors.View.backgroundDefaultBlack.swiftUIColor : SemanticColors.View.backgroundDefaultWhite.swiftUIColor
-    }
     var certificateDetails: String
     var isDownloadAndCopyEnabled: Bool
 
@@ -134,7 +130,13 @@ struct E2EIdentityCertificateDetailsView: View {
             .frame(maxWidth: .infinity)
             // The background will extend automatically to the edge
             .background(SemanticColors.View.backgroundDefaultWhite.swiftUIColor)
-            .border(borderColor, width: 0.5)
+            .overlay(alignment: .top) {
+                if isDownloadAndCopyEnabled {
+                    Rectangle()
+                        .frame(height: 1)
+                        .foregroundColor(SemanticColors.View.backgroundSeparatorCell.swiftUIColor)
+                }
+            }
         }
         .ignoresSafeArea()
         .padding(.top, ViewConstants.Padding.medium)
