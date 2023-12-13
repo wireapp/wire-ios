@@ -68,17 +68,21 @@ final class LocationSendViewController: UIViewController {
     private func setupConstraints() {
         [containerView, addressLabel, sendButton].prepareForLayout()
         NSLayoutConstraint.activate([
+            // containerView
             containerView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             containerView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             containerView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 12),
             containerView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -12),
+
+            // addressLabel
             addressLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
             addressLabel.trailingAnchor.constraint(lessThanOrEqualTo: sendButton.leadingAnchor, constant: -12),
-            addressLabel.topAnchor.constraint(equalTo: containerView.topAnchor),
+            addressLabel.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 12),
             addressLabel.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
+
+            // sendButton
             sendButton.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
-            sendButton.centerYAnchor.constraint(equalTo: addressLabel.centerYAnchor),
-            sendButton.heightAnchor.constraint(equalToConstant: 28)
+            sendButton.centerYAnchor.constraint(equalTo: addressLabel.centerYAnchor)
         ])
 
         sendButton.setContentCompressionResistancePriority(.required, for: .horizontal)
