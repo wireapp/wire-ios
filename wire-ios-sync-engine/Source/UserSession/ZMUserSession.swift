@@ -694,19 +694,24 @@ extension ZMUserSession: ZMSyncStateDelegate {
             context: syncContext.notificationContext
         ).post()
 
-        let selfClient = ZMUser.selfUser(in: syncContext).selfClient()
+        Task {
+            let selfClient = await syncContext.perform { [syncContext] in
+                ZMUser.selfUser(in: syncContext).selfClient()
+            }
+            if await syncContext.perform({ selfClient?.hasRegisteredMLSClient }) == true {
+                await syncContext.perform { self.mlsService.performPendingJoins() }
+                await mlsService.uploadKeyPackagesIfNeeded()
+                await mlsService.updateKeyMaterialForAllStaleGroupsIfNeeded()
+                await commitPendingProposalsIfNeeded()
+            }
+            await syncContext.perform { [self] in
+                fetchFeatureConfigs()
+                recurringActionService.performActionsIfNeeded()
 
-        if selfClient?.hasRegisteredMLSClient == true {
-            mlsService.performPendingJoins()
-            mlsService.uploadKeyPackagesIfNeeded()
-            mlsService.updateKeyMaterialForAllStaleGroupsIfNeeded()
-            commitPendingProposalsIfNeeded()
-        }
-        fetchFeatureConfigs()
-        recurringActionService.performActionsIfNeeded()
-
-        managedObjectContext.performGroupedBlock { [weak self] in
-            self?.notifyThirdPartyServices()
+                managedObjectContext.performGroupedBlock { [weak self] in
+                    self?.notifyThirdPartyServices()
+                }
+            }
         }
     }
 
@@ -754,13 +759,11 @@ extension ZMUserSession: ZMSyncStateDelegate {
     }
 
     // // FIXME: [jacob] move commitPendingProposalsIfNeeded to MLSService?
-    private func commitPendingProposalsIfNeeded() {
-        Task {
-            do {
-                try await mlsService.commitPendingProposals()
-            } catch {
-                Logging.mls.error("Failed to commit pending proposals: \(String(describing: error))")
-            }
+    private func commitPendingProposalsIfNeeded() async {
+        do {
+            try await mlsService.commitPendingProposals()
+        } catch {
+            Logging.mls.error("Failed to commit pending proposals: \(String(describing: error))")
         }
     }
 
@@ -775,7 +778,9 @@ extension ZMUserSession: ZMSyncStateDelegate {
     }
 
     public func didRegisterMLSClient(_ userClient: UserClient) {
-        mlsService.uploadKeyPackagesIfNeeded()
+        Task {
+            await mlsService.uploadKeyPackagesIfNeeded()
+        }
     }
 
     public func didRegisterSelfUserClient(_ userClient: UserClient) {

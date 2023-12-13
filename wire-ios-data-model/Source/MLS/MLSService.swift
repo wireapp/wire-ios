@@ -660,7 +660,7 @@ public final class MLSService: MLSServiceInterface {
 
             return true
 
-        } catch let error {
+        } catch {
             logger.warn("failed to get valid key packages count with error: \(String(describing: error))")
             return true
         }
