@@ -189,7 +189,7 @@ public final class ProteusService: ProteusServiceInterface {
     public func decrypt(
         data: Data,
         forSession id: ProteusSessionID
-    ) throws -> (didCreateSession: Bool, decryptedData: Data) {
+    ) throws -> (didCreateNewSession: Bool, decryptedData: Data) {
         logger.info("decrypting data")
 
         if sessionExists(id: id) {
@@ -207,7 +207,7 @@ public final class ProteusService: ProteusServiceInterface {
                 }
             }
 
-            return (didCreateSession: false, decryptedData: decryptedBytes.data)
+            return (didCreateNewSession: false, decryptedData: decryptedBytes.data)
 
         } else {
             logger.info("session doesn't exist, creating one then decrypting message...")
@@ -224,7 +224,7 @@ public final class ProteusService: ProteusServiceInterface {
                 }
             }
 
-            return (didCreateSession: true, decryptedData: decryptedBytes.data)
+            return (didCreateNewSession: true, decryptedData: decryptedBytes.data)
         }
     }
 

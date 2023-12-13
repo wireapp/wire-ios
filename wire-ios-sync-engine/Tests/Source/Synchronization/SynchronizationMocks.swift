@@ -161,38 +161,6 @@ class FakeCredentialProvider: NSObject, ZMCredentialProvider {
 class FakeCookieStorage: ZMPersistentCookieStorage {
 }
 
-// used by tests to fake errors on genrating pre keys
-class SpyUserClientKeyStore: UserClientKeysStore {
-
-    var failToGeneratePreKeys: Bool = false
-    var failToGenerateLastPreKey: Bool = false
-
-    var lastGeneratedKeys: [(id: UInt16, prekey: String)] = []
-    var lastGeneratedLastPrekey: String?
-
-    override public func generateMoreKeys(_ count: UInt16, start: UInt16) throws -> [(id: UInt16, prekey: String)] {
-
-        if self.failToGeneratePreKeys {
-            let error = NSError(domain: "cryptobox.error", code: 0, userInfo: ["reason": "using fake store with simulated fail"])
-            throw error
-        } else {
-            let keys = try! super.generateMoreKeys(count, start: start)
-            lastGeneratedKeys = keys
-            return keys
-        }
-    }
-
-    override public func lastPreKey() throws -> String {
-        if self.failToGenerateLastPreKey {
-            let error = NSError(domain: "cryptobox.error", code: 0, userInfo: ["reason": "using fake store with simulated fail"])
-            throw error
-        } else {
-            lastGeneratedLastPrekey = try! super.lastPreKey()
-            return lastGeneratedLastPrekey!
-        }
-    }
-}
-
 public class MockSyncStatus: SyncStatus {
 
     var didCallFailCurrentSyncPhase = false
@@ -243,15 +211,15 @@ public class MockSyncStatus: SyncStatus {
         didCallFinishQuickSync = true
     }
 
-    public func didRegisterSelfUserClient(_ userClient: UserClient!) {
+    public func didRegisterSelfUserClient(_ userClient: UserClient) {
         registeredUserClient = userClient
     }
 
-    public func didFailToRegisterSelfUserClient(error: Error!) {
+    public func didFailToRegisterSelfUserClient(error: Error) {
         didCallFailRegisterUserClient = true
     }
 
-    public func didDeleteSelfUserClient(error: Error!) {
+    public func didDeleteSelfUserClient(error: Error) {
         didCallDeleteUserClient = true
     }
 }
@@ -317,6 +285,17 @@ public class MockEventConsumer: NSObject, ZMEventConsumer {
         addTrackedObjectsCalled = true
     }
 
+}
+
+@objcMembers
+public class MockEventAsyncConsumer: NSObject, ZMEventAsyncConsumer {
+
+    public var eventsProcessed: [ZMUpdateEvent] = []
+    public var processEventsCalled: Bool = false
+    public func processEvents(_ events: [WireTransport.ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) async {
+        processEventsCalled = true
+        eventsProcessed.append(contentsOf: events)
+    }
 }
 
 @objcMembers

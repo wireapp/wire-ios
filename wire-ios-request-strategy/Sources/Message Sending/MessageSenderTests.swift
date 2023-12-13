@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireDataModelSupport
 import XCTest
 
 final class MessageSenderTests: MessagingTestBase {
@@ -317,13 +318,17 @@ final class MessageSenderTests: MessagingTestBase {
             message: GenericMessage(content: Text(content: "Hello World")),
             completionHandler: nil)
 
-        let (_, messageSender) = Arrangement(coreDataStack: coreDataStack)
+        let (arrangement, messageSender) = Arrangement(coreDataStack: coreDataStack)
             .withQuickSyncObserverCompleting()
             .withMessageDependencyResolverReturning(result: .success(Void()))
             .withApiVersionResolving(to: .v5)
             .withMLServiceConfigured()
             .withSendMlsMessage(returning: .success((messageSendingStatus, response)))
             .arrange()
+        arrangement.mlsService.commitPendingProposalsIn_MockMethod = { _ in }
+        arrangement.mlsService.encryptMessageFor_MockMethod = { message, _ in
+            message + [000]
+        }
 
         // when
         try await messageSender.sendMessage(message: message)
@@ -356,12 +361,16 @@ final class MessageSenderTests: MessagingTestBase {
             .withMLServiceConfigured()
             .withSendMlsMessage(returning: .success((messageSendingStatus, response)))
             .arrange()
+        arrangement.mlsService.commitPendingProposalsIn_MockMethod = { _ in }
+        arrangement.mlsService.encryptMessageFor_MockMethod = { message, _ in
+            message + [000]
+        }
 
         // when
         try await messageSender.sendMessage(message: message)
 
         // then
-        XCTAssertEqual([Arrangement.Scaffolding.groupID], arrangement.mlsService.calls.commitPendingProposalsInGroup)
+        XCTAssertEqual([Arrangement.Scaffolding.groupID], arrangement.mlsService.commitPendingProposalsIn_Invocations)
     }
 
     func testThatWhenSendingMlsMessageFailsWithPermanentError_thenThrowError() async throws {
@@ -377,13 +386,17 @@ final class MessageSenderTests: MessagingTestBase {
             message: GenericMessage(content: Text(content: "Hello World")),
             completionHandler: nil)
 
-        let (_, messageSender) = Arrangement(coreDataStack: coreDataStack)
+        let (arrangement, messageSender) = Arrangement(coreDataStack: coreDataStack)
             .withQuickSyncObserverCompleting()
             .withMessageDependencyResolverReturning(result: .success(Void()))
             .withApiVersionResolving(to: .v5)
             .withMLServiceConfigured()
             .withSendMlsMessage(returning: .failure(networkError))
             .arrange()
+        arrangement.mlsService.commitPendingProposalsIn_MockMethod = { _ in }
+        arrangement.mlsService.encryptMessageFor_MockMethod = { message, _ in
+            message + [000]
+        }
 
         // then
         await assertItThrows(error: networkError) {
@@ -469,7 +482,7 @@ final class MessageSenderTests: MessagingTestBase {
         let sessionEstablisher = MockSessionEstablisherInterface()
         let messageDependencyResolver = MockMessageDependencyResolverInterface()
         let quickSyncObserver = MockQuickSyncObserverInterface()
-        let mlsService = MockMLSService()
+        let mlsService = MockMLSServiceInterface()
         let coreDataStack: CoreDataStack
 
         init(coreDataStack: CoreDataStack) {

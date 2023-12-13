@@ -217,7 +217,7 @@ extension MessagingTestBase {
                     return nil
                 }
 
-                return (didCreateNewSession: result.didCreateSession, decryptedData: result.decryptedData)
+                return (didCreateNewSession: result.didCreateNewSession, decryptedData: result.decryptedData)
             }
         } else {
             syncMOC.zm_cryptKeyStore.encryptionContext.perform { session in

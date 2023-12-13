@@ -12,7 +12,11 @@
 		010497DA2940F4F40046124D /* CustomBackendView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 010497D72940F4F40046124D /* CustomBackendView.swift */; };
 		010497DB2940F4F40046124D /* ProxyCredentialsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 010497D82940F4F40046124D /* ProxyCredentialsViewController.swift */; };
 		010497E12940F5DE0046124D /* AuthenticationShowCustomBackendInfoHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 010497E02940F5DE0046124D /* AuthenticationShowCustomBackendInfoHandler.swift */; };
+		011853962AE6BA5D0071FA32 /* ProfileClientViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 011853952AE6BA5D0071FA32 /* ProfileClientViewModel.swift */; };
 		0119F3D029969CEA006AE3A8 /* CrashReporter.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE9A857529896B4D00064A9C /* CrashReporter.xcframework */; };
+		0145AE962B1156F40097E3B8 /* WireSyncEngineSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0145AE952B1156F40097E3B8 /* WireSyncEngineSupport.framework */; };
+		0145AE992B1156FC0097E3B8 /* WireSyncEngineSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0145AE982B1156FC0097E3B8 /* WireSyncEngineSupport.framework */; };
+		014A63AC2B234EAB00827558 /* MFMailComposeViewController+Logs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 014A63AB2B234EAB00827558 /* MFMailComposeViewController+Logs.swift */; };
 		014C81BE29BB6BC600258FF8 /* ConversationListViewController+ConversationListTabBarControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF6E9FEF231D4CDF000B7785 /* ConversationListViewController+ConversationListTabBarControllerDelegate.swift */; };
 		017ABBBA299541F50004C243 /* Colors.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E56CA37428588C4F00CD2045 /* Colors.xcassets */; };
 		017ABBBB299542BA0004C243 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F1FDF2C521ADA3F000E037A1 /* Images.xcassets */; };
@@ -1266,8 +1270,10 @@
 		E90B7DB628117DED001831FB /* DynamicFontLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E90B7DB528117DED001831FB /* DynamicFontLabel.swift */; };
 		E91DCC34278DAEDA00B66DD7 /* GroupDetailsServicesCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E91DCC33278DAEDA00B66DD7 /* GroupDetailsServicesCell.swift */; };
 		E91DCC36278DE2AE00B66DD7 /* ConversationCreateServicesCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E91DCC35278DE2AE00B66DD7 /* ConversationCreateServicesCell.swift */; };
+		E91F90202A851AE400B1A5B8 /* FontBook.swift in Sources */ = {isa = PBXBuildFile; fileRef = E91F901F2A851AE400B1A5B8 /* FontBook.swift */; };
 		E92A07A02817E553006BA73B /* DynamicFontButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E92A079F2817E553006BA73B /* DynamicFontButton.swift */; };
 		E92D1B95285B773B00366AFC /* LabelStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = E92D1B94285B773B00366AFC /* LabelStyle.swift */; };
+		E92D31752B0CBAD400F5AAD4 /* FontBookSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E92D31742B0CBAD400F5AAD4 /* FontBookSnapshotTests.swift */; };
 		E93DA61A2913F38A00A0F17C /* LinkButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E93DA6192913F38A00A0F17C /* LinkButton.swift */; };
 		E942A38D28A2AC3A00C3092F /* NavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E942A38C28A2AC3A00C3092F /* NavigationController.swift */; };
 		E94784E9278EDDC200F9FE80 /* ConversationCreateServicesSectionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E94784E8278EDDC200F9FE80 /* ConversationCreateServicesSectionController.swift */; };
@@ -1936,15 +1942,6 @@
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		A9C4B418266A558300C88BEB /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
@@ -1953,6 +1950,10 @@
 		010497D72940F4F40046124D /* CustomBackendView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomBackendView.swift; sourceTree = "<group>"; };
 		010497D82940F4F40046124D /* ProxyCredentialsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProxyCredentialsViewController.swift; sourceTree = "<group>"; };
 		010497E02940F5DE0046124D /* AuthenticationShowCustomBackendInfoHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthenticationShowCustomBackendInfoHandler.swift; sourceTree = "<group>"; };
+		011853952AE6BA5D0071FA32 /* ProfileClientViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileClientViewModel.swift; sourceTree = "<group>"; };
+		0145AE952B1156F40097E3B8 /* WireSyncEngineSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireSyncEngineSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		0145AE982B1156FC0097E3B8 /* WireSyncEngineSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireSyncEngineSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		014A63AB2B234EAB00827558 /* MFMailComposeViewController+Logs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MFMailComposeViewController+Logs.swift"; sourceTree = "<group>"; };
 		016BDDEF2AA0AE670054FB04 /* Developer-Flags.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Developer-Flags.xcconfig"; sourceTree = "<group>"; };
 		01A5E043297FDAB500624B65 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 		01A5E046297FDAB500624B65 /* updateLicenses */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = updateLicenses; sourceTree = "<group>"; };
@@ -3279,8 +3280,10 @@
 		E90B7DB528117DED001831FB /* DynamicFontLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DynamicFontLabel.swift; sourceTree = "<group>"; };
 		E91DCC33278DAEDA00B66DD7 /* GroupDetailsServicesCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupDetailsServicesCell.swift; sourceTree = "<group>"; };
 		E91DCC35278DE2AE00B66DD7 /* ConversationCreateServicesCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationCreateServicesCell.swift; sourceTree = "<group>"; };
+		E91F901F2A851AE400B1A5B8 /* FontBook.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FontBook.swift; sourceTree = "<group>"; };
 		E92A079F2817E553006BA73B /* DynamicFontButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DynamicFontButton.swift; sourceTree = "<group>"; };
 		E92D1B94285B773B00366AFC /* LabelStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelStyle.swift; sourceTree = "<group>"; };
+		E92D31742B0CBAD400F5AAD4 /* FontBookSnapshotTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FontBookSnapshotTests.swift; sourceTree = "<group>"; };
 		E93DA6192913F38A00A0F17C /* LinkButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkButton.swift; sourceTree = "<group>"; };
 		E942A38C28A2AC3A00C3092F /* NavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationController.swift; sourceTree = "<group>"; };
 		E94784E8278EDDC200F9FE80 /* ConversationCreateServicesSectionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationCreateServicesSectionController.swift; sourceTree = "<group>"; };
@@ -3900,6 +3903,7 @@
 				EEE25B0C2970C0980008B894 /* WireTesting.framework in Frameworks */,
 				EEE25B04297036410008B894 /* FBSnapshotTestCase.xcframework in Frameworks */,
 				01C1A7C72A54C45A0058D578 /* SnapshotTesting in Frameworks */,
+				0145AE962B1156F40097E3B8 /* WireSyncEngineSupport.framework in Frameworks */,
 				873DC95C1D479A0500C1C9B0 /* AVFoundation.framework in Frameworks */,
 				873DC95A1D479A0000C1C9B0 /* Photos.framework in Frameworks */,
 				8741DB621C1EFE2D00BDB470 /* CoreLocation.framework in Frameworks */,
@@ -3910,6 +3914,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0145AE992B1156FC0097E3B8 /* WireSyncEngineSupport.framework in Frameworks */,
 				E6C25FC52AFFAAC300406A1C /* WireTesting.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4921,6 +4926,7 @@
 			isa = PBXGroup;
 			children = (
 				87D5E43D1C3E78A000EB8289 /* ProfileClientViewController.swift */,
+				011853952AE6BA5D0071FA32 /* ProfileClientViewModel.swift */,
 				16814843228D89EC0069F16F /* UserClientListViewController.swift */,
 				1681483F228C6E120069F16F /* UserClientCell.swift */,
 			);
@@ -5099,6 +5105,8 @@
 		8286E48D7CC440448CBD8F48 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				0145AE982B1156FC0097E3B8 /* WireSyncEngineSupport.framework */,
+				0145AE952B1156F40097E3B8 /* WireSyncEngineSupport.framework */,
 				E6C25FC42AFFAAC300406A1C /* WireTesting.framework */,
 				E9C68C032A29DB0100CDCAFD /* WireCoreCrypto.xcframework */,
 				EE9A8585298B0A3B00064A9C /* WireNotificationEngine.framework */,
@@ -6354,7 +6362,7 @@
 			isa = PBXGroup;
 			children = (
 				A937A5C223D5F0400080A507 /* ConversationInputBarViewControllerDelegate.swift */,
-				A965F89D23DB3359005209E1 /* ConversationInputBarViewController.swift */,
+				E9B5C8592B1A218E00B78E64 /* ConversationInputBarViewController */,
 				EF95B053227C782D005A060A /* ConversationInputBarViewController+TypingIndicator.swift */,
 				06C412AF239103910018866F /* ConversationInputBarViewController+DragAndDrop.swift */,
 				EF58B556218B463F00750A2B /* ConversationInputBarViewController+KeyCommand.swift */,
@@ -6482,6 +6490,7 @@
 				87AC9F551C0749FB00E1ED6F /* TailEditingTextField.swift */,
 				F12CDAD91E43868200CEFCEB /* ChangingDetails */,
 				BD979D2B1D8F3AF700E8E3CB /* SettingsTechnicalReportViewController.swift */,
+				014A63AB2B234EAB00827558 /* MFMailComposeViewController+Logs.swift */,
 				87D21AD61D8A98620075AB7A /* AccentColorPickerController.swift */,
 				87C1A7BA1D8FDFD8002630BB /* VersionInfoViewController.swift */,
 				F19C3A8E20513532004387E4 /* DatabaseStatisticsController.swift */,
@@ -6829,6 +6838,7 @@
 				7C440E7E23473A0F00D91B5F /* FolderCreationControllerSnapshotTests.swift */,
 				7C440E84234B460100D91B5F /* FolderPickerControllerSnapshotTests.swift */,
 				87AAE4201E42441B00E1D13A /* FontSchemeTests.swift */,
+				E92D31742B0CBAD400F5AAD4 /* FontBookSnapshotTests.swift */,
 				EF6E3C7B208A02FE003F6752 /* GiphySearchViewControllerSnapshotTests.swift */,
 				EF91A0541FF3A04700FE2F53 /* GiphySearchViewControllerTests.swift */,
 				16C02A11204EE5EC00811912 /* GroupConversationCellTests.swift */,
@@ -7388,6 +7398,14 @@
 				E902B3B329ED3A240090DE32 /* SwiftUIButton+HapticFeedback.swift */,
 			);
 			path = "SwiftUI Helpers";
+			sourceTree = "<group>";
+		};
+		E9B5C8592B1A218E00B78E64 /* ConversationInputBarViewController */ = {
+			isa = PBXGroup;
+			children = (
+				A965F89D23DB3359005209E1 /* ConversationInputBarViewController.swift */,
+			);
+			path = ConversationInputBarViewController;
 			sourceTree = "<group>";
 		};
 		E9B8EB7E2A0CEC370056E417 /* Reactions */ = {
@@ -8048,6 +8066,7 @@
 				E9EBE0D128194F2D0058C793 /* FontScheme.swift */,
 				E9EBE0D328194F890058C793 /* FontScheme+DynamicType.swift */,
 				E9EBE0D8281958BE0058C793 /* FontSpec.swift */,
+				E91F901F2A851AE400B1A5B8 /* FontBook.swift */,
 			);
 			path = WireCommonComponents;
 			sourceTree = "<group>";
@@ -8118,13 +8137,13 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 8F42C558199244A700288E4D /* Build configuration list for PBXNativeTarget "Wire-iOS" */;
 			buildPhases = (
+				EEF9786E25D2923A00F7333E /* Run SwiftGen */,
 				8F42C534199244A700288E4D /* Sources */,
 				8F42C535199244A700288E4D /* Frameworks */,
 				8F42C536199244A700288E4D /* Resources */,
 				160EABBA1D47BD7200F83CA7 /* Copy Extra Audio Notifications */,
 				5E055B28228AAF1500E91314 /* Embed Internal Resources */,
 				8795A5D21D34D1A50024101B /* EmbedBuildInfo */,
-				EEF9786E25D2923A00F7333E /* Run SwiftGen */,
 				EE00ACE125E43FA2005FEC14 /* Run SwiftLint */,
 				A96867A826A5E52F00679D95 /* Embed Frameworks */,
 				01D97B17294CCA1A001A04BD /* Conditional Datadog Framework Removal */,
@@ -8153,7 +8172,6 @@
 				BACB884E1AF7C48900DDCDB0 /* Frameworks */,
 				BACB884F1AF7C48900DDCDB0 /* Resources */,
 				BFE731DE20A2F2270088BA22 /* Remove Old Snapshot Results */,
-				A9C4B418266A558300C88BEB /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -8504,6 +8522,7 @@
 		};
 		EE00ACE125E43FA2005FEC14 /* Run SwiftLint */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
@@ -8523,6 +8542,7 @@
 		};
 		EEF9786E25D2923A00F7333E /* Run SwiftGen */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 12;
 			files = (
 			);
@@ -8537,7 +8557,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Adds support for Apple Silicon brew directory\nexport PATH=\"$PATH:/opt/homebrew/bin\"\n\nif which swiftgen >/dev/null; then\n  swiftgen\nelse\n  echo \"warning: SwiftGen not installed, download it from https://github.com/SwiftGen/SwiftGen\"\nfi\n";
+			shellScript = "../scripts/run-swiftgen.sh\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -8777,6 +8797,7 @@
 				068500BD26B9580700721F80 /* FileMessageRestrictionView.swift in Sources */,
 				061EF88D27971EC000584C53 /* SettingsProfileLinkCellDescriptor.swift in Sources */,
 				5E3FB06E206BC7B40075E910 /* Tab.swift in Sources */,
+				011853962AE6BA5D0071FA32 /* ProfileClientViewModel.swift in Sources */,
 				D5189473204D543C00C095C1 /* InitialSyncObserver.swift in Sources */,
 				87DCF49E1D34E9E600BB420F /* ModalTopBar.swift in Sources */,
 				F16427041FCC5BB600D2ABFC /* VerifyEmailStepDescription.swift in Sources */,
@@ -9138,6 +9159,7 @@
 				5E4B1387204FE7DA00ED5DF1 /* SystemAnimationCurves.swift in Sources */,
 				D550F5772044532D009E09DD /* ConversationAction.swift in Sources */,
 				D5F8BFF42007AC84008F8C3D /* UIView+TableViewHeaderFooterSizing.swift in Sources */,
+				014A63AC2B234EAB00827558 /* MFMailComposeViewController+Logs.swift in Sources */,
 				EFBCC90F2152A93F006AAB70 /* AnalyticsProvider.swift in Sources */,
 				BF52C1601CB25FE70037331F /* ArchivedListViewModel.swift in Sources */,
 				D5CEBFC3202CA3BA00AFBD3A /* AddParticipantsViewModel.swift in Sources */,
@@ -9772,6 +9794,7 @@
 				A9CF740E24891498007A11DC /* Settings+Reset.swift in Sources */,
 				EF21219A2292EEF3006C4293 /* XCTestCase+SnapshotTesting.swift in Sources */,
 				5EDF03EF22455C4E00C04007 /* MockImageResource.swift in Sources */,
+				E92D31752B0CBAD400F5AAD4 /* FontBookSnapshotTests.swift in Sources */,
 				6375051B262477ED0083DC27 /* NotificationLabelTests.swift in Sources */,
 				5EA73D9120D903B90001D106 /* GroupDetailsTimeoutOptionsCellTests.swift in Sources */,
 				EF159F381FD59607006E0A9C /* TextFieldValidatorTests.swift in Sources */,
@@ -10244,6 +10267,7 @@
 				F156509E21DCF1DA00210504 /* Dummy.swift in Sources */,
 				165C55C2254B0CB500731CA9 /* UIColor+NamedColors.swift in Sources */,
 				06F9864925CC1518005572C5 /* AccessoryTextField.swift in Sources */,
+				E91F90202A851AE400B1A5B8 /* FontBook.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -10639,10 +10663,6 @@
 					x86_64,
 					arm64,
 				);
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build/iOS",
-				);
 			};
 			name = Debug;
 		};
@@ -10653,10 +10673,6 @@
 				"ARCHS[sdk=iphonesimulator*]" = (
 					x86_64,
 					arm64,
-				);
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
 			};
 			name = Release;
@@ -10687,10 +10703,6 @@
 					x86_64,
 					arm64,
 				);
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build/iOS",
-				);
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -10709,7 +10721,6 @@
 					x86_64,
 					arm64,
 				);
-				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -10729,7 +10740,6 @@
 				);
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build",
 					"\"$(SRCROOT)/Carthage/Build/OCMock.xcframework/ios-arm64_i386_x86_64-simulator\"",
 					"\"$(SRCROOT)/Carthage/Build/FBSnapshotTestCase.xcframework/ios-arm64_i386_x86_64-simulator\"",
 					"\"$(SRCROOT)/Carthage/Build/SnapshotTesting.xcframework/ios-arm64_x86_64-simulator\"",
@@ -10750,7 +10760,6 @@
 				);
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build",
 					"\"$(SRCROOT)/Carthage/Build/OCMock.xcframework/ios-arm64_i386_x86_64-simulator\"",
 					"\"$(SRCROOT)/Carthage/Build/FBSnapshotTestCase.xcframework/ios-arm64_i386_x86_64-simulator\"",
 					"\"$(SRCROOT)/Carthage/Build/SnapshotTesting.xcframework/ios-arm64_x86_64-simulator\"",
@@ -10805,7 +10814,6 @@
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build",
 					"\"$(SRCROOT)/Carthage/Build/OCMock.xcframework/ios-arm64_i386_x86_64-simulator\"",
 					"\"$(SRCROOT)/Carthage/Build/WireTesting.xcframework/ios-arm64_x86_64-simulator\"",
 				);
@@ -10886,7 +10894,6 @@
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build",
 					"\"$(SRCROOT)/Carthage/Build/OCMock.xcframework/ios-arm64_i386_x86_64-simulator\"",
 					"\"$(SRCROOT)/Carthage/Build/WireTesting.xcframework/ios-arm64_x86_64-simulator\"",
 				);

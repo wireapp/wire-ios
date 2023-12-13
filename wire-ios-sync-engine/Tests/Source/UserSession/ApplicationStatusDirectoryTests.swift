@@ -30,14 +30,16 @@ class ApplicationStatusDirectoryTests: MessagingTest {
         let cookieStorage = ZMPersistentCookieStorage()
         let mockApplication = ApplicationMock()
 
-        sut = ApplicationStatusDirectory(
-            withManagedObjectContext: syncMOC,
-            cookieStorage: cookieStorage,
-            requestCancellation: self,
-            application: mockApplication,
-            syncStateDelegate: self,
-            lastEventIDRepository: lastEventIDRepository
-        )
+        syncMOC.performAndWait {
+            sut = ApplicationStatusDirectory(
+                withManagedObjectContext: syncMOC,
+                cookieStorage: cookieStorage,
+                requestCancellation: self,
+                application: mockApplication,
+                syncStateDelegate: self,
+                lastEventIDRepository: lastEventIDRepository
+            )
+        }
     }
 
     override func tearDown() {
@@ -99,14 +101,14 @@ extension ApplicationStatusDirectoryTests: ZMSyncStateDelegate {
         // no-op
     }
 
-    func didRegisterSelfUserClient(_ userClient: UserClient!) {
+    func didRegisterSelfUserClient(_ userClient: UserClient) {
         // nop
     }
 
-    func didFailToRegisterSelfUserClient(error: Error!) {
+    func didFailToRegisterSelfUserClient(error: Error) {
         // nop
     }
 
-    func didDeleteSelfUserClient(error: Error!) {
+    func didDeleteSelfUserClient(error: Error) {
         // nop
     }}

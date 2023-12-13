@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -49,6 +49,7 @@
 		8701221920F641BE001E6342 /* CacheTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8701221720F641A4001E6342 /* CacheTests.swift */; };
 		D59F3A1B206A448F0023474F /* DispatchQueue+ZMSDispatchGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = D59F3A1A206A448F0023474F /* DispatchQueue+ZMSDispatchGroup.swift */; };
 		D59F3A1D206A47E80023474F /* DispatchQueueHelperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D59F3A1C206A47E80023474F /* DispatchQueueHelperTests.swift */; };
+		E6B58E412B21D8920046B6E1 /* ZipArchive.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = E6B58E402B21D8920046B6E1 /* ZipArchive.xcframework */; };
 		EEDC67192A1778D600201436 /* UserDefaults+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEDC67182A1778D600201436 /* UserDefaults+Helpers.swift */; };
 		F1670FAE22A7C5F500BC6811 /* SanitizedString.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1670FAD22A7C5F500BC6811 /* SanitizedString.swift */; };
 		F1670FB022A7C7D800BC6811 /* SanitizedStringTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1670FAF22A7C7D800BC6811 /* SanitizedStringTests.swift */; };
@@ -119,6 +120,7 @@
 		8701221720F641A4001E6342 /* CacheTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CacheTests.swift; sourceTree = "<group>"; };
 		D59F3A1A206A448F0023474F /* DispatchQueue+ZMSDispatchGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DispatchQueue+ZMSDispatchGroup.swift"; sourceTree = "<group>"; };
 		D59F3A1C206A47E80023474F /* DispatchQueueHelperTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DispatchQueueHelperTests.swift; sourceTree = "<group>"; };
+		E6B58E402B21D8920046B6E1 /* ZipArchive.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = ZipArchive.xcframework; path = ../Carthage/Build/ZipArchive.xcframework; sourceTree = "<group>"; };
 		EEDC67182A1778D600201436 /* UserDefaults+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserDefaults+Helpers.swift"; sourceTree = "<group>"; };
 		F1670FAD22A7C5F500BC6811 /* SanitizedString.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SanitizedString.swift; sourceTree = "<group>"; };
 		F1670FAF22A7C7D800BC6811 /* SanitizedStringTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SanitizedStringTests.swift; sourceTree = "<group>"; };
@@ -130,6 +132,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E6B58E412B21D8920046B6E1 /* ZipArchive.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -162,6 +165,7 @@
 				5473E7C61B31A95A00C6A937 /* Source */,
 				54A327381B99A3650004EB95 /* Tests */,
 				3ECC34E61AD433520089FD4B /* Products */,
+				E66EC68A2B21D179003052F7 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -262,6 +266,14 @@
 				54C0CC421C9C7862000A9286 /* ZMSAssertionTests.m */,
 			);
 			path = Tests;
+			sourceTree = "<group>";
+		};
+		E66EC68A2B21D179003052F7 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				E6B58E402B21D8920046B6E1 /* ZipArchive.xcframework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		EE08D03829A79F9B00A9AB02 /* Logging */ = {
@@ -391,6 +403,7 @@
 /* Begin PBXShellScriptBuildPhase section */
 		54CD53321AE6E8E6001CE59A /* Delay */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
@@ -401,10 +414,11 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# artificial delay or file won't be seen by the next step\nsleep 1";
+			shellScript = "# artificial delay or file won't be seen by the next step\nsleep 1\n";
 		};
 		AD4812AC2AB9912400ED208C /* Run Swiftlint */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);

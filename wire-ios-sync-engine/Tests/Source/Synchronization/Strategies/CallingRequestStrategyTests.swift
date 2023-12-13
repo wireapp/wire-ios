@@ -17,7 +17,9 @@
 //
 
 import Foundation
+import WireDataModelSupport
 import WireRequestStrategy
+import WireSyncEngineSupport
 @testable import WireSyncEngine
 
 class CallingRequestStrategyTests: MessagingTest {
@@ -652,7 +654,7 @@ class CallingRequestStrategyTests: MessagingTest {
             sentMessage = message as? GenericMessageEntity
         }
 
-        let mockMLSService = MockMLSService()
+        let mockMLSService = MockMLSServiceInterface()
 
         syncMOC.performGroupedBlock {
             self.syncMOC.mlsService = mockMLSService

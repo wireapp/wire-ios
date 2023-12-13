@@ -49,7 +49,8 @@ extension ZMConversation {
     public func setMessageDestructionTimeout(
         _ timeout: MessageDestructionTimeoutValue,
         in userSession: ZMUserSession, _
-        completion: @escaping (VoidResult) -> Void) {
+        completion: @escaping (Swift.Result<Void, Error>) -> Void) {
+        // TODO: move this method to a useCase - WPB-5730
 
         guard let apiVersion = BackendInfo.apiVersion else {
             return completion(.failure(WirelessLinkError.unknown))
@@ -59,11 +60,9 @@ extension ZMConversation {
         request.add(ZMCompletionHandler(on: managedObjectContext!) { response in
             if response.httpStatus.isOne(of: 200, 204), let event = response.updateEvent {
                 // Process `conversation.message-timer-update` event
-                userSession.syncManagedObjectContext.performGroupedBlock {
-                    // TODO jacob maybe skip the event decoder since we know these events will never be encrypted.
-                    userSession.updateEventProcessor?.storeAndProcessUpdateEvents([event], ignoreBuffer: true)
-                }
-                completion(.success)
+                // FIXME: [jacob] replace with ConversationEventProcessor
+                userSession.processConversationEvents([event])
+                completion(.success(()))
             } else {
                 let error = WirelessLinkError(response: response) ?? .unknown
                 log.debug("Error updating message destruction timeout \(error): \(response)")
