@@ -505,20 +505,6 @@ NSString * const ZMMessageDecryptionErrorCodeKey = @"decryptionErrorCode";
 }
 
 
-+ (BOOL)doesEventTypeGenerateMessage:(ZMUpdateEventType)type;
-{
-    return
-        (type == ZMUpdateEventTypeConversationAssetAdd) ||
-        (type == ZMUpdateEventTypeConversationMessageAdd) ||
-        (type == ZMUpdateEventTypeConversationClientMessageAdd) ||
-        (type == ZMUpdateEventTypeConversationOtrMessageAdd) ||
-        (type == ZMUpdateEventTypeConversationOtrAssetAdd) ||
-        (type == ZMUpdateEventTypeConversationMLSMessageAdd) ||
-        (type == ZMUpdateEventTypeConversationKnock) ||
-        [ZMSystemMessage doesEventTypeGenerateSystemMessage:type];
-}
-
-
 + (instancetype)createOrUpdateMessageFromUpdateEvent:(ZMUpdateEvent *__unused)updateEvent
                               inManagedObjectContext:(NSManagedObjectContext *__unused)moc
                                       prefetchResult:(__unused ZMFetchRequestBatchResult *)prefetchResult
@@ -803,7 +789,7 @@ NSString * const ZMMessageDecryptionErrorCodeKey = @"decryptionErrorCode";
                               inManagedObjectContext:(NSManagedObjectContext *)moc
                                       prefetchResult:(ZMFetchRequestBatchResult *)prefetchResult
 {
-    ZMSystemMessageType type = [self.class systemMessageTypeFromEventType:updateEvent.type];
+    ZMSystemMessageType type = [self.class systemMessageTypeFromUpdateEvent:updateEvent];
     if (type == ZMSystemMessageTypeInvalid) {
         return nil;
     }
@@ -937,29 +923,26 @@ NSString * const ZMMessageDecryptionErrorCodeKey = @"decryptionErrorCode";
     return NO;
 }
 
-+ (ZMSystemMessageType)systemMessageTypeFromEventType:(ZMUpdateEventType)type
++ (ZMSystemMessageType)systemMessageTypeFromUpdateEvent:(ZMUpdateEvent *)updateEvent;
 {
-    NSNumber *number = self.eventTypeToSystemMessageTypeMap[@(type)];
-    if(number == nil) {
-        return ZMSystemMessageTypeInvalid;
-    }
-    else {
-        return (ZMSystemMessageType) number.integerValue;
-    }
-}
+    switch (updateEvent.type) {
 
-+ (BOOL)doesEventTypeGenerateSystemMessage:(ZMUpdateEventType)type;
-{
-    return [self.eventTypeToSystemMessageTypeMap.allKeys containsObject:@(type)];
-}
+        case ZMUpdateEventTypeConversationMemberJoin:
+            return ZMSystemMessageTypeParticipantsAdded;
 
-+ (NSDictionary *)eventTypeToSystemMessageTypeMap   
-{
-    return @{
-             @(ZMUpdateEventTypeConversationMemberJoin) : @(ZMSystemMessageTypeParticipantsAdded),
-             @(ZMUpdateEventTypeConversationMemberLeave) : @(ZMSystemMessageTypeParticipantsRemoved),
-             @(ZMUpdateEventTypeConversationRename) : @(ZMSystemMessageTypeConversationNameChanged)
-             };
+        case ZMUpdateEventTypeConversationRename:
+            return ZMSystemMessageTypeConversationNameChanged;
+
+        case ZMUpdateEventTypeConversationMemberLeave:
+            if ([updateEvent.payload[@"data"][@"reason"] isEqualToString:@"user-deleted"]) {
+                return ZMSystemMessageTypeTeamMemberLeave;
+            } else {
+                return ZMSystemMessageTypeParticipantsRemoved;
+            }
+
+        default:
+            return ZMSystemMessageTypeInvalid;
+    }
 }
 
 - (id<ZMSystemMessageData>)systemMessageData
