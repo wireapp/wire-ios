@@ -775,30 +775,38 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
     XCTAssertNil(message);
 }
 
-- (void)testSystemMessageTypeFromUpdateEventMapping;
+- (void)testSystemMessageTypeFromUpdateEventReturnsParticipantsAdded;
 {
     // Given
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     conversation.remoteIdentifier = [NSUUID createUUID];
-    for (NSNumber *number in [ZMUpdateEvent allTypes]) {
-        ZMUpdateEventType updateEventType = number.unsignedIntegerValue;
-        ZMUpdateEvent *updateEvent = [self mockEventOfType:updateEventType forConversation:conversation sender:nil data:@{}];
+    ZMUpdateEvent *updateEvent = [self mockEventOfType:ZMUpdateEventTypeConversationMemberJoin
+                                       forConversation:conversation
+                                                sender:nil
+                                                  data:nil];
 
-        // When
-        ZMSystemMessageType systemMessageType = [ZMSystemMessage systemMessageTypeFromUpdateEvent:updateEvent];
+    // When
+    ZMSystemMessageType systemMessageType = [ZMSystemMessage systemMessageTypeFromUpdateEvent:updateEvent];
 
-        // Then
-        switch (updateEventType) {
-            case ZMUpdateEventTypeConversationMemberJoin:
-                XCTAssertEqual(systemMessageType, ZMSystemMessageTypeParticipantsAdded);
-            case ZMUpdateEventTypeConversationRename:
-                XCTAssertEqual(systemMessageType, ZMSystemMessageTypeConversationNameChanged);
-            case ZMUpdateEventTypeConversationMemberLeave:
-                XCTAssertEqual(systemMessageType, ZMSystemMessageTypeParticipantsRemoved);
-            default:
-                XCTAssertEqual(systemMessageType, ZMSystemMessageTypeInvalid);
-        }
-    }
+    // Then
+    XCTAssertEqual(systemMessageType, ZMSystemMessageTypeParticipantsAdded);
+}
+
+- (void)testSystemMessageTypeFromUpdateEventReturnsParticipantsRemoved;
+{
+    // Given
+    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+    conversation.remoteIdentifier = [NSUUID createUUID];
+    ZMUpdateEvent *updateEvent = [self mockEventOfType:ZMUpdateEventTypeConversationMemberLeave
+                                       forConversation:conversation
+                                                sender:nil
+                                                  data:nil];
+
+    // When
+    ZMSystemMessageType systemMessageType = [ZMSystemMessage systemMessageTypeFromUpdateEvent:updateEvent];
+
+    // Then
+    XCTAssertEqual(systemMessageType, ZMSystemMessageTypeParticipantsRemoved);
 }
 
 - (void)testSystemMessageTypeFromUpdateEventReturnsTeamMemberLeave;
@@ -816,6 +824,50 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
 
     // Then
     XCTAssertEqual(systemMessageType, ZMSystemMessageTypeTeamMemberLeave);
+}
+
+- (void)testSystemMessageTypeFromUpdateEventReturnsConversationNameChanged;
+{
+    // Given
+    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+    conversation.remoteIdentifier = [NSUUID createUUID];
+    ZMUpdateEvent *updateEvent = [self mockEventOfType:ZMUpdateEventTypeConversationRename
+                                       forConversation:conversation
+                                                sender:nil
+                                                  data:nil];
+
+    // When
+    ZMSystemMessageType systemMessageType = [ZMSystemMessage systemMessageTypeFromUpdateEvent:updateEvent];
+
+    // Then
+    XCTAssertEqual(systemMessageType, ZMSystemMessageTypeConversationNameChanged);
+}
+
+- (void)testSystemMessageTypeFromUpdateEventReturnsInvalid;
+{
+    // Given
+    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+    conversation.remoteIdentifier = [NSUUID createUUID];
+    NSSet<NSNumber *> *skipValues = [NSSet setWithArray:@[
+        @(ZMUpdateEventTypeConversationMemberJoin),
+        @(ZMUpdateEventTypeConversationMemberLeave),
+        @(ZMUpdateEventTypeConversationRename)
+    ]];
+    for (NSNumber *value in [ZMUpdateEvent allTypes]) {
+        // skip valid values
+        if ([skipValues containsObject:value]) {
+            continue;
+        }
+
+        ZMUpdateEventType updateEventType = value.unsignedIntegerValue;
+        ZMUpdateEvent *updateEvent = [self mockEventOfType:updateEventType forConversation:conversation sender:nil data:@{}];
+
+        // When
+        ZMSystemMessageType systemMessageType = [ZMSystemMessage systemMessageTypeFromUpdateEvent:updateEvent];
+
+        // Then
+        XCTAssertEqual(systemMessageType, ZMSystemMessageTypeInvalid);
+    }
 }
 
 - (void)testThatItStoresPermanentManagedObjectIdentifiersInTheUserField
