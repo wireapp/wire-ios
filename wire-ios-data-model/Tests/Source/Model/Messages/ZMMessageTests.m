@@ -352,27 +352,6 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
     XCTAssertEqualObjects(message.keysTrackedForLocalModifications, expected);
 }
 
-/*
-- (void)testThat_doesEventGenerateMessage_returnsTrueForAllKnownTypes
-{
-    NSArray *validTypes = @[
-                            @(ZMUpdateEventTypeConversationMemberJoin),
-                            @(ZMUpdateEventTypeConversationMemberLeave),
-                            @(ZMUpdateEventTypeConversationRename),
-                            @(ZMUpdateEventTypeConversationMessageAdd),
-                            @(ZMUpdateEventTypeConversationClientMessageAdd),
-                            @(ZMUpdateEventTypeConversationOtrMessageAdd),
-                            @(ZMUpdateEventTypeConversationOtrAssetAdd),
-                            @(ZMUpdateEventTypeConversationMLSMessageAdd),
-                            @(ZMUpdateEventTypeConversationAssetAdd),
-                            @(ZMUpdateEventTypeConversationKnock),
-                            ];
-    for(NSUInteger evt = 0; evt <= ZMUpdateEventTypeUserPropertiesDelete; ++evt) {
-        XCTAssertEqual([ZMMessage doesEventTypeGenerateMessage:evt], [validTypes containsObject:@(evt)]);
-    }
-}
-*/
-
 - (void)testThatTheTextIsCopied
 {
     // given
@@ -796,32 +775,47 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
     XCTAssertNil(message);
 }
 
-- (void)testThatItDoesNotGenerateSystemMessagesFromUpdateEventsOfTheWrongType
+- (void)testSystemMessageTypeFromUpdateEventMapping;
 {
-    NSSet<NSNumber *> *eventTypes = [NSSet setWithArray:@[
-        @(ZMUpdateEventTypeConversationAssetAdd),
-        @(ZMUpdateEventTypeConversationMessageAdd),
-        @(ZMUpdateEventTypeConversationClientMessageAdd),
-        @(ZMUpdateEventTypeConversationOtrMessageAdd),
-        @(ZMUpdateEventTypeConversationOtrAssetAdd),
-        @(ZMUpdateEventTypeConversationMLSMessageAdd),
-        @(ZMUpdateEventTypeConversationKnock),
-        @(ZMUpdateEventTypeConversationMemberJoin),
-        @(ZMUpdateEventTypeConversationMemberLeave),
-        @(ZMUpdateEventTypeConversationRename)
-    ]];
+    // Given
+    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+    conversation.remoteIdentifier = [NSUUID createUUID];
+    for (NSNumber *number in [ZMUpdateEvent allTypes]) {
+        ZMUpdateEventType updateEventType = number.unsignedIntegerValue;
+        ZMUpdateEvent *updateEvent = [self mockEventOfType:updateEventType forConversation:conversation sender:nil data:@{}];
 
-    NSLog(@"%i", [eventTypes containsObject:@(ZMUpdateEventTypeConversationAssetAdd)]);
+        // When
+        ZMSystemMessageType systemMessageType = [ZMSystemMessage systemMessageTypeFromUpdateEvent:updateEvent];
 
-    for(NSUInteger evt = 0; evt <= ZMUpdateEventTypeUserPropertiesDelete; ++evt)
-    {
-        if (![eventTypes containsObject:@(evt)]) {
-            NSLog(@"testing %lu", evt);
-            [self checkThatUpdateEventTypeDoesNotGenerateMessage:evt];
-        } else {
-            NSLog(@"not testing %lu", evt);
+        // Then
+        switch (updateEventType) {
+            case ZMUpdateEventTypeConversationMemberJoin:
+                XCTAssertEqual(systemMessageType, ZMSystemMessageTypeParticipantsAdded);
+            case ZMUpdateEventTypeConversationRename:
+                XCTAssertEqual(systemMessageType, ZMSystemMessageTypeConversationNameChanged);
+            case ZMUpdateEventTypeConversationMemberLeave:
+                XCTAssertEqual(systemMessageType, ZMSystemMessageTypeParticipantsRemoved);
+            default:
+                XCTAssertEqual(systemMessageType, ZMSystemMessageTypeInvalid);
         }
     }
+}
+
+- (void)testSystemMessageTypeFromUpdateEventReturnsTeamMemberLeave;
+{
+    // Given
+    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+    conversation.remoteIdentifier = [NSUUID createUUID];
+    ZMUpdateEvent *updateEvent = [self mockEventOfType:ZMUpdateEventTypeConversationMemberLeave
+                                       forConversation:conversation
+                                                sender:nil
+                                                  data:@{ @"reason": @"user-deleted" }];
+
+    // When
+    ZMSystemMessageType systemMessageType = [ZMSystemMessage systemMessageTypeFromUpdateEvent:updateEvent];
+
+    // Then
+    XCTAssertEqual(systemMessageType, ZMSystemMessageTypeTeamMemberLeave);
 }
 
 - (void)testThatItStoresPermanentManagedObjectIdentifiersInTheUserField

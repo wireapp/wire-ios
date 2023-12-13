@@ -934,7 +934,7 @@ NSString * const ZMMessageDecryptionErrorCodeKey = @"decryptionErrorCode";
             return ZMSystemMessageTypeConversationNameChanged;
 
         case ZMUpdateEventTypeConversationMemberLeave:
-            if ([updateEvent.payload[@"reason"] isEqualToString:@"user-deleted"]) {
+            if ([updateEvent.payload[@"data"][@"reason"] isEqualToString:@"user-deleted"]) {
                 return ZMSystemMessageTypeTeamMemberLeave;
             } else {
                 return ZMSystemMessageTypeParticipantsRemoved;
