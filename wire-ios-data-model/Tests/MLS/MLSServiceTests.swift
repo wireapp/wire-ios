@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2023 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import XCTest
-import WireCoreCrypto
 import Combine
+import Foundation
+import WireCoreCrypto
+import XCTest
 
 @testable import WireDataModel
 @testable import WireDataModelSupport
@@ -1704,8 +1704,10 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
 
         // Expectations
-        keyMaterialUpdatedExpectation = self.expectation(description: "did update key material")
-        didFinishInitializationExpectation = expectation(description: "did finish initialization")
+        keyMaterialUpdatedExpectation = expectation(description: "did update key material")
+
+        // wait for `MLSService.init`'s async operations
+        await fulfillment(of: [didFinishInitializationExpectation], timeout: 1)
 
         // When
         await sut.updateKeyMaterialForAllStaleGroupsIfNeeded()
@@ -2143,10 +2145,12 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         let epochTimestamp = Date()
         let publicGroupState = Data.random()
 
-        let conversation = ZMConversation.insertNewObject(in: uiMOC)
-        conversation.remoteIdentifier = parentQualifiedID.uuid
-        conversation.domain = parentQualifiedID.domain
-        conversation.mlsGroupID = parentID
+        await uiMOC.perform { [uiMOC] in
+            let conversation = ZMConversation.insertNewObject(in: uiMOC)
+            conversation.remoteIdentifier = parentQualifiedID.uuid
+            conversation.domain = parentQualifiedID.domain
+            conversation.mlsGroupID = parentID
+        }
 
         mockActionsProvider.fetchSubgroupConversationIDDomainTypeContext_MockMethod = { _, _, _, _ in
             return MLSSubgroup(

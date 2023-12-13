@@ -223,12 +223,13 @@ public final class MLSService: MLSServiceInterface {
             subconversationGroupIDRepository: subconversationGroupIDRepository
         )
 
+        schedulePeriodicKeyMaterialUpdateCheck()
+
         // FIXME: [jacob] fetch on demand when creating group
         Task {
             await fetchBackendPublicKeys()
+            delegate?.MLSServiceDidFinishInitialization()
         }
-
-        schedulePeriodicKeyMaterialUpdateCheck()
     }
 
     deinit {
@@ -447,14 +448,14 @@ public final class MLSService: MLSServiceInterface {
     }
 
     public func createSelfGroup(for groupID: MLSGroupID) async {
-        guard let context = context else {
-            return
-        }
+        guard let context else { return }
 
         do {
-            try createGroup(for: groupID)
-            let selfUser = ZMUser.selfUser(in: context)
-            let mlsSelfUser = MLSUser(from: selfUser)
+            let mlsSelfUser = try await context.perform {
+                try self.createGroup(for: groupID)
+                let selfUser = ZMUser.selfUser(in: context)
+                return MLSUser(from: selfUser)
+            }
 
             do {
                 try await addMembersToConversation(with: [mlsSelfUser], for: groupID)
@@ -617,11 +618,11 @@ public final class MLSService: MLSServiceInterface {
 
         guard shouldQueryUnclaimedKeyPackagesCount() else { return }
 
-        guard let context = context else {
+        guard let context else {
             return logWarn(abortedWithReason: "missing context")
         }
 
-        guard let clientID = ZMUser.selfUser(in: context).selfClient()?.remoteIdentifier else {
+        guard let clientID = await context.perform({ ZMUser.selfUser(in: context).selfClient()?.remoteIdentifier }) else {
             return logWarn(abortedWithReason: "failed to get client ID")
         }
 
@@ -789,8 +790,10 @@ public final class MLSService: MLSServiceInterface {
             try createGroup(for: groupID)
         }
 
-        let selfUser = ZMUser.selfUser(in: context)
-        let mlsUser = MLSUser(from: selfUser)
+        let mlsUser = await context.perform {
+            let selfUser = ZMUser.selfUser(in: context)
+            return MLSUser(from: selfUser)
+        }
 
         try await joinGroup(with: groupID)
         try await addMembersToConversation(with: [mlsUser], for: groupID)
