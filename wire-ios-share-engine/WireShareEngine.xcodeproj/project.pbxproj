@@ -10,12 +10,9 @@
 		165C55F62551AF1300731CA9 /* SharingSession+EncryptionAtRest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 165C55F52551AF1300731CA9 /* SharingSession+EncryptionAtRest.swift */; };
 		166DCD9E2552969B004F4F59 /* SharingSessionTests+EncryptionAtRest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 166DCD9D2552969B004F4F59 /* SharingSessionTests+EncryptionAtRest.swift */; };
 		5470D3F31D76E1B000FDE440 /* WireShareEngine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5470D3E81D76E1B000FDE440 /* WireShareEngine.framework */; };
-		63172F792902A42700DBECC9 /* SharingSession+CoreCrypto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63172F782902A42700DBECC9 /* SharingSession+CoreCrypto.swift */; };
-		637ED12E29119689001157F4 /* SharingSessionTests+CryptoStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637ED12D29119689001157F4 /* SharingSessionTests+CryptoStack.swift */; };
 		BFA18BD41D806050005C281B /* BaseSharingSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFA18BD31D806050005C281B /* BaseSharingSessionTests.swift */; };
 		CE7FBFC41E015C5900E1C4C9 /* RequestGeneratorStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE7FBFC31E015C5900E1C4C9 /* RequestGeneratorStoreTests.swift */; };
 		CEB50AEC1DF9BADF00211B30 /* OperationLoopTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEB50AEB1DF9BADF00211B30 /* OperationLoopTests.swift */; };
-		EE0BA28E29D5B9FE004E93B5 /* MockCryptoboxMigrationManagerInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0BA28D29D5B9FE004E93B5 /* MockCryptoboxMigrationManagerInterface.swift */; };
 		EE668BC22954B82900D939E7 /* WireRequestStrategy.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE668BC12954B82900D939E7 /* WireRequestStrategy.framework */; };
 		EE67F6F5296F093E001D7C88 /* WireTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F6F4296F093E001D7C88 /* WireTesting.framework */; };
 		EE67F6F6296F093E001D7C88 /* WireTesting.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F6F4296F093E001D7C88 /* WireTesting.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -95,12 +92,9 @@
 		5470D4171D76E2A400FDE440 /* warnings.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = warnings.xcconfig; sourceTree = "<group>"; };
 		5470D42B1D770CEE00FDE440 /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		5470D42C1D770CEE00FDE440 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
-		63172F782902A42700DBECC9 /* SharingSession+CoreCrypto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SharingSession+CoreCrypto.swift"; sourceTree = "<group>"; };
-		637ED12D29119689001157F4 /* SharingSessionTests+CryptoStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SharingSessionTests+CryptoStack.swift"; sourceTree = "<group>"; };
 		BFA18BD31D806050005C281B /* BaseSharingSessionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseSharingSessionTests.swift; sourceTree = "<group>"; };
 		CE7FBFC31E015C5900E1C4C9 /* RequestGeneratorStoreTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestGeneratorStoreTests.swift; sourceTree = "<group>"; };
 		CEB50AEB1DF9BADF00211B30 /* OperationLoopTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OperationLoopTests.swift; sourceTree = "<group>"; };
-		EE0BA28D29D5B9FE004E93B5 /* MockCryptoboxMigrationManagerInterface.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockCryptoboxMigrationManagerInterface.swift; sourceTree = "<group>"; };
 		EE668BC12954B82900D939E7 /* WireRequestStrategy.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireRequestStrategy.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE67F6F4296F093E001D7C88 /* WireTesting.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTesting.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE67F6F8296F094C001D7C88 /* WireMockTransport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireMockTransport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -184,10 +178,8 @@
 				BFA18BD31D806050005C281B /* BaseSharingSessionTests.swift */,
 				F125E9B41E28DB06006583A2 /* SharingSessionTests.swift */,
 				166DCD9D2552969B004F4F59 /* SharingSessionTests+EncryptionAtRest.swift */,
-				637ED12D29119689001157F4 /* SharingSessionTests+CryptoStack.swift */,
 				CEB50AEB1DF9BADF00211B30 /* OperationLoopTests.swift */,
 				CE7FBFC31E015C5900E1C4C9 /* RequestGeneratorStoreTests.swift */,
-				EE0BA28D29D5B9FE004E93B5 /* MockCryptoboxMigrationManagerInterface.swift */,
 			);
 			path = WireShareEngineTests;
 			sourceTree = "<group>";
@@ -236,14 +228,6 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		63172F94290AB45100DBECC9 /* CoreCrypto */ = {
-			isa = PBXGroup;
-			children = (
-				63172F782902A42700DBECC9 /* SharingSession+CoreCrypto.swift */,
-			);
-			path = CoreCrypto;
-			sourceTree = "<group>";
-		};
 		F154EE091F44826400CB8184 /* WireShareEngineTestHost */ = {
 			isa = PBXGroup;
 			children = (
@@ -256,7 +240,6 @@
 		F1DABF961E9B8B6100AD2324 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
-				63172F94290AB45100DBECC9 /* CoreCrypto */,
 				F1DABF971E9B8B6100AD2324 /* AuthenticationStatusProvider.swift */,
 				F1DABF981E9B8B6100AD2324 /* Conversation.swift */,
 				F1DABF991E9B8B6100AD2324 /* OperationLoop.swift */,
@@ -454,7 +437,6 @@
 				F1DABFAC1E9B8B6100AD2324 /* ZMMessage+Sendable.swift in Sources */,
 				F1DABFA61E9B8B6100AD2324 /* SendableBatchObserver.swift in Sources */,
 				F1DABFA51E9B8B6100AD2324 /* Sendable.swift in Sources */,
-				63172F792902A42700DBECC9 /* SharingSession+CoreCrypto.swift in Sources */,
 				F1DABFA71E9B8B6100AD2324 /* SharingSession.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -465,10 +447,8 @@
 			files = (
 				CE7FBFC41E015C5900E1C4C9 /* RequestGeneratorStoreTests.swift in Sources */,
 				BFA18BD41D806050005C281B /* BaseSharingSessionTests.swift in Sources */,
-				EE0BA28E29D5B9FE004E93B5 /* MockCryptoboxMigrationManagerInterface.swift in Sources */,
 				CEB50AEC1DF9BADF00211B30 /* OperationLoopTests.swift in Sources */,
 				166DCD9E2552969B004F4F59 /* SharingSessionTests+EncryptionAtRest.swift in Sources */,
-				637ED12E29119689001157F4 /* SharingSessionTests+CryptoStack.swift in Sources */,
 				F125E9B51E28DB06006583A2 /* SharingSessionTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -578,7 +558,10 @@
 			baseConfigurationReference = 5470D40B1D76E2A400FDE440 /* ios-test-host.xcconfig */;
 			buildSettings = {
 				INFOPLIST_FILE = "$(SRCROOT)/WireShareEngineTests/WireShareEngineTestHost/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireShareEngineTestHost;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -589,7 +572,10 @@
 			baseConfigurationReference = 5470D40B1D76E2A400FDE440 /* ios-test-host.xcconfig */;
 			buildSettings = {
 				INFOPLIST_FILE = "$(SRCROOT)/WireShareEngineTests/WireShareEngineTestHost/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireShareEngineTestHost;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};

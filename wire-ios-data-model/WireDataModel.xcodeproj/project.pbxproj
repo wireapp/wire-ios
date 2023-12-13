@@ -168,6 +168,7 @@
 		16B5B33126FDC5D2001A3216 /* ZMConnection+Actions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16B5B33026FDC5D2001A3216 /* ZMConnection+Actions.swift */; };
 		16BA4303233CD8E50018E883 /* Label.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16BA4302233CD8E50018E883 /* Label.swift */; };
 		16BA4305233CDEA30018E883 /* ZMConversation+Labels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16BA4304233CDEA30018E883 /* ZMConversation+Labels.swift */; };
+		16BBA2002AFD130F00CDF38A /* CoreCryptoProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16BBA1FF2AFD130F00CDF38A /* CoreCryptoProvider.swift */; };
 		16C391E2214BD438003AB3AD /* MentionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16C391E1214BD437003AB3AD /* MentionTests.swift */; };
 		16CDEBF72209897D00E74A41 /* ZMMessageTests+ShouldGenerateUnreadCount.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16CDEBF62209897D00E74A41 /* ZMMessageTests+ShouldGenerateUnreadCount.swift */; };
 		16CDEBFB2209D13B00E74A41 /* ZMMessage+Quotes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16CDEBFA2209D13B00E74A41 /* ZMMessage+Quotes.swift */; };
@@ -975,6 +976,7 @@
 		16B5B33026FDC5D2001A3216 /* ZMConnection+Actions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMConnection+Actions.swift"; sourceTree = "<group>"; };
 		16BA4302233CD8E50018E883 /* Label.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Label.swift; sourceTree = "<group>"; };
 		16BA4304233CDEA30018E883 /* ZMConversation+Labels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMConversation+Labels.swift"; sourceTree = "<group>"; };
+		16BBA1FF2AFD130F00CDF38A /* CoreCryptoProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreCryptoProvider.swift; sourceTree = "<group>"; };
 		16C391E1214BD437003AB3AD /* MentionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MentionTests.swift; sourceTree = "<group>"; };
 		16CDEBF62209897D00E74A41 /* ZMMessageTests+ShouldGenerateUnreadCount.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMMessageTests+ShouldGenerateUnreadCount.swift"; sourceTree = "<group>"; };
 		16CDEBFA2209D13B00E74A41 /* ZMMessage+Quotes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMMessage+Quotes.swift"; sourceTree = "<group>"; };
@@ -2005,6 +2007,7 @@
 				63B1335329A503D000009D84 /* StaleMLSKeyMaterialDetector.swift */,
 				63BEF5862A2636BC00F482E8 /* MLSConferenceInfo.swift */,
 				63F0781129F6C59D0031E19D /* MLSSubgroup.swift */,
+				16BBA1FF2AFD130F00CDF38A /* CoreCryptoProvider.swift */,
 			);
 			name = MLS;
 			path = Source/MLS;
@@ -3760,6 +3763,7 @@
 				EFD0B02D21087DC80065EBF3 /* ZMConversation+Language.swift in Sources */,
 				63B1336629A503D100009D84 /* SendCommitBundleAction.swift in Sources */,
 				F137EEBE212C14300043FDEB /* ZMConversation+Services.swift in Sources */,
+				16BBA2002AFD130F00CDF38A /* CoreCryptoProvider.swift in Sources */,
 				54EDE6801CBBF1860044A17E /* PINCache+ZMessaging.swift in Sources */,
 				06E8AAB4242BAA6A008929B1 /* SignatureStatus.swift in Sources */,
 				068DCC5729BB816300F7E4F1 /* ZMOTRMessage+FailedToSendReason.swift in Sources */,
