@@ -615,10 +615,45 @@ final class ConversationInputBarViewController: UIViewController,
 
     // MARK: - PingButton
 
-    @objc
-    private func pingButtonPressed(_ button: UIButton?) {
-        appendKnock()
-    }
+        private func confirmPing(completion: @escaping (_ completion: Bool) -> Void) {
+            let participantCount = conversation.localParticipantsCount - 1
+            let title = L10n.Localizable.Conversation.Ping.ManyParticipantsConfirmation.title(participantCount)
+
+            let controller = UIAlertController(
+                title: title,
+                message: nil,
+                preferredStyle: .alert
+            )
+
+            controller.addAction(.cancel { completion(false) })
+
+            let sendAction = UIAlertAction(
+                title: L10n.Localizable.Conversation.Ping.Action.title,
+                style: .default,
+                handler: { _ in completion(true) }
+            )
+
+            controller.addAction(sendAction)
+            self.present(controller, animated: true)
+        }
+
+        @objc
+        private func pingButtonPressed(_ button: UIButton?) {
+            /// Don't take into account the selfUser when we check against the minimumPingParticipants
+            /// That's why participantsIndex is **conversation.localParticipantsCount - 1**
+            let participantIndex = conversation.localParticipantsCount - 1
+            let minimumPingParticipants = 4
+
+            if participantIndex >= minimumPingParticipants {
+                confirmPing { [weak self] shouldPing in
+                    if shouldPing {
+                        self?.appendKnock()
+                    }
+                }
+            } else {
+                self.appendKnock()
+            }
+        }
 
     private func appendKnock() {
         guard let conversation = conversation as? ZMConversation else { return }
@@ -655,7 +690,7 @@ final class ConversationInputBarViewController: UIViewController,
     @objc
     private func giphyButtonPressed(_ sender: Any?) {
         guard !AppDelegate.isOffline,
-                let conversation = conversation as? ZMConversation else { return }
+              let conversation = conversation as? ZMConversation else { return }
 
         inputBar.textView.resignFirstResponder()
         let giphySearchViewController = GiphySearchViewController(searchTerm: "", conversation: conversation, userSession: userSession)

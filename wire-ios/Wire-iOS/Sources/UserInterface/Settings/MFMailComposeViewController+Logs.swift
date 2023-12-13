@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2023 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,16 +17,23 @@
 //
 
 import Foundation
+import MessageUI
+import WireSystem
 
-enum Logging {
+extension MFMailComposeViewController {
 
-    // For logs related to processing message data, which may included
-    // work related to `GenericMessage` profotobuf data or the `ZMClientMessage`
-    // and `ZMAssetClientMessage` container types.
+    func attachLogs() {
+        if let currentLog = ZMSLog.currentZipLog {
+            addAttachmentData(currentLog, mimeType: "application/zip", fileName: "current.log.zip")
+        }
 
-    static let messageProcessing = ZMSLog(tag: "message-processing")
-    static let localStorage = ZMSLog(tag: "local-storage")
-    static let eventProcessing = ZMSLog(tag: "event-processing")
-    static let mls = ZMSLog(tag: "mls")
-
+        ZMSLog.previousZipLogURLs.forEach { url in
+            do {
+                let data = try Data(contentsOf: url)
+                addAttachmentData(data, mimeType: "application/zip", fileName: url.lastPathComponent)
+            } catch {
+                // ignore error for now, it's possible a file does not exist.
+            }
+        }
+    }
 }
