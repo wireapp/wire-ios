@@ -25,9 +25,9 @@ protocol LocationSendViewControllerDelegate: AnyObject {
 
 final class LocationSendViewController: UIViewController {
 
-    let sendButton = Button(style: .accentColorTextButtonStyle, cornerRadius: 12, fontSpec: .normalSemiboldFont)
+   private let sendButton = Button(style: .accentColorTextButtonStyle, cornerRadius: 12, fontSpec: .normalSemiboldFont)
 
-    let addressLabel: UILabel = {
+    private let addressLabel: UILabel = {
         let label = DynamicFontLabel(style: .body, color: SemanticColors.Label.textDefault)
         label.numberOfLines = 0
         return label
@@ -52,6 +52,14 @@ final class LocationSendViewController: UIViewController {
     }
 
     private func configureViews() {
+        setupSendLocationButton()
+        addressLabel.accessibilityIdentifier = "selectedAddress"
+
+        view.addSubview(containerView)
+        [addressLabel, sendButton].forEach(containerView.addSubview)
+    }
+
+    private func setupSendLocationButton() {
         sendButton.setTitle(L10n.Localizable.Location.SendButton.title, for: [])
 
         let action = UIAction { [weak self] _ in
@@ -59,10 +67,6 @@ final class LocationSendViewController: UIViewController {
         }
         sendButton.addAction(action, for: .touchUpInside)
         sendButton.accessibilityIdentifier = "sendLocation"
-        addressLabel.accessibilityIdentifier = "selectedAddress"
-
-        view.addSubview(containerView)
-        [addressLabel, sendButton].forEach(containerView.addSubview)
     }
 
     private func setupConstraints() {
@@ -91,6 +95,7 @@ final class LocationSendViewController: UIViewController {
     }
 
     private func sendButtonTapped() {
-        delegate?.locationSendViewControllerSendButtonTapped(self)
+        guard let delegate else { return }
+        delegate.locationSendViewControllerSendButtonTapped(self)
     }
 }
