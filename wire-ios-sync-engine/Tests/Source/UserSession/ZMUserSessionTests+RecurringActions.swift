@@ -44,6 +44,7 @@ class ZMUserSessionTests_RecurringActions: ZMUserSessionTestsBase {
         XCTAssertFalse(mockRecurringActionService.performActionsIsCalled)
         sut.didFinishQuickSync()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
         // then
         XCTAssertTrue(mockRecurringActionService.performActionsIsCalled)
     }

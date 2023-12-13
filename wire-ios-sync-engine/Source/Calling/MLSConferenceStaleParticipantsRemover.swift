@@ -55,7 +55,7 @@ class MLSConferenceStaleParticipantsRemover: Subscriber {
     }
 
     func receive(_ input: MLSConferenceParticipantsInfo) -> Subscribers.Demand {
-        Task {
+        WaitingGroupTask(context: syncContext) { [self] in
             await process(input: input)
         }
         return .unlimited
@@ -79,31 +79,33 @@ class MLSConferenceStaleParticipantsRemover: Subscriber {
             return
         }
 
-        let newAndChangedParticipants = newAndChangedParticipants(
-            between: previousInput?.participants ?? [],
-            and: input.participants
-        )
+        await syncContext.perform { [self] in
+            let newAndChangedParticipants = newAndChangedParticipants(
+                between: previousInput?.participants ?? [],
+                and: input.participants
+            )
 
-        newAndChangedParticipants.excludingParticipant(withID: input.selfUserID).forEach {
+            newAndChangedParticipants.excludingParticipant(withID: input.selfUserID).forEach {
 
-            guard let clientID = MLSClientID(callParticipant: $0) else {
-                return
+                guard let clientID = MLSClientID(callParticipant: $0) else {
+                    return
+                }
+
+                switch (subconversationMembers.contains(clientID), $0.state) {
+                case (true, .connecting):
+                    enqueueRemove(
+                        client: clientID,
+                        from: input.subconversationID,
+                        after: removalTimeout
+                    )
+                case (false, _), (_, .connected):
+                    cancelRemoval(for: clientID)
+                default: break
+                }
             }
 
-            switch (subconversationMembers.contains(clientID), $0.state) {
-            case (true, .connecting):
-                enqueueRemove(
-                    client: clientID,
-                    from: input.subconversationID,
-                    after: removalTimeout
-                )
-            case (false, _), (_, .connected):
-                cancelRemoval(for: clientID)
-            default: break
-            }
+            previousInput = input
         }
-
-        previousInput = input
     }
 
     private func newAndChangedParticipants(between previous: [CallParticipant], and current: [CallParticipant]) -> [CallParticipant] {
@@ -145,7 +147,7 @@ class MLSConferenceStaleParticipantsRemover: Subscriber {
                 completion: { [weak self] in
                     guard let self else { return }
 
-                    Task {
+                    WaitingGroupTask(context: syncContext) { [self] in
                         await self.remove(
                             client: clientID,
                             from: groupID

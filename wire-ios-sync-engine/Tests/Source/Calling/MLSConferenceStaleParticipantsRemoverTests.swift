@@ -84,10 +84,10 @@ class MLSConferenceStaleParticipantsRemoverTests: MessagingTest {
                 subconversationID: groupID
             )
         )
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 1))
 
         // THEN
-        wait(for: Array(expectations.values), timeout: 0.5)
+        wait(for: Array(expectations.values), timeout: 1)
     }
 
     func test_ItDoesntRemoveParticipantsThatReconnectedBeforeTimeout() {
