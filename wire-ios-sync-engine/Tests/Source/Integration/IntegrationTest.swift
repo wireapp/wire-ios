@@ -701,7 +701,7 @@ extension IntegrationTest: SessionManagerDelegate {
         // no-op
     }
 
-    public func sessionManagerDidFailToLoadDatabase() {
+    public func sessionManagerDidFailToLoadDatabase(error: Error) {
         // no-op
     }
 
