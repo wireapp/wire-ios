@@ -40,6 +40,7 @@ final class LocationSendViewController: UIViewController {
     var address: String? {
         didSet {
             addressLabel.text = address
+            updateAddressLabelAccessibility()
         }
     }
 
@@ -64,11 +65,18 @@ final class LocationSendViewController: UIViewController {
 
     private func setupAddressLabel() {
         addressLabel.accessibilityIdentifier = "selectedAddress"
+        addressLabel.accessibilityTraits = .staticText
+        updateAddressLabelAccessibility()
     }
 
     private func setupContainerView() {
         view.addSubview(containerView)
         [addressLabel, sendButton].forEach(containerView.addSubview)
+    }
+
+    private func updateAddressLabelAccessibility() {
+        addressLabel.accessibilityLabel = L10n.Accessibility.SendLocation.Address.description(addressLabel)
+        addressLabel.accessibilityHint = L10n.Accessibility.SendLocation.Address.hint
     }
 
     private func setupConstraints() {
