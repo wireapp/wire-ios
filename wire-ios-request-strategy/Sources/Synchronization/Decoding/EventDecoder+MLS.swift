@@ -76,11 +76,13 @@ extension EventDecoder {
 
             case .proposal(let commitDelay):
                 let scheduledDate = (updateEvent.timestamp ?? Date()) + TimeInterval(commitDelay)
+                var mlsService: MLSServiceInterface?
                 await context.perform {
                     conversation?.commitPendingProposalDate = scheduledDate
+                    mlsService = context.mlsService
                 }
 
-                if let mlsService = context.mlsService, updateEvent.source == .webSocket {
+                if let mlsService, updateEvent.source == .webSocket {
                     do {
                         try await mlsService.commitPendingProposals()
                     } catch {

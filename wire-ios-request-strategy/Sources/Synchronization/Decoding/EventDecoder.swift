@@ -49,6 +49,12 @@ private let previouslyReceivedEventIDsKey = "zm_previouslyReceivedEventIDsKey"
     unowned let eventMOC: NSManagedObjectContext
     unowned let syncMOC: NSManagedObjectContext
 
+    private var proteusProvider: ProteusProviding {
+        return syncMOC.performAndWait {
+            syncMOC.proteusProvider
+        }
+    }
+
     fileprivate typealias EventsWithStoredEvents = (storedEvents: [StoredUpdateEvent], updateEvents: [ZMUpdateEvent])
 
     public init(eventMOC: NSManagedObjectContext, syncMOC: NSManagedObjectContext) {
@@ -59,6 +65,7 @@ private let previouslyReceivedEventIDsKey = "zm_previouslyReceivedEventIDsKey"
             self.createReceivedPushEventIDsStoreIfNecessary()
         }
     }
+
 }
 
 // MARK: - Process events
@@ -85,12 +92,12 @@ extension EventDecoder {
             return (filteredEvents, lastIndex)
         }
 
-        guard self.syncMOC.proteusProvider.canPerform else {
+        guard proteusProvider.canPerform else {
                 WireLogger.proteus.warn("ignore decrypting events because it is not safe")
              return []
         }
 
-        let decryptedEvents: [ZMUpdateEvent] = await self.syncMOC.proteusProvider.performAsync(
+        let decryptedEvents: [ZMUpdateEvent] = await proteusProvider.performAsync(
             withProteusService: { proteusService in
                 return await self.decryptAndStoreEvents(
                     filteredEvents,
@@ -230,13 +237,6 @@ extension EventDecoder {
         startingAtIndex startIndex: Int64,
         publicKeys: EARPublicKeys?
     ) {
-        let selfUser = ZMUser.selfUser(in: syncMOC)
-
-        let account = Account(
-            userName: "",
-            userIdentifier: selfUser.remoteIdentifier
-        )
-
         for (idx, event) in decryptedEvents.enumerated() {
             _ = StoredUpdateEvent.encryptAndCreate(
                 event,

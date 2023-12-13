@@ -45,7 +45,7 @@ extension EventDecoder {
         var selfUser: ZMUser?
         var selfClient: UserClient?
 
-        let senderClient: UserClient? = await context.perform {
+        let (senderClient, senderClientSessionId) = await context.perform {
             // Is it for the current client?
             selfUser = ZMUser.selfUser(in: context)
             selfClient = selfUser?.selfClient()
@@ -55,13 +55,14 @@ extension EventDecoder {
                 selfClient?.remoteIdentifier == recipientID
             else {
                 WireLogger.updateEvent.info("decrypting proteus event... failed: is not for self client, dropping...")
-                return nil
+                return (UserClient?.none, ProteusSessionID?.none)
             }
 
-            return self.createClientIfNeeded(from: event, in: context)
+            let client = self.createClientIfNeeded(from: event, in: context)
+            return (client, client?.proteusSessionID)
         }
 
-        guard let senderClient else {
+        guard let senderClient, let senderClientSessionId else {
             WireLogger.updateEvent.error("decrypting proteus event... failed: couldn't fetch sender client, dropping...")
             return nil
         }
@@ -71,9 +72,8 @@ extension EventDecoder {
                 if senderClient.isInserted {
                     selfClient?.addNewClientToIgnored(senderClient)
                 }
+                appendFailedToDecryptMessage(after: error, for: event, sender: senderClient, in: context)
             }
-
-            appendFailedToDecryptMessage(after: error, for: event, sender: senderClient, in: context)
         }
 
         // Decrypt event.
@@ -83,7 +83,7 @@ extension EventDecoder {
         do {
             guard let result = try await decryptedUpdateEvent(
                 for: event,
-                sender: senderClient,
+                senderSessionId: senderClientSessionId,
                 using: decryptFunction
             ) else {
                 fail()
@@ -202,13 +202,13 @@ extension EventDecoder {
     // payload keys
     private func decryptedUpdateEvent(
         for event: ZMUpdateEvent,
-        sender: UserClient,
+        senderSessionId: ProteusSessionID,
         using decryptFunction: ProteusDecryptionFunction
     ) async throws -> (didCreateNewSession: Bool, event: ZMUpdateEvent)? {
         guard
             let result = try await self.decryptedData(
                 event,
-                client: sender,
+                sessionID: senderSessionId,
                 using: decryptFunction
             ),
             let decryptedEvent = event.decryptedEvent(decryptedData: result.decryptedData)
@@ -220,12 +220,11 @@ extension EventDecoder {
 
     private func decryptedData(
         _ event: ZMUpdateEvent,
-        client: UserClient,
+        sessionID: ProteusSessionID,
         using decryptFunction: ProteusDecryptionFunction
     ) async throws -> (didCreateNewSession: Bool, decryptedData: Data)? {
         guard
-            let encryptedData = try event.encryptedMessageData(),
-            let sessionID = client.proteusSessionID
+            let encryptedData = try event.encryptedMessageData()
         else {
             return nil
         }
