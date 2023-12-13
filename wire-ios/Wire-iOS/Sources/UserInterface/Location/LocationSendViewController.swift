@@ -25,7 +25,7 @@ protocol LocationSendViewControllerDelegate: AnyObject {
 
 final class LocationSendViewController: UIViewController {
 
-   private let sendButton = Button(style: .accentColorTextButtonStyle, cornerRadius: 12, fontSpec: .normalSemiboldFont)
+    private let sendButton = Button(style: .accentColorTextButtonStyle, cornerRadius: 12, fontSpec: .normalSemiboldFont)
 
     private let addressLabel: UILabel = {
         let label = DynamicFontLabel(style: .body, color: SemanticColors.Label.textDefault)
@@ -45,18 +45,11 @@ final class LocationSendViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        configureViews()
-        setupConstraints()
-
-        view.backgroundColor = SemanticColors.View.backgroundDefault
-    }
-
-    private func configureViews() {
         setupSendLocationButton()
-        addressLabel.accessibilityIdentifier = "selectedAddress"
-
-        view.addSubview(containerView)
-        [addressLabel, sendButton].forEach(containerView.addSubview)
+        setupAddressLabel()
+        setupContainerView()
+        setupConstraints()
+        view.backgroundColor = SemanticColors.View.backgroundDefault
     }
 
     private func setupSendLocationButton() {
@@ -67,6 +60,15 @@ final class LocationSendViewController: UIViewController {
         }
         sendButton.addAction(action, for: .touchUpInside)
         sendButton.accessibilityIdentifier = "sendLocation"
+    }
+
+    private func setupAddressLabel() {
+        addressLabel.accessibilityIdentifier = "selectedAddress"
+    }
+
+    private func setupContainerView() {
+        view.addSubview(containerView)
+        [addressLabel, sendButton].forEach(containerView.addSubview)
     }
 
     private func setupConstraints() {
