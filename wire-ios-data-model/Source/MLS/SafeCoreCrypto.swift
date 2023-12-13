@@ -63,6 +63,8 @@ public class SafeCoreCrypto: SafeCoreCryptoProtocol {
             ciphersuites: [defaultCipherSuite.rawValue]
         )
 
+        try coreCrypto.setCallbacks(callbacks: CoreCryptoCallbacksImpl())
+
         self.init(coreCrypto: coreCrypto, databasePath: path)
     }
 
