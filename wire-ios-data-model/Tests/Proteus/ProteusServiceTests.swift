@@ -19,6 +19,7 @@
 import Foundation
 import XCTest
 import WireCoreCrypto
+import WireDataModelSupport
 @testable import WireDataModel
 
 class ProteusServiceTests: XCTestCase {
@@ -27,6 +28,7 @@ class ProteusServiceTests: XCTestCase {
 
     var mockCoreCrypto: MockCoreCrypto!
     var mockSafeCoreCrypto: MockSafeCoreCrypto!
+    var mockCoreCryptoProvider: MockCoreCryptoProviderProtocol!
     var sut: ProteusService!
 
     // MARK: - Set up
@@ -36,7 +38,9 @@ class ProteusServiceTests: XCTestCase {
         mockCoreCrypto = MockCoreCrypto()
         mockCoreCrypto.mockProteusInit = {}
         mockSafeCoreCrypto = MockSafeCoreCrypto(coreCrypto: mockCoreCrypto)
-        sut = try ProteusService(coreCrypto: mockSafeCoreCrypto)
+        mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
+        mockCoreCryptoProvider.coreCryptoRequireMLS_MockValue = mockSafeCoreCrypto
+        sut = ProteusService(coreCryptoProvider: mockCoreCryptoProvider)
     }
 
     override func tearDown() {
