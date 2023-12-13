@@ -70,7 +70,6 @@ final class AddParticipantsViewControllerSnapshotTests: BaseSnapshotTestCase {
     }
 
     func testForAddParticipantsButtonIsShown() {
-
         let conversation = MockGroupDetailsConversation()
         sut = AddParticipantsViewController(context: .add(conversation), userSession: userSession)
         let user = MockUserType.createUser(name: "Bill")
