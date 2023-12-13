@@ -81,14 +81,6 @@ import WireUtilities
     // Current max value: conversationMLSMessageAdd = 44
 }
 
-#if DEBUG
-// Used in Objective C unit tests.
-extension ZMUpdateEvent {
-    @objc
-    static let allTypes = ZMUpdateEventType.allCases.map { $0.rawValue as NSNumber }
-}
-#endif
-
 extension ZMUpdateEventType {
     var stringValue: String? {
         switch self {
