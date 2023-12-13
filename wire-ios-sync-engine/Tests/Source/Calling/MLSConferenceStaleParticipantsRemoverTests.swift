@@ -84,6 +84,7 @@ class MLSConferenceStaleParticipantsRemoverTests: MessagingTest {
                 subconversationID: groupID
             )
         )
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
         wait(for: Array(expectations.values), timeout: 0.5)
@@ -129,6 +130,7 @@ class MLSConferenceStaleParticipantsRemoverTests: MessagingTest {
                 subconversationID: groupID
             )
         )
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
         wait(for: Array(expectations.values), timeout: 0.5)

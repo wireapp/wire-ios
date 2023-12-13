@@ -694,23 +694,20 @@ extension ZMUserSession: ZMSyncStateDelegate {
             context: syncContext.notificationContext
         ).post()
 
-        Task {
-            let selfClient = await syncContext.perform { [syncContext] in
-                ZMUser.selfUser(in: syncContext).selfClient()
-            }
-            if await syncContext.perform({ selfClient?.hasRegisteredMLSClient }) == true {
-                await syncContext.perform { self.mlsService.performPendingJoins() }
+        let selfClient = ZMUser.selfUser(in: syncContext).selfClient()
+
+        WaitingGroupTask(context: syncContext) { [self] in
+            if selfClient?.hasRegisteredMLSClient == true {
+                mlsService.performPendingJoins()
                 await mlsService.uploadKeyPackagesIfNeeded()
                 await mlsService.updateKeyMaterialForAllStaleGroupsIfNeeded()
-                await commitPendingProposalsIfNeeded()
+                commitPendingProposalsIfNeeded()
             }
-            await syncContext.perform { [self] in
-                fetchFeatureConfigs()
-                recurringActionService.performActionsIfNeeded()
+            fetchFeatureConfigs()
+            recurringActionService.performActionsIfNeeded()
 
-                managedObjectContext.performGroupedBlock { [weak self] in
-                    self?.notifyThirdPartyServices()
-                }
+            managedObjectContext.performGroupedBlock { [weak self] in
+                self?.notifyThirdPartyServices()
             }
         }
     }
@@ -759,11 +756,13 @@ extension ZMUserSession: ZMSyncStateDelegate {
     }
 
     // // FIXME: [jacob] move commitPendingProposalsIfNeeded to MLSService?
-    private func commitPendingProposalsIfNeeded() async {
-        do {
-            try await mlsService.commitPendingProposals()
-        } catch {
-            Logging.mls.error("Failed to commit pending proposals: \(String(describing: error))")
+    private func commitPendingProposalsIfNeeded() {
+        Task {
+            do {
+                try await mlsService.commitPendingProposals()
+            } catch {
+                Logging.mls.error("Failed to commit pending proposals: \(String(describing: error))")
+            }
         }
     }
 
