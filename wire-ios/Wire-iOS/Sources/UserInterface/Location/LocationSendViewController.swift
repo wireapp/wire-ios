@@ -28,7 +28,7 @@ final class LocationSendViewController: UIViewController {
     let sendButton = Button(style: .accentColorTextButtonStyle, cornerRadius: 12, fontSpec: .normalSemiboldFont)
 
     let addressLabel: UILabel = {
-        let label = DynamicFontLabel(fontSpec: FontSpec.normalFont, color: SemanticColors.Label.textDefault)
+        let label = DynamicFontLabel(style: .body, color: SemanticColors.Label.textDefault)
         label.numberOfLines = 0
         return label
     }()
@@ -46,42 +46,47 @@ final class LocationSendViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureViews()
-        createConstraints()
+        setupConstraints()
 
         view.backgroundColor = SemanticColors.View.backgroundDefault
     }
 
-    fileprivate func configureViews() {
+    private func configureViews() {
         sendButton.setTitle(L10n.Localizable.Location.SendButton.title, for: [])
-        sendButton.addTarget(self, action: #selector(sendButtonTapped), for: .touchUpInside)
+
+        let action = UIAction { [weak self] _ in
+            self?.sendButtonTapped()
+        }
+        sendButton.addAction(action, for: .touchUpInside)
         sendButton.accessibilityIdentifier = "sendLocation"
         addressLabel.accessibilityIdentifier = "selectedAddress"
+
         view.addSubview(containerView)
         [addressLabel, sendButton].forEach(containerView.addSubview)
     }
 
-    private func createConstraints() {
+    private func setupConstraints() {
         [containerView, addressLabel, sendButton].prepareForLayout()
         NSLayoutConstraint.activate([
-            containerView.topAnchor.constraint(equalTo: view.topAnchor),
-            containerView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            containerView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 12),
-            containerView.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -12),
+            containerView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            containerView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            containerView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 12),
+            containerView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -12),
             addressLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
             addressLabel.trailingAnchor.constraint(lessThanOrEqualTo: sendButton.leadingAnchor, constant: -12),
             addressLabel.topAnchor.constraint(equalTo: containerView.topAnchor),
-            addressLabel.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -UIScreen.safeArea.bottom),
+            addressLabel.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
             sendButton.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
             sendButton.centerYAnchor.constraint(equalTo: addressLabel.centerYAnchor),
             sendButton.heightAnchor.constraint(equalToConstant: 28)
         ])
 
-        sendButton.setContentCompressionResistancePriority(UILayoutPriority(rawValue: 1000), for: .horizontal)
-        addressLabel.setContentCompressionResistancePriority(UILayoutPriority(rawValue: 750), for: .horizontal)
+        sendButton.setContentCompressionResistancePriority(.required, for: .horizontal)
+        addressLabel.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
+        addressLabel.setContentHuggingPriority(.defaultLow, for: .horizontal)
     }
 
-    @objc
-    private func sendButtonTapped(_ sender: LegacyButton) {
+    private func sendButtonTapped() {
         delegate?.locationSendViewControllerSendButtonTapped(self)
     }
 }
