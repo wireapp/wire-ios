@@ -49,7 +49,8 @@ final class AddParticipantsViewControllerSnapshotTests: BaseSnapshotTestCase {
 
     override func setUp() {
         super.setUp()
-        mockSelfUser = .createDefaultSelfUser()
+        SelfUser.setupMockSelfUser(inTeam: UUID())
+        mockSelfUser = SelfUser.provider?.providedSelfUser as? MockUserType
         userSession = UserSessionMock(mockUser: mockSelfUser)
     }
 
@@ -69,6 +70,7 @@ final class AddParticipantsViewControllerSnapshotTests: BaseSnapshotTestCase {
     }
 
     func testForAddParticipantsButtonIsShown() {
+
         let conversation = MockGroupDetailsConversation()
         sut = AddParticipantsViewController(context: .add(conversation), userSession: userSession)
         let user = MockUserType.createUser(name: "Bill")
