@@ -21,7 +21,7 @@ import XCTest
 import SwiftUI
 @testable import Wire
 
-final class E2eIdentityCertificateViewTests: ZMSnapshotTestCase {
+final class E2eIdentityCertificateViewTests: BaseSnapshotTestCase {
 
     var sut: UIHostingController<E2EIdentityCertificateDetailsView>!
     lazy var kCertificate: String  = {
