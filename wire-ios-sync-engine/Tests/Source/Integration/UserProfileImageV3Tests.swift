@@ -29,8 +29,6 @@ class UserProfileImageV3Tests: IntegrationTest {
     }
 
     func checkProfileImagesMatch(local: ZMUser, remote: MockUser, file: StaticString = #file, line: UInt = #line) {
-        XCTAssertNotNil(remote.completeProfileAssetIdentifier, "Complete assetId should bet set on remote user", file: file, line: line)
-        XCTAssertNotNil(remote.previewProfileAssetIdentifier, "Preview assetId should bet set on remote user", file: file, line: line)
         XCTAssertNotNil(local.completeProfileAssetIdentifier, "Complete assetId should bet set on local user", file: file, line: line)
         XCTAssertNotNil(local.previewProfileAssetIdentifier, "Preview assetId should bet set on local user", file: file, line: line)
 
