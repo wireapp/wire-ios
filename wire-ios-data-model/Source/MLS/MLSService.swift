@@ -88,6 +88,8 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
 
     func fetchAndRepairGroup(with groupID: MLSGroupID) async
 
+    func updateKeyMaterialForAllStaleGroupsIfNeeded() async
+
 }
 
 // This is only used in tests, so it should be removed.
@@ -104,7 +106,7 @@ public final class MLSService: MLSServiceInterface {
     // MARK: - Properties
 
     private weak var context: NSManagedObjectContext?
-    private let coreCrypto: SafeCoreCryptoProtocol
+    private let coreCryptoProvider: CoreCryptoProviderProtocol
 
     private let encryptionService: MLSEncryptionServiceInterface
     private let decryptionService: MLSDecryptionServiceInterface
@@ -112,12 +114,21 @@ public final class MLSService: MLSServiceInterface {
     private let mlsActionExecutor: MLSActionExecutorProtocol
     private let conversationEventProcessor: ConversationEventProcessorProtocol
     private let staleKeyMaterialDetector: StaleMLSKeyDetectorProtocol
-    private let userDefaults: UserDefaults
+    private let userDefaults: PrivateUserDefaults<Keys>
     private let logger = WireLogger.mls
     private var groupsPendingJoin = Set<MLSGroupID>()
     private let groupsBeingRepaired = GroupsBeingRepaired()
-
     private let syncStatus: SyncStatusProtocol
+
+    private var coreCrypto: SafeCoreCryptoProtocol {
+        get throws {
+            try coreCryptoProvider.coreCrypto(requireMLS: true)
+        }
+    }
+
+    enum Keys: String, DefaultsKey {
+        case keyPackageQueriedTime
+    }
 
     var backendPublicKeys = BackendMLSPublicKeys()
     var pendingProposalCommitTimers = [MLSGroupID: Timer]()
@@ -154,14 +165,15 @@ public final class MLSService: MLSServiceInterface {
 
     public convenience init(
         context: NSManagedObjectContext,
-        coreCrypto: SafeCoreCryptoProtocol,
+        coreCryptoProvider: CoreCryptoProviderProtocol,
         conversationEventProcessor: ConversationEventProcessorProtocol,
         userDefaults: UserDefaults,
-        syncStatus: SyncStatusProtocol
+        syncStatus: SyncStatusProtocol,
+        userID: UUID
     ) {
         self.init(
             context: context,
-            coreCrypto: coreCrypto,
+            coreCryptoProvider: coreCryptoProvider,
             conversationEventProcessor: conversationEventProcessor,
             staleKeyMaterialDetector: StaleMLSKeyDetector(
                 refreshIntervalInDays: Self.keyMaterialRefreshIntervalInDays,
@@ -169,13 +181,14 @@ public final class MLSService: MLSServiceInterface {
             ),
             userDefaults: userDefaults,
             actionsProvider: MLSActionsProvider(),
-            syncStatus: syncStatus
+            syncStatus: syncStatus,
+            userID: userID
         )
     }
 
     init(
         context: NSManagedObjectContext,
-        coreCrypto: SafeCoreCryptoProtocol,
+        coreCryptoProvider: CoreCryptoProviderProtocol,
         encryptionService: MLSEncryptionServiceInterface? = nil,
         decryptionService: MLSDecryptionServiceInterface? = nil,
         mlsActionExecutor: MLSActionExecutorProtocol? = nil,
@@ -185,44 +198,37 @@ public final class MLSService: MLSServiceInterface {
         actionsProvider: MLSActionsProviderProtocol = MLSActionsProvider(),
         delegate: MLSServiceDelegate? = nil,
         syncStatus: SyncStatusProtocol,
+        userID: UUID,
         subconversationGroupIDRepository: SubconversationGroupIDRepositoryInterface = SubconversationGroupIDRepository()
     ) {
         self.context = context
-        self.coreCrypto = coreCrypto
+        self.coreCryptoProvider = coreCryptoProvider
         self.mlsActionExecutor = mlsActionExecutor ?? MLSActionExecutor(
-            coreCrypto: coreCrypto,
+            coreCryptoProvider: coreCryptoProvider,
             context: context,
             actionsProvider: actionsProvider
         )
         self.conversationEventProcessor = conversationEventProcessor
         self.staleKeyMaterialDetector = staleKeyMaterialDetector
         self.actionsProvider = actionsProvider
-        self.userDefaults = userDefaults
+        self.userDefaults = PrivateUserDefaults(userID: userID, storage: userDefaults)
         self.delegate = delegate
         self.syncStatus = syncStatus
         self.subconversationGroupIDRepository = subconversationGroupIDRepository
 
-        self.encryptionService = encryptionService ?? MLSEncryptionService(coreCrypto: coreCrypto)
+        self.encryptionService = encryptionService ?? MLSEncryptionService(coreCryptoProvider: coreCryptoProvider)
         self.decryptionService = decryptionService ?? MLSDecryptionService(
             context: context,
-            coreCrypto: coreCrypto,
+            coreCryptoProvider: coreCryptoProvider,
             subconversationGroupIDRepository: subconversationGroupIDRepository
         )
 
-        do {
-            try coreCrypto.perform { try $0.setCallbacks(callbacks: CoreCryptoCallbacksImpl()) }
-        } catch {
-            logger.error("failed to set callbacks: \(String(describing: error))")
+        // FIXME: [jacob] fetch on demand when creating group
+        Task {
+            await fetchBackendPublicKeys()
         }
 
-        generateClientPublicKeysIfNeeded()
-        Task {
-            await uploadKeyPackagesIfNeeded()
-            await fetchBackendPublicKeys()
-            await updateKeyMaterialForAllStaleGroupsIfNeeded()
-            schedulePeriodicKeyMaterialUpdateCheck()
-            delegate?.MLSServiceDidFinishInitialization()
-        }
+        schedulePeriodicKeyMaterialUpdateCheck()
     }
 
     deinit {
@@ -230,31 +236,6 @@ public final class MLSService: MLSServiceInterface {
     }
 
     // MARK: - Public keys
-
-    private func generateClientPublicKeysIfNeeded() {
-        guard
-            let context = context,
-            let selfClient = ZMUser.selfUser(in: context).selfClient()
-        else {
-            return
-        }
-
-        var keys = selfClient.mlsPublicKeys
-
-        do {
-            if keys.ed25519 == nil {
-                logger.info("generating ed25519 public key")
-                let keyBytes = try coreCrypto.perform { try $0.clientPublicKey(ciphersuite: defaultCipherSuite.rawValue) }
-                let keyData = Data(keyBytes)
-                keys.ed25519 = keyData.base64EncodedString()
-            }
-        } catch {
-            logger.error("failed to generate public keys: \(String(describing: error))")
-        }
-
-        selfClient.mlsPublicKeys = keys
-        context.saveOrRollback()
-    }
 
     private func fetchBackendPublicKeys() async {
         logger.info("fetching backend public keys")
@@ -373,14 +354,21 @@ public final class MLSService: MLSServiceInterface {
             withTimeInterval: .oneDay,
             repeats: true
         ) { [weak self] _ in
-            guard let self else { return }
+            guard
+                let self,
+                let context = context,
+                ZMUser.selfUser(in: context).selfClient()?.hasRegisteredMLSClient == true else {
+                self?.logger.info("Skip periodic key material check since MLS is not enabled")
+                return
+            }
+
             Task {
                 await self.updateKeyMaterialForAllStaleGroupsIfNeeded()
             }
         }
     }
 
-    private func updateKeyMaterialForAllStaleGroupsIfNeeded() async {
+    public func updateKeyMaterialForAllStaleGroupsIfNeeded() async {
         guard lastKeyMaterialUpdateCheck.ageInDays >= 1 else { return }
 
         await updateKeyMaterialForAllStaleGroups()
@@ -641,7 +629,7 @@ public final class MLSService: MLSServiceInterface {
             let unclaimedKeyPackageCount = try await countUnclaimedKeyPackages(clientID: clientID, context: context.notificationContext)
             logger.info("there are \(unclaimedKeyPackageCount) unclaimed key packages")
 
-            userDefaults.lastKeyPackageCountDate = Date()
+            userDefaults.set(Date(), forKey: .keyPackageQueriedTime)
 
             guard unclaimedKeyPackageCount <= halfOfTargetUnclaimedKeyPackageCount else {
                 logger.info("no need to upload new key packages yet")
@@ -663,9 +651,8 @@ public final class MLSService: MLSServiceInterface {
                 try $0.clientValidKeypackagesCount(ciphersuite: defaultCipherSuite.rawValue)
             }
             let shouldCountRemainingKeyPackages = estimatedLocalKeyPackageCount < halfOfTargetUnclaimedKeyPackageCount
-            let lastCheckWasMoreThan24Hours = userDefaults.hasMoreThan24HoursPassedSinceLastCheck
 
-            guard lastCheckWasMoreThan24Hours || shouldCountRemainingKeyPackages else {
+            guard hasMoreThan24HoursPassedSinceLastCheck || shouldCountRemainingKeyPackages else {
                 logger.info("last check was recent and there are enough unclaimed key packages. not uploading.")
                 return false
             }
@@ -675,6 +662,16 @@ public final class MLSService: MLSServiceInterface {
         } catch let error {
             logger.warn("failed to get valid key packages count with error: \(String(describing: error))")
             return true
+        }
+    }
+
+    private var hasMoreThan24HoursPassedSinceLastCheck: Bool {
+        guard let storedDate = userDefaults.date(forKey: .keyPackageQueriedTime) else { return true }
+
+        if Calendar.current.dateComponents([.hour], from: storedDate, to: Date()).hour > 24 {
+            return true
+        } else {
+            return false
         }
     }
 
@@ -748,7 +745,8 @@ public final class MLSService: MLSServiceInterface {
     }
 
     public func conversationExists(groupID: MLSGroupID) -> Bool {
-        let result = coreCrypto.perform { $0.conversationExists(conversationId: groupID.bytes) }
+        // TODO: [jacob] let it throw
+        let result = (try? coreCrypto.perform { $0.conversationExists(conversationId: groupID.bytes) }) ?? false
         logger.info("checking if group (\(groupID)) exists... it does\(result ? "!" : " not!")")
         return result
     }
@@ -1016,7 +1014,7 @@ public final class MLSService: MLSServiceInterface {
     }
 
     private func outOfSyncConversations(in context: NSManagedObjectContext) -> [ZMConversation] {
-        return coreCrypto.perform { coreCrypto in
+        return (try? coreCrypto.perform { coreCrypto in
             return ZMConversation.fetchMLSConversations(in: context).filter {
                 isConversationOutOfSync(
                     $0,
@@ -1024,7 +1022,7 @@ public final class MLSService: MLSServiceInterface {
                     context: context
                 )
             }
-        }
+        }) ?? [] // TODO: [jacob] let it throw
     }
 
     private func isConversationOutOfSync(
@@ -1067,14 +1065,14 @@ public final class MLSService: MLSServiceInterface {
         subgroup: MLSSubgroup? = nil,
         context: NSManagedObjectContext
     ) -> Bool {
-        return coreCrypto.perform {
+        return (try? coreCrypto.perform {
             return isConversationOutOfSync(
                 conversation,
                 subgroup: subgroup,
                 coreCrypto: $0,
                 context: context
             )
-        }
+        }) ?? false // TODO: [jacob] let it throw
     }
 
     // MARK: - External Proposals
@@ -1780,38 +1778,6 @@ public protocol ConversationEventProcessorProtocol {
     func processConversationEvents(_ events: [ZMUpdateEvent]) async
     // TODO: make async
     func processPayload(_ payload: ZMTransportData)
-}
-
-private extension UserDefaults {
-
-    enum Keys {
-        static let keyPackageQueriedTime = "keyPackageQueriedTime"
-    }
-
-    var lastKeyPackageCountDate: Date? {
-
-        get { object(forKey: Keys.keyPackageQueriedTime) as? Date }
-        set { set(newValue, forKey: Keys.keyPackageQueriedTime) }
-
-    }
-
-    var hasMoreThan24HoursPassedSinceLastCheck: Bool {
-
-        guard let storedDate = lastKeyPackageCountDate else { return true }
-
-        if Calendar.current.dateComponents([.hour], from: storedDate, to: Date()).hour > 24 {
-            return true
-        } else {
-            return false
-        }
-
-    }
-}
-
-extension UserDefaults {
-    func test_setLastKeyPackageCountDate(_ date: Date) {
-        lastKeyPackageCountDate = date
-    }
 }
 
 extension CiphersuiteName {

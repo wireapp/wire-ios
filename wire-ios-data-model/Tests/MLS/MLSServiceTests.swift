@@ -29,6 +29,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
     var sut: MLSService!
     var mockCoreCrypto: MockCoreCrypto!
     var mockSafeCoreCrypto: MockSafeCoreCrypto!
+    var mockCoreCryptoProvider: MockCoreCryptoProviderProtocol!
     var mockEncryptionService: MockMLSEncryptionServiceInterface!
     var mockDecryptionService: MockMLSDecryptionServiceInterface!
     var mockMLSActionExecutor: MockMLSActionExecutor!
@@ -37,6 +38,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
     var mockConversationEventProcessor: MockConversationEventProcessorProtocol!
     var mockStaleMLSKeyDetector: MockStaleMLSKeyDetector!
     var userDefaultsTestSuite: UserDefaults!
+    var privateUserDefaults: PrivateUserDefaults<MLSService.Keys>!
     var mockSubconversationGroupIDRepository: MockSubconversationGroupIDRepositoryInterface!
 
     let groupID = MLSGroupID([1, 2, 3])
@@ -52,6 +54,8 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         super.setUp()
         mockCoreCrypto = MockCoreCrypto()
         mockSafeCoreCrypto = MockSafeCoreCrypto(coreCrypto: mockCoreCrypto)
+        mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
+        mockCoreCryptoProvider.coreCryptoRequireMLS_MockValue = mockSafeCoreCrypto
         mockEncryptionService = MockMLSEncryptionServiceInterface()
         mockDecryptionService = MockMLSDecryptionServiceInterface()
         mockMLSActionExecutor = MockMLSActionExecutor()
@@ -61,6 +65,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         mockConversationEventProcessor.processConversationEvents_MockMethod = { _ in }
         mockStaleMLSKeyDetector = MockStaleMLSKeyDetector()
         userDefaultsTestSuite = UserDefaults(suiteName: "com.wire.mls-test-suite")!
+        privateUserDefaults = PrivateUserDefaults(userID: userIdentifier, storage: userDefaultsTestSuite)
         mockSubconversationGroupIDRepository = MockSubconversationGroupIDRepositoryInterface()
 
         mockCoreCrypto.mockClientValidKeypackagesCount = { _ in
@@ -79,7 +84,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         didFinishInitializationExpectation = XCTestExpectation(description: "did finish initialization")
         sut = MLSService(
             context: uiMOC,
-            coreCrypto: mockSafeCoreCrypto,
+            coreCryptoProvider: mockCoreCryptoProvider,
             encryptionService: mockEncryptionService,
             decryptionService: mockDecryptionService,
             mlsActionExecutor: mockMLSActionExecutor,
@@ -89,6 +94,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             actionsProvider: mockActionsProvider,
             delegate: self,
             syncStatus: mockSyncStatus,
+            userID: userIdentifier,
             subconversationGroupIDRepository: mockSubconversationGroupIDRepository
         )
     }
@@ -180,13 +186,14 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         // When
         let sut = MLSService(
             context: uiMOC,
-            coreCrypto: mockSafeCoreCrypto,
+            coreCryptoProvider: mockCoreCryptoProvider,
             conversationEventProcessor: mockConversationEventProcessor,
             staleKeyMaterialDetector: mockStaleMLSKeyDetector,
             userDefaults: userDefaultsTestSuite,
             actionsProvider: mockActionsProvider,
             delegate: self,
-            syncStatus: mockSyncStatus
+            syncStatus: mockSyncStatus,
+            userID: userIdentifier
         )
 
         // Then
@@ -1524,7 +1531,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         let uploadKeyPackages = self.expectation(description: "Upload key packages")
 
         // mock that we queried kp count recently
-        userDefaultsTestSuite.test_setLastKeyPackageCountDate(Date())
+        userDefaultsTestSuite.set(Date(), forKey: MLSService.Keys.keyPackageQueriedTime.rawValue)
 
         // mock that we don't have enough unclaimed kp locally
         mockCoreCrypto.mockClientValidKeypackagesCount = { _ in
@@ -1578,7 +1585,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         countUnclaimedKeyPackages.isInverted = true
 
         // mock that we queried kp count recently
-        userDefaultsTestSuite.test_setLastKeyPackageCountDate(Date())
+        privateUserDefaults.set(Date(), forKey: .keyPackageQueriedTime)
 
         // mock that there are enough kp locally
         mockCoreCrypto.mockClientValidKeypackagesCount = { _ in
@@ -1613,7 +1620,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         uploadKeyPackages.isInverted = true
 
         // mock that we didn't query kp count recently
-        userDefaultsTestSuite.test_setLastKeyPackageCountDate(.distantPast)
+        privateUserDefaults.set(Date.distantPast, forKey: .keyPackageQueriedTime)
 
         // mock that we don't have enough unclaimed kp locally
         mockCoreCrypto.mockClientValidKeypackagesCount = { _ in
@@ -1676,7 +1683,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     // MARK: - Update key material
 
-    func test_UpdateKeyMaterial_WhenInitializing() throws {
+    func test_UpdateKeyMaterial() async throws {
         // Given
         let group1 = MLSGroupID.random()
         let group2 = MLSGroupID.random()
@@ -1701,20 +1708,10 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         didFinishInitializationExpectation = expectation(description: "did finish initialization")
 
         // When
-        let sut = MLSService(
-            context: uiMOC,
-            coreCrypto: mockSafeCoreCrypto,
-            mlsActionExecutor: mockMLSActionExecutor,
-            conversationEventProcessor: mockConversationEventProcessor,
-            staleKeyMaterialDetector: mockStaleMLSKeyDetector,
-            userDefaults: userDefaultsTestSuite,
-            actionsProvider: mockActionsProvider,
-            delegate: self,
-            syncStatus: mockSyncStatus
-        )
+        await sut.updateKeyMaterialForAllStaleGroupsIfNeeded()
 
         // Then
-        _ = waitForCustomExpectations(withTimeout: 5)
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 5))
 
         // Then we updated the key material.
         XCTAssertEqual(
@@ -1751,104 +1748,6 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             accuracy: 0.1
         )
     }
-
-    func test_SendPendingProposal_BeforeUpdatingKeyMaterial_WhenInitializing() throws {
-        // Given
-        let futureCommitDate = Date().addingTimeInterval(2)
-        let groupID = MLSGroupID.random()
-        var conversation: ZMConversation!
-
-        uiMOC.performAndWait {
-            // A group with pending proposal in the future.
-            conversation = createConversation(in: uiMOC)
-            conversation.mlsGroupID = groupID
-            conversation.commitPendingProposalDate = futureCommitDate
-        }
-
-        // Expectation
-        keyMaterialUpdatedExpectation = expectation(description: "did update key material")
-        didFinishInitializationExpectation = expectation(description: "did finish initialization")
-
-        // Mock committing pending proposal.
-        var mockCommitPendingProposalsArguments = [MLSGroupID]()
-        let updateEvent = dummyMemberJoinEvent()
-
-        mockMLSActionExecutor.mockCommitPendingProposals = {
-            mockCommitPendingProposalsArguments.append($0)
-            return [updateEvent]
-        }
-
-        // Mock stale groups.
-        mockStaleMLSKeyDetector.groupsWithStaleKeyingMaterial = [groupID]
-
-        // Mock updating key material.
-        var mockUpdateKeyingMaterialArguments = Set<MLSGroupID>()
-        mockMLSActionExecutor.mockUpdateKeyMaterial = {
-            mockUpdateKeyingMaterialArguments.insert($0)
-            return []
-        }
-
-        // When
-        let sut = MLSService(
-            context: uiMOC,
-            coreCrypto: mockSafeCoreCrypto,
-            mlsActionExecutor: mockMLSActionExecutor,
-            conversationEventProcessor: mockConversationEventProcessor,
-            staleKeyMaterialDetector: mockStaleMLSKeyDetector,
-            userDefaults: userDefaultsTestSuite,
-            actionsProvider: mockActionsProvider,
-            delegate: self,
-            syncStatus: mockSyncStatus
-        )
-
-        // Then
-        XCTAssertTrue(waitForCustomExpectations(withTimeout: 5))
-
-        // Then we committed the pending proposal.
-        XCTAssertEqual(mockCommitPendingProposalsArguments, [groupID])
-
-        // Then the conversation has been updated.
-        uiMOC.performAndWait {
-            XCTAssertNil(conversation.commitPendingProposalDate)
-        }
-
-        // Then we updated the key material.
-        XCTAssertEqual(
-            mockUpdateKeyingMaterialArguments,
-            [groupID]
-        )
-
-        // Then we informed the key detector of the update.
-        XCTAssertEqual(
-            Set(mockStaleMLSKeyDetector.calls.keyingMaterialUpdated),
-            Set([groupID])
-        )
-
-        // Then we processed the update event from the proposal.
-        XCTAssertEqual(
-            mockConversationEventProcessor.processConversationEvents_Invocations,
-            [[updateEvent], []]
-        )
-
-        // Then we updated the last check date.
-        XCTAssertEqual(
-            sut.lastKeyMaterialUpdateCheck.timeIntervalSinceNow,
-            Date().timeIntervalSinceNow,
-            accuracy: 3
-        )
-
-        // Then we scheduled a timer.
-        let timer = try XCTUnwrap(sut.keyMaterialUpdateCheckTimer)
-        XCTAssertTrue(timer.isValid)
-
-        XCTAssertEqual(
-            timer.fireDate.timeIntervalSinceNow,
-            Date().addingTimeInterval(.oneDay).timeIntervalSinceNow,
-            accuracy: 3
-        )
-    }
-
-    // MARK: - Rety on commit failure
 
     // Note: these tests are asserting the behavior of the retry mechanism only, which
     // is used in various operations, such as adding members or removing clients. For

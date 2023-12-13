@@ -22,6 +22,7 @@ import WireTesting
 import WireCryptobox
 import WireMockTransport
 import WireDataModel
+import WireDataModelSupport
 import Foundation
 
 class UserClientRequestFactoryTests: MessagingTest {
@@ -45,9 +46,9 @@ class UserClientRequestFactoryTests: MessagingTest {
         )
         proteusService = mockProteusService()
         proteusProvider = MockProteusProvider(
-            mockProteusService: proteusService,
-            mockKeyStore: spyKeyStore
+            mockProteusService: proteusService
         )
+        spyKeyStore = proteusProvider.mockKeyStore
 
         sut = UserClientRequestFactory(proteusProvider: proteusProvider)
     }
