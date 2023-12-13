@@ -368,6 +368,13 @@ public class ZMUserSession: NSObject {
         // This should happen after the request strategies are created b/c
         // it needs to make network requests upon initialization.
         setupCryptoStack(stage: .mls)
+        syncContext.performGroupedBlock {
+            guard let mlsService = self.syncContext.mlsService else {
+                return
+            }
+            let toketE2ei = EpochChangeObserver(mlsService: mlsService)
+            self.tokens.append(toketE2ei)
+        }
 
         registerForCalculateBadgeCountNotification()
         registerForRegisteringPushTokenNotification()

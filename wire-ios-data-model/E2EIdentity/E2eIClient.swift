@@ -25,6 +25,7 @@ public protocol E2eIClientInterface {
 
 }
 
+// TODO: change to Service
 /// This class setups e2eIdentity object from CoreCrypto.
 public final class E2eIClient: E2eIClientInterface {
 
@@ -54,3 +55,43 @@ public final class E2eIClient: E2eIClientInterface {
     }
 
 }
+
+// TODO: Move to the separate file
+protocol MLSConversationsVerificationStatusesHandler {
+    func invoke()
+    /// epoch observer -> conversation (groupID)
+    /// MLSConversationService.getConversationVerificationStatus(conversation.iD) -> newStatus
+    ///  getconversationByGroupID -> conversation
+    /// updateStatusAndNotifyUserIfNeeded (conversation)
+    ///
+    /// **private func updateStatusAndNotifyUserIfNeeded (conversation)**
+    /// var currentStatus = conversation.conversation.mlsVerificationStatus
+    /// var newStatus = getActualNewStatus(newStatusFromCC, currentStatus)
+    /// if (newStatus == currentStatus) return
+    /// conversationRepository.updateMlsVerificationStatus(newStatus, conversation.conversation.id)
+    /// if (newStatus == VerificationStatus.DEGRADED || newStatus == VerificationStatus.VERIFIED) {
+    ///    notifyUserAboutStateChanges(conversation.conversation.id, newStatus)
+    /// }
+}
+
+public enum VerificationStatus {
+    case verified
+    case notVerified
+    case degraded
+}
+
+public protocol MLSConversationServiceInterface {
+    func getConversationVerificationStatus(groupID: MLSGroupID) -> Bool
+}
+class MLSConversationService: MLSConversationServiceInterface {
+    private let coreCrypto: SafeCoreCryptoProtocol
+    public init(coreCrypto: SafeCoreCryptoProtocol) {
+        self.coreCrypto = coreCrypto
+    }
+
+    public func getConversationVerificationStatus(groupID: MLSGroupID) -> Bool {
+        /// another method
+        return coreCrypto.perform { $0.conversationExists(conversationId: groupID.bytes) }
+    }
+}
+// mlsVerificationState
