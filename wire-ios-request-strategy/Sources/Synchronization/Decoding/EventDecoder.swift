@@ -49,12 +49,6 @@ private let previouslyReceivedEventIDsKey = "zm_previouslyReceivedEventIDsKey"
     unowned let eventMOC: NSManagedObjectContext
     unowned let syncMOC: NSManagedObjectContext
 
-    private var proteusProvider: ProteusProviding {
-        return syncMOC.performAndWait {
-            syncMOC.proteusProvider
-        }
-    }
-
     fileprivate typealias EventsWithStoredEvents = (storedEvents: [StoredUpdateEvent], updateEvents: [ZMUpdateEvent])
 
     public init(eventMOC: NSManagedObjectContext, syncMOC: NSManagedObjectContext) {
@@ -66,6 +60,13 @@ private let previouslyReceivedEventIDsKey = "zm_previouslyReceivedEventIDsKey"
         }
     }
 
+    /// Guarantee to get proteusProvider from correct context
+    /// - Note: to be replaced when proteusProvider is not attached to context 🤞
+    private var proteusProvider: ProteusProviding {
+        return syncMOC.performAndWait {
+            syncMOC.proteusProvider
+        }
+    }
 }
 
 // MARK: - Process events

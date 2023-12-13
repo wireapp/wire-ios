@@ -192,6 +192,7 @@ public final class ProteusService: ProteusServiceInterface {
     ) async throws -> (didCreateNewSession: Bool, decryptedData: Data) {
         logger.info("decrypting data")
 
+        // FIXME: turn async in WPB-5850
         if sessionExists(id: id) {
             logger.info("session exists, decrypting...")
 
