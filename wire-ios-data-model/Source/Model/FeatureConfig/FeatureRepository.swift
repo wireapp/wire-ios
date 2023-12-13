@@ -37,8 +37,8 @@ public protocol FeatureRepositoryInterface {
     func storeDigitalSignature(_ digitalSignature: Feature.DigitalSignature)
     func fetchMLS() -> Feature.MLS
     func storeMLS(_ mls: Feature.MLS)
-    func fetchE2EId() -> Feature.E2EId
-    func storeE2EId(_ e2eid: Feature.E2EId)
+    func fetchE2EI() -> Feature.E2EI
+    func storeE2EI(_ e2ei: Feature.E2EI)
 
 }
 
@@ -256,7 +256,7 @@ public class FeatureRepository: FeatureRepositoryInterface {
 
     // MARK: - E2EId
 
-    public func fetchE2EId() -> Feature.E2EId {
+    public func fetchE2EI() -> Feature.E2EI {
         guard
             let feature = Feature.fetch(name: .e2ei, context: context),
             let featureConfig = feature.config
@@ -264,11 +264,11 @@ public class FeatureRepository: FeatureRepositoryInterface {
             return .init()
         }
 
-        let config = try! JSONDecoder().decode(Feature.E2EId.Config.self, from: featureConfig)
+        let config = try! JSONDecoder().decode(Feature.E2EI.Config.self, from: featureConfig)
         return .init(status: feature.status, config: config)
     }
 
-    public func storeE2EId(_ e2eid: Feature.E2EId) {
+    public func storeE2EI(_ e2eid: Feature.E2EI) {
         let config = try! JSONEncoder().encode(e2eid.config)
 
         Feature.updateOrCreate(havingName: .e2ei, in: context) {
@@ -307,7 +307,7 @@ public class FeatureRepository: FeatureRepositoryInterface {
                 storeMLS(.init())
 
             case .e2ei:
-                storeE2EId(.init())
+                storeE2EI(.init())
             }
         }
     }

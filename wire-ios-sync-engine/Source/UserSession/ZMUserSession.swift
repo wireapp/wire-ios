@@ -127,9 +127,9 @@ public class ZMUserSession: NSObject {
         return featureRepository.fetchClassifiedDomains()
     }
 
-    public var e2eiFeature: Feature.E2EId {
+    public var e2eiFeature: Feature.E2EI {
         let featureRepository = FeatureRepository(context: coreDataStack.viewContext)
-        return featureRepository.fetchE2EId()
+        return featureRepository.fetchE2EI()
     }
 
     public var hasCompletedInitialSync: Bool = false

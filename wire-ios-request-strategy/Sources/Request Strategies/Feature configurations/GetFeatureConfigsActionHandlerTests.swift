@@ -134,7 +134,7 @@ class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
             XCTAssertEqual(selfDeletingMessage.status, .enabled)
             XCTAssertEqual(selfDeletingMessage.config.enforcedTimeoutSeconds, 22)
 
-            let e2ei = featureRepository.fetchE2EId()
+            let e2ei = featureRepository.fetchE2EI()
             XCTAssertEqual(e2ei.status, .enabled)
             XCTAssertEqual(e2ei.config.acmeDiscoveryUrl, "https://acme/defaultteams/directory")
             XCTAssertEqual(e2ei.config.verificationExpiration, 60)
@@ -217,7 +217,7 @@ class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
             XCTAssertEqual(selfDeletingMessage.status, .enabled)
             XCTAssertEqual(selfDeletingMessage.config, .init())
 
-            let e2ei = featureRepository.fetchE2EId()
+            let e2ei = featureRepository.fetchE2EI()
             XCTAssertEqual(e2ei.status, .disabled)
             XCTAssertEqual(e2ei.config, .init())
         }

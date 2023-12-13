@@ -221,6 +221,7 @@ public class Feature: ZMManagedObject {
             break
         case .e2ei:
             /// TODO: in the next PR
+            /// https://wearezeta.atlassian.net/browse/WPB-3321
             break
         }
     }

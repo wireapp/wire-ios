@@ -20,7 +20,7 @@ import Foundation
 
 public extension Feature {
 
-    struct E2EId: Codable {
+    struct E2EI: Codable {
 
         // MARK: - Properties
 
