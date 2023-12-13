@@ -29,7 +29,7 @@ extension ZMUserSession {
 
     @objc(setEmailCredentials:)
     func setEmailCredentials(_ emailCredentials: ZMEmailCredentials?) {
-        applicationStatusDirectory?.clientRegistrationStatus.emailCredentials = emailCredentials
+        applicationStatusDirectory.clientRegistrationStatus.emailCredentials = emailCredentials
     }
 
     /// `True` if the session is ready to be used.

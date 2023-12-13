@@ -581,13 +581,13 @@ extension IntegrationTest {
     }
 
     func performSlowSync() {
-        userSession?.applicationStatusDirectory?.syncStatus.forceSlowSync()
+        userSession?.applicationStatusDirectory.syncStatus.forceSlowSync()
         RequestAvailableNotification.notifyNewRequestsAvailable(nil)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
 
     func performQuickSync() {
-        userSession?.applicationStatusDirectory?.syncStatus.forceQuickSync()
+        userSession?.applicationStatusDirectory.syncStatus.forceQuickSync()
         RequestAvailableNotification.notifyNewRequestsAvailable(nil)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }

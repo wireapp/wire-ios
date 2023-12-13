@@ -65,8 +65,8 @@
     [[[self.mockCookieStorage stub] andReturn:[NSData data]] authenticationCookieData];
     
     self.sut = [[ZMClientRegistrationStatus alloc] initWithManagedObjectContext:self.syncMOC
-                                                                  cookieStorage:self.mockCookieStorage
-                                                     registrationStatusDelegate:self.mockClientRegistrationDelegate];
+                                                                  cookieStorage:self.mockCookieStorage];
+    self.sut.registrationStatusDelegate = self.mockClientRegistrationDelegate;
 }
 
 - (void)tearDown

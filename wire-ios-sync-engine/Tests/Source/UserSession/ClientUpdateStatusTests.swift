@@ -19,6 +19,8 @@
 import Foundation
 import WireTesting
 
+@testable import WireSyncEngine
+
 struct ClientUpdateStatusChange {
     let type: ZMClientUpdateNotificationType
     var clientObjectIDs: [NSManagedObjectID]
@@ -33,6 +35,7 @@ class ClientUpdateStatusTests: MessagingTest {
     override func setUp() {
         super.setUp()
         self.sut = ClientUpdateStatus(syncManagedObjectContext: self.syncMOC)
+        self.sut.determineInitialClientStatus()
 
         clientObserverToken = ZMClientUpdateNotification.addObserver(context: uiMOC) { [weak self] (type, clientObjectIDs, error) in
             self?.receivedNotifications.append(ClientUpdateStatusChange(type: type, clientObjectIDs: clientObjectIDs, error: error))
@@ -277,6 +280,7 @@ class ClientUpdateStatusTests: MessagingTest {
         // WHEN
         // re-create
         self.sut = ClientUpdateStatus(syncManagedObjectContext: self.syncMOC)
+        self.sut.determineInitialClientStatus()
         clientObserverToken = ZMClientUpdateNotification.addObserver(context: uiMOC) { [weak self] (type, clientObjectIDs, error) in
             self?.receivedNotifications.append(ClientUpdateStatusChange(type: type, clientObjectIDs: clientObjectIDs, error: error))
         }

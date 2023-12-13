@@ -52,9 +52,8 @@ public class ProteusProvider: ProteusProviding {
 
         precondition(context.zm_isSyncContext, "ProteusProvider should only be used on the sync context")
 
-        if let proteusService = context.proteusService {
+        if let proteusService = context.proteusService, proteusViaCoreCrypto {
 
-            precondition(proteusViaCoreCrypto, "core crypto should only be used when the flag is on")
             return try proteusServiceBlock(proteusService)
 
         } else if let keyStore = context.zm_cryptKeyStore {

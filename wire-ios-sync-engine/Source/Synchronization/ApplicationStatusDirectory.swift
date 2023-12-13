@@ -44,7 +44,6 @@ public final class ApplicationStatusDirectory: NSObject, ApplicationStatus {
         cookieStorage: ZMPersistentCookieStorage,
         requestCancellation: ZMRequestCancellation,
         application: ZMApplication,
-        syncStateDelegate: ZMSyncStateDelegate,
         lastEventIDRepository: LastEventIDRepositoryInterface,
         analytics: AnalyticsType? = nil
     ) {
@@ -56,14 +55,12 @@ public final class ApplicationStatusDirectory: NSObject, ApplicationStatus {
         self.operationStatus.isInBackground = application.applicationState == .background
         self.syncStatus = SyncStatus(
             managedObjectContext: managedObjectContext,
-            syncStateDelegate: syncStateDelegate,
             lastEventIDRepository: lastEventIDRepository
         )
-        self.userProfileUpdateStatus = UserProfileUpdateStatus(managedObjectContext: managedObjectContext)
+        self.userProfileUpdateStatus = UserProfileUpdateStatus(managedObjectContext: managedObjectContext, analytics: analytics)
         self.clientUpdateStatus = ClientUpdateStatus(syncManagedObjectContext: managedObjectContext)
         self.clientRegistrationStatus = ZMClientRegistrationStatus(managedObjectContext: managedObjectContext,
-                                                                   cookieStorage: cookieStorage,
-                                                                   registrationStatusDelegate: syncStateDelegate)
+                                                                   cookieStorage: cookieStorage)
         self.pushNotificationStatus = PushNotificationStatus(
             managedObjectContext: managedObjectContext,
             lastEventIDRepository: lastEventIDRepository
