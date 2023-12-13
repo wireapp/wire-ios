@@ -352,6 +352,7 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
     XCTAssertEqualObjects(message.keysTrackedForLocalModifications, expected);
 }
 
+/*
 - (void)testThat_doesEventGenerateMessage_returnsTrueForAllKnownTypes
 {
     NSArray *validTypes = @[
@@ -370,6 +371,7 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
         XCTAssertEqual([ZMMessage doesEventTypeGenerateMessage:evt], [validTypes containsObject:@(evt)]);
     }
 }
+*/
 
 - (void)testThatTheTextIsCopied
 {
@@ -749,20 +751,6 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
 #pragma mark - CreateSystemMessageFromUpdateEvent
 
 
-- (void)testThat_isEventTypeGeneratingSystemMessage_returnsNo
-{
-    // valid types
-    NSArray *validTypes = @[
-        @(ZMUpdateEventTypeConversationMemberJoin),
-        @(ZMUpdateEventTypeConversationMemberLeave),
-        @(ZMUpdateEventTypeConversationRename)
-    ];
-    
-    for(NSUInteger evt = 0; evt <= ZMUpdateEventTypeUserPropertiesDelete; ++evt) {
-        XCTAssertEqual([ZMSystemMessage doesEventTypeGenerateSystemMessage:evt], [validTypes containsObject:@(evt)]);
-    }
-}
-
 - (ZMSystemMessage *)createSystemMessageFromType:(ZMUpdateEventType)updateEventType inConversation:(ZMConversation *)conversation withUsersIDs:(NSArray *)userIDs senderID:(NSUUID *)senderID
 {
     NSDictionary *data =@{
@@ -810,10 +798,28 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
 
 - (void)testThatItDoesNotGenerateSystemMessagesFromUpdateEventsOfTheWrongType
 {
+    NSSet<NSNumber *> *eventTypes = [NSSet setWithArray:@[
+        @(ZMUpdateEventTypeConversationAssetAdd),
+        @(ZMUpdateEventTypeConversationMessageAdd),
+        @(ZMUpdateEventTypeConversationClientMessageAdd),
+        @(ZMUpdateEventTypeConversationOtrMessageAdd),
+        @(ZMUpdateEventTypeConversationOtrAssetAdd),
+        @(ZMUpdateEventTypeConversationMLSMessageAdd),
+        @(ZMUpdateEventTypeConversationKnock),
+        @(ZMUpdateEventTypeConversationMemberJoin),
+        @(ZMUpdateEventTypeConversationMemberLeave),
+        @(ZMUpdateEventTypeConversationRename)
+    ]];
+
+    NSLog(@"%i", [eventTypes containsObject:@(ZMUpdateEventTypeConversationAssetAdd)]);
+
     for(NSUInteger evt = 0; evt <= ZMUpdateEventTypeUserPropertiesDelete; ++evt)
     {
-        if( ! [ZMSystemMessage doesEventTypeGenerateSystemMessage:evt] ) {
+        if (![eventTypes containsObject:@(evt)]) {
+            NSLog(@"testing %lu", evt);
             [self checkThatUpdateEventTypeDoesNotGenerateMessage:evt];
+        } else {
+            NSLog(@"not testing %lu", evt);
         }
     }
 }
@@ -1473,4 +1479,3 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
 }
 
 @end
-

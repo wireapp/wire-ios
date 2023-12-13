@@ -193,7 +193,6 @@ extern NSString * _Nonnull const ZMMessageNeedsLinkAttachmentsUpdateKey;
 - (NSString * _Nonnull)shortDebugDescription;
 
 - (void)updateWithPostPayload:(NSDictionary * _Nonnull)payload updatedKeys:(NSSet * _Nonnull)updatedKeys;
-+ (BOOL)doesEventTypeGenerateMessage:(ZMUpdateEventType)type;
 
 /// Returns a predicate that matches messages that might expire if they are not sent in time
 + (NSPredicate * _Nonnull)predicateForMessagesThatWillExpire;
@@ -259,15 +258,17 @@ extern NSString *  _Nonnull const ZMMessageServerTimestampKey;
 @end
 
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface ZMSystemMessage (Internal)
 
-+ (BOOL)doesEventTypeGenerateSystemMessage:(ZMUpdateEventType)type;
-+ (instancetype _Nullable)createOrUpdateMessageFromUpdateEvent:(ZMUpdateEvent * _Nonnull)updateEvent inManagedObjectContext:(NSManagedObjectContext * _Nonnull)moc;
-+ (NSPredicate * _Nonnull)predicateForSystemMessagesInsertedLocally;
++ (ZMSystemMessageType)systemMessageTypeFromUpdateEvent:(ZMUpdateEvent *)updateEvent;
++ (instancetype _Nullable)createOrUpdateMessageFromUpdateEvent:(ZMUpdateEvent *)updateEvent inManagedObjectContext:(NSManagedObjectContext *)moc;
++ (NSPredicate *)predicateForSystemMessagesInsertedLocally;
 
 @end
 
-
+NS_ASSUME_NONNULL_END
 
 
 @interface ZMMessage (Ephemeral)
