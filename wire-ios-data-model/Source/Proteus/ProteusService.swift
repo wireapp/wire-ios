@@ -184,9 +184,10 @@ public final class ProteusService: ProteusServiceInterface {
     public func decrypt(
         data: Data,
         forSession id: ProteusSessionID
-    ) throws -> (didCreateNewSession: Bool, decryptedData: Data) {
+    ) async throws -> (didCreateNewSession: Bool, decryptedData: Data) {
         logger.info("decrypting data")
 
+        // FIXME: turn async in WPB-5850
         if sessionExists(id: id) {
             logger.info("session exists, decrypting...")
 
