@@ -28,6 +28,8 @@ protocol BackupRestoreControllerDelegate: AnyObject {
  * An object that coordinates restoring a backup.
  */
 
+private let zmLog = ZMSLog(tag: "Backup")
+
 final class BackupRestoreController: NSObject {
 
     // There are some external apps that users can use to transfer backup files, which can modify
@@ -82,6 +84,7 @@ final class BackupRestoreController: NSObject {
             guard let `self` = self else { return }
             switch result {
             case .failure(SessionManager.BackupError.decryptionError):
+                zmLog.safePublic("Failed restoring backup: \(SanitizedString(stringLiteral: SessionManager.BackupError.decryptionError.localizedDescription))", level: .error)
                 WireLogger.localStorage.error("Failed restoring backup: \(SessionManager.BackupError.decryptionError)")
                 self.target.isLoadingViewVisible = false
                 self.showWrongPasswordAlert { _ in
@@ -89,6 +92,7 @@ final class BackupRestoreController: NSObject {
                 }
 
             case .failure(let error):
+                zmLog.safePublic("Failed restoring backup: \(SanitizedString(stringLiteral: error.localizedDescription))", level: .error)
                 WireLogger.localStorage.error("Failed restoring backup: \(error)")
                 BackupEvent.importFailed.track()
                 self.showRestoreError(error)

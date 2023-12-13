@@ -118,10 +118,7 @@ final class DebugLogSender: NSObject, MFMailComposeViewControllerDelegate {
         guard let controller = UIApplication.shared.topmostViewController(onlyFullScreen: false) else { return }
         guard self.senderInstance == nil else { return }
 
-        let currentLog = ZMSLog.currentLog
-        let previousLog = ZMSLog.previousLog
-
-        guard currentLog != nil || previousLog != nil else {
+        guard ZMSLog.currentLog != nil else {
             DebugAlert.showGeneric(message: "There are no logs to send, have you enabled them from the debug menu > log settings BEFORE the issue happened?\nWARNING: restarting the app will discard all collected logs")
             return
         }
@@ -147,14 +144,7 @@ final class DebugLogSender: NSObject, MFMailComposeViewControllerDelegate {
         mailVC.setToRecipients([mail])
         mailVC.setSubject("iOS logs from \(userDescription)")
         mailVC.setMessageBody(message, isHTML: false)
-
-        if let currentLog = currentLog, let currentPath = ZMSLog.currentLogPath {
-            mailVC.addAttachmentData(currentLog, mimeType: "text/plain", fileName: currentPath.lastPathComponent)
-        }
-        if let previousLog = previousLog, let previousPath = ZMSLog.previousLogPath {
-            mailVC.addAttachmentData(previousLog, mimeType: "text/plain", fileName: previousPath.lastPathComponent)
-        }
-
+        mailVC.attachLogs()
         mailVC.mailComposeDelegate = alert
         alert.mailViewController = mailVC
 
