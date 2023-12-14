@@ -34,6 +34,7 @@ class ClaimMLSKeyPackageActionHandlerTests: ActionHandlerTestBase<ClaimMLSKeyPac
             domain: domain,
             userId: userId
         )
+        handler = ClaimMLSKeyPackageActionHandler(context: syncMOC)
     }
 
     // MARK: - Request generation

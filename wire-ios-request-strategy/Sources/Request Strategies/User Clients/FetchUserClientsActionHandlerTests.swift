@@ -44,6 +44,7 @@ class FetchUserClientsActionHandlerTests: ActionHandlerTestBase<FetchUserClients
             QualifiedID(uuid: userID1, domain: domain1),
             QualifiedID(uuid: userID2, domain: domain2)
         ]))
+        handler = FetchUserClientsActionHandler(context: syncMOC)
     }
 
     override func tearDown() {

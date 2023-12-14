@@ -40,10 +40,6 @@ class AddParticipantActionHandler: ActionHandler<AddParticipantAction> {
 
     private let eventProcessor: ConversationEventProcessorProtocol
 
-    convenience required init(context: NSManagedObjectContext) {
-        self.init(context: context, eventProcessor: ConversationEventProcessor(context: context))
-    }
-
     init(
         context: NSManagedObjectContext,
         eventProcessor: ConversationEventProcessorProtocol
