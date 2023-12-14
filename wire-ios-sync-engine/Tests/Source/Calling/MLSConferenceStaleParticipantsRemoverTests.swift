@@ -185,11 +185,9 @@ class MLSConferenceStaleParticipantsRemoverTests: MessagingTest {
             participants.map(\.mlsClientID)
         }
 
-        // set expectation
+        // mock remove members
         let expectation = XCTestExpectation()
         expectation.isInverted = true
-
-        // fulfill expectation
         mlsService.removeMembersFromConversationWithFor_MockMethod = { _, _ in
             expectation.fulfill()
         }
@@ -202,6 +200,8 @@ class MLSConferenceStaleParticipantsRemoverTests: MessagingTest {
                 subconversationID: groupID
             )
         )
+
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // WHEN
         sut.cancelPendingRemovals()
