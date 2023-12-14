@@ -152,4 +152,10 @@ extension ZMClientRegistrationStatus {
         registrationStatusDelegate.didFailToRegisterSelfUserClient(error: error)
     }
 
+    @objc(needsToRegisterMLSClientInContext:)
+    public static func needsToRegisterMLSClient(in context: NSManagedObjectContext) -> Bool {
+        let hasRegisteredMLSClient = ZMUser.selfUser(in: context).selfClient()?.hasRegisteredMLSClient ?? false
+        let isAllowedToRegisterMLSCLient = DeveloperFlag.enableMLSSupport.isOn && (BackendInfo.apiVersion ?? .v0) >= .v5
+        return !hasRegisteredMLSClient && isAllowedToRegisterMLSCLient
+    }
 }

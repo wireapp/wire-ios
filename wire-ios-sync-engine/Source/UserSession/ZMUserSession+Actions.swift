@@ -114,7 +114,7 @@ import Foundation
             return
         }
 
-        applicationStatusDirectory?.operationStatus.startBackgroundTask { [weak self] (result) in
+        applicationStatusDirectory.operationStatus.startBackgroundTask { [weak self] (result) in
             guard let `self` = self else { return }
 
             self.messageReplyObserver = nil
@@ -194,7 +194,7 @@ import Foundation
             return
         }
 
-        applicationStatusDirectory?.operationStatus.startBackgroundTask { [weak self] (result) in
+        applicationStatusDirectory.operationStatus.startBackgroundTask { [weak self] (result) in
             guard let `self` =  self else { return }
 
             self.likeMesssageObserver = nil
@@ -216,9 +216,9 @@ import Foundation
 
     func updateBackgroundTask(with message: ZMConversationMessage) {
         if message.isSent {
-            applicationStatusDirectory?.operationStatus.finishBackgroundTask(withTaskResult: .finished)
+            applicationStatusDirectory.operationStatus.finishBackgroundTask(withTaskResult: .finished)
         } else if message.deliveryState == .failedToSend {
-            applicationStatusDirectory?.operationStatus.finishBackgroundTask(withTaskResult: .failed)
+            applicationStatusDirectory.operationStatus.finishBackgroundTask(withTaskResult: .failed)
         }
     }
 

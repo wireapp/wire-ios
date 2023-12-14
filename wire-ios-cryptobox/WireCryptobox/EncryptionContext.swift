@@ -144,6 +144,25 @@ extension EncryptionContext {
         self.releaseDirectoryLock()
     }
 
+    public func performAsync(_ block: (_ sessionsDirectory: EncryptionSessionsDirectory) async -> Void ) async {
+        self.acquireDirectoryLock()
+        if self.currentSessionsDirectory == nil {
+            self.currentSessionsDirectory =
+                EncryptionSessionsDirectory(
+                    generatingContext: self,
+                    encryptionPayloadCache: cache,
+                    extensiveLoggingSessions: extensiveLoggingSessions
+            )
+        }
+        performCount += 1
+        await block(self.currentSessionsDirectory!)
+        performCount -= 1
+        if 0 == performCount {
+            self.currentSessionsDirectory = nil
+        }
+        self.releaseDirectoryLock()
+    }
+
     fileprivate func acquireDirectoryLock() {
         if flock(self.fileDescriptor, LOCK_EX) != 0 {
             fatal("Failed to lock \(self.path)")

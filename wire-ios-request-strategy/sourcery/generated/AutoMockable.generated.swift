@@ -230,6 +230,29 @@ public class MockMessageAPI: MessageAPI {
     public init() {}
 
 
+    // MARK: - broadcastProteusMessage
+
+    public var broadcastProteusMessageMessage_Invocations: [any ProteusMessage] = []
+    public var broadcastProteusMessageMessage_MockError: Error?
+    public var broadcastProteusMessageMessage_MockMethod: ((any ProteusMessage) async throws -> (Payload.MessageSendingStatus, ZMTransportResponse))?
+    public var broadcastProteusMessageMessage_MockValue: (Payload.MessageSendingStatus, ZMTransportResponse)?
+
+    public func broadcastProteusMessage(message: any ProteusMessage) async throws -> (Payload.MessageSendingStatus, ZMTransportResponse) {
+        broadcastProteusMessageMessage_Invocations.append(message)
+
+        if let error = broadcastProteusMessageMessage_MockError {
+            throw error
+        }
+
+        if let mock = broadcastProteusMessageMessage_MockMethod {
+            return try await mock(message)
+        } else if let mock = broadcastProteusMessageMessage_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `broadcastProteusMessageMessage`")
+        }
+    }
+
     // MARK: - sendProteusMessage
 
     public var sendProteusMessageMessageConversationID_Invocations: [(message: any ProteusMessage, conversationID: QualifiedID)] = []
@@ -327,6 +350,26 @@ public class MockMessageSenderInterface: MessageSenderInterface {
 
         guard let mock = sendMessageMessage_MockMethod else {
             fatalError("no mock for `sendMessageMessage`")
+        }
+
+        try await mock(message)
+    }
+
+    // MARK: - broadcastMessage
+
+    public var broadcastMessageMessage_Invocations: [any ProteusMessage] = []
+    public var broadcastMessageMessage_MockError: Error?
+    public var broadcastMessageMessage_MockMethod: ((any ProteusMessage) async throws -> Void)?
+
+    public func broadcastMessage(message: any ProteusMessage) async throws {
+        broadcastMessageMessage_Invocations.append(message)
+
+        if let error = broadcastMessageMessage_MockError {
+            throw error
+        }
+
+        guard let mock = broadcastMessageMessage_MockMethod else {
+            fatalError("no mock for `broadcastMessageMessage`")
         }
 
         try await mock(message)

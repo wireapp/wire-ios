@@ -145,6 +145,7 @@ class TeamInvitationRequestStrategyTests: MessagingTest {
 }
 
 extension TeamInvitationRequestStrategyTests: ZMRequestCancellation, ZMSyncStateDelegate {
+    func didRegisterMLSClient(_ userClient: WireDataModel.UserClient) { }
 
     func cancelTask(with taskIdentifier: ZMTaskIdentifier) { }
 

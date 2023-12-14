@@ -23,7 +23,6 @@ class LabelDownstreamRequestStrategyTests: MessagingTest {
 
     var sut: LabelDownstreamRequestStrategy!
     var mockSyncStatus: MockSyncStatus!
-    var mockSyncStateDelegate: MockSyncStateDelegate!
     var mockApplicationStatus: MockApplicationStatus!
 
     var conversation1: ZMConversation!
@@ -31,10 +30,8 @@ class LabelDownstreamRequestStrategyTests: MessagingTest {
 
     override func setUp() {
         super.setUp()
-        mockSyncStateDelegate = MockSyncStateDelegate()
         mockSyncStatus = MockSyncStatus(
             managedObjectContext: syncMOC,
-            syncStateDelegate: mockSyncStateDelegate,
             lastEventIDRepository: lastEventIDRepository
         )
         mockApplicationStatus = MockApplicationStatus()
@@ -54,7 +51,6 @@ class LabelDownstreamRequestStrategyTests: MessagingTest {
         sut = nil
         mockSyncStatus = nil
         mockApplicationStatus = nil
-        mockSyncStateDelegate = nil
         conversation1 = nil
         conversation2 = nil
         super.tearDown()

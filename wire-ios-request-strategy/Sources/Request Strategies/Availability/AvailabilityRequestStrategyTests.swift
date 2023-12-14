@@ -21,48 +21,47 @@ import WireRequestStrategy
 
 class AvailabilityRequestStrategyTests: MessagingTestBase {
 
-    var applicationStatus: MockApplicationStatus!
+    var messageSender: MockMessageSenderInterface!
     var sut: AvailabilityRequestStrategy!
 
     override func setUp() {
         super.setUp()
 
-        self.syncMOC.performGroupedAndWait { moc in
-            self.applicationStatus = MockApplicationStatus()
-            self.applicationStatus.mockSynchronizationState = .online
-            self.sut = AvailabilityRequestStrategy(withManagedObjectContext: moc, applicationStatus: self.applicationStatus)
-        }
+        self.messageSender = MockMessageSenderInterface()
+        self.sut = AvailabilityRequestStrategy(context: syncMOC, messageSender: messageSender)
     }
 
     override func tearDown() {
         sut = nil
-        applicationStatus = nil
+        messageSender = nil
 
         super.tearDown()
     }
 
-    func testThatItGeneratesARequestWhenAvailabilityIsModified() {
+    func testThatItBroadcastWhenAvailabilityIsModified() {
         self.syncMOC.performGroupedAndWait { moc in
-
             // given
             let selfUser = ZMUser.selfUser(in: moc)
             let availabilityKeySet: Set<AnyHashable> = [AvailabilityKey]
             selfUser.needsToBeUpdatedFromBackend = false
             selfUser.setLocallyModifiedKeys(availabilityKeySet)
-            self.sut.contextChangeTrackers.forEach({ $0.addTrackedObjects(Set<NSManagedObject>(arrayLiteral: selfUser)) })
+            self.messageSender.broadcastMessageMessage_MockMethod = { _ in }
 
             // when
-            let request = self.sut.nextRequest(for: .v0)
-
-            // then
-            XCTAssertNotNil(request)
+            self.sut.contextChangeTrackers.forEach({ $0.addTrackedObjects(Set<NSManagedObject>(arrayLiteral: selfUser)) })
         }
+        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // then
+        XCTAssertEqual(messageSender.broadcastMessageMessage_Invocations.count, 1)
     }
 
-    func testThatItGeneratesARequestWhenAvailabilityIsModifiedAndGuestShouldCommunicateStatus() {
+    func testThatItBroadcastWhenAvailabilityIsModifiedAndGuestShouldCommunicateStatus() {
         self.syncMOC.performGroupedAndWait { moc in
 
             // given
+            self.messageSender.broadcastMessageMessage_MockMethod = { _ in }
+
             let selfUser = ZMUser.selfUser(in: moc)
             let availabilityKeySet: Set<AnyHashable> = [AvailabilityKey]
             selfUser.needsToBeUpdatedFromBackend = false
@@ -75,43 +74,41 @@ class AvailabilityRequestStrategyTests: MessagingTestBase {
             membership.team = team
 
             self.sut.contextChangeTrackers.forEach({ $0.addTrackedObjects(Set<NSManagedObject>(arrayLiteral: selfUser)) })
-
-            // when
-            let request = self.sut.nextRequest(for: .v0)
-
-            // then
-            XCTAssertNotNil(request)
         }
+        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // then
+        XCTAssertEqual(messageSender.broadcastMessageMessage_Invocations.count, 1)
     }
 
-    func testThatItDoesntGenerateARequestWhenAvailabilityIsModifiedForOtherUsers() {
+    func testThatItDoesntBroadcastWhenAvailabilityIsModifiedForOtherUsers() {
         self.syncMOC.performGroupedAndWait { _ in
             // given
+            self.messageSender.broadcastMessageMessage_MockMethod = { _ in }
+
             let availabilityKeySet: Set<AnyHashable> = [AvailabilityKey]
             self.otherUser.needsToBeUpdatedFromBackend = false
             self.otherUser.modifiedKeys = availabilityKeySet
             self.sut.contextChangeTrackers.forEach({ $0.addTrackedObjects(Set<NSManagedObject>(arrayLiteral: self.otherUser)) })
-
-            // when
-            let request = self.sut.nextRequest(for: .v0)
-
-            // then
-            XCTAssertNil(request)
         }
+        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // then
+        XCTAssertEqual(messageSender.broadcastMessageMessage_Invocations.count, 0)
     }
 
-    func testThatItUpdatesAvailabilityFromUpdateEvent() {
-        self.syncMOC.performGroupedAndWait { moc in
+    func testThatItUpdatesAvailabilityFromUpdateEvent() throws {
+        try syncMOC.performGroupedAndWait { moc in
 
             // given
             let selfUser = ZMUser.selfUser(in: moc)
             _ = ZMConversation.fetchOrCreate(with: selfUser.remoteIdentifier!, domain: nil, in: moc) // create self conversation
 
             let message = GenericMessage(content: WireProtos.Availability(.away))
-            let messageData = try? message.serializedData()
+            let messageData = try message.serializedData()
             let dict = ["recipient": self.selfClient.remoteIdentifier!,
                         "sender": self.selfClient.remoteIdentifier!,
-                        "text": messageData?.base64String()] as NSDictionary
+                        "text": messageData.base64String()] as NSDictionary
 
             let updateEvent = ZMUpdateEvent(fromEventStreamPayload: ([
                 "type": "conversation.otr-message-add",
@@ -127,18 +124,4 @@ class AvailabilityRequestStrategyTests: MessagingTestBase {
             XCTAssertEqual(selfUser.availability, .away)
         }
     }
-
-    func testThatItRequestSlowSyncIfWeAreSendingToRedudantClients() {
-        self.syncMOC.performGroupedAndWait { moc in
-            // given
-            let redundantUser = ZMUser.fetchOrCreate(with: UUID(), domain: nil, in: moc)
-
-            // when
-            self.sut.detectedRedundantUsers([redundantUser])
-
-            // then
-            XCTAssertTrue(self.applicationStatus.slowSyncWasRequested)
-        }
-    }
-
 }

@@ -19,6 +19,7 @@
 import Foundation
 import XCTest
 import WireCoreCrypto
+import WireDataModelSupport
 @testable import WireDataModel
 
 class ProteusServiceTests: XCTestCase {
@@ -27,6 +28,7 @@ class ProteusServiceTests: XCTestCase {
 
     var mockCoreCrypto: MockCoreCrypto!
     var mockSafeCoreCrypto: MockSafeCoreCrypto!
+    var mockCoreCryptoProvider: MockCoreCryptoProviderProtocol!
     var sut: ProteusService!
 
     // MARK: - Set up
@@ -36,7 +38,9 @@ class ProteusServiceTests: XCTestCase {
         mockCoreCrypto = MockCoreCrypto()
         mockCoreCrypto.mockProteusInit = {}
         mockSafeCoreCrypto = MockSafeCoreCrypto(coreCrypto: mockCoreCrypto)
-        sut = try ProteusService(coreCrypto: mockSafeCoreCrypto)
+        mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
+        mockCoreCryptoProvider.coreCryptoRequireMLS_MockValue = mockSafeCoreCrypto
+        sut = ProteusService(coreCryptoProvider: mockCoreCryptoProvider)
     }
 
     override func tearDown() {
@@ -48,7 +52,7 @@ class ProteusServiceTests: XCTestCase {
 
     // MARK: - Decrypting messages
 
-    func test_DecryptDataForSession_SessionExists() throws {
+    func test_DecryptDataForSession_SessionExists() async throws {
         // Given
         let sessionID = ProteusSessionID.random()
         let encryptedData = Data.secureRandomData(length: 8)
@@ -66,7 +70,7 @@ class ProteusServiceTests: XCTestCase {
         }
 
         // When
-        let (didCreateNewSession, decryptedData) = try sut.decrypt(
+        let (didCreateNewSession, decryptedData) = try await sut.decrypt(
             data: encryptedData,
             forSession: sessionID
         )
@@ -76,7 +80,7 @@ class ProteusServiceTests: XCTestCase {
         XCTAssertEqual(decryptedData, Data([0, 1, 2, 3, 4, 5]))
     }
 
-    func test_DecryptDataForSession_SessionExists_Failure() throws {
+    func test_DecryptDataForSession_SessionExists_Failure() async throws {
         // Given
         let sessionID = ProteusSessionID.random()
         let encryptedData = Data.secureRandomData(length: 8)
@@ -96,16 +100,16 @@ class ProteusServiceTests: XCTestCase {
         }
 
         // Then
-        assertItThrows(error: ProteusService.DecryptionError.failedToDecryptData(.duplicateMessage)) {
+        await assertItThrows(error: ProteusService.DecryptionError.failedToDecryptData(.duplicateMessage)) {
             // When
-            _ = try sut.decrypt(
+            _ = try await sut.decrypt(
                 data: encryptedData,
                 forSession: sessionID
             )
         }
     }
 
-    func test_DecryptDataForSession_SessionDoesNotExist() throws {
+    func test_DecryptDataForSession_SessionDoesNotExist() async throws {
         // Given
         let sessionID = ProteusSessionID.random()
         let encryptedData = Data.secureRandomData(length: 8)
@@ -123,7 +127,7 @@ class ProteusServiceTests: XCTestCase {
         }
 
         // When
-        let (didCreateNewSession, decryptedData) = try sut.decrypt(
+        let (didCreateNewSession, decryptedData) = try await sut.decrypt(
             data: encryptedData,
             forSession: sessionID
         )
@@ -133,7 +137,7 @@ class ProteusServiceTests: XCTestCase {
         XCTAssertEqual(decryptedData, Data([0, 1, 2, 3, 4, 5]))
     }
 
-    func test_DecryptDataForSession_SessionDoesNotExist_Failure() throws {
+    func test_DecryptDataForSession_SessionDoesNotExist_Failure() async throws {
         // Given
         let sessionID = ProteusSessionID.random()
         let encryptedData = Data.secureRandomData(length: 8)
@@ -153,9 +157,9 @@ class ProteusServiceTests: XCTestCase {
         }
 
         // Then
-        assertItThrows(error: ProteusService.DecryptionError.failedToEstablishSessionFromMessage(.duplicateMessage)) {
+        await assertItThrows(error: ProteusService.DecryptionError.failedToEstablishSessionFromMessage(.duplicateMessage)) {
             // When
-            _ = try sut.decrypt(
+            _ = try await sut.decrypt(
                 data: encryptedData,
                 forSession: sessionID
             )

@@ -95,11 +95,11 @@ class ZMMockClientRegistrationStatus: ZMClientRegistrationStatus {
     var mockReadiness: Bool = true
 
     convenience init(managedObjectContext: NSManagedObjectContext) {
-        self.init(managedObjectContext: managedObjectContext, cookieStorage: nil, registrationStatusDelegate: nil)
+        self.init(managedObjectContext: managedObjectContext, cookieStorage: nil)
     }
 
-    override init!(managedObjectContext moc: NSManagedObjectContext!, cookieStorage: ZMPersistentCookieStorage!, registrationStatusDelegate: ZMClientRegistrationStatusDelegate!) {
-        super.init(managedObjectContext: moc, cookieStorage: cookieStorage, registrationStatusDelegate: registrationStatusDelegate)
+    override init!(managedObjectContext moc: NSManagedObjectContext!, cookieStorage: ZMPersistentCookieStorage!) {
+        super.init(managedObjectContext: moc, cookieStorage: cookieStorage)
         self.emailCredentials = ZMEmailCredentials(email: "bla@example.com", password: "secret")
     }
 
@@ -188,6 +188,7 @@ public class MockSyncStatus: SyncStatus {
 @objc public class MockSyncStateDelegate: NSObject, ZMSyncStateDelegate {
 
     var registeredUserClient: UserClient?
+    var registeredMLSClient: UserClient?
     @objc public var didCallStartSlowSync = false
     @objc public var didCallFinishSlowSync = false
     @objc public var didCallStartQuickSync = false
@@ -209,6 +210,10 @@ public class MockSyncStatus: SyncStatus {
 
     public func didFinishQuickSync() {
         didCallFinishQuickSync = true
+    }
+
+    public func didRegisterMLSClient(_ userClient: UserClient) {
+        registeredMLSClient = userClient
     }
 
     public func didRegisterSelfUserClient(_ userClient: UserClient) {

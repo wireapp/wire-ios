@@ -26,6 +26,7 @@ import Foundation
         case clients([ZMUser: Set<UserClient>])
     }
 
+    public var context: NSManagedObjectContext
     public var message: GenericMessage
     public var conversation: ZMConversation?
     public var completionHandler: ((_ response: ZMTransportResponse) -> Void)?
@@ -35,15 +36,12 @@ import Foundation
 
     public let targetRecipients: Recipients
 
-    public init(conversation: ZMConversation, message: GenericMessage, targetRecipients: Recipients = .conversationParticipants, completionHandler: ((_ response: ZMTransportResponse) -> Void)?) {
+    public init(message: GenericMessage, context: NSManagedObjectContext, conversation: ZMConversation? = nil, targetRecipients: Recipients = .conversationParticipants, completionHandler: ((_ response: ZMTransportResponse) -> Void)?) {
+        self.context = context
         self.conversation = conversation
         self.message = message
         self.targetRecipients = targetRecipients
         self.completionHandler = completionHandler
-    }
-
-    public var context: NSManagedObjectContext {
-        return conversation!.managedObjectContext!
     }
 
     public var dependentObjectNeedingUpdateBeforeProcessing: NSObject? {
@@ -102,20 +100,14 @@ extension GenericMessageEntity: EncryptedPayloadGenerator {
     }
 
     public func encryptForTransportQualified() -> EncryptedPayloadGenerator.Payload? {
-        guard
-            let conversation = conversation,
-            let managedObjectContext = conversation.managedObjectContext
-        else {
-            return nil
-        }
-
         switch targetRecipients {
         case .conversationParticipants:
+            guard let conversation = conversation else { return nil }
             return message.encryptForTransport(for: conversation, useQualifiedIdentifiers: true)
         case .users(let users):
-            return message.encryptForTransport(forBroadcastRecipients: users, useQualifiedIdentifiers: true, in: managedObjectContext)
+            return message.encryptForTransport(forBroadcastRecipients: users, useQualifiedIdentifiers: true, in: context)
         case .clients(let clientsByUser):
-            return message.encryptForTransport(for: clientsByUser, useQualifiedIdentifiers: true, in: managedObjectContext)
+            return message.encryptForTransport(for: clientsByUser, useQualifiedIdentifiers: true, in: context)
         }
     }
 

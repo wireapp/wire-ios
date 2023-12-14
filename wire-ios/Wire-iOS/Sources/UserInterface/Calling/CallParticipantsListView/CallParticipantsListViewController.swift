@@ -80,7 +80,7 @@ final class CallParticipantsListViewController: UIViewController, UICollectionVi
     }
 
     private func setupViews() {
-        title = "call.participants.list.title".localized(uppercased: true)
+        title = L10n.Localizable.Call.Participants.List.title.localizedUppercase
         let collectionViewLayout = UICollectionViewFlowLayout()
         collectionViewLayout.scrollDirection = .vertical
         collectionViewLayout.minimumInteritemSpacing = 12

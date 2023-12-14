@@ -31,8 +31,6 @@
 @property (nonatomic) ZMLastUpdateEventIDTranscoder *sut;
 @property (nonatomic) ZMSingleRequestSync *downstreamSync;
 @property (nonatomic) MockSyncStatus *mockSyncStatus;
-@property (nonatomic) id syncStateDelegate;
-
 @end
 
 @implementation ZMLastUpdateEventIDTranscoderTests
@@ -42,11 +40,8 @@
     
     self.downstreamSync = [OCMockObject mockForClass:ZMSingleRequestSync.class];
     [self verifyMockLater:self.downstreamSync];
-    
-    self.syncStateDelegate = [OCMockObject niceMockForProtocol:@protocol(ZMSyncStateDelegate)];
 
     self.mockSyncStatus = [[MockSyncStatus alloc] initWithManagedObjectContext:self.syncMOC
-                                                             syncStateDelegate:self.syncStateDelegate
                                                          lastEventIDRepository:self.lastEventIDRepository];
     self.mockSyncStatus.mockPhase = SyncPhaseDone;
     self.mockApplicationStatus = [[MockApplicationStatus alloc] init];
@@ -61,8 +56,6 @@
 
 - (void)tearDown {
     self.downstreamSync = nil;
-    [self.syncStateDelegate stopMocking];
-    self.syncStateDelegate = nil;
     self.mockSyncStatus = nil;
     self.mockApplicationStatus = nil;
     self.sut = nil;
