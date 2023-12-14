@@ -399,7 +399,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     // MARK: - Create group
 
-    func test_CreateGroup_IsSuccessful() throws {
+    func test_CreateGroup_IsSuccessful() async throws {
         // Given
         let groupID = MLSGroupID(Data([1, 2, 3]))
         let removalKey = Data([1, 2, 3])
@@ -425,7 +425,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         wait(for: [didFinishInitializationExpectation], timeout: 1)
 
         // When
-        XCTAssertNoThrow(try sut.createGroup(for: groupID))
+        XCTAssertNoThrow(try await sut.createGroup(for: groupID))
 
         // Then
         XCTAssertEqual(mockCreateConversationCount, 1)

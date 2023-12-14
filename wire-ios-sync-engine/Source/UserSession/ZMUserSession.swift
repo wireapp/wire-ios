@@ -702,10 +702,10 @@ extension ZMUserSession: ZMSyncStateDelegate {
         if selfClient?.hasRegisteredMLSClient == true {
 
             WaitingGroupTask(context: syncContext) { [self] in
-                mlsService.performPendingJoins()
-                await mlsService.uploadKeyPackagesIfNeeded()
-                await mlsService.updateKeyMaterialForAllStaleGroupsIfNeeded()
                 do {
+                    try await mlsService.performPendingJoins()
+                    await mlsService.uploadKeyPackagesIfNeeded()
+                    await mlsService.updateKeyMaterialForAllStaleGroupsIfNeeded()
                     try await mlsService.commitPendingProposals()
                 } catch {
                     Logging.mls.error("Failed to commit pending proposals: \(String(reflecting: error))")
