@@ -987,7 +987,9 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
             selfUserLeaves: true
         )
         let expectation = XCTNSNotificationExpectation(name: AccountDeletedNotification.notificationName, object: nil, notificationCenter: .default)
-        expectation.handler = { $0.userInfo?[AccountDeletedNotification.userInfoKey] as? AccountDeletedNotification != nil }
+        expectation.handler = { notification in
+            notification.userInfo?[AccountDeletedNotification.userInfoKey] as? AccountDeletedNotification != nil
+        }
 
         // When
         syncMOC.performAndWait {
@@ -1069,8 +1071,9 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
                     "id": "cf51e6b1-39a6-11ed-8005-520924331b82",
                     "time": "2022-09-21T12:13:32.173Z",
                     "type": "conversation.member-leave",
+                    "from": "f76c1c7a-7278-4b70-9df7-eca7980f3a5d",
                     "conversation": "ee8824c5-95d0-4e59-9862-e9bb0fc6e921",
-                    "payload": [
+                    "data": [
                         "qualified_user_ids": [
                             ["id": users[userIndex].remoteIdentifier.transportString(), "domain": owningDomain]
                         ],

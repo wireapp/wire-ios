@@ -308,7 +308,7 @@ NSString * const ZMMessageDecryptionErrorCodeKey = @"decryptionErrorCode";
 }
 
 - (void)updateWithUpdateEvent:(ZMUpdateEvent *)event forConversation:(ZMConversation *)conversation
-{    
+{
     self.visibleInConversation = conversation;
     ZMUser *sender = [ZMUser fetchOrCreateWith:event.senderUUID domain:event.senderDomain in:self.managedObjectContext];
     if (sender != nil && !sender.isZombieObject && self.managedObjectContext == sender.managedObjectContext) {
