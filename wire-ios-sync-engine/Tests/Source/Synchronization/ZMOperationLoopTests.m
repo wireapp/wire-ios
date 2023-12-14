@@ -38,7 +38,6 @@
     self.mockTransportSesssion = [[RecordingMockTransportSession alloc] initWithCookieStorage:self.cookieStorage
                                                                                   pushChannel:self.mockPushChannel];
             
-    self.mockSyncDelegate = [[MockSyncStateDelegate alloc] init];
     self.mockRequestStrategy = [[MockRequestStrategy alloc] init];
     self.mockUpdateEventProcessor = [[MockUpdateEventProcessor alloc] init];
     self.mockRequestCancellation = [[MockRequestCancellation alloc] init];
@@ -47,7 +46,6 @@
                                                                                          cookieStorage:self.cookieStorage
                                                                                    requestCancellation:self.mockRequestCancellation
                                                                                            application:self.application
-                                                                                     syncStateDelegate:self.mockSyncDelegate
                                                                                  lastEventIDRepository:self.lastEventIDRepository
                                                                                              analytics:nil];
     

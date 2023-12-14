@@ -205,13 +205,13 @@ extension ClientMessageRequestStrategyTests {
         }
     }
 
-    func testThatANewOtrMessageIsCreatedFromADecryptedAPNSEvent() {
-        self.syncMOC.performGroupedBlockAndWait {
-            // GIVEN
-            let eventDecoder = EventDecoder(eventMOC: self.eventMOC, syncMOC: self.syncMOC)
-            let text = "Everything"
-            let event = self.decryptedUpdateEventFromOtherClient(text: text, eventDecoder: eventDecoder)
+    func testThatANewOtrMessageIsCreatedFromADecryptedAPNSEvent() async throws {
+        // GIVEN
+        let eventDecoder = EventDecoder(eventMOC: self.eventMOC, syncMOC: self.syncMOC)
+        let text = "Everything"
+        let event = try await self.decryptedUpdateEventFromOtherClient(text: text, eventDecoder: eventDecoder)
 
+        await syncMOC.perform {
             // WHEN
             self.sut.processEvents([event], liveEvents: false, prefetchResult: nil)
 
