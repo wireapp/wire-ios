@@ -189,6 +189,8 @@ internal enum Asset {
     internal static let close = ImageAsset(name: "Close")
     internal static let copy = ImageAsset(name: "Copy")
     internal static let downArrow = ImageAsset(name: "DownArrow")
+    internal static let download = ImageAsset(name: "Download")
+    internal static let more = ImageAsset(name: "More")
     internal static let unavailableUser = ImageAsset(name: "Unavailable user")
   }
 }
