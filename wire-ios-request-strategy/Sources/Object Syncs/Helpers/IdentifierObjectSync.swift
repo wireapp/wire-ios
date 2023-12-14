@@ -100,28 +100,28 @@ public class IdentifierObjectSync<Transcoder: IdentifierObjectSyncTranscoder>: N
         downloading.formUnion(scheduled)
         pending.subtract(scheduled)
 
-        request.add(ZMCompletionHandler(on: managedObjectContext, block: { [weak self] (response) in
-            guard let strongSelf = self else { return }
+        request.add(ZMCompletionHandler(on: managedObjectContext) { [weak self] response in
+            guard let self else { return }
 
             switch response.result {
             case .permanentError, .success:
-                strongSelf.downloading.subtract(scheduled)
-                strongSelf.transcoder?.didReceive(response: response, for: scheduled)
+                self.downloading.subtract(scheduled)
+                self.transcoder?.didReceive(response: response, for: scheduled)
 
                 if case .permanentError = response.result {
-                    self?.delegate?.didFailToSyncAllObjects()
+                    self.delegate?.didFailToSyncAllObjects()
                 }
             default:
-                strongSelf.downloading.subtract(scheduled)
-                strongSelf.pending.formUnion(scheduled)
+                self.downloading.subtract(scheduled)
+                self.pending.formUnion(scheduled)
             }
 
-            strongSelf.managedObjectContext.enqueueDelayedSave()
+            self.managedObjectContext.enqueueDelayedSave()
 
-            if !strongSelf.isSyncing {
-                self?.delegate?.didFinishSyncingAllObjects()
+            if !self.isSyncing {
+                self.delegate?.didFinishSyncingAllObjects()
             }
-        }))
+        })
 
         return request
     }

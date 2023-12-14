@@ -1294,31 +1294,31 @@ public class MockMLSServiceInterface: MLSServiceInterface {
     // MARK: - uploadKeyPackagesIfNeeded
 
     public var uploadKeyPackagesIfNeeded_Invocations: [Void] = []
-    public var uploadKeyPackagesIfNeeded_MockMethod: (() -> Void)?
+    public var uploadKeyPackagesIfNeeded_MockMethod: (() async -> Void)?
 
-    public func uploadKeyPackagesIfNeeded() {
+    public func uploadKeyPackagesIfNeeded() async {
         uploadKeyPackagesIfNeeded_Invocations.append(())
 
         guard let mock = uploadKeyPackagesIfNeeded_MockMethod else {
             fatalError("no mock for `uploadKeyPackagesIfNeeded`")
         }
 
-        mock()
+        await mock()
     }
 
     // MARK: - createSelfGroup
 
     public var createSelfGroupFor_Invocations: [MLSGroupID] = []
-    public var createSelfGroupFor_MockMethod: ((MLSGroupID) -> Void)?
+    public var createSelfGroupFor_MockMethod: ((MLSGroupID) async -> Void)?
 
-    public func createSelfGroup(for groupID: MLSGroupID) {
+    public func createSelfGroup(for groupID: MLSGroupID) async {
         createSelfGroupFor_Invocations.append(groupID)
 
         guard let mock = createSelfGroupFor_MockMethod else {
             fatalError("no mock for `createSelfGroupFor`")
         }
 
-        mock(groupID)
+        await mock(groupID)
     }
 
     // MARK: - joinGroup
@@ -1403,10 +1403,10 @@ public class MockMLSServiceInterface: MLSServiceInterface {
 
     public var processWelcomeMessageWelcomeMessage_Invocations: [String] = []
     public var processWelcomeMessageWelcomeMessage_MockError: Error?
-    public var processWelcomeMessageWelcomeMessage_MockMethod: ((String) throws -> MLSGroupID)?
+    public var processWelcomeMessageWelcomeMessage_MockMethod: ((String) async throws -> MLSGroupID)?
     public var processWelcomeMessageWelcomeMessage_MockValue: MLSGroupID?
 
-    public func processWelcomeMessage(welcomeMessage: String) throws -> MLSGroupID {
+    public func processWelcomeMessage(welcomeMessage: String) async throws -> MLSGroupID {
         processWelcomeMessageWelcomeMessage_Invocations.append(welcomeMessage)
 
         if let error = processWelcomeMessageWelcomeMessage_MockError {
@@ -1414,7 +1414,7 @@ public class MockMLSServiceInterface: MLSServiceInterface {
         }
 
         if let mock = processWelcomeMessageWelcomeMessage_MockMethod {
-            return try mock(welcomeMessage)
+            return try await mock(welcomeMessage)
         } else if let mock = processWelcomeMessageWelcomeMessage_MockValue {
             return mock
         } else {
@@ -1495,16 +1495,16 @@ public class MockMLSServiceInterface: MLSServiceInterface {
     // MARK: - wipeGroup
 
     public var wipeGroup_Invocations: [MLSGroupID] = []
-    public var wipeGroup_MockMethod: ((MLSGroupID) -> Void)?
+    public var wipeGroup_MockMethod: ((MLSGroupID) async -> Void)?
 
-    public func wipeGroup(_ groupID: MLSGroupID) {
+    public func wipeGroup(_ groupID: MLSGroupID) async {
         wipeGroup_Invocations.append(groupID)
 
         guard let mock = wipeGroup_MockMethod else {
             fatalError("no mock for `wipeGroup`")
         }
 
-        mock(groupID)
+        await mock(groupID)
     }
 
     // MARK: - commitPendingProposals
@@ -1675,10 +1675,10 @@ public class MockMLSServiceInterface: MLSServiceInterface {
 
     public var subconversationMembersFor_Invocations: [MLSGroupID] = []
     public var subconversationMembersFor_MockError: Error?
-    public var subconversationMembersFor_MockMethod: ((MLSGroupID) throws -> [MLSClientID])?
+    public var subconversationMembersFor_MockMethod: ((MLSGroupID) async throws -> [MLSClientID])?
     public var subconversationMembersFor_MockValue: [MLSClientID]?
 
-    public func subconversationMembers(for subconversationGroupID: MLSGroupID) throws -> [MLSClientID] {
+    public func subconversationMembers(for subconversationGroupID: MLSGroupID) async throws -> [MLSClientID] {
         subconversationMembersFor_Invocations.append(subconversationGroupID)
 
         if let error = subconversationMembersFor_MockError {
@@ -1686,7 +1686,7 @@ public class MockMLSServiceInterface: MLSServiceInterface {
         }
 
         if let mock = subconversationMembersFor_MockMethod {
-            return try mock(subconversationGroupID)
+            return try await mock(subconversationGroupID)
         } else if let mock = subconversationMembersFor_MockValue {
             return mock
         } else {
@@ -1727,16 +1727,16 @@ public class MockMLSServiceInterface: MLSServiceInterface {
     // MARK: - updateKeyMaterialForAllStaleGroupsIfNeeded
 
     public var updateKeyMaterialForAllStaleGroupsIfNeeded_Invocations: [Void] = []
-    public var updateKeyMaterialForAllStaleGroupsIfNeeded_MockMethod: (() -> Void)?
+    public var updateKeyMaterialForAllStaleGroupsIfNeeded_MockMethod: (() async -> Void)?
 
-    public func updateKeyMaterialForAllStaleGroupsIfNeeded() {
+    public func updateKeyMaterialForAllStaleGroupsIfNeeded() async {
         updateKeyMaterialForAllStaleGroupsIfNeeded_Invocations.append(())
 
         guard let mock = updateKeyMaterialForAllStaleGroupsIfNeeded_MockMethod else {
             fatalError("no mock for `updateKeyMaterialForAllStaleGroupsIfNeeded`")
         }
 
-        mock()
+        await mock()
     }
 
     // MARK: - onEpochChanged
