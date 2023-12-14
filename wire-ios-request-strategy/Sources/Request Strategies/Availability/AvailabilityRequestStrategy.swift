@@ -54,6 +54,7 @@ extension AvailabilityRequestStrategy: ModifiedKeyObjectSyncTranscoder {
             try? await messageSender.broadcastMessage(message: proteusMessage)
             await context.perform { [self] in
                 completion()
+                // saving since the `modifiedKeys` of the self user are reset in the completion block
                 context.enqueueDelayedSave()
             }
         }
