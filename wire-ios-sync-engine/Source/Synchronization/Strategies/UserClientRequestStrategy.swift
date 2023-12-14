@@ -168,10 +168,15 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
             clientRegistrationStatus.willGeneratePrekeys()
             let groups = managedObjectContext?.enterAllGroupsExceptSecondary()
             Task {
-                let prekeys = try await prekeyGenerator.generatePrekeys()
-                let lastResortPrekey = try await prekeyGenerator.generateLastResortPrekey()
-                await managedObjectContext?.perform {
-                    clientRegistrationStatus.didGeneratePrekeys(prekeys, lastResortPrekey: lastResortPrekey)
+                do {
+                    let prekeys = try await prekeyGenerator.generatePrekeys()
+                    let lastResortPrekey = try await prekeyGenerator.generateLastResortPrekey()
+                    await managedObjectContext?.perform {
+                        clientRegistrationStatus.didGeneratePrekeys(prekeys, lastResortPrekey: lastResortPrekey)
+                    }
+                } catch {
+                    // TODO: [F] check if we need to propagate error
+                    WireLogger.proteus.error("prekeys: failed to generatePrekeys: \(error.localizedDescription)")
                 }
                 managedObjectContext?.leaveAllGroups(groups)
             }
@@ -310,10 +315,14 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
                 clientUpdateStatus?.willGeneratePrekeys()
                 let groups = managedObjectContext?.enterAllGroupsExceptSecondary()
                 Task {
-                    let prekeys = try await prekeyGenerator.generatePrekeys()
-                    let lastResortPrekey = try await prekeyGenerator.generateLastResortPrekey()
-                    await managedObjectContext?.perform {
-                        self.clientUpdateStatus?.didGeneratePrekeys(prekeys)
+                    do {
+                        let prekeys = try await prekeyGenerator.generatePrekeys()
+                        await managedObjectContext?.perform {
+                            self.clientUpdateStatus?.didGeneratePrekeys(prekeys)
+                        }
+                    } catch {
+                        // TODO: [F] check if we need to propagate error
+                        WireLogger.proteus.error("prekeys: shouldCreateRequest: failed to generatePrekeys: \(error.localizedDescription)")
                     }
                     managedObjectContext?.leaveAllGroups(groups)
                 }
