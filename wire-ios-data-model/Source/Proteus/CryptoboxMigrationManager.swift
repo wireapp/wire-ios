@@ -26,11 +26,8 @@ public protocol CryptoboxMigrationManagerInterface {
 
     func performMigration(
         accountDirectory: URL,
-        syncContext: NSManagedObjectContext
+        coreCrypto: SafeCoreCryptoProtocol
     ) throws
-
-    func completeMigration(syncContext: NSManagedObjectContext) throws
-
 }
 
 public class CryptoboxMigrationManager: CryptoboxMigrationManagerInterface {
@@ -69,17 +66,12 @@ public class CryptoboxMigrationManager: CryptoboxMigrationManagerInterface {
 
     public func performMigration(
         accountDirectory: URL,
-        syncContext: NSManagedObjectContext
+        coreCrypto: SafeCoreCryptoProtocol
     ) throws {
-            guard let proteusService = syncContext.proteusService else {
-                WireLogger.proteus.warn("cannot perform cryptobox migration without proteus service")
-                throw Failure.proteusServiceUnavailable
-            }
-
             do {
                 WireLogger.proteus.info("migrating cryptobox data...")
                 let cryptoboxDirectory = fileManager.cryptoboxDirectory(in: accountDirectory)
-                try proteusService.migrateCryptoboxSessions(at: cryptoboxDirectory)
+                try coreCrypto.perform { try $0.proteusCryptoboxMigrate(path: cryptoboxDirectory.path) }
                 WireLogger.proteus.info("migrating cryptobox data... success")
             } catch {
                 throw Failure.failedToMigrateData
@@ -92,18 +84,6 @@ public class CryptoboxMigrationManager: CryptoboxMigrationManagerInterface {
             } catch {
                 throw Failure.failedToDeleteLegacyData
             }
-    }
-
-    public func completeMigration(syncContext: NSManagedObjectContext) throws {
-        guard DeveloperFlag.proteusViaCoreCrypto.isOn else {
-            return
-        }
-
-        guard let proteusService = syncContext.proteusService else {
-            throw Failure.proteusServiceUnavailable
-        }
-
-        try proteusService.completeInitialization()
     }
 
     // MARK: - Helpers

@@ -26,24 +26,19 @@ public final class ProteusService: ProteusServiceInterface {
 
     // MARK: - Properties
 
-    private let coreCrypto: SafeCoreCryptoProtocol
+    private let coreCryptoProvider: CoreCryptoProviderProtocol
     private let logger = WireLogger.proteus
+
+    private var coreCrypto: SafeCoreCryptoProtocol {
+        get throws {
+            try coreCryptoProvider.coreCrypto(requireMLS: false)
+        }
+    }
 
     // MARK: - Life cycle
 
-    public init(coreCrypto: SafeCoreCryptoProtocol) {
-        self.coreCrypto = coreCrypto
-    }
-
-    public func completeInitialization() throws {
-        do {
-            logger.info("completing intialization of ProteusService...")
-            try coreCrypto.perform { try $0.proteusInit() }
-            logger.info("completing intialization of ProteusService... success")
-        } catch {
-            logger.error("completing intialization of ProteusService... failed: \(error.localizedDescription)")
-            throw error
-        }
+    public init(coreCryptoProvider: CoreCryptoProviderProtocol) {
+        self.coreCryptoProvider = coreCryptoProvider
     }
 
     // MARK: - proteusSessionFromPrekey
@@ -189,9 +184,10 @@ public final class ProteusService: ProteusServiceInterface {
     public func decrypt(
         data: Data,
         forSession id: ProteusSessionID
-    ) throws -> (didCreateSession: Bool, decryptedData: Data) {
+    ) async throws -> (didCreateNewSession: Bool, decryptedData: Data) {
         logger.info("decrypting data")
 
+        // FIXME: turn async in WPB-5850
         if sessionExists(id: id) {
             logger.info("session exists, decrypting...")
 
@@ -207,7 +203,7 @@ public final class ProteusService: ProteusServiceInterface {
                 }
             }
 
-            return (didCreateSession: false, decryptedData: decryptedBytes.data)
+            return (didCreateNewSession: false, decryptedData: decryptedBytes.data)
 
         } else {
             logger.info("session doesn't exist, creating one then decrypting message...")
@@ -224,7 +220,7 @@ public final class ProteusService: ProteusServiceInterface {
                 }
             }
 
-            return (didCreateSession: true, decryptedData: decryptedBytes.data)
+            return (didCreateNewSession: true, decryptedData: decryptedBytes.data)
         }
     }
 
@@ -336,23 +332,6 @@ public final class ProteusService: ProteusServiceInterface {
             throw FingerprintError.failedToGetFingerprintFromPrekey
         }
     }
-
-    // MARK: - cryptoboxMigration
-
-        enum MigrationError: Error {
-            case failedToMigrateData
-        }
-
-        public func migrateCryptoboxSessions(at url: URL) throws {
-            logger.info("migrating data from Cryptobox into the CoreCrypto keystore")
-
-            do {
-                try coreCrypto.perform { try $0.proteusCryptoboxMigrate(path: url.path) }
-            } catch {
-                logger.error("failed to migrate data from Cryptobox: \(String(describing: error))")
-                throw MigrationError.failedToMigrateData
-            }
-        }
 }
 
 private extension CoreCryptoProtocol {

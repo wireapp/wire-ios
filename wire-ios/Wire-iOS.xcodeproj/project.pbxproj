@@ -16,6 +16,7 @@
 		0119F3D029969CEA006AE3A8 /* CrashReporter.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE9A857529896B4D00064A9C /* CrashReporter.xcframework */; };
 		0145AE962B1156F40097E3B8 /* WireSyncEngineSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0145AE952B1156F40097E3B8 /* WireSyncEngineSupport.framework */; };
 		0145AE992B1156FC0097E3B8 /* WireSyncEngineSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0145AE982B1156FC0097E3B8 /* WireSyncEngineSupport.framework */; };
+		014A63AC2B234EAB00827558 /* MFMailComposeViewController+Logs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 014A63AB2B234EAB00827558 /* MFMailComposeViewController+Logs.swift */; };
 		014C81BE29BB6BC600258FF8 /* ConversationListViewController+ConversationListTabBarControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF6E9FEF231D4CDF000B7785 /* ConversationListViewController+ConversationListTabBarControllerDelegate.swift */; };
 		017ABBBA299541F50004C243 /* Colors.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E56CA37428588C4F00CD2045 /* Colors.xcassets */; };
 		017ABBBB299542BA0004C243 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F1FDF2C521ADA3F000E037A1 /* Images.xcassets */; };
@@ -1952,6 +1953,7 @@
 		011853952AE6BA5D0071FA32 /* ProfileClientViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileClientViewModel.swift; sourceTree = "<group>"; };
 		0145AE952B1156F40097E3B8 /* WireSyncEngineSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireSyncEngineSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		0145AE982B1156FC0097E3B8 /* WireSyncEngineSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireSyncEngineSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		014A63AB2B234EAB00827558 /* MFMailComposeViewController+Logs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MFMailComposeViewController+Logs.swift"; sourceTree = "<group>"; };
 		016BDDEF2AA0AE670054FB04 /* Developer-Flags.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Developer-Flags.xcconfig"; sourceTree = "<group>"; };
 		01A5E043297FDAB500624B65 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 		01A5E046297FDAB500624B65 /* updateLicenses */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = updateLicenses; sourceTree = "<group>"; };
@@ -6360,7 +6362,7 @@
 			isa = PBXGroup;
 			children = (
 				A937A5C223D5F0400080A507 /* ConversationInputBarViewControllerDelegate.swift */,
-				A965F89D23DB3359005209E1 /* ConversationInputBarViewController.swift */,
+				E9B5C8592B1A218E00B78E64 /* ConversationInputBarViewController */,
 				EF95B053227C782D005A060A /* ConversationInputBarViewController+TypingIndicator.swift */,
 				06C412AF239103910018866F /* ConversationInputBarViewController+DragAndDrop.swift */,
 				EF58B556218B463F00750A2B /* ConversationInputBarViewController+KeyCommand.swift */,
@@ -6488,6 +6490,7 @@
 				87AC9F551C0749FB00E1ED6F /* TailEditingTextField.swift */,
 				F12CDAD91E43868200CEFCEB /* ChangingDetails */,
 				BD979D2B1D8F3AF700E8E3CB /* SettingsTechnicalReportViewController.swift */,
+				014A63AB2B234EAB00827558 /* MFMailComposeViewController+Logs.swift */,
 				87D21AD61D8A98620075AB7A /* AccentColorPickerController.swift */,
 				87C1A7BA1D8FDFD8002630BB /* VersionInfoViewController.swift */,
 				F19C3A8E20513532004387E4 /* DatabaseStatisticsController.swift */,
@@ -7396,6 +7399,14 @@
 				E902B3B329ED3A240090DE32 /* SwiftUIButton+HapticFeedback.swift */,
 			);
 			path = "SwiftUI Helpers";
+			sourceTree = "<group>";
+		};
+		E9B5C8592B1A218E00B78E64 /* ConversationInputBarViewController */ = {
+			isa = PBXGroup;
+			children = (
+				A965F89D23DB3359005209E1 /* ConversationInputBarViewController.swift */,
+			);
+			path = ConversationInputBarViewController;
 			sourceTree = "<group>";
 		};
 		E9B8EB7E2A0CEC370056E417 /* Reactions */ = {
@@ -9156,6 +9167,7 @@
 				5E4B1387204FE7DA00ED5DF1 /* SystemAnimationCurves.swift in Sources */,
 				D550F5772044532D009E09DD /* ConversationAction.swift in Sources */,
 				D5F8BFF42007AC84008F8C3D /* UIView+TableViewHeaderFooterSizing.swift in Sources */,
+				014A63AC2B234EAB00827558 /* MFMailComposeViewController+Logs.swift in Sources */,
 				EFBCC90F2152A93F006AAB70 /* AnalyticsProvider.swift in Sources */,
 				BF52C1601CB25FE70037331F /* ArchivedListViewModel.swift in Sources */,
 				D5CEBFC3202CA3BA00AFBD3A /* AddParticipantsViewModel.swift in Sources */,
@@ -10659,10 +10671,6 @@
 					x86_64,
 					arm64,
 				);
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build/iOS",
-				);
 			};
 			name = Debug;
 		};
@@ -10673,10 +10681,6 @@
 				"ARCHS[sdk=iphonesimulator*]" = (
 					x86_64,
 					arm64,
-				);
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
 			};
 			name = Release;
@@ -10707,10 +10711,6 @@
 					x86_64,
 					arm64,
 				);
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build/iOS",
-				);
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -10729,7 +10729,6 @@
 					x86_64,
 					arm64,
 				);
-				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -10749,7 +10748,6 @@
 				);
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build",
 					"\"$(SRCROOT)/Carthage/Build/OCMock.xcframework/ios-arm64_i386_x86_64-simulator\"",
 					"\"$(SRCROOT)/Carthage/Build/FBSnapshotTestCase.xcframework/ios-arm64_i386_x86_64-simulator\"",
 					"\"$(SRCROOT)/Carthage/Build/SnapshotTesting.xcframework/ios-arm64_x86_64-simulator\"",
@@ -10770,7 +10768,6 @@
 				);
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build",
 					"\"$(SRCROOT)/Carthage/Build/OCMock.xcframework/ios-arm64_i386_x86_64-simulator\"",
 					"\"$(SRCROOT)/Carthage/Build/FBSnapshotTestCase.xcframework/ios-arm64_i386_x86_64-simulator\"",
 					"\"$(SRCROOT)/Carthage/Build/SnapshotTesting.xcframework/ios-arm64_x86_64-simulator\"",
@@ -10825,7 +10822,6 @@
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build",
 					"\"$(SRCROOT)/Carthage/Build/OCMock.xcframework/ios-arm64_i386_x86_64-simulator\"",
 					"\"$(SRCROOT)/Carthage/Build/WireTesting.xcframework/ios-arm64_x86_64-simulator\"",
 				);
@@ -10906,7 +10902,6 @@
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build",
 					"\"$(SRCROOT)/Carthage/Build/OCMock.xcframework/ios-arm64_i386_x86_64-simulator\"",
 					"\"$(SRCROOT)/Carthage/Build/WireTesting.xcframework/ios-arm64_x86_64-simulator\"",
 				);

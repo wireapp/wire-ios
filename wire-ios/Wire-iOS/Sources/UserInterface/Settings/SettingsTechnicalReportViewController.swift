@@ -23,21 +23,21 @@ import WireCommonComponents
 
 typealias TechnicalReport = [String: String]
 
-final class SettingsTechnicalReportViewController: UITableViewController, MFMailComposeViewControllerDelegate {
+final class SettingsTechnicalReportViewController: UITableViewController {
     private let includedVoiceLogCell: UITableViewCell
     private let sendReportCell: UITableViewCell
 
     init() {
         sendReportCell = UITableViewCell(style: .default, reuseIdentifier: nil)
         sendReportCell.backgroundColor = SemanticColors.View.backgroundUserCell
-        sendReportCell.textLabel?.text = "self.settings.technical_report.send_report".localized
+        sendReportCell.textLabel?.text = L10n.Localizable.Self.Settings.TechnicalReport.sendReport
         sendReportCell.textLabel?.textColor = UIColor.accent()
         sendReportCell.backgroundView = UIView()
         sendReportCell.selectedBackgroundView = UIView()
 
         includedVoiceLogCell = UITableViewCell(style: .default, reuseIdentifier: nil)
         includedVoiceLogCell.accessoryType = .checkmark
-        includedVoiceLogCell.textLabel?.text = "self.settings.technical_report.include_log".localized
+        includedVoiceLogCell.textLabel?.text = L10n.Localizable.Self.Settings.TechnicalReport.includeLog
         includedVoiceLogCell.textLabel?.textColor = SemanticColors.Label.textDefault
         includedVoiceLogCell.backgroundColor = SemanticColors.View.backgroundUserCell
         includedVoiceLogCell.backgroundView = UIView()
@@ -65,28 +65,8 @@ final class SettingsTechnicalReportViewController: UITableViewController, MFMail
     }
 
     func sendReport(sourceView: UIView? = nil) {
-        let mailRecipient = WireEmail.shared.callingSupportEmail
-
-        guard MFMailComposeViewController.canSendMail() else {
-            DebugAlert.displayFallbackActivityController(logPaths: ZMSLog.pathsForExistingLogs, email: mailRecipient, from: self, sourceView: sourceView)
-            return
-        }
-
-        let mailComposeViewController = MFMailComposeViewController()
-        mailComposeViewController.mailComposeDelegate = self
-        mailComposeViewController.setToRecipients([mailRecipient])
-        mailComposeViewController.setSubject(NSLocalizedString("self.settings.technical_report.mail.subject", comment: ""))
-
-        if includedVoiceLogCell.accessoryType == .checkmark {
-            if let currentLog = ZMSLog.currentLog, let currentPath = ZMSLog.currentLogPath {
-                mailComposeViewController.addAttachmentData(currentLog, mimeType: "text/plain", fileName: currentPath.lastPathComponent)
-            }
-            if let previousLog = ZMSLog.previousLog, let previousPath = ZMSLog.previousLogPath {
-                mailComposeViewController.addAttachmentData(previousLog, mimeType: "text/plain", fileName: previousPath.lastPathComponent)
-            }
-        }
-        mailComposeViewController.setMessageBody("Debug report", isHTML: false)
-        self.present(mailComposeViewController, animated: true, completion: nil)
+        presentMailComposer(withLogs: includedVoiceLogCell.accessoryType == .checkmark,
+                            sourceView: sourceView)
     }
 
     private func setupNavigationTitle() {
@@ -117,7 +97,7 @@ final class SettingsTechnicalReportViewController: UITableViewController, MFMail
 
     override func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
         let label = UILabel()
-        label.text = "self.settings.technical_report.privacy_warning".localized
+        label.text = L10n.Localizable.Self.Settings.TechnicalReport.privacyWarning
         label.textColor = SemanticColors.Label.textSectionFooter
         label.backgroundColor = .clear
         label.font = FontSpec(.small, .light).font!
@@ -151,7 +131,41 @@ final class SettingsTechnicalReportViewController: UITableViewController, MFMail
     }
 
     // MARK: Mail Delegate
+
     func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {
         controller.presentingViewController?.dismiss(animated: true, completion: nil)
+    }
+
+}
+
+protocol SendTechnicalReportPresenter: MFMailComposeViewControllerDelegate {
+    func presentMailComposer(withLogs logsIncluded: Bool)
+}
+
+extension SettingsTechnicalReportViewController: SendTechnicalReportPresenter {}
+
+extension SendTechnicalReportPresenter where Self: UIViewController {
+    func presentMailComposer(withLogs logsIncluded: Bool) {
+        presentMailComposer(withLogs: logsIncluded, sourceView: nil)
+    }
+
+    func presentMailComposer(withLogs logsIncluded: Bool, sourceView: UIView?, fallback: ((Bool) -> Void)? = nil) {
+        let mailRecipient = WireEmail.shared.callingSupportEmail
+
+        guard MFMailComposeViewController.canSendMail() else {
+            DebugAlert.displayFallbackActivityController(logPaths: ZMSLog.pathsForExistingLogs, email: mailRecipient, from: self, sourceView: sourceView)
+            return
+        }
+
+        let mailComposeViewController = MFMailComposeViewController()
+        mailComposeViewController.mailComposeDelegate = self
+        mailComposeViewController.setToRecipients([mailRecipient])
+        mailComposeViewController.setSubject(NSLocalizedString("self.settings.technical_report.mail.subject", comment: ""))
+
+        if logsIncluded {
+            mailComposeViewController.attachLogs()
+        }
+        mailComposeViewController.setMessageBody("Debug report", isHTML: false)
+        self.present(mailComposeViewController, animated: true, completion: nil)
     }
 }

@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireDataModelSupport
 import XCTest
 @testable import WireRequestStrategy
 
@@ -308,7 +309,10 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
             // Given
             BackendInfo.apiVersion = .v2
             action = createAction()
-            let mlsService = MockMLSService()
+            let mlsService = MockMLSServiceInterface()
+            mlsService.conversationExistsGroupID_MockMethod = { _ in false }
+            mlsService.createGroupFor_MockMethod = { _ in }
+            mlsService.addMembersToConversationWithFor_MockMethod = { _, _ in }
             self.syncMOC.mlsService = mlsService
             let payload = try XCTUnwrap(successResponsePayloadMLS.encodeToJSONString())
 
@@ -325,9 +329,9 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
             XCTAssertEqual(conversation.mlsGroupID, mlsGroupID)
             XCTAssertEqual(conversation.mlsStatus, .ready)
 
-            XCTAssertEqual(mlsService.createGroupCalls.count, 1)
+            XCTAssertEqual(mlsService.createGroupFor_Invocations.count, 1)
 
-            let createGroupCall = mlsService.createGroupCalls.element(atIndex: 0)
+            let createGroupCall = mlsService.createGroupFor_Invocations.element(atIndex: 0)
             XCTAssertEqual(createGroupCall, mlsGroupID)
         }
     }

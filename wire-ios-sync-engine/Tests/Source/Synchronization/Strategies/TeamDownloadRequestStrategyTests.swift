@@ -24,16 +24,13 @@ class TeamDownloadRequestStrategyTests: MessagingTest {
     var sut: TeamDownloadRequestStrategy!
     var mockApplicationStatus: MockApplicationStatus!
     var mockSyncStatus: MockSyncStatus!
-    var mockSyncStateDelegate: MockSyncStateDelegate!
     let teamID = UUID.create()
 
     override func setUp() {
         super.setUp()
         mockApplicationStatus = MockApplicationStatus()
-        mockSyncStateDelegate = MockSyncStateDelegate()
         mockSyncStatus = MockSyncStatus(
             managedObjectContext: syncMOC,
-            syncStateDelegate: mockSyncStateDelegate,
             lastEventIDRepository: lastEventIDRepository
         )
         sut = TeamDownloadRequestStrategy(withManagedObjectContext: syncMOC, applicationStatus: mockApplicationStatus, syncStatus: mockSyncStatus)
@@ -47,7 +44,6 @@ class TeamDownloadRequestStrategyTests: MessagingTest {
 
     override func tearDown() {
         mockApplicationStatus = nil
-        mockSyncStateDelegate = nil
         mockSyncStatus = nil
         sut = nil
         super.tearDown()
@@ -307,14 +303,17 @@ class TeamDownloadRequestStrategyTests: MessagingTest {
         }
     }
 
-    func testThatItRemovesAMemberThatIsNotSelfUser() {
+    func testThatItRemovesAMemberThatIsNotSelfUser() async {
 
         let teamId = UUID.create()
         let userId = UUID.create()
 
+        var event: ZMUpdateEvent?
+        var team: Team!
+
         syncMOC.performGroupedBlockAndWait {
             // given
-            let team = Team.insertNewObject(in: self.syncMOC)
+            team = Team.insertNewObject(in: self.syncMOC)
             self.mockApplicationStatus.mockSynchronizationState = .online
             team.remoteIdentifier = teamId
 
@@ -330,11 +329,19 @@ class TeamDownloadRequestStrategyTests: MessagingTest {
                 "type": "team.member-leave"
             ]
 
-            let event = ZMUpdateEvent(fromEventStreamPayload: payload as NSDictionary, uuid: nil)!
+            event = ZMUpdateEvent(fromEventStreamPayload: payload as NSDictionary, uuid: nil)!
+        }
 
-            // when
-            self.sut.processEvents([event], liveEvents: true, prefetchResult: nil)
-            self.syncMOC.saveOrRollback()
+        guard let event else {
+            XCTFail("missing event")
+            return
+        }
+
+        // when
+        await self.sut.processEvents([event], liveEvents: true, prefetchResult: nil)
+
+        syncMOC.performGroupedAndWait { context in
+             context.saveOrRollback()
 
             // then
             let result = team.members.contains(where: { (member) -> Bool in

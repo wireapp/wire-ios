@@ -19,7 +19,9 @@
 import XCTest
 import WireUtilities
 import WireCryptobox
+
 @testable import WireDataModel
+@testable import WireDataModelSupport
 
 final class UserClientTests: ZMBaseManagedObjectTest {
 
@@ -1040,7 +1042,7 @@ extension UserClientTests {
             return "test"
         }
 
-        let mock = MockProteusProvider(mockProteusService: mockProteusService, mockKeyStore: self.spyForTests())
+        let mock = MockProteusProvider(mockProteusService: mockProteusService)
         mock.useProteusService = true
 
         var sut: UserClient!

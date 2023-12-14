@@ -20,20 +20,28 @@ import Foundation
 import XCTest
 import WireCoreCrypto
 import Combine
+
 @testable import WireDataModel
+@testable import WireDataModelSupport
 
 class MLSActionExecutorTests: ZMBaseManagedObjectTest {
 
     var mockCoreCrypto: MockCoreCrypto!
+    var mockSafeCoreCrypto: MockSafeCoreCrypto!
     var mockActionsProvider: MockMLSActionsProviderProtocol!
+    var mockCoreCryptoProvider: MockCoreCryptoProviderProtocol!
     var sut: MLSActionExecutor!
 
     override func setUp() {
         super.setUp()
         mockCoreCrypto = MockCoreCrypto()
+        mockSafeCoreCrypto = MockSafeCoreCrypto(coreCrypto: mockCoreCrypto)
         mockActionsProvider = MockMLSActionsProviderProtocol()
+        mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
+        mockCoreCryptoProvider.coreCryptoRequireMLS_MockValue = mockSafeCoreCrypto
+
         sut = MLSActionExecutor(
-            coreCrypto: MockSafeCoreCrypto(coreCrypto: mockCoreCrypto),
+            coreCryptoProvider: mockCoreCryptoProvider,
             context: uiMOC,
             actionsProvider: mockActionsProvider
         )

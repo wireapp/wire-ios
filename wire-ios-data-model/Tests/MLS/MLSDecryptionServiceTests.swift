@@ -20,13 +20,16 @@ import Foundation
 import XCTest
 import Combine
 import WireCoreCrypto
+
 @testable import WireDataModel
+@testable import WireDataModelSupport
 
 final class MLSDecryptionServiceTests: ZMConversationTestsBase {
 
     var sut: MLSDecryptionService!
     var mockCoreCrypto: MockCoreCrypto!
     var mockSafeCoreCrypto: MockSafeCoreCrypto!
+    var mockCoreCryptoProvider: MockCoreCryptoProviderProtocol!
     var mockSubconversationGroupIDRepository: MockSubconversationGroupIDRepositoryInterface!
 
     // MARK: - Setup
@@ -35,11 +38,13 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
         super.setUp()
         mockCoreCrypto = MockCoreCrypto()
         mockSafeCoreCrypto = MockSafeCoreCrypto(coreCrypto: mockCoreCrypto)
+        mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
+        mockCoreCryptoProvider.coreCryptoRequireMLS_MockValue = mockSafeCoreCrypto
         mockSubconversationGroupIDRepository = MockSubconversationGroupIDRepositoryInterface()
 
         sut = MLSDecryptionService(
             context: syncMOC,
-            coreCrypto: mockSafeCoreCrypto,
+            coreCryptoProvider: mockCoreCryptoProvider,
             subconversationGroupIDRepository: mockSubconversationGroupIDRepository
         )
     }
