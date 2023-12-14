@@ -26,6 +26,7 @@ public protocol GetUserClientFingerprintUseCaseProtocol {
 
 public class GetUserClientFingerprintUseCase: GetUserClientFingerprintUseCaseProtocol {
 
+    let proteusProvider: ProteusProviding
     let context: NSManagedObjectContext
     let sessionEstablisher: SessionEstablisherInterface
 
@@ -40,12 +41,15 @@ public class GetUserClientFingerprintUseCase: GetUserClientFingerprintUseCasePro
         let sessionEstablisher = SessionEstablisher(
             context: syncContext,
             apiProvider: apiProvider)
+        let proteusProvider = ProteusProvider(context: syncContext)
 
-        self.init(sessionEstablisher: sessionEstablisher, managedObjectContext: syncContext)
+        self.init(proteusProvider: proteusProvider, sessionEstablisher: sessionEstablisher, managedObjectContext: syncContext)
     }
 
-    init(sessionEstablisher: SessionEstablisherInterface,
+    init(proteusProvider: ProteusProviding,
+         sessionEstablisher: SessionEstablisherInterface,
          managedObjectContext: NSManagedObjectContext) {
+        self.proteusProvider = proteusProvider
         self.context = managedObjectContext
         self.sessionEstablisher = sessionEstablisher
     }
@@ -149,10 +153,6 @@ public class GetUserClientFingerprintUseCase: GetUserClientFingerprintUseCasePro
     }
 
     // MARK: - Helpers
-
-    private var proteusProvider: ProteusProviding {
-        context.performAndWait { ProteusProvider(context: context) }
-    }
 
     private func proteusPerform<T>(
         withProteusService proteusServiceBlock: @escaping ProteusServicePerformBlock<T>,
