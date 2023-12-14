@@ -91,12 +91,15 @@ final class SyncConversationActionHandler: ActionHandler<SyncConversationAction>
                 return
             }
 
-            processor.updateOrCreateConversation(
-                from: conversationData,
-                in: context
-            )
+            Task { [action] in
+                await processor.updateOrCreateConversation(
+                    from: conversationData,
+                    in: context
+                )
 
-            action.succeed()
+                var action = action
+                action.succeed()
+            }
 
         case 400:
             action.fail(with: .invalidBody)

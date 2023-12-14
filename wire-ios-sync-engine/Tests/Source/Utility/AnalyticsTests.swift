@@ -1,7 +1,7 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
-// 
+// Copyright (C) 2023 Wire Swiss GmbH
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
@@ -16,12 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
-import Foundation
-import XCTest
 import WireTesting
+import XCTest
+
 @testable import WireSyncEngine
 
-class AnalyticsTests: DatabaseTest {
+final class AnalyticsTests: DatabaseTest {
 
     var analytics: MockAnalytics!
 
@@ -37,13 +37,15 @@ class AnalyticsTests: DatabaseTest {
     }
 
     func testThatItSetsAnalyticsOnManagedObjectContext() {
-        // when
-        syncMOC.analytics = analytics
+        syncMOC.performAndWait {
+            // when
+            syncMOC.analytics = analytics
 
-        // then
-        XCTAssertNotNil(syncMOC.analytics)
-        XCTAssertEqual(syncMOC.analytics as? MockAnalytics, analytics)
-        syncMOC.analytics = nil
-        XCTAssertNil(syncMOC.analytics)
+            // then
+            XCTAssertNotNil(syncMOC.analytics)
+            XCTAssertEqual(syncMOC.analytics as? MockAnalytics, analytics)
+            syncMOC.analytics = nil
+            XCTAssertNil(syncMOC.analytics)
+        }
     }
 }
