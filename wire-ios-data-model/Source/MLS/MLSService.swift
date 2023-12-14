@@ -1779,7 +1779,6 @@ extension Invitee {
 public protocol ConversationEventProcessorProtocol {
 
     func processConversationEvents(_ events: [ZMUpdateEvent]) async
-    // TODO: make async
     func processPayload(_ payload: ZMTransportData)
 }
 
