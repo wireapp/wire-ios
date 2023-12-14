@@ -30,8 +30,9 @@ final class MessageSenderTests: MessagingTestBase {
         }
 
         let message = GenericMessageEntity(
-            conversation: groupConversation,
             message: GenericMessage(content: Text(content: "Hello World")),
+            context: syncMOC,
+            conversation: groupConversation,
             completionHandler: nil)
 
         let (_, messageSender) = Arrangement(coreDataStack: coreDataStack)
@@ -48,8 +49,9 @@ final class MessageSenderTests: MessagingTestBase {
     func testThatBeforeSendingMessage_thenCallDependencyResolver() async throws {
         // given
         let message = GenericMessageEntity(
-            conversation: groupConversation,
             message: GenericMessage(content: Text(content: "Hello World")),
+            context: syncMOC,
+            conversation: groupConversation,
             completionHandler: nil)
 
         let (arrangement, messageSender) = Arrangement(coreDataStack: coreDataStack)
@@ -68,8 +70,9 @@ final class MessageSenderTests: MessagingTestBase {
     func testThatBeforeSendingMessage_thenWaitForQuickSyncToFinish() async throws {
         // given
         let message = GenericMessageEntity(
-            conversation: groupConversation,
             message: GenericMessage(content: Text(content: "Hello World")),
+            context: syncMOC,
+            conversation: groupConversation,
             completionHandler: nil)
 
         let (arrangement, messageSender) = Arrangement(coreDataStack: coreDataStack)
@@ -88,8 +91,9 @@ final class MessageSenderTests: MessagingTestBase {
     func testThatWhenApiVersionIsNotResolved_thenFailWithUnresolvedApiVersion() async throws {
         // given
         let message = GenericMessageEntity(
-            conversation: groupConversation,
             message: GenericMessage(content: Text(content: "Hello World")),
+            context: syncMOC,
+            conversation: groupConversation,
             completionHandler: nil)
 
         let (_, messageSender) = Arrangement(coreDataStack: coreDataStack)
@@ -117,8 +121,9 @@ final class MessageSenderTests: MessagingTestBase {
         )
 
         let message = GenericMessageEntity(
-            conversation: groupConversation,
             message: GenericMessage(content: Text(content: "Hello World")),
+            context: syncMOC,
+            conversation: groupConversation,
             completionHandler: nil)
 
         let (_, messageSender) = Arrangement(coreDataStack: coreDataStack)
@@ -138,8 +143,9 @@ final class MessageSenderTests: MessagingTestBase {
         // given
         let response = ZMTransportResponse(payload: nil, httpStatus: 412, transportSessionError: nil, apiVersion: 0)
         let message = GenericMessageEntity(
-            conversation: groupConversation,
             message: GenericMessage(content: Text(content: "Hello World")),
+            context: syncMOC,
+            conversation: groupConversation,
             completionHandler: nil)
 
         let (arrangement, messageSender) = Arrangement(coreDataStack: coreDataStack)
@@ -165,8 +171,9 @@ final class MessageSenderTests: MessagingTestBase {
         // given
         let response = ZMTransportResponse(payload: nil, httpStatus: 408, transportSessionError: nil, apiVersion: 0)
         let message = GenericMessageEntity(
-            conversation: groupConversation,
             message: GenericMessage(content: Text(content: "Hello World")),
+            context: syncMOC,
+            conversation: groupConversation,
             completionHandler: nil)
 
         let (arrangement, messageSender) = Arrangement(coreDataStack: coreDataStack)
@@ -188,8 +195,9 @@ final class MessageSenderTests: MessagingTestBase {
         // given
         let response = ZMTransportResponse(payload: nil, httpStatus: 408, transportSessionError: nil, apiVersion: 0)
         let message = GenericMessageEntity(
-            conversation: groupConversation,
             message: GenericMessage(content: Text(content: "Hello World")),
+            context: syncMOC,
+            conversation: groupConversation,
             completionHandler: nil)
         message.isExpired = true
 
@@ -211,8 +219,9 @@ final class MessageSenderTests: MessagingTestBase {
         let response = ZMTransportResponse(payload: nil, httpStatus: 403, transportSessionError: nil, apiVersion: 0)
         let networkError = NetworkError.errorDecodingResponse(response)
         let message = GenericMessageEntity(
-            conversation: groupConversation,
             message: GenericMessage(content: Text(content: "Hello World")),
+            context: syncMOC,
+            conversation: groupConversation,
             completionHandler: nil)
 
         let (_, messageSender) = Arrangement(coreDataStack: coreDataStack)
@@ -244,8 +253,9 @@ final class MessageSenderTests: MessagingTestBase {
         )
         let networkError = NetworkError.invalidRequestError(responseFailure, response)
         let message = GenericMessageEntity(
-            conversation: groupConversation,
             message: GenericMessage(content: Text(content: "Hello World")),
+            context: syncMOC,
+            conversation: groupConversation,
             completionHandler: nil)
 
         let (_, messageSender) = Arrangement(coreDataStack: coreDataStack)
@@ -280,8 +290,9 @@ final class MessageSenderTests: MessagingTestBase {
         )
         let networkError = NetworkError.invalidRequestError(responseFailure, response)
         let message = GenericMessageEntity(
-            conversation: groupConversation,
             message: GenericMessage(content: Text(content: "Hello World")),
+            context: syncMOC,
+            conversation: groupConversation,
             completionHandler: nil)
 
         let (_, messageSender) = Arrangement(coreDataStack: coreDataStack)
@@ -314,8 +325,9 @@ final class MessageSenderTests: MessagingTestBase {
         )
 
         let message = GenericMessageEntity(
-            conversation: groupConversation,
             message: GenericMessage(content: Text(content: "Hello World")),
+            context: syncMOC,
+            conversation: groupConversation,
             completionHandler: nil)
 
         let (arrangement, messageSender) = Arrangement(coreDataStack: coreDataStack)
@@ -350,8 +362,9 @@ final class MessageSenderTests: MessagingTestBase {
         )
 
         let message = GenericMessageEntity(
-            conversation: groupConversation,
             message: GenericMessage(content: Text(content: "Hello World")),
+            context: syncMOC,
+            conversation: groupConversation,
             completionHandler: nil)
 
         let (arrangement, messageSender) = Arrangement(coreDataStack: coreDataStack)
@@ -382,8 +395,9 @@ final class MessageSenderTests: MessagingTestBase {
         let response = ZMTransportResponse(payload: nil, httpStatus: 403, transportSessionError: nil, apiVersion: 0)
         let networkError = NetworkError.errorDecodingResponse(response)
         let message = GenericMessageEntity(
-            conversation: groupConversation,
             message: GenericMessage(content: Text(content: "Hello World")),
+            context: syncMOC,
+            conversation: groupConversation,
             completionHandler: nil)
 
         let (arrangement, messageSender) = Arrangement(coreDataStack: coreDataStack)
@@ -411,8 +425,9 @@ final class MessageSenderTests: MessagingTestBase {
             self.groupConversation.messageProtocol = .mls
         }
         let message = GenericMessageEntity(
-            conversation: groupConversation,
             message: GenericMessage(content: Text(content: "Hello World")),
+            context: syncMOC,
+            conversation: groupConversation,
             completionHandler: nil)
 
         let (_, messageSender) = Arrangement(coreDataStack: coreDataStack)
@@ -433,8 +448,9 @@ final class MessageSenderTests: MessagingTestBase {
             self.groupConversation.messageProtocol = .mls
         }
         let message = GenericMessageEntity(
-            conversation: groupConversation,
             message: GenericMessage(content: Text(content: "Hello World")),
+            context: syncMOC,
+            conversation: groupConversation,
             completionHandler: nil)
 
         let (_, messageSender) = Arrangement(coreDataStack: coreDataStack)

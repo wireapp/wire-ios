@@ -23,8 +23,9 @@ final class MessageDependencyResolverTests: MessagingTestBase {
     func testThatGivenMessageWithoutDependencies_thenDontWait() throws {
         // given
         let message = GenericMessageEntity(
-            conversation: groupConversation,
             message: GenericMessage(content: Text(content: "Hello World")),
+            context: syncMOC,
+            conversation: groupConversation,
             completionHandler: nil)
         let (_, messageDependencyResolver) = Arrangement(coreDataStack: coreDataStack)
             .arrange()
@@ -42,8 +43,9 @@ final class MessageDependencyResolverTests: MessagingTestBase {
             groupConversation.needsToBeUpdatedFromBackend = true
         }
         let message = GenericMessageEntity(
-            conversation: groupConversation,
             message: GenericMessage(content: Text(content: "Hello World")),
+            context: syncMOC,
+            conversation: groupConversation,
             completionHandler: nil)
         let (_, messageDependencyResolver) = Arrangement(coreDataStack: coreDataStack)
             .arrange()
