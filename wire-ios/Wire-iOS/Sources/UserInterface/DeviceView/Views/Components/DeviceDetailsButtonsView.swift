@@ -52,7 +52,7 @@ struct DeviceDetailsButtonsView: View {
     var showCertificateButton: some View {
         SwiftUI.Button(
             action: {
-                    isCertificateViewPresented.toggle()
+                    isCertificateViewPresented = true
             },
             label: {
                 HStack {
