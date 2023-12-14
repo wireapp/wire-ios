@@ -61,6 +61,8 @@ public protocol MessageSenderInterface {
 
     func sendMessage(message: any SendableMessage) async throws
 
+    func broadcastMessage(message: any ProteusMessage) async throws
+
 }
 
 public class MessageSender: MessageSenderInterface {
@@ -89,6 +91,20 @@ public class MessageSender: MessageSenderInterface {
     private let quickSyncObserver: QuickSyncObserverInterface
     private let proteusPayloadProcessor = MessageSendingStatusPayloadProcessor()
     private let mlsPayloadProcessor = MLSMessageSendingStatusPayloadProcessor()
+
+    public func broadcastMessage(message: any ProteusMessage) async throws {
+        WireLogger.messaging.debug("broadcast message")
+
+        await quickSyncObserver.waitForQuickSyncToFinish()
+
+        do {
+            guard let apiVersion = BackendInfo.apiVersion else { throw MessageSendError.unresolvedApiVersion }
+            try await attemptToBroadcastWithProteus(message: message, apiVersion: apiVersion)
+        } catch {
+            WireLogger.messaging.warn("broadcast message failed: \(error)")
+            throw error
+        }
+    }
 
     public func sendMessage(message: any SendableMessage) async throws {
         WireLogger.messaging.debug("send message")
@@ -127,6 +143,21 @@ public class MessageSender: MessageSenderInterface {
             try await context.perform { [self] in
                 try handleFederationFailure(networkError: networkError, message: message)
             }
+        }
+    }
+
+    private func attemptToBroadcastWithProteus(message: any ProteusMessage, apiVersion: APIVersion) async throws {
+        do {
+            let (messageStatus, response) = try await apiProvider.messageAPI(apiVersion: apiVersion).broadcastProteusMessage(message: message)
+            await context.perform { [self] in
+                handleProteusSuccess(message: message, messageSendingStatus: messageStatus, response: response)
+            }
+        } catch let networkError as NetworkError {
+            let missingClients = try await context.perform { [self] in
+                try handleProteusFailure(message: message, networkError)
+            }
+            try await sessionEstablisher.establishSession(with: missingClients, apiVersion: apiVersion)
+            try await broadcastMessage(message: message)
         }
     }
 

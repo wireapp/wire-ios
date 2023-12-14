@@ -28,7 +28,7 @@ extension ZMUserSession {
         BackgroundActivityFactory.shared.resume()
 
         syncManagedObjectContext.performGroupedBlock {
-            self.applicationStatusDirectory?.operationStatus.startBackgroundFetch(withCompletionHandler: completionHandler)
+            self.applicationStatusDirectory.operationStatus.startBackgroundFetch(withCompletionHandler: completionHandler)
         }
     }
 

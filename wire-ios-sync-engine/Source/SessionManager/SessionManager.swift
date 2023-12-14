@@ -1044,7 +1044,7 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     func updateProfileImage(imageData: Data) {
         activeUserSession?.enqueue {
-            self.activeUserSession?.userProfileImage?.updateImage(imageData: imageData)
+            self.activeUserSession?.userProfileImage.updateImage(imageData: imageData)
         }
     }
 
