@@ -98,13 +98,7 @@ public class ZMUserSession: NSObject {
 
     var cryptoboxMigrationManager: CryptoboxMigrationManagerInterface
     var coreCryptoProvider: CoreCryptoProvider
-    lazy var proteusService: ProteusServiceInterface? = {
-        if DeveloperFlag.proteusViaCoreCrypto.isOn {
-            return  ProteusService(coreCryptoProvider: coreCryptoProvider)
-        } else {
-            return nil
-        }
-    }()
+    lazy var proteusService: ProteusServiceInterface = ProteusService(coreCryptoProvider: coreCryptoProvider)
     var mlsService: MLSServiceInterface
     var proteusProvider: ProteusProvider!
 
