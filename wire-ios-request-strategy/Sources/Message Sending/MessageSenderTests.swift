@@ -108,6 +108,85 @@ final class MessageSenderTests: MessagingTestBase {
         }
     }
 
+    func testThatWhenBroadcastingProteusMessageSucceeds_thenCompleteWithoutErrors() async throws {
+        // given
+        let response = ZMTransportResponse(payload: nil, httpStatus: 200, transportSessionError: nil, apiVersion: 0)
+        let messageSendingStatus = Payload.MessageSendingStatus(
+            time: Date(),
+            missing: [:],
+            redundant: [:],
+            deleted: [:],
+            failedToSend: [:],
+            failedToConfirm: [:]
+        )
+
+        let message = GenericMessageEntity(
+            message: GenericMessage(content: Text(content: "Hello World")),
+            context: syncMOC,
+            conversation: groupConversation,
+            completionHandler: nil)
+
+        let (_, messageSender) = Arrangement(coreDataStack: coreDataStack)
+            .withQuickSyncObserverCompleting()
+            .withApiVersionResolving(to: .v0)
+            .withBroadcastProteusMessage(returning: .success((messageSendingStatus, response)))
+            .arrange()
+
+        // when
+        try await messageSender.broadcastMessage(message: message)
+
+        // then test completes
+    }
+
+    func testThatWhenBroadcastingProteusMessageFailsDueToMissingClients_thenEstablishSessionsAndTryAgain() async throws {
+        // given
+        let response = ZMTransportResponse(payload: nil, httpStatus: 412, transportSessionError: nil, apiVersion: 0)
+        let message = GenericMessageEntity(
+            message: GenericMessage(content: Text(content: "Hello World")),
+            context: syncMOC,
+            conversation: groupConversation,
+            completionHandler: nil)
+
+        let (arrangement, messageSender) = Arrangement(coreDataStack: coreDataStack)
+            .withQuickSyncObserverCompleting()
+            .withApiVersionResolving(to: .v0)
+            .withBroadcastProteusMessageFailing(with: NetworkError.missingClients(
+                Arrangement.Scaffolding.messageSendingStatusMissingClients,
+                response)
+            )
+            .withEstablishSessions(returning: .success(Void()))
+            .arrange()
+
+        // when
+        try await messageSender.broadcastMessage(message: message)
+
+        // then
+        XCTAssertEqual(Set(arrayLiteral: Arrangement.Scaffolding.clientID), arrangement.sessionEstablisher.establishSessionWithApiVersion_Invocations[0].clients)
+    }
+
+    func testThatWhenBroadcastingMessageProteusFailsWithTemporaryError_thenTryAgain() async throws {
+        // given
+        let response = ZMTransportResponse(payload: nil, httpStatus: 408, transportSessionError: nil, apiVersion: 0)
+        let message = GenericMessageEntity(
+            message: GenericMessage(content: Text(content: "Hello World")),
+            context: syncMOC,
+            conversation: groupConversation,
+            completionHandler: nil)
+
+        let (arrangement, messageSender) = Arrangement(coreDataStack: coreDataStack)
+            .withQuickSyncObserverCompleting()
+            .withApiVersionResolving(to: .v0)
+            .withBroadcastProteusMessageFailing(with: NetworkError.errorDecodingResponse(response))
+            .withEstablishSessions(returning: .success(Void()))
+            .arrange()
+
+        // when
+        try await messageSender.broadcastMessage(message: message)
+
+        // then
+        XCTAssertEqual(2, arrangement.messageApi.broadcastProteusMessageMessage_Invocations.count)
+    }
+
     func testThatWhenSendingProteusMessageSucceeds_thenCompleteWithoutErrors() async throws {
         // given
         let response = ZMTransportResponse(payload: nil, httpStatus: 200, transportSessionError: nil, apiVersion: 0)
@@ -164,7 +243,6 @@ final class MessageSenderTests: MessagingTestBase {
 
         // then
         XCTAssertEqual(Set(arrayLiteral: Arrangement.Scaffolding.clientID), arrangement.sessionEstablisher.establishSessionWithApiVersion_Invocations[0].clients)
-
     }
 
     func testThatWhenSendingMessageProteusFailsWithTemporaryError_thenTryAgain() async throws {
@@ -526,6 +604,17 @@ final class MessageSenderTests: MessagingTestBase {
             return self
         }
 
+        func withBroadcastProteusMessageFailing(with error: NetworkError) -> Arrangement {
+            messageApi.broadcastProteusMessageMessage_MockMethod = { [weak messageApi] _ in
+                if messageApi?.broadcastProteusMessageMessage_Invocations.count > 1 {
+                    return (Scaffolding.messageSendingStatusSuccess, Scaffolding.responseSuccess)
+                } else {
+                    throw error
+                }
+            }
+            return self
+        }
+
         func withSendProteusMessageFailing(with error: NetworkError) -> Arrangement {
             messageApi.sendProteusMessageMessageConversationID_MockMethod = { [weak messageApi] _, _ in
                 if messageApi?.sendProteusMessageMessageConversationID_Invocations.count > 1 {
@@ -550,6 +639,17 @@ final class MessageSenderTests: MessagingTestBase {
                 sessionEstablisher.establishSessionWithApiVersion_MockMethod = { _, _ in }
             case .failure(let error):
                 sessionEstablisher.establishSessionWithApiVersion_MockError = error
+            }
+            return self
+        }
+
+        func withBroadcastProteusMessage(returning result: Swift.Result<(Payload.MessageSendingStatus, ZMTransportResponse), NetworkError>) -> Arrangement {
+
+            switch result {
+            case .success(let value):
+                messageApi.broadcastProteusMessageMessage_MockValue = value
+            case .failure(let error):
+                messageApi.broadcastProteusMessageMessage_MockError = error
             }
             return self
         }
