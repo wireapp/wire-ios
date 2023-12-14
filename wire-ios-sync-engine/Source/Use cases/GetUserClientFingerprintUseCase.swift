@@ -33,7 +33,8 @@ public class GetUserClientFingerprintUseCase: GetUserClientFingerprintUseCasePro
     // MARK: - Initialization
 
     convenience init(syncContext: NSManagedObjectContext,
-                     transportSession: TransportSessionType) {
+                     transportSession: TransportSessionType,
+                     proteusProvider: ProteusProvider) {
         let httpClient = HttpClientImpl(
             transportSession: transportSession,
             queue: syncContext)
@@ -41,7 +42,6 @@ public class GetUserClientFingerprintUseCase: GetUserClientFingerprintUseCasePro
         let sessionEstablisher = SessionEstablisher(
             context: syncContext,
             apiProvider: apiProvider)
-        let proteusProvider = ProteusProvider(context: syncContext)
 
         self.init(proteusProvider: proteusProvider, sessionEstablisher: sessionEstablisher, managedObjectContext: syncContext)
     }

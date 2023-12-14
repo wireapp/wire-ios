@@ -47,7 +47,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
         localNotificationDispatcher: LocalNotificationDispatcher,
         useLegacyPushNotifications: Bool,
         lastEventIDRepository: LastEventIDRepositoryInterface,
-        transportSession: TransportSessionType
+        transportSession: TransportSessionType,
+        proteusProvider: ProteusProvider
     ) {
 
         self.strategies = Self.buildStrategies(
@@ -60,7 +61,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             localNotificationDispatcher: localNotificationDispatcher,
             useLegacyPushNotifications: useLegacyPushNotifications,
             lastEventIDRepository: lastEventIDRepository,
-            transportSession: transportSession
+            transportSession: transportSession,
+            proteusProvider: proteusProvider
         )
 
         self.requestStrategies = strategies.compactMap({ $0 as? RequestStrategy})
@@ -94,7 +96,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
         localNotificationDispatcher: LocalNotificationDispatcher,
         useLegacyPushNotifications: Bool,
         lastEventIDRepository: LastEventIDRepositoryInterface,
-        transportSession: TransportSessionType
+        transportSession: TransportSessionType,
+        proteusProvider: ProteusProvider
     ) -> [Any] {
         let syncMOC = contextProvider.syncContext
 
@@ -122,7 +125,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 clientRegistrationStatus: applicationStatusDirectory.clientRegistrationStatus,
                 clientUpdateStatus: applicationStatusDirectory.clientUpdateStatus,
                 context: syncMOC,
-                proteusProvider: ProteusProvider(context: syncMOC)
+                proteusProvider: proteusProvider
             ),
             MissingClientsRequestStrategy(
                 withManagedObjectContext: syncMOC,

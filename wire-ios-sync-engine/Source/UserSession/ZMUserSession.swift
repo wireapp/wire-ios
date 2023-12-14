@@ -95,10 +95,18 @@ public class ZMUserSession: NSObject {
     // let hotFixApplicator = PatchApplicator<HotfixPatch>(lastRunVersionKey: "lastRunHotFixVersion")
     var accessTokenRenewalObserver: AccessTokenRenewalObserver?
     var recurringActionService: RecurringActionServiceInterface = RecurringActionService()
+
     var cryptoboxMigrationManager: CryptoboxMigrationManagerInterface
     var coreCryptoProvider: CoreCryptoProvider
-    lazy var proteusService: ProteusServiceInterface = ProteusService(coreCryptoProvider: coreCryptoProvider)
+    lazy var proteusService: ProteusServiceInterface? = {
+        if DeveloperFlag.proteusViaCoreCrypto.isOn {
+            return  ProteusService(coreCryptoProvider: coreCryptoProvider)
+        } else {
+            return nil
+        }
+    }()
     var mlsService: MLSServiceInterface
+    var proteusProvider: ProteusProvider!
 
     public var syncStatus: SyncStatusProtocol {
         return applicationStatusDirectory.syncStatus
@@ -251,7 +259,9 @@ public class ZMUserSession: NSObject {
     /// - Note: this is safe if coredataStack and proteus are ready
     public lazy var getUserClientFingerprint: GetUserClientFingerprintUseCaseProtocol = {
         GetUserClientFingerprintUseCase(syncContext: coreDataStack.syncContext,
-                                        transportSession: transportSession)
+
+                                        transportSession: transportSession,
+                                        proteusProvider: proteusProvider)
     }()
 
     let lastEventIDRepository: LastEventIDRepositoryInterface
@@ -276,6 +286,7 @@ public class ZMUserSession: NSObject {
         cryptoboxMigrationManager: CryptoboxMigrationManagerInterface,
         sharedUserDefaults: UserDefaults
     ) {
+        // why is this set here
         coreDataStack.syncContext.performGroupedBlockAndWait {
             coreDataStack.syncContext.analytics = analytics
             coreDataStack.syncContext.zm_userInterface = coreDataStack.viewContext
@@ -349,6 +360,10 @@ public class ZMUserSession: NSObject {
         syncManagedObjectContext.performGroupedBlockAndWait { [self] in
             self.localNotificationDispatcher = LocalNotificationDispatcher(in: coreDataStack.syncContext)
             self.configureTransportSession()
+
+            // need to be before we create strategies since it is passed
+            self.proteusProvider = ProteusProvider(proteusService: self.proteusService,
+                                                   keyStore: self.syncManagedObjectContext.zm_cryptKeyStore)
 
             self.strategyDirectory = strategyDirectory ?? self.createStrategyDirectory(useLegacyPushNotifications: configuration.useLegacyPushNotifications)
             self.updateEventProcessor = eventProcessor ?? self.createUpdateEventProcessor()
@@ -424,7 +439,8 @@ public class ZMUserSession: NSObject {
             localNotificationDispatcher: localNotificationDispatcher!,
             useLegacyPushNotifications: useLegacyPushNotifications,
             lastEventIDRepository: lastEventIDRepository,
-            transportSession: transportSession
+            transportSession: transportSession,
+            proteusProvider: self.proteusProvider
         )
     }
 

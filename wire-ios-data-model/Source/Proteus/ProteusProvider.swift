@@ -46,16 +46,11 @@ public class ProteusProvider: ProteusProviding {
     private let keyStore: UserClientKeysStore
     private let proteusViaCoreCrypto: Bool
 
-    public convenience init(
-        context: NSManagedObjectContext,
+    public init(
+        proteusService: ProteusServiceInterface?,
+        keyStore: UserClientKeysStore,
         proteusViaCoreCrypto: Bool = DeveloperFlag.proteusViaCoreCrypto.isOn
     ) {
-        self.init(proteusService: context.proteusService,
-                  keyStore: context.zm_cryptKeyStore,
-                  proteusViaCoreCrypto: proteusViaCoreCrypto)
-    }
-
-    internal init(proteusService: ProteusServiceInterface?, keyStore: UserClientKeysStore, proteusViaCoreCrypto: Bool) {
         self.proteusService = proteusService
         self.keyStore = keyStore
         self.proteusViaCoreCrypto = proteusViaCoreCrypto
