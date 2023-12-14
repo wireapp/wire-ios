@@ -37,11 +37,12 @@ final class SyncStatusTests: MessagingTest {
     }
 
     private func createSut() -> SyncStatus {
-        return SyncStatus(
+        let sut = SyncStatus(
             managedObjectContext: uiMOC,
-            syncStateDelegate: mockSyncDelegate,
             lastEventIDRepository: lastEventIDRepository
         )
+        sut.syncStateDelegate = mockSyncDelegate
+        return sut
     }
 
     func testThatWhenIntializingWithoutLastEventIDItStartsInStateFetchingLastUpdateEventID() {
@@ -49,7 +50,7 @@ final class SyncStatusTests: MessagingTest {
         lastEventIDRepository.storeLastEventID(nil)
 
         // when
-        sut = createSut()
+        sut.determineInitialSyncPhase()
 
         // then
         XCTAssertEqual(sut.currentSyncPhase, .fetchingLastUpdateEventID)
@@ -60,7 +61,7 @@ final class SyncStatusTests: MessagingTest {
         lastEventIDRepository.storeLastEventID(UUID.timeBasedUUID() as UUID)
 
         // when
-        sut = createSut()
+        sut.determineInitialSyncPhase()
 
         // then
         XCTAssertEqual(sut.currentSyncPhase, .fetchingMissedEvents)
@@ -81,8 +82,11 @@ final class SyncStatusTests: MessagingTest {
     }
 
     func testThatItGoesThroughTheStatesInSpecificOrder() {
+        // given
+        sut.determineInitialSyncPhase()
+
         syncPhases.forEach { syncPhase in
-            // given / then
+            // then
             XCTAssertEqual(sut.currentSyncPhase, syncPhase)
             // when
             sut.finishCurrentSyncPhase(phase: syncPhase)
@@ -93,6 +97,7 @@ final class SyncStatusTests: MessagingTest {
 
     func testThatItSavesTheLastNotificationIDOnlyAfterFinishingUserPhase() {
         // given
+        sut.determineInitialSyncPhase()
         XCTAssertEqual(sut.currentSyncPhase, .fetchingLastUpdateEventID)
         sut.updateLastUpdateEventID(eventID: UUID.timeBasedUUID() as UUID)
         XCTAssertNil(lastEventIDRepository.fetchLastEventID())
@@ -144,6 +149,7 @@ final class SyncStatusTests: MessagingTest {
     }
 
     func testThatItDoesNotSetTheLastNotificationIDIfItHasNone() {
+        sut.determineInitialSyncPhase()
         XCTAssertEqual(sut.currentSyncPhase, .fetchingLastUpdateEventID)
         lastEventIDRepository.storeLastEventID(UUID.timeBasedUUID() as UUID)
         XCTAssertNotNil(lastEventIDRepository.fetchLastEventID())
@@ -186,6 +192,7 @@ final class SyncStatusTests: MessagingTest {
 
     func testThatItNotifiesTheStateDelegateWhenFinishingSync() {
         // given
+        sut.determineInitialSyncPhase()
         XCTAssertEqual(sut.currentSyncPhase, .fetchingLastUpdateEventID)
         XCTAssertFalse(mockSyncDelegate.didCallFinishSlowSync)
         XCTAssertFalse(mockSyncDelegate.didCallFinishQuickSync)
@@ -233,9 +240,8 @@ final class SyncStatusTests: MessagingTest {
     }
 
     func testThatItNotifiesTheStateDelegateWhenStartingSlowSync() {
-        // given
-        sut = createSut()
-        XCTAssertEqual(sut.currentSyncPhase, .fetchingLastUpdateEventID)
+        // when
+        sut.determineInitialSyncPhase()
 
         // then
         XCTAssertTrue(mockSyncDelegate.didCallStartSlowSync)
@@ -244,15 +250,18 @@ final class SyncStatusTests: MessagingTest {
     func testThatItNotifiesTheStateDelegateWhenStartingQuickSync() {
         // given
         lastEventIDRepository.storeLastEventID(UUID.timeBasedUUID() as UUID)
-        sut = createSut()
-        XCTAssertEqual(sut.currentSyncPhase, .fetchingMissedEvents)
+
+        // when
+        sut.determineInitialSyncPhase()
 
         // then
+        XCTAssertEqual(sut.currentSyncPhase, .fetchingMissedEvents)
         XCTAssertTrue(mockSyncDelegate.didCallStartQuickSync)
     }
 
     func testThatItDoesNotNotifyTheStateDelegateWhenAlreadySyncing() {
         // given
+        sut.determineInitialSyncPhase()
         mockSyncDelegate.didCallStartQuickSync = false
         sut.finishCurrentSyncPhase(phase: .fetchingLastUpdateEventID)
         XCTAssertEqual(sut.currentSyncPhase, .fetchingTeams)
@@ -269,7 +278,7 @@ final class SyncStatusTests: MessagingTest {
     func testThatItNotifiesTheStateDelegateWhenPushChannelClosedThatSyncStarted() {
         // given
         lastEventIDRepository.storeLastEventID(UUID.timeBasedUUID() as UUID)
-        sut = createSut()
+        sut.determineInitialSyncPhase()
         sut.finishCurrentSyncPhase(phase: .fetchingMissedEvents)
         XCTAssertEqual(sut.currentSyncPhase, .done)
         mockSyncDelegate.didCallStartQuickSync = false
@@ -290,7 +299,7 @@ extension SyncStatusTests {
     func testThatItStartsQuickSyncWhenPushChannelOpens_PreviousPhaseDone() {
         // given
         lastEventIDRepository.storeLastEventID(UUID.timeBasedUUID() as UUID)
-        sut = createSut()
+        sut.determineInitialSyncPhase()
         sut.finishCurrentSyncPhase(phase: .fetchingMissedEvents)
         XCTAssertEqual(sut.currentSyncPhase, .done)
 
@@ -303,6 +312,7 @@ extension SyncStatusTests {
 
     func testThatItDoesNotStartsQuickSyncWhenPushChannelOpens_PreviousInSlowSync() {
         // given
+        sut.determineInitialSyncPhase()
         XCTAssertEqual(sut.currentSyncPhase, .fetchingLastUpdateEventID)
 
         // when
@@ -315,7 +325,7 @@ extension SyncStatusTests {
     func testThatItRestartsQuickSyncWhenPushChannelOpens_PreviousInQuickSync() {
         // given
         lastEventIDRepository.storeLastEventID(UUID.timeBasedUUID() as UUID)
-        sut = createSut()
+        sut.determineInitialSyncPhase()
         XCTAssertEqual(sut.currentSyncPhase, .fetchingMissedEvents)
         XCTAssertFalse(sut.needsToRestartQuickSync)
 
@@ -336,7 +346,7 @@ extension SyncStatusTests {
     func testThatItRestartsQuickSyncWhenPushChannelClosedDuringQuickSync() {
         // given
         lastEventIDRepository.storeLastEventID(UUID.timeBasedUUID() as UUID)
-        sut = createSut()
+        sut.determineInitialSyncPhase()
         XCTAssertEqual(sut.currentSyncPhase, .fetchingMissedEvents)
         XCTAssertFalse(sut.needsToRestartQuickSync)
 
@@ -359,7 +369,7 @@ extension SyncStatusTests {
     func testThatItRestartsSlowSyncWhenRestartSlowSyncIsCalled() {
         // given
         lastEventIDRepository.storeLastEventID(UUID.timeBasedUUID() as UUID)
-        sut = createSut()
+        sut.determineInitialSyncPhase()
         sut.finishCurrentSyncPhase(phase: .fetchingMissedEvents)
         XCTAssertEqual(sut.currentSyncPhase, .done)
 
@@ -374,7 +384,7 @@ extension SyncStatusTests {
     func testThatItRestartsSlowSyncWhenRestartSlowSyncNotificationIsFired() {
         // given
         lastEventIDRepository.storeLastEventID(UUID.timeBasedUUID() as UUID)
-        sut = createSut()
+        sut.determineInitialSyncPhase()
         sut.finishCurrentSyncPhase(phase: .fetchingMissedEvents)
         XCTAssertEqual(sut.currentSyncPhase, .done)
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -390,7 +400,7 @@ extension SyncStatusTests {
     func testThatItDoesNotRestartsQuickSyncWhenPushChannelIsClosed() {
         // given
         lastEventIDRepository.storeLastEventID(UUID.timeBasedUUID() as UUID)
-        sut = createSut()
+        sut.determineInitialSyncPhase()
         XCTAssertEqual(sut.currentSyncPhase, .fetchingMissedEvents)
         XCTAssertFalse(sut.needsToRestartQuickSync)
 
@@ -412,7 +422,7 @@ extension SyncStatusTests {
     func testThatItEntersSlowSyncIfQuickSyncFailed() {
         // given
         lastEventIDRepository.storeLastEventID(UUID.timeBasedUUID() as UUID)
-        sut = createSut()
+        sut.determineInitialSyncPhase()
         XCTAssertEqual(sut.currentSyncPhase, .fetchingMissedEvents)
 
         // when
@@ -427,7 +437,7 @@ extension SyncStatusTests {
         let oldID = UUID.timeBasedUUID() as UUID
         let newID = UUID.timeBasedUUID() as UUID
         lastEventIDRepository.storeLastEventID(oldID)
-        sut = createSut()
+        sut.determineInitialSyncPhase()
         XCTAssertEqual(sut.currentSyncPhase, .fetchingMissedEvents)
 
         // when
@@ -443,7 +453,7 @@ extension SyncStatusTests {
         let oldID = UUID.timeBasedUUID() as UUID
         let newID = UUID.timeBasedUUID() as UUID
         lastEventIDRepository.storeLastEventID(oldID)
-        sut = createSut()
+        sut.determineInitialSyncPhase()
         XCTAssertEqual(sut.currentSyncPhase, .fetchingMissedEvents)
 
         // when

@@ -17,11 +17,23 @@
 //
 
 import Foundation
+import MessageUI
+import WireSystem
 
-public extension NSManagedObjectContext {
+extension MFMailComposeViewController {
 
-    var proteusProvider: ProteusProviding {
-        precondition(zm_isSyncContext, "ProteusProvider should only be accessed on the sync context")
-        return ProteusProvider(context: self)
+    func attachLogs() {
+        if let currentLog = ZMSLog.currentZipLog {
+            addAttachmentData(currentLog, mimeType: "application/zip", fileName: "current.log.zip")
+        }
+
+        ZMSLog.previousZipLogURLs.forEach { url in
+            do {
+                let data = try Data(contentsOf: url)
+                addAttachmentData(data, mimeType: "application/zip", fileName: url.lastPathComponent)
+            } catch {
+                // ignore error for now, it's possible a file does not exist.
+            }
+        }
     }
 }
