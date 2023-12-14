@@ -475,7 +475,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
         // Mock no pending proposals.
         mockMLSActionExecutor.mockCommitPendingProposals = { _ in
-            throw MLSActionExecutor.Error.noPendingProposals
+            throw CommitError.noPendingProposals
         }
 
         // Mock claiming a key package.
@@ -582,7 +582,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
         // Mock no pending proposals.
         mockMLSActionExecutor.mockCommitPendingProposals = { _ in
-            throw MLSActionExecutor.Error.noPendingProposals
+            throw CommitError.noPendingProposals
         }
 
         // wait for `MLSService.init`'s async operations
@@ -603,7 +603,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
         // Mock no pending proposals.
         mockMLSActionExecutor.mockCommitPendingProposals = { _ in
-            throw MLSActionExecutor.Error.noPendingProposals
+            throw CommitError.noPendingProposals
         }
 
         // Mock failure for claiming key packages.
@@ -628,7 +628,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
         // Mock no pending proposals.
         mockMLSActionExecutor.mockCommitPendingProposals = { _ in
-            throw MLSActionExecutor.Error.noPendingProposals
+            throw CommitError.noPendingProposals
         }
 
         // Mock key package.
@@ -639,14 +639,14 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
 
         mockMLSActionExecutor.mockAddMembers = { _, _ in
-            throw MLSActionExecutor.Error.failedToGenerateCommit
+            throw CommitError.failedToGenerateCommit
         }
 
         // wait for `MLSService.init`'s async operations
         await fulfillment(of: [didFinishInitializationExpectation], timeout: 1)
 
         // when / then
-        await assertItThrows(error: MLSActionExecutor.Error.failedToGenerateCommit) {
+        await assertItThrows(error: CommitError.failedToGenerateCommit) {
             try await sut.addMembersToConversation(with: mlsUser, for: mlsGroupID)
         }
     }
@@ -663,7 +663,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
         // Mock no pending proposals.
         mockMLSActionExecutor.mockCommitPendingProposals = { _ in
-            throw MLSActionExecutor.Error.noPendingProposals
+            throw CommitError.noPendingProposals
         }
 
         // Mock removing clients from the group.
@@ -758,7 +758,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
         // Mock no pending proposals.
         mockMLSActionExecutor.mockCommitPendingProposals = { _ in
-            throw MLSActionExecutor.Error.noPendingProposals
+            throw CommitError.noPendingProposals
         }
 
         // wait for `MLSService.init`'s async operations
@@ -780,19 +780,19 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
         // Mock no pending proposals.
         mockMLSActionExecutor.mockCommitPendingProposals = { _ in
-            throw MLSActionExecutor.Error.noPendingProposals
+            throw CommitError.noPendingProposals
         }
 
         // Mock executor error.
         mockMLSActionExecutor.mockRemoveClients = { _, _ in
-            throw MLSActionExecutor.Error.failedToGenerateCommit
+            throw CommitError.failedToGenerateCommit
         }
 
         // wait for `MLSService.init`'s async operations
         await fulfillment(of: [didFinishInitializationExpectation], timeout: 1)
 
         // When / Then
-        await assertItThrows(error: MLSActionExecutor.Error.failedToGenerateCommit) {
+        await assertItThrows(error: CommitError.failedToGenerateCommit) {
             try await sut.removeMembersFromConversation(with: [mlsClientID], for: mlsGroupID)
         }
     }
@@ -817,7 +817,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
         // Mock no pending proposals.
         mockMLSActionExecutor.mockCommitPendingProposals = { _ in
-            throw MLSActionExecutor.Error.noPendingProposals
+            throw CommitError.noPendingProposals
         }
 
         // wait for `MLSService.init`'s async operations
@@ -1151,7 +1151,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         test_PerformPendingJoinsRecovery(.giveUp)
     }
 
-    private func test_PerformPendingJoinsRecovery(_ recovery: MLSActionExecutor.ExternalCommitErrorRecovery) {
+    private func test_PerformPendingJoinsRecovery(_ recovery: ExternalCommitError.Recovery) {
         // Given
         let shouldRetry = recovery == .retry
         let groupID = MLSGroupID.random()
@@ -1180,7 +1180,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             joinGroupCount += 1
 
             if joinGroupCount == 1 {
-                throw MLSActionExecutor.Error.failedToSendExternalCommit(recovery: recovery)
+                throw ExternalCommitError.failedToSendCommit(recovery: recovery)
             }
 
             return []
@@ -1690,7 +1690,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
         // Mock no pending proposals.
         mockMLSActionExecutor.mockCommitPendingProposals = { _ in
-            throw MLSActionExecutor.Error.noPendingProposals
+            throw CommitError.noPendingProposals
         }
 
         // Mock stale groups.
@@ -1761,7 +1761,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
         // Mock no pending proposals.
         mockMLSActionExecutor.mockCommitPendingProposals = { _ in
-            throw MLSActionExecutor.Error.noPendingProposals
+            throw CommitError.noPendingProposals
         }
 
         // Mock one failure to update key material, then a success.
@@ -1770,7 +1770,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             defer { mockUpdateKeyMaterialCount += 1 }
             switch mockUpdateKeyMaterialCount {
             case 0:
-                throw MLSActionExecutor.Error.failedToSendCommit(recovery: .retryAfterQuickSync)
+                throw CommitError.failedToSendCommit(recovery: .retryAfterQuickSync)
             default:
                 return []
             }
@@ -1804,7 +1804,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
         // Mock no pending proposals.
         mockMLSActionExecutor.mockCommitPendingProposals = { _ in
-            throw MLSActionExecutor.Error.noPendingProposals
+            throw CommitError.noPendingProposals
         }
 
         // Mock three failures to update key material, then a success.
@@ -1813,7 +1813,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             defer { mockUpdateKeyMaterialCount += 1 }
             switch mockUpdateKeyMaterialCount {
             case 0..<3:
-                throw MLSActionExecutor.Error.failedToSendCommit(recovery: .retryAfterQuickSync)
+                throw CommitError.failedToSendCommit(recovery: .retryAfterQuickSync)
             default:
                 return []
             }
@@ -1851,7 +1851,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             defer { mockCommitPendingProposalsCount += 1 }
             switch mockCommitPendingProposalsCount {
             case 0..<2:
-                throw MLSActionExecutor.Error.failedToSendCommit(recovery: .retryAfterQuickSync)
+                throw CommitError.failedToSendCommit(recovery: .retryAfterQuickSync)
             default:
                 return []
             }
@@ -1863,7 +1863,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             defer { mockUpdateKeyMaterialCount += 1 }
             switch mockUpdateKeyMaterialCount {
             case 0..<3:
-                throw MLSActionExecutor.Error.failedToSendCommit(recovery: .retryAfterQuickSync)
+                throw CommitError.failedToSendCommit(recovery: .retryAfterQuickSync)
             default:
                 return []
             }
@@ -1906,7 +1906,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             defer { mockCommitPendingProposalsCount += 1 }
             switch mockCommitPendingProposalsCount {
             case 0:
-                throw MLSActionExecutor.Error.noPendingProposals
+                throw CommitError.noPendingProposals
             default:
                 return []
             }
@@ -1917,7 +1917,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         var mockUpdateKeyMaterialCount = 0
         mockMLSActionExecutor.mockUpdateKeyMaterial = { _ in
             defer { mockUpdateKeyMaterialCount += 1 }
-            throw MLSActionExecutor.Error.failedToSendCommit(recovery: .commitPendingProposalsAfterQuickSync)
+            throw CommitError.failedToSendCommit(recovery: .commitPendingProposalsAfterQuickSync)
         }
 
         // Mock quick sync.
@@ -1951,14 +1951,14 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
         // Mock no pending proposals.
         mockMLSActionExecutor.mockCommitPendingProposals = { _ in
-            throw MLSActionExecutor.Error.noPendingProposals
+            throw CommitError.noPendingProposals
         }
 
         // Mock failures to update key material, no successes.
         var mockUpdateKeyMaterialCount = 0
         mockMLSActionExecutor.mockUpdateKeyMaterial = { _ in
             defer { mockUpdateKeyMaterialCount += 1 }
-            throw MLSActionExecutor.Error.failedToSendCommit(recovery: .giveUp)
+            throw CommitError.failedToSendCommit(recovery: .giveUp)
         }
 
         // Mock quick sync.
@@ -1971,7 +1971,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         await fulfillment(of: [didFinishInitializationExpectation], timeout: 1)
 
         // Then
-        await assertItThrows(error: MLSActionExecutor.Error.failedToSendCommit(recovery: .giveUp)) {
+        await assertItThrows(error: CommitError.failedToSendCommit(recovery: .giveUp)) {
             // When
             try await sut.updateKeyMaterial(for: groupID)
         }

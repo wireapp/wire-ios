@@ -22,6 +22,7 @@ import WireCoreCrypto
 // MARK: - Protocols
 
 public protocol SafeCoreCryptoProtocol {
+    func perform<T>(_ block: (CoreCryptoProtocol) async throws -> T) async rethrows -> T
     func perform<T>(_ block: (CoreCryptoProtocol) throws -> T) rethrows -> T
     func unsafePerform<T>(_ block: (CoreCryptoProtocol) throws -> T) rethrows -> T
     func mlsInit(clientID: String) throws
@@ -31,6 +32,7 @@ public protocol SafeCoreCryptoProtocol {
 let defaultCipherSuite = CiphersuiteName.mls128Dhkemx25519Aes128gcmSha256Ed25519
 
 public class SafeCoreCrypto: SafeCoreCryptoProtocol {
+    
     public enum CoreCryptoSetupFailure: Error, Equatable {
         case failedToGetClientIDBytes
     }
@@ -112,6 +114,11 @@ public class SafeCoreCrypto: SafeCoreCryptoProtocol {
         }
 
         return result
+    }
+
+    // TODO: Remove when async core crypto is supported
+    public func perform<T>(_ block: (WireCoreCrypto.CoreCryptoProtocol) async throws -> T) async rethrows -> T {
+        try await block(coreCrypto)
     }
 
     public func unsafePerform<T>(_ block: (CoreCryptoProtocol) throws -> T) rethrows -> T {
