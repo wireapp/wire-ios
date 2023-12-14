@@ -710,13 +710,13 @@ extension ZMUserSession: ZMSyncStateDelegate {
                     Logging.mls.error("Failed to commit pending proposals: \(String(reflecting: error))")
                 }
             }
+        }
 
-            fetchFeatureConfigs()
-            recurringActionService.performActionsIfNeeded()
+        fetchFeatureConfigs()
+        recurringActionService.performActionsIfNeeded()
 
-            managedObjectContext.performGroupedBlock { [weak self] in
-                self?.notifyThirdPartyServices()
-            }
+        managedObjectContext.performGroupedBlock { [weak self] in
+            self?.notifyThirdPartyServices()
         }
     }
 
