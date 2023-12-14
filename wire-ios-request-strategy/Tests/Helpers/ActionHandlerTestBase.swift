@@ -16,8 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
+import XCTest
+
 @testable import WireRequestStrategy
 
 class ActionHandlerTestBase<Action: EntityAction, Handler: ActionHandler<Action>>: MessagingTestBase {
@@ -122,6 +123,8 @@ class ActionHandlerTestBase<Action: EntityAction, Handler: ActionHandler<Action>
         payload: ZMTransportData? = nil,
         label: String? = nil,
         apiVersion: APIVersion = .v1,
+        file: StaticString = #file,
+        line: UInt = #line,
         validation: @escaping ValidationBlock
     ) {
         // Given
@@ -141,7 +144,7 @@ class ActionHandlerTestBase<Action: EntityAction, Handler: ActionHandler<Action>
         sut.handleResponse(response, action: action)
 
         // Then
-        XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
+        XCTAssert(waitForCustomExpectations(withTimeout: 0.5), file: file, line: line)
     }
 }
 
@@ -171,6 +174,8 @@ extension ActionHandlerTestBase {
         status: Int,
         payload: ZMTransportData? = nil,
         label: String? = nil,
+        file: StaticString = #file,
+        line: UInt = #line,
         validation: @escaping ValidationBlock
     ) {
         guard let action = self.action else {
@@ -182,15 +187,27 @@ extension ActionHandlerTestBase {
             status: status,
             payload: payload,
             label: label,
+            file: file,
+            line: line,
             validation: validation
         )
     }
 
     @discardableResult
-    func test_itHandlesSuccess(status: Int, payload: ZMTransportData? = nil) -> Result? {
+    func test_itHandlesSuccess(
+        status: Int,
+        payload: ZMTransportData? = nil,
+        file: StaticString = #file,
+        line: UInt = #line
+    ) -> Result? {
         var result: Result?
 
-        test_itHandlesResponse(status: status, payload: payload) {
+        test_itHandlesResponse(
+            status: status,
+            payload: payload,
+            file: file,
+            line: line
+        ) {
             guard case .success(let res) = $0 else { return false }
             result = res
             return true

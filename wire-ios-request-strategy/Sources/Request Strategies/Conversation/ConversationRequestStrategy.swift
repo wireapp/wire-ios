@@ -499,7 +499,9 @@ class ConversationByIDTranscoder: IdentifierObjectSyncTranscoder {
 
         guard response.result != .permanentError else {
             if response.httpStatus == 404 {
-                deleteConversations(identifiers)
+                Task {
+                    await deleteConversations(identifiers)
+                }
                 return
             }
 
@@ -521,21 +523,23 @@ class ConversationByIDTranscoder: IdentifierObjectSyncTranscoder {
             return
         }
 
-        processor.updateOrCreateConversation(
-            from: payload,
-            in: context
-        )
+        Task {
+            await processor.updateOrCreateConversation(
+                from: payload,
+                in: context
+            )
+        }
     }
 
-    private func deleteConversations(_ conversations: Set<UUID>) {
+    private func deleteConversations(_ conversations: Set<UUID>) async {
         for conversationID in conversations {
-            guard
-                let conversation = ZMConversation.fetch(with: conversationID, domain: nil, in: context),
-                conversation.conversationType == .group
-            else {
-                continue
+            let (conversation, conversationType) = await context.perform { [context] in
+                let conversation = ZMConversation.fetch(with: conversationID, domain: nil, in: context)
+                return (conversation, conversation?.conversationType)
             }
-            removeLocalConversation.invoke(
+            guard let conversation, conversationType == .group else { continue }
+
+            await removeLocalConversation.invoke(
                 with: conversation,
                 syncContext: context
             )
@@ -611,7 +615,9 @@ class ConversationByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
             markConversationsAsFetched(identifiers)
 
             if response.httpStatus == 404 {
-                deleteConversations(identifiers)
+                Task {
+                    await deleteConversations(identifiers)
+                }
                 return
             }
 
@@ -634,13 +640,15 @@ class ConversationByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
             return Logging.network.warn("Can't process response, aborting.")
         }
 
-        processor.updateOrCreateConversation(
-            from: payload,
-            in: context
-        )
+        Task {
+            await processor.updateOrCreateConversation(
+                from: payload,
+                in: context
+            )
+        }
     }
 
-    private func deleteConversations(_ conversations: Set<QualifiedID>) {
+    private func deleteConversations(_ conversations: Set<QualifiedID>) async {
         for qualifiedID in conversations {
             guard
                 let conversation = ZMConversation.fetch(
@@ -652,7 +660,7 @@ class ConversationByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
             else {
                 continue
             }
-            removeLocalConversation.invoke(
+            await removeLocalConversation.invoke(
                 with: conversation,
                 syncContext: context
             )
@@ -718,16 +726,20 @@ class ConversationByIDListTranscoder: IdentifierObjectSyncTranscoder {
             return
         }
 
-        processor.updateOrCreateConversations(
-            from: payload,
-            in: context
-        )
+        Task {
+            await processor.updateOrCreateConversations(
+                from: payload,
+                in: context
+            )
 
-        let missingIdentifiers = identifiers.subtracting(payload.conversations.compactMap(\.id))
-        queryStatusForMissingConversations(missingIdentifiers)
+            await context.perform {
+                let missingIdentifiers = identifiers.subtracting(payload.conversations.compactMap(\.id))
+                self.queryStatusForMissingConversations(missingIdentifiers)
+            }
+        }
     }
 
-    /// Query the backend if a converation is deleted or the self user has been removed
+    /// Query the backend if a conversation is deleted or the self user has been removed
     private func queryStatusForMissingConversations(_ conversations: Set<UUID>) {
         for conversationID in conversations {
             let conversation = ZMConversation.fetch(with: conversationID, in: context)
@@ -776,16 +788,20 @@ class ConversationByQualifiedIDListTranscoder: IdentifierObjectSyncTranscoder {
             return
         }
 
-        processor.updateOrCreateConverations(
-            from: payload,
-            in: context
-        )
+        Task {
+            await processor.updateOrCreateConverations(
+                from: payload,
+                in: context
+            )
 
-        queryStatusForMissingConversations(payload.notFound)
-        queryStatusForFailedConversations(payload.failed)
+            await context.perform {
+                self.queryStatusForMissingConversations(payload.notFound)
+                self.queryStatusForFailedConversations(payload.failed)
+            }
+        }
     }
 
-    /// Query the backend if a converation is deleted or the self user has been removed
+    /// Query the backend if a conversation is deleted or the self user has been removed
     private func queryStatusForMissingConversations(_ conversations: [QualifiedID]) {
         for qualifiedID in conversations {
             let conversation = ZMConversation.fetch(with: qualifiedID.uuid, domain: qualifiedID.domain, in: context)

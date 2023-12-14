@@ -115,23 +115,23 @@ actor EventProcessor: UpdateEventProcessor {
     }
 
     private func processEvents(callEventsOnly: Bool) async throws {
-            WireLogger.updateEvent.info("process pending events (callEventsOnly: \(callEventsOnly)")
+        WireLogger.updateEvent.info("process pending events (callEventsOnly: \(callEventsOnly)")
 
-            let encryptMessagesAtRest = await syncContext.perform {
-                self.syncContext.encryptMessagesAtRest
+        let encryptMessagesAtRest = await syncContext.perform {
+            self.syncContext.encryptMessagesAtRest
+        }
+        if encryptMessagesAtRest {
+            do {
+                WireLogger.updateEvent.info("trying to get EAR keys")
+                let privateKeys = try earService.fetchPrivateKeys(includingPrimary: !callEventsOnly)
+                await processStoredUpdateEvents(with: privateKeys, callEventsOnly: callEventsOnly)
+            } catch {
+                WireLogger.updateEvent.error("failed to fetch EAR keys: \(String(describing: error))")
+                throw error
             }
-            if encryptMessagesAtRest {
-                do {
-                    WireLogger.updateEvent.info("trying to get EAR keys")
-                    let privateKeys = try earService.fetchPrivateKeys(includingPrimary: !callEventsOnly)
-                    await processStoredUpdateEvents(with: privateKeys, callEventsOnly: callEventsOnly)
-                } catch {
-                    WireLogger.updateEvent.error("failed to fetch EAR keys: \(String(describing: error))")
-                    throw error
-                }
-            } else {
-                await processStoredUpdateEvents(callEventsOnly: callEventsOnly)
-            }
+        } else {
+            await processStoredUpdateEvents(callEventsOnly: callEventsOnly)
+        }
     }
 
     private func processStoredUpdateEvents(

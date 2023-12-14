@@ -255,38 +255,38 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
     // MARK: - Response handling
 
     func test_HandleResponse_200() throws {
+        // Given
+        BackendInfo.apiVersion = .v2
+        action = createAction()
+
+        // When
+        let payload = try XCTUnwrap(successResponsePayloadProteus.encodeToJSONString())
+        let result = try XCTUnwrap(test_itHandlesSuccess(
+            status: 200,
+            payload: payload as ZMTransportData
+        ))
+
+        // Then
         try syncMOC.performAndWait {
-            // Given
-            BackendInfo.apiVersion = .v2
-            action = createAction()
-            let payload = try XCTUnwrap(successResponsePayloadProteus.encodeToJSONString())
-
-            // When
-            let result = try XCTUnwrap(test_itHandlesSuccess(
-                status: 200,
-                payload: payload as ZMTransportData
-            ))
-
-            // Then
             let conversation = try XCTUnwrap(syncMOC.existingObject(with: result) as? ZMConversation)
             assertConversationHasCorrectValues(conversation)
         }
     }
 
     func test_HandleResponse_201() throws {
+        // Given
+        BackendInfo.apiVersion = .v2
+        action = createAction()
+
+        // When
+        let payload = try XCTUnwrap(successResponsePayloadProteus.encodeToJSONString())
+        let result = try XCTUnwrap(test_itHandlesSuccess(
+            status: 201,
+            payload: payload as ZMTransportData
+        ))
+
+        // Then
         try syncMOC.performAndWait {
-            // Given
-            BackendInfo.apiVersion = .v2
-            action = createAction()
-            let payload = try XCTUnwrap(successResponsePayloadProteus.encodeToJSONString())
-
-            // When
-            let result = try XCTUnwrap(test_itHandlesSuccess(
-                status: 201,
-                payload: payload as ZMTransportData
-            ))
-
-            // Then
             let conversation = try XCTUnwrap(syncMOC.existingObject(with: result) as? ZMConversation)
             assertConversationHasCorrectValues(conversation)
         }
@@ -305,24 +305,26 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
     }
 
     func test_ItCreatesMLSGroup() throws {
-        try syncMOC.performAndWait {
-            // Given
-            BackendInfo.apiVersion = .v2
-            action = createAction()
-            let mlsService = MockMLSServiceInterface()
-            mlsService.conversationExistsGroupID_MockMethod = { _ in false }
-            mlsService.createGroupFor_MockMethod = { _ in }
-            mlsService.addMembersToConversationWithFor_MockMethod = { _, _ in }
+        // Given
+        BackendInfo.apiVersion = .v2
+        action = createAction()
+        let mlsService = MockMLSServiceInterface()
+        mlsService.conversationExistsGroupID_MockMethod = { _ in false }
+        mlsService.createGroupFor_MockMethod = { _ in }
+        mlsService.addMembersToConversationWithFor_MockMethod = { _, _ in }
+        syncMOC.performAndWait {
             self.syncMOC.mlsService = mlsService
-            let payload = try XCTUnwrap(successResponsePayloadMLS.encodeToJSONString())
+        }
+        let payload = try XCTUnwrap(successResponsePayloadMLS.encodeToJSONString())
 
-            // When
-            let result = try XCTUnwrap(test_itHandlesSuccess(
-                status: 201,
-                payload: payload as ZMTransportData
-            ))
+        // When
+        let result = try XCTUnwrap(test_itHandlesSuccess(
+            status: 201,
+            payload: payload as ZMTransportData
+        ))
 
-            // Then
+        // Then
+        try syncMOC.performAndWait {
             let conversation = try XCTUnwrap(syncMOC.existingObject(with: result) as? ZMConversation)
             assertConversationHasCorrectValues(conversation)
             XCTAssertEqual(conversation.messageProtocol, .mls)

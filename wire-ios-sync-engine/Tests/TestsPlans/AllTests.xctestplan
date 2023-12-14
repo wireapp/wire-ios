@@ -48,7 +48,6 @@
   "testTargets" : [
     {
       "skippedTests" : [
-        "AnalyticsTests",
         "AvailabilityTests",
         "EventProcessingPerformanceTests",
         "SessionManagerTests\/testThatSessionManagerSetsUpAPNSEnvironmentOnLaunch()",
