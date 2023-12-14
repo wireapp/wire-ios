@@ -67,7 +67,7 @@ public class ProteusProvider: ProteusProviding {
     ) rethrows -> T {
 
         if let proteusService = proteusService, proteusViaCoreCrypto {
-           
+
           return try proteusServiceBlock(proteusService)
 
         } else {
@@ -90,29 +90,6 @@ public class ProteusProvider: ProteusProviding {
 
             // remove comment once implementation of proteus via core crypto is done
             return try await keyStoreBlock(keyStore)
-        }
-    }
-
-    public func performAsync<T>(
-        withProteusService proteusServiceBlock: ProteusServicePerformAsyncBlock<T>,
-        withKeyStore keyStoreBlock: KeyStorePerformAsyncBlock<T>
-    ) async rethrows -> T {
-
-        precondition(context.zm_isSyncContext, "ProteusProvider should only be used on the sync context")
-
-        if let proteusService = context.proteusService, proteusViaCoreCrypto {
-
-            return try await proteusServiceBlock(proteusService)
-
-        } else if let keyStore = context.zm_cryptKeyStore {
-
-            // remove comment once implementation of proteus via core crypto is done
-            // precondition(!proteusViaCoreCrypto, "cryptobox should only be used when the flag is off")
-            return try await keyStoreBlock(keyStore)
-
-        } else {
-            WireLogger.coreCrypto.error("can't access any proteus cryptography service")
-            fatal("can't access any proteus cryptography service")
         }
     }
 
