@@ -55,7 +55,9 @@ public enum ClientUpdateError: NSInteger {
     public init(syncManagedObjectContext: NSManagedObjectContext) {
         self.syncManagedObjectContext = syncManagedObjectContext
         super.init()
+    }
 
+    func determineInitialClientStatus() {
         let hasSelfClient = !ZMClientRegistrationStatus.needsToRegisterClient(in: self.syncManagedObjectContext)
 
         needsToFetchClients(andVerifySelfClient: hasSelfClient)

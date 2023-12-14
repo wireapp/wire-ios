@@ -46,19 +46,21 @@ static NSString *ZMLogTag ZM_UNUSED = @"Authentication";
 @implementation ZMClientRegistrationStatus
 
 - (instancetype)initWithManagedObjectContext:(NSManagedObjectContext *)moc
-                                      cookieStorage:(ZMPersistentCookieStorage *)cookieStorage
-                  registrationStatusDelegate:(id<ZMClientRegistrationStatusDelegate>) registrationStatusDelegate;
+                               cookieStorage:(ZMPersistentCookieStorage *)cookieStorage
 {
     self = [super init];
     if (self != nil) {
         self.managedObjectContext = moc;
-        self.registrationStatusDelegate = registrationStatusDelegate;
-        self.needsToVerifySelfClient = !self.needsToRegisterClient;
         self.cookieStorage = cookieStorage;
         
         [self observeClientUpdates];
     }
     return self;
+}
+
+- (void)determineInitialRegistrationStatus
+{
+    self.needsToVerifySelfClient = !self.needsToRegisterClient;
 }
 
 - (void)observeClientUpdates
@@ -182,6 +184,11 @@ static NSString *ZMLogTag ZM_UNUSED = @"Authentication";
     return [[self class] needsToRegisterClientInContext:self.managedObjectContext];
 }
 
+- (BOOL)needsToRegisterMLSCLient
+{
+    return [[self class] needsToRegisterMLSClientInContext:self.managedObjectContext];
+}
+
 + (BOOL)needsToRegisterClientInContext:(NSManagedObjectContext *)moc;
 {
     //replace with selfUser.client.remoteIdentifier == nil
@@ -221,6 +228,11 @@ static NSString *ZMLogTag ZM_UNUSED = @"Authentication";
     self.needsToCheckCredentials = NO;
     
     ZMLogDebug(@"current phase: %lu", (unsigned long)self.currentPhase);
+}
+
+- (void)didRegisterMLSClient:(UserClient *)client
+{
+    [self.registrationStatusDelegate didRegisterMLSClient:client];
 }
 
 - (void)fetchExistingSelfClientsAfterClientRegistered:(UserClient *)currentSelfClient
@@ -288,7 +300,7 @@ static NSString *ZMLogTag ZM_UNUSED = @"Authentication";
 
 - (BOOL)clientIsReadyForRequests
 {
-    return self.currentPhase == ZMClientRegistrationPhaseRegistered;
+    return self.currentPhase == ZMClientRegistrationPhaseRegistered && !self.needsToRegisterMLSCLient;
 }
 
 - (void)invalidateSelfClient

@@ -116,6 +116,59 @@ public class MockAPIProviderInterface: APIProviderInterface {
     }
 
 }
+public class MockConversationServiceInterface: ConversationServiceInterface {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - createGroupConversation
+
+    public var createGroupConversationNameUsersAllowGuestsAllowServicesEnableReceiptsMessageProtocolCompletion_Invocations: [(name: String?, users: Set<ZMUser>, allowGuests: Bool, allowServices: Bool, enableReceipts: Bool, messageProtocol: MessageProtocol, completion: (Swift.Result<ZMConversation, ConversationCreationFailure>) -> Void)] = []
+    public var createGroupConversationNameUsersAllowGuestsAllowServicesEnableReceiptsMessageProtocolCompletion_MockMethod: ((String?, Set<ZMUser>, Bool, Bool, Bool, MessageProtocol, @escaping (Swift.Result<ZMConversation, ConversationCreationFailure>) -> Void) -> Void)?
+
+    public func createGroupConversation(name: String?, users: Set<ZMUser>, allowGuests: Bool, allowServices: Bool, enableReceipts: Bool, messageProtocol: MessageProtocol, completion: @escaping (Swift.Result<ZMConversation, ConversationCreationFailure>) -> Void) {
+        createGroupConversationNameUsersAllowGuestsAllowServicesEnableReceiptsMessageProtocolCompletion_Invocations.append((name: name, users: users, allowGuests: allowGuests, allowServices: allowServices, enableReceipts: enableReceipts, messageProtocol: messageProtocol, completion: completion))
+
+        guard let mock = createGroupConversationNameUsersAllowGuestsAllowServicesEnableReceiptsMessageProtocolCompletion_MockMethod else {
+            fatalError("no mock for `createGroupConversationNameUsersAllowGuestsAllowServicesEnableReceiptsMessageProtocolCompletion`")
+        }
+
+        mock(name, users, allowGuests, allowServices, enableReceipts, messageProtocol, completion)
+    }
+
+    // MARK: - syncConversation
+
+    public var syncConversationQualifiedIDCompletion_Invocations: [(qualifiedID: QualifiedID, completion: () -> Void)] = []
+    public var syncConversationQualifiedIDCompletion_MockMethod: ((QualifiedID, @escaping () -> Void) -> Void)?
+
+    public func syncConversation(qualifiedID: QualifiedID, completion: @escaping () -> Void) {
+        syncConversationQualifiedIDCompletion_Invocations.append((qualifiedID: qualifiedID, completion: completion))
+
+        guard let mock = syncConversationQualifiedIDCompletion_MockMethod else {
+            fatalError("no mock for `syncConversationQualifiedIDCompletion`")
+        }
+
+        mock(qualifiedID, completion)
+    }
+
+    // MARK: - syncConversation
+
+    public var syncConversationQualifiedID_Invocations: [QualifiedID] = []
+    public var syncConversationQualifiedID_MockMethod: ((QualifiedID) async -> Void)?
+
+    public func syncConversation(qualifiedID: QualifiedID) async {
+        syncConversationQualifiedID_Invocations.append(qualifiedID)
+
+        guard let mock = syncConversationQualifiedID_MockMethod else {
+            fatalError("no mock for `syncConversationQualifiedID`")
+        }
+
+        await mock(qualifiedID)
+    }
+
+}
 public class MockE2eIAPI: E2eIAPI {
 
     // MARK: - Life cycle
@@ -170,65 +223,35 @@ public class MockE2eIAPI: E2eIAPI {
     }
 
 }
-public class MockConversationServiceInterface: ConversationServiceInterface {
-
-    // MARK: - Life cycle
-
-    public init() {}
-
-
-    // MARK: - createGroupConversation
-
-    public var createGroupConversationNameUsersAllowGuestsAllowServicesEnableReceiptsMessageProtocolCompletion_Invocations: [(name: String?, users: Set<ZMUser>, allowGuests: Bool, allowServices: Bool, enableReceipts: Bool, messageProtocol: MessageProtocol, completion: (Swift.Result<ZMConversation, ConversationCreationFailure>) -> Void)] = []
-    public var createGroupConversationNameUsersAllowGuestsAllowServicesEnableReceiptsMessageProtocolCompletion_MockMethod: ((String?, Set<ZMUser>, Bool, Bool, Bool, MessageProtocol, @escaping (Swift.Result<ZMConversation, ConversationCreationFailure>) -> Void) -> Void)?
-
-    public func createGroupConversation(name: String?, users: Set<ZMUser>, allowGuests: Bool, allowServices: Bool, enableReceipts: Bool, messageProtocol: MessageProtocol, completion: @escaping (Swift.Result<ZMConversation, ConversationCreationFailure>) -> Void) {
-        createGroupConversationNameUsersAllowGuestsAllowServicesEnableReceiptsMessageProtocolCompletion_Invocations.append((name: name, users: users, allowGuests: allowGuests, allowServices: allowServices, enableReceipts: enableReceipts, messageProtocol: messageProtocol, completion: completion))
-
-        guard let mock = createGroupConversationNameUsersAllowGuestsAllowServicesEnableReceiptsMessageProtocolCompletion_MockMethod else {
-            fatalError("no mock for `createGroupConversationNameUsersAllowGuestsAllowServicesEnableReceiptsMessageProtocolCompletion`")
-        }
-
-        mock(name, users, allowGuests, allowServices, enableReceipts, messageProtocol, completion)
-    }
-
-    // MARK: - syncConversation
-
-    public var syncConversationQualifiedIDCompletion_Invocations: [(qualifiedID: QualifiedID, completion: () -> Void)] = []
-    public var syncConversationQualifiedIDCompletion_MockMethod: ((QualifiedID, @escaping () -> Void) -> Void)?
-
-    public func syncConversation(qualifiedID: QualifiedID, completion: @escaping () -> Void) {
-        syncConversationQualifiedIDCompletion_Invocations.append((qualifiedID: qualifiedID, completion: completion))
-
-        guard let mock = syncConversationQualifiedIDCompletion_MockMethod else {
-            fatalError("no mock for `syncConversationQualifiedIDCompletion`")
-        }
-
-        mock(qualifiedID, completion)
-    }
-
-    // MARK: - syncConversation
-
-    public var syncConversationQualifiedID_Invocations: [QualifiedID] = []
-    public var syncConversationQualifiedID_MockMethod: ((QualifiedID) async -> Void)?
-
-    public func syncConversation(qualifiedID: QualifiedID) async {
-        syncConversationQualifiedID_Invocations.append(qualifiedID)
-
-        guard let mock = syncConversationQualifiedID_MockMethod else {
-            fatalError("no mock for `syncConversationQualifiedID`")
-        }
-
-        await mock(qualifiedID)
-    }
-
-}
 public class MockMessageAPI: MessageAPI {
 
     // MARK: - Life cycle
 
     public init() {}
 
+
+    // MARK: - broadcastProteusMessage
+
+    public var broadcastProteusMessageMessage_Invocations: [any ProteusMessage] = []
+    public var broadcastProteusMessageMessage_MockError: Error?
+    public var broadcastProteusMessageMessage_MockMethod: ((any ProteusMessage) async throws -> (Payload.MessageSendingStatus, ZMTransportResponse))?
+    public var broadcastProteusMessageMessage_MockValue: (Payload.MessageSendingStatus, ZMTransportResponse)?
+
+    public func broadcastProteusMessage(message: any ProteusMessage) async throws -> (Payload.MessageSendingStatus, ZMTransportResponse) {
+        broadcastProteusMessageMessage_Invocations.append(message)
+
+        if let error = broadcastProteusMessageMessage_MockError {
+            throw error
+        }
+
+        if let mock = broadcastProteusMessageMessage_MockMethod {
+            return try await mock(message)
+        } else if let mock = broadcastProteusMessageMessage_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `broadcastProteusMessageMessage`")
+        }
+    }
 
     // MARK: - sendProteusMessage
 
@@ -327,6 +350,26 @@ public class MockMessageSenderInterface: MessageSenderInterface {
 
         guard let mock = sendMessageMessage_MockMethod else {
             fatalError("no mock for `sendMessageMessage`")
+        }
+
+        try await mock(message)
+    }
+
+    // MARK: - broadcastMessage
+
+    public var broadcastMessageMessage_Invocations: [any ProteusMessage] = []
+    public var broadcastMessageMessage_MockError: Error?
+    public var broadcastMessageMessage_MockMethod: ((any ProteusMessage) async throws -> Void)?
+
+    public func broadcastMessage(message: any ProteusMessage) async throws {
+        broadcastMessageMessage_Invocations.append(message)
+
+        if let error = broadcastMessageMessage_MockError {
+            throw error
+        }
+
+        guard let mock = broadcastMessageMessage_MockMethod else {
+            fatalError("no mock for `broadcastMessageMessage`")
         }
 
         try await mock(message)

@@ -248,6 +248,10 @@ final class UserSessionMock: UserSession {
         mockGetUserClientFingerprintUseCaseProtocol
     }
 
+    var mlsConversationVerificationStatusProvider: WireDataModel.MLSConversationVerificationStatusProviderInterface? {
+        return nil
+    }
+
     var selfUserClient: UserClient? {
         return nil
     }
