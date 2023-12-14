@@ -61,7 +61,7 @@ class SlowSyncTests_NotificationsV3: IntegrationTest {
 
         // THEN
         let result = wait(withTimeout: 1) {
-            self.userSession?.applicationStatusDirectory?.syncStatus.isSlowSyncing == true
+            self.userSession?.applicationStatusDirectory.syncStatus.isSlowSyncing == true
         }
         XCTAssertTrue(result, "it should perform slow sync")
     }

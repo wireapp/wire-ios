@@ -52,8 +52,9 @@ extension ResetSessionRequestStrategy: KeyPathObjectSyncTranscoder {
             return
         }
 
-        let message = GenericMessageEntity(conversation: conversation,
-                                           message: GenericMessage(clientAction: .resetSession),
+        let message = GenericMessageEntity(message: GenericMessage(clientAction: .resetSession),
+                                           context: managedObjectContext,
+                                           conversation: conversation,
                                            completionHandler: nil)
 
         // Enter groups to enable waiting for message sending to complete in tests

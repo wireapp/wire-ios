@@ -95,6 +95,38 @@ public class MockConversationEventProcessorProtocol: ConversationEventProcessorP
 
 }
 
+public class MockCoreCryptoProviderProtocol: CoreCryptoProviderProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - coreCrypto
+
+    public var coreCryptoRequireMLS_Invocations: [Bool] = []
+    public var coreCryptoRequireMLS_MockError: Error?
+    public var coreCryptoRequireMLS_MockMethod: ((Bool) throws -> SafeCoreCryptoProtocol)?
+    public var coreCryptoRequireMLS_MockValue: SafeCoreCryptoProtocol?
+
+    public func coreCrypto(requireMLS: Bool) throws -> SafeCoreCryptoProtocol {
+        coreCryptoRequireMLS_Invocations.append(requireMLS)
+
+        if let error = coreCryptoRequireMLS_MockError {
+            throw error
+        }
+
+        if let mock = coreCryptoRequireMLS_MockMethod {
+            return try mock(requireMLS)
+        } else if let mock = coreCryptoRequireMLS_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `coreCryptoRequireMLS`")
+        }
+    }
+
+}
+
 class MockCoreDataMessagingMigratorProtocol: CoreDataMessagingMigratorProtocol {
 
     // MARK: - Life cycle
@@ -168,42 +200,22 @@ public class MockCryptoboxMigrationManagerInterface: CryptoboxMigrationManagerIn
 
     // MARK: - performMigration
 
-    public var performMigrationAccountDirectorySyncContext_Invocations: [(accountDirectory: URL, syncContext: NSManagedObjectContext)] = []
-    public var performMigrationAccountDirectorySyncContext_MockError: Error?
-    public var performMigrationAccountDirectorySyncContext_MockMethod: ((URL, NSManagedObjectContext) throws -> Void)?
+    public var performMigrationAccountDirectoryCoreCrypto_Invocations: [(accountDirectory: URL, coreCrypto: SafeCoreCryptoProtocol)] = []
+    public var performMigrationAccountDirectoryCoreCrypto_MockError: Error?
+    public var performMigrationAccountDirectoryCoreCrypto_MockMethod: ((URL, SafeCoreCryptoProtocol) throws -> Void)?
 
-    public func performMigration(accountDirectory: URL, syncContext: NSManagedObjectContext) throws {
-        performMigrationAccountDirectorySyncContext_Invocations.append((accountDirectory: accountDirectory, syncContext: syncContext))
+    public func performMigration(accountDirectory: URL, coreCrypto: SafeCoreCryptoProtocol) throws {
+        performMigrationAccountDirectoryCoreCrypto_Invocations.append((accountDirectory: accountDirectory, coreCrypto: coreCrypto))
 
-        if let error = performMigrationAccountDirectorySyncContext_MockError {
+        if let error = performMigrationAccountDirectoryCoreCrypto_MockError {
             throw error
         }
 
-        guard let mock = performMigrationAccountDirectorySyncContext_MockMethod else {
-            fatalError("no mock for `performMigrationAccountDirectorySyncContext`")
+        guard let mock = performMigrationAccountDirectoryCoreCrypto_MockMethod else {
+            fatalError("no mock for `performMigrationAccountDirectoryCoreCrypto`")
         }
 
-        try mock(accountDirectory, syncContext)
-    }
-
-    // MARK: - completeMigration
-
-    public var completeMigrationSyncContext_Invocations: [NSManagedObjectContext] = []
-    public var completeMigrationSyncContext_MockError: Error?
-    public var completeMigrationSyncContext_MockMethod: ((NSManagedObjectContext) throws -> Void)?
-
-    public func completeMigration(syncContext: NSManagedObjectContext) throws {
-        completeMigrationSyncContext_Invocations.append(syncContext)
-
-        if let error = completeMigrationSyncContext_MockError {
-            throw error
-        }
-
-        guard let mock = completeMigrationSyncContext_MockMethod else {
-            fatalError("no mock for `completeMigrationSyncContext`")
-        }
-
-        try mock(syncContext)
+        try mock(accountDirectory, coreCrypto)
     }
 
 }
@@ -1712,6 +1724,21 @@ public class MockMLSServiceInterface: MLSServiceInterface {
         await mock(groupID)
     }
 
+    // MARK: - updateKeyMaterialForAllStaleGroupsIfNeeded
+
+    public var updateKeyMaterialForAllStaleGroupsIfNeeded_Invocations: [Void] = []
+    public var updateKeyMaterialForAllStaleGroupsIfNeeded_MockMethod: (() -> Void)?
+
+    public func updateKeyMaterialForAllStaleGroupsIfNeeded() {
+        updateKeyMaterialForAllStaleGroupsIfNeeded_Invocations.append(())
+
+        guard let mock = updateKeyMaterialForAllStaleGroupsIfNeeded_MockMethod else {
+            fatalError("no mock for `updateKeyMaterialForAllStaleGroupsIfNeeded`")
+        }
+
+        mock()
+    }
+
     // MARK: - onEpochChanged
 
     public var onEpochChanged_Invocations: [Void] = []
@@ -1793,26 +1820,6 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
 
     public var underlyingLastPrekeyID: UInt16!
 
-
-    // MARK: - completeInitialization
-
-    public var completeInitialization_Invocations: [Void] = []
-    public var completeInitialization_MockError: Error?
-    public var completeInitialization_MockMethod: (() throws -> Void)?
-
-    public func completeInitialization() throws {
-        completeInitialization_Invocations.append(())
-
-        if let error = completeInitialization_MockError {
-            throw error
-        }
-
-        guard let mock = completeInitialization_MockMethod else {
-            fatalError("no mock for `completeInitialization`")
-        }
-
-        try mock()
-    }
 
     // MARK: - establishSession
 
@@ -1922,10 +1929,10 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
 
     public var decryptDataForSession_Invocations: [(data: Data, id: ProteusSessionID)] = []
     public var decryptDataForSession_MockError: Error?
-    public var decryptDataForSession_MockMethod: ((Data, ProteusSessionID) throws -> (didCreateNewSession: Bool, decryptedData: Data))?
+    public var decryptDataForSession_MockMethod: ((Data, ProteusSessionID) async throws -> (didCreateNewSession: Bool, decryptedData: Data))?
     public var decryptDataForSession_MockValue: (didCreateNewSession: Bool, decryptedData: Data)?
 
-    public func decrypt(data: Data, forSession id: ProteusSessionID) throws -> (didCreateNewSession: Bool, decryptedData: Data) {
+    public func decrypt(data: Data, forSession id: ProteusSessionID) async throws -> (didCreateNewSession: Bool, decryptedData: Data) {
         decryptDataForSession_Invocations.append((data: data, id: id))
 
         if let error = decryptDataForSession_MockError {
@@ -1933,7 +1940,7 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
         }
 
         if let mock = decryptDataForSession_MockMethod {
-            return try mock(data, id)
+            return try await mock(data, id)
         } else if let mock = decryptDataForSession_MockValue {
             return mock
         } else {
@@ -2077,26 +2084,6 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
         } else {
             fatalError("no mock for `fingerprintFromPrekey`")
         }
-    }
-
-    // MARK: - migrateCryptoboxSessions
-
-    public var migrateCryptoboxSessionsAt_Invocations: [URL] = []
-    public var migrateCryptoboxSessionsAt_MockError: Error?
-    public var migrateCryptoboxSessionsAt_MockMethod: ((URL) throws -> Void)?
-
-    public func migrateCryptoboxSessions(at url: URL) throws {
-        migrateCryptoboxSessionsAt_Invocations.append(url)
-
-        if let error = migrateCryptoboxSessionsAt_MockError {
-            throw error
-        }
-
-        guard let mock = migrateCryptoboxSessionsAt_MockMethod else {
-            fatalError("no mock for `migrateCryptoboxSessionsAt`")
-        }
-
-        try mock(url)
     }
 
 }
