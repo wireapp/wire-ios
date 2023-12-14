@@ -46,7 +46,10 @@ public class MockProteusProvider: ProteusProviding {
         }
     }
 
-    public func performAsync<T>(withProteusService proteusServiceBlock: (WireDataModel.ProteusServiceInterface) async throws -> T, withKeyStore keyStoreBlock: (WireDataModel.UserClientKeysStore) async throws -> T) async rethrows -> T {
+    public func performAsync<T>(
+        withProteusService proteusServiceBlock: (ProteusServiceInterface) async throws -> T,
+        withKeyStore keyStoreBlock: (UserClientKeysStore) async throws -> T)
+    async rethrows -> T {
         if useProteusService {
             return try await proteusServiceBlock(mockProteusService)
         } else {

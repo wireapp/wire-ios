@@ -497,6 +497,8 @@ class ZMUserSessionTests: ZMUserSessionTestsBase {
         // when
         sut.didFinishQuickSync()
 
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
         // then
         XCTAssertFalse(mockMLSService.performPendingJoins_Invocations.isEmpty)
         XCTAssertFalse(mockMLSService.uploadKeyPackagesIfNeeded_Invocations.isEmpty)

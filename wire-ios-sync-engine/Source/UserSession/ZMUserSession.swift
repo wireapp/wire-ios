@@ -675,7 +675,10 @@ extension ZMUserSession: ZMSyncStateDelegate {
             }
         }
 
-        mlsService.repairOutOfSyncConversations()
+        let selfClient = ZMUser.selfUser(in: syncContext).selfClient()
+        if selfClient?.hasRegisteredMLSClient == true {
+            mlsService.repairOutOfSyncConversations()
+        }
     }
 
     public func didStartQuickSync() {
@@ -696,13 +699,20 @@ extension ZMUserSession: ZMSyncStateDelegate {
         ).post()
 
         let selfClient = ZMUser.selfUser(in: syncContext).selfClient()
-
         if selfClient?.hasRegisteredMLSClient == true {
-            mlsService.performPendingJoins()
-            mlsService.uploadKeyPackagesIfNeeded()
-            mlsService.updateKeyMaterialForAllStaleGroupsIfNeeded()
-            commitPendingProposalsIfNeeded()
+
+            WaitingGroupTask(context: syncContext) { [self] in
+                mlsService.performPendingJoins()
+                await mlsService.uploadKeyPackagesIfNeeded()
+                await mlsService.updateKeyMaterialForAllStaleGroupsIfNeeded()
+                do {
+                    try await mlsService.commitPendingProposals()
+                } catch {
+                    Logging.mls.error("Failed to commit pending proposals: \(String(reflecting: error))")
+                }
+            }
         }
+
         fetchFeatureConfigs()
         recurringActionService.performActionsIfNeeded()
 
@@ -776,7 +786,9 @@ extension ZMUserSession: ZMSyncStateDelegate {
     }
 
     public func didRegisterMLSClient(_ userClient: UserClient) {
-        mlsService.uploadKeyPackagesIfNeeded()
+        Task {
+            await mlsService.uploadKeyPackagesIfNeeded()
+        }
     }
 
     public func didRegisterSelfUserClient(_ userClient: UserClient) {
