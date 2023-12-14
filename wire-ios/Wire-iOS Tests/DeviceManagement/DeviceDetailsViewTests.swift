@@ -21,7 +21,7 @@ import XCTest
 import SwiftUI
 import WireSyncEngineSupport
 
-final class DeviceDetailsViewTests: ZMSnapshotTestCase, CoreDataFixtureTestHelper {
+final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHelper {
     var coreDataFixture: CoreDataFixture!
     var sut: UIHostingController<DeviceDetailsView>!
     var client: UserClient!
