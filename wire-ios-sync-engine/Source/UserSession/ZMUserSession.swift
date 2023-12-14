@@ -434,7 +434,8 @@ public class ZMUserSession: NSObject {
             useLegacyPushNotifications: useLegacyPushNotifications,
             lastEventIDRepository: lastEventIDRepository,
             transportSession: transportSession,
-            proteusProvider: self.proteusProvider
+            proteusProvider: self.proteusProvider,
+            mlsService: mlsService
         )
     }
 

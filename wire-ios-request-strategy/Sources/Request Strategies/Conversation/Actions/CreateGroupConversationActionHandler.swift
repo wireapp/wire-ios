@@ -84,6 +84,16 @@ public final class CreateGroupConversationAction: EntityAction {
 final class CreateGroupConversationActionHandler: ActionHandler<CreateGroupConversationAction> {
 
     private let processor = ConversationEventPayloadProcessor()
+    private let mlsService: MLSServiceInterface
+
+    required init(
+        context: NSManagedObjectContext,
+        mlsService: MLSServiceInterface
+    ) {
+        self.mlsService = mlsService
+
+        super.init(context: context)
+    }
 
     // MARK: - Request generation
 
@@ -197,51 +207,36 @@ final class CreateGroupConversationActionHandler: ActionHandler<CreateGroupConve
             let apiVersion = APIVersion(rawValue: response.apiVersion),
             let rawData = response.rawData,
             let payload = Payload.Conversation(rawData, apiVersion: apiVersion),
-            let newConversation = await processor.updateOrCreateConversation(
+            let newConversation = await self.processor.updateOrCreateConversation(
                 from: payload,
-                in: context
+                in: self.context
             )
         else {
             Logging.network.warn("Can't process response, aborting.")
-            action.fail(with: .proccessingError)
+            await context.perform {
+                action.fail(with: .proccessingError)
+            }
             return
         }
 
-        switch await context.perform({ newConversation.messageProtocol }) {
+        let messageProtocol = await context.perform { newConversation.messageProtocol }
+
+        switch messageProtocol {
         case .proteus:
-            await context.perform { [context] in
-                context.saveOrRollback()
+            await context.perform {
+                self.context.saveOrRollback()
                 action.succeed(with: newConversation.objectID)
             }
 
         case .mls:
             Logging.mls.info("created new conversation on backend, got group ID (\(String(describing: payload.mlsGroupID)))")
 
-            let newConversationObjectID = await context.perform {
-                // Self user is creator, so we don't need to process a welcome message
+            // Self user is creator, so we don't need to process a welcome message
+            await context.perform {
                 newConversation.mlsStatus = .ready
-                return newConversation.objectID
             }
 
-            guard let mlsService = await context.perform({ [context] in context.zm_sync.mlsService }) else {
-                Logging.mls.warn("failed to create mls group: mlsService doesn't exist")
-                action.fail(with: .proccessingError)
-                return
-            }
-
-            guard let groupID = await context.perform({ newConversation.mlsGroupID }) else {
-                Logging.mls.warn("failed to create mls group: conversation is missing group id.")
-                action.fail(with: .proccessingError)
-                return
-            }
-
-            do {
-                try mlsService.createGroup(for: groupID)
-            } catch let error {
-                Logging.mls.error("failed to create mls group: \(String(describing: error))")
-                action.fail(with: .proccessingError)
-                return
-            }
+            let selfUserID = await context.perform { ZMUser.selfUser(in: self.context).qualifiedID }
 
             // If this is an mls conversation, then the initial participants won't have
             // been added yet on the backend. This means that we must take the list of
@@ -251,10 +246,6 @@ final class CreateGroupConversationActionHandler: ActionHandler<CreateGroupConve
                 return QualifiedID(uuid: $0, domain: localDomain)
             })
 
-            let selfUserID = await context.perform { [context] in
-                ZMUser.selfUser(in: context).qualifiedID
-            }
-
             let users = pendingParticipants.map { qualifiedID in
                 if qualifiedID == selfUserID {
                     return MLSUser(qualifiedID, selfClientID: action.creatorClientID)
@@ -263,25 +254,26 @@ final class CreateGroupConversationActionHandler: ActionHandler<CreateGroupConve
                 }
             }
 
-            let reportSuccess = {
-                action.succeed(with: newConversationObjectID)
-            }
-
-            let reportFailure = {
+            guard let groupID = await context.perform({ newConversation.mlsGroupID }) else {
+                Logging.mls.warn("failed to create mls group: conversation is missing group id.")
                 action.fail(with: .proccessingError)
+                return
             }
 
             do {
+                // FIXME: turn async
+                try mlsService.createGroup(for: groupID)
                 try await mlsService.addMembersToConversation(with: users, for: groupID)
-                reportSuccess()
+                await self.context.perform {
+                    action.succeed(with: newConversation.objectID)
+                }
             } catch let error {
-                Logging.mls.error("failed to add members to new mls group: \(String(describing: error))")
-                reportFailure()
+                Logging.mls.error("failed create new mls group: \(String(describing: error))")
+                action.fail(with: .proccessingError)
                 return
             }
         }
     }
-
 }
 
 extension CreateGroupConversationActionHandler {

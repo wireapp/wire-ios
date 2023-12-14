@@ -48,7 +48,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
         useLegacyPushNotifications: Bool,
         lastEventIDRepository: LastEventIDRepositoryInterface,
         transportSession: TransportSessionType,
-        proteusProvider: ProteusProvider
+        proteusProvider: ProteusProvider,
+        mlsService: MLSServiceInterface
     ) {
 
         self.strategies = Self.buildStrategies(
@@ -62,7 +63,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             useLegacyPushNotifications: useLegacyPushNotifications,
             lastEventIDRepository: lastEventIDRepository,
             transportSession: transportSession,
-            proteusProvider: proteusProvider
+            proteusProvider: proteusProvider,
+            mlsService: mlsService
         )
 
         self.requestStrategies = strategies.compactMap({ $0 as? RequestStrategy})
@@ -97,7 +99,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
         useLegacyPushNotifications: Bool,
         lastEventIDRepository: LastEventIDRepositoryInterface,
         transportSession: TransportSessionType,
-        proteusProvider: ProteusProvider
+        proteusProvider: ProteusProvider,
+        mlsService: MLSServiceInterface
     ) -> [Any] {
         let syncMOC = contextProvider.syncContext
 
@@ -218,7 +221,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             ConversationRequestStrategy(
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory,
-                syncProgress: applicationStatusDirectory.syncStatus),
+                syncProgress: applicationStatusDirectory.syncStatus,
+                mlsService: mlsService),
             UserProfileRequestStrategy(
                 managedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory,
