@@ -210,7 +210,6 @@ class RemoveParticipantActionHandlerTests: MessagingTestBase {
             self.syncMOC.saveOrRollback()
 
             let action = RemoveParticipantAction(user: selfUser, conversation: self.conversation)
-            let memberLeaveTimestamp = Date().addingTimeInterval(1000)
             let memberLeave = Payload.UpdateConverationMemberLeave(
                 userIDs: [selfUser.remoteIdentifier!],
                 qualifiedUserIDs: [selfUser.qualifiedID!],
