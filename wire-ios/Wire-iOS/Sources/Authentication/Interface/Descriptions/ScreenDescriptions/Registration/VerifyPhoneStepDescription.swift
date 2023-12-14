@@ -52,8 +52,8 @@ final class VerifyPhoneStepDescription: AuthenticationStepDescription {
         self.phoneNumber = phoneNumber
         backButton = nil
         mainView = VerificationCodeFieldDescription()
-        headline = "team.phone_activation_code.headline".localized
-        subtext = "team.activation_code.subheadline".localized(args: phoneNumber)
+        headline = L10n.Localizable.Team.PhoneActivationCode.headline
+        subtext = L10n.Localizable.Team.ActivationCode.subheadline(phoneNumber)
         secondaryView = nil
         footerView = VerifyPhoneStepSecondaryView(phoneNumber: phoneNumber, allowChange: allowChange)
     }

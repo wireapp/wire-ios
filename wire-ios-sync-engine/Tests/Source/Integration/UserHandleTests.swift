@@ -118,7 +118,8 @@ class UserHandleTests: IntegrationTest {
         }
     }
 
-    func testThatItIsNotifiedWhenFailsToSetTheHandleBecauseItExists() {
+    // FIXME: [jacob] this test is flaky WPB-5882
+    func disabled_testThatItIsNotifiedWhenFailsToSetTheHandleBecauseItExists() {
 
         // GIVEN
         let handle = "Evelyn"

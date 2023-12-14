@@ -127,5 +127,4 @@ extension ZMClientRegistrationStatusTests {
         // then
         XCTAssertEqual(self.sut.currentPhase, .registered)
     }
-
 }

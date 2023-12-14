@@ -42,14 +42,22 @@ public protocol ProteusProviding {
 
 public class ProteusProvider: ProteusProviding {
 
-    private let context: NSManagedObjectContext
+    private let proteusService: ProteusServiceInterface?
+    private let keyStore: UserClientKeysStore
     private let proteusViaCoreCrypto: Bool
 
-    public init(
+    public convenience init(
         context: NSManagedObjectContext,
         proteusViaCoreCrypto: Bool = DeveloperFlag.proteusViaCoreCrypto.isOn
     ) {
-        self.context = context
+        self.init(proteusService: context.proteusService,
+                  keyStore: context.zm_cryptKeyStore,
+                  proteusViaCoreCrypto: proteusViaCoreCrypto)
+    }
+
+    internal init(proteusService: ProteusServiceInterface?, keyStore: UserClientKeysStore, proteusViaCoreCrypto: Bool) {
+        self.proteusService = proteusService
+        self.keyStore = keyStore
         self.proteusViaCoreCrypto = proteusViaCoreCrypto
     }
 
@@ -58,21 +66,30 @@ public class ProteusProvider: ProteusProviding {
         withKeyStore keyStoreBlock: KeyStorePerformBlock<T>
     ) rethrows -> T {
 
-        precondition(context.zm_isSyncContext, "ProteusProvider should only be used on the sync context")
-
-        if let proteusService = context.proteusService, proteusViaCoreCrypto {
-
-            return try proteusServiceBlock(proteusService)
-
-        } else if let keyStore = context.zm_cryptKeyStore {
-
-            // remove comment once implementation of proteus via core crypto is done
-            // precondition(!proteusViaCoreCrypto, "cryptobox should only be used when the flag is off")
-            return try keyStoreBlock(keyStore)
+        if let proteusService = proteusService, proteusViaCoreCrypto {
+           
+          return try proteusServiceBlock(proteusService)
 
         } else {
-            WireLogger.coreCrypto.error("can't access any proteus cryptography service")
-            fatal("can't access any proteus cryptography service")
+
+            // remove comment once implementation of proteus via core crypto is done
+            return try keyStoreBlock(keyStore)
+        }
+    }
+
+    public func performAsync<T>(
+        withProteusService proteusServiceBlock: ProteusServicePerformAsyncBlock<T>,
+        withKeyStore keyStoreBlock: KeyStorePerformAsyncBlock<T>
+    ) async rethrows -> T {
+
+        if let proteusService = proteusService, proteusViaCoreCrypto {
+
+            return try await proteusServiceBlock(proteusService)
+
+        } else {
+
+            // remove comment once implementation of proteus via core crypto is done
+            return try await keyStoreBlock(keyStore)
         }
     }
 
@@ -100,8 +117,8 @@ public class ProteusProvider: ProteusProviding {
     }
 
     public var canPerform: Bool {
-        let canUseProteusService = proteusViaCoreCrypto && context.proteusService != nil
-        let canUseKeyStore = !proteusViaCoreCrypto && context.zm_cryptKeyStore != nil
+        let canUseProteusService = proteusViaCoreCrypto && proteusService != nil
+        let canUseKeyStore = !proteusViaCoreCrypto
 
         return canUseProteusService || canUseKeyStore
     }
