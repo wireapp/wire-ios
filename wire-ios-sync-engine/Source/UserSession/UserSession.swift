@@ -213,6 +213,8 @@ public protocol UserSession: AnyObject {
 
     var getUserClientFingerprint: GetUserClientFingerprintUseCaseProtocol { get }
 
+    var mlsConversationVerificationStatusProvider: MLSConversationVerificationStatusProviderInterface? { get }
+
     var selfUserClient: UserClient? { get }
 }
 

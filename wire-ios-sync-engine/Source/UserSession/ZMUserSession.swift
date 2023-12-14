@@ -267,15 +267,30 @@ public class ZMUserSession: NSObject {
             guard let coreCrypto = syncContext.coreCrypto else {
                 return
             }
-            let e2eiClient = E2eIClient(coreCrypto: coreCrypto)
+            let e2eiSetupService = E2eISetupService(coreCrypto: coreCrypto)
             e2eiRepository = E2eIRepository(acmeApi: acmeApi,
                                             apiProvider: apiProvider,
-                                            e2eiClient: e2eiClient)
+                                            e2eiSetupService: e2eiSetupService)
         }
         guard let e2eiRepository = e2eiRepository else {
             return nil
         }
         return EnrollE2eICertificateUseCase(e2eiRepository: e2eiRepository)
+    }()
+
+    public lazy var mlsConversationVerificationStatusProvider: MLSConversationVerificationStatusProviderInterface? = {
+        /// TODO: if E2EI feature is enabled
+        var verificationStatusProvider: MLSConversationVerificationStatusProvider?
+        syncContext.performAndWait {
+            guard let coreCrypto = syncContext.coreCrypto else {
+                return
+            }
+
+            let e2eIConversationService = E2eIConversationService(coreCrypto: coreCrypto)
+            verificationStatusProvider = MLSConversationVerificationStatusProvider(e2eIConversationService: e2eIConversationService,
+                                                                                   syncContext: syncContext)
+        }
+        return verificationStatusProvider
     }()
 
     let lastEventIDRepository: LastEventIDRepositoryInterface
@@ -368,13 +383,7 @@ public class ZMUserSession: NSObject {
         // This should happen after the request strategies are created b/c
         // it needs to make network requests upon initialization.
         setupCryptoStack(stage: .mls)
-        syncContext.performGroupedBlock {
-            guard let mlsService = self.syncContext.mlsService else {
-                return
-            }
-            let toketE2ei = EpochChangeObserver(mlsService: mlsService)
-            self.tokens.append(toketE2ei)
-        }
+        observeOnEpochChangeIfNeeded()
 
         registerForCalculateBadgeCountNotification()
         registerForRegisteringPushTokenNotification()
@@ -538,6 +547,18 @@ public class ZMUserSession: NSObject {
     private func notifyUserAboutChangesInAvailabilityBehaviourIfNeeded() {
         syncManagedObjectContext.performGroupedBlock {
             self.localNotificationDispatcher?.notifyAvailabilityBehaviourChangedIfNeeded()
+        }
+    }
+
+    private func observeOnEpochChangeIfNeeded() {
+        syncContext.performAndWait {
+            guard let mlsService = self.syncContext.mlsService else {
+                return
+            }
+            let epochChangeToken = EpochChangeObserver(
+                mlsService: mlsService,
+                onEpochChangedBlock: self.mlsConversationVerificationStatusProvider?.invoke(_:))
+            self.tokens.append(epochChangeToken)
         }
     }
 

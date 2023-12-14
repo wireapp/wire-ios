@@ -28,16 +28,16 @@ public final class E2eIRepository: E2eIRepositoryInterface {
 
     private var acmeApi: AcmeAPIInterface
     private var apiProvider: APIProviderInterface
-    private var e2eiClient: E2eIClientInterface
+    private var e2eiSetupService: E2eISetupServiceInterface
 
-    public init(acmeApi: AcmeAPIInterface, apiProvider: APIProviderInterface, e2eiClient: E2eIClientInterface) {
+    public init(acmeApi: AcmeAPIInterface, apiProvider: APIProviderInterface, e2eiSetupService: E2eISetupServiceInterface) {
         self.acmeApi = acmeApi
         self.apiProvider = apiProvider
-        self.e2eiClient = e2eiClient
+        self.e2eiSetupService = e2eiSetupService
     }
 
     public func createEnrollment(e2eiClientId: E2eIClientID, userName: String, handle: String) async throws -> E2eIEnrollmentInterface {
-        let e2eIdentity = try await e2eiClient.setupEnrollment(e2eiClientId: e2eiClientId, userName: userName, handle: handle)
+        let e2eIdentity = try await e2eiSetupService.setupEnrollment(e2eiClientId: e2eiClientId, userName: userName, handle: handle)
         let e2eiService = E2eIService(e2eIdentity: e2eIdentity)
         let acmeDirectory = try await loadACMEDirectory(e2eiService: e2eiService)
 

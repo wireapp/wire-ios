@@ -1684,18 +1684,6 @@ public final class MLSService: MLSServiceInterface {
 
 }
 
-public class EpochChangeObserver {
-
-    public let token: AnyObject!
-
-    public init(mlsService: MLSServiceInterface) {
-        token = mlsService.onEpochChanged().sink { groupID in
-            print(groupID.safeForLoggingDescription)
-        }
-    }
-
-}
-
 // MARK: - Helper types
 
 public struct MLSUser: Equatable {
