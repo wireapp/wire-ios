@@ -49,10 +49,10 @@ public protocol ProteusServiceInterface {
         forSession id: ProteusSessionID
     ) async throws -> (didCreateNewSession: Bool, decryptedData: Data)
 
-    func generatePrekey(id: UInt16) throws -> String
-    func lastPrekey() throws -> String
+    func generatePrekey(id: UInt16) async throws -> String
+    func lastPrekey() async throws -> String
     var lastPrekeyID: UInt16 { get }
-    func generatePrekeys(start: UInt16, count: UInt16) throws -> [IdPrekeyTuple]
+    func generatePrekeys(start: UInt16, count: UInt16) async throws -> [IdPrekeyTuple]
     func localFingerprint() throws -> String
     func remoteFingerprint(forSession id: ProteusSessionID) throws -> String
     func fingerprint(fromPrekey prekey: String) throws -> String
