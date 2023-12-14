@@ -167,7 +167,11 @@
 				3ECC34E61AD433520089FD4B /* Products */,
 				E66EC68A2B21D179003052F7 /* Frameworks */,
 			);
+			indentWidth = 4;
 			sourceTree = "<group>";
+			tabWidth = 4;
+			usesTabs = 0;
+			wrapsLines = 1;
 		};
 		3ECC34E61AD433520089FD4B /* Products */ = {
 			isa = PBXGroup;
