@@ -45,8 +45,8 @@ struct E2EIdentityCertificateDetailsView: View {
                     Image(.close)
                         .foregroundColor(SemanticColors.Icon.foregroundDefaultBlack.swiftUIColor)
                 }
-            ).padding()
-        }.background(SemanticColors.View.backgroundDefault.swiftUIColor)
+            ).padding(.all, ViewConstants.Padding.standard)
+        }
     }
 
     private var certificateView: some View {
@@ -80,7 +80,6 @@ struct E2EIdentityCertificateDetailsView: View {
                     .font(FontSpec.normalBoldFont.swiftUIFont)
             }
         )
-        .foregroundColor(SemanticColors.Label.textDefault.swiftUIColor)
     }
 
     private var moreButton: some View {
@@ -106,40 +105,45 @@ struct E2EIdentityCertificateDetailsView: View {
                     .foregroundColor(SemanticColors.Label.textDefault.swiftUIColor)
             }
         )
-        .foregroundColor(SemanticColors.Label.textDefault.swiftUIColor)
     }
 
-    var body: some View {
-        titleView
-        certificateView
-        .safeAreaInset(edge: .bottom, spacing: .zero) {
-            VStack {
-                if isDownloadAndCopyEnabled {
-                    HStack {
-                        downloadImageButton.padding()
-                        downloadButton.padding()
-                        Spacer()
-                        moreButton
-                        .confirmationDialog("...", isPresented: $isMenuPresented) {
-                            copyToClipboardButton
-                        }
+    private var bottomBarView: some View {
+        VStack {
+            if isDownloadAndCopyEnabled {
+                HStack {
+                    downloadImageButton.padding()
+                    downloadButton
+                        .foregroundColor(SemanticColors.Icon.foregroundDefaultBlack.swiftUIColor)
+                        .padding()
+                    Spacer()
+                    moreButton
+                        .foregroundColor(SemanticColors.Icon.foregroundDefaultBlack.swiftUIColor)
+                    .confirmationDialog("...", isPresented: $isMenuPresented) {
+                        copyToClipboardButton
+                            .foregroundColor(SemanticColors.Icon.foregroundDefaultBlack.swiftUIColor)
                     }
                 }
             }
-            .padding()
-            .frame(maxWidth: .infinity)
-            // The background will extend automatically to the edge
-            .background(SemanticColors.View.backgroundDefaultWhite.swiftUIColor)
-            .overlay(alignment: .top) {
-                if isDownloadAndCopyEnabled {
-                    Rectangle()
-                        .frame(height: 1)
-                        .foregroundColor(SemanticColors.View.backgroundSeparatorCell.swiftUIColor)
-                }
+        }
+        .padding()
+        .frame(maxWidth: .infinity)
+        // The background will extend automatically to the edge
+        .overlay(alignment: .top) {
+            if isDownloadAndCopyEnabled {
+                Rectangle()
+                    .frame(height: 1)
+                    .foregroundColor(SemanticColors.View.backgroundSeparatorCell.swiftUIColor)
             }
         }
+    }
+
+    var body: some View {
+        titleView.background(SemanticColors.View.backgroundDefault.swiftUIColor)
+        certificateView.background(SemanticColors.View.backgroundDefaultWhite.swiftUIColor)
+        .safeAreaInset(edge: .bottom, spacing: .zero) {
+            bottomBarView.background(SemanticColors.View.backgroundUserCell.swiftUIColor)
+        }
         .ignoresSafeArea()
-        .padding(.top, ViewConstants.Padding.medium)
-        .background(SemanticColors.View.backgroundDefaultWhite.swiftUIColor)
+        .background(SemanticColors.View.backgroundDefault.swiftUIColor)
     }
 }
