@@ -18,10 +18,19 @@
 
 import Foundation
 
-public extension NSManagedObjectContext {
+extension NSManagedObjectContext {
 
-    var proteusProvider: ProteusProviding {
-        precondition(zm_isSyncContext, "ProteusProvider should only be accessed on the sync context")
-        return ProteusProvider(context: self)
+    private static let proteusProviderUserInfoKey = "ProteusProvidingUserInfoKey"
+
+    public var proteusProvider: ProteusProviding {
+        get {
+            precondition(zm_isSyncContext, "ProteusProviding should only be accessed on the sync context")
+            return userInfo[Self.proteusProviderUserInfoKey] as! ProteusProviding
+        }
+
+        set {
+            precondition(zm_isSyncContext, "ProteusProviding should only be accessed on the sync context")
+            userInfo[Self.proteusProviderUserInfoKey] = newValue
+        }
     }
 }
