@@ -376,8 +376,6 @@ public class ZMUserSession: NSObject {
 
             // FIXME: [jacob] inject instead of storing on context WPB-5827
             self.syncManagedObjectContext.proteusService = self.proteusService
-
-            self.syncManagedObjectContext.proteusProvider = proteusProvider
             self.syncManagedObjectContext.mlsService = self.mlsService
 
             applicationStatusDirectory.clientRegistrationStatus.prepareForClientRegistration()
