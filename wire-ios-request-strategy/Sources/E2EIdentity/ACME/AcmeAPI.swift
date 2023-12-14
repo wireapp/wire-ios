@@ -31,13 +31,16 @@ public class AcmeAPI: NSObject, AcmeAPIInterface {
 
     // MARK: - Properties
 
+    private let acmeDirectory: URL
     private let httpClient: HttpClientCustom
     private let contentType = "Content-Type"
 
     // MARK: - Life cycle
 
     /// TODO: it would be nice to use HttpClient
-    public init(httpClient: HttpClientCustom = HttpClientE2EI()) {
+    public init(acmeDirectory: URL,
+                httpClient: HttpClientCustom = HttpClientE2EI()) {
+        self.acmeDirectory = acmeDirectory
         self.httpClient = httpClient
     }
 
@@ -47,13 +50,7 @@ public class AcmeAPI: NSObject, AcmeAPIInterface {
             throw NetworkError.errorEncodingRequest
         }
 
-        /// TODO: it's temp, we should fetch it from the team settings
-        let path = "https://acme.\(domain)/acme/defaultteams/directory"
-
-        guard let url = URL(string: path) else {
-            throw NetworkError.errorEncodingRequest
-        }
-        var request = URLRequest(url: url)
+        var request = URLRequest(url: acmeDirectory)
         request.httpMethod = HTTPMethod.get
         let (data, _) = try await httpClient.send(request)
 
@@ -127,7 +124,6 @@ public class AcmeAPI: NSObject, AcmeAPIInterface {
                                  status: challengeResponse.status,
                                  token: challengeResponse.token,
                                  nonce: replayNonce)
-
     }
 
 }

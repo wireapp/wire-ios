@@ -29,8 +29,9 @@ class AcmeAPITests: ZMTBaseTest {
         super.setUp()
 
         mockHttpClient = MockHttpClient()
-        if let mockHttpClient = mockHttpClient {
-            acmeApi = AcmeAPI(httpClient: mockHttpClient)
+        if let mockHttpClient = mockHttpClient,
+            let url = URL(string: "https://acme/defaultteams/directory") {
+            acmeApi = AcmeAPI(acmeDirectory: url, httpClient: mockHttpClient)
         }
     }
 
