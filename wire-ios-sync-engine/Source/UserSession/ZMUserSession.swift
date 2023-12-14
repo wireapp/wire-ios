@@ -674,7 +674,10 @@ extension ZMUserSession: ZMSyncStateDelegate {
             }
         }
 
-        mlsService.repairOutOfSyncConversations()
+        let selfClient = ZMUser.selfUser(in: syncContext).selfClient()
+        if selfClient?.hasRegisteredMLSClient == true {
+            mlsService.repairOutOfSyncConversations()
+        }
     }
 
     public func didStartQuickSync() {
