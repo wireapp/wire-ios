@@ -695,14 +695,19 @@ extension ZMUserSession: ZMSyncStateDelegate {
         ).post()
 
         let selfClient = ZMUser.selfUser(in: syncContext).selfClient()
+        if selfClient?.hasRegisteredMLSClient == true {
 
-        WaitingGroupTask(context: syncContext) { [self] in
-            if selfClient?.hasRegisteredMLSClient == true {
+            WaitingGroupTask(context: syncContext) { [self] in
                 mlsService.performPendingJoins()
                 await mlsService.uploadKeyPackagesIfNeeded()
                 await mlsService.updateKeyMaterialForAllStaleGroupsIfNeeded()
-                commitPendingProposalsIfNeeded()
+                do {
+                    try await mlsService.commitPendingProposals()
+                } catch {
+                    Logging.mls.error("Failed to commit pending proposals: \(String(reflecting: error))")
+                }
             }
+
             fetchFeatureConfigs()
             recurringActionService.performActionsIfNeeded()
 
