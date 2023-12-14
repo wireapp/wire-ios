@@ -285,10 +285,10 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
 
     public func request(forInserting managedObject: ZMManagedObject, forKeys keys: Set<String>?, apiVersion: APIVersion) -> ZMUpstreamRequest? {
         guard let client = managedObject as? UserClient else { fatal("Called requestForInsertingObject() on \(managedObject.safeForLoggingDescription)") }
-        guard let prekeys = clientRegistrationStatus?._prekeys else {
+        guard let prekeys = clientRegistrationStatus?.idPrekeysTuple else {
             fatal("Asked to insert client when there's no prekeys available")
         }
-        guard let lastResortPrekey = clientRegistrationStatus?._lastResortPrekey else {
+        guard let lastResortPrekey = clientRegistrationStatus?.lastResortIdPrekeyTuple else {
             fatal("Asked to insert client when there's no last resort prekey available")
         }
 

@@ -159,7 +159,7 @@ extension ZMClientRegistrationStatus {
         return !hasRegisteredMLSClient && isAllowedToRegisterMLSCLient
     }
 
-    var _prekeys: [IdPrekeyTuple]? {
+    var idPrekeysTuple: [IdPrekeyTuple]? {
         prekeys.compactMap {
             guard
                 let id = $0.keys.first?.uint16Value,
@@ -172,7 +172,7 @@ extension ZMClientRegistrationStatus {
         }
     }
 
-    var _lastResortPrekey: IdPrekeyTuple? {
+    var lastResortIdPrekeyTuple: IdPrekeyTuple? {
         guard let lastResortPrekey = lastResortPrekey else {
             return nil
         }

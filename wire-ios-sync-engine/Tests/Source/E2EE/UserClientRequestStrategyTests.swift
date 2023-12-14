@@ -168,8 +168,8 @@ extension UserClientRequestStrategyTests {
                 client,
                 credentials: self.fakeCredentialsProvider.emailCredentials(),
                 cookieLabel: "mycookie",
-                prekeys: self.clientRegistrationStatus._prekeys!,
-                lastRestortPrekey: self.clientRegistrationStatus._lastResortPrekey!,
+                prekeys: self.clientRegistrationStatus.idPrekeysTuple!,
+                lastRestortPrekey: self.clientRegistrationStatus.lastResortIdPrekeyTuple!,
                 apiVersion: .v0).transportRequest!
 
             AssertOptionalNotNil(request, "Should return request if there is inserted UserClient object") { request in
