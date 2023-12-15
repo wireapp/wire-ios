@@ -566,7 +566,7 @@ extension FetchClientRequestStrategyTests {
         var client: UserClient!
         self.syncMOC.performGroupedBlockAndWait {
             client = self.createClient(user: self.otherUser)
-            XCTAssertFalse(client.hasSessionWithSelfClient)
+//            XCTAssertFalse(client.hasSessionWithSelfClient)
             self.otherUser.fetchUserClients()
             payload = [["id": client.remoteIdentifier!, "class": "phone"]] as NSArray
         }

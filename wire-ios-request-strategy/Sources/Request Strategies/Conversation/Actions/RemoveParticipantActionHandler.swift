@@ -105,7 +105,7 @@ class RemoveParticipantActionHandler: ActionHandler<RemoveParticipantAction> {
             let success = {
                 action.notifyResult(.success(Void()))
             }
-            Task {
+            WaitingGroupTask(context: context) { [self] in
                 await eventProcessor.processConversationEvents([updateEvent])
                 success()
             }
