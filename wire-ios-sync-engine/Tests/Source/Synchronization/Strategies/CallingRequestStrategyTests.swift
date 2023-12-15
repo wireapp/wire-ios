@@ -44,22 +44,24 @@ class CallingRequestStrategyTests: MessagingTest {
         mockFetchUserClientsUseCase = MockFetchUserClientsUseCase()
         mockMessageSender = MockMessageSenderInterface()
 
-        sut = CallingRequestStrategy(
-            managedObjectContext: syncMOC,
-            applicationStatus: mockApplicationStatus,
-            clientRegistrationDelegate: mockRegistrationDelegate,
-            flowManager: FlowManagerMock(),
-            callEventStatus: CallEventStatus(),
-            fetchUserClientsUseCase: mockFetchUserClientsUseCase,
-            messageSender: mockMessageSender
-        )
-        sut.callCenter = WireCallCenterV3Mock(
-            userId: .stub,
-            clientId: UUID().transportString(),
-            uiMOC: uiMOC,
-            flowManager: FlowManagerMock(),
-            transport: WireCallCenterTransportMock()
-        )
+        syncMOC.performAndWait {
+            sut = CallingRequestStrategy(
+                managedObjectContext: syncMOC,
+                applicationStatus: mockApplicationStatus,
+                clientRegistrationDelegate: mockRegistrationDelegate,
+                flowManager: FlowManagerMock(),
+                callEventStatus: CallEventStatus(),
+                fetchUserClientsUseCase: mockFetchUserClientsUseCase,
+                messageSender: mockMessageSender
+            )
+            sut.callCenter = WireCallCenterV3Mock(
+                userId: .stub,
+                clientId: UUID().transportString(),
+                uiMOC: uiMOC,
+                flowManager: FlowManagerMock(),
+                transport: WireCallCenterTransportMock()
+            )
+        }
         setupMockMessageSyncForMLSSuccessfully()
     }
 
@@ -508,30 +510,34 @@ class CallingRequestStrategyTests: MessagingTest {
     }
 
     func testThatItDoesNotTargetCallMessagesIfNoTargetClientsAreSpecified() {
-        // Given
-        let selfClient = createSelfClient()
+        let (user1, user2, client1, client2, client3, client4, conversation) = syncMOC.performAndWait {
+            // Given
+            let selfClient = createSelfClient()
 
-        // One user with two clients connected to self
-        let user1 = ZMUser.insertNewObject(in: syncMOC)
-        user1.remoteIdentifier = .create()
+            // One user with two clients connected to self
+            let user1 = ZMUser.insertNewObject(in: syncMOC)
+            user1.remoteIdentifier = .create()
 
-        let client1 = createClient(for: user1, connectedTo: selfClient)
-        let client2 = createClient(for: user1, connectedTo: selfClient)
+            let client1 = createClient(for: user1, connectedTo: selfClient)
+            let client2 = createClient(for: user1, connectedTo: selfClient)
 
-        // Another user with two clients connected to self
-        let user2 = ZMUser.insertNewObject(in: syncMOC)
-        user2.remoteIdentifier = .create()
+            // Another user with two clients connected to self
+            let user2 = ZMUser.insertNewObject(in: syncMOC)
+            user2.remoteIdentifier = .create()
 
-        let client3 = createClient(for: user2, connectedTo: selfClient)
-        let client4 = createClient(for: user2, connectedTo: selfClient)
+            let client3 = createClient(for: user2, connectedTo: selfClient)
+            let client4 = createClient(for: user2, connectedTo: selfClient)
 
-        // A conversation with both users and self
-        let conversation = ZMConversation.insertNewObject(in: syncMOC)
-        conversation.remoteIdentifier = .create()
-        conversation.addParticipantsAndUpdateConversationState(users: [ZMUser.selfUser(in: syncMOC), user1, user2], role: nil)
-        conversation.needsToBeUpdatedFromBackend = false
+            // A conversation with both users and self
+            let conversation = ZMConversation.insertNewObject(in: syncMOC)
+            conversation.remoteIdentifier = .create()
+            conversation.addParticipantsAndUpdateConversationState(users: [ZMUser.selfUser(in: syncMOC), user1, user2], role: nil)
+            conversation.needsToBeUpdatedFromBackend = false
 
-        syncMOC.saveOrRollback()
+            syncMOC.saveOrRollback()
+
+            return (user1, user2, client1, client2, client3, client4, conversation)
+        }
 
         var sentMessage: GenericMessageEntity?
         mockMessageSender.sendMessageMessage_MockMethod = { message in
@@ -546,27 +552,29 @@ class CallingRequestStrategyTests: MessagingTest {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         XCTAssertNotNil(sentMessage)
 
-        guard
-            let data = sentMessage?.encryptForTransport()?.data,
-            let otrMessage = try? Proteus_NewOtrMessage(serializedData: data)
-        else {
-            return XCTFail("Expected OTR message")
+        syncMOC.performAndWait {
+            guard
+                let data = syncMOC.performAndWait({ sentMessage?.encryptForTransport()?.data }),
+                let otrMessage = try? Proteus_NewOtrMessage(serializedData: data)
+            else {
+                return XCTFail("Expected OTR message")
+            }
+
+            // Then we send the message to all clients in the conversation
+            XCTAssertEqual(otrMessage.recipients.count, 2)
+
+            guard let recipient1 = otrMessage.recipients.first(where: { $0.user == user1.userId }) else {
+                return XCTFail("Expected user1 to be recipient")
+            }
+
+            XCTAssertEqual(Set(recipient1.clients.map(\.client)), Set([client1, client2].map(\.clientId)))
+
+            guard let recipient2 = otrMessage.recipients.first(where: { $0.user == user2.userId }) else {
+                return XCTFail("Expected user2 to be recipient")
+            }
+
+            XCTAssertEqual(Set(recipient2.clients.map(\.client)), Set([client3, client4].map(\.clientId)))
         }
-
-        // Then we send the message to all clients in the conversation
-        XCTAssertEqual(otrMessage.recipients.count, 2)
-
-        guard let recipient1 = otrMessage.recipients.first(where: { $0.user == user1.userId }) else {
-            return XCTFail("Expected user1 to be recipient")
-        }
-
-        XCTAssertEqual(Set(recipient1.clients.map(\.client)), Set([client1, client2].map(\.clientId)))
-
-        guard let recipient2 = otrMessage.recipients.first(where: { $0.user == user2.userId }) else {
-            return XCTFail("Expected user2 to be recipient")
-        }
-
-        XCTAssertEqual(Set(recipient2.clients.map(\.client)), Set([client3, client4].map(\.clientId)))
     }
 
     @discardableResult
@@ -577,10 +585,10 @@ class CallingRequestStrategyTests: MessagingTest {
 
         WaitingGroupTask(context: syncMOC) { [syncMOC] in
             // TODO: [John] use flag here
-            let success = await userClient.establishSessionWithClient(client, usingPreKey: try! syncMOC.zm_cryptKeyStore.lastPreKey())
+            let lastPreKey = await syncMOC.perform { try! syncMOC.zm_cryptKeyStore.lastPreKey() }
+            let success = await userClient.establishSessionWithClient(client, usingPreKey: lastPreKey)
             XCTAssertTrue(success)
         }
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 1))
 
         return client
     }
@@ -624,48 +632,52 @@ class CallingRequestStrategyTests: MessagingTest {
         sut.callCenter?.muted = false
 
         // WHEN
-        sut.processEventsWhileInBackground([updateEvent])
+        syncMOC.performAndWait {
+            sut.processEventsWhileInBackground([updateEvent])
+        }
 
         // THEN
         XCTAssertTrue(sut.callCenter?.muted ?? false)
     }
 
     func test_ThatItHandlesMLSRejectMessage() {
-        // Given
-        createMLSSelfConversation()
-        let selfClient = createSelfClient()
+        let (user1AVSIdentifier, client1RemoteIdentifier, conversation, sentMessage) = syncMOC.performAndWait { [self] in
+            // Given
+            createMLSSelfConversation()
+            let selfClient = createSelfClient()
 
-        let user1 = ZMUser.insertNewObject(in: syncMOC)
-        user1.remoteIdentifier = .create()
-        let client1 = createClient(for: user1, connectedTo: selfClient)
+            let user1 = ZMUser.insertNewObject(in: syncMOC)
+            user1.remoteIdentifier = .create()
+            let client1 = createClient(for: user1, connectedTo: selfClient)
 
-        let user2 = ZMUser.insertNewObject(in: syncMOC)
-        user2.remoteIdentifier = .create()
-        _ = createClient(for: user2, connectedTo: selfClient)
+            let user2 = ZMUser.insertNewObject(in: syncMOC)
+            user2.remoteIdentifier = .create()
+            _ = createClient(for: user2, connectedTo: selfClient)
 
-        // An MLS conversation with both users and self
-        let conversation = ZMConversation.insertNewObject(in: syncMOC)
-        conversation.remoteIdentifier = .create()
-        conversation.mlsGroupID = MLSGroupID(Data([2, 2, 2]))
-        conversation.messageProtocol = .mls
-        conversation.addParticipantsAndUpdateConversationState(users: [ZMUser.selfUser(in: syncMOC), user1, user2], role: nil)
-        conversation.needsToBeUpdatedFromBackend = false
+            // An MLS conversation with both users and self
+            let conversation = ZMConversation.insertNewObject(in: syncMOC)
+            conversation.remoteIdentifier = .create()
+            conversation.mlsGroupID = MLSGroupID(Data([2, 2, 2]))
+            conversation.messageProtocol = .mls
+            conversation.addParticipantsAndUpdateConversationState(users: [ZMUser.selfUser(in: syncMOC), user1, user2], role: nil)
+            conversation.needsToBeUpdatedFromBackend = false
 
-        syncMOC.saveOrRollback()
+            syncMOC.saveOrRollback()
 
-        var sentMessage: GenericMessageEntity?
-        mockMessageSender.sendMessageMessage_MockMethod = { message in
-            sentMessage = message as? GenericMessageEntity
-        }
+            var sentMessage: GenericMessageEntity?
+            mockMessageSender.sendMessageMessage_MockMethod = { message in
+                sentMessage = message as? GenericMessageEntity
+            }
 
-        let mockMLSService = MockMLSServiceInterface()
+            let mockMLSService = MockMLSServiceInterface()
 
-        syncMOC.performGroupedBlock {
             self.syncMOC.mlsService = mockMLSService
+
+            return (user1.avsIdentifier, client1.remoteIdentifier!, conversation, sentMessage)
         }
 
         // Targeting one client
-        let avsClient1 = AVSClient(userId: user1.avsIdentifier, clientId: client1.remoteIdentifier!)
+        let avsClient1 = AVSClient(userId: user1AVSIdentifier, clientId: client1RemoteIdentifier)
         let targets = [avsClient1]
 
         let expectation = self.expectation(description: "reject message is sent to MLS self conversation")
