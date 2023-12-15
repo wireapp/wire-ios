@@ -306,7 +306,6 @@
 		639971AE2B2732E6009DD5CF /* CommitSender.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639971AD2B2732E6009DD5CF /* CommitSender.swift */; };
 		639971B02B27346B009DD5CF /* CommitError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639971AF2B27346B009DD5CF /* CommitError.swift */; };
 		639971B22B2734C0009DD5CF /* ExternalCommitError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639971B12B2734C0009DD5CF /* ExternalCommitError.swift */; };
-		639971BF2B28BB63009DD5CF /* config.yml in Resources */ = {isa = PBXBuildFile; fileRef = 639971BE2B28BB63009DD5CF /* config.yml */; };
 		639971C22B28C5FF009DD5CF /* CommitSenderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639971C02B28C5FA009DD5CF /* CommitSenderTests.swift */; };
 		63AFE2D6244F49A90003F619 /* GenericMessage+MessageCapable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63AFE2D5244F49A90003F619 /* GenericMessage+MessageCapable.swift */; };
 		63B1335429A503D100009D84 /* ProteusServiceInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B1333729A503D000009D84 /* ProteusServiceInterface.swift */; };
@@ -1135,7 +1134,6 @@
 		639971AD2B2732E6009DD5CF /* CommitSender.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommitSender.swift; sourceTree = "<group>"; };
 		639971AF2B27346B009DD5CF /* CommitError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommitError.swift; sourceTree = "<group>"; };
 		639971B12B2734C0009DD5CF /* ExternalCommitError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExternalCommitError.swift; sourceTree = "<group>"; };
-		639971BE2B28BB63009DD5CF /* config.yml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.yaml; path = config.yml; sourceTree = "<group>"; };
 		639971C02B28C5FA009DD5CF /* CommitSenderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommitSenderTests.swift; sourceTree = "<group>"; };
 		63AFE2D5244F49A90003F619 /* GenericMessage+MessageCapable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GenericMessage+MessageCapable.swift"; sourceTree = "<group>"; };
 		63B1333729A503D000009D84 /* ProteusServiceInterface.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProteusServiceInterface.swift; sourceTree = "<group>"; };
@@ -1965,7 +1963,6 @@
 		594EB2FE2B1E31D30022A5CD /* Sourcery */ = {
 			isa = PBXGroup;
 			children = (
-				639971BE2B28BB63009DD5CF /* config.yml */,
 				594EB2FF2B1E31D30022A5CD /* generated */,
 			);
 			path = Sourcery;
@@ -3535,7 +3532,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				639971BF2B28BB63009DD5CF /* config.yml in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
