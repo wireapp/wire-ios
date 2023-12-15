@@ -18,6 +18,7 @@
 import Foundation
 import XCTest
 import WireDataModel
+import WireDataModelSupport
 @testable import WireRequestStrategy
 
 class ConversationRequestStrategyTests: MessagingTestBase {
@@ -26,6 +27,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
     var mockApplicationStatus: MockApplicationStatus!
     var mockSyncProgress: MockSyncProgress!
     var mockRemoveLocalConversation: MockLocalConversationRemovalUseCase!
+    var mockMLSService: MockMLSServiceInterface!
 
     var apiVersion: APIVersion! {
         didSet {
@@ -40,11 +42,13 @@ class ConversationRequestStrategyTests: MessagingTestBase {
         mockApplicationStatus.mockSynchronizationState = .online
         mockSyncProgress = MockSyncProgress()
         mockRemoveLocalConversation = MockLocalConversationRemovalUseCase()
+        mockMLSService = MockMLSServiceInterface()
 
         sut = ConversationRequestStrategy(
             withManagedObjectContext: syncMOC,
             applicationStatus: mockApplicationStatus,
             syncProgress: mockSyncProgress,
+            mlsService: mockMLSService,
             removeLocalConversation: mockRemoveLocalConversation
         )
 

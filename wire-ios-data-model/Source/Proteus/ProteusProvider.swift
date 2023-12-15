@@ -68,7 +68,7 @@ public class ProteusProvider: ProteusProviding {
 
         if let proteusService = proteusService, proteusViaCoreCrypto {
 
-            return try proteusServiceBlock(proteusService)
+          return try proteusServiceBlock(proteusService)
 
         } else {
 

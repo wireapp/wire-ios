@@ -126,12 +126,36 @@ extension UserClientRequestStrategyTests {
         return selfClient
     }
 
-    func testThatItReturnsRequestForInsertedObject() {
+    func testThatPrekeysAreGeneratedBeforeAttemptingToRegisterClient() {
         syncMOC.performGroupedBlockAndWait {
 
             // given
             let client = self.createSelfClient(self.sut.managedObjectContext!)
             self.sut.notifyChangeTrackers(client)
+            self.clientRegistrationStatus.prepareForClientRegistration()
+
+            // when
+            XCTAssertNil(self.sut.nextRequest(for: .v0))
+        }
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        syncMOC.performGroupedBlockAndWait {
+            // then
+            XCTAssertNotNil(self.clientRegistrationStatus.prekeys)
+            XCTAssertNotNil(self.clientRegistrationStatus.lastResortPrekey)
+        }
+    }
+
+    func testThatItReturnsRequestForInsertedObject() {
+        syncMOC.performGroupedBlockAndWait {
+
+            // given
+            let prekeys = [[NSNumber(value: 1): "prekey1"]]
+            let lastResortPrekey = "last-resort-prekey"
+            let client = self.createSelfClient(self.sut.managedObjectContext!)
+            self.sut.notifyChangeTrackers(client)
+            self.clientRegistrationStatus.prekeys = prekeys
+            self.clientRegistrationStatus.lastResortPrekey = lastResortPrekey
             self.clientRegistrationStatus.mockPhase = .unregistered
 
             // when
@@ -140,7 +164,13 @@ extension UserClientRequestStrategyTests {
             let request = self.sut.nextRequest(for: .v0)
 
             // then
-            let expectedRequest = try! self.sut.requestsFactory.registerClientRequest(client, credentials: self.fakeCredentialsProvider.emailCredentials(), cookieLabel: "mycookie", apiVersion: .v0).transportRequest!
+            let expectedRequest = try! self.sut.requestsFactory.registerClientRequest(
+                client,
+                credentials: self.fakeCredentialsProvider.emailCredentials(),
+                cookieLabel: "mycookie",
+                prekeys: self.clientRegistrationStatus.idPrekeysTuple!,
+                lastRestortPrekey: self.clientRegistrationStatus.lastResortIdPrekeyTuple!,
+                apiVersion: .v0).transportRequest!
 
             AssertOptionalNotNil(request, "Should return request if there is inserted UserClient object") { request in
                 XCTAssertNotNil(request.payload, "Request should contain payload")
@@ -154,6 +184,7 @@ extension UserClientRequestStrategyTests {
         syncMOC.performGroupedBlockAndWait {
 
             // given
+            self.clientRegistrationStatus.isWaitingForLoginValue = true
             let client = self.createSelfClient(self.sut.managedObjectContext!)
             self.sut.notifyChangeTrackers(client)
 
@@ -174,6 +205,8 @@ extension UserClientRequestStrategyTests {
             // given
             let client = self.createSelfClient(self.sut.managedObjectContext!)
             self.sut.managedObjectContext!.saveOrRollback()
+            self.clientRegistrationStatus.prekeys = [[NSNumber(value: 1): "prekey1"]]
+            self.clientRegistrationStatus.lastResortPrekey = "last-resort-prekey"
 
             let remoteIdentifier = "superRandomIdentifer"
             let payload = ["id": remoteIdentifier]
@@ -197,9 +230,12 @@ extension UserClientRequestStrategyTests {
 
         var client: UserClient! = nil
         var maxID_before: UInt16! = nil
+        let expectedMaxID: UInt16 = 1
 
         syncMOC.performGroupedBlock {
             // given
+            self.clientRegistrationStatus.prekeys = [[NSNumber(value: expectedMaxID): "prekey1"]]
+            self.clientRegistrationStatus.lastResortPrekey = "last-resort-prekey"
             self.clientRegistrationStatus.mockPhase = .unregistered
 
             client = self.createSelfClient(self.sut.managedObjectContext!)
@@ -218,9 +254,6 @@ extension UserClientRequestStrategyTests {
         syncMOC.performGroupedBlockAndWait {
             // then
             let maxID_after = UInt16(client.preKeysRangeMax)
-            let expectedMaxID = self.spyKeyStore.lastGeneratedKeys.last?.id
-
-            XCTAssertNotEqual(maxID_after, maxID_before)
             XCTAssertEqual(maxID_after, expectedMaxID)
         }
     }
@@ -230,6 +263,8 @@ extension UserClientRequestStrategyTests {
         var client: UserClient! = nil
         syncMOC.performGroupedBlock {
             // given
+            self.clientRegistrationStatus.prekeys = [[NSNumber(value: 1): "prekey1"]]
+            self.clientRegistrationStatus.lastResortPrekey = "last-resort-prekey"
             self.clientRegistrationStatus.mockPhase = .unregistered
 
             client = self.createSelfClient(self.syncMOC)
@@ -256,6 +291,8 @@ extension UserClientRequestStrategyTests {
 
         syncMOC.performGroupedBlock {
             // given
+            self.clientRegistrationStatus.prekeys = [[NSNumber(value: 1): "prekey1"]]
+            self.clientRegistrationStatus.lastResortPrekey = "last-resort-prekey"
             self.clientRegistrationStatus.mockPhase = .unregistered
 
             let client = self.createSelfClient(self.syncMOC)
@@ -277,6 +314,8 @@ extension UserClientRequestStrategyTests {
 
         syncMOC.performGroupedBlock {
             // given
+            self.clientRegistrationStatus.prekeys = [[NSNumber(value: 1): "prekey1"]]
+            self.clientRegistrationStatus.lastResortPrekey = "last-resort-prekey"
             self.clientRegistrationStatus.mockPhase = .unregistered
 
             let client = self.createSelfClient(self.syncMOC)
@@ -305,6 +344,8 @@ extension UserClientRequestStrategyTests {
 
         syncMOC.performGroupedBlock {
             // given
+            self.clientRegistrationStatus.prekeys = [[NSNumber(value: 1): "prekey1"]]
+            self.clientRegistrationStatus.lastResortPrekey = "last-resort-prekey"
             self.clientRegistrationStatus.mockPhase = .unregistered
 
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
@@ -340,6 +381,8 @@ extension UserClientRequestStrategyTests {
 
         syncMOC.performGroupedBlock {
             // given
+            self.clientRegistrationStatus.prekeys = [[NSNumber(value: 1): "prekey1"]]
+            self.clientRegistrationStatus.lastResortPrekey = "last-resort-prekey"
             self.cookieStorage.authenticationCookieData = Data()
             self.clientRegistrationStatus.mockPhase = .unregistered
 
@@ -374,11 +417,35 @@ extension UserClientRequestStrategyTests {
 // MARK: Updating
 extension UserClientRequestStrategyTests {
 
+    func testThatPrekeysAreGeneratedBeforeRefillingPrekeys() {
+        syncMOC.performGroupedBlockAndWait {
+            // given
+            self.clientRegistrationStatus.mockPhase = .registered
+            let client = self.createSelfClient(self.sut.managedObjectContext!)
+            client.remoteIdentifier = UUID.create().transportString()
+            client.numberOfKeysRemaining = Int32(self.sut.minNumberOfRemainingKeys - 1)
+            client.setLocallyModifiedKeys([ZMUserClientNumberOfKeysRemainingKey])
+            self.sut.managedObjectContext!.saveOrRollback()
+            self.sut.notifyChangeTrackers(client)
+
+            // when
+            XCTAssertNil(self.sut.nextRequest(for: .v0))
+        }
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        syncMOC.performGroupedBlockAndWait {
+            // then
+            XCTAssertNotNil(self.clientUpdateStatus.prekeys)
+        }
+    }
+
     func testThatItReturnsRequestIfNumberOfRemainingKeysIsLessThanMinimum() {
 
         syncMOC.performGroupedBlockAndWait {
             // given
+            let prekeys = [IdPrekeyTuple(id: 1, prekey: "prekey1")]
             self.clientRegistrationStatus.mockPhase = .registered
+            self.clientUpdateStatus.didGeneratePrekeys(prekeys)
 
             let client = UserClient.insertNewObject(in: self.sut.managedObjectContext!)
             let userClientNumberOfKeysRemainingKeySet: Set<AnyHashable> = [ZMUserClientNumberOfKeysRemainingKey]
@@ -396,7 +463,11 @@ extension UserClientRequestStrategyTests {
             }
 
             // then
-            let expectedRequest = try! self.sut.requestsFactory.updateClientPreKeysRequest(client, apiVersion: .v0).transportRequest
+            let expectedRequest = try! self.sut.requestsFactory.updateClientPreKeysRequest(
+                client,
+                prekeys: prekeys,
+                apiVersion: .v0
+            ).transportRequest
 
             AssertOptionalNotNil(request, "Should return request if there is inserted UserClient object") { request in
                 XCTAssertNotNil(request.payload, "Request should contain payload")
@@ -432,6 +503,8 @@ extension UserClientRequestStrategyTests {
         syncMOC.performGroupedBlockAndWait {
 
             // given
+            self.clientRegistrationStatus.mockPhase = .registered
+
             let client = UserClient.insertNewObject(in: self.sut.managedObjectContext!)
             client.remoteIdentifier = UUID.create().transportString()
             self.sut.managedObjectContext!.saveOrRollback()
@@ -458,7 +531,7 @@ extension UserClientRequestStrategyTests {
             self.sut.managedObjectContext!.saveOrRollback()
 
             client.numberOfKeysRemaining = Int32(self.sut.minNumberOfRemainingKeys - 1)
-            let expectedNumberOfKeys = client.numberOfKeysRemaining + Int32(self.sut.requestsFactory.keyCount)
+            let expectedNumberOfKeys = client.numberOfKeysRemaining + Int32(self.sut.prekeyGenerator.keyCount)
 
             // when
             let response = ZMTransportResponse(payload: nil, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
@@ -497,6 +570,7 @@ extension UserClientRequestStrategyTests {
 
         syncMOC.performGroupedBlockAndWait {
             // given
+            self.clientUpdateStatus.mockPhase = .fetchingClients
             let nextResponse = ZMTransportResponse(payload: self.payloadForClients() as ZMTransportData?, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
 
             // when
