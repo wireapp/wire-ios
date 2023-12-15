@@ -286,16 +286,16 @@ public class ZMUserSession: NSObject {
     }()
 
     public lazy var mlsConversationVerificationStatusProvider: MLSConversationVerificationStatusProviderInterface? = {
-        /// TODO: if E2EI feature is enabled
         var verificationStatusProvider: MLSConversationVerificationStatusProvider?
         syncContext.performAndWait {
             guard let coreCrypto = syncContext.coreCrypto else {
                 return
             }
 
-            let e2eIConversationService = E2eIConversationService(coreCrypto: coreCrypto)
-            verificationStatusProvider = MLSConversationVerificationStatusProvider(e2eIConversationService: e2eIConversationService,
-                                                                                   syncContext: syncContext)
+            let e2eIVerificationStatusService = E2eIVerificationStatusService(coreCryptoProvider: coreCryptoProvider)
+            verificationStatusProvider = MLSConversationVerificationStatusProvider(
+                e2eIVerificationStatusService: e2eIVerificationStatusService,
+                syncContext: syncContext)
         }
         return verificationStatusProvider
     }()
@@ -567,15 +567,14 @@ public class ZMUserSession: NSObject {
     }
 
     private func observeOnEpochChangeIfNeeded() {
-        syncContext.performAndWait {
-            guard let mlsService = self.syncContext.mlsService else {
-                return
-            }
-            let epochChangeToken = EpochChangeObserver(
-                mlsService: mlsService,
-                onEpochChangedBlock: self.mlsConversationVerificationStatusProvider?.invoke(_:))
-            self.tokens.append(epochChangeToken)
+        guard e2eiFeature.isEnabled,
+              let mlsService = self.syncContext.mlsService else {
+            return
         }
+        let epochChangeToken = EpochChangeObserver(
+            mlsService: mlsService,
+            block: self.mlsConversationVerificationStatusProvider?.updateStatus(_:))
+        self.tokens.append(epochChangeToken)
     }
 
     func createMLSClientIfNeeded() {

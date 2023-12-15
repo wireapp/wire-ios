@@ -19,21 +19,34 @@
 import Foundation
 import WireCoreCrypto
 
-public protocol E2eIConversationServiceInterface {
+// sourcery: AutoMockable
+public protocol E2eIVerificationStatusServiceInterface {
 
-    func getConversationVerificationStatus(groupID: MLSGroupID) -> MLSVerificationStatus
+    func getConversationStatus(groupID: MLSGroupID) -> MLSVerificationStatus
 
 }
 
-public final class E2eIConversationService: E2eIConversationServiceInterface {
-    private let coreCrypto: SafeCoreCryptoProtocol
-    public init(coreCrypto: SafeCoreCryptoProtocol) {
-        self.coreCrypto = coreCrypto
+public final class E2eIVerificationStatusService: E2eIVerificationStatusServiceInterface {
+
+    // MARK: - Properties
+
+    private let coreCryptoProvider: CoreCryptoProviderProtocol
+    private var coreCrypto: SafeCoreCryptoProtocol {
+        get throws {
+            try coreCryptoProvider.coreCrypto(requireMLS: true)
+        }
     }
 
-    public func getConversationVerificationStatus(groupID: MLSGroupID) -> MLSVerificationStatus {
-        /// TODO: should use coreCrypto.e2eiConversationState(groupID) -> E2EIConversationState
-        /// will be available in the latest CC version.
+    // MARK: - Life cycle
+
+    public init(coreCryptoProvider: CoreCryptoProviderProtocol) {
+        self.coreCryptoProvider = coreCryptoProvider
+    }
+
+    // MARK: - Public interface
+
+    public func getConversationStatus(groupID: MLSGroupID) -> MLSVerificationStatus {
+        /// TODO: should use coreCrypto.e2eiConversationState(groupID) -> E2EIConversationState from the new CC version
         return E2EIConversationState.notVerified.toMLSVerificationStatus()
     }
 

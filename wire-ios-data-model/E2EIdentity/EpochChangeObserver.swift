@@ -23,9 +23,9 @@ public class EpochChangeObserver {
     public let token: AnyObject?
 
     public init(mlsService: MLSServiceInterface,
-                onEpochChangedBlock: ((_ groupID: MLSGroupID) -> Void)?) {
+                block: ((_ groupID: MLSGroupID) -> Void)?) {
         token = mlsService.onEpochChanged().sink { groupID in
-            onEpochChangedBlock?(groupID)
+            block?(groupID)
         }
     }
 

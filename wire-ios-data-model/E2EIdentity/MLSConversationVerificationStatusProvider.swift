@@ -18,35 +18,45 @@
 
 import Foundation
 
+// sourcery: AutoMockable
 public protocol MLSConversationVerificationStatusProviderInterface {
 
-    func invoke(_ groupID: MLSGroupID)
+    func updateStatus(_ groupID: MLSGroupID)
 
 }
 
 public class MLSConversationVerificationStatusProvider: MLSConversationVerificationStatusProviderInterface {
 
-    private var e2eIConversationService: E2eIConversationServiceInterface
+    // MARK: - Properties
+
+    private var e2eIVerificationStatusService: E2eIVerificationStatusServiceInterface
     private var syncContext: NSManagedObjectContext
 
-    public init(e2eIConversationService: E2eIConversationServiceInterface, syncContext: NSManagedObjectContext) {
-        self.e2eIConversationService = e2eIConversationService
-        self.syncContext = syncContext
-    }
+    // MARK: - Life cycle
 
-    public func invoke(_ groupID: MLSGroupID) {
-        var conversation: ZMConversation?
-        let coreCryptoStatus = e2eIConversationService.getConversationVerificationStatus(groupID: groupID)
+    public init(
+        e2eIVerificationStatusService: E2eIVerificationStatusServiceInterface,
+        syncContext: NSManagedObjectContext) {
+            self.e2eIVerificationStatusService = e2eIVerificationStatusService
+            self.syncContext = syncContext
+        }
+
+    // MARK: - Public interface
+
+    public func updateStatus(_ groupID: MLSGroupID) {
         syncContext.performAndWait {
-            conversation = ZMConversation.fetch(with: groupID, in: syncContext)
+            let coreCryptoStatus = e2eIVerificationStatusService.getConversationStatus(groupID: groupID)
+            guard let conversation = ZMConversation.fetch(with: groupID, in: syncContext) else {
+                return
+            }
+            updateStatusAndNotifyUserIfNeeded(newStatusFromCC: coreCryptoStatus, conversation: conversation)
         }
-        guard let conversation = conversation else {
-            return
-        }
-        updateStatusAndNotifyUserIfNeeded(newStatusFromCC: coreCryptoStatus, conversation: conversation)
     }
 
-    private func updateStatusAndNotifyUserIfNeeded(newStatusFromCC: MLSVerificationStatus, conversation: ZMConversation) {
+    // MARK: - Helpers
+
+    private func updateStatusAndNotifyUserIfNeeded(newStatusFromCC: MLSVerificationStatus,
+                                                   conversation: ZMConversation) {
         guard let currentStatus = conversation.mlsVerificationStatus else {
             return
         }
@@ -62,7 +72,8 @@ public class MLSConversationVerificationStatusProvider: MLSConversationVerificat
         }
     }
 
-    private func getActualNewStatus(newStatusFromCC: MLSVerificationStatus, currentStatus: MLSVerificationStatus) -> MLSVerificationStatus {
+    private func getActualNewStatus(newStatusFromCC: MLSVerificationStatus,
+                                    currentStatus: MLSVerificationStatus) -> MLSVerificationStatus {
         switch (newStatusFromCC, currentStatus) {
         case (.notVerified, .verified):
             return .degraded
@@ -76,4 +87,5 @@ public class MLSConversationVerificationStatusProvider: MLSConversationVerificat
     private func notifyUserAboutStateChanges(_ newStatus: MLSVerificationStatus, in conversation: ZMConversation) {
         // TODO: add system message - https://wearezeta.atlassian.net/browse/WPB-3233
     }
+
 }
