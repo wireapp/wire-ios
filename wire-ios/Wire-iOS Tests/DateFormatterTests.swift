@@ -128,19 +128,22 @@ final class DateFormatterTests: XCTestCase {
     func testWr_formattedDateForTwoHourBefore() {
         // GIVEN
         let twoHourBefore = Calendar.current.date(byAdding: .hour, value: -2, to: Date())!
-        var hour = Calendar.current.component(.hour, from: twoHourBefore)
-
-        // to fit US 12hr format
-        if hour == 0 {
-            hour = 12
-        }
+        let hour = Calendar.current.component(.hour, from: twoHourBefore)
+        let minute = Calendar.current.component(.minute, from: twoHourBefore)
+        let dateFormatter = DateFormatter()
 
         // WHEN
         let dateString = twoHourBefore.formattedDate
 
         // THEN
-        // If two hours before is yesterday, dateString looks like "Yesterday, 11:17 PM"
-        XCTAssertTrue(dateString.contains(String(hour)), "hour is \(hour), dateString is \(dateString)")
+        dateFormatter.dateFormat = "h:mm\u{202f}a"
+        let expected12HoursString = dateFormatter.string(from: twoHourBefore)
+        dateFormatter.dateFormat = "H:mm"
+        let expected24HoursString = dateFormatter.string(from: twoHourBefore)
+        XCTAssert(
+            dateString.contains(expected24HoursString) || dateString.contains(expected12HoursString),
+            "dateString '\(dateString)' neither contains '\(expected12HoursString)' nor '\(expected24HoursString)'"
+        )
     }
 
     func testWr_formattedDateForNow() {
