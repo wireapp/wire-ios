@@ -422,17 +422,17 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
 
         // wait for `MLSService.init`'s async operations
-        wait(for: [didFinishInitializationExpectation], timeout: 1)
+        await fulfillment(of: [didFinishInitializationExpectation], timeout: 1)
 
         // When
-        XCTAssertNoThrow(try await sut.createGroup(for: groupID))
+        try await sut.createGroup(for: groupID)
 
         // Then
         XCTAssertEqual(mockCreateConversationCount, 1)
         XCTAssertEqual(mockStaleMLSKeyDetector.calls.keyingMaterialUpdated, [groupID])
     }
 
-    func test_CreateGroup_ThrowsError() throws {
+    func test_CreateGroup_ThrowsError() async throws {
         // Given
         let groupID = MLSGroupID(Data([1, 2, 3]))
         let config = ConversationConfiguration(
@@ -453,15 +453,17 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
 
         // wait for `MLSService.init`'s async operations
-        wait(for: [didFinishInitializationExpectation], timeout: 1)
+        await fulfillment(of: [didFinishInitializationExpectation], timeout: 1)
 
         // when / then
-        assertItThrows(error: MLSService.MLSGroupCreationError.failedToCreateGroup) {
-            try sut.createGroup(for: groupID)
+        do {
+            try await sut.createGroup(for: groupID)
+            XCTFail("Unexpected success")
+        } catch MLSService.MLSGroupCreationError.failedToCreateGroup {
+            // Then
+            XCTAssertEqual(mockCreateConversationCount, 1)
         }
 
-        // Then
-        XCTAssertEqual(mockCreateConversationCount, 1)
     }
 
     // MARK: - Adding participants
@@ -1077,7 +1079,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     // MARK: - Joining conversations
 
-    func test_PerformPendingJoins_IsSuccessful() {
+    func test_PerformPendingJoins_IsSuccessful() async throws {
         // Given
         let groupID = MLSGroupID.random()
         let conversationID = UUID.create()
@@ -1116,13 +1118,13 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
 
         // wait for `MLSService.init`'s async operations
-        wait(for: [didFinishInitializationExpectation], timeout: 1)
+        await fulfillment(of: [didFinishInitializationExpectation], timeout: 1)
 
         // When
-        sut.performPendingJoins()
+        try await sut.performPendingJoins()
 
         // Then
-        wait(for: [expectation], timeout: 0.5)
+        await fulfillment(of: [expectation], timeout: 0.5)
 
         // it fetches public group state
         let groupStateInvocations = mockActionsProvider.fetchConversationGroupInfoConversationIdDomainSubgroupTypeContext_Invocations
@@ -1143,15 +1145,18 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         XCTAssertEqual(processConversationEventsArguments.first, mockUpdateEvents)
     }
 
-    func test_PerformPendingJoins_Retries() {
-        test_PerformPendingJoinsRecovery(.retry)
+    func test_PerformPendingJoins_Retries() async throws {
+        try await test_PerformPendingJoinsRecovery(.retry)
     }
 
-    func test_PerformPendingJoins_GivesUp() {
-        test_PerformPendingJoinsRecovery(.giveUp)
+    func test_PerformPendingJoins_GivesUp() async throws {
+        try await test_PerformPendingJoinsRecovery(.giveUp)
     }
 
-    private func test_PerformPendingJoinsRecovery(_ recovery: MLSActionExecutor.ExternalCommitErrorRecovery) {
+    private func test_PerformPendingJoinsRecovery(
+        _ recovery: MLSActionExecutor.ExternalCommitErrorRecovery
+        // TODO: add file, line
+    ) async throws {
         // Given
         let shouldRetry = recovery == .retry
         let groupID = MLSGroupID.random()
@@ -1194,13 +1199,13 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
 
         // wait for `MLSService.init`'s async operations
-        wait(for: [didFinishInitializationExpectation], timeout: 1)
+        await fulfillment(of: [didFinishInitializationExpectation], timeout: 1)
 
         // When
-        sut.performPendingJoins()
+        try await sut.performPendingJoins()
 
         // Then
-        wait(for: [expectation], timeout: 0.5)
+        await fulfillment(of: [expectation], timeout: 0.5)
 
         // it fetches group info
         let groupInfoInvocations = mockActionsProvider.fetchConversationGroupInfoConversationIdDomainSubgroupTypeContext_Invocations
@@ -1216,7 +1221,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         XCTAssertEqual(processConversationEventsCount, shouldRetry ? 1 : 0)
     }
 
-    func test_PerformPendingJoins_DoesntJoinGroupNotPending() {
+    func test_PerformPendingJoins_DoesntJoinGroupNotPending() async throws {
         // Given
         let groupID = MLSGroupID.random()
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
@@ -1242,13 +1247,13 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
 
         // wait for `MLSService.init`'s async operations
-        wait(for: [didFinishInitializationExpectation], timeout: 1)
+        await fulfillment(of: [didFinishInitializationExpectation], timeout: 1)
 
         // When
-        sut.performPendingJoins()
+        try await sut.performPendingJoins()
 
         // Then
-        wait(for: [expectation], timeout: 0.5)
+        await fulfillment(of: [expectation], timeout: 0.5)
 
         let groupInfoInvocations = mockActionsProvider.fetchConversationGroupInfoConversationIdDomainSubgroupTypeContext_Invocations
         XCTAssertEqual(groupInfoInvocations.count, 0)

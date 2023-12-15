@@ -608,6 +608,7 @@ extension ZMClientMessageTests_Editing {
         self.performPretendingUiMocIsSyncMoc {
             newMessage = ZMClientMessage.createOrUpdate(from: updateEvent!, in: self.uiMOC, prefetchResult: nil)
         }
+        // TODO: why is `newMessage` never read?
 
         // then
         XCTAssertTrue(message.reactions.isEmpty)
@@ -643,6 +644,7 @@ extension ZMClientMessageTests_Editing {
         self.performPretendingUiMocIsSyncMoc {
             newMessage = ZMClientMessage.createOrUpdate(from: updateEvent!, in: self.uiMOC, prefetchResult: nil)
         }
+        // TODO: why is `newMessage` never read?
 
         // then
         XCTAssertTrue(message.reactions.isEmpty)

@@ -63,19 +63,19 @@ class ZMMessageTests_GenericMessage: BaseZMClientMessageTests {
 
 extension ZMMessageTests_GenericMessage {
 
-    func testThatItCreatesOtrKnockMessageFromAnUpdateEvent() {
+    func testThatItCreatesOtrKnockMessageFromAnUpdateEvent() throws {
         // given
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.remoteIdentifier = UUID.create()
 
-        let senderClientID = NSString.createAlphanumerical()
+        let senderClientID = try XCTUnwrap(NSString.createAlphanumerical())
         let nonce = UUID.create()
         let knockMessage = GenericMessage(content: Knock.with { $0.hotKnock = false }, nonce: nonce)
 
-        let contentData = try? knockMessage.serializedData()
+        let contentData = try XCTUnwrap(knockMessage.serializedData())
         let data: NSDictionary = [
             "sender": senderClientID,
-            "text": contentData?.base64String()
+            "text": contentData.base64String()
         ]
         let payload = payloadForMessage(in: conversation, type: EventConversationAddOTRMessage, data: data, time: Date(timeIntervalSinceReferenceDate: 450000000))
         let event = ZMUpdateEvent.eventFromEventStreamPayload(payload, uuid: nil)
