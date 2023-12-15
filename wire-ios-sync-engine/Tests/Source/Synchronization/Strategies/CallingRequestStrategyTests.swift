@@ -575,8 +575,12 @@ class CallingRequestStrategyTests: MessagingTest {
         client.remoteIdentifier = NSString.createAlphanumerical() as String
         client.user = user
 
-        // TODO: [John] use flag here
-        XCTAssertTrue(userClient.establishSessionWithClient(client, usingPreKey: try! syncMOC.zm_cryptKeyStore.lastPreKey()))
+        WaitingGroupTask(context: syncMOC) { [syncMOC] in
+            // TODO: [John] use flag here
+            let success = await userClient.establishSessionWithClient(client, usingPreKey: try! syncMOC.zm_cryptKeyStore.lastPreKey())
+            XCTAssertTrue(success)
+        }
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 1))
 
         return client
     }

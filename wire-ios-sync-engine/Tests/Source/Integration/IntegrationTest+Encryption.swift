@@ -56,59 +56,67 @@ extension IntegrationTest {
 
     /// Creates a session between the self client to the given user, if it does not
     /// exists already
-    public func establishSessionFromSelf(to client: UserClient) {
+    public func establishSessionFromSelf(to client: UserClient) async {
+
+        let context = userSession!.syncManagedObjectContext
 
         // this makes sure the client has remote identifier
-        _ = self.encryptionContext(for: client)
+        await context.perform { _ = self.encryptionContext(for: client) }
 
-        if client.hasSessionWithSelfClient {
+        if await client.hasSessionWithSelfClient {
             // done!
             return
         }
 
-        let selfClient = ZMUser.selfUser(in: self.userSession!.syncManagedObjectContext).selfClient()!
-        var prekey: String?
-        self.encryptionContext(for: client).perform { (session) in
-            prekey = try! session.generateLastPrekey()
-        }
+        await context.perform {
+            _ = ZMUser.selfUser(in: context).selfClient()!
+            var prekey: String?
+            self.encryptionContext(for: client).perform { session in
+                prekey = try! session.generateLastPrekey()
+            }
 
-        // TODO: [John] use flag here
-        userSession!.syncContext.zm_cryptKeyStore.encryptionContext.perform { (session) in
-            try! session.createClientSession(client.sessionIdentifier!, base64PreKeyString: prekey!)
+            // TODO: [John] use flag here
+            context.zm_cryptKeyStore.encryptionContext.perform { (session) in
+                try! session.createClientSession(client.sessionIdentifier!, base64PreKeyString: prekey!)
+            }
         }
     }
 
     /// Creates a session between the self client, and a client matching a remote client.
     /// If no such client exists locally, it creates it (and the user associated with it).
-    public func establishSessionFromSelf(toRemote remoteClient: MockUserClient) {
+    public func establishSessionFromSelf(toRemote remoteClient: MockUserClient) async {
 
-        guard let remoteUserIdentifierString = remoteClient.user?.identifier,
-            let remoteUserIdentifier = UUID(uuidString: remoteUserIdentifierString),
-            let remoteClientIdentifier = remoteClient.identifier else {
-                fatalError("You should set up remote client with user and identifier")
+        let context = userSession!.syncManagedObjectContext
+        guard let remoteUserIdentifierString = await context.perform({ remoteClient.user?.identifier }),
+              let remoteUserIdentifier = UUID(uuidString: remoteUserIdentifierString),
+              let remoteClientIdentifier = await context.perform({ remoteClient.identifier }) else {
+            fatalError("You should set up remote client with user and identifier")
         }
 
-        // create user
+        let (localClient, lastPrekey) = await context.perform {
+            // create user
+            let localUser = ZMUser.fetchOrCreate(with: remoteUserIdentifier, domain: nil, in: context)
 
-        let localUser = ZMUser.fetchOrCreate(with: remoteUserIdentifier, domain: nil, in: userSession!.syncManagedObjectContext)
-
-        // create client
-        let localClient = localUser.clients.first(where: { $0.remoteIdentifier == remoteClientIdentifier }) ?? { () -> UserClient in
-            let newClient = UserClient.insertNewObject(in: self.userSession!.syncManagedObjectContext)
-            newClient.user = localUser
-            newClient.remoteIdentifier = remoteClientIdentifier
-            return newClient
+            // create client
+            let localClient = localUser.clients.first(where: { $0.remoteIdentifier == remoteClientIdentifier }) ?? { () -> UserClient in
+                let newClient = UserClient.insertNewObject(in: context)
+                newClient.user = localUser
+                newClient.remoteIdentifier = remoteClientIdentifier
+                return newClient
             }()
-        self.userSession!.syncManagedObjectContext.saveOrRollback()
+            context.saveOrRollback()
 
-        var lastPrekey: String?
-        self.mockTransportSession.performRemoteChanges { (_) in
-            lastPrekey = remoteClient.lastPrekey.value
+            var lastPrekey: String!
+            self.mockTransportSession.performRemoteChanges { _ in
+                lastPrekey = remoteClient.lastPrekey.value
+            }
+            return (localClient, lastPrekey)
         }
 
-        let selfClient = ZMUser.selfUser(in: self.userSession!.syncManagedObjectContext).selfClient()!
-        if !localClient.hasSessionWithSelfClient {
-            XCTAssertTrue(selfClient.establishSessionWithClient(localClient, usingPreKey: lastPrekey!))
+        let selfClient = await context.perform { ZMUser.selfUser(in: context).selfClient()! }
+        if await !localClient.hasSessionWithSelfClient {
+            let success = await selfClient.establishSessionWithClient(localClient, usingPreKey: lastPrekey!)
+            XCTAssertTrue(success)
         }
     }
 
