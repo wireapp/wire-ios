@@ -62,7 +62,6 @@ final class BackupRestoreController: NSObject {
     }
 
     private func showFilePicker() {
-        // Test code to verify restore
         let picker: UIDocumentPickerViewController
         if #available(iOS 14.0, *) {
             picker = UIDocumentPickerViewController(
