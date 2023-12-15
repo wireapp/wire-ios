@@ -69,6 +69,7 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
         applicationStatus: ApplicationStatus,
         syncProgress: SyncProgress,
+        mlsService: MLSServiceInterface,
         removeLocalConversation: RemoveLocalConversationUseCaseProtocol? = nil
     ) {
         self.removeLocalConversation = removeLocalConversation ?? RemoveLocalConversationUseCase()
@@ -126,7 +127,8 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
             \.needsToBeUpdatedFromBackend
         )
 
-        self.addParticipantActionHandler = AddParticipantActionHandler(context: managedObjectContext)
+        conversationEventProcessor = ConversationEventProcessor(context: managedObjectContext)
+        self.addParticipantActionHandler = AddParticipantActionHandler(context: managedObjectContext, eventProcessor: conversationEventProcessor)
         self.removeParticipantActionHandler = RemoveParticipantActionHandler(context: managedObjectContext)
         self.updateAccessRolesActionHandler = UpdateAccessRolesActionHandler(context: managedObjectContext)
 
@@ -138,10 +140,8 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
             updateAccessRolesActionHandler,
             updateRoleActionHandler,
             SyncConversationActionHandler(context: managedObjectContext),
-            CreateGroupConversationActionHandler(context: managedObjectContext)
+            CreateGroupConversationActionHandler(context: managedObjectContext, mlsService: mlsService)
         ])
-
-        conversationEventProcessor = ConversationEventProcessor(context: managedObjectContext)
 
         super.init(
             withManagedObjectContext: managedObjectContext,

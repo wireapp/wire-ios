@@ -95,7 +95,7 @@ class ClientUpdateStatusTests: MessagingTest {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        XCTAssertEqual(self.sut.currentPhase, ClientUpdatePhase.done)
+        XCTAssertEqual(self.sut.currentPhase, .waitingForPrekeys)
 
         XCTAssertEqual(self.receivedNotifications.count, 1)
         let note = self.receivedNotifications.first
@@ -121,7 +121,7 @@ class ClientUpdateStatusTests: MessagingTest {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        XCTAssertEqual(self.sut.currentPhase, ClientUpdatePhase.done)
+        XCTAssertEqual(self.sut.currentPhase, .waitingForPrekeys)
 
         XCTAssertEqual(self.receivedNotifications.count, 1)
         let note = self.receivedNotifications.first
@@ -164,7 +164,7 @@ class ClientUpdateStatusTests: MessagingTest {
 
         self.sut.needsToFetchClients(andVerifySelfClient: true)
         self.sut.didFetchClients([client, selfClient])
-        XCTAssertEqual(self.sut.currentPhase, ClientUpdatePhase.done)
+        XCTAssertEqual(self.sut.currentPhase, .waitingForPrekeys)
         self.receivedNotifications.removeAll()
 
         // when
@@ -176,7 +176,7 @@ class ClientUpdateStatusTests: MessagingTest {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        XCTAssertEqual(self.sut.currentPhase, ClientUpdatePhase.done)
+        XCTAssertEqual(self.sut.currentPhase, .waitingForPrekeys)
         XCTAssertEqual(self.receivedNotifications.count, 1)
         let note = self.receivedNotifications.first
         if let note = note {
@@ -200,7 +200,7 @@ class ClientUpdateStatusTests: MessagingTest {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        XCTAssertEqual(self.sut.currentPhase, ClientUpdatePhase.done)
+        XCTAssertEqual(self.sut.currentPhase, .waitingForPrekeys)
         XCTAssertEqual(self.receivedNotifications.count, 1)
         let note = self.receivedNotifications.first
         if let note = note {
@@ -222,7 +222,7 @@ class ClientUpdateStatusTests: MessagingTest {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        XCTAssertEqual(self.sut.currentPhase, ClientUpdatePhase.done)
+        XCTAssertEqual(self.sut.currentPhase, .waitingForPrekeys)
         XCTAssertEqual(self.receivedNotifications.count, 1)
         let note = self.receivedNotifications.first
         if let note = note {
@@ -253,7 +253,7 @@ class ClientUpdateStatusTests: MessagingTest {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        XCTAssertEqual(self.sut.currentPhase, ClientUpdatePhase.done)
+        XCTAssertEqual(self.sut.currentPhase, .waitingForPrekeys)
         XCTAssertEqual(self.receivedNotifications.count, 1)
         let note = self.receivedNotifications.first
         if let note = note {
@@ -290,5 +290,55 @@ class ClientUpdateStatusTests: MessagingTest {
         XCTAssertFalse(selfClient.markedToDelete)
         XCTAssertFalse(selfClient.hasLocalModifications(forKey: ZMUserClientMarkedToDeleteKey))
 
+    }
+
+    func testThatItReturnsWaitsForPrekeys_WhenThereAreNoPrekeysAvailable() {
+        // given
+        let selfClient = insertSelfClient()
+        self.sut.didFetchClients([selfClient])
+
+        // then
+        XCTAssertEqual(self.sut.currentPhase, .waitingForPrekeys)
+    }
+
+    func testThatItReturnsGeneratesPrekeys_AfterPrekeyGenerationAsBegun() {
+        // given
+        let selfClient = insertSelfClient()
+        self.sut.didFetchClients([selfClient])
+
+        // when
+        sut.willGeneratePrekeys()
+
+        // then
+        XCTAssertEqual(self.sut.currentPhase, .generatingPrekeys)
+    }
+
+    func testThatItReturnsDone_AfterPrekeyGenerationIsCompleted() {
+        // given
+        let prekey = IdPrekeyTuple(id: 1, prekey: "prekey1")
+        let selfClient = insertSelfClient()
+        self.sut.didFetchClients([selfClient])
+        sut.willGeneratePrekeys()
+
+        // when
+        sut.didGeneratePrekeys([prekey])
+
+        // then
+        XCTAssertEqual(self.sut.currentPhase, .done)
+    }
+
+    func testThatItReturnsWaitingForPrekeys_AfterPrekeysHaveBeenUploaded() {
+        // given
+        let prekey = IdPrekeyTuple(id: 1, prekey: "prekey1")
+        let selfClient = insertSelfClient()
+        self.sut.didFetchClients([selfClient])
+        sut.willGeneratePrekeys()
+        sut.didGeneratePrekeys([prekey])
+
+        // when
+        sut.didUploadPrekeys()
+
+        // then
+        XCTAssertEqual(self.sut.currentPhase, .waitingForPrekeys)
     }
 }

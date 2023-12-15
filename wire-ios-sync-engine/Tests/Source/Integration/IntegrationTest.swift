@@ -106,7 +106,7 @@ extension IntegrationTest {
     @objc
     func _setUp() {
 
-        UserClientRequestFactory._test_overrideNumberOfKeys = 1
+        PrekeyGenerator._test_overrideNumberOfKeys = 1
 
         var flag = DeveloperFlag.proteusViaCoreCrypto
         flag.isOn = false
@@ -142,7 +142,7 @@ extension IntegrationTest {
 
     @objc
     func _tearDown() {
-        UserClientRequestFactory._test_overrideNumberOfKeys = nil
+        PrekeyGenerator._test_overrideNumberOfKeys = nil
         destroyTimers()
         sharedSearchDirectory?.tearDown()
         sharedSearchDirectory = nil

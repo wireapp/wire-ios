@@ -28,6 +28,7 @@ class ActionHandlerTestBase<Action: EntityAction, Handler: ActionHandler<Action>
     typealias ValidationBlock = (Swift.Result<Result, Failure>) -> Bool
 
     var action: Action!
+    var handler: Handler!
 
     override func tearDown() {
         action = nil
@@ -45,11 +46,8 @@ class ActionHandlerTestBase<Action: EntityAction, Handler: ActionHandler<Action>
         expectedAcceptType: ZMTransportAccept? = nil,
         apiVersion: APIVersion = .v1
     ) throws -> ZMTransportRequest {
-        // Given
-        let sut = Handler(context: syncMOC)
-
         // When
-        let request = try XCTUnwrap(sut.request(for: action, apiVersion: apiVersion))
+        let request = try XCTUnwrap(handler.request(for: action, apiVersion: apiVersion))
 
         // Then
         XCTAssertEqual(request.path, expectedPath)
@@ -74,11 +72,8 @@ class ActionHandlerTestBase<Action: EntityAction, Handler: ActionHandler<Action>
         expectedContentType: String,
         apiVersion: APIVersion = .v1
     ) throws {
-        // Given
-        let sut = Handler(context: syncMOC)
-
         // When
-        let request = try XCTUnwrap(sut.request(for: action, apiVersion: apiVersion))
+        let request = try XCTUnwrap(handler.request(for: action, apiVersion: apiVersion))
 
         // Then
         XCTAssertEqual(request.path, expectedPath)
@@ -94,13 +89,12 @@ class ActionHandlerTestBase<Action: EntityAction, Handler: ActionHandler<Action>
     ) {
         // Given
         var action = action
-        let sut = Handler(context: syncMOC)
 
         // Expectation
         expect(action: &action, toPassValidation: validation)
 
         // When
-        let request = sut.request(for: action, apiVersion: apiVersion)
+        let request = handler.request(for: action, apiVersion: apiVersion)
 
         // Then
         XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
@@ -128,7 +122,6 @@ class ActionHandlerTestBase<Action: EntityAction, Handler: ActionHandler<Action>
         validation: @escaping ValidationBlock
     ) {
         // Given
-        let sut = Handler(context: syncMOC)
         var action = action
 
         // Expectation
@@ -141,7 +134,7 @@ class ActionHandlerTestBase<Action: EntityAction, Handler: ActionHandler<Action>
             label: label,
             apiVersion: apiVersion
         )
-        sut.handleResponse(response, action: action)
+        handler.handleResponse(response, action: action)
 
         // Then
         XCTAssert(waitForCustomExpectations(withTimeout: 0.5), file: file, line: line)
