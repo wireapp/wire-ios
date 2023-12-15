@@ -754,12 +754,16 @@ extension ZMUserSession: ZMSyncStateDelegate {
         }
     }
 
-    func processPendingCallEvents(completionHandler: @escaping () -> Void) throws {
+    func processPendingCallEvents(completionHandler: @escaping () -> Void) {
         WireLogger.updateEvent.info("process pending call events")
         Task {
-            try await updateEventProcessor!.processBufferedEvents()
-            await managedObjectContext.perform {
-                completionHandler()
+            do {
+                try await updateEventProcessor!.processBufferedEvents()
+                await managedObjectContext.perform {
+                    completionHandler()
+                }
+            } catch {
+                Logging.mls.error("Failed to process pending call events: \(String(reflecting: error))")
             }
         }
     }
