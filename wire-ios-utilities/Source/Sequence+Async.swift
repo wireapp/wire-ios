@@ -19,6 +19,15 @@
 import Foundation
 
 extension Sequence {
+
+    public func asyncForEach(
+        _ operation: (Element) async throws -> Void
+    ) async rethrows {
+        for element in self {
+            try await operation(element)
+        }
+    }
+
     public func asyncMap<T>(
         _ transform: (Element) async throws -> T
     ) async rethrows -> [T] {
