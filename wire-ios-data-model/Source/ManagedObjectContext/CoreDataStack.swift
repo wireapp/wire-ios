@@ -22,7 +22,20 @@ import WireSystem
 
 enum CoreDataStackError: Error {
     case simulateDatabaseLoadingFailure
+    case noDatabaseActivity
 }
+extension CoreDataStackError: LocalizedError {
+
+    var errorDescription: String? {
+        switch self {
+        case .simulateDatabaseLoadingFailure:
+            return "simulateDatabaseLoadingFailure"
+        case .noDatabaseActivity:
+            return "Could create a background activity for database setup"
+        }
+    }
+}
+
 
 @objc
 public protocol ContextProvider {
@@ -207,7 +220,10 @@ public class CoreDataStack: NSObject, ContextProvider {
         if needsMigration {
             onStartMigration()
         }
-
+        // this activity should prevent app to be killed while migrating db
+        guard let activity = BackgroundActivityFactory.shared.startBackgroundActivity(withName: "database setup") else {
+            return onFailure(CoreDataStackError.noDatabaseActivity)
+        }
         DispatchQueue.global(qos: .userInitiated).async {
             if self.needsMessagingStoreMigration() {
                 log.safePublic("[setup] start migration of core data messaging store!")
