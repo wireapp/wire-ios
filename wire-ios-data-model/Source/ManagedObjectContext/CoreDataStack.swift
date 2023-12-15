@@ -193,9 +193,9 @@ public class CoreDataStack: NSObject, ContextProvider {
     }
 
     func closeStores(in container: PersistentContainer) throws {
-        try container.persistentStoreCoordinator.persistentStores.forEach({
+        try container.persistentStoreCoordinator.persistentStores.forEach {
             try container.persistentStoreCoordinator.remove($0)
-        })
+        }
     }
 
     public func setup(

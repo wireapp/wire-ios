@@ -16,17 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-
 extension Sequence {
-
-    public func asyncForEach(
-        _ operation: (Element) async throws -> Void
-    ) async rethrows {
-        for element in self {
-            try await operation(element)
-        }
-    }
 
     public func asyncMap<T>(
         _ transform: (Element) async throws -> T
@@ -56,7 +46,7 @@ extension Sequence {
 
     public func asyncForEach(_ body: (Element) async throws -> Void) async rethrows {
         for element in self {
-          try await body(element)
+            try await body(element)
         }
     }
 
