@@ -1432,7 +1432,7 @@ public final class MLSService: MLSServiceInterface {
 
         } catch Error.failedToSendExternalCommit(recovery: .retry) {
             logger.warn("failed to send external commit, retrying operation...")
-            try await retryOnCommitFailure(for: groupID, operation: operation)
+            try await retryOnCommitFailure(for: groupID, operation: operation) // I wonder if this could result in an infinite loop
 
         } catch Error.failedToSendExternalCommit(recovery: .giveUp) {
             logger.warn("failed to send external commit, giving up...")

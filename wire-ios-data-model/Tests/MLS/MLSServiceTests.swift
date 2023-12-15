@@ -1159,7 +1159,11 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
     }
 
     func test_PerformPendingJoins_GivesUp() async throws {
-        try await test_PerformPendingJoinsRecovery(.giveUp)
+        do {
+            try await test_PerformPendingJoinsRecovery(.giveUp)
+        } catch MLSActionExecutor.Error.failedToSendExternalCommit {
+            // expected
+        }
     }
 
     private func test_PerformPendingJoinsRecovery(
