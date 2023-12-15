@@ -58,7 +58,7 @@ public class MLSConversationVerificationStatusProvider: MLSConversationVerificat
     private func updateStatusAndNotifyUserIfNeeded(newStatusFromCC: MLSVerificationStatus,
                                                    conversation: ZMConversation) {
         guard let currentStatus = conversation.mlsVerificationStatus else {
-            return
+            return conversation.mlsVerificationStatus = newStatusFromCC
         }
 
         let newStatus = getActualNewStatus(newStatusFromCC: newStatusFromCC, currentStatus: currentStatus)
