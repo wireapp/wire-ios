@@ -102,7 +102,11 @@
 				090837FF1B872DBF00629095 /* Products */,
 				67FFDFDA66F3EEA3F9461130 /* Frameworks */,
 			);
+			indentWidth = 4;
 			sourceTree = "<group>";
+			tabWidth = 4;
+			usesTabs = 0;
+			wrapsLines = 1;
 		};
 		090837FF1B872DBF00629095 /* Products */ = {
 			isa = PBXGroup;

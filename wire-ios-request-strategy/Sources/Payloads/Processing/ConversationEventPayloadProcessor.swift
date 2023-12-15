@@ -689,7 +689,7 @@ final class ConversationEventPayloadProcessor {
         )
 
         if source == .slowSync {
-            context.performAndWait {
+            await context.perform {
                 mlsEventProcessor.joinMLSGroupWhenReady(
                     forConversation: conversation,
                     context: context
