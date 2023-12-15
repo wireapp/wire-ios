@@ -262,7 +262,6 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
             return [mockUpdateEvent]
         }
 
-
         // When
         let updateEvents = try await sut.commitPendingProposals(in: groupID)
 
@@ -328,43 +327,6 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
 
         // Then the update event was returned
         XCTAssertEqual(updateEvents, mockUpdateEvents)
-    }
-
-    // MARK: - Epoch change
-
-    func test_OnEpochChanged() async throws {
-        // Given
-        let groupID = MLSGroupID.random()
-
-        var receivedGroupIDs = [MLSGroupID]()
-        let didReceiveGroupIDs = expectation(description: "didReceiveGroupIDs")
-        let cancellable = sut.onEpochChanged().collect(1).sink {
-            receivedGroupIDs = $0
-            didReceiveGroupIDs.fulfill()
-        }
-
-        let mockCommit = Data.random().bytes
-        let mockGroupInfo = GroupInfoBundle(
-            encryptionType: .plaintext,
-            ratchetTreeType: .full,
-            payload: .random()
-        )
-        let mockCommitBundle = CommitBundle(
-            welcome: nil,
-            commit: mockCommit,
-            groupInfo: mockGroupInfo
-        )
-
-        // When we make a commit
-        mockCoreCrypto.mockUpdateKeyingMaterial = { _ in return mockCommitBundle }
-        mockCommitSender.sendCommitBundleFor_MockMethod = { _, _ in return [] }
-        mockCoreCrypto.mockCommitAccepted = { _ in }
-        _ = try await sut.updateKeyMaterial(for: groupID)
-
-        // Then
-        XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
-        cancellable.cancel()
-        XCTAssertEqual(receivedGroupIDs, [groupID])
     }
 
 }

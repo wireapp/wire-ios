@@ -250,4 +250,33 @@ class CommitSenderTests: ZMBaseManagedObjectTest {
             XCTAssertEqual(mockClearPendingGroupInvocations.count, 0)
         }
     }
+
+    // MARK: - Epoch change
+
+    func test_OnEpochChanged() async throws {
+        // Given
+
+        // Mock action provider
+        mockActionsProvider.sendCommitBundleIn_MockMethod = { _, _ in
+            return []
+        }
+
+        // Mock commit accepted
+        mockCoreCrypto.mockCommitAccepted = { _ in }
+
+        // Set up expectation
+        let expectation = XCTestExpectation(description: "observed epoch change")
+        var receivedGroupIDs = [MLSGroupID]()
+        let token = sut.onEpochChanged().collect(1).sink {
+            receivedGroupIDs = $0
+            expectation.fulfill()
+        }
+
+        // When
+        _ = try await sut.sendCommitBundle(commitBundle, for: groupID)
+
+        // Then
+        await fulfillment(of: [expectation])
+        XCTAssertEqual(receivedGroupIDs, [groupID])
+    }
 }
