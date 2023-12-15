@@ -260,7 +260,6 @@ public class ZMUserSession: NSObject {
     }()
 
     public lazy var enrollE2eICertificate: EnrollE2eICertificateUseCaseInterface? = {
-        var e2eiRepository: E2eIRepository?
         let acmeDiscoveryPath = e2eiFeature.config.acmeDiscoveryUrl
         guard let acmeDirectory = URL(string: acmeDiscoveryPath) else {
             return nil
@@ -270,34 +269,19 @@ public class ZMUserSession: NSObject {
             transportSession: transportSession,
             queue: syncContext)
         let apiProvider = APIProvider(httpClient: httpClient)
-        syncContext.performAndWait {
-            guard let coreCrypto = syncContext.coreCrypto else {
-                return
-            }
-            let e2eiSetupService = E2eISetupService(coreCrypto: coreCrypto)
-            e2eiRepository = E2eIRepository(acmeApi: acmeApi,
+        let e2eiSetupService = E2eISetupService(coreCryptoProvider: coreCryptoProvider)
+        let e2eiRepository = E2eIRepository(acmeApi: acmeApi,
                                             apiProvider: apiProvider,
                                             e2eiSetupService: e2eiSetupService)
-        }
-        guard let e2eiRepository = e2eiRepository else {
-            return nil
-        }
+
         return EnrollE2eICertificateUseCase(e2eiRepository: e2eiRepository)
     }()
 
     public lazy var mlsConversationVerificationStatusProvider: MLSConversationVerificationStatusProviderInterface? = {
-        var verificationStatusProvider: MLSConversationVerificationStatusProvider?
-        syncContext.performAndWait {
-            guard let coreCrypto = syncContext.coreCrypto else {
-                return
-            }
-
-            let e2eIVerificationStatusService = E2eIVerificationStatusService(coreCryptoProvider: coreCryptoProvider)
-            verificationStatusProvider = MLSConversationVerificationStatusProvider(
-                e2eIVerificationStatusService: e2eIVerificationStatusService,
-                syncContext: syncContext)
-        }
-        return verificationStatusProvider
+        let e2eIVerificationStatusService = E2eIVerificationStatusService(coreCryptoProvider: coreCryptoProvider)
+        return MLSConversationVerificationStatusProvider(
+            e2eIVerificationStatusService: e2eIVerificationStatusService,
+            syncContext: syncContext)
     }()
 
     let lastEventIDRepository: LastEventIDRepositoryInterface

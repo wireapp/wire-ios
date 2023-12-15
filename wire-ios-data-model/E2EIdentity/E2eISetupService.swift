@@ -28,10 +28,22 @@ public protocol E2eISetupServiceInterface {
 /// This class setups e2eIdentity object from CoreCrypto.
 public final class E2eISetupService: E2eISetupServiceInterface {
 
-    private let coreCrypto: SafeCoreCryptoProtocol
-    public init(coreCrypto: SafeCoreCryptoProtocol) {
-        self.coreCrypto = coreCrypto
+    // MARK: - Properties
+
+    private let coreCryptoProvider: CoreCryptoProviderProtocol
+    private var coreCrypto: SafeCoreCryptoProtocol {
+        get throws {
+            try coreCryptoProvider.coreCrypto(requireMLS: true)
+        }
     }
+
+    // MARK: - Life cycle
+
+    public init(coreCryptoProvider: CoreCryptoProviderProtocol) {
+        self.coreCryptoProvider = coreCryptoProvider
+    }
+
+    // MARK: - Public interface
 
     public func setupEnrollment(e2eiClientId: E2eIClientID, userName: String, handle: String) async throws -> WireE2eIdentityProtocol {
         do {
