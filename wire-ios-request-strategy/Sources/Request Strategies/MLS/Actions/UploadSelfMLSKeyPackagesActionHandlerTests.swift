@@ -28,6 +28,7 @@ class UploadSelfMLSKeyPackagesActionHandlerTests: ActionHandlerTestBase<UploadSe
     override func setUp() {
         super.setUp()
         action = UploadSelfMLSKeyPackagesAction(clientID: clientId, keyPackages: keyPackages)
+        handler = UploadSelfMLSKeyPackagesActionHandler(context: syncMOC)
     }
 
     // MARK: - Request generation

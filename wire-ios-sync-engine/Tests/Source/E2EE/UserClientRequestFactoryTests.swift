@@ -29,38 +29,26 @@ class UserClientRequestFactoryTests: MessagingTest {
 
     var sut: UserClientRequestFactory!
     var authenticationStatus: ZMAuthenticationStatus!
-    var spyKeyStore: SpyUserClientKeyStore!
     var mockAuthenticationStatusDelegate: MockAuthenticationStatusDelegate!
     var userInfoParser: MockUserInfoParser!
-    var proteusService: MockProteusServiceInterface!
-    var proteusProvider: MockProteusProvider!
 
     override func setUp() {
         super.setUp()
-        spyKeyStore = SpyUserClientKeyStore(accountDirectory: accountDirectory, applicationContainer: sharedContainerURL)
         userInfoParser = MockUserInfoParser()
         mockAuthenticationStatusDelegate = MockAuthenticationStatusDelegate()
         authenticationStatus = MockAuthenticationStatus(
             delegate: mockAuthenticationStatusDelegate,
             userInfoParser: self.userInfoParser
         )
-        proteusService = mockProteusService()
-        proteusProvider = MockProteusProvider(
-            mockProteusService: proteusService
-        )
-        spyKeyStore = proteusProvider.mockKeyStore
 
-        sut = UserClientRequestFactory(proteusProvider: proteusProvider)
+        sut = UserClientRequestFactory()
     }
 
     override func tearDown() {
-        try? FileManager.default.removeItem(at: spyKeyStore.cryptoboxDirectory)
         authenticationStatus = nil
         mockAuthenticationStatusDelegate = nil
         sut = nil
-        spyKeyStore = nil
         userInfoParser = nil
-        proteusService = nil
         super.tearDown()
     }
 
@@ -125,14 +113,17 @@ class UserClientRequestFactoryTests: MessagingTest {
         usingProteusService: Bool
     ) throws {
         // given
-        proteusProvider.useProteusService = usingProteusService
         let client = UserClient.insertNewObject(in: self.syncMOC)
+        let prekeys = [IdPrekeyTuple(id: 0, "prekey0")]
+        let lastRestortPrekey = IdPrekeyTuple(id: UInt16.max, "last-resort-prekey")
 
         // when
         let request = try sut.registerClientRequest(
             client,
             credentials: credentials,
             cookieLabel: "mycookie",
+            prekeys: prekeys,
+            lastRestortPrekey: lastRestortPrekey,
             apiVersion: .v0
         )
 
@@ -141,8 +132,6 @@ class UserClientRequestFactoryTests: MessagingTest {
         assertRequest(transportRequest, path: "/clients", method: .post)
 
         let payload = try XCTUnwrap(payload(from: transportRequest))
-        try assertLastPrekey(payload, usingProteusService: usingProteusService)
-        try assertPrekeys(payload, client: client, usingProteusService: usingProteusService)
         try assertSigkeys(payload)
 
         XCTAssertEqual(payload.type, DeviceType.permanent.rawValue)
@@ -185,17 +174,8 @@ class UserClientRequestFactoryTests: MessagingTest {
         usingProteusService: Bool
     ) {
         // given
-        proteusProvider.useProteusService = usingProteusService
-
-        switch error {
-        case .failedToGeneratePrekeys:
-            proteusService.generatePrekeysStartCount_MockError = error
-            spyKeyStore.failToGeneratePreKeys = true
-        case .failedToGenerateLastPrekey:
-            proteusService.lastPrekey_MockError = error
-            spyKeyStore.failToGenerateLastPreKey = true
-        }
-
+        let emptyPrekeys: [IdPrekeyTuple] = []
+        let lastRestortPrekey = IdPrekeyTuple(id: UInt16.max, "last-resort-prekey")
         let client = UserClient.insertNewObject(in: syncMOC)
         let credentials = ZMEmailCredentials(email: "some@example.com", password: "123")
 
@@ -204,6 +184,8 @@ class UserClientRequestFactoryTests: MessagingTest {
             client,
             credentials: credentials,
             cookieLabel: "mycookie",
+            prekeys: emptyPrekeys,
+            lastRestortPrekey: lastRestortPrekey,
             apiVersion: .v0
         )
 
@@ -233,14 +215,13 @@ class UserClientRequestFactoryTests: MessagingTest {
         usingProteusService: Bool
     ) throws {
         // given
-        proteusProvider.useProteusService = usingProteusService
-
+        let prekeys = [IdPrekeyTuple(id: 1, "prekey1")]
         let client = UserClient.insertNewObject(in: self.syncMOC)
         client.remoteIdentifier = UUID.create().transportString()
         client.preKeysRangeMax = prekeyRangeMax
 
         // when
-        let request = try sut.updateClientPreKeysRequest(client, apiVersion: .v0)
+        let request = try sut.updateClientPreKeysRequest(client, prekeys: prekeys, apiVersion: .v0)
 
         // then
         let transportRequest = try XCTUnwrap(request.transportRequest)
@@ -251,7 +232,6 @@ class UserClientRequestFactoryTests: MessagingTest {
         )
 
         let payload = try XCTUnwrap(payload(from: transportRequest))
-        try assertPrekeys(payload, client: client, usingProteusService: usingProteusService)
     }
 
     func testThatItReturnsNilForUpdateClientRequestIfCanNotGeneratePreKeys() {
@@ -261,15 +241,12 @@ class UserClientRequestFactoryTests: MessagingTest {
 
     func testThatItReturnsNilForUpdateClientRequestIfCanNotGeneratePreKeys(usingProteusService: Bool) {
         // given
-        proteusProvider.useProteusService = usingProteusService
-        spyKeyStore.failToGeneratePreKeys = true
-        proteusService.generatePrekeysStartCount_MockError = PrekeyError.failedToGeneratePrekeys
-
+        let emptyPrekeys: [IdPrekeyTuple] = []
         let client = UserClient.insertNewObject(in: self.syncMOC)
         client.remoteIdentifier = UUID.create().transportString()
 
         // when
-        let request = try? sut.updateClientPreKeysRequest(client, apiVersion: .v0)
+        let request = try? sut.updateClientPreKeysRequest(client, prekeys: emptyPrekeys, apiVersion: .v0)
 
         // then
         XCTAssertNil(request, "Should not return request if client fails to generate prekeys")
@@ -277,11 +254,12 @@ class UserClientRequestFactoryTests: MessagingTest {
 
     func testThatItDoesNotReturnRequestIfClientIsNotSynced() {
         // given
+        let prekeys = [IdPrekeyTuple(id: 1, "prekey1")]
         let client = UserClient.insertNewObject(in: self.syncMOC)
 
         // when
         do {
-            _ = try sut.updateClientPreKeysRequest(client, apiVersion: .v0)
+            _ = try sut.updateClientPreKeysRequest(client, prekeys: prekeys, apiVersion: .v0)
         } catch let error {
             XCTAssertNotNil(error, "Should not return request if client does not have remoteIdentifier")
         }
@@ -352,56 +330,11 @@ class UserClientRequestFactoryTests: MessagingTest {
         XCTAssertEqual(request.method, method)
     }
 
-    private func assertLastPrekey(_ payload: [String: Any], usingProteusService: Bool) throws {
-        let expectedLastPrekey = try expectedLastPrekey(usingProteusService: usingProteusService)
-        let lastPrekey = try XCTUnwrap(payload.lastKey)
-
-        XCTAssertEqual(lastPrekey.key, expectedLastPrekey.key)
-        XCTAssertEqual(lastPrekey.id, expectedLastPrekey.id)
-    }
-
-    private func assertPrekeys(_ payload: [String: Any], client: UserClient, usingProteusService: Bool) throws {
-        let expectedPrekeys = try expectedKeyPayloadForClientPreKeys(
-            client,
-            usingProteusService: usingProteusService
-        )
-        let prekeys = try XCTUnwrap(payload.prekeys)
-
-        zip(prekeys, expectedPrekeys).forEach { (lhs, rhs) in
-            XCTAssertEqual(lhs.key, rhs.key)
-            XCTAssertEqual(lhs.id, rhs.id)
-        }
-    }
-
     private func assertSigkeys(_ payload: [String: Any]) throws {
         let sigkeys = try XCTUnwrap(payload.sigkeys)
         XCTAssertNotNil(sigkeys.enckey)
         XCTAssertNotNil(sigkeys.mackey)
     }
-
-    private func expectedLastPrekey(usingProteusService: Bool) throws -> (key: String, id: NSNumber) {
-        let expectedLastPrekey = usingProteusService
-        ? try proteusService.lastPrekey()
-        : try XCTUnwrap(spyKeyStore.lastGeneratedLastPrekey)
-
-        let expectedLastPrekeyID = usingProteusService
-        ? NSNumber(value: proteusService.lastPrekeyID)
-        : NSNumber(value: CBOX_LAST_PREKEY_ID)
-
-        return (expectedLastPrekey, expectedLastPrekeyID)
-    }
-
-    private func expectedKeyPayloadForClientPreKeys(_ client: UserClient, usingProteusService: Bool) throws -> [[String: Any]] {
-        let generatedKeys = usingProteusService
-        ? try proteusService.generatePrekeys(start: 0, count: 100)
-        : self.spyKeyStore.lastGeneratedKeys
-
-        let expectedPrekeys: [[String: Any]] = generatedKeys.map { (key: (id: UInt16, prekey: String)) in
-            return ["key": key.prekey, "id": NSNumber(value: key.id)]
-        }
-        return expectedPrekeys
-    }
-
 }
 
 private extension Dictionary where Key == String, Value == Any {

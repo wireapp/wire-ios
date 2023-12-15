@@ -73,6 +73,7 @@ final class MLSEventProcessor: MLSEventProcessing {
 
     // MARK: - Joining new conversations
 
+    /// - Note: must be executed on syncContext
     func joinMLSGroupWhenReady(forConversation conversation: ZMConversation, context: NSManagedObjectContext) {
         Logging.mls.info("MLS event processor is adding group to join")
 

@@ -424,7 +424,8 @@ public class ZMUserSession: NSObject {
             localNotificationDispatcher: localNotificationDispatcher!,
             useLegacyPushNotifications: useLegacyPushNotifications,
             lastEventIDRepository: lastEventIDRepository,
-            transportSession: transportSession
+            transportSession: transportSession,
+            mlsService: mlsService
         )
     }
 
