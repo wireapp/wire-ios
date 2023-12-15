@@ -32,7 +32,7 @@ public protocol SafeCoreCryptoProtocol {
 let defaultCipherSuite = CiphersuiteName.mls128Dhkemx25519Aes128gcmSha256Ed25519
 
 public class SafeCoreCrypto: SafeCoreCryptoProtocol {
-    
+
     public enum CoreCryptoSetupFailure: Error, Equatable {
         case failedToGetClientIDBytes
     }
