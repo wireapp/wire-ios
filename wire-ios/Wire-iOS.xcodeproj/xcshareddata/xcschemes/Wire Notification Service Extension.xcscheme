@@ -15,7 +15,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "067BBBEB247E5FAE00D73407"
+               BlueprintIdentifier = "065A5ADD279B07AC002D4D1E"
                BuildableName = "Wire Notification Service Extension.appex"
                BlueprintName = "Wire Notification Service Extension"
                ReferencedContainer = "container:Wire-iOS.xcodeproj">
@@ -74,6 +74,7 @@
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
       debugDocumentVersioning = "YES"
+      askForAppToLaunch = "Yes"
       launchAutomaticallySubstyle = "2">
       <BuildableProductRunnable
          runnableDebuggingMode = "0">
