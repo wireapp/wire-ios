@@ -117,11 +117,21 @@ class ZMMockClientRegistrationStatus: ZMClientRegistrationStatus {
     override func clientIsReadyForRequests() -> Bool {
         return mockReadiness
     }
+
+    var isWaitingForLoginValue: Bool = false
+    override var isWaitingForLogin: Bool {
+        return isWaitingForLoginValue
+    }
+
+    var isAddingEmailNecessaryValue: Bool = false
+    override func isAddingEmailNecessary() -> Bool {
+        return isAddingEmailNecessaryValue
+    }
 }
 
 class ZMMockClientUpdateStatus: ClientUpdateStatus {
     var fetchedClients: [UserClient?] = []
-    var mockPhase: ClientUpdatePhase = .done
+    var mockPhase: ClientUpdatePhase?
     var deleteCallCount: Int = 0
     var fetchCallCount: Int = 0
     var mockCredentials: ZMEmailCredentials = ZMEmailCredentials(email: "bla@example.com", password: "secret")
@@ -140,7 +150,10 @@ class ZMMockClientUpdateStatus: ClientUpdateStatus {
     }
 
     override var currentPhase: ClientUpdatePhase {
-        return mockPhase
+        if let mockPhase {
+            return mockPhase
+        }
+        return super.currentPhase
     }
 }
 
