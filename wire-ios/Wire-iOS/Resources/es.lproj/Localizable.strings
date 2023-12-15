@@ -1477,7 +1477,6 @@
 
 // Generic
 "registration.no_history.restore_backup_failed.title" = "Algo salió mal";
-"registration.no_history.restore_backup_failed.message" = "Su historia no pudo ser restaurada.";
 
 // Wrong Account
 "registration.no_history.restore_backup_failed.wrong_account.title" = "Copia de seguridad incompatible";

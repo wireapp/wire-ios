@@ -1477,7 +1477,6 @@
 
 // Generic
 "registration.no_history.restore_backup_failed.title" = "Kažkas nutiko";
-"registration.no_history.restore_backup_failed.message" = "Praeities atkurti nepavyko.";
 
 // Wrong Account
 "registration.no_history.restore_backup_failed.wrong_account.title" = "Nesuderinama atsarginė kopija";

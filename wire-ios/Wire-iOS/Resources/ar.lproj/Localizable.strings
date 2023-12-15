@@ -1477,7 +1477,6 @@
 
 // Generic
 "registration.no_history.restore_backup_failed.title" = "حدث خطأ";
-"registration.no_history.restore_backup_failed.message" = "لا يمكن استعادة تاريخك.";
 
 // Wrong Account
 "registration.no_history.restore_backup_failed.wrong_account.title" = "نسخة احتياطية غير متوافقة";

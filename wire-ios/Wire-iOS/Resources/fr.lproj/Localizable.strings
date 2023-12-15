@@ -1477,7 +1477,6 @@
 
 // Generic
 "registration.no_history.restore_backup_failed.title" = "Une erreur est survenue";
-"registration.no_history.restore_backup_failed.message" = "Votre historique n’a pas pu être restauré.";
 
 // Wrong Account
 "registration.no_history.restore_backup_failed.wrong_account.title" = "Sauvegarde incompatible";

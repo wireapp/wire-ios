@@ -1477,7 +1477,6 @@
 
 // Generic
 "registration.no_history.restore_backup_failed.title" = "Midagi läks valesti";
-"registration.no_history.restore_backup_failed.message" = "Sinu ajalugu ei saanud taastada.";
 
 // Wrong Account
 "registration.no_history.restore_backup_failed.wrong_account.title" = "Ühildumatu varundus";

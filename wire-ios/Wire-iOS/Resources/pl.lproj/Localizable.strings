@@ -1477,7 +1477,6 @@
 
 // Generic
 "registration.no_history.restore_backup_failed.title" = "Coś poszło nie tak";
-"registration.no_history.restore_backup_failed.message" = "Twoja historia nie została przywrócona.";
 
 // Wrong Account
 "registration.no_history.restore_backup_failed.wrong_account.title" = "Niezgodna kopia zapasowa";

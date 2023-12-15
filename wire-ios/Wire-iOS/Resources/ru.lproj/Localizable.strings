@@ -1477,7 +1477,6 @@
 
 // Generic
 "registration.no_history.restore_backup_failed.title" = "Что-то пошло не так";
-"registration.no_history.restore_backup_failed.message" = "Ваша история не может быть восстановлена.";
 
 // Wrong Account
 "registration.no_history.restore_backup_failed.wrong_account.title" = "Несовместимая резервная копия";
