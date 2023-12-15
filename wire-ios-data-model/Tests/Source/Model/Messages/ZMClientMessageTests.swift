@@ -235,10 +235,10 @@ final class ClientMessageTests: BaseZMClientMessageTests {
         }
         let modifiedMessage = GenericMessage(content: messageText, nonce: nonce)
 
-        let modifiedMessageData = try? modifiedMessage.serializedData().base64String()
-        let data: NSDictionary = [
-            "sender": selfClient.remoteIdentifier,
-            "recipient": selfClient.remoteIdentifier,
+        let modifiedMessageData = try modifiedMessage.serializedData().base64String()
+        let data: NSDictionary = try [
+            "sender": XCTUnwrap(selfClient.remoteIdentifier),
+            "recipient": XCTUnwrap(selfClient.remoteIdentifier),
             "text": modifiedMessageData
         ]
         let payload = payloadForMessage(in: conversation, type: EventConversationAddOTRMessage, data: data, time: Date(), from: self.selfUser)
@@ -356,11 +356,11 @@ extension ClientMessageTests {
         var prototype = GenericMessage(content: Text(content: self.name, mentions: [], linkPreviews: [], replyingTo: nil), nonce: nonce)
         prototype.messageID = "please-fail"
 
-        let contentData = try? prototype.serializedData()
+        let contentData = try prototype.serializedData()
 
-        let data: NSDictionary = [
-            "sender": senderClientID,
-            "text": contentData?.base64String()
+        let data: NSDictionary = try [
+            "sender": XCTUnwrap(senderClientID),
+            "text": contentData.base64String()
         ]
         let payload = payloadForMessage(in: conversation, type: EventConversationAddOTRMessage, data: data)
 
@@ -417,10 +417,10 @@ extension ClientMessageTests {
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.remoteIdentifier = UUID.create()
         let availability = Availability(.away)
-        let contentData = try? GenericMessage(content: availability, nonce: UUID.create()).serializedData()
-        let data: NSDictionary = [
-            "sender": senderClientID,
-            "text": contentData?.base64String()
+        let contentData = try GenericMessage(content: availability, nonce: UUID.create()).serializedData()
+        let data: NSDictionary = try [
+            "sender": XCTUnwrap(senderClientID),
+            "text": contentData.base64String()
         ]
         let payload = payloadForMessage(in: conversation, type: EventConversationAddOTRMessage, data: data)
 
@@ -460,11 +460,11 @@ extension ClientMessageTests {
         existingMessage.sender = self.selfUser
 
         let modifiedMessage = GenericMessage(content: Text(content: modifiedText, mentions: [], linkPreviews: [], replyingTo: nil), nonce: nonce)
-        let contentData = try? modifiedMessage.serializedData()
-        let data: NSDictionary = [
-            "sender": selfClient.remoteIdentifier,
-            "recipient": selfClient.remoteIdentifier,
-            "text": contentData?.base64String()
+        let contentData = try modifiedMessage.serializedData()
+        let data: NSDictionary = try [
+            "sender": XCTUnwrap(selfClient.remoteIdentifier),
+            "recipient": XCTUnwrap(selfClient.remoteIdentifier),
+            "text": contentData.base64String()
         ]
         let payload = payloadForMessage(in: conversation, type: EventConversationAddOTRMessage, data: data)
 
@@ -507,11 +507,11 @@ extension ClientMessageTests {
 
         let modifiedMessage = GenericMessage(content: Text(content: modifiedText, mentions: [], linkPreviews: [], replyingTo: nil), nonce: nonce)
 
-        let contentData = try? modifiedMessage.serializedData()
-        let data: NSDictionary = [
-            "sender": unknownSender,
-            "recipient": selfClient.remoteIdentifier,
-            "text": contentData?.base64String()
+        let contentData = try modifiedMessage.serializedData()
+        let data: NSDictionary = try [
+            "sender": XCTUnwrap(unknownSender),
+            "recipient": XCTUnwrap(selfClient.remoteIdentifier),
+            "text": contentData.base64String()
         ]
         let payload = payloadForMessage(in: conversation, type: EventConversationAddOTRMessage, data: data)
 
@@ -553,11 +553,11 @@ extension ClientMessageTests {
 
         let modifiedMessage = GenericMessage(content: Text(content: modifiedText, mentions: [], linkPreviews: [], replyingTo: nil), nonce: nonce)
 
-        let contentData = try? modifiedMessage.serializedData()
-        let data: NSDictionary = [
-            "sender": selfClient.remoteIdentifier,
-            "recipient": selfClient.remoteIdentifier,
-            "text": contentData?.base64String()
+        let contentData = try modifiedMessage.serializedData()
+        let data: NSDictionary = try [
+            "sender": XCTUnwrap(selfClient.remoteIdentifier),
+            "recipient": XCTUnwrap(selfClient.remoteIdentifier),
+            "text": contentData.base64String()
         ]
         let payload = payloadForMessage(in: conversation, type: EventConversationAddOTRMessage, data: data, time: Date(), from: self.selfUser)
 
@@ -611,11 +611,11 @@ extension ClientMessageTests {
         }
         let modifiedMessage = GenericMessage(content: messageText, nonce: nonce)
 
-        let contentData = try? modifiedMessage.serializedData()
-        let data: NSDictionary = [
-            "sender": selfClient.remoteIdentifier,
-            "recipient": selfClient.remoteIdentifier,
-            "text": contentData?.base64String()
+        let contentData = try modifiedMessage.serializedData()
+        let data: NSDictionary = try [
+            "sender": XCTUnwrap(selfClient.remoteIdentifier),
+            "recipient": XCTUnwrap(selfClient.remoteIdentifier),
+            "text": contentData.base64String()
         ]
         let payload = payloadForMessage(in: conversation, type: EventConversationAddOTRMessage, data: data, time: Date(), from: self.selfUser)
 
@@ -667,11 +667,11 @@ extension ClientMessageTests {
         }
         let modifiedMessage = GenericMessage(content: messageText, nonce: nonce)
 
-        let contentData = try? modifiedMessage.serializedData()
-        let data: NSDictionary = [
-            "sender": selfClient.remoteIdentifier,
-            "recipient": selfClient.remoteIdentifier,
-            "text": contentData?.base64String()
+        let contentData = try modifiedMessage.serializedData()
+        let data: NSDictionary = try [
+            "sender": XCTUnwrap(selfClient.remoteIdentifier),
+            "recipient": XCTUnwrap(selfClient.remoteIdentifier),
+            "text": contentData.base64String()
         ]
         let payload = payloadForMessage(in: conversation, type: EventConversationAddOTRMessage, data: data, time: Date(), from: self.selfUser)
 

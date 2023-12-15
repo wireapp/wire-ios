@@ -22,28 +22,24 @@ import XCTest
 
 class ZMMessageTests_GenericMessage: BaseZMClientMessageTests {
 
-   func testThatItDoesNotSetTheServerTimestampFromEventDataEvenIfMessageAlreadyExists() {
-        self.syncMOC.performGroupedAndWait {_ in
+   func testThatItDoesNotSetTheServerTimestampFromEventDataEvenIfMessageAlreadyExists() throws {
+        try syncMOC.performGroupedAndWait { syncMOC in
             // given
-            let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
+            let conversation = ZMConversation.insertNewObject(in: syncMOC)
             conversation.remoteIdentifier = UUID.create()
 
                     let nonce = UUID.create()
 
             let textMessage = GenericMessage(content: Text(content: self.name, mentions: [], linkPreviews: [], replyingTo: nil), nonce: nonce)
-            let msg = ZMClientMessage.init(nonce: nonce, managedObjectContext: self.syncMOC)
-            do {
-                try msg.setUnderlyingMessage(textMessage)
-            } catch {
-                XCTFail()
-            }
+            let msg = ZMClientMessage.init(nonce: nonce, managedObjectContext: syncMOC)
+            try msg.setUnderlyingMessage(textMessage)
 
             msg.visibleInConversation = conversation
             msg.serverTimestamp = Date(timeIntervalSinceReferenceDate: 400000000)
 
-            let data: NSDictionary = [
+            let data: NSDictionary = try [
                 "content": self.name,
-                "nonce": msg.nonce?.transportString()
+                "nonce": XCTUnwrap(msg.nonce?.transportString())
             ]
             let payload = self.payloadForMessage(in: conversation, type: EventConversationAdd, data: data, time: Date(timeIntervalSinceReferenceDate: 450000000))
             let event = ZMUpdateEvent.eventFromEventStreamPayload(payload, uuid: nil)
@@ -95,15 +91,11 @@ extension ZMMessageTests_GenericMessage {
         XCTAssertEqual(message?.nonce, nonce)
     }
 
-    func testThatAClientMessageHasKnockMessageData() {
+    func testThatAClientMessageHasKnockMessageData() throws {
         // given
         let knock = GenericMessage(content: Knock.with { $0.hotKnock = false }, nonce: UUID.create())
         let message = ZMClientMessage.init(nonce: UUID.create(), managedObjectContext: self.uiMOC)
-        do {
-            try message.setUnderlyingMessage(knock)
-        } catch {
-            XCTFail()
-        }
+        try message.setUnderlyingMessage(knock)
 
         // then
         XCTAssertNil(message.textMessageData?.messageText)
@@ -129,7 +121,7 @@ extension ZMMessageTests_GenericMessage {
         XCTAssertNotNil(message.managedObjectContext)
 
         message.hideForSelfUser()
-        self.uiMOC.saveOrRollback()
+        uiMOC.saveOrRollback()
 
         // then
         XCTAssertEqual(dataSet.count, 1)
@@ -151,7 +143,7 @@ extension ZMMessageTests_GenericMessage {
         XCTAssertNotNil(message.managedObjectContext)
 
         message.hideForSelfUser()
-        self.uiMOC.saveOrRollback()
+        uiMOC.saveOrRollback()
 
         // then
         XCTAssertEqual(dataSet.count, 1)
