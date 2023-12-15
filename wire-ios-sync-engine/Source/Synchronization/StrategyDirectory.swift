@@ -127,9 +127,6 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 context: syncMOC,
                 proteusProvider: ProteusProvider(context: syncMOC)
             ),
-            MissingClientsRequestStrategy(
-                withManagedObjectContext: syncMOC,
-                applicationStatus: applicationStatusDirectory),
             ZMMissingUpdateEventsTranscoder(
                 managedObjectContext: syncMOC,
                 notificationsTracker: nil,

@@ -230,20 +230,28 @@ extension ZMUser: SelfLegalHoldSubject {
      * - returns: The created client, if the state is valid.
      */
 
-    public func addLegalHoldClient(from request: LegalHoldRequest) -> UserClient? {
-        guard let moc = self.managedObjectContext, let selfClient = self.selfClient() else { return nil }
+    public func addLegalHoldClient(from request: LegalHoldRequest) async -> UserClient? {
+        guard
+            let context = self.managedObjectContext,
+            let selfClient = self.selfClient(),
+            let legalHoldClient = await context.perform({ self.insertLegalHoldClient(from: request, in: context) })
+        else { return nil }
 
-        let legalHoldClient = UserClient.insertNewObject(in: moc)
+        guard await selfClient.establishSessionWithClient(legalHoldClient, usingPreKey: request.lastPrekey.key.base64String()) else {
+            log.error("Could not establish session with new legal hold device.")
+            await context.perform { context.delete(legalHoldClient) }
+            return nil
+        }
+
+        return legalHoldClient
+    }
+
+    private func insertLegalHoldClient(from request: LegalHoldRequest, in context: NSManagedObjectContext) -> UserClient? {
+        let legalHoldClient = UserClient.insertNewObject(in: context)
         legalHoldClient.type = .legalHold
         legalHoldClient.deviceClass = .legalHold
         legalHoldClient.remoteIdentifier = request.clientIdentifier
         legalHoldClient.user = self
-
-        guard selfClient.establishSessionWithClient(legalHoldClient, usingPreKey: request.lastPrekey.key.base64String()) else {
-            log.error("Could not establish session with new legal hold device.")
-            moc.delete(legalHoldClient)
-            return nil
-        }
 
         return legalHoldClient
     }
