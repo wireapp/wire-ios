@@ -100,7 +100,7 @@ public class ZMUserSession: NSObject {
     var coreCryptoProvider: CoreCryptoProvider
     lazy var proteusService: ProteusServiceInterface = ProteusService(coreCryptoProvider: coreCryptoProvider)
     var mlsService: MLSServiceInterface
-    var proteusProvider: ProteusProvider!
+    var proteusProvider: ProteusProviding!
 
     public var syncStatus: SyncStatusProtocol {
         return applicationStatusDirectory.syncStatus
@@ -279,7 +279,6 @@ public class ZMUserSession: NSObject {
         cryptoboxMigrationManager: CryptoboxMigrationManagerInterface,
         sharedUserDefaults: UserDefaults
     ) {
-        // why is this set here
         coreDataStack.syncContext.performGroupedBlockAndWait {
             coreDataStack.syncContext.analytics = analytics
             coreDataStack.syncContext.zm_userInterface = coreDataStack.viewContext
