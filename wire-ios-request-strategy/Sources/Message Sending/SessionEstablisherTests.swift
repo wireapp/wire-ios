@@ -56,7 +56,7 @@ final class SessionEstablisherTests: MessagingTestBase {
         let clientID = Arrangement.Scaffolding.clientID
         let (arrangement, sessionEstablisher) = Arrangement(coreDataStack: coreDataStack)
             .withFetchPrekeyAPI(returning: .success(Arrangement.Scaffolding.prekeyByQualifiedUserID))
-            .withEstablishSessionsFromWithContext(returning: false)
+            .withEstablishSessionsSucceding()
             .arrange()
 
         // when
@@ -75,7 +75,7 @@ final class SessionEstablisherTests: MessagingTestBase {
         }
         let (arrangement, sessionEstablisher) = Arrangement(coreDataStack: coreDataStack)
             .withFetchPrekeyAPI(returning: .success(Arrangement.Scaffolding.prekeyByQualifiedUserID))
-            .withEstablishSessionsFromWithContext(returning: false)
+            .withEstablishSessionsSucceding()
             .arrange()
 
         // when
@@ -89,7 +89,7 @@ final class SessionEstablisherTests: MessagingTestBase {
         // given
         let (arrangement, sessionEstablisher) = Arrangement(coreDataStack: coreDataStack)
             .withFetchPrekeyAPI(returning: .success(Arrangement.Scaffolding.prekeyByQualifiedUserID))
-            .withEstablishSessionsFromWithContext(returning: false)
+            .withEstablishSessionsSucceding()
             .arrange()
 
         // when
@@ -129,8 +129,8 @@ final class SessionEstablisherTests: MessagingTestBase {
             return self
         }
 
-        func withEstablishSessionsFromWithContext(returning value: Bool) -> Arrangement {
-            processor.establishSessionsFromWithContext_MockValue = value
+        func withEstablishSessionsSucceding() -> Arrangement {
+            processor.establishSessionsFromWithContext_MockMethod = { _, _, _ in }
             return self
         }
 
