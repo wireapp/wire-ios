@@ -64,19 +64,34 @@ final class BackupRestoreController: NSObject {
         // Test code to verify restore
 
         let picker = UIDocumentPickerViewController(
-            documentTypes: BackupRestoreController.WireBackupUTIs,
-            in: .`import`)
+            forOpeningContentTypes:  BackupRestoreController.WireBackupUTIs,
+            asCopy: true)
+
         picker.delegate = self
         target.present(picker, animated: true)
     }
 
-    private func restore(with url: URL) {
-        requestPassword { [performRestore] password in
-            performRestore(password, url)
+    private func restore(
+        with url: URL,
+        onSuccess: () -> Void,
+        onError: () -> Void
+    ) {
+        requestPassword { password in
+            self.performRestore(
+                using: password,
+                from: url,
+                onSuccess: onSuccess,
+                onError: onError
+            )
         }
     }
 
-    private func performRestore(using password: String, from url: URL) {
+    private func performRestore(
+        using password: String,
+        from url: URL,
+        onSuccess: () -> Void,
+        onError: () -> Void
+    ) {
         guard let sessionManager = SessionManager.shared else { return }
         target.isLoadingViewVisible = true
 
@@ -84,6 +99,7 @@ final class BackupRestoreController: NSObject {
             guard let `self` = self else { return }
             switch result {
             case .failure(SessionManager.BackupError.decryptionError):
+                onError()
                 zmLog.safePublic("Failed restoring backup: \(SanitizedString(stringLiteral: SessionManager.BackupError.decryptionError.localizedDescription))", level: .error)
                 WireLogger.localStorage.error("Failed restoring backup: \(SessionManager.BackupError.decryptionError)")
                 self.target.isLoadingViewVisible = false
@@ -92,6 +108,7 @@ final class BackupRestoreController: NSObject {
                 }
 
             case .failure(let error):
+                onError()
                 zmLog.safePublic("Failed restoring backup: \(SanitizedString(stringLiteral: error.localizedDescription))", level: .error)
                 WireLogger.localStorage.error("Failed restoring backup: \(error)")
                 BackupEvent.importFailed.track()
@@ -99,6 +116,7 @@ final class BackupRestoreController: NSObject {
                 self.target.isLoadingViewVisible = false
 
             case .success:
+                onSuccess()
                 BackupEvent.importSucceeded.track()
                 self.temporaryFilesService.removeTemporaryData()
                 self.delegate?.backupResoreControllerDidFinishRestoring(self)
@@ -134,7 +152,23 @@ final class BackupRestoreController: NSObject {
 }
 
 extension BackupRestoreController: UIDocumentPickerDelegate {
-    public func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentAt url: URL) {
-        self.restore(with: url)
-    }
+    public func documentPicker(
+        _ controller: UIDocumentPickerViewController,
+        didPickDocumentAt url: URL) {
+            zmLog.safePublic("opening file at: \(url.absoluteString)", level: .debug)
+            WireLogger.localStorage.debug("opening file at: \(url.absoluteString)")
+            url.startAccessingSecurityScopedResource()
+            self.restore(
+                with: url,
+                onSuccess: {
+                    dispatch_assert_queue(DispatchQueue.main)
+                    assert(Thread.isMainThread)
+                    url.stopAccessingSecurityScopedResource()
+                },
+                onError: {
+                    dispatch_assert_queue(DispatchQueue.main)
+                    assert(Thread.isMainThread)
+                    url.stopAccessingSecurityScopedResource()
+                })
+        }
 }
