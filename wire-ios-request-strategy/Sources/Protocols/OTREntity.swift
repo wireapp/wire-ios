@@ -204,7 +204,8 @@ extension OTREntity {
             }
         }
 
-        registersNewMissingClients(allMissingClients)
+        let redundantClients = Set(redundantUsers.flatMap(\.clients))
+        allDeletedClients = allDeletedClients.union(redundantClients)
 
         return (missingClients: allMissingClients, deletedClients: allDeletedClients)
     }
@@ -232,7 +233,6 @@ extension OTREntity {
         self.missesRecipients(missingClients)
 
         selfClient.addNewClientsToIgnored(missingClients)
-
     }
 
 }

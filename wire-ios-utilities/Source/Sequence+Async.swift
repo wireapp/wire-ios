@@ -20,6 +20,16 @@ import Foundation
 
 extension Sequence {
 
+    public func asyncFilter(
+        _ operation: (Element) async throws -> Bool
+    ) async rethrows -> [Element] {
+        var values = [Element]()
+        for element in self where try await operation(element) {
+            values.append(element)
+        }
+        return values
+    }
+
     public func asyncForEach(
         _ operation: (Element) async throws -> Void
     ) async rethrows {

@@ -55,6 +55,8 @@ final class MessageSendingStatusPayloadProcessor {
             await deletedClients.asyncForEach { await $0.deleteClientAndEndSession() }
         }
 
+        let newMissingClients = await missingClients.flatMap(\.value).asyncFilter { await $0.hasSessionWithSelfClient == false }
+
         await context.perform {
             if !redundantUsers.isEmpty {
                 WireLogger.messaging.debug("detected redundant users")
@@ -71,11 +73,9 @@ final class MessageSendingStatusPayloadProcessor {
                 message.detectedRedundantUsers(redundantUsers)
             }
 
-            for (_, userClients) in missingClients {
-                userClients.forEach({ $0.discoveredByMessage = message as? ZMOTRMessage })
-                message.registersNewMissingClients(Set(userClients))
-                message.conversation?.decreaseSecurityLevelIfNeededAfterDiscovering(clients: Set(userClients), causedBy: message as? ZMOTRMessage)
-            }
+            newMissingClients.forEach({ $0.discoveredByMessage = message as? ZMOTRMessage })
+            message.registersNewMissingClients(Set(newMissingClients))
+            message.conversation?.decreaseSecurityLevelIfNeededAfterDiscovering(clients: Set(newMissingClients), causedBy: message as? ZMOTRMessage)
 
             if !failedToConfirmUsers.isEmpty {
                 message.addFailedToSendRecipients(failedToConfirmUsers)

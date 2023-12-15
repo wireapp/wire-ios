@@ -90,10 +90,18 @@ extension VerifyLegalHoldRequestStrategy: IdentifierObjectSyncTranscoder {
         let verifyClientsParser = VerifyClientsParser(context: managedObjectContext, conversation: conversation)
         let clientChanges = verifyClientsParser.processEmptyUploadResponse(response, in: conversation, clientRegistrationDelegate: applicationStatus!.clientRegistrationDelegate)
 
-        Task {
+        WaitingGroupTask(context: managedObjectContext) { [self] in
+            let newMissingClients = await clientChanges.missingClients.asyncFilter { await $0.hasSessionWithSelfClient == false }
+            await managedObjectContext.perform {
+                let selfClient = ZMUser.selfUser(in: self.managedObjectContext).selfClient()
+                selfClient?.addNewClientsToIgnored(Set(newMissingClients))
+            }
+
             await clientChanges.deletedClients.asyncForEach { await $0.deleteClientAndEndSession() }
-            await managedObjectContext.perform { conversation.updateSecurityLevelIfNeededAfterFetchingClients() }
-            completionHandler()
+            await managedObjectContext.perform {
+                conversation.updateSecurityLevelIfNeededAfterFetchingClients()
+                completionHandler()
+            }
         }
 
     }
