@@ -48,7 +48,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
         useLegacyPushNotifications: Bool,
         lastEventIDRepository: LastEventIDRepositoryInterface,
         transportSession: TransportSessionType,
-        proteusProvider: ProteusProvider,
+        proteusProvider: ProteusProviding,
         mlsService: MLSServiceInterface
     ) {
 
@@ -63,7 +63,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             useLegacyPushNotifications: useLegacyPushNotifications,
             lastEventIDRepository: lastEventIDRepository,
             transportSession: transportSession,
-            proteusProvider: proteusProvider,
+            proteusProvider: ProteusProviding,
             mlsService: mlsService
         )
 
@@ -99,7 +99,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
         useLegacyPushNotifications: Bool,
         lastEventIDRepository: LastEventIDRepositoryInterface,
         transportSession: TransportSessionType,
-        proteusProvider: ProteusProvider,
+        proteusProvider: ProteusProviding,
         mlsService: MLSServiceInterface
     ) -> [Any] {
         let syncMOC = contextProvider.syncContext
@@ -123,7 +123,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             quickSyncObserver: quickSyncObserver,
             context: syncMOC)
         let strategies: [Any] = [
-            // TODO: [John] use flag here
+
             UserClientRequestStrategy(
                 clientRegistrationStatus: applicationStatusDirectory.clientRegistrationStatus,
                 clientUpdateStatus: applicationStatusDirectory.clientUpdateStatus,
