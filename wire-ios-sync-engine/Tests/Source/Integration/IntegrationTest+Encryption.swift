@@ -63,7 +63,12 @@ extension IntegrationTest {
         // this makes sure the client has remote identifier
         await context.perform { _ = self.encryptionContext(for: client) }
 
-        if await client.hasSessionWithSelfClient {
+        var hasSessionWithSelfClient: Bool = false
+        userSession!.syncContext.zm_cryptKeyStore.encryptionContext.perform { sessionsDirectory in
+            hasSessionWithSelfClient = sessionsDirectory.hasSession(for: client.sessionIdentifier!)
+        }
+
+        if hasSessionWithSelfClient {
             // done!
             return
         }
@@ -114,9 +119,17 @@ extension IntegrationTest {
         }
 
         let selfClient = await context.perform { ZMUser.selfUser(in: context).selfClient()! }
-        if await !localClient.hasSessionWithSelfClient {
-            let success = await selfClient.establishSessionWithClient(localClient, usingPreKey: lastPrekey!)
-            XCTAssertTrue(success)
+
+        var hasSessionWithLocalClient: Bool = false
+        userSession!.syncContext.zm_cryptKeyStore.encryptionContext.perform { sessionsDirectory in
+            hasSessionWithLocalClient = sessionsDirectory.hasSession(for: localClient.sessionIdentifier!)
+        }
+
+        if !hasSessionWithLocalClient {
+            // TODO: [John] use flag here
+            userSession!.syncContext.zm_cryptKeyStore.encryptionContext.perform { (session) in
+                try! session.createClientSession(localClient.sessionIdentifier!, base64PreKeyString: lastPrekey!)
+            }
         }
     }
 

@@ -583,11 +583,12 @@ class CallingRequestStrategyTests: MessagingTest {
         client.remoteIdentifier = NSString.createAlphanumerical() as String
         client.user = user
 
-        WaitingGroupTask(context: syncMOC) { [syncMOC] in
-            // TODO: [John] use flag here
-            let lastPreKey = await syncMOC.perform { try! syncMOC.zm_cryptKeyStore.lastPreKey() }
-            let success = await userClient.establishSessionWithClient(client, usingPreKey: lastPreKey)
-            XCTAssertTrue(success)
+        // TODO: [John] use flag here
+        syncMOC.zm_cryptKeyStore.encryptionContext.perform { (session) in
+            try! session.createClientSession(
+                client.sessionIdentifier!,
+                base64PreKeyString: syncMOC.zm_cryptKeyStore.lastPreKey()
+            )
         }
 
         return client
