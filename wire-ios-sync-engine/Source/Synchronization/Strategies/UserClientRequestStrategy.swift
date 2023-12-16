@@ -490,7 +490,7 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
             return $0 != selfClient && $0.remoteIdentifier.map({ foundClientsIdentifier.contains($0) }) == false
         }
 
-        Task {
+        WaitingGroupTask(context: moc) {
             await deletedClients.asyncForEach { await $0.deleteClientAndEndSession() }
             await moc.perform {
                 moc.saveOrRollback()
@@ -530,10 +530,10 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
 
     func processResponseForDeletingClients(_ managedObject: ZMManagedObject!, requestUserInfo: [AnyHashable: Any]!, responsePayload payload: ZMTransportData!) -> Bool {
         // is it safe for ui??
-        if let client = managedObject as? UserClient {
-            Task {
+        if let client = managedObject as? UserClient, let context = managedObjectContext {
+            WaitingGroupTask(context: context) {
                 await client.deleteClientAndEndSession()
-                await managedObjectContext?.perform { self.clientUpdateStatus?.didDeleteClient() }
+                await context.perform { self.clientUpdateStatus?.didDeleteClient() }
             }
         }
         return false
