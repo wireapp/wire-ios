@@ -247,7 +247,11 @@ public class UserClient: ZMManagedObject, UserClientType {
 
     /// Resets releationships and ends an exisiting session before deleting the object
     public func deleteClientAndEndSession() async {
-        try? await deleteSession()
+        do {
+            try await deleteSession()
+        } catch {
+            WireLogger.userClient.error("error deleting session: \(String(reflecting: error))")
+        }
         await managedObjectContext?.perform { self.deleteClient() }
     }
 
