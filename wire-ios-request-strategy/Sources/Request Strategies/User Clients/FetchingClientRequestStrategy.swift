@@ -240,8 +240,6 @@ final class UserClientByUserClientIDTranscoder: IdentifierObjectSyncTranscoder {
     }
 
     public func didReceive(response: ZMTransportResponse, for identifiers: Set<UserClientID>, completionHandler: @escaping () -> Void) {
-        defer { completionHandler() }
-
         guard
             let identifier = identifiers.first,
             let client = UserClient.fetchUserClient(withRemoteId: identifier.clientId,
@@ -251,12 +249,13 @@ final class UserClientByUserClientIDTranscoder: IdentifierObjectSyncTranscoder {
                                                     createIfNeeded: true)
         else {
             Logging.network.warn("Can't process response, aborting.")
-            return
+            return completionHandler()
         }
 
         if response.result == .permanentError {
             Task {
                 await client.deleteClientAndEndSession()
+                await managedObjectContext.perform { completionHandler() }
             }
         } else if let rawData = response.rawData,
                   let payload = Payload.UserClient(rawData, decoder: decoder) {
@@ -268,6 +267,7 @@ final class UserClientByUserClientIDTranscoder: IdentifierObjectSyncTranscoder {
             let selfClient = ZMUser.selfUser(in: managedObjectContext).selfClient()
             let clientSet: Set<UserClient> = [client]
             selfClient?.updateSecurityLevelAfterDiscovering(clientSet)
+            completionHandler()
         }
     }
 }
