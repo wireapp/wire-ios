@@ -253,7 +253,7 @@ final class UserClientByUserClientIDTranscoder: IdentifierObjectSyncTranscoder {
         }
 
         if response.result == .permanentError {
-            Task {
+            WaitingGroupTask(context: managedObjectContext) { [self] in
                 await client.deleteClientAndEndSession()
                 await managedObjectContext.perform { completionHandler() }
             }
@@ -369,7 +369,7 @@ final class UserClientByQualifiedUserIDTranscoder: IdentifierObjectSyncTranscode
             return
 
         case .v1, .v2, .v3, .v4, .v5:
-            Task {
+            WaitingGroupTask(context: managedObjectContext) { [self] in
                 await commonResponseHandling(response: response, for: identifiers)
                 await managedObjectContext.perform { completionHandler() }
             }
@@ -474,7 +474,7 @@ final class UserClientByUserIDTranscoder: IdentifierObjectSyncTranscoder {
             in: managedObjectContext
         )
 
-        Task {
+        WaitingGroupTask(context: managedObjectContext) { [self] in
             await processor.createOrUpdateClients(
                 from: payload,
                 for: user,
