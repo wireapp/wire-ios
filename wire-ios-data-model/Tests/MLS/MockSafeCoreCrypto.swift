@@ -40,6 +40,11 @@ class MockSafeCoreCrypto: SafeCoreCryptoProtocol {
         return try block(coreCrypto)
     }
 
+    // TODO: Update after update of CC 1.0
+    func perform<T>(_ block: (WireCoreCrypto.CoreCryptoProtocol) async throws -> T) async rethrows -> T {
+        return try await block(coreCrypto)
+    }
+
     var mockMlsInit: ((String) throws -> Void)?
 
     func mlsInit(clientID: String) throws {
