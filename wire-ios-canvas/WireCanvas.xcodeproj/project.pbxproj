@@ -130,7 +130,11 @@
 				165EA0C41DB67C3B008ECC60 /* Products */,
 				166390D71DC8E5EF00D7BF1C /* Frameworks */,
 			);
+			indentWidth = 4;
 			sourceTree = "<group>";
+			tabWidth = 4;
+			usesTabs = 0;
+			wrapsLines = 1;
 		};
 		165EA0C41DB67C3B008ECC60 /* Products */ = {
 			isa = PBXGroup;
