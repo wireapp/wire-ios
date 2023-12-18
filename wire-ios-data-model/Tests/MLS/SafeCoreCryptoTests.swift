@@ -18,6 +18,7 @@
 
 import Foundation
 @testable import WireDataModel
+@testable import WireDataModelSupport
 import XCTest
 
 class SafeCoreCryptoTests: ZMBaseManagedObjectTest {

@@ -19,6 +19,7 @@
 import Foundation
 import WireCoreCrypto
 @testable import WireDataModel
+@testable import WireDataModelSupport
 
 class E2eIServiceTests: ZMConversationTestsBase {
 
