@@ -583,7 +583,7 @@ extension ZMClientMessageTests_Editing {
         XCTAssertEqual(clientMessage.dataSet.count, 0)
     }
 
-    func testThatItClearsReactionsWhenAMessageIsEdited() {
+    func testThatItClearsReactionsWhenAMessageIsEdited() throws {
         // given
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.remoteIdentifier = UUID.create()
@@ -597,26 +597,27 @@ extension ZMClientMessageTests_Editing {
 
         XCTAssertFalse(message.reactions.isEmpty)
 
+        let editedText = "Hello"
         let updateEvent = createMessageEditUpdateEvent(oldNonce: message.nonce!,
                                                        newNonce: UUID.create(),
                                                        conversationID: conversation.remoteIdentifier!,
                                                        senderID: message.sender!.remoteIdentifier!,
-                                                       newText: "Hello")
+                                                       newText: editedText)
 
         // when
         var newMessage: ZMClientMessage?
         self.performPretendingUiMocIsSyncMoc {
             newMessage = ZMClientMessage.createOrUpdate(from: updateEvent!, in: self.uiMOC, prefetchResult: nil)
         }
-        // TODO: why is `newMessage` never read?
 
         // then
         XCTAssertTrue(message.reactions.isEmpty)
         XCTAssertEqual(conversation.allMessages.count, 1)
 
-        let editedMessage = conversation.lastMessage as! ZMMessage
+        let editedMessage = try XCTUnwrap(conversation.lastMessage as? ZMMessage)
         XCTAssertTrue(editedMessage.reactions.isEmpty)
-        XCTAssertEqual(editedMessage.textMessageData?.messageText, "Hello")
+        XCTAssertEqual(editedMessage.textMessageData?.messageText, editedText)
+        XCTAssertEqual(editedMessage, newMessage)
     }
 
     func testThatItClearsReactionsWhenAMessageIsEditedRemotely() {
