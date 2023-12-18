@@ -86,6 +86,8 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
         // and when
         self.uiMOC.saveOrRollback()
 
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 1))
+
         // then
         XCTAssertEqual(observer.notifications.count, changeCount, "Should have changed only once", file: file, line: line)
 
@@ -943,7 +945,9 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
             self.performPretendingUiMocIsSyncMoc {
                 // Can't call async function inside the synchronous modifier block.
                 // We need an async version of `checkThatItNotifiesTheObserverOfAChange`
-                // legalHoldClient.deleteClientAndEndSession()
+                WaitingGroupTask(context: uiMOC) {
+                    legalHoldClient.deleteClientAndEndSession()
+                }
             }
         }
 

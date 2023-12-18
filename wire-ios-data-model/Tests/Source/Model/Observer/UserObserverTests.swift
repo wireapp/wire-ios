@@ -592,7 +592,9 @@ extension UserObserverTests {
             self.performPretendingUiMocIsSyncMoc {
                 // Can't call async function inside the synchronous modifier block.
                 // We need an async version of `checkThatItNotifiesTheObserverOfAChange`
-                // legalHoldClient.deleteClientAndEndSession()
+                WaitingGroupTask(context: uiMOC) {
+                    legalHoldClient.deleteClientAndEndSession()
+                }
             }
         }
 
