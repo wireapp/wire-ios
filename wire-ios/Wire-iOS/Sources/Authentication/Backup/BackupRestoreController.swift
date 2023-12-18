@@ -75,63 +75,56 @@ final class BackupRestoreController: NSObject {
         target.present(picker, animated: true)
     }
 
-    private func restore(
-        with url: URL,
-        onCompletion: @escaping () -> Void
-    ) {
+    private func restore(with url: URL) {
         requestPassword { password in
             self.performRestore(
                 using: password,
-                from: url,
-                onCompletion: onCompletion
+                from: url
             )
         }
     }
 
     private func performRestore(
         using password: String,
-        from url: URL,
-        onCompletion: @escaping () -> Void
+        from url: URL
     ) {
         guard let sessionManager = SessionManager.shared,
               let activity = BackgroundActivityFactory.shared.startBackgroundActivity(withName: "restore backup") else {
-            onCompletion()
             return
         }
         target.isLoadingViewVisible = true
 
         sessionManager.restoreFromBackup(at: url, password: password) { [weak self] result in
             guard let `self` = self else { 
-                onCompletion()
                 BackgroundActivityFactory.shared.endBackgroundActivity(activity)
                 return
             }
             switch result {
             case .failure(SessionManager.BackupError.decryptionError):
-                onCompletion()
                 zmLog.safePublic("Failed restoring backup: \(SanitizedString(stringLiteral: SessionManager.BackupError.decryptionError.localizedDescription))", level: .error)
                 WireLogger.localStorage.error("Failed restoring backup: \(SessionManager.BackupError.decryptionError)")
                 self.target.isLoadingViewVisible = false
+                BackgroundActivityFactory.shared.endBackgroundActivity(activity)
                 self.showWrongPasswordAlert { _ in
-                    self.restore(with: url, onCompletion: onCompletion)
+                    self.restore(with: url)
                 }
 
             case .failure(let error):
-                onCompletion()
                 zmLog.safePublic("Failed restoring backup: \(SanitizedString(stringLiteral: error.localizedDescription))", level: .error)
                 WireLogger.localStorage.error("Failed restoring backup: \(error)")
                 BackupEvent.importFailed.track()
                 self.showRestoreError(error)
                 self.target.isLoadingViewVisible = false
+                BackgroundActivityFactory.shared.endBackgroundActivity(activity)
 
             case .success:
-                onCompletion()
                 BackupEvent.importSucceeded.track()
                 self.temporaryFilesService.removeTemporaryData()
                 self.delegate?.backupResoreControllerDidFinishRestoring(self)
+                BackgroundActivityFactory.shared.endBackgroundActivity(activity)
             }
             
-            BackgroundActivityFactory.shared.endBackgroundActivity(activity)
+
         }
     }
 
@@ -166,18 +159,9 @@ extension BackupRestoreController: UIDocumentPickerDelegate {
     public func documentPicker(
         _ controller: UIDocumentPickerViewController,
         didPickDocumentAt url: URL) {
+            WireLogger.localStorage.debug("opening file at: \(url.absoluteString)")
+            zmLog.safePublic(SanitizedString(stringLiteral: "opening file at: \(url.absoluteString)"), level: .debug)
 
-            let granted = url.startAccessingSecurityScopedResource()
-
-            WireLogger.localStorage.debug("opening file at: \(url.absoluteString), granted: \(granted)")
-            zmLog.safePublic(SanitizedString(stringLiteral: "opening file at: \(url.absoluteString), granted access: \(granted)"), level: .debug)
-
-            self.restore(
-                with: url,
-                onCompletion: {
-                    dispatchPrecondition(condition: DispatchPredicate.onQueue(DispatchQueue.main))
-                    assert(Thread.isMainThread)
-                    url.stopAccessingSecurityScopedResource()
-                })
+            self.restore(with: url)
         }
 }
