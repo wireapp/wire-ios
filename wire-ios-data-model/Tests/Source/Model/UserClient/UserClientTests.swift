@@ -186,7 +186,9 @@ final class UserClientTests: ZMBaseManagedObjectTest {
         try await otherClient.deleteSession()
 
         // Then
-        XCTAssertEqual(mockProteusService.deleteSessionId_Invocations, [otherClient.proteusSessionID])
+        self.syncMOC.performGroupedBlockAndWait {
+            XCTAssertEqual(mockProteusService.deleteSessionId_Invocations, [otherClient.proteusSessionID])
+        }
 
         XCTAssert(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         flag.isOn = false
