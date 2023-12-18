@@ -81,6 +81,9 @@ public final class EnrollE2eICertificateUseCase: EnrollE2eICertificateUseCaseInt
         let finalizeResponse = try await enrollment.finalize(location: orderResponse.location, prevNonce: orderResponse.acmeResponse.nonce)
         let certificateRequest = try await enrollment.certificateRequest(location: finalizeResponse.location, prevNonce: finalizeResponse.acmeResponse.nonce)
 
+        // TODO: Pass the certificate chain
+        try await enrollment.rotateKeysAndMigrateConversations(certificateChain: "")
+
         do {
             return try JSONDecoder().decode(String.self, from: certificateRequest.response)
         } catch {

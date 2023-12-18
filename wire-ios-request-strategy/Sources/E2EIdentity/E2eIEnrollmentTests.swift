@@ -28,6 +28,7 @@ class E2eIEnrollmentTests: ZMTBaseTest {
     var mockAcmeApi: MockAcmeApi!
     var mockApiProvider: MockAPIProviderInterface!
     var mockE2eiService: MockE2eIService!
+    var mockKeyRotator: MockE2eIKeyPackageRotating!
     var previousApiVersion: APIVersion!
 
     override func setUp() {
@@ -40,10 +41,14 @@ class E2eIEnrollmentTests: ZMTBaseTest {
         mockAcmeApi = MockAcmeApi()
         mockApiProvider = MockAPIProviderInterface()
         mockE2eiService = MockE2eIService()
-        sut = E2eIEnrollment(acmeApi: mockAcmeApi,
-                             apiProvider: mockApiProvider,
-                             e2eiService: mockE2eiService,
-                             acmeDirectory: acmeDirectory)
+        mockKeyRotator = MockE2eIKeyPackageRotating()
+        sut = E2eIEnrollment(
+            acmeApi: mockAcmeApi,
+            apiProvider: mockApiProvider,
+            e2eiService: mockE2eiService,
+            acmeDirectory: acmeDirectory,
+            keyRotator: mockKeyRotator
+        )
     }
 
     override func tearDown() {
@@ -51,6 +56,7 @@ class E2eIEnrollmentTests: ZMTBaseTest {
         mockAcmeApi = nil
         mockApiProvider = nil
         mockE2eiService = nil
+        mockKeyRotator = nil
         BackendInfo.apiVersion = previousApiVersion
 
         super.tearDown()
@@ -299,6 +305,20 @@ class E2eIEnrollmentTests: ZMTBaseTest {
         // then
         XCTAssertEqual(result, expectedACMEResponse)
     }
+
+    func testThatItRotateKeysAndMigrateConversations() async throws {
+        // Given
+        let certificateChain = "123456"
+        mockKeyRotator.rotateKeysAndMigrateConversationsE2eIServiceCertificateChain_MockMethod = { _, _ in }
+
+        // When
+        try await sut.rotateKeysAndMigrateConversations(certificateChain: certificateChain)
+
+        // Then
+        let invocations = mockKeyRotator.rotateKeysAndMigrateConversationsE2eIServiceCertificateChain_Invocations
+        XCTAssertEqual(invocations.count, 1)
+        XCTAssertEqual(invocations.first?.certificateChain, certificateChain)
+    }
 }
 
 class MockAcmeApi: AcmeAPIInterface {
@@ -341,13 +361,11 @@ class MockAcmeApi: AcmeAPIInterface {
             "revokeCert": "https://\(domain)/acme/defaultteams/revoke-cert",
             "keyChange": "https://\(domain)/acme/defaultteams/key-change"
         ]
-
     }
 
 }
 
 class MockE2eIService: E2eIServiceInterface {
-
     var mockAcmeOrder: NewAcmeOrder?
     var wireDpopChallenge: AcmeChallenge?
     var wireOidcChallenge: AcmeChallenge?
@@ -419,6 +437,16 @@ class MockE2eIService: E2eIServiceInterface {
 
     func certificateRequest(nonce: String) async throws -> Data {
         return Data()
+    }
+
+    var mockE2eIdentity: MockWireE2eIdentity?
+    var e2eIdentity: WireE2eIdentityProtocol {
+        get {
+            guard let mock = mockE2eIdentity else {
+                fatalError("no mock for `e2eIdentity`")
+            }
+            return mock
+        }
     }
 
 }
