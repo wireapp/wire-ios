@@ -1151,7 +1151,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         test_PerformPendingJoinsRecovery(.giveUp)
     }
 
-    private func test_PerformPendingJoinsRecovery(_ recovery: ExternalCommitError.Recovery) {
+    private func test_PerformPendingJoinsRecovery(_ recovery: ExternalCommitError.RecoveryStrategy) {
         // Given
         let shouldRetry = recovery == .retry
         let groupID = MLSGroupID.random()

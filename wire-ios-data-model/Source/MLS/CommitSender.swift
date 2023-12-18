@@ -94,7 +94,7 @@ public actor CommitSender: CommitSending {
         } catch let error as SendCommitBundleAction.Failure {
             WireLogger.mls.warn("failed to send commit bundle: \(String(describing: error))")
 
-            let recoveryStrategy = CommitError.Recovery(from: error)
+            let recoveryStrategy = CommitError.RecoveryStrategy(from: error)
 
             if recoveryStrategy.shouldDiscardCommit {
                 try await discardPendingCommit(in: groupID)
@@ -121,7 +121,7 @@ public actor CommitSender: CommitSending {
         } catch let error as SendCommitBundleAction.Failure {
             WireLogger.mls.warn("failed to send external commit bundle: \(String(describing: error))")
 
-            let recoveryStrategy = ExternalCommitError.Recovery(from: error)
+            let recoveryStrategy = ExternalCommitError.RecoveryStrategy(from: error)
 
             if recoveryStrategy.shouldClearPendingGroup {
                 try await clearPendingGroup(in: groupID)
@@ -199,7 +199,7 @@ public actor CommitSender: CommitSending {
     }
 }
 
-private extension CommitError.Recovery {
+private extension CommitError.RecoveryStrategy {
 
     init(from error: SendCommitBundleAction.Failure) {
         switch error {
@@ -216,7 +216,7 @@ private extension CommitError.Recovery {
 
 }
 
-private extension ExternalCommitError.Recovery {
+private extension ExternalCommitError.RecoveryStrategy {
 
     init(from error: SendCommitBundleAction.Failure) {
         switch error {

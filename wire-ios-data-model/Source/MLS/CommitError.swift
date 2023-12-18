@@ -21,12 +21,12 @@ import Foundation
 enum CommitError: Error, Equatable {
 
     case failedToGenerateCommit
-    case failedToSendCommit(recovery: Recovery)
+    case failedToSendCommit(recovery: RecoveryStrategy)
     case failedToMergeCommit
     case failedToClearCommit
     case noPendingProposals
 
-    enum Recovery: Equatable {
+    enum RecoveryStrategy: Equatable {
 
         /// Perform a quick sync, then commit pending proposals.
         ///
@@ -60,7 +60,7 @@ enum CommitError: Error, Equatable {
     }
 }
 
-extension CommitError.Recovery {
+extension CommitError.RecoveryStrategy {
 
     /// Whether the pending commit should be discarded.
 
