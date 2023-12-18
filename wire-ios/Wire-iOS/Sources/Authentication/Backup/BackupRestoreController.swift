@@ -93,11 +93,19 @@ final class BackupRestoreController: NSObject {
         from url: URL,
         onCompletion: @escaping () -> Void
     ) {
-        guard let sessionManager = SessionManager.shared else { return }
+        guard let sessionManager = SessionManager.shared,
+              let activity = BackgroundActivityFactory.shared.startBackgroundActivity(withName: "restore backup") else {
+            onCompletion()
+            return
+        }
         target.isLoadingViewVisible = true
 
         sessionManager.restoreFromBackup(at: url, password: password) { [weak self] result in
-            guard let `self` = self else { return }
+            guard let `self` = self else { 
+                onCompletion()
+                BackgroundActivityFactory.shared.endBackgroundActivity(activity)
+                return
+            }
             switch result {
             case .failure(SessionManager.BackupError.decryptionError):
                 onCompletion()
@@ -122,6 +130,8 @@ final class BackupRestoreController: NSObject {
                 self.temporaryFilesService.removeTemporaryData()
                 self.delegate?.backupResoreControllerDidFinishRestoring(self)
             }
+            
+            BackgroundActivityFactory.shared.endBackgroundActivity(activity)
         }
     }
 
