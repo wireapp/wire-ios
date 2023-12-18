@@ -23,7 +23,7 @@ import WireCoreCrypto
 
 public protocol SafeCoreCryptoProtocol {
     func perform<T>(_ block: (CoreCryptoProtocol) async throws -> T) async rethrows -> T
-    func perform<T>(_ block: (CoreCryptoProtocol) throws -> T) rethrows -> T
+    func perform<T>(_ block: (CoreCryptoProtocol) throws -> T) async rethrows -> T
     func unsafePerform<T>(_ block: (CoreCryptoProtocol) throws -> T) rethrows -> T
     func mlsInit(clientID: String) async throws
     func tearDown() throws
@@ -71,7 +71,7 @@ public class SafeCoreCrypto: SafeCoreCryptoProtocol {
         guard let clientID = config.clientIDBytes else {
             throw CoreCryptoSetupFailure.failedToGetClientIDBytes
         }
-        // TODO: wait for fix see cyphersuite cyphersuiteName
+
         let coreCrypto = try await coreCryptoNew(path: config.path, key: config.key, clientId: clientID, ciphersuites: [CiphersuiteName.default.rawValue])
 
         self.init(coreCrypto: coreCrypto, databasePath: config.path)
@@ -81,7 +81,7 @@ public class SafeCoreCrypto: SafeCoreCryptoProtocol {
     public convenience init(path: String, key: String) async throws {
         let coreCrypto = try await coreCryptoDeferredInit(path: path, key: key, ciphersuites: [CiphersuiteName.default.rawValue])
 
-        try coreCrypto.setCallbacks(callbacks: CoreCryptoCallbacksImpl())
+        try await coreCrypto.setCallbacks(callbacks: CoreCryptoCallbacksImpl())
 
         self.init(coreCrypto: coreCrypto, databasePath: path)
     }
@@ -132,9 +132,27 @@ public class SafeCoreCrypto: SafeCoreCryptoProtocol {
         return result
     }
 
-    // TODO: Remove when async core crypto is supported
-    public func perform<T>(_ block: (WireCoreCrypto.CoreCryptoProtocol) async throws -> T) async rethrows -> T {
-        try await block(coreCrypto)
+    public func perform<T>(_ block: (WireCoreCrypto.CoreCryptoProtocol) throws -> T) async rethrows -> T {
+        var result: T
+        WireLogger.coreCrypto.info("acquiring directory lock")
+        safeContext.acquireDirectoryLock()
+        WireLogger.coreCrypto.info("acquired lock. performing restoreFromDisk()")
+        await restoreFromDisk()
+
+        defer {
+            WireLogger.coreCrypto.info("releasing directory lock")
+            safeContext.releaseDirectoryLock()
+            WireLogger.coreCrypto.info("released lock")
+        }
+
+        do {
+            result = try block(coreCrypto)
+        } catch {
+            WireLogger.coreCrypto.error("failed to perform block on core crypto")
+            throw error
+        }
+
+        return result
     }
 
     public func unsafePerform<T>(_ block: (CoreCryptoProtocol) throws -> T) rethrows -> T {

@@ -236,7 +236,7 @@ public final class ProteusService: ProteusServiceInterface {
         logger.info("generating prekey")
 
         do {
-            return try coreCrypto.perform { try $0.proteusNewPrekey(prekeyId: id).data.base64EncodedString() }
+            return try await coreCrypto.perform { try await $0.proteusNewPrekey(prekeyId: id).data.base64EncodedString() }
         } catch {
             logger.error("failed to generate prekey: \(String(describing: error))")
             throw PrekeyError.failedToGeneratePrekey
