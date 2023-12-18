@@ -86,6 +86,8 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
         // and when
         self.uiMOC.saveOrRollback()
 
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 1))
+
         // then
         XCTAssertEqual(observer.notifications.count, changeCount, "Should have changed only once", file: file, line: line)
 
@@ -919,7 +921,7 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
                                                      expectedChangedKeys: [#keyPath(ZMConversation.legalHoldStatus), #keyPath(ZMConversation.allMessages)])
     }
 
-    // TODO: [jacob] re-enable WPB-5917 
+    // TODO: [jacob] re-enable WPB-5917 and fix calling `legalHoldClient.deleteClientAndEndSession()`
     func testThatItNotifiesOfLegalHoldChanges_Disabled() {
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.conversationType = .group
@@ -939,7 +941,7 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
         conversation.addParticipantAndUpdateConversationState(user: user, role: nil)
         uiMOC.saveOrRollback()
 
-        let modifier: (ZMConversation, ConversationObserver) -> Void = { _, _ in
+        let modifier: (ZMConversation, ConversationObserver) -> Void = { [uiMOC, legalHoldClient] _, _ in
             self.performPretendingUiMocIsSyncMoc {
                 // Can't call async function inside the synchronous modifier block.
                 // We need an async version of `checkThatItNotifiesTheObserverOfAChange`

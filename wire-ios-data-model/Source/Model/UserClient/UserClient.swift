@@ -320,7 +320,7 @@ public class UserClient: ZMManagedObject, UserClientType {
     /// Can be called several times without issues
     public func resetSession() {
         guard
-            let uiMOC = self.managedObjectContext?.zm_userInterface,
+            let uiMOC = managedObjectContext?.zm_userInterface,
             let syncMOC = uiMOC.zm_sync
         else {
             return
