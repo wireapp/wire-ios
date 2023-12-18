@@ -580,7 +580,7 @@ extension UserObserverTests {
         XCTAssertTrue(user.needsToAcknowledgeLegalHoldStatus)
     }
 
-    // TODO: [jacob] re-enable WPB-5917 
+    // TODO: [jacob] re-enable WPB-5917 and fix calling `legalHoldClient.deleteClientAndEndSession()`
     func testThatItNotifiesTheObserverOfLegalHoldStatusChange_Removed() {
         // given
         let user = ZMUser.selfUser(in: uiMOC)
@@ -592,9 +592,7 @@ extension UserObserverTests {
             self.performPretendingUiMocIsSyncMoc {
                 // Can't call async function inside the synchronous modifier block.
                 // We need an async version of `checkThatItNotifiesTheObserverOfAChange`
-                WaitingGroupTask(context: uiMOC) {
-                    legalHoldClient.deleteClientAndEndSession()
-                }
+                // legalHoldClient.deleteClientAndEndSession()
             }
         }
 
