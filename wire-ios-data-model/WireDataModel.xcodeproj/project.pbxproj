@@ -11,8 +11,8 @@
 		0125F73D2B28A31C00D989AB /* MockProteusProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0125F73B2B28A31C00D989AB /* MockProteusProvider.swift */; };
 		0129E7F929A520870065E6DB /* SafeCoreCrypto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0129E7F829A520870065E6DB /* SafeCoreCrypto.swift */; };
 		0129E7FB29A520EB0065E6DB /* SafeFileContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0129E7FA29A520EB0065E6DB /* SafeFileContext.swift */; };
-		0140A0C42B30F748004D8B40 /* MockSafeCoreCrypto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01A2D62E2A153118000EFC9C /* MockSafeCoreCrypto.swift */; };
-		0140A0C52B30F753004D8B40 /* MockCoreCryptoProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEC3BC732888403000BFDC35 /* MockCoreCryptoProtocol.swift */; };
+		0140A0D02B31028D004D8B40 /* MockCoreCryptoProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0140A0CE2B31028D004D8B40 /* MockCoreCryptoProtocol.swift */; };
+		0140A0D12B31028D004D8B40 /* MockSafeCoreCrypto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0140A0CF2B31028D004D8B40 /* MockSafeCoreCrypto.swift */; };
 		01482E8A2B10ED0800F3B2CB /* MLSSubgroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63F0781129F6C59D0031E19D /* MLSSubgroup.swift */; };
 		01482E8B2B10EEB000F3B2CB /* FetchSubgroupAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63F0780C29F292770031E19D /* FetchSubgroupAction.swift */; };
 		017CA4442A2742B800E8E778 /* WireCoreCrypto.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 017CA4432A2742B800E8E778 /* WireCoreCrypto.xcframework */; };
@@ -824,12 +824,13 @@
 		0125F73B2B28A31C00D989AB /* MockProteusProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockProteusProvider.swift; sourceTree = "<group>"; };
 		0129E7F829A520870065E6DB /* SafeCoreCrypto.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SafeCoreCrypto.swift; sourceTree = "<group>"; };
 		0129E7FA29A520EB0065E6DB /* SafeFileContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafeFileContext.swift; sourceTree = "<group>"; };
+		0140A0CE2B31028D004D8B40 /* MockCoreCryptoProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockCoreCryptoProtocol.swift; sourceTree = "<group>"; };
+		0140A0CF2B31028D004D8B40 /* MockSafeCoreCrypto.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockSafeCoreCrypto.swift; sourceTree = "<group>"; };
 		014C36AC2B271F2900D7E8EA /* WireTesting.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTesting.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		014C36B02B27206D00D7E8EA /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Platforms/iPhoneOS.platform/Developer/Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		017CA4432A2742B800E8E778 /* WireCoreCrypto.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = WireCoreCrypto.xcframework; path = ../Carthage/Build/WireCoreCrypto.xcframework; sourceTree = "<group>"; };
 		018964242A6FE72700BCEE0E /* EARStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EARStorage.swift; sourceTree = "<group>"; };
 		0189815429A66B0800B52510 /* SafeCoreCryptoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafeCoreCryptoTests.swift; sourceTree = "<group>"; };
-		01A2D62E2A153118000EFC9C /* MockSafeCoreCrypto.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockSafeCoreCrypto.swift; sourceTree = "<group>"; };
 		01B6A89E2B16252300E409A0 /* zmessaging2.111.0.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = zmessaging2.111.0.xcdatamodel; sourceTree = "<group>"; };
 		01B6A89F2B16268300E409A0 /* store2-111-0.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; path = "store2-111-0.wiredatabase"; sourceTree = "<group>"; };
 		01B7A5742B0FB6DA00FE5132 /* CoreDataMessagingMigrationVersionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CoreDataMessagingMigrationVersionTests.swift; path = Migrations/CoreDataMessagingMigrationVersionTests.swift; sourceTree = "<group>"; };
@@ -1386,7 +1387,6 @@
 		EEBACDAA25B9C4B0000210AC /* AppLockAuthenticationResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockAuthenticationResult.swift; sourceTree = "<group>"; };
 		EEBF69EC28A2724800195771 /* ZMConversationTests+MLS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMConversationTests+MLS.swift"; sourceTree = "<group>"; };
 		EEBFA2E729D1D94B0004E8B4 /* ProteusError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProteusError.swift; sourceTree = "<group>"; };
-		EEC3BC732888403000BFDC35 /* MockCoreCryptoProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockCoreCryptoProtocol.swift; sourceTree = "<group>"; };
 		EEC47ED527A81EF60020B599 /* Feature+ClassifiedDomains.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Feature+ClassifiedDomains.swift"; sourceTree = "<group>"; };
 		EEC57C4929E407CC0068DFDA /* EARService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EARService.swift; sourceTree = "<group>"; };
 		EEC794F32A384421008E1A3B /* MLSDecryptionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLSDecryptionService.swift; sourceTree = "<group>"; };
@@ -1700,6 +1700,8 @@
 			isa = PBXGroup;
 			children = (
 				0125F73A2B28A31C00D989AB /* SpyUserClientKeyStore.swift */,
+				0140A0CE2B31028D004D8B40 /* MockCoreCryptoProtocol.swift */,
+				0140A0CF2B31028D004D8B40 /* MockSafeCoreCrypto.swift */,
 				0125F73B2B28A31C00D989AB /* MockProteusProvider.swift */,
 			);
 			path = Sources;
@@ -2226,8 +2228,6 @@
 				EEF6E3C928D89251001C1799 /* StaleMLSKeyDetectorTests.swift */,
 				EEFAAC3328DDE27F009940E7 /* CoreCryptoCallbacksTests.swift */,
 				EEF0BC3028EEC02400ED16CA /* MockSyncStatus.swift */,
-				EEC3BC732888403000BFDC35 /* MockCoreCryptoProtocol.swift */,
-				01A2D62E2A153118000EFC9C /* MockSafeCoreCrypto.swift */,
 				EEC8064D28CF4C2D00DD58E9 /* MockStaleMLSKeyDetector.swift */,
 				63C07014291144F70075D598 /* CoreCryptoConfigProviderTests.swift */,
 				6374562129C3323D001D1A33 /* CoreCryptoKeyProviderTests.swift */,
@@ -3566,10 +3566,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				0125F73C2B28A31C00D989AB /* SpyUserClientKeyStore.swift in Sources */,
+				0140A0D02B31028D004D8B40 /* MockCoreCryptoProtocol.swift in Sources */,
 				594EB3062B1E3B340022A5CD /* AutoMockable.generated.swift in Sources */,
-				0140A0C42B30F748004D8B40 /* MockSafeCoreCrypto.swift in Sources */,
 				0125F73D2B28A31C00D989AB /* MockProteusProvider.swift in Sources */,
-				0140A0C52B30F753004D8B40 /* MockCoreCryptoProtocol.swift in Sources */,
+				0140A0D12B31028D004D8B40 /* MockSafeCoreCrypto.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
