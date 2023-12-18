@@ -34,7 +34,7 @@ public class GetUserClientFingerprintUseCase: GetUserClientFingerprintUseCasePro
 
     convenience init(syncContext: NSManagedObjectContext,
                      transportSession: TransportSessionType,
-                     proteusProvider: ProteusProvider) {
+                     proteusProvider: ProteusProviding) {
         let httpClient = HttpClientImpl(
             transportSession: transportSession,
             queue: syncContext)

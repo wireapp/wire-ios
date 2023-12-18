@@ -63,7 +63,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             useLegacyPushNotifications: useLegacyPushNotifications,
             lastEventIDRepository: lastEventIDRepository,
             transportSession: transportSession,
-            proteusProvider: ProteusProviding,
+            proteusProvider: proteusProvider,
             mlsService: mlsService
         )
 
