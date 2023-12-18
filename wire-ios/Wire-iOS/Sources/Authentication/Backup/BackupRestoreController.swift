@@ -97,6 +97,8 @@ final class BackupRestoreController: NSObject {
         sessionManager.restoreFromBackup(at: url, password: password) { [weak self] result in
             guard let `self` = self else { 
                 BackgroundActivityFactory.shared.endBackgroundActivity(activity)
+                zmLog.safePublic("memory allocation in performRestore", level: .error)
+                WireLogger.localStorage.error("memory allocation in performRestore")
                 return
             }
             switch result {
@@ -123,8 +125,6 @@ final class BackupRestoreController: NSObject {
                 self.delegate?.backupResoreControllerDidFinishRestoring(self)
                 BackgroundActivityFactory.shared.endBackgroundActivity(activity)
             }
-            
-
         }
     }
 

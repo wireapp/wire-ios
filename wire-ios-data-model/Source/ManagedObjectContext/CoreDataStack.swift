@@ -222,7 +222,8 @@ public class CoreDataStack: NSObject, ContextProvider {
         }
         // this activity should prevent app to be killed while migrating db
         guard let activity = BackgroundActivityFactory.shared.startBackgroundActivity(withName: "database setup") else {
-            return onFailure(CoreDataStackError.noDatabaseActivity)
+            onFailure(CoreDataStackError.noDatabaseActivity)
+            return
         }
         DispatchQueue.global(qos: .userInitiated).async {
             if self.needsMessagingStoreMigration() {

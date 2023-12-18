@@ -170,6 +170,8 @@ extension CoreDataStack {
         completion: @escaping ((Result<URL>) -> Void)
     ) {
         guard let activity = BackgroundActivityFactory.shared.startBackgroundActivity(withName: "import backup") else {
+            WireLogger.localStorage.error("backup: error backing up local store: \(CoreDataStackError.noDatabaseActivity)")
+            log.debug("error backing up local store: \(CoreDataStackError.noDatabaseActivity)")
             completion(.failure(CoreDataStackError.noDatabaseActivity))
             return
         }
