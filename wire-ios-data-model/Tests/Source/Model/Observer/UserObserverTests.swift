@@ -581,26 +581,28 @@ extension UserObserverTests {
     }
 
     // TODO: [jacob] re-enable
-//    func testThatItNotifiesTheObserverOfLegalHoldStatusChange_Removed() {
-//        // given
-//        let user = ZMUser.selfUser(in: uiMOC)
-//        user.acknowledgeLegalHoldStatus()
-//
-//        let legalHoldClient = UserClient.createMockLegalHoldSelfUserClient(in: uiMOC)
-//
-//        let modifier: (ZMUser) -> Void = { _ in
-//            self.performPretendingUiMocIsSyncMoc {
-//                legalHoldClient.deleteClientAndEndSession()
-//            }
-//        }
-//
-//        // when
-//        self.checkThatItNotifiesTheObserverOfAChange(user,
-//                                                     modifier: modifier,
-//                                                     expectedChangedFields: [.legalHoldStatus, .isUnderLegalHold])
-//
-//        XCTAssertTrue(user.needsToAcknowledgeLegalHoldStatus)
-//    }
+    func testThatItNotifiesTheObserverOfLegalHoldStatusChange_Removed() {
+        // given
+        let user = ZMUser.selfUser(in: uiMOC)
+        user.acknowledgeLegalHoldStatus()
+
+        let legalHoldClient = UserClient.createMockLegalHoldSelfUserClient(in: uiMOC)
+
+        let modifier: (ZMUser) -> Void = { _ in
+            self.performPretendingUiMocIsSyncMoc {
+                // Can't call async function inside the synchronous modifier block.
+                // We need an async version of `checkThatItNotifiesTheObserverOfAChange`
+                // legalHoldClient.deleteClientAndEndSession()
+            }
+        }
+
+        // when
+        self.checkThatItNotifiesTheObserverOfAChange(user,
+                                                     modifier: modifier,
+                                                     expectedChangedFields: [.legalHoldStatus, .isUnderLegalHold])
+
+        XCTAssertTrue(user.needsToAcknowledgeLegalHoldStatus)
+    }
 
     func testThatItNotifiesTheObserverOfIsUnderLegalHoldChange_DeviceClassIsAssigned() {
         // given
