@@ -303,6 +303,7 @@
 		6391A7FA2A6FD6FC00832665 /* MappingModel_2.106-2.107.xcmappingmodel in Sources */ = {isa = PBXBuildFile; fileRef = 6391A7F92A6FD6FC00832665 /* MappingModel_2.106-2.107.xcmappingmodel */; };
 		6391A7FD2A6FD7D100832665 /* DatabaseMigrationTests+UserClientUniqueness.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6391A7FB2A6FD7C900832665 /* DatabaseMigrationTests+UserClientUniqueness.swift */; };
 		6391A7FF2A6FDB9100832665 /* store2-107-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = 6391A7FE2A6FDB9100832665 /* store2-107-0.wiredatabase */; };
+		639971AA2B1E301E009DD5CF /* ReplaceSelfMLSKeyPackagesAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639971A92B1E301E009DD5CF /* ReplaceSelfMLSKeyPackagesAction.swift */; };
 		639971AE2B2732E6009DD5CF /* CommitSender.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639971AD2B2732E6009DD5CF /* CommitSender.swift */; };
 		639971B02B27346B009DD5CF /* CommitError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639971AF2B27346B009DD5CF /* CommitError.swift */; };
 		639971B22B2734C0009DD5CF /* ExternalCommitError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639971B12B2734C0009DD5CF /* ExternalCommitError.swift */; };
@@ -1131,6 +1132,7 @@
 		6391A7F92A6FD6FC00832665 /* MappingModel_2.106-2.107.xcmappingmodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcmappingmodel; path = "MappingModel_2.106-2.107.xcmappingmodel"; sourceTree = "<group>"; };
 		6391A7FB2A6FD7C900832665 /* DatabaseMigrationTests+UserClientUniqueness.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "DatabaseMigrationTests+UserClientUniqueness.swift"; sourceTree = "<group>"; };
 		6391A7FE2A6FDB9100832665 /* store2-107-0.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; path = "store2-107-0.wiredatabase"; sourceTree = "<group>"; };
+		639971A92B1E301E009DD5CF /* ReplaceSelfMLSKeyPackagesAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReplaceSelfMLSKeyPackagesAction.swift; sourceTree = "<group>"; };
 		639971AD2B2732E6009DD5CF /* CommitSender.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommitSender.swift; sourceTree = "<group>"; };
 		639971AF2B27346B009DD5CF /* CommitError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommitError.swift; sourceTree = "<group>"; };
 		639971B12B2734C0009DD5CF /* ExternalCommitError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExternalCommitError.swift; sourceTree = "<group>"; };
@@ -2097,11 +2099,12 @@
 		63B1334829A503D000009D84 /* Actions */ = {
 			isa = PBXGroup;
 			children = (
-				63B1334929A503D000009D84 /* UploadSelfMLSKeyPackagesAction.swift */,
 				63B1334A29A503D000009D84 /* SendMLSMessageAction.swift */,
 				63B1334B29A503D000009D84 /* SendCommitBundleAction.swift */,
 				63B1334C29A503D000009D84 /* FetchBackendMLSPublicKeysAction.swift */,
 				63B1334D29A503D000009D84 /* CountSelfMLSKeyPackagesAction.swift */,
+				63B1334929A503D000009D84 /* UploadSelfMLSKeyPackagesAction.swift */,
+				639971A92B1E301E009DD5CF /* ReplaceSelfMLSKeyPackagesAction.swift */,
 				63B1334F29A503D000009D84 /* ClaimMLSKeyPackageAction.swift */,
 				63F0780C29F292770031E19D /* FetchSubgroupAction.swift */,
 				6308F8A12A273C0B0072A177 /* BaseFetchMLSGroupInfoAction.swift */,
@@ -3931,6 +3934,7 @@
 				5E9EA4E22243E0D300D401B2 /* ConversationMessage+Attachments.swift in Sources */,
 				EE5F54CC259B22C400F11F3C /* Account+Keychain.swift in Sources */,
 				639971B22B2734C0009DD5CF /* ExternalCommitError.swift in Sources */,
+				639971AA2B1E301E009DD5CF /* ReplaceSelfMLSKeyPackagesAction.swift in Sources */,
 				F93C4C7D1E24E1B1007E9CEE /* NotificationDispatcher.swift in Sources */,
 				06D48735241F930A00881B08 /* GenericMessage+Obfuscation.swift in Sources */,
 				0686649F256FB0CA001C8747 /* AppLockController.swift in Sources */,
