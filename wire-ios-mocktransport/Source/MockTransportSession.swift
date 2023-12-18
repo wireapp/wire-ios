@@ -152,6 +152,10 @@ public extension MockTransportSession {
 
 extension MockTransportSession: TransportSessionType {
 
+    public func enqueue(_ request: ZMTransportRequest, queue: ZMSGroupQueue) async -> ZMTransportResponse {
+        fatalError("not implmented")
+    }
+
     public var requestLoopDetectionCallback: ((String) -> Void)? {
         get { return nil }
         set { }
