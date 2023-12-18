@@ -137,17 +137,15 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
 
     // MARK: - Commit generation
 
-    private func commitBundle(for action: Action, in groupID: MLSGroupID) throws -> CommitBundle {
+    private func commitBundle(for action: Action, in groupID: MLSGroupID) async throws -> CommitBundle {
         do {
             WireLogger.mls.info("generating commit for action (\(String(describing: action))) for group (\(groupID.safeForLoggingDescription))...")
             switch action {
             case .addMembers(let clients):
-                let memberAddMessages = try coreCrypto.perform {
-                    try $0.addClientsToConversation(
-                        conversationId: groupID.bytes,
-                        clients: clients
-                    )
-                }
+                let memberAddMessages = try await coreCrypto.perform { try await $0.addClientsToConversation(
+                    conversationId: groupID.data,
+                    clients: clients
+                ) }
 
                 return CommitBundle(
                     welcome: memberAddMessages.welcome,
@@ -156,35 +154,31 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
                 )
 
             case .removeClients(let clients):
-                return try coreCrypto.perform {
-                    try $0.removeClientsFromConversation(
-                        conversationId: groupID.bytes,
+                return try await coreCrypto.perform {
+                    try await $0.removeClientsFromConversation(
+                        conversationId: groupID.data,
                         clients: clients
                     )
                 }
 
             case .updateKeyMaterial:
-                return try coreCrypto.perform {
-                    try $0.updateKeyingMaterial(conversationId: groupID.bytes)
+                return try await coreCrypto.perform {
+                    try await $0.updateKeyingMaterial(conversationId: groupID.data)
                 }
 
             case .proposal:
-                guard let bundle = try coreCrypto.perform({
-                    try $0.commitPendingProposals(conversationId: groupID.bytes)
-                }) else {
-                    throw CommitError.noPendingProposals
+                guard let bundle = try await coreCrypto.perform({ try await $0.commitPendingProposals(
+                    conversationId: groupID.data
+
+                ) }) else {
+                    throw Error.noPendingProposals
                 }
 
                 return bundle
 
-            case .joinGroup(let groupInfo):
-                let conversationInitBundle = try coreCrypto.perform {
-                    try $0.joinByExternalCommit(
-                        groupInfo: groupInfo.bytes,
-                        customConfiguration: .init(keyRotationSpan: nil, wirePolicy: nil),
-                        credentialType: .basic
-                    )
-                }
+            case .joinGroup(let publicGroupState):
+                let conversationInitBundle = try await coreCrypto.perform { try await $0.joinByExternalCommit(groupInfo: publicGroupState,
+                                                                                                        customConfiguration: .init(keyRotationSpan: nil, wirePolicy: nil), credentialType: .basic) }
 
                 return CommitBundle(
                     welcome: nil,
