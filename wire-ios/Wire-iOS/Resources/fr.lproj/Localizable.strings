@@ -1742,10 +1742,10 @@
 "jailbrokendevice.alert.message" = "Pour des raisons de sécurité Wire ne peut pas être utilisé sur cet appareil. Toutes données Wire existantes ont été effacées.";
 
 // Database Loading Failure alert
-"databaseloadingfailure.alert.title" = "Espace insuffisant";
-"databaseloadingfailure.alert.message" = "La base de données n'a pas pu être chargée en raison d'un espace de stockage insuffisant. Vérifiez l'utilisation du stockage de votre appareil et réessayez.";
-"databaseloadingfailure.alert.settings" = "Allez dans les paramètres";
-"databaseloadingfailure.alert.delete_database" = "Supprimer la base de données";
+"databaseloadingfailure.alert.title" = "Update Data storage";
+"databaseloadingfailure.alert.message" = "The database could not be loaded.\n Error: %@";
+"databaseloadingfailure.alert.save-backup" = "Save my data";
+"databaseloadingfailure.alert.delete_database" = "Clear my data and continue";
 "databaseloadingfailure.alert.delete_database.message" = "En supprimant la base de données, toutes les données locales et les messages de ce compte seront supprimés définitivement.";
 "databaseloadingfailure.alert.delete_database.continue" = "Continuer";
 

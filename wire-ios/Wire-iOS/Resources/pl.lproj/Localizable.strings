@@ -1742,10 +1742,10 @@
 "jailbrokendevice.alert.message" = "Ze względów bezpieczeństwa nie można użyć Wire na tym urządzeniu. Wszelkie istniejące dane zostały usunięte.";
 
 // Database Loading Failure alert
-"databaseloadingfailure.alert.title" = "Zbyt mało miejsca";
-"databaseloadingfailure.alert.message" = "Nie można załadować bazy danych z powodu niewystarczającej ilości pamięci. Przejrzyj użycie pamięci urządzenia i spróbuj ponownie.";
-"databaseloadingfailure.alert.settings" = "Przejdź do Ustawień";
-"databaseloadingfailure.alert.delete_database" = "Usuń bazę danych";
+"databaseloadingfailure.alert.title" = "Update Data storage";
+"databaseloadingfailure.alert.message" = "The database could not be loaded.\n Error: %@";
+"databaseloadingfailure.alert.save-backup" = "Save my data";
+"databaseloadingfailure.alert.delete_database" = "Clear my data and continue";
 "databaseloadingfailure.alert.delete_database.message" = "Usuwając bazę danych, wszystkie lokalne dane i wiadomości dla tego konta zostaną trwale usunięte.";
 "databaseloadingfailure.alert.delete_database.continue" = "Kontynuuj";
 
