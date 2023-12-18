@@ -240,6 +240,7 @@ public class CoreDataStack: NSObject, ContextProvider {
                     DispatchQueue.main.async {
                         onFailure(error)
                     }
+                    BackgroundActivityFactory.shared.endBackgroundActivity(activity)
                     return
                 }
             }
@@ -253,14 +254,17 @@ public class CoreDataStack: NSObject, ContextProvider {
                         var flag = DeveloperFlag.forceDatabaseLoadingFailure
                         flag.isOn = false
                         onFailure(CoreDataStackError.simulateDatabaseLoadingFailure)
+                        BackgroundActivityFactory.shared.endBackgroundActivity(activity)
                         return
                     }
 
                     if let error {
                         onFailure(error)
+                        BackgroundActivityFactory.shared.endBackgroundActivity(activity)
                         return
                     }
                     onCompletion(self)
+                    BackgroundActivityFactory.shared.endBackgroundActivity(activity)
                 }
             }
         }

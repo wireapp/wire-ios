@@ -43,7 +43,12 @@ import WireTesting
     }
 
     /// Create storage stack
-    func createStorageStackAndWaitForCompletion(userID: UUID = UUID()) -> CoreDataStack {
+    func createStorageStackAndWaitForCompletion(userID: UUID = UUID(), file: StaticString = #file, line: UInt = #line) -> CoreDataStack {
+
+        // we use backgroundActivity suring the setup so we need to mock for tests
+        let manager = MockBackgroundActivityManager()
+        BackgroundActivityFactory.shared.activityManager = manager
+
         let account = Account(userName: "", userIdentifier: userID)
         let stack = CoreDataStack(account: account,
                                   applicationContainer: applicationContainer,
@@ -51,16 +56,19 @@ import WireTesting
                                   dispatchGroup: dispatchGroup)
 
         let exp = self.expectation(description: "should wait for loadStores to finish")
-        stack.setup(onStartMigration: { 
+        stack.setup(onStartMigration: {
             // do nothing
         }) { error in
-            XCTAssertNil(error)
+            XCTAssertNil(error, file: file, line: line)
             exp.fulfill()
         } onCompletion: { _ in
             exp.fulfill()
         }
 
-        XCTAssertTrue(waitForCustomExpectations(withTimeout: 1.0))
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 1.0), file: file, line: line)
+
+        BackgroundActivityFactory.shared.activityManager = nil
+        XCTAssertFalse(BackgroundActivityFactory.shared.isActive, file: file, line: line)
 
         return stack
     }
