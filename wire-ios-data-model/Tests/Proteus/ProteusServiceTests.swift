@@ -19,8 +19,9 @@
 import Foundation
 import XCTest
 import WireCoreCrypto
-import WireDataModelSupport
+
 @testable import WireDataModel
+@testable import WireDataModelSupport
 
 class ProteusServiceTests: XCTestCase {
 

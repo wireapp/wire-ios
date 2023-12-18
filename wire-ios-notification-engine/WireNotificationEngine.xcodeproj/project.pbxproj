@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		015C22DD2A1566EB009119CA /* MockSafeCoreCrypto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 015C22DC2A1566EB009119CA /* MockSafeCoreCrypto.swift */; };
 		018964272A6FEA8600BCEE0E /* MockEARServiceInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = 018964262A6FEA8600BCEE0E /* MockEARServiceInterface.swift */; };
 		067ECB3E2487A93D00701956 /* WireNotificationEngine.h in Headers */ = {isa = PBXBuildFile; fileRef = 067ECB3C2487A93D00701956 /* WireNotificationEngine.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		067ECB602487ABF700701956 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06604297247FE76A00A5F161 /* AppDelegate.swift */; };
@@ -65,7 +64,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		015C22DC2A1566EB009119CA /* MockSafeCoreCrypto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockSafeCoreCrypto.swift; sourceTree = "<group>"; };
 		018964262A6FEA8600BCEE0E /* MockEARServiceInterface.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockEARServiceInterface.swift; sourceTree = "<group>"; };
 		06394AA12497B24600380494 /* OperationLoop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationLoop.swift; sourceTree = "<group>"; };
 		06604297247FE76A00A5F161 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -255,7 +253,6 @@
 				EE0BA28929D59B1D004E93B5 /* NotificationSessionTests.swift */,
 				630A582C29AF9F3E00E26C4D /* BaseNotificationSessionTests.swift */,
 				630A584929B1182C00E26C4D /* MockCoreCrypto.swift */,
-				015C22DC2A1566EB009119CA /* MockSafeCoreCrypto.swift */,
 				018964262A6FEA8600BCEE0E /* MockEARServiceInterface.swift */,
 			);
 			path = WireNotificationEngineTests;
@@ -462,7 +459,6 @@
 				EE0BA28A29D59B1D004E93B5 /* NotificationSessionTests.swift in Sources */,
 				630A582D29AF9F3E00E26C4D /* BaseNotificationSessionTests.swift in Sources */,
 				018964272A6FEA8600BCEE0E /* MockEARServiceInterface.swift in Sources */,
-				015C22DD2A1566EB009119CA /* MockSafeCoreCrypto.swift in Sources */,
 				630A584A29B1182C00E26C4D /* MockCoreCrypto.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
