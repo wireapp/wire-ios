@@ -400,7 +400,7 @@ public class ZMUserSession: NSObject {
             self.hasCompletedInitialSync = self.applicationStatusDirectory.syncStatus.isSlowSyncing == false
 
             createMLSClientIfNeeded()
-            observeOnEpochChangeIfNeeded()
+            startObservingMLSConversationVerificationStatus()
         }
 
         registerForCalculateBadgeCountNotification()
@@ -550,15 +550,15 @@ public class ZMUserSession: NSObject {
         }
     }
 
-    private func observeOnEpochChangeIfNeeded() {
-        guard e2eiFeature.isEnabled,
-              let mlsService = self.syncContext.mlsService else {
+    private func startObservingMLSConversationVerificationStatus() {
+        guard e2eiFeature.isEnabled else {
             return
         }
-        let epochChangeToken = EpochChangeObserver(
-            mlsService: mlsService,
-            block: self.mlsConversationVerificationStatusProvider?.updateStatus(_:))
-        self.tokens.append(epochChangeToken)
+        Task {
+            for try await groupID in mlsService.epochChanges() {
+                try await mlsConversationVerificationStatusProvider?.updateStatus(groupID)
+            }
+        }
     }
 
     func createMLSClientIfNeeded() {

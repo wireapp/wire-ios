@@ -22,7 +22,7 @@ import WireCoreCrypto
 // sourcery: AutoMockable
 public protocol E2eIVerificationStatusServiceInterface {
 
-    func getConversationStatus(groupID: MLSGroupID) -> MLSVerificationStatus
+    func getConversationStatus(groupID: MLSGroupID) async throws -> MLSVerificationStatus
 
 }
 
@@ -45,7 +45,7 @@ public final class E2eIVerificationStatusService: E2eIVerificationStatusServiceI
 
     // MARK: - Public interface
 
-    public func getConversationStatus(groupID: MLSGroupID) -> MLSVerificationStatus {
+    public func getConversationStatus(groupID: MLSGroupID) async throws -> MLSVerificationStatus {
         /// TODO: should use coreCrypto.e2eiConversationState(groupID) -> E2EIConversationState from the new CC version
         return E2EIConversationState.notVerified.toMLSVerificationStatus()
     }

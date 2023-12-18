@@ -1644,6 +1644,24 @@ public class MockMLSServiceInterface: MLSServiceInterface {
         }
     }
 
+    // MARK: - epochChanges
+
+    public var epochChanges_Invocations: [Void] = []
+    public var epochChanges_MockMethod: (() -> AsyncStream<MLSGroupID>)?
+    public var epochChanges_MockValue: AsyncStream<MLSGroupID>?
+
+    public func epochChanges() -> AsyncStream<MLSGroupID> {
+        epochChanges_Invocations.append(())
+
+        if let mock = epochChanges_MockMethod {
+            return mock()
+        } else if let mock = epochChanges_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `epochChanges`")
+        }
+    }
+
     // MARK: - leaveSubconversationIfNeeded
 
     public var leaveSubconversationIfNeededParentQualifiedIDParentGroupIDSubconversationTypeSelfClientID_Invocations: [(parentQualifiedID: QualifiedID, parentGroupID: MLSGroupID, subconversationType: SubgroupType, selfClientID: MLSClientID)] = []
