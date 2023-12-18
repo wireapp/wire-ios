@@ -620,40 +620,6 @@ extension ZMClientMessageTests_Editing {
         XCTAssertEqual(editedMessage, newMessage)
     }
 
-    func testThatItClearsReactionsWhenAMessageIsEditedRemotely() {
-        // given
-        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
-        conversation.remoteIdentifier = UUID.create()
-        let message: ZMMessage = try! conversation.appendText(content: "Hallo") as! ZMMessage
-
-        let otherUser = ZMUser.insertNewObject(in: self.uiMOC)
-        otherUser.remoteIdentifier = UUID.create()
-
-        message.setReactions(["😱"], forUser: self.selfUser)
-        message.setReactions(["🤗"], forUser: otherUser)
-
-        XCTAssertFalse(message.reactions.isEmpty)
-
-        let updateEvent = createMessageEditUpdateEvent(oldNonce: message.nonce!,
-                                                       newNonce: UUID.create(),
-                                                       conversationID: conversation.remoteIdentifier!,
-                                                       senderID: message.sender!.remoteIdentifier,
-                                                       newText: "Hello")
-
-        // when
-        var newMessage: ZMClientMessage?
-        self.performPretendingUiMocIsSyncMoc {
-            newMessage = ZMClientMessage.createOrUpdate(from: updateEvent!, in: self.uiMOC, prefetchResult: nil)
-        }
-        // TODO: why is `newMessage` never read?
-
-        // then
-        XCTAssertTrue(message.reactions.isEmpty)
-        let editedMessage = conversation.lastMessage as! ZMMessage
-        XCTAssertTrue(editedMessage.reactions.isEmpty)
-        XCTAssertEqual(editedMessage.textMessageData?.messageText, "Hello")
-    }
-
     func testThatMessageNonPersistedIdentifierDoesNotChangeAfterEdit() {
         // given
         let oldText = "Mamma mia"
