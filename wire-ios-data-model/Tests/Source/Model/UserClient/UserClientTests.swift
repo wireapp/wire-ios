@@ -173,23 +173,24 @@ final class UserClientTests: ZMBaseManagedObjectTest {
             // No op
         }
 
-        await syncMOC.perform { [syncMOC] in
-            otherClient = UserClient.insertNewObject(in: syncMOC)
+        self.syncMOC.performGroupedBlockAndWait {
+            otherClient = UserClient.insertNewObject(in: self.syncMOC)
             otherClient.remoteIdentifier = UUID.create().transportString()
-            otherClient.user = ZMUser.insertNewObject(in: syncMOC)
+            otherClient.user = ZMUser.insertNewObject(in: self.syncMOC)
             otherClient.user?.remoteIdentifier = UUID.create()
 
-            syncMOC.proteusService = mockProteusService
+            self.syncMOC.proteusService = mockProteusService
         }
 
         // When
         try await otherClient.deleteSession()
 
         // Then
-        let proteusSessionID = await syncMOC.perform { otherClient.proteusSessionID }
-        XCTAssertEqual(mockProteusService.deleteSessionId_Invocations, [proteusSessionID])
+        self.syncMOC.performGroupedBlockAndWait {
+            XCTAssertEqual(mockProteusService.deleteSessionId_Invocations, [otherClient.proteusSessionID])
+        }
 
-        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssert(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         flag.isOn = false
     }
 

@@ -919,38 +919,40 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
                                                      expectedChangedKeys: [#keyPath(ZMConversation.legalHoldStatus), #keyPath(ZMConversation.allMessages)])
     }
 
-    // TODO: [jacob] re-enable
-//    func testThatItNotifiesOfLegalHoldChanges_Disabled() {
-//        let conversation = ZMConversation.insertNewObject(in: uiMOC)
-//        conversation.conversationType = .group
-//
-//        let user = createUser(in: uiMOC)
-//
-//        let legalHoldClient = UserClient.insertNewObject(in: uiMOC)
-//        legalHoldClient.type = .legalHold
-//        legalHoldClient.deviceClass = .legalHold
-//        legalHoldClient.user = user
-//
-//        let normalClient = UserClient.insertNewObject(in: uiMOC)
-//        normalClient.type = .permanent
-//        normalClient.deviceClass = .phone
-//        normalClient.user = user
-//
-//        conversation.addParticipantAndUpdateConversationState(user: user, role: nil)
-//        uiMOC.saveOrRollback()
-//
-//        let modifier: (ZMConversation, ConversationObserver) -> Void = { _, _ in
-//            self.performPretendingUiMocIsSyncMoc {
-//                legalHoldClient.deleteClientAndEndSession()
-//            }
-//        }
-//
-//        // Removing a legal hold client should add a system message and change the legal hold value
-//        self.checkThatItNotifiesTheObserverOfAChange(conversation,
-//                                                     modifier: modifier,
-//                                                     expectedChangedFields: [#keyPath(ConversationChangeInfo.legalHoldStatusChanged), #keyPath(ConversationChangeInfo.messagesChanged)],
-//                                                     expectedChangedKeys: [#keyPath(ZMConversation.legalHoldStatus), #keyPath(ZMConversation.allMessages)])
-//    }
+    // TODO: [jacob] re-enable WPB-5917 
+    func testThatItNotifiesOfLegalHoldChanges_Disabled() {
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
+        conversation.conversationType = .group
+
+        let user = createUser(in: uiMOC)
+
+        let legalHoldClient = UserClient.insertNewObject(in: uiMOC)
+        legalHoldClient.type = .legalHold
+        legalHoldClient.deviceClass = .legalHold
+        legalHoldClient.user = user
+
+        let normalClient = UserClient.insertNewObject(in: uiMOC)
+        normalClient.type = .permanent
+        normalClient.deviceClass = .phone
+        normalClient.user = user
+
+        conversation.addParticipantAndUpdateConversationState(user: user, role: nil)
+        uiMOC.saveOrRollback()
+
+        let modifier: (ZMConversation, ConversationObserver) -> Void = { _, _ in
+            self.performPretendingUiMocIsSyncMoc {
+                // Can't call async function inside the synchronous modifier block.
+                // We need an async version of `checkThatItNotifiesTheObserverOfAChange`
+                // legalHoldClient.deleteClientAndEndSession()
+            }
+        }
+
+        // Removing a legal hold client should add a system message and change the legal hold value
+        self.checkThatItNotifiesTheObserverOfAChange(conversation,
+                                                     modifier: modifier,
+                                                     expectedChangedFields: [#keyPath(ConversationChangeInfo.legalHoldStatusChanged), #keyPath(ConversationChangeInfo.messagesChanged)],
+                                                     expectedChangedKeys: [#keyPath(ZMConversation.legalHoldStatus), #keyPath(ZMConversation.allMessages)])
+    }
 
     // MARK: - Role
 

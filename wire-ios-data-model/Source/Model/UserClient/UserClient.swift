@@ -247,11 +247,15 @@ public class UserClient: ZMManagedObject, UserClientType {
 
     /// Resets releationships and ends an exisiting session before deleting the object
     public func deleteClientAndEndSession() async {
-        try? await deleteSession()
+        do {
+            try await deleteSession()
+        } catch {
+            WireLogger.userClient.error("error deleting session: \(String(reflecting: error))")
+        }
         await managedObjectContext?.perform { self.deleteClient() }
     }
 
-    public func deleteClient() {
+    private func deleteClient() {
         assert(self.managedObjectContext!.zm_isSyncContext, "clients can only be deleted on syncContext")
         // hold on to the conversations that are affected by removing this client
         let conversations = activeConversationsForUserOfClients([self])

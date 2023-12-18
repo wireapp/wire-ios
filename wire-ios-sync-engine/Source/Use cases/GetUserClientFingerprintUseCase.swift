@@ -41,7 +41,7 @@ public class GetUserClientFingerprintUseCase: GetUserClientFingerprintUseCasePro
         let sessionEstablisher = SessionEstablisher(
             context: syncContext,
             apiProvider: apiProvider)
-        let proteusProvider = syncContext.performAndWait { ProteusProvider(context: syncContext) }
+        let proteusProvider = ProteusProvider(context: syncContext)
 
         self.init(proteusProvider: proteusProvider, sessionEstablisher: sessionEstablisher, managedObjectContext: syncContext)
     }

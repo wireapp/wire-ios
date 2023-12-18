@@ -129,7 +129,7 @@ final class SessionEstablisherTests: MessagingTestBase {
             return self
         }
 
-        func withEstablishSessionsSucceding() -> Arrangement {
+        func withEstablishSessionsSucceeding() -> Arrangement {
             processor.establishSessionsFromWithContext_MockMethod = { _, _, _ in }
             return self
         }
