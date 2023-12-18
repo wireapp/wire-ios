@@ -31,7 +31,7 @@ extension CoreDataStackError: LocalizedError {
         case .simulateDatabaseLoadingFailure:
             return "simulateDatabaseLoadingFailure"
         case .noDatabaseActivity:
-            return "Could create a background activity for database setup"
+            return "Could not create a background activity for database setup"
         }
     }
 }
