@@ -56,7 +56,7 @@ final class SessionEstablisherTests: MessagingTestBase {
         let clientID = Arrangement.Scaffolding.clientID
         let (arrangement, sessionEstablisher) = Arrangement(coreDataStack: coreDataStack)
             .withFetchPrekeyAPI(returning: .success(Arrangement.Scaffolding.prekeyByQualifiedUserID))
-            .withEstablishSessionsSucceding()
+            .withEstablishSessionsSucceeding()
             .arrange()
 
         // when
@@ -75,7 +75,7 @@ final class SessionEstablisherTests: MessagingTestBase {
         }
         let (arrangement, sessionEstablisher) = Arrangement(coreDataStack: coreDataStack)
             .withFetchPrekeyAPI(returning: .success(Arrangement.Scaffolding.prekeyByQualifiedUserID))
-            .withEstablishSessionsSucceding()
+            .withEstablishSessionsSucceeding()
             .arrange()
 
         // when
@@ -89,7 +89,7 @@ final class SessionEstablisherTests: MessagingTestBase {
         // given
         let (arrangement, sessionEstablisher) = Arrangement(coreDataStack: coreDataStack)
             .withFetchPrekeyAPI(returning: .success(Arrangement.Scaffolding.prekeyByQualifiedUserID))
-            .withEstablishSessionsSucceding()
+            .withEstablishSessionsSucceeding()
             .arrange()
 
         // when
