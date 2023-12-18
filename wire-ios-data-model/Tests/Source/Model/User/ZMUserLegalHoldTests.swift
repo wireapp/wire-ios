@@ -89,7 +89,7 @@ class ZMUserLegalHoldTests: ModelObjectsTests {
 
         // WHEN
         _ = await selfUser.addLegalHoldClient(from: legalHoldRequest)
-        selfUser.userDidAcceptLegalHoldRequest(legalHoldRequest)
+        await syncMOC.perform { selfUser.userDidAcceptLegalHoldRequest(legalHoldRequest) }
 
         // THEN
         syncMOC.performAndWait {
