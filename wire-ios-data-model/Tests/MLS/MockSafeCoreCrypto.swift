@@ -22,9 +22,9 @@ import WireCoreCrypto
 
 class MockSafeCoreCrypto: SafeCoreCryptoProtocol {
 
-    var coreCrypto: MockCoreCrypto
+    var coreCrypto: MockCoreCryptoProtocol
 
-    init(coreCrypto: MockCoreCrypto = .init()) {
+    init(coreCrypto: MockCoreCryptoProtocol = .init()) {
         self.coreCrypto = coreCrypto
     }
 

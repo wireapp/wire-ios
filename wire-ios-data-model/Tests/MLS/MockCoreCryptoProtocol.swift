@@ -20,7 +20,7 @@ import Foundation
 import WireDataModel
 import WireCoreCrypto
 
-class MockCoreCrypto: CoreCryptoProtocol {
+class MockCoreCryptoProtocol: CoreCryptoProtocol {
 
     // MARK: - mlsInit
 

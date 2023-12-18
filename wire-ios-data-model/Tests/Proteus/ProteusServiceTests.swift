@@ -27,7 +27,7 @@ class ProteusServiceTests: XCTestCase {
 
     struct MockError: Error {}
 
-    var mockCoreCrypto: MockCoreCrypto!
+    var mockCoreCrypto: MockCoreCryptoProtocol!
     var mockSafeCoreCrypto: MockSafeCoreCrypto!
     var mockCoreCryptoProvider: MockCoreCryptoProviderProtocol!
     var sut: ProteusService!
@@ -36,7 +36,7 @@ class ProteusServiceTests: XCTestCase {
 
     override func setUpWithError() throws {
         try super.setUpWithError()
-        mockCoreCrypto = MockCoreCrypto()
+        mockCoreCrypto = MockCoreCryptoProtocol()
         mockCoreCrypto.mockProteusInit = {}
         mockSafeCoreCrypto = MockSafeCoreCrypto(coreCrypto: mockCoreCrypto)
         mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
