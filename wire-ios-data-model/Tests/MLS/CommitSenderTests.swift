@@ -28,7 +28,7 @@ class CommitSenderTests: ZMBaseManagedObjectTest {
 
     private var sut: CommitSender!
     private var mockActionsProvider: MockMLSActionsProviderProtocol!
-    private var mockCoreCrypto: MockCoreCrypto!
+    private var mockCoreCrypto: MockCoreCryptoProtocol!
     private var mockCoreCryptoProvider: MockCoreCryptoProviderProtocol!
     private var mockClearPendingCommitInvocations: [[Byte]]!
     private var mockClearPendingGroupInvocations: [[Byte]]!
@@ -49,7 +49,7 @@ class CommitSenderTests: ZMBaseManagedObjectTest {
     override func setUp() {
         super.setUp()
 
-        mockCoreCrypto = MockCoreCrypto()
+        mockCoreCrypto = MockCoreCryptoProtocol()
         mockActionsProvider = MockMLSActionsProviderProtocol()
         mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
         mockCoreCryptoProvider.coreCryptoRequireMLS_MockValue = MockSafeCoreCrypto(coreCrypto: mockCoreCrypto)
