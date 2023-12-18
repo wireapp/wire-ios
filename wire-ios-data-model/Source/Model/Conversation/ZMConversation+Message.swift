@@ -364,7 +364,6 @@ extension ZMConversation {
 
         if expires {
             let expirationDate = message.setExpirationDate()
-            message.setExpirationDate()
             WireLogger.messaging.debug("set expiration date \(expirationDate)")
         }
 
