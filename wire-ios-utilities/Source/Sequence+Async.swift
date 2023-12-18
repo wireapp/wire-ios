@@ -54,6 +54,7 @@ extension Sequence {
         return values
     }
 
+    /// Please try to use a loop instead.
     public func asyncForEach(_ body: (Element) async throws -> Void) async rethrows {
         for element in self {
             try await body(element)
