@@ -199,10 +199,12 @@
 		631216392881D10100FF9A56 /* ZMUpdateEvent+Payload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 631216382881D10100FF9A56 /* ZMUpdateEvent+Payload.swift */; };
 		633B396A2891890600208124 /* ZMUpdateEvent+Decryption.swift in Sources */ = {isa = PBXBuildFile; fileRef = 633B39692891890500208124 /* ZMUpdateEvent+Decryption.swift */; };
 		63457C062B2C6F4200AFFEF3 /* ReplaceSelfMLSKeyPackagesActionHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63457C052B2C6F4200AFFEF3 /* ReplaceSelfMLSKeyPackagesActionHandlerTests.swift */; };
+		63457C082B2CA8E300AFFEF3 /* E2eIKeyPackageRotatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63457C072B2CA8E300AFFEF3 /* E2eIKeyPackageRotatorTests.swift */; };
 		638941F02AF50EB10051ABFD /* MockLocalConversationRemovalUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 638941EF2AF50EB10051ABFD /* MockLocalConversationRemovalUseCase.swift */; };
 		6397F6E228F447F800298DB1 /* SendCommitBundleActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6397F6E128F447F800298DB1 /* SendCommitBundleActionHandler.swift */; };
 		6397F6E628F6DD8B00298DB1 /* SendCommitBundleActionHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6397F6E528F6DD8B00298DB1 /* SendCommitBundleActionHandlerTests.swift */; };
 		639971AC2B1E3072009DD5CF /* ReplaceSelfMLSKeyPackagesActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639971AB2B1E3072009DD5CF /* ReplaceSelfMLSKeyPackagesActionHandler.swift */; };
+		639971B42B2779A9009DD5CF /* E2eIKeyPackageRotator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639971B32B2779A9009DD5CF /* E2eIKeyPackageRotator.swift */; };
 		63CC83B12859D488008549AD /* ClaimMLSKeyPackageActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63CC83B02859D488008549AD /* ClaimMLSKeyPackageActionHandler.swift */; };
 		63CC83B3285A1E59008549AD /* ClaimMLSKeyPackageActionHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63CC83B2285A1E59008549AD /* ClaimMLSKeyPackageActionHandlerTests.swift */; };
 		63CC83B9285B4845008549AD /* String+Empty.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63CC83B8285B4845008549AD /* String+Empty.swift */; };
@@ -649,10 +651,12 @@
 		631216382881D10100FF9A56 /* ZMUpdateEvent+Payload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMUpdateEvent+Payload.swift"; sourceTree = "<group>"; };
 		633B39692891890500208124 /* ZMUpdateEvent+Decryption.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMUpdateEvent+Decryption.swift"; sourceTree = "<group>"; };
 		63457C052B2C6F4200AFFEF3 /* ReplaceSelfMLSKeyPackagesActionHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReplaceSelfMLSKeyPackagesActionHandlerTests.swift; sourceTree = "<group>"; };
+		63457C072B2CA8E300AFFEF3 /* E2eIKeyPackageRotatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = E2eIKeyPackageRotatorTests.swift; sourceTree = "<group>"; };
 		638941EF2AF50EB10051ABFD /* MockLocalConversationRemovalUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockLocalConversationRemovalUseCase.swift; sourceTree = "<group>"; };
 		6397F6E128F447F800298DB1 /* SendCommitBundleActionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendCommitBundleActionHandler.swift; sourceTree = "<group>"; };
 		6397F6E528F6DD8B00298DB1 /* SendCommitBundleActionHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendCommitBundleActionHandlerTests.swift; sourceTree = "<group>"; };
 		639971AB2B1E3072009DD5CF /* ReplaceSelfMLSKeyPackagesActionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReplaceSelfMLSKeyPackagesActionHandler.swift; sourceTree = "<group>"; };
+		639971B32B2779A9009DD5CF /* E2eIKeyPackageRotator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = E2eIKeyPackageRotator.swift; sourceTree = "<group>"; };
 		63CC83B02859D488008549AD /* ClaimMLSKeyPackageActionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaimMLSKeyPackageActionHandler.swift; sourceTree = "<group>"; };
 		63CC83B2285A1E59008549AD /* ClaimMLSKeyPackageActionHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaimMLSKeyPackageActionHandlerTests.swift; sourceTree = "<group>"; };
 		63CC83B8285B4845008549AD /* String+Empty.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Empty.swift"; sourceTree = "<group>"; };
@@ -953,6 +957,8 @@
 				06D61FB72B0CBE3100C2699A /* E2eIEnrollmentTests.swift */,
 				067215AC2B10DCA300CF4AD4 /* E2eIRepository.swift */,
 				064824972B10E32C00115329 /* EnrollE2eICertificateUseCase.swift */,
+				639971B32B2779A9009DD5CF /* E2eIKeyPackageRotator.swift */,
+				63457C072B2CA8E300AFFEF3 /* E2eIKeyPackageRotatorTests.swift */,
 			);
 			path = E2EIdentity;
 			sourceTree = "<group>";
@@ -2079,6 +2085,7 @@
 				F18401A42073BE0800E9F4CC /* GenericMessageEntity.swift in Sources */,
 				1621D2751D7715EA007108C2 /* ZMObjectSyncStrategy.m in Sources */,
 				166901E21D7081C7000FE4AF /* ZMRequestGenerator.m in Sources */,
+				639971B42B2779A9009DD5CF /* E2eIKeyPackageRotator.swift in Sources */,
 				5E68F22722452CDC00298376 /* LinkPreprocessor.swift in Sources */,
 				06025662248E467B00E060E1 /* NotificationStreamSync.swift in Sources */,
 				EE8807A12AC4669D00278E3C /* UserClientPayloadProcessor.swift in Sources */,
@@ -2283,6 +2290,7 @@
 				63DA33AA286F343A00818C3C /* MockMLSEventProcessor.swift in Sources */,
 				16BA786C2AFE7119006D8CCF /* EventDecoderTest.swift in Sources */,
 				06FDC63128354DBD008300DB /* PushTokenStorageTests.swift in Sources */,
+				63457C082B2CA8E300AFFEF3 /* E2eIKeyPackageRotatorTests.swift in Sources */,
 				EE8807932AC40AB100278E3C /* ConnectionPayloadProcessorTests.swift in Sources */,
 				F18401EE2073C26C00E9F4CC /* LinkPreviewAssetUploadRequestStrategyTests.swift in Sources */,
 				EE4345DF2865D0FB0090AC34 /* ConversationByQualifiedIDListTranscoderTests.swift in Sources */,

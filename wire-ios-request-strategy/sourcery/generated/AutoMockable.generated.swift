@@ -31,6 +31,7 @@ import UIKit
 import AppKit
 #endif
 
+import WireCoreCrypto
 
 @testable import WireRequestStrategy
 
@@ -220,6 +221,34 @@ public class MockE2eIAPI: E2eIAPI {
         } else {
             fatalError("no mock for `getAccessTokenClientIdDpopToken`")
         }
+    }
+
+}
+public class MockE2eIKeyPackageRotating: E2eIKeyPackageRotating {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - rotateKeysAndMigrateConversations
+
+    public var rotateKeysAndMigrateConversationsE2eIServiceCertificateChain_Invocations: [(e2eIService: E2eIServiceInterface, certificateChain: String)] = []
+    public var rotateKeysAndMigrateConversationsE2eIServiceCertificateChain_MockError: Error?
+    public var rotateKeysAndMigrateConversationsE2eIServiceCertificateChain_MockMethod: ((E2eIServiceInterface, String) async throws -> Void)?
+
+    public func rotateKeysAndMigrateConversations(e2eIService: E2eIServiceInterface, certificateChain: String) async throws {
+        rotateKeysAndMigrateConversationsE2eIServiceCertificateChain_Invocations.append((e2eIService: e2eIService, certificateChain: certificateChain))
+
+        if let error = rotateKeysAndMigrateConversationsE2eIServiceCertificateChain_MockError {
+            throw error
+        }
+
+        guard let mock = rotateKeysAndMigrateConversationsE2eIServiceCertificateChain_MockMethod else {
+            fatalError("no mock for `rotateKeysAndMigrateConversationsE2eIServiceCertificateChain`")
+        }
+
+        try await mock(e2eIService, certificateChain)
     }
 
 }
