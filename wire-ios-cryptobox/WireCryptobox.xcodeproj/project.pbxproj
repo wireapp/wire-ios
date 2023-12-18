@@ -410,7 +410,11 @@
 				BA7EF95F1B7109B600204A8E /* Products */,
 				F10C8E221E9296BA00020408 /* Frameworks */,
 			);
+			indentWidth = 4;
 			sourceTree = "<group>";
+			tabWidth = 4;
+			usesTabs = 0;
+			wrapsLines = 1;
 		};
 		BA7EF95F1B7109B600204A8E /* Products */ = {
 			isa = PBXGroup;
