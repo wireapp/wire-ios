@@ -1477,6 +1477,7 @@
 
 // Generic
 "registration.no_history.restore_backup_failed.title" = "Ein Fehler ist aufgetreten";
+"registration.no_history.restore_backup_failed.message" = "Der Gesprächsverlauf konnte nicht wiederhergestellt werden.";
 
 // Wrong Account
 "registration.no_history.restore_backup_failed.wrong_account.title" = "Inkompatibles Backup";

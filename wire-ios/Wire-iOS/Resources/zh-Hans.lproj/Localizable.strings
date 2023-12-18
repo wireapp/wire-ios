@@ -1477,6 +1477,7 @@
 
 // Generic
 "registration.no_history.restore_backup_failed.title" = "好像出了点问题。";
+"registration.no_history.restore_backup_failed.message" = "您的历史无法恢复。";
 
 // Wrong Account
 "registration.no_history.restore_backup_failed.wrong_account.title" = "不兼容的备份";

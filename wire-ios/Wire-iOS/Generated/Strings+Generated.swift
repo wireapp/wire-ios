@@ -4521,10 +4521,7 @@ internal enum L10n {
         }
         internal enum RestoreBackupFailed {
           /// Your history could not be restored.
-          ///  Error: %@
-          internal static func message(_ p1: Any) -> String {
-            return L10n.tr("Localizable", "registration.no_history.restore_backup_failed.message", String(describing: p1), fallback: "Your history could not be restored.\n Error: %@")
-          }
+          internal static let message = L10n.tr("Localizable", "registration.no_history.restore_backup_failed.message", fallback: "Your history could not be restored.")
           /// Something went wrong
           internal static let title = L10n.tr("Localizable", "registration.no_history.restore_backup_failed.title", fallback: "Something went wrong")
           /// Try again

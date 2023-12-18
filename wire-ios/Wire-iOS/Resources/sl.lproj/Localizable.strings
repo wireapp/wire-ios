@@ -1477,6 +1477,7 @@
 
 // Generic
 "registration.no_history.restore_backup_failed.title" = "Nekaj je šlo narobe";
+"registration.no_history.restore_backup_failed.message" = "Your history could not be restored.";
 
 // Wrong Account
 "registration.no_history.restore_backup_failed.wrong_account.title" = "Incompatible backup";
