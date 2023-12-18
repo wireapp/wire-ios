@@ -17,7 +17,6 @@
 //
 
 import XCTest
-
 @testable import WireDataModel
 
 class ZMConversationTests_Confirmations: ZMConversationTestsBase {
@@ -95,6 +94,7 @@ class ZMConversationTests_Confirmations: ZMConversationTestsBase {
         XCTAssertEqual(confirmMessages[0].underlyingMessage?.confirmation.firstMessageID, message1.nonce?.transportString())
         XCTAssertEqual(confirmMessages[0].underlyingMessage?.confirmation.moreMessageIds, [message2.nonce!.transportString()])
     }
+
     func testThatConfirmUnreadMessagesAsRead_StillConfirmsMessages_EvenIfLastReadServerTimestampAdvances() throws {
         // Given
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
@@ -114,6 +114,11 @@ class ZMConversationTests_Confirmations: ZMConversationTestsBase {
         message4.sender = user1
 
         conversation.conversationType = .group
+
+        message1.updateServerTimestamp(with: 10)
+        message2.updateServerTimestamp(with: 20)
+        message3.updateServerTimestamp(with: 30)
+        message4.updateServerTimestamp(with: 40)
 
         // When
         // Before we confirm the unread messages, advance the last read server timestamp.
