@@ -441,12 +441,10 @@ class MockE2eIService: E2eIServiceInterface {
 
     var mockE2eIdentity: MockWireE2eIdentity?
     var e2eIdentity: WireE2eIdentityProtocol {
-        get {
-            guard let mock = mockE2eIdentity else {
-                fatalError("no mock for `e2eIdentity`")
-            }
-            return mock
+        guard let mock = mockE2eIdentity else {
+            fatalError("no mock for `e2eIdentity`")
         }
+        return mock
     }
 
 }
