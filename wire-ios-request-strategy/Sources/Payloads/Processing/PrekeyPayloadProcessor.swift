@@ -39,8 +39,6 @@ public final class PrekeyPayloadProcessor: PrekeyPayloadProcessorInterface {
     ///   - payload: The payload containing the prekeys
     ///   - selfClient: The self user's client
     ///   - context: The `NSManagedObjectContext` on which the operation should be performed
-    ///
-    /// - returns `True` if there's more sessions which needs to be established.
 
     public func establishSessions(
         from payload: Payload.PrekeyByQualifiedUserID,
@@ -64,8 +62,6 @@ public final class PrekeyPayloadProcessor: PrekeyPayloadProcessorInterface {
     ///   - selfClient: The self user's client
     ///   - context: The `NSManagedObjectContext` on which the operation should be performed
     ///   - domain: originating domain of the clients.
-    ///
-    /// - returns `True` if there's more sessions which needs to be established.
 
     func establishSessions(
         from payload: Payload.PrekeyByUserID,
