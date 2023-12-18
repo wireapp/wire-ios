@@ -282,6 +282,8 @@
 "conversation.input_bar.audio_message.tooltip.tap_send" = "Нажмите для отправки";
 "conversation.input_bar.audio_message.too_long.title" = "Запись остановлена";
 "conversation.input_bar.audio_message.too_long.message" = "Размер аудиосообщений ограничен %@.";
+"conversation.ping.many_participants_confirmation.title" = "Вы действительно хотите отправить пинг %d пользователям?";
+"conversation.ping.action.title" = "Пинг";
 
 "conversation.input_bar.audio_message.too_long_size.message" = "Размер файла аудиосообщения ограничен %@.";
 
@@ -753,7 +755,7 @@
 "call.degraded.alert.title" = "Новое устройство";
 "call.degraded.alert.message.self" = "Вы начали использовать новое устройство.";
 "call.degraded.alert.message.user" = "%@ начал(-а) использовать новое устройство.";
-"call.degraded.alert.message.unknown" = "Кто-то начал(-а) использовать новое устройство.";
+"call.degraded.alert.message.unknown" = "Кто-то начал использовать новое устройство.";
 "call.degraded.alert.action.continue" = "Все равно позвонить";
 
 "call.degraded.ended.alert.title" = "Вызов завершен";
@@ -855,7 +857,7 @@
 // Conversation Degraded (security level lowered)
 "meta.degraded.degradation_reason_message.singular" = "%@ начал(-а) использовать новое устройство.";
 "meta.degraded.degradation_reason_message.plural" = "%@ начал(-а) использовать новые устройства.";
-"meta.degraded.degradation_reason_message.someone" = "Кто-то начал(-а) использовать новое устройство.";
+"meta.degraded.degradation_reason_message.someone" = "Кто-то начал использовать новое устройство.";
 "meta.degraded.dialog_message" = "Вы все еще хотите отправить свое сообщение?";
 "meta.degraded.verify_devices_button" = "Верифицируйте устройства…";
 "meta.degraded.send_anyway_button" = "Отправить в любом случае";
@@ -1742,10 +1744,10 @@
 "jailbrokendevice.alert.message" = "С целью обеспечения безопасности Wire нельзя использовать на этом устройстве. Все существующие данные Wire были удалены.";
 
 // Database Loading Failure alert
-"databaseloadingfailure.alert.title" = "Недостаточно места";
-"databaseloadingfailure.alert.message" = "База данных не может быть загружена из-за нехватки места на вашем устройстве. Проверьте использование памяти вашего устройства и попробуйте еще раз.";
-"databaseloadingfailure.alert.settings" = "Перейти в настройки";
-"databaseloadingfailure.alert.delete_database" = "Удалить базу данных";
+"databaseloadingfailure.alert.title" = "Обновить хранилище данных";
+"databaseloadingfailure.alert.message" = "Не удалось загрузить базу данных.\n Ошибка: %@";
+"databaseloadingfailure.alert.save-backup" = "Сохранить мои данные";
+"databaseloadingfailure.alert.delete_database" = "Очистить мои данные и продолжить";
 "databaseloadingfailure.alert.delete_database.message" = "При удалении базы данных все локальные данные и сообщения этого аккаунта будут удалены навсегда.";
 "databaseloadingfailure.alert.delete_database.continue" = "Продолжить";
 "databaseloadingfailure.alert.retry" = "Повторить";
