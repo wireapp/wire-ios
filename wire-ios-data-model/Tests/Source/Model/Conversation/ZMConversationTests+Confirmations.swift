@@ -83,6 +83,10 @@ class ZMConversationTests_Confirmations: ZMConversationTestsBase {
         conversation.conversationType = .group
         conversation.lastReadServerTimeStamp = .distantPast
 
+        message1.updateServerTimestamp(with: 10)
+        message2.updateServerTimestamp(with: 20)
+        message3.updateServerTimestamp(with: 30)
+
         // when
         let confirmMessages = conversation.confirmUnreadMessagesAsRead(in: conversation.lastReadServerTimeStamp!...message2.serverTimestamp!)
 
@@ -91,7 +95,6 @@ class ZMConversationTests_Confirmations: ZMConversationTestsBase {
         XCTAssertEqual(confirmMessages[0].underlyingMessage?.confirmation.firstMessageID, message1.nonce?.transportString())
         XCTAssertEqual(confirmMessages[0].underlyingMessage?.confirmation.moreMessageIds, [message2.nonce!.transportString()])
     }
-
     func testThatConfirmUnreadMessagesAsRead_StillConfirmsMessages_EvenIfLastReadServerTimestampAdvances() throws {
         // Given
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
