@@ -120,28 +120,19 @@ extension SessionManager {
 
             let decryptedURL = SessionManager.temporaryURL(for: location)
 
-            var fileCoordinatorError: NSError? = nil
-            NSFileCoordinator().coordinate(readingItemAt: location, error: &fileCoordinatorError) { url in
+            zmLog.safePublic(SanitizedString(stringLiteral: "coordinated file access at: \(location.absoluteString)"), level: .debug)
+            WireLogger.localStorage.debug("coordinated file access at: \(location.absoluteString)")
 
-                zmLog.safePublic(SanitizedString(stringLiteral: "coordinated file access at: \(url.absoluteString)"), level: .debug)
-                WireLogger.localStorage.debug("coordinated file access at: \(url.absoluteString)")
-                do {
-                    try SessionManager.decrypt(from: location, to: decryptedURL, password: password, accountId: userId)
-                } catch {
-                    switch error {
-                    case ChaCha20Poly1305.StreamEncryption.EncryptionError.decryptionFailed:
-                        return complete(.failure(BackupError.decryptionError))
-                    case ChaCha20Poly1305.StreamEncryption.EncryptionError.keyGenerationFailed:
-                        return complete(.failure(BackupError.keyCreationFailed))
-                    default: return complete(.failure(error))
-                    }
+            do {
+                try SessionManager.decrypt(from: location, to: decryptedURL, password: password, accountId: userId)
+            } catch {
+                switch error {
+                case ChaCha20Poly1305.StreamEncryption.EncryptionError.decryptionFailed:
+                    return complete(.failure(BackupError.decryptionError))
+                case ChaCha20Poly1305.StreamEncryption.EncryptionError.keyGenerationFailed:
+                    return complete(.failure(BackupError.keyCreationFailed))
+                default: return complete(.failure(error))
                 }
-            }
-
-            if fileCoordinatorError != nil {
-                zmLog.safePublic(SanitizedString(stringLiteral: "File Coordinator errored out: \(fileCoordinatorError.debugDescription)"), level: .debug)
-                WireLogger.localStorage.debug("File Coordinator errored out: \(fileCoordinatorError.debugDescription)")
-                complete(.failure(fileCoordinatorError!))
             }
 
             let url = SessionManager.unzippedBackupURL(for: location)
