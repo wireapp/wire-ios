@@ -580,7 +580,7 @@ extension UserObserverTests {
         XCTAssertTrue(user.needsToAcknowledgeLegalHoldStatus)
     }
 
-    // TODO: [jacob] re-enable
+    // TODO: [jacob] re-enable WPB-5917 
     func testThatItNotifiesTheObserverOfLegalHoldStatusChange_Removed() {
         // given
         let user = ZMUser.selfUser(in: uiMOC)

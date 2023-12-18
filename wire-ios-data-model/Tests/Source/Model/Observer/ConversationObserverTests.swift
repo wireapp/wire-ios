@@ -919,7 +919,7 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
                                                      expectedChangedKeys: [#keyPath(ZMConversation.legalHoldStatus), #keyPath(ZMConversation.allMessages)])
     }
 
-    // TODO: [jacob] re-enable
+    // TODO: [jacob] re-enable WPB-5917 
     func testThatItNotifiesOfLegalHoldChanges_Disabled() {
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.conversationType = .group
