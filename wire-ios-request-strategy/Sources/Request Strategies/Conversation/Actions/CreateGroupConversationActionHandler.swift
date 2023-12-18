@@ -261,7 +261,6 @@ final class CreateGroupConversationActionHandler: ActionHandler<CreateGroupConve
             }
 
             do {
-                // FIXME: turn async
                 try await mlsService.createGroup(for: groupID)
                 try await mlsService.addMembersToConversation(with: users, for: groupID)
                 await self.context.perform {

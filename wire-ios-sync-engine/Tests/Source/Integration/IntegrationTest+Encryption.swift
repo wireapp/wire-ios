@@ -77,12 +77,20 @@ extension IntegrationTest {
             _ = ZMUser.selfUser(in: context).selfClient()!
             var prekey: String?
             self.encryptionContext(for: client).perform { session in
-                prekey = try! session.generateLastPrekey()
+                do {
+                    prekey = try session.generateLastPrekey()
+                } catch {
+                    XCTFail("unexpected error: \(String(reflecting: error))")
+                }
             }
 
             // TODO: [John] use flag here
-            context.zm_cryptKeyStore.encryptionContext.perform { (session) in
-                try! session.createClientSession(client.sessionIdentifier!, base64PreKeyString: prekey!)
+            context.zm_cryptKeyStore.encryptionContext.perform { session in
+                do {
+                    try session.createClientSession(client.sessionIdentifier!, base64PreKeyString: prekey!)
+                } catch {
+                    XCTFail("unexpected error: \(String(reflecting: error))")
+                }
             }
         }
     }
