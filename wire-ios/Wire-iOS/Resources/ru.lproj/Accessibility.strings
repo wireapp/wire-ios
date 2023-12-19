@@ -83,6 +83,9 @@
 "conversationSearch.item.hint" = "Нажмите дважды, чтобы открыть";
 "conversationSearch.itemPlay.hint" = "Нажмите дважды, чтобы воспроизвести";
 
+"conversation.scrollToBottomButton.description" = "Переход к концу беседы";
+"conversation.scrollToBottomButton.hint" = "Нажмите для перехода к концу беседы";
+
 "audioRecord.stopButton.description" = "Остановить запись";
 "audioRecord.startButton.description" = "Начать запись";
 "audioRecord.startButton.hint" = "Нажмите дважды, чтобы записать";
