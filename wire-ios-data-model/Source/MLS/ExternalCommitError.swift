@@ -20,11 +20,11 @@ import Foundation
 
 enum ExternalCommitError: Error, Equatable {
 
-    case failedToSendCommit(recovery: Recovery)
+    case failedToSendCommit(recovery: RecoveryStrategy)
     case failedToMergePendingGroup
     case failedToClearPendingGroup
 
-    enum Recovery {
+    enum RecoveryStrategy {
 
         /// Retry the action from the beginning
         case retry
@@ -35,7 +35,7 @@ enum ExternalCommitError: Error, Equatable {
     }
 }
 
-extension ExternalCommitError.Recovery {
+extension ExternalCommitError.RecoveryStrategy {
 
     /// Whether the pending group should be cleared
 

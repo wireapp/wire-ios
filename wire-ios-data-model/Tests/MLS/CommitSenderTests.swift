@@ -28,7 +28,7 @@ class CommitSenderTests: ZMBaseManagedObjectTest {
 
     private var sut: CommitSender!
     private var mockActionsProvider: MockMLSActionsProviderProtocol!
-    private var mockCoreCrypto: MockCoreCrypto!
+    private var mockCoreCrypto: MockCoreCryptoProtocol!
     private var mockCoreCryptoProvider: MockCoreCryptoProviderProtocol!
     private var mockClearPendingCommitInvocations: [[Byte]]!
     private var mockClearPendingGroupInvocations: [[Byte]]!
@@ -49,7 +49,7 @@ class CommitSenderTests: ZMBaseManagedObjectTest {
     override func setUp() {
         super.setUp()
 
-        mockCoreCrypto = MockCoreCrypto()
+        mockCoreCrypto = MockCoreCryptoProtocol()
         mockActionsProvider = MockMLSActionsProviderProtocol()
         mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
         mockCoreCryptoProvider.coreCryptoRequireMLS_MockValue = MockSafeCoreCrypto(coreCrypto: mockCoreCrypto)
@@ -145,7 +145,7 @@ class CommitSenderTests: ZMBaseManagedObjectTest {
     }
 
     private func assertSendCommitBundleThrows(
-        withRecovery recovery: CommitError.Recovery,
+        withRecovery recovery: CommitError.RecoveryStrategy,
         for error: SendCommitBundleAction.Failure,
         shouldClearPendingCommit: Bool,
         file: StaticString = #file,
@@ -223,7 +223,7 @@ class CommitSenderTests: ZMBaseManagedObjectTest {
     }
 
     private func assertSendExternalCommitBundleThrows(
-        withRecovery recovery: ExternalCommitError.Recovery,
+        withRecovery recovery: ExternalCommitError.RecoveryStrategy,
         for error: SendCommitBundleAction.Failure,
         shouldClearPendingGroup: Bool,
         file: StaticString = #file,
@@ -243,11 +243,11 @@ class CommitSenderTests: ZMBaseManagedObjectTest {
 
         if shouldClearPendingGroup {
             // It clears pending commit
-            XCTAssertEqual(mockClearPendingGroupInvocations.count, 1)
-            XCTAssertEqual(mockClearPendingGroupInvocations.first, groupID.bytes)
+            XCTAssertEqual(mockClearPendingGroupInvocations.count, 1, file: file, line: line)
+            XCTAssertEqual(mockClearPendingGroupInvocations.first, groupID.bytes, file: file, line: line)
         } else {
             // It doesn't clear pending commit
-            XCTAssertEqual(mockClearPendingGroupInvocations.count, 0)
+            XCTAssertEqual(mockClearPendingGroupInvocations.count, 0, file: file, line: line)
         }
     }
 

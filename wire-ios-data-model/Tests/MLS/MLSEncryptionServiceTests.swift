@@ -25,7 +25,7 @@ import WireCoreCrypto
 final class MLSEncryptionServiceTests: XCTestCase {
 
     var sut: MLSEncryptionService!
-    var mockCoreCrypto: MockCoreCrypto!
+    var mockCoreCrypto: MockCoreCryptoProtocol!
     var mockSafeCoreCrypto: MockSafeCoreCrypto!
     var mockCoreCryptoProvider: MockCoreCryptoProviderProtocol!
 
@@ -33,7 +33,7 @@ final class MLSEncryptionServiceTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        mockCoreCrypto = MockCoreCrypto()
+        mockCoreCrypto = MockCoreCryptoProtocol()
         mockSafeCoreCrypto = MockSafeCoreCrypto(coreCrypto: mockCoreCrypto)
         mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
         mockCoreCryptoProvider.coreCryptoRequireMLS_MockValue = mockSafeCoreCrypto

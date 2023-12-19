@@ -495,7 +495,8 @@ class ConversationByIDTranscoder: IdentifierObjectSyncTranscoder {
         return ZMTransportRequest(getFromPath: "/conversations/\(converationID)", apiVersion: apiVersion.rawValue)
     }
 
-    func didReceive(response: ZMTransportResponse, for identifiers: Set<UUID>) {
+    func didReceive(response: ZMTransportResponse, for identifiers: Set<UUID>, completionHandler: @escaping () -> Void) {
+        defer { completionHandler() }
 
         guard response.result != .permanentError else {
             if response.httpStatus == 404 {
@@ -609,7 +610,8 @@ class ConversationByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
         return ZMTransportRequest(getFromPath: "/conversations/\(domain)/\(conversationID)", apiVersion: apiVersion.rawValue)
     }
 
-    func didReceive(response: ZMTransportResponse, for identifiers: Set<QualifiedID>) {
+    func didReceive(response: ZMTransportResponse, for identifiers: Set<QualifiedID>, completionHandler: @escaping () -> Void) {
+        defer { completionHandler() }
 
         guard response.result != .permanentError else {
             markConversationsAsFetched(identifiers)
@@ -716,7 +718,8 @@ class ConversationByIDListTranscoder: IdentifierObjectSyncTranscoder {
         return ZMTransportRequest(getFromPath: "/conversations?ids=\(converationIDs)", apiVersion: apiVersion.rawValue)
     }
 
-    func didReceive(response: ZMTransportResponse, for identifiers: Set<UUID>) {
+    func didReceive(response: ZMTransportResponse, for identifiers: Set<UUID>, completionHandler: @escaping () -> Void) {
+        defer { completionHandler() }
         guard
             let apiVersion = APIVersion(rawValue: response.apiVersion),
             let rawData = response.rawData,
@@ -778,7 +781,9 @@ class ConversationByQualifiedIDListTranscoder: IdentifierObjectSyncTranscoder {
         return ZMTransportRequest(path: path, method: .post, payload: payloadAsString as ZMTransportData, apiVersion: apiVersion.rawValue)
     }
 
-    func didReceive(response: ZMTransportResponse, for identifiers: Set<QualifiedID>) {
+    func didReceive(response: ZMTransportResponse, for identifiers: Set<QualifiedID>, completionHandler: @escaping () -> Void) {
+        defer { completionHandler() }
+
         guard
             let apiVersion = APIVersion(rawValue: response.apiVersion),
             let rawData = response.rawData,
