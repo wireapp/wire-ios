@@ -121,8 +121,8 @@ public final class MLSService: MLSServiceInterface {
     private let syncStatus: SyncStatusProtocol
 
     private var coreCrypto: SafeCoreCryptoProtocol {
-        get throws {
-            try coreCryptoProvider.coreCrypto(requireMLS: true)
+        get async throws {
+            try await coreCryptoProvider.coreCrypto(requireMLS: true)
         }
     }
 

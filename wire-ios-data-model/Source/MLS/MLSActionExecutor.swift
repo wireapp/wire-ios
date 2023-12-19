@@ -51,8 +51,8 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
     private let commitSender: CommitSending
 
     private var coreCrypto: SafeCoreCryptoProtocol {
-        get throws {
-            try coreCryptoProvider.coreCrypto(requireMLS: true)
+        get async throws {
+            try await coreCryptoProvider.coreCrypto(requireMLS: true)
         }
     }
 

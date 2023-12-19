@@ -530,7 +530,7 @@ public class ZMUserSession: NSObject {
         do {
             if applicationStatusDirectory.clientRegistrationStatus.needsToRegisterMLSCLient {
                 // Make sure MLS client exists, mls public keys will be generated upon creation
-                _ = try coreCryptoProvider.coreCrypto(requireMLS: true)
+                _ = try await coreCryptoProvider.coreCrypto(requireMLS: true)
             }
         } catch {
             WireLogger.mls.error("Failed to create MLS client: \(error)")

@@ -115,7 +115,7 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
         }
 
         do {
-            let decryptedMessage = try coreCryptoProvider.coreCrypto(requireMLS: true).perform { try $0.decryptMessage(
+            let decryptedMessage = try await coreCryptoProvider.coreCrypto(requireMLS: true).perform { try $0.decryptMessage(
                 conversationId: groupID.bytes,
                 payload: messageBytes
             ) }
