@@ -1570,18 +1570,6 @@ public final class MLSService: MLSServiceInterface {
         }
     }
 
-    private func getMembers(for groupID: MLSGroupID) throws -> [MLSClientID] {
-        do {
-            logger.info("getting members for group (\(groupID.safeForLoggingDescription))")
-            return try coreCrypto
-                .perform { try $0.getClientIds(conversationId: groupID.bytes) }
-                .compactMap { MLSClientID(data: Data($0)) }
-        } catch {
-            logger.error("failed to get members for group (\(groupID.safeForLoggingDescription)): \(String(describing: error))")
-            throw error
-        }
-    }
-
     public func leaveSubconversationIfNeeded(
         parentQualifiedID: QualifiedID,
         parentGroupID: MLSGroupID,
