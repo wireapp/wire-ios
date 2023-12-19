@@ -140,7 +140,7 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
         let fetchRequest = ZMUser.fetchRequest()
         guard let users = try context.fetch(fetchRequest) as? [ZMUser] else { return }
         let qualifiedIDs = users.compactMap { $0.qualifiedID }
-        try await actionsProvider.syncUsers(qualifiedIDs: ids, context: context.notificationContext)
+        try await actionsProvider.syncUsers(qualifiedIDs: qualifiedIDs, context: context.notificationContext)
     }
 
     // This method is for [iOS] Finalise migration for conversation - WPB-542
