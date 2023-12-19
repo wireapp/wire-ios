@@ -45,7 +45,7 @@ import WireTesting
     /// Create storage stack
     func createStorageStackAndWaitForCompletion(userID: UUID = UUID(), file: StaticString = #file, line: UInt = #line) -> CoreDataStack {
 
-        // we use backgroundActivity suring the setup so we need to mock for tests
+        // we use backgroundActivity during the setup so we need to mock it for tests
         let manager = MockBackgroundActivityManager()
         BackgroundActivityFactory.shared.activityManager = manager
 
