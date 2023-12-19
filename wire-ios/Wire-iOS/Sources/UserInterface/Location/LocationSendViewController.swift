@@ -23,6 +23,8 @@ import WireCommonComponents
 
 protocol LocationSendViewControllerDelegate: AnyObject {
     func locationSendViewControllerSendButtonTapped(_ viewController: LocationSendViewController)
+    func locationSendViewController(_ viewController: LocationSendViewController, shouldChangeHeight isActive: Bool)
+
 }
 
 // MARK: - LocationSendViewController
@@ -51,6 +53,8 @@ final class LocationSendViewController: UIViewController {
         didSet {
             addressLabel.text = address
             updateAddressLabelAccessibility()
+            let shouldActivateConstraint = address?.isEmpty ?? true
+            delegate?.locationSendViewController(self, shouldChangeHeight: shouldActivateConstraint)
         }
     }
 
