@@ -139,7 +139,7 @@ extension ZMClientMessage: EncryptedPayloadGenerator {
         }
 
         await context.perform { self.updateUnderlayingMessageBeforeSending(in: context) }
-        return await underlyingMessage?.encryptForTransport(for: conversation)
+        return await underlyingMessage?.encryptForTransport(for: conversation, in: context)
     }
 
     public func encryptForTransportQualified() async -> Payload? {
@@ -151,7 +151,7 @@ extension ZMClientMessage: EncryptedPayloadGenerator {
         }
 
         await context.perform { self.updateUnderlayingMessageBeforeSending(in: context) }
-        return await underlyingMessage?.encryptForTransport(for: conversation, useQualifiedIdentifiers: true)
+        return await underlyingMessage?.encryptForTransport(for: conversation, in: context, useQualifiedIdentifiers: true)
     }
 
     public var debugInfo: String {
@@ -171,7 +171,7 @@ extension ZMAssetClientMessage: EncryptedPayloadGenerator {
         }
 
         await context.perform { self.updateUnderlayingMessageBeforeSending(in: context) }
-        return await underlyingMessage?.encryptForTransport(for: conversation)
+        return await underlyingMessage?.encryptForTransport(for: conversation, in: context)
     }
 
     public func encryptForTransportQualified() async -> Payload? {
@@ -190,7 +190,7 @@ extension ZMAssetClientMessage: EncryptedPayloadGenerator {
         let underlyingMessage = await context.perform { self.updateUnderlayingMessageBeforeSending(in: context)
             return self.underlyingMessage
         }
-        return await underlyingMessage?.encryptForTransport(for: conversation, useQualifiedIdentifiers: true)
+        return await underlyingMessage?.encryptForTransport(for: conversation, in: context, useQualifiedIdentifiers: true)
     }
 
     public var debugInfo: String {
@@ -218,14 +218,12 @@ extension GenericMessage {
 
     public func encryptForTransport(
         for conversation: ZMConversation,
+        in context: NSManagedObjectContext,
         useQualifiedIdentifiers: Bool = false,
         externalData: Data? = nil
     ) async -> EncryptedPayloadGenerator.Payload? {
-        guard let context = conversation.managedObjectContext else {
-            return nil
-        }
 
-        let selfUser = await context.perform {ZMUser.selfUser(in: context) }
+        let selfUser = await context.perform { ZMUser.selfUser(in: context) }
         let (users, missingClientsStrategy) = await context.perform { recipientUsersForMessage(in: conversation, selfUser: selfUser) }
         let recipients = await context.perform { users.mapToDictionary { $0.clients } }
 
@@ -375,7 +373,8 @@ extension GenericMessage {
                 selfDomain: selfDomain,
                 recipients: recipients,
                 missingClientsStrategy: missingClientsStrategy,
-                externalData: externalData
+                externalData: externalData,
+                context: context
             ) { sessionID, plainText in
                 try proteusService.encrypt(
                     data: plainText,
@@ -390,7 +389,8 @@ extension GenericMessage {
                 selfClient,
                 recipients: recipients,
                 missingClientsStrategy: missingClientsStrategy,
-                externalData: externalData
+                externalData: externalData,
+                context: context
             ) { sessionID, plainText in
                 try proteusService.encrypt(
                     data: plainText,
@@ -429,23 +429,28 @@ extension GenericMessage {
         useQualifiedIdentifiers: Bool = false,
         in context: NSManagedObjectContext
     ) async -> Data? {
-        guard
-            let selfClient = ZMUser.selfUser(in: context).selfClient(),
-            selfClient.remoteIdentifier != nil
-        else {
-            return nil
+        let selfClient = await context.perform {
+            let client = ZMUser.selfUser(in: context).selfClient()
+            if client?.remoteIdentifier != nil {
+                return client
+            } else {
+                return UserClient?.none
+            }
         }
+
+        guard let selfClient else { return nil }
 
         var messageData: Data?
 
         await keyStore.encryptionContext.performAsync { sessionsDirectory in
-            if useQualifiedIdentifiers, let selfDomain = ZMUser.selfUser(in: context).domain {
+            if useQualifiedIdentifiers, let selfDomain = await context.perform({ZMUser.selfUser(in: context).domain }) {
                 let message = await proteusMessage(
                     selfClient,
                     selfDomain: selfDomain,
                     recipients: recipients,
                     missingClientsStrategy: missingClientsStrategy,
-                    externalData: externalData
+                    externalData: externalData,
+                    context: context
                 ) { sessionID, plainText in
                     try sessionsDirectory.encryptCaching(
                         plainText,
@@ -460,7 +465,8 @@ extension GenericMessage {
                     selfClient,
                     recipients: recipients,
                     missingClientsStrategy: missingClientsStrategy,
-                    externalData: externalData
+                    externalData: externalData,
+                    context: context
                 ) { sessionID, plainText in
                     try sessionsDirectory.encryptCaching(
                         plainText,
@@ -499,12 +505,14 @@ extension GenericMessage {
         recipients: [ZMUser: Set<UserClient>],
         missingClientsStrategy: MissingClientsStrategy,
         externalData: Data?,
+        context: NSManagedObjectContext,
         using encryptionFunction: EncryptionFunction
     ) async -> Proteus_QualifiedNewOtrMessage {
         let qualifiedUserEntries = await qualifiedUserEntriesWithEncryptedData(
             selfClient,
             selfDomain: selfDomain,
             recipients: recipients,
+            context: context,
             using: encryptionFunction
         )
 
@@ -527,11 +535,13 @@ extension GenericMessage {
         recipients: [ZMUser: Set<UserClient>],
         missingClientsStrategy: MissingClientsStrategy,
         externalData: Data?,
+        context: NSManagedObjectContext,
         using encryptionFunction: EncryptionFunction
     ) async -> Proteus_NewOtrMessage {
         let userEntries = await userEntriesWithEncryptedData(
             selfClient,
             recipients: recipients,
+            context: context,
             using: encryptionFunction
         )
 
@@ -556,19 +566,23 @@ extension GenericMessage {
         _ selfClient: UserClient,
         selfDomain: String,
         recipients: [ZMUser: Set<UserClient>],
+        context: NSManagedObjectContext,
         using encryptionFunction: EncryptionFunction
     ) async -> [Proteus_QualifiedUserEntry] {
-        let recipientsByDomain = Dictionary(grouping: recipients) { (element) -> String in
-            element.key.domain ?? selfDomain
+        let recipientsByDomain = await context.perform {
+            Dictionary(grouping: recipients) { (element) -> String in
+                element.key.domain ?? selfDomain
+            }
         }
 
         return await recipientsByDomain.asyncCompactMap { domain, recipients in
             let userEntries: [Proteus_UserEntry] = await recipients.asyncCompactMap { (user, clients) in
-                guard !user.isAccountDeleted else { return nil }
+                guard await context.perform({ !user.isAccountDeleted }) else { return nil }
 
                 let clientEntries = await clientEntriesWithEncryptedData(
                     selfClient,
                     userClients: clients,
+                    context: context,
                     using: encryptionFunction
                 )
 
@@ -583,14 +597,16 @@ extension GenericMessage {
     private func userEntriesWithEncryptedData(
         _ selfClient: UserClient,
         recipients: [ZMUser: Set<UserClient>],
+        context: NSManagedObjectContext,
         using encryptionFunction: EncryptionFunction
     ) async -> [Proteus_UserEntry] {
         return await recipients.asyncCompactMap { (user, clients) in
-            guard !user.isAccountDeleted else { return nil }
+            guard await context.perform({ !user.isAccountDeleted }) else { return nil }
 
             let clientEntries = await clientEntriesWithEncryptedData(
                 selfClient,
                 userClients: clients,
+                context: context,
                 using: encryptionFunction
             )
 
@@ -603,27 +619,30 @@ extension GenericMessage {
     private func clientEntriesWithEncryptedData(
         _ selfClient: UserClient,
         userClients: Set<UserClient>,
+        context: NSManagedObjectContext,
         using encryptionFunction: EncryptionFunction
     ) async -> [Proteus_ClientEntry] {
         return await userClients.asyncCompactMap { client in
-            guard client != selfClient else { return nil }
-            return await clientEntry(for: client, using: encryptionFunction)
+            guard await context.perform({ client != selfClient }) else { return nil }
+            return await clientEntry(for: client, context: context, using: encryptionFunction)
         }
     }
 
     // Assumes it's not the self client.
     private func clientEntry(
         for client: UserClient,
+        context: NSManagedObjectContext,
         using encryptionFunction: EncryptionFunction
     ) async -> Proteus_ClientEntry? {
         guard let sessionID = client.proteusSessionID else {
             return nil
         }
 
-        guard !client.failedToEstablishSession else {
+        guard await context.perform({ !client.failedToEstablishSession }) else {
             // If the session is corrupted, we will send a special payload.
             let data = ZMFailedToCreateEncryptedMessagePayloadString.data(using: String.Encoding.utf8)!
-            WireLogger.proteus.error("Failed to encrypt payload: session is not established with client: \(client.remoteIdentifier ?? "<nil>")", attributes: nil)
+            let id = await context.perform({ client.remoteIdentifier ?? "<nil>" })
+            WireLogger.proteus.error("Failed to encrypt payload: session is not established with client: \(id)", attributes: nil)
             return Proteus_ClientEntry(withClient: client, data: data)
         }
 
@@ -631,7 +650,7 @@ extension GenericMessage {
             let plainText = try serializedData()
             let encryptedData = try await encryptionFunction(sessionID, plainText)
             guard let data = encryptedData else { return nil }
-            return Proteus_ClientEntry(withClient: client, data: data)
+            return await context.perform { Proteus_ClientEntry(withClient: client, data: data) }
         } catch {
             WireLogger.proteus.error("failed to encrypt payload for a client: \(String(describing: error))")
             return nil
@@ -756,10 +775,10 @@ extension GenericMessage {
 
     /// Returns a message with recipients, with the content stored externally, and a strategy to handle missing clients.
 
-    private func encryptForTransportWithExternalDataBlob(for conversation: ZMConversation) async -> EncryptedPayloadGenerator.Payload? {
+    private func encryptForTransportWithExternalDataBlob(for conversation: ZMConversation, in context: NSManagedObjectContext) async -> EncryptedPayloadGenerator.Payload? {
         guard let encryptedDataWithKeys = GenericMessage.encryptedDataWithKeys(from: self) else { return nil }
         let externalGenericMessage = GenericMessage(content: External(withKeyWithChecksum: encryptedDataWithKeys.keys))
-        return await externalGenericMessage.encryptForTransport(for: conversation, externalData: encryptedDataWithKeys.data)
+        return await externalGenericMessage.encryptForTransport(for: conversation, in: context, externalData: encryptedDataWithKeys.data)
     }
 
     private func encryptForTransportWithExternalDataBlob(

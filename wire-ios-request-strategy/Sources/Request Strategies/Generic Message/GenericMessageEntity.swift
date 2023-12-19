@@ -83,19 +83,18 @@ extension GenericMessageEntity: EncryptedPayloadGenerator {
 
     public func encryptForTransport() async -> EncryptedPayloadGenerator.Payload? {
         guard
-            let conversation = conversation,
-            let managedObjectContext = conversation.managedObjectContext
+            let conversation = conversation
         else {
             return nil
         }
 
         switch targetRecipients {
         case .conversationParticipants:
-            return await message.encryptForTransport(for: conversation)
+            return await message.encryptForTransport(for: conversation, in: context)
         case .users(let users):
-            return await message.encryptForTransport(forBroadcastRecipients: users, in: managedObjectContext)
+            return await message.encryptForTransport(forBroadcastRecipients: users, in: context)
         case .clients(let clientsByUser):
-            return await message.encryptForTransport(for: clientsByUser, in: managedObjectContext)
+            return await message.encryptForTransport(for: clientsByUser, in: context)
         }
     }
 
@@ -103,7 +102,7 @@ extension GenericMessageEntity: EncryptedPayloadGenerator {
         switch targetRecipients {
         case .conversationParticipants:
             guard let conversation = conversation else { return nil }
-            return await message.encryptForTransport(for: conversation, useQualifiedIdentifiers: true)
+            return await message.encryptForTransport(for: conversation, in: context, useQualifiedIdentifiers: true)
         case .users(let users):
             return await message.encryptForTransport(forBroadcastRecipients: users, useQualifiedIdentifiers: true, in: context)
         case .clients(let clientsByUser):
