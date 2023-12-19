@@ -128,7 +128,7 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
 
         // We periodically sync users to refresh their list of supported protocols
         // But if the finalisation time has arrived, we will finish the migration regardless of supported protocols
-        if migrationFinalisationTimeHasArrived {
+        if !migrationFinalisationTimeHasArrived {
             try await syncUsersWithTheBackend()
         }
 
