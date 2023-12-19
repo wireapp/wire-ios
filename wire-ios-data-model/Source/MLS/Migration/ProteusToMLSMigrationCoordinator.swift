@@ -144,6 +144,8 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
         try await actionsProvider.syncUsers(qualifiedIDs: ids, context: context.notificationContext)
     }
 
+    // This method is for [iOS] Finalise migration for conversation - WPB-542
+    // which is going to be implemented in the next PR
     func finalizeConversationMigration(conversation: ZMConversation) async {
 
     }
