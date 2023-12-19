@@ -59,22 +59,19 @@ public class GetUserClientFingerprintUseCase: GetUserClientFingerprintUseCasePro
     public func invoke(userClient: UserClient) async -> Data? {
         let objectId = userClient.objectID
 
-        var existingUser: UserClient?
-        var shouldEstablishSession = false
-        var clientIds = Set<QualifiedClientID>()
-
-        await self.context.perform {
-            existingUser = try? self.context.existingObject(with: objectId) as? UserClient
-            shouldEstablishSession = existingUser?.hasSessionWithSelfClient == false
-            if let id = existingUser?.qualifiedClientID {
-                clientIds.insert(id)
-            }
+        guard let (existingClient, clientId) = await self.context.perform({
+            let client = try? self.context.existingObject(with: objectId) as? UserClient
+            return (client, client?.qualifiedClientID) as? (UserClient, QualifiedClientID)
+        }) else {
+            return nil
         }
+
+        let shouldEstablishSession = await existingClient.hasSessionWithSelfClient == false
 
         if shouldEstablishSession {
             if let apiVersion = BackendInfo.apiVersion {
                 do {
-                    try await sessionEstablisher.establishSession(with: clientIds, apiVersion: apiVersion)
+                    try await sessionEstablisher.establishSession(with: Set([clientId]), apiVersion: apiVersion)
                 } catch {
                     WireLogger.proteus.error("cannot establishSession while getting fingerprint: \(error)")
                 }
@@ -83,10 +80,8 @@ public class GetUserClientFingerprintUseCase: GetUserClientFingerprintUseCasePro
             }
         }
 
-        guard let existingUser else { return nil }
-
         let isSelfClient = await context.perform {
-            existingUser.isSelfClient()
+            existingClient.isSelfClient()
         }
 
         let canPerform  = await context.perform {
@@ -101,7 +96,7 @@ public class GetUserClientFingerprintUseCase: GetUserClientFingerprintUseCasePro
         if isSelfClient {
             return await localFingerprint()
         } else {
-            return await fetchRemoteFingerprint(for: existingUser)
+            return await fetchRemoteFingerprint(for: existingClient)
         }
     }
 
