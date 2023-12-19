@@ -113,12 +113,9 @@ extension ZMConversation {
     }
 
     /// Should be called if we need to verify the legal hold status after fetching the clients in a conversation.
-    public func updateSecurityLevelIfNeededAfterFetchingClients(changes: ZMConversationRemoteClientChangeSet) {
+    public func updateSecurityLevelIfNeededAfterFetchingClients() {
         needsToVerifyLegalHold = false
-
-        if changes.isEmpty {
-            applySecurityChanges(cause: .verifyLegalHold)
-        }
+        applySecurityChanges(cause: .verifyLegalHold)
     }
 
     /// Should be called when client is trusted.
