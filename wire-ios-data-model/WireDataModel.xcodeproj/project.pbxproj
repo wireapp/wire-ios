@@ -59,13 +59,15 @@
 		068DCC5729BB816300F7E4F1 /* ZMOTRMessage+FailedToSendReason.swift in Sources */ = {isa = PBXBuildFile; fileRef = 068DCC5629BB816300F7E4F1 /* ZMOTRMessage+FailedToSendReason.swift */; };
 		068DCC5B29BFEC4E00F7E4F1 /* ZMMessageTests+ExpirationReasonCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 068DCC5A29BFEC4E00F7E4F1 /* ZMMessageTests+ExpirationReasonCode.swift */; };
 		069BCC4E2B2CA47700DF4EC2 /* store2-112-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = 069BCC4D2B2CA47700DF4EC2 /* store2-112-0.wiredatabase */; };
-		069BCC572B30945500DF4EC2 /* MockWireE2eIdentity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 069BCC502B30945500DF4EC2 /* MockWireE2eIdentity.swift */; };
 		069BCC582B30945500DF4EC2 /* E2eIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 069BCC512B30945500DF4EC2 /* E2eIService.swift */; };
 		069BCC592B30945500DF4EC2 /* MLSConversationVerificationStatusProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 069BCC522B30945500DF4EC2 /* MLSConversationVerificationStatusProvider.swift */; };
 		069BCC5A2B30945500DF4EC2 /* E2eIClientID.swift in Sources */ = {isa = PBXBuildFile; fileRef = 069BCC532B30945500DF4EC2 /* E2eIClientID.swift */; };
 		069BCC5B2B30945500DF4EC2 /* E2eISetupService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 069BCC542B30945500DF4EC2 /* E2eISetupService.swift */; };
 		069BCC5C2B30945500DF4EC2 /* E2eIVerificationStatusService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 069BCC552B30945500DF4EC2 /* E2eIVerificationStatusService.swift */; };
 		069BCC5E2B3094D000DF4EC2 /* E2eIServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 069BCC562B30945500DF4EC2 /* E2eIServiceTests.swift */; };
+		069BCC642B30990600DF4EC2 /* MockWireE2eIdentity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 069BCC502B30945500DF4EC2 /* MockWireE2eIdentity.swift */; };
+		069BCC662B30994300DF4EC2 /* E2eIVerificationStatusServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 069BCC652B30994300DF4EC2 /* E2eIVerificationStatusServiceTests.swift */; };
+		069BCC682B30996200DF4EC2 /* MLSConversationVerificationStatusProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 069BCC672B30996200DF4EC2 /* MLSConversationVerificationStatusProviderTests.swift */; };
 		069D07B82562671D00DBA592 /* FeatureTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 069D07B72562671D00DBA592 /* FeatureTests.swift */; };
 		06A0E60B281AE65D00E5F822 /* store2-99-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = 06A0E60A281AE65D00E5F822 /* store2-99-0.wiredatabase */; };
 		06B1C493248F9173007FDA8D /* GenericMessage+Debug.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06B1C492248F9173007FDA8D /* GenericMessage+Debug.swift */; };
@@ -895,6 +897,8 @@
 		069BCC542B30945500DF4EC2 /* E2eISetupService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = E2eISetupService.swift; sourceTree = "<group>"; };
 		069BCC552B30945500DF4EC2 /* E2eIVerificationStatusService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = E2eIVerificationStatusService.swift; sourceTree = "<group>"; };
 		069BCC562B30945500DF4EC2 /* E2eIServiceTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = E2eIServiceTests.swift; sourceTree = "<group>"; };
+		069BCC652B30994300DF4EC2 /* E2eIVerificationStatusServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = E2eIVerificationStatusServiceTests.swift; sourceTree = "<group>"; };
+		069BCC672B30996200DF4EC2 /* MLSConversationVerificationStatusProviderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLSConversationVerificationStatusProviderTests.swift; sourceTree = "<group>"; };
 		069D07B72562671D00DBA592 /* FeatureTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureTests.swift; sourceTree = "<group>"; };
 		06A0E60A281AE65D00E5F822 /* store2-99-0.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; path = "store2-99-0.wiredatabase"; sourceTree = "<group>"; };
 		06B1C492248F9173007FDA8D /* GenericMessage+Debug.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GenericMessage+Debug.swift"; sourceTree = "<group>"; };
@@ -1795,13 +1799,23 @@
 		069BCC4F2B30945500DF4EC2 /* E2EIdentity */ = {
 			isa = PBXGroup;
 			children = (
-				069BCC502B30945500DF4EC2 /* MockWireE2eIdentity.swift */,
 				069BCC512B30945500DF4EC2 /* E2eIService.swift */,
 				069BCC522B30945500DF4EC2 /* MLSConversationVerificationStatusProvider.swift */,
 				069BCC532B30945500DF4EC2 /* E2eIClientID.swift */,
 				069BCC542B30945500DF4EC2 /* E2eISetupService.swift */,
 				069BCC552B30945500DF4EC2 /* E2eIVerificationStatusService.swift */,
+			);
+			name = E2EIdentity;
+			path = Source/E2EIdentity;
+			sourceTree = "<group>";
+		};
+		069BCC632B3098F500DF4EC2 /* E2EIdentity */ = {
+			isa = PBXGroup;
+			children = (
+				069BCC502B30945500DF4EC2 /* MockWireE2eIdentity.swift */,
 				069BCC562B30945500DF4EC2 /* E2eIServiceTests.swift */,
+				069BCC652B30994300DF4EC2 /* E2eIVerificationStatusServiceTests.swift */,
+				069BCC672B30996200DF4EC2 /* MLSConversationVerificationStatusProviderTests.swift */,
 			);
 			name = E2EIdentity;
 			path = Source/E2EIdentity;
@@ -3262,6 +3276,7 @@
 		F9C9A79A1CAEA8FC0039E10C /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				069BCC632B3098F500DF4EC2 /* E2EIdentity */,
 				638941F42AF521050051ABFD /* Use cases */,
 				EE91911829F0196600514A2D /* EAR */,
 				54FB03AB1E41F6C2000E13DC /* Utils */,
@@ -3868,7 +3883,6 @@
 				F137EEBE212C14300043FDEB /* ZMConversation+Services.swift in Sources */,
 				16BBA2002AFD130F00CDF38A /* CoreCryptoProvider.swift in Sources */,
 				54EDE6801CBBF1860044A17E /* PINCache+ZMessaging.swift in Sources */,
-				069BCC572B30945500DF4EC2 /* MockWireE2eIdentity.swift in Sources */,
 				06E8AAB4242BAA6A008929B1 /* SignatureStatus.swift in Sources */,
 				068DCC5729BB816300F7E4F1 /* ZMOTRMessage+FailedToSendReason.swift in Sources */,
 				2577CB712B19DA7B007D3443 /* MockRevokedE2eIdentityProvider.swift in Sources */,
@@ -4161,6 +4175,7 @@
 				EEC8064E28CF4C2D00DD58E9 /* MockStaleMLSKeyDetector.swift in Sources */,
 				63FACD56291BC598003AB25D /* MLSClientIDTests.swift in Sources */,
 				D5FA30D12063FD3A00716618 /* VersionTests.swift in Sources */,
+				069BCC662B30994300DF4EC2 /* E2eIVerificationStatusServiceTests.swift in Sources */,
 				54A885A81F62EEB600AFBA95 /* ZMConversationTests+Messages.swift in Sources */,
 				54ED3A9D1F38CB6A0066AD47 /* DatabaseMigrationTests.swift in Sources */,
 				0680A9C624606288000F80F3 /* ZMMessage+Reaction.swift in Sources */,
@@ -4194,6 +4209,7 @@
 				068DCC5B29BFEC4E00F7E4F1 /* ZMMessageTests+ExpirationReasonCode.swift in Sources */,
 				F9DD60C11E8916170019823F /* ChangedIndexesTests.swift in Sources */,
 				F9A7083D1CAEEB7500C2F5FE /* ModelObjectsTests.m in Sources */,
+				069BCC642B30990600DF4EC2 /* MockWireE2eIdentity.swift in Sources */,
 				F9B71F921CB2BEF4001DB03F /* BaseClientMessageTests.swift in Sources */,
 				63D41E6D245733AC0076826F /* ZMMessageTests+Removal.swift in Sources */,
 				F963E9861D9D485900098AD3 /* ZMClientMessageTests+Ephemeral.swift in Sources */,
@@ -4272,6 +4288,7 @@
 				16925337234F677B0041A8FF /* ZMConversationListDirectoryTests+Labels.swift in Sources */,
 				1623F8F32AEBB80C004F0319 /* ZMMessageTests+Legalhold.swift in Sources */,
 				EE6A57DC25BAE3D700F848DD /* MockLAContext.swift in Sources */,
+				069BCC682B30996200DF4EC2 /* MLSConversationVerificationStatusProviderTests.swift in Sources */,
 				1687C0E22150EE91003099DD /* ZMClientMessageTests+Mentions.swift in Sources */,
 				EE84227028EC353900B80FE5 /* MLSActionExecutorTests.swift in Sources */,
 				F9A708341CAEEB7500C2F5FE /* ManagedObjectContextSaveNotificationTests.m in Sources */,
