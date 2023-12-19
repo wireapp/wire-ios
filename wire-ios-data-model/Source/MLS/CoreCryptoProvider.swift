@@ -84,7 +84,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
             let provider = CoreCryptoConfigProvider()
             let clientID = try await syncContext.perform { try provider.clientID(of: .selfUser(in: self.syncContext)) }
             try await coreCrypto.mlsInit(clientID: clientID)
-            try generateClientPublicKeysIfNeeded(with: coreCrypto)
+            try await generateClientPublicKeysIfNeeded(with: coreCrypto)
         } catch {
             initialisatingMls = false
             resumeInitialiseMlsContinuations(with: .failure(error))
@@ -156,7 +156,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         )
 
         updateKeychainItemAccess()
-        migrateCryptoboxSessionsIfNeeded(with: coreCrypto)
+        await migrateCryptoboxSessionsIfNeeded(with: coreCrypto)
 
         try await coreCrypto.perform { try $0.proteusInit() }
 
@@ -216,7 +216,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         }
     }
 
-    private func generateClientPublicKeysIfNeeded(with coreCrypto: SafeCoreCrypto) throws {
+    private func generateClientPublicKeysIfNeeded(with coreCrypto: SafeCoreCrypto) async throws {
         let mlsPublicKeys = syncContext.performAndWait {
             ZMUser.selfUser(in: self.syncContext).selfClient()?.mlsPublicKeys
         }
@@ -237,7 +237,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         }
     }
 
-    private func migrateCryptoboxSessionsIfNeeded(with coreCrypto: SafeCoreCrypto) {
+    private func migrateCryptoboxSessionsIfNeeded(with coreCrypto: SafeCoreCrypto) async {
         guard cryptoboxMigrationManager.isMigrationNeeded(accountDirectory: accountDirectory) else {
             WireLogger.proteus.info("cryptobox migration is not needed")
             return
@@ -246,7 +246,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         WireLogger.proteus.info("preparing for cryptobox migration...")
 
         do {
-            try self.cryptoboxMigrationManager.performMigration(
+            try await self.cryptoboxMigrationManager.performMigration(
                 accountDirectory: accountDirectory,
                 coreCrypto: coreCrypto
             )

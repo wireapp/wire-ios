@@ -29,8 +29,8 @@ public protocol ProteusServiceInterface {
     func establishSession(id: ProteusSessionID, fromPrekey: String) async throws
     func deleteSession(id: ProteusSessionID) async throws
     func sessionExists(id: ProteusSessionID) async -> Bool
-    func encrypt(data: Data, forSession id: ProteusSessionID) throws -> Data
-    func encryptBatched(data: Data, forSessions sessions: [ProteusSessionID]) throws -> [String: Data]
+    func encrypt(data: Data, forSession id: ProteusSessionID) async throws -> Data
+    func encryptBatched(data: Data, forSessions sessions: [ProteusSessionID]) async throws -> [String: Data]
 
     /// Decrypt a proteus message for a given session.
     ///
@@ -49,13 +49,9 @@ public protocol ProteusServiceInterface {
         forSession id: ProteusSessionID
     ) async throws -> (didCreateNewSession: Bool, decryptedData: Data)
 
-    func generatePrekey(id: UInt16) async throws -> String
-    func lastPrekey() async throws -> String
-    var lastPrekeyID: UInt16 { get }
-    func generatePrekeys(start: UInt16, count: UInt16) async throws -> [IdPrekeyTuple]
-    func localFingerprint() throws -> String
-    func remoteFingerprint(forSession id: ProteusSessionID) throws -> String
-    func fingerprint(fromPrekey prekey: String) throws -> String
+    func localFingerprint() async throws -> String
+    func remoteFingerprint(forSession id: ProteusSessionID) async throws -> String
+    func fingerprint(fromPrekey prekey: String) async throws -> String
 
 }
 

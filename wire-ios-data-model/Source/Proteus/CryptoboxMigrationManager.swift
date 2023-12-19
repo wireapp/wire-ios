@@ -27,7 +27,7 @@ public protocol CryptoboxMigrationManagerInterface {
     func performMigration(
         accountDirectory: URL,
         coreCrypto: SafeCoreCryptoProtocol
-    ) throws
+    ) async throws
 }
 
 public class CryptoboxMigrationManager: CryptoboxMigrationManagerInterface {
@@ -67,7 +67,7 @@ public class CryptoboxMigrationManager: CryptoboxMigrationManagerInterface {
     public func performMigration(
         accountDirectory: URL,
         coreCrypto: SafeCoreCryptoProtocol
-    ) throws {
+    ) async throws {
             do {
                 WireLogger.proteus.info("migrating cryptobox data...")
                 let cryptoboxDirectory = fileManager.cryptoboxDirectory(in: accountDirectory)
