@@ -36,7 +36,6 @@ extension CoreDataStackError: LocalizedError {
     }
 }
 
-
 @objc
 public protocol ContextProvider {
 
