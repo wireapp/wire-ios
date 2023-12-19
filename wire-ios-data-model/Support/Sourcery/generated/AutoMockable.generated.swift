@@ -1899,9 +1899,9 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
 
     public var establishSessionIdFromPrekey_Invocations: [(id: ProteusSessionID, fromPrekey: String)] = []
     public var establishSessionIdFromPrekey_MockError: Error?
-    public var establishSessionIdFromPrekey_MockMethod: ((ProteusSessionID, String) throws -> Void)?
+    public var establishSessionIdFromPrekey_MockMethod: ((ProteusSessionID, String) async throws -> Void)?
 
-    public func establishSession(id: ProteusSessionID, fromPrekey: String) throws {
+    public func establishSession(id: ProteusSessionID, fromPrekey: String) async throws {
         establishSessionIdFromPrekey_Invocations.append((id: id, fromPrekey: fromPrekey))
 
         if let error = establishSessionIdFromPrekey_MockError {
@@ -1912,16 +1912,16 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
             fatalError("no mock for `establishSessionIdFromPrekey`")
         }
 
-        try mock(id, fromPrekey)
+        try await mock(id, fromPrekey)
     }
 
     // MARK: - deleteSession
 
     public var deleteSessionId_Invocations: [ProteusSessionID] = []
     public var deleteSessionId_MockError: Error?
-    public var deleteSessionId_MockMethod: ((ProteusSessionID) throws -> Void)?
+    public var deleteSessionId_MockMethod: ((ProteusSessionID) async throws -> Void)?
 
-    public func deleteSession(id: ProteusSessionID) throws {
+    public func deleteSession(id: ProteusSessionID) async throws {
         deleteSessionId_Invocations.append(id)
 
         if let error = deleteSessionId_MockError {
@@ -1932,20 +1932,20 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
             fatalError("no mock for `deleteSessionId`")
         }
 
-        try mock(id)
+        try await mock(id)
     }
 
     // MARK: - sessionExists
 
     public var sessionExistsId_Invocations: [ProteusSessionID] = []
-    public var sessionExistsId_MockMethod: ((ProteusSessionID) -> Bool)?
+    public var sessionExistsId_MockMethod: ((ProteusSessionID) async -> Bool)?
     public var sessionExistsId_MockValue: Bool?
 
-    public func sessionExists(id: ProteusSessionID) -> Bool {
+    public func sessionExists(id: ProteusSessionID) async -> Bool {
         sessionExistsId_Invocations.append(id)
 
         if let mock = sessionExistsId_MockMethod {
-            return mock(id)
+            return await mock(id)
         } else if let mock = sessionExistsId_MockValue {
             return mock
         } else {

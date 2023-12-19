@@ -402,10 +402,7 @@ final class ProfileClientViewController: UIViewController, SpinnerCapable {
     }
 
     @objc private func onResetTapped(_ sender: AnyObject) {
-        guard let userSession = ZMUserSession.shared() else { return }
-        userSession.perform { [weak self] in
-             self?.viewModel.userClient.resetSession()
-        }
+        viewModel.userClient.resetSession()
         isLoadingViewVisible = true
     }
 
@@ -453,31 +450,32 @@ final class ProfileClientViewController: UIViewController, SpinnerCapable {
 
     @objc
     private func onDeleteDeviceTapped() {
+        let clientObjectID = self.viewModel.userClient.objectID
         let sync = viewModel.userClient.managedObjectContext!.zm_sync!
-        sync.performGroupedBlockAndWait { [weak self] in
-            guard let weakSelf = self else { return }
-
-            let client = try! sync.existingObject(with: weakSelf.viewModel.userClient.objectID) as! UserClient
-            client.deleteClientAndEndSession()
-            sync.saveOrRollback()
+        Task { [self] in
+            let client = await sync.perform { try! sync.existingObject(with: clientObjectID) as! UserClient }
+            await client.deleteClientAndEndSession()
+            _ = await sync.perform { sync.saveOrRollback() }
+            await MainActor.run {
+                presentingViewController?.dismiss(animated: true, completion: .none)
+            }
         }
-        presentingViewController?.dismiss(animated: true, completion: .none)
     }
 
     @objc
     private func onCorruptSessionTapped() {
         let sync = viewModel.userClient.managedObjectContext!.zm_sync!
-        let selfClientID = ZMUser.selfUser()?.selfClient()?.objectID
-        sync.performGroupedBlockAndWait { [weak self] in
-            guard let weakSelf = self else { return }
-
-            let client = try! sync.existingObject(with: weakSelf.viewModel.userClient.objectID) as! UserClient
-            let selfClient = try! sync.existingObject(with: selfClientID!) as! UserClient
-
-            _ = selfClient.establishSessionWithClient(client, usingPreKey: "pQABAQACoQBYIBi1nXQxPf9hpIp1K1tBOj/tlBuERZHfTMOYEW38Ny7PA6EAoQBYIAZbZQ9KtsLVc9VpHkPjYy2+Bmz95fyR0MGKNUqtUUi1BPY=")
-            sync.saveOrRollback()
+        let selfClientObjectID = ZMUser.selfUser()?.selfClient()?.objectID
+        let userClientObjectID = viewModel.userClient.objectID
+        Task {
+            let client = await sync.perform { try! sync.existingObject(with: userClientObjectID) as! UserClient }
+            let selfClient = await sync.perform { try! sync.existingObject(with: selfClientObjectID!) as! UserClient }
+            _ = await selfClient.establishSessionWithClient(client, usingPreKey: "pQABAQACoQBYIBi1nXQxPf9hpIp1K1tBOj/tlBuERZHfTMOYEW38Ny7PA6EAoQBYIAZbZQ9KtsLVc9VpHkPjYy2+Bmz95fyR0MGKNUqtUUi1BPY=")
+            await sync.perform { sync.saveOrRollback() }
+            await MainActor.run {
+                presentingViewController?.dismiss(animated: true, completion: .none)
+            }
         }
-        presentingViewController?.dismiss(animated: true, completion: .none)
     }
 
     private func onDuplicateClientTapped() {

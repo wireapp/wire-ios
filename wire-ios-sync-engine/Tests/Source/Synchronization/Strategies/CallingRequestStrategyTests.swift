@@ -576,7 +576,12 @@ class CallingRequestStrategyTests: MessagingTest {
         client.user = user
 
         // TODO: [John] use flag here
-        XCTAssertTrue(userClient.establishSessionWithClient(client, usingPreKey: try! syncMOC.zm_cryptKeyStore.lastPreKey()))
+        syncMOC.zm_cryptKeyStore.encryptionContext.perform { (session) in
+            try! session.createClientSession(
+                client.sessionIdentifier!,
+                base64PreKeyString: syncMOC.zm_cryptKeyStore.lastPreKey()
+            )
+        }
 
         return client
     }

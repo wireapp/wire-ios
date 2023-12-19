@@ -394,6 +394,10 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
 
 @implementation MockTransportSession (Mock)
 
+- (void)enqueueRequest:(ZMTransportRequest *)request queue:(id<ZMSGroupQueue>)queue completionHandler:(void (^)(ZMTransportResponse * _Nonnull))completionHandler {
+    [request addCompletionHandler:[ZMCompletionHandler handlerOnGroupQueue:queue block:completionHandler]];
+    [self enqueueOneTimeRequest:request];
+}
 
 - (void)enqueueOneTimeRequest:(ZMTransportRequest *)request;
 {

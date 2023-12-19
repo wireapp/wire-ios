@@ -486,16 +486,16 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
         let selfUser = ZMUser.selfUser(in: moc)
         let selfClient = selfUser.selfClient()
         let otherClients = selfUser.clients
+        let deletedClients = otherClients.filter {
+            return $0 != selfClient && $0.remoteIdentifier.map({ foundClientsIdentifier.contains($0) }) == false
+        }
 
-        otherClients.forEach {
-            guard $0 != selfClient, // not current client
-                let identifier = $0.remoteIdentifier, // has remote ID
-                !foundClientsIdentifier.contains(identifier) // not in the list of found ones
-                else {
-                return
+        WaitingGroupTask(context: moc) {
+            await deletedClients.asyncForEach { await $0.deleteClientAndEndSession() }
+            await moc.perform {
+                moc.saveOrRollback()
+                self.clientUpdateStatus?.didFetchClients(clients)
             }
-            // not there? delete
-            $0.deleteClientAndEndSession()
         }
 
         moc.saveOrRollback()
@@ -530,13 +530,11 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
 
     func processResponseForDeletingClients(_ managedObject: ZMManagedObject!, requestUserInfo: [AnyHashable: Any]!, responsePayload payload: ZMTransportData!) -> Bool {
         // is it safe for ui??
-        if let client = managedObject as? UserClient {
-            managedObject.managedObjectContext?.performGroupedBlock({ () -> Void in
-                // end session and delete client
-                client.deleteClientAndEndSession()
-                // notify the clientStatus
-                self.clientUpdateStatus?.didDeleteClient()
-            })
+        if let client = managedObject as? UserClient, let context = managedObjectContext {
+            WaitingGroupTask(context: context) {
+                await client.deleteClientAndEndSession()
+                await context.perform { self.clientUpdateStatus?.didDeleteClient() }
+            }
         }
         return false
     }
