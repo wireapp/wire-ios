@@ -128,19 +128,13 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
     }
 
     private func finalizeMigrationIfNeeded() async throws {
-        let mixedConversations = [ZMConversation]()
-        if migrationForceTimeHasArrived {
-            for conversation in mixedConversations {
-                await finalizeConversationMigration(conversation: conversation)
-            }
-        } else {
-            // 1. Sync users with the backend
-            try await syncUsersWithTheBackend()
-            // 2. Loop through conversations
-            for conversation in mixedConversations where canConversationBeFinalised(conversation: conversation) {
-                await finalizeConversationMigration(conversation: conversation)
-            }
+        let tuples = try await fetchMixedConversations()
+        if !migrationForceTimeHasArrived { try await syncUsersWithTheBackend() }
+
+        for tuple in tuples {
+            await finalizeConversationMigration(conversation: tuple.conversation)
         }
+
     }
 
     private func syncUsersWithTheBackend() async throws {
@@ -156,12 +150,7 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
     }
 
     func canConversationBeFinalised (conversation: ZMConversation) -> Bool {
-        let participants = conversation.localParticipants
-
-        let canBeFinalised = participants.allSatisfy { participant in
-            participant.supportedProtocols.contains(.mls)
-        }
-        return canBeFinalised
+        return conversation.localParticipants.allSatisfy { $0.supportedProtocols.contains(.mls) }
     }
 
     func resolveMigrationStartStatus() async -> MigrationStartStatus {
