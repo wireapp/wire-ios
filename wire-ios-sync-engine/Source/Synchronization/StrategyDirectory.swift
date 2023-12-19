@@ -23,6 +23,7 @@ import WireRequestStrategy
 public protocol StrategyDirectoryProtocol {
 
     var eventConsumers: [ZMEventConsumer] { get }
+    var eventAsyncConsumers: [ZMEventAsyncConsumer] { get }
     var requestStrategies: [RequestStrategy] { get }
     var contextChangeTrackers: [ZMContextChangeTracker] {get }
 
@@ -35,6 +36,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
 
     public let requestStrategies: [RequestStrategy]
     public let eventConsumers: [ZMEventConsumer]
+    public let eventAsyncConsumers: [ZMEventAsyncConsumer]
     public let contextChangeTrackers: [ZMContextChangeTracker]
 
     init(
@@ -48,6 +50,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
         useLegacyPushNotifications: Bool,
         lastEventIDRepository: LastEventIDRepositoryInterface,
         transportSession: TransportSessionType,
+        proteusProvider: ProteusProviding,
         mlsService: MLSServiceInterface
     ) {
 
@@ -62,11 +65,13 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             useLegacyPushNotifications: useLegacyPushNotifications,
             lastEventIDRepository: lastEventIDRepository,
             transportSession: transportSession,
+            proteusProvider: proteusProvider,
             mlsService: mlsService
         )
 
         self.requestStrategies = strategies.compactMap({ $0 as? RequestStrategy})
         self.eventConsumers = strategies.compactMap({ $0 as? ZMEventConsumer })
+        self.eventAsyncConsumers = strategies.compactMap({ $0 as? ZMEventAsyncConsumer })
         self.contextChangeTrackers = strategies.flatMap({ (object: Any) -> [ZMContextChangeTracker] in
             if let source = object as? ZMContextChangeTrackerSource {
                 return source.contextChangeTrackers
@@ -97,6 +102,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
         useLegacyPushNotifications: Bool,
         lastEventIDRepository: LastEventIDRepositoryInterface,
         transportSession: TransportSessionType,
+        proteusProvider: ProteusProviding,
         mlsService: MLSServiceInterface
     ) -> [Any] {
         let syncMOC = contextProvider.syncContext
@@ -120,16 +126,13 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             quickSyncObserver: quickSyncObserver,
             context: syncMOC)
         let strategies: [Any] = [
-            // TODO: [John] use flag here
+
             UserClientRequestStrategy(
                 clientRegistrationStatus: applicationStatusDirectory.clientRegistrationStatus,
                 clientUpdateStatus: applicationStatusDirectory.clientUpdateStatus,
                 context: syncMOC,
-                proteusProvider: ProteusProvider(context: syncMOC)
+                proteusProvider: proteusProvider
             ),
-            MissingClientsRequestStrategy(
-                withManagedObjectContext: syncMOC,
-                applicationStatus: applicationStatusDirectory),
             ZMMissingUpdateEventsTranscoder(
                 managedObjectContext: syncMOC,
                 notificationsTracker: nil,
