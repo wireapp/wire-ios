@@ -31,11 +31,6 @@ public final class E2eISetupService: E2eISetupServiceInterface {
     // MARK: - Properties
 
     private let coreCryptoProvider: CoreCryptoProviderProtocol
-    private var coreCrypto: SafeCoreCryptoProtocol {
-        get throws {
-            try coreCryptoProvider.coreCrypto(requireMLS: true)
-        }
-    }
 
     // MARK: - Life cycle
 
@@ -47,7 +42,7 @@ public final class E2eISetupService: E2eISetupServiceInterface {
 
     public func setupEnrollment(e2eiClientId: E2eIClientID, userName: String, handle: String) async throws -> WireE2eIdentityProtocol {
         do {
-            return try coreCrypto.perform {
+            return try coreCryptoProvider.coreCrypto(requireMLS: true).perform {
                 /// TODO: Use e2eiNewRotateEnrollment or e2eiNewActivationEnrollment from the new CC version
                 try $0.e2eiNewEnrollment(clientId: e2eiClientId.rawValue,
                                          displayName: userName,

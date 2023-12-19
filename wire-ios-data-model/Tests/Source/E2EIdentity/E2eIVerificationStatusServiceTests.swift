@@ -24,14 +24,14 @@ import Foundation
 class E2eIVerificationStatusServiceTests: ZMConversationTestsBase {
 
     var sut: E2eIVerificationStatusService!
-    var mockCoreCrypto: MockCoreCrypto!
+    var mockCoreCrypto: MockCoreCryptoProtocol!
     var mockSafeCoreCrypto: MockSafeCoreCrypto!
     var mockCoreCryptoProvider: MockCoreCryptoProviderProtocol!
 
     override func setUp() {
         super.setUp()
 
-        mockCoreCrypto = MockCoreCrypto()
+        mockCoreCrypto = MockCoreCryptoProtocol()
         mockSafeCoreCrypto = MockSafeCoreCrypto(coreCrypto: mockCoreCrypto)
         mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
         mockCoreCryptoProvider.coreCryptoRequireMLS_MockValue = mockSafeCoreCrypto

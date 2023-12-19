@@ -43,20 +43,19 @@ public class MLSConversationVerificationStatusProvider: MLSConversationVerificat
 
     // MARK: - Public interface
 
-    public func updateStatus(_ groupID: MLSGroupID) async {
-       guard let conversation = await syncContext.perform({
-            ZMConversation.fetch(with: groupID, in: syncContext)
-       }) else {
-            return
-       }
-            Task {
-                do {
-                    let coreCryptoStatus = try await e2eIVerificationStatusService.getConversationStatus(groupID: groupID)
-                    updateStatusAndNotifyUserIfNeeded(newStatusFromCC: coreCryptoStatus, conversation: conversation)
-                } catch {
-                    throw error
-                }
+    public func updateStatus(_ groupID: MLSGroupID) async throws {
+        guard let conversation = await syncContext.perform({
+            ZMConversation.fetch(with: groupID, in: self.syncContext)
+        }) else {
+            throw E2eIVerificationStatusService.E2eIVerificationStatusError.missingConversation
+        }
+        do {
+            let coreCryptoStatus = try await e2eIVerificationStatusService.getConversationStatus(groupID: groupID)
+            await syncContext.perform {
+                self.updateStatusAndNotifyUserIfNeeded(newStatusFromCC: coreCryptoStatus, conversation: conversation)
             }
+        } catch {
+            throw error
         }
     }
 
@@ -64,20 +63,18 @@ public class MLSConversationVerificationStatusProvider: MLSConversationVerificat
 
     private func updateStatusAndNotifyUserIfNeeded(newStatusFromCC: MLSVerificationStatus,
                                                    conversation: ZMConversation) {
-        syncContext.performAndWait {
-            guard let currentStatus = conversation.mlsVerificationStatus else {
-                return conversation.mlsVerificationStatus = newStatusFromCC
-            }
+        guard let currentStatus = conversation.mlsVerificationStatus else {
+            return conversation.mlsVerificationStatus = newStatusFromCC
+        }
 
-            let newStatus = getActualNewStatus(newStatusFromCC: newStatusFromCC, currentStatus: currentStatus)
-            guard newStatus != currentStatus else {
-                return
-            }
-            conversation.mlsVerificationStatus = newStatus
-            // TODO: check conditions - https://wearezeta.atlassian.net/browse/WPB-3233
-            if newStatus == .degraded || newStatus == .verified {
-                notifyUserAboutStateChanges(newStatus, in: conversation)
-            }
+        let newStatus = getActualNewStatus(newStatusFromCC: newStatusFromCC, currentStatus: currentStatus)
+        guard newStatus != currentStatus else {
+            return
+        }
+        conversation.mlsVerificationStatus = newStatus
+        // TODO: check conditions - https://wearezeta.atlassian.net/browse/WPB-3233
+        if newStatus == .degraded || newStatus == .verified {
+            notifyUserAboutStateChanges(newStatus, in: conversation)
         }
     }
 

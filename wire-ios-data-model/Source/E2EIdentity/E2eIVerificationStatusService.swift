@@ -31,11 +31,6 @@ public final class E2eIVerificationStatusService: E2eIVerificationStatusServiceI
     // MARK: - Properties
 
     private let coreCryptoProvider: CoreCryptoProviderProtocol
-    private var coreCrypto: SafeCoreCryptoProtocol {
-        get throws {
-            try coreCryptoProvider.coreCrypto(requireMLS: true)
-        }
-    }
 
     // MARK: - Life cycle
 
@@ -43,10 +38,28 @@ public final class E2eIVerificationStatusService: E2eIVerificationStatusServiceI
         self.coreCryptoProvider = coreCryptoProvider
     }
 
+    // MARK: - Error
+
+    public enum E2eIVerificationStatusError: Error {
+
+        case missingConversation
+        case failedToFetchVerificationStatus
+
+    }
+
     // MARK: - Public interface
 
+    /// Returns the state of a conversation regarding end-to-end identity.
+    ///
+    /// - Parameters:
+    ///  - groupID: the id of the MLS group for which to get the verification status
+    /// - Throws:
+    ///   `E2eIVerificationStatusError` if the status couldn't be fetched
+    /// - Returns:
+    /// - `MLSVerificationStatus`
+
     public func getConversationStatus(groupID: MLSGroupID) async throws -> MLSVerificationStatus {
-        /// TODO: should use coreCrypto.e2eiConversationState(groupID) -> E2EIConversationState from the new CC version
+        /// TODO: should use try coreCryptoProvider.coreCrypto.e2eiConversationState(groupID) -> E2EIConversationState from the new CC version
         return E2EIConversationState.notVerified.toMLSVerificationStatus()
     }
 
