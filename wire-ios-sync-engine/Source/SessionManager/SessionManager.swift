@@ -728,6 +728,7 @@ public final class SessionManager: NSObject, SessionManagerType {
     }
 
     fileprivate func deleteTemporaryData() {
+        // TODO: [F] replace with TemporaryFileServiceInterface
         guard let tmpDirectoryPath = URL(string: NSTemporaryDirectory()) else { return }
         let manager = FileManager.default
         try? manager
