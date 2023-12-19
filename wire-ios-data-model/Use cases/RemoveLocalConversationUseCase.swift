@@ -20,7 +20,9 @@ import Foundation
 import WireSystem
 
 public protocol RemoveLocalConversationUseCaseProtocol {
-    func invoke(with conversation: ZMConversation, syncContext: NSManagedObjectContext) throws
+
+    func invoke(with conversation: ZMConversation, syncContext: NSManagedObjectContext) async throws
+
 }
 
 public class RemoveLocalConversationUseCase: RemoveLocalConversationUseCaseProtocol {
@@ -30,30 +32,34 @@ public class RemoveLocalConversationUseCase: RemoveLocalConversationUseCaseProto
     public func invoke(
         with conversation: ZMConversation,
         syncContext: NSManagedObjectContext
-    ) throws {
-        precondition(syncContext.zm_isSyncContext, "use case should only be accessed on the sync context")
+    ) async throws {
+        let isSyncContext = await syncContext.perform { syncContext.zm_isSyncContext }
+        precondition(isSyncContext, "use case should only be accessed on the sync context")
 
-        conversation.isDeletedRemotely = true
-        try wipeMLSGroupIfNeeded(for: conversation, in: syncContext)
-        syncContext.saveOrRollback()
+        await syncContext.perform { conversation.isDeletedRemotely = true }
+        try await wipeMLSGroupIfNeeded(for: conversation, in: syncContext)
+        await syncContext.perform { _ = syncContext.saveOrRollback() }
     }
 
     func wipeMLSGroupIfNeeded(
         for conversation: ZMConversation,
         in context: NSManagedObjectContext
-    ) throws {
-        guard conversation.messageProtocol == .mls else {
-            return
+    ) async throws {
+        let (mlsService, groupID) = await context.perform {
+            guard conversation.messageProtocol == .mls else {
+                return (MLSServiceInterface?.none, MLSGroupID?.none)
+            }
+            return (context.mlsService, conversation.mlsGroupID)
         }
 
-        guard let groupID = conversation.mlsGroupID else {
+        guard let groupID else {
             return WireLogger.mls.warn("failed to wipe conversation: missing group ID")
         }
 
-        guard let mlsService = context.mlsService else {
+        guard let mlsService else {
             return WireLogger.mls.warn("failed to wipe conversation: missing `mlsService`")
         }
 
-        try mlsService.wipeGroup(groupID)
+        try await mlsService.wipeGroup(groupID)
     }
 }

@@ -23,11 +23,7 @@ class SyncUsersActionHandler: ActionHandler<SyncUsersAction> {
 
     private let payloadProcessor: UserProfilePayloadProcessing
 
-    required convenience init(context: NSManagedObjectContext) {
-        self.init(context: context, payloadProcessor: nil)
-    }
-
-    init(
+    required init(
         context: NSManagedObjectContext,
         payloadProcessor: UserProfilePayloadProcessing? = nil
     ) {

@@ -33,6 +33,7 @@ import AppKit
 
 import LocalAuthentication
 import Combine
+import WireCoreCrypto
 
 @testable import WireDataModel
 
@@ -55,6 +56,79 @@ import Combine
 
 
 
+
+public class MockCommitSending: CommitSending {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - sendCommitBundle
+
+    public var sendCommitBundleFor_Invocations: [(bundle: CommitBundle, groupID: MLSGroupID)] = []
+    public var sendCommitBundleFor_MockError: Error?
+    public var sendCommitBundleFor_MockMethod: ((CommitBundle, MLSGroupID) async throws -> [ZMUpdateEvent])?
+    public var sendCommitBundleFor_MockValue: [ZMUpdateEvent]?
+
+    public func sendCommitBundle(_ bundle: CommitBundle, for groupID: MLSGroupID) async throws -> [ZMUpdateEvent] {
+        sendCommitBundleFor_Invocations.append((bundle: bundle, groupID: groupID))
+
+        if let error = sendCommitBundleFor_MockError {
+            throw error
+        }
+
+        if let mock = sendCommitBundleFor_MockMethod {
+            return try await mock(bundle, groupID)
+        } else if let mock = sendCommitBundleFor_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `sendCommitBundleFor`")
+        }
+    }
+
+    // MARK: - sendExternalCommitBundle
+
+    public var sendExternalCommitBundleFor_Invocations: [(bundle: CommitBundle, groupID: MLSGroupID)] = []
+    public var sendExternalCommitBundleFor_MockError: Error?
+    public var sendExternalCommitBundleFor_MockMethod: ((CommitBundle, MLSGroupID) async throws -> [ZMUpdateEvent])?
+    public var sendExternalCommitBundleFor_MockValue: [ZMUpdateEvent]?
+
+    public func sendExternalCommitBundle(_ bundle: CommitBundle, for groupID: MLSGroupID) async throws -> [ZMUpdateEvent] {
+        sendExternalCommitBundleFor_Invocations.append((bundle: bundle, groupID: groupID))
+
+        if let error = sendExternalCommitBundleFor_MockError {
+            throw error
+        }
+
+        if let mock = sendExternalCommitBundleFor_MockMethod {
+            return try await mock(bundle, groupID)
+        } else if let mock = sendExternalCommitBundleFor_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `sendExternalCommitBundleFor`")
+        }
+    }
+
+    // MARK: - onEpochChanged
+
+    public var onEpochChanged_Invocations: [Void] = []
+    public var onEpochChanged_MockMethod: (() -> AnyPublisher<MLSGroupID, Never>)?
+    public var onEpochChanged_MockValue: AnyPublisher<MLSGroupID, Never>?
+
+    public func onEpochChanged() -> AnyPublisher<MLSGroupID, Never> {
+        onEpochChanged_Invocations.append(())
+
+        if let mock = onEpochChanged_MockMethod {
+            return mock()
+        } else if let mock = onEpochChanged_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `onEpochChanged`")
+        }
+    }
+
+}
 
 public class MockConversationEventProcessorProtocol: ConversationEventProcessorProtocol {
 
@@ -1347,31 +1421,31 @@ public class MockMLSServiceInterface: MLSServiceInterface {
     // MARK: - uploadKeyPackagesIfNeeded
 
     public var uploadKeyPackagesIfNeeded_Invocations: [Void] = []
-    public var uploadKeyPackagesIfNeeded_MockMethod: (() -> Void)?
+    public var uploadKeyPackagesIfNeeded_MockMethod: (() async -> Void)?
 
-    public func uploadKeyPackagesIfNeeded() {
+    public func uploadKeyPackagesIfNeeded() async {
         uploadKeyPackagesIfNeeded_Invocations.append(())
 
         guard let mock = uploadKeyPackagesIfNeeded_MockMethod else {
             fatalError("no mock for `uploadKeyPackagesIfNeeded`")
         }
 
-        mock()
+        await mock()
     }
 
     // MARK: - createSelfGroup
 
     public var createSelfGroupFor_Invocations: [MLSGroupID] = []
-    public var createSelfGroupFor_MockMethod: ((MLSGroupID) -> Void)?
+    public var createSelfGroupFor_MockMethod: ((MLSGroupID) async -> Void)?
 
-    public func createSelfGroup(for groupID: MLSGroupID) {
+    public func createSelfGroup(for groupID: MLSGroupID) async {
         createSelfGroupFor_Invocations.append(groupID)
 
         guard let mock = createSelfGroupFor_MockMethod else {
             fatalError("no mock for `createSelfGroupFor`")
         }
 
-        mock(groupID)
+        await mock(groupID)
     }
 
     // MARK: - joinGroup
@@ -1456,10 +1530,10 @@ public class MockMLSServiceInterface: MLSServiceInterface {
 
     public var processWelcomeMessageWelcomeMessage_Invocations: [String] = []
     public var processWelcomeMessageWelcomeMessage_MockError: Error?
-    public var processWelcomeMessageWelcomeMessage_MockMethod: ((String) throws -> MLSGroupID)?
+    public var processWelcomeMessageWelcomeMessage_MockMethod: ((String) async throws -> MLSGroupID)?
     public var processWelcomeMessageWelcomeMessage_MockValue: MLSGroupID?
 
-    public func processWelcomeMessage(welcomeMessage: String) throws -> MLSGroupID {
+    public func processWelcomeMessage(welcomeMessage: String) async throws -> MLSGroupID {
         processWelcomeMessageWelcomeMessage_Invocations.append(welcomeMessage)
 
         if let error = processWelcomeMessageWelcomeMessage_MockError {
@@ -1467,7 +1541,7 @@ public class MockMLSServiceInterface: MLSServiceInterface {
         }
 
         if let mock = processWelcomeMessageWelcomeMessage_MockMethod {
-            return try mock(welcomeMessage)
+            return try await mock(welcomeMessage)
         } else if let mock = processWelcomeMessageWelcomeMessage_MockValue {
             return mock
         } else {
@@ -1549,9 +1623,9 @@ public class MockMLSServiceInterface: MLSServiceInterface {
 
     public var wipeGroup_Invocations: [MLSGroupID] = []
     public var wipeGroup_MockError: Error?
-    public var wipeGroup_MockMethod: ((MLSGroupID) throws -> Void)?
+    public var wipeGroup_MockMethod: ((MLSGroupID) async throws -> Void)?
 
-    public func wipeGroup(_ groupID: MLSGroupID) throws {
+    public func wipeGroup(_ groupID: MLSGroupID) async throws {
         wipeGroup_Invocations.append(groupID)
 
         if let error = wipeGroup_MockError {
@@ -1562,7 +1636,7 @@ public class MockMLSServiceInterface: MLSServiceInterface {
             fatalError("no mock for `wipeGroup`")
         }
 
-        try mock(groupID)
+        try await mock(groupID)
     }
 
     // MARK: - commitPendingProposals
@@ -1733,10 +1807,10 @@ public class MockMLSServiceInterface: MLSServiceInterface {
 
     public var subconversationMembersFor_Invocations: [MLSGroupID] = []
     public var subconversationMembersFor_MockError: Error?
-    public var subconversationMembersFor_MockMethod: ((MLSGroupID) throws -> [MLSClientID])?
+    public var subconversationMembersFor_MockMethod: ((MLSGroupID) async throws -> [MLSClientID])?
     public var subconversationMembersFor_MockValue: [MLSClientID]?
 
-    public func subconversationMembers(for subconversationGroupID: MLSGroupID) throws -> [MLSClientID] {
+    public func subconversationMembers(for subconversationGroupID: MLSGroupID) async throws -> [MLSClientID] {
         subconversationMembersFor_Invocations.append(subconversationGroupID)
 
         if let error = subconversationMembersFor_MockError {
@@ -1744,7 +1818,7 @@ public class MockMLSServiceInterface: MLSServiceInterface {
         }
 
         if let mock = subconversationMembersFor_MockMethod {
-            return try mock(subconversationGroupID)
+            return try await mock(subconversationGroupID)
         } else if let mock = subconversationMembersFor_MockValue {
             return mock
         } else {
@@ -1782,21 +1856,6 @@ public class MockMLSServiceInterface: MLSServiceInterface {
         await mock(groupID)
     }
 
-    // MARK: - updateKeyMaterialForAllStaleGroupsIfNeeded
-
-    public var updateKeyMaterialForAllStaleGroupsIfNeeded_Invocations: [Void] = []
-    public var updateKeyMaterialForAllStaleGroupsIfNeeded_MockMethod: (() -> Void)?
-
-    public func updateKeyMaterialForAllStaleGroupsIfNeeded() {
-        updateKeyMaterialForAllStaleGroupsIfNeeded_Invocations.append(())
-
-        guard let mock = updateKeyMaterialForAllStaleGroupsIfNeeded_MockMethod else {
-            fatalError("no mock for `updateKeyMaterialForAllStaleGroupsIfNeeded`")
-        }
-
-        mock()
-    }
-
     // MARK: - startProteusToMLSMigration
 
     public var startProteusToMLSMigration_Invocations: [Void] = []
@@ -1815,6 +1874,21 @@ public class MockMLSServiceInterface: MLSServiceInterface {
         }
 
         try await mock()
+    }
+
+    // MARK: - updateKeyMaterialForAllStaleGroupsIfNeeded
+
+    public var updateKeyMaterialForAllStaleGroupsIfNeeded_Invocations: [Void] = []
+    public var updateKeyMaterialForAllStaleGroupsIfNeeded_MockMethod: (() async -> Void)?
+
+    public func updateKeyMaterialForAllStaleGroupsIfNeeded() async {
+        updateKeyMaterialForAllStaleGroupsIfNeeded_Invocations.append(())
+
+        guard let mock = updateKeyMaterialForAllStaleGroupsIfNeeded_MockMethod else {
+            fatalError("no mock for `updateKeyMaterialForAllStaleGroupsIfNeeded`")
+        }
+
+        await mock()
     }
 
     // MARK: - onEpochChanged
@@ -1903,9 +1977,9 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
 
     public var establishSessionIdFromPrekey_Invocations: [(id: ProteusSessionID, fromPrekey: String)] = []
     public var establishSessionIdFromPrekey_MockError: Error?
-    public var establishSessionIdFromPrekey_MockMethod: ((ProteusSessionID, String) throws -> Void)?
+    public var establishSessionIdFromPrekey_MockMethod: ((ProteusSessionID, String) async throws -> Void)?
 
-    public func establishSession(id: ProteusSessionID, fromPrekey: String) throws {
+    public func establishSession(id: ProteusSessionID, fromPrekey: String) async throws {
         establishSessionIdFromPrekey_Invocations.append((id: id, fromPrekey: fromPrekey))
 
         if let error = establishSessionIdFromPrekey_MockError {
@@ -1916,16 +1990,16 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
             fatalError("no mock for `establishSessionIdFromPrekey`")
         }
 
-        try mock(id, fromPrekey)
+        try await mock(id, fromPrekey)
     }
 
     // MARK: - deleteSession
 
     public var deleteSessionId_Invocations: [ProteusSessionID] = []
     public var deleteSessionId_MockError: Error?
-    public var deleteSessionId_MockMethod: ((ProteusSessionID) throws -> Void)?
+    public var deleteSessionId_MockMethod: ((ProteusSessionID) async throws -> Void)?
 
-    public func deleteSession(id: ProteusSessionID) throws {
+    public func deleteSession(id: ProteusSessionID) async throws {
         deleteSessionId_Invocations.append(id)
 
         if let error = deleteSessionId_MockError {
@@ -1936,20 +2010,20 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
             fatalError("no mock for `deleteSessionId`")
         }
 
-        try mock(id)
+        try await mock(id)
     }
 
     // MARK: - sessionExists
 
     public var sessionExistsId_Invocations: [ProteusSessionID] = []
-    public var sessionExistsId_MockMethod: ((ProteusSessionID) -> Bool)?
+    public var sessionExistsId_MockMethod: ((ProteusSessionID) async -> Bool)?
     public var sessionExistsId_MockValue: Bool?
 
-    public func sessionExists(id: ProteusSessionID) -> Bool {
+    public func sessionExists(id: ProteusSessionID) async -> Bool {
         sessionExistsId_Invocations.append(id)
 
         if let mock = sessionExistsId_MockMethod {
-            return mock(id)
+            return await mock(id)
         } else if let mock = sessionExistsId_MockValue {
             return mock
         } else {
@@ -2030,10 +2104,10 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
 
     public var generatePrekeyId_Invocations: [UInt16] = []
     public var generatePrekeyId_MockError: Error?
-    public var generatePrekeyId_MockMethod: ((UInt16) throws -> String)?
+    public var generatePrekeyId_MockMethod: ((UInt16) async throws -> String)?
     public var generatePrekeyId_MockValue: String?
 
-    public func generatePrekey(id: UInt16) throws -> String {
+    public func generatePrekey(id: UInt16) async throws -> String {
         generatePrekeyId_Invocations.append(id)
 
         if let error = generatePrekeyId_MockError {
@@ -2041,7 +2115,7 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
         }
 
         if let mock = generatePrekeyId_MockMethod {
-            return try mock(id)
+            return try await mock(id)
         } else if let mock = generatePrekeyId_MockValue {
             return mock
         } else {
@@ -2053,10 +2127,10 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
 
     public var lastPrekey_Invocations: [Void] = []
     public var lastPrekey_MockError: Error?
-    public var lastPrekey_MockMethod: (() throws -> String)?
+    public var lastPrekey_MockMethod: (() async throws -> String)?
     public var lastPrekey_MockValue: String?
 
-    public func lastPrekey() throws -> String {
+    public func lastPrekey() async throws -> String {
         lastPrekey_Invocations.append(())
 
         if let error = lastPrekey_MockError {
@@ -2064,7 +2138,7 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
         }
 
         if let mock = lastPrekey_MockMethod {
-            return try mock()
+            return try await mock()
         } else if let mock = lastPrekey_MockValue {
             return mock
         } else {
@@ -2076,10 +2150,10 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
 
     public var generatePrekeysStartCount_Invocations: [(start: UInt16, count: UInt16)] = []
     public var generatePrekeysStartCount_MockError: Error?
-    public var generatePrekeysStartCount_MockMethod: ((UInt16, UInt16) throws -> [IdPrekeyTuple])?
+    public var generatePrekeysStartCount_MockMethod: ((UInt16, UInt16) async throws -> [IdPrekeyTuple])?
     public var generatePrekeysStartCount_MockValue: [IdPrekeyTuple]?
 
-    public func generatePrekeys(start: UInt16, count: UInt16) throws -> [IdPrekeyTuple] {
+    public func generatePrekeys(start: UInt16, count: UInt16) async throws -> [IdPrekeyTuple] {
         generatePrekeysStartCount_Invocations.append((start: start, count: count))
 
         if let error = generatePrekeysStartCount_MockError {
@@ -2087,7 +2161,7 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
         }
 
         if let mock = generatePrekeysStartCount_MockMethod {
-            return try mock(start, count)
+            return try await mock(start, count)
         } else if let mock = generatePrekeysStartCount_MockValue {
             return mock
         } else {

@@ -95,10 +95,12 @@ public class ZMUserSession: NSObject {
     // let hotFixApplicator = PatchApplicator<HotfixPatch>(lastRunVersionKey: "lastRunHotFixVersion")
     var accessTokenRenewalObserver: AccessTokenRenewalObserver?
     var recurringActionService: RecurringActionServiceInterface = RecurringActionService()
+
     var cryptoboxMigrationManager: CryptoboxMigrationManagerInterface
     var coreCryptoProvider: CoreCryptoProvider
     lazy var proteusService: ProteusServiceInterface = ProteusService(coreCryptoProvider: coreCryptoProvider)
     var mlsService: MLSServiceInterface
+    var proteusProvider: ProteusProviding!
     let proteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
 
     public var syncStatus: SyncStatusProtocol {
@@ -252,11 +254,12 @@ public class ZMUserSession: NSObject {
     /// - Note: this is safe if coredataStack and proteus are ready
     public lazy var getUserClientFingerprint: GetUserClientFingerprintUseCaseProtocol = {
         GetUserClientFingerprintUseCase(syncContext: coreDataStack.syncContext,
-                                        transportSession: transportSession)
+                                        transportSession: transportSession,
+                                        proteusProvider: proteusProvider)
     }()
 
     let lastEventIDRepository: LastEventIDRepositoryInterface
-    let conversationEventProcessor: ConversationEventProcessorProtocol
+    let conversationEventProcessor: ConversationEventProcessor
 
     public init(
         userId: UUID,
@@ -357,6 +360,10 @@ public class ZMUserSession: NSObject {
             self.localNotificationDispatcher = LocalNotificationDispatcher(in: coreDataStack.syncContext)
             self.configureTransportSession()
 
+            // need to be before we create strategies since it is passed
+            self.proteusProvider = ProteusProvider(proteusService: self.proteusService,
+                                                   keyStore: self.syncManagedObjectContext.zm_cryptKeyStore)
+
             self.strategyDirectory = strategyDirectory ?? self.createStrategyDirectory(useLegacyPushNotifications: configuration.useLegacyPushNotifications)
             self.updateEventProcessor = eventProcessor ?? self.createUpdateEventProcessor()
             self.syncStrategy = syncStrategy ?? self.createSyncStrategy()
@@ -431,18 +438,19 @@ public class ZMUserSession: NSObject {
             localNotificationDispatcher: localNotificationDispatcher!,
             useLegacyPushNotifications: useLegacyPushNotifications,
             lastEventIDRepository: lastEventIDRepository,
-            transportSession: transportSession
+            transportSession: transportSession,
+            proteusProvider: self.proteusProvider,
+            mlsService: mlsService
         )
     }
 
     private func createUpdateEventProcessor() -> EventProcessor {
-
         return EventProcessor(
             storeProvider: self.coreDataStack,
             eventProcessingTracker: eventProcessingTracker,
             earService: earService,
             eventConsumers: strategyDirectory?.eventConsumers ?? [],
-            eventAsyncConsumers: (conversationEventProcessor as? ZMEventAsyncConsumer).flatMap {[$0]} ?? []
+            eventAsyncConsumers: (strategyDirectory?.eventAsyncConsumers ?? []) + [conversationEventProcessor]
         )
     }
 
@@ -706,13 +714,20 @@ extension ZMUserSession: ZMSyncStateDelegate {
         ).post()
 
         let selfClient = ZMUser.selfUser(in: syncContext).selfClient()
-
         if selfClient?.hasRegisteredMLSClient == true {
-            mlsService.performPendingJoins()
-            mlsService.uploadKeyPackagesIfNeeded()
-            mlsService.updateKeyMaterialForAllStaleGroupsIfNeeded()
-            commitPendingProposalsIfNeeded()
+
+            WaitingGroupTask(context: syncContext) { [self] in
+                mlsService.performPendingJoins()
+                await mlsService.uploadKeyPackagesIfNeeded()
+                await mlsService.updateKeyMaterialForAllStaleGroupsIfNeeded()
+                do {
+                    try await mlsService.commitPendingProposals()
+                } catch {
+                    Logging.mls.error("Failed to commit pending proposals: \(String(reflecting: error))")
+                }
+            }
         }
+
         fetchFeatureConfigs()
         recurringActionService.performActionsIfNeeded()
 
@@ -786,7 +801,9 @@ extension ZMUserSession: ZMSyncStateDelegate {
     }
 
     public func didRegisterMLSClient(_ userClient: UserClient) {
-        mlsService.uploadKeyPackagesIfNeeded()
+        Task {
+            await mlsService.uploadKeyPackagesIfNeeded()
+        }
     }
 
     public func didRegisterSelfUserClient(_ userClient: UserClient) {

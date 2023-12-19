@@ -23,19 +23,24 @@ final class SyncUsersActionHandlerTests: ActionHandlerTestBase<SyncUsersAction, 
 
     // MARK: - Properties
 
-    let qualifiedIDs = QualifiedID(uuid: .create(), domain: "example.com")
+    private let qualifiedIDs = QualifiedID(uuid: .create(), domain: "example.com")
+    private var mockProcessor: MockUserProfilePayloadProcessing!
 
     // MARK: - setUp
 
     override func setUp() {
         super.setUp()
+        mockProcessor = MockUserProfilePayloadProcessing()
         action = SyncUsersAction(qualifiedIDs: [qualifiedIDs])
+        handler = SyncUsersActionHandler(context: syncMOC, payloadProcessor: mockProcessor)
     }
 
     // MARK: - tearDown
 
     override func tearDown() {
         action = nil
+        handler = nil
+        mockProcessor = nil
         super.tearDown()
     }
 
@@ -75,8 +80,6 @@ final class SyncUsersActionHandlerTests: ActionHandlerTestBase<SyncUsersAction, 
 
     func test_ItHandlesSuccess() async throws {
         // GIVEN
-        let mockProcessor = MockUserProfilePayloadProcessing()
-        let sut = SyncUsersActionHandler(context: syncMOC, payloadProcessor: mockProcessor)
 
         // mock the payload processor method
         mockProcessor.updateUserProfilesFromIn_MockMethod = { _, _ in }
@@ -139,7 +142,6 @@ final class SyncUsersActionHandlerTests: ActionHandlerTestBase<SyncUsersAction, 
 
         // THEN
         test_itHandlesSuccess(
-            sut: sut,
             status: 200,
             payload: payloadData as ZMTransportData,
             apiVersion: .v5
@@ -153,18 +155,15 @@ final class SyncUsersActionHandlerTests: ActionHandlerTestBase<SyncUsersAction, 
 
         // assert the payload processor is called
         XCTAssertEqual(mockProcessor.updateUserProfilesFromIn_Invocations.count, 1)
-
-        // TODO: nice to have -> assert that the paylod processor has received the right argument
     }
 
     func test_itHandlesFailures() {
-            test_itHandlesFailure(
-                status: 999,
-                label: "foo",
-                apiVersion: .v5,
-                expectedError: .unknownError(code: 999, label: "foo", message: "?")
-            )
-
+        test_itHandlesFailure(
+            status: 999,
+            label: "foo",
+            apiVersion: .v5,
+            expectedError: .unknownError(code: 999, label: "foo", message: "?")
+        )
     }
 
 }

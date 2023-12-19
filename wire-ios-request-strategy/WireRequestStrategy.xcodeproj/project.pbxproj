@@ -301,8 +301,6 @@
 		F154EDC71F447B6C00CB8184 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F154EDC61F447B6C00CB8184 /* AppDelegate.swift */; };
 		F184019A2073BE0800E9F4CC /* ClientMessageRequestFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = F184014F2073BE0800E9F4CC /* ClientMessageRequestFactory.swift */; };
 		F18401A42073BE0800E9F4CC /* GenericMessageEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = F184015A2073BE0800E9F4CC /* GenericMessageEntity.swift */; };
-		F18401A62073BE0800E9F4CC /* MissingClientsRequestStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = F184015D2073BE0800E9F4CC /* MissingClientsRequestStrategy.swift */; };
-		F18401A92073BE0800E9F4CC /* MissingClientsRequestFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = F18401602073BE0800E9F4CC /* MissingClientsRequestFactory.swift */; };
 		F18401AA2073BE0800E9F4CC /* FetchingClientRequestStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = F18401612073BE0800E9F4CC /* FetchingClientRequestStrategy.swift */; };
 		F18401AF2073BE0800E9F4CC /* AvailabilityRequestStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = F18401682073BE0800E9F4CC /* AvailabilityRequestStrategy.swift */; };
 		F18401B02073BE0800E9F4CC /* AbstractRequestStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = F184016A2073BE0800E9F4CC /* AbstractRequestStrategy.swift */; };
@@ -330,7 +328,6 @@
 		F18401E02073C25900E9F4CC /* ClientMessageRequestFactoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F18401542073BE0800E9F4CC /* ClientMessageRequestFactoryTests.swift */; };
 		F18401E12073C25900E9F4CC /* OTREntityTests+Dependency.swift in Sources */ = {isa = PBXBuildFile; fileRef = F18401552073BE0800E9F4CC /* OTREntityTests+Dependency.swift */; };
 		F18401E52073C26200E9F4CC /* FetchingClientRequestStrategyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F184015E2073BE0800E9F4CC /* FetchingClientRequestStrategyTests.swift */; };
-		F18401E72073C26200E9F4CC /* MissingClientsRequestStrategyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F18401622073BE0800E9F4CC /* MissingClientsRequestStrategyTests.swift */; };
 		F18401E92073C26700E9F4CC /* AvailabilityRequestStrategyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F18401672073BE0800E9F4CC /* AvailabilityRequestStrategyTests.swift */; };
 		F18401EA2073C26700E9F4CC /* AbstractRequestStrategyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F184016B2073BE0800E9F4CC /* AbstractRequestStrategyTests.swift */; };
 		F18401EB2073C26700E9F4CC /* MockOTREntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = F184016C2073BE0800E9F4CC /* MockOTREntity.swift */; };
@@ -757,11 +754,8 @@
 		F18401542073BE0800E9F4CC /* ClientMessageRequestFactoryTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClientMessageRequestFactoryTests.swift; sourceTree = "<group>"; };
 		F18401552073BE0800E9F4CC /* OTREntityTests+Dependency.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "OTREntityTests+Dependency.swift"; sourceTree = "<group>"; };
 		F184015A2073BE0800E9F4CC /* GenericMessageEntity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GenericMessageEntity.swift; sourceTree = "<group>"; };
-		F184015D2073BE0800E9F4CC /* MissingClientsRequestStrategy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MissingClientsRequestStrategy.swift; sourceTree = "<group>"; };
 		F184015E2073BE0800E9F4CC /* FetchingClientRequestStrategyTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FetchingClientRequestStrategyTests.swift; sourceTree = "<group>"; };
-		F18401602073BE0800E9F4CC /* MissingClientsRequestFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MissingClientsRequestFactory.swift; sourceTree = "<group>"; };
 		F18401612073BE0800E9F4CC /* FetchingClientRequestStrategy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FetchingClientRequestStrategy.swift; sourceTree = "<group>"; };
-		F18401622073BE0800E9F4CC /* MissingClientsRequestStrategyTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MissingClientsRequestStrategyTests.swift; sourceTree = "<group>"; };
 		F18401672073BE0800E9F4CC /* AvailabilityRequestStrategyTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AvailabilityRequestStrategyTests.swift; sourceTree = "<group>"; };
 		F18401682073BE0800E9F4CC /* AvailabilityRequestStrategy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AvailabilityRequestStrategy.swift; sourceTree = "<group>"; };
 		F184016A2073BE0800E9F4CC /* AbstractRequestStrategy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AbstractRequestStrategy.swift; sourceTree = "<group>"; };
@@ -1114,6 +1108,8 @@
 			indentWidth = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
+			usesTabs = 0;
+			wrapsLines = 1;
 		};
 		1669016B1D707509000FE4AF /* Products */ = {
 			isa = PBXGroup;
@@ -1450,9 +1446,6 @@
 		F184015C2073BE0800E9F4CC /* User Clients */ = {
 			isa = PBXGroup;
 			children = (
-				F184015D2073BE0800E9F4CC /* MissingClientsRequestStrategy.swift */,
-				F18401622073BE0800E9F4CC /* MissingClientsRequestStrategyTests.swift */,
-				F18401602073BE0800E9F4CC /* MissingClientsRequestFactory.swift */,
 				F18401612073BE0800E9F4CC /* FetchingClientRequestStrategy.swift */,
 				F184015E2073BE0800E9F4CC /* FetchingClientRequestStrategyTests.swift */,
 				EEA2EE8928F021C100A2CBE1 /* UserClientByQualifiedUserIDTranscoderTests.swift */,
@@ -1999,7 +1992,6 @@
 				8792F55721AD944100795027 /* UserPropertyRequestStrategy.swift in Sources */,
 				EE3245FC2821D41000F2A84A /* VoIPPushHelper.swift in Sources */,
 				D33B57B12A56BDCA0078A4F9 /* FederationTerminationManager.swift in Sources */,
-				F18401A92073BE0800E9F4CC /* MissingClientsRequestFactory.swift in Sources */,
 				16367F2626FDB4720028AF8B /* ConnectionRequestStrategy.swift in Sources */,
 				06474D4D24AF68AD002C695D /* StoreUpdateEvent.swift in Sources */,
 				068084962563B6940047899C /* FeatureConfigRequestStrategy.swift in Sources */,
@@ -2148,7 +2140,6 @@
 				06CDDEA1282E9E7F00F9360F /* RemovePushTokenActionHandler.swift in Sources */,
 				EE90C2A7282E7EC800474379 /* RegisterPushTokenActionHandler.swift in Sources */,
 				EEE95CD72A4330D900E136CB /* LeaveSubconversationActionHandler.swift in Sources */,
-				F18401A62073BE0800E9F4CC /* MissingClientsRequestStrategy.swift in Sources */,
 				0649D12224F5C5EF001DDC78 /* ZMLocalNotification.swift in Sources */,
 				EE90C2A8282E7ECF00474379 /* RegisterPushTokenAction.swift in Sources */,
 				06FDC62F28354DAE008300DB /* PushTokenStorage.swift in Sources */,
@@ -2291,7 +2282,6 @@
 				16E5F71826EF4DBF00F35FBA /* ConversationRequestStrategyTests.swift in Sources */,
 				D3DA067C2A5D9EF700BA9CEB /* FederationTerminationManagerTest.swift in Sources */,
 				6308F8B22A2740C30072A177 /* FetchMLSSubconversationGroupInfoActionHandlerTests.swift in Sources */,
-				F18401E72073C26200E9F4CC /* MissingClientsRequestStrategyTests.swift in Sources */,
 				1621D2671D75C776007108C2 /* ZMRemoteIdentifierObjectSyncTests.m in Sources */,
 				1621D26A1D75C782007108C2 /* ZMTimedSingleRequestSyncTests.m in Sources */,
 				16BBA1FC2AFC44B100CDF38A /* QuickSyncObserverTests.swift in Sources */,
