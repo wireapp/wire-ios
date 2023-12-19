@@ -81,7 +81,7 @@ public func == (lhs: GenericMessageEntity, rhs: GenericMessageEntity) -> Bool {
 
 extension GenericMessageEntity: EncryptedPayloadGenerator {
 
-    public func encryptForTransport() -> EncryptedPayloadGenerator.Payload? {
+    public func encryptForTransport() async -> EncryptedPayloadGenerator.Payload? {
         guard
             let conversation = conversation,
             let managedObjectContext = conversation.managedObjectContext
@@ -91,23 +91,23 @@ extension GenericMessageEntity: EncryptedPayloadGenerator {
 
         switch targetRecipients {
         case .conversationParticipants:
-            return message.encryptForTransport(for: conversation)
+            return await message.encryptForTransport(for: conversation)
         case .users(let users):
-            return message.encryptForTransport(forBroadcastRecipients: users, in: managedObjectContext)
+            return await message.encryptForTransport(forBroadcastRecipients: users, in: managedObjectContext)
         case .clients(let clientsByUser):
-            return message.encryptForTransport(for: clientsByUser, in: managedObjectContext)
+            return await message.encryptForTransport(for: clientsByUser, in: managedObjectContext)
         }
     }
 
-    public func encryptForTransportQualified() -> EncryptedPayloadGenerator.Payload? {
+    public func encryptForTransportQualified() async -> EncryptedPayloadGenerator.Payload? {
         switch targetRecipients {
         case .conversationParticipants:
             guard let conversation = conversation else { return nil }
-            return message.encryptForTransport(for: conversation, useQualifiedIdentifiers: true)
+            return await message.encryptForTransport(for: conversation, useQualifiedIdentifiers: true)
         case .users(let users):
-            return message.encryptForTransport(forBroadcastRecipients: users, useQualifiedIdentifiers: true, in: context)
+            return await message.encryptForTransport(forBroadcastRecipients: users, useQualifiedIdentifiers: true, in: context)
         case .clients(let clientsByUser):
-            return message.encryptForTransport(for: clientsByUser, useQualifiedIdentifiers: true, in: context)
+            return await message.encryptForTransport(for: clientsByUser, useQualifiedIdentifiers: true, in: context)
         }
     }
 

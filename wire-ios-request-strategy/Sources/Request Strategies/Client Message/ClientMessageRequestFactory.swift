@@ -104,11 +104,12 @@ public final class ClientMessageRequestFactory: NSObject {
         }
 
         let originalPath = "/" + ["conversations", conversationID, "otr", "messages"].joined(separator: "/")
-        guard let encryptedPayload = message.encryptForTransport() else { return nil }
-        let path = originalPath.pathWithMissingClientStrategy(strategy: encryptedPayload.strategy)
-        let request = ZMTransportRequest(path: path, method: .post, binaryData: encryptedPayload.data, type: protobufContentType, contentDisposition: nil, apiVersion: apiVersion.rawValue)
-        request.addContentDebugInformation(message.debugInfo)
-        return request
+        fatalError("replace implementation")
+//        guard let encryptedPayload = message.encryptForTransport() else { return nil }
+//        let path = originalPath.pathWithMissingClientStrategy(strategy: encryptedPayload.strategy)
+//        let request = ZMTransportRequest(path: path, method: .post, binaryData: encryptedPayload.data, type: protobufContentType, contentDisposition: nil, apiVersion: apiVersion.rawValue)
+//        request.addContentDebugInformation(message.debugInfo)
+//        return request
     }
 
     fileprivate func upstreamRequestForQualifiedEncryptedMessage(_ message: EncryptedPayloadGenerator, in conversation: ZMConversation, apiVersion: APIVersion) -> ZMTransportRequest? {
@@ -123,15 +124,15 @@ public final class ClientMessageRequestFactory: NSObject {
         }
 
         let path = "/" + ["conversations", domain, conversationID, "proteus", "messages"].joined(separator: "/")
-
-        guard let encryptedPayload = message.encryptForTransportQualified() else {
-            WireLogger.messaging.error("failed to encrypt message for transport: \(message.debugInfo)")
-            return nil
-        }
-
-        let request = ZMTransportRequest(path: path, method: .post, binaryData: encryptedPayload.data, type: protobufContentType, contentDisposition: nil, apiVersion: apiVersion.rawValue)
-        request.addContentDebugInformation(message.debugInfo)
-        return request
+        fatalError("replace implementation")
+//        guard let encryptedPayload = message.encryptForTransportQualified() else {
+//            WireLogger.messaging.error("failed to encrypt message for transport: \(message.debugInfo)")
+//            return nil
+//        }
+//
+//        let request = ZMTransportRequest(path: path, method: .post, binaryData: encryptedPayload.data, type: protobufContentType, contentDisposition: nil, apiVersion: apiVersion.rawValue)
+//        request.addContentDebugInformation(message.debugInfo)
+//        return request
     }
 
     public func requestToGetAsset(_ assetId: String, inConversation conversationId: UUID, apiVersion: APIVersion) -> ZMTransportRequest {
