@@ -158,7 +158,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         updateKeychainItemAccess()
         migrateCryptoboxSessionsIfNeeded(with: coreCrypto)
 
-        try coreCrypto.perform { try $0.proteusInit() }
+        try await coreCrypto.perform { try $0.proteusInit() }
 
         return coreCrypto
     }
@@ -226,7 +226,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         }
 
         WireLogger.mls.info("generating ed25519 public key")
-        let keyBytes = try coreCrypto.perform { try $0.clientPublicKey(ciphersuite: defaultCipherSuite.rawValue) }
+        let keyBytes = try await coreCrypto.perform { try $0.clientPublicKey(ciphersuite: defaultCipherSuite.rawValue) }
         let keyData = Data(keyBytes)
         var keys = UserClient.MLSPublicKeys()
         keys.ed25519 = keyData.base64EncodedString()

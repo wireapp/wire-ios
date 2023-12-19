@@ -275,7 +275,7 @@ public final class MLSService: MLSServiceInterface {
 
             let keyLength: UInt32 = 32
 
-            return try coreCrypto.perform {
+            return try await coreCrypto.perform {
                 let epoch = try $0.conversationEpoch(conversationId: subconversationGroupID.bytes)
 
                 let keyData = try $0.exportSecretKey(
@@ -310,7 +310,7 @@ public final class MLSService: MLSServiceInterface {
 
     public func subconversationMembers(for subconversationGroupID: MLSGroupID) async throws -> [MLSClientID] {
         do {
-            return try coreCrypto.perform {
+            return try await coreCrypto.perform {
                 try $0.getClientIds(conversationId: subconversationGroupID.bytes).compactMap {
                     MLSClientID(data: $0.data)
                 }
@@ -434,7 +434,7 @@ public final class MLSService: MLSServiceInterface {
                 custom: .init(keyRotationSpan: nil, wirePolicy: nil)
             )
 
-            try coreCrypto.perform {
+            try await coreCrypto.perform {
                 try $0.createConversation(
                     conversationId: groupID.bytes,
                     creatorCredentialType: .basic,
@@ -590,7 +590,7 @@ public final class MLSService: MLSServiceInterface {
     public func wipeGroup(_ groupID: MLSGroupID) async {
         logger.info("wiping group (\(groupID.safeForLoggingDescription))")
         do {
-            try coreCrypto.perform { try $0.wipeConversation(conversationId: groupID.bytes) }
+            try await coreCrypto.perform { try $0.wipeConversation(conversationId: groupID.bytes) }
         } catch {
             logger.warn("failed to wipe group (\(groupID.safeForLoggingDescription)): \(String(describing: error))")
         }
@@ -650,7 +650,7 @@ public final class MLSService: MLSServiceInterface {
 
     private func shouldQueryUnclaimedKeyPackagesCount() -> Bool {
         do {
-            let estimatedLocalKeyPackageCount = try coreCrypto.perform {
+            let estimatedLocalKeyPackageCount = try await coreCrypto.perform {
                 try $0.clientValidKeypackagesCount(ciphersuite: defaultCipherSuite.rawValue)
             }
             let shouldCountRemainingKeyPackages = estimatedLocalKeyPackageCount < halfOfTargetUnclaimedKeyPackageCount
@@ -704,7 +704,7 @@ public final class MLSService: MLSServiceInterface {
         var keyPackages = [[Byte]]()
 
         do {
-            keyPackages = try coreCrypto.perform { try $0.clientKeypackages(ciphersuite: defaultCipherSuite.rawValue, amountRequested: amountRequested) }
+            keyPackages = try await coreCrypto.perform { try $0.clientKeypackages(ciphersuite: defaultCipherSuite.rawValue, amountRequested: amountRequested) }
 
         } catch let error {
             logger.warn("failed to generate new key packages: \(String(describing: error))")
@@ -763,7 +763,7 @@ public final class MLSService: MLSServiceInterface {
         }
 
         do {
-            let groupIDBytes = try coreCrypto.perform {
+            let groupIDBytes = try await coreCrypto.perform {
                 try $0.processWelcomeMessage(
                     welcomeMessage: messageBytes,
                     customConfiguration: .init(keyRotationSpan: nil, wirePolicy: nil)
@@ -1086,7 +1086,7 @@ public final class MLSService: MLSServiceInterface {
         logger.info("requesting to join group (\(groupID.safeForLoggingDescription)")
 
         do {
-            let proposal = try coreCrypto.perform {
+            let proposal = try await coreCrypto.perform {
                 try $0.newExternalAddProposal(conversationId: groupID.bytes,
                                               epoch: epoch,
                                               ciphersuite: defaultCipherSuite.rawValue,
@@ -1660,7 +1660,7 @@ public final class MLSService: MLSServiceInterface {
                 parentGroupID: parentGroupID
             )
 
-            try coreCrypto.perform {
+            try await coreCrypto.perform {
                 try $0.wipeConversation(conversationId: subconversationGroupID.bytes)
             }
         } catch {

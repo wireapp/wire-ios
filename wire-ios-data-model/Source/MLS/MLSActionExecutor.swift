@@ -156,7 +156,7 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
                 )
 
             case .removeClients(let clients):
-                return try coreCrypto.perform {
+                return try await coreCrypto.perform {
                     try $0.removeClientsFromConversation(
                         conversationId: groupID.bytes,
                         clients: clients
@@ -164,12 +164,12 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
                 }
 
             case .updateKeyMaterial:
-                return try coreCrypto.perform {
+                return try await coreCrypto.perform {
                     try $0.updateKeyingMaterial(conversationId: groupID.bytes)
                 }
 
             case .proposal:
-                guard let bundle = try coreCrypto.perform({
+                guard let bundle = try await coreCrypto.perform({
                     try $0.commitPendingProposals(conversationId: groupID.bytes)
                 }) else {
                     throw CommitError.noPendingProposals
@@ -178,7 +178,7 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
                 return bundle
 
             case .joinGroup(let groupInfo):
-                let conversationInitBundle = try coreCrypto.perform {
+                let conversationInitBundle = try await coreCrypto.perform {
                     try $0.joinByExternalCommit(
                         groupInfo: groupInfo.bytes,
                         customConfiguration: .init(keyRotationSpan: nil, wirePolicy: nil),
