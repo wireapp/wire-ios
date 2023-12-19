@@ -162,7 +162,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         keyMaterialUpdatedExpectation?.fulfill()
     }
 
-    func MLSServiceDidFinishInitialization() {
+    func mlsServiceDidFinishInitialization() {
         didFinishInitializationExpectation.fulfill()
     }
 

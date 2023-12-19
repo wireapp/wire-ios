@@ -97,7 +97,7 @@ public protocol MLSServiceDelegate: AnyObject {
 
     func mlsServiceDidCommitPendingProposal(for groupID: MLSGroupID)
     func mlsServiceDidUpdateKeyMaterialForAllGroups()
-    func MLSServiceDidFinishInitialization()
+    func mlsServiceDidFinishInitialization()
 
 }
 
@@ -230,7 +230,7 @@ public final class MLSService: MLSServiceInterface {
         // FIXME: [jacob] fetch on demand when creating group
         Task {
             await fetchBackendPublicKeys()
-            delegate?.MLSServiceDidFinishInitialization()
+            delegate?.mlsServiceDidFinishInitialization()
         }
     }
 
