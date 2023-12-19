@@ -58,11 +58,12 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
     private let logger = WireLogger.mls
 
     lazy var migrationForceTimeHasArrived: Bool = {
-        guard let finaliseDate = featureRepository.fetchMLSMigration().config.finaliseRegardlessAfter else {
+        let mlsMigrationFeature = featureRepository.fetchMLSMigration()
+        guard let finaliseDate = mlsMigrationFeature.config.finaliseRegardlessAfter else {
             return false
         }
 
-        return Date() >= finaliseDate
+        return finaliseDate.isPast
     }()
 
     // MARK: - Life cycle
