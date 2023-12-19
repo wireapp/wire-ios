@@ -26,7 +26,7 @@ import Combine
 
 class MLSActionExecutorTests: ZMBaseManagedObjectTest {
 
-    var mockCoreCrypto: MockCoreCrypto!
+    var mockCoreCrypto: MockCoreCryptoProtocol!
     var mockSafeCoreCrypto: MockSafeCoreCrypto!
     var mockCoreCryptoProvider: MockCoreCryptoProviderProtocol!
     var mockCommitSender: MockCommitSending!
@@ -34,7 +34,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
 
     override func setUp() {
         super.setUp()
-        mockCoreCrypto = MockCoreCrypto()
+        mockCoreCrypto = MockCoreCryptoProtocol()
         mockSafeCoreCrypto = MockSafeCoreCrypto(coreCrypto: mockCoreCrypto)
         mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
         mockCoreCryptoProvider.coreCryptoRequireMLS_MockValue = mockSafeCoreCrypto
