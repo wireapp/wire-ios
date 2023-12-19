@@ -622,35 +622,73 @@ extension GenericMessage {
         context: NSManagedObjectContext,
         using encryptionFunction: EncryptionFunction
     ) async -> [Proteus_ClientEntry] {
-        return await userClients.asyncCompactMap { client in
-            guard await context.perform({ client != selfClient }) else { return nil }
-            return await clientEntry(for: client, context: context, using: encryptionFunction)
+
+        let filteredClientEntries = await context.perform {
+            userClients.compactMap {
+                if $0 != selfClient {
+                    return ClientEntry(client: $0, context: context)
+                } else {
+                    return nil
+                }
+            }
+        }
+
+        return await filteredClientEntries.asyncCompactMap { client in
+            return await clientEntry(for: client, using: encryptionFunction)
+        }
+    }
+
+    struct ClientEntry {
+        var client: UserClient
+        var context: NSManagedObjectContext
+
+        var proteusSessionID: ProteusSessionID? {
+            get async {
+                await context.perform { client.proteusSessionID }
+            }
+        }
+
+        var failedToEstablishSession: Bool {
+            get async {
+                await context.perform({ client.failedToEstablishSession })
+            }
+        }
+
+        var loggedId: String {
+            get async {
+                await context.perform({ client.remoteIdentifier ?? "<nil>" })
+            }
+        }
+
+        func proteusClientEntry(with data: Data) async -> Proteus_ClientEntry {
+            let id = await context.perform {
+                client.clientId
+            }
+            return Proteus_ClientEntry(withClientId: id, data: data)
         }
     }
 
     // Assumes it's not the self client.
     private func clientEntry(
-        for client: UserClient,
-        context: NSManagedObjectContext,
+        for client: ClientEntry,
         using encryptionFunction: EncryptionFunction
     ) async -> Proteus_ClientEntry? {
-        guard let sessionID = client.proteusSessionID else {
+        guard let sessionID = await client.proteusSessionID else {
             return nil
         }
 
-        guard await context.perform({ !client.failedToEstablishSession }) else {
+        guard await !client.failedToEstablishSession else {
             // If the session is corrupted, we will send a special payload.
             let data = ZMFailedToCreateEncryptedMessagePayloadString.data(using: String.Encoding.utf8)!
-            let id = await context.perform({ client.remoteIdentifier ?? "<nil>" })
-            WireLogger.proteus.error("Failed to encrypt payload: session is not established with client: \(id)", attributes: nil)
-            return Proteus_ClientEntry(withClient: client, data: data)
+            WireLogger.proteus.error("Failed to encrypt payload: session is not established with client: \(await client.loggedId)", attributes: nil)
+            return await client.proteusClientEntry(with: data)
         }
 
         do {
             let plainText = try serializedData()
             let encryptedData = try await encryptionFunction(sessionID, plainText)
             guard let data = encryptedData else { return nil }
-            return await context.perform { Proteus_ClientEntry(withClient: client, data: data) }
+            return await client.proteusClientEntry(with: data)
         } catch {
             WireLogger.proteus.error("failed to encrypt payload for a client: \(String(describing: error))")
             return nil
