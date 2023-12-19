@@ -83,7 +83,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         do {
             let provider = CoreCryptoConfigProvider()
             let clientID = try await syncContext.perform { try provider.clientID(of: .selfUser(in: self.syncContext)) }
-            try coreCrypto.mlsInit(clientID: clientID)
+            try await coreCrypto.mlsInit(clientID: clientID)
             try generateClientPublicKeysIfNeeded(with: coreCrypto)
         } catch {
             initialisatingMls = false

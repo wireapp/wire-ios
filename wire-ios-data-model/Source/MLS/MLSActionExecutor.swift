@@ -142,7 +142,7 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
             WireLogger.mls.info("generating commit for action (\(String(describing: action))) for group (\(groupID.safeForLoggingDescription))...")
             switch action {
             case .addMembers(let clients):
-                let memberAddMessages = try coreCrypto.perform {
+                let memberAddMessages = try await coreCrypto.perform {
                     try $0.addClientsToConversation(
                         conversationId: groupID.bytes,
                         clients: clients
