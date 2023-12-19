@@ -134,13 +134,12 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
         for tuple in tuples {
             await finalizeConversationMigration(conversation: tuple.conversation)
         }
-
     }
 
     private func syncUsersWithTheBackend() async throws {
         let fetchRequest = ZMUser.fetchRequest()
         let result = try context.fetch(fetchRequest) as? [ZMUser]
-        guard let result else { return }
+        guard let result = try context.fetch(fetchRequest) as? [ZMUser] else { return }
         let ids = result.compactMap { $0.qualifiedID }
         try await actionsProvider.syncUsers(qualifiedIDs: ids, context: context.notificationContext)
     }
