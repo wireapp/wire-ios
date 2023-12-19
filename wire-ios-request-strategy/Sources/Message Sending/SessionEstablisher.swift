@@ -41,7 +41,6 @@ public class SessionEstablisher: SessionEstablisherInterface {
 
     private let apiProvider: APIProviderInterface
     private let context: NSManagedObjectContext
-    private let requestFactory = MissingClientsRequestFactory()
     private let processor: PrekeyPayloadProcessorInterface
     private let batchSize = 28
 
@@ -61,9 +60,7 @@ public class SessionEstablisher: SessionEstablisherInterface {
 
         let prekeys = try await apiProvider.prekeyAPI(apiVersion: apiVersion).fetchPrekeys(for: clients)
 
-        await context.perform {
-            _ = self.processor.establishSessions(from: prekeys, with: selfClient, context: self.context)
-        }
+            _ = await processor.establishSessions(from: prekeys, with: selfClient, context: self.context)
     }
 }
 

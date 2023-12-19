@@ -82,6 +82,7 @@ class ConversationTests_LegalHold: ConversationTestsBase {
 
         let legalHoldUser = self.user(for: user1)!
         let groupConversation = try XCTUnwrap(self.conversation(for: self.groupConversation))
+
         let conversationParticipantsService = ConversationParticipantsService(context: userSession!.managedObjectContext)
         mockTransportSession.performRemoteChanges { (session) in
             session.registerClient(for: self.user1, label: "Legal Hold", type: "legalhold", deviceClass: "legalhold")

@@ -1,5 +1,26 @@
 // Generated using Sourcery 2.1.2 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
+
+//
+// Wire
+// Copyright (C) 2023 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
+
+// swiftlint:disable superfluous_disable_command
+// swiftlint:disable vertical_whitespace
 // swiftlint:disable line_length
 // swiftlint:disable variable_name
 
@@ -162,6 +183,21 @@ public class MockConversationServiceInterface: ConversationServiceInterface {
         mock(qualifiedID, completion)
     }
 
+    // MARK: - syncConversation
+
+    public var syncConversationQualifiedID_Invocations: [QualifiedID] = []
+    public var syncConversationQualifiedID_MockMethod: ((QualifiedID) async -> Void)?
+
+    public func syncConversation(qualifiedID: QualifiedID) async {
+        syncConversationQualifiedID_Invocations.append(qualifiedID)
+
+        guard let mock = syncConversationQualifiedID_MockMethod else {
+            fatalError("no mock for `syncConversationQualifiedID`")
+        }
+
+        await mock(qualifiedID)
+    }
+
 }
 class MockMLSClientIDsProviding: MLSClientIDsProviding {
 
@@ -246,6 +282,29 @@ public class MockMessageAPI: MessageAPI {
 
     public init() {}
 
+
+    // MARK: - broadcastProteusMessage
+
+    public var broadcastProteusMessageMessage_Invocations: [any ProteusMessage] = []
+    public var broadcastProteusMessageMessage_MockError: Error?
+    public var broadcastProteusMessageMessage_MockMethod: ((any ProteusMessage) async throws -> (Payload.MessageSendingStatus, ZMTransportResponse))?
+    public var broadcastProteusMessageMessage_MockValue: (Payload.MessageSendingStatus, ZMTransportResponse)?
+
+    public func broadcastProteusMessage(message: any ProteusMessage) async throws -> (Payload.MessageSendingStatus, ZMTransportResponse) {
+        broadcastProteusMessageMessage_Invocations.append(message)
+
+        if let error = broadcastProteusMessageMessage_MockError {
+            throw error
+        }
+
+        if let mock = broadcastProteusMessageMessage_MockMethod {
+            return try await mock(message)
+        } else if let mock = broadcastProteusMessageMessage_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `broadcastProteusMessageMessage`")
+        }
+    }
 
     // MARK: - sendProteusMessage
 
@@ -349,6 +408,26 @@ public class MockMessageSenderInterface: MessageSenderInterface {
         try await mock(message)
     }
 
+    // MARK: - broadcastMessage
+
+    public var broadcastMessageMessage_Invocations: [any ProteusMessage] = []
+    public var broadcastMessageMessage_MockError: Error?
+    public var broadcastMessageMessage_MockMethod: ((any ProteusMessage) async throws -> Void)?
+
+    public func broadcastMessage(message: any ProteusMessage) async throws {
+        broadcastMessageMessage_Invocations.append(message)
+
+        if let error = broadcastMessageMessage_MockError {
+            throw error
+        }
+
+        guard let mock = broadcastMessageMessage_MockMethod else {
+            fatalError("no mock for `broadcastMessageMessage`")
+        }
+
+        try await mock(message)
+    }
+
 }
 public class MockPrekeyAPI: PrekeyAPI {
 
@@ -391,19 +470,16 @@ public class MockPrekeyPayloadProcessorInterface: PrekeyPayloadProcessorInterfac
     // MARK: - establishSessions
 
     public var establishSessionsFromWithContext_Invocations: [(payload: Payload.PrekeyByQualifiedUserID, selfClient: UserClient, context: NSManagedObjectContext)] = []
-    public var establishSessionsFromWithContext_MockMethod: ((Payload.PrekeyByQualifiedUserID, UserClient, NSManagedObjectContext) -> Bool)?
-    public var establishSessionsFromWithContext_MockValue: Bool?
+    public var establishSessionsFromWithContext_MockMethod: ((Payload.PrekeyByQualifiedUserID, UserClient, NSManagedObjectContext) async -> Void)?
 
-    public func establishSessions(from payload: Payload.PrekeyByQualifiedUserID, with selfClient: UserClient, context: NSManagedObjectContext) -> Bool {
+    public func establishSessions(from payload: Payload.PrekeyByQualifiedUserID, with selfClient: UserClient, context: NSManagedObjectContext) async {
         establishSessionsFromWithContext_Invocations.append((payload: payload, selfClient: selfClient, context: context))
 
-        if let mock = establishSessionsFromWithContext_MockMethod {
-            return mock(payload, selfClient, context)
-        } else if let mock = establishSessionsFromWithContext_MockValue {
-            return mock
-        } else {
+        guard let mock = establishSessionsFromWithContext_MockMethod else {
             fatalError("no mock for `establishSessionsFromWithContext`")
         }
+
+        await mock(payload, selfClient, context)
     }
 
 }
@@ -527,3 +603,8 @@ class MockUserProfilePayloadProcessing: UserProfilePayloadProcessing {
     }
 
 }
+
+// swiftlint:enable variable_name
+// swiftlint:enable line_length
+// swiftlint:enable vertical_whitespace
+// swiftlint:enable superfluous_disable_command

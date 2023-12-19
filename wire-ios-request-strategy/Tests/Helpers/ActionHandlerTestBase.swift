@@ -18,6 +18,7 @@
 
 import UIKit
 import XCTest
+
 @testable import WireRequestStrategy
 
 class ActionHandlerTestBase<Action: EntityAction, Handler: ActionHandler<Action>>: MessagingTestBase {
@@ -27,9 +28,11 @@ class ActionHandlerTestBase<Action: EntityAction, Handler: ActionHandler<Action>
     typealias ValidationBlock = (Swift.Result<Result, Failure>) -> Bool
 
     var action: Action!
+    var handler: Handler!
 
     override func tearDown() {
         action = nil
+        handler = nil
         super.tearDown()
     }
 
@@ -44,11 +47,8 @@ class ActionHandlerTestBase<Action: EntityAction, Handler: ActionHandler<Action>
         expectedAcceptType: ZMTransportAccept? = nil,
         apiVersion: APIVersion = .v1
     ) throws -> ZMTransportRequest {
-        // Given
-        let sut = Handler(context: syncMOC)
-
         // When
-        let request = try XCTUnwrap(sut.request(for: action, apiVersion: apiVersion))
+        let request = try XCTUnwrap(handler.request(for: action, apiVersion: apiVersion))
 
         // Then
         XCTAssertEqual(request.path, expectedPath)
@@ -75,11 +75,8 @@ class ActionHandlerTestBase<Action: EntityAction, Handler: ActionHandler<Action>
         file: StaticString = #filePath,
         line: UInt = #line
     ) throws {
-        // Given
-        let sut = Handler(context: syncMOC)
-
         // When
-        let request = try XCTUnwrap(sut.request(for: action, apiVersion: apiVersion))
+        let request = try XCTUnwrap(handler.request(for: action, apiVersion: apiVersion))
 
         // Then
         XCTAssertEqual(request.path, expectedPath, file: file, line: line)
@@ -95,13 +92,12 @@ class ActionHandlerTestBase<Action: EntityAction, Handler: ActionHandler<Action>
     ) {
         // Given
         var action = action
-        let sut = Handler(context: syncMOC)
 
         // Expectation
         expect(action: &action, toPassValidation: validation)
 
         // When
-        let request = sut.request(for: action, apiVersion: apiVersion)
+        let request = handler.request(for: action, apiVersion: apiVersion)
 
         // Then
         XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
@@ -119,18 +115,16 @@ class ActionHandlerTestBase<Action: EntityAction, Handler: ActionHandler<Action>
     ///   - apiVersion: The api version of the response
     ///   - validation: The validation block to perform on the action result
     func test_itHandlesResponse(
-        sut: Handler? = nil,
         action: Action,
         status: Int,
         payload: ZMTransportData? = nil,
         label: String? = nil,
         apiVersion: APIVersion = .v1,
-        file: StaticString = #filePath,
+        file: StaticString = #file,
         line: UInt = #line,
         validation: @escaping ValidationBlock
     ) {
         // Given
-        let sut = sut ?? Handler(context: syncMOC)
         var action = action
 
         // Expectation
@@ -143,7 +137,7 @@ class ActionHandlerTestBase<Action: EntityAction, Handler: ActionHandler<Action>
             label: label,
             apiVersion: apiVersion
         )
-        sut.handleResponse(response, action: action)
+        handler.handleResponse(response, action: action)
 
         // Then
         XCTAssert(waitForCustomExpectations(withTimeout: 0.5), file: file, line: line)
@@ -173,12 +167,11 @@ extension ActionHandlerTestBase {
     }
 
     func test_itHandlesResponse(
-        sut: Handler? = nil,
         status: Int,
         payload: ZMTransportData? = nil,
         label: String? = nil,
         apiVersion: APIVersion = .v1,
-        file: StaticString = #filePath,
+        file: StaticString = #file,
         line: UInt = #line,
         validation: @escaping ValidationBlock
     ) {
@@ -187,7 +180,6 @@ extension ActionHandlerTestBase {
         }
 
         test_itHandlesResponse(
-            sut: sut,
             action: action,
             status: status,
             payload: payload,
@@ -201,18 +193,20 @@ extension ActionHandlerTestBase {
 
     @discardableResult
     func test_itHandlesSuccess(
-        sut: Handler? = nil,
         status: Int,
         payload: ZMTransportData? = nil,
-        apiVersion: APIVersion = .v1
+        apiVersion: APIVersion = .v1,
+        file: StaticString = #file,
+        line: UInt = #line
     ) -> Result? {
         var result: Result?
 
         test_itHandlesResponse(
-            sut: sut,
             status: status,
             payload: payload,
-            apiVersion: apiVersion
+            apiVersion: apiVersion,
+            file: file,
+            line: line
         ) {
             guard case .success(let res) = $0 else { return false }
             result = res

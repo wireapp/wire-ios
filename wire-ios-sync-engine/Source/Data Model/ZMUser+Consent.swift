@@ -87,7 +87,7 @@ extension ZMUser {
         transportSession.enqueueOneTime(request)
     }
 
-    public typealias CompletionSet   = (VoidResult) -> Void
+    public typealias CompletionSet = (Swift.Result<Void, Error>) -> Void
     public func setMarketingConsent(to value: Bool,
                                     in userSession: ZMUserSession,
                                     completion: @escaping CompletionSet) {
@@ -115,7 +115,7 @@ extension ZMUser {
                     return
             }
 
-            completion(.success)
+            completion(.success(()))
         })
 
         transportSession.enqueueOneTime(request)

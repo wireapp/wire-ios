@@ -106,7 +106,7 @@ extension IntegrationTest {
     @objc
     func _setUp() {
 
-        UserClientRequestFactory._test_overrideNumberOfKeys = 1
+        PrekeyGenerator._test_overrideNumberOfKeys = 1
 
         var flag = DeveloperFlag.proteusViaCoreCrypto
         flag.isOn = false
@@ -142,7 +142,7 @@ extension IntegrationTest {
 
     @objc
     func _tearDown() {
-        UserClientRequestFactory._test_overrideNumberOfKeys = nil
+        PrekeyGenerator._test_overrideNumberOfKeys = nil
         destroyTimers()
         sharedSearchDirectory?.tearDown()
         sharedSearchDirectory = nil
@@ -581,13 +581,13 @@ extension IntegrationTest {
     }
 
     func performSlowSync() {
-        userSession?.applicationStatusDirectory?.syncStatus.forceSlowSync()
+        userSession?.applicationStatusDirectory.syncStatus.forceSlowSync()
         RequestAvailableNotification.notifyNewRequestsAvailable(nil)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
 
     func performQuickSync() {
-        userSession?.applicationStatusDirectory?.syncStatus.forceQuickSync()
+        userSession?.applicationStatusDirectory.syncStatus.forceQuickSync()
         RequestAvailableNotification.notifyNewRequestsAvailable(nil)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
@@ -701,7 +701,7 @@ extension IntegrationTest: SessionManagerDelegate {
         // no-op
     }
 
-    public func sessionManagerDidFailToLoadDatabase() {
+    public func sessionManagerDidFailToLoadDatabase(error: Error) {
         // no-op
     }
 

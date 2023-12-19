@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireDataModelSupport
 import WireRequestStrategy
 import WireSyncEngineSupport
 @testable import WireSyncEngine
@@ -575,7 +576,12 @@ class CallingRequestStrategyTests: MessagingTest {
         client.user = user
 
         // TODO: [John] use flag here
-        XCTAssertTrue(userClient.establishSessionWithClient(client, usingPreKey: try! syncMOC.zm_cryptKeyStore.lastPreKey()))
+        syncMOC.zm_cryptKeyStore.encryptionContext.perform { (session) in
+            try! session.createClientSession(
+                client.sessionIdentifier!,
+                base64PreKeyString: syncMOC.zm_cryptKeyStore.lastPreKey()
+            )
+        }
 
         return client
     }
@@ -653,7 +659,7 @@ class CallingRequestStrategyTests: MessagingTest {
             sentMessage = message as? GenericMessageEntity
         }
 
-        let mockMLSService = MockMLSService()
+        let mockMLSService = MockMLSServiceInterface()
 
         syncMOC.performGroupedBlock {
             self.syncMOC.mlsService = mockMLSService

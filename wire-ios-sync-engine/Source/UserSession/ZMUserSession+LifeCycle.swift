@@ -28,7 +28,7 @@ extension ZMUserSession {
         BackgroundActivityFactory.shared.resume()
 
         syncManagedObjectContext.performGroupedBlock {
-            self.applicationStatusDirectory?.operationStatus.startBackgroundFetch(withCompletionHandler: completionHandler)
+            self.applicationStatusDirectory.operationStatus.startBackgroundFetch(withCompletionHandler: completionHandler)
         }
     }
 
@@ -56,7 +56,7 @@ extension ZMUserSession {
     }
 
     func processPendingEvents() {
-        syncManagedObjectContext.performGroupedBlock {
+        syncContext.performGroupedBlock {
             self.processEvents()
         }
     }

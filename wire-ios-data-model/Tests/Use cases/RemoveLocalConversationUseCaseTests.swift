@@ -17,19 +17,22 @@
 //
 
 import Foundation
+import WireDataModelSupport
 import XCTest
 @testable import WireDataModel
 
 class RemoveLocalConversationUseCaseTests: ZMBaseManagedObjectTest {
 
     private var sut: RemoveLocalConversationUseCase!
-    private var mockMLSService: MockMLSService!
+    private var mockMLSService: MockMLSServiceInterface!
 
     override func setUp() {
         super.setUp()
         sut = RemoveLocalConversationUseCase()
-        mockMLSService = MockMLSService()
-        syncMOC.mlsService = mockMLSService
+        mockMLSService = .init()
+        syncMOC.performAndWait {
+            syncMOC.mlsService = mockMLSService
+        }
     }
 
     override func tearDown() {
@@ -38,18 +41,24 @@ class RemoveLocalConversationUseCaseTests: ZMBaseManagedObjectTest {
         super.tearDown()
     }
 
-    func test_itMarksConversationAsDeleted_AndWipesMLSGroup() throws {
+    func test_itMarksConversationAsDeleted_AndWipesMLSGroup() async throws {
         // Given
         let groupID = MLSGroupID.random()
-        let conversation = ZMConversation.insertNewObject(in: syncMOC)
-        conversation.messageProtocol = .mls
-        conversation.mlsGroupID = groupID
+        let conversation = await syncMOC.perform { [syncMOC] in
+            let conversation = ZMConversation.insertNewObject(in: syncMOC)
+            conversation.messageProtocol = .mls
+            conversation.mlsGroupID = groupID
+            return conversation
+        }
+        mockMLSService.wipeGroup_MockMethod = { _ in }
 
         // When
-        try sut.invoke(with: conversation, syncContext: syncMOC)
+        try await sut.invoke(with: conversation, syncContext: syncMOC)
 
         // Then
-        XCTAssertTrue(conversation.isDeletedRemotely)
-        XCTAssertEqual(mockMLSService.calls.wipeGroup, [groupID])
+        await syncMOC.perform {
+            XCTAssertTrue(conversation.isDeletedRemotely)
+        }
+        XCTAssertEqual(mockMLSService.wipeGroup_Invocations, [groupID])
     }
 }

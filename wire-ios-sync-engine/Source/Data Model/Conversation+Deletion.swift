@@ -38,14 +38,14 @@ extension ZMConversation {
     /// Delete a conversation remotely and locally for everyone
     ///
     /// Only team conversations can be deleted.
-    public func delete(in userSession: ZMUserSession, completion: @escaping (VoidResult) -> Void) {
+    public func delete(in userSession: ZMUserSession, completion: @escaping (Swift.Result<Void, Error>) -> Void) {
         delete(in: userSession.coreDataStack, transportSession: userSession.transportSession, completion: completion)
     }
 
     func delete(
         in contextProvider: ContextProvider,
         transportSession: TransportSessionType,
-        completion: @escaping (VoidResult) -> Void
+        completion: @escaping (Swift.Result<Void, Error>) -> Void
     ) {
         let removeLocalConversation = RemoveLocalConversationUseCase()
 
@@ -57,33 +57,46 @@ extension ZMConversation {
             return completion(.failure(ConversationDeletionError.invalidOperation))
         }
 
-        request.add(ZMCompletionHandler(on: managedObjectContext!) { [weak contextProvider] response in
+        request.add(ZMCompletionHandler(on: contextProvider.syncContext) { [weak contextProvider] response in
             guard let contextProvider = contextProvider else { return completion(.failure(ConversationDeletionError.unknown)) }
 
             if response.httpStatus == 200 {
 
-                contextProvider.syncContext.performGroupedBlock {
+                let conversation = ZMConversation.fetch(
+                        with: conversationId,
+                        domain: nil,
+                        in: contextProvider.syncContext
+                    )
 
-                    guard let conversation = ZMConversation.fetch(
-                            with: conversationId,
-                            domain: nil,
-                            in: contextProvider.syncContext
-                    ) else {
-                        return
+                guard let conversation else {
+                    DispatchQueue.main.async {
+                        completion(.success(()))
                     }
-
-                    do {
-                        try removeLocalConversation.invoke(with: conversation, syncContext: contextProvider.syncContext)
-                    } catch {
-                        WireLogger.mls.error("removeLocalConversation threw error: \(String(reflecting: error))")
-                    }
+                    return
                 }
 
-                completion(.success)
+                Task {
+                    do {
+                        try await removeLocalConversation.invoke(
+                            with: conversation,
+                            syncContext: contextProvider.syncContext
+                        )
+                        await MainActor.run {
+                            completion(.success())
+                        }
+                    } catch {
+                        WireLogger.mls.error("removeLocalConversation threw error: \(String(reflecting: error))")
+                        await MainActor.run {
+                            completion(.failure(error))
+                        }
+                    }
+                }
             } else {
                 let error = ConversationDeletionError(response: response) ?? .unknown
                 Logging.network.debug("Error deleting converation: \(error)")
-                completion(.failure(error))
+                DispatchQueue.main.async {
+                    completion(.failure(error))
+                }
             }
         })
 

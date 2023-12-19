@@ -46,19 +46,21 @@ static NSString *ZMLogTag ZM_UNUSED = @"Authentication";
 @implementation ZMClientRegistrationStatus
 
 - (instancetype)initWithManagedObjectContext:(NSManagedObjectContext *)moc
-                                      cookieStorage:(ZMPersistentCookieStorage *)cookieStorage
-                  registrationStatusDelegate:(id<ZMClientRegistrationStatusDelegate>) registrationStatusDelegate;
+                               cookieStorage:(ZMPersistentCookieStorage *)cookieStorage
 {
     self = [super init];
     if (self != nil) {
         self.managedObjectContext = moc;
-        self.registrationStatusDelegate = registrationStatusDelegate;
-        self.needsToVerifySelfClient = !self.needsToRegisterClient;
         self.cookieStorage = cookieStorage;
         
         [self observeClientUpdates];
     }
     return self;
+}
+
+- (void)determineInitialRegistrationStatus
+{
+    self.needsToVerifySelfClient = !self.needsToRegisterClient;
 }
 
 - (void)observeClientUpdates
@@ -169,6 +171,15 @@ static NSString *ZMLogTag ZM_UNUSED = @"Authentication";
     if (self.isWaitingForClientsToBeDeleted) {
         return ZMClientRegistrationPhaseWaitingForDeletion;
     }
+
+    if (self.isGeneratingPrekeys) {
+        return ZMClientRegistrationPhaseGeneratingPrekeys;
+    }
+
+    if (self.prekeys == NULL || self.lastResortPrekey == NULL) {
+        return ZMClientRegistrationPhaseWaitingForPrekeys;
+    }
+
     return ZMClientRegistrationPhaseUnregistered;
 }
 
@@ -180,6 +191,11 @@ static NSString *ZMLogTag ZM_UNUSED = @"Authentication";
 - (BOOL)needsToRegisterClient
 {
     return [[self class] needsToRegisterClientInContext:self.managedObjectContext];
+}
+
+- (BOOL)needsToRegisterMLSCLient
+{
+    return [[self class] needsToRegisterMLSClientInContext:self.managedObjectContext];
 }
 
 + (BOOL)needsToRegisterClientInContext:(NSManagedObjectContext *)moc;
@@ -219,8 +235,15 @@ static NSString *ZMLogTag ZM_UNUSED = @"Authentication";
     [self.registrationStatusDelegate didRegisterSelfUserClient:client];
     self.emailCredentials = nil;
     self.needsToCheckCredentials = NO;
-    
+    self.prekeys = nil;
+    self.lastResortPrekey = nil;
+
     ZMLogDebug(@"current phase: %lu", (unsigned long)self.currentPhase);
+}
+
+- (void)didRegisterMLSClient:(UserClient *)client
+{
+    [self.registrationStatusDelegate didRegisterMLSClient:client];
 }
 
 - (void)fetchExistingSelfClientsAfterClientRegistered:(UserClient *)currentSelfClient
@@ -274,21 +297,13 @@ static NSString *ZMLogTag ZM_UNUSED = @"Authentication";
 - (void)didDetectCurrentClientDeletion
 {
     [self invalidateSelfClient];
-    
-    NSFetchRequest *clientFetchRequest = [UserClient sortedFetchRequest];
-    NSArray <UserClient *>*clients = [self.managedObjectContext executeFetchRequestOrAssert:clientFetchRequest];
-    
-    for (UserClient *client in clients) {
-        [client deleteClientAndEndSession];
-    }
-    
     [self.managedObjectContext tearDownCryptoStack];
     [self invalidateCookieAndNotify];
 }
 
 - (BOOL)clientIsReadyForRequests
 {
-    return self.currentPhase == ZMClientRegistrationPhaseRegistered;
+    return self.currentPhase == ZMClientRegistrationPhaseRegistered && !self.needsToRegisterMLSCLient;
 }
 
 - (void)invalidateSelfClient

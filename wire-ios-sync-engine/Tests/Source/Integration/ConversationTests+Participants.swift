@@ -26,14 +26,14 @@ class ConversationTests_Participants: ConversationTestsBase {
         // given
         XCTAssert(login())
 
-        let conversation = self.conversation(for: emptyGroupConversation)!
+        let conversation = try XCTUnwrap(self.conversation(for: self.emptyGroupConversation))
+        let conversationParticipantsService = ConversationParticipantsService(context: userSession!.managedObjectContext)
         let connectedUser = user(for: self.user2)!
 
         let observer = ConversationChangeObserver(conversation: conversation)
         observer?.clearNotifications()
 
         // when
-        let conversationParticipantsService = ConversationParticipantsService(context: userSession!.managedObjectContext)
         try await conversationParticipantsService.addParticipants([connectedUser], to: conversation)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -66,13 +66,13 @@ class ConversationTests_Participants: ConversationTestsBase {
         // given
         XCTAssert(login())
 
-        let conversation = self.conversation(for: emptyGroupConversation)!
+        let conversation = try XCTUnwrap(self.conversation(for: self.emptyGroupConversation))
+        let conversationParticipantsService = ConversationParticipantsService(context: userSession!.managedObjectContext)
         let connectedUser = user(for: self.user2)!
 
         XCTAssertFalse(conversation.localParticipants.contains(connectedUser))
 
         // when
-        let conversationParticipantsService = ConversationParticipantsService(context: userSession!.managedObjectContext)
         try await conversationParticipantsService.addParticipants([connectedUser], to: conversation)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -91,13 +91,13 @@ class ConversationTests_Participants: ConversationTestsBase {
         // given
         XCTAssert(login())
 
-        let conversation = self.conversation(for: groupConversation)!
+        let conversation = try XCTUnwrap(self.conversation(for: self.groupConversation))
+        let conversationParticipantsService = ConversationParticipantsService(context: userSession!.managedObjectContext)
         let connectedUser = user(for: self.user2)!
 
         XCTAssertTrue(conversation.localParticipants.contains(connectedUser))
 
         // when
-        let conversationParticipantsService = ConversationParticipantsService(context: userSession!.managedObjectContext)
         try await conversationParticipantsService.removeParticipant(connectedUser, from: conversation)
         XCTAssertTrue( waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 

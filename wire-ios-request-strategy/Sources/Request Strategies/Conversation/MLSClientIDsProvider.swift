@@ -1,4 +1,4 @@
-////
+//
 // Wire
 // Copyright (C) 2023 Wire Swiss GmbH
 //
@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireDataModel
 
 // sourcery: AutoMockable
 protocol MLSClientIDsProviding {
@@ -38,5 +39,4 @@ struct MLSClientIDsProvider: MLSClientIDsProviding {
         let userClients = try await action.perform(in: context)
         return userClients.compactMap(MLSClientID.init(qualifiedClientID:))
     }
-
 }

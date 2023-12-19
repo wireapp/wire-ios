@@ -39,7 +39,7 @@ struct ReadReceiptViewModel {
         var updateText: NSAttributedString
 
         if sender.isSelfUser {
-            let youLocalized = "content.system.you_started".localized
+            let youLocalized = L10n.Localizable.Content.System.youStarted
 
             updateText = NSAttributedString(string: template.localized(pov: sender.pov, args: youLocalized), attributes: baseAttributes).adding(font: .mediumSemiboldFont, to: youLocalized)
         } else {
