@@ -84,7 +84,7 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
 
     func subconversationMembers(for subconversationGroupID: MLSGroupID) async throws -> [MLSClientID]
 
-    func repairOutOfSyncConversations()
+    func repairOutOfSyncConversations() async
 
     func fetchAndRepairGroup(with groupID: MLSGroupID) async
 
@@ -618,7 +618,7 @@ public final class MLSService: MLSServiceInterface {
             logger.warn("aborting key packages upload: \(reason)")
         }
 
-        guard shouldQueryUnclaimedKeyPackagesCount() else { return }
+        guard await shouldQueryUnclaimedKeyPackagesCount() else { return }
 
         guard let context else {
             return logWarn(abortedWithReason: "missing context")
@@ -640,7 +640,7 @@ public final class MLSService: MLSServiceInterface {
             }
 
             let amount = UInt32(targetUnclaimedKeyPackageCount)
-            let keyPackages = try generateKeyPackages(amountRequested: amount)
+            let keyPackages = try await generateKeyPackages(amountRequested: amount)
             try await uploadKeyPackages(clientID: clientID, keyPackages: keyPackages, context: context.notificationContext)
             logger.info("success: uploaded key packages for client \(clientID)")
         } catch let error {
@@ -648,7 +648,7 @@ public final class MLSService: MLSServiceInterface {
         }
     }
 
-    private func shouldQueryUnclaimedKeyPackagesCount() -> Bool {
+    private func shouldQueryUnclaimedKeyPackagesCount() async -> Bool {
         do {
             let estimatedLocalKeyPackageCount = try await coreCrypto.perform {
                 try $0.clientValidKeypackagesCount(ciphersuite: defaultCipherSuite.rawValue)
@@ -698,7 +698,7 @@ public final class MLSService: MLSServiceInterface {
         }
     }
 
-    private func generateKeyPackages(amountRequested: UInt32) throws -> [String] {
+    private func generateKeyPackages(amountRequested: UInt32) async throws -> [String] {
         logger.info("generating \(amountRequested) key packages")
 
         var keyPackages = [[Byte]]()
@@ -853,34 +853,31 @@ public final class MLSService: MLSServiceInterface {
 
     /// Fetches and re-joins MLS conversations that are out of sync
     /// (where the conversation object's epoch differs from the corresponding MLS group epoch)
-    public func repairOutOfSyncConversations() {
+    public func repairOutOfSyncConversations() async {
         guard let context = self.context else { return }
 
-        let outOfSync = outOfSyncConversations(in: context)
+        let outOfSync = await outOfSyncConversations(in: context)
 
         logger.info("found \(outOfSync.count) conversations out of sync")
 
-        outOfSync.forEach { conversation in
-            guard let groupID = conversation.mlsGroupID else {
-                return
-            }
+        await outOfSync.asyncForEach { info in
 
-            launchGroupRepairTaskIfNotInProgress(for: groupID) {
+            await launchGroupRepairTaskIfNotInProgress(for: info.mlsGroupId) {
                 do {
                     try await self.joinGroupAndAppendGapSystemMessage(
-                        groupID: groupID,
-                        conversation: conversation,
+                        groupID: info.mlsGroupId,
+                        conversation: info.conversation,
                         context: context
                     )
                 } catch {
-                    self.logger.warn("failed to repair out of sync conversation (\(groupID.safeForLoggingDescription)). error: \(String(describing: error))")
+                    self.logger.warn("failed to repair out of sync conversation (\(info.mlsGroupId.safeForLoggingDescription)). error: \(String(describing: error))")
                 }
             }
         }
     }
 
-    func fetchAndRepairGroupIfPossible(with groupID: MLSGroupID) {
-        launchGroupRepairTaskIfNotInProgress(for: groupID) {
+    func fetchAndRepairGroupIfPossible(with groupID: MLSGroupID) async {
+        await launchGroupRepairTaskIfNotInProgress(for: groupID) {
             await self.fetchAndRepairGroup(with: groupID)
         }
     }
@@ -914,7 +911,7 @@ public final class MLSService: MLSServiceInterface {
                 context: context.notificationContext
             )
 
-            guard isConversationOutOfSync(
+            guard await isConversationOutOfSync(
                 conversationInfo.conversation,
                 context: context
             ) else {
@@ -981,7 +978,7 @@ public final class MLSService: MLSServiceInterface {
                 context: context.notificationContext
             )
 
-            guard isConversationOutOfSync(
+            guard await isConversationOutOfSync(
                 conversationInfo.conversation,
                 subgroup: subgroup,
                 context: context
@@ -1004,20 +1001,21 @@ public final class MLSService: MLSServiceInterface {
     private func launchGroupRepairTaskIfNotInProgress(
         for groupID: MLSGroupID,
         repairOperation: @escaping () async -> Void
-    ) {
-        Task {
-            guard await !groupsBeingRepaired.contains(group: groupID) else {
-                return
-            }
-
-            await groupsBeingRepaired.insert(group: groupID)
-            await repairOperation()
-            await groupsBeingRepaired.remove(group: groupID)
+    ) async {
+        guard await !groupsBeingRepaired.contains(group: groupID) else {
+            return
         }
+
+        await groupsBeingRepaired.insert(group: groupID)
+        await repairOperation()
+        await groupsBeingRepaired.remove(group: groupID)
     }
 
-    private func outOfSyncConversations(in context: NSManagedObjectContext) -> [ZMConversation] {
-        return (try? coreCrypto.perform { coreCrypto in
+    typealias OutOfSyncConversationInfo = (mlsGroupId: MLSGroupID, conversation: ZMConversation)
+
+    private func outOfSyncConversations(in context: NSManagedObjectContext) async -> [OutOfSyncConversationInfo] {
+
+        let conversations = (try? await coreCrypto.perform { coreCrypto in
             return ZMConversation.fetchMLSConversations(in: context).filter {
                 isConversationOutOfSync(
                     $0,
@@ -1026,6 +1024,14 @@ public final class MLSService: MLSServiceInterface {
                 )
             }
         }) ?? [] // TODO: [jacob] let it throw
+
+        return await context.perform { conversations.compactMap {
+            if let groupId = $0.mlsGroupID {
+                return (groupId, $0)
+            } else {
+                return nil
+            }
+        } }
     }
 
     private func isConversationOutOfSync(
@@ -1067,8 +1073,8 @@ public final class MLSService: MLSServiceInterface {
         _ conversation: ZMConversation,
         subgroup: MLSSubgroup? = nil,
         context: NSManagedObjectContext
-    ) -> Bool {
-        return (try? coreCrypto.perform {
+    ) async -> Bool {
+        return (try? await coreCrypto.perform {
             return isConversationOutOfSync(
                 conversation,
                 subgroup: subgroup,
@@ -1262,7 +1268,7 @@ public final class MLSService: MLSServiceInterface {
                 subconversationType: subconversationType
             )
         } catch DecryptionError.wrongEpoch {
-            fetchAndRepairGroupIfPossible(with: groupID)
+            await fetchAndRepairGroupIfPossible(with: groupID)
             throw DecryptionError.wrongEpoch
         } catch {
             throw error

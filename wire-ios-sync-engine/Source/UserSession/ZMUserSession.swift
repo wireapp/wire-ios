@@ -684,7 +684,9 @@ extension ZMUserSession: ZMSyncStateDelegate {
 
         let selfClient = ZMUser.selfUser(in: syncContext).selfClient()
         if selfClient?.hasRegisteredMLSClient == true {
-            mlsService.repairOutOfSyncConversations()
+            Task {
+                await mlsService.repairOutOfSyncConversations()
+            }
         }
     }
 
