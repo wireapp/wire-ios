@@ -61,7 +61,12 @@ extension IntegrationTest {
         // this makes sure the client has remote identifier
         _ = self.encryptionContext(for: client)
 
-        if client.hasSessionWithSelfClient {
+        var hasSessionWithSelfClient: Bool = false
+        userSession!.syncContext.zm_cryptKeyStore.encryptionContext.perform { sessionsDirectory in
+            hasSessionWithSelfClient = sessionsDirectory.hasSession(for: client.sessionIdentifier!)
+        }
+
+        if hasSessionWithSelfClient {
             // done!
             return
         }
@@ -107,8 +112,17 @@ extension IntegrationTest {
         }
 
         let selfClient = ZMUser.selfUser(in: self.userSession!.syncManagedObjectContext).selfClient()!
-        if !localClient.hasSessionWithSelfClient {
-            XCTAssertTrue(selfClient.establishSessionWithClient(localClient, usingPreKey: lastPrekey!))
+
+        var hasSessionWithLocalClient: Bool = false
+        userSession!.syncContext.zm_cryptKeyStore.encryptionContext.perform { sessionsDirectory in
+            hasSessionWithLocalClient = sessionsDirectory.hasSession(for: localClient.sessionIdentifier!)
+        }
+
+        if !hasSessionWithLocalClient {
+            // TODO: [John] use flag here
+            userSession!.syncContext.zm_cryptKeyStore.encryptionContext.perform { (session) in
+                try! session.createClientSession(localClient.sessionIdentifier!, base64PreKeyString: lastPrekey!)
+            }
         }
     }
 
