@@ -64,10 +64,6 @@ class RecordingMockTransportSession: NSObject, TransportSessionType {
         lastEnqueuedRequest = request
     }
 
-    func enqueue(_ request: ZMTransportRequest, queue: ZMSGroupQueue) async -> ZMTransportResponse {
-        fatalError("not implemented")
-    }
-
     func attemptToEnqueueSyncRequest(generator: () -> ZMTransportRequest?) -> ZMTransportEnqueueResult {
         guard let request = generator() else {
             return ZMTransportEnqueueResult(didHaveLessRequestsThanMax: true, didGenerateNonNullRequest: false)
