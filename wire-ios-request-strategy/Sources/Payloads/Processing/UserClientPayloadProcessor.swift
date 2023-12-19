@@ -39,8 +39,8 @@ final class UserClientPayloadProcessor {
         }
 
         // Remove clients that have not been included in the response
-        await deletedClients.asyncForEach {
-            await $0.deleteClientAndEndSession()
+        for deletedClient in deletedClients {
+            await deletedClient.deleteClientAndEndSession()
         }
 
         // Mark new clients as ignored

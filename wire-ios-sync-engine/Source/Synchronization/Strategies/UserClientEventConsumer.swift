@@ -40,7 +40,9 @@ public class UserClientEventConsumer: NSObject, ZMEventAsyncConsumer {
     }
 
     public func processEvents(_ events: [WireTransport.ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) async {
-        await events.asyncForEach(processUpdateEvent)
+        for event in events {
+            await processUpdateEvent(event)
+        }
     }
 
     fileprivate func processUpdateEvent(_ event: ZMUpdateEvent) async {

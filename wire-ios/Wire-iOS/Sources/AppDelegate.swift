@@ -130,7 +130,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         voIPPushManager.registerForVoIPPushes()
 
         temporaryFilesService.removeTemporaryData()
-        
+
         zmLog.info("application:didFinishLaunchingWithOptions START \(String(describing: launchOptions)) (applicationState = \(application.applicationState.rawValue))")
 
         NotificationCenter.default.addObserver(self,

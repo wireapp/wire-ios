@@ -95,7 +95,7 @@ final class BackupRestoreController: NSObject {
         target.isLoadingViewVisible = true
 
         sessionManager.restoreFromBackup(at: url, password: password) { [weak self] result in
-            guard let `self` = self else { 
+            guard let `self` = self else {
                 BackgroundActivityFactory.shared.endBackgroundActivity(activity)
                 zmLog.safePublic("SessionManager.self is `nil` in performRestore", level: .error)
                 WireLogger.localStorage.error("SessionManager.self is `nil` in performRestore")

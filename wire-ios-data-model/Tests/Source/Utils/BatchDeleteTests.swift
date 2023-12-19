@@ -62,7 +62,7 @@ class BatchDeleteTests: ZMTBaseTest {
     func createTestCoreData() throws -> (NSManagedObjectModel, NSManagedObjectContext) {
         let model = self.model
         let persistentStoreCoordinator = NSPersistentStoreCoordinator(managedObjectModel: model)
-        try persistentStoreCoordinator.addPersistentStore(type: .sqlite,
+        _ = try persistentStoreCoordinator.addPersistentStore(type: .sqlite,
                                                           configuration: nil,
                                                           at: URL(fileURLWithPath: storagePath),
                                                           options: [:])
