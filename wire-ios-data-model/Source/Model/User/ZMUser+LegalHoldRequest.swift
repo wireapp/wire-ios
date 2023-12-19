@@ -232,7 +232,7 @@ extension ZMUser: SelfLegalHoldSubject {
 
     public func addLegalHoldClient(from request: LegalHoldRequest) async -> UserClient? {
         guard
-            let context = self.managedObjectContext,
+            let context = managedObjectContext,
             let selfClient = await context.perform({ self.selfClient() }),
             let legalHoldClient = await context.perform({ self.insertLegalHoldClient(from: request, in: context) })
         else { return nil }
