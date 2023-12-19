@@ -97,7 +97,9 @@ extension VerifyLegalHoldRequestStrategy: IdentifierObjectSyncTranscoder {
                 selfClient?.addNewClientsToIgnored(Set(newMissingClients))
             }
 
-            await clientChanges.deletedClients.asyncForEach { await $0.deleteClientAndEndSession() }
+            for deletedClient in clientChanges.deletedClients {
+                await deletedClient.deleteClientAndEndSession()
+            }
             await managedObjectContext.perform {
                 conversation.updateSecurityLevelIfNeededAfterFetchingClients()
                 completionHandler()

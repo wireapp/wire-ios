@@ -22,7 +22,7 @@ import Foundation
 public protocol UserType: NSObjectProtocol, UserConnections {
 
     /// The identifier which uniquely idenitifies the user in its domain
-    var remoteIdentifier: UUID? { get }
+    var remoteIdentifier: UUID! { get }
 
     /// The domain which the user originates from
     var domain: String? { get }

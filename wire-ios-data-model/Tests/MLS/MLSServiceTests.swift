@@ -44,11 +44,12 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
     let groupID = MLSGroupID([1, 2, 3])
 
     // `MLSService.init` performs actions which make it hard to assert state on mocks
-    let skipSetupSUTTestNames: Set<String> = [
-        "-[MLSServiceTests test_BackendPublicKeysAreFetched_WhenInitializing]",
-        "-[MLSServiceTests test_UpdateKeyMaterial_WhenInitializing]",
-        "-[MLSServiceTests test_SendPendingProposal_BeforeUpdatingKeyMaterial_WhenInitializing]"
+    let skipSetupSUTTestNames = Set([
+        "-[MLSServiceTests \(#selector(test_BackendPublicKeysAreFetched_WhenInitializing))]",
+        "-[MLSServiceTests \(#selector(test_CreateGroup_IsSuccessful))]"
     ]
+        .map { $0.replacingOccurrences(of: "WithCompletionHandler:", with: "") }
+    )
 
     override func setUp() {
         super.setUp()
@@ -399,7 +400,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     // MARK: - Create group
 
-    func test_CreateGroup_IsSuccessful() throws {
+    func test_CreateGroup_IsSuccessful() async throws {
         // Given
         let groupID = MLSGroupID(Data([1, 2, 3]))
         let removalKey = Data([1, 2, 3])
@@ -409,30 +410,34 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         )
 
         var mockCreateConversationCount = 0
-        mockCoreCrypto.mockCreateConversation = {
+        mockCoreCrypto.mockCreateConversation = { conversationID, creatorCredentialType, config in
             mockCreateConversationCount += 1
 
-            XCTAssertEqual($0, groupID.bytes)
-            XCTAssertEqual($1, .basic)
-            XCTAssertEqual($2, ConversationConfiguration(
+            XCTAssertEqual(conversationID, groupID.bytes)
+            XCTAssertEqual(creatorCredentialType, .basic)
+            XCTAssertEqual(config, .init(
                 ciphersuite: CiphersuiteName.mls128Dhkemx25519Aes128gcmSha256Ed25519.rawValue,
                 externalSenders: [removalKey.bytes],
                 custom: .init(keyRotationSpan: nil, wirePolicy: nil)
             ))
         }
 
+        // delayed creating sut with `skipSetupSUTTestNames` otherwise
+        // `fetchBackendPublicKeys` is called before the mock is set
+        createSut()
+
         // wait for `MLSService.init`'s async operations
-        wait(for: [didFinishInitializationExpectation], timeout: 1)
+        await fulfillment(of: [didFinishInitializationExpectation], timeout: 1)
 
         // When
-        XCTAssertNoThrow(try sut.createGroup(for: groupID))
+        try await sut.createGroup(for: groupID)
 
         // Then
         XCTAssertEqual(mockCreateConversationCount, 1)
         XCTAssertEqual(mockStaleMLSKeyDetector.calls.keyingMaterialUpdated, [groupID])
     }
 
-    func test_CreateGroup_ThrowsError() throws {
+    func test_CreateGroup_ThrowsError() async throws {
         // Given
         let groupID = MLSGroupID(Data([1, 2, 3]))
         let config = ConversationConfiguration(
@@ -453,15 +458,17 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
 
         // wait for `MLSService.init`'s async operations
-        wait(for: [didFinishInitializationExpectation], timeout: 1)
+        await fulfillment(of: [didFinishInitializationExpectation], timeout: 1)
 
         // when / then
-        assertItThrows(error: MLSService.MLSGroupCreationError.failedToCreateGroup) {
-            try sut.createGroup(for: groupID)
+        do {
+            try await sut.createGroup(for: groupID)
+            XCTFail("Unexpected success")
+        } catch MLSService.MLSGroupCreationError.failedToCreateGroup {
+            // Then
+            XCTAssertEqual(mockCreateConversationCount, 1)
         }
 
-        // Then
-        XCTAssertEqual(mockCreateConversationCount, 1)
     }
 
     // MARK: - Adding participants
@@ -1077,17 +1084,20 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     // MARK: - Joining conversations
 
-    func test_PerformPendingJoins_IsSuccessful() {
+    func test_PerformPendingJoins_IsSuccessful() async throws {
         // Given
         let groupID = MLSGroupID.random()
         let conversationID = UUID.create()
         let domain = "example.domain.com"
         let publicGroupState = Data()
-        let conversation = ZMConversation.insertNewObject(in: uiMOC)
-        conversation.remoteIdentifier = conversationID
-        conversation.domain = domain
-        conversation.mlsGroupID = groupID
-        conversation.mlsStatus = .pendingJoin
+        let conversation = await uiMOC.perform { [uiMOC] in
+            let conversation = ZMConversation.insertNewObject(in: uiMOC)
+            conversation.remoteIdentifier = conversationID
+            conversation.domain = domain
+            conversation.mlsGroupID = groupID
+            conversation.mlsStatus = .pendingJoin
+            return conversation
+        }
 
         // TODO: Mock properly
         let mockUpdateEvents = [ZMUpdateEvent]()
@@ -1116,13 +1126,13 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
 
         // wait for `MLSService.init`'s async operations
-        wait(for: [didFinishInitializationExpectation], timeout: 1)
+        await fulfillment(of: [didFinishInitializationExpectation], timeout: 1)
 
         // When
-        sut.performPendingJoins()
+        try await sut.performPendingJoins()
 
         // Then
-        wait(for: [expectation], timeout: 0.5)
+        await fulfillment(of: [expectation], timeout: 0.5)
 
         // it fetches public group state
         let groupStateInvocations = mockActionsProvider.fetchConversationGroupInfoConversationIdDomainSubgroupTypeContext_Invocations
@@ -1136,33 +1146,45 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         XCTAssertEqual(joinGroupArguments.first?.groupState, publicGroupState)
 
         // it sets conversation state to ready
-        XCTAssertEqual(conversation.mlsStatus, .ready)
+        let conversationMLSStatus = await uiMOC.perform { conversation.mlsStatus }
+        XCTAssertEqual(conversationMLSStatus, .ready)
 
         // it processes conversation events
         XCTAssertEqual(processConversationEventsArguments.count, 1)
         XCTAssertEqual(processConversationEventsArguments.first, mockUpdateEvents)
     }
 
-    func test_PerformPendingJoins_Retries() {
-        test_PerformPendingJoinsRecovery(.retry)
+    func test_PerformPendingJoins_Retries() async throws {
+        try await test_PerformPendingJoinsRecovery(.retry)
     }
 
-    func test_PerformPendingJoins_GivesUp() {
-        test_PerformPendingJoinsRecovery(.giveUp)
+    func test_PerformPendingJoins_GivesUp() async throws {
+        do {
+            try await test_PerformPendingJoinsRecovery(.giveUp)
+        } catch ExternalCommitError.failedToSendCommit(recovery: .giveUp) {
+            // expected
+        }
     }
 
-    private func test_PerformPendingJoinsRecovery(_ recovery: ExternalCommitError.RecoveryStrategy) {
+    private func test_PerformPendingJoinsRecovery(
+        _ recovery: ExternalCommitError.RecoveryStrategy,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) async throws {
         // Given
         let shouldRetry = recovery == .retry
         let groupID = MLSGroupID.random()
         let conversationID = UUID.create()
         let domain = "example.domain.com"
         let groupInfo = Data()
-        let conversation = ZMConversation.insertNewObject(in: uiMOC)
-        conversation.remoteIdentifier = conversationID
-        conversation.domain = domain
-        conversation.mlsGroupID = groupID
-        conversation.mlsStatus = .pendingJoin
+        let conversation = await uiMOC.perform { [uiMOC] in
+            let conversation = ZMConversation.insertNewObject(in: uiMOC)
+            conversation.remoteIdentifier = conversationID
+            conversation.domain = domain
+            conversation.mlsGroupID = groupID
+            conversation.mlsStatus = .pendingJoin
+            return conversation
+        }
 
         // register the group to be joined
         sut.registerPendingJoin(groupID)
@@ -1194,36 +1216,39 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
 
         // wait for `MLSService.init`'s async operations
-        wait(for: [didFinishInitializationExpectation], timeout: 1)
+        await fulfillment(of: [didFinishInitializationExpectation], timeout: 1)
 
         // When
-        sut.performPendingJoins()
+        try await sut.performPendingJoins()
 
         // Then
-        wait(for: [expectation], timeout: 0.5)
+        await fulfillment(of: [expectation], timeout: 0.5)
 
         // it fetches group info
         let groupInfoInvocations = mockActionsProvider.fetchConversationGroupInfoConversationIdDomainSubgroupTypeContext_Invocations
-        XCTAssertEqual(groupInfoInvocations.count, shouldRetry ? 2 : 1)
+        XCTAssertEqual(groupInfoInvocations.count, shouldRetry ? 2 : 1, file: file, line: line)
 
         // it asks executor to join group
-        XCTAssertEqual(joinGroupCount, shouldRetry ? 2 : 1)
+        XCTAssertEqual(joinGroupCount, shouldRetry ? 2 : 1, file: file, line: line)
 
         // it sets conversation state to ready
-        XCTAssertEqual(conversation.mlsStatus, shouldRetry ? .ready : .pendingJoin)
+        let conversationMLSStatus = await uiMOC.perform { conversation.mlsStatus }
+        XCTAssertEqual(conversationMLSStatus, shouldRetry ? .ready : .pendingJoin, file: file, line: line)
 
         // it processes conversation events
-        XCTAssertEqual(processConversationEventsCount, shouldRetry ? 1 : 0)
+        XCTAssertEqual(processConversationEventsCount, shouldRetry ? 1 : 0, file: file, line: line)
     }
 
-    func test_PerformPendingJoins_DoesntJoinGroupNotPending() {
+    func test_PerformPendingJoins_DoesntJoinGroupNotPending() async throws {
         // Given
         let groupID = MLSGroupID.random()
-        let conversation = ZMConversation.insertNewObject(in: uiMOC)
-        conversation.mlsGroupID = groupID
-        conversation.remoteIdentifier = UUID.create()
-        conversation.domain = "domain.com"
-        conversation.mlsStatus = .ready
+        await uiMOC.perform { [uiMOC] in
+            let conversation = ZMConversation.insertNewObject(in: uiMOC)
+            conversation.mlsGroupID = groupID
+            conversation.remoteIdentifier = UUID.create()
+            conversation.domain = "domain.com"
+            conversation.mlsStatus = .ready
+        }
 
         // register the group to be joined
         sut.registerPendingJoin(groupID)
@@ -1242,13 +1267,13 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
 
         // wait for `MLSService.init`'s async operations
-        wait(for: [didFinishInitializationExpectation], timeout: 1)
+        await fulfillment(of: [didFinishInitializationExpectation], timeout: 1)
 
         // When
-        sut.performPendingJoins()
+        try await sut.performPendingJoins()
 
         // Then
-        wait(for: [expectation], timeout: 0.5)
+        await fulfillment(of: [expectation], timeout: 0.5)
 
         let groupInfoInvocations = mockActionsProvider.fetchConversationGroupInfoConversationIdDomainSubgroupTypeContext_Invocations
         XCTAssertEqual(groupInfoInvocations.count, 0)
