@@ -138,9 +138,8 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
 
     private func syncUsersWithTheBackend() async throws {
         let fetchRequest = ZMUser.fetchRequest()
-        let result = try context.fetch(fetchRequest) as? [ZMUser]
-        guard let result = try context.fetch(fetchRequest) as? [ZMUser] else { return }
-        let ids = result.compactMap { $0.qualifiedID }
+        guard let users = try context.fetch(fetchRequest) as? [ZMUser] else { return }
+        let qualifiedIDs = users.compactMap { $0.qualifiedID }
         try await actionsProvider.syncUsers(qualifiedIDs: ids, context: context.notificationContext)
     }
 
