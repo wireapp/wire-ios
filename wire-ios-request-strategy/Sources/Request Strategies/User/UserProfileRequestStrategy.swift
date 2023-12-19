@@ -245,7 +245,8 @@ class UserProfileByIDTranscoder: IdentifierObjectSyncTranscoder {
         return ZMTransportRequest(getFromPath: "/users?ids=\(userIDs)", apiVersion: apiVersion.rawValue)
     }
 
-    func didReceive(response: ZMTransportResponse, for identifiers: Set<UUID>) {
+    func didReceive(response: ZMTransportResponse, for identifiers: Set<UUID>, completionHandler: @escaping () -> Void) {
+        defer { completionHandler() }
 
         if response.httpStatus == 404, let responseFailure = Payload.ResponseFailure(response, decoder: decoder) {
             if case .notFound = responseFailure.label {
@@ -311,7 +312,9 @@ class UserProfileByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
         return ZMTransportRequest(path: path, method: .post, payload: payloadAsString as ZMTransportData?, apiVersion: apiVersion.rawValue)
     }
 
-    func didReceive(response: ZMTransportResponse, for identifiers: Set<QualifiedID>) {
+    func didReceive(response: ZMTransportResponse, for identifiers: Set<QualifiedID>, completionHandler: @escaping () -> Void) {
+        defer { completionHandler() }
+
         if response.httpStatus == 404, let responseFailure = Payload.ResponseFailure(response, decoder: decoder) {
             guard case .notFound = responseFailure.label else { return }
             markUserProfilesAsFetched(identifiers)

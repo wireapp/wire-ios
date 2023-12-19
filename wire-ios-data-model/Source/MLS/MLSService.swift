@@ -207,8 +207,10 @@ public final class MLSService: MLSServiceInterface {
         self.coreCryptoProvider = coreCryptoProvider
         self.mlsActionExecutor = mlsActionExecutor ?? MLSActionExecutor(
             coreCryptoProvider: coreCryptoProvider,
-            context: context,
-            actionsProvider: actionsProvider
+            commitSender: CommitSender(
+                coreCryptoProvider: coreCryptoProvider,
+                notificationContext: context.notificationContext
+            )
         )
         self.conversationEventProcessor = conversationEventProcessor
         self.staleKeyMaterialDetector = staleKeyMaterialDetector
@@ -1391,7 +1393,7 @@ public final class MLSService: MLSServiceInterface {
             await conversationEventProcessor.processConversationEvents(events)
             clearPendingProposalCommitDate(for: groupID)
             delegate?.mlsServiceDidCommitPendingProposal(for: groupID)
-        } catch MLSActionExecutor.Error.noPendingProposals {
+        } catch CommitError.noPendingProposals {
             logger.info("no proposals to commit in group (\(groupID.safeForLoggingDescription))...")
             clearPendingProposalCommitDate(for: groupID)
         } catch {
@@ -1417,41 +1419,40 @@ public final class MLSService: MLSServiceInterface {
         for groupID: MLSGroupID,
         operation: @escaping () async throws -> Void
     ) async throws {
-        typealias Error = MLSActionExecutor.Error
 
         do {
             try await operation()
 
-        } catch Error.failedToSendCommit(recovery: .commitPendingProposalsAfterQuickSync) {
+        } catch CommitError.failedToSendCommit(recovery: .commitPendingProposalsAfterQuickSync) {
             logger.warn("failed to send commit, syncing then committing pending proposals...")
             await syncStatus.performQuickSync()
             logger.info("sync finished, committing pending proposals...")
             try await commitPendingProposals(in: groupID)
 
-        } catch Error.failedToSendCommit(recovery: .retryAfterQuickSync) {
+        } catch CommitError.failedToSendCommit(recovery: .retryAfterQuickSync) {
             logger.warn("failed to send commit, syncing then retrying operation...")
             await syncStatus.performQuickSync()
             logger.info("sync finished, retying operation...")
             try await retryOnCommitFailure(for: groupID, operation: operation)
 
-        } catch Error.failedToSendCommit(recovery: .retryAfterRepairingGroup) {
+        } catch CommitError.failedToSendCommit(recovery: .retryAfterRepairingGroup) {
             logger.warn("failed to send commit, repairing group then retrying operation...")
             await fetchAndRepairGroup(with: groupID)
             logger.info("repair finished, retrying operation...")
             try await operation()
 
-        } catch Error.failedToSendCommit(recovery: .giveUp) {
+        } catch CommitError.failedToSendCommit(recovery: .giveUp) {
             logger.warn("failed to send commit, giving up...")
             // TODO: [John] inform user
-            throw Error.failedToSendCommit(recovery: .giveUp)
+            throw CommitError.failedToSendCommit(recovery: .giveUp)
 
-        } catch Error.failedToSendExternalCommit(recovery: .retry) {
+        } catch ExternalCommitError.failedToSendCommit(recovery: .retry) {
             logger.warn("failed to send external commit, retrying operation...")
             try await retryOnCommitFailure(for: groupID, operation: operation)
 
-        } catch Error.failedToSendExternalCommit(recovery: .giveUp) {
+        } catch ExternalCommitError.failedToSendCommit(recovery: .giveUp) {
             logger.warn("failed to send external commit, giving up...")
-            throw MLSActionExecutor.Error.failedToSendExternalCommit(recovery: .giveUp)
+            throw ExternalCommitError.failedToSendCommit(recovery: .giveUp)
 
         }
     }

@@ -246,17 +246,22 @@ public class UserClient: ZMManagedObject, UserClientType {
     }
 
     /// Resets releationships and ends an exisiting session before deleting the object
-    /// Call this from the syncMOC only
-    public func deleteClientAndEndSession() {
+    public func deleteClientAndEndSession() async {
+        do {
+            try await deleteSession()
+        } catch {
+            WireLogger.userClient.error("error deleting session: \(String(reflecting: error))")
+        }
+        await managedObjectContext?.perform { self.deleteClient() }
+    }
+
+    private func deleteClient() {
         assert(self.managedObjectContext!.zm_isSyncContext, "clients can only be deleted on syncContext")
         // hold on to the conversations that are affected by removing this client
         let conversations = activeConversationsForUserOfClients([self])
         let user = self.user
 
         self.failedToEstablishSession = false
-
-        // reset the session
-        try? deleteSession()
 
         // reset the relationship
         self.user = nil
@@ -286,27 +291,29 @@ public class UserClient: ZMManagedObject, UserClientType {
     /// Note: only access this property only from the sync context.
 
     public var hasSessionWithSelfClient: Bool {
-        guard
-            let sessionID = proteusSessionID,
-            let proteusProvider = managedObjectContext?.proteusProvider
-        else {
-            return false
-        }
-
-        var hasSession = false
-
-        proteusProvider.perform(
-            withProteusService: { proteusService in
-                hasSession = proteusService.sessionExists(id: sessionID)
-            },
-            withKeyStore: { keyStore in
-                keyStore.encryptionContext.perform { sessionsDirectory in
-                    hasSession = sessionsDirectory.hasSession(for: sessionID.mapToEncryptionSessionID())
-                }
+        get async {
+            guard
+                let sessionID = await managedObjectContext?.perform({ self.proteusSessionID }),
+                let proteusProvider = await managedObjectContext?.perform({ self.managedObjectContext?.proteusProvider })
+            else {
+                return false
             }
-        )
 
-        return hasSession
+            var hasSession = false
+
+            await proteusProvider.performAsync(
+                withProteusService: { proteusService in
+                    hasSession = await proteusService.sessionExists(id: sessionID)
+                },
+                withKeyStore: { keyStore in
+                    keyStore.encryptionContext.perform { sessionsDirectory in
+                        hasSession = sessionsDirectory.hasSession(for: sessionID.mapToEncryptionSessionID())
+                    }
+                }
+            )
+
+            return hasSession
+        }
     }
 
     /// Resets the session between the client and the selfClient
@@ -318,38 +325,29 @@ public class UserClient: ZMManagedObject, UserClientType {
 
     public func resetSession(completion: ((Bool) -> Void)? = nil) {
         guard
-            let uiMOC = self.managedObjectContext?.zm_userInterface,
+            let uiMOC = managedObjectContext?.zm_userInterface,
             let syncMOC = uiMOC.zm_sync
         else {
             completion?(false)
             return
         }
 
-        // Delete should happen on sync context since the cryptobox could be accessed only from there
-        syncMOC.performGroupedBlock {
-            guard
-                let selfClient = ZMUser.selfUser(in: syncMOC).selfClient(),
-                let syncClient = (try? syncMOC.existingObject(with: self.objectID)) as? UserClient
-            else {
-                completion?(false)
+        WaitingGroupTask(context: syncMOC) {
+            guard let syncClient = await syncMOC.perform({
+                (try? syncMOC.existingObject(with: self.objectID)) as? UserClient
+            }) else {
                 return
             }
 
             // Delete session and fingerprint
-            do {
-                try syncClient.deleteSession()
+            try? await syncClient.deleteSession()
 
-                // Mark clients as needing to be refetched
-                selfClient.missesClient(syncClient)
-
+            // Delete should happen on sync context since the cryptobox could be accessed only from there
+            await syncMOC.perform {
                 // Mark that we need notify the other party about the session reset
                 syncClient.needsToNotifyOtherUserAboutSessionReset = true
 
                 syncMOC.saveOrRollback()
-                completion?(true)
-            } catch {
-                WireLogger.userClient.error("Failed to Delete Session with Error \(error.localizedDescription)")
-                completion?(false)
             }
         }
     }
@@ -543,18 +541,18 @@ public extension UserClient {
 
     /// Deletes the session between the selfClient and the given userClient
     /// If there is no session it does nothing
-    func deleteSession() throws {
+    func deleteSession() async throws {
         guard
-            !isSelfClient(),
             let context = managedObjectContext,
-            let sessionID = proteusSessionID
+            await context.perform({ !self.isSelfClient() }),
+            let sessionID = await context.perform({ self.proteusSessionID })
         else {
             return
         }
-
-        try context.proteusProvider.perform(
+        let proteusProvider = await context.perform { context.proteusProvider }
+        try await proteusProvider.performAsync(
             withProteusService: { proteusService in
-                try proteusService.deleteSession(id: sessionID)
+                try await proteusService.deleteSession(id: sessionID)
             },
             withKeyStore: { keyStore in
                 keyStore.encryptionContext.perform { sessionsDirectory in
@@ -567,13 +565,16 @@ public extension UserClient {
     func establishSessionWithClient(
         _ client: UserClient,
         usingPreKey preKey: String
-    ) -> Bool {
-        guard let proteusProvider = managedObjectContext?.proteusProvider else {
+    ) async -> Bool {
+        guard
+            let proteusProvider = await managedObjectContext?.perform({ self.managedObjectContext?.proteusProvider }),
+            let sessionId = await managedObjectContext?.perform({ client.sessionIdentifier })
+        else {
             return false
         }
 
-        return establishSessionWithClient(
-            client,
+        return await establishSessionWithClient(
+            sessionId: sessionId,
             usingPreKey: preKey,
             proteusProviding: proteusProvider
         )
@@ -583,27 +584,18 @@ public extension UserClient {
     /// Returns false if the session could not be established
     /// Use this method only for the selfClient
     func establishSessionWithClient(
-        _ client: UserClient,
+        sessionId: EncryptionSessionIdentifier,
         usingPreKey preKey: String,
         proteusProviding: ProteusProviding
-    ) -> Bool {
-        guard
-            isSelfClient(),
-            let sessionIdentifier = client.sessionIdentifier
-        else {
-            return false
-        }
-
-        return proteusProviding.perform { proteusService in
-            establishSession(through: proteusService,
-                             client: client,
-                             sessionId: sessionIdentifier,
+    ) async -> Bool {
+        return await proteusProviding.performAsync { proteusService in
+            await establishSession(through: proteusService,
+                             sessionId: sessionId,
                              preKey: preKey
             )
         } withKeyStore: { keystore in
             establishSession(through: keystore,
-                             client: client,
-                             sessionId: sessionIdentifier,
+                             sessionId: sessionId,
                              preKey: preKey
             )
         }
@@ -611,15 +603,13 @@ public extension UserClient {
 
     private func establishSession(
         through proteusService: ProteusServiceInterface,
-        client: UserClient,
         sessionId: EncryptionSessionIdentifier,
         preKey: String
-    ) -> Bool {
+    ) async -> Bool {
         do {
             // TODO: check if we should delete session if it exists before creating new one
             let proteusSessionId = ProteusSessionID(domain: sessionId.domain, userID: sessionId.userId, clientID: sessionId.clientId)
-
-            try proteusService.establishSession(id: proteusSessionId, fromPrekey: preKey)
+            try await proteusService.establishSession(id: proteusSessionId, fromPrekey: preKey)
             return true
         } catch {
             zmLog.error("Cannot create session for prekey \(preKey): \(String(describing: error))")
@@ -627,9 +617,8 @@ public extension UserClient {
         }
     }
 
-    private func establishSession(
+    func establishSession(
         through keystore: UserClientKeysStore,
-        client: UserClient,
         sessionId: EncryptionSessionIdentifier,
         preKey: String
     ) -> Bool {
