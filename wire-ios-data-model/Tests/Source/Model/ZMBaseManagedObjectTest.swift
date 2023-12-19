@@ -55,8 +55,13 @@ extension ZMBaseManagedObjectTest {
         if createSessionWithSelfUser {
             let selfClient = ZMUser.selfUser(in: moc).selfClient()
             performPretendingUiMocIsSyncMoc {
-                let prekey = try? moc.zm_cryptKeyStore.lastPreKey()
-                _ = selfClient?.establishSession(through: moc.zm_cryptKeyStore, sessionId: userClient.sessionIdentifier!, preKey: prekey!)
+                do {
+                    let prekey = try moc.zm_cryptKeyStore.lastPreKey()
+                    let selfClient = try XCTUnwrap(selfClient)
+                    _ = selfClient.establishSession(through: moc.zm_cryptKeyStore, sessionId: userClient.sessionIdentifier!, preKey: prekey)
+                } catch {
+                    XCTFail("unexpected error: \(String(reflecting: error))")
+                }
             }
         }
         return userClient

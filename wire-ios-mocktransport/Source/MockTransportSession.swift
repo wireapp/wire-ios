@@ -153,7 +153,13 @@ public extension MockTransportSession {
 extension MockTransportSession: TransportSessionType {
 
     public func enqueue(_ request: ZMTransportRequest, queue: ZMSGroupQueue) async -> ZMTransportResponse {
-        fatalError("not implemented")
+        return await withCheckedContinuation { continuation in
+            request.add(ZMCompletionHandler(on: queue, block: { response in
+                continuation.resume(returning: response)
+            }))
+
+            enqueueOneTime(request)
+        }
     }
 
     public var requestLoopDetectionCallback: ((String) -> Void)? {

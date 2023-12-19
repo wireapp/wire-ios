@@ -801,7 +801,7 @@ extension ClientMessageTests {
     func testThatItDecryptsMessageWithExternalBlobCorrectly() {
         // given
         self.syncMOC.performGroupedAndWait {_ in
-            self.createSelfClient()
+            self.createSelfClient(onMOC: self.syncMOC)
             let otherUser = ZMUser.insertNewObject(in: self.syncMOC)
             otherUser.remoteIdentifier = UUID.create()
             let firstClient = self.createClient(for: otherUser, createSessionWithSelfUser: true, onMOC: self.syncMOC)

@@ -33,6 +33,7 @@ import AppKit
 
 import LocalAuthentication
 import Combine
+import WireCoreCrypto
 
 @testable import WireDataModel
 
@@ -55,6 +56,79 @@ import Combine
 
 
 
+
+public class MockCommitSending: CommitSending {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - sendCommitBundle
+
+    public var sendCommitBundleFor_Invocations: [(bundle: CommitBundle, groupID: MLSGroupID)] = []
+    public var sendCommitBundleFor_MockError: Error?
+    public var sendCommitBundleFor_MockMethod: ((CommitBundle, MLSGroupID) async throws -> [ZMUpdateEvent])?
+    public var sendCommitBundleFor_MockValue: [ZMUpdateEvent]?
+
+    public func sendCommitBundle(_ bundle: CommitBundle, for groupID: MLSGroupID) async throws -> [ZMUpdateEvent] {
+        sendCommitBundleFor_Invocations.append((bundle: bundle, groupID: groupID))
+
+        if let error = sendCommitBundleFor_MockError {
+            throw error
+        }
+
+        if let mock = sendCommitBundleFor_MockMethod {
+            return try await mock(bundle, groupID)
+        } else if let mock = sendCommitBundleFor_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `sendCommitBundleFor`")
+        }
+    }
+
+    // MARK: - sendExternalCommitBundle
+
+    public var sendExternalCommitBundleFor_Invocations: [(bundle: CommitBundle, groupID: MLSGroupID)] = []
+    public var sendExternalCommitBundleFor_MockError: Error?
+    public var sendExternalCommitBundleFor_MockMethod: ((CommitBundle, MLSGroupID) async throws -> [ZMUpdateEvent])?
+    public var sendExternalCommitBundleFor_MockValue: [ZMUpdateEvent]?
+
+    public func sendExternalCommitBundle(_ bundle: CommitBundle, for groupID: MLSGroupID) async throws -> [ZMUpdateEvent] {
+        sendExternalCommitBundleFor_Invocations.append((bundle: bundle, groupID: groupID))
+
+        if let error = sendExternalCommitBundleFor_MockError {
+            throw error
+        }
+
+        if let mock = sendExternalCommitBundleFor_MockMethod {
+            return try await mock(bundle, groupID)
+        } else if let mock = sendExternalCommitBundleFor_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `sendExternalCommitBundleFor`")
+        }
+    }
+
+    // MARK: - onEpochChanged
+
+    public var onEpochChanged_Invocations: [Void] = []
+    public var onEpochChanged_MockMethod: (() -> AnyPublisher<MLSGroupID, Never>)?
+    public var onEpochChanged_MockValue: AnyPublisher<MLSGroupID, Never>?
+
+    public func onEpochChanged() -> AnyPublisher<MLSGroupID, Never> {
+        onEpochChanged_Invocations.append(())
+
+        if let mock = onEpochChanged_MockMethod {
+            return mock()
+        } else if let mock = onEpochChanged_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `onEpochChanged`")
+        }
+    }
+
+}
 
 public class MockConversationEventProcessorProtocol: ConversationEventProcessorProtocol {
 
