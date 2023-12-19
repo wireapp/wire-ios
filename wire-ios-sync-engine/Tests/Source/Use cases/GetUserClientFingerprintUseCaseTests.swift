@@ -71,6 +71,7 @@ class GetUserClientFingerprintUseCaseTests: MessagingTest {
         var userClient: UserClient!
         syncMOC.performAndWait {
             userClient = self.createSelfClient()
+            userClient.user?.domain = "example.com"
         }
 
         let expectation = XCTestExpectation(description: "should call establishSession")

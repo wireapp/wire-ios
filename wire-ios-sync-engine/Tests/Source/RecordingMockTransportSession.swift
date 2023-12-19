@@ -54,6 +54,11 @@ class RecordingMockTransportSession: NSObject, TransportSessionType {
 
     func cancelTask(with taskIdentifier: ZMTaskIdentifier) { }
 
+    func enqueue(_ request: ZMTransportRequest, queue: ZMSGroupQueue) async -> ZMTransportResponse {
+        lastEnqueuedRequest = request
+        return ZMTransportResponse(payload: nil, httpStatus: 200, transportSessionError: nil, apiVersion: 0)
+    }
+
     var lastEnqueuedRequest: ZMTransportRequest?
     func enqueueOneTime(_ request: ZMTransportRequest) {
         lastEnqueuedRequest = request

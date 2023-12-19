@@ -297,14 +297,6 @@ static NSString *ZMLogTag ZM_UNUSED = @"Authentication";
 - (void)didDetectCurrentClientDeletion
 {
     [self invalidateSelfClient];
-    
-    NSFetchRequest *clientFetchRequest = [UserClient sortedFetchRequest];
-    NSArray <UserClient *>*clients = [self.managedObjectContext executeFetchRequestOrAssert:clientFetchRequest];
-    
-    for (UserClient *client in clients) {
-        [client deleteClientAndEndSession];
-    }
-    
     [self.managedObjectContext tearDownCryptoStack];
     [self invalidateCookieAndNotify];
 }

@@ -17,94 +17,94 @@
 //
 // General strings
 
-"general.ok" = "OK";
-"general.next" = "Next";
-"general.cancel" = "Cancel";
+"general.ok" = "හරි";
+"general.next" = "ඊළඟ";
+"general.cancel" = "අවලංගු";
 "general.close" = "වසන්න";
-"general.back" = "Back";
-"general.open_settings" = "Open Wire Settings";
-"general.edit" = "Edit";
-"general.done" = "Done";
-"general.confirm" = "OK";
-"general.later" = "Later";
-"general.skip" = "Not Now";
-"general.accept" = "Accept";
-"general.decline" = "No, thanks";
-"general.failure" = "Something went wrong";
-"general.failure.try_again" = "Please try again.";
-"general.service" = "Service";
-"general.off" = "Off";
-"general.on" = "On";
-"general.loading" = "Loading…";
-"general.paste" = "Paste";
+"general.back" = "ආපසු";
+"general.open_settings" = "වයර් සැකසුම් අරින්න";
+"general.edit" = "සංස්කරණය";
+"general.done" = "අහවරයි";
+"general.confirm" = "හරි";
+"general.later" = "පසුව";
+"general.skip" = "දැන් නොවේ";
+"general.accept" = "පිළිගන්න";
+"general.decline" = "එපා, ස්තුතියි";
+"general.failure" = "යමක් වැරදී ඇත";
+"general.failure.try_again" = "නැවත";
+"general.service" = "සේවාව";
+"general.off" = "අක්‍රියයි";
+"general.on" = "සක්‍රියයි";
+"general.loading" = "පූරණය වෙමින්…";
+"general.paste" = "අලවන්න";
 
 // Language like Chinese does not use space to sperate words or sentences.
 "general.space_between_words" = " ";
 
-"general.guest-room-name" = "Guest room";
+"general.guest-room-name" = "අමුත්තන්ගේ කාමරය";
 
 // User Cell
-"user_cell.title.you_suffix" = " (You)";
+"user_cell.title.you_suffix" = " (ඔබ)";
 
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // People picker/start UI
-"peoplepicker.search_placeholder" = "Search by name or username";
-"peoplepicker.header.top_people" = "Top people";
-"peoplepicker.button.create_conversation" = "Create group";
-"peoplepicker.button.add_to_conversation" = "Add Participants";
-"peoplepicker.header.conversations" = "Groups";
-"peoplepicker.header.team_conversations" = "%@ Groups";
-"peoplepicker.header.send_invitation" = "Invite";
-"peoplepicker.header.contacts" = "Contacts";
-"peoplepicker.header.contacts_personal" = "Personal Contacts";
-"peoplepicker.header.directory" = "Connect";
-"peoplepicker.header.federation" = "Connect with other domain";
+"peoplepicker.search_placeholder" = "නමකින් හෝ පරිශ්‍රීලක නාමයෙන් සොයන්න";
+"peoplepicker.header.top_people" = "ජනප්‍රිය පුද්ගලයින්";
+"peoplepicker.button.create_conversation" = "සමූහයක් සාදන්න";
+"peoplepicker.button.add_to_conversation" = "සහභාගීන් යොදන්න";
+"peoplepicker.header.conversations" = "සමූහ";
+"peoplepicker.header.team_conversations" = "සමූහ %@";
+"peoplepicker.header.send_invitation" = "ආරාධනා කරන්න";
+"peoplepicker.header.contacts" = "සබඳතා";
+"peoplepicker.header.contacts_personal" = "පෞද්ගලික සබඳතා";
+"peoplepicker.header.directory" = "සබඳින්න";
+"peoplepicker.header.federation" = "වෙනත් වසමකට සම්බන්ධ වන්න";
 
-"peoplepicker.group.title.singular" = "Add Participants";
-"peoplepicker.group.title.plural" = "Add Participants (%d)";
-"peoplepicker.group.skip" = "Skip";
-"peoplepicker.group.done" = "Done";
-"peoplepicker.group.create" = "Create";
+"peoplepicker.group.title.singular" = "සහභාගීන් යොදන්න";
+"peoplepicker.group.title.plural" = "සහභාගීන් යොදන්න (%d)";
+"peoplepicker.group.skip" = "මඟහරින්න";
+"peoplepicker.group.done" = "අහවරයි";
+"peoplepicker.group.create" = "සාදන්න";
 
-"peoplepicker.header.people" = "People";
-"peoplepicker.header.services" = "Services";
-"peoplepicker.services.open_conversation.item" = "Open conversation";
+"peoplepicker.header.people" = "පුද්ගලයින්";
+"peoplepicker.header.services" = "සේවා";
+"peoplepicker.services.open_conversation.item" = "සංවාදය අරින්න";
 "peoplepicker.services.add_service.button" = "Add service";
 "peoplepicker.services.add_service.error.title" = "The service can’t be added";
 "peoplepicker.services.add_service.error.default" = "The service is unavailable at the moment";
 "peoplepicker.services.add_service.error.full" = "The conversation is full";
 
-"peoplepicker.title.create_conversation" = "Create group";
-"peoplepicker.title.add_to_conversation" = "Add participants";
+"peoplepicker.title.create_conversation" = "සමූහයක් සාදන්න";
+"peoplepicker.title.add_to_conversation" = "සහභාගීන් යොදන්න";
 
-"peoplepicker.no_contacts_title" = "No Contacts.";
+"peoplepicker.no_contacts_title" = "සබඳතා නැත";
 
 "peoplepicker.no_search_results" = "No matching results. Try entering a different name.";
 
-"peoplepicker.no_matching_results.action.send_invite" = "Send an invitation";
-"peoplepicker.no_matching_results.action.share_contacts" = "Share contacts";
-"peoplepicker.no_matching_results.action.learn_more" = "Learn more";
-"peoplepicker.no_matching_results.action.manage_services" = "Manage Services";
+"peoplepicker.no_matching_results.action.send_invite" = "ආරාධනයක් යවන්න";
+"peoplepicker.no_matching_results.action.share_contacts" = "සබඳතා බෙදාගන්න";
+"peoplepicker.no_matching_results.action.learn_more" = "තව දැනගන්න";
+"peoplepicker.no_matching_results.action.manage_services" = "සේවා කළමනාකරණය";
 
-"peoplepicker.no_matching_results_after_address_book_upload_title" = "No results.";
+"peoplepicker.no_matching_results_after_address_book_upload_title" = "ප්‍රතිඵල නැත.";
 "peoplepicker.no_matching_results.message.users" = "Find people in Wire by name or @username";
 "peoplepicker.no_matching_results.message.usersAndFederation" = "Find people in Wire by name or @username\n\nFind people on another domain by @username@domainname";
 "peoplepicker.no_matching_results.message.users_all_added" = "Everyone’s here.";
-"peoplepicker.no_matching_results.message.services" = "No results.";
+"peoplepicker.no_matching_results.message.services" = "ප්‍රතිඵල නැත.";
 "peoplepicker.no_matching_results.message.services_not_enabled_admin" = "Services are helpers that can improve your workflow.";
 "peoplepicker.no_matching_results.message.services_not_enabled" = "Services are helpers that can improve your workflow. To enable them, ask your administrator.";
 
 "peoplepicker.send_invitation.dialog.title" = "Invitation sent";
 "peoplepicker.send_invitation.dialog.message" = "It can be used for 2 weeks. Send a new one if it expires.";
-"peoplepicker.send_invitation.dialog.ok" = "OK";
+"peoplepicker.send_invitation.dialog.ok" = "හරි";
 
-"peoplepicker.invite_more_people" = "Invite more people";
-"peoplepicker.invite_team_members" = "Invite people to join the team";
-"peoplepicker.quick-action.open-conversation" = "Open";
-"peoplepicker.quick-action.create-conversation" = "Create group";
-"peoplepicker.quick-action.create-guest-room" = "Create guest room";
-"peoplepicker.quick-action.admin-services" = "Manage Services";
+"peoplepicker.invite_more_people" = "ආරාධනා කරන්න";
+"peoplepicker.invite_team_members" = "කණ්ඩායමට එක්වීමට ආරාධනා කරන්න";
+"peoplepicker.quick-action.open-conversation" = "අරින්න";
+"peoplepicker.quick-action.create-conversation" = "සමූහයක් සාදන්න";
+"peoplepicker.quick-action.create-guest-room" = "අමුත්තන්ගේ කාමරයක් සාදන්න";
+"peoplepicker.quick-action.admin-services" = "සේවා කළමනාකරණය";
 
 "peoplepicker.federation.domain_unvailable" = "The federated domain is currently not available. [Learn more](%@)";
 
@@ -113,39 +113,39 @@
 "add_participants.alert.message.existing_conversation" = "Up to %1$d people can join a conversation. Currently there is only room for %2$d more.";
 
 // Contacts UI
-"contacts_ui.search_placeholder" = "Search by name";
+"contacts_ui.search_placeholder" = "නමින් සොයන්න";
 "contacts_ui.invite_others" = "Invite others";
 "contacts_ui.name_in_contacts" = "%@ in Contacts";
 "contacts_ui.connection_request" = "Requested to connect";
-"contacts_ui.action_button.invite" = "Invite";
-"contacts_ui.action_button.open" = "Open";
-"contacts_ui.invite_sheet.cancel_button_title" = "Cancel";
-"contacts_ui.notification.invitation_sent" = "Invitation sent";
+"contacts_ui.action_button.invite" = "ආරාධනා කරන්න";
+"contacts_ui.action_button.open" = "අරින්න";
+"contacts_ui.invite_sheet.cancel_button_title" = "අවලංගු";
+"contacts_ui.notification.invitation_sent" = "ආරාධනා යවා ඇත";
 "contacts_ui.notification.invitation_failed" = "Failed to send invitation";
-"contacts_ui.title" = "Invite people";
+"contacts_ui.title" = "ආරාධනා කරන්න";
 
-"conversation_list.empty.all_archived.message" = "Everything archived";
-"conversation_list.empty.no_contacts.message" = "Start a conversation or\ncreate a group.";
+"conversation_list.empty.all_archived.message" = "සියල්ල සංරක්‍ෂිතයි";
+"conversation_list.empty.no_contacts.message" = "සංවාදයක් අරඹන්න හෝ සමූහයක් සාදන්න";
 
 
 // Conversation List Indicator
-"conversation_list.right_accessory.join_button.title" = "Join";
+"conversation_list.right_accessory.join_button.title" = "එක්වන්න";
 "conversation_list.header.self_team.accessibility_value" = "%@ account.";
 "conversation_list.header.self_team.accessibility_value.inactive" = "Tap to activate.";
 "conversation_list.header.self_team.accessibility_value.active" = "Active now.";
 "conversation_list.header.self_team.accessibility_value.has_new_messages" = "Has new messages.";
 
 // Conversation List Bottom Bar
-"conversation_list.bottom_bar.contacts.title" = "Contacts";
-"conversation_list.bottom_bar.conversations.title" = "Conversations";
-"conversation_list.bottom_bar.folders.title" = "Folders";
-"conversation_list.bottom_bar.archived.title" = "Archive";
+"conversation_list.bottom_bar.contacts.title" = "සබඳතා";
+"conversation_list.bottom_bar.conversations.title" = "සංවාද";
+"conversation_list.bottom_bar.folders.title" = "බහාලුම්";
+"conversation_list.bottom_bar.archived.title" = "සංරක්‍ෂණය";
 
 // Conversation List Data Usage Permission Dialog
-"conversation_list.data_usage_permission_alert.title" = "Help us make Wire better";
-"conversation_list.data_usage_permission_alert.message" = "I agree that Wire may create and use anonymous usage and error reports to improve the Wire App. I can revoke this consent at any time.";
-"conversation_list.data_usage_permission_alert.disagree" = "No";
-"conversation_list.data_usage_permission_alert.agree" = "I Agree";
+"conversation_list.data_usage_permission_alert.title" = "අපට වයර් දියුණු කිරීමට උදව් වන්න";
+"conversation_list.data_usage_permission_alert.message" = "වයර් යෙදුම වැඩිදියුණු කිරීම සඳහා එයට නිර්නාමික පරිශ්‍රීලන සහ දෝෂ වාර්තා සාදා භාවිතයට ඉඩ දෙමි. ඕනෑම විටෙක මෙම කැමැත්ත අහෝසි කිරීමට හැකිය.";
+"conversation_list.data_usage_permission_alert.disagree" = "නැහැ";
+"conversation_list.data_usage_permission_alert.agree" = "මම එකඟයි";
 
 // Profile Header View
 "conversation.connection_view.in_address_book" = "in Contacts";
@@ -185,12 +185,12 @@
 // Folders
 
 "folder.creation.name.title" = "Create new folder";
-"folder.creation.name.button.create" = "Create";
+"folder.creation.name.button.create" = "සාදන්න";
 "folder.creation.name.header" = "Move the conversation \"%@\" to a new folder.";
-"folder.creation.name.footer" = "Maximum 64 characters";
-"folder.creation.name.placeholder" = "Folder name";
+"folder.creation.name.footer" = "උපරිම අකුරු 64 කි";
+"folder.creation.name.placeholder" = "බහාලුමේ නම";
 
-"folder.picker.title" = "Move to";
+"folder.picker.title" = "මෙයට ගෙනයන්න";
 "folder.picker.empty.hint" = "Create a new folder by pressing the + button";
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++x
@@ -211,8 +211,8 @@
 "list.archived_conversations" = "ARCHIVE";
 "list.archived_conversations_close" = "Close archive";
 
-"list.section.groups" = "Groups";
-"list.section.contacts" = "People";
+"list.section.groups" = "සමූහ";
+"list.section.contacts" = "පුද්ගලයින්";
 "list.section.requests" = "Requests";
 "list.section.favorites" = "Favorites";
 
@@ -282,6 +282,8 @@
 "conversation.input_bar.audio_message.tooltip.tap_send" = "Tap to send";
 "conversation.input_bar.audio_message.too_long.title" = "Recording Stopped";
 "conversation.input_bar.audio_message.too_long.message" = "Audio messages are limited to %@.";
+"conversation.ping.many_participants_confirmation.title" = "Are you sure you want to ping %d people?";
+"conversation.ping.action.title" = "Ping";
 
 "conversation.input_bar.audio_message.too_long_size.message" = "File size for audio messages is limited to %@.";
 
@@ -307,7 +309,7 @@
 "conversation.input_bar.message_too_long.title" = "Message too long";
 "conversation.input_bar.message_too_long.message" = "You can send messages up to %d characters long.";
 
-"conversation.create.group_name.title" = "Create group";
+"conversation.create.group_name.title" = "සමූහයක් සාදන්න";
 "conversation.create.group_name.placeholder" = "Group name";
 "conversation.create.guidance.empty" = "At least 1 character";
 "conversation.create.guidance.toolong" = "Too many characters";
@@ -338,7 +340,7 @@
 
 // Conversation banner
 "conversation.banner.guests" = "Guests";
-"conversation.banner.services" = "Services";
+"conversation.banner.services" = "සේවා";
 "conversation.banner.externals" = "Externals";
 "conversation.banner.remotes" = "Federated users";
 "conversation.banner.are_present" = "%@ are present";
@@ -364,7 +366,7 @@
 "conversation.input_bar.message_preview.accessibility.unknown_message" = "Unknown message";
 "conversation.input_bar.message_preview.accessibility.message_from" = "%@ from %@";
 
-"image_confirmer.confirm" = "OK";
+"image_confirmer.confirm" = "හරි";
 "image_confirmer.cancel" = "Cancel";
 "image.add_sketch" = "Add a sketch";
 "image.add_emoji" = "Add an emoji";
@@ -485,7 +487,7 @@
 "content.system.conversation.guest.you_joined" = "You joined";
 
 "content.system.conversation.invite.title" = "People outside your team can join this conversation.";
-"content.system.conversation.invite.button" = "Invite people";
+"content.system.conversation.invite.button" = "ආරාධනා කරන්න";
 
 "content.system.other_renamed_conv_to_nothing" = "%@ removed the conversation name";
 "content.system.you_renamed_conv_to_nothing" = "You removed the conversation name";
@@ -616,7 +618,7 @@
 "content.message.forward" = "Share";
 "content.message.go_to_conversation" = "Reveal";
 "content.message.forward.to" = "Search…";
-"content.message.open" = "Open";
+"content.message.open" = "අරින්න";
 "content.message.sign" = "Sign";
 "content.message.copy" = "Copy";
 "content.message.download" = "Download";
@@ -633,7 +635,7 @@
 
 "content.message.open_link_alert.title" = "Visit Link";
 "content.message.open_link_alert.message" = "This will take you to\n%@";
-"content.message.open_link_alert.open" = "Open";
+"content.message.open_link_alert.open" = "අරින්න";
 
 "content.message.audio_message.accessibility" = "Play the audio message";
 
@@ -709,7 +711,7 @@
 
 "voice.alert.call_in_progress.title" = "Call in progress";
 "voice.alert.call_in_progress.message" = "You can have only one active call at a time";
-"voice.alert.call_in_progress.confirm" = "OK";
+"voice.alert.call_in_progress.confirm" = "හරි";
 
 "voice.alert.microphone_warning.title" = "Wire needs access to the microphone";
 
@@ -798,7 +800,7 @@
 "participants.avatar.guest.title" = "Guest";
 
 "participants.title" = "Details";
-"participants.all.title" = "People";
+"participants.all.title" = "පුද්ගලයින්";
 "participants.section.participants" = "People (%d)";
 "participants.section.services" = "Services (%d)";
 "participants.section.settings" = "Options";
@@ -916,7 +918,7 @@
 
 "profile.cancel_connection_button_title" = "Cancel Request";
 "profile.connection_request_state.blocked" = "BLOCKED";
-"profile.create_conversation_button_title" = "Create group";
+"profile.create_conversation_button_title" = "සමූහයක් සාදන්න";
 "profile.open_conversation_button_title" = "Open conversation";
 
 "profile.read_receipts_enabled_memo.header" = "YOU HAVE ENABLED READ RECEIPTS";
@@ -971,7 +973,7 @@
 "group_details.guest_options_cell.title" = "Guests";
 "group_details.guest_options_cell.enabled" = "On";
 "group_details.guest_options_cell.disabled" = "Off";
-"group_details.services_options_cell.title" = "Services";
+"group_details.services_options_cell.title" = "සේවා";
 "group_details.services_options_cell.enabled" = "On";
 "group_details.services_options_cell.disabled" = "Off";
 "group_details.timeout_options_cell.title" = "Self-deleting messages";
@@ -1031,7 +1033,7 @@
 "self.new_device_alert.message" = "\n%@\n\nIf you don’t recognize the device above, remove it and reset your password.";
 "self.new_device_alert.message_plural" = "\n%@\n\nIf you don’t recognize the devices above, remove them and reset your password.";
 "self.new_device_alert.manage_devices" = "Manage devices";
-"self.new_device_alert.trust_devices" = "OK";
+"self.new_device_alert.trust_devices" = "හරි";
 
 // Settings changed alert
 
@@ -1305,7 +1307,7 @@
 "self.settings.password_reset_menu.title" = "Reset Password";
 
 // Invite from Settings
-"self.settings.invite_friends.title" = "Invite people";
+"self.settings.invite_friends.title" = "ආරාධනා කරන්න";
 
 // History backup
 
@@ -1322,7 +1324,7 @@
 
 "self.settings.history_backup.password.title" = "Set Password";
 "self.settings.history_backup.password.cancel" = "Cancel";
-"self.settings.history_backup.password.next" = "Next";
+"self.settings.history_backup.password.next" = "ඊළඟ";
 "self.settings.history_backup.password.placeholder" = "Password";
 "self.settings.history_backup.password.description" = "The backup will be compressed and encrypted with the password you set here.";
 
@@ -1433,7 +1435,7 @@
 
 // Registration
 
-"registration.launch_back_button.label" = "Back";
+"registration.launch_back_button.label" = "ආපසු";
 
 "registration.title" = "Registration";
 "registration.close_email_invitation_button.email_title" = "Use another email";
@@ -1457,7 +1459,7 @@
 
 "registration.no_history.hero" = "It’s the first time you’re using Wire on this device.";
 "registration.no_history.subtitle" = "For privacy reasons, your conversation history will not appear here.";
-"registration.no_history.got_it" = "OK";
+"registration.no_history.got_it" = "හරි";
 "registration.no_history.restore_backup" = "Restore from backup";
 
 "registration.alert.account_exists.title" = "Account Exists";
@@ -1525,7 +1527,7 @@
 
 "registration.no_history.logged_out.hero" = "You’ve used Wire on this device before.";
 "registration.no_history.logged_out.subtitle" = "Messages sent in the meantime will not appear.";
-"registration.no_history.logged_out.got_it" = "OK";
+"registration.no_history.logged_out.got_it" = "හරි";
 
 "registration.enter_name.title" = "Edit Name";
 "registration.enter_name.hero" = "What should we call you?";
@@ -1548,7 +1550,7 @@
 
 "registration.share_contacts.hero.title" = "Find people on Wire";
 "registration.share_contacts.hero.paragraph" = "Share your contacts so we can connect you with others. We anonymize all information and do not share it with anyone else.";
-"registration.share_contacts.find_friends_button.title" = "Share contacts";
+"registration.share_contacts.find_friends_button.title" = "සබඳතා බෙදාගන්න";
 "registration.share_contacts.skip_button.title" = "Not now";
 
 "registration.address_book_access_denied.hero.title" = "Wire does not have access to your contacts.";
@@ -1742,10 +1744,10 @@
 "jailbrokendevice.alert.message" = "For security reasons, Wire can't be used on this device. Any existing Wire data has been erased.";
 
 // Database Loading Failure alert
-"databaseloadingfailure.alert.title" = "Not Enough Storage";
-"databaseloadingfailure.alert.message" = "The database could not be loaded due to insufficient storage. Review your device storage usage and try again.";
-"databaseloadingfailure.alert.settings" = "Go to Settings";
-"databaseloadingfailure.alert.delete_database" = "Delete Database";
+"databaseloadingfailure.alert.title" = "Update Data storage";
+"databaseloadingfailure.alert.message" = "The database could not be loaded.\n Error: %@";
+"databaseloadingfailure.alert.save-backup" = "Save my data";
+"databaseloadingfailure.alert.delete_database" = "Clear my data and continue";
 "databaseloadingfailure.alert.delete_database.message" = "By deleting the database, all local data and messages for this account will be permanently deleted.";
 "databaseloadingfailure.alert.delete_database.continue" = "Continue";
 "databaseloadingfailure.alert.retry" = "Retry";
@@ -1766,7 +1768,7 @@
 
 "invite_banner.title" = "Bring your friends to Wire!";
 "invite_banner.message" = "Enjoy calls, messages, sketches, GIFs and more in private or with groups.";
-"invite_banner.invite_button_title" = "Invite more people";
+"invite_banner.invite_button_title" = "ආරාධනා කරන්න";
 
 // Collections
 "collections.section.images.title" = "Images";
@@ -1816,7 +1818,7 @@
 "availability.reminder.none.title" = "No status set";
 "availability.reminder.none.message" = "You will receive notifications for incoming calls and for messages according to the Notifications setting in each conversation.";
 "availability.reminder.action.dont_remind_me" = "Do not display this information again";
-"availability.reminder.action.ok" = "OK";
+"availability.reminder.action.ok" = "හරි";
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Call Quality Survey
@@ -1828,7 +1830,7 @@
 "calling.quality_survey.answer.3" = "Fair";
 "calling.quality_survey.answer.4" = "Good";
 "calling.quality_survey.answer.5" = "Excellent";
-"calling.quality_survey.skip_button_title" = "Skip";
+"calling.quality_survey.skip_button_title" = "මඟහරින්න";
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // URL Action
@@ -1848,7 +1850,7 @@
 
 // Placeholder: conversation name
 "url_action.join_conversation.confirmation.message" = "You have been invited to a conversation:\n%@";
-"url_action.join_conversation.confirmation.confirm_button" = "Join";
+"url_action.join_conversation.confirmation.confirm_button" = "එක්වන්න";
 
 "url_action.join_conversation.error.alert.title" = "You could not join the conversation";
 "url_action.join_conversation.error.alert.converation_is_full.message" = "The conversation is full.";
@@ -1997,7 +1999,7 @@
 "keyboardshortcut.scrollToBottom" = "Scroll to Bottom";
 "keyboardshortcut.conversationDetail" = "Conversation Details...";
 "keyboardshortcut.searchInConversation" = "Search in Conversation...";
-"keyboardshortcut.openPeople" = "People";
+"keyboardshortcut.openPeople" = "පුද්ගලයින්";
 
 // MARK: - Security classification
 "security_classification.security_level" = "Security level:";

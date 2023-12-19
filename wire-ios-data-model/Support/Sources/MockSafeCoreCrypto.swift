@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2023 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,9 +22,9 @@ import WireCoreCrypto
 
 class MockSafeCoreCrypto: SafeCoreCryptoProtocol {
 
-    var coreCrypto: MockCoreCrypto
+    var coreCrypto: MockCoreCryptoProtocol
 
-    init(coreCrypto: MockCoreCrypto = .init()) {
+    init(coreCrypto: MockCoreCryptoProtocol = .init()) {
         self.coreCrypto = coreCrypto
     }
 
@@ -38,6 +38,11 @@ class MockSafeCoreCrypto: SafeCoreCryptoProtocol {
     func unsafePerform<T>(_ block: (CoreCryptoProtocol) throws -> T) rethrows -> T {
         unsafePerformCount += 1
         return try block(coreCrypto)
+    }
+
+    // TODO: Update after update of CC 1.0
+    func perform<T>(_ block: (WireCoreCrypto.CoreCryptoProtocol) async throws -> T) async rethrows -> T {
+        return try await block(coreCrypto)
     }
 
     var mockMlsInit: ((String) throws -> Void)?

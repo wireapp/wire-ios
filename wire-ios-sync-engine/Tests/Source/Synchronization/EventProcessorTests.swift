@@ -18,6 +18,7 @@
 
 import XCTest
 @testable import WireSyncEngine
+@testable import WireDataModelSupport
 
 class EventProcessorTests: MessagingTest {
 

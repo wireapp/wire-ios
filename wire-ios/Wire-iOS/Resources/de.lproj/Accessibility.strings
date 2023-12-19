@@ -83,6 +83,9 @@
 "conversationSearch.item.hint" = "Zum Öffnen doppeltippen";
 "conversationSearch.itemPlay.hint" = "Doppeltippen zum Abspielen";
 
+"conversation.scrollToBottomButton.description" = "Scroll to the bottom of the conversation";
+"conversation.scrollToBottomButton.hint" = "Tap to scroll to the bottom of the conversation";
+
 "audioRecord.stopButton.description" = "Aufnahme stoppen";
 "audioRecord.startButton.description" = "Aufnahme starten";
 "audioRecord.startButton.hint" = "Doppeltippen zum Aufnehmen";

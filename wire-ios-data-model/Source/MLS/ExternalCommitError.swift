@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2023 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,15 +18,35 @@
 
 import Foundation
 
-@objcMembers
-public class MockStrategyDirectory: NSObject, StrategyDirectoryProtocol {
+enum ExternalCommitError: Error, Equatable {
 
-    public var eventConsumers: [ZMEventConsumer] = []
+    case failedToSendCommit(recovery: RecoveryStrategy)
+    case failedToMergePendingGroup
+    case failedToClearPendingGroup
 
-    public var eventAsyncConsumers: [ZMEventAsyncConsumer] = []
+    enum RecoveryStrategy {
 
-    public var requestStrategies: [RequestStrategy] = []
+        /// Retry the action from the beginning
+        case retry
 
-    public var contextChangeTrackers: [ZMContextChangeTracker] = []
+        /// Abort the action and log the error
+        case giveUp
+
+    }
+}
+
+extension ExternalCommitError.RecoveryStrategy {
+
+    /// Whether the pending group should be cleared
+
+    var shouldClearPendingGroup: Bool {
+        switch self {
+        case .retry:
+            return false
+
+        case .giveUp:
+            return true
+        }
+    }
 
 }

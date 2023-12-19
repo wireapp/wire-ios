@@ -417,19 +417,16 @@ public class MockPrekeyPayloadProcessorInterface: PrekeyPayloadProcessorInterfac
     // MARK: - establishSessions
 
     public var establishSessionsFromWithContext_Invocations: [(payload: Payload.PrekeyByQualifiedUserID, selfClient: UserClient, context: NSManagedObjectContext)] = []
-    public var establishSessionsFromWithContext_MockMethod: ((Payload.PrekeyByQualifiedUserID, UserClient, NSManagedObjectContext) -> Bool)?
-    public var establishSessionsFromWithContext_MockValue: Bool?
+    public var establishSessionsFromWithContext_MockMethod: ((Payload.PrekeyByQualifiedUserID, UserClient, NSManagedObjectContext) async -> Void)?
 
-    public func establishSessions(from payload: Payload.PrekeyByQualifiedUserID, with selfClient: UserClient, context: NSManagedObjectContext) -> Bool {
+    public func establishSessions(from payload: Payload.PrekeyByQualifiedUserID, with selfClient: UserClient, context: NSManagedObjectContext) async {
         establishSessionsFromWithContext_Invocations.append((payload: payload, selfClient: selfClient, context: context))
 
-        if let mock = establishSessionsFromWithContext_MockMethod {
-            return mock(payload, selfClient, context)
-        } else if let mock = establishSessionsFromWithContext_MockValue {
-            return mock
-        } else {
+        guard let mock = establishSessionsFromWithContext_MockMethod else {
             fatalError("no mock for `establishSessionsFromWithContext`")
         }
+
+        await mock(payload, selfClient, context)
     }
 
 }
