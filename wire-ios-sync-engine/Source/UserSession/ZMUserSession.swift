@@ -112,6 +112,8 @@ public class ZMUserSession: NSObject {
 
     public var appLockController: AppLockType
 
+    var mlsConversationVerificationManager: MLSConversationVerificationManagerInterface?
+
     public var fileSharingFeature: Feature.FileSharing {
         let featureRepository = FeatureRepository(context: coreDataStack.viewContext)
         return featureRepository.fetchFileSharing()
@@ -407,7 +409,14 @@ public class ZMUserSession: NSObject {
             self.hasCompletedInitialSync = self.applicationStatusDirectory.syncStatus.isSlowSyncing == false
 
             createMLSClientIfNeeded()
-            startObservingMLSConversationVerificationStatus()
+
+            if e2eiFeature.isEnabled {
+                self.mlsConversationVerificationManager = MLSConversationVerificationManager(
+                    mlsService: self.mlsService,
+                    mlsConversationVerificationStatusProvider: mlsConversationVerificationStatusProvider)
+
+                self.mlsConversationVerificationManager?.startObservingMLSConversationVerificationStatus()
+            }
         }
 
         registerForCalculateBadgeCountNotification()
@@ -554,17 +563,6 @@ public class ZMUserSession: NSObject {
     private func notifyUserAboutChangesInAvailabilityBehaviourIfNeeded() {
         syncManagedObjectContext.performGroupedBlock {
             self.localNotificationDispatcher?.notifyAvailabilityBehaviourChangedIfNeeded()
-        }
-    }
-
-    private func startObservingMLSConversationVerificationStatus() {
-        guard e2eiFeature.isEnabled else {
-            return
-        }
-        Task {
-            for try await groupID in mlsService.epochChanges() {
-                try await mlsConversationVerificationStatusProvider?.updateStatus(groupID)
-            }
         }
     }
 
