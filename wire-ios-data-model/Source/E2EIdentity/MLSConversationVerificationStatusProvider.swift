@@ -44,10 +44,11 @@ public class MLSConversationVerificationStatusProvider: MLSConversationVerificat
     // MARK: - Public interface
 
     public func updateStatus(_ groupID: MLSGroupID) async {
-        syncContext.performAndWait {
-            guard let conversation = ZMConversation.fetch(with: groupID, in: syncContext) else {
-                return
-            }
+       guard let conversation = await syncContext.perform({
+            ZMConversation.fetch(with: groupID, in: syncContext)
+       }) else {
+            return
+       }
             Task {
                 do {
                     let coreCryptoStatus = try await e2eIVerificationStatusService.getConversationStatus(groupID: groupID)
