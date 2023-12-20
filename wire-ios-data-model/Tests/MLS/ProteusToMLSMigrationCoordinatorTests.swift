@@ -242,7 +242,7 @@ class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
     func test_ItDoesntUpdateProtocolToMLS_IfParticipantsDontSupportMLS_AndFinalisationTimeHasNotBeenReached() async throws {
         // Given
         mockStorage.underlyingMigrationStatus = .started
-        
+
         await setMocksForFinalisation(
             supportedProtocolForAllParticipants: .proteus,
             finaliseRegardlessAfter: .distantFuture
