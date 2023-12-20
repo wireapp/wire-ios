@@ -54,14 +54,14 @@ final class ClientMessageTests_OTR: BaseZMClientMessageTests {
             let otherUser = ZMUser.insertNewObject(in: self.syncMOC)
             otherUser.remoteIdentifier = UUID.create()
 
-1            // Mock
-            self.mockProteusService.establishSessionIdFromPrekey_MockMethod = { _, _ in
-                // No op
-            }
-
-            self.mockProteusService.remoteFingerprintForSession_MockMethod = { sessionID in
-                return sessionID.rawValue + "remote_fingerprint"
-            }
+//            // Mock
+//            self.mockProteusService.establishSessionIdFromPrekey_MockMethod = { _, _ in
+//                // No op
+//            }
+//
+//            self.mockProteusService.remoteFingerprintForSession_MockMethod = { sessionID in
+//                return sessionID.rawValue + "remote_fingerprint"
+//            }
 
             let firstClient = self.createClient(for: otherUser, createSessionWithSelfUser: true, onMOC: self.syncMOC)
             let secondClient = self.createClient(for: otherUser, createSessionWithSelfUser: true, onMOC: self.syncMOC)
@@ -80,7 +80,6 @@ final class ClientMessageTests_OTR: BaseZMClientMessageTests {
 
             return (textMessage, notSelfClients, firstClient, secondClient)
         }
-        waitForAllGroupsToBeEmpty(withTimeout: 0.5)
         // Mock
         self.mockProteusService.encryptDataForSession_MockMethod = { plaintext, _ in
             return plaintext
@@ -90,7 +89,6 @@ final class ClientMessageTests_OTR: BaseZMClientMessageTests {
         let dataAndStrategy = await textMessage.encryptForTransport(for: conversation, in: syncMOC)
         let unwrappedDataAndStrategy = try XCTUnwrap(dataAndStrategy)
 
-        waitForAllGroupsToBeEmpty(withTimeout: 0.5)
         // Then
         let createdMessage = Proteus_NewOtrMessage.with {
             try? $0.merge(serializedData: unwrappedDataAndStrategy.data)

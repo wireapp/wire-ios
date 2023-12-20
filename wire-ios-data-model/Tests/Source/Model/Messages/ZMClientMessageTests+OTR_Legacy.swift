@@ -1,91 +1,98 @@
-////
-//// Wire
-//// Copyright (C) 2016 Wire Swiss GmbH
-//// 
-//// This program is free software: you can redistribute it and/or modify
-//// it under the terms of the GNU General Public License as published by
-//// the Free Software Foundation, either version 3 of the License, or
-//// (at your option) any later version.
-//// 
-//// This program is distributed in the hope that it will be useful,
-//// but WITHOUT ANY WARRANTY; without even the implied warranty of
-//// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-//// GNU General Public License for more details.
-//// 
-//// You should have received a copy of the GNU General Public License
-//// along with this program. If not, see http://www.gnu.org/licenses/.
-//// 
 //
-// import XCTest
-// @testable import WireDataModel
-//
-// final class ClientMessageTests_OTR_Legacy: BaseZMClientMessageTests {
-//
-//    override func setUp() {
-//        DeveloperFlag.storage = UserDefaults(suiteName: UUID().uuidString)!
-//        var flag = DeveloperFlag.proteusViaCoreCrypto
-//        flag.isOn = false
-//
-//        super.setUp()
-//    }
-//
-//    override func tearDown() {
-//        super.tearDown()
-//        BackendInfo.domain = nil
-//        DeveloperFlag.storage = UserDefaults.standard
-//    }
-//
-// }
-//
-// MARK: - Payload creation
-// extension ClientMessageTests_OTR_Legacy {
-//
-//    func testThatCreatesEncryptedDataAndAddsItToGenericMessageAsBlob() {
-//        self.syncMOC.performGroupedBlockAndWait {
-//            let otherUser = ZMUser.insertNewObject(in: self.syncMOC)
-//            otherUser.remoteIdentifier = UUID.create()
-//            let firstClient = self.createClient(for: otherUser, createSessionWithSelfUser: true, onMOC: self.syncMOC)
-//            let secondClient = self.createClient(for: otherUser, createSessionWithSelfUser: true, onMOC: self.syncMOC)
-//            let selfClients = ZMUser.selfUser(in: self.syncMOC).clients
-//            let selfClient = ZMUser.selfUser(in: self.syncMOC).selfClient()
-//            let notSelfClients = selfClients.filter { $0 != selfClient }
-//
-//            let nonce = UUID.create()
-//            let textMessage = GenericMessage(content: Text(content: self.textMessageRequiringExternalMessage(2)), nonce: nonce)
-//
-//            let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
-//            conversation.conversationType = .group
-//            conversation.remoteIdentifier = UUID.create()
-//            conversation.addParticipantAndUpdateConversationState(user: otherUser, role: nil)
-//            XCTAssertTrue(self.syncMOC.saveOrRollback())
-//
-//            // when
-//            guard let dataAndStrategy = textMessage.encryptForTransport(for: conversation)
-//            else { return XCTFail() }
-//
-//            // then
-//            let createdMessage = Proteus_NewOtrMessage.with {
-//                try? $0.merge(serializedData: dataAndStrategy.data)
-//            }
-//
-//            XCTAssertEqual(createdMessage.hasBlob, true)
-//            let clientIds = createdMessage.recipients.flatMap { userEntry -> [Proteus_ClientId] in
-//                return (userEntry.clients).map { clientEntry -> Proteus_ClientId in
-//                    return clientEntry.client
-//                }
-//            }
-//            let clientSet = Set(clientIds)
-//            XCTAssertEqual(clientSet.count, 2 + notSelfClients.count)
-//            XCTAssertTrue(clientSet.contains(firstClient.clientId))
-//            XCTAssertTrue(clientSet.contains(secondClient.clientId))
-//            notSelfClients.forEach {
-//                XCTAssertTrue(clientSet.contains($0.clientId))
-//            }
-//
-//            XCTAssertEqual(createdMessage.reportMissing.count, createdMessage.recipients.count)
-//        }
-//    }
-//
+// Wire
+// Copyright (C) 2016 Wire Swiss GmbH
+// 
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+// 
+
+ import XCTest
+ @testable import WireDataModel
+
+ final class ClientMessageTests_OTR_Legacy: BaseZMClientMessageTests {
+
+    override func setUp() {
+        DeveloperFlag.storage = UserDefaults(suiteName: UUID().uuidString)!
+        var flag = DeveloperFlag.proteusViaCoreCrypto
+        flag.isOn = false
+
+        super.setUp()
+    }
+
+    override func tearDown() {
+        super.tearDown()
+        BackendInfo.domain = nil
+        DeveloperFlag.storage = UserDefaults.standard
+    }
+
+ }
+
+ // MARK: - Payload creation
+
+extension ClientMessageTests_OTR_Legacy {
+
+    func testThatCreatesEncryptedDataAndAddsItToGenericMessageAsBlob() async throws {
+        let (textMessage, notSelfClients, firstClient, secondClient) = await self.syncMOC.perform {
+            let otherUser = ZMUser.insertNewObject(in: self.syncMOC)
+            otherUser.remoteIdentifier = UUID.create()
+            let firstClient = self.createClient(for: otherUser, createSessionWithSelfUser: true, onMOC: self.syncMOC)
+            let secondClient = self.createClient(for: otherUser, createSessionWithSelfUser: true, onMOC: self.syncMOC)
+            let selfClients = ZMUser.selfUser(in: self.syncMOC).clients
+            let selfClient = ZMUser.selfUser(in: self.syncMOC).selfClient()
+            let notSelfClients = selfClients.filter { $0 != selfClient }
+
+            let nonce = UUID.create()
+            let textMessage = GenericMessage(content: Text(content: self.textMessageRequiringExternalMessage(2)), nonce: nonce)
+
+            let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
+            conversation.conversationType = .group
+            conversation.remoteIdentifier = UUID.create()
+            conversation.addParticipantAndUpdateConversationState(user: otherUser, role: nil)
+            XCTAssertTrue(self.syncMOC.saveOrRollback())
+
+            return (textMessage, notSelfClients, firstClient, secondClient)
+        }
+        // when
+        guard let dataAndStrategy = await textMessage.encryptForTransport(for: conversation, in: syncMOC)
+        else { return XCTFail() }
+
+        // then
+        let createdMessage = Proteus_NewOtrMessage.with {
+            try? $0.merge(serializedData: dataAndStrategy.data)
+        }
+
+        XCTAssertEqual(createdMessage.hasBlob, true)
+
+        await syncMOC.perform {
+
+            let clientIds = createdMessage.recipients.flatMap { userEntry -> [Proteus_ClientId] in
+                return (userEntry.clients).map { clientEntry -> Proteus_ClientId in
+                    return clientEntry.client
+                }
+            }
+            let clientSet = Set(clientIds)
+            XCTAssertEqual(clientSet.count, 2 + notSelfClients.count)
+            XCTAssertTrue(clientSet.contains(firstClient.clientId))
+            XCTAssertTrue(clientSet.contains(secondClient.clientId))
+            notSelfClients.forEach {
+                XCTAssertTrue(clientSet.contains($0.clientId))
+            }
+
+            XCTAssertEqual(createdMessage.reportMissing.count, createdMessage.recipients.count)
+        }
+    }
+}
+
 //    func testThatCorruptedClientsReceiveBogusPayload() {
 //        self.syncMOC.performGroupedBlockAndWait {
 //
@@ -469,36 +476,36 @@
 //        // THEN
 //        XCTAssertEqual(identifier, EncryptionSessionIdentifier(userId: user.remoteIdentifier.uuidString, clientId: client.remoteIdentifier!))
 //    }
-// }
-//
-// MARK: - Helper
-// extension ClientMessageTests_OTR_Legacy {
-//
-//    /// Returns a string large enough to have to be encoded in an external message
-//    fileprivate var stringLargeEnoughToRequireExternal: String {
-//        var text = "Hello"
-//        while text.data(using: String.Encoding.utf8)!.count < Int(ZMClientMessage.byteSizeExternalThreshold) {
-//            text.append(text)
-//        }
-//        return text
-//    }
-//
-//    /// Asserts that the message metadata is as expected
-//    fileprivate func assertMessageMetadata(_ payload: Data!, file: StaticString = #file, line: UInt = #line) {
-//        let messageMetadata = Proteus_NewOtrMessage.with {
-//            try? $0.merge(serializedData: payload)
-//        }
-//
-//        XCTAssertEqual(messageMetadata.sender.client, self.selfClient1.clientId.client, file: file, line: line)
-//        assertRecipients(messageMetadata.recipients, file: file, line: line)
-//    }
-//
-//    /// Returns a string that is big enough to require external message payload
-//    fileprivate func textMessageRequiringExternalMessage(_ numberOfClients: UInt) -> String {
-//        var string = "Exponential growth!"
-//        while string.data(using: String.Encoding.utf8)!.count < Int(ZMClientMessage.byteSizeExternalThreshold / numberOfClients) {
-//            string += string
-//        }
-//        return string
-//    }
-// }
+ }
+
+ MARK: - Helper
+ extension ClientMessageTests_OTR_Legacy {
+
+    /// Returns a string large enough to have to be encoded in an external message
+    fileprivate var stringLargeEnoughToRequireExternal: String {
+        var text = "Hello"
+        while text.data(using: String.Encoding.utf8)!.count < Int(ZMClientMessage.byteSizeExternalThreshold) {
+            text.append(text)
+        }
+        return text
+    }
+
+    /// Asserts that the message metadata is as expected
+    fileprivate func assertMessageMetadata(_ payload: Data!, file: StaticString = #file, line: UInt = #line) {
+        let messageMetadata = Proteus_NewOtrMessage.with {
+            try? $0.merge(serializedData: payload)
+        }
+
+        XCTAssertEqual(messageMetadata.sender.client, self.selfClient1.clientId.client, file: file, line: line)
+        assertRecipients(messageMetadata.recipients, file: file, line: line)
+    }
+
+    /// Returns a string that is big enough to require external message payload
+    fileprivate func textMessageRequiringExternalMessage(_ numberOfClients: UInt) -> String {
+        var string = "Exponential growth!"
+        while string.data(using: String.Encoding.utf8)!.count < Int(ZMClientMessage.byteSizeExternalThreshold / numberOfClients) {
+            string += string
+        }
+        return string
+    }
+ }
