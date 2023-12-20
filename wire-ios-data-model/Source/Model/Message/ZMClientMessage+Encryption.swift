@@ -490,9 +490,11 @@ extension GenericMessage {
         }
 
         // Reset all failed sessions.
-        recipients.values
-            .flatMap { $0 }
-            .forEach { $0.failedToEstablishSession = false }
+        await context.perform {
+            recipients.values
+                .flatMap { $0 }
+                .forEach { $0.failedToEstablishSession = false }
+        }
 
         return messageData
     }
