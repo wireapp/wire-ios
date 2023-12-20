@@ -22,42 +22,35 @@ import WireTesting
 
 class ZMMessageTests_Legalhold: BaseZMClientMessageTests {
 
-//    func testThatItUpdatesLegalHoldStatusFlag_WhenLegalHoldIsEnabled() throws {
-//        // given
-//        let conversation = createConversation(in: uiMOC)
-//        let message = createClientTextMessage()!
-//        conversation.append(message)
-//        var genericMessage = try XCTUnwrap(message.underlyingMessage)
-//
-//        genericMessage.setLegalHoldStatus(.disabled)
-//        try message.setUnderlyingMessage(genericMessage)
-//        conversation.legalHoldStatus = .enabled
-//
-//        // when
-//        performPretendingUiMocIsSyncMoc {
-//            _ = message.encryptForTransport()
-//        }
-//
-//        // then
-//        XCTAssertEqual(message.underlyingMessage?.text.legalHoldStatus, .enabled)
-//    }
-//
-//    func testThatItUpdatesLegalHoldStatusFlag_WhenLegalHoldIsDisabled() throws {
-//        // given
-//        let conversation = createConversation(in: uiMOC)
-//        let message = createClientTextMessage()!
-//        conversation.append(message)
-//        var genericMessage = try XCTUnwrap(message.underlyingMessage)
-//        genericMessage.setLegalHoldStatus(.enabled)
-//        try message.setUnderlyingMessage(genericMessage)
-//        conversation.legalHoldStatus = .disabled
-//
-//        // when
-//        performPretendingUiMocIsSyncMoc {
-//            _ = message.encryptForTransport()
-//        }
-//
-//        // then
-//        XCTAssertEqual(message.underlyingMessage?.text.legalHoldStatus, .disabled)
-//    }
+    func testThatItUpdatesLegalHoldStatusFlag_WhenLegalHoldIsEnabled() async throws {
+        try await internalTestThatItUpdatesLegalHoldStatusFlag_WhenLegalHold(enabled: true)
+    }
+
+    func testThatItUpdatesLegalHoldStatusFlag_WhenLegalHoldIsDisabled() async throws {
+        try await internalTestThatItUpdatesLegalHoldStatusFlag_WhenLegalHold(enabled: false)
+    }
+
+    func internalTestThatItUpdatesLegalHoldStatusFlag_WhenLegalHold(enabled: Bool) async throws {
+        // given
+        let message = try await syncMOC.perform { [self] in
+            let conversation = createConversation(in: syncMOC)
+            let message = try XCTUnwrap(createClientTextMessage(in: syncMOC))
+            conversation.append(message)
+            var genericMessage = try XCTUnwrap(message.underlyingMessage)
+
+            genericMessage.setLegalHoldStatus(enabled ? .disabled : .enabled)
+            try message.setUnderlyingMessage(genericMessage)
+            conversation.legalHoldStatus = enabled ? .enabled : .disabled
+            return message
+        }
+
+        // when
+         _ = await message.encryptForTransport()
+
+        // then
+        await syncMOC.perform {
+            XCTAssertEqual(message.underlyingMessage?.text.legalHoldStatus, enabled ? .enabled : .disabled)
+        }
+
+    }
 }
