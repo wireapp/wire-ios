@@ -45,11 +45,15 @@ extension CoreDataMessagingMigratorError: LocalizedError {
         case .unknownVersion:
             return "unknownVersion"
         case .migrateStoreFailed(let error):
-            return "migrateStoreFailed: \(error.localizedDescription)"
+            let nsError = error as NSError
+            return "migrateStoreFailed: \(error.localizedDescription). "
+            + "NSError code: \(nsError.code) --- domain \(nsError.domain) --- userInfo: \(dump(nsError.userInfo))."
         case .failedToForceWALCheckpointing:
             return "failedToForceWALCheckpointing"
         case .failedToReplacePersistentStore(let sourceURL, let targetURL, let underlyingError):
-            return "failedToReplacePersistentStore: \(underlyingError.localizedDescription). sourceURL: \(sourceURL). targetURL: \(targetURL)"
+            let nsError = underlyingError as NSError
+            return "failedToReplacePersistentStore: \(underlyingError.localizedDescription). sourceURL: \(sourceURL). targetURL: \(targetURL). "
+            + "NSError code: \(nsError.code) --- domain \(nsError.domain) --- userInfo: \(dump(nsError.userInfo))"
         case .failedToDestroyPersistentStore(let storeURL):
             return "failedToDestroyPersistentStore: \(storeURL)"
         }
@@ -58,6 +62,7 @@ extension CoreDataMessagingMigratorError: LocalizedError {
 
 final class CoreDataMessagingMigrator: CoreDataMessagingMigratorProtocol {
 
+    private let zmLog = ZMSLog(tag: "core-data")
     private let isInMemoryStore: Bool
 
     @available(iOS 15.0, *)
@@ -82,12 +87,19 @@ final class CoreDataMessagingMigrator: CoreDataMessagingMigratorProtocol {
     }
 
     func migrateStore(at storeURL: URL, toVersion version: CoreDataMessagingMigrationVersion) throws {
+        zmLog.safePublic(
+            "migrateStore at: \(SanitizedString(stringLiteral: storeURL.absoluteString)) to version: \(SanitizedString(stringLiteral: version.rawValue))",
+            level: .info
+        )
+
         try forceWALCheckpointingForStore(at: storeURL)
 
         var currentURL = storeURL
 
         for migrationStep in try migrationStepsForStore(at: storeURL, to: version) {
-            WireLogger.localStorage.info("messaging core data store migration step \(migrationStep.sourceVersion) to \(migrationStep.destinationVersion)")
+            let logMessage = "messaging core data store migration step \(migrationStep.sourceVersion) to \(migrationStep.destinationVersion)"
+            zmLog.safePublic(SanitizedString(stringLiteral: logMessage), level: .info)
+            WireLogger.localStorage.info(logMessage)
 
             let manager = NSMigrationManager(sourceModel: migrationStep.sourceModel, destinationModel: migrationStep.destinationModel)
             let destinationURL = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true).appendingPathComponent(UUID().uuidString)
@@ -112,7 +124,7 @@ final class CoreDataMessagingMigrator: CoreDataMessagingMigratorProtocol {
                         destinationOptions: nil
                     )
                 }
-            } catch let error {
+            } catch {
                 throw CoreDataMessagingMigratorError.migrateStoreFailed(error: error)
             }
 
@@ -122,6 +134,8 @@ final class CoreDataMessagingMigrator: CoreDataMessagingMigratorProtocol {
             }
 
             currentURL = destinationURL
+
+            zmLog.safePublic("finish migration step", level: .info)
         }
 
         try replaceStore(at: storeURL, withStoreAt: currentURL)
@@ -172,8 +186,11 @@ final class CoreDataMessagingMigrator: CoreDataMessagingMigratorProtocol {
             let versionURL = version.managedObjectModelURL(),
             let model = NSManagedObjectModel(contentsOf: versionURL)
         else {
+            zmLog.safePublic("skip WAL checkpointing for store", level: .info)
             return
         }
+
+        zmLog.safePublic("force WAL checkpointing for store", level: .info)
 
         do {
             let persistentStoreCoordinator = NSPersistentStoreCoordinator(managedObjectModel: model)
@@ -192,6 +209,7 @@ final class CoreDataMessagingMigrator: CoreDataMessagingMigratorProtocol {
                 )
             }
             try persistentStoreCoordinator.remove(store)
+            zmLog.safePublic("finish WAL checkpointing for store", level: .info)
         } catch {
             throw CoreDataMessagingMigratorError.failedToForceWALCheckpointing
         }
@@ -224,6 +242,10 @@ final class CoreDataMessagingMigrator: CoreDataMessagingMigratorProtocol {
     // MARK: - NSPersistentStoreCoordinator File Managing
 
     private func replaceStore(at targetURL: URL, withStoreAt sourceURL: URL) throws {
+        zmLog.safePublic(
+            "replace store at target url: \(SanitizedString(stringLiteral: targetURL.absoluteString))",
+            level: .info
+        )
         do {
             let persistentStoreCoordinator = NSPersistentStoreCoordinator(managedObjectModel: NSManagedObjectModel())
             try persistentStoreCoordinator.replacePersistentStore(
@@ -239,6 +261,11 @@ final class CoreDataMessagingMigrator: CoreDataMessagingMigratorProtocol {
     }
 
     private func destroyStore(at storeURL: URL) throws {
+        zmLog.safePublic(
+            "destroy store of at: \(SanitizedString(stringLiteral: storeURL.absoluteString))",
+            level: .info
+        )
+
         do {
             let persistentStoreCoordinator = NSPersistentStoreCoordinator(managedObjectModel: NSManagedObjectModel())
             try persistentStoreCoordinator.destroyPersistentStore(at: storeURL, ofType: storeType, options: nil)

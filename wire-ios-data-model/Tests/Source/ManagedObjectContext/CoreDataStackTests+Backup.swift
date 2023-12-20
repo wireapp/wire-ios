@@ -49,7 +49,7 @@ class CoreDataStackTests_Backup: DatabaseBaseTest {
         var result: Result<URL>?
         CoreDataStack.backupLocalStorage(accountIdentifier: accountIdentifier,
                                          clientIdentifier: name,
-                                         applicationContainer: applicationContainer,
+                                         applicationContainer: DatabaseBaseTest.applicationContainer,
                                          dispatchGroup: self.dispatchGroup,
                                          databaseKey: databaseKey) {
             result = $0.map { $0.url }
@@ -70,7 +70,7 @@ class CoreDataStackTests_Backup: DatabaseBaseTest {
         CoreDataStack.importLocalStorage(
             accountIdentifier: accountIdentifier,
             from: backup,
-            applicationContainer: applicationContainer,
+            applicationContainer: DatabaseBaseTest.applicationContainer,
             dispatchGroup: dispatchGroup,
             messagingMigrator: migrator
         ) {
@@ -329,7 +329,7 @@ class CoreDataStackTests_Backup: DatabaseBaseTest {
     func testThatItFailsWhenImportingNonExistantBackup() {
         // given
         let uuid = UUID()
-        let backup = applicationContainer.appendingPathComponent("non-existing-backup")
+        let backup = DatabaseBaseTest.applicationContainer.appendingPathComponent("non-existing-backup")
 
         // when
         guard let result = importBackup(
