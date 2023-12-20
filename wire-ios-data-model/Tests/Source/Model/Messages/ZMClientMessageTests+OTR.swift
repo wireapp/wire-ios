@@ -21,6 +21,9 @@ import XCTest
 @testable import WireDataModel
 @testable import WireDataModelSupport
 
+// TODO: this class is the same tests as ClientMessageTests_OTR_legacy but with proteusViaCoreCrypto true
+// + mockProteusService setup
+// as a cleanup we should remove the duplication and refactor this - WPB-5980
 final class ClientMessageTests_OTR: BaseZMClientMessageTests {
 
     var mockProteusService: MockProteusServiceInterface!
@@ -31,6 +34,10 @@ final class ClientMessageTests_OTR: BaseZMClientMessageTests {
         mockProteusService = MockProteusServiceInterface()
 
         // Mock
+        setupMockProteusService()
+    }
+
+    private func setupMockProteusService() {
         self.mockProteusService.establishSessionIdFromPrekey_MockMethod = { _, _ in
             // No op
         }
