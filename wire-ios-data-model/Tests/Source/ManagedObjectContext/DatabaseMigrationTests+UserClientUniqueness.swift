@@ -39,8 +39,22 @@ final class DatabaseMigrationTests_UserClientUniqueness: DatabaseBaseTest {
         try versions.forEach { initialVersion in
             try migrateStoreToCurrentVersion(
                 sourceVersion: initialVersion,
-                preMigrationAction: insertDuplicates,
-                postMigrationAction: assertDuplicatesResolved
+                preMigrationAction: { context in
+                    try insertDuplicateClients(with: clientID, in: context)
+                    let clients = try fetchClients(with: clientID, in: context)
+                    XCTAssertEqual(clients.count, 2)
+                },
+                postMigrationAction: { context in
+                    // verify it deleted duplicates
+                    var clients = try fetchClients(with: clientID, in: context)
+                    XCTAssertEqual(clients.count, 1)
+
+                    // verify we can't insert duplicates
+                    context.mergePolicy = NSMergePolicy.mergeByPropertyObjectTrump
+                    try insertDuplicateClients(with: clientID, in: context)
+                    clients = try fetchClients(with: clientID, in: context)
+                    XCTAssertEqual(clients.count, 1)
+                }
             )
             // clean after each test
             self.clearStorageFolder()
@@ -55,30 +69,23 @@ final class DatabaseMigrationTests_UserClientUniqueness: DatabaseBaseTest {
             sourceVersion: "2.106.0",
             destinationVersion: "2.107.0",
             mappingModel: mappingModel,
-            preMigrationAction: insertDuplicates,
-            postMigrationAction: assertDuplicatesResolved
+            preMigrationAction: { context in
+                try insertDuplicateClients(with: clientID, in: context)
+                let clients = try fetchClients(with: clientID, in: context)
+                XCTAssertEqual(clients.count, 2)
+            },
+            postMigrationAction: { context in
+                // verify it deleted duplicates
+                var clients = try fetchClients(with: clientID, in: context)
+                XCTAssertEqual(clients.count, 1)
+
+                // verify we can't insert duplicates
+                context.mergePolicy = NSMergePolicy.mergeByPropertyObjectTrump
+                try insertDuplicateClients(with: clientID, in: context)
+                clients = try fetchClients(with: clientID, in: context)
+                XCTAssertEqual(clients.count, 1)
+            }
         )
-    }
-
-    private func insertDuplicates(in context: NSManagedObjectContext) throws {
-        // insert some duplicates
-        try insertDuplicateClients(with: clientID, in: context)
-        let clients = try fetchClients(with: clientID, in: context)
-        XCTAssertEqual(clients.count, 2)
-    }
-
-    private func assertDuplicatesResolved(in context: NSManagedObjectContext) throws {
-        var clients: [UserClient]
-
-        // verify it deleted duplicates
-        clients = try fetchClients(with: clientID, in: context)
-        XCTAssertEqual(clients.count, 1)
-
-        // verify we can't insert duplicates
-        context.mergePolicy = NSMergePolicy.mergeByPropertyObjectTrump
-        try insertDuplicateClients(with: clientID, in: context)
-        clients = try fetchClients(with: clientID, in: context)
-        XCTAssertEqual(clients.count, 1)
     }
 
     // MARK: - Migration Helpers
@@ -141,7 +148,9 @@ final class DatabaseMigrationTests_UserClientUniqueness: DatabaseBaseTest {
         let destinationModel = try createObjectModel(version: destinationVersion)
 
         // create container for initial version
-        let container = try createStore(version: sourceVersion, model: sourceModel)
+        let sourceStoreURL = storeURL(version: sourceVersion)
+        let destinationStoreURL = storeURL(version: destinationVersion)
+        let container = try createStore(model: sourceModel, at: sourceStoreURL)
 
         // perform pre-migration action
         try preMigrationAction(container.viewContext)
@@ -161,7 +170,7 @@ final class DatabaseMigrationTests_UserClientUniqueness: DatabaseBaseTest {
                 sourceType: NSSQLiteStoreType,
                 options: nil,
                 with: mappingModel,
-                toDestinationURL: storeURL(version: destinationVersion),
+                toDestinationURL: destinationStoreURL,
                 destinationType: NSSQLiteStoreType,
                 destinationOptions: nil
             )
@@ -172,7 +181,7 @@ final class DatabaseMigrationTests_UserClientUniqueness: DatabaseBaseTest {
         // THEN
 
         // create store
-        let migratedContainer = try createStore(version: destinationVersion, model: destinationModel)
+        let migratedContainer = try createStore(model: destinationModel, at: destinationStoreURL)
 
         // perform post migration action
         try postMigrationAction(migratedContainer.viewContext)
@@ -199,12 +208,6 @@ final class DatabaseMigrationTests_UserClientUniqueness: DatabaseBaseTest {
 
         // Create the versioned model from the url
         return try XCTUnwrap(NSManagedObjectModel(contentsOf: modelVersionURL))
-    }
-
-    private func createStore(version: String, model: NSManagedObjectModel) throws -> NSPersistentContainer {
-        let storeURL = storeURL(version: version)
-
-       return try createStore(model: model, at: storeURL)
     }
 
     private func createStore(model: NSManagedObjectModel, at storeURL: URL) throws -> NSPersistentContainer {
