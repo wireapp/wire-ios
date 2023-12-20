@@ -173,7 +173,7 @@ class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
         )
 
         // Assert the users has been synced
-        XCTAssertEqual(invocation.qualifiedIDs, qualifiedIDs)
+        XCTAssertEqual(Set(invocation.qualifiedIDs), Set(qualifiedIDs))
     }
 
     func test_ItJoinsMLSGroup_IfGroupDoesntExist() async throws {
