@@ -882,7 +882,7 @@ extension GenericMessage {
 
 public protocol MLSEncryptedPayloadGenerator {
 
-    typealias EncryptionFunction = (Data) throws -> Data
+    typealias EncryptionFunction = (Data) async throws -> Data
 
     /// Encrypts data via MLS for sending to the backend.
     ///
@@ -895,7 +895,7 @@ public protocol MLSEncryptedPayloadGenerator {
     /// - Throws: An `MLSEncryptedPayloadGeneratorError` or any error thrown from
     ///   the `encrypt` function.
 
-    func encryptForTransport(using encrypt: EncryptionFunction) throws -> Data
+    func encryptForTransport(using encrypt: EncryptionFunction) async throws -> Data
 
 }
 
@@ -908,7 +908,7 @@ public enum MLSEncryptedPayloadGeneratorError: Error {
 
 extension ZMClientMessage: MLSEncryptedPayloadGenerator {
 
-    public func encryptForTransport(using encrypt: EncryptionFunction) throws -> Data {
+    public func encryptForTransport(using encrypt: EncryptionFunction) async throws -> Data {
         guard let context = managedObjectContext else {
             throw MLSEncryptedPayloadGeneratorError.noContext
         }
@@ -919,14 +919,14 @@ extension ZMClientMessage: MLSEncryptedPayloadGenerator {
             throw MLSEncryptedPayloadGeneratorError.noUnencryptedData
         }
 
-        return try genericMessage.encryptForTransport(using: encrypt)
+        return try await genericMessage.encryptForTransport(using: encrypt)
     }
 
 }
 
 extension ZMAssetClientMessage: MLSEncryptedPayloadGenerator {
 
-    public func encryptForTransport(using encrypt: EncryptionFunction) throws -> Data {
+    public func encryptForTransport(using encrypt: EncryptionFunction) async throws -> Data {
         guard let context = managedObjectContext else {
             throw MLSEncryptedPayloadGeneratorError.noContext
         }
@@ -937,16 +937,16 @@ extension ZMAssetClientMessage: MLSEncryptedPayloadGenerator {
             throw MLSEncryptedPayloadGeneratorError.noUnencryptedData
         }
 
-        return try genericMessage.encryptForTransport(using: encrypt)
+        return try await genericMessage.encryptForTransport(using: encrypt)
     }
 
 }
 
 extension GenericMessage: MLSEncryptedPayloadGenerator {
 
-    public func encryptForTransport(using encrypt: MLSEncryptedPayloadGenerator.EncryptionFunction) throws -> Data {
+    public func encryptForTransport(using encrypt: MLSEncryptedPayloadGenerator.EncryptionFunction) async throws -> Data {
         let unencryptedData = try unencryptedData()
-        return try encrypt(unencryptedData)
+        return try await encrypt(unencryptedData)
     }
 
     private func unencryptedData() throws -> Data {
