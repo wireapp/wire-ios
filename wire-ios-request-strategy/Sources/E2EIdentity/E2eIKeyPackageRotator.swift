@@ -46,6 +46,7 @@ public class E2eIKeyPackageRotator: E2eIKeyPackageRotating {
     private let conversationEventProcessor: ConversationEventProcessorProtocol
     private let context: NSManagedObjectContext
     private let commitSender: CommitSending
+    private let newKeyPackageCount: UInt32 = 100
 
     private var coreCrypto: SafeCoreCryptoProtocol {
         get throws {
@@ -88,7 +89,7 @@ public class E2eIKeyPackageRotator: E2eIKeyPackageRotating {
             try await $0.e2eiRotateAll(
                 enrollment: identity,
                 certificateChain: certificateChain,
-                newKeyPackageCount: 100
+                newKeyPackageCount: newKeyPackageCount
             )
         }
 

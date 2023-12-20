@@ -35,7 +35,7 @@ public class ReplaceSelfMLSKeyPackagesAction: EntityAction {
         public var errorDescription: String? {
             switch self {
             case .endpointUnavailable:
-                return "End point not available"
+                return "Endpoint not available"
             case .invalidParameters:
                 return "Invalid client ID or key packages"
             case .invalidBodyOrCiphersuites:
