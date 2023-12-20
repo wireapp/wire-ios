@@ -139,9 +139,7 @@
     }
 }
 
-@end
-
-@implementation ConversationTests (DisplayName)
+// MARK: - DisplayName
 
 - (void)testThatReceivingAPushEventForNameChangeChangesTheConversationName
 {
@@ -315,10 +313,7 @@
 }
 
 
-@end
-
-#pragma mark - Conversation list
-@implementation ConversationTests (ConversationStatusAndOrder)
+// MARK: - Conversation list
 
 - (void)testThatAConversationListListenerOnlyReceivesNotificationsForTheSpecificListItSignedUpFor
 {
