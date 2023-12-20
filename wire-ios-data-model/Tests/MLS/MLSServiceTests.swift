@@ -302,22 +302,26 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     func test_Decrypt_RepairsConversationOnWrongEpochError() async throws {
         // Given
-        let conversation = createConversation(outOfSync: true).conversation
-        let groupID = try XCTUnwrap(conversation.mlsGroupID)
+        let conversation = await uiMOC.perform { self.createConversation(outOfSync: true).conversation }
+        guard let groupID = await uiMOC.perform({ conversation.mlsGroupID }) else {
+            XCTFail("no groupId")
+            return
+        }
         let message = "foo"
         let error = MLSDecryptionService.MLSMessageDecryptionError.wrongEpoch
         mockDecryptionService.decryptMessageForSubconversationType_MockError = error
 
         let expectation = XCTestExpectation(description: "repaired conversation")
-
-        setMocksForConversationRepair(
-            parentGroupID: groupID,
-            epoch: conversation.epoch + 1,
-            onJoinGroup: { joinedGroupID in
-                XCTAssertEqual(groupID, joinedGroupID)
-                expectation.fulfill()
-            }
-        )
+        await uiMOC.perform {
+            self.setMocksForConversationRepair(
+                parentGroupID: groupID,
+                epoch: conversation.epoch + 1,
+                onJoinGroup: { joinedGroupID in
+                    XCTAssertEqual(groupID, joinedGroupID)
+                    expectation.fulfill()
+                }
+            )
+        }
 
         // When
         _ = try? await sut.decrypt(
