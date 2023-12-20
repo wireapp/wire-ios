@@ -856,21 +856,21 @@ public final class MLSService: MLSServiceInterface {
     public func repairOutOfSyncConversations() async {
         guard let context = self.context else { return }
 
-        let outOfSync = await outOfSyncConversations(in: context)
+        let outOfSyncConversationInfos = await outOfSyncConversations(in: context)
 
-        logger.info("found \(outOfSync.count) conversations out of sync")
+        logger.info("found \(outOfSyncConversationInfos.count) conversations out of sync")
 
-        await outOfSync.asyncForEach { info in
+        for conversationInfo in outOfSyncConversationInfos {
 
-            await launchGroupRepairTaskIfNotInProgress(for: info.mlsGroupId) {
+            await launchGroupRepairTaskIfNotInProgress(for: conversationInfo.mlsGroupId) {
                 do {
                     try await self.joinGroupAndAppendGapSystemMessage(
-                        groupID: info.mlsGroupId,
-                        conversation: info.conversation,
+                        groupID: conversationInfo.mlsGroupId,
+                        conversation: conversationInfo.conversation,
                         context: context
                     )
                 } catch {
-                    self.logger.warn("failed to repair out of sync conversation (\(info.mlsGroupId.safeForLoggingDescription)). error: \(String(describing: error))")
+                    self.logger.warn("failed to repair out of sync conversation (\(conversationInfo.mlsGroupId.safeForLoggingDescription)). error: \(String(reflecting: error))")
                 }
             }
         }
