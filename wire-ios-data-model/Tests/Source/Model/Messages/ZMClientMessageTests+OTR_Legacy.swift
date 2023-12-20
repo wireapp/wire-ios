@@ -428,7 +428,9 @@ extension ClientMessageTests_OTR_Legacy {
 
         // When
         let result = await confirmationMessage.encryptForTransport()
-        XCTAssertNotNil(result)
+        await syncMOC.perform {
+            XCTAssertNotNil(result)
+        }
     }
 
     func testThatItCreatesPayloadForConfimationMessageWhenOriginalHasNoSenderButInferSenderWithConnection() async throws {
@@ -461,7 +463,9 @@ extension ClientMessageTests_OTR_Legacy {
 
         // When
         let result = await confirmationMessage.encryptForTransport()
-        XCTAssertNotNil(result)
+        await syncMOC.perform {
+            XCTAssertNotNil(result)
+        }
     }
 
     func testThatItCreatesPayloadForConfimationMessageWhenOriginalHasNoSenderAndConnectionButInferSenderOtherActiveParticipants() async throws {
@@ -489,7 +493,9 @@ extension ClientMessageTests_OTR_Legacy {
 
         // When
         let result = await confirmationMessage.encryptForTransport()
-        XCTAssertNotNil(result)
+        await syncMOC.perform {
+            XCTAssertNotNil(result)
+        }
     }
 }
 

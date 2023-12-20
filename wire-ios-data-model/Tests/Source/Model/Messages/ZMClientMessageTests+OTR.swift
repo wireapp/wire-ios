@@ -471,7 +471,9 @@ final class ClientMessageTests_OTR: BaseZMClientMessageTests {
 
         // When
         let result = await confirmationMessage.encryptForTransport()
-        XCTAssertNotNil(result)
+        await syncMOC.perform {
+            XCTAssertNotNil(result)
+        }
     }
 
     func testThatItCreatesPayloadForConfimationMessageWhenOriginalHasNoSenderButInferSenderWithConnection() async throws {
@@ -504,7 +506,9 @@ final class ClientMessageTests_OTR: BaseZMClientMessageTests {
 
         // When
         let result = await confirmationMessage.encryptForTransport()
-        XCTAssertNotNil(result)
+        await syncMOC.perform {
+            XCTAssertNotNil(result)
+        }
     }
 
     func testThatItCreatesPayloadForConfimationMessageWhenOriginalHasNoSenderAndConnectionButInferSenderOtherActiveParticipants() async throws {
@@ -532,7 +536,9 @@ final class ClientMessageTests_OTR: BaseZMClientMessageTests {
 
         // When
         let result = await confirmationMessage.encryptForTransport()
-        XCTAssertNotNil(result)
+        await syncMOC.perform {
+            XCTAssertNotNil(result)
+        }
     }
 
     // MARK: - Session identifier
