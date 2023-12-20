@@ -97,7 +97,6 @@ public protocol MLSServiceDelegate: AnyObject {
 
     func mlsServiceDidCommitPendingProposal(for groupID: MLSGroupID)
     func mlsServiceDidUpdateKeyMaterialForAllGroups()
-    func MLSServiceDidFinishInitialization()
 
 }
 
@@ -226,12 +225,6 @@ public final class MLSService: MLSServiceInterface {
         )
 
         schedulePeriodicKeyMaterialUpdateCheck()
-
-        // FIXME: [jacob] fetch on demand when creating group
-        Task {
-            await fetchBackendPublicKeys()
-            delegate?.MLSServiceDidFinishInitialization()
-        }
     }
 
     deinit {
@@ -426,6 +419,7 @@ public final class MLSService: MLSServiceInterface {
 
     public func createGroup(for groupID: MLSGroupID) async throws {
         logger.info("creating group for id: \(groupID.safeForLoggingDescription)")
+        await fetchBackendPublicKeys()
 
         do {
             let config = ConversationConfiguration(
