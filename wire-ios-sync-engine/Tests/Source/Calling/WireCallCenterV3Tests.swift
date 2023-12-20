@@ -868,7 +868,10 @@ class WireCallCenterV3Tests: MessagingTest {
         // So we can inform of new conference infos
         let conferenceInfoChangeSubject = PassthroughSubject<MLSConferenceInfo, Never>()
         mlsService.onConferenceInfoChangeParentGroupIDSubConversationGroupID_MockMethod = { _, _ in
-            return conferenceInfoChangeSubject.eraseToAnyPublisher()
+            var iterator = conferenceInfoChangeSubject.values.makeAsyncIterator()
+            return AsyncThrowingStream {
+                await iterator.next()
+            }
         }
 
         try checkThatItPostsNotification(
@@ -880,6 +883,8 @@ class WireCallCenterV3Tests: MessagingTest {
             try block()
         }
 
+        XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
+
         let didSetConferenceInfo2 = expectation(description: "didSetConferenceInfo2")
         mockAVSWrapper.mockSetMLSConferenceInfo = {
             XCTAssertEqual($0, self.groupConversation.avsIdentifier)
@@ -889,6 +894,8 @@ class WireCallCenterV3Tests: MessagingTest {
 
         // and when the conference info changes
         conferenceInfoChangeSubject.send(conferenceInfo2)
+
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then we set conference info 2 to avs (see expectations)
         XCTAssert(waitForCustomExpectations(withTimeout: 0.5))

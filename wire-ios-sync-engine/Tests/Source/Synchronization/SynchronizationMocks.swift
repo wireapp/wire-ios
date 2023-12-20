@@ -95,11 +95,11 @@ class ZMMockClientRegistrationStatus: ZMClientRegistrationStatus {
     var mockReadiness: Bool = true
 
     convenience init(managedObjectContext: NSManagedObjectContext) {
-        self.init(managedObjectContext: managedObjectContext, cookieStorage: nil, registrationStatusDelegate: nil)
+        self.init(managedObjectContext: managedObjectContext, cookieStorage: nil)
     }
 
-    override init!(managedObjectContext moc: NSManagedObjectContext!, cookieStorage: ZMPersistentCookieStorage!, registrationStatusDelegate: ZMClientRegistrationStatusDelegate!) {
-        super.init(managedObjectContext: moc, cookieStorage: cookieStorage, registrationStatusDelegate: registrationStatusDelegate)
+    override init!(managedObjectContext moc: NSManagedObjectContext!, cookieStorage: ZMPersistentCookieStorage!) {
+        super.init(managedObjectContext: moc, cookieStorage: cookieStorage)
         self.emailCredentials = ZMEmailCredentials(email: "bla@example.com", password: "secret")
     }
 
@@ -117,11 +117,21 @@ class ZMMockClientRegistrationStatus: ZMClientRegistrationStatus {
     override func clientIsReadyForRequests() -> Bool {
         return mockReadiness
     }
+
+    var isWaitingForLoginValue: Bool = false
+    override var isWaitingForLogin: Bool {
+        return isWaitingForLoginValue
+    }
+
+    var isAddingEmailNecessaryValue: Bool = false
+    override func isAddingEmailNecessary() -> Bool {
+        return isAddingEmailNecessaryValue
+    }
 }
 
 class ZMMockClientUpdateStatus: ClientUpdateStatus {
     var fetchedClients: [UserClient?] = []
-    var mockPhase: ClientUpdatePhase = .done
+    var mockPhase: ClientUpdatePhase?
     var deleteCallCount: Int = 0
     var fetchCallCount: Int = 0
     var mockCredentials: ZMEmailCredentials = ZMEmailCredentials(email: "bla@example.com", password: "secret")
@@ -140,7 +150,10 @@ class ZMMockClientUpdateStatus: ClientUpdateStatus {
     }
 
     override var currentPhase: ClientUpdatePhase {
-        return mockPhase
+        if let mockPhase {
+            return mockPhase
+        }
+        return super.currentPhase
     }
 }
 
@@ -159,50 +172,6 @@ class FakeCredentialProvider: NSObject, ZMCredentialProvider {
 }
 
 class FakeCookieStorage: ZMPersistentCookieStorage {
-}
-
-// used by tests to fake errors on genrating pre keys
-class SpyUserClientKeyStore: UserClientKeysStore {
-
-    var failToGeneratePreKeys: Bool = false
-    var failToGenerateLastPreKey: Bool = false
-
-    var lastGeneratedKeys: [(id: UInt16, prekey: String)] = []
-    var lastGeneratedLastPrekey: String?
-
-    override public func generateMoreKeys(_ count: UInt16, start: UInt16) throws -> [(id: UInt16, prekey: String)] {
-
-        if self.failToGeneratePreKeys {
-            let error = NSError(domain: "cryptobox.error", code: 0, userInfo: ["reason": "using fake store with simulated fail"])
-            throw error
-        } else {
-            let keys = try! super.generateMoreKeys(count, start: start)
-            lastGeneratedKeys = keys
-            return keys
-        }
-    }
-
-    override public func lastPreKey() throws -> String {
-        if self.failToGenerateLastPreKey {
-            let error = NSError(domain: "cryptobox.error", code: 0, userInfo: ["reason": "using fake store with simulated fail"])
-            throw error
-        } else {
-            lastGeneratedLastPrekey = try! super.lastPreKey()
-            return lastGeneratedLastPrekey!
-        }
-    }
-
-    var accessEncryptionContextCount = 0
-
-    override var encryptionContext: EncryptionContext {
-        get {
-            accessEncryptionContextCount += 1
-            return super.encryptionContext
-        }
-        set {
-            super.encryptionContext = newValue
-        }
-    }
 }
 
 public class MockSyncStatus: SyncStatus {
@@ -232,6 +201,7 @@ public class MockSyncStatus: SyncStatus {
 @objc public class MockSyncStateDelegate: NSObject, ZMSyncStateDelegate {
 
     var registeredUserClient: UserClient?
+    var registeredMLSClient: UserClient?
     @objc public var didCallStartSlowSync = false
     @objc public var didCallFinishSlowSync = false
     @objc public var didCallStartQuickSync = false
@@ -253,6 +223,10 @@ public class MockSyncStatus: SyncStatus {
 
     public func didFinishQuickSync() {
         didCallFinishQuickSync = true
+    }
+
+    public func didRegisterMLSClient(_ userClient: UserClient) {
+        registeredMLSClient = userClient
     }
 
     public func didRegisterSelfUserClient(_ userClient: UserClient) {
@@ -329,6 +303,17 @@ public class MockEventConsumer: NSObject, ZMEventConsumer {
         addTrackedObjectsCalled = true
     }
 
+}
+
+@objcMembers
+public class MockEventAsyncConsumer: NSObject, ZMEventAsyncConsumer {
+
+    public var eventsProcessed: [ZMUpdateEvent] = []
+    public var processEventsCalled: Bool = false
+    public func processEvents(_ events: [WireTransport.ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) async {
+        processEventsCalled = true
+        eventsProcessed.append(contentsOf: events)
+    }
 }
 
 @objcMembers

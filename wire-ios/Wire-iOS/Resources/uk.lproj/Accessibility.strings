@@ -83,6 +83,9 @@
 "conversationSearch.item.hint" = "Торкніться двічі, щоб відкрити";
 "conversationSearch.itemPlay.hint" = "Торкніться двічі, щоб відтворити";
 
+"conversation.scrollToBottomButton.description" = "Scroll to the bottom of the conversation";
+"conversation.scrollToBottomButton.hint" = "Tap to scroll to the bottom of the conversation";
+
 "audioRecord.stopButton.description" = "Зупинити запис";
 "audioRecord.startButton.description" = "Розпочати запис";
 "audioRecord.startButton.hint" = "Торкніться двічі, щоб почати запис";

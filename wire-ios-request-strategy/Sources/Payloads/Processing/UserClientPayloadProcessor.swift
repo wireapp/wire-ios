@@ -24,25 +24,31 @@ final class UserClientPayloadProcessor {
         from payloads: [Payload.UserClient],
         for user: ZMUser,
         selfClient: UserClient
-    ) {
-        let clients = payloads.map {
-            createOrUpdateClient(
-                from: $0,
-                for: user
-            )
+    ) async {
+        guard let context = user.managedObjectContext else { return }
+
+        let (clients, deletedClients) = await context.perform {
+            let clients = payloads.map {
+                self.createOrUpdateClient(
+                    from: $0,
+                    for: user
+                )
+            }
+            let deletedClients = user.clients.subtracting(clients)
+            return (clients, deletedClients)
         }
 
         // Remove clients that have not been included in the response
-        let deletedClients = user.clients.subtracting(clients)
-        deletedClients.forEach {
-            $0.deleteClientAndEndSession()
+        for deletedClient in deletedClients {
+            await deletedClient.deleteClientAndEndSession()
         }
 
-        // Mark new clients as missed and ignore them
-        let newClients = Set(clients.filter({ $0.isInserted || !$0.hasSessionWithSelfClient }))
-        selfClient.missesClients(newClients)
-        selfClient.addNewClientsToIgnored(newClients)
-        selfClient.updateSecurityLevelAfterDiscovering(newClients)
+        // Mark new clients as ignored
+        await context.perform {
+            let newClients = Set(clients.filter({ $0.isInserted }))
+            selfClient.addNewClientsToIgnored(newClients)
+            selfClient.updateSecurityLevelAfterDiscovering(newClients)
+        }
     }
 
     func createOrUpdateClient(

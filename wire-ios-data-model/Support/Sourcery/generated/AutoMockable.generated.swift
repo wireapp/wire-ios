@@ -33,6 +33,7 @@ import AppKit
 
 import LocalAuthentication
 import Combine
+import WireCoreCrypto
 
 @testable import WireDataModel
 
@@ -55,6 +56,150 @@ import Combine
 
 
 
+
+public class MockCommitSending: CommitSending {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - sendCommitBundle
+
+    public var sendCommitBundleFor_Invocations: [(bundle: CommitBundle, groupID: MLSGroupID)] = []
+    public var sendCommitBundleFor_MockError: Error?
+    public var sendCommitBundleFor_MockMethod: ((CommitBundle, MLSGroupID) async throws -> [ZMUpdateEvent])?
+    public var sendCommitBundleFor_MockValue: [ZMUpdateEvent]?
+
+    public func sendCommitBundle(_ bundle: CommitBundle, for groupID: MLSGroupID) async throws -> [ZMUpdateEvent] {
+        sendCommitBundleFor_Invocations.append((bundle: bundle, groupID: groupID))
+
+        if let error = sendCommitBundleFor_MockError {
+            throw error
+        }
+
+        if let mock = sendCommitBundleFor_MockMethod {
+            return try await mock(bundle, groupID)
+        } else if let mock = sendCommitBundleFor_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `sendCommitBundleFor`")
+        }
+    }
+
+    // MARK: - sendExternalCommitBundle
+
+    public var sendExternalCommitBundleFor_Invocations: [(bundle: CommitBundle, groupID: MLSGroupID)] = []
+    public var sendExternalCommitBundleFor_MockError: Error?
+    public var sendExternalCommitBundleFor_MockMethod: ((CommitBundle, MLSGroupID) async throws -> [ZMUpdateEvent])?
+    public var sendExternalCommitBundleFor_MockValue: [ZMUpdateEvent]?
+
+    public func sendExternalCommitBundle(_ bundle: CommitBundle, for groupID: MLSGroupID) async throws -> [ZMUpdateEvent] {
+        sendExternalCommitBundleFor_Invocations.append((bundle: bundle, groupID: groupID))
+
+        if let error = sendExternalCommitBundleFor_MockError {
+            throw error
+        }
+
+        if let mock = sendExternalCommitBundleFor_MockMethod {
+            return try await mock(bundle, groupID)
+        } else if let mock = sendExternalCommitBundleFor_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `sendExternalCommitBundleFor`")
+        }
+    }
+
+    // MARK: - onEpochChanged
+
+    public var onEpochChanged_Invocations: [Void] = []
+    public var onEpochChanged_MockMethod: (() -> AnyPublisher<MLSGroupID, Never>)?
+    public var onEpochChanged_MockValue: AnyPublisher<MLSGroupID, Never>?
+
+    public func onEpochChanged() -> AnyPublisher<MLSGroupID, Never> {
+        onEpochChanged_Invocations.append(())
+
+        if let mock = onEpochChanged_MockMethod {
+            return mock()
+        } else if let mock = onEpochChanged_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `onEpochChanged`")
+        }
+    }
+
+}
+
+public class MockConversationEventProcessorProtocol: ConversationEventProcessorProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - processConversationEvents
+
+    public var processConversationEvents_Invocations: [[ZMUpdateEvent]] = []
+    public var processConversationEvents_MockMethod: (([ZMUpdateEvent]) async -> Void)?
+
+    public func processConversationEvents(_ events: [ZMUpdateEvent]) async {
+        processConversationEvents_Invocations.append(events)
+
+        guard let mock = processConversationEvents_MockMethod else {
+            fatalError("no mock for `processConversationEvents`")
+        }
+
+        await mock(events)
+    }
+
+    // MARK: - processPayload
+
+    public var processPayload_Invocations: [ZMTransportData] = []
+    public var processPayload_MockMethod: ((ZMTransportData) -> Void)?
+
+    public func processPayload(_ payload: ZMTransportData) {
+        processPayload_Invocations.append(payload)
+
+        guard let mock = processPayload_MockMethod else {
+            fatalError("no mock for `processPayload`")
+        }
+
+        mock(payload)
+    }
+
+}
+
+public class MockCoreCryptoProviderProtocol: CoreCryptoProviderProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - coreCrypto
+
+    public var coreCryptoRequireMLS_Invocations: [Bool] = []
+    public var coreCryptoRequireMLS_MockError: Error?
+    public var coreCryptoRequireMLS_MockMethod: ((Bool) throws -> SafeCoreCryptoProtocol)?
+    public var coreCryptoRequireMLS_MockValue: SafeCoreCryptoProtocol?
+
+    public func coreCrypto(requireMLS: Bool) throws -> SafeCoreCryptoProtocol {
+        coreCryptoRequireMLS_Invocations.append(requireMLS)
+
+        if let error = coreCryptoRequireMLS_MockError {
+            throw error
+        }
+
+        if let mock = coreCryptoRequireMLS_MockMethod {
+            return try mock(requireMLS)
+        } else if let mock = coreCryptoRequireMLS_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `coreCryptoRequireMLS`")
+        }
+    }
+
+}
 
 class MockCoreDataMessagingMigratorProtocol: CoreDataMessagingMigratorProtocol {
 
@@ -129,42 +274,22 @@ public class MockCryptoboxMigrationManagerInterface: CryptoboxMigrationManagerIn
 
     // MARK: - performMigration
 
-    public var performMigrationAccountDirectorySyncContext_Invocations: [(accountDirectory: URL, syncContext: NSManagedObjectContext)] = []
-    public var performMigrationAccountDirectorySyncContext_MockError: Error?
-    public var performMigrationAccountDirectorySyncContext_MockMethod: ((URL, NSManagedObjectContext) throws -> Void)?
+    public var performMigrationAccountDirectoryCoreCrypto_Invocations: [(accountDirectory: URL, coreCrypto: SafeCoreCryptoProtocol)] = []
+    public var performMigrationAccountDirectoryCoreCrypto_MockError: Error?
+    public var performMigrationAccountDirectoryCoreCrypto_MockMethod: ((URL, SafeCoreCryptoProtocol) throws -> Void)?
 
-    public func performMigration(accountDirectory: URL, syncContext: NSManagedObjectContext) throws {
-        performMigrationAccountDirectorySyncContext_Invocations.append((accountDirectory: accountDirectory, syncContext: syncContext))
+    public func performMigration(accountDirectory: URL, coreCrypto: SafeCoreCryptoProtocol) throws {
+        performMigrationAccountDirectoryCoreCrypto_Invocations.append((accountDirectory: accountDirectory, coreCrypto: coreCrypto))
 
-        if let error = performMigrationAccountDirectorySyncContext_MockError {
+        if let error = performMigrationAccountDirectoryCoreCrypto_MockError {
             throw error
         }
 
-        guard let mock = performMigrationAccountDirectorySyncContext_MockMethod else {
-            fatalError("no mock for `performMigrationAccountDirectorySyncContext`")
+        guard let mock = performMigrationAccountDirectoryCoreCrypto_MockMethod else {
+            fatalError("no mock for `performMigrationAccountDirectoryCoreCrypto`")
         }
 
-        try mock(accountDirectory, syncContext)
-    }
-
-    // MARK: - completeMigration
-
-    public var completeMigrationSyncContext_Invocations: [NSManagedObjectContext] = []
-    public var completeMigrationSyncContext_MockError: Error?
-    public var completeMigrationSyncContext_MockMethod: ((NSManagedObjectContext) throws -> Void)?
-
-    public func completeMigration(syncContext: NSManagedObjectContext) throws {
-        completeMigrationSyncContext_Invocations.append(syncContext)
-
-        if let error = completeMigrationSyncContext_MockError {
-            throw error
-        }
-
-        guard let mock = completeMigrationSyncContext_MockMethod else {
-            fatalError("no mock for `completeMigrationSyncContext`")
-        }
-
-        try mock(syncContext)
+        try mock(accountDirectory, coreCrypto)
     }
 
 }
@@ -1180,10 +1305,10 @@ public class MockMLSDecryptionServiceInterface: MLSDecryptionServiceInterface {
 
     public var decryptMessageForSubconversationType_Invocations: [(message: String, groupID: MLSGroupID, subconversationType: SubgroupType?)] = []
     public var decryptMessageForSubconversationType_MockError: Error?
-    public var decryptMessageForSubconversationType_MockMethod: ((String, MLSGroupID, SubgroupType?) throws -> MLSDecryptResult?)?
+    public var decryptMessageForSubconversationType_MockMethod: ((String, MLSGroupID, SubgroupType?) async throws -> MLSDecryptResult?)?
     public var decryptMessageForSubconversationType_MockValue: MLSDecryptResult??
 
-    public func decrypt(message: String, for groupID: MLSGroupID, subconversationType: SubgroupType?) throws -> MLSDecryptResult? {
+    public func decrypt(message: String, for groupID: MLSGroupID, subconversationType: SubgroupType?) async throws -> MLSDecryptResult? {
         decryptMessageForSubconversationType_Invocations.append((message: message, groupID: groupID, subconversationType: subconversationType))
 
         if let error = decryptMessageForSubconversationType_MockError {
@@ -1191,7 +1316,7 @@ public class MockMLSDecryptionServiceInterface: MLSDecryptionServiceInterface {
         }
 
         if let mock = decryptMessageForSubconversationType_MockMethod {
-            return try mock(message, groupID, subconversationType)
+            return try await mock(message, groupID, subconversationType)
         } else if let mock = decryptMessageForSubconversationType_MockValue {
             return mock
         } else {
@@ -1212,10 +1337,10 @@ public class MockMLSEncryptionServiceInterface: MLSEncryptionServiceInterface {
 
     public var encryptMessageFor_Invocations: [(message: [Byte], groupID: MLSGroupID)] = []
     public var encryptMessageFor_MockError: Error?
-    public var encryptMessageFor_MockMethod: (([Byte], MLSGroupID) throws -> [Byte])?
+    public var encryptMessageFor_MockMethod: (([Byte], MLSGroupID) async throws -> [Byte])?
     public var encryptMessageFor_MockValue: [Byte]?
 
-    public func encrypt(message: [Byte], for groupID: MLSGroupID) throws -> [Byte] {
+    public func encrypt(message: [Byte], for groupID: MLSGroupID) async throws -> [Byte] {
         encryptMessageFor_Invocations.append((message: message, groupID: groupID))
 
         if let error = encryptMessageFor_MockError {
@@ -1223,7 +1348,7 @@ public class MockMLSEncryptionServiceInterface: MLSEncryptionServiceInterface {
         }
 
         if let mock = encryptMessageFor_MockMethod {
-            return try mock(message, groupID)
+            return try await mock(message, groupID)
         } else if let mock = encryptMessageFor_MockValue {
             return mock
         } else {
@@ -1243,31 +1368,31 @@ public class MockMLSServiceInterface: MLSServiceInterface {
     // MARK: - uploadKeyPackagesIfNeeded
 
     public var uploadKeyPackagesIfNeeded_Invocations: [Void] = []
-    public var uploadKeyPackagesIfNeeded_MockMethod: (() -> Void)?
+    public var uploadKeyPackagesIfNeeded_MockMethod: (() async -> Void)?
 
-    public func uploadKeyPackagesIfNeeded() {
+    public func uploadKeyPackagesIfNeeded() async {
         uploadKeyPackagesIfNeeded_Invocations.append(())
 
         guard let mock = uploadKeyPackagesIfNeeded_MockMethod else {
             fatalError("no mock for `uploadKeyPackagesIfNeeded`")
         }
 
-        mock()
+        await mock()
     }
 
     // MARK: - createSelfGroup
 
     public var createSelfGroupFor_Invocations: [MLSGroupID] = []
-    public var createSelfGroupFor_MockMethod: ((MLSGroupID) -> Void)?
+    public var createSelfGroupFor_MockMethod: ((MLSGroupID) async -> Void)?
 
-    public func createSelfGroup(for groupID: MLSGroupID) {
+    public func createSelfGroup(for groupID: MLSGroupID) async {
         createSelfGroupFor_Invocations.append(groupID)
 
         guard let mock = createSelfGroupFor_MockMethod else {
             fatalError("no mock for `createSelfGroupFor`")
         }
 
-        mock(groupID)
+        await mock(groupID)
     }
 
     // MARK: - joinGroup
@@ -1314,9 +1439,9 @@ public class MockMLSServiceInterface: MLSServiceInterface {
 
     public var createGroupFor_Invocations: [MLSGroupID] = []
     public var createGroupFor_MockError: Error?
-    public var createGroupFor_MockMethod: ((MLSGroupID) throws -> Void)?
+    public var createGroupFor_MockMethod: ((MLSGroupID) async throws -> Void)?
 
-    public func createGroup(for groupID: MLSGroupID) throws {
+    public func createGroup(for groupID: MLSGroupID) async throws {
         createGroupFor_Invocations.append(groupID)
 
         if let error = createGroupFor_MockError {
@@ -1327,7 +1452,7 @@ public class MockMLSServiceInterface: MLSServiceInterface {
             fatalError("no mock for `createGroupFor`")
         }
 
-        try mock(groupID)
+        try await mock(groupID)
     }
 
     // MARK: - conversationExists
@@ -1352,10 +1477,10 @@ public class MockMLSServiceInterface: MLSServiceInterface {
 
     public var processWelcomeMessageWelcomeMessage_Invocations: [String] = []
     public var processWelcomeMessageWelcomeMessage_MockError: Error?
-    public var processWelcomeMessageWelcomeMessage_MockMethod: ((String) throws -> MLSGroupID)?
+    public var processWelcomeMessageWelcomeMessage_MockMethod: ((String) async throws -> MLSGroupID)?
     public var processWelcomeMessageWelcomeMessage_MockValue: MLSGroupID?
 
-    public func processWelcomeMessage(welcomeMessage: String) throws -> MLSGroupID {
+    public func processWelcomeMessage(welcomeMessage: String) async throws -> MLSGroupID {
         processWelcomeMessageWelcomeMessage_Invocations.append(welcomeMessage)
 
         if let error = processWelcomeMessageWelcomeMessage_MockError {
@@ -1363,7 +1488,7 @@ public class MockMLSServiceInterface: MLSServiceInterface {
         }
 
         if let mock = processWelcomeMessageWelcomeMessage_MockMethod {
-            return try mock(welcomeMessage)
+            return try await mock(welcomeMessage)
         } else if let mock = processWelcomeMessageWelcomeMessage_MockValue {
             return mock
         } else {
@@ -1429,31 +1554,36 @@ public class MockMLSServiceInterface: MLSServiceInterface {
     // MARK: - performPendingJoins
 
     public var performPendingJoins_Invocations: [Void] = []
-    public var performPendingJoins_MockMethod: (() -> Void)?
+    public var performPendingJoins_MockError: Error?
+    public var performPendingJoins_MockMethod: (() async throws -> Void)?
 
-    public func performPendingJoins() {
+    public func performPendingJoins() async throws {
         performPendingJoins_Invocations.append(())
+
+        if let error = performPendingJoins_MockError {
+            throw error
+        }
 
         guard let mock = performPendingJoins_MockMethod else {
             fatalError("no mock for `performPendingJoins`")
         }
 
-        mock()
+        try await mock()
     }
 
     // MARK: - wipeGroup
 
     public var wipeGroup_Invocations: [MLSGroupID] = []
-    public var wipeGroup_MockMethod: ((MLSGroupID) -> Void)?
+    public var wipeGroup_MockMethod: ((MLSGroupID) async -> Void)?
 
-    public func wipeGroup(_ groupID: MLSGroupID) {
+    public func wipeGroup(_ groupID: MLSGroupID) async {
         wipeGroup_Invocations.append(groupID)
 
         guard let mock = wipeGroup_MockMethod else {
             fatalError("no mock for `wipeGroup`")
         }
 
-        mock(groupID)
+        await mock(groupID)
     }
 
     // MARK: - commitPendingProposals
@@ -1523,10 +1653,10 @@ public class MockMLSServiceInterface: MLSServiceInterface {
 
     public var generateConferenceInfoParentGroupIDSubconversationGroupID_Invocations: [(parentGroupID: MLSGroupID, subconversationGroupID: MLSGroupID)] = []
     public var generateConferenceInfoParentGroupIDSubconversationGroupID_MockError: Error?
-    public var generateConferenceInfoParentGroupIDSubconversationGroupID_MockMethod: ((MLSGroupID, MLSGroupID) throws -> MLSConferenceInfo)?
+    public var generateConferenceInfoParentGroupIDSubconversationGroupID_MockMethod: ((MLSGroupID, MLSGroupID) async throws -> MLSConferenceInfo)?
     public var generateConferenceInfoParentGroupIDSubconversationGroupID_MockValue: MLSConferenceInfo?
 
-    public func generateConferenceInfo(parentGroupID: MLSGroupID, subconversationGroupID: MLSGroupID) throws -> MLSConferenceInfo {
+    public func generateConferenceInfo(parentGroupID: MLSGroupID, subconversationGroupID: MLSGroupID) async throws -> MLSConferenceInfo {
         generateConferenceInfoParentGroupIDSubconversationGroupID_Invocations.append((parentGroupID: parentGroupID, subconversationGroupID: subconversationGroupID))
 
         if let error = generateConferenceInfoParentGroupIDSubconversationGroupID_MockError {
@@ -1534,7 +1664,7 @@ public class MockMLSServiceInterface: MLSServiceInterface {
         }
 
         if let mock = generateConferenceInfoParentGroupIDSubconversationGroupID_MockMethod {
-            return try mock(parentGroupID, subconversationGroupID)
+            return try await mock(parentGroupID, subconversationGroupID)
         } else if let mock = generateConferenceInfoParentGroupIDSubconversationGroupID_MockValue {
             return mock
         } else {
@@ -1545,10 +1675,10 @@ public class MockMLSServiceInterface: MLSServiceInterface {
     // MARK: - onConferenceInfoChange
 
     public var onConferenceInfoChangeParentGroupIDSubConversationGroupID_Invocations: [(parentGroupID: MLSGroupID, subConversationGroupID: MLSGroupID)] = []
-    public var onConferenceInfoChangeParentGroupIDSubConversationGroupID_MockMethod: ((MLSGroupID, MLSGroupID) -> AnyPublisher<MLSConferenceInfo, Never>)?
-    public var onConferenceInfoChangeParentGroupIDSubConversationGroupID_MockValue: AnyPublisher<MLSConferenceInfo, Never>?
+    public var onConferenceInfoChangeParentGroupIDSubConversationGroupID_MockMethod: ((MLSGroupID, MLSGroupID) -> AsyncThrowingStream<MLSConferenceInfo, Error>)?
+    public var onConferenceInfoChangeParentGroupIDSubConversationGroupID_MockValue: AsyncThrowingStream<MLSConferenceInfo, Error>?
 
-    public func onConferenceInfoChange(parentGroupID: MLSGroupID, subConversationGroupID: MLSGroupID) -> AnyPublisher<MLSConferenceInfo, Never> {
+    public func onConferenceInfoChange(parentGroupID: MLSGroupID, subConversationGroupID: MLSGroupID) -> AsyncThrowingStream<MLSConferenceInfo, Error> {
         onConferenceInfoChangeParentGroupIDSubConversationGroupID_Invocations.append((parentGroupID: parentGroupID, subConversationGroupID: subConversationGroupID))
 
         if let mock = onConferenceInfoChangeParentGroupIDSubConversationGroupID_MockMethod {
@@ -1624,10 +1754,10 @@ public class MockMLSServiceInterface: MLSServiceInterface {
 
     public var subconversationMembersFor_Invocations: [MLSGroupID] = []
     public var subconversationMembersFor_MockError: Error?
-    public var subconversationMembersFor_MockMethod: ((MLSGroupID) throws -> [MLSClientID])?
+    public var subconversationMembersFor_MockMethod: ((MLSGroupID) async throws -> [MLSClientID])?
     public var subconversationMembersFor_MockValue: [MLSClientID]?
 
-    public func subconversationMembers(for subconversationGroupID: MLSGroupID) throws -> [MLSClientID] {
+    public func subconversationMembers(for subconversationGroupID: MLSGroupID) async throws -> [MLSClientID] {
         subconversationMembersFor_Invocations.append(subconversationGroupID)
 
         if let error = subconversationMembersFor_MockError {
@@ -1635,7 +1765,7 @@ public class MockMLSServiceInterface: MLSServiceInterface {
         }
 
         if let mock = subconversationMembersFor_MockMethod {
-            return try mock(subconversationGroupID)
+            return try await mock(subconversationGroupID)
         } else if let mock = subconversationMembersFor_MockValue {
             return mock
         } else {
@@ -1673,6 +1803,21 @@ public class MockMLSServiceInterface: MLSServiceInterface {
         await mock(groupID)
     }
 
+    // MARK: - updateKeyMaterialForAllStaleGroupsIfNeeded
+
+    public var updateKeyMaterialForAllStaleGroupsIfNeeded_Invocations: [Void] = []
+    public var updateKeyMaterialForAllStaleGroupsIfNeeded_MockMethod: (() async -> Void)?
+
+    public func updateKeyMaterialForAllStaleGroupsIfNeeded() async {
+        updateKeyMaterialForAllStaleGroupsIfNeeded_Invocations.append(())
+
+        guard let mock = updateKeyMaterialForAllStaleGroupsIfNeeded_MockMethod else {
+            fatalError("no mock for `updateKeyMaterialForAllStaleGroupsIfNeeded`")
+        }
+
+        await mock()
+    }
+
     // MARK: - onEpochChanged
 
     public var onEpochChanged_Invocations: [Void] = []
@@ -1695,10 +1840,10 @@ public class MockMLSServiceInterface: MLSServiceInterface {
 
     public var decryptMessageForSubconversationType_Invocations: [(message: String, groupID: MLSGroupID, subconversationType: SubgroupType?)] = []
     public var decryptMessageForSubconversationType_MockError: Error?
-    public var decryptMessageForSubconversationType_MockMethod: ((String, MLSGroupID, SubgroupType?) throws -> MLSDecryptResult?)?
+    public var decryptMessageForSubconversationType_MockMethod: ((String, MLSGroupID, SubgroupType?) async throws -> MLSDecryptResult?)?
     public var decryptMessageForSubconversationType_MockValue: MLSDecryptResult??
 
-    public func decrypt(message: String, for groupID: MLSGroupID, subconversationType: SubgroupType?) throws -> MLSDecryptResult? {
+    public func decrypt(message: String, for groupID: MLSGroupID, subconversationType: SubgroupType?) async throws -> MLSDecryptResult? {
         decryptMessageForSubconversationType_Invocations.append((message: message, groupID: groupID, subconversationType: subconversationType))
 
         if let error = decryptMessageForSubconversationType_MockError {
@@ -1706,7 +1851,7 @@ public class MockMLSServiceInterface: MLSServiceInterface {
         }
 
         if let mock = decryptMessageForSubconversationType_MockMethod {
-            return try mock(message, groupID, subconversationType)
+            return try await mock(message, groupID, subconversationType)
         } else if let mock = decryptMessageForSubconversationType_MockValue {
             return mock
         } else {
@@ -1718,10 +1863,10 @@ public class MockMLSServiceInterface: MLSServiceInterface {
 
     public var encryptMessageFor_Invocations: [(message: [Byte], groupID: MLSGroupID)] = []
     public var encryptMessageFor_MockError: Error?
-    public var encryptMessageFor_MockMethod: (([Byte], MLSGroupID) throws -> [Byte])?
+    public var encryptMessageFor_MockMethod: (([Byte], MLSGroupID) async throws -> [Byte])?
     public var encryptMessageFor_MockValue: [Byte]?
 
-    public func encrypt(message: [Byte], for groupID: MLSGroupID) throws -> [Byte] {
+    public func encrypt(message: [Byte], for groupID: MLSGroupID) async throws -> [Byte] {
         encryptMessageFor_Invocations.append((message: message, groupID: groupID))
 
         if let error = encryptMessageFor_MockError {
@@ -1729,7 +1874,7 @@ public class MockMLSServiceInterface: MLSServiceInterface {
         }
 
         if let mock = encryptMessageFor_MockMethod {
-            return try mock(message, groupID)
+            return try await mock(message, groupID)
         } else if let mock = encryptMessageFor_MockValue {
             return mock
         } else {
@@ -1755,33 +1900,13 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
     public var underlyingLastPrekeyID: UInt16!
 
 
-    // MARK: - completeInitialization
-
-    public var completeInitialization_Invocations: [Void] = []
-    public var completeInitialization_MockError: Error?
-    public var completeInitialization_MockMethod: (() throws -> Void)?
-
-    public func completeInitialization() throws {
-        completeInitialization_Invocations.append(())
-
-        if let error = completeInitialization_MockError {
-            throw error
-        }
-
-        guard let mock = completeInitialization_MockMethod else {
-            fatalError("no mock for `completeInitialization`")
-        }
-
-        try mock()
-    }
-
     // MARK: - establishSession
 
     public var establishSessionIdFromPrekey_Invocations: [(id: ProteusSessionID, fromPrekey: String)] = []
     public var establishSessionIdFromPrekey_MockError: Error?
-    public var establishSessionIdFromPrekey_MockMethod: ((ProteusSessionID, String) throws -> Void)?
+    public var establishSessionIdFromPrekey_MockMethod: ((ProteusSessionID, String) async throws -> Void)?
 
-    public func establishSession(id: ProteusSessionID, fromPrekey: String) throws {
+    public func establishSession(id: ProteusSessionID, fromPrekey: String) async throws {
         establishSessionIdFromPrekey_Invocations.append((id: id, fromPrekey: fromPrekey))
 
         if let error = establishSessionIdFromPrekey_MockError {
@@ -1792,16 +1917,16 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
             fatalError("no mock for `establishSessionIdFromPrekey`")
         }
 
-        try mock(id, fromPrekey)
+        try await mock(id, fromPrekey)
     }
 
     // MARK: - deleteSession
 
     public var deleteSessionId_Invocations: [ProteusSessionID] = []
     public var deleteSessionId_MockError: Error?
-    public var deleteSessionId_MockMethod: ((ProteusSessionID) throws -> Void)?
+    public var deleteSessionId_MockMethod: ((ProteusSessionID) async throws -> Void)?
 
-    public func deleteSession(id: ProteusSessionID) throws {
+    public func deleteSession(id: ProteusSessionID) async throws {
         deleteSessionId_Invocations.append(id)
 
         if let error = deleteSessionId_MockError {
@@ -1812,20 +1937,20 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
             fatalError("no mock for `deleteSessionId`")
         }
 
-        try mock(id)
+        try await mock(id)
     }
 
     // MARK: - sessionExists
 
     public var sessionExistsId_Invocations: [ProteusSessionID] = []
-    public var sessionExistsId_MockMethod: ((ProteusSessionID) -> Bool)?
+    public var sessionExistsId_MockMethod: ((ProteusSessionID) async -> Bool)?
     public var sessionExistsId_MockValue: Bool?
 
-    public func sessionExists(id: ProteusSessionID) -> Bool {
+    public func sessionExists(id: ProteusSessionID) async -> Bool {
         sessionExistsId_Invocations.append(id)
 
         if let mock = sessionExistsId_MockMethod {
-            return mock(id)
+            return await mock(id)
         } else if let mock = sessionExistsId_MockValue {
             return mock
         } else {
@@ -1883,10 +2008,10 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
 
     public var decryptDataForSession_Invocations: [(data: Data, id: ProteusSessionID)] = []
     public var decryptDataForSession_MockError: Error?
-    public var decryptDataForSession_MockMethod: ((Data, ProteusSessionID) throws -> (didCreateNewSession: Bool, decryptedData: Data))?
+    public var decryptDataForSession_MockMethod: ((Data, ProteusSessionID) async throws -> (didCreateNewSession: Bool, decryptedData: Data))?
     public var decryptDataForSession_MockValue: (didCreateNewSession: Bool, decryptedData: Data)?
 
-    public func decrypt(data: Data, forSession id: ProteusSessionID) throws -> (didCreateNewSession: Bool, decryptedData: Data) {
+    public func decrypt(data: Data, forSession id: ProteusSessionID) async throws -> (didCreateNewSession: Bool, decryptedData: Data) {
         decryptDataForSession_Invocations.append((data: data, id: id))
 
         if let error = decryptDataForSession_MockError {
@@ -1894,7 +2019,7 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
         }
 
         if let mock = decryptDataForSession_MockMethod {
-            return try mock(data, id)
+            return try await mock(data, id)
         } else if let mock = decryptDataForSession_MockValue {
             return mock
         } else {
@@ -1906,10 +2031,10 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
 
     public var generatePrekeyId_Invocations: [UInt16] = []
     public var generatePrekeyId_MockError: Error?
-    public var generatePrekeyId_MockMethod: ((UInt16) throws -> String)?
+    public var generatePrekeyId_MockMethod: ((UInt16) async throws -> String)?
     public var generatePrekeyId_MockValue: String?
 
-    public func generatePrekey(id: UInt16) throws -> String {
+    public func generatePrekey(id: UInt16) async throws -> String {
         generatePrekeyId_Invocations.append(id)
 
         if let error = generatePrekeyId_MockError {
@@ -1917,7 +2042,7 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
         }
 
         if let mock = generatePrekeyId_MockMethod {
-            return try mock(id)
+            return try await mock(id)
         } else if let mock = generatePrekeyId_MockValue {
             return mock
         } else {
@@ -1929,10 +2054,10 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
 
     public var lastPrekey_Invocations: [Void] = []
     public var lastPrekey_MockError: Error?
-    public var lastPrekey_MockMethod: (() throws -> String)?
+    public var lastPrekey_MockMethod: (() async throws -> String)?
     public var lastPrekey_MockValue: String?
 
-    public func lastPrekey() throws -> String {
+    public func lastPrekey() async throws -> String {
         lastPrekey_Invocations.append(())
 
         if let error = lastPrekey_MockError {
@@ -1940,7 +2065,7 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
         }
 
         if let mock = lastPrekey_MockMethod {
-            return try mock()
+            return try await mock()
         } else if let mock = lastPrekey_MockValue {
             return mock
         } else {
@@ -1952,10 +2077,10 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
 
     public var generatePrekeysStartCount_Invocations: [(start: UInt16, count: UInt16)] = []
     public var generatePrekeysStartCount_MockError: Error?
-    public var generatePrekeysStartCount_MockMethod: ((UInt16, UInt16) throws -> [IdPrekeyTuple])?
+    public var generatePrekeysStartCount_MockMethod: ((UInt16, UInt16) async throws -> [IdPrekeyTuple])?
     public var generatePrekeysStartCount_MockValue: [IdPrekeyTuple]?
 
-    public func generatePrekeys(start: UInt16, count: UInt16) throws -> [IdPrekeyTuple] {
+    public func generatePrekeys(start: UInt16, count: UInt16) async throws -> [IdPrekeyTuple] {
         generatePrekeysStartCount_Invocations.append((start: start, count: count))
 
         if let error = generatePrekeysStartCount_MockError {
@@ -1963,7 +2088,7 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
         }
 
         if let mock = generatePrekeysStartCount_MockMethod {
-            return try mock(start, count)
+            return try await mock(start, count)
         } else if let mock = generatePrekeysStartCount_MockValue {
             return mock
         } else {
@@ -2038,26 +2163,6 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
         } else {
             fatalError("no mock for `fingerprintFromPrekey`")
         }
-    }
-
-    // MARK: - migrateCryptoboxSessions
-
-    public var migrateCryptoboxSessionsAt_Invocations: [URL] = []
-    public var migrateCryptoboxSessionsAt_MockError: Error?
-    public var migrateCryptoboxSessionsAt_MockMethod: ((URL) throws -> Void)?
-
-    public func migrateCryptoboxSessions(at url: URL) throws {
-        migrateCryptoboxSessionsAt_Invocations.append(url)
-
-        if let error = migrateCryptoboxSessionsAt_MockError {
-            throw error
-        }
-
-        guard let mock = migrateCryptoboxSessionsAt_MockMethod else {
-            fatalError("no mock for `migrateCryptoboxSessionsAt`")
-        }
-
-        try mock(url)
     }
 
 }

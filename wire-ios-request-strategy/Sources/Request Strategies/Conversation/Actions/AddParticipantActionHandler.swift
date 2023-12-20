@@ -40,10 +40,6 @@ class AddParticipantActionHandler: ActionHandler<AddParticipantAction> {
 
     private let eventProcessor: ConversationEventProcessorProtocol
 
-    convenience required init(context: NSManagedObjectContext) {
-        self.init(context: context, eventProcessor: ConversationEventProcessor(context: context))
-    }
-
     init(
         context: NSManagedObjectContext,
         eventProcessor: ConversationEventProcessorProtocol
@@ -144,9 +140,13 @@ class AddParticipantActionHandler: ActionHandler<AddParticipantAction> {
                 action.fail(with: .unknown)
                 return
             }
-
-            eventProcessor.processConversationEvents([updateEvent])
-            action.succeed()
+            let success = {
+                action.succeed()
+            }
+            Task {
+                await eventProcessor.processConversationEvents([updateEvent])
+                success()
+            }
 
         case 204:
             action.succeed()

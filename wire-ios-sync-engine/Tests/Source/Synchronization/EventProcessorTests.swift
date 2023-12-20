@@ -18,6 +18,7 @@
 
 import XCTest
 @testable import WireSyncEngine
+@testable import WireDataModelSupport
 
 class EventProcessorTests: MessagingTest {
 
@@ -26,6 +27,7 @@ class EventProcessorTests: MessagingTest {
     var sut: EventProcessor!
     var eventProcessingTracker: EventProcessingTracker!
     var mockEventsConsumers: [MockEventConsumer]!
+    var mockEventAsyncConsumers: [MockEventAsyncConsumer]!
     var earService: MockEARServiceInterface!
 
     override func setUp() {
@@ -33,6 +35,8 @@ class EventProcessorTests: MessagingTest {
         createSelfClient()
 
         mockEventsConsumers = [MockEventConsumer(), MockEventConsumer()]
+        mockEventAsyncConsumers = [MockEventAsyncConsumer(), MockEventAsyncConsumer()]
+
         eventProcessingTracker = EventProcessingTracker()
 
         earService = MockEARServiceInterface()
@@ -43,12 +47,14 @@ class EventProcessorTests: MessagingTest {
             storeProvider: coreDataStack,
             eventProcessingTracker: eventProcessingTracker,
             earService: earService,
-            eventConsumers: mockEventsConsumers
+            eventConsumers: mockEventsConsumers,
+            eventAsyncConsumers: mockEventAsyncConsumers
         )
     }
 
     override func tearDown() {
         mockEventsConsumers = nil
+        mockEventAsyncConsumers = nil
         eventProcessingTracker = nil
         earService = nil
         sut = nil
@@ -88,6 +94,11 @@ class EventProcessorTests: MessagingTest {
             XCTAssertTrue(mockEventConsumer.processEventsCalled)
             XCTAssertEqual(events, mockEventConsumer.eventsProcessed)
         })
+
+        mockEventAsyncConsumers.forEach({ mockEventConsumer in
+            XCTAssertTrue(mockEventConsumer.processEventsCalled)
+            XCTAssertEqual(events, mockEventConsumer.eventsProcessed)
+        })
     }
 
     func testThatEventsAreNotForwardedToAllEventConsumers_WhenBuffered() async {
@@ -101,6 +112,10 @@ class EventProcessorTests: MessagingTest {
         // then
         mockEventsConsumers.forEach({ mockEventConsumer in
             XCTAssertFalse(mockEventConsumer.processEventsWhileInBackgroundCalled)
+            XCTAssertFalse(mockEventConsumer.processEventsCalled)
+        })
+
+        mockEventAsyncConsumers.forEach({ mockEventConsumer in
             XCTAssertFalse(mockEventConsumer.processEventsCalled)
         })
     }
@@ -145,6 +160,11 @@ class EventProcessorTests: MessagingTest {
         // then
         mockEventsConsumers.forEach({ mockEventConsumer in
             XCTAssertTrue(mockEventConsumer.processEventsWhileInBackgroundCalled)
+            XCTAssertTrue(mockEventConsumer.processEventsCalled)
+            XCTAssertEqual(events, mockEventConsumer.eventsProcessed)
+        })
+
+        mockEventAsyncConsumers.forEach({ mockEventConsumer in
             XCTAssertTrue(mockEventConsumer.processEventsCalled)
             XCTAssertEqual(events, mockEventConsumer.eventsProcessed)
         })

@@ -26,6 +26,7 @@ class SendMLSMessageActionHandlerTests: ActionHandlerTestBase<SendMLSMessageActi
     override func setUp() {
         super.setUp()
         action = SendMLSMessageAction(message: mlsMessage)
+        handler = SendMLSMessageActionHandler(context: syncMOC)
     }
 
     // MARK: - Request generation

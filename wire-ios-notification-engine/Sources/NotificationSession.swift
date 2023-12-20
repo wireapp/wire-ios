@@ -79,6 +79,8 @@ public class NotificationSession {
 
         case noAccount
         case pendingCryptoboxMigration
+        case coreDataMissingSharedContainer
+        case coreDataMigrationRequired
 
     }
 
@@ -104,9 +106,7 @@ public class NotificationSession {
     private var callEvent: CallEventPayload?
     private var localNotifications = [ZMLocalNotification]()
 
-    private var context: NSManagedObjectContext {
-        return coreDataStack.syncContext
-    }
+    private var context: NSManagedObjectContext { coreDataStack.syncContext }
 
     public weak var delegate: NotificationSessionDelegate?
 
@@ -137,7 +137,19 @@ public class NotificationSession {
             applicationContainer: sharedContainerURL
         )
 
+        guard coreDataStack.storesExists else {
+            throw InitializationError.coreDataMissingSharedContainer
+        }
+
+        guard !coreDataStack.needsMigration  else {
+            throw InitializationError.coreDataMigrationRequired
+        }
+
         coreDataStack.loadStores { error in
+            // ⚠️ errors are not handled and `NotificationSession` will be created.
+            // Currently it is the given behavior, but should be refactored
+            // into a "setup" or "load" func that can be async and handle errors.
+
             if let error = error {
                 WireLogger.notifications.error("Loading coreDataStack with error: \(error.localizedDescription)")
             }
@@ -152,7 +164,7 @@ public class NotificationSession {
 
         let credentials = environment.proxy.flatMap { ProxyCredentials.retrieve(for: $0) }
 
-        let transportSession =  ZMTransportSession(
+        let transportSession = ZMTransportSession(
             environment: environment,
             proxyUsername: credentials?.username,
             proxyPassword: credentials?.password,
@@ -215,6 +227,16 @@ public class NotificationSession {
             transportSession: transportSession
         )
 
+        let cryptoboxMigrationManager = CryptoboxMigrationManager()
+        let coreCryptoProvider = CoreCryptoProvider(
+            selfUserID: accountIdentifier,
+            sharedContainerURL: coreDataStack.applicationContainer,
+            accountDirectory: coreDataStack.accountContainer,
+            syncContext: coreDataStack.syncContext,
+            cryptoboxMigrationManager: cryptoboxMigrationManager,
+            allowCreation: false
+        )
+
         let saveNotificationPersistence = ContextDidSaveNotificationPersistence(accountContainer: accountContainer)
 
         try self.init(
@@ -226,7 +248,10 @@ public class NotificationSession {
             operationLoop: operationLoop,
             accountIdentifier: accountIdentifier,
             pushNotificationStrategy: pushNotificationStrategy,
-            earService: EARService(accountID: accountIdentifier, sharedUserDefaults: sharedUserDefaults)
+            cryptoboxMigrationManager: cryptoboxMigrationManager,
+            earService: EARService(accountID: accountIdentifier, sharedUserDefaults: sharedUserDefaults),
+            proteusService: ProteusService(coreCryptoProvider: coreCryptoProvider),
+            mlsDecryptionService: MLSDecryptionService(context: coreDataStack.syncContext, coreCryptoProvider: coreCryptoProvider)
         )
     }
 
@@ -239,8 +264,11 @@ public class NotificationSession {
         operationLoop: RequestGeneratingOperationLoop,
         accountIdentifier: UUID,
         pushNotificationStrategy: PushNotificationStrategy,
-        cryptoboxMigrationManager: CryptoboxMigrationManagerInterface = CryptoboxMigrationManager(),
-        earService: EARServiceInterface
+        cryptoboxMigrationManager: CryptoboxMigrationManagerInterface,
+        earService: EARServiceInterface,
+        proteusService: ProteusServiceInterface,
+        mlsDecryptionService: MLSDecryptionServiceInterface
+
     ) throws {
         self.coreDataStack = coreDataStack
         self.transportSession = transportSession
@@ -261,14 +289,14 @@ public class NotificationSession {
         guard !cryptoboxMigrationManager.isMigrationNeeded(accountDirectory: accountDirectory) else {
             throw InitializationError.pendingCryptoboxMigration
         }
-
-        setUpCoreCryptoStack(
-            sharedContainerURL: coreDataStack.applicationContainer,
-            syncContext: coreDataStack.syncContext
-        )
-
         coreDataStack.syncContext.performAndWait {
-            try? cryptoboxMigrationManager.completeMigration(syncContext: coreDataStack.syncContext)
+            if DeveloperFlag.proteusViaCoreCrypto.isOn, coreDataStack.syncContext.proteusService == nil {
+                coreDataStack.syncContext.proteusService = proteusService
+            }
+
+            if DeveloperFlag.enableMLSSupport.isOn, coreDataStack.syncContext.mlsDecryptionService == nil {
+                coreDataStack.syncContext.mlsDecryptionService = mlsDecryptionService
+            }
         }
 
     }

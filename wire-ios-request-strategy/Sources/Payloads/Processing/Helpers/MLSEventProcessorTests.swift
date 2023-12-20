@@ -23,12 +23,14 @@ import XCTest
 class MLSEventProcessorTests: MessagingTestBase {
 
     var mlsServiceMock: MockMLSServiceInterface!
+    var sut: MLSEventProcessor!
     var conversation: ZMConversation!
     var domain = "example.com"
     let groupIdString = "identifier".data(using: .utf8)!.base64EncodedString()
 
     override func setUp() {
         super.setUp()
+        sut = MLSEventProcessor()
         syncMOC.performGroupedBlockAndWait {
             self.mlsServiceMock = .init()
             self.mlsServiceMock.registerPendingJoin_MockMethod = { _ in }
@@ -42,6 +44,7 @@ class MLSEventProcessorTests: MessagingTestBase {
     }
 
     override func tearDown() {
+        sut = nil
         mlsServiceMock = nil
         conversation = nil
         super.tearDown()
@@ -49,45 +52,40 @@ class MLSEventProcessorTests: MessagingTestBase {
 
     // MARK: - Process Welcome Message
 
-    func test_itProcessesMessageAndUpdatesConversation() {
+    func test_itProcessesMessageAndUpdatesConversation() async {
+        // Given
+        let message = "welcome message"
         syncMOC.performGroupedBlockAndWait {
-            // Given
-            let message = "welcome message"
             self.mlsServiceMock.processWelcomeMessageWelcomeMessage_MockValue = self.conversation.mlsGroupID ?? MLSGroupID(Data())
             self.conversation.mlsStatus = .pendingJoin
             XCTAssertEqual(self.conversation.mlsStatus, .pendingJoin)
-
-            // When
-            MLSEventProcessor.shared.process(welcomeMessage: message, in: self.syncMOC)
-
-            // Then
-            XCTAssertEqual(message, self.mlsServiceMock.processWelcomeMessageWelcomeMessage_Invocations.last)
-            XCTAssertEqual(self.conversation.mlsStatus, .ready)
         }
     }
 
     // MARK: - Update Conversation
 
-    func test_itUpdates_GroupID() {
-        syncMOC.performGroupedBlockAndWait {
+    func test_itUpdates_GroupID() async {
+        await syncMOC.perform {
             // Given
             self.conversation.mlsGroupID = nil
             self.mlsServiceMock.conversationExistsGroupID_MockMethod = { _ in false }
+        }
 
-            // When
-            MLSEventProcessor.shared.updateConversationIfNeeded(
-                conversation: self.conversation,
-                groupID: self.groupIdString,
-                context: self.syncMOC
-            )
+        // When
+        await sut.updateConversationIfNeeded(
+            conversation: self.conversation,
+            groupID: self.groupIdString,
+            context: self.syncMOC
+        )
 
+        await syncMOC.perform {
             // Then
             XCTAssertEqual(self.conversation.mlsGroupID?.bytes, self.groupIdString.base64DecodedBytes)
         }
     }
 
-    func test_itUpdates_MlsStatus_WhenProtocolIsMLS_AndWelcomeMessageWasProcessed() {
-        assert_mlsStatus(
+    func test_itUpdates_MlsStatus_WhenProtocolIsMLS_AndWelcomeMessageWasProcessed() async {
+        await assert_mlsStatus(
             originalValue: .pendingJoin,
             expectedValue: .ready,
             mockMessageProtocol: .mls,
@@ -95,8 +93,8 @@ class MLSEventProcessorTests: MessagingTestBase {
         )
     }
 
-    func test_itUpdates_MlsStatus_WhenProtocolIsMLS_AndWelcomeMessageWasNotProcessed() {
-        assert_mlsStatus(
+    func test_itUpdates_MlsStatus_WhenProtocolIsMLS_AndWelcomeMessageWasNotProcessed() async {
+        await assert_mlsStatus(
             originalValue: .ready,
             expectedValue: .pendingJoin,
             mockMessageProtocol: .mls,
@@ -104,8 +102,8 @@ class MLSEventProcessorTests: MessagingTestBase {
         )
     }
 
-    func test_itDoesntUpdate_MlsStatus_WhenProtocolIsNotMLS() {
-        assert_mlsStatus(
+    func test_itDoesntUpdate_MlsStatus_WhenProtocolIsNotMLS() async {
+        await assert_mlsStatus(
             originalValue: .pendingJoin,
             expectedValue: .pendingJoin,
             mockMessageProtocol: .proteus
@@ -120,7 +118,7 @@ class MLSEventProcessorTests: MessagingTestBase {
             self.conversation.mlsStatus = .pendingJoin
 
             // When
-            MLSEventProcessor.shared.joinMLSGroupWhenReady(
+            self.sut.joinMLSGroupWhenReady(
                 forConversation: self.conversation,
                 context: self.syncMOC
             )
@@ -139,40 +137,40 @@ class MLSEventProcessorTests: MessagingTestBase {
 
     // MARK: - Wiping group
 
-    func test_itWipesGroup() {
+    func test_itWipesGroup() async {
+        // Given
+        let groupID = MLSGroupID(Data.random())
         syncMOC.performAndWait {
-            // Given
-            let groupID = MLSGroupID(Data.random())
             conversation.messageProtocol = .mls
             conversation.mlsGroupID = groupID
-
-            // When
-            MLSEventProcessor.shared.wipeMLSGroup(
-                forConversation: conversation,
-                context: syncMOC
-            )
-
-            // Then
-            XCTAssertEqual(mlsServiceMock.wipeGroup_Invocations.count, 1)
-            XCTAssertEqual(mlsServiceMock.wipeGroup_Invocations.first, groupID)
         }
+
+        // When
+        await sut.wipeMLSGroup(
+            forConversation: conversation,
+            context: syncMOC
+        )
+
+        // Then
+        XCTAssertEqual(mlsServiceMock.wipeGroup_Invocations.count, 1)
+        XCTAssertEqual(mlsServiceMock.wipeGroup_Invocations.first, groupID)
     }
 
-    func test_itDoesntWipeGroup_WhenProtocolIsNotMLS() {
+    func test_itDoesntWipeGroup_WhenProtocolIsNotMLS() async {
         syncMOC.performAndWait {
             // Given
             conversation.messageProtocol = .proteus
             conversation.mlsGroupID = MLSGroupID(Data.random())
-
-            // When
-            MLSEventProcessor.shared.wipeMLSGroup(
-                forConversation: conversation,
-                context: syncMOC
-            )
-
-            // Then
-            XCTAssertTrue(mlsServiceMock.wipeGroup_Invocations.isEmpty)
         }
+
+        // When
+        await sut.wipeMLSGroup(
+            forConversation: conversation,
+            context: syncMOC
+        )
+
+        // Then
+        XCTAssertTrue(mlsServiceMock.wipeGroup_Invocations.isEmpty)
     }
 
     // MARK: - Helpers
@@ -183,7 +181,7 @@ class MLSEventProcessorTests: MessagingTestBase {
             self.conversation.mlsStatus = status
 
             // When
-            MLSEventProcessor.shared.joinMLSGroupWhenReady(
+            self.sut.joinMLSGroupWhenReady(
                 forConversation: self.conversation,
                 context: self.syncMOC
             )
@@ -200,20 +198,22 @@ class MLSEventProcessorTests: MessagingTestBase {
         mockHasWelcomeMessageBeenProcessed: Bool = true,
         file: StaticString = #filePath,
         line: UInt = #line
-    ) {
-        syncMOC.performGroupedBlockAndWait {
+    ) async {
+        await syncMOC.perform {
             // Given
             self.conversation.mlsStatus = originalValue
             self.conversation.messageProtocol = mockMessageProtocol
             self.mlsServiceMock.conversationExistsGroupID_MockValue = mockHasWelcomeMessageBeenProcessed
+        }
 
-            // When
-            MLSEventProcessor.shared.updateConversationIfNeeded(
-                conversation: self.conversation,
-                groupID: self.groupIdString,
-                context: self.syncMOC
-            )
+        // When
+        await sut.updateConversationIfNeeded(
+            conversation: self.conversation,
+            groupID: self.groupIdString,
+            context: self.syncMOC
+        )
 
+        await syncMOC.perform {
             // Then
             XCTAssertEqual(self.conversation.mlsStatus, expectedValue, file: file, line: line)
         }

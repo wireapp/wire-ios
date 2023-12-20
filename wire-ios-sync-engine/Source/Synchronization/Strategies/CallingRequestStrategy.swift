@@ -353,21 +353,23 @@ extension CallingRequestStrategy: WireCallCenterTransport {
                 }
 
                 message = GenericMessageEntity(
-                    conversation: selfConversation,
                     message: genericMessage,
+                    context: self.managedObjectContext,
+                    conversation: selfConversation,
                     targetRecipients: recipients,
                     completionHandler: nil
                 )
             } else {
                 message = GenericMessageEntity(
-                    conversation: conversation,
                     message: genericMessage,
+                    context: self.managedObjectContext,
+                    conversation: conversation,
                     targetRecipients: recipients,
                     completionHandler: nil
                 )
             }
 
-            Task {
+            WaitingGroupTask(context: self.managedObjectContext) {
                 do {
                     try await self.messageSender.sendMessage(message: message)
                     completionHandler(200)

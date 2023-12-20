@@ -1,5 +1,6 @@
+//
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2023 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,26 +17,23 @@
 //
 
 import Foundation
+import MessageUI
+import WireSystem
 
-final class MockConversationService: ConversationServiceInterface {
+extension MFMailComposeViewController {
 
-    func createGroupConversation(
-        name: String?,
-        users: Set<ZMUser>,
-        allowGuests: Bool,
-        allowServices: Bool,
-        enableReceipts: Bool,
-        messageProtocol: WireDataModel.MessageProtocol,
-        completion: @escaping (Swift.Result<ZMConversation, ConversationCreationFailure>) -> Void
-    ) {
-        fatalError("not implemented")
+    func attachLogs() {
+        if let currentLog = ZMSLog.currentZipLog {
+            addAttachmentData(currentLog, mimeType: "application/zip", fileName: "current.log.zip")
+        }
+
+        ZMSLog.previousZipLogURLs.forEach { url in
+            do {
+                let data = try Data(contentsOf: url)
+                addAttachmentData(data, mimeType: "application/zip", fileName: url.lastPathComponent)
+            } catch {
+                // ignore error for now, it's possible a file does not exist.
+            }
+        }
     }
-
-    func syncConversation(
-        qualifiedID: QualifiedID,
-        completion: @escaping () -> Void
-    ) {
-        completion()
-    }
-
 }
