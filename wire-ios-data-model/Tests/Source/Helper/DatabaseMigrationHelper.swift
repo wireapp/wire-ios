@@ -102,7 +102,7 @@ struct DatabaseMigrationHelper {
         try FileManager.default.copyItem(at: source, to: storeFile)
     }
 
-    private func databaseFixtureURL(version: String, file: StaticString = #file, line: UInt = #line) -> URL? {
+    func databaseFixtureURL(version: String, file: StaticString = #file, line: UInt = #line) -> URL? {
         let name = databaseFixtureFileName(for: version)
         guard let source = WireDataModelTestsBundle.bundle.url(forResource: name, withExtension: "wiredatabase") else {
             XCTFail("Could not find \(name).wiredatabase in test bundle", file: file, line: line)
@@ -112,7 +112,7 @@ struct DatabaseMigrationHelper {
     }
 
     // The naming scheme is slightly different for fixture files
-    private func databaseFixtureFileName(for version: String) -> String {
+    func databaseFixtureFileName(for version: String) -> String {
         let fixedVersion = version.replacingOccurrences(of: ".", with: "-")
         let name = "store" + fixedVersion
         return name
