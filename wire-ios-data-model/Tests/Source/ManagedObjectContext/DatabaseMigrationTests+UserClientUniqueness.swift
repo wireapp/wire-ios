@@ -115,12 +115,14 @@ final class DatabaseMigrationTests_UserClientUniqueness: XCTestCase {
         postMigrationAction: MigrationAction
     ) throws {
         // GIVEN
-        let userId = DatabaseMigrationTests.testUUID
+        let accountIdentifier = UUID()
         let applicationContainer = DatabaseBaseTest.applicationContainer
 
         // copy given database as source
-        let storeFile = CoreDataStack.accountDataFolder(accountIdentifier: userId,
-                                                        applicationContainer: applicationContainer).appendingPersistentStoreLocation()
+        let storeFile = CoreDataStack.accountDataFolder(
+            accountIdentifier: accountIdentifier,
+            applicationContainer: applicationContainer
+        ).appendingPersistentStoreLocation()
 
         try helper.createFixtureDatabase(
             storeFile: storeFile,
@@ -145,7 +147,7 @@ final class DatabaseMigrationTests_UserClientUniqueness: XCTestCase {
 
         // WHEN
         let stack = createStorageStackAndWaitForCompletion(
-            userID: userId,
+            userID: accountIdentifier,
             applicationContainer: applicationContainer
         )
 

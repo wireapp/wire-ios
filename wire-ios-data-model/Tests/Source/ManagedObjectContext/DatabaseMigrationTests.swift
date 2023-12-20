@@ -47,6 +47,7 @@ final class DatabaseMigrationTests: DatabaseBaseTest {
             .map { "2-\($0)-0" }
         let modelVersion = CoreDataStack.loadMessagingModel().version
         let fixtureVersion = String(helper.databaseFixtureFileName(for: modelVersion).dropFirst("store".count))
+        let accountIdentifier = UUID()
 
         // Check that we have current version fixture file
         guard helper.databaseFixtureURL(version: modelVersion) != nil else {
@@ -54,10 +55,10 @@ final class DatabaseMigrationTests: DatabaseBaseTest {
 
             try helper.createFixtureDatabase(
                 applicationContainer: DatabaseBaseTest.applicationContainer,
-                accountIdentifier: DatabaseMigrationTests.testUUID,
+                accountIdentifier: accountIdentifier,
                 versionName: versionsWithoutCurrent.last!
             )
-            let directory = createStorageStackAndWaitForCompletion(userID: DatabaseMigrationTests.testUUID)
+            let directory = createStorageStackAndWaitForCompletion(userID: accountIdentifier)
             let currentDatabaseURL = directory.syncContext.persistentStoreCoordinator!.persistentStores.last!.url!
 
             XCTFail("\nMissing current version database file: `store\(fixtureVersion).wiredatabase`. \n\n" +
@@ -81,12 +82,12 @@ final class DatabaseMigrationTests: DatabaseBaseTest {
             // GIVEN
             try helper.createFixtureDatabase(
                 applicationContainer: DatabaseBaseTest.applicationContainer,
-                accountIdentifier: DatabaseMigrationTests.testUUID,
+                accountIdentifier: accountIdentifier,
                 versionName: version
             )
 
             // WHEN
-            var directory: CoreDataStack! = createStorageStackAndWaitForCompletion(userID: DatabaseMigrationTests.testUUID)
+            var directory: CoreDataStack! = createStorageStackAndWaitForCompletion(userID: accountIdentifier)
 
             // THEN
             let conversationCount = try directory.viewContext.count(for: ZMConversation.sortedFetchRequest())
@@ -161,9 +162,6 @@ final class DatabaseMigrationTests: DatabaseBaseTest {
 
 // MARK: - Helpers
 extension DatabaseMigrationTests {
-
-    static let testUUID: UUID = UUID()
-
     var userPropertiesToFetch: [String] {
         return [
             "accentColorValue",
