@@ -918,9 +918,12 @@ extension ZMClientMessage: MLSEncryptedPayloadGenerator {
             throw MLSEncryptedPayloadGeneratorError.noContext
         }
 
-        updateUnderlayingMessageBeforeSending(in: context)
+        let genericMessage = await context.perform {
+            self.updateUnderlayingMessageBeforeSending(in: context)
+            return self.underlyingMessage
+        }
 
-        guard let genericMessage = underlyingMessage else {
+        guard let genericMessage else {
             throw MLSEncryptedPayloadGeneratorError.noUnencryptedData
         }
 
@@ -936,9 +939,12 @@ extension ZMAssetClientMessage: MLSEncryptedPayloadGenerator {
             throw MLSEncryptedPayloadGeneratorError.noContext
         }
 
-        updateUnderlayingMessageBeforeSending(in: context)
+        let genericMessage = await context.perform {
+            self.updateUnderlayingMessageBeforeSending(in: context)
+            return self.underlyingMessage
+        }
 
-        guard let genericMessage = underlyingMessage else {
+        guard let genericMessage else {
             throw MLSEncryptedPayloadGeneratorError.noUnencryptedData
         }
 
