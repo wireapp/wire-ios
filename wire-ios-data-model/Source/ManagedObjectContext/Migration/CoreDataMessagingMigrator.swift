@@ -46,11 +46,14 @@ extension CoreDataMessagingMigratorError: LocalizedError {
             return "unknownVersion"
         case .migrateStoreFailed(let error):
             let nsError = error as NSError
-            return "migrateStoreFailed: \(error.localizedDescription). NSError code: \(nsError.code) --- domain \(nsError.domain) --- userInfo: \(dump(nsError.userInfo))"
+            return "migrateStoreFailed: \(error.localizedDescription). "
+            + "NSError code: \(nsError.code) --- domain \(nsError.domain) --- userInfo: \(dump(nsError.userInfo))."
         case .failedToForceWALCheckpointing:
             return "failedToForceWALCheckpointing"
         case .failedToReplacePersistentStore(let sourceURL, let targetURL, let underlyingError):
-            return "failedToReplacePersistentStore: \(underlyingError.localizedDescription). sourceURL: \(sourceURL). targetURL: \(targetURL)"
+            let nsError = underlyingError as NSError
+            return "failedToReplacePersistentStore: \(underlyingError.localizedDescription). sourceURL: \(sourceURL). targetURL: \(targetURL). "
+            + "NSError code: \(nsError.code) --- domain \(nsError.domain) --- userInfo: \(dump(nsError.userInfo))"
         case .failedToDestroyPersistentStore(let storeURL):
             return "failedToDestroyPersistentStore: \(storeURL)"
         }
@@ -91,7 +94,7 @@ final class CoreDataMessagingMigrator: CoreDataMessagingMigratorProtocol {
 
         for migrationStep in try migrationStepsForStore(at: storeURL, to: version) {
             let logMessage = "messaging core data store migration step \(migrationStep.sourceVersion) to \(migrationStep.destinationVersion)"
-            zmLog.safePublic(SanitizedString(stringLiteral: logMessage), level: .error)
+            zmLog.safePublic(SanitizedString(stringLiteral: logMessage), level: .info)
             WireLogger.localStorage.info(logMessage)
 
             let manager = NSMigrationManager(sourceModel: migrationStep.sourceModel, destinationModel: migrationStep.destinationModel)
