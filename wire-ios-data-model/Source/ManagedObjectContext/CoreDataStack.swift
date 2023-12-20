@@ -231,14 +231,11 @@ public class CoreDataStack: NSObject, ContextProvider {
                 WireLogger.localStorage.info("start migration of core data messaging store!")
 
                 do {
-                    throw MigrationError.migrationFailed(NSError(domain: "test", code: NSValidationMultipleErrorsError, userInfo: ["Object": "Missing required reference"]))
                     try self.migrateMessagingStore()
                     log.safePublic("[setup] finished migration of core data messaging store!")
                     WireLogger.localStorage.info("finished migration of core data messaging store!")
                 } catch {
-                    let nsError = error as NSError
-                    let logMessage = "failed migration of core data messaging store: \(error.localizedDescription). "
-                        + "NSError code: \(nsError.code) --- domain \(nsError.domain) --- userInfo: \(nsError.userInfo)"
+                    let logMessage = "failed migration of core data messaging store: \(error.localizedDescription)."
                     log.safePublic("[setup] \(SanitizedString(stringLiteral: logMessage))", level: .error)
                     WireLogger.localStorage.error(logMessage)
 

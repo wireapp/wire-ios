@@ -45,7 +45,8 @@ extension CoreDataMessagingMigratorError: LocalizedError {
         case .unknownVersion:
             return "unknownVersion"
         case .migrateStoreFailed(let error):
-            return "migrateStoreFailed: \(error.localizedDescription)"
+            let nsError = error as NSError
+            return "migrateStoreFailed: \(error.localizedDescription). NSError code: \(nsError.code) --- domain \(nsError.domain) --- userInfo: \(dump(nsError.userInfo))"
         case .failedToForceWALCheckpointing:
             return "failedToForceWALCheckpointing"
         case .failedToReplacePersistentStore(let sourceURL, let targetURL, let underlyingError):
