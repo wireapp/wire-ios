@@ -223,6 +223,72 @@ public final class ProteusService: ProteusServiceInterface {
         }
     }
 
+    // MARK: - proteusNewPrekey
+
+    enum PrekeyError: Error {
+        case failedToGeneratePrekey
+        case prekeyCountTooLow
+        case failedToGetLastPrekey
+    }
+
+    public func generatePrekey(id: UInt16) async throws -> String {
+        logger.info("generating prekey")
+
+        do {
+            return try await coreCrypto.perform { try $0.proteusNewPrekey(prekeyId: id).data.base64EncodedString() }
+        } catch {
+            logger.error("failed to generate prekey: \(String(describing: error))")
+            throw PrekeyError.failedToGeneratePrekey
+        }
+    }
+
+    public func lastPrekey() async throws -> String {
+        logger.info("getting last resort prekey")
+        do {
+            return try await coreCrypto.perform { try $0.proteusLastResortPrekey().data.base64EncodedString() }
+        } catch {
+            logger.error("failed to get last resort prekey: \(String(describing: error))")
+            throw PrekeyError.failedToGetLastPrekey
+        }
+    }
+
+    public var lastPrekeyID: UInt16 {
+        get async {
+            let lastPrekeyID = try? await coreCrypto.perform { try $0.proteusLastResortPrekeyId() }
+            return lastPrekeyID ?? UInt16.max
+        }
+    }
+
+    public func generatePrekeys(start: UInt16 = 0, count: UInt16 = 0) async throws -> [IdPrekeyTuple] {
+        guard count > 0 else {
+            throw PrekeyError.prekeyCountTooLow
+        }
+
+        let range = await prekeysRange(count, start: start)
+        let prekeys = try await generatePrekeys(range)
+
+        guard prekeys.count > 0 else {
+            throw PrekeyError.failedToGeneratePrekey
+        }
+
+        return prekeys
+    }
+
+    private func generatePrekeys(_ range: CountableRange<UInt16>) async throws -> [IdPrekeyTuple] {
+        return try await range.asyncMap {
+            let prekey = try await generatePrekey(id: $0)
+            return (id: $0, prekey: prekey)
+        }
+    }
+
+    private func prekeysRange(_ count: UInt16, start: UInt16) async -> CountableRange<UInt16> {
+        let keyId = await lastPrekeyID
+        if start + count > keyId {
+            return 0 ..< count
+        }
+        return start ..< (start + count)
+    }
+
     // MARK: - proteusFingerprint
 
     enum FingerprintError: Error {
