@@ -36,10 +36,11 @@ public class MLSConversationVerificationStatusProvider: MLSConversationVerificat
 
     public init(
         e2eIVerificationStatusService: E2eIVerificationStatusServiceInterface,
-        syncContext: NSManagedObjectContext) {
-            self.e2eIVerificationStatusService = e2eIVerificationStatusService
-            self.syncContext = syncContext
-        }
+        syncContext: NSManagedObjectContext
+    ) {
+        self.e2eIVerificationStatusService = e2eIVerificationStatusService
+        self.syncContext = syncContext
+    }
 
     // MARK: - Public interface
 
