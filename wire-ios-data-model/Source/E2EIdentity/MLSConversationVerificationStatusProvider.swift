@@ -68,7 +68,7 @@ public class MLSConversationVerificationStatusProvider: MLSConversationVerificat
             return conversation.mlsVerificationStatus = newStatusFromCC
         }
 
-        let newStatus = getActualNewStatus(newStatusFromCC: newStatusFromCC, currentStatus: currentStatus)
+        let newStatus = resolveNewStatus(newStatusFromCC: newStatusFromCC, currentStatus: currentStatus)
         guard newStatus != currentStatus else {
             return
         }
