@@ -34,11 +34,15 @@ class ClientUpdateStatusTests: MessagingTest {
 
     override func setUp() {
         super.setUp()
-        self.sut = ClientUpdateStatus(syncManagedObjectContext: self.syncMOC)
-        self.sut.determineInitialClientStatus()
 
-        clientObserverToken = ZMClientUpdateNotification.addObserver(context: uiMOC) { [weak self] (type, clientObjectIDs, error) in
-            self?.receivedNotifications.append(ClientUpdateStatusChange(type: type, clientObjectIDs: clientObjectIDs, error: error))
+        syncMOC.performAndWait { [self] in
+            self.sut = ClientUpdateStatus(syncManagedObjectContext: syncMOC)
+            self.sut.determineInitialClientStatus()
+        }
+
+        clientObserverToken = ZMClientUpdateNotification.addObserver(context: uiMOC) { [weak self] type, clientObjectIDs, error in
+            let change = ClientUpdateStatusChange(type: type, clientObjectIDs: clientObjectIDs, error: error)
+            self?.receivedNotifications.append(change)
         }
     }
 
