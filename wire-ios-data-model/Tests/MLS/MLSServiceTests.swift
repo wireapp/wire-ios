@@ -43,14 +43,6 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     let groupID = MLSGroupID([1, 2, 3])
 
-    // `MLSService.init` performs actions which make it hard to assert state on mocks
-    let skipSetupSUTTestNames = Set([
-        "-[MLSServiceTests \(#selector(test_BackendPublicKeysAreFetched_WhenInitializing))]",
-        "-[MLSServiceTests \(#selector(test_CreateGroup_IsSuccessful))]"
-    ]
-        .map { $0.replacingOccurrences(of: "WithCompletionHandler:", with: "") }
-    )
-
     override func setUp() {
         super.setUp()
         mockCoreCrypto = MockCoreCryptoProtocol()
@@ -76,9 +68,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         mockActionsProvider.fetchBackendPublicKeysIn_MockValue = BackendMLSPublicKeys()
         mockActionsProvider.claimKeyPackagesUserIDDomainExcludedSelfClientIDIn_MockValue = []
 
-        if !skipSetupSUTTestNames.contains(name) {
-            createSut()
-        }
+        createSut()
     }
 
     private func createSut() {
@@ -158,40 +148,6 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     func mlsServiceDidUpdateKeyMaterialForAllGroups() {
         keyMaterialUpdatedExpectation?.fulfill()
-    }
-
-    // MARK: - Public keys
-
-    func test_BackendPublicKeysAreFetched_WhenInitializing() throws {
-        // Mock
-        let keys = BackendMLSPublicKeys(
-            removal: .init(ed25519: Data([1, 2, 3]))
-        )
-
-        // expectations
-        let fetchBackendPublicKeysExpectation = XCTestExpectation(description: "Fetch backend public keys")
-
-        mockActionsProvider.fetchBackendPublicKeysIn_MockMethod = { _ in
-            fetchBackendPublicKeysExpectation.fulfill()
-            return keys
-        }
-
-        // When
-        let sut = MLSService(
-            context: uiMOC,
-            coreCryptoProvider: mockCoreCryptoProvider,
-            conversationEventProcessor: mockConversationEventProcessor,
-            staleKeyMaterialDetector: mockStaleMLSKeyDetector,
-            userDefaults: userDefaultsTestSuite,
-            actionsProvider: mockActionsProvider,
-            delegate: self,
-            syncStatus: mockSyncStatus,
-            userID: userIdentifier
-        )
-
-        // Then
-        wait(for: [fetchBackendPublicKeysExpectation], timeout: 0.5)
-        XCTAssertEqual(sut.backendPublicKeys, keys)
     }
 
     // MARK: - Conference info
@@ -399,10 +355,6 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             ))
         }
 
-        // delayed creating sut with `skipSetupSUTTestNames` otherwise
-        // `fetchBackendPublicKeys` is called before the mock is set
-        createSut()
-
         // When
         try await sut.createGroup(for: groupID)
 
@@ -439,7 +391,27 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             // Then
             XCTAssertEqual(mockCreateConversationCount, 1)
         }
+    }
 
+    func test_CreateGroup_BackendPublicKeysAreFetched() async throws {
+        // Given
+        let groupID = MLSGroupID(Data([1, 2, 3]))
+        let backendPublicKeys = BackendMLSPublicKeys(removal: .init(ed25519: .init([1, 2, 3])))
+
+        let fetchBackendPublicKeysExpectation = XCTestExpectation(description: "Fetch backend public keys")
+        mockActionsProvider.fetchBackendPublicKeysIn_MockMethod = { _ in
+            fetchBackendPublicKeysExpectation.fulfill()
+            return backendPublicKeys
+        }
+        mockCoreCrypto.mockCreateConversation = { _, _, _ in }
+
+        // When
+        try await sut.createGroup(for: groupID)
+
+        // Then
+        await fulfillment(of: [fetchBackendPublicKeysExpectation], timeout: 0.5)
+        XCTAssertEqual(mockStaleMLSKeyDetector.calls.keyingMaterialUpdated, [groupID])
+        XCTAssertEqual(sut.backendPublicKeys, backendPublicKeys)
     }
 
     // MARK: - Adding participants
