@@ -132,8 +132,8 @@ extension ZMClientMessage: EncryptedPayloadGenerator {
 
     public func encryptForTransport() async -> Payload? {
         guard
-            let conversation = conversation,
-            let context = managedObjectContext
+            let context = managedObjectContext,
+            let conversation = await context.perform({ self.conversation })
         else {
             return nil
         }
@@ -144,13 +144,15 @@ extension ZMClientMessage: EncryptedPayloadGenerator {
 
     public func encryptForTransportQualified() async -> Payload? {
         guard
-            let conversation = conversation,
-            let context = managedObjectContext
+            let context = managedObjectContext,
+            let conversation = await context.perform({ self.conversation })
         else {
             return nil
         }
 
-        await context.perform { self.updateUnderlayingMessageBeforeSending(in: context) }
+        let underlyingMessage = await context.perform { self.updateUnderlayingMessageBeforeSending(in: context)
+            return self.underlyingMessage
+        }
         return await underlyingMessage?.encryptForTransport(for: conversation, in: context, useQualifiedIdentifiers: true)
     }
 
@@ -164,8 +166,8 @@ extension ZMAssetClientMessage: EncryptedPayloadGenerator {
 
     public func encryptForTransport() async -> Payload? {
         guard
-            let conversation = conversation,
-            let context = managedObjectContext
+            let context = managedObjectContext,
+            let conversation = await context.perform({ self.conversation })
         else {
             return nil
         }
@@ -176,13 +178,8 @@ extension ZMAssetClientMessage: EncryptedPayloadGenerator {
 
     public func encryptForTransportQualified() async -> Payload? {
         guard
-            let context = managedObjectContext
-        else {
-            return nil
-        }
-
-        guard
-            let conversation = conversation
+            let context = managedObjectContext,
+            let conversation = await context.perform({ self.conversation })
         else {
             return nil
         }
@@ -414,10 +411,11 @@ extension GenericMessage {
         }
 
         // Reset all failed sessions.
-        recipients.values
-            .flatMap { $0 }
-            .forEach { $0.failedToEstablishSession = false }
-
+        await context.perform {
+            recipients.values
+                .flatMap { $0 }
+                .forEach { $0.failedToEstablishSession = false }
+        }
         return messageData
     }
 
@@ -519,13 +517,15 @@ extension GenericMessage {
         // We do not want to send pushes for delivery receipts.
         let nativePush = !hasConfirmation
 
-        return Proteus_QualifiedNewOtrMessage(
-            withSender: selfClient,
-            nativePush: nativePush,
-            recipients: qualifiedUserEntries,
-            missingClientsStrategy: missingClientsStrategy,
-            blob: externalData
-        )
+        return await context.perform {
+            Proteus_QualifiedNewOtrMessage(
+                withSender: selfClient,
+                nativePush: nativePush,
+                recipients: qualifiedUserEntries,
+                missingClientsStrategy: missingClientsStrategy,
+                blob: externalData
+            )
+        }
     }
 
     /// Returns a message for the given recipients.
@@ -587,7 +587,8 @@ extension GenericMessage {
                 )
 
                 guard !clientEntries.isEmpty else { return nil }
-                return Proteus_UserEntry(withUser: user, clientEntries: clientEntries)
+
+                return await context.perform { Proteus_UserEntry(withUser: user, clientEntries: clientEntries) }
             }
 
             return Proteus_QualifiedUserEntry(withDomain: domain, userEntries: userEntries)
