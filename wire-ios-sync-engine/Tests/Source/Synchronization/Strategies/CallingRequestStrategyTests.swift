@@ -237,10 +237,10 @@ class CallingRequestStrategyTests: MessagingTest {
     }
 
     func testThatItGeneratesClientListRequestAndCallsTheCompletionHandler_Federated() throws {
+        // Given
+        BackendInfo.storage = .random()!
+        BackendInfo.isFederationEnabled = true
         let (conversation, payload) = try syncMOC.performAndWait {
-            // Given
-            BackendInfo.isFederationEnabled = true
-
             let selfClient = createSelfClient()
             let selfUser = ZMUser.selfUser(in: syncMOC)
             selfUser.domain = "foo.com"
