@@ -58,12 +58,12 @@ import WireTesting
         let exp = self.expectation(description: "should wait for loadStores to finish")
         stack.setup(onStartMigration: {
             // do nothing
-        }) { error in
+        }, onFailure: { error in
             XCTAssertNil(error, file: file, line: line)
             exp.fulfill()
-        } onCompletion: { _ in
+        }, onCompletion: { _ in
             exp.fulfill()
-        }
+        })
 
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 1.0), file: file, line: line)
 
