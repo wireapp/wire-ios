@@ -58,6 +58,7 @@ extension CoreDataMessagingMigratorError: LocalizedError {
 
 final class CoreDataMessagingMigrator: CoreDataMessagingMigratorProtocol {
 
+    private let zmLog = ZMSLog(tag: "core-data")
     private let isInMemoryStore: Bool
 
     @available(iOS 15.0, *)
@@ -82,12 +83,15 @@ final class CoreDataMessagingMigrator: CoreDataMessagingMigratorProtocol {
     }
 
     func migrateStore(at storeURL: URL, toVersion version: CoreDataMessagingMigrationVersion) throws {
+        zmLog.safePublic("force WAL checkpointing for store", level: .info)
         try forceWALCheckpointingForStore(at: storeURL)
 
         var currentURL = storeURL
 
         for migrationStep in try migrationStepsForStore(at: storeURL, to: version) {
-            WireLogger.localStorage.info("messaging core data store migration step \(migrationStep.sourceVersion) to \(migrationStep.destinationVersion)")
+            let logMessage = "messaging core data store migration step \(migrationStep.sourceVersion) to \(migrationStep.destinationVersion)"
+            zmLog.safePublic(SanitizedString(stringLiteral: logMessage), level: .error)
+            WireLogger.localStorage.info(logMessage)
 
             let manager = NSMigrationManager(sourceModel: migrationStep.sourceModel, destinationModel: migrationStep.destinationModel)
             let destinationURL = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true).appendingPathComponent(UUID().uuidString)
@@ -112,7 +116,7 @@ final class CoreDataMessagingMigrator: CoreDataMessagingMigratorProtocol {
                         destinationOptions: nil
                     )
                 }
-            } catch let error {
+            } catch {
                 throw CoreDataMessagingMigratorError.migrateStoreFailed(error: error)
             }
 
@@ -122,6 +126,8 @@ final class CoreDataMessagingMigrator: CoreDataMessagingMigratorProtocol {
             }
 
             currentURL = destinationURL
+
+            zmLog.safePublic("finish migration step", level: .info)
         }
 
         try replaceStore(at: storeURL, withStoreAt: currentURL)
