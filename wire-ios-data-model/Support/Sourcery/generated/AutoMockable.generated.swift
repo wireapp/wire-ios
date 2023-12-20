@@ -180,10 +180,10 @@ public class MockCoreCryptoProviderProtocol: CoreCryptoProviderProtocol {
 
     public var coreCryptoRequireMLS_Invocations: [Bool] = []
     public var coreCryptoRequireMLS_MockError: Error?
-    public var coreCryptoRequireMLS_MockMethod: ((Bool) throws -> SafeCoreCryptoProtocol)?
+    public var coreCryptoRequireMLS_MockMethod: ((Bool) async throws -> SafeCoreCryptoProtocol)?
     public var coreCryptoRequireMLS_MockValue: SafeCoreCryptoProtocol?
 
-    public func coreCrypto(requireMLS: Bool) throws -> SafeCoreCryptoProtocol {
+    public func coreCrypto(requireMLS: Bool) async throws -> SafeCoreCryptoProtocol {
         coreCryptoRequireMLS_Invocations.append(requireMLS)
 
         if let error = coreCryptoRequireMLS_MockError {
@@ -191,7 +191,7 @@ public class MockCoreCryptoProviderProtocol: CoreCryptoProviderProtocol {
         }
 
         if let mock = coreCryptoRequireMLS_MockMethod {
-            return try mock(requireMLS)
+            return try await mock(requireMLS)
         } else if let mock = coreCryptoRequireMLS_MockValue {
             return mock
         } else {
@@ -276,9 +276,9 @@ public class MockCryptoboxMigrationManagerInterface: CryptoboxMigrationManagerIn
 
     public var performMigrationAccountDirectoryCoreCrypto_Invocations: [(accountDirectory: URL, coreCrypto: SafeCoreCryptoProtocol)] = []
     public var performMigrationAccountDirectoryCoreCrypto_MockError: Error?
-    public var performMigrationAccountDirectoryCoreCrypto_MockMethod: ((URL, SafeCoreCryptoProtocol) throws -> Void)?
+    public var performMigrationAccountDirectoryCoreCrypto_MockMethod: ((URL, SafeCoreCryptoProtocol) async throws -> Void)?
 
-    public func performMigration(accountDirectory: URL, coreCrypto: SafeCoreCryptoProtocol) throws {
+    public func performMigration(accountDirectory: URL, coreCrypto: SafeCoreCryptoProtocol) async throws {
         performMigrationAccountDirectoryCoreCrypto_Invocations.append((accountDirectory: accountDirectory, coreCrypto: coreCrypto))
 
         if let error = performMigrationAccountDirectoryCoreCrypto_MockError {
@@ -289,7 +289,7 @@ public class MockCryptoboxMigrationManagerInterface: CryptoboxMigrationManagerIn
             fatalError("no mock for `performMigrationAccountDirectoryCoreCrypto`")
         }
 
-        try mock(accountDirectory, coreCrypto)
+        try await mock(accountDirectory, coreCrypto)
     }
 
 }
@@ -1458,14 +1458,14 @@ public class MockMLSServiceInterface: MLSServiceInterface {
     // MARK: - conversationExists
 
     public var conversationExistsGroupID_Invocations: [MLSGroupID] = []
-    public var conversationExistsGroupID_MockMethod: ((MLSGroupID) -> Bool)?
+    public var conversationExistsGroupID_MockMethod: ((MLSGroupID) async -> Bool)?
     public var conversationExistsGroupID_MockValue: Bool?
 
-    public func conversationExists(groupID: MLSGroupID) -> Bool {
+    public func conversationExists(groupID: MLSGroupID) async -> Bool {
         conversationExistsGroupID_Invocations.append(groupID)
 
         if let mock = conversationExistsGroupID_MockMethod {
-            return mock(groupID)
+            return await mock(groupID)
         } else if let mock = conversationExistsGroupID_MockValue {
             return mock
         } else {
@@ -1776,16 +1776,16 @@ public class MockMLSServiceInterface: MLSServiceInterface {
     // MARK: - repairOutOfSyncConversations
 
     public var repairOutOfSyncConversations_Invocations: [Void] = []
-    public var repairOutOfSyncConversations_MockMethod: (() -> Void)?
+    public var repairOutOfSyncConversations_MockMethod: (() async -> Void)?
 
-    public func repairOutOfSyncConversations() {
+    public func repairOutOfSyncConversations() async {
         repairOutOfSyncConversations_Invocations.append(())
 
         guard let mock = repairOutOfSyncConversations_MockMethod else {
             fatalError("no mock for `repairOutOfSyncConversations`")
         }
 
-        mock()
+        await mock()
     }
 
     // MARK: - fetchAndRepairGroup
@@ -1890,15 +1890,6 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
 
     public init() {}
 
-    // MARK: - lastPrekeyID
-
-    public var lastPrekeyID: UInt16 {
-        get { return underlyingLastPrekeyID }
-        set(value) { underlyingLastPrekeyID = value }
-    }
-
-    public var underlyingLastPrekeyID: UInt16!
-
 
     // MARK: - establishSession
 
@@ -1962,10 +1953,10 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
 
     public var encryptDataForSession_Invocations: [(data: Data, id: ProteusSessionID)] = []
     public var encryptDataForSession_MockError: Error?
-    public var encryptDataForSession_MockMethod: ((Data, ProteusSessionID) throws -> Data)?
+    public var encryptDataForSession_MockMethod: ((Data, ProteusSessionID) async throws -> Data)?
     public var encryptDataForSession_MockValue: Data?
 
-    public func encrypt(data: Data, forSession id: ProteusSessionID) throws -> Data {
+    public func encrypt(data: Data, forSession id: ProteusSessionID) async throws -> Data {
         encryptDataForSession_Invocations.append((data: data, id: id))
 
         if let error = encryptDataForSession_MockError {
@@ -1973,7 +1964,7 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
         }
 
         if let mock = encryptDataForSession_MockMethod {
-            return try mock(data, id)
+            return try await mock(data, id)
         } else if let mock = encryptDataForSession_MockValue {
             return mock
         } else {
@@ -1985,10 +1976,10 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
 
     public var encryptBatchedDataForSessions_Invocations: [(data: Data, sessions: [ProteusSessionID])] = []
     public var encryptBatchedDataForSessions_MockError: Error?
-    public var encryptBatchedDataForSessions_MockMethod: ((Data, [ProteusSessionID]) throws -> [String: Data])?
+    public var encryptBatchedDataForSessions_MockMethod: ((Data, [ProteusSessionID]) async throws -> [String: Data])?
     public var encryptBatchedDataForSessions_MockValue: [String: Data]?
 
-    public func encryptBatched(data: Data, forSessions sessions: [ProteusSessionID]) throws -> [String: Data] {
+    public func encryptBatched(data: Data, forSessions sessions: [ProteusSessionID]) async throws -> [String: Data] {
         encryptBatchedDataForSessions_Invocations.append((data: data, sessions: sessions))
 
         if let error = encryptBatchedDataForSessions_MockError {
@@ -1996,7 +1987,7 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
         }
 
         if let mock = encryptBatchedDataForSessions_MockMethod {
-            return try mock(data, sessions)
+            return try await mock(data, sessions)
         } else if let mock = encryptBatchedDataForSessions_MockValue {
             return mock
         } else {
@@ -2027,83 +2018,14 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
         }
     }
 
-    // MARK: - generatePrekey
-
-    public var generatePrekeyId_Invocations: [UInt16] = []
-    public var generatePrekeyId_MockError: Error?
-    public var generatePrekeyId_MockMethod: ((UInt16) async throws -> String)?
-    public var generatePrekeyId_MockValue: String?
-
-    public func generatePrekey(id: UInt16) async throws -> String {
-        generatePrekeyId_Invocations.append(id)
-
-        if let error = generatePrekeyId_MockError {
-            throw error
-        }
-
-        if let mock = generatePrekeyId_MockMethod {
-            return try await mock(id)
-        } else if let mock = generatePrekeyId_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `generatePrekeyId`")
-        }
-    }
-
-    // MARK: - lastPrekey
-
-    public var lastPrekey_Invocations: [Void] = []
-    public var lastPrekey_MockError: Error?
-    public var lastPrekey_MockMethod: (() async throws -> String)?
-    public var lastPrekey_MockValue: String?
-
-    public func lastPrekey() async throws -> String {
-        lastPrekey_Invocations.append(())
-
-        if let error = lastPrekey_MockError {
-            throw error
-        }
-
-        if let mock = lastPrekey_MockMethod {
-            return try await mock()
-        } else if let mock = lastPrekey_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `lastPrekey`")
-        }
-    }
-
-    // MARK: - generatePrekeys
-
-    public var generatePrekeysStartCount_Invocations: [(start: UInt16, count: UInt16)] = []
-    public var generatePrekeysStartCount_MockError: Error?
-    public var generatePrekeysStartCount_MockMethod: ((UInt16, UInt16) async throws -> [IdPrekeyTuple])?
-    public var generatePrekeysStartCount_MockValue: [IdPrekeyTuple]?
-
-    public func generatePrekeys(start: UInt16, count: UInt16) async throws -> [IdPrekeyTuple] {
-        generatePrekeysStartCount_Invocations.append((start: start, count: count))
-
-        if let error = generatePrekeysStartCount_MockError {
-            throw error
-        }
-
-        if let mock = generatePrekeysStartCount_MockMethod {
-            return try await mock(start, count)
-        } else if let mock = generatePrekeysStartCount_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `generatePrekeysStartCount`")
-        }
-    }
-
     // MARK: - localFingerprint
 
     public var localFingerprint_Invocations: [Void] = []
     public var localFingerprint_MockError: Error?
-    public var localFingerprint_MockMethod: (() throws -> String)?
+    public var localFingerprint_MockMethod: (() async throws -> String)?
     public var localFingerprint_MockValue: String?
 
-    public func localFingerprint() throws -> String {
+    public func localFingerprint() async throws -> String {
         localFingerprint_Invocations.append(())
 
         if let error = localFingerprint_MockError {
@@ -2111,7 +2033,7 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
         }
 
         if let mock = localFingerprint_MockMethod {
-            return try mock()
+            return try await mock()
         } else if let mock = localFingerprint_MockValue {
             return mock
         } else {
@@ -2123,10 +2045,10 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
 
     public var remoteFingerprintForSession_Invocations: [ProteusSessionID] = []
     public var remoteFingerprintForSession_MockError: Error?
-    public var remoteFingerprintForSession_MockMethod: ((ProteusSessionID) throws -> String)?
+    public var remoteFingerprintForSession_MockMethod: ((ProteusSessionID) async throws -> String)?
     public var remoteFingerprintForSession_MockValue: String?
 
-    public func remoteFingerprint(forSession id: ProteusSessionID) throws -> String {
+    public func remoteFingerprint(forSession id: ProteusSessionID) async throws -> String {
         remoteFingerprintForSession_Invocations.append(id)
 
         if let error = remoteFingerprintForSession_MockError {
@@ -2134,7 +2056,7 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
         }
 
         if let mock = remoteFingerprintForSession_MockMethod {
-            return try mock(id)
+            return try await mock(id)
         } else if let mock = remoteFingerprintForSession_MockValue {
             return mock
         } else {
@@ -2146,10 +2068,10 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
 
     public var fingerprintFromPrekey_Invocations: [String] = []
     public var fingerprintFromPrekey_MockError: Error?
-    public var fingerprintFromPrekey_MockMethod: ((String) throws -> String)?
+    public var fingerprintFromPrekey_MockMethod: ((String) async throws -> String)?
     public var fingerprintFromPrekey_MockValue: String?
 
-    public func fingerprint(fromPrekey prekey: String) throws -> String {
+    public func fingerprint(fromPrekey prekey: String) async throws -> String {
         fingerprintFromPrekey_Invocations.append(prekey)
 
         if let error = fingerprintFromPrekey_MockError {
@@ -2157,7 +2079,7 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
         }
 
         if let mock = fingerprintFromPrekey_MockMethod {
-            return try mock(prekey)
+            return try await mock(prekey)
         } else if let mock = fingerprintFromPrekey_MockValue {
             return mock
         } else {

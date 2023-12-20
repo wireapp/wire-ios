@@ -1177,97 +1177,116 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     // MARK: - Handling out of sync conversations
 
-    func test_RepairOutOfSyncConversations_RejoinsOutOfSyncConversations() {
+    func test_RepairOutOfSyncConversations_RejoinsOutOfSyncConversations() async {
         // GIVEN
-        let conversationAndOutOfSyncTuples = [
-            createConversation(outOfSync: true),
-            createConversation(outOfSync: true),
-            createConversation(outOfSync: false)
-        ]
+        let conversationAndOutOfSyncTuples = await uiMOC.perform { [self] in
+            [
+                createConversation(outOfSync: true),
+                createConversation(outOfSync: true),
+                createConversation(outOfSync: false)
+            ]
+        }
 
-        // mock conversation epoch
-        mockCoreCrypto.mockConversationEpoch = { groupID in
-            guard let tuple = conversationAndOutOfSyncTuples.first(
-                where: { $0.conversation.mlsGroupID?.bytes == groupID }
-            ) else {
-                return 1
+        await uiMOC.perform {
+            // mock conversation epoch
+            self.mockCoreCrypto.mockConversationEpoch = { groupID in
+                guard let tuple = conversationAndOutOfSyncTuples.first(
+                    where: { $0.conversation.mlsGroupID?.bytes == groupID }
+                ) else {
+                    return 1
+                }
+
+                let epoch = tuple.conversation.epoch
+                return tuple.isOutOfSync ? epoch + 1 : epoch
             }
-
-            let epoch = tuple.conversation.epoch
-            return tuple.isOutOfSync ? epoch + 1 : epoch
         }
 
         // mock fetching group info
         mockActionsProvider.fetchConversationGroupInfoConversationIdDomainSubgroupTypeContext_MockValue = Data()
 
         // mock joining group
-        let expectations = expectations(from: conversationAndOutOfSyncTuples)
-        mockMLSActionExecutor.mockJoinGroup = { groupID, _ in
-            expectations[groupID]?.fulfill()
-            return []
+        let expectations = await uiMOC.perform { self.expectations(from: conversationAndOutOfSyncTuples) }
+        await uiMOC.perform { [self] in
+            mockMLSActionExecutor.mockJoinGroup = { groupID, _ in
+                expectations[groupID]?.fulfill()
+                return []
+            }
         }
 
         // WHEN
-        sut.repairOutOfSyncConversations()
+        await sut.repairOutOfSyncConversations()
 
         // THEN
-        wait(for: Array(expectations.values), timeout: 1.5)
+        await fulfillment(of: Array(expectations.values), timeout: 1.5)
     }
 
-    func test_FetchAndRepairConversation_RejoinsOutOfSyncConversation() throws {
+    func test_FetchAndRepairConversation_RejoinsOutOfSyncConversation() async throws {
         // GIVEN
-        let conversation = createConversation(outOfSync: true).conversation
-        let groupID = try XCTUnwrap(conversation.mlsGroupID)
+        let conversation = await uiMOC.perform({ self.createConversation(outOfSync: true).conversation })
+        guard let groupID =  await uiMOC.perform({ conversation.mlsGroupID }) else {
+            XCTFail("missing groupID")
+            return
+        }
+
         let expectation = XCTestExpectation(description: "rejoined conversation")
 
-        setMocksForConversationRepair(
-            parentGroupID: groupID,
-            epoch: conversation.epoch + 1,
-            onJoinGroup: { joinedGroupID in
-                XCTAssertEqual(groupID, joinedGroupID)
-                expectation.fulfill()
-            }
-        )
-
+        await uiMOC.perform { [self] in
+            setMocksForConversationRepair(
+                parentGroupID: groupID,
+                epoch: conversation.epoch + 1,
+                onJoinGroup: { joinedGroupID in
+                    XCTAssertEqual(groupID, joinedGroupID)
+                    expectation.fulfill()
+                }
+            )
+        }
         // WHEN
-        sut.fetchAndRepairGroupIfPossible(with: groupID)
+        await sut.fetchAndRepairGroupIfPossible(with: groupID)
 
         // THEN
         // Verify expectation that the conversation was rejoined
-        wait(for: [expectation], timeout: 0.5)
+        await fulfillment(of: [expectation], timeout: 0.5)
         // Wait for groups that need the current context before its deallocated
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
 
-    func test_FetchAndRepairConversation_DoesNothingIfConversationIsNotOutOfSync() throws {
+    func test_FetchAndRepairConversation_DoesNothingIfConversationIsNotOutOfSync() async throws {
         // GIVEN
-        let conversation = createConversation(outOfSync: true).conversation
-        let groupID = try XCTUnwrap(conversation.mlsGroupID)
+        let conversation = await uiMOC.perform({ self.createConversation(outOfSync: true).conversation })
+        guard let groupID =  await uiMOC.perform({ conversation.mlsGroupID }) else {
+            XCTFail("missing groupID")
+            return
+        }
 
         let expectation = XCTestExpectation(description: "didn't rejoin conversation")
         expectation.isInverted = true
 
-        setMocksForConversationRepair(
-            parentGroupID: groupID,
-            epoch: conversation.epoch,
-            onJoinGroup: { _ in
-                expectation.fulfill()
-            }
-        )
-
+        await uiMOC.perform { [self] in
+            setMocksForConversationRepair(
+                parentGroupID: groupID,
+                epoch: conversation.epoch,
+                onJoinGroup: { _ in
+                    expectation.fulfill()
+                }
+            )
+        }
         // WHEN
-        sut.fetchAndRepairGroupIfPossible(with: groupID)
+        await sut.fetchAndRepairGroupIfPossible(with: groupID)
 
         // THEN
         // Verify expectation that the conversation was NOT rejoined
-        wait(for: [expectation], timeout: 0.5)
+        await fulfillment(of: [expectation], timeout: 0.5)
     }
 
-    func test_FetchAndRepairConversation_RejoinsOutOfSyncSubgroup() throws {
+    func test_FetchAndRepairConversation_RejoinsOutOfSyncSubgroup() async throws {
         // GIVEN
-        let conversation = createConversation(outOfSync: true).conversation
-        let groupID = try XCTUnwrap(conversation.mlsGroupID)
+        let conversation = await uiMOC.perform({ self.createConversation(outOfSync: true).conversation })
+        guard let groupID =  await uiMOC.perform({ conversation.mlsGroupID }) else {
+            XCTFail("missing groupID")
+            return
+        }
         let subgroupID = MLSGroupID.random()
+        let qualifiedID = await self.uiMOC.perform({ conversation.qualifiedID })
 
         let subgroup = MLSSubgroup(
             cipherSuite: 0,
@@ -1275,34 +1294,39 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             epochTimestamp: Date(),
             groupID: subgroupID,
             members: [],
-            parentQualifiedID: try XCTUnwrap(conversation.qualifiedID)
+            parentQualifiedID: try XCTUnwrap(qualifiedID)
         )
 
         let expectation = XCTestExpectation(description: "rejoined subgroup")
-
-        setMocksForConversationRepair(
-            parentGroupID: groupID,
-            epoch: UInt64(subgroup.epoch + 1),
-            subgroup: subgroup,
-            onJoinGroup: { joinedGroupID in
-                XCTAssertEqual(subgroupID, joinedGroupID)
-                expectation.fulfill()
-            }
-        )
+        await uiMOC.perform {
+            self.setMocksForConversationRepair(
+                parentGroupID: groupID,
+                epoch: UInt64(subgroup.epoch + 1),
+                subgroup: subgroup,
+                onJoinGroup: { joinedGroupID in
+                    XCTAssertEqual(subgroupID, joinedGroupID)
+                    expectation.fulfill()
+                }
+            )
+        }
 
         // WHEN
-        sut.fetchAndRepairGroupIfPossible(with: groupID)
+        await sut.fetchAndRepairGroupIfPossible(with: groupID)
 
         // THEN
         // Verify expectation that the subgroup was rejoined
-        wait(for: [expectation], timeout: 0.5)
+        await fulfillment(of: [expectation], timeout: 0.5)
     }
 
-    func test_FetchAndRepairConversation_DoesNothingIfSubgroupIsNotOutOfSync() throws {
+    func test_FetchAndRepairConversation_DoesNothingIfSubgroupIsNotOutOfSync() async throws {
         // GIVEN
-        let conversation = createConversation(outOfSync: true).conversation
-        let groupID = try XCTUnwrap(conversation.mlsGroupID)
+        let conversation = await uiMOC.perform({ self.createConversation(outOfSync: true).conversation })
+        guard let groupID =  await uiMOC.perform({ conversation.mlsGroupID }) else {
+            XCTFail("missing groupID")
+            return
+        }
         let subgroupID = MLSGroupID.random()
+        let qualifiedID = await self.uiMOC.perform({ conversation.qualifiedID })
 
         let subgroup = MLSSubgroup(
             cipherSuite: 0,
@@ -1310,27 +1334,29 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             epochTimestamp: Date(),
             groupID: subgroupID,
             members: [],
-            parentQualifiedID: try XCTUnwrap(conversation.qualifiedID)
+            parentQualifiedID: try XCTUnwrap(qualifiedID)
         )
 
         let expectation = XCTestExpectation(description: "didn't rejoin subgroup")
         expectation.isInverted = true
 
-        setMocksForConversationRepair(
-            parentGroupID: groupID,
-            epoch: UInt64(subgroup.epoch),
-            subgroup: subgroup,
-            onJoinGroup: { _ in
-                expectation.fulfill()
-            }
-        )
+        await uiMOC.perform {
+            self.setMocksForConversationRepair(
+                parentGroupID: groupID,
+                epoch: UInt64(subgroup.epoch),
+                subgroup: subgroup,
+                onJoinGroup: { _ in
+                    expectation.fulfill()
+                }
+            )
+        }
 
         // WHEN
-        sut.fetchAndRepairGroupIfPossible(with: groupID)
+        await sut.fetchAndRepairGroupIfPossible(with: groupID)
 
         // THEN
         // Verify expectation that the subgroup was NOT rejoined
-        wait(for: [expectation], timeout: 0.5)
+        await fulfillment(of: [expectation], timeout: 0.5)
     }
 
     private func setMocksForConversationRepair(

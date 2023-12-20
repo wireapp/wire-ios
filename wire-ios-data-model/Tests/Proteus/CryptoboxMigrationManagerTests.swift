@@ -105,7 +105,7 @@ class CryptoboxMigrationManagerTests: ZMBaseManagedObjectTest {
 
     // MARK: - Perform migration
 
-    func test_itPerformsMigrations() throws {
+    func test_itPerformsMigrations() async throws {
         // Given
         let migrated = expectation(description: "Cryptobox was migrated")
         mockFileManager.fileExistsAtPath_MockValue = true
@@ -116,7 +116,7 @@ class CryptoboxMigrationManagerTests: ZMBaseManagedObjectTest {
 
         // When
         do {
-            try sut.performMigration(accountDirectory: accountDirectory, coreCrypto: mockSafeCoreCrypto)
+            try await sut.performMigration(accountDirectory: accountDirectory, coreCrypto: mockSafeCoreCrypto)
         } catch {
             XCTFail("failed to perform migration: \(error.localizedDescription)")
         }
@@ -126,7 +126,7 @@ class CryptoboxMigrationManagerTests: ZMBaseManagedObjectTest {
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
     }
 
-    func test_itDoesNotPerformMigration_CoreCryptoError() {
+    func test_itDoesNotPerformMigration_CoreCryptoError() async {
         // Given
         mockFileManager.fileExistsAtPath_MockValue = true
         proteusViaCoreCryptoFlag.isOn = true
@@ -136,9 +136,12 @@ class CryptoboxMigrationManagerTests: ZMBaseManagedObjectTest {
         }
 
         // When
-        XCTAssertThrowsError(try sut.performMigration(accountDirectory: accountDirectory, coreCrypto: mockSafeCoreCrypto)) { error in
-            XCTAssertEqual(error as? CryptoboxMigrationManager.Failure, CryptoboxMigrationManager.Failure.failedToMigrateData)
+        await assertThrows(expectedError: CryptoboxMigrationManager.Failure.failedToMigrateData) {
+            try await self.sut.performMigration(accountDirectory: self.accountDirectory, coreCrypto: self.mockSafeCoreCrypto)
         }
+//        XCTAssertThrowsError() { error in
+//            XCTAssertEqual(error as? CryptoboxMigrationManager.Failure, CryptoboxMigrationManager.Failure.failedToMigrateData)
+//        }
 
         // Then
         XCTAssertTrue(mockFileManager.removeItemAt_Invocations.isEmpty)

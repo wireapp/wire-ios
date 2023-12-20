@@ -1010,13 +1010,16 @@ public final class MLSService: MLSServiceInterface {
     private func outOfSyncConversations(in context: NSManagedObjectContext) async -> [OutOfSyncConversationInfo] {
 
         let conversations = (try? await coreCrypto.perform { coreCrypto in
-            return ZMConversation.fetchMLSConversations(in: context).filter {
-                isConversationOutOfSync(
-                    $0,
-                    coreCrypto: coreCrypto,
-                    context: context
-                )
+            return await context.perform { [weak self] in
+                return ZMConversation.fetchMLSConversations(in: context).filter {
+                    self?.isConversationOutOfSync(
+                        $0,
+                        coreCrypto: coreCrypto,
+                        context: context
+                    ) == true
+                }
             }
+
         }) ?? [] // TODO: [jacob] let it throw
 
         return await context.perform { conversations.compactMap {
