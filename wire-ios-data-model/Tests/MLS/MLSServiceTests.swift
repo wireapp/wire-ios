@@ -43,14 +43,6 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     let groupID = MLSGroupID([1, 2, 3])
 
-    // `MLSService.init` performs actions which make it hard to assert state on mocks
-    let skipSetupSUTTestNames = Set([
-        "-[MLSServiceTests \(#selector(test_BackendPublicKeysAreFetched_WhenInitializing))]",
-        "-[MLSServiceTests \(#selector(test_CreateGroup_IsSuccessful))]"
-    ]
-        .map { $0.replacingOccurrences(of: "WithCompletionHandler:", with: "") }
-    )
-
     override func setUp() {
         super.setUp()
         mockCoreCrypto = MockCoreCryptoProtocol()
@@ -76,13 +68,10 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         mockActionsProvider.fetchBackendPublicKeysIn_MockValue = BackendMLSPublicKeys()
         mockActionsProvider.claimKeyPackagesUserIDDomainExcludedSelfClientIDIn_MockValue = []
 
-        if !skipSetupSUTTestNames.contains(name) {
-            createSut()
-        }
+        createSut()
     }
 
     private func createSut() {
-        didFinishInitializationExpectation = XCTestExpectation(description: "did finish initialization")
         sut = MLSService(
             context: uiMOC,
             coreCryptoProvider: mockCoreCryptoProvider,
@@ -102,7 +91,6 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     override func tearDown() {
         sut = nil
-        didFinishInitializationExpectation = nil
         keyMaterialUpdatedExpectation = nil
         mockCoreCrypto = nil
         mockSafeCoreCrypto = nil
@@ -150,7 +138,6 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     var pendingProposalCommitExpectations = [MLSGroupID: XCTestExpectation]()
     var keyMaterialUpdatedExpectation: XCTestExpectation?
-    var didFinishInitializationExpectation: XCTestExpectation!
 
     // Since SUT may schedule timers to commit pending proposals, we create expectations
     // and fulfill them when SUT informs us the commit was made.
@@ -161,45 +148,6 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     func mlsServiceDidUpdateKeyMaterialForAllGroups() {
         keyMaterialUpdatedExpectation?.fulfill()
-    }
-
-    func mlsServiceDidFinishInitialization() {
-        didFinishInitializationExpectation.fulfill()
-    }
-
-    // MARK: - Public keys
-
-    func test_BackendPublicKeysAreFetched_WhenInitializing() throws {
-        // Mock
-        let keys = BackendMLSPublicKeys(
-            removal: .init(ed25519: Data([1, 2, 3]))
-        )
-
-        // expectations
-        let fetchBackendPublicKeysExpectation = XCTestExpectation(description: "Fetch backend public keys")
-        didFinishInitializationExpectation = XCTestExpectation(description: "did finish initialization")
-
-        mockActionsProvider.fetchBackendPublicKeysIn_MockMethod = { _ in
-            fetchBackendPublicKeysExpectation.fulfill()
-            return keys
-        }
-
-        // When
-        let sut = MLSService(
-            context: uiMOC,
-            coreCryptoProvider: mockCoreCryptoProvider,
-            conversationEventProcessor: mockConversationEventProcessor,
-            staleKeyMaterialDetector: mockStaleMLSKeyDetector,
-            userDefaults: userDefaultsTestSuite,
-            actionsProvider: mockActionsProvider,
-            delegate: self,
-            syncStatus: mockSyncStatus,
-            userID: userIdentifier
-        )
-
-        // Then
-        wait(for: [fetchBackendPublicKeysExpectation, didFinishInitializationExpectation], timeout: 0.5)
-        XCTAssertEqual(sut.backendPublicKeys, keys)
     }
 
     // MARK: - Conference info
@@ -247,9 +195,6 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             }
         }
 
-        // wait for `MLSService.init`'s async operations
-        await fulfillment(of: [didFinishInitializationExpectation], timeout: 1)
-
         // When
         let conferenceInfo = try await sut.generateConferenceInfo(
             parentGroupID: parentGroupID,
@@ -291,9 +236,6 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             throw CryptoError.ConversationNotFound(message: "foo")
         }
 
-        // wait for `MLSService.init`'s async operations
-        await fulfillment(of: [didFinishInitializationExpectation], timeout: 1)
-
         // When / Then
         await assertItThrows(error: ConferenceInfoError.failedToGenerateConferenceInfo) {
             _ = try await sut.generateConferenceInfo(
@@ -314,9 +256,6 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         let mockResult = MLSDecryptResult.message(.random(), .random(length: 3))
 
         mockDecryptionService.decryptMessageForSubconversationType_MockValue = mockResult
-
-        // wait for `MLSService.init`'s async operations
-        await fulfillment(of: [didFinishInitializationExpectation], timeout: 1)
 
         // When
         let result = try await sut.decrypt(
@@ -344,9 +283,6 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
         let mockResult = MLSDecryptResult.message(.random(), .random(length: 3))
         mockDecryptionService.decryptMessageForSubconversationType_MockValue = mockResult
-
-        // wait for `MLSService.init`'s async operations
-        await fulfillment(of: [didFinishInitializationExpectation], timeout: 1)
 
         // When
         let result = try await sut.decrypt(
@@ -382,9 +318,6 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
                 expectation.fulfill()
             }
         )
-
-        // wait for `MLSService.init`'s async operations
-        await fulfillment(of: [didFinishInitializationExpectation], timeout: 1)
 
         // When
         _ = try? await sut.decrypt(
@@ -422,13 +355,6 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             ))
         }
 
-        // delayed creating sut with `skipSetupSUTTestNames` otherwise
-        // `fetchBackendPublicKeys` is called before the mock is set
-        createSut()
-
-        // wait for `MLSService.init`'s async operations
-        await fulfillment(of: [didFinishInitializationExpectation], timeout: 1)
-
         // When
         try await sut.createGroup(for: groupID)
 
@@ -457,9 +383,6 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             throw CryptoError.MalformedIdentifier(message: "bad id")
         }
 
-        // wait for `MLSService.init`'s async operations
-        await fulfillment(of: [didFinishInitializationExpectation], timeout: 1)
-
         // when / then
         do {
             try await sut.createGroup(for: groupID)
@@ -468,7 +391,27 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             // Then
             XCTAssertEqual(mockCreateConversationCount, 1)
         }
+    }
 
+    func test_CreateGroup_BackendPublicKeysAreFetched() async throws {
+        // Given
+        let groupID = MLSGroupID(Data([1, 2, 3]))
+        let backendPublicKeys = BackendMLSPublicKeys(removal: .init(ed25519: .init([1, 2, 3])))
+
+        let fetchBackendPublicKeysExpectation = XCTestExpectation(description: "Fetch backend public keys")
+        mockActionsProvider.fetchBackendPublicKeysIn_MockMethod = { _ in
+            fetchBackendPublicKeysExpectation.fulfill()
+            return backendPublicKeys
+        }
+        mockCoreCrypto.mockCreateConversation = { _, _, _ in }
+
+        // When
+        try await sut.createGroup(for: groupID)
+
+        // Then
+        await fulfillment(of: [fetchBackendPublicKeysExpectation], timeout: 0.5)
+        XCTAssertEqual(mockStaleMLSKeyDetector.calls.keyingMaterialUpdated, [groupID])
+        XCTAssertEqual(sut.backendPublicKeys, backendPublicKeys)
     }
 
     // MARK: - Adding participants
@@ -500,9 +443,6 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             mockAddMembersArguments.append(($0, $1))
             return [updateEvent]
         }
-
-        // wait for `MLSService.init`'s async operations
-        await fulfillment(of: [didFinishInitializationExpectation], timeout: 1)
 
         // When
         try await sut.addMembersToConversation(with: mlsUser, for: mlsGroupID)
@@ -560,9 +500,6 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             return [updateEvent2]
         }
 
-        // wait for `MLSService.init`'s async operations
-        await fulfillment(of: [didFinishInitializationExpectation], timeout: 1)
-
         // When
         try await sut.addMembersToConversation(with: mlsUser, for: groupID)
 
@@ -592,9 +529,6 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             throw CommitError.noPendingProposals
         }
 
-        // wait for `MLSService.init`'s async operations
-        await fulfillment(of: [didFinishInitializationExpectation], timeout: 1)
-
         // when / then
         await assertItThrows(error: MLSService.MLSAddMembersError.noMembersToAdd) {
             try await sut.addMembersToConversation(with: [], for: mlsGroupID)
@@ -615,9 +549,6 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
         // Mock failure for claiming key packages.
         mockActionsProvider.claimKeyPackagesUserIDDomainExcludedSelfClientIDIn_MockError = ClaimMLSKeyPackageAction.Failure.missingDomain
-
-        // wait for `MLSService.init`'s async operations
-        await fulfillment(of: [didFinishInitializationExpectation], timeout: 1)
 
         // Then
         await assertItThrows(error: MLSService.MLSAddMembersError.failedToClaimKeyPackages) {
@@ -649,9 +580,6 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             throw CommitError.failedToGenerateCommit
         }
 
-        // wait for `MLSService.init`'s async operations
-        await fulfillment(of: [didFinishInitializationExpectation], timeout: 1)
-
         // when / then
         await assertItThrows(error: CommitError.failedToGenerateCommit) {
             try await sut.addMembersToConversation(with: mlsUser, for: mlsGroupID)
@@ -681,9 +609,6 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             mockRemoveClientsArguments.append(($0, $1))
             return [updateEvent]
         }
-
-        // wait for `MLSService.init`'s async operations
-        await fulfillment(of: [didFinishInitializationExpectation], timeout: 1)
 
         // When
         try await sut.removeMembersFromConversation(with: [mlsClientID], for: mlsGroupID)
@@ -735,9 +660,6 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             return [updateEvent2]
         }
 
-        // wait for `MLSService.init`'s async operations
-        await fulfillment(of: [didFinishInitializationExpectation], timeout: 1)
-
         // When
         try await sut.removeMembersFromConversation(with: [mlsClientID], for: groupID)
 
@@ -768,9 +690,6 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             throw CommitError.noPendingProposals
         }
 
-        // wait for `MLSService.init`'s async operations
-        await fulfillment(of: [didFinishInitializationExpectation], timeout: 1)
-
         // When / Then
         await assertItThrows(error: MLSService.MLSRemoveParticipantsError.noClientsToRemove) {
             try await sut.removeMembersFromConversation(with: [], for: mlsGroupID)
@@ -794,9 +713,6 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         mockMLSActionExecutor.mockRemoveClients = { _, _ in
             throw CommitError.failedToGenerateCommit
         }
-
-        // wait for `MLSService.init`'s async operations
-        await fulfillment(of: [didFinishInitializationExpectation], timeout: 1)
 
         // When / Then
         await assertItThrows(error: CommitError.failedToGenerateCommit) {
@@ -826,9 +742,6 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         mockMLSActionExecutor.mockCommitPendingProposals = { _ in
             throw CommitError.noPendingProposals
         }
-
-        // wait for `MLSService.init`'s async operations
-        await fulfillment(of: [didFinishInitializationExpectation], timeout: 1)
 
         // When
         try await self.sut.commitPendingProposals()
@@ -863,9 +776,6 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             mockCommitPendingProposalArguments.append(($0, Date()))
             return [updateEvent]
         }
-
-        // wait for `MLSService.init`'s async operations
-        await fulfillment(of: [didFinishInitializationExpectation], timeout: 1)
 
         // When
         try await self.sut.commitPendingProposals()
@@ -908,9 +818,6 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             mockCommitPendingProposalArguments.append(($0, Date()))
             return [updateEvent]
         }
-
-        // wait for `MLSService.init`'s async operations
-        await fulfillment(of: [didFinishInitializationExpectation], timeout: 1)
 
         // When
         try await self.sut.commitPendingProposals()
@@ -979,9 +886,6 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             default: return []
             }
         }
-
-        // wait for `MLSService.init`'s async operations
-        await fulfillment(of: [didFinishInitializationExpectation], timeout: 1)
 
         // When
         try await sut.commitPendingProposals()
@@ -1055,9 +959,6 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             return []
         }
 
-        // wait for `MLSService.init`'s async operations
-        await fulfillment(of: [didFinishInitializationExpectation], timeout: 1)
-
         // When
         try await self.sut.commitPendingProposals()
 
@@ -1124,9 +1025,6 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             processConversationEventsArguments.append($0)
             expectation.fulfill()
         }
-
-        // wait for `MLSService.init`'s async operations
-        await fulfillment(of: [didFinishInitializationExpectation], timeout: 1)
 
         // When
         try await sut.performPendingJoins()
@@ -1215,9 +1113,6 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             expectation.fulfill()
         }
 
-        // wait for `MLSService.init`'s async operations
-        await fulfillment(of: [didFinishInitializationExpectation], timeout: 1)
-
         // When
         try await sut.performPendingJoins()
 
@@ -1266,9 +1161,6 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             return []
         }
 
-        // wait for `MLSService.init`'s async operations
-        await fulfillment(of: [didFinishInitializationExpectation], timeout: 1)
-
         // When
         try await sut.performPendingJoins()
 
@@ -1311,9 +1203,6 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             return []
         }
 
-        // wait for `MLSService.init`'s async operations
-        wait(for: [didFinishInitializationExpectation], timeout: 1)
-
         // WHEN
         sut.repairOutOfSyncConversations()
 
@@ -1335,9 +1224,6 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
                 expectation.fulfill()
             }
         )
-
-        // wait for `MLSService.init`'s async operations
-        wait(for: [didFinishInitializationExpectation], timeout: 1)
 
         // WHEN
         sut.fetchAndRepairGroupIfPossible(with: groupID)
@@ -1364,9 +1250,6 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
                 expectation.fulfill()
             }
         )
-
-        // wait for `MLSService.init`'s async operations
-        wait(for: [didFinishInitializationExpectation], timeout: 1)
 
         // WHEN
         sut.fetchAndRepairGroupIfPossible(with: groupID)
@@ -1403,9 +1286,6 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             }
         )
 
-        // wait for `MLSService.init`'s async operations
-        wait(for: [didFinishInitializationExpectation], timeout: 1)
-
         // WHEN
         sut.fetchAndRepairGroupIfPossible(with: groupID)
 
@@ -1440,9 +1320,6 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
                 expectation.fulfill()
             }
         )
-
-        // wait for `MLSService.init`'s async operations
-        wait(for: [didFinishInitializationExpectation], timeout: 1)
 
         // WHEN
         sut.fetchAndRepairGroupIfPossible(with: groupID)
@@ -1524,9 +1401,6 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             XCTAssertEqual(id, groupID.bytes)
         }
 
-        // wait for `MLSService.init`'s async operations
-        await fulfillment(of: [didFinishInitializationExpectation], timeout: 1)
-
         // When
         await sut.wipeGroup(groupID)
 
@@ -1581,9 +1455,6 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             uploadKeyPackages.fulfill()
         }
 
-        // wait for `MLSService.init`'s async operations
-        await fulfillment(of: [didFinishInitializationExpectation], timeout: 1)
-
         // When
         await sut.uploadKeyPackagesIfNeeded()
 
@@ -1621,9 +1492,6 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             countUnclaimedKeyPackages.fulfill()
             return 0
         }
-
-        // wait for `MLSService.init`'s async operations
-        await fulfillment(of: [didFinishInitializationExpectation], timeout: 1)
 
         // When
         await sut.uploadKeyPackagesIfNeeded()
@@ -1667,9 +1535,6 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             return []
         }
 
-        // wait for `MLSService.init`'s async operations
-        await fulfillment(of: [didFinishInitializationExpectation], timeout: 1)
-
         // When
         await sut.uploadKeyPackagesIfNeeded()
 
@@ -1694,9 +1559,6 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             mockClientValidKeypackagesCountCount += 1
             return UInt64(self.sut.targetUnclaimedKeyPackageCount)
         }
-
-        // wait for `MLSService.init`'s async operations
-        await fulfillment(of: [didFinishInitializationExpectation], timeout: 1)
 
         // When
         _ = try await sut.processWelcomeMessage(welcomeMessage: message)
@@ -1730,9 +1592,6 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
         // Expectations
         keyMaterialUpdatedExpectation = expectation(description: "did update key material")
-
-        // wait for `MLSService.init`'s async operations
-        await fulfillment(of: [didFinishInitializationExpectation], timeout: 1)
 
         // When
         await sut.updateKeyMaterialForAllStaleGroupsIfNeeded()
@@ -1807,9 +1666,6 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             mockPerformQuickSyncCount += 1
         }
 
-        // wait for `MLSService.init`'s async operations
-        await fulfillment(of: [didFinishInitializationExpectation], timeout: 1)
-
         // When
         try await sut.updateKeyMaterial(for: groupID)
 
@@ -1849,9 +1705,6 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         mockSyncStatus.mockPerformQuickSync = {
             mockPerformQuickSyncCount += 1
         }
-
-        // wait for `MLSService.init`'s async operations
-        await fulfillment(of: [didFinishInitializationExpectation], timeout: 1)
 
         // When
         try await sut.updateKeyMaterial(for: groupID)
@@ -1899,9 +1752,6 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         mockSyncStatus.mockPerformQuickSync = {
             mockPerformQuickSyncCount += 1
         }
-
-        // wait for `MLSService.init`'s async operations
-        await fulfillment(of: [didFinishInitializationExpectation], timeout: 1)
 
         // When
         try await sut.updateKeyMaterial(for: groupID)
@@ -1951,9 +1801,6 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             mockPerformQuickSyncCount += 1
         }
 
-        // wait for `MLSService.init`'s async operations
-        await fulfillment(of: [didFinishInitializationExpectation], timeout: 1)
-
         // When
         try await sut.updateKeyMaterial(for: groupID)
 
@@ -1991,9 +1838,6 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         mockSyncStatus.mockPerformQuickSync = {
             mockPerformQuickSyncCount += 1
         }
-
-        // wait for `MLSService.init`'s async operations
-        await fulfillment(of: [didFinishInitializationExpectation], timeout: 1)
 
         // Then
         await assertItThrows(error: CommitError.failedToSendCommit(recovery: .giveUp)) {
@@ -2049,9 +1893,6 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         mockSubconversationGroupIDRepository.storeSubconversationGroupIDForTypeParentGroupID_MockMethod = { _, _, _ in
             // no op
         }
-
-        // wait for `MLSService.init`'s async operations
-        await fulfillment(of: [didFinishInitializationExpectation], timeout: 1)
 
         // When
         let result = try await sut.createOrJoinSubgroup(
@@ -2122,9 +1963,6 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         mockSubconversationGroupIDRepository.storeSubconversationGroupIDForTypeParentGroupID_MockMethod = { _, _, _ in
             // no op
         }
-
-        // wait for `MLSService.init`'s async operations
-        await fulfillment(of: [didFinishInitializationExpectation], timeout: 1)
 
         // When
         let result = try await sut.createOrJoinSubgroup(
@@ -2200,9 +2038,6 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             // no op
         }
 
-        // wait for `MLSService.init`'s async operations
-        await fulfillment(of: [didFinishInitializationExpectation], timeout: 1)
-
         // When
         let result = try await sut.createOrJoinSubgroup(
             parentQualifiedID: parentQualifiedID,
@@ -2258,9 +2093,6 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             // no op
         }
 
-        // wait for `MLSService.init`'s async operations
-        await fulfillment(of: [didFinishInitializationExpectation], timeout: 1)
-
         // When
         try await sut.leaveSubconversation(
             parentQualifiedID: parentID,
@@ -2314,9 +2146,6 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         mockSubconversationGroupIDRepository.storeSubconversationGroupIDForTypeParentGroupID_MockMethod = { _, _, _ in
             // no op
         }
-
-        // wait for `MLSService.init`'s async operations
-        await fulfillment(of: [didFinishInitializationExpectation], timeout: 1)
 
         // When
         try await sut.leaveSubconversationIfNeeded(
@@ -2382,9 +2211,6 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             // no op
         }
 
-        // wait for `MLSService.init`'s async operations
-        await fulfillment(of: [didFinishInitializationExpectation], timeout: 1)
-
         // When
         try await sut.leaveSubconversationIfNeeded(
             parentQualifiedID: parentID,
@@ -2433,9 +2259,6 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             receivedGroupIDs = $0
             didReceiveGroupIDs.fulfill()
         }
-
-        // wait for `MLSService.init`'s async operations
-        wait(for: [didFinishInitializationExpectation], timeout: 1)
 
         // When
         epochChangedFromDecryptionSerivce.send(groupID1)
@@ -2513,9 +2336,6 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             subConversationGroupID: subconversationGroupID
         )
 
-        // wait for `MLSService.init`'s async operations
-        await fulfillment(of: [didFinishInitializationExpectation], timeout: 1)
-
         // When
         for groupID in epochChangeSequence {
             epochChangedFromDecryptionSerivce.send(groupID)
@@ -2559,9 +2379,6 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             return []
         }
 
-        // wait for `MLSService.init`'s async operations
-        await fulfillment(of: [didFinishInitializationExpectation], timeout: 1)
-
         // WHEN
         await sut.createSelfGroup(for: groupID)
 
@@ -2595,9 +2412,6 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
         let groupID = MLSGroupID.random()
 
-        // wait for `MLSService.init`'s async operations
-        await fulfillment(of: [didFinishInitializationExpectation], timeout: 1)
-
         // WHEN
         await sut.createSelfGroup(for: groupID)
 
@@ -2620,9 +2434,6 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             updateKeyMaterialInvocations.append($0)
             return []
         }
-
-        // wait for `MLSService.init`'s async operations
-        await fulfillment(of: [didFinishInitializationExpectation], timeout: 1)
 
         // When
         try await sut.generateNewEpoch(groupID: groupID)
