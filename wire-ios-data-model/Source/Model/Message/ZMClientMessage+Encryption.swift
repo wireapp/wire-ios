@@ -444,6 +444,19 @@ extension GenericMessage {
         var messageData: Data?
 
         await keyStore.encryptionContext.performAsync { sessionsDirectory in
+
+            // don't capture sessionsDirectory outside of this perform below
+            let encryptionFunction: EncryptionFunction = { [weak sessionsDirectory] sessionID, plainText in
+                guard let directory = sessionsDirectory else {
+                    assertionFailure("should have sessionsDirectory from cryptobox")
+                    return nil
+                }
+                return try directory.encryptCaching(
+                    plainText,
+                    for: sessionID.mapToEncryptionSessionID()
+                )
+            }
+
             if useQualifiedIdentifiers, let selfDomain = await context.perform({ZMUser.selfUser(in: context).domain }) {
                 let message = await proteusMessage(
                     selfClient,
@@ -451,13 +464,9 @@ extension GenericMessage {
                     recipients: recipients,
                     missingClientsStrategy: missingClientsStrategy,
                     externalData: externalData,
-                    context: context
-                ) { sessionID, plainText in
-                    try sessionsDirectory.encryptCaching(
-                        plainText,
-                        for: sessionID.mapToEncryptionSessionID()
-                    )
-                }
+                    context: context,
+                    using: encryptionFunction
+                )
 
                 messageData = try? message.serializedData()
 
@@ -467,13 +476,9 @@ extension GenericMessage {
                     recipients: recipients,
                     missingClientsStrategy: missingClientsStrategy,
                     externalData: externalData,
-                    context: context
-                ) { sessionID, plainText in
-                    try sessionsDirectory.encryptCaching(
-                        plainText,
-                        for: sessionID.mapToEncryptionSessionID()
-                    )
-                }
+                    context: context,
+                    using: encryptionFunction
+                )
 
                 messageData = try? message.serializedData()
             }
