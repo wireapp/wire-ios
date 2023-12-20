@@ -27,7 +27,17 @@ final class DatabaseMigrationTests_UserClientUniqueness: DatabaseBaseTest {
     private let bundle = Bundle(for: ZMManagedObject.self)
     private let clientID = "abc123"
     private let tmpStoreURL = URL(fileURLWithPath: "\(NSTemporaryDirectory())databasetest/")
-    private let dataModelName = "zmessaging"
+    private let helper = DatabaseMigrationHelper()
+
+    override func setUpWithError() throws {
+        try super.setUpWithError()
+        try FileManager.default.createDirectory(at: tmpStoreURL, withIntermediateDirectories: true)
+    }
+
+    override func tearDownWithError() throws {
+        try? FileManager.default.removeItem(at: tmpStoreURL)
+        try super.tearDownWithError()
+    }
 
     func testThatItPerformsMigrationFromOldVersionsBefore107_ToCurrentModelVersion() throws {
         // With version 107 and later we can not insert duplicated keys anymore!
@@ -104,8 +114,8 @@ final class DatabaseMigrationTests_UserClientUniqueness: DatabaseBaseTest {
 
         let storeFile = CoreDataStack.accountDataFolder(accountIdentifier: userId,
                                                         applicationContainer: self.applicationContainer).appendingPersistentStoreLocation()
-        let sourceModel = try createObjectModel(version: sourceVersion)
-        var sourceContainer: NSPersistentContainer? = try createStore(model: sourceModel, at: storeFile)
+        let sourceModel = try helper.createObjectModel(version: sourceVersion)
+        var sourceContainer: NSPersistentContainer? = try helper.createStore(model: sourceModel, at: storeFile)
 
         // perform pre-migration action
         if let sourceContainer {
@@ -126,9 +136,6 @@ final class DatabaseMigrationTests_UserClientUniqueness: DatabaseBaseTest {
         // THEN
         // perform post migration action
         try postMigrationAction(stack.viewContext)
-
-        // cleanup
-        cleanupStoreDirectory()
     }
 
     private func migrateStore(
@@ -140,18 +147,15 @@ final class DatabaseMigrationTests_UserClientUniqueness: DatabaseBaseTest {
     ) throws {
         // GIVEN
 
-        // set up temporary directory
-        try setupStoreDirectory()
-
         // create versions models
-        let sourceModel = try createObjectModel(version: sourceVersion)
-        let destinationModel = try createObjectModel(version: destinationVersion)
+        let sourceModel = try helper.createObjectModel(version: sourceVersion)
+        let destinationModel = try helper.createObjectModel(version: destinationVersion)
 
         let sourceStoreURL = storeURL(version: sourceVersion)
         let destinationStoreURL = storeURL(version: destinationVersion)
 
         // create container for initial version
-        let container = try createStore(model: sourceModel, at: sourceStoreURL)
+        let container = try helper.createStore(model: sourceModel, at: sourceStoreURL)
 
         // perform pre-migration action
         try preMigrationAction(container.viewContext)
@@ -182,60 +186,10 @@ final class DatabaseMigrationTests_UserClientUniqueness: DatabaseBaseTest {
         // THEN
 
         // create store
-        let migratedContainer = try createStore(model: destinationModel, at: destinationStoreURL)
+        let migratedContainer = try helper.createStore(model: destinationModel, at: destinationStoreURL)
 
         // perform post migration action
         try postMigrationAction(migratedContainer.viewContext)
-
-        // cleanup
-        cleanupStoreDirectory()
-    }
-
-    private func createObjectModel(version: String) throws -> NSManagedObjectModel {
-        let modelVersion = "\(dataModelName)\(version)"
-
-        // Get the compiled datamodel file bundle
-        let modelURL = try XCTUnwrap(bundle.url(
-            forResource: dataModelName,
-            withExtension: "momd"
-        ))
-        let modelBundle = try XCTUnwrap(Bundle(url: modelURL))
-
-        // Create the url for the given datamodel version
-        let modelVersionURL = try XCTUnwrap(modelBundle.url(
-            forResource: modelVersion,
-            withExtension: "mom"
-        ), "\(modelVersion).mom not found in Bundle \(modelBundle)")
-
-        // Create the versioned model from the url
-        return try XCTUnwrap(NSManagedObjectModel(contentsOf: modelVersionURL))
-    }
-
-    private func createStore(model: NSManagedObjectModel, at storeURL: URL) throws -> NSPersistentContainer {
-        let container = NSPersistentContainer(
-            name: dataModelName,
-            managedObjectModel: model
-        )
-
-        try container.persistentStoreCoordinator.addPersistentStore(
-            ofType: NSSQLiteStoreType,
-            configurationName: nil,
-            at: storeURL,
-            options: nil
-        )
-
-        return container
-    }
-
-    // MARK: - File Helpers
-
-    private func setupStoreDirectory() throws {
-        cleanupStoreDirectory()
-        try FileManager.default.createDirectory(at: tmpStoreURL, withIntermediateDirectories: true)
-    }
-
-    private func cleanupStoreDirectory() {
-        try? FileManager.default.removeItem(at: tmpStoreURL)
     }
 
     // MARK: - URL Helpers
