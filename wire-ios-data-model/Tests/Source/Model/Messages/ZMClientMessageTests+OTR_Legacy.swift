@@ -39,7 +39,7 @@
 extension ClientMessageTests_OTR_Legacy {
 
     func testThatCreatesEncryptedDataAndAddsItToGenericMessageAsBlob() async throws {
-        let (textMessage, notSelfClients, firstClient, secondClient) = await self.syncMOC.perform {
+        let (textMessage, notSelfClients, firstClient, secondClient, conversation) = await self.syncMOC.perform {
             // Given
             let otherUser = ZMUser.insertNewObject(in: self.syncMOC)
             otherUser.remoteIdentifier = UUID.create()
@@ -59,7 +59,7 @@ extension ClientMessageTests_OTR_Legacy {
             conversation.addParticipantAndUpdateConversationState(user: otherUser, role: nil)
             XCTAssertTrue(self.syncMOC.saveOrRollback())
 
-            return (textMessage, notSelfClients, firstClient, secondClient)
+            return (textMessage, notSelfClients, firstClient, secondClient, conversation)
         }
 
         // When
