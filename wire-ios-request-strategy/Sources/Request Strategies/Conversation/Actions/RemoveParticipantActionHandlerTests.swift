@@ -155,7 +155,7 @@ class RemoveParticipantActionHandlerTests: MessagingTestBase {
         }
     }
 
-    func testThatItProcessMemberLeaveEventInTheResponse_Bots() throws {
+    func testThatItProcessesMemberLeaveEventInTheResponse_Bots() throws {
 
         syncMOC.performGroupedAndWait { [self] syncMOC in
             // given
@@ -188,6 +188,7 @@ class RemoveParticipantActionHandlerTests: MessagingTestBase {
         }
 
         // then
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
         syncMOC.performAndWait {
             XCTAssertFalse(conversation.localParticipants.contains(service))

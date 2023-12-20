@@ -25,6 +25,7 @@ class FetchMLSConversationGroupInfoActionHandlerTests: BaseFetchMLSGroupInfoActi
     override func setUp() {
         super.setUp()
         action = FetchMLSConversationGroupInfoAction(conversationId: conversationId, domain: domain)
+        handler = FetchMLSConversationGroupInfoActionHandler(context: syncMOC)
     }
 
     func test_itGeneratesARequest_APIV5() throws {

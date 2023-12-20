@@ -66,13 +66,13 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
             switch event.type {
             case .conversationCreate:
                 if let payload = event.eventPayload(type: Payload.ConversationEvent<Payload.Conversation>.self) {
-                    await context.perform { self.processor.processPayload(payload, in: self.context) }
+                    await processor.processPayload(payload, in: self.context)
                 }
 
             case .conversationDelete:
 
                 if let payload = event.eventPayload(type: Payload.ConversationEvent<Payload.UpdateConversationDeleted>.self) {
-                    await context.perform { self.processor.processPayload(payload, in: self.context) }
+                    await processor.processPayload(payload, in: self.context)
                 }
 
             case .conversationMemberLeave:
@@ -161,8 +161,8 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
                 else {
                     break
                 }
-                // TODO: this will become async as MLSService conversationExists will become async
-                MLSEventProcessor.shared.process(
+
+                await MLSEventProcessor.shared.process(
                     welcomeMessage: payload.data,
                     in: self.context
                 )
@@ -220,7 +220,7 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
     }
 
     private func updateMLSStatus(for conversation: ZMConversation, context: NSManagedObjectContext) async {
-        MLSEventProcessor.shared.updateConversationIfNeeded(
+        await MLSEventProcessor.shared.updateConversationIfNeeded(
             conversation: conversation,
             groupID: nil,
             context: context

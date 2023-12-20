@@ -159,25 +159,25 @@ class ZMConversationTests_Timestamps: ZMConversationTestsBase {
         }
     }
 
-    func testThatNeedsToCalculateUnreadMessagesFlagIsUpdatedWhenMessageFromUpdateEventIsInserted() {
+    func testThatNeedsToCalculateUnreadMessagesFlagIsUpdatedWhenMessageFromUpdateEventIsInserted() throws {
 
         // given
-        syncMOC.performGroupedBlockAndWait {
-            let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
+        try syncMOC.performGroupedAndWait { syncMOC in
+            let conversation = ZMConversation.insertNewObject(in: syncMOC)
             conversation.remoteIdentifier = UUID.create()
 
             let nonce = UUID.create()
             let message = GenericMessage(content: Text(content: self.name, mentions: [], linkPreviews: [], replyingTo: nil), nonce: nonce)
-            let contentData = try? message.serializedData()
-            let data = contentData?.base64String()
+            let contentData = try XCTUnwrap(message.serializedData())
+            let data = contentData.base64String()
 
-            let payload = self.payloadForMessage(in: conversation, type: EventConversationAddClientMessage, data: data!)
+            let payload = self.payloadForMessage(in: conversation, type: EventConversationAddClientMessage, data: data)
             let event = ZMUpdateEvent.eventFromEventStreamPayload(payload, uuid: nil)
             XCTAssertNotNil(event)
 
             // when
             var sut: ZMClientMessage?
-            sut = ZMClientMessage.createOrUpdate(from: event!, in: self.syncMOC, prefetchResult: nil)
+            sut = ZMClientMessage.createOrUpdate(from: event!, in: syncMOC, prefetchResult: nil)
 
             // then
             XCTAssertEqual(sut?.conversation, conversation)

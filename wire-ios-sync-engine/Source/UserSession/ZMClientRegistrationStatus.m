@@ -171,6 +171,15 @@ static NSString *ZMLogTag ZM_UNUSED = @"Authentication";
     if (self.isWaitingForClientsToBeDeleted) {
         return ZMClientRegistrationPhaseWaitingForDeletion;
     }
+
+    if (self.isGeneratingPrekeys) {
+        return ZMClientRegistrationPhaseGeneratingPrekeys;
+    }
+
+    if (self.prekeys == NULL || self.lastResortPrekey == NULL) {
+        return ZMClientRegistrationPhaseWaitingForPrekeys;
+    }
+
     return ZMClientRegistrationPhaseUnregistered;
 }
 
@@ -226,7 +235,9 @@ static NSString *ZMLogTag ZM_UNUSED = @"Authentication";
     [self.registrationStatusDelegate didRegisterSelfUserClient:client];
     self.emailCredentials = nil;
     self.needsToCheckCredentials = NO;
-    
+    self.prekeys = nil;
+    self.lastResortPrekey = nil;
+
     ZMLogDebug(@"current phase: %lu", (unsigned long)self.currentPhase);
 }
 
@@ -286,14 +297,6 @@ static NSString *ZMLogTag ZM_UNUSED = @"Authentication";
 - (void)didDetectCurrentClientDeletion
 {
     [self invalidateSelfClient];
-    
-    NSFetchRequest *clientFetchRequest = [UserClient sortedFetchRequest];
-    NSArray <UserClient *>*clients = [self.managedObjectContext executeFetchRequestOrAssert:clientFetchRequest];
-    
-    for (UserClient *client in clients) {
-        [client deleteClientAndEndSession];
-    }
-    
     [self.managedObjectContext tearDownCryptoStack];
     [self invalidateCookieAndNotify];
 }
