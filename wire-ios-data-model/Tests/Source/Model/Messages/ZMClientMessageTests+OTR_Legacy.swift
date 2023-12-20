@@ -40,8 +40,10 @@ extension ClientMessageTests_OTR_Legacy {
 
     func testThatCreatesEncryptedDataAndAddsItToGenericMessageAsBlob() async throws {
         let (textMessage, notSelfClients, firstClient, secondClient) = await self.syncMOC.perform {
+            // Given
             let otherUser = ZMUser.insertNewObject(in: self.syncMOC)
             otherUser.remoteIdentifier = UUID.create()
+
             let firstClient = self.createClient(for: otherUser, createSessionWithSelfUser: true, onMOC: self.syncMOC)
             let secondClient = self.createClient(for: otherUser, createSessionWithSelfUser: true, onMOC: self.syncMOC)
             let selfClients = ZMUser.selfUser(in: self.syncMOC).clients
@@ -49,7 +51,7 @@ extension ClientMessageTests_OTR_Legacy {
             let notSelfClients = selfClients.filter { $0 != selfClient }
 
             let nonce = UUID.create()
-            let textMessage = GenericMessage(content: Text(content: self.textMessageRequiringExternalMessage(2)), nonce: nonce)
+            let textMessage = GenericMessage(content: Text(content: self.textMessageRequiringExternalMessage(withNumberOfClients: 2)), nonce: nonce)
 
             let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
             conversation.conversationType = .group
@@ -59,19 +61,18 @@ extension ClientMessageTests_OTR_Legacy {
 
             return (textMessage, notSelfClients, firstClient, secondClient)
         }
-        // when
-        guard let dataAndStrategy = await textMessage.encryptForTransport(for: conversation, in: syncMOC)
-        else { return XCTFail() }
 
-        // then
+        // When
+        let dataAndStrategy = await textMessage.encryptForTransport(for: conversation, in: syncMOC)
+        let unwrappedDataAndStrategy = try XCTUnwrap(dataAndStrategy)
+
+        // Then
         let createdMessage = Proteus_NewOtrMessage.with {
-            try? $0.merge(serializedData: dataAndStrategy.data)
+            try? $0.merge(serializedData: unwrappedDataAndStrategy.data)
         }
 
         XCTAssertEqual(createdMessage.hasBlob, true)
-
         await syncMOC.perform {
-
             let clientIds = createdMessage.recipients.flatMap { userEntry -> [Proteus_ClientId] in
                 return (userEntry.clients).map { clientEntry -> Proteus_ClientId in
                     return clientEntry.client
@@ -89,389 +90,428 @@ extension ClientMessageTests_OTR_Legacy {
         }
     }
 
-//    func testThatCorruptedClientsReceiveBogusPayload() {
-//        self.syncMOC.performGroupedBlockAndWait {
-//
-//            // given
-//            let message = try! self.syncConversation.appendText(content: self.name, fetchLinkPreview: true, nonce: UUID.create()) as! ZMClientMessage
-//            self.syncUser3Client1.failedToEstablishSession = true
-//
-//            // when
-//            guard let dataAndStrategy = message.encryptForTransport() else {
-//                XCTFail()
-//                return
-//            }
-//
-//            // then
-//            let createdMessage = Proteus_NewOtrMessage.with {
-//                try? $0.merge(serializedData: dataAndStrategy.data)
-//            }
-//            guard let userEntry = createdMessage.recipients.first(where: { self.syncUser3.userId == $0.user }) else { return XCTFail() }
-//
-//            XCTAssertEqual(userEntry.clients.count, 1)
-//            XCTAssertEqual(userEntry.clients.first?.text, ZMFailedToCreateEncryptedMessagePayloadString.data(using: .utf8))
-//            XCTAssertFalse(self.syncUser3Client1.failedToEstablishSession)
-//            }
-//    }
-//
-//    func testThatCorruptedClientsReceiveBogusPayloadWhenSentAsExternal() {
-//        self.syncMOC.performGroupedBlockAndWait {
-//
-//            // given
-//            let messageRequiringExternal = self.textMessageRequiringExternalMessage(6)
-//            let message = try! self.syncConversation.appendText(content: messageRequiringExternal) as! ZMClientMessage
-//            self.syncUser3Client1.failedToEstablishSession = true
-//
-//            // when
-//            guard let dataAndStrategy = message.encryptForTransport() else {
-//                XCTFail()
-//                return
-//            }
-//
-//            // then
-//            let createdMessage = Proteus_NewOtrMessage.with {
-//                try? $0.merge(serializedData: dataAndStrategy.data)
-//            }
-//            guard let userEntry = createdMessage.recipients.first(where: { self.syncUser3.userId == $0.user }) else { return XCTFail() }
-//
-//            XCTAssertEqual(userEntry.clients.count, 1)
-//            XCTAssertEqual(userEntry.clients.first?.text, ZMFailedToCreateEncryptedMessagePayloadString.data(using: .utf8))
-//            XCTAssertFalse(self.syncUser3Client1.failedToEstablishSession)
-//        }
-//    }
-//
-//    func testThatItCreatesPayloadDataForTextMessage() {
-//        self.syncMOC.performGroupedBlockAndWait {
-//
-//            // given
-//            let message = try! self.syncConversation.appendText(content: self.name, fetchLinkPreview: true, nonce: UUID.create()) as! ZMClientMessage
-//
-//            // when
-//            guard let payloadAndStrategy = message.encryptForTransport() else {
-//                XCTFail()
-//                return
-//            }
-//
-//            // then
-//            self.assertMessageMetadata(payloadAndStrategy.data)
-//            switch payloadAndStrategy.strategy {
-//            case .doNotIgnoreAnyMissingClient:
-//                break
-//            default:
-//                XCTFail()
-//            }
-//        }
-//    }
-//
-//    func testThatItCreatesPayloadDataForEphemeralTextMessage_Group() {
-//        self.syncMOC.performGroupedBlockAndWait {
-//
-//            // given
-//            self.syncConversation.setMessageDestructionTimeoutValue(.tenSeconds, for: .selfUser)
-//            let message = try! self.syncConversation.appendText(content: self.name, fetchLinkPreview: true, nonce: UUID.create()) as! ZMClientMessage
-//            XCTAssertTrue(message.isEphemeral)
-//
-//            // when
-//            guard let payloadAndStrategy = message.encryptForTransport() else { return XCTFail() }
-//
-//            // then
-//            switch payloadAndStrategy.strategy {
-//            case .ignoreAllMissingClientsNotFromUsers, .ignoreAllMissingClients:
-//                XCTFail()
-//            default:
-//                break
-//            }
-//        }
-//    }
-//
-//    func testThatItCreatesPayloadDataForDeletionOfEphemeralTextMessage_Group() {
-//
-//        var syncMessage: ZMClientMessage!
-//        self.syncMOC.performGroupedBlockAndWait {
-//            // given
-//            self.syncConversation.setMessageDestructionTimeoutValue(.tenSeconds, for: .selfUser)
-//            syncMessage = try! self.syncConversation.appendText(content: self.name, fetchLinkPreview: true, nonce: UUID.create()) as? ZMClientMessage
-//            syncMessage.sender = self.syncUser1
-//            XCTAssertTrue(syncMessage.isEphemeral)
-//            self.syncMOC.saveOrRollback()
-//        }
-//
-//        let uiMessage = self.uiMOC.object(with: syncMessage.objectID) as! ZMMessage
-//        uiMessage.startDestructionIfNeeded()
-//        XCTAssertNotNil(uiMessage.destructionDate)
-//        self.uiMOC.zm_teardownMessageDeletionTimer()
-//        self.uiMOC.saveOrRollback()
-//
-//        self.syncMOC.performGroupedBlockAndWait {
-//            self.syncMOC.refresh(syncMessage, mergeChanges: true)
-//            XCTAssertNotNil(syncMessage.destructionDate)
-//
-//            let sut = syncMessage.deleteForEveryone()
-//
-//            // when
-//            guard let payloadAndStrategy = sut?.encryptForTransport() else { return XCTFail() }
-//
-//            // then
-//            switch payloadAndStrategy.strategy {
-//            case .ignoreAllMissingClientsNotFromUsers(users: let users):
-//                XCTAssertEqual(users, Set(arrayLiteral: self.syncSelfUser, self.syncUser1))
-//            default:
-//                XCTFail()
-//            }
-//        }
-//    }
-//
-//    func testThatItCreatesPayloadForDeletionOfEphemeralTextMessage_Group_SenderWasDeleted() {
-//        // This can happen due to a race condition where we receive a delete for an ephemeral after deleting the same message locally, but before creating the payload
-//        var syncMessage: ZMClientMessage!
-//        self.syncMOC.performGroupedBlockAndWait {
-//            // given
-//            self.syncConversation.setMessageDestructionTimeoutValue(.tenSeconds, for: .selfUser)
-//            syncMessage = try! self.syncConversation.appendText(content: self.name, fetchLinkPreview: true, nonce: UUID.create()) as? ZMClientMessage
-//            syncMessage.sender = self.syncUser1
-//            XCTAssertTrue(syncMessage.isEphemeral)
-//            self.syncMOC.saveOrRollback()
-//        }
-//
-//        let uiMessage = self.uiMOC.object(with: syncMessage.objectID) as! ZMMessage
-//        uiMessage.startDestructionIfNeeded()
-//        XCTAssertNotNil(uiMessage.destructionDate)
-//        self.uiMOC.zm_teardownMessageDeletionTimer()
-//        self.uiMOC.saveOrRollback()
-//
-//        self.syncMOC.performGroupedBlockAndWait {
-//            self.syncMOC.refresh(syncMessage, mergeChanges: true)
-//            XCTAssertNotNil(syncMessage.destructionDate)
-//
-//            let sut = syncMessage.deleteForEveryone()
-//
-//            // when
-//            syncMessage.sender = nil
-//            var payload: (data: Data, strategy: MissingClientsStrategy)?
-//            self.performIgnoringZMLogError {
-//                 payload = sut?.encryptForTransport()
-//            }
-//
-//            // then
-//            guard let payloadAndStrategy = payload else { return XCTFail() }
-//            switch payloadAndStrategy.strategy {
-//            case .ignoreAllMissingClientsNotFromUsers(users: let users):
-//                XCTAssertEqual(users, Set(arrayLiteral: self.syncSelfUser))
-//            default:
-//                XCTFail()
-//            }
-//        }
-//    }
-//
-//    func testThatItCreatesPayloadForZMLastReadMessages() {
-//        self.syncMOC.performGroupedBlockAndWait {
-//            // given
-//            let domain = "example.domain.com"
-//            BackendInfo.domain = domain
-//            self.syncConversation.lastReadServerTimeStamp = Date()
-//            self.syncConversation.remoteIdentifier = UUID()
-//            guard let message = try? ZMConversation.updateSelfConversation(withLastReadOf: self.syncConversation) else { return XCTFail() }
-//
-//            self.expectedRecipients = [self.syncSelfUser.remoteIdentifier!.transportString(): [self.syncSelfClient2.remoteIdentifier!]]
-//
-//            // when
-//            guard let payloadAndStrategy = message.encryptForTransport() else { return XCTFail() }
-//
-//            // then
-//            self.assertMessageMetadata(payloadAndStrategy.data)
-//            switch payloadAndStrategy.strategy {
-//            case .doNotIgnoreAnyMissingClient:
-//                break
-//            default:
-//                XCTFail()
-//            }
-//        }
-//    }
-//
-//    func testThatItCreatesPayloadForZMClearedMessages() {
-//        self.syncMOC.performGroupedBlockAndWait {
-//            // given
-//            self.syncConversation.clearedTimeStamp = Date()
-//            self.syncConversation.remoteIdentifier = UUID()
-//            guard let message = try? ZMConversation.updateSelfConversation(withClearedOf: self.syncConversation) else { return XCTFail() }
-//
-//            self.expectedRecipients = [self.syncSelfUser.remoteIdentifier!.transportString(): [self.syncSelfClient2.remoteIdentifier!]]
-//
-//            // when
-//            guard let payloadAndStrategy = message.encryptForTransport() else { return XCTFail() }
-//
-//            // then
-//            self.assertMessageMetadata(payloadAndStrategy.data)
-//            switch payloadAndStrategy.strategy {
-//            case .doNotIgnoreAnyMissingClient:
-//                break
-//            default:
-//                XCTFail()
-//            }
-//        }
-//    }
-// }
-//
-// MARK: - Delivery
-// extension ClientMessageTests_OTR_Legacy {
-//
-//    func testThatItCreatesPayloadDataForConfirmationMessage() {
-//        self.syncMOC.performGroupedBlockAndWait {
-//
-//            // given
-//            let senderID = self.syncUser1.clients.first!.remoteIdentifier
-//            let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
-//            conversation.conversationType = .oneOnOne
-//            conversation.remoteIdentifier = UUID.create()
-//
-//            let connection = ZMConnection.insertNewObject(in: self.syncMOC)
-//            connection.to = self.syncUser1
-//            connection.status = .accepted
-//            conversation.connection = connection
-//            conversation.addParticipantAndUpdateConversationState(user: self.syncUser1, role: nil)
-//
-//            self.syncMOC.saveOrRollback()
-//
-//            let textMessage = try! conversation.appendText(content: self.stringLargeEnoughToRequireExternal, fetchLinkPreview: true, nonce: UUID.create()) as! ZMClientMessage
-//
-//            textMessage.sender = self.syncUser1
-//            textMessage.senderClientID = senderID
-//
-//            let genericMessage = GenericMessage(content: Confirmation(messageId: textMessage.nonce!, type: .delivered))
-//            let confirmationMessage = try? conversation.appendClientMessage(with: genericMessage, expires: false, hidden: true)
-//
-//            // when
-//            guard let payloadAndStrategy = confirmationMessage?.encryptForTransport()
-//            else { return XCTFail()}
-//
-//            // then
-//            switch payloadAndStrategy.strategy {
-//            case .ignoreAllMissingClientsNotFromUsers(let users):
-//                XCTAssertEqual(users, Set(arrayLiteral: self.syncUser1))
-//            default:
-//                XCTFail()
-//            }
-//            let messageMetadata = Proteus_NewOtrMessage.with {
-//                try? $0.merge(serializedData: payloadAndStrategy.data)
-//            }
-//
-//            let payloadClients = messageMetadata.recipients.compactMap { user -> [String] in
-//                return user.clients.map({ String(format: "%llx", $0.client.client) })
-//            }.flatMap { $0 }
-//            XCTAssertEqual(payloadClients.sorted(), self.syncUser1.clients.map { $0.remoteIdentifier! }.sorted())
-//        }
-//    }
-//
-//    func testThatItCreatesPayloadForConfimationMessageWhenOriginalHasSender() {
-//        syncMOC.performGroupedBlockAndWait {
-//            // given
-//            let senderID = self.syncUser1.clients.first!.remoteIdentifier
-//            let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
-//            conversation.conversationType = .oneOnOne
-//            conversation.remoteIdentifier = UUID.create()
-//
-//            let connection = ZMConnection.insertNewObject(in: self.syncMOC)
-//            connection.to = self.syncUser1
-//            connection.status = .accepted
-//            conversation.connection = connection
-//            conversation.addParticipantAndUpdateConversationState(user: self.syncUser1, role: nil)
-//
-//            self.syncMOC.saveOrRollback()
-//
-//            let textMessage = try! conversation.appendText(content: self.stringLargeEnoughToRequireExternal, fetchLinkPreview: true, nonce: UUID.create()) as! ZMClientMessage
-//
-//            textMessage.sender = self.syncUser1
-//            textMessage.senderClientID = senderID
-//
-//            let confirmation = GenericMessage(content: Confirmation(messageId: textMessage.nonce!, type: .delivered))
-//            let confirmationMessage = try? conversation.appendClientMessage(with: confirmation, expires: false, hidden: true)
-//
-//            // when
-//            guard confirmationMessage?.encryptForTransport() != nil
-//                else { return XCTFail()}
-//        }
-//    }
-//
-//    func testThatItCreatesPayloadForConfimationMessageWhenOriginalHasNoSenderButInferSenderWithConnection() {
-//        syncMOC.performGroupedBlockAndWait {
-//            // given
-//            let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
-//            conversation.conversationType = .oneOnOne
-//            conversation.remoteIdentifier = UUID.create()
-//
-//            let connection = ZMConnection.insertNewObject(in: self.syncMOC)
-//            connection.to = self.syncUser1
-//            connection.status = .accepted
-//            conversation.connection = connection
-//
-//            let genericMessage = GenericMessage(content: Text(content: "yo"), nonce: UUID.create())
-//            let clientmessage = ZMClientMessage(nonce: UUID(), managedObjectContext: self.syncMOC)
-//            do {
-//                try clientmessage.setUnderlyingMessage(genericMessage)
-//            } catch {
-//                XCTFail()
-//            }
-//            clientmessage.visibleInConversation = conversation
-//
-//            self.syncMOC.saveOrRollback()
-//
-//            let confirmation = GenericMessage(content: Confirmation(messageId: clientmessage.nonce!, type: .delivered))
-//            let confirmationMessage = try? conversation.appendClientMessage(with: confirmation, expires: false, hidden: true)
-//
-//            // when
-//            guard confirmationMessage?.encryptForTransport() != nil
-//                else { return XCTFail()}
-//        }
-//    }
-//
-//    func testThatItCreatesPayloadForConfimationMessageWhenOriginalHasNoSenderAndConnectionButInferSenderOtherActiveParticipants() {
-//        syncMOC.performGroupedBlockAndWait {
-//            // given
-//            let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
-//            conversation.conversationType = .oneOnOne
-//            conversation.remoteIdentifier = UUID.create()
-//            conversation.addParticipantAndUpdateConversationState(user: self.syncUser1, role: nil)
-//
-//            let genericMessage = GenericMessage(content: Text(content: "yo"), nonce: UUID.create())
-//            let clientMessage = ZMClientMessage(nonce: UUID(), managedObjectContext: self.syncMOC)
-//            do {
-//                try clientMessage.setUnderlyingMessage(genericMessage)
-//            } catch {
-//                XCTFail()
-//            }
-//            clientMessage.visibleInConversation = conversation
-//
-//            self.syncMOC.saveOrRollback()
-//
-//            let confirmation = GenericMessage(content: Confirmation(messageId: clientMessage.nonce!, type: .delivered))
-//            let confirmationMessage = try? conversation.appendClientMessage(with: confirmation, expires: false, hidden: true)
-//
-//            // when
-//            guard confirmationMessage?.encryptForTransport() != nil
-//                else { return XCTFail()}
-//        }
-//    }
+    func testThatCorruptedClientsReceiveBogusPayload() async throws {
+        let message = try await self.syncMOC.perform {
+            // Given
+            let message = try self.syncConversation.appendText(content: self.name, fetchLinkPreview: true, nonce: UUID.create()) as? ZMClientMessage
+            self.syncUser3Client1.failedToEstablishSession = true
+            return message
+        }
 
-// }
-//
+        // When
+        let unWrappedMessage = try XCTUnwrap(message)
+        let dataAndStrategy = await unWrappedMessage.encryptForTransport()
+        let unwrappedDataAndStrategy = try XCTUnwrap(dataAndStrategy)
+
+        // Then
+        let createdMessage = Proteus_NewOtrMessage.with {
+            try? $0.merge(serializedData: unwrappedDataAndStrategy.data)
+        }
+        await syncMOC.perform {
+            guard let userEntry = createdMessage.recipients.first(where: { self.syncUser3.userId == $0.user }) else { return XCTFail() }
+
+            XCTAssertEqual(userEntry.clients.count, 1)
+            XCTAssertEqual(userEntry.clients.first?.text, ZMFailedToCreateEncryptedMessagePayloadString.data(using: .utf8))
+            XCTAssertFalse(self.syncUser3Client1.failedToEstablishSession)
+        }
+    }
+
+    func testThatCorruptedClientsReceiveBogusPayloadWhenSentAsExternal() async throws {
+        // Given
+        let message = try await self.syncMOC.perform {
+            let messageRequiringExternal = try XCTUnwrap(self.textMessageRequiringExternalMessage(withNumberOfClients: 6))
+            let message = try self.syncConversation.appendText(content: messageRequiringExternal) as? ZMClientMessage
+            self.syncUser3Client1.failedToEstablishSession = true
+            return message
+        }
+
+        // When
+        guard let dataAndStrategy = await message?.encryptForTransport() else {
+            XCTFail()
+            return
+        }
+
+        // Then
+        await syncMOC.perform {
+            let createdMessage = Proteus_NewOtrMessage.with {
+                try? $0.merge(serializedData: dataAndStrategy.data)
+            }
+            guard let userEntry = createdMessage.recipients.first(where: { self.syncUser3.userId == $0.user }) else { return XCTFail() }
+
+            XCTAssertEqual(userEntry.clients.count, 1)
+            XCTAssertEqual(userEntry.clients.first?.text, ZMFailedToCreateEncryptedMessagePayloadString.data(using: .utf8))
+            XCTAssertFalse(self.syncUser3Client1.failedToEstablishSession)
+        }
+    }
+
+    func testThatItCreatesPayloadDataForTextMessage() async throws {
+        let message = try await self.syncMOC.perform {
+            // Given
+            let message = try self.syncConversation.appendText(content: self.name, fetchLinkPreview: true, nonce: UUID.create()) as? ZMClientMessage
+
+            return message
+        }
+
+        // When
+        guard let payloadAndStrategy = await message?.encryptForTransport() else {
+            XCTFail()
+            return
+        }
+
+        // Then
+        await self.syncMOC.perform {
+            self.assertMessageMetadata(payloadAndStrategy.data)
+            switch payloadAndStrategy.strategy {
+            case .doNotIgnoreAnyMissingClient:
+                break
+            default:
+                XCTFail()
+            }
+        }
+    }
+
+    func testThatItCreatesPayloadDataForEphemeralTextMessage_Group() async throws {
+        let message = try await self.syncMOC.perform {
+            // Given
+            self.syncConversation.setMessageDestructionTimeoutValue(.tenSeconds, for: .selfUser)
+            let message = try XCTUnwrap(
+                try self.syncConversation.appendText(content: self.name, fetchLinkPreview: true, nonce: UUID.create()) as? ZMClientMessage
+            )
+
+            XCTAssertTrue(message.isEphemeral)
+            return message
+        }
+
+        // When
+        guard let payloadAndStrategy = await message.encryptForTransport() else { return XCTFail() }
+
+        // Then
+        switch payloadAndStrategy.strategy {
+        case .ignoreAllMissingClientsNotFromUsers, .ignoreAllMissingClients:
+            XCTFail()
+        default:
+            break
+        }
+    }
+
+    func testThatItCreatesPayloadDataForDeletionOfEphemeralTextMessage_Group() async throws {
+        let syncMessage: ZMClientMessage? = try await self.syncMOC.perform {
+            // Given
+            self.syncConversation.setMessageDestructionTimeoutValue(.tenSeconds, for: .selfUser)
+            let syncMessage = try self.syncConversation.appendText(content: self.name, fetchLinkPreview: true, nonce: UUID.create()) as? ZMClientMessage
+            syncMessage?.sender = self.syncUser1
+            XCTAssertTrue(syncMessage?.isEphemeral == true)
+            self.syncMOC.saveOrRollback()
+            return syncMessage
+        }
+
+        guard let syncMessage else {
+            XCTFail("missing syncMessage")
+            return
+        }
+
+        await uiMOC.perform {
+            let uiMessage = self.uiMOC.object(with: syncMessage.objectID) as! ZMMessage
+            uiMessage.startDestructionIfNeeded()
+            XCTAssertNotNil(uiMessage.destructionDate)
+            self.uiMOC.zm_teardownMessageDeletionTimer()
+            self.uiMOC.saveOrRollback()
+        }
+
+        let sut = await self.syncMOC.perform {
+            self.syncMOC.refresh(syncMessage, mergeChanges: true)
+            XCTAssertNotNil(syncMessage.destructionDate)
+
+            return syncMessage.deleteForEveryone()
+        }
+
+        // When
+        guard let payloadAndStrategy = await sut?.encryptForTransport() else { return XCTFail() }
+
+        // Then
+        await syncMOC.perform {
+            switch payloadAndStrategy.strategy {
+            case .ignoreAllMissingClientsNotFromUsers(users: let users):
+                XCTAssertEqual(users, Set(arrayLiteral: self.syncSelfUser, self.syncUser1))
+            default:
+                XCTFail()
+            }
+        }
+    }
+
+    func testThatItCreatesPayloadForDeletionOfEphemeralTextMessage_Group_SenderWasDeleted() async throws {
+        // This can happen due to a race condition where we receive a delete for an ephemeral after deleting the same message locally, but before creating the payload
+        let syncMessage = try await self.syncMOC.perform {
+            // Given
+            self.syncConversation.setMessageDestructionTimeoutValue(.tenSeconds, for: .selfUser)
+            let syncMessage = try self.syncConversation.appendText(content: self.name, fetchLinkPreview: true, nonce: UUID.create()) as? ZMClientMessage
+            syncMessage?.sender = self.syncUser1
+            XCTAssertTrue(syncMessage?.isEphemeral == true)
+            self.syncMOC.saveOrRollback()
+            return syncMessage
+        }
+
+        guard let syncMessage else {
+            XCTFail("syncMessage missing")
+            return
+        }
+
+        await uiMOC.perform {
+            let uiMessage = self.uiMOC.object(with: syncMessage.objectID) as! ZMMessage
+            uiMessage.startDestructionIfNeeded()
+            XCTAssertNotNil(uiMessage.destructionDate)
+            self.uiMOC.zm_teardownMessageDeletionTimer()
+            self.uiMOC.saveOrRollback()
+        }
+
+        let sut = await self.syncMOC.perform {
+            self.syncMOC.refresh(syncMessage, mergeChanges: true)
+            XCTAssertNotNil(syncMessage.destructionDate)
+
+            let sut = syncMessage.deleteForEveryone()
+
+            // When
+            syncMessage.sender = nil
+            return sut
+        }
+        var payload: (data: Data, strategy: MissingClientsStrategy)?
+        self.disableZMLogError(true)
+        payload = await sut?.encryptForTransport()
+        self.disableZMLogError(false)
+
+        // Then
+        await syncMOC.perform {
+            guard let payloadAndStrategy = payload else { return XCTFail() }
+            switch payloadAndStrategy.strategy {
+            case .ignoreAllMissingClientsNotFromUsers(users: let users):
+                XCTAssertEqual(users, Set(arrayLiteral: self.syncSelfUser))
+            default:
+                XCTFail()
+            }
+        }
+    }
+
+    func testThatItCreatesPayloadForZMLastReadMessages() async throws {
+        // Given
+        BackendInfo.storage = .random()!
+        BackendInfo.domain = "example.domain.com"
+
+        let message = try await self.syncMOC.perform {
+            self.syncConversation.lastReadServerTimeStamp = Date()
+            self.syncConversation.remoteIdentifier = UUID()
+            let message = try ZMConversation.updateSelfConversation(withLastReadOf: self.syncConversation)
+
+            self.expectedRecipients = [self.syncSelfUser.remoteIdentifier!.transportString(): [self.syncSelfClient2.remoteIdentifier!]]
+            return message
+        }
+
+        // When
+        guard let payloadAndStrategy = await message.encryptForTransport() else { return XCTFail() }
+
+        // Then
+        await syncMOC.perform {
+            self.assertMessageMetadata(payloadAndStrategy.data)
+            switch payloadAndStrategy.strategy {
+            case .doNotIgnoreAnyMissingClient:
+                break
+            default:
+                XCTFail()
+            }
+
+        }
+    }
+
+    func testThatItCreatesPayloadForZMClearedMessages() async throws {
+        let message = try await self.syncMOC.perform {
+            // Given
+            self.syncConversation.clearedTimeStamp = Date()
+            self.syncConversation.remoteIdentifier = UUID()
+            let message = try ZMConversation.updateSelfConversation(withClearedOf: self.syncConversation)
+
+            self.expectedRecipients = [self.syncSelfUser.remoteIdentifier!.transportString(): [self.syncSelfClient2.remoteIdentifier!]]
+            return message
+        }
+
+        // When
+        guard let payloadAndStrategy = await message.encryptForTransport() else { return XCTFail() }
+
+        await syncMOC.perform {
+            // Then
+            self.assertMessageMetadata(payloadAndStrategy.data)
+            switch payloadAndStrategy.strategy {
+            case .doNotIgnoreAnyMissingClient:
+                break
+            default:
+                XCTFail()
+            }
+        }
+    }
+
+    // MARK: - Delivery
+
+    func testThatItCreatesPayloadDataForConfirmationMessage() async throws {
+        let confirmationMessage = try await self.syncMOC.perform {
+            // Given
+            let senderID = self.syncUser1.clients.first!.remoteIdentifier
+            let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
+            conversation.conversationType = .oneOnOne
+            conversation.remoteIdentifier = UUID.create()
+
+            let connection = ZMConnection.insertNewObject(in: self.syncMOC)
+            connection.to = self.syncUser1
+            connection.status = .accepted
+            conversation.connection = connection
+            conversation.addParticipantAndUpdateConversationState(user: self.syncUser1, role: nil)
+
+            self.syncMOC.saveOrRollback()
+
+            let textMessage = try conversation.appendText(content: self.stringLargeEnoughToRequireExternal, fetchLinkPreview: true, nonce: UUID.create()) as? ZMClientMessage
+
+            textMessage?.sender = self.syncUser1
+            textMessage?.senderClientID = senderID
+
+            let textMessageNonce = try XCTUnwrap(textMessage?.nonce)
+
+            let genericMessage = GenericMessage(content: Confirmation(messageId: textMessageNonce, type: .delivered))
+            return try conversation.appendClientMessage(with: genericMessage, expires: false, hidden: true)
+        }
+
+        // When
+        let payloadAndStrategy = await confirmationMessage.encryptForTransport()
+        let unWrappedPayloadAndStrategy = try XCTUnwrap(payloadAndStrategy)
+
+        await syncMOC.perform {
+            // Then
+            switch unWrappedPayloadAndStrategy.strategy {
+            case .ignoreAllMissingClientsNotFromUsers(let users):
+                XCTAssertEqual(users, Set(arrayLiteral: self.syncUser1))
+            default:
+                XCTFail()
+            }
+            let messageMetadata = Proteus_NewOtrMessage.with {
+                try? $0.merge(serializedData: unWrappedPayloadAndStrategy.data)
+            }
+
+            let payloadClients = messageMetadata.recipients.compactMap { user -> [String] in
+                return user.clients.map({ String(format: "%llx", $0.client.client) })
+            }.flatMap { $0 }
+            XCTAssertEqual(payloadClients.sorted(), self.syncUser1.clients.map { $0.remoteIdentifier! }.sorted())
+        }
+    }
+
+    func testThatItCreatesPayloadForConfimationMessageWhenOriginalHasSender() async throws {
+        let confirmationMessage = try await syncMOC.perform {
+            // Given
+            let senderID = self.syncUser1.clients.first!.remoteIdentifier
+            let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
+            conversation.conversationType = .oneOnOne
+            conversation.remoteIdentifier = UUID.create()
+
+            let connection = ZMConnection.insertNewObject(in: self.syncMOC)
+            connection.to = self.syncUser1
+            connection.status = .accepted
+            conversation.connection = connection
+            conversation.addParticipantAndUpdateConversationState(user: self.syncUser1, role: nil)
+
+            self.syncMOC.saveOrRollback()
+
+            let textMessage = try conversation.appendText(content: self.stringLargeEnoughToRequireExternal, fetchLinkPreview: true, nonce: UUID.create()) as? ZMClientMessage
+
+            textMessage?.sender = self.syncUser1
+            textMessage?.senderClientID = senderID
+
+            let textMessageNonce = try XCTUnwrap(textMessage?.nonce)
+
+            let confirmation = GenericMessage(content: Confirmation(messageId: textMessageNonce, type: .delivered))
+            return try conversation.appendClientMessage(with: confirmation, expires: false, hidden: true)
+        }
+
+        // When
+        let result = await confirmationMessage.encryptForTransport()
+        XCTAssertNotNil(result)
+    }
+
+    func testThatItCreatesPayloadForConfimationMessageWhenOriginalHasNoSenderButInferSenderWithConnection() async throws {
+        let confirmationMessage = try await syncMOC.perform {
+            // Given
+            let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
+            conversation.conversationType = .oneOnOne
+            conversation.remoteIdentifier = UUID.create()
+
+            let connection = ZMConnection.insertNewObject(in: self.syncMOC)
+            connection.to = self.syncUser1
+            connection.status = .accepted
+            conversation.connection = connection
+
+            let genericMessage = GenericMessage(content: Text(content: "yo"), nonce: UUID.create())
+            let clientmessage = ZMClientMessage(nonce: UUID(), managedObjectContext: self.syncMOC)
+            do {
+                try clientmessage.setUnderlyingMessage(genericMessage)
+            } catch {
+                XCTFail()
+            }
+            clientmessage.visibleInConversation = conversation
+
+            self.syncMOC.saveOrRollback()
+
+            let nonce = try XCTUnwrap(clientmessage.nonce)
+            let confirmation = GenericMessage(content: Confirmation(messageId: nonce, type: .delivered))
+            return try conversation.appendClientMessage(with: confirmation, expires: false, hidden: true)
+        }
+
+        // When
+        let result = await confirmationMessage.encryptForTransport()
+        XCTAssertNotNil(result)
+    }
+
+    func testThatItCreatesPayloadForConfimationMessageWhenOriginalHasNoSenderAndConnectionButInferSenderOtherActiveParticipants() async throws {
+        let confirmationMessage = try await syncMOC.perform {
+            // Given
+            let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
+            conversation.conversationType = .oneOnOne
+            conversation.remoteIdentifier = UUID.create()
+            conversation.addParticipantAndUpdateConversationState(user: self.syncUser1, role: nil)
+
+            let genericMessage = GenericMessage(content: Text(content: "yo"), nonce: UUID.create())
+            let clientMessage = ZMClientMessage(nonce: UUID(), managedObjectContext: self.syncMOC)
+            do {
+                try clientMessage.setUnderlyingMessage(genericMessage)
+            } catch {
+                XCTFail()
+            }
+            clientMessage.visibleInConversation = conversation
+
+            self.syncMOC.saveOrRollback()
+
+            let confirmation = GenericMessage(content: Confirmation(messageId: clientMessage.nonce!, type: .delivered))
+            return try conversation.appendClientMessage(with: confirmation, expires: false, hidden: true)
+        }
+
+        // When
+        let result = await confirmationMessage.encryptForTransport()
+        XCTAssertNotNil(result)
+    }
+}
+
 // MARK: - Session identifier
-// extension ClientMessageTests_OTR_Legacy {
-//
-//    func testThatItUsesTheProperSessionIdentifier() {
-//
-//        // GIVEN
-//        let user = ZMUser.insertNewObject(in: self.uiMOC)
-//        user.remoteIdentifier = UUID.create()
-//        let client = UserClient.insertNewObject(in: self.uiMOC)
-//        client.user = user
-//        client.remoteIdentifier = UUID.create().transportString()
-//
-//        // WHEN
-//        let identifier = client.sessionIdentifier
-//
-//        // THEN
-//        XCTAssertEqual(identifier, EncryptionSessionIdentifier(userId: user.remoteIdentifier.uuidString, clientId: client.remoteIdentifier!))
-//    }
+
+extension ClientMessageTests_OTR_Legacy {
+
+    func testThatItUsesTheProperSessionIdentifier() {
+
+        // GIVEN
+        let user = ZMUser.insertNewObject(in: self.uiMOC)
+        user.remoteIdentifier = UUID.create()
+        let client = UserClient.insertNewObject(in: self.uiMOC)
+        client.user = user
+        client.remoteIdentifier = UUID.create().transportString()
+
+        // WHEN
+        let identifier = client.sessionIdentifier
+
+        // THEN
+        XCTAssertEqual(identifier, EncryptionSessionIdentifier(userId: user.remoteIdentifier.uuidString, clientId: client.remoteIdentifier!))
+    }
  }
 
 // MARK: - Helper
