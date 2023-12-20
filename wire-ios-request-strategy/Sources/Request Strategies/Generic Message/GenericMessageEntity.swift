@@ -82,14 +82,10 @@ public func == (lhs: GenericMessageEntity, rhs: GenericMessageEntity) -> Bool {
 extension GenericMessageEntity: EncryptedPayloadGenerator {
 
     public func encryptForTransport() async -> EncryptedPayloadGenerator.Payload? {
-        guard
-            let conversation = conversation
-        else {
-            return nil
-        }
 
         switch targetRecipients {
         case .conversationParticipants:
+            guard let conversation else { return nil }
             return await message.encryptForTransport(for: conversation, in: context)
         case .users(let users):
             return await message.encryptForTransport(forBroadcastRecipients: users, in: context)
@@ -101,7 +97,7 @@ extension GenericMessageEntity: EncryptedPayloadGenerator {
     public func encryptForTransportQualified() async -> EncryptedPayloadGenerator.Payload? {
         switch targetRecipients {
         case .conversationParticipants:
-            guard let conversation = conversation else { return nil }
+            guard let conversation else { return nil }
             return await message.encryptForTransport(for: conversation, in: context, useQualifiedIdentifiers: true)
         case .users(let users):
             return await message.encryptForTransport(forBroadcastRecipients: users, useQualifiedIdentifiers: true, in: context)
