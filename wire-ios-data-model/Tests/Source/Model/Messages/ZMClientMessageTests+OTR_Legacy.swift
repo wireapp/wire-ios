@@ -22,10 +22,7 @@
  final class ClientMessageTests_OTR_Legacy: BaseZMClientMessageTests {
 
     override func setUp() {
-        DeveloperFlag.storage = UserDefaults(suiteName: UUID().uuidString)!
-        var flag = DeveloperFlag.proteusViaCoreCrypto
-        flag.isOn = false
-
+        DeveloperFlag.proteusViaCoreCrypto.enable(false, storage: .random())
         super.setUp()
     }
 
@@ -91,7 +88,6 @@ extension ClientMessageTests_OTR_Legacy {
             XCTAssertEqual(createdMessage.reportMissing.count, createdMessage.recipients.count)
         }
     }
-}
 
 //    func testThatCorruptedClientsReceiveBogusPayload() {
 //        self.syncMOC.performGroupedBlockAndWait {
@@ -455,7 +451,7 @@ extension ClientMessageTests_OTR_Legacy {
 //                else { return XCTFail()}
 //        }
 //    }
-//
+
 // }
 //
 // MARK: - Session identifier
@@ -478,7 +474,8 @@ extension ClientMessageTests_OTR_Legacy {
 //    }
  }
 
- MARK: - Helper
+// MARK: - Helper
+
  extension ClientMessageTests_OTR_Legacy {
 
     /// Returns a string large enough to have to be encoded in an external message
