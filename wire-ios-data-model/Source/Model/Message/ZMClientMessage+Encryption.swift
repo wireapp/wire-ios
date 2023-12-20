@@ -138,7 +138,10 @@ extension ZMClientMessage: EncryptedPayloadGenerator {
             return nil
         }
 
-        await context.perform { self.updateUnderlayingMessageBeforeSending(in: context) }
+        let underlyingMessage = await context.perform {
+            self.updateUnderlayingMessageBeforeSending(in: context)
+            return self.underlyingMessage
+        }
         return await underlyingMessage?.encryptForTransport(for: conversation, in: context)
     }
 
@@ -550,15 +553,19 @@ extension GenericMessage {
         // We do not want to send pushes for delivery receipts.
         let nativePush = !hasConfirmation
 
-        var message = Proteus_NewOtrMessage(
-            withSender: selfClient,
-            nativePush: nativePush,
-            recipients: userEntries,
-            blob: externalData
-        )
+        let message = await context.perform {
+            var message = Proteus_NewOtrMessage(
+                withSender: selfClient,
+                nativePush: nativePush,
+                recipients: userEntries,
+                blob: externalData
+            )
 
-        if case .ignoreAllMissingClientsNotFromUsers(let users) = missingClientsStrategy {
-            message.reportMissing = Array(users.map { $0.userId })
+            if case .ignoreAllMissingClientsNotFromUsers(let users) = missingClientsStrategy {
+                message.reportMissing = Array(users.map { $0.userId })
+            }
+
+            return message
         }
 
         return message
@@ -615,7 +622,9 @@ extension GenericMessage {
 
             guard !clientEntries.isEmpty else { return nil }
 
-            return Proteus_UserEntry(withUser: user, clientEntries: clientEntries)
+            return await context.perform {
+                Proteus_UserEntry(withUser: user, clientEntries: clientEntries)
+            }
         }
     }
 
