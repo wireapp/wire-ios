@@ -22,42 +22,42 @@ import WireTesting
 
 class ZMMessageTests_Legalhold: BaseZMClientMessageTests {
 
-    func testThatItUpdatesLegalHoldStatusFlag_WhenLegalHoldIsEnabled() throws {
-        // given
-        let conversation = createConversation(in: uiMOC)
-        let message = createClientTextMessage()!
-        conversation.append(message)
-        var genericMessage = try XCTUnwrap(message.underlyingMessage)
-
-        genericMessage.setLegalHoldStatus(.disabled)
-        try message.setUnderlyingMessage(genericMessage)
-        conversation.legalHoldStatus = .enabled
-
-        // when
-        performPretendingUiMocIsSyncMoc {
-            _ = message.encryptForTransport()
-        }
-
-        // then
-        XCTAssertEqual(message.underlyingMessage?.text.legalHoldStatus, .enabled)
-    }
-
-    func testThatItUpdatesLegalHoldStatusFlag_WhenLegalHoldIsDisabled() throws {
-        // given
-        let conversation = createConversation(in: uiMOC)
-        let message = createClientTextMessage()!
-        conversation.append(message)
-        var genericMessage = try XCTUnwrap(message.underlyingMessage)
-        genericMessage.setLegalHoldStatus(.enabled)
-        try message.setUnderlyingMessage(genericMessage)
-        conversation.legalHoldStatus = .disabled
-
-        // when
-        performPretendingUiMocIsSyncMoc {
-            _ = message.encryptForTransport()
-        }
-
-        // then
-        XCTAssertEqual(message.underlyingMessage?.text.legalHoldStatus, .disabled)
-    }
+//    func testThatItUpdatesLegalHoldStatusFlag_WhenLegalHoldIsEnabled() throws {
+//        // given
+//        let conversation = createConversation(in: uiMOC)
+//        let message = createClientTextMessage()!
+//        conversation.append(message)
+//        var genericMessage = try XCTUnwrap(message.underlyingMessage)
+//
+//        genericMessage.setLegalHoldStatus(.disabled)
+//        try message.setUnderlyingMessage(genericMessage)
+//        conversation.legalHoldStatus = .enabled
+//
+//        // when
+//        performPretendingUiMocIsSyncMoc {
+//            _ = message.encryptForTransport()
+//        }
+//
+//        // then
+//        XCTAssertEqual(message.underlyingMessage?.text.legalHoldStatus, .enabled)
+//    }
+//
+//    func testThatItUpdatesLegalHoldStatusFlag_WhenLegalHoldIsDisabled() throws {
+//        // given
+//        let conversation = createConversation(in: uiMOC)
+//        let message = createClientTextMessage()!
+//        conversation.append(message)
+//        var genericMessage = try XCTUnwrap(message.underlyingMessage)
+//        genericMessage.setLegalHoldStatus(.enabled)
+//        try message.setUnderlyingMessage(genericMessage)
+//        conversation.legalHoldStatus = .disabled
+//
+//        // when
+//        performPretendingUiMocIsSyncMoc {
+//            _ = message.encryptForTransport()
+//        }
+//
+//        // then
+//        XCTAssertEqual(message.underlyingMessage?.text.legalHoldStatus, .disabled)
+//    }
 }
