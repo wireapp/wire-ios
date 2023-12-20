@@ -43,7 +43,7 @@ public protocol ProteusProviding {
 public class ProteusProvider: ProteusProviding {
 
     private let proteusService: ProteusServiceInterface?
-    private let keyStore: UserClientKeysStore
+    private let keyStore: UserClientKeysStore?
     private let proteusViaCoreCrypto: Bool
 
     convenience init(
@@ -51,13 +51,13 @@ public class ProteusProvider: ProteusProviding {
         proteusViaCoreCrypto: Bool = DeveloperFlag.proteusViaCoreCrypto.isOn
     ) {
         self.init(proteusService: context.proteusService,
-                  keyStore: context.zm_cryptKeyStore,
+                  keyStore: context.zm_cryptKeyStore ?? nil,
                   proteusViaCoreCrypto: proteusViaCoreCrypto)
     }
 
     public init(
         proteusService: ProteusServiceInterface?,
-        keyStore: UserClientKeysStore,
+        keyStore: UserClientKeysStore?,
         proteusViaCoreCrypto: Bool = DeveloperFlag.proteusViaCoreCrypto.isOn
     ) {
         self.proteusService = proteusService
@@ -74,7 +74,7 @@ public class ProteusProvider: ProteusProviding {
 
           return try proteusServiceBlock(proteusService)
 
-        } else if !proteusViaCoreCrypto {
+        } else if let keyStore = keyStore, !proteusViaCoreCrypto {
 
             // remove comment once implementation of proteus via core crypto is done
             return try keyStoreBlock(keyStore)
@@ -94,7 +94,7 @@ public class ProteusProvider: ProteusProviding {
 
             return try await proteusServiceBlock(proteusService)
 
-        } else if !proteusViaCoreCrypto {
+        } else if let keyStore = keyStore, !proteusViaCoreCrypto {
 
             // remove comment once implementation of proteus via core crypto is done
             return try await keyStoreBlock(keyStore)
