@@ -87,7 +87,11 @@ final class CoreDataMessagingMigrator: CoreDataMessagingMigratorProtocol {
     }
 
     func migrateStore(at storeURL: URL, toVersion version: CoreDataMessagingMigrationVersion) throws {
-        zmLog.safePublic("force WAL checkpointing for store", level: .info)
+        zmLog.safePublic(
+            "migrateStore at: \(SanitizedString(stringLiteral: storeURL.absoluteString)) to version: \(SanitizedString(stringLiteral: version.rawValue))",
+            level: .info
+        )
+
         try forceWALCheckpointingForStore(at: storeURL)
 
         var currentURL = storeURL
@@ -182,8 +186,11 @@ final class CoreDataMessagingMigrator: CoreDataMessagingMigratorProtocol {
             let versionURL = version.managedObjectModelURL(),
             let model = NSManagedObjectModel(contentsOf: versionURL)
         else {
+            zmLog.safePublic("skip WAL checkpointing for store", level: .info)
             return
         }
+
+        zmLog.safePublic("force WAL checkpointing for store", level: .info)
 
         do {
             let persistentStoreCoordinator = NSPersistentStoreCoordinator(managedObjectModel: model)
@@ -202,6 +209,7 @@ final class CoreDataMessagingMigrator: CoreDataMessagingMigratorProtocol {
                 )
             }
             try persistentStoreCoordinator.remove(store)
+            zmLog.safePublic("finish WAL checkpointing for store", level: .info)
         } catch {
             throw CoreDataMessagingMigratorError.failedToForceWALCheckpointing
         }
@@ -234,6 +242,10 @@ final class CoreDataMessagingMigrator: CoreDataMessagingMigratorProtocol {
     // MARK: - NSPersistentStoreCoordinator File Managing
 
     private func replaceStore(at targetURL: URL, withStoreAt sourceURL: URL) throws {
+        zmLog.safePublic(
+            "replace store at target url: \(SanitizedString(stringLiteral: targetURL.absoluteString))",
+            level: .info
+        )
         do {
             let persistentStoreCoordinator = NSPersistentStoreCoordinator(managedObjectModel: NSManagedObjectModel())
             try persistentStoreCoordinator.replacePersistentStore(
@@ -249,6 +261,11 @@ final class CoreDataMessagingMigrator: CoreDataMessagingMigratorProtocol {
     }
 
     private func destroyStore(at storeURL: URL) throws {
+        zmLog.safePublic(
+            "destroy store of at: \(SanitizedString(stringLiteral: storeURL.absoluteString))",
+            level: .info
+        )
+
         do {
             let persistentStoreCoordinator = NSPersistentStoreCoordinator(managedObjectModel: NSManagedObjectModel())
             try persistentStoreCoordinator.destroyPersistentStore(at: storeURL, ofType: storeType, options: nil)
