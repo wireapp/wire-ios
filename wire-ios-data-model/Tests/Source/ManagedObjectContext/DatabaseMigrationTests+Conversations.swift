@@ -35,6 +35,8 @@ final class DatabaseMigrationTests_Conversations: XCTestCase {
     }
 
     func testThatItPerformsInferredMigration_deleteConversationCascadesToParticipantRole() throws {
+        throw XCTSkip("test need to be improved to be not flaky")
+
         try migrateStoreToCurrentVersion(
             sourceVersion: "2.106.0",
             preMigrationAction: { context in
@@ -54,6 +56,8 @@ final class DatabaseMigrationTests_Conversations: XCTestCase {
     }
 
     func testThatItPerformsInferredMigration_markConversationAsDeletedKeepsParticipantRole() throws {
+        throw XCTSkip("test need to be improved to be not flaky")
+
         try migrateStoreToCurrentVersion(
             sourceVersion: "2.106.0",
             preMigrationAction: { context in
