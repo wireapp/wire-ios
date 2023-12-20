@@ -34,7 +34,7 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
 
     func createGroup(for groupID: MLSGroupID) async throws
 
-    func conversationExists(groupID: MLSGroupID) -> Bool
+    func conversationExists(groupID: MLSGroupID) async -> Bool
 
     func processWelcomeMessage(welcomeMessage: String) async throws -> MLSGroupID
 
@@ -741,9 +741,9 @@ public final class MLSService: MLSServiceInterface {
 
     }
 
-    public func conversationExists(groupID: MLSGroupID) -> Bool {
+    public func conversationExists(groupID: MLSGroupID) async -> Bool {
         // TODO: [jacob] let it throw
-        let result = (try? coreCrypto.perform { $0.conversationExists(conversationId: groupID.bytes) }) ?? false
+        let result = (try? await coreCrypto.perform { $0.conversationExists(conversationId: groupID.bytes) }) ?? false
         logger.info("checking if group (\(groupID)) exists... it does\(result ? "!" : " not!")")
         return result
     }
@@ -769,7 +769,7 @@ public final class MLSService: MLSServiceInterface {
             return groupID
 
         } catch {
-            logger.error("failed to process welcome message: \(String(describing: error))")
+            logger.error("failed to process welcome message: \(String(reflecting: error))")
             throw MLSWelcomeMessageProcessingError.failedToProcessMessage
         }
     }
@@ -782,7 +782,7 @@ public final class MLSService: MLSServiceInterface {
             return
         }
 
-        if !conversationExists(groupID: groupID) {
+        if await !conversationExists(groupID: groupID) {
             try await createGroup(for: groupID)
         }
 
@@ -1584,7 +1584,7 @@ public final class MLSService: MLSServiceInterface {
                 forType: subconversationType,
                 parentGroupID: parentGroupID
             ),
-            conversationExists(groupID: subConversationGroupID)
+            await conversationExists(groupID: subConversationGroupID)
         {
             try await leaveSubconversation(id: subConversationGroupID)
         } else if let context = context?.notificationContext {
