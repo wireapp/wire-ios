@@ -24,6 +24,16 @@ final class DatabaseMigrationTests: DatabaseBaseTest {
 
     private let helper = DatabaseMigrationHelper()
 
+    private let userPropertiesToFetch = [
+        "accentColorValue",
+        "emailAddress",
+        "modifiedKeys",
+        "name",
+        "normalizedEmailAddress",
+        "normalizedName",
+        "handle"
+    ]
+
     func testMessagingLatestModelHasMigrationVersion() throws {
         // given
         let dataModelVersion = CoreDataStack.loadMessagingModel().version
@@ -157,20 +167,5 @@ final class DatabaseMigrationTests: DatabaseBaseTest {
             XCTAssertTrue(store.versionIdentifiers.contains(version))
             processedVersions.insert(version)
         }
-    }
-}
-
-// MARK: - Helpers
-extension DatabaseMigrationTests {
-    var userPropertiesToFetch: [String] {
-        return [
-            "accentColorValue",
-            "emailAddress",
-            "modifiedKeys",
-            "name",
-            "normalizedEmailAddress",
-            "normalizedName",
-            "handle"
-        ]
     }
 }
