@@ -48,9 +48,13 @@ final class DatabaseMigrationTests_UserClientUniqueness: DatabaseBaseTest {
     }
 
     func testMigratingToMessagingStore_2_107_PreventsDuplicateUserClients() throws {
+        let mappingModelURL = bundle.url(forResource: "MappingModel_2.106-2.107", withExtension: "cdm")
+        let mappingModel = try XCTUnwrap(NSMappingModel(contentsOf: mappingModelURL))
+
         try migrateStore(
             sourceVersion: "2.106.0",
             destinationVersion: "2.107.0",
+            mappingModel: mappingModel,
             preMigrationAction: insertDuplicates,
             postMigrationAction: assertDuplicatesResolved
         )
@@ -123,6 +127,7 @@ final class DatabaseMigrationTests_UserClientUniqueness: DatabaseBaseTest {
     private func migrateStore(
         sourceVersion: String,
         destinationVersion: String,
+        mappingModel: NSMappingModel,
         preMigrationAction: MigrationAction,
         postMigrationAction: MigrationAction
     ) throws {
@@ -146,7 +151,6 @@ final class DatabaseMigrationTests_UserClientUniqueness: DatabaseBaseTest {
             sourceModel: sourceModel,
             destinationModel: destinationModel
         )
-        let mappingModel = try XCTUnwrap(NSMappingModel(contentsOf: mappingModelURL))
 
         // WHEN
 
@@ -231,10 +235,6 @@ final class DatabaseMigrationTests_UserClientUniqueness: DatabaseBaseTest {
     }
 
     // MARK: - URL Helpers
-
-    private var mappingModelURL: URL? {
-        bundle.url(forResource: "MappingModel_2.106-2.107", withExtension: "cdm")
-    }
 
     private func storeURL(version: String) -> URL {
         return tmpStoreURL.appendingPathComponent("\(version).sqlite")
