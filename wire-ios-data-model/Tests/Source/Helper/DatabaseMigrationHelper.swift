@@ -60,16 +60,6 @@ struct DatabaseMigrationHelper {
         return container
     }
 
-    func inferredMappingModel(sourceVersion: String, destinationVersion: String) throws -> NSMappingModel {
-        let sourceModel = try createObjectModel(version: sourceVersion)
-        let destinationModel = try createObjectModel(version: destinationVersion)
-
-        return try NSMappingModel.inferredMappingModel(
-            forSourceModel: sourceModel,
-            destinationModel: destinationModel
-        )
-    }
-
     // MARK: Fixture
 
     func createFixtureDatabase(
