@@ -50,7 +50,9 @@ final class DatabaseMigrationTests_UserClientUniqueness: DatabaseBaseTest {
             try migrateStoreToCurrentVersion(
                 sourceVersion: initialVersion,
                 preMigrationAction: { context in
-                    try insertDuplicateClients(with: clientID, in: context)
+                    insertDuplicateClients(with: clientID, in: context)
+                    try context.save()
+
                     let clients = try fetchClients(with: clientID, in: context)
                     XCTAssertEqual(clients.count, 2)
                 },
@@ -61,7 +63,9 @@ final class DatabaseMigrationTests_UserClientUniqueness: DatabaseBaseTest {
 
                     // verify we can't insert duplicates
                     context.mergePolicy = NSMergePolicy.mergeByPropertyObjectTrump
-                    try insertDuplicateClients(with: clientID, in: context)
+                    insertDuplicateClients(with: clientID, in: context)
+                    try context.save()
+
                     clients = try fetchClients(with: clientID, in: context)
                     XCTAssertEqual(clients.count, 1)
                 }
@@ -80,7 +84,9 @@ final class DatabaseMigrationTests_UserClientUniqueness: DatabaseBaseTest {
             destinationVersion: "2.107.0",
             mappingModel: mappingModel,
             preMigrationAction: { context in
-                try insertDuplicateClients(with: clientID, in: context)
+                insertDuplicateClients(with: clientID, in: context)
+                try context.save()
+
                 let clients = try fetchClients(with: clientID, in: context)
                 XCTAssertEqual(clients.count, 2)
             },
@@ -91,7 +97,9 @@ final class DatabaseMigrationTests_UserClientUniqueness: DatabaseBaseTest {
 
                 // verify we can't insert duplicates
                 context.mergePolicy = NSMergePolicy.mergeByPropertyObjectTrump
-                try insertDuplicateClients(with: clientID, in: context)
+                insertDuplicateClients(with: clientID, in: context)
+                try context.save()
+
                 clients = try fetchClients(with: clientID, in: context)
                 XCTAssertEqual(clients.count, 1)
             }
@@ -215,15 +223,12 @@ final class DatabaseMigrationTests_UserClientUniqueness: DatabaseBaseTest {
     private func insertDuplicateClients(
         with identifier: String,
         in context: NSManagedObjectContext
-    ) throws {
-
+    ) {
         let duplicate1 = UserClient.insertNewObject(in: context)
         duplicate1.remoteIdentifier = identifier
 
         let duplicate2 = UserClient.insertNewObject(in: context)
         duplicate2.remoteIdentifier = identifier
-
-        try context.save()
     }
 
 }
