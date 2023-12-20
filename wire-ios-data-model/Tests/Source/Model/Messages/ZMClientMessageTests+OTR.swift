@@ -59,7 +59,7 @@ final class ClientMessageTests_OTR: BaseZMClientMessageTests {
     // MARK: - Payload creation
 
     func testThatCreatesEncryptedDataAndAddsItToGenericMessageAsBlob() async throws {
-        let (textMessage, notSelfClients, firstClient, secondClient) = await self.syncMOC.perform {
+        let (textMessage, notSelfClients, firstClient, secondClient, conversation) = await self.syncMOC.perform {
             // Given
             let otherUser = ZMUser.insertNewObject(in: self.syncMOC)
             otherUser.remoteIdentifier = UUID.create()
@@ -79,7 +79,7 @@ final class ClientMessageTests_OTR: BaseZMClientMessageTests {
             conversation.addParticipantAndUpdateConversationState(user: otherUser, role: nil)
             XCTAssertTrue(self.syncMOC.saveOrRollback())
 
-            return (textMessage, notSelfClients, firstClient, secondClient)
+            return (textMessage, notSelfClients, firstClient, secondClient, conversation)
         }
 
         // When
