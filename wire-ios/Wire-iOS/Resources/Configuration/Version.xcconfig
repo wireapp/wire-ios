@@ -16,4 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+<<<<<<< HEAD
 WIRE_SHORT_VERSION = 3.112
+=======
+WIRE_SHORT_VERSION = 3.111.4
+>>>>>>> d7c7ebae1 (fix: add more logs (#799))
