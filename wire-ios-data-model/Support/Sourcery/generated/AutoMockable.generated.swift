@@ -1890,6 +1890,26 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
 
     public init() {}
 
+    // MARK: - lastPrekeyID
+
+    public var lastPrekeyIDCallsCount = 0
+    public var lastPrekeyIDCalled: Bool {
+        return lastPrekeyIDCallsCount > 0
+    }
+
+    public var lastPrekeyID: UInt16 {
+        get async {
+            lastPrekeyIDCallsCount += 1
+            if let lastPrekeyIDClosure = lastPrekeyIDClosure {
+                return await lastPrekeyIDClosure()
+            } else {
+                return underlyingLastPrekeyID
+            }
+        }
+    }
+    public var underlyingLastPrekeyID: UInt16!
+    public var lastPrekeyIDClosure: (() async -> UInt16)?
+
 
     // MARK: - establishSession
 
@@ -2015,6 +2035,75 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
             return mock
         } else {
             fatalError("no mock for `decryptDataForSession`")
+        }
+    }
+
+    // MARK: - generatePrekey
+
+    public var generatePrekeyId_Invocations: [UInt16] = []
+    public var generatePrekeyId_MockError: Error?
+    public var generatePrekeyId_MockMethod: ((UInt16) async throws -> String)?
+    public var generatePrekeyId_MockValue: String?
+
+    public func generatePrekey(id: UInt16) async throws -> String {
+        generatePrekeyId_Invocations.append(id)
+
+        if let error = generatePrekeyId_MockError {
+            throw error
+        }
+
+        if let mock = generatePrekeyId_MockMethod {
+            return try await mock(id)
+        } else if let mock = generatePrekeyId_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `generatePrekeyId`")
+        }
+    }
+
+    // MARK: - lastPrekey
+
+    public var lastPrekey_Invocations: [Void] = []
+    public var lastPrekey_MockError: Error?
+    public var lastPrekey_MockMethod: (() async throws -> String)?
+    public var lastPrekey_MockValue: String?
+
+    public func lastPrekey() async throws -> String {
+        lastPrekey_Invocations.append(())
+
+        if let error = lastPrekey_MockError {
+            throw error
+        }
+
+        if let mock = lastPrekey_MockMethod {
+            return try await mock()
+        } else if let mock = lastPrekey_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `lastPrekey`")
+        }
+    }
+
+    // MARK: - generatePrekeys
+
+    public var generatePrekeysStartCount_Invocations: [(start: UInt16, count: UInt16)] = []
+    public var generatePrekeysStartCount_MockError: Error?
+    public var generatePrekeysStartCount_MockMethod: ((UInt16, UInt16) async throws -> [IdPrekeyTuple])?
+    public var generatePrekeysStartCount_MockValue: [IdPrekeyTuple]?
+
+    public func generatePrekeys(start: UInt16, count: UInt16) async throws -> [IdPrekeyTuple] {
+        generatePrekeysStartCount_Invocations.append((start: start, count: count))
+
+        if let error = generatePrekeysStartCount_MockError {
+            throw error
+        }
+
+        if let mock = generatePrekeysStartCount_MockMethod {
+            return try await mock(start, count)
+        } else if let mock = generatePrekeysStartCount_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `generatePrekeysStartCount`")
         }
     }
 
