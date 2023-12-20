@@ -79,8 +79,8 @@ public class MLSConversationVerificationStatusProvider: MLSConversationVerificat
         }
     }
 
-    private func getActualNewStatus(newStatusFromCC: MLSVerificationStatus,
-                                    currentStatus: MLSVerificationStatus) -> MLSVerificationStatus {
+    private func resolveNewStatus(newStatusFromCC: MLSVerificationStatus,
+                                  currentStatus: MLSVerificationStatus) -> MLSVerificationStatus {
         switch (newStatusFromCC, currentStatus) {
         case (.notVerified, .verified):
             return .degraded
