@@ -53,7 +53,7 @@ class GenericMessageTests_NativePush: BaseZMMessageTests {
             createSelfClient()
         }
 
-        let (user, connection, conversation) = await syncMOC.perform { [self] in
+        let conversation = await syncMOC.perform { [self] in
             let user = ZMUser.insertNewObject(in: self.syncMOC)
             user.remoteIdentifier = .create()
 
@@ -64,7 +64,7 @@ class GenericMessageTests_NativePush: BaseZMMessageTests {
             conversation.connection = connection
             conversation.conversationType = .oneOnOne
 
-            return (user, connection, conversation)
+            return conversation
         }
         // when
         let (data, _) = await message.encryptForTransport(for: conversation, in: self.syncMOC)!
