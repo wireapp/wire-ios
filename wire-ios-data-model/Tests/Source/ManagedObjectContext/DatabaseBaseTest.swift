@@ -24,8 +24,8 @@ import WireTesting
 
     var accountID: UUID = UUID.create()
 
-    public var applicationContainer: URL {
-        return FileManager.default
+    public static var applicationContainer: URL {
+        FileManager.default
             .urls(for: .applicationSupportDirectory, in: .userDomainMask)
             .first!
             .appendingPathComponent("StorageStackTests")
@@ -34,7 +34,7 @@ import WireTesting
     override public func setUp() {
         super.setUp()
         self.clearStorageFolder()
-        try! FileManager.default.createDirectory(at: self.applicationContainer, withIntermediateDirectories: true)
+        try! FileManager.default.createDirectory(at: Self.applicationContainer, withIntermediateDirectories: true)
     }
 
     override public func tearDown() {
@@ -51,7 +51,7 @@ import WireTesting
 
         let account = Account(userName: "", userIdentifier: userID)
         let stack = CoreDataStack(account: account,
-                                  applicationContainer: applicationContainer,
+                                  applicationContainer: Self.applicationContainer,
                                   inMemoryStore: false,
                                   dispatchGroup: dispatchGroup)
 
@@ -97,7 +97,7 @@ import WireTesting
 
     /// Clears the current storage folder and the legacy locations
     public func clearStorageFolder() {
-        let url = self.applicationContainer
+        let url = Self.applicationContainer
         try? FileManager.default.removeItem(at: url)
     }
 

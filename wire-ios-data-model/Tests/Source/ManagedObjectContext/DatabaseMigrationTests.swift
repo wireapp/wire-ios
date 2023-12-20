@@ -168,7 +168,7 @@ extension DatabaseMigrationTests {
 
 extension DatabaseBaseTest {
     func createDatabaseWithOlderModelVersion(versionName: String, file: StaticString = #file, line: UInt = #line) throws {
-        let storeFile = CoreDataStack.accountDataFolder(accountIdentifier: DatabaseMigrationTests.testUUID, applicationContainer: self.applicationContainer).appendingPersistentStoreLocation()
+        let storeFile = CoreDataStack.accountDataFolder(accountIdentifier: DatabaseMigrationTests.testUUID, applicationContainer: DatabaseBaseTest.applicationContainer).appendingPersistentStoreLocation()
         try FileManager.default.createDirectory(at: storeFile.deletingLastPathComponent(), withIntermediateDirectories: true)
 
         // copy old version database into the expected location

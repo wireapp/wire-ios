@@ -16,13 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 import XCTest
 @testable import WireDataModel
 
 struct DatabaseMigrationHelper {
 
-    private let bundle = Bundle(for: ZMManagedObject.self)
+    private let bundle = WireDataModelBundle.bundle
     private let dataModelName = "zmessaging"
 
     func createObjectModel(version: String) throws -> NSManagedObjectModel {
@@ -70,4 +69,57 @@ struct DatabaseMigrationHelper {
             destinationModel: destinationModel
         )
     }
+
+    // MARK: Fixture
+
+    func createFixtureDatabase(
+        applicationContainer: URL,
+        accountIdentifier: UUID,
+        versionName: String,
+        file: StaticString = #file,
+        line: UInt = #line
+    ) throws {
+        let storeFile = CoreDataStack.accountDataFolder(
+            accountIdentifier: accountIdentifier,
+            applicationContainer: applicationContainer
+        ).appendingPersistentStoreLocation()
+
+        try createFixtureDatabase(storeFile: storeFile, versionName: versionName)
+    }
+
+    func createFixtureDatabase(
+        storeFile: URL,
+        versionName: String,
+        file: StaticString = #file,
+        line: UInt = #line
+    ) throws {
+        try FileManager.default.createDirectory(at: storeFile.deletingLastPathComponent(), withIntermediateDirectories: true)
+
+        // copy old version database into the expected location
+        guard let source = databaseFixtureURL(version: versionName, file: file, line: line) else {
+            return
+        }
+        try FileManager.default.copyItem(at: source, to: storeFile)
+    }
+
+    private func databaseFixtureURL(version: String, file: StaticString = #file, line: UInt = #line) -> URL? {
+        let name = databaseFixtureFileName(for: version)
+        guard let source = WireDataModelTestsBundle.bundle.url(forResource: name, withExtension: "wiredatabase") else {
+            XCTFail("Could not find \(name).wiredatabase in test bundle", file: file, line: line)
+            return nil
+        }
+        return source
+    }
+
+    // The naming scheme is slightly different for fixture files
+    private func databaseFixtureFileName(for version: String) -> String {
+        let fixedVersion = version.replacingOccurrences(of: ".", with: "-")
+        let name = "store" + fixedVersion
+        return name
+    }
+
+}
+
+private final class WireDataModelTestsBundle {
+    static let bundle = Bundle(for: WireDataModelTestsBundle.self)
 }

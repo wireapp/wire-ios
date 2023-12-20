@@ -20,7 +20,7 @@ import XCTest
 import Foundation
 @testable import WireDataModel
 
-final class DatabaseMigrationTests_UserClientUniqueness: DatabaseBaseTest {
+final class DatabaseMigrationTests_UserClientUniqueness: XCTestCase {
 
     typealias MigrationAction = (NSManagedObjectContext) throws -> Void
 
@@ -70,8 +70,9 @@ final class DatabaseMigrationTests_UserClientUniqueness: DatabaseBaseTest {
                     XCTAssertEqual(clients.count, 1)
                 }
             )
+
             // clean after each test
-            self.clearStorageFolder()
+            try? FileManager.default.removeItem(at: tmpStoreURL)
         }
     }
 
@@ -115,13 +116,17 @@ final class DatabaseMigrationTests_UserClientUniqueness: DatabaseBaseTest {
     ) throws {
         // GIVEN
         let userId = DatabaseMigrationTests.testUUID
-        let fixedVersion = sourceVersion.replacingOccurrences(of: ".", with: "-")
+        let applicationContainer = DatabaseBaseTest.applicationContainer
 
         // copy given database as source
-        try createDatabaseWithOlderModelVersion(versionName: fixedVersion)
-
         let storeFile = CoreDataStack.accountDataFolder(accountIdentifier: userId,
-                                                        applicationContainer: self.applicationContainer).appendingPersistentStoreLocation()
+                                                        applicationContainer: applicationContainer).appendingPersistentStoreLocation()
+
+        try helper.createFixtureDatabase(
+            storeFile: storeFile,
+            versionName: sourceVersion
+        )
+
         let sourceModel = try helper.createObjectModel(version: sourceVersion)
         var sourceContainer: NSPersistentContainer? = try helper.createStore(model: sourceModel, at: storeFile)
 
@@ -139,11 +144,16 @@ final class DatabaseMigrationTests_UserClientUniqueness: DatabaseBaseTest {
         sourceContainer = nil
 
         // WHEN
-        let stack = createStorageStackAndWaitForCompletion(userID: userId)
+        let stack = createStorageStackAndWaitForCompletion(
+            userID: userId,
+            applicationContainer: applicationContainer
+        )
 
         // THEN
         // perform post migration action
         try postMigrationAction(stack.viewContext)
+
+        try? FileManager.default.removeItem(at: applicationContainer)
     }
 
     private func migrateStore(
@@ -198,6 +208,44 @@ final class DatabaseMigrationTests_UserClientUniqueness: DatabaseBaseTest {
 
         // perform post migration action
         try postMigrationAction(migratedContainer.viewContext)
+    }
+
+    func createStorageStackAndWaitForCompletion(
+        userID: UUID = UUID(),
+        applicationContainer: URL,
+        file: StaticString = #file,
+        line: UInt = #line
+    ) -> CoreDataStack {
+
+        // we use backgroundActivity suring the setup so we need to mock for tests
+        let manager = MockBackgroundActivityManager()
+        BackgroundActivityFactory.shared.activityManager = manager
+
+        let account = Account(
+            userName: "",
+            userIdentifier: userID
+        )
+        let stack = CoreDataStack(
+            account: account,
+            applicationContainer: applicationContainer,
+            inMemoryStore: false
+        )
+
+        let exp = self.expectation(description: "should wait for loadStores to finish")
+        stack.setup(onStartMigration: {
+            // do nothing
+        }, onFailure: { error in
+            XCTAssertNil(error, file: file, line: line)
+            exp.fulfill()
+        }, onCompletion: { _ in
+            exp.fulfill()
+        })
+        waitForExpectations(timeout: 1.0)
+
+        BackgroundActivityFactory.shared.activityManager = nil
+        XCTAssertFalse(BackgroundActivityFactory.shared.isActive, file: file, line: line)
+
+        return stack
     }
 
     // MARK: - URL Helpers
