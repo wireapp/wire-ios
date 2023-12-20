@@ -147,9 +147,10 @@ final class DatabaseMigrationTests_UserClientUniqueness: DatabaseBaseTest {
         let sourceModel = try createObjectModel(version: sourceVersion)
         let destinationModel = try createObjectModel(version: destinationVersion)
 
-        // create container for initial version
         let sourceStoreURL = storeURL(version: sourceVersion)
         let destinationStoreURL = storeURL(version: destinationVersion)
+
+        // create container for initial version
         let container = try createStore(model: sourceModel, at: sourceStoreURL)
 
         // perform pre-migration action
@@ -166,7 +167,7 @@ final class DatabaseMigrationTests_UserClientUniqueness: DatabaseBaseTest {
         // perform migration
         do {
             try migrationManager.migrateStore(
-                from: container.persistentStoreCoordinator.persistentStores.first!.url!,
+                from: sourceStoreURL,
                 sourceType: NSSQLiteStoreType,
                 options: nil,
                 with: mappingModel,
