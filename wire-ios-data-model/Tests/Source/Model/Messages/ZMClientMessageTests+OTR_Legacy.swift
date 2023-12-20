@@ -532,8 +532,8 @@ extension ClientMessageTests_OTR_Legacy {
         let messageMetadata = Proteus_NewOtrMessage.with {
             try? $0.merge(serializedData: payload)
         }
-
-        XCTAssertEqual(messageMetadata.sender.client, self.selfClient1.clientId.client, file: file, line: line)
+        let client = self.uiMOC.performAndWait({ self.selfClient1.clientId.client })
+        XCTAssertEqual(messageMetadata.sender.client, client, file: file, line: line)
         assertRecipients(messageMetadata.recipients, file: file, line: line)
     }
 
