@@ -20,7 +20,7 @@ import Foundation
 import WireTesting
 @testable import WireDataModel
 
-@objcMembers public class DatabaseBaseTest: ZMTBaseTest {
+class DatabaseBaseTest: ZMTBaseTest {
 
     var accountID: UUID = UUID.create()
 
@@ -30,6 +30,8 @@ import WireTesting
             .first!
             .appendingPathComponent("StorageStackTests")
     }
+
+    // MARK: - Init
 
     override public func setUp() {
         super.setUp()
@@ -41,6 +43,16 @@ import WireTesting
         self.clearStorageFolder()
         super.tearDown()
     }
+
+    // MARK: - Cleanup
+
+    /// Clears the current storage folder and the legacy locations
+    public func clearStorageFolder() {
+        let url = Self.applicationContainer
+        try? FileManager.default.removeItem(at: url)
+    }
+
+    // MARK: - CoreData Stack
 
     /// Create storage stack
     func createStorageStackAndWaitForCompletion(userID: UUID = UUID(), file: StaticString = #file, line: UInt = #line) -> CoreDataStack {
@@ -72,41 +84,4 @@ import WireTesting
 
         return stack
     }
-
-    /// Create a session in the keystore directory for the given account
-    public func createSessionInKeyStore(accountDirectory: URL, applicationContainer: URL, sessionId: EncryptionSessionIdentifier) {
-        let preKey = "pQABAQICoQBYICHHDV4Zh6yJzJSPhQmtxah8N4kVE+XSCmTVfIsvgm5UA6EAoQBYIJeiWi5TfAWBrYSOtM5nKk5isfRYX5pFqRk13jVenPz6BPY="
-        let keyStore = UserClientKeysStore(accountDirectory: accountDirectory, applicationContainer: applicationContainer)
-        keyStore.encryptionContext.perform { sessionsDirectory in
-            try! sessionsDirectory.createClientSession(sessionId, base64PreKeyString: preKey)
-        }
-    }
-
-    /// Returns true if the given session exists in the keystore for the given account
-    public func doesSessionExistInKeyStore(accountDirectory: URL, applicationContainer: URL, sessionId: EncryptionSessionIdentifier) -> Bool {
-
-        var hasSession = false
-
-        let keyStore = UserClientKeysStore(accountDirectory: accountDirectory, applicationContainer: applicationContainer)
-        keyStore.encryptionContext.perform { sessionsDirectory in
-            hasSession = sessionsDirectory.hasSession(for: sessionId)
-        }
-
-        return hasSession
-    }
-
-    /// Clears the current storage folder and the legacy locations
-    public func clearStorageFolder() {
-        let url = Self.applicationContainer
-        try? FileManager.default.removeItem(at: url)
-    }
-
-    /// Creates some dummy Core Data store support file
-    func createDummyExternalSupportFileForDatabase(storeFile: URL) {
-        let storeName = storeFile.deletingPathExtension().lastPathComponent
-        let supportPath = storeFile.deletingLastPathComponent().appendingPathComponent(".\(storeName)_SUPPORT")
-        try! FileManager.default.createDirectory(at: supportPath, withIntermediateDirectories: true)
-        try! self.mediumJPEGData().write(to: supportPath.appendingPathComponent("image.dat"))
-    }
-
 }
