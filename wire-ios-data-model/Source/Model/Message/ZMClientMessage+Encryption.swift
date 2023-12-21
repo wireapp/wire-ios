@@ -741,20 +741,20 @@ extension GenericMessage {
          context: NSManagedObjectContext,
          using encryptionFunction: LegacyEncryptionFunction
      ) -> [Proteus_UserEntry] {
-         return recipients.compactMap { (user, clients) in
-             guard context.performAndWait({ !user.isAccountDeleted }) else { return nil }
+         context.performAndWait {
+             recipients.compactMap { (user, clients) in
+                 guard !user.isAccountDeleted else { return nil }
 
-             let clientEntries = clientEntriesWithEncryptedData(
-                 selfClient,
-                 userClients: clients,
-                 context: context,
-                 using: encryptionFunction
-             )
+                 let clientEntries = clientEntriesWithEncryptedData(
+                    selfClient,
+                    userClients: clients,
+                    context: context,
+                    using: encryptionFunction
+                 )
 
-             guard !clientEntries.isEmpty else { return nil }
+                 guard !clientEntries.isEmpty else { return nil }
 
-             return context.performAndWait {
-                 Proteus_UserEntry(withUser: user, clientEntries: clientEntries)
+                 return Proteus_UserEntry(withUser: user, clientEntries: clientEntries)
              }
          }
      }
