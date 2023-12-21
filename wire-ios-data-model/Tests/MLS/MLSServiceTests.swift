@@ -247,7 +247,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     // MARK: - Message Encryption
 
-    func test_Encrypt_UsesEncyptionService() throws {
+    func test_Encrypt_UsesEncyptionService() async throws {
         // Given
         let message = "foo"
         let groupID = MLSGroupID.random()
@@ -258,7 +258,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         mockDecryptionService.decryptMessageForSubconversationType_MockValue = mockResult
 
         // When
-        let result = try sut.decrypt(
+        let result = try await sut.decrypt(
             message: message,
             for: groupID,
             subconversationType: subconversationType
@@ -275,7 +275,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     // MARK: - Message Decryption
 
-    func test_Decrypt_UsesDecyptionService() throws {
+    func test_Decrypt_UsesDecyptionService() async throws {
         // Given
         let message = "foo"
         let groupID = MLSGroupID.random()
@@ -285,7 +285,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         mockDecryptionService.decryptMessageForSubconversationType_MockValue = mockResult
 
         // When
-        let result = try sut.decrypt(
+        let result = try await sut.decrypt(
             message: message,
             for: groupID,
             subconversationType: subconversationType
@@ -300,7 +300,7 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         XCTAssertEqual(result, mockResult)
     }
 
-    func test_Decrypt_RepairsConversationOnWrongEpochError() throws {
+    func test_Decrypt_RepairsConversationOnWrongEpochError() async throws {
         // Given
         let conversation = await uiMOC.perform { self.createConversation(outOfSync: true).conversation }
         guard let groupID = await uiMOC.perform({ conversation.mlsGroupID }) else {
@@ -324,14 +324,14 @@ class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
 
         // When
-        _ = try? sut.decrypt(
+        _ = try? await sut.decrypt(
             message: message,
             for: groupID,
             subconversationType: nil
         )
 
         // Then
-        wait(for: [expectation], timeout: 0.5)
+        await fulfillment(of: [expectation], timeout: 0.5)
         _ = waitForAllGroupsToBeEmpty(withTimeout: 0.5)
     }
 
