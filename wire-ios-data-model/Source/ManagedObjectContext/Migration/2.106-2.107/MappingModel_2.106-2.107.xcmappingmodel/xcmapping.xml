@@ -10,7 +10,9 @@
             <plist version="1.0">
                 <dict>
                     <key>NSPersistenceFrameworkVersion</key>
-                    <integer>1251</integer>
+                    <integer>1338</integer>
+                    <key>NSStoreModelVersionChecksumKey</key>
+                    <string>bMpud663vz0bXQE24C6Rh4MvJ5jVnzsD2sI3njZkKbc=</string>
                     <key>NSStoreModelVersionHashes</key>
                     <dict>
                         <key>XDDevAttributeMapping</key>
@@ -1101,6 +1103,8 @@ dmVyVCR0b3BYJG9iamVjdHMSAAGGoF8QD05TS2V5ZWRBcmNoaXZlctEAAAAIAAAACVRyb290gAGvERxZ
         <relationship name="entitymapping" type="1/1" destination="XDDEVENTITYMAPPING" idrefs="z360"></relationship>
     </object>
     <object type="XDDEVENTITYMAPPING" id="z325">
+        <attribute name="name" type="string">ParticipantRoleToParticipantRole</attribute>
+        <attribute name="migrationpolicyclassname" type="string">WireDataModel.RemoveZombieParticipantRolesMigrationPolicy</attribute>
         <attribute name="sourcename" type="string">ParticipantRole</attribute>
         <attribute name="mappingtypename" type="string">Undefined</attribute>
         <attribute name="mappingnumber" type="int16">24</attribute>
