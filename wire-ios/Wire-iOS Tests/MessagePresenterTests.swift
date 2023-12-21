@@ -26,10 +26,12 @@ final class MessagePresenterTests: XCTestCase {
     var sut: MessagePresenter!
     var mediaPlaybackManager: MediaPlaybackManager!
     var originalRootViewConttoller: UIViewController!
+    var userSession: UserSessionMock!
 
     override func setUp() {
         super.setUp()
-        mediaPlaybackManager = MediaPlaybackManager(name: nil)
+        userSession = UserSessionMock()
+        mediaPlaybackManager = MediaPlaybackManager(name: nil, userSession: userSession)
         sut = MessagePresenter(mediaPlaybackManager: mediaPlaybackManager)
         UIView.setAnimationsEnabled(false)
 
@@ -41,6 +43,7 @@ final class MessagePresenterTests: XCTestCase {
     override func tearDown() {
         sut = nil
         mediaPlaybackManager = nil
+        sut = nil
         super.tearDown()
         UIView.setAnimationsEnabled(true)
         UIApplication.shared.firstKeyWindow?.rootViewController = originalRootViewConttoller
@@ -76,25 +79,29 @@ final class MessagePresenterTests: XCTestCase {
 
     // MARK: - Pass
 
-    func testThatCreateAddPassesViewControllerReturnsNilForFileMessage() {
+    func testThatMakePassesViewControllerThrowsErrorForInvalidFileURL() async throws {
         // GIVEN
-        let message = MockMessageFactory.fileTransferMessage()
+        let fileURL = try XCTUnwrap(URL(string: "https://apple.com"))
 
-        // WHEN
-        let addPassesViewController = sut.createAddPassesViewController(fileMessageData: message.fileMessageData!)
-
-        // THEN
-        XCTAssertNil(addPassesViewController)
+        // WHEN && THEN
+        do {
+            _ = try await sut.makePassesViewController(fileURL: fileURL)
+            XCTFail("expected to throw an error!")
+        } catch {
+            // success
+        }
     }
 
-    func testThatCreateAddPassesViewControllerReturnsAViewControllerForPassFileMessage() {
+    func testThatCreateAddPassesViewControllerReturnsAViewControllerForPassFileMessage() async throws {
         // GIVEN
         let message = MockMessageFactory.passFileTransferMessage()
+        let fileURL = try XCTUnwrap(message.fileMessageData?.fileURL)
 
-        // WHEN
-        let addPassesViewController = sut.createAddPassesViewController(fileMessageData: message.fileMessageData!)
-
-        // THEN
-        XCTAssertNotNil(addPassesViewController)
+        // WHEN && THEN
+        do {
+            _ = try await sut.makePassesViewController(fileURL: fileURL)
+        } catch {
+            XCTFail("expected not to throw an error!")
+        }
     }
 }

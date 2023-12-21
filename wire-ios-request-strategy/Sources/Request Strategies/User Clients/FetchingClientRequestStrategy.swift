@@ -236,11 +236,10 @@ final class UserClientByUserClientIDTranscoder: IdentifierObjectSyncTranscoder {
         guard let identifier = identifiers.first else { return nil }
 
         let path = "/users/\(identifier.userId.transportString())/clients/\(identifier.clientId)"
-        return ZMTransportRequest(path: path, method: .methodGET, payload: nil, apiVersion: apiVersion.rawValue)
+        return ZMTransportRequest(path: path, method: .get, payload: nil, apiVersion: apiVersion.rawValue)
     }
 
-    public func didReceive(response: ZMTransportResponse, for identifiers: Set<UserClientID>) {
-
+    public func didReceive(response: ZMTransportResponse, for identifiers: Set<UserClientID>, completionHandler: @escaping () -> Void) {
         guard
             let identifier = identifiers.first,
             let client = UserClient.fetchUserClient(withRemoteId: identifier.clientId,
@@ -250,11 +249,14 @@ final class UserClientByUserClientIDTranscoder: IdentifierObjectSyncTranscoder {
                                                     createIfNeeded: true)
         else {
             Logging.network.warn("Can't process response, aborting.")
-            return
+            return completionHandler()
         }
 
         if response.result == .permanentError {
-            client.deleteClientAndEndSession()
+            WaitingGroupTask(context: managedObjectContext) { [self] in
+                await client.deleteClientAndEndSession()
+                await managedObjectContext.perform { completionHandler() }
+            }
         } else if let rawData = response.rawData,
                   let payload = Payload.UserClient(rawData, decoder: decoder) {
             processor.updateClient(
@@ -265,6 +267,7 @@ final class UserClientByUserClientIDTranscoder: IdentifierObjectSyncTranscoder {
             let selfClient = ZMUser.selfUser(in: managedObjectContext).selfClient()
             let clientSet: Set<UserClient> = [client]
             selfClient?.updateSecurityLevelAfterDiscovering(clientSet)
+            completionHandler()
         }
     }
 }
@@ -324,7 +327,7 @@ final class UserClientByQualifiedUserIDTranscoder: IdentifierObjectSyncTranscode
 
         return ZMTransportRequest(
             path: "/users/list-clients/v2",
-            method: .methodPOST,
+            method: .post,
             payload: payloadAsString as ZMTransportData?,
             apiVersion: 1
         )
@@ -340,7 +343,7 @@ final class UserClientByQualifiedUserIDTranscoder: IdentifierObjectSyncTranscode
 
         return ZMTransportRequest(
             path: "/users/list-clients",
-            method: .methodPOST,
+            method: .post,
             payload: payloadAsString as ZMTransportData?,
             apiVersion: apiVersion.rawValue
         )
@@ -358,30 +361,31 @@ final class UserClientByQualifiedUserIDTranscoder: IdentifierObjectSyncTranscode
 
     }
 
-    public func didReceive(response: ZMTransportResponse, for identifiers: Set<QualifiedID>) {
+    public func didReceive(response: ZMTransportResponse, for identifiers: Set<QualifiedID>, completionHandler: @escaping () -> Void) {
         guard let apiVersion = APIVersion(rawValue: response.apiVersion) else { return }
         switch apiVersion {
         case .v0:
+            completionHandler()
             return
 
         case .v1, .v2, .v3, .v4, .v5:
-            commonResponseHandling(response: response, for: identifiers)
+            WaitingGroupTask(context: managedObjectContext) { [self] in
+                await commonResponseHandling(response: response, for: identifiers)
+                await managedObjectContext.perform { completionHandler() }
+            }
         }
     }
 
-    private func commonResponseHandling(response: ZMTransportResponse, for identifiers: Set<QualifiedID>) {
-        defer {
-            // We mark all clients as synced, even if they did not appear in
-            // the reponse payload, in order to avoid a possible request loop.
-            markAllClientsAsUpdated(identifiers: identifiers)
-        }
-
+    private func commonResponseHandling(response: ZMTransportResponse, for identifiers: Set<QualifiedID>) async {
         guard
             let rawData = response.rawData,
             let payload = ResponsePayload(rawData, decoder: decoder),
-            let selfClient = ZMUser.selfUser(in: managedObjectContext).selfClient()
+            let selfClient = await managedObjectContext.perform({ ZMUser.selfUser(in: self.managedObjectContext).selfClient() })
         else {
             Logging.network.warn("Can't process response, aborting.")
+            await managedObjectContext.perform {
+                self.markAllClientsAsUpdated(identifiers: identifiers)
+            }
             return
         }
 
@@ -391,18 +395,24 @@ final class UserClientByQualifiedUserIDTranscoder: IdentifierObjectSyncTranscode
                     continue
                 }
 
-                let user = ZMUser.fetchOrCreate(
+                let user = await managedObjectContext.perform { ZMUser.fetchOrCreate(
                     with: userID,
                     domain: domain,
-                    in: managedObjectContext
-                )
+                    in: self.managedObjectContext
+                )}
 
-                processor.createOrUpdateClients(
+                await processor.createOrUpdateClients(
                     from: clientPayloads,
                     for: user,
                     selfClient: selfClient
                 )
             }
+        }
+
+        // We mark all clients as synced, even if they did not appear in
+        // the reponse payload, in order to avoid a possible request loop.
+        await managedObjectContext.perform {
+            self.markAllClientsAsUpdated(identifiers: identifiers)
         }
     }
 
@@ -443,11 +453,10 @@ final class UserClientByUserIDTranscoder: IdentifierObjectSyncTranscoder {
         guard let userId = identifiers.first?.transportString() else { return nil }
 
         let path = "/users/\(userId)/clients"
-        return ZMTransportRequest(path: path, method: .methodGET, payload: nil, apiVersion: apiVersion.rawValue)
+        return ZMTransportRequest(path: path, method: .get, payload: nil, apiVersion: apiVersion.rawValue)
     }
 
-    public func didReceive(response: ZMTransportResponse, for identifiers: Set<UUID>) {
-
+    public func didReceive(response: ZMTransportResponse, for identifiers: Set<UUID>, completionHandler: @escaping () -> Void) {
         guard
             let rawData = response.rawData,
             let payload = Payload.UserClients(rawData, decoder: decoder),
@@ -455,6 +464,7 @@ final class UserClientByUserIDTranscoder: IdentifierObjectSyncTranscoder {
             let selfClient = ZMUser.selfUser(in: managedObjectContext).selfClient()
         else {
             Logging.network.warn("Can't process response, aborting.")
+            completionHandler()
             return
         }
 
@@ -464,10 +474,13 @@ final class UserClientByUserIDTranscoder: IdentifierObjectSyncTranscoder {
             in: managedObjectContext
         )
 
-        processor.createOrUpdateClients(
-            from: payload,
-            for: user,
-            selfClient: selfClient
-        )
+        WaitingGroupTask(context: managedObjectContext) { [self] in
+            await processor.createOrUpdateClients(
+                from: payload,
+                for: user,
+                selfClient: selfClient
+            )
+            await managedObjectContext.perform { completionHandler() }
+        }
     }
 }

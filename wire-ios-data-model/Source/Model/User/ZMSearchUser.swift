@@ -112,7 +112,7 @@ public class ZMSearchUser: NSObject, UserType {
     public var providerIdentifier: String?
     public var summary: String?
     public var assetKeys: SearchUserAssetKeys?
-    public var remoteIdentifier: UUID?
+    public var remoteIdentifier: UUID!
     public var teamIdentifier: UUID?
     @objc public var contact: ZMAddressBookContact?
     @objc public var user: ZMUser?
@@ -190,6 +190,10 @@ public class ZMSearchUser: NSObject, UserType {
         guard let user = user else { return false }
 
         return user.isSelfUser
+    }
+
+    public var membership: Member? {
+        user?.membership
     }
 
     public var teamName: String? {

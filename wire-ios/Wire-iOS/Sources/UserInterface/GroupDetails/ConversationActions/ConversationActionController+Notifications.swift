@@ -24,7 +24,7 @@ enum NotificationResult: CaseIterable {
     case everything, mentionsAndReplies, nothing, cancel
 
     static var title: String {
-        return "meta.menu.configure_notification.dialog_message".localized
+        return L10n.Localizable.Meta.Menu.ConfigureNotification.dialogMessage
     }
 
     var mutedMessageTypes: MutedMessageTypes? {
@@ -78,7 +78,7 @@ enum NotificationResult: CaseIterable {
 extension ConversationActionController {
 
     func requestNotificationResult(for conversation: ZMConversation, handler: @escaping (NotificationResult) -> Void) {
-        let title = "\(conversation.displayName) • \(NotificationResult.title)"
+        let title = "\(conversation.displayNameWithFallback) • \(NotificationResult.title)"
         let controller = UIAlertController(title: title, message: nil, preferredStyle: .actionSheet)
         NotificationResult.allCases.map { $0.action(for: conversation, handler: handler) }.forEach(controller.addAction)
         present(controller)
@@ -86,7 +86,7 @@ extension ConversationActionController {
 
     func handleNotificationResult(_ result: NotificationResult, for conversation: ZMConversation) {
         if let mutedMessageTypes = result.mutedMessageTypes {
-            ZMUserSession.shared()?.perform {
+            userSession.perform {
                 conversation.mutedMessageTypes = mutedMessageTypes
             }
         }

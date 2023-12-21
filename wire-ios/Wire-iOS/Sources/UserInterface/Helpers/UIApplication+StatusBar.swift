@@ -57,7 +57,7 @@ extension UIApplication {
         }
 
         while let presentedController = topController.presentedViewController,
-            (!onlyFullScreen || presentedController.modalPresentationStyle == .fullScreen) {
+            !onlyFullScreen || presentedController.modalPresentationStyle == .fullScreen {
             topController = presentedController
         }
 

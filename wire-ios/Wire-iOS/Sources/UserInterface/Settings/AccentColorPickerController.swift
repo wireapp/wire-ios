@@ -193,7 +193,7 @@ final class AccentColorPickerController: ColorPickerController {
 
         setupControllerTitle()
 
-        if let accentColor = AccentColor(ZMAccentColor: ZMUser.selfUser().accentColorValue), let currentColorIndex = allAccentColors.firstIndex(of: accentColor) {
+        if let selfUser = ZMUser.selfUser(), let accentColor = AccentColor(ZMAccentColor: selfUser.accentColorValue), let currentColorIndex = allAccentColors.firstIndex(of: accentColor) {
             selectedColor = colors[currentColorIndex]
         }
         delegate = self
@@ -221,7 +221,7 @@ extension AccentColorPickerController: ColorPickerControllerDelegate {
         }
 
         ZMUserSession.shared()?.perform {
-            ZMUser.selfUser().accentColorValue = self.allAccentColors[colorIndex].zmAccentColor
+            ZMUser.selfUser()?.accentColorValue = self.allAccentColors[colorIndex].zmAccentColor
         }
     }
 

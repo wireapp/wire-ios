@@ -20,20 +20,24 @@ import Foundation
 import XCTest
 import WireCoreCrypto
 @testable import WireDataModel
+@testable import WireDataModelSupport
 
 final class MLSEncryptionServiceTests: XCTestCase {
 
     var sut: MLSEncryptionService!
-    var mockCoreCrypto: MockCoreCrypto!
+    var mockCoreCrypto: MockCoreCryptoProtocol!
     var mockSafeCoreCrypto: MockSafeCoreCrypto!
+    var mockCoreCryptoProvider: MockCoreCryptoProviderProtocol!
 
     // MARK: - Setup
 
     override func setUp() {
         super.setUp()
-        mockCoreCrypto = MockCoreCrypto()
+        mockCoreCrypto = MockCoreCryptoProtocol()
         mockSafeCoreCrypto = MockSafeCoreCrypto(coreCrypto: mockCoreCrypto)
-        sut = MLSEncryptionService(coreCrypto: mockSafeCoreCrypto)
+        mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
+        mockCoreCryptoProvider.coreCryptoRequireMLS_MockValue = mockSafeCoreCrypto
+        sut = MLSEncryptionService(coreCryptoProvider: mockCoreCryptoProvider)
     }
 
     override func tearDown() {

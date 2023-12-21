@@ -44,7 +44,7 @@ enum ClearContentResult {
     }
 
     static var title: String {
-        return "meta.menu.delete_content.dialog_message".localized
+        return L10n.Localizable.Meta.Menu.DeleteContent.dialogMessage
     }
 
     static func options(for conversation: ZMConversation) -> [ClearContentResult] {
@@ -66,10 +66,15 @@ extension ConversationActionController {
 
     func handleClearContentResult(_ result: ClearContentResult, for conversation: ZMConversation) {
         guard case .delete(leave: let leave) = result else { return }
+        guard let user = SelfUser.provider?.providedSelfUser else {
+            assertionFailure("expected available 'user'!")
+            return
+        }
+
         transitionToListAndEnqueue {
             conversation.clearMessageHistory()
             if leave {
-                conversation.removeOrShowError(participant: SelfUser.current)
+                conversation.removeOrShowError(participant: user)
             }
         }
     }

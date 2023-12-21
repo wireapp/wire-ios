@@ -34,6 +34,7 @@ class ClaimMLSKeyPackageActionHandlerTests: ActionHandlerTestBase<ClaimMLSKeyPac
             domain: domain,
             userId: userId
         )
+        handler = ClaimMLSKeyPackageActionHandler(context: syncMOC)
     }
 
     // MARK: - Request generation
@@ -47,7 +48,7 @@ class ClaimMLSKeyPackageActionHandlerTests: ActionHandlerTestBase<ClaimMLSKeyPac
             ),
             expectedPath: "/v5/mls/key-packages/claim/\(domain)/\(userId.transportString())",
             expectedPayload: ["skip_own": excludedSelfCliendId],
-            expectedMethod: .methodPOST,
+            expectedMethod: .post,
             apiVersion: .v5
         )
     }

@@ -48,11 +48,6 @@ final class SimpleNotificationService: UNNotificationServiceExtension, Loggable 
     ) {
         WireLogger.notifications.info("simple notification service will process request: \(request.identifier)")
 
-        guard #available(iOS 15, *) else {
-            WireLogger.notifications.error("iOS 15 is not available")
-            return finishWithoutShowingNotification()
-        }
-
         let task = Task { [weak self] in
             do {
                 WireLogger.notifications.info("initializing job for request (\(request.identifier))")
@@ -62,7 +57,7 @@ final class SimpleNotificationService: UNNotificationServiceExtension, Loggable 
                 contentHandler(content)
             } catch {
                 WireLogger.notifications.error("job for request (\(request.identifier)) failed: \(error.localizedDescription)")
-                finishWithoutShowingNotification()
+                self?.finishWithoutShowingNotification()
             }
             self?.currentTasks[request.identifier] = nil
         }

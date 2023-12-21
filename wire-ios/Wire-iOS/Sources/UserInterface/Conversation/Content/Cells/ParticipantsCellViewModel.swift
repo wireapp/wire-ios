@@ -112,7 +112,11 @@ class ParticipantsCellViewModel {
         let users = sortedUsersWithoutSelf
         let boundary = users.count > maxShownUsers && action.allowsCollapsing ? maxShownUsersWhenCollapsed : users.count
         let result = users[..<boundary]
-        return result + (isSelfIncludedInUsers ? [SelfUser.current] : [])
+
+        guard let selfUser = sortedUsers.first(where: \.isSelfUser) else {
+            return users
+        }
+        return result + [selfUser]
     }()
 
     /// Users not displayed in the system message but collapsed into a link.
@@ -177,17 +181,17 @@ class ParticipantsCellViewModel {
         if user.isSelfUser {
             return "content.system.you_\(grammaticalCase(for: user))".localized
         } else {
-            return user.name ?? "conversation.status.someone".localized
+            return user.name ?? L10n.Localizable.Conversation.Status.someone
         }
     }
 
     private var nameList: NameList {
-        var userNames = shownUsers.map { self.name(for: $0) }
+        var userNames = shownUsers.map { name(for: $0) }
         /// If users were removed due to legal hold policy conflict and there is a selfUser in that list, we should only display selfUser
         if case .removed(reason: .legalHoldPolicyConflict) = action,
-           isSelfIncludedInUsers,
+           let selfUser = sortedUsers.first(where: \.isSelfUser),
            !sortedUsersWithoutSelf.isEmpty {
-            userNames = [self.name(for: SelfUser.current)]
+            userNames = [name(for: selfUser)]
         }
 
         return NameList(names: userNames, collapsed: collapsedUsers.count, selfIncluded: isSelfIncludedInUsers)
@@ -242,7 +246,7 @@ class ParticipantsCellViewModel {
 
     func warning() -> String? {
         guard showServiceUserWarning else { return nil }
-        return "content.system.services.warning".localized
+        return L10n.Localizable.Content.System.Services.warning
     }
 
     private func formatter(for message: ZMConversationMessage) -> ParticipantsStringFormatter? {

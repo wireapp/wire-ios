@@ -17,6 +17,7 @@
 //
 
 import XCTest
+import avs
 @testable import Wire
 
 final private class MockAudioRecordViewControllerDelegate: NSObject, AudioRecordViewControllerDelegate {
@@ -36,12 +37,13 @@ final class AudioRecordViewControllerTests: BaseSnapshotTestCase {
 
     var sut: AudioRecordViewController!
     fileprivate var delegate: MockAudioRecordViewControllerDelegate!
+    var userSession: UserSessionMock!
 
     override func setUp() {
         super.setUp()
         accentColor = .strongBlue
-        sut = AudioRecordViewController()
-        sut.view.backgroundColor = SemanticColors.View.backgroundDefault
+        userSession = UserSessionMock()
+        sut = AudioRecordViewController(userSession: userSession)
         delegate = MockAudioRecordViewControllerDelegate()
         sut.delegate = delegate
         sut.updateTimeLabel(123)
@@ -51,6 +53,8 @@ final class AudioRecordViewControllerTests: BaseSnapshotTestCase {
     override func tearDown() {
         sut = nil
         delegate = nil
+        userSession = nil
+
         super.tearDown()
     }
 

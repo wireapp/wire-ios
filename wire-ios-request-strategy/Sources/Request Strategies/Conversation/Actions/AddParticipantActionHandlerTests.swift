@@ -44,6 +44,11 @@ class AddParticipantActionHandlerTests: MessagingTestBase {
             self.conversation = conversation
         }
 
+        let mockConversationService = MockConversationServiceInterface()
+        mockConversationService.syncConversationQualifiedID_MockMethod = { _ in
+
+        }
+
         sut = AddParticipantActionHandler(
             context: syncMOC,
             eventProcessor: ConversationEventProcessor(
@@ -134,10 +139,13 @@ class AddParticipantActionHandlerTests: MessagingTestBase {
     }
 
     func testThatItProcessMemberJoinEventInTheResponse() throws {
+        var response: ZMTransportResponse!
+        var action: AddParticipantAction!
+
         syncMOC.performGroupedAndWait { [self] _ in
             // given
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
-            let action = AddParticipantAction(users: [user], conversation: conversation)
+            action = AddParticipantAction(users: [user], conversation: conversation)
             let member = Payload.ConversationMember(
                 id: user.remoteIdentifier,
                 qualifiedID: user.qualifiedID,
@@ -153,19 +161,29 @@ class AddParticipantActionHandlerTests: MessagingTestBase {
                 senderID: selfUser.qualifiedID
             )
             let payloadAsString = String(bytes: conversationEvent.payloadData()!, encoding: .utf8)!
-            let response = ZMTransportResponse(
+            response = ZMTransportResponse(
                 payload: payloadAsString as ZMTransportData,
                 httpStatus: 200,
                 transportSessionError: nil,
                 apiVersion: APIVersion.v0.rawValue
             )
+        }
 
-            // when
-            self.sut.handleResponse(response, action: action)
+        let waitForHandler = self.expectation(description: "wait for Handler to be called")
 
-            // then
+        action.resultHandler = { _ in
+            waitForHandler.fulfill()
+        }
+        // when
+        self.sut.handleResponse(response, action: action)
+
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
+
+        // then
+        syncMOC.performAndWait {
             XCTAssertTrue(conversation.localParticipants.contains(user))
         }
+
     }
 
     func testThatItRefetchTeamUsers_On403() {
@@ -201,14 +219,19 @@ class AddParticipantActionHandlerTests: MessagingTestBase {
     }
 
     func testThatItCallsResultHandler_On200() {
+        var action: AddParticipantAction!
+
+        var response: ZMTransportResponse!
         syncMOC.performGroupedAndWait { [self] _ in
             // given
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
-            var action = AddParticipantAction(users: [user], conversation: conversation)
+            action = AddParticipantAction(users: [user], conversation: conversation)
             let expectation = self.expectation(description: "Result Handler was called")
             action.onResult { (result) in
                 if case .success = result {
                     expectation.fulfill()
+                } else {
+                    XCTFail("called the wrong result")
                 }
             }
 
@@ -227,19 +250,19 @@ class AddParticipantActionHandlerTests: MessagingTestBase {
                 senderID: selfUser.qualifiedID
             )
             let payloadAsString = String(bytes: conversationEvent.payloadData()!, encoding: .utf8)!
-            let response = ZMTransportResponse(
+            response = ZMTransportResponse(
                 payload: payloadAsString as ZMTransportData,
                 httpStatus: 200,
                 transportSessionError: nil,
                 apiVersion: APIVersion.v0.rawValue
             )
-
-            // when
-            self.sut.handleResponse(response, action: action)
-
-            // then
-            XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
         }
+
+        // when
+        self.sut.handleResponse(response, action: action)
+
+        // then
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
     }
 
     func testThatItCallsResultHandler_On204() {

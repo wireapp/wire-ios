@@ -212,11 +212,11 @@ final class ContactsCell: UITableViewCell, SeparatorViewProtocol {
     }
 
     private func updateTitleLabel() {
-        guard let user = self.user else {
+        guard let user, let selfUser = ZMUser.selfUser() else {
             return
         }
 
-        titleLabel.attributedText = user.nameIncludingAvailability(color: LabelColors.textDefault, selfUser: ZMUser.selfUser())
+        titleLabel.attributedText = user.nameIncludingAvailability(color: LabelColors.textDefault, selfUser: selfUser)
     }
 
     @objc func actionButtonPressed(sender: Any?) {

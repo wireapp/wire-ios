@@ -93,10 +93,10 @@ final class DebugAlert {
                                                   email: String,
                                                   from controller: UIViewController,
                                                   sourceView: UIView? = nil) {
-        let alert = UIAlertController(title: "self.settings.technical_report_section.title".localized,
-                                      message: "self.settings.technical_report.no_mail_alert".localized + email,
+        let alert = UIAlertController(title: L10n.Localizable.Self.Settings.TechnicalReportSection.title,
+                                      message: L10n.Localizable.Self.Settings.TechnicalReport.noMailAlert + email,
                                       alertAction: .cancel())
-        alert.addAction(UIAlertAction(title: "general.ok".localized, style: .default, handler: { _ in
+        alert.addAction(UIAlertAction(title: L10n.Localizable.General.ok, style: .default, handler: { _ in
             let activity = UIActivityViewController(activityItems: logPaths, applicationActivities: nil)
             activity.configPopover(pointToView: sourceView ?? controller.view)
 
@@ -118,16 +118,13 @@ final class DebugLogSender: NSObject, MFMailComposeViewControllerDelegate {
         guard let controller = UIApplication.shared.topmostViewController(onlyFullScreen: false) else { return }
         guard self.senderInstance == nil else { return }
 
-        let currentLog = ZMSLog.currentLog
-        let previousLog = ZMSLog.previousLog
-
-        guard currentLog != nil || previousLog != nil else {
+        guard ZMSLog.currentLog != nil else {
             DebugAlert.showGeneric(message: "There are no logs to send, have you enabled them from the debug menu > log settings BEFORE the issue happened?\nWARNING: restarting the app will discard all collected logs")
             return
         }
 
         // Prepare subject & body
-        let user = SelfUser.provider?.selfUser as? ZMUser
+        let user = SelfUser.provider?.providedSelfUser as? ZMUser
         let userID = user?.remoteIdentifier?.transportString() ?? ""
         let device = UIDevice.current.name
         let userDescription = "\(user?.name ?? "") [user: \(userID)] [device: \(device)]"
@@ -147,14 +144,7 @@ final class DebugLogSender: NSObject, MFMailComposeViewControllerDelegate {
         mailVC.setToRecipients([mail])
         mailVC.setSubject("iOS logs from \(userDescription)")
         mailVC.setMessageBody(message, isHTML: false)
-
-        if let currentLog = currentLog, let currentPath = ZMSLog.currentLogPath {
-            mailVC.addAttachmentData(currentLog, mimeType: "text/plain", fileName: currentPath.lastPathComponent)
-        }
-        if let previousLog = previousLog, let previousPath = ZMSLog.previousLogPath {
-            mailVC.addAttachmentData(previousLog, mimeType: "text/plain", fileName: previousPath.lastPathComponent)
-        }
-
+        mailVC.attachLogs()
         mailVC.mailComposeDelegate = alert
         alert.mailViewController = mailVC
 

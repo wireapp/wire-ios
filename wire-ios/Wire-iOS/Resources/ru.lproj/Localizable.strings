@@ -152,7 +152,7 @@
 
 // Conversation list voiceover accessibility
 "conversation_list.voiceover.open_conversation.hint" = "Открыть беседу";
-"conversation_list.voiceover.status.pending_connection" = "ожидает";
+"conversation_list.voiceover.status.pending_connection" = "ожидание";
 "conversation_list.voiceover.status.active_call" = "активный вызов";
 "conversation_list.voiceover.status.missed_call" = "пропущенный вызов";
 "conversation_list.voiceover.status.pause_media" = "поставить на паузу";
@@ -282,6 +282,8 @@
 "conversation.input_bar.audio_message.tooltip.tap_send" = "Нажмите для отправки";
 "conversation.input_bar.audio_message.too_long.title" = "Запись остановлена";
 "conversation.input_bar.audio_message.too_long.message" = "Размер аудиосообщений ограничен %@.";
+"conversation.ping.many_participants_confirmation.title" = "Вы действительно хотите отправить пинг %d пользователям?";
+"conversation.ping.action.title" = "Пинг";
 
 "conversation.input_bar.audio_message.too_long_size.message" = "Размер файла аудиосообщения ограничен %@.";
 
@@ -464,7 +466,7 @@
 "digital_signature.alert.error" = "К сожалению, ваша цифровая подпись не сработала.";
 "digital_signature.alert.error.no_consent_url" = "К сожалению, форма подписи не открылась. Пожалуйста, попробуйте еще раз.";
 "digital_signature.alert.error.no_signature" = "К сожалению, ваша цифровая подпись не сработала. Пожалуйста, попробуйте еще раз.";
-"digital_signature.alert.download_necessary" = "Пожалуйста, перед тем, как подписывать документ, сохраните его и прочтите.";
+"digital_signature.alert.download_necessary" = "Пожалуйста, сохраните и прочитайте документ перед его подписанием.";
 
 // New conversation participants added / removed / started system message
 
@@ -619,7 +621,7 @@
 "content.message.open" = "Открыть";
 "content.message.sign" = "Подписать";
 "content.message.copy" = "Скопировать";
-"content.message.download" = "Скачать";
+"content.message.download" = "Загрузить";
 "content.message.details" = "Профиль";
 "content.message.reactions" = "Реакции";
 
@@ -725,7 +727,7 @@
 "call.status.connecting" = "Подключение…";
 "call.status.incoming.user" = "%@ вызывает…";
 "call.status.incoming" = "Вызывает…";
-"call.status.outgoing" = "Звонит…";
+"call.status.outgoing" = "Вызываем…";
 "call.status.outgoing.user" = "Вызов %@…";
 "call.status.reconnecting" = "Переподключение…";
 "call.status.terminating" = "Разъединение…";
@@ -753,7 +755,7 @@
 "call.degraded.alert.title" = "Новое устройство";
 "call.degraded.alert.message.self" = "Вы начали использовать новое устройство.";
 "call.degraded.alert.message.user" = "%@ начал(-а) использовать новое устройство.";
-"call.degraded.alert.message.unknown" = "Кто-то начал(-а) использовать новое устройство.";
+"call.degraded.alert.message.unknown" = "Кто-то начал использовать новое устройство.";
 "call.degraded.alert.action.continue" = "Все равно позвонить";
 
 "call.degraded.ended.alert.title" = "Вызов завершен";
@@ -855,13 +857,13 @@
 // Conversation Degraded (security level lowered)
 "meta.degraded.degradation_reason_message.singular" = "%@ начал(-а) использовать новое устройство.";
 "meta.degraded.degradation_reason_message.plural" = "%@ начал(-а) использовать новые устройства.";
-"meta.degraded.degradation_reason_message.someone" = "Кто-то начал(-а) использовать новое устройство.";
+"meta.degraded.degradation_reason_message.someone" = "Кто-то начал использовать новое устройство.";
 "meta.degraded.dialog_message" = "Вы все еще хотите отправить свое сообщение?";
 "meta.degraded.verify_devices_button" = "Верифицируйте устройства…";
 "meta.degraded.send_anyway_button" = "Отправить в любом случае";
 "meta.degraded.cancel_sending_button" = "Отмена";
 "meta.legalhold.info_button" = "Что такое юридические ограничения?";
-"meta.legalhold.send_alert_title" = "Эта беседа теперь является предметом юридических ограничений.";
+"meta.legalhold.send_alert_title" = "Эта беседа теперь является субъектом юридических ограничений.";
 
 // Remove from conversation dialogue
 "profile.remove_dialog_title" = "Удалить?";
@@ -935,7 +937,7 @@
 "profile.details.federated" = "Федеративный";
 "profile.details.blocking_reason" = "Этот пользователь заблокирован из-за юридических ограничений. [ПОДРОБНЕЕ](%@)";
 "profile.details.identity_warning" = "Перед добавлением убедитесь в личности %@.";
-"profile.details.requested_identity_warning" = "Прежде чем принять запрос на добавление, подтвердите личность пользователя.";
+"profile.details.requested_identity_warning" = "Прежде чем принять запрос на добавление, верифицируйте личность собеседника.";
 "profile.details.title.unavailable" = "Имя недоступно";
 
 // Device list
@@ -1214,7 +1216,7 @@
 // dark theme
 "dark_theme.option.dark" = "Темная";
 "dark_theme.option.light" = "Светлая";
-"dark_theme.option.system" = "Синхронизировать с настройками системы";
+"dark_theme.option.system" = "Как в системе";
 
 // Open in
 "self.settings.external_apps.header" = "Открыть с помощью";
@@ -1742,10 +1744,10 @@
 "jailbrokendevice.alert.message" = "С целью обеспечения безопасности Wire нельзя использовать на этом устройстве. Все существующие данные Wire были удалены.";
 
 // Database Loading Failure alert
-"databaseloadingfailure.alert.title" = "Недостаточно места";
-"databaseloadingfailure.alert.message" = "База данных не может быть загружена из-за нехватки места на вашем устройстве. Проверьте использование памяти вашего устройства и попробуйте еще раз.";
-"databaseloadingfailure.alert.settings" = "Перейти в настройки";
-"databaseloadingfailure.alert.delete_database" = "Удалить базу данных";
+"databaseloadingfailure.alert.title" = "Обновить хранилище данных";
+"databaseloadingfailure.alert.message" = "Не удалось загрузить базу данных.\n Ошибка: %@";
+"databaseloadingfailure.alert.save-backup" = "Сохранить мои данные";
+"databaseloadingfailure.alert.delete_database" = "Очистить мои данные и продолжить";
 "databaseloadingfailure.alert.delete_database.message" = "При удалении базы данных все локальные данные и сообщения этого аккаунта будут удалены навсегда.";
 "databaseloadingfailure.alert.delete_database.continue" = "Продолжить";
 "databaseloadingfailure.alert.retry" = "Повторить";
@@ -1898,7 +1900,7 @@
 
 // Legal Hold Deactivation
 "legal_hold.deactivated.title" = "Юридические ограничения деактивированы";
-"legal_hold.deactivated.message" = "Будущие сообщения не будут сохраняться.";
+"legal_hold.deactivated.message" = "Будущие сообщения записываться не будут.";
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Share Extension
@@ -1907,9 +1909,9 @@
 "share_extension.voiceover.conversation_secure_with_ignored" = "Не все клиенты верифицированы.";
 
 // Legal hold - alert
-"legalhold_request.button.accessibility" = "В ожидании принятия.";
+"legalhold_request.button.accessibility" = "Ожидание принятия.";
 "legalhold_request.alert.title" = "Запрошены юридические ограничения";
-"legalhold_request.alert.detail" = "Все будущие сообщения будут записываться устройством с отпечатком:\n\n%@\n\nСюда входят удаленные, отредактированные и самоудаляющиеся сообщения во всех беседах.";
+"legalhold_request.alert.detail" = "Все будущие сообщения будут записываться устройством с отпечатком:\n\n%@\n\nК ним относятся удаленные, отредактированные и самоудаляющиеся сообщения во всех беседах.";
 "legalhold_request.alert.detail.enter_password" = "Введите пароль для подтверждения.";
 "legalhold_request.alert.error_wrong_password" = "Неверный пароль";
 

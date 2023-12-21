@@ -31,7 +31,7 @@ extension StartUIViewController {
         guard let indexPath = indexPath,
             let cell = searchResultsViewController.searchResultsView.collectionView.cellForItem(at: indexPath) else { return }
 
-        profilePresenter.presentProfileViewController(for: bareUser, in: self, from: view.convert(cell.bounds, from: cell), onDismiss: {
+        profilePresenter.presentProfileViewController(for: bareUser, in: self, from: view.convert(cell.bounds, from: cell), userSession: userSession, onDismiss: {
             if self.isIPadRegular() {
                 let indexPaths = self.searchResultsViewController.searchResultsView.collectionView.indexPathsForVisibleItems
                 self.searchResultsViewController.searchResultsView.collectionView.reloadItems(at: indexPaths)
@@ -78,8 +78,11 @@ extension StartUIViewController: SearchResultsViewControllerDelegate {
     func searchResultsViewController(_ searchResultsViewController: SearchResultsViewController,
                                      didTapOnSeviceUser user: ServiceUser) {
 
-        let detail = ServiceDetailViewController(serviceUser: user,
-                                                 actionType: .openConversation) { [weak self] result in
+        let detail = ServiceDetailViewController(
+            serviceUser: user,
+            actionType: .openConversation,
+            userSession: userSession
+        ) { [weak self] result in
             guard let weakSelf = self else { return }
 
             if let result = result {
@@ -108,7 +111,7 @@ extension StartUIViewController: SearchResultsViewControllerDelegate {
     }
 
     func openCreateGroupController() {
-        let controller = ConversationCreationController()
+        let controller = ConversationCreationController(preSelectedParticipants: nil, userSession: userSession)
         controller.delegate = self
 
         if self.traitCollection.horizontalSizeClass == .compact {
@@ -124,8 +127,9 @@ extension StartUIViewController: SearchResultsViewControllerDelegate {
     }
 
     func createGuestRoom() {
-        guard let userSession = ZMUserSession.shared() else {
-            fatal("No user session present")
+        // TODO: avoid casting to `ZMUserSession` (expand `UserSession` API)
+        guard let userSession = userSession as? ZMUserSession else {
+            return WireLogger.conversation.error("failed to create guest room: no user session")
         }
 
         isLoadingViewVisible = true

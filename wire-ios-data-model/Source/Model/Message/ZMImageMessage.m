@@ -1,7 +1,7 @@
 // 
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
-// 
+// Copyright (C) 2023 Wire Swiss GmbH
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
@@ -160,6 +160,10 @@
             completionHandler(imageData);
         }];
     }];
+}
+
+- (void)requestFileDownload { 
+    [self requestFileDownload_Swift];
 }
 
 - (void)fetchPreviewDataWithQueue:(dispatch_queue_t)queue completionHandler:(void (^)(NSData *))completionHandler {

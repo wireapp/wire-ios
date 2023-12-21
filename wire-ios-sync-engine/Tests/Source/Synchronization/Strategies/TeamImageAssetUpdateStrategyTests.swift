@@ -72,7 +72,7 @@ final class TeamImageAssetUpdateStrategyTests: MessagingTest {
         let request = sut.nextRequest(for: .v0)
         XCTAssertNotNil(request)
         XCTAssertEqual(request?.path, "/assets/v3/\(pictureAssetId)")
-        XCTAssertEqual(request?.method, .methodGET)
+        XCTAssertEqual(request?.method, .get)
     }
 
     func testThatItStoresTeamImageAsset_OnSuccessfulResponse() {

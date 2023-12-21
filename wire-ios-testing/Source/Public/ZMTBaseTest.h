@@ -73,6 +73,9 @@ typedef BOOL(^VerificationBlock)(void);
 
 /// perform operations while not considering ZMLogErrors as test failure
 - (void)performIgnoringZMLogError:(nonnull void(^)(void))block;
+/// Disable test failure on ZMLogErrors temporary, use this for Swift async function. Turn on back after. 
+/// If possible prefer `performIgnoringZMLogError`
+- (void)disableZMLogError:(BOOL)disabled;
 
 /// Returns the data of a small JPEG image
 - (nonnull NSData *)verySmallJPEGData;

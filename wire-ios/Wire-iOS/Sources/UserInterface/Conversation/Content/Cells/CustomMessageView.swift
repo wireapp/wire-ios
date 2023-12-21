@@ -42,8 +42,12 @@ class CustomMessageView: UIView {
     override init(frame: CGRect) {
         messageLabel.isAccessibilityElement = true
         messageLabel.accessibilityLabel = "Text"
-        messageLabel.linkTextAttributes = [NSAttributedString.Key.underlineStyle: NSUnderlineStyle().rawValue as NSNumber,
-                                       NSAttributedString.Key.foregroundColor: ZMUser.selfUser().accentColor]
+        messageLabel.linkTextAttributes = [NSAttributedString.Key.underlineStyle: NSUnderlineStyle().rawValue as NSNumber]
+        if let selfUser = ZMUser.selfUser() {
+            messageLabel.linkTextAttributes[NSAttributedString.Key.foregroundColor] = selfUser.accentColor
+        } else {
+            assertionFailure("ZMUser.selfUser() is nil")
+        }
 
         super.init(frame: frame)
         addSubview(messageLabel)

@@ -22,6 +22,7 @@ import WireMockTransport
 import WireTesting
 import WireRequestStrategy
 import WireLinkPreview
+import WireDataModelSupport
 @testable import WireShareEngine
 
 class FakeAuthenticationStatus: AuthenticationStatusProvider {
@@ -59,6 +60,9 @@ class BaseTest: ZMTBaseTest {
     var operationLoop: RequestGeneratingOperationLoop!
     var strategyFactory: StrategyFactory!
     var mockCryptoboxMigrationManager: MockCryptoboxMigrationManagerInterface!
+    var mockEARService: MockEARServiceInterface!
+    var mockProteusService: MockProteusServiceInterface!
+    var mockMLSDecryptionService: MLSDecryptionServiceInterface!
 
     override func setUp() {
         super.setUp()
@@ -116,7 +120,8 @@ class BaseTest: ZMTBaseTest {
         strategyFactory = StrategyFactory(
             syncContext: coreDataStack.syncContext,
             applicationStatus: applicationStatusDirectory,
-            linkPreviewPreprocessor: LinkPreviewPreprocessor(linkPreviewDetector: linkPreviewDetector, managedObjectContext: coreDataStack.syncContext)
+            linkPreviewPreprocessor: LinkPreviewPreprocessor(linkPreviewDetector: linkPreviewDetector, managedObjectContext: coreDataStack.syncContext),
+            transportSession: transportSession
         )
 
         let context = coreDataStack.syncContext
@@ -131,7 +136,15 @@ class BaseTest: ZMTBaseTest {
 
         mockCryptoboxMigrationManager = MockCryptoboxMigrationManagerInterface()
         mockCryptoboxMigrationManager.isMigrationNeededAccountDirectory_MockValue = false
-        mockCryptoboxMigrationManager.completeMigrationSyncContext_MockMethod = { _ in }
+
+        mockEARService = MockEARServiceInterface()
+        mockEARService.enableEncryptionAtRestContextSkipMigration_MockMethod = { _, _ in }
+        mockEARService.disableEncryptionAtRestContextSkipMigration_MockMethod = { _, _ in }
+        mockEARService.unlockDatabaseContext_MockMethod = { _ in }
+        mockEARService.lockDatabase_MockMethod = { }
+
+        mockProteusService = MockProteusServiceInterface()
+        mockMLSDecryptionService = MockMLSDecryptionServiceInterface()
 
         context.setPersistentStoreMetadata(selfClient.remoteIdentifier!, key: ZMPersistedClientIdKey)
         context.saveOrRollback()
@@ -150,10 +163,18 @@ class BaseTest: ZMTBaseTest {
         operationLoop = nil
         strategyFactory = nil
         mockCryptoboxMigrationManager = nil
+        mockEARService = nil
+        mockProteusService = nil
+        mockMLSDecryptionService = nil
         super.tearDown()
     }
 
     func createSharingSession() throws -> SharingSession {
+        let earService = EARService(
+            accountID: accountIdentifier,
+            databaseContexts: [coreDataStack.viewContext, coreDataStack.syncContext],
+            sharedUserDefaults: sharedUserDefaults
+        )
         return try SharingSession(
             accountIdentifier: accountIdentifier,
             coreDataStack: coreDataStack,
@@ -166,6 +187,9 @@ class BaseTest: ZMTBaseTest {
             strategyFactory: strategyFactory,
             appLockConfig: AppLockController.LegacyConfig(),
             cryptoboxMigrationManager: mockCryptoboxMigrationManager,
+            earService: earService,
+            proteusService: mockProteusService,
+            mlsDecryptionService: mockMLSDecryptionService,
             sharedUserDefaults: .random()!
         )
     }

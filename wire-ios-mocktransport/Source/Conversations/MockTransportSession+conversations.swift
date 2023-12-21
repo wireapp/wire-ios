@@ -292,6 +292,7 @@ extension MockTransportSession {
         let deletedClients = self.deletedClients(fromRecipients: otrMetaData.recipients, conversation: conversation)
 
         let payload: [String: Any] = [
+            "redundant": [:],
             "missing": missedClients,
             "deleted": deletedClients,
             "time": Date().transportString()

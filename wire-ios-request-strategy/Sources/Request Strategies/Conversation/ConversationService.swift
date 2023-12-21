@@ -16,7 +16,7 @@
 //
 
 import Foundation
-
+// sourcery: AutoMockable
 public protocol ConversationServiceInterface {
 
     func createGroupConversation(
@@ -33,6 +33,9 @@ public protocol ConversationServiceInterface {
         qualifiedID: QualifiedID,
         completion: @escaping () -> Void
     )
+
+    func syncConversation(
+        qualifiedID: QualifiedID) async
 
 }
 
@@ -276,4 +279,13 @@ public final class ConversationService: ConversationServiceInterface {
         }
     }
 
+    public func syncConversation(
+        qualifiedID: QualifiedID
+    ) async {
+        await withCheckedContinuation { continuation in
+            syncConversation(qualifiedID: qualifiedID) {
+                continuation.resume()
+            }
+        }
+    }
 }

@@ -42,23 +42,6 @@ private let zmLog = ZMSLog(tag: "UserClient")
 
 @objcMembers
 public class UserClient: ZMManagedObject, UserClientType {
-    public var activationLatitude: Double {
-        get {
-            return activationLocationLatitude?.doubleValue ?? 0.0
-        }
-        set {
-            activationLocationLatitude = NSNumber(value: newValue)
-        }
-    }
-
-    public var activationLongitude: Double {
-        get {
-            return activationLocationLongitude?.doubleValue ?? 0.0
-        }
-        set {
-            activationLocationLongitude = NSNumber(value: newValue)
-        }
-    }
 
     @NSManaged public var type: DeviceType
     @NSManaged public var label: String?
@@ -71,16 +54,12 @@ public class UserClient: ZMManagedObject, UserClientType {
     @NSManaged public var addedOrRemovedInSystemMessages: Set<ZMSystemMessage>
     @NSManaged public var messagesMissingRecipient: Set<ZMMessage>
     @NSManaged public var numberOfKeysRemaining: Int32
-    @NSManaged public var activationAddress: String?
     @NSManaged public var activationDate: Date?
     @NSManaged public var discoveryDate: Date?
     @NSManaged public var lastActiveDate: Date?
     @NSManaged public var model: String?
     @NSManaged public var deviceClass: DeviceClass?
-    @NSManaged public var activationLocationLatitude: NSNumber?
-    @NSManaged public var activationLocationLongitude: NSNumber?
     @NSManaged public var needsToNotifyUser: Bool
-    @NSManaged public var fingerprint: Data?
     @NSManaged public var apsVerificationKey: Data?
     @NSManaged public var apsDecryptionKey: Data?
     @NSManaged public var needsToUploadSignalingKeys: Bool
@@ -147,27 +126,14 @@ public class UserClient: ZMManagedObject, UserClientType {
     /// Clients that ignore this client trust (currently can contain only self client)
     @NSManaged public var ignoredByClients: Set<UserClient>
 
-    public var activationLocation: CLLocation {
-        return CLLocation(latitude: self.activationLocationLatitude as! CLLocationDegrees, longitude: self.activationLocationLongitude as! CLLocationDegrees)
-    }
-
     public var isLegalHoldDevice: Bool {
         return deviceClass == .legalHold || type == .legalHold
     }
 
-    public override func awakeFromFetch() {
-        super.awakeFromFetch()
-
-        // Fetch fingerprint if not there yet (could remain nil after fetch)
-        if let managedObjectContext = self.managedObjectContext,
-           self.remoteIdentifier != nil, managedObjectContext.zm_isSyncContext && self.fingerprint == .none {
-            self.fingerprint = self.remoteFingerprint()
-        }
-    }
-
     public var verified: Bool {
-        let selfUser = ZMUser.selfUser(in: self.managedObjectContext!)
-        guard let selfClient = selfUser.selfClient()
+        guard
+            let managedObjectContext,
+            let selfClient = ZMUser.selfUser(in: managedObjectContext).selfClient()
         else { return false }
         return selfClient.remoteIdentifier == self.remoteIdentifier || selfClient.trustedClients.contains(self)
     }
@@ -281,17 +247,22 @@ public class UserClient: ZMManagedObject, UserClientType {
     }
 
     /// Resets releationships and ends an exisiting session before deleting the object
-    /// Call this from the syncMOC only
-    public func deleteClientAndEndSession() {
+    public func deleteClientAndEndSession() async {
+        do {
+            try await deleteSession()
+        } catch {
+            WireLogger.userClient.error("error deleting session: \(String(reflecting: error))")
+        }
+        await managedObjectContext?.perform { self.deleteClient() }
+    }
+
+    private func deleteClient() {
         assert(self.managedObjectContext!.zm_isSyncContext, "clients can only be deleted on syncContext")
         // hold on to the conversations that are affected by removing this client
         let conversations = activeConversationsForUserOfClients([self])
         let user = self.user
 
         self.failedToEstablishSession = false
-
-        // reset the session
-        try? deleteSession()
 
         // reset the relationship
         self.user = nil
@@ -321,59 +292,58 @@ public class UserClient: ZMManagedObject, UserClientType {
     /// Note: only access this property only from the sync context.
 
     public var hasSessionWithSelfClient: Bool {
-        guard
-            let sessionID = proteusSessionID,
-            let proteusProvider = managedObjectContext?.proteusProvider
-        else {
-            return false
-        }
-
-        var hasSession = false
-
-        proteusProvider.perform(
-            withProteusService: { proteusService in
-                hasSession = proteusService.sessionExists(id: sessionID)
-            },
-            withKeyStore: { keyStore in
-                keyStore.encryptionContext.perform { sessionsDirectory in
-                    hasSession = sessionsDirectory.hasSession(for: sessionID.mapToEncryptionSessionID())
-                }
+        get async {
+            guard
+                let sessionID = await managedObjectContext?.perform({ self.proteusSessionID }),
+                let proteusProvider = await managedObjectContext?.perform({ self.managedObjectContext?.proteusProvider })
+            else {
+                return false
             }
-        )
 
-        return hasSession
+            var hasSession = false
+
+            await proteusProvider.performAsync(
+                withProteusService: { proteusService in
+                    hasSession = await proteusService.sessionExists(id: sessionID)
+                },
+                withKeyStore: { keyStore in
+                    keyStore.encryptionContext.perform { sessionsDirectory in
+                        hasSession = sessionsDirectory.hasSession(for: sessionID.mapToEncryptionSessionID())
+                    }
+                }
+            )
+
+            return hasSession
+        }
     }
 
     /// Resets the session between the client and the selfClient
     /// Can be called several times without issues
     public func resetSession() {
         guard
-            let uiMOC = self.managedObjectContext?.zm_userInterface,
+            let uiMOC = managedObjectContext?.zm_userInterface,
             let syncMOC = uiMOC.zm_sync
         else {
             return
         }
 
-        // Delete should happen on sync context since the cryptobox could be accessed only from there
-        syncMOC.performGroupedBlock {
-            guard
-                let selfClient = ZMUser.selfUser(in: syncMOC).selfClient(),
-                let syncClient = (try? syncMOC.existingObject(with: self.objectID)) as? UserClient
-            else {
+        WaitingGroupTask(context: syncMOC) {
+            guard let syncClient = await syncMOC.perform({
+                (try? syncMOC.existingObject(with: self.objectID)) as? UserClient
+            }) else {
                 return
             }
 
             // Delete session and fingerprint
-            try? syncClient.deleteSession()
-            syncClient.fingerprint = .none
+            try? await syncClient.deleteSession()
 
-            // Mark clients as needing to be refetched
-            selfClient.missesClient(syncClient)
+            // Delete should happen on sync context since the cryptobox could be accessed only from there
+            await syncMOC.perform {
+                // Mark that we need notify the other party about the session reset
+                syncClient.needsToNotifyOtherUserAboutSessionReset = true
 
-            // Mark that we need notify the other party about the session reset
-            syncClient.needsToNotifyOtherUserAboutSessionReset = true
-
-            syncMOC.saveOrRollback()
+                syncMOC.saveOrRollback()
+            }
         }
     }
 
@@ -432,15 +402,10 @@ public extension UserClient {
         let payloadAsDictionary = payloadData as NSDictionary
 
         let label = payloadAsDictionary.optionalString(forKey: "label")?.removingExtremeCombiningCharacters
-        let activationAddress = payloadAsDictionary.optionalString(forKey: "address")?.removingExtremeCombiningCharacters
         let model = payloadAsDictionary.optionalString(forKey: "model")?.removingExtremeCombiningCharacters
         let deviceClass = payloadAsDictionary.optionalString(forKey: "class")
         let activationDate = payloadAsDictionary.date(for: "time")
         let lastActiveDate = payloadAsDictionary.optionalDate(forKey: "last_active")
-
-        let locationCoordinates = payloadData["location"] as? [String: Double]
-        let latitude = (locationCoordinates?["lat"] as NSNumber?) ?? 0
-        let longitude = (locationCoordinates?["lon"] as NSNumber?) ?? 0
 
         let result = fetchOrCreateUserClient(with: id, in: context)
         let client = result.client
@@ -448,13 +413,9 @@ public extension UserClient {
 
         client.label = label
         client.type = DeviceType(rawValue: type)
-        client.activationAddress = activationAddress
         client.model = model
         client.deviceClass = deviceClass.map { DeviceClass(rawValue: $0) }
         client.activationDate = activationDate
-        client.lastActiveDate = lastActiveDate
-        client.activationLocationLatitude = latitude
-        client.activationLocationLongitude = longitude
         client.remoteIdentifier = id
 
         let selfUser = ZMUser.selfUser(in: context)
@@ -471,18 +432,10 @@ public extension UserClient {
 
         if let selfClient = selfUser.selfClient() {
             if client.remoteIdentifier != selfClient.remoteIdentifier && isNewClient {
-                client.fetchFingerprintOrPrekeys()
 
                 if let selfClientActivationdate = selfClient.activationDate, client.activationDate?.compare(selfClientActivationdate) == .orderedDescending {
+                    // TODO: Check this flag
                     client.needsToNotifyUser = true
-                }
-            }
-
-            // We could already set local fingerprint if user is self
-            if client.remoteIdentifier == selfClient.remoteIdentifier {
-                client.fingerprint = client.localFingerprint()
-                if client.fingerprint == nil {
-                    zmLog.warn("Cannot fetch local fingerprint for \(client)")
                 }
             }
         }
@@ -530,125 +483,6 @@ public extension UserClient {
         self.markedToDelete = true
         self.setLocallyModifiedKeys(Set(arrayLiteral: ZMUserClientMarkedToDeleteKey))
     }
-
-    @available(*, deprecated)
-    func markForFetchingPreKeys() {
-        self.fetchFingerprintOrPrekeys()
-    }
-
-    @objc func fetchFingerprintOrPrekeys() {
-        guard
-            self.fingerprint == .none,
-            let syncMOC = self.managedObjectContext?.zm_sync
-        else {
-            return
-        }
-
-        if self.objectID.isTemporaryID {
-            do {
-                try syncMOC.obtainPermanentIDs(for: [self])
-            } catch {
-                fatal("Error obtaining permanent id for client")
-            }
-        }
-
-        let selfObjectID = self.objectID
-
-        syncMOC.performGroupedBlock({ [unowned syncMOC] () -> Void in
-            guard
-                let obj = try? syncMOC.existingObject(with: selfObjectID),
-                let syncClient = obj as? UserClient,
-                let syncSelfClient = ZMUser.selfUser(in: syncMOC).selfClient()
-            else {
-                return
-            }
-
-            if syncSelfClient == syncClient {
-                syncClient.fingerprint = syncClient.localFingerprint()
-                syncMOC.saveOrRollback()
-            } else {
-                if !syncClient.hasSessionWithSelfClient {
-                    syncSelfClient.missesClient(syncClient)
-                    syncSelfClient.setLocallyModifiedKeys(Set(arrayLiteral: ZMUserClientMissingKey))
-                    syncMOC.saveOrRollback()
-                }
-                else {
-                    syncClient.fingerprint = syncClient.remoteFingerprint()
-                    guard syncClient.fingerprint != nil else {
-                        zmLog.error("Cannot fetch fingerprint for client \(syncClient.sessionIdentifier!)")
-                        return
-                    }
-                    syncMOC.saveOrRollback()
-                }
-            }
-        })
-    }
-
-}
-
-// MARK: - Fetch fingerprint
-
-extension UserClient {
-
-    func remoteFingerprint(_ proteusProvider: ProteusProviding? = nil) -> Data? {
-        guard
-            let proteusProvider = proteusProvider ?? managedObjectContext?.proteusProvider,
-            proteusProvider.canPerform,
-            let sessionID = proteusSessionID
-        else {
-            return nil
-        }
-
-        var fingerprintData: Data?
-
-        proteusProvider.perform(
-            withProteusService: { proteusService in
-                do {
-                    let fingerprint = try proteusService.remoteFingerprint(forSession: sessionID)
-                    fingerprintData = fingerprint.utf8Data
-                } catch {
-                    zmLog.error("Cannot fetch remote fingerprint for \(self)")
-                }
-            },
-            withKeyStore: { keyStore in
-                keyStore.encryptionContext.perform { sessionsDirectory in
-                    fingerprintData = sessionsDirectory.fingerprint(for: sessionID.mapToEncryptionSessionID())
-                }
-            }
-        )
-
-        return fingerprintData
-    }
-
-    func localFingerprint(_ proteusProvider: ProteusProviding? = nil) -> Data? {
-        guard
-            let proteusProvider = proteusProvider ?? managedObjectContext?.proteusProvider,
-            proteusProvider.canPerform
-        else {
-            return nil
-        }
-
-        var fingerprintData: Data?
-
-        proteusProvider.perform(
-            withProteusService: { proteusService in
-                do {
-                    let fingerprint = try proteusService.localFingerprint()
-                    fingerprintData = fingerprint.utf8Data
-                } catch {
-                    zmLog.error("Cannot fetch local fingerprint for \(self)")
-                }
-            },
-            withKeyStore: { keyStore in
-                keyStore.encryptionContext.perform { sessionsDirectory in
-                    fingerprintData = sessionsDirectory.localFingerprint
-                }
-            }
-        )
-
-        return fingerprintData
-    }
-
 }
 
 // MARK: - Corrupted Session
@@ -703,18 +537,18 @@ public extension UserClient {
 
     /// Deletes the session between the selfClient and the given userClient
     /// If there is no session it does nothing
-    func deleteSession() throws {
+    func deleteSession() async throws {
         guard
-            !isSelfClient(),
             let context = managedObjectContext,
-            let sessionID = proteusSessionID
+            await context.perform({ !self.isSelfClient() }),
+            let sessionID = await context.perform({ self.proteusSessionID })
         else {
             return
         }
-
-        try context.proteusProvider.perform(
+        let proteusProvider = await context.perform { context.proteusProvider }
+        try await proteusProvider.performAsync(
             withProteusService: { proteusService in
-                try proteusService.deleteSession(id: sessionID)
+                try await proteusService.deleteSession(id: sessionID)
             },
             withKeyStore: { keyStore in
                 keyStore.encryptionContext.perform { sessionsDirectory in
@@ -727,13 +561,16 @@ public extension UserClient {
     func establishSessionWithClient(
         _ client: UserClient,
         usingPreKey preKey: String
-    ) -> Bool {
-        guard let proteusProvider = managedObjectContext?.proteusProvider else {
+    ) async -> Bool {
+        guard
+            let proteusProvider = await managedObjectContext?.perform({ self.managedObjectContext?.proteusProvider }),
+            let sessionId = await managedObjectContext?.perform({ client.sessionIdentifier })
+        else {
             return false
         }
 
-        return establishSessionWithClient(
-            client,
+        return await establishSessionWithClient(
+            sessionId: sessionId,
             usingPreKey: preKey,
             proteusProviding: proteusProvider
         )
@@ -743,27 +580,18 @@ public extension UserClient {
     /// Returns false if the session could not be established
     /// Use this method only for the selfClient
     func establishSessionWithClient(
-        _ client: UserClient,
+        sessionId: EncryptionSessionIdentifier,
         usingPreKey preKey: String,
         proteusProviding: ProteusProviding
-    ) -> Bool {
-        guard
-            isSelfClient(),
-            let sessionIdentifier = client.sessionIdentifier
-        else {
-            return false
-        }
-
-        return proteusProviding.perform { proteusService in
-            establishSession(through: proteusService,
-                             client: client,
-                             sessionId: sessionIdentifier,
+    ) async -> Bool {
+        return await proteusProviding.performAsync { proteusService in
+            await establishSession(through: proteusService,
+                             sessionId: sessionId,
                              preKey: preKey
             )
         } withKeyStore: { keystore in
             establishSession(through: keystore,
-                             client: client,
-                             sessionId: sessionIdentifier,
+                             sessionId: sessionId,
                              preKey: preKey
             )
         }
@@ -771,17 +599,13 @@ public extension UserClient {
 
     private func establishSession(
         through proteusService: ProteusServiceInterface,
-        client: UserClient,
         sessionId: EncryptionSessionIdentifier,
         preKey: String
-    ) -> Bool {
+    ) async -> Bool {
         do {
             // TODO: check if we should delete session if it exists before creating new one
             let proteusSessionId = ProteusSessionID(domain: sessionId.domain, userID: sessionId.userId, clientID: sessionId.clientId)
-
-            try proteusService.establishSession(id: proteusSessionId, fromPrekey: preKey)
-            let fingerprint = try proteusService.remoteFingerprint(forSession: proteusSessionId)
-            client.fingerprint = fingerprint.utf8Data
+            try await proteusService.establishSession(id: proteusSessionId, fromPrekey: preKey)
             return true
         } catch {
             zmLog.error("Cannot create session for prekey \(preKey): \(String(describing: error))")
@@ -789,9 +613,8 @@ public extension UserClient {
         }
     }
 
-    private func establishSession(
+    func establishSession(
         through keystore: UserClientKeysStore,
-        client: UserClient,
         sessionId: EncryptionSessionIdentifier,
         preKey: String
     ) -> Bool {
@@ -814,7 +637,6 @@ public extension UserClient {
         keystore.encryptionContext.perform { (sessionsDirectory) in
             do {
                 try sessionsDirectory.createClientSession(sessionId, base64PreKeyString: preKey)
-                client.fingerprint = sessionsDirectory.fingerprint(for: sessionId)
                 didEstablishSession = true
             } catch {
                 zmLog.error("Cannot create session for prekey \(preKey)")

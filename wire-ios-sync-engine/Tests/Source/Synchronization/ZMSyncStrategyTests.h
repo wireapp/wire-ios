@@ -31,7 +31,7 @@
 @class MockContextChangeTracker;
 
 
-@interface ZMSyncStrategyTests : MessagingTest <ZMRequestCancellation, ZMSyncStateDelegate>
+@interface ZMSyncStrategyTests : MessagingTest <ZMRequestCancellation>
 
 @property (nonatomic) ZMSyncStrategy *sut;
 

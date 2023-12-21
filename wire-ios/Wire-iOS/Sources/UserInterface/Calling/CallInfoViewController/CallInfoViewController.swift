@@ -78,13 +78,23 @@ final class CallInfoViewController: UIViewController, CallActionsViewDelegate, C
         }
     }
 
-    init(configuration: CallInfoViewControllerInput,
-         selfUser: UserType,
-         userSession: ZMUserSession? = ZMUserSession.shared()) {
+    init(
+        configuration: CallInfoViewControllerInput,
+        selfUser: UserType,
+        userSession: UserSession
+    ) {
         self.configuration = configuration
+
         statusViewController = CallStatusViewController(configuration: configuration)
-        accessoryViewController = CallAccessoryViewController(configuration: configuration, selfUser: selfUser)
+
+        accessoryViewController = CallAccessoryViewController(
+            configuration: configuration,
+            selfUser: selfUser,
+            userSession: userSession
+        )
+
         backgroundViewController = BackgroundViewController(user: selfUser, userSession: userSession)
+
         super.init(nibName: nil, bundle: nil)
         accessoryViewController.delegate = self
         actionsView.delegate = self
@@ -151,7 +161,7 @@ final class CallInfoViewController: UIViewController, CallActionsViewDelegate, C
             action: #selector(minimizeCallOverlay)
         )
 
-        minimizeItem.accessibilityLabel = "call.actions.label.minimize_call".localized
+        minimizeItem.accessibilityLabel = L10n.Localizable.Call.Actions.Label.minimizeCall
         minimizeItem.accessibilityIdentifier = "CallDismissOverlayButton"
 
         navigationItem.leftBarButtonItem = minimizeItem

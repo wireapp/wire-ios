@@ -29,6 +29,8 @@ enum ClientSection: Int {
     case removeDevice = 3
 }
 
+typealias SettingsClientViewModel = ProfileClientViewModel
+
 final class SettingsClientViewController: UIViewController,
                                           UITableViewDelegate,
                                           UITableViewDataSource,
@@ -43,7 +45,11 @@ final class SettingsClientViewController: UIViewController,
     private static let resetCellReuseIdentifier: String = "ResetCellReuseIdentifier"
     private static let verifiedCellReuseIdentifier: String = "VerifiedCellReuseIdentifier"
 
-    let userClient: UserClient
+    let userSession: UserSession
+    let viewModel: ProfileClientViewModel
+    var userClient: UserClient {
+        viewModel.userClient
+    }
 
     var userClientToken: NSObjectProtocol!
     var credentials: ZMEmailCredentials?
@@ -56,24 +62,27 @@ final class SettingsClientViewController: UIViewController,
     var removalObserver: ClientRemovalObserver?
 
     convenience init(userClient: UserClient,
+                     userSession: UserSession,
                      fromConversation: Bool,
                      credentials: ZMEmailCredentials? = .none) {
-        self.init(userClient: userClient, credentials: credentials)
+        self.init(userClient: userClient, userSession: userSession, credentials: credentials)
         self.fromConversation = fromConversation
     }
 
     required init(userClient: UserClient,
+                  userSession: UserSession,
                   credentials: ZMEmailCredentials? = .none) {
-        self.userClient = userClient
-
+        self.userSession = userSession
+        self.viewModel = SettingsClientViewModel(userClient: userClient,
+                                                 getUserClientFingerprint: userSession.getUserClientFingerprint)
         super.init(nibName: nil, bundle: nil)
         self.edgesForExtendedLayout = []
         self.userClientToken = UserClientChangeInfo.add(observer: self, for: userClient)
-        if userClient.fingerprint == .none {
-            ZMUserSession.shared()?.enqueue({ () -> Void in
-                userClient.fetchFingerprintOrPrekeys()
-            })
+
+        self.viewModel.fingerprintDataClosure = { [weak self] _ in
+            self?.tableView.reloadData()
         }
+
         setupNavigationTitle()
         self.credentials = credentials
     }
@@ -84,7 +93,6 @@ final class SettingsClientViewController: UIViewController,
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
         self.view.addSubview(self.topSeparator)
         self.createTableView()
         self.createConstraints()
@@ -93,6 +101,8 @@ final class SettingsClientViewController: UIViewController,
             setupFromConversationStyle()
         }
         setColor()
+
+        self.viewModel.loadData()
     }
 
     func setupFromConversationStyle() {
@@ -162,9 +172,9 @@ final class SettingsClientViewController: UIViewController,
     }
 
     @objc func onVerifiedChanged(_ sender: UISwitch!) {
-        let selfClient = ZMUserSession.shared()!.selfUserClient
+        let selfClient = userSession.selfUserClient
 
-        ZMUserSession.shared()?.enqueue({
+        userSession.enqueue({
             if sender.isOn {
                 selfClient?.trustClient(self.userClient)
             } else {
@@ -183,7 +193,7 @@ final class SettingsClientViewController: UIViewController,
 
     func numberOfSections(in tableView: UITableView) -> Int {
 
-        if let userClient = ZMUserSession.shared()?.selfUserClient, self.userClient == userClient {
+        if self.userClient == userSession.selfUserClient {
             return 2
         } else {
             return userClient.type == .legalHold ? 3 : 4
@@ -197,7 +207,7 @@ final class SettingsClientViewController: UIViewController,
         case .info:
             return 1
         case .fingerprintAndVerify:
-            if self.userClient == ZMUserSession.shared()?.selfUserClient {
+            if self.userClient == userSession.selfUserClient {
                 return 1
             } else {
                 return 2
@@ -231,7 +241,7 @@ final class SettingsClientViewController: UIViewController,
                 if let cell = tableView.dequeueReusableCell(withIdentifier: FingerprintTableViewCell.zm_reuseIdentifier, for: indexPath) as? FingerprintTableViewCell {
                     cell.selectionStyle = .none
                     cell.separatorInset = .zero
-                    cell.fingerprint = self.userClient.fingerprint
+                    cell.fingerprint = self.viewModel.fingerprintData
                     return cell
                 }
             } else {

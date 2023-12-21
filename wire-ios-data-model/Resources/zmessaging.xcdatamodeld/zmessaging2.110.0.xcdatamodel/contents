@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="21754" systemVersion="22G91" minimumToolsVersion="Xcode 11.0" sourceLanguage="Objective-C" userDefinedModelVersionIdentifier="2.110.0">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="22225" systemVersion="23A344" minimumToolsVersion="Xcode 11.0" sourceLanguage="Objective-C" userDefinedModelVersionIdentifier="2.110.0">
     <entity name="Action" representedClassName=".Action" syncable="YES">
         <attribute name="name" optional="YES" attributeType="String"/>
         <relationship name="role" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Role" inverseName="actions" inverseEntity="Role"/>
@@ -320,7 +320,6 @@
         <attribute name="remoteIdentifier_data" optional="YES" attributeType="Binary"/>
         <attribute name="richProfile" optional="YES" attributeType="Binary"/>
         <attribute name="serviceIdentifier" optional="YES" attributeType="String"/>
-        <attribute name="supportedProtocols" optional="YES" attributeType="Transformable"/>
         <attribute name="teamIdentifier" optional="YES" transient="YES"/>
         <attribute name="teamIdentifier_data" optional="YES" attributeType="Binary"/>
         <attribute name="usesCompanyLogin" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO"/>
@@ -349,17 +348,13 @@
         </fetchIndex>
     </entity>
     <entity name="UserClient" representedClassName=".UserClient" syncable="YES">
-        <attribute name="activationAddress" optional="YES" attributeType="String"/>
         <attribute name="activationDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
-        <attribute name="activationLocationLatitude" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="NO"/>
-        <attribute name="activationLocationLongitude" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="NO"/>
         <attribute name="apsDecryptionKey" optional="YES" attributeType="Binary"/>
         <attribute name="apsVerificationKey" optional="YES" attributeType="Binary"/>
         <attribute name="deviceClass" optional="YES" attributeType="String"/>
         <attribute name="discoveryDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="fingerprint" optional="YES" attributeType="Binary"/>
         <attribute name="label" optional="YES" attributeType="String"/>
-        <attribute name="lastActiveDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="markedToDelete" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO"/>
         <attribute name="mlsPublicKeys" optional="YES" attributeType="Binary"/>
         <attribute name="model" optional="YES" attributeType="String"/>

@@ -23,7 +23,6 @@ class LabelDownstreamRequestStrategyTests: MessagingTest {
 
     var sut: LabelDownstreamRequestStrategy!
     var mockSyncStatus: MockSyncStatus!
-    var mockSyncStateDelegate: MockSyncStateDelegate!
     var mockApplicationStatus: MockApplicationStatus!
 
     var conversation1: ZMConversation!
@@ -31,10 +30,8 @@ class LabelDownstreamRequestStrategyTests: MessagingTest {
 
     override func setUp() {
         super.setUp()
-        mockSyncStateDelegate = MockSyncStateDelegate()
         mockSyncStatus = MockSyncStatus(
             managedObjectContext: syncMOC,
-            syncStateDelegate: mockSyncStateDelegate,
             lastEventIDRepository: lastEventIDRepository
         )
         mockApplicationStatus = MockApplicationStatus()
@@ -54,7 +51,6 @@ class LabelDownstreamRequestStrategyTests: MessagingTest {
         sut = nil
         mockSyncStatus = nil
         mockApplicationStatus = nil
-        mockSyncStateDelegate = nil
         conversation1 = nil
         conversation2 = nil
         super.tearDown()
@@ -190,20 +186,28 @@ class LabelDownstreamRequestStrategyTests: MessagingTest {
 
     // MARK: - Event Processing
 
-    func testThatItUpdatesLabels_OnPropertiesUpdateEvent() {
+    func testThatItUpdatesLabels_OnPropertiesUpdateEvent() async {
         var conversation: ZMConversation!
         let conversationId = UUID()
+
+        var event: ZMUpdateEvent?
 
         syncMOC.performGroupedBlockAndWait {
             // GIVEN
             conversation = ZMConversation.insertNewObject(in: self.syncMOC)
             conversation.remoteIdentifier = conversationId
             self.syncMOC.saveOrRollback()
-            let event = self.updateEvent(with: self.favoriteResponse(favorites: [conversationId]))
+            event = self.updateEvent(with: self.favoriteResponse(favorites: [conversationId]))
 
-            // WHEN
-            self.sut.processEvents([event], liveEvents: false, prefetchResult: nil)
         }
+
+        // WHEN
+        guard let event else {
+            XCTFail("missing event")
+            return
+        }
+        await self.sut.processEvents([event], liveEvents: false, prefetchResult: nil)
+
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN

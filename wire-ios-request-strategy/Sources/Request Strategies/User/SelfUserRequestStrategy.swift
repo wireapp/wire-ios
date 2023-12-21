@@ -87,7 +87,7 @@ private extension SelfUserRequestStrategy {
 
             let request = ZMTransportRequest(
                 path: "/self/supported-protocols",
-                method: .methodPUT,
+                method: .put,
                 payload: payload as ZMTransportData,
                 apiVersion: apiVersion.rawValue
             )

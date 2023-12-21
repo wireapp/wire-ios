@@ -96,7 +96,7 @@
     NSString *otrConversationPath = [NSString stringWithFormat:@"/conversations/%@/otr/messages", self.groupConversation.identifier];
 
     for (ZMTransportRequest *request in self.mockTransportSession.receivedRequests) {
-        if (request.method == ZMMethodPOST && [request.path isEqualToString:otrConversationPath]) {
+        if (request.method == ZMTransportRequestMethodPost && [request.path isEqualToString:otrConversationPath]) {
             otrResponseCount++;
         }
     }
@@ -243,67 +243,6 @@
     XCTAssertEqual(textMessage.deliveryState, ZMDeliveryStateSent);
 }
 
-- (void)testThatNextMessageIsSentAfterPreviousMessageInConversationIsDelivered
-{
-    // given
-    XCTAssert([self login]);
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    ZMConversation *conversation = [self conversationForMockConversation:self.selfToUser1Conversation];
-    XCTAssertNotNil(conversation);
-    [self prefetchRemoteClientByInsertingMessageInConversation:self.selfToUser1Conversation];
-    [self.mockTransportSession resetReceivedRequests];
-    
-    NSString *conversationID = self.selfToUser1Conversation.identifier;
-    NSString *conversationMessagePath = [NSString stringWithFormat:@"/conversations/%@/otr/messages", conversationID];
-    
-    //when
-    //there is previous pending message
-    
-    //we block first request from finishing and check that no other requests are coming in
-    __block ZMTransportRequest *firstRequest;
-    ZM_WEAK(self);
-    self.mockTransportSession.responseGeneratorBlock = ^ZMTransportResponse *(ZMTransportRequest *request) {
-        ZM_STRONG(self);
-        //we should not receieve another request until we finish this one
-        if(![request.path isEqualToString:conversationMessagePath]) {
-            return nil;
-        }
-        XCTAssertNil(firstRequest);
-        firstRequest = request;
-        return ResponseGenerator.ResponseNotCompleted;
-    };
-    __block id<ZMConversationMessage> message;
-    __block id<ZMConversationMessage> secondMessage;
-    [self.userSession performChanges:^{
-        message = (id)[conversation appendMessageWithText:@"foo1"];
-        [self spinMainQueueWithTimeout:0.5];
-        secondMessage = (id)[conversation appendMessageWithText:@"foo2"];
-    }];
-    
-    XCTAssertTrue([self waitForCustomExpectationsWithTimeout:0.5f]);
-    WaitForAllGroupsToBeEmpty(0.5f);
-    
-    //then
-    NSArray *conversationMessageRequests = [self.mockTransportSession.receivedRequests filterWithBlock:^BOOL(ZMTransportRequest *req) {
-        return [req.path isEqualToString:conversationMessagePath] && req != firstRequest;
-    }];
-    XCTAssertEqual(conversationMessageRequests.count, 0u);
-    
-    //when
-    //finally finish request
-    self.mockTransportSession.responseGeneratorBlock = nil;
-    [self.mockTransportSession completePreviouslySuspendendRequest:firstRequest];
-    WaitForAllGroupsToBeEmpty(0.5f);
-    
-    //then
-    //we check that the second message is delivered
-    NSArray *laterConversationMessageRequests = [self.mockTransportSession.receivedRequests filterWithBlock:^BOOL(ZMTransportRequest *req) {
-        return [req.path isEqualToString:conversationMessagePath] && req != firstRequest;
-    }];
-    XCTAssertEqual(laterConversationMessageRequests.count, 1u);
-}
-
 - (void)testThatNextClientMessageIsSentAfterPreviousMessageInConversationIsDelivered
 {
     //given
@@ -342,7 +281,6 @@
     }];
     
     XCTAssertTrue([self waitForCustomExpectationsWithTimeout:0.5f]);
-    WaitForAllGroupsToBeEmpty(0.5f);
     
     //then
     ZMTransportRequest *lastRequest = [[self.mockTransportSession receivedRequests] lastObject];
@@ -396,6 +334,11 @@
     
     //expect
     XCTAssertTrue([self waitForCustomExpectationsWithTimeout:0.5f]);
+    self.mockTransportSession.responseGeneratorBlock = nil;
+    [self performIgnoringZMLogError:^{
+        [self.mockTransportSession completeAllBlockedRequests];
+    }];
+    WaitForAllGroupsToBeEmpty(0.5);
 }
 
 - (void)testThatSystemEventsAreAddedToAConversationWhenTheyAreGeneratedRemotely

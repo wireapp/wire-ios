@@ -65,7 +65,7 @@ class RegistrationStrategyTests: MessagingTest {
         let path = "/register"
         let payload = team.payload
 
-        let transportRequest = ZMTransportRequest(path: path, method: .methodPOST, payload: payload as ZMTransportData, apiVersion: APIVersion.v0.rawValue)
+        let transportRequest = ZMTransportRequest(path: path, method: .post, payload: payload as ZMTransportData, apiVersion: APIVersion.v0.rawValue)
         registrationStatus.phase = .createTeam(team: team)
 
         // when
@@ -82,7 +82,7 @@ class RegistrationStrategyTests: MessagingTest {
         let path = "/register"
         let payload = user.payload
 
-        let transportRequest = ZMTransportRequest(path: path, method: .methodPOST, payload: payload as ZMTransportData, apiVersion: APIVersion.v0.rawValue)
+        let transportRequest = ZMTransportRequest(path: path, method: .post, payload: payload as ZMTransportData, apiVersion: APIVersion.v0.rawValue)
         registrationStatus.phase = .createUser(user: user)
 
         // when

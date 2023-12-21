@@ -48,7 +48,7 @@ class UpdateConnectionActionHandlerTests: MessagingTestBase {
 
             // then
             XCTAssertEqual(request.path, "/connections/\(userID.transportString())")
-            XCTAssertEqual(request.method, .methodPUT)
+            XCTAssertEqual(request.method, .put)
             let payload = Payload.ConnectionUpdate(request)
             XCTAssertEqual(payload?.status, .cancelled)
         }
@@ -66,7 +66,7 @@ class UpdateConnectionActionHandlerTests: MessagingTestBase {
 
             // then
             XCTAssertEqual(request.path, "/v1/connections/\(userID.domain)/\(userID.uuid.transportString())")
-            XCTAssertEqual(request.method, .methodPUT)
+            XCTAssertEqual(request.method, .put)
             let payload = Payload.ConnectionUpdate(request)
             XCTAssertEqual(payload?.status, .cancelled)
         }
