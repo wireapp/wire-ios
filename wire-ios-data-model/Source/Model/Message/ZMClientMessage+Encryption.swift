@@ -454,7 +454,7 @@ extension GenericMessage {
             }
 
             if useQualifiedIdentifiers, let selfDomain = context.performAndWait({ZMUser.selfUser(in: context).domain }) {
-                let message = proteusMessage(
+                let message = legacyProteusMessage(
                     selfClient,
                     selfDomain: selfDomain,
                     recipients: recipients,
@@ -467,7 +467,7 @@ extension GenericMessage {
                 messageData = try? message.serializedData()
 
             } else {
-                let message = otrMessage(
+                let message = legacyOtrMessage(
                     selfClient,
                     recipients: recipients,
                     missingClientsStrategy: missingClientsStrategy,
@@ -532,7 +532,7 @@ extension GenericMessage {
         }
     }
 
-    private func proteusMessage(
+    private func legacyProteusMessage(
            _ selfClient: UserClient,
            selfDomain: String,
            recipients: [ZMUser: Set<UserClient>],
@@ -541,7 +541,7 @@ extension GenericMessage {
            context: NSManagedObjectContext,
            using encryptionFunction: LegacyEncryptionFunction
        ) -> Proteus_QualifiedNewOtrMessage {
-           let qualifiedUserEntries = qualifiedUserEntriesWithEncryptedData(
+           let qualifiedUserEntries = legacyQualifiedUserEntriesWithEncryptedData(
                selfClient,
                selfDomain: selfDomain,
                recipients: recipients,
@@ -563,7 +563,7 @@ extension GenericMessage {
            }
        }
 
-    private func otrMessage(
+    private func legacyOtrMessage(
            _ selfClient: UserClient,
            recipients: [ZMUser: Set<UserClient>],
            missingClientsStrategy: MissingClientsStrategy,
@@ -571,7 +571,7 @@ extension GenericMessage {
            context: NSManagedObjectContext,
            using encryptionFunction: LegacyEncryptionFunction
        ) -> Proteus_NewOtrMessage {
-           let userEntries = userEntriesWithEncryptedData(
+           let userEntries = legacyUserEntriesWithEncryptedData(
                selfClient,
                recipients: recipients,
                context: context,
@@ -670,38 +670,38 @@ extension GenericMessage {
         }
     }
 
-    private func qualifiedUserEntriesWithEncryptedData(
-           _ selfClient: UserClient,
-           selfDomain: String,
-           recipients: [ZMUser: Set<UserClient>],
-           context: NSManagedObjectContext,
-           using encryptionFunction: LegacyEncryptionFunction
-       ) -> [Proteus_QualifiedUserEntry] {
-           let recipientsByDomain = context.performAndWait {
-               Dictionary(grouping: recipients) { (element) -> String in
-                   element.key.domain ?? selfDomain
-               }
-           }
+    private func legacyQualifiedUserEntriesWithEncryptedData(
+        _ selfClient: UserClient,
+        selfDomain: String,
+        recipients: [ZMUser: Set<UserClient>],
+        context: NSManagedObjectContext,
+        using encryptionFunction: LegacyEncryptionFunction
+    ) -> [Proteus_QualifiedUserEntry] {
+        let recipientsByDomain = context.performAndWait {
+            Dictionary(grouping: recipients) { (element) -> String in
+                element.key.domain ?? selfDomain
+            }
+        }
 
-           return recipientsByDomain.compactMap { domain, recipients in
-               let userEntries: [Proteus_UserEntry] = recipients.compactMap { (user, clients) in
-                   guard context.performAndWait({ !user.isAccountDeleted }) else { return nil }
+        return recipientsByDomain.compactMap { domain, recipients in
+            let userEntries: [Proteus_UserEntry] = recipients.compactMap { (user, clients) in
+                guard context.performAndWait({ !user.isAccountDeleted }) else { return nil }
 
-                   let clientEntries = clientEntriesWithEncryptedData(
-                       selfClient,
-                       userClients: clients,
-                       context: context,
-                       using: encryptionFunction
-                   )
+                let clientEntries = legacyClientEntriesWithEncryptedData(
+                    selfClient,
+                    userClients: clients,
+                    context: context,
+                    using: encryptionFunction
+                )
 
-                   guard !clientEntries.isEmpty else { return nil }
+                guard !clientEntries.isEmpty else { return nil }
 
-                   return context.performAndWait { Proteus_UserEntry(withUser: user, clientEntries: clientEntries) }
-               }
+                return context.performAndWait { Proteus_UserEntry(withUser: user, clientEntries: clientEntries) }
+            }
 
-               return Proteus_QualifiedUserEntry(withDomain: domain, userEntries: userEntries)
-           }
-       }
+            return Proteus_QualifiedUserEntry(withDomain: domain, userEntries: userEntries)
+        }
+    }
 
     private func userEntriesWithEncryptedData(
         _ selfClient: UserClient,
@@ -727,7 +727,7 @@ extension GenericMessage {
         }
     }
 
-    private func userEntriesWithEncryptedData(
+    private func legacyUserEntriesWithEncryptedData(
          _ selfClient: UserClient,
          recipients: [ZMUser: Set<UserClient>],
          context: NSManagedObjectContext,
@@ -737,7 +737,7 @@ extension GenericMessage {
              recipients.compactMap { (user, clients) in
                  guard !user.isAccountDeleted else { return nil }
 
-                 let clientEntries = clientEntriesWithEncryptedData(
+                 let clientEntries = legacyClientEntriesWithEncryptedData(
                     selfClient,
                     userClients: clients,
                     context: context,
@@ -773,7 +773,7 @@ extension GenericMessage {
         }
     }
 
-    private func clientEntriesWithEncryptedData(
+    private func legacyClientEntriesWithEncryptedData(
            _ selfClient: UserClient,
            userClients: Set<UserClient>,
            context: NSManagedObjectContext,
@@ -781,7 +781,7 @@ extension GenericMessage {
        ) -> [Proteus_ClientEntry] {
            return userClients.compactMap { client in
                guard client != selfClient else { return nil }
-               return clientEntry(for: client, using: encryptionFunction)
+               return legacyClientEntry(for: client, using: encryptionFunction)
            }
        }
 
@@ -842,7 +842,7 @@ extension GenericMessage {
         }
     }
 
-    private func clientEntry(
+    private func legacyClientEntry(
            for client: UserClient,
            using encryptionFunction: LegacyEncryptionFunction
        ) -> Proteus_ClientEntry? {
