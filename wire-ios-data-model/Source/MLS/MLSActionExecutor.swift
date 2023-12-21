@@ -179,7 +179,7 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
 
             case .joinGroup(let groupInfo):
                 let conversationInitBundle = try await coreCrypto.perform {
-                    try $0.joinByExternalCommit(
+                    try await $0.joinByExternalCommit(
                         groupInfo: groupInfo,
                         customConfiguration: .init(keyRotationSpan: nil, wirePolicy: nil),
                         credentialType: .basic

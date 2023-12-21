@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireCoreCrypto
 
 // sourcery: AutoMockable
 public protocol CoreCryptoProviderProtocol {
@@ -226,7 +227,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         }
 
         WireLogger.mls.info("generating ed25519 public key")
-        let keyBytes = try await coreCrypto.perform { try $0.clientPublicKey(ciphersuite: defaultCipherSuite.rawValue) }
+        let keyBytes = try await coreCrypto.perform { try await $0.clientPublicKey(ciphersuite: CiphersuiteName.default.rawValue) }
         let keyData = Data(keyBytes)
         var keys = UserClient.MLSPublicKeys()
         keys.ed25519 = keyData.base64EncodedString()

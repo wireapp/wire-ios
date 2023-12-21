@@ -157,7 +157,6 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
 
     private func senderClientId(from message: DecryptedMessage) -> String? {
         guard let senderClientID = message.senderClientId else { return nil }
-        return MLSClientID(data: senderClientID.data)?.clientID
+        return MLSClientID(data: senderClientID)?.clientID
     }
-
 }
