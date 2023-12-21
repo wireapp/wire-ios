@@ -491,7 +491,9 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
         }
 
         WaitingGroupTask(context: moc) {
-            await deletedClients.asyncForEach { await $0.deleteClientAndEndSession() }
+            for deletedClient in deletedClients {
+                await deletedClient.deleteClientAndEndSession()
+            }
             await moc.perform {
                 moc.saveOrRollback()
                 self.clientUpdateStatus?.didFetchClients(clients)

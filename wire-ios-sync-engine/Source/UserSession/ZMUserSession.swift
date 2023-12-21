@@ -740,10 +740,10 @@ extension ZMUserSession: ZMSyncStateDelegate {
         if selfClient?.hasRegisteredMLSClient == true {
 
             WaitingGroupTask(context: syncContext) { [self] in
-                mlsService.performPendingJoins()
-                await mlsService.uploadKeyPackagesIfNeeded()
-                await mlsService.updateKeyMaterialForAllStaleGroupsIfNeeded()
                 do {
+                    try await mlsService.performPendingJoins()
+                    await mlsService.uploadKeyPackagesIfNeeded()
+                    await mlsService.updateKeyMaterialForAllStaleGroupsIfNeeded()
                     try await mlsService.commitPendingProposals()
                 } catch {
                     Logging.mls.error("Failed to commit pending proposals: \(String(reflecting: error))")
@@ -792,12 +792,16 @@ extension ZMUserSession: ZMSyncStateDelegate {
         }
     }
 
-    func processPendingCallEvents(completionHandler: @escaping () -> Void) throws {
+    func processPendingCallEvents(completionHandler: @escaping () -> Void) {
         WireLogger.updateEvent.info("process pending call events")
         Task {
-            try await updateEventProcessor!.processBufferedEvents()
-            await managedObjectContext.perform {
-                completionHandler()
+            do {
+                try await updateEventProcessor!.processBufferedEvents()
+                await managedObjectContext.perform {
+                    completionHandler()
+                }
+            } catch {
+                Logging.mls.error("Failed to process pending call events: \(String(reflecting: error))")
             }
         }
     }
