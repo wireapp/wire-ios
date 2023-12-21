@@ -33,6 +33,8 @@ private final class MockConversation: MockStableRandomParticipantsConversation, 
     var messageProtocol: MessageProtocol = .proteus
 
     var mlsGroupID: WireDataModel.MLSGroupID?
+
+    var mlsVerificationStatus: WireDataModel.MLSVerificationStatus?
 }
 
 final class GroupParticipantsDetailViewControllerTests: ZMSnapshotTestCase {
