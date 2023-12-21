@@ -24,6 +24,8 @@ class RemoveZombieParticipantRolesMigrationPolicy: NSEntityMigrationPolicy {
         case conversation
     }
 
+    private let zmLog = ZMSLog(tag: "core-data")
+
     override func createDestinationInstances(
         forSource sInstance: NSManagedObject,
         in mapping: NSEntityMapping,
@@ -33,8 +35,8 @@ class RemoveZombieParticipantRolesMigrationPolicy: NSEntityMigrationPolicy {
             sInstance.entity.name == ParticipantRole.entityName(),
             sInstance.primitiveValue(forKey: Keys.conversation.rawValue) == nil
         {
-            // drop zombie object without conversation
-            // TODO:  log in zmLogger?
+            // drop zombie object without conversation relationship!
+            zmLog.safePublic("remove zombie object 'ParticipantRole' without conversation", level: .warn)
             WireLogger.localStorage.info("remove zombie object 'ParticipantRole' without conversation")
         } else {
             try super.createDestinationInstances(forSource: sInstance, in: mapping, manager: manager)
