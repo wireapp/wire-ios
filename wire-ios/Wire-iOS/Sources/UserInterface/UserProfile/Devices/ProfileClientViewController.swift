@@ -512,8 +512,8 @@ extension ProfileClientViewController: UserClientObserver {
     func userClientDidChange(_ changeInfo: UserClientChangeInfo) {
 
         if changeInfo.sessionHasBeenReset {
-            let alert = UIAlertController(title: "", message: NSLocalizedString("self.settings.device_details.reset_session.success", comment: ""), preferredStyle: .alert)
-            let okAction = UIAlertAction(title: NSLocalizedString("general.ok", comment: ""), style: .destructive, handler: nil)
+            let alert = UIAlertController(title: "", message: L10n.Localizable.Self.Settings.DeviceDetails.ResetSession.success, preferredStyle: .alert)
+            let okAction = UIAlertAction(title: L10n.Localizable.General.ok, style: .destructive, handler: nil)
             alert.addAction(okAction)
             present(alert, animated: true, completion: .none)
             isLoadingViewVisible = false
