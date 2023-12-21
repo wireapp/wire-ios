@@ -244,14 +244,16 @@ extension GenericMessage {
                 )
             },
             withKeyStore: { keyStore in
-                encryptedData = legacyEncrypt(
-                    using: keyStore,
-                    for: recipients,
-                    with: missingClientsStrategy,
-                    externalData: externalData,
-                    useQualifiedIdentifiers: useQualifiedIdentifiers,
-                    in: context
-                )
+                encryptedData = context.performAndWait {
+                    legacyEncrypt(
+                        using: keyStore,
+                        for: recipients,
+                        with: missingClientsStrategy,
+                        externalData: externalData,
+                        useQualifiedIdentifiers: useQualifiedIdentifiers,
+                        in: context
+                    )
+                }
             }
         )
 
@@ -432,19 +434,11 @@ extension GenericMessage {
         useQualifiedIdentifiers: Bool = false,
         in context: NSManagedObjectContext
     ) -> Data? {
-        let selfClient = context.performAndWait {
-            let client = ZMUser.selfUser(in: context).selfClient()
-            if client?.remoteIdentifier != nil {
-                return client
-            } else {
-                return UserClient?.none
-            }
+        guard let selfClient = ZMUser.selfUser(in: context).selfClient(), selfClient.remoteIdentifier != nil else {
+            return Data?.none
         }
 
-        guard let selfClient else { return nil }
-
         var messageData: Data?
-
         keyStore.encryptionContext.perform { sessionsDirectory in
 
             // don't capture sessionsDirectory outside of this perform below
@@ -500,11 +494,9 @@ extension GenericMessage {
         }
 
         // Reset all failed sessions.
-        context.performAndWait {
-            recipients.values
-                .flatMap { $0 }
-                .forEach { $0.failedToEstablishSession = false }
-        }
+        recipients.values
+            .flatMap { $0 }
+            .forEach { $0.failedToEstablishSession = false }
 
         return messageData
     }
