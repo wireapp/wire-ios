@@ -19,6 +19,11 @@
 import CoreData
 
 class RemoveZombieParticipantRolesMigrationPolicy: NSEntityMigrationPolicy {
+
+    private enum Keys: String {
+        case conversation
+    }
+
     override func createDestinationInstances(
         forSource sInstance: NSManagedObject,
         in mapping: NSEntityMapping,
@@ -26,7 +31,7 @@ class RemoveZombieParticipantRolesMigrationPolicy: NSEntityMigrationPolicy {
     ) throws {
         if
             sInstance.entity.name == ParticipantRole.entityName(),
-            sInstance.primitiveValue(forKey: "conversation") == nil
+            sInstance.primitiveValue(forKey: Keys.conversation.rawValue) == nil
         {
             // drop zombie object without conversation
             // TODO:  log in zmLogger?
