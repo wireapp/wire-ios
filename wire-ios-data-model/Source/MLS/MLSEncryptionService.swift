@@ -25,7 +25,7 @@ public protocol MLSEncryptionServiceInterface {
     func encrypt(
         message: [Byte],
         for groupID: MLSGroupID
-    ) async throws -> [Byte]
+    ) throws -> [Byte]
 
 }
 
