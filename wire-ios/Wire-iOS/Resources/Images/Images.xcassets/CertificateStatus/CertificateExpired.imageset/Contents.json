@@ -1,7 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "Certificate expired.svg",
+      "filename" : "Certificate expired light.svg",
+      "idiom" : "universal"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "filename" : "Certificate expired dark.svg",
       "idiom" : "universal"
     }
   ],

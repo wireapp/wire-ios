@@ -1,7 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "Certificate revoked.svg",
+      "filename" : "Certificate revoked light.svg",
+      "idiom" : "universal"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "filename" : "Certificate revoked dark.svg",
       "idiom" : "universal"
     }
   ],

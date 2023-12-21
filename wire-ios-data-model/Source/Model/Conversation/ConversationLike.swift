@@ -59,6 +59,8 @@ public protocol SwiftConversationLike {
     var mutedMessageTypes: MutedMessageTypes { get set }
     var sortedOtherParticipants: [UserType] { get }
     var sortedServiceUsers: [UserType] { get }
+//    var messageProtocol: MessageProtocol { get }
+//    var mlsVerificationStatus: MLSVerificationStatus? { get }
 }
 
 extension ZMConversation: ConversationLike {

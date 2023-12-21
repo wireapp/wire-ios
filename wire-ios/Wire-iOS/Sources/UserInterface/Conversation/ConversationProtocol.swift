@@ -103,6 +103,8 @@ protocol GroupDetailsConversation {
     var messageProtocol: MessageProtocol { get }
 
     var mlsGroupID: MLSGroupID? { get }
+
+    var mlsVerificationStatus: MLSVerificationStatus? { get }
 }
 
 typealias GroupDetailsConversationType = GroupDetailsConversation & Conversation

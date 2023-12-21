@@ -224,6 +224,10 @@ extension URL {
         return wr_support.appendingPathComponent("hc/categories/4719917054365-Federation")
     }
 
+    static var wr_e2eiLearnMore: URL {
+        return wr_support.appendingPathComponent("hc/articles/9211300150685-End-to-end-identity")
+    }
+
     static var selfUserProfileLink: URL? {
         guard let link = BackendEnvironment.selfUserProfileLink else {
             return nil
