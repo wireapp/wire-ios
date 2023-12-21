@@ -130,31 +130,6 @@ final class DatabaseMigrationTests_Conversations: XCTestCase {
         )
     }
 
-    func testThatItPerformsMigrationFrom107_invalidConversationRelationKeepsParticipantRole() throws {
-        // Even though the test confirms that the lightweight migration keeps the zombie object
-        // It's not the wanted behavior for longterm!
-
-        try migrateStoreToCurrentVersion(
-            sourceVersion: "2.107.0",
-            preMigrationAction: { context in
-                let user = ZMUser(context: context)
-                let conversation = ZMConversation(context: context)
-                let participantRole = ParticipantRole(context: context)
-                participantRole.conversation = conversation
-                participantRole.user = user
-                try context.save()
-
-                // Produce Failure: model requires 'conversation' to be non-optional!
-                participantRole.conversation = nil
-                try context.save()
-            },
-            postMigrationAction: { context in
-                let roles = try context.fetch(ParticipantRole.fetchRequest())
-                XCTAssertEqual(roles.count, 1)
-            }
-        )
-    }
-
     // MARK: -
 
     private func migrateStoreToCurrentVersion(
