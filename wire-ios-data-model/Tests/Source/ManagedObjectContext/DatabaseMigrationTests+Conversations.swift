@@ -23,7 +23,7 @@ final class DatabaseMigrationTests_Conversations: XCTestCase {
 
     private let helper = DatabaseMigrationHelper()
 
-    func testThatItPerformsInferredMigration_deleteConversationCascadesToParticipantRole() throws {
+    func testThatItPerformsMigrationFrom106_deleteConversationCascadesToParticipantRole() throws {
         try migrateStoreToCurrentVersion(
             sourceVersion: "2.106.0",
             preMigrationAction: { context in
@@ -42,7 +42,7 @@ final class DatabaseMigrationTests_Conversations: XCTestCase {
         )
     }
 
-    func testThatItPerformsInferredMigration_markConversationAsDeletedKeepsParticipantRole() throws {
+    func testThatItPerformsMigrationFrom106_markConversationAsDeletedKeepsParticipantRole() throws {
         try migrateStoreToCurrentVersion(
             sourceVersion: "2.106.0",
             preMigrationAction: { context in
@@ -59,6 +59,59 @@ final class DatabaseMigrationTests_Conversations: XCTestCase {
                 XCTAssertEqual(roles.count, 1)
             }
         )
+    }
+
+    func testThatItPerformsMigrationFrom106_invalidParticipantRoleThrowsMigrateStoreFailed() throws {
+        XCTAssertThrowsError(try migrateStoreToCurrentVersion(
+            sourceVersion: "2.106.0",
+            preMigrationAction: { context in
+                let user = ZMUser(context: context)
+                let conversation = ZMConversation(context: context)
+                let participantRole = ParticipantRole(context: context)
+                participantRole.conversation = conversation
+                participantRole.user = user
+                try context.save()
+
+                // Produce Failure: model requires 'conversation' to be non-optional!
+                participantRole.conversation = nil
+                try context.save()
+            },
+            postMigrationAction: { context in
+                let roles = try context.fetch(ParticipantRole.fetchRequest())
+                XCTAssertEqual(roles.count, 0)
+            }
+        ), "expected CoreDataMessagingMigratorError.migrateStoreFailed") { error in
+            switch error as? CoreDataMessagingMigratorError {
+            case .migrateStoreFailed(let nsError as NSError):
+                XCTAssertEqual(nsError.code, NSValidationMissingMandatoryPropertyError)
+                XCTAssertEqual(nsError.domain, NSCocoaErrorDomain)
+                XCTAssertFalse(nsError.userInfo.isEmpty)
+            default:
+                XCTFail("expected CoreDataMessagingMigratorError.migrateStoreFailed")
+            }
+        }
+    }
+
+    func testThatItPerformsMigrationFrom107_invalidParticipantRoleNotThrowsMigrateStoreFailed() throws {
+        XCTAssertNoThrow(try migrateStoreToCurrentVersion(
+            sourceVersion: "2.107.0",
+            preMigrationAction: { context in
+                let user = ZMUser(context: context)
+                let conversation = ZMConversation(context: context)
+                let participantRole = ParticipantRole(context: context)
+                participantRole.conversation = conversation
+                participantRole.user = user
+                try context.save()
+
+                // Produce Failure: model requires 'conversation' to be non-optional!
+                participantRole.conversation = nil
+                try context.save()
+            },
+            postMigrationAction: { context in
+                let roles = try context.fetch(ParticipantRole.fetchRequest())
+                XCTAssertEqual(roles.count, 1)
+            }
+        ))
     }
 
     // MARK: -
@@ -97,7 +150,7 @@ final class DatabaseMigrationTests_Conversations: XCTestCase {
         sourceContainer = nil
 
         // WHEN
-        let stack = createStorageStackAndWaitForCompletion(
+        let stack = try createStorageStackAndWaitForCompletion(
             userID: accountIdentifier,
             applicationContainer: applicationContainer
         )
@@ -114,7 +167,7 @@ final class DatabaseMigrationTests_Conversations: XCTestCase {
         applicationContainer: URL,
         file: StaticString = #file,
         line: UInt = #line
-    ) -> CoreDataStack {
+    ) throws -> CoreDataStack {
 
         // we use backgroundActivity suring the setup so we need to mock for tests
         let manager = MockBackgroundActivityManager()
@@ -131,15 +184,20 @@ final class DatabaseMigrationTests_Conversations: XCTestCase {
         )
 
         let exp = self.expectation(description: "should wait for loadStores to finish")
+        var setupError: Error?
         stack.setup(onStartMigration: {
             // do nothing
         }, onFailure: { error in
-            XCTAssertNil(error, file: file, line: line)
+            setupError = error
             exp.fulfill()
         }, onCompletion: { _ in
             exp.fulfill()
         })
         waitForExpectations(timeout: 5.0)
+
+        if let setupError {
+            throw setupError
+        }
 
         BackgroundActivityFactory.shared.activityManager = nil
         XCTAssertFalse(BackgroundActivityFactory.shared.isActive, file: file, line: line)
