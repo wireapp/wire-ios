@@ -23,7 +23,7 @@ import Foundation
 /// Self user clients are clients belonging to the self user.
 
 @objcMembers
-public class UserClientEventConsumer: NSObject, ZMEventConsumer {
+public class UserClientEventConsumer: NSObject, ZMEventAsyncConsumer {
 
     let managedObjectContext: NSManagedObjectContext
     let clientRegistrationStatus: ZMClientRegistrationStatus
@@ -39,45 +39,53 @@ public class UserClientEventConsumer: NSObject, ZMEventConsumer {
         super.init()
     }
 
-    public func processEvents(_ events: [ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) {
-        events.forEach(processUpdateEvent)
+    public func processEvents(_ events: [WireTransport.ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) async {
+        for event in events {
+            await processUpdateEvent(event)
+        }
     }
 
-    fileprivate func processUpdateEvent(_ event: ZMUpdateEvent) {
+    fileprivate func processUpdateEvent(_ event: ZMUpdateEvent) async {
         switch event.type {
         case .userClientAdd, .userClientRemove:
-            processClientListUpdateEvent(event)
+            await processClientListUpdateEvent(event)
         default:
             break
         }
     }
 
-    fileprivate func processClientListUpdateEvent(_ event: ZMUpdateEvent) {
+    fileprivate func processClientListUpdateEvent(_ event: ZMUpdateEvent) async {
         guard let clientInfo = event.payload["client"] as? [String: AnyObject] else {
             Logging.eventProcessing.error("Client info has unexpected payload")
             return
         }
 
-        let selfUser = ZMUser.selfUser(in: managedObjectContext)
-
         switch event.type {
         case .userClientAdd:
-            if let client = UserClient.createOrUpdateSelfUserClient(clientInfo, context: managedObjectContext) {
-                let clientSet: Set<UserClient> = [client]
-                selfUser.selfClient()?.addNewClientToIgnored(client)
-                selfUser.selfClient()?.updateSecurityLevelAfterDiscovering(clientSet)
+            await managedObjectContext.perform {
+                if let client = UserClient.createOrUpdateSelfUserClient(clientInfo, context: self.managedObjectContext) {
+                    let clientSet: Set<UserClient> = [client]
+                    let selfUser = ZMUser.selfUser(in: self.managedObjectContext)
+                    selfUser.selfClient()?.addNewClientToIgnored(client)
+                    selfUser.selfClient()?.updateSecurityLevelAfterDiscovering(clientSet)
+                }
             }
         case .userClientRemove:
-            let selfClientId = selfUser.selfClient()?.remoteIdentifier
+            let selfUser = await managedObjectContext.perform { ZMUser.selfUser(in: self.managedObjectContext) }
+            let selfClientId = await managedObjectContext.perform { selfUser.selfClient()?.remoteIdentifier }
+
             guard let clientId = clientInfo["id"] as? String else { return }
 
             if selfClientId != clientId {
-                if let clientToDelete = selfUser.clients.filter({ $0.remoteIdentifier == clientId }).first {
-                    clientToDelete.deleteClientAndEndSession()
+                let deletedClient = await managedObjectContext.perform {
+                    selfUser.clients.first { $0.remoteIdentifier == clientId }
                 }
+                await deletedClient?.deleteClientAndEndSession()
             } else {
-                clientRegistrationStatus.didDetectCurrentClientDeletion()
-                clientUpdateStatus.didDetectCurrentClientDeletion()
+                await managedObjectContext.perform {
+                    self.clientRegistrationStatus.didDetectCurrentClientDeletion()
+                    self.clientUpdateStatus.didDetectCurrentClientDeletion()
+                }
             }
         default: break
         }

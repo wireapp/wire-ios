@@ -30,7 +30,7 @@ public protocol MLSDecryptionServiceInterface {
         message: String,
         for groupID: MLSGroupID,
         subconversationType: SubgroupType?
-    ) throws -> MLSDecryptResult?
+    ) async throws -> MLSDecryptResult?
 
 }
 
@@ -94,7 +94,7 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
         message: String,
         for groupID: MLSGroupID,
         subconversationType: SubgroupType?
-    ) throws -> MLSDecryptResult? {
+    ) async throws -> MLSDecryptResult? {
         WireLogger.mls.debug("decrypting message for group (\(groupID.safeForLoggingDescription)) and subconversation type (\(String(describing: subconversationType)))")
 
         guard let messageBytes = message.base64DecodedBytes else {
@@ -105,6 +105,7 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
 
         if
             let type = subconversationType,
+            // TODO: [F] does subconverationGroupIDRepository needs to be an actor?
             let subconversationGroupID = subconverationGroupIDRepository.fetchSubconversationGroupID(
                 forType: type,
                 parentGroupID: groupID
@@ -114,7 +115,7 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
         }
 
         do {
-            let decryptedMessage = try coreCryptoProvider.coreCrypto(requireMLS: true).perform { try $0.decryptMessage(
+            let decryptedMessage = try await coreCryptoProvider.coreCrypto(requireMLS: true).perform { try $0.decryptMessage(
                 conversationId: groupID.bytes,
                 payload: messageBytes
             ) }

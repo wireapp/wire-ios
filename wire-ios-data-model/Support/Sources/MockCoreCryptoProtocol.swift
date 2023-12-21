@@ -203,65 +203,11 @@ public class MockCoreCryptoProtocol: CoreCryptoProtocol {
 
     // MARK: - commitPendingProposals
 
-    public var commitPendingProposalsConversationId_Invocations: [Data] = []
-    public var commitPendingProposalsConversationId_MockError: Error?
-    public var commitPendingProposalsConversationId_MockMethod: ((Data) async throws -> WireCoreCrypto.CommitBundle?)?
-    public var commitPendingProposalsConversationId_MockValue: WireCoreCrypto.CommitBundle??
+    var mockCommitPendingProposals: ((ConversationId) throws -> CommitBundle?)?
 
-    public func commitPendingProposals(conversationId: Data) async throws -> WireCoreCrypto.CommitBundle? {
-        commitPendingProposalsConversationId_Invocations.append(conversationId)
-
-        if let error = commitPendingProposalsConversationId_MockError {
-            throw error
-        }
-
-        if let mock = commitPendingProposalsConversationId_MockMethod {
-            return try await mock(conversationId)
-        } else if let mock = commitPendingProposalsConversationId_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `commitPendingProposalsConversationId`")
-        }
-    }
-
-    // MARK: - conversationEpoch
-
-    public var conversationEpochConversationId_Invocations: [Data] = []
-    public var conversationEpochConversationId_MockError: Error?
-    public var conversationEpochConversationId_MockMethod: ((Data) async throws -> UInt64)?
-    public var conversationEpochConversationId_MockValue: UInt64?
-
-    public func conversationEpoch(conversationId: Data) async throws -> UInt64 {
-        conversationEpochConversationId_Invocations.append(conversationId)
-
-        if let error = conversationEpochConversationId_MockError {
-            throw error
-        }
-
-        if let mock = conversationEpochConversationId_MockMethod {
-            return try await mock(conversationId)
-        } else if let mock = conversationEpochConversationId_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `conversationEpochConversationId`")
-        }
-    }
-
-    // MARK: - conversationExists
-
-    public var conversationExistsConversationId_Invocations: [Data] = []
-    public var conversationExistsConversationId_MockMethod: ((Data) async -> Bool)?
-    public var conversationExistsConversationId_MockValue: Bool?
-
-    public func conversationExists(conversationId: Data) async -> Bool {
-        conversationExistsConversationId_Invocations.append(conversationId)
-
-        if let mock = conversationExistsConversationId_MockMethod {
-            return await mock(conversationId)
-        } else if let mock = conversationExistsConversationId_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `conversationExistsConversationId`")
+    func commitPendingProposals(conversationId: ConversationId) throws -> CommitBundle? {
+        guard let mock = mockCommitPendingProposals else {
+            fatalError("no mock for `commitPendingProposals`")
         }
     }
 

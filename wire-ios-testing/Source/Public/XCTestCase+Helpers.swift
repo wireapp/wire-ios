@@ -104,4 +104,21 @@ extension XCTestCase {
                 XCTAssertEqual(expectedFailure, failure, file: file, line: line)
             }
         }
+
+    public func assertThrows<E: Error & Equatable>(
+        expectedError: E,
+        when: @escaping () async throws -> Void
+    ) async {
+        do {
+            try await when()
+            XCTFail("expected an error")
+        } catch {
+            if let error = error as? E {
+                XCTAssertEqual(error, expectedError)
+            } else {
+                XCTFail("unexpected error: \(String(describing: error))")
+            }
+        }
+    }
+
 }

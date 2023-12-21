@@ -258,7 +258,7 @@ public class ZMUserSession: NSObject {
     }()
 
     let lastEventIDRepository: LastEventIDRepositoryInterface
-    let conversationEventProcessor: ConversationEventProcessorProtocol
+    let conversationEventProcessor: ConversationEventProcessor
 
     public init(
         userId: UUID,
@@ -438,13 +438,12 @@ public class ZMUserSession: NSObject {
     }
 
     private func createUpdateEventProcessor() -> EventProcessor {
-
         return EventProcessor(
             storeProvider: self.coreDataStack,
             eventProcessingTracker: eventProcessingTracker,
             earService: earService,
             eventConsumers: strategyDirectory?.eventConsumers ?? [],
-            eventAsyncConsumers: (conversationEventProcessor as? ZMEventAsyncConsumer).flatMap {[$0]} ?? []
+            eventAsyncConsumers: (strategyDirectory?.eventAsyncConsumers ?? []) + [conversationEventProcessor]
         )
     }
 
@@ -528,13 +527,16 @@ public class ZMUserSession: NSObject {
     }
 
     func createMLSClientIfNeeded() {
-        do {
-            if applicationStatusDirectory.clientRegistrationStatus.needsToRegisterMLSCLient {
-                // Make sure MLS client exists, mls public keys will be generated upon creation
-                _ = try coreCryptoProvider.coreCrypto(requireMLS: true)
+        // FIXME: [F] check async or not
+        WaitingGroupTask(context: syncContext) { [self] in
+            do {
+                if await syncContext.perform({ [self] in self.applicationStatusDirectory.clientRegistrationStatus.needsToRegisterMLSCLient }) {
+                    // Make sure MLS client exists, mls public keys will be generated upon creation
+                    _ = try await coreCryptoProvider.coreCrypto(requireMLS: true)
+                }
+            } catch {
+                WireLogger.mls.error("Failed to create MLS client: \(error)")
             }
-        } catch {
-            WireLogger.mls.error("Failed to create MLS client: \(error)")
         }
     }
 
@@ -685,7 +687,9 @@ extension ZMUserSession: ZMSyncStateDelegate {
 
         let selfClient = ZMUser.selfUser(in: syncContext).selfClient()
         if selfClient?.hasRegisteredMLSClient == true {
-            mlsService.repairOutOfSyncConversations()
+            Task {
+                await mlsService.repairOutOfSyncConversations()
+            }
         }
     }
 
@@ -710,10 +714,10 @@ extension ZMUserSession: ZMSyncStateDelegate {
         if selfClient?.hasRegisteredMLSClient == true {
 
             WaitingGroupTask(context: syncContext) { [self] in
-                mlsService.performPendingJoins()
-                await mlsService.uploadKeyPackagesIfNeeded()
-                await mlsService.updateKeyMaterialForAllStaleGroupsIfNeeded()
                 do {
+                    try await mlsService.performPendingJoins()
+                    await mlsService.uploadKeyPackagesIfNeeded()
+                    await mlsService.updateKeyMaterialForAllStaleGroupsIfNeeded()
                     try await mlsService.commitPendingProposals()
                 } catch {
                     Logging.mls.error("Failed to commit pending proposals: \(String(reflecting: error))")
@@ -762,12 +766,16 @@ extension ZMUserSession: ZMSyncStateDelegate {
         }
     }
 
-    func processPendingCallEvents(completionHandler: @escaping () -> Void) throws {
+    func processPendingCallEvents(completionHandler: @escaping () -> Void) {
         WireLogger.updateEvent.info("process pending call events")
         Task {
-            try await updateEventProcessor!.processBufferedEvents()
-            await managedObjectContext.perform {
-                completionHandler()
+            do {
+                try await updateEventProcessor!.processBufferedEvents()
+                await managedObjectContext.perform {
+                    completionHandler()
+                }
+            } catch {
+                Logging.mls.error("Failed to process pending call events: \(String(reflecting: error))")
             }
         }
     }

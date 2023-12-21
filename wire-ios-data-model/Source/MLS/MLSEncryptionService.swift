@@ -25,7 +25,7 @@ public protocol MLSEncryptionServiceInterface {
     func encrypt(
         message: [Byte],
         for groupID: MLSGroupID
-    ) throws -> [Byte]
+    ) async throws -> [Byte]
 
 }
 
@@ -64,10 +64,10 @@ public final class MLSEncryptionService: MLSEncryptionServiceInterface {
     public func encrypt(
         message: [Byte],
         for groupID: MLSGroupID
-    ) throws -> [Byte] {
+    ) async throws -> [Byte] {
         do {
             WireLogger.mls.debug("encrypting message (\(message.count) bytes) for group (\(groupID))")
-            return try coreCryptoProvider.coreCrypto(requireMLS: true).perform { try $0.encryptMessage(conversationId: groupID.bytes, message: message) }
+            return try await coreCryptoProvider.coreCrypto(requireMLS: true).perform { try $0.encryptMessage(conversationId: groupID.bytes, message: message) }
         } catch let error {
             WireLogger.mls.error("failed to encrypt message for group (\(groupID)): \(String(describing: error))")
             throw MLSMessageEncryptionError.failedToEncryptMessage

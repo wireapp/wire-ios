@@ -28,9 +28,10 @@ extension UserType where Self: SelfLegalHoldSubject {
      * - parameter inputHandler: The block to execute with the password of the user.
      * - note: If the user dismisses the alert, we will make the legal hold request as acknowledged.
      */
-
     func makeLegalHoldInputRequest(for request: LegalHoldRequest, cancellationHandler: @escaping () -> Void, inputHandler: @escaping (String?) -> Void) -> UserInputRequest {
+        // FIXME: [F] move to useCase
         let fingerprintString = self.fingerprint?.fingerprintStringWithSpaces ?? "<fingerprint unavailable>"
+
         var legalHoldMessage = L10n.Localizable.LegalholdRequest.Alert.detail(fingerprintString)
 
         var inputConfiguration: UserInputRequest.InputConfiguration?

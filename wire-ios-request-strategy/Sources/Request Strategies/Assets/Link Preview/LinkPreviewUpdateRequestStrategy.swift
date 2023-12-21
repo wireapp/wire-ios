@@ -58,7 +58,11 @@ extension LinkPreviewUpdateRequestStrategy: ModifiedKeyObjectSyncTranscoder {
         // Enter groups to enable waiting for message sending to complete in tests
         let groups = managedObjectContext.enterAllGroupsExceptSecondary()
         Task {
-            try? await messageSender.sendMessage(message: object)
+            do {
+                try await messageSender.sendMessage(message: object)
+            } catch {
+                WireLogger.calling.error("failed to send message: \(String(reflecting: error))")
+            }
             await managedObjectContext.perform {
                 object.linkPreviewState = .done
                 completion()

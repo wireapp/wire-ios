@@ -47,8 +47,8 @@ public actor CommitSender: CommitSending {
     private let onEpochChangedSubject = PassthroughSubject<MLSGroupID, Never>()
 
     private var coreCrypto: SafeCoreCryptoProtocol {
-        get throws {
-            try coreCryptoProvider.coreCrypto(requireMLS: true)
+        get async throws {
+            try await coreCryptoProvider.coreCrypto(requireMLS: true)
         }
     }
 
