@@ -77,32 +77,45 @@ final class ConversationLegalHoldCellDescription: ConversationMessageCellDescrip
     }
 
     private static func configuration(for systemMessageType: ZMSystemMessageType, in conversation: ZMConversation) -> View.Configuration {
-
-        let baseTemplate = "content.system.message_legal_hold"
-        var template = baseTemplate
-
-        if systemMessageType == .legalHoldEnabled {
-            template += ".enabled"
-        } else if systemMessageType == .legalHoldDisabled {
-            template += ".disabled"
-        }
-
-        var attributedText = NSAttributedString(string: template.localized, attributes: ConversationSystemMessageCell.baseAttributes)
+        let systemMessageTitle = title(for: systemMessageType)
+        var attributedText = NSAttributedString(string: systemMessageTitle, attributes: ConversationSystemMessageCell.baseAttributes)
 
         if systemMessageType == .legalHoldEnabled {
-            let learnMore = NSAttributedString(string: (baseTemplate + ".learn_more").localized.uppercased(),
-                                               attributes: [.font: UIFont.mediumSemiboldFont,
-                                                            .link: ConversationLegalHoldSystemMessageCell.legalHoldURL as AnyObject,
-                                                            .foregroundColor: SemanticColors.Label.textDefault])
-
-            attributedText += " " + String.MessageToolbox.middleDot + " "
-            attributedText += learnMore
+            attributedText = appendLegalHoldEnabledText(to: attributedText)
         }
 
         let icon = StyleKitIcon.legalholdactive.makeImage(size: .tiny, color: SemanticColors.Icon.foregroundDefaultRed)
 
         return View.Configuration(attributedText: attributedText, icon: icon, conversation: conversation)
     }
+
+    private static func title(for messageType: ZMSystemMessageType) -> String {
+        switch messageType {
+        case .legalHoldEnabled:
+            return L10n.Localizable.Content.System.MessageLegalHold.enabled
+        case .legalHoldDisabled:
+            return L10n.Localizable.Content.System.MessageLegalHold.disabled
+        default:
+            return ""
+        }
+    }
+
+    private static func appendLegalHoldEnabledText(to attributedText: NSAttributedString) -> NSAttributedString {
+        let learnMoreText = L10n.Localizable.Content.System.MessageLegalHold.learnMore.localizedUppercase
+        let learnMoreAttributes: [NSAttributedString.Key: Any] = [
+            .font: UIFont.mediumSemiboldFont,
+            .link: ConversationLegalHoldSystemMessageCell.legalHoldURL as AnyObject,
+            .foregroundColor: SemanticColors.Label.textDefault
+        ]
+        let learnMore = NSAttributedString(string: learnMoreText, attributes: learnMoreAttributes)
+
+        let mutableAttributedText = NSMutableAttributedString(attributedString: attributedText)
+        mutableAttributedText.append(NSAttributedString(string: " " + String.MessageToolbox.middleDot + " "))
+        mutableAttributedText.append(learnMore)
+
+        return mutableAttributedText
+    }
+
 }
 
 extension ConversationLegalHoldSystemMessageCell {

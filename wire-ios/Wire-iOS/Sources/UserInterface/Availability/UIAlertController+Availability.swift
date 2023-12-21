@@ -23,9 +23,24 @@ import WireDataModel
 extension UIAlertController {
 
     static func availabilityExplanation(_ availability: AvailabilityKind) -> UIAlertController {
+        var title: String = ""
+        var message: String = ""
 
-        let title = "availability.reminder.\(availability.canonicalName).title".localized
-        let message = "availability.reminder.\(availability.canonicalName).message".localized
+        switch availability {
+        case .none:
+            title = L10n.Localizable.Availability.Reminder.None.title
+            message = L10n.Localizable.Availability.Reminder.None.message
+        case .available:
+            title = L10n.Localizable.Availability.Reminder.Available.title
+            message = L10n.Localizable.Availability.Reminder.Available.message
+        case .busy:
+            title = L10n.Localizable.Availability.Reminder.Busy.title
+            message = L10n.Localizable.Availability.Reminder.Busy.message
+        case .away:
+            title = L10n.Localizable.Availability.Reminder.Away.title
+            message = L10n.Localizable.Availability.Reminder.Away.message
+        }
+
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
 
         alert.addAction(UIAlertAction(title: L10n.Localizable.Availability.Reminder.Action.dontRemindMe, style: .default, handler: { (_) in
