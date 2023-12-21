@@ -29,7 +29,9 @@ final class DatabaseMigrationTests_Conversations: XCTestCase {
             preMigrationAction: { context in
                 let user = ZMUser(context: context)
                 let conversation = ZMConversation(context: context)
-                _ = ParticipantRole.create(managedObjectContext: context, user: user, conversation: conversation)
+                let participantRole = ParticipantRole(context: context)
+                participantRole.conversation = conversation
+                participantRole.user = user
                 try context.save()
 
                 context.delete(conversation)
@@ -42,13 +44,15 @@ final class DatabaseMigrationTests_Conversations: XCTestCase {
         )
     }
 
-    func testThatItPerformsMigrationFrom106_markConversationAsDeletedKeepsParticipantRole() throws {
+    func testThatItPerformsMigrationFrom106_deleteRemotelyConversationKeepsParticipantRole() throws {
         try migrateStoreToCurrentVersion(
             sourceVersion: "2.106.0",
             preMigrationAction: { context in
                 let user = ZMUser(context: context)
                 let conversation = ZMConversation(context: context)
-                _ = ParticipantRole.create(managedObjectContext: context, user: user, conversation: conversation)
+                let participantRole = ParticipantRole(context: context)
+                participantRole.conversation = conversation
+                participantRole.user = user
                 try context.save()
 
                 conversation.isDeletedRemotely = true
@@ -61,8 +65,26 @@ final class DatabaseMigrationTests_Conversations: XCTestCase {
         )
     }
 
-    func testThatItPerformsMigrationFrom106_invalidParticipantRoleThrowsMigrateStoreFailed() throws {
-        XCTAssertThrowsError(try migrateStoreToCurrentVersion(
+    func testThatItPerformsMigrationFrom106_validConversationRelationKeepsParticipantRole() throws {
+        XCTAssertNoThrow(try migrateStoreToCurrentVersion(
+            sourceVersion: "2.106.0",
+            preMigrationAction: { context in
+                let user = ZMUser(context: context)
+                let conversation = ZMConversation(context: context)
+                let participantRole = ParticipantRole(context: context)
+                participantRole.conversation = conversation
+                participantRole.user = user
+                try context.save()
+            },
+            postMigrationAction: { context in
+                let roles = try context.fetch(ParticipantRole.fetchRequest())
+                XCTAssertEqual(roles.count, 1)
+            }
+        ))
+    }
+
+    func testThatItPerformsMigrationFrom106_invalidConversationRelationDropsParticipantRole() throws {
+        XCTAssertNoThrow(try migrateStoreToCurrentVersion(
             sourceVersion: "2.106.0",
             preMigrationAction: { context in
                 let user = ZMUser(context: context)
@@ -72,28 +94,22 @@ final class DatabaseMigrationTests_Conversations: XCTestCase {
                 participantRole.user = user
                 try context.save()
 
-                // Produce Failure: model requires 'conversation' to be non-optional!
+                // Failure: model requires 'conversation' to be non-optional!
                 participantRole.conversation = nil
                 try context.save()
             },
             postMigrationAction: { context in
                 let roles = try context.fetch(ParticipantRole.fetchRequest())
-                XCTAssertEqual(roles.count, 0)
+                XCTAssert(roles.isEmpty)
             }
-        ), "expected CoreDataMessagingMigratorError.migrateStoreFailed") { error in
-            switch error as? CoreDataMessagingMigratorError {
-            case .migrateStoreFailed(let nsError as NSError):
-                XCTAssertEqual(nsError.code, NSValidationMissingMandatoryPropertyError)
-                XCTAssertEqual(nsError.domain, NSCocoaErrorDomain)
-                XCTAssertFalse(nsError.userInfo.isEmpty)
-            default:
-                XCTFail("expected CoreDataMessagingMigratorError.migrateStoreFailed")
-            }
-        }
+        ))
     }
 
-    func testThatItPerformsMigrationFrom107_invalidParticipantRoleNotThrowsMigrateStoreFailed() throws {
-        XCTAssertNoThrow(try migrateStoreToCurrentVersion(
+    func testThatItPerformsMigrationFrom107_invalidConversationRelationKeepsParticipantRole() throws {
+        // Even though the test confirms that the lightweight migration keeps the zombie object
+        // It's not the wanted behavior for longterm!
+
+        try migrateStoreToCurrentVersion(
             sourceVersion: "2.107.0",
             preMigrationAction: { context in
                 let user = ZMUser(context: context)
@@ -111,7 +127,7 @@ final class DatabaseMigrationTests_Conversations: XCTestCase {
                 let roles = try context.fetch(ParticipantRole.fetchRequest())
                 XCTAssertEqual(roles.count, 1)
             }
-        ))
+        )
     }
 
     // MARK: -
