@@ -51,7 +51,7 @@ public class ProteusProvider: ProteusProviding {
         proteusViaCoreCrypto: Bool = DeveloperFlag.proteusViaCoreCrypto.isOn
     ) {
         self.init(proteusService: context.proteusService,
-                  keyStore: context.zm_cryptKeyStore ?? nil,
+                  keyStore: context.zm_cryptKeyStore,
                   proteusViaCoreCrypto: proteusViaCoreCrypto)
     }
 
