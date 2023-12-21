@@ -30,8 +30,8 @@ class CommitSenderTests: ZMBaseManagedObjectTest {
     private var mockActionsProvider: MockMLSActionsProviderProtocol!
     private var mockCoreCrypto: MockCoreCryptoProtocol!
     private var mockCoreCryptoProvider: MockCoreCryptoProviderProtocol!
-    private var mockClearPendingCommitInvocations: [[Byte]]!
-    private var mockClearPendingGroupInvocations: [[Byte]]!
+    private var mockClearPendingCommitInvocations: [Data]!
+    private var mockClearPendingGroupInvocations: [Data]!
 
     private lazy var groupID: MLSGroupID = .random()
     private lazy var commitBundle = CommitBundle(
@@ -61,12 +61,13 @@ class CommitSenderTests: ZMBaseManagedObjectTest {
         )
 
         mockClearPendingCommitInvocations = []
-        mockCoreCrypto.mockClearPendingCommit = { [self] groupID in
+        mockCoreCrypto.commitPendingProposalsConversationId_MockMethod = { [self] groupID in
             mockClearPendingCommitInvocations.append(groupID)
+            return nil
         }
 
         mockClearPendingGroupInvocations = []
-        mockCoreCrypto.mockClearPendingGroupFromExternalCommit = { [self] groupID in
+        mockCoreCrypto.clearPendingGroupFromExternalCommitConversationId_MockMethod = { [self] groupID in
             mockClearPendingGroupInvocations.append(groupID)
         }
     }
@@ -91,9 +92,10 @@ class CommitSenderTests: ZMBaseManagedObjectTest {
         }
 
         // Mock core crypto
-        var commitAcceptedInvocations = [[Byte]]()
-        mockCoreCrypto.mockCommitAccepted = { groupID in
+        var commitAcceptedInvocations = [Data]()
+        mockCoreCrypto.commitAcceptedConversationId_MockMethod = { groupID in
             commitAcceptedInvocations.append(groupID)
+            return nil
         }
 
         // When
@@ -106,7 +108,7 @@ class CommitSenderTests: ZMBaseManagedObjectTest {
 
         // Commit accepted was called
         XCTAssertEqual(commitAcceptedInvocations.count, 1)
-        XCTAssertEqual(commitAcceptedInvocations.first, groupID.bytes)
+        XCTAssertEqual(commitAcceptedInvocations.first, groupID.data)
 
         // Events were received
         XCTAssertEqual(receivedEvents, [event])
@@ -166,7 +168,7 @@ class CommitSenderTests: ZMBaseManagedObjectTest {
         if shouldClearPendingCommit {
             // It clears pending commit
             XCTAssertEqual(mockClearPendingCommitInvocations.count, 1)
-            XCTAssertEqual(mockClearPendingCommitInvocations.first, groupID.bytes)
+            XCTAssertEqual(mockClearPendingCommitInvocations.first, groupID.data)
         } else {
             // It doesn't clear pending commit
             XCTAssertEqual(mockClearPendingCommitInvocations.count, 0)
@@ -185,9 +187,10 @@ class CommitSenderTests: ZMBaseManagedObjectTest {
         }
 
         // Mock core crypto
-        var mergePendingGroupInvocations = [[Byte]]()
-        mockCoreCrypto.mockMergePendingGroupFromExternalCommit = { groupID in
+        var mergePendingGroupInvocations = [Data]()
+        mockCoreCrypto.mergePendingGroupFromExternalCommitConversationId_MockMethod = { groupID in
             mergePendingGroupInvocations.append(groupID)
+            return nil
         }
 
         // When
@@ -200,7 +203,7 @@ class CommitSenderTests: ZMBaseManagedObjectTest {
 
         // Commit accepted was called
         XCTAssertEqual(mergePendingGroupInvocations.count, 1)
-        XCTAssertEqual(mergePendingGroupInvocations.first, groupID.bytes)
+        XCTAssertEqual(mergePendingGroupInvocations.first, groupID.data)
 
         // Events were received
         XCTAssertEqual(receivedEvents, [event])
@@ -244,7 +247,7 @@ class CommitSenderTests: ZMBaseManagedObjectTest {
         if shouldClearPendingGroup {
             // It clears pending commit
             XCTAssertEqual(mockClearPendingGroupInvocations.count, 1, file: file, line: line)
-            XCTAssertEqual(mockClearPendingGroupInvocations.first, groupID.bytes, file: file, line: line)
+            XCTAssertEqual(mockClearPendingGroupInvocations.first, groupID.data, file: file, line: line)
         } else {
             // It doesn't clear pending commit
             XCTAssertEqual(mockClearPendingGroupInvocations.count, 0, file: file, line: line)
@@ -262,7 +265,7 @@ class CommitSenderTests: ZMBaseManagedObjectTest {
         }
 
         // Mock commit accepted
-        mockCoreCrypto.mockCommitAccepted = { _ in }
+        mockCoreCrypto.commitAcceptedConversationId_MockMethod = { _ in  return nil }
 
         // Set up expectation
         let expectation = XCTestExpectation(description: "observed epoch change")

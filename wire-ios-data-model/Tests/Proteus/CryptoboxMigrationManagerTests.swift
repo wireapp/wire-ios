@@ -110,7 +110,7 @@ class CryptoboxMigrationManagerTests: ZMBaseManagedObjectTest {
         let migrated = expectation(description: "Cryptobox was migrated")
         mockFileManager.fileExistsAtPath_MockValue = true
         proteusViaCoreCryptoFlag.isOn = true
-        mockSafeCoreCrypto.coreCrypto.mockProteusCryptoboxMigrate = { _ in
+        mockSafeCoreCrypto.coreCrypto.proteusCryptoboxMigratePath_MockMethod = { _ in
             migrated.fulfill()
         }
 
@@ -131,7 +131,7 @@ class CryptoboxMigrationManagerTests: ZMBaseManagedObjectTest {
         mockFileManager.fileExistsAtPath_MockValue = true
         proteusViaCoreCryptoFlag.isOn = true
 
-        mockSafeCoreCrypto.coreCrypto.mockProteusCryptoboxMigrate = { _ in
+        mockSafeCoreCrypto.coreCrypto.proteusCryptoboxMigratePath_MockMethod = { _ in
             throw CryptoboxMigrationManager.Failure.failedToMigrateData
         }
 
@@ -139,9 +139,6 @@ class CryptoboxMigrationManagerTests: ZMBaseManagedObjectTest {
         await assertThrows(expectedError: CryptoboxMigrationManager.Failure.failedToMigrateData) {
             try await self.sut.performMigration(accountDirectory: self.accountDirectory, coreCrypto: self.mockSafeCoreCrypto)
         }
-//        XCTAssertThrowsError() { error in
-//            XCTAssertEqual(error as? CryptoboxMigrationManager.Failure, CryptoboxMigrationManager.Failure.failedToMigrateData)
-//        }
 
         // Then
         XCTAssertTrue(mockFileManager.removeItemAt_Invocations.isEmpty)
