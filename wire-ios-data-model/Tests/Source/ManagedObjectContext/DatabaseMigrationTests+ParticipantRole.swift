@@ -84,6 +84,8 @@ final class DatabaseMigrationTests_Conversations: XCTestCase {
     }
 
     /*
+     * [WPB-5993] Jira-Ticket "fix core data migrating corrupted ParticipantRole objects"
+     * 
      * This test was creating an error thrown by core data migration. Now we can not reproduce this behavior anymore,
      * because `ParticipantRole.conversation` can not set to`nil` anymore by the compiler.
      *
