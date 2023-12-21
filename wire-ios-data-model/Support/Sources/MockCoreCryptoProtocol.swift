@@ -20,11 +20,19 @@ import Foundation
 import WireDataModel
 import WireCoreCrypto
 
+// how to update
+// 1. copy CoreCryptoProtocol from WireCoreCrypto to WireDataModel
+// 2. add sourcery: AutoMockable annotation
+// 3. run sourcery -> see WireDataModelSupport target build phases
+// 4. move generated code from `wire-ios-data-model/Support/Sourcery/generated/AutoMockable.generated.swift` to here
+// 5. remove copied CoreCryptoProtocol
+
 public class MockCoreCryptoProtocol: CoreCryptoProtocol {
 
     // MARK: - Life cycle
 
     public init() {}
+
 
     // MARK: - addClientsToConversation
 
@@ -203,11 +211,65 @@ public class MockCoreCryptoProtocol: CoreCryptoProtocol {
 
     // MARK: - commitPendingProposals
 
-    var mockCommitPendingProposals: ((ConversationId) throws -> CommitBundle?)?
+    public var commitPendingProposalsConversationId_Invocations: [Data] = []
+    public var commitPendingProposalsConversationId_MockError: Error?
+    public var commitPendingProposalsConversationId_MockMethod: ((Data) async throws -> WireCoreCrypto.CommitBundle?)?
+    public var commitPendingProposalsConversationId_MockValue: WireCoreCrypto.CommitBundle??
 
-    func commitPendingProposals(conversationId: ConversationId) throws -> CommitBundle? {
-        guard let mock = mockCommitPendingProposals else {
-            fatalError("no mock for `commitPendingProposals`")
+    public func commitPendingProposals(conversationId: Data) async throws -> WireCoreCrypto.CommitBundle? {
+        commitPendingProposalsConversationId_Invocations.append(conversationId)
+
+        if let error = commitPendingProposalsConversationId_MockError {
+            throw error
+        }
+
+        if let mock = commitPendingProposalsConversationId_MockMethod {
+            return try await mock(conversationId)
+        } else if let mock = commitPendingProposalsConversationId_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `commitPendingProposalsConversationId`")
+        }
+    }
+
+    // MARK: - conversationEpoch
+
+    public var conversationEpochConversationId_Invocations: [Data] = []
+    public var conversationEpochConversationId_MockError: Error?
+    public var conversationEpochConversationId_MockMethod: ((Data) async throws -> UInt64)?
+    public var conversationEpochConversationId_MockValue: UInt64?
+
+    public func conversationEpoch(conversationId: Data) async throws -> UInt64 {
+        conversationEpochConversationId_Invocations.append(conversationId)
+
+        if let error = conversationEpochConversationId_MockError {
+            throw error
+        }
+
+        if let mock = conversationEpochConversationId_MockMethod {
+            return try await mock(conversationId)
+        } else if let mock = conversationEpochConversationId_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `conversationEpochConversationId`")
+        }
+    }
+
+    // MARK: - conversationExists
+
+    public var conversationExistsConversationId_Invocations: [Data] = []
+    public var conversationExistsConversationId_MockMethod: ((Data) async -> Bool)?
+    public var conversationExistsConversationId_MockValue: Bool?
+
+    public func conversationExists(conversationId: Data) async -> Bool {
+        conversationExistsConversationId_Invocations.append(conversationId)
+
+        if let mock = conversationExistsConversationId_MockMethod {
+            return await mock(conversationId)
+        } else if let mock = conversationExistsConversationId_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `conversationExistsConversationId`")
         }
     }
 
@@ -884,10 +946,10 @@ public class MockCoreCryptoProtocol: CoreCryptoProtocol {
 
     public var proteusEncryptBatchedSessionsPlaintext_Invocations: [(sessions: [String], plaintext: Data)] = []
     public var proteusEncryptBatchedSessionsPlaintext_MockError: Error?
-    public var proteusEncryptBatchedSessionsPlaintext_MockMethod: (([String], Data) async throws -> [String: Data])?
-    public var proteusEncryptBatchedSessionsPlaintext_MockValue: [String: Data]?
+    public var proteusEncryptBatchedSessionsPlaintext_MockMethod: (([String], Data) async throws -> [String : Data])?
+    public var proteusEncryptBatchedSessionsPlaintext_MockValue: [String : Data]?
 
-    public func proteusEncryptBatched(sessions: [String], plaintext: Data) async throws -> [String: Data] {
+    public func proteusEncryptBatched(sessions: [String], plaintext: Data) async throws -> [String : Data] {
         proteusEncryptBatchedSessionsPlaintext_Invocations.append((sessions: sessions, plaintext: plaintext))
 
         if let error = proteusEncryptBatchedSessionsPlaintext_MockError {

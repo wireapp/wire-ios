@@ -1335,12 +1335,12 @@ public class MockMLSEncryptionServiceInterface: MLSEncryptionServiceInterface {
 
     // MARK: - encrypt
 
-    public var encryptMessageFor_Invocations: [(message: [Byte], groupID: MLSGroupID)] = []
+    public var encryptMessageFor_Invocations: [(message: Data, groupID: MLSGroupID)] = []
     public var encryptMessageFor_MockError: Error?
-    public var encryptMessageFor_MockMethod: (([Byte], MLSGroupID) async throws -> [Byte])?
-    public var encryptMessageFor_MockValue: [Byte]?
+    public var encryptMessageFor_MockMethod: ((Data, MLSGroupID) async throws -> Data)?
+    public var encryptMessageFor_MockValue: Data?
 
-    public func encrypt(message: [Byte], for groupID: MLSGroupID) async throws -> [Byte] {
+    public func encrypt(message: Data, for groupID: MLSGroupID) async throws -> Data {
         encryptMessageFor_Invocations.append((message: message, groupID: groupID))
 
         if let error = encryptMessageFor_MockError {
@@ -1861,12 +1861,12 @@ public class MockMLSServiceInterface: MLSServiceInterface {
 
     // MARK: - encrypt
 
-    public var encryptMessageFor_Invocations: [(message: [Byte], groupID: MLSGroupID)] = []
+    public var encryptMessageFor_Invocations: [(message: Data, groupID: MLSGroupID)] = []
     public var encryptMessageFor_MockError: Error?
-    public var encryptMessageFor_MockMethod: (([Byte], MLSGroupID) async throws -> [Byte])?
-    public var encryptMessageFor_MockValue: [Byte]?
+    public var encryptMessageFor_MockMethod: ((Data, MLSGroupID) async throws -> Data)?
+    public var encryptMessageFor_MockValue: Data?
 
-    public func encrypt(message: [Byte], for groupID: MLSGroupID) async throws -> [Byte] {
+    public func encrypt(message: Data, for groupID: MLSGroupID) async throws -> Data {
         encryptMessageFor_Invocations.append((message: message, groupID: groupID))
 
         if let error = encryptMessageFor_MockError {
