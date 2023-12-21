@@ -908,7 +908,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
         await syncMOC.perform { [self] in
             let updateConversationCalls = mockMLSEventProcessor.calls.updateConversationIfNeeded
             XCTAssertEqual(updateConversationCalls.count, 1)
-            XCTAssertEqual(updateConversationCalls.first?.conversation, groupConversation)
+            XCTAssertEqual(updateConversationCalls.first?.conversation, self.groupConversation)
         }
     }
 
@@ -934,7 +934,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
         await syncMOC.perform { [self] in
             let joinMLSGroupWhenReadyCalls = mockMLSEventProcessor.calls.joinMLSGroupWhenReady
             XCTAssertEqual(joinMLSGroupWhenReadyCalls.count, 1)
-            XCTAssertEqual(joinMLSGroupWhenReadyCalls.first, groupConversation)
+            XCTAssertEqual(joinMLSGroupWhenReadyCalls.first, self.groupConversation)
         }
     }
 

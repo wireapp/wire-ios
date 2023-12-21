@@ -267,12 +267,11 @@ public class MessageSender: MessageSenderInterface {
             }
 
             return try message.encryptForTransport { messageData in
-                return messageData
-//                let encryptedBytes = try await mlsService.encrypt(
-//                    message: messageData.bytes,
-//                    for: groupID
-//                )
-//                return encryptedBytes.data
+                let encryptedBytes = try mlsService.encrypt(
+                    message: messageData.bytes,
+                    for: groupID
+                )
+                return encryptedBytes.data
             }
         }
     }
