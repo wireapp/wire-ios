@@ -6,4 +6,4 @@ output:
   ./generated
 args:
   autoMockableTestableImports: ["WireDataModel"]
-  autoMockableImports: ["LocalAuthentication", "Combine"]
+  autoMockableImports: ["LocalAuthentication", "Combine", "WireCoreCrypto"]

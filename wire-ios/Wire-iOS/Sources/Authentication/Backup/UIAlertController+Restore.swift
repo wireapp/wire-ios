@@ -66,7 +66,7 @@ extension UIAlertController {
         case CoreDataStack.BackupImportError.incompatibleBackup(BackupMetadata.VerificationError.userMismatch):
             return L10n.Localizable.Registration.NoHistory.RestoreBackupFailed.WrongAccount.message
         default:
-            return L10n.Localizable.Registration.NoHistory.RestoreBackupFailed.message
+            return L10n.Localizable.Registration.NoHistory.RestoreBackupFailed.message + "\n\(error.localizedDescription)"
         }
     }
 
