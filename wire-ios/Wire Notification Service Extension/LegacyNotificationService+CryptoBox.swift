@@ -27,86 +27,35 @@ extension LegacyNotificationService {
         let shouldSetupProteusService: Bool
         let shouldSetupMLSService: Bool
 
-        var shouldSetupCryptoStack: Bool {
-            shouldSetupProteusService || shouldSetupMLSService
+        init() {
+            self.init(
+                shouldSetupProteusService: DeveloperFlag.proteusViaCoreCrypto.isOn,
+                shouldSetupMLSService: DeveloperFlag.enableMLSSupport.isOn && (BackendInfo.apiVersion ?? .v0) >= .v5
+            )
         }
-    }
 
-    // MARK: Properties
-
-    var cryptoSetupConfiguration: CryptoSetupConfiguration {
-        .init(
-            shouldSetupProteusService: DeveloperFlag.proteusViaCoreCrypto.isOn,
-            shouldSetupMLSService: DeveloperFlag.enableMLSSupport.isOn && (BackendInfo.apiVersion ?? .v0) >= .v5
-        )
+        init(shouldSetupProteusService: Bool, shouldSetupMLSService: Bool) {
+            self.shouldSetupProteusService = shouldSetupProteusService
+            self.shouldSetupMLSService = shouldSetupMLSService
+        }
     }
 
     // MARK: Methods
 
     func setUpCoreCryptoStack(
-        accountContainer: URL,
-        applicationContainer: URL,
+        provider: CoreCryptoProviderProtocol,
         syncContext: NSManagedObjectContext,
-        cryptoboxMigrationManager: CryptoboxMigrationManagerInterface
-    ) throws {
-        try setUpCoreCryptoStack(
-            accountContainer: accountContainer,
-            applicationContainer: applicationContainer,
-            syncContext: syncContext,
-            cryptoboxMigrationManager: cryptoboxMigrationManager,
-            setupConfiguration: cryptoSetupConfiguration
-        )
-    }
-
-    func setUpCoreCryptoStack(
-        accountContainer: URL,
-        applicationContainer: URL,
-        syncContext: NSManagedObjectContext,
-        cryptoboxMigrationManager: CryptoboxMigrationManagerInterface,
-        setupConfiguration: CryptoSetupConfiguration
-    ) throws {
-        guard !cryptoboxMigrationManager.isMigrationNeeded(accountDirectory: accountContainer) else {
-            throw LegacyNotificationServiceError.cryptoboxHasPendingMigration
+        configuration: CryptoSetupConfiguration = CryptoSetupConfiguration()
+    ) {
+        if configuration.shouldSetupProteusService, syncContext.proteusService == nil {
+            syncContext.proteusService = ProteusService(coreCryptoProvider: provider)
         }
 
-        guard setupConfiguration.shouldSetupCryptoStack else {
-            WireLogger.coreCrypto.info("not setting up core crypto stack because it is not needed")
-            return
-        }
-
-        syncContext.performAndWait {
-            let provider = CoreCryptoConfigProvider()
-
-            do {
-                let configuration = try provider.createFullConfiguration(
-                    sharedContainerURL: applicationContainer,
-                    selfUser: .selfUser(in: syncContext),
-                    createKeyIfNeeded: false
-                )
-
-                let safeCoreCrypto = try SafeCoreCrypto(coreCryptoConfiguration: configuration)
-
-                syncContext.coreCrypto = safeCoreCrypto
-
-                if setupConfiguration.shouldSetupProteusService, syncContext.proteusService == nil {
-                    syncContext.proteusService = ProteusService(coreCrypto: safeCoreCrypto)
-                }
-
-                if setupConfiguration.shouldSetupMLSService, syncContext.mlsDecryptionService == nil {
-                    syncContext.mlsDecryptionService = MLSDecryptionService(
-                        context: syncContext,
-                        coreCrypto: safeCoreCrypto
-                    )
-                }
-
-                WireLogger.coreCrypto.info("success: setup crypto stack")
-            } catch {
-                WireLogger.coreCrypto.error("fail: setup crypto stack: \(String(describing: error))")
-            }
-        }
-
-        syncContext.performAndWait {
-            try? cryptoboxMigrationManager.completeMigration(syncContext: syncContext)
+        if configuration.shouldSetupMLSService, syncContext.mlsDecryptionService == nil {
+            syncContext.mlsDecryptionService = MLSDecryptionService(
+                context: syncContext,
+                coreCryptoProvider: provider
+            )
         }
     }
 }

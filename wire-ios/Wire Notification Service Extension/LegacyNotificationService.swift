@@ -164,11 +164,17 @@ final class LegacyNotificationService: UNNotificationServiceExtension, Notificat
             do {
                 let coreDataStack = try result.get()
 
-                try self.setUpCoreCryptoStack(
-                    accountContainer: coreDataStack.accountContainer,
-                    applicationContainer: coreDataStack.applicationContainer,
+                let coreCryptoProvider = CoreCryptoProvider(
+                    selfUserID: accountIdentifier,
+                    sharedContainerURL: coreDataStack.applicationContainer,
+                    accountDirectory: coreDataStack.accountContainer,
                     syncContext: coreDataStack.syncContext,
-                    cryptoboxMigrationManager: CryptoboxMigrationManager()
+                    cryptoboxMigrationManager: CryptoboxMigrationManager(),
+                    allowCreation: false
+                )
+                self.setUpCoreCryptoStack(
+                    provider: coreCryptoProvider,
+                    syncContext: coreDataStack.syncContext
                 )
 
                 let session = NotificationSession(
