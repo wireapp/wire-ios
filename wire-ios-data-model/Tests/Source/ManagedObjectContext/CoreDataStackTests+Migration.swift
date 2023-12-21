@@ -34,7 +34,7 @@ class CoreDataStackTests_Migration: DatabaseBaseTest {
                           migration: @escaping (NSManagedObjectContext) throws -> Void) -> Result<Void>? {
         var result: Result<Void>?
         CoreDataStack.migrateLocalStorage(accountIdentifier: accountIdentifier,
-                                          applicationContainer: applicationContainer,
+                                          applicationContainer: DatabaseBaseTest.applicationContainer,
                                           dispatchGroup: dispatchGroup,
                                           migration: migration,
                                           completion: { result = $0 })
