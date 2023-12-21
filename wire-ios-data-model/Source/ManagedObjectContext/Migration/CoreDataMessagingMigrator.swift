@@ -99,7 +99,6 @@ final class CoreDataMessagingMigrator: CoreDataMessagingMigratorProtocol {
             let destinationURL = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true).appendingPathComponent(UUID().uuidString)
 
             do {
-<<<<<<< HEAD
                 try manager.migrateStore(
                     from: currentURL,
                     type: persistentStoreType,
@@ -108,28 +107,6 @@ final class CoreDataMessagingMigrator: CoreDataMessagingMigratorProtocol {
                     type: persistentStoreType
                 )
             } catch let error {
-=======
-                if #available(iOS 15, *) {
-                    try manager.migrateStore(
-                        from: currentURL,
-                        type: persistentStoreType,
-                        mapping: migrationStep.mappingModel,
-                        to: destinationURL,
-                        type: persistentStoreType
-                    )
-                } else {
-                    try manager.migrateStore(
-                        from: currentURL,
-                        sourceType: storeType,
-                        options: nil,
-                        with: migrationStep.mappingModel,
-                        toDestinationURL: destinationURL,
-                        destinationType: storeType,
-                        destinationOptions: nil
-                    )
-                }
-            } catch {
->>>>>>> d7c7ebae1 (fix: add more logs (#799))
                 throw CoreDataMessagingMigratorError.migrateStoreFailed(error: error)
             }
 
