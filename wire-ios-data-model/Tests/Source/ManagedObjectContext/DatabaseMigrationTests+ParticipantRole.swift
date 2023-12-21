@@ -66,7 +66,7 @@ final class DatabaseMigrationTests_Conversations: XCTestCase {
     }
 
     func testThatItPerformsMigrationFrom106_validConversationRelationKeepsParticipantRole() throws {
-        XCTAssertNoThrow(try migrateStoreToCurrentVersion(
+        try migrateStoreToCurrentVersion(
             sourceVersion: "2.106.0",
             preMigrationAction: { context in
                 let user = ZMUser(context: context)
@@ -80,11 +80,30 @@ final class DatabaseMigrationTests_Conversations: XCTestCase {
                 let roles = try context.fetch(ParticipantRole.fetchRequest())
                 XCTAssertEqual(roles.count, 1)
             }
-        ))
+        )
     }
 
+    /**
+     * This test was creating an error thrown by core data migration.
+     *
+     * In order to recreate this the failure migration one needs to remove the `RemoveZombieParticipantRolesMigrationPolicy`
+     * from `MappingModel_2.106-2.107` where the mapping `ParticipantRoleToParticipantRole` happens.
+     *
+     * Example:
+     *
+     * Error Domain=NSCocoaErrorDomain Code=1570 "conversation is a required value."
+     * UserInfo={NSValidationErrorObject=<NSManagedObject: 0x283002bc0> (
+     * entity: ParticipantRole;
+     * id: 0x91c16ef3ddc135ae <x-coredata://AC33D7EC-1515-4FDB-9FBC-FE0BE37B1D4F/ParticipantRole/p7>;
+     * data: {
+     *     conversation = nil;
+     *     modifiedKeys = nil;
+     *     role = nil;
+     *     user = "0x91c16ef3dd4134be <x-coredata://AC33D7EC-1515-4FDB-9FBC-FE0BE37B1D4F/User/p3>";
+     * })
+     */
     func testThatItPerformsMigrationFrom106_invalidConversationRelationDropsParticipantRole() throws {
-        XCTAssertNoThrow(try migrateStoreToCurrentVersion(
+        try migrateStoreToCurrentVersion(
             sourceVersion: "2.106.0",
             preMigrationAction: { context in
                 let user = ZMUser(context: context)
@@ -94,6 +113,8 @@ final class DatabaseMigrationTests_Conversations: XCTestCase {
                 participantRole.user = user
                 try context.save()
 
+                XCTAssertEqual(user.participantRoles.count, 1)
+
                 // Failure: model requires 'conversation' to be non-optional!
                 participantRole.conversation = nil
                 try context.save()
@@ -101,8 +122,12 @@ final class DatabaseMigrationTests_Conversations: XCTestCase {
             postMigrationAction: { context in
                 let roles = try context.fetch(ParticipantRole.fetchRequest())
                 XCTAssert(roles.isEmpty)
+
+                // Make sure the user object relation has been updated!
+                let user = try context.fetch(NSFetchRequest<ZMUser>(entityName: ZMUser.entityName())).first
+                XCTAssertEqual(user?.participantRoles.count, 0)
             }
-        ))
+        )
     }
 
     func testThatItPerformsMigrationFrom107_invalidConversationRelationKeepsParticipantRole() throws {
