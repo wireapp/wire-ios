@@ -329,12 +329,12 @@ final class ClientListViewController: UIViewController,
         switch self.convertSection(section) {
         case 0:
             if self.selfClient != nil {
-                return NSLocalizedString("registration.devices.current_list_header", comment: "")
+                return L10n.Localizable.Registration.Devices.currentListHeader
             } else {
                 return nil
             }
         case 1:
-            return NSLocalizedString("registration.devices.active_list_header", comment: "")
+            return L10n.Localizable.Registration.Devices.activeListHeader
         default:
             return nil
         }
@@ -345,7 +345,7 @@ final class ClientListViewController: UIViewController,
         case 0:
             return nil
         case 1:
-            return NSLocalizedString("registration.devices.active_list_subtitle", comment: "")
+            return L10n.Localizable.Registration.Devices.activeListSubtitle
         default:
             return nil
         }

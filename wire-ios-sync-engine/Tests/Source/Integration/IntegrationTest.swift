@@ -490,17 +490,19 @@ extension IntegrationTest {
 
     @objc(establishSessionWithMockUser:)
     func establishSession(with mockUser: MockUser) {
-        mockTransportSession.performRemoteChanges({ session in
+        mockTransportSession.performRemoteChanges { session in
             if mockUser.clients.count == 0 {
                 session.registerClient(for: mockUser)
             }
 
-            for client in mockUser.clients {
-                self.userSession?.syncManagedObjectContext.performGroupedBlockAndWait {
-                    self.establishSessionFromSelf(toRemote: client as! MockUserClient)
+            self.userSession.map { userSession in
+                WaitingGroupTask(context: userSession.syncManagedObjectContext) {
+                    for client in mockUser.clients {
+                        await self.establishSessionFromSelf(toRemote: client as! MockUserClient)
+                    }
                 }
             }
-        })
+        }
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }

@@ -168,7 +168,7 @@ extern NSString * _Nonnull const ZMMessageNeedsLinkAttachmentsUpdateKey;
 @property (nonatomic) NSSet <Reaction *> * _Nonnull reactions;
 @property (nonatomic, readonly) NSSet<ZMMessageConfirmation*> * _Nonnull confirmations;
 
-- (void)setExpirationDate;
+- (NSDate * _Nonnull)setExpirationDate;
 - (void)removeExpirationDate;
 - (void)expire;
 

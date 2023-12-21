@@ -51,8 +51,8 @@ final class MessageSendingStatusPayloadProcessor {
             WireLogger.messaging.debug("detected missing clients")
         }
 
-        for (_, deletedClients) in deletedClients {
-            await deletedClients.asyncForEach { await $0.deleteClientAndEndSession() }
+        for deletedClient in deletedClients.values.flatMap(\.self) {
+            await deletedClient.deleteClientAndEndSession()
         }
 
         let newMissingClients = await missingClients.flatMap(\.value).asyncFilter { await $0.hasSessionWithSelfClient == false }

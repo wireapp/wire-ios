@@ -486,8 +486,8 @@ extension AuthenticationCoordinator {
                 style: .destructive
             )
 
-            let alertModel = AuthenticationCoordinatorAlert(title: "self.settings.account_details.log_out.alert.title".localized,
-                                                            message: "self.settings.account_details.log_out.alert.message".localized,
+            let alertModel = AuthenticationCoordinatorAlert(title: L10n.Localizable.Self.Settings.AccountDetails.LogOut.Alert.title,
+                                                            message: L10n.Localizable.Self.Settings.AccountDetails.LogOut.Alert.message,
                                                             actions: [.cancel, signOutAction])
 
             presentAlert(for: alertModel)

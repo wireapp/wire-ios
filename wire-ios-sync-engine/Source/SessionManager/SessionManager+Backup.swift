@@ -22,6 +22,8 @@ import ZipArchive
 import WireUtilities
 import WireCryptobox
 
+private let zmLog = ZMSLog(tag: "SessionManager")
+
 extension SessionManager {
 
     public typealias BackupResultClosure = (Result<URL>) -> Void
@@ -111,8 +113,16 @@ extension SessionManager {
         guard BackupFileExtensions.allCases.contains(where: { $0.rawValue == location.pathExtension }) else { return completion(.failure(BackupError.invalidFileExtension)) }
 
         SessionManager.workerQueue.async(group: dispatchGroup) { [weak self] in
-            guard let `self` = self else { return }
+            guard let `self` = self else {
+                completion(.failure(NSError(code: .unknownError, userInfo: ["reason": "SessionManager.self is `nil` in restoreFromBackup"])))
+                return
+            }
+
             let decryptedURL = SessionManager.temporaryURL(for: location)
+
+            zmLog.safePublic(SanitizedString(stringLiteral: "coordinated file access at: \(location.absoluteString)"), level: .debug)
+            WireLogger.localStorage.debug("coordinated file access at: \(location.absoluteString)")
+
             do {
                 try SessionManager.decrypt(from: location, to: decryptedURL, password: password, accountId: userId)
             } catch {
