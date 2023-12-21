@@ -21,12 +21,12 @@ import WireDataModelSupport
 
 final class LegacyNotificationServiceCryptoStackTest: XCTestCase {
 
-    private var mockCryptoboxMigrator: MockCryptoboxMigrationManagerInterface!
+    private var coreCryptoProviderMock: MockCoreCryptoProviderProtocol!
 
     override func setUpWithError() throws {
         createCoreCryptoKeyIfNeeded()
 
-        mockCryptoboxMigrator = MockCryptoboxMigrationManagerInterface()
+        coreCryptoProviderMock = MockCoreCryptoProviderProtocol()
 
         try super.setUpWithError()
     }
@@ -34,7 +34,7 @@ final class LegacyNotificationServiceCryptoStackTest: XCTestCase {
     override func tearDownWithError() throws {
         try super.tearDownWithError()
 
-        mockCryptoboxMigrator = nil
+        coreCryptoProviderMock = nil
     }
 
     // MARK: - Tests
@@ -47,9 +47,6 @@ final class LegacyNotificationServiceCryptoStackTest: XCTestCase {
             shouldSetupMLSService: false
         )
 
-        mockCryptoboxMigrator.isMigrationNeededAccountDirectory_MockValue = false
-        mockCryptoboxMigrator.completeMigrationSyncContext_MockMethod = { _ in }
-
         let userIdentifier = UUID()
         let coreDataStack = try makeMockCoreDataStack(userIdentifier: userIdentifier)
         let context = coreDataStack.syncContext
@@ -60,15 +57,12 @@ final class LegacyNotificationServiceCryptoStackTest: XCTestCase {
         XCTAssertNil(context.mlsEncryptionService)
         XCTAssertNil(context.mlsDecryptionService)
         XCTAssertNil(context.proteusService)
-        XCTAssertNil(context.coreCrypto)
 
         // WHEN
-        try service.setUpCoreCryptoStack(
-            accountContainer: coreDataStack.accountContainer,
-            applicationContainer: coreDataStack.applicationContainer,
+        service.setUpCoreCryptoStack(
+            provider: coreCryptoProviderMock,
             syncContext: coreDataStack.syncContext,
-            cryptoboxMigrationManager: mockCryptoboxMigrator,
-            setupConfiguration: configuration
+            configuration: configuration
         )
 
         // THEN
@@ -76,7 +70,6 @@ final class LegacyNotificationServiceCryptoStackTest: XCTestCase {
         XCTAssertNil(context.mlsEncryptionService)
         XCTAssertNil(context.mlsDecryptionService)
         XCTAssertNotNil(context.proteusService)
-        XCTAssertNotNil(context.coreCrypto)
     }
 
     //    func test_CryptoStackSetup_OnInit_MLSOnly() throws {
