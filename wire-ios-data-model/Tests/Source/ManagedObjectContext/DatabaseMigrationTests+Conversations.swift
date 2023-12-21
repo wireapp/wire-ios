@@ -21,22 +21,9 @@ import XCTest
 
 final class DatabaseMigrationTests_Conversations: XCTestCase {
 
-    private let tmpStoreURL = URL(fileURLWithPath: "\(NSTemporaryDirectory())databasetest/")
     private let helper = DatabaseMigrationHelper()
 
-    override func setUpWithError() throws {
-        try super.setUpWithError()
-        try FileManager.default.createDirectory(at: tmpStoreURL, withIntermediateDirectories: true)
-    }
-
-    override func tearDownWithError() throws {
-        try? FileManager.default.removeItem(at: tmpStoreURL)
-        try super.tearDownWithError()
-    }
-
     func testThatItPerformsInferredMigration_deleteConversationCascadesToParticipantRole() throws {
-        throw XCTSkip("test need to be improved to be not flaky")
-
         try migrateStoreToCurrentVersion(
             sourceVersion: "2.106.0",
             preMigrationAction: { context in
@@ -56,8 +43,6 @@ final class DatabaseMigrationTests_Conversations: XCTestCase {
     }
 
     func testThatItPerformsInferredMigration_markConversationAsDeletedKeepsParticipantRole() throws {
-        throw XCTSkip("test need to be improved to be not flaky")
-
         try migrateStoreToCurrentVersion(
             sourceVersion: "2.106.0",
             preMigrationAction: { context in
@@ -93,10 +78,7 @@ final class DatabaseMigrationTests_Conversations: XCTestCase {
             applicationContainer: applicationContainer
         ).appendingPersistentStoreLocation()
 
-        try helper.createFixtureDatabase(
-            storeFile: storeFile,
-            versionName: sourceVersion
-        )
+        try helper.createFixtureDatabase(storeFile: storeFile, versionName: sourceVersion)
 
         let sourceModel = try helper.createObjectModel(version: sourceVersion)
         var sourceContainer: NSPersistentContainer? = try helper.createStore(model: sourceModel, at: storeFile)
@@ -157,17 +139,11 @@ final class DatabaseMigrationTests_Conversations: XCTestCase {
         }, onCompletion: { _ in
             exp.fulfill()
         })
-        waitForExpectations(timeout: 1.0)
+        waitForExpectations(timeout: 5.0)
 
         BackgroundActivityFactory.shared.activityManager = nil
         XCTAssertFalse(BackgroundActivityFactory.shared.isActive, file: file, line: line)
 
         return stack
-    }
-
-    // MARK: - URL Helpers
-
-    private func storeURL(version: String) -> URL {
-        return tmpStoreURL.appendingPathComponent("\(version).sqlite")
     }
 }
