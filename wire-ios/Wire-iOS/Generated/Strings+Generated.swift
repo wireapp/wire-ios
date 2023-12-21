@@ -3502,8 +3502,10 @@ internal enum L10n {
       }
       internal enum Participants {
         internal enum Section {
-          /// Legal hold subjects
-          internal static let title = L10n.tr("Localizable", "legalhold.participants.section.title", fallback: "Legal hold subjects")
+          /// Legal hold subjects %@
+          internal static func title(_ p1: Any) -> String {
+            return L10n.tr("Localizable", "legalhold.participants.section.title", String(describing: p1), fallback: "Legal hold subjects %@")
+          }
         }
       }
     }

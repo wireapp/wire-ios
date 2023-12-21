@@ -65,38 +65,38 @@ enum MessageAction: CaseIterable, Equatable {
 
     var title: String? {
         let key: String?
-
+        typealias MessageActionLocale = L10n.Localizable.Content.Message
         switch self {
         case .copy:
-            key = "content.message.copy"
+            key = MessageActionLocale.copy
         case .digitallySign:
-            key = "content.message.sign"
+            key = MessageActionLocale.sign
         case .reply:
-            key = "content.message.reply"
+            key = MessageActionLocale.reply
         case .openDetails:
-            key = "content.message.details"
+            key = MessageActionLocale.details
         case .edit:
-            key = "message.menu.edit.title"
+            key = L10n.Localizable.Message.Menu.Edit.title
         case .delete:
-            key = "content.message.delete"
+            key = MessageActionLocale.delete
         case .save:
-            key = "content.message.save"
+            key = MessageActionLocale.save
         case .cancel:
-            key = "general.cancel"
+            key = L10n.Localizable.General.cancel
         case .download:
-            key = "content.message.download"
+            key = MessageActionLocale.download
         case .forward:
-            key = "content.message.forward"
+            key = MessageActionLocale.forward
         case .resend:
-            key = "content.message.resend"
+            key = MessageActionLocale.resend
         case .showInConversation:
-            key = "content.message.go_to_conversation"
+            key = MessageActionLocale.goToConversation
         case .sketchDraw:
-            key = "image.add_sketch"
+            key = L10n.Localizable.Image.addSketch
         case .sketchEmoji:
-            key = "image.add_emoji"
+            key = L10n.Localizable.Image.addEmoji
         case .visitLink:
-            key = "content.message.open_link_alert.title"
+            key = MessageActionLocale.OpenLinkAlert.title
         case .present,
              .openQuote,
              .resetSession,
@@ -104,7 +104,7 @@ enum MessageAction: CaseIterable, Equatable {
             key = nil
         }
 
-        return key?.localized
+        return key
     }
 
     var icon: StyleKitIcon? {
