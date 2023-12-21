@@ -150,7 +150,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
             createKeyIfNeeded: allowCreation
         )
 
-        let coreCrypto = try SafeCoreCrypto(
+        let coreCrypto = try await SafeCoreCrypto(
             path: configuration.path,
             key: configuration.key
         )
@@ -158,7 +158,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         updateKeychainItemAccess()
         await migrateCryptoboxSessionsIfNeeded(with: coreCrypto)
 
-        try await coreCrypto.perform { try $0.proteusInit() }
+        try await coreCrypto.perform { try await $0.proteusInit() }
 
         return coreCrypto
     }

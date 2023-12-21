@@ -143,7 +143,7 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
             switch action {
             case .addMembers(let clients):
                 let memberAddMessages = try await coreCrypto.perform {
-                    try $0.addClientsToConversation(
+                    try await $0.addClientsToConversation(
                         conversationId: groupID.data,
                         clients: clients
                     )
@@ -170,7 +170,7 @@ actor MLSActionExecutor: MLSActionExecutorProtocol {
 
             case .proposal:
                 guard let bundle = try await coreCrypto.perform({
-                    try $0.commitPendingProposals(conversationId: groupID.data)
+                    try await $0.commitPendingProposals(conversationId: groupID.data)
                 }) else {
                     throw CommitError.noPendingProposals
                 }
