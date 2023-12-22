@@ -1,0 +1,91 @@
+//
+// Wire
+// Copyright (C) 2023 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
+
+import Foundation
+
+enum MockPEMDocuments {
+    static let expired = """
+-----BEGIN CERTIFICATE-----
+MIIFezCCA2OgAwIBAgIUEktwKeixXosZ62BYtjaJWnYyaRQwDQYJKoZIhvcNAQEL
+BQAwTTELMAkGA1UEBhMCREUxDzANBgNVBAgMBkJlcmxpbjEPMA0GA1UEBwwGQmVy
+bGluMQ0wCwYDVQQKDARXaXJlMQ0wCwYDVQQLDARXaXJlMB4XDTIzMTIyMjE3MDcw
+MVoXDTIzMTIyMzE3MDcwMVowTTELMAkGA1UEBhMCREUxDzANBgNVBAgMBkJlcmxp
+bjEPMA0GA1UEBwwGQmVybGluMQ0wCwYDVQQKDARXaXJlMQ0wCwYDVQQLDARXaXJl
+MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAvcl3NelGqBuXKj7cHdD/
+R9Rpib2Yd3rp9qU1Uowj0Rwlue35rCxGaW4Yd1l9ULBOfKqaHsATL3c0Svu8sz8K
++1Sj6fDDpBbMdmKI4qCdH9OFBUWbWrnLSl6gjZZOfs/sgIgQSRcakSi5SMdNEO+l
+kGQ+/BWIJ+aaEsoEpXxKnfJJYbY9kD/yzK3D0l41DR+T9PiGz+kppoJyN2q4FRW1
+copfJumPO1dj6E1a48NePeyExsrYdGB+4bpB6o0luEMq5uv1GH3Lyb5zxZ+FDgU1
+I7zwTzVH6vrkqk8JpNESMkuzVRZ5evXOmq5+lVwpZ/y8bHj7bBufFSzv4kbjBraz
+lk5+bCEc+5SeVes3elj95hJopi6nGl/rfJ1QuiJcS1Px05m1GZnHUMM8ihnlyJo+
+UEpvg8M07Envtm83T29qZ3x0HZxLwHrBXMbelF2u714fSeLSkNyFBbC+nqwwXOIw
+HEew8HvV0UKSdHFbulfVAQiDk7Cam/qbA288HNbfnJ3JKRf3st8lV79rcbnA+nO+
+y84Yrt1HEEyN7eTtVnQWNgMPmfpe2NeluBO8yl/EJBr9olORSc1sFNhlCusQ3vfo
+A0b+r7fpl0zhKrhZkxKLct1R47AQUXwDboDJ5Qg5nrlyH9styXoVI6TKC1RbpVwL
+qPLxLFoXJFGCOPPCLIytYkMCAwEAAaNTMFEwHQYDVR0OBBYEFPZhklvN25BJonvv
+NFYIEqZPENaRMB8GA1UdIwQYMBaAFPZhklvN25BJonvvNFYIEqZPENaRMA8GA1Ud
+EwEB/wQFMAMBAf8wDQYJKoZIhvcNAQELBQADggIBAJTCtcW8lWkpdb4t+/qkkgL/
+RAxXS173jBx8EgxgPiFKvspodZFOY6Vhz7FeywXmyzVJDv/QA9h5maMN1rpBhfuX
+i+gRYdJpHeQdn/5NMJzR9DsNBGTEha2Ch+Qw/bQ98q1bjjhkDyTxRs7x0RmPZz81
+Nabm1NjJcYxak44EoVcNLkLDONoox7YkMvi1bWjV4zSCPhzx0X6jB8Y80zIhG/IB
+6Q6LsV0JgRp/6U6fbxmF/Y3Gy4SDl3Xh9XI3Ejk5XLltGWVlEhC/8QmEJr1R7nOj
+IK2YwbXFBz09KUVsxds8m1gvNBiKGvvrzVEEoXgkez5hY6xh2n8nbDqhfkA1JVQL
+/fhpZ/AAR+Vgi70hw/M/gb9RLO9EZGVu1qvuBVlLFQXi1w0MhQE0jroQDupmqDlV
+MjzoZR/lR0zj8aUQyaSUtJll5lZChH8XhoZoy2UYXLBml762sSAviaFhc+kF8WOM
+Tb9ivv9Af6a0QIcfxan8FbnWExjtll9AAT5/ljOz7SajEtqPbmfozYM/kkiNLg7i
+J22ox2h/JXtslH4NJPp1VZaaLx5NF1XwJXmOf9zONGoigNbxBtd1D4yX3lFFd5IE
+bRizMeJ0g3JCmAcQVkjVsgNZpJXtM9Wxk2WZS0pRgFma/uS/0Zv+vj00FzrsHNvZ
+I4/WTmi6eTToJ2J3iiMW
+-----END CERTIFICATE-----
+"""
+
+   static let valid = """
+-----BEGIN CERTIFICATE-----
+MIIFfTCCA2WgAwIBAgIUbkdHeHxVPCXDGG82ioB+hR+rAwUwDQYJKoZIhvcNAQEL
+BQAwTTELMAkGA1UEBhMCREUxDzANBgNVBAgMBkJlcmxpbjEPMA0GA1UEBwwGQmVy
+bGluMQ0wCwYDVQQKDARXaXJlMQ0wCwYDVQQLDARXaXJlMCAXDTIzMTIyMjE3MTAz
+NloYDzIyOTcxMDA2MTcxMDM2WjBNMQswCQYDVQQGEwJERTEPMA0GA1UECAwGQmVy
+bGluMQ8wDQYDVQQHDAZCZXJsaW4xDTALBgNVBAoMBFdpcmUxDTALBgNVBAsMBFdp
+cmUwggIiMA0GCSqGSIb3DQEBAQUAA4ICDwAwggIKAoICAQDPGJOtcjA5jmefESoK
+EKqRk4nkdzqzZ6mLAWjdW5YjU3qMg2V1Nu/H1fqyis9iANNSAGgWhWJgq4M8hbMe
+/+Dt8gQWY1MRoaosNlgjCX0T48H0i4DRQRIKj7dO0iBAsnBa18EVe2TrLkryndlu
+kBs9P4CrhSrTgl4vg/o0Sfcehv3HCKsZAP4WTD25cxnpLLODH7xUzmOHNuF9nnq/
+QhKPdMItJwBLfDW/co0ls9/LOScbWShtUtOvZihdfFeL4GSmNhcWpx/JKnDifK3E
+D56SwNFAOnZHM3XqJH6HxIVXCkQd2SwwTPOpe6nn2HoX7TtpArt5cgCLCRVFHkOU
+vlfkpj7htzyOiEldd9klQN4ZJBILJLP+F+IiofXnxB40m+ez1GJQa/+NQJjqqWoA
+vYuPfUUvdajpUPBfVP9dWGVzjKzJcNaS75a1RxePXMa0iZOcFjXYeyNTzWSV0X0l
+oBkSCBPWA8xi9gXpu97+Of7MJ2GIEn6SqGUgJDYhCtIgfzLfzL8poLQ5L49+fdKg
+esHOWejuVsNj0aIu9sBp3XsAeidwOY59TiN5vW9jD2eartl0Hie+5qIJembFaENx
+sqXMfJnXgmoJtzL6YoK6Q0+x7k8MizS0rEYG5DWCFA7UENu/y0PbRdtpGeu0fLFn
+C9q7uyW4lE9ru2I5/rC6YbCOPwIDAQABo1MwUTAdBgNVHQ4EFgQU6mdRNrjHfqO1
+b1dGIM/IinUo7icwHwYDVR0jBBgwFoAU6mdRNrjHfqO1b1dGIM/IinUo7icwDwYD
+VR0TAQH/BAUwAwEB/zANBgkqhkiG9w0BAQsFAAOCAgEAytPlg2RYoNme3m7vwCbc
+ux3/g3N+xciZ6zVpE2UpO7YXiYMwVmj6BRGwoctqHsSIKtIJEre/oPIvbipXxnB8
+tLx7mdmKrkrrwnVaFCK6oYPMYJRSw+skUNWsnCqS/lLYfex2UtDy0JS8nfHtPyo7
+0Xagw20g6bLpLUP9/uJsvxlWok/hsdZf9T3serDN7hjEXlNS1vX/oDFUipHc83Zw
+FZ+M9aCmmI2NEMgetkHfyFYFDEyXulQOsqSUGTJeG7PqEzsSaRuuAqxnNYH8b+xY
+Cvo3mrbCHoTMegv7EYzRly0Z+1Mg4a4o31ukS6OFLZunGWnRp13HlGVMMxFM9v8G
+ZY17xrD6RK+wK/P+euZPYWL/gdk57qmlNHTJany+GNY0yBGuKEyUqR0zDQ+2hqNA
+DPLGC0MSGOsk67ZJhakf1UOE4GIlZWaBohXWpPz+1uGYX1prPWO7wiCELcRJeOuz
+I3zWEMtXm4premhDibnwn/z9iEkDXb8esRtC6pYtEwVjz/k4Xu6MdIcGWkrjRurP
+AbmCR9w6UcWGsS0hu5wfsU2odc3VFvqyDLT9hjeWJ+tBAz7zWKlhjZYvyQAj5YyG
+Ewd3FFVdTGDLzfNHOilIAhAptKfs7hGikGZff8pTFVw6eEiGMUzVuNKlkTCj7T2F
+4ObaWasRH1ZQlBCUZoY4xmU=
+-----END CERTIFICATE-----
+"""
+}

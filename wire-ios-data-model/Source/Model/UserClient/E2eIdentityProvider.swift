@@ -71,7 +71,7 @@ public protocol E2eIdentityProviding {
 }
 
 // TODO: remove this once updated Core-crypto is available
-private extension WireIdentity {
+public extension WireIdentity {
 
     var status: E2EIdentityCertificateStatus {
         .valid
@@ -90,21 +90,31 @@ private extension WireIdentity {
 public final class E2eIdentityProvider: E2eIdentityProviding {
 
     private let kServerRetainedDays: Double = 28 * 24 * 60 * 60
+    private let kRandomInterval = Int.random(in: 0..<86400)
+
     private var clientIds: [ClientId]?
     private var userIds: [String]?
     private var conversationId: String
     private var gracePeriod: Double
+    private var cryptoProvider: CryptoE2EIdentityProviderProtocol
 
-    public init(clientIds: [ClientId]?, userIds: [String]?, conversationId: String, gracePeriod: Double) {
+    public init(
+        clientIds: [ClientId]?,
+        userIds: [String]?,
+        conversationId: String,
+        gracePeriod: Double,
+        cryptoProvider: CryptoE2EIdentityProviderProtocol = MockCryptoE2EIProvider()
+    ) {
         self.clientIds = clientIds
         self.userIds = userIds
         self.conversationId = conversationId
         self.gracePeriod = gracePeriod
+        self.cryptoProvider = cryptoProvider
     }
 
     public func isE2EIdentityEnabled() -> Bool {
         // TODO: call core crypto method to get E2EI status
-        return true
+        return cryptoProvider.isE2EIdentityEnabled()
     }
 
     public func fetchCertificates() async throws -> [E2eIdentityCertificate] {
@@ -132,34 +142,21 @@ public final class E2eIdentityProvider: E2eIdentityProviding {
 
     public func shouldUpdateCertificate(for certificate: E2eIdentityCertificate) -> Bool {
         // TODO: call core cypto function to check the validity. Check if the certificate was revoked
-        let validationInterval = timeUntilCertificateActivation(for: certificate) - timeSinceCertificateActivation(for: certificate)
-        let randomInterval = Double.random(in: 0.0..<86400)
-        let remainingTimeToUpdate = validationInterval - (gracePeriod + Double(kServerRetainedDays) + randomInterval)
-        let futureDate = Date.now.addingTimeInterval(remainingTimeToUpdate)
-        return futureDate > Date.now
+        let validationInterval = DateInterval(
+            start: certificate.notValidBefore,
+            end: certificate.expiryDate).duration
+        let remainingTimeToUpdate = validationInterval
+        - gracePeriod
+        - Double(kServerRetainedDays)
+        - Double(kRandomInterval)
+        return remainingTimeToUpdate <= 0.0
     }
 
     private func fetchWireIdentity(clientIDs: [ClientId], conversationId: String) -> [WireIdentity] {
-        guard !conversationId.isEmpty, !clientIDs.isEmpty else {
-            return []
-        }
-        // TODO: Call core crypto method to fetch `WireIdentity`
-        return [WireIdentity(clientId: "sdkjfsafsld", handle: "sdsjks", displayName: "asfdsk sdfsdfs", domain: "sdfasfas")]
+        return cryptoProvider.fetchWireIdentity(clientIDs: clientIDs, conversationId: conversationId)
     }
 
     private func fetchWireIdentity(userIds: [String], conversationId: String ) -> [WireIdentity] {
-        guard !userIds.isEmpty, !conversationId.isEmpty else {
-            return []
-        }
-        // TODO: Call core crypto method to fetch `WireIdentity`
-        return [WireIdentity(clientId: "sdkjfsafsld", handle: "sdsjks", displayName: "asfdsk sdfsdfs", domain: "sdfasfas")]
-    }
-
-    private func timeSinceCertificateActivation(for certificate: E2eIdentityCertificate) -> Double {
-        return Date.now.timeIntervalSince(certificate.notValidBefore)
-    }
-
-    private func timeUntilCertificateActivation(for certificate: E2eIdentityCertificate) -> Double {
-        return Date.now.timeIntervalSince(certificate.expiryDate)
+        return cryptoProvider.fetchWireIdentity(userIds: userIds, conversationId: conversationId)
     }
 }
