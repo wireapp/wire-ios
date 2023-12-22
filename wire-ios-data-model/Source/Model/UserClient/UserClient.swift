@@ -320,15 +320,10 @@ public class UserClient: ZMManagedObject, UserClientType {
     /// Can be called several times without issues
 
     public func resetSession() {
-        resetSession(completion: nil)
-    }
-
-    public func resetSession(completion: ((Bool) -> Void)? = nil) {
         guard
             let uiMOC = managedObjectContext?.zm_userInterface,
             let syncMOC = uiMOC.zm_sync
         else {
-            completion?(false)
             return
         }
 
@@ -338,15 +333,16 @@ public class UserClient: ZMManagedObject, UserClientType {
             }) else {
                 return
             }
-
             // Delete session and fingerprint
-            try? await syncClient.deleteSession()
-
+            do {
+                try await syncClient.deleteSession()
+            } catch {
+                WireLogger.e2ei.error(error.localizedDescription)
+            }
             // Delete should happen on sync context since the cryptobox could be accessed only from there
             await syncMOC.perform {
                 // Mark that we need notify the other party about the session reset
                 syncClient.needsToNotifyOtherUserAboutSessionReset = true
-
                 syncMOC.saveOrRollback()
             }
         }

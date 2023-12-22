@@ -24,7 +24,6 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
     let logger = WireLogger.e2ei
     let e2eIdentityProvider: E2eIdentityProviding
     let userSession: UserSession
-    let mlsProvider: MLSProviding
 
     var userClient: UserClient
     var clientRemovalObserver: ClientRemovalObserver?
@@ -33,11 +32,11 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
     var isProcessing: ((Bool) -> Void)?
 
     var isMLSEnabled: Bool {
-        mlsProvider.isMLSEnbaled
+        e2eIdentityProvider.isE2EIdentityEnabled()
     }
 
     var isE2eIdentityEnabled: Bool {
-        e2eIdentityProvider.isE2EIdentityEnabled
+        e2eIdentityProvider.isE2EIdentityEnabled()
     }
 
     var isSelfClient: Bool {
@@ -48,60 +47,38 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
         userClient: UserClient,
         userSession: UserSession,
         credentials: ZMEmailCredentials?,
-        e2eIdentityProvider: E2eIdentityProviding,
-        mlsProvider: MLSProviding
+        e2eIdentityProvider: E2eIdentityProviding
     ) {
         self.userClient = userClient
         self.credentials = credentials
         self.userSession = userSession
         self.e2eIdentityProvider = e2eIdentityProvider
-        self.mlsProvider = mlsProvider
     }
 
     func fetchCertificate() async -> E2eIdentityCertificate? {
         do {
-            return try await userClient.fetchE2eIdentityCertificate(e2eIdentityProvider: e2eIdentityProvider)
+            return try await userClient.fetchE2eIdentityCertificates(e2eIdentityProvider: e2eIdentityProvider).first
         } catch {
             logger.error(error.localizedDescription)
         }
         return nil
     }
 
-    func fetchMLSThumbprint() async -> String? {
-        do {
-            return try await mlsProvider.fetchMLSThumbprint()
-        } catch {
-            logger.error(error.localizedDescription)
-        }
-        return nil
+    func removeDevice() {
+        clientRemovalObserver = ClientRemovalObserver(
+            userClientToDelete: userClient,
+            delegate: self,
+            credentials: credentials,
+            completion: {
+                error in
+                let isRemoved = error == nil
+            }
+        )
+        self.clientRemovalObserver?.startRemoval()
     }
 
-    func removeDevice() async -> Bool {
-        isProcessing?(true)
-        return await withCheckedContinuation {[weak self] continuation in
-            guard let self = self else {
-                return
-            }
-            clientRemovalObserver = ClientRemovalObserver(
-                userClientToDelete: userClient,
-                delegate: self,
-                credentials: credentials,
-                completion: {
-                    error in
-                    let isRemoved = error == nil
-                    continuation.resume(returning: isRemoved)
-                }
-            )
-            clientRemovalObserver?.startRemoval()
-        }
-    }
-
-    func resetSession() async -> Bool {
-        return await withCheckedContinuation { continuation in
-            userClient.resetSession { value in
-                continuation.resume(returning: value)
-            }
-        }
+    func resetSession() {
+        userClient.resetSession()
     }
 
     func updateVerified(_ isVerified: Bool) async -> Bool {
@@ -154,13 +131,17 @@ extension DeviceDetailsViewActionsHandler: ClientRemovalObserverDelegate {
         _ clientRemovalObserver: ClientRemovalObserver,
         viewControllerToPresent: UIViewController
     ) {
-        UIViewController.presentTopmost(viewController: viewControllerToPresent)
+        DispatchQueue.main.async {
+            UIViewController.presentTopmost(viewController: viewControllerToPresent)
+        }
     }
 
     func setIsLoadingViewVisible(
         _ clientRemovalObserver: ClientRemovalObserver,
         isVisible: Bool
     ) {
-        isProcessing?(isVisible)
+        DispatchQueue.main.async {
+            self.isProcessing?(isVisible)
+        }
     }
 }

@@ -23,15 +23,13 @@ import WireDataModel
 import WireSyncEngine
 
 protocol DeviceDetailsViewActions {
-    var isMLSEnabled: Bool { get }
     var isE2eIdentityEnabled: Bool { get }
     var isSelfClient: Bool { get }
     var isProcessing: ((Bool) -> Void)? { get set }
 
     func fetchCertificate() async -> E2eIdentityCertificate?
-    func fetchMLSThumbprint() async -> String?
-    func removeDevice() async -> Bool
-    func resetSession() async -> Bool
+    func removeDevice()
+    func resetSession()
     func updateVerified(_ value: Bool) async -> Bool
     func copyToClipboard(_ value: String)
     func downloadE2EIdentityCertificate()
@@ -51,51 +49,49 @@ final class DeviceInfoViewModel: ObservableObject {
         actionsHandler.isE2eIdentityEnabled
     }
 
-    var isMLSEnablled: Bool {
-        actionsHandler.isMLSEnabled
-    }
-
     var isValidCerificate: Bool {
         guard let certificate = e2eIdentityCertificate,
-           E2EIdentityCertificateStatus.status(for: certificate.certificateStatus) != .none,
-              E2EIdentityCertificateStatus.status(for: certificate.certificateStatus) != .notActivated else {
+                certificate.status != .notActivated,
+                certificate.status != .revoked else {
             return false
         }
         return true
     }
 
     var certificateStatus: E2EIdentityCertificateStatus {
-        guard let certificate = e2eIdentityCertificate,
-              let status = E2EIdentityCertificateStatus.allCases.filter({
-                        $0.titleForStatus() == certificate.certificateStatus
-                    }
-                ).first
+        guard let certificate = e2eIdentityCertificate
         else {
-            return isE2EIdentityEnabled ? .notActivated : .none
+            return .notActivated
         }
-        return status
+        return certificate.status
     }
 
     var isCertificateExpiringSoon: Bool {
-        guard let certificate = e2eIdentityCertificate else {
+        guard var certificate = e2eIdentityCertificate else {
             return false
         }
-        return certificate.expiryDate < Date.now + .oneDay + .oneDay
+        return certificate.isExpiringSoon
     }
 
-    @Published
-    var e2eIdentityCertificate: E2eIdentityCertificate?
-    @Published
-    var mlsThumbprint: String?
-    private var actionsHandler: any DeviceDetailsViewActions
+    var mlsThumbprint: String {
+        guard let certificate = e2eIdentityCertificate else {
+            return ""
+        }
+        return certificate.mlsThumbprint
+    }
+
     var isCopyEnabled: Bool {
         return Settings.isClipboardEnabled
     }
+
+    @Published var e2eIdentityCertificate: E2eIdentityCertificate?
     @Published var isRemoved: Bool = false
     @Published var isReset: Bool = false
     @Published var isProteusVerificationEnabled: Bool = false
     @Published var isActionInProgress: Bool = false
     @Published var proteusKeyFingerprint: String = ""
+
+    private var actionsHandler: any DeviceDetailsViewActions
 
     init(
         title: String,
@@ -149,30 +145,15 @@ final class DeviceInfoViewModel: ObservableObject {
         }
     }
 
-    func removeDevice() async {
-        DispatchQueue.main.async {
-            self.isActionInProgress = true
-        }
-        let isRemoved = await actionsHandler.removeDevice()
-        DispatchQueue.main.async {
-            self.isRemoved = isRemoved
-            self.isActionInProgress = false
-        }
+    func removeDevice() {
+        actionsHandler.removeDevice()
     }
 
-    func resetSession() async {
-        DispatchQueue.main.async {
-            self.isActionInProgress = true
-        }
-        let isReset =  await actionsHandler.resetSession()
-        DispatchQueue.main.async {
-            self.isReset = isReset
-            self.isActionInProgress = false
-        }
+    func resetSession() {
+        actionsHandler.resetSession()
     }
 
     func updateVerifiedStatus(_ value: Bool) async {
-        // TODO: Check why this is not working as expected
         let result = await actionsHandler.updateVerified(value)
         DispatchQueue.main.async {
             self.isProteusVerificationEnabled = result
@@ -181,17 +162,6 @@ final class DeviceInfoViewModel: ObservableObject {
 
     func copyToClipboard(_ value: String) {
         actionsHandler.copyToClipboard(value)
-    }
-
-    func fetchMLSFingerPrint() async {
-        DispatchQueue.main.async {
-            self.isActionInProgress = true
-        }
-        let result = await actionsHandler.fetchMLSThumbprint()?.uppercased().splitStringIntoLines(charactersPerLine: 16)
-        DispatchQueue.main.async {
-            self.mlsThumbprint = result
-            self.isActionInProgress = false
-        }
     }
 
     func downloadE2EIdentityCertificate() {
@@ -206,8 +176,7 @@ extension DeviceInfoViewModel {
         userSession: UserSession,
         credentials: ZMEmailCredentials?,
         getUserClientFingerprintUseCase: GetUserClientFingerprintUseCaseProtocol,
-        e2eIdentityProvider: E2eIdentityProviding,
-        mlsProvider: MLSProviding
+        e2eIdentityProvider: E2eIdentityProviding
     ) -> DeviceInfoViewModel {
         return DeviceInfoViewModel(
             title: userClient.model ?? "",
@@ -218,13 +187,46 @@ extension DeviceInfoViewModel {
                 userClient: userClient,
                 userSession: userSession,
                 credentials: credentials,
-                e2eIdentityProvider: e2eIdentityProvider,
-                mlsProvider: mlsProvider
+                e2eIdentityProvider: e2eIdentityProvider
             ),
             userSession: userSession,
             getUserClientFingerprint: getUserClientFingerprintUseCase,
             userClient: userClient,
             isSelfClient: isSelfClient
         )
+    }
+}
+
+extension E2EIdentityCertificateStatus {
+    func titleForStatus() -> String {
+        switch self {
+        case .notActivated:
+            return L10n.Localizable.Device.Details.Section.E2ei.Status.notActivated
+        case .revoked:
+            return L10n.Localizable.Device.Details.Section.E2ei.Status.revoked
+        case .expired:
+            return L10n.Localizable.Device.Details.Section.E2ei.Status.expired
+        case .valid:
+            return L10n.Localizable.Device.Details.Section.E2ei.Status.valid
+        }
+    }
+
+    func imageForStatus() -> Image? {
+        switch self {
+        case .notActivated:
+            return Image(.certificateExpired)
+        case .revoked:
+            return Image(.certificateRevoked)
+        case .expired:
+            return Image(.certificateExpired)
+        case .valid:
+            return Image(.certificateValid)
+        }
+    }
+
+    static func status(for string: String) -> E2EIdentityCertificateStatus? {
+        E2EIdentityCertificateStatus.allCases.filter({
+            $0.titleForStatus() == string
+        }).first
     }
 }

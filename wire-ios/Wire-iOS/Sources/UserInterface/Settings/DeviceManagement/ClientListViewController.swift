@@ -196,8 +196,7 @@ final class ClientListViewController: UIViewController,
                     credentials: self.credentials,
                     getUserClientFingerprintUseCase: userSession.getUserClientFingerprint,
                     // TODO: Replace these once we have actual implementations
-                    e2eIdentityProvider: DeveloperDeviceDetailsSettingsSelectionViewModel.e2eIdentityProvider(),
-                    mlsProvider: DeveloperDeviceDetailsSettingsSelectionViewModel.mlsProvider()
+                    e2eIdentityProvider: DeveloperDeviceDetailsSettingsSelectionViewModel.e2eIdentityProvider()
                 )
             ) {
                 self.navigationController?.setNavigationBarHidden(false, animated: false)

@@ -32,9 +32,7 @@ struct DeviceDetailsBottomView: View {
     var resetSessionView: some View {
         HStack {
             SwiftUI.Button {
-                Task {
-                    await viewModel.resetSession()
-                }
+                viewModel.resetSession()
             } label: {
                 Text(L10n.Localizable.Profile.Devices.Detail.ResetSession.title)
                     .padding(.all, ViewConstants.Padding.standard)
@@ -57,9 +55,7 @@ struct DeviceDetailsBottomView: View {
     var removeDeviceView: some View {
         HStack {
             SwiftUI.Button {
-                Task {
-                   await viewModel.removeDevice()
-                }
+                viewModel.removeDevice()
             } label: {
                 Text(L10n.Localizable.Self.Settings.AccountDetails.RemoveDevice.title)
                 .padding(.all, ViewConstants.Padding.standard)

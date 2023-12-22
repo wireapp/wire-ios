@@ -58,10 +58,12 @@ struct DeviceDetailsE2EIdentityCertificateView: View {
                     textColor: SemanticColors.Label.textCertificateValid.swiftUIColor,
                     image: Image(.certificateValid)
                 )
-            case .none:
-                Spacer()
             }
             Spacer()
+        }.onAppear {
+            Task {
+                await viewModel.fetchFingerPrintForProteus()
+            }
         }
         if viewModel.isValidCerificate, let certificate = viewModel.e2eIdentityCertificate {
             Text(L10n.Localizable.Device.Details.Section.E2ei.serialNumber)

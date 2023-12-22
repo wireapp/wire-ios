@@ -22,20 +22,24 @@ public final class MockRevokedE2eIdentityProvider: E2eIdentityProviding {
 
     lazy var dateFormatter = DateFormatter()
 
-    public var isE2EIdentityEnabled: Bool = true
-
     public var certificate: E2eIdentityCertificate {
         E2eIdentityCertificate(
             certificateDetails: .mockCertificate(),
+            mlsThumbprint: .mockThumbprint(),
+            notValidBefore: dateFormatter.date(from: "10.10.2023") ?? Date.now - .oneYearFromNow,
             expiryDate: dateFormatter.date(from: "15.10.2023") ?? Date.now,
-            certificateStatus: "Revoked",
+            status: .revoked,
             serialNumber: .mockSerialNumber()
         )
     }
 
     public init() {}
 
-    public func fetchCertificate() async throws -> E2eIdentityCertificate {
-        certificate
+    public func isE2EIdentityEnabled() -> Bool {
+        return true
+    }
+
+    public func fetchCertificates() async throws -> [E2eIdentityCertificate] {
+        [certificate]
     }
 }

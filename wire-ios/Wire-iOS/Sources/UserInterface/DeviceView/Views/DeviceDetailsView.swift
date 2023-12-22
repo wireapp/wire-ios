@@ -73,10 +73,8 @@ struct DeviceDetailsView: View {
     var body: some View {
         NavigationView {
             ScrollView {
-                if viewModel.isMLSEnablled {
-                    mlsView
-                }
                 if viewModel.isE2EIdentityEnabled {
+                    mlsView
                     e2eIdentityCertificateView
                 }
                 proteusView
@@ -114,12 +112,6 @@ struct DeviceDetailsView: View {
 
         .background(SemanticColors.View.backgroundDefault.swiftUIColor)
         .navigationBarBackButtonHidden(true)
-        .onAppear {
-            Task {
-                await viewModel.fetchFingerPrintForProteus()
-                await viewModel.fetchE2eCertificate()
-            }
-        }
         .onDisappear {
             dismissedView?()
         }

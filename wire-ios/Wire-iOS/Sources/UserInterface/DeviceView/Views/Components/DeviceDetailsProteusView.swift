@@ -60,6 +60,10 @@ struct DeviceDetailsProteusView: View {
                     }
                 }
             }
+        }.onAppear {
+            Task {
+                await viewModel.fetchFingerPrintForProteus()
+            }
         }
     }
 }

@@ -47,6 +47,8 @@ public extension Feature {
         public struct Config: Codable, Equatable {
 
             public let acmeDiscoveryUrl: String
+
+            // Grace period for E2eI expiration
             public let verificationExpiration: UInt
 
             public init(acmeDiscoveryUrl: String = "", verificationExpiration: UInt = 60) {
