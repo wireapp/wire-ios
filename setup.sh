@@ -1,4 +1,6 @@
 #!/bin/bash
+set -Eeuo pipefail
+
 #
 # Wire
 # Copyright (C) 2023 Wire Swiss GmbH
@@ -23,8 +25,6 @@
 # This scripts checks that the necessary tools are installed on the local machine
 # and sets up the project so that it can be built with Xcode
 #
-
-set -e
 
 function die { ( >&2 echo "$*"); exit 1; }
 
@@ -51,7 +51,7 @@ REPO_ROOT=$(git rev-parse --show-toplevel)
 rm -rf ${TMPDIR}/TemporaryItems/*carthage*
 
 echo "ℹ️  Carthage bootstrap. This might take a while..."
-if [[ -n "${CI}" ]]; then
+if [[ -n "${CI-}" ]]; then
     echo "Skipping Carthage bootstrap from setup.sh script since CI is defined"
 else 
     "$REPO_ROOT/scripts/carthage.sh" bootstrap --cache-builds --platform ios --use-xcframeworks
@@ -59,7 +59,7 @@ fi
 echo ""
 
 echo "ℹ️  Installing ImageMagick..."
-if [[ -z "${CI}" ]]; then # skip cache bootstrap for CI
+if [[ -z "${CI-}" ]]; then # skip cache bootstrap for CI
     echo "Skipping ImageMagick install because not running on CI"
 else
     which identify || brew install ImageMagick
@@ -67,7 +67,7 @@ fi
 echo ""
 
 echo "ℹ️  Installing AWS CLI..."
-if [[ -z "${CI}" ]]; then # skip cache bootstrap for CI
+if [[ -z "${CI-}" ]]; then # skip cache bootstrap for CI
     echo "Skipping AWS CLI install because not running on CI"
 else
     which aws || (curl "https://awscli.amazonaws.com/AWSCLIV2.pkg" -o "AWSCLIV2.pkg" && sudo installer -pkg AWSCLIV2.pkg -target /)
