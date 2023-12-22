@@ -17,8 +17,8 @@
 // 
 
 
-@import Foundation;
-@import CoreData;
+#import <Foundation/Foundation.h>
+#import <CoreData/CoreData.h>
 
 @protocol LabelType;
 

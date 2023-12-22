@@ -17,10 +17,10 @@
 // 
 
 
-@import CoreData;
-@import WireSystem;
-@import WireUtilities;
-@import PINCache;
+#import <CoreData/CoreData.h>
+#import <WireSystem/WireSystem.h>
+#import <WireUtilities/WireUtilities.h>
+#import <PINCache/PINCache.h>
 
 @class NSOperationQueue;
 @class DisplayNameGenerator;

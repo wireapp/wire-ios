@@ -17,7 +17,7 @@
 // 
 
 
-@import CoreData;
+#import <CoreData/CoreData.h>
 
 extern NSString * _Nonnull const ZMDataPropertySuffix;
 

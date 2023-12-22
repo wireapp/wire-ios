@@ -17,7 +17,7 @@
 // 
 
 
-@import Foundation;
+#import <Foundation/Foundation.h>
 
 
 @class ZMConversation;

@@ -23,7 +23,7 @@
 #import "ZMConnection.h"
 #import "ZMConversationSecurityLevel.h"
 
-@import WireImages;
+#import <WireImages/WireImages.h>
 
 @class ZMClientMessage;
 @class ZMAssetClientMessage;

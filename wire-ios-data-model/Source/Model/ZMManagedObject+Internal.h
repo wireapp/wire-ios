@@ -17,9 +17,8 @@
 // 
 
 
-@import WireSystem;
-@import CoreGraphics;
-
+#import <CoreGraphics/CoreGraphics.h>
+#import <WireSystem/WireSystem.h>
 #import <WireDataModel/ZMManagedObject.h>
 
 typedef void(^ObjectsEnumerationBlock)(ZMManagedObject * _Nonnull, BOOL * _Nonnull stop);

@@ -17,7 +17,7 @@
 // 
 
 
-@import WireTransport;
+#import <WireTransport/WireTransport.h>
 
 @class ZMConversation;
 @class NSManagedObjectContext;

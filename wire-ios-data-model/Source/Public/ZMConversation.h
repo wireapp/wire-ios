@@ -17,7 +17,7 @@
 // 
 
 
-@import WireSystem;
+#import <WireSystem/WireSystem.h>
 
 #import "ZMManagedObject.h"
 #import "ZMMessage.h"
