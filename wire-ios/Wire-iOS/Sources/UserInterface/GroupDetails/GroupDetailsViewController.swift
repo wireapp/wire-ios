@@ -275,7 +275,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
                 conversation: conversation,
                 userSession: userSession
             )
-            
+
             let navigationController = addParticipantsViewController.wrapInNavigationController()
 
             navigationController.modalPresentationStyle = .currentContext
