@@ -41,4 +41,8 @@ public final class MockValidE2eIdentityProvider: E2eIdentityProviding {
     public func fetchCertificates() async throws -> [E2eIdentityCertificate] {
         [certificate]
     }
+
+    public func shouldUpdateCertificate(for certificate: E2eIdentityCertificate) -> Bool {
+        return false
+    }
 }

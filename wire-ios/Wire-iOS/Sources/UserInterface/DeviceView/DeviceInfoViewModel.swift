@@ -24,6 +24,7 @@ import WireSyncEngine
 
 protocol DeviceDetailsViewActions {
     var isE2eIdentityEnabled: Bool { get }
+    var shouldUpdateCertificate: Bool { get }
     var isSelfClient: Bool { get }
     var isProcessing: ((Bool) -> Void)? { get set }
 
@@ -67,10 +68,7 @@ final class DeviceInfoViewModel: ObservableObject {
     }
 
     var isCertificateExpiringSoon: Bool {
-        guard var certificate = e2eIdentityCertificate else {
-            return false
-        }
-        return certificate.isExpiringSoon
+        return actionsHandler.shouldUpdateCertificate
     }
 
     var mlsThumbprint: String {

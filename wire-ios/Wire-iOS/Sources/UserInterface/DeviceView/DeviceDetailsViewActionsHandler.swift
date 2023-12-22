@@ -39,6 +39,12 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
         e2eIdentityProvider.isE2EIdentityEnabled()
     }
 
+    var shouldUpdateCertificate: Bool {
+        guard let certificate = certificate else {
+            return false
+        }
+        return e2eIdentityProvider.shouldUpdateCertificate(for: certificate)
+    }
     var isSelfClient: Bool {
         userClient.isSelfClient()
     }
@@ -71,7 +77,9 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
             credentials: credentials,
             completion: {
                 error in
-                let isRemoved = error == nil
+                if let error = error {
+                    WireLogger.e2ei.error(error.localizedDescription)
+                }
             }
         )
         self.clientRemovalObserver?.startRemoval()

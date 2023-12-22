@@ -105,7 +105,7 @@ class DeveloperDeviceDetailsSettingsSelectionViewModel: ObservableObject {
 
     static func e2eIdentityProvider() -> E2eIdentityProviding {
         guard  DeveloperDeviceDetailsSettingsSelectionViewModel.isE2eIdentityViewEnabled else {
-            return E2eIdentityProvider(clientIds: [], userIds: [""], conversationId: "sdsa")
+            return E2eIdentityProvider(clientIds: [], userIds: [""], conversationId: "sdsa", gracePeriod: 20)
         }
         let status = E2EIdentityCertificateStatus.status(
             for: DeveloperDeviceDetailsSettingsSelectionViewModel.selectedE2eIdentiyStatus ?? ""
@@ -120,8 +120,8 @@ class DeveloperDeviceDetailsSettingsSelectionViewModel: ObservableObject {
         case .valid:
             return MockValidE2eIdentityProvider()
         default:
-            return E2eIdentityProvider(clientIds: [], userIds: [""], conversationId: "sdsa")
+            return E2eIdentityProvider(clientIds: [], userIds: [""], conversationId: "sdsa", gracePeriod: 20)
         }
     }
-    
+
 }

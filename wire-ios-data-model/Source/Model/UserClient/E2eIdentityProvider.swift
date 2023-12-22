@@ -32,7 +32,6 @@ public struct E2eIdentityCertificate {
     public var expiryDate: Date
     public var status: E2EIdentityCertificateStatus
     public var serialNumber: String
-    public lazy var isExpiringSoon: Bool  = isCertificateExpiringSoon()
 
     public init(
         certificateDetails: String,
@@ -63,21 +62,12 @@ public struct E2eIdentityCertificate {
         self.status = certificateStatus
         self.mlsThumbprint = mlsThumbprint
     }
-
-    private func isCertificateExpiringSoon() -> Bool {
-        let validity = expiryDate.timeIntervalSince(notValidBefore)
-        let backendMessagesStoreTime = Double(28 * 60 * 60)
-        let gracePerid = Double(0)
-        let randomUncertinity = Double(Int.random(in: 0..<86400))
-        let renewalTime = validity - backendMessagesStoreTime - gracePerid - randomUncertinity
-        let timeSinceCertificateActivation = Date.now.timeIntervalSince(notValidBefore)
-        return renewalTime > timeSinceCertificateActivation
-    }
 }
 
 public protocol E2eIdentityProviding {
     func isE2EIdentityEnabled() -> Bool
     func fetchCertificates() async throws -> [E2eIdentityCertificate]
+    func shouldUpdateCertificate(for certificate: E2eIdentityCertificate) -> Bool
 }
 
 // TODO: remove this once updated Core-crypto is available
@@ -99,14 +89,17 @@ private extension WireIdentity {
 
 public final class E2eIdentityProvider: E2eIdentityProviding {
 
+    private let kServerRetainedDays: Double = 28 * 24 * 60 * 60
     private var clientIds: [ClientId]?
     private var userIds: [String]?
     private var conversationId: String
+    private var gracePeriod: Double
 
-    public init(clientIds: [ClientId]?, userIds: [String]?, conversationId: String) {
+    public init(clientIds: [ClientId]?, userIds: [String]?, conversationId: String, gracePeriod: Double) {
         self.clientIds = clientIds
         self.userIds = userIds
         self.conversationId = conversationId
+        self.gracePeriod = gracePeriod
     }
 
     public func isE2EIdentityEnabled() -> Bool {
@@ -137,6 +130,15 @@ public final class E2eIdentityProvider: E2eIdentityProviding {
         return e2eiCertificates
     }
 
+    public func shouldUpdateCertificate(for certificate: E2eIdentityCertificate) -> Bool {
+        // TODO: call core cypto function to check the validity. Check if the certificate was revoked
+        let validationInterval = timeUntilCertificateActivation(for: certificate) - timeSinceCertificateActivation(for: certificate)
+        let randomInterval = Double.random(in: 0.0..<86400)
+        let remainingTimeToUpdate = validationInterval - (gracePeriod + Double(kServerRetainedDays) + randomInterval)
+        let futureDate = Date.now.addingTimeInterval(remainingTimeToUpdate)
+        return futureDate > Date.now
+    }
+
     private func fetchWireIdentity(clientIDs: [ClientId], conversationId: String) -> [WireIdentity] {
         guard !conversationId.isEmpty, !clientIDs.isEmpty else {
             return []
@@ -153,17 +155,11 @@ public final class E2eIdentityProvider: E2eIdentityProviding {
         return [WireIdentity(clientId: "sdkjfsafsld", handle: "sdsjks", displayName: "asfdsk sdfsdfs", domain: "sdfasfas")]
     }
 
-    private func fetchStatus(for certificate: Certificate) -> E2EIdentityCertificateStatus {
-        // TODO: call core cypto function to check the validity. Check if the certificate was revoked
-        return renewalTime(for: certificate) > timeSinceCertificateActivation(for: certificate) ? .valid : .expired
-    }
-
-    private func renewalTime(for certificate: Certificate) -> Double {
-        // TODO: call core cypto function to check the validity. Check if the certificate was revoked
-        return (Date.now + .oneYearFromNow).timeIntervalSinceReferenceDate
-    }
-
-    private func timeSinceCertificateActivation(for certificate: Certificate) -> Double {
+    private func timeSinceCertificateActivation(for certificate: E2eIdentityCertificate) -> Double {
         return Date.now.timeIntervalSince(certificate.notValidBefore)
+    }
+
+    private func timeUntilCertificateActivation(for certificate: E2eIdentityCertificate) -> Double {
+        return Date.now.timeIntervalSince(certificate.expiryDate)
     }
 }
